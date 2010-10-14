@@ -35,24 +35,36 @@ public class LiveLyricsPanel extends SelectLyricsPanel {
         black.addActionListener(new ActionListener() {
 
             public void actionPerformed(ActionEvent e) {
-                
+                for(LyricCanvas canvas : getCanvases()) {
+                    canvas.toggleBlack();
+                }
             }
         });
         clear = new JToggleButton("Clear text", Utils.getImageIcon("icons/filenew.png"));
         clear.addActionListener(new ActionListener() {
 
             public void actionPerformed(ActionEvent e) {
-                if(clear.getModel().isSelected()) {
-                    getLyricCanvas().setText(new String[]{});
-                }
-                else {
-                    getLyricCanvas().setText(((SongSection)getLyricsList().getSelectedValue()).getLyrics());
+                for(LyricCanvas canvas : getCanvases()) {
+                    canvas.toggleClear();
                 }
             }
         });
         header.add(black);
         header.add(clear);
         add(header, BorderLayout.NORTH);
-        getLyricsList().registerLyricCanvas(fullScreenCanvas);
+        registerLyricCanvas(fullScreenCanvas);
+    }
+
+    private void toggleClear() {
+        String[] text;
+        if(clear.getModel().isSelected()) {
+            text = new String[]{};
+        }
+        else {
+            text = ((SongSection) getLyricsList().getSelectedValue()).getLyrics();
+        }
+        for(LyricCanvas canvas : getCanvases()) {
+            canvas.setText(text);
+        }
     }
 }

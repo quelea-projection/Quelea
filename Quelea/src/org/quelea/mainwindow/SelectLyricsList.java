@@ -70,26 +70,6 @@ public class SelectLyricsList extends JList {
     }
 
     /**
-     * Register a lyric canvas with this lyrics list.
-     * @param canvas the canvas to register.
-     */
-    public void registerLyricCanvas(final LyricCanvas canvas) {
-        if(canvas==null) {
-            return;
-        }
-        addListSelectionListener(new ListSelectionListener() {
-
-            public void valueChanged(ListSelectionEvent e) {
-                int selectedIndex = getSelectedIndex();
-                if(selectedIndex == -1) {
-                    return;
-                }
-                canvas.setText(((SongSection) getModel().getElementAt(selectedIndex)).getLyrics());
-            }
-        });
-    }
-
-    /**
      * @inheritDoc
      * @return a defaultlistmodel that backs this lyrics list.
      */

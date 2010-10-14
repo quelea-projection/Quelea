@@ -29,6 +29,8 @@ public class LyricCanvas extends Canvas {
     private Font font;
     private int aspectWidth;
     private int aspectHeight;
+    private boolean cleared;
+    private boolean blacked;
 
     /**
      * Create a new canvas where the lyrics should be displayed.
@@ -55,7 +57,12 @@ public class LyricCanvas extends Canvas {
             ((Graphics2D) g).drawRenderedImage(backgroundImage, scaler);
         }
         else {
-            setBackground(backgroundColor);
+            if(blacked) {
+                setBackground(Color.BLACK);
+            }
+            else {
+                setBackground(backgroundColor);
+            }
         }
         g.setFont(font);
         g.setColor(Color.WHITE);
@@ -68,6 +75,9 @@ public class LyricCanvas extends Canvas {
      * @param font the font to use for the text.
      */
     private void drawText(Graphics graphics, Font font) {
+        if(cleared || blacked) {
+            return;
+        }
         graphics.setFont(font);
         ArrayList<String> lines = new ArrayList<String>();
         FontMetrics metrics = graphics.getFontMetrics(font);
@@ -102,6 +112,40 @@ public class LyricCanvas extends Canvas {
     }
 
     /**
+     * Toggle the clearing of this canvas - still leave the background image
+     * in place but remove all the text.
+     */
+    public void toggleClear() {
+        cleared = !cleared;
+        repaint();
+    }
+
+    /**
+     * Determine whether this canvas is cleared.
+     * @return true if the canvas is cleared, false otherwise.
+     */
+    public boolean isCleared() {
+        return cleared;
+    }
+
+    /**
+     * Toggle the blacking of this canvas - remove the text and background
+     * image (if any) just displaying a black screen.
+     */
+    public void toggleBlack() {
+        blacked = !blacked;
+        repaint();
+    }
+
+    /**
+     * Determine whether this canvas is blacked.
+     * @return true if the canvas is blacked, false otherwise.
+     */
+    public boolean isBlacked() {
+        return blacked;
+    }
+
+    /**
      * Set the background image of this canvas. The image will be scaled up or
      * down to fit the canvas size.
      * @param image the background image to place on the canvas.
@@ -131,6 +175,15 @@ public class LyricCanvas extends Canvas {
     public void setText(String[] text) {
         this.text = text;
         repaint();
+    }
+
+    /**
+     * Get the text currently set to appear on the canvas. The text may or may
+     * not be shown depending on whether the canvas is blacked or cleared.
+     * @return the current text.
+     */
+    public String[] getText() {
+        return text;
     }
 
     /**
