@@ -26,12 +26,12 @@ public class MainPanel extends JPanel {
     /**
      * Create the new main panel.
      */
-    public MainPanel(LyricCanvas fullScreenCanvas) {
+    public MainPanel() {
         setLayout(new BorderLayout());
         schedulePanel = new SchedulePanel();
         libraryPanel = new LibraryPanel();
         previewPanel = new SelectPreviewLyricsPanel();
-        livePanel = new SelectLiveLyricsPanel(fullScreenCanvas);
+        livePanel = new SelectLiveLyricsPanel();
 
         schedulePanel.getScheduleList().addListSelectionListener(new ListSelectionListener() {
 
@@ -74,6 +74,14 @@ public class MainPanel extends JPanel {
         mainSplit.setResizeWeight(0.2);
         mainSplit.setSize(300, 300);
         add(mainSplit, BorderLayout.CENTER);
+    }
+
+    /**
+     * Get the panel displaying the selection of the preview lyrics.
+     * @return the panel displaying the selection of the preview lyrics.
+     */
+    public SelectPreviewLyricsPanel getPreviewLyricsPanel() {
+        return previewPanel;
     }
 
     /**

@@ -7,11 +7,8 @@ import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
 import org.pushingpixels.substance.api.skin.SubstanceBusinessLookAndFeel;
 import org.quelea.mainwindow.components.LyricWindow;
-import org.quelea.display.SongSection;
 import org.quelea.mainwindow.components.MainWindow;
 
 /**
@@ -31,7 +28,7 @@ public class Main {
      * Go go go!
      * @param args the command line arguments
      */
-    public static void main(String[] args) throws Exception {
+    public static void main(String[] args) {
 
         GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
         final GraphicsDevice[] gds = ge.getScreenDevices();
@@ -49,36 +46,23 @@ public class Main {
             public void run() {
                 try {
                     UIManager.setLookAndFeel(new SubstanceBusinessLookAndFeel());
-//                    UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
                 }
                 catch(UnsupportedLookAndFeelException ex) {
                     //Oh well...
                 }
-//                catch(ClassNotFoundException ex) {}
-//                catch(InstantiationException ex) {}
-//                catch(IllegalAccessException ex) {}
                 
                 JFrame.setDefaultLookAndFeelDecorated(true);
-                final MainWindow mainWindow;
-                if(fullScreenWindow == null) {
-                    mainWindow = new MainWindow();
-                    JOptionPane.showMessageDialog(null, "Looks like you've only got one monitor installed. I can't display the full screen canvas in this setup.");
-                }
-                else {
-                    mainWindow = new MainWindow(fullScreenWindow.getCanvas());
-                    mainWindow.getLiveLyricsList().addListSelectionListener(new ListSelectionListener() {
-
-                        public void valueChanged(ListSelectionEvent e) {
-                            if(mainWindow.getLiveLyricsList().getSelectedIndex() != -1) {
-                                fullScreenWindow.getCanvas().setText(((SongSection) mainWindow.getLiveLyricsList().getSelectedValue()).getLyrics());
-                            }
-                        }
-                    });
-                    fullScreenWindow.setVisible(true);
-                }
+                final MainWindow mainWindow = new MainWindow();
                 mainWindow.setLocation((int) gds[0].getDefaultConfiguration().getBounds().getMinX() + 100, (int) gds[0].getDefaultConfiguration().getBounds().getMinY() + 100);
                 mainWindow.setVisible(true);
 
+                if(fullScreenWindow == null) {
+                    JOptionPane.showMessageDialog(mainWindow, "Looks like you've only got one monitor installed. I can't display the full screen canvas in this setup.");
+                }
+                else {
+                    mainWindow.getMainPanel().getLiveLyricsPanel().registerLyricCanvas(fullScreenWindow.getCanvas());
+                    fullScreenWindow.setVisible(true);
+                }
             }
         });
     }
