@@ -17,16 +17,9 @@ public class MainWindow extends JFrame {
     private MainPanel mainpanel;
 
     /**
-     * Create a new main window with no associated full screen canvas.
-     */
-    public MainWindow() {
-        this(null);
-    }
-
-    /**
      * Create a new main window.
      */
-    public MainWindow(LyricCanvas fullScreenCanvas) {
+    public MainWindow() {
         super("Quelea V0.0 alpha");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
@@ -38,11 +31,15 @@ public class MainWindow extends JFrame {
         setLayout(new BorderLayout());
         menubar = new MainMenuBar();
         toolbar = new MainToolbar();
-        mainpanel = new MainPanel(fullScreenCanvas);
+        mainpanel = new MainPanel();
         setJMenuBar(menubar);
         add(toolbar, BorderLayout.NORTH);
         add(mainpanel);
         pack();
+    }
+
+    public MainPanel getMainPanel() {
+        return mainpanel;
     }
 
     /**

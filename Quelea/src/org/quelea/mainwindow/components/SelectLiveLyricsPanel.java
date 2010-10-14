@@ -7,7 +7,6 @@ import javax.swing.JLabel;
 import javax.swing.JToggleButton;
 import javax.swing.JToolBar;
 import org.quelea.Utils;
-import org.quelea.display.SongSection;
 
 /**
  * The panel displaying the live lyrics selection - changes made on this panel
@@ -25,7 +24,7 @@ public class SelectLiveLyricsPanel extends SelectLyricsPanel {
      * @param fullScreenCanvas the full screen canvas that this live window
      * controls.
      */
-    public SelectLiveLyricsPanel(LyricCanvas fullScreenCanvas) {
+    public SelectLiveLyricsPanel() {
         header = new JToolBar();
         header.setFloatable(false);
         header.add(new JLabel("<html><b>Live</b></html>"));
@@ -51,19 +50,6 @@ public class SelectLiveLyricsPanel extends SelectLyricsPanel {
         header.add(black);
         header.add(clear);
         add(header, BorderLayout.NORTH);
-        registerLyricCanvas(fullScreenCanvas);
     }
-
-    private void toggleClear() {
-        String[] text;
-        if(clear.getModel().isSelected()) {
-            text = new String[]{};
-        }
-        else {
-            text = ((SongSection) getLyricsList().getSelectedValue()).getLyrics();
-        }
-        for(LyricCanvas canvas : getCanvases()) {
-            canvas.setText(text);
-        }
-    }
+    
 }
