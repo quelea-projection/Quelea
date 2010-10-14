@@ -1,4 +1,4 @@
-package org.quelea.mainwindow;
+package org.quelea.mainwindow.components;
 
 import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
@@ -7,15 +7,14 @@ import javax.swing.JLabel;
 import javax.swing.JToggleButton;
 import javax.swing.JToolBar;
 import org.quelea.Utils;
-import org.quelea.display.LyricCanvas;
-import org.quelea.display.components.SongSection;
+import org.quelea.display.SongSection;
 
 /**
  * The panel displaying the live lyrics selection - changes made on this panel
  * are reflected on the live projection.
  * @author Michael
  */
-public class LiveLyricsPanel extends SelectLyricsPanel {
+public class SelectLiveLyricsPanel extends SelectLyricsPanel {
 
     private JToolBar header;
     private JToggleButton black;
@@ -26,7 +25,7 @@ public class LiveLyricsPanel extends SelectLyricsPanel {
      * @param fullScreenCanvas the full screen canvas that this live window
      * controls.
      */
-    public LiveLyricsPanel(LyricCanvas fullScreenCanvas) {
+    public SelectLiveLyricsPanel(LyricCanvas fullScreenCanvas) {
         header = new JToolBar();
         header.setFloatable(false);
         header.add(new JLabel("<html><b>Live</b></html>"));

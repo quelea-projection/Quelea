@@ -1,4 +1,4 @@
-package org.quelea.mainwindow;
+package org.quelea.mainwindow.components;
 
 import java.awt.BorderLayout;
 import java.awt.event.ActionListener;
@@ -13,7 +13,7 @@ import org.quelea.Utils;
  * The panel displaying the preview lyrics selection - this is viewed before
  * displaying the actual lyrics on the projector.
  */
-public class PreviewLyricsPanel extends SelectLyricsPanel {
+public class SelectPreviewLyricsPanel extends SelectLyricsPanel {
 
     private JToolBar header;
     private JButton liveButton;
@@ -21,7 +21,7 @@ public class PreviewLyricsPanel extends SelectLyricsPanel {
     /**
      * Create a new preview lyrics panel.
      */
-    public PreviewLyricsPanel() {
+    public SelectPreviewLyricsPanel() {
         header = new JToolBar();
         header.setFloatable(false);
         header.add(new JLabel("<html><b>Preview</b></html>"));

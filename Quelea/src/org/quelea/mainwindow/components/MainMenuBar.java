@@ -1,4 +1,4 @@
-package org.quelea.mainwindow;
+package org.quelea.mainwindow.components;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;

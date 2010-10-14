@@ -10,9 +10,9 @@ import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import org.pushingpixels.substance.api.skin.SubstanceBusinessLookAndFeel;
-import org.quelea.display.LyricWindow;
-import org.quelea.display.components.SongSection;
-import org.quelea.mainwindow.MainWindow;
+import org.quelea.mainwindow.components.LyricWindow;
+import org.quelea.display.SongSection;
+import org.quelea.mainwindow.components.MainWindow;
 
 /**
  * The main class, sets everything in motion...

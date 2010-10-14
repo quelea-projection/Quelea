@@ -1,4 +1,4 @@
-package org.quelea.mainwindow;
+package org.quelea.mainwindow.components;
 
 import java.awt.Component;
 import javax.swing.DefaultListModel;
@@ -8,7 +8,7 @@ import javax.swing.ListCellRenderer;
 import javax.swing.ListSelectionModel;
 import javax.swing.border.EmptyBorder;
 import org.quelea.Utils;
-import org.quelea.display.components.Song;
+import org.quelea.display.Song;
 
 /**
  * The schedule list, all the items that are to be displayed in the service.
