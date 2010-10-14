@@ -1,4 +1,4 @@
-package org.quelea.mainwindow;
+package org.quelea.mainwindow.components;
 
 import java.awt.Component;
 import javax.swing.DefaultListModel;
@@ -7,10 +7,7 @@ import javax.swing.JList;
 import javax.swing.ListCellRenderer;
 import javax.swing.ListSelectionModel;
 import javax.swing.border.EmptyBorder;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
-import org.quelea.display.LyricCanvas;
-import org.quelea.display.components.SongSection;
+import org.quelea.display.SongSection;
 
 /**
  * A list displaying the different sections in the song.

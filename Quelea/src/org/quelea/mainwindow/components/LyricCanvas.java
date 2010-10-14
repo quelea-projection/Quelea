@@ -1,4 +1,4 @@
-package org.quelea.display;
+package org.quelea.mainwindow.components;
 
 import java.awt.Canvas;
 import java.awt.Color;

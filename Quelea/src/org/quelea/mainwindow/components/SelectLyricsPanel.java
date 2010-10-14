@@ -1,4 +1,4 @@
-package org.quelea.mainwindow;
+package org.quelea.mainwindow.components;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
@@ -11,8 +11,7 @@ import javax.swing.JSplitPane;
 import javax.swing.border.EmptyBorder;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
-import org.quelea.display.LyricCanvas;
-import org.quelea.display.components.SongSection;
+import org.quelea.display.SongSection;
 
 /**
  * The panel where the lyrics for different songs can be selected.

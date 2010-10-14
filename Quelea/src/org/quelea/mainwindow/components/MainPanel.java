@@ -1,4 +1,4 @@
-package org.quelea.mainwindow;
+package org.quelea.mainwindow.components;
 
 import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
@@ -8,9 +8,8 @@ import javax.swing.JPanel;
 import javax.swing.JSplitPane;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
-import org.quelea.display.LyricCanvas;
-import org.quelea.display.components.Song;
-import org.quelea.display.components.SongSection;
+import org.quelea.display.Song;
+import org.quelea.display.SongSection;
 
 /**
  * The main body of the main window, containing the schedule, the media bank,
@@ -21,8 +20,8 @@ public class MainPanel extends JPanel {
 
     private SchedulePanel schedulePanel;
     private LibraryPanel libraryPanel;
-    private PreviewLyricsPanel previewPanel;
-    private LiveLyricsPanel livePanel;
+    private SelectPreviewLyricsPanel previewPanel;
+    private SelectLiveLyricsPanel livePanel;
 
     /**
      * Create the new main panel.
@@ -31,8 +30,8 @@ public class MainPanel extends JPanel {
         setLayout(new BorderLayout());
         schedulePanel = new SchedulePanel();
         libraryPanel = new LibraryPanel();
-        previewPanel = new PreviewLyricsPanel();
-        livePanel = new LiveLyricsPanel(fullScreenCanvas);
+        previewPanel = new SelectPreviewLyricsPanel();
+        livePanel = new SelectLiveLyricsPanel(fullScreenCanvas);
 
         schedulePanel.getScheduleList().addListSelectionListener(new ListSelectionListener() {
 
@@ -81,7 +80,7 @@ public class MainPanel extends JPanel {
      * Get the panel displaying the selection of the live lyrics.
      * @return the panel displaying the selection of the live lyrics.
      */
-    public LiveLyricsPanel getLiveLyricsPanel() {
+    public SelectLiveLyricsPanel getLiveLyricsPanel() {
         return livePanel;
     }
 }

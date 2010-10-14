@@ -1,4 +1,4 @@
-package org.quelea.mainwindow;
+package org.quelea.mainwindow.components;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
@@ -12,8 +12,8 @@ import javax.swing.JToolBar;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import org.quelea.Utils;
-import org.quelea.display.components.Song;
-import org.quelea.display.components.SongSection;
+import org.quelea.display.Song;
+import org.quelea.display.SongSection;
 
 /**
  * The panel displaying the schedule / order of service. Items from here are

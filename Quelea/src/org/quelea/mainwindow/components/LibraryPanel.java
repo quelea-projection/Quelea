@@ -1,4 +1,4 @@
-package org.quelea.mainwindow;
+package org.quelea.mainwindow.components;
 
 import javax.swing.BoxLayout;
 import javax.swing.JPanel;

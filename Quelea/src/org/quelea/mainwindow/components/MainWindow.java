@@ -1,11 +1,10 @@
-package org.quelea.mainwindow;
+package org.quelea.mainwindow.components;
 
 import java.awt.BorderLayout;
 import java.io.File;
 import java.io.IOException;
 import javax.imageio.ImageIO;
 import javax.swing.JFrame;
-import org.quelea.display.LyricCanvas;
 
 /**
  * The main window used to control the projection.

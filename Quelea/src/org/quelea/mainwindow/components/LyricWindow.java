@@ -1,4 +1,4 @@
-package org.quelea.display;
+package org.quelea.mainwindow.components;
 
 import java.awt.Color;
 import java.awt.Cursor;
