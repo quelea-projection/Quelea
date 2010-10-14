@@ -2,7 +2,8 @@ package org.quelea.mainwindow;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
-import java.awt.Font;
+import java.util.HashSet;
+import java.util.Set;
 import javax.swing.DefaultListModel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -20,7 +21,7 @@ import org.quelea.display.components.SongSection;
 public abstract class SelectLyricsPanel extends JPanel {
 
     private SelectLyricsList lyricsList;
-    private LyricCanvas previewCanvas;
+    private Set<LyricCanvas> canvases = new HashSet<LyricCanvas>();
 
     /**
      * Create a new lyrics panel.
@@ -31,8 +32,9 @@ public abstract class SelectLyricsPanel extends JPanel {
         JSplitPane splitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT);
         splitPane.setResizeWeight(0.6);
         lyricsList = new SelectLyricsList(new DefaultListModel());
-        previewCanvas = new LyricCanvas(4,3);
+        LyricCanvas previewCanvas = new LyricCanvas(4, 3);
         splitPane.add(new JScrollPane(lyricsList) {
+
             {
                 setBorder(new EmptyBorder(0, 0, 0, 0));
                 setPreferredSize(lyricsList.getPreferredSize());
@@ -41,7 +43,7 @@ public abstract class SelectLyricsPanel extends JPanel {
         splitPane.setOneTouchExpandable(true);
         splitPane.add(previewCanvas);
         add(splitPane, BorderLayout.CENTER);
-        lyricsList.registerLyricCanvas(previewCanvas);
+        registerLyricCanvas(previewCanvas);
 
     }
 
@@ -54,10 +56,31 @@ public abstract class SelectLyricsPanel extends JPanel {
     }
 
     /**
-     * Get the underlying preview canvas in this panel.
+     * Register a lyric canvas with this lyrics list.
+     * @param canvas the canvas to register.
+     */
+    public final void registerLyricCanvas(final LyricCanvas canvas) {
+        if(canvas == null) {
+            return;
+        }
+        getLyricsList().addListSelectionListener(new ListSelectionListener() {
+
+            public void valueChanged(ListSelectionEvent e) {
+                int selectedIndex = getLyricsList().getSelectedIndex();
+                if(selectedIndex == -1) {
+                    return;
+                }
+                canvas.setText(((SongSection) getLyricsList().getModel().getElementAt(selectedIndex)).getLyrics());
+            }
+        });
+        canvases.add(canvas);
+    }
+
+    /**
+     * Get the canvases registered to this panel.
      * @return the preview canvas.
      */
-    public LyricCanvas getLyricCanvas() {
-        return previewCanvas;
+    public Set<LyricCanvas> getCanvases() {
+        return canvases;
     }
 }
