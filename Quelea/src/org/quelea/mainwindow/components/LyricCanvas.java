@@ -52,13 +52,14 @@ public class LyricCanvas extends JPanel {
     public void paint(Graphics g) {
         Image offscreenImage = createImage(getWidth(), getHeight());
         Graphics offscreen = offscreenImage.getGraphics();
-        offscreen.setColor(getBackground());
-        offscreen.fillRect(0, 0, getWidth(), getHeight());
         offscreen.setColor(getForeground());
         super.paint(offscreen);
         fixAspectRatio();
         if(blacked || background==null) {
-            setBackground(new Background(Color.BLACK));
+            Color temp = offscreen.getColor();
+            offscreen.setColor(Color.BLACK);
+            offscreen.fillRect(0, 0, getWidth(), getHeight());
+            offscreen.setColor(temp);
         }
         else {
             offscreen.drawImage(background.getImage(getWidth(), getHeight()), 0, 0, null);
