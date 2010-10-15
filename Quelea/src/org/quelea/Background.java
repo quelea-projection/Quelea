@@ -41,9 +41,10 @@ public class Background {
     public BufferedImage getImage(int width, int height) {
         BufferedImage ret = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
         Graphics2D g = (Graphics2D) ret.getGraphics();
-        if(color==null) {
-            AffineTransform scaler = AffineTransform.getScaleInstance((double) height / image.getHeight(null), (double) width / image.getHeight(null));
-            g.drawRenderedImage(ret, scaler);
+        g.setColor(Color.BLACK);
+        g.fillRect(0, 0, width, height);
+        if(color == null) {
+            g.drawImage(image, 0, 0, width, height, null);
             return ret;
         }
         else {
@@ -51,5 +52,59 @@ public class Background {
             g.fillRect(0, 0, width, height);
             return ret;
         }
+    }
+
+    /**
+     * Generate a hashcode for this background.
+     * @return the hashcode.
+     */
+    @Override
+    public int hashCode() {
+        int hash = 5;
+        hash = 59 * hash + (this.color != null ? this.color.hashCode() : 0);
+        hash = 59 * hash + (this.image != null ? this.image.hashCode() : 0);
+        return hash;
+    }
+
+    /**
+     * Determine whether this background is equal to another object.
+     * @param obj the other object.
+     * @return true if the objects are equal, false otherwise.
+     */
+    @Override
+    public boolean equals(Object obj) {
+        if(obj == null) {
+            return false;
+        }
+        if(getClass() != obj.getClass()) {
+            return false;
+        }
+        final Background other = (Background) obj;
+        if(this.color != other.color && (this.color == null || !this.color.equals(other.color))) {
+            return false;
+        }
+        if(this.image != other.image && (this.image == null || !this.image.equals(other.image))) {
+            return false;
+        }
+        return true;
+    }
+
+    /**
+     * Get some information about this background.
+     * @return information about the background in a string format.
+     */
+    @Override
+    public String toString() {
+        StringBuilder ret = new StringBuilder();
+        ret.append("Background: ");
+        if(color == null) {
+            ret.append("image: ");
+            ret.append(image);
+        }
+        else {
+            ret.append("colour: ");
+            ret.append(color);
+        }
+        return ret.toString();
     }
 }

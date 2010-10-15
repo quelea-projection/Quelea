@@ -1,6 +1,7 @@
 package org.quelea;
 
 import java.awt.Image;
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import javax.imageio.ImageIO;
@@ -27,9 +28,22 @@ public class Utils {
      * occured.
      */
     public static Icon getImageIcon(String location) {
+        Image image = getImage(location);
+        if(image==null) {
+            return null;
+        }
+        return new ImageIcon(image);
+    }
+
+    /**
+     * Get an image from the location of a specified file.
+     * @param location the location of the image to use.
+     * @return the icon formed from the image, or null if an IOException
+     * occured.
+     */
+    public static BufferedImage getImage(String location) {
         try {
-            Image image = ImageIO.read(new File(location));
-            return new ImageIcon(image);
+            return ImageIO.read(new File(location));
         }
         catch(IOException ex) {
             return null;

@@ -1,7 +1,6 @@
 package org.quelea.mainwindow.components;
 
 import java.awt.BorderLayout;
-import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import javax.swing.DefaultListModel;
@@ -11,6 +10,7 @@ import javax.swing.JPanel;
 import javax.swing.JToolBar;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
+import org.quelea.Background;
 import org.quelea.Utils;
 import org.quelea.display.Song;
 import org.quelea.display.SongSection;
@@ -36,7 +36,7 @@ public class SchedulePanel extends JPanel {
     public SchedulePanel() {
         setLayout(new BorderLayout());
         DefaultListModel model = new DefaultListModel();
-        model.addElement(new Song("Great is thy faithfaulness", "Traditional") {
+        model.addElement(new Song("Great is thy faithfaulness", "Traditional", new Background(Utils.getImage("img/watercross.jpg"))) {
             {
                 addSection(new SongSection("Verse", new String[] {"Great is thy faithfulness oh God my father", "There is no shadow of turning with thee"}));
                 addSection(new SongSection("Verse", new String[] {"Thou changest not, thy compassion it fails not", "Great is thy faithfulness Lord unto me"}));
