@@ -6,14 +6,13 @@ import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.Graphics;
-import java.awt.Graphics2D;
+import java.awt.Image;
 import java.awt.font.TextAttribute;
-import java.awt.geom.AffineTransform;
-import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
+import org.quelea.Background;
 
 /**
  * The canvas where the lyrics / images / media are drawn.
@@ -21,10 +20,9 @@ import java.util.Map.Entry;
  */
 public class LyricCanvas extends Canvas {
 
-    private BufferedImage backgroundImage;
     /** The default colour, used if none is given. */
-    public static final Color DEFAULT_COLOUR = Color.BLACK;
-    private Color backgroundColor;
+    public static final Background DEFAULT_BACKGROUND = new Background(Color.BLACK);
+    private Background background;
     private String[] text;
     private Font font;
     private int aspectWidth;
@@ -34,14 +32,31 @@ public class LyricCanvas extends Canvas {
 
     /**
      * Create a new canvas where the lyrics should be displayed.
+     * @param aspectWidth the aspect ratio width.
+     * @param aspectHeight the aspect ratio height.
      */
     public LyricCanvas(int aspectWidth, int aspectHeight) {
         this.aspectWidth = aspectWidth;
         this.aspectHeight = aspectHeight;
-        setMinimumSize(new Dimension(10, 10));
         text = new String[]{};
-        font = new Font("Comic Sans MS", Font.BOLD, 72);
-        backgroundColor = DEFAULT_COLOUR;
+        font = new Font("sans-serif", Font.BOLD, 72);
+        background = DEFAULT_BACKGROUND;
+        setMinimumSize(new Dimension(10, 10));
+    }
+
+    /**
+     * Sort out double buffering.
+     * @param g the graphics for this component.
+     */
+    @Override
+    public void update(Graphics g) {
+        Image offscreen = createImage(getWidth(), getHeight());
+        Graphics offscreenGraphics = offscreen.getGraphics();
+        offscreenGraphics.setColor(getBackground());
+        offscreenGraphics.fillRect(0, 0, getWidth(), getHeight());
+        offscreenGraphics.setColor(getForeground());
+        paint(offscreenGraphics);
+        g.drawImage(offscreen, 0, 0, this);
     }
 
     /**
@@ -52,17 +67,11 @@ public class LyricCanvas extends Canvas {
     public void paint(Graphics g) {
         super.paint(g);
         fixAspectRatio();
-        if(backgroundImage != null) {
-            AffineTransform scaler = AffineTransform.getScaleInstance((double) getHeight() / backgroundImage.getHeight(null), (double) getWidth() / backgroundImage.getHeight(null));
-            ((Graphics2D) g).drawRenderedImage(backgroundImage, scaler);
+        if(blacked) {
+            setBackground(Color.BLACK);
         }
         else {
-            if(blacked) {
-                setBackground(Color.BLACK);
-            }
-            else {
-                setBackground(backgroundColor);
-            }
+            g.drawImage(background.getImage(getWidth(), getHeight()), 0, 0, null);
         }
         g.setFont(font);
         g.setColor(Color.WHITE);
@@ -98,7 +107,7 @@ public class LyricCanvas extends Canvas {
             lines.add(builder.toString());
         }
         if(heightOffset > getHeight()) {
-            drawText(graphics, getDifferentSizeFont(font, font.getSize()-10));
+            drawText(graphics, getDifferentSizeFont(font, font.getSize() - 10));
         }
         else {
             heightOffset = 0;
@@ -146,23 +155,11 @@ public class LyricCanvas extends Canvas {
     }
 
     /**
-     * Set the background image of this canvas. The image will be scaled up or
-     * down to fit the canvas size.
-     * @param image the background image to place on the canvas.
+     * Set the background of this canvas to be displayed behind the text.
+     * @param background the background to place on the canvas.
      */
-    public void setBackgroundImage(BufferedImage image) {
-        this.backgroundImage = image;
-    }
-
-    /**
-     * Set the background colour of the canvas. This will replace any image
-     * currently being used for the background colour.
-     * @param colour the colour to use as the background colour.
-     */
-    public void setBackgroundColour(Color colour) {
-        backgroundImage = null;
-        backgroundColor = colour;
-        repaint();
+    public void setBackground(Background background) {
+        this.background = background;
     }
 
     /**
@@ -207,11 +204,11 @@ public class LyricCanvas extends Canvas {
         double estHeight = (width / aspectWidth) * aspectHeight;
         if(estWidth < width) {
             super.setSize(new Dimension((int) estWidth, (int) height));
-            font = getDifferentSizeFont(font, (float)estWidth/16);
+            font = getDifferentSizeFont(font, (float) estWidth / 16);
         }
         else {
             super.setSize(new Dimension((int) width, (int) estHeight));
-            font = getDifferentSizeFont(font, (float)width/16);
+            font = getDifferentSizeFont(font, (float) width / 16);
         }
     }
 
