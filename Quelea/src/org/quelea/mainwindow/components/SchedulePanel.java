@@ -8,6 +8,8 @@ import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JToolBar;
+import javax.swing.event.ListDataEvent;
+import javax.swing.event.ListDataListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import org.quelea.Background;
@@ -63,7 +65,14 @@ public class SchedulePanel extends JPanel {
         removeButton.addActionListener(new ActionListener() {
 
             public void actionPerformed(ActionEvent e) {
+                int selectedIndex = scheduleList.getSelectedIndex();
                 scheduleList.removeCurrentItem();
+                if(selectedIndex==scheduleList.getModel().getSize()) {
+                    selectedIndex--;
+                }
+                if(selectedIndex >= 0) {
+                    scheduleList.setSelectedIndex(selectedIndex);
+                }
             }
         });
 
@@ -90,7 +99,7 @@ public class SchedulePanel extends JPanel {
         scheduleList.addListSelectionListener(new ListSelectionListener() {
 
             public void valueChanged(ListSelectionEvent e) {
-                if(scheduleList.getModel().getSize()==0) {
+                if(scheduleList.getSelectedIndex()==-1) {
                     removeButton.setEnabled(false);
                     upButton.setEnabled(false);
                     downButton.setEnabled(false);

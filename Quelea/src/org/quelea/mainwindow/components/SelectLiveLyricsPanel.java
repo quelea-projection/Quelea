@@ -35,6 +35,7 @@ public class SelectLiveLyricsPanel extends SelectLyricsPanel {
             public void actionPerformed(ActionEvent e) {
                 for(LyricCanvas canvas : getCanvases()) {
                     canvas.toggleBlack();
+                    getLyricsList().requestFocus();
                 }
             }
         });
@@ -44,6 +45,7 @@ public class SelectLiveLyricsPanel extends SelectLyricsPanel {
             public void actionPerformed(ActionEvent e) {
                 for(LyricCanvas canvas : getCanvases()) {
                     canvas.toggleClear();
+                    getLyricsList().requestFocus();
                 }
             }
         });

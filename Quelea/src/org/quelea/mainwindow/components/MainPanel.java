@@ -46,6 +46,7 @@ public class MainPanel extends JPanel {
                     model.addElement(section);
                 }
                 previewPanel.getLyricsList().setSelectedIndex(0);
+                previewPanel.getLyricsList().requestFocus();
             }
         });
 
