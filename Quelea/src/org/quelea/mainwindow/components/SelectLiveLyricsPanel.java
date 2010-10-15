@@ -1,11 +1,13 @@
 package org.quelea.mainwindow.components;
 
 import java.awt.BorderLayout;
+import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import javax.swing.JLabel;
 import javax.swing.JToggleButton;
 import javax.swing.JToolBar;
+import javax.swing.border.EmptyBorder;
 import org.quelea.Utils;
 
 /**
@@ -29,7 +31,8 @@ public class SelectLiveLyricsPanel extends SelectLyricsPanel {
         header.setFloatable(false);
         header.add(new JLabel("<html><b>Live</b></html>"));
         header.add(new JToolBar.Separator());
-        black = new JToggleButton("Black", Utils.getImageIcon("icons/black.png"));
+        black = new JToggleButton(Utils.getImageIcon("icons/black.png"));
+        black.setToolTipText("Black screen");
         black.addActionListener(new ActionListener() {
 
             public void actionPerformed(ActionEvent e) {
@@ -39,7 +42,8 @@ public class SelectLiveLyricsPanel extends SelectLyricsPanel {
                 }
             }
         });
-        clear = new JToggleButton("Clear text", Utils.getImageIcon("icons/filenew.png"));
+        clear = new JToggleButton(Utils.getImageIcon("icons/filenew.png"));
+        clear.setToolTipText("Clear text");
         clear.addActionListener(new ActionListener() {
 
             public void actionPerformed(ActionEvent e) {
