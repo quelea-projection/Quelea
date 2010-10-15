@@ -1,6 +1,5 @@
 package org.quelea.mainwindow.components;
 
-import java.awt.Canvas;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
@@ -12,13 +11,14 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
+import javax.swing.JPanel;
 import org.quelea.Background;
 
 /**
  * The canvas where the lyrics / images / media are drawn.
  * @author Michael
  */
-public class LyricCanvas extends Canvas {
+public class LyricCanvas extends JPanel {
 
     /** The default colour, used if none is given. */
     public static final Background DEFAULT_BACKGROUND = new Background(Color.BLACK);
@@ -45,37 +45,28 @@ public class LyricCanvas extends Canvas {
     }
 
     /**
-     * Sort out double buffering.
-     * @param g the graphics for this component.
-     */
-    @Override
-    public void update(Graphics g) {
-        Image offscreen = createImage(getWidth(), getHeight());
-        Graphics offscreenGraphics = offscreen.getGraphics();
-        offscreenGraphics.setColor(getBackground());
-        offscreenGraphics.fillRect(0, 0, getWidth(), getHeight());
-        offscreenGraphics.setColor(getForeground());
-        paint(offscreenGraphics);
-        g.drawImage(offscreen, 0, 0, this);
-    }
-
-    /**
      * Paint the background image and the lyrics onto the canvas.
      * @param g the graphics used for painting.
      */
     @Override
     public void paint(Graphics g) {
-        super.paint(g);
+        Image offscreenImage = createImage(getWidth(), getHeight());
+        Graphics offscreen = offscreenImage.getGraphics();
+        offscreen.setColor(getBackground());
+        offscreen.fillRect(0, 0, getWidth(), getHeight());
+        offscreen.setColor(getForeground());
+        super.paint(offscreen);
         fixAspectRatio();
-        if(blacked) {
-            setBackground(Color.BLACK);
+        if(blacked || background==null) {
+            setBackground(new Background(Color.BLACK));
         }
         else {
-            g.drawImage(background.getImage(getWidth(), getHeight()), 0, 0, null);
+            offscreen.drawImage(background.getImage(getWidth(), getHeight()), 0, 0, null);
         }
-        g.setFont(font);
-        g.setColor(Color.WHITE);
-        drawText(g, font);
+        offscreen.setFont(font);
+        offscreen.setColor(Color.WHITE);
+        drawText(offscreen, font);
+        g.drawImage(offscreenImage, 0, 0, this);
     }
 
     /**
@@ -159,7 +150,12 @@ public class LyricCanvas extends Canvas {
      * @param background the background to place on the canvas.
      */
     public void setBackground(Background background) {
-        this.background = background;
+        Background b1 = background==null ? DEFAULT_BACKGROUND : background;
+        Background b2 = this.background==null ? DEFAULT_BACKGROUND : this.background;
+        if(!b2.equals(b1)) {
+            this.background = background;
+            repaint();
+        }
     }
 
     /**
