@@ -13,6 +13,7 @@ import javax.swing.JTabbedPane;
 public class LibraryPanel extends JPanel {
 
     private JTabbedPane tabbedPane;
+    private LibrarySongPanel songPanel;
 
     /**
      * Create a new library panel.
@@ -20,11 +21,23 @@ public class LibraryPanel extends JPanel {
     public LibraryPanel() {
         setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
         tabbedPane = new JTabbedPane();
-        tabbedPane.addTab("Songs", new JPanel());
+
+        songPanel = new LibrarySongPanel();
+        tabbedPane.addTab("Songs", songPanel);
         tabbedPane.addTab("Bible", new JPanel());
         tabbedPane.addTab("Media", new JPanel());
 
         add(tabbedPane);
     }
+
+    /**
+     * Get the library song panel.
+     * @return the library song panel.
+     */
+    public LibrarySongPanel getLibrarySongPanel() {
+        return songPanel;
+    }
+
+
 
 }
