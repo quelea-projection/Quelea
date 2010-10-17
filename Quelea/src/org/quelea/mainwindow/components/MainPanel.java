@@ -67,6 +67,14 @@ public class MainPanel extends JPanel {
             }
         });
 
+        libraryPanel.getLibrarySongPanel().getSongList().getPopupMenu().getAddToScheduleButton().addActionListener(new ActionListener() {
+
+            public void actionPerformed(ActionEvent e) {
+                Object song = (Song)libraryPanel.getLibrarySongPanel().getSongList().getSelectedValue();
+                ((DefaultListModel)schedulePanel.getScheduleList().getModel()).addElement(song);
+            }
+        });
+
         JSplitPane scheduleAndLibrary = new JSplitPane(JSplitPane.VERTICAL_SPLIT, schedulePanel, libraryPanel);
         scheduleAndLibrary.setResizeWeight(0.5);
         JSplitPane previewAndLive = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, previewPanel, livePanel);

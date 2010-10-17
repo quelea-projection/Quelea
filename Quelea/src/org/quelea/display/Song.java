@@ -9,7 +9,7 @@ import org.quelea.Background;
  * A song that contains a number of sections (verses, choruses, etc.)
  * @author Michael
  */
-public class Song implements Displayable {
+public class Song implements Displayable, Searchable {
 
     private String title;
     private String author;
@@ -71,6 +71,24 @@ public class Song implements Displayable {
      */
     public SongSection[] getSections() {
         return sections.toArray(new SongSection[sections.size()]);
+    }
+
+    /**
+     * Determine whether this song matches a particular search.
+     * @param s the search term.
+     * @return true if the song matches, false otherwise.
+     */
+    public boolean search(String s) {
+        return title.toLowerCase().contains(s.toLowerCase());
+    }
+
+    /**
+     * Get a string representation of this song.
+     * @return a string representation of the song.
+     */
+    @Override
+    public String toString() {
+        return getTitle();
     }
 
 }
