@@ -65,4 +65,18 @@ public class SongSection {
         this.background = background;
     }
 
+    /**
+     * Get a string representation of this song section.
+     * @return a string representation.
+     */
+    @Override
+    public String toString() {
+        StringBuilder ret = new StringBuilder();
+        ret.append(title).append('\n');
+        for(String str : lyrics) {
+            ret.append(str).append('\n');
+        }
+        return ret.toString();
+    }
+
 }

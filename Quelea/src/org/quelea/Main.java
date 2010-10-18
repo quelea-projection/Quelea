@@ -2,12 +2,15 @@ package org.quelea;
 
 import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
+import java.io.IOException;
+import javax.swing.DefaultListModel;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 import org.pushingpixels.substance.api.skin.SubstanceBusinessLookAndFeel;
+import org.quelea.display.Song;
 import org.quelea.mainwindow.components.LyricWindow;
 import org.quelea.mainwindow.components.MainWindow;
 
@@ -41,6 +44,15 @@ public class Main {
             fullScreenWindow = null;
         }
 
+        SongDatabase database = null;
+        try {
+            database = new SongDatabase("queleadatabase.zip");
+        }
+        catch(IOException ex) {
+            JOptionPane.showMessageDialog(null, "Couldn't load the database.");
+        }
+        final Song[] songs = database.getSongs();;
+
         SwingUtilities.invokeLater(new Runnable() {
 
             public void run() {
@@ -53,6 +65,10 @@ public class Main {
                 
                 JFrame.setDefaultLookAndFeelDecorated(true);
                 final MainWindow mainWindow = new MainWindow();
+                DefaultListModel model = (DefaultListModel)mainWindow.getMainPanel().getLibraryPanel().getLibrarySongPanel().getSongList().getModel();
+                for(Song song : songs) {
+                    model.addElement(song);
+                }
                 mainWindow.setLocation((int) gds[0].getDefaultConfiguration().getBounds().getMinX() + 100, (int) gds[0].getDefaultConfiguration().getBounds().getMinY() + 100);
                 mainWindow.setVisible(true);
 
