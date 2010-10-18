@@ -100,4 +100,20 @@ public class MainPanel extends JPanel {
     public SelectLiveLyricsPanel getLiveLyricsPanel() {
         return livePanel;
     }
+
+    /**
+     * Get the panel displaying the order of service.
+     * @return the panel displaying the order of service.
+     */
+    public SchedulePanel getSchedulePanel() {
+        return schedulePanel;
+    }
+
+    /**
+     * Get the panel displaying the library of media.
+     * @return the library panel.
+     */
+    public LibraryPanel getLibraryPanel() {
+        return libraryPanel;
+    }
 }
