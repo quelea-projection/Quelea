@@ -2,8 +2,9 @@ package org.quelea;
 
 import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
-import java.io.IOException;
-import javax.swing.DefaultListModel;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
@@ -11,14 +12,19 @@ import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 import org.pushingpixels.substance.api.skin.SubstanceBusinessLookAndFeel;
 import org.quelea.display.Song;
-import org.quelea.mainwindow.components.LyricWindow;
-import org.quelea.mainwindow.components.MainWindow;
+import org.quelea.windows.main.LibrarySongPanel;
+import org.quelea.windows.main.LyricWindow;
+import org.quelea.windows.main.MainWindow;
+import org.quelea.windows.newsong.NewSongWindow;
 
 /**
  * The main class, sets everything in motion...
  * @author Michael
  */
 public class Main {
+
+    private static LyricWindow fullScreenWindow;
+    private static SongDatabase database;
 
     /**
      * Don't instantiate me. I bite.
@@ -36,7 +42,6 @@ public class Main {
         GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
         final GraphicsDevice[] gds = ge.getScreenDevices();
 
-        final LyricWindow fullScreenWindow;
         if(gds.length > 1) {
             fullScreenWindow = new LyricWindow(gds[1].getDefaultConfiguration().getBounds());
         }
@@ -44,31 +49,53 @@ public class Main {
             fullScreenWindow = null;
         }
 
-        SongDatabase database = null;
-        try {
-            database = new SongDatabase("queleadatabase.zip");
-        }
-        catch(IOException ex) {
-            JOptionPane.showMessageDialog(null, "Couldn't load the database.");
-        }
-        final Song[] songs = database.getSongs();;
+        database = new SongDatabase();
+        final Song[] songs = database.getSongs();
 
         SwingUtilities.invokeLater(new Runnable() {
 
             public void run() {
-                try {
-                    UIManager.setLookAndFeel(new SubstanceBusinessLookAndFeel());
-                }
-                catch(UnsupportedLookAndFeelException ex) {
-                    //Oh well...
-                }
+                setLaf();
                 
-                JFrame.setDefaultLookAndFeelDecorated(true);
                 final MainWindow mainWindow = new MainWindow();
-                DefaultListModel model = (DefaultListModel)mainWindow.getMainPanel().getLibraryPanel().getLibrarySongPanel().getSongList().getModel();
+                SortedListModel model = (SortedListModel)mainWindow.getMainPanel().getLibraryPanel().getLibrarySongPanel().getSongList().getModel();
                 for(Song song : songs) {
-                    model.addElement(song);
+                    model.add(song);
                 }
+                final NewSongWindow newSongWindow = mainWindow.getNewSongWindow();
+                newSongWindow.getConfirmButton().addActionListener(new ActionListener() {
+
+                    public void actionPerformed(ActionEvent e) {
+                        Song song = new Song(newSongWindow.getTitleField(), newSongWindow.getAuthorField());
+                        song.setLyrics(newSongWindow.getLyrics());
+                        if(!database.addSong(song)) {
+                            //Error
+                        }
+                        newSongWindow.setVisible(false);
+                        newSongWindow.resetContents();
+                        SortedListModel model = (SortedListModel)mainWindow.getMainPanel().getLibraryPanel().getLibrarySongPanel().getSongList().getModel();
+                        model.add(song);
+                    }
+                });
+                final LibrarySongPanel songPanel = mainWindow.getMainPanel().getLibraryPanel().getLibrarySongPanel();
+                songPanel.getRemoveButton().addActionListener(new ActionListener() {
+
+                    public void actionPerformed(ActionEvent e) {
+                        Song song = (Song)songPanel.getSongList().getSelectedValue();
+                        if(song==null) {
+                            return;
+                        }
+                        int confirmResult = JOptionPane.showConfirmDialog(mainWindow, "Really remove " + song.getTitle() + " from the database? This action cannnot be undone.", "Confirm remove", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
+                        if(confirmResult==JOptionPane.NO_OPTION) {
+                            return;
+                        }
+                        if(!database.removeSong(song)) {
+                            //Error
+                        }
+                        SortedListModel model = (SortedListModel) songPanel.getSongList().getModel();
+                        model.removeElement(song);
+                    }
+                });
                 mainWindow.setLocation((int) gds[0].getDefaultConfiguration().getBounds().getMinX() + 100, (int) gds[0].getDefaultConfiguration().getBounds().getMinY() + 100);
                 mainWindow.setVisible(true);
 
@@ -81,5 +108,20 @@ public class Main {
                 }
             }
         });
+    }
+
+    /**
+     * Attempt to set the look and feel of the components.
+     */
+    private static void setLaf() {
+        try {
+            UIManager.setLookAndFeel(new SubstanceBusinessLookAndFeel());
+        }
+        catch(UnsupportedLookAndFeelException ex) {
+            //Oh well...
+        }
+
+        JFrame.setDefaultLookAndFeelDecorated(true);
+        JDialog.setDefaultLookAndFeelDecorated(true);
     }
 }
