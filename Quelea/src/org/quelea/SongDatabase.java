@@ -21,7 +21,7 @@ public class SongDatabase {
     /**
      * Initialise the song database.
      */
-    public SongDatabase() {
+    public SongDatabase() throws SQLException {
         try {
             Class.forName("org.hsqldb.jdbcDriver");
             conn = DriverManager.getConnection("jdbc:hsqldb:database/quelea", "", "");
@@ -39,9 +39,6 @@ public class SongDatabase {
             stat.close();
         }
         catch(ClassNotFoundException ex) {
-            ex.printStackTrace();
-        }
-        catch(SQLException ex) {
             ex.printStackTrace();
         }
     }
