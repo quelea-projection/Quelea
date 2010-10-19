@@ -23,6 +23,8 @@ import org.quelea.windows.newsong.NewSongWindow;
  */
 public class Main {
 
+    private static MainWindow mainWindow;
+    private static NewSongWindow newSongWindow;
     private static LyricWindow fullScreenWindow;
     private static SongDatabase database;
 
@@ -50,52 +52,19 @@ public class Main {
         }
 
         database = new SongDatabase();
-        final Song[] songs = database.getSongs();
 
         SwingUtilities.invokeLater(new Runnable() {
 
             public void run() {
                 setLaf();
+                mainWindow = new MainWindow();
+                addDBSongs();
                 
-                final MainWindow mainWindow = new MainWindow();
-                SortedListModel model = (SortedListModel)mainWindow.getMainPanel().getLibraryPanel().getLibrarySongPanel().getSongList().getModel();
-                for(Song song : songs) {
-                    model.add(song);
-                }
-                final NewSongWindow newSongWindow = mainWindow.getNewSongWindow();
-                newSongWindow.getConfirmButton().addActionListener(new ActionListener() {
+                newSongWindow = mainWindow.getNewSongWindow();
+                addNewSongWindowListeners();
+                
+                addSongPanelListeners();
 
-                    public void actionPerformed(ActionEvent e) {
-                        Song song = new Song(newSongWindow.getTitleField(), newSongWindow.getAuthorField());
-                        song.setLyrics(newSongWindow.getLyrics());
-                        if(!database.addSong(song)) {
-                            //Error
-                        }
-                        newSongWindow.setVisible(false);
-                        newSongWindow.resetContents();
-                        SortedListModel model = (SortedListModel)mainWindow.getMainPanel().getLibraryPanel().getLibrarySongPanel().getSongList().getModel();
-                        model.add(song);
-                    }
-                });
-                final LibrarySongPanel songPanel = mainWindow.getMainPanel().getLibraryPanel().getLibrarySongPanel();
-                songPanel.getRemoveButton().addActionListener(new ActionListener() {
-
-                    public void actionPerformed(ActionEvent e) {
-                        Song song = (Song)songPanel.getSongList().getSelectedValue();
-                        if(song==null) {
-                            return;
-                        }
-                        int confirmResult = JOptionPane.showConfirmDialog(mainWindow, "Really remove " + song.getTitle() + " from the database? This action cannnot be undone.", "Confirm remove", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
-                        if(confirmResult==JOptionPane.NO_OPTION) {
-                            return;
-                        }
-                        if(!database.removeSong(song)) {
-                            //Error
-                        }
-                        SortedListModel model = (SortedListModel) songPanel.getSongList().getModel();
-                        model.removeElement(song);
-                    }
-                });
                 mainWindow.setLocation((int) gds[0].getDefaultConfiguration().getBounds().getMinX() + 100, (int) gds[0].getDefaultConfiguration().getBounds().getMinY() + 100);
                 mainWindow.setVisible(true);
 
@@ -108,6 +77,61 @@ public class Main {
                 }
             }
         });
+    }
+
+    /**
+     * Add the required action listeners to the song panel.
+     */
+    private static void addSongPanelListeners() {
+        final LibrarySongPanel songPanel = mainWindow.getMainPanel().getLibraryPanel().getLibrarySongPanel();
+        songPanel.getRemoveButton().addActionListener(new ActionListener() {
+
+            public void actionPerformed(ActionEvent e) {
+                Song song = (Song) songPanel.getSongList().getSelectedValue();
+                if(song == null) {
+                    return;
+                }
+                int confirmResult = JOptionPane.showConfirmDialog(mainWindow, "Really remove " + song.getTitle() + " from the database? This action cannnot be undone.", "Confirm remove", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
+                if(confirmResult == JOptionPane.NO_OPTION) {
+                    return;
+                }
+                if(!database.removeSong(song)) {
+                    //Error
+                }
+                SortedListModel model = (SortedListModel) songPanel.getSongList().getModel();
+                model.removeElement(song);
+            }
+        });
+    }
+
+    /**
+     * Add the required action listeners to the buttons on the new song window.
+     */
+    private static void addNewSongWindowListeners() {
+        newSongWindow.getConfirmButton().addActionListener(new ActionListener() {
+
+            public void actionPerformed(ActionEvent e) {
+                Song song = new Song(newSongWindow.getTitleField(), newSongWindow.getAuthorField());
+                song.setLyrics(newSongWindow.getLyrics());
+                if(!database.addSong(song)) {
+                    //Error
+                }
+                newSongWindow.setVisible(false);
+                newSongWindow.resetContents();
+                SortedListModel model = (SortedListModel) mainWindow.getMainPanel().getLibraryPanel().getLibrarySongPanel().getSongList().getModel();
+                model.add(song);
+            }
+        });
+    }
+
+    /**
+     * Add the songs to the GUI from the database.
+     */
+    private static void addDBSongs() {
+        SortedListModel model = (SortedListModel) mainWindow.getMainPanel().getLibraryPanel().getLibrarySongPanel().getSongList().getModel();
+        for(Song song : database.getSongs()) {
+            model.add(song);
+        }
     }
 
     /**
