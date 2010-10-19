@@ -4,6 +4,7 @@ import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.sql.SQLException;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
@@ -51,18 +52,23 @@ public class Main {
             fullScreenWindow = null;
         }
 
-        database = new SongDatabase();
-
         SwingUtilities.invokeLater(new Runnable() {
 
             public void run() {
                 setLaf();
+                try {
+                    database = new SongDatabase();
+                }
+                catch(SQLException ex) {
+                    JOptionPane.showMessageDialog(null, "It looks like you already have an instance of Quelea running, make sure you close all instances before running the program.", "Already running", JOptionPane.ERROR_MESSAGE);
+                    System.exit(0);
+                }
                 mainWindow = new MainWindow();
                 addDBSongs();
-                
+
                 newSongWindow = mainWindow.getNewSongWindow();
                 addNewSongWindowListeners();
-                
+
                 addSongPanelListeners();
 
                 mainWindow.setLocation((int) gds[0].getDefaultConfiguration().getBounds().getMinX() + 100, (int) gds[0].getDefaultConfiguration().getBounds().getMinY() + 100);
