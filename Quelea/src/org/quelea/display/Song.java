@@ -7,6 +7,7 @@ import java.util.List;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import org.quelea.Background;
+import org.quelea.Utils;
 import org.w3c.dom.Document;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
@@ -16,12 +17,13 @@ import org.w3c.dom.NodeList;
  * A song that contains a number of sections (verses, choruses, etc.)
  * @author Michael
  */
-public class Song implements Displayable, Searchable {
+public class Song implements Displayable, Searchable, Comparable<Song> {
 
     private String title;
     private String author;
     private List<SongSection> sections;
     private Background background;
+    private int id;
 
     /**
      * Create a new, empty song.
@@ -39,10 +41,27 @@ public class Song implements Displayable, Searchable {
      * @param background the default background of the song.
      */
     public Song(String title, String author, Background background) {
+        id = -1;
         this.title = title;
         this.author = author;
         this.background = background;
         sections = new ArrayList<SongSection>();
+    }
+
+    /**
+     * Get the unique ID of the song.
+     * @return the ID of the song.
+     */
+    public int getID() {
+        return id;
+    }
+
+    /**
+     * Set the unique ID of this song.
+     * @param id the id of the song.
+     */
+    public void setID(int id) {
+        this.id = id;
     }
 
     /**
@@ -62,6 +81,48 @@ public class Song implements Displayable, Searchable {
     }
 
     /**
+     * Get all the lyrics to this song as a string. This can be parsed using
+     * the setLyrics() method.
+     * @return the lyrics to this song.
+     */
+    public String getLyrics() {
+        StringBuilder ret = new StringBuilder();
+        for(SongSection section : sections) {
+            if(section.getTitle()!=null && !section.getTitle().equals("")) {
+                ret.append(section.getTitle()).append("\n");
+            }
+            for(String line : section.getLyrics()) {
+                ret.append(line).append("\n");
+            }
+            ret.append("\n");
+        }
+        return ret.toString();
+    }
+
+    /**
+     * Set the lyrics to this song as a string. This will erase any sections
+     * currently in the song and parse the given lyrics into a number of
+     * song sections.
+     * @param lyrics the lyrics to set as this song's lyrics.
+     */
+    public void setLyrics(String lyrics) {
+        sections.clear();
+        for(String section : lyrics.split("\n\n")) {
+            String[] sectionLines = section.split("\n");
+            String[] newLyrics = section.split("\n");
+            String title = "";
+            if(Utils.isTitle(sectionLines[0])) {
+                title = sectionLines[0];
+                newLyrics = new String[sectionLines.length - 1];
+                for(int i = 1; i < sectionLines.length; i++) {
+                    newLyrics[i - 1] = sectionLines[i];
+                }
+            }
+            sections.add(new SongSection(title, newLyrics));
+        }
+    }
+
+    /**
      * Add a section to this song.
      * @param section the section to add.
      */
@@ -70,6 +131,16 @@ public class Song implements Displayable, Searchable {
             section.setBackground(background);
         }
         sections.add(section);
+    }
+
+    /**
+     * Add a number of sections to this song.
+     * @param sections the sections to add.
+     */
+    public void addSections(SongSection[] sections) {
+        for(SongSection section : sections) {
+            addSection(section);
+        }
     }
 
     /**
@@ -199,6 +270,20 @@ public class Song implements Displayable, Searchable {
             return false;
         }
         return true;
+    }
+
+    /**
+     * Compare this song to another song, first by title and then by author.
+     * @param other the other song.
+     * @return 1 if this song is greater than the other song, 0 if they're
+     * the same, and -1 if this is less than the other song.
+     */
+    public int compareTo(Song other) {
+        int result = getTitle().compareToIgnoreCase(other.getTitle());
+        if(result==0) {
+            result = getAuthor().compareToIgnoreCase(other.getAuthor());
+        }
+        return result;
     }
 
     /**

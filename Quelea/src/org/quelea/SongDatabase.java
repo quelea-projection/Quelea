@@ -1,87 +1,152 @@
 package org.quelea;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.PrintWriter;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
-import java.util.Enumeration;
 import java.util.List;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipFile;
-import java.util.zip.ZipOutputStream;
 import org.quelea.display.Song;
 
 /**
- * The class that controls the database that stores all the song data in flat
- * file format on the disk. At present this is just a zip file containing XML
- * files of all the songs.
+ * The class that controls the database that stores all the song data.
  * @author Michael
  */
 public class SongDatabase {
 
-    private File database;
+    private Connection conn;
 
     /**
-     * Initialise a song database at a specified file location.
-     * @param databaseLocation the location of the database.
-     * @throws IOException if there is a problem with the database.
+     * Initialise the song database.
      */
-    public SongDatabase(String databaseLocation) throws IOException {
-        database = new File(databaseLocation);
+    public SongDatabase() {
+        try {
+            Class.forName("org.hsqldb.jdbcDriver");
+            conn = DriverManager.getConnection("jdbc:hsqldb:database/quelea", "", "");
+            Statement stat = conn.createStatement();
+            try {
+                stat.executeUpdate("CREATE TABLE Songs (id INTEGER IDENTITY,"
+                        + "title varchar_ignorecase(256),"
+                        + "author varchar_ignorecase(256),"
+                        + "lyrics varchar_ignorecase(" + Integer.MAX_VALUE + "),"
+                        + "background varchar(256))");
+            }
+            catch(SQLException ex) { //Horrible but only way with hsqldb
+                System.out.println("Songs table already exists.");
+            }
+            stat.close();
+        }
+        catch(ClassNotFoundException ex) {
+            ex.printStackTrace();
+        }
+        catch(SQLException ex) {
+            ex.printStackTrace();
+        }
     }
 
     /**
-     * Get all the songs from the database and return them as an array of
-     * songs.
-     * @return all the songs in the database.
+     * Run a select expression (query) that returns a result set.
+     * @param expression the select expression to run.
+     * @return the result set returned from the SQL query.
+     * @throws SQLException if the query fails for some reason.
+     */
+    private ResultSet runSelectExpression(String expression) throws SQLException {
+        Statement stat = conn.createStatement();
+        ResultSet ret = stat.executeQuery(expression);
+        stat.close();
+        return ret;
+    }
+
+    /**
+     * Get all the songs in the database.
+     * @return an array of all the songs in the database.
      */
     public Song[] getSongs() {
         try {
-            ZipFile zipFile = new ZipFile(database);
-            Enumeration<? extends ZipEntry> entries = zipFile.entries();
+            final ResultSet rs = runSelectExpression("select * from songs");
             List<Song> songs = new ArrayList<Song>();
-            while(entries.hasMoreElements()) {
-                ZipEntry entry = entries.nextElement();
-                try {
-                    songs.add(Song.parseXML(zipFile.getInputStream(entry)));
-                }
-                catch(IOException ex) {
-                    System.err.println("Failed to get " + entry.getName() + " from database.");
-                }
+            while(rs.next()) {
+                songs.add(new Song(rs.getString("title"), rs.getString("author")){
+                    {
+                        setLyrics(rs.getString("lyrics"));
+                        setID(rs.getInt("id"));
+                    }
+                });
             }
-            zipFile.close();
             return songs.toArray(new Song[songs.size()]);
         }
-        catch(IOException ex) {
+        catch(SQLException ex) {
+            ex.printStackTrace();
             return null;
         }
     }
 
     /**
-     * Add the specified song to the database.
+     * Add a song to the database.
      * @param song the song to add.
+     * @return true if the operation succeeded, false otherwise.
      */
     public boolean addSong(Song song) {
         try {
-            File songFile = File.createTempFile("queleasong", "tmp");
-            FileInputStream inputStream = new FileInputStream(songFile);
-            PrintWriter writer = new PrintWriter(songFile);
-            writer.println(song.getXML());
-            writer.close();
-            ZipOutputStream zipStream = new ZipOutputStream(new FileOutputStream(database));
-            zipStream.putNextEntry(new ZipEntry(song.getTitle() + "," + song.getAuthor() + "," + song.hashCode() + ".xml"));
-            byte[] buffer = new byte[4096];
-            int bytesRead;
-            while((bytesRead = inputStream.read(buffer)) != -1) {
-                zipStream.write(buffer, 0, bytesRead);
+            PreparedStatement stat = conn.prepareStatement("insert into songs(title, author, lyrics) values(?, ?, ?)");
+            stat.setString(1, song.getTitle());
+            stat.setString(2, song.getAuthor());
+            stat.setString(3, song.getLyrics());
+            stat.executeUpdate();
+            Statement stId = conn.createStatement();
+            int id=-1;
+            stId.execute("call IDENTITY()");
+            ResultSet resultSet = stId.getResultSet();
+            while(resultSet.next()) {
+                id = resultSet.getInt(1);
             }
-            zipStream.closeEntry();
-            zipStream.close();
+            song.setID(id);
+            stat.close();
             return true;
         }
-        catch(IOException ex) {
+        catch(SQLException ex) {
+            ex.printStackTrace();
+            return false;
+        }
+    }
+
+    /**
+     * Update a song in the database.
+     * @param song the song to update.
+     * @return true if the operation succeeded, false otherwise.
+     */
+    public boolean updateSong(Song song) {
+        try {
+            PreparedStatement stat = conn.prepareStatement("update songs set title=?, author=?, lyrics=? where id=?");
+            stat.setString(1, song.getTitle());
+            stat.setString(2, song.getAuthor());
+            stat.setString(3, song.getLyrics());
+            stat.setInt(4, song.getID());
+            stat.executeUpdate();
+            return true;
+        }
+        catch(SQLException ex) {
+            ex.printStackTrace();
+            return false;
+        }
+    }
+
+    /**
+     * Remove a song from the database.
+     * @param song the song to remove.
+     * @return true if the operation succeeded, false otherwise.
+     */
+    public boolean removeSong(Song song) {
+        try {
+            PreparedStatement stat = conn.prepareStatement("delete from songs where id=?");
+            stat.setInt(1, song.getID());
+            stat.executeUpdate();
+            return true;
+        }
+        catch(SQLException ex) {
+            ex.printStackTrace();
             return false;
         }
     }

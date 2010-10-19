@@ -49,4 +49,19 @@ public class Utils {
             return null;
         }
     }
+
+    /**
+     * Determine whether the given string is the title of a song section.
+     * @param title the title to check.
+     * @return true if it is a valid title, false otherwise.
+     */
+    public static boolean isTitle(String title) {
+        return title.toLowerCase().startsWith("verse") ||
+                title.toLowerCase().startsWith("chorus") ||
+                title.toLowerCase().startsWith("tag") ||
+                title.toLowerCase().startsWith("pre-chorus") ||
+                title.toLowerCase().startsWith("pre chorus") ||
+                title.toLowerCase().startsWith("coda") ||
+                title.toLowerCase().startsWith("bridge");
+    }
 }
