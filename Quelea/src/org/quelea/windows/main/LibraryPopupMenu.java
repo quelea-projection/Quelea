@@ -11,6 +11,7 @@ import javax.swing.JPopupMenu;
 public class LibraryPopupMenu extends JPopupMenu {
     
     private JMenuItem addToSchedule;
+    private JMenuItem editDB;
     private JMenuItem removeFromDB;
 
     /**
@@ -18,8 +19,11 @@ public class LibraryPopupMenu extends JPopupMenu {
      */
     public LibraryPopupMenu() {
         addToSchedule = new JMenuItem("Add to schedule");
+        editDB = new JMenuItem("Edit song");
         removeFromDB = new JMenuItem("Remove from database");
+
         add(addToSchedule);
+        add(editDB);
         add(removeFromDB);
     }
 
@@ -29,6 +33,14 @@ public class LibraryPopupMenu extends JPopupMenu {
      */
     public JMenuItem getAddToScheduleButton() {
         return addToSchedule;
+    }
+
+    /**
+     * Get the edit button in the popup menu.
+     * @return the edit button.
+     */
+    public JMenuItem getEditDBButton() {
+        return editDB;
     }
 
     /**
