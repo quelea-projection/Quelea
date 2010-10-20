@@ -7,7 +7,8 @@ import java.io.File;
 import java.io.IOException;
 import javax.imageio.ImageIO;
 import javax.swing.JFrame;
-import org.quelea.windows.newsong.NewSongWindow;
+import org.quelea.display.Song;
+import org.quelea.windows.newsong.SongEntryWindow;
 
 /**
  * The main window used to control the projection.
@@ -18,7 +19,7 @@ public class MainWindow extends JFrame {
     private MainToolbar toolbar;
     private MainMenuBar menubar;
     private MainPanel mainpanel;
-    private NewSongWindow newSongWindow;
+    private SongEntryWindow songEntryWindow;
 
     /**
      * Create a new main window.
@@ -36,12 +37,21 @@ public class MainWindow extends JFrame {
         menubar = new MainMenuBar();
         toolbar = new MainToolbar();
         mainpanel = new MainPanel();
-        newSongWindow = new NewSongWindow(this);
+        songEntryWindow = new SongEntryWindow(this);
         mainpanel.getLibraryPanel().getLibrarySongPanel().getAddButton().addActionListener(new ActionListener() {
 
             public void actionPerformed(ActionEvent e) {
-                newSongWindow.centreOnOwner();
-                newSongWindow.setVisible(true);
+                songEntryWindow.centreOnOwner();
+                songEntryWindow.resetNewSong();
+                songEntryWindow.setVisible(true);
+            }
+        });
+        mainpanel.getLibraryPanel().getLibrarySongPanel().getSongList().getPopupMenu().getEditDBButton().addActionListener(new ActionListener() {
+
+            public void actionPerformed(ActionEvent e) {
+                songEntryWindow.centreOnOwner();
+                songEntryWindow.resetEditSong((Song)mainpanel.getLibraryPanel().getLibrarySongPanel().getSongList().getSelectedValue());
+                songEntryWindow.setVisible(true);
             }
         });
 
@@ -62,8 +72,8 @@ public class MainWindow extends JFrame {
     /**
      * Get the new song window used for this main panel.
      */
-    public NewSongWindow getNewSongWindow() {
-        return newSongWindow;
+    public SongEntryWindow getNewSongWindow() {
+        return songEntryWindow;
     }
 
 }

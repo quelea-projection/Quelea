@@ -116,6 +116,9 @@ public class SongDatabase {
      */
     public boolean updateSong(Song song) {
         try {
+            if(song.getID()==-1) {
+                addSong(song);
+            }
             PreparedStatement stat = conn.prepareStatement("update songs set title=?, author=?, lyrics=? where id=?");
             stat.setString(1, song.getTitle());
             stat.setString(2, song.getAuthor());

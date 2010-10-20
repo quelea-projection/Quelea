@@ -16,7 +16,7 @@ import org.quelea.display.Song;
 import org.quelea.windows.main.LibrarySongPanel;
 import org.quelea.windows.main.LyricWindow;
 import org.quelea.windows.main.MainWindow;
-import org.quelea.windows.newsong.NewSongWindow;
+import org.quelea.windows.newsong.SongEntryWindow;
 
 /**
  * The main class, sets everything in motion...
@@ -25,7 +25,6 @@ import org.quelea.windows.newsong.NewSongWindow;
 public class Main {
 
     private static MainWindow mainWindow;
-    private static NewSongWindow newSongWindow;
     private static LyricWindow fullScreenWindow;
     private static SongDatabase database;
 
@@ -66,7 +65,6 @@ public class Main {
                 mainWindow = new MainWindow();
                 addDBSongs();
 
-                newSongWindow = mainWindow.getNewSongWindow();
                 addNewSongWindowListeners();
 
                 addSongPanelListeners();
@@ -114,17 +112,19 @@ public class Main {
      * Add the required action listeners to the buttons on the new song window.
      */
     private static void addNewSongWindowListeners() {
-        newSongWindow.getConfirmButton().addActionListener(new ActionListener() {
+        final SongEntryWindow songEntryWindow = mainWindow.getNewSongWindow();
+        songEntryWindow.getConfirmButton().addActionListener(new ActionListener() {
 
             public void actionPerformed(ActionEvent e) {
-                Song song = new Song(newSongWindow.getTitleField(), newSongWindow.getAuthorField());
-                song.setLyrics(newSongWindow.getLyrics());
-                if(!database.addSong(song)) {
+
+                Song song = songEntryWindow.getSong();
+                song.setLyrics(songEntryWindow.getBasicSongPanel().getLyricsField().getText());
+                SortedListModel model = (SortedListModel) mainWindow.getMainPanel().getLibraryPanel().getLibrarySongPanel().getSongList().getModel();
+                model.removeElement(song);
+                if(!database.updateSong(song)) {
                     //Error
                 }
-                newSongWindow.resetContents();
-                newSongWindow.setVisible(false);
-                SortedListModel model = (SortedListModel) mainWindow.getMainPanel().getLibraryPanel().getLibrarySongPanel().getSongList().getModel();
+                songEntryWindow.setVisible(false);
                 model.add(song);
             }
         });
