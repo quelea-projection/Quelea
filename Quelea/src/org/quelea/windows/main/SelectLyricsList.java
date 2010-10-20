@@ -31,9 +31,12 @@ public class SelectLyricsList extends JList {
             setBorder(new EmptyBorder(5, 5, 5, 5));
             SongSection section = (SongSection) value;
             StringBuilder labelHTML = new StringBuilder();
-            labelHTML.append("<html><font color=\"white\"><span style=\"background-color:blue; width:100%;\">&nbsp;");
-            labelHTML.append(section.getTitle());
-            labelHTML.append("&nbsp;</span></font><br/>");
+            labelHTML.append("<html>");
+            if(!section.getTitle().trim().equals("")) {
+                labelHTML.append("<font color=\"white\"><span style=\"background-color:blue; width:100%;\">&nbsp;");
+                labelHTML.append(section.getTitle());
+                labelHTML.append("&nbsp;</span></font><br/>");
+            }
             for(String line : section.getLyrics()) {
                 labelHTML.append(line);
                 labelHTML.append("<br/>");

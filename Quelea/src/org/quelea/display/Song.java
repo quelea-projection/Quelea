@@ -110,15 +110,15 @@ public class Song implements Displayable, Searchable, Comparable<Song> {
         for(String section : lyrics.split("\n\n")) {
             String[] sectionLines = section.split("\n");
             String[] newLyrics = section.split("\n");
-            String title = "";
+            String sectionTitle = "";
             if(Utils.isTitle(sectionLines[0])) {
-                title = sectionLines[0];
+                sectionTitle = sectionLines[0];
                 newLyrics = new String[sectionLines.length - 1];
                 for(int i = 1; i < sectionLines.length; i++) {
                     newLyrics[i - 1] = sectionLines[i];
                 }
             }
-            sections.add(new SongSection(title, newLyrics));
+            sections.add(new SongSection(sectionTitle, newLyrics));
         }
     }
 
@@ -238,6 +238,10 @@ public class Song implements Displayable, Searchable, Comparable<Song> {
         }
     }
 
+    /**
+     * Generate a hashcode for this song.
+     * @return the hashcode.
+     */
     @Override
     public int hashCode() {
         int hash = 7;
@@ -248,6 +252,11 @@ public class Song implements Displayable, Searchable, Comparable<Song> {
         return hash;
     }
 
+    /**
+     * Determine whether this song equals another object.
+     * @param obj the other object.
+     * @return true if the objects are equal, false otherwise.
+     */
     @Override
     public boolean equals(Object obj) {
         if(obj == null) {
@@ -282,6 +291,9 @@ public class Song implements Displayable, Searchable, Comparable<Song> {
         int result = getTitle().compareToIgnoreCase(other.getTitle());
         if(result==0) {
             result = getAuthor().compareToIgnoreCase(other.getAuthor());
+            if(result==0) {
+                result = getLyrics().compareTo(other.getLyrics());
+            }
         }
         return result;
     }

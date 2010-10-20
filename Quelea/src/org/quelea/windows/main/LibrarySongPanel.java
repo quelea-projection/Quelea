@@ -2,14 +2,17 @@ package org.quelea.windows.main;
 
 import java.awt.BorderLayout;
 import javax.swing.BoxLayout;
-import javax.swing.DefaultListModel;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 import javax.swing.JToolBar;
+import javax.swing.border.EmptyBorder;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
+import javax.swing.event.ListDataEvent;
+import javax.swing.event.ListDataListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import org.quelea.Utils;
@@ -36,15 +39,26 @@ public class LibrarySongPanel extends JPanel {
         songList.addListSelectionListener(new ListSelectionListener() {
 
             public void valueChanged(ListSelectionEvent e) {
-                if(songList.getSelectedIndex() == -1) {
-                    removeButton.setEnabled(false);
-                }
-                else {
-                    removeButton.setEnabled(true);
-                }
+                checkRemoveButton();
             }
         });
-        add(songList, BorderLayout.CENTER);
+        songList.getModel().addListDataListener(new ListDataListener() {
+
+            public void intervalAdded(ListDataEvent e) {
+                checkRemoveButton();
+            }
+
+            public void intervalRemoved(ListDataEvent e) {
+                checkRemoveButton();
+            }
+
+            public void contentsChanged(ListDataEvent e) {
+                checkRemoveButton();
+            }
+        });
+        JScrollPane listScrollPane = new JScrollPane(songList);
+        listScrollPane.setBorder(new EmptyBorder(0, 0, 0, 0));
+        add(listScrollPane, BorderLayout.CENTER);
 
         JPanel northPanel = new JPanel();
         northPanel.setLayout(new BoxLayout(northPanel, BoxLayout.X_AXIS));
@@ -83,6 +97,19 @@ public class LibrarySongPanel extends JPanel {
         toolbar.add(removeButton);
         add(toolbar, BorderLayout.EAST);
 
+    }
+
+    /**
+     * Check whether the remove button should be enabled or disabled and set
+     * it accordingly.
+     */
+    private void checkRemoveButton() {
+        if(songList.getSelectedIndex() == -1 || songList.getModel().getSize()==0) {
+            removeButton.setEnabled(false);
+        }
+        else {
+            removeButton.setEnabled(true);
+        }
     }
 
     /**

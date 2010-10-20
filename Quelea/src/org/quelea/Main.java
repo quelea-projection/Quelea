@@ -122,8 +122,8 @@ public class Main {
                 if(!database.addSong(song)) {
                     //Error
                 }
-                newSongWindow.setVisible(false);
                 newSongWindow.resetContents();
+                newSongWindow.setVisible(false);
                 SortedListModel model = (SortedListModel) mainWindow.getMainPanel().getLibraryPanel().getLibrarySongPanel().getSongList().getModel();
                 model.add(song);
             }
