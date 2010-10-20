@@ -160,7 +160,7 @@ public class SongEntryWindow extends JDialog {
      */
     private void checkConfirmButton() {
         if(getBasicSongPanel().getLyricsField().getText().trim().equals("")
-                || getBasicSongPanel().getLyricsField().getText().trim().equals("")) {
+                || getBasicSongPanel().getTitleField().getText().trim().equals("")) {
             confirmButton.setEnabled(false);
         }
         else {
