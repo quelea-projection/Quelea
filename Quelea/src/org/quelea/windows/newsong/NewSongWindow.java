@@ -51,6 +51,20 @@ public class NewSongWindow extends JDialog {
             (titleField=new JTextField() {
                 {
                     setName("Title");
+                    addKeyListener(new KeyListener() {
+
+                    public void keyTyped(KeyEvent e) {
+                        checkConfirmButton();
+                    }
+
+                    public void keyPressed(KeyEvent e) {
+                        checkConfirmButton();
+                    }
+
+                    public void keyReleased(KeyEvent e) {
+                        checkConfirmButton();
+                    }
+                });
                 }
             }),
             (authorField=new JTextField() {
@@ -75,14 +89,17 @@ public class NewSongWindow extends JDialog {
 
             public void keyTyped(KeyEvent e) {
                 checkHighlight();
+                checkConfirmButton();
             }
 
             public void keyPressed(KeyEvent e) {
                 checkHighlight();
+                checkConfirmButton();
             }
 
             public void keyReleased(KeyEvent e) {
                 checkHighlight();
+                checkConfirmButton();
             }
 
             private void checkHighlight() {
@@ -109,18 +126,7 @@ public class NewSongWindow extends JDialog {
         for(JTextField textField : attributes) {
             textField.setText("");
         }
-        textArea.setText("Type lyrics here");
-        textArea.addCaretListener(new CaretListener() {
-
-            public void caretUpdate(CaretEvent e) {
-                SwingUtilities.invokeLater(new Runnable() {
-                    public void run() {
-                        textArea.setText("");
-                    }
-                });
-                textArea.removeCaretListener(this);
-            }
-        });
+        textArea.setText("<Type lyrics here>");
         textArea.addFocusListener(new FocusListener() {
 
             public void focusGained(FocusEvent e) {
@@ -134,6 +140,22 @@ public class NewSongWindow extends JDialog {
 
             public void focusLost(FocusEvent e) {}
         });
+        confirmButton.setEnabled(false);
+        titleField.requestFocus();
+    }
+
+    /**
+     * Check whether the confirm button should be enabled or disabled and set
+     * it accordingly.
+     */
+    private void checkConfirmButton() {
+        if(textArea.getText().trim().equals("") ||
+                titleField.getText().trim().equals("")) {
+            confirmButton.setEnabled(false);
+        }
+        else {
+            confirmButton.setEnabled(true);
+        }
     }
 
     /**

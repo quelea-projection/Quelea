@@ -7,7 +7,9 @@ import javax.swing.DefaultListModel;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import javax.swing.JToolBar;
+import javax.swing.border.EmptyBorder;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import org.quelea.Background;
@@ -119,7 +121,9 @@ public class SchedulePanel extends JPanel {
         toolbar.add(downButton);
 
         add(header, BorderLayout.NORTH);
-        add(scheduleList, BorderLayout.CENTER);
+        JScrollPane scheduleListScroll = new JScrollPane(scheduleList);
+        scheduleListScroll.setBorder(new EmptyBorder(0, 0, 0, 0));
+        add(scheduleListScroll, BorderLayout.CENTER);
         add(toolbar, BorderLayout.EAST);
     }
 

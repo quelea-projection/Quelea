@@ -13,7 +13,7 @@ import javax.swing.AbstractListModel;
  */
 public class SortedListModel extends AbstractListModel {
 
-    SortedSet<Object> model;
+    private SortedSet<Object> model;
 
     public SortedListModel() {
         model = new TreeSet<Object>();

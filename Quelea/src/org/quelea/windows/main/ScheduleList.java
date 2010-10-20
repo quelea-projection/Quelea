@@ -1,6 +1,16 @@
 package org.quelea.windows.main;
 
 import java.awt.Component;
+import java.awt.dnd.DragGestureEvent;
+import java.awt.dnd.DragGestureListener;
+import java.awt.dnd.DragSourceDragEvent;
+import java.awt.dnd.DragSourceDropEvent;
+import java.awt.dnd.DragSourceEvent;
+import java.awt.dnd.DragSourceListener;
+import java.awt.dnd.DropTargetDragEvent;
+import java.awt.dnd.DropTargetDropEvent;
+import java.awt.dnd.DropTargetEvent;
+import java.awt.dnd.DropTargetListener;
 import javax.swing.DefaultListModel;
 import javax.swing.JLabel;
 import javax.swing.JList;
@@ -14,7 +24,27 @@ import org.quelea.display.Song;
  * The schedule list, all the items that are to be displayed in the service.
  * @author Michael
  */
-public class ScheduleList extends JList {
+public class ScheduleList extends JList implements DropTargetListener {
+
+    public void dragEnter(DropTargetDragEvent dtde) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    public void dragOver(DropTargetDragEvent dtde) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    public void dropActionChanged(DropTargetDragEvent dtde) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    public void dragExit(DropTargetEvent dte) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    public void drop(DropTargetDropEvent dtde) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
 
     /**
      * A direction; either up or down. Used for rearranging the order of items
@@ -61,6 +91,7 @@ public class ScheduleList extends JList {
      */
     public ScheduleList(DefaultListModel model) {
         super(model);
+        setDragEnabled(true);
         setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         setCellRenderer(new SummaryRenderer());
     }
