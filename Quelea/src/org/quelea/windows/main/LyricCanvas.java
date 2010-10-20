@@ -99,7 +99,9 @@ public class LyricCanvas extends JPanel {
             lines.add(builder.toString());
         }
         if(heightOffset > getHeight()) {
-            drawText(graphics, getDifferentSizeFont(font, font.getSize() - 2));
+            if(font.getSize() > 8) {
+                drawText(graphics, getDifferentSizeFont(font, font.getSize() - 2));
+            }
         }
         else {
             heightOffset = 0;
