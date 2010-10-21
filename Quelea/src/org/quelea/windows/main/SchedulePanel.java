@@ -37,25 +37,7 @@ public class SchedulePanel extends JPanel {
      */
     public SchedulePanel() {
         setLayout(new BorderLayout());
-        DefaultListModel model = new DefaultListModel();
-        model.addElement(new Song("Great is thy faithfaulness", "Traditional", new Background(Utils.getImage("img/watercross.jpg"))) {
-            {
-                addSection(new SongSection("Verse", new String[] {"Great is thy faithfulness oh God my father", "There is no shadow of turning with thee"}));
-                addSection(new SongSection("Verse", new String[] {"Thou changest not, thy compassion it fails not", "Great is thy faithfulness Lord unto me"}));
-            }
-        });
-        model.addElement(new Song("God of Gods", "Mark") {
-            {
-                addSection(new SongSection("Verse", new String[] {"You are God of Gods", "King of Kings", "Ruler over the earth"}));
-                addSection(new SongSection("Chorus", new String[] {"Bring to me", "Bring to me", "Bring to me you love oh Lord"}));
-            }
-        });
-        model.addElement(new Song("Lion of Judah", "Ben") {
-            {
-                addSection(new SongSection("Title", new String[] {"Lyrics", "Line2"}));
-            }
-        });
-        scheduleList = new ScheduleList(model);
+        scheduleList = new ScheduleList(new DefaultListModel());
 
         toolbar = new JToolBar(JToolBar.VERTICAL);
         toolbar.setFloatable(false);
