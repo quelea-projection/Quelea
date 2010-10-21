@@ -2,10 +2,10 @@ package org.quelea.windows.newsong;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.Font;
-import javax.swing.BoxLayout;
 import javax.swing.JComboBox;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JToggleButton;
 import javax.swing.JToolBar;
 import org.quelea.Utils;
 
@@ -15,33 +15,48 @@ import org.quelea.Utils;
  */
 public class ThemePanel extends JPanel {
 
-    private JToolBar themeToolbar;
+    private JToolBar fontToolbar;
     private JComboBox fontSelection;
     private ColourButton colourButton;
+    private JComboBox fontSizeSelection;
+    private JToggleButton boldButton;
+    private JToggleButton italicButton;
 
     /**
      * Create and initialise the theme panel.
      */
-    public ThemePanel() {
+    public ThemePanel(ColourSelectionWindow selectionWindow) {
         setName("Theme");
         setLayout(new BorderLayout());
-        setupToolbar();
-        add(themeToolbar, BorderLayout.NORTH);
+        setupToolbar(selectionWindow);
+        add(fontToolbar, BorderLayout.NORTH);
     }
 
     /**
-     * Setup the toolbar
+     * Setup the font toolbar.
      */
-    private void setupToolbar() {
-        themeToolbar = new JToolBar();
-        themeToolbar.setFloatable(false);
+    private void setupToolbar(ColourSelectionWindow selectionWindow) {
+        fontToolbar = new JToolBar();
+        fontToolbar.setFloatable(false);
+        fontToolbar.add(new JLabel("Font:"));
         fontSelection = new JComboBox();
         for(String font : Utils.getAllFonts()) {
             fontSelection.addItem(font);
         }
-        themeToolbar.add(fontSelection);
-        colourButton = new ColourButton(Color.BLACK);
-        themeToolbar.add(colourButton);
+        fontToolbar.add(fontSelection);
+        fontSizeSelection = new JComboBox();
+        for(int i=8 ; i<=100 ; i+=2) {
+            fontSizeSelection.addItem(i);
+        }
+        fontSizeSelection.setSelectedItem(72);
+        fontToolbar.add(fontSizeSelection);
+        boldButton = new JToggleButton(Utils.getImageIcon("icons/bold.png"));
+        fontToolbar.add(boldButton);
+        italicButton = new JToggleButton(Utils.getImageIcon("icons/italic.png"));
+        italicButton.setBorderPainted(false);
+        fontToolbar.add(italicButton);
+        colourButton = new ColourButton(Color.BLACK, selectionWindow);
+        fontToolbar.add(colourButton);
 
     }
 

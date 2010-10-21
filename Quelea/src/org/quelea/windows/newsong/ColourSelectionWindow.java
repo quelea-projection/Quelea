@@ -14,7 +14,7 @@ import org.quelea.Utils;
  * A colour selection window where the user can select a colour they require.
  * @author Michael
  */
-public class ColorSelectionWindow extends JDialog {
+public class ColourSelectionWindow extends JDialog {
     
     private JColorChooser chooser;
     private JButton confirmButton;
@@ -23,7 +23,8 @@ public class ColorSelectionWindow extends JDialog {
     /**
      * Create and initialise the colour selection window.
      */
-    public ColorSelectionWindow() {
+    public ColourSelectionWindow(JDialog owner) {
+        super(owner, "Colour chooser");
         setLayout(new BorderLayout());
         chooser = new JColorChooser(Color.WHITE);
         add(chooser, BorderLayout.CENTER);
