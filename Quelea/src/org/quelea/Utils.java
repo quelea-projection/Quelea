@@ -1,6 +1,8 @@
 package org.quelea;
 
+import java.awt.Color;
 import java.awt.Font;
+import java.awt.Graphics;
 import java.awt.GraphicsEnvironment;
 import java.awt.Image;
 import java.awt.image.BufferedImage;
@@ -78,5 +80,20 @@ public class Utils {
             ret[i] = fonts[i].getName();
         }
         return ret;
+    }
+
+    /**
+     * Get an image filled with the specified colour.
+     * @param color the colour of the image.
+     * @param width the width of the image.
+     * @param height the height of the image.
+     * @return the image.
+     */
+    public static BufferedImage getImageFromColour(Color color, int width, int height) {
+        BufferedImage image = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
+        Graphics graphics = image.getGraphics();
+        graphics.setColor(color);
+        graphics.fillRect(0, 0, width, height);
+        return image;
     }
 }
