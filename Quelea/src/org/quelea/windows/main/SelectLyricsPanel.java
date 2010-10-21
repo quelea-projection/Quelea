@@ -70,7 +70,7 @@ public abstract class SelectLyricsPanel extends JPanel {
                     return;
                 }
                 SongSection currentSection = (SongSection) getLyricsList().getModel().getElementAt(selectedIndex);
-                canvas.setBackground(currentSection.getBackground());
+                canvas.setTheme(currentSection.getTheme());
                 canvas.setText((currentSection).getLyrics());
             }
         });

@@ -1,12 +1,11 @@
 package org.quelea.display;
 
-import java.awt.Color;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
-import org.quelea.Background;
+import org.quelea.Theme;
 import org.quelea.Utils;
 import org.w3c.dom.Document;
 import org.w3c.dom.NamedNodeMap;
@@ -22,7 +21,7 @@ public class Song implements Displayable, Searchable, Comparable<Song> {
     private String title;
     private String author;
     private List<SongSection> sections;
-    private Background background;
+    private Theme theme;
     private int id;
 
     /**
@@ -31,20 +30,20 @@ public class Song implements Displayable, Searchable, Comparable<Song> {
      * @param author the author of the song.
      */
     public Song(String title, String author) {
-        this(title, author, new Background(Color.BLACK));
+        this(title, author, new Theme(Theme.DEFAULT_FONT, Theme.DEFAULT_FONT_COLOR, Theme.DEFAULT_BACKGROUND));
     }
 
     /**
      * Create a new, empty song.
      * @param title the title of the song.
      * @param author the author of the song.
-     * @param background the default background of the song.
+     * @param theme the theme of the song.
      */
-    public Song(String title, String author, Background background) {
+    public Song(String title, String author, Theme theme) {
         id = -1;
         this.title = title;
         this.author = author;
-        this.background = background;
+        this.theme = theme;
         sections = new ArrayList<SongSection>();
     }
 
@@ -96,7 +95,7 @@ public class Song implements Displayable, Searchable, Comparable<Song> {
             }
             ret.append("\n");
         }
-        return ret.toString();
+        return ret.toString().trim();
     }
 
     /**
@@ -127,8 +126,8 @@ public class Song implements Displayable, Searchable, Comparable<Song> {
      * @param section the section to add.
      */
     public void addSection(SongSection section) {
-        if(section.getBackground() == null) {
-            section.setBackground(background);
+        if(section.getTheme() == null) {
+            section.setTheme(theme);
         }
         sections.add(section);
     }
@@ -200,7 +199,6 @@ public class Song implements Displayable, Searchable, Comparable<Song> {
             String title = "";
             String author = "";
             List<SongSection> songSections = new ArrayList<SongSection>();
-            Background background = new Background(Color.BLACK);
             for(int i = 0; i < list.getLength(); i++) {
                 Node node = list.item(i);
                 if(node.getNodeName().equals("title")) {
@@ -227,7 +225,7 @@ public class Song implements Displayable, Searchable, Comparable<Song> {
                     }
                 }
             }
-            Song ret = new Song(title, author, background);
+            Song ret = new Song(title, author, new Theme(Theme.DEFAULT_FONT, Theme.DEFAULT_FONT_COLOR, Theme.DEFAULT_BACKGROUND));
             for(SongSection section : songSections) {
                 ret.addSection(section);
             }
@@ -248,7 +246,7 @@ public class Song implements Displayable, Searchable, Comparable<Song> {
         hash = 29 * hash + (this.title != null ? this.title.hashCode() : 0);
         hash = 29 * hash + (this.author != null ? this.author.hashCode() : 0);
         hash = 29 * hash + (this.sections != null ? this.sections.hashCode() : 0);
-        hash = 29 * hash + (this.background != null ? this.background.hashCode() : 0);
+        hash = 29 * hash + (this.theme != null ? this.theme.hashCode() : 0);
         return hash;
     }
 
@@ -275,7 +273,7 @@ public class Song implements Displayable, Searchable, Comparable<Song> {
         if(this.sections != other.sections && (this.sections == null || !this.sections.equals(other.sections))) {
             return false;
         }
-        if(this.background != other.background && (this.background == null || !this.background.equals(other.background))) {
+        if(this.theme != other.theme && (this.theme == null || !this.theme.equals(other.theme))) {
             return false;
         }
         return true;

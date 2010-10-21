@@ -22,6 +22,7 @@ public class SongEntryWindow extends JDialog {
 
     private JTabbedPane tabbedPane;
     private BasicSongPanel basicSongPanel;
+    private ThemePanel themePanel;
     private JButton confirmButton;
     private JButton cancelButton;
     private Song song;
@@ -34,6 +35,39 @@ public class SongEntryWindow extends JDialog {
         super(owner, "Song entry");
         setLayout(new BorderLayout());
         tabbedPane = new JTabbedPane();
+        setupBasicSongPanel();
+        tabbedPane.add(basicSongPanel);
+        setupThemePanel();
+        tabbedPane.add(themePanel);
+        add(tabbedPane, BorderLayout.CENTER);
+
+        confirmButton = new JButton("Add Song", Utils.getImageIcon("icons/tick.png"));
+        cancelButton = new JButton("Cancel", Utils.getImageIcon("icons/cross.png"));
+        cancelButton.addActionListener(new ActionListener() {
+
+            public void actionPerformed(ActionEvent e) {
+                setVisible(false);
+            }
+        });
+        JPanel bottomPanel = new JPanel();
+        bottomPanel.add(confirmButton);
+        bottomPanel.add(cancelButton);
+        add(bottomPanel, BorderLayout.SOUTH);
+
+        pack();
+    }
+    
+    /**
+     * Called by the constructor to initialise the theme panel.
+     */
+    private void setupThemePanel() {
+        themePanel = new ThemePanel();
+    }
+
+    /**
+     * Called by the constructor to initialise the basic song panel.
+     */
+    private void setupBasicSongPanel() {
         basicSongPanel = new BasicSongPanel();
         basicSongPanel.getLyricsField().addKeyListener(new KeyListener() {
 
@@ -70,23 +104,6 @@ public class SongEntryWindow extends JDialog {
                 checkConfirmButton();
             }
         });
-        tabbedPane.add(basicSongPanel);
-        add(tabbedPane, BorderLayout.CENTER);
-
-        confirmButton = new JButton("Add Song", Utils.getImageIcon("icons/tick.png"));
-        cancelButton = new JButton("Cancel", Utils.getImageIcon("icons/cross.png"));
-        cancelButton.addActionListener(new ActionListener() {
-
-            public void actionPerformed(ActionEvent e) {
-                setVisible(false);
-            }
-        });
-        JPanel bottomPanel = new JPanel();
-        bottomPanel.add(confirmButton);
-        bottomPanel.add(cancelButton);
-        add(bottomPanel, BorderLayout.SOUTH);
-
-        pack();
     }
 
     /**
