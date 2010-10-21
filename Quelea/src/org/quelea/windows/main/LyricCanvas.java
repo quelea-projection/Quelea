@@ -13,6 +13,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import javax.swing.JPanel;
 import org.quelea.Background;
+import org.quelea.Theme;
 
 /**
  * The canvas where the lyrics / images / media are drawn.
@@ -22,7 +23,7 @@ public class LyricCanvas extends JPanel {
 
     /** The default colour, used if none is given. */
     public static final Background DEFAULT_BACKGROUND = new Background(Color.BLACK);
-    private Background background;
+    private Theme theme;
     private String[] text;
     private Font font;
     private int aspectWidth;
@@ -40,7 +41,7 @@ public class LyricCanvas extends JPanel {
         this.aspectHeight = aspectHeight;
         text = new String[]{};
         font = new Font("sans-serif", Font.BOLD, 72);
-        background = DEFAULT_BACKGROUND;
+        theme = Theme.DEFAULT_THEME;
         setMinimumSize(new Dimension(10, 10));
     }
 
@@ -55,14 +56,14 @@ public class LyricCanvas extends JPanel {
         offscreen.setColor(getForeground());
         super.paint(offscreen);
         fixAspectRatio();
-        if(blacked || background==null) {
+        if(blacked || theme==null) {
             Color temp = offscreen.getColor();
             offscreen.setColor(Color.BLACK);
             offscreen.fillRect(0, 0, getWidth(), getHeight());
             offscreen.setColor(temp);
         }
         else {
-            offscreen.drawImage(background.getImage(getWidth(), getHeight()), 0, 0, null);
+            offscreen.drawImage(theme.getBackground().getImage(getWidth(), getHeight()), 0, 0, null);
         }
         offscreen.setFont(font);
         offscreen.setColor(Color.WHITE);
@@ -80,6 +81,7 @@ public class LyricCanvas extends JPanel {
             return;
         }
         graphics.setFont(font);
+        graphics.setColor(theme.getFontColor());
         ArrayList<String> lines = new ArrayList<String>();
         FontMetrics metrics = graphics.getFontMetrics(font);
         int heightOffset = 0;
@@ -149,14 +151,14 @@ public class LyricCanvas extends JPanel {
     }
 
     /**
-     * Set the background of this canvas to be displayed behind the text.
-     * @param background the background to place on the canvas.
+     * Set the theme of this canvas.
+     * @param theme the theme to place on the canvas.
      */
-    public void setBackground(Background background) {
-        Background b1 = background==null ? DEFAULT_BACKGROUND : background;
-        Background b2 = this.background==null ? DEFAULT_BACKGROUND : this.background;
+    public void setTheme(Theme theme) {
+        Theme b1 = theme==null ? Theme.DEFAULT_THEME : theme;
+        Theme b2 = this.theme==null ? Theme.DEFAULT_THEME : this.theme;
         if(!b2.equals(b1)) {
-            this.background = background;
+            this.theme = theme;
             repaint();
         }
     }

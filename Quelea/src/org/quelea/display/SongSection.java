@@ -1,6 +1,6 @@
 package org.quelea.display;
 
-import org.quelea.Background;
+import org.quelea.Theme;
 
 /**
  * Represents a section of a song, eg. a verse, chorus or bridge.
@@ -10,7 +10,7 @@ public class SongSection {
 
     private String title;
     private String[] lyrics;
-    private Background background;
+    private Theme theme;
 
     /**
      * Create a new song section with the specified title and lyrics.
@@ -25,12 +25,12 @@ public class SongSection {
      * Create a new song section with the specified title and lyrics.
      * @param title the title of the section.
      * @param lyrics the lyrics of the section, one line per array entry.
-     * @param background the default background of this song section.
+     * @param theme the theme of this song section.
      */
-    public SongSection(String title, String[] lyrics, Background background) {
+    public SongSection(String title, String[] lyrics, Theme theme) {
         this.title = title;
         this.lyrics = lyrics;
-        this.background = background;
+        this.theme = theme;
     }
 
     /**
@@ -50,19 +50,19 @@ public class SongSection {
     }
 
     /**
-     * Get the background of the section.
-     * @return the background of the section.
+     * Get the theme of the section.
+     * @return the theme of the section.
      */
-    public Background getBackground() {
-        return background;
+    public Theme getTheme() {
+        return theme;
     }
 
     /**
-     * Set the background of the section.
-     * @param background the new background.
+     * Set the theme of the section.
+     * @param theme the new theme.
      */
-    public void setBackground(Background background) {
-        this.background = background;
+    public void setTheme(Theme theme) {
+        this.theme = theme;
     }
 
     /**

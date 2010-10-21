@@ -1,5 +1,7 @@
 package org.quelea;
 
+import java.awt.Font;
+import java.awt.GraphicsEnvironment;
 import java.awt.Image;
 import java.awt.image.BufferedImage;
 import java.io.File;
@@ -63,5 +65,18 @@ public class Utils {
                 title.toLowerCase().startsWith("pre chorus") ||
                 title.toLowerCase().startsWith("coda") ||
                 title.toLowerCase().startsWith("bridge");
+    }
+
+    /**
+     * Get the names of all the fonts available on the current system.
+     * @return the names of all the fonts available.
+     */
+    public static String[] getAllFonts() {
+        Font[] fonts = GraphicsEnvironment.getLocalGraphicsEnvironment().getAllFonts();
+        String[] ret = new String[fonts.length];
+        for(int i=0 ; i<fonts.length ; i++) {
+            ret[i] = fonts[i].getName();
+        }
+        return ret;
     }
 }

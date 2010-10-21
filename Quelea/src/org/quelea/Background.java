@@ -11,7 +11,7 @@ import java.awt.image.BufferedImage;
 public class Background {
 
     private Color color;
-    private BufferedImage image;
+    private String imageLocation;
 
     /**
      * Create a new background that's a certain colour.
@@ -23,10 +23,10 @@ public class Background {
 
     /**
      * Create a new background that's a certain image.
-     * @param image the background image.
+     * @param imageLocation the location of the background image.
      */
-    public Background(BufferedImage image) {
-        this.image = image;
+    public Background(String imageLocation) {
+        this.imageLocation = imageLocation;
     }
 
     /**
@@ -43,7 +43,7 @@ public class Background {
         g.setColor(Color.BLACK);
         g.fillRect(0, 0, width, height);
         if(color == null) {
-            g.drawImage(image, 0, 0, width, height, null);
+            g.drawImage(Utils.getImage(imageLocation), 0, 0, width, height, null);
             return ret;
         }
         else {
@@ -61,7 +61,7 @@ public class Background {
     public int hashCode() {
         int hash = 5;
         hash = 59 * hash + (this.color != null ? this.color.hashCode() : 0);
-        hash = 59 * hash + (this.image != null ? this.image.hashCode() : 0);
+        hash = 59 * hash + (this.imageLocation != null ? this.imageLocation.hashCode() : 0);
         return hash;
     }
 
@@ -82,7 +82,7 @@ public class Background {
         if(this.color != other.color && (this.color == null || !this.color.equals(other.color))) {
             return false;
         }
-        if(this.image != other.image && (this.image == null || !this.image.equals(other.image))) {
+        if(this.imageLocation != other.imageLocation && (this.imageLocation == null || !this.imageLocation.equals(other.imageLocation))) {
             return false;
         }
         return true;
@@ -98,7 +98,7 @@ public class Background {
         ret.append("Background: ");
         if(color == null) {
             ret.append("image: ");
-            ret.append(image);
+            ret.append(imageLocation);
         }
         else {
             ret.append("colour: ");
