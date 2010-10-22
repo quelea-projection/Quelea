@@ -10,6 +10,7 @@ import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
+import javax.swing.border.EmptyBorder;
 import org.quelea.Utils;
 import org.quelea.display.Song;
 
@@ -20,7 +21,6 @@ import org.quelea.display.Song;
  */
 public class SongEntryWindow extends JDialog {
 
-    private ColourSelectionWindow colourSelectionWindow;
     private JTabbedPane tabbedPane;
     private BasicSongPanel basicSongPanel;
     private ThemePanel themePanel;
@@ -34,9 +34,10 @@ public class SongEntryWindow extends JDialog {
      */
     public SongEntryWindow(JFrame owner) {
         super(owner, "Song entry");
-        colourSelectionWindow = new ColourSelectionWindow(this);
+        setResizable(false);
         setLayout(new BorderLayout());
         tabbedPane = new JTabbedPane();
+        tabbedPane.setBorder(new EmptyBorder(0, 0, 0, 0));
         setupBasicSongPanel();
         tabbedPane.add(basicSongPanel);
         setupThemePanel();
@@ -55,7 +56,6 @@ public class SongEntryWindow extends JDialog {
         bottomPanel.add(confirmButton);
         bottomPanel.add(cancelButton);
         add(bottomPanel, BorderLayout.SOUTH);
-
         pack();
     }
     
@@ -63,7 +63,7 @@ public class SongEntryWindow extends JDialog {
      * Called by the constructor to initialise the theme panel.
      */
     private void setupThemePanel() {
-        themePanel = new ThemePanel(colourSelectionWindow);
+        themePanel = new ThemePanel();
     }
 
     /**
