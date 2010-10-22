@@ -3,6 +3,7 @@ package org.quelea;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
+import java.io.File;
 
 /**
  * A visual background. This may either be an image or a color.
@@ -43,7 +44,7 @@ public class Background {
         g.setColor(Color.BLACK);
         g.fillRect(0, 0, width, height);
         if(color == null) {
-            g.drawImage(Utils.getImage(imageLocation), 0, 0, width, height, null);
+            g.drawImage(Utils.getImage(new File(new File("img").getAbsolutePath(),imageLocation).getAbsolutePath()), 0, 0, width, height, null);
             return ret;
         }
         else {

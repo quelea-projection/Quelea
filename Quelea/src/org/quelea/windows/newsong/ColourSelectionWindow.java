@@ -2,6 +2,7 @@ package org.quelea.windows.newsong;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import javax.swing.JButton;
@@ -23,7 +24,7 @@ public class ColourSelectionWindow extends JDialog {
     /**
      * Create and initialise the colour selection window.
      */
-    public ColourSelectionWindow(JDialog owner) {
+    public ColourSelectionWindow(Window owner) {
         super(owner, "Colour chooser");
         setLayout(new BorderLayout());
         chooser = new JColorChooser(Color.WHITE);

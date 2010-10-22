@@ -164,6 +164,30 @@ public class LyricCanvas extends JPanel {
     }
 
     /**
+     * Prevent small changes to the canvas' size. This is a workaround to a bug
+     * where the canvas was sometimes resized constantly by very small
+     * intervals (a few pixels) causing annoying flickering.
+     * @param width the width of the component.
+     * @param height the height of the component.
+     */
+    @Override
+    public void setSize(int width, int height) {
+        int widthDiff = Math.abs(width-getWidth());
+        int heightDiff = Math.abs(height-getHeight());
+        if(widthDiff>10 || heightDiff>10) {
+            super.setSize(width, height);
+        }
+    }
+
+    /**
+     * Get the theme currently in use on the canvas.
+     * @return the current theme
+     */
+    public Theme getTheme() {
+        return theme;
+    }
+
+    /**
      * Set the text to appear on the canvas. The lines will be automatically
      * wrapped and if the text is too large to fit on the screen in the current
      * font, the size will be decreased until all the text fits.

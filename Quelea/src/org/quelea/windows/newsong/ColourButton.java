@@ -5,6 +5,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.SwingUtilities;
 import org.quelea.Utils;
 
 /**
@@ -13,17 +14,17 @@ import org.quelea.Utils;
  */
 public class ColourButton extends JButton {
 
-    private ColourSelectionWindow selectionWindow;
     private Color color;
+    private ColourSelectionWindow selectionWindow;
 
     /**
      * Create and initialise the colour button.
      * @param defaultColor the default colour of the button.
      */
-    public ColourButton(final Color defaultColor, final ColourSelectionWindow selectionWindow) {
+    public ColourButton(final Color defaultColor) {
         super("Choose colour...");
+        selectionWindow = new ColourSelectionWindow(SwingUtilities.getWindowAncestor(this));
         this.color = defaultColor;
-        this.selectionWindow = selectionWindow;
         setIcon(new ImageIcon(Utils.getImageFromColour(Color.BLACK, 16, 16)));
         selectionWindow.getConfirmButton().addActionListener(new ActionListener() {
 
