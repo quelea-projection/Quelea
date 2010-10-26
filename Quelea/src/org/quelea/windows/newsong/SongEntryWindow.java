@@ -11,6 +11,7 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
 import javax.swing.border.EmptyBorder;
+import org.quelea.Theme;
 import org.quelea.Utils;
 import org.quelea.display.Song;
 
@@ -133,6 +134,14 @@ public class SongEntryWindow extends JDialog {
     }
 
     /**
+     * Get the theme currently displayed on this window.
+     * @return the current theme.
+     */
+    public Theme getTheme() {
+        return themePanel.getTheme();
+    }
+
+    /**
      * Set this window up ready to enter a new song.
      */
     public void resetNewSong() {
@@ -141,6 +150,8 @@ public class SongEntryWindow extends JDialog {
         confirmButton.setText("Add new song");
         confirmButton.setEnabled(false);
         basicSongPanel.resetNewSong();
+        themePanel.setTheme(Theme.DEFAULT_THEME);
+        tabbedPane.setSelectedIndex(0);
     }
 
     /**
@@ -153,6 +164,10 @@ public class SongEntryWindow extends JDialog {
         confirmButton.setText("Edit song");
         confirmButton.setEnabled(true);
         basicSongPanel.resetEditSong(song);
+        if(song.getSections().length>0) {
+            themePanel.setTheme(song.getSections()[0].getTheme());
+        }
+        tabbedPane.setSelectedIndex(0);
     }
 
     /**

@@ -13,6 +13,7 @@ import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 import org.pushingpixels.substance.api.skin.SubstanceBusinessLookAndFeel;
 import org.quelea.display.Song;
+import org.quelea.display.SongSection;
 import org.quelea.windows.main.LibrarySongPanel;
 import org.quelea.windows.main.LyricWindow;
 import org.quelea.windows.main.MainWindow;
@@ -119,6 +120,9 @@ public class Main {
 
                 Song song = songEntryWindow.getSong();
                 song.setLyrics(songEntryWindow.getBasicSongPanel().getLyricsField().getText());
+                for(SongSection section : song.getSections()) {
+                    section.setTheme(songEntryWindow.getTheme());
+                }
                 SortedListModel model = (SortedListModel) mainWindow.getMainPanel().getLibraryPanel().getLibrarySongPanel().getSongList().getModel();
                 model.removeElement(song);
                 if(!database.updateSong(song)) {
