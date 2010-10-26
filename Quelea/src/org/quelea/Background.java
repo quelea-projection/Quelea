@@ -6,20 +6,20 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 
 /**
- * A visual background. This may either be an image or a color.
+ * A visual background. This may either be an image or a colour.
  * @author Michael
  */
 public class Background {
 
-    private Color color;
+    private Color colour;
     private String imageLocation;
 
     /**
      * Create a new background that's a certain colour.
-     * @param color the colour of the background.
+     * @param colour the colour of the background.
      */
-    public Background(Color color) {
-        this.color = color;
+    public Background(Color colour) {
+        this.colour = colour;
     }
 
     /**
@@ -43,15 +43,49 @@ public class Background {
         Graphics2D g = (Graphics2D) ret.getGraphics();
         g.setColor(Color.BLACK);
         g.fillRect(0, 0, width, height);
-        if(color == null) {
-            g.drawImage(Utils.getImage(new File(new File("img").getAbsolutePath(),imageLocation).getAbsolutePath()), 0, 0, width, height, null);
+        if(colour == null) {
+            g.drawImage(Utils.getImage(new File(new File("img").getAbsolutePath(), imageLocation).getAbsolutePath()), 0, 0, width, height, null);
             return ret;
         }
         else {
-            g.setColor(color);
+            g.setColor(colour);
             g.fillRect(0, 0, width, height);
             return ret;
         }
+    }
+
+    /**
+     * Get the current colour of this background, or null if the background is
+     * currently an image.
+     * @return the colour of the background.
+     */
+    public Color getColour() {
+        return colour;
+    }
+
+    /**
+     * Get the current image location of this background, or null if the
+     * background is currently a colour.
+     * @return the current image location of the background.
+     */
+    public String getImageLocation() {
+        return imageLocation;
+    }
+
+    /**
+     * Determine whether this background is an image.
+     * @return true if the background is an image, false if its a colour.
+     */
+    public boolean isImage() {
+        return imageLocation != null;
+    }
+
+    /**
+     * Determine whether this background is a colour.
+     * @return true if the background is a colour, false if its an image.
+     */
+    public boolean isColour() {
+        return colour != null;
     }
 
     /**
@@ -61,7 +95,7 @@ public class Background {
     @Override
     public int hashCode() {
         int hash = 5;
-        hash = 59 * hash + (this.color != null ? this.color.hashCode() : 0);
+        hash = 59 * hash + (this.colour != null ? this.colour.hashCode() : 0);
         hash = 59 * hash + (this.imageLocation != null ? this.imageLocation.hashCode() : 0);
         return hash;
     }
@@ -80,7 +114,7 @@ public class Background {
             return false;
         }
         final Background other = (Background) obj;
-        if(this.color != other.color && (this.color == null || !this.color.equals(other.color))) {
+        if(this.colour != other.colour && (this.colour == null || !this.colour.equals(other.colour))) {
             return false;
         }
         if(this.imageLocation != other.imageLocation && (this.imageLocation == null || !this.imageLocation.equals(other.imageLocation))) {
@@ -97,13 +131,13 @@ public class Background {
     public String toString() {
         StringBuilder ret = new StringBuilder();
         ret.append("Background: ");
-        if(color == null) {
+        if(colour == null) {
             ret.append("image: ");
             ret.append(imageLocation);
         }
         else {
             ret.append("colour: ");
-            ret.append(color);
+            ret.append(colour);
         }
         return ret.toString();
     }

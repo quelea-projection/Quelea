@@ -14,7 +14,7 @@ import org.quelea.Utils;
  */
 public class ColourButton extends JButton {
 
-    private Color color;
+    private Color colour;
     private ColourSelectionWindow selectionWindow;
 
     /**
@@ -24,12 +24,14 @@ public class ColourButton extends JButton {
     public ColourButton(final Color defaultColor) {
         super("Choose colour...");
         selectionWindow = new ColourSelectionWindow(SwingUtilities.getWindowAncestor(this));
-        this.color = defaultColor;
-        setIcon(new ImageIcon(Utils.getImageFromColour(Color.BLACK, 16, 16)));
+        this.colour = defaultColor;
+        selectionWindow.setSelectedColour(colour);
+        setIcon(new ImageIcon(Utils.getImageFromColour(colour, 16, 16)));
         selectionWindow.getConfirmButton().addActionListener(new ActionListener() {
 
             public void actionPerformed(ActionEvent e) {
-                setIcon(new ImageIcon(Utils.getImageFromColour(selectionWindow.getSelectedColour(), 16, 16)));
+                colour = selectionWindow.getSelectedColour();
+                setIcon(new ImageIcon(Utils.getImageFromColour(colour, 16, 16)));
             }
         });
         addActionListener(new ActionListener() {
@@ -42,11 +44,11 @@ public class ColourButton extends JButton {
     }
 
     /**
-     * Get the colour that the user has selected.
-     * @return the user selected colour.
+     * Get the colour selection window.
+     * @return the colour selection window.
      */
-    public Color getColour() {
-        return color;
+    public ColourSelectionWindow getColourSelectionWindow() {
+        return selectionWindow;
     }
 
 }

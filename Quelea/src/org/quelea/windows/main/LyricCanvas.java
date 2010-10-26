@@ -12,7 +12,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 import javax.swing.JPanel;
-import org.quelea.Background;
 import org.quelea.Theme;
 
 /**
@@ -21,8 +20,6 @@ import org.quelea.Theme;
  */
 public class LyricCanvas extends JPanel {
 
-    /** The default colour, used if none is given. */
-    public static final Background DEFAULT_BACKGROUND = new Background(Color.BLACK);
     private Theme theme;
     private String[] text;
     private Font font;
@@ -65,9 +62,16 @@ public class LyricCanvas extends JPanel {
         else {
             offscreen.drawImage(theme.getBackground().getImage(getWidth(), getHeight()), 0, 0, null);
         }
-        offscreen.setFont(font);
-        offscreen.setColor(Color.WHITE);
-        drawText(offscreen, font);
+        Color fontColour = theme.getFontColor();
+        if(fontColour==null) {
+            fontColour = Theme.DEFAULT_FONT_COLOR;
+        }
+        offscreen.setColor(fontColour);
+        Font themeFont = theme.getFont();
+        if(themeFont == null) {
+            themeFont = Theme.DEFAULT_FONT;
+        }
+        drawText(offscreen, themeFont);
         g.drawImage(offscreenImage, 0, 0, this);
     }
 
@@ -172,9 +176,10 @@ public class LyricCanvas extends JPanel {
      */
     @Override
     public void setSize(int width, int height) {
+        final int MAX_OFFSET = 5; //changes less than this will be discarded.
         int widthDiff = Math.abs(width-getWidth());
         int heightDiff = Math.abs(height-getHeight());
-        if(widthDiff>10 || heightDiff>10) {
+        if(widthDiff>MAX_OFFSET || heightDiff>MAX_OFFSET) {
             super.setSize(width, height);
         }
     }

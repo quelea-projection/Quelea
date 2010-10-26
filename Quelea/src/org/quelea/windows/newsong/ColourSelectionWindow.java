@@ -72,11 +72,19 @@ public class ColourSelectionWindow extends JDialog {
     }
 
     /**
-     * Get the color that the user has selected.
-     * @return the selected color.
+     * Get the colour that the user has selected.
+     * @return the selected colour.
      */
     public Color getSelectedColour() {
         return chooser.getColor();
+    }
+
+    /**
+     * Set the colour to be displayed in this colour selection window.
+     * @param colour the colour to be displayed.
+     */
+    public void setSelectedColour(Color colour) {
+        chooser.setColor(colour);
     }
 
 }

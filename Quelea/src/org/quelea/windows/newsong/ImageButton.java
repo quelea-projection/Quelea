@@ -1,6 +1,5 @@
 package org.quelea.windows.newsong;
 
-import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
@@ -23,7 +22,6 @@ public class ImageButton extends JButton {
 
     private String imageLocation;
     private JFileChooser fileChooser;
-    private ColourSelectionWindow selectionWindow;
 
     /**
      * Create and initialise the colour button.
@@ -31,7 +29,6 @@ public class ImageButton extends JButton {
      */
     public ImageButton(final JTextField imageLocationField, final LyricCanvas canvas) {
         super("Select...");
-        selectionWindow = new ColourSelectionWindow(SwingUtilities.getWindowAncestor(this));
         fileChooser = new JLocationFileChooser("img");
         fileChooser.setFileFilter(new FileFilter() {
 
