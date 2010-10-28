@@ -55,4 +55,82 @@ public class Theme {
         return fontColor;
     }
 
+    /**
+     * Get a string representation of this theme for storing in the database.
+     * @return the string to store in the database.
+     */
+    public String toDBString() {
+        StringBuilder ret = new StringBuilder();
+        ret.append("fontname:").append(font.getName());
+        ret.append("$fontbold:").append(font.isBold());
+        ret.append("$fontitalic:").append(font.isItalic());
+        ret.append("$fontcolour:").append(fontColor.toString());
+        if(background.isColour()) {
+            ret.append("$backgroundcolour:").append(background.getColour());
+        }
+        else {
+            ret.append("$backgroundimage:").append(background.getImageLocation());
+        }
+        return ret.toString();
+    }
+
+    /**
+     * Get a theme from a string.
+     * @param s the string to parse.
+     * @return the theme parsed from the string, or null if a parsing error
+     * occurs.
+     */
+    public static Theme parseDBString(String s) {
+        if(s==null || s.isEmpty()) {
+            return Theme.DEFAULT_THEME;
+        }
+        String fontname = "";
+        boolean fontbold = false;
+        boolean fontitalic = false;
+        String fontcolour = "";
+        String backgroundcolour = "";
+        String backgroundimage = "";
+
+        for(String part : s.split("\\$")) {
+            if(!part.contains(":")) {
+                continue;
+            }
+            String[] parts = part.split(":");
+            if(parts[0].equalsIgnoreCase("fontname")) {
+                fontname = parts[1];
+            }
+            else if(parts[0].equalsIgnoreCase("fontbold")) {
+                fontbold = Boolean.parseBoolean(parts[1]);
+            }
+            else if(parts[0].equalsIgnoreCase("fontitalic")) {
+                fontitalic = Boolean.parseBoolean(parts[1]);
+            }
+            else if(parts[0].equalsIgnoreCase("fontcolour")) {
+                fontcolour = parts[1];
+            }
+            else if(parts[0].equalsIgnoreCase("backgroundcolour")) {
+                backgroundcolour = parts[1];
+            }
+            else if(parts[0].equalsIgnoreCase("backgroundimage")) {
+                backgroundimage = parts[1];
+            }
+        }
+        int fontstyle = 0;
+        if(fontbold) {
+            fontstyle |= Font.BOLD;
+        }
+        if(fontitalic) {
+            fontstyle |= Font.ITALIC;
+        }
+        Font font = new Font(fontname, fontstyle, 72);
+        Background background;
+        if(backgroundcolour.isEmpty()) {
+            background = new Background(backgroundimage);
+        }
+        else {
+            background = new Background(Utils.parseColour(backgroundcolour));
+        }
+        return new Theme(font, Utils.parseColour(fontcolour), background);
+    }
+
 }

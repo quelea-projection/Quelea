@@ -8,6 +8,7 @@ import java.awt.Image;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.util.Map;
 import javax.imageio.ImageIO;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
@@ -96,4 +97,19 @@ public class Utils {
         graphics.fillRect(0, 0, width, height);
         return image;
     }
+
+    /**
+     * Parse a colour string to a colour.
+     * @param s the colour string.
+     * @return the colour.
+     */
+    public static Color parseColour(String s) {
+        s = s.substring(s.indexOf('[')+1, s.indexOf(']'));
+        String[] parts = s.split(",");
+        int red = Integer.parseInt(parts[0].split("=")[1]);
+        int green = Integer.parseInt(parts[1].split("=")[1]);
+        int blue = Integer.parseInt(parts[2].split("=")[1]);
+        return new Color(red, green, blue);
+    }
+
 }
