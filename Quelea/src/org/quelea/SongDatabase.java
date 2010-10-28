@@ -9,6 +9,7 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 import org.quelea.display.Song;
+import org.quelea.display.SongSection;
 
 /**
  * The class that controls the database that stores all the song data.
@@ -69,6 +70,9 @@ public class SongDatabase {
                     {
                         setLyrics(rs.getString("lyrics"));
                         setID(rs.getInt("id"));
+                        for(SongSection section : getSections()) {
+                            section.setTheme(Theme.parseDBString(rs.getString("background")));
+                        }
                     }
                 });
             }
@@ -87,10 +91,15 @@ public class SongDatabase {
      */
     public boolean addSong(Song song) {
         try {
-            PreparedStatement stat = conn.prepareStatement("insert into songs(title, author, lyrics) values(?, ?, ?)");
+            PreparedStatement stat = conn.prepareStatement("insert into songs(title, author, lyrics, background) values(?, ?, ?, ?)");
             stat.setString(1, song.getTitle());
             stat.setString(2, song.getAuthor());
             stat.setString(3, song.getLyrics());
+            String theme = "";
+            if(song.getSections().length>0) {
+                theme = song.getSections()[0].getTheme().toDBString();
+            }
+            stat.setString(4, theme);
             stat.executeUpdate();
             Statement stId = conn.createStatement();
             int id=-1;
@@ -119,11 +128,16 @@ public class SongDatabase {
             if(song.getID()==-1) {
                 addSong(song);
             }
-            PreparedStatement stat = conn.prepareStatement("update songs set title=?, author=?, lyrics=? where id=?");
+            PreparedStatement stat = conn.prepareStatement("update songs set title=?, author=?, lyrics=?, background=? where id=?");
             stat.setString(1, song.getTitle());
             stat.setString(2, song.getAuthor());
             stat.setString(3, song.getLyrics());
-            stat.setInt(4, song.getID());
+            String theme = "";
+            if(song.getSections().length > 0) {
+                theme = song.getSections()[0].getTheme().toDBString();
+            }
+            stat.setString(4, theme);
+            stat.setInt(5, song.getID());
             stat.executeUpdate();
             return true;
         }

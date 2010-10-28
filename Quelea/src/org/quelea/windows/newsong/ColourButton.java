@@ -44,6 +44,14 @@ public class ColourButton extends JButton {
     }
 
     /**
+     * Set the icon colour of this button.
+     * @param colour the colour of the button's icon.
+     */
+    public void setIconColour(Color colour) {
+        setIcon(new ImageIcon(Utils.getImageFromColour(colour, 16, 16)));
+    }
+
+    /**
      * Get the colour selection window.
      * @return the colour selection window.
      */

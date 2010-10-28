@@ -191,10 +191,12 @@ public class ThemePanel extends JPanel {
         }
         fontSizeSelection.setSelectedItem(fontSize);
         fontColourButton.getColourSelectionWindow().setSelectedColour(theme.getFontColor());
+        fontColourButton.setIconColour(theme.getFontColor());
         Background background = theme.getBackground();
         if(background.isColour()) {
             backgroundTypeSelect.getModel().setSelectedItem("Colour");
             backgroundColourButton.getColourSelectionWindow().setSelectedColour(background.getColour());
+            backgroundColourButton.setIconColour(background.getColour());
         }
         else {
             backgroundTypeSelect.getModel().setSelectedItem("Image");
