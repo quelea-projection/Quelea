@@ -1,16 +1,21 @@
 package org.quelea.display;
 
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
 import org.quelea.Theme;
 import org.quelea.Utils;
 import org.w3c.dom.Document;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
+import org.xml.sax.SAXException;
 
 /**
  * A song that contains a number of sections (verses, choruses, etc.)
@@ -86,11 +91,11 @@ public class Song implements Displayable, Searchable, Comparable<Song> {
      */
     public String getLyrics() {
         StringBuilder ret = new StringBuilder();
-        for(SongSection section : sections) {
-            if(section.getTitle()!=null && !section.getTitle().equals("")) {
+        for (SongSection section : sections) {
+            if (section.getTitle() != null && !section.getTitle().equals("")) {
                 ret.append(section.getTitle()).append("\n");
             }
-            for(String line : section.getLyrics()) {
+            for (String line : section.getLyrics()) {
                 ret.append(line).append("\n");
             }
             ret.append("\n");
@@ -106,14 +111,14 @@ public class Song implements Displayable, Searchable, Comparable<Song> {
      */
     public void setLyrics(String lyrics) {
         sections.clear();
-        for(String section : lyrics.split("\n\n")) {
+        for (String section : lyrics.split("\n\n")) {
             String[] sectionLines = section.split("\n");
             String[] newLyrics = section.split("\n");
             String sectionTitle = "";
-            if(Utils.isTitle(sectionLines[0])) {
+            if (Utils.isTitle(sectionLines[0])) {
                 sectionTitle = sectionLines[0];
                 newLyrics = new String[sectionLines.length - 1];
-                for(int i = 1; i < sectionLines.length; i++) {
+                for (int i = 1; i < sectionLines.length; i++) {
                     newLyrics[i - 1] = sectionLines[i];
                 }
             }
@@ -126,7 +131,7 @@ public class Song implements Displayable, Searchable, Comparable<Song> {
      * @param section the section to add.
      */
     public void addSection(SongSection section) {
-        if(section.getTheme() == null) {
+        if (section.getTheme() == null) {
             section.setTheme(theme);
         }
         sections.add(section);
@@ -137,7 +142,7 @@ public class Song implements Displayable, Searchable, Comparable<Song> {
      * @param sections the sections to add.
      */
     public void addSections(SongSection[] sections) {
-        for(SongSection section : sections) {
+        for (SongSection section : sections) {
             addSection(section);
         }
     }
@@ -173,12 +178,8 @@ public class Song implements Displayable, Searchable, Comparable<Song> {
         xml.append(author);
         xml.append("</author>");
         xml.append("<lyrics>");
-        for(SongSection section : sections) {
-            xml.append("<section ").append("title=\"").append(section.getTitle()).append("\">");
-            for(String line : section.getLyrics()) {
-                xml.append(line).append('\n');
-            }
-            xml.append("</section>");
+        for (SongSection section : sections) {
+            xml.append(section.getXML());
         }
         xml.append("</lyrics>");
         xml.append("</song>");
@@ -187,53 +188,37 @@ public class Song implements Displayable, Searchable, Comparable<Song> {
 
     /**
      * Parse a song in XML format and return the song object.
-     * @param inputStream the inputstream to parse.
+     * @param xml the xml string to parse.
      * @return the song, or null if an error occurs.
      */
-    public static Song parseXML(InputStream inputStream) {
-        try {
-            DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-            DocumentBuilder builder = factory.newDocumentBuilder();
-            Document doc = builder.parse(inputStream);
-            NodeList list = doc.getElementsByTagName("*");
-            String title = "";
-            String author = "";
-            List<SongSection> songSections = new ArrayList<SongSection>();
-            for(int i = 0; i < list.getLength(); i++) {
-                Node node = list.item(i);
-                if(node.getNodeName().equals("title")) {
-                    title = node.getTextContent();
-                }
-                if(node.getNodeName().equals("author")) {
-                    author = node.getTextContent();
-                }
-                if(node.getNodeName().equals("lyrics")) {
-                    NodeList sections = node.getChildNodes();
-                    for(int j = 0; j < sections.getLength(); j++) {
-                        Node sectionNode = sections.item(j);
-                        NamedNodeMap attributes = sectionNode.getAttributes();
-                        String sectionTitle = null;
-                        if(attributes!=null) {
-                            Node titleNode = attributes.getNamedItem("title");
-                            if(titleNode != null) {
-                                sectionTitle = titleNode.getTextContent();
-                            }
-                        }
-                        if(sectionNode.getNodeName().equals("section")) {
-                            songSections.add(new SongSection(sectionTitle, sectionNode.getTextContent().split("\n")));
-                        }
+    public static Song parseXML(Node song) {
+        NodeList list = song.getChildNodes();
+        String title = "";
+        String author = "";
+        List<SongSection> songSections = new ArrayList<SongSection>();
+        for (int i = 0; i < list.getLength(); i++) {
+            Node node = list.item(i);
+            if (node.getNodeName().equals("title")) {
+                title = node.getTextContent();
+            }
+            if (node.getNodeName().equals("author")) {
+                author = node.getTextContent();
+            }
+            if (node.getNodeName().equals("lyrics")) {
+                NodeList sections = node.getChildNodes();
+                for (int j = 0; j < sections.getLength(); j++) {
+                    Node sectionNode = sections.item(j);
+                    if (sectionNode.getNodeName().equals("section")) {
+                        songSections.add(SongSection.parseXML(sectionNode));
                     }
                 }
             }
-            Song ret = new Song(title, author, new Theme(Theme.DEFAULT_FONT, Theme.DEFAULT_FONT_COLOR, Theme.DEFAULT_BACKGROUND));
-            for(SongSection section : songSections) {
-                ret.addSection(section);
-            }
-            return ret;
         }
-        catch(Exception ex) {
-            return null;
+        Song ret = new Song(title, author, new Theme(Theme.DEFAULT_FONT, Theme.DEFAULT_FONT_COLOR, Theme.DEFAULT_BACKGROUND));
+        for (SongSection section : songSections) {
+            ret.addSection(section);
         }
+        return ret;
     }
 
     /**
@@ -257,23 +242,23 @@ public class Song implements Displayable, Searchable, Comparable<Song> {
      */
     @Override
     public boolean equals(Object obj) {
-        if(obj == null) {
+        if (obj == null) {
             return false;
         }
-        if(getClass() != obj.getClass()) {
+        if (getClass() != obj.getClass()) {
             return false;
         }
         final Song other = (Song) obj;
-        if((this.title == null) ? (other.title != null) : !this.title.equals(other.title)) {
+        if ((this.title == null) ? (other.title != null) : !this.title.equals(other.title)) {
             return false;
         }
-        if((this.author == null) ? (other.author != null) : !this.author.equals(other.author)) {
+        if ((this.author == null) ? (other.author != null) : !this.author.equals(other.author)) {
             return false;
         }
-        if(this.sections != other.sections && (this.sections == null || !this.sections.equals(other.sections))) {
+        if (this.sections != other.sections && (this.sections == null || !this.sections.equals(other.sections))) {
             return false;
         }
-        if(this.theme != other.theme && (this.theme == null || !this.theme.equals(other.theme))) {
+        if (this.theme != other.theme && (this.theme == null || !this.theme.equals(other.theme))) {
             return false;
         }
         return true;
@@ -287,9 +272,9 @@ public class Song implements Displayable, Searchable, Comparable<Song> {
      */
     public int compareTo(Song other) {
         int result = getTitle().compareToIgnoreCase(other.getTitle());
-        if(result==0) {
+        if (result == 0) {
             result = getAuthor().compareToIgnoreCase(other.getAuthor());
-            if(result==0) {
+            if (result == 0) {
                 result = getLyrics().compareTo(other.getLyrics());
             }
         }

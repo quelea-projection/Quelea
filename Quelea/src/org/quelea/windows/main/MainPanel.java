@@ -70,8 +70,8 @@ public class MainPanel extends JPanel {
         libraryPanel.getLibrarySongPanel().getSongList().getPopupMenu().getAddToScheduleButton().addActionListener(new ActionListener() {
 
             public void actionPerformed(ActionEvent e) {
-                Object song = (Song)libraryPanel.getLibrarySongPanel().getSongList().getSelectedValue();
-                ((DefaultListModel)schedulePanel.getScheduleList().getModel()).addElement(song);
+                Song song = (Song) libraryPanel.getLibrarySongPanel().getSongList().getSelectedValue();
+                ((DefaultListModel) schedulePanel.getScheduleList().getModel()).addElement(song);
             }
         });
 

@@ -1,0 +1,17 @@
+AssignmentInOperand
+DoNotUseThreads
+MethodArgumentCouldBeFinal
+ShortVariable
+CyclomaticComplexity
+UseLocaleWithCaseConversions
+AvoidInstantiatingObjectsInLoops
+LocalVariableCouldBeFinal
+DataflowAnomalyAnalysis
+NPathComplexity
+EmptyCatchBlock
+AvoidDeeplyNestedIfStmts
+LongVariable
+CallSuperInConstructor
+DoNotCallSystemExit
+BeanMembersShouldSerialize
+OnlyOneReturn

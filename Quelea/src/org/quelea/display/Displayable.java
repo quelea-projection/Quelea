@@ -6,6 +6,6 @@ package org.quelea.display;
  */
 public interface Displayable {
 
-    
+    String getXML();
 
 }

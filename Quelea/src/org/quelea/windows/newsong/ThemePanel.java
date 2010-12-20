@@ -4,6 +4,7 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
+import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
@@ -49,7 +50,7 @@ public class ThemePanel extends JPanel {
         canvas.setText(SAMPLE_LYRICS);
         add(canvas, BorderLayout.CENTER);
         JPanel toolbarPanel = new JPanel();
-        toolbarPanel.setLayout(new BoxLayout(toolbarPanel, BoxLayout.Y_AXIS));
+        toolbarPanel.setLayout(new GridLayout(2, 1));
         setupFontToolbar();
         toolbarPanel.add(fontToolbar);
         setupBackgroundToolbar();

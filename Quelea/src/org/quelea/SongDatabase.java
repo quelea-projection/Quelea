@@ -12,7 +12,7 @@ import org.quelea.display.Song;
 import org.quelea.display.SongSection;
 
 /**
- * The class that controls the database that stores all the song data.
+ * The class that controls the database.
  * @author Michael
  */
 public class SongDatabase {
@@ -34,12 +34,12 @@ public class SongDatabase {
                         + "lyrics varchar_ignorecase(" + Integer.MAX_VALUE + "),"
                         + "background varchar(256))");
             }
-            catch(SQLException ex) { //Horrible but only way with hsqldb
+            catch (SQLException ex) { //Horrible but only way with hsqldb
                 System.out.println("Songs table already exists.");
             }
             stat.close();
         }
-        catch(ClassNotFoundException ex) {
+        catch (ClassNotFoundException ex) {
             ex.printStackTrace();
         }
     }
@@ -52,9 +52,12 @@ public class SongDatabase {
      */
     private ResultSet runSelectExpression(String expression) throws SQLException {
         Statement stat = conn.createStatement();
-        ResultSet ret = stat.executeQuery(expression);
-        stat.close();
-        return ret;
+        try {
+            return stat.executeQuery(expression);
+        }
+        finally {
+            stat.close();
+        }
     }
 
     /**
@@ -64,21 +67,27 @@ public class SongDatabase {
     public Song[] getSongs() {
         try {
             final ResultSet rs = runSelectExpression("select * from songs");
-            List<Song> songs = new ArrayList<Song>();
-            while(rs.next()) {
-                songs.add(new Song(rs.getString("title"), rs.getString("author")){
-                    {
-                        setLyrics(rs.getString("lyrics"));
-                        setID(rs.getInt("id"));
-                        for(SongSection section : getSections()) {
-                            section.setTheme(Theme.parseDBString(rs.getString("background")));
+            try {
+                List<Song> songs = new ArrayList<Song>();
+                while (rs.next()) {
+                    songs.add(new Song(rs.getString("title"), rs.getString("author")) {
+
+                        {
+                            setLyrics(rs.getString("lyrics"));
+                            setID(rs.getInt("id"));
+                            for (SongSection section : getSections()) {
+                                section.setTheme(Theme.parseDBString(rs.getString("background")));
+                            }
                         }
-                    }
-                });
+                    });
+                }
+                return songs.toArray(new Song[songs.size()]);
             }
-            return songs.toArray(new Song[songs.size()]);
+            finally {
+                rs.close();
+            }
         }
-        catch(SQLException ex) {
+        catch (SQLException ex) {
             ex.printStackTrace();
             return null;
         }
@@ -92,27 +101,33 @@ public class SongDatabase {
     public boolean addSong(Song song) {
         try {
             PreparedStatement stat = conn.prepareStatement("insert into songs(title, author, lyrics, background) values(?, ?, ?, ?)");
-            stat.setString(1, song.getTitle());
-            stat.setString(2, song.getAuthor());
-            stat.setString(3, song.getLyrics());
-            String theme = "";
-            if(song.getSections().length>0) {
-                theme = song.getSections()[0].getTheme().toDBString();
-            }
-            stat.setString(4, theme);
-            stat.executeUpdate();
             Statement stId = conn.createStatement();
-            int id=-1;
-            stId.execute("call IDENTITY()");
-            ResultSet resultSet = stId.getResultSet();
-            while(resultSet.next()) {
-                id = resultSet.getInt(1);
+            try {
+                stat.setString(1, song.getTitle());
+                stat.setString(2, song.getAuthor());
+                stat.setString(3, song.getLyrics());
+                String theme = "";
+                if (song.getSections().length > 0) {
+                    theme = song.getSections()[0].getTheme().toDBString();
+                }
+                stat.setString(4, theme);
+                stat.executeUpdate();
+                int id = -1;
+                stId.execute("call IDENTITY()");
+                ResultSet resultSet = stId.getResultSet();
+                while (resultSet.next()) {
+                    id = resultSet.getInt(1);
+                }
+                resultSet.close();
+                song.setID(id);
+                return true;
             }
-            song.setID(id);
-            stat.close();
-            return true;
+            finally {
+                stat.close();
+                stId.close();
+            }
         }
-        catch(SQLException ex) {
+        catch (SQLException ex) {
             ex.printStackTrace();
             return false;
         }
@@ -125,7 +140,7 @@ public class SongDatabase {
      */
     public boolean updateSong(Song song) {
         try {
-            if(song.getID()==-1) {
+            if (song.getID() == -1) {
                 addSong(song);
             }
             PreparedStatement stat = conn.prepareStatement("update songs set title=?, author=?, lyrics=?, background=? where id=?");
@@ -133,7 +148,7 @@ public class SongDatabase {
             stat.setString(2, song.getAuthor());
             stat.setString(3, song.getLyrics());
             String theme = "";
-            if(song.getSections().length > 0) {
+            if (song.getSections().length > 0) {
                 theme = song.getSections()[0].getTheme().toDBString();
             }
             stat.setString(4, theme);
@@ -141,7 +156,7 @@ public class SongDatabase {
             stat.executeUpdate();
             return true;
         }
-        catch(SQLException ex) {
+        catch (SQLException ex) {
             ex.printStackTrace();
             return false;
         }
@@ -159,7 +174,7 @@ public class SongDatabase {
             stat.executeUpdate();
             return true;
         }
-        catch(SQLException ex) {
+        catch (SQLException ex) {
             ex.printStackTrace();
             return false;
         }
