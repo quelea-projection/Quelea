@@ -12,10 +12,7 @@ import javax.swing.JToolBar;
 import javax.swing.border.EmptyBorder;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
-import org.quelea.Background;
 import org.quelea.Utils;
-import org.quelea.display.Song;
-import org.quelea.display.SongSection;
 
 /**
  * The panel displaying the schedule / order of service. Items from here are
@@ -25,12 +22,12 @@ import org.quelea.display.SongSection;
  */
 public class SchedulePanel extends JPanel {
 
-    private ScheduleList scheduleList;
-    private JButton removeButton;
-    private JButton upButton;
-    private JButton downButton;
-    private JToolBar toolbar;
-    private JToolBar header;
+    private final ScheduleList scheduleList;
+    private final JButton removeButton;
+    private final JButton upButton;
+    private final JButton downButton;
+    private final JToolBar toolbar;
+    private final JToolBar header;
 
     /**
      * Create and initialise the schedule panel.

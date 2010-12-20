@@ -1,5 +1,2 @@
 /*C3*/SET SCHEMA PUBLIC
 ROLLBACK
-DELETE FROM SONGS WHERE ID=35
-INSERT INTO SONGS VALUES(35,'All things bright and beautiful','Traditional','Chorus\u000aAll things bright and beautiful,\u000aAll creatures great and small,\u000aAll things wise and wonderful,\u000aThe Lord God made them all. \u000a\u000aVerse\u000aEach little flower that opens,\u000aEach little bird that sings,\u000aHe made their glowing colours,\u000aHe made their tiny wings.\u000a\u000aVerse\u000aThe purple-headed mountain,\u000aThe river running by,\u000aThe sunset and the morning,\u000aThat brightens up the sky;\u000a\u000aVerse\u000aThe cold wind in the winter,\u000aThe pleasant summer sun,\u000aThe ripe fruits in the garden,\u000aHe made them every one;\u000a\u000aVerse\u000aThe tall trees in the greenwood,\u000aThe meadows for our play,\u000aThe rushes by the water,\u000aTo gather every day;\u000a\u000aVerse\u000aHe gave us eyes to see them,\u000aAnd lips that we might tell\u000aHow great is God Almighty,\u000aWho has made all things well.','fontname:Arial$fontbold:true$fontitalic:false$fontcolour:java.awt.Color[r=79,g=255,b=237]$backgroundimage:watercross.jpg')
-COMMIT

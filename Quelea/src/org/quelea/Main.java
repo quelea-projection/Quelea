@@ -23,7 +23,7 @@ import org.quelea.windows.newsong.SongEntryWindow;
  * The main class, sets everything in motion...
  * @author Michael
  */
-public class Main {
+public final class Main {
 
     private static MainWindow mainWindow;
     private static LyricWindow fullScreenWindow;

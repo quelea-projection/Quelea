@@ -1,56 +1,33 @@
 package org.quelea.windows.main;
 
 import java.awt.Component;
-import java.awt.dnd.DragGestureEvent;
-import java.awt.dnd.DragGestureListener;
-import java.awt.dnd.DragSourceDragEvent;
-import java.awt.dnd.DragSourceDropEvent;
-import java.awt.dnd.DragSourceEvent;
-import java.awt.dnd.DragSourceListener;
-import java.awt.dnd.DropTargetDragEvent;
-import java.awt.dnd.DropTargetDropEvent;
-import java.awt.dnd.DropTargetEvent;
-import java.awt.dnd.DropTargetListener;
 import javax.swing.DefaultListModel;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.ListCellRenderer;
 import javax.swing.ListSelectionModel;
 import javax.swing.border.EmptyBorder;
+import org.quelea.Schedule;
 import org.quelea.Utils;
+import org.quelea.display.Displayable;
 import org.quelea.display.Song;
 
 /**
  * The schedule list, all the items that are to be displayed in the service.
  * @author Michael
  */
-public class ScheduleList extends JList implements DropTargetListener {
+public class ScheduleList extends JList {
 
-    public void dragEnter(DropTargetDragEvent dtde) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    public void dragOver(DropTargetDragEvent dtde) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    public void dropActionChanged(DropTargetDragEvent dtde) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    public void dragExit(DropTargetEvent dte) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    public void drop(DropTargetDropEvent dtde) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
+    private Schedule schedule;
 
     /**
      * A direction; either up or down. Used for rearranging the order of items
      * in the service.
      */
-    public enum Direction {UP, DOWN}
+    public enum Direction {
+
+        UP, DOWN
+    }
 
     /**
      * Used for displaying summaries of items in the service in the schedule
@@ -62,12 +39,12 @@ public class ScheduleList extends JList implements DropTargetListener {
          * @inheritDoc
          */
         public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
-            if(value==null || !(value instanceof Song)) {
+            if (!(value instanceof Song)) {
                 return new JLabel();
             }
             setBorder(new EmptyBorder(5, 5, 5, 5));
-            Song songValue = (Song)value;
-            setText("<html>"+songValue.getTitle()+"<br/><i>"+songValue.getAuthor()+"</i></html>");
+            Song songValue = (Song) value;
+            setText("<html>" + songValue.getTitle() + "<br/><i>" + songValue.getAuthor() + "</i></html>");
             setIcon(Utils.getImageIcon("icons/lyrics.png"));
             if (isSelected) {
                 setBackground(list.getSelectionBackground());
@@ -82,7 +59,6 @@ public class ScheduleList extends JList implements DropTargetListener {
             setOpaque(true);
             return this;
         }
-
     }
 
     /**
@@ -91,9 +67,50 @@ public class ScheduleList extends JList implements DropTargetListener {
      */
     public ScheduleList(DefaultListModel model) {
         super(model);
+        schedule = new Schedule();
         setDragEnabled(true);
         setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         setCellRenderer(new SummaryRenderer());
+    }
+
+    /**
+     * Get the current schedule in use on this list.
+     * @return
+     */
+    public Schedule getSchedule() {
+        schedule.clear();
+        for(int i=0 ; i<getModel().getSize() ; i++) {
+            schedule.add((Displayable)getModel().getElementAt(i));
+        }
+        return schedule;
+    }
+
+    /**
+     * Erase everything in the current schedule and set the contents of this
+     * list to the current schedule.
+     * @param schedule the schedule.
+     */
+    public void setSchedule(Schedule schedule) {
+        clearSchedule();
+        for(Displayable displayable : schedule) {
+            ((DefaultListModel)getModel()).addElement(displayable);
+        }
+        this.schedule = schedule;
+    }
+
+    /**
+     * Clear the current schedule without warning.
+     */
+    public void clearSchedule() {
+        ((DefaultListModel)getModel()).clear();
+    }
+
+    /**
+     * Determine whether the schedule list is empty.
+     * @return true if it's empty, false otherwise.
+     */
+    public boolean isEmpty() {
+        return getModel().getSize()==0;
     }
 
     /**
@@ -103,7 +120,7 @@ public class ScheduleList extends JList implements DropTargetListener {
     public void removeCurrentItem() {
         DefaultListModel model = (DefaultListModel) getModel();
         int selectedIndex = getSelectedIndex();
-        if(selectedIndex != -1) {
+        if (selectedIndex != -1) {
             model.remove(getSelectedIndex());
         }
     }
@@ -115,21 +132,20 @@ public class ScheduleList extends JList implements DropTargetListener {
     public void moveCurrentItem(Direction direction) {
         DefaultListModel model = (DefaultListModel) getModel();
         int selectedIndex = getSelectedIndex();
-        if(selectedIndex == -1) { //Nothing selected
+        if (selectedIndex == -1) { //Nothing selected
             return;
         }
-        if(direction==Direction.UP && selectedIndex > 0) {
-            Object temp = model.get(selectedIndex-1);
-            model.set(selectedIndex-1, model.get(selectedIndex));
+        if (direction == Direction.UP && selectedIndex > 0) {
+            Object temp = model.get(selectedIndex - 1);
+            model.set(selectedIndex - 1, model.get(selectedIndex));
             model.set(selectedIndex, temp);
-            setSelectedIndex(selectedIndex-1);
+            setSelectedIndex(selectedIndex - 1);
         }
-        if (direction == Direction.DOWN && selectedIndex < model.getSize()-1) {
+        if (direction == Direction.DOWN && selectedIndex < model.getSize() - 1) {
             Object temp = model.get(selectedIndex + 1);
             model.set(selectedIndex + 1, model.get(selectedIndex));
             model.set(selectedIndex, temp);
             setSelectedIndex(selectedIndex + 1);
         }
     }
-
 }
