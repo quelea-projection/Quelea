@@ -11,7 +11,7 @@ import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.filechooser.FileFilter;
 import org.quelea.Schedule;
-import org.quelea.Utils;
+import org.quelea.utils.Utils;
 import org.quelea.display.Song;
 import org.quelea.windows.newsong.SongEntryWindow;
 

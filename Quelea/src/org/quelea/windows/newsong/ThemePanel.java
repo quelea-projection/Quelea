@@ -9,7 +9,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
-import javax.swing.BoxLayout;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -18,7 +17,7 @@ import javax.swing.JToggleButton;
 import javax.swing.JToolBar;
 import org.quelea.Background;
 import org.quelea.Theme;
-import org.quelea.Utils;
+import org.quelea.utils.Utils;
 import org.quelea.windows.main.LyricCanvas;
 
 /**
@@ -27,7 +26,7 @@ import org.quelea.windows.main.LyricCanvas;
  */
 public class ThemePanel extends JPanel {
 
-    public static final String[] SAMPLE_LYRICS = {"Amazing Grace! how sweet the sound", "That saved a wretch like me", "I once was lost but now am found", "Was blind, but now I see."};
+    private static final String[] SAMPLE_LYRICS = {"Amazing Grace! how sweet the sound", "That saved a wretch like me", "I once was lost but now am found", "Was blind, but now I see."};
     private JToolBar fontToolbar;
     private JToolBar backgroundToolbar;
     private JComboBox fontSelection;
@@ -38,7 +37,7 @@ public class ThemePanel extends JPanel {
     private JComboBox fontSizeSelection;
     private JToggleButton boldButton;
     private JToggleButton italicButton;
-    private LyricCanvas canvas;
+    private final LyricCanvas canvas;
 
     /**
      * Create and initialise the theme panel.

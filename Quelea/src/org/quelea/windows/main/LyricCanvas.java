@@ -8,6 +8,7 @@ import java.awt.Graphics;
 import java.awt.Image;
 import java.awt.font.TextAttribute;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -23,8 +24,8 @@ public class LyricCanvas extends JPanel {
     private Theme theme;
     private String[] text;
     private Font font;
-    private int aspectWidth;
-    private int aspectHeight;
+    private final int aspectWidth;
+    private final int aspectHeight;
     private boolean cleared;
     private boolean blacked;
 
@@ -125,7 +126,7 @@ public class LyricCanvas extends JPanel {
      * in place but remove all the text.
      */
     public void toggleClear() {
-        cleared = !cleared;
+        cleared ^= true;
         repaint();
     }
 
@@ -142,7 +143,7 @@ public class LyricCanvas extends JPanel {
      * image (if any) just displaying a black screen.
      */
     public void toggleBlack() {
-        blacked = !blacked;
+        blacked ^= true;
         repaint();
     }
 
@@ -200,7 +201,7 @@ public class LyricCanvas extends JPanel {
      * in the array is one line.
      */
     public void setText(String[] text) {
-        this.text = text;
+        this.text = Arrays.copyOf(text, text.length);
         repaint();
     }
 
@@ -210,7 +211,7 @@ public class LyricCanvas extends JPanel {
      * @return the current text.
      */
     public String[] getText() {
-        return text;
+        return Arrays.copyOf(text, text.length);
     }
 
     /**

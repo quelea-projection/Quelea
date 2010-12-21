@@ -16,8 +16,8 @@ import javax.swing.JWindow;
  */
 public class LyricWindow extends JWindow {
 
-    private static Cursor BLANK_CURSOR;
-    private LyricCanvas canvas;
+    private static final Cursor BLANK_CURSOR;
+    private final LyricCanvas canvas;
 
     /**
      * Initialise cursor hiding

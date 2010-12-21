@@ -1,4 +1,4 @@
-package org.quelea;
+package org.quelea.utils;
 
 import java.awt.Color;
 import java.awt.Font;

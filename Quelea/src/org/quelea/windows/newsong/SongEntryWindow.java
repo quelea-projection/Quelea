@@ -12,7 +12,7 @@ import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
 import javax.swing.border.EmptyBorder;
 import org.quelea.Theme;
-import org.quelea.Utils;
+import org.quelea.utils.Utils;
 import org.quelea.display.Song;
 
 /**
@@ -22,11 +22,11 @@ import org.quelea.display.Song;
  */
 public class SongEntryWindow extends JDialog {
 
-    private JTabbedPane tabbedPane;
     private BasicSongPanel basicSongPanel;
     private ThemePanel themePanel;
-    private JButton confirmButton;
-    private JButton cancelButton;
+    private final JTabbedPane tabbedPane;
+    private final JButton confirmButton;
+    private final JButton cancelButton;
     private Song song;
 
     /**

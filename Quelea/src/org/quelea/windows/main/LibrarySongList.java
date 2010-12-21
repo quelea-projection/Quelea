@@ -16,9 +16,9 @@ import org.quelea.display.SongSection;
  */
 public class LibrarySongList extends JList {
 
-    private SortedListModel tempModel;
-    private SortedListModel fullModel;
-    private LibraryPopupMenu popupMenu;
+    private final SortedListModel tempModel;
+    private final SortedListModel fullModel;
+    private final LibraryPopupMenu popupMenu;
 
     /**
      * Create a new library song list.

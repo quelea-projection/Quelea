@@ -15,7 +15,7 @@ import javax.swing.event.ListDataEvent;
 import javax.swing.event.ListDataListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
-import org.quelea.Utils;
+import org.quelea.utils.Utils;
 
 /**
  * The panel used for browsing the database of songs and adding any songs to
@@ -24,11 +24,10 @@ import org.quelea.Utils;
  */
 public class LibrarySongPanel extends JPanel {
 
-    private JTextField searchBox;
-    private LibrarySongList songList;
-    private JToolBar toolbar;
-    private JButton removeButton;
-    private JButton addButton;
+    private final JTextField searchBox;
+    private final LibrarySongList songList;
+    private final JButton removeButton;
+    private final JButton addButton;
 
     /**
      * Create and initialise the library song panel.
@@ -85,7 +84,7 @@ public class LibrarySongPanel extends JPanel {
         northPanel.add(searchBox);
         add(northPanel, BorderLayout.NORTH);
 
-        toolbar = new JToolBar();
+        JToolBar toolbar = new JToolBar();
         toolbar.setLayout(new BoxLayout(toolbar, BoxLayout.Y_AXIS));
         toolbar.setFloatable(false);
         addButton = new JButton(Utils.getImageIcon("icons/newsong.png"));

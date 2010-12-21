@@ -7,7 +7,7 @@ import javax.swing.JLabel;
 import javax.swing.JToolBar;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
-import org.quelea.Utils;
+import org.quelea.utils.Utils;
 
 /**
  * The panel displaying the preview lyrics selection - this is viewed before
@@ -15,14 +15,13 @@ import org.quelea.Utils;
  */
 public class SelectPreviewLyricsPanel extends SelectLyricsPanel {
 
-    private final JToolBar header;
     private final JButton liveButton;
 
     /**
      * Create a new preview lyrics panel.
      */
     public SelectPreviewLyricsPanel() {
-        header = new JToolBar();
+        JToolBar header = new JToolBar();
         header.setFloatable(false);
         header.add(new JLabel("<html><b>Preview</b></html>"));
         header.add(new JToolBar.Separator());

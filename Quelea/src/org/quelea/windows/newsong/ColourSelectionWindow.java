@@ -9,7 +9,7 @@ import javax.swing.JButton;
 import javax.swing.JColorChooser;
 import javax.swing.JDialog;
 import javax.swing.JPanel;
-import org.quelea.Utils;
+import org.quelea.utils.Utils;
 
 /**
  * A colour selection window where the user can select a colour they require.
@@ -17,9 +17,9 @@ import org.quelea.Utils;
  */
 public class ColourSelectionWindow extends JDialog {
     
-    private JColorChooser chooser;
-    private JButton confirmButton;
-    private JButton cancelButton;
+    private final JColorChooser chooser;
+    private final JButton confirmButton;
+    private final JButton cancelButton;
 
     /**
      * Create and initialise the colour selection window.

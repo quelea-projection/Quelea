@@ -10,9 +10,9 @@ import javax.swing.JPopupMenu;
  */
 public class LibraryPopupMenu extends JPopupMenu {
     
-    private JMenuItem addToSchedule;
-    private JMenuItem editDB;
-    private JMenuItem removeFromDB;
+    private final JMenuItem addToSchedule;
+    private final JMenuItem editDB;
+    private final JMenuItem removeFromDB;
 
     /**
      * Create and initialise the popup menu.

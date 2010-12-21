@@ -23,10 +23,9 @@ import org.quelea.display.Song;
  */
 public class BasicSongPanel extends JPanel {
 
-    private JTextArea lyricsArea;
-    private JTextField titleField;
-    private JTextField authorField;
-    private JTextField[] attributes;
+    private final JTextArea lyricsArea;
+    private final JTextField titleField;
+    private final JTextField authorField;
 
     /**
      * Create and initialise the song panel.
@@ -46,7 +45,7 @@ public class BasicSongPanel extends JPanel {
         authorField = new JTextField();
         authorField.setName("Author");
 
-        attributes = new JTextField[]{titleField, authorField};
+        JTextField[] attributes = new JTextField[]{titleField, authorField};
 
         JPanel topPanel = new JPanel(new SpringLayout());
         for(int i = 0; i < attributes.length; i++) {
@@ -103,6 +102,7 @@ public class BasicSongPanel extends JPanel {
             }
 
             public void focusLost(FocusEvent e) {
+                //Nothing needs to be done here.
             }
         });
         getTitleField().requestFocus();

@@ -12,7 +12,7 @@ import javax.swing.JToolBar;
 import javax.swing.border.EmptyBorder;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
-import org.quelea.Utils;
+import org.quelea.utils.Utils;
 
 /**
  * The panel displaying the schedule / order of service. Items from here are
@@ -26,8 +26,6 @@ public class SchedulePanel extends JPanel {
     private final JButton removeButton;
     private final JButton upButton;
     private final JButton downButton;
-    private final JToolBar toolbar;
-    private final JToolBar header;
 
     /**
      * Create and initialise the schedule panel.
@@ -36,7 +34,7 @@ public class SchedulePanel extends JPanel {
         setLayout(new BorderLayout());
         scheduleList = new ScheduleList(new DefaultListModel());
 
-        toolbar = new JToolBar(JToolBar.VERTICAL);
+        JToolBar toolbar = new JToolBar(JToolBar.VERTICAL);
         toolbar.setFloatable(false);
         removeButton = new JButton(Utils.getImageIcon("icons/remove.png"));
         removeButton.setToolTipText("Remove song");
@@ -91,7 +89,7 @@ public class SchedulePanel extends JPanel {
             }
         });
 
-        header = new JToolBar();
+        JToolBar header = new JToolBar();
         header.setFloatable(false);
         header.add(new JLabel("<html><b>Order of Service</b></html>"));
 

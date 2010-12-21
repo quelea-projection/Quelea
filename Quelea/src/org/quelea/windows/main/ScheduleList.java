@@ -8,7 +8,7 @@ import javax.swing.ListCellRenderer;
 import javax.swing.ListSelectionModel;
 import javax.swing.border.EmptyBorder;
 import org.quelea.Schedule;
-import org.quelea.Utils;
+import org.quelea.utils.Utils;
 import org.quelea.display.Displayable;
 import org.quelea.display.Song;
 

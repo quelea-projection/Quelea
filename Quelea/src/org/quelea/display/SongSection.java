@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import org.quelea.Theme;
-import org.quelea.Utils;
+import org.quelea.utils.Utils;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -64,44 +64,38 @@ public class SongSection {
      * @return the song section.
      */
     public static SongSection parseXML(Node sectionNode) {
-        try {
-            NamedNodeMap attributes = sectionNode.getAttributes();
-            String sectionTitle = null;
-            String[] lyrics = null;
-            Theme theme = null;
-            if (attributes != null) {
-                Node titleNode = attributes.getNamedItem("title");
-                if (titleNode != null) {
-                    sectionTitle = titleNode.getTextContent();
-                }
+        NamedNodeMap attributes = sectionNode.getAttributes();
+        String sectionTitle = null;
+        String[] lyrics = null;
+        Theme theme = null;
+        if (attributes != null) {
+            Node titleNode = attributes.getNamedItem("title");
+            if (titleNode != null) {
+                sectionTitle = titleNode.getTextContent();
             }
-            NodeList nodelist = sectionNode.getChildNodes();
-            for(int i=0 ; i<nodelist.getLength() ; i++) {
-                Node node = nodelist.item(i);
-                if(node.getNodeName().equals("theme")) {
-                    theme = Theme.parseDBString(node.getTextContent());
-                }
-                else if(node.getNodeName().equals("lyrics")) {
-                    String[] rawLyrics = node.getTextContent().split("\n");
-                    List<String> newLyrics = new ArrayList<String>();
-                    for (String line : rawLyrics) {
-                        if (!line.isEmpty()) {
-                            newLyrics.add(line);
-                        }
+        }
+        NodeList nodelist = sectionNode.getChildNodes();
+        for (int i = 0; i < nodelist.getLength(); i++) {
+            Node node = nodelist.item(i);
+            if (node.getNodeName().equals("theme")) {
+                theme = Theme.parseDBString(node.getTextContent());
+            }
+            else if (node.getNodeName().equals("lyrics")) {
+                String[] rawLyrics = node.getTextContent().split("\n");
+                List<String> newLyrics = new ArrayList<String>();
+                for (String line : rawLyrics) {
+                    if (!line.isEmpty()) {
+                        newLyrics.add(line);
                     }
-                    lyrics = newLyrics.toArray(new String[newLyrics.size()]);
                 }
+                lyrics = newLyrics.toArray(new String[newLyrics.size()]);
             }
-            SongSection ret = new SongSection(sectionTitle, lyrics);
-            if(theme != null) {
-                ret.setTheme(theme);
-            }
-            return ret;
         }
-        catch (Exception ex) {
-            ex.printStackTrace();
-            return null;
+        SongSection ret = new SongSection(sectionTitle, lyrics);
+        if (theme != null) {
+            ret.setTheme(theme);
         }
+        return ret;
     }
 
     /**

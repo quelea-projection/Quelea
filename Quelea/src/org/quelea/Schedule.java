@@ -1,14 +1,14 @@
 package org.quelea;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
-import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 import java.util.zip.ZipOutputStream;
@@ -17,6 +17,7 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import org.quelea.display.Displayable;
 import org.quelea.display.Song;
+import org.quelea.utils.LoggerUtils;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -29,6 +30,7 @@ import org.xml.sax.SAXException;
  */
 public class Schedule implements Iterable<Displayable> {
 
+    private static final Logger LOGGER = LoggerUtils.getLogger();
     private final List<Displayable> displayables;
     private File file;
 
@@ -91,6 +93,7 @@ public class Schedule implements Iterable<Displayable> {
             }
         }
         catch (IOException ex) {
+            LOGGER.log(Level.WARNING, "Couldn't write the schedule to file", ex);
             return false;
         }
     }
@@ -113,6 +116,7 @@ public class Schedule implements Iterable<Displayable> {
             }
         }
         catch (IOException ex) {
+            LOGGER.log(Level.WARNING, "Couldn't read the schedule from file", ex);
             return null;
         }
     }
@@ -137,7 +141,6 @@ public class Schedule implements Iterable<Displayable> {
      * @return the schedule.
      */
     private static Schedule parseXML(InputStream inputStream) {
-//        InputStream inputStream = new ByteArrayInputStream(xml.getBytes());
         try {
             DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
             DocumentBuilder builder = factory.newDocumentBuilder();
@@ -150,19 +153,19 @@ public class Schedule implements Iterable<Displayable> {
                 if (name.equalsIgnoreCase("song")) {
                     newSchedule.add(Song.parseXML(node));
                 }
-                else {
-                    throw new RuntimeException("Invalid node name: " + name);
-                }
             }
             return newSchedule;
         }
         catch (ParserConfigurationException ex) {
+            LOGGER.log(Level.WARNING, "Couldn't parse the schedule", ex);
             return null;
         }
         catch (SAXException ex) {
+            LOGGER.log(Level.WARNING, "Couldn't parse the schedule", ex);
             return null;
         }
         catch (IOException ex) {
+            LOGGER.log(Level.WARNING, "Couldn't parse the schedule", ex);
             return null;
         }
     }
