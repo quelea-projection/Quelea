@@ -21,6 +21,7 @@
             <fileset dir="${basedir}/img"/>
         </copy>
         <delete file="${dist.jar.dir}/README.TXT" failonerror="false"/>
+        <copy file="${basedir}/README.TXT" todir="${dist.jar.dir}/README.TXT" failonerror="false"/>
         <java jar="launch4j/launch4j.jar" failonerror="false">
             <arg value="launch4j/config.xml"/>
         </java>
