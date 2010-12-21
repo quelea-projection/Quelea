@@ -30,7 +30,7 @@ public class MainWindow extends JFrame {
      * Create a new main window.
      */
     public MainWindow() {
-        super("Quelea V0.0 alpha");
+        super("Quelea (Version " + Utils.VERSION + " Pre-release)");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
         try {
