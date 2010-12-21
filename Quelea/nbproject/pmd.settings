@@ -1,3 +1,4 @@
+TooManyMethods
 AssignmentInOperand
 DoNotUseThreads
 MethodArgumentCouldBeFinal
@@ -10,8 +11,10 @@ DataflowAnomalyAnalysis
 NPathComplexity
 EmptyCatchBlock
 AvoidDeeplyNestedIfStmts
+NullAssignment
 LongVariable
 CallSuperInConstructor
+AbstractNaming
 DoNotCallSystemExit
 BeanMembersShouldSerialize
 OnlyOneReturn

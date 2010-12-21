@@ -58,6 +58,11 @@ public class SongSection {
         return xml.toString();
     }
 
+    /**
+     * Parse the given node to create a new song section.
+     * @param sectionNode the section node.
+     * @return the song section.
+     */
     public static SongSection parseXML(Node sectionNode) {
         try {
             NamedNodeMap attributes = sectionNode.getAttributes();

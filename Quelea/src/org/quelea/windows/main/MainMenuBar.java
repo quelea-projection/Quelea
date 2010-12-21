@@ -12,6 +12,11 @@ import javax.swing.JMenuItem;
  */
 public class MainMenuBar extends JMenuBar {
 
+    private JMenuItem newSchedule;
+    private JMenuItem openSchedule;
+    private JMenuItem saveSchedule;
+    private JMenuItem saveScheduleAs;
+
     /**
      * Create a new main menu bar and initialise all the components.
      */
@@ -20,10 +25,50 @@ public class MainMenuBar extends JMenuBar {
     }
 
     /**
+     * Get the new schedule menu item.
+     * @return the new schedule menu item.
+     */
+    public JMenuItem getNewSchedule() {
+        return newSchedule;
+    }
+
+    /**
+     * Get the open schedule menu item.
+     * @return the open schedule menu item.
+     */
+    public JMenuItem getOpenSchedule() {
+        return openSchedule;
+    }
+
+    /**
+     * Get the save schedule menu item.
+     * @return the save schedule menu item.
+     */
+    public JMenuItem getSaveSchedule() {
+        return saveSchedule;
+    }
+
+    /**
+     * Get the save as schedule menu item.
+     * @return the save as schedule menu item.
+     */
+    public JMenuItem getSaveScheduleAs() {
+        return saveScheduleAs;
+    }
+
+    /**
      * Add the file menu to the menu bar.
      */
     private void addFileMenu() {
         JMenu fileMenu = new JMenu("File");
+        newSchedule = new JMenuItem("New");
+        fileMenu.add(newSchedule);
+        openSchedule = new JMenuItem("Open");
+        fileMenu.add(openSchedule);
+        saveSchedule = new JMenuItem("Save");
+        fileMenu.add(saveSchedule);
+        saveScheduleAs = new JMenuItem("Save as...");
+        fileMenu.add(saveScheduleAs);
         JMenuItem exit = new JMenuItem("Exit");
         exit.addActionListener(new ActionListener() {
 

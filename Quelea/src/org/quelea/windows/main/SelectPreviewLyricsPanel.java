@@ -15,8 +15,8 @@ import org.quelea.Utils;
  */
 public class SelectPreviewLyricsPanel extends SelectLyricsPanel {
 
-    private JToolBar header;
-    private JButton liveButton;
+    private final JToolBar header;
+    private final JButton liveButton;
 
     /**
      * Create a new preview lyrics panel.

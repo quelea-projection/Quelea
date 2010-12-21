@@ -11,6 +11,7 @@ import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.filechooser.FileFilter;
 import org.quelea.Schedule;
+import org.quelea.Utils;
 import org.quelea.display.Song;
 import org.quelea.windows.newsong.SongEntryWindow;
 
@@ -20,10 +21,10 @@ import org.quelea.windows.newsong.SongEntryWindow;
  */
 public class MainWindow extends JFrame {
 
-    private MainToolbar toolbar;
-    private MainMenuBar menubar;
-    private MainPanel mainpanel;
-    private SongEntryWindow songEntryWindow;
+    private final MainToolbar toolbar;
+    private final MainMenuBar menubar;
+    private final MainPanel mainpanel;
+    private final SongEntryWindow songEntryWindow;
 
     /**
      * Create a new main window.
@@ -58,47 +59,123 @@ public class MainWindow extends JFrame {
                 songEntryWindow.setVisible(true);
             }
         });
-        toolbar.getNewButton().addActionListener(new ActionListener() {
-
-            public void actionPerformed(ActionEvent e) {
-                if (confirmClear()) {
-                    mainpanel.getSchedulePanel().getScheduleList().clearSchedule();
-                }
-            }
-        });
-        toolbar.getOpenButton().addActionListener(new ActionListener() {
-
-            public void actionPerformed(ActionEvent e) {
-                if (confirmClear()) {
-                    JFileChooser chooser = getFileChooser();
-                    if (chooser.showOpenDialog(MainWindow.this) == JFileChooser.APPROVE_OPTION) {
-                        Schedule schedule = Schedule.fromFile(chooser.getSelectedFile());
-                        mainpanel.getSchedulePanel().getScheduleList().setSchedule(schedule);
-                    }
-                }
-            }
-        });
-        toolbar.getSaveButton().addActionListener(new ActionListener() {
-
-            public void actionPerformed(ActionEvent e) {
-                Schedule schedule = mainpanel.getSchedulePanel().getScheduleList().getSchedule();
-                if(schedule.getFile()==null) {
-                    JFileChooser chooser = getFileChooser();
-                    if (chooser.showSaveDialog(MainWindow.this) == JFileChooser.APPROVE_OPTION) {
-                        schedule.setFile(chooser.getSelectedFile());
-                    }
-                }
-                boolean success = schedule.writeToFile();
-                if (!success) {
-                    JOptionPane.showMessageDialog(MainWindow.this, "Couldn't save schedule", "Error", JOptionPane.ERROR_MESSAGE, null);
-                }
-            }
-        });
-
+        addToolbarListeners();
+        addMenuBarListeners();
         setJMenuBar(menubar);
         add(toolbar, BorderLayout.NORTH);
         add(mainpanel);
         pack();
+    }
+
+    /**
+     * Add the required action listeners to the menu bar.
+     */
+    private void addMenuBarListeners() {
+        menubar.getNewSchedule().addActionListener(new NewScheduleActionListener());
+        menubar.getOpenSchedule().addActionListener(new OpenScheduleActionListener());
+        menubar.getSaveSchedule().addActionListener(new SaveScheduleActionListener());
+        menubar.getSaveScheduleAs().addActionListener(new SaveScheduleAsActionListener());
+    }
+
+    /**
+     * Add the required action listeners to the toolbar.
+     */
+    private void addToolbarListeners() {
+        toolbar.getNewButton().addActionListener(new NewScheduleActionListener());
+        toolbar.getOpenButton().addActionListener(new OpenScheduleActionListener());
+        toolbar.getSaveButton().addActionListener(new SaveScheduleActionListener());
+    }
+
+    /**
+     * The action listener fired when a new schedule is created.
+     */
+    private class NewScheduleActionListener implements ActionListener {
+
+        public void actionPerformed(ActionEvent e) {
+            if (confirmClear()) {
+                mainpanel.getSchedulePanel().getScheduleList().clearSchedule();
+            }
+        }
+
+    }
+
+    /**
+     * The action listener fired when a schedule is opened.
+     */
+    private class OpenScheduleActionListener implements ActionListener {
+
+        public void actionPerformed(ActionEvent e) {
+            if (confirmClear()) {
+                JFileChooser chooser = getFileChooser();
+                if (chooser.showOpenDialog(MainWindow.this) == JFileChooser.APPROVE_OPTION) {
+                    Schedule schedule = Schedule.fromFile(chooser.getSelectedFile());
+                    if(schedule==null) {
+                        JOptionPane.showMessageDialog(MainWindow.this,
+                                "There was a problem opening the schedule. Perhaps it's corrupt, or is not a schedule saved by Quelea.",
+                                "Error opening schedule", JOptionPane.ERROR_MESSAGE, null);
+                    }
+                    else {
+                        mainpanel.getSchedulePanel().getScheduleList().setSchedule(schedule);
+                    }
+                }
+            }
+        }
+
+    }
+
+    /**
+     * The action listener fired when a schedule is saved.
+     */
+    private class SaveScheduleActionListener implements ActionListener {
+
+        public void actionPerformed(ActionEvent e) {
+            saveSchedule(false);
+        }
+
+    }
+
+    /**
+     * The action listener fired when a schedule is saved "as" a file.
+     */
+    private class SaveScheduleAsActionListener implements ActionListener {
+
+        public void actionPerformed(ActionEvent e) {
+            saveSchedule(true);
+        }
+
+    }
+
+    /**
+     * Save the current schedule.
+     * @param saveAs true if the file location should be specified, false if
+     * the current one should be used.
+     */
+    private void saveSchedule(boolean saveAs) {
+        Schedule schedule = mainpanel.getSchedulePanel().getScheduleList().getSchedule();
+        File file = null;
+        if (saveAs || schedule.getFile() == null) {
+            JFileChooser chooser = getFileChooser();
+            if (chooser.showSaveDialog(MainWindow.this) == JFileChooser.APPROVE_OPTION) {
+                file = chooser.getSelectedFile();
+                if(!file.getName().endsWith("." + Utils.EXTENSION)) {
+                    file = new File(file.getAbsoluteFile() + "." + Utils.EXTENSION);
+                }
+                if(file.exists()) {
+                    int result = JOptionPane.showConfirmDialog(MainWindow.this, file.getName() + " already exists. Overwrite?",
+                            "Overwrite", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE, null);
+                    if(result!=JOptionPane.YES_OPTION) {
+                        file = null;
+                    }
+                }
+                schedule.setFile(file);
+            }
+        }
+        if(file != null) {
+            boolean success = schedule.writeToFile();
+            if (!success) {
+                JOptionPane.showMessageDialog(MainWindow.this, "Couldn't save schedule", "Error", JOptionPane.ERROR_MESSAGE, null);
+            }
+        }
     }
 
     /**
@@ -115,12 +192,12 @@ public class MainWindow extends JFrame {
                 if (f.isDirectory()) {
                     return true;
                 }
-                return f.getName().toLowerCase().endsWith(".qsch");
+                return f.getName().toLowerCase().endsWith("." + Utils.EXTENSION);
             }
 
             @Override
             public String getDescription() {
-                return "Quelea schedules (.qsch)";
+                return "Quelea schedules (." + Utils.EXTENSION + ")";
             }
         });
         return chooser;
