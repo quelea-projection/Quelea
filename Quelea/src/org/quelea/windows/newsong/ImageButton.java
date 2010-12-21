@@ -34,6 +34,7 @@ public class ImageButton extends JButton {
     public ImageButton(final JTextField imageLocationField, final LyricCanvas canvas) {
         super("Select...");
         fileChooser = new JLocationFileChooser("img");
+        fileChooser.setAcceptAllFileFilterUsed(false);
         fileChooser.setFileFilter(new FileFilter() {
 
             @Override
