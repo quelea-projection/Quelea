@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="iso-8859-1" standalone="yes" ?>
+
+<installation version="1.0">
+
+    <info>
+        <appname>Quelea</appname>
+        <appversion>0.1</appversion>
+        <javaversion>1.6</javaversion>
+        <url>http://www.quelea.org/</url>
+<!--        <pack200/>-->
+    </info>
+
+    <guiprefs width="640" height="480" resizable="no"/>
+
+    <locale>
+        <langpack iso3="eng"/>
+    </locale>
+
+    <!-- 
+        The resources section.
+        The ids must be these ones if you want to use the LicencePanel and/or the InfoPanel.
+    -->
+    <resources>
+        <res id="LicencePanel.licence" src="license.txt"/>
+        <res id="HTMLHelloPanel.welcome" src="../izpack/welcome.html"/>
+        <res src="../izpack/shortcutSpec.xml" id="shortcutSpec.xml"/>
+        <res src="../izpack/Unix_shortcutSpec.xml" id="Unix_shortcutSpec.xml"/>
+    </resources>
+
+    <native type="izpack" name="ShellLink.dll"/>
+    <native type="3rdparty" name="COIOSHelper.dll" stage="both">
+        <os family="windows"/>
+    </native>
+
+    <listeners>
+        <listener installer="RegistryInstallerListener" uninstaller="RegistryUninstallerListener">
+            <os family="windows"/>
+        </listener>
+    </listeners>
+
+    <panels>
+        <panel classname="HTMLHelloPanel" id="welcome"/>
+        <panel classname="LicencePanel"/>
+        <panel classname="TargetPanel"/>
+<!--        <panel classname="PacksPanel"/>-->
+        <panel classname="InstallPanel"/>
+        <panel classname="ShortcutPanel"/>
+        <panel classname="FinishPanel"/>
+    </panels>
+
+    <packs>
+        <pack name="base" required="yes" hidden="true">
+            <description>Core components</description>
+            <file src="lib" targetdir="$INSTALL_PATH"/>
+            <file src="Quelea.jar" targetdir="$INSTALL_PATH"/>
+            <file src="Readme.txt" targetdir="$INSTALL_PATH"/>
+            <file src="license.txt" targetdir="$INSTALL_PATH"/>
+        </pack>
+        <pack name="database" required="yes" hidden="true">
+            <description>The database</description>
+            <file src="database" targetdir="$INSTALL_PATH"/>
+        </pack>
+        <pack name="images" required="yes" hidden="true">
+            <description>Images and icons</description>
+            <file src="icons" targetdir="$INSTALL_PATH"/>
+            <file src="img" targetdir="$INSTALL_PATH"/>
+        </pack>
+    </packs>
+
+</installation>

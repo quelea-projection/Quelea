@@ -8,8 +8,10 @@
 <!-- You can turn off the Compile on Save (or Deploy on Save) setting -->
 <!-- in the project's Project Properties dialog box.-->
 <project name="Quelea" default="default" basedir=".">
+    <taskdef name="izpack" classpath="${basedir}/izpack/standalone-compiler.jar" classname="com.izforge.izpack.ant.IzPackTask"/>
     <description>Builds, tests, and runs Quelea.</description>
     <import file="nbproject/build-impl.xml"/>
+
     <target name="-post-jar">
         <copy todir="${dist.jar.dir}/icons">
             <fileset dir="${basedir}/icons"/>
@@ -21,13 +23,13 @@
             <fileset dir="${basedir}/img"/>
         </copy>
         <delete file="${dist.jar.dir}/README.TXT" failonerror="false"/>
-        <copy file="${basedir}/README.TXT" todir="${dist.jar.dir}/README.TXT" failonerror="false"/>
+        <copy file="${basedir}/README.TXT" todir="${dist.jar.dir}" failonerror="false"/>
+        <copy file="${basedir}/license.txt" todir="${dist.jar.dir}"/>
+        <mkdir dir="${dist.jar.dir}/standalone"/>
+        <izpack input="${basedir}/izpack/config.xml" output="${dist.jar.dir}/standalone/quelea-install.jar" basedir="${dist.jar.dir}"/>
         <java jar="launch4j/launch4j.jar" failonerror="false">
             <arg value="launch4j/config.xml"/>
         </java>
-        <zip file="${dist.jar.dir}/quelea.zip">
-            <fileset dir="${dist.jar.dir}"/>
-        </zip>
     </target>
     <!--
 
