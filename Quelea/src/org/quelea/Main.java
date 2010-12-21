@@ -48,9 +48,6 @@ public final class Main {
         if(gds.length > 1) {
             fullScreenWindow = new LyricWindow(gds[1].getDefaultConfiguration().getBounds());
         }
-        else {
-            fullScreenWindow = null;
-        }
 
         SwingUtilities.invokeLater(new Runnable() {
 

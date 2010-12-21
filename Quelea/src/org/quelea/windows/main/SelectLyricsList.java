@@ -25,7 +25,7 @@ public class SelectLyricsList extends JList {
          * @inheritDoc
          */
         public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
-            if (value == null || !(value instanceof SongSection)) {
+            if (!(value instanceof SongSection)) {
                 return new JLabel();
             }
             setBorder(new EmptyBorder(5, 5, 5, 5));

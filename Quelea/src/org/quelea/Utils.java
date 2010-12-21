@@ -21,6 +21,8 @@ import org.w3c.dom.NodeList;
  */
 public final class Utils {
 
+    public static final String EXTENSION = "qsch";
+
     /**
      * Don't instantiate me. I bite.
      */

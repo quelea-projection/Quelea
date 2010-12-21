@@ -19,8 +19,8 @@ import org.quelea.display.SongSection;
  */
 public abstract class SelectLyricsPanel extends JPanel {
 
-    private SelectLyricsList lyricsList;
-    private Set<LyricCanvas> canvases = new HashSet<LyricCanvas>();
+    private final SelectLyricsList lyricsList;
+    private final Set<LyricCanvas> canvases = new HashSet<LyricCanvas>();
 
     /**
      * Create a new lyrics panel.
@@ -59,19 +59,19 @@ public abstract class SelectLyricsPanel extends JPanel {
      * @param canvas the canvas to register.
      */
     public final void registerLyricCanvas(final LyricCanvas canvas) {
-        if(canvas == null) {
+        if (canvas == null) {
             return;
         }
         getLyricsList().addListSelectionListener(new ListSelectionListener() {
 
             public void valueChanged(ListSelectionEvent e) {
                 int selectedIndex = getLyricsList().getSelectedIndex();
-                if(selectedIndex == -1) {
+                if (selectedIndex == -1) {
                     return;
                 }
                 SongSection currentSection = (SongSection) getLyricsList().getModel().getElementAt(selectedIndex);
                 canvas.setTheme(currentSection.getTheme());
-                canvas.setText((currentSection).getLyrics());
+                canvas.setText(currentSection.getLyrics());
             }
         });
         canvases.add(canvas);

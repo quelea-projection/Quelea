@@ -6,6 +6,8 @@ import java.awt.event.ActionListener;
 import javax.swing.DefaultListModel;
 import javax.swing.JPanel;
 import javax.swing.JSplitPane;
+import javax.swing.event.ListDataEvent;
+import javax.swing.event.ListDataListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import org.quelea.display.Song;
@@ -18,10 +20,10 @@ import org.quelea.display.SongSection;
  */
 public class MainPanel extends JPanel {
 
-    private SchedulePanel schedulePanel;
-    private LibraryPanel libraryPanel;
-    private SelectPreviewLyricsPanel previewPanel;
-    private SelectLiveLyricsPanel livePanel;
+    private final SchedulePanel schedulePanel;
+    private final LibraryPanel libraryPanel;
+    private final SelectPreviewLyricsPanel previewPanel;
+    private final SelectLiveLyricsPanel livePanel;
 
     /**
      * Create the new main panel.
@@ -33,20 +35,34 @@ public class MainPanel extends JPanel {
         previewPanel = new SelectPreviewLyricsPanel();
         livePanel = new SelectLiveLyricsPanel();
 
+        schedulePanel.getScheduleList().getModel().addListDataListener(new ListDataListener() {
+
+            /**
+             * Nothing needs to be done here.
+             */
+            public void intervalAdded(ListDataEvent e) {
+            }
+
+            /**
+             * Nothing needs to be done here.
+             */
+            public void intervalRemoved(ListDataEvent e) {
+            }
+
+            /**
+             * listChanged() must be called in case we're removing the last
+             * element in the list, in which case the preview panel must be
+             * cleared.
+             */
+            public void contentsChanged(ListDataEvent e) {
+                listChanged();
+            }
+        });
+
         schedulePanel.getScheduleList().addListSelectionListener(new ListSelectionListener() {
 
             public void valueChanged(ListSelectionEvent e) {
-                if (schedulePanel.getScheduleList().getSelectedIndex() == -1) {
-                    return;
-                }
-                Song newSong = (Song) schedulePanel.getScheduleList().getModel().getElementAt(schedulePanel.getScheduleList().getSelectedIndex());
-                DefaultListModel model = previewPanel.getLyricsList().getModel();
-                model.clear();
-                for (SongSection section : newSong.getSections()) {
-                    model.addElement(section);
-                }
-                previewPanel.getLyricsList().setSelectedIndex(0);
-                previewPanel.getLyricsList().requestFocus();
+                listChanged();
             }
         });
 
@@ -77,12 +93,32 @@ public class MainPanel extends JPanel {
 
         JSplitPane scheduleAndLibrary = new JSplitPane(JSplitPane.VERTICAL_SPLIT, schedulePanel, libraryPanel);
         scheduleAndLibrary.setResizeWeight(0.5);
+        scheduleAndLibrary.setOneTouchExpandable(true);
         JSplitPane previewAndLive = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, previewPanel, livePanel);
         previewAndLive.setResizeWeight(0.5);
         JSplitPane mainSplit = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, scheduleAndLibrary, previewAndLive);
         mainSplit.setResizeWeight(0.2);
         mainSplit.setSize(300, 300);
         add(mainSplit, BorderLayout.CENTER);
+    }
+
+    /**
+     * This method should be called every time the list values are updated or
+     * changed.
+     */
+    private void listChanged() {
+        if (schedulePanel.getScheduleList().getSelectedIndex() == -1) {
+            previewPanel.getLyricsList().getModel().clear();
+            return;
+        }
+        Song newSong = (Song) schedulePanel.getScheduleList().getModel().getElementAt(schedulePanel.getScheduleList().getSelectedIndex());
+        DefaultListModel model = previewPanel.getLyricsList().getModel();
+        model.clear();
+        for (SongSection section : newSong.getSections()) {
+            model.addElement(section);
+        }
+        previewPanel.getLyricsList().setSelectedIndex(0);
+        previewPanel.getLyricsList().requestFocus();
     }
 
     /**

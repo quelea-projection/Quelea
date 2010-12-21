@@ -23,7 +23,8 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
 /**
- *
+ * A schedule that consists of a number of displayable objects displayed by
+ * Quelea.
  * @author Michael
  */
 public class Schedule implements Iterable<Displayable> {
@@ -31,26 +32,48 @@ public class Schedule implements Iterable<Displayable> {
     private final List<Displayable> displayables;
     private File file;
 
+    /**
+     * Create a new schedule.
+     */
     public Schedule() {
         displayables = new ArrayList<Displayable>();
     }
 
+    /**
+     * Set the file that this schedule should be saved to.
+     * @param file the file.
+     */
     public void setFile(File file) {
         this.file = file;
     }
 
+    /**
+     * Get the file where this schedule is being saved.
+     * @return the file.
+     */
     public File getFile() {
         return file;
     }
 
+    /**
+     * Clear all the displayables in this schedule.
+     */
     public void clear() {
         displayables.clear();
     }
 
+    /**
+     * Add a displayable to this schedule.
+     * @param displayable the displayable to add.
+     */
     public void add(Displayable displayable) {
         displayables.add(displayable);
     }
 
+    /**
+     * Write this schedule to a file.
+     * @return true if the write was successful, false otherwise.
+     */
     public boolean writeToFile() {
         if(file==null) {
             return false;
@@ -72,6 +95,11 @@ public class Schedule implements Iterable<Displayable> {
         }
     }
 
+    /**
+     * Generate a schedule object from a saved file.
+     * @param file the file where the schedule is saved.
+     * @return the schedule object.
+     */
     public static Schedule fromFile(File file) {
         try {
             ZipFile zipFile = new ZipFile(file);
@@ -85,11 +113,14 @@ public class Schedule implements Iterable<Displayable> {
             }
         }
         catch (IOException ex) {
-            //TODO: Error
             return null;
         }
     }
 
+    /**
+     * Get this schedule as XML.
+     * @return XML describing this schedule.
+     */
     private String getXML() {
         StringBuilder xml = new StringBuilder();
         xml.append("<schedule>");
@@ -100,7 +131,12 @@ public class Schedule implements Iterable<Displayable> {
         return xml.toString();
     }
 
-    public static Schedule parseXML(InputStream inputStream) {
+    /**
+     * Parse some given XML from an inputstream to create a schedule.
+     * @param inputStream the inputstream where the xml is being read from.
+     * @return the schedule.
+     */
+    private static Schedule parseXML(InputStream inputStream) {
 //        InputStream inputStream = new ByteArrayInputStream(xml.getBytes());
         try {
             DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();

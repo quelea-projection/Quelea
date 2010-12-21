@@ -8,8 +8,26 @@
 <!-- You can turn off the Compile on Save (or Deploy on Save) setting -->
 <!-- in the project's Project Properties dialog box.-->
 <project name="Quelea" default="default" basedir=".">
-    <description>Builds, tests, and runs the project Quelea.</description>
+    <description>Builds, tests, and runs Quelea.</description>
     <import file="nbproject/build-impl.xml"/>
+    <target name="-post-jar">
+        <copy todir="${dist.jar.dir}/icons">
+            <fileset dir="${basedir}/icons"/>
+        </copy>
+        <copy todir="${dist.jar.dir}/database">
+            <fileset dir="${basedir}/database"/>
+        </copy>
+        <copy todir="${dist.jar.dir}/img">
+            <fileset dir="${basedir}/img"/>
+        </copy>
+        <delete file="${dist.jar.dir}/README.TXT" failonerror="false"/>
+        <java jar="launch4j/launch4j.jar" failonerror="false">
+            <arg value="launch4j/config.xml"/>
+        </java>
+        <zip file="${dist.jar.dir}/quelea.zip">
+            <fileset dir="${dist.jar.dir}"/>
+        </zip>
+    </target>
     <!--
 
     There exist several targets which are by default empty and which can be 
