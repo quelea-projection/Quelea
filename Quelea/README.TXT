@@ -1,0 +1,1 @@
+Hi, and thanks for downloading Quelea. Simply extract the contents of this zip file to a folder of your choice, then run quelea.exe (if you're using windows) or quelea.jar (if you're using another OS.)
