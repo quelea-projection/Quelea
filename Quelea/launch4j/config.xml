@@ -2,8 +2,8 @@
 <launch4jConfig>
     <dontWrapJar>false</dontWrapJar>
     <headerType>gui</headerType>
-    <jar>..\dist\Quelea.jar</jar>
-    <outfile>..\dist\quelea.exe</outfile>
+    <jar>..\dist\standalone\quelea-install.jar</jar>
+    <outfile>..\dist\standalone\quelea-install.exe</outfile>
     <errTitle></errTitle>
     <cmdLine></cmdLine>
     <chdir></chdir>
@@ -20,12 +20,12 @@
         <maxVersion></maxVersion>
         <jdkPreference>preferJre</jdkPreference>
     </jre>
-    <splash>
+<!--    <splash>
         <file>../img/splash.bmp</file>
         <waitForWindow>true</waitForWindow>
         <timeout>10</timeout>
         <timeoutErr>true</timeoutErr>
-    </splash>
+    </splash>-->
     <messages>
         <startupErr>Sorry, there was an error starting the program.</startupErr>
         <bundledJreErr>Sorry, there was an error with the bundled JRE.</bundledJreErr>
