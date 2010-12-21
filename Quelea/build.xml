@@ -24,6 +24,7 @@
         </copy>
         <delete file="${dist.jar.dir}/README.TXT" failonerror="false"/>
         <copy file="${basedir}/README.TXT" todir="${dist.jar.dir}" failonerror="false"/>
+        <copy file="${basedir}/quelea.properties" todir="${dist.jar.dir}"/>
         <copy file="${basedir}/license.txt" todir="${dist.jar.dir}"/>
         <mkdir dir="${dist.jar.dir}/standalone"/>
         <izpack input="${basedir}/izpack/config.xml" output="${dist.jar.dir}/standalone/quelea-install.jar" basedir="${dist.jar.dir}"/>

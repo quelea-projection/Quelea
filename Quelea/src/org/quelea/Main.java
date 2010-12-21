@@ -17,6 +17,7 @@ import org.pushingpixels.substance.api.skin.SubstanceBusinessLookAndFeel;
 import org.quelea.display.Song;
 import org.quelea.display.SongSection;
 import org.quelea.utils.LoggerUtils;
+import org.quelea.utils.QueleaProperties;
 import org.quelea.windows.main.LibrarySongPanel;
 import org.quelea.windows.main.LyricWindow;
 import org.quelea.windows.main.MainWindow;
@@ -50,9 +51,19 @@ public final class Main {
         final GraphicsDevice[] gds = ge.getScreenDevices();
         LOGGER.log(Level.INFO, "Number of displays: {0}", gds.length);
 
-        if(gds.length > 1) {
-            LOGGER.log(Level.INFO, "Starting display on monitor 1");
-            fullScreenWindow = new LyricWindow(gds[1].getDefaultConfiguration().getBounds());
+        int controlScreenProp = QueleaProperties.get().getControlScreen();
+        final int controlScreen;
+        final int projectorScreen = QueleaProperties.get().getProjectorScreen();
+
+        if(gds.length <= controlScreenProp) {
+            controlScreen = 0;
+        }
+        else {
+            controlScreen = controlScreenProp;
+        }
+        if(gds.length > projectorScreen) {
+            LOGGER.log(Level.INFO, "Starting projector display on monitor {0}", projectorScreen);
+            fullScreenWindow = new LyricWindow(gds[projectorScreen].getDefaultConfiguration().getBounds());
         }
 
         SwingUtilities.invokeLater(new Runnable() {
@@ -74,7 +85,7 @@ public final class Main {
 
                 addSongPanelListeners();
 
-                mainWindow.setLocation((int) gds[0].getDefaultConfiguration().getBounds().getMinX() + 100, (int) gds[0].getDefaultConfiguration().getBounds().getMinY() + 100);
+                mainWindow.setLocation((int) gds[controlScreen].getDefaultConfiguration().getBounds().getMinX() + 100, (int) gds[controlScreen].getDefaultConfiguration().getBounds().getMinY() + 100);
                 mainWindow.setVisible(true);
 
                 if(fullScreenWindow == null) {

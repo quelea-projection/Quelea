@@ -8,12 +8,11 @@ import java.awt.Image;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.imageio.ImageIO;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
-import org.w3c.dom.NamedNodeMap;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
 
 /**
  * General utility class containing a bunch of static methods.
@@ -21,8 +20,7 @@ import org.w3c.dom.NodeList;
  */
 public final class Utils {
 
-    public static final String EXTENSION = "qsch";
-    public static final String VERSION = "0.1";
+    private static final Logger LOGGER = LoggerUtils.getLogger();
 
     /**
      * Don't instantiate me. I bite.
@@ -42,69 +40,6 @@ public final class Utils {
                 .replace(">", "&gt;")
                 .replace("\"", "&quot;")
                 .replace("'", "&apos;");
-    }
-
-    /**
-     * Taken from JBoss.
-     * @param n the XML node to get the string from.
-     * @return the node as a string (including tags.)
-     */
-    public static String nodeToString(Node n) {
-
-        String name = n.getNodeName();
-
-        int type = n.getNodeType();
-
-        if (Node.CDATA_SECTION_NODE == type) {
-            return "<![CDATA[" + n.getNodeValue() + "]]&gt;";
-        }
-
-        if (name.charAt(0)=='#') {
-            return "";
-        }
-
-        StringBuilder sb = new StringBuilder();
-        sb.append('<').append(name);
-
-        NamedNodeMap attrs = n.getAttributes();
-        if (attrs != null) {
-            for (int i = 0; i < attrs.getLength(); i++) {
-                Node attr = attrs.item(i);
-                sb.append(' ').append(attr.getNodeName()).append("=\"").append(attr.getNodeValue()).append(
-                        "\"");
-            }
-        }
-
-        String textContent = null;
-        NodeList children = n.getChildNodes();
-
-        if (children.getLength() == 0) {
-            if ((textContent = n.getTextContent()) != null && !"".equals(textContent)) {
-                sb.append(textContent).append("</").append(name).append('>');
-            }
-            else {
-                sb.append("/>").append('\n');
-            }
-        }
-        else {
-            sb.append('>').append('\n');
-            boolean hasValidChildren = false;
-            for (int i = 0; i < children.getLength(); i++) {
-                String childToString = nodeToString(children.item(i));
-                if (!"".equals(childToString)) {
-                    sb.append(childToString);
-                    hasValidChildren = true;
-                }
-            }
-
-            if (!hasValidChildren && ((textContent = n.getTextContent()) != null)) {
-                sb.append(textContent);
-            }
-
-            sb.append("</").append(name).append('>');
-        }
-
-        return sb.toString();
     }
 
     /**
@@ -132,6 +67,7 @@ public final class Utils {
             return ImageIO.read(new File(location));
         }
         catch(IOException ex) {
+            LOGGER.log(Level.WARNING, "Couldn't get image: " + location, ex);
             return null;
         }
     }

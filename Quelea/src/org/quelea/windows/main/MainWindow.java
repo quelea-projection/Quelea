@@ -11,8 +11,8 @@ import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.filechooser.FileFilter;
 import org.quelea.Schedule;
-import org.quelea.utils.Utils;
 import org.quelea.display.Song;
+import org.quelea.utils.QueleaProperties;
 import org.quelea.windows.newsong.SongEntryWindow;
 
 /**
@@ -30,7 +30,7 @@ public class MainWindow extends JFrame {
      * Create a new main window.
      */
     public MainWindow() {
-        super("Quelea (Version " + Utils.VERSION + " Pre-release)");
+        super("Quelea (Version " + QueleaProperties.get().getVersion() + " Pre-release)");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
         try {
@@ -156,9 +156,10 @@ public class MainWindow extends JFrame {
         if (saveAs || schedule.getFile() == null) {
             JFileChooser chooser = getFileChooser();
             if (chooser.showSaveDialog(MainWindow.this) == JFileChooser.APPROVE_OPTION) {
+                String extension = QueleaProperties.get().getScheduleExtension();
                 file = chooser.getSelectedFile();
-                if(!file.getName().endsWith("." + Utils.EXTENSION)) {
-                    file = new File(file.getAbsoluteFile() + "." + Utils.EXTENSION);
+                if(!file.getName().endsWith("." + extension)) {
+                    file = new File(file.getAbsoluteFile() + "." + extension);
                 }
                 if(file.exists()) {
                     int result = JOptionPane.showConfirmDialog(MainWindow.this, file.getName() + " already exists. Overwrite?",
@@ -183,7 +184,9 @@ public class MainWindow extends JFrame {
      * @return the JFileChooser.
      */
     private JFileChooser getFileChooser() {
+        final String extension = QueleaProperties.get().getScheduleExtension();
         JFileChooser chooser = new JFileChooser();
+        chooser.setAcceptAllFileFilterUsed(false);
         chooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
         chooser.setFileFilter(new FileFilter() {
 
@@ -192,12 +195,12 @@ public class MainWindow extends JFrame {
                 if (f.isDirectory()) {
                     return true;
                 }
-                return f.getName().toLowerCase().endsWith("." + Utils.EXTENSION);
+                return f.getName().toLowerCase().endsWith("." + extension);
             }
 
             @Override
             public String getDescription() {
-                return "Quelea schedules (." + Utils.EXTENSION + ")";
+                return "Quelea schedules (." + extension + ")";
             }
         });
         return chooser;
