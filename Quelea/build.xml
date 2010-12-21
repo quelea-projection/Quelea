@@ -8,11 +8,17 @@
 <!-- You can turn off the Compile on Save (or Deploy on Save) setting -->
 <!-- in the project's Project Properties dialog box.-->
 <project name="Quelea" default="default" basedir=".">
-    <taskdef name="izpack" classpath="${basedir}/izpack/standalone-compiler.jar" classname="com.izforge.izpack.ant.IzPackTask"/>
     <description>Builds, tests, and runs Quelea.</description>
     <import file="nbproject/build-impl.xml"/>
+    <taskdef name="izpack" classpath="${basedir}/izpack/standalone-compiler.jar" classname="com.izforge.izpack.ant.IzPackTask"/>
+    <taskdef name="launch4j" classpath="launch4j/launch4j.jar" classname="net.sf.launch4j.ant.Launch4jTask" />
+    <property file="quelea.properties"/>
 
     <target name="-post-jar">
+
+        <property name="CPInstaller" value="${dist.jar.dir}/standalone/quelea-V${quelea.version}-crossplatform-install.jar"/>
+        <property name="WindowsInstaller" value="${dist.jar.dir}/standalone/quelea-V${quelea.version}-windows-install.exe"/>
+        
         <copy todir="${dist.jar.dir}/icons">
             <fileset dir="${basedir}/icons"/>
         </copy>
@@ -27,10 +33,8 @@
         <copy file="${basedir}/quelea.properties" todir="${dist.jar.dir}"/>
         <copy file="${basedir}/license.txt" todir="${dist.jar.dir}"/>
         <mkdir dir="${dist.jar.dir}/standalone"/>
-        <izpack input="${basedir}/izpack/config.xml" output="${dist.jar.dir}/standalone/quelea-install.jar" basedir="${dist.jar.dir}"/>
-        <java jar="launch4j/launch4j.jar" failonerror="false">
-            <arg value="launch4j/config.xml"/>
-        </java>
+        <izpack input="${basedir}/izpack/config.xml" output="${CPInstaller}" basedir="${dist.jar.dir}"/>
+        <launch4j jar="${CPInstaller}" configFile="launch4j/config.xml" outfile="${WindowsInstaller}"/>
     </target>
     <!--
 
