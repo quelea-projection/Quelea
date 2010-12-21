@@ -1,14 +1,12 @@
 package org.quelea.windows.main;
 
 import java.awt.BorderLayout;
-import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import javax.swing.JLabel;
 import javax.swing.JToggleButton;
 import javax.swing.JToolBar;
-import javax.swing.border.EmptyBorder;
-import org.quelea.Utils;
+import org.quelea.utils.Utils;
 
 /**
  * The panel displaying the live lyrics selection - changes made on this panel
@@ -17,9 +15,8 @@ import org.quelea.Utils;
  */
 public class SelectLiveLyricsPanel extends SelectLyricsPanel {
 
-    private JToolBar header;
-    private JToggleButton black;
-    private JToggleButton clear;
+    private final JToggleButton black;
+    private final JToggleButton clear;
 
     /**
      * Create a new live lyrics panel.
@@ -27,7 +24,7 @@ public class SelectLiveLyricsPanel extends SelectLyricsPanel {
      * controls.
      */
     public SelectLiveLyricsPanel() {
-        header = new JToolBar();
+        JToolBar header = new JToolBar();
         header.setFloatable(false);
         header.add(new JLabel("<html><b>Live</b></html>"));
         header.add(new JToolBar.Separator());
@@ -57,5 +54,21 @@ public class SelectLiveLyricsPanel extends SelectLyricsPanel {
         header.add(clear);
         add(header, BorderLayout.NORTH);
     }
-    
+
+    /**
+     * Get the "black" toggle button.
+     * @return the "black" toggle button.
+     */
+    public JToggleButton getBlack() {
+        return black;
+    }
+
+    /**
+     * Get the "clear" toggle button.
+     * @return the "clear" toggle button.
+     */
+    public JToggleButton getClear() {
+        return clear;
+    }
+
 }

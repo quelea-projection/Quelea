@@ -5,6 +5,8 @@ import java.awt.GraphicsEnvironment;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.sql.SQLException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
@@ -14,6 +16,7 @@ import javax.swing.UnsupportedLookAndFeelException;
 import org.pushingpixels.substance.api.skin.SubstanceBusinessLookAndFeel;
 import org.quelea.display.Song;
 import org.quelea.display.SongSection;
+import org.quelea.utils.LoggerUtils;
 import org.quelea.windows.main.LibrarySongPanel;
 import org.quelea.windows.main.LyricWindow;
 import org.quelea.windows.main.MainWindow;
@@ -25,6 +28,7 @@ import org.quelea.windows.newsong.SongEntryWindow;
  */
 public final class Main {
 
+    private static final Logger LOGGER = LoggerUtils.getLogger();
     private static MainWindow mainWindow;
     private static LyricWindow fullScreenWindow;
     private static SongDatabase database;
@@ -44,8 +48,10 @@ public final class Main {
 
         GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
         final GraphicsDevice[] gds = ge.getScreenDevices();
+        LOGGER.log(Level.INFO, "Number of displays: {0}", gds.length);
 
         if(gds.length > 1) {
+            LOGGER.log(Level.INFO, "Starting display on monitor 1");
             fullScreenWindow = new LyricWindow(gds[1].getDefaultConfiguration().getBounds());
         }
 
@@ -57,6 +63,7 @@ public final class Main {
                     database = new SongDatabase();
                 }
                 catch(SQLException ex) {
+                    LOGGER.log(Level.SEVERE, "SQL excpetion - hopefully this is just because quelea is already running", ex);
                     JOptionPane.showMessageDialog(null, "It looks like you already have an instance of Quelea running, make sure you close all instances before running the program.", "Already running", JOptionPane.ERROR_MESSAGE);
                     System.exit(0);
                 }
@@ -98,7 +105,7 @@ public final class Main {
                     return;
                 }
                 if(!database.removeSong(song)) {
-                    //Error
+                    JOptionPane.showMessageDialog(mainWindow, "There was an error removing the song from the database.", "Error", JOptionPane.ERROR_MESSAGE, null);
                 }
                 SortedListModel model = (SortedListModel) songPanel.getSongList().getModel();
                 model.removeElement(song);
@@ -123,7 +130,7 @@ public final class Main {
                 SortedListModel model = (SortedListModel) mainWindow.getMainPanel().getLibraryPanel().getLibrarySongPanel().getSongList().getModel();
                 model.removeElement(song);
                 if(!database.updateSong(song)) {
-                    //Error
+                    JOptionPane.showMessageDialog(mainWindow, "There was an error updating the song in the database.", "Error", JOptionPane.ERROR_MESSAGE, null);
                 }
                 songEntryWindow.setVisible(false);
                 model.add(song);
@@ -149,7 +156,7 @@ public final class Main {
             UIManager.setLookAndFeel(new SubstanceBusinessLookAndFeel());
         }
         catch(UnsupportedLookAndFeelException ex) {
-            //Oh well...
+            LOGGER.log(Level.INFO, "Couldn't set the look and feel to substance.", ex);
         }
 
         JFrame.setDefaultLookAndFeelDecorated(true);

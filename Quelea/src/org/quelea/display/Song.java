@@ -3,7 +3,7 @@ package org.quelea.display;
 import java.util.ArrayList;
 import java.util.List;
 import org.quelea.Theme;
-import org.quelea.Utils;
+import org.quelea.utils.Utils;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
@@ -108,9 +108,7 @@ public class Song implements Displayable, Searchable, Comparable<Song> {
             if (Utils.isTitle(sectionLines[0])) {
                 sectionTitle = sectionLines[0];
                 newLyrics = new String[sectionLines.length - 1];
-                for (int i = 1; i < sectionLines.length; i++) {
-                    newLyrics[i - 1] = sectionLines[i];
-                }
+                System.arraycopy(sectionLines, 1, newLyrics, 0, newLyrics.length);
             }
             sections.add(new SongSection(sectionTitle, newLyrics));
         }

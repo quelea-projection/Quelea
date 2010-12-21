@@ -1,5 +1,6 @@
 package org.quelea;
 
+import org.quelea.utils.Utils;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;

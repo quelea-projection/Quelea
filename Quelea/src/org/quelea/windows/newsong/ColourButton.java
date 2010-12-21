@@ -6,7 +6,7 @@ import java.awt.event.ActionListener;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.SwingUtilities;
-import org.quelea.Utils;
+import org.quelea.utils.Utils;
 
 /**
  * The colour button where the user selects a colour.
@@ -15,7 +15,7 @@ import org.quelea.Utils;
 public class ColourButton extends JButton {
 
     private Color colour;
-    private ColourSelectionWindow selectionWindow;
+    private final ColourSelectionWindow selectionWindow;
 
     /**
      * Create and initialise the colour button.

@@ -1,5 +1,6 @@
 package org.quelea;
 
+import org.quelea.utils.Utils;
 import java.awt.Color;
 import java.awt.Font;
 
@@ -15,9 +16,9 @@ public class Theme {
     public static final Background DEFAULT_BACKGROUND = new Background(Color.BLACK);
     public static final Theme DEFAULT_THEME = new Theme(DEFAULT_FONT, DEFAULT_FONT_COLOR, DEFAULT_BACKGROUND);
 
-    private Font font;
-    private Color fontColor;
-    private Background background;
+    private final Font font;
+    private final Color fontColor;
+    private final Background background;
 
     /**
      * Create a new theme with a specified font, font colour and background.

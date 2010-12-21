@@ -37,16 +37,12 @@ public class MainPanel extends JPanel {
 
         schedulePanel.getScheduleList().getModel().addListDataListener(new ListDataListener() {
 
-            /**
-             * Nothing needs to be done here.
-             */
             public void intervalAdded(ListDataEvent e) {
+                //Nothing needs to be done here.
             }
 
-            /**
-             * Nothing needs to be done here.
-             */
             public void intervalRemoved(ListDataEvent e) {
+                //Nothing needs to be done here.
             }
 
             /**
