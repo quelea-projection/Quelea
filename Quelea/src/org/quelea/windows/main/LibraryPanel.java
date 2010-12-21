@@ -12,20 +12,20 @@ import javax.swing.JTabbedPane;
  */
 public class LibraryPanel extends JPanel {
 
-    private JTabbedPane tabbedPane;
-    private LibrarySongPanel songPanel;
+    private final LibrarySongPanel songPanel;
 
     /**
      * Create a new library panel.
      */
     public LibraryPanel() {
         setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
-        tabbedPane = new JTabbedPane();
+        JTabbedPane tabbedPane = new JTabbedPane();
 
         songPanel = new LibrarySongPanel();
         tabbedPane.addTab("Songs", songPanel);
-        tabbedPane.addTab("Bible", new JPanel());
-        tabbedPane.addTab("Media", new JPanel());
+        //TODO: Add other panels
+//        tabbedPane.addTab("Bible", new JPanel());
+//        tabbedPane.addTab("Media", new JPanel());
 
         add(tabbedPane);
     }
