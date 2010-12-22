@@ -1,20 +1,16 @@
 package org.quelea.windows.main;
 
-import java.awt.Color;
 import java.awt.Component;
 import java.awt.Rectangle;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import javax.swing.DefaultListCellRenderer;
 import javax.swing.DropMode;
-import javax.swing.Icon;
 import javax.swing.JList;
 import javax.swing.ListSelectionModel;
-import javax.swing.border.Border;
 import org.quelea.SortedListModel;
 import org.quelea.display.Song;
 import org.quelea.display.SongSection;
-import sun.swing.DefaultLookup;
 
 /**
  * The list that displays the songs in the library.
