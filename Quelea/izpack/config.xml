@@ -8,7 +8,7 @@
         <javaversion>1.6</javaversion>
         <url>http://www.quelea.org/</url>
         <!--Uncomment the following line when going to production, drastically reduces size of the installer-->
-<!--        <pack200/>-->
+        <pack200/>
     </info>
 
     <guiprefs width="640" height="480" resizable="no"/>
@@ -56,7 +56,7 @@
             <file src="Quelea.jar" targetdir="$INSTALL_PATH"/>
             <file src="Readme.txt" targetdir="$INSTALL_PATH"/>
             <file src="license.txt" targetdir="$INSTALL_PATH"/>
-            <file src="quelea.properties" targetdir="$INSTALL_PATH"/>
+            <file src="quelea.properties" targetdir="$INSTALL_PATH" override="false"/>
         </pack>
         <pack name="database" required="yes" hidden="true">
             <description>The database</description>
