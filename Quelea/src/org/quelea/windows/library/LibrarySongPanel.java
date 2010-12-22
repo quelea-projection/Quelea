@@ -1,4 +1,4 @@
-package org.quelea.windows.main;
+package org.quelea.windows.library;
 
 import java.awt.BorderLayout;
 import javax.swing.BoxLayout;

@@ -1,4 +1,4 @@
-package org.quelea.windows.main;
+package org.quelea.windows.library;
 
 import java.awt.Component;
 import java.awt.Rectangle;

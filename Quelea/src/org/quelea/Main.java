@@ -18,7 +18,7 @@ import org.quelea.display.Song;
 import org.quelea.display.SongSection;
 import org.quelea.utils.LoggerUtils;
 import org.quelea.utils.QueleaProperties;
-import org.quelea.windows.main.LibrarySongPanel;
+import org.quelea.windows.library.LibrarySongPanel;
 import org.quelea.windows.main.LyricWindow;
 import org.quelea.windows.main.MainWindow;
 import org.quelea.windows.newsong.SongEntryWindow;

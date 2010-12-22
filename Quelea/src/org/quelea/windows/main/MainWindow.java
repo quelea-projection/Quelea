@@ -50,14 +50,7 @@ public class MainWindow extends JFrame {
         songEntryWindow = new SongEntryWindow(this);
         optionsDialog = new OptionsDialog(this);
         aboutDialog = new AboutDialog(this);
-        mainpanel.getLibraryPanel().getLibrarySongPanel().getAddButton().addActionListener(new ActionListener() {
-
-            public void actionPerformed(ActionEvent e) {
-                songEntryWindow.centreOnOwner();
-                songEntryWindow.resetNewSong();
-                songEntryWindow.setVisible(true);
-            }
-        });
+        mainpanel.getLibraryPanel().getLibrarySongPanel().getAddButton().addActionListener(new NewSongActionListener());
         mainpanel.getLibraryPanel().getLibrarySongPanel().getSongList().getPopupMenu().getEditDBButton().addActionListener(new ActionListener() {
 
             public void actionPerformed(ActionEvent e) {
@@ -74,6 +67,16 @@ public class MainWindow extends JFrame {
         pack();
     }
 
+    private class NewSongActionListener implements ActionListener {
+
+        public void actionPerformed(ActionEvent e) {
+            songEntryWindow.centreOnOwner();
+            songEntryWindow.resetNewSong();
+            songEntryWindow.setVisible(true);
+        }
+
+    }
+
     /**
      * Add the required action listeners to the menu bar.
      */
@@ -82,6 +85,7 @@ public class MainWindow extends JFrame {
         menubar.getFileMenu().getOpenSchedule().addActionListener(new OpenScheduleActionListener());
         menubar.getFileMenu().getSaveSchedule().addActionListener(new SaveScheduleActionListener());
         menubar.getFileMenu().getSaveScheduleAs().addActionListener(new SaveScheduleAsActionListener());
+        menubar.getDatabaseMenu().getNewSong().addActionListener(new NewSongActionListener());
         menubar.getToolsMenu().getOptions().addActionListener(new ActionListener() {
 
             public void actionPerformed(ActionEvent e) {
