@@ -1,11 +1,11 @@
 package org.quelea.windows.main;
 
+import java.awt.Rectangle;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import javax.swing.DropMode;
 import javax.swing.JList;
 import javax.swing.ListSelectionModel;
-import javax.swing.SwingUtilities;
 import org.quelea.SortedListModel;
 import org.quelea.display.Song;
 import org.quelea.display.SongSection;
@@ -25,7 +25,7 @@ public class LibrarySongList extends JList {
      */
     public LibrarySongList() {
         super(new SortedListModel());
-        SortedListModel model = (SortedListModel)super.getModel();
+        SortedListModel model = (SortedListModel) super.getModel();
         setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         popupMenu = new LibraryPopupMenu();
         fullModel = model;
@@ -33,11 +33,6 @@ public class LibrarySongList extends JList {
         setDragEnabled(true);
         setDropMode(DropMode.ON);
         this.addMouseListener(new MouseAdapter() {
-
-            @Override
-            public void mouseClicked(MouseEvent e) {
-                checkPopup(e);
-            }
 
             @Override
             public void mousePressed(MouseEvent e) {
@@ -50,11 +45,14 @@ public class LibrarySongList extends JList {
             }
 
             private void checkPopup(MouseEvent e) {
-                if(SwingUtilities.isRightMouseButton(e)
-                        && !isSelectionEmpty()
-                        && locationToIndex(e.getPoint())
-                        == getSelectedIndex()) {
-                    popupMenu.show(LibrarySongList.this, e.getX(), e.getY());
+                if (e.isPopupTrigger()) {
+                    int index = locationToIndex(e.getPoint());
+                    Rectangle Rect = getCellBounds(index, index);
+                    index = Rect.contains(e.getPoint().x, e.getPoint().y) ? index : -1;
+                    if(index != -1) {
+                        setSelectedIndex(index);
+                        popupMenu.show(LibrarySongList.this, e.getX(), e.getY());
+                    }
                 }
             }
         });
@@ -66,9 +64,9 @@ public class LibrarySongList extends JList {
      */
     public void filter(String search) {
         tempModel.clear();
-        for(int i=0 ; i<fullModel.getSize() ; i++) {
-            Song s = (Song)fullModel.getElementAt(i);
-            if(s.search(search)) {
+        for (int i = 0; i < fullModel.getSize(); i++) {
+            Song s = (Song) fullModel.getElementAt(i);
+            if (s.search(search)) {
                 tempModel.add(s);
             }
         }
@@ -91,15 +89,14 @@ public class LibrarySongList extends JList {
     @Override
     public String getToolTipText(MouseEvent evt) {
         int index = locationToIndex(evt.getPoint());
-        if(index<0) {
+        if (index < 0) {
             return null;
         }
-        Song song = (Song)getModel().getElementAt(index);
+        Song song = (Song) getModel().getElementAt(index);
         SongSection[] sections = song.getSections();
-        if(sections.length>0) {
+        if (sections.length > 0) {
             return sections[0].getLyrics()[0] + "...";
         }
         return null;
     }
-
 }
