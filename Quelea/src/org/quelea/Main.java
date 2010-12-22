@@ -82,8 +82,8 @@ public final class Main {
                 addDBSongs();
 
                 addNewSongWindowListeners();
-
                 addSongPanelListeners();
+                addDisplayListeners();
 
                 mainWindow.setLocation((int) gds[controlScreen].getDefaultConfiguration().getBounds().getMinX() + 100, (int) gds[controlScreen].getDefaultConfiguration().getBounds().getMinY() + 100);
                 mainWindow.setVisible(true);
@@ -95,6 +95,30 @@ public final class Main {
                     mainWindow.getMainPanel().getLiveLyricsPanel().registerLyricCanvas(fullScreenWindow.getCanvas());
                     fullScreenWindow.setVisible(true);
                 }
+            }
+        });
+    }
+
+    private static void addDisplayListeners() {
+        mainWindow.getOptionsWindow().getOKButton().addActionListener(new ActionListener() {
+
+            public void actionPerformed(ActionEvent e) {
+                QueleaProperties props = QueleaProperties.get();
+                int monitorDisplay = mainWindow.getOptionsWindow().getDisplayPanel().getMonitorDisplay();
+                int projectorDisplay = mainWindow.getOptionsWindow().getDisplayPanel().getProjectorDisplay();
+                props.setControlScreen(monitorDisplay);
+                props.setProjectorScreen(projectorDisplay);
+                
+                GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
+                final GraphicsDevice[] gds = ge.getScreenDevices();
+                if (projectorDisplay == -1) {
+                    fullScreenWindow.setVisible(false);
+                }
+                else {
+                    fullScreenWindow.setVisible(true);
+                    fullScreenWindow.setArea(gds[projectorDisplay].getDefaultConfiguration().getBounds());
+                }
+                mainWindow.setLocation((int) gds[monitorDisplay].getDefaultConfiguration().getBounds().getMinX() + 100, (int) gds[monitorDisplay].getDefaultConfiguration().getBounds().getMinY() + 100);
             }
         });
     }

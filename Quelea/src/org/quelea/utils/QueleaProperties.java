@@ -1,6 +1,7 @@
 package org.quelea.utils;
 
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Properties;
 import java.util.logging.Level;
@@ -35,6 +36,24 @@ public final class QueleaProperties extends Properties {
     }
 
     /**
+     * Save these properties to the file.
+     */
+    private void write() {
+        try {
+            FileWriter writer = new FileWriter(PROP_FILE_LOCATION);
+            try {
+                store(writer, "Auto save");
+            }
+            finally {
+                writer.close();
+            }
+        }
+        catch(IOException ex) {
+            LOGGER.log(Level.WARNING, "Couldn't store properties", ex);
+        }
+    }
+
+    /**
      * Get the singleton instance of this class.
      * @return the instance.
      */
@@ -65,6 +84,24 @@ public final class QueleaProperties extends Properties {
      */
     public int getControlScreen() {
         return Integer.parseInt(getProperty("control.screen", "0"));
+    }
+
+    /**
+     * Set the control screen output.
+     * @param screen the number of the screen to use for the output.
+     */
+    public void setControlScreen(int screen) {
+        setProperty("control.screen", Integer.toString(screen));
+        write();
+    }
+
+    /**
+     * Set the control screen output.
+     * @param screen the number of the screen to use for the output.
+     */
+    public void setProjectorScreen(int screen) {
+        setProperty("projector.screen", Integer.toString(screen));
+        write();
     }
 
     /**
