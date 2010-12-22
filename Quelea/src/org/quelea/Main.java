@@ -93,6 +93,7 @@ public final class Main {
                 }
                 else {
                     mainWindow.getMainPanel().getLiveLyricsPanel().registerLyricCanvas(fullScreenWindow.getCanvas());
+                    mainWindow.getMainPanel().getLiveLyricsPanel().registerLyricWindow(fullScreenWindow);
                     fullScreenWindow.setVisible(true);
                 }
             }
