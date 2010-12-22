@@ -1,11 +1,22 @@
 package org.quelea.display;
 
+import java.awt.Color;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+import org.quelea.Schedule;
 import org.quelea.Theme;
 import org.quelea.utils.Utils;
+import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
+import org.xml.sax.SAXException;
 
 /**
  * A song that contains a number of sections (verses, choruses, etc.)
@@ -18,6 +29,18 @@ public class Song implements Displayable, Searchable, Comparable<Song> {
     private List<SongSection> sections;
     private Theme theme;
     private int id;
+
+    /**
+     * Copy constructor - creates a shallow copy.
+     * @param song the song to copy to create the new song.
+     */
+    public Song(Song song) {
+        this.title = song.title;
+        this.author = song.author;
+        this.sections = song.sections;
+        this.theme = song.theme;
+        this.id = song.id;
+    }
 
     /**
      * Create a new, empty song.
@@ -174,6 +197,25 @@ public class Song implements Displayable, Searchable, Comparable<Song> {
         return xml.toString();
     }
 
+    public static Song parseSong(String xml) {
+        InputStream inputStream = new ByteArrayInputStream(xml.getBytes());
+        try {
+            DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+            DocumentBuilder builder = factory.newDocumentBuilder();
+            Document doc = builder.parse(inputStream);
+            return parseXML(doc.getFirstChild());
+        }
+        catch (ParserConfigurationException ex) {
+            return null;
+        }
+        catch (SAXException ex) {
+            return null;
+        }
+        catch (IOException ex) {
+            return null;
+        }
+    }
+
     /**
      * Parse a song in XML format and return the song object.
      * @param xml the xml string to parse.
@@ -275,6 +317,6 @@ public class Song implements Displayable, Searchable, Comparable<Song> {
      */
     @Override
     public String toString() {
-        return getTitle();
+        return getXML();
     }
 }

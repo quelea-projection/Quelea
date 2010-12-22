@@ -1,20 +1,49 @@
 package org.quelea.windows.main;
 
+import java.awt.Color;
+import java.awt.Component;
 import java.awt.Rectangle;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import javax.swing.DefaultListCellRenderer;
 import javax.swing.DropMode;
+import javax.swing.Icon;
 import javax.swing.JList;
 import javax.swing.ListSelectionModel;
+import javax.swing.border.Border;
 import org.quelea.SortedListModel;
 import org.quelea.display.Song;
 import org.quelea.display.SongSection;
+import sun.swing.DefaultLookup;
 
 /**
  * The list that displays the songs in the library.
  * @author Michael
  */
 public class LibrarySongList extends JList {
+
+    private static class SongRenderer extends DefaultListCellRenderer {
+
+        /**
+         * @inheritDoc
+         */
+        @Override
+        public Component getListCellRendererComponent(
+                JList list,
+                Object value,
+                int index,
+                boolean isSelected,
+                boolean cellHasFocus) {
+            Song s = new Song((Song)value) {
+                @Override
+                public String toString() {
+                    return getTitle();
+                }
+            };
+            return super.getListCellRendererComponent(list, s, index, isSelected, cellHasFocus);
+        }
+
+    }
 
     private final SortedListModel tempModel;
     private final SortedListModel fullModel;
@@ -25,6 +54,7 @@ public class LibrarySongList extends JList {
      */
     public LibrarySongList() {
         super(new SortedListModel());
+        setCellRenderer(new SongRenderer());
         SortedListModel model = (SortedListModel) super.getModel();
         setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         popupMenu = new LibraryPopupMenu();
@@ -44,6 +74,10 @@ public class LibrarySongList extends JList {
                 checkPopup(e);
             }
 
+            /**
+             * Display the popup if appropriate. This should be done when the
+             * mouse is pressed and released for platform-independence.
+             */
             private void checkPopup(MouseEvent e) {
                 if (e.isPopupTrigger()) {
                     int index = locationToIndex(e.getPoint());

@@ -2,6 +2,7 @@ package org.quelea.windows.main;
 
 import java.awt.BorderLayout;
 import javax.swing.BoxLayout;
+import javax.swing.DropMode;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -63,6 +64,7 @@ public class LibrarySongPanel extends JPanel {
         northPanel.setLayout(new BoxLayout(northPanel, BoxLayout.X_AXIS));
         northPanel.add(new JLabel("Search "));
         searchBox = new JTextField();
+        searchBox.setDragEnabled(false);
         searchBox.getDocument().addDocumentListener(new DocumentListener() {
 
             public void insertUpdate(DocumentEvent e) {
