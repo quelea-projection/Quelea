@@ -31,7 +31,7 @@
         <delete file="${dist.jar.dir}/README.TXT" failonerror="false"/>
         <copy file="${basedir}/README.TXT" todir="${dist.jar.dir}" failonerror="false"/>
         <copy file="${basedir}/quelea.properties" todir="${dist.jar.dir}"/>
-        <copy file="${basedir}/license.txt" todir="${dist.jar.dir}"/>
+        <copy file="${basedir}/licenses/gplv3.txt" tofile="${dist.jar.dir}/license.txt"/>
         <mkdir dir="${dist.jar.dir}/standalone"/>
         <izpack input="${basedir}/izpack/config.xml" output="${CPInstaller}" basedir="${dist.jar.dir}"/>
         <launch4j jar="${CPInstaller}" configFile="launch4j/config.xml" outfile="${WindowsInstaller}"/>
