@@ -105,7 +105,7 @@ public final class Main {
 
             public void actionPerformed(ActionEvent e) {
                 QueleaProperties props = QueleaProperties.get();
-                int monitorDisplay = mainWindow.getOptionsWindow().getDisplayPanel().getMonitorDisplay();
+                int monitorDisplay = mainWindow.getOptionsWindow().getDisplayPanel().getControlDisplay();
                 int projectorDisplay = mainWindow.getOptionsWindow().getDisplayPanel().getProjectorDisplay();
                 props.setControlScreen(monitorDisplay);
                 props.setProjectorScreen(projectorDisplay);

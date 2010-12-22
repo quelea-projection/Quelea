@@ -6,13 +6,16 @@ import javax.swing.JPanel;
 import org.quelea.utils.QueleaProperties;
 
 /**
- *
+ * A panel that the user uses to set up the displays that match to the outputs.
  * @author Michael
  */
 public class DisplaySetupPanel extends JPanel {
 
-    private SingleDisplayPanel monitorPanel, projectorPanel;
+    private final SingleDisplayPanel monitorPanel, projectorPanel;
 
+    /**
+     * Create a new display setup panel.
+     */
     public DisplaySetupPanel() {
         setLayout(new BorderLayout());
         JPanel mainPanel = new JPanel();
@@ -22,19 +25,30 @@ public class DisplaySetupPanel extends JPanel {
 
         projectorPanel = new SingleDisplayPanel("Projector screen:", "icons/projector.png", true);
         mainPanel.add(projectorPanel);
-        syncScreens();
+        syncForm();
         add(mainPanel, BorderLayout.CENTER);
     }
 
-    public final void syncScreens() {
+    /**
+     * Synchronise the panel with the current information in the properties file.
+     */
+    public final void syncForm() {
         monitorPanel.setScreen(QueleaProperties.get().getControlScreen());
         projectorPanel.setScreen(QueleaProperties.get().getProjectorScreen());
     }
 
-    public int getMonitorDisplay() {
+    /**
+     * Get the display that the control window should be sent to.
+     * @return the display that the control window should be sent to.
+     */
+    public int getControlDisplay() {
         return monitorPanel.getOutputDisplay();
     }
 
+    /**
+     * Get the display that the projector window should be sent to.
+     * @return the display that the projector window should be sent to.
+     */
     public int getProjectorDisplay() {
         return projectorPanel.getOutputDisplay();
     }

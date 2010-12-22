@@ -13,7 +13,8 @@ import javax.swing.JPanel;
 import org.quelea.utils.Utils;
 
 /**
- *
+ * A panel used to represent a single type of display that the user can then
+ * select the output for.
  * @author Michael
  */
 public class SingleDisplayPanel extends JPanel {
@@ -21,6 +22,13 @@ public class SingleDisplayPanel extends JPanel {
     private final boolean none;
     private final JComboBox outputSelect;
 
+    /**
+     * Create a new single display panel.
+     * @param caption the bit of text at the top describing the display.
+     * @param iconLocation the location of the icon to use.
+     * @param none true if "none" (i.e. no output) should be an option, false
+     * otherwise.
+     */
     public SingleDisplayPanel(String caption, String iconLocation, boolean none) {
         this.none = none;
         setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
