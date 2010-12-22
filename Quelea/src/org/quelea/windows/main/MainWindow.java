@@ -1,5 +1,6 @@
 package org.quelea.windows.main;
 
+import org.quelea.windows.main.menu.MainMenuBar;
 import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -77,17 +78,17 @@ public class MainWindow extends JFrame {
      * Add the required action listeners to the menu bar.
      */
     private void addMenuBarListeners() {
-        menubar.getNewSchedule().addActionListener(new NewScheduleActionListener());
-        menubar.getOpenSchedule().addActionListener(new OpenScheduleActionListener());
-        menubar.getSaveSchedule().addActionListener(new SaveScheduleActionListener());
-        menubar.getSaveScheduleAs().addActionListener(new SaveScheduleAsActionListener());
-        menubar.getOptions().addActionListener(new ActionListener() {
+        menubar.getFileMenu().getNewSchedule().addActionListener(new NewScheduleActionListener());
+        menubar.getFileMenu().getOpenSchedule().addActionListener(new OpenScheduleActionListener());
+        menubar.getFileMenu().getSaveSchedule().addActionListener(new SaveScheduleActionListener());
+        menubar.getFileMenu().getSaveScheduleAs().addActionListener(new SaveScheduleAsActionListener());
+        menubar.getToolsMenu().getOptions().addActionListener(new ActionListener() {
 
             public void actionPerformed(ActionEvent e) {
                 optionsDialog.setVisible(true);
             }
         });
-        menubar.getAbout().addActionListener(new ActionListener() {
+        menubar.getHelpMenu().getAbout().addActionListener(new ActionListener() {
 
             public void actionPerformed(ActionEvent e) {
                 aboutDialog.setVisible(true);
