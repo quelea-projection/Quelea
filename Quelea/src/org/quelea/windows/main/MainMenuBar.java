@@ -5,6 +5,7 @@ import java.awt.event.ActionListener;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
+import org.quelea.windows.help.AboutDialog;
 
 /**
  * The main menu bar that's displayed at the top of the main Quelea window.
@@ -17,6 +18,7 @@ public class MainMenuBar extends JMenuBar {
     private JMenuItem saveSchedule;
     private JMenuItem saveScheduleAs;
     private JMenuItem options;
+    private JMenuItem about;
 
     /**
      * Create a new main menu bar and initialise all the components.
@@ -24,6 +26,7 @@ public class MainMenuBar extends JMenuBar {
     public MainMenuBar() {
         addFileMenu();
         addToolsMenu();
+        addHelpMenu();
     }
 
     /**
@@ -67,6 +70,14 @@ public class MainMenuBar extends JMenuBar {
     }
 
     /**
+     * Get the about menu item.
+     * @return the about menu item.
+     */
+    public JMenuItem getAbout() {
+        return about;
+    }
+
+    /**
      * Add the file menu to the menu bar.
      */
     private void addFileMenu() {
@@ -98,6 +109,16 @@ public class MainMenuBar extends JMenuBar {
         options = new JMenuItem("Options");
         toolsMenu.add(options);
         add(toolsMenu);
+    }
+
+    /**
+     * Add the help menu to the menu bar.
+     */
+    private void addHelpMenu() {
+        JMenu helpMenu = new JMenu("Help");
+        about = new JMenuItem("About...");
+        helpMenu.add(about);
+        add(helpMenu);
     }
 
 }
