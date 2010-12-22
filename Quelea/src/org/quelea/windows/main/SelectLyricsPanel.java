@@ -21,6 +21,7 @@ public abstract class SelectLyricsPanel extends JPanel {
 
     private final SelectLyricsList lyricsList;
     private final Set<LyricCanvas> canvases = new HashSet<LyricCanvas>();
+    private final Set<LyricWindow> windows = new HashSet<LyricWindow>();
 
     /**
      * Create a new lyrics panel.
@@ -55,7 +56,7 @@ public abstract class SelectLyricsPanel extends JPanel {
     }
 
     /**
-     * Register a lyric canvas with this lyrics list.
+     * Register a lyric canvas with this lyrics panel.
      * @param canvas the canvas to register.
      */
     public final void registerLyricCanvas(final LyricCanvas canvas) {
@@ -78,10 +79,29 @@ public abstract class SelectLyricsPanel extends JPanel {
     }
 
     /**
+     * Register a lyric window with this lyrics panel.
+     * @param window the window to register.
+     */
+    public final void registerLyricWindow(final LyricWindow window) {
+        if (window == null) {
+            return;
+        }
+        windows.add(window);
+    }
+
+    /**
      * Get the canvases registered to this panel.
-     * @return the preview canvas.
+     * @return the canvases.
      */
     public Set<LyricCanvas> getCanvases() {
         return canvases;
+    }
+
+    /**
+     * Get the windows registered to this panel.
+     * @return the windows.
+     */
+    public Set<LyricWindow> getWindows() {
+        return windows;
     }
 }

@@ -6,6 +6,7 @@ import java.awt.event.ActionListener;
 import javax.swing.JLabel;
 import javax.swing.JToggleButton;
 import javax.swing.JToolBar;
+import org.quelea.utils.QueleaProperties;
 import org.quelea.utils.Utils;
 
 /**
@@ -17,6 +18,7 @@ public class SelectLiveLyricsPanel extends SelectLyricsPanel {
 
     private final JToggleButton black;
     private final JToggleButton clear;
+    private final JToggleButton hide;
 
     /**
      * Create a new live lyrics panel.
@@ -39,6 +41,7 @@ public class SelectLiveLyricsPanel extends SelectLyricsPanel {
                 }
             }
         });
+        header.add(black);
         clear = new JToggleButton(Utils.getImageIcon("icons/filenew.png"));
         clear.setToolTipText("Clear text");
         clear.addActionListener(new ActionListener() {
@@ -50,8 +53,21 @@ public class SelectLiveLyricsPanel extends SelectLyricsPanel {
                 }
             }
         });
-        header.add(black);
         header.add(clear);
+        hide = new JToggleButton(Utils.getImageIcon("icons/cross.png"));
+        hide.setToolTipText("Hide display output");
+        hide.addActionListener(new ActionListener() {
+
+            public void actionPerformed(ActionEvent e) {
+                if(QueleaProperties.get().getProjectorScreen()==-1) {
+                    return;
+                }
+                for(LyricWindow window : getWindows()) {
+                    window.setVisible(!window.isVisible());
+                }
+            }
+        });
+        header.add(hide);
         add(header, BorderLayout.NORTH);
     }
 
@@ -69,6 +85,14 @@ public class SelectLiveLyricsPanel extends SelectLyricsPanel {
      */
     public JToggleButton getClear() {
         return clear;
+    }
+
+    /**
+     * Get the "hide" toggle button.
+     * @return the "hide" toggle button.
+     */
+    public JToggleButton getHide() {
+        return hide;
     }
 
 }
