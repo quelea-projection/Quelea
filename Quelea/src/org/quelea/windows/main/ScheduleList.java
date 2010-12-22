@@ -1,11 +1,15 @@
 package org.quelea.windows.main;
 
 import java.awt.Component;
+import java.awt.datatransfer.DataFlavor;
+import java.awt.datatransfer.Transferable;
 import javax.swing.DefaultListModel;
+import javax.swing.DropMode;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.ListCellRenderer;
 import javax.swing.ListSelectionModel;
+import javax.swing.TransferHandler;
 import javax.swing.border.EmptyBorder;
 import org.quelea.Schedule;
 import org.quelea.utils.Utils;
@@ -67,8 +71,40 @@ public class ScheduleList extends JList {
      */
     public ScheduleList(DefaultListModel model) {
         super(model);
-        schedule = new Schedule();
         setDragEnabled(true);
+        setDropMode(DropMode.ON);
+        setTransferHandler(new TransferHandler() {
+
+            @Override
+            public boolean canImport(TransferHandler.TransferSupport support) {
+                return support.isDataFlavorSupported(DataFlavor.stringFlavor);
+            }
+
+            @Override
+            public boolean importData(TransferHandler.TransferSupport support) {
+                if (!canImport(support)) {
+                    return false;
+                }
+
+                Transferable transferable = support.getTransferable();
+                String data;
+                try {
+                    data = (String) transferable.getTransferData(DataFlavor.stringFlavor);
+                }
+                catch (Exception e) {
+                    return false;
+                }
+
+                JList.DropLocation dl = (JList.DropLocation) support.getDropLocation();
+                int index = dl.getIndex();
+                if (index == -1) {
+                    index = getModel().getSize();
+                }
+                ((DefaultListModel) getModel()).add(index, Song.parseSong(data));
+                return true;
+            }
+        });
+        schedule = new Schedule();
         setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         setCellRenderer(new SummaryRenderer());
     }
@@ -79,8 +115,8 @@ public class ScheduleList extends JList {
      */
     public Schedule getSchedule() {
         schedule.clear();
-        for(int i=0 ; i<getModel().getSize() ; i++) {
-            schedule.add((Displayable)getModel().getElementAt(i));
+        for (int i = 0; i < getModel().getSize(); i++) {
+            schedule.add((Displayable) getModel().getElementAt(i));
         }
         return schedule;
     }
@@ -92,8 +128,8 @@ public class ScheduleList extends JList {
      */
     public void setSchedule(Schedule schedule) {
         clearSchedule();
-        for(Displayable displayable : schedule) {
-            ((DefaultListModel)getModel()).addElement(displayable);
+        for (Displayable displayable : schedule) {
+            ((DefaultListModel) getModel()).addElement(displayable);
         }
         this.schedule = schedule;
     }
@@ -102,7 +138,7 @@ public class ScheduleList extends JList {
      * Clear the current schedule without warning.
      */
     public void clearSchedule() {
-        ((DefaultListModel)getModel()).clear();
+        ((DefaultListModel) getModel()).clear();
     }
 
     /**
@@ -110,7 +146,7 @@ public class ScheduleList extends JList {
      * @return true if it's empty, false otherwise.
      */
     public boolean isEmpty() {
-        return getModel().getSize()==0;
+        return getModel().getSize() == 0;
     }
 
     /**
