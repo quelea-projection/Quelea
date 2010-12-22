@@ -3,7 +3,10 @@ package org.quelea.windows.main;
 import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import javax.swing.DefaultListModel;
+import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JSplitPane;
 import javax.swing.event.ListDataEvent;
@@ -84,6 +87,19 @@ public class MainPanel extends JPanel {
             public void actionPerformed(ActionEvent e) {
                 Song song = (Song) libraryPanel.getLibrarySongPanel().getSongList().getSelectedValue();
                 ((DefaultListModel) schedulePanel.getScheduleList().getModel()).addElement(song);
+            }
+        });
+
+        libraryPanel.getLibrarySongPanel().getSongList().addMouseListener(new MouseAdapter() {
+
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                JList songList = (JList) e.getSource();
+                if (e.getClickCount() == 2) {
+                    Song song = (Song)songList.getSelectedValue();
+//                    int index = list.locationToIndex(e.getPoint());
+                    ((DefaultListModel)schedulePanel.getScheduleList().getModel()).addElement(song);
+                }
             }
         });
 
