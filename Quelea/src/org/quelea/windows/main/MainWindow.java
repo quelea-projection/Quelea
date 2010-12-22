@@ -13,6 +13,7 @@ import javax.swing.filechooser.FileFilter;
 import org.quelea.Schedule;
 import org.quelea.display.Song;
 import org.quelea.utils.QueleaProperties;
+import org.quelea.windows.help.AboutDialog;
 import org.quelea.windows.newsong.SongEntryWindow;
 import org.quelea.windows.options.OptionsDialog;
 
@@ -26,7 +27,8 @@ public class MainWindow extends JFrame {
     private final MainMenuBar menubar;
     private final MainPanel mainpanel;
     private final SongEntryWindow songEntryWindow;
-    private final OptionsDialog optionsFrame;
+    private final OptionsDialog optionsDialog;
+    private final AboutDialog aboutDialog;
 
     /**
      * Create a new main window.
@@ -45,7 +47,8 @@ public class MainWindow extends JFrame {
         toolbar = new MainToolbar();
         mainpanel = new MainPanel();
         songEntryWindow = new SongEntryWindow(this);
-        optionsFrame = new OptionsDialog(this);
+        optionsDialog = new OptionsDialog(this);
+        aboutDialog = new AboutDialog(this);
         mainpanel.getLibraryPanel().getLibrarySongPanel().getAddButton().addActionListener(new ActionListener() {
 
             public void actionPerformed(ActionEvent e) {
@@ -81,7 +84,13 @@ public class MainWindow extends JFrame {
         menubar.getOptions().addActionListener(new ActionListener() {
 
             public void actionPerformed(ActionEvent e) {
-                optionsFrame.setVisible(true);
+                optionsDialog.setVisible(true);
+            }
+        });
+        menubar.getAbout().addActionListener(new ActionListener() {
+
+            public void actionPerformed(ActionEvent e) {
+                aboutDialog.setVisible(true);
             }
         });
 
@@ -252,6 +261,6 @@ public class MainWindow extends JFrame {
      * @return the options window.
      */
     public OptionsDialog getOptionsWindow() {
-        return optionsFrame;
+        return optionsDialog;
     }
 }
