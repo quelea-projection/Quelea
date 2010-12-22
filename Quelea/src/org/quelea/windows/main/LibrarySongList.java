@@ -18,18 +18,18 @@ import org.quelea.display.SongSection;
  */
 public class LibrarySongList extends JList {
 
+    /**
+     * The toString() method on song returns XML, we don't want to print that
+     * so this is a bit of a hack to display the title instead.
+     */
     private static class SongRenderer extends DefaultListCellRenderer {
 
         /**
          * @inheritDoc
          */
         @Override
-        public Component getListCellRendererComponent(
-                JList list,
-                Object value,
-                int index,
-                boolean isSelected,
-                boolean cellHasFocus) {
+        public Component getListCellRendererComponent(JList list, Object value,
+                int index, boolean isSelected, boolean cellHasFocus) {
             Song s = new Song((Song)value) {
                 @Override
                 public String toString() {
