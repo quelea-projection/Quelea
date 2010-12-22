@@ -1,0 +1,79 @@
+package org.quelea.windows.options;
+
+import java.awt.GraphicsDevice;
+import java.awt.GraphicsEnvironment;
+import java.util.ArrayList;
+import java.util.List;
+import javax.swing.BoxLayout;
+import javax.swing.ComboBoxModel;
+import javax.swing.DefaultComboBoxModel;
+import javax.swing.JComboBox;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import org.quelea.utils.Utils;
+
+/**
+ *
+ * @author Michael
+ */
+public class SingleDisplayPanel extends JPanel {
+
+    private final boolean none;
+    private final JComboBox outputSelect;
+
+    public SingleDisplayPanel(String caption, String iconLocation, boolean none) {
+        this.none = none;
+        setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
+        add(new JLabel(caption));
+        add(new JLabel(Utils.getImageIcon(iconLocation)));
+        outputSelect = new JComboBox(getAvailableScreens(none));
+        JPanel outputSelectPanel = new JPanel();
+        outputSelectPanel.add(outputSelect);
+        add(outputSelectPanel);
+    }
+
+    /**
+     * Determine the output display that should be used.
+     * @return the output display as an index starting from 0, or -1 if "none"
+     * is selected.
+     */
+    public int getOutputDisplay() {
+        if(none) {
+            return outputSelect.getSelectedIndex()-1;
+        }
+        else {
+            return outputSelect.getSelectedIndex();
+        }
+    }
+
+    /**
+     * Set the screen to select on the combo box.
+     * @param num the index (0 based) of the screen to select.
+     */
+    public void setScreen(int num) {
+        if(none) {
+            outputSelect.setSelectedIndex(num+1);
+        }
+        else {
+            outputSelect.setSelectedIndex(num);
+        }
+    }
+
+    /**
+     * Get a list model describing the available graphical devices.
+     * @return a list model describing the available graphical devices.
+     */
+    private ComboBoxModel getAvailableScreens(boolean none) {
+        GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
+        final GraphicsDevice[] gds = ge.getScreenDevices();
+        List<String> descriptions = new ArrayList<String>();
+        if(none) {
+            descriptions.add("<html><i>None</i></html>");
+        }
+        for (int i=0; i < gds.length; i++) {
+            descriptions.add("Output " + (i+1));
+        }
+        return new DefaultComboBoxModel(descriptions.toArray(new String[descriptions.size()]));
+    }
+
+}

@@ -14,6 +14,7 @@ import org.quelea.Schedule;
 import org.quelea.display.Song;
 import org.quelea.utils.QueleaProperties;
 import org.quelea.windows.newsong.SongEntryWindow;
+import org.quelea.windows.options.OptionsDialog;
 
 /**
  * The main window used to control the projection.
@@ -25,6 +26,7 @@ public class MainWindow extends JFrame {
     private final MainMenuBar menubar;
     private final MainPanel mainpanel;
     private final SongEntryWindow songEntryWindow;
+    private final OptionsDialog optionsFrame;
 
     /**
      * Create a new main window.
@@ -43,6 +45,7 @@ public class MainWindow extends JFrame {
         toolbar = new MainToolbar();
         mainpanel = new MainPanel();
         songEntryWindow = new SongEntryWindow(this);
+        optionsFrame = new OptionsDialog(this);
         mainpanel.getLibraryPanel().getLibrarySongPanel().getAddButton().addActionListener(new ActionListener() {
 
             public void actionPerformed(ActionEvent e) {
@@ -75,6 +78,13 @@ public class MainWindow extends JFrame {
         menubar.getOpenSchedule().addActionListener(new OpenScheduleActionListener());
         menubar.getSaveSchedule().addActionListener(new SaveScheduleActionListener());
         menubar.getSaveScheduleAs().addActionListener(new SaveScheduleAsActionListener());
+        menubar.getOptions().addActionListener(new ActionListener() {
+
+            public void actionPerformed(ActionEvent e) {
+                optionsFrame.setVisible(true);
+            }
+        });
+
     }
 
     /**
@@ -231,8 +241,17 @@ public class MainWindow extends JFrame {
 
     /**
      * Get the new song window used for this main panel.
+     * @return the song entry window.
      */
     public SongEntryWindow getNewSongWindow() {
         return songEntryWindow;
+    }
+
+    /**
+     * Get the options window.
+     * @return the options window.
+     */
+    public OptionsDialog getOptionsWindow() {
+        return optionsFrame;
     }
 }

@@ -34,13 +34,21 @@ public class LyricWindow extends JWindow {
     public LyricWindow(Rectangle area) {
         JPanel panel = new JPanel();
         panel.setBackground(Color.BLACK);
-        setSize((int)(area.getMaxX()-area.getMinX()), (int)(area.getMaxY()-area.getMinY()));
-        setLocation((int) area.getMinX(), (int) area.getMinY());
+        setArea(area);
         setCursor(BLANK_CURSOR);
         canvas = new LyricCanvas(4,3);
         canvas.setPreferredSize(new Dimension((int)(area.getMaxX()-area.getMinX()), (int)(area.getMaxY()-area.getMinY())));
         panel.add(canvas);
         add(panel);
+    }
+
+    /**
+     * Set the area of the lyric window.
+     * @param area the area of the window.
+     */
+    public final void setArea(Rectangle area) {
+        setSize((int) (area.getMaxX() - area.getMinX()), (int) (area.getMaxY() - area.getMinY()));
+        setLocation((int) area.getMinX(), (int) area.getMinY());
     }
 
     /**

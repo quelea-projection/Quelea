@@ -16,12 +16,14 @@ public class MainMenuBar extends JMenuBar {
     private JMenuItem openSchedule;
     private JMenuItem saveSchedule;
     private JMenuItem saveScheduleAs;
+    private JMenuItem options;
 
     /**
      * Create a new main menu bar and initialise all the components.
      */
     public MainMenuBar() {
         addFileMenu();
+        addToolsMenu();
     }
 
     /**
@@ -57,6 +59,14 @@ public class MainMenuBar extends JMenuBar {
     }
 
     /**
+     * Get the options menu item.
+     * @return the options menu item.
+     */
+    public JMenuItem getOptions() {
+        return options;
+    }
+
+    /**
      * Add the file menu to the menu bar.
      */
     private void addFileMenu() {
@@ -76,9 +86,18 @@ public class MainMenuBar extends JMenuBar {
                 System.exit(0);
             }
         });
-
         fileMenu.add(exit);
         add(fileMenu);
+    }
+
+    /**
+     * Add the tools menu to the menu bar.
+     */
+    private void addToolsMenu() {
+        JMenu toolsMenu = new JMenu("Tools");
+        options = new JMenuItem("Options");
+        toolsMenu.add(options);
+        add(toolsMenu);
     }
 
 }
