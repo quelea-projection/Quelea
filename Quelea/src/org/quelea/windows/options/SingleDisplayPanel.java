@@ -59,11 +59,20 @@ public class SingleDisplayPanel extends JPanel {
      * @param num the index (0 based) of the screen to select.
      */
     public void setScreen(int num) {
+        int maxIndex = outputSelect.getModel().getSize()-1;
         if(none) {
+            int index = num+1;
+            if(index>maxIndex) {
+                index = 0;
+            }
             outputSelect.setSelectedIndex(num+1);
         }
         else {
-            outputSelect.setSelectedIndex(num);
+            int index = num;
+            if (index > maxIndex) {
+                index = 0;
+            }
+            outputSelect.setSelectedIndex(index);
         }
     }
 
