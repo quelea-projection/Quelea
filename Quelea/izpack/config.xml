@@ -65,7 +65,7 @@
         <pack name="images" required="yes" hidden="true">
             <description>Images and icons</description>
             <file src="icons" targetdir="$INSTALL_PATH"/>
-            <file src="img" targetdir="$INSTALL_PATH"/>
+            <file src="img" targetdir="$INSTALL_PATH" override="false"/>
         </pack>
     </packs>
 
