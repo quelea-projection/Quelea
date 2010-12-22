@@ -96,6 +96,15 @@ public final class QueleaProperties extends Properties {
     }
 
     /**
+     * Get the number of the projector screen. This is the screen that the
+     * projected output will be displayed on.
+     * @return the projector screen number.
+     */
+    public int getProjectorScreen() {
+        return Integer.parseInt(getProperty("projector.screen", "1"));
+    }
+    
+    /**
      * Set the control screen output.
      * @param screen the number of the screen to use for the output.
      */
@@ -105,12 +114,44 @@ public final class QueleaProperties extends Properties {
     }
 
     /**
-     * Get the number of the projector screen. This is the screen that the
-     * projected output will be displayed on.
-     * @return the projector screen number.
+     * Get the maximum number of characters allowed on any one line of
+     * projected text. If the line is longer than this, it will be split up
+     * intelligently.
+     * @return the maximum number of characters allowed on any one line of
+     * projected text.
      */
-    public int getProjectorScreen() {
-        return Integer.parseInt(getProperty("projector.screen", "1"));
+    public int getMaxChars() {
+        return Integer.parseInt(getProperty("max.chars", "30"));
+    }
+
+    /**
+     * Set the max chars value.
+     * @param maxChars the maximum number of characters allowed on any one line
+     * of projected text.
+     */
+    public void setMaxChars(int maxChars) {
+        setProperty("max.chars", Integer.toString(maxChars));
+        write();
+    }
+
+    /**
+     * Get the minimum number of lines that should be displayed on each page.
+     * This purely applies to font sizes, the font will be adjusted so this
+     * amount of lines can fit on. This stops small lines becoming huge in the
+     * preview window rather than displaying normally.
+     * @return the minimum line count.
+     */
+    public int getMinLines() {
+        return Integer.parseInt(getProperty("min.lines", "10"));
+    }
+
+    /**
+     * Set the min lines value.
+     * @param maxChars the minimum line count.
+     */
+    public void setMinLines(int minLines) {
+        setProperty("min.lines", Integer.toString(minLines));
+        write();
     }
 
 }

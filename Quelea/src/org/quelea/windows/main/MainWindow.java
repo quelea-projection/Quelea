@@ -112,6 +112,7 @@ public class MainWindow extends JFrame {
 
         public void actionPerformed(ActionEvent e) {
             if (confirmClear()) {
+                mainpanel.getLiveLyricsPanel().getLyricsList().getModel().clear();
                 mainpanel.getSchedulePanel().getScheduleList().clearSchedule();
             }
         }
@@ -134,6 +135,7 @@ public class MainWindow extends JFrame {
                                 "Error opening schedule", JOptionPane.ERROR_MESSAGE, null);
                     }
                     else {
+                        mainpanel.getLiveLyricsPanel().getLyricsList().getModel().clear();
                         mainpanel.getSchedulePanel().getScheduleList().setSchedule(schedule);
                     }
                 }

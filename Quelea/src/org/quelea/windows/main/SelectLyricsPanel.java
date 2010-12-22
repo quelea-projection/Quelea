@@ -9,8 +9,11 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.border.EmptyBorder;
+import javax.swing.event.ListDataEvent;
+import javax.swing.event.ListDataListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
+import org.quelea.Theme;
 import org.quelea.display.SongSection;
 
 /**
@@ -66,16 +69,40 @@ public abstract class SelectLyricsPanel extends JPanel {
         getLyricsList().addListSelectionListener(new ListSelectionListener() {
 
             public void valueChanged(ListSelectionEvent e) {
-                int selectedIndex = getLyricsList().getSelectedIndex();
-                if (selectedIndex == -1) {
-                    return;
-                }
-                SongSection currentSection = (SongSection) getLyricsList().getModel().getElementAt(selectedIndex);
-                canvas.setTheme(currentSection.getTheme());
-                canvas.setText(currentSection.getLyrics());
+                updateCanvas(canvas);
+            }
+        });
+        getLyricsList().getModel().addListDataListener(new ListDataListener() {
+
+            public void intervalAdded(ListDataEvent e) {
+                updateCanvas(canvas);
+            }
+
+            public void intervalRemoved(ListDataEvent e) {
+                updateCanvas(canvas);
+            }
+
+            public void contentsChanged(ListDataEvent e) {
+                updateCanvas(canvas);
             }
         });
         canvases.add(canvas);
+    }
+
+    /**
+     * Called to update the contents of the canvases when the list selection
+     * changes.
+     */
+    private void updateCanvas(final LyricCanvas canvas) {
+        int selectedIndex = getLyricsList().getSelectedIndex();
+        if (selectedIndex==-1 || selectedIndex >= getLyricsList().getModel().getSize()) {
+            canvas.setTheme(null);
+            canvas.setText(null);
+            return;
+        }
+        SongSection currentSection = (SongSection) getLyricsList().getModel().getElementAt(selectedIndex);
+        canvas.setTheme(currentSection.getTheme());
+        canvas.setText(currentSection.getLyrics());
     }
 
     /**
