@@ -1,8 +1,11 @@
 package org.quelea.windows.main;
 
 import java.awt.Component;
+import java.awt.Rectangle;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.Transferable;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import javax.swing.DefaultListModel;
 import javax.swing.DropMode;
 import javax.swing.JLabel;
@@ -15,6 +18,7 @@ import org.quelea.Schedule;
 import org.quelea.utils.Utils;
 import org.quelea.display.Displayable;
 import org.quelea.display.Song;
+import org.quelea.windows.library.LibrarySongList;
 
 /**
  * The schedule list, all the items that are to be displayed in the service.
@@ -23,6 +27,7 @@ import org.quelea.display.Song;
 public class ScheduleList extends JList {
 
     private Schedule schedule;
+    private SchedulePopupMenu popupMenu;
 
     /**
      * A direction; either up or down. Used for rearranging the order of items
@@ -71,6 +76,35 @@ public class ScheduleList extends JList {
      */
     public ScheduleList(DefaultListModel model) {
         super(model);
+        popupMenu = new SchedulePopupMenu();
+        this.addMouseListener(new MouseAdapter() {
+
+            @Override
+            public void mousePressed(MouseEvent e) {
+                checkPopup(e);
+            }
+
+            @Override
+            public void mouseReleased(MouseEvent e) {
+                checkPopup(e);
+            }
+
+            /**
+             * Display the popup if appropriate. This should be done when the
+             * mouse is pressed and released for platform-independence.
+             */
+            private void checkPopup(MouseEvent e) {
+                if (e.isPopupTrigger()) {
+                    int index = locationToIndex(e.getPoint());
+                    Rectangle Rect = getCellBounds(index, index);
+                    index = Rect.contains(e.getPoint().x, e.getPoint().y) ? index : -1;
+                    if (index != -1) {
+                        setSelectedIndex(index);
+                        popupMenu.show(ScheduleList.this, e.getX(), e.getY());
+                    }
+                }
+            }
+        });
         setDragEnabled(true);
         setDropMode(DropMode.ON);
         setTransferHandler(new TransferHandler() {
@@ -139,6 +173,14 @@ public class ScheduleList extends JList {
      */
     public void clearSchedule() {
         ((DefaultListModel) getModel()).clear();
+    }
+
+    /**
+     * Get the popup menu on this schedule list.
+     * @return the popup menu.
+     */
+    public SchedulePopupMenu getPopupMenu() {
+        return popupMenu;
     }
 
     /**
