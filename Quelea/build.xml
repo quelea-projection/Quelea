@@ -12,12 +12,16 @@
     <import file="nbproject/build-impl.xml"/>
     <taskdef name="izpack" classpath="${basedir}/izpack/standalone-compiler.jar" classname="com.izforge.izpack.ant.IzPackTask"/>
     <taskdef name="launch4j" classpath="launch4j/launch4j.jar" classname="net.sf.launch4j.ant.Launch4jTask" />
+    <taskdef name="desktopentry" classpath="antdeb/ant-deb-0.0.1.jar" classname="com.googlecode.ant_deb_task.DesktopEntry" />
+    <taskdef name="deb" classpath="antdeb/ant-deb-0.0.1.jar" classname="com.googlecode.ant_deb_task.Deb" />
     <property file="quelea.properties"/>
 
     <target name="-post-jar">
 
-        <property name="CPInstaller" value="${dist.jar.dir}/standalone/quelea-V${quelea.version}-crossplatform-install.jar"/>
-        <property name="WindowsInstaller" value="${dist.jar.dir}/standalone/quelea-V${quelea.version}-windows-install.exe"/>
+        <property name="CPInstaller" value="${dist.jar.dir}/standalone/quelea-${quelea.version}-crossplatform-install.jar"/>
+        <property name="WindowsInstaller" value="${dist.jar.dir}/standalone/quelea-${quelea.version}-windows-install.exe"/>
+        <property name="DebInstaller" value="${dist.jar.dir}/standalone/quelea-${quelea.version}-deb-install.deb"/>
+        <property name="Portable" value="${dist.jar.dir}/standalone/quelea-${quelea.version}-portable.zip"/>
         
         <copy todir="${dist.jar.dir}/icons">
             <fileset dir="${basedir}/icons"/>
@@ -36,8 +40,32 @@
         <copy file="${basedir}/quelea.properties" todir="${dist.jar.dir}"/>
         <copy file="${basedir}/licenses/gplv3.txt" tofile="${dist.jar.dir}/license.txt"/>
         <mkdir dir="${dist.jar.dir}/standalone"/>
+        <desktopentry toFile="quelea.desktop" name="Quelea" comment="Quelea version ${quelea.version}" exec="java -jar usr/share/quelea/Quelea.jar" icon="/usr/share/quelea/img/logo.png" categories="Utility;Java" />
+        <deb
+            package="quelea"
+            todir="${dist.jar.dir}/standalone"
+            section="misc"
+            depends="sun-java6-jre | openjdk-6-jre">
+            <version upstream="${quelea.version}"/>
+            <maintainer name="Michael Berry" email="michael@quelea.org"/>
+            <description synopsis="An open source lyrics projection package">
+                Quelea is an open source lyrics projection package that aims to
+                bring together the best features of existing packages and offer
+                some new features as well. It's designed to be totally cross
+                platform and should run on any platform Java supports without
+                many issues. If you encounter any issues with this package
+                then please email support@quelea.org or post on the discussion
+                list: https://groups.google.com/group/quelea-discuss
+            </description>
+            <description>Quelea</description>
+            <tarfileset file="quelea.desktop" prefix="usr/share/applications" />
+            <tarfileset dir="${dist.jar.dir}" prefix="usr/share/quelea" excludes="standalone/"/>
+        </deb>
+        <move file="${dist.jar.dir}/standalone/quelea_${quelea.version}-1_all.deb" tofile="${DebInstaller}"/>
+        <delete file="quelea.desktop"/>
         <izpack input="${basedir}/izpack/config.xml" output="${CPInstaller}" basedir="${dist.jar.dir}"/>
         <launch4j jar="${CPInstaller}" configFile="launch4j/config.xml" outfile="${WindowsInstaller}"/>
+        <zip destfile="${Portable}" basedir="${dist.jar.dir}" excludes="standalone/"/>
     </target>
     <!--
 
