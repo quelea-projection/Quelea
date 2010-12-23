@@ -216,7 +216,6 @@ public final class Main {
             public void actionPerformed(ActionEvent e) {
 
                 Song song = songEntryWindow.getSong();
-                song.setLyrics(songEntryWindow.getBasicSongPanel().getLyricsField().getText());
                 for (SongSection section : song.getSections()) {
                     section.setTheme(songEntryWindow.getTheme());
                 }
