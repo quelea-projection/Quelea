@@ -102,7 +102,9 @@ public class LyricCanvas extends JPanel {
                 maxLine = line;
             }
         }
-        graphics.setFont(getDifferentSizeFont(font, getFontSize(font, graphics, maxLine)));
+        int size = getFontSize(font, graphics, maxLine);
+        Font newFont = getDifferentSizeFont(font, size);
+        graphics.setFont(newFont);
         if (heightOffset > getHeight()) {
             if (font.getSize() > 8) {
                 drawText(graphics, getDifferentSizeFont(font, font.getSize() - 2));
@@ -129,8 +131,8 @@ public class LyricCanvas extends JPanel {
      */
     private int getFontSize(Font font, Graphics graphics, String line) {
         int size = ensureLineCount(font, graphics);
-        while (size > 12 && graphics.getFontMetrics(font).stringWidth(line) >= getWidth()) {
-            size -= 1;
+        while (size > 0 && graphics.getFontMetrics(font).stringWidth(line) >= getWidth()) {
+            size --;
             font = getDifferentSizeFont(font, size);
         }
         return size;
@@ -147,9 +149,9 @@ public class LyricCanvas extends JPanel {
         int height;
         do {
             height = graphics.getFontMetrics(font).getHeight() * QueleaProperties.get().getMinLines();
-            font = getDifferentSizeFont(font, font.getSize() - 2);
+            font = getDifferentSizeFont(font, font.getSize() - 1);
         }
-        while (height > getHeight());
+        while (height > getHeight() && font.getSize()>12);
 
         return font.getSize();
     }
