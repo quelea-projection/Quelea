@@ -30,6 +30,7 @@ public class DatabaseMenu extends JMenu {
         importMenu.add(ssImport);
         add(importMenu);
         exportSongs = new JMenuItem("Export songs...");
+        exportSongs.setEnabled(false);
         add(exportSongs);
     }
 
