@@ -63,7 +63,7 @@ public class SongEntryWindow extends JDialog {
         add(bottomPanel, BorderLayout.SOUTH);
         pack();
     }
-    
+
     /**
      * Called by the constructor to initialise the theme panel.
      */
@@ -175,7 +175,7 @@ public class SongEntryWindow extends JDialog {
         confirmButton.setText("Edit song");
         confirmButton.setEnabled(true);
         basicSongPanel.resetEditSong(song);
-        if(song.getSections().length>0) {
+        if (song.getSections().length > 0) {
             themePanel.setTheme(song.getSections()[0].getTheme());
         }
         tabbedPane.setSelectedIndex(0);
@@ -186,9 +186,12 @@ public class SongEntryWindow extends JDialog {
      * @return the song.
      */
     public Song getSong() {
-        if(song==null) {
+        if (song == null) {
             song = new Song(getBasicSongPanel().getTitleField().getText(), getBasicSongPanel().getAuthorField().getText());
         }
+        song.setLyrics(getBasicSongPanel().getLyricsField().getText());
+        song.setTitle(getBasicSongPanel().getTitleField().getText());
+        song.setAuthor(getBasicSongPanel().getAuthorField().getText());
         return song;
     }
 
@@ -196,7 +199,7 @@ public class SongEntryWindow extends JDialog {
      * Centre this window on its owner.
      */
     public void centreOnOwner() {
-        setLocation((getOwner().getX()+getOwner().getWidth()/2)-getWidth()/2, (getOwner().getY()+getOwner().getHeight()/2)-getHeight()/2);
+        setLocation((getOwner().getX() + getOwner().getWidth() / 2) - getWidth() / 2, (getOwner().getY() + getOwner().getHeight() / 2) - getHeight() / 2);
     }
 
     /**
@@ -204,7 +207,7 @@ public class SongEntryWindow extends JDialog {
      * it accordingly.
      */
     private void checkConfirmButton() {
-        if(getBasicSongPanel().getLyricsField().getText().trim().equals("")
+        if (getBasicSongPanel().getLyricsField().getText().trim().equals("")
                 || getBasicSongPanel().getTitleField().getText().trim().equals("")) {
             confirmButton.setEnabled(false);
         }
@@ -212,5 +215,4 @@ public class SongEntryWindow extends JDialog {
             confirmButton.setEnabled(true);
         }
     }
-
 }

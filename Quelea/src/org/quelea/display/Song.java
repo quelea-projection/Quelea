@@ -90,11 +90,27 @@ public class Song implements Displayable, Searchable, Comparable<Song> {
     }
 
     /**
+     * Set the title of the song.
+     * @param title the new song title.
+     */
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    /**
      * Get the author of this song.
      * @return the author of the song.
      */
     public String getAuthor() {
         return author;
+    }
+
+    /**
+     * Set the author of the song.
+     * @param author the new song author.
+     */
+    public void setAuthor(String author) {
+        this.author = author;
     }
 
     /**
