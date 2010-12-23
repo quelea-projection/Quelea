@@ -35,7 +35,7 @@ public class MainWindow extends JFrame {
      * Create a new main window.
      */
     public MainWindow() {
-        super("Quelea (Version " + QueleaProperties.get().getVersion().getVersionString() + ")");
+        super("Quelea " + QueleaProperties.get().getVersion().getVersionString());
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
         try {
