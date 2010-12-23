@@ -4,6 +4,8 @@ import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.util.HashSet;
 import java.util.Set;
+import javax.swing.Box;
+import javax.swing.BoxLayout;
 import javax.swing.DefaultListModel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -13,7 +15,6 @@ import javax.swing.event.ListDataEvent;
 import javax.swing.event.ListDataListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
-import org.quelea.Theme;
 import org.quelea.display.SongSection;
 
 /**
@@ -44,7 +45,12 @@ public abstract class SelectLyricsPanel extends JPanel {
             }
         });
         splitPane.setOneTouchExpandable(true);
-        splitPane.add(previewCanvas);
+        JPanel previewPanel = new JPanel();
+        previewPanel.setLayout(new BoxLayout(previewPanel, BoxLayout.X_AXIS));
+//        previewPanel.add(Box.createHorizontalGlue());
+        previewPanel.add(previewCanvas);
+//        previewPanel.add(Box.createHorizontalGlue());
+        splitPane.add(previewPanel);
         add(splitPane, BorderLayout.CENTER);
         registerLyricCanvas(previewCanvas);
 
