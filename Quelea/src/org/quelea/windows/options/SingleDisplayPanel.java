@@ -65,7 +65,7 @@ public class SingleDisplayPanel extends JPanel {
             if(index>maxIndex) {
                 index = 0;
             }
-            outputSelect.setSelectedIndex(num+1);
+            outputSelect.setSelectedIndex(index);
         }
         else {
             int index = num;

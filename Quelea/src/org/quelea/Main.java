@@ -53,16 +53,26 @@ public final class Main {
 
         int controlScreenProp = QueleaProperties.get().getControlScreen();
         final int controlScreen;
-        final int projectorScreen = QueleaProperties.get().getProjectorScreen();
+        int projectorScreen = QueleaProperties.get().getProjectorScreen();
 
-        if(gds.length <= controlScreenProp) {
+        if (gds.length <= controlScreenProp) {
             controlScreen = 0;
         }
         else {
             controlScreen = controlScreenProp;
         }
-        if(gds.length > projectorScreen) {
-            LOGGER.log(Level.INFO, "Starting projector display on monitor {0}", projectorScreen);
+        final boolean hidden;
+        if (gds.length < projectorScreen || projectorScreen < 0) {
+            hidden = true;
+        }
+        else {
+            hidden = false;
+        }
+        LOGGER.log(Level.INFO, "Starting projector display on monitor {0}", projectorScreen);
+        if (hidden) {
+            fullScreenWindow = new LyricWindow(gds[0].getDefaultConfiguration().getBounds());
+        }
+        else {
             fullScreenWindow = new LyricWindow(gds[projectorScreen].getDefaultConfiguration().getBounds());
         }
 
@@ -73,7 +83,7 @@ public final class Main {
                 try {
                     database = new SongDatabase();
                 }
-                catch(SQLException ex) {
+                catch (SQLException ex) {
                     LOGGER.log(Level.SEVERE, "SQL excpetion - hopefully this is just because quelea is already running", ex);
                     JOptionPane.showMessageDialog(null, "It looks like you already have an instance of Quelea running, make sure you close all instances before running the program.", "Already running", JOptionPane.ERROR_MESSAGE);
                     System.exit(0);
@@ -88,14 +98,9 @@ public final class Main {
                 mainWindow.setLocation((int) gds[controlScreen].getDefaultConfiguration().getBounds().getMinX() + 100, (int) gds[controlScreen].getDefaultConfiguration().getBounds().getMinY() + 100);
                 mainWindow.setVisible(true);
 
-                if(fullScreenWindow == null) {
-                    JOptionPane.showMessageDialog(mainWindow, "Looks like you've only got one monitor installed. I can't display the full screen canvas in this setup.");
-                }
-                else {
-                    mainWindow.getMainPanel().getLiveLyricsPanel().registerLyricCanvas(fullScreenWindow.getCanvas());
-                    mainWindow.getMainPanel().getLiveLyricsPanel().registerLyricWindow(fullScreenWindow);
-                    fullScreenWindow.setVisible(true);
-                }
+                mainWindow.getMainPanel().getLiveLyricsPanel().registerLyricCanvas(fullScreenWindow.getCanvas());
+                mainWindow.getMainPanel().getLiveLyricsPanel().registerLyricWindow(fullScreenWindow);
+                fullScreenWindow.setVisible(!hidden);
             }
         });
     }
@@ -109,13 +114,18 @@ public final class Main {
                 int projectorDisplay = mainWindow.getOptionsWindow().getDisplayPanel().getProjectorDisplay();
                 props.setControlScreen(monitorDisplay);
                 props.setProjectorScreen(projectorDisplay);
-                
+
                 GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
                 final GraphicsDevice[] gds = ge.getScreenDevices();
                 if (projectorDisplay == -1) {
-                    fullScreenWindow.setVisible(false);
+                    if (fullScreenWindow != null) {
+                        fullScreenWindow.setVisible(false);
+                    }
                 }
                 else {
+                    if (fullScreenWindow == null) {
+                        fullScreenWindow = new LyricWindow(gds[projectorDisplay].getDefaultConfiguration().getBounds());
+                    }
                     fullScreenWindow.setVisible(true);
                     fullScreenWindow.setArea(gds[projectorDisplay].getDefaultConfiguration().getBounds());
                 }
@@ -133,14 +143,14 @@ public final class Main {
 
             public void actionPerformed(ActionEvent e) {
                 Song song = (Song) songPanel.getSongList().getSelectedValue();
-                if(song == null) {
+                if (song == null) {
                     return;
                 }
                 int confirmResult = JOptionPane.showConfirmDialog(mainWindow, "Really remove " + song.getTitle() + " from the database? This action cannnot be undone.", "Confirm remove", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
-                if(confirmResult == JOptionPane.NO_OPTION) {
+                if (confirmResult == JOptionPane.NO_OPTION) {
                     return;
                 }
-                if(!database.removeSong(song)) {
+                if (!database.removeSong(song)) {
                     JOptionPane.showMessageDialog(mainWindow, "There was an error removing the song from the database.", "Error", JOptionPane.ERROR_MESSAGE, null);
                 }
                 SortedListModel model = (SortedListModel) songPanel.getSongList().getModel();
@@ -160,12 +170,12 @@ public final class Main {
 
                 Song song = songEntryWindow.getSong();
                 song.setLyrics(songEntryWindow.getBasicSongPanel().getLyricsField().getText());
-                for(SongSection section : song.getSections()) {
+                for (SongSection section : song.getSections()) {
                     section.setTheme(songEntryWindow.getTheme());
                 }
                 SortedListModel model = (SortedListModel) mainWindow.getMainPanel().getLibraryPanel().getLibrarySongPanel().getSongList().getModel();
                 model.removeElement(song);
-                if(!database.updateSong(song)) {
+                if (!database.updateSong(song)) {
                     JOptionPane.showMessageDialog(mainWindow, "There was an error updating the song in the database.", "Error", JOptionPane.ERROR_MESSAGE, null);
                 }
                 songEntryWindow.setVisible(false);
@@ -179,7 +189,7 @@ public final class Main {
      */
     private static void addDBSongs() {
         SortedListModel model = (SortedListModel) mainWindow.getMainPanel().getLibraryPanel().getLibrarySongPanel().getSongList().getModel();
-        for(Song song : database.getSongs()) {
+        for (Song song : database.getSongs()) {
             model.add(song);
         }
     }
@@ -191,7 +201,7 @@ public final class Main {
         try {
             UIManager.setLookAndFeel(new SubstanceBusinessLookAndFeel());
         }
-        catch(UnsupportedLookAndFeelException ex) {
+        catch (UnsupportedLookAndFeelException ex) {
             LOGGER.log(Level.INFO, "Couldn't set the look and feel to substance.", ex);
         }
 
