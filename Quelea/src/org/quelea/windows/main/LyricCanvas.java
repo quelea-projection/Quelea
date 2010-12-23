@@ -192,6 +192,14 @@ public class LyricCanvas extends JPanel {
                     sections.addAll(splitLine(s, maxLength));
                 }
             }
+            else if (containsNotAtEnd(line, "-")) {
+                for (String s : splitMiddle(line, '-')) {
+                    sections.addAll(splitLine(s, maxLength));
+                }
+            }
+            else {
+                sections.addAll(splitLine(new StringBuilder(line).insert(line.length()/2, "-").toString(), maxLength));
+            }
         }
         else {
             sections.add(line.trim());
