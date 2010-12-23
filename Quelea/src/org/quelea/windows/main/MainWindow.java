@@ -59,6 +59,14 @@ public class MainWindow extends JFrame {
                 songEntryWindow.setVisible(true);
             }
         });
+        mainpanel.getSchedulePanel().getScheduleList().getPopupMenu().getEditSongButton().addActionListener(new ActionListener() {
+
+            public void actionPerformed(ActionEvent e) {
+                songEntryWindow.centreOnOwner();
+                songEntryWindow.resetEditSong((Song) mainpanel.getSchedulePanel().getScheduleList().getSelectedValue());
+                songEntryWindow.setVisible(true);
+            }
+        });
         addToolbarListeners();
         addMenuBarListeners();
         setJMenuBar(menubar);
