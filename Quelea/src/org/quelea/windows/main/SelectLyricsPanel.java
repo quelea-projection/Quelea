@@ -2,9 +2,9 @@ package org.quelea.windows.main;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
+import java.awt.Graphics;
 import java.util.HashSet;
 import java.util.Set;
-import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.DefaultListModel;
 import javax.swing.JPanel;
@@ -45,12 +45,7 @@ public abstract class SelectLyricsPanel extends JPanel {
             }
         });
         splitPane.setOneTouchExpandable(true);
-        JPanel previewPanel = new JPanel();
-        previewPanel.setLayout(new BoxLayout(previewPanel, BoxLayout.X_AXIS));
-//        previewPanel.add(Box.createHorizontalGlue());
-        previewPanel.add(previewCanvas);
-//        previewPanel.add(Box.createHorizontalGlue());
-        splitPane.add(previewPanel);
+        splitPane.add(previewCanvas);
         add(splitPane, BorderLayout.CENTER);
         registerLyricCanvas(previewCanvas);
 

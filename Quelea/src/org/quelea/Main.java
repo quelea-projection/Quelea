@@ -102,7 +102,7 @@ public final class Main {
                 addOptionListeners();
                 addMenuListeners();
 
-                mainWindow.setLocation((int) gds[controlScreen].getDefaultConfiguration().getBounds().getMinX() + 100, (int) gds[controlScreen].getDefaultConfiguration().getBounds().getMinY() + 100);
+                mainWindow.setLocation((int) gds[controlScreen].getDefaultConfiguration().getBounds().getMinX(), (int) gds[controlScreen].getDefaultConfiguration().getBounds().getMinY());
                 mainWindow.setVisible(true);
 
                 checkUpdate(false, false);
@@ -176,7 +176,7 @@ public final class Main {
                     fullScreenWindow.setVisible(true);
                     fullScreenWindow.setArea(gds[projectorDisplay].getDefaultConfiguration().getBounds());
                 }
-                mainWindow.setLocation((int) gds[monitorDisplay].getDefaultConfiguration().getBounds().getMinX() + 100, (int) gds[monitorDisplay].getDefaultConfiguration().getBounds().getMinY() + 100);
+                mainWindow.setLocation((int) gds[monitorDisplay].getDefaultConfiguration().getBounds().getMinX(), (int) gds[monitorDisplay].getDefaultConfiguration().getBounds().getMinY());
             }
         });
     }
