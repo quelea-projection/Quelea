@@ -68,11 +68,12 @@ public final class Main {
         else {
             hidden = false;
         }
-        LOGGER.log(Level.INFO, "Starting projector display on monitor {0}", projectorScreen);
         if (hidden) {
+            LOGGER.log(Level.INFO, "Hiding projector display on monitor 0");
             fullScreenWindow = new LyricWindow(gds[0].getDefaultConfiguration().getBounds());
         }
         else {
+            LOGGER.log(Level.INFO, "Starting projector display on monitor {0}", projectorScreen);
             fullScreenWindow = new LyricWindow(gds[projectorScreen].getDefaultConfiguration().getBounds());
         }
 
