@@ -17,6 +17,7 @@ public class OptionsDialog extends JDialog {
 
     private final JButton okButton;
     private final DisplaySetupPanel displayPanel;
+    private final GeneralPanel generalPanel;
     private final JFrame owner;
 
     /**
@@ -28,8 +29,10 @@ public class OptionsDialog extends JDialog {
         this.owner = owner;
         setLayout(new BorderLayout());
         JTabbedPane tabbedPane = new JTabbedPane();
+        generalPanel = new GeneralPanel();
+        tabbedPane.add(generalPanel);
         displayPanel = new DisplaySetupPanel();
-        tabbedPane.addTab("Display", displayPanel);
+        tabbedPane.add(displayPanel);
         add(tabbedPane, BorderLayout.CENTER);
         JPanel buttonPanel = new JPanel();
         okButton = new JButton("OK");
@@ -54,9 +57,18 @@ public class OptionsDialog extends JDialog {
     public void setVisible(boolean visible) {
         if(visible) {
             setLocationRelativeTo(owner);
-            displayPanel.syncForm();
+            displayPanel.update();
+            generalPanel.update();
         }
         super.setVisible(visible);
+    }
+
+    /**
+     * Get the general panel used in this options dialog.
+     * @return the general panel.
+     */
+    public GeneralPanel getGeneralPanel() {
+        return generalPanel;
     }
 
     /**
