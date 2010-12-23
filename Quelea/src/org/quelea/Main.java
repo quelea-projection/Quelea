@@ -144,6 +144,8 @@ public final class Main {
                 QueleaProperties props = QueleaProperties.get();
                 boolean checkUpdate = mainWindow.getOptionsWindow().getGeneralPanel().getStartupUpdateCheckBox().isSelected();
                 props.setCheckUpdate(checkUpdate);
+                boolean showWarning = mainWindow.getOptionsWindow().getGeneralPanel().getOneMonitorWarningCheckBox().isSelected();
+                props.setSingleMonitorWarning(showWarning);
                 boolean checkCapital = mainWindow.getOptionsWindow().getGeneralPanel().getCapitalFirstCheckBox().isSelected();
                 props.setCapitalFirst(checkCapital);
                 int maxCharsPerLine = mainWindow.getOptionsWindow().getGeneralPanel().getMaxCharsSlider().getValue();
