@@ -26,7 +26,7 @@ public class AboutDialog extends JDialog {
         super(owner, "About");
         this.owner = owner;
         setLayout(new BoxLayout(this.getContentPane(), BoxLayout.Y_AXIS));
-        add(new JLabel("<html><b>Quelea</b> version " + QueleaProperties.get().getVersion() + "</html>"));
+        add(new JLabel("<html><b>Quelea</b> version " + QueleaProperties.get().getVersion().getVersionString() + "</html>"));
         add(new JLabel("Discussion group: https://groups.google.com/group/quelea-discuss"));
         add(new JLabel("Website: http://www.quelea.org"));
         add(new JLabel(" "));

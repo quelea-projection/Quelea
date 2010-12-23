@@ -23,6 +23,7 @@ import org.quelea.display.Song;
 public class SongEntryWindow extends JDialog {
 
     private BasicSongPanel basicSongPanel;
+    private DetailedSongPanel detailedSongPanel;
     private ThemePanel themePanel;
     private final JTabbedPane tabbedPane;
     private final JButton confirmButton;
@@ -41,6 +42,9 @@ public class SongEntryWindow extends JDialog {
         tabbedPane.setBorder(new EmptyBorder(0, 0, 0, 0));
         setupBasicSongPanel();
         tabbedPane.add(basicSongPanel);
+        setupDetailedSongPanel();
+        tabbedPane.add(detailedSongPanel);
+        tabbedPane.setEnabledAt(1, false);
         setupThemePanel();
         tabbedPane.add(themePanel);
         add(tabbedPane, BorderLayout.CENTER);
@@ -65,6 +69,13 @@ public class SongEntryWindow extends JDialog {
      */
     private void setupThemePanel() {
         themePanel = new ThemePanel();
+    }
+
+    /**
+     * Called by the constructor to initialise the detailed song panel.
+     */
+    private void setupDetailedSongPanel() {
+        detailedSongPanel = new DetailedSongPanel();
     }
 
     /**

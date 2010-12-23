@@ -35,7 +35,7 @@ public class MainWindow extends JFrame {
      * Create a new main window.
      */
     public MainWindow() {
-        super("Quelea (Version " + QueleaProperties.get().getVersion() + " Pre-release)");
+        super("Quelea (Version " + QueleaProperties.get().getVersion().getVersionString() + " Pre-release)");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
         try {
@@ -256,11 +256,19 @@ public class MainWindow extends JFrame {
     }
 
     /**
-     * Get the new song window used for this main panel.
+     * Get the new song window used for this window.
      * @return the song entry window.
      */
     public SongEntryWindow getNewSongWindow() {
         return songEntryWindow;
+    }
+
+    /**
+     * Get the main menu bar used on this window.
+     * @return the main menu bar.
+     */
+    public MainMenuBar getMainMenuBar() {
+        return menubar;
     }
 
     /**

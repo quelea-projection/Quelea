@@ -65,8 +65,8 @@ public final class QueleaProperties extends Properties {
      * Get the current version number.
      * @return the current version number.
      */
-    public String getVersion() {
-        return getProperty("quelea.version", "");
+    public Version getVersion() {
+        return new Version(getProperty("quelea.version", ""));
     }
 
     /**
@@ -169,6 +169,57 @@ public final class QueleaProperties extends Properties {
      */
     public void setSingleMonitorWarning(boolean val) {
         setProperty("single.monitor.warning", Boolean.toString(val));
+        write();
+    }
+
+    /**
+     * Get the URL to download Quelea.
+     * @return the URL to download Quelea.
+     */
+    public String getDownloadLocation() {
+        return getProperty("download.location", "http://code.google.com/p/quelea-projection/downloads/list");
+    }
+
+    /**
+     * Get the URL to the Quelea website.
+     * @return the URL to the Quelea website.
+     */
+    public String getWebsiteLocation() {
+        return getProperty("website.location", "http://www.quelea.org/");
+    }
+
+    /**
+     * Get the URL to the Quelea discussion forum.
+     * @return the URL to the Quelea discussion forum.
+     */
+    public String getDiscussLocation() {
+        return getProperty("discuss.location", "https://groups.google.com/group/quelea-discuss");
+    }
+
+    /**
+     * Get the URL used for checking the latest version.
+     * @return the URL used for checking the latest version.
+     */
+    public String getUpdateURL() {
+        return getProperty("update.url", "http://code.google.com/p/quelea-projection/");
+    }
+
+    /**
+     * Determine whether we should check for updates each time the program
+     * starts.
+     * @return true if we should check for updates, false otherwise.
+     */
+    public boolean checkUpdate() {
+        return Boolean.parseBoolean(getProperty("check.update", "true"));
+    }
+
+    /**
+     * Set whether we should check for updates each time the program
+     * starts.
+     * @param val true if we should check for updates, false otherwise.
+     */
+    public void setCheckUpdate(boolean val) {
+        setProperty("check.update", Boolean.toString(val));
         write();
     }
 
