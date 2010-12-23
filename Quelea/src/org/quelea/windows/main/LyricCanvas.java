@@ -56,7 +56,7 @@ public class LyricCanvas extends JPanel {
         Graphics offscreen = offscreenImage.getGraphics();
         offscreen.setColor(getForeground());
         super.paint(offscreen);
-//        fixAspectRatio();
+//        fixAspectRatio(); //Seems to work better without this with the new algorithm
         if (blacked || theme == null) {
             Color temp = offscreen.getColor();
             offscreen.setColor(Color.BLACK);
@@ -215,15 +215,16 @@ public class LyricCanvas extends JPanel {
     }
 
     /**
-     * Determine if the given line contains the given delimiter, ignoring the
-     * character at the end of the line.
+     * Determine if the given line contains the given string in the middle
+     * 80% of the line.
      * @param line the line to check.
-     * @param delimiter the delimiter to use.
+     * @param str the string to use.
      * @return true if the line contains the delimiter, false otherwise.
      */
-    private static boolean containsNotAtEnd(String line, String delimiter) {
-        line = line.trim().substring(0, line.length() - 1);
-        return line.contains(delimiter);
+    private static boolean containsNotAtEnd(String line, String str) {
+        final int percentage = 80;
+        int removeChars = (int)((double)line.length()*((double)(100-percentage)/100));
+        return line.substring(removeChars, line.length()-removeChars).contains(str);
     }
 
     /**
