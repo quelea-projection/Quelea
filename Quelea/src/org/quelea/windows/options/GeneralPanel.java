@@ -19,6 +19,7 @@ public class GeneralPanel extends JPanel implements Updatable {
 
     private final JCheckBox startupUpdateCheckBox;
     private final JCheckBox capitalFirstCheckBox;
+    private final JCheckBox oneMonitorWarnCheckBox;
     private final JSlider maxCharsSlider;
     private final JSlider minLinesSlider;
 
@@ -35,6 +36,13 @@ public class GeneralPanel extends JPanel implements Updatable {
         startupUpdateCheckBox = new JCheckBox();
         startupLabel.setLabelFor(startupUpdateCheckBox);
         generalPanel.add(startupUpdateCheckBox);
+        generalPanel.add(new JLabel()); //Keep springlayout happy
+
+        JLabel warnLabel = new JLabel("Warn if there's just one monitor");
+        generalPanel.add(warnLabel);
+        oneMonitorWarnCheckBox = new JCheckBox();
+        warnLabel.setLabelFor(oneMonitorWarnCheckBox);
+        generalPanel.add(oneMonitorWarnCheckBox);
         generalPanel.add(new JLabel()); //Keep springlayout happy
 
         JLabel capitalFirstLabel = new JLabel("Capitalise the start of each line");
@@ -73,7 +81,7 @@ public class GeneralPanel extends JPanel implements Updatable {
                 minLinesValue.setText(Integer.toString(minLinesSlider.getValue()));
             }
         });
-        SpringUtilities.makeCompactGrid(generalPanel, 4, 3, 6, 6, 6, 6);
+        SpringUtilities.makeCompactGrid(generalPanel, 5, 3, 6, 6, 6, 6);
         add(generalPanel);
         update();
     }
@@ -85,6 +93,7 @@ public class GeneralPanel extends JPanel implements Updatable {
         QueleaProperties props = QueleaProperties.get();
         startupUpdateCheckBox.setSelected(props.checkUpdate());
         capitalFirstCheckBox.setSelected(props.checkCapitalFirst());
+        oneMonitorWarnCheckBox.setSelected(props.showSingleMonitorWarning());
         maxCharsSlider.setValue(props.getMaxChars());
         minLinesSlider.setValue(props.getMinLines());
     }
@@ -119,5 +128,13 @@ public class GeneralPanel extends JPanel implements Updatable {
      */
     public JCheckBox getCapitalFirstCheckBox() {
         return capitalFirstCheckBox;
+    }
+
+    /**
+     * Get the "one monitor warning" checkbox.
+     * @return the "one monitor warning" checkbox.
+     */
+    public JCheckBox getOneMonitorWarningCheckBox() {
+        return oneMonitorWarnCheckBox;
     }
 }
