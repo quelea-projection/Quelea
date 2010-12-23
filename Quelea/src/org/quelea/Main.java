@@ -1,9 +1,11 @@
 package org.quelea;
 
+import java.awt.Desktop;
 import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.net.URI;
 import java.sql.SQLException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -18,6 +20,8 @@ import org.quelea.display.Song;
 import org.quelea.display.SongSection;
 import org.quelea.utils.LoggerUtils;
 import org.quelea.utils.QueleaProperties;
+import org.quelea.utils.Version;
+import org.quelea.utils.VersionChecker;
 import org.quelea.windows.library.LibrarySongPanel;
 import org.quelea.windows.main.LyricWindow;
 import org.quelea.windows.main.MainWindow;
@@ -62,7 +66,7 @@ public final class Main {
             controlScreen = controlScreenProp;
         }
         final boolean hidden;
-        if (projectorScreen >= gds.length  || projectorScreen < 0) {
+        if (projectorScreen >= gds.length || projectorScreen < 0) {
             hidden = true;
         }
         else {
@@ -76,6 +80,7 @@ public final class Main {
             LOGGER.log(Level.INFO, "Starting projector display on monitor {0} (base 0!)", projectorScreen);
             fullScreenWindow = new LyricWindow(gds[projectorScreen].getDefaultConfiguration().getBounds());
         }
+        fullScreenWindow.toFront();
 
         SwingUtilities.invokeLater(new Runnable() {
 
@@ -95,10 +100,12 @@ public final class Main {
                 addNewSongWindowListeners();
                 addSongPanelListeners();
                 addDisplayListeners();
+                addMenuListeners();
 
                 mainWindow.setLocation((int) gds[controlScreen].getDefaultConfiguration().getBounds().getMinX() + 100, (int) gds[controlScreen].getDefaultConfiguration().getBounds().getMinY() + 100);
                 mainWindow.setVisible(true);
 
+                checkUpdate(false, false);
                 showWarning(gds.length);
                 mainWindow.getMainPanel().getLiveLyricsPanel().registerLyricCanvas(fullScreenWindow.getCanvas());
                 mainWindow.getMainPanel().getLiveLyricsPanel().registerLyricWindow(fullScreenWindow);
@@ -107,6 +114,21 @@ public final class Main {
         });
     }
 
+    /**
+     * Add the required action listeners to the menus.
+     */
+    private static void addMenuListeners() {
+        mainWindow.getMainMenuBar().getHelpMenu().getUpdateCheck().addActionListener(new ActionListener() {
+
+            public void actionPerformed(ActionEvent e) {
+                checkUpdate(true, true);
+            }
+        });
+    }
+
+    /**
+     * Add the required action listeners to the options window.
+     */
     private static void addDisplayListeners() {
         mainWindow.getOptionsWindow().getOKButton().addActionListener(new ActionListener() {
 
@@ -197,6 +219,66 @@ public final class Main {
     }
 
     /**
+     * Check whether there's an update to Quelea, display a message if so.
+     * @param showIfLatest true if the user should see a message even if they're
+     * running the latest version.
+     * @param showIfError true if the user should see a message if there is an
+     * error.
+     */
+    private static void checkUpdate(boolean showIfLatest, boolean showIfError) {
+        if (QueleaProperties.get().checkUpdate()) {
+            Version latestVersion = new VersionChecker(QueleaProperties.get().getUpdateURL()).getLatestVersion();
+            if(latestVersion==null) {
+                if(showIfError) {
+                    showUpdateError();
+                }
+                return;
+            }
+            Version curVersion = QueleaProperties.get().getVersion();
+            LOGGER.log(Level.INFO, "Checked updates, current version is {0} and latest version is {1}",
+                    new Object[]{curVersion.getVersionString(), latestVersion.getVersionString()});
+            if (curVersion.compareTo(latestVersion) == -1) {
+                if (Desktop.isDesktopSupported()) {
+                    int result = JOptionPane.showConfirmDialog(mainWindow,
+                            "There is a newer version of Quelea available (" + latestVersion.getVersionString() + "). "
+                            + "Visit the web page to download it now?",
+                            "Update available", JOptionPane.YES_NO_OPTION, JOptionPane.INFORMATION_MESSAGE, null);
+                    if (result == JOptionPane.YES_OPTION) {
+                        try {
+                            Desktop.getDesktop().browse(new URI(QueleaProperties.get().getDownloadLocation()));
+                        }
+                        catch(Exception ex) {
+                            LOGGER.log(Level.WARNING, "Couldn't open browser", ex);
+                            if (showIfError) {
+                                showUpdateError();
+                            }
+                            return;
+                        }
+                    }
+                }
+                else {
+                    JOptionPane.showMessageDialog(mainWindow,
+                            "There is a newer version of Quelea available (" + latestVersion.getVersionString() + "). "
+                            + "You can download it here: " + QueleaProperties.get().getDownloadLocation(),
+                            "Update available", JOptionPane.INFORMATION_MESSAGE, null);
+                }
+            }
+            else if(showIfLatest) {
+                JOptionPane.showMessageDialog(mainWindow, "You are running the latest version of Quelea ("
+                        + curVersion.getVersionString() + ").", "Already up-to-date!", JOptionPane.INFORMATION_MESSAGE, null);
+            }
+        }
+    }
+
+    /**
+     * Show a message saying there was an error checking for updates.
+     */
+    private static void showUpdateError() {
+        JOptionPane.showMessageDialog(mainWindow, "Sorry, there was an error checking for updates."
+                + "Please check your internet connection then try again.", "Error", JOptionPane.ERROR_MESSAGE, null);
+    }
+
+    /**
      * If it's appropriate, show the warning about only having 1 monitor.
      * @param numMonitors the number of monitors.
      */
@@ -204,7 +286,7 @@ public final class Main {
         if (numMonitors <= 1 && QueleaProperties.get().showSingleMonitorWarning()) {
             JOptionPane.showMessageDialog(mainWindow, "Looks like you've only got one monitor installed. "
                     + "This is fine if you're just using Quelea to prepare some schedules, but if you're "
-                    + "using it in a live setting Quelea needs 2 monitors to work properly.", "One monitor",
+                    + "using it in a live setting Quelea needs 2 monitors to work properly.", "Only one monitor",
                     JOptionPane.WARNING_MESSAGE, null);
         }
     }
