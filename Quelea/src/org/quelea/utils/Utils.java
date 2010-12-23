@@ -6,7 +6,10 @@ import java.awt.Graphics;
 import java.awt.GraphicsEnvironment;
 import java.awt.Image;
 import java.awt.image.BufferedImage;
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -21,7 +24,6 @@ import javax.swing.ImageIcon;
 public final class Utils {
 
     private static final Logger LOGGER = LoggerUtils.getLogger();
-
 
     /**
      * Don't instantiate me. I bite.
@@ -41,6 +43,35 @@ public final class Utils {
                 .replace(">", "&gt;")
                 .replace("\"", "&quot;")
                 .replace("'", "&apos;");
+    }
+    
+    /**
+     * Get the textual content from a file as a string, returning the given
+     * error string if a problem occurs retrieving the content.
+     * @param fileName the filename to get the text from.
+     * @param errorText the error string to return if things go wrong.
+     * @return hopefully the text content of the file, or the errorText string
+     * if we can't get the text content for some reason.
+     */
+    public static String getTextFromFile(String fileName, String errorText) {
+        try {
+            BufferedReader reader = new BufferedReader(new FileReader(fileName));
+            try {
+                StringBuilder content = new StringBuilder();
+                String line;
+                while ((line = reader.readLine()) != null) {
+                    content.append(line).append('\n');
+                }
+                return content.toString();
+            }
+            finally {
+                reader.close();
+            }
+        }
+        catch (IOException ex) {
+            LOGGER.log(Level.WARNING, "Couldn't get the contents of " + fileName, ex);
+            return errorText;
+        }
     }
 
     /**
