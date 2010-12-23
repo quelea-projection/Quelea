@@ -10,8 +10,6 @@ import javax.swing.JMenuItem;
 public class DatabaseMenu extends JMenu {
 
     private final JMenuItem newSong;
-    private final JMenuItem qspImport;
-    private final JMenuItem ssImport;
     private final JMenuItem exportSongs;
 
     /**
@@ -21,14 +19,6 @@ public class DatabaseMenu extends JMenu {
         super("Database");
         newSong = new JMenuItem("New song...");
         add(newSong);
-        JMenu importMenu = new JMenu("Import songs");
-        qspImport = new JMenuItem("Quelea song pack...");
-        qspImport.setEnabled(false);
-        importMenu.add(qspImport);
-        ssImport = new JMenuItem("Survivor songbook...");
-        ssImport.setEnabled(false);
-        importMenu.add(ssImport);
-        add(importMenu);
         exportSongs = new JMenuItem("Export songs...");
         exportSongs.setEnabled(false);
         add(exportSongs);
@@ -40,22 +30,6 @@ public class DatabaseMenu extends JMenu {
      */
     public JMenuItem getExportSongs() {
         return exportSongs;
-    }
-
-    /**
-     * Get the import quelea song pack menu item.
-     * @return the import quelea song pack menu item.
-     */
-    public JMenuItem getQSPImport() {
-        return qspImport;
-    }
-
-    /**
-     * Get the import survivor songbook menu item.
-     * @return the import survivor songbook menu item.
-     */
-    public JMenuItem getSSImport() {
-        return ssImport;
     }
 
     /**
