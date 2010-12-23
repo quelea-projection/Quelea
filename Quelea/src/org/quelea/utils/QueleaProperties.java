@@ -154,4 +154,22 @@ public final class QueleaProperties extends Properties {
         write();
     }
 
+    /**
+     * Determine whether the single monitor warning should be shown (this warns
+     * the user they only have one monitor installed.)
+     * @return true if the warning should be shown, false otherwise.
+     */
+    public boolean showSingleMonitorWarning() {
+        return Boolean.parseBoolean(getProperty("single.monitor.warning", "true"));
+    }
+
+    /**
+     * Set whether the single monitor warning should be shown.
+     * @param val true if the warning should be shown, false otherwise.
+     */
+    public void setSingleMonitorWarning(boolean val) {
+        setProperty("single.monitor.warning", Boolean.toString(val));
+        write();
+    }
+
 }
