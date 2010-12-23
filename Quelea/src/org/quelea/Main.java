@@ -99,7 +99,7 @@ public final class Main {
 
                 addNewSongWindowListeners();
                 addSongPanelListeners();
-                addDisplayListeners();
+                addOptionListeners();
                 addMenuListeners();
 
                 mainWindow.setLocation((int) gds[controlScreen].getDefaultConfiguration().getBounds().getMinX() + 100, (int) gds[controlScreen].getDefaultConfiguration().getBounds().getMinY() + 100);
@@ -129,10 +129,33 @@ public final class Main {
     /**
      * Add the required action listeners to the options window.
      */
-    private static void addDisplayListeners() {
+    private static void addOptionListeners() {
         mainWindow.getOptionsWindow().getOKButton().addActionListener(new ActionListener() {
 
             public void actionPerformed(ActionEvent e) {
+                updateDisplay();
+                updateGeneral();
+            }
+
+            /**
+             * Update the general part of the options form.
+             */
+            private void updateGeneral() {
+                QueleaProperties props = QueleaProperties.get();
+                boolean checkUpdate = mainWindow.getOptionsWindow().getGeneralPanel().getStartupUpdateCheckBox().isSelected();
+                props.setCheckUpdate(checkUpdate);
+                boolean checkCapital = mainWindow.getOptionsWindow().getGeneralPanel().getCapitalFirstCheckBox().isSelected();
+                props.setCapitalFirst(checkCapital);
+                int maxCharsPerLine = mainWindow.getOptionsWindow().getGeneralPanel().getMaxCharsSlider().getValue();
+                props.setMaxChars(maxCharsPerLine);
+                int minLines = mainWindow.getOptionsWindow().getGeneralPanel().getMinLinesSlider().getValue();
+                props.setMinLines(minLines);
+            }
+
+            /**
+             * Update the display part of the options form.
+             */
+            private void updateDisplay() {
                 QueleaProperties props = QueleaProperties.get();
                 int monitorDisplay = mainWindow.getOptionsWindow().getDisplayPanel().getControlDisplay();
                 int projectorDisplay = mainWindow.getOptionsWindow().getDisplayPanel().getProjectorDisplay();

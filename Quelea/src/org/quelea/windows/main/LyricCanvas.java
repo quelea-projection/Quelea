@@ -16,6 +16,7 @@ import java.util.Map.Entry;
 import javax.swing.JPanel;
 import org.quelea.Theme;
 import org.quelea.utils.QueleaProperties;
+import org.quelea.utils.Utils;
 
 /**
  * The canvas where the lyrics / images / media are drawn.
@@ -202,7 +203,11 @@ public class LyricCanvas extends JPanel {
             }
         }
         else {
-            sections.add(line.trim());
+            line = line.trim();
+            if(QueleaProperties.get().checkCapitalFirst()) {
+                line = Utils.capitaliseFirst(line);
+            }
+            sections.add(line);
         }
         return sections;
     }

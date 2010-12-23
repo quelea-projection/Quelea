@@ -71,7 +71,7 @@ public class SelectLyricsList extends JList {
 
     /**
      * @inheritDoc
-     * @return a defaultlistmodel that backs this lyrics list.
+     * @return a DefaultListModel that backs this lyrics list.
      */
     @Override
     public DefaultListModel getModel() {

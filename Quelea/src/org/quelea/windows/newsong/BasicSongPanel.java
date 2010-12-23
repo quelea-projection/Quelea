@@ -13,7 +13,7 @@ import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.SpringLayout;
 import javax.swing.SwingUtilities;
-import org.quelea.SpringUtilities;
+import org.quelea.utils.SpringUtilities;
 import org.quelea.display.Song;
 
 /**

@@ -223,4 +223,23 @@ public final class QueleaProperties extends Properties {
         write();
     }
 
+    /**
+     * Determine whether the first letter of all displayed lines should be a
+     * capital.
+     * @return true if it should be a capital, false otherwise.
+     */
+    public boolean checkCapitalFirst() {
+        return Boolean.parseBoolean(getProperty("capital.first", "true"));
+    }
+
+    /**
+     * Set whether the first letter of all displayed lines should be a
+     * capital.
+     * @param val true if it should be a capital, false otherwise.
+     */
+    public void setCapitalFirst(boolean val) {
+        setProperty("capital.first", Boolean.toString(val));
+        write();
+    }
+
 }

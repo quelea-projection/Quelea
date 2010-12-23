@@ -33,6 +33,20 @@ public final class Utils {
     }
 
     /**
+     * Capitalise the first letter of a string.
+     * @param line the input string.
+     * @return the the string with the first letter capitalised.
+     */
+    public static String capitaliseFirst(String line) {
+        if(line.isEmpty()) {
+            return line;
+        }
+        StringBuilder ret = new StringBuilder(line);
+        ret.setCharAt(0, Character.toUpperCase(line.charAt(0)));
+        return ret.toString();
+    }
+
+    /**
      * Escape the XML special characters.
      * @param s the string to escape.
      * @return the escaped string.

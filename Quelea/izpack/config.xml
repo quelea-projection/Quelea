@@ -50,19 +50,23 @@
     </panels>
 
     <packs>
-        <pack name="base" required="yes" hidden="true">
+        <pack name="base" required="yes" preselected="yes" hidden="true">
             <description>Core components</description>
             <file src="lib" targetdir="$INSTALL_PATH"/>
             <file src="Quelea.jar" targetdir="$INSTALL_PATH"/>
             <file src="Readme.txt" targetdir="$INSTALL_PATH"/>
             <file src="../licenses/gplv3.txt" targetdir="$INSTALL_PATH"/>
-            <file src="quelea.properties" targetdir="$INSTALL_PATH" override="true"/>
+            <file src="quelea.properties" targetdir="$INSTALL_PATH"/>
         </pack>
-        <pack name="database" required="yes" hidden="true">
-            <description>The database</description>
+        <pack name="source code" required="no" preselected="yes">
+            <description>Source code</description>
+            <file src="src" targetdir="$INSTALL_PATH"/>
+        </pack>
+        <pack name="database" required="no" preselected="yes">
+            <description>Sample database of songs</description>
             <file src="database" targetdir="$INSTALL_PATH" override="false"/>
         </pack>
-        <pack name="images" required="yes" hidden="true">
+        <pack name="images" required="no" preselected="yes">
             <description>Images and icons</description>
             <file src="icons" targetdir="$INSTALL_PATH"/>
             <file src="img" targetdir="$INSTALL_PATH" override="false"/>
