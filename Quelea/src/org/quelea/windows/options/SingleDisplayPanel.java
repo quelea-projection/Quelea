@@ -77,6 +77,13 @@ public class SingleDisplayPanel extends JPanel {
     }
 
     /**
+     * Update the display panel with the monitor information.
+     */
+    public void update() {
+        outputSelect.setModel(getAvailableScreens(none));
+    }
+
+    /**
      * Get a list model describing the available graphical devices.
      * @return a list model describing the available graphical devices.
      */

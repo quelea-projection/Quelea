@@ -33,6 +33,8 @@ public class DisplaySetupPanel extends JPanel {
      * Synchronise the panel with the current information in the properties file.
      */
     public final void syncForm() {
+        monitorPanel.update();
+        projectorPanel.update();
         monitorPanel.setScreen(QueleaProperties.get().getControlScreen());
         projectorPanel.setScreen(QueleaProperties.get().getProjectorScreen());
     }

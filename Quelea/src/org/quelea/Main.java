@@ -62,7 +62,7 @@ public final class Main {
             controlScreen = controlScreenProp;
         }
         final boolean hidden;
-        if (gds.length < projectorScreen || projectorScreen < 0) {
+        if (projectorScreen >= gds.length  || projectorScreen < 0) {
             hidden = true;
         }
         else {
@@ -99,6 +99,7 @@ public final class Main {
                 mainWindow.setLocation((int) gds[controlScreen].getDefaultConfiguration().getBounds().getMinX() + 100, (int) gds[controlScreen].getDefaultConfiguration().getBounds().getMinY() + 100);
                 mainWindow.setVisible(true);
 
+                showWarning(gds.length);
                 mainWindow.getMainPanel().getLiveLyricsPanel().registerLyricCanvas(fullScreenWindow.getCanvas());
                 mainWindow.getMainPanel().getLiveLyricsPanel().registerLyricWindow(fullScreenWindow);
                 fullScreenWindow.setVisible(!hidden);
@@ -192,6 +193,19 @@ public final class Main {
         SortedListModel model = (SortedListModel) mainWindow.getMainPanel().getLibraryPanel().getLibrarySongPanel().getSongList().getModel();
         for (Song song : database.getSongs()) {
             model.add(song);
+        }
+    }
+
+    /**
+     * If it's appropriate, show the warning about only having 1 monitor.
+     * @param numMonitors the number of monitors.
+     */
+    private static void showWarning(int numMonitors) {
+        if (numMonitors <= 1 && QueleaProperties.get().showSingleMonitorWarning()) {
+            JOptionPane.showMessageDialog(mainWindow, "Looks like you've only got one monitor installed. "
+                    + "This is fine if you're just using Quelea to prepare some schedules, but if you're "
+                    + "using it in a live setting Quelea needs 2 monitors to work properly.", "One monitor",
+                    JOptionPane.WARNING_MESSAGE, null);
         }
     }
 
