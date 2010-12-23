@@ -56,7 +56,7 @@ public class LyricCanvas extends JPanel {
         Graphics offscreen = offscreenImage.getGraphics();
         offscreen.setColor(getForeground());
         super.paint(offscreen);
-        fixAspectRatio();
+//        fixAspectRatio();
         if (blacked || theme == null) {
             Color temp = offscreen.getColor();
             offscreen.setColor(Color.BLACK);
