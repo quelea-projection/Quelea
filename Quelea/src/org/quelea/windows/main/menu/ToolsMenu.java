@@ -1,6 +1,7 @@
 
 package org.quelea.windows.main.menu;
 
+import java.awt.event.KeyEvent;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 
@@ -20,14 +21,18 @@ public class ToolsMenu extends JMenu {
     public ToolsMenu() {
         super("Tools");
         JMenu importMenu = new JMenu("Import songs");
+        importMenu.setMnemonic(KeyEvent.VK_I);
         qspImport = new JMenuItem("Quelea song pack...");
+        qspImport.setMnemonic(KeyEvent.VK_Q);
         qspImport.setEnabled(false);
         importMenu.add(qspImport);
         ssImport = new JMenuItem("Survivor songbook...");
+        ssImport.setMnemonic(KeyEvent.VK_S);
         ssImport.setEnabled(false);
         importMenu.add(ssImport);
         add(importMenu);
         options = new JMenuItem("Options");
+        options.setMnemonic(KeyEvent.VK_O);
         add(options);
     }
 

@@ -1,7 +1,6 @@
 package org.quelea.windows.main;
 
 import java.awt.BorderLayout;
-import java.awt.event.ActionListener;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JToolBar;
@@ -43,11 +42,11 @@ public class SelectPreviewLyricsPanel extends SelectLyricsPanel {
     }
 
     /**
-     * Add a listener that's fired when the "go live" button is pressed.
-     * @param listener the actionlistener.
+     * Get the "go live" button.
+     * @return the "go live" button.
      */
-    public void addLiveButtonListener(ActionListener listener) {
-        liveButton.addActionListener(listener);
+    public JButton getLiveButton() {
+        return liveButton;
     }
 
 }

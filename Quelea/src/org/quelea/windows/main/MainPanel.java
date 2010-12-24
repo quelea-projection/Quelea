@@ -1,9 +1,11 @@
 package org.quelea.windows.main;
 
+import java.awt.event.KeyEvent;
 import org.quelea.windows.library.LibraryPanel;
 import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import javax.swing.DefaultListModel;
@@ -39,6 +41,141 @@ public class MainPanel extends JPanel {
         previewPanel = new SelectPreviewLyricsPanel();
         livePanel = new SelectLiveLyricsPanel();
 
+        addKeyListeners();
+        addScheduleListeners();
+        addLiveButtonListener();
+        addScheduleAddListeners();
+
+        JSplitPane scheduleAndLibrary = new JSplitPane(JSplitPane.VERTICAL_SPLIT, schedulePanel, libraryPanel);
+        scheduleAndLibrary.setResizeWeight(0.5);
+        scheduleAndLibrary.setOneTouchExpandable(true);
+        JSplitPane previewAndLive = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, previewPanel, livePanel);
+        previewAndLive.setResizeWeight(0.5);
+        JSplitPane mainSplit = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, scheduleAndLibrary, previewAndLive);
+        mainSplit.setResizeWeight(0.2);
+        mainSplit.setSize(300, 300);
+        add(mainSplit, BorderLayout.CENTER);
+    }
+
+    /**
+     * Add the listeners that add songs to the schedule.
+     */
+    private void addScheduleAddListeners() {
+        libraryPanel.getLibrarySongPanel().getSongList().getPopupMenu().getAddToScheduleButton().addActionListener(new ActionListener() {
+
+            public void actionPerformed(ActionEvent e) {
+                Song song = (Song) libraryPanel.getLibrarySongPanel().getSongList().getSelectedValue();
+                ((DefaultListModel) schedulePanel.getScheduleList().getModel()).addElement(song);
+            }
+        });
+
+        libraryPanel.getLibrarySongPanel().getSongList().addMouseListener(new MouseAdapter() {
+
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                JList songList = (JList) e.getSource();
+                if (e.getClickCount() == 2) {
+                    Song song = (Song) songList.getSelectedValue();
+                    ((DefaultListModel) schedulePanel.getScheduleList().getModel()).addElement(song);
+                }
+            }
+        });
+    }
+
+    /**
+     * Add the listener for the live button.
+     */
+    private void addLiveButtonListener() {
+
+        previewPanel.getLiveButton().addActionListener(new ActionListener() {
+
+            public void actionPerformed(ActionEvent e) {
+                DefaultListModel liveModel = livePanel.getLyricsList().getModel();
+                DefaultListModel previewModel = previewPanel.getLyricsList().getModel();
+                liveModel.clear();
+                for (int i = 0; i < previewModel.getSize(); i++) {
+                    liveModel.addElement(previewModel.get(i));
+                }
+                livePanel.getLyricsList().setSelectedIndex(previewPanel.getLyricsList().getSelectedIndex());
+                if (schedulePanel.getScheduleList().getSelectedIndex() < schedulePanel.getScheduleList().getModel().getSize()) {
+                    schedulePanel.getScheduleList().setSelectedIndex(schedulePanel.getScheduleList().getSelectedIndex() + 1);
+                }
+                livePanel.getLyricsList().requestFocus();
+            }
+        });
+    }
+
+    /**
+     * Add the key listeners to the lists used for switching focus between them.
+     */
+    private void addKeyListeners() {
+
+        schedulePanel.getScheduleList().addKeyListener(new KeyListener() {
+
+            public void keyTyped(KeyEvent e) {
+                if (e.getKeyChar() == ' ') {
+                    previewPanel.getLiveButton().doClick();
+                    livePanel.getLyricsList().ensureIndexIsVisible(livePanel.getLyricsList().getSelectedIndex());
+                }
+            }
+
+            public void keyPressed(KeyEvent e) {
+                if (e.getKeyCode() == KeyEvent.VK_RIGHT && !previewPanel.getLyricsList().getModel().isEmpty()) {
+                    previewPanel.getLyricsList().requestFocus();
+                }
+            }
+
+            public void keyReleased(KeyEvent e) {
+                //Nothing needed here
+            }
+        });
+        previewPanel.getLyricsList().addKeyListener(new KeyListener() {
+
+            public void keyTyped(KeyEvent e) {
+                if (e.getKeyChar() == ' ') {
+                    previewPanel.getLiveButton().doClick();
+                    livePanel.getLyricsList().ensureIndexIsVisible(livePanel.getLyricsList().getSelectedIndex());
+                }
+            }
+
+            public void keyPressed(KeyEvent e) {
+                if (e.getKeyCode() == KeyEvent.VK_RIGHT && !livePanel.getLyricsList().getModel().isEmpty()) {
+                    livePanel.getLyricsList().requestFocus();
+                }
+                else if (e.getKeyCode() == KeyEvent.VK_LEFT && schedulePanel.getScheduleList().getModel().getSize() > 0) {
+                    schedulePanel.getScheduleList().requestFocus();
+                }
+            }
+
+            public void keyReleased(KeyEvent e) {
+                //Nothing needed here
+            }
+        });
+        livePanel.getLyricsList().addKeyListener(new KeyListener() {
+
+            public void keyTyped(KeyEvent e) {
+                if (e.getKeyChar() == ' ') {
+                    previewPanel.getLiveButton().doClick();
+                    livePanel.getLyricsList().ensureIndexIsVisible(livePanel.getLyricsList().getSelectedIndex());
+                }
+            }
+
+            public void keyPressed(KeyEvent e) {
+                if (e.getKeyCode() == KeyEvent.VK_LEFT && !previewPanel.getLyricsList().getModel().isEmpty()) {
+                    previewPanel.getLyricsList().requestFocus();
+                }
+            }
+
+            public void keyReleased(KeyEvent e) {
+                //Nothing needed here
+            }
+        });
+    }
+
+    /**
+     * Add the listeners to check for changes in the schedule panel.
+     */
+    private void addScheduleListeners() {
         schedulePanel.getScheduleList().getModel().addListDataListener(new ListDataListener() {
 
             public void intervalAdded(ListDataEvent e) {
@@ -65,54 +202,6 @@ public class MainPanel extends JPanel {
                 listChanged();
             }
         });
-
-        previewPanel.addLiveButtonListener(new ActionListener() {
-
-            public void actionPerformed(ActionEvent e) {
-                DefaultListModel liveModel = livePanel.getLyricsList().getModel();
-                DefaultListModel previewModel = previewPanel.getLyricsList().getModel();
-                liveModel.clear();
-                for (int i = 0; i < previewModel.getSize(); i++) {
-                    liveModel.addElement(previewModel.get(i));
-                }
-                livePanel.getLyricsList().setSelectedIndex(previewPanel.getLyricsList().getSelectedIndex());
-                if (schedulePanel.getScheduleList().getSelectedIndex() < schedulePanel.getScheduleList().getModel().getSize()) {
-                    schedulePanel.getScheduleList().setSelectedIndex(schedulePanel.getScheduleList().getSelectedIndex() + 1);
-                }
-                livePanel.getLyricsList().requestFocus();
-            }
-        });
-
-        libraryPanel.getLibrarySongPanel().getSongList().getPopupMenu().getAddToScheduleButton().addActionListener(new ActionListener() {
-
-            public void actionPerformed(ActionEvent e) {
-                Song song = (Song) libraryPanel.getLibrarySongPanel().getSongList().getSelectedValue();
-                ((DefaultListModel) schedulePanel.getScheduleList().getModel()).addElement(song);
-            }
-        });
-
-        libraryPanel.getLibrarySongPanel().getSongList().addMouseListener(new MouseAdapter() {
-
-            @Override
-            public void mouseClicked(MouseEvent e) {
-                JList songList = (JList) e.getSource();
-                if (e.getClickCount() == 2) {
-                    Song song = (Song)songList.getSelectedValue();
-//                    int index = list.locationToIndex(e.getPoint());
-                    ((DefaultListModel)schedulePanel.getScheduleList().getModel()).addElement(song);
-                }
-            }
-        });
-
-        JSplitPane scheduleAndLibrary = new JSplitPane(JSplitPane.VERTICAL_SPLIT, schedulePanel, libraryPanel);
-        scheduleAndLibrary.setResizeWeight(0.5);
-        scheduleAndLibrary.setOneTouchExpandable(true);
-        JSplitPane previewAndLive = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, previewPanel, livePanel);
-        previewAndLive.setResizeWeight(0.5);
-        JSplitPane mainSplit = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, scheduleAndLibrary, previewAndLive);
-        mainSplit.setResizeWeight(0.2);
-        mainSplit.setSize(300, 300);
-        add(mainSplit, BorderLayout.CENTER);
     }
 
     /**
@@ -131,7 +220,6 @@ public class MainPanel extends JPanel {
             model.addElement(section);
         }
         previewPanel.getLyricsList().setSelectedIndex(0);
-        previewPanel.getLyricsList().requestFocus();
     }
 
     /**
@@ -165,4 +253,5 @@ public class MainPanel extends JPanel {
     public LibraryPanel getLibraryPanel() {
         return libraryPanel;
     }
+
 }

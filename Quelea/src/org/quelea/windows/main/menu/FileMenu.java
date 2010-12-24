@@ -2,8 +2,11 @@ package org.quelea.windows.main.menu;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.InputEvent;
+import java.awt.event.KeyEvent;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
+import javax.swing.KeyStroke;
 
 /**
  * The file menu on the menu bar.
@@ -22,14 +25,22 @@ public class FileMenu extends JMenu {
     public FileMenu() {
         super("File");
         newSchedule = new JMenuItem("New");
+        newSchedule.setAccelerator(KeyStroke.getKeyStroke('N', InputEvent.CTRL_DOWN_MASK));
+        newSchedule.setMnemonic(KeyEvent.VK_N);
         add(newSchedule);
         openSchedule = new JMenuItem("Open");
+        openSchedule.setAccelerator(KeyStroke.getKeyStroke('O', InputEvent.CTRL_DOWN_MASK));
+        openSchedule.setMnemonic(KeyEvent.VK_O);
         add(openSchedule);
         saveSchedule = new JMenuItem("Save");
+        saveSchedule.setAccelerator(KeyStroke.getKeyStroke('S', InputEvent.CTRL_DOWN_MASK));
+        saveSchedule.setMnemonic(KeyEvent.VK_S);
         add(saveSchedule);
         saveScheduleAs = new JMenuItem("Save as...");
+        saveScheduleAs.setMnemonic(KeyEvent.VK_A);
         add(saveScheduleAs);
-        JMenuItem exit = new JMenuItem("Exit");
+        JMenuItem exit = new JMenuItem("Quit");
+        exit.setMnemonic(KeyEvent.VK_Q);
         exit.addActionListener(new ActionListener() {
 
             public void actionPerformed(ActionEvent e) {
