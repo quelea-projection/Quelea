@@ -1,5 +1,6 @@
 package org.quelea.windows.main.menu;
 
+import java.awt.event.KeyEvent;
 import javax.swing.JMenuBar;
 
 /**
@@ -21,6 +22,17 @@ public class MainMenuBar extends JMenuBar {
         add(databaseMenu=new DatabaseMenu());
         add(toolsMenu=new ToolsMenu());
         add(helpMenu=new HelpMenu());
+        addShortcuts();
+    }
+
+    /**
+     * Add the shortcuts to the menus.
+     */
+    private void addShortcuts() {
+        fileMenu.setMnemonic(KeyEvent.VK_F);
+        databaseMenu.setMnemonic(KeyEvent.VK_D);
+        toolsMenu.setMnemonic(KeyEvent.VK_T);
+        helpMenu.setMnemonic(KeyEvent.VK_H);
     }
 
     /**

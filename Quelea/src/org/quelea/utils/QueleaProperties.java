@@ -1,5 +1,6 @@
 package org.quelea.utils;
 
+import java.awt.Color;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -16,6 +17,7 @@ public final class QueleaProperties extends Properties {
     public static final String PROP_FILE_LOCATION = "quelea.properties";
     private static final Logger LOGGER = LoggerUtils.getLogger();
     private static final QueleaProperties INSTANCE = new QueleaProperties();
+    private static final Color ACTIVE_SELECTION = new Color(200, 255, 255);
 
     /**
      * Load the properties from the properties file.
@@ -240,6 +242,14 @@ public final class QueleaProperties extends Properties {
     public void setCapitalFirst(boolean val) {
         setProperty("capital.first", Boolean.toString(val));
         write();
+    }
+
+    /**
+     * Get the colour used to signify an active list.
+     * @return the colour used to signify an active list.
+     */
+    public Color getActiveSelectionColor() {
+        return ACTIVE_SELECTION;
     }
 
 }

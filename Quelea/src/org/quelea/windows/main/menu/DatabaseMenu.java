@@ -1,5 +1,6 @@
 package org.quelea.windows.main.menu;
 
+import java.awt.event.KeyEvent;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 
@@ -18,8 +19,10 @@ public class DatabaseMenu extends JMenu {
     public DatabaseMenu() {
         super("Database");
         newSong = new JMenuItem("New song...");
+        newSong.setMnemonic(KeyEvent.VK_N);
         add(newSong);
         exportSongs = new JMenuItem("Export songs...");
+        exportSongs.setMnemonic(KeyEvent.VK_E);
         exportSongs.setEnabled(false);
         add(exportSongs);
     }

@@ -1,9 +1,12 @@
 package org.quelea.windows.main;
 
+import java.awt.Color;
 import java.awt.Component;
 import java.awt.Rectangle;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.Transferable;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import javax.swing.DefaultListModel;
@@ -18,7 +21,7 @@ import org.quelea.Schedule;
 import org.quelea.utils.Utils;
 import org.quelea.display.Displayable;
 import org.quelea.display.Song;
-import org.quelea.windows.library.LibrarySongList;
+import org.quelea.utils.QueleaProperties;
 
 /**
  * The schedule list, all the items that are to be displayed in the service.
@@ -27,7 +30,8 @@ import org.quelea.windows.library.LibrarySongList;
 public class ScheduleList extends JList {
 
     private Schedule schedule;
-    private SchedulePopupMenu popupMenu;
+    private final SchedulePopupMenu popupMenu;
+    private final Color originalSelectionColour;
 
     /**
      * A direction; either up or down. Used for rearranging the order of items
@@ -76,6 +80,19 @@ public class ScheduleList extends JList {
      */
     public ScheduleList(DefaultListModel model) {
         super(model);
+        originalSelectionColour = getSelectionBackground();
+        addFocusListener(new FocusListener() {
+
+            public void focusGained(FocusEvent e) {
+                if (getModel().getSize() > 0) {
+                    setSelectionBackground(QueleaProperties.get().getActiveSelectionColor());
+                }
+            }
+
+            public void focusLost(FocusEvent e) {
+                setSelectionBackground(originalSelectionColour);
+            }
+        });
         popupMenu = new SchedulePopupMenu();
         this.addMouseListener(new MouseAdapter() {
 

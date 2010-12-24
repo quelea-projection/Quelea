@@ -3,6 +3,7 @@ package org.quelea.windows.main.menu;
 import java.awt.Desktop;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
 import java.net.URI;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -44,6 +45,7 @@ public class HelpMenu extends JMenu {
                     }
                 }
             });
+            queleaSite.setMnemonic(KeyEvent.VK_W);
             add(queleaSite);
             queleaDiscuss = new JMenuItem("Discussion (ask any questions here)");
             queleaDiscuss.addActionListener(new ActionListener() {
@@ -58,6 +60,7 @@ public class HelpMenu extends JMenu {
                     }
                 }
             });
+            queleaDiscuss.setMnemonic(KeyEvent.VK_D);
             add(queleaDiscuss);
             queleaDownload = new JMenuItem("Download");
             queleaDownload.addActionListener(new ActionListener() {
@@ -72,6 +75,7 @@ public class HelpMenu extends JMenu {
                     }
                 }
             });
+            queleaDownload.setMnemonic(KeyEvent.VK_O);
             add(queleaDownload);
         }
         else {
@@ -80,8 +84,10 @@ public class HelpMenu extends JMenu {
             queleaDownload = null;
         }
         updateCheck = new JMenuItem("Check for updates");
+        updateCheck.setMnemonic(KeyEvent.VK_C);
         add(updateCheck);
         about = new JMenuItem("About...");
+        about.setMnemonic(KeyEvent.VK_A);
         add(about);
     }
 

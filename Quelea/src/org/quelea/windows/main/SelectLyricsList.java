@@ -1,6 +1,9 @@
 package org.quelea.windows.main;
 
+import java.awt.Color;
 import java.awt.Component;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
 import javax.swing.DefaultListModel;
 import javax.swing.JLabel;
 import javax.swing.JList;
@@ -8,12 +11,15 @@ import javax.swing.ListCellRenderer;
 import javax.swing.ListSelectionModel;
 import javax.swing.border.EmptyBorder;
 import org.quelea.display.SongSection;
+import org.quelea.utils.QueleaProperties;
 
 /**
  * A list displaying the different sections in the song.
  * @author Michael
  */
 public class SelectLyricsList extends JList {
+
+    private final Color originalSelectionColour;
 
     /**
      * Used for displaying summaries of items in the service in the schedule
@@ -65,6 +71,19 @@ public class SelectLyricsList extends JList {
      */
     public SelectLyricsList(DefaultListModel model) {
         super(model);
+        originalSelectionColour = getSelectionBackground();
+        addFocusListener(new FocusListener() {
+
+            public void focusGained(FocusEvent e) {
+                if(getModel().getSize()>0) {
+                    setSelectionBackground(QueleaProperties.get().getActiveSelectionColor());
+                }
+            }
+
+            public void focusLost(FocusEvent e) {
+                setSelectionBackground(originalSelectionColour);
+            }
+        });
         setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         setCellRenderer(new SelectLyricsRenderer());
     }

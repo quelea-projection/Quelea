@@ -102,7 +102,7 @@ public final class Main {
                 addOptionListeners();
                 addMenuListeners();
 
-                mainWindow.setLocation((int) gds[controlScreen].getDefaultConfiguration().getBounds().getMinX(), (int) gds[controlScreen].getDefaultConfiguration().getBounds().getMinY());
+                centreOnMonitor(mainWindow, controlScreen);
                 mainWindow.setVisible(true);
 
                 checkUpdate(false, false);
@@ -159,9 +159,9 @@ public final class Main {
              */
             private void updateDisplay() {
                 QueleaProperties props = QueleaProperties.get();
-                int monitorDisplay = mainWindow.getOptionsWindow().getDisplayPanel().getControlDisplay();
+                int controlDisplay = mainWindow.getOptionsWindow().getDisplayPanel().getControlDisplay();
                 int projectorDisplay = mainWindow.getOptionsWindow().getDisplayPanel().getProjectorDisplay();
-                props.setControlScreen(monitorDisplay);
+                props.setControlScreen(controlDisplay);
                 props.setProjectorScreen(projectorDisplay);
 
                 GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
@@ -178,9 +178,36 @@ public final class Main {
                     fullScreenWindow.setVisible(true);
                     fullScreenWindow.setArea(gds[projectorDisplay].getDefaultConfiguration().getBounds());
                 }
-                mainWindow.setLocation((int) gds[monitorDisplay].getDefaultConfiguration().getBounds().getMinX(), (int) gds[monitorDisplay].getDefaultConfiguration().getBounds().getMinY());
+                if(!frameOnScreen(mainWindow, controlDisplay)) {
+                    centreOnMonitor(mainWindow, controlDisplay);
+                }
             }
         });
+    }
+
+    /**
+     * Determine whether the given frame is completely on the given screen.
+     * @param frame the frame to check.
+     * @param monitorNum the monitor number to check.
+     * @return true if the frame is totally on the screen, false otherwise.
+     */
+    private static boolean frameOnScreen(JFrame frame, int monitorNum) {
+        GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
+        final GraphicsDevice[] gds = ge.getScreenDevices();
+        return gds[monitorNum].getDefaultConfiguration().getBounds().contains(frame.getBounds());
+    }
+
+    /**
+     * Centre the given frame on the given monitor.
+     * @param frame the frame to centre.
+     * @param monitorNum the monitor number to centre the frame on.
+     */
+    private static void centreOnMonitor(JFrame frame, int monitorNum) {
+        GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
+        final GraphicsDevice[] gds = ge.getScreenDevices();
+        int centreX = (int)(gds[monitorNum].getDefaultConfiguration().getBounds().getMaxX()-gds[monitorNum].getDefaultConfiguration().getBounds().getMinX())/2;
+        int centreY = (int)(gds[monitorNum].getDefaultConfiguration().getBounds().getMaxY()-gds[monitorNum].getDefaultConfiguration().getBounds().getMinY())/2;
+        frame.setLocation(centreX-frame.getWidth()/2, centreY-frame.getHeight()/2);
     }
 
     /**
