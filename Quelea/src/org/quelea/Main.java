@@ -16,8 +16,9 @@ import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 import org.pushingpixels.substance.api.skin.SubstanceBusinessLookAndFeel;
-import org.quelea.display.Song;
-import org.quelea.display.SongSection;
+import org.quelea.displayable.Song;
+import org.quelea.displayable.TextSection;
+import org.quelea.bible.BibleManager;
 import org.quelea.utils.LoggerUtils;
 import org.quelea.utils.QueleaProperties;
 import org.quelea.utils.Version;
@@ -103,7 +104,11 @@ public final class Main {
                 addMenuListeners();
 
                 centreOnMonitor(mainWindow, controlScreen);
+                LOGGER.log(Level.INFO, "Loading bibles");
+                BibleManager.get(); //Pre-load bibles
+                LOGGER.log(Level.INFO, "Loading bibles done");
                 mainWindow.setVisible(true);
+                mainWindow.toFront();
 
                 checkUpdate(false, false);
                 showWarning(gds.length);
@@ -245,7 +250,7 @@ public final class Main {
             public void actionPerformed(ActionEvent e) {
 
                 Song song = songEntryWindow.getSong();
-                for (SongSection section : song.getSections()) {
+                for (TextSection section : song.getSections()) {
                     section.setTheme(songEntryWindow.getTheme());
                 }
                 SortedListModel model = (SortedListModel) mainWindow.getMainPanel().getLibraryPanel().getLibrarySongPanel().getSongList().getModel();

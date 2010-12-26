@@ -2,7 +2,6 @@ package org.quelea.bible;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -13,6 +12,7 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import org.quelea.utils.LoggerUtils;
+import org.quelea.utils.Utils;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -41,7 +41,7 @@ public final class Bible {
     /**
      * Parse a bible from a specified bible and return it as an object.
      * @param file the file where the XML bible is stored.
-     * @return the bible as a java object, or null if an error occured.
+     * @return the bible as a java object, or null if an error occurred.
      */
     public static Bible parseBible(File file) {
         try {
@@ -130,6 +130,15 @@ public final class Bible {
      */
     public String getName() {
         return name;
+    }
+
+    /**
+     * Get a summary of the bible.
+     * @return a summary of the bible.
+     */
+    @Override
+    public String toString() {
+        return getName() + " (" + Utils.getAbbreviation(getName()) + ")";
     }
 
     /**
