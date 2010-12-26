@@ -1,16 +1,13 @@
 package org.quelea.display;
 
-import java.awt.Color;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Level;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
-import org.quelea.Schedule;
 import org.quelea.Theme;
 import org.quelea.utils.Utils;
 import org.w3c.dom.Document;
