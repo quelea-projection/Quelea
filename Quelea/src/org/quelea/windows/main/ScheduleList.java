@@ -19,8 +19,8 @@ import javax.swing.TransferHandler;
 import javax.swing.border.EmptyBorder;
 import org.quelea.Schedule;
 import org.quelea.utils.Utils;
-import org.quelea.display.Displayable;
-import org.quelea.display.Song;
+import org.quelea.displayable.Displayable;
+import org.quelea.displayable.Song;
 import org.quelea.utils.QueleaProperties;
 
 /**
@@ -52,13 +52,10 @@ public class ScheduleList extends JList {
          * @inheritDoc
          */
         public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
-            if (!(value instanceof Song)) {
-                return new JLabel();
-            }
             setBorder(new EmptyBorder(5, 5, 5, 5));
-            Song songValue = (Song) value;
-            setText("<html>" + songValue.getTitle() + "<br/><i>" + songValue.getAuthor() + "</i></html>");
-            setIcon(Utils.getImageIcon("icons/lyrics.png"));
+            Displayable displayableValue = (Displayable) value;
+            setText(displayableValue.getPreviewText());
+            setIcon(displayableValue.getPreviewIcon());
             if (isSelected) {
                 setBackground(list.getSelectionBackground());
                 setForeground(list.getSelectionForeground());

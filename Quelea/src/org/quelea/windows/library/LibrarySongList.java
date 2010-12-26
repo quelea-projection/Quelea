@@ -9,8 +9,8 @@ import javax.swing.DropMode;
 import javax.swing.JList;
 import javax.swing.ListSelectionModel;
 import org.quelea.SortedListModel;
-import org.quelea.display.Song;
-import org.quelea.display.SongSection;
+import org.quelea.displayable.Song;
+import org.quelea.displayable.TextSection;
 
 /**
  * The list that displays the songs in the library.
@@ -123,9 +123,9 @@ public class LibrarySongList extends JList {
             return null;
         }
         Song song = (Song) getModel().getElementAt(index);
-        SongSection[] sections = song.getSections();
+        TextSection[] sections = song.getSections();
         if (sections.length > 0) {
-            return sections[0].getLyrics()[0] + "...";
+            return sections[0].getText()[0] + "...";
         }
         return null;
     }

@@ -245,6 +245,23 @@ public final class QueleaProperties extends Properties {
     }
 
     /**
+     * Get the default bible to use.
+     * @return the default bible.
+     */
+    public String getDefaultBible() {
+        return getProperty("default.bible");
+    }
+
+    /**
+     * Set the default bible.
+     * @param biblename the name of the default bible.
+     */
+    public void setDefaultBible(String biblename) {
+        setProperty("default.bible", biblename);
+        write();
+    }
+
+    /**
      * Get the colour used to signify an active list.
      * @return the colour used to signify an active list.
      */

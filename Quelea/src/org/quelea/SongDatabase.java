@@ -10,8 +10,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import org.quelea.display.Song;
-import org.quelea.display.SongSection;
+import org.quelea.displayable.Song;
+import org.quelea.displayable.TextSection;
 import org.quelea.utils.LoggerUtils;
 
 /**
@@ -79,7 +79,7 @@ public class SongDatabase {
                         {
                             setLyrics(rs.getString("lyrics"));
                             setID(rs.getInt("id"));
-                            for (SongSection section : getSections()) {
+                            for (TextSection section : getSections()) {
                                 section.setTheme(Theme.parseDBString(rs.getString("background")));
                             }
                         }

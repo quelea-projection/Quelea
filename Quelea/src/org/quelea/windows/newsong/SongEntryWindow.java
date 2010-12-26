@@ -13,7 +13,7 @@ import javax.swing.JTabbedPane;
 import javax.swing.border.EmptyBorder;
 import org.quelea.Theme;
 import org.quelea.utils.Utils;
-import org.quelea.display.Song;
+import org.quelea.displayable.Song;
 
 /**
  * A new song window that users use for inserting the text content of a new

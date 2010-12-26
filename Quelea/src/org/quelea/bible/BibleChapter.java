@@ -66,6 +66,18 @@ public final class BibleChapter {
     }
 
     /**
+     * Get all the text in this chapter as a string.
+     * @return all the text in this chapter as a string.
+     */
+    public String getText() {
+        StringBuilder ret = new StringBuilder();
+        for(BibleVerse verse : verses) {
+            ret.append(verse.getText());
+        }
+        return ret.toString();
+    }
+
+    /**
      * Add a verse to this chapter.
      * @param verse the verse to add.
      */
@@ -79,6 +91,21 @@ public final class BibleChapter {
      */
     public BibleVerse[] getVerses() {
         return verses.toArray(new BibleVerse[verses.size()]);
+    }
+    
+    /**
+     * Get a specific verse from this chapter.
+     * @param i the verse number to get.
+     * @return the verse at the specified number, or null if it doesn't
+     * exist.
+     */
+    public BibleVerse getVerse(int i) {
+        if (i < verses.size() && i >= 0) {
+            return verses.get(i);
+        }
+        else {
+            return null;
+        }
     }
 
     /**
