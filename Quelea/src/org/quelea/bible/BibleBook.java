@@ -30,10 +30,10 @@ public final class BibleBook {
      */
     public static BibleBook parseXML(Node node) {
         BibleBook ret = new BibleBook();
-        if(node.getAttributes().getNamedItem("bnumber")!=null) {
+        if (node.getAttributes().getNamedItem("bnumber") != null) {
             ret.bookNumber = Integer.parseInt(node.getAttributes().getNamedItem("bnumber").getNodeValue());
         }
-        if(node.getAttributes().getNamedItem("bname")!=null) {
+        if (node.getAttributes().getNamedItem("bname") != null) {
             ret.bookName = node.getAttributes().getNamedItem("bname").getNodeValue();
         }
         else {
@@ -41,8 +41,8 @@ public final class BibleBook {
         }
         NodeList list = node.getChildNodes();
         for (int i = 0; i < list.getLength(); i++) {
-            if (list.item(i).getNodeName().equalsIgnoreCase("chapter") ||
-                    list.item(i).getNodeName().equalsIgnoreCase("c")) {
+            if (list.item(i).getNodeName().equalsIgnoreCase("chapter")
+                    || list.item(i).getNodeName().equalsIgnoreCase("c")) {
                 ret.addChapter(BibleChapter.parseXML(list.item(i)));
             }
         }
@@ -76,6 +76,15 @@ public final class BibleBook {
     }
 
     /**
+     * Get the name of the book.
+     * @return the book's name.
+     */
+    @Override
+    public String toString() {
+        return bookName;
+    }
+
+    /**
      * Get the number of the book.
      * @return the book's number.
      */
@@ -89,6 +98,21 @@ public final class BibleBook {
      */
     public void addChapter(BibleChapter chapter) {
         chapters.add(chapter);
+    }
+
+    /**
+     * Get a specific chapter from this book.
+     * @param i the chapter number to get.
+     * @return the chapter at the specified number, or null if it doesn't
+     * exist.
+     */
+    public BibleChapter getChapter(int i) {
+        if (i < chapters.size() && i >= 0) {
+            return chapters.get(i);
+        }
+        else {
+            return null;
+        }
     }
 
     /**

@@ -17,7 +17,7 @@ import javax.swing.event.ListDataEvent;
 import javax.swing.event.ListDataListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
-import org.quelea.display.SongSection;
+import org.quelea.displayable.TextSection;
 
 /**
  * The panel where the lyrics for different songs can be selected.
@@ -103,9 +103,10 @@ public abstract class SelectLyricsPanel extends JPanel {
             canvas.setText(null);
             return;
         }
-        SongSection currentSection = (SongSection) getLyricsList().getModel().getElementAt(selectedIndex);
+        TextSection currentSection = (TextSection) getLyricsList().getModel().getElementAt(selectedIndex);
         canvas.setTheme(currentSection.getTheme());
-        canvas.setText(currentSection.getLyrics());
+        canvas.setCapitaliseFirst(currentSection.capitaliseFirst());
+        canvas.setText(currentSection.getText());
     }
 
     /**

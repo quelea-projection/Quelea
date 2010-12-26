@@ -46,6 +46,23 @@ public final class Utils {
     }
 
     /**
+     * Get an abbreviation from a name based on the first letter of each word
+     * of the name.
+     * @param name the name to use for the abbreviation.
+     * @return the abbreviation.
+     */
+    public static String getAbbreviation(String name) {
+        StringBuilder ret = new StringBuilder();
+        String[] parts = name.split(" ");
+        for(String str : parts) {
+            if(!str.isEmpty()) {
+                ret.append(Character.toUpperCase(str.charAt(0)));
+            }
+        }
+        return ret.toString();
+    }
+
+    /**
      * Escape the XML special characters.
      * @param s the string to escape.
      * @return the escaped string.

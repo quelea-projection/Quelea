@@ -16,8 +16,11 @@ import javax.swing.event.ListDataEvent;
 import javax.swing.event.ListDataListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
-import org.quelea.display.Song;
-import org.quelea.display.SongSection;
+import org.quelea.bible.Bible;
+import org.quelea.displayable.BiblePassage;
+import org.quelea.displayable.Song;
+import org.quelea.displayable.TextDisplayable;
+import org.quelea.displayable.TextSection;
 
 /**
  * The main body of the main window, containing the schedule, the media bank,
@@ -43,8 +46,9 @@ public class MainPanel extends JPanel {
 
         addKeyListeners();
         addScheduleListeners();
-        addLiveButtonListener();
         addScheduleAddListeners();
+        addLiveButtonListener();
+        addBibleListeners();
 
         JSplitPane scheduleAndLibrary = new JSplitPane(JSplitPane.VERTICAL_SPLIT, schedulePanel, libraryPanel);
         scheduleAndLibrary.setResizeWeight(0.5);
@@ -55,6 +59,16 @@ public class MainPanel extends JPanel {
         mainSplit.setResizeWeight(0.2);
         mainSplit.setSize(300, 300);
         add(mainSplit, BorderLayout.CENTER);
+    }
+
+    private void addBibleListeners() {
+        libraryPanel.getBiblePanel().getAddToSchedule().addActionListener(new ActionListener() {
+
+            public void actionPerformed(ActionEvent e) {
+                BiblePassage passage = new BiblePassage((Bible)libraryPanel.getBiblePanel().getBibleSelector().getSelectedItem(), libraryPanel.getBiblePanel().getBibleLocation(), libraryPanel.getBiblePanel().getVerses());
+                ((DefaultListModel) schedulePanel.getScheduleList().getModel()).addElement(passage);
+            }
+        });
     }
 
     /**
@@ -213,10 +227,10 @@ public class MainPanel extends JPanel {
             previewPanel.getLyricsList().getModel().clear();
             return;
         }
-        Song newSong = (Song) schedulePanel.getScheduleList().getModel().getElementAt(schedulePanel.getScheduleList().getSelectedIndex());
+        TextDisplayable newDisplayable = (TextDisplayable) schedulePanel.getScheduleList().getModel().getElementAt(schedulePanel.getScheduleList().getSelectedIndex());
         DefaultListModel model = previewPanel.getLyricsList().getModel();
         model.clear();
-        for (SongSection section : newSong.getSections()) {
+        for (TextSection section : newDisplayable.getSections()) {
             model.addElement(section);
         }
         previewPanel.getLyricsList().setSelectedIndex(0);

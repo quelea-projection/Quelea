@@ -62,7 +62,7 @@ public final class BibleVerse {
      * Get the textual content of the verse.
      * @return the textual content of the verse.
      */
-    public String getVerse() {
+    public String getText() {
         return verse;
     }
 

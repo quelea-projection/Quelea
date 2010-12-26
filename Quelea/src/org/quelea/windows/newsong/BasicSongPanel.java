@@ -14,7 +14,7 @@ import javax.swing.JTextField;
 import javax.swing.SpringLayout;
 import javax.swing.SwingUtilities;
 import org.quelea.utils.SpringUtilities;
-import org.quelea.display.Song;
+import org.quelea.displayable.Song;
 
 /**
  * The panel that manages the basic input of song information - the title,

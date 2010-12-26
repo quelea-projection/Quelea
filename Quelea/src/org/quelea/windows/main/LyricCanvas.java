@@ -31,6 +31,7 @@ public class LyricCanvas extends JPanel {
     private final int aspectHeight;
     private boolean cleared;
     private boolean blacked;
+    private boolean capitaliseFirst;
 
     /**
      * Create a new canvas where the lyrics should be displayed.
@@ -44,6 +45,14 @@ public class LyricCanvas extends JPanel {
         font = new Font("sans-serif", Font.BOLD, 300);
         theme = Theme.DEFAULT_THEME;
         setMinimumSize(new Dimension(10, 10));
+    }
+
+    /**
+     * Set whether the first of each line should be capitalised.
+     * @param val true if the first character should be, false otherwise.
+     */
+    public void setCapitaliseFirst(boolean val) {
+        this.capitaliseFirst = val;
     }
 
     /**
@@ -102,7 +111,7 @@ public class LyricCanvas extends JPanel {
                 maxLine = line;
             }
         }
-        int size = getFontSize(font, graphics, maxLine);
+        int size = getFontSize(font, graphics, maxLine, sanctifiedLines.size());
         Font newFont = getDifferentSizeFont(font, size);
         graphics.setFont(newFont);
         if (heightOffset > getHeight()) {
@@ -129,10 +138,10 @@ public class LyricCanvas extends JPanel {
      * @param line the longest line.
      * @return the largest font size that can be used.
      */
-    private int getFontSize(Font font, Graphics graphics, String line) {
-        int size = ensureLineCount(font, graphics);
+    private int getFontSize(Font font, Graphics graphics, String line, int numLines) {
+        int size = ensureLineCount(font, graphics, numLines);
         while (size > 0 && graphics.getFontMetrics(font).stringWidth(line) >= getWidth()) {
-            size --;
+            size--;
             font = getDifferentSizeFont(font, size);
         }
         return size;
@@ -145,13 +154,17 @@ public class LyricCanvas extends JPanel {
      * @param graphics the graphics of the canvas.
      * @return the largest font size that can be used.
      */
-    private int ensureLineCount(Font font, Graphics graphics) {
+    private int ensureLineCount(Font font, Graphics graphics, int numLines) {
         int height;
+        int lineCount = QueleaProperties.get().getMinLines();
+        if (numLines > lineCount) {
+            lineCount = numLines;
+        }
         do {
-            height = graphics.getFontMetrics(font).getHeight() * QueleaProperties.get().getMinLines();
+            height = graphics.getFontMetrics(font).getHeight() * lineCount;
             font = getDifferentSizeFont(font, font.getSize() - 1);
         }
-        while (height > getHeight() && font.getSize()>12);
+        while (height > getHeight() && font.getSize() > 12);
 
         return font.getSize();
     }
@@ -201,12 +214,12 @@ public class LyricCanvas extends JPanel {
                 }
             }
             else {
-                sections.addAll(splitLine(new StringBuilder(line).insert(line.length()/2, "-").toString(), maxLength));
+                sections.addAll(splitLine(new StringBuilder(line).insert(line.length() / 2, "-").toString(), maxLength));
             }
         }
         else {
             line = line.trim();
-            if(QueleaProperties.get().checkCapitalFirst()) {
+            if (capitaliseFirst && QueleaProperties.get().checkCapitalFirst()) {
                 line = Utils.capitaliseFirst(line);
             }
             sections.add(line);
@@ -223,8 +236,8 @@ public class LyricCanvas extends JPanel {
      */
     private static boolean containsNotAtEnd(String line, String str) {
         final int percentage = 80;
-        int removeChars = (int)((double)line.length()*((double)(100-percentage)/100));
-        return line.substring(removeChars, line.length()-removeChars).contains(str);
+        int removeChars = (int) ((double) line.length() * ((double) (100 - percentage) / 100));
+        return line.substring(removeChars, line.length() - removeChars).contains(str);
     }
 
     /**

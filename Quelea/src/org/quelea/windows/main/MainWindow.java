@@ -12,7 +12,7 @@ import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.filechooser.FileFilter;
 import org.quelea.Schedule;
-import org.quelea.display.Song;
+import org.quelea.displayable.Song;
 import org.quelea.utils.QueleaProperties;
 import org.quelea.windows.help.AboutDialog;
 import org.quelea.windows.newsong.SongEntryWindow;

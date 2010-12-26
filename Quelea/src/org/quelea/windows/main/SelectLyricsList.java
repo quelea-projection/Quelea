@@ -10,7 +10,7 @@ import javax.swing.JList;
 import javax.swing.ListCellRenderer;
 import javax.swing.ListSelectionModel;
 import javax.swing.border.EmptyBorder;
-import org.quelea.display.SongSection;
+import org.quelea.displayable.TextSection;
 import org.quelea.utils.QueleaProperties;
 
 /**
@@ -31,11 +31,11 @@ public class SelectLyricsList extends JList {
          * @inheritDoc
          */
         public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
-            if (!(value instanceof SongSection)) {
+            if (!(value instanceof TextSection)) {
                 return new JLabel();
             }
             setBorder(new EmptyBorder(5, 5, 5, 5));
-            SongSection section = (SongSection) value;
+            TextSection section = (TextSection) value;
             StringBuilder labelHTML = new StringBuilder();
             labelHTML.append("<html>");
             if(!section.getTitle().trim().equals("")) {
@@ -43,7 +43,7 @@ public class SelectLyricsList extends JList {
                 labelHTML.append(section.getTitle());
                 labelHTML.append("&nbsp;</span></font><br/>");
             }
-            for(String line : section.getLyrics()) {
+            for(String line : section.getText()) {
                 labelHTML.append(line);
                 labelHTML.append("<br/>");
             }
