@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.quelea.bible.Bible;
 
 /**
  * Manages the properties specific to Quelea.
@@ -50,7 +51,7 @@ public final class QueleaProperties extends Properties {
                 writer.close();
             }
         }
-        catch(IOException ex) {
+        catch (IOException ex) {
             LOGGER.log(Level.WARNING, "Couldn't store properties", ex);
         }
     }
@@ -105,7 +106,7 @@ public final class QueleaProperties extends Properties {
     public int getProjectorScreen() {
         return Integer.parseInt(getProperty("projector.screen", "1"));
     }
-    
+
     /**
      * Set the control screen output.
      * @param screen the number of the screen to use for the output.
@@ -256,8 +257,27 @@ public final class QueleaProperties extends Properties {
      * Set the default bible.
      * @param biblename the name of the default bible.
      */
-    public void setDefaultBible(String biblename) {
-        setProperty("default.bible", biblename);
+    public void setDefaultBible(Bible bible) {
+        setProperty("default.bible", bible.getName());
+        write();
+    }
+
+    /**
+     * Get the maximum number of verses allowed in any one bible reading. Too
+     * many will crash the program!
+     * @return the maximum number of verses allowed.
+     */
+    public int getMaxVerses() {
+        return Integer.parseInt(getProperty("max.verses"));
+    }
+
+    /**
+     * Set the maximum number of verses allowed in any one bible reading. Too
+     * many will crash the program!
+     * @param val the maximum number of verses allowed.
+     */
+    public void setMaxVerses(int val) {
+        setProperty("max.verses", Integer.toString(val));
         write();
     }
 
@@ -268,5 +288,4 @@ public final class QueleaProperties extends Properties {
     public Color getActiveSelectionColor() {
         return ACTIVE_SELECTION;
     }
-
 }

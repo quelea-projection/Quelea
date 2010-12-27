@@ -192,7 +192,7 @@ public class LyricCanvas extends JPanel {
     private List<String> splitLine(String line, int maxLength) {
         List<String> sections = new ArrayList<String>();
         if (line.length() > maxLength) {
-
+            System.out.println(line.length() + " " + maxLength);
             if (containsNotAtEnd(line, ";")) {
                 for (String s : splitMiddle(line, ';')) {
                     sections.addAll(splitLine(s, maxLength));

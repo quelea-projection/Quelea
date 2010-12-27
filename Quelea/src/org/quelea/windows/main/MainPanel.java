@@ -65,7 +65,7 @@ public class MainPanel extends JPanel {
         libraryPanel.getBiblePanel().getAddToSchedule().addActionListener(new ActionListener() {
 
             public void actionPerformed(ActionEvent e) {
-                BiblePassage passage = new BiblePassage((Bible)libraryPanel.getBiblePanel().getBibleSelector().getSelectedItem(), libraryPanel.getBiblePanel().getBibleLocation(), libraryPanel.getBiblePanel().getVerses());
+                BiblePassage passage = new BiblePassage(((Bible)libraryPanel.getBiblePanel().getBibleSelector().getSelectedItem()).getName(), libraryPanel.getBiblePanel().getBibleLocation(), libraryPanel.getBiblePanel().getVerses());
                 ((DefaultListModel) schedulePanel.getScheduleList().getModel()).addElement(passage);
             }
         });
