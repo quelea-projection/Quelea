@@ -4,9 +4,11 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import javax.swing.Icon;
-import org.quelea.bible.Bible;
 import org.quelea.bible.BibleVerse;
+import org.quelea.utils.QueleaProperties;
 import org.quelea.utils.Utils;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 /**
  * A displayable passage from the bible.
@@ -14,9 +16,9 @@ import org.quelea.utils.Utils;
  */
 public class BiblePassage implements TextDisplayable {
 
-    private final String summary;
-    private final List<TextSection> textSections;
-    private final BibleVerse[] verses;
+    private String summary;
+    private List<TextSection> textSections;
+    private BibleVerse[] verses;
 
     /**
      * Create a new bible passage.
@@ -24,8 +26,17 @@ public class BiblePassage implements TextDisplayable {
      * @param location the location of the passage in the bible.
      * @param verses the verses, in order, that make up the passage.
      */
-    public BiblePassage(Bible bible, String location, BibleVerse[] verses) {
-        this.summary = "<html>" + location + "<br/><i>" + bible.getName() + "</i></html>";
+    public BiblePassage(String biblename, String location, BibleVerse[] verses) {
+        this("<html>" + location + "<br/><i>" + biblename + "</i></html>", verses);
+    }
+
+    /**
+     * Create a new bible passage from a summary and an array of verses.
+     * @param summary the summary to display in the schedule.
+     * @param verses the verses in the passage.
+     */
+    private BiblePassage(String summary, BibleVerse[] verses) {
+        this.summary = summary;
         this.verses = Arrays.copyOf(verses, verses.length);
         textSections = new ArrayList<TextSection>();
         fillTextSections();
@@ -36,7 +47,6 @@ public class BiblePassage implements TextDisplayable {
      */
     private void fillTextSections() {
         final int LINES_PER_SLIDE = 8;
-        final int WORDS_PER_LINE = 7;
         List<String> words = new ArrayList<String>();
         for (int i = 0; i < verses.length; i++) {
             words.addAll(Arrays.asList(verses[i].getText().split(" ")));
@@ -46,7 +56,11 @@ public class BiblePassage implements TextDisplayable {
         StringBuilder line = new StringBuilder();
         for(int i=0 ; i<words.size() ; i++) {
             line.append(words.get(i)).append(" ");
-            if ((i != 0 && i % WORDS_PER_LINE == 0) || i == words.size() - 1) {
+            int length = line.length();
+            if(i<words.size()-1) {
+                length += words.get(i+1).length();
+            }
+            if ((i != 0 && length>=QueleaProperties.get().getMaxChars()) || i == words.size() - 1) {
                 lines.add(line.toString());
                 line.setLength(0);
             }
@@ -68,13 +82,31 @@ public class BiblePassage implements TextDisplayable {
     public String getXML() {
         StringBuilder ret = new StringBuilder();
         ret.append("<passage summary=\"");
-        ret.append(summary);
+        ret.append(Utils.escapeXML(summary));
         ret.append("\">");
         for (BibleVerse verse : verses) {
             ret.append(verse.toXML());
         }
         ret.append("</passage>");
         return ret.toString();
+    }
+
+    /**
+     * Parse the xml from a bible passage and return the passage.
+     * @param passage the passage to parse.
+     * @return the passage object.
+     */
+    public static BiblePassage parseXML(Node passage) {
+        NodeList list = passage.getChildNodes();
+        String summary = passage.getAttributes().getNamedItem("summary").getNodeValue();
+        List<BibleVerse> verses = new ArrayList<BibleVerse>();
+        for (int i = 0; i < list.getLength(); i++) {
+            Node node = list.item(i);
+            if (node.getNodeName().equals("vers")) {
+                verses.add(BibleVerse.parseXML(node));
+            }
+        }
+        return new BiblePassage(summary, verses.toArray(new BibleVerse[verses.size()]));
     }
 
     /**

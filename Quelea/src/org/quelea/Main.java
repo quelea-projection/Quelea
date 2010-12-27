@@ -16,6 +16,7 @@ import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 import org.pushingpixels.substance.api.skin.SubstanceBusinessLookAndFeel;
+import org.quelea.bible.Bible;
 import org.quelea.displayable.Song;
 import org.quelea.displayable.TextSection;
 import org.quelea.bible.BibleManager;
@@ -140,6 +141,7 @@ public final class Main {
             public void actionPerformed(ActionEvent e) {
                 updateDisplay();
                 updateGeneral();
+                updateBible();
             }
 
             /**
@@ -186,6 +188,14 @@ public final class Main {
                 if(!frameOnScreen(mainWindow, controlDisplay)) {
                     centreOnMonitor(mainWindow, controlDisplay);
                 }
+            }
+
+            private void updateBible() {
+                QueleaProperties props = QueleaProperties.get();
+                Bible bible = (Bible)mainWindow.getOptionsWindow().getBiblePanel().getDefaultBibleBox().getSelectedItem();
+                props.setDefaultBible(bible);
+                int maxVerses = (Integer)mainWindow.getOptionsWindow().getBiblePanel().getMaxVersesSpinner().getValue();
+                props.setMaxVerses(maxVerses);
             }
         });
     }

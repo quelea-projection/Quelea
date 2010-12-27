@@ -15,6 +15,7 @@ import java.util.zip.ZipOutputStream;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
+import org.quelea.displayable.BiblePassage;
 import org.quelea.displayable.Displayable;
 import org.quelea.displayable.Song;
 import org.quelea.utils.LoggerUtils;
@@ -152,6 +153,9 @@ public class Schedule implements Iterable<Displayable> {
                 String name = node.getNodeName();
                 if (name.equalsIgnoreCase("song")) {
                     newSchedule.add(Song.parseXML(node));
+                }
+                else if(name.equalsIgnoreCase("passage")) {
+                    newSchedule.add(BiblePassage.parseXML(node));
                 }
             }
             return newSchedule;

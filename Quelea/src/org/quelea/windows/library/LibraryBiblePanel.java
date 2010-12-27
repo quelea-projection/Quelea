@@ -1,8 +1,11 @@
 package org.quelea.windows.library;
 
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.util.ArrayList;
 import java.util.List;
 import javax.swing.BoxLayout;
@@ -45,9 +48,9 @@ public class LibraryBiblePanel extends JPanel {
         verses = new ArrayList<BibleVerse>();
         bibleSelector = new JComboBox(BibleManager.get().getBibles());
         String selectedBibleName = QueleaProperties.get().getDefaultBible();
-        for(int i=0 ; i<bibleSelector.getModel().getSize() ; i++) {
-            Bible bible = (Bible)bibleSelector.getItemAt(i);
-            if(bible.getName().equals(selectedBibleName)) {
+        for (int i = 0; i < bibleSelector.getModel().getSize(); i++) {
+            Bible bible = (Bible) bibleSelector.getItemAt(i);
+            if (bible.getName().equals(selectedBibleName)) {
                 bibleSelector.setSelectedIndex(i);
             }
         }
@@ -58,6 +61,22 @@ public class LibraryBiblePanel extends JPanel {
         chapterPanel.add(bookSelector);
         passageSelector = new JTextField();
         chapterPanel.add(passageSelector);
+        passageSelector.addKeyListener(new KeyListener() {
+
+            public void keyTyped(KeyEvent e) {
+                //Nothing needed here
+            }
+
+            public void keyPressed(KeyEvent e) {
+                if (e.getKeyCode() == KeyEvent.VK_ENTER) {
+                    addToSchedule.doClick();
+                }
+            }
+
+            public void keyReleased(KeyEvent e) {
+                //Nothing needed here
+            }
+        });
         add(chapterPanel);
         preview = new JTextArea();
         preview.setEditable(false);
@@ -66,6 +85,7 @@ public class LibraryBiblePanel extends JPanel {
         add(new JScrollPane(preview));
         addToSchedule = new JButton("Add to schedule", Utils.getImageIcon("icons/tick.png"));
         JPanel addPanel = new JPanel();
+        addToSchedule.setEnabled(false);
         addPanel.add(addToSchedule);
         add(addPanel);
 
@@ -111,6 +131,7 @@ public class LibraryBiblePanel extends JPanel {
                 update();
             }
         });
+
     }
 
     /**
@@ -121,9 +142,10 @@ public class LibraryBiblePanel extends JPanel {
         verses.clear();
         ChapterVerseParser cvp = new ChapterVerseParser(passageSelector.getText());
         BibleBook book = (BibleBook) bookSelector.getSelectedItem();
-        if(book==null || book.getChapter(cvp.getFromChapter()) == null ||
-                book.getChapter(cvp.getToChapter()) == null ||
-                passageSelector.getText().isEmpty()) {
+        if (book == null || book.getChapter(cvp.getFromChapter()) == null
+                || book.getChapter(cvp.getToChapter()) == null
+                || passageSelector.getText().isEmpty()) {
+            getAddToSchedule().setEnabled(false);
             preview.setText("");
             return;
         }
@@ -139,7 +161,7 @@ public class LibraryBiblePanel extends JPanel {
             verses.add(verse);
         }
         for (int c = cvp.getFromChapter() + 1; c < cvp.getToChapter(); c++) {
-            for(BibleVerse verse : book.getChapter(c).getVerses()) {
+            for (BibleVerse verse : book.getChapter(c).getVerses()) {
                 ret.append(verse.getText()).append(' ');
                 verses.add(verse);
             }
@@ -147,9 +169,27 @@ public class LibraryBiblePanel extends JPanel {
         if (cvp.getFromChapter() != cvp.getToChapter()) {
             for (int v = 0; v <= cvp.getToVerse(); v++) {
                 BibleVerse verse = book.getChapter(cvp.getToChapter()).getVerse(v);
-                ret.append(verse.getText()).append(' ');
-                verses.add(verse);
+                if(verse != null) {
+                    ret.append(verse.getText()).append(' ');
+                    verses.add(verse);
+                }
             }
+        }
+        int maxVerses = QueleaProperties.get().getMaxVerses();
+        if(verses.size()>maxVerses) {
+            preview.setText("Sorry, no more than " + maxVerses + " verses allowed "
+                    + "(at the moment you've selected a total off " + verses.size()
+                    + ".) You can increase this value by going to Tools => Options "
+                    + "and clicking the \"Bible\" tab, but setting this value "
+                    + "too high will crash the program if you're computer isn't "
+                    + "fast enough.");
+            preview.setBackground(Color.RED);
+            getAddToSchedule().setEnabled(false);
+            return;
+        }
+        else {
+            preview.setBackground(null);
+            getAddToSchedule().setEnabled(true);
         }
 
         preview.setText(ret.toString());
@@ -215,5 +255,4 @@ public class LibraryBiblePanel extends JPanel {
     public JTextField getPassageSelector() {
         return passageSelector;
     }
-    
 }
