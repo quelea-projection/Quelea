@@ -17,7 +17,8 @@ public class OptionsDialog extends JDialog {
 
     private final JButton okButton;
     private final DisplaySetupPanel displayPanel;
-    private final GeneralPanel generalPanel;
+    private final OptionsGeneralPanel generalPanel;
+    private final OptionsBiblePanel biblePanel;
     private final JFrame owner;
 
     /**
@@ -29,10 +30,12 @@ public class OptionsDialog extends JDialog {
         this.owner = owner;
         setLayout(new BorderLayout());
         JTabbedPane tabbedPane = new JTabbedPane();
-        generalPanel = new GeneralPanel();
+        generalPanel = new OptionsGeneralPanel();
         tabbedPane.add(generalPanel);
         displayPanel = new DisplaySetupPanel();
         tabbedPane.add(displayPanel);
+        biblePanel = new OptionsBiblePanel();
+        tabbedPane.add(biblePanel);
         add(tabbedPane, BorderLayout.CENTER);
         JPanel buttonPanel = new JPanel();
         okButton = new JButton("OK");
@@ -59,6 +62,7 @@ public class OptionsDialog extends JDialog {
             setLocationRelativeTo(owner);
             displayPanel.update();
             generalPanel.update();
+            biblePanel.update();
         }
         super.setVisible(visible);
     }
@@ -67,7 +71,7 @@ public class OptionsDialog extends JDialog {
      * Get the general panel used in this options dialog.
      * @return the general panel.
      */
-    public GeneralPanel getGeneralPanel() {
+    public OptionsGeneralPanel getGeneralPanel() {
         return generalPanel;
     }
 
@@ -77,6 +81,14 @@ public class OptionsDialog extends JDialog {
      */
     public DisplaySetupPanel getDisplayPanel() {
         return displayPanel;
+    }
+
+    /**
+     * Get the bible panel used in this options dialog.
+     * @return the bible panel.
+     */
+    public OptionsBiblePanel getBiblePanel() {
+        return biblePanel;
     }
 
     /**

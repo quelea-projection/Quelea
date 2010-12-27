@@ -15,7 +15,7 @@ import org.quelea.utils.Updatable;
  * A panel where the general options in the program are set.
  * @author Michael
  */
-public class GeneralPanel extends JPanel implements Updatable {
+public class OptionsGeneralPanel extends JPanel implements Updatable {
 
     private final JCheckBox startupUpdateCheckBox;
     private final JCheckBox capitalFirstCheckBox;
@@ -26,7 +26,7 @@ public class GeneralPanel extends JPanel implements Updatable {
     /**
      * Create a new general panel.
      */
-    public GeneralPanel() {
+    public OptionsGeneralPanel() {
         setName("General");
         JPanel generalPanel = new JPanel(); //Add stuff to generalpanel to avoid leaking this
         generalPanel.setLayout(new SpringLayout());
