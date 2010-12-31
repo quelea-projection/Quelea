@@ -196,13 +196,6 @@ public class SongEntryWindow extends JDialog {
     }
 
     /**
-     * Centre this window on its owner.
-     */
-    public void centreOnOwner() {
-        setLocation((getOwner().getX() + getOwner().getWidth() / 2) - getWidth() / 2, (getOwner().getY() + getOwner().getHeight() / 2) - getHeight() / 2);
-    }
-
-    /**
      * Check whether the confirm button should be enabled or disabled and set
      * it accordingly.
      */
