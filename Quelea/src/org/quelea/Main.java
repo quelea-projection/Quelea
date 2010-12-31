@@ -5,14 +5,17 @@ import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.IOException;
 import java.net.URI;
 import java.sql.SQLException;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
+import javax.swing.SwingWorker;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 import org.pushingpixels.substance.api.skin.SubstanceBusinessLookAndFeel;
@@ -20,6 +23,8 @@ import org.quelea.bible.Bible;
 import org.quelea.displayable.Song;
 import org.quelea.displayable.TextSection;
 import org.quelea.bible.BibleManager;
+import org.quelea.importsong.SurvivorImportDialog;
+import org.quelea.importsong.SurvivorSongbookParser;
 import org.quelea.utils.LoggerUtils;
 import org.quelea.utils.QueleaProperties;
 import org.quelea.utils.Version;
@@ -102,6 +107,7 @@ public final class Main {
                 addNewSongWindowListeners();
                 addSongPanelListeners();
                 addOptionListeners();
+                addImportListeners();
                 addMenuListeners();
 
                 centreOnMonitor(mainWindow, controlScreen);
@@ -118,6 +124,7 @@ public final class Main {
                 fullScreenWindow.setVisible(!hidden);
             }
         });
+
     }
 
     /**
@@ -128,6 +135,52 @@ public final class Main {
 
             public void actionPerformed(ActionEvent e) {
                 checkUpdate(true, true);
+            }
+        });
+    }
+
+    /**
+     * Add the listeners to the import buttons.
+     */
+    private static void addImportListeners() {
+        final SurvivorImportDialog dialog = mainWindow.getSsImportDialog();
+        dialog.getImportButton().addActionListener(new ActionListener() {
+
+            public void actionPerformed(ActionEvent e) {
+                dialog.getImportButton().setEnabled(false);
+                dialog.getLocationField().setEnabled(false);
+                dialog.setDefaultCloseOperation(JDialog.DO_NOTHING_ON_CLOSE);
+                final String originalLabel = dialog.getImportButton().getText();
+                dialog.getImportButton().setText("Importing, please wait...");
+                final SurvivorSongbookParser parser = new SurvivorSongbookParser(dialog.getLocationField().getText());
+                SwingWorker worker = new SwingWorker() {
+
+                    @Override
+                    protected Object doInBackground() {
+                        try {
+                            List<Song> localSongs = parser.getSongs();
+                            for (Song song : localSongs) {
+                                database.addSong(song);
+                            }
+                            return localSongs;
+                        }
+                        catch (IOException ex) {
+                            JOptionPane.showMessageDialog(mainWindow, "Sorry, there was an error importing the songs.", "Error", JOptionPane.ERROR_MESSAGE, null);
+                            return null;
+                        }
+                    }
+
+                    @Override
+                    protected void done() {
+                        addDBSongs();
+                        dialog.getLocationField().setText("");
+                        dialog.getLocationField().setEnabled(true);
+                        dialog.getImportButton().setText(originalLabel);
+                        dialog.setVisible(false);
+                        dialog.setDefaultCloseOperation(JDialog.HIDE_ON_CLOSE);
+                    }
+                };
+                worker.execute();
             }
         });
     }
@@ -185,16 +238,16 @@ public final class Main {
                     fullScreenWindow.setVisible(true);
                     fullScreenWindow.setArea(gds[projectorDisplay].getDefaultConfiguration().getBounds());
                 }
-                if(!frameOnScreen(mainWindow, controlDisplay)) {
+                if (!frameOnScreen(mainWindow, controlDisplay)) {
                     centreOnMonitor(mainWindow, controlDisplay);
                 }
             }
 
             private void updateBible() {
                 QueleaProperties props = QueleaProperties.get();
-                Bible bible = (Bible)mainWindow.getOptionsWindow().getBiblePanel().getDefaultBibleBox().getSelectedItem();
+                Bible bible = (Bible) mainWindow.getOptionsWindow().getBiblePanel().getDefaultBibleBox().getSelectedItem();
                 props.setDefaultBible(bible);
-                int maxVerses = (Integer)mainWindow.getOptionsWindow().getBiblePanel().getMaxVersesSpinner().getValue();
+                int maxVerses = (Integer) mainWindow.getOptionsWindow().getBiblePanel().getMaxVersesSpinner().getValue();
                 props.setMaxVerses(maxVerses);
             }
         });
@@ -220,9 +273,9 @@ public final class Main {
     private static void centreOnMonitor(JFrame frame, int monitorNum) {
         GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
         final GraphicsDevice[] gds = ge.getScreenDevices();
-        int centreX = (int)(gds[monitorNum].getDefaultConfiguration().getBounds().getMaxX()-gds[monitorNum].getDefaultConfiguration().getBounds().getMinX())/2;
-        int centreY = (int)(gds[monitorNum].getDefaultConfiguration().getBounds().getMaxY()-gds[monitorNum].getDefaultConfiguration().getBounds().getMinY())/2;
-        frame.setLocation(centreX-frame.getWidth()/2, centreY-frame.getHeight()/2);
+        int centreX = (int) (gds[monitorNum].getDefaultConfiguration().getBounds().getMaxX() - gds[monitorNum].getDefaultConfiguration().getBounds().getMinX()) / 2;
+        int centreY = (int) (gds[monitorNum].getDefaultConfiguration().getBounds().getMaxY() - gds[monitorNum].getDefaultConfiguration().getBounds().getMinY()) / 2;
+        frame.setLocation(centreX - frame.getWidth() / 2, centreY - frame.getHeight() / 2);
     }
 
     /**
@@ -279,6 +332,7 @@ public final class Main {
      */
     private static void addDBSongs() {
         SortedListModel model = (SortedListModel) mainWindow.getMainPanel().getLibraryPanel().getLibrarySongPanel().getSongList().getModel();
+        model.clear();
         for (Song song : database.getSongs()) {
             model.add(song);
         }
@@ -294,8 +348,8 @@ public final class Main {
     private static void checkUpdate(boolean showIfLatest, boolean showIfError) {
         if (QueleaProperties.get().checkUpdate()) {
             Version latestVersion = new VersionChecker(QueleaProperties.get().getUpdateURL()).getLatestVersion();
-            if(latestVersion==null) {
-                if(showIfError) {
+            if (latestVersion == null) {
+                if (showIfError) {
                     showUpdateError();
                 }
                 return;
@@ -313,7 +367,7 @@ public final class Main {
                         try {
                             Desktop.getDesktop().browse(new URI(QueleaProperties.get().getDownloadLocation()));
                         }
-                        catch(Exception ex) {
+                        catch (Exception ex) {
                             LOGGER.log(Level.WARNING, "Couldn't open browser", ex);
                             if (showIfError) {
                                 showUpdateError();
@@ -329,7 +383,7 @@ public final class Main {
                             "Update available", JOptionPane.INFORMATION_MESSAGE, null);
                 }
             }
-            else if(showIfLatest) {
+            else if (showIfLatest) {
                 JOptionPane.showMessageDialog(mainWindow, "You are running the latest version of Quelea ("
                         + curVersion.getVersionString() + ").", "Already up-to-date!", JOptionPane.INFORMATION_MESSAGE, null);
             }

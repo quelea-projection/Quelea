@@ -110,7 +110,7 @@ public final class Utils {
      * @return the icon formed from the image, or null if an IOException
      * occured.
      */
-    public static Icon getImageIcon(String location) {
+    public static ImageIcon getImageIcon(String location) {
         Image image = getImage(location);
         if(image==null) {
             return null;
