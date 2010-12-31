@@ -110,7 +110,7 @@ public class SongDatabase {
                 stat.setString(2, song.getAuthor());
                 stat.setString(3, song.getLyrics());
                 String theme = "";
-                if (song.getSections().length > 0) {
+                if (song.getSections().length > 0 && song.getSections()[0].getTheme() != null) {
                     theme = song.getSections()[0].getTheme().toDBString();
                 }
                 stat.setString(4, theme);
