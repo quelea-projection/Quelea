@@ -93,6 +93,7 @@ public class LibrarySongList extends JList {
      * @param search the search term to use.
      */
     public void filter(String search) {
+        search = search.toLowerCase();
         tempModel.clear();
         for (int i = 0; i < fullModel.getSize(); i++) {
             Song s = (Song) fullModel.getElementAt(i);

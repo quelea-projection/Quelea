@@ -28,7 +28,6 @@ public class ToolsMenu extends JMenu {
         importMenu.add(qspImport);
         ssImport = new JMenuItem("Survivor songbook...");
         ssImport.setMnemonic(KeyEvent.VK_S);
-        ssImport.setEnabled(false);
         importMenu.add(ssImport);
         add(importMenu);
         options = new JMenuItem("Options");

@@ -27,6 +27,7 @@ public class Song implements TextDisplayable, Searchable, Comparable<Song> {
     private List<TextSection> sections;
     private Theme theme;
     private int id;
+    private String searchLyrics;
 
     /**
      * Copy constructor - creates a shallow copy.
@@ -38,6 +39,7 @@ public class Song implements TextDisplayable, Searchable, Comparable<Song> {
         this.sections = song.sections;
         this.theme = song.theme;
         this.id = song.id;
+        this.searchLyrics = song.searchLyrics;
     }
 
     /**
@@ -142,6 +144,9 @@ public class Song implements TextDisplayable, Searchable, Comparable<Song> {
             String[] sectionLines = section.split("\n");
             String[] newLyrics = section.split("\n");
             String sectionTitle = "";
+            if (sectionLines.length == 0) {
+                continue;
+            }
             if (Utils.isTitle(sectionLines[0])) {
                 sectionTitle = sectionLines[0];
                 newLyrics = new String[sectionLines.length - 1];
@@ -149,6 +154,7 @@ public class Song implements TextDisplayable, Searchable, Comparable<Song> {
             }
             sections.add(new TextSection(sectionTitle, newLyrics, true));
         }
+        searchLyrics = null;
     }
 
     /**
@@ -160,6 +166,7 @@ public class Song implements TextDisplayable, Searchable, Comparable<Song> {
             section.setTheme(theme);
         }
         sections.add(section);
+        searchLyrics = null;
     }
 
     /**
@@ -186,7 +193,22 @@ public class Song implements TextDisplayable, Searchable, Comparable<Song> {
      * @return true if the song matches, false otherwise.
      */
     public boolean search(String s) {
-        return title.toLowerCase().contains(s.toLowerCase());
+        if(searchLyrics==null) {
+            searchLyrics = stripPunctuation(getLyrics().replace("\n", " ")).toLowerCase();
+        }
+        return title.toLowerCase().contains(s) ||
+                searchLyrics.contains(stripPunctuation(s));
+    }
+
+    private static String stripPunctuation(String s) {
+        s = s.replaceAll("[ ]+", " ");
+        StringBuilder ret = new StringBuilder();
+        for(char c : s.toCharArray()) {
+            if(Character.isLetterOrDigit(c) || Character.isWhitespace(c)) {
+                ret.append(c);
+            }
+        }
+        return ret.toString();
     }
 
     /**
@@ -317,9 +339,11 @@ public class Song implements TextDisplayable, Searchable, Comparable<Song> {
     public int compareTo(Song other) {
         int result = getTitle().compareToIgnoreCase(other.getTitle());
         if (result == 0) {
-            result = getAuthor().compareToIgnoreCase(other.getAuthor());
-            if (result == 0) {
-                result = getLyrics().compareTo(other.getLyrics());
+            if (getAuthor() != null && other.getAuthor() != null) {
+                result = getAuthor().compareToIgnoreCase(other.getAuthor());
+            }
+            if (result == 0 && getLyrics() != null && other.getLyrics() != null) {
+                    result = getLyrics().compareTo(other.getLyrics());
             }
         }
         return result;

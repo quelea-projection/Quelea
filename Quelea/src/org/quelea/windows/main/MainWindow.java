@@ -12,7 +12,9 @@ import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.filechooser.FileFilter;
 import org.quelea.Schedule;
+import org.quelea.SongDatabase;
 import org.quelea.displayable.Song;
+import org.quelea.importsong.SurvivorImportDialog;
 import org.quelea.utils.QueleaProperties;
 import org.quelea.windows.help.AboutDialog;
 import org.quelea.windows.newsong.SongEntryWindow;
@@ -30,6 +32,7 @@ public class MainWindow extends JFrame {
     private final SongEntryWindow songEntryWindow;
     private final OptionsDialog optionsDialog;
     private final AboutDialog aboutDialog;
+    private final SurvivorImportDialog ssImportDialog;
 
     /**
      * Create a new main window.
@@ -48,13 +51,14 @@ public class MainWindow extends JFrame {
         toolbar = new MainToolbar();
         mainpanel = new MainPanel();
         songEntryWindow = new SongEntryWindow(this);
+        ssImportDialog = new SurvivorImportDialog(this);
         optionsDialog = new OptionsDialog(this);
         aboutDialog = new AboutDialog(this);
         mainpanel.getLibraryPanel().getLibrarySongPanel().getAddButton().addActionListener(new NewSongActionListener());
         mainpanel.getLibraryPanel().getLibrarySongPanel().getSongList().getPopupMenu().getEditDBButton().addActionListener(new ActionListener() {
 
             public void actionPerformed(ActionEvent e) {
-                songEntryWindow.centreOnOwner();
+                songEntryWindow.setLocationRelativeTo(songEntryWindow.getOwner());
                 songEntryWindow.resetEditSong((Song) mainpanel.getLibraryPanel().getLibrarySongPanel().getSongList().getSelectedValue());
                 songEntryWindow.setVisible(true);
             }
@@ -62,7 +66,7 @@ public class MainWindow extends JFrame {
         mainpanel.getSchedulePanel().getScheduleList().getPopupMenu().getEditSongButton().addActionListener(new ActionListener() {
 
             public void actionPerformed(ActionEvent e) {
-                songEntryWindow.centreOnOwner();
+                songEntryWindow.setLocationRelativeTo(songEntryWindow.getOwner());
                 songEntryWindow.resetEditSong((Song) mainpanel.getSchedulePanel().getScheduleList().getSelectedValue());
                 songEntryWindow.setVisible(true);
             }
@@ -78,7 +82,7 @@ public class MainWindow extends JFrame {
     private class NewSongActionListener implements ActionListener {
 
         public void actionPerformed(ActionEvent e) {
-            songEntryWindow.centreOnOwner();
+            songEntryWindow.setLocationRelativeTo(songEntryWindow.getOwner());
             songEntryWindow.resetNewSong();
             songEntryWindow.setVisible(true);
         }
@@ -106,7 +110,13 @@ public class MainWindow extends JFrame {
                 aboutDialog.setVisible(true);
             }
         });
+        menubar.getToolsMenu().getSSImport().addActionListener(new ActionListener() {
 
+            public void actionPerformed(ActionEvent e) {
+                ssImportDialog.setLocationRelativeTo(ssImportDialog.getOwner());
+                ssImportDialog.setVisible(true);
+            }
+        });
     }
 
     /**
@@ -286,4 +296,13 @@ public class MainWindow extends JFrame {
     public OptionsDialog getOptionsWindow() {
         return optionsDialog;
     }
+
+    /**
+     * Get the survivor import dialog.
+     * @return the survivor import dialog.
+     */
+    public SurvivorImportDialog getSsImportDialog() {
+        return ssImportDialog;
+    }
+
 }

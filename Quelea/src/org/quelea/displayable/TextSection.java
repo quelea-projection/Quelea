@@ -49,9 +49,11 @@ public class TextSection {
     public String getXML() {
         StringBuilder xml = new StringBuilder();
         xml.append("<section ").append("title=\"").append(getTitle()).append("\" capitalise=\"").append(capitaliseFirst()).append("\">");
-        xml.append("<theme>");
-        xml.append(theme.toDBString());
-        xml.append("</theme>");
+        if(theme != null) {
+            xml.append("<theme>");
+            xml.append(theme.toDBString());
+            xml.append("</theme>");
+        }
         xml.append("<lyrics>");
         for (String line : getText()) {
             xml.append(Utils.escapeXML(line)).append('\n');
