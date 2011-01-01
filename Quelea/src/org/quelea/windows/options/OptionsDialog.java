@@ -26,7 +26,7 @@ public class OptionsDialog extends JDialog {
      * @param owner the owner of the dialog - should be the main window.
      */
     public OptionsDialog(JFrame owner) {
-        super(owner, "Options");
+        super(owner, "Options", true);
         this.owner = owner;
         setLayout(new BorderLayout());
         JTabbedPane tabbedPane = new JTabbedPane();
