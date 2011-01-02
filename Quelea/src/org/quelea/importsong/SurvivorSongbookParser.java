@@ -144,7 +144,8 @@ public class SurvivorSongbookParser {
         int endIndex = -1;
         for (int i = parts.length - 1; i >= 0; i--) {
             if (parts[i].toLowerCase().contains("ccl licence no.")
-                    || parts[i].contains("©")) {
+                    || parts[i].contains("©")
+                    || parts[i].contains("(c)")) {
                 endIndex = i;
                 break;
             }
