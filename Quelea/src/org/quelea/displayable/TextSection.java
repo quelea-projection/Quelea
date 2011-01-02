@@ -48,7 +48,7 @@ public class TextSection {
      */
     public String getXML() {
         StringBuilder xml = new StringBuilder();
-        xml.append("<section ").append("title=\"").append(getTitle()).append("\" capitalise=\"").append(capitaliseFirst()).append("\">");
+        xml.append("<section ").append("title=\"").append(getTitle()).append("\" capitalise=\"").append(shouldCapitaliseFirst()).append("\">");
         if(theme != null) {
             xml.append("<theme>");
             xml.append(theme.toDBString());
@@ -139,6 +139,28 @@ public class TextSection {
         this.theme = theme;
     }
 
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final TextSection other = (TextSection) obj;
+        if (!Arrays.deepEquals(this.lines, other.lines)) {
+            return false;
+        }
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 3;
+        hash = 47 * hash + Arrays.deepHashCode(this.lines);
+        return hash;
+    }
+
     /**
      * Get a string representation of this song section.
      * @return a string representation.
@@ -159,7 +181,7 @@ public class TextSection {
      * @return whether this text section should capitalise the beginning of
      * every line.
      */
-    public boolean capitaliseFirst() {
+    public boolean shouldCapitaliseFirst() {
         return capitaliseFirst;
     }
 }

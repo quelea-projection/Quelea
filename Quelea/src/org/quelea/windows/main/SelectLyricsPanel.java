@@ -105,7 +105,7 @@ public abstract class SelectLyricsPanel extends JPanel {
         }
         TextSection currentSection = (TextSection) getLyricsList().getModel().getElementAt(selectedIndex);
         canvas.setTheme(currentSection.getTheme());
-        canvas.setCapitaliseFirst(currentSection.capitaliseFirst());
+        canvas.setCapitaliseFirst(currentSection.shouldCapitaliseFirst());
         canvas.setText(currentSection.getText());
     }
 
