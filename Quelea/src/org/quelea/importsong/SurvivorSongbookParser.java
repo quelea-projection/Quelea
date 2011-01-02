@@ -131,6 +131,7 @@ public class SurvivorSongbookParser {
         }
         Song song = new Song(title, author);
         song.setLyrics(songLyricsStr);
+        song.removeDuplicateSections();
         return song;
     }
 

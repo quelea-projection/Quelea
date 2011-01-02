@@ -10,10 +10,14 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.imageio.ImageIO;
-import javax.swing.Icon;
 import javax.swing.ImageIcon;
 
 /**
@@ -32,12 +36,30 @@ public final class Utils {
     }
 
     /**
+     * Remove duplicates in a list whilst maintaining the order.
+     * @param <T> the type of the list.
+     * @param list the list to remove duplicates.
+     */
+    public static <T> void removeDuplicateWithOrder(List<T> list) {
+        Set<T> set = new HashSet<T>();
+        List<T> newList = new ArrayList<T>();
+        for (Iterator<T> iter = list.iterator(); iter.hasNext();) {
+            T element = iter.next();
+            if (set.add(element)) {
+                newList.add(element);
+            }
+        }
+        list.clear();
+        list.addAll(newList);
+    }
+
+    /**
      * Capitalise the first letter of a string.
      * @param line the input string.
      * @return the the string with the first letter capitalised.
      */
     public static String capitaliseFirst(String line) {
-        if(line.isEmpty()) {
+        if (line.isEmpty()) {
             return line;
         }
         StringBuilder ret = new StringBuilder(line);
@@ -54,8 +76,8 @@ public final class Utils {
     public static String getAbbreviation(String name) {
         StringBuilder ret = new StringBuilder();
         String[] parts = name.split(" ");
-        for(String str : parts) {
-            if(!str.isEmpty()) {
+        for (String str : parts) {
+            if (!str.isEmpty()) {
                 ret.append(Character.toUpperCase(str.charAt(0)));
             }
         }
@@ -68,13 +90,9 @@ public final class Utils {
      * @return the escaped string.
      */
     public static String escapeXML(String s) {
-        return s.replace("&", "&amp;")
-                .replace("<", "&lt;")
-                .replace(">", "&gt;")
-                .replace("\"", "&quot;")
-                .replace("'", "&apos;");
+        return s.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;").replace("\"", "&quot;").replace("'", "&apos;");
     }
-    
+
     /**
      * Get the textual content from a file as a string, returning the given
      * error string if a problem occurs retrieving the content.
@@ -112,7 +130,7 @@ public final class Utils {
      */
     public static ImageIcon getImageIcon(String location) {
         Image image = getImage(location);
-        if(image==null) {
+        if (image == null) {
             return null;
         }
         return new ImageIcon(image);
@@ -128,7 +146,7 @@ public final class Utils {
         try {
             return ImageIO.read(new File(location));
         }
-        catch(IOException ex) {
+        catch (IOException ex) {
             LOGGER.log(Level.WARNING, "Couldn't get image: " + location, ex);
             return null;
         }
@@ -140,13 +158,13 @@ public final class Utils {
      * @return true if it is a valid title, false otherwise.
      */
     public static boolean isTitle(String title) {
-        return title.toLowerCase().startsWith("verse") ||
-                title.toLowerCase().startsWith("chorus") ||
-                title.toLowerCase().startsWith("tag") ||
-                title.toLowerCase().startsWith("pre-chorus") ||
-                title.toLowerCase().startsWith("pre chorus") ||
-                title.toLowerCase().startsWith("coda") ||
-                title.toLowerCase().startsWith("bridge");
+        return title.toLowerCase().startsWith("verse")
+                || title.toLowerCase().startsWith("chorus")
+                || title.toLowerCase().startsWith("tag")
+                || title.toLowerCase().startsWith("pre-chorus")
+                || title.toLowerCase().startsWith("pre chorus")
+                || title.toLowerCase().startsWith("coda")
+                || title.toLowerCase().startsWith("bridge");
     }
 
     /**
@@ -156,7 +174,7 @@ public final class Utils {
     public static String[] getAllFonts() {
         Font[] fonts = GraphicsEnvironment.getLocalGraphicsEnvironment().getAllFonts();
         String[] ret = new String[fonts.length];
-        for(int i=0 ; i<fonts.length ; i++) {
+        for (int i = 0; i < fonts.length; i++) {
             ret[i] = fonts[i].getName();
         }
         return ret;
@@ -183,12 +201,11 @@ public final class Utils {
      * @return the colour.
      */
     public static Color parseColour(String colour) {
-        colour = colour.substring(colour.indexOf('[')+1, colour.indexOf(']'));
+        colour = colour.substring(colour.indexOf('[') + 1, colour.indexOf(']'));
         String[] parts = colour.split(",");
         int red = Integer.parseInt(parts[0].split("=")[1]);
         int green = Integer.parseInt(parts[1].split("=")[1]);
         int blue = Integer.parseInt(parts[2].split("=")[1]);
         return new Color(red, green, blue);
     }
-
 }

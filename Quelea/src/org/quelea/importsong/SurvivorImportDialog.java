@@ -81,6 +81,7 @@ public class SurvivorImportDialog extends JDialog implements PropertyChangeListe
         add(progressBar);
 
         importButton = new JButton("Import");
+        getRootPane().setDefaultButton(importButton);
         importButton.setEnabled(false);
         add(importButton);
 

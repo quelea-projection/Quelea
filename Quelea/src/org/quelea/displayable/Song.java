@@ -373,4 +373,11 @@ public class Song implements TextDisplayable, Searchable, Comparable<Song> {
     public String getPreviewText() {
         return "<html>" + getTitle() + "<br/><i>" + getAuthor() + "</i></html>";
     }
+
+    /**
+     * Remove any duplicate sections in this song.
+     */
+    public void removeDuplicateSections() {
+        Utils.removeDuplicateWithOrder(sections);
+    }
 }
