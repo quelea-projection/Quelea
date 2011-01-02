@@ -62,7 +62,12 @@ public class SurvivorSongbookParser {
             document.close();
             songs = pdfSongs;
         }
-        return songs;
+        if(songs==null) {
+            return new ArrayList<Song>();
+        }
+        else {
+            return songs;
+        }
     }
 
     /**
@@ -178,7 +183,7 @@ public class SurvivorSongbookParser {
             }
         }
         if (index > -1) {
-            return parts[index];
+            return parts[index].trim();
         }
         else {
             int i = parts.length - 5;

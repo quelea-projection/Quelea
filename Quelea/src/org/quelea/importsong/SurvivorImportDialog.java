@@ -3,6 +3,8 @@ package org.quelea.importsong;
 import java.awt.Font;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.io.File;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
@@ -10,6 +12,7 @@ import javax.swing.JDialog;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JProgressBar;
 import javax.swing.JTextField;
 import javax.swing.filechooser.FileFilter;
 
@@ -17,17 +20,21 @@ import javax.swing.filechooser.FileFilter;
  * An import dialog used for importing songs from the survivor song book.
  * @author Michael
  */
-public class SurvivorImportDialog extends JDialog {
+public class SurvivorImportDialog extends JDialog implements PropertyChangeListener {
 
     private final JTextField locationField;
     private final JButton importButton;
+    private final JProgressBar progressBar;
+    private final SelectImportedSongsDialog importedDialog;
 
     /**
      * Create a new survivor import dialog.
      * @param owner the owner of this dialog.
      */
     public SurvivorImportDialog(JFrame owner) {
-        super(owner, "Import");
+        super(owner, "Import", true);
+        progressBar = new JProgressBar(0, 100);
+        importedDialog = new SelectImportedSongsDialog(owner);
         setLayout(new BoxLayout(this.getContentPane(), BoxLayout.Y_AXIS));
         final JFileChooser locationChooser = new JFileChooser();
         locationChooser.setFileFilter(new FileFilter() {
@@ -71,6 +78,7 @@ public class SurvivorImportDialog extends JDialog {
             }
         });
         add(locationField);
+        add(progressBar);
 
         importButton = new JButton("Import");
         importButton.setEnabled(false);
@@ -96,4 +104,34 @@ public class SurvivorImportDialog extends JDialog {
     public JTextField getLocationField() {
         return locationField;
     }
+
+    /**
+     * Get the dialog that appears after the songs have been imported.
+     * @return the imported songs dialog.
+     */
+    public SelectImportedSongsDialog getImportedDialog() {
+        return importedDialog;
+    }
+
+    /**
+     * Get the progress bar on this dialog.
+     * @return the progress bar.
+     */
+    public JProgressBar getProgressBar() {
+        return progressBar;
+    }
+
+    /**
+     * Update the progress bar.
+     * @param evt the property change event.
+     */
+    public void propertyChange(PropertyChangeEvent evt) {
+        String strPropertyName = evt.getPropertyName();
+        if ("progress".equals(strPropertyName)) {
+            progressBar.setIndeterminate(false);
+            int progress = (Integer) evt.getNewValue();
+            progressBar.setValue(progress);
+        }
+    }
+
 }

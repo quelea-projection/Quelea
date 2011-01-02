@@ -4,19 +4,24 @@ import java.awt.Component;
 import java.awt.Rectangle;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.util.concurrent.ScheduledThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 import javax.swing.DefaultListCellRenderer;
 import javax.swing.DropMode;
 import javax.swing.JList;
 import javax.swing.ListSelectionModel;
+import javax.swing.SwingUtilities;
+import org.quelea.SongDatabase;
 import org.quelea.SortedListModel;
 import org.quelea.displayable.Song;
 import org.quelea.displayable.TextSection;
+import org.quelea.utils.DatabaseListener;
 
 /**
  * The list that displays the songs in the library.
  * @author Michael
  */
-public class LibrarySongList extends JList {
+public class LibrarySongList extends JList implements DatabaseListener {
 
     /**
      * The toString() method on song returns XML, we don't want to print that
@@ -86,6 +91,8 @@ public class LibrarySongList extends JList {
                 }
             }
         });
+        update();
+        SongDatabase.get().registerDatabaseListener(this);
     }
 
     /**
@@ -129,5 +136,35 @@ public class LibrarySongList extends JList {
             return sections[0].getText()[0] + "...";
         }
         return null;
+    }
+
+//    private final ScheduledThreadPoolExecutor executor = new ScheduledThreadPoolExecutor(1);
+//    private final Runnable updateRunnable = new Runnable() {
+//
+//        public void run() {
+//            SwingUtilities.invokeLater(new Runnable() {
+//
+//                public void run() {
+//                    SortedListModel model = (SortedListModel) getModel();
+//                    model.clear();
+//                    for (Song song : SongDatabase.get().getSongs()) {
+//                        model.add(song);
+//                    }
+//                }
+//            });
+//        }
+//    };
+
+    /**
+     * Update the contents of the list.
+     */
+    public final void update() {
+//        executor.remove(updateRunnable);
+//        executor.schedule(updateRunnable, 1, TimeUnit.SECONDS);
+        SortedListModel model = (SortedListModel) getModel();
+        model.clear();
+        for (Song song : SongDatabase.get().getSongs()) {
+            model.add(song);
+        }
     }
 }
