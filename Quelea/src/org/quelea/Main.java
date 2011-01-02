@@ -7,7 +7,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.IOException;
 import java.net.URI;
-import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -17,7 +17,6 @@ import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 import javax.swing.SwingWorker;
 import javax.swing.UIManager;
-import javax.swing.UnsupportedLookAndFeelException;
 import org.pushingpixels.substance.api.skin.SubstanceBusinessLookAndFeel;
 import org.quelea.bible.Bible;
 import org.quelea.displayable.Song;
@@ -43,7 +42,6 @@ public final class Main {
     private static final Logger LOGGER = LoggerUtils.getLogger();
     private static MainWindow mainWindow;
     private static LyricWindow fullScreenWindow;
-    private static SongDatabase database;
 
     /**
      * Don't instantiate me. I bite.
@@ -93,16 +91,7 @@ public final class Main {
 
             public void run() {
                 setLaf();
-                try {
-                    database = new SongDatabase();
-                }
-                catch (SQLException ex) {
-                    LOGGER.log(Level.SEVERE, "SQL excpetion - hopefully this is just because quelea is already running", ex);
-                    JOptionPane.showMessageDialog(null, "It looks like you already have an instance of Quelea running, make sure you close all instances before running the program.", "Already running", JOptionPane.ERROR_MESSAGE);
-                    System.exit(0);
-                }
                 mainWindow = new MainWindow();
-                addDBSongs();
 
                 addNewSongWindowListeners();
                 addSongPanelListeners();
@@ -147,6 +136,7 @@ public final class Main {
         dialog.getImportButton().addActionListener(new ActionListener() {
 
             public void actionPerformed(ActionEvent e) {
+                dialog.getProgressBar().setIndeterminate(true);
                 dialog.getImportButton().setEnabled(false);
                 dialog.getLocationField().setEnabled(false);
                 dialog.setDefaultCloseOperation(JDialog.DO_NOTHING_ON_CLOSE);
@@ -155,24 +145,41 @@ public final class Main {
                 final SurvivorSongbookParser parser = new SurvivorSongbookParser(dialog.getLocationField().getText());
                 SwingWorker worker = new SwingWorker() {
 
+                    private List<Song> localSongs;
+                    private List<Boolean> localSongsDuplicate;
+
                     @Override
                     protected Object doInBackground() {
                         try {
-                            List<Song> localSongs = parser.getSongs();
-                            for (Song song : localSongs) {
-                                database.addSong(song);
+                            localSongsDuplicate = new ArrayList<Boolean>();
+                            localSongs = parser.getSongs();
+                            for (int i = 0; i < localSongs.size(); i++) {
+                                localSongsDuplicate.add(new SongDatabaseChecker().checkSong(localSongs.get(i)));
+                                setProgress((int) (((double) i / localSongs.size()) * 100));
                             }
                             return localSongs;
                         }
                         catch (IOException ex) {
                             JOptionPane.showMessageDialog(mainWindow, "Sorry, there was an error importing the songs.", "Error", JOptionPane.ERROR_MESSAGE, null);
+                            LOGGER.log(Level.WARNING, "Error importing songs", ex);
                             return null;
                         }
                     }
 
                     @Override
                     protected void done() {
-                        addDBSongs();
+                        dialog.getProgressBar().setValue(0);
+                        if (localSongs == null || localSongs.isEmpty()) {
+                            JOptionPane.showMessageDialog(mainWindow, "Sorry, couldn't find any songs to import in the given document. "
+                                    + "Are you sure it's the right type?", "No songs", JOptionPane.WARNING_MESSAGE, null);
+                        }
+                        else {
+                            dialog.getImportedDialog().setSongs(localSongs, localSongsDuplicate);
+                            dialog.getImportedDialog().setLocationRelativeTo(dialog.getImportedDialog().getOwner());
+                            dialog.getImportedDialog().setVisible(true);
+                        }
+                        dialog.getProgressBar().setIndeterminate(false);
+                        dialog.getProgressBar().setValue(0);
                         dialog.getLocationField().setText("");
                         dialog.getLocationField().setEnabled(true);
                         dialog.getImportButton().setText(originalLabel);
@@ -180,6 +187,7 @@ public final class Main {
                         dialog.setDefaultCloseOperation(JDialog.HIDE_ON_CLOSE);
                     }
                 };
+                worker.addPropertyChangeListener(dialog);
                 worker.execute();
             }
         });
@@ -294,7 +302,7 @@ public final class Main {
                 if (confirmResult == JOptionPane.NO_OPTION) {
                     return;
                 }
-                if (!database.removeSong(song)) {
+                if (!SongDatabase.get().removeSong(song)) {
                     JOptionPane.showMessageDialog(mainWindow, "There was an error removing the song from the database.", "Error", JOptionPane.ERROR_MESSAGE, null);
                 }
                 SortedListModel model = (SortedListModel) songPanel.getSongList().getModel();
@@ -318,24 +326,13 @@ public final class Main {
                 }
                 SortedListModel model = (SortedListModel) mainWindow.getMainPanel().getLibraryPanel().getLibrarySongPanel().getSongList().getModel();
                 model.removeElement(song);
-                if (!database.updateSong(song)) {
+                if (!SongDatabase.get().updateSong(song)) {
                     JOptionPane.showMessageDialog(mainWindow, "There was an error updating the song in the database.", "Error", JOptionPane.ERROR_MESSAGE, null);
                 }
                 songEntryWindow.setVisible(false);
                 model.add(song);
             }
         });
-    }
-
-    /**
-     * Add the songs to the GUI from the database.
-     */
-    private static void addDBSongs() {
-        SortedListModel model = (SortedListModel) mainWindow.getMainPanel().getLibraryPanel().getLibrarySongPanel().getSongList().getModel();
-        model.clear();
-        for (Song song : database.getSongs()) {
-            model.add(song);
-        }
     }
 
     /**
@@ -418,7 +415,7 @@ public final class Main {
         try {
             UIManager.setLookAndFeel(new SubstanceBusinessLookAndFeel());
         }
-        catch (UnsupportedLookAndFeelException ex) {
+        catch (Exception ex) {
             LOGGER.log(Level.INFO, "Couldn't set the look and feel to substance.", ex);
         }
 
