@@ -8,15 +8,15 @@ import javax.swing.SpinnerNumberModel;
 import javax.swing.SpringLayout;
 import org.quelea.bible.Bible;
 import org.quelea.bible.BibleManager;
+import org.quelea.utils.PropertyPanel;
 import org.quelea.utils.QueleaProperties;
 import org.quelea.utils.SpringUtilities;
-import org.quelea.utils.Updatable;
 
 /**
  * The panel that shows the bible options
  * @author Michael
  */
-public class OptionsBiblePanel extends JPanel implements Updatable {
+public class OptionsBiblePanel extends JPanel implements PropertyPanel {
 
     private final JComboBox defaultBibleComboBox;
     private final JSpinner maxVersesSpinner;
@@ -40,10 +40,13 @@ public class OptionsBiblePanel extends JPanel implements Updatable {
 
         SpringUtilities.makeCompactGrid(biblePanel, 2, 2, 6, 6, 6, 6);
         add(biblePanel);
-        update();
+        readProperties();
     }
 
-    public final void update() {
+    /**
+     * @inheritDoc
+     */
+    public final void readProperties() {
         QueleaProperties props = QueleaProperties.get();
         String selectedBibleName = props.getDefaultBible();
         for (int i = 0; i < defaultBibleComboBox.getModel().getSize(); i++) {
@@ -53,6 +56,17 @@ public class OptionsBiblePanel extends JPanel implements Updatable {
             }
         }
         maxVersesSpinner.setValue(props.getMaxVerses());
+    }
+    
+    /**
+     * @inheritDoc
+     */
+    public void setProperties() {
+        QueleaProperties props = QueleaProperties.get();
+        Bible bible = (Bible)getDefaultBibleBox().getSelectedItem();
+        props.setDefaultBible(bible);
+        int maxVerses = (Integer)getMaxVersesSpinner().getValue();
+        props.setMaxVerses(maxVerses);
     }
 
     /**

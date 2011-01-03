@@ -12,8 +12,8 @@ import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.filechooser.FileFilter;
 import org.quelea.Schedule;
-import org.quelea.SongDatabase;
 import org.quelea.displayable.Song;
+import org.quelea.importsong.ImportDialog;
 import org.quelea.importsong.SurvivorImportDialog;
 import org.quelea.utils.QueleaProperties;
 import org.quelea.windows.help.AboutDialog;
@@ -32,7 +32,7 @@ public class MainWindow extends JFrame {
     private final SongEntryWindow songEntryWindow;
     private final OptionsDialog optionsDialog;
     private final AboutDialog aboutDialog;
-    private final SurvivorImportDialog ssImportDialog;
+    private final ImportDialog ssImportDialog;
 
     /**
      * Create a new main window.
@@ -301,7 +301,7 @@ public class MainWindow extends JFrame {
      * Get the survivor import dialog.
      * @return the survivor import dialog.
      */
-    public SurvivorImportDialog getSsImportDialog() {
+    public ImportDialog getSsImportDialog() {
         return ssImportDialog;
     }
 

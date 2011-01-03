@@ -8,6 +8,7 @@ import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
+import org.quelea.utils.PropertyPanel;
 
 /**
  * The dialog that holds all the options the user can set.
@@ -16,7 +17,8 @@ import javax.swing.JTabbedPane;
 public class OptionsDialog extends JDialog {
 
     private final JButton okButton;
-    private final DisplaySetupPanel displayPanel;
+    private final JTabbedPane tabbedPane;
+    private final OptionsDisplaySetupPanel displayPanel;
     private final OptionsGeneralPanel generalPanel;
     private final OptionsBiblePanel biblePanel;
     private final JFrame owner;
@@ -29,10 +31,10 @@ public class OptionsDialog extends JDialog {
         super(owner, "Options", true);
         this.owner = owner;
         setLayout(new BorderLayout());
-        JTabbedPane tabbedPane = new JTabbedPane();
+        tabbedPane = new JTabbedPane();
         generalPanel = new OptionsGeneralPanel();
         tabbedPane.add(generalPanel);
-        displayPanel = new DisplaySetupPanel();
+        displayPanel = new OptionsDisplaySetupPanel();
         tabbedPane.add(displayPanel);
         biblePanel = new OptionsBiblePanel();
         tabbedPane.add(biblePanel);
@@ -42,6 +44,9 @@ public class OptionsDialog extends JDialog {
         okButton.addActionListener(new ActionListener() {
 
             public void actionPerformed(ActionEvent e) {
+                for(int i=0 ; i<tabbedPane.getComponentCount() ; i++) {
+                    ((PropertyPanel)tabbedPane.getComponentAt(i)).setProperties();
+                }
                 setVisible(false);
             }
         });
@@ -60,9 +65,9 @@ public class OptionsDialog extends JDialog {
     public void setVisible(boolean visible) {
         if(visible) {
             setLocationRelativeTo(owner);
-            displayPanel.update();
-            generalPanel.update();
-            biblePanel.update();
+            for (int i = 0; i < tabbedPane.getComponentCount(); i++) {
+                ((PropertyPanel) tabbedPane.getComponentAt(i)).readProperties();
+            }
         }
         super.setVisible(visible);
     }
@@ -79,7 +84,7 @@ public class OptionsDialog extends JDialog {
      * Get the display panel used in this options dialog.
      * @return the display panel.
      */
-    public DisplaySetupPanel getDisplayPanel() {
+    public OptionsDisplaySetupPanel getDisplayPanel() {
         return displayPanel;
     }
 

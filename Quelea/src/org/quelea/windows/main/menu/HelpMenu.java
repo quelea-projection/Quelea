@@ -10,8 +10,10 @@ import java.util.logging.Logger;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
+import javax.swing.JPopupMenu;
 import org.quelea.utils.LoggerUtils;
 import org.quelea.utils.QueleaProperties;
+import org.quelea.utils.UpdateChecker;
 
 /**
  * The help menu.
@@ -85,6 +87,12 @@ public class HelpMenu extends JMenu {
         }
         updateCheck = new JMenuItem("Check for updates");
         updateCheck.setMnemonic(KeyEvent.VK_C);
+        updateCheck.addActionListener(new ActionListener() {
+
+            public void actionPerformed(ActionEvent e) {
+                new UpdateChecker(((JPopupMenu)updateCheck.getParent()).getInvoker()).checkUpdate(true, true, true);
+            }
+        });
         add(updateCheck);
         about = new JMenuItem("About...");
         about.setMnemonic(KeyEvent.VK_A);
@@ -96,7 +104,7 @@ public class HelpMenu extends JMenu {
      * @param location the location that failed to open.
      */
     private void showError(String location) {
-        JOptionPane.showMessageDialog(this, "Sorry, we couldn't open " + location + ".", "Error", JOptionPane.ERROR_MESSAGE, null);
+        JOptionPane.showMessageDialog(this, "Sorry, couldn't open " + location + ".", "Error", JOptionPane.ERROR_MESSAGE, null);
     }
 
     /**
