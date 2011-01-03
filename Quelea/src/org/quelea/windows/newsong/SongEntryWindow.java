@@ -8,12 +8,16 @@ import java.awt.event.KeyListener;
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
 import javax.swing.border.EmptyBorder;
+import org.quelea.Application;
+import org.quelea.SongDatabase;
 import org.quelea.Theme;
 import org.quelea.utils.Utils;
 import org.quelea.displayable.Song;
+import org.quelea.displayable.TextSection;
 
 /**
  * A new song window that users use for inserting the text content of a new
@@ -50,6 +54,19 @@ public class SongEntryWindow extends JDialog {
         add(tabbedPane, BorderLayout.CENTER);
 
         confirmButton = new JButton("Add Song", Utils.getImageIcon("icons/tick.png"));
+        confirmButton.addActionListener(new ActionListener() {
+
+            public void actionPerformed(ActionEvent e) {
+
+                for (TextSection section : song.getSections()) {
+                    section.setTheme(getTheme());
+                }
+                if (!SongDatabase.get().updateSong(song)) {
+                    JOptionPane.showMessageDialog(Application.get().getMainWindow(), "There was an error updating the song in the database.", "Error", JOptionPane.ERROR_MESSAGE, null);
+                }
+                setVisible(false);
+            }
+        });
         cancelButton = new JButton("Cancel", Utils.getImageIcon("icons/cross.png"));
         cancelButton.addActionListener(new ActionListener() {
 

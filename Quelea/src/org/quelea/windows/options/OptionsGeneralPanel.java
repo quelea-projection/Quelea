@@ -7,15 +7,15 @@ import javax.swing.JSlider;
 import javax.swing.SpringLayout;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
+import org.quelea.utils.PropertyPanel;
 import org.quelea.utils.QueleaProperties;
 import org.quelea.utils.SpringUtilities;
-import org.quelea.utils.Updatable;
 
 /**
  * A panel where the general options in the program are set.
  * @author Michael
  */
-public class OptionsGeneralPanel extends JPanel implements Updatable {
+public class OptionsGeneralPanel extends JPanel implements PropertyPanel {
 
     private final JCheckBox startupUpdateCheckBox;
     private final JCheckBox capitalFirstCheckBox;
@@ -83,19 +83,36 @@ public class OptionsGeneralPanel extends JPanel implements Updatable {
         });
         SpringUtilities.makeCompactGrid(generalPanel, 5, 3, 6, 6, 6, 6);
         add(generalPanel);
-        update();
+        readProperties();
     }
 
     /**
      * @inheritDoc
      */
-    public final void update() {
+    public final void readProperties() {
         QueleaProperties props = QueleaProperties.get();
         startupUpdateCheckBox.setSelected(props.checkUpdate());
         capitalFirstCheckBox.setSelected(props.checkCapitalFirst());
         oneMonitorWarnCheckBox.setSelected(props.showSingleMonitorWarning());
         maxCharsSlider.setValue(props.getMaxChars());
         minLinesSlider.setValue(props.getMinLines());
+    }
+    
+    /**
+     * @inheritDoc
+     */
+    public void setProperties() {
+        QueleaProperties props = QueleaProperties.get();
+        boolean checkUpdate = getStartupUpdateCheckBox().isSelected();
+        props.setCheckUpdate(checkUpdate);
+        boolean showWarning = getOneMonitorWarningCheckBox().isSelected();
+        props.setSingleMonitorWarning(showWarning);
+        boolean checkCapital = getCapitalFirstCheckBox().isSelected();
+        props.setCapitalFirst(checkCapital);
+        int maxCharsPerLine = getMaxCharsSlider().getValue();
+        props.setMaxChars(maxCharsPerLine);
+        int minLines = getMinLinesSlider().getValue();
+        props.setMinLines(minLines);
     }
 
     /**
@@ -115,8 +132,8 @@ public class OptionsGeneralPanel extends JPanel implements Updatable {
     }
 
     /**
-     * Get the startup update checkbox.
-     * @return the startup update checkbox.
+     * Get the startup readProperties checkbox.
+     * @return the startup readProperties checkbox.
      */
     public JCheckBox getStartupUpdateCheckBox() {
         return startupUpdateCheckBox;

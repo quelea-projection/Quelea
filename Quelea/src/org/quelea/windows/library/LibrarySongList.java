@@ -2,19 +2,21 @@ package org.quelea.windows.library;
 
 import java.awt.Component;
 import java.awt.Rectangle;
+import java.awt.dnd.DnDConstants;
+import java.awt.dnd.DragGestureEvent;
+import java.awt.dnd.DragGestureListener;
+import java.awt.dnd.DragSource;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.util.concurrent.ScheduledThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
 import javax.swing.DefaultListCellRenderer;
-import javax.swing.DropMode;
 import javax.swing.JList;
 import javax.swing.ListSelectionModel;
-import javax.swing.SwingUtilities;
 import org.quelea.SongDatabase;
 import org.quelea.SortedListModel;
+import org.quelea.displayable.Displayable;
 import org.quelea.displayable.Song;
 import org.quelea.displayable.TextSection;
+import org.quelea.displayable.TransferDisplayable;
 import org.quelea.utils.DatabaseListener;
 
 /**
@@ -35,7 +37,8 @@ public class LibrarySongList extends JList implements DatabaseListener {
         @Override
         public Component getListCellRendererComponent(JList list, Object value,
                 int index, boolean isSelected, boolean cellHasFocus) {
-            Song s = new Song((Song)value) {
+            Song s = new Song((Song) value) {
+
                 @Override
                 public String toString() {
                     return getTitle();
@@ -43,9 +46,7 @@ public class LibrarySongList extends JList implements DatabaseListener {
             };
             return super.getListCellRendererComponent(list, s, index, isSelected, cellHasFocus);
         }
-
     }
-
     private final SortedListModel tempModel;
     private final SortedListModel fullModel;
     private final LibraryPopupMenu popupMenu;
@@ -61,8 +62,14 @@ public class LibrarySongList extends JList implements DatabaseListener {
         popupMenu = new LibraryPopupMenu();
         fullModel = model;
         tempModel = new SortedListModel();
-        setDragEnabled(true);
-        setDropMode(DropMode.ON);
+        DragSource.getDefaultDragSource().createDefaultDragGestureRecognizer(this, DnDConstants.ACTION_MOVE, new DragGestureListener() {
+
+            public void dragGestureRecognized(DragGestureEvent dge) {
+                if (getSelectedValue()!=null) {
+                    dge.startDrag(DragSource.DefaultCopyDrop, new TransferDisplayable((Displayable) getSelectedValue()));
+                }
+            }
+        });
         this.addMouseListener(new MouseAdapter() {
 
             @Override
@@ -84,7 +91,7 @@ public class LibrarySongList extends JList implements DatabaseListener {
                     int index = locationToIndex(e.getPoint());
                     Rectangle Rect = getCellBounds(index, index);
                     index = Rect.contains(e.getPoint().x, e.getPoint().y) ? index : -1;
-                    if(index != -1) {
+                    if (index != -1) {
                         setSelectedIndex(index);
                         popupMenu.show(LibrarySongList.this, e.getX(), e.getY());
                     }
@@ -154,7 +161,6 @@ public class LibrarySongList extends JList implements DatabaseListener {
 //            });
 //        }
 //    };
-
     /**
      * Update the contents of the list.
      */

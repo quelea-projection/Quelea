@@ -3,14 +3,18 @@ package org.quelea.windows.main;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Rectangle;
-import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.Transferable;
+import java.awt.dnd.DnDConstants;
+import java.awt.dnd.DragGestureEvent;
+import java.awt.dnd.DragGestureListener;
+import java.awt.dnd.DragSource;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import javax.swing.DefaultListModel;
 import javax.swing.DropMode;
+import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.ListCellRenderer;
@@ -18,9 +22,8 @@ import javax.swing.ListSelectionModel;
 import javax.swing.TransferHandler;
 import javax.swing.border.EmptyBorder;
 import org.quelea.Schedule;
-import org.quelea.utils.Utils;
 import org.quelea.displayable.Displayable;
-import org.quelea.displayable.Song;
+import org.quelea.displayable.TransferDisplayable;
 import org.quelea.utils.QueleaProperties;
 
 /**
@@ -32,6 +35,7 @@ public class ScheduleList extends JList {
     private Schedule schedule;
     private final SchedulePopupMenu popupMenu;
     private final Color originalSelectionColour;
+    private boolean internalDrag;
 
     /**
      * A direction; either up or down. Used for rearranging the order of items
@@ -119,13 +123,21 @@ public class ScheduleList extends JList {
                 }
             }
         });
-        setDragEnabled(true);
-        setDropMode(DropMode.ON);
+        setDropMode(DropMode.INSERT);
+        DragSource.getDefaultDragSource().createDefaultDragGestureRecognizer(this, DnDConstants.ACTION_MOVE, new DragGestureListener() {
+
+            public void dragGestureRecognized(DragGestureEvent dge) {
+                if (getSelectedValue() != null) {
+                    internalDrag = true;
+                    dge.startDrag(DragSource.DefaultMoveDrop, new TransferDisplayable((Displayable)getSelectedValue()));
+                }
+            }
+        });
         setTransferHandler(new TransferHandler() {
 
             @Override
             public boolean canImport(TransferHandler.TransferSupport support) {
-                return support.isDataFlavorSupported(DataFlavor.stringFlavor);
+                return support.isDataFlavorSupported(TransferDisplayable.DISPLAYABLE_FLAVOR);
             }
 
             @Override
@@ -134,12 +146,13 @@ public class ScheduleList extends JList {
                     return false;
                 }
 
+
                 Transferable transferable = support.getTransferable();
-                String data;
+                Displayable data;
                 try {
-                    data = (String) transferable.getTransferData(DataFlavor.stringFlavor);
+                    data = (Displayable) transferable.getTransferData(TransferDisplayable.DISPLAYABLE_FLAVOR);
                 }
-                catch (Exception e) {
+                catch (Exception ex) {
                     return false;
                 }
 
@@ -148,8 +161,31 @@ public class ScheduleList extends JList {
                 if (index == -1) {
                     index = getModel().getSize();
                 }
-                ((DefaultListModel) getModel()).add(index, Song.parseSong(data));
+
+                DefaultListModel model = (DefaultListModel) getModel();
+                if(internalDrag) {
+                    int val = Math.abs(getSelectedIndex()-index);
+                    if(getSelectedIndex()<index) {
+                        for(int i=0 ; i<val ; i++) {
+                            moveCurrentItem(Direction.DOWN);
+                        }
+                    }
+                    else {
+                        for (int i = 0; i < val; i++) {
+                            moveCurrentItem(Direction.UP);
+                        }
+                    }
+                }
+                else {
+                    model.add(index, data);
+                }
+                internalDrag = false;
                 return true;
+            }
+
+            @Override
+            protected void exportDone(JComponent c, Transferable data, int action) {
+                ((DefaultListModel) getModel()).remove(getSelectedIndex());
             }
         });
         schedule = new Schedule();

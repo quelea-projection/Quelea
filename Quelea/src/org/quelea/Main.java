@@ -1,37 +1,22 @@
 package org.quelea;
 
-import java.awt.Desktop;
 import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.io.IOException;
-import java.net.URI;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
-import javax.swing.SwingWorker;
 import javax.swing.UIManager;
 import org.pushingpixels.substance.api.skin.SubstanceBusinessLookAndFeel;
-import org.quelea.bible.Bible;
-import org.quelea.displayable.Song;
-import org.quelea.displayable.TextSection;
 import org.quelea.bible.BibleManager;
-import org.quelea.importsong.SurvivorImportDialog;
-import org.quelea.importsong.SurvivorSongbookParser;
 import org.quelea.utils.LoggerUtils;
 import org.quelea.utils.QueleaProperties;
-import org.quelea.utils.Version;
-import org.quelea.utils.VersionChecker;
-import org.quelea.windows.library.LibrarySongPanel;
+import org.quelea.utils.UpdateChecker;
+import org.quelea.utils.Utils;
 import org.quelea.windows.main.LyricWindow;
 import org.quelea.windows.main.MainWindow;
-import org.quelea.windows.newsong.SongEntryWindow;
 
 /**
  * The main class, sets everything in motion...
@@ -85,28 +70,25 @@ public final class Main {
             LOGGER.log(Level.INFO, "Starting projector display on monitor {0} (base 0!)", projectorScreen);
             fullScreenWindow = new LyricWindow(gds[projectorScreen].getDefaultConfiguration().getBounds());
         }
+        Application.get().setLyricWindow(fullScreenWindow);
         fullScreenWindow.toFront();
+
+        LOGGER.log(Level.INFO, "Loading bibles");
+        BibleManager.get(); //Pre-load bibles
+        LOGGER.log(Level.INFO, "Loading bibles done");
 
         SwingUtilities.invokeLater(new Runnable() {
 
             public void run() {
                 setLaf();
                 mainWindow = new MainWindow();
+                Application.get().setMainWindow(mainWindow);
 
-                addNewSongWindowListeners();
-                addSongPanelListeners();
-                addOptionListeners();
-                addImportListeners();
-                addMenuListeners();
-
-                centreOnMonitor(mainWindow, controlScreen);
-                LOGGER.log(Level.INFO, "Loading bibles");
-                BibleManager.get(); //Pre-load bibles
-                LOGGER.log(Level.INFO, "Loading bibles done");
+                Utils.centreOnMonitor(mainWindow, controlScreen);
                 mainWindow.setVisible(true);
                 mainWindow.toFront();
 
-                checkUpdate(false, false);
+                new UpdateChecker(mainWindow).checkUpdate(false, false, false);
                 showWarning(gds.length);
                 mainWindow.getMainPanel().getLiveLyricsPanel().registerLyricCanvas(fullScreenWindow.getCanvas());
                 mainWindow.getMainPanel().getLiveLyricsPanel().registerLyricWindow(fullScreenWindow);
@@ -114,298 +96,6 @@ public final class Main {
             }
         });
 
-    }
-
-    /**
-     * Add the required action listeners to the menus.
-     */
-    private static void addMenuListeners() {
-        mainWindow.getMainMenuBar().getHelpMenu().getUpdateCheck().addActionListener(new ActionListener() {
-
-            public void actionPerformed(ActionEvent e) {
-                checkUpdate(true, true);
-            }
-        });
-    }
-
-    /**
-     * Add the listeners to the import buttons.
-     */
-    private static void addImportListeners() {
-        final SurvivorImportDialog dialog = mainWindow.getSsImportDialog();
-        dialog.getImportButton().addActionListener(new ActionListener() {
-
-            public void actionPerformed(ActionEvent e) {
-                dialog.getProgressBar().setIndeterminate(true);
-                dialog.getImportButton().setEnabled(false);
-                dialog.getLocationField().setEnabled(false);
-                dialog.setDefaultCloseOperation(JDialog.DO_NOTHING_ON_CLOSE);
-                final String originalLabel = dialog.getImportButton().getText();
-                dialog.getImportButton().setText("Importing, please wait...");
-                final SurvivorSongbookParser parser = new SurvivorSongbookParser(dialog.getLocationField().getText());
-                SwingWorker worker = new SwingWorker() {
-
-                    private List<Song> localSongs;
-                    private List<Boolean> localSongsDuplicate;
-
-                    @Override
-                    protected Object doInBackground() {
-                        try {
-                            localSongsDuplicate = new ArrayList<Boolean>();
-                            localSongs = parser.getSongs();
-                            for (int i = 0; i < localSongs.size(); i++) {
-                                localSongsDuplicate.add(new SongDatabaseChecker().checkSong(localSongs.get(i)));
-                                setProgress((int) (((double) i / localSongs.size()) * 100));
-                            }
-                            return localSongs;
-                        }
-                        catch (IOException ex) {
-                            JOptionPane.showMessageDialog(mainWindow, "Sorry, there was an error importing the songs.", "Error", JOptionPane.ERROR_MESSAGE, null);
-                            LOGGER.log(Level.WARNING, "Error importing songs", ex);
-                            return null;
-                        }
-                    }
-
-                    @Override
-                    protected void done() {
-                        dialog.getProgressBar().setValue(0);
-                        if (localSongs == null || localSongs.isEmpty()) {
-                            JOptionPane.showMessageDialog(mainWindow, "Sorry, couldn't find any songs to import in the given document. "
-                                    + "Are you sure it's the right type?", "No songs", JOptionPane.WARNING_MESSAGE, null);
-                        }
-                        else {
-                            dialog.getImportedDialog().setSongs(localSongs, localSongsDuplicate);
-                            dialog.getImportedDialog().setLocationRelativeTo(dialog.getImportedDialog().getOwner());
-                            dialog.getImportedDialog().setVisible(true);
-                        }
-                        dialog.getProgressBar().setIndeterminate(false);
-                        dialog.getProgressBar().setValue(0);
-                        dialog.getLocationField().setText("");
-                        dialog.getLocationField().setEnabled(true);
-                        dialog.getImportButton().setText(originalLabel);
-                        dialog.setVisible(false);
-                        dialog.setDefaultCloseOperation(JDialog.HIDE_ON_CLOSE);
-                    }
-                };
-                worker.addPropertyChangeListener(dialog);
-                worker.execute();
-            }
-        });
-    }
-
-    /**
-     * Add the required action listeners to the options window.
-     */
-    private static void addOptionListeners() {
-        mainWindow.getOptionsWindow().getOKButton().addActionListener(new ActionListener() {
-
-            public void actionPerformed(ActionEvent e) {
-                updateDisplay();
-                updateGeneral();
-                updateBible();
-            }
-
-            /**
-             * Update the general part of the options form.
-             */
-            private void updateGeneral() {
-                QueleaProperties props = QueleaProperties.get();
-                boolean checkUpdate = mainWindow.getOptionsWindow().getGeneralPanel().getStartupUpdateCheckBox().isSelected();
-                props.setCheckUpdate(checkUpdate);
-                boolean showWarning = mainWindow.getOptionsWindow().getGeneralPanel().getOneMonitorWarningCheckBox().isSelected();
-                props.setSingleMonitorWarning(showWarning);
-                boolean checkCapital = mainWindow.getOptionsWindow().getGeneralPanel().getCapitalFirstCheckBox().isSelected();
-                props.setCapitalFirst(checkCapital);
-                int maxCharsPerLine = mainWindow.getOptionsWindow().getGeneralPanel().getMaxCharsSlider().getValue();
-                props.setMaxChars(maxCharsPerLine);
-                int minLines = mainWindow.getOptionsWindow().getGeneralPanel().getMinLinesSlider().getValue();
-                props.setMinLines(minLines);
-            }
-
-            /**
-             * Update the display part of the options form.
-             */
-            private void updateDisplay() {
-                QueleaProperties props = QueleaProperties.get();
-                int controlDisplay = mainWindow.getOptionsWindow().getDisplayPanel().getControlDisplay();
-                int projectorDisplay = mainWindow.getOptionsWindow().getDisplayPanel().getProjectorDisplay();
-                props.setControlScreen(controlDisplay);
-                props.setProjectorScreen(projectorDisplay);
-
-                GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
-                final GraphicsDevice[] gds = ge.getScreenDevices();
-                if (projectorDisplay == -1) {
-                    if (fullScreenWindow != null) {
-                        fullScreenWindow.setVisible(false);
-                    }
-                }
-                else {
-                    if (fullScreenWindow == null) {
-                        fullScreenWindow = new LyricWindow(gds[projectorDisplay].getDefaultConfiguration().getBounds());
-                    }
-                    fullScreenWindow.setVisible(true);
-                    fullScreenWindow.setArea(gds[projectorDisplay].getDefaultConfiguration().getBounds());
-                }
-                if (!frameOnScreen(mainWindow, controlDisplay)) {
-                    centreOnMonitor(mainWindow, controlDisplay);
-                }
-            }
-
-            private void updateBible() {
-                QueleaProperties props = QueleaProperties.get();
-                Bible bible = (Bible) mainWindow.getOptionsWindow().getBiblePanel().getDefaultBibleBox().getSelectedItem();
-                props.setDefaultBible(bible);
-                int maxVerses = (Integer) mainWindow.getOptionsWindow().getBiblePanel().getMaxVersesSpinner().getValue();
-                props.setMaxVerses(maxVerses);
-            }
-        });
-    }
-
-    /**
-     * Determine whether the given frame is completely on the given screen.
-     * @param frame the frame to check.
-     * @param monitorNum the monitor number to check.
-     * @return true if the frame is totally on the screen, false otherwise.
-     */
-    private static boolean frameOnScreen(JFrame frame, int monitorNum) {
-        GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
-        final GraphicsDevice[] gds = ge.getScreenDevices();
-        return gds[monitorNum].getDefaultConfiguration().getBounds().contains(frame.getBounds());
-    }
-
-    /**
-     * Centre the given frame on the given monitor.
-     * @param frame the frame to centre.
-     * @param monitorNum the monitor number to centre the frame on.
-     */
-    private static void centreOnMonitor(JFrame frame, int monitorNum) {
-        GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
-        final GraphicsDevice[] gds = ge.getScreenDevices();
-        int centreX = (int) (gds[monitorNum].getDefaultConfiguration().getBounds().getMaxX() - gds[monitorNum].getDefaultConfiguration().getBounds().getMinX()) / 2;
-        int centreY = (int) (gds[monitorNum].getDefaultConfiguration().getBounds().getMaxY() - gds[monitorNum].getDefaultConfiguration().getBounds().getMinY()) / 2;
-        frame.setLocation(centreX - frame.getWidth() / 2, centreY - frame.getHeight() / 2);
-    }
-
-    /**
-     * Add the required action listeners to the song panel.
-     */
-    private static void addSongPanelListeners() {
-        final LibrarySongPanel songPanel = mainWindow.getMainPanel().getLibraryPanel().getLibrarySongPanel();
-        songPanel.getRemoveButton().addActionListener(new ActionListener() {
-
-            public void actionPerformed(ActionEvent e) {
-                Song song = (Song) songPanel.getSongList().getSelectedValue();
-                if (song == null) {
-                    return;
-                }
-                int confirmResult = JOptionPane.showConfirmDialog(mainWindow, "Really remove " + song.getTitle() + " from the database? This action cannnot be undone.", "Confirm remove", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
-                if (confirmResult == JOptionPane.NO_OPTION) {
-                    return;
-                }
-                if (!SongDatabase.get().removeSong(song)) {
-                    JOptionPane.showMessageDialog(mainWindow, "There was an error removing the song from the database.", "Error", JOptionPane.ERROR_MESSAGE, null);
-                }
-                SortedListModel model = (SortedListModel) songPanel.getSongList().getModel();
-                model.removeElement(song);
-            }
-        });
-    }
-
-    /**
-     * Add the required action listeners to the buttons on the new song window.
-     */
-    private static void addNewSongWindowListeners() {
-        final SongEntryWindow songEntryWindow = mainWindow.getNewSongWindow();
-        songEntryWindow.getConfirmButton().addActionListener(new ActionListener() {
-
-            public void actionPerformed(ActionEvent e) {
-
-                Song song = songEntryWindow.getSong();
-                for (TextSection section : song.getSections()) {
-                    section.setTheme(songEntryWindow.getTheme());
-                }
-                SortedListModel model = (SortedListModel) mainWindow.getMainPanel().getLibraryPanel().getLibrarySongPanel().getSongList().getModel();
-                model.removeElement(song);
-                if (!SongDatabase.get().updateSong(song)) {
-                    JOptionPane.showMessageDialog(mainWindow, "There was an error updating the song in the database.", "Error", JOptionPane.ERROR_MESSAGE, null);
-                }
-                songEntryWindow.setVisible(false);
-                model.add(song);
-            }
-        });
-    }
-
-    /**
-     * Check whether there's an update to Quelea, display a message if so.
-     * @param showIfLatest true if the user should see a message even if they're
-     * running the latest version.
-     * @param showIfError true if the user should see a message if there is an
-     * error.
-     */
-    private static void checkUpdate(boolean showIfLatest, boolean showIfError) {
-        if (QueleaProperties.get().checkUpdate()) {
-            Version latestVersion = new VersionChecker(QueleaProperties.get().getUpdateURL()).getLatestVersion();
-            if (latestVersion == null) {
-                if (showIfError) {
-                    showUpdateError();
-                }
-                return;
-            }
-            Version curVersion = QueleaProperties.get().getVersion();
-            LOGGER.log(Level.INFO, "Checked updates, current version is {0} and latest version is {1}",
-                    new Object[]{curVersion.getVersionString(), latestVersion.getVersionString()});
-            if (curVersion.compareTo(latestVersion) == -1) {
-                if (Desktop.isDesktopSupported()) {
-                    int result = JOptionPane.showConfirmDialog(mainWindow,
-                            "There is a newer version of Quelea available (" + latestVersion.getVersionString() + "). "
-                            + "Visit the web page to download it now?",
-                            "Update available", JOptionPane.YES_NO_OPTION, JOptionPane.INFORMATION_MESSAGE, null);
-                    if (result == JOptionPane.YES_OPTION) {
-                        try {
-                            Desktop.getDesktop().browse(new URI(QueleaProperties.get().getDownloadLocation()));
-                        }
-                        catch (Exception ex) {
-                            LOGGER.log(Level.WARNING, "Couldn't open browser", ex);
-                            if (showIfError) {
-                                showUpdateError();
-                            }
-                            return;
-                        }
-                    }
-                }
-                else {
-                    JOptionPane.showMessageDialog(mainWindow,
-                            "There is a newer version of Quelea available (" + latestVersion.getVersionString() + "). "
-                            + "You can download it here: " + QueleaProperties.get().getDownloadLocation(),
-                            "Update available", JOptionPane.INFORMATION_MESSAGE, null);
-                }
-            }
-            else if (showIfLatest) {
-                JOptionPane.showMessageDialog(mainWindow, "You are running the latest version of Quelea ("
-                        + curVersion.getVersionString() + ").", "Already up-to-date!", JOptionPane.INFORMATION_MESSAGE, null);
-            }
-        }
-    }
-
-    /**
-     * Show a message saying there was an error checking for updates.
-     */
-    private static void showUpdateError() {
-        JOptionPane.showMessageDialog(mainWindow, "Sorry, there was an error checking for updates."
-                + "Please check your internet connection then try again.", "Error", JOptionPane.ERROR_MESSAGE, null);
-    }
-
-    /**
-     * If it's appropriate, show the warning about only having 1 monitor.
-     * @param numMonitors the number of monitors.
-     */
-    private static void showWarning(int numMonitors) {
-        if (numMonitors <= 1 && QueleaProperties.get().showSingleMonitorWarning()) {
-            JOptionPane.showMessageDialog(mainWindow, "Looks like you've only got one monitor installed. "
-                    + "This is fine if you're just using Quelea to prepare some schedules, but if you're "
-                    + "using it in a live setting Quelea needs 2 monitors to work properly.", "Only one monitor",
-                    JOptionPane.WARNING_MESSAGE, null);
-        }
     }
 
     /**
@@ -421,5 +111,18 @@ public final class Main {
 
         JFrame.setDefaultLookAndFeelDecorated(true);
         JDialog.setDefaultLookAndFeelDecorated(true);
+    }
+
+    /**
+     * If it's appropriate, show the warning about only having 1 monitor.
+     * @param numMonitors the number of monitors.
+     */
+    private static void showWarning(int numMonitors) {
+        if (numMonitors <= 1 && QueleaProperties.get().showSingleMonitorWarning()) {
+            JOptionPane.showMessageDialog(mainWindow, "Looks like you've only got one monitor installed. "
+                    + "This is fine if you're just using Quelea to prepare some schedules, but if you're "
+                    + "using it in a live setting Quelea needs 2 monitors to work properly.", "Only one monitor",
+                    JOptionPane.WARNING_MESSAGE, null);
+        }
     }
 }

@@ -1,138 +1,103 @@
 package org.quelea.importsong;
 
-import java.awt.Font;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.io.File;
-import javax.swing.BoxLayout;
-import javax.swing.JButton;
-import javax.swing.JDialog;
-import javax.swing.JFileChooser;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JProgressBar;
-import javax.swing.JTextField;
+import javax.swing.JOptionPane;
+import javax.swing.SwingWorker;
 import javax.swing.filechooser.FileFilter;
+import org.quelea.SongDatabaseChecker;
+import org.quelea.displayable.Song;
+import org.quelea.utils.LoggerUtils;
 
 /**
- * An import dialog used for importing songs from the survivor song book.
+ * An import dialog for the survivor song books in PDF format.
  * @author Michael
  */
-public class SurvivorImportDialog extends JDialog implements PropertyChangeListener {
+public class SurvivorImportDialog extends ImportDialog {
 
-    private final JTextField locationField;
-    private final JButton importButton;
-    private final JProgressBar progressBar;
-    private final SelectImportedSongsDialog importedDialog;
+    private static final Logger LOGGER = LoggerUtils.getLogger();
+    /**
+     * The file filter used for the import dialog, this always references
+     * acetates.pdf since this should always be the name of the file.
+     */
+    private static final FileFilter FILE_FILTER = new FileFilter() {
+
+        @Override
+        public boolean accept(File f) {
+            if (f.isDirectory()
+                    || f.getName().trim().equalsIgnoreCase("acetates.pdf")) {
+                return true;
+            }
+            return false;
+        }
+
+        @Override
+        public String getDescription() {
+            return "acetates.pdf";
+        }
+    };
 
     /**
      * Create a new survivor import dialog.
-     * @param owner the owner of this dialog.
+     * @param owner the owner of the dialog.
      */
     public SurvivorImportDialog(JFrame owner) {
-        super(owner, "Import", true);
-        progressBar = new JProgressBar(0, 100);
-        importedDialog = new SelectImportedSongsDialog(owner);
-        setLayout(new BoxLayout(this.getContentPane(), BoxLayout.Y_AXIS));
-        final JFileChooser locationChooser = new JFileChooser();
-        locationChooser.setFileFilter(new FileFilter() {
+        super(owner, new String[]{
+                    "Select the location of the Survivor Songbook PDF below.",
+                    "<html>This must be the <b>acetates.pdf</b> file, <i>not</i> the guitar chords or the sheet music.</html>"
+                }, FILE_FILTER);
+        getImportButton().addActionListener(new ActionListener() {
 
-            @Override
-            public boolean accept(File f) {
-                if (f.isDirectory()
-                        || f.getName().trim().equalsIgnoreCase("acetates.pdf")) {
-                    return true;
-                }
-                return false;
-            }
+            public void actionPerformed(ActionEvent e) {
+                setActive();
+                final SurvivorSongbookParser parser = new SurvivorSongbookParser(getLocationField().getText());
+                SwingWorker worker = new SwingWorker() {
 
-            @Override
-            public String getDescription() {
-                return "acetates.pdf";
-            }
-        });
-        locationChooser.setAcceptAllFileFilterUsed(false);
-        locationChooser.setMultiSelectionEnabled(false);
+                    private List<Song> localSongs;
+                    private List<Boolean> localSongsDuplicate;
 
-        add(new JLabel("Select the location of the Survivor Songbook PDF below."));
-        add(new JLabel("<html>This must be the <b>acetates.pdf</b> file, <i>not</i> the guitar chords or the sheet music.</html>"));
-
-        locationField = new JTextField();
-        locationField.setEditable(false);
-        locationField.setFont(new Font(locationField.getFont().getName(), Font.ITALIC, locationField.getFont().getSize()));
-        locationField.setText("Click here to select file");
-        locationField.addMouseListener(new MouseAdapter() {
-
-            @Override
-            public void mouseClicked(MouseEvent e) {
-                if (locationField.isEnabled()) {
-                    locationChooser.showOpenDialog(getRootPane());
-                    if (locationChooser.getSelectedFile() != null) {
-                        locationField.setFont(new Font(locationField.getFont().getName(), 0, locationField.getFont().getSize()));
-                        locationField.setText(locationChooser.getSelectedFile().getAbsolutePath());
-                        importButton.setEnabled(true);
+                    @Override
+                    protected Object doInBackground() {
+                        try {
+                            localSongsDuplicate = new ArrayList<Boolean>();
+                            localSongs = parser.getSongs();
+                            for (int i = 0; i < localSongs.size(); i++) {
+                                localSongsDuplicate.add(new SongDatabaseChecker().checkSong(localSongs.get(i)));
+                                setProgress((int) (((double) i / localSongs.size()) * 100));
+                            }
+                            return localSongs;
+                        }
+                        catch (IOException ex) {
+                            JOptionPane.showMessageDialog(getOwner(), "Sorry, there was an error importing the songs.", "Error", JOptionPane.ERROR_MESSAGE, null);
+                            LOGGER.log(Level.WARNING, "Error importing songs", ex);
+                            return null;
+                        }
                     }
-                }
+
+                    @Override
+                    protected void done() {
+                        if (localSongs == null || localSongs.isEmpty()) {
+                            JOptionPane.showMessageDialog(getOwner(), "Sorry, couldn't find any songs to import in the given document. "
+                                    + "Are you sure it's the right type?", "No songs", JOptionPane.WARNING_MESSAGE, null);
+                        }
+                        else {
+                            getImportedDialog().setSongs(localSongs, localSongsDuplicate);
+                            getImportedDialog().setLocationRelativeTo(getImportedDialog().getOwner());
+                            getImportedDialog().setVisible(true);
+                        }
+                        setIdle();
+                    }
+                };
+                worker.addPropertyChangeListener(SurvivorImportDialog.this);
+                worker.execute();
             }
         });
-        add(locationField);
-        add(progressBar);
-
-        importButton = new JButton("Import");
-        getRootPane().setDefaultButton(importButton);
-        importButton.setEnabled(false);
-        add(importButton);
-
-        pack();
-        setResizable(false);
-
     }
-
-    /**
-     * Get the import button.
-     * @return the import button.
-     */
-    public JButton getImportButton() {
-        return importButton;
-    }
-
-    /**
-     * Get the location field.
-     * @return the location field.
-     */
-    public JTextField getLocationField() {
-        return locationField;
-    }
-
-    /**
-     * Get the dialog that appears after the songs have been imported.
-     * @return the imported songs dialog.
-     */
-    public SelectImportedSongsDialog getImportedDialog() {
-        return importedDialog;
-    }
-
-    /**
-     * Get the progress bar on this dialog.
-     * @return the progress bar.
-     */
-    public JProgressBar getProgressBar() {
-        return progressBar;
-    }
-
-    /**
-     * Update the progress bar.
-     * @param evt the property change event.
-     */
-    public void propertyChange(PropertyChangeEvent evt) {
-        String strPropertyName = evt.getPropertyName();
-        if ("progress".equals(strPropertyName)) {
-            progressBar.setIndeterminate(false);
-            int progress = (Integer) evt.getNewValue();
-            progressBar.setValue(progress);
-        }
-    }
-
 }
