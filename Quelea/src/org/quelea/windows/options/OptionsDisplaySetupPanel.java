@@ -1,23 +1,29 @@
 package org.quelea.windows.options;
 
 import java.awt.BorderLayout;
+import java.awt.GraphicsDevice;
+import java.awt.GraphicsEnvironment;
 import java.awt.GridLayout;
 import javax.swing.JPanel;
+import org.quelea.Application;
+import org.quelea.utils.PropertyPanel;
 import org.quelea.utils.QueleaProperties;
-import org.quelea.utils.Updatable;
+import org.quelea.utils.Utils;
+import org.quelea.windows.main.LyricWindow;
+import org.quelea.windows.main.MainWindow;
 
 /**
  * A panel that the user uses to set up the displays that match to the outputs.
  * @author Michael
  */
-public class DisplaySetupPanel extends JPanel implements Updatable {
+public class OptionsDisplaySetupPanel extends JPanel implements PropertyPanel {
 
     private final SingleDisplayPanel monitorPanel, projectorPanel;
 
     /**
      * Create a new display setup panel.
      */
-    public DisplaySetupPanel() {
+    public OptionsDisplaySetupPanel() {
         setName("Display");
         setLayout(new BorderLayout());
         JPanel mainPanel = new JPanel();
@@ -26,18 +32,47 @@ public class DisplaySetupPanel extends JPanel implements Updatable {
         mainPanel.add(monitorPanel);
         projectorPanel = new SingleDisplayPanel("Projector screen:", "icons/projector.png", true);
         mainPanel.add(projectorPanel);
-        update();
+        readProperties();
         add(mainPanel, BorderLayout.CENTER);
     }
 
     /**
-     * Synchronise the panel with the current information in the properties file.
+     * @inheritDoc
      */
-    public final void update() {
+    public final void readProperties() {
         monitorPanel.update();
         projectorPanel.update();
         monitorPanel.setScreen(QueleaProperties.get().getControlScreen());
         projectorPanel.setScreen(QueleaProperties.get().getProjectorScreen());
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public void setProperties() {
+        QueleaProperties props = QueleaProperties.get();
+        MainWindow mainWindow = Application.get().getMainWindow();
+        LyricWindow lyricWindow = Application.get().getLyricWindow();
+        props.setControlScreen(getControlDisplay());
+        props.setProjectorScreen(getProjectorDisplay());
+
+        GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
+        final GraphicsDevice[] gds = ge.getScreenDevices();
+        if (getProjectorDisplay() == -1) {
+            if (lyricWindow != null) {
+                lyricWindow.setVisible(false);
+            }
+        }
+        else {
+            if (lyricWindow == null) {
+                lyricWindow = new LyricWindow(gds[getProjectorDisplay()].getDefaultConfiguration().getBounds());
+            }
+            lyricWindow.setVisible(true);
+            lyricWindow.setArea(gds[getProjectorDisplay()].getDefaultConfiguration().getBounds());
+        }
+        if (!Utils.isFrameOnScreen(mainWindow, getControlDisplay())) {
+            Utils.centreOnMonitor(mainWindow, getControlDisplay());
+        }
     }
 
     /**

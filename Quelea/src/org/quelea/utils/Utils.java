@@ -3,8 +3,10 @@ package org.quelea.utils;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics;
+import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
 import java.awt.Image;
+import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 import java.io.BufferedReader;
 import java.io.File;
@@ -19,6 +21,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
+import javax.swing.JFrame;
 
 /**
  * General utility class containing a bunch of static methods.
@@ -33,6 +36,34 @@ public final class Utils {
      */
     private Utils() {
         throw new AssertionError();
+    }
+
+    /**
+     * Determine whether the given frame is completely on the given screen.
+     * @param frame the frame to check.
+     * @param monitorNum the monitor number to check.
+     * @return true if the frame is totally on the screen, false otherwise.
+     */
+    public static boolean isFrameOnScreen(JFrame frame, int monitorNum) {
+        GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
+        final GraphicsDevice[] gds = ge.getScreenDevices();
+        return gds[monitorNum].getDefaultConfiguration().getBounds().contains(frame.getBounds());
+    }
+
+    /**
+     * Centre the given frame on the given monitor.
+     * @param frame the frame to centre.
+     * @param monitorNum the monitor number to centre the frame on.
+     */
+    public static void centreOnMonitor(JFrame frame, int monitorNum) {
+        GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
+        final GraphicsDevice[] gds = ge.getScreenDevices();
+        Rectangle bounds = gds[monitorNum].getDefaultConfiguration().getBounds();
+        int centreX = (int) (bounds.getMaxX() - bounds.getMinX()) / 2;
+        int centreY = (int) (bounds.getMaxY() - bounds.getMinY()) / 2;
+        centreX += bounds.getMinX();
+        centreY += bounds.getMinY();
+        frame.setLocation(centreX - frame.getWidth() / 2, centreY - frame.getHeight() / 2);
     }
 
     /**
