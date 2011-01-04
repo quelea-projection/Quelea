@@ -66,7 +66,7 @@ public class LibrarySongList extends JList implements DatabaseListener {
 
             public void dragGestureRecognized(DragGestureEvent dge) {
                 if (getSelectedValue()!=null) {
-                    dge.startDrag(DragSource.DefaultCopyDrop, new TransferDisplayable((Displayable) getSelectedValue()));
+                    dge.startDrag(DragSource.DefaultCopyDrop, new TransferDisplayable((Displayable) getModel().getElementAt(locationToIndex(dge.getDragOrigin()))));
                 }
             }
         });

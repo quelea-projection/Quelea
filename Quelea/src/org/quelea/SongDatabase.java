@@ -86,7 +86,7 @@ public final class SongDatabase {
      * Fire off the database listeners.
      */
     public void fireUpdate() {
-        for(DatabaseListener listener: listeners) {
+        for (DatabaseListener listener : listeners) {
             listener.update();
         }
     }
@@ -172,7 +172,7 @@ public final class SongDatabase {
                 }
                 finally {
                     resultSet.close();
-                    if(fireUpdate) {
+                    if (fireUpdate) {
                         fireUpdate();
                     }
                 }
@@ -197,25 +197,29 @@ public final class SongDatabase {
     public boolean updateSong(Song song) {
         try {
             if (song.getID() == -1) {
-                addSong(song, true);
+                LOGGER.log(Level.INFO, "Updating song that doesn't exist, adding instead");
+                return addSong(song, true);
             }
-            PreparedStatement stat = conn.prepareStatement("update songs set title=?, author=?, lyrics=?, background=? where id=?");
-            try {
-                stat.setString(1, song.getTitle());
-                stat.setString(2, song.getAuthor());
-                stat.setString(3, song.getLyrics());
-                String theme = "";
-                if (song.getSections().length > 0) {
-                    theme = song.getSections()[0].getTheme().toDBString();
+            else {
+                LOGGER.log(Level.INFO, "Updating song");
+                PreparedStatement stat = conn.prepareStatement("update songs set title=?, author=?, lyrics=?, background=? where id=?");
+                try {
+                    stat.setString(1, song.getTitle());
+                    stat.setString(2, song.getAuthor());
+                    stat.setString(3, song.getLyrics());
+                    String theme = "";
+                    if (song.getSections().length > 0 && song.getSections()[0].getTheme()!=null) {
+                        theme = song.getSections()[0].getTheme().toDBString();
+                    }
+                    stat.setString(4, theme);
+                    stat.setInt(5, song.getID());
+                    stat.executeUpdate();
+                    return true;
                 }
-                stat.setString(4, theme);
-                stat.setInt(5, song.getID());
-                stat.executeUpdate();
-                return true;
-            }
-            finally {
-                stat.close();
-                fireUpdate();
+                finally {
+                    stat.close();
+                    fireUpdate();
+                }
             }
         }
         catch (SQLException ex) {

@@ -9,6 +9,7 @@ import javax.swing.Icon;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
+import org.quelea.SongDatabase;
 import org.quelea.Theme;
 import org.quelea.utils.Utils;
 import org.w3c.dom.Document;
@@ -63,6 +64,20 @@ public class Song implements TextDisplayable, Searchable, Comparable<Song> {
         this.author = author;
         this.theme = theme;
         sections = new ArrayList<TextSection>();
+    }
+
+    /**
+     * Try and give this song an ID based on the ID in the database. If this
+     * can't be done, leave it as -1.
+     */
+    public void matchID() {
+        if(id==-1) {
+            for (Song song : SongDatabase.get().getSongs()) {
+                if (this.title.equals(song.title)) {
+                    id = song.getID();
+                }
+            }
+        }
     }
 
     /**
@@ -193,18 +208,18 @@ public class Song implements TextDisplayable, Searchable, Comparable<Song> {
      * @return true if the song matches, false otherwise.
      */
     public boolean search(String s) {
-        if(searchLyrics==null) {
+        if (searchLyrics == null) {
             searchLyrics = stripPunctuation(getLyrics().replace("\n", " ")).toLowerCase();
         }
-        return title.toLowerCase().contains(s) ||
-                searchLyrics.contains(stripPunctuation(s));
+        return title.toLowerCase().contains(s)
+                || searchLyrics.contains(stripPunctuation(s));
     }
 
     private static String stripPunctuation(String s) {
         s = s.replaceAll("[ ]+", " ");
         StringBuilder ret = new StringBuilder();
-        for(char c : s.toCharArray()) {
-            if(Character.isLetterOrDigit(c) || Character.isWhitespace(c)) {
+        for (char c : s.toCharArray()) {
+            if (Character.isLetterOrDigit(c) || Character.isWhitespace(c)) {
                 ret.append(c);
             }
         }
@@ -219,10 +234,10 @@ public class Song implements TextDisplayable, Searchable, Comparable<Song> {
         StringBuilder xml = new StringBuilder();
         xml.append("<song>");
         xml.append("<title>");
-        xml.append(title);
+        xml.append(Utils.escapeXML(title));
         xml.append("</title>");
         xml.append("<author>");
-        xml.append(author);
+        xml.append(Utils.escapeXML(author));
         xml.append("</author>");
         xml.append("<lyrics>");
         for (TextSection section : sections) {
@@ -311,7 +326,7 @@ public class Song implements TextDisplayable, Searchable, Comparable<Song> {
         if (obj == null) {
             return false;
         }
-        if (getClass() != obj.getClass()) {
+        if (!(obj instanceof Song)) {
             return false;
         }
         final Song other = (Song) obj;
@@ -343,7 +358,7 @@ public class Song implements TextDisplayable, Searchable, Comparable<Song> {
                 result = getAuthor().compareToIgnoreCase(other.getAuthor());
             }
             if (result == 0 && getLyrics() != null && other.getLyrics() != null) {
-                    result = getLyrics().compareTo(other.getLyrics());
+                result = getLyrics().compareTo(other.getLyrics());
             }
         }
         return result;

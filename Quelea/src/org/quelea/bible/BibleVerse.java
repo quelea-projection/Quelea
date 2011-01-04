@@ -1,5 +1,6 @@
 package org.quelea.bible;
 
+import org.quelea.utils.Utils;
 import org.w3c.dom.Node;
 
 /**
@@ -45,7 +46,7 @@ public final class BibleVerse {
         ret.append("<vers vnumber=\"");
         ret.append(num);
         ret.append("\">");
-        ret.append(verse);
+        ret.append(Utils.escapeXML(verse));
         ret.append("</vers>");
         return ret.toString();
     }

@@ -32,6 +32,7 @@ import org.quelea.utils.Utils;
 public class LibrarySongPanel extends JPanel {
 
     private final JTextField searchBox;
+    private final JButton searchCancelButton;
     private final LibrarySongList songList;
     private final JButton removeButton;
     private final JButton addButton;
@@ -74,22 +75,38 @@ public class LibrarySongPanel extends JPanel {
         searchBox.getDocument().addDocumentListener(new DocumentListener() {
 
             public void insertUpdate(DocumentEvent e) {
-                updateList();
+                update();
             }
 
             public void removeUpdate(DocumentEvent e) {
-                updateList();
+                update();
             }
 
             public void changedUpdate(DocumentEvent e) {
-                updateList();
+                update();
             }
 
-            private void updateList() {
+            private void update() {
+                if(searchBox.getText().isEmpty()) {
+                    searchCancelButton.setEnabled(false);
+                }
+                else {
+                    searchCancelButton.setEnabled(true);
+                }
                 songList.filter(searchBox.getText());
             }
         });
         northPanel.add(searchBox);
+        searchCancelButton = new JButton(Utils.getImageIcon("icons/cross.png"));
+        searchCancelButton.setToolTipText("Clear search box");
+        searchCancelButton.setEnabled(false);
+        searchCancelButton.addActionListener(new ActionListener() {
+
+            public void actionPerformed(ActionEvent e) {
+                searchBox.setText("");
+            }
+        });
+        northPanel.add(searchCancelButton);
         add(northPanel, BorderLayout.NORTH);
 
         JToolBar toolbar = new JToolBar();
@@ -116,6 +133,7 @@ public class LibrarySongPanel extends JPanel {
                     JOptionPane.showMessageDialog(Application.get().getMainWindow(), "There was an error removing the song from the database.", "Error", JOptionPane.ERROR_MESSAGE, null);
                 }
                 SortedListModel model = (SortedListModel) getSongList().getModel();
+                song.setID(-1);
                 model.removeElement(song);
             }
         });
