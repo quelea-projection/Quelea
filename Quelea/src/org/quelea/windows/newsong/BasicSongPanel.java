@@ -30,6 +30,7 @@ import javax.swing.text.Highlighter;
 import javax.swing.text.Highlighter.Highlight;
 import org.quelea.utils.SpringUtilities;
 import org.quelea.displayable.Song;
+import org.quelea.utils.LineTypeChecker;
 import org.quelea.utils.Utils;
 
 /**
@@ -96,10 +97,9 @@ public class BasicSongPanel extends JPanel {
         lyricsPanel.setLayout(new BoxLayout(lyricsPanel, BoxLayout.X_AXIS));
         JToolBar lyricsToolbar = new JToolBar("Tools", JToolBar.VERTICAL);
         lyricsToolbar.setFloatable(false);
-        JButton dictButton = getDictButton();
-        lyricsToolbar.add(dictButton);
-        JButton fixAposButton = getAposButton();
-        lyricsToolbar.add(fixAposButton);
+        lyricsToolbar.add(getDictButton());
+        lyricsToolbar.add(getAposButton());
+        lyricsToolbar.add(getRemoveChordsButton());
         lyricsPanel.add(new JScrollPane(lyricsArea));
         JPanel lyricsToolbarPanel = new JPanel();
         lyricsToolbarPanel.setLayout(new FlowLayout(FlowLayout.LEADING, 0, 0));
@@ -109,38 +109,41 @@ public class BasicSongPanel extends JPanel {
         add(centrePanel, BorderLayout.CENTER);
 
     }
-
     private final List<Object> highlights = new ArrayList<Object>();
 
     /**
      * Manage the highlighting.
      */
     private void doHighlight() {
-        for(Object highlight : highlights) {
+        for (Object highlight : highlights) {
             lyricsArea.getHighlighter().removeHighlight(highlight);
         }
         highlights.clear();
         try {
             Highlighter hilite = lyricsArea.getHighlighter();
             String text = lyricsArea.getText();
-            String[] lines = text.split("\n\n");
-            List<Integer> startIndexes = new ArrayList<Integer>();
-            List<Integer> endIndexes = new ArrayList<Integer>();
+            String[] lines = text.split("\n");
+            List<HighlightIndex> indexes = new ArrayList<HighlightIndex>();
             int offset = 0;
-            for (String line : lines) {
-                if (Utils.isTitle(line)) {
-                    startIndexes.add(text.indexOf(line, offset));
-                    int endIndex = text.indexOf('\n', text.indexOf(line));
-                    if (endIndex < text.indexOf(line, offset)) {
-                        endIndex = text.length();
-                    }
-                    endIndexes.add(endIndex);
+            for (int i=0 ; i<lines.length ; i++) {
+                String line = lines[i];
+                LineTypeChecker.Type type = new LineTypeChecker(line).getLineType();
+                if(type==LineTypeChecker.Type.TITLE && i>0 && !lines[i-1].trim().isEmpty()) {
+                    type = LineTypeChecker.Type.NORMAL;
                 }
-                offset += line.length();
+                if (type != LineTypeChecker.Type.NORMAL) {
+                    int startIndex = offset;
+                    int endIndex = startIndex + line.length();
+                    Color highlightColor = type.getHighlightColor();
+                    if(highlightColor != null) {
+                        indexes.add(new HighlightIndex(startIndex, endIndex, highlightColor));
+                    }
+                }
+                offset += line.length() + 1;
             }
 
-            for (int i = 0; i < startIndexes.size(); i++) {
-                highlights.add(hilite.addHighlight(startIndexes.get(i), endIndexes.get(i), new DefaultHighlightPainter(Color.YELLOW)));
+            for (HighlightIndex index : indexes) {
+                highlights.add(hilite.addHighlight(index.getStartIndex(), index.getEndIndex(), new DefaultHighlightPainter(index.getHighlightColor())));
             }
         }
         catch (BadLocationException ex) {
@@ -148,21 +151,45 @@ public class BasicSongPanel extends JPanel {
     }
 
     /**
+     * Get the remove chords button.
+     * @return the remove chords button.
+     */
+    private JButton getRemoveChordsButton() {
+        JButton button = new JButton(Utils.getImageIcon("icons/removeChords.png"));
+        button.setMargin(new Insets(0, 0, 0, 0));
+        button.setBorder(new EmptyBorder(0, 0, 0, 0));
+        button.setToolTipText("Remove guitar chords (marked in red)");
+        button.addActionListener(new ActionListener() {
+
+            public void actionPerformed(ActionEvent e) {
+                StringBuilder newText = new StringBuilder();
+                for(String line : lyricsArea.getText().split("\n")) {
+                    if(new LineTypeChecker(line).getLineType()!=LineTypeChecker.Type.CHORDS) {
+                        newText.append(line).append('\n');
+                    }
+                }
+                lyricsArea.setText(newText.toString());
+            }
+        });
+        return button;
+    }
+
+    /**
      * Get the spell checker button.
      * @return the spell checker button.
      */
     private JButton getDictButton() {
-        JButton spellButton = new JButton(Utils.getImageIcon("icons/dictionary.png"));
-        spellButton.setMargin(new Insets(0, 0, 0, 0));
-        spellButton.setBorder(new EmptyBorder(0, 0, 0, 0));
-        spellButton.setToolTipText("Run spellcheck (F7)");
-        spellButton.addActionListener(new ActionListener() {
+        JButton button = new JButton(Utils.getImageIcon("icons/dictionary.png"));
+        button.setMargin(new Insets(0, 0, 0, 0));
+        button.setBorder(new EmptyBorder(0, 0, 0, 0));
+        button.setToolTipText("Run spellcheck (F7)");
+        button.addActionListener(new ActionListener() {
 
             public void actionPerformed(ActionEvent e) {
                 SpellChecker.showSpellCheckerDialog(lyricsArea, SpellChecker.getOptions());
             }
         });
-        return spellButton;
+        return button;
     }
 
     /**
@@ -170,11 +197,11 @@ public class BasicSongPanel extends JPanel {
      * @return the button to fix apostrophes.
      */
     private JButton getAposButton() {
-        JButton aposButton = new JButton(Utils.getImageIcon("icons/apos.png"));
-        aposButton.setMargin(new Insets(0, 0, 0, 0));
-        aposButton.setBorder(new EmptyBorder(0, 0, 0, 0));
-        aposButton.setToolTipText("Fix weird apostrophes");
-        aposButton.addActionListener(new ActionListener() {
+        JButton button = new JButton(Utils.getImageIcon("icons/apos.png"));
+        button.setMargin(new Insets(0, 0, 0, 0));
+        button.setBorder(new EmptyBorder(0, 0, 0, 0));
+        button.setToolTipText("Fix weird apostrophes");
+        button.addActionListener(new ActionListener() {
 
             public void actionPerformed(ActionEvent e) {
                 int pos = lyricsArea.getCaretPosition();
@@ -182,7 +209,7 @@ public class BasicSongPanel extends JPanel {
                 lyricsArea.setCaretPosition(pos);
             }
         });
-        return aposButton;
+        return button;
     }
 
     /**
