@@ -104,7 +104,7 @@ public final class Bible {
     public String toXML() {
         StringBuilder ret = new StringBuilder();
         ret.append("<xmlbible xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:noNamespaceSchemaLocation=\"zef2005.xsd\" version=\"2.0.1.18\" status=\"v\" biblename=\"");
-        ret.append(name);
+        ret.append(Utils.escapeXML(name));
         ret.append("\" type=\"x-bible\" revision=\"0\">");
         if(information != null) {
             ret.append(information.toXML());

@@ -2,6 +2,7 @@ package org.quelea.bible;
 
 import java.util.ArrayList;
 import java.util.List;
+import org.quelea.utils.Utils;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
@@ -59,7 +60,7 @@ public final class BibleChapter {
         }
         ret.append(">");
         for (BibleVerse verse : verses) {
-            ret.append(verse.toXML());
+            ret.append(Utils.escapeXML(verse.toXML()));
         }
         ret.append("</chapter>");
         return ret.toString();

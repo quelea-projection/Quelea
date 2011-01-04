@@ -56,6 +56,36 @@ public class Theme {
         return fontColor;
     }
 
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final Theme other = (Theme) obj;
+        if (this.font != other.font && (this.font == null || !this.font.equals(other.font))) {
+            return false;
+        }
+        if (this.fontColor != other.fontColor && (this.fontColor == null || !this.fontColor.equals(other.fontColor))) {
+            return false;
+        }
+        if (this.background != other.background && (this.background == null || !this.background.equals(other.background))) {
+            return false;
+        }
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 67 * hash + (this.font != null ? this.font.hashCode() : 0);
+        hash = 67 * hash + (this.fontColor != null ? this.fontColor.hashCode() : 0);
+        hash = 67 * hash + (this.background != null ? this.background.hashCode() : 0);
+        return hash;
+    }
+
     /**
      * Get a string representation of this theme for storing in the database.
      * @return the string to store in the database.

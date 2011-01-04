@@ -51,7 +51,7 @@ public class TextSection {
         xml.append("<section ").append("title=\"").append(getTitle()).append("\" capitalise=\"").append(shouldCapitaliseFirst()).append("\">");
         if(theme != null) {
             xml.append("<theme>");
-            xml.append(theme.toDBString());
+            xml.append(Utils.escapeXML(theme.toDBString()));
             xml.append("</theme>");
         }
         xml.append("<lyrics>");

@@ -196,8 +196,8 @@ public class MainWindow extends JFrame {
      */
     private void saveSchedule(boolean saveAs) {
         Schedule schedule = mainpanel.getSchedulePanel().getScheduleList().getSchedule();
-        File file = null;
-        if (saveAs || schedule.getFile() == null) {
+        File file = schedule.getFile();
+        if (saveAs || file == null) {
             JFileChooser chooser = getFileChooser();
             if (chooser.showSaveDialog(MainWindow.this) == JFileChooser.APPROVE_OPTION) {
                 String extension = QueleaProperties.get().getScheduleExtension();

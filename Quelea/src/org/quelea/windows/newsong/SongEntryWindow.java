@@ -58,10 +58,10 @@ public class SongEntryWindow extends JDialog {
 
             public void actionPerformed(ActionEvent e) {
 
-                for (TextSection section : song.getSections()) {
+                for (TextSection section : getSong().getSections()) {
                     section.setTheme(getTheme());
                 }
-                if (!SongDatabase.get().updateSong(song)) {
+                if (!SongDatabase.get().updateSong(getSong())) {
                     JOptionPane.showMessageDialog(Application.get().getMainWindow(), "There was an error updating the song in the database.", "Error", JOptionPane.ERROR_MESSAGE, null);
                 }
                 setVisible(false);

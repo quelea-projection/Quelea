@@ -3,6 +3,7 @@ package org.quelea.bible;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
+import org.quelea.utils.Utils;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
@@ -75,11 +76,11 @@ public class BibleInfo {
         ret.append("<information>");
         for(Map.Entry<String, String> attrib : getAtributes()) {
             ret.append('<');
-            ret.append(attrib.getKey());
+            ret.append(Utils.escapeXML(attrib.getKey()));
             ret.append('>');
-            ret.append(attrib.getValue());
+            ret.append(Utils.escapeXML(attrib.getValue()));
             ret.append("</");
-            ret.append(attrib.getKey());
+            ret.append(Utils.escapeXML(attrib.getKey()));
             ret.append('>');
         }
         ret.append("</information>");

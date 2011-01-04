@@ -23,6 +23,7 @@ import javax.swing.TransferHandler;
 import javax.swing.border.EmptyBorder;
 import org.quelea.Schedule;
 import org.quelea.displayable.Displayable;
+import org.quelea.displayable.Song;
 import org.quelea.displayable.TransferDisplayable;
 import org.quelea.utils.QueleaProperties;
 
@@ -116,7 +117,7 @@ public class ScheduleList extends JList {
                     int index = locationToIndex(e.getPoint());
                     Rectangle Rect = getCellBounds(index, index);
                     index = Rect.contains(e.getPoint().x, e.getPoint().y) ? index : -1;
-                    if (index != -1) {
+                    if (index != -1 && getModel().getElementAt(index) instanceof Song && ((Song) getModel().getElementAt(index)).getID() != -1) {
                         setSelectedIndex(index);
                         popupMenu.show(ScheduleList.this, e.getX(), e.getY());
                     }
@@ -129,7 +130,7 @@ public class ScheduleList extends JList {
             public void dragGestureRecognized(DragGestureEvent dge) {
                 if (getSelectedValue() != null) {
                     internalDrag = true;
-                    dge.startDrag(DragSource.DefaultMoveDrop, new TransferDisplayable((Displayable)getSelectedValue()));
+                    dge.startDrag(DragSource.DefaultMoveDrop, new TransferDisplayable((Displayable) getModel().getElementAt(locationToIndex(dge.getDragOrigin()))));
                 }
             }
         });
@@ -163,10 +164,10 @@ public class ScheduleList extends JList {
                 }
 
                 DefaultListModel model = (DefaultListModel) getModel();
-                if(internalDrag) {
-                    int val = Math.abs(getSelectedIndex()-index);
-                    if(getSelectedIndex()<index) {
-                        for(int i=0 ; i<val ; i++) {
+                if (internalDrag) {
+                    int val = Math.abs(getSelectedIndex() - index);
+                    if (getSelectedIndex() < index) {
+                        for (int i = 0; i < val; i++) {
                             moveCurrentItem(Direction.DOWN);
                         }
                     }
@@ -213,6 +214,9 @@ public class ScheduleList extends JList {
     public void setSchedule(Schedule schedule) {
         clearSchedule();
         for (Displayable displayable : schedule) {
+            if(displayable instanceof Song) {
+                ((Song)displayable).matchID();
+            }
             ((DefaultListModel) getModel()).addElement(displayable);
         }
         this.schedule = schedule;
