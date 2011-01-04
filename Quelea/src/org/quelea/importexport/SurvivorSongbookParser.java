@@ -1,4 +1,4 @@
-package org.quelea.importsong;
+package org.quelea.importexport;
 
 import java.io.File;
 import java.io.IOException;

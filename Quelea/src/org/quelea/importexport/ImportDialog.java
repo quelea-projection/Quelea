@@ -1,4 +1,4 @@
-package org.quelea.importsong;
+package org.quelea.importexport;
 
 import java.awt.Font;
 import java.awt.event.MouseAdapter;

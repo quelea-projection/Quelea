@@ -81,6 +81,14 @@ public final class QueleaProperties extends Properties {
     }
 
     /**
+     * Get the extension used for quelea song packs.
+     * @return the extension used for quelea song packs.
+     */
+    public String getSongPackExtension() {
+        return getProperty("quelea.songpack.extension", "qsp");
+    }
+
+    /**
      * Get the number of the screen used for the control screen. This is the
      * screen that the main Quelea operator window will be displayed on.
      * @return the control screen number.

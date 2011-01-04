@@ -1,8 +1,14 @@
 package org.quelea.windows.main.menu;
 
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
+import java.util.Arrays;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
+import org.quelea.Application;
+import org.quelea.SongDatabase;
+import org.quelea.importexport.SelectExportedSongsDialog;
 
 /**
  * The database menu.
@@ -23,7 +29,15 @@ public class DatabaseMenu extends JMenu {
         add(newSong);
         exportSongs = new JMenuItem("Export songs...");
         exportSongs.setMnemonic(KeyEvent.VK_E);
-        exportSongs.setEnabled(false);
+        exportSongs.addActionListener(new ActionListener() {
+
+            public void actionPerformed(ActionEvent e) {
+                SelectExportedSongsDialog dialog = new SelectExportedSongsDialog(Application.get().getMainWindow());
+                dialog.setLocationRelativeTo(dialog.getOwner());
+                dialog.setSongs(Arrays.asList(SongDatabase.get().getSongs()), null, false);
+                dialog.setVisible(true);
+            }
+        });
         add(exportSongs);
     }
 
