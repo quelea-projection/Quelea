@@ -39,7 +39,7 @@ public class SongEntryWindow extends JDialog {
      * @param owner the owner of this window.
      */
     public SongEntryWindow(JFrame owner) {
-        super(owner, "Song entry", true);
+        super(owner, "Song entry");
         setResizable(false);
         setLayout(new BorderLayout());
         tabbedPane = new JTabbedPane();
@@ -58,9 +58,6 @@ public class SongEntryWindow extends JDialog {
 
             public void actionPerformed(ActionEvent e) {
 
-                for (TextSection section : getSong().getSections()) {
-                    section.setTheme(getTheme());
-                }
                 if (!SongDatabase.get().updateSong(getSong())) {
                     JOptionPane.showMessageDialog(Application.get().getMainWindow(), "There was an error updating the song in the database.", "Error", JOptionPane.ERROR_MESSAGE, null);
                 }
@@ -209,6 +206,9 @@ public class SongEntryWindow extends JDialog {
         song.setLyrics(getBasicSongPanel().getLyricsField().getText());
         song.setTitle(getBasicSongPanel().getTitleField().getText());
         song.setAuthor(getBasicSongPanel().getAuthorField().getText());
+        for(TextSection section : song.getSections()) {
+            section.setTheme(themePanel.getTheme());
+        }
         return song;
     }
 

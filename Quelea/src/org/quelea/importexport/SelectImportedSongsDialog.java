@@ -1,4 +1,4 @@
-package org.quelea.importsong;
+package org.quelea.importexport;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
