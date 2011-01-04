@@ -1,7 +1,6 @@
 package org.quelea;
 
 import com.inet.jortho.SpellChecker;
-import com.inet.jortho.SpellCheckerOptions;
 import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
 import java.io.File;
@@ -96,6 +95,10 @@ public final class Main {
 
             public void run() {
                 setLaf();
+                if (SongDatabase.get().getError()) {
+                    JOptionPane.showMessageDialog(null, "It looks like you already have an instance of Quelea running, make sure you close all instances before running the program.", "Already running", JOptionPane.ERROR_MESSAGE);
+                    System.exit(0);
+                }
                 mainWindow = new MainWindow();
                 Application.get().setMainWindow(mainWindow);
 

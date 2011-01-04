@@ -206,14 +206,14 @@ public class MainPanel extends JPanel {
              * cleared.
              */
             public void contentsChanged(ListDataEvent e) {
-                listChanged();
+                scheduleListChanged();
             }
         });
 
         schedulePanel.getScheduleList().addListSelectionListener(new ListSelectionListener() {
 
             public void valueChanged(ListSelectionEvent e) {
-                listChanged();
+                scheduleListChanged();
             }
         });
     }
@@ -222,7 +222,7 @@ public class MainPanel extends JPanel {
      * This method should be called every time the list values are updated or
      * changed.
      */
-    private void listChanged() {
+    private void scheduleListChanged() {
         if (schedulePanel.getScheduleList().getSelectedIndex() == -1) {
             previewPanel.getLyricsList().getModel().clear();
             return;
