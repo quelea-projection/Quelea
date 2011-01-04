@@ -5,6 +5,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.Icon;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -12,6 +14,7 @@ import javax.xml.parsers.ParserConfigurationException;
 import org.quelea.SongDatabase;
 import org.quelea.Theme;
 import org.quelea.utils.LineTypeChecker;
+import org.quelea.utils.LoggerUtils;
 import org.quelea.utils.Utils;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
@@ -24,6 +27,7 @@ import org.xml.sax.SAXException;
  */
 public class Song implements TextDisplayable, Searchable, Comparable<Song> {
 
+    private static final Logger LOGGER = LoggerUtils.getLogger();
     private String title;
     private String author;
     private List<TextSection> sections;
@@ -250,7 +254,12 @@ public class Song implements TextDisplayable, Searchable, Comparable<Song> {
         return xml.toString();
     }
 
-    public static Song parseSong(String xml) {
+    /**
+     * Parse a song in XML format and return the song object.
+     * @param xml the xml string to parse.
+     * @return the song, or null if an error occurs.
+     */
+    public static Song parseXML(String xml) {
         InputStream inputStream = new ByteArrayInputStream(xml.getBytes());
         try {
             DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
@@ -265,6 +274,32 @@ public class Song implements TextDisplayable, Searchable, Comparable<Song> {
             return null;
         }
         catch (IOException ex) {
+            return null;
+        }
+    }
+
+    /**
+     * Parse a song in XML format and return the song object.
+     * @param inputStream the input stream containing the xml.
+     * @return the song, or null if an error occurs.
+     */
+    public static Song parseXML(InputStream inputStream) {
+        try {
+            DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+            DocumentBuilder builder = factory.newDocumentBuilder();
+            Document doc = builder.parse(inputStream);
+            return parseXML(doc.getChildNodes().item(0));
+        }
+        catch (ParserConfigurationException ex) {
+            LOGGER.log(Level.WARNING, "Couldn't parse the schedule", ex);
+            return null;
+        }
+        catch (SAXException ex) {
+            LOGGER.log(Level.WARNING, "Couldn't parse the schedule", ex);
+            return null;
+        }
+        catch (IOException ex) {
+            LOGGER.log(Level.WARNING, "Couldn't parse the schedule", ex);
             return null;
         }
     }

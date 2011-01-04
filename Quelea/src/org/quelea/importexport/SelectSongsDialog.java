@@ -1,17 +1,27 @@
-package org.quelea.importsong;
+package org.quelea.importexport;
 
+import java.awt.Insets;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
+import javax.swing.JToolBar;
 import javax.swing.ListSelectionModel;
+import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableModel;
+import javax.swing.table.TableRowSorter;
 import org.quelea.displayable.Song;
+import org.quelea.utils.Utils;
 
 /**
  * A dialog where given songs can be selected.
@@ -34,29 +44,63 @@ public class SelectSongsDialog extends JDialog {
         super(owner, "Select Songs", true);
         this.checkboxText = checkboxText;
         songs = new ArrayList<Song>();
-        setLayout(new BoxLayout(getContentPane(), BoxLayout.Y_AXIS));
+        setLayout(new BoxLayout(getContentPane(), BoxLayout.X_AXIS));
+        JPanel mainPanel = new JPanel();
+        mainPanel.setLayout(new BoxLayout(mainPanel, BoxLayout.Y_AXIS));
         for(String str : text) {
-            add(new JLabel(str));
+            mainPanel.add(new JLabel(str));
         }
         table = new JTable();
         table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-        add(new JScrollPane(table));
+        mainPanel.add(new JScrollPane(table));
+        JPanel optionsPanel = new JPanel();
+        JToolBar options = new JToolBar();
+        options.setFloatable(false);
+        options.add(getCheckAllButton());
+        optionsPanel.add(options);
         addButton = new JButton(acceptText);
-        add(addButton);
+        mainPanel.add(addButton);
+        add(mainPanel);
+        add(optionsPanel);
         pack();
+    }
+
+    private JButton getCheckAllButton() {
+        JButton checkButton = new JButton(Utils.getImageIcon("icons/checkbox.jpg"));
+        checkButton.setToolTipText("Check / Uncheck all");
+        checkButton.setMargin(new Insets(0, 0, 0, 0));
+        checkButton.setBorder(new EmptyBorder(0, 0, 0, 0));
+        checkButton.addActionListener(new ActionListener() {
+
+            public void actionPerformed(ActionEvent e) {
+                if(getSongs().isEmpty()) {
+                    return;
+                }
+                boolean val = !(Boolean)getTable().getValueAt(0, 2);
+                for (int i = 0; i < getSongs().size(); i++) {
+                    getTable().setValueAt(val, i, 2);
+                }
+            }
+        });
+        return checkButton;
     }
 
     /**
      * Set the songs to be shown in the dialog.
      * @param songs the list of songs to be shown.
      * @param existsAlready a list corresponding to the song list - each
-     * position is true if Quelea thinks the song already exists in the
-     * database, and false otherwise.
+     * position is true if the checkbox should be selected, false otherwise.
+     * @param defaultVal the default value to use for the checkbox if checkList
+     * is null or smaller than the songs list.
      */
-    public void setSongs(List<Song> songs, List<Boolean> checkList) {
+    public void setSongs(List<Song> songs, List<Boolean> checkList, boolean defaultVal) {
+        Collections.sort(songs);
         this.songs = songs;
         this.checkList = checkList;
-        table.setModel(new DefaultTableModel(songs.size(), 3));
+        DefaultTableModel model = new DefaultTableModel(songs.size(), 3);
+        table.setModel(model);
+        TableRowSorter<TableModel> sorter = new TableRowSorter<TableModel>(model);
+        table.setRowSorter(sorter);
         table.getColumnModel().getColumn(0).setHeaderValue("Name");
         table.getColumnModel().getColumn(1).setHeaderValue("Author");
         table.getColumnModel().getColumn(2).setHeaderValue(checkboxText);
@@ -67,10 +111,10 @@ public class SelectSongsDialog extends JDialog {
             table.getModel().setValueAt(songs.get(i).getAuthor(), i, 1);
             boolean val;
             if(checkList!=null && i<checkList.size()) {
-                val = checkList.get(i)^true; //invert
+                val = checkList.get(i); //invert
             }
             else {
-                val = true;
+                val = defaultVal;
             }
             table.getModel().setValueAt(val, i, 2);
         }
