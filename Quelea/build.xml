@@ -21,6 +21,9 @@
         <copy todir="${dist.jar.dir}/bibles">
             <fileset dir="${basedir}/bibles"/>
         </copy>
+        <copy todir="${dist.jar.dir}/dictionaries">
+            <fileset dir="${basedir}/dictionaries"/>
+        </copy>
         <copy todir="${dist.jar.dir}/database">
             <fileset dir="${basedir}/database"/>
         </copy>

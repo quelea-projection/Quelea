@@ -1,7 +1,11 @@
 package org.quelea;
 
+import com.inet.jortho.SpellChecker;
+import com.inet.jortho.SpellCheckerOptions;
 import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
+import java.io.File;
+import java.net.MalformedURLException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JDialog;
@@ -76,6 +80,17 @@ public final class Main {
         LOGGER.log(Level.INFO, "Loading bibles");
         BibleManager.get(); //Pre-load bibles
         LOGGER.log(Level.INFO, "Loading bibles done");
+
+        LOGGER.log(Level.INFO, "Registering dictionary");
+        try {
+            SpellChecker.registerDictionaries(new File("dictionaries").toURI().toURL(), "en", "en");
+            SpellChecker.getOptions().setLanguageDisableVisible(false);
+            SpellChecker.getOptions().setCaseSensitive(false);
+        }
+        catch (MalformedURLException ex) {
+            LOGGER.log(Level.SEVERE, "Couldn't load dictionaries", ex);
+        }
+        LOGGER.log(Level.INFO, "Registered dictionary");
 
         SwingUtilities.invokeLater(new Runnable() {
 

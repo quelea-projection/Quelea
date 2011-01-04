@@ -39,7 +39,7 @@ public class SongEntryWindow extends JDialog {
      * @param owner the owner of this window.
      */
     public SongEntryWindow(JFrame owner) {
-        super(owner, "Song entry");
+        super(owner, "Song entry", true);
         setResizable(false);
         setLayout(new BorderLayout());
         tabbedPane = new JTabbedPane();
