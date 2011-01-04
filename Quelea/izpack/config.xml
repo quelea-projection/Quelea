@@ -58,6 +58,10 @@
             <file src="../licenses/gplv3.txt" targetdir="$INSTALL_PATH"/>
             <file src="quelea.properties" targetdir="$INSTALL_PATH"/>
         </pack>
+        <pack name="dictionaries" required="yes" preselected="yes" hidden="true">
+            <description>Dictionaries</description>
+            <file src="dictionaries" targetdir="$INSTALL_PATH" override="false"/>
+        </pack>
         <pack name="source code" required="no" preselected="yes">
             <description>Source code</description>
             <file src="src" targetdir="$INSTALL_PATH"/>

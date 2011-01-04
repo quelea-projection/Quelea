@@ -62,7 +62,7 @@ public class SurvivorSongbookParser {
             document.close();
             songs = pdfSongs;
         }
-        if(songs==null) {
+        if (songs == null) {
             return new ArrayList<Song>();
         }
         else {
@@ -83,12 +83,12 @@ public class SurvivorSongbookParser {
         stripper.setEndPage(page);
         StringWriter textWriter = new StringWriter();
         stripper.writeText(document, textWriter);
-        return textWriter.toString();
+        return textWriter.toString().replace("’", "'").replace("`", "'");
     }
 
     /**
      * Given a number of parts, get a song.
-     * @param parts the parts (one part per pagein the PDF) of the song.
+     * @param parts the parts (one part per page in the PDF) of the song.
      * @return the song object from these parts.
      */
     private Song processSong(String[] parts) {
