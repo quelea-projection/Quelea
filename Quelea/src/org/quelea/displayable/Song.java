@@ -11,6 +11,7 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import org.quelea.SongDatabase;
 import org.quelea.Theme;
+import org.quelea.utils.LineTypeChecker;
 import org.quelea.utils.Utils;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
@@ -71,7 +72,7 @@ public class Song implements TextDisplayable, Searchable, Comparable<Song> {
      * can't be done, leave it as -1.
      */
     public void matchID() {
-        if(id==-1) {
+        if (id == -1) {
             for (Song song : SongDatabase.get().getSongs()) {
                 if (this.title.equals(song.title)) {
                     id = song.getID();
@@ -155,6 +156,7 @@ public class Song implements TextDisplayable, Searchable, Comparable<Song> {
      */
     public void setLyrics(String lyrics) {
         sections.clear();
+        lyrics = lyrics.replaceAll("\n\n+", "\n\n");
         for (String section : lyrics.split("\n\n")) {
             String[] sectionLines = section.split("\n");
             String[] newLyrics = section.split("\n");
@@ -162,7 +164,7 @@ public class Song implements TextDisplayable, Searchable, Comparable<Song> {
             if (sectionLines.length == 0) {
                 continue;
             }
-            if (Utils.isTitle(sectionLines[0])) {
+            if (new LineTypeChecker(sectionLines[0]).getLineType() == LineTypeChecker.Type.TITLE) {
                 sectionTitle = sectionLines[0];
                 newLyrics = new String[sectionLines.length - 1];
                 System.arraycopy(sectionLines, 1, newLyrics, 0, newLyrics.length);

@@ -184,21 +184,6 @@ public final class Utils {
     }
 
     /**
-     * Determine whether the given string is the title of a song section.
-     * @param title the title to check.
-     * @return true if it is a valid title, false otherwise.
-     */
-    public static boolean isTitle(String title) {
-        return title.toLowerCase().startsWith("verse")
-                || title.toLowerCase().startsWith("chorus")
-                || title.toLowerCase().startsWith("tag")
-                || title.toLowerCase().startsWith("pre-chorus")
-                || title.toLowerCase().startsWith("pre chorus")
-                || title.toLowerCase().startsWith("coda")
-                || title.toLowerCase().startsWith("bridge");
-    }
-
-    /**
      * Get the names of all the fonts available on the current system.
      * @return the names of all the fonts available.
      */

@@ -12,8 +12,6 @@ import java.util.List;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.swing.JOptionPane;
-import javax.swing.SwingUtilities;
 import org.quelea.displayable.Song;
 import org.quelea.displayable.TextSection;
 import org.quelea.utils.DatabaseListener;
@@ -28,6 +26,7 @@ public final class SongDatabase {
     private static final Logger LOGGER = LoggerUtils.getLogger();
     private static final SongDatabase INSTANCE = new SongDatabase();
     private Connection conn;
+    private boolean error;
     private final Set<DatabaseListener> listeners;
 
     /**
@@ -53,16 +52,11 @@ public final class SongDatabase {
         }
         catch (ClassNotFoundException ex) {
             LOGGER.log(Level.SEVERE, "Couldn't find the database library.", ex);
+            error = true;
         }
         catch (SQLException ex) {
             LOGGER.log(Level.SEVERE, "SQL excpetion - hopefully this is just because quelea is already running", ex);
-            SwingUtilities.invokeLater(new Runnable() {
-
-                public void run() {
-                    JOptionPane.showMessageDialog(null, "It looks like you already have an instance of Quelea running, make sure you close all instances before running the program.", "Already running", JOptionPane.ERROR_MESSAGE);
-                    System.exit(0);
-                }
-            });
+            error = true;
         }
     }
 
@@ -72,6 +66,14 @@ public final class SongDatabase {
      */
     public static SongDatabase get() {
         return INSTANCE;
+    }
+
+    /**
+     * Determine if an error occurred initialising the database.
+     * @return true if an error occurred, false if all is ok.
+     */
+    public boolean getError() {
+        return error;
     }
 
     /**
