@@ -2,6 +2,7 @@ package org.quelea.bible;
 
 import java.util.ArrayList;
 import java.util.List;
+import org.quelea.utils.Utils;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
@@ -58,7 +59,7 @@ public final class BibleBook {
         ret.append("<biblebook bnumber=\"");
         ret.append(bookNumber);
         ret.append("\" bname=\"");
-        ret.append(bookName);
+        ret.append(Utils.escapeXML(bookName));
         ret.append("\">");
         for (BibleChapter chapter : chapters) {
             ret.append(chapter.toXML());
