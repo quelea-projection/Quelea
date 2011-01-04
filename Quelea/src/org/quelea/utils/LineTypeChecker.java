@@ -61,11 +61,12 @@ public class LineTypeChecker {
         if (line.isEmpty()) {
             return false;
         }
-        for (String s : line.split("\\s")) {
+        String checkLine = line.replace('-', ' ');
+        for (String s : checkLine.split("\\s")) {
             if (s.trim().isEmpty()) {
                 continue;
             }
-            if (!s.matches("([a-gA-G](#|b)?[0-9]*((sus|dim|maj|dom|min|m|aug|add)?){2}(#|b)?[0-9]*)(/([a-gA-G](#|b)?[0-9]*((sus|dim|maj|dom|min|m|aug|add)?){2}(#|b)?[0-9]*))?")) {
+            if (!s.matches("([a-gA-G](#|b)?[0-9]*((sus|dim|maj|dom|min|m|aug|add)?[0-9]*){3}(#|b)?[0-9]*)(/([a-gA-G](#|b)?[0-9]*((sus|dim|maj|dom|min|m|aug|add)?[0-9]*){3}(#|b)?[0-9]*))?")) {
                 return false;
             }
         }
