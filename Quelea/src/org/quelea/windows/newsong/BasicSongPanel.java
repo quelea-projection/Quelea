@@ -27,7 +27,6 @@ import javax.swing.event.DocumentListener;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.DefaultHighlighter.DefaultHighlightPainter;
 import javax.swing.text.Highlighter;
-import javax.swing.text.Highlighter.Highlight;
 import org.quelea.utils.SpringUtilities;
 import org.quelea.displayable.Song;
 import org.quelea.utils.LineTypeChecker;
@@ -100,6 +99,7 @@ public class BasicSongPanel extends JPanel {
         lyricsToolbar.add(getDictButton());
         lyricsToolbar.add(getAposButton());
         lyricsToolbar.add(getRemoveChordsButton());
+        lyricsToolbar.add(getTrimLinesButton());
         lyricsPanel.add(new JScrollPane(lyricsArea));
         JPanel lyricsToolbarPanel = new JPanel();
         lyricsToolbarPanel.setLayout(new FlowLayout(FlowLayout.LEADING, 0, 0));
@@ -148,6 +148,28 @@ public class BasicSongPanel extends JPanel {
         }
         catch (BadLocationException ex) {
         }
+    }
+
+    /**
+     * Get the remove chords button.
+     * @return the remove chords button.
+     */
+    private JButton getTrimLinesButton() {
+        JButton button = new JButton(Utils.getImageIcon("icons/trimLines.png"));
+        button.setMargin(new Insets(0, 0, 0, 0));
+        button.setBorder(new EmptyBorder(0, 0, 0, 0));
+        button.setToolTipText("Trim lines");
+        button.addActionListener(new ActionListener() {
+
+            public void actionPerformed(ActionEvent e) {
+                StringBuilder newText = new StringBuilder();
+                for(String line : lyricsArea.getText().split("\n")) {
+                    newText.append(line.trim()).append("\n");
+                }
+                lyricsArea.setText(newText.toString());
+            }
+        });
+        return button;
     }
 
     /**
