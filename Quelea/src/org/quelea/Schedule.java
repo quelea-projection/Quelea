@@ -1,10 +1,14 @@
 package org.quelea;
 
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.List;
 import java.util.logging.Level;
@@ -78,15 +82,32 @@ public class Schedule implements Iterable<Displayable> {
      * @return true if the write was successful, false otherwise.
      */
     public boolean writeToFile() {
-        if(file==null) {
+        if (file == null) {
             return false;
         }
         try {
             ZipOutputStream zos = new ZipOutputStream(new FileOutputStream(file));
+            final int BUFFER = 2048;
+            byte data[] = new byte[BUFFER];
             try {
                 zos.putNextEntry(new ZipEntry("schedule.xml"));
                 zos.write(getXML().getBytes());
                 zos.closeEntry();
+                for (Displayable displayable : displayables) {
+                    for (File displayableFile : displayable.getResources()) {
+                        String base = ".";
+                        String path = displayableFile.getAbsolutePath();
+                        String relative = new File(base).toURI().relativize(new File(path).toURI()).getPath();
+                        zos.putNextEntry(new ZipEntry("resources/" + relative));
+                        FileInputStream fi = new FileInputStream(displayableFile);
+                        BufferedInputStream origin = new BufferedInputStream(fi, BUFFER);
+                        int count;
+                        while ((count = origin.read(data, 0, BUFFER)) != -1) {
+                            zos.write(data, 0, count);
+                        }
+                        zos.closeEntry();
+                    }
+                }
                 return true;
             }
             finally {
@@ -107,9 +128,33 @@ public class Schedule implements Iterable<Displayable> {
     public static Schedule fromFile(File file) {
         try {
             ZipFile zipFile = new ZipFile(file);
+            final int BUFFER = 2048;
             try {
                 Schedule ret = parseXML(zipFile.getInputStream(zipFile.getEntry("schedule.xml")));
                 ret.setFile(file);
+                Enumeration<? extends ZipEntry> enumeration = zipFile.entries();
+                while (enumeration.hasMoreElements()) {
+                    ZipEntry entry = enumeration.nextElement();
+                    if(!entry.getName().startsWith("resources/")) {
+                        continue;
+                    }
+                    BufferedInputStream is = new BufferedInputStream(zipFile.getInputStream(entry));
+                    int count;
+                    byte data[] = new byte[BUFFER];
+                    File writeFile = new File(entry.getName().substring("resources/".length()));
+                    if(writeFile.exists()) {
+                        continue;
+                    }
+                    FileOutputStream fos = new FileOutputStream(writeFile);
+                    BufferedOutputStream dest = new BufferedOutputStream(fos, BUFFER);
+                    while ((count = is.read(data, 0, BUFFER))
+                            != -1) {
+                        dest.write(data, 0, count);
+                    }
+                    dest.flush();
+                    dest.close();
+                    is.close();
+                }
                 return ret;
             }
             finally {
@@ -154,7 +199,7 @@ public class Schedule implements Iterable<Displayable> {
                 if (name.equalsIgnoreCase("song")) {
                     newSchedule.add(Song.parseXML(node));
                 }
-                else if(name.equalsIgnoreCase("passage")) {
+                else if (name.equalsIgnoreCase("passage")) {
                     newSchedule.add(BiblePassage.parseXML(node));
                 }
             }

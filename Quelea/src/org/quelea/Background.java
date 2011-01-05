@@ -44,8 +44,8 @@ public class Background {
         Graphics2D g = (Graphics2D) ret.getGraphics();
         g.setColor(Color.BLACK);
         g.fillRect(0, 0, width, height);
-        if(colour == null) {
-            g.drawImage(Utils.getImage(new File(new File("img").getAbsolutePath(), imageLocation).getAbsolutePath()), 0, 0, width, height, null);
+        if (colour == null) {
+            g.drawImage(Utils.getImage(getImageFile().getAbsolutePath()), 0, 0, width, height, null);
             return ret;
         }
         else {
@@ -62,6 +62,20 @@ public class Background {
      */
     public Color getColour() {
         return colour;
+    }
+
+    /**
+     * Get the image background file.
+     * @return the file representing the image background, or null if the image
+     * background is a colour.
+     */
+    public File getImageFile() {
+        if (imageLocation == null) {
+            return null;
+        }
+        else {
+            return new File(new File("img").getAbsolutePath(), imageLocation);
+        }
     }
 
     /**
@@ -108,17 +122,17 @@ public class Background {
      */
     @Override
     public boolean equals(Object obj) {
-        if(obj == null) {
+        if (obj == null) {
             return false;
         }
-        if(getClass() != obj.getClass()) {
+        if (getClass() != obj.getClass()) {
             return false;
         }
         final Background other = (Background) obj;
-        if(this.colour != other.colour && (this.colour == null || !this.colour.equals(other.colour))) {
+        if (this.colour != other.colour && (this.colour == null || !this.colour.equals(other.colour))) {
             return false;
         }
-        if(this.imageLocation != other.imageLocation && (this.imageLocation == null || !this.imageLocation.equals(other.imageLocation))) {
+        if (this.imageLocation != other.imageLocation && (this.imageLocation == null || !this.imageLocation.equals(other.imageLocation))) {
             return false;
         }
         return true;
@@ -132,7 +146,7 @@ public class Background {
     public String toString() {
         StringBuilder ret = new StringBuilder();
         ret.append("Background: ");
-        if(colour == null) {
+        if (colour == null) {
             ret.append("image: ");
             ret.append(imageLocation);
         }
