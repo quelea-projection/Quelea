@@ -146,7 +146,9 @@ public class SurvivorSongbookParser {
         for (int i = parts.length - 1; i >= 0; i--) {
             if (parts[i].toLowerCase().contains("ccl licence no.")
                     || parts[i].contains("©")
-                    || parts[i].contains("(c)")) {
+                    || parts[i].toLowerCase().contains("copyright")
+                    || parts[i].toLowerCase().contains("(c)")
+                    || parts[i].toLowerCase().contains("kingswaysongs")) {
                 endIndex = i;
                 break;
             }
@@ -154,7 +156,10 @@ public class SurvivorSongbookParser {
         if (endIndex == -1) {
             return text;
         }
-        int startIndex = endIndex - 2;
+        int startIndex = endIndex - 1;
+        while (parts[startIndex].trim().isEmpty()) {
+            startIndex--;
+        }
         while (!parts[startIndex].trim().isEmpty()) {
             startIndex--;
         }
