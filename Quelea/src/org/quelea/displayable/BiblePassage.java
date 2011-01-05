@@ -1,7 +1,9 @@
 package org.quelea.displayable;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 import javax.swing.Icon;
 import org.quelea.bible.BibleVerse;
@@ -131,5 +133,13 @@ public class BiblePassage implements TextDisplayable {
      */
     public TextSection[] getSections() {
         return textSections.toArray(new TextSection[textSections.size()]);
+    }
+
+    /**
+     * Bible passages don't need any resources, return an empty collection.
+     * @return an empty list, always.
+     */
+    public Collection<File> getResources() {
+        return new ArrayList<File>();
     }
 }
