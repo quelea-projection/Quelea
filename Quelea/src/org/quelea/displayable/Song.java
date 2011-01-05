@@ -1,16 +1,21 @@
 package org.quelea.displayable;
 
 import java.io.ByteArrayInputStream;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.Icon;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
+import org.quelea.Background;
 import org.quelea.SongDatabase;
 import org.quelea.Theme;
 import org.quelea.utils.LineTypeChecker;
@@ -431,5 +436,23 @@ public class Song implements TextDisplayable, Searchable, Comparable<Song> {
      */
     public void removeDuplicateSections() {
         Utils.removeDuplicateWithOrder(sections);
+    }
+
+    /**
+     * Get all the files used by this song.
+     * @return all the files used by this song.
+     */
+    public Collection<File> getResources() {
+        Set<File> ret = new HashSet<File>();
+        for(TextSection section : getSections()) {
+            Theme sectionTheme = section.getTheme();
+            if(sectionTheme != null) {
+                Background background = sectionTheme.getBackground();
+                if(background.getImageLocation() != null) {
+                    ret.add(background.getImageFile());
+                }
+            }
+        }
+        return ret;
     }
 }
