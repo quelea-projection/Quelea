@@ -57,10 +57,9 @@ public class LibrarySongList extends JList implements DatabaseListener {
     public LibrarySongList() {
         super(new SortedListModel());
         setCellRenderer(new SongRenderer());
-        SortedListModel model = (SortedListModel) super.getModel();
         setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         popupMenu = new LibraryPopupMenu();
-        fullModel = model;
+        fullModel = (SortedListModel) super.getModel();
         tempModel = new SortedListModel();
         DragSource.getDefaultDragSource().createDefaultDragGestureRecognizer(this, DnDConstants.ACTION_MOVE, new DragGestureListener() {
 
@@ -145,32 +144,13 @@ public class LibrarySongList extends JList implements DatabaseListener {
         return null;
     }
 
-//    private final ScheduledThreadPoolExecutor executor = new ScheduledThreadPoolExecutor(1);
-//    private final Runnable updateRunnable = new Runnable() {
-//
-//        public void run() {
-//            SwingUtilities.invokeLater(new Runnable() {
-//
-//                public void run() {
-//                    SortedListModel model = (SortedListModel) getModel();
-//                    model.clear();
-//                    for (Song song : SongDatabase.get().getSongs()) {
-//                        model.add(song);
-//                    }
-//                }
-//            });
-//        }
-//    };
     /**
      * Update the contents of the list.
      */
     public final void update() {
-//        executor.remove(updateRunnable);
-//        executor.schedule(updateRunnable, 1, TimeUnit.SECONDS);
-        SortedListModel model = (SortedListModel) getModel();
-        model.clear();
+        fullModel.clear();
         for (Song song : SongDatabase.get().getSongs()) {
-            model.add(song);
+            fullModel.add(song);
         }
     }
 }
