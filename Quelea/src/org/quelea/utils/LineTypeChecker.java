@@ -62,6 +62,10 @@ public class LineTypeChecker {
             return false;
         }
         String checkLine = line.replace('-', ' ');
+        checkLine = checkLine.replace('(', ' ');
+        checkLine = checkLine.replace(')', ' ');
+        checkLine = checkLine.replaceAll("[xX][0-9]+", "");
+        checkLine = checkLine.replaceAll("[0-9]+[xX]", "");
         for (String s : checkLine.split("\\s")) {
             if (s.trim().isEmpty()) {
                 continue;
@@ -86,6 +90,8 @@ public class LineTypeChecker {
                 || line.toLowerCase().startsWith("pre chorus")
                 || line.toLowerCase().startsWith("coda")
                 || line.toLowerCase().startsWith("ending")
-                || line.toLowerCase().startsWith("bridge");
+                || line.toLowerCase().startsWith("bridge")
+                || line.toLowerCase().startsWith("intro")
+                || line.toLowerCase().startsWith("outro");
     }
 }
