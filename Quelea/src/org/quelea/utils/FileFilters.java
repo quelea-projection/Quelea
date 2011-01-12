@@ -13,7 +13,7 @@ public final class FileFilters {
     /**
      * The file filter used for the survivor songbooks.
      */
-    public static final FileFilter SS = new FileFilter() {
+    public static final FileFilter SURVIVOR_SONGBOOK = new FileFilter() {
 
         @Override
         public boolean accept(File f) {
@@ -33,7 +33,7 @@ public final class FileFilters {
     /**
      * The file filter used for Quelea song packs.
      */
-    public static final FileFilter QSP = new FileFilter() {
+    public static final FileFilter SONG_PACK = new FileFilter() {
 
         private final String extension = QueleaProperties.get().getSongPackExtension();
 
@@ -48,6 +48,27 @@ public final class FileFilters {
         @Override
         public String getDescription() {
             return "Quelea song pack (." + extension + ")";
+        }
+    };
+
+    /**
+     * The file filter used for Quelea song packs.
+     */
+    public static final FileFilter SCHEDULE = new FileFilter() {
+
+        private final String extension = QueleaProperties.get().getScheduleExtension();
+
+        @Override
+        public boolean accept(File f) {
+            if (f.isDirectory()) {
+                return true;
+            }
+            return f.getName().toLowerCase().endsWith("." + extension);
+        }
+
+        @Override
+        public String getDescription() {
+            return "Quelea schedules (." + extension + ")";
         }
     };
 

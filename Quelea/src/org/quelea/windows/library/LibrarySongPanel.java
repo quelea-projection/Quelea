@@ -3,6 +3,10 @@ package org.quelea.windows.library;
 import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JLabel;
@@ -72,6 +76,37 @@ public class LibrarySongPanel extends JPanel {
         northPanel.add(new JLabel("Search "));
         searchBox = new JTextField();
         searchBox.setDragEnabled(false);
+        searchBox.addFocusListener(new FocusListener() {
+
+            @Override
+            public void focusGained(FocusEvent e) {
+                searchBox.setText("");
+            }
+
+            @Override
+            public void focusLost(FocusEvent e) {
+                //Nothing needed here
+            }
+        });
+        searchBox.addKeyListener(new KeyListener() {
+
+            @Override
+            public void keyTyped(KeyEvent e) {
+                //Nothing needed here
+            }
+
+            @Override
+            public void keyPressed(KeyEvent e) {
+                if(e.getKeyCode()==KeyEvent.VK_ESCAPE) {
+                    searchCancelButton.doClick();
+                }
+            }
+
+            @Override
+            public void keyReleased(KeyEvent e) {
+                //Nothing needed here
+            }
+        });
         searchBox.getDocument().addDocumentListener(new DocumentListener() {
 
             public void insertUpdate(DocumentEvent e) {
@@ -98,7 +133,8 @@ public class LibrarySongPanel extends JPanel {
         });
         northPanel.add(searchBox);
         searchCancelButton = new JButton(Utils.getImageIcon("icons/cross.png"));
-        searchCancelButton.setToolTipText("Clear search box");
+        searchCancelButton.setToolTipText("Clear search box (Esc)");
+        searchCancelButton.setRequestFocusEnabled(false);
         searchCancelButton.setEnabled(false);
         searchCancelButton.addActionListener(new ActionListener() {
 
@@ -114,9 +150,11 @@ public class LibrarySongPanel extends JPanel {
         toolbar.setFloatable(false);
         addButton = new JButton(Utils.getImageIcon("icons/newsong.png"));
         addButton.setToolTipText("Add song");
+        addButton.setRequestFocusEnabled(false);
         toolbar.add(addButton);
         removeButton = new JButton(Utils.getImageIcon("icons/remove.png"));
         removeButton.setToolTipText("Remove song");
+        removeButton.setRequestFocusEnabled(false);
         removeButton.setEnabled(false);
         removeButton.addActionListener(new ActionListener() {
 

@@ -95,7 +95,7 @@ public final class Main {
 
             public void run() {
                 setLaf();
-                if (SongDatabase.get().getError()) {
+                if (SongDatabase.get().errorOccurred()) {
                     JOptionPane.showMessageDialog(null, "It looks like you already have an instance of Quelea running, make sure you close all instances before running the program.", "Already running", JOptionPane.ERROR_MESSAGE);
                     System.exit(0);
                 }

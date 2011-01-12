@@ -31,7 +31,7 @@ public class SurvivorImportDialog extends ImportDialog {
         super(owner, new String[]{
                     "Select the location of the Survivor Songbook PDF below.",
                     "<html>This must be the <b>acetates.pdf</b> file, <i>not</i> the guitar chords or the sheet music.</html>"
-                }, FileFilters.SS);
+                }, FileFilters.SURVIVOR_SONGBOOK);
         getImportButton().addActionListener(new ActionListener() {
 
             public void actionPerformed(ActionEvent e) {

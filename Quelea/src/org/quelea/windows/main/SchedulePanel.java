@@ -38,6 +38,7 @@ public class SchedulePanel extends JPanel {
         toolbar.setFloatable(false);
         removeButton = new JButton(Utils.getImageIcon("icons/remove.png"));
         removeButton.setToolTipText("Remove song");
+        removeButton.setRequestFocusEnabled(false);
         removeButton.setEnabled(false);
         removeButton.addActionListener(new ActionListener() {
 
@@ -55,6 +56,7 @@ public class SchedulePanel extends JPanel {
 
         upButton = new JButton(Utils.getImageIcon("icons/up.png"));
         upButton.setToolTipText("Move selected item up");
+        upButton.setRequestFocusEnabled(false);
         upButton.setEnabled(false);
         upButton.addActionListener(new ActionListener() {
 
@@ -65,6 +67,7 @@ public class SchedulePanel extends JPanel {
 
         downButton = new JButton(Utils.getImageIcon("icons/down.png"));
         downButton.setToolTipText("Move selected item down");
+        downButton.setRequestFocusEnabled(false);
         downButton.setEnabled(false);
         downButton.addActionListener(new ActionListener() {
 

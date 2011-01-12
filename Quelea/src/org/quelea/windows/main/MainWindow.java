@@ -10,11 +10,9 @@ import javax.imageio.ImageIO;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
-import javax.swing.filechooser.FileFilter;
 import org.quelea.Schedule;
 import org.quelea.displayable.Song;
-import org.quelea.importexport.ImportDialog;
-import org.quelea.importexport.SurvivorImportDialog;
+import org.quelea.utils.FileFilters;
 import org.quelea.utils.QueleaProperties;
 import org.quelea.windows.help.AboutDialog;
 import org.quelea.windows.newsong.SongEntryWindow;
@@ -219,25 +217,10 @@ public class MainWindow extends JFrame {
      * @return the JFileChooser.
      */
     private JFileChooser getFileChooser() {
-        final String extension = QueleaProperties.get().getScheduleExtension();
         JFileChooser chooser = new JFileChooser();
         chooser.setAcceptAllFileFilterUsed(false);
         chooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
-        chooser.setFileFilter(new FileFilter() {
-
-            @Override
-            public boolean accept(File f) {
-                if (f.isDirectory()) {
-                    return true;
-                }
-                return f.getName().toLowerCase().endsWith("." + extension);
-            }
-
-            @Override
-            public String getDescription() {
-                return "Quelea schedules (." + extension + ")";
-            }
-        });
+        chooser.setFileFilter(FileFilters.SCHEDULE);
         return chooser;
     }
 
