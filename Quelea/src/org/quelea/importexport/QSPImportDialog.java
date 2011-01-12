@@ -26,13 +26,13 @@ public class QSPImportDialog extends ImportDialog {
     private static final Logger LOGGER = LoggerUtils.getLogger();
 
     /**
-     * Create a new QSP import dialog.
+     * Create a new SCHEDULE import dialog.
      * @param owner the owner of the dialog.
      */
     public QSPImportDialog(JFrame owner) {
         super(owner, new String[]{
                     "Select the location of the Quelea songpack below."
-                }, FileFilters.QSP);
+                }, FileFilters.SCHEDULE);
         getImportButton().addActionListener(new ActionListener() {
 
             public void actionPerformed(ActionEvent e) {

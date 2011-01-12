@@ -72,7 +72,7 @@ public final class SongDatabase {
      * Determine if an error occurred initialising the database.
      * @return true if an error occurred, false if all is ok.
      */
-    public boolean getError() {
+    public boolean errorOccurred() {
         return error;
     }
 

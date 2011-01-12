@@ -3,6 +3,8 @@ package org.quelea.windows.main;
 import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import javax.swing.JLabel;
 import javax.swing.JToggleButton;
 import javax.swing.JToolBar;
@@ -31,31 +33,32 @@ public class SelectLiveLyricsPanel extends SelectLyricsPanel {
         header.add(new JLabel("<html><b>Live</b></html>"));
         header.add(new JToolBar.Separator());
         black = new JToggleButton(Utils.getImageIcon("icons/black.png"));
-        black.setToolTipText("Black screen");
+        black.setToolTipText("Black screen (F1)");
+        black.setRequestFocusEnabled(false);
         black.addActionListener(new ActionListener() {
 
             public void actionPerformed(ActionEvent e) {
                 for(LyricCanvas canvas : getCanvases()) {
                     canvas.toggleBlack();
-                    getLyricsList().requestFocus();
                 }
             }
         });
         header.add(black);
         clear = new JToggleButton(Utils.getImageIcon("icons/filenew.png"));
-        clear.setToolTipText("Clear text");
+        clear.setToolTipText("Clear text (F2)");
+        clear.setRequestFocusEnabled(false);
         clear.addActionListener(new ActionListener() {
 
             public void actionPerformed(ActionEvent e) {
                 for(LyricCanvas canvas : getCanvases()) {
                     canvas.toggleClear();
-                    getLyricsList().requestFocus();
                 }
             }
         });
         header.add(clear);
         hide = new JToggleButton(Utils.getImageIcon("icons/cross.png"));
-        hide.setToolTipText("Hide display output");
+        hide.setToolTipText("Hide display output (F3)");
+        hide.setRequestFocusEnabled(false);
         hide.addActionListener(new ActionListener() {
 
             public void actionPerformed(ActionEvent e) {
@@ -69,6 +72,29 @@ public class SelectLiveLyricsPanel extends SelectLyricsPanel {
         });
         header.add(hide);
         add(header, BorderLayout.NORTH);
+
+        getLyricsList().addKeyListener(new KeyListener() {
+
+            public void keyTyped(KeyEvent e) {
+                //Nothing needed here
+            }
+
+            public void keyPressed(KeyEvent e) {
+                if (e.getKeyCode() == KeyEvent.VK_F1) {
+                    black.doClick();
+                }
+                else if(e.getKeyCode() == KeyEvent.VK_F2) {
+                    clear.doClick();
+                }
+                else if (e.getKeyCode() == KeyEvent.VK_F3) {
+                    hide.doClick();
+                }
+            }
+
+            public void keyReleased(KeyEvent e) {
+                //Nothing needed here
+            }
+        });
     }
 
     /**
