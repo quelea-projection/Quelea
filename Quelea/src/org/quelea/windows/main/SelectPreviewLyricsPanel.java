@@ -25,12 +25,23 @@ public class SelectPreviewLyricsPanel extends SelectLyricsPanel {
         header.add(new JLabel("<html><b>Preview</b></html>"));
         header.add(new JToolBar.Separator());
         liveButton = new JButton("Go live", Utils.getImageIcon("icons/2rightarrow.png"));
+        liveButton.setToolTipText("Go live (space)");
+        liveButton.setRequestFocusEnabled(false);
         header.add(liveButton);
         liveButton.setEnabled(false);
+        addListeners();
+        add(header, BorderLayout.NORTH);
+    }
+
+    /**
+     * Add the listeners required for this panel.
+     */
+    private void addListeners() {
+        
         getLyricsList().addListSelectionListener(new ListSelectionListener() {
 
             public void valueChanged(ListSelectionEvent e) {
-                if(getLyricsList().getModel().isEmpty()) {
+                if (getLyricsList().getModel().isEmpty()) {
                     liveButton.setEnabled(false);
                 }
                 else {
@@ -38,7 +49,6 @@ public class SelectPreviewLyricsPanel extends SelectLyricsPanel {
                 }
             }
         });
-        add(header, BorderLayout.NORTH);
     }
 
     /**

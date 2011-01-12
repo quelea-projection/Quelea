@@ -47,8 +47,24 @@ public class MainPanel extends JPanel {
         addKeyListeners();
         addScheduleListeners();
         addScheduleAddListeners();
-        addLiveButtonListener();
         addBibleListeners();
+
+        previewPanel.getLiveButton().addActionListener(new ActionListener() {
+
+            public void actionPerformed(ActionEvent e) {
+                DefaultListModel liveModel = livePanel.getLyricsList().getModel();
+                DefaultListModel previewModel = previewPanel.getLyricsList().getModel();
+                liveModel.clear();
+                for (int i = 0; i < previewModel.getSize(); i++) {
+                    liveModel.addElement(previewModel.get(i));
+                }
+                livePanel.getLyricsList().setSelectedIndex(previewPanel.getLyricsList().getSelectedIndex());
+                if (schedulePanel.getScheduleList().getSelectedIndex() < schedulePanel.getScheduleList().getModel().getSize()) {
+                    schedulePanel.getScheduleList().setSelectedIndex(schedulePanel.getScheduleList().getSelectedIndex() + 1);
+                }
+                livePanel.getLyricsList().requestFocus();
+            }
+        });
 
         JSplitPane scheduleAndLibrary = new JSplitPane(JSplitPane.VERTICAL_SPLIT, schedulePanel, libraryPanel);
         scheduleAndLibrary.setResizeWeight(0.5);
@@ -65,7 +81,7 @@ public class MainPanel extends JPanel {
         libraryPanel.getBiblePanel().getAddToSchedule().addActionListener(new ActionListener() {
 
             public void actionPerformed(ActionEvent e) {
-                BiblePassage passage = new BiblePassage(((Bible)libraryPanel.getBiblePanel().getBibleSelector().getSelectedItem()).getName(), libraryPanel.getBiblePanel().getBibleLocation(), libraryPanel.getBiblePanel().getVerses());
+                BiblePassage passage = new BiblePassage(((Bible) libraryPanel.getBiblePanel().getBibleSelector().getSelectedItem()).getName(), libraryPanel.getBiblePanel().getBibleLocation(), libraryPanel.getBiblePanel().getVerses());
                 ((DefaultListModel) schedulePanel.getScheduleList().getModel()).addElement(passage);
             }
         });
@@ -97,29 +113,6 @@ public class MainPanel extends JPanel {
     }
 
     /**
-     * Add the listener for the live button.
-     */
-    private void addLiveButtonListener() {
-
-        previewPanel.getLiveButton().addActionListener(new ActionListener() {
-
-            public void actionPerformed(ActionEvent e) {
-                DefaultListModel liveModel = livePanel.getLyricsList().getModel();
-                DefaultListModel previewModel = previewPanel.getLyricsList().getModel();
-                liveModel.clear();
-                for (int i = 0; i < previewModel.getSize(); i++) {
-                    liveModel.addElement(previewModel.get(i));
-                }
-                livePanel.getLyricsList().setSelectedIndex(previewPanel.getLyricsList().getSelectedIndex());
-                if (schedulePanel.getScheduleList().getSelectedIndex() < schedulePanel.getScheduleList().getModel().getSize()) {
-                    schedulePanel.getScheduleList().setSelectedIndex(schedulePanel.getScheduleList().getSelectedIndex() + 1);
-                }
-                livePanel.getLyricsList().requestFocus();
-            }
-        });
-    }
-
-    /**
      * Add the key listeners to the lists used for switching focus between them.
      */
     private void addKeyListeners() {
@@ -143,6 +136,7 @@ public class MainPanel extends JPanel {
                 //Nothing needed here
             }
         });
+
         previewPanel.getLyricsList().addKeyListener(new KeyListener() {
 
             public void keyTyped(KeyEvent e) {
@@ -165,6 +159,7 @@ public class MainPanel extends JPanel {
                 //Nothing needed here
             }
         });
+
         livePanel.getLyricsList().addKeyListener(new KeyListener() {
 
             public void keyTyped(KeyEvent e) {
@@ -267,5 +262,4 @@ public class MainPanel extends JPanel {
     public LibraryPanel getLibraryPanel() {
         return libraryPanel;
     }
-
 }

@@ -21,12 +21,15 @@ public class MainToolbar extends JToolBar {
     public MainToolbar() {
         setFloatable(false);
         newButton = new JButton(Utils.getImageIcon("icons/filenew.png"));
+        newButton.setRequestFocusEnabled(false);
         newButton.setToolTipText("New");
         add(newButton);
         openButton = new JButton(Utils.getImageIcon("icons/fileopen.png"));
+        newButton.setRequestFocusEnabled(false);
         openButton.setToolTipText("Open...");
         add(openButton);
         saveButton = new JButton(Utils.getImageIcon("icons/filesave.png"));
+        newButton.setRequestFocusEnabled(false);
         saveButton.setToolTipText("Save...");
         add(saveButton);
     }
