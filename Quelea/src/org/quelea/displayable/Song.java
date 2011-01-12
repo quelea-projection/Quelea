@@ -1,20 +1,5 @@
 package org.quelea.displayable;
 
-import java.io.ByteArrayInputStream;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import javax.swing.Icon;
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
 import org.quelea.Background;
 import org.quelea.SongDatabase;
 import org.quelea.Theme;
@@ -25,6 +10,19 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
+
+import javax.swing.*;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.lang.ref.SoftReference;
+import java.util.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * A song that contains a number of sections (verses, choruses, etc.)
@@ -38,7 +36,7 @@ public class Song implements TextDisplayable, Searchable, Comparable<Song> {
     private List<TextSection> sections;
     private Theme theme;
     private int id;
-    private String searchLyrics;
+    private SoftReference<String> searchLyrics;
 
     /**
      * Copy constructor - creates a shallow copy.
@@ -55,7 +53,7 @@ public class Song implements TextDisplayable, Searchable, Comparable<Song> {
 
     /**
      * Create a new, empty song.
-     * @param title the title of the song.
+     * @param title  the title of the song.
      * @param author the author of the song.
      */
     public Song(String title, String author) {
@@ -64,9 +62,9 @@ public class Song implements TextDisplayable, Searchable, Comparable<Song> {
 
     /**
      * Create a new, empty song.
-     * @param title the title of the song.
+     * @param title  the title of the song.
      * @param author the author of the song.
-     * @param theme the theme of the song.
+     * @param theme  the theme of the song.
      */
     public Song(String title, String author, Theme theme) {
         id = -1;
@@ -77,13 +75,12 @@ public class Song implements TextDisplayable, Searchable, Comparable<Song> {
     }
 
     /**
-     * Try and give this song an ID based on the ID in the database. If this
-     * can't be done, leave it as -1.
+     * Try and give this song an ID based on the ID in the database. If this can't be done, leave it as -1.
      */
     public void matchID() {
-        if (id == -1) {
-            for (Song song : SongDatabase.get().getSongs()) {
-                if (this.title.equals(song.title)) {
+        if(id == -1) {
+            for(Song song : SongDatabase.get().getSongs()) {
+                if(this.title.equals(song.title)) {
                     id = song.getID();
                 }
             }
@@ -139,17 +136,16 @@ public class Song implements TextDisplayable, Searchable, Comparable<Song> {
     }
 
     /**
-     * Get all the lyrics to this song as a string. This can be parsed using
-     * the setLyrics() method.
+     * Get all the lyrics to this song as a string. This can be parsed using the setLyrics() method.
      * @return the lyrics to this song.
      */
     public String getLyrics() {
         StringBuilder ret = new StringBuilder();
-        for (TextSection section : sections) {
-            if (section.getTitle() != null && !section.getTitle().equals("")) {
+        for(TextSection section : sections) {
+            if(section.getTitle() != null && !section.getTitle().equals("")) {
                 ret.append(section.getTitle()).append("\n");
             }
-            for (String line : section.getText()) {
+            for(String line : section.getText()) {
                 ret.append(line).append("\n");
             }
             ret.append("\n");
@@ -158,22 +154,21 @@ public class Song implements TextDisplayable, Searchable, Comparable<Song> {
     }
 
     /**
-     * Set the lyrics to this song as a string. This will erase any sections
-     * currently in the song and parse the given lyrics into a number of
-     * song sections.
+     * Set the lyrics to this song as a string. This will erase any sections currently in the song and parse the given
+     * lyrics into a number of song sections.
      * @param lyrics the lyrics to set as this song's lyrics.
      */
     public void setLyrics(String lyrics) {
         sections.clear();
         lyrics = lyrics.replaceAll("\n\n+", "\n\n");
-        for (String section : lyrics.split("\n\n")) {
+        for(String section : lyrics.split("\n\n")) {
             String[] sectionLines = section.split("\n");
             String[] newLyrics = section.split("\n");
             String sectionTitle = "";
-            if (sectionLines.length == 0) {
+            if(sectionLines.length == 0) {
                 continue;
             }
-            if (new LineTypeChecker(sectionLines[0]).getLineType() == LineTypeChecker.Type.TITLE) {
+            if(new LineTypeChecker(sectionLines[0]).getLineType() == LineTypeChecker.Type.TITLE) {
                 sectionTitle = sectionLines[0];
                 newLyrics = new String[sectionLines.length - 1];
                 System.arraycopy(sectionLines, 1, newLyrics, 0, newLyrics.length);
@@ -188,7 +183,7 @@ public class Song implements TextDisplayable, Searchable, Comparable<Song> {
      * @param section the section to add.
      */
     public void addSection(TextSection section) {
-        if (section.getTheme() == null) {
+        if(section.getTheme() == null) {
             section.setTheme(theme);
         }
         sections.add(section);
@@ -200,7 +195,7 @@ public class Song implements TextDisplayable, Searchable, Comparable<Song> {
      * @param sections the sections to add.
      */
     public void addSections(TextSection[] sections) {
-        for (TextSection section : sections) {
+        for(TextSection section : sections) {
             addSection(section);
         }
     }
@@ -214,23 +209,30 @@ public class Song implements TextDisplayable, Searchable, Comparable<Song> {
     }
 
     /**
-     * Determine whether this song matches a particular search.
+     * Determine whether this song matches a particular search. In doing so this method will check for whether the given
+     * soft reference to the search lyrics is null or contains null, if it does then new search lyrics will be
+     * generated. This acts as a type of cache to speed up searching.
      * @param s the search term.
      * @return true if the song matches, false otherwise.
      */
     public boolean search(String s) {
-        if (searchLyrics == null) {
-            searchLyrics = stripPunctuation(getLyrics().replace("\n", " ")).toLowerCase();
+        if(searchLyrics == null || searchLyrics.get() == null) {
+            searchLyrics = new SoftReference<String>(stripPunctuation(getLyrics().replace("\n", " ")).toLowerCase());
         }
         return title.toLowerCase().contains(s)
-                || searchLyrics.contains(stripPunctuation(s));
+                || searchLyrics.get().contains(stripPunctuation(s));
     }
 
+    /**
+     * Strip punctuation from the given string.
+     * @param s the string to use to strip punctuation from
+     * @return the "stripped" string.
+     */
     private static String stripPunctuation(String s) {
         s = s.replaceAll("[ ]+", " ");
         StringBuilder ret = new StringBuilder();
-        for (char c : s.toCharArray()) {
-            if (Character.isLetterOrDigit(c) || Character.isWhitespace(c)) {
+        for(char c : s.toCharArray()) {
+            if(Character.isLetterOrDigit(c) || Character.isWhitespace(c)) {
                 ret.append(c);
             }
         }
@@ -251,7 +253,7 @@ public class Song implements TextDisplayable, Searchable, Comparable<Song> {
         xml.append(Utils.escapeXML(author));
         xml.append("</author>");
         xml.append("<lyrics>");
-        for (TextSection section : sections) {
+        for(TextSection section : sections) {
             xml.append(section.getXML());
         }
         xml.append("</lyrics>");
@@ -271,14 +273,11 @@ public class Song implements TextDisplayable, Searchable, Comparable<Song> {
             DocumentBuilder builder = factory.newDocumentBuilder();
             Document doc = builder.parse(inputStream);
             return parseXML(doc.getFirstChild());
-        }
-        catch (ParserConfigurationException ex) {
+        } catch(ParserConfigurationException ex) {
             return null;
-        }
-        catch (SAXException ex) {
+        } catch(SAXException ex) {
             return null;
-        }
-        catch (IOException ex) {
+        } catch(IOException ex) {
             return null;
         }
     }
@@ -294,16 +293,13 @@ public class Song implements TextDisplayable, Searchable, Comparable<Song> {
             DocumentBuilder builder = factory.newDocumentBuilder();
             Document doc = builder.parse(inputStream);
             return parseXML(doc.getChildNodes().item(0));
-        }
-        catch (ParserConfigurationException ex) {
+        } catch(ParserConfigurationException ex) {
             LOGGER.log(Level.WARNING, "Couldn't parse the schedule", ex);
             return null;
-        }
-        catch (SAXException ex) {
+        } catch(SAXException ex) {
             LOGGER.log(Level.WARNING, "Couldn't parse the schedule", ex);
             return null;
-        }
-        catch (IOException ex) {
+        } catch(IOException ex) {
             LOGGER.log(Level.WARNING, "Couldn't parse the schedule", ex);
             return null;
         }
@@ -311,7 +307,7 @@ public class Song implements TextDisplayable, Searchable, Comparable<Song> {
 
     /**
      * Parse a song in XML format and return the song object.
-     * @param xml the xml string to parse.
+     * @param song the song node to parse.
      * @return the song, or null if an error occurs.
      */
     public static Song parseXML(Node song) {
@@ -319,26 +315,26 @@ public class Song implements TextDisplayable, Searchable, Comparable<Song> {
         String title = "";
         String author = "";
         List<TextSection> songSections = new ArrayList<TextSection>();
-        for (int i = 0; i < list.getLength(); i++) {
+        for(int i = 0; i < list.getLength(); i++) {
             Node node = list.item(i);
-            if (node.getNodeName().equals("title")) {
+            if(node.getNodeName().equals("title")) {
                 title = node.getTextContent();
             }
-            if (node.getNodeName().equals("author")) {
+            if(node.getNodeName().equals("author")) {
                 author = node.getTextContent();
             }
-            if (node.getNodeName().equals("lyrics")) {
+            if(node.getNodeName().equals("lyrics")) {
                 NodeList sections = node.getChildNodes();
-                for (int j = 0; j < sections.getLength(); j++) {
+                for(int j = 0; j < sections.getLength(); j++) {
                     Node sectionNode = sections.item(j);
-                    if (sectionNode.getNodeName().equals("section")) {
+                    if(sectionNode.getNodeName().equals("section")) {
                         songSections.add(TextSection.parseXML(sectionNode));
                     }
                 }
             }
         }
         Song ret = new Song(title, author, new Theme(Theme.DEFAULT_FONT, Theme.DEFAULT_FONT_COLOR, Theme.DEFAULT_BACKGROUND));
-        for (TextSection section : songSections) {
+        for(TextSection section : songSections) {
             ret.addSection(section);
         }
         return ret;
@@ -365,23 +361,23 @@ public class Song implements TextDisplayable, Searchable, Comparable<Song> {
      */
     @Override
     public boolean equals(Object obj) {
-        if (obj == null) {
+        if(obj == null) {
             return false;
         }
-        if (!(obj instanceof Song)) {
+        if(!(obj instanceof Song)) {
             return false;
         }
         final Song other = (Song) obj;
-        if ((this.title == null) ? (other.title != null) : !this.title.equals(other.title)) {
+        if((this.title == null) ? (other.title != null) : !this.title.equals(other.title)) {
             return false;
         }
-        if ((this.author == null) ? (other.author != null) : !this.author.equals(other.author)) {
+        if((this.author == null) ? (other.author != null) : !this.author.equals(other.author)) {
             return false;
         }
-        if (this.sections != other.sections && (this.sections == null || !this.sections.equals(other.sections))) {
+        if(this.sections != other.sections && (this.sections == null || !this.sections.equals(other.sections))) {
             return false;
         }
-        if (this.theme != other.theme && (this.theme == null || !this.theme.equals(other.theme))) {
+        if(this.theme != other.theme && (this.theme == null || !this.theme.equals(other.theme))) {
             return false;
         }
         return true;
@@ -390,16 +386,16 @@ public class Song implements TextDisplayable, Searchable, Comparable<Song> {
     /**
      * Compare this song to another song, first by title and then by author.
      * @param other the other song.
-     * @return 1 if this song is greater than the other song, 0 if they're
-     * the same, and -1 if this is less than the other song.
+     * @return 1 if this song is greater than the other song, 0 if they're the same, and -1 if this is less than the
+     *         other song.
      */
     public int compareTo(Song other) {
         int result = getTitle().compareToIgnoreCase(other.getTitle());
-        if (result == 0) {
-            if (getAuthor() != null && other.getAuthor() != null) {
+        if(result == 0) {
+            if(getAuthor() != null && other.getAuthor() != null) {
                 result = getAuthor().compareToIgnoreCase(other.getAuthor());
             }
-            if (result == 0 && getLyrics() != null && other.getLyrics() != null) {
+            if(result == 0 && getLyrics() != null && other.getLyrics() != null) {
                 result = getLyrics().compareTo(other.getLyrics());
             }
         }
