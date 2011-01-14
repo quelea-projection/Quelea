@@ -43,7 +43,7 @@
         <panel classname="HTMLHelloPanel" id="welcome"/>
         <panel classname="LicencePanel"/>
         <panel classname="TargetPanel"/>
-<!--        <panel classname="PacksPanel"/>-->
+        <!--        <panel classname="PacksPanel"/>-->
         <panel classname="InstallPanel"/>
         <panel classname="ShortcutPanel"/>
         <panel classname="FinishPanel"/>
@@ -61,6 +61,10 @@
         <pack name="dictionaries" required="yes" preselected="yes" hidden="true">
             <description>Dictionaries</description>
             <file src="dictionaries" targetdir="$INSTALL_PATH" override="false"/>
+        </pack>
+        <pack name="bibles" required="no" preselected="yes" hidden="true">
+            <description>Bibles</description>
+            <file src="bibles" targetdir="$INSTALL_PATH" override="false"/>
         </pack>
         <pack name="source code" required="no" preselected="yes">
             <description>Source code</description>
