@@ -3,7 +3,6 @@ package org.quelea.bible;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
-import org.quelea.bible.Bible;
 
 /**
  * Loads and manages the available getBibles.
@@ -39,11 +38,14 @@ public final class BibleManager {
     }
 
     /**
-     * Reload all the bibles from the bibles directory into this bible
-     * manager.
+     * Reload all the bibles from the bibles directory into this bible manager.
      */
     public void loadBibles() {
         bibles.clear();
+        File biblesFile = new File("bibles");
+        if(!biblesFile.exists()) {
+            biblesFile.mkdir();
+        }
         for(File file : new File("bibles").listFiles()) {
             if(file.getName().toLowerCase().endsWith(".xml")) {
                 Bible bible = Bible.parseBible(file);
