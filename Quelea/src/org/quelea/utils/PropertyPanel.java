@@ -1,8 +1,8 @@
 package org.quelea.utils;
 
 /**
- * Classes using this interface write some properties to Quelea's properties
- * file, and read these properties to set their contents.
+ * Classes using this interface write some properties to Quelea's properties file, and read these properties to set
+ * their contents.
  * @author Michael
  */
 public interface PropertyPanel {

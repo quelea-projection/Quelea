@@ -1,8 +1,8 @@
 package org.quelea.displayable;
 
+import javax.swing.*;
 import java.io.File;
 import java.util.Collection;
-import javax.swing.Icon;
 
 /**
  * An item such as a song that can be displayed on the projection screen.
@@ -29,8 +29,8 @@ public interface Displayable {
     String getPreviewText();
 
     /**
-     * Get any file resources that this displayable needs to work. For songs
-     * this can be backgrounds, for videos this is the video file, etc.
+     * Get any file resources that this displayable needs to work. For songs this can be backgrounds, for videos this is
+     * the video file, etc.
      * @return any files that this displayable relies upon.
      */
     Collection<File> getResources();

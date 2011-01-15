@@ -1,16 +1,14 @@
 package org.quelea.windows.options;
 
-import java.awt.BorderLayout;
-import java.awt.GraphicsDevice;
-import java.awt.GraphicsEnvironment;
-import java.awt.GridLayout;
-import javax.swing.JPanel;
 import org.quelea.Application;
 import org.quelea.utils.PropertyPanel;
 import org.quelea.utils.QueleaProperties;
 import org.quelea.utils.Utils;
 import org.quelea.windows.main.LyricWindow;
 import org.quelea.windows.main.MainWindow;
+
+import javax.swing.*;
+import java.awt.*;
 
 /**
  * A panel that the user uses to set up the displays that match to the outputs.
@@ -58,19 +56,19 @@ public class OptionsDisplaySetupPanel extends JPanel implements PropertyPanel {
 
         GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
         final GraphicsDevice[] gds = ge.getScreenDevices();
-        if (getProjectorDisplay() == -1) {
-            if (lyricWindow != null) {
+        if(getProjectorDisplay() == -1) {
+            if(lyricWindow != null) {
                 lyricWindow.setVisible(false);
             }
         }
         else {
-            if (lyricWindow == null) {
+            if(lyricWindow == null) {
                 lyricWindow = new LyricWindow(gds[getProjectorDisplay()].getDefaultConfiguration().getBounds());
             }
             lyricWindow.setVisible(true);
             lyricWindow.setArea(gds[getProjectorDisplay()].getDefaultConfiguration().getBounds());
         }
-        if (!Utils.isFrameOnScreen(mainWindow, getControlDisplay())) {
+        if(!Utils.isFrameOnScreen(mainWindow, getControlDisplay())) {
             Utils.centreOnMonitor(mainWindow, getControlDisplay());
         }
     }

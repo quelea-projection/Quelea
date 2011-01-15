@@ -6,7 +6,6 @@ import java.util.Collection;
 
 /**
  * An image that can be displayed as part of an order of service.
- *
  * @author Michael
  */
 public class ImageDisplayable implements Displayable {

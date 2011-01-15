@@ -1,11 +1,7 @@
 package org.quelea;
 
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.SortedSet;
-import java.util.TreeSet;
-import javax.swing.AbstractListModel;
+import javax.swing.*;
+import java.util.*;
 
 /**
  * A list model that sorts its components.

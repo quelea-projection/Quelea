@@ -1,21 +1,19 @@
 package org.quelea.windows.newsong;
 
+import org.apache.commons.io.FileUtils;
+import org.quelea.Background;
+import org.quelea.Theme;
+import org.quelea.utils.LoggerUtils;
+import org.quelea.windows.main.LyricCanvas;
+
+import javax.swing.*;
+import javax.swing.filechooser.FileFilter;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.swing.JButton;
-import javax.swing.JFileChooser;
-import javax.swing.JTextField;
-import javax.swing.SwingUtilities;
-import javax.swing.filechooser.FileFilter;
-import org.apache.commons.io.FileUtils;
-import org.quelea.Background;
-import org.quelea.Theme;
-import org.quelea.utils.LoggerUtils;
-import org.quelea.windows.main.LyricCanvas;
 
 /**
  * The colour button where the user selects a colour.
@@ -40,7 +38,7 @@ public class ImageButton extends JButton {
             @Override
             public boolean accept(File f) {
                 String suffix = f.getName().split("\\.")[f.getName().split("\\.").length - 1].toLowerCase().trim();
-                if (suffix.equals("png")
+                if(suffix.equals("png")
                         || suffix.equals("bmp")
                         || suffix.equals("tif")
                         || suffix.equals("jpg")
@@ -60,16 +58,16 @@ public class ImageButton extends JButton {
 
             public void actionPerformed(ActionEvent e) {
                 int ret = fileChooser.showOpenDialog(SwingUtilities.getWindowAncestor(ImageButton.this));
-                if (ret == JFileChooser.APPROVE_OPTION) {
+                if(ret == JFileChooser.APPROVE_OPTION) {
                     File imageDir = new File("img");
                     File selectedFile = fileChooser.getSelectedFile();
                     File newFile = new File(imageDir, selectedFile.getName());
                     try {
-                        if (!selectedFile.getCanonicalPath().startsWith(imageDir.getCanonicalPath())) {
+                        if(!selectedFile.getCanonicalPath().startsWith(imageDir.getCanonicalPath())) {
                             FileUtils.copyFile(selectedFile, newFile);
                         }
                     }
-                    catch (IOException ex) {
+                    catch(IOException ex) {
                         LOGGER.log(Level.WARNING, "", ex);
                     }
 

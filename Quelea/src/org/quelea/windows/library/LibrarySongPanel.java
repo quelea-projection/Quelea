@@ -1,36 +1,19 @@
 package org.quelea.windows.library;
 
-import java.awt.BorderLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.FocusEvent;
-import java.awt.event.FocusListener;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
-import javax.swing.BoxLayout;
-import javax.swing.JButton;
-import javax.swing.JLabel;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTextField;
-import javax.swing.JToolBar;
-import javax.swing.border.EmptyBorder;
-import javax.swing.event.DocumentEvent;
-import javax.swing.event.DocumentListener;
-import javax.swing.event.ListDataEvent;
-import javax.swing.event.ListDataListener;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
 import org.quelea.Application;
 import org.quelea.SongDatabase;
 import org.quelea.SortedListModel;
 import org.quelea.displayable.Song;
 import org.quelea.utils.Utils;
 
+import javax.swing.*;
+import javax.swing.border.EmptyBorder;
+import javax.swing.event.*;
+import java.awt.*;
+import java.awt.event.*;
+
 /**
- * The panel used for browsing the database of songs and adding any songs to
- * the order of service.
+ * The panel used for browsing the database of songs and adding any songs to the order of service.
  * @author Michael
  */
 public class LibrarySongPanel extends JPanel {
@@ -97,7 +80,7 @@ public class LibrarySongPanel extends JPanel {
 
             @Override
             public void keyPressed(KeyEvent e) {
-                if(e.getKeyCode()==KeyEvent.VK_ESCAPE) {
+                if(e.getKeyCode() == KeyEvent.VK_ESCAPE) {
                     searchCancelButton.doClick();
                 }
             }
@@ -159,15 +142,15 @@ public class LibrarySongPanel extends JPanel {
         removeButton.addActionListener(new ActionListener() {
 
             public void actionPerformed(ActionEvent e) {
-                Song song = (Song)getSongList().getSelectedValue();
-                if (song == null) {
+                Song song = (Song) getSongList().getSelectedValue();
+                if(song == null) {
                     return;
                 }
                 int confirmResult = JOptionPane.showConfirmDialog(Application.get().getMainWindow(), "Really remove \"" + song.getTitle() + "\" from the database? This action cannnot be undone.", "Confirm remove", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
-                if (confirmResult == JOptionPane.NO_OPTION) {
+                if(confirmResult == JOptionPane.NO_OPTION) {
                     return;
                 }
-                if (!SongDatabase.get().removeSong(song)) {
+                if(!SongDatabase.get().removeSong(song)) {
                     JOptionPane.showMessageDialog(Application.get().getMainWindow(), "There was an error removing the song from the database.", "Error", JOptionPane.ERROR_MESSAGE, null);
                 }
                 SortedListModel model = (SortedListModel) getSongList().getModel();
@@ -181,11 +164,10 @@ public class LibrarySongPanel extends JPanel {
     }
 
     /**
-     * Check whether the remove button should be enabled or disabled and set
-     * it accordingly.
+     * Check whether the remove button should be enabled or disabled and set it accordingly.
      */
     private void checkRemoveButton() {
-        if(songList.getSelectedIndex() == -1 || songList.getModel().getSize()==0) {
+        if(songList.getSelectedIndex() == -1 || songList.getModel().getSize() == 0) {
             removeButton.setEnabled(false);
         }
         else {

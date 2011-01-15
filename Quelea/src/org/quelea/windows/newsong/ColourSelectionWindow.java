@@ -1,22 +1,18 @@
 package org.quelea.windows.newsong;
 
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.Window;
+import org.quelea.utils.Utils;
+
+import javax.swing.*;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import javax.swing.JButton;
-import javax.swing.JColorChooser;
-import javax.swing.JDialog;
-import javax.swing.JPanel;
-import org.quelea.utils.Utils;
 
 /**
  * A colour selection window where the user can select a colour they require.
  * @author Michael
  */
 public class ColourSelectionWindow extends JDialog {
-    
+
     private final JColorChooser chooser;
     private final JButton confirmButton;
     private final JButton cancelButton;
@@ -41,8 +37,7 @@ public class ColourSelectionWindow extends JDialog {
     }
 
     /**
-     * Add the listeners to the JButtons that hide the window when the user
-     * has selected a colour.
+     * Add the listeners to the JButtons that hide the window when the user has selected a colour.
      */
     private void addHideListeners() {
         final ActionListener hideListener = new ActionListener() {

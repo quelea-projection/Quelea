@@ -1,15 +1,13 @@
 package org.quelea.windows.library;
 
-import javax.swing.JMenuItem;
-import javax.swing.JPopupMenu;
+import javax.swing.*;
 
 /**
- * The popup menu that displays when someone right clicks on a song in the
- * library.
+ * The popup menu that displays when someone right clicks on a song in the library.
  * @author Michael
  */
 public class LibraryPopupMenu extends JPopupMenu {
-    
+
     private final JMenuItem addToSchedule;
     private final JMenuItem editDB;
     private final JMenuItem removeFromDB;

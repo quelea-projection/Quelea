@@ -1,19 +1,12 @@
 package org.quelea.importexport;
 
-import java.awt.Font;
+import javax.swing.*;
+import javax.swing.filechooser.FileFilter;
+import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
-import javax.swing.BoxLayout;
-import javax.swing.JButton;
-import javax.swing.JDialog;
-import javax.swing.JFileChooser;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JProgressBar;
-import javax.swing.JTextField;
-import javax.swing.filechooser.FileFilter;
 
 /**
  * An import dialog used for importing songs.
@@ -52,9 +45,9 @@ public abstract class ImportDialog extends JDialog implements PropertyChangeList
 
             @Override
             public void mouseClicked(MouseEvent e) {
-                if (locationField.isEnabled()) {
+                if(locationField.isEnabled()) {
                     locationChooser.showOpenDialog(getRootPane());
-                    if (locationChooser.getSelectedFile() != null) {
+                    if(locationChooser.getSelectedFile() != null) {
                         locationField.setFont(new Font(locationField.getFont().getName(), 0, locationField.getFont().getSize()));
                         locationField.setText(locationChooser.getSelectedFile().getAbsolutePath());
                         importButton.setEnabled(true);
@@ -108,8 +101,7 @@ public abstract class ImportDialog extends JDialog implements PropertyChangeList
     }
 
     /**
-     * Called when the import is taking place, this disables the appropriate
-     * controls.
+     * Called when the import is taking place, this disables the appropriate controls.
      */
     public void setActive() {
         getProgressBar().setIndeterminate(true);
@@ -120,8 +112,7 @@ public abstract class ImportDialog extends JDialog implements PropertyChangeList
     }
 
     /**
-     * Called when the import has finished taking place, this resets the
-     * controls.
+     * Called when the import has finished taking place, this resets the controls.
      */
     public void setIdle() {
         getProgressBar().setIndeterminate(false);
@@ -139,7 +130,7 @@ public abstract class ImportDialog extends JDialog implements PropertyChangeList
      */
     public void propertyChange(PropertyChangeEvent evt) {
         String strPropertyName = evt.getPropertyName();
-        if ("progress".equals(strPropertyName)) {
+        if("progress".equals(strPropertyName)) {
             progressBar.setIndeterminate(false);
             int progress = (Integer) evt.getNewValue();
             progressBar.setValue(progress);

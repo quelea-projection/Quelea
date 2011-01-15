@@ -1,16 +1,17 @@
 package org.quelea.displayable;
 
-import java.io.File;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
-import javax.swing.Icon;
 import org.quelea.bible.BibleVerse;
 import org.quelea.utils.QueleaProperties;
 import org.quelea.utils.Utils;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
+
+import javax.swing.*;
+import java.io.File;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.List;
 
 /**
  * A displayable passage from the bible.
@@ -24,9 +25,9 @@ public class BiblePassage implements TextDisplayable {
 
     /**
      * Create a new bible passage.
-     * @param bible the bible that the passage comes from.
+     * @param bible    the bible that the passage comes from.
      * @param location the location of the passage in the bible.
-     * @param verses the verses, in order, that make up the passage.
+     * @param verses   the verses, in order, that make up the passage.
      */
     public BiblePassage(String biblename, String location, BibleVerse[] verses) {
         this("<html>" + location + "<br/><i>" + biblename + "</i></html>", verses);
@@ -35,7 +36,7 @@ public class BiblePassage implements TextDisplayable {
     /**
      * Create a new bible passage from a summary and an array of verses.
      * @param summary the summary to display in the schedule.
-     * @param verses the verses in the passage.
+     * @param verses  the verses in the passage.
      */
     private BiblePassage(String summary, BibleVerse[] verses) {
         this.summary = summary;
@@ -50,27 +51,27 @@ public class BiblePassage implements TextDisplayable {
     private void fillTextSections() {
         final int LINES_PER_SLIDE = 8;
         List<String> words = new ArrayList<String>();
-        for (int i = 0; i < verses.length; i++) {
+        for(int i = 0; i < verses.length; i++) {
             words.addAll(Arrays.asList(verses[i].getText().split(" ")));
         }
 
         List<String> lines = new ArrayList<String>();
         StringBuilder line = new StringBuilder();
-        for(int i=0 ; i<words.size() ; i++) {
+        for(int i = 0; i < words.size(); i++) {
             line.append(words.get(i)).append(" ");
             int length = line.length();
-            if(i<words.size()-1) {
-                length += words.get(i+1).length();
+            if(i < words.size() - 1) {
+                length += words.get(i + 1).length();
             }
-            if ((i != 0 && length>=QueleaProperties.get().getMaxChars()) || i == words.size() - 1) {
+            if((i != 0 && length >= QueleaProperties.get().getMaxChars()) || i == words.size() - 1) {
                 lines.add(line.toString());
                 line.setLength(0);
             }
         }
         List<String> sections = new ArrayList<String>();
-        for(int i=0 ; i<lines.size(); i++) {
+        for(int i = 0; i < lines.size(); i++) {
             sections.add(lines.get(i));
-            if ((i != 0 && i % LINES_PER_SLIDE == 0) || i == lines.size() - 1) {
+            if((i != 0 && i % LINES_PER_SLIDE == 0) || i == lines.size() - 1) {
                 textSections.add(new TextSection("", sections.toArray(new String[sections.size()]), false));
                 sections.clear();
             }
@@ -86,7 +87,7 @@ public class BiblePassage implements TextDisplayable {
         ret.append("<passage summary=\"");
         ret.append(Utils.escapeXML(summary));
         ret.append("\">");
-        for (BibleVerse verse : verses) {
+        for(BibleVerse verse : verses) {
             ret.append(verse.toXML());
         }
         ret.append("</passage>");
@@ -102,9 +103,9 @@ public class BiblePassage implements TextDisplayable {
         NodeList list = passage.getChildNodes();
         String summary = passage.getAttributes().getNamedItem("summary").getNodeValue();
         List<BibleVerse> verses = new ArrayList<BibleVerse>();
-        for (int i = 0; i < list.getLength(); i++) {
+        for(int i = 0; i < list.getLength(); i++) {
             Node node = list.item(i);
-            if (node.getNodeName().equals("vers")) {
+            if(node.getNodeName().equals("vers")) {
                 verses.add(BibleVerse.parseXML(node));
             }
         }

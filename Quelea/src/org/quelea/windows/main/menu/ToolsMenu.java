@@ -1,15 +1,14 @@
-
 package org.quelea.windows.main.menu;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.KeyEvent;
-import javax.swing.JMenu;
-import javax.swing.JMenuItem;
 import org.quelea.Application;
 import org.quelea.importexport.ImportDialog;
 import org.quelea.importexport.QSPImportDialog;
 import org.quelea.importexport.SurvivorImportDialog;
+
+import javax.swing.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
 
 /**
  * The tools menu on the menu bar.

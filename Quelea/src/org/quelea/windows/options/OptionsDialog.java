@@ -1,14 +1,11 @@
 package org.quelea.windows.options;
 
-import java.awt.BorderLayout;
+import org.quelea.utils.PropertyPanel;
+
+import javax.swing.*;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import javax.swing.JButton;
-import javax.swing.JDialog;
-import javax.swing.JFrame;
-import javax.swing.JPanel;
-import javax.swing.JTabbedPane;
-import org.quelea.utils.PropertyPanel;
 
 /**
  * The dialog that holds all the options the user can set.
@@ -44,8 +41,8 @@ public class OptionsDialog extends JDialog {
         okButton.addActionListener(new ActionListener() {
 
             public void actionPerformed(ActionEvent e) {
-                for(int i=0 ; i<tabbedPane.getComponentCount() ; i++) {
-                    ((PropertyPanel)tabbedPane.getComponentAt(i)).setProperties();
+                for(int i = 0; i < tabbedPane.getComponentCount(); i++) {
+                    ((PropertyPanel) tabbedPane.getComponentAt(i)).setProperties();
                 }
                 setVisible(false);
             }
@@ -57,15 +54,14 @@ public class OptionsDialog extends JDialog {
     }
 
     /**
-     * When the dialog is made visible, centre it on its owner and sync the
-     * forms.
+     * When the dialog is made visible, centre it on its owner and sync the forms.
      * @param visible true if the dialog should be made visible, false otherwise.
      */
     @Override
     public void setVisible(boolean visible) {
         if(visible) {
             setLocationRelativeTo(owner);
-            for (int i = 0; i < tabbedPane.getComponentCount(); i++) {
+            for(int i = 0; i < tabbedPane.getComponentCount(); i++) {
                 ((PropertyPanel) tabbedPane.getComponentAt(i)).readProperties();
             }
         }

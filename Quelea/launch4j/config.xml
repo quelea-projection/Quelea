@@ -1,4 +1,3 @@
-
 <launch4jConfig>
     <dontWrapJar>false</dontWrapJar>
     <headerType>gui</headerType>
@@ -20,7 +19,7 @@
         <maxVersion></maxVersion>
         <jdkPreference>preferJre</jdkPreference>
     </jre>
-<!--    <splash>
+    <!--    <splash>
         <file>../img/splash.bmp</file>
         <waitForWindow>true</waitForWindow>
         <timeout>10</timeout>

@@ -1,5 +1,15 @@
 package org.quelea.bible;
 
+import org.quelea.utils.LoggerUtils;
+import org.quelea.utils.Utils;
+import org.w3c.dom.Document;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+import org.xml.sax.SAXException;
+
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -8,15 +18,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
-import org.quelea.utils.LoggerUtils;
-import org.quelea.utils.Utils;
-import org.w3c.dom.Document;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
-import org.xml.sax.SAXException;
 
 /**
  * A bible containing a number of books as well as some information.
@@ -50,46 +51,45 @@ public final class Bible {
             DocumentBuilder builder = factory.newDocumentBuilder();
             Document doc = builder.parse(fis);
             NodeList list = doc.getChildNodes();
-            for(int i=0 ; i<list.getLength() ; i++) {
+            for(int i = 0; i < list.getLength(); i++) {
                 if(list.item(i).getNodeName().equalsIgnoreCase("xmlbible")
-                        ||list.item(i).getNodeName().equalsIgnoreCase("bible")) {
+                        || list.item(i).getNodeName().equalsIgnoreCase("bible")) {
                     return parseXML(list.item(i));
                 }
             }
             return null;
         }
-        catch (ParserConfigurationException ex) {
+        catch(ParserConfigurationException ex) {
             LOGGER.log(Level.WARNING, "Couldn't parse the bible", ex);
             return null;
         }
-        catch (SAXException ex) {
+        catch(SAXException ex) {
             LOGGER.log(Level.WARNING, "Couldn't parse the bible", ex);
             return null;
         }
-        catch (IOException ex) {
+        catch(IOException ex) {
             LOGGER.log(Level.WARNING, "Couldn't parse the bible", ex);
             return null;
         }
     }
 
     /**
-     * Parse some XML representing this object and return the object it
-     * represents.
+     * Parse some XML representing this object and return the object it represents.
      * @param info the XML node representing this object.
      * @return the object as defined by the XML.
      */
     public static Bible parseXML(Node node) {
         String name = "";
-        if(node.getAttributes().getNamedItem("biblename")!=null) {
+        if(node.getAttributes().getNamedItem("biblename") != null) {
             name = node.getAttributes().getNamedItem("biblename").getNodeValue();
         }
         Bible ret = new Bible(name);
         NodeList list = node.getChildNodes();
-        for (int i = 0; i < list.getLength(); i++) {
+        for(int i = 0; i < list.getLength(); i++) {
             if(list.item(i).getNodeName().equalsIgnoreCase("information")) {
                 ret.information = BibleInfo.parseXML(list.item(i));
             }
-            else if (list.item(i).getNodeName().equalsIgnoreCase("biblebook") ||
+            else if(list.item(i).getNodeName().equalsIgnoreCase("biblebook") ||
                     list.item(i).getNodeName().equalsIgnoreCase("b")) {
                 ret.addBook(BibleBook.parseXML(list.item(i)));
             }
@@ -109,7 +109,7 @@ public final class Bible {
         if(information != null) {
             ret.append(information.toXML());
         }
-        for (BibleBook book : books) {
+        for(BibleBook book : books) {
             ret.append(book.toXML());
         }
         ret.append("</xmlbible>");
