@@ -3,19 +3,19 @@
 <shortcuts>
     <skipIfNotSupported/>
     <programGroup defaultName="Quelea"
-            location="applications"/>
+                  location="applications"/>
     <shortcut
-name="Quelea"
-target="$INSTALL_PATH\Quelea.jar"
-description="Launch app"
-workingDirectory="$INSTALL_PATH"
-iconFile="$INSTALL_PATH\icons\logo.ico"
-  initialState="normal"
-programGroup="yes"
-desktop="yes"
-applications="no"
-startMenu="no"
-startup="no">
+            name="Quelea"
+            target="$INSTALL_PATH\Quelea.jar"
+            description="Launch app"
+            workingDirectory="$INSTALL_PATH"
+            iconFile="$INSTALL_PATH\icons\logo.ico"
+            initialState="normal"
+            programGroup="yes"
+            desktop="yes"
+            applications="no"
+            startMenu="no"
+            startup="no">
 
         <createForPack name="base"/>
     </shortcut>

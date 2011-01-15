@@ -1,13 +1,10 @@
 package org.quelea.windows.library;
 
-import javax.swing.BoxLayout;
-import javax.swing.JPanel;
-import javax.swing.JTabbedPane;
+import javax.swing.*;
 
 /**
- * The panel that's used to display the library of media (pictures, video)
- * and songs. Items can be selected from here and added to the order of
- * service.
+ * The panel that's used to display the library of media (pictures, video) and songs. Items can be selected from here
+ * and added to the order of service.
  * @author Michael
  */
 public class LibraryPanel extends JPanel {

@@ -1,24 +1,16 @@
 package org.quelea.windows.newsong;
 
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.Font;
-import java.awt.GridLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
-import javax.swing.JComboBox;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JTextField;
-import javax.swing.JToggleButton;
-import javax.swing.JToolBar;
 import org.quelea.Background;
 import org.quelea.Theme;
 import org.quelea.utils.Utils;
 import org.quelea.windows.main.LyricCanvas;
+
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 
 /**
  * The panel where the user chooses what visual theme a song should have.
@@ -181,7 +173,7 @@ public class ThemePanel extends JPanel {
      * @param theme the theme to represent.
      */
     public void setTheme(Theme theme) {
-        if(theme==null) {
+        if(theme == null) {
             theme = Theme.DEFAULT_THEME;
         }
         Font font = theme.getFont();
@@ -192,7 +184,7 @@ public class ThemePanel extends JPanel {
             italicButton.setSelected(true);
         }
         int fontSize = font.getSize();
-        if(fontSize%2!=0) {
+        if(fontSize % 2 != 0) {
             fontSize--;
         }
         fontSizeSelection.setSelectedItem(fontSize);
@@ -225,10 +217,10 @@ public class ThemePanel extends JPanel {
         }
         Font font = new Font(fontSelection.getSelectedItem().toString(), fontStyle, Integer.parseInt(fontSizeSelection.getSelectedItem().toString()));
         Background background;
-        if (backgroundTypeSelect.getModel().getSelectedItem().equals("Colour") || backgroundImageLocation.getText().isEmpty()) {
+        if(backgroundTypeSelect.getModel().getSelectedItem().equals("Colour") || backgroundImageLocation.getText().isEmpty()) {
             background = new Background(backgroundColourButton.getColourSelectionWindow().getSelectedColour());
         }
-        else if (backgroundTypeSelect.getModel().getSelectedItem().equals("Image")) {
+        else if(backgroundTypeSelect.getModel().getSelectedItem().equals("Image")) {
             background = new Background(backgroundImageLocation.getText());
         }
         else {

@@ -1,17 +1,6 @@
 package org.quelea;
 
 import com.inet.jortho.SpellChecker;
-import java.awt.GraphicsDevice;
-import java.awt.GraphicsEnvironment;
-import java.io.File;
-import java.net.MalformedURLException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import javax.swing.JDialog;
-import javax.swing.JFrame;
-import javax.swing.JOptionPane;
-import javax.swing.SwingUtilities;
-import javax.swing.UIManager;
 import org.pushingpixels.substance.api.skin.SubstanceBusinessLookAndFeel;
 import org.quelea.bible.BibleManager;
 import org.quelea.utils.LoggerUtils;
@@ -20,6 +9,13 @@ import org.quelea.utils.UpdateChecker;
 import org.quelea.utils.Utils;
 import org.quelea.windows.main.LyricWindow;
 import org.quelea.windows.main.MainWindow;
+
+import javax.swing.*;
+import java.awt.*;
+import java.io.File;
+import java.net.MalformedURLException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * The main class, sets everything in motion...
@@ -52,20 +48,20 @@ public final class Main {
         final int controlScreen;
         int projectorScreen = QueleaProperties.get().getProjectorScreen();
 
-        if (gds.length <= controlScreenProp) {
+        if(gds.length <= controlScreenProp) {
             controlScreen = 0;
         }
         else {
             controlScreen = controlScreenProp;
         }
         final boolean hidden;
-        if (projectorScreen >= gds.length || projectorScreen < 0) {
+        if(projectorScreen >= gds.length || projectorScreen < 0) {
             hidden = true;
         }
         else {
             hidden = false;
         }
-        if (hidden) {
+        if(hidden) {
             LOGGER.log(Level.INFO, "Hiding projector display on monitor 0 (base 0!)");
             fullScreenWindow = new LyricWindow(gds[0].getDefaultConfiguration().getBounds());
         }
@@ -86,7 +82,7 @@ public final class Main {
             SpellChecker.getOptions().setLanguageDisableVisible(false);
             SpellChecker.getOptions().setCaseSensitive(false);
         }
-        catch (MalformedURLException ex) {
+        catch(MalformedURLException ex) {
             LOGGER.log(Level.SEVERE, "Couldn't load dictionaries", ex);
         }
         LOGGER.log(Level.INFO, "Registered dictionary");
@@ -95,7 +91,7 @@ public final class Main {
 
             public void run() {
                 setLaf();
-                if (SongDatabase.get().errorOccurred()) {
+                if(SongDatabase.get().errorOccurred()) {
                     JOptionPane.showMessageDialog(null, "It looks like you already have an instance of Quelea running, make sure you close all instances before running the program.", "Already running", JOptionPane.ERROR_MESSAGE);
                     System.exit(0);
                 }
@@ -123,7 +119,7 @@ public final class Main {
         try {
             UIManager.setLookAndFeel(new SubstanceBusinessLookAndFeel());
         }
-        catch (Exception ex) {
+        catch(Exception ex) {
             LOGGER.log(Level.INFO, "Couldn't set the look and feel to substance.", ex);
         }
 
@@ -136,7 +132,7 @@ public final class Main {
      * @param numMonitors the number of monitors.
      */
     private static void showWarning(int numMonitors) {
-        if (numMonitors <= 1 && QueleaProperties.get().showSingleMonitorWarning()) {
+        if(numMonitors <= 1 && QueleaProperties.get().showSingleMonitorWarning()) {
             JOptionPane.showMessageDialog(mainWindow, "Looks like you've only got one monitor installed. "
                     + "This is fine if you're just using Quelea to prepare some schedules, but if you're "
                     + "using it in a live setting Quelea needs 2 monitors to work properly.", "Only one monitor",

@@ -1,7 +1,6 @@
 package org.quelea.windows.main;
 
-import javax.swing.JMenuItem;
-import javax.swing.JPopupMenu;
+import javax.swing.*;
 
 /**
  * The popup menu that displays when a song in the schedule is right-clicked.

@@ -1,11 +1,10 @@
 package org.quelea.utils;
 
-import java.awt.Component;
-import java.awt.Desktop;
+import javax.swing.*;
+import java.awt.*;
 import java.net.URI;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.swing.JOptionPane;
 
 /**
  * Checks for any updates to Quelea.
@@ -22,16 +21,14 @@ public class UpdateChecker {
 
     /**
      * Check whether there's an update to Quelea, display a message if so.
-     * @param showIfLatest true if the user should see a message even if they're
-     * running the latest version.
-     * @param showIfError true if the user should see a message if there is an
-     * error.
+     * @param showIfLatest true if the user should see a message even if they're running the latest version.
+     * @param showIfError  true if the user should see a message if there is an error.
      */
     public void checkUpdate(boolean showIfLatest, boolean showIfError, boolean forceCheck) {
-        if (forceCheck || QueleaProperties.get().checkUpdate()) {
+        if(forceCheck || QueleaProperties.get().checkUpdate()) {
             Version latestVersion = new VersionChecker(QueleaProperties.get().getUpdateURL()).getLatestVersion();
-            if (latestVersion == null) {
-                if (showIfError) {
+            if(latestVersion == null) {
+                if(showIfError) {
                     showUpdateError();
                 }
                 return;
@@ -39,19 +36,19 @@ public class UpdateChecker {
             Version curVersion = QueleaProperties.get().getVersion();
             LOGGER.log(Level.INFO, "Checked updates, current version is {0} and latest version is {1}",
                     new Object[]{curVersion.getVersionString(), latestVersion.getVersionString()});
-            if (curVersion.compareTo(latestVersion) == -1) {
-                if (Desktop.isDesktopSupported()) {
+            if(curVersion.compareTo(latestVersion) == -1) {
+                if(Desktop.isDesktopSupported()) {
                     int result = JOptionPane.showConfirmDialog(owner,
                             "There is a newer version of Quelea available (" + latestVersion.getVersionString() + "). "
-                            + "Visit the web page to download it now?",
+                                    + "Visit the web page to download it now?",
                             "Update available", JOptionPane.YES_NO_OPTION, JOptionPane.INFORMATION_MESSAGE, null);
-                    if (result == JOptionPane.YES_OPTION) {
+                    if(result == JOptionPane.YES_OPTION) {
                         try {
                             Desktop.getDesktop().browse(new URI(QueleaProperties.get().getDownloadLocation()));
                         }
-                        catch (Exception ex) {
+                        catch(Exception ex) {
                             LOGGER.log(Level.WARNING, "Couldn't open browser", ex);
-                            if (showIfError) {
+                            if(showIfError) {
                                 showUpdateError();
                             }
                             return;
@@ -61,11 +58,11 @@ public class UpdateChecker {
                 else {
                     JOptionPane.showMessageDialog(owner,
                             "There is a newer version of Quelea available (" + latestVersion.getVersionString() + "). "
-                            + "You can download it here: " + QueleaProperties.get().getDownloadLocation(),
+                                    + "You can download it here: " + QueleaProperties.get().getDownloadLocation(),
                             "Update available", JOptionPane.INFORMATION_MESSAGE, null);
                 }
             }
-            else if (showIfLatest) {
+            else if(showIfLatest) {
                 JOptionPane.showMessageDialog(owner, "You are running the latest version of Quelea ("
                         + curVersion.getVersionString() + ").", "Already up-to-date!", JOptionPane.INFORMATION_MESSAGE, null);
             }

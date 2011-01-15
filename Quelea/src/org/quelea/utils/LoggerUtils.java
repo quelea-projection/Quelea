@@ -12,7 +12,9 @@ import java.util.logging.SimpleFormatter;
  */
 public final class LoggerUtils {
 
-    /** The default level for loggers. */
+    /**
+     * The default level for loggers.
+     */
     public static final Level DEFAULT_LEVEL = Level.INFO;
     private static final FileHandler FILE_HANDLER;
 
@@ -21,7 +23,7 @@ public final class LoggerUtils {
             FILE_HANDLER = new FileHandler("quelea-debug.txt");
             FILE_HANDLER.setFormatter(new SimpleFormatter());
         }
-        catch (IOException ex) {
+        catch(IOException ex) {
             //Can't really do a lot here
         }
     }
@@ -45,8 +47,7 @@ public final class LoggerUtils {
     }
 
     /**
-     * Determine if we were able to write to the file handler or not. If not
-     * then the debug log won't be written.
+     * Determine if we were able to write to the file handler or not. If not then the debug log won't be written.
      * @return true if all is ok, false if there is a problem.
      */
     public boolean isFileHandlerOK() {

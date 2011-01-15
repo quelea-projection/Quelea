@@ -1,19 +1,16 @@
 package org.quelea.windows.main;
 
-import java.awt.BorderLayout;
-import java.awt.Dimension;
-import java.util.HashSet;
-import java.util.Set;
-import javax.swing.DefaultListModel;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JSplitPane;
+import org.quelea.displayable.TextSection;
+
+import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import javax.swing.event.ListDataEvent;
 import javax.swing.event.ListDataListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
-import org.quelea.displayable.TextSection;
+import java.awt.*;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * The panel where the lyrics for different songs can be selected.
@@ -62,7 +59,7 @@ public abstract class SelectLyricsPanel extends JPanel {
      * @param canvas the canvas to register.
      */
     public final void registerLyricCanvas(final LyricCanvas canvas) {
-        if (canvas == null) {
+        if(canvas == null) {
             return;
         }
         getLyricsList().addListSelectionListener(new ListSelectionListener() {
@@ -89,12 +86,11 @@ public abstract class SelectLyricsPanel extends JPanel {
     }
 
     /**
-     * Called to update the contents of the canvases when the list selection
-     * changes.
+     * Called to update the contents of the canvases when the list selection changes.
      */
     private void updateCanvas(final LyricCanvas canvas) {
         int selectedIndex = getLyricsList().getSelectedIndex();
-        if (selectedIndex==-1 || selectedIndex >= getLyricsList().getModel().getSize()) {
+        if(selectedIndex == -1 || selectedIndex >= getLyricsList().getModel().getSize()) {
             canvas.setTheme(null);
             canvas.setText(null);
             return;
@@ -110,7 +106,7 @@ public abstract class SelectLyricsPanel extends JPanel {
      * @param window the window to register.
      */
     public final void registerLyricWindow(final LyricWindow window) {
-        if (window == null) {
+        if(window == null) {
             return;
         }
         windows.add(window);

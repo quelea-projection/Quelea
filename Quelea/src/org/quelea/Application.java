@@ -4,8 +4,7 @@ import org.quelea.windows.main.LyricWindow;
 import org.quelea.windows.main.MainWindow;
 
 /**
- * A singleton class for grabbing application wide objects with ease such as
- * the main window.
+ * A singleton class for grabbing application wide objects with ease such as the main window.
  * @author Michael
  */
 public class Application {

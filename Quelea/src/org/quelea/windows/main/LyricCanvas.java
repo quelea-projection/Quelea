@@ -1,22 +1,15 @@
 package org.quelea.windows.main;
 
-import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.Font;
-import java.awt.FontMetrics;
-import java.awt.Graphics;
-import java.awt.Image;
-import java.awt.font.TextAttribute;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import javax.swing.JPanel;
 import org.quelea.Theme;
 import org.quelea.utils.QueleaProperties;
 import org.quelea.utils.Utils;
+
+import javax.swing.*;
+import java.awt.*;
+import java.awt.font.TextAttribute;
+import java.util.*;
+import java.util.List;
+import java.util.Map.Entry;
 
 /**
  * The canvas where the lyrics / images / media are drawn.
@@ -35,7 +28,7 @@ public class LyricCanvas extends JPanel {
 
     /**
      * Create a new canvas where the lyrics should be displayed.
-     * @param aspectWidth the aspect ratio width.
+     * @param aspectWidth  the aspect ratio width.
      * @param aspectHeight the aspect ratio height.
      */
     public LyricCanvas(int aspectWidth, int aspectHeight) {
@@ -66,7 +59,7 @@ public class LyricCanvas extends JPanel {
         offscreen.setColor(getForeground());
         super.paint(offscreen);
 //        fixAspectRatio(); //Seems to work better without this with the new algorithm
-        if (blacked || theme == null) {
+        if(blacked || theme == null) {
             Color temp = offscreen.getColor();
             offscreen.setColor(Color.BLACK);
             offscreen.fillRect(0, 0, getWidth(), getHeight());
@@ -76,12 +69,12 @@ public class LyricCanvas extends JPanel {
             offscreen.drawImage(theme.getBackground().getImage(getWidth(), getHeight()), 0, 0, null);
         }
         Color fontColour = theme.getFontColor();
-        if (fontColour == null) {
+        if(fontColour == null) {
             fontColour = Theme.DEFAULT_FONT_COLOR;
         }
         offscreen.setColor(fontColour);
         Font themeFont = theme.getFont();
-        if (themeFont == null) {
+        if(themeFont == null) {
             themeFont = Theme.DEFAULT_FONT;
         }
         drawText(offscreen, themeFont);
@@ -91,10 +84,10 @@ public class LyricCanvas extends JPanel {
     /**
      * Draw the text and background to the given graphics object.
      * @param graphics the graphics object
-     * @param font the font to use for the text.
+     * @param font     the font to use for the text.
      */
     private void drawText(Graphics graphics, Font font) {
-        if (cleared || blacked) {
+        if(cleared || blacked) {
             return;
         }
         graphics.setFont(font);
@@ -104,9 +97,9 @@ public class LyricCanvas extends JPanel {
         int maxWidth = 0;
         String maxLine = "";
         List<String> sanctifiedLines = sanctifyText();
-        for (String line : sanctifiedLines) {
+        for(String line : sanctifiedLines) {
             int width = metrics.stringWidth(line);
-            if (width > maxWidth) {
+            if(width > maxWidth) {
                 maxWidth = width;
                 maxLine = line;
             }
@@ -114,14 +107,14 @@ public class LyricCanvas extends JPanel {
         int size = getFontSize(font, graphics, maxLine, sanctifiedLines.size());
         Font newFont = getDifferentSizeFont(font, size);
         graphics.setFont(newFont);
-        if (heightOffset > getHeight()) {
-            if (font.getSize() > 8) {
+        if(heightOffset > getHeight()) {
+            if(font.getSize() > 8) {
                 drawText(graphics, getDifferentSizeFont(font, font.getSize() - 2));
             }
         }
         else {
             heightOffset = 0;
-            for (String line : sanctifiedLines) {
+            for(String line : sanctifiedLines) {
                 int width = graphics.getFontMetrics().stringWidth(line);
                 int leftOffset = (getWidth() - width) / 2;
                 heightOffset += graphics.getFontMetrics().getHeight();
@@ -131,16 +124,15 @@ public class LyricCanvas extends JPanel {
     }
 
     /**
-     * Based on the longest line, return the largest font size that can be used
-     * to fit this line.
-     * @param font the initial starting font to use.
+     * Based on the longest line, return the largest font size that can be used to fit this line.
+     * @param font     the initial starting font to use.
      * @param graphics the graphics of this canvas.
-     * @param line the longest line.
+     * @param line     the longest line.
      * @return the largest font size that can be used.
      */
     private int getFontSize(Font font, Graphics graphics, String line, int numLines) {
         int size = ensureLineCount(font, graphics, numLines);
-        while (size > 0 && graphics.getFontMetrics(font).stringWidth(line) >= getWidth()) {
+        while(size > 0 && graphics.getFontMetrics(font).stringWidth(line) >= getWidth()) {
             size--;
             font = getDifferentSizeFont(font, size);
         }
@@ -148,36 +140,35 @@ public class LyricCanvas extends JPanel {
     }
 
     /**
-     * Return a font size that ensures we have at least the required number of
-     * lines available per slide.
-     * @param font the initial font to use.
+     * Return a font size that ensures we have at least the required number of lines available per slide.
+     * @param font     the initial font to use.
      * @param graphics the graphics of the canvas.
      * @return the largest font size that can be used.
      */
     private int ensureLineCount(Font font, Graphics graphics, int numLines) {
         int height;
         int lineCount = QueleaProperties.get().getMinLines();
-        if (numLines > lineCount) {
+        if(numLines > lineCount) {
             lineCount = numLines;
         }
         do {
             height = graphics.getFontMetrics(font).getHeight() * lineCount;
             font = getDifferentSizeFont(font, font.getSize() - 1);
         }
-        while (height > getHeight() && font.getSize() > 12);
+        while(height > getHeight() && font.getSize() > 12);
 
         return font.getSize();
     }
 
     /**
-     * Take the raw text and format it into a number of lines nicely, where the
-     * lines aren't more than the maximum length.
+     * Take the raw text and format it into a number of lines nicely, where the lines aren't more than the maximum
+     * length.
      * @return processed, sanctified text that can be displayed nicely.
      */
     private List<String> sanctifyText() {
         List<String> ret = new ArrayList<String>();
         int maxLength = QueleaProperties.get().getMaxChars();
-        for (String line : text) {
+        for(String line : text) {
             ret.addAll(splitLine(line, maxLength));
         }
         return ret;
@@ -186,39 +177,38 @@ public class LyricCanvas extends JPanel {
     /**
      * Given a line of any length, sensibly split it up into several lines.
      * @param line the line to split.
-     * @return the split line (or the unaltered line if it is less than or
-     * equal to the allowed length.
+     * @return the split line (or the unaltered line if it is less than or equal to the allowed length.
      */
     private List<String> splitLine(String line, int maxLength) {
         List<String> sections = new ArrayList<String>();
-        if (line.length() > maxLength) {
-            if (containsNotAtEnd(line, ";")) {
-                for (String s : splitMiddle(line, ';')) {
+        if(line.length() > maxLength) {
+            if(containsNotAtEnd(line, ";")) {
+                for(String s : splitMiddle(line, ';')) {
                     sections.addAll(splitLine(s, maxLength));
                 }
             }
-            else if (containsNotAtEnd(line, ",")) {
-                for (String s : splitMiddle(line, ',')) {
+            else if(containsNotAtEnd(line, ",")) {
+                for(String s : splitMiddle(line, ',')) {
                     sections.addAll(splitLine(s, maxLength));
                 }
             }
-            else if (containsNotAtEnd(line, " ")) {
-                for (String s : splitMiddle(line, ' ')) {
+            else if(containsNotAtEnd(line, " ")) {
+                for(String s : splitMiddle(line, ' ')) {
                     sections.addAll(splitLine(s, maxLength));
                 }
             }
-            else if (containsNotAtEnd(line, "-")) {
-                for (String s : splitMiddle(line, '-')) {
-                    sections.addAll(splitLine(s, maxLength));
-                }
-            }
+//            else if(containsNotAtEnd(line, "-")) {
+//                for(String s : splitMiddle(line, '-')) {
+//                    sections.addAll(splitLine(s, maxLength));
+//                }
+//            }
             else {
                 sections.addAll(splitLine(new StringBuilder(line).insert(line.length() / 2, "-").toString(), maxLength));
             }
         }
         else {
             line = line.trim();
-            if (capitaliseFirst && QueleaProperties.get().checkCapitalFirst()) {
+            if(capitaliseFirst && QueleaProperties.get().checkCapitalFirst()) {
                 line = Utils.capitaliseFirst(line);
             }
             sections.add(line);
@@ -227,10 +217,9 @@ public class LyricCanvas extends JPanel {
     }
 
     /**
-     * Determine if the given line contains the given string in the middle
-     * 80% of the line.
+     * Determine if the given line contains the given string in the middle 80% of the line.
      * @param line the line to check.
-     * @param str the string to use.
+     * @param str  the string to use.
      * @return true if the line contains the delimiter, false otherwise.
      */
     private static boolean containsNotAtEnd(String line, String str) {
@@ -240,21 +229,19 @@ public class LyricCanvas extends JPanel {
     }
 
     /**
-     * Split a string with the given delimiter into two parts, using the
-     * delimiter closest to the middle of the string.
-     * @param line the line to split.
+     * Split a string with the given delimiter into two parts, using the delimiter closest to the middle of the string.
+     * @param line      the line to split.
      * @param delimiter the delimiter.
-     * @return an array containing two strings split in the middle by the
-     * delimiter.
+     * @return an array containing two strings split in the middle by the delimiter.
      */
     private static String[] splitMiddle(String line, char delimiter) {
         final int middle = (int) (((double) line.length() / 2) + 0.5);
         int nearestIndex = -1;
-        for (int i = 0; i < line.length(); i++) {
-            if (line.charAt(i) == delimiter) {
+        for(int i = 0; i < line.length(); i++) {
+            if(line.charAt(i) == delimiter) {
                 int curDistance = Math.abs(nearestIndex - middle);
                 int newDistance = Math.abs(i - middle);
-                if (newDistance < curDistance || nearestIndex < 0) {
+                if(newDistance < curDistance || nearestIndex < 0) {
                     nearestIndex = i;
                 }
             }
@@ -263,8 +250,7 @@ public class LyricCanvas extends JPanel {
     }
 
     /**
-     * Toggle the clearing of this canvas - still leave the background image
-     * in place but remove all the text.
+     * Toggle the clearing of this canvas - still leave the background image in place but remove all the text.
      */
     public void toggleClear() {
         cleared ^= true;
@@ -280,8 +266,8 @@ public class LyricCanvas extends JPanel {
     }
 
     /**
-     * Toggle the blacking of this canvas - remove the text and background
-     * image (if any) just displaying a black screen.
+     * Toggle the blacking of this canvas - remove the text and background image (if any) just displaying a black
+     * screen.
      */
     public void toggleBlack() {
         blacked ^= true;
@@ -303,17 +289,16 @@ public class LyricCanvas extends JPanel {
     public void setTheme(Theme theme) {
         Theme t1 = theme == null ? Theme.DEFAULT_THEME : theme;
         Theme t2 = this.theme == null ? Theme.DEFAULT_THEME : this.theme;
-        if (!t2.equals(t1)) {
+        if(!t2.equals(t1)) {
             this.theme = t1;
             repaint();
         }
     }
 
     /**
-     * Prevent small changes to the canvas' size. This is a workaround to a bug
-     * where the canvas was sometimes resized constantly by very small
-     * intervals (a few pixels) causing annoying flickering.
-     * @param width the width of the component.
+     * Prevent small changes to the canvas' size. This is a workaround to a bug where the canvas was sometimes resized
+     * constantly by very small intervals (a few pixels) causing annoying flickering.
+     * @param width  the width of the component.
      * @param height the height of the component.
      */
     @Override
@@ -321,7 +306,7 @@ public class LyricCanvas extends JPanel {
         final int MAX_OFFSET = 5; //changes less than this will be discarded.
         int widthDiff = Math.abs(width - getWidth());
         int heightDiff = Math.abs(height - getHeight());
-        if (widthDiff > MAX_OFFSET || heightDiff > MAX_OFFSET) {
+        if(widthDiff > MAX_OFFSET || heightDiff > MAX_OFFSET) {
             super.setSize(width, height);
         }
     }
@@ -335,14 +320,12 @@ public class LyricCanvas extends JPanel {
     }
 
     /**
-     * Set the text to appear on the canvas. The lines will be automatically
-     * wrapped and if the text is too large to fit on the screen in the current
-     * font, the size will be decreased until all the text fits.
-     * @param text an array of the lines to display on the canvas, one entry
-     * in the array is one line.
+     * Set the text to appear on the canvas. The lines will be automatically wrapped and if the text is too large to fit
+     * on the screen in the current font, the size will be decreased until all the text fits.
+     * @param text an array of the lines to display on the canvas, one entry in the array is one line.
      */
     public void setText(String[] text) {
-        if (text == null) {
+        if(text == null) {
             text = new String[0];
         }
         this.text = Arrays.copyOf(text, text.length);
@@ -350,8 +333,8 @@ public class LyricCanvas extends JPanel {
     }
 
     /**
-     * Get the text currently set to appear on the canvas. The text may or may
-     * not be shown depending on whether the canvas is blacked or cleared.
+     * Get the text currently set to appear on the canvas. The text may or may not be shown depending on whether the
+     * canvas is blacked or cleared.
      * @return the current text.
      */
     public String[] getText() {
@@ -368,8 +351,7 @@ public class LyricCanvas extends JPanel {
     }
 
     /**
-     * Fix the aspect ratio of this lyric canvas so that it's always reduced
-     * in size to the aspect ratio specified.
+     * Fix the aspect ratio of this lyric canvas so that it's always reduced in size to the aspect ratio specified.
      */
     public void fixAspectRatio() {
         Dimension currentSize = getSize();
@@ -377,7 +359,7 @@ public class LyricCanvas extends JPanel {
         double height = currentSize.getHeight();
         double estWidth = (height / aspectHeight) * aspectWidth;
         double estHeight = (width / aspectWidth) * aspectHeight;
-        if (estWidth < width) {
+        if(estWidth < width) {
             super.setSize(new Dimension((int) estWidth, (int) height));
             font = getDifferentSizeFont(font, (float) estWidth / 16);
         }
@@ -394,10 +376,10 @@ public class LyricCanvas extends JPanel {
      */
     private Font getDifferentSizeFont(Font bigFont, float size) {
         Map<TextAttribute, Object> attributes = new HashMap<TextAttribute, Object>();
-        for (Entry<TextAttribute, ?> entry : bigFont.getAttributes().entrySet()) {
+        for(Entry<TextAttribute, ?> entry : bigFont.getAttributes().entrySet()) {
             attributes.put(entry.getKey(), entry.getValue());
         }
-        if (attributes.get(TextAttribute.SIZE) != null) {
+        if(attributes.get(TextAttribute.SIZE) != null) {
             attributes.put(TextAttribute.SIZE, size);
         }
         return new Font(attributes);

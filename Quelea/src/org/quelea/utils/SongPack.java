@@ -1,5 +1,7 @@
 package org.quelea.utils;
 
+import org.quelea.displayable.Song;
+
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -11,11 +13,9 @@ import java.util.logging.Logger;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 import java.util.zip.ZipOutputStream;
-import org.quelea.displayable.Song;
 
 /**
- * A song pack that contains a number of songs and can be written to a
- * compressed archive.
+ * A song pack that contains a number of songs and can be written to a compressed archive.
  * @author Michael
  */
 public class SongPack {
@@ -49,7 +49,7 @@ public class SongPack {
         try {
             SongPack ret = new SongPack();
             Enumeration<? extends ZipEntry> entries = zipFile.entries();
-            while (entries.hasMoreElements()) {
+            while(entries.hasMoreElements()) {
                 ZipEntry entry = entries.nextElement();
                 ret.addSong(Song.parseXML(zipFile.getInputStream(entry)));
             }
@@ -65,14 +65,14 @@ public class SongPack {
      * @return true if the write was successful, false otherwise.
      */
     public boolean writeToFile(File file) {
-        if (file == null) {
+        if(file == null) {
             return false;
         }
         try {
             ZipOutputStream zos = new ZipOutputStream(new FileOutputStream(file));
             try {
                 int count = 0;
-                for (Song song : songs) {
+                for(Song song : songs) {
                     zos.putNextEntry(new ZipEntry("song" + count + ".xml"));
                     zos.write(song.getXML().getBytes());
                     zos.closeEntry();
@@ -84,7 +84,7 @@ public class SongPack {
                 zos.close();
             }
         }
-        catch (IOException ex) {
+        catch(IOException ex) {
             LOGGER.log(Level.WARNING, "Couldn't write the song pack to file", ex);
             return false;
         }

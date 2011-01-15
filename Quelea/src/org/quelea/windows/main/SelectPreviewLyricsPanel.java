@@ -1,16 +1,15 @@
 package org.quelea.windows.main;
 
-import java.awt.BorderLayout;
-import javax.swing.JButton;
-import javax.swing.JLabel;
-import javax.swing.JToolBar;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
 import org.quelea.utils.Utils;
 
+import javax.swing.*;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
+import java.awt.*;
+
 /**
- * The panel displaying the preview lyrics selection - this is viewed before
- * displaying the actual lyrics on the projector.
+ * The panel displaying the preview lyrics selection - this is viewed before displaying the actual lyrics on the
+ * projector.
  */
 public class SelectPreviewLyricsPanel extends SelectLyricsPanel {
 
@@ -37,11 +36,11 @@ public class SelectPreviewLyricsPanel extends SelectLyricsPanel {
      * Add the listeners required for this panel.
      */
     private void addListeners() {
-        
+
         getLyricsList().addListSelectionListener(new ListSelectionListener() {
 
             public void valueChanged(ListSelectionEvent e) {
-                if (getLyricsList().getModel().isEmpty()) {
+                if(getLyricsList().getModel().isEmpty()) {
                     liveButton.setEnabled(false);
                 }
                 else {

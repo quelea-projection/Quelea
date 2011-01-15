@@ -1,27 +1,19 @@
 package org.quelea.importexport;
 
-import java.awt.Insets;
+import org.quelea.displayable.Song;
+import org.quelea.utils.Utils;
+
+import javax.swing.*;
+import javax.swing.border.EmptyBorder;
+import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableModel;
+import javax.swing.table.TableRowSorter;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import javax.swing.BoxLayout;
-import javax.swing.JButton;
-import javax.swing.JDialog;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTable;
-import javax.swing.JToolBar;
-import javax.swing.ListSelectionModel;
-import javax.swing.border.EmptyBorder;
-import javax.swing.table.DefaultTableModel;
-import javax.swing.table.TableModel;
-import javax.swing.table.TableRowSorter;
-import org.quelea.displayable.Song;
-import org.quelea.utils.Utils;
 
 /**
  * A dialog where given songs can be selected.
@@ -40,7 +32,7 @@ public class SelectSongsDialog extends JDialog {
      * @param owner the owner of the dialog.
      */
     public SelectSongsDialog(JFrame owner, String[] text, String acceptText,
-            String checkboxText) {
+                             String checkboxText) {
         super(owner, "Select Songs", true);
         this.checkboxText = checkboxText;
         songs = new ArrayList<Song>();
@@ -76,8 +68,8 @@ public class SelectSongsDialog extends JDialog {
                 if(getSongs().isEmpty()) {
                     return;
                 }
-                boolean val = !(Boolean)getTable().getValueAt(0, 2);
-                for (int i = 0; i < getSongs().size(); i++) {
+                boolean val = !(Boolean) getTable().getValueAt(0, 2);
+                for(int i = 0; i < getSongs().size(); i++) {
                     getTable().setValueAt(val, i, 2);
                 }
             }
@@ -87,11 +79,11 @@ public class SelectSongsDialog extends JDialog {
 
     /**
      * Set the songs to be shown in the dialog.
-     * @param songs the list of songs to be shown.
-     * @param existsAlready a list corresponding to the song list - each
-     * position is true if the checkbox should be selected, false otherwise.
-     * @param defaultVal the default value to use for the checkbox if checkList
-     * is null or smaller than the songs list.
+     * @param songs         the list of songs to be shown.
+     * @param existsAlready a list corresponding to the song list - each position is true if the checkbox should be
+     *                      selected, false otherwise.
+     * @param defaultVal    the default value to use for the checkbox if checkList is null or smaller than the songs
+     *                      list.
      */
     public void setSongs(List<Song> songs, List<Boolean> checkList, boolean defaultVal) {
         Collections.sort(songs);
@@ -106,11 +98,11 @@ public class SelectSongsDialog extends JDialog {
         table.getColumnModel().getColumn(2).setHeaderValue(checkboxText);
         table.getColumnModel().getColumn(2).setCellEditor(table.getDefaultEditor(Boolean.class));
         table.getColumnModel().getColumn(2).setCellRenderer(table.getDefaultRenderer(Boolean.class));
-        for (int i = 0; i < songs.size(); i++) {
+        for(int i = 0; i < songs.size(); i++) {
             table.getModel().setValueAt(songs.get(i).getTitle(), i, 0);
             table.getModel().setValueAt(songs.get(i).getAuthor(), i, 1);
             boolean val;
-            if(checkList!=null && i<checkList.size()) {
+            if(checkList != null && i < checkList.size()) {
                 val = checkList.get(i); //invert
             }
             else {
@@ -121,8 +113,8 @@ public class SelectSongsDialog extends JDialog {
     }
 
     /**
-     * Get the check list. This list corresponds with the list of songs to
-     * determine whether the checkbox by each song should be checked or not.
+     * Get the check list. This list corresponds with the list of songs to determine whether the checkbox by each song
+     * should be checked or not.
      * @return the check list.
      */
     public List<Boolean> getCheckList() {

@@ -1,40 +1,28 @@
 package org.quelea.windows.newsong;
 
 import com.inet.jortho.SpellChecker;
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.FlowLayout;
-import java.awt.Insets;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.FocusEvent;
-import java.awt.event.FocusListener;
-import java.util.ArrayList;
-import java.util.List;
-import javax.swing.BoxLayout;
-import javax.swing.JButton;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTextArea;
-import javax.swing.JTextField;
-import javax.swing.JToolBar;
-import javax.swing.SpringLayout;
-import javax.swing.SwingUtilities;
+import org.quelea.displayable.Song;
+import org.quelea.utils.LineTypeChecker;
+import org.quelea.utils.SpringUtilities;
+import org.quelea.utils.Utils;
+
+import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.DefaultHighlighter.DefaultHighlightPainter;
 import javax.swing.text.Highlighter;
-import org.quelea.utils.SpringUtilities;
-import org.quelea.displayable.Song;
-import org.quelea.utils.LineTypeChecker;
-import org.quelea.utils.Utils;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
- * The panel that manages the basic input of song information - the title,
- * author and lyrics.
+ * The panel that manages the basic input of song information - the title, author and lyrics.
  * @author Michael
  */
 public class BasicSongPanel extends JPanel {
@@ -64,7 +52,7 @@ public class BasicSongPanel extends JPanel {
         JTextField[] attributes = new JTextField[]{titleField, authorField};
 
         JPanel topPanel = new JPanel(new SpringLayout());
-        for (int i = 0; i < attributes.length; i++) {
+        for(int i = 0; i < attributes.length; i++) {
             JLabel label = new JLabel(attributes[i].getName(), JLabel.TRAILING);
             topPanel.add(label);
             label.setLabelFor(attributes[i]);
@@ -109,13 +97,14 @@ public class BasicSongPanel extends JPanel {
         add(centrePanel, BorderLayout.CENTER);
 
     }
+
     private final List<Object> highlights = new ArrayList<Object>();
 
     /**
      * Manage the highlighting.
      */
     private void doHighlight() {
-        for (Object highlight : highlights) {
+        for(Object highlight : highlights) {
             lyricsArea.getHighlighter().removeHighlight(highlight);
         }
         highlights.clear();
@@ -125,13 +114,13 @@ public class BasicSongPanel extends JPanel {
             String[] lines = text.split("\n");
             List<HighlightIndex> indexes = new ArrayList<HighlightIndex>();
             int offset = 0;
-            for (int i=0 ; i<lines.length ; i++) {
+            for(int i = 0; i < lines.length; i++) {
                 String line = lines[i];
                 LineTypeChecker.Type type = new LineTypeChecker(line).getLineType();
-                if(type==LineTypeChecker.Type.TITLE && i>0 && !lines[i-1].trim().isEmpty()) {
+                if(type == LineTypeChecker.Type.TITLE && i > 0 && !lines[i - 1].trim().isEmpty()) {
                     type = LineTypeChecker.Type.NORMAL;
                 }
-                if (type != LineTypeChecker.Type.NORMAL) {
+                if(type != LineTypeChecker.Type.NORMAL) {
                     int startIndex = offset;
                     int endIndex = startIndex + line.length();
                     Color highlightColor = type.getHighlightColor();
@@ -142,11 +131,11 @@ public class BasicSongPanel extends JPanel {
                 offset += line.length() + 1;
             }
 
-            for (HighlightIndex index : indexes) {
+            for(HighlightIndex index : indexes) {
                 highlights.add(hilite.addHighlight(index.getStartIndex(), index.getEndIndex(), new DefaultHighlightPainter(index.getHighlightColor())));
             }
         }
-        catch (BadLocationException ex) {
+        catch(BadLocationException ex) {
         }
     }
 
@@ -186,7 +175,7 @@ public class BasicSongPanel extends JPanel {
             public void actionPerformed(ActionEvent e) {
                 StringBuilder newText = new StringBuilder();
                 for(String line : lyricsArea.getText().split("\n")) {
-                    if(new LineTypeChecker(line).getLineType()!=LineTypeChecker.Type.CHORDS) {
+                    if(new LineTypeChecker(line).getLineType() != LineTypeChecker.Type.CHORDS) {
                         newText.append(line).append('\n');
                     }
                 }

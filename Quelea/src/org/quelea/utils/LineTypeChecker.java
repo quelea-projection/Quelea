@@ -1,6 +1,6 @@
 package org.quelea.utils;
 
-import java.awt.Color;
+import java.awt.*;
 
 /**
  * Checks the type of the line.
@@ -27,6 +27,7 @@ public class LineTypeChecker {
             return color;
         }
     }
+
     private final String line;
 
     /**
@@ -42,10 +43,10 @@ public class LineTypeChecker {
      * @return the type of the line.
      */
     public Type getLineType() {
-        if (checkTitle()) {
+        if(checkTitle()) {
             return Type.TITLE;
         }
-        else if (checkChords()) {
+        else if(checkChords()) {
             return Type.CHORDS;
         }
         else {
@@ -58,7 +59,7 @@ public class LineTypeChecker {
      * @return true if it's a chord line, false otherwise.
      */
     private boolean checkChords() {
-        if (line.isEmpty()) {
+        if(line.isEmpty()) {
             return false;
         }
         String checkLine = line.replace('-', ' ');
@@ -66,11 +67,11 @@ public class LineTypeChecker {
         checkLine = checkLine.replace(')', ' ');
         checkLine = checkLine.replaceAll("[xX][0-9]+", "");
         checkLine = checkLine.replaceAll("[0-9]+[xX]", "");
-        for (String s : checkLine.split("\\s")) {
-            if (s.trim().isEmpty()) {
+        for(String s : checkLine.split("\\s")) {
+            if(s.trim().isEmpty()) {
                 continue;
             }
-            if (!s.matches("([a-gA-G](#|b)?[0-9]*((sus|dim|maj|dom|min|m|aug|add)?[0-9]*){3}(#|b)?[0-9]*)(/([a-gA-G](#|b)?[0-9]*((sus|dim|maj|dom|min|m|aug|add)?[0-9]*){3}(#|b)?[0-9]*))?")) {
+            if(!s.matches("([a-gA-G](#|b)?[0-9]*((sus|dim|maj|dom|min|m|aug|add)?[0-9]*){3}(#|b)?[0-9]*)(/([a-gA-G](#|b)?[0-9]*((sus|dim|maj|dom|min|m|aug|add)?[0-9]*){3}(#|b)?[0-9]*))?")) {
                 return false;
             }
         }
@@ -83,15 +84,16 @@ public class LineTypeChecker {
      * @return true if it's the title of a section, false otherwise.
      */
     private boolean checkTitle() {
-        return line.toLowerCase().startsWith("verse")
-                || line.toLowerCase().startsWith("chorus")
-                || line.toLowerCase().startsWith("tag")
-                || line.toLowerCase().startsWith("pre-chorus")
-                || line.toLowerCase().startsWith("pre chorus")
-                || line.toLowerCase().startsWith("coda")
-                || line.toLowerCase().startsWith("ending")
-                || line.toLowerCase().startsWith("bridge")
-                || line.toLowerCase().startsWith("intro")
-                || line.toLowerCase().startsWith("outro");
+        String processedLine = line.toLowerCase().trim().replace("(", "").replace(")", "");
+        return processedLine.toLowerCase().startsWith("verse")
+                || processedLine.toLowerCase().startsWith("chorus")
+                || processedLine.toLowerCase().startsWith("tag")
+                || processedLine.toLowerCase().startsWith("pre-chorus")
+                || processedLine.toLowerCase().startsWith("pre chorus")
+                || processedLine.toLowerCase().startsWith("coda")
+                || processedLine.toLowerCase().startsWith("ending")
+                || processedLine.toLowerCase().startsWith("bridge")
+                || processedLine.toLowerCase().startsWith("intro")
+                || processedLine.toLowerCase().startsWith("outro");
     }
 }

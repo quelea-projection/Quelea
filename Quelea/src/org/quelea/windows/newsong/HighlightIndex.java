@@ -1,6 +1,6 @@
 package org.quelea.windows.newsong;
 
-import java.awt.Color;
+import java.awt.*;
 
 /**
  * Add some information about where something should be highlighted.
@@ -14,8 +14,8 @@ public class HighlightIndex {
 
     /**
      * Create a new highlight index.
-     * @param startIndex the index where highlighting should start.
-     * @param endIndex the index where highlighting should end.
+     * @param startIndex     the index where highlighting should start.
+     * @param endIndex       the index where highlighting should end.
      * @param highlightColor the colour of the highlight.
      */
     public HighlightIndex(int startIndex, int endIndex, Color highlightColor) {
@@ -23,7 +23,7 @@ public class HighlightIndex {
         this.endIndex = endIndex;
         this.highlightColor = highlightColor;
     }
-    
+
     /**
      * Get the start index of the highlight (inclusive.)
      * @return the start index of the highlight.

@@ -273,11 +273,14 @@ public class Song implements TextDisplayable, Searchable, Comparable<Song> {
             DocumentBuilder builder = factory.newDocumentBuilder();
             Document doc = builder.parse(inputStream);
             return parseXML(doc.getFirstChild());
-        } catch(ParserConfigurationException ex) {
+        }
+        catch(ParserConfigurationException ex) {
             return null;
-        } catch(SAXException ex) {
+        }
+        catch(SAXException ex) {
             return null;
-        } catch(IOException ex) {
+        }
+        catch(IOException ex) {
             return null;
         }
     }
@@ -293,13 +296,16 @@ public class Song implements TextDisplayable, Searchable, Comparable<Song> {
             DocumentBuilder builder = factory.newDocumentBuilder();
             Document doc = builder.parse(inputStream);
             return parseXML(doc.getChildNodes().item(0));
-        } catch(ParserConfigurationException ex) {
+        }
+        catch(ParserConfigurationException ex) {
             LOGGER.log(Level.WARNING, "Couldn't parse the schedule", ex);
             return null;
-        } catch(SAXException ex) {
+        }
+        catch(SAXException ex) {
             LOGGER.log(Level.WARNING, "Couldn't parse the schedule", ex);
             return null;
-        } catch(IOException ex) {
+        }
+        catch(IOException ex) {
             LOGGER.log(Level.WARNING, "Couldn't parse the schedule", ex);
             return null;
         }

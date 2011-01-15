@@ -1,8 +1,8 @@
 package org.quelea;
 
 import org.quelea.utils.Utils;
-import java.awt.Color;
-import java.awt.Graphics2D;
+
+import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
 
@@ -32,10 +32,9 @@ public class Background {
     }
 
     /**
-     * Get the background with a specified width and height. If this background
-     * is an image then it will be scaled accordingly, if it is a colour an
-     * image will be given with the specified dimension, filled with the colour.
-     * @param width the width of the background.
+     * Get the background with a specified width and height. If this background is an image then it will be scaled
+     * accordingly, if it is a colour an image will be given with the specified dimension, filled with the colour.
+     * @param width  the width of the background.
      * @param height the height of the background.
      * @return an image containing the background with the given dimensions.
      */
@@ -44,7 +43,7 @@ public class Background {
         Graphics2D g = (Graphics2D) ret.getGraphics();
         g.setColor(Color.BLACK);
         g.fillRect(0, 0, width, height);
-        if (colour == null) {
+        if(colour == null) {
             g.drawImage(Utils.getImage(getImageFile().getAbsolutePath()), 0, 0, width, height, null);
             return ret;
         }
@@ -56,8 +55,7 @@ public class Background {
     }
 
     /**
-     * Get the current colour of this background, or null if the background is
-     * currently an image.
+     * Get the current colour of this background, or null if the background is currently an image.
      * @return the colour of the background.
      */
     public Color getColour() {
@@ -66,11 +64,10 @@ public class Background {
 
     /**
      * Get the image background file.
-     * @return the file representing the image background, or null if the image
-     * background is a colour.
+     * @return the file representing the image background, or null if the image background is a colour.
      */
     public File getImageFile() {
-        if (imageLocation == null) {
+        if(imageLocation == null) {
             return null;
         }
         else {
@@ -79,8 +76,7 @@ public class Background {
     }
 
     /**
-     * Get the current image location of this background, or null if the
-     * background is currently a colour.
+     * Get the current image location of this background, or null if the background is currently a colour.
      * @return the current image location of the background.
      */
     public String getImageLocation() {
@@ -122,17 +118,17 @@ public class Background {
      */
     @Override
     public boolean equals(Object obj) {
-        if (obj == null) {
+        if(obj == null) {
             return false;
         }
-        if (getClass() != obj.getClass()) {
+        if(getClass() != obj.getClass()) {
             return false;
         }
         final Background other = (Background) obj;
-        if (this.colour != other.colour && (this.colour == null || !this.colour.equals(other.colour))) {
+        if(this.colour != other.colour && (this.colour == null || !this.colour.equals(other.colour))) {
             return false;
         }
-        if (this.imageLocation != other.imageLocation && (this.imageLocation == null || !this.imageLocation.equals(other.imageLocation))) {
+        if(this.imageLocation != other.imageLocation && (this.imageLocation == null || !this.imageLocation.equals(other.imageLocation))) {
             return false;
         }
         return true;
@@ -146,7 +142,7 @@ public class Background {
     public String toString() {
         StringBuilder ret = new StringBuilder();
         ret.append("Background: ");
-        if (colour == null) {
+        if(colour == null) {
             ret.append("image: ");
             ret.append(imageLocation);
         }

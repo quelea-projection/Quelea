@@ -1,8 +1,8 @@
 package org.quelea.windows.main;
 
-import javax.swing.JButton;
-import javax.swing.JToolBar;
 import org.quelea.utils.Utils;
+
+import javax.swing.*;
 
 /**
  * The toolbar displayed on the main window.

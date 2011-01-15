@@ -1,22 +1,21 @@
 package org.quelea.windows.main;
 
-import org.quelea.windows.main.menu.MainMenuBar;
-import java.awt.BorderLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.io.File;
-import java.io.IOException;
-import javax.imageio.ImageIO;
-import javax.swing.JFileChooser;
-import javax.swing.JFrame;
-import javax.swing.JOptionPane;
 import org.quelea.Schedule;
 import org.quelea.displayable.Song;
 import org.quelea.utils.FileFilters;
 import org.quelea.utils.QueleaProperties;
 import org.quelea.windows.help.AboutDialog;
+import org.quelea.windows.main.menu.MainMenuBar;
 import org.quelea.windows.newsong.SongEntryWindow;
 import org.quelea.windows.options.OptionsDialog;
+
+import javax.imageio.ImageIO;
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.io.File;
+import java.io.IOException;
 
 /**
  * The main window used to control the projection.
@@ -41,7 +40,7 @@ public class MainWindow extends JFrame {
         try {
             setIconImage(ImageIO.read(new File("img/logo.png")));
         }
-        catch (IOException ex) {
+        catch(IOException ex) {
         }
         setLayout(new BorderLayout());
         menubar = new MainMenuBar();
@@ -123,7 +122,7 @@ public class MainWindow extends JFrame {
     private class NewScheduleActionListener implements ActionListener {
 
         public void actionPerformed(ActionEvent e) {
-            if (confirmClear()) {
+            if(confirmClear()) {
                 mainpanel.getLiveLyricsPanel().getLyricsList().getModel().clear();
                 mainpanel.getSchedulePanel().getScheduleList().clearSchedule();
             }
@@ -137,11 +136,11 @@ public class MainWindow extends JFrame {
     private class OpenScheduleActionListener implements ActionListener {
 
         public void actionPerformed(ActionEvent e) {
-            if (confirmClear()) {
+            if(confirmClear()) {
                 JFileChooser chooser = getFileChooser();
-                if (chooser.showOpenDialog(MainWindow.this) == JFileChooser.APPROVE_OPTION) {
+                if(chooser.showOpenDialog(MainWindow.this) == JFileChooser.APPROVE_OPTION) {
                     Schedule schedule = Schedule.fromFile(chooser.getSelectedFile());
-                    if(schedule==null) {
+                    if(schedule == null) {
                         JOptionPane.showMessageDialog(MainWindow.this,
                                 "There was a problem opening the schedule. Perhaps it's corrupt, or is not a schedule saved by Quelea.",
                                 "Error opening schedule", JOptionPane.ERROR_MESSAGE, null);
@@ -180,15 +179,14 @@ public class MainWindow extends JFrame {
 
     /**
      * Save the current schedule.
-     * @param saveAs true if the file location should be specified, false if
-     * the current one should be used.
+     * @param saveAs true if the file location should be specified, false if the current one should be used.
      */
     private void saveSchedule(boolean saveAs) {
         Schedule schedule = mainpanel.getSchedulePanel().getScheduleList().getSchedule();
         File file = schedule.getFile();
-        if (saveAs || file == null) {
+        if(saveAs || file == null) {
             JFileChooser chooser = getFileChooser();
-            if (chooser.showSaveDialog(MainWindow.this) == JFileChooser.APPROVE_OPTION) {
+            if(chooser.showSaveDialog(MainWindow.this) == JFileChooser.APPROVE_OPTION) {
                 String extension = QueleaProperties.get().getScheduleExtension();
                 file = chooser.getSelectedFile();
                 if(!file.getName().endsWith("." + extension)) {
@@ -197,7 +195,7 @@ public class MainWindow extends JFrame {
                 if(file.exists()) {
                     int result = JOptionPane.showConfirmDialog(MainWindow.this, file.getName() + " already exists. Overwrite?",
                             "Overwrite", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE, null);
-                    if(result!=JOptionPane.YES_OPTION) {
+                    if(result != JOptionPane.YES_OPTION) {
                         file = null;
                     }
                 }
@@ -206,7 +204,7 @@ public class MainWindow extends JFrame {
         }
         if(file != null) {
             boolean success = schedule.writeToFile();
-            if (!success) {
+            if(!success) {
                 JOptionPane.showMessageDialog(MainWindow.this, "Couldn't save schedule", "Error", JOptionPane.ERROR_MESSAGE, null);
             }
         }
@@ -233,7 +231,7 @@ public class MainWindow extends JFrame {
             return true;
         }
         int result = JOptionPane.showConfirmDialog(this, "This will clear the current schedule. Is this OK?", "Confirm", JOptionPane.YES_NO_OPTION, JOptionPane.INFORMATION_MESSAGE, null);
-        if(result==JOptionPane.YES_OPTION) {
+        if(result == JOptionPane.YES_OPTION) {
             return true;
         }
         return false;

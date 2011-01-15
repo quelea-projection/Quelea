@@ -1,12 +1,11 @@
 package org.quelea;
 
 import org.quelea.utils.Utils;
-import java.awt.Color;
-import java.awt.Font;
+
+import java.awt.*;
 
 /**
- * A theme for displaying some lyrics on screen. Currently consists of a font
- * and a background.
+ * A theme for displaying some lyrics on screen. Currently consists of a font and a background.
  * @author Michael
  */
 public class Theme {
@@ -22,8 +21,8 @@ public class Theme {
 
     /**
      * Create a new theme with a specified font, font colour and background.
-     * @param font the font to use for the theme.
-     * @param fontColor the font colour to use for the theme.
+     * @param font       the font to use for the theme.
+     * @param fontColor  the font colour to use for the theme.
      * @param background the background to use for the page.
      */
     public Theme(Font font, Color fontColor, Background background) {
@@ -58,20 +57,20 @@ public class Theme {
 
     @Override
     public boolean equals(Object obj) {
-        if (obj == null) {
+        if(obj == null) {
             return false;
         }
-        if (getClass() != obj.getClass()) {
+        if(getClass() != obj.getClass()) {
             return false;
         }
         final Theme other = (Theme) obj;
-        if (this.font != other.font && (this.font == null || !this.font.equals(other.font))) {
+        if(this.font != other.font && (this.font == null || !this.font.equals(other.font))) {
             return false;
         }
-        if (this.fontColor != other.fontColor && (this.fontColor == null || !this.fontColor.equals(other.fontColor))) {
+        if(this.fontColor != other.fontColor && (this.fontColor == null || !this.fontColor.equals(other.fontColor))) {
             return false;
         }
-        if (this.background != other.background && (this.background == null || !this.background.equals(other.background))) {
+        if(this.background != other.background && (this.background == null || !this.background.equals(other.background))) {
             return false;
         }
         return true;
@@ -108,11 +107,10 @@ public class Theme {
     /**
      * Get a theme from a string.
      * @param s the string to parse.
-     * @return the theme parsed from the string, or null if a parsing error
-     * occurs.
+     * @return the theme parsed from the string, or null if a parsing error occurs.
      */
     public static Theme parseDBString(String s) {
-        if(s==null || s.isEmpty()) {
+        if(s == null || s.isEmpty()) {
             return Theme.DEFAULT_THEME;
         }
         String fontname = "";

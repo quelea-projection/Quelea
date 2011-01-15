@@ -1,20 +1,14 @@
 package org.quelea.windows.options;
 
-import java.awt.GraphicsDevice;
-import java.awt.GraphicsEnvironment;
-import java.util.ArrayList;
-import java.util.List;
-import javax.swing.BoxLayout;
-import javax.swing.ComboBoxModel;
-import javax.swing.DefaultComboBoxModel;
-import javax.swing.JComboBox;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
 import org.quelea.utils.Utils;
 
+import javax.swing.*;
+import java.awt.*;
+import java.util.ArrayList;
+import java.util.List;
+
 /**
- * A panel used to represent a single type of display that the user can then
- * select the output for.
+ * A panel used to represent a single type of display that the user can then select the output for.
  * @author Michael
  */
 public class SingleDisplayPanel extends JPanel {
@@ -24,10 +18,9 @@ public class SingleDisplayPanel extends JPanel {
 
     /**
      * Create a new single display panel.
-     * @param caption the bit of text at the top describing the display.
+     * @param caption      the bit of text at the top describing the display.
      * @param iconLocation the location of the icon to use.
-     * @param none true if "none" (i.e. no output) should be an option, false
-     * otherwise.
+     * @param none         true if "none" (i.e. no output) should be an option, false otherwise.
      */
     public SingleDisplayPanel(String caption, String iconLocation, boolean none) {
         this.none = none;
@@ -42,12 +35,11 @@ public class SingleDisplayPanel extends JPanel {
 
     /**
      * Determine the output display that should be used.
-     * @return the output display as an index starting from 0, or -1 if "none"
-     * is selected.
+     * @return the output display as an index starting from 0, or -1 if "none" is selected.
      */
     public int getOutputDisplay() {
         if(none) {
-            return outputSelect.getSelectedIndex()-1;
+            return outputSelect.getSelectedIndex() - 1;
         }
         else {
             return outputSelect.getSelectedIndex();
@@ -59,17 +51,17 @@ public class SingleDisplayPanel extends JPanel {
      * @param num the index (0 based) of the screen to select.
      */
     public void setScreen(int num) {
-        int maxIndex = outputSelect.getModel().getSize()-1;
+        int maxIndex = outputSelect.getModel().getSize() - 1;
         if(none) {
-            int index = num+1;
-            if(index>maxIndex) {
+            int index = num + 1;
+            if(index > maxIndex) {
                 index = 0;
             }
             outputSelect.setSelectedIndex(index);
         }
         else {
             int index = num;
-            if (index > maxIndex) {
+            if(index > maxIndex) {
                 index = 0;
             }
             outputSelect.setSelectedIndex(index);
@@ -94,8 +86,8 @@ public class SingleDisplayPanel extends JPanel {
         if(none) {
             descriptions.add("<html><i>None</i></html>");
         }
-        for (int i=0; i < gds.length; i++) {
-            descriptions.add("Output " + (i+1));
+        for(int i = 0; i < gds.length; i++) {
+            descriptions.add("Output " + (i + 1));
         }
         return new DefaultComboBoxModel(descriptions.toArray(new String[descriptions.size()]));
     }

@@ -7,11 +7,9 @@ package org.quelea.displayable;
 public interface Searchable {
 
     /**
-     * Determine whether this object is returned if the user searches for the
-     * given string.
+     * Determine whether this object is returned if the user searches for the given string.
      * @param s the search string.
-     * @return true if the object should be returned as part of the search
-     * results, false otherwise.
+     * @return true if the object should be returned as part of the search results, false otherwise.
      */
     boolean search(String s);
 

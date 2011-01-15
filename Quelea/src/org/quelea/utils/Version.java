@@ -1,8 +1,7 @@
 package org.quelea.utils;
 
 /**
- * A version number that can be compared against another version to see what
- * one is greatest.
+ * A version number that can be compared against another version to see what one is greatest.
  * @author Michael
  */
 public class Version implements Comparable<Version> {
@@ -11,8 +10,7 @@ public class Version implements Comparable<Version> {
 
     /**
      * Create a new version.
-     * @param version the version number in the form x.x.x.x (all x's must be
-     * positive integers.)
+     * @param version the version number in the form x.x.x.x (all x's must be positive integers.)
      */
     public Version(String version) {
         this.versionStr = version;
@@ -33,14 +31,14 @@ public class Version implements Comparable<Version> {
      */
     @Override
     public boolean equals(Object obj) {
-        if (obj == null) {
+        if(obj == null) {
             return false;
         }
-        if (getClass() != obj.getClass()) {
+        if(getClass() != obj.getClass()) {
             return false;
         }
         final Version other = (Version) obj;
-        if ((this.versionStr == null) ? (other.versionStr != null) : !this.versionStr.equals(other.versionStr)) {
+        if((this.versionStr == null) ? (other.versionStr != null) : !this.versionStr.equals(other.versionStr)) {
             return false;
         }
         return true;
@@ -68,26 +66,25 @@ public class Version implements Comparable<Version> {
     /**
      * Compare this version to another.
      * @param o the other version.
-     * @return -1 if this version is less than the other one, 0 if they are the
-     * same and 1 if this version is greater.
+     * @return -1 if this version is less than the other one, 0 if they are the same and 1 if this version is greater.
      */
     public int compareTo(Version o) {
         String[] theseParts = versionStr.split("\\.");
         String[] otherParts = o.versionStr.split("\\.");
         int minLength;
-        if (theseParts.length < otherParts.length) {
+        if(theseParts.length < otherParts.length) {
             minLength = theseParts.length;
         }
         else {
             minLength = otherParts.length;
         }
-        for (int i = 0; i < minLength; i++) {
+        for(int i = 0; i < minLength; i++) {
             int thisNum = Integer.parseInt(theseParts[i]);
             int otherNum = Integer.parseInt(otherParts[i]);
-            if (thisNum > otherNum) {
+            if(thisNum > otherNum) {
                 return 1;
             }
-            else if (thisNum < otherNum) {
+            else if(thisNum < otherNum) {
                 return -1;
             }
         }

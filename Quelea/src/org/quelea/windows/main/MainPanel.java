@@ -1,30 +1,22 @@
 package org.quelea.windows.main;
 
-import java.awt.event.KeyEvent;
-import org.quelea.windows.library.LibraryPanel;
-import java.awt.BorderLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.KeyListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import javax.swing.DefaultListModel;
-import javax.swing.JList;
-import javax.swing.JPanel;
-import javax.swing.JSplitPane;
-import javax.swing.event.ListDataEvent;
-import javax.swing.event.ListDataListener;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
 import org.quelea.bible.Bible;
 import org.quelea.displayable.BiblePassage;
 import org.quelea.displayable.Song;
 import org.quelea.displayable.TextDisplayable;
 import org.quelea.displayable.TextSection;
+import org.quelea.windows.library.LibraryPanel;
+
+import javax.swing.*;
+import javax.swing.event.ListDataEvent;
+import javax.swing.event.ListDataListener;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
+import java.awt.*;
+import java.awt.event.*;
 
 /**
- * The main body of the main window, containing the schedule, the media bank,
- * the preview and the live panels.
+ * The main body of the main window, containing the schedule, the media bank, the preview and the live panels.
  * @author Michael
  */
 public class MainPanel extends JPanel {
@@ -55,11 +47,11 @@ public class MainPanel extends JPanel {
                 DefaultListModel liveModel = livePanel.getLyricsList().getModel();
                 DefaultListModel previewModel = previewPanel.getLyricsList().getModel();
                 liveModel.clear();
-                for (int i = 0; i < previewModel.getSize(); i++) {
+                for(int i = 0; i < previewModel.getSize(); i++) {
                     liveModel.addElement(previewModel.get(i));
                 }
                 livePanel.getLyricsList().setSelectedIndex(previewPanel.getLyricsList().getSelectedIndex());
-                if (schedulePanel.getScheduleList().getSelectedIndex() < schedulePanel.getScheduleList().getModel().getSize()) {
+                if(schedulePanel.getScheduleList().getSelectedIndex() < schedulePanel.getScheduleList().getModel().getSize()) {
                     schedulePanel.getScheduleList().setSelectedIndex(schedulePanel.getScheduleList().getSelectedIndex() + 1);
                 }
                 livePanel.getLyricsList().requestFocus();
@@ -104,7 +96,7 @@ public class MainPanel extends JPanel {
             @Override
             public void mouseClicked(MouseEvent e) {
                 JList songList = (JList) e.getSource();
-                if (e.getClickCount() == 2) {
+                if(e.getClickCount() == 2) {
                     Song song = (Song) songList.getSelectedValue();
                     ((DefaultListModel) schedulePanel.getScheduleList().getModel()).addElement(song);
                 }
@@ -120,14 +112,14 @@ public class MainPanel extends JPanel {
         schedulePanel.getScheduleList().addKeyListener(new KeyListener() {
 
             public void keyTyped(KeyEvent e) {
-                if (e.getKeyChar() == ' ') {
+                if(e.getKeyChar() == ' ') {
                     previewPanel.getLiveButton().doClick();
                     livePanel.getLyricsList().ensureIndexIsVisible(livePanel.getLyricsList().getSelectedIndex());
                 }
             }
 
             public void keyPressed(KeyEvent e) {
-                if (e.getKeyCode() == KeyEvent.VK_RIGHT && !previewPanel.getLyricsList().getModel().isEmpty()) {
+                if(e.getKeyCode() == KeyEvent.VK_RIGHT && !previewPanel.getLyricsList().getModel().isEmpty()) {
                     previewPanel.getLyricsList().requestFocus();
                 }
             }
@@ -140,17 +132,17 @@ public class MainPanel extends JPanel {
         previewPanel.getLyricsList().addKeyListener(new KeyListener() {
 
             public void keyTyped(KeyEvent e) {
-                if (e.getKeyChar() == ' ') {
+                if(e.getKeyChar() == ' ') {
                     previewPanel.getLiveButton().doClick();
                     livePanel.getLyricsList().ensureIndexIsVisible(livePanel.getLyricsList().getSelectedIndex());
                 }
             }
 
             public void keyPressed(KeyEvent e) {
-                if (e.getKeyCode() == KeyEvent.VK_RIGHT && !livePanel.getLyricsList().getModel().isEmpty()) {
+                if(e.getKeyCode() == KeyEvent.VK_RIGHT && !livePanel.getLyricsList().getModel().isEmpty()) {
                     livePanel.getLyricsList().requestFocus();
                 }
-                else if (e.getKeyCode() == KeyEvent.VK_LEFT && schedulePanel.getScheduleList().getModel().getSize() > 0) {
+                else if(e.getKeyCode() == KeyEvent.VK_LEFT && schedulePanel.getScheduleList().getModel().getSize() > 0) {
                     schedulePanel.getScheduleList().requestFocus();
                 }
             }
@@ -163,14 +155,14 @@ public class MainPanel extends JPanel {
         livePanel.getLyricsList().addKeyListener(new KeyListener() {
 
             public void keyTyped(KeyEvent e) {
-                if (e.getKeyChar() == ' ') {
+                if(e.getKeyChar() == ' ') {
                     previewPanel.getLiveButton().doClick();
                     livePanel.getLyricsList().ensureIndexIsVisible(livePanel.getLyricsList().getSelectedIndex());
                 }
             }
 
             public void keyPressed(KeyEvent e) {
-                if (e.getKeyCode() == KeyEvent.VK_LEFT && !previewPanel.getLyricsList().getModel().isEmpty()) {
+                if(e.getKeyCode() == KeyEvent.VK_LEFT && !previewPanel.getLyricsList().getModel().isEmpty()) {
                     previewPanel.getLyricsList().requestFocus();
                 }
             }
@@ -214,18 +206,17 @@ public class MainPanel extends JPanel {
     }
 
     /**
-     * This method should be called every time the list values are updated or
-     * changed.
+     * This method should be called every time the list values are updated or changed.
      */
     private void scheduleListChanged() {
-        if (schedulePanel.getScheduleList().getSelectedIndex() == -1) {
+        if(schedulePanel.getScheduleList().getSelectedIndex() == -1) {
             previewPanel.getLyricsList().getModel().clear();
             return;
         }
         TextDisplayable newDisplayable = (TextDisplayable) schedulePanel.getScheduleList().getModel().getElementAt(schedulePanel.getScheduleList().getSelectedIndex());
         DefaultListModel model = previewPanel.getLyricsList().getModel();
         model.clear();
-        for (TextSection section : newDisplayable.getSections()) {
+        for(TextSection section : newDisplayable.getSections()) {
             model.addElement(section);
         }
         previewPanel.getLyricsList().setSelectedIndex(0);

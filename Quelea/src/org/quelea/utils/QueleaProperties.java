@@ -1,13 +1,14 @@
 package org.quelea.utils;
 
-import java.awt.Color;
+import org.quelea.bible.Bible;
+
+import java.awt.*;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import org.quelea.bible.Bible;
 
 /**
  * Manages the properties specific to Quelea.
@@ -33,7 +34,7 @@ public final class QueleaProperties extends Properties {
                 reader.close();
             }
         }
-        catch (IOException ex) {
+        catch(IOException ex) {
             LOGGER.log(Level.SEVERE, "Couldn't load properties", ex);
         }
     }
@@ -51,7 +52,7 @@ public final class QueleaProperties extends Properties {
                 writer.close();
             }
         }
-        catch (IOException ex) {
+        catch(IOException ex) {
             LOGGER.log(Level.WARNING, "Couldn't store properties", ex);
         }
     }
@@ -89,8 +90,8 @@ public final class QueleaProperties extends Properties {
     }
 
     /**
-     * Get the number of the screen used for the control screen. This is the
-     * screen that the main Quelea operator window will be displayed on.
+     * Get the number of the screen used for the control screen. This is the screen that the main Quelea operator window
+     * will be displayed on.
      * @return the control screen number.
      */
     public int getControlScreen() {
@@ -107,8 +108,7 @@ public final class QueleaProperties extends Properties {
     }
 
     /**
-     * Get the number of the projector screen. This is the screen that the
-     * projected output will be displayed on.
+     * Get the number of the projector screen. This is the screen that the projected output will be displayed on.
      * @return the projector screen number.
      */
     public int getProjectorScreen() {
@@ -125,11 +125,9 @@ public final class QueleaProperties extends Properties {
     }
 
     /**
-     * Get the maximum number of characters allowed on any one line of
-     * projected text. If the line is longer than this, it will be split up
-     * intelligently.
-     * @return the maximum number of characters allowed on any one line of
-     * projected text.
+     * Get the maximum number of characters allowed on any one line of projected text. If the line is longer than this,
+     * it will be split up intelligently.
+     * @return the maximum number of characters allowed on any one line of projected text.
      */
     public int getMaxChars() {
         return Integer.parseInt(getProperty("max.chars", "30"));
@@ -137,8 +135,7 @@ public final class QueleaProperties extends Properties {
 
     /**
      * Set the max chars value.
-     * @param maxChars the maximum number of characters allowed on any one line
-     * of projected text.
+     * @param maxChars the maximum number of characters allowed on any one line of projected text.
      */
     public void setMaxChars(int maxChars) {
         setProperty("max.chars", Integer.toString(maxChars));
@@ -146,10 +143,9 @@ public final class QueleaProperties extends Properties {
     }
 
     /**
-     * Get the minimum number of lines that should be displayed on each page.
-     * This purely applies to font sizes, the font will be adjusted so this
-     * amount of lines can fit on. This stops small lines becoming huge in the
-     * preview window rather than displaying normally.
+     * Get the minimum number of lines that should be displayed on each page. This purely applies to font sizes, the
+     * font will be adjusted so this amount of lines can fit on. This stops small lines becoming huge in the preview
+     * window rather than displaying normally.
      * @return the minimum line count.
      */
     public int getMinLines() {
@@ -166,8 +162,8 @@ public final class QueleaProperties extends Properties {
     }
 
     /**
-     * Determine whether the single monitor warning should be shown (this warns
-     * the user they only have one monitor installed.)
+     * Determine whether the single monitor warning should be shown (this warns the user they only have one monitor
+     * installed.)
      * @return true if the warning should be shown, false otherwise.
      */
     public boolean showSingleMonitorWarning() {
@@ -216,8 +212,7 @@ public final class QueleaProperties extends Properties {
     }
 
     /**
-     * Determine whether we should check for updates each time the program
-     * starts.
+     * Determine whether we should check for updates each time the program starts.
      * @return true if we should check for updates, false otherwise.
      */
     public boolean checkUpdate() {
@@ -225,8 +220,7 @@ public final class QueleaProperties extends Properties {
     }
 
     /**
-     * Set whether we should check for updates each time the program
-     * starts.
+     * Set whether we should check for updates each time the program starts.
      * @param val true if we should check for updates, false otherwise.
      */
     public void setCheckUpdate(boolean val) {
@@ -235,8 +229,7 @@ public final class QueleaProperties extends Properties {
     }
 
     /**
-     * Determine whether the first letter of all displayed lines should be a
-     * capital.
+     * Determine whether the first letter of all displayed lines should be a capital.
      * @return true if it should be a capital, false otherwise.
      */
     public boolean checkCapitalFirst() {
@@ -244,8 +237,7 @@ public final class QueleaProperties extends Properties {
     }
 
     /**
-     * Set whether the first letter of all displayed lines should be a
-     * capital.
+     * Set whether the first letter of all displayed lines should be a capital.
      * @param val true if it should be a capital, false otherwise.
      */
     public void setCapitalFirst(boolean val) {
@@ -271,8 +263,7 @@ public final class QueleaProperties extends Properties {
     }
 
     /**
-     * Get the maximum number of verses allowed in any one bible reading. Too
-     * many will crash the program!
+     * Get the maximum number of verses allowed in any one bible reading. Too many will crash the program!
      * @return the maximum number of verses allowed.
      */
     public int getMaxVerses() {
@@ -280,8 +271,7 @@ public final class QueleaProperties extends Properties {
     }
 
     /**
-     * Set the maximum number of verses allowed in any one bible reading. Too
-     * many will crash the program!
+     * Set the maximum number of verses allowed in any one bible reading. Too many will crash the program!
      * @param val the maximum number of verses allowed.
      */
     public void setMaxVerses(int val) {

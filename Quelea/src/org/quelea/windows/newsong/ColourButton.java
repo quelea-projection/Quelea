@@ -1,12 +1,11 @@
 package org.quelea.windows.newsong;
 
-import java.awt.Color;
+import org.quelea.utils.Utils;
+
+import javax.swing.*;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import javax.swing.ImageIcon;
-import javax.swing.JButton;
-import javax.swing.SwingUtilities;
-import org.quelea.utils.Utils;
 
 /**
  * The colour button where the user selects a colour.
@@ -37,7 +36,7 @@ public class ColourButton extends JButton {
         addActionListener(new ActionListener() {
 
             public void actionPerformed(ActionEvent e) {
-                selectionWindow.setLocation((int)getLocationOnScreen().getX(), (int)getLocationOnScreen().getY());
+                selectionWindow.setLocation((int) getLocationOnScreen().getX(), (int) getLocationOnScreen().getY());
                 selectionWindow.setVisible(true);
             }
         });

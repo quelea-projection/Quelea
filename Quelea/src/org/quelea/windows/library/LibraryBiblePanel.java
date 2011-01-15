@@ -1,30 +1,19 @@
 package org.quelea.windows.library;
 
-import java.awt.Color;
-import java.awt.Dimension;
+import org.quelea.bible.*;
+import org.quelea.utils.QueleaProperties;
+import org.quelea.utils.Utils;
+
+import javax.swing.*;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.util.ArrayList;
 import java.util.List;
-import javax.swing.BoxLayout;
-import javax.swing.DefaultComboBoxModel;
-import javax.swing.JButton;
-import javax.swing.JComboBox;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTextArea;
-import javax.swing.JTextField;
-import javax.swing.event.DocumentEvent;
-import javax.swing.event.DocumentListener;
-import org.quelea.bible.Bible;
-import org.quelea.bible.BibleBook;
-import org.quelea.bible.BibleManager;
-import org.quelea.bible.BibleVerse;
-import org.quelea.bible.ChapterVerseParser;
-import org.quelea.utils.QueleaProperties;
-import org.quelea.utils.Utils;
 
 /**
  * The panel used to get bible verses.
@@ -48,9 +37,9 @@ public class LibraryBiblePanel extends JPanel {
         verses = new ArrayList<BibleVerse>();
         bibleSelector = new JComboBox(BibleManager.get().getBibles());
         String selectedBibleName = QueleaProperties.get().getDefaultBible();
-        for (int i = 0; i < bibleSelector.getModel().getSize(); i++) {
+        for(int i = 0; i < bibleSelector.getModel().getSize(); i++) {
             Bible bible = (Bible) bibleSelector.getItemAt(i);
-            if (bible.getName().equals(selectedBibleName)) {
+            if(bible.getName().equals(selectedBibleName)) {
                 bibleSelector.setSelectedIndex(i);
             }
         }
@@ -68,7 +57,7 @@ public class LibraryBiblePanel extends JPanel {
             }
 
             public void keyPressed(KeyEvent e) {
-                if (e.getKeyCode() == KeyEvent.VK_ENTER) {
+                if(e.getKeyCode() == KeyEvent.VK_ENTER) {
                     addToSchedule.doClick();
                     passageSelector.setText("");
                 }
@@ -96,7 +85,7 @@ public class LibraryBiblePanel extends JPanel {
             public void actionPerformed(ActionEvent e) {
                 DefaultComboBoxModel model = (DefaultComboBoxModel) bookSelector.getModel();
                 model.removeAllElements();
-                for (BibleBook book : ((Bible) bibleSelector.getSelectedItem()).getBooks()) {
+                for(BibleBook book : ((Bible) bibleSelector.getSelectedItem()).getBooks()) {
                     model.addElement(book);
                 }
                 update();
@@ -136,14 +125,13 @@ public class LibraryBiblePanel extends JPanel {
     }
 
     /**
-     * Update the text in the preview panel based on the contents of the
-     * fields.
+     * Update the text in the preview panel based on the contents of the fields.
      */
     private void update() {
         verses.clear();
         ChapterVerseParser cvp = new ChapterVerseParser(passageSelector.getText());
         BibleBook book = (BibleBook) bookSelector.getSelectedItem();
-        if (book == null || book.getChapter(cvp.getFromChapter()) == null
+        if(book == null || book.getChapter(cvp.getFromChapter()) == null
                 || book.getChapter(cvp.getToChapter()) == null
                 || passageSelector.getText().isEmpty()) {
             getAddToSchedule().setEnabled(false);
@@ -152,23 +140,23 @@ public class LibraryBiblePanel extends JPanel {
         }
         StringBuilder ret = new StringBuilder();
         int toVerse = book.getChapter(cvp.getFromChapter()).getVerses().length - 1;
-        if ((cvp.getFromChapter() == cvp.getToChapter()) && cvp.getToVerse() >= 0 && cvp.getToVerse() < book.getChapter(cvp.getFromChapter()).getVerses().length) {
+        if((cvp.getFromChapter() == cvp.getToChapter()) && cvp.getToVerse() >= 0 && cvp.getToVerse() < book.getChapter(cvp.getFromChapter()).getVerses().length) {
             toVerse = cvp.getToVerse();
         }
 
-        for (int v = cvp.getFromVerse(); v <= toVerse; v++) {
+        for(int v = cvp.getFromVerse(); v <= toVerse; v++) {
             BibleVerse verse = book.getChapter(cvp.getFromChapter()).getVerse(v);
             ret.append(verse.getText()).append(' ');
             verses.add(verse);
         }
-        for (int c = cvp.getFromChapter() + 1; c < cvp.getToChapter(); c++) {
-            for (BibleVerse verse : book.getChapter(c).getVerses()) {
+        for(int c = cvp.getFromChapter() + 1; c < cvp.getToChapter(); c++) {
+            for(BibleVerse verse : book.getChapter(c).getVerses()) {
                 ret.append(verse.getText()).append(' ');
                 verses.add(verse);
             }
         }
-        if (cvp.getFromChapter() != cvp.getToChapter()) {
-            for (int v = 0; v <= cvp.getToVerse(); v++) {
+        if(cvp.getFromChapter() != cvp.getToChapter()) {
+            for(int v = 0; v <= cvp.getToVerse(); v++) {
                 BibleVerse verse = book.getChapter(cvp.getToChapter()).getVerse(v);
                 if(verse != null) {
                     ret.append(verse.getText()).append(' ');
@@ -177,7 +165,7 @@ public class LibraryBiblePanel extends JPanel {
             }
         }
         int maxVerses = QueleaProperties.get().getMaxVerses();
-        if(verses.size()>maxVerses) {
+        if(verses.size() > maxVerses) {
             preview.setText("Sorry, no more than " + maxVerses + " verses allowed "
                     + "(at the moment you've selected a total off " + verses.size()
                     + ".) You can increase this value by going to Tools => Options "
