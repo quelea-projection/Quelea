@@ -1,8 +1,14 @@
 package org.quelea.windows.main;
 
-import java.awt.Color;
-import java.awt.Component;
-import java.awt.Rectangle;
+import org.quelea.Schedule;
+import org.quelea.displayable.Displayable;
+import org.quelea.displayable.Song;
+import org.quelea.displayable.TransferDisplayable;
+import org.quelea.utils.QueleaProperties;
+
+import javax.swing.*;
+import javax.swing.border.EmptyBorder;
+import java.awt.*;
 import java.awt.datatransfer.Transferable;
 import java.awt.dnd.DnDConstants;
 import java.awt.dnd.DragGestureEvent;
@@ -12,20 +18,6 @@ import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import javax.swing.DefaultListModel;
-import javax.swing.DropMode;
-import javax.swing.JComponent;
-import javax.swing.JLabel;
-import javax.swing.JList;
-import javax.swing.ListCellRenderer;
-import javax.swing.ListSelectionModel;
-import javax.swing.TransferHandler;
-import javax.swing.border.EmptyBorder;
-import org.quelea.Schedule;
-import org.quelea.displayable.Displayable;
-import org.quelea.displayable.Song;
-import org.quelea.displayable.TransferDisplayable;
-import org.quelea.utils.QueleaProperties;
 
 /**
  * The schedule list, all the items that are to be displayed in the service.
@@ -39,8 +31,7 @@ public class ScheduleList extends JList {
     private boolean internalDrag;
 
     /**
-     * A direction; either up or down. Used for rearranging the order of items
-     * in the service.
+     * A direction; either up or down. Used for rearranging the order of items in the service.
      */
     public enum Direction {
 
@@ -48,8 +39,7 @@ public class ScheduleList extends JList {
     }
 
     /**
-     * Used for displaying summaries of items in the service in the schedule
-     * list.
+     * Used for displaying summaries of items in the service in the schedule list.
      */
     private static class SummaryRenderer extends JLabel implements ListCellRenderer {
 
@@ -61,7 +51,7 @@ public class ScheduleList extends JList {
             Displayable displayableValue = (Displayable) value;
             setText(displayableValue.getPreviewText());
             setIcon(displayableValue.getPreviewIcon());
-            if (isSelected) {
+            if(isSelected) {
                 setBackground(list.getSelectionBackground());
                 setForeground(list.getSelectionForeground());
             }
@@ -86,7 +76,7 @@ public class ScheduleList extends JList {
         addFocusListener(new FocusListener() {
 
             public void focusGained(FocusEvent e) {
-                if (getModel().getSize() > 0) {
+                if(getModel().getSize() > 0) {
                     setSelectionBackground(QueleaProperties.get().getActiveSelectionColor());
                 }
             }
@@ -113,11 +103,11 @@ public class ScheduleList extends JList {
              * mouse is pressed and released for platform-independence.
              */
             private void checkPopup(MouseEvent e) {
-                if (e.isPopupTrigger()) {
+                if(e.isPopupTrigger()) {
                     int index = locationToIndex(e.getPoint());
                     Rectangle Rect = getCellBounds(index, index);
                     index = Rect.contains(e.getPoint().x, e.getPoint().y) ? index : -1;
-                    if (index != -1 && getModel().getElementAt(index) instanceof Song && ((Song) getModel().getElementAt(index)).getID() != -1) {
+                    if(index != -1 && getModel().getElementAt(index) instanceof Song && ((Song) getModel().getElementAt(index)).getID() != -1) {
                         setSelectedIndex(index);
                         popupMenu.show(ScheduleList.this, e.getX(), e.getY());
                     }
@@ -128,7 +118,7 @@ public class ScheduleList extends JList {
         DragSource.getDefaultDragSource().createDefaultDragGestureRecognizer(this, DnDConstants.ACTION_MOVE, new DragGestureListener() {
 
             public void dragGestureRecognized(DragGestureEvent dge) {
-                if (getSelectedValue() != null) {
+                if(getSelectedValue() != null) {
                     internalDrag = true;
                     dge.startDrag(DragSource.DefaultMoveDrop, new TransferDisplayable((Displayable) getModel().getElementAt(locationToIndex(dge.getDragOrigin()))));
                 }
@@ -143,7 +133,7 @@ public class ScheduleList extends JList {
 
             @Override
             public boolean importData(TransferHandler.TransferSupport support) {
-                if (!canImport(support)) {
+                if(!canImport(support)) {
                     return false;
                 }
 
@@ -153,26 +143,26 @@ public class ScheduleList extends JList {
                 try {
                     data = (Displayable) transferable.getTransferData(TransferDisplayable.DISPLAYABLE_FLAVOR);
                 }
-                catch (Exception ex) {
+                catch(Exception ex) {
                     return false;
                 }
 
                 JList.DropLocation dl = (JList.DropLocation) support.getDropLocation();
                 int index = dl.getIndex();
-                if (index == -1) {
+                if(index == -1) {
                     index = getModel().getSize();
                 }
 
                 DefaultListModel model = (DefaultListModel) getModel();
-                if (internalDrag) {
+                if(internalDrag) {
                     int val = Math.abs(getSelectedIndex() - index);
-                    if (getSelectedIndex() < index) {
-                        for (int i = 0; i < val; i++) {
+                    if(getSelectedIndex() < index) {
+                        for(int i = 0; i < val; i++) {
                             moveCurrentItem(Direction.DOWN);
                         }
                     }
                     else {
-                        for (int i = 0; i < val; i++) {
+                        for(int i = 0; i < val; i++) {
                             moveCurrentItem(Direction.UP);
                         }
                     }
@@ -200,22 +190,21 @@ public class ScheduleList extends JList {
      */
     public Schedule getSchedule() {
         schedule.clear();
-        for (int i = 0; i < getModel().getSize(); i++) {
+        for(int i = 0; i < getModel().getSize(); i++) {
             schedule.add((Displayable) getModel().getElementAt(i));
         }
         return schedule;
     }
 
     /**
-     * Erase everything in the current schedule and set the contents of this
-     * list to the current schedule.
+     * Erase everything in the current schedule and set the contents of this list to the current schedule.
      * @param schedule the schedule.
      */
     public void setSchedule(Schedule schedule) {
         clearSchedule();
-        for (Displayable displayable : schedule) {
+        for(Displayable displayable : schedule) {
             if(displayable instanceof Song) {
-                ((Song)displayable).matchID();
+                ((Song) displayable).matchID();
             }
             ((DefaultListModel) getModel()).addElement(displayable);
         }
@@ -246,13 +235,12 @@ public class ScheduleList extends JList {
     }
 
     /**
-     * Remove the currently selected item in the list, or do nothing if there
-     * is no selected item.
+     * Remove the currently selected item in the list, or do nothing if there is no selected item.
      */
     public void removeCurrentItem() {
         DefaultListModel model = (DefaultListModel) getModel();
         int selectedIndex = getSelectedIndex();
-        if (selectedIndex != -1) {
+        if(selectedIndex != -1) {
             model.remove(getSelectedIndex());
         }
     }
@@ -264,16 +252,16 @@ public class ScheduleList extends JList {
     public void moveCurrentItem(Direction direction) {
         DefaultListModel model = (DefaultListModel) getModel();
         int selectedIndex = getSelectedIndex();
-        if (selectedIndex == -1) { //Nothing selected
+        if(selectedIndex == -1) { //Nothing selected
             return;
         }
-        if (direction == Direction.UP && selectedIndex > 0) {
+        if(direction == Direction.UP && selectedIndex > 0) {
             Object temp = model.get(selectedIndex - 1);
             model.set(selectedIndex - 1, model.get(selectedIndex));
             model.set(selectedIndex, temp);
             setSelectedIndex(selectedIndex - 1);
         }
-        if (direction == Direction.DOWN && selectedIndex < model.getSize() - 1) {
+        if(direction == Direction.DOWN && selectedIndex < model.getSize() - 1) {
             Object temp = model.get(selectedIndex + 1);
             model.set(selectedIndex + 1, model.get(selectedIndex));
             model.set(selectedIndex, temp);

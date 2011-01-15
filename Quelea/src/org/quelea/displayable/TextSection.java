@@ -1,13 +1,14 @@
 package org.quelea.displayable;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 import org.quelea.Theme;
 import org.quelea.utils.Utils;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * Represents a section of text in a song or passage.
@@ -55,7 +56,7 @@ public class TextSection {
             xml.append("</theme>");
         }
         xml.append("<lyrics>");
-        for (String line : getText()) {
+        for(String line : getText()) {
             xml.append(Utils.escapeXML(line)).append('\n');
         }
         xml.append("</lyrics></section>");
@@ -73,27 +74,27 @@ public class TextSection {
         String[] lyrics = null;
         Theme theme = null;
         boolean capitalise = true;
-        if (attributes != null) {
+        if(attributes != null) {
             Node titleNode = attributes.getNamedItem("title");
-            if (titleNode != null) {
+            if(titleNode != null) {
                 sectionTitle = titleNode.getTextContent();
             }
             Node capitaliseNode = attributes.getNamedItem("capitalise");
-            if (capitaliseNode != null) {
+            if(capitaliseNode != null) {
                 capitalise = Boolean.parseBoolean(capitaliseNode.getTextContent());
             }
         }
         NodeList nodelist = sectionNode.getChildNodes();
-        for (int i = 0; i < nodelist.getLength(); i++) {
+        for(int i = 0; i < nodelist.getLength(); i++) {
             Node node = nodelist.item(i);
-            if (node.getNodeName().equals("theme")) {
+            if(node.getNodeName().equals("theme")) {
                 theme = Theme.parseDBString(node.getTextContent());
             }
-            else if (node.getNodeName().equals("lyrics")) {
+            else if(node.getNodeName().equals("lyrics")) {
                 String[] rawLyrics = node.getTextContent().split("\n");
                 List<String> newLyrics = new ArrayList<String>();
-                for (String line : rawLyrics) {
-                    if (!line.isEmpty()) {
+                for(String line : rawLyrics) {
+                    if(!line.isEmpty()) {
                         newLyrics.add(line);
                     }
                 }
@@ -101,7 +102,7 @@ public class TextSection {
             }
         }
         TextSection ret = new TextSection(sectionTitle, lyrics, capitalise);
-        if (theme != null) {
+        if(theme != null) {
             ret.setTheme(theme);
         }
         return ret;
@@ -141,14 +142,14 @@ public class TextSection {
 
     @Override
     public boolean equals(Object obj) {
-        if (obj == null) {
+        if(obj == null) {
             return false;
         }
-        if (getClass() != obj.getClass()) {
+        if(getClass() != obj.getClass()) {
             return false;
         }
         final TextSection other = (TextSection) obj;
-        if (!Arrays.deepEquals(this.lines, other.lines)) {
+        if(!Arrays.deepEquals(this.lines, other.lines)) {
             return false;
         }
         return true;
@@ -169,17 +170,15 @@ public class TextSection {
     public String toString() {
         StringBuilder ret = new StringBuilder();
         ret.append(title).append('\n');
-        for (String str : lines) {
+        for(String str : lines) {
             ret.append(str).append('\n');
         }
         return ret.toString();
     }
 
     /**
-     * Determine whether the first word of each line should be a capital (if
-     * Quelea allows it.)
-     * @return whether this text section should capitalise the beginning of
-     * every line.
+     * Determine whether the first word of each line should be a capital (if Quelea allows it.)
+     * @return whether this text section should capitalise the beginning of every line.
      */
     public boolean shouldCapitaliseFirst() {
         return capitaliseFirst;

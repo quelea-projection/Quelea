@@ -1,6 +1,6 @@
 package org.quelea.windows.library;
 
-import javax.swing.JPanel;
+import javax.swing.*;
 
 /**
  * The image panel in the library.

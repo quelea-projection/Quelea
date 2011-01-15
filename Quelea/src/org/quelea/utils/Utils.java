@@ -1,27 +1,17 @@
 package org.quelea.utils;
 
-import java.awt.Color;
-import java.awt.Font;
-import java.awt.Graphics;
-import java.awt.GraphicsDevice;
-import java.awt.GraphicsEnvironment;
-import java.awt.Image;
-import java.awt.Rectangle;
+import javax.imageio.ImageIO;
+import javax.swing.*;
+import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Iterator;
+import java.util.*;
 import java.util.List;
-import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.imageio.ImageIO;
-import javax.swing.ImageIcon;
-import javax.swing.JFrame;
 
 /**
  * General utility class containing a bunch of static methods.
@@ -40,7 +30,7 @@ public final class Utils {
 
     /**
      * Determine whether the given frame is completely on the given screen.
-     * @param frame the frame to check.
+     * @param frame      the frame to check.
      * @param monitorNum the monitor number to check.
      * @return true if the frame is totally on the screen, false otherwise.
      */
@@ -52,7 +42,7 @@ public final class Utils {
 
     /**
      * Centre the given frame on the given monitor.
-     * @param frame the frame to centre.
+     * @param frame      the frame to centre.
      * @param monitorNum the monitor number to centre the frame on.
      */
     public static void centreOnMonitor(JFrame frame, int monitorNum) {
@@ -68,15 +58,15 @@ public final class Utils {
 
     /**
      * Remove duplicates in a list whilst maintaining the order.
-     * @param <T> the type of the list.
+     * @param <T>  the type of the list.
      * @param list the list to remove duplicates.
      */
     public static <T> void removeDuplicateWithOrder(List<T> list) {
         Set<T> set = new HashSet<T>();
         List<T> newList = new ArrayList<T>();
-        for (Iterator<T> iter = list.iterator(); iter.hasNext();) {
+        for(Iterator<T> iter = list.iterator(); iter.hasNext();) {
             T element = iter.next();
-            if (set.add(element)) {
+            if(set.add(element)) {
                 newList.add(element);
             }
         }
@@ -90,7 +80,7 @@ public final class Utils {
      * @return the the string with the first letter capitalised.
      */
     public static String capitaliseFirst(String line) {
-        if (line.isEmpty()) {
+        if(line.isEmpty()) {
             return line;
         }
         StringBuilder ret = new StringBuilder(line);
@@ -99,16 +89,15 @@ public final class Utils {
     }
 
     /**
-     * Get an abbreviation from a name based on the first letter of each word
-     * of the name.
+     * Get an abbreviation from a name based on the first letter of each word of the name.
      * @param name the name to use for the abbreviation.
      * @return the abbreviation.
      */
     public static String getAbbreviation(String name) {
         StringBuilder ret = new StringBuilder();
         String[] parts = name.split(" ");
-        for (String str : parts) {
-            if (!str.isEmpty()) {
+        for(String str : parts) {
+            if(!str.isEmpty()) {
                 ret.append(Character.toUpperCase(str.charAt(0)));
             }
         }
@@ -125,12 +114,12 @@ public final class Utils {
     }
 
     /**
-     * Get the textual content from a file as a string, returning the given
-     * error string if a problem occurs retrieving the content.
-     * @param fileName the filename to get the text from.
+     * Get the textual content from a file as a string, returning the given error string if a problem occurs retrieving
+     * the content.
+     * @param fileName  the filename to get the text from.
      * @param errorText the error string to return if things go wrong.
-     * @return hopefully the text content of the file, or the errorText string
-     * if we can't get the text content for some reason.
+     * @return hopefully the text content of the file, or the errorText string if we can't get the text content for some
+     *         reason.
      */
     public static String getTextFromFile(String fileName, String errorText) {
         try {
@@ -138,7 +127,7 @@ public final class Utils {
             try {
                 StringBuilder content = new StringBuilder();
                 String line;
-                while ((line = reader.readLine()) != null) {
+                while((line = reader.readLine()) != null) {
                     content.append(line).append('\n');
                 }
                 return content.toString();
@@ -147,7 +136,7 @@ public final class Utils {
                 reader.close();
             }
         }
-        catch (IOException ex) {
+        catch(IOException ex) {
             LOGGER.log(Level.WARNING, "Couldn't get the contents of " + fileName, ex);
             return errorText;
         }
@@ -156,12 +145,11 @@ public final class Utils {
     /**
      * Get an image icon from the location of a specified file.
      * @param location the location of the image to use.
-     * @return the icon formed from the image, or null if an IOException
-     * occured.
+     * @return the icon formed from the image, or null if an IOException occured.
      */
     public static ImageIcon getImageIcon(String location) {
         Image image = getImage(location);
-        if (image == null) {
+        if(image == null) {
             return null;
         }
         return new ImageIcon(image);
@@ -170,14 +158,13 @@ public final class Utils {
     /**
      * Get an image from the location of a specified file.
      * @param location the location of the image to use.
-     * @return the icon formed from the image, or null if an IOException
-     * occured.
+     * @return the icon formed from the image, or null if an IOException occured.
      */
     public static BufferedImage getImage(String location) {
         try {
             return ImageIO.read(new File(location));
         }
-        catch (IOException ex) {
+        catch(IOException ex) {
             LOGGER.log(Level.WARNING, "Couldn't get image: " + location, ex);
             return null;
         }
@@ -190,7 +177,7 @@ public final class Utils {
     public static String[] getAllFonts() {
         Font[] fonts = GraphicsEnvironment.getLocalGraphicsEnvironment().getAllFonts();
         String[] ret = new String[fonts.length];
-        for (int i = 0; i < fonts.length; i++) {
+        for(int i = 0; i < fonts.length; i++) {
             ret[i] = fonts[i].getName();
         }
         return ret;
@@ -198,8 +185,8 @@ public final class Utils {
 
     /**
      * Get an image filled with the specified colour.
-     * @param color the colour of the image.
-     * @param width the width of the image.
+     * @param color  the colour of the image.
+     * @param width  the width of the image.
      * @param height the height of the image.
      * @return the image.
      */

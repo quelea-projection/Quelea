@@ -1,11 +1,12 @@
 package org.quelea.bible;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
 import org.quelea.utils.Utils;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
+
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * General information about a specified bible.
@@ -50,15 +51,14 @@ public class BibleInfo {
     }
 
     /**
-     * Parse some XML representing this object and return the object it
-     * represents.
+     * Parse some XML representing this object and return the object it represents.
      * @param info the XML node representing this object.
      * @return the object as defined by the XML.
      */
     public static BibleInfo parseXML(Node info) {
         NodeList list = info.getChildNodes();
         BibleInfo ret = new BibleInfo();
-        for(int i=0 ; i<list.getLength() ; i++) {
+        for(int i = 0; i < list.getLength(); i++) {
             Node node = list.item(i);
             if(!node.getNodeName().contains("#")) {
                 ret.putAttribute(node.getNodeName(), node.getTextContent());

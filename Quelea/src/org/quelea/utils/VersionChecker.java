@@ -19,16 +19,14 @@ public class VersionChecker {
     private final String urlStr;
 
     /**
-     * Create a new version checker that checks the specified url for the
-     * version number.
+     * Create a new version checker that checks the specified url for the version number.
      */
     public VersionChecker(String url) {
         this.urlStr = url;
     }
 
     /**
-     * Get the latest version, or null if an error occured and it couldn't be
-     * found.
+     * Get the latest version, or null if an error occured and it couldn't be found.
      * @return the latest version.
      */
     public Version getLatestVersion() {
@@ -42,7 +40,7 @@ public class VersionChecker {
             try {
                 StringBuilder content = new StringBuilder();
                 String line;
-                while ((line = reader.readLine()) != null) {
+                while((line = reader.readLine()) != null) {
                     content.append(line);
                 }
                 return extractVersion(content.toString());
@@ -51,7 +49,7 @@ public class VersionChecker {
                 reader.close();
             }
         }
-        catch (IOException ex) {
+        catch(IOException ex) {
             LOGGER.log(Level.WARNING, "Couldn't get version", ex);
             return null;
         }

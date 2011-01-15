@@ -1,6 +1,6 @@
 package org.quelea.windows.library;
 
-import javax.swing.JPanel;
+import javax.swing.*;
 
 /**
  * The video panel in the library.
@@ -9,5 +9,5 @@ import javax.swing.JPanel;
 public class LibraryVideoPanel extends JPanel {
 
     //TODO: Implement
-    
+
 }

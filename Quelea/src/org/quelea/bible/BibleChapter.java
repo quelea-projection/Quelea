@@ -1,10 +1,11 @@
 package org.quelea.bible;
 
-import java.util.ArrayList;
-import java.util.List;
 import org.quelea.utils.Utils;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * A chapter in the bible.
@@ -25,20 +26,19 @@ public final class BibleChapter {
     }
 
     /**
-     * Parse some XML representing this object and return the object it
-     * represents.
+     * Parse some XML representing this object and return the object it represents.
      * @param info the XML node representing this object.
      * @return the object as defined by the XML.
      */
     public static BibleChapter parseXML(Node node) {
         int num = -1;
-        if(node.getAttributes().getNamedItem("cnumber")!=null) {
+        if(node.getAttributes().getNamedItem("cnumber") != null) {
             num = Integer.parseInt(node.getAttributes().getNamedItem("cnumber").getNodeValue());
         }
         BibleChapter ret = new BibleChapter(num);
         NodeList list = node.getChildNodes();
-        for (int i = 0; i < list.getLength(); i++) {
-            if (list.item(i).getNodeName().equalsIgnoreCase("vers")||
+        for(int i = 0; i < list.getLength(); i++) {
+            if(list.item(i).getNodeName().equalsIgnoreCase("vers") ||
                     list.item(i).getNodeName().equalsIgnoreCase("v")) {
                 ret.addVerse(BibleVerse.parseXML(list.item(i)));
             }
@@ -53,13 +53,13 @@ public final class BibleChapter {
     public String toXML() {
         StringBuilder ret = new StringBuilder();
         ret.append("<chapter");
-        if(num!=-1) {
+        if(num != -1) {
             ret.append(" cnumber=\"");
             ret.append(num);
             ret.append('\"');
         }
         ret.append(">");
-        for (BibleVerse verse : verses) {
+        for(BibleVerse verse : verses) {
             ret.append(Utils.escapeXML(verse.toXML()));
         }
         ret.append("</chapter>");
@@ -93,15 +93,14 @@ public final class BibleChapter {
     public BibleVerse[] getVerses() {
         return verses.toArray(new BibleVerse[verses.size()]);
     }
-    
+
     /**
      * Get a specific verse from this chapter.
      * @param i the verse number to get.
-     * @return the verse at the specified number, or null if it doesn't
-     * exist.
+     * @return the verse at the specified number, or null if it doesn't exist.
      */
     public BibleVerse getVerse(int i) {
-        if (i < verses.size() && i >= 0) {
+        if(i < verses.size() && i >= 0) {
             return verses.get(i);
         }
         else {

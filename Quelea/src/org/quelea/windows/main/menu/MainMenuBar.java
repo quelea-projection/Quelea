@@ -1,7 +1,7 @@
 package org.quelea.windows.main.menu;
 
+import javax.swing.*;
 import java.awt.event.KeyEvent;
-import javax.swing.JMenuBar;
 
 /**
  * The main menu bar that's displayed at the top of the main Quelea window.
@@ -18,10 +18,10 @@ public class MainMenuBar extends JMenuBar {
      * Create a new main menu bar and initialise all the components.
      */
     public MainMenuBar() {
-        add(fileMenu=new FileMenu());
-        add(databaseMenu=new DatabaseMenu());
-        add(toolsMenu=new ToolsMenu());
-        add(helpMenu=new HelpMenu());
+        add(fileMenu = new FileMenu());
+        add(databaseMenu = new DatabaseMenu());
+        add(toolsMenu = new ToolsMenu());
+        add(helpMenu = new HelpMenu());
         addShortcuts();
     }
 

@@ -1,18 +1,14 @@
 package org.quelea.windows.help;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import javax.swing.BoxLayout;
-import javax.swing.JButton;
-import javax.swing.JDialog;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
 import org.quelea.utils.QueleaProperties;
 import org.quelea.utils.Utils;
 
+import javax.swing.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
 /**
- * A dialog giving some information about Quelea.
- * TODO: A nice logo and better information should go here.
+ * A dialog giving some information about Quelea. TODO: A nice logo and better information should go here.
  * @author Michael
  */
 public class AboutDialog extends JDialog {
@@ -50,7 +46,7 @@ public class AboutDialog extends JDialog {
      */
     @Override
     public void setVisible(boolean visible) {
-        if (visible) {
+        if(visible) {
             setLocationRelativeTo(owner);
         }
         super.setVisible(visible);

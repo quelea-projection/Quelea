@@ -20,14 +20,13 @@ public final class BibleVerse {
     }
 
     /**
-     * Parse some XML representing this object and return the object it
-     * represents.
+     * Parse some XML representing this object and return the object it represents.
      * @param info the XML node representing this object.
      * @return the object as defined by the XML.
      */
     public static BibleVerse parseXML(Node node) {
         BibleVerse ret = new BibleVerse();
-        if(node.getAttributes().getNamedItem("vnumber")==null) {
+        if(node.getAttributes().getNamedItem("vnumber") == null) {
             ret.num = Integer.parseInt(node.getAttributes().getNamedItem("n").getNodeValue());
         }
         else {
