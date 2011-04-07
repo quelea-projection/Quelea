@@ -30,7 +30,6 @@ public class LibraryPanel extends JPanel {
         videoPanel = new LibraryVideoPanel();
         tabbedPane.addTab("Video", videoPanel);
 
-        tabbedPane.setEnabledAt(2, false);
         tabbedPane.setEnabledAt(3, false);
         add(tabbedPane);
 
