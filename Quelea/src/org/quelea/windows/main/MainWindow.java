@@ -71,6 +71,7 @@ public class MainWindow extends JFrame {
         setJMenuBar(menubar);
         add(toolbar, BorderLayout.NORTH);
         add(mainpanel);
+        mainpanel.getLibraryPanel().getImagePanel().setPreferredSize(new Dimension(100, 200));
         pack();
     }
 
@@ -81,7 +82,6 @@ public class MainWindow extends JFrame {
             songEntryWindow.resetNewSong();
             songEntryWindow.setVisible(true);
         }
-
     }
 
     /**
