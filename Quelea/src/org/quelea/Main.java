@@ -1,6 +1,8 @@
 package org.quelea;
 
 import com.inet.jortho.SpellChecker;
+import java.awt.GraphicsDevice;
+import java.awt.GraphicsEnvironment;
 import org.pushingpixels.substance.api.skin.SubstanceBusinessLookAndFeel;
 import org.quelea.bible.BibleManager;
 import org.quelea.utils.LoggerUtils;
@@ -10,12 +12,17 @@ import org.quelea.utils.Utils;
 import org.quelea.windows.main.LyricWindow;
 import org.quelea.windows.main.MainWindow;
 
-import javax.swing.*;
-import java.awt.*;
 import java.io.File;
 import java.net.MalformedURLException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.JDialog;
+import javax.swing.JFrame;
+import javax.swing.JOptionPane;
+import javax.swing.SwingUtilities;
+import javax.swing.UIManager;
+import org.pushingpixels.substance.api.skin.SubstanceOfficeBlue2007LookAndFeel;
+import org.pushingpixels.substance.api.skin.SubstanceOfficeSilver2007LookAndFeel;
 
 /**
  * The main class, sets everything in motion...
@@ -117,7 +124,9 @@ public final class Main {
      */
     private static void setLaf() {
         try {
-            UIManager.setLookAndFeel(new SubstanceBusinessLookAndFeel());
+            UIManager.setLookAndFeel(new SubstanceOfficeBlue2007LookAndFeel());
+//            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+//            UIManager.setLookAndFeel("com.sun.java.swing.plaf.windows.WindowsLookAndFeel");
         }
         catch(Exception ex) {
             LOGGER.log(Level.INFO, "Couldn't set the look and feel to substance.", ex);

@@ -3,6 +3,7 @@ package org.quelea.utils;
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
+import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 import java.io.BufferedReader;
 import java.io.File;
@@ -64,9 +65,9 @@ public final class Utils {
     public static <T> void removeDuplicateWithOrder(List<T> list) {
         Set<T> set = new HashSet<T>();
         List<T> newList = new ArrayList<T>();
-        for(Iterator<T> iter = list.iterator(); iter.hasNext();) {
+        for (Iterator<T> iter = list.iterator(); iter.hasNext();) {
             T element = iter.next();
-            if(set.add(element)) {
+            if (set.add(element)) {
                 newList.add(element);
             }
         }
@@ -80,7 +81,7 @@ public final class Utils {
      * @return the the string with the first letter capitalised.
      */
     public static String capitaliseFirst(String line) {
-        if(line.isEmpty()) {
+        if (line.isEmpty()) {
             return line;
         }
         StringBuilder ret = new StringBuilder(line);
@@ -96,8 +97,8 @@ public final class Utils {
     public static String getAbbreviation(String name) {
         StringBuilder ret = new StringBuilder();
         String[] parts = name.split(" ");
-        for(String str : parts) {
-            if(!str.isEmpty()) {
+        for (String str : parts) {
+            if (!str.isEmpty()) {
                 ret.append(Character.toUpperCase(str.charAt(0)));
             }
         }
@@ -127,7 +128,7 @@ public final class Utils {
             try {
                 StringBuilder content = new StringBuilder();
                 String line;
-                while((line = reader.readLine()) != null) {
+                while ((line = reader.readLine()) != null) {
                     content.append(line).append('\n');
                 }
                 return content.toString();
@@ -136,7 +137,7 @@ public final class Utils {
                 reader.close();
             }
         }
-        catch(IOException ex) {
+        catch (IOException ex) {
             LOGGER.log(Level.WARNING, "Couldn't get the contents of " + fileName, ex);
             return errorText;
         }
@@ -148,8 +149,17 @@ public final class Utils {
      * @return the icon formed from the image, or null if an IOException occured.
      */
     public static ImageIcon getImageIcon(String location) {
-        Image image = getImage(location);
-        if(image == null) {
+        return getImageIcon(location, -1, -1);
+    }
+
+    /**
+     * Get an image icon from the location of a specified file.
+     * @param location the location of the image to use.
+     * @return the icon formed from the image, or null if an IOException occured.
+     */
+    public static ImageIcon getImageIcon(String location, int width, int height) {
+        Image image = getImage(location, width, height);
+        if (image == null) {
             return null;
         }
         return new ImageIcon(image);
@@ -161,13 +171,70 @@ public final class Utils {
      * @return the icon formed from the image, or null if an IOException occured.
      */
     public static BufferedImage getImage(String location) {
+        return getImage(location, -1, -1);
+    }
+
+    /**
+     * Get an image from the location of a specified file.
+     * @param location the location of the image to use.
+     * @return the icon formed from the image, or null if an IOException occured.
+     */
+    public static BufferedImage getImage(String location, int width, int height) {
         try {
-            return ImageIO.read(new File(location));
+            BufferedImage image = ImageIO.read(new File(location));
+            if (width > 0 && height > 0) {
+                return resizeImage(image, width, height);
+            }
+            else {
+                return image;
+            }
         }
-        catch(IOException ex) {
+        catch (IOException ex) {
             LOGGER.log(Level.WARNING, "Couldn't get image: " + location, ex);
             return null;
         }
+    }
+
+    /**
+     * Resize a given image to the given width and height.
+     * @param image the image to resize.
+     * @param width the width of the new image.
+     * @param height the height of the new image.
+     * @return the resized image.
+     */
+    public static BufferedImage resizeImage(BufferedImage image, int width, int height) {
+        if (width > 0 && height > 0) {
+            BufferedImage bdest = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
+            Graphics2D g = bdest.createGraphics();
+            AffineTransform at = AffineTransform.getScaleInstance((double) width / image.getWidth(),
+                    (double) height / image.getHeight());
+            g.drawRenderedImage(image, at);
+            return bdest;
+        }
+        else {
+            return image;
+        }
+    }
+
+    public static BufferedImage iconToImage(Icon icon) {
+        BufferedImage ret = new BufferedImage(icon.getIconWidth(), icon.getIconHeight(), BufferedImage.TYPE_INT_RGB);
+        icon.paintIcon(new JLabel(),ret.createGraphics(), 0,0);
+        return ret;
+    }
+
+    /**
+     * Determine whether a file is an image file.
+     * @param file the file to check.
+     * @return true if the file is an image, false otherwise.
+     */
+    public static boolean fileIsImage(File file) {
+        String suffix = file.getName().split("\\.")[file.getName().split("\\.").length - 1].toLowerCase().trim();
+        return (suffix.equals("png")
+                || suffix.equals("bmp")
+                || suffix.equals("tif")
+                || suffix.equals("jpg")
+                || suffix.equals("jpeg")
+                || suffix.equals("gif"));
     }
 
     /**
@@ -177,7 +244,7 @@ public final class Utils {
     public static String[] getAllFonts() {
         Font[] fonts = GraphicsEnvironment.getLocalGraphicsEnvironment().getAllFonts();
         String[] ret = new String[fonts.length];
-        for(int i = 0; i < fonts.length; i++) {
+        for (int i = 0; i < fonts.length; i++) {
             ret[i] = fonts[i].getName();
         }
         return ret;

@@ -14,6 +14,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.quelea.utils.Utils;
 
 /**
  * The colour button where the user selects a colour.
@@ -37,16 +38,7 @@ public class ImageButton extends JButton {
 
             @Override
             public boolean accept(File f) {
-                String suffix = f.getName().split("\\.")[f.getName().split("\\.").length - 1].toLowerCase().trim();
-                if(suffix.equals("png")
-                        || suffix.equals("bmp")
-                        || suffix.equals("tif")
-                        || suffix.equals("jpg")
-                        || suffix.equals("jpeg")
-                        || suffix.equals("gif")) {
-                    return true;
-                }
-                return false;
+                return Utils.fileIsImage(f);
             }
 
             @Override
