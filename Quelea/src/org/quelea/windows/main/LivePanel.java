@@ -14,7 +14,7 @@ import java.awt.event.KeyListener;
  * The panel displaying the live lyrics selection - changes made on this panel are reflected on the live projection.
  * @author Michael
  */
-public class SelectLiveLyricsPanel extends SelectLyricsPanel {
+public class LivePanel extends LivePreviewPanel {
 
     private final JToggleButton black;
     private final JToggleButton clear;
@@ -24,7 +24,7 @@ public class SelectLiveLyricsPanel extends SelectLyricsPanel {
      * Create a new live lyrics panel.
      * @param fullScreenCanvas the full screen canvas that this live window controls.
      */
-    public SelectLiveLyricsPanel() {
+    public LivePanel() {
         JToolBar header = new JToolBar();
         header.setFloatable(false);
         header.add(new JLabel("<html><b>Live</b></html>"));
@@ -70,7 +70,7 @@ public class SelectLiveLyricsPanel extends SelectLyricsPanel {
         header.add(hide);
         add(header, BorderLayout.NORTH);
 
-        getLyricsList().addKeyListener(new KeyListener() {
+        addKeyListener(new KeyListener() {
 
             public void keyTyped(KeyEvent e) {
                 //Nothing needed here

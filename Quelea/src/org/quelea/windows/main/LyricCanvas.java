@@ -37,7 +37,7 @@ public class LyricCanvas extends JPanel {
         text = new String[]{};
         font = new Font("sans-serif", Font.BOLD, 300);
         theme = Theme.DEFAULT_THEME;
-        setMinimumSize(new Dimension(10, 10));
+        
     }
 
     /**
@@ -253,7 +253,7 @@ public class LyricCanvas extends JPanel {
      * Toggle the clearing of this canvas - still leave the background image in place but remove all the text.
      */
     public void toggleClear() {
-        cleared ^= true;
+        cleared ^= true; //invert
         repaint();
     }
 
@@ -270,7 +270,7 @@ public class LyricCanvas extends JPanel {
      * screen.
      */
     public void toggleBlack() {
-        blacked ^= true;
+        blacked ^= true; //invert
         repaint();
     }
 
@@ -301,15 +301,15 @@ public class LyricCanvas extends JPanel {
      * @param width  the width of the component.
      * @param height the height of the component.
      */
-    @Override
-    public void setSize(int width, int height) {
-        final int MAX_OFFSET = 5; //changes less than this will be discarded.
-        int widthDiff = Math.abs(width - getWidth());
-        int heightDiff = Math.abs(height - getHeight());
-        if(widthDiff > MAX_OFFSET || heightDiff > MAX_OFFSET) {
-            super.setSize(width, height);
-        }
-    }
+//    @Override
+//    public void setSize(int width, int height) {
+//        final int MAX_OFFSET = 5; //changes less than this will be discarded.
+//        int widthDiff = Math.abs(width - getWidth());
+//        int heightDiff = Math.abs(height - getHeight());
+//        if(widthDiff > MAX_OFFSET || heightDiff > MAX_OFFSET) {
+//            super.setSize(width, height);
+//        }
+//    }
 
     /**
      * Get the theme currently in use on the canvas.
@@ -353,21 +353,21 @@ public class LyricCanvas extends JPanel {
     /**
      * Fix the aspect ratio of this lyric canvas so that it's always reduced in size to the aspect ratio specified.
      */
-    public void fixAspectRatio() {
-        Dimension currentSize = getSize();
-        double width = currentSize.getWidth();
-        double height = currentSize.getHeight();
-        double estWidth = (height / aspectHeight) * aspectWidth;
-        double estHeight = (width / aspectWidth) * aspectHeight;
-        if(estWidth < width) {
-            super.setSize(new Dimension((int) estWidth, (int) height));
-            font = getDifferentSizeFont(font, (float) estWidth / 16);
-        }
-        else {
-            super.setSize(new Dimension((int) width, (int) estHeight));
-            font = getDifferentSizeFont(font, (float) width / 16);
-        }
-    }
+//    public void fixAspectRatio() {
+//        Dimension currentSize = getSize();
+//        double width = currentSize.getWidth();
+//        double height = currentSize.getHeight();
+//        double estWidth = (height / aspectHeight) * aspectWidth;
+//        double estHeight = (width / aspectWidth) * aspectHeight;
+//        if(estWidth < width) {
+//            super.setSize(new Dimension((int) estWidth, (int) height));
+//            font = getDifferentSizeFont(font, (float) estWidth / 16);
+//        }
+//        else {
+//            super.setSize(new Dimension((int) width, (int) estHeight));
+//            font = getDifferentSizeFont(font, (float) width / 16);
+//        }
+//    }
 
     /**
      * Get a font identical to the one given apart from in size.

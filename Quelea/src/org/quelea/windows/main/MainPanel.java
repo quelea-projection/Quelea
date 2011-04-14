@@ -3,7 +3,6 @@ package org.quelea.windows.main;
 import org.quelea.bible.Bible;
 import org.quelea.displayable.BiblePassage;
 import org.quelea.displayable.Song;
-import org.quelea.displayable.TextSection;
 import org.quelea.windows.library.LibraryPanel;
 
 import javax.swing.*;
@@ -13,10 +12,8 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import java.awt.*;
 import java.awt.event.*;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.quelea.displayable.Displayable;
-import org.quelea.displayable.TextDisplayable;
 import org.quelea.utils.LoggerUtils;
 
 /**
@@ -27,8 +24,8 @@ public class MainPanel extends JPanel {
 
     private final SchedulePanel schedulePanel;
     private final LibraryPanel libraryPanel;
-    private final SelectPreviewLyricsPanel previewLyricsPanel;
-    private final SelectLiveLyricsPanel liveLyricsPanel;
+    private final PreviewPanel previewPanel;
+    private final LivePanel livePanel;
     private static final Logger LOGGER = LoggerUtils.getLogger();
 
     /**
@@ -38,35 +35,36 @@ public class MainPanel extends JPanel {
         setLayout(new BorderLayout());
         schedulePanel = new SchedulePanel();
         libraryPanel = new LibraryPanel();
-        previewLyricsPanel = new SelectPreviewLyricsPanel();
-        liveLyricsPanel = new SelectLiveLyricsPanel();
+        previewPanel = new PreviewPanel();
+        livePanel = new LivePanel();
 
         addKeyListeners();
         addScheduleListeners();
         addScheduleAddListeners();
         addBibleListeners();
 
-        previewLyricsPanel.getLiveButton().addActionListener(new ActionListener() {
+        previewPanel.getLiveButton().addActionListener(new ActionListener() {
 
             public void actionPerformed(ActionEvent e) {
-                DefaultListModel liveModel = liveLyricsPanel.getLyricsList().getModel();
-                DefaultListModel previewModel = previewLyricsPanel.getLyricsList().getModel();
-                liveModel.clear();
-                for (int i = 0; i < previewModel.getSize(); i++) {
-                    liveModel.addElement(previewModel.get(i));
-                }
-                liveLyricsPanel.getLyricsList().setSelectedIndex(previewLyricsPanel.getLyricsList().getSelectedIndex());
-                if (schedulePanel.getScheduleList().getSelectedIndex() < schedulePanel.getScheduleList().getModel().getSize()) {
-                    schedulePanel.getScheduleList().setSelectedIndex(schedulePanel.getScheduleList().getSelectedIndex() + 1);
-                }
-                liveLyricsPanel.getLyricsList().requestFocus();
+//                DefaultListModel liveModel = livePanel.getLyricsList().getModel();
+//                DefaultListModel previewModel = previewPanel.getLyricsList().getModel();
+//                liveModel.clear();
+//                for (int i = 0; i < previewModel.getSize(); i++) {
+//                    liveModel.addElement(previewModel.get(i));
+//                }
+//                livePanel.getLyricsList().setSelectedIndex(previewPanel.getLyricsList().getSelectedIndex());
+//                if (schedulePanel.getScheduleList().getSelectedIndex() < schedulePanel.getScheduleList().getModel().getSize()) {
+//                    schedulePanel.getScheduleList().setSelectedIndex(schedulePanel.getScheduleList().getSelectedIndex() + 1);
+//                }
+                livePanel.setDisplayable(previewPanel.getDisplayable(), previewPanel.getIndex());
+                livePanel.focus();
             }
         });
 
         JSplitPane scheduleAndLibrary = new JSplitPane(JSplitPane.VERTICAL_SPLIT, schedulePanel, libraryPanel);
         scheduleAndLibrary.setResizeWeight(0.8);
         scheduleAndLibrary.setOneTouchExpandable(true);
-        JSplitPane previewAndLive = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, previewLyricsPanel, liveLyricsPanel);
+        JSplitPane previewAndLive = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, previewPanel, livePanel);
         previewAndLive.setResizeWeight(0.5);
         JSplitPane mainSplit = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, scheduleAndLibrary, previewAndLive);
         mainSplit.setResizeWeight(0.2);
@@ -118,14 +116,14 @@ public class MainPanel extends JPanel {
 
             public void keyTyped(KeyEvent e) {
                 if (e.getKeyChar() == ' ') {
-                    previewLyricsPanel.getLiveButton().doClick();
-                    liveLyricsPanel.getLyricsList().ensureIndexIsVisible(liveLyricsPanel.getLyricsList().getSelectedIndex());
+                    previewPanel.getLiveButton().doClick();
+//                    liveLyricsPanel.getLyricsList().ensureIndexIsVisible(liveLyricsPanel.getLyricsList().getSelectedIndex());
                 }
             }
 
             public void keyPressed(KeyEvent e) {
-                if (e.getKeyCode() == KeyEvent.VK_RIGHT && !previewLyricsPanel.getLyricsList().getModel().isEmpty()) {
-                    previewLyricsPanel.getLyricsList().requestFocus();
+                if (e.getKeyCode() == KeyEvent.VK_RIGHT) {
+                    previewPanel.focus();
                 }
             }
 
@@ -134,18 +132,18 @@ public class MainPanel extends JPanel {
             }
         });
 
-        previewLyricsPanel.getLyricsList().addKeyListener(new KeyListener() {
+        previewPanel.addKeyListener(new KeyListener() {
 
             public void keyTyped(KeyEvent e) {
                 if (e.getKeyChar() == ' ') {
-                    previewLyricsPanel.getLiveButton().doClick();
-                    liveLyricsPanel.getLyricsList().ensureIndexIsVisible(liveLyricsPanel.getLyricsList().getSelectedIndex());
+                    previewPanel.getLiveButton().doClick();
+//                    liveLyricsPanel.getLyricsList().ensureIndexIsVisible(liveLyricsPanel.getLyricsList().getSelectedIndex());
                 }
             }
 
             public void keyPressed(KeyEvent e) {
-                if (e.getKeyCode() == KeyEvent.VK_RIGHT && !liveLyricsPanel.getLyricsList().getModel().isEmpty()) {
-                    liveLyricsPanel.getLyricsList().requestFocus();
+                if (e.getKeyCode() == KeyEvent.VK_RIGHT) {
+                    livePanel.focus();
                 }
                 else if (e.getKeyCode() == KeyEvent.VK_LEFT && schedulePanel.getScheduleList().getModel().getSize() > 0) {
                     schedulePanel.getScheduleList().requestFocus();
@@ -156,19 +154,19 @@ public class MainPanel extends JPanel {
                 //Nothing needed here
             }
         });
-
-        liveLyricsPanel.getLyricsList().addKeyListener(new KeyListener() {
+//
+        livePanel.addKeyListener(new KeyListener() {
 
             public void keyTyped(KeyEvent e) {
                 if (e.getKeyChar() == ' ') {
-                    previewLyricsPanel.getLiveButton().doClick();
-                    liveLyricsPanel.getLyricsList().ensureIndexIsVisible(liveLyricsPanel.getLyricsList().getSelectedIndex());
+                    previewPanel.getLiveButton().doClick();
+//                    livePanel.getLyricsList().ensureIndexIsVisible(liveLyricsPanel.getLyricsList().getSelectedIndex());
                 }
             }
 
             public void keyPressed(KeyEvent e) {
-                if (e.getKeyCode() == KeyEvent.VK_LEFT && !previewLyricsPanel.getLyricsList().getModel().isEmpty()) {
-                    previewLyricsPanel.getLyricsList().requestFocus();
+                if (e.getKeyCode() == KeyEvent.VK_LEFT) {
+                    previewPanel.focus();
                 }
             }
 
@@ -214,39 +212,31 @@ public class MainPanel extends JPanel {
      * This method should be called every time the list values are updated or changed.
      */
     private void scheduleListChanged() {
+        if (schedulePanel.getScheduleList().isEmpty()) {
+            livePanel.clear();
+        }
         if (schedulePanel.getScheduleList().getSelectedIndex() == -1) {
-            previewLyricsPanel.getLyricsList().getModel().clear();
+            previewPanel.clear();
             return;
         }
         Displayable newDisplayable = (Displayable) schedulePanel.getScheduleList().getModel().getElementAt(schedulePanel.getScheduleList().getSelectedIndex());
-        if (newDisplayable instanceof TextDisplayable) {
-            TextDisplayable textDisplayable = (TextDisplayable)newDisplayable;
-            DefaultListModel model = previewLyricsPanel.getLyricsList().getModel();
-            model.clear();
-            for (TextSection section : textDisplayable.getSections()) {
-                model.addElement(section);
-            }
-            previewLyricsPanel.getLyricsList().setSelectedIndex(0);
-        }
-        else {
-            LOGGER.log(Level.WARNING, "Unhandled displayable type: {0}", newDisplayable.getClass());
-        }
+        previewPanel.setDisplayable(newDisplayable, 0);
     }
 
     /**
      * Get the panel displaying the selection of the preview lyrics.
      * @return the panel displaying the selection of the preview lyrics.
      */
-    public SelectPreviewLyricsPanel getPreviewLyricsPanel() {
-        return previewLyricsPanel;
+    public PreviewPanel getPreviewLyricsPanel() {
+        return previewPanel;
     }
 
     /**
      * Get the panel displaying the selection of the live lyrics.
      * @return the panel displaying the selection of the live lyrics.
      */
-    public SelectLiveLyricsPanel getLiveLyricsPanel() {
-        return liveLyricsPanel;
+    public LivePanel getLiveLyricsPanel() {
+        return livePanel;
     }
 
     /**

@@ -21,8 +21,6 @@ import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
-import org.pushingpixels.substance.api.skin.SubstanceOfficeBlue2007LookAndFeel;
-import org.pushingpixels.substance.api.skin.SubstanceOfficeSilver2007LookAndFeel;
 
 /**
  * The main class, sets everything in motion...
@@ -96,6 +94,7 @@ public final class Main {
 
         SwingUtilities.invokeLater(new Runnable() {
 
+            @Override
             public void run() {
                 setLaf();
                 if(SongDatabase.get().errorOccurred()) {
@@ -124,7 +123,7 @@ public final class Main {
      */
     private static void setLaf() {
         try {
-            UIManager.setLookAndFeel(new SubstanceOfficeBlue2007LookAndFeel());
+            UIManager.setLookAndFeel(new SubstanceBusinessLookAndFeel());
 //            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
 //            UIManager.setLookAndFeel("com.sun.java.swing.plaf.windows.WindowsLookAndFeel");
         }

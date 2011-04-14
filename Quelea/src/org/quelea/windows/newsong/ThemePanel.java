@@ -221,7 +221,7 @@ public class ThemePanel extends JPanel {
             background = new Background(backgroundColourButton.getColourSelectionWindow().getSelectedColour());
         }
         else if(backgroundTypeSelect.getModel().getSelectedItem().equals("Image")) {
-            background = new Background(backgroundImageLocation.getText());
+            background = new Background(backgroundImageLocation.getText(), null);
         }
         else {
             throw new AssertionError("Bug - " + backgroundTypeSelect.getModel().getSelectedItem() + " is an unknown selection value");

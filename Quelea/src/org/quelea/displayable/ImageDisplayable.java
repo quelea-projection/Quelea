@@ -1,9 +1,12 @@
 package org.quelea.displayable;
 
+import java.awt.image.BufferedImage;
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import javax.imageio.ImageIO;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import org.quelea.utils.Utils;
@@ -18,17 +21,24 @@ public class ImageDisplayable implements Displayable {
     public static final int ICON_WIDTH = 60;
     public static final int ICON_HEIGHT = 60;
     private final File file;
-    private final Icon image;
-    private Icon resizedImage;
+    private final Icon icon;
+    private Icon previewIcon;
+    private BufferedImage originalImage;
 
     /**
      * Create a new image displayable.
      * @param file the file for the displayable.
      * @param image a preview icon for the displayable.
      */
-    public ImageDisplayable(File file, Icon image) {
+    public ImageDisplayable(File file) {
         this.file = file;
-        this.image = image;
+        try {
+            originalImage = ImageIO.read(file);
+        } catch (IOException ex) {
+            originalImage = null;
+            ex.printStackTrace();
+        }
+        icon = new ImageIcon(Utils.resizeImage(originalImage, ICON_WIDTH, ICON_HEIGHT));
     }
 
     /**
@@ -44,7 +54,7 @@ public class ImageDisplayable implements Displayable {
      * @return the displayable image.
      */
     public Icon getImage() {
-        return image;
+        return icon;
     }
 
     /**
@@ -54,8 +64,7 @@ public class ImageDisplayable implements Displayable {
      */
     public static ImageDisplayable parseXML(Node node) {
         File file = new File(node.getTextContent());
-        Icon icon = Utils.getImageIcon(new File("img/", file.getName()).getAbsolutePath(), ImageDisplayable.ICON_WIDTH, ImageDisplayable.ICON_HEIGHT);
-        return new ImageDisplayable(file, icon);
+        return new ImageDisplayable(new File("img/", file.getName()));
     }
 
     /**
@@ -77,10 +86,18 @@ public class ImageDisplayable implements Displayable {
      */
     @Override
     public Icon getPreviewIcon() {
-        if(resizedImage==null) {
-            resizedImage = new ImageIcon(Utils.resizeImage(Utils.iconToImage(image), 30, 30));
+        if (previewIcon == null) {
+            previewIcon = new ImageIcon(Utils.resizeImage(Utils.iconToImage(icon), 30, 30));
         }
-        return resizedImage;
+        return previewIcon;
+    }
+
+    /**
+     * Get the original image in its original size.
+     * @return the original image straight from the file.
+     */
+    public BufferedImage getOriginalImage() {
+        return originalImage;
     }
 
     /**
