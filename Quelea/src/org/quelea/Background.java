@@ -14,6 +14,7 @@ public class Background {
 
     private Color colour;
     private String imageLocation;
+    private BufferedImage originalImage;
 
     /**
      * Create a new background that's a certain colour.
@@ -27,8 +28,9 @@ public class Background {
      * Create a new background that's a certain image.
      * @param imageLocation the location of the background image.
      */
-    public Background(String imageLocation) {
+    public Background(String imageLocation, BufferedImage originalImage) {
         this.imageLocation = imageLocation;
+        this.originalImage = originalImage;
     }
 
     /**
@@ -44,7 +46,10 @@ public class Background {
         g.setColor(Color.BLACK);
         g.fillRect(0, 0, width, height);
         if(colour == null) {
-            g.drawImage(Utils.getImage(getImageFile().getAbsolutePath()), 0, 0, width, height, null);
+            if(originalImage==null) {
+                originalImage = Utils.getImage(getImageFile().getAbsolutePath());
+            }
+            g.drawImage(originalImage, 0, 0, width, height, null);
             return ret;
         }
         else {

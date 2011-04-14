@@ -34,7 +34,7 @@ public class LibrarySongList extends JList implements DatabaseListener {
          */
         @Override
         public Component getListCellRendererComponent(JList list, Object value,
-                                                      int index, boolean isSelected, boolean cellHasFocus) {
+                int index, boolean isSelected, boolean cellHasFocus) {
             Song s = new Song((Song) value) {
 
                 @Override
@@ -45,7 +45,6 @@ public class LibrarySongList extends JList implements DatabaseListener {
             return super.getListCellRendererComponent(list, s, index, isSelected, cellHasFocus);
         }
     }
-
     private final SortedListModel tempModel;
     private final SortedListModel fullModel;
     private final LibraryPopupMenu popupMenu;
@@ -63,7 +62,7 @@ public class LibrarySongList extends JList implements DatabaseListener {
         DragSource.getDefaultDragSource().createDefaultDragGestureRecognizer(this, DnDConstants.ACTION_MOVE, new DragGestureListener() {
 
             public void dragGestureRecognized(DragGestureEvent dge) {
-                if(getSelectedValue() != null) {
+                if (getSelectedValue() != null) {
                     dge.startDrag(DragSource.DefaultCopyDrop, new TransferDisplayable((Displayable) getModel().getElementAt(locationToIndex(dge.getDragOrigin()))));
                 }
             }
@@ -85,11 +84,11 @@ public class LibrarySongList extends JList implements DatabaseListener {
              * mouse is pressed and released for platform-independence.
              */
             private void checkPopup(MouseEvent e) {
-                if(e.isPopupTrigger()) {
+                if (e.isPopupTrigger()) {
                     int index = locationToIndex(e.getPoint());
                     Rectangle Rect = getCellBounds(index, index);
                     index = Rect.contains(e.getPoint().x, e.getPoint().y) ? index : -1;
-                    if(index != -1) {
+                    if (index != -1) {
                         setSelectedIndex(index);
                         popupMenu.show(LibrarySongList.this, e.getX(), e.getY());
                     }
@@ -104,14 +103,17 @@ public class LibrarySongList extends JList implements DatabaseListener {
      * Filter the results in this list by a specific search term.
      * @param search the search term to use.
      */
-    public void filter(String search) {
+    public void filter(String search, boolean beep) {
         search = search.toLowerCase();
         tempModel.clear();
-        for(int i = 0; i < fullModel.getSize(); i++) {
+        for (int i = 0; i < fullModel.getSize(); i++) {
             Song s = (Song) fullModel.getElementAt(i);
-            if(s.search(search)) {
+            if (s.search(search)) {
                 tempModel.add(s);
             }
+        }
+        if (beep && tempModel.getSize() == 0) {
+            Toolkit.getDefaultToolkit().beep();
         }
         setModel(tempModel);
     }
@@ -132,12 +134,12 @@ public class LibrarySongList extends JList implements DatabaseListener {
     @Override
     public String getToolTipText(MouseEvent evt) {
         int index = locationToIndex(evt.getPoint());
-        if(index < 0) {
+        if (index < 0) {
             return null;
         }
         Song song = (Song) getModel().getElementAt(index);
         TextSection[] sections = song.getSections();
-        if(sections.length > 0) {
+        if (sections.length > 0) {
             return sections[0].getText()[0] + "...";
         }
         return null;
@@ -148,7 +150,7 @@ public class LibrarySongList extends JList implements DatabaseListener {
      */
     public final void update() {
         fullModel.clear();
-        for(Song song : SongDatabase.get().getSongs()) {
+        for (Song song : SongDatabase.get().getSongs()) {
             fullModel.add(song);
         }
     }

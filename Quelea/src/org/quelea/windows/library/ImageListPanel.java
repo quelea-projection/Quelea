@@ -80,7 +80,7 @@ public class ImageListPanel extends JPanel {
         File[] files = new File(dir).listFiles();
         for (File file : files) {
             if (Utils.fileIsImage(file)) {
-                model.addElement(new ImageDisplayable(file, Utils.getImageIcon(file.getAbsolutePath(), ImageDisplayable.ICON_WIDTH, ImageDisplayable.ICON_HEIGHT)));
+                model.addElement(new ImageDisplayable(file));
             }
         }
     }

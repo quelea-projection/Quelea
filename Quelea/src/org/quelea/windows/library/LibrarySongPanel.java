@@ -111,7 +111,7 @@ public class LibrarySongPanel extends JPanel {
                 else {
                     searchCancelButton.setEnabled(true);
                 }
-                songList.filter(searchBox.getText());
+                songList.filter(searchBox.getText(), true);
             }
         });
         northPanel.add(searchBox);

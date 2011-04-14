@@ -9,29 +9,30 @@ import javax.swing.event.ListDataListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import java.awt.*;
-import java.util.HashSet;
-import java.util.Set;
+import java.awt.event.KeyListener;
+import org.quelea.displayable.TextDisplayable;
 
 /**
  * The panel where the lyrics for different songs can be selected.
  * @author Michael
  */
-public abstract class SelectLyricsPanel extends JPanel {
+public class SelectLyricsPanel extends ContainedPanel {
 
     private final SelectLyricsList lyricsList;
-    private final Set<LyricCanvas> canvases = new HashSet<LyricCanvas>();
-    private final Set<LyricWindow> windows = new HashSet<LyricWindow>();
+    private final LivePreviewPanel containerPanel;
+    private final LyricCanvas previewCanvas;
 
     /**
      * Create a new lyrics panel.
      */
-    public SelectLyricsPanel() {
+    public SelectLyricsPanel(LivePreviewPanel containerPanel) {
+        this.containerPanel = containerPanel;
         setPreferredSize(new Dimension(300, 600));
         setLayout(new BorderLayout());
         JSplitPane splitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT);
         splitPane.setResizeWeight(0.6);
         lyricsList = new SelectLyricsList(new DefaultListModel());
-        LyricCanvas previewCanvas = new LyricCanvas(4, 3);
+        previewCanvas = new LyricCanvas(4, 3);
         splitPane.add(new JScrollPane(lyricsList) {
 
             {
@@ -42,89 +43,74 @@ public abstract class SelectLyricsPanel extends JPanel {
         splitPane.setOneTouchExpandable(true);
         splitPane.add(previewCanvas);
         add(splitPane, BorderLayout.CENTER);
-        registerLyricCanvas(previewCanvas);
-
-    }
-
-    /**
-     * Get the underlying lyrics list in this panel.
-     * @return the lyrics list.
-     */
-    public SelectLyricsList getLyricsList() {
-        return lyricsList;
-    }
-
-    /**
-     * Register a lyric canvas with this lyrics panel.
-     * @param canvas the canvas to register.
-     */
-    public final void registerLyricCanvas(final LyricCanvas canvas) {
-        if(canvas == null) {
-            return;
-        }
-        getLyricsList().addListSelectionListener(new ListSelectionListener() {
+        containerPanel.registerLyricCanvas(previewCanvas);
+        lyricsList.addListSelectionListener(new ListSelectionListener() {
 
             public void valueChanged(ListSelectionEvent e) {
-                updateCanvas(canvas);
+                updateCanvases();
             }
         });
-        getLyricsList().getModel().addListDataListener(new ListDataListener() {
+        lyricsList.getModel().addListDataListener(new ListDataListener() {
 
             public void intervalAdded(ListDataEvent e) {
-                updateCanvas(canvas);
+                updateCanvases();
             }
 
             public void intervalRemoved(ListDataEvent e) {
-                updateCanvas(canvas);
+                updateCanvases();
             }
 
             public void contentsChanged(ListDataEvent e) {
-                updateCanvas(canvas);
+                updateCanvases();
             }
         });
-        canvases.add(canvas);
+    }
+
+    public void showDisplayable(TextDisplayable displayable, int index) {
+        clear();
+        for (TextSection section : displayable.getSections()) {
+            lyricsList.getModel().addElement(section);
+        }
+        lyricsList.setSelectedIndex(index);
+        lyricsList.ensureIndexIsVisible(index);
+    }
+
+    public int getIndex() {
+        return lyricsList.getSelectedIndex();
+    }
+
+    @Override
+    public void clear() {
+        lyricsList.getModel().clear();
+        updateCanvases();
+    }
+
+    @Override
+    public void focus() {
+        lyricsList.requestFocus();
+    }
+
+    @Override
+    public void addKeyListener(KeyListener l) {
+        super.addKeyListener(l);
+        lyricsList.addKeyListener(l);
     }
 
     /**
      * Called to update the contents of the canvases when the list selection changes.
      */
-    private void updateCanvas(final LyricCanvas canvas) {
-        int selectedIndex = getLyricsList().getSelectedIndex();
-        if(selectedIndex == -1 || selectedIndex >= getLyricsList().getModel().getSize()) {
-            canvas.setTheme(null);
-            canvas.setText(null);
-            return;
+    private void updateCanvases() {
+        int selectedIndex = lyricsList.getSelectedIndex();
+        for (LyricCanvas canvas : containerPanel.getCanvases()) {
+            if (selectedIndex == -1 || selectedIndex >= lyricsList.getModel().getSize()) {
+                canvas.setTheme(null);
+                canvas.setText(null);
+                continue;
+            }
+            TextSection currentSection = (TextSection) lyricsList.getModel().getElementAt(selectedIndex);
+            canvas.setTheme(currentSection.getTheme());
+            canvas.setCapitaliseFirst(currentSection.shouldCapitaliseFirst());
+            canvas.setText(currentSection.getText());
         }
-        TextSection currentSection = (TextSection) getLyricsList().getModel().getElementAt(selectedIndex);
-        canvas.setTheme(currentSection.getTheme());
-        canvas.setCapitaliseFirst(currentSection.shouldCapitaliseFirst());
-        canvas.setText(currentSection.getText());
-    }
-
-    /**
-     * Register a lyric window with this lyrics panel.
-     * @param window the window to register.
-     */
-    public final void registerLyricWindow(final LyricWindow window) {
-        if(window == null) {
-            return;
-        }
-        windows.add(window);
-    }
-
-    /**
-     * Get the canvases registered to this panel.
-     * @return the canvases.
-     */
-    public Set<LyricCanvas> getCanvases() {
-        return canvases;
-    }
-
-    /**
-     * Get the windows registered to this panel.
-     * @return the windows.
-     */
-    public Set<LyricWindow> getWindows() {
-        return windows;
     }
 }
