@@ -3,22 +3,21 @@ package org.quelea.windows.main;
 import org.quelea.utils.Utils;
 
 import javax.swing.*;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
 import java.awt.*;
+import org.quelea.displayable.Displayable;
 
 /**
  * The panel displaying the preview lyrics selection - this is viewed before displaying the actual lyrics on the
  * projector.
  */
-public class SelectPreviewLyricsPanel extends SelectLyricsPanel {
+public class PreviewPanel extends LivePreviewPanel {
 
     private final JButton liveButton;
 
     /**
      * Create a new preview lyrics panel.
      */
-    public SelectPreviewLyricsPanel() {
+    public PreviewPanel() {
         JToolBar header = new JToolBar();
         header.setFloatable(false);
         header.add(new JLabel("<html><b>Preview</b></html>"));
@@ -28,26 +27,28 @@ public class SelectPreviewLyricsPanel extends SelectLyricsPanel {
         liveButton.setRequestFocusEnabled(false);
         header.add(liveButton);
         liveButton.setEnabled(false);
-        addListeners();
         add(header, BorderLayout.NORTH);
     }
 
     /**
-     * Add the listeners required for this panel.
+     * Set the given displayable to be shown on the panel.
+     * @param d the displayable to show.
+     * @param index an index that may be used or ignored depending on the
+     * displayable.
      */
-    private void addListeners() {
+    @Override
+    public void setDisplayable(Displayable d, int index) {
+        super.setDisplayable(d, index);
+        liveButton.setEnabled(true);
+    }
 
-        getLyricsList().addListSelectionListener(new ListSelectionListener() {
-
-            public void valueChanged(ListSelectionEvent e) {
-                if(getLyricsList().getModel().isEmpty()) {
-                    liveButton.setEnabled(false);
-                }
-                else {
-                    liveButton.setEnabled(true);
-                }
-            }
-        });
+    /**
+     * Clear the preview panel.
+     */
+    @Override
+    public void clear() {
+        super.clear();
+        liveButton.setEnabled(false);
     }
 
     /**

@@ -22,8 +22,7 @@ public final class LoggerUtils {
         try {
             FILE_HANDLER = new FileHandler("quelea-debug.txt");
             FILE_HANDLER.setFormatter(new SimpleFormatter());
-        }
-        catch(IOException ex) {
+        } catch (IOException ex) {
             //Can't really do a lot here
         }
     }
@@ -40,7 +39,15 @@ public final class LoggerUtils {
      * @return a logger that uses the called class as its name.
      */
     public static Logger getLogger() {
-        final Logger logger = Logger.getLogger(new Throwable().getStackTrace()[1].getClassName());
+        StackTraceElement[] ele = new Throwable().getStackTrace();
+        String name;
+        if (ele==null || ele[1]==null || ele[1].getClassName() == null) {
+            name = "DEFAULT";
+        }
+        else {
+            name = ele[1].getClassName();
+        }
+        final Logger logger = Logger.getLogger(name);
         logger.setLevel(DEFAULT_LEVEL);
         logger.addHandler(FILE_HANDLER);
         return logger;

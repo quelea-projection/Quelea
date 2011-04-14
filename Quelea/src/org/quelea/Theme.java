@@ -154,7 +154,7 @@ public class Theme {
         Font font = new Font(fontname, fontstyle, 72);
         Background background;
         if(backgroundcolour.isEmpty()) {
-            background = new Background(backgroundimage);
+            background = new Background(backgroundimage, null);
         }
         else {
             background = new Background(Utils.parseColour(backgroundcolour));
