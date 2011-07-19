@@ -1,6 +1,7 @@
 package org.quelea.windows.main;
 
 import java.awt.BorderLayout;
+import java.awt.Canvas;
 import java.awt.CardLayout;
 import java.awt.Component;
 import java.awt.event.KeyListener;
@@ -10,6 +11,7 @@ import javax.swing.JPanel;
 import org.quelea.displayable.Displayable;
 import org.quelea.displayable.ImageDisplayable;
 import org.quelea.displayable.TextDisplayable;
+import org.quelea.displayable.VideoDisplayable;
 
 /**
  * The common superclass of the live / preview panels used for selecting the
@@ -25,7 +27,10 @@ public abstract class LivePreviewPanel extends JPanel {
     private static final String LYRICS_LABEL = "LYRICS";
     private SelectLyricsPanel lyricsPanel = new SelectLyricsPanel(this);
     private static final String IMAGE_LABEL = "IMAGE";
+    private static final String VIDEO_LABEL = "VIDEO";
+    private String currentLabel;
     private ImagePanel picturePanel = new ImagePanel(this);
+    private VideoPanel videoPanel = new VideoPanel();
     private final Set<ContainedPanel> containedSet = new HashSet<ContainedPanel>() {
 
         {
@@ -39,6 +44,7 @@ public abstract class LivePreviewPanel extends JPanel {
         add(cardPanel, BorderLayout.CENTER);
         cardPanel.add(lyricsPanel, LYRICS_LABEL);
         cardPanel.add(picturePanel, IMAGE_LABEL);
+        cardPanel.add(videoPanel, VIDEO_LABEL);
         ((CardLayout) cardPanel.getLayout()).show(cardPanel, LYRICS_LABEL);
     }
 
@@ -70,13 +76,30 @@ public abstract class LivePreviewPanel extends JPanel {
 
     public void setDisplayable(Displayable d, int index) {
         this.displayable = d;
+        if(VIDEO_LABEL.equals(currentLabel)) {
+            stopVideo();
+        }
         if (d instanceof TextDisplayable) {
             lyricsPanel.showDisplayable((TextDisplayable) d, index);
             ((CardLayout) cardPanel.getLayout()).show(cardPanel, LYRICS_LABEL);
+            currentLabel = LYRICS_LABEL;
         } else if (d instanceof ImageDisplayable) {
             picturePanel.showDisplayable((ImageDisplayable) d);
             ((CardLayout) cardPanel.getLayout()).show(cardPanel, IMAGE_LABEL);
+            currentLabel = IMAGE_LABEL;
         }
+        else if (d instanceof VideoDisplayable) {
+            videoPanel.showDisplayable((VideoDisplayable) d);
+            for(LyricCanvas lc : videoPanel.getVideoControlPanel().getRegisteredCanvases()) {
+                lc.setText(new String[]{});
+            }
+            ((CardLayout) cardPanel.getLayout()).show(cardPanel, VIDEO_LABEL);
+            currentLabel = VIDEO_LABEL;
+        }
+    }
+
+    public void stopVideo() {
+        videoPanel.getVideoControlPanel().stopVideo();
     }
 
     /**
@@ -108,6 +131,10 @@ public abstract class LivePreviewPanel extends JPanel {
             return;
         }
         windows.add(window);
+    }
+
+    public final void registerVideoCanvas(final LyricCanvas canvas) {
+        videoPanel.getVideoControlPanel().registerCanvas(canvas);
     }
 
     /**
