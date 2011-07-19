@@ -65,7 +65,7 @@
         <!--<tarfileset file="quelea.desktop" prefix="usr/share/applications" />-->
         <!--<tarfileset dir="${dist.jar.dir}" prefix="usr/share/quelea" excludes="standalone/"/>-->
         <!--</deb>-->
-        <move file="${dist.jar.dir}/standalone/quelea_${quelea.version}-1_all.deb" tofile="${DebInstaller}"/>
+        <!--<move file="${dist.jar.dir}/standalone/quelea_${quelea.version}-1_all.deb" tofile="${DebInstaller}"/>-->
         <delete file="quelea.desktop"/>
         <izpack input="${basedir}/izpack/config.xml" output="${CPInstaller}" basedir="${dist.jar.dir}"/>
         <launch4j jar="${CPInstaller}" configFile="launch4j/config.xml" outfile="${WindowsInstaller}"/>
