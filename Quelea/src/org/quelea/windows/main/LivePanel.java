@@ -34,6 +34,7 @@ public class LivePanel extends LivePreviewPanel {
         black.setRequestFocusEnabled(false);
         black.addActionListener(new ActionListener() {
 
+            @Override
             public void actionPerformed(ActionEvent e) {
                 for(LyricCanvas canvas : getCanvases()) {
                     canvas.toggleBlack();
@@ -46,6 +47,7 @@ public class LivePanel extends LivePreviewPanel {
         clear.setRequestFocusEnabled(false);
         clear.addActionListener(new ActionListener() {
 
+            @Override
             public void actionPerformed(ActionEvent e) {
                 for(LyricCanvas canvas : getCanvases()) {
                     canvas.toggleClear();
@@ -58,6 +60,7 @@ public class LivePanel extends LivePreviewPanel {
         hide.setRequestFocusEnabled(false);
         hide.addActionListener(new ActionListener() {
 
+            @Override
             public void actionPerformed(ActionEvent e) {
                 if(QueleaProperties.get().getProjectorScreen() == -1) {
                     return;
@@ -72,10 +75,12 @@ public class LivePanel extends LivePreviewPanel {
 
         addKeyListener(new KeyListener() {
 
+            @Override
             public void keyTyped(KeyEvent e) {
                 //Nothing needed here
             }
 
+            @Override
             public void keyPressed(KeyEvent e) {
                 if(e.getKeyCode() == KeyEvent.VK_F1) {
                     black.doClick();
@@ -88,6 +93,7 @@ public class LivePanel extends LivePreviewPanel {
                 }
             }
 
+            @Override
             public void keyReleased(KeyEvent e) {
                 //Nothing needed here
             }

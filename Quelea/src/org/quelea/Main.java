@@ -21,6 +21,10 @@ import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
+import org.quelea.displayable.VideoDisplayable;
+import uk.co.caprica.vlcj.player.MediaPlayerEventListener;
+import uk.co.caprica.vlcj.player.MediaPlayerFactory;
+import uk.co.caprica.vlcj.player.direct.DirectMediaPlayer;
 
 /**
  * The main class, sets everything in motion...
@@ -110,12 +114,16 @@ public final class Main {
 
                 new UpdateChecker(mainWindow).checkUpdate(false, false, false);
                 showWarning(gds.length);
-                mainWindow.getMainPanel().getLiveLyricsPanel().registerLyricCanvas(fullScreenWindow.getCanvas());
-                mainWindow.getMainPanel().getLiveLyricsPanel().registerLyricWindow(fullScreenWindow);
+                mainWindow.getMainPanel().getLivePanel().registerLyricCanvas(fullScreenWindow.getCanvas());
+                mainWindow.getMainPanel().getLivePanel().registerLyricWindow(fullScreenWindow);
+                mainWindow.getMainPanel().getLivePanel().registerVideoCanvas(fullScreenWindow.getCanvas());
                 fullScreenWindow.setVisible(!hidden);
+
+                Schedule schedule = new Schedule();
+                schedule.add(new VideoDisplayable(new File("F:\\Videos\\Inception\\Inception.mkv")));
+                mainWindow.getMainPanel().getSchedulePanel().getScheduleList().setSchedule(schedule);
             }
         });
-
     }
 
     /**
