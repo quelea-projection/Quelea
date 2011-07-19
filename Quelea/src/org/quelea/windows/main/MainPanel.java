@@ -56,6 +56,7 @@ public class MainPanel extends JPanel {
 //                if (schedulePanel.getScheduleList().getSelectedIndex() < schedulePanel.getScheduleList().getModel().getSize()) {
 //                    schedulePanel.getScheduleList().setSelectedIndex(schedulePanel.getScheduleList().getSelectedIndex() + 1);
 //                }
+                previewPanel.stopVideo();
                 livePanel.setDisplayable(previewPanel.getDisplayable(), previewPanel.getIndex());
                 livePanel.focus();
             }
@@ -227,7 +228,7 @@ public class MainPanel extends JPanel {
      * Get the panel displaying the selection of the preview lyrics.
      * @return the panel displaying the selection of the preview lyrics.
      */
-    public PreviewPanel getPreviewLyricsPanel() {
+    public PreviewPanel getPreviewPanel() {
         return previewPanel;
     }
 
@@ -235,7 +236,7 @@ public class MainPanel extends JPanel {
      * Get the panel displaying the selection of the live lyrics.
      * @return the panel displaying the selection of the live lyrics.
      */
-    public LivePanel getLiveLyricsPanel() {
+    public LivePanel getLivePanel() {
         return livePanel;
     }
 
