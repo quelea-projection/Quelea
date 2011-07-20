@@ -1,5 +1,6 @@
 package org.quelea.video;
 
+import com.sun.jna.NativeLibrary;
 import com.sun.jna.Pointer;
 import java.awt.Canvas;
 import java.io.BufferedReader;
@@ -22,12 +23,12 @@ import uk.co.caprica.vlcj.runtime.RuntimeUtil;
  *
  * @author Michael
  */
-public class Class2 {
+public class OutOfProcessPlayer {
 
     private ServerSocket serverSocket;
     private Socket clientSocket;
 
-    public Class2(final int port, final long canvasId) throws Exception {
+    public OutOfProcessPlayer(final int port, final long canvasId) throws Exception {
         try {
             serverSocket = new ServerSocket(port);
         }
@@ -110,12 +111,15 @@ public class Class2 {
     }
 
     public static void main(String[] args) {
+        File nativeDir = new File("lib/native");
+        NativeLibrary.addSearchPath("libvlc", nativeDir.getAbsolutePath());
+        NativeLibrary.addSearchPath("vlc", nativeDir.getAbsolutePath());
         PrintStream ps = null;
         try {
             ps = new PrintStream(new File("C:\\Users\\Michael\\Desktop\\log.txt"));
             System.setErr(ps);
             System.err.println(args[0]);
-            new Class2(Integer.parseInt(args[0]), Integer.parseInt(args[1]));
+            new OutOfProcessPlayer(Integer.parseInt(args[0]), Integer.parseInt(args[1]));
         }
         catch (Exception ex) {
             ex.printStackTrace();
