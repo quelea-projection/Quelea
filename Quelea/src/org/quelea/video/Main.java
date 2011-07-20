@@ -28,7 +28,7 @@ public class Main {
         String classpath = System.getProperty("java.class.path");
         String path = System.getProperty("java.home")
                 + separator + "bin" + separator + "java";
-        ProcessBuilder processBuilder = new ProcessBuilder(path, "-cp", classpath, "-Djna.library.path=" + System.getProperty("jna.library.path"), Class2.class.getName(), Integer.toString(port), Long.toString(memory));
+        ProcessBuilder processBuilder = new ProcessBuilder(path, "-cp", classpath, OutOfProcessPlayer.class.getName(), Integer.toString(port), Long.toString(memory));
         processBuilder.start();
         write();
     }
