@@ -6,6 +6,10 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ComponentEvent;
+import java.awt.event.ComponentListener;
+import java.awt.event.HierarchyEvent;
+import java.awt.event.HierarchyListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
@@ -13,7 +17,6 @@ import java.util.List;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
-import java.util.logging.Logger;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -22,14 +25,8 @@ import javax.swing.JSlider;
 import javax.swing.SwingUtilities;
 import org.pushingpixels.substance.internal.ui.SubstanceSliderUI;
 import org.quelea.utils.Utils;
-import uk.co.caprica.vlcj.binding.LibVlc;
-import uk.co.caprica.vlcj.binding.internal.libvlc_instance_t;
-import uk.co.caprica.vlcj.player.MediaPlayerFactory;
-import uk.co.caprica.vlcj.player.embedded.EmbeddedMediaPlayer;
-import uk.co.caprica.vlcj.player.embedded.linux.LinuxEmbeddedMediaPlayer;
-import uk.co.caprica.vlcj.player.embedded.mac.MacEmbeddedMediaPlayer;
-import uk.co.caprica.vlcj.player.embedded.windows.WindowsEmbeddedMediaPlayer;
-import uk.co.caprica.vlcj.runtime.RuntimeUtil;
+import org.quelea.video.RemotePlayer;
+import org.quelea.video.RemotePlayerFactory;
 
 /**
  *
@@ -43,12 +40,15 @@ public class VideoControlPanel extends JPanel {
     private JButton mute;
     private JSlider positionSlider;
     private Canvas videoArea;
-    private List<EmbeddedMediaPlayer> mediaPlayers;
+    private List<RemotePlayer> mediaPlayers;
     private List<LyricCanvas> registeredCanvases;
     private ScheduledExecutorService executorService;
     private boolean pauseCheck;
+    private String videoPath;
 
     public VideoControlPanel() {
+
+        executorService = Executors.newSingleThreadScheduledExecutor();
         play = new JButton(Utils.getImageIcon("icons/play.png"));
         play.addActionListener(new ActionListener() {
 
@@ -88,7 +88,7 @@ public class VideoControlPanel extends JPanel {
 
             @Override
             public void mousePressed(MouseEvent e) {
-                for (EmbeddedMediaPlayer mediaPlayer : mediaPlayers) {
+                for (RemotePlayer mediaPlayer : mediaPlayers) {
                     if (mediaPlayer.isPlaying()) {
                         mediaPlayer.pause();
                         pauseCheck = false;
@@ -101,7 +101,7 @@ public class VideoControlPanel extends JPanel {
 
             @Override
             public void mouseReleased(MouseEvent e) {
-                for (EmbeddedMediaPlayer mediaPlayer : mediaPlayers) {
+                for (RemotePlayer mediaPlayer : mediaPlayers) {
                     mediaPlayer.setTime((long) ((positionSlider.getValue() / (double) 1000) * mediaPlayer.getLength()));
                     if (!pauseCheck) {
                         mediaPlayer.play();
@@ -135,16 +135,11 @@ public class VideoControlPanel extends JPanel {
         videoArea = new Canvas();
         videoArea.setBackground(Color.BLACK);
         videoArea.setMinimumSize(new Dimension(20, 20));
-        MediaPlayerFactory factory = new MediaPlayerFactory(new String[]{"--no-video-title"});
-        EmbeddedMediaPlayer mediaPlayer = factory.newMediaPlayer(null);
-        factory.release();
-        mediaPlayer.setVideoSurface(videoArea);
-        mediaPlayers = new ArrayList<EmbeddedMediaPlayer>();
-        mediaPlayers.add(mediaPlayer);
-        registeredCanvases = new ArrayList<LyricCanvas>();
-
+        videoArea.setPreferredSize(new Dimension(100, 100));
         setLayout(new BorderLayout());
         add(videoArea, BorderLayout.CENTER);
+        registeredCanvases = new ArrayList<LyricCanvas>();
+
         JPanel controlPanel = new JPanel();
         controlPanel.setLayout(new BorderLayout());
         JPanel sliderPanel = new JPanel();
@@ -159,15 +154,47 @@ public class VideoControlPanel extends JPanel {
         buttonPanel.add(mute);
         controlPanel.add(buttonPanel, BorderLayout.NORTH);
         add(controlPanel, BorderLayout.NORTH);
+        mediaPlayers = new ArrayList<RemotePlayer>();
+        videoArea.addHierarchyListener(new HierarchyListener() {
+
+            @Override
+            public void hierarchyChanged(HierarchyEvent e) {
+                if ((e.getChangeFlags() & HierarchyEvent.SHOWING_CHANGED) > 0 && videoArea.isShowing()) {
+                    RemotePlayer player = RemotePlayerFactory.getRemotePlayer(videoArea);
+                    mediaPlayers.add(0, player);
+                    if (videoPath != null) {
+                        player.load(videoPath);
+                    }
+                    videoArea.removeHierarchyListener(this);
+                }
+            }
+        });
     }
 
-    public void registerCanvas(LyricCanvas canvas) {
+    public void registerCanvas(final LyricCanvas canvas) {
         registeredCanvases.add(canvas);
-        mediaPlayers.get(0).setVideoSurface(canvas);
-//        MediaPlayerFactory factory = new MediaPlayerFactory(new String[] {"--no-video-title"});
-//        EmbeddedMediaPlayer mediaPlayer = factory.newMediaPlayer(null);
-//        mediaPlayer.setVideoSurface(videoArea);
-//        mediaPlayers.add(mediaPlayer);
+        if (!canvas.isShowing()) {
+            canvas.addHierarchyListener(new HierarchyListener() {
+
+                @Override
+                public void hierarchyChanged(HierarchyEvent e) {
+                    if ((e.getChangeFlags() & HierarchyEvent.SHOWING_CHANGED) > 0 && canvas.isShowing()) {
+                        RemotePlayer player = RemotePlayerFactory.getRemotePlayer(canvas);
+                        player.setMute(true);
+                        mediaPlayers.add(player);
+                        if (videoPath != null) {
+                            player.load(videoPath);
+                        }
+                        canvas.removeHierarchyListener(this);
+                    }
+                }
+            });
+        }
+        else {
+            RemotePlayer player = RemotePlayerFactory.getRemotePlayer(canvas);
+            player.setMute(true);
+            mediaPlayers.add(player);
+        }
     }
 
     public List<LyricCanvas> getRegisteredCanvases() {
@@ -175,15 +202,18 @@ public class VideoControlPanel extends JPanel {
     }
 
     public void loadVideo(String videoPath) {
-        for (EmbeddedMediaPlayer mediaPlayer : mediaPlayers) {
-            mediaPlayer.prepareMedia(videoPath);
+        this.videoPath = videoPath;
+        for (RemotePlayer mediaPlayer : mediaPlayers) {
+            mediaPlayer.load(videoPath);
         }
-        executorService = Executors.newSingleThreadScheduledExecutor();
     }
 
     public void playVideo() {
-        for(int i=0 ; i<mediaPlayers.size() ; i++) {
-            final EmbeddedMediaPlayer mediaPlayer = mediaPlayers.get(i);
+        for (int i = 0; i < mediaPlayers.size(); i++) {
+            final RemotePlayer mediaPlayer = mediaPlayers.get(i);
+            if(i>0) {
+                mediaPlayer.setMute(true);
+            }
             mediaPlayer.play();
             executorService.scheduleAtFixedRate(new Runnable() {
 
@@ -204,20 +234,28 @@ public class VideoControlPanel extends JPanel {
         }
     }
 
+    public long getTime() {
+        return mediaPlayers.get(0).getTime();
+    }
+
+    public void setTime(long time) {
+        mediaPlayers.get(0).setTime(time);
+    }
+
     public void pauseVideo() {
-        for (EmbeddedMediaPlayer mediaPlayer : mediaPlayers) {
+        for (RemotePlayer mediaPlayer : mediaPlayers) {
             mediaPlayer.pause();
         }
     }
 
     public void stopVideo() {
-        for (EmbeddedMediaPlayer mediaPlayer : mediaPlayers) {
+        for (RemotePlayer mediaPlayer : mediaPlayers) {
             mediaPlayer.stop();
         }
     }
 
     public void setMute(boolean muteState) {
-        mediaPlayers.get(0).mute(muteState);
+        mediaPlayers.get(0).setMute(muteState);
         if (getMute()) {
             mute.setIcon(Utils.getImageIcon("icons/unmute.png"));
         }
@@ -227,12 +265,12 @@ public class VideoControlPanel extends JPanel {
     }
 
     public boolean getMute() {
-        return mediaPlayers.get(0).isMute();
+        return mediaPlayers.get(0).getMute();
     }
 
     public void close() {
-        for (EmbeddedMediaPlayer mediaPlayer : mediaPlayers) {
-            mediaPlayer.release();
+        for (RemotePlayer mediaPlayer : mediaPlayers) {
+            mediaPlayer.close();
         }
         executorService.shutdownNow();
     }
