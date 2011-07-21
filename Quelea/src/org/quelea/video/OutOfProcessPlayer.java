@@ -5,12 +5,8 @@ import com.sun.jna.Pointer;
 import java.awt.Canvas;
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintStream;
-import java.io.PrintWriter;
-import java.net.ServerSocket;
-import java.net.Socket;
 import uk.co.caprica.vlcj.binding.LibVlcFactory;
 import uk.co.caprica.vlcj.binding.internal.libvlc_media_player_t;
 import uk.co.caprica.vlcj.player.embedded.EmbeddedMediaPlayer;
@@ -25,26 +21,7 @@ import uk.co.caprica.vlcj.runtime.RuntimeUtil;
  */
 public class OutOfProcessPlayer {
 
-    private ServerSocket serverSocket;
-    private Socket clientSocket;
-
-    public OutOfProcessPlayer(final int port, final long canvasId) throws Exception {
-        try {
-            serverSocket = new ServerSocket(port);
-        }
-        catch (IOException e) {
-            System.out.println("Could not listen on port: 4444");
-            e.printStackTrace();
-            System.exit(-1);
-        }
-
-        try {
-            clientSocket = serverSocket.accept();
-        }
-        catch (IOException e) {
-            System.out.println("Accept failed: 4444");
-            System.exit(-1);
-        }
+    public OutOfProcessPlayer(final long canvasId) throws Exception {
 
         EmbeddedMediaPlayer mediaPlayer;
 
@@ -79,33 +56,53 @@ public class OutOfProcessPlayer {
         }
         else {
             mediaPlayer = null;
+            System.exit(1);
         }
 
         mediaPlayer.setVideoSurface(new Canvas());
 
-        PrintWriter out = new PrintWriter(clientSocket.getOutputStream(), true);
-        BufferedReader in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
+        BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
         String inputLine;
 
         while ((inputLine = in.readLine()) != null) {
             if (inputLine.startsWith("open ")) {
                 inputLine = inputLine.substring("open ".length());
                 mediaPlayer.prepareMedia(inputLine);
-                out.println("ok");
             }
             else if (inputLine.equalsIgnoreCase("play")) {
                 mediaPlayer.play();
-                out.println("ok");
             }
             else if (inputLine.equalsIgnoreCase("pause")) {
                 mediaPlayer.pause();
-                out.println("ok");
+            }
+            else if (inputLine.equalsIgnoreCase("stop")) {
+                mediaPlayer.stop();
+            }
+            else if (inputLine.startsWith("setTime ")) {
+                inputLine = inputLine.substring("setTime ".length());
+                mediaPlayer.setTime(Long.parseLong(inputLine));
+            }
+            else if (inputLine.startsWith("setMute ")) {
+                inputLine = inputLine.substring("setMute ".length());
+                mediaPlayer.mute(Boolean.parseBoolean(inputLine));
+            }
+            else if (inputLine.equalsIgnoreCase("mute?")) {
+                boolean mute = mediaPlayer.isMute();
+                System.out.println(mute);
+            }
+            else if (inputLine.equalsIgnoreCase("length?")) {
+                long length = mediaPlayer.getLength();
+                System.out.println(length);
+            }
+            else if (inputLine.equalsIgnoreCase("time?")) {
+                long time = mediaPlayer.getTime();
+                System.out.println(time);
             }
             else if (inputLine.equalsIgnoreCase("close")) {
                 System.exit(0);
             }
             else {
-                out.println("unknown command");
+                System.out.println("unknown command: ." + inputLine + ".");
             }
         }
     }
@@ -114,16 +111,17 @@ public class OutOfProcessPlayer {
         File nativeDir = new File("lib/native");
         NativeLibrary.addSearchPath("libvlc", nativeDir.getAbsolutePath());
         NativeLibrary.addSearchPath("vlc", nativeDir.getAbsolutePath());
-        PrintStream ps = null;
+        PrintStream stream = null;
         try {
-            ps = new PrintStream(new File("C:\\Users\\Michael\\Desktop\\log.txt"));
-            System.setErr(ps);
-            System.err.println(args[0]);
-            new OutOfProcessPlayer(Integer.parseInt(args[0]), Integer.parseInt(args[1]));
+            stream = new PrintStream(new File("C:\\Users\\Michael\\Desktop\\log.txt"));
+            System.setErr(stream);
+            new OutOfProcessPlayer(Integer.parseInt(args[0]));
         }
         catch (Exception ex) {
             ex.printStackTrace();
-            ps.close();
+        }
+        finally {
+            stream.close();
         }
     }
 }
