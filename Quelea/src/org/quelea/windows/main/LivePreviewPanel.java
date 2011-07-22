@@ -1,7 +1,6 @@
 package org.quelea.windows.main;
 
 import java.awt.BorderLayout;
-import java.awt.Canvas;
 import java.awt.CardLayout;
 import java.awt.Component;
 import java.awt.event.KeyListener;
@@ -77,7 +76,7 @@ public abstract class LivePreviewPanel extends JPanel {
     public void setDisplayable(Displayable d, int index) {
         this.displayable = d;
         if(VIDEO_LABEL.equals(currentLabel)) {
-            stopVideo();
+            videoPanel.getVideoControlPanel().stopVideo();
         }
         if (d instanceof TextDisplayable) {
             lyricsPanel.showDisplayable((TextDisplayable) d, index);
@@ -94,12 +93,19 @@ public abstract class LivePreviewPanel extends JPanel {
                 lc.setText(new String[]{});
             }
             ((CardLayout) cardPanel.getLayout()).show(cardPanel, VIDEO_LABEL);
+            videoPanel.repaint();
             currentLabel = VIDEO_LABEL;
         }
     }
 
-    public void stopVideo() {
-        videoPanel.getVideoControlPanel().stopVideo();
+    public void setVideoProperties(LivePreviewPanel other) {
+//        videoPanel.getVideoControlPanel().playVideo();
+//        videoPanel.getVideoControlPanel().pauseVideo();
+//        videoPanel.getVideoControlPanel().setTime(other.videoPanel.getVideoControlPanel().getTime());
+    }
+
+    public void pauseVideo() {
+        videoPanel.getVideoControlPanel().pauseVideo();
     }
 
     /**

@@ -111,17 +111,11 @@ public class OutOfProcessPlayer {
         File nativeDir = new File("lib/native");
         NativeLibrary.addSearchPath("libvlc", nativeDir.getAbsolutePath());
         NativeLibrary.addSearchPath("vlc", nativeDir.getAbsolutePath());
-        PrintStream stream = null;
         try {
-            stream = new PrintStream(new File("C:\\Users\\Michael\\Desktop\\log.txt"));
-            System.setErr(stream);
             new OutOfProcessPlayer(Integer.parseInt(args[0]));
         }
         catch (Exception ex) {
             ex.printStackTrace();
-        }
-        finally {
-            stream.close();
         }
     }
 }
