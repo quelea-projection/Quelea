@@ -22,9 +22,6 @@ import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import org.quelea.displayable.VideoDisplayable;
-import uk.co.caprica.vlcj.player.MediaPlayerEventListener;
-import uk.co.caprica.vlcj.player.MediaPlayerFactory;
-import uk.co.caprica.vlcj.player.direct.DirectMediaPlayer;
 
 /**
  * The main class, sets everything in motion...
@@ -120,7 +117,8 @@ public final class Main {
                 fullScreenWindow.setVisible(!hidden);
 
                 Schedule schedule = new Schedule();
-                schedule.add(new VideoDisplayable(new File("F:\\Videos\\Inception\\Inception.mkv")));
+//                schedule.add(new VideoDisplayable(new File("F:\\Videos\\Inception\\Inception.mkv")));
+                schedule.add(new VideoDisplayable(new File("C:\\1.avi")));
                 mainWindow.getMainPanel().getSchedulePanel().getScheduleList().setSchedule(schedule);
             }
         });

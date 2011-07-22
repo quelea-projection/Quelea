@@ -32,7 +32,7 @@ public class Test {
 //        RemotePlayer player2 = RemotePlayerFactory.getRemotePlayer(panel2);
 //        player2.load("F:\\Videos\\Gone in 60 Seconds\\Gone in 60 Seconds.avi");
 //        player2.play();
-        go();
+//        go();
     }
 
     public static void go() {
@@ -44,9 +44,6 @@ public class Test {
         frame.pack();
         frame.setVisible(true);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-
-
-
     }
 
 }

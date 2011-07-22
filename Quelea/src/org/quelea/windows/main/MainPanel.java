@@ -14,6 +14,7 @@ import java.awt.*;
 import java.awt.event.*;
 import java.util.logging.Logger;
 import org.quelea.displayable.Displayable;
+import org.quelea.displayable.VideoDisplayable;
 import org.quelea.utils.LoggerUtils;
 
 /**
@@ -56,8 +57,11 @@ public class MainPanel extends JPanel {
 //                if (schedulePanel.getScheduleList().getSelectedIndex() < schedulePanel.getScheduleList().getModel().getSize()) {
 //                    schedulePanel.getScheduleList().setSelectedIndex(schedulePanel.getScheduleList().getSelectedIndex() + 1);
 //                }
-                previewPanel.stopVideo();
+//                previewPanel.pauseVideo();
                 livePanel.setDisplayable(previewPanel.getDisplayable(), previewPanel.getIndex());
+                if(previewPanel.getDisplayable() instanceof VideoDisplayable) {
+                    livePanel.setVideoProperties(previewPanel);
+                }
                 livePanel.focus();
             }
         });
