@@ -1,5 +1,7 @@
 package org.quelea.windows.main;
 
+import java.awt.BorderLayout;
+import java.awt.Dimension;
 import org.quelea.Schedule;
 import org.quelea.displayable.Song;
 import org.quelea.utils.FileFilters;
@@ -10,12 +12,21 @@ import org.quelea.windows.newsong.SongEntryWindow;
 import org.quelea.windows.options.OptionsDialog;
 
 import javax.imageio.ImageIO;
-import javax.swing.*;
-import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.List;
+import javax.swing.JFileChooser;
+import javax.swing.JFrame;
+import javax.swing.JOptionPane;
+import org.pushingpixels.flamingo.api.common.JCommandButton;
+import org.pushingpixels.flamingo.api.ribbon.JRibbon;
+import org.pushingpixels.flamingo.api.ribbon.JRibbonBand;
+import org.pushingpixels.flamingo.api.ribbon.RibbonElementPriority;
+import org.pushingpixels.flamingo.api.ribbon.RibbonTask;
+import org.pushingpixels.flamingo.api.ribbon.resize.IconRibbonBandResizePolicy;
 
 /**
  * The main window used to control the projection.
@@ -42,6 +53,7 @@ public class MainWindow extends JFrame {
         }
         catch(IOException ex) {
         }
+
         setLayout(new BorderLayout());
         menubar = new MainMenuBar();
         toolbar = new MainToolbar();
@@ -68,8 +80,9 @@ public class MainWindow extends JFrame {
         });
         addToolbarListeners();
         addMenuBarListeners();
-        setJMenuBar(menubar);
-        add(toolbar, BorderLayout.NORTH);
+//        setJMenuBar(menubar);
+//        add(toolbar, BorderLayout.NORTH);
+        addRibbon();
         add(mainpanel);
         mainpanel.getLibraryPanel().getImagePanel().setPreferredSize(new Dimension(100, 200));
         pack();
@@ -233,6 +246,24 @@ public class MainWindow extends JFrame {
             return true;
         }
         return false;
+    }
+
+    private void addRibbon() {
+
+        JRibbon ribbon = new JRibbon();
+        add(ribbon, BorderLayout.NORTH);
+
+        JRibbonBand band1 = new JRibbonBand("Hello", null);
+        JRibbonBand band2 = new JRibbonBand("world!", null);
+
+        band1.setResizePolicies((List) Arrays.asList(new IconRibbonBandResizePolicy(band1.getControlPanel())));
+        band2.setResizePolicies((List) Arrays.asList(new IconRibbonBandResizePolicy(band1.getControlPanel())));
+
+        RibbonTask task1 = new RibbonTask("One", band1);
+        RibbonTask task2 = new RibbonTask("Two", band2);
+
+        ribbon.addTask(task1);
+        ribbon.addTask(task2);
     }
 
     /**

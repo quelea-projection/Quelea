@@ -211,7 +211,7 @@ public class VideoControlPanel extends JPanel {
     public void playVideo() {
         for (int i = 0; i < mediaPlayers.size(); i++) {
             final RemotePlayer mediaPlayer = mediaPlayers.get(i);
-            if(i>0) {
+            if (i > 0) {
                 mediaPlayer.setMute(true);
             }
             mediaPlayer.play();
@@ -239,7 +239,9 @@ public class VideoControlPanel extends JPanel {
     }
 
     public void setTime(long time) {
-        mediaPlayers.get(0).setTime(time);
+        for (RemotePlayer mediaPlayer : mediaPlayers) {
+            mediaPlayer.setTime(time);
+        }
     }
 
     public void pauseVideo() {
@@ -292,6 +294,7 @@ public class VideoControlPanel extends JPanel {
         frame.setVisible(true);
 
         panel.loadVideo("F:\\Videos\\Inception\\Inception.mkv");
+//        panel.loadVideo("C:\\1.avi");
         panel.playVideo();
     }
 }
