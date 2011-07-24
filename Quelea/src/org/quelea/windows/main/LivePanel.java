@@ -42,7 +42,7 @@ public class LivePanel extends LivePreviewPanel {
             }
         });
         header.add(black);
-        clear = new JToggleButton(Utils.getImageIcon("icons/filenew.png"));
+        clear = new JToggleButton(Utils.getImageIcon("icons/clear.png", 16, 16));
         clear.setToolTipText("Clear text (F2)");
         clear.setRequestFocusEnabled(false);
         clear.addActionListener(new ActionListener() {
