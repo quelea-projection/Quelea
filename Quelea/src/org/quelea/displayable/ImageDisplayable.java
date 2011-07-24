@@ -119,4 +119,9 @@ public class ImageDisplayable implements Displayable {
         files.add(file);
         return files;
     }
+
+    @Override
+    public String getPrintText() {
+        return "Image: " + file.getName();
+    }
 }
