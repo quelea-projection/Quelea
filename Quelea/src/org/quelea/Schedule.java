@@ -25,6 +25,7 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 import java.util.zip.ZipOutputStream;
 import org.quelea.displayable.ImageDisplayable;
+import org.quelea.displayable.VideoDisplayable;
 
 /**
  * A schedule that consists of a number of displayable objects displayed by Quelea.
@@ -207,6 +208,9 @@ public class Schedule implements Iterable<Displayable> {
                 }
                 else if (name.equalsIgnoreCase("fileimage")) {
                     newSchedule.add(ImageDisplayable.parseXML(node));
+                }
+                else if (name.equalsIgnoreCase("filevideo")) {
+                    newSchedule.add(VideoDisplayable.parseXML(node));
                 }
             }
             return newSchedule;
