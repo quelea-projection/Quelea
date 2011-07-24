@@ -13,8 +13,6 @@ import java.util.*;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import org.pushingpixels.flamingo.api.common.icon.ImageWrapperResizableIcon;
-import org.pushingpixels.flamingo.api.common.icon.ResizableIcon;
 
 /**
  * General utility class containing a bunch of static methods.
@@ -165,16 +163,6 @@ public final class Utils {
             return null;
         }
         return new ImageIcon(image);
-    }
-    
-    /**
-     * Get an icon to be displayed on a flamingo ribbon from a file name.
-     * @param file the path of the file
-     * @param width the width of the icon
-     * @param height the height of the icon
-     */
-    public static ResizableIcon getRibbonIcon(String file, int width, int height) {
-        return ImageWrapperResizableIcon.getIcon(getImage(file), new Dimension(width, height));
     }
 
     /**

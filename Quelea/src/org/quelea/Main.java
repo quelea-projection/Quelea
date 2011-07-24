@@ -102,15 +102,9 @@ public final class Main {
                     JOptionPane.showMessageDialog(null, "It looks like you already have an instance of Quelea running, make sure you close all instances before running the program.", "Already running", JOptionPane.ERROR_MESSAGE);
                     System.exit(0);
                 }
-                mainWindow = new MainWindow();
-                Application.get().setMainWindow(mainWindow);
-
-                Utils.centreOnMonitor(mainWindow, controlScreen);
-                mainWindow.setVisible(true);
-                mainWindow.toFront();
+                mainWindow = new MainWindow(true);
 
                 new UpdateChecker(mainWindow).checkUpdate(false, false, false);
-                showWarning(gds.length);
                 mainWindow.getMainPanel().getLivePanel().registerLyricCanvas(fullScreenWindow.getCanvas());
                 mainWindow.getMainPanel().getLivePanel().registerLyricWindow(fullScreenWindow);
                 mainWindow.getMainPanel().getLivePanel().registerVideoCanvas(fullScreenWindow.getCanvas());
@@ -118,8 +112,13 @@ public final class Main {
 
                 Schedule schedule = new Schedule();
 //                schedule.add(new VideoDisplayable(new File("F:\\Videos\\Inception\\Inception.mkv")));
-                schedule.add(new VideoDisplayable(new File("C:\\1.avi")));
+                schedule.add(new VideoDisplayable(new File("C:\\vid.avi")));
                 mainWindow.getMainPanel().getSchedulePanel().getScheduleList().setSchedule(schedule);
+                
+                Utils.centreOnMonitor(mainWindow, controlScreen);
+                mainWindow.setVisible(true);
+                mainWindow.toFront();
+                showWarning(gds.length);
             }
         });
     }

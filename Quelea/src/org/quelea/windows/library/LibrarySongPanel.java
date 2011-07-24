@@ -11,6 +11,7 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.event.*;
 import java.awt.*;
 import java.awt.event.*;
+import org.quelea.windows.main.RemoveSongDBActionListener;
 
 /**
  * The panel used for browsing the database of songs and adding any songs to the order of service.
@@ -131,7 +132,7 @@ public class LibrarySongPanel extends JPanel {
         JToolBar toolbar = new JToolBar();
         toolbar.setLayout(new BoxLayout(toolbar, BoxLayout.Y_AXIS));
         toolbar.setFloatable(false);
-        addButton = new JButton(Utils.getImageIcon("icons/newsong.png"));
+        addButton = new JButton(Utils.getImageIcon("icons/add.png"));
         addButton.setToolTipText("Add song");
         addButton.setRequestFocusEnabled(false);
         toolbar.add(addButton);
@@ -139,25 +140,7 @@ public class LibrarySongPanel extends JPanel {
         removeButton.setToolTipText("Remove song");
         removeButton.setRequestFocusEnabled(false);
         removeButton.setEnabled(false);
-        removeButton.addActionListener(new ActionListener() {
-
-            public void actionPerformed(ActionEvent e) {
-                Song song = (Song) getSongList().getSelectedValue();
-                if(song == null) {
-                    return;
-                }
-                int confirmResult = JOptionPane.showConfirmDialog(Application.get().getMainWindow(), "Really remove \"" + song.getTitle() + "\" from the database? This action cannnot be undone.", "Confirm remove", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
-                if(confirmResult == JOptionPane.NO_OPTION) {
-                    return;
-                }
-                if(!SongDatabase.get().removeSong(song)) {
-                    JOptionPane.showMessageDialog(Application.get().getMainWindow(), "There was an error removing the song from the database.", "Error", JOptionPane.ERROR_MESSAGE, null);
-                }
-                SortedListModel model = (SortedListModel) getSongList().getModel();
-                song.setID(-1);
-                model.removeElement(song);
-            }
-        });
+        removeButton.addActionListener(new RemoveSongDBActionListener());
         toolbar.add(removeButton);
         add(toolbar, BorderLayout.EAST);
 

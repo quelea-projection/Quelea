@@ -12,7 +12,6 @@ public class LibraryPanel extends JPanel {
     private final LibrarySongPanel songPanel;
     private final LibraryBiblePanel biblePanel;
     private final LibraryImagePanel imagePanel;
-    private final LibraryVideoPanel videoPanel;
 
     /**
      * Create a new library panel.
@@ -27,10 +26,6 @@ public class LibraryPanel extends JPanel {
         tabbedPane.addTab("Bible", biblePanel);
         imagePanel = new LibraryImagePanel();
         tabbedPane.addTab("Image", imagePanel);
-        videoPanel = new LibraryVideoPanel();
-        tabbedPane.addTab("Video", videoPanel);
-
-        tabbedPane.setEnabledAt(3, false);
         add(tabbedPane);
 
     }
@@ -57,14 +52,6 @@ public class LibraryPanel extends JPanel {
      */
     public LibraryImagePanel getImagePanel() {
         return imagePanel;
-    }
-
-    /**
-     * Get the library video panel.
-     * @return the library video panel.
-     */
-    public LibraryVideoPanel getVideoPanel() {
-        return videoPanel;
     }
 
 }

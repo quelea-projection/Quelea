@@ -1,5 +1,9 @@
 package org.quelea.windows.library;
 
+import java.awt.Color;
+import java.awt.Component;
+import java.awt.Rectangle;
+import java.awt.Toolkit;
 import org.quelea.SongDatabase;
 import org.quelea.SortedListModel;
 import org.quelea.displayable.Displayable;
@@ -8,14 +12,18 @@ import org.quelea.displayable.TextSection;
 import org.quelea.displayable.TransferDisplayable;
 import org.quelea.utils.DatabaseListener;
 
-import javax.swing.*;
-import java.awt.*;
 import java.awt.dnd.DnDConstants;
 import java.awt.dnd.DragGestureEvent;
 import java.awt.dnd.DragGestureListener;
 import java.awt.dnd.DragSource;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import javax.swing.DefaultListCellRenderer;
+import javax.swing.JList;
+import javax.swing.ListSelectionModel;
+import org.quelea.utils.QueleaProperties;
 
 /**
  * The list that displays the songs in the library.
@@ -48,6 +56,7 @@ public class LibrarySongList extends JList implements DatabaseListener {
     private final SortedListModel tempModel;
     private final SortedListModel fullModel;
     private final LibraryPopupMenu popupMenu;
+    private final Color originalSelectionColour;
 
     /**
      * Create a new library song list.
@@ -55,12 +64,27 @@ public class LibrarySongList extends JList implements DatabaseListener {
     public LibrarySongList() {
         super(new SortedListModel());
         setCellRenderer(new SongRenderer());
+        originalSelectionColour = getSelectionBackground();
+        addFocusListener(new FocusListener() {
+
+            @Override
+            public void focusGained(FocusEvent e) {
+                if (getModel().getSize() > 0) {
+                    setSelectionBackground(QueleaProperties.get().getActiveSelectionColor());
+                }
+            }
+
+            public void focusLost(FocusEvent e) {
+                setSelectionBackground(originalSelectionColour);
+            }
+        });
         setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         popupMenu = new LibraryPopupMenu();
         fullModel = (SortedListModel) super.getModel();
         tempModel = new SortedListModel();
         DragSource.getDefaultDragSource().createDefaultDragGestureRecognizer(this, DnDConstants.ACTION_MOVE, new DragGestureListener() {
 
+            @Override
             public void dragGestureRecognized(DragGestureEvent dge) {
                 if (getSelectedValue() != null) {
                     dge.startDrag(DragSource.DefaultCopyDrop, new TransferDisplayable((Displayable) getModel().getElementAt(locationToIndex(dge.getDragOrigin()))));
