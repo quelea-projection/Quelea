@@ -80,4 +80,9 @@ public class VideoDisplayable implements Displayable {
     public Collection<File> getResources() {
         return new ArrayList<File>();
     }
+
+    @Override
+    public String getPrintText() {
+        return "Video file: " + file.getName();
+    }
 }

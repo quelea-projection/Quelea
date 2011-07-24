@@ -1,5 +1,12 @@
 package org.quelea;
 
+import java.awt.Color;
+import java.awt.Font;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.print.PageFormat;
+import java.awt.print.Printable;
+import java.awt.print.PrinterException;
 import org.quelea.displayable.BiblePassage;
 import org.quelea.displayable.Displayable;
 import org.quelea.displayable.Song;
@@ -31,7 +38,7 @@ import org.quelea.displayable.VideoDisplayable;
  * A schedule that consists of a number of displayable objects displayed by Quelea.
  * @author Michael
  */
-public class Schedule implements Iterable<Displayable> {
+public class Schedule implements Iterable<Displayable>, Printable {
 
     private static final Logger LOGGER = LoggerUtils.getLogger();
     private final List<Displayable> displayables;
@@ -113,12 +120,10 @@ public class Schedule implements Iterable<Displayable> {
                     }
                 }
                 return true;
-            }
-            finally {
+            } finally {
                 zos.close();
             }
-        }
-        catch (IOException ex) {
+        } catch (IOException ex) {
             LOGGER.log(Level.WARNING, "Couldn't write the schedule to file", ex);
             return false;
         }
@@ -160,12 +165,10 @@ public class Schedule implements Iterable<Displayable> {
                     is.close();
                 }
                 return ret;
-            }
-            finally {
+            } finally {
                 zipFile.close();
             }
-        }
-        catch (IOException ex) {
+        } catch (IOException ex) {
             LOGGER.log(Level.WARNING, "Couldn't read the schedule from file", ex);
             return null;
         }
@@ -202,28 +205,22 @@ public class Schedule implements Iterable<Displayable> {
                 String name = node.getNodeName();
                 if (name.equalsIgnoreCase("song")) {
                     newSchedule.add(Song.parseXML(node));
-                }
-                else if (name.equalsIgnoreCase("passage")) {
+                } else if (name.equalsIgnoreCase("passage")) {
                     newSchedule.add(BiblePassage.parseXML(node));
-                }
-                else if (name.equalsIgnoreCase("fileimage")) {
+                } else if (name.equalsIgnoreCase("fileimage")) {
                     newSchedule.add(ImageDisplayable.parseXML(node));
-                }
-                else if (name.equalsIgnoreCase("filevideo")) {
+                } else if (name.equalsIgnoreCase("filevideo")) {
                     newSchedule.add(VideoDisplayable.parseXML(node));
                 }
             }
             return newSchedule;
-        }
-        catch (ParserConfigurationException ex) {
+        } catch (ParserConfigurationException ex) {
             LOGGER.log(Level.WARNING, "Couldn't parse the schedule", ex);
             return null;
-        }
-        catch (SAXException ex) {
+        } catch (SAXException ex) {
             LOGGER.log(Level.WARNING, "Couldn't parse the schedule", ex);
             return null;
-        }
-        catch (IOException ex) {
+        } catch (IOException ex) {
             LOGGER.log(Level.WARNING, "Couldn't parse the schedule", ex);
             return null;
         }
@@ -235,5 +232,32 @@ public class Schedule implements Iterable<Displayable> {
      */
     public Iterator<Displayable> iterator() {
         return displayables.iterator();
+    }
+
+    /**
+     * Print the schedule.
+     * @param graphics graphics to paint on.
+     * @param pageFormat page format.
+     * @param pageIndex starting index.
+     * @return PAGE_EXISTS if the page exists, NO_SUCH_PAGE otherwise.
+     * @throws PrinterException  if something went wrong
+     */
+    @Override
+    public int print(Graphics graphics, PageFormat pageFormat, int pageIndex) throws PrinterException {
+        if (pageIndex > 0) {
+            return NO_SUCH_PAGE;
+        }
+        Graphics2D g2d = (Graphics2D) graphics;
+        g2d.setFont(new Font("Verdana", 0, 36));
+        g2d.setColor(Color.BLUE);
+        g2d.drawString("Order of service", 20, 60);
+        g2d.setFont(new Font("Arial", 0, 14));
+        g2d.setColor(Color.BLACK);
+        int offset = 130;
+        for (Displayable displayable : displayables) {
+            g2d.drawString(displayable.getPrintText(), 20, offset);
+            offset += 50;
+        }
+        return PAGE_EXISTS;
     }
 }
