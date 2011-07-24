@@ -10,6 +10,7 @@ import org.pushingpixels.flamingo.api.ribbon.RibbonApplicationMenu;
 import org.pushingpixels.flamingo.api.ribbon.RibbonApplicationMenuEntryPrimary;
 import org.quelea.Application;
 import org.quelea.Schedule;
+import org.quelea.print.Printer;
 import org.quelea.utils.FileFilters;
 import org.quelea.utils.QueleaProperties;
 import org.quelea.windows.help.AboutDialog;
@@ -81,7 +82,13 @@ public class RibbonMenu extends RibbonApplicationMenu {
         }, JCommandButton.CommandButtonKind.ACTION_ONLY);
         addMenuEntry(saveAsMenuEntry);
         RibbonApplicationMenuEntryPrimary printMenuEntry = new RibbonApplicationMenuEntryPrimary(
-                RibbonUtils.getRibbonIcon("icons/fileprint.png", 100, 100), "Print Schedule", null, JCommandButton.CommandButtonKind.ACTION_ONLY);
+                RibbonUtils.getRibbonIcon("icons/fileprint.png", 100, 100), "Print Schedule", new ActionListener() {
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                Printer.getInstance().print(Application.get().getMainWindow().getMainPanel().getSchedulePanel().getScheduleList().getSchedule());
+            }
+        }, JCommandButton.CommandButtonKind.ACTION_ONLY);
         addMenuEntry(printMenuEntry);
         RibbonApplicationMenuEntryPrimary optionsMenuEntry = new RibbonApplicationMenuEntryPrimary(
                 RibbonUtils.getRibbonIcon("icons/options.png", 100, 100), "Options", new ActionListener() {

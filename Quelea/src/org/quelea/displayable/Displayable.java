@@ -27,6 +27,12 @@ public interface Displayable {
      * @return the preview text.
      */
     String getPreviewText();
+    
+    /**
+     * Get the text to display when printed.
+     * @return the printed text.
+     */
+    String getPrintText();
 
     /**
      * Get any file resources that this displayable needs to work. For songs this can be backgrounds, for videos this is

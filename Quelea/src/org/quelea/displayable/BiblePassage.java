@@ -143,4 +143,9 @@ public class BiblePassage implements TextDisplayable {
     public Collection<File> getResources() {
         return new ArrayList<File>();
     }
+
+    @Override
+    public String getPrintText() {
+        return "Bible passage: " + summary.substring("<html>".length(), summary.indexOf("<br"));
+    }
 }

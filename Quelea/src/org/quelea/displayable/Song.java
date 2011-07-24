@@ -457,4 +457,9 @@ public class Song implements TextDisplayable, Searchable, Comparable<Song> {
         }
         return ret;
     }
+
+    @Override
+    public String getPrintText() {
+        return "Song: " + getTitle() + " (" + getAuthor() + ")";
+    }
 }
