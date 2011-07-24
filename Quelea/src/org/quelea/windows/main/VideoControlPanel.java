@@ -50,6 +50,7 @@ public class VideoControlPanel extends JPanel {
 
         executorService = Executors.newSingleThreadScheduledExecutor();
         play = new JButton(Utils.getImageIcon("icons/play.png"));
+        play.setEnabled(false);
         play.addActionListener(new ActionListener() {
 
             @Override
@@ -58,6 +59,7 @@ public class VideoControlPanel extends JPanel {
             }
         });
         pause = new JButton(Utils.getImageIcon("icons/pause.png"));
+        pause.setEnabled(false);
         pause.addActionListener(new ActionListener() {
 
             @Override
@@ -66,6 +68,7 @@ public class VideoControlPanel extends JPanel {
             }
         });
         stop = new JButton(Utils.getImageIcon("icons/stop.png"));
+        stop.setEnabled(false);
         stop.addActionListener(new ActionListener() {
 
             @Override
@@ -75,6 +78,7 @@ public class VideoControlPanel extends JPanel {
             }
         });
         mute = new JButton(Utils.getImageIcon("icons/mute.png"));
+        mute.setEnabled(false);
         mute.addActionListener(new ActionListener() {
 
             @Override
@@ -83,6 +87,7 @@ public class VideoControlPanel extends JPanel {
             }
         });
         positionSlider = new JSlider(0, 1000);
+        positionSlider.setEnabled(false);
         positionSlider.setValue(0);
         positionSlider.addMouseListener(new MouseAdapter() {
 
@@ -92,8 +97,7 @@ public class VideoControlPanel extends JPanel {
                     if (mediaPlayer.isPlaying()) {
                         mediaPlayer.pause();
                         pauseCheck = false;
-                    }
-                    else {
+                    } else {
                         pauseCheck = true;
                     }
                 }
@@ -121,15 +125,13 @@ public class VideoControlPanel extends JPanel {
 
                     if (positionSlider.getOrientation() == JSlider.HORIZONTAL) {
                         value = this.valueForXPosition(positionSlider.getMousePosition().x);
-                    }
-                    else if (positionSlider.getOrientation() == JSlider.VERTICAL) {
+                    } else if (positionSlider.getOrientation() == JSlider.VERTICAL) {
                         value = this.valueForYPosition(positionSlider.getMousePosition().y);
                     }
                     positionSlider.setValue(value);
                 }
             });
-        }
-        catch (Exception ex) {
+        } catch (Exception ex) {
             //UI issue, cannot do a lot and don't want to break program...
         }
         videoArea = new Canvas();
@@ -160,11 +162,22 @@ public class VideoControlPanel extends JPanel {
             @Override
             public void hierarchyChanged(HierarchyEvent e) {
                 if ((e.getChangeFlags() & HierarchyEvent.SHOWING_CHANGED) > 0 && videoArea.isShowing()) {
-                    RemotePlayer player = RemotePlayerFactory.getRemotePlayer(videoArea);
-                    mediaPlayers.add(0, player);
-                    if (videoPath != null) {
-                        player.load(videoPath);
-                    }
+                    new Thread() {
+
+                        @Override
+                        public void run() {
+                            RemotePlayer player = RemotePlayerFactory.getRemotePlayer(videoArea);
+                            mediaPlayers.add(0, player);
+                            if (videoPath != null) {
+                                player.load(videoPath);
+                            }
+                            play.setEnabled(true);
+                            pause.setEnabled(true);
+                            stop.setEnabled(true);
+                            mute.setEnabled(true);
+                            positionSlider.setEnabled(true);
+                        }
+                    }.start();
                     videoArea.removeHierarchyListener(this);
                 }
             }
@@ -189,8 +202,7 @@ public class VideoControlPanel extends JPanel {
                     }
                 }
             });
-        }
-        else {
+        } else {
             RemotePlayer player = RemotePlayerFactory.getRemotePlayer(canvas);
             player.setMute(true);
             mediaPlayers.add(player);
@@ -260,8 +272,7 @@ public class VideoControlPanel extends JPanel {
         mediaPlayers.get(0).setMute(muteState);
         if (getMute()) {
             mute.setIcon(Utils.getImageIcon("icons/unmute.png"));
-        }
-        else {
+        } else {
             mute.setIcon(Utils.getImageIcon("icons/mute.png"));
         }
     }

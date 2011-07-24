@@ -91,14 +91,7 @@ public class MainPanel extends JPanel {
      * Add the listeners that add songs to the schedule.
      */
     private void addScheduleAddListeners() {
-        libraryPanel.getLibrarySongPanel().getSongList().getPopupMenu().getAddToScheduleButton().addActionListener(new ActionListener() {
-
-            public void actionPerformed(ActionEvent e) {
-                Song song = (Song) libraryPanel.getLibrarySongPanel().getSongList().getSelectedValue();
-                ((DefaultListModel) schedulePanel.getScheduleList().getModel()).addElement(song);
-            }
-        });
-
+        libraryPanel.getLibrarySongPanel().getSongList().getPopupMenu().getAddToScheduleButton().addActionListener(new AddSongActionListener());
         libraryPanel.getLibrarySongPanel().getSongList().addMouseListener(new MouseAdapter() {
 
             @Override

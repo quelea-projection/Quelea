@@ -35,19 +35,7 @@ public class SchedulePanel extends JPanel {
         removeButton.setToolTipText("Remove song");
         removeButton.setRequestFocusEnabled(false);
         removeButton.setEnabled(false);
-        removeButton.addActionListener(new ActionListener() {
-
-            public void actionPerformed(ActionEvent e) {
-                int selectedIndex = scheduleList.getSelectedIndex();
-                scheduleList.removeCurrentItem();
-                if(selectedIndex == scheduleList.getModel().getSize()) {
-                    selectedIndex--;
-                }
-                if(selectedIndex >= 0) {
-                    scheduleList.setSelectedIndex(selectedIndex);
-                }
-            }
-        });
+        removeButton.addActionListener(new RemoveSongScheduleActionListener());
 
         upButton = new JButton(Utils.getImageIcon("icons/up.png"));
         upButton.setToolTipText("Move selected item up");
