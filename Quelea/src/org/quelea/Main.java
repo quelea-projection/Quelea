@@ -109,11 +109,6 @@ public final class Main {
                 mainWindow.getMainPanel().getLivePanel().registerLyricWindow(fullScreenWindow);
                 mainWindow.getMainPanel().getLivePanel().registerVideoCanvas(fullScreenWindow.getCanvas());
                 fullScreenWindow.setVisible(!hidden);
-
-                Schedule schedule = new Schedule();
-//                schedule.add(new VideoDisplayable(new File("F:\\Videos\\Inception\\Inception.mkv")));
-                schedule.add(new VideoDisplayable(new File("C:\\vid.avi")));
-                mainWindow.getMainPanel().getSchedulePanel().getScheduleList().setSchedule(schedule);
                 
                 Utils.centreOnMonitor(mainWindow, controlScreen);
                 mainWindow.setVisible(true);
