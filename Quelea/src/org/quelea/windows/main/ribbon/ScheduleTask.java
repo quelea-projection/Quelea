@@ -17,9 +17,11 @@ import org.pushingpixels.flamingo.api.ribbon.RibbonElementPriority;
 import org.pushingpixels.flamingo.api.ribbon.RibbonTask;
 import org.quelea.Application;
 import org.quelea.Schedule;
+import org.quelea.displayable.PresentationDisplayable;
 import org.quelea.displayable.Song;
 import org.quelea.displayable.VideoDisplayable;
 import org.quelea.mail.MailDialog;
+import org.quelea.video.PowerpointFileFilter;
 import org.quelea.video.VideoFileFilter;
 import org.quelea.windows.library.LibrarySongList;
 import org.quelea.windows.main.AddSongActionListener;
@@ -142,7 +144,21 @@ public class ScheduleTask extends RibbonTask {
         RibbonUtils.applyStandardResizePolicies(videoBand);
         JCommandButton presentationButton = new JCommandButton("Presentation", RibbonUtils.getRibbonIcon("icons/powerpoint.png", 100, 100));
         videoBand.addCommandButton(presentationButton, RibbonElementPriority.TOP);
-        presentationButton.setEnabled(false);
+        presentationButton.addActionListener(new ActionListener() {
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                JFileChooser fileChooser = new JFileChooser();
+                fileChooser.setFileFilter(new PowerpointFileFilter());
+                fileChooser.setAcceptAllFileFilterUsed(false);
+                fileChooser.showOpenDialog(Application.get().getMainWindow());
+                File file = fileChooser.getSelectedFile();
+                if (file != null) {
+                    PresentationDisplayable displayable = new PresentationDisplayable(fileChooser.getSelectedFile());
+                    ((DefaultListModel) Application.get().getMainWindow().getMainPanel().getSchedulePanel().getScheduleList().getModel()).addElement(displayable);
+                }
+            }
+        });
         JCommandButton videoFileButton = new JCommandButton("Video File", RibbonUtils.getRibbonIcon("icons/video file.png", 100, 100));
         videoFileButton.addActionListener(new ActionListener() {
 
