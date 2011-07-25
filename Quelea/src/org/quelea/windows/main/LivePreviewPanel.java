@@ -9,6 +9,7 @@ import java.util.Set;
 import javax.swing.JPanel;
 import org.quelea.displayable.Displayable;
 import org.quelea.displayable.ImageDisplayable;
+import org.quelea.displayable.PresentationDisplayable;
 import org.quelea.displayable.TextDisplayable;
 import org.quelea.displayable.VideoDisplayable;
 
@@ -27,8 +28,10 @@ public abstract class LivePreviewPanel extends JPanel {
     private SelectLyricsPanel lyricsPanel = new SelectLyricsPanel(this);
     private static final String IMAGE_LABEL = "IMAGE";
     private static final String VIDEO_LABEL = "VIDEO";
+    private static final String PRESENTATION_LABEL = "PPT";
     private String currentLabel;
     private ImagePanel picturePanel = new ImagePanel(this);
+    private PowerpointPanel powerpointPanel = new PowerpointPanel(this);
     private VideoPanel videoPanel = new VideoPanel();
     private final Set<ContainedPanel> containedSet = new HashSet<ContainedPanel>() {
 
@@ -44,6 +47,7 @@ public abstract class LivePreviewPanel extends JPanel {
         cardPanel.add(lyricsPanel, LYRICS_LABEL);
         cardPanel.add(picturePanel, IMAGE_LABEL);
         cardPanel.add(videoPanel, VIDEO_LABEL);
+        cardPanel.add(powerpointPanel, PRESENTATION_LABEL);
         ((CardLayout) cardPanel.getLayout()).show(cardPanel, LYRICS_LABEL);
     }
 
@@ -75,7 +79,7 @@ public abstract class LivePreviewPanel extends JPanel {
 
     public void setDisplayable(Displayable d, int index) {
         this.displayable = d;
-        if(VIDEO_LABEL.equals(currentLabel)) {
+        if (VIDEO_LABEL.equals(currentLabel)) {
             videoPanel.getVideoControlPanel().stopVideo();
         }
         if (d instanceof TextDisplayable) {
@@ -86,15 +90,18 @@ public abstract class LivePreviewPanel extends JPanel {
             picturePanel.showDisplayable((ImageDisplayable) d);
             ((CardLayout) cardPanel.getLayout()).show(cardPanel, IMAGE_LABEL);
             currentLabel = IMAGE_LABEL;
-        }
-        else if (d instanceof VideoDisplayable) {
+        } else if (d instanceof VideoDisplayable) {
             videoPanel.showDisplayable((VideoDisplayable) d);
-            for(LyricCanvas lc : videoPanel.getVideoControlPanel().getRegisteredCanvases()) {
+            for (LyricCanvas lc : videoPanel.getVideoControlPanel().getRegisteredCanvases()) {
                 lc.setText(new String[]{});
             }
             ((CardLayout) cardPanel.getLayout()).show(cardPanel, VIDEO_LABEL);
             videoPanel.repaint();
             currentLabel = VIDEO_LABEL;
+        } else if (d instanceof PresentationDisplayable) {
+            ((CardLayout) cardPanel.getLayout()).show(cardPanel, PRESENTATION_LABEL);
+            powerpointPanel.setDisplayable((PresentationDisplayable) d);
+            currentLabel = PRESENTATION_LABEL;
         }
     }
 

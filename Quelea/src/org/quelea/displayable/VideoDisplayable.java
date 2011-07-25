@@ -73,7 +73,7 @@ public class VideoDisplayable implements Displayable {
     }
 
     /**
-     * Get any resources this displayable needs (in this case the image.)
+     * Get any resources this displayable needs.
      * @return the image backing this displayable.
      */
     @Override
