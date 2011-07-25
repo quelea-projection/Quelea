@@ -19,9 +19,9 @@ import org.quelea.powerpoint.PresentationSlide;
  * @author Michael
  */
 public class PowerpointPanel extends ContainedPanel {
-    
+
     private PowerpointList powerpointList;
-    
+
     public PowerpointPanel(final LivePreviewPanel containerPanel) {
         setLayout(new BorderLayout());
         powerpointList = new PowerpointList();
@@ -29,29 +29,32 @@ public class PowerpointPanel extends ContainedPanel {
 
             @Override
             public void valueChanged(ListSelectionEvent e) {
-                for(LyricCanvas lc : containerPanel.getCanvases()) {
-                    lc.setText(new String[]{});
-                    lc.setTheme(new Theme(null, Color.yellow, new Background(null, powerpointList.getCurrentImage())));
+                if (!powerpointList.getValueIsAdjusting()) {
+                    for (LyricCanvas lc : containerPanel.getCanvases()) {
+                        lc.setText(new String[]{});
+                        lc.setTheme(new Theme(null, Color.yellow, new Background(null, powerpointList.getCurrentImage())));
+                    }
                 }
             }
         });
         JScrollPane scroll = new JScrollPane(powerpointList);
         add(scroll, BorderLayout.CENTER);
     }
-    
+
     public void setDisplayable(PresentationDisplayable displayable) {
         PresentationSlide[] slides = displayable.getPresentation().getSlides();
         DefaultListModel model = (DefaultListModel) (powerpointList.getModel());
         model.clear();
-        for(PresentationSlide slide : slides) {
+        for (PresentationSlide slide : slides) {
             model.addElement(slide);
         }
     }
-    
+
     public static void main(String[] args) {
         final PowerpointPanel panel = new PowerpointPanel(null);
         final PresentationDisplayable presentation = new PresentationDisplayable(new File("C:\\java.ppt"));
         SwingUtilities.invokeLater(new Runnable() {
+
             public void run() {
                 JFrame frame = new JFrame();
                 frame.setLayout(new BorderLayout());
