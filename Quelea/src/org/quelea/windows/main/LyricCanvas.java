@@ -9,9 +9,12 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.font.TextAttribute;
 import java.awt.image.BufferedImage;
+import java.io.File;
 import java.util.*;
 import java.util.List;
 import java.util.Map.Entry;
+import javax.imageio.ImageIO;
+import org.quelea.Background;
 import uk.co.caprica.vlcj.player.direct.RenderCallback;
 
 /**
@@ -28,7 +31,7 @@ public class LyricCanvas extends Canvas implements RenderCallback {
     private boolean cleared;
     private boolean blacked;
     private boolean capitaliseFirst;
-    private boolean videoMode = true;
+    private boolean videoMode;
     private int[] rgbBuffer;
     private BufferedImage videoImage;
     private int videoWidth = 800;
@@ -65,6 +68,14 @@ public class LyricCanvas extends Canvas implements RenderCallback {
         videoImage.setRGB(0, 0, videoWidth, videoHeight, rgbBuffer, 0, videoWidth);
         repaint();
     }
+    
+    public boolean getVideoMode() {
+        return videoMode;
+    }
+    
+    public void setVideoMode(boolean on) {
+        videoMode = on;
+    }
 
     /**
      * Paint the background image and the lyrics onto the canvas.
@@ -93,8 +104,7 @@ public class LyricCanvas extends Canvas implements RenderCallback {
                 offscreen.setColor(Color.BLACK);
                 offscreen.fillRect(0, 0, getWidth(), getHeight());
                 offscreen.setColor(temp);
-            }
-            else {
+            } else {
                 offscreen.drawImage(theme.getBackground().getImage(getWidth(), getHeight()), 0, 0, null);
             }
         }
@@ -141,8 +151,7 @@ public class LyricCanvas extends Canvas implements RenderCallback {
             if (font.getSize() > 8) {
                 drawText(graphics, getDifferentSizeFont(font, font.getSize() - 2));
             }
-        }
-        else {
+        } else {
             heightOffset = 0;
             for (String line : sanctifiedLines) {
                 int width = graphics.getFontMetrics().stringWidth(line);
@@ -215,13 +224,11 @@ public class LyricCanvas extends Canvas implements RenderCallback {
                 for (String s : splitMiddle(line, ';')) {
                     sections.addAll(splitLine(s, maxLength));
                 }
-            }
-            else if (containsNotAtEnd(line, ",")) {
+            } else if (containsNotAtEnd(line, ",")) {
                 for (String s : splitMiddle(line, ',')) {
                     sections.addAll(splitLine(s, maxLength));
                 }
-            }
-            else if (containsNotAtEnd(line, " ")) {
+            } else if (containsNotAtEnd(line, " ")) {
                 for (String s : splitMiddle(line, ' ')) {
                     sections.addAll(splitLine(s, maxLength));
                 }
@@ -233,8 +240,7 @@ public class LyricCanvas extends Canvas implements RenderCallback {
             else {
                 sections.addAll(splitLine(new StringBuilder(line).insert(line.length() / 2, "-").toString(), maxLength));
             }
-        }
-        else {
+        } else {
             line = line.trim();
             if (capitaliseFirst && QueleaProperties.get().checkCapitalFirst()) {
                 line = Utils.capitaliseFirst(line);
@@ -409,5 +415,22 @@ public class LyricCanvas extends Canvas implements RenderCallback {
             attributes.put(TextAttribute.SIZE, size);
         }
         return new Font(attributes);
+    }
+
+    public static void main(String[] args) {
+        LyricCanvas canvas = new LyricCanvas(4, 3);
+        JFrame frame = new JFrame();
+        frame.setLayout(new BorderLayout());
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.add(canvas, BorderLayout.CENTER);
+        frame.setSize(500, 500);
+        frame.setVisible(true);
+
+        canvas.setText(new String[]{"HIHIHI"});
+        try {
+            canvas.setTheme(new Theme(null, null, new Background("C:\\img.jpg", ImageIO.read(new File("C:\\img.jpg")))));
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
     }
 }

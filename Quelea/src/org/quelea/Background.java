@@ -49,6 +49,8 @@ public class Background {
             if(originalImage==null) {
                 originalImage = Utils.getImage(getImageFile().getAbsolutePath());
             }
+            g.setRenderingHint(RenderingHints.KEY_INTERPOLATION,
+                    RenderingHints.VALUE_INTERPOLATION_BICUBIC);
             g.drawImage(originalImage, 0, 0, width, height, null);
             return ret;
         }
@@ -134,6 +136,9 @@ public class Background {
             return false;
         }
         if(this.imageLocation != other.imageLocation && (this.imageLocation == null || !this.imageLocation.equals(other.imageLocation))) {
+            return false;
+        }
+        if(this.originalImage != other.originalImage && (this.originalImage == null || !this.originalImage.equals(other.originalImage))) {
             return false;
         }
         return true;
