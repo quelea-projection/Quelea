@@ -1,23 +1,19 @@
 package org.quelea.mail;
 
+import java.awt.Desktop;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Date;
 import javax.activation.DataHandler;
 import javax.activation.FileDataSource;
-import javax.mail.Message;
 import javax.mail.MessagingException;
 import javax.mail.Multipart;
 import javax.mail.Session;
-import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeMultipart;
 import javax.swing.JOptionPane;
-import javax.swing.SwingUtilities;
-import org.apache.mailet.MailAddress;
-import org.masukomi.aspirin.core.MailQue;
-import org.masukomi.aspirin.core.MailWatcher;
 import org.quelea.Application;
 import org.quelea.Schedule;
 
@@ -44,7 +40,7 @@ public class Mailer {
         return instance;
     }
 
-    public void sendSchedule(Schedule schedule, String addressTo, String body) {
+    public void sendSchedule(Schedule schedule, String body) {
 
         if (schedule == null || !schedule.iterator().hasNext()) {
             throw new RuntimeException("Can't send empty schedule: " + schedule);
@@ -53,9 +49,6 @@ public class Mailer {
         try {
 
             MimeMessage msg = new MimeMessage(Session.getInstance(System.getProperties()));
-            msg.setFrom(new InternetAddress("schedules@quelea.org"));
-            InternetAddress[] address = {new InternetAddress(addressTo)};
-            msg.setRecipients(Message.RecipientType.TO, address);
             msg.setSubject("Quelea schedule");
 
             // create and fill the first message part
@@ -72,7 +65,8 @@ public class Mailer {
             schedule.setFile(tempFile);
             try {
                 schedule.writeToFile();
-            } finally {
+            }
+            finally {
                 schedule.setFile(originalFile);
             }
             FileDataSource fds = new FileDataSource(tempFile);
@@ -90,46 +84,34 @@ public class Mailer {
             // set the Date: header
             msg.setSentDate(new Date());
 
-            MailQue que = new MailQue();
-            que.addWatcher(new MailWatcher() {
+            File temp = File.createTempFile("quelea", ".eml");
+            temp.deleteOnExit();
+            FileOutputStream stream = null;
+            try {
+                stream = new FileOutputStream(temp);
+                msg.writeTo(stream);
+            }
+            finally {
+                stream.close();
+            }
 
-                @Override
-                public void deliverySuccess(MailQue mq, MimeMessage mm, MailAddress ma) {
-                    SwingUtilities.invokeLater(new Runnable() {
+            try {
+                Desktop.getDesktop().open(temp);
+            }
+            catch(Throwable ex) {
+                JOptionPane.showMessageDialog(Application.get().getMainWindow(),
+                        "There was an error opening your email client. "
+                        + "Make sure you have an email client installed and "
+                        + "registered to handle eml files. Otherwise, you'll "
+                        + "have to send the email manually.",
+                        "Error sending email", JOptionPane.WARNING_MESSAGE);
+            }
 
-                        @Override
-                        public void run() {
-                            JOptionPane.showMessageDialog(Application.get().getMainWindow(),
-                                    "Email sent successfully!",
-                                    "Success", JOptionPane.INFORMATION_MESSAGE);
-                        }
-                    });
-                }
-
-                @Override
-                public void deliveryFailure(MailQue mq, MimeMessage mm, MailAddress ma, MessagingException me) {
-                    SwingUtilities.invokeLater(new Runnable() {
-
-                        @Override
-                        public void run() {
-                            JOptionPane.showMessageDialog(Application.get().getMainWindow(),
-                                    "Sorry, but the email delivery failed. If you're connected to the internet, "
-                                    + "your ISP might be blocking the message from being sent. If so, you'll "
-                                    + "have to save the schedule and attach it to an email manually.",
-                                    "Sending failed", JOptionPane.WARNING_MESSAGE);
-                        }
-                    });
-                }
-
-                @Override
-                public void deliveryFinished(MailQue mq, MimeMessage mm) {
-                    //Nothing needed
-                }
-            });
-            que.queMail(msg);
-        } catch (MessagingException ex) {
+        }
+        catch (MessagingException ex) {
             ex.printStackTrace();
-        } catch (IOException ex) {
+        }
+        catch (IOException ex) {
             ex.printStackTrace();
         }
     }

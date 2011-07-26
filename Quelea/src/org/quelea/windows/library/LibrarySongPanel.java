@@ -181,4 +181,12 @@ public class LibrarySongPanel extends JPanel {
     public JButton getRemoveButton() {
         return removeButton;
     }
+
+    /**
+     * Get the search box.
+     * @return the search box.
+     */
+    public JTextField getSearchBox() {
+        return searchBox;
+    }
 }

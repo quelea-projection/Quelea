@@ -1,6 +1,7 @@
 package org.quelea.windows.main;
 
 import java.awt.Dimension;
+import javax.swing.JComponent;
 import org.quelea.utils.QueleaProperties;
 import org.quelea.windows.newsong.SongEntryWindow;
 
