@@ -1,30 +1,33 @@
 package org.quelea.powerpoint;
 
 import java.io.IOException;
-import javax.swing.JOptionPane;
-import javax.swing.SwingUtilities;
 import org.apache.poi.hslf.HSLFSlideShow;
 import org.apache.poi.hslf.model.Slide;
 import org.apache.poi.hslf.usermodel.SlideShow;
-import org.apache.poi.poifs.filesystem.OfficeXmlFileException;
-import org.quelea.Application;
+import org.apache.poi.xslf.XSLFSlideShow;
+import org.apache.poi.xslf.usermodel.XMLSlideShow;
+import org.apache.poi.xslf.usermodel.XSLFSlide;
 
 /**
  *
  * @author Michael
  */
-public class Presentation {
+public class XMLPresentation {
 
-    private SlideShow slideshow;
+    private XMLSlideShow slideshow;
     private PresentationSlide[] slides;
 
-    public Presentation(String file) {
+    public XMLPresentation(String file) {
         try {
-            slideshow = new SlideShow(new HSLFSlideShow(file));
-            slides = makeSlides();
-        } catch (IOException ex) {
+            slideshow = new XMLSlideShow(new XSLFSlideShow(file));
+        }
+        catch (IOException ex) {
             throw new RuntimeException("Couldn't find " + file, ex);
         }
+        catch(Exception ex) {
+            throw new RuntimeException("Error creating presentation");
+        }
+        slides = makeSlides();
     }
 
     public PresentationSlide getSlide(int index) {
@@ -36,10 +39,10 @@ public class Presentation {
     }
 
     private PresentationSlide[] makeSlides() {
-        Slide[] lSlides = slideshow.getSlides();
+        XSLFSlide[] lSlides = slideshow.getSlides();
         PresentationSlide[] ret = new PresentationSlide[lSlides.length];
         for (int i = 0; i < lSlides.length; i++) {
-            ret[i] = new PresentationSlide(lSlides[i]);
+//            ret[i] = new PresentationSlide(lSlides[i]);
         }
         return ret;
     }
