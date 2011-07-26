@@ -47,11 +47,11 @@ public class PowerpointList extends JList {
         }
     }
 
-    public BufferedImage getCurrentImage() {
+    public BufferedImage getCurrentImage(int width, int height) {
         if (getSelectedValue() == null) {
             return new BufferedImage(10, 10, BufferedImage.TYPE_INT_ARGB);
         }
-        return ((PresentationSlide) getSelectedValue()).getImage();
+        return ((PresentationSlide) getSelectedValue()).getImage(width, height);
     }
 
     /**
@@ -64,7 +64,7 @@ public class PowerpointList extends JList {
                 boolean isSelected, boolean cellHasFocus) {
             CustomCellRenderer ret = (CustomCellRenderer) super.getListCellRendererComponent(list, "", index, isSelected, cellHasFocus);
             ret.setBorder(new EmptyBorder(10, 5, 10, 5));
-            ret.setIcon(new ImageIcon(Utils.resizeImage(((PresentationSlide) value).getImage(), list.getWidth() > 400 ? 390 : list.getWidth() - 10, 200)));
+            ret.setIcon(new ImageIcon(((PresentationSlide) value).getImage( list.getWidth() > 400 ? 390 : list.getWidth() - 10, 200)));
             return ret;
         }
     }

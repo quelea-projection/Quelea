@@ -31,7 +31,7 @@ public class PowerpointPanel extends ContainedPanel {
                 if (!powerpointList.getValueIsAdjusting()) {
                     for (LyricCanvas lc : containerPanel.getCanvases()) {
                         lc.setText(new String[]{});
-                        BufferedImage displayImage = Utils.resizeImage(powerpointList.getCurrentImage(), lc.getWidth(), lc.getHeight());
+                        BufferedImage displayImage = powerpointList.getCurrentImage(lc.getWidth(), lc.getHeight());
                         lc.setTheme(new Theme(null, null, new Background(null, displayImage)));
                     }
                 }
