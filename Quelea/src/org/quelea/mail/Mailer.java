@@ -13,7 +13,12 @@ import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeMultipart;
+import javax.swing.JOptionPane;
+import javax.swing.SwingUtilities;
+import org.apache.mailet.MailAddress;
 import org.masukomi.aspirin.core.MailQue;
+import org.masukomi.aspirin.core.MailWatcher;
+import org.quelea.Application;
 import org.quelea.Schedule;
 
 /**
@@ -86,6 +91,41 @@ public class Mailer {
             msg.setSentDate(new Date());
 
             MailQue que = new MailQue();
+            que.addWatcher(new MailWatcher() {
+
+                @Override
+                public void deliverySuccess(MailQue mq, MimeMessage mm, MailAddress ma) {
+                    SwingUtilities.invokeLater(new Runnable() {
+
+                        @Override
+                        public void run() {
+                            JOptionPane.showMessageDialog(Application.get().getMainWindow(),
+                                    "Email sent successfully!",
+                                    "Success", JOptionPane.INFORMATION_MESSAGE);
+                        }
+                    });
+                }
+
+                @Override
+                public void deliveryFailure(MailQue mq, MimeMessage mm, MailAddress ma, MessagingException me) {
+                    SwingUtilities.invokeLater(new Runnable() {
+
+                        @Override
+                        public void run() {
+                            JOptionPane.showMessageDialog(Application.get().getMainWindow(),
+                                    "Sorry, but the email delivery failed. If you're connected to the internet, "
+                                    + "your ISP might be blocking the message from being sent. If so, you'll "
+                                    + "have to save the schedule and attach it to an email manually.",
+                                    "Sending failed", JOptionPane.WARNING_MESSAGE);
+                        }
+                    });
+                }
+
+                @Override
+                public void deliveryFinished(MailQue mq, MimeMessage mm) {
+                    //Nothing needed
+                }
+            });
             que.queMail(msg);
         } catch (MessagingException ex) {
             ex.printStackTrace();
