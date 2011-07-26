@@ -30,6 +30,19 @@ public final class Utils {
     }
 
     /**
+     * Sleep ignoring the exception.
+     * @param millis milliseconds to sleep.
+     */
+    public static void sleep(long millis) {
+        try {
+            Thread.sleep(millis);
+        }
+        catch(InterruptedException ex) {
+            //Nothing
+        }
+    }
+
+    /**
      * Determine whether the given frame is completely on the given screen.
      * @param frame      the frame to check.
      * @param monitorNum the monitor number to check.
@@ -204,12 +217,10 @@ public final class Utils {
      */
     public static BufferedImage resizeImage(BufferedImage image, int width, int height) {
         if (width > 0 && height > 0 && (image.getWidth()!=width||image.getHeight()!=height)) {
-            long time = System.currentTimeMillis();
             BufferedImage bdest = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
             Graphics2D g = bdest.createGraphics();
             g.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BICUBIC);
             g.drawImage(image, 0, 0, width, height, null);
-            System.out.println(System.currentTimeMillis()-time);
             return bdest;
         }
         else {

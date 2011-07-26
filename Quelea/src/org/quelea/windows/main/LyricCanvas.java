@@ -68,13 +68,23 @@ public class LyricCanvas extends Canvas implements RenderCallback {
         repaint();
     }
 
+    public void repaint() {
+        if (getWidth() > 0 && getHeight() > 0) {
+            SwingUtilities.invokeLater(new Runnable() {
+
+                public void run() {
+                    paint(getGraphics());
+                }
+            });
+        }
+    }
+
     /**
      * Paint the background image and the lyrics onto the canvas.
      * @param g the graphics used for painting.
      */
     @Override
     public void paint(Graphics g) {
-        super.paint(g);
         Image offscreenImage = new BufferedImage(getWidth(), getHeight(), BufferedImage.TYPE_INT_ARGB);
         Graphics offscreen = offscreenImage.getGraphics();
         offscreen.setColor(getForeground());
@@ -86,7 +96,7 @@ public class LyricCanvas extends Canvas implements RenderCallback {
             offscreen.setColor(temp);
         }
         else {
-            offscreen.drawImage(theme.getBackground().getImage(getWidth(), getHeight()), 0, 0, null);
+            offscreen.drawImage(theme.getBackground().getImage(getWidth(), getHeight(), Integer.toString(getWidth())), 0, 0, null);
         }
         Color fontColour = theme.getFontColor();
         if (fontColour == null) {
