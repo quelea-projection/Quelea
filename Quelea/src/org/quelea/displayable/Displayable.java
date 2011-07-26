@@ -11,6 +11,12 @@ import java.util.Collection;
 public interface Displayable {
 
     /**
+     * Determine if this displayable can be "cleared" in some way.
+     * @return true if it can be cleared, false otherwise.
+     */
+    boolean supportClear();
+
+    /**
      * Get the XML describing this displayable.
      * @return the xml.
      */

@@ -1,18 +1,17 @@
 package org.quelea.windows.main;
 
 import java.awt.BorderLayout;
-import java.awt.Color;
-import java.io.File;
+import java.awt.event.KeyListener;
+import java.awt.image.BufferedImage;
 import javax.swing.DefaultListModel;
-import javax.swing.JFrame;
 import javax.swing.JScrollPane;
-import javax.swing.SwingUtilities;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import org.quelea.Background;
 import org.quelea.Theme;
 import org.quelea.displayable.PresentationDisplayable;
 import org.quelea.powerpoint.PresentationSlide;
+import org.quelea.utils.Utils;
 
 /**
  *
@@ -32,7 +31,8 @@ public class PowerpointPanel extends ContainedPanel {
                 if (!powerpointList.getValueIsAdjusting()) {
                     for (LyricCanvas lc : containerPanel.getCanvases()) {
                         lc.setText(new String[]{});
-                        lc.setTheme(new Theme(null, Color.yellow, new Background(null, powerpointList.getCurrentImage())));
+                        BufferedImage displayImage = Utils.resizeImage(powerpointList.getCurrentImage(), lc.getWidth(), lc.getHeight());
+                        lc.setTheme(new Theme(null, null, new Background(null, displayImage)));
                     }
                 }
             }
@@ -41,39 +41,54 @@ public class PowerpointPanel extends ContainedPanel {
         add(scroll, BorderLayout.CENTER);
     }
 
-    public void setDisplayable(PresentationDisplayable displayable) {
+    public void setDisplayable(PresentationDisplayable displayable, int index) {
         PresentationSlide[] slides = displayable.getPresentation().getSlides();
         DefaultListModel model = (DefaultListModel) (powerpointList.getModel());
         model.clear();
         for (PresentationSlide slide : slides) {
             model.addElement(slide);
         }
+        powerpointList.setSelectedIndex(index);
+        if(powerpointList.getSelectedIndex()==-1) {
+            powerpointList.setSelectedIndex(0);
+        }
+        powerpointList.ensureIndexIsVisible(powerpointList.getSelectedIndex());
     }
 
-    public static void main(String[] args) {
-        final PowerpointPanel panel = new PowerpointPanel(null);
-        final PresentationDisplayable presentation = new PresentationDisplayable(new File("C:\\java.ppt"));
-        SwingUtilities.invokeLater(new Runnable() {
-
-            public void run() {
-                JFrame frame = new JFrame();
-                frame.setLayout(new BorderLayout());
-                frame.add(panel, BorderLayout.CENTER);
-                frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-                frame.pack();
-                frame.setVisible(true);
-                panel.setDisplayable(presentation);
-            }
-        });
+    public int getIndex() {
+        return powerpointList.getSelectedIndex();
+    }
+    
+    @Override
+    public void addKeyListener(KeyListener l) {
+        super.addKeyListener(l);
+        powerpointList.addKeyListener(l);
     }
 
     @Override
     public void focus() {
-        //TODO: Something
+        powerpointList.requestFocus();
     }
 
     @Override
     public void clear() {
         //Doesn't really apply
     }
+
+//    public static void main(String[] args) {
+//        final PowerpointPanel panel = new PowerpointPanel(null);
+//        final PresentationDisplayable presentation = new PresentationDisplayable(new File("C:\\java.ppt"));
+//        SwingUtilities.invokeLater(new Runnable() {
+//
+//            public void run() {
+//                JFrame frame = new JFrame();
+//                frame.setLayout(new BorderLayout());
+//                frame.add(panel, BorderLayout.CENTER);
+//                frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+//                frame.pack();
+//                frame.setVisible(true);
+//                panel.setDisplayable(presentation);
+//            }
+//        });
+//    }
 }

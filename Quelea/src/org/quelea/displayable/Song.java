@@ -78,9 +78,9 @@ public class Song implements TextDisplayable, Searchable, Comparable<Song> {
      * Try and give this song an ID based on the ID in the database. If this can't be done, leave it as -1.
      */
     public void matchID() {
-        if(id == -1) {
-            for(Song song : SongDatabase.get().getSongs()) {
-                if(this.title.equals(song.title)) {
+        if (id == -1) {
+            for (Song song : SongDatabase.get().getSongs()) {
+                if (this.title.equals(song.title)) {
                     id = song.getID();
                 }
             }
@@ -135,17 +135,22 @@ public class Song implements TextDisplayable, Searchable, Comparable<Song> {
         this.author = author;
     }
 
+    @Override
+    public boolean supportClear() {
+        return true;
+    }
+
     /**
      * Get all the lyrics to this song as a string. This can be parsed using the setLyrics() method.
      * @return the lyrics to this song.
      */
     public String getLyrics() {
         StringBuilder ret = new StringBuilder();
-        for(TextSection section : sections) {
-            if(section.getTitle() != null && !section.getTitle().equals("")) {
+        for (TextSection section : sections) {
+            if (section.getTitle() != null && !section.getTitle().equals("")) {
                 ret.append(section.getTitle()).append("\n");
             }
-            for(String line : section.getText()) {
+            for (String line : section.getText()) {
                 ret.append(line).append("\n");
             }
             ret.append("\n");
@@ -161,14 +166,14 @@ public class Song implements TextDisplayable, Searchable, Comparable<Song> {
     public void setLyrics(String lyrics) {
         sections.clear();
         lyrics = lyrics.replaceAll("\n\n+", "\n\n");
-        for(String section : lyrics.split("\n\n")) {
+        for (String section : lyrics.split("\n\n")) {
             String[] sectionLines = section.split("\n");
             String[] newLyrics = section.split("\n");
             String sectionTitle = "";
-            if(sectionLines.length == 0) {
+            if (sectionLines.length == 0) {
                 continue;
             }
-            if(new LineTypeChecker(sectionLines[0]).getLineType() == LineTypeChecker.Type.TITLE) {
+            if (new LineTypeChecker(sectionLines[0]).getLineType() == LineTypeChecker.Type.TITLE) {
                 sectionTitle = sectionLines[0];
                 newLyrics = new String[sectionLines.length - 1];
                 System.arraycopy(sectionLines, 1, newLyrics, 0, newLyrics.length);
@@ -183,7 +188,7 @@ public class Song implements TextDisplayable, Searchable, Comparable<Song> {
      * @param section the section to add.
      */
     public void addSection(TextSection section) {
-        if(section.getTheme() == null) {
+        if (section.getTheme() == null) {
             section.setTheme(theme);
         }
         sections.add(section);
@@ -195,7 +200,7 @@ public class Song implements TextDisplayable, Searchable, Comparable<Song> {
      * @param sections the sections to add.
      */
     public void addSections(TextSection[] sections) {
-        for(TextSection section : sections) {
+        for (TextSection section : sections) {
             addSection(section);
         }
     }
@@ -216,7 +221,7 @@ public class Song implements TextDisplayable, Searchable, Comparable<Song> {
      * @return true if the song matches, false otherwise.
      */
     public boolean search(String s) {
-        if(searchLyrics == null || searchLyrics.get() == null) {
+        if (searchLyrics == null || searchLyrics.get() == null) {
             searchLyrics = new SoftReference<String>(stripPunctuation(getLyrics().replace("\n", " ")).toLowerCase());
         }
         return title.toLowerCase().contains(s)
@@ -231,8 +236,8 @@ public class Song implements TextDisplayable, Searchable, Comparable<Song> {
     private static String stripPunctuation(String s) {
         s = s.replaceAll("[ ]+", " ");
         StringBuilder ret = new StringBuilder();
-        for(char c : s.toCharArray()) {
-            if(Character.isLetterOrDigit(c) || Character.isWhitespace(c)) {
+        for (char c : s.toCharArray()) {
+            if (Character.isLetterOrDigit(c) || Character.isWhitespace(c)) {
                 ret.append(c);
             }
         }
@@ -253,7 +258,7 @@ public class Song implements TextDisplayable, Searchable, Comparable<Song> {
         xml.append(Utils.escapeXML(author));
         xml.append("</author>");
         xml.append("<lyrics>");
-        for(TextSection section : sections) {
+        for (TextSection section : sections) {
             xml.append(section.getXML());
         }
         xml.append("</lyrics>");
@@ -274,13 +279,13 @@ public class Song implements TextDisplayable, Searchable, Comparable<Song> {
             Document doc = builder.parse(inputStream);
             return parseXML(doc.getFirstChild());
         }
-        catch(ParserConfigurationException ex) {
+        catch (ParserConfigurationException ex) {
             return null;
         }
-        catch(SAXException ex) {
+        catch (SAXException ex) {
             return null;
         }
-        catch(IOException ex) {
+        catch (IOException ex) {
             return null;
         }
     }
@@ -297,15 +302,15 @@ public class Song implements TextDisplayable, Searchable, Comparable<Song> {
             Document doc = builder.parse(inputStream);
             return parseXML(doc.getChildNodes().item(0));
         }
-        catch(ParserConfigurationException ex) {
+        catch (ParserConfigurationException ex) {
             LOGGER.log(Level.WARNING, "Couldn't parse the schedule", ex);
             return null;
         }
-        catch(SAXException ex) {
+        catch (SAXException ex) {
             LOGGER.log(Level.WARNING, "Couldn't parse the schedule", ex);
             return null;
         }
-        catch(IOException ex) {
+        catch (IOException ex) {
             LOGGER.log(Level.WARNING, "Couldn't parse the schedule", ex);
             return null;
         }
@@ -321,26 +326,26 @@ public class Song implements TextDisplayable, Searchable, Comparable<Song> {
         String title = "";
         String author = "";
         List<TextSection> songSections = new ArrayList<TextSection>();
-        for(int i = 0; i < list.getLength(); i++) {
+        for (int i = 0; i < list.getLength(); i++) {
             Node node = list.item(i);
-            if(node.getNodeName().equals("title")) {
+            if (node.getNodeName().equals("title")) {
                 title = node.getTextContent();
             }
-            if(node.getNodeName().equals("author")) {
+            if (node.getNodeName().equals("author")) {
                 author = node.getTextContent();
             }
-            if(node.getNodeName().equals("lyrics")) {
+            if (node.getNodeName().equals("lyrics")) {
                 NodeList sections = node.getChildNodes();
-                for(int j = 0; j < sections.getLength(); j++) {
+                for (int j = 0; j < sections.getLength(); j++) {
                     Node sectionNode = sections.item(j);
-                    if(sectionNode.getNodeName().equals("section")) {
+                    if (sectionNode.getNodeName().equals("section")) {
                         songSections.add(TextSection.parseXML(sectionNode));
                     }
                 }
             }
         }
         Song ret = new Song(title, author, new Theme(Theme.DEFAULT_FONT, Theme.DEFAULT_FONT_COLOR, Theme.DEFAULT_BACKGROUND));
-        for(TextSection section : songSections) {
+        for (TextSection section : songSections) {
             ret.addSection(section);
         }
         return ret;
@@ -367,23 +372,23 @@ public class Song implements TextDisplayable, Searchable, Comparable<Song> {
      */
     @Override
     public boolean equals(Object obj) {
-        if(obj == null) {
+        if (obj == null) {
             return false;
         }
-        if(!(obj instanceof Song)) {
+        if (!(obj instanceof Song)) {
             return false;
         }
         final Song other = (Song) obj;
-        if((this.title == null) ? (other.title != null) : !this.title.equals(other.title)) {
+        if ((this.title == null) ? (other.title != null) : !this.title.equals(other.title)) {
             return false;
         }
-        if((this.author == null) ? (other.author != null) : !this.author.equals(other.author)) {
+        if ((this.author == null) ? (other.author != null) : !this.author.equals(other.author)) {
             return false;
         }
-        if(this.sections != other.sections && (this.sections == null || !this.sections.equals(other.sections))) {
+        if (this.sections != other.sections && (this.sections == null || !this.sections.equals(other.sections))) {
             return false;
         }
-        if(this.theme != other.theme && (this.theme == null || !this.theme.equals(other.theme))) {
+        if (this.theme != other.theme && (this.theme == null || !this.theme.equals(other.theme))) {
             return false;
         }
         return true;
@@ -397,11 +402,11 @@ public class Song implements TextDisplayable, Searchable, Comparable<Song> {
      */
     public int compareTo(Song other) {
         int result = getTitle().compareToIgnoreCase(other.getTitle());
-        if(result == 0) {
-            if(getAuthor() != null && other.getAuthor() != null) {
+        if (result == 0) {
+            if (getAuthor() != null && other.getAuthor() != null) {
                 result = getAuthor().compareToIgnoreCase(other.getAuthor());
             }
-            if(result == 0 && getLyrics() != null && other.getLyrics() != null) {
+            if (result == 0 && getLyrics() != null && other.getLyrics() != null) {
                 result = getLyrics().compareTo(other.getLyrics());
             }
         }
@@ -446,11 +451,11 @@ public class Song implements TextDisplayable, Searchable, Comparable<Song> {
      */
     public Collection<File> getResources() {
         Set<File> ret = new HashSet<File>();
-        for(TextSection section : getSections()) {
+        for (TextSection section : getSections()) {
             Theme sectionTheme = section.getTheme();
-            if(sectionTheme != null) {
+            if (sectionTheme != null) {
                 Background background = sectionTheme.getBackground();
-                if(background.getImageLocation() != null) {
+                if (background.getImageLocation() != null) {
                     ret.add(background.getImageFile());
                 }
             }
