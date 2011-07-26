@@ -1,21 +1,19 @@
 package org.quelea.windows.main.ribbon;
 
-import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 import java.io.File;
 import javax.swing.DefaultListModel;
-import javax.swing.JDialog;
 import javax.swing.JFileChooser;
-import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
-import javax.swing.SwingWorker;
 import javax.swing.event.ListDataEvent;
 import javax.swing.event.ListDataListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
+import org.apache.poi.poifs.filesystem.OfficeXmlFileException;
 import org.pushingpixels.flamingo.api.common.JCommandButton;
 import org.pushingpixels.flamingo.api.ribbon.JRibbonBand;
 import org.pushingpixels.flamingo.api.ribbon.RibbonElementPriority;
@@ -56,10 +54,12 @@ public class ScheduleTask extends RibbonTask {
         if (scheduleList.getSelectedIndex() == -1) {
             editSongButton.setEnabled(false);
             removeSongButton.setEnabled(false);
-        } else {
+        }
+        else {
             if (scheduleList.getSelectedValue() instanceof Song) {
                 editSongButton.setEnabled(true);
-            } else {
+            }
+            else {
                 editSongButton.setEnabled(false);
             }
             removeSongButton.setEnabled(true);
@@ -75,7 +75,8 @@ public class ScheduleTask extends RibbonTask {
         }
         if (songList.getSelectedIndex() == -1) {
             addSongButton.setEnabled(false);
-        } else {
+        }
+        else {
             addSongButton.setEnabled(true);
         }
     }
@@ -145,7 +146,7 @@ public class ScheduleTask extends RibbonTask {
     private static JRibbonBand createVideoBand() {
         JRibbonBand videoBand = new JRibbonBand("Add Multimedia", RibbonUtils.getRibbonIcon("icons/video file.png", 100, 100));
         RibbonUtils.applyStandardResizePolicies(videoBand);
-        JCommandButton presentationButton = new JCommandButton("Presentation", RibbonUtils.getRibbonIcon("icons/powerpoint.png", 100, 100));
+        final JCommandButton presentationButton = new JCommandButton("Presentation", RibbonUtils.getRibbonIcon("icons/powerpoint.png", 100, 100));
         videoBand.addCommandButton(presentationButton, RibbonElementPriority.TOP);
         presentationButton.addActionListener(new ActionListener() {
 
@@ -158,15 +159,35 @@ public class ScheduleTask extends RibbonTask {
                 File file = fileChooser.getSelectedFile();
                 if (file != null) {
                     new Thread() {
-                        public void run() {
-                            final PresentationDisplayable displayable = new PresentationDisplayable(fileChooser.getSelectedFile());
-                            SwingUtilities.invokeLater(new Runnable() {
 
-                                @Override
-                                public void run() {
-                                    ((DefaultListModel) Application.get().getMainWindow().getMainPanel().getSchedulePanel().getScheduleList().getModel()).addElement(displayable);
-                                }
-                            });
+                        public void run() {
+                            presentationButton.setIcon(RibbonUtils.getRibbonIcon("icons/hourglass.png", 100, 100));
+                            presentationButton.setEnabled(false);
+                            try {
+                                final PresentationDisplayable displayable = new PresentationDisplayable(fileChooser.getSelectedFile());
+                                SwingUtilities.invokeLater(new Runnable() {
+
+                                    @Override
+                                    public void run() {
+                                        ((DefaultListModel) Application.get().getMainWindow().getMainPanel().getSchedulePanel().getScheduleList().getModel()).addElement(displayable);
+                                    }
+                                });
+                            }
+                            catch (OfficeXmlFileException ex) {
+                                SwingUtilities.invokeLater(new Runnable() {
+
+                                    @Override
+                                    public void run() {
+                                        JOptionPane.showMessageDialog(Application.get().getMainWindow(),
+                                                "Sorry, this file appears to be in the new powerpoint format. "
+                                                + "Hopefully Quelea will support this format in the "
+                                                + "future but it doesn't at the moment. For now, just use "
+                                                + "the original powerpoint (PPT) format.", "Invalid format", JOptionPane.ERROR_MESSAGE);
+                                    }
+                                });
+                            }
+                            presentationButton.setIcon(RibbonUtils.getRibbonIcon("icons/powerpoint.png", 100, 100));
+                            presentationButton.setEnabled(true);
                         }
                     }.start();
                 }
@@ -241,7 +262,8 @@ public class ScheduleTask extends RibbonTask {
                 Schedule schedule = scheduleList.getSchedule();
                 if (schedule == null || !schedule.iterator().hasNext()) {
                     emailButton.setEnabled(false);
-                } else {
+                }
+                else {
                     emailButton.setEnabled(true);
                 }
             }
@@ -251,14 +273,14 @@ public class ScheduleTask extends RibbonTask {
             @Override
             public void actionPerformed(ActionEvent e) {
                 Mailer.getInstance().sendSchedule(scheduleList.getSchedule(), "Hi,\n"
-                + "Attached is a Quelea schedule you've been sent. Simply "
-                + "open it with Quelea and all the items should appear correctly.\n\n"
-                + "Thanks,\n"
-                + "Quelea Team\n\n\n"
-                + "-----\n"
-                + "Please note this is an automated email, do not reply to this "
-                + "address. If you wish to reply please be sure to change the "
-                + "address to the correct person.");
+                        + "Attached is a Quelea schedule you've been sent. Simply "
+                        + "open it with Quelea and all the items should appear correctly.\n\n"
+                        + "Thanks,\n"
+                        + "Quelea Team\n\n\n"
+                        + "-----\n"
+                        + "Please note this is an automated email, do not reply to this "
+                        + "address. If you wish to reply please be sure to change the "
+                        + "address to the correct person.");
             }
         });
         return shareBand;
