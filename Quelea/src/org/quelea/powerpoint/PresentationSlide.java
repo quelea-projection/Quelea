@@ -6,7 +6,7 @@ import java.lang.ref.SoftReference;
 import java.util.HashMap;
 import java.util.Map;
 import org.apache.poi.hslf.model.Slide;
-import org.apache.poi.hslf.usermodel.SlideShow;
+import org.apache.poi.xslf.usermodel.XSLFSlide;
 import org.quelea.Application;
 import org.quelea.utils.Utils;
 import org.quelea.windows.main.LyricCanvas;
@@ -20,9 +20,12 @@ public class PresentationSlide {
     private BufferedImage image;
     private Map<Dimension, SoftReference<BufferedImage>> cache;
 
-    public PresentationSlide(Slide slide) {
+    {
         cache = new HashMap<Dimension, SoftReference<BufferedImage>>();
-        SlideShow slideshow = slide.getSlideShow();
+    }
+
+    public PresentationSlide(Slide slide) {
+        org.apache.poi.hslf.usermodel.SlideShow slideshow = slide.getSlideShow();
         image = new BufferedImage((int) slideshow.getPageSize().getWidth(), (int) slideshow.getPageSize().getHeight(), BufferedImage.TYPE_INT_ARGB);
         slide.draw(image.createGraphics());
         LyricCanvas lc = Application.get().getLyricWindow().getCanvas();
