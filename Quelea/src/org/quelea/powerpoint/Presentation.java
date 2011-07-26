@@ -1,13 +1,9 @@
 package org.quelea.powerpoint;
 
 import java.io.IOException;
-import java.util.Arrays;
 import org.apache.poi.hslf.HSLFSlideShow;
 import org.apache.poi.hslf.model.Slide;
 import org.apache.poi.hslf.usermodel.SlideShow;
-import org.apache.poi.xslf.usermodel.XMLSlideShow;
-import org.apache.poi.xslf.XSLFSlideShow;
-import org.apache.poi.xslf.usermodel.XSLFSlide;
 
 /**
  *

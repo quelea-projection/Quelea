@@ -2,7 +2,6 @@
 <project name="Quelea" default="default" basedir=".">
     <description>Builds, tests, and runs Quelea.</description>
     <import file="nbproject/build-impl.xml"/>
-    <import file="nbproject/profiler-build-impl.xml"/>
     <taskdef name="izpack" classpath="${basedir}/izpack/standalone-compiler.jar"
              classname="com.izforge.izpack.ant.IzPackTask"/>
     <taskdef name="launch4j" classpath="launch4j/launch4j.jar" classname="net.sf.launch4j.ant.Launch4jTask"/>

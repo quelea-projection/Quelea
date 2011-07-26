@@ -71,6 +71,9 @@ public abstract class LivePreviewPanel extends JPanel {
 
     public void clear() {
         displayable = null;
+        if (PRESENTATION_LABEL.equals(currentLabel)) {
+            powerpointPanel.setDisplayable(null, 0);
+        }
         for (ContainedPanel panel : containedSet) {
             panel.clear();
         }
@@ -78,7 +81,7 @@ public abstract class LivePreviewPanel extends JPanel {
     }
 
     public int getIndex() {
-        if (currentLabel.equals(PRESENTATION_LABEL)) {
+        if (PRESENTATION_LABEL.equals(currentLabel)) {
             return powerpointPanel.getIndex();
         }
         else {
@@ -90,6 +93,9 @@ public abstract class LivePreviewPanel extends JPanel {
         this.displayable = d;
         if (VIDEO_LABEL.equals(currentLabel)) {
             videoPanel.getVideoControlPanel().stopVideo();
+        }
+        if (PRESENTATION_LABEL.equals(currentLabel)) {
+            powerpointPanel.setDisplayable(null, 0);
         }
         if (d instanceof TextDisplayable) {
             lyricsPanel.showDisplayable((TextDisplayable) d, index);
