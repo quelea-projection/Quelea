@@ -5,6 +5,8 @@ import org.quelea.utils.Utils;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * A visual background. This may either be an image or a colour.
@@ -15,6 +17,7 @@ public class Background {
     private Color colour;
     private String imageLocation;
     private BufferedImage originalImage;
+    private Map<String, BufferedImage> cacheMap = new HashMap<String, BufferedImage>();;
 
     /**
      * Create a new background that's a certain colour.
@@ -40,7 +43,13 @@ public class Background {
      * @param height the height of the background.
      * @return an image containing the background with the given dimensions.
      */
-    public BufferedImage getImage(int width, int height) {
+    public BufferedImage getImage(int width, int height, String key) {
+        if(key != null && cacheMap.get(key)!=null) {
+            BufferedImage cacheImage = cacheMap.get(key);
+            if(cacheImage.getWidth()==width&&cacheImage.getHeight()==height) {
+                return cacheImage;
+            }
+        }
         BufferedImage ret = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
         Graphics2D g = (Graphics2D) ret.getGraphics();
         g.setColor(Color.BLACK);
@@ -52,13 +61,15 @@ public class Background {
             g.setRenderingHint(RenderingHints.KEY_INTERPOLATION,
                     RenderingHints.VALUE_INTERPOLATION_BICUBIC);
             g.drawImage(originalImage, 0, 0, width, height, null);
-            return ret;
         }
         else {
             g.setColor(colour);
             g.fillRect(0, 0, width, height);
-            return ret;
         }
+        if(key != null) {
+            cacheMap.put(key, ret);
+        }
+        return ret;
     }
 
     /**
@@ -138,9 +149,12 @@ public class Background {
         if(this.imageLocation != other.imageLocation && (this.imageLocation == null || !this.imageLocation.equals(other.imageLocation))) {
             return false;
         }
-        if(this.originalImage != other.originalImage && (this.originalImage == null || !this.originalImage.equals(other.originalImage))) {
+        if(this.imageLocation==null) {
             return false;
         }
+//        if(this.originalImage != other.originalImage && (this.originalImage == null || !this.originalImage.equals(other.originalImage))) {
+//            return false;
+//        }
         return true;
     }
 
