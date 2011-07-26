@@ -2,6 +2,8 @@ package org.quelea.windows.main;
 
 import java.awt.Color;
 import java.awt.Component;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
 import java.awt.image.BufferedImage;
 import javax.swing.DefaultListCellRenderer;
 import javax.swing.DefaultListModel;
@@ -9,6 +11,7 @@ import javax.swing.ImageIcon;
 import javax.swing.JList;
 import javax.swing.border.EmptyBorder;
 import org.quelea.powerpoint.PresentationSlide;
+import org.quelea.utils.QueleaProperties;
 import org.quelea.utils.Utils;
 
 /**
@@ -17,10 +20,24 @@ import org.quelea.utils.Utils;
  */
 public class PowerpointList extends JList {
 
+    private Color originalSelectionColour;
+
     public PowerpointList() {
-        setBackground(Color.BLACK);
         setModel(new DefaultListModel());
         setCellRenderer(new CustomCellRenderer());
+        originalSelectionColour = getSelectionBackground();
+        addFocusListener(new FocusListener() {
+
+            public void focusGained(FocusEvent e) {
+                if (getModel().getSize() > 0) {
+                    setSelectionBackground(QueleaProperties.get().getActiveSelectionColor());
+                }
+            }
+
+            public void focusLost(FocusEvent e) {
+                setSelectionBackground(originalSelectionColour);
+            }
+        });
     }
 
     public void setSlides(PresentationSlide[] slides) {
@@ -31,7 +48,7 @@ public class PowerpointList extends JList {
     }
 
     public BufferedImage getCurrentImage() {
-        if(getSelectedValue()==null) {
+        if (getSelectedValue() == null) {
             return new BufferedImage(10, 10, BufferedImage.TYPE_INT_ARGB);
         }
         return ((PresentationSlide) getSelectedValue()).getImage();

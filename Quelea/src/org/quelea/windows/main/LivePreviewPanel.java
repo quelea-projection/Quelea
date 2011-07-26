@@ -25,11 +25,11 @@ public abstract class LivePreviewPanel extends JPanel {
     private Displayable displayable;
     private JPanel cardPanel = new JPanel(new CardLayout());
     private static final String LYRICS_LABEL = "LYRICS";
-    private SelectLyricsPanel lyricsPanel = new SelectLyricsPanel(this);
     private static final String IMAGE_LABEL = "IMAGE";
     private static final String VIDEO_LABEL = "VIDEO";
     private static final String PRESENTATION_LABEL = "PPT";
     private String currentLabel;
+    private SelectLyricsPanel lyricsPanel = new SelectLyricsPanel(this);
     private ImagePanel picturePanel = new ImagePanel(this);
     private PowerpointPanel powerpointPanel = new PowerpointPanel(this);
     private VideoPanel videoPanel = new VideoPanel();
@@ -38,6 +38,8 @@ public abstract class LivePreviewPanel extends JPanel {
         {
             this.add(lyricsPanel);
             this.add(picturePanel);
+            this.add(videoPanel);
+            this.add(powerpointPanel);
         }
     };
 
@@ -54,7 +56,9 @@ public abstract class LivePreviewPanel extends JPanel {
     @Override
     public void addKeyListener(KeyListener l) {
         super.addKeyListener(l);
-        getCurrentPanel().addKeyListener(l);
+        for (ContainedPanel panel : containedSet) {
+            panel.addKeyListener(l);
+        }
     }
 
     public JPanel getContainerPanel() {
@@ -74,7 +78,12 @@ public abstract class LivePreviewPanel extends JPanel {
     }
 
     public int getIndex() {
-        return lyricsPanel.getIndex();
+        if (currentLabel.equals(PRESENTATION_LABEL)) {
+            return powerpointPanel.getIndex();
+        }
+        else {
+            return lyricsPanel.getIndex();
+        }
     }
 
     public void setDisplayable(Displayable d, int index) {
@@ -86,11 +95,13 @@ public abstract class LivePreviewPanel extends JPanel {
             lyricsPanel.showDisplayable((TextDisplayable) d, index);
             ((CardLayout) cardPanel.getLayout()).show(cardPanel, LYRICS_LABEL);
             currentLabel = LYRICS_LABEL;
-        } else if (d instanceof ImageDisplayable) {
+        }
+        else if (d instanceof ImageDisplayable) {
             picturePanel.showDisplayable((ImageDisplayable) d);
             ((CardLayout) cardPanel.getLayout()).show(cardPanel, IMAGE_LABEL);
             currentLabel = IMAGE_LABEL;
-        } else if (d instanceof VideoDisplayable) {
+        }
+        else if (d instanceof VideoDisplayable) {
             videoPanel.showDisplayable((VideoDisplayable) d);
             for (LyricCanvas lc : videoPanel.getVideoControlPanel().getRegisteredCanvases()) {
                 lc.setText(new String[]{});
@@ -98,10 +109,14 @@ public abstract class LivePreviewPanel extends JPanel {
             ((CardLayout) cardPanel.getLayout()).show(cardPanel, VIDEO_LABEL);
             videoPanel.repaint();
             currentLabel = VIDEO_LABEL;
-        } else if (d instanceof PresentationDisplayable) {
+        }
+        else if (d instanceof PresentationDisplayable) {
             ((CardLayout) cardPanel.getLayout()).show(cardPanel, PRESENTATION_LABEL);
-            powerpointPanel.setDisplayable((PresentationDisplayable) d);
+            powerpointPanel.setDisplayable((PresentationDisplayable) d, index);
             currentLabel = PRESENTATION_LABEL;
+        }
+        else {
+            throw new RuntimeException("Displayable type not implemented: " + d.getClass());
         }
     }
 

@@ -32,7 +32,7 @@ public class Presentation {
     }
 
     public PresentationSlide[] getSlides() {
-        return Arrays.copyOf(slides, slides.length);
+        return slides;
     }
 
     private PresentationSlide[] makeSlides() {

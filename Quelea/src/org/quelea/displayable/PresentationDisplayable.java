@@ -75,5 +75,10 @@ public class PresentationDisplayable implements Displayable {
     public Collection<File> getResources() {
         return new ArrayList<File>();
     }
+
+    @Override
+    public boolean supportClear() {
+        return false;
+    }
     
 }
