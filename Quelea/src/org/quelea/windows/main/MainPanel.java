@@ -75,6 +75,14 @@ public class MainPanel extends JPanel {
         mainSplit.setResizeWeight(0.2);
         mainSplit.setSize(300, 300);
         add(mainSplit, BorderLayout.CENTER);
+
+        registerKeyboardAction(new ActionListener() {
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                libraryPanel.getLibrarySongPanel().getSearchBox().requestFocusInWindow();
+            }
+        }, KeyStroke.getKeyStroke(KeyEvent.VK_L, InputEvent.CTRL_MASK), JComponent.WHEN_IN_FOCUSED_WINDOW);
     }
 
     private void addBibleListeners() {

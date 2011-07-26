@@ -1,12 +1,17 @@
 package org.quelea.windows.main.ribbon;
 
+import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 import java.io.File;
 import javax.swing.DefaultListModel;
+import javax.swing.JDialog;
 import javax.swing.JFileChooser;
+import javax.swing.JLabel;
+import javax.swing.SwingUtilities;
+import javax.swing.SwingWorker;
 import javax.swing.event.ListDataEvent;
 import javax.swing.event.ListDataListener;
 import javax.swing.event.ListSelectionEvent;
@@ -20,7 +25,7 @@ import org.quelea.Schedule;
 import org.quelea.displayable.PresentationDisplayable;
 import org.quelea.displayable.Song;
 import org.quelea.displayable.VideoDisplayable;
-import org.quelea.mail.MailDialog;
+import org.quelea.mail.Mailer;
 import org.quelea.video.PowerpointFileFilter;
 import org.quelea.video.VideoFileFilter;
 import org.quelea.windows.library.LibrarySongList;
@@ -35,8 +40,6 @@ import org.quelea.windows.main.ScheduleList;
  * @author Michael
  */
 public class ScheduleTask extends RibbonTask {
-
-    private static MailDialog mailDialog = new MailDialog();
 
     public ScheduleTask() {
         super("Schedule", createSongBand(), createVideoBand(), createShareBand(), createNoticeBand());
@@ -148,14 +151,24 @@ public class ScheduleTask extends RibbonTask {
 
             @Override
             public void actionPerformed(ActionEvent e) {
-                JFileChooser fileChooser = new JFileChooser();
+                final JFileChooser fileChooser = new JFileChooser();
                 fileChooser.setFileFilter(new PowerpointFileFilter());
                 fileChooser.setAcceptAllFileFilterUsed(false);
                 fileChooser.showOpenDialog(Application.get().getMainWindow());
                 File file = fileChooser.getSelectedFile();
                 if (file != null) {
-                    PresentationDisplayable displayable = new PresentationDisplayable(fileChooser.getSelectedFile());
-                    ((DefaultListModel) Application.get().getMainWindow().getMainPanel().getSchedulePanel().getScheduleList().getModel()).addElement(displayable);
+                    new Thread() {
+                        public void run() {
+                            final PresentationDisplayable displayable = new PresentationDisplayable(fileChooser.getSelectedFile());
+                            SwingUtilities.invokeLater(new Runnable() {
+
+                                @Override
+                                public void run() {
+                                    ((DefaultListModel) Application.get().getMainWindow().getMainPanel().getSchedulePanel().getScheduleList().getModel()).addElement(displayable);
+                                }
+                            });
+                        }
+                    }.start();
                 }
             }
         });
@@ -237,9 +250,15 @@ public class ScheduleTask extends RibbonTask {
 
             @Override
             public void actionPerformed(ActionEvent e) {
-                mailDialog.reset();
-                mailDialog.setSchedule(scheduleList.getSchedule());
-                mailDialog.setVisible(true);
+                Mailer.getInstance().sendSchedule(scheduleList.getSchedule(), "Hi,\n"
+                + "Attached is a Quelea schedule you've been sent. Simply "
+                + "open it with Quelea and all the items should appear correctly.\n\n"
+                + "Thanks,\n"
+                + "Quelea Team\n\n\n"
+                + "-----\n"
+                + "Please note this is an automated email, do not reply to this "
+                + "address. If you wish to reply please be sure to change the "
+                + "address to the correct person.");
             }
         });
         return shareBand;

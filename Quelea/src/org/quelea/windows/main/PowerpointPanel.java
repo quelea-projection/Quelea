@@ -42,8 +42,12 @@ public class PowerpointPanel extends ContainedPanel {
     }
 
     public void setDisplayable(PresentationDisplayable displayable, int index) {
-        PresentationSlide[] slides = displayable.getPresentation().getSlides();
         DefaultListModel model = (DefaultListModel) (powerpointList.getModel());
+        if(displayable==null) {
+            model.clear();
+            return;
+        }
+        PresentationSlide[] slides = displayable.getPresentation().getSlides();
         model.clear();
         for (PresentationSlide slide : slides) {
             model.addElement(slide);
