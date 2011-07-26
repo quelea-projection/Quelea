@@ -19,7 +19,6 @@
 package org.quelea.video;
 
 import java.io.File;
-import java.io.FileFilter;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;

@@ -85,4 +85,9 @@ public class VideoDisplayable implements Displayable {
     public String getPrintText() {
         return "Video file: " + file.getName();
     }
+
+    @Override
+    public boolean supportClear() {
+        return false;
+    }
 }

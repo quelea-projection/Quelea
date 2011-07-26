@@ -203,12 +203,13 @@ public final class Utils {
      * @return the resized image.
      */
     public static BufferedImage resizeImage(BufferedImage image, int width, int height) {
-        if (width > 0 && height > 0) {
-            BufferedImage bdest = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
+        if (width > 0 && height > 0 && (image.getWidth()!=width||image.getHeight()!=height)) {
+            long time = System.currentTimeMillis();
+            BufferedImage bdest = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
             Graphics2D g = bdest.createGraphics();
-            AffineTransform at = AffineTransform.getScaleInstance((double) width / image.getWidth(),
-                    (double) height / image.getHeight());
-            g.drawRenderedImage(image, at);
+            g.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BICUBIC);
+            g.drawImage(image, 0, 0, width, height, null);
+            System.out.println(System.currentTimeMillis()-time);
             return bdest;
         }
         else {

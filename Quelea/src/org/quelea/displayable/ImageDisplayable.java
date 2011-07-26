@@ -34,7 +34,8 @@ public class ImageDisplayable implements Displayable {
         this.file = file;
         try {
             originalImage = ImageIO.read(file);
-        } catch (IOException ex) {
+        }
+        catch (IOException ex) {
             originalImage = null;
             ex.printStackTrace();
         }
@@ -123,5 +124,10 @@ public class ImageDisplayable implements Displayable {
     @Override
     public String getPrintText() {
         return "Image: " + file.getName();
+    }
+
+    @Override
+    public boolean supportClear() {
+        return false;
     }
 }
