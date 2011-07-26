@@ -1,13 +1,9 @@
 package org.quelea.powerpoint;
 
 import java.io.IOException;
-import javax.swing.JOptionPane;
-import javax.swing.SwingUtilities;
 import org.apache.poi.hslf.HSLFSlideShow;
 import org.apache.poi.hslf.model.Slide;
 import org.apache.poi.hslf.usermodel.SlideShow;
-import org.apache.poi.poifs.filesystem.OfficeXmlFileException;
-import org.quelea.Application;
 
 /**
  *
