@@ -1,9 +1,5 @@
 package org.quelea.windows.library;
 
-import org.quelea.Application;
-import org.quelea.SongDatabase;
-import org.quelea.SortedListModel;
-import org.quelea.displayable.Song;
 import org.quelea.utils.Utils;
 
 import javax.swing.*;
