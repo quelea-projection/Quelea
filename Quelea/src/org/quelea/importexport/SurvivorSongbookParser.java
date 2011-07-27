@@ -15,25 +15,17 @@ import java.util.List;
  * chords or sheet music!)
  * @author Michael
  */
-public class SurvivorSongbookParser {
+public class SurvivorSongbookParser implements SongParser {
 
-    private final File location;
     private List<Song> songs;
-
-    /**
-     * Create a new parser for a specific PDF document.
-     * @param pdfPath the path to the PDF document.
-     */
-    public SurvivorSongbookParser(String pdfPath) {
-        this.location = new File(pdfPath);
-    }
 
     /**
      * Get all the songs in the PDF document.
      * @return a list of all the songs.
      * @throws IOException if something went wrong.
      */
-    public List<Song> getSongs() throws IOException {
+    @Override
+    public List<Song> getSongs(File location) throws IOException {
         if(songs == null) {
             PDDocument document = PDDocument.load(location);
             List<Song> pdfSongs = new ArrayList<Song>();
