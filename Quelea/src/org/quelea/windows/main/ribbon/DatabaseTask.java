@@ -16,6 +16,7 @@ import org.quelea.SongDatabase;
 import org.quelea.importexport.ImportDialog;
 import org.quelea.importexport.QSPImportDialog;
 import org.quelea.importexport.SelectExportedSongsDialog;
+import org.quelea.importexport.SourceImportDialog;
 import org.quelea.importexport.SurvivorImportDialog;
 import org.quelea.windows.library.LibrarySongList;
 import org.quelea.windows.main.EditSongDBActionListener;
@@ -30,10 +31,12 @@ public class DatabaseTask extends RibbonTask {
 
     private static final ImportDialog sImportDialog;
     private static final ImportDialog qspImportDialog;
+    private static final ImportDialog sourceImportDialog;
 
     static {
         qspImportDialog = new QSPImportDialog(Application.get().getMainWindow());
         sImportDialog = new SurvivorImportDialog(Application.get().getMainWindow());
+        sourceImportDialog = new SourceImportDialog(Application.get().getMainWindow());
     }
 
     public DatabaseTask() {
@@ -63,6 +66,16 @@ public class DatabaseTask extends RibbonTask {
             }
         });
         importBand.addCommandButton(survivor, RibbonElementPriority.TOP);
+        JCommandButton source = new JCommandButton("The source", RibbonUtils.getRibbonIcon("icons/source.jpg", 100, 100));
+        source.addActionListener(new ActionListener() {
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                sourceImportDialog.setLocationRelativeTo(sourceImportDialog.getOwner());
+                sourceImportDialog.setVisible(true);
+            }
+        });
+        importBand.addCommandButton(source, RibbonElementPriority.TOP);
         JCommandButton sof = new JCommandButton("Songs of fellowship", RibbonUtils.getRibbonIcon("icons/sof.jpg", 100, 100));
         sof.addActionListener(new ActionListener() {
 
