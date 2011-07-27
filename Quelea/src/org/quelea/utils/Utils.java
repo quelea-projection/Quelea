@@ -43,6 +43,25 @@ public final class Utils {
     }
 
     /**
+     * Wrap a runnable as one having a low priority.
+     * @param task the runnable to wrap.
+     * @return a runnable having a low priority.
+     */
+    public static Runnable wrapAsLowPriority(final Runnable task) {
+        return new Runnable() {
+
+            public void run() {
+                Thread t = Thread.currentThread();
+                int oldPriority = t.getPriority();
+                t.setPriority(Thread.MIN_PRIORITY);
+                Thread.yield();
+                task.run();
+                t.setPriority(oldPriority);
+            }
+        };
+    }
+
+    /**
      * Determine whether the given frame is completely on the given screen.
      * @param frame      the frame to check.
      * @param monitorNum the monitor number to check.

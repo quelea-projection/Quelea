@@ -20,7 +20,6 @@ public class StatusPanel extends JPanel {
     private JButton cancelButton;
     private StatusPanelGroup group;
     private int index;
-    private boolean done;
 
     StatusPanel(StatusPanelGroup group, String labelText, int index) {
         this.group = group;
@@ -36,10 +35,7 @@ public class StatusPanel extends JPanel {
     }
 
     public void done() {
-        if (!done) {
-            group.removePanel(index);
-        }
-        done = true;
+        group.removePanel(index);
     }
 
     public void setLabelText(String text) {
