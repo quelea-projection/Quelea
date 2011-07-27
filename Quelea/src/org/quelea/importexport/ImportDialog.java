@@ -26,12 +26,13 @@ import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
-import javax.swing.JProgressBar;
 import javax.swing.JTextField;
 import javax.swing.SwingWorker;
+import org.quelea.Application;
 import org.quelea.SongDatabaseChecker;
 import org.quelea.displayable.Song;
 import org.quelea.utils.LoggerUtils;
+import org.quelea.windows.main.StatusPanel;
 
 /**
  * An import dialog used for importing songs.
@@ -42,8 +43,9 @@ public abstract class ImportDialog extends JDialog implements PropertyChangeList
     private final JTextField locationField;
     private final JButton importButton;
     private final JCheckBox checkDuplicates;
-    private final JProgressBar progressBar;
     private final SelectSongsDialog importedDialog;
+    private StatusPanel statusPanel;
+    private boolean halt;
     private static final Logger LOGGER = LoggerUtils.getLogger();
 
     /**
@@ -53,7 +55,7 @@ public abstract class ImportDialog extends JDialog implements PropertyChangeList
     public ImportDialog(JFrame owner, String[] dialogLabels, FileFilter fileFilter,
             final SongParser parser, final boolean selectDirectory) {
         super(owner, "Import", true);
-        progressBar = new JProgressBar(0, 100);
+        halt = false;
         importedDialog = new SelectImportedSongsDialog(owner);
         setLayout(new BoxLayout(this.getContentPane(), BoxLayout.Y_AXIS));
         final JFileChooser locationChooser = new JFileChooser();
@@ -90,7 +92,6 @@ public abstract class ImportDialog extends JDialog implements PropertyChangeList
             }
         });
         add(locationField);
-        add(progressBar);
 
         importButton = new JButton("Import");
         getRootPane().setDefaultButton(importButton);
@@ -100,6 +101,16 @@ public abstract class ImportDialog extends JDialog implements PropertyChangeList
 
             @Override
             public void actionPerformed(ActionEvent e) {
+                statusPanel = Application.get().getStatusGroup().addPanel("Importing... ");
+                statusPanel.getCancelButton().addActionListener(new ActionListener() {
+
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        halt = true;
+                        statusPanel.done();
+                    }
+                });
+                final String location = locationField.getText();
                 setActive();
                 SwingWorker worker = new SwingWorker() {
 
@@ -111,8 +122,12 @@ public abstract class ImportDialog extends JDialog implements PropertyChangeList
                     protected Object doInBackground() {
                         try {
                             localSongsDuplicate = Collections.synchronizedList(new ArrayList<Boolean>());
-                            localSongs = parser.getSongs(new File(locationField.getText()));
-                            getProgressBar().setIndeterminate(false);
+                            localSongs = parser.getSongs(new File(location));
+                            if (halt) {
+                                localSongs = null;
+                                return null;
+                            }
+                            statusPanel.getProgressBar().setIndeterminate(false);
                             if (checkDuplicates.isSelected()) {
                                 for (int i = 0; i < localSongs.size(); i++) {
                                     final int finali = i;
@@ -120,14 +135,15 @@ public abstract class ImportDialog extends JDialog implements PropertyChangeList
 
                                         @Override
                                         public void run() {
-                                            localSongsDuplicate.add(finali, new SongDatabaseChecker().checkSong(localSongs.get(finali)));
-                                            System.out.println((int) (((double) finali / localSongs.size()) * 100));
-                                            setProgress((int) (((double) finali / localSongs.size()) * 100));
+                                            if (!halt) {
+                                                localSongsDuplicate.add(finali, new SongDatabaseChecker().checkSong(localSongs.get(finali)));
+                                                setProgress((int) (((double) finali / localSongs.size()) * 100));
+                                            }
                                         }
                                     });
                                 }
                                 try {
-                                    checkerService.awaitTermination(1, TimeUnit.DAYS);
+                                    checkerService.awaitTermination(365, TimeUnit.DAYS); //Year eh? ;-)
                                 }
                                 catch (InterruptedException ex) {
                                 }
@@ -144,11 +160,11 @@ public abstract class ImportDialog extends JDialog implements PropertyChangeList
                     @Override
                     protected void done() {
                         checkerService.shutdownNow();
-                        if (localSongs == null || localSongs.isEmpty()) {
+                        if ((localSongs == null || localSongs.isEmpty()) && !halt) {
                             JOptionPane.showMessageDialog(getOwner(), "Sorry, couldn't find any songs to import."
                                     + "Are you sure it's the right type?", "No songs", JOptionPane.WARNING_MESSAGE, null);
                         }
-                        else {
+                        else if (!(localSongs == null || localSongs.isEmpty())) {
                             getImportedDialog().setSongs(localSongs, localSongsDuplicate, true);
                             getImportedDialog().setLocationRelativeTo(getImportedDialog().getOwner());
                             getImportedDialog().setVisible(true);
@@ -191,34 +207,26 @@ public abstract class ImportDialog extends JDialog implements PropertyChangeList
     }
 
     /**
-     * Get the progress bar on this dialog.
-     * @return the progress bar.
-     */
-    public JProgressBar getProgressBar() {
-        return progressBar;
-    }
-
-    /**
      * Called when the import is taking place, this disables the appropriate controls.
      */
     public void setActive() {
-        getProgressBar().setIndeterminate(true);
-        getImportButton().setEnabled(false);
-        checkDuplicates.setEnabled(false);
-        getLocationField().setEnabled(false);
-        setDefaultCloseOperation(JDialog.DO_NOTHING_ON_CLOSE);
-        getImportButton().setText("Importing, please wait...");
+        statusPanel.getProgressBar().setIndeterminate(true);
+        setVisible(false);
+        resetDialog();
     }
 
     /**
      * Called when the import has finished taking place, this resets the controls.
      */
     public void setIdle() {
-        getProgressBar().setIndeterminate(false);
-        getProgressBar().setValue(0);
-        getLocationField().setText("");
+        statusPanel.done();
+        halt = false;
+        resetDialog();
+    }
+
+    private void resetDialog() {
+        getLocationField().setText("Click here to select file");
         getLocationField().setEnabled(true);
-        checkDuplicates.setEnabled(true);
         getImportButton().setText("Import");
         setVisible(false);
         setDefaultCloseOperation(JDialog.HIDE_ON_CLOSE);
@@ -231,10 +239,10 @@ public abstract class ImportDialog extends JDialog implements PropertyChangeList
     @Override
     public void propertyChange(PropertyChangeEvent evt) {
         String strPropertyName = evt.getPropertyName();
-        if ("progress".equals(strPropertyName)) {
-            progressBar.setIndeterminate(false);
+        if ("progress".equals(strPropertyName) && statusPanel != null) {
+            statusPanel.getProgressBar().setIndeterminate(false);
             int progress = (Integer) evt.getNewValue();
-            progressBar.setValue(progress);
+            statusPanel.getProgressBar().setValue(progress);
         }
     }
 }
