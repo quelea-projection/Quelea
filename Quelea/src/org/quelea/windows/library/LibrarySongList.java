@@ -20,9 +20,13 @@ import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 import javax.swing.DefaultListCellRenderer;
 import javax.swing.JList;
 import javax.swing.ListSelectionModel;
+import javax.swing.SwingUtilities;
 import org.quelea.utils.QueleaProperties;
 
 /**
@@ -53,7 +57,6 @@ public class LibrarySongList extends JList implements DatabaseListener {
             return super.getListCellRendererComponent(list, s, index, isSelected, cellHasFocus);
         }
     }
-    private final SortedListModel tempModel;
     private final SortedListModel fullModel;
     private final LibraryPopupMenu popupMenu;
     private final Color originalSelectionColour;
@@ -81,7 +84,6 @@ public class LibrarySongList extends JList implements DatabaseListener {
         setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         popupMenu = new LibraryPopupMenu();
         fullModel = (SortedListModel) super.getModel();
-        tempModel = new SortedListModel();
         DragSource.getDefaultDragSource().createDefaultDragGestureRecognizer(this, DnDConstants.ACTION_MOVE, new DragGestureListener() {
 
             @Override
@@ -123,23 +125,38 @@ public class LibrarySongList extends JList implements DatabaseListener {
         SongDatabase.get().registerDatabaseListener(this);
     }
 
+    private ExecutorService filterService = Executors.newSingleThreadExecutor();
+    private Future filterFuture;
+
     /**
      * Filter the results in this list by a specific search term.
      * @param search the search term to use.
      */
-    public void filter(String search, boolean beep) {
-        search = search.toLowerCase();
-        tempModel.clear();
-        for (int i = 0; i < fullModel.getSize(); i++) {
-            Song s = (Song) fullModel.getElementAt(i);
-            if (s.search(search)) {
-                tempModel.add(s);
+    public void filter(final String search, final boolean beep) {
+        if(filterFuture != null) {
+            filterFuture.cancel(true);
+        }
+        filterFuture = filterService.submit(new Runnable() {
+            public void run() {
+                final SortedListModel model = new SortedListModel();
+                for (int i = 0; i < fullModel.getSize(); i++) {
+                    Song s = (Song) fullModel.getElementAt(i);
+                    if (s.search(search.toLowerCase())) {
+                        model.add(s);
+                    }
+                }
+//                if (beep && model.getSize() == 0) {
+//                    Toolkit.getDefaultToolkit().beep();
+//                }
+                SwingUtilities.invokeLater(new Runnable() {
+                    @Override
+                    public void run() {
+                        LibrarySongList.this.setModel(model);
+                    }
+                });
             }
-        }
-        if (beep && tempModel.getSize() == 0) {
-            Toolkit.getDefaultToolkit().beep();
-        }
-        setModel(tempModel);
+        });
+
     }
 
     /**
