@@ -2,6 +2,7 @@ package org.quelea;
 
 import org.quelea.windows.main.LyricWindow;
 import org.quelea.windows.main.MainWindow;
+import org.quelea.windows.main.StatusPanelGroup;
 
 /**
  * A singleton class for grabbing application wide objects with ease such as the main window.
@@ -35,6 +36,15 @@ public class Application {
      */
     public MainWindow getMainWindow() {
         return mainWindow;
+    }
+
+    /**
+     * Get the status panel group. Shortcut method but provided here for
+     * convenience.
+     * @return the status panel group.
+     */
+    public StatusPanelGroup getStatusGroup() {
+        return mainWindow.getMainPanel().getStatusPanelGroup();
     }
 
     /**

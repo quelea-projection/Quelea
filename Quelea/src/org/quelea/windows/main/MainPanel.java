@@ -27,6 +27,7 @@ public class MainPanel extends JPanel {
     private final LibraryPanel libraryPanel;
     private final PreviewPanel previewPanel;
     private final LivePanel livePanel;
+    private final StatusPanelGroup statusPanelGroup;
     private static final Logger LOGGER = LoggerUtils.getLogger();
 
     /**
@@ -83,6 +84,9 @@ public class MainPanel extends JPanel {
                 libraryPanel.getLibrarySongPanel().getSearchBox().requestFocusInWindow();
             }
         }, KeyStroke.getKeyStroke(KeyEvent.VK_L, InputEvent.CTRL_MASK), JComponent.WHEN_IN_FOCUSED_WINDOW);
+
+        statusPanelGroup = new StatusPanelGroup();
+        add(statusPanelGroup, BorderLayout.SOUTH);
     }
 
     private void addBibleListeners() {
@@ -259,5 +263,13 @@ public class MainPanel extends JPanel {
      */
     public LibraryPanel getLibraryPanel() {
         return libraryPanel;
+    }
+
+    /**
+     * Get the status panel.
+     * @return the status panel.
+     */
+    public StatusPanelGroup getStatusPanelGroup() {
+        return statusPanelGroup;
     }
 }

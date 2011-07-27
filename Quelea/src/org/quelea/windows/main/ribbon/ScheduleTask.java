@@ -24,6 +24,7 @@ import org.quelea.displayable.PresentationDisplayable;
 import org.quelea.displayable.Song;
 import org.quelea.displayable.VideoDisplayable;
 import org.quelea.mail.Mailer;
+import org.quelea.utils.Utils;
 import org.quelea.video.PowerpointFileFilter;
 import org.quelea.video.VideoFileFilter;
 import org.quelea.windows.library.LibrarySongList;
@@ -32,6 +33,7 @@ import org.quelea.windows.main.EditSongScheduleActionListener;
 import org.quelea.windows.main.MainPanel;
 import org.quelea.windows.main.RemoveSongScheduleActionListener;
 import org.quelea.windows.main.ScheduleList;
+import org.quelea.windows.main.StatusPanel;
 
 /**
  *
@@ -160,34 +162,62 @@ public class ScheduleTask extends RibbonTask {
                 if (file != null) {
                     new Thread() {
 
+                        private StatusPanel panel;
+                        private boolean halt;
+
+                        @Override
                         public void run() {
-                            presentationButton.setIcon(RibbonUtils.getRibbonIcon("icons/hourglass.png", 100, 100));
-                            presentationButton.setEnabled(false);
+                            SwingUtilities.invokeLater(new Runnable() {
+
+                                @Override
+                                public void run() {
+                                    panel = Application.get().getStatusGroup().addPanel("Adding presentation... ");
+                                    panel.getProgressBar().setIndeterminate(true);
+                                    panel.getCancelButton().addActionListener(new ActionListener() {
+
+                                        @Override
+                                        public void actionPerformed(ActionEvent e) {
+                                            panel.done();
+                                            halt = true;
+                                        }
+                                    });
+                                }
+                            });
+//                            presentationButton.setIcon(RibbonUtils.getRibbonIcon("icons/hourglass.png", 100, 100));
+//                            presentationButton.setEnabled(false);
                             try {
                                 final PresentationDisplayable displayable = new PresentationDisplayable(fileChooser.getSelectedFile());
-                                SwingUtilities.invokeLater(new Runnable() {
+                                if (!halt) {
+                                    SwingUtilities.invokeLater(new Runnable() {
 
-                                    @Override
-                                    public void run() {
-                                        ((DefaultListModel) Application.get().getMainWindow().getMainPanel().getSchedulePanel().getScheduleList().getModel()).addElement(displayable);
-                                    }
-                                });
+                                        @Override
+                                        public void run() {
+                                            ((DefaultListModel) Application.get().getMainWindow().getMainPanel().getSchedulePanel().getScheduleList().getModel()).addElement(displayable);
+                                        }
+                                    });
+                                }
                             }
                             catch (OfficeXmlFileException ex) {
-                                SwingUtilities.invokeLater(new Runnable() {
+                                if (!halt) {
+                                    SwingUtilities.invokeLater(new Runnable() {
 
-                                    @Override
-                                    public void run() {
-                                        JOptionPane.showMessageDialog(Application.get().getMainWindow(),
-                                                "Sorry, this file appears to be in the new powerpoint format. "
-                                                + "Hopefully Quelea will support this format in the "
-                                                + "future but it doesn't at the moment. For now, just use "
-                                                + "the original powerpoint (PPT) format.", "Invalid format", JOptionPane.ERROR_MESSAGE);
-                                    }
-                                });
+                                        @Override
+                                        public void run() {
+                                            JOptionPane.showMessageDialog(Application.get().getMainWindow(),
+                                                    "Sorry, this file appears to be in the new powerpoint format. "
+                                                    + "Hopefully Quelea will support this format in the "
+                                                    + "future but it doesn't at the moment. For now, just use "
+                                                    + "the original powerpoint (PPT) format.", "Invalid format", JOptionPane.ERROR_MESSAGE);
+                                        }
+                                    });
+                                }
                             }
-                            presentationButton.setIcon(RibbonUtils.getRibbonIcon("icons/powerpoint.png", 100, 100));
-                            presentationButton.setEnabled(true);
+//                            presentationButton.setIcon(RibbonUtils.getRibbonIcon("icons/powerpoint.png", 100, 100));
+//                            presentationButton.setEnabled(true);
+                            while (panel == null) {
+                                Utils.sleep(1000); //Quick bodge but hey, it works
+                            }
+                            panel.done();
                         }
                     }.start();
                 }
