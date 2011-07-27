@@ -103,7 +103,7 @@ public class SelectSongsDialog extends JDialog {
             table.getModel().setValueAt(songs.get(i).getAuthor(), i, 1);
             boolean val;
             if(checkList != null && i < checkList.size()) {
-                val = checkList.get(i); //invert
+                val = !checkList.get(i); //invert
             }
             else {
                 val = defaultVal;

@@ -30,6 +30,22 @@ public final class FileFilters {
     };
 
     /**
+     * Accept only folders.
+     */
+    public static final FileFilter DIR_ONLY = new FileFilter() {
+
+        @Override
+        public boolean accept(File f) {
+            return f.isDirectory();
+        }
+
+        @Override
+        public String getDescription() {
+            return "Folders";
+        }
+    };
+
+    /**
      * The file filter used for Quelea song packs.
      */
     public static final FileFilter SONG_PACK = new FileFilter() {

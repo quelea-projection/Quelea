@@ -10,7 +10,7 @@ import java.util.logging.Logger;
  * An import dialog for the survivor song books in PDF format.
  * @author Michael
  */
-public class SurvivorImportDialog extends ImportDialog {
+public class SourceImportDialog extends ImportDialog {
 
     private static final Logger LOGGER = LoggerUtils.getLogger();
 
@@ -18,10 +18,9 @@ public class SurvivorImportDialog extends ImportDialog {
      * Create a new survivor import dialog.
      * @param owner the owner of the dialog.
      */
-    public SurvivorImportDialog(JFrame owner) {
+    public SourceImportDialog(JFrame owner) {
         super(owner, new String[]{
-                "Select the location of the Survivor Songbook PDF below.",
-                "<html>This must be the <b>acetates.pdf</b> file, <i>not</i> the guitar chords or the sheet music.</html>"
-        }, FileFilters.SURVIVOR_SONGBOOK, new SurvivorSongbookParser(), false);
+                "<html>Select the location of the <b>hymns</b> directory on the source CD.</html>"
+        }, FileFilters.DIR_ONLY, new SourceParser(), true);
     }
 }
