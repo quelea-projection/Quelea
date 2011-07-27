@@ -38,12 +38,12 @@ public class StatusPanelGroup extends JPanel {
 
     void removePanel(int index) {
         StatusPanel panel = panels.get(index);
-        panel.setPreferredSize(new Dimension(1, 1));
-        panel.setSize(1, 1);
-        remove(panel);
-        Application.get().getMainWindow().validate();
-        Application.get().getMainWindow().repaint();
-        panels.set(index, null);
+        if (panel != null) {
+            remove(panel);
+            Application.get().getMainWindow().validate();
+            Application.get().getMainWindow().repaint();
+            panels.set(index, null);
+        }
     }
 
     public static void main(String[] args) {
