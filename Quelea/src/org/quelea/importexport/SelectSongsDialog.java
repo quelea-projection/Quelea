@@ -24,7 +24,7 @@ public class SelectSongsDialog extends JDialog {
     private final JButton addButton;
     private final JTable table;
     private List<Song> songs;
-    private List<Boolean> checkList;
+    private boolean[] checkList;
     private final String checkboxText;
 
     /**
@@ -85,7 +85,7 @@ public class SelectSongsDialog extends JDialog {
      * @param defaultVal    the default value to use for the checkbox if checkList is null or smaller than the songs
      *                      list.
      */
-    public void setSongs(List<Song> songs, List<Boolean> checkList, boolean defaultVal) {
+    public void setSongs(List<Song> songs, boolean[] checkList, boolean defaultVal) {
         Collections.sort(songs);
         this.songs = songs;
         this.checkList = checkList;
@@ -102,8 +102,8 @@ public class SelectSongsDialog extends JDialog {
             table.getModel().setValueAt(songs.get(i).getTitle(), i, 0);
             table.getModel().setValueAt(songs.get(i).getAuthor(), i, 1);
             boolean val;
-            if(checkList != null && i < checkList.size()) {
-                val = !checkList.get(i); //invert
+            if(checkList != null && i < checkList.length) {
+                val = !checkList[i]; //invert
             }
             else {
                 val = defaultVal;
@@ -117,7 +117,7 @@ public class SelectSongsDialog extends JDialog {
      * should be checked or not.
      * @return the check list.
      */
-    public List<Boolean> getCheckList() {
+    public boolean[] getCheckList() {
         return checkList;
     }
 

@@ -10,8 +10,6 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -27,11 +25,13 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JTextField;
+import javax.swing.SwingUtilities;
 import javax.swing.SwingWorker;
 import org.quelea.Application;
 import org.quelea.SongDatabaseChecker;
 import org.quelea.displayable.Song;
 import org.quelea.utils.LoggerUtils;
+import org.quelea.utils.Utils;
 import org.quelea.windows.main.StatusPanel;
 
 /**
@@ -106,8 +106,8 @@ public abstract class ImportDialog extends JDialog implements PropertyChangeList
 
                     @Override
                     public void actionPerformed(ActionEvent e) {
-                        halt = true;
                         statusPanel.done();
+                        halt = true;
                     }
                 });
                 final String location = locationField.getText();
@@ -115,14 +115,15 @@ public abstract class ImportDialog extends JDialog implements PropertyChangeList
                 SwingWorker worker = new SwingWorker() {
 
                     private List<Song> localSongs;
-                    private List<Boolean> localSongsDuplicate;
+                    private boolean[] localSongsDuplicate;
                     private ExecutorService checkerService = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
 
                     @Override
                     protected Object doInBackground() {
                         try {
-                            localSongsDuplicate = Collections.synchronizedList(new ArrayList<Boolean>());
+//                            localSongsDuplicate = Collections.synchronizedList(new ArrayList<Boolean>(1000));
                             localSongs = parser.getSongs(new File(location));
+                            localSongsDuplicate = new boolean[localSongs.size()];
                             if (halt) {
                                 localSongs = null;
                                 return null;
@@ -131,18 +132,28 @@ public abstract class ImportDialog extends JDialog implements PropertyChangeList
                             if (checkDuplicates.isSelected()) {
                                 for (int i = 0; i < localSongs.size(); i++) {
                                     final int finali = i;
-                                    checkerService.submit(new Runnable() {
+                                    checkerService.submit(Utils.wrapAsLowPriority(new Runnable() {
 
                                         @Override
                                         public void run() {
                                             if (!halt) {
-                                                localSongsDuplicate.add(finali, new SongDatabaseChecker().checkSong(localSongs.get(finali)));
-                                                setProgress((int) (((double) finali / localSongs.size()) * 100));
+                                                final boolean result = new SongDatabaseChecker().checkSong(localSongs.get(finali));
+                                                localSongsDuplicate[finali] = result;
+                                                final int progress = (int) (((double) finali / localSongs.size()) * 100);
+                                                SwingUtilities.invokeLater(new Runnable() {
+
+                                                    public void run() {
+                                                        if (statusPanel.getProgressBar().getValue() < progress) {
+                                                            statusPanel.getProgressBar().setValue(progress);
+                                                        }
+                                                    }
+                                                });
                                             }
                                         }
-                                    });
+                                    }));
                                 }
                                 try {
+                                    checkerService.shutdown();
                                     checkerService.awaitTermination(365, TimeUnit.DAYS); //Year eh? ;-)
                                 }
                                 catch (InterruptedException ex) {
