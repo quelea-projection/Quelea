@@ -66,6 +66,9 @@ public class SourceParser implements SongParser {
         if (title.endsWith(",")) {
             title = title.substring(0, title.length() - 1);
         }
+        if (title.endsWith(";")) {
+            title = title.substring(0, title.length() - 1);
+        }
         if (title.startsWith("'")) {
             title = title.substring(1);
         }
