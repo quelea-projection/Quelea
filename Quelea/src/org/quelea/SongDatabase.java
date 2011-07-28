@@ -1,5 +1,6 @@
 package org.quelea;
 
+import java.io.File;
 import org.quelea.displayable.Song;
 import org.quelea.displayable.TextSection;
 import org.quelea.utils.DatabaseListener;
@@ -12,6 +13,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.quelea.utils.QueleaProperties;
 
 /**
  * The class that controls the database.
@@ -32,7 +34,8 @@ public final class SongDatabase {
         listeners = new HashSet<DatabaseListener>();
         try {
             Class.forName("org.hsqldb.jdbcDriver");
-            conn = DriverManager.getConnection("jdbc:hsqldb:database/quelea", "", "");
+            String location = new File(QueleaProperties.get().getQueleaUserHome(), "database").getAbsolutePath();
+            conn = DriverManager.getConnection("jdbc:hsqldb:"+location, "", "");
             Statement stat = conn.createStatement();
             try {
                 stat.executeUpdate("CREATE TABLE Songs (id INTEGER IDENTITY,"
