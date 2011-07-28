@@ -21,7 +21,7 @@ import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
-import org.quelea.displayable.VideoDisplayable;
+import org.quelea.splash.SplashWindow;
 
 /**
  * The main class, sets everything in motion...
@@ -45,6 +45,9 @@ public final class Main {
      * @param args the command line arguments
      */
     public static void main(String[] args) {
+
+        final SplashWindow splashWindow = new SplashWindow();
+        splashWindow.setVisible(true);
 
         GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
         final GraphicsDevice[] gds = ge.getScreenDevices();
@@ -114,6 +117,7 @@ public final class Main {
                 mainWindow.setVisible(true);
                 mainWindow.toFront();
                 showWarning(gds.length);
+                splashWindow.setVisible(false);
             }
         });
     }
