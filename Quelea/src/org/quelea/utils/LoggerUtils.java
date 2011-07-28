@@ -1,5 +1,6 @@
 package org.quelea.utils;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.logging.FileHandler;
 import java.util.logging.Level;
@@ -16,14 +17,19 @@ public final class LoggerUtils {
      * The default level for loggers.
      */
     public static final Level DEFAULT_LEVEL = Level.INFO;
-    private static final FileHandler FILE_HANDLER;
+    private static FileHandler FILE_HANDLER;
 
-    static {
-        try {
-            FILE_HANDLER = new FileHandler("quelea-debug.txt");
-            FILE_HANDLER.setFormatter(new SimpleFormatter());
-        } catch (IOException ex) {
-            //Can't really do a lot here
+    private synchronized static void initialise() {
+        if (FILE_HANDLER == null) {
+            try {
+                File handler = new File(QueleaProperties.get().getQueleaUserHome(), "quelea-debug.txt");
+                FILE_HANDLER = new FileHandler(handler.getAbsolutePath());
+                FILE_HANDLER.setFormatter(new SimpleFormatter());
+            }
+            catch (IOException ex) {
+                ex.printStackTrace();
+                //Can't really do a lot here
+            }
         }
     }
 
@@ -39,9 +45,10 @@ public final class LoggerUtils {
      * @return a logger that uses the called class as its name.
      */
     public static Logger getLogger() {
+        initialise();
         StackTraceElement[] ele = new Throwable().getStackTrace();
         String name;
-        if (ele==null || ele[1]==null || ele[1].getClassName() == null) {
+        if (ele == null || ele[1] == null || ele[1].getClassName() == null) {
             name = "DEFAULT";
         }
         else {
@@ -49,7 +56,12 @@ public final class LoggerUtils {
         }
         final Logger logger = Logger.getLogger(name);
         logger.setLevel(DEFAULT_LEVEL);
-        logger.addHandler(FILE_HANDLER);
+        try {
+            logger.addHandler(FILE_HANDLER);
+        }
+        catch (Exception ex) {
+            ex.printStackTrace();
+        }
         return logger;
     }
 

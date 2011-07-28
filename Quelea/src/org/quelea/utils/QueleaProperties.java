@@ -3,6 +3,7 @@ package org.quelea.utils;
 import org.quelea.bible.Bible;
 
 import java.awt.*;
+import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -17,10 +18,9 @@ import java.util.logging.Logger;
 public final class QueleaProperties extends Properties {
 
     public static final String PROP_FILE_LOCATION = "quelea.properties";
-    private static final Logger LOGGER = LoggerUtils.getLogger();
     private static final QueleaProperties INSTANCE = new QueleaProperties();
+    private static final Logger LOGGER = LoggerUtils.getLogger();
     private static final Color ACTIVE_SELECTION = new Color(200, 255, 255);
-
     /**
      * Load the properties from the properties file.
      */
@@ -34,7 +34,7 @@ public final class QueleaProperties extends Properties {
                 reader.close();
             }
         }
-        catch(IOException ex) {
+        catch (IOException ex) {
             LOGGER.log(Level.SEVERE, "Couldn't load properties", ex);
         }
     }
@@ -52,7 +52,7 @@ public final class QueleaProperties extends Properties {
                 writer.close();
             }
         }
-        catch(IOException ex) {
+        catch (IOException ex) {
             LOGGER.log(Level.WARNING, "Couldn't store properties", ex);
         }
     }
@@ -63,6 +63,18 @@ public final class QueleaProperties extends Properties {
      */
     public static QueleaProperties get() {
         return INSTANCE;
+    }
+
+    /**
+     * Get the Quelea home directory in the user's directory.
+     * @return the Quelea home directory.
+     */
+    public File getQueleaUserHome() {
+        File ret = new File(new File(System.getProperty("user.home")), "My Quelea");
+        if (!ret.exists()) {
+            ret.mkdir();
+        }
+        return ret;
     }
 
     /**
