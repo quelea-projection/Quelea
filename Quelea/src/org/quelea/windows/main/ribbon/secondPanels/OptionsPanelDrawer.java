@@ -8,7 +8,7 @@ import javax.swing.JPanel;
  * PanelDrawer...
  * @author Michael
  */
-public class SavePanelDrawer implements SecondPanelDrawer {
+public class OptionsPanelDrawer implements SecondPanelDrawer {
 
     @Override
     public void draw(JPanel panel) {
@@ -16,10 +16,9 @@ public class SavePanelDrawer implements SecondPanelDrawer {
         Graphics2D graphics = (Graphics2D) panel.getGraphics();
         graphics.clearRect(0, 0, panel.getWidth(), panel.getHeight());
         graphics.setFont(new Font("Verdana", 0, 20));
-        graphics.drawString("Save the schedule", 20, 40);
+        graphics.drawString("Options", 20, 40);
         graphics.setFont(new Font("Verdana", 0, 14));
-        graphics.drawString("This saves the current schedule to", 20, 60);
-        graphics.drawString("disk.", 20, 75);
+        graphics.drawString("Display the options.", 20, 60);
     }
 
 }

@@ -1,7 +1,5 @@
 package org.quelea.windows.main.ribbon;
 
-import java.awt.Font;
-import java.awt.Graphics2D;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import javax.swing.JFileChooser;
@@ -17,6 +15,12 @@ import org.quelea.print.Printer;
 import org.quelea.utils.Utils;
 import org.quelea.windows.help.AboutDialog;
 import org.quelea.windows.main.MainPanel;
+import org.quelea.windows.main.ribbon.secondPanels.ExitPanelDrawer;
+import org.quelea.windows.main.ribbon.secondPanels.NewPanelDrawer;
+import org.quelea.windows.main.ribbon.secondPanels.OpenPanelDrawer;
+import org.quelea.windows.main.ribbon.secondPanels.OptionsPanelDrawer;
+import org.quelea.windows.main.ribbon.secondPanels.PrintPanelDrawer;
+import org.quelea.windows.main.ribbon.secondPanels.SaveAsPanelDrawer;
 import org.quelea.windows.main.ribbon.secondPanels.SavePanelDrawer;
 import org.quelea.windows.options.OptionsDialog;
 
@@ -44,6 +48,13 @@ public class RibbonMenu extends RibbonApplicationMenu {
                 }
             }
         }, JCommandButton.CommandButtonKind.ACTION_ONLY);
+        newMenuEntry.setRolloverCallback(new RibbonApplicationMenuEntryPrimary.PrimaryRolloverCallback() {
+
+            @Override
+            public void menuEntryActivated(JPanel pnl) {
+                new NewPanelDrawer().draw(pnl);
+            }
+        });
         addMenuEntry(newMenuEntry);
         RibbonApplicationMenuEntryPrimary openMenuEntry = new RibbonApplicationMenuEntryPrimary(
                 RibbonUtils.getRibbonIcon("icons/fileopen.png", 100, 100), "Open Schedule", new ActionListener() {
@@ -65,6 +76,13 @@ public class RibbonMenu extends RibbonApplicationMenu {
                 }
             }
         }, JCommandButton.CommandButtonKind.ACTION_ONLY);
+        openMenuEntry.setRolloverCallback(new RibbonApplicationMenuEntryPrimary.PrimaryRolloverCallback() {
+
+            @Override
+            public void menuEntryActivated(JPanel pnl) {
+                new OpenPanelDrawer().draw(pnl);
+            }
+        });
         addMenuEntry(openMenuEntry);
         RibbonApplicationMenuEntryPrimary saveMenuEntry = new RibbonApplicationMenuEntryPrimary(
                 RibbonUtils.getRibbonIcon("icons/filesave.png", 100, 100), "Save Schedule", new ActionListener() {
@@ -90,6 +108,13 @@ public class RibbonMenu extends RibbonApplicationMenu {
                 new ScheduleSaver().saveSchedule(true);
             }
         }, JCommandButton.CommandButtonKind.ACTION_ONLY);
+        saveAsMenuEntry.setRolloverCallback(new RibbonApplicationMenuEntryPrimary.PrimaryRolloverCallback() {
+
+            @Override
+            public void menuEntryActivated(JPanel pnl) {
+                new SaveAsPanelDrawer().draw(pnl);
+            }
+        });
         addMenuEntry(saveAsMenuEntry);
         RibbonApplicationMenuEntryPrimary printMenuEntry = new RibbonApplicationMenuEntryPrimary(
                 RibbonUtils.getRibbonIcon("icons/fileprint.png", 100, 100), "Print Schedule", new ActionListener() {
@@ -99,6 +124,13 @@ public class RibbonMenu extends RibbonApplicationMenu {
                 Printer.getInstance().print(Application.get().getMainWindow().getMainPanel().getSchedulePanel().getScheduleList().getSchedule());
             }
         }, JCommandButton.CommandButtonKind.ACTION_ONLY);
+        printMenuEntry.setRolloverCallback(new RibbonApplicationMenuEntryPrimary.PrimaryRolloverCallback() {
+
+            @Override
+            public void menuEntryActivated(JPanel pnl) {
+                new PrintPanelDrawer().draw(pnl);
+            }
+        });
         addMenuEntry(printMenuEntry);
         RibbonApplicationMenuEntryPrimary optionsMenuEntry = new RibbonApplicationMenuEntryPrimary(
                 RibbonUtils.getRibbonIcon("icons/options.png", 100, 100), "Options", new ActionListener() {
@@ -108,6 +140,13 @@ public class RibbonMenu extends RibbonApplicationMenu {
                 optionsDialog.setVisible(true);
             }
         }, JCommandButton.CommandButtonKind.ACTION_ONLY);
+        optionsMenuEntry.setRolloverCallback(new RibbonApplicationMenuEntryPrimary.PrimaryRolloverCallback() {
+
+            @Override
+            public void menuEntryActivated(JPanel pnl) {
+                new OptionsPanelDrawer().draw(pnl);
+            }
+        });
         addMenuEntry(optionsMenuEntry);
         RibbonApplicationMenuEntryPrimary exitMenuEntry = new RibbonApplicationMenuEntryPrimary(
                 RibbonUtils.getRibbonIcon("icons/exit.png", 100, 100), "Exit", new ActionListener() {
@@ -117,6 +156,13 @@ public class RibbonMenu extends RibbonApplicationMenu {
                 System.exit(0);
             }
         }, JCommandButton.CommandButtonKind.ACTION_ONLY);
+        exitMenuEntry.setRolloverCallback(new RibbonApplicationMenuEntryPrimary.PrimaryRolloverCallback() {
+
+            @Override
+            public void menuEntryActivated(JPanel pnl) {
+                new ExitPanelDrawer().draw(pnl);
+            }
+        });
         addMenuEntry(exitMenuEntry);
     }
     
