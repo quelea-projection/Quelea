@@ -2,7 +2,6 @@ package org.quelea.windows.main.ribbon;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.File;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import org.pushingpixels.flamingo.api.common.JCommandButton;
@@ -10,9 +9,9 @@ import org.pushingpixels.flamingo.api.ribbon.RibbonApplicationMenu;
 import org.pushingpixels.flamingo.api.ribbon.RibbonApplicationMenuEntryPrimary;
 import org.quelea.Application;
 import org.quelea.Schedule;
+import org.quelea.ScheduleSaver;
 import org.quelea.print.Printer;
-import org.quelea.utils.FileFilters;
-import org.quelea.utils.QueleaProperties;
+import org.quelea.utils.Utils;
 import org.quelea.windows.help.AboutDialog;
 import org.quelea.windows.main.MainPanel;
 import org.quelea.windows.options.OptionsDialog;
@@ -48,7 +47,7 @@ public class RibbonMenu extends RibbonApplicationMenu {
             @Override
             public void actionPerformed(ActionEvent e) {
                 if (confirmClear()) {
-                    JFileChooser chooser = getFileChooser();
+                    JFileChooser chooser = Utils.getScheduleFileChooser();
                     if (chooser.showOpenDialog(Application.get().getMainWindow()) == JFileChooser.APPROVE_OPTION) {
                         Schedule schedule = Schedule.fromFile(chooser.getSelectedFile());
                         if (schedule == null) {
@@ -68,7 +67,7 @@ public class RibbonMenu extends RibbonApplicationMenu {
 
             @Override
             public void actionPerformed(ActionEvent e) {
-                saveSchedule(false);
+                new ScheduleSaver().saveSchedule(false);
             }
         }, JCommandButton.CommandButtonKind.ACTION_ONLY);
         addMenuEntry(saveMenuEntry);
@@ -77,7 +76,7 @@ public class RibbonMenu extends RibbonApplicationMenu {
 
             @Override
             public void actionPerformed(ActionEvent e) {
-                saveSchedule(true);
+                new ScheduleSaver().saveSchedule(true);
             }
         }, JCommandButton.CommandButtonKind.ACTION_ONLY);
         addMenuEntry(saveAsMenuEntry);
@@ -124,51 +123,5 @@ public class RibbonMenu extends RibbonApplicationMenu {
             return true;
         }
         return false;
-    }
-    
-    /**
-     * Get the JFileChooser used for opening and saving schedules.
-     * @return the JFileChooser.
-     */
-    private JFileChooser getFileChooser() {
-        JFileChooser chooser = new JFileChooser();
-        chooser.setAcceptAllFileFilterUsed(false);
-        chooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
-        chooser.setFileFilter(FileFilters.SCHEDULE);
-        return chooser;
-    }
-    
-    /**
-     * Save the current schedule.
-     * @param saveAs true if the file location should be specified, false if the current one should be used.
-     */
-    private void saveSchedule(boolean saveAs) {
-        MainPanel mainpanel = Application.get().getMainWindow().getMainPanel();
-        Schedule schedule = mainpanel.getSchedulePanel().getScheduleList().getSchedule();
-        File file = schedule.getFile();
-        if (saveAs || file == null) {
-            JFileChooser chooser = getFileChooser();
-            if (chooser.showSaveDialog(Application.get().getMainWindow()) == JFileChooser.APPROVE_OPTION) {
-                String extension = QueleaProperties.get().getScheduleExtension();
-                file = chooser.getSelectedFile();
-                if (!file.getName().endsWith("." + extension)) {
-                    file = new File(file.getAbsoluteFile() + "." + extension);
-                }
-                if (file.exists()) {
-                    int result = JOptionPane.showConfirmDialog(Application.get().getMainWindow(), file.getName() + " already exists. Overwrite?",
-                            "Overwrite", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE, null);
-                    if (result != JOptionPane.YES_OPTION) {
-                        file = null;
-                    }
-                }
-                schedule.setFile(file);
-            }
-        }
-        if (file != null) {
-            boolean success = schedule.writeToFile();
-            if (!success) {
-                JOptionPane.showMessageDialog(Application.get().getMainWindow(), "Couldn't save schedule", "Error", JOptionPane.ERROR_MESSAGE, null);
-            }
-        }
     }
 }
