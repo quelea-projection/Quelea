@@ -41,7 +41,6 @@ public final class Utils {
             //Nothing
         }
     }
-
     /**
      * Wrap a runnable as one having a low priority.
      * @param task the runnable to wrap.
