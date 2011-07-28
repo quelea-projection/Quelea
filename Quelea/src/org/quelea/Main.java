@@ -116,6 +116,7 @@ public final class Main {
                 Utils.centreOnMonitor(mainWindow, controlScreen);
                 mainWindow.setVisible(true);
                 mainWindow.toFront();
+                new ShortcutManager().addShortcuts();
                 showWarning(gds.length);
                 splashWindow.setVisible(false);
             }

@@ -28,6 +28,7 @@ public class SelectExportedSongsDialog extends SelectSongsDialog {
 
         getAddButton().addActionListener(new ActionListener() {
 
+            @Override
             public void actionPerformed(ActionEvent e) {
                 final String extension = QueleaProperties.get().getSongPackExtension();
                 JFileChooser chooser = getChooser();

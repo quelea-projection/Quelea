@@ -33,6 +33,7 @@ public final class SongDatabase {
     private SongDatabase() {
         listeners = new HashSet<DatabaseListener>();
         try {
+            LOGGER.log(Level.INFO, "Loading database");
             Class.forName("org.hsqldb.jdbcDriver");
             String location = new File(QueleaProperties.get().getQueleaUserHome(), "database").getAbsolutePath();
             conn = DriverManager.getConnection("jdbc:hsqldb:"+location, "", "");
@@ -48,6 +49,7 @@ public final class SongDatabase {
                 LOGGER.log(Level.INFO, "Songs table already exists.");
             }
             stat.close();
+            LOGGER.log(Level.INFO, "Loaded database.");
         }
         catch(ClassNotFoundException ex) {
             LOGGER.log(Level.SEVERE, "Couldn't find the database library.", ex);
