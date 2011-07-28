@@ -1,11 +1,11 @@
 package org.quelea.windows.main;
 
-import java.awt.Dimension;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JProgressBar;
+import javax.swing.SwingUtilities;
 import javax.swing.border.EmptyBorder;
 import org.quelea.utils.Utils;
 
@@ -35,7 +35,11 @@ public class StatusPanel extends JPanel {
     }
 
     public void done() {
-        group.removePanel(index);
+        SwingUtilities.invokeLater(new Runnable() {
+            public void run() {
+                group.removePanel(index);
+            }
+        });
     }
 
     public void setLabelText(String text) {
