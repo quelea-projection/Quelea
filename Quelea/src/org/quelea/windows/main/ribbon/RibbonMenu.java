@@ -1,9 +1,12 @@
 package org.quelea.windows.main.ribbon;
 
+import java.awt.Font;
+import java.awt.Graphics2D;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
+import javax.swing.JPanel;
 import org.pushingpixels.flamingo.api.common.JCommandButton;
 import org.pushingpixels.flamingo.api.ribbon.RibbonApplicationMenu;
 import org.pushingpixels.flamingo.api.ribbon.RibbonApplicationMenuEntryPrimary;
@@ -14,6 +17,7 @@ import org.quelea.print.Printer;
 import org.quelea.utils.Utils;
 import org.quelea.windows.help.AboutDialog;
 import org.quelea.windows.main.MainPanel;
+import org.quelea.windows.main.ribbon.secondPanels.SavePanelDrawer;
 import org.quelea.windows.options.OptionsDialog;
 
 /**
@@ -70,6 +74,13 @@ public class RibbonMenu extends RibbonApplicationMenu {
                 new ScheduleSaver().saveSchedule(false);
             }
         }, JCommandButton.CommandButtonKind.ACTION_ONLY);
+        saveMenuEntry.setRolloverCallback(new RibbonApplicationMenuEntryPrimary.PrimaryRolloverCallback() {
+
+            @Override
+            public void menuEntryActivated(JPanel pnl) {
+                new SavePanelDrawer().draw(pnl);
+            }
+        });
         addMenuEntry(saveMenuEntry);
         RibbonApplicationMenuEntryPrimary saveAsMenuEntry = new RibbonApplicationMenuEntryPrimary(
                 RibbonUtils.getRibbonIcon("icons/filesaveas.png", 100, 100), "Save Schedule as...", new ActionListener() {
