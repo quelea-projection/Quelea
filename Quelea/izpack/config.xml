@@ -71,10 +71,10 @@
             <description>Source code</description>
             <file src="src" targetdir="$INSTALL_PATH"/>
         </pack>
-        <pack name="database" required="no" preselected="yes">
+<!--        <pack name="database" required="no" preselected="yes">
             <description>Sample database of songs</description>
             <file src="database" targetdir="$INSTALL_PATH" override="false"/>
-        </pack>
+        </pack>-->
         <pack name="images" required="no" preselected="yes">
             <description>Images and icons</description>
             <file src="icons" targetdir="$INSTALL_PATH"/>
