@@ -1,6 +1,5 @@
 package org.quelea.splash;
 
-import com.sun.awt.AWTUtilities;
 import java.awt.BorderLayout;
 import java.awt.Font;
 import java.awt.Graphics2D;
@@ -67,14 +66,14 @@ public class SplashWindow extends JWindow {
                 if (in) {
                     SplashWindow.super.setVisible(true);
                     while (opacity < 1) {
-                        AWTUtilities.setWindowOpacity(SplashWindow.this, opacity);
+                        com.sun.awt.AWTUtilities.setWindowOpacity(SplashWindow.this, opacity);
                         Utils.sleep(15);
                         opacity += 0.03f;
                     }
                 }
                 else {
                     while (opacity > 0) {
-                        AWTUtilities.setWindowOpacity(SplashWindow.this, opacity);
+                        com.sun.awt.AWTUtilities.setWindowOpacity(SplashWindow.this, opacity);
                         Utils.sleep(15);
                         opacity -= 0.03f;
                     }
