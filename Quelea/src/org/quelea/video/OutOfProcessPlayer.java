@@ -6,6 +6,8 @@ import java.awt.Canvas;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.InputStreamReader;
+import java.io.PrintStream;
+import org.quelea.utils.QueleaProperties;
 import uk.co.caprica.vlcj.binding.LibVlcFactory;
 import uk.co.caprica.vlcj.binding.internal.libvlc_media_player_t;
 import uk.co.caprica.vlcj.player.embedded.EmbeddedMediaPlayer;
@@ -59,6 +61,7 @@ public class OutOfProcessPlayer {
         }
 
         mediaPlayer.setVideoSurface(new Canvas());
+
         BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
         String inputLine;
 
@@ -76,7 +79,7 @@ public class OutOfProcessPlayer {
             else if (inputLine.equalsIgnoreCase("stop")) {
                 mediaPlayer.stop();
             }
-            else if(inputLine.equalsIgnoreCase("playable?")) {
+            else if (inputLine.equalsIgnoreCase("playable?")) {
                 System.out.println(mediaPlayer.isPlayable());
             }
             else if (inputLine.startsWith("setTime ")) {
@@ -112,11 +115,17 @@ public class OutOfProcessPlayer {
         File nativeDir = new File("lib/native");
         NativeLibrary.addSearchPath("libvlc", nativeDir.getAbsolutePath());
         NativeLibrary.addSearchPath("vlc", nativeDir.getAbsolutePath());
+        PrintStream stream = null;
         try {
+            stream = new PrintStream(new File(QueleaProperties.get().getQueleaUserHome(), "ooplog.txt"));
+            System.setErr(stream);
             new OutOfProcessPlayer(Integer.parseInt(args[0]));
         }
         catch (Exception ex) {
             ex.printStackTrace();
+        }
+        finally {
+            stream.close();
         }
     }
 }
