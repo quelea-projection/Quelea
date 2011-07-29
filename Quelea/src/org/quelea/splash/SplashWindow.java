@@ -66,14 +66,14 @@ public class SplashWindow extends JWindow {
                 if (in) {
                     SplashWindow.super.setVisible(true);
                     while (opacity < 1) {
-                        com.sun.awt.AWTUtilities.setWindowOpacity(SplashWindow.this, opacity);
+                        setOpacity(opacity);
                         Utils.sleep(15);
                         opacity += 0.03f;
                     }
                 }
                 else {
                     while (opacity > 0) {
-                        com.sun.awt.AWTUtilities.setWindowOpacity(SplashWindow.this, opacity);
+                        setOpacity(opacity);
                         Utils.sleep(15);
                         opacity -= 0.03f;
                     }
