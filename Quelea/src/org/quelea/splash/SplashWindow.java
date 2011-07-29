@@ -42,6 +42,9 @@ public class SplashWindow extends JWindow {
         int controlScreenProp = QueleaProperties.get().getControlScreen();
         GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
         final GraphicsDevice[] gds = ge.getScreenDevices();
+        if(controlScreenProp >= gds.length) {
+            controlScreenProp = gds.length-1;
+        }
         Rectangle bounds = gds[controlScreenProp].getDefaultConfiguration().getBounds();
         setLocation((int) (bounds.getLocation().x + bounds.getWidth() / 2) - getWidth() / 2, (int) (bounds.getLocation().y + bounds.getHeight() / 2) - getHeight() / 2);
 
