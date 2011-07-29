@@ -17,11 +17,14 @@ import org.quelea.utils.QueleaProperties;
 import org.quelea.utils.Utils;
 
 /**
- *
+ * The splash screen to display when the program starts.
  * @author Michael
  */
 public class SplashWindow extends JWindow {
 
+    /**
+     * Create a new splash window.
+     */
     public SplashWindow() {
         try {
             BufferedImage image = ImageIO.read(new File("img/splash.png"));
@@ -50,6 +53,10 @@ public class SplashWindow extends JWindow {
 
     }
 
+    /**
+     * Fade in or out, replaces setVisible().
+     * @param in true if the window should fade in, false to fade out.
+     */
     private void fade(final boolean in) {
         new Thread() {
 
@@ -86,11 +93,19 @@ public class SplashWindow extends JWindow {
         }.start();
     }
 
+    /**
+     * Fade the window in and out gradually.
+     * @param visible whether the window should be visible or not.
+     */
     @Override
     public void setVisible(boolean visible) {
         fade(visible);
     }
 
+    /**
+     * Just for testing...
+     * @param args not used.
+     */
     public static void main(String[] args) {
         new SplashWindow().setVisible(true);
     }
