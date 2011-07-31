@@ -16,7 +16,7 @@
  * 
  * Copyright 2009, 2010 Caprica Software Limited.
  */
-package org.quelea.video;
+package org.quelea.utils;
 
 import java.io.File;
 import java.util.Arrays;

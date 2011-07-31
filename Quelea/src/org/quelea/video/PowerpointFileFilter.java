@@ -19,6 +19,8 @@
 
 package org.quelea.video;
 
+import org.quelea.utils.ExtensionFileFilter;
+
 /**
  * File filter implementation for video files recognised by libvlc.
  */
