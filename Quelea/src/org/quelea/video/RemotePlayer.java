@@ -7,7 +7,7 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 
 /**
- *
+ * Controls an OutOfProcessPlayer via input / output process streams.
  * @author Michael
  */
 public class RemotePlayer {
@@ -16,6 +16,7 @@ public class RemotePlayer {
     private BufferedWriter out;
     private boolean open;
     private boolean playing;
+    private boolean paused;
 
     /**
      * Internal use only.
@@ -56,16 +57,21 @@ public class RemotePlayer {
     public void play() {
         writeOut("play");
         playing = true;
+        paused = false;
     }
 
     public void pause() {
-        writeOut("pause");
-        playing = false;
+        if(!paused) {
+            writeOut("pause");
+            playing = false;
+            paused = true;
+        }
     }
 
     public void stop() {
         writeOut("stop");
         playing = false;
+        paused = false;
     }
 
     public boolean isPlayable() {
@@ -96,6 +102,10 @@ public class RemotePlayer {
         writeOut("setMute " + mute);
     }
 
+    /**
+     * Terminate the OutOfProcessPlayer. MUST be called before closing, otherwise
+     * the player won't quit!
+     */
     public void close() {
         if (open) {
             writeOut("close");
@@ -104,7 +114,20 @@ public class RemotePlayer {
         }
     }
 
+    /**
+     * Determine whether the remote player is playing.
+     * @return true if its playing, false otherwise.
+     */
     public boolean isPlaying() {
         return playing;
     }
+    
+    /**
+     * Determine whether the remote player is paused.
+     * @return true if its paused, false otherwise.
+     */
+    public boolean isPaused() {
+        return paused;
+    }
+    
 }
