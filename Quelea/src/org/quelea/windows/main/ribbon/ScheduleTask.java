@@ -26,7 +26,7 @@ import org.quelea.displayable.VideoDisplayable;
 import org.quelea.mail.Mailer;
 import org.quelea.utils.Utils;
 import org.quelea.video.PowerpointFileFilter;
-import org.quelea.video.VideoFileFilter;
+import org.quelea.utils.VideoFileFilter;
 import org.quelea.windows.library.LibrarySongList;
 import org.quelea.windows.main.AddSongActionListener;
 import org.quelea.windows.main.EditSongScheduleActionListener;

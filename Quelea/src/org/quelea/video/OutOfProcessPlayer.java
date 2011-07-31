@@ -17,15 +17,15 @@ import uk.co.caprica.vlcj.player.embedded.windows.WindowsEmbeddedMediaPlayer;
 import uk.co.caprica.vlcj.runtime.RuntimeUtil;
 
 /**
- *
+ * Sits out of process so as not to crash the primary VM.
  * @author Michael
  */
 public class OutOfProcessPlayer {
 
     public OutOfProcessPlayer(final long canvasId) throws Exception {
 
+        //Lifted pretty much out of the VLCJ code
         EmbeddedMediaPlayer mediaPlayer;
-
         if (RuntimeUtil.isNix()) {
             mediaPlayer = new LinuxEmbeddedMediaPlayer(LibVlcFactory.factory().synchronise().log().create().libvlc_new(1, new String[]{"--no-video-title"}), null) {
 
@@ -65,6 +65,7 @@ public class OutOfProcessPlayer {
         BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
         String inputLine;
 
+        //Process the input - I know this isn't very OO but it works for now...
         while ((inputLine = in.readLine()) != null) {
             if (inputLine.startsWith("open ")) {
                 inputLine = inputLine.substring("open ".length());
@@ -118,7 +119,7 @@ public class OutOfProcessPlayer {
         PrintStream stream = null;
         try {
             stream = new PrintStream(new File(QueleaProperties.get().getQueleaUserHome(), "ooplog.txt"));
-            System.setErr(stream);
+            System.setErr(stream); //Important, MUST redirect err stream
             new OutOfProcessPlayer(Integer.parseInt(args[0]));
         }
         catch (Exception ex) {

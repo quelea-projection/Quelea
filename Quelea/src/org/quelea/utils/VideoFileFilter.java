@@ -17,7 +17,7 @@
  * Copyright 2009, 2010 Caprica Software Limited.
  */
 
-package org.quelea.video;
+package org.quelea.utils;
 
 /**
  * File filter implementation for video files recognised by libvlc.
