@@ -8,7 +8,9 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 /**
- * A dialog giving some information about Quelea. TODO: A nice logo and better information should go here.
+ * A dialog giving some information about Quelea.
+ * Do we really need this? Potentially remove.
+ * @deprecated
  * @author Michael
  */
 public class AboutDialog extends JDialog {

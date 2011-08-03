@@ -30,7 +30,7 @@ public class VideoPanel extends ContainedPanel {
      */
     @Override
     public void clear() {
-        //TODO: Something.,..
+        //Nada. Can't clear a video.
     }
 
     public VideoControlPanel getVideoControlPanel() {
