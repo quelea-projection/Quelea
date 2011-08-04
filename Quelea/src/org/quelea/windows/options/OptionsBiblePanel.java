@@ -1,18 +1,25 @@
 package org.quelea.windows.options;
 
+import javax.swing.DefaultComboBoxModel;
+import javax.swing.JComboBox;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JSpinner;
+import javax.swing.SpinnerNumberModel;
+import javax.swing.SpringLayout;
+import javax.swing.SwingUtilities;
 import org.quelea.bible.Bible;
 import org.quelea.bible.BibleManager;
 import org.quelea.utils.PropertyPanel;
 import org.quelea.utils.QueleaProperties;
 import org.quelea.utils.SpringUtilities;
-
-import javax.swing.*;
+import org.quelea.bible.BibleChangeListener;
 
 /**
  * The panel that shows the bible options
  * @author Michael
  */
-public class OptionsBiblePanel extends JPanel implements PropertyPanel {
+public class OptionsBiblePanel extends JPanel implements PropertyPanel, BibleChangeListener {
 
     private final JComboBox defaultBibleComboBox;
     private final JSpinner maxVersesSpinner;
@@ -24,6 +31,7 @@ public class OptionsBiblePanel extends JPanel implements PropertyPanel {
 
         JLabel defaultLabel = new JLabel("Default bible");
         biblePanel.add(defaultLabel);
+        BibleManager.get().registerBibleChangeListener(this);
         defaultBibleComboBox = new JComboBox(BibleManager.get().getBibles());
         defaultLabel.setLabelFor(defaultBibleComboBox);
         biblePanel.add(defaultBibleComboBox);
@@ -39,15 +47,28 @@ public class OptionsBiblePanel extends JPanel implements PropertyPanel {
         readProperties();
     }
 
+    @Override
+    public void updateBibles() {
+        SwingUtilities.invokeLater(new Runnable() {
+            public void run() {
+                DefaultComboBoxModel model = ((DefaultComboBoxModel) defaultBibleComboBox.getModel());
+                model.removeAllElements();
+                for (Bible bible : BibleManager.get().getBibles()) {
+                    model.addElement(bible);
+                }
+            }
+        });
+    }
+
     /**
      * @inheritDoc
      */
     public final void readProperties() {
         QueleaProperties props = QueleaProperties.get();
         String selectedBibleName = props.getDefaultBible();
-        for(int i = 0; i < defaultBibleComboBox.getModel().getSize(); i++) {
+        for (int i = 0; i < defaultBibleComboBox.getModel().getSize(); i++) {
             Bible bible = (Bible) defaultBibleComboBox.getItemAt(i);
-            if(bible.getName().equals(selectedBibleName)) {
+            if (bible.getName().equals(selectedBibleName)) {
                 defaultBibleComboBox.setSelectedIndex(i);
             }
         }
@@ -80,5 +101,4 @@ public class OptionsBiblePanel extends JPanel implements PropertyPanel {
     public JSpinner getMaxVersesSpinner() {
         return maxVersesSpinner;
     }
-
 }

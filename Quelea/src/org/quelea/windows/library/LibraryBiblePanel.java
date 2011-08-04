@@ -19,7 +19,7 @@ import java.util.List;
  * The panel used to get bible verses.
  * @author Michael
  */
-public class LibraryBiblePanel extends JPanel {
+public class LibraryBiblePanel extends JPanel implements BibleChangeListener {
 
     private final JComboBox bibleSelector;
     private final JComboBox bookSelector;
@@ -34,12 +34,13 @@ public class LibraryBiblePanel extends JPanel {
     public LibraryBiblePanel() {
         setName("Bible");
         setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
-        verses = new ArrayList<BibleVerse>();
+        verses = new ArrayList<>();
+        BibleManager.get().registerBibleChangeListener(this);
         bibleSelector = new JComboBox(BibleManager.get().getBibles());
         String selectedBibleName = QueleaProperties.get().getDefaultBible();
-        for(int i = 0; i < bibleSelector.getModel().getSize(); i++) {
+        for (int i = 0; i < bibleSelector.getModel().getSize(); i++) {
             Bible bible = (Bible) bibleSelector.getItemAt(i);
-            if(bible.getName().equals(selectedBibleName)) {
+            if (bible.getName().equals(selectedBibleName)) {
                 bibleSelector.setSelectedIndex(i);
             }
         }
@@ -57,7 +58,7 @@ public class LibraryBiblePanel extends JPanel {
             }
 
             public void keyPressed(KeyEvent e) {
-                if(e.getKeyCode() == KeyEvent.VK_ENTER) {
+                if (e.getKeyCode() == KeyEvent.VK_ENTER) {
                     addToSchedule.doClick();
                     passageSelector.setText("");
                 }
@@ -83,9 +84,12 @@ public class LibraryBiblePanel extends JPanel {
         bibleSelector.addActionListener(new ActionListener() {
 
             public void actionPerformed(ActionEvent e) {
+                if (bibleSelector.getSelectedIndex() == -1) {
+                    return;
+                }
                 DefaultComboBoxModel model = (DefaultComboBoxModel) bookSelector.getModel();
                 model.removeAllElements();
-                for(BibleBook book : ((Bible) bibleSelector.getSelectedItem()).getBooks()) {
+                for (BibleBook book : ((Bible) bibleSelector.getSelectedItem()).getBooks()) {
                     model.addElement(book);
                 }
                 update();
@@ -95,6 +99,20 @@ public class LibraryBiblePanel extends JPanel {
         chapterPanel.setMaximumSize(new Dimension(chapterPanel.getMaximumSize().width, bookSelector.getHeight()));
         bibleSelector.setMaximumSize(new Dimension(chapterPanel.getMaximumSize().width, bookSelector.getHeight()));
         addPanel.setMaximumSize(new Dimension(chapterPanel.getMaximumSize().width, addToSchedule.getHeight()));
+    }
+
+    @Override
+    public void updateBibles() {
+        SwingUtilities.invokeLater(new Runnable() {
+
+            public void run() {
+                DefaultComboBoxModel model = ((DefaultComboBoxModel) bibleSelector.getModel());
+                model.removeAllElements();
+                for (Bible bible : BibleManager.get().getBibles()) {
+                    model.addElement(bible);
+                }
+            }
+        });
     }
 
     /**
@@ -131,7 +149,7 @@ public class LibraryBiblePanel extends JPanel {
         verses.clear();
         ChapterVerseParser cvp = new ChapterVerseParser(passageSelector.getText());
         BibleBook book = (BibleBook) bookSelector.getSelectedItem();
-        if(book == null || book.getChapter(cvp.getFromChapter()) == null
+        if (book == null || book.getChapter(cvp.getFromChapter()) == null
                 || book.getChapter(cvp.getToChapter()) == null
                 || passageSelector.getText().isEmpty()) {
             getAddToSchedule().setEnabled(false);
@@ -140,32 +158,32 @@ public class LibraryBiblePanel extends JPanel {
         }
         StringBuilder ret = new StringBuilder();
         int toVerse = book.getChapter(cvp.getFromChapter()).getVerses().length - 1;
-        if((cvp.getFromChapter() == cvp.getToChapter()) && cvp.getToVerse() >= 0 && cvp.getToVerse() < book.getChapter(cvp.getFromChapter()).getVerses().length) {
+        if ((cvp.getFromChapter() == cvp.getToChapter()) && cvp.getToVerse() >= 0 && cvp.getToVerse() < book.getChapter(cvp.getFromChapter()).getVerses().length) {
             toVerse = cvp.getToVerse();
         }
 
-        for(int v = cvp.getFromVerse(); v <= toVerse; v++) {
+        for (int v = cvp.getFromVerse(); v <= toVerse; v++) {
             BibleVerse verse = book.getChapter(cvp.getFromChapter()).getVerse(v);
             ret.append(verse.getText()).append(' ');
             verses.add(verse);
         }
-        for(int c = cvp.getFromChapter() + 1; c < cvp.getToChapter(); c++) {
-            for(BibleVerse verse : book.getChapter(c).getVerses()) {
+        for (int c = cvp.getFromChapter() + 1; c < cvp.getToChapter(); c++) {
+            for (BibleVerse verse : book.getChapter(c).getVerses()) {
                 ret.append(verse.getText()).append(' ');
                 verses.add(verse);
             }
         }
-        if(cvp.getFromChapter() != cvp.getToChapter()) {
-            for(int v = 0; v <= cvp.getToVerse(); v++) {
+        if (cvp.getFromChapter() != cvp.getToChapter()) {
+            for (int v = 0; v <= cvp.getToVerse(); v++) {
                 BibleVerse verse = book.getChapter(cvp.getToChapter()).getVerse(v);
-                if(verse != null) {
+                if (verse != null) {
                     ret.append(verse.getText()).append(' ');
                     verses.add(verse);
                 }
             }
         }
         int maxVerses = QueleaProperties.get().getMaxVerses();
-        if(verses.size() > maxVerses) {
+        if (verses.size() > maxVerses) {
             preview.setText("Sorry, no more than " + maxVerses + " verses allowed "
                     + "(at the moment you've selected a total off " + verses.size()
                     + ".) You can increase this value by going to Tools => Options "
@@ -175,8 +193,7 @@ public class LibraryBiblePanel extends JPanel {
             preview.setBackground(Color.RED);
             getAddToSchedule().setEnabled(false);
             return;
-        }
-        else {
+        } else {
             preview.setBackground(null);
             getAddToSchedule().setEnabled(true);
         }
