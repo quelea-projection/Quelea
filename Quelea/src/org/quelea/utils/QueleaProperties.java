@@ -76,6 +76,14 @@ public final class QueleaProperties extends Properties {
         }
         return ret;
     }
+    
+    /**
+     * Get the directory used for storing the bibles.
+     * @return the bibles directory.
+     */
+    public File getBibleDir() {
+        return new File(getProperty("bibles.dir", "bibles"));
+    }
 
     /**
      * Get the current version number.
