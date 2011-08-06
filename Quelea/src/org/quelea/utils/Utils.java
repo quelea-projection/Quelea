@@ -3,12 +3,14 @@ package org.quelea.utils;
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
-import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
+import java.nio.channels.FileChannel;
 import java.util.*;
 import java.util.List;
 import java.util.logging.Level;
@@ -37,7 +39,7 @@ public final class Utils {
         try {
             Thread.sleep(millis);
         }
-        catch(InterruptedException ex) {
+        catch (InterruptedException ex) {
             //Nothing
         }
     }
@@ -107,8 +109,8 @@ public final class Utils {
      * @param list the list to remove duplicates.
      */
     public static <T> void removeDuplicateWithOrder(List<T> list) {
-        Set<T> set = new HashSet<T>();
-        List<T> newList = new ArrayList<T>();
+        Set<T> set = new HashSet<>();
+        List<T> newList = new ArrayList<>();
         for (Iterator<T> iter = list.iterator(); iter.hasNext();) {
             T element = iter.next();
             if (set.add(element)) {
@@ -117,6 +119,34 @@ public final class Utils {
         }
         list.clear();
         list.addAll(newList);
+    }
+
+    /**
+     * Copy a file from one place to another.
+     * @param sourceFile the source file
+     * @param destFile the destination file
+     * @throws IOException if something goes wrong.
+     */
+    public static void copyFile(File sourceFile, File destFile) throws IOException {
+        if (!destFile.exists()) {
+            destFile.createNewFile();
+        }
+
+        FileChannel source = null;
+        FileChannel destination = null;
+        try {
+            source = new FileInputStream(sourceFile).getChannel();
+            destination = new FileOutputStream(destFile).getChannel();
+            destination.transferFrom(source, 0, source.size());
+        }
+        finally {
+            if (source != null) {
+                source.close();
+            }
+            if (destination != null) {
+                destination.close();
+            }
+        }
     }
 
     /**
@@ -247,7 +277,7 @@ public final class Utils {
      * @return the resized image.
      */
     public static BufferedImage resizeImage(BufferedImage image, int width, int height) {
-        if (width > 0 && height > 0 && (image.getWidth()!=width||image.getHeight()!=height)) {
+        if (width > 0 && height > 0 && (image.getWidth() != width || image.getHeight() != height)) {
             BufferedImage bdest = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
             Graphics2D g = bdest.createGraphics();
             g.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BICUBIC);
@@ -261,7 +291,7 @@ public final class Utils {
 
     public static BufferedImage iconToImage(Icon icon) {
         BufferedImage ret = new BufferedImage(icon.getIconWidth(), icon.getIconHeight(), BufferedImage.TYPE_INT_RGB);
-        icon.paintIcon(new JLabel(),ret.createGraphics(), 0,0);
+        icon.paintIcon(new JLabel(), ret.createGraphics(), 0, 0);
         return ret;
     }
 
