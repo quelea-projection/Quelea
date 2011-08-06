@@ -16,7 +16,7 @@ import org.quelea.displayable.ImageDisplayable;
 public class ImagePanel extends ContainedPanel {
 
     private JPanel containerPanel = new JPanel();
-    private LyricCanvas canvas = new LyricCanvas(1,1);
+    private LyricCanvas canvas = new LyricCanvas();
     private LivePreviewPanel container;
 
     /**

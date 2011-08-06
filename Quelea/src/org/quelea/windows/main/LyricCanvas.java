@@ -1,38 +1,40 @@
 package org.quelea.windows.main;
 
-import com.sun.jna.Memory;
+import java.awt.BorderLayout;
+import java.awt.Canvas;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Font;
+import java.awt.FontMetrics;
+import java.awt.Graphics;
+import java.awt.GraphicsEnvironment;
+import java.awt.Image;
+import java.awt.font.TextAttribute;
+import java.awt.image.BufferedImage;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import javax.swing.JFrame;
+import javax.swing.SwingUtilities;
 import org.quelea.Theme;
 import org.quelea.utils.QueleaProperties;
 import org.quelea.utils.Utils;
-
-import javax.swing.*;
-import java.awt.*;
-import java.awt.font.TextAttribute;
-import java.awt.image.BufferedImage;
-import java.io.File;
-import java.util.*;
-import java.util.List;
-import java.util.Map.Entry;
-import javax.imageio.ImageIO;
-import org.quelea.Background;
-import uk.co.caprica.vlcj.player.direct.RenderCallback;
 
 /**
  * The canvas where the lyrics / images / media are drawn.
  * @author Michael
  */
-public class LyricCanvas extends Canvas implements RenderCallback {
+public class LyricCanvas extends Canvas {
 
     private Theme theme;
     private String[] text;
     private String[] smallText;
-    private Font font;
-    private final int aspectWidth;
-    private final int aspectHeight;
     private boolean cleared;
     private boolean blacked;
     private boolean capitaliseFirst;
-    private int[] rgbBuffer;
     private BufferedImage videoImage;
     private int videoWidth = 800;
     private int videoHeight = 600;
@@ -42,13 +44,9 @@ public class LyricCanvas extends Canvas implements RenderCallback {
      * @param aspectWidth  the aspect ratio width.
      * @param aspectHeight the aspect ratio height.
      */
-    public LyricCanvas(int aspectWidth, int aspectHeight) {
-        this.aspectWidth = aspectWidth;
-        this.aspectHeight = aspectHeight;
+    public LyricCanvas() {
         text = new String[]{};
-        font = new Font("sans-serif", Font.BOLD, 300);
         theme = Theme.DEFAULT_THEME;
-        rgbBuffer = new int[800 * 600];
         videoImage = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice().getDefaultConfiguration().createCompatibleImage(videoWidth, videoHeight);
         videoImage.setAccelerationPriority(1.0f);
         setMinimumSize(new Dimension(20, 20));
@@ -60,13 +58,6 @@ public class LyricCanvas extends Canvas implements RenderCallback {
      */
     public void setCapitaliseFirst(boolean val) {
         this.capitaliseFirst = val;
-    }
-
-    @Override
-    public void display(Memory nativeBuffer) {
-        nativeBuffer.read(0, rgbBuffer, 0, rgbBuffer.length);
-        videoImage.setRGB(0, 0, videoWidth, videoHeight, rgbBuffer, 0, videoWidth);
-        repaint();
     }
 
     public void repaint() {
@@ -124,28 +115,21 @@ public class LyricCanvas extends Canvas implements RenderCallback {
                 || !QueleaProperties.get().checkDisplaySongInfoText()) {
             return 0;
         }
-        int fontSize = getHeight()/50;
+        int fontSize = getHeight() / 50;
         font = getDifferentSizeFont(font, fontSize);
         graphics.setFont(font);
         graphics.setColor(theme.getFontColor());
         FontMetrics metrics = graphics.getFontMetrics(font);
-        int largestWidth = 0;
-        for (String str : smallText) {
-            int width = metrics.stringWidth(str);
-            if (width > largestWidth) {
-                largestWidth = width;
-            }
-        }
+
         int height = metrics.getHeight();
-        
-        int xPos = getWidth()-largestWidth;
-        int yPos = getHeight()-(height*smallText.length);
-        
-        for(String str : smallText) {
+        int yPos = getHeight() - (height * smallText.length);
+
+        for (String str : smallText) {
+            int xPos = getWidth() - metrics.stringWidth(str);
             graphics.drawString(str, xPos, yPos);
             yPos += height;
         }
-        return height*smallText.length;
+        return height * smallText.length;
     }
 
     /**
@@ -197,7 +181,7 @@ public class LyricCanvas extends Canvas implements RenderCallback {
      * @return the largest font size that can be used.
      */
     private int getFontSize(Font font, Graphics graphics, String line, int numLines) {
-        int size = ensureLineCount(font, graphics, numLines);
+        int size = ensureLineCount(font, graphics, numLines + 1);
         while (size > 0 && graphics.getFontMetrics(font).stringWidth(line) >= getWidth()) {
             size--;
             font = getDifferentSizeFont(font, size);
@@ -417,33 +401,6 @@ public class LyricCanvas extends Canvas implements RenderCallback {
     }
 
     /**
-     * Change the font used for the text on the canvas.
-     * @param font the new font.
-     */
-    public void changeFont(Font font) {
-        this.font = font;
-        repaint();
-    }
-
-    /**
-     * Fix the aspect ratio of this lyric canvas so that it's always reduced in size to the aspect ratio specified.
-     */
-//    public void fixAspectRatio() {
-//        Dimension currentSize = getSize();
-//        double width = currentSize.getWidth();
-//        double height = currentSize.getHeight();
-//        double estWidth = (height / aspectHeight) * aspectWidth;
-//        double estHeight = (width / aspectWidth) * aspectHeight;
-//        if(estWidth < width) {
-//            super.setSize(new Dimension((int) estWidth, (int) height));
-//            font = getDifferentSizeFont(font, (float) estWidth / 16);
-//        }
-//        else {
-//            super.setSize(new Dimension((int) width, (int) estHeight));
-//            font = getDifferentSizeFont(font, (float) width / 16);
-//        }
-//    }
-    /**
      * Get a font identical to the one given apart from in size.
      * @param size the size of the new font.
      * @return the resized font.
@@ -460,7 +417,7 @@ public class LyricCanvas extends Canvas implements RenderCallback {
     }
 
     public static void main(String[] args) {
-        LyricCanvas canvas = new LyricCanvas(4, 3);
+        LyricCanvas canvas = new LyricCanvas();
         JFrame frame = new JFrame();
         frame.setLayout(new BorderLayout());
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
