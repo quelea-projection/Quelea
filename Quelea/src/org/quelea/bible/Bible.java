@@ -46,28 +46,30 @@ public final class Bible {
      */
     public static Bible parseBible(File file) {
         try {
-            InputStream fis = new FileInputStream(file);
-            DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-            DocumentBuilder builder = factory.newDocumentBuilder();
-            Document doc = builder.parse(fis);
-            NodeList list = doc.getChildNodes();
-            for(int i = 0; i < list.getLength(); i++) {
-                if(list.item(i).getNodeName().equalsIgnoreCase("xmlbible")
-                        || list.item(i).getNodeName().equalsIgnoreCase("bible")) {
-                    return parseXML(list.item(i));
+            if (file.exists()) {
+                InputStream fis = new FileInputStream(file);
+                DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+                DocumentBuilder builder = factory.newDocumentBuilder();
+                Document doc = builder.parse(fis);
+                NodeList list = doc.getChildNodes();
+                for (int i = 0; i < list.getLength(); i++) {
+                    if (list.item(i).getNodeName().equalsIgnoreCase("xmlbible")
+                            || list.item(i).getNodeName().equalsIgnoreCase("bible")) {
+                        return parseXML(list.item(i));
+                    }
                 }
             }
             return null;
         }
-        catch(ParserConfigurationException ex) {
+        catch (ParserConfigurationException ex) {
             LOGGER.log(Level.WARNING, "Couldn't parse the bible", ex);
             return null;
         }
-        catch(SAXException ex) {
+        catch (SAXException ex) {
             LOGGER.log(Level.WARNING, "Couldn't parse the bible", ex);
             return null;
         }
-        catch(IOException ex) {
+        catch (IOException ex) {
             LOGGER.log(Level.WARNING, "Couldn't parse the bible", ex);
             return null;
         }
@@ -80,17 +82,17 @@ public final class Bible {
      */
     public static Bible parseXML(Node node) {
         String name = "";
-        if(node.getAttributes().getNamedItem("biblename") != null) {
+        if (node.getAttributes().getNamedItem("biblename") != null) {
             name = node.getAttributes().getNamedItem("biblename").getNodeValue();
         }
         Bible ret = new Bible(name);
         NodeList list = node.getChildNodes();
-        for(int i = 0; i < list.getLength(); i++) {
-            if(list.item(i).getNodeName().equalsIgnoreCase("information")) {
+        for (int i = 0; i < list.getLength(); i++) {
+            if (list.item(i).getNodeName().equalsIgnoreCase("information")) {
                 ret.information = BibleInfo.parseXML(list.item(i));
             }
-            else if(list.item(i).getNodeName().equalsIgnoreCase("biblebook") ||
-                    list.item(i).getNodeName().equalsIgnoreCase("b")) {
+            else if (list.item(i).getNodeName().equalsIgnoreCase("biblebook")
+                    || list.item(i).getNodeName().equalsIgnoreCase("b")) {
                 ret.addBook(BibleBook.parseXML(list.item(i)));
             }
         }
@@ -106,10 +108,10 @@ public final class Bible {
         ret.append("<xmlbible xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:noNamespaceSchemaLocation=\"zef2005.xsd\" version=\"2.0.1.18\" status=\"v\" biblename=\"");
         ret.append(Utils.escapeXML(name));
         ret.append("\" type=\"x-bible\" revision=\"0\">");
-        if(information != null) {
+        if (information != null) {
             ret.append(information.toXML());
         }
-        for(BibleBook book : books) {
+        for (BibleBook book : books) {
             ret.append(book.toXML());
         }
         ret.append("</xmlbible>");
@@ -156,5 +158,4 @@ public final class Bible {
     public BibleBook[] getBooks() {
         return books.toArray(new BibleBook[books.size()]);
     }
-
 }
