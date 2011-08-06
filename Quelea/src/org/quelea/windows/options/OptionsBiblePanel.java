@@ -21,6 +21,7 @@ import org.quelea.utils.PropertyPanel;
 import org.quelea.utils.QueleaProperties;
 import org.quelea.utils.SpringUtilities;
 import org.quelea.bible.BibleChangeListener;
+import org.quelea.utils.FileFilters;
 import org.quelea.utils.Utils;
 
 /**
@@ -56,6 +57,8 @@ public class OptionsBiblePanel extends JPanel implements PropertyPanel, BibleCha
             @Override
             public void actionPerformed(ActionEvent e) {
                 JFileChooser chooser = new JFileChooser();
+                chooser.setFileFilter(FileFilters.XML_BIBLE);
+                chooser.setAcceptAllFileFilterUsed(false);
                 chooser.showDialog(SwingUtilities.getWindowAncestor(addBibleButton), "Add bible");
                 File file = chooser.getSelectedFile();
                 try {
