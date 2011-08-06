@@ -17,6 +17,7 @@ public class OptionsGeneralPanel extends JPanel implements PropertyPanel {
     private final JCheckBox startupUpdateCheckBox;
     private final JCheckBox capitalFirstCheckBox;
     private final JCheckBox oneMonitorWarnCheckBox;
+    private final JCheckBox displaySongInfoCheckBox;
     private final JSlider maxCharsSlider;
     private final JSlider minLinesSlider;
 
@@ -49,6 +50,13 @@ public class OptionsGeneralPanel extends JPanel implements PropertyPanel {
         generalPanel.add(capitalFirstCheckBox);
         generalPanel.add(new JLabel()); //Keep springlayout happy
 
+        JLabel displaySongInfoLabel = new JLabel("Display song information on each slide");
+        generalPanel.add(displaySongInfoLabel);
+        displaySongInfoCheckBox = new JCheckBox();
+        startupLabel.setLabelFor(displaySongInfoCheckBox);
+        generalPanel.add(displaySongInfoCheckBox);
+        generalPanel.add(new JLabel()); //Keep springlayout happy
+
         JLabel maxCharsLabel = new JLabel("Maximum number of characters per line");
         generalPanel.add(maxCharsLabel);
         maxCharsSlider = new JSlider(10, 80);
@@ -78,7 +86,7 @@ public class OptionsGeneralPanel extends JPanel implements PropertyPanel {
                 minLinesValue.setText(Integer.toString(minLinesSlider.getValue()));
             }
         });
-        SpringUtilities.makeCompactGrid(generalPanel, 5, 3, 6, 6, 6, 6);
+        SpringUtilities.makeCompactGrid(generalPanel, 6, 3, 6, 6, 6, 6);
         add(generalPanel);
         readProperties();
     }
@@ -91,6 +99,7 @@ public class OptionsGeneralPanel extends JPanel implements PropertyPanel {
         startupUpdateCheckBox.setSelected(props.checkUpdate());
         capitalFirstCheckBox.setSelected(props.checkCapitalFirst());
         oneMonitorWarnCheckBox.setSelected(props.showSingleMonitorWarning());
+        displaySongInfoCheckBox.setSelected(props.checkDisplaySongInfoText());
         maxCharsSlider.setValue(props.getMaxChars());
         minLinesSlider.setValue(props.getMinLines());
     }
@@ -106,6 +115,8 @@ public class OptionsGeneralPanel extends JPanel implements PropertyPanel {
         props.setSingleMonitorWarning(showWarning);
         boolean checkCapital = getCapitalFirstCheckBox().isSelected();
         props.setCapitalFirst(checkCapital);
+        boolean checkDisplayInfo = getDisplaySongInfoCheckBox().isSelected();
+        props.setDisplaySongInfoText(checkDisplayInfo);
         int maxCharsPerLine = getMaxCharsSlider().getValue();
         props.setMaxChars(maxCharsPerLine);
         int minLines = getMinLinesSlider().getValue();
@@ -142,6 +153,14 @@ public class OptionsGeneralPanel extends JPanel implements PropertyPanel {
      */
     public JCheckBox getCapitalFirstCheckBox() {
         return capitalFirstCheckBox;
+    }
+
+    /**
+     * Get the display song info checkbox.
+     * @return the display song info checkbox.
+     */
+    public JCheckBox getDisplaySongInfoCheckBox() {
+        return displaySongInfoCheckBox;
     }
 
     /**

@@ -25,7 +25,7 @@ public class AboutDialog extends JDialog {
         super(owner, "About");
         this.owner = owner;
         setLayout(new BoxLayout(this.getContentPane(), BoxLayout.Y_AXIS));
-        add(new JLabel("<html><h1>Quelea</h1> Version " + QueleaProperties.get().getVersion().getVersionString() + "</html>"));
+        add(new JLabel("<html><h1>Quelea</h1> Version " + QueleaProperties.VERSION.getVersionString() + "</html>"));
         add(new JLabel(Utils.getImageIcon("img/logo.png")));
         add(new JLabel(" "));
         add(new JLabel("Quelea is licensed under the GPL (Version 3.)"));
