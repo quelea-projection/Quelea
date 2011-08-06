@@ -46,6 +46,25 @@ public final class FileFilters {
     };
 
     /**
+     * Accept only folders.
+     */
+    public static final FileFilter XML_BIBLE = new FileFilter() {
+
+        @Override
+        public boolean accept(File f) {
+            if (f.isDirectory()) {
+                return true;
+            }
+            return f.getName().toLowerCase().endsWith(".xml");
+        }
+
+        @Override
+        public String getDescription() {
+            return "XML bibles";
+        }
+    };
+
+    /**
      * The file filter used for Quelea song packs.
      */
     public static final FileFilter SONG_PACK = new FileFilter() {
