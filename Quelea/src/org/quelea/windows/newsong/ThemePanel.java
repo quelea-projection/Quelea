@@ -187,6 +187,7 @@ public class ThemePanel extends JPanel {
         if(fontSize % 2 != 0) {
             fontSize--;
         }
+        fontSelection.setSelectedItem(font.getFamily());
         fontSizeSelection.setSelectedItem(fontSize);
         fontColourButton.getColourSelectionWindow().setSelectedColour(theme.getFontColor());
         fontColourButton.setIconColour(theme.getFontColor());

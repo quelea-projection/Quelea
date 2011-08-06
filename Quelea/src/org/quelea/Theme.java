@@ -10,7 +10,7 @@ import java.awt.*;
  */
 public class Theme {
 
-    public static final Font DEFAULT_FONT = new Font("Sans serif", Font.BOLD, 72);
+    public static final Font DEFAULT_FONT = new Font("SansSerif", Font.BOLD, 72);
     public static final Color DEFAULT_FONT_COLOR = Color.WHITE;
     public static final Background DEFAULT_BACKGROUND = new Background(Color.BLACK);
     public static final Theme DEFAULT_THEME = new Theme(DEFAULT_FONT, DEFAULT_FONT_COLOR, DEFAULT_BACKGROUND);
