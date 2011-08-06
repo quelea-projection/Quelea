@@ -71,7 +71,7 @@ public class Song implements TextDisplayable, Searchable, Comparable<Song> {
         this.title = title;
         this.author = author;
         this.theme = theme;
-        sections = new ArrayList<TextSection>();
+        sections = new ArrayList<>();
     }
 
     /**
@@ -178,7 +178,11 @@ public class Song implements TextDisplayable, Searchable, Comparable<Song> {
                 newLyrics = new String[sectionLines.length - 1];
                 System.arraycopy(sectionLines, 1, newLyrics, 0, newLyrics.length);
             }
-            sections.add(new TextSection(sectionTitle, newLyrics, true));
+            String[] smallLines = new String[]{
+                title,
+                author
+            };
+            sections.add(new TextSection(sectionTitle, newLyrics, smallLines, true));
         }
         searchLyrics = null;
     }
@@ -222,7 +226,7 @@ public class Song implements TextDisplayable, Searchable, Comparable<Song> {
      */
     public boolean search(String s) {
         if (searchLyrics == null || searchLyrics.get() == null) {
-            searchLyrics = new SoftReference<String>(stripPunctuation(getLyrics().replace("\n", " ")).toLowerCase());
+            searchLyrics = new SoftReference<>(stripPunctuation(getLyrics().replace("\n", " ")).toLowerCase());
         }
         return title.toLowerCase().contains(s)
                 || searchLyrics.get().contains(stripPunctuation(s));
@@ -279,13 +283,7 @@ public class Song implements TextDisplayable, Searchable, Comparable<Song> {
             Document doc = builder.parse(inputStream);
             return parseXML(doc.getFirstChild());
         }
-        catch (ParserConfigurationException ex) {
-            return null;
-        }
-        catch (SAXException ex) {
-            return null;
-        }
-        catch (IOException ex) {
+        catch (ParserConfigurationException | SAXException | IOException ex) {
             return null;
         }
     }
@@ -302,15 +300,7 @@ public class Song implements TextDisplayable, Searchable, Comparable<Song> {
             Document doc = builder.parse(inputStream);
             return parseXML(doc.getChildNodes().item(0));
         }
-        catch (ParserConfigurationException ex) {
-            LOGGER.log(Level.WARNING, "Couldn't parse the schedule", ex);
-            return null;
-        }
-        catch (SAXException ex) {
-            LOGGER.log(Level.WARNING, "Couldn't parse the schedule", ex);
-            return null;
-        }
-        catch (IOException ex) {
+        catch (ParserConfigurationException | SAXException | IOException ex) {
             LOGGER.log(Level.WARNING, "Couldn't parse the schedule", ex);
             return null;
         }
@@ -325,7 +315,7 @@ public class Song implements TextDisplayable, Searchable, Comparable<Song> {
         NodeList list = song.getChildNodes();
         String title = "";
         String author = "";
-        List<TextSection> songSections = new ArrayList<TextSection>();
+        List<TextSection> songSections = new ArrayList<>();
         for (int i = 0; i < list.getLength(); i++) {
             Node node = list.item(i);
             if (node.getNodeName().equals("title")) {
@@ -450,7 +440,7 @@ public class Song implements TextDisplayable, Searchable, Comparable<Song> {
      * @return all the files used by this song.
      */
     public Collection<File> getResources() {
-        Set<File> ret = new HashSet<File>();
+        Set<File> ret = new HashSet<>();
         for (TextSection section : getSections()) {
             Theme sectionTheme = section.getTheme();
             if (sectionTheme != null) {

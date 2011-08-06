@@ -41,7 +41,7 @@ public class BiblePassage implements TextDisplayable {
     private BiblePassage(String summary, BibleVerse[] verses) {
         this.summary = summary;
         this.verses = Arrays.copyOf(verses, verses.length);
-        textSections = new ArrayList<TextSection>();
+        textSections = new ArrayList<>();
         fillTextSections();
     }
 
@@ -50,29 +50,29 @@ public class BiblePassage implements TextDisplayable {
      */
     private void fillTextSections() {
         final int LINES_PER_SLIDE = 8;
-        List<String> words = new ArrayList<String>();
-        for(int i = 0; i < verses.length; i++) {
+        List<String> words = new ArrayList<>();
+        for (int i = 0; i < verses.length; i++) {
             words.addAll(Arrays.asList(verses[i].getText().split(" ")));
         }
 
-        List<String> lines = new ArrayList<String>();
+        List<String> lines = new ArrayList<>();
         StringBuilder line = new StringBuilder();
-        for(int i = 0; i < words.size(); i++) {
+        for (int i = 0; i < words.size(); i++) {
             line.append(words.get(i)).append(" ");
             int length = line.length();
-            if(i < words.size() - 1) {
+            if (i < words.size() - 1) {
                 length += words.get(i + 1).length();
             }
-            if((i != 0 && length >= QueleaProperties.get().getMaxChars()) || i == words.size() - 1) {
+            if ((i != 0 && length >= QueleaProperties.get().getMaxChars()) || i == words.size() - 1) {
                 lines.add(line.toString());
                 line.setLength(0);
             }
         }
-        List<String> sections = new ArrayList<String>();
-        for(int i = 0; i < lines.size(); i++) {
+        List<String> sections = new ArrayList<>();
+        for (int i = 0; i < lines.size(); i++) {
             sections.add(lines.get(i));
-            if((i != 0 && i % LINES_PER_SLIDE == 0) || i == lines.size() - 1) {
-                textSections.add(new TextSection("", sections.toArray(new String[sections.size()]), false));
+            if ((i != 0 && i % LINES_PER_SLIDE == 0) || i == lines.size() - 1) {
+                textSections.add(new TextSection("", sections.toArray(new String[sections.size()]), new String[]{summary}, false));
                 sections.clear();
             }
         }
@@ -87,7 +87,7 @@ public class BiblePassage implements TextDisplayable {
         ret.append("<passage summary=\"");
         ret.append(Utils.escapeXML(summary));
         ret.append("\">");
-        for(BibleVerse verse : verses) {
+        for (BibleVerse verse : verses) {
             ret.append(verse.toXML());
         }
         ret.append("</passage>");
@@ -102,10 +102,10 @@ public class BiblePassage implements TextDisplayable {
     public static BiblePassage parseXML(Node passage) {
         NodeList list = passage.getChildNodes();
         String summary = passage.getAttributes().getNamedItem("summary").getNodeValue();
-        List<BibleVerse> verses = new ArrayList<BibleVerse>();
-        for(int i = 0; i < list.getLength(); i++) {
+        List<BibleVerse> verses = new ArrayList<>();
+        for (int i = 0; i < list.getLength(); i++) {
             Node node = list.item(i);
-            if(node.getNodeName().equals("vers")) {
+            if (node.getNodeName().equals("vers")) {
                 verses.add(BibleVerse.parseXML(node));
             }
         }
@@ -141,7 +141,7 @@ public class BiblePassage implements TextDisplayable {
      * @return an empty list, always.
      */
     public Collection<File> getResources() {
-        return new ArrayList<File>();
+        return new ArrayList<>();
     }
 
     @Override
