@@ -61,10 +61,10 @@ public class ImagePanel extends ContainedPanel {
      */
     private void updateCanvases(Theme theme) {
         canvas.setTheme(theme);
-        canvas.setText(new String[] {});
+        canvas.eraseText();
         for (LyricCanvas lCanvas : container.getCanvases()) {
             lCanvas.setTheme(theme);
-            lCanvas.setText(new String[]{});
+            lCanvas.eraseText();
         }
     }
 

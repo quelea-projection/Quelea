@@ -110,7 +110,7 @@ public abstract class LivePreviewPanel extends JPanel {
         else if (d instanceof VideoDisplayable) {
             videoPanel.showDisplayable((VideoDisplayable) d);
             for (LyricCanvas lc : videoPanel.getVideoControlPanel().getRegisteredCanvases()) {
-                lc.setText(new String[]{});
+                lc.eraseText();
             }
             ((CardLayout) cardPanel.getLayout()).show(cardPanel, VIDEO_LABEL);
             videoPanel.repaint();

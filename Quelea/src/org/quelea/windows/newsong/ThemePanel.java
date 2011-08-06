@@ -38,7 +38,7 @@ public class ThemePanel extends JPanel {
         setName("Theme");
         setLayout(new BorderLayout());
         canvas = new LyricCanvas(4, 3);
-        canvas.setText(SAMPLE_LYRICS);
+        canvas.setText(SAMPLE_LYRICS, null);
         add(canvas, BorderLayout.CENTER);
         JPanel toolbarPanel = new JPanel();
         toolbarPanel.setLayout(new GridLayout(2, 1));

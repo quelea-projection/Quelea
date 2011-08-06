@@ -18,6 +18,7 @@ public class TextSection {
 
     private String title;
     private String[] lines;
+    private String[] smallLines;
     private Theme theme;
     private boolean capitaliseFirst;
 
@@ -26,8 +27,8 @@ public class TextSection {
      * @param title the title of the section.
      * @param lines the lines of the section, one line per array entry.
      */
-    public TextSection(String title, String[] lines, boolean capitaliseFirst) {
-        this(title, lines, capitaliseFirst, null);
+    public TextSection(String title, String[] lines, String[] smallLines, boolean capitaliseFirst) {
+        this(title, lines, smallLines, capitaliseFirst, null);
     }
 
     /**
@@ -36,10 +37,11 @@ public class TextSection {
      * @param lines the lines of the section, one line per array entry.
      * @param theme the theme of this song section.
      */
-    public TextSection(String title, String[] lines, boolean capitaliseFirst, Theme theme) {
+    public TextSection(String title, String[] lines, String[] smallLines, boolean capitaliseFirst, Theme theme) {
         this.capitaliseFirst = capitaliseFirst;
         this.title = title;
         this.lines = Arrays.copyOf(lines, lines.length);
+        this.smallLines = Arrays.copyOf(smallLines, smallLines.length);
         this.theme = theme;
     }
 
@@ -50,13 +52,20 @@ public class TextSection {
     public String getXML() {
         StringBuilder xml = new StringBuilder();
         xml.append("<section ").append("title=\"").append(getTitle()).append("\" capitalise=\"").append(shouldCapitaliseFirst()).append("\">");
-        if(theme != null) {
+        if (theme != null) {
             xml.append("<theme>");
             xml.append(Utils.escapeXML(theme.toDBString()));
             xml.append("</theme>");
         }
+        if (smallLines != null) {
+            xml.append("<smalllines>");
+            for (String line : smallLines) {
+                xml.append(Utils.escapeXML(line)).append('\n');
+            }
+            xml.append("</smalllines>");
+        }
         xml.append("<lyrics>");
-        for(String line : getText()) {
+        for (String line : getText()) {
             xml.append(Utils.escapeXML(line)).append('\n');
         }
         xml.append("</lyrics></section>");
@@ -72,37 +81,51 @@ public class TextSection {
         NamedNodeMap attributes = sectionNode.getAttributes();
         String sectionTitle = null;
         String[] lyrics = null;
+        String[] smallLines = null;
         Theme theme = null;
         boolean capitalise = true;
-        if(attributes != null) {
+
+        if (attributes != null) {
             Node titleNode = attributes.getNamedItem("title");
-            if(titleNode != null) {
+            if (titleNode != null) {
                 sectionTitle = titleNode.getTextContent();
             }
             Node capitaliseNode = attributes.getNamedItem("capitalise");
-            if(capitaliseNode != null) {
+            if (capitaliseNode != null) {
                 capitalise = Boolean.parseBoolean(capitaliseNode.getTextContent());
             }
         }
         NodeList nodelist = sectionNode.getChildNodes();
-        for(int i = 0; i < nodelist.getLength(); i++) {
+        for (int i = 0; i < nodelist.getLength(); i++) {
             Node node = nodelist.item(i);
-            if(node.getNodeName().equals("theme")) {
-                theme = Theme.parseDBString(node.getTextContent());
-            }
-            else if(node.getNodeName().equals("lyrics")) {
-                String[] rawLyrics = node.getTextContent().split("\n");
-                List<String> newLyrics = new ArrayList<String>();
-                for(String line : rawLyrics) {
-                    if(!line.isEmpty()) {
-                        newLyrics.add(line);
+            switch (node.getNodeName()) {
+                case "theme":
+                    theme = Theme.parseDBString(node.getTextContent());
+                    break;
+                case "lyrics":
+                    String[] rawLyrics = node.getTextContent().split("\n");
+                    List<String> newLyrics = new ArrayList<>();
+                    for (String line : rawLyrics) {
+                        if (!line.isEmpty()) {
+                            newLyrics.add(line);
+                        }
                     }
-                }
-                lyrics = newLyrics.toArray(new String[newLyrics.size()]);
+                    lyrics = newLyrics.toArray(new String[newLyrics.size()]);
+                    break;
+                case "smalllines":
+                    String[] rawSmallLines = node.getTextContent().split("\n");
+                    List<String> newSmallLines = new ArrayList<>();
+                    for (String line : rawSmallLines) {
+                        if (!line.isEmpty()) {
+                            newSmallLines.add(line);
+                        }
+                    }
+                    smallLines = newSmallLines.toArray(new String[newSmallLines.size()]);
+                    break;
             }
         }
-        TextSection ret = new TextSection(sectionTitle, lyrics, capitalise);
-        if(theme != null) {
+        TextSection ret = new TextSection(sectionTitle, lyrics, smallLines, capitalise);
+        if (theme != null) {
             ret.setTheme(theme);
         }
         return ret;
@@ -125,6 +148,14 @@ public class TextSection {
     }
 
     /**
+     * Get the small text of the section.
+     * @return the small text of the section.
+     */
+    public String[] getSmallText() {
+        return Arrays.copyOf(smallLines, smallLines.length);
+    }
+
+    /**
      * Get the theme of the section.
      * @return the theme of the section.
      */
@@ -142,14 +173,14 @@ public class TextSection {
 
     @Override
     public boolean equals(Object obj) {
-        if(obj == null) {
+        if (obj == null) {
             return false;
         }
-        if(getClass() != obj.getClass()) {
+        if (getClass() != obj.getClass()) {
             return false;
         }
         final TextSection other = (TextSection) obj;
-        if(!Arrays.deepEquals(this.lines, other.lines)) {
+        if (!Arrays.deepEquals(this.lines, other.lines)) {
             return false;
         }
         return true;
@@ -170,7 +201,7 @@ public class TextSection {
     public String toString() {
         StringBuilder ret = new StringBuilder();
         ret.append(title).append('\n');
-        for(String str : lines) {
+        for (String str : lines) {
             ret.append(str).append('\n');
         }
         return ret.toString();

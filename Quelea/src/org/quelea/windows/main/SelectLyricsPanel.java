@@ -104,13 +104,13 @@ public class SelectLyricsPanel extends ContainedPanel {
         for (LyricCanvas canvas : containerPanel.getCanvases()) {
             if (selectedIndex == -1 || selectedIndex >= lyricsList.getModel().getSize()) {
                 canvas.setTheme(null);
-                canvas.setText(null);
+                canvas.eraseText();
                 continue;
             }
             TextSection currentSection = (TextSection) lyricsList.getModel().getElementAt(selectedIndex);
             canvas.setTheme(currentSection.getTheme());
             canvas.setCapitaliseFirst(currentSection.shouldCapitaliseFirst());
-            canvas.setText(currentSection.getText());
+            canvas.setText(currentSection.getText(), currentSection.getSmallText());
         }
     }
 }
