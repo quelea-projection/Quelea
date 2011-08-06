@@ -1,8 +1,15 @@
 package org.quelea.windows.options;
 
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.io.File;
+import java.io.IOException;
 import javax.swing.DefaultComboBoxModel;
+import javax.swing.JButton;
 import javax.swing.JComboBox;
+import javax.swing.JFileChooser;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JSpinner;
 import javax.swing.SpinnerNumberModel;
@@ -14,6 +21,7 @@ import org.quelea.utils.PropertyPanel;
 import org.quelea.utils.QueleaProperties;
 import org.quelea.utils.SpringUtilities;
 import org.quelea.bible.BibleChangeListener;
+import org.quelea.utils.Utils;
 
 /**
  * The panel that shows the bible options
@@ -41,8 +49,27 @@ public class OptionsBiblePanel extends JPanel implements PropertyPanel, BibleCha
         maxVersesSpinner = new JSpinner(new SpinnerNumberModel(200, 1, 5000, 1));
         maxVerseLabel.setLabelFor(maxVersesSpinner);
         biblePanel.add(maxVersesSpinner);
+        
+        final JButton addBibleButton = new JButton("Add bible");
+        addBibleButton.addActionListener(new ActionListener() {
 
-        SpringUtilities.makeCompactGrid(biblePanel, 2, 2, 6, 6, 6, 6);
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                JFileChooser chooser = new JFileChooser();
+                chooser.showDialog(SwingUtilities.getWindowAncestor(addBibleButton), "Add bible");
+                File file = chooser.getSelectedFile();
+                try {
+                    Utils.copyFile(file, new File(QueleaProperties.get().getBibleDir(), file.getName()));
+                }
+                catch(IOException ex) {
+                    JOptionPane.showMessageDialog(chooser, "Sorry, couldn't copy the bible.", "Error copying", JOptionPane.ERROR);
+                }
+            }
+        });
+        biblePanel.add(addBibleButton);
+        biblePanel.add(new JLabel());
+
+        SpringUtilities.makeCompactGrid(biblePanel, 3, 2, 6, 6, 6, 6);
         add(biblePanel);
         readProperties();
     }
