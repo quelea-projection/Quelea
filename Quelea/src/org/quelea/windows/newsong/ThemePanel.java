@@ -1,16 +1,25 @@
 package org.quelea.windows.newsong;
 
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Font;
+import java.awt.GridLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
+import javax.swing.JComboBox;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
+import javax.swing.JToggleButton;
+import javax.swing.JToolBar;
 import org.quelea.Background;
 import org.quelea.Theme;
 import org.quelea.utils.Utils;
 import org.quelea.windows.main.LyricCanvas;
 
-import javax.swing.*;
-import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
 
 /**
  * The panel where the user chooses what visual theme a song should have.
@@ -37,7 +46,7 @@ public class ThemePanel extends JPanel {
     public ThemePanel() {
         setName("Theme");
         setLayout(new BorderLayout());
-        canvas = new LyricCanvas(4, 3);
+        canvas = new LyricCanvas();
         canvas.setText(SAMPLE_LYRICS, null);
         add(canvas, BorderLayout.CENTER);
         JPanel toolbarPanel = new JPanel();

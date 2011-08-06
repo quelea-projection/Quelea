@@ -1,16 +1,18 @@
 package org.quelea.windows.main;
 
-import org.quelea.displayable.TextSection;
-
-import javax.swing.*;
+import java.awt.BorderLayout;
+import java.awt.Dimension;
+import java.awt.event.KeyListener;
+import javax.swing.DefaultListModel;
+import javax.swing.JScrollPane;
+import javax.swing.JSplitPane;
 import javax.swing.border.EmptyBorder;
 import javax.swing.event.ListDataEvent;
 import javax.swing.event.ListDataListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
-import java.awt.*;
-import java.awt.event.KeyListener;
 import org.quelea.displayable.TextDisplayable;
+import org.quelea.displayable.TextSection;
 
 /**
  * The panel where the lyrics for different songs can be selected.
@@ -32,7 +34,7 @@ public class SelectLyricsPanel extends ContainedPanel {
         JSplitPane splitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT);
         splitPane.setResizeWeight(0.6);
         lyricsList = new SelectLyricsList(new DefaultListModel());
-        previewCanvas = new LyricCanvas(4, 3);
+        previewCanvas = new LyricCanvas();
         splitPane.add(new JScrollPane(lyricsList) {
 
             {
