@@ -1,8 +1,8 @@
 package org.quelea;
 
+import java.awt.Color;
+import java.awt.Font;
 import org.quelea.utils.Utils;
-
-import java.awt.*;
 
 /**
  * A theme for displaying some lyrics on screen. Currently consists of a font and a background.

@@ -27,7 +27,7 @@ public final class QueleaProperties extends Properties {
      */
     private QueleaProperties() {
         try {
-            if(!getPropFile().exists()) {
+            if (!getPropFile().exists()) {
                 getPropFile().createNewFile();
             }
             try (FileReader reader = new FileReader(getPropFile())) {
@@ -52,10 +52,8 @@ public final class QueleaProperties extends Properties {
      * Save these properties to the file.
      */
     private void write() {
-        try {
-            try (FileWriter writer = new FileWriter(getPropFile())) {
-                store(writer, "Auto save");
-            }
+        try (FileWriter writer = new FileWriter(getPropFile())) {
+            store(writer, "Auto save");
         }
         catch (IOException ex) {
             LOGGER.log(Level.WARNING, "Couldn't store properties", ex);
