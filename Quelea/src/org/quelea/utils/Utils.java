@@ -21,7 +21,7 @@ import java.util.logging.Logger;
  * @author Michael
  */
 public final class Utils {
-    
+
     private static final Logger LOGGER = LoggerUtils.getLogger();
 
     /**
@@ -63,7 +63,7 @@ public final class Utils {
      */
     public static Runnable wrapAsLowPriority(final Runnable task) {
         return new Runnable() {
-            
+
             public void run() {
                 Thread t = Thread.currentThread();
                 int oldPriority = t.getPriority();
@@ -131,7 +131,7 @@ public final class Utils {
         if (!destFile.exists()) {
             destFile.createNewFile();
         }
-        
+
         FileChannel source = null;
         FileChannel destination = null;
         try {
@@ -197,19 +197,13 @@ public final class Utils {
      *         reason.
      */
     public static String getTextFromFile(String fileName, String errorText) {
-        try {
-            BufferedReader reader = new BufferedReader(new FileReader(fileName));
-            try {
-                StringBuilder content = new StringBuilder();
-                String line;
-                while ((line = reader.readLine()) != null) {
-                    content.append(line).append('\n');
-                }
-                return content.toString();
+        try (BufferedReader reader = new BufferedReader(new FileReader(fileName))) {
+            StringBuilder content = new StringBuilder();
+            String line;
+            while ((line = reader.readLine()) != null) {
+                content.append(line).append('\n');
             }
-            finally {
-                reader.close();
-            }
+            return content.toString();
         }
         catch (IOException ex) {
             LOGGER.log(Level.WARNING, "Couldn't get the contents of " + fileName, ex);
@@ -288,7 +282,7 @@ public final class Utils {
             return image;
         }
     }
-    
+
     public static BufferedImage iconToImage(Icon icon) {
         BufferedImage ret = new BufferedImage(icon.getIconWidth(), icon.getIconHeight(), BufferedImage.TYPE_INT_RGB);
         icon.paintIcon(new JLabel(), ret.createGraphics(), 0, 0);
@@ -321,7 +315,7 @@ public final class Utils {
             names.add(fonts[i].getFamily());
         }
         List<String> namesList = new ArrayList<>(names.size());
-        for(String name : names) {
+        for (String name : names) {
             namesList.add(name);
         }
         Collections.sort(namesList);
