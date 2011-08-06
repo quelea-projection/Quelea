@@ -21,7 +21,7 @@ import java.util.logging.Logger;
  * @author Michael
  */
 public final class Utils {
-
+    
     private static final Logger LOGGER = LoggerUtils.getLogger();
 
     /**
@@ -63,7 +63,7 @@ public final class Utils {
      */
     public static Runnable wrapAsLowPriority(final Runnable task) {
         return new Runnable() {
-
+            
             public void run() {
                 Thread t = Thread.currentThread();
                 int oldPriority = t.getPriority();
@@ -131,7 +131,7 @@ public final class Utils {
         if (!destFile.exists()) {
             destFile.createNewFile();
         }
-
+        
         FileChannel source = null;
         FileChannel destination = null;
         try {
@@ -288,7 +288,7 @@ public final class Utils {
             return image;
         }
     }
-
+    
     public static BufferedImage iconToImage(Icon icon) {
         BufferedImage ret = new BufferedImage(icon.getIconWidth(), icon.getIconHeight(), BufferedImage.TYPE_INT_RGB);
         icon.paintIcon(new JLabel(), ret.createGraphics(), 0, 0);
@@ -316,11 +316,16 @@ public final class Utils {
      */
     public static String[] getAllFonts() {
         Font[] fonts = GraphicsEnvironment.getLocalGraphicsEnvironment().getAllFonts();
-        String[] ret = new String[fonts.length];
+        Set<String> names = new HashSet<>();
         for (int i = 0; i < fonts.length; i++) {
-            ret[i] = fonts[i].getName();
+            names.add(fonts[i].getFamily());
         }
-        return ret;
+        List<String> namesList = new ArrayList<>(names.size());
+        for(String name : names) {
+            namesList.add(name);
+        }
+        Collections.sort(namesList);
+        return namesList.toArray(new String[namesList.size()]);
     }
 
     /**
