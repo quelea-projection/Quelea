@@ -33,7 +33,7 @@ public class UpdateChecker {
                 }
                 return;
             }
-            Version curVersion = QueleaProperties.get().getVersion();
+            Version curVersion = QueleaProperties.VERSION;
             LOGGER.log(Level.INFO, "Checked updates, current version is {0} and latest version is {1}",
                     new Object[]{curVersion.getVersionString(), latestVersion.getVersionString()});
             if(curVersion.compareTo(latestVersion) == -1) {
@@ -52,6 +52,7 @@ public class UpdateChecker {
                                 showUpdateError();
                             }
                             return;
+       
                         }
                     }
                 }

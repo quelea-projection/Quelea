@@ -120,7 +120,8 @@ public class LyricCanvas extends Canvas implements RenderCallback {
      * @return the height the small text takes on the canvas in pixels.
      */
     private int drawSmallText(Graphics graphics, Font font) {
-        if (cleared || blacked || smallText == null) {
+        if (cleared || blacked || smallText == null
+                || !QueleaProperties.get().checkDisplaySongInfoText()) {
             return 0;
         }
         int fontSize = getHeight()/50;

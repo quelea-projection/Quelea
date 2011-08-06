@@ -23,7 +23,7 @@ public class MainWindow extends JRibbonFrame {
      * Create a new main window.
      */
     public MainWindow(boolean setApplicationWindow) {
-        super("Quelea " + QueleaProperties.get().getVersion().getVersionString());
+        super("Quelea " + QueleaProperties.VERSION.getVersionString());
         if(setApplicationWindow) {
             Application.get().setMainWindow(this);
         }
