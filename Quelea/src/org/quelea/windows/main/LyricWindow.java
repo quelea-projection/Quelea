@@ -1,8 +1,15 @@
 package org.quelea.windows.main;
 
-import javax.swing.*;
-import java.awt.*;
+import java.awt.Color;
+import java.awt.Cursor;
+import java.awt.Dimension;
+import java.awt.Point;
+import java.awt.Rectangle;
+import java.awt.Toolkit;
 import java.awt.image.BufferedImage;
+import javax.swing.JPanel;
+import javax.swing.JWindow;
+
 
 /**
  * The full screen window used for displaying the projection.
@@ -30,7 +37,7 @@ public class LyricWindow extends JWindow {
         panel.setBackground(Color.BLACK);
         setArea(area);
         setCursor(BLANK_CURSOR);
-        canvas = new LyricCanvas(4, 3);
+        canvas = new LyricCanvas();
         canvas.setPreferredSize(new Dimension((int) (area.getMaxX() - area.getMinX()), (int) (area.getMaxY() - area.getMinY())));
         panel.add(canvas);
         add(panel);
