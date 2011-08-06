@@ -25,6 +25,7 @@ public class LyricCanvas extends Canvas implements RenderCallback {
 
     private Theme theme;
     private String[] text;
+    private String[] smallText;
     private Font font;
     private final int aspectWidth;
     private final int aspectHeight;
@@ -107,14 +108,48 @@ public class LyricCanvas extends Canvas implements RenderCallback {
         if (themeFont == null) {
             themeFont = Theme.DEFAULT_FONT;
         }
+        drawSmallText(offscreen, themeFont);
         drawText(offscreen, themeFont);
         g.drawImage(offscreenImage, 0, 0, this);
     }
 
     /**
-     * Draw the text and background to the given graphics object.
+     * Draw the small text to the given graphics object using the given font.
      * @param graphics the graphics object
      * @param font     the font to use for the text.
+     * @return the height the small text takes on the canvas in pixels.
+     */
+    private int drawSmallText(Graphics graphics, Font font) {
+        if (cleared || blacked || smallText == null) {
+            return 0;
+        }
+        int fontSize = getHeight()/50;
+        font = getDifferentSizeFont(font, fontSize);
+        graphics.setFont(font);
+        graphics.setColor(theme.getFontColor());
+        FontMetrics metrics = graphics.getFontMetrics(font);
+        int largestWidth = 0;
+        for (String str : smallText) {
+            int width = metrics.stringWidth(str);
+            if (width > largestWidth) {
+                largestWidth = width;
+            }
+        }
+        int height = metrics.getHeight();
+        
+        int xPos = getWidth()-largestWidth;
+        int yPos = getHeight()-(height*smallText.length);
+        
+        for(String str : smallText) {
+            graphics.drawString(str, xPos, yPos);
+            yPos += height;
+        }
+        return height*smallText.length;
+    }
+
+    /**
+     * Draw the text and background to the given graphics object.
+    
      */
     private void drawText(Graphics graphics, Font font) {
         if (cleared || blacked) {
@@ -184,7 +219,8 @@ public class LyricCanvas extends Canvas implements RenderCallback {
         do {
             height = graphics.getFontMetrics(font).getHeight() * lineCount;
             font = getDifferentSizeFont(font, font.getSize() - 1);
-        } while (height > getHeight() && font.getSize() > 12);
+        }
+        while (height > getHeight() && font.getSize() > 12);
 
         return font.getSize();
     }
@@ -195,7 +231,7 @@ public class LyricCanvas extends Canvas implements RenderCallback {
      * @return processed, sanctified text that can be displayed nicely.
      */
     private List<String> sanctifyText() {
-        List<String> ret = new ArrayList<String>();
+        List<String> ret = new ArrayList<>();
         int maxLength = QueleaProperties.get().getMaxChars();
         for (String line : text) {
             ret.addAll(splitLine(line, maxLength));
@@ -209,7 +245,7 @@ public class LyricCanvas extends Canvas implements RenderCallback {
      * @return the split line (or the unaltered line if it is less than or equal to the allowed length.
      */
     private List<String> splitLine(String line, int maxLength) {
-        List<String> sections = new ArrayList<String>();
+        List<String> sections = new ArrayList<>();
         if (line.length() > maxLength) {
             if (containsNotAtEnd(line, ";")) {
                 for (String s : splitMiddle(line, ';')) {
@@ -347,14 +383,25 @@ public class LyricCanvas extends Canvas implements RenderCallback {
     }
 
     /**
+     * Erase all the text on the canvas.
+     */
+    public void eraseText() {
+        setText(null, null);
+    }
+
+    /**
      * Set the text to appear on the canvas. The lines will be automatically wrapped and if the text is too large to fit
      * on the screen in the current font, the size will be decreased until all the text fits.
      * @param text an array of the lines to display on the canvas, one entry in the array is one line.
      */
-    public void setText(String[] text) {
+    public void setText(String[] text, String[] smallText) {
         if (text == null) {
             text = new String[0];
         }
+        if (smallText == null) {
+            smallText = new String[0];
+        }
+        this.smallText = smallText;
         this.text = Arrays.copyOf(text, text.length);
         repaint();
     }
@@ -401,7 +448,7 @@ public class LyricCanvas extends Canvas implements RenderCallback {
      * @return the resized font.
      */
     private Font getDifferentSizeFont(Font bigFont, float size) {
-        Map<TextAttribute, Object> attributes = new HashMap<TextAttribute, Object>();
+        Map<TextAttribute, Object> attributes = new HashMap<>();
         for (Entry<TextAttribute, ?> entry : bigFont.getAttributes().entrySet()) {
             attributes.put(entry.getKey(), entry.getValue());
         }
@@ -420,13 +467,16 @@ public class LyricCanvas extends Canvas implements RenderCallback {
         frame.setSize(500, 500);
         frame.setVisible(true);
 
-        try {
-            canvas.setTheme(new Theme(null, null, new Background("C:\\img.jpg", ImageIO.read(new File("C:\\img.jpg")))));
-            Thread.sleep(3000);
-            canvas.setTheme(new Theme(null, null, new Background("C:\\img2.jpg", ImageIO.read(new File("C:\\img2.jpg")))));
-        }
-        catch (Exception ex) {
-            ex.printStackTrace();
-        }
+        canvas.setText(new String[]{"Line 1", "line 2", "BLAHBLAH BLAH BLAH"},
+                new String[]{"Tim Hughes", "CCLI number poo", "I hate CCLI really"});
+
+//        try {
+//            canvas.setTheme(new Theme(null, null, new Background("C:\\img.jpg", ImageIO.read(new File("C:\\img.jpg")))));
+//            Thread.sleep(3000);
+//            canvas.setTheme(new Theme(null, null, new Background("C:\\img2.jpg", ImageIO.read(new File("C:\\img2.jpg")))));
+//        }
+//        catch (Exception ex) {
+//            ex.printStackTrace();
+//        }
     }
 }
