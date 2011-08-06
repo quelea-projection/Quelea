@@ -17,26 +17,35 @@ import java.util.logging.Logger;
  */
 public final class QueleaProperties extends Properties {
 
-    public static final String PROP_FILE_LOCATION = "quelea.properties";
+    public static final Version VERSION = new Version("0.3");
     private static final QueleaProperties INSTANCE = new QueleaProperties();
     private static final Logger LOGGER = LoggerUtils.getLogger();
     private static final Color ACTIVE_SELECTION = new Color(200, 255, 255);
+
     /**
      * Load the properties from the properties file.
      */
     private QueleaProperties() {
         try {
-            FileReader reader = new FileReader(PROP_FILE_LOCATION);
-            try {
-                load(reader);
+            if(!getPropFile().exists()) {
+                getPropFile().createNewFile();
             }
-            finally {
-                reader.close();
+            try (FileReader reader = new FileReader(getPropFile())) {
+                load(reader);
             }
         }
         catch (IOException ex) {
-            LOGGER.log(Level.SEVERE, "Couldn't load properties", ex);
+//            LOGGER.log(Level.SEVERE, "Couldn't load properties", ex);
+            ex.printStackTrace();
         }
+    }
+
+    /**
+     * Get the properties file.
+     * @return the properties file.
+     */
+    private File getPropFile() {
+        return new File(getQueleaUserHome(), "quelea.properties");
     }
 
     /**
@@ -44,12 +53,8 @@ public final class QueleaProperties extends Properties {
      */
     private void write() {
         try {
-            FileWriter writer = new FileWriter(PROP_FILE_LOCATION);
-            try {
+            try (FileWriter writer = new FileWriter(getPropFile())) {
                 store(writer, "Auto save");
-            }
-            finally {
-                writer.close();
             }
         }
         catch (IOException ex) {
@@ -69,28 +74,20 @@ public final class QueleaProperties extends Properties {
      * Get the Quelea home directory in the user's directory.
      * @return the Quelea home directory.
      */
-    public File getQueleaUserHome() {
+    public static File getQueleaUserHome() {
         File ret = new File(new File(System.getProperty("user.home")), "My Quelea");
         if (!ret.exists()) {
             ret.mkdir();
         }
         return ret;
     }
-    
+
     /**
      * Get the directory used for storing the bibles.
      * @return the bibles directory.
      */
     public File getBibleDir() {
         return new File(getProperty("bibles.dir", "bibles"));
-    }
-
-    /**
-     * Get the current version number.
-     * @return the current version number.
-     */
-    public Version getVersion() {
-        return new Version(getProperty("quelea.version", ""));
     }
 
     /**
@@ -266,6 +263,23 @@ public final class QueleaProperties extends Properties {
     }
 
     /**
+     * Determine whether the song info text should be displayed.
+     * @return true if it should be a displayed, false otherwise.
+     */
+    public boolean checkDisplaySongInfoText() {
+        return Boolean.parseBoolean(getProperty("display.songinfotext", "true"));
+    }
+
+    /**
+     * Set whether the song info text should be displayed.
+     * @param val true if it should be displayed, false otherwise.
+     */
+    public void setDisplaySongInfoText(boolean val) {
+        setProperty("display.songinfotext", Boolean.toString(val));
+        write();
+    }
+
+    /**
      * Get the default bible to use.
      * @return the default bible.
      */
@@ -287,7 +301,7 @@ public final class QueleaProperties extends Properties {
      * @return the maximum number of verses allowed.
      */
     public int getMaxVerses() {
-        return Integer.parseInt(getProperty("max.verses"));
+        return Integer.parseInt(getProperty("max.verses", "100"));
     }
 
     /**

@@ -30,7 +30,7 @@ public class SplashWindow extends JWindow {
             BufferedImage image = ImageIO.read(new File("img/splash.png"));
             Graphics2D graphics = (Graphics2D) image.getGraphics();
             graphics.setFont(new Font("Verdana", 0, 45));
-            graphics.drawString(QueleaProperties.get().getVersion().getVersionString(), 220, 140);
+            graphics.drawString(QueleaProperties.VERSION.getVersionString(), 220, 140);
 
             setAlwaysOnTop(true);
             JLabel splash = new JLabel(new ImageIcon(image));
