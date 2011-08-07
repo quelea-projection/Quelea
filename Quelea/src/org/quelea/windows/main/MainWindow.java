@@ -1,12 +1,15 @@
 package org.quelea.windows.main;
 
 import java.awt.Dimension;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.quelea.utils.QueleaProperties;
 import org.quelea.windows.newsong.SongEntryWindow;
 
 import javax.swing.JFrame;
 import org.pushingpixels.flamingo.api.ribbon.JRibbonFrame;
 import org.quelea.Application;
+import org.quelea.utils.LoggerUtils;
 import org.quelea.windows.main.ribbon.RibbonPopulator;
 import org.quelea.windows.main.ribbon.RibbonUtils;
 
@@ -16,6 +19,7 @@ import org.quelea.windows.main.ribbon.RibbonUtils;
  */
 public class MainWindow extends JRibbonFrame {
 
+    private static final Logger LOGGER = LoggerUtils.getLogger();
     private final MainPanel mainpanel;
     private final SongEntryWindow songEntryWindow;
 
@@ -24,6 +28,8 @@ public class MainWindow extends JRibbonFrame {
      */
     public MainWindow(boolean setApplicationWindow) {
         super("Quelea " + QueleaProperties.VERSION.getVersionString());
+        
+        LOGGER.log(Level.INFO, "Creating main window");
         if(setApplicationWindow) {
             Application.get().setMainWindow(this);
         }
@@ -40,6 +46,7 @@ public class MainWindow extends JRibbonFrame {
         add(mainpanel);
         mainpanel.getLibraryPanel().getImagePanel().setPreferredSize(new Dimension(100, 200));
         setSize(800,600);
+        LOGGER.log(Level.INFO, "Created main window.");
     }
 
     /**

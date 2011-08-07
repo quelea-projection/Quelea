@@ -15,6 +15,7 @@
             <definitions>lib\nblibraries.properties</definitions>
         </libraries>
         <spellchecker-wordlist xmlns="http://www.netbeans.org/ns/spellchecker-wordlist/1">
+            <word>Quelea</word>
             <word>toolbar</word>
         </spellchecker-wordlist>
     </configuration>

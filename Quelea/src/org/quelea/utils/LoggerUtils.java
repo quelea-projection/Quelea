@@ -17,18 +17,22 @@ public final class LoggerUtils {
      * The default level for loggers.
      */
     public static final Level DEFAULT_LEVEL = Level.INFO;
-    private static FileHandler FILE_HANDLER;
+    private static volatile FileHandler FILE_HANDLER;
 
-    private synchronized static void initialise() {
+    private static void initialise() {
         if (FILE_HANDLER == null) {
-            try {
-                File handler = new File(QueleaProperties.get().getQueleaUserHome(), "quelea-debug.txt");
-                FILE_HANDLER = new FileHandler(handler.getAbsolutePath());
-                FILE_HANDLER.setFormatter(new SimpleFormatter());
-            }
-            catch (IOException ex) {
-                ex.printStackTrace();
-                //Can't really do a lot here
+            synchronized (LoggerUtils.class) {
+                if (FILE_HANDLER == null) {
+                    try {
+                        File handler = new File(System.getProperty("user.home"), "quelea-debug.txt");
+                        FILE_HANDLER = new FileHandler(handler.getAbsolutePath());
+                        FILE_HANDLER.setFormatter(new SimpleFormatter());
+                    }
+                    catch (IOException ex) {
+                        ex.printStackTrace();
+                        //Can't really do a lot here
+                    }
+                }
             }
         }
     }

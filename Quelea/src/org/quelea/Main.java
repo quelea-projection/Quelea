@@ -28,7 +28,7 @@ import org.quelea.splash.SplashWindow;
  * @author Michael
  */
 public final class Main {
-
+    
     private static final Logger LOGGER = LoggerUtils.getLogger();
     private static MainWindow mainWindow;
     private static LyricWindow fullScreenWindow;
@@ -45,7 +45,7 @@ public final class Main {
      * @param args the command line arguments
      */
     public static void main(String[] args) {
-
+        
         final SplashWindow splashWindow = new SplashWindow();
         splashWindow.setVisible(true);
 
@@ -106,18 +106,24 @@ public final class Main {
                     System.exit(0);
                 }
                 mainWindow = new MainWindow(true);
-
+                
                 new UpdateChecker(mainWindow).checkUpdate(false, false, false);
+                
+                LOGGER.log(Level.INFO, "Registering canvases");
                 mainWindow.getMainPanel().getLivePanel().registerLyricCanvas(fullScreenWindow.getCanvas());
                 mainWindow.getMainPanel().getLivePanel().registerLyricWindow(fullScreenWindow);
                 mainWindow.getMainPanel().getLivePanel().registerVideoCanvas(fullScreenWindow.getCanvas());
                 fullScreenWindow.setVisible(!hidden);
+                LOGGER.log(Level.INFO, "Registered canvases.");
                 
+                LOGGER.log(Level.INFO, "Final loading bits");
                 Utils.centreOnMonitor(mainWindow, controlScreen);
                 mainWindow.setVisible(true);
                 mainWindow.toFront();
                 new ShortcutManager().addShortcuts();
                 splashWindow.setVisible(false);
+                LOGGER.log(Level.INFO, "Loaded everything.");
+                
                 showWarning(gds.length);
             }
         });
