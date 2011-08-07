@@ -117,8 +117,8 @@ public final class Main {
                 mainWindow.setVisible(true);
                 mainWindow.toFront();
                 new ShortcutManager().addShortcuts();
-                showWarning(gds.length);
                 splashWindow.setVisible(false);
+                showWarning(gds.length);
             }
         });
     }
