@@ -12,6 +12,7 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import java.awt.*;
 import java.awt.event.*;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.quelea.displayable.Displayable;
 import org.quelea.displayable.VideoDisplayable;
@@ -23,23 +24,29 @@ import org.quelea.utils.LoggerUtils;
  */
 public class MainPanel extends JPanel {
 
+    private static final Logger LOGGER = LoggerUtils.getLogger();
     private final SchedulePanel schedulePanel;
     private final LibraryPanel libraryPanel;
     private final PreviewPanel previewPanel;
     private final LivePanel livePanel;
     private final StatusPanelGroup statusPanelGroup;
-    private static final Logger LOGGER = LoggerUtils.getLogger();
 
     /**
      * Create the new main panel.
      */
     public MainPanel() {
+        LOGGER.log(Level.INFO, "Creating main panel");
         setLayout(new BorderLayout());
+        LOGGER.log(Level.INFO, "Creating schedule panel");
         schedulePanel = new SchedulePanel();
+        LOGGER.log(Level.INFO, "Creating library panel");
         libraryPanel = new LibraryPanel();
+        LOGGER.log(Level.INFO, "Creating preview panel");
         previewPanel = new PreviewPanel();
+        LOGGER.log(Level.INFO, "Creating live panel");
         livePanel = new LivePanel();
 
+        LOGGER.log(Level.INFO, "Adding listeners");
         addKeyListeners();
         addScheduleListeners();
         addScheduleAddListeners();
