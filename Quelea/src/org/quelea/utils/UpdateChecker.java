@@ -1,5 +1,7 @@
 package org.quelea.utils;
 
+import java.io.IOException;
+import java.net.URISyntaxException;
 import javax.swing.*;
 import java.awt.*;
 import java.net.URI;
@@ -23,6 +25,7 @@ public class UpdateChecker {
      * Check whether there's an update to Quelea, display a message if so.
      * @param showIfLatest true if the user should see a message even if they're running the latest version.
      * @param showIfError  true if the user should see a message if there is an error.
+     * @param forceCheck   true if we should check even if the properties state otherwise.
      */
     public void checkUpdate(boolean showIfLatest, boolean showIfError, boolean forceCheck) {
         if(forceCheck || QueleaProperties.get().checkUpdate()) {
@@ -46,7 +49,7 @@ public class UpdateChecker {
                         try {
                             Desktop.getDesktop().browse(new URI(QueleaProperties.get().getDownloadLocation()));
                         }
-                        catch(Exception ex) {
+                        catch(URISyntaxException | IOException ex) {
                             LOGGER.log(Level.WARNING, "Couldn't open browser", ex);
                             if(showIfError) {
                                 showUpdateError();

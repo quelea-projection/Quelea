@@ -15,7 +15,7 @@ public class SortedListModel extends AbstractListModel {
      * Create a new sorted list model.
      */
     public SortedListModel() {
-        model = new TreeSet<Object>();
+        model = new TreeSet<>();
     }
 
     /**
