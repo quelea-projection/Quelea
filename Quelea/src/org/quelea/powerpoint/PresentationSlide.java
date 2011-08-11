@@ -6,7 +6,6 @@ import java.lang.ref.SoftReference;
 import java.util.HashMap;
 import java.util.Map;
 import org.apache.poi.hslf.model.Slide;
-import org.apache.poi.xslf.usermodel.XSLFSlide;
 import org.quelea.Application;
 import org.quelea.utils.Utils;
 import org.quelea.windows.main.LyricCanvas;
@@ -21,7 +20,7 @@ public class PresentationSlide {
     private Map<Dimension, SoftReference<BufferedImage>> cache;
 
     {
-        cache = new HashMap<Dimension, SoftReference<BufferedImage>>();
+        cache = new HashMap<>();
     }
 
     public PresentationSlide(Slide slide) {
@@ -42,7 +41,7 @@ public class PresentationSlide {
             }
         }
         BufferedImage ret = Utils.resizeImage(image, width, height);
-        cache.put(d, new SoftReference<BufferedImage>(ret));
+        cache.put(d, new SoftReference<>(ret));
         return ret;
     }
 }
