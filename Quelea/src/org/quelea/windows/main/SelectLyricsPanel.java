@@ -109,7 +109,7 @@ public class SelectLyricsPanel extends ContainedPanel {
                 canvas.eraseText();
                 continue;
             }
-            TextSection currentSection = (TextSection) lyricsList.getModel().getElementAt(selectedIndex);
+            TextSection currentSection = lyricsList.getModel().getElementAt(selectedIndex);
             canvas.setTheme(currentSection.getTheme());
             canvas.setCapitaliseFirst(currentSection.shouldCapitaliseFirst());
             canvas.setText(currentSection.getText(), currentSection.getSmallText());

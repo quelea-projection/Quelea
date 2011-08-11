@@ -44,7 +44,7 @@ public class LibrarySongList extends JList<Song> implements DatabaseListener {
          * @inheritDoc
          */
         @Override
-        public Component getListCellRendererComponent(JList list, Object value,
+        public Component getListCellRendererComponent(JList<?> list, Object value,
                 int index, boolean isSelected, boolean cellHasFocus) {
             Song s = new Song((Song) value) {
 
@@ -125,7 +125,7 @@ public class LibrarySongList extends JList<Song> implements DatabaseListener {
     }
 
     private ExecutorService filterService = Executors.newSingleThreadExecutor();
-    private Future filterFuture;
+    private Future<?> filterFuture;
 
     /**
      * Filter the results in this list by a specific search term.
@@ -183,7 +183,7 @@ public class LibrarySongList extends JList<Song> implements DatabaseListener {
         if (index < 0) {
             return null;
         }
-        Song song = (Song) getModel().getElementAt(index);
+        Song song = getModel().getElementAt(index);
         TextSection[] sections = song.getSections();
         if (sections.length > 0) {
             return sections[0].getText()[0] + "...";

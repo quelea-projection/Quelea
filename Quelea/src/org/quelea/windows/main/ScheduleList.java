@@ -50,9 +50,8 @@ public class ScheduleList extends JList<Displayable> {
          */
         public Component getListCellRendererComponent(JList<? extends Displayable> list, Displayable value, int index, boolean isSelected, boolean cellHasFocus) {
             setBorder(new EmptyBorder(5, 5, 5, 5));
-            Displayable displayableValue = (Displayable) value;
-            setText(displayableValue.getPreviewText());
-            setIcon(displayableValue.getPreviewIcon());
+            setText(value.getPreviewText());
+            setIcon(value.getPreviewIcon());
             if (isSelected) {
                 setBackground(list.getSelectionBackground());
                 setForeground(list.getSelectionForeground());
@@ -192,7 +191,7 @@ public class ScheduleList extends JList<Displayable> {
     public Schedule getSchedule() {
         schedule.clear();
         for (int i = 0; i < getModel().getSize(); i++) {
-            schedule.add((Displayable) getModel().getElementAt(i));
+            schedule.add(getModel().getElementAt(i));
         }
         return schedule;
     }

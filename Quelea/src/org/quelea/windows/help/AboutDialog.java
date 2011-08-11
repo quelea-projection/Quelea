@@ -10,7 +10,7 @@ import java.awt.event.ActionListener;
 /**
  * A dialog giving some information about Quelea.
  * Do we really need this? Potentially remove.
- * @deprecated
+ * @Deprecated
  * @author Michael
  */
 public class AboutDialog extends JDialog {

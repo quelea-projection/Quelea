@@ -90,7 +90,7 @@ public class ImageListPanel extends JPanel {
      * @return the full size currently selected image.
      */
     public BufferedImage getSelectedImage() {
-        File file = ((ImageDisplayable)imageList.getSelectedValue()).getFile();
+        File file = imageList.getSelectedValue().getFile();
         return Utils.getImage(file.getAbsolutePath());
     }
 
@@ -100,7 +100,7 @@ public class ImageListPanel extends JPanel {
     private static class CustomCellRenderer extends DefaultListCellRenderer {
 
         @Override
-        public Component getListCellRendererComponent(JList list, Object value, int index,
+        public Component getListCellRendererComponent(JList<?> list, Object value, int index,
                 boolean isSelected, boolean cellHasFocus) {
             CustomCellRenderer ret = (CustomCellRenderer)super.getListCellRendererComponent(list, ((ImageDisplayable)value).getImage(), index, isSelected, cellHasFocus);
             ret.setBorder(new EmptyBorder(5, 5, 5, 5));

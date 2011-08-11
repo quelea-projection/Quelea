@@ -60,7 +60,7 @@ public class PowerpointList extends JList<PresentationSlide> {
     private static class CustomCellRenderer extends DefaultListCellRenderer {
 
         @Override
-        public Component getListCellRendererComponent(JList list, Object value, int index,
+        public Component getListCellRendererComponent(JList<?> list, Object value, int index,
                 boolean isSelected, boolean cellHasFocus) {
             CustomCellRenderer ret = (CustomCellRenderer) super.getListCellRendererComponent(list, "", index, isSelected, cellHasFocus);
             ret.setBorder(new EmptyBorder(10, 5, 10, 5));
