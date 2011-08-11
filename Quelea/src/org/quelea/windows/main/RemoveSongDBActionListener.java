@@ -5,7 +5,6 @@ import java.awt.event.ActionListener;
 import javax.swing.JOptionPane;
 import org.quelea.Application;
 import org.quelea.SongDatabase;
-import org.quelea.SortedListModel;
 import org.quelea.displayable.Song;
 import org.quelea.windows.library.LibrarySongList;
 
@@ -29,7 +28,6 @@ public class RemoveSongDBActionListener implements ActionListener {
         if (!SongDatabase.get().removeSong(song)) {
             JOptionPane.showMessageDialog(mainWindow, "There was an error removing the song from the database.", "Error", JOptionPane.ERROR_MESSAGE, null);
         }
-        SortedListModel model = (SortedListModel) songList.getModel();
         song.setID(-1);
         songList.getModel().removeElement(song);
     }

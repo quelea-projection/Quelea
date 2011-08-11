@@ -29,17 +29,16 @@ public class SelectLyricsList extends JList<TextSection> {
         /**
          * @inheritDoc
          */
-        public Component getListCellRendererComponent(JList list, TextSection value, int index, boolean isSelected, boolean cellHasFocus) {
+        public Component getListCellRendererComponent(JList<? extends TextSection> list, TextSection value, int index, boolean isSelected, boolean cellHasFocus) {
             setBorder(new EmptyBorder(5, 5, 5, 5));
-            TextSection section = (TextSection) value;
             StringBuilder labelHTML = new StringBuilder();
             labelHTML.append("<html>");
-            if(!section.getTitle().trim().equals("")) {
+            if(!value.getTitle().trim().equals("")) {
                 labelHTML.append("<font color=\"white\"><span style=\"background-color:blue; width:100%;\">&nbsp;");
-                labelHTML.append(section.getTitle());
+                labelHTML.append(value.getTitle());
                 labelHTML.append("&nbsp;</span></font><br/>");
             }
-            for(String line : section.getText()) {
+            for(String line : value.getText()) {
                 labelHTML.append(line);
                 labelHTML.append("<br/>");
             }

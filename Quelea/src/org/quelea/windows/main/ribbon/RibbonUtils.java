@@ -2,7 +2,6 @@ package org.quelea.windows.main.ribbon;
 
 import java.awt.Dimension;
 import java.util.Arrays;
-import java.util.List;
 import org.pushingpixels.flamingo.api.common.icon.ImageWrapperResizableIcon;
 import org.pushingpixels.flamingo.api.common.icon.ResizableIcon;
 import org.pushingpixels.flamingo.api.ribbon.JRibbonBand;
@@ -22,7 +21,7 @@ public class RibbonUtils {
     }
 
     public static void applyStandardResizePolicies(JRibbonBand band) {
-        band.setResizePolicies((List<RibbonBandResizePolicy>) Arrays.<RibbonBandResizePolicy>asList(
+        band.setResizePolicies(Arrays.<RibbonBandResizePolicy>asList(
                 new CoreRibbonResizePolicies.None(band.getControlPanel()),
                 new CoreRibbonResizePolicies.Mirror(band.getControlPanel()),
                 new CoreRibbonResizePolicies.Mid2Low(band.getControlPanel()),

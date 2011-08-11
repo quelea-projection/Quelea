@@ -227,7 +227,7 @@ public class MainPanel extends JPanel {
             previewPanel.clear();
             return;
         }
-        Displayable newDisplayable = (Displayable) schedulePanel.getScheduleList().getModel().getElementAt(schedulePanel.getScheduleList().getSelectedIndex());
+        Displayable newDisplayable = schedulePanel.getScheduleList().getModel().getElementAt(schedulePanel.getScheduleList().getSelectedIndex());
         previewPanel.setDisplayable(newDisplayable, 0);
     }
 

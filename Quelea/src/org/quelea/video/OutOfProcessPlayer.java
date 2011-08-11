@@ -116,7 +116,7 @@ public class OutOfProcessPlayer {
         File nativeDir = new File("lib/native");
         NativeLibrary.addSearchPath("libvlc", nativeDir.getAbsolutePath());
         NativeLibrary.addSearchPath("vlc", nativeDir.getAbsolutePath());
-        try (PrintStream stream = new PrintStream(new File(QueleaProperties.get().getQueleaUserHome(), "ooplog.txt"))) {
+        try (PrintStream stream = new PrintStream(new File(QueleaProperties.getQueleaUserHome(), "ooplog.txt"))) {
             System.setErr(stream); //Important, MUST redirect err stream
             new OutOfProcessPlayer(Integer.parseInt(args[0]));
         }
