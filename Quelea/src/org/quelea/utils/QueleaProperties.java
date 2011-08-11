@@ -318,4 +318,21 @@ public final class QueleaProperties extends Properties {
     public Color getActiveSelectionColor() {
         return ACTIVE_SELECTION;
     }
+    
+    /**
+     * Get the thickness of the outline to use for displaying the text.
+     * @return the outline thickness in pixels.
+     */
+    public int getOutlineThickness() {
+        return Integer.parseInt(getProperty("outline.thickness", "2"));
+    }
+    
+    /**
+     * Set the outline thickness.
+     * @param px the outline thickness in pixels.
+     */
+    public void setOutlineThickness(int px) {
+        setProperty("outline.thickness", Integer.toString(px));
+        write();
+    }
 }

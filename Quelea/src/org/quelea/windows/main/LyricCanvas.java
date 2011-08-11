@@ -20,6 +20,7 @@ import java.util.Map.Entry;
 import javax.swing.JFrame;
 import javax.swing.SwingUtilities;
 import org.quelea.Theme;
+import org.quelea.utils.GraphicsUtils;
 import org.quelea.utils.QueleaProperties;
 import org.quelea.utils.Utils;
 
@@ -134,7 +135,6 @@ public class LyricCanvas extends Canvas {
 
     /**
      * Draw the text and background to the given graphics object.
-    
      */
     private void drawText(Graphics graphics, Font font) {
         if (cleared || blacked) {
@@ -168,7 +168,8 @@ public class LyricCanvas extends Canvas {
                 int width = graphics.getFontMetrics().stringWidth(line);
                 int leftOffset = (getWidth() - width) / 2;
                 heightOffset += graphics.getFontMetrics().getHeight();
-                graphics.drawString(line, leftOffset, heightOffset);
+                GraphicsUtils graphicsUtils = new GraphicsUtils(graphics);
+                graphicsUtils.drawStringWithOutline(line, leftOffset, heightOffset, graphicsUtils.getInverseColor(), QueleaProperties.get().getOutlineThickness());
             }
         }
     }
@@ -204,8 +205,7 @@ public class LyricCanvas extends Canvas {
         do {
             height = graphics.getFontMetrics(font).getHeight() * lineCount;
             font = getDifferentSizeFont(font, font.getSize() - 1);
-        }
-        while (height > getHeight() && font.getSize() > 12);
+        } while (height > getHeight() && font.getSize() > 12);
 
         return font.getSize();
     }
@@ -246,11 +246,12 @@ public class LyricCanvas extends Canvas {
                 for (String s : splitMiddle(line, ' ')) {
                     sections.addAll(splitLine(s, maxLength));
                 }
-            } //            else if(containsNotAtEnd(line, "-")) {
-            //                for(String s : splitMiddle(line, '-')) {
-            //                    sections.addAll(splitLine(s, maxLength));
-            //                }
-            //            }
+            }
+//            else if(containsNotAtEnd(line, "-")) {
+//                for(String s : splitMiddle(line, '-')) {
+//                    sections.addAll(splitLine(s, maxLength));
+//                }
+//            }
             else {
                 sections.addAll(splitLine(new StringBuilder(line).insert(line.length() / 2, "-").toString(), maxLength));
             }
@@ -344,21 +345,6 @@ public class LyricCanvas extends Canvas {
         }
     }
 
-    /**
-     * Prevent small changes to the canvas' size. This is a workaround to a bug where the canvas was sometimes resized
-     * constantly by very small intervals (a few pixels) causing annoying flickering.
-     * @param width  the width of the component.
-     * @param height the height of the component.
-     */
-//    @Override
-//    public void setSize(int width, int height) {
-//        final int MAX_OFFSET = 5; //changes less than this will be discarded.
-//        int widthDiff = Math.abs(width - getWidth());
-//        int heightDiff = Math.abs(height - getHeight());
-//        if(widthDiff > MAX_OFFSET || heightDiff > MAX_OFFSET) {
-//            super.setSize(width, height);
-//        }
-//    }
     /**
      * Get the theme currently in use on the canvas.
      * @return the current theme
