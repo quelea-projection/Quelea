@@ -18,6 +18,7 @@ public class OptionsGeneralPanel extends JPanel implements PropertyPanel {
     private final JCheckBox capitalFirstCheckBox;
     private final JCheckBox oneMonitorWarnCheckBox;
     private final JCheckBox displaySongInfoCheckBox;
+    private final JSlider borderThicknessSlider;
     private final JSlider maxCharsSlider;
     private final JSlider minLinesSlider;
 
@@ -28,6 +29,7 @@ public class OptionsGeneralPanel extends JPanel implements PropertyPanel {
         setName("General");
         JPanel generalPanel = new JPanel(); //Add stuff to generalpanel to avoid leaking this
         generalPanel.setLayout(new SpringLayout());
+        int rows = 0;
 
         JLabel startupLabel = new JLabel("Check for update on startup");
         generalPanel.add(startupLabel);
@@ -35,6 +37,7 @@ public class OptionsGeneralPanel extends JPanel implements PropertyPanel {
         startupLabel.setLabelFor(startupUpdateCheckBox);
         generalPanel.add(startupUpdateCheckBox);
         generalPanel.add(new JLabel()); //Keep springlayout happy
+        rows++;
 
         JLabel warnLabel = new JLabel("Warn if there's just one monitor");
         generalPanel.add(warnLabel);
@@ -42,6 +45,7 @@ public class OptionsGeneralPanel extends JPanel implements PropertyPanel {
         warnLabel.setLabelFor(oneMonitorWarnCheckBox);
         generalPanel.add(oneMonitorWarnCheckBox);
         generalPanel.add(new JLabel()); //Keep springlayout happy
+        rows++;
 
         JLabel capitalFirstLabel = new JLabel("Capitalise the start of each line");
         generalPanel.add(capitalFirstLabel);
@@ -49,6 +53,7 @@ public class OptionsGeneralPanel extends JPanel implements PropertyPanel {
         startupLabel.setLabelFor(capitalFirstCheckBox);
         generalPanel.add(capitalFirstCheckBox);
         generalPanel.add(new JLabel()); //Keep springlayout happy
+        rows++;
 
         JLabel displaySongInfoLabel = new JLabel("Display song information on each slide");
         generalPanel.add(displaySongInfoLabel);
@@ -56,6 +61,23 @@ public class OptionsGeneralPanel extends JPanel implements PropertyPanel {
         startupLabel.setLabelFor(displaySongInfoCheckBox);
         generalPanel.add(displaySongInfoCheckBox);
         generalPanel.add(new JLabel()); //Keep springlayout happy
+        rows++;
+
+        JLabel borderThicknessLabel = new JLabel("Text border thickness");
+        generalPanel.add(borderThicknessLabel);
+        borderThicknessSlider = new JSlider(0, 5);
+        generalPanel.add(borderThicknessSlider);
+        borderThicknessLabel.setLabelFor(borderThicknessSlider);
+        final JLabel borderThicknessValue = new JLabel(Integer.toString(borderThicknessSlider.getValue()));
+        generalPanel.add(borderThicknessValue);
+        borderThicknessValue.setLabelFor(borderThicknessSlider);
+        borderThicknessSlider.addChangeListener(new ChangeListener() {
+
+            public void stateChanged(ChangeEvent e) {
+                borderThicknessValue.setText(Integer.toString(borderThicknessSlider.getValue()));
+            }
+        });
+        rows++;
 
         JLabel maxCharsLabel = new JLabel("Maximum number of characters per line");
         generalPanel.add(maxCharsLabel);
@@ -71,6 +93,7 @@ public class OptionsGeneralPanel extends JPanel implements PropertyPanel {
                 maxCharsValue.setText(Integer.toString(maxCharsSlider.getValue()));
             }
         });
+        rows++;
 
         JLabel minLinesLabel = new JLabel("<html>Minimum number of emulated lines<i> (Advanced)</i></html>");
         generalPanel.add(minLinesLabel);
@@ -86,7 +109,9 @@ public class OptionsGeneralPanel extends JPanel implements PropertyPanel {
                 minLinesValue.setText(Integer.toString(minLinesSlider.getValue()));
             }
         });
-        SpringUtilities.makeCompactGrid(generalPanel, 6, 3, 6, 6, 6, 6);
+        rows++;
+
+        SpringUtilities.makeCompactGrid(generalPanel, rows, 3, 6, 6, 6, 6);
         add(generalPanel);
         readProperties();
     }
@@ -102,6 +127,7 @@ public class OptionsGeneralPanel extends JPanel implements PropertyPanel {
         displaySongInfoCheckBox.setSelected(props.checkDisplaySongInfoText());
         maxCharsSlider.setValue(props.getMaxChars());
         minLinesSlider.setValue(props.getMinLines());
+        borderThicknessSlider.setValue(props.getOutlineThickness());
     }
 
     /**
@@ -121,6 +147,8 @@ public class OptionsGeneralPanel extends JPanel implements PropertyPanel {
         props.setMaxChars(maxCharsPerLine);
         int minLines = getMinLinesSlider().getValue();
         props.setMinLines(minLines);
+        int borderThickness = getBorderThicknessSlider().getValue();
+        props.setOutlineThickness(borderThickness);
     }
 
     /**
@@ -169,5 +197,13 @@ public class OptionsGeneralPanel extends JPanel implements PropertyPanel {
      */
     public JCheckBox getOneMonitorWarningCheckBox() {
         return oneMonitorWarnCheckBox;
+    }
+
+    /**
+     * Get the border thickness slider.
+     * @return the border thickness slider.
+     */
+    public JSlider getBorderThicknessSlider() {
+        return borderThicknessSlider;
     }
 }
