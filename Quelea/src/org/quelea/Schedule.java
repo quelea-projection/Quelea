@@ -48,7 +48,7 @@ public class Schedule implements Iterable<Displayable>, Printable {
      * Create a new schedule.
      */
     public Schedule() {
-        displayables = new ArrayList<Displayable>();
+        displayables = new ArrayList<>();
     }
 
     /**
@@ -98,7 +98,7 @@ public class Schedule implements Iterable<Displayable>, Printable {
                 zos.putNextEntry(new ZipEntry("schedule.xml"));
                 zos.write(getXML().getBytes());
                 zos.closeEntry();
-                Set<String> entries = new HashSet<String>();
+                Set<String> entries = new HashSet<>();
                 for (Displayable displayable : displayables) {
                     for (File displayableFile : displayable.getResources()) {
                         String base = ".";
@@ -147,22 +147,22 @@ public class Schedule implements Iterable<Displayable>, Printable {
                     if (!entry.getName().startsWith("resources/")) {
                         continue;
                     }
-                    BufferedInputStream is = new BufferedInputStream(zipFile.getInputStream(entry));
-                    int count;
-                    byte data[] = new byte[BUFFER];
-                    File writeFile = new File(entry.getName().substring("resources/".length()));
-                    if (writeFile.exists()) {
-                        continue;
+                    try (BufferedInputStream is = new BufferedInputStream(zipFile.getInputStream(entry))) {
+                        int count;
+                        byte data[] = new byte[BUFFER];
+                        File writeFile = new File(entry.getName().substring("resources/".length()));
+                        if (writeFile.exists()) {
+                            continue;
+                        }
+                        FileOutputStream fos = new FileOutputStream(writeFile);
+                        try (BufferedOutputStream dest = new BufferedOutputStream(fos, BUFFER)) {
+                            while ((count = is.read(data, 0, BUFFER))
+                                    != -1) {
+                                dest.write(data, 0, count);
+                            }
+                            dest.flush();
+                        }
                     }
-                    FileOutputStream fos = new FileOutputStream(writeFile);
-                    BufferedOutputStream dest = new BufferedOutputStream(fos, BUFFER);
-                    while ((count = is.read(data, 0, BUFFER))
-                            != -1) {
-                        dest.write(data, 0, count);
-                    }
-                    dest.flush();
-                    dest.close();
-                    is.close();
                 }
                 return ret;
             } finally {
@@ -214,13 +214,7 @@ public class Schedule implements Iterable<Displayable>, Printable {
                 }
             }
             return newSchedule;
-        } catch (ParserConfigurationException ex) {
-            LOGGER.log(Level.WARNING, "Couldn't parse the schedule", ex);
-            return null;
-        } catch (SAXException ex) {
-            LOGGER.log(Level.WARNING, "Couldn't parse the schedule", ex);
-            return null;
-        } catch (IOException ex) {
+        } catch (ParserConfigurationException | SAXException | IOException ex) {
             LOGGER.log(Level.WARNING, "Couldn't parse the schedule", ex);
             return null;
         }
