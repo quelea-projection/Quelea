@@ -74,6 +74,15 @@ public final class Utils {
             }
         };
     }
+    
+    /**
+     * Remove all HTML tags from a string.
+     * @param str the string to remove the tags from.
+     * @return the string with the tags removed.
+     */
+    public static String removeTags(String str) {
+        return str.replaceAll("\\<.*?>","");
+    }
 
     /**
      * Determine whether the given frame is completely on the given screen.

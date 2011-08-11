@@ -108,7 +108,7 @@ public class SourceParser implements SongParser {
             String section = matcher.group(0);
             section = section.replace("<br>", "\n");
             section = section.replace("<br/>", "\n");
-            section = section.replaceAll("\\<.*?\\>", "");
+            section = Utils.removeTags(section);
             String[] lines = section.split("\n");
             for (int i = 0; i < lines.length; i++) {
                 lines[i] = lines[i].trim();
