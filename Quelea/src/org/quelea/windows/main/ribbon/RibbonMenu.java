@@ -13,7 +13,6 @@ import org.quelea.Schedule;
 import org.quelea.ScheduleSaver;
 import org.quelea.print.Printer;
 import org.quelea.utils.Utils;
-import org.quelea.windows.help.AboutDialog;
 import org.quelea.windows.main.MainPanel;
 import org.quelea.windows.main.ribbon.secondPanels.ExitPanelDrawer;
 import org.quelea.windows.main.ribbon.secondPanels.NewPanelDrawer;
@@ -25,18 +24,16 @@ import org.quelea.windows.main.ribbon.secondPanels.SavePanelDrawer;
 import org.quelea.windows.options.OptionsDialog;
 
 /**
- *
+ * The menu on the ribbon component.
  * @author Michael
  */
 public class RibbonMenu extends RibbonApplicationMenu {
     
     private final OptionsDialog optionsDialog;
-    private final AboutDialog aboutDialog;
     
 
     public RibbonMenu() {
         optionsDialog = new OptionsDialog(Application.get().getMainWindow());
-        aboutDialog = new AboutDialog(Application.get().getMainWindow());
         
         RibbonApplicationMenuEntryPrimary newMenuEntry = new RibbonApplicationMenuEntryPrimary(
                 RibbonUtils.getRibbonIcon("icons/filenew.png", 100, 100), "New Schedule", new ActionListener() {
