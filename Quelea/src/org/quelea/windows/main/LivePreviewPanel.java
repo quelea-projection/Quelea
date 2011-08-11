@@ -20,8 +20,8 @@ import org.quelea.displayable.VideoDisplayable;
  */
 public abstract class LivePreviewPanel extends JPanel {
 
-    private final Set<LyricCanvas> canvases = new HashSet<LyricCanvas>();
-    private final Set<LyricWindow> windows = new HashSet<LyricWindow>();
+    private final Set<LyricCanvas> canvases = new HashSet<>();
+    private final Set<LyricWindow> windows = new HashSet<>();
     private Displayable displayable;
     private JPanel cardPanel = new JPanel(new CardLayout());
     private static final String LYRICS_LABEL = "LYRICS";
