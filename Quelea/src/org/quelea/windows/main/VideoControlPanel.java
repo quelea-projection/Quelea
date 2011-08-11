@@ -27,11 +27,12 @@ import org.quelea.video.RemotePlayer;
 import org.quelea.video.RemotePlayerFactory;
 
 /**
- *
+ * The control panel for displaying the video.
  * @author Michael
  */
 public class VideoControlPanel extends JPanel {
 
+    private static final boolean TEST_DISABLE_SUBSTANCE = false;
     private JButton play;
     private JButton pause;
     private JButton stop;
@@ -95,7 +96,8 @@ public class VideoControlPanel extends JPanel {
                     if (mediaPlayer.isPlaying()) {
                         mediaPlayer.pause();
                         pauseCheck = false;
-                    } else {
+                    }
+                    else {
                         pauseCheck = true;
                     }
                 }
@@ -111,26 +113,30 @@ public class VideoControlPanel extends JPanel {
                 }
             }
         });
-        try {
-            positionSlider.setUI(new SubstanceSliderUI(positionSlider) {
+        if (!TEST_DISABLE_SUBSTANCE) {
+            try {
+                positionSlider.setUI(new SubstanceSliderUI(positionSlider) {
 
-                @Override
-                protected void scrollDueToClickInTrack(int direction) {
-                    // this is the default behaviour, let's comment that out
-                    //scrollByBlock(direction);
+                    @Override
+                    protected void scrollDueToClickInTrack(int direction) {
+                        // this is the default behaviour, let's comment that out
+                        //scrollByBlock(direction);
 
-                    int value = positionSlider.getValue();
+                        int value = positionSlider.getValue();
 
-                    if (positionSlider.getOrientation() == JSlider.HORIZONTAL) {
-                        value = this.valueForXPosition(positionSlider.getMousePosition().x);
-                    } else if (positionSlider.getOrientation() == JSlider.VERTICAL) {
-                        value = this.valueForYPosition(positionSlider.getMousePosition().y);
+                        if (positionSlider.getOrientation() == JSlider.HORIZONTAL) {
+                            value = this.valueForXPosition(positionSlider.getMousePosition().x);
+                        }
+                        else if (positionSlider.getOrientation() == JSlider.VERTICAL) {
+                            value = this.valueForYPosition(positionSlider.getMousePosition().y);
+                        }
+                        positionSlider.setValue(value);
                     }
-                    positionSlider.setValue(value);
-                }
-            });
-        } catch (Exception ex) {
-            //UI issue, cannot do a lot and don't want to break program...
+                });
+            }
+            catch (Exception ex) {
+                //UI issue, cannot do a lot and don't want to break program...
+            }
         }
         videoArea = new Canvas();
         videoArea.setBackground(Color.BLACK);
@@ -200,7 +206,8 @@ public class VideoControlPanel extends JPanel {
                     }
                 }
             });
-        } else {
+        }
+        else {
             RemotePlayer player = RemotePlayerFactory.getRemotePlayer(canvas);
             player.setMute(true);
             mediaPlayers.add(player);
@@ -270,7 +277,8 @@ public class VideoControlPanel extends JPanel {
         mediaPlayers.get(0).setMute(muteState);
         if (getMute()) {
             mute.setIcon(Utils.getImageIcon("icons/unmute.png"));
-        } else {
+        }
+        else {
             mute.setIcon(Utils.getImageIcon("icons/mute.png"));
         }
     }

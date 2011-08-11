@@ -1,10 +1,8 @@
 package org.quelea.video;
 
-import java.awt.BorderLayout;
-import java.awt.Canvas;
-import java.awt.Dimension;
 import java.awt.GridLayout;
 import javax.swing.JFrame;
+import javax.swing.SwingUtilities;
 import org.quelea.windows.main.VideoControlPanel;
 
 /**
@@ -32,18 +30,23 @@ public class Test {
 //        RemotePlayer player2 = RemotePlayerFactory.getRemotePlayer(panel2);
 //        player2.load("F:\\Videos\\Gone in 60 Seconds\\Gone in 60 Seconds.avi");
 //        player2.play();
-//        go();
+        go();
     }
 
     public static void go() {
-        JFrame frame = new JFrame();
-        frame.setLayout(new GridLayout(1, 2));
-        VideoControlPanel panel1 = new VideoControlPanel();
-        panel1.loadVideo("F:\\Videos\\Inception\\Inception.mkv");
-        frame.add(panel1);
-        frame.pack();
-        frame.setVisible(true);
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-    }
+        SwingUtilities.invokeLater(new Runnable() {
 
+            public void run() {
+                JFrame frame = new JFrame();
+                frame.setLayout(new GridLayout(1, 2));
+                VideoControlPanel panel1 = new VideoControlPanel();
+                panel1.loadVideo("http://www.youtube.com/watch?v=W0WD4nduCsg");
+                panel1.playVideo();
+                frame.add(panel1);
+                frame.pack();
+                frame.setVisible(true);
+                frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+            }
+        });
+    }
 }
