@@ -11,10 +11,9 @@ import org.quelea.Background;
 import org.quelea.Theme;
 import org.quelea.displayable.PresentationDisplayable;
 import org.quelea.powerpoint.PresentationSlide;
-import org.quelea.utils.Utils;
 
 /**
- *
+ * The panel for displaying powerpoint slides in the live / preview panels.
  * @author Michael
  */
 public class PowerpointPanel extends ContainedPanel {
@@ -42,7 +41,7 @@ public class PowerpointPanel extends ContainedPanel {
     }
 
     public void setDisplayable(PresentationDisplayable displayable, int index) {
-        DefaultListModel model = (DefaultListModel) (powerpointList.getModel());
+        DefaultListModel<PresentationSlide> model = (DefaultListModel<PresentationSlide>)powerpointList.getModel();
         if(displayable==null) {
             model.clear();
             return;

@@ -21,8 +21,8 @@ import java.util.List;
  */
 public class LibraryBiblePanel extends JPanel implements BibleChangeListener {
 
-    private final JComboBox bibleSelector;
-    private final JComboBox bookSelector;
+    private final JComboBox<Bible> bibleSelector;
+    private final JComboBox<BibleBook> bookSelector;
     private final JTextField passageSelector;
     private final JTextArea preview;
     private final JButton addToSchedule;
@@ -36,9 +36,9 @@ public class LibraryBiblePanel extends JPanel implements BibleChangeListener {
         setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
         verses = new ArrayList<>();
         BibleManager.get().registerBibleChangeListener(this);
-        bibleSelector = new JComboBox(BibleManager.get().getBibles());
+        bibleSelector = new JComboBox<>(BibleManager.get().getBibles());
         String selectedBibleName = QueleaProperties.get().getDefaultBible();
-        for (int i = 0; i < bibleSelector.getModel().getSize(); i++) {
+        for (int i = 0; i < getBibleSelectorModel().getSize(); i++) {
             Bible bible = (Bible) bibleSelector.getItemAt(i);
             if (bible.getName().equals(selectedBibleName)) {
                 bibleSelector.setSelectedIndex(i);
@@ -47,7 +47,7 @@ public class LibraryBiblePanel extends JPanel implements BibleChangeListener {
         add(bibleSelector);
         JPanel chapterPanel = new JPanel();
         chapterPanel.setLayout(new BoxLayout(chapterPanel, BoxLayout.X_AXIS));
-        bookSelector = new JComboBox(((Bible) bibleSelector.getSelectedItem()).getBooks());
+        bookSelector = new JComboBox<>(getBibleSelectorModel().getElementAt(bibleSelector.getSelectedIndex()).getBooks());
         chapterPanel.add(bookSelector);
         passageSelector = new JTextField();
         chapterPanel.add(passageSelector);
@@ -87,10 +87,9 @@ public class LibraryBiblePanel extends JPanel implements BibleChangeListener {
                 if (bibleSelector.getSelectedIndex() == -1) {
                     return;
                 }
-                DefaultComboBoxModel model = (DefaultComboBoxModel) bookSelector.getModel();
-                model.removeAllElements();
+                getBibleBookSelectorModel().removeAllElements();
                 for (BibleBook book : ((Bible) bibleSelector.getSelectedItem()).getBooks()) {
-                    model.addElement(book);
+                    getBibleBookSelectorModel().addElement(book);
                 }
                 update();
             }
@@ -106,13 +105,29 @@ public class LibraryBiblePanel extends JPanel implements BibleChangeListener {
         SwingUtilities.invokeLater(new Runnable() {
 
             public void run() {
-                DefaultComboBoxModel model = ((DefaultComboBoxModel) bibleSelector.getModel());
+                DefaultComboBoxModel<Bible> model = getBibleSelectorModel();
                 model.removeAllElements();
                 for (Bible bible : BibleManager.get().getBibles()) {
                     model.addElement(bible);
                 }
             }
         });
+    }
+    
+    /**
+     * Get the bible selector model 
+     */
+    @SuppressWarnings("unchecked")
+    private DefaultComboBoxModel<Bible> getBibleSelectorModel() {
+        return (DefaultComboBoxModel<Bible>)bibleSelector.getModel();
+    }
+    
+    /**
+     * Get the book selector model.
+     */
+    @SuppressWarnings("unchecked")
+    private DefaultComboBoxModel<BibleBook> getBibleBookSelectorModel() {
+        return (DefaultComboBoxModel<BibleBook>)bookSelector.getModel();
     }
 
     /**

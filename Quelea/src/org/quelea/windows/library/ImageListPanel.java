@@ -26,7 +26,7 @@ import org.quelea.utils.Utils;
  */
 public class ImageListPanel extends JPanel {
 
-    private final JList imageList;
+    private final JList<ImageDisplayable> imageList;
     private String dir;
 
     /**
@@ -35,7 +35,7 @@ public class ImageListPanel extends JPanel {
      */
     public ImageListPanel(String dir) {
         this.dir = dir;
-        imageList = new JList(new DefaultListModel());
+        imageList = new JList<>(new DefaultListModel<ImageDisplayable>());
         imageList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         DragSource.getDefaultDragSource().createDefaultDragGestureRecognizer(imageList, DnDConstants.ACTION_MOVE, new DragGestureListener() {
 
@@ -46,7 +46,7 @@ public class ImageListPanel extends JPanel {
             }
         });
         imageList.setCellRenderer(new CustomCellRenderer());
-        addFiles((DefaultListModel) imageList.getModel());
+        addFiles((DefaultListModel<ImageDisplayable>) imageList.getModel());
         imageList.setLayoutOrientation(JList.HORIZONTAL_WRAP);
         imageList.setVisibleRowCount(-1);
         JScrollPane scroll = new JScrollPane(imageList);
@@ -67,7 +67,7 @@ public class ImageListPanel extends JPanel {
      * Refresh the contents of this image list panel.
      */
     public void refresh() {
-        DefaultListModel model = (DefaultListModel) imageList.getModel();
+        DefaultListModel<ImageDisplayable> model = (DefaultListModel<ImageDisplayable>) imageList.getModel();
         model.clear();
         addFiles(model);
     }
@@ -76,7 +76,7 @@ public class ImageListPanel extends JPanel {
      * Add the files to the given model.
      * @param model the model to add files to.
      */
-    private void addFiles(DefaultListModel model) {
+    private void addFiles(DefaultListModel<ImageDisplayable> model) {
         File[] files = new File(dir).listFiles();
         for (File file : files) {
             if (Utils.fileIsImage(file)) {

@@ -18,7 +18,7 @@ public class RemoveSongDBActionListener implements ActionListener {
     public void actionPerformed(ActionEvent e) {
         MainWindow mainWindow = Application.get().getMainWindow();
         LibrarySongList songList = mainWindow.getMainPanel().getLibraryPanel().getLibrarySongPanel().getSongList();
-        Song song = (Song) songList.getSelectedValue();
+        Song song = songList.getModel().getElementAt(songList.getSelectedIndex());
         if (song == null) {
             return;
         }
@@ -31,7 +31,7 @@ public class RemoveSongDBActionListener implements ActionListener {
         }
         SortedListModel model = (SortedListModel) songList.getModel();
         song.setID(-1);
-        model.removeElement(song);
+        songList.getModel().removeElement(song);
     }
     
 }

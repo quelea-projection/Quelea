@@ -46,6 +46,7 @@ public final class BibleManager {
             biblePath.register(watcher, ENTRY_CREATE, ENTRY_DELETE, ENTRY_MODIFY);
             new Thread() {
 
+                @SuppressWarnings("unchecked")
                 public void run() {
                     while (true) {
                         WatchKey key;

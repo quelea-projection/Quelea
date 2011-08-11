@@ -30,12 +30,12 @@ public class ThemePanel extends JPanel {
     private static final String[] SAMPLE_LYRICS = {"Amazing Grace! how sweet the sound", "That saved a wretch like me", "I once was lost but now am found", "Was blind, but now I see."};
     private JToolBar fontToolbar;
     private JToolBar backgroundToolbar;
-    private JComboBox fontSelection;
+    private JComboBox<String> fontSelection;
     private ColourButton fontColourButton;
     private ColourButton backgroundColourButton;
-    private JComboBox backgroundTypeSelect;
+    private JComboBox<String> backgroundTypeSelect;
     private JTextField backgroundImageLocation;
-    private JComboBox fontSizeSelection;
+    private JComboBox<Integer> fontSizeSelection;
     private JToggleButton boldButton;
     private JToggleButton italicButton;
     private final LyricCanvas canvas;
@@ -66,7 +66,7 @@ public class ThemePanel extends JPanel {
         backgroundToolbar = new JToolBar();
         backgroundToolbar.setFloatable(false);
         backgroundToolbar.add(new JLabel("Background:"));
-        backgroundTypeSelect = new JComboBox();
+        backgroundTypeSelect = new JComboBox<>();
         backgroundTypeSelect.addItem("Colour");
         backgroundTypeSelect.addItem("Image");
         backgroundTypeSelect.addActionListener(new ActionListener() {
@@ -120,7 +120,7 @@ public class ThemePanel extends JPanel {
         fontToolbar = new JToolBar();
         fontToolbar.setFloatable(false);
         fontToolbar.add(new JLabel("Font:"));
-        fontSelection = new JComboBox();
+        fontSelection = new JComboBox<>();
         for(String font : Utils.getAllFonts()) {
             fontSelection.addItem(font);
         }
@@ -131,7 +131,7 @@ public class ThemePanel extends JPanel {
             }
         });
         fontToolbar.add(fontSelection);
-        fontSizeSelection = new JComboBox();
+        fontSizeSelection = new JComboBox<>();
         for(int i = 8; i <= 100; i += 2) {
             fontSizeSelection.addItem(i);
         }

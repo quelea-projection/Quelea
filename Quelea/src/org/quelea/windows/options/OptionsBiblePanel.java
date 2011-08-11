@@ -30,7 +30,7 @@ import org.quelea.utils.Utils;
  */
 public class OptionsBiblePanel extends JPanel implements PropertyPanel, BibleChangeListener {
 
-    private final JComboBox defaultBibleComboBox;
+    private final JComboBox<Bible> defaultBibleComboBox;
     private final JSpinner maxVersesSpinner;
 
     public OptionsBiblePanel() {
@@ -41,7 +41,7 @@ public class OptionsBiblePanel extends JPanel implements PropertyPanel, BibleCha
         JLabel defaultLabel = new JLabel("Default bible");
         biblePanel.add(defaultLabel);
         BibleManager.get().registerBibleChangeListener(this);
-        defaultBibleComboBox = new JComboBox(BibleManager.get().getBibles());
+        defaultBibleComboBox = new JComboBox<>(BibleManager.get().getBibles());
         defaultLabel.setLabelFor(defaultBibleComboBox);
         biblePanel.add(defaultBibleComboBox);
 
@@ -81,7 +81,7 @@ public class OptionsBiblePanel extends JPanel implements PropertyPanel, BibleCha
     public void updateBibles() {
         SwingUtilities.invokeLater(new Runnable() {
             public void run() {
-                DefaultComboBoxModel model = ((DefaultComboBoxModel) defaultBibleComboBox.getModel());
+                DefaultComboBoxModel<Bible> model = ((DefaultComboBoxModel<Bible>) defaultBibleComboBox.getModel());
                 model.removeAllElements();
                 for (Bible bible : BibleManager.get().getBibles()) {
                     model.addElement(bible);
@@ -120,7 +120,7 @@ public class OptionsBiblePanel extends JPanel implements PropertyPanel, BibleCha
      * Get the default bible combo box.
      * @return the default bible combo box.
      */
-    public JComboBox getDefaultBibleBox() {
+    public JComboBox<Bible> getDefaultBibleBox() {
         return defaultBibleComboBox;
     }
 
