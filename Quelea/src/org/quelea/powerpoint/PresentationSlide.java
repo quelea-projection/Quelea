@@ -11,7 +11,7 @@ import org.quelea.utils.Utils;
 import org.quelea.windows.main.LyricCanvas;
 
 /**
- *
+ * A slide in a powerpoint presentation.
  * @author Michael
  */
 public class PresentationSlide {
