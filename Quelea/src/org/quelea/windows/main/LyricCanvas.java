@@ -163,13 +163,15 @@ public class LyricCanvas extends Canvas {
             }
         }
         else {
-            heightOffset = 0;
+            int totalHeight = graphics.getFontMetrics().getHeight()*sanctifiedLines.size();
+            heightOffset = (getHeight()-totalHeight)/2;
+            heightOffset += graphics.getFontMetrics().getHeight()/2;
             for (String line : sanctifiedLines) {
                 int width = graphics.getFontMetrics().stringWidth(line);
                 int leftOffset = (getWidth() - width) / 2;
-                heightOffset += graphics.getFontMetrics().getHeight();
                 GraphicsUtils graphicsUtils = new GraphicsUtils(graphics);
                 graphicsUtils.drawStringWithOutline(line, leftOffset, heightOffset, graphicsUtils.getInverseColor(), QueleaProperties.get().getOutlineThickness());
+                heightOffset += graphics.getFontMetrics().getHeight();
             }
         }
     }
