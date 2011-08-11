@@ -1,34 +1,35 @@
 package org.quelea.windows.main;
 
-import org.quelea.displayable.TextSection;
-import org.quelea.utils.QueleaProperties;
-
-import javax.swing.*;
-import javax.swing.border.EmptyBorder;
-import java.awt.*;
+import java.awt.Color;
+import java.awt.Component;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
+import javax.swing.DefaultListModel;
+import javax.swing.JLabel;
+import javax.swing.JList;
+import javax.swing.ListCellRenderer;
+import javax.swing.ListSelectionModel;
+import javax.swing.border.EmptyBorder;
+import org.quelea.displayable.TextSection;
+import org.quelea.utils.QueleaProperties;
 
 /**
  * A list displaying the different sections in the song.
  * @author Michael
  */
-public class SelectLyricsList extends JList {
+public class SelectLyricsList extends JList<TextSection> {
 
     private final Color originalSelectionColour;
 
     /**
      * Used for displaying summaries of items in the service in the schedule list.
      */
-    private static class SelectLyricsRenderer extends JLabel implements ListCellRenderer {
+    private static class SelectLyricsRenderer extends JLabel implements ListCellRenderer<TextSection> {
 
         /**
          * @inheritDoc
          */
-        public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
-            if(!(value instanceof TextSection)) {
-                return new JLabel();
-            }
+        public Component getListCellRendererComponent(JList list, TextSection value, int index, boolean isSelected, boolean cellHasFocus) {
             setBorder(new EmptyBorder(5, 5, 5, 5));
             TextSection section = (TextSection) value;
             StringBuilder labelHTML = new StringBuilder();
@@ -56,7 +57,6 @@ public class SelectLyricsList extends JList {
             setFont(list.getFont());
             setOpaque(true);
             return this;
-
         }
     }
 
@@ -64,8 +64,8 @@ public class SelectLyricsList extends JList {
      * Create a new schedule list with a given model.
      * @param model the model to display.
      */
-    public SelectLyricsList(DefaultListModel model) {
-        super(model);
+    public SelectLyricsList() {
+        super(new DefaultListModel<TextSection>());
         originalSelectionColour = getSelectionBackground();
         addFocusListener(new FocusListener() {
 
@@ -88,8 +88,8 @@ public class SelectLyricsList extends JList {
      * @inheritDoc
      */
     @Override
-    public DefaultListModel getModel() {
-        return (DefaultListModel) super.getModel();
+    public DefaultListModel<TextSection> getModel() {
+        return (DefaultListModel<TextSection>) super.getModel();
     }
 
 

@@ -92,7 +92,7 @@ public class MainPanel extends JPanel {
 
             public void actionPerformed(ActionEvent e) {
                 BiblePassage passage = new BiblePassage(((Bible) libraryPanel.getBiblePanel().getBibleSelector().getSelectedItem()).getName(), libraryPanel.getBiblePanel().getBibleLocation(), libraryPanel.getBiblePanel().getVerses());
-                ((DefaultListModel) schedulePanel.getScheduleList().getModel()).addElement(passage);
+                schedulePanel.getScheduleList().getModel().addElement(passage);
             }
         });
     }
@@ -109,7 +109,7 @@ public class MainPanel extends JPanel {
                 JList songList = (JList) e.getSource();
                 if (e.getClickCount() == 2) {
                     Song song = (Song) songList.getSelectedValue();
-                    ((DefaultListModel) schedulePanel.getScheduleList().getModel()).addElement(song);
+                    schedulePanel.getScheduleList().getModel().addElement(song);
                 }
             }
         });

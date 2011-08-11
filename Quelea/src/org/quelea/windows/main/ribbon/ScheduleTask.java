@@ -192,7 +192,7 @@ public class ScheduleTask extends RibbonTask {
 
                                         @Override
                                         public void run() {
-                                            ((DefaultListModel) Application.get().getMainWindow().getMainPanel().getSchedulePanel().getScheduleList().getModel()).addElement(displayable);
+                                            Application.get().getMainWindow().getMainPanel().getSchedulePanel().getScheduleList().getModel().addElement(displayable);
                                         }
                                     });
                                 }
@@ -235,7 +235,7 @@ public class ScheduleTask extends RibbonTask {
                 File file = fileChooser.getSelectedFile();
                 if (file != null) {
                     VideoDisplayable displayable = new VideoDisplayable(fileChooser.getSelectedFile());
-                    ((DefaultListModel) Application.get().getMainWindow().getMainPanel().getSchedulePanel().getScheduleList().getModel()).addElement(displayable);
+                    Application.get().getMainWindow().getMainPanel().getSchedulePanel().getScheduleList().getModel().addElement(displayable);
                 }
             }
         });
