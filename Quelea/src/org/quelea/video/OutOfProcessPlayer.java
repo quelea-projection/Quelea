@@ -22,7 +22,6 @@ import uk.co.caprica.vlcj.runtime.RuntimeUtil;
  */
 public class OutOfProcessPlayer {
 
-    private static final boolean TEST_MODE = false;
     private EmbeddedMediaPlayer mediaPlayer;
 
     public OutOfProcessPlayer(final long canvasId) throws Exception {
@@ -115,9 +114,13 @@ public class OutOfProcessPlayer {
             }
         }
     }
+    
+    private static final boolean TEST_MODE = false;
 
     public static void main(String[] args) {
-//        args = new String[]{"0"};
+        if (TEST_MODE) {
+            args = new String[]{"0"};
+        }
         File nativeDir = new File("lib/native");
         NativeLibrary.addSearchPath("libvlc", nativeDir.getAbsolutePath());
         NativeLibrary.addSearchPath("vlc", nativeDir.getAbsolutePath());
