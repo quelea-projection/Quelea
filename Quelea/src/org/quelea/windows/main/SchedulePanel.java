@@ -27,7 +27,7 @@ public class SchedulePanel extends JPanel {
      */
     public SchedulePanel() {
         setLayout(new BorderLayout());
-        scheduleList = new ScheduleList(new DefaultListModel());
+        scheduleList = new ScheduleList();
 
         JToolBar toolbar = new JToolBar(JToolBar.VERTICAL);
         toolbar.setFloatable(false);

@@ -14,7 +14,7 @@ import java.util.List;
 public class SingleDisplayPanel extends JPanel {
 
     private final boolean none;
-    private final JComboBox outputSelect;
+    private final JComboBox<String> outputSelect;
 
     /**
      * Create a new single display panel.
@@ -27,7 +27,7 @@ public class SingleDisplayPanel extends JPanel {
         setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
         add(new JLabel(caption));
         add(new JLabel(Utils.getImageIcon(iconLocation)));
-        outputSelect = new JComboBox(getAvailableScreens(none));
+        outputSelect = new JComboBox<>(getAvailableScreens(none));
         JPanel outputSelectPanel = new JPanel();
         outputSelectPanel.add(outputSelect);
         add(outputSelectPanel);
@@ -79,17 +79,17 @@ public class SingleDisplayPanel extends JPanel {
      * Get a list model describing the available graphical devices.
      * @return a list model describing the available graphical devices.
      */
-    private ComboBoxModel getAvailableScreens(boolean none) {
+    private ComboBoxModel<String> getAvailableScreens(boolean none) {
         GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
         final GraphicsDevice[] gds = ge.getScreenDevices();
-        List<String> descriptions = new ArrayList<String>();
+        List<String> descriptions = new ArrayList<>();
         if(none) {
             descriptions.add("<html><i>None</i></html>");
         }
         for(int i = 0; i < gds.length; i++) {
             descriptions.add("Output " + (i + 1));
         }
-        return new DefaultComboBoxModel(descriptions.toArray(new String[descriptions.size()]));
+        return new DefaultComboBoxModel<>(descriptions.toArray(new String[descriptions.size()]));
     }
 
 }

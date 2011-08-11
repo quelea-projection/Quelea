@@ -3,7 +3,6 @@ package org.quelea.windows.library;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Rectangle;
-import java.awt.Toolkit;
 import org.quelea.SongDatabase;
 import org.quelea.SortedListModel;
 import org.quelea.displayable.Displayable;
@@ -33,7 +32,7 @@ import org.quelea.utils.QueleaProperties;
  * The list that displays the songs in the library.
  * @author Michael
  */
-public class LibrarySongList extends JList implements DatabaseListener {
+public class LibrarySongList extends JList<Song> implements DatabaseListener {
 
     /**
      * The toString() method on song returns XML, we don't want to print that so this is a bit of a hack to display the
@@ -57,7 +56,7 @@ public class LibrarySongList extends JList implements DatabaseListener {
             return super.getListCellRendererComponent(list, s, index, isSelected, cellHasFocus);
         }
     }
-    private final SortedListModel fullModel;
+    private final SortedListModel<Song> fullModel;
     private final LibraryPopupMenu popupMenu;
     private final Color originalSelectionColour;
 
@@ -65,7 +64,7 @@ public class LibrarySongList extends JList implements DatabaseListener {
      * Create a new library song list.
      */
     public LibrarySongList() {
-        super(new SortedListModel());
+        super(new SortedListModel<Song>());
         setCellRenderer(new SongRenderer());
         originalSelectionColour = getSelectionBackground();
         addFocusListener(new FocusListener() {
@@ -83,7 +82,7 @@ public class LibrarySongList extends JList implements DatabaseListener {
         });
         setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         popupMenu = new LibraryPopupMenu();
-        fullModel = (SortedListModel) super.getModel();
+        fullModel = (SortedListModel<Song>) super.getModel();
         DragSource.getDefaultDragSource().createDefaultDragGestureRecognizer(this, DnDConstants.ACTION_MOVE, new DragGestureListener() {
 
             @Override
@@ -138,15 +137,15 @@ public class LibrarySongList extends JList implements DatabaseListener {
         }
         filterFuture = filterService.submit(new Runnable() {
             public void run() {
-                final SortedListModel model = new SortedListModel();
+                final SortedListModel<Song> model = new SortedListModel<>();
                 for (int i = 0; i < fullModel.getSize(); i++) {
-                    Song s = (Song) fullModel.getElementAt(i);
+                    Song s = fullModel.getElementAt(i);
                     if (s.search(search.toLowerCase())) {
                         model.add(s);
                     }
                 }
 //                if (beep && model.getSize() == 0) {
-//                    Toolkit.getDefaultToolkit().beep();
+//                    java.awt.Toolkit.getDefaultToolkit().beep();
 //                }
                 SwingUtilities.invokeLater(new Runnable() {
                     @Override
@@ -165,6 +164,12 @@ public class LibrarySongList extends JList implements DatabaseListener {
      */
     public LibraryPopupMenu getPopupMenu() {
         return popupMenu;
+    }
+    
+    @Override
+    @SuppressWarnings("unchecked")
+    public SortedListModel<Song> getModel() {
+        return (SortedListModel<Song>)super.getModel();
     }
 
     /**

@@ -12,18 +12,17 @@ import javax.swing.JList;
 import javax.swing.border.EmptyBorder;
 import org.quelea.powerpoint.PresentationSlide;
 import org.quelea.utils.QueleaProperties;
-import org.quelea.utils.Utils;
 
 /**
- *
+ * A JList for specifically displaying powerpoint slides.
  * @author Michael
  */
-public class PowerpointList extends JList {
+public class PowerpointList extends JList<PresentationSlide> {
 
     private Color originalSelectionColour;
 
     public PowerpointList() {
-        setModel(new DefaultListModel());
+        setModel(new DefaultListModel<PresentationSlide>());
         setCellRenderer(new CustomCellRenderer());
         originalSelectionColour = getSelectionBackground();
         addFocusListener(new FocusListener() {
@@ -41,9 +40,10 @@ public class PowerpointList extends JList {
     }
 
     public void setSlides(PresentationSlide[] slides) {
-        ((DefaultListModel) getModel()).clear();
+        DefaultListModel<PresentationSlide> model = (DefaultListModel<PresentationSlide>)getModel();
+        model.clear();
         for (PresentationSlide slide : slides) {
-            ((DefaultListModel) getModel()).addElement(slide);
+            model.addElement(slide);
         }
     }
 
@@ -51,7 +51,7 @@ public class PowerpointList extends JList {
         if (getSelectedValue() == null) {
             return new BufferedImage(10, 10, BufferedImage.TYPE_INT_ARGB);
         }
-        return ((PresentationSlide) getSelectedValue()).getImage(width, height);
+        return getModel().getElementAt(getSelectedIndex()).getImage(width, height);
     }
 
     /**
