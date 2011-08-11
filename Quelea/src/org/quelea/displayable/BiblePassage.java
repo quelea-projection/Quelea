@@ -20,6 +20,7 @@ import java.util.List;
 public class BiblePassage implements TextDisplayable {
 
     private String summary;
+    private String[] smallText;
     private List<TextSection> textSections;
     private BibleVerse[] verses;
 
@@ -40,6 +41,10 @@ public class BiblePassage implements TextDisplayable {
      */
     private BiblePassage(String summary, BibleVerse[] verses) {
         this.summary = summary;
+        this.smallText = summary.split("<br/>");
+        for (int i = 0; i < smallText.length; i++) {
+            smallText[i] = Utils.removeTags(smallText[i]);
+        }
         this.verses = Arrays.copyOf(verses, verses.length);
         textSections = new ArrayList<>();
         fillTextSections();
@@ -72,7 +77,7 @@ public class BiblePassage implements TextDisplayable {
         for (int i = 0; i < lines.size(); i++) {
             sections.add(lines.get(i));
             if ((i != 0 && i % LINES_PER_SLIDE == 0) || i == lines.size() - 1) {
-                textSections.add(new TextSection("", sections.toArray(new String[sections.size()]), new String[]{summary}, false));
+                textSections.add(new TextSection("", sections.toArray(new String[sections.size()]), smallText, false));
                 sections.clear();
             }
         }
