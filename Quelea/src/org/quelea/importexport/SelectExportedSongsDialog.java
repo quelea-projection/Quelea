@@ -78,7 +78,7 @@ public class SelectExportedSongsDialog extends SelectSongsDialog {
     private void writeSongPack(final File file) {
         final SongPack pack = new SongPack();
         getAddButton().setEnabled(false);
-        SwingWorker worker = new SwingWorker<Void, Void>() {
+        SwingWorker<Void, Void> worker = new SwingWorker<Void, Void>() {
 
             @Override
             protected Void doInBackground() {

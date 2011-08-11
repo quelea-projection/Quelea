@@ -97,7 +97,7 @@ public class OptionsBiblePanel extends JPanel implements PropertyPanel, BibleCha
         QueleaProperties props = QueleaProperties.get();
         String selectedBibleName = props.getDefaultBible();
         for (int i = 0; i < defaultBibleComboBox.getModel().getSize(); i++) {
-            Bible bible = (Bible) defaultBibleComboBox.getItemAt(i);
+            Bible bible = defaultBibleComboBox.getItemAt(i);
             if (bible.getName().equals(selectedBibleName)) {
                 defaultBibleComboBox.setSelectedIndex(i);
             }

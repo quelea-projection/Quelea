@@ -35,7 +35,7 @@ public final class SongDatabase {
         try {
             LOGGER.log(Level.INFO, "Loading database");
             Class.forName("org.hsqldb.jdbcDriver");
-            String location = new File(QueleaProperties.get().getQueleaUserHome(), "database").getAbsolutePath();
+            String location = new File(QueleaProperties.getQueleaUserHome(), "database").getAbsolutePath();
             conn = DriverManager.getConnection("jdbc:hsqldb:"+location, "", "");
             Statement stat = conn.createStatement();
             try {

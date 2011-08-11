@@ -16,7 +16,7 @@ public class EditSongDBActionListener implements ActionListener {
     public void actionPerformed(ActionEvent e) {
         SongEntryWindow songEntryWindow = Application.get().getMainWindow().getSongEntryWindow();
         songEntryWindow.setLocationRelativeTo(songEntryWindow.getOwner());
-        songEntryWindow.resetEditSong((Song) Application.get().getMainWindow().getMainPanel().getLibraryPanel().getLibrarySongPanel().getSongList().getSelectedValue());
+        songEntryWindow.resetEditSong(Application.get().getMainWindow().getMainPanel().getLibraryPanel().getLibrarySongPanel().getSongList().getSelectedValue());
         songEntryWindow.setVisible(true);
     }
 }

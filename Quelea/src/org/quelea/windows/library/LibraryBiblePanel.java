@@ -39,7 +39,7 @@ public class LibraryBiblePanel extends JPanel implements BibleChangeListener {
         bibleSelector = new JComboBox<>(BibleManager.get().getBibles());
         String selectedBibleName = QueleaProperties.get().getDefaultBible();
         for (int i = 0; i < getBibleSelectorModel().getSize(); i++) {
-            Bible bible = (Bible) bibleSelector.getItemAt(i);
+            Bible bible = bibleSelector.getItemAt(i);
             if (bible.getName().equals(selectedBibleName)) {
                 bibleSelector.setSelectedIndex(i);
             }
@@ -241,7 +241,7 @@ public class LibraryBiblePanel extends JPanel implements BibleChangeListener {
      * Get the bible selector used to select the type of bible to use.
      * @return the bible selector used to select the type of bible to use.
      */
-    public JComboBox getBibleSelector() {
+    public JComboBox<Bible> getBibleSelector() {
         return bibleSelector;
     }
 
@@ -265,7 +265,7 @@ public class LibraryBiblePanel extends JPanel implements BibleChangeListener {
      * Get the book selector.
      * @return the book selector.
      */
-    public JComboBox getBookSelector() {
+    public JComboBox<BibleBook> getBookSelector() {
         return bookSelector;
     }
 
