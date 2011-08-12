@@ -12,7 +12,10 @@ import org.w3c.dom.Node;
  * @author Michael
  */
 public class VideoDisplayable implements Displayable {
+    
+    public enum VideoType {FILE, DVD}
 
+    private final VideoType type;
     private final File file;
 
     /**
@@ -20,8 +23,20 @@ public class VideoDisplayable implements Displayable {
      * @param file the file for the displayable.
      * @param image a preview icon for the displayable.
      */
-    public VideoDisplayable(File file) {
+    public VideoDisplayable(File file, VideoType type) {
+        this.type = type;
         this.file = file;
+    }
+    
+    /**
+     * Get the string to open this video displayable with vlc.
+     */
+    public String getVLCString() {
+        switch(type) {
+            case FILE: return file.getAbsolutePath();
+            case DVD: return "dvdsimple://"+file.getAbsolutePath();
+            default: throw new AssertionError("Unhandled video case");
+        }
     }
 
     /**
@@ -38,7 +53,8 @@ public class VideoDisplayable implements Displayable {
      * @return the object as defined by the XML.
      */
     public static VideoDisplayable parseXML(Node node) {
-        return new VideoDisplayable(new File(node.getTextContent()));
+        VideoType type = VideoType.valueOf(node.getAttributes().getNamedItem("type").getNodeValue());
+        return new VideoDisplayable(new File(node.getTextContent()), type);
     }
 
     /**
@@ -48,7 +64,7 @@ public class VideoDisplayable implements Displayable {
     @Override
     public String getXML() {
         StringBuilder ret = new StringBuilder();
-        ret.append("<filevideo>");
+        ret.append("<filevideo type=\"").append(type).append("\">");
         ret.append(Utils.escapeXML(file.getAbsolutePath()));
         ret.append("</filevideo>");
         return ret.toString();
@@ -69,7 +85,14 @@ public class VideoDisplayable implements Displayable {
      */
     @Override
     public String getPreviewText() {
-        return file.getName();
+        switch (type) {
+            case FILE:
+                return file.getName();
+            case DVD:
+                return "DVD";
+            default:
+                throw new AssertionError("Unhandled video case");
+        }
     }
 
     /**
@@ -78,7 +101,7 @@ public class VideoDisplayable implements Displayable {
      */
     @Override
     public Collection<File> getResources() {
-        return new ArrayList<File>();
+        return new ArrayList<>();
     }
 
     @Override

@@ -60,8 +60,7 @@ public class OutOfProcessPlayer {
             mediaPlayer = null;
             System.exit(1);
         }
-
-        mediaPlayer.setVideoSurface(new Canvas());
+        mediaPlayer.setVideoSurface(new Canvas()); //Required with a dummy canvas to active the above nativeSetVideoSurface method
 
         BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
         String inputLine;
