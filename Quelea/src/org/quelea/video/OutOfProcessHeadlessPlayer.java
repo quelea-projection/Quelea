@@ -14,14 +14,13 @@ import uk.co.caprica.vlcj.player.MediaPlayerFactory;
  */
 public class OutOfProcessHeadlessPlayer extends OutOfProcessPlayer {
 
-    private static int nextPort = 5555;
     private final int port;
     private MediaPlayer mediaPlayer;
 
-    public OutOfProcessHeadlessPlayer() throws IOException {
+    public OutOfProcessHeadlessPlayer(int port) throws IOException {
         MediaPlayerFactory factory = new MediaPlayerFactory(new String[]{"--no-video-title"});
         mediaPlayer = factory.newMediaPlayer();
-        port = nextPort++;
+        this.port = port;
     }
 
     public int getPort() {
@@ -41,14 +40,14 @@ public class OutOfProcessHeadlessPlayer extends OutOfProcessPlayer {
 
     public static void main(String[] args) {
         if (TEST_MODE) {
-            args = new String[]{"0"};
+            args = new String[]{"5555"};
         }
         File nativeDir = new File("lib/native");
         NativeLibrary.addSearchPath("libvlc", nativeDir.getAbsolutePath());
         NativeLibrary.addSearchPath("vlc", nativeDir.getAbsolutePath());
         try (PrintStream stream = new PrintStream(new File(QueleaProperties.getQueleaUserHome(), "ooplog.txt"))) {
             System.setErr(stream); //Important, MUST redirect err stream
-            OutOfProcessHeadlessPlayer player = new OutOfProcessHeadlessPlayer();
+            OutOfProcessHeadlessPlayer player = new OutOfProcessHeadlessPlayer(Integer.parseInt(args[0]));
             if (TEST_MODE) {
                 player.mediaPlayer.prepareMedia("dvdsimple://E:");
                 player.mediaPlayer.play();
