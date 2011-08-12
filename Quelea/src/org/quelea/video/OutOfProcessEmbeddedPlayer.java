@@ -4,6 +4,7 @@ import com.sun.jna.NativeLibrary;
 import com.sun.jna.Pointer;
 import java.awt.Canvas;
 import java.io.File;
+import java.io.IOException;
 import java.io.PrintStream;
 import org.quelea.utils.QueleaProperties;
 import uk.co.caprica.vlcj.binding.LibVlcFactory;
@@ -22,7 +23,7 @@ public class OutOfProcessEmbeddedPlayer extends OutOfProcessPlayer {
 
     private EmbeddedMediaPlayer mediaPlayer;
 
-    public OutOfProcessEmbeddedPlayer(final long canvasId) throws Exception {
+    public OutOfProcessEmbeddedPlayer(final long canvasId) throws IOException {
 
         //Lifted pretty much out of the VLCJ code
         if (RuntimeUtil.isNix()) {
@@ -60,10 +61,13 @@ public class OutOfProcessEmbeddedPlayer extends OutOfProcessPlayer {
         }
         mediaPlayer.setVideoSurface(new Canvas()); //Required with a dummy canvas to active the above nativeSetVideoSurface method
 
-        if (!TEST_MODE) {
-            read(mediaPlayer);
-        }
     }
+
+    @Override
+    public String[] getPrepareOptions() {
+        return new String[0];
+    }
+    
     private static final boolean TEST_MODE = false;
 
     public static void main(String[] args) {
@@ -76,8 +80,13 @@ public class OutOfProcessEmbeddedPlayer extends OutOfProcessPlayer {
         try (PrintStream stream = new PrintStream(new File(QueleaProperties.getQueleaUserHome(), "ooplog.txt"))) {
             System.setErr(stream); //Important, MUST redirect err stream
             OutOfProcessEmbeddedPlayer player = new OutOfProcessEmbeddedPlayer(Integer.parseInt(args[0]));
-//            player.mediaPlayer.prepareMedia("dvdsimple://E:");
-//            player.mediaPlayer.play();
+            if (TEST_MODE) {
+                player.mediaPlayer.prepareMedia("dvdsimple://E:");
+                player.mediaPlayer.play();
+            }
+            else {
+                player.read(player.mediaPlayer);
+            }
         }
         catch (Exception ex) {
             ex.printStackTrace();
