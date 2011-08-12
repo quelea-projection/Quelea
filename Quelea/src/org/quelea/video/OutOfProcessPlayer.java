@@ -20,7 +20,7 @@ public abstract class OutOfProcessPlayer {
         while ((inputLine = in.readLine()) != null) {
             if (inputLine.startsWith("open ")) {
                 inputLine = inputLine.substring("open ".length());
-                mediaPlayer.prepareMedia(inputLine);
+                mediaPlayer.prepareMedia(inputLine, getPrepareOptions());
             }
             else if (inputLine.equalsIgnoreCase("play")) {
                 mediaPlayer.play();
@@ -62,5 +62,7 @@ public abstract class OutOfProcessPlayer {
             }
         }
     }
+    
+    public abstract String[] getPrepareOptions();
 
 }
