@@ -170,7 +170,7 @@ public class VideoControlPanel extends JPanel {
 
                         @Override
                         public void run() {
-                            RemotePlayer player = RemotePlayerFactory.getRemotePlayer(videoArea);
+                            RemotePlayer player = RemotePlayerFactory.getEmbeddedRemotePlayer(videoArea);
                             mediaPlayers.add(0, player);
                             if (videoPath != null) {
                                 player.load(videoPath);
@@ -196,7 +196,7 @@ public class VideoControlPanel extends JPanel {
                 @Override
                 public void hierarchyChanged(HierarchyEvent e) {
                     if ((e.getChangeFlags() & HierarchyEvent.SHOWING_CHANGED) > 0 && canvas.isShowing()) {
-                        RemotePlayer player = RemotePlayerFactory.getRemotePlayer(canvas);
+                        RemotePlayer player = RemotePlayerFactory.getEmbeddedRemotePlayer(canvas);
                         player.setMute(true);
                         mediaPlayers.add(player);
                         if (videoPath != null) {
@@ -208,7 +208,7 @@ public class VideoControlPanel extends JPanel {
             });
         }
         else {
-            RemotePlayer player = RemotePlayerFactory.getRemotePlayer(canvas);
+            RemotePlayer player = RemotePlayerFactory.getEmbeddedRemotePlayer(canvas);
             player.setMute(true);
             mediaPlayers.add(player);
         }
