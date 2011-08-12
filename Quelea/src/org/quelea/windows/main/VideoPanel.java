@@ -42,7 +42,7 @@ public class VideoPanel extends ContainedPanel {
      * @param displayable the video displayable.
      */
     public void showDisplayable(VideoDisplayable displayable) {
-        controlPanel.loadVideo(displayable.getFile().getAbsolutePath());
+        controlPanel.loadVideo(displayable.getVLCString());
     }
 
 }
