@@ -28,7 +28,7 @@ public class RemotePlayerFactory {
         String classpath = System.getProperty("java.class.path");
         String path = System.getProperty("java.home")
                 + separator + "bin" + separator + "java";
-        ProcessBuilder processBuilder = new ProcessBuilder(path, "-cp", classpath, "-Djna.library.path=" + System.getProperty("jna.library.path"), OutOfProcessPlayer.class.getName(), Long.toString(drawable));
+        ProcessBuilder processBuilder = new ProcessBuilder(path, "-cp", classpath, "-Djna.library.path=" + System.getProperty("jna.library.path"), OutOfProcessEmbeddedPlayer.class.getName(), Long.toString(drawable));
         Process process = processBuilder.start();
         return new StreamWrapper(process.getInputStream(), process.getOutputStream());
     }
