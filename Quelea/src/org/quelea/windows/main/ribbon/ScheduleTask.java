@@ -5,7 +5,6 @@ import java.awt.event.ActionListener;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 import java.io.File;
-import javax.swing.DefaultListModel;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
@@ -23,6 +22,7 @@ import org.quelea.Schedule;
 import org.quelea.displayable.PresentationDisplayable;
 import org.quelea.displayable.Song;
 import org.quelea.displayable.VideoDisplayable;
+import org.quelea.displayable.VideoDisplayable.VideoType;
 import org.quelea.mail.Mailer;
 import org.quelea.utils.Utils;
 import org.quelea.video.PowerpointFileFilter;
@@ -234,7 +234,7 @@ public class ScheduleTask extends RibbonTask {
                 fileChooser.showOpenDialog(Application.get().getMainWindow());
                 File file = fileChooser.getSelectedFile();
                 if (file != null) {
-                    VideoDisplayable displayable = new VideoDisplayable(fileChooser.getSelectedFile());
+                    VideoDisplayable displayable = new VideoDisplayable(fileChooser.getSelectedFile(), VideoType.FILE);
                     Application.get().getMainWindow().getMainPanel().getSchedulePanel().getScheduleList().getModel().addElement(displayable);
                 }
             }
@@ -248,7 +248,26 @@ public class ScheduleTask extends RibbonTask {
         liveButton.setEnabled(false);
         JCommandButton dvdButton = new JCommandButton("DVD", RibbonUtils.getRibbonIcon("icons/dvd.png", 100, 100));
         videoBand.addCommandButton(dvdButton, RibbonElementPriority.MEDIUM);
-        dvdButton.setEnabled(false);
+        dvdButton.addActionListener(new ActionListener() {
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                File[] arr = File.listRoots();
+                File file = null;
+                for(File f : arr) {
+                    if(f.getUsableSpace()==0 && f.getTotalSpace()>0) {
+                        file = f;
+                    }
+                }
+                if (file == null) {
+                    JOptionPane.showMessageDialog(Application.get().getMainWindow(), "Couldn't find a DVD...", "No DVD found", JOptionPane.ERROR_MESSAGE);
+                }
+                else {
+                    VideoDisplayable displayable = new VideoDisplayable(file, VideoType.DVD);
+                    Application.get().getMainWindow().getMainPanel().getSchedulePanel().getScheduleList().getModel().addElement(displayable);
+                }
+            }
+        });
         JCommandButton audioButton = new JCommandButton("Audio", RibbonUtils.getRibbonIcon("icons/audio.png", 100, 100));
         videoBand.addCommandButton(audioButton, RibbonElementPriority.MEDIUM);
         audioButton.setEnabled(false);
