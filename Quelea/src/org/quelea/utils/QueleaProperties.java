@@ -73,7 +73,7 @@ public final class QueleaProperties extends Properties {
      * @return the Quelea home directory.
      */
     public static File getQueleaUserHome() {
-        File ret = new File(new File(System.getProperty("user.home")), "My Quelea");
+        File ret = new File(new File(System.getProperty("user.home")), ".quelea");
         if (!ret.exists()) {
             ret.mkdir();
         }
