@@ -98,7 +98,7 @@ public class BasicSongPanel extends JPanel {
 
     }
 
-    private final List<Object> highlights = new ArrayList<Object>();
+    private final List<Object> highlights = new ArrayList<>();
 
     /**
      * Manage the highlighting.
@@ -112,7 +112,7 @@ public class BasicSongPanel extends JPanel {
             Highlighter hilite = lyricsArea.getHighlighter();
             String text = lyricsArea.getText();
             String[] lines = text.split("\n");
-            List<HighlightIndex> indexes = new ArrayList<HighlightIndex>();
+            List<HighlightIndex> indexes = new ArrayList<>();
             int offset = 0;
             for(int i = 0; i < lines.length; i++) {
                 String line = lines[i];
