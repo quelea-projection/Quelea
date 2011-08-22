@@ -1,18 +1,22 @@
 package org.quelea;
 
 import java.io.File;
-import org.quelea.displayable.Song;
-import org.quelea.displayable.TextSection;
-import org.quelea.utils.DatabaseListener;
-import org.quelea.utils.LoggerUtils;
-
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.quelea.displayable.Song;
+import org.quelea.displayable.TextSection;
+import org.quelea.utils.DatabaseListener;
+import org.quelea.utils.LoggerUtils;
 import org.quelea.utils.QueleaProperties;
 
 /**
@@ -31,31 +35,31 @@ public final class SongDatabase {
      * Initialise the song database.
      */
     private SongDatabase() {
-        listeners = new HashSet<DatabaseListener>();
+        listeners = new HashSet<>();
         try {
             LOGGER.log(Level.INFO, "Loading database");
             Class.forName("org.hsqldb.jdbcDriver");
-            String location = new File(QueleaProperties.getQueleaUserHome(), "database").getAbsolutePath();
-            conn = DriverManager.getConnection("jdbc:hsqldb:"+location, "", "");
-            Statement stat = conn.createStatement();
-            try {
-                stat.executeUpdate("CREATE TABLE Songs (id INTEGER IDENTITY,"
-                        + "title varchar_ignorecase(256),"
-                        + "author varchar_ignorecase(256),"
-                        + "lyrics varchar_ignorecase(" + Integer.MAX_VALUE + "),"
-                        + "background varchar(256))");
+            String location = new File(new File(QueleaProperties.getQueleaUserHome(), "database"), "database").getAbsolutePath();
+            conn = DriverManager.getConnection("jdbc:hsqldb:" + location, "", "");
+            try (Statement stat = conn.createStatement()) {
+                try {
+                    stat.executeUpdate("CREATE TABLE Songs (id INTEGER IDENTITY,"
+                            + "title varchar_ignorecase(256),"
+                            + "author varchar_ignorecase(256),"
+                            + "lyrics varchar_ignorecase(" + Integer.MAX_VALUE + "),"
+                            + "background varchar(256))");
+                }
+                catch (SQLException ex) { //Horrible but only way with hsqldb
+                    LOGGER.log(Level.INFO, "Songs table already exists.");
+                }
             }
-            catch(SQLException ex) { //Horrible but only way with hsqldb
-                LOGGER.log(Level.INFO, "Songs table already exists.");
-            }
-            stat.close();
             LOGGER.log(Level.INFO, "Loaded database.");
         }
-        catch(ClassNotFoundException ex) {
+        catch (ClassNotFoundException ex) {
             LOGGER.log(Level.SEVERE, "Couldn't find the database library.", ex);
             error = true;
         }
-        catch(SQLException ex) {
+        catch (SQLException ex) {
             LOGGER.log(Level.SEVERE, "SQL excpetion - hopefully this is just because quelea is already running", ex);
             error = true;
         }
@@ -89,7 +93,7 @@ public final class SongDatabase {
      * Fire off the database listeners.
      */
     public void fireUpdate() {
-        for(DatabaseListener listener : listeners) {
+        for (DatabaseListener listener : listeners) {
             listener.update();
         }
     }
@@ -101,12 +105,8 @@ public final class SongDatabase {
      * @throws SQLException if the query fails for some reason.
      */
     private ResultSet runSelectExpression(String expression) throws SQLException {
-        Statement stat = conn.createStatement();
-        try {
+        try (Statement stat = conn.createStatement()) {
             return stat.executeQuery(expression);
-        }
-        finally {
-            stat.close();
         }
     }
 
@@ -115,29 +115,23 @@ public final class SongDatabase {
      * @return an array of all the songs in the database.
      */
     public Song[] getSongs() {
-        try {
-            final ResultSet rs = runSelectExpression("select * from songs");
-            try {
-                List<Song> songs = new ArrayList<Song>();
-                while(rs.next()) {
-                    songs.add(new Song(rs.getString("title"), rs.getString("author")) {
+        try (ResultSet rs = runSelectExpression("select * from songs")) {
+            List<Song> songs = new ArrayList<>();
+            while (rs.next()) {
+                songs.add(new Song(rs.getString("title"), rs.getString("author")) {
 
-                        {
-                            setLyrics(rs.getString("lyrics"));
-                            setID(rs.getInt("id"));
-                            for(TextSection section : getSections()) {
-                                section.setTheme(Theme.parseDBString(rs.getString("background")));
-                            }
+                    {
+                        setLyrics(rs.getString("lyrics"));
+                        setID(rs.getInt("id"));
+                        for (TextSection section : getSections()) {
+                            section.setTheme(Theme.parseDBString(rs.getString("background")));
                         }
-                    });
-                }
-                return songs.toArray(new Song[songs.size()]);
+                    }
+                });
             }
-            finally {
-                rs.close();
-            }
+            return songs.toArray(new Song[songs.size()]);
         }
-        catch(SQLException ex) {
+        catch (SQLException ex) {
             LOGGER.log(Level.WARNING, "Couldn't get the songs", ex);
             return null;
         }
@@ -150,44 +144,39 @@ public final class SongDatabase {
      * @return true if the operation succeeded, false otherwise.
      */
     public boolean addSong(Song song, boolean fireUpdate) {
-        try {
-            PreparedStatement stat = conn.prepareStatement("insert into songs(title, author, lyrics, background) values(?, ?, ?, ?)");
-            try {
-                stat.setString(1, song.getTitle());
-                stat.setString(2, song.getAuthor());
-                stat.setString(3, song.getLyrics());
-                String theme = "";
-                if(song.getSections().length > 0 && song.getSections()[0].getTheme() != null) {
-                    theme = song.getSections()[0].getTheme().toDBString();
-                }
-                stat.setString(4, theme);
-                stat.executeUpdate();
-                int id = -1;
-                Statement stId = conn.createStatement();
+        try (PreparedStatement stat = conn.prepareStatement("insert into songs(title, author, lyrics, background) values(?, ?, ?, ?)")) {
+            stat.setString(1, song.getTitle());
+            stat.setString(2, song.getAuthor());
+            stat.setString(3, song.getLyrics());
+            String theme = "";
+            if (song.getSections().length > 0 && song.getSections()[0].getTheme() != null) {
+                theme = song.getSections()[0].getTheme().toDBString();
+            }
+            stat.setString(4, theme);
+            stat.executeUpdate();
+            int id = -1;
+            ResultSet resultSet = null;
+            try (Statement stId = conn.createStatement()) {
                 stId.execute("call IDENTITY()");
-                ResultSet resultSet = stId.getResultSet();
-                stId.close();
-                try {
-                    while(resultSet.next()) {
-                        id = resultSet.getInt(1);
-                    }
+                resultSet = stId.getResultSet();
+            }
+            try {
+                while (resultSet.next()) {
+                    id = resultSet.getInt(1);
                 }
-                finally {
-                    resultSet.close();
-                }
-                song.setID(id);
-                return true;
             }
             finally {
-                stat.close();
+                resultSet.close();
             }
+            song.setID(id);
+            return true;
         }
-        catch(SQLException ex) {
+        catch (SQLException ex) {
             LOGGER.log(Level.WARNING, "SQL exception occured adding the song: " + song, ex);
             return false;
         }
         finally {
-            if(fireUpdate) {
+            if (fireUpdate) {
                 fireUpdate();
             }
         }
@@ -200,19 +189,18 @@ public final class SongDatabase {
      */
     public boolean updateSong(Song song) {
         try {
-            if(song.getID() == -1) {
+            if (song.getID() == -1) {
                 LOGGER.log(Level.INFO, "Updating song that doesn't exist, adding instead");
                 return addSong(song, true);
             }
             else {
                 LOGGER.log(Level.INFO, "Updating song");
-                PreparedStatement stat = conn.prepareStatement("update songs set title=?, author=?, lyrics=?, background=? where id=?");
-                try {
+                try (PreparedStatement stat = conn.prepareStatement("update songs set title=?, author=?, lyrics=?, background=? where id=?")) {
                     stat.setString(1, song.getTitle());
                     stat.setString(2, song.getAuthor());
                     stat.setString(3, song.getLyrics());
                     String theme = "";
-                    if(song.getSections().length > 0 && song.getSections()[0].getTheme() != null) {
+                    if (song.getSections().length > 0 && song.getSections()[0].getTheme() != null) {
                         theme = song.getSections()[0].getTheme().toDBString();
                     }
                     stat.setString(4, theme);
@@ -221,12 +209,11 @@ public final class SongDatabase {
                     return true;
                 }
                 finally {
-                    stat.close();
                     fireUpdate();
                 }
             }
         }
-        catch(SQLException ex) {
+        catch (SQLException ex) {
             LOGGER.log(Level.WARNING, "SQL exception occured updating the song: " + song, ex);
             return false;
         }
@@ -238,21 +225,18 @@ public final class SongDatabase {
      * @return true if the operation succeeded, false otherwise.
      */
     public boolean removeSong(Song song) {
-        try {
-            PreparedStatement stat = conn.prepareStatement("delete from songs where id=?");
-            try {
-                stat.setInt(1, song.getID());
-                stat.executeUpdate();
-                return true;
-            }
-            finally {
-                stat.close();
-                fireUpdate();
-            }
+        try (PreparedStatement stat = conn.prepareStatement("delete from songs where id=?")) {
+            stat.setInt(1, song.getID());
+            stat.executeUpdate();
+            return true;
         }
-        catch(SQLException ex) {
+        catch (SQLException ex) {
             LOGGER.log(Level.WARNING, "SQL exception occured removing the song: " + song, ex);
             return false;
         }
+        finally {
+            fireUpdate();
+        }
+
     }
 }
