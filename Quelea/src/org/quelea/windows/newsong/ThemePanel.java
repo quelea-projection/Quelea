@@ -58,6 +58,7 @@ public class ThemePanel extends JPanel {
         toolbarPanel.add(backgroundPanel);
         backgroundPanel.setMaximumSize(new Dimension(1000, 10));
         add(toolbarPanel, BorderLayout.NORTH);
+        updateTheme();
     }
 
     /**
