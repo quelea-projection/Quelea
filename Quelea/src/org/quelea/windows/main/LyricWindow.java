@@ -37,7 +37,7 @@ public class LyricWindow extends JWindow {
         panel.setBackground(Color.BLACK);
         setArea(area);
         setCursor(BLANK_CURSOR);
-        canvas = new LyricCanvas();
+        canvas = new LyricCanvas(true);
         canvas.setPreferredSize(new Dimension((int) (area.getMaxX() - area.getMinX()), (int) (area.getMaxY() - area.getMinY())));
         panel.add(canvas);
         add(panel);

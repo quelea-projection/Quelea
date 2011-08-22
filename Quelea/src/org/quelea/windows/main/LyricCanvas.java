@@ -35,6 +35,7 @@ public class LyricCanvas extends Canvas {
     private String[] smallText;
     private boolean cleared;
     private boolean blacked;
+    private boolean showBorder;
     private boolean capitaliseFirst;
     private BufferedImage videoImage;
     private int videoWidth = 800;
@@ -45,7 +46,8 @@ public class LyricCanvas extends Canvas {
      * @param aspectWidth  the aspect ratio width.
      * @param aspectHeight the aspect ratio height.
      */
-    public LyricCanvas() {
+    public LyricCanvas(boolean showBorder) {
+        this.showBorder = showBorder;
         text = new String[]{};
         theme = Theme.DEFAULT_THEME;
         videoImage = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice().getDefaultConfiguration().createCompatibleImage(videoWidth, videoHeight);
@@ -163,14 +165,19 @@ public class LyricCanvas extends Canvas {
             }
         }
         else {
-            int totalHeight = graphics.getFontMetrics().getHeight()*sanctifiedLines.size();
-            heightOffset = (getHeight()-totalHeight)/2;
-            heightOffset += graphics.getFontMetrics().getHeight()/2;
+            int totalHeight = graphics.getFontMetrics().getHeight() * sanctifiedLines.size();
+            heightOffset = (getHeight() - totalHeight) / 2;
+            heightOffset += graphics.getFontMetrics().getHeight() / 2;
             for (String line : sanctifiedLines) {
                 int width = graphics.getFontMetrics().stringWidth(line);
                 int leftOffset = (getWidth() - width) / 2;
                 GraphicsUtils graphicsUtils = new GraphicsUtils(graphics);
-                graphicsUtils.drawStringWithOutline(line, leftOffset, heightOffset, graphicsUtils.getInverseColor(), QueleaProperties.get().getOutlineThickness());
+                if (showBorder) {
+                    graphicsUtils.drawStringWithOutline(line, leftOffset, heightOffset, graphicsUtils.getInverseColor(), QueleaProperties.get().getOutlineThickness());
+                }
+                else {
+                    graphics.drawString(line, leftOffset, heightOffset);
+                }
                 heightOffset += graphics.getFontMetrics().getHeight();
             }
         }
@@ -405,7 +412,7 @@ public class LyricCanvas extends Canvas {
     }
 
     public static void main(String[] args) {
-        LyricCanvas canvas = new LyricCanvas();
+        LyricCanvas canvas = new LyricCanvas(true);
         JFrame frame = new JFrame();
         frame.setLayout(new BorderLayout());
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);

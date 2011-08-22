@@ -219,4 +219,5 @@ public class SongEntryWindow extends JDialog {
             confirmButton.setEnabled(true);
         }
     }
+
 }

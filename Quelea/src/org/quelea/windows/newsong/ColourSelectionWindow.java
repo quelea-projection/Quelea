@@ -1,11 +1,13 @@
 package org.quelea.windows.newsong;
 
+import javax.swing.event.ChangeEvent;
 import org.quelea.utils.Utils;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import javax.swing.event.ChangeListener;
 
 /**
  * A colour selection window where the user can select a colour they require.
@@ -13,7 +15,8 @@ import java.awt.event.ActionListener;
  */
 public class ColourSelectionWindow extends JDialog {
 
-    private final JColorChooser chooser;
+    private final ColorWheel wheel;
+    private final JSlider brightness;
     private final JButton confirmButton;
     private final JButton cancelButton;
 
@@ -21,11 +24,21 @@ public class ColourSelectionWindow extends JDialog {
      * Create and initialise the colour selection window.
      */
     public ColourSelectionWindow(Window owner) {
-        super(owner, "Colour chooser");
+        super(owner, "Select colour");
         setLayout(new BorderLayout());
-        chooser = new JColorChooser(Color.WHITE);
-        add(chooser, BorderLayout.CENTER);
+        setResizable(false);
+        wheel = new ColorWheel(new ColorModel(), Color.WHITE);
+        add(wheel, BorderLayout.CENTER);
+        brightness = new JSlider(JSlider.VERTICAL, 0, 100, 100);
+        brightness.addChangeListener(new ChangeListener() {
 
+            @Override
+            public void stateChanged(ChangeEvent e) {
+                wheel.getModel().setBrightness((float) (brightness.getValue() / 100.0));
+                wheel.repaint();
+            }
+        });
+        add(brightness, BorderLayout.WEST);
         JPanel bottomPanel = new JPanel();
         confirmButton = new JButton("Select Colour", Utils.getImageIcon("icons/tick.png"));
         cancelButton = new JButton("Cancel", Utils.getImageIcon("icons/cross.png"));
@@ -71,7 +84,7 @@ public class ColourSelectionWindow extends JDialog {
      * @return the selected colour.
      */
     public Color getSelectedColour() {
-        return chooser.getColor();
+        return wheel.getModel().getColor();
     }
 
     /**
@@ -79,7 +92,10 @@ public class ColourSelectionWindow extends JDialog {
      * @param colour the colour to be displayed.
      */
     public void setSelectedColour(Color colour) {
-        chooser.setColor(colour);
+        wheel.getModel().setColor(colour);
+        ColorModel model = new ColorModel();
+        model.setColor(colour);
+        brightness.setValue((int)(model.getBrightness()*100));
     }
 
 }
