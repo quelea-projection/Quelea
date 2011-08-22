@@ -57,7 +57,7 @@
             <file src="Quelea.jar" targetdir="$INSTALL_PATH"/>
             <file src="Readme.txt" targetdir="$INSTALL_PATH"/>
             <file src="../licenses/gplv3.txt" targetdir="$INSTALL_PATH"/>
-<!--            <file src="quelea.properties" targetdir="$USER_HOME/My Quelea"/>-->
+<!--            <file src="quelea.properties" targetdir="$USER_HOME/.quelea"/>-->
         </pack>
         <pack name="dictionaries" required="yes" preselected="yes" hidden="true">
             <description>Dictionaries</description>
@@ -73,8 +73,12 @@
         </pack>
 <!--        <pack name="database" required="no" preselected="yes">
             <description>Sample database of songs</description>
-            <file src="database" targetdir="$USER_HOME/My Quelea" override="false"/>
+            <file src="database" targetdir="$USER_HOME/.quelea/database" override="false"/>
         </pack>-->
+        <pack name="themes" required="yes" preselected="yes">
+            <description>Sample themes</description>
+            <file src="theme" targetdir="$USER_HOME/.quelea/themes" override="false"/>
+        </pack>
         <pack name="images" required="no" preselected="yes">
             <description>Images and icons</description>
             <file src="icons" targetdir="$INSTALL_PATH"/>

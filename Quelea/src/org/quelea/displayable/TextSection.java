@@ -20,6 +20,7 @@ public class TextSection {
     private String[] lines;
     private String[] smallLines;
     private Theme theme;
+    private Theme tempTheme;
     private boolean capitaliseFirst;
 
     /**
@@ -161,6 +162,23 @@ public class TextSection {
      */
     public Theme getTheme() {
         return theme;
+    }
+
+    /**
+     * Get the temporary theme of the section.
+     * @return the temporary theme of the section, or null if none has been
+     * set.
+     */
+    public Theme getTempTheme() {
+        return tempTheme;
+    }
+
+    /**
+     * Set the temporary theme of the section.
+     * @param tempTheme the temporary theme.
+     */
+    public void setTempTheme(Theme tempTheme) {
+        this.tempTheme = tempTheme;
     }
 
     /**

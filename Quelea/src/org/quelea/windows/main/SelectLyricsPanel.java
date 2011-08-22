@@ -3,7 +3,6 @@ package org.quelea.windows.main;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.event.KeyListener;
-import javax.swing.DefaultListModel;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.border.EmptyBorder;
@@ -110,7 +109,12 @@ public class SelectLyricsPanel extends ContainedPanel {
                 continue;
             }
             TextSection currentSection = lyricsList.getModel().getElementAt(selectedIndex);
-            canvas.setTheme(currentSection.getTheme());
+            if (currentSection.getTempTheme() != null) {
+                canvas.setTheme(currentSection.getTempTheme());
+            }
+            else {
+                canvas.setTheme(currentSection.getTheme());
+            }
             canvas.setCapitaliseFirst(currentSection.shouldCapitaliseFirst());
             canvas.setText(currentSection.getText(), currentSection.getSmallText());
         }

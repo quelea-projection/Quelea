@@ -18,6 +18,13 @@ public class Theme {
     private final Font font;
     private final Color fontColor;
     private final Background background;
+    private String themeName;
+    
+    public static void main(String[] args) {
+        Theme theme = new Theme(DEFAULT_FONT, DEFAULT_FONT_COLOR, DEFAULT_BACKGROUND);
+        theme.themeName = "White on black";
+        System.out.println(theme.toDBString());
+    }
 
     /**
      * Create a new theme with a specified font, font colour and background.
@@ -29,6 +36,15 @@ public class Theme {
         this.font = font;
         this.fontColor = fontColor;
         this.background = background;
+        themeName = "";
+    }
+    
+    /**
+     * Get the name of the theme.
+     * @return the name of the theme.
+     */
+    public String getThemeName() {
+        return themeName;
     }
 
     /**
@@ -95,6 +111,9 @@ public class Theme {
         ret.append("$fontbold:").append(font.isBold());
         ret.append("$fontitalic:").append(font.isItalic());
         ret.append("$fontcolour:").append(fontColor.toString());
+        if(!themeName.isEmpty()) {
+            ret.append("$themename:").append(themeName);
+        }
         if(background.isColour()) {
             ret.append("$backgroundcolour:").append(background.getColour());
         }
@@ -119,6 +138,7 @@ public class Theme {
         String fontcolour = "";
         String backgroundcolour = "";
         String backgroundimage = "";
+        String themeName = "";
 
         for(String part : s.split("\\$")) {
             if(!part.contains(":")) {
@@ -143,6 +163,9 @@ public class Theme {
             else if(parts[0].equalsIgnoreCase("backgroundimage")) {
                 backgroundimage = parts[1];
             }
+            else if(parts[0].equalsIgnoreCase("themename")) {
+                themeName = parts[1];
+            }
         }
         int fontstyle = 0;
         if(fontbold) {
@@ -159,7 +182,9 @@ public class Theme {
         else {
             background = new Background(Utils.parseColour(backgroundcolour));
         }
-        return new Theme(font, Utils.parseColour(fontcolour), background);
+        Theme ret = new Theme(font, Utils.parseColour(fontcolour), background);
+        ret.themeName = themeName;
+        return ret;
     }
 
 }
