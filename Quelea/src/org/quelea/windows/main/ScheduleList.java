@@ -28,7 +28,7 @@ import java.awt.event.MouseEvent;
 public class ScheduleList extends JList<Displayable> {
 
     private Schedule schedule;
-    private final SchedulePopupMenu popupMenu;
+    private final ScheduleSongPopupMenu popupMenu;
     private final Color originalSelectionColour;
     private boolean internalDrag;
 
@@ -86,7 +86,7 @@ public class ScheduleList extends JList<Displayable> {
                 setSelectionBackground(originalSelectionColour);
             }
         });
-        popupMenu = new SchedulePopupMenu();
+        popupMenu = new ScheduleSongPopupMenu();
         this.addMouseListener(new MouseAdapter() {
 
             @Override
@@ -228,7 +228,7 @@ public class ScheduleList extends JList<Displayable> {
      * Get the popup menu on this schedule list.
      * @return the popup menu.
      */
-    public SchedulePopupMenu getPopupMenu() {
+    public ScheduleSongPopupMenu getPopupMenu() {
         return popupMenu;
     }
 
@@ -237,7 +237,7 @@ public class ScheduleList extends JList<Displayable> {
      * @return true if it's empty, false otherwise.
      */
     public boolean isEmpty() {
-        return getModel().getSize() == 0;
+        return getModel().isEmpty();
     }
 
     /**
