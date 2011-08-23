@@ -21,7 +21,7 @@ public final class BibleBook {
      * Create a new book.
      */
     private BibleBook() {
-        chapters = new ArrayList<BibleChapter>();
+        chapters = new ArrayList<>();
     }
 
     /**
