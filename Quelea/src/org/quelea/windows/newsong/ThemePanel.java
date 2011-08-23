@@ -14,6 +14,7 @@ import javax.swing.BoxLayout;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.JToggleButton;
@@ -22,13 +23,13 @@ import org.quelea.Theme;
 import org.quelea.utils.Utils;
 import org.quelea.windows.main.LyricCanvas;
 
-
 /**
  * The panel where the user chooses what visual theme a song should have.
  * @author Michael
  */
 public class ThemePanel extends JPanel {
 
+    private static final int THRESHOLD = 30;
     private static final String[] SAMPLE_LYRICS = {"Amazing Grace! how sweet the sound", "That saved a wretch like me", "I once was lost but now am found", "Was blind, but now I see."};
     private JPanel fontToolbar;
     private JPanel backgroundPanel;
@@ -58,7 +59,7 @@ public class ThemePanel extends JPanel {
         toolbarPanel.add(backgroundPanel);
         backgroundPanel.setMaximumSize(new Dimension(1000, 10));
         add(toolbarPanel, BorderLayout.NORTH);
-        updateTheme();
+        updateTheme(false);
     }
 
     /**
@@ -70,14 +71,14 @@ public class ThemePanel extends JPanel {
         final JPanel backgroundChooserPanel = new JPanel();
         final CardLayout layout = new CardLayout();
         backgroundChooserPanel.setLayout(layout);
-        
+
         backgroundTypeSelect = new JComboBox<>();
         backgroundTypeSelect.addItem("Colour");
         backgroundTypeSelect.addItem("Image");
         backgroundTypeSelect.addActionListener(new ActionListener() {
 
             public void actionPerformed(ActionEvent e) {
-                updateTheme();
+                updateTheme(false);
             }
         });
         backgroundPanel.add(new JLabel("Background:"));
@@ -92,7 +93,7 @@ public class ThemePanel extends JPanel {
         backgroundColourButton.getColourSelectionWindow().getConfirmButton().addActionListener(new ActionListener() {
 
             public void actionPerformed(ActionEvent e) {
-                updateTheme();
+                updateTheme(true);
             }
         });
 
@@ -102,17 +103,17 @@ public class ThemePanel extends JPanel {
         backgroundImageLocation.setEditable(false);
         imagePanel.add(backgroundImageLocation);
         imagePanel.add(new ImageButton(backgroundImageLocation, canvas));
-        
+
         backgroundChooserPanel.add(colourPanel, "colour");
         backgroundChooserPanel.add(imagePanel, "image");
 
         backgroundTypeSelect.addActionListener(new ActionListener() {
 
             public void actionPerformed(ActionEvent e) {
-                if(backgroundTypeSelect.getModel().getSelectedItem().equals("Colour")) {
+                if (backgroundTypeSelect.getModel().getSelectedItem().equals("Colour")) {
                     layout.show(backgroundChooserPanel, "colour");
                 }
-                else if(backgroundTypeSelect.getModel().getSelectedItem().equals("Image")) {
+                else if (backgroundTypeSelect.getModel().getSelectedItem().equals("Image")) {
                     layout.show(backgroundChooserPanel, "image");
                 }
                 else {
@@ -130,13 +131,13 @@ public class ThemePanel extends JPanel {
         fontToolbar.setLayout(new FlowLayout(FlowLayout.LEFT));
         fontToolbar.add(new JLabel("Font:"));
         fontSelection = new JComboBox<>();
-        for(String font : Utils.getAllFonts()) {
+        for (String font : Utils.getAllFonts()) {
             fontSelection.addItem(font);
         }
         fontSelection.addItemListener(new ItemListener() {
 
             public void itemStateChanged(ItemEvent e) {
-                updateTheme();
+                updateTheme(false);
             }
         });
         fontToolbar.add(fontSelection);
@@ -144,7 +145,7 @@ public class ThemePanel extends JPanel {
         boldButton.addActionListener(new ActionListener() {
 
             public void actionPerformed(ActionEvent e) {
-                updateTheme();
+                updateTheme(false);
             }
         });
         fontToolbar.add(boldButton);
@@ -152,7 +153,7 @@ public class ThemePanel extends JPanel {
         italicButton.addActionListener(new ActionListener() {
 
             public void actionPerformed(ActionEvent e) {
-                updateTheme();
+                updateTheme(false);
             }
         });
         fontToolbar.add(italicButton);
@@ -160,7 +161,7 @@ public class ThemePanel extends JPanel {
         fontColourButton.getColourSelectionWindow().getConfirmButton().addActionListener(new ActionListener() {
 
             public void actionPerformed(ActionEvent e) {
-                updateTheme();
+                updateTheme(true);
             }
         });
         fontToolbar.add(fontColourButton);
@@ -170,8 +171,12 @@ public class ThemePanel extends JPanel {
     /**
      * Update the canvas with the current theme.
      */
-    private void updateTheme() {
-        canvas.setTheme(getTheme());
+    private void updateTheme(boolean warning) {
+        Theme theme = getTheme();
+        if (warning && theme.getBackground().isColour()) {
+            checkAccessibility(theme.getFontColor(), theme.getBackground().getColour());
+        }
+        canvas.setTheme(theme);
     }
 
     /**
@@ -179,25 +184,25 @@ public class ThemePanel extends JPanel {
      * @param theme the theme to represent.
      */
     public void setTheme(Theme theme) {
-        if(theme == null) {
+        if (theme == null) {
             theme = Theme.DEFAULT_THEME;
         }
         Font font = theme.getFont();
-        if(font.isBold()) {
+        if (font.isBold()) {
             boldButton.setSelected(true);
         }
-        if(font.isItalic()) {
+        if (font.isItalic()) {
             italicButton.setSelected(true);
         }
         int fontSize = font.getSize();
-        if(fontSize % 2 != 0) {
+        if (fontSize % 2 != 0) {
             fontSize--;
         }
         fontSelection.setSelectedItem(font.getFamily());
         fontColourButton.getColourSelectionWindow().setSelectedColour(theme.getFontColor());
         fontColourButton.setIconColour(theme.getFontColor());
         Background background = theme.getBackground();
-        if(background.isColour()) {
+        if (background.isColour()) {
             backgroundTypeSelect.getModel().setSelectedItem("Colour");
             backgroundColourButton.getColourSelectionWindow().setSelectedColour(background.getColour());
             backgroundColourButton.setIconColour(background.getColour());
@@ -206,7 +211,17 @@ public class ThemePanel extends JPanel {
             backgroundTypeSelect.getModel().setSelectedItem("Image");
             backgroundImageLocation.setText(background.getImageLocation());
         }
-        updateTheme();
+        updateTheme(false);
+    }
+
+    private void checkAccessibility(Color a, Color b) {
+        int diff = Utils.getColorDifference(a, b);
+        if (diff < THRESHOLD) {
+            JOptionPane.showMessageDialog(this, "The chosen colours are very similar. "
+                    + "You may wish to choose different colours, otherwise "
+                    + "it could be difficult to read.",
+                    "Warning", JOptionPane.WARNING_MESSAGE);
+        }
     }
 
     /**
@@ -215,18 +230,18 @@ public class ThemePanel extends JPanel {
      */
     public Theme getTheme() {
         int fontStyle = 0;
-        if(boldButton.isSelected()) {
+        if (boldButton.isSelected()) {
             fontStyle |= Font.BOLD;
         }
-        if(italicButton.isSelected()) {
+        if (italicButton.isSelected()) {
             fontStyle |= Font.ITALIC;
         }
         Font font = new Font(fontSelection.getSelectedItem().toString(), fontStyle, 72);
         Background background;
-        if(backgroundTypeSelect.getModel().getSelectedItem().equals("Colour") || backgroundImageLocation.getText().isEmpty()) {
+        if (backgroundTypeSelect.getModel().getSelectedItem().equals("Colour") || backgroundImageLocation.getText().isEmpty()) {
             background = new Background(backgroundColourButton.getColourSelectionWindow().getSelectedColour());
         }
-        else if(backgroundTypeSelect.getModel().getSelectedItem().equals("Image")) {
+        else if (backgroundTypeSelect.getModel().getSelectedItem().equals("Image")) {
             background = new Background(backgroundImageLocation.getText(), null);
         }
         else {
@@ -234,8 +249,7 @@ public class ThemePanel extends JPanel {
         }
         return new Theme(font, fontColourButton.getColourSelectionWindow().getSelectedColour(), background);
     }
-    
-    
+
     public static void main(String[] args) {
         JFrame frame = new JFrame();
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
