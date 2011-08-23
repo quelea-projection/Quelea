@@ -76,6 +76,18 @@ public final class Utils {
     }
     
     /**
+     * Get the difference between two colours, from 0 to 100 where 100 is most
+     * difference and 0 is least different.
+     * @param a the first colour
+     * @param b the second colour
+     * @return the difference between the colours.
+     */
+    public static int getColorDifference(Color a, Color b) {
+        double ret = Math.abs(a.getRed()-b.getRed()) + Math.abs(a.getGreen()-b.getGreen()) + Math.abs(a.getBlue()-b.getBlue());
+        return (int)((ret/(255*3))*100);
+    }
+    
+    /**
      * Remove all HTML tags from a string.
      * @param str the string to remove the tags from.
      * @return the string with the tags removed.
