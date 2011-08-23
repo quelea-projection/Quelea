@@ -77,7 +77,7 @@
         </pack>-->
         <pack name="themes" required="yes" preselected="yes">
             <description>Sample themes</description>
-            <file src="theme" targetdir="$USER_HOME/.quelea/themes" override="false"/>
+            <file src="themes" targetdir="$USER_HOME/.quelea/themes" override="false"/>
         </pack>
         <pack name="images" required="no" preselected="yes">
             <description>Images and icons</description>
