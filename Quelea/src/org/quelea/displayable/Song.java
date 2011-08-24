@@ -1,5 +1,21 @@
 package org.quelea.displayable;
 
+import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.lang.ref.SoftReference;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.swing.Icon;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
 import org.quelea.Background;
 import org.quelea.SongDatabase;
 import org.quelea.Theme;
@@ -11,28 +27,97 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
-import javax.swing.*;
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
-import java.io.ByteArrayInputStream;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.lang.ref.SoftReference;
-import java.util.*;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
 /**
  * A song that contains a number of sections (verses, choruses, etc.)
  * @author Michael
  */
 public class Song implements TextDisplayable, Searchable, Comparable<Song> {
 
+    public static class Builder {
+
+        private Song song;
+
+        public Builder(String title, String author) {
+            song = new Song(title, author);
+        }
+
+        public Builder id(int id) {
+            song.id = id;
+            return this;
+        }
+
+        public Builder ccli(String str) {
+            if (str == null) {
+                str = "";
+            }
+            song.ccli = str;
+            return this;
+        }
+
+        public Builder year(String str) {
+            if (str == null) {
+                str = "";
+            }
+            song.year = str;
+            return this;
+        }
+
+        public Builder publisher(String str) {
+            if (str == null) {
+                str = "";
+            }
+            song.publisher = str;
+            return this;
+        }
+
+        public Builder tags(String str) {
+            if (str == null) {
+                song.tags = new String[0];
+            }
+            else {
+                song.tags = str.split(";");
+            }
+            return this;
+        }
+
+        public Builder tags(String[] arr) {
+            if (arr == null) {
+                arr = new String[0];
+            }
+            song.tags = arr;
+            return this;
+        }
+
+        public Builder tags(Theme theme) {
+            song.theme = theme;
+            return this;
+        }
+
+        public Builder lyrics(String lyrics) {
+            song.setLyrics(lyrics);
+            return this;
+        }
+
+        public Builder copyright(String copyright) {
+            if (copyright == null) {
+                copyright = "";
+            }
+            song.copyright = copyright;
+            return this;
+        }
+
+        public Song get() {
+            return song;
+        }
+    }
     private static final Logger LOGGER = LoggerUtils.getLogger();
     private String title;
     private String author;
+    private String ccli;
+    private String year;
+    private String publisher;
+    private String copyright;
+    private String[] tags;
     private List<TextSection> sections;
     private Theme theme;
     private int id;
@@ -138,6 +223,61 @@ public class Song implements TextDisplayable, Searchable, Comparable<Song> {
     @Override
     public boolean supportClear() {
         return true;
+    }
+
+    public String getCcli() {
+        return ccli;
+    }
+
+    public String getPublisher() {
+        return publisher;
+    }
+
+    public String[] getTags() {
+        return tags;
+    }
+
+    public String getTagsAsString() {
+        StringBuilder ret = new StringBuilder(50);
+        for (int i = 0; i < tags.length; i++) {
+            ret.append(tags[i]);
+            if (i != tags.length - 1) {
+                ret.append("; ");
+            }
+        }
+        return ret.toString();
+    }
+
+    public String getYear() {
+        return year;
+    }
+
+    public String getCopyright() {
+        return copyright;
+    }
+
+    public void setCcli(String ccli) {
+        this.ccli = ccli;
+    }
+
+    public void setPublisher(String publisher) {
+        this.publisher = publisher;
+    }
+
+    public void setTags(String[] tags) {
+        this.tags = tags;
+    }
+
+    public void setTags(String tags) {
+        this.tags = tags.split(";");
+    }
+
+    public void setYear(String year) {
+        this.year = year;
+    }
+
+    public void setCopyright(String copyright) {
+        this.copyright = copyright;
     }
 
     /**

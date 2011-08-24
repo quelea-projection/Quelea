@@ -47,12 +47,14 @@ public final class SongDatabase {
                             + "title varchar_ignorecase(256),"
                             + "author varchar_ignorecase(256),"
                             + "lyrics varchar_ignorecase(" + Integer.MAX_VALUE + "),"
-                            + "background varchar(256))");
+                            + "background varchar(256),"
+                            + ")");
                 }
                 catch (SQLException ex) { //Horrible but only way with hsqldb
                     LOGGER.log(Level.INFO, "Songs table already exists.");
                 }
             }
+            addColumns();
             LOGGER.log(Level.INFO, "Loaded database.");
         }
         catch (ClassNotFoundException ex) {
@@ -60,8 +62,27 @@ public final class SongDatabase {
             error = true;
         }
         catch (SQLException ex) {
-            LOGGER.log(Level.SEVERE, "SQL excpetion - hopefully this is just because quelea is already running", ex);
+            LOGGER.log(Level.SEVERE, "SQL excpetion - hopefully this is just because Quelea is already running", ex);
             error = true;
+        }
+    }
+    
+    private void addColumns() {
+        addColumn("ccli", "varchar_ignorecase(256)");
+        addColumn("copyright", "varchar_ignorecase(256)");
+        addColumn("year", "varchar_ignorecase(256)");
+        addColumn("publisher", "varchar_ignorecase(256)");
+        addColumn("tags", "varchar_ignorecase(256)");
+    }
+
+    private void addColumn(String name, String dataType) {
+        String nameDataType = name + " " + dataType;
+        try (Statement stat = conn.createStatement()) {
+            stat.executeUpdate("ALTER TABLE Songs ADD COLUMN " + nameDataType);
+            LOGGER.log(Level.INFO, "Added {0}", nameDataType);
+        }
+        catch(SQLException ex) {
+            LOGGER.log(Level.INFO, "{0} already exists", nameDataType);
         }
     }
 
@@ -118,16 +139,19 @@ public final class SongDatabase {
         try (ResultSet rs = runSelectExpression("select * from songs")) {
             List<Song> songs = new ArrayList<>();
             while (rs.next()) {
-                songs.add(new Song(rs.getString("title"), rs.getString("author")) {
-
-                    {
-                        setLyrics(rs.getString("lyrics"));
-                        setID(rs.getInt("id"));
-                        for (TextSection section : getSections()) {
-                            section.setTheme(Theme.parseDBString(rs.getString("background")));
-                        }
-                    }
-                });
+                Song song = new Song.Builder(rs.getString("title"), rs.getString("author"))
+                        .lyrics(rs.getString("lyrics"))
+                        .ccli(rs.getString("ccli"))
+                        .year(rs.getString("year"))
+                        .tags(rs.getString("tags"))
+                        .publisher(rs.getString("publisher"))
+                        .copyright(rs.getString("copyright"))
+                        .id(rs.getInt("id"))
+                        .get();
+                for (TextSection section : song.getSections()) {
+                    section.setTheme(Theme.parseDBString(rs.getString("background")));
+                }
+                songs.add(song);
             }
             return songs.toArray(new Song[songs.size()]);
         }
@@ -135,6 +159,18 @@ public final class SongDatabase {
             LOGGER.log(Level.WARNING, "Couldn't get the songs", ex);
             return null;
         }
+//        {
+//            new Song(rs.getString("title"), rs.getString("author")) {
+//
+//                    {
+//                        setLyrics(rs.getString("lyrics"));
+//                        setID(rs.getInt("id"));
+//                        for (TextSection section : getSections()) {
+//                            section.setTheme(Theme.parseDBString(rs.getString("background")));
+//                        }
+//                    }
+//                }
+//        }
     }
 
     /**
@@ -195,7 +231,8 @@ public final class SongDatabase {
             }
             else {
                 LOGGER.log(Level.INFO, "Updating song");
-                try (PreparedStatement stat = conn.prepareStatement("update songs set title=?, author=?, lyrics=?, background=? where id=?")) {
+                try (PreparedStatement stat = conn.prepareStatement("update songs set title=?, author=?, lyrics=?, background=?,"
+                        + "ccli=?, tags=?, publisher=?, year=?, copyright=? where id=?")) {
                     stat.setString(1, song.getTitle());
                     stat.setString(2, song.getAuthor());
                     stat.setString(3, song.getLyrics());
@@ -204,7 +241,12 @@ public final class SongDatabase {
                         theme = song.getSections()[0].getTheme().toDBString();
                     }
                     stat.setString(4, theme);
-                    stat.setInt(5, song.getID());
+                    stat.setString(5, song.getCcli());
+                    stat.setString(6, song.getTagsAsString());
+                    stat.setString(7, song.getPublisher());
+                    stat.setString(8, song.getYear());
+                    stat.setString(9, song.getCopyright());
+                    stat.setInt(10, song.getID());
                     stat.executeUpdate();
                     return true;
                 }
