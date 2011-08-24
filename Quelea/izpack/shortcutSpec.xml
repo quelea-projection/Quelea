@@ -6,7 +6,7 @@
                   location="applications"/>
     <shortcut
             name="Quelea"
-            target="$INSTALL_PATH\Quelea.jar"
+            target="$INSTALL_PATH\Quelea.vbs"
             description="Launch app"
             workingDirectory="$INSTALL_PATH"
             iconFile="$INSTALL_PATH\icons\logo.ico"
