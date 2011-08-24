@@ -43,7 +43,6 @@ public class SongEntryWindow extends JDialog {
         tabbedPane.add(basicSongPanel);
         setupDetailedSongPanel();
         tabbedPane.add(detailedSongPanel);
-        tabbedPane.setEnabledAt(1, false);
         setupThemePanel();
         tabbedPane.add(themePanel);
         add(tabbedPane, BorderLayout.CENTER);
@@ -152,6 +151,14 @@ public class SongEntryWindow extends JDialog {
     public BasicSongPanel getBasicSongPanel() {
         return basicSongPanel;
     }
+    
+    /**
+     * Get the panel where the user enters the more detailed song information.
+     * @return the detailed song panel.
+     */
+    public DetailedSongPanel getDetailedSongPanel() {
+        return detailedSongPanel;
+    }
 
     /**
      * Get the theme currently displayed on this window.
@@ -170,6 +177,7 @@ public class SongEntryWindow extends JDialog {
         confirmButton.setText("Add new song");
         confirmButton.setEnabled(false);
         basicSongPanel.resetNewSong();
+        detailedSongPanel.resetNewSong();
         themePanel.setTheme(Theme.DEFAULT_THEME);
         tabbedPane.setSelectedIndex(0);
     }
@@ -184,6 +192,7 @@ public class SongEntryWindow extends JDialog {
         confirmButton.setText("Edit song");
         confirmButton.setEnabled(true);
         basicSongPanel.resetEditSong(song);
+        detailedSongPanel.resetEditSong(song);
         if(song.getSections().length > 0) {
             themePanel.setTheme(song.getSections()[0].getTheme());
         }
@@ -201,6 +210,11 @@ public class SongEntryWindow extends JDialog {
         song.setLyrics(getBasicSongPanel().getLyricsField().getText());
         song.setTitle(getBasicSongPanel().getTitleField().getText());
         song.setAuthor(getBasicSongPanel().getAuthorField().getText());
+        song.setTags(getDetailedSongPanel().getTagsField().getText());
+        song.setCcli(getDetailedSongPanel().getCcliField().getText());
+        song.setCopyright(getDetailedSongPanel().getCopyrightField().getText());
+        song.setPublisher(getDetailedSongPanel().getPublisherField().getText());
+        song.setYear(getDetailedSongPanel().getYearField().getText());
         for(TextSection section : song.getSections()) {
             section.setTheme(themePanel.getTheme());
         }
