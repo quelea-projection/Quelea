@@ -7,7 +7,6 @@ import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.Graphics;
-import java.awt.GraphicsEnvironment;
 import java.awt.Image;
 import java.awt.font.TextAttribute;
 import java.awt.image.BufferedImage;
@@ -37,9 +36,6 @@ public class LyricCanvas extends Canvas {
     private boolean blacked;
     private boolean showBorder;
     private boolean capitaliseFirst;
-    private BufferedImage videoImage;
-    private int videoWidth = 800;
-    private int videoHeight = 600;
 
     /**
      * Create a new canvas where the lyrics should be displayed.
@@ -50,8 +46,6 @@ public class LyricCanvas extends Canvas {
         this.showBorder = showBorder;
         text = new String[]{};
         theme = Theme.DEFAULT_THEME;
-        videoImage = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice().getDefaultConfiguration().createCompatibleImage(videoWidth, videoHeight);
-        videoImage.setAccelerationPriority(1.0f);
         setMinimumSize(new Dimension(20, 20));
     }
 
