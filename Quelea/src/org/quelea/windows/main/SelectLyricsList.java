@@ -26,6 +26,12 @@ public class SelectLyricsList extends JList<TextSection> {
      */
     private static class SelectLyricsRenderer extends JLabel implements ListCellRenderer<TextSection> {
 
+        private boolean displayChords;
+
+        public SelectLyricsRenderer(boolean displayChords) {
+            this.displayChords = displayChords;
+        }
+
         /**
          * @inheritDoc
          */
@@ -33,18 +39,18 @@ public class SelectLyricsList extends JList<TextSection> {
             setBorder(new EmptyBorder(5, 5, 5, 5));
             StringBuilder labelHTML = new StringBuilder();
             labelHTML.append("<html>");
-            if(!value.getTitle().trim().equals("")) {
+            if (!value.getTitle().trim().equals("")) {
                 labelHTML.append("<font color=\"white\"><span style=\"background-color:blue; width:100%;\">&nbsp;");
                 labelHTML.append(value.getTitle());
                 labelHTML.append("&nbsp;</span></font><br/>");
             }
-            for(String line : value.getText()) {
+            for (String line : value.getText(displayChords)) {
                 labelHTML.append(line);
                 labelHTML.append("<br/>");
             }
             labelHTML.append("</html>");
             setText(labelHTML.toString());
-            if(isSelected) {
+            if (isSelected) {
                 setBackground(list.getSelectionBackground());
                 setForeground(list.getSelectionForeground());
             }
@@ -69,7 +75,7 @@ public class SelectLyricsList extends JList<TextSection> {
         addFocusListener(new FocusListener() {
 
             public void focusGained(FocusEvent e) {
-                if(getModel().getSize() > 0) {
+                if (getModel().getSize() > 0) {
                     setSelectionBackground(QueleaProperties.get().getActiveSelectionColor());
                 }
             }
@@ -79,7 +85,7 @@ public class SelectLyricsList extends JList<TextSection> {
             }
         });
         setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-        setCellRenderer(new SelectLyricsRenderer());
+        setCellRenderer(new SelectLyricsRenderer(false));
     }
 
     /**
@@ -90,6 +96,4 @@ public class SelectLyricsList extends JList<TextSection> {
     public DefaultListModel<TextSection> getModel() {
         return (DefaultListModel<TextSection>) super.getModel();
     }
-
-
 }

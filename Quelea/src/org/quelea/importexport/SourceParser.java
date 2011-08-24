@@ -1,7 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package org.quelea.importexport;
 
 import java.io.File;
@@ -29,7 +25,7 @@ public class SourceParser implements SongParser {
             throw new RuntimeException("Must be a directory.");
         }
         File[] files = location.listFiles();
-        List<Song> ret = new ArrayList<Song>();
+        List<Song> ret = new ArrayList<>();
         for (File file : files) {
             if (file.getName().endsWith("htm") || file.getName().endsWith("html")) {
                 String contents = Utils.getTextFromFile(file.getAbsolutePath(), null);
@@ -126,16 +122,16 @@ public class SourceParser implements SongParser {
         return ret;
     }
 
-    public static void main(String[] args) throws Exception {
-        SourceParser parser = new SourceParser();
-        List<Song> songs = parser.getSongs(new File("E:\\hymns"));
-        for (Song song : songs) {
-            System.out.println(song.getTitle());
-            System.out.println(song.getAuthor());
-            System.out.println(song.getLyrics());
-            System.out.println();
-            System.out.println("-----");
-            System.out.println();
-        }
-    }
+//    public static void main(String[] args) throws Exception {
+//        SourceParser parser = new SourceParser();
+//        List<Song> songs = parser.getSongs(new File("E:\\hymns"));
+//        for (Song song : songs) {
+//            System.out.println(song.getTitle());
+//            System.out.println(song.getAuthor());
+//            System.out.println(song.getLyrics());
+//            System.out.println();
+//            System.out.println("-----");
+//            System.out.println();
+//        }
+//    }
 }
