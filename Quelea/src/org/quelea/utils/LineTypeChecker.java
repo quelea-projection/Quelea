@@ -13,7 +13,7 @@ public class LineTypeChecker {
      */
     public enum Type {
 
-        NORMAL(null), TITLE(Color.YELLOW), CHORDS(Color.RED);
+        NORMAL(null), TITLE(Color.YELLOW), CHORDS(new Color(238,213,183));
         private final Color color;
 
         private Type(Color color) {

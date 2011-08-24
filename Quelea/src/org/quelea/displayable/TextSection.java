@@ -9,6 +9,7 @@ import org.w3c.dom.NodeList;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import org.quelea.utils.LineTypeChecker;
 
 /**
  * Represents a section of text in a song or passage.
@@ -66,7 +67,7 @@ public class TextSection {
             xml.append("</smalllines>");
         }
         xml.append("<lyrics>");
-        for (String line : getText()) {
+        for (String line : getText(true)) {
             xml.append(Utils.escapeXML(line)).append('\n');
         }
         xml.append("</lyrics></section>");
@@ -142,10 +143,22 @@ public class TextSection {
 
     /**
      * Get the lyrics of the section.
+     * @param chords true if any chords should be included in the text (if 
+     * present), false otherwise.
      * @return the lyrics of the section.
      */
-    public String[] getText() {
-        return Arrays.copyOf(lines, lines.length);
+    public String[] getText(boolean chords) {
+        if(chords) {
+            return Arrays.copyOf(lines, lines.length);
+        }
+        //Filter chords
+        List<String> ret = new ArrayList<>(lines.length);
+        for(String str : lines) {
+            if(new LineTypeChecker(str).getLineType()!=LineTypeChecker.Type.CHORDS) {
+                ret.add(str);
+            }
+        }
+        return ret.toArray(new String[ret.size()]);
     }
 
     /**

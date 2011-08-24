@@ -282,15 +282,16 @@ public class Song implements TextDisplayable, Searchable, Comparable<Song> {
 
     /**
      * Get all the lyrics to this song as a string. This can be parsed using the setLyrics() method.
+     * @param chords true if any chords should be included, false otherwise.
      * @return the lyrics to this song.
      */
-    public String getLyrics() {
+    public String getLyrics(boolean chords) {
         StringBuilder ret = new StringBuilder();
         for (TextSection section : sections) {
             if (section.getTitle() != null && !section.getTitle().equals("")) {
                 ret.append(section.getTitle()).append("\n");
             }
-            for (String line : section.getText()) {
+            for (String line : section.getText(chords)) {
                 ret.append(line).append("\n");
             }
             ret.append("\n");
@@ -366,7 +367,7 @@ public class Song implements TextDisplayable, Searchable, Comparable<Song> {
      */
     public boolean search(String s) {
         if (searchLyrics == null || searchLyrics.get() == null) {
-            searchLyrics = new SoftReference<>(stripPunctuation(getLyrics().replace("\n", " ")).toLowerCase());
+            searchLyrics = new SoftReference<>(stripPunctuation(getLyrics(false).replace("\n", " ")).toLowerCase());
         }
         return title.toLowerCase().contains(s)
                 || searchLyrics.get().contains(stripPunctuation(s));
@@ -536,8 +537,8 @@ public class Song implements TextDisplayable, Searchable, Comparable<Song> {
             if (getAuthor() != null && other.getAuthor() != null) {
                 result = getAuthor().compareToIgnoreCase(other.getAuthor());
             }
-            if (result == 0 && getLyrics() != null && other.getLyrics() != null) {
-                result = getLyrics().compareTo(other.getLyrics());
+            if (result == 0 && getLyrics(false) != null && other.getLyrics(false) != null) {
+                result = getLyrics(false).compareTo(other.getLyrics(false));
             }
         }
         return result;

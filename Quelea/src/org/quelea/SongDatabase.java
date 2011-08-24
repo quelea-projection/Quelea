@@ -183,7 +183,7 @@ public final class SongDatabase {
         try (PreparedStatement stat = conn.prepareStatement("insert into songs(title, author, lyrics, background) values(?, ?, ?, ?)")) {
             stat.setString(1, song.getTitle());
             stat.setString(2, song.getAuthor());
-            stat.setString(3, song.getLyrics());
+            stat.setString(3, song.getLyrics(true));
             String theme = "";
             if (song.getSections().length > 0 && song.getSections()[0].getTheme() != null) {
                 theme = song.getSections()[0].getTheme().toDBString();
@@ -235,7 +235,7 @@ public final class SongDatabase {
                         + "ccli=?, tags=?, publisher=?, year=?, copyright=? where id=?")) {
                     stat.setString(1, song.getTitle());
                     stat.setString(2, song.getAuthor());
-                    stat.setString(3, song.getLyrics());
+                    stat.setString(3, song.getLyrics(true));
                     String theme = "";
                     if (song.getSections().length > 0 && song.getSections()[0].getTheme() != null) {
                         theme = song.getSections()[0].getTheme().toDBString();
