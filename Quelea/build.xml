@@ -20,6 +20,9 @@
         <property name="DebInstaller" value="${dist.jar.dir}/standalone/quelea-${quelea.version}-deb-install.deb"/>
         <property name="Portable" value="${dist.jar.dir}/standalone/quelea-${quelea.version}-portable.zip"/>
 
+        <copy todir="${dist.jar.dir}/lib">
+            <fileset dir="${basedir}/lib"/>
+        </copy>
         <copy todir="${dist.jar.dir}/themes">
             <fileset dir="${basedir}/themes"/>
         </copy>
