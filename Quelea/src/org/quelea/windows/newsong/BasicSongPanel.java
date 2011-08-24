@@ -86,7 +86,7 @@ public class BasicSongPanel extends JPanel {
         lyricsToolbar.setFloatable(false);
         lyricsToolbar.add(getDictButton());
         lyricsToolbar.add(getAposButton());
-        lyricsToolbar.add(getRemoveChordsButton());
+//        lyricsToolbar.add(getRemoveChordsButton());
         lyricsToolbar.add(getTrimLinesButton());
         lyricsPanel.add(new JScrollPane(lyricsArea));
         JPanel lyricsToolbarPanel = new JPanel();
@@ -256,7 +256,7 @@ public class BasicSongPanel extends JPanel {
     public void resetEditSong(Song song) {
         getTitleField().setText(song.getTitle());
         getAuthorField().setText(song.getAuthor());
-        getLyricsField().setText(song.getLyrics());
+        getLyricsField().setText(song.getLyrics(true));
         getLyricsField().requestFocus();
     }
 
