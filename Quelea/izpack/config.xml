@@ -57,7 +57,7 @@
             <file src="Quelea.jar" targetdir="$INSTALL_PATH"/>
             <file src="Readme.txt" targetdir="$INSTALL_PATH"/>
             <file src="../licenses/gplv3.txt" targetdir="$INSTALL_PATH"/>
-<!--            <file src="quelea.properties" targetdir="$USER_HOME/.quelea"/>-->
+            <file src="quelea.properties" targetdir="$USER_HOME/.quelea"/>
         </pack>
         <pack name="dictionaries" required="yes" preselected="yes" hidden="true">
             <description>Dictionaries</description>
