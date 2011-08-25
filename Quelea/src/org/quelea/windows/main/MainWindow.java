@@ -9,6 +9,7 @@ import org.quelea.windows.newsong.SongEntryWindow;
 import javax.swing.JFrame;
 import org.pushingpixels.flamingo.api.ribbon.JRibbonFrame;
 import org.quelea.Application;
+import org.quelea.notice.NoticeDialog;
 import org.quelea.utils.LoggerUtils;
 import org.quelea.windows.main.ribbon.RibbonPopulator;
 import org.quelea.windows.main.ribbon.RibbonUtils;
@@ -22,12 +23,15 @@ public class MainWindow extends JRibbonFrame {
     private static final Logger LOGGER = LoggerUtils.getLogger();
     private final MainPanel mainpanel;
     private final SongEntryWindow songEntryWindow;
+    private final NoticeDialog noticeDialog;
 
     /**
      * Create a new main window.
      */
     public MainWindow(boolean setApplicationWindow) {
         super("Quelea " + QueleaProperties.VERSION.getVersionString());
+        
+        noticeDialog = new NoticeDialog(this);
         
         LOGGER.log(Level.INFO, "Creating main window");
         if(setApplicationWindow) {
@@ -55,6 +59,10 @@ public class MainWindow extends JRibbonFrame {
      */
     public MainPanel getMainPanel() {
         return mainpanel;
+    }
+    
+    public NoticeDialog getNoticeDialog() {
+        return noticeDialog;
     }
 
     /**
