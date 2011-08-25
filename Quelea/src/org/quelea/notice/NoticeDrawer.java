@@ -94,7 +94,7 @@ public class NoticeDrawer {
         }
         noticeString = builder.toString();
     }
-    
+
     public boolean getRedraw() {
         return redraw;
     }
@@ -167,7 +167,7 @@ public class NoticeDrawer {
 
         new Thread(runnable).start();
     }
-    private boolean first = true;
+    private boolean first = true; //Yeah... bodge.
 
     public void addNotice(Notice notice) {
         notices.add(notice);
