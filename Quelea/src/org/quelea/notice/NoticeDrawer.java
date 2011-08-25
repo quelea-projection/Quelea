@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import javax.swing.SwingUtilities;
+import org.quelea.utils.QueleaProperties;
 import org.quelea.utils.Utils;
 import org.quelea.windows.main.LyricCanvas;
 
@@ -18,8 +19,6 @@ import org.quelea.windows.main.LyricCanvas;
 public class NoticeDrawer {
 
     private static final int DELAY = 40;
-    public static final int BOX_HEIGHT = 50;
-    private static final int SPEED = 8;
     private Font font = new Font("Sans serif", 0, 2);
     private LyricCanvas canvas;
     private int boxHeight;
@@ -44,16 +43,17 @@ public class NoticeDrawer {
         if (boxHeight == 0) {
             return null;
         }
+        int finalHeight = QueleaProperties.get().getNoticeBoxHeight();
         BufferedImage ret = new BufferedImage(canvas.getWidth(), boxHeight, BufferedImage.TYPE_INT_RGB);
         Graphics g = ret.getGraphics();
-        if (boxHeight == BOX_HEIGHT - BOX_HEIGHT / 20) {
-            font = Utils.getDifferentSizeFont(font, Utils.getMaxFittingFontSize(g, font, noticeString, Integer.MAX_VALUE, BOX_HEIGHT));
+        if (boxHeight == finalHeight - finalHeight / 20) {
+            font = Utils.getDifferentSizeFont(font, Utils.getMaxFittingFontSize(g, font, noticeString, Integer.MAX_VALUE, finalHeight));
         }
         noticeWidth = g.getFontMetrics(font).stringWidth(noticeString.toString());
         int height = g.getFontMetrics(font).getHeight();
         g.setColor(Color.GRAY);
         g.fillRect(0, 0, ret.getWidth(), ret.getHeight());
-        if (boxHeight == BOX_HEIGHT) {
+        if (boxHeight == finalHeight) {
             g.setFont(font);
             g.setColor(Color.WHITE);
             g.drawString(noticeString.toString(), stringPos, ret.getHeight() / 2 + height / 4);
@@ -105,9 +105,11 @@ public class NoticeDrawer {
                             }
                         }
                     }
+                    int finalHeight = QueleaProperties.get().getNoticeBoxHeight();
+                    int speed = QueleaProperties.get().getNoticeBoxSpeed();
 
-                    while (boxHeight < BOX_HEIGHT) {
-                        boxHeight += BOX_HEIGHT / 20;
+                    while (boxHeight < finalHeight) {
+                        boxHeight += finalHeight / 20;
                         SwingUtilities.invokeLater(new Runnable() {
 
                             @Override
@@ -120,7 +122,7 @@ public class NoticeDrawer {
                     recalculateNoticeString(false);
                     while (!notices.isEmpty()) {
                         while (stringPos > -noticeWidth) {
-                            stringPos -= SPEED;
+                            stringPos -= speed;
                             SwingUtilities.invokeLater(new Runnable() {
 
                                 @Override
@@ -134,7 +136,7 @@ public class NoticeDrawer {
                         stringPos = canvas.getWidth();
                     }
                     while (boxHeight > 0) {
-                        boxHeight -= BOX_HEIGHT / 20;
+                        boxHeight -= finalHeight / 20;
                         SwingUtilities.invokeLater(new Runnable() {
 
                             @Override
