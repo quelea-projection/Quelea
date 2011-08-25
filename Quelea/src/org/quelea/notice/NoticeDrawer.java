@@ -27,6 +27,8 @@ public class NoticeDrawer {
     private List<Notice> inUseNotices;
     private List<NoticesChangedListener> listeners;
     private String noticeString;
+    private BufferedImage image;
+    private boolean redraw;
     private int noticeWidth;
     private final Object lock = new Object();
 
@@ -43,22 +45,27 @@ public class NoticeDrawer {
         if (boxHeight == 0) {
             return null;
         }
+        if (image == null || redraw) {
+            image = new BufferedImage(canvas.getWidth(), boxHeight, BufferedImage.TYPE_INT_RGB);
+        }
+        else {
+            image.getGraphics().clearRect(0, 0, image.getWidth(), image.getHeight());
+        }
         int finalHeight = QueleaProperties.get().getNoticeBoxHeight();
-        BufferedImage ret = new BufferedImage(canvas.getWidth(), boxHeight, BufferedImage.TYPE_INT_RGB);
-        Graphics g = ret.getGraphics();
+        Graphics g = image.getGraphics();
         if (boxHeight == finalHeight - finalHeight / 20) {
             font = Utils.getDifferentSizeFont(font, Utils.getMaxFittingFontSize(g, font, noticeString, Integer.MAX_VALUE, finalHeight));
         }
         noticeWidth = g.getFontMetrics(font).stringWidth(noticeString.toString());
         int height = g.getFontMetrics(font).getHeight();
         g.setColor(Color.GRAY);
-        g.fillRect(0, 0, ret.getWidth(), ret.getHeight());
+        g.fillRect(0, 0, image.getWidth(), image.getHeight());
         if (boxHeight == finalHeight) {
             g.setFont(font);
             g.setColor(Color.WHITE);
-            g.drawString(noticeString.toString(), stringPos, ret.getHeight() / 2 + height / 4);
+            g.drawString(noticeString.toString(), stringPos, image.getHeight() / 2 + height / 4);
         }
-        return ret;
+        return image;
     }
 
     private void recalculateNoticeString(boolean decrement) {
@@ -87,14 +94,18 @@ public class NoticeDrawer {
         }
         noticeString = builder.toString();
     }
+    
+    public boolean getRedraw() {
+        return redraw;
+    }
 
     private void start() {
         stringPos = canvas.getWidth();
-
         Runnable runnable = Utils.wrapAsLowPriority(new Runnable() {
 
             public void run() {
                 while (true) {
+                    redraw = false;
                     if (notices.isEmpty()) {
                         synchronized (lock) {
                             try {
@@ -108,6 +119,7 @@ public class NoticeDrawer {
                     int finalHeight = QueleaProperties.get().getNoticeBoxHeight();
                     int speed = QueleaProperties.get().getNoticeBoxSpeed();
 
+                    redraw = true;
                     while (boxHeight < finalHeight) {
                         boxHeight += finalHeight / 20;
                         SwingUtilities.invokeLater(new Runnable() {
@@ -119,6 +131,7 @@ public class NoticeDrawer {
                         });
                         Utils.sleep(DELAY);
                     }
+                    redraw = false;
                     recalculateNoticeString(false);
                     while (!notices.isEmpty()) {
                         while (stringPos > -noticeWidth) {
@@ -135,6 +148,7 @@ public class NoticeDrawer {
                         recalculateNoticeString(true);
                         stringPos = canvas.getWidth();
                     }
+                    redraw = true;
                     while (boxHeight > 0) {
                         boxHeight -= finalHeight / 20;
                         SwingUtilities.invokeLater(new Runnable() {
