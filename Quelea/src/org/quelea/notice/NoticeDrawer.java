@@ -15,26 +15,28 @@ import org.quelea.windows.main.LyricCanvas;
  *
  * @author Michael
  */
-public class NoticeManager {
+public class NoticeDrawer {
 
-    private static final int DELAY = 33;
-    private static final Font FONT = new Font("Sans serif", 0, 20);
-    public static final int BOX_HEIGHT = 30;
+    private static final int DELAY = 40;
+    public static final int BOX_HEIGHT = 200;
     private static final int SPEED = 8;
+    private Font font = new Font("Sans serif", 0, 2);
     private LyricCanvas canvas;
     private int boxHeight;
     private int stringPos;
     private List<Notice> notices;
     private List<Notice> inUseNotices;
+    private List<NoticesChangedListener> listeners;
     private String noticeString;
     private int noticeWidth;
-    private final Object monitor = new Object();
+    private final Object lock = new Object();
 
-    public NoticeManager(LyricCanvas canvas) {
+    public NoticeDrawer(LyricCanvas canvas) {
         this.canvas = canvas;
         notices = Collections.synchronizedList(new ArrayList<Notice>());
         inUseNotices = Collections.synchronizedList(new ArrayList<Notice>());
         noticeString = "";
+        listeners = new ArrayList<>();
         start();
     }
 
@@ -42,35 +44,43 @@ public class NoticeManager {
         if (boxHeight == 0) {
             return null;
         }
-        BufferedImage ret = new BufferedImage(canvas.getWidth(), boxHeight, BufferedImage.TYPE_INT_ARGB);
+        BufferedImage ret = new BufferedImage(canvas.getWidth(), boxHeight, BufferedImage.TYPE_INT_RGB);
         Graphics g = ret.getGraphics();
-        noticeWidth = g.getFontMetrics(FONT).stringWidth(noticeString.toString());
-        int height = g.getFontMetrics(FONT).getHeight();
+        if (boxHeight == BOX_HEIGHT - BOX_HEIGHT / 20) {
+            font = Utils.getDifferentSizeFont(font, Utils.getMaxFittingFontSize(g, font, noticeString, Integer.MAX_VALUE, BOX_HEIGHT));
+        }
+        noticeWidth = g.getFontMetrics(font).stringWidth(noticeString.toString());
+        int height = g.getFontMetrics(font).getHeight();
         g.setColor(Color.GRAY);
         g.fillRect(0, 0, ret.getWidth(), ret.getHeight());
         if (boxHeight == BOX_HEIGHT) {
-            g.setFont(FONT);
+            g.setFont(font);
             g.setColor(Color.WHITE);
-            g.drawString(noticeString.toString(), stringPos, ret.getHeight() / 2+height/4);
+            g.drawString(noticeString.toString(), stringPos, ret.getHeight() / 2 + height / 4);
         }
         return ret;
     }
 
-    private void recalculateNoticeString() {
+    private void recalculateNoticeString(boolean decrement) {
         StringBuilder builder = new StringBuilder();
-        for (Notice notice : inUseNotices) {
-            notice.decrementTimes();
-        }
-        for (int i = notices.size() - 1; i >= 0; i--) {
-            if (notices.get(i).getTimes() < 0) {
-                notices.remove(notices.get(i));
+        if (decrement) {
+            for (Notice notice : inUseNotices) {
+                notice.decrementTimes();
             }
+            for (int i = notices.size() - 1; i >= 0; i--) {
+                if (notices.get(i) == null || notices.get(i).getTimes() <= 0) {
+                    notices.remove(notices.get(i));
+                }
+            }
+        }
+        for (NoticesChangedListener listener : listeners) {
+            listener.noticesUpdated(notices);
         }
         inUseNotices.clear();
         for (int i = 0; i < notices.size(); i++) {
             Notice notice = notices.get(i);
             inUseNotices.add(notice);
-            builder.append(notice.getStr());
+            builder.append(notice.getText());
             if (i != notices.size() - 1) {
                 builder.append("    //    ");
             }
@@ -84,17 +94,19 @@ public class NoticeManager {
 
             public void run() {
                 while (true) {
-                    synchronized (monitor) {
-                        try {
-                            monitor.wait();
-                        }
-                        catch (InterruptedException ex) {
-                            continue;
+                    if (notices.isEmpty()) {
+                        synchronized (lock) {
+                            try {
+                                lock.wait();
+                            }
+                            catch (InterruptedException ex) {
+                                continue;
+                            }
                         }
                     }
 
                     while (boxHeight < BOX_HEIGHT) {
-                        boxHeight += 2;
+                        boxHeight += BOX_HEIGHT / 20;
                         SwingUtilities.invokeLater(new Runnable() {
 
                             @Override
@@ -104,7 +116,7 @@ public class NoticeManager {
                         });
                         Utils.sleep(DELAY);
                     }
-                    recalculateNoticeString();
+                    recalculateNoticeString(false);
                     while (!notices.isEmpty()) {
                         while (stringPos > -noticeWidth) {
                             stringPos -= SPEED;
@@ -117,11 +129,11 @@ public class NoticeManager {
                             });
                             Utils.sleep(DELAY);
                         }
-                        recalculateNoticeString();
+                        recalculateNoticeString(true);
                         stringPos = canvas.getWidth();
                     }
                     while (boxHeight > 0) {
-                        boxHeight -= 2;
+                        boxHeight -= BOX_HEIGHT / 20;
                         SwingUtilities.invokeLater(new Runnable() {
 
                             @Override
@@ -136,12 +148,17 @@ public class NoticeManager {
         });
         new Thread(runnable).start();
     }
+    private boolean first = true;
 
     public void addNotice(Notice notice) {
         notices.add(notice);
+        if (first) {
+            first = false;
+            notice.setTimes(notice.getTimes() + 1);
+        }
         if (notices.size() == 1) {
-            synchronized (monitor) {
-                monitor.notifyAll();
+            synchronized (lock) {
+                lock.notifyAll();
             }
         }
     }
@@ -152,5 +169,9 @@ public class NoticeManager {
 
     public List<Notice> getNotices() {
         return new ArrayList<>(notices);
+    }
+
+    public void addNoticeChangedListener(NoticesChangedListener listener) {
+        listeners.add(listener);
     }
 }
