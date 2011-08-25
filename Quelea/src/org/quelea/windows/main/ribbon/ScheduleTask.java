@@ -24,6 +24,7 @@ import org.quelea.displayable.Song;
 import org.quelea.displayable.VideoDisplayable;
 import org.quelea.displayable.VideoDisplayable.VideoType;
 import org.quelea.mail.Mailer;
+import org.quelea.notice.NoticeDialog;
 import org.quelea.utils.Utils;
 import org.quelea.video.PowerpointFileFilter;
 import org.quelea.utils.VideoFileFilter;
@@ -40,9 +41,10 @@ import org.quelea.windows.main.StatusPanel;
  * @author Michael
  */
 public class ScheduleTask extends RibbonTask {
-
+    
     public ScheduleTask() {
         super("Schedule", createSongBand(), createVideoBand(), createShareBand(), createNoticeBand());
+        Application.get().getMainWindow().getNoticeDialog().registerCanvas(Application.get().getLyricWindow().getCanvas());
     }
 
     private static void checkEditRemoveButtons(JCommandButton editSongButton, JCommandButton removeSongButton) {
@@ -278,7 +280,13 @@ public class ScheduleTask extends RibbonTask {
         JRibbonBand noticeBand = new JRibbonBand("Notices", RibbonUtils.getRibbonIcon("icons/info.png", 100, 100));
         RibbonUtils.applyStandardResizePolicies(noticeBand);
         JCommandButton alertButton = new JCommandButton("Manage notices", RibbonUtils.getRibbonIcon("icons/info.png", 100, 100));
-        alertButton.setEnabled(false);
+        alertButton.addActionListener(new ActionListener() {
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                Application.get().getMainWindow().getNoticeDialog().setVisible(true);
+            }
+        });
         noticeBand.addCommandButton(alertButton, RibbonElementPriority.TOP);
         return noticeBand;
     }
