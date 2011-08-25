@@ -74,6 +74,7 @@ public final class SongDatabase {
         addColumn("publisher", "varchar_ignorecase(256)");
         addColumn("tags", "varchar_ignorecase(256)");
         addColumn("key", "varchar_ignorecase(256)");
+        addColumn("info", "varchar_ignorecase(20000)");
     }
 
     private void addColumn(String name, String dataType) {
@@ -148,6 +149,7 @@ public final class SongDatabase {
                         .publisher(rs.getString("publisher"))
                         .copyright(rs.getString("copyright"))
                         .key(rs.getString("key"))
+                        .info(rs.getString("info"))
                         .id(rs.getInt("id"))
                         .get();
                 for (TextSection section : song.getSections()) {
@@ -183,7 +185,7 @@ public final class SongDatabase {
      */
     public boolean addSong(Song song, boolean fireUpdate) {
         try (PreparedStatement stat = conn.prepareStatement("insert into songs(title, author, lyrics, background, "
-                + "ccli, tags, publisher, year, copyright, key) values(?, ?, ?, ?, ?, ?, ?, ?, ?, ?)")) {
+                + "ccli, tags, publisher, year, copyright, key, info) values(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)")) {
             stat.setString(1, song.getTitle());
             stat.setString(2, song.getAuthor());
             stat.setString(3, song.getLyrics(true));
@@ -198,6 +200,7 @@ public final class SongDatabase {
             stat.setString(8, song.getYear());
             stat.setString(9, song.getCopyright());
             stat.setString(10, song.getKey());
+            stat.setString(11, song.getInfo());
             stat.executeUpdate();
             int id = -1;
             ResultSet resultSet = null;
@@ -241,7 +244,7 @@ public final class SongDatabase {
             else {
                 LOGGER.log(Level.INFO, "Updating song");
                 try (PreparedStatement stat = conn.prepareStatement("update songs set title=?, author=?, lyrics=?, background=?,"
-                        + "ccli=?, tags=?, publisher=?, year=?, copyright=?, key=? where id=?")) {
+                        + "ccli=?, tags=?, publisher=?, year=?, copyright=?, key=?, info=? where id=?")) {
                     stat.setString(1, song.getTitle());
                     stat.setString(2, song.getAuthor());
                     stat.setString(3, song.getLyrics(true));
@@ -256,7 +259,8 @@ public final class SongDatabase {
                     stat.setString(8, song.getYear());
                     stat.setString(9, song.getCopyright());
                     stat.setString(10, song.getKey());
-                    stat.setInt(11, song.getID());
+                    stat.setString(11, song.getInfo());
+                    stat.setInt(12, song.getID());
                     stat.executeUpdate();
                     return true;
                 }
