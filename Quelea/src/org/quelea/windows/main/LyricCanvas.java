@@ -11,14 +11,10 @@ import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Image;
 import java.awt.event.ComponentAdapter;
-import java.awt.font.TextAttribute;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
 import javax.swing.JFrame;
 import javax.swing.SwingUtilities;
 import org.quelea.Theme;
@@ -91,13 +87,15 @@ public class LyricCanvas extends Canvas {
      */
     @Override
     public void paint(Graphics g) {
-        valid = false;
         Image noticeImage = noticeDrawer.getNoticeImage();
-        if (noticeImage != null) {
-            if (noticeImage.getHeight(null) < QueleaProperties.get().getNoticeBoxHeight()) {
-                valid = false;
-            }
+        if(noticeDrawer.getRedraw()) {
+            valid = false;
         }
+//        if (noticeImage != null) {
+//            if (noticeImage.getHeight(null) < QueleaProperties.get().getNoticeBoxHeight()) {
+//                valid = false;
+//            }
+//        }
         if (!valid) {
             offscreenImage = new BufferedImage(getWidth(), getHeight(), BufferedImage.TYPE_INT_ARGB);
             Graphics offscreen = offscreenImage.getGraphics();
