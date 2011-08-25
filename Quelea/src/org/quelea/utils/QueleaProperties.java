@@ -335,4 +335,38 @@ public final class QueleaProperties extends Properties {
         setProperty("outline.thickness", Integer.toString(px));
         write();
     }
+
+    /**
+     * Get the notice box height (px).
+     * @return the notice box height.
+     */
+    public int getNoticeBoxHeight() {
+        return Integer.parseInt(getProperty("notice.box.height", "40"));
+    }
+
+    /**
+     * Set the notice box height (px).
+     * @param height the notice box height.
+     */
+    public void setNoticeBoxHeight(int height) {
+        setProperty("notice.box.height", Integer.toString(height));
+        write();
+    }
+
+    /**
+     * Get the notice box speed.
+     * @return the notice box speed.
+     */
+    public int getNoticeBoxSpeed() {
+        return Integer.parseInt(getProperty("notice.box.speed", "8"));
+    }
+
+    /**
+     * Set the notice box speed.
+     * @param speed the notice box speed.
+     */
+    public void setNoticeBoxSpeed(int speed) {
+        setProperty("notice.box.speed", Integer.toString(speed));
+        write();
+    }
 }

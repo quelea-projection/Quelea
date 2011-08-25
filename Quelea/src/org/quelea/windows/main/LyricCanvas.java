@@ -94,7 +94,7 @@ public class LyricCanvas extends Canvas {
         valid = false;
         Image noticeImage = noticeDrawer.getNoticeImage();
         if (noticeImage != null) {
-            if (noticeImage.getHeight(null) < NoticeDrawer.BOX_HEIGHT) {
+            if (noticeImage.getHeight(null) < QueleaProperties.get().getNoticeBoxHeight()) {
                 valid = false;
             }
         }
