@@ -113,6 +113,14 @@ public class Song implements TextDisplayable, Searchable, Comparable<Song> {
             song.key = key;
             return this;
         }
+        
+        public Builder info(String info) {
+            if (info == null) {
+                info = "";
+            }
+            song.info = info;
+            return this;
+        }
 
         public Song get() {
             return song;
@@ -127,6 +135,7 @@ public class Song implements TextDisplayable, Searchable, Comparable<Song> {
     private String publisher;
     private String copyright;
     private String key;
+    private String info;
     private String[] tags;
     private List<TextSection> sections;
     private Theme theme;
@@ -144,6 +153,13 @@ public class Song implements TextDisplayable, Searchable, Comparable<Song> {
         this.theme = song.theme;
         this.id = song.id;
         this.searchLyrics = song.searchLyrics;
+        this.ccli = song.ccli;
+        this.year = song.year;
+        this.publisher = song.publisher;
+        this.copyright = song.copyright;
+        this.key = song.key;
+        this.info = song.info;
+        this.tags = song.tags;
     }
 
     /**
@@ -248,7 +264,10 @@ public class Song implements TextDisplayable, Searchable, Comparable<Song> {
     }
 
     public String getTagsAsString() {
-        StringBuilder ret = new StringBuilder(50);
+        if(tags==null) {
+            return "";
+        }
+        StringBuilder ret = new StringBuilder(tags.length*5);
         for (int i = 0; i < tags.length; i++) {
             ret.append(tags[i]);
             if (i != tags.length - 1) {
@@ -270,6 +289,14 @@ public class Song implements TextDisplayable, Searchable, Comparable<Song> {
         return key;
     }
 
+    public String getInfo() {
+        return info;
+    }
+
+    public void setInfo(String info) {
+        this.info = info;
+    }
+    
     public void setKey(String key) {
         this.key = key;
     }
