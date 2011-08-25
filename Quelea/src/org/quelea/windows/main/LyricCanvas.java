@@ -1,5 +1,7 @@
 package org.quelea.windows.main;
 
+import java.awt.event.ComponentEvent;
+import org.quelea.notice.NoticeManager;
 import java.awt.BorderLayout;
 import java.awt.Canvas;
 import java.awt.Color;
@@ -8,6 +10,8 @@ import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Image;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentListener;
 import java.awt.font.TextAttribute;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
@@ -19,6 +23,7 @@ import java.util.Map.Entry;
 import javax.swing.JFrame;
 import javax.swing.SwingUtilities;
 import org.quelea.Theme;
+import org.quelea.notice.Notice;
 import org.quelea.utils.GraphicsUtils;
 import org.quelea.utils.QueleaProperties;
 import org.quelea.utils.Utils;
@@ -36,6 +41,9 @@ public class LyricCanvas extends Canvas {
     private boolean blacked;
     private boolean showBorder;
     private boolean capitaliseFirst;
+    private boolean valid = false;
+    private NoticeManager noticeManager;
+    private Image offscreenImage;
 
     /**
      * Create a new canvas where the lyrics should be displayed.
@@ -44,9 +52,17 @@ public class LyricCanvas extends Canvas {
      */
     public LyricCanvas(boolean showBorder) {
         this.showBorder = showBorder;
+        noticeManager = new NoticeManager(this);
         text = new String[]{};
         theme = Theme.DEFAULT_THEME;
         setMinimumSize(new Dimension(20, 20));
+        addComponentListener(new ComponentAdapter() {
+
+            @Override
+            public void componentResized(ComponentEvent e) {
+                valid = false;
+            }
+        });
     }
 
     /**
@@ -55,8 +71,10 @@ public class LyricCanvas extends Canvas {
      */
     public void setCapitaliseFirst(boolean val) {
         this.capitaliseFirst = val;
+        valid = false;
     }
 
+    @Override
     public void repaint() {
         if (getWidth() > 0 && getHeight() > 0) {
             SwingUtilities.invokeLater(new Runnable() {
@@ -74,31 +92,43 @@ public class LyricCanvas extends Canvas {
      */
     @Override
     public void paint(Graphics g) {
-        Image offscreenImage = new BufferedImage(getWidth(), getHeight(), BufferedImage.TYPE_INT_ARGB);
-        Graphics offscreen = offscreenImage.getGraphics();
-        offscreen.setColor(getForeground());
-        super.paint(offscreen);
-        if (blacked || theme == null) {
-            Color temp = offscreen.getColor();
-            offscreen.setColor(Color.BLACK);
-            offscreen.fillRect(0, 0, getWidth(), getHeight());
-            offscreen.setColor(temp);
+        Image noticeImage = noticeManager.getNoticeImage();
+        if (noticeImage != null) {
+            if (noticeImage.getHeight(null) < NoticeManager.BOX_HEIGHT) {
+                valid = false;
+            }
         }
-        else {
-            offscreen.drawImage(theme.getBackground().getImage(getWidth(), getHeight(), Integer.toString(getWidth())), 0, 0, null);
+        if (!valid) {
+            offscreenImage = new BufferedImage(getWidth(), getHeight(), BufferedImage.TYPE_INT_ARGB);
+            Graphics offscreen = offscreenImage.getGraphics();
+            offscreen.setColor(getForeground());
+            super.paint(offscreen);
+            if (blacked || theme == null) {
+                Color temp = offscreen.getColor();
+                offscreen.setColor(Color.BLACK);
+                offscreen.fillRect(0, 0, getWidth(), getHeight());
+                offscreen.setColor(temp);
+            }
+            else {
+                offscreen.drawImage(theme.getBackground().getImage(getWidth(), getHeight(), Integer.toString(getWidth())), 0, 0, null);
+            }
+            Color fontColour = theme.getFontColor();
+            if (fontColour == null) {
+                fontColour = Theme.DEFAULT_FONT_COLOR;
+            }
+            offscreen.setColor(fontColour);
+            Font themeFont = theme.getFont();
+            if (themeFont == null) {
+                themeFont = Theme.DEFAULT_FONT;
+            }
+            drawSmallText(offscreen, themeFont);
+            drawText(offscreen, themeFont);
         }
-        Color fontColour = theme.getFontColor();
-        if (fontColour == null) {
-            fontColour = Theme.DEFAULT_FONT_COLOR;
+        if (noticeImage != null) {
+            offscreenImage.getGraphics().drawImage(noticeImage, 0, getHeight() - noticeImage.getHeight(null), null);
         }
-        offscreen.setColor(fontColour);
-        Font themeFont = theme.getFont();
-        if (themeFont == null) {
-            themeFont = Theme.DEFAULT_FONT;
-        }
-        drawSmallText(offscreen, themeFont);
-        drawText(offscreen, themeFont);
         g.drawImage(offscreenImage, 0, 0, this);
+        valid = true;
     }
 
     /**
@@ -344,6 +374,7 @@ public class LyricCanvas extends Canvas {
         Theme t2 = this.theme == null ? Theme.DEFAULT_THEME : this.theme;
         if (!t2.equals(t1)) {
             this.theme = t1;
+            valid = false;
             repaint();
         }
     }
@@ -377,6 +408,7 @@ public class LyricCanvas extends Canvas {
         }
         this.smallText = smallText;
         this.text = Arrays.copyOf(text, text.length);
+        valid = false;
         repaint();
     }
 
@@ -405,6 +437,10 @@ public class LyricCanvas extends Canvas {
         return new Font(attributes);
     }
 
+    public NoticeManager getNoticeManager() {
+        return noticeManager;
+    }
+
     public static void main(String[] args) {
         LyricCanvas canvas = new LyricCanvas(true);
         JFrame frame = new JFrame();
@@ -416,6 +452,8 @@ public class LyricCanvas extends Canvas {
 
         canvas.setText(new String[]{"Line 1", "line 2", "BLAHBLAH BLAH BLAH"},
                 new String[]{"Tim Hughes", "CCLI number poo", "I hate CCLI really"});
+
+        canvas.getNoticeManager().addNotice(new Notice("Hello", 2));
 
 //        try {
 //            canvas.setTheme(new Theme(null, null, new Background("C:\\img.jpg", ImageIO.read(new File("C:\\img.jpg")))));
