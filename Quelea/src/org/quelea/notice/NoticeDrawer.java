@@ -12,13 +12,13 @@ import org.quelea.utils.Utils;
 import org.quelea.windows.main.LyricCanvas;
 
 /**
- *
+ * Responsible for drawing the notice animation on a particular canvas.
  * @author Michael
  */
 public class NoticeDrawer {
 
     private static final int DELAY = 40;
-    public static final int BOX_HEIGHT = 200;
+    public static final int BOX_HEIGHT = 50;
     private static final int SPEED = 8;
     private Font font = new Font("Sans serif", 0, 2);
     private LyricCanvas canvas;
@@ -90,6 +90,7 @@ public class NoticeDrawer {
 
     private void start() {
         stringPos = canvas.getWidth();
+
         Runnable runnable = Utils.wrapAsLowPriority(new Runnable() {
 
             public void run() {
@@ -146,6 +147,8 @@ public class NoticeDrawer {
                 }
             }
         });
+
+
         new Thread(runnable).start();
     }
     private boolean first = true;

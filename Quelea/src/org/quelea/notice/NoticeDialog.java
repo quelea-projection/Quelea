@@ -48,9 +48,11 @@ public class NoticeDialog extends JDialog implements NoticesChangedListener {
             @Override
             public void actionPerformed(ActionEvent e) {
                 Notice notice = NoticeEntryDialog.getNotice(NoticeDialog.this, null);
-                ((DefaultListModel<Notice>) noticeList.getModel()).addElement(notice);
-                for (NoticeDrawer drawer : noticeDrawers) {
-                    drawer.addNotice(notice);
+                if (notice != null) {
+                    ((DefaultListModel<Notice>) noticeList.getModel()).addElement(notice);
+                    for (NoticeDrawer drawer : noticeDrawers) {
+                        drawer.addNotice(notice);
+                    }
                 }
             }
         });
@@ -71,7 +73,7 @@ public class NoticeDialog extends JDialog implements NoticesChangedListener {
             @Override
             public void actionPerformed(ActionEvent e) {
                 Notice notice = noticeList.getSelectedValue();
-                ((DefaultListModel)noticeList.getModel()).remove(noticeList.getSelectedIndex());
+                ((DefaultListModel) noticeList.getModel()).remove(noticeList.getSelectedIndex());
                 for (NoticeDrawer drawer : noticeDrawers) {
                     drawer.removeNotice(notice);
                 }
@@ -99,7 +101,7 @@ public class NoticeDialog extends JDialog implements NoticesChangedListener {
         });
         noticeList.setPreferredSize(new Dimension((int) noticeList.getPreferredSize().getHeight(), 50));
         add(new JScrollPane(noticeList), BorderLayout.CENTER);
-        
+
         doneButton = new JButton("Done");
         doneButton.addActionListener(new ActionListener() {
 
@@ -122,13 +124,13 @@ public class NoticeDialog extends JDialog implements NoticesChangedListener {
      */
     @Override
     public void noticesUpdated(List<Notice> notices) {
-        ((DefaultListModel<Notice>)noticeList.getModel()).removeAllElements();
+        ((DefaultListModel<Notice>) noticeList.getModel()).removeAllElements();
         Set<Notice> noticesSet = new HashSet<>();
-        for(NoticeDrawer drawer : noticeDrawers) {
+        for (NoticeDrawer drawer : noticeDrawers) {
             noticesSet.addAll(drawer.getNotices());
         }
-        for(Notice notice : noticesSet) {
-            ((DefaultListModel<Notice>)noticeList.getModel()).addElement(notice);
+        for (Notice notice : noticesSet) {
+            ((DefaultListModel<Notice>) noticeList.getModel()).addElement(notice);
         }
         validate();
     }
