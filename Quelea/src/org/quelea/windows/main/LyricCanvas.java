@@ -1,7 +1,7 @@
 package org.quelea.windows.main;
 
 import java.awt.event.ComponentEvent;
-import org.quelea.notice.NoticeManager;
+import org.quelea.notice.NoticeDrawer;
 import java.awt.BorderLayout;
 import java.awt.Canvas;
 import java.awt.Color;
@@ -11,7 +11,6 @@ import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Image;
 import java.awt.event.ComponentAdapter;
-import java.awt.event.ComponentListener;
 import java.awt.font.TextAttribute;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
@@ -42,7 +41,7 @@ public class LyricCanvas extends Canvas {
     private boolean showBorder;
     private boolean capitaliseFirst;
     private boolean valid = false;
-    private NoticeManager noticeManager;
+    private NoticeDrawer noticeDrawer;
     private Image offscreenImage;
 
     /**
@@ -52,7 +51,7 @@ public class LyricCanvas extends Canvas {
      */
     public LyricCanvas(boolean showBorder) {
         this.showBorder = showBorder;
-        noticeManager = new NoticeManager(this);
+        noticeDrawer = new NoticeDrawer(this);
         text = new String[]{};
         theme = Theme.DEFAULT_THEME;
         setMinimumSize(new Dimension(20, 20));
@@ -92,9 +91,10 @@ public class LyricCanvas extends Canvas {
      */
     @Override
     public void paint(Graphics g) {
-        Image noticeImage = noticeManager.getNoticeImage();
+        valid = false;
+        Image noticeImage = noticeDrawer.getNoticeImage();
         if (noticeImage != null) {
-            if (noticeImage.getHeight(null) < NoticeManager.BOX_HEIGHT) {
+            if (noticeImage.getHeight(null) < NoticeDrawer.BOX_HEIGHT) {
                 valid = false;
             }
         }
@@ -143,7 +143,7 @@ public class LyricCanvas extends Canvas {
             return 0;
         }
         int fontSize = getHeight() / 50;
-        font = getDifferentSizeFont(font, fontSize);
+        font = Utils.getDifferentSizeFont(font, fontSize);
         graphics.setFont(font);
         graphics.setColor(theme.getFontColor());
         FontMetrics metrics = graphics.getFontMetrics(font);
@@ -181,11 +181,11 @@ public class LyricCanvas extends Canvas {
             }
         }
         int size = getFontSize(font, graphics, maxLine, sanctifiedLines.size());
-        Font newFont = getDifferentSizeFont(font, size);
+        Font newFont = Utils.getDifferentSizeFont(font, size);
         graphics.setFont(newFont);
         if (heightOffset > getHeight()) {
             if (font.getSize() > 8) {
-                drawText(graphics, getDifferentSizeFont(font, font.getSize() - 2));
+                drawText(graphics, Utils.getDifferentSizeFont(font, font.getSize() - 2));
             }
         }
         else {
@@ -218,7 +218,7 @@ public class LyricCanvas extends Canvas {
         int size = ensureLineCount(font, graphics, numLines + 1);
         while (size > 0 && graphics.getFontMetrics(font).stringWidth(line) >= getWidth()) {
             size--;
-            font = getDifferentSizeFont(font, size);
+            font = Utils.getDifferentSizeFont(font, size);
         }
         return size;
     }
@@ -237,7 +237,7 @@ public class LyricCanvas extends Canvas {
         }
         do {
             height = graphics.getFontMetrics(font).getHeight() * lineCount;
-            font = getDifferentSizeFont(font, font.getSize() - 1);
+            font = Utils.getDifferentSizeFont(font, font.getSize() - 1);
         } while (height > getHeight() && font.getSize() > 12);
 
         return font.getSize();
@@ -421,24 +421,8 @@ public class LyricCanvas extends Canvas {
         return Arrays.copyOf(text, text.length);
     }
 
-    /**
-     * Get a font identical to the one given apart from in size.
-     * @param size the size of the new font.
-     * @return the resized font.
-     */
-    private Font getDifferentSizeFont(Font bigFont, float size) {
-        Map<TextAttribute, Object> attributes = new HashMap<>();
-        for (Entry<TextAttribute, ?> entry : bigFont.getAttributes().entrySet()) {
-            attributes.put(entry.getKey(), entry.getValue());
-        }
-        if (attributes.get(TextAttribute.SIZE) != null) {
-            attributes.put(TextAttribute.SIZE, size);
-        }
-        return new Font(attributes);
-    }
-
-    public NoticeManager getNoticeManager() {
-        return noticeManager;
+    public NoticeDrawer getNoticeDrawer() {
+        return noticeDrawer;
     }
 
     public static void main(String[] args) {
@@ -453,7 +437,7 @@ public class LyricCanvas extends Canvas {
         canvas.setText(new String[]{"Line 1", "line 2", "BLAHBLAH BLAH BLAH"},
                 new String[]{"Tim Hughes", "CCLI number poo", "I hate CCLI really"});
 
-        canvas.getNoticeManager().addNotice(new Notice("Hello", 2));
+        canvas.getNoticeDrawer().addNotice(new Notice("Hello", 2));
 
 //        try {
 //            canvas.setTheme(new Theme(null, null, new Background("C:\\img.jpg", ImageIO.read(new File("C:\\img.jpg")))));
