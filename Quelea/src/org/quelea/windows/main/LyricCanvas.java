@@ -91,11 +91,6 @@ public class LyricCanvas extends Canvas {
         if(noticeDrawer.getRedraw()) {
             valid = false;
         }
-//        if (noticeImage != null) {
-//            if (noticeImage.getHeight(null) < QueleaProperties.get().getNoticeBoxHeight()) {
-//                valid = false;
-//            }
-//        }
         if (!valid) {
             offscreenImage = new BufferedImage(getWidth(), getHeight(), BufferedImage.TYPE_INT_ARGB);
             Graphics offscreen = offscreenImage.getGraphics();
