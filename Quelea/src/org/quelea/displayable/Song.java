@@ -105,10 +105,19 @@ public class Song implements TextDisplayable, Searchable, Comparable<Song> {
             song.copyright = copyright;
             return this;
         }
+        
+        public Builder key(String key) {
+            if (key == null) {
+                key = "";
+            }
+            song.key = key;
+            return this;
+        }
 
         public Song get() {
             return song;
         }
+
     }
     private static final Logger LOGGER = LoggerUtils.getLogger();
     private String title;
@@ -117,6 +126,7 @@ public class Song implements TextDisplayable, Searchable, Comparable<Song> {
     private String year;
     private String publisher;
     private String copyright;
+    private String key;
     private String[] tags;
     private List<TextSection> sections;
     private Theme theme;
@@ -256,6 +266,14 @@ public class Song implements TextDisplayable, Searchable, Comparable<Song> {
         return copyright;
     }
 
+    public String getKey() {
+        return key;
+    }
+
+    public void setKey(String key) {
+        this.key = key;
+    }
+    
     public void setCcli(String ccli) {
         this.ccli = ccli;
     }
