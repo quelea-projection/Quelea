@@ -98,6 +98,10 @@ public class KingswayWorshipParser implements SongParser {
         for(String str : songHtml.split("\n")) {
             lyrics.append(str.trim()).append('\n');
         }
+        
+        if(title.trim().isEmpty()) {
+            title = lyrics.toString().split("\n")[0];
+        }
 
         Song ret = new Song(title, author);
         ret.setLyrics(lyrics.toString());
