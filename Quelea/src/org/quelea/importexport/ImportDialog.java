@@ -74,28 +74,32 @@ public abstract class ImportDialog extends JDialog implements PropertyChangeList
         add(checkDuplicates);
 
         locationField = new JTextField();
-        locationField.setEditable(false);
-        locationField.setFont(new Font(locationField.getFont().getName(), Font.ITALIC, locationField.getFont().getSize()));
-        locationField.setText("Click here to select file");
-        locationField.addMouseListener(new MouseAdapter() {
+        if (fileFilter != null) {
+            locationField.setEditable(false);
+            locationField.setFont(new Font(locationField.getFont().getName(), Font.ITALIC, locationField.getFont().getSize()));
+            locationField.setText("Click here to select file");
+            locationField.addMouseListener(new MouseAdapter() {
 
-            @Override
-            public void mouseClicked(MouseEvent e) {
-                if (locationField.isEnabled()) {
-                    locationChooser.showOpenDialog(getRootPane());
-                    if (locationChooser.getSelectedFile() != null) {
-                        locationField.setFont(new Font(locationField.getFont().getName(), 0, locationField.getFont().getSize()));
-                        locationField.setText(locationChooser.getSelectedFile().getAbsolutePath());
-                        importButton.setEnabled(true);
+                @Override
+                public void mouseClicked(MouseEvent e) {
+                    if (locationField.isEnabled()) {
+                        locationChooser.showOpenDialog(getRootPane());
+                        if (locationChooser.getSelectedFile() != null) {
+                            locationField.setFont(new Font(locationField.getFont().getName(), 0, locationField.getFont().getSize()));
+                            locationField.setText(locationChooser.getSelectedFile().getAbsolutePath());
+                            importButton.setEnabled(true);
+                        }
                     }
                 }
-            }
-        });
-        add(locationField);
+            });
+            add(locationField);
+        }
 
         importButton = new JButton("Import");
         getRootPane().setDefaultButton(importButton);
-        importButton.setEnabled(false);
+        if (fileFilter != null) {
+            importButton.setEnabled(false);
+        }
         add(importButton);
         importButton.addActionListener(new ActionListener() {
 

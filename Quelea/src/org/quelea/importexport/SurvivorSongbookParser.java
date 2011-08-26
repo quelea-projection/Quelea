@@ -25,9 +25,9 @@ public class SurvivorSongbookParser implements SongParser {
     @Override
     public List<Song> getSongs(File location) throws IOException {
         PDDocument document = PDDocument.load(location);
-        List<Song> pdfSongs = new ArrayList<Song>();
+        List<Song> pdfSongs = new ArrayList<>();
         PDFTextStripper stripper = new PDFTextStripper();
-        List<String> songParts = new ArrayList<String>();
+        List<String> songParts = new ArrayList<>();
         for (int i = 0; i < document.getNumberOfPages(); i++) {
             String pageText = getPageText(document, stripper, i);
             if (pageText.trim().isEmpty()) {
@@ -51,7 +51,7 @@ public class SurvivorSongbookParser implements SongParser {
         }
         document.close();
         if (pdfSongs == null) {
-            return new ArrayList<Song>();
+            return new ArrayList<>();
         }
         else {
             return pdfSongs;
