@@ -5,6 +5,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 import java.util.Arrays;
+import javax.swing.JDialog;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import org.pushingpixels.flamingo.api.common.JCommandButton;
@@ -14,6 +15,7 @@ import org.pushingpixels.flamingo.api.ribbon.RibbonTask;
 import org.quelea.Application;
 import org.quelea.SongDatabase;
 import org.quelea.importexport.ImportDialog;
+import org.quelea.importexport.KingswayImportDialog;
 import org.quelea.importexport.QSPImportDialog;
 import org.quelea.importexport.SelectExportedSongsDialog;
 import org.quelea.importexport.SourceImportDialog;
@@ -32,11 +34,13 @@ public class DatabaseTask extends RibbonTask {
     private static final ImportDialog sImportDialog;
     private static final ImportDialog qspImportDialog;
     private static final ImportDialog sourceImportDialog;
+    private static final ImportDialog kingswayImportDialog;
 
     static {
         qspImportDialog = new QSPImportDialog(Application.get().getMainWindow());
         sImportDialog = new SurvivorImportDialog(Application.get().getMainWindow());
         sourceImportDialog = new SourceImportDialog(Application.get().getMainWindow());
+        kingswayImportDialog = new KingswayImportDialog(Application.get().getMainWindow());
     }
 
     public DatabaseTask() {
@@ -76,16 +80,26 @@ public class DatabaseTask extends RibbonTask {
             }
         });
         importBand.addCommandButton(source, RibbonElementPriority.TOP);
-        JCommandButton sof = new JCommandButton("Songs of fellowship", RibbonUtils.getRibbonIcon("icons/sof.jpg", 100, 100));
-        sof.addActionListener(new ActionListener() {
+        JCommandButton kingsway = new JCommandButton("Kingsway", RibbonUtils.getRibbonIcon("icons/kingsway.png", 100, 100));
+        kingsway.addActionListener(new ActionListener() {
 
             @Override
             public void actionPerformed(ActionEvent e) {
-                //TODO: Implement
+                kingswayImportDialog.setLocationRelativeTo(kingswayImportDialog.getOwner());
+                kingswayImportDialog.setVisible(true);
             }
         });
-        sof.setEnabled(false);
-        importBand.addCommandButton(sof, RibbonElementPriority.TOP);
+        importBand.addCommandButton(kingsway, RibbonElementPriority.TOP);
+//        JCommandButton sof = new JCommandButton("Songs of fellowship", RibbonUtils.getRibbonIcon("icons/sof.jpg", 100, 100));
+//        sof.addActionListener(new ActionListener() {
+//
+//            @Override
+//            public void actionPerformed(ActionEvent e) {
+//                //TODO: Implement
+//            }
+//        });
+//        sof.setEnabled(false);
+//        importBand.addCommandButton(sof, RibbonElementPriority.TOP);
         return importBand;
     }
 
