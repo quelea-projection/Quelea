@@ -23,12 +23,17 @@ public class KingswayWorshipParser implements SongParser {
 
     @Override
     public List<Song> getSongs(File location) throws IOException {
-        LOGGER.log(Level.INFO, "Making connection");
         List<Song> ret = new ArrayList<>();
         int i = 1;
         String pageText;
         while ((pageText = getPageText(i)) != null) {
-            Song song = parseSong(pageText);
+            Song song = null;
+            try {
+                song = parseSong(pageText);
+            }
+            catch (Exception ex) {
+                LOGGER.log(Level.WARNING, ex.getMessage());
+            }
             if (song != DEFAULT) {
                 ret.add(song);
             }
@@ -44,7 +49,12 @@ public class KingswayWorshipParser implements SongParser {
         if (text.isEmpty()) {
             return DEFAULT;
         }
-        String songHtml = text.substring(text.indexOf("<h1>SONG LIBRARY</h1>") + "<h1>SONG LIBRARY</h1>".length(), text.indexOf("<a class=")).trim();
+        int startIndex = text.indexOf("<h1>SONG LIBRARY</h1>") + "<h1>SONG LIBRARY</h1>".length();
+        int endIndex = text.indexOf("<a class=", startIndex);
+        if(endIndex==-1) {
+            endIndex = text.indexOf("</div>", startIndex);
+        }
+        String songHtml = text.substring(startIndex, endIndex).trim();
 
         String title = songHtml.substring(4, songHtml.indexOf("</h2>"));
         songHtml = songHtml.substring(songHtml.indexOf("</h2>") + 5);
@@ -72,7 +82,7 @@ public class KingswayWorshipParser implements SongParser {
 
         int i = songHtml.length() - 1;
         while (i > 1) {
-            if (songHtml.charAt(i)=='\n'&&songHtml.charAt(i-1)=='\n') {
+            if (songHtml.charAt(i) == '\n' && songHtml.charAt(i - 1) == '\n') {
                 break;
             }
             i--;
