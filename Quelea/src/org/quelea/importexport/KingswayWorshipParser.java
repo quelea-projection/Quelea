@@ -20,6 +20,7 @@ public class KingswayWorshipParser implements SongParser {
 
     private static final Logger LOGGER = LoggerUtils.getLogger();
     private static final Song DEFAULT = new Song("", "");
+    private int count500 = 0;
 
     @Override
     public List<Song> getSongs(File location) throws IOException {
@@ -51,10 +52,21 @@ public class KingswayWorshipParser implements SongParser {
         }
         int startIndex = text.indexOf("<h1>SONG LIBRARY</h1>") + "<h1>SONG LIBRARY</h1>".length();
         int endIndex = text.indexOf("<a class=", startIndex);
-        if(endIndex==-1) {
+        if (endIndex == -1) {
             endIndex = text.indexOf("</div>", startIndex);
         }
         String songHtml = text.substring(startIndex, endIndex).trim();
+        songHtml = songHtml.replace("&#39;", "'");
+        songHtml = songHtml.replace("&#160;", " ");
+        songHtml = songHtml.replace("&nbsp;", " ");
+        songHtml = songHtml.replace(Character.toString((char)160), " ");
+        songHtml = songHtml.replace("&amp;", "&");
+        songHtml = songHtml.replace("&quot;", "\"");
+        songHtml = songHtml.replace("&lt;", "<");
+        songHtml = songHtml.replace("&gt;", ">");
+        songHtml = songHtml.replace("&lsquo;", "'");
+        songHtml = songHtml.replace("&rsquo;", "'");
+        songHtml = songHtml.replace("&copy;", "©");
 
         String title = songHtml.substring(4, songHtml.indexOf("</h2>"));
         songHtml = songHtml.substring(songHtml.indexOf("</h2>") + 5);
@@ -69,14 +81,6 @@ public class KingswayWorshipParser implements SongParser {
         songHtml = songHtml.replace("<br>", "\n");
         songHtml = songHtml.replace("</p>", "\n");
         songHtml = songHtml.replace("<p>", "");
-        songHtml = songHtml.replace("&#39;", "'");
-        songHtml = songHtml.replace("&amp;", "&");
-        songHtml = songHtml.replace("&quot;", "\"");
-        songHtml = songHtml.replace("&lt;", "<");
-        songHtml = songHtml.replace("&gt;", ">");
-        songHtml = songHtml.replace("&lsquo;", "'");
-        songHtml = songHtml.replace("&rsquo;", "'");
-        songHtml = songHtml.replace("&copy;", "©");
         songHtml = songHtml.replaceAll("\\<.*?>", "");
         songHtml = songHtml.trim();
 
@@ -89,9 +93,14 @@ public class KingswayWorshipParser implements SongParser {
         }
         songHtml = songHtml.substring(0, i);
         songHtml = songHtml.trim();
+        
+        StringBuilder lyrics = new StringBuilder();
+        for(String str : songHtml.split("\n")) {
+            lyrics.append(str.trim()).append('\n');
+        }
 
         Song ret = new Song(title, author);
-        ret.setLyrics(songHtml);
+        ret.setLyrics(lyrics.toString());
         return ret;
     }
 
@@ -106,11 +115,18 @@ public class KingswayWorshipParser implements SongParser {
                     content.append(str).append("\n");
                 }
             }
+            count500=0;
             return content.toString();
         }
         catch (Exception ex) {
             LOGGER.log(Level.WARNING, ex.getMessage());
             if (ex.getMessage().contains("500")) {
+                count500++;
+                if(count500>10) {
+                    LOGGER.log(Level.INFO, "Too many 500's, giving up");
+                    count500=0;
+                    return null;
+                }
                 return "";
             }
             return null;
