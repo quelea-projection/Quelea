@@ -65,21 +65,20 @@ public final class LoggerUtils {
      * otherwise. Should only be false with out of process loggers...
      * @return a logger that uses the called class as its name.
      */
-    public static Logger getLogger(boolean file) {
+    public static synchronized Logger getLogger(boolean file) {
         initialise();
         StackTraceElement[] ele = new Throwable().getStackTrace();
         String name;
-        if (ele == null || ele[1] == null || ele[1].getClassName() == null) {
+        if (ele == null || ele[2] == null || ele[2].getClassName() == null) {
             name = "DEFAULT";
         }
         else {
-            name = ele[1].getClassName();
+            name = ele[2].getClassName();
         }
         Logger logger = loggers.get(name);
         if (logger == null) {
             logger = Logger.getLogger(name);
             logger.setLevel(DEFAULT_LEVEL);
-
             try {
                 logger.addHandler(FILE_HANDLER);
             }
