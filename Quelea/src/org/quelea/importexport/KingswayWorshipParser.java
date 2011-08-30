@@ -25,12 +25,12 @@ public class KingswayWorshipParser implements SongParser {
     @Override
     public List<Song> getSongs(File location) throws IOException {
         List<Song> ret = new ArrayList<>();
-        int i = 1;
+        int i = 646;
         String pageText;
         while ((pageText = getPageText(i)) != null) {
             Song song = null;
             try {
-                song = parseSong(pageText);
+                song = parseSong(pageText, i);
             }
             catch (Exception ex) {
                 LOGGER.log(Level.WARNING, ex.getMessage());
@@ -43,23 +43,29 @@ public class KingswayWorshipParser implements SongParser {
         return ret;
     }
 
-    private Song parseSong(String text) {
-        if (text == null) {
+    /**
+     * Parse the given HTML to produce a song object.
+     * @param html the HTML to parse.
+     * @param num the number of the song (debugging use only)
+     * @return the song from the given HTML
+     */
+    private Song parseSong(String html, int num) {
+        if (html == null) {
             return null;
         }
-        if (text.isEmpty()) {
+        if (html.isEmpty()) {
             return DEFAULT;
         }
-        int startIndex = text.indexOf("<h1>SONG LIBRARY</h1>") + "<h1>SONG LIBRARY</h1>".length();
-        int endIndex = text.indexOf("<a class=", startIndex);
+        int startIndex = html.indexOf("<h1>SONG LIBRARY</h1>") + "<h1>SONG LIBRARY</h1>".length();
+        int endIndex = html.indexOf("<a class=", startIndex);
         if (endIndex == -1) {
-            endIndex = text.indexOf("</div>", startIndex);
+            endIndex = html.indexOf("</div>", startIndex);
         }
-        String songHtml = text.substring(startIndex, endIndex).trim();
+        String songHtml = html.substring(startIndex, endIndex).trim();
         songHtml = songHtml.replace("&#39;", "'");
         songHtml = songHtml.replace("&#160;", " ");
         songHtml = songHtml.replace("&nbsp;", " ");
-        songHtml = songHtml.replace(Character.toString((char)160), " ");
+        songHtml = songHtml.replace(Character.toString((char) 160), " ");
         songHtml = songHtml.replace("&amp;", "&");
         songHtml = songHtml.replace("&quot;", "\"");
         songHtml = songHtml.replace("&lt;", "<");
@@ -77,35 +83,51 @@ public class KingswayWorshipParser implements SongParser {
         songHtml = songHtml.trim();
 
         songHtml = songHtml.replace("<br />", "\n");
+        songHtml = songHtml.replace("<BR />", "\n");
         songHtml = songHtml.replace("<br/>", "\n");
+        songHtml = songHtml.replace("<BR/>", "\n");
         songHtml = songHtml.replace("<br>", "\n");
+        songHtml = songHtml.replace("<BR>", "\n");
         songHtml = songHtml.replace("</p>", "\n");
+        songHtml = songHtml.replace("</P>", "\n");
         songHtml = songHtml.replace("<p>", "");
+        songHtml = songHtml.replace("<P>", "");
         songHtml = songHtml.replaceAll("\\<.*?>", "");
         songHtml = songHtml.trim();
 
         int i = songHtml.length() - 1;
         while (i > 1) {
-            if (songHtml.charAt(i) == '\n' && songHtml.charAt(i - 1) == '\n') {
-                break;
+            if (songHtml.charAt(i) == '\n') {
+                while (songHtml.charAt(i) == ' ') {
+                    i--;
+                }
+                if (songHtml.charAt(i) == '\n') {
+                    break;
+                }
             }
             i--;
         }
         songHtml = songHtml.substring(0, i);
         songHtml = songHtml.trim();
-        
+
         StringBuilder lyrics = new StringBuilder();
-        for(String str : songHtml.split("\n")) {
+        for (String str : songHtml.split("\n")) {
             lyrics.append(str.trim()).append('\n');
         }
-        
-        if(title.trim().isEmpty()) {
+
+        if (title.trim().isEmpty()) {
             title = lyrics.toString().split("\n")[0];
         }
 
-        Song ret = new Song(title, author);
-        ret.setLyrics(lyrics.toString());
-        return ret;
+        if (lyrics.toString().length() > 5) {
+            Song ret = new Song(title, author);
+            ret.setLyrics(lyrics.toString());
+            return ret;
+        }
+        else {
+            LOGGER.log(Level.WARNING, "Page {0} no lyrics found", num);
+            return null;
+        }
     }
 
     private String getPageText(int num) {
@@ -119,16 +141,16 @@ public class KingswayWorshipParser implements SongParser {
                     content.append(str).append("\n");
                 }
             }
-            count500=0;
+            count500 = 0;
             return content.toString();
         }
         catch (Exception ex) {
             LOGGER.log(Level.WARNING, ex.getMessage());
             if (ex.getMessage().contains("500")) {
                 count500++;
-                if(count500>10) {
+                if (count500 > 10) {
                     LOGGER.log(Level.INFO, "Too many 500's, giving up");
-                    count500=0;
+                    count500 = 0;
                     return null;
                 }
                 return "";
@@ -136,5 +158,9 @@ public class KingswayWorshipParser implements SongParser {
             return null;
         }
 
+    }
+
+    public static void main(String[] args) throws IOException {
+        new KingswayWorshipParser().getSongs(null);
     }
 }
