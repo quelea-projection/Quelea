@@ -123,7 +123,6 @@ public class LibrarySongList extends JList<Song> implements DatabaseListener {
         update();
         SongDatabase.get().registerDatabaseListener(this);
     }
-
     private ExecutorService filterService = Executors.newSingleThreadExecutor();
     private Future<?> filterFuture;
 
@@ -132,10 +131,11 @@ public class LibrarySongList extends JList<Song> implements DatabaseListener {
      * @param search the search term to use.
      */
     public void filter(final String search, final boolean beep) {
-        if(filterFuture != null) {
+        if (filterFuture != null) {
             filterFuture.cancel(true);
         }
         filterFuture = filterService.submit(new Runnable() {
+
             public void run() {
                 final SortedListModel<Song> model = new SortedListModel<>();
                 for (int i = 0; i < fullModel.getSize(); i++) {
@@ -148,6 +148,7 @@ public class LibrarySongList extends JList<Song> implements DatabaseListener {
 //                    java.awt.Toolkit.getDefaultToolkit().beep();
 //                }
                 SwingUtilities.invokeLater(new Runnable() {
+
                     @Override
                     public void run() {
                         LibrarySongList.this.setModel(model);
@@ -165,11 +166,11 @@ public class LibrarySongList extends JList<Song> implements DatabaseListener {
     public LibraryPopupMenu getPopupMenu() {
         return popupMenu;
     }
-    
+
     @Override
     @SuppressWarnings("unchecked")
     public SortedListModel<Song> getModel() {
-        return (SortedListModel<Song>)super.getModel();
+        return (SortedListModel<Song>) super.getModel();
     }
 
     /**
@@ -185,7 +186,7 @@ public class LibrarySongList extends JList<Song> implements DatabaseListener {
         }
         Song song = getModel().getElementAt(index);
         TextSection[] sections = song.getSections();
-        if (sections.length > 0) {
+        if (sections.length > 0 && sections[0] != null && sections[0].getText(false).length > 0) {
             return sections[0].getText(false)[0] + "...";
         }
         return null;
