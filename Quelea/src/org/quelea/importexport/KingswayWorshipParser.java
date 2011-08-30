@@ -25,7 +25,7 @@ public class KingswayWorshipParser implements SongParser {
     @Override
     public List<Song> getSongs(File location) throws IOException {
         List<Song> ret = new ArrayList<>();
-        int i = 646;
+        int i = 1;
         String pageText;
         while ((pageText = getPageText(i)) != null) {
             Song song = null;
@@ -96,16 +96,18 @@ public class KingswayWorshipParser implements SongParser {
         songHtml = songHtml.trim();
 
         int i = songHtml.length() - 1;
-        while (i > 1) {
-            if (songHtml.charAt(i) == '\n') {
-                while (songHtml.charAt(i) == ' ') {
-                    i--;
-                }
+        for (int j = 0; j < 2; j++) {
+            while (i > 1) {
                 if (songHtml.charAt(i) == '\n') {
-                    break;
+                    while (songHtml.charAt(i) == ' ') {
+                        i--;
+                    }
+                    if (songHtml.charAt(i) == '\n') {
+                        break;
+                    }
                 }
+                i--;
             }
-            i--;
         }
         songHtml = songHtml.substring(0, i);
         songHtml = songHtml.trim();
