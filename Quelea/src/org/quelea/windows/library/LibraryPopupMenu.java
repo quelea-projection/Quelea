@@ -1,6 +1,8 @@
 package org.quelea.windows.library;
 
+import java.awt.event.KeyEvent;
 import javax.swing.*;
+import org.quelea.utils.Utils;
 
 /**
  * The popup menu that displays when someone right clicks on a song in the library.
@@ -16,9 +18,12 @@ public class LibraryPopupMenu extends JPopupMenu {
      * Create and initialise the popup menu.
      */
     public LibraryPopupMenu() {
-        addToSchedule = new JMenuItem("Add to schedule");
-        editDB = new JMenuItem("Edit song");
-        removeFromDB = new JMenuItem("Remove from database");
+        addToSchedule = new JMenuItem("Add to schedule", Utils.getImageIcon("icons/add.png", 16, 16));
+        addToSchedule.setMnemonic(KeyEvent.VK_A);
+        editDB = new JMenuItem("Edit song", Utils.getImageIcon("icons/edit.png", 16, 16));
+        editDB.setMnemonic(KeyEvent.VK_E);
+        removeFromDB = new JMenuItem("Remove from database", Utils.getImageIcon("icons/remove.png", 16, 16));
+        removeFromDB.setMnemonic(KeyEvent.VK_R);
 
         add(addToSchedule);
         add(editDB);

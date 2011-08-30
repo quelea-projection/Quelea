@@ -1,5 +1,6 @@
 package org.quelea.windows.main;
 
+import java.awt.event.KeyEvent;
 import javax.swing.*;
 import org.quelea.utils.Utils;
 
@@ -16,6 +17,7 @@ public class ScheduleSongPopupMenu extends JPopupMenu {
      */
     public ScheduleSongPopupMenu() {
         editSong = new JMenuItem("Edit song", Utils.getImageIcon("icons/edit.png", 16, 16));
+        editSong.setMnemonic(KeyEvent.VK_E);
         add(editSong);
     }
 
