@@ -1,7 +1,7 @@
 package org.quelea.print;
 
+import java.awt.print.Printable;
 import java.awt.print.PrinterJob;
-import org.quelea.Schedule;
 
 /**
  * Used for printing schedules.
@@ -26,9 +26,9 @@ public class Printer {
         return instance;
     }
 
-    public void print(Schedule schedule) {
+    public void print(Printable printable) {
         PrinterJob printJob = PrinterJob.getPrinterJob();
-        printJob.setPrintable(schedule);
+        printJob.setPrintable(printable);
         if (printJob.printDialog()) {
             try {
                 printJob.print();
