@@ -8,8 +8,6 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Properties;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  * Manages the properties specific to Quelea.
@@ -19,7 +17,7 @@ public final class QueleaProperties extends Properties {
 
     public static final Version VERSION = new Version("0.4");
     private static final QueleaProperties INSTANCE = new QueleaProperties();
-    private static final Logger LOGGER = LoggerUtils.getLogger();
+//    private static final Logger LOGGER = LoggerUtils.getLogger();
     private static final Color ACTIVE_SELECTION = new Color(200, 255, 255);
 
     /**
@@ -56,7 +54,7 @@ public final class QueleaProperties extends Properties {
             store(writer, "Auto save");
         }
         catch (IOException ex) {
-            LOGGER.log(Level.WARNING, "Couldn't store properties", ex);
+//            LOGGER.log(Level.WARNING, "Couldn't store properties", ex);
         }
     }
 

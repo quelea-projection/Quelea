@@ -24,7 +24,7 @@ public final class LoggerUtils {
             synchronized (LoggerUtils.class) {
                 if (FILE_HANDLER == null) {
                     try {
-                        File handler = new File(System.getProperty("user.home"), "quelea-debug.txt");
+                        File handler = new File(QueleaProperties.getQueleaUserHome(), "quelea-debuglog.txt");
                         FILE_HANDLER = new FileHandler(handler.getAbsolutePath());
                         FILE_HANDLER.setFormatter(new SimpleFormatter());
                     }
@@ -43,12 +43,22 @@ public final class LoggerUtils {
     private LoggerUtils() {
         throw new AssertionError();
     }
-
+    
     /**
      * Get a logger with its appropriate class name.
      * @return a logger that uses the called class as its name.
      */
     public static Logger getLogger() {
+        return getLogger(true);
+    }
+
+    /**
+     * Get a logger with its appropriate class name.
+     * @param file true if the logger should write to the debug file, false
+     * otherwise. Should only be false with out of process loggers...
+     * @return a logger that uses the called class as its name.
+     */
+    public static Logger getLogger(boolean file) {
         initialise();
         StackTraceElement[] ele = new Throwable().getStackTrace();
         String name;
@@ -60,6 +70,7 @@ public final class LoggerUtils {
         }
         final Logger logger = Logger.getLogger(name);
         logger.setLevel(DEFAULT_LEVEL);
+        
         try {
             logger.addHandler(FILE_HANDLER);
         }
