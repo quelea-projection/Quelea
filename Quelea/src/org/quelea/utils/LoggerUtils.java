@@ -2,6 +2,8 @@ package org.quelea.utils;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.logging.FileHandler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -18,6 +20,11 @@ public final class LoggerUtils {
      */
     public static final Level DEFAULT_LEVEL = Level.INFO;
     private static volatile FileHandler FILE_HANDLER;
+    private static final Map<String, Logger> loggers;
+
+    static {
+        loggers = new HashMap<>();
+    }
 
     private static void initialise() {
         if (FILE_HANDLER == null) {
@@ -43,7 +50,7 @@ public final class LoggerUtils {
     private LoggerUtils() {
         throw new AssertionError();
     }
-    
+
     /**
      * Get a logger with its appropriate class name.
      * @return a logger that uses the called class as its name.
@@ -68,14 +75,18 @@ public final class LoggerUtils {
         else {
             name = ele[1].getClassName();
         }
-        final Logger logger = Logger.getLogger(name);
-        logger.setLevel(DEFAULT_LEVEL);
-        
-        try {
-            logger.addHandler(FILE_HANDLER);
-        }
-        catch (Exception ex) {
-            ex.printStackTrace();
+        Logger logger = loggers.get(name);
+        if (logger == null) {
+            logger = Logger.getLogger(name);
+            logger.setLevel(DEFAULT_LEVEL);
+
+            try {
+                logger.addHandler(FILE_HANDLER);
+            }
+            catch (Exception ex) {
+                ex.printStackTrace();
+            }
+            loggers.put(name, logger);
         }
         return logger;
     }
