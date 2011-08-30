@@ -125,7 +125,6 @@ public class KingswayWorshipParser implements SongParser {
 
         if (lyrics.toString().length() > 5) {
             Song ret = new Song(title, author);
-            System.out.println(lyrics.toString());
             ret.setLyrics(lyrics.toString());
             return ret;
         }
