@@ -103,12 +103,14 @@ public class KingswayWorshipParser implements SongParser {
                         i--;
                     }
                     if (songHtml.charAt(i) == '\n') {
+                        i--;
                         break;
                     }
                 }
                 i--;
             }
         }
+        i++;
         songHtml = songHtml.substring(0, i);
         songHtml = songHtml.trim();
 
@@ -123,6 +125,7 @@ public class KingswayWorshipParser implements SongParser {
 
         if (lyrics.toString().length() > 5) {
             Song ret = new Song(title, author);
+            System.out.println(lyrics.toString());
             ret.setLyrics(lyrics.toString());
             return ret;
         }
