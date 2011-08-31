@@ -140,6 +140,9 @@ public class ChordTransposer {
             index = TRANSPOSE_STEPS.indexOf(chord2);
             index += semitones;
             index %= TRANSPOSE_STEPS.size();
+            if (index < 0) {
+                index = TRANSPOSE_STEPS.size() + index;
+            }
             String transposedChord2 = TRANSPOSE_STEPS.get(index) + tail2;
             transposedChord += "/" + toSharpFlat(sharpKey, transposedChord2);
         }
