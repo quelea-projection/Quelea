@@ -127,6 +127,9 @@ public class ChordTransposer {
         int index = TRANSPOSE_STEPS.indexOf(chord);
         index += semitones;
         index %= TRANSPOSE_STEPS.size();
+        if(index<0) {
+            index = TRANSPOSE_STEPS.size()+index;
+        }
         String transposedChord = TRANSPOSE_STEPS.get(index);
         if (newKey != null) {
             transposedChord = toSharpFlat(isSharpKey(newKey), transposedChord);
@@ -217,9 +220,5 @@ public class ChordTransposer {
             }
         }
         return false;
-    }
-
-    public static void main(String[] args) {
-        System.out.println(new ChordLineTransposer("F#m").transpose(2, "B"));
     }
 }
