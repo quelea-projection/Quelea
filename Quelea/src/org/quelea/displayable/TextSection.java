@@ -28,6 +28,10 @@ public class TextSection {
      * Create a new text section with the specified title and lyrics.
      * @param title the title of the section.
      * @param lines the lines of the section, one line per array entry.
+     * @param smallLines the lines to be displayed in the bottom left of the 
+     * canvas for this text section
+     * @param capitaliseFirst true if the first character of each line should 
+     * be a capital, false otherwise.
      */
     public TextSection(String title, String[] lines, String[] smallLines, boolean capitaliseFirst) {
         this(title, lines, smallLines, capitaliseFirst, null);
@@ -37,6 +41,10 @@ public class TextSection {
      * Create a new song section with the specified title and lyrics.
      * @param title the title of the section.
      * @param lines the lines of the section, one line per array entry.
+     * @param smallLines the lines to be displayed in the bottom left of the 
+     * canvas for this text section
+     * @param capitaliseFirst true if the first character of each line should 
+     * be a capital, false otherwise.
      * @param theme the theme of this song section.
      */
     public TextSection(String title, String[] lines, String[] smallLines, boolean capitaliseFirst, Theme theme) {
@@ -145,6 +153,7 @@ public class TextSection {
      * Get the lyrics of the section.
      * @param chords true if any chords should be included in the text (if 
      * present), false otherwise.
+     * @param comments true if any comments should be included, false otherwise.
      * @return the lyrics of the section.
      */
     public String[] getText(boolean chords, boolean comments) {
@@ -173,14 +182,14 @@ public class TextSection {
     }
 
     private String removeComments(String str) {
-        str = str.trim().toLowerCase();
-        if (str.endsWith("//lyrics")) {
+        str = str.trim();
+        if (str.toLowerCase().endsWith("//lyrics")) {
             return str.substring(0, str.indexOf("//lyrics"));
         }
-        if (str.endsWith("//chords")) {
+        if (str.toLowerCase().endsWith("//chords")) {
             return str.substring(0, str.indexOf("//chords"));
         }
-        if (str.endsWith("//title")) {
+        if (str.toLowerCase().endsWith("//title")) {
             return str.substring(0, str.indexOf("//title"));
         }
         return str;
