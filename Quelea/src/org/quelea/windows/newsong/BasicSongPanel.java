@@ -23,6 +23,7 @@ import java.util.List;
 import org.quelea.Application;
 import org.quelea.chord.ChordLineTransposer;
 import org.quelea.chord.ChordTransposer;
+import org.quelea.chord.TransposeDialog;
 
 /**
  * The panel that manages the basic input of song information - the title, author and lyrics.
@@ -33,6 +34,7 @@ public class BasicSongPanel extends JPanel {
     private final JTextArea lyricsArea;
     private final JTextField titleField;
     private final JTextField authorField;
+    private final TransposeDialog transposeDialog;
 
     /**
      * Create and initialise the song panel.
@@ -51,6 +53,8 @@ public class BasicSongPanel extends JPanel {
 
         authorField = new JTextField();
         authorField.setName("Author");
+
+        transposeDialog = new TransposeDialog();
 
         JTextField[] attributes = new JTextField[]{titleField, authorField};
 
@@ -141,35 +145,31 @@ public class BasicSongPanel extends JPanel {
         }
     }
 
+    /**
+     * Get the button used for transposing the chords.
+     * @return the button used for transposing the chords.
+     */
     private JButton getTransposeButton() {
         JButton ret = new JButton(Utils.getImageIcon("icons/transpose.png", 16, 16));
+        ret.setMargin(new Insets(0, 0, 0, 0));
+        ret.setBorder(new EmptyBorder(0, 0, 0, 0));
+        ret.setToolTipText("Trim lines");
         ret.addActionListener(new ActionListener() {
 
             @Override
             public void actionPerformed(ActionEvent e) {
 
-                int semitones = 2;
+                transposeDialog.setKey(getKey(0));
+                transposeDialog.setVisible(true);
+                int semitones = transposeDialog.getSemitones();
 
                 JTextField keyField = Application.get().getMainWindow().getSongEntryWindow().getDetailedSongPanel().getKeyField();
                 if (!keyField.getText().isEmpty()) {
                     keyField.setText(new ChordTransposer(keyField.getText()).transpose(semitones, null));
                 }
 
-                String key = keyField.getText();
-                if (key == null || key.isEmpty()) {
-                    for (String line : getLyricsField().getText().split("\n")) {
-                        if (new LineTypeChecker(line).getLineType() == LineTypeChecker.Type.CHORDS) {
-                            String first = line.split("\\s+")[0];
-                            key = new ChordTransposer(first).transpose(semitones, null);
-                            break;
-                        }
-                    }
-                }
+                String key = getKey(semitones);
 
-                if (key.isEmpty()) {
-                    key = null;
-                }
-                
                 StringBuilder newText = new StringBuilder(getLyricsField().getText().length());
                 for (String line : getLyricsField().getText().split("\n")) {
                     if (new LineTypeChecker(line).getLineType() == LineTypeChecker.Type.CHORDS) {
@@ -180,10 +180,48 @@ public class BasicSongPanel extends JPanel {
                     }
                     newText.append('\n');
                 }
+                int pos = getLyricsField().getCaretPosition();
                 getLyricsField().setText(newText.toString());
+                getLyricsField().setCaretPosition(pos);
             }
         });
         return ret;
+    }
+
+    /**
+     * Get the given key of the song (or as best we can work out if it's not 
+     * specified) transposed by the given number of semitones.
+     * @param semitones the number of semitones to transpose the key.
+     * @return the key, transposed.
+     */
+    private String getKey(int semitones) {
+        JTextField keyField = Application.get().getMainWindow().getSongEntryWindow().getDetailedSongPanel().getKeyField();
+        String key = keyField.getText();
+        if (key == null || key.isEmpty()) {
+            for (String line : getLyricsField().getText().split("\n")) {
+                if (new LineTypeChecker(line).getLineType() == LineTypeChecker.Type.CHORDS) {
+                    String first = line.split("\\s+")[0];
+                    key = new ChordTransposer(first).transpose(semitones, null);
+                    if (key.length() > 2) {
+                        key = key.substring(0, 2);
+                    }
+                    if (key.length() == 2) {
+                        if (key.charAt(1) == 'B') {
+                            key = Character.toString(key.charAt(0)) + "b";
+                        }
+                        else if (key.charAt(1) != 'b' && key.charAt(1) != '#') {
+                            key = Character.toString(key.charAt(0));
+                        }
+                    }
+                    break;
+                }
+            }
+        }
+
+        if (key.isEmpty()) {
+            key = null;
+        }
+        return key;
     }
 
     /**
@@ -208,30 +246,30 @@ public class BasicSongPanel extends JPanel {
         return button;
     }
 
-    /**
-     * Get the remove chords button.
-     * @return the remove chords button.
-     */
-    private JButton getRemoveChordsButton() {
-        JButton button = new JButton(Utils.getImageIcon("icons/removeChords.png"));
-        button.setMargin(new Insets(0, 0, 0, 0));
-        button.setBorder(new EmptyBorder(0, 0, 0, 0));
-        button.setToolTipText("Remove guitar chords (marked in red)");
-        button.addActionListener(new ActionListener() {
-
-            public void actionPerformed(ActionEvent e) {
-                StringBuilder newText = new StringBuilder();
-                for (String line : lyricsArea.getText().split("\n")) {
-                    if (new LineTypeChecker(line).getLineType() != LineTypeChecker.Type.CHORDS) {
-                        newText.append(line).append('\n');
-                    }
-                }
-                lyricsArea.setText(newText.toString());
-            }
-        });
-        return button;
-    }
-
+//    /**
+//     * Get the remove chords button. We no longer remove chords so this isn't needed - we keep them and use them!
+//     * @return the remove chords button.
+//     * @deprecated
+//     */
+//    private JButton getRemoveChordsButton() {
+//        JButton button = new JButton(Utils.getImageIcon("icons/removeChords.png"));
+//        button.setMargin(new Insets(0, 0, 0, 0));
+//        button.setBorder(new EmptyBorder(0, 0, 0, 0));
+//        button.setToolTipText("Remove guitar chords (marked in red)");
+//        button.addActionListener(new ActionListener() {
+//
+//            public void actionPerformed(ActionEvent e) {
+//                StringBuilder newText = new StringBuilder();
+//                for (String line : lyricsArea.getText().split("\n")) {
+//                    if (new LineTypeChecker(line).getLineType() != LineTypeChecker.Type.CHORDS) {
+//                        newText.append(line).append('\n');
+//                    }
+//                }
+//                lyricsArea.setText(newText.toString());
+//            }
+//        });
+//        return button;
+//    }
     /**
      * Get the spell checker button.
      * @return the spell checker button.
@@ -304,6 +342,7 @@ public class BasicSongPanel extends JPanel {
         getTitleField().setText(song.getTitle());
         getAuthorField().setText(song.getAuthor());
         getLyricsField().setText(song.getLyrics(true, true));
+        getLyricsField().setCaretPosition(0);
         getLyricsField().requestFocus();
     }
 
