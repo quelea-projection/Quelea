@@ -1,5 +1,9 @@
 package org.quelea.displayable;
 
+import java.awt.Graphics;
+import java.awt.print.PageFormat;
+import java.awt.print.Printable;
+import java.awt.print.PrinterException;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
@@ -31,7 +35,7 @@ import org.xml.sax.SAXException;
  * A song that contains a number of sections (verses, choruses, etc.)
  * @author Michael
  */
-public class Song implements TextDisplayable, Searchable, Comparable<Song> {
+public class Song implements TextDisplayable, Searchable, Comparable<Song>, Printable {
 
     public static class Builder {
 
@@ -105,7 +109,7 @@ public class Song implements TextDisplayable, Searchable, Comparable<Song> {
             song.copyright = copyright;
             return this;
         }
-        
+
         public Builder key(String key) {
             if (key == null) {
                 key = "";
@@ -113,7 +117,7 @@ public class Song implements TextDisplayable, Searchable, Comparable<Song> {
             song.key = key;
             return this;
         }
-        
+
         public Builder info(String info) {
             if (info == null) {
                 info = "";
@@ -125,7 +129,6 @@ public class Song implements TextDisplayable, Searchable, Comparable<Song> {
         public Song get() {
             return song;
         }
-
     }
     private static final Logger LOGGER = LoggerUtils.getLogger();
     private String title;
@@ -141,6 +144,7 @@ public class Song implements TextDisplayable, Searchable, Comparable<Song> {
     private Theme theme;
     private int id;
     private SoftReference<String> searchLyrics;
+    private boolean printChords;
 
     /**
      * Copy constructor - creates a shallow copy.
@@ -264,10 +268,10 @@ public class Song implements TextDisplayable, Searchable, Comparable<Song> {
     }
 
     public String getTagsAsString() {
-        if(tags==null) {
+        if (tags == null) {
             return "";
         }
-        StringBuilder ret = new StringBuilder(tags.length*5);
+        StringBuilder ret = new StringBuilder(tags.length * 5);
         for (int i = 0; i < tags.length; i++) {
             ret.append(tags[i]);
             if (i != tags.length - 1) {
@@ -293,14 +297,22 @@ public class Song implements TextDisplayable, Searchable, Comparable<Song> {
         return info;
     }
 
+    public boolean printChords() {
+        return printChords;
+    }
+
+    public void setPrintChords(boolean printChords) {
+        this.printChords = printChords;
+    }
+
     public void setInfo(String info) {
         this.info = info;
     }
-    
+
     public void setKey(String key) {
         this.key = key;
     }
-    
+
     public void setCcli(String ccli) {
         this.ccli = ccli;
     }
@@ -642,5 +654,16 @@ public class Song implements TextDisplayable, Searchable, Comparable<Song> {
     @Override
     public String getPrintText() {
         return "Song: " + getTitle() + " (" + getAuthor() + ")";
+    }
+
+    @Override
+    public int print(Graphics graphics, PageFormat pageFormat, int pageIndex) throws PrinterException {
+        //TODO: Implement
+        if (pageIndex == 1) {
+            return PAGE_EXISTS;
+        }
+        else {
+            return NO_SUCH_PAGE;
+        }
     }
 }

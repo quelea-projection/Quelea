@@ -1,7 +1,12 @@
 package org.quelea.windows.library;
 
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import javax.swing.*;
+import org.quelea.Application;
+import org.quelea.displayable.Song;
+import org.quelea.print.Printer;
 import org.quelea.utils.Utils;
 
 /**
@@ -13,6 +18,7 @@ public class LibraryPopupMenu extends JPopupMenu {
     private final JMenuItem addToSchedule;
     private final JMenuItem editDB;
     private final JMenuItem removeFromDB;
+    private final JMenuItem print;
 
     /**
      * Create and initialise the popup menu.
@@ -24,10 +30,26 @@ public class LibraryPopupMenu extends JPopupMenu {
         editDB.setMnemonic(KeyEvent.VK_E);
         removeFromDB = new JMenuItem("Remove from database", Utils.getImageIcon("icons/remove.png", 16, 16));
         removeFromDB.setMnemonic(KeyEvent.VK_R);
+        print = new JMenuItem("Print song", Utils.getImageIcon("icons/fileprint.png", 16, 16));
+        print.setMnemonic(KeyEvent.VK_P);
+
+        print.addActionListener(new ActionListener() {
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                Song song = Application.get().getMainWindow().getMainPanel().getLibraryPanel().getLibrarySongPanel().getSongList().getSelectedValue();
+                if (song != null) {
+                    int result = JOptionPane.showConfirmDialog(Application.get().getMainWindow(), "Print chords as well as lyrics?", "Printing options", JOptionPane.YES_NO_OPTION);
+                    song.setPrintChords(result == JOptionPane.YES_OPTION);
+                    Printer.getInstance().print(song);
+                }
+            }
+        });
 
         add(addToSchedule);
         add(editDB);
         add(removeFromDB);
+        add(print);
     }
 
     /**
@@ -53,5 +75,4 @@ public class LibraryPopupMenu extends JPopupMenu {
     public JMenuItem getRemoveFromDBButton() {
         return removeFromDB;
     }
-
 }
