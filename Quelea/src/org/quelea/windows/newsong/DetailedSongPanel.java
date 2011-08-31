@@ -3,8 +3,11 @@ package org.quelea.windows.newsong;
 import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Dimension;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
+import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -15,7 +18,10 @@ import javax.swing.SpringLayout;
 import javax.swing.text.AttributeSet;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.PlainDocument;
+import org.quelea.Application;
+import org.quelea.chord.ChordLineTransposer;
 import org.quelea.displayable.Song;
+import org.quelea.utils.LineTypeChecker;
 import org.quelea.utils.SpringUtilities;
 
 /**
@@ -89,16 +95,11 @@ public class DetailedSongPanel extends JPanel {
                 String oldString = getText(0, getLength());
                 String newString = oldString.substring(0, offs) + str
                         + oldString.substring(offs);
-                try {
-                    if (newString.isEmpty() || newString.matches("[a-gA-G][#b]?")) {
-                        if (Character.isLowerCase(newString.charAt(0))) {
-                            str = Character.toString(Character.toUpperCase(str.substring(0, 1).charAt(0))) + str.substring(1);
-                        }
-                        super.insertString(offs, str, a);
+                if (newString.isEmpty() || newString.matches("[a-gA-G][#b]?")) {
+                    if (Character.isLowerCase(newString.charAt(0))) {
+                        str = Character.toString(Character.toUpperCase(str.substring(0, 1).charAt(0))) + str.substring(1);
                     }
-                }
-                catch (NumberFormatException e) {
-                    //Not a number
+                    super.insertString(offs, str, a);
                 }
             }
         }, "", 10);
