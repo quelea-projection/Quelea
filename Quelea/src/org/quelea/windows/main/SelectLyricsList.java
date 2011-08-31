@@ -44,7 +44,7 @@ public class SelectLyricsList extends JList<TextSection> {
                 labelHTML.append(value.getTitle());
                 labelHTML.append("&nbsp;</span></font><br/>");
             }
-            for (String line : value.getText(displayChords)) {
+            for (String line : value.getText(displayChords, false)) {
                 labelHTML.append(line);
                 labelHTML.append("<br/>");
             }

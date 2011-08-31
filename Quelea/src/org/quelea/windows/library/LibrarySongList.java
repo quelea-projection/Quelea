@@ -186,8 +186,8 @@ public class LibrarySongList extends JList<Song> implements DatabaseListener {
         }
         Song song = getModel().getElementAt(index);
         TextSection[] sections = song.getSections();
-        if (sections.length > 0 && sections[0] != null && sections[0].getText(false).length > 0) {
-            return sections[0].getText(false)[0] + "...";
+        if (sections.length > 0 && sections[0] != null && sections[0].getText(false, false).length > 0) {
+            return sections[0].getText(false, false)[0] + "...";
         }
         return null;
     }

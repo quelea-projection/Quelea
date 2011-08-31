@@ -256,7 +256,7 @@ public class BasicSongPanel extends JPanel {
     public void resetEditSong(Song song) {
         getTitleField().setText(song.getTitle());
         getAuthorField().setText(song.getAuthor());
-        getLyricsField().setText(song.getLyrics(true));
+        getLyricsField().setText(song.getLyrics(true, true));
         getLyricsField().requestFocus();
     }
 
