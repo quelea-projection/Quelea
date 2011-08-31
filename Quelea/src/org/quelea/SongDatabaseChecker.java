@@ -17,8 +17,8 @@ public class SongDatabaseChecker {
      */
     public boolean checkSong(Song newSong) {
         for(Song databaseSong : SongDatabase.get().getSongs()) {
-            String databaseLyrics = databaseSong.getLyrics(false).replaceAll("[^\\p{L}]", "");
-            String newLyrics = newSong.getLyrics(false).replaceAll("[^\\p{L}]", "");
+            String databaseLyrics = databaseSong.getLyrics(false, false).replaceAll("[^\\p{L}]", "");
+            String newLyrics = newSong.getLyrics(false, false).replaceAll("[^\\p{L}]", "");
             int maxDistance;
             if(newLyrics.length() < databaseLyrics.length()) {
                 maxDistance = newLyrics.length() / 10;

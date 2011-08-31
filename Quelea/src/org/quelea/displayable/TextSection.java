@@ -67,7 +67,7 @@ public class TextSection {
             xml.append("</smalllines>");
         }
         xml.append("<lyrics>");
-        for (String line : getText(true)) {
+        for (String line : getText(true, true)) {
             xml.append(Utils.escapeXML(line)).append('\n');
         }
         xml.append("</lyrics></section>");
@@ -147,18 +147,43 @@ public class TextSection {
      * present), false otherwise.
      * @return the lyrics of the section.
      */
-    public String[] getText(boolean chords) {
-        if(chords) {
-            return Arrays.copyOf(lines, lines.length);
-        }
-        //Filter chords
+    public String[] getText(boolean chords, boolean comments) {
         List<String> ret = new ArrayList<>(lines.length);
-        for(String str : lines) {
-            if(new LineTypeChecker(str).getLineType()!=LineTypeChecker.Type.CHORDS) {
-                ret.add(str);
+        for (String str : lines) {
+            if (chords) {
+                if (comments) {
+                    ret.add(str);
+                }
+                else {
+                    ret.add(removeComments(str));
+                }
+            }
+            else {
+                if (new LineTypeChecker(str).getLineType() != LineTypeChecker.Type.CHORDS) {
+                    if (comments) {
+                        ret.add(str);
+                    }
+                    else {
+                        ret.add(removeComments(str));
+                    }
+                }
             }
         }
         return ret.toArray(new String[ret.size()]);
+    }
+
+    private String removeComments(String str) {
+        str = str.trim().toLowerCase();
+        if (str.endsWith("//lyrics")) {
+            return str.substring(0, str.indexOf("//lyrics"));
+        }
+        if (str.endsWith("//chords")) {
+            return str.substring(0, str.indexOf("//chords"));
+        }
+        if (str.endsWith("//title")) {
+            return str.substring(0, str.indexOf("//title"));
+        }
+        return str;
     }
 
     /**
