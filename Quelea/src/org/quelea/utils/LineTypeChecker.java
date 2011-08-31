@@ -22,6 +22,7 @@ public class LineTypeChecker {
 
         /**
          * Get the highlight colour to use for this type.
+         * @return the highlight colour to use for this type.
          */
         public Color getHighlightColor() {
             return color;
