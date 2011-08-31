@@ -20,6 +20,9 @@ import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 import java.util.ArrayList;
 import java.util.List;
+import org.quelea.Application;
+import org.quelea.chord.ChordLineTransposer;
+import org.quelea.chord.ChordTransposer;
 
 /**
  * The panel that manages the basic input of song information - the title, author and lyrics.
@@ -52,7 +55,7 @@ public class BasicSongPanel extends JPanel {
         JTextField[] attributes = new JTextField[]{titleField, authorField};
 
         JPanel topPanel = new JPanel(new SpringLayout());
-        for(int i = 0; i < attributes.length; i++) {
+        for (int i = 0; i < attributes.length; i++) {
             JLabel label = new JLabel(attributes[i].getName(), JLabel.TRAILING);
             topPanel.add(label);
             label.setLabelFor(attributes[i]);
@@ -86,8 +89,8 @@ public class BasicSongPanel extends JPanel {
         lyricsToolbar.setFloatable(false);
         lyricsToolbar.add(getDictButton());
         lyricsToolbar.add(getAposButton());
-//        lyricsToolbar.add(getRemoveChordsButton());
         lyricsToolbar.add(getTrimLinesButton());
+        lyricsToolbar.add(getTransposeButton());
         lyricsPanel.add(new JScrollPane(lyricsArea));
         JPanel lyricsToolbarPanel = new JPanel();
         lyricsToolbarPanel.setLayout(new FlowLayout(FlowLayout.LEADING, 0, 0));
@@ -97,14 +100,13 @@ public class BasicSongPanel extends JPanel {
         add(centrePanel, BorderLayout.CENTER);
 
     }
-
     private final List<Object> highlights = new ArrayList<>();
 
     /**
      * Manage the highlighting.
      */
     private void doHighlight() {
-        for(Object highlight : highlights) {
+        for (Object highlight : highlights) {
             lyricsArea.getHighlighter().removeHighlight(highlight);
         }
         highlights.clear();
@@ -114,29 +116,74 @@ public class BasicSongPanel extends JPanel {
             String[] lines = text.split("\n");
             List<HighlightIndex> indexes = new ArrayList<>();
             int offset = 0;
-            for(int i = 0; i < lines.length; i++) {
+            for (int i = 0; i < lines.length; i++) {
                 String line = lines[i];
                 LineTypeChecker.Type type = new LineTypeChecker(line).getLineType();
-                if(type == LineTypeChecker.Type.TITLE && i > 0 && !lines[i - 1].trim().isEmpty()) {
+                if (type == LineTypeChecker.Type.TITLE && i > 0 && !lines[i - 1].trim().isEmpty()) {
                     type = LineTypeChecker.Type.NORMAL;
                 }
-                if(type != LineTypeChecker.Type.NORMAL) {
+                if (type != LineTypeChecker.Type.NORMAL) {
                     int startIndex = offset;
                     int endIndex = startIndex + line.length();
                     Color highlightColor = type.getHighlightColor();
-                    if(highlightColor != null) {
+                    if (highlightColor != null) {
                         indexes.add(new HighlightIndex(startIndex, endIndex, highlightColor));
                     }
                 }
                 offset += line.length() + 1;
             }
 
-            for(HighlightIndex index : indexes) {
+            for (HighlightIndex index : indexes) {
                 highlights.add(hilite.addHighlight(index.getStartIndex(), index.getEndIndex(), new DefaultHighlightPainter(index.getHighlightColor())));
             }
         }
-        catch(BadLocationException ex) {
+        catch (BadLocationException ex) {
         }
+    }
+
+    private JButton getTransposeButton() {
+        JButton ret = new JButton(Utils.getImageIcon("icons/transpose.png", 16, 16));
+        ret.addActionListener(new ActionListener() {
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+
+                int semitones = 2;
+
+                JTextField keyField = Application.get().getMainWindow().getSongEntryWindow().getDetailedSongPanel().getKeyField();
+                if (!keyField.getText().isEmpty()) {
+                    keyField.setText(new ChordTransposer(keyField.getText()).transpose(semitones, null));
+                }
+
+                String key = keyField.getText();
+                if (key == null || key.isEmpty()) {
+                    for (String line : getLyricsField().getText().split("\n")) {
+                        if (new LineTypeChecker(line).getLineType() == LineTypeChecker.Type.CHORDS) {
+                            String first = line.split("\\s+")[0];
+                            key = new ChordTransposer(first).transpose(semitones, null);
+                            break;
+                        }
+                    }
+                }
+
+                if (key.isEmpty()) {
+                    key = null;
+                }
+                
+                StringBuilder newText = new StringBuilder(getLyricsField().getText().length());
+                for (String line : getLyricsField().getText().split("\n")) {
+                    if (new LineTypeChecker(line).getLineType() == LineTypeChecker.Type.CHORDS) {
+                        newText.append(new ChordLineTransposer(line).transpose(semitones, key));
+                    }
+                    else {
+                        newText.append(line);
+                    }
+                    newText.append('\n');
+                }
+                getLyricsField().setText(newText.toString());
+            }
+        });
+        return ret;
     }
 
     /**
@@ -152,7 +199,7 @@ public class BasicSongPanel extends JPanel {
 
             public void actionPerformed(ActionEvent e) {
                 StringBuilder newText = new StringBuilder();
-                for(String line : lyricsArea.getText().split("\n")) {
+                for (String line : lyricsArea.getText().split("\n")) {
                     newText.append(line.trim()).append("\n");
                 }
                 lyricsArea.setText(newText.toString());
@@ -174,8 +221,8 @@ public class BasicSongPanel extends JPanel {
 
             public void actionPerformed(ActionEvent e) {
                 StringBuilder newText = new StringBuilder();
-                for(String line : lyricsArea.getText().split("\n")) {
-                    if(new LineTypeChecker(line).getLineType() != LineTypeChecker.Type.CHORDS) {
+                for (String line : lyricsArea.getText().split("\n")) {
+                    if (new LineTypeChecker(line).getLineType() != LineTypeChecker.Type.CHORDS) {
                         newText.append(line).append('\n');
                     }
                 }
