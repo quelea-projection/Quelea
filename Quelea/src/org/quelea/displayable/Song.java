@@ -340,15 +340,16 @@ public class Song implements TextDisplayable, Searchable, Comparable<Song>, Prin
     /**
      * Get all the lyrics to this song as a string. This can be parsed using the setLyrics() method.
      * @param chords true if any chords should be included, false otherwise.
+     * @param comments true if any comments should be included, false otherwise.
      * @return the lyrics to this song.
      */
-    public String getLyrics(boolean chords) {
+    public String getLyrics(boolean chords, boolean comments) {
         StringBuilder ret = new StringBuilder();
         for (TextSection section : sections) {
             if (section.getTitle() != null && !section.getTitle().equals("")) {
                 ret.append(section.getTitle()).append("\n");
             }
-            for (String line : section.getText(chords)) {
+            for (String line : section.getText(chords, comments)) {
                 ret.append(line).append("\n");
             }
             ret.append("\n");
@@ -424,7 +425,7 @@ public class Song implements TextDisplayable, Searchable, Comparable<Song>, Prin
      */
     public boolean search(String s) {
         if (searchLyrics == null || searchLyrics.get() == null) {
-            searchLyrics = new SoftReference<>(stripPunctuation(getLyrics(false).replace("\n", " ")).toLowerCase());
+            searchLyrics = new SoftReference<>(stripPunctuation(getLyrics(false, false).replace("\n", " ")).toLowerCase());
         }
         return title.toLowerCase().contains(s)
                 || searchLyrics.get().contains(stripPunctuation(s));
@@ -594,8 +595,8 @@ public class Song implements TextDisplayable, Searchable, Comparable<Song>, Prin
             if (getAuthor() != null && other.getAuthor() != null) {
                 result = getAuthor().compareToIgnoreCase(other.getAuthor());
             }
-            if (result == 0 && getLyrics(false) != null && other.getLyrics(false) != null) {
-                result = getLyrics(false).compareTo(other.getLyrics(false));
+            if (result == 0 && getLyrics(false, false) != null && other.getLyrics(false, false) != null) {
+                result = getLyrics(false, false).compareTo(other.getLyrics(false, false));
             }
         }
         return result;

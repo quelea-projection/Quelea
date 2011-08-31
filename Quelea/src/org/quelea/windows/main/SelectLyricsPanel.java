@@ -116,7 +116,7 @@ public class SelectLyricsPanel extends ContainedPanel {
                 canvas.setTheme(currentSection.getTheme());
             }
             canvas.setCapitaliseFirst(currentSection.shouldCapitaliseFirst());
-            canvas.setText(currentSection.getText(false), currentSection.getSmallText());
+            canvas.setText(currentSection.getText(false, false), currentSection.getSmallText());
         }
     }
 }

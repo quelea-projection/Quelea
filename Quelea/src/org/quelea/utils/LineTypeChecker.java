@@ -62,6 +62,12 @@ public class LineTypeChecker {
         if(line.isEmpty()) {
             return false;
         }
+        if(line.toLowerCase().endsWith("//chords")) {
+            return true;
+        }
+        if(line.toLowerCase().endsWith("//lyrics")) {
+            return false;
+        }
         String checkLine = line.replace('-', ' ');
         checkLine = checkLine.replace('(', ' ');
         checkLine = checkLine.replace(')', ' ');
@@ -85,6 +91,9 @@ public class LineTypeChecker {
      */
     private boolean checkTitle() {
         String processedLine = line.toLowerCase().trim().replace("(", "").replace(")", "");
+        if (processedLine.endsWith("//title")) {
+            return true;
+        }
         return processedLine.toLowerCase().startsWith("verse")
                 || processedLine.toLowerCase().startsWith("chorus")
                 || processedLine.toLowerCase().startsWith("tag")

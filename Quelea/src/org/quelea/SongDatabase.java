@@ -188,7 +188,7 @@ public final class SongDatabase {
                 + "ccli, tags, publisher, year, copyright, key, info) values(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)")) {
             stat.setString(1, song.getTitle());
             stat.setString(2, song.getAuthor());
-            stat.setString(3, song.getLyrics(true));
+            stat.setString(3, song.getLyrics(true, true));
             String theme = "";
             if (song.getSections().length > 0 && song.getSections()[0].getTheme() != null) {
                 theme = song.getSections()[0].getTheme().toDBString();
@@ -247,7 +247,7 @@ public final class SongDatabase {
                         + "ccli=?, tags=?, publisher=?, year=?, copyright=?, key=?, info=? where id=?")) {
                     stat.setString(1, song.getTitle());
                     stat.setString(2, song.getAuthor());
-                    stat.setString(3, song.getLyrics(true));
+                    stat.setString(3, song.getLyrics(true, true));
                     String theme = "";
                     if (song.getSections().length > 0 && song.getSections()[0].getTheme() != null) {
                         theme = song.getSections()[0].getTheme().toDBString();
