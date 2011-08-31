@@ -1,5 +1,8 @@
 package org.quelea.displayable;
 
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.print.PageFormat;
 import java.awt.print.Printable;
@@ -11,12 +14,16 @@ import java.io.InputStream;
 import java.lang.ref.SoftReference;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.Icon;
+import javax.swing.JFrame;
+import javax.swing.JPanel;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -656,15 +663,87 @@ public class Song implements TextDisplayable, Searchable, Comparable<Song>, Prin
     public String getPrintText() {
         return "Song: " + getTitle() + " (" + getAuthor() + ")";
     }
+    
+    private List<Integer> nextSection = new ArrayList<>();
 
+    /**
+     * Print out the song.
+     * @param graphics the graphics to print onto.
+     * @param pageFormat the page format to print.
+     * @param pageIndex the page index to be printed.
+     * @return PAGE_EXISTS or NO_SUCH_PAGE
+     * @throws PrinterException if something went wrong.
+     */
     @Override
     public int print(Graphics graphics, PageFormat pageFormat, int pageIndex) throws PrinterException {
-        //TODO: Implement
-        if (pageIndex == 1) {
-            return PAGE_EXISTS;
+
+        if (pageIndex == 0) {
+            nextSection.clear();
+            nextSection.add(0);
         }
-        else {
+        else if (nextSection.get(pageIndex) >= getSections().length) {
             return NO_SUCH_PAGE;
         }
+
+        final int minx = (int) pageFormat.getImageableX();
+        final int miny = (int) pageFormat.getImageableY();
+        final int maxx = minx + (int) pageFormat.getImageableWidth();
+        final int maxy = miny + (int) pageFormat.getImageableHeight();
+
+        int pos = miny;
+        
+        if (pageIndex == 0) {
+            int fontSize = 38;
+            int width;
+            do {
+                fontSize -= 2;
+                graphics.setFont(new Font("SansSerif", Font.BOLD, fontSize));
+                width = graphics.getFontMetrics().stringWidth(getTitle().toUpperCase());
+            } while (width > maxx - minx);
+
+            graphics.drawString(getTitle().toUpperCase(), minx, miny + graphics.getFontMetrics().getHeight());
+            pos += graphics.getFontMetrics().getHeight() + graphics.getFontMetrics().getDescent();
+
+            graphics.setFont(new Font("SansSerif", Font.ITALIC, 20));
+            pos += graphics.getFontMetrics().getHeight();
+            graphics.drawString(getAuthor(), minx, pos);
+            pos += 10;
+            graphics.fillRect(minx, pos, maxx - minx, 3);
+
+        }
+        
+        pos += 30;
+
+        for (int i = nextSection.get(pageIndex); i < getSections().length; i++) {
+            TextSection section = getSections()[i];
+            int height = graphics.getFontMetrics().getHeight() * section.getText(printChords(), false).length;
+            if (pos + height > maxy - miny) {
+                if (nextSection.size() <= pageIndex + 1) {
+                    nextSection.add(0);
+                }
+                nextSection.set(pageIndex + 1, i);
+                return PAGE_EXISTS;
+            }
+            for (String str : section.getText(true, false)) {
+                switch (new LineTypeChecker(str).getLineType()) {
+                    case CHORDS:
+                        graphics.setFont(new Font("SansSerif", Font.BOLD, 16));
+                        graphics.setColor(Color.BLACK);
+                        break;
+                    default:
+                        graphics.setFont(new Font("SansSerif", 0, 16));
+                        graphics.setColor(Color.BLACK);
+                        break;
+                }
+                graphics.drawString(str, minx, pos);
+                pos += graphics.getFontMetrics().getHeight();
+            }
+            pos += 30;
+        }
+        if (nextSection.size() <= pageIndex + 1) {
+            nextSection.add(0);
+        }
+        nextSection.set(pageIndex + 1, getSections().length);
+        return PAGE_EXISTS;
     }
 }
