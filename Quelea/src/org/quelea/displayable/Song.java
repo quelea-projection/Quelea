@@ -309,10 +309,6 @@ public class Song implements TextDisplayable, Searchable, Comparable<Song>, Prin
         return info;
     }
 
-    public boolean printChords() {
-        return printChords;
-    }
-
     public String getCapo() {
         return capo;
     }
@@ -320,7 +316,7 @@ public class Song implements TextDisplayable, Searchable, Comparable<Song>, Prin
     public void setCapo(String capo) {
         this.capo = capo;
     }
-    
+
     public void setPrintChords(boolean printChords) {
         this.printChords = printChords;
     }
@@ -676,7 +672,6 @@ public class Song implements TextDisplayable, Searchable, Comparable<Song>, Prin
     public String getPrintText() {
         return "Song: " + getTitle() + " (" + getAuthor() + ")";
     }
-    
     private List<Integer> nextSection = new ArrayList<>();
 
     /**
@@ -704,7 +699,7 @@ public class Song implements TextDisplayable, Searchable, Comparable<Song>, Prin
         final int maxy = miny + (int) pageFormat.getImageableHeight();
 
         int pos = miny;
-        
+
         if (pageIndex == 0) {
             int fontSize = 38;
             int width;
@@ -717,19 +712,26 @@ public class Song implements TextDisplayable, Searchable, Comparable<Song>, Prin
             graphics.drawString(getTitle().toUpperCase(), minx, miny + graphics.getFontMetrics().getHeight());
             pos += graphics.getFontMetrics().getHeight() + graphics.getFontMetrics().getDescent();
 
-            graphics.setFont(new Font("SansSerif", Font.ITALIC, 20));
-            pos += graphics.getFontMetrics().getHeight();
-            graphics.drawString(getAuthor(), minx, pos);
-            pos += 10;
+            if (!getAuthor().isEmpty() || (printChords && !getCapo().isEmpty())) {
+                graphics.setFont(new Font("SansSerif", Font.ITALIC, 20));
+                pos += graphics.getFontMetrics().getHeight();
+                graphics.drawString(getAuthor(), minx, pos);
+                if (printChords && !getCapo().isEmpty()) {
+                    String capoStr = "Capo " + getCapo();
+                    int capoStrWidth = graphics.getFontMetrics().stringWidth(capoStr);
+                    graphics.drawString(capoStr, maxx - capoStrWidth, pos);
+                }
+                pos += 10;
+            }
             graphics.fillRect(minx, pos, maxx - minx, 3);
 
         }
-        
+
         pos += 30;
 
         for (int i = nextSection.get(pageIndex); i < getSections().length; i++) {
             TextSection section = getSections()[i];
-            int height = graphics.getFontMetrics().getHeight() * section.getText(printChords(), false).length;
+            int height = graphics.getFontMetrics().getHeight() * section.getText(printChords, false).length;
             if (pos + height > maxy - miny) {
                 if (nextSection.size() <= pageIndex + 1) {
                     nextSection.add(0);
@@ -740,6 +742,9 @@ public class Song implements TextDisplayable, Searchable, Comparable<Song>, Prin
             for (String str : section.getText(true, false)) {
                 switch (new LineTypeChecker(str).getLineType()) {
                     case CHORDS:
+                        if (!printChords) {
+                            continue;
+                        }
                         graphics.setFont(new Font("SansSerif", Font.BOLD, 16));
                         graphics.setColor(Color.BLACK);
                         break;
