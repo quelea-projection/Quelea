@@ -3,11 +3,8 @@ package org.quelea.windows.newsong;
 import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Dimension;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
-import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -18,10 +15,7 @@ import javax.swing.SpringLayout;
 import javax.swing.text.AttributeSet;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.PlainDocument;
-import org.quelea.Application;
-import org.quelea.chord.ChordLineTransposer;
 import org.quelea.displayable.Song;
-import org.quelea.utils.LineTypeChecker;
 import org.quelea.utils.SpringUtilities;
 
 /**
@@ -36,6 +30,7 @@ public class DetailedSongPanel extends JPanel {
     private JTextField copyright;
     private JTextField tags;
     private JTextField key;
+    private JTextField capo;
     private JTextArea info;
 
     /**
@@ -103,6 +98,30 @@ public class DetailedSongPanel extends JPanel {
                 }
             }
         }, "", 10);
+        capo = new JTextField(new PlainDocument() {
+
+            @Override
+            public void insertString(int offs, String str, AttributeSet a) throws BadLocationException {
+
+                if (str == null) {
+                    return;
+                }
+                String oldString = getText(0, getLength());
+                String newString = oldString.substring(0, offs) + str
+                        + oldString.substring(offs);
+                try {
+                    if (newString.length() <= 4) {
+                        int val = Integer.parseInt(newString + "0") / 10;
+                        if (val > 0 && val <= 24) {
+                            super.insertString(offs, str, a);
+                        }
+                    }
+                }
+                catch (NumberFormatException e) {
+                    //Not a number
+                }
+            }
+        }, "", 10);
         info = new JTextArea(new PlainDocument() {
 
             @Override
@@ -126,11 +145,12 @@ public class DetailedSongPanel extends JPanel {
         addBlock(formPanel, "Publisher", publisher);
         addBlock(formPanel, "Tags", tags);
         addBlock(formPanel, "Key", key);
+        addBlock(formPanel, "Capo", capo);
         JScrollPane pane = new JScrollPane(info);
         pane.setPreferredSize(new Dimension(pane.getPreferredSize().width, 300));
         addBlock(formPanel, "Notes", pane);
 
-        SpringUtilities.makeCompactGrid(formPanel, 7, 2, 6, 6, 6, 6);
+        SpringUtilities.makeCompactGrid(formPanel, 8, 2, 6, 6, 6, 6);
 
         add(formPanel, BorderLayout.NORTH);
 
@@ -150,6 +170,7 @@ public class DetailedSongPanel extends JPanel {
         tags.setText("");
         copyright.setText("");
         key.setText("");
+        capo.setText("");
         info.setText("");
     }
 
@@ -160,6 +181,7 @@ public class DetailedSongPanel extends JPanel {
         publisher.setText(song.getPublisher());
         year.setText(song.getYear());
         key.setText(song.getKey());
+        capo.setText(song.getCapo());
         info.setText(song.getInfo());
     }
 
@@ -191,6 +213,10 @@ public class DetailedSongPanel extends JPanel {
         return key;
     }
 
+    public JTextField getCapoField() {
+        return capo;
+    }
+    
     public static void main(String[] args) {
         JFrame frame = new JFrame();
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);

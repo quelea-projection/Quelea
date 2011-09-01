@@ -216,6 +216,7 @@ public class SongEntryWindow extends JDialog {
         song.setPublisher(getDetailedSongPanel().getPublisherField().getText());
         song.setYear(getDetailedSongPanel().getYearField().getText());
         song.setKey(getDetailedSongPanel().getKeyField().getText());
+        song.setCapo(getDetailedSongPanel().getCapoField().getText());
         song.setInfo(getDetailedSongPanel().getInfoField().getText());
         for(TextSection section : song.getSections()) {
             section.setTheme(themePanel.getTheme());
