@@ -47,7 +47,7 @@ public class TransposeDialog extends JDialog {
 
             @Override
             public void actionPerformed(ActionEvent e) {
-                semitones = keySelection.getSelectedIndex() - 10;
+                semitones = keySelection.getSelectedIndex() - 4;
                 if (semitones <= 0) {
                     semitones--;
                 }
@@ -78,7 +78,7 @@ public class TransposeDialog extends JDialog {
     public void setKey(String key) {
         DefaultComboBoxModel<String> model = ((DefaultComboBoxModel<String>) keySelection.getModel());
         model.removeAllElements();
-        for (int i = -11; i < 12; i++) {
+        for (int i = -5; i < 7; i++) {
             if (i == 0) {
                 continue;
             }
@@ -90,7 +90,7 @@ public class TransposeDialog extends JDialog {
             model.addElement(transKey + " (" + istr + ")");
         }
         
-        keySelection.setSelectedIndex(11);
+        keySelection.setSelectedIndex(5);
         keySelection.setMaximumSize(keySelection.getPreferredSize());
     }
 
