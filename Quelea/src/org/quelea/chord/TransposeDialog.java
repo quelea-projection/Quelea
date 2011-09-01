@@ -67,6 +67,7 @@ public class TransposeDialog extends JDialog {
         buttonPanel.add(cancelButton);
         buttonPanel.setAlignmentX(Component.LEFT_ALIGNMENT);
         add(buttonPanel);
+        getRootPane().setDefaultButton(okButton);
         pack();
     }
 
