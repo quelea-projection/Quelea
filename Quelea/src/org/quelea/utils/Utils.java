@@ -262,7 +262,7 @@ public final class Utils {
      * @return hopefully the text content of the file, or the errorText string if we can't get the text content for some
      *         reason.
      */
-    public static String getTextFromFile(String fileName, String errorText) {
+    public static synchronized String getTextFromFile(String fileName, String errorText) {
         try (BufferedReader reader = new BufferedReader(new FileReader(fileName))) {
             StringBuilder content = new StringBuilder();
             String line;

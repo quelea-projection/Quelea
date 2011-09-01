@@ -22,9 +22,10 @@ public class ColourSelectionWindow extends JDialog {
 
     /**
      * Create and initialise the colour selection window.
+     * @param owner the owner of this dialog.
      */
     public ColourSelectionWindow(Window owner) {
-        super(owner, "Select colour");
+        super(owner, "Select colour", ModalityType.APPLICATION_MODAL);
         setLayout(new BorderLayout());
         setResizable(false);
         wheel = new ColorWheel(new ColorModel(), Color.WHITE);
