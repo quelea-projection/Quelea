@@ -167,7 +167,7 @@ public final class QueleaProperties extends Properties {
 
     /**
      * Set the min lines value.
-     * @param maxChars the minimum line count.
+     * @param minLines the minimum line count.
      */
     public void setMinLines(int minLines) {
         setProperty("min.lines", Integer.toString(minLines));
@@ -285,7 +285,7 @@ public final class QueleaProperties extends Properties {
 
     /**
      * Set the default bible.
-     * @param biblename the name of the default bible.
+     * @param bible the default bible.
      */
     public void setDefaultBible(Bible bible) {
         setProperty("default.bible", bible.getName());
