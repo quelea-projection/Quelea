@@ -30,7 +30,7 @@ import org.quelea.windows.main.LyricCanvas;
 public class ThemePanel extends JPanel {
 
     private static final int THRESHOLD = 30;
-    private static final String[] SAMPLE_LYRICS = {"Amazing Grace! how sweet the sound", "That saved a wretch like me", "I once was lost but now am found", "Was blind, but now I see."};
+    public static final String[] SAMPLE_LYRICS = {"Amazing Grace how sweet the sound", "That saved a wretch like me", "I once was lost but now am found", "Was blind, but now I see."};
     private JPanel fontToolbar;
     private JPanel backgroundPanel;
     private JComboBox<String> fontSelection;
