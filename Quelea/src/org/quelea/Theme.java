@@ -2,6 +2,7 @@ package org.quelea;
 
 import java.awt.Color;
 import java.awt.Font;
+import java.io.File;
 import org.quelea.utils.Utils;
 
 /**
@@ -19,13 +20,8 @@ public class Theme {
     private final Color fontColor;
     private final Background background;
     private String themeName;
+    private File file;
     
-    public static void main(String[] args) {
-        Theme theme = new Theme(DEFAULT_FONT, DEFAULT_FONT_COLOR, DEFAULT_BACKGROUND);
-        theme.themeName = "White on black";
-        System.out.println(theme.toDBString());
-    }
-
     /**
      * Create a new theme with a specified font, font colour and background.
      * @param font       the font to use for the theme.
@@ -38,6 +34,14 @@ public class Theme {
         this.background = background;
         themeName = "";
     }
+
+    public File getFile() {
+        return file;
+    }
+
+    public void setFile(File file) {
+        this.file = file;
+    }
     
     /**
      * Get the name of the theme.
@@ -45,6 +49,14 @@ public class Theme {
      */
     public String getThemeName() {
         return themeName;
+    }
+    
+    /**
+     * Set the theme name.
+     * @param themeName the theme name.
+     */
+    public void setThemeName(String themeName) {
+        this.themeName = themeName;
     }
 
     /**
