@@ -42,8 +42,8 @@ public class LyricCanvas extends Canvas {
 
     /**
      * Create a new canvas where the lyrics should be displayed.
-     * @param aspectWidth  the aspect ratio width.
-     * @param aspectHeight the aspect ratio height.
+     * @param showBorder true if the border should be shown around any text (only
+     * if the options say so) false otherwise.
      */
     public LyricCanvas(boolean showBorder) {
         this.showBorder = showBorder;
@@ -391,6 +391,7 @@ public class LyricCanvas extends Canvas {
      * Set the text to appear on the canvas. The lines will be automatically wrapped and if the text is too large to fit
      * on the screen in the current font, the size will be decreased until all the text fits.
      * @param text an array of the lines to display on the canvas, one entry in the array is one line.
+     * @param smallText an array of the small lines to be displayed on the canvas. 
      */
     public void setText(String[] text, String[] smallText) {
         if (text == null) {
