@@ -1,7 +1,6 @@
 package org.quelea.displayable;
 
 import java.awt.Color;
-import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.print.PageFormat;
@@ -14,16 +13,12 @@ import java.io.InputStream;
 import java.lang.ref.SoftReference;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.Icon;
-import javax.swing.JFrame;
-import javax.swing.JPanel;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -125,6 +120,14 @@ public class Song implements TextDisplayable, Searchable, Comparable<Song>, Prin
             return this;
         }
 
+        public Builder capo(String capo) {
+            if (capo == null) {
+                capo = "";
+            }
+            song.capo = capo;
+            return this;
+        }
+
         public Builder info(String info) {
             if (info == null) {
                 info = "";
@@ -145,6 +148,7 @@ public class Song implements TextDisplayable, Searchable, Comparable<Song>, Prin
     private String publisher;
     private String copyright;
     private String key;
+    private String capo;
     private String info;
     private String[] tags;
     private List<TextSection> sections;
@@ -171,6 +175,7 @@ public class Song implements TextDisplayable, Searchable, Comparable<Song>, Prin
         this.key = song.key;
         this.info = song.info;
         this.tags = song.tags;
+        this.capo = song.capo;
     }
 
     /**
@@ -308,6 +313,14 @@ public class Song implements TextDisplayable, Searchable, Comparable<Song>, Prin
         return printChords;
     }
 
+    public String getCapo() {
+        return capo;
+    }
+
+    public void setCapo(String capo) {
+        this.capo = capo;
+    }
+    
     public void setPrintChords(boolean printChords) {
         this.printChords = printChords;
     }
