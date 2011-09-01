@@ -8,11 +8,13 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import java.awt.*;
+import java.awt.event.AWTEventListener;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import javax.swing.event.ListDataListener;
+import org.quelea.Application;
 
 /**
  * The panel displaying the schedule / order of service. Items from here are loaded into the preview panel where they
@@ -26,7 +28,7 @@ public class SchedulePanel extends JPanel {
     private final JButton upButton;
     private final JButton downButton;
     private final JButton themeButton;
-    private final ScheduleThemePopupMenu themeMenu;
+    private final ScheduleThemePopupWindow themeMenu;
 
     /**
      * Create and initialise the schedule panel.
@@ -51,13 +53,35 @@ public class SchedulePanel extends JPanel {
                 themeMenu.updateTheme();
             }
         });
-        
-        themeMenu = new ScheduleThemePopupMenu(scheduleList);
+
+        themeMenu = new ScheduleThemePopupWindow(scheduleList);
+        Toolkit.getDefaultToolkit().addAWTEventListener(new AWTEventListener() {
+
+            @Override
+            public void eventDispatched(AWTEvent event) {
+                MouseEvent mouseEvent = (MouseEvent) event;
+                if (mouseEvent.getClickCount() > 0) {
+                    Rectangle bounds = Application.get().getMainWindow().getBounds();
+                    if (bounds.contains(new Point(mouseEvent.getXOnScreen(), mouseEvent.getYOnScreen()))) {
+                        Rectangle popupBounds = themeMenu.getBounds();
+                        if (!popupBounds.contains(new Point(mouseEvent.getXOnScreen(), mouseEvent.getYOnScreen()))) {
+                            if (event.getSource() != themeButton) {
+                                themeMenu.setVisible(false);
+                            }
+                        }
+                    }
+                }
+            }
+        }, AWTEvent.MOUSE_EVENT_MASK);
         themeButton = new JButton(Utils.getImageIcon("icons/settings.png", 16, 16));
         themeButton.addMouseListener(new MouseAdapter() {
 
             public void mousePressed(MouseEvent e) {
-                themeMenu.show(e.getComponent(), themeButton.getX()-e.getComponent().getX(), themeButton.getY()-e.getComponent().getY()+themeButton.getHeight());
+                themeMenu.setSize(themeMenu.getPreferredSize());
+                int x = (int)themeButton.getLocationOnScreen().getX();
+                int y = (int)themeButton.getLocationOnScreen().getY()+themeButton.getHeight();
+                themeMenu.setLocation(x, y);
+                themeMenu.setVisible(true);
             }
         });
         themeButton.setToolTipText("Adjust theme for service");
@@ -95,7 +119,7 @@ public class SchedulePanel extends JPanel {
         scheduleList.addListSelectionListener(new ListSelectionListener() {
 
             public void valueChanged(ListSelectionEvent e) {
-                if(scheduleList.getSelectedIndex() == -1) {
+                if (scheduleList.getSelectedIndex() == -1) {
                     removeButton.setEnabled(false);
                     upButton.setEnabled(false);
                     downButton.setEnabled(false);
@@ -132,7 +156,7 @@ public class SchedulePanel extends JPanel {
     public ScheduleList getScheduleList() {
         return scheduleList;
     }
-    
+
     public static void main(String[] args) {
         JFrame frame = new JFrame();
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -140,5 +164,4 @@ public class SchedulePanel extends JPanel {
         frame.pack();
         frame.setVisible(true);
     }
-
 }

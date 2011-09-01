@@ -12,15 +12,14 @@ import java.io.IOException;
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
-import javax.swing.JWindow;
+import org.quelea.utils.FadeWindow;
 import org.quelea.utils.QueleaProperties;
-import org.quelea.utils.Utils;
 
 /**
  * The splash screen to display when the program starts.
  * @author Michael
  */
-public class SplashWindow extends JWindow {
+public class SplashWindow extends FadeWindow {
 
     /**
      * Create a new splash window.
@@ -51,55 +50,6 @@ public class SplashWindow extends JWindow {
         Rectangle bounds = gds[controlScreenProp].getDefaultConfiguration().getBounds();
         setLocation((int) (bounds.getLocation().x + bounds.getWidth() / 2) - getWidth() / 2, (int) (bounds.getLocation().y + bounds.getHeight() / 2) - getHeight() / 2);
 
-    }
-
-    /**
-     * Fade in or out, replaces setVisible().
-     * @param in true if the window should fade in, false to fade out.
-     */
-    private void fade(final boolean in) {
-        new Thread() {
-
-            private float opacity;
-
-            {
-                if (in) {
-                    opacity = 0;
-                }
-                else {
-                    opacity = 1;
-                }
-            }
-
-            @Override
-            public void run() {
-                if (in) {
-                    SplashWindow.super.setVisible(true);
-                    while (opacity < 1) {
-                        setOpacity(opacity);
-                        Utils.sleep(15);
-                        opacity += 0.03f;
-                    }
-                }
-                else {
-                    while (opacity > 0) {
-                        setOpacity(opacity);
-                        Utils.sleep(15);
-                        opacity -= 0.03f;
-                    }
-                    SplashWindow.super.setVisible(false);
-                }
-            }
-        }.start();
-    }
-
-    /**
-     * Fade the window in and out gradually.
-     * @param visible whether the window should be visible or not.
-     */
-    @Override
-    public void setVisible(boolean visible) {
-        fade(visible);
     }
 
     /**
