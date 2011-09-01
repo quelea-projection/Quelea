@@ -153,7 +153,7 @@ public class BasicSongPanel extends JPanel {
         JButton ret = new JButton(Utils.getImageIcon("icons/transpose.png", 16, 16));
         ret.setMargin(new Insets(0, 0, 0, 0));
         ret.setBorder(new EmptyBorder(0, 0, 0, 0));
-        ret.setToolTipText("Trim lines");
+        ret.setToolTipText("Transpose");
         ret.addActionListener(new ActionListener() {
 
             @Override
