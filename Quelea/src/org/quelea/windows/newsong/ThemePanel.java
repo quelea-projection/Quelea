@@ -224,6 +224,10 @@ public class ThemePanel extends JPanel {
         }
     }
 
+    public LyricCanvas getCanvas() {
+        return canvas;
+    }
+    
     /**
      * Get the theme currently represented by the state of this panel.
      * @return the current theme.

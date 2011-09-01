@@ -38,6 +38,7 @@ public class ColourButton extends JButton {
             public void actionPerformed(ActionEvent e) {
                 selectionWindow.setLocation((int) getLocationOnScreen().getX(), (int) getLocationOnScreen().getY());
                 selectionWindow.setVisible(true);
+                selectionWindow.toFront();
             }
         });
     }
