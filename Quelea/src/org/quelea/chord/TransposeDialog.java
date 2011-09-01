@@ -28,7 +28,7 @@ public class TransposeDialog extends JDialog {
      * Create a new transpose dialog.
      */
     public TransposeDialog() {
-        super(Application.get().getMainWindow(), "Transpose song chords", true);
+        super(Application.get().getMainWindow(), "Transpose", true);
         keySelection = new JComboBox<>();
         keySelection.setAlignmentX(Component.LEFT_ALIGNMENT);
         setLayout(new BoxLayout(getContentPane(), BoxLayout.Y_AXIS));
