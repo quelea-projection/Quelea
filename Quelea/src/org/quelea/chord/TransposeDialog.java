@@ -32,7 +32,7 @@ public class TransposeDialog extends JDialog {
         keySelection = new JComboBox<>();
         keySelection.setAlignmentX(Component.LEFT_ALIGNMENT);
         setLayout(new BoxLayout(getContentPane(), BoxLayout.Y_AXIS));
-        JLabel label = new JLabel("Select the amount of semitones you want to transpose up or down:");
+        JLabel label = new JLabel("Select the new key:");
         label.setAlignmentX(Component.LEFT_ALIGNMENT);
         add(label);
         add(Box.createVerticalStrut(5));
