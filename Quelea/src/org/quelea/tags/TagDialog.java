@@ -44,7 +44,7 @@ public class TagDialog extends JDialog {
         list = new LibrarySongList();
         
         setLayout(new BorderLayout());
-        tagEntryPanel = new TagEntryPanel(list);
+        tagEntryPanel = new TagEntryPanel(list, false, true);
         add(tagEntryPanel, BorderLayout.NORTH);
         JScrollPane scroll = new JScrollPane(list);
         scroll.setPreferredSize(new Dimension(500, 500));

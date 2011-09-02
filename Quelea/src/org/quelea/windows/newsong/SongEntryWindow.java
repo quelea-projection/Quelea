@@ -210,7 +210,7 @@ public class SongEntryWindow extends JDialog {
         song.setLyrics(getBasicSongPanel().getLyricsField().getText());
         song.setTitle(getBasicSongPanel().getTitleField().getText());
         song.setAuthor(getBasicSongPanel().getAuthorField().getText());
-        song.setTags(getDetailedSongPanel().getTagsField().getText());
+        song.setTags(getDetailedSongPanel().getTagsPanel().getTagsAsString());
         song.setCcli(getDetailedSongPanel().getCcliField().getText());
         song.setCopyright(getDetailedSongPanel().getCopyrightField().getText());
         song.setPublisher(getDetailedSongPanel().getPublisherField().getText());

@@ -20,7 +20,7 @@ import org.quelea.windows.library.LibrarySongList;
  * @author Michael
  */
 public class TagPopupWindow extends FadeWindow {
-    
+
     private class Tag implements Comparable<Tag> {
 
         private String str;
@@ -63,18 +63,19 @@ public class TagPopupWindow extends FadeWindow {
             return hash;
         }
     }
-    
     private static final int MAX_RESULTS = 12;
     private Map<String, Integer> tagMap;
+    private boolean includeUserText;
 
-    public TagPopupWindow() {
+    public TagPopupWindow(final boolean includeUserText) {
+        this.includeUserText = includeUserText;
         setSpeed(0.07f);
         setLayout(new BoxLayout(this.getContentPane(), BoxLayout.Y_AXIS));
         setAlwaysOnTop(true);
     }
 
     public void setString(final JTextField search, final TagPanel panel, final LibrarySongList list) {
-        
+
         boolean visible = false;
         getContentPane().removeAll();
 
@@ -84,6 +85,9 @@ public class TagPopupWindow extends FadeWindow {
                 chosenTags.add(new Tag(tag, tagMap.get(tag)));
             }
         }
+        if (includeUserText && search.getText() != null && !search.getText().trim().isEmpty()) {
+            chosenTags.add(new Tag(search.getText(), 0));
+        }
 
         Iterator<Tag> iter = chosenTags.iterator();
         for (int i = 0; i < MAX_RESULTS; i++) {
@@ -91,14 +95,20 @@ public class TagPopupWindow extends FadeWindow {
                 break;
             }
             final String tag = iter.next().str;
-            final JButton button = new JButton(tag + " (x" + tagMap.get(tag) + ")");
+            Integer num = tagMap.get(tag);
+            if (num == null) {
+                num = 0;
+            }
+            final JButton button = new JButton(tag + " (x" + num + ")");
             button.addActionListener(new ActionListener() {
 
                 @Override
                 public void actionPerformed(ActionEvent e) {
                     search.setText("");
                     panel.addTag(tag, list);
-                    list.filterByTag(panel.getTags(), false);
+                    if (list != null) {
+                        list.filterByTag(panel.getTags(), false);
+                    }
                     setVisible(false);
                 }
             });

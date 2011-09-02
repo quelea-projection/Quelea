@@ -16,6 +16,7 @@ import javax.swing.text.AttributeSet;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.PlainDocument;
 import org.quelea.displayable.Song;
+import org.quelea.tags.TagEntryPanel;
 import org.quelea.utils.SpringUtilities;
 
 /**
@@ -28,7 +29,7 @@ public class DetailedSongPanel extends JPanel {
     private JTextField year;
     private JTextField publisher;
     private JTextField copyright;
-    private JTextField tags;
+    private TagEntryPanel tags;
     private JTextField key;
     private JTextField capo;
     private JTextArea info;
@@ -78,7 +79,7 @@ public class DetailedSongPanel extends JPanel {
         }, "", 10);
         publisher = new JTextField(10);
         copyright = new JTextField(10);
-        tags = new JTextField(10);
+        tags = new TagEntryPanel(null, true, false);
         key = new JTextField(new PlainDocument() {
 
             @Override
@@ -167,7 +168,7 @@ public class DetailedSongPanel extends JPanel {
         ccli.setText("");
         year.setText("");
         publisher.setText("");
-        tags.setText("");
+        tags.removeTags();
         copyright.setText("");
         key.setText("");
         capo.setText("");
@@ -177,7 +178,7 @@ public class DetailedSongPanel extends JPanel {
     public void resetEditSong(Song song) {
         ccli.setText(song.getCcli());
         copyright.setText(song.getCopyright());
-        tags.setText(song.getTagsAsString());
+        tags.setTags(song.getTagsAsString());
         publisher.setText(song.getPublisher());
         year.setText(song.getYear());
         key.setText(song.getKey());
@@ -197,7 +198,7 @@ public class DetailedSongPanel extends JPanel {
         return publisher;
     }
 
-    public JTextField getTagsField() {
+    public TagEntryPanel getTagsPanel() {
         return tags;
     }
 

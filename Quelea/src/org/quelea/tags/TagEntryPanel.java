@@ -5,6 +5,7 @@ import java.awt.Dimension;
 import java.awt.IllegalComponentStateException;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
+import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 import java.awt.event.MouseAdapter;
@@ -35,12 +36,21 @@ public class TagEntryPanel extends JPanel {
     private TagPanel tagPanel;
     private TagPopupWindow popup;
 
-    public TagEntryPanel(final LibrarySongList list) {
+    public TagEntryPanel(final LibrarySongList list, boolean includeUserText, boolean includeLabel) {
         setLayout(new BorderLayout());
         tagPanel = new TagPanel();
         tagField = new JTextField(20);
+        tagField.setText("<Type a tag name here>");
+        tagField.addFocusListener(new FocusAdapter() {
+
+            @Override
+            public void focusGained(FocusEvent e) {
+                tagField.setText("");
+                removeFocusListener(this);
+            }
+        });
         tags = new HashMap<>();
-        popup = new TagPopupWindow();
+        popup = new TagPopupWindow(includeUserText);
         addAncestorListener(new AncestorListener() {
 
             private ComponentAdapter adapter = new ComponentAdapter() {
@@ -126,12 +136,27 @@ public class TagEntryPanel extends JPanel {
         northPanel.setLayout(new BoxLayout(northPanel, BoxLayout.Y_AXIS));
         JPanel textPanel = new JPanel();
         textPanel.setLayout(new BoxLayout(textPanel, BoxLayout.X_AXIS));
-        textPanel.add(new JLabel("Tags:"));
-        textPanel.add(Box.createRigidArea(new Dimension(10, 0)));
+        if (includeLabel) {
+            textPanel.add(new JLabel("Tags:"));
+            textPanel.add(Box.createRigidArea(new Dimension(10, 0)));
+        }
         textPanel.add(tagField);
         northPanel.add(textPanel);
         northPanel.add(tagPanel);
         add(northPanel, BorderLayout.NORTH);
+    }
+
+    public void removeTags() {
+        tagPanel.removeTags();
+    }
+
+    public void setTags(String tags) {
+        reloadTags();
+        tagPanel.setTags(tags);
+    }
+
+    public String getTagsAsString() {
+        return tagPanel.getTagsAsString();
     }
 
     public final void reloadTags() {
