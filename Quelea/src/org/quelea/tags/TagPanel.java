@@ -37,7 +37,7 @@ public class TagPanel extends JPanel {
         final JPanel tagPanel = new JPanel();
         tagPanel.setBorder(new LineBorder(Color.BLACK, 2));
         tagPanel.add(new JLabel(tag));
-        final JButton button = new JButton(Utils.getImageIcon("icons/delete.png", 16, 16));
+        final JButton button = new JButton(Utils.getImageIcon("icons/delete.png", 10, 10));
         button.addActionListener(new ActionListener() {
 
             @Override

@@ -64,7 +64,7 @@ public class TagPopupWindow extends FadeWindow {
         }
     }
     
-    private static final int MAX_RESULTS = 4;
+    private static final int MAX_RESULTS = 12;
     private Map<String, Integer> tagMap;
 
     public TagPopupWindow() {
