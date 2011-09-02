@@ -11,7 +11,6 @@ import java.awt.event.MouseEvent;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
-import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -77,9 +76,6 @@ public class ThemePreviewPanel extends JPanel {
                 }
             });
         }
-        else {
-            selectButton.doClick();
-        }
         buttonPanel.add(selectButton);
         if (theme != null) {
             buttonPanel.add(Box.createHorizontalGlue());
@@ -122,11 +118,4 @@ public class ThemePreviewPanel extends JPanel {
         return theme;
     }
 
-    public static void main(String[] args) {
-        JFrame frame = new JFrame();
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.add(new ThemePreviewPanel(Theme.DEFAULT_THEME));
-        frame.pack();
-        frame.setVisible(true);
-    }
 }
