@@ -19,6 +19,7 @@ import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
@@ -129,6 +130,8 @@ public class LibrarySongList extends JList<Song> implements DatabaseListener {
     /**
      * Filter the results in this list by a specific search term.
      * @param search the search term to use.
+     * @param beep true if the system should beep if the search returns 0 results,
+     * false otherwise. At present ignored - never beep.
      */
     public void filter(final String search, final boolean beep) {
         if (filterFuture != null) {
@@ -141,6 +144,51 @@ public class LibrarySongList extends JList<Song> implements DatabaseListener {
                 for (int i = 0; i < fullModel.getSize(); i++) {
                     Song s = fullModel.getElementAt(i);
                     if (s.search(search.toLowerCase())) {
+                        model.add(s);
+                    }
+                }
+//                if (beep && model.getSize() == 0) {
+//                    java.awt.Toolkit.getDefaultToolkit().beep();
+//                }
+                SwingUtilities.invokeLater(new Runnable() {
+
+                    @Override
+                    public void run() {
+                        LibrarySongList.this.setModel(model);
+                    }
+                });
+            }
+        });
+
+    }
+
+    public void filterByTag(final List<String> filterTags, final boolean beep) {
+        if (filterFuture != null) {
+            filterFuture.cancel(true);
+        }
+        filterFuture = filterService.submit(new Runnable() {
+
+            public void run() {
+                final SortedListModel<Song> model = new SortedListModel<>();
+                for (int i = 0; i < fullModel.getSize(); i++) {
+                    boolean add = true;
+                    Song s = fullModel.getElementAt(i);
+                    String[] songTags = s.getTags();
+                    for (String filterTag : filterTags) {
+                        if (filterTag.trim().isEmpty()) {
+                            continue;
+                        }
+                        boolean inPlace = false;
+                        for (String songtag : songTags) {
+                            if (filterTag.trim().equalsIgnoreCase(songtag.trim())) {
+                                inPlace = true;
+                            }
+                        }
+                        if(!inPlace) {
+                            add = false;
+                        }
+                    }
+                    if(add) {
                         model.add(s);
                     }
                 }
