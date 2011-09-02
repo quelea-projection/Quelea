@@ -2,32 +2,11 @@ package org.quelea.tags;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
-import java.awt.IllegalComponentStateException;
-import java.awt.event.ComponentAdapter;
-import java.awt.event.ComponentEvent;
-import java.awt.event.FocusEvent;
-import java.awt.event.FocusListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import javax.swing.Box;
-import javax.swing.BoxLayout;
 import javax.swing.JDialog;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
 import javax.swing.JScrollPane;
-import javax.swing.JTextField;
-import javax.swing.event.DocumentEvent;
-import javax.swing.event.DocumentListener;
 import org.quelea.Application;
-import org.quelea.SongDatabase;
-import org.quelea.displayable.Song;
-import org.quelea.utils.LoggerUtils;
 import org.quelea.windows.library.LibrarySongList;
 
 /**
@@ -41,7 +20,7 @@ public class TagDialog extends JDialog {
 
     public TagDialog() {
         super(Application.get().getMainWindow(), "Filter by tag", ModalityType.MODELESS);
-        list = new LibrarySongList();
+        list = new LibrarySongList(false);
         
         setLayout(new BorderLayout());
         tagEntryPanel = new TagEntryPanel(list, false, true);

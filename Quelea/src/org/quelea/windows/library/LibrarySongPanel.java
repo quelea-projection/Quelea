@@ -26,7 +26,7 @@ public class LibrarySongPanel extends JPanel {
      */
     public LibrarySongPanel() {
         setLayout(new BorderLayout());
-        songList = new LibrarySongList();
+        songList = new LibrarySongList(true);
         songList.addListSelectionListener(new ListSelectionListener() {
 
             public void valueChanged(ListSelectionEvent e) {
