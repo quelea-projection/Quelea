@@ -20,6 +20,7 @@ import org.quelea.importexport.QSPImportDialog;
 import org.quelea.importexport.SelectExportedSongsDialog;
 import org.quelea.importexport.SourceImportDialog;
 import org.quelea.importexport.SurvivorImportDialog;
+import org.quelea.tags.TagDialog;
 import org.quelea.windows.library.LibrarySongList;
 import org.quelea.windows.main.EditSongDBActionListener;
 import org.quelea.windows.main.NewSongActionListener;
@@ -35,12 +36,14 @@ public class DatabaseTask extends RibbonTask {
     private static final ImportDialog qspImportDialog;
     private static final ImportDialog sourceImportDialog;
     private static final ImportDialog kingswayImportDialog;
+    private static final TagDialog tagDialog;
 
     static {
         qspImportDialog = new QSPImportDialog(Application.get().getMainWindow());
         sImportDialog = new SurvivorImportDialog(Application.get().getMainWindow());
         sourceImportDialog = new SourceImportDialog(Application.get().getMainWindow());
         kingswayImportDialog = new KingswayImportDialog(Application.get().getMainWindow());
+        tagDialog = new TagDialog();
     }
 
     public DatabaseTask() {
@@ -135,6 +138,17 @@ public class DatabaseTask extends RibbonTask {
         deleteSongButton.addActionListener(new RemoveSongDBActionListener());
         deleteSongButton.setEnabled(false);
         songBand.addCommandButton(deleteSongButton, RibbonElementPriority.MEDIUM);
+        final JCommandButton tagsButton = new JCommandButton("Tags", RibbonUtils.getRibbonIcon("icons/tag.png", 100, 100));
+        tagsButton.addActionListener(new ActionListener() {
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                tagDialog.reloadTags();
+                tagDialog.setVisible(true);
+            }
+        });
+        tagsButton.setEnabled(false);
+        songBand.addCommandButton(tagsButton, RibbonElementPriority.MEDIUM);
         final LibrarySongList libraryList = Application.get().getMainWindow().getMainPanel().getLibraryPanel().getLibrarySongPanel().getSongList();
 
         libraryList.addListSelectionListener(new ListSelectionListener() {
