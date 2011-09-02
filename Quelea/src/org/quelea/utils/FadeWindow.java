@@ -10,7 +10,6 @@ public class FadeWindow extends JWindow {
 
     private int sleepTime = 15;
     private float speed = 0.03f;
-    private boolean fading = false;
     private boolean nextStateVisible;
 
     public int getSleepTime() {
@@ -28,12 +27,15 @@ public class FadeWindow extends JWindow {
     public void setSpeed(float speed) {
         this.speed = speed;
     }
-    
+
     /**
      * Fade in or out, replaces setVisible().
      * @param in true if the window should fade in, false to fade out.
      */
     private void fade(final boolean in) {
+        if (in) {
+            FadeWindow.super.setVisible(true);
+        }
         new Thread() {
 
             private float opacity;
@@ -49,9 +51,7 @@ public class FadeWindow extends JWindow {
 
             @Override
             public void run() {
-                fading = true;
                 if (in) {
-                    FadeWindow.super.setVisible(true);
                     while (opacity < 1) {
                         setOpacity(opacity);
                         Utils.sleep(sleepTime);
@@ -66,7 +66,6 @@ public class FadeWindow extends JWindow {
                     }
                     FadeWindow.super.setVisible(false);
                 }
-                fading = false;
             }
         }.start();
     }
@@ -77,7 +76,7 @@ public class FadeWindow extends JWindow {
      */
     @Override
     public void setVisible(boolean visible) {
-        if(fading&&nextStateVisible==visible) {
+        if (nextStateVisible == visible) {
             return;
         }
         nextStateVisible = visible;
