@@ -46,7 +46,9 @@ public class TagPanel extends JPanel {
                 tags.remove(tag);
                 remove(tagPanel);
                 redo(ancestor);
-                list.filterByTag(getTags(), false);
+                if (list != null) {
+                    list.filterByTag(getTags(), false);
+                }
             }
         });
         button.setBorder(new EmptyBorder(0, 0, 0, 0));
@@ -62,10 +64,26 @@ public class TagPanel extends JPanel {
         ((JDialog) ancestor).repaint();
     }
 
+    public void setTags(String tags) {
+        removeTags();
+        for (String tag : tags.split(";")) {
+            addTag(tag, null);
+            this.tags.add(tag);
+        }
+    }
+
     public List<String> getTags() {
         List<String> ret = new ArrayList<>();
         ret.addAll(tags);
         return ret;
+    }
+
+    public String getTagsAsString() {
+        StringBuilder ret = new StringBuilder();
+        for (String str : getTags()) {
+            ret.append(str).append(";");
+        }
+        return ret.subSequence(0, ret.length() - 1).toString();
     }
 
     public void removeTags() {
