@@ -175,7 +175,7 @@ public final class SongDatabase {
      */
     public boolean addSong(Song song, boolean fireUpdate) {
         try (PreparedStatement stat = conn.prepareStatement("insert into songs(title, author, lyrics, background, "
-                + "ccli, tags, publisher, year, copyright, key, capo, info) values(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)")) {
+                + "ccli, tags, publisher, year, copyright, key, capo, info) values(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)")) {
             stat.setString(1, song.getTitle());
             stat.setString(2, song.getAuthor());
             stat.setString(3, song.getLyrics(true, true));
