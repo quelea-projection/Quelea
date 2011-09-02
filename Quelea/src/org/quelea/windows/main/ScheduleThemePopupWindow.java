@@ -11,6 +11,7 @@ import java.awt.BorderLayout;
 import java.awt.Component;
 import javax.swing.SwingUtilities;
 import java.awt.Color;
+import java.awt.Dialog.ModalityType;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.GridLayout;
@@ -183,7 +184,7 @@ public class ScheduleThemePopupWindow extends FadeWindow {
 
             @Override
             public void actionPerformed(ActionEvent e) {
-                final JDialog dialog = new JDialog(Application.get().getMainWindow(), true);
+                final JDialog dialog = new JDialog(Application.get().getMainWindow(), "New theme", ModalityType.APPLICATION_MODAL);
                 dialog.setLayout(new BorderLayout());
                 JPanel northPanel = new JPanel();
                 dialog.add(northPanel, BorderLayout.NORTH);
