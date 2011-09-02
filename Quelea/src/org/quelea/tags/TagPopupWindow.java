@@ -33,7 +33,8 @@ public class TagPopupWindow extends FadeWindow {
 
         @Override
         public int compareTo(Tag o) { //Bodged method but does what we need!
-            if(count==0) return 1; //If there's a new one should always appear on top
+            if(count==0) return -1; //If there's a new one should always appear on top
+            if(o.count==0) return 1;
             if (count > o.count) {
                 return -1;
             }
@@ -49,10 +50,7 @@ public class TagPopupWindow extends FadeWindow {
                 return false;
             }
             final Tag other = (Tag) obj;
-            if (!Objects.equals(this.str, other.str)) {
-                return false;
-            }
-            if (this.count != other.count) {
+            if (!this.str.trim().equalsIgnoreCase(other.str.trim())) {
                 return false;
             }
             return true;
@@ -60,10 +58,10 @@ public class TagPopupWindow extends FadeWindow {
 
         public int hashCode() {
             int hash = 7;
-            hash = 59 * hash + Objects.hashCode(this.str);
-            hash = 59 * hash + this.count;
+            hash = 29 * hash + Objects.hashCode(this.str);
             return hash;
         }
+        
     }
     private static final int MAX_RESULTS = 12;
     private Map<String, Integer> tagMap;
@@ -83,12 +81,12 @@ public class TagPopupWindow extends FadeWindow {
 
         Set<Tag> chosenTags = new TreeSet<>();
         for (final String tag : tagMap.keySet()) {
-            if (tag.startsWith(search.getText()) && !panel.getTags().contains(tag)) {
-                chosenTags.add(new Tag(tag, tagMap.get(tag)));
+            if (tag.startsWith(search.getText()) && !panel.getTags().contains(tag.trim()) && (!includeUserText||!search.getText().trim().equalsIgnoreCase(tag.trim()))) {
+                chosenTags.add(new Tag(tag.trim(), tagMap.get(tag)));
             }
         }
-        if (includeUserText && search.getText() != null && !search.getText().trim().isEmpty()) {
-            chosenTags.add(new Tag(search.getText(), 0));
+        if (includeUserText && search.getText() != null && !search.getText().trim().isEmpty() && !chosenTags.contains(new Tag(search.getText().toLowerCase().trim(), 0))) {
+            chosenTags.add(new Tag(search.getText().toLowerCase().trim(), 0));
         }
 
         Iterator<Tag> iter = chosenTags.iterator();

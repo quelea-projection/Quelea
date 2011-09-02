@@ -60,12 +60,14 @@ public class LibrarySongList extends JList<Song> implements DatabaseListener {
     private final SortedListModel<Song> fullModel;
     private final LibraryPopupMenu popupMenu;
     private final Color originalSelectionColour;
+    private final boolean popup;
 
     /**
      * Create a new library song list.
      */
-    public LibrarySongList() {
+    public LibrarySongList(boolean popup) {
         super(new SortedListModel<Song>());
+        this.popup = popup;
         setCellRenderer(new SongRenderer());
         originalSelectionColour = getSelectionBackground();
         addFocusListener(new FocusListener() {
@@ -110,7 +112,7 @@ public class LibrarySongList extends JList<Song> implements DatabaseListener {
              * mouse is pressed and released for platform-independence.
              */
             private void checkPopup(MouseEvent e) {
-                if (e.isPopupTrigger()) {
+                if (e.isPopupTrigger()&&LibrarySongList.this.popup) {
                     int index = locationToIndex(e.getPoint());
                     Rectangle Rect = getCellBounds(index, index);
                     index = Rect.contains(e.getPoint().x, e.getPoint().y) ? index : -1;

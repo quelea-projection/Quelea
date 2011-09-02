@@ -15,7 +15,6 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
-import org.apache.xmlbeans.impl.xb.xsdschema.LengthDocument;
 import org.quelea.utils.Utils;
 import org.quelea.utils.WrapLayout;
 import org.quelea.windows.library.LibrarySongList;
