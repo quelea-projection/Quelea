@@ -1,5 +1,6 @@
 package org.quelea.windows.main;
 
+import java.util.Set;
 import javax.swing.JTextField;
 import javax.swing.JLabel;
 import javax.swing.event.DocumentEvent;
@@ -164,6 +165,12 @@ public class ScheduleThemePopupWindow extends FadeWindow {
                 public void actionPerformed(ActionEvent e) {
                     tempTheme = theme;
                     setTheme(theme);
+                    Set<LyricCanvas> canvases = Application.get().getMainWindow().getMainPanel().getPreviewPanel().getCanvases();
+                    canvases.addAll(Application.get().getMainWindow().getMainPanel().getLivePanel().getCanvases());
+                    for(LyricCanvas canvas : canvases) {
+                        canvas.setTheme(theme);
+                        canvas.repaint();
+                    }
                 }
             });
             group.add(panel.getSelectButton());
