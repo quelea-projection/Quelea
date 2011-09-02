@@ -147,7 +147,6 @@ public class DatabaseTask extends RibbonTask {
                 tagDialog.setVisible(true);
             }
         });
-        tagsButton.setEnabled(false);
         songBand.addCommandButton(tagsButton, RibbonElementPriority.MEDIUM);
         final LibrarySongList libraryList = Application.get().getMainWindow().getMainPanel().getLibraryPanel().getLibrarySongPanel().getSongList();
 
