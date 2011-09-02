@@ -15,6 +15,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
+import org.apache.xmlbeans.impl.xb.xsdschema.LengthDocument;
 import org.quelea.utils.Utils;
 import org.quelea.utils.WrapLayout;
 import org.quelea.windows.library.LibrarySongList;
@@ -66,9 +67,12 @@ public class TagPanel extends JPanel {
 
     public void setTags(String tags) {
         removeTags();
+        if(tags.trim().isEmpty()) {
+            return;
+        }
         for (String tag : tags.split(";")) {
-            addTag(tag, null);
-            this.tags.add(tag);
+            addTag(tag.trim(), null);
+            this.tags.add(tag.trim());
         }
     }
 
@@ -82,6 +86,9 @@ public class TagPanel extends JPanel {
         StringBuilder ret = new StringBuilder();
         for (String str : getTags()) {
             ret.append(str).append(";");
+        }
+        if(ret.length()==0) {
+            return "";
         }
         return ret.subSequence(0, ret.length() - 1).toString();
     }

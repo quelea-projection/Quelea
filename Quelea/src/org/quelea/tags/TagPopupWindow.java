@@ -32,11 +32,13 @@ public class TagPopupWindow extends FadeWindow {
         }
 
         @Override
-        public int compareTo(Tag o) {
+        public int compareTo(Tag o) { //Bodged method but does what we need!
+            if(count==0) return 1; //If there's a new one should always appear on top
             if (count > o.count) {
                 return -1;
             }
             return 1;
+            //Don't care about equal ones (in fact this breaks things)
         }
 
         public boolean equals(Object obj) {
