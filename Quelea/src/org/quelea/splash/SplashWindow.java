@@ -31,7 +31,7 @@ public class SplashWindow extends FadeWindow {
             graphics.setFont(new Font("Verdana", 0, 45));
             graphics.drawString(QueleaProperties.VERSION.getVersionString(), 220, 140);
 
-            setAlwaysOnTop(true);
+//            setAlwaysOnTop(true);
             JLabel splash = new JLabel(new ImageIcon(image));
             setLayout(new BorderLayout());
             add(splash, BorderLayout.CENTER);
