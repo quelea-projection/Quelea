@@ -167,7 +167,6 @@ public class ScheduleThemePopupWindow extends FadeWindow {
                     tempTheme = theme;
                     setTheme(theme);
                     Set<LyricCanvas> canvases = Application.get().getMainWindow().getMainPanel().getPreviewPanel().getCanvases();
-                    canvases.addAll(Application.get().getMainWindow().getMainPanel().getLivePanel().getCanvases());
                     for(LyricCanvas canvas : canvases) {
                         canvas.setTheme(theme);
                         canvas.repaint();
