@@ -8,6 +8,8 @@ import java.awt.event.ComponentEvent;
 import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.HashMap;
@@ -47,6 +49,15 @@ public class TagEntryPanel extends JPanel {
             public void focusGained(FocusEvent e) {
                 tagField.setText("");
                 removeFocusListener(this);
+            }
+        });
+        tagField.addKeyListener(new KeyAdapter() {
+
+            @Override
+            public void keyPressed(KeyEvent e) {
+                if(e.getKeyCode()==KeyEvent.VK_ENTER) {
+                    popup.clickFirst();
+                }
             }
         });
         tags = new HashMap<>();
