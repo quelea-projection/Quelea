@@ -1,6 +1,5 @@
 package org.quelea.tags;
 
-import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -13,7 +12,6 @@ import java.util.logging.Logger;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
-import javax.swing.JPanel;
 import javax.swing.JTextField;
 import org.quelea.utils.FadeWindow;
 import org.quelea.utils.LoggerUtils;
