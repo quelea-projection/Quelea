@@ -1,5 +1,6 @@
 package org.quelea.tags;
 
+import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -8,11 +9,14 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.TreeSet;
+import java.util.logging.Logger;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
+import javax.swing.JPanel;
 import javax.swing.JTextField;
 import org.quelea.utils.FadeWindow;
+import org.quelea.utils.LoggerUtils;
 import org.quelea.windows.library.LibrarySongList;
 
 /**
@@ -33,8 +37,12 @@ public class TagPopupWindow extends FadeWindow {
 
         @Override
         public int compareTo(Tag o) { //Bodged method but does what we need!
-            if(count==0) return -1; //If there's a new one should always appear on top
-            if(o.count==0) return 1;
+            if (count == 0) {
+                return -1; //If there's a new one should always appear on top
+            }
+            if (o.count == 0) {
+                return 1;
+            }
             if (count > o.count) {
                 return -1;
             }
@@ -61,11 +69,13 @@ public class TagPopupWindow extends FadeWindow {
             hash = 29 * hash + Objects.hashCode(this.str);
             return hash;
         }
-        
     }
+    
+    private static final Logger LOGGER = LoggerUtils.getLogger();
     private static final int MAX_RESULTS = 12;
     private Map<String, Integer> tagMap;
     private boolean includeUserText;
+    private JButton firstButton;
 
     public TagPopupWindow(final boolean includeUserText) {
         this.includeUserText = includeUserText;
@@ -81,7 +91,7 @@ public class TagPopupWindow extends FadeWindow {
 
         Set<Tag> chosenTags = new TreeSet<>();
         for (final String tag : tagMap.keySet()) {
-            if (tag.startsWith(search.getText()) && !panel.getTags().contains(tag.trim()) && (!includeUserText||!search.getText().trim().equalsIgnoreCase(tag.trim()))) {
+            if (tag.startsWith(search.getText()) && !panel.getTags().contains(tag.trim()) && (!includeUserText || !search.getText().trim().equalsIgnoreCase(tag.trim()))) {
                 chosenTags.add(new Tag(tag.trim(), tagMap.get(tag)));
             }
         }
@@ -89,6 +99,7 @@ public class TagPopupWindow extends FadeWindow {
             chosenTags.add(new Tag(search.getText().toLowerCase().trim(), 0));
         }
 
+        firstButton = null;
         Iterator<Tag> iter = chosenTags.iterator();
         for (int i = 0; i < MAX_RESULTS; i++) {
             if (!iter.hasNext()) {
@@ -112,6 +123,9 @@ public class TagPopupWindow extends FadeWindow {
                     setVisible(false);
                 }
             });
+            if(firstButton==null) {
+                firstButton = button;
+            }
             add(button);
             add(Box.createRigidArea(new Dimension(0, 5)));
             visible = true;
@@ -122,6 +136,15 @@ public class TagPopupWindow extends FadeWindow {
         repaint();
         setVisible(visible);
         toFront();
+    }
+
+    /**
+     * Click the first button in the window if there is one.
+     */
+    public void clickFirst() {
+        if(firstButton != null) {
+            firstButton.doClick();
+        }
     }
 
     public void setTags(Map<String, Integer> tagMap) {
