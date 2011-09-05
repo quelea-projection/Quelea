@@ -11,6 +11,7 @@ import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Image;
 import java.awt.event.ComponentAdapter;
+import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -18,6 +19,7 @@ import java.util.List;
 import javax.swing.JFrame;
 import javax.swing.SwingUtilities;
 import org.quelea.Theme;
+import org.quelea.graphics.keystone.KeystoneCorrector;
 import org.quelea.notice.Notice;
 import org.quelea.utils.GraphicsUtils;
 import org.quelea.utils.QueleaProperties;
@@ -120,6 +122,7 @@ public class LyricCanvas extends Canvas {
         if (noticeImage != null) {
             offscreenImage.getGraphics().drawImage(noticeImage, 0, getHeight() - noticeImage.getHeight(null), null);
         }
+//        offscreenImage = new KeystoneCorrector(offscreenImage).getCorrectedImage();
         g.drawImage(offscreenImage, 0, 0, this);
         valid = true;
     }
