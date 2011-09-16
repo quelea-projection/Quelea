@@ -20,11 +20,14 @@ package org.quelea.notice;
 import java.util.List;
 
 /**
- *
+ * A listener that's activated when a notice is changed.
  * @author Michael
  */
 public interface NoticesChangedListener {
-    
+
+    /**
+     * Signifies that the notices have changed and therefore need to be updated.
+     * @param notices the list of notices.
+     */
     void noticesUpdated(List<Notice> notices);
-    
 }

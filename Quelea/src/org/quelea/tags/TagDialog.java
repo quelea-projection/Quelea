@@ -35,6 +35,9 @@ public class TagDialog extends JDialog {
     private TagEntryPanel tagEntryPanel;
     private LibrarySongList list;
 
+    /**
+     * Create a new tag dialog.
+     */
     public TagDialog() {
         super(Application.get().getMainWindow(), "Filter by tag", ModalityType.MODELESS);
         list = new LibrarySongList(false);
@@ -48,6 +51,9 @@ public class TagDialog extends JDialog {
         pack();
     }
     
+    /**
+     * 
+     */
     public void reloadTags() {
         tagEntryPanel.reloadTags();
     }

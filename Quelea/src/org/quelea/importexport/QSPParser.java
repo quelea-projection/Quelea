@@ -15,11 +15,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
-
 package org.quelea.importexport;
 
 import java.io.File;
@@ -29,11 +24,18 @@ import org.quelea.displayable.Song;
 import org.quelea.utils.SongPack;
 
 /**
- *
+ * A parser for parsing song packs. Not really a parser, but here for 
+ * completeness.
  * @author Michael
  */
 public class QSPParser implements SongParser {
 
+    /**
+     * Get a list of the songs contained in the given pack.
+     * @param location the location of the QSP file.
+     * @return a list of the songs found.
+     * @throws IOException if something goes wrong.
+     */
     @Override
     public List<Song> getSongs(File location) throws IOException {
         return SongPack.fromFile(location).getSongs();

@@ -29,5 +29,4 @@ public interface Searchable {
      * @return true if the object should be returned as part of the search results, false otherwise.
      */
     boolean search(String s);
-
 }

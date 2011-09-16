@@ -43,9 +43,9 @@ public class BiblePassage implements TextDisplayable {
 
     /**
      * Create a new bible passage.
-     * @param bible    the bible that the passage comes from.
+     * @param biblename the bible that the passage comes from.
      * @param location the location of the passage in the bible.
-     * @param verses   the verses, in order, that make up the passage.
+     * @param verses the verses, in order, that make up the passage.
      */
     public BiblePassage(String biblename, String location, BibleVerse[] verses) {
         this("<html>" + location + "<br/><i>" + biblename + "</i></html>", verses);
@@ -166,11 +166,19 @@ public class BiblePassage implements TextDisplayable {
         return new ArrayList<>();
     }
 
+    /**
+     * Return a summary to display when printed as part of the order of service.
+     * @return the summary as a string.
+     */
     @Override
     public String getPrintText() {
         return "Bible passage: " + summary.substring("<html>".length(), summary.indexOf("<br"));
     }
 
+    /**
+     * We support clear, so return true.
+     * @return true, always.
+     */
     @Override
     public boolean supportClear() {
         return true;

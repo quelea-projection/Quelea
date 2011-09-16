@@ -26,17 +26,29 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 
 /**
- *
+ * The beginnings of a class that corrects an image on a projector that has been
+ * distorted because of the tombstone effect. Currently this isn't yet working
+ * properly and the poor performance means it needs a complete revamp to be
+ * useful.
+ * TODO: Complete
  * @author Michael
  */
 public class KeystoneCorrector {
 
     private BufferedImage originalImage;
 
+    /**
+     * Create a new keystone corrector for a specified image.
+     * @param originalImage the uncorrected image.
+     */
     public KeystoneCorrector(Image originalImage) {
         this.originalImage = (BufferedImage) originalImage;
     }
 
+    /**
+     * Get the corrected image.
+     * @return the image after corrects have been applied.
+     */
     public BufferedImage getCorrectedImage() {
         double width = originalImage.getWidth(null) * 0.5;
         double increment = (originalImage.getWidth(null) - width)/originalImage.getHeight();
@@ -59,6 +71,12 @@ public class KeystoneCorrector {
         return ret;
     }
 
+    /**
+     * Get a line of pixels reduced in size.
+     * @param original the original line of pixels.
+     * @param newSize the size of the new line of pixels.
+     * @return the new line of pixels.
+     */
     private int[] getShortLine(int[] original, int newSize) {
         int[] newArr = new int[original.length];
         double scale = original.length / newSize;
@@ -70,6 +88,11 @@ public class KeystoneCorrector {
         return newArr;
     }
 
+    /**
+     * Test the keystone corrector.
+     * @param args command line arguments (not used)
+     * @throws Exception to avoid dealing with things properly ;)
+     */
     public static void main(String[] args) throws Exception {
         JFrame frame = new JFrame();
         final BufferedImage image = ImageIO.read(new File("D:\\My Pictures\\lightning.jpg"));

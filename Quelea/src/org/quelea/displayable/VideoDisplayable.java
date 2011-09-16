@@ -29,30 +29,39 @@ import org.w3c.dom.Node;
  * @author Michael
  */
 public class VideoDisplayable implements Displayable {
-    
-    public enum VideoType {FILE, DVD}
 
+    /**
+     * The type of video, for instance DVD, FILE, etc.
+     */
+    public enum VideoType {
+
+        FILE, DVD
+    }
     private final VideoType type;
     private final File file;
 
     /**
      * Create a new image displayable.
      * @param file the file for the displayable.
-     * @param image a preview icon for the displayable.
+     * @param type the type of video.
      */
     public VideoDisplayable(File file, VideoType type) {
         this.type = type;
         this.file = file;
     }
-    
+
     /**
      * Get the string to open this video displayable with vlc.
+     * @return the string to open this video displayable with vlc.
      */
     public String getVLCString() {
-        switch(type) {
-            case FILE: return file.getAbsolutePath();
-            case DVD: return "dvdsimple://"+file.getAbsolutePath();
-            default: throw new AssertionError("Unhandled video case");
+        switch (type) {
+            case FILE:
+                return file.getAbsolutePath();
+            case DVD:
+                return "dvdsimple://" + file.getAbsolutePath();
+            default:
+                throw new AssertionError("Unhandled video case");
         }
     }
 
@@ -66,7 +75,7 @@ public class VideoDisplayable implements Displayable {
 
     /**
      * Parse some XML representing this object and return the object it represents.
-     * @param info the XML node representing this object.
+     * @param node the XML node representing this object.
      * @return the object as defined by the XML.
      */
     public static VideoDisplayable parseXML(Node node) {
@@ -121,11 +130,19 @@ public class VideoDisplayable implements Displayable {
         return new ArrayList<>();
     }
 
+    /**
+     * Get the text to print on the order of service.
+     * @return "Video file: " and the name of the video file.
+     */
     @Override
     public String getPrintText() {
         return "Video file: " + file.getName();
     }
 
+    /**
+     * Determine whether videos support clearing, which they don't.
+     * @return false, always.
+     */
     @Override
     public boolean supportClear() {
         return false;

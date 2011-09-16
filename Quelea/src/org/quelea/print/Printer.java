@@ -17,8 +17,6 @@
  */
 package org.quelea.print;
 
-import java.awt.print.PageFormat;
-import java.awt.print.Paper;
 import java.awt.print.Printable;
 import java.awt.print.PrinterJob;
 import java.util.logging.Level;
@@ -34,10 +32,17 @@ public class Printer {
     private static volatile Printer instance;
     private static final Logger LOGGER = LoggerUtils.getLogger();
 
+    /**
+     * Create the printer.
+     */
     private Printer() {
         //Internal only
     }
 
+    /**
+     * Get the singleton instance of this class.
+     * @return the singleton instance.
+     */
     public static Printer getInstance() {
         if (instance == null) {
             synchronized (Printer.class) {
@@ -49,6 +54,10 @@ public class Printer {
         return instance;
     }
 
+    /**
+     * Print the given printable object.
+     * @param printable the object to print.
+     */
     public void print(Printable printable) {
         PrinterJob printJob = PrinterJob.getPrinterJob();
 //        PageFormat pf = printJob.defaultPage();

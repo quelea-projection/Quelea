@@ -106,7 +106,7 @@ public class TransposeDialog extends JDialog {
             }
             model.addElement(transKey + " (" + istr + ")");
         }
-        
+
         keySelection.setSelectedIndex(5);
         keySelection.setMaximumSize(keySelection.getPreferredSize());
     }

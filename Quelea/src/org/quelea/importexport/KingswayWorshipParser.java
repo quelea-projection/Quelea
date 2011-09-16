@@ -30,7 +30,7 @@ import org.quelea.displayable.Song;
 import org.quelea.utils.LoggerUtils;
 
 /**
- *
+ * Parse songs imported from the kingsway importer.
  * @author Michael
  */
 public class KingswayWorshipParser implements SongParser {
@@ -39,6 +39,12 @@ public class KingswayWorshipParser implements SongParser {
     private static final Song DEFAULT = new Song("", "");
     private int count500 = 0;
 
+    /**
+     * Get the songs from the kingsway online library.
+     * @param location not used.
+     * @return a list of all the songs found.
+     * @throws IOException if something went wrong.
+     */
     @Override
     public List<Song> getSongs(File location) throws IOException {
         List<Song> ret = new ArrayList<>();
@@ -151,6 +157,11 @@ public class KingswayWorshipParser implements SongParser {
         }
     }
 
+    /**
+     * Get the raw page text for a particular page number.
+     * @param num the page number.
+     * @return the raw text on the page.
+     */
     private String getPageText(int num) {
         LOGGER.log(Level.INFO, "Doing page {0}", num);
         try {
@@ -181,6 +192,11 @@ public class KingswayWorshipParser implements SongParser {
 
     }
 
+    /**
+     * Testing.
+     * @param args
+     * @throws IOException 
+     */
     public static void main(String[] args) throws IOException {
         new KingswayWorshipParser().getSongs(null);
     }

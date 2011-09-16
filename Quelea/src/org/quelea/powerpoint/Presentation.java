@@ -23,7 +23,8 @@ import org.apache.poi.hslf.model.Slide;
 import org.apache.poi.hslf.usermodel.SlideShow;
 
 /**
- *
+ * A presentation that can be displayed. At the moment represents a powerpoint
+ * presentation though other formats may be supported in future.
  * @author Michael
  */
 public class Presentation {
@@ -31,6 +32,10 @@ public class Presentation {
     private SlideShow slideshow;
     private PresentationSlide[] slides;
 
+    /**
+     * Create a presentation from a file.
+     * @param file the file containing the presentation.
+     */
     public Presentation(String file) {
         try {
             slideshow = new SlideShow(new HSLFSlideShow(file));
@@ -40,14 +45,28 @@ public class Presentation {
         }
     }
 
+    /**
+     * Get the presentation slide at the given index in the presentation.
+     * @param index the index of the slide.
+     * @return the slide at the given index.
+     */
     public PresentationSlide getSlide(int index) {
         return slides[index];
     }
 
+    /**
+     * Get all the slides in the presentation.
+     * @return all the slides.
+     */
     public PresentationSlide[] getSlides() {
         return slides;
     }
 
+    /**
+     * Make the slides that go in this presentation, this is what takes time
+     * and should only be done once.
+     * @return all the slides.
+     */
     private PresentationSlide[] makeSlides() {
         Slide[] lSlides = slideshow.getSlides();
         PresentationSlide[] ret = new PresentationSlide[lSlides.length];

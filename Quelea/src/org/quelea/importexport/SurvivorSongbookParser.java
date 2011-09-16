@@ -17,15 +17,14 @@
  */
 package org.quelea.importexport;
 
-import org.apache.pdfbox.pdmodel.PDDocument;
-import org.apache.pdfbox.util.PDFTextStripper;
-import org.quelea.displayable.Song;
-
 import java.io.File;
 import java.io.IOException;
 import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.List;
+import org.apache.pdfbox.pdmodel.PDDocument;
+import org.apache.pdfbox.util.PDFTextStripper;
+import org.quelea.displayable.Song;
 
 /**
  * Parses a PDF from the survivor songbook, this must be the acetates PDF containing only the lyrics (not the guitar

@@ -38,7 +38,7 @@ import javax.swing.event.DocumentListener;
 import org.quelea.utils.SpringUtilities;
 
 /**
- *
+ * The entry dialog for creating a notice.
  * @author Michael
  */
 public class NoticeEntryDialog extends JDialog {
@@ -51,6 +51,10 @@ public class NoticeEntryDialog extends JDialog {
     private JButton cancelButton;
     private Notice notice;
 
+    /**
+     * Create a new notice entry dialog.
+     * @param owner the owner of this dialog.
+     */
     public NoticeEntryDialog(JDialog owner) {
         super(owner, true);
         setTitle("New notice");
@@ -146,6 +150,13 @@ public class NoticeEntryDialog extends JDialog {
         pack();
     }
 
+    /**
+     * Add a "block" to a panel, consisting of a label and then a component to
+     * go with that label.
+     * @param panel the panel to add the "block" to.
+     * @param labelText the text to display on the label.
+     * @param component the component to go with the label.
+     */
     private void addBlock(JPanel panel, String labelText, Component component) {
         JLabel label = new JLabel(labelText);
         label.setLabelFor(component);
@@ -153,10 +164,18 @@ public class NoticeEntryDialog extends JDialog {
         panel.add(component);
     }
 
+    /**
+     * Get the notice text.
+     * @return the notice text.
+     */
     public String getNoticeText() {
         return text.getText();
     }
 
+    /**
+     * Get the number of times remaining (Integer.MAX_VALUE) if infinite.
+     * @return the number of times remaining (Integer.MAX_VALUE) if infinite.
+     */
     public int getTimes() {
         if (infinite.isSelected()) {
             return Integer.MAX_VALUE;
@@ -164,6 +183,10 @@ public class NoticeEntryDialog extends JDialog {
         return (int) times.getValue();
     }
 
+    /**
+     * Set the dialog to be visible or not, if visible centre on parent.
+     * @param visible true if visible, false otherwise.
+     */
     @Override
     public void setVisible(boolean visible) {
         if (visible) {
@@ -172,6 +195,10 @@ public class NoticeEntryDialog extends JDialog {
         super.setVisible(visible);
     }
 
+    /**
+     * Set the dialog to show the given notice.
+     * @param notice the notice to show.
+     */
     private void setNotice(Notice notice) {
         this.notice = notice;
         if (notice == null) {
@@ -191,6 +218,12 @@ public class NoticeEntryDialog extends JDialog {
         }
     }
 
+    /**
+     * Get a notice that the user enters.
+     * @param owner the owner of the dialog that will be created.
+     * @param existing any existing notice to fill the dialog with.
+     * @return the user-entered notice.
+     */
     public static Notice getNotice(JDialog owner, Notice existing) {
         if (dialog == null) {
             dialog = new NoticeEntryDialog(owner);

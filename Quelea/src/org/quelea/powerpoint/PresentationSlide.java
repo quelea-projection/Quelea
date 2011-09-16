@@ -36,10 +36,17 @@ public class PresentationSlide {
     private BufferedImage image;
     private Map<Dimension, SoftReference<BufferedImage>> cache;
 
+    /*
+     * Initialise cache.
+     */
     {
         cache = new HashMap<>();
     }
 
+    /**
+     * Create a new presentation slide.
+     * @param slide the underlying apache POI slide.
+     */
     public PresentationSlide(Slide slide) {
         org.apache.poi.hslf.usermodel.SlideShow slideshow = slide.getSlideShow();
         image = new BufferedImage((int) slideshow.getPageSize().getWidth(), (int) slideshow.getPageSize().getHeight(), BufferedImage.TYPE_INT_ARGB);
@@ -48,7 +55,13 @@ public class PresentationSlide {
         getImage(lc.getWidth(), lc.getHeight()); //just for the cache
     }
 
-    public BufferedImage getImage(int width, int height) {
+    /**
+     * Get the image from this slide.
+     * @param width the width of the image.
+     * @param height the height of the image.
+     * @return the image of this slide.
+     */
+    public final BufferedImage getImage(int width, int height) {
         Dimension d = new Dimension(width, height);
         SoftReference<BufferedImage> cacheReference = cache.get(d);
         if (cacheReference != null) {

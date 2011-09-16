@@ -17,11 +17,11 @@
  */
 package org.quelea.importexport;
 
-import org.quelea.SongDatabase;
-
-import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import javax.swing.JFrame;
+import javax.swing.SwingWorker;
+import org.quelea.SongDatabase;
 
 /**
  * A dialog used for selecting the songs to be entered into the database after they've been imported.
@@ -35,10 +35,10 @@ public class SelectImportedSongsDialog extends SelectSongsDialog {
      */
     public SelectImportedSongsDialog(JFrame owner) {
         super(owner, new String[]{
-                "The following songs have been imported.",
-                "Select the ones you want to add to the database then hit \"Add\".",
-                "Songs that Quelea thinks are duplicates have been unchecked."
-        }, "Add", "Add to database?");
+                    "The following songs have been imported.",
+                    "Select the ones you want to add to the database then hit \"Add\".",
+                    "Songs that Quelea thinks are duplicates have been unchecked."
+                }, "Add", "Add to database?");
 
         getAddButton().addActionListener(new ActionListener() {
 
@@ -48,8 +48,8 @@ public class SelectImportedSongsDialog extends SelectSongsDialog {
 
                     @Override
                     protected Void doInBackground() {
-                        for(int i = 0; i < getSongs().size(); i++) {
-                            if((Boolean) getTable().getValueAt(i, 2)) {
+                        for (int i = 0; i < getSongs().size(); i++) {
+                            if ((Boolean) getTable().getValueAt(i, 2)) {
                                 SongDatabase.get().addSong(getSongs().get(i), false);
                             }
                         }
@@ -62,11 +62,9 @@ public class SelectImportedSongsDialog extends SelectSongsDialog {
                         setVisible(false);
                         getAddButton().setEnabled(true);
                     }
-
                 };
                 worker.execute();
             }
         });
     }
-
 }

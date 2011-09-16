@@ -56,71 +56,124 @@ import org.xml.sax.SAXException;
  */
 public class Song implements TextDisplayable, Searchable, Comparable<Song>, Printable {
 
+    /**
+     * The builder responsible for building this song.
+     */
     public static class Builder {
 
         private Song song;
 
+        /**
+         * Create a new builder with the required fields.
+         * @param title the title of the song.
+         * @param author the author of the song.
+         */
         public Builder(String title, String author) {
             song = new Song(title, author);
         }
 
+        /**
+         * Set the id of the song.
+         * @param id the song's id.
+         * @return this builder.
+         */
         public Builder id(int id) {
             song.id = id;
             return this;
         }
 
-        public Builder ccli(String str) {
-            if (str == null) {
-                str = "";
+        /**
+         * Set the ccli number of the song.
+         * @param ccli the song's ccli number.
+         * @return this builder.
+         */
+        public Builder ccli(String ccli) {
+            if (ccli == null) {
+                ccli = "";
             }
-            song.ccli = str;
+            song.ccli = ccli;
             return this;
         }
 
-        public Builder year(String str) {
-            if (str == null) {
-                str = "";
+        /**
+         * Set the year of the song.
+         * @param year the song's year.
+         * @return this builder.
+         */
+        public Builder year(String year) {
+            if (year == null) {
+                year = "";
             }
-            song.year = str;
+            song.year = year;
             return this;
         }
 
-        public Builder publisher(String str) {
-            if (str == null) {
-                str = "";
+        /**
+         * Set the publisher of the song.
+         * @param publisher the song's publisher.
+         * @return this builder.
+         */
+        public Builder publisher(String publisher) {
+            if (publisher == null) {
+                publisher = "";
             }
-            song.publisher = str;
+            song.publisher = publisher;
             return this;
         }
 
-        public Builder tags(String str) {
-            if (str == null) {
+        /**
+         * Set the tags of this song..
+         * @param tags the song's tags.
+         * @return this builder.
+         */
+        public Builder tags(String tags) {
+            if (tags == null) {
                 song.tags = new String[0];
             }
             else {
-                song.tags = str.split(";");
+                song.tags = tags.split(";");
             }
             return this;
         }
 
-        public Builder tags(String[] arr) {
-            if (arr == null) {
-                arr = new String[0];
+        /**
+         * Set the tags of this song..
+         * @param tags the song's tags.
+         * @return this builder.
+         */
+        public Builder tags(String[] tags) {
+            if (tags == null) {
+                tags = new String[0];
             }
-            song.tags = arr;
+            song.tags = tags;
             return this;
         }
 
-        public Builder tags(Theme theme) {
+        /**
+         * Set the theme of this song..
+         * @param theme the song's theme.
+         * @return this builder.
+         */
+        public Builder theme(Theme theme) {
             song.theme = theme;
             return this;
         }
 
+        /**
+         * Set the lyrics of this song..
+         * @param lyrics the song's tags.
+         * @return this builder.
+         */
         public Builder lyrics(String lyrics) {
             song.setLyrics(lyrics);
             return this;
         }
 
+        /**
+         * Set the copyright info of this song..
+         * @param copyright the song's copyright info.
+         * @return this builder.
+         */
         public Builder copyright(String copyright) {
             if (copyright == null) {
                 copyright = "";
@@ -129,6 +182,11 @@ public class Song implements TextDisplayable, Searchable, Comparable<Song>, Prin
             return this;
         }
 
+        /**
+         * Set the key of this song..
+         * @param key the song's key.
+         * @return this builder.
+         */
         public Builder key(String key) {
             if (key == null) {
                 key = "";
@@ -137,6 +195,11 @@ public class Song implements TextDisplayable, Searchable, Comparable<Song>, Prin
             return this;
         }
 
+        /**
+         * Set the capo of this song..
+         * @param capo the song's capo.
+         * @return this builder.
+         */
         public Builder capo(String capo) {
             if (capo == null) {
                 capo = "";
@@ -145,6 +208,11 @@ public class Song implements TextDisplayable, Searchable, Comparable<Song>, Prin
             return this;
         }
 
+        /**
+         * Set the info string of this song..
+         * @param info the song's information field.
+         * @return this builder.
+         */
         public Builder info(String info) {
             if (info == null) {
                 info = "";
@@ -153,6 +221,10 @@ public class Song implements TextDisplayable, Searchable, Comparable<Song>, Prin
             return this;
         }
 
+        /**
+         * Get the song from this builder with all the fields set appropriately.
+         * @return the song.
+         */
         public Song get() {
             return song;
         }
@@ -279,23 +351,43 @@ public class Song implements TextDisplayable, Searchable, Comparable<Song>, Prin
         this.author = author;
     }
 
+    /**
+     * Return true because songs can be cleared.
+     * @return true, always.
+     */
     @Override
     public boolean supportClear() {
         return true;
     }
 
+    /**
+     * Get the CCLI number of this song.
+     * @return the CCLI number of this song.
+     */
     public String getCcli() {
         return ccli;
     }
 
+    /**
+     * Get the publisher of this song.
+     * @return the publisher of this song.
+     */
     public String getPublisher() {
         return publisher;
     }
 
+    /**
+     * Get the tags of this song.
+     * @return the tags of this song.
+     */
     public String[] getTags() {
         return tags;
     }
 
+    /**
+     * Get the tags of this song as a single string delimited by semicolons.
+     * @return the tags of this song.
+     */
     public String getTagsAsString() {
         if (tags == null) {
             return "";
@@ -310,62 +402,123 @@ public class Song implements TextDisplayable, Searchable, Comparable<Song>, Prin
         return ret.toString();
     }
 
+    /**
+     * Get the year of this song.
+     * @return the year of this song.
+     */
     public String getYear() {
         return year;
     }
 
+    /**
+     * Get the copyright information of this song.
+     * @return the copyright information of this song.
+     */
     public String getCopyright() {
         return copyright;
     }
 
+    /**
+     * Get the key of this song.
+     * @return the key of this song.
+     */
     public String getKey() {
         return key;
     }
 
+    /**
+     * Get the general information about this song.
+     * @return the general information about this song.
+     */
     public String getInfo() {
         return info;
     }
 
+    /**
+     * Get the capo of this song.
+     * @return the capo of this song.
+     */
     public String getCapo() {
         return capo;
     }
 
+    /**
+     * Set the capo of this song.
+     * @param capo the capo of this song.
+     */
     public void setCapo(String capo) {
         this.capo = capo;
     }
 
+    /**
+     * Set whether to print the chords of this song - temporary field used 
+     * when printing chords.
+     * @param printChords true if chords should be printed, false otherwise.
+     */
     public void setPrintChords(boolean printChords) {
         this.printChords = printChords;
     }
 
+    /**
+     * Set the info of this song.
+     * @param info the info of this song.
+     */
     public void setInfo(String info) {
         this.info = info;
     }
 
+    /**
+     * Set the key of this song.
+     * @param key the key of this song.
+     */
     public void setKey(String key) {
         this.key = key;
     }
 
+    /**
+     * Set the ccli number of this song.
+     * @param ccli the ccli number of this song.
+     */
     public void setCcli(String ccli) {
         this.ccli = ccli;
     }
 
+    /**
+     * Set the publisher of this song.
+     * @param publisher the publisher of this song.
+     */
     public void setPublisher(String publisher) {
         this.publisher = publisher;
     }
 
+    /**
+     * Set the tags of this song.
+     * @param tags the tags of this song.
+     */
     public void setTags(String[] tags) {
         this.tags = tags;
     }
 
+    /**
+     * Set the tags of this song as a list separated by semi-colons.
+     * @param tags the tags of this song.
+     */
     public void setTags(String tags) {
         this.tags = tags.split(";");
     }
 
+    /**
+     * Set the year of this song.
+     * @param year the year of this song.
+     */
     public void setYear(String year) {
         this.year = year;
     }
 
+    /**
+     * Set the copyright field of this song.
+     * @param copyright the copyright field of this song.
+     */
     public void setCopyright(String copyright) {
         this.copyright = copyright;
     }
@@ -685,10 +838,15 @@ public class Song implements TextDisplayable, Searchable, Comparable<Song>, Prin
         return ret;
     }
 
+    /**
+     * Get the summary text to print in the order of service.
+     * @return the summary text to print in the order of service.
+     */
     @Override
     public String getPrintText() {
         return "Song: " + getTitle() + " (" + getAuthor() + ")";
     }
+    //Field just used for the calculation of how to print the song
     private List<Integer> nextSection = new ArrayList<>();
 
     /**
