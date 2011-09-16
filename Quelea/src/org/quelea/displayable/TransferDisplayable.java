@@ -55,6 +55,7 @@ public class TransferDisplayable implements Transferable {
 
     /**
      * @inheritDoc
+     * @return the transfer data if the flavor is DISPLAYABLE_FLAVOR, else null.
      */
     public Object getTransferData(DataFlavor flavor) throws UnsupportedFlavorException, IOException {
         if(flavor.equals(DISPLAYABLE_FLAVOR)) {
@@ -67,6 +68,7 @@ public class TransferDisplayable implements Transferable {
 
     /**
      * Get the displayable backing this transfer displayable.
+     * @return the displayable backing this transfer displayable.
      */
     public Displayable getDisplayable() {
         return displayable;

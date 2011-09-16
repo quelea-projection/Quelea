@@ -15,14 +15,9 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package org.quelea.windows.main;
 
 import java.awt.BorderLayout;
-import java.awt.Dimension;
 import java.util.ArrayList;
 import java.util.List;
 import javax.swing.BoxLayout;
@@ -32,18 +27,27 @@ import org.quelea.Application;
 import org.quelea.utils.Utils;
 
 /**
- *
+ * A group of status panels that shows all the background tasks Quelea is 
+ * currently processing.
  * @author Michael
  */
 public class StatusPanelGroup extends JPanel {
 
     private List<StatusPanel> panels;
 
+    /**
+     * Create a new status panel group.
+     */
     public StatusPanelGroup() {
-        panels = new ArrayList<StatusPanel>();
+        panels = new ArrayList<>();
         setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
     }
 
+    /**
+     * Add a status panel to the given group.
+     * @param label the label to put on the status panel.
+     * @return the status panel.
+     */
     public synchronized StatusPanel addPanel(String label) {
         StatusPanel panel = new StatusPanel(this, label, panels.size());
         add(panel);
@@ -53,7 +57,11 @@ public class StatusPanelGroup extends JPanel {
         return panel;
     }
 
-    void removePanel(int index) {
+    /**
+     * Remove a status panel at the given index.
+     * @param index the index of the panel to remove.
+     */
+    public void removePanel(int index) {
         StatusPanel panel = panels.get(index);
         if (panel != null) {
             remove(panel);
@@ -63,6 +71,10 @@ public class StatusPanelGroup extends JPanel {
         }
     }
 
+    /**
+     * Testing.
+     * @param args 
+     */
     public static void main(String[] args) {
         JFrame frame = new JFrame();
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);

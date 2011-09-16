@@ -43,23 +43,23 @@ public final class BibleBook {
 
     /**
      * Parse some XML representing this object and return the object it represents.
-     * @param info the XML node representing this object.
+     * @param node the XML node representing this object.
      * @return the object as defined by the XML.
      */
     public static BibleBook parseXML(Node node) {
         BibleBook ret = new BibleBook();
-        if(node.getAttributes().getNamedItem("bnumber") != null) {
+        if (node.getAttributes().getNamedItem("bnumber") != null) {
             ret.bookNumber = Integer.parseInt(node.getAttributes().getNamedItem("bnumber").getNodeValue());
         }
-        if(node.getAttributes().getNamedItem("bname") != null) {
+        if (node.getAttributes().getNamedItem("bname") != null) {
             ret.bookName = node.getAttributes().getNamedItem("bname").getNodeValue();
         }
         else {
             ret.bookName = node.getAttributes().getNamedItem("n").getNodeValue();
         }
         NodeList list = node.getChildNodes();
-        for(int i = 0; i < list.getLength(); i++) {
-            if(list.item(i).getNodeName().equalsIgnoreCase("chapter")
+        for (int i = 0; i < list.getLength(); i++) {
+            if (list.item(i).getNodeName().equalsIgnoreCase("chapter")
                     || list.item(i).getNodeName().equalsIgnoreCase("c")) {
                 ret.addChapter(BibleChapter.parseXML(list.item(i)));
             }
@@ -78,7 +78,7 @@ public final class BibleBook {
         ret.append("\" bname=\"");
         ret.append(Utils.escapeXML(bookName));
         ret.append("\">");
-        for(BibleChapter chapter : chapters) {
+        for (BibleChapter chapter : chapters) {
             ret.append(chapter.toXML());
         }
         ret.append("</biblebook>");
@@ -124,7 +124,7 @@ public final class BibleBook {
      * @return the chapter at the specified number, or null if it doesn't exist.
      */
     public BibleChapter getChapter(int i) {
-        if(i < chapters.size() && i >= 0) {
+        if (i < chapters.size() && i >= 0) {
             return chapters.get(i);
         }
         else {

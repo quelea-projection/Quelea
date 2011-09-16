@@ -79,5 +79,4 @@ public class Application {
     public void setMainWindow(MainWindow mainWindow) {
         this.mainWindow = mainWindow;
     }
-
 }

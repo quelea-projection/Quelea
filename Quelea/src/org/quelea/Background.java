@@ -34,7 +34,7 @@ public class Background {
     private Color colour;
     private String imageLocation;
     private BufferedImage originalImage;
-    private Map<String, BufferedImage> cacheMap = new HashMap<String, BufferedImage>();;
+    private Map<String, BufferedImage> cacheMap = new HashMap<>();
 
     /**
      * Create a new background that's a certain colour.
@@ -47,6 +47,7 @@ public class Background {
     /**
      * Create a new background that's a certain image.
      * @param imageLocation the location of the background image.
+     * @param originalImage the original image to use. 
      */
     public Background(String imageLocation, BufferedImage originalImage) {
         this.imageLocation = imageLocation;
@@ -58,12 +59,13 @@ public class Background {
      * accordingly, if it is a colour an image will be given with the specified dimension, filled with the colour.
      * @param width  the width of the background.
      * @param height the height of the background.
+     * @param key the key to use for the image in the cache.
      * @return an image containing the background with the given dimensions.
      */
     public BufferedImage getImage(int width, int height, String key) {
-        if(key != null && cacheMap.get(key)!=null) {
+        if (key != null && cacheMap.get(key) != null) {
             BufferedImage cacheImage = cacheMap.get(key);
-            if(cacheImage.getWidth()==width&&cacheImage.getHeight()==height) {
+            if (cacheImage.getWidth() == width && cacheImage.getHeight() == height) {
                 return cacheImage;
             }
         }
@@ -71,8 +73,8 @@ public class Background {
         Graphics2D g = (Graphics2D) ret.getGraphics();
         g.setColor(Color.BLACK);
         g.fillRect(0, 0, width, height);
-        if(colour == null) {
-            if(originalImage==null) {
+        if (colour == null) {
+            if (originalImage == null) {
                 originalImage = Utils.getImage(getImageFile().getAbsolutePath());
             }
             g.setRenderingHint(RenderingHints.KEY_INTERPOLATION,
@@ -83,7 +85,7 @@ public class Background {
             g.setColor(colour);
             g.fillRect(0, 0, width, height);
         }
-        if(key != null) {
+        if (key != null) {
             cacheMap.put(key, ret);
         }
         return ret;
@@ -102,7 +104,7 @@ public class Background {
      * @return the file representing the image background, or null if the image background is a colour.
      */
     public File getImageFile() {
-        if(imageLocation == null) {
+        if (imageLocation == null) {
             return null;
         }
         else {
@@ -153,20 +155,20 @@ public class Background {
      */
     @Override
     public boolean equals(Object obj) {
-        if(obj == null) {
+        if (obj == null) {
             return false;
         }
-        if(getClass() != obj.getClass()) {
+        if (getClass() != obj.getClass()) {
             return false;
         }
         final Background other = (Background) obj;
-        if(this.colour != other.colour && (this.colour == null || !this.colour.equals(other.colour))) {
+        if (this.colour != other.colour && (this.colour == null || !this.colour.equals(other.colour))) {
             return false;
         }
-        if(this.imageLocation != other.imageLocation && (this.imageLocation == null || !this.imageLocation.equals(other.imageLocation))) {
+        if (this.imageLocation != other.imageLocation && (this.imageLocation == null || !this.imageLocation.equals(other.imageLocation))) {
             return false;
         }
-        if(this.imageLocation==null) {
+        if (this.imageLocation == null) {
             return false;
         }
 //        if(this.originalImage != other.originalImage && (this.originalImage == null || !this.originalImage.equals(other.originalImage))) {
@@ -183,7 +185,7 @@ public class Background {
     public String toString() {
         StringBuilder ret = new StringBuilder();
         ret.append("Background: ");
-        if(colour == null) {
+        if (colour == null) {
             ret.append("image: ");
             ret.append(imageLocation);
         }

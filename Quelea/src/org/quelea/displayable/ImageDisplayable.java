@@ -23,9 +23,12 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.imageio.ImageIO;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
+import org.quelea.utils.LoggerUtils;
 import org.quelea.utils.Utils;
 import org.w3c.dom.Node;
 
@@ -41,11 +44,11 @@ public class ImageDisplayable implements Displayable {
     private final Icon icon;
     private Icon previewIcon;
     private BufferedImage originalImage;
+    private static final Logger LOGGER = LoggerUtils.getLogger();
 
     /**
      * Create a new image displayable.
      * @param file the file for the displayable.
-     * @param image a preview icon for the displayable.
      */
     public ImageDisplayable(File file) {
         this.file = file;
@@ -54,7 +57,7 @@ public class ImageDisplayable implements Displayable {
         }
         catch (IOException ex) {
             originalImage = null;
-            ex.printStackTrace();
+            LOGGER.log(Level.WARNING, "Couldn't create image displayable", ex);
         }
         icon = new ImageIcon(Utils.resizeImage(originalImage, ICON_WIDTH, ICON_HEIGHT));
     }
@@ -77,7 +80,7 @@ public class ImageDisplayable implements Displayable {
 
     /**
      * Parse some XML representing this object and return the object it represents.
-     * @param info the XML node representing this object.
+     * @param node the XML node representing this object.
      * @return the object as defined by the XML.
      */
     public static ImageDisplayable parseXML(Node node) {
@@ -133,16 +136,26 @@ public class ImageDisplayable implements Displayable {
      */
     @Override
     public Collection<File> getResources() {
-        List<File> files = new ArrayList<File>();
+        List<File> files = new ArrayList<>();
         files.add(file);
         return files;
     }
 
+    /**
+     * Get the summary to print in an order of service.
+     * @return the summary as a string. Just the image and the file name at
+     * present.
+     */
     @Override
     public String getPrintText() {
         return "Image: " + file.getName();
     }
 
+    /**
+     * Images don't support clearing of text (they contain no text) so false, 
+     * always.
+     * @return false, always.
+     */
     @Override
     public boolean supportClear() {
         return false;

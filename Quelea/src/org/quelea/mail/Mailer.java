@@ -22,6 +22,8 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Date;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.activation.DataHandler;
 import javax.activation.FileDataSource;
 import javax.mail.MessagingException;
@@ -33,19 +35,26 @@ import javax.mail.internet.MimeMultipart;
 import javax.swing.JOptionPane;
 import org.quelea.Application;
 import org.quelea.Schedule;
+import org.quelea.utils.LoggerUtils;
 
 /**
- *
+ * A singleton class used for sending off a schedule using the default email
+ * program.
  * @author Michael
  */
 public class Mailer {
 
     private static volatile Mailer instance;
+    private static final Logger LOGGER = LoggerUtils.getLogger();
 
     private Mailer() {
         //Internal only
     }
 
+    /**
+     * Get the singleton instance of this class.
+     * @return the singleton instance of this class.
+     */
     public static Mailer getInstance() {
         if (instance == null) {
             synchronized (Mailer.class) {
@@ -57,6 +66,11 @@ public class Mailer {
         return instance;
     }
 
+    /**
+     * Send the given schedule via e-mail.
+     * @param schedule the schedule to send as an attachment.
+     * @param body the body of the email.
+     */
     public void sendSchedule(Schedule schedule, String body) {
 
         if (schedule == null || !schedule.iterator().hasNext()) {
@@ -103,19 +117,13 @@ public class Mailer {
 
             File temp = File.createTempFile("quelea", ".eml");
             temp.deleteOnExit();
-            FileOutputStream stream = null;
-            try {
-                stream = new FileOutputStream(temp);
+            try (FileOutputStream stream = new FileOutputStream(temp)) {
                 msg.writeTo(stream);
             }
-            finally {
-                stream.close();
-            }
-
             try {
                 Desktop.getDesktop().open(temp);
             }
-            catch(Throwable ex) {
+            catch (Throwable ex) {
                 JOptionPane.showMessageDialog(Application.get().getMainWindow(),
                         "There was an error opening your email client. "
                         + "Make sure you have an email client installed and "
@@ -125,11 +133,8 @@ public class Mailer {
             }
 
         }
-        catch (MessagingException ex) {
-            ex.printStackTrace();
-        }
-        catch (IOException ex) {
-            ex.printStackTrace();
+        catch (MessagingException | IOException ex) {
+            LOGGER.log(Level.WARNING, "Error sending mail", ex);
         }
     }
 }

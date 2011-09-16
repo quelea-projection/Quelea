@@ -40,7 +40,7 @@ public class ChapterVerseParser {
         try {
             parseFull(str.trim());
         }
-        catch(Exception ex) {
+        catch (Exception ex) {
             //Just ignore, invalid input
         }
     }
@@ -58,7 +58,7 @@ public class ChapterVerseParser {
      * @return the starting verse.
      */
     public int getFromVerse() {
-        if(fromVerse == -1) {
+        if (fromVerse == -1) {
             return 0;
         }
         else {
@@ -71,7 +71,7 @@ public class ChapterVerseParser {
      * @return the ending chapter.
      */
     public int getToChapter() {
-        if(toChapter == -1) {
+        if (toChapter == -1) {
             return fromChapter - 1;
         }
         else {
@@ -84,7 +84,7 @@ public class ChapterVerseParser {
      * @return the ending verse.
      */
     public int getToVerse() {
-        if(toVerse == -1) {
+        if (toVerse == -1) {
             return fromVerse - 1;
         }
         else {
@@ -97,13 +97,13 @@ public class ChapterVerseParser {
      * @param str the string to parse.
      */
     private void parseFull(String str) {
-        if(str.endsWith(":")) {
+        if (str.endsWith(":")) {
             str = str.substring(0, str.length() - 1);
         }
-        else if(str.endsWith("-")) {
+        else if (str.endsWith("-")) {
             str = str.substring(0, str.length() - 1);
         }
-        if(str.charAt(str.length() - 1) != '-' && str.contains("-")) {
+        if (str.charAt(str.length() - 1) != '-' && str.contains("-")) {
             String toStr = str.substring(str.indexOf('-') + 1);
             parseToStr(toStr);
             str = str.substring(0, str.indexOf('-'));
@@ -135,7 +135,7 @@ public class ChapterVerseParser {
      */
     private int getChapterFrom(String str) {
         str = str.trim();
-        if(str.contains(":")) {
+        if (str.contains(":")) {
             str = str.split(":")[0].trim();
         }
         return Integer.parseInt(str);
@@ -147,7 +147,7 @@ public class ChapterVerseParser {
      */
     private int getVerseFrom(String str) {
         str = str.trim();
-        if(str.contains(":")) {
+        if (str.contains(":")) {
             return Integer.parseInt(str.split(":")[1].trim());
         }
         else {
@@ -161,7 +161,7 @@ public class ChapterVerseParser {
      */
     private int getChapterTo(String str) {
         str = str.trim();
-        if(str.contains(":")) {
+        if (str.contains(":")) {
             return Integer.parseInt(str.split(":")[0].trim());
         }
         else {
@@ -175,7 +175,7 @@ public class ChapterVerseParser {
      */
     private int getVerseTo(String str) {
         str = str.trim();
-        if(str.contains(":")) {
+        if (str.contains(":")) {
             str = str.split(":")[1].trim();
         }
         return Integer.parseInt(str);

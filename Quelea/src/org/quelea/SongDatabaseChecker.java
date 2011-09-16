@@ -33,17 +33,17 @@ public class SongDatabaseChecker {
      * @return true if the song is the same or similar to an existing song, false otherwise.
      */
     public boolean checkSong(Song newSong) {
-        for(Song databaseSong : SongDatabase.get().getSongs()) {
+        for (Song databaseSong : SongDatabase.get().getSongs()) {
             String databaseLyrics = databaseSong.getLyrics(false, false).replaceAll("[^\\p{L}]", "");
             String newLyrics = newSong.getLyrics(false, false).replaceAll("[^\\p{L}]", "");
             int maxDistance;
-            if(newLyrics.length() < databaseLyrics.length()) {
+            if (newLyrics.length() < databaseLyrics.length()) {
                 maxDistance = newLyrics.length() / 10;
             }
             else {
                 maxDistance = databaseLyrics.length() / 10;
             }
-            if(StringUtils.getLevenshteinDistance(databaseLyrics, newLyrics) <= maxDistance) {
+            if (StringUtils.getLevenshteinDistance(databaseLyrics, newLyrics) <= maxDistance) {
                 return true;
             }
         }

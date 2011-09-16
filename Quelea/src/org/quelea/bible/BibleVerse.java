@@ -38,7 +38,7 @@ public final class BibleVerse {
 
     /**
      * Parse some XML representing this object and return the object it represents.
-     * @param info the XML node representing this object.
+     * @param node the XML node representing this object.
      * @return the object as defined by the XML.
      */
     public static BibleVerse parseXML(Node node) {

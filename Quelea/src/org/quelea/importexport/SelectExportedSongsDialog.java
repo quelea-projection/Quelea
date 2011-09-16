@@ -17,15 +17,17 @@
  */
 package org.quelea.importexport;
 
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.io.File;
+import javax.swing.JFileChooser;
+import javax.swing.JFrame;
+import javax.swing.JOptionPane;
+import javax.swing.SwingWorker;
 import org.quelea.Application;
 import org.quelea.utils.FileFilters;
 import org.quelea.utils.QueleaProperties;
 import org.quelea.utils.SongPack;
-
-import javax.swing.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.io.File;
 
 /**
  * A dialog used for selecting the songs to be put in the song pack after export.
@@ -39,9 +41,9 @@ public class SelectExportedSongsDialog extends SelectSongsDialog {
      */
     public SelectExportedSongsDialog(final JFrame owner) {
         super(owner, new String[]{
-                "The following songs are in the database.",
-                "Select the ones you want to add to the song pack then hit \"Add\"."
-        }, "Add", "Add to song pack?");
+                    "The following songs are in the database.",
+                    "Select the ones you want to add to the song pack then hit \"Add\"."
+                }, "Add", "Add to song pack?");
 
         getAddButton().addActionListener(new ActionListener() {
 
@@ -50,9 +52,9 @@ public class SelectExportedSongsDialog extends SelectSongsDialog {
                 final String extension = QueleaProperties.get().getSongPackExtension();
                 JFileChooser chooser = getChooser();
                 int chooserResult = chooser.showSaveDialog(owner);
-                if(chooserResult == JFileChooser.APPROVE_OPTION) {
+                if (chooserResult == JFileChooser.APPROVE_OPTION) {
                     final File file;
-                    if(chooser.getSelectedFile().getName().endsWith("." + extension)) {
+                    if (chooser.getSelectedFile().getName().endsWith("." + extension)) {
                         file = chooser.getSelectedFile();
                     }
                     else {
@@ -60,20 +62,19 @@ public class SelectExportedSongsDialog extends SelectSongsDialog {
                     }
 
                     boolean writeFile = true;
-                    if(file.exists()) {
+                    if (file.exists()) {
                         int result = JOptionPane.showConfirmDialog(Application.get().getMainWindow(), file.getName() + " already exists. Overwrite?",
                                 "Overwrite", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE, null);
-                        if(result != JOptionPane.YES_OPTION) {
+                        if (result != JOptionPane.YES_OPTION) {
                             writeFile = false;
                         }
                     }
-                    if(writeFile) {
+                    if (writeFile) {
                         writeSongPack(file);
                     }
 
                 }
             }
-
         });
     }
 
@@ -99,8 +100,8 @@ public class SelectExportedSongsDialog extends SelectSongsDialog {
 
             @Override
             protected Void doInBackground() {
-                for(int i = 0; i < getSongs().size(); i++) {
-                    if((Boolean) getTable().getValueAt(i, 2)) {
+                for (int i = 0; i < getSongs().size(); i++) {
+                    if ((Boolean) getTable().getValueAt(i, 2)) {
                         pack.addSong(getSongs().get(i));
                     }
                 }

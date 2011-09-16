@@ -37,7 +37,10 @@ import org.quelea.utils.LoggerUtils;
 import org.quelea.utils.QueleaProperties;
 
 /**
- * The class that controls the database.
+ * The database that contains all the songs and their appropriate properties.
+ * Calling methods on this class updates the persistent database used by Quelea
+ * to store songs. Only one instance can be created since only one lock can be
+ * held on the database at any one time.
  * @author Michael
  */
 public final class SongDatabase {
@@ -83,7 +86,12 @@ public final class SongDatabase {
             error = true;
         }
     }
-    
+
+    /**
+     * Add any extra columns into the database that may not already be there.
+     * This way we can silently upgrade the database if we need to add in new
+     * columns later.
+     */
     private void addColumns() {
         addColumn("ccli", "varchar_ignorecase(256)");
         addColumn("copyright", "varchar_ignorecase(256)");
@@ -95,13 +103,19 @@ public final class SongDatabase {
         addColumn("info", "varchar_ignorecase(20000)");
     }
 
+    /**
+     * Add a column into the database, silently fail since if it already exists 
+     * this means the database already contains the column.
+     * @param name the name of the column.
+     * @param dataType the data type of the column.
+     */
     private void addColumn(String name, String dataType) {
         String nameDataType = name + " " + dataType;
         try (Statement stat = conn.createStatement()) {
             stat.executeUpdate("ALTER TABLE Songs ADD COLUMN " + nameDataType);
             LOGGER.log(Level.INFO, "Added {0}", nameDataType);
         }
-        catch(SQLException ex) {
+        catch (SQLException ex) {
             LOGGER.log(Level.INFO, "{0} already exists", nameDataType);
         }
     }
@@ -159,18 +173,7 @@ public final class SongDatabase {
         try (ResultSet rs = runSelectExpression("select * from songs")) {
             List<Song> songs = new ArrayList<>();
             while (rs.next()) {
-                Song song = new Song.Builder(rs.getString("title"), rs.getString("author"))
-                        .lyrics(rs.getString("lyrics"))
-                        .ccli(rs.getString("ccli"))
-                        .year(rs.getString("year"))
-                        .tags(rs.getString("tags"))
-                        .publisher(rs.getString("publisher"))
-                        .copyright(rs.getString("copyright"))
-                        .key(rs.getString("key"))
-                        .info(rs.getString("info"))
-                        .capo(rs.getString("capo"))
-                        .id(rs.getInt("id"))
-                        .get();
+                Song song = new Song.Builder(rs.getString("title"), rs.getString("author")).lyrics(rs.getString("lyrics")).ccli(rs.getString("ccli")).year(rs.getString("year")).tags(rs.getString("tags")).publisher(rs.getString("publisher")).copyright(rs.getString("copyright")).key(rs.getString("key")).info(rs.getString("info")).capo(rs.getString("capo")).id(rs.getInt("id")).get();
                 for (TextSection section : song.getSections()) {
                     section.setTheme(Theme.parseDBString(rs.getString("background")));
                 }
@@ -192,7 +195,7 @@ public final class SongDatabase {
      */
     public boolean addSong(Song song, boolean fireUpdate) {
         try (PreparedStatement stat = conn.prepareStatement("insert into songs(title, author, lyrics, background, "
-                + "ccli, tags, publisher, year, copyright, key, capo, info) values(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)")) {
+                        + "ccli, tags, publisher, year, copyright, key, capo, info) values(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)")) {
             stat.setString(1, song.getTitle());
             stat.setString(2, song.getAuthor());
             stat.setString(3, song.getLyrics(true, true));
@@ -252,7 +255,7 @@ public final class SongDatabase {
             else {
                 LOGGER.log(Level.INFO, "Updating song");
                 try (PreparedStatement stat = conn.prepareStatement("update songs set title=?, author=?, lyrics=?, background=?,"
-                        + "ccli=?, tags=?, publisher=?, year=?, copyright=?, key=?, capo=?, info=? where id=?")) {
+                                + "ccli=?, tags=?, publisher=?, year=?, copyright=?, key=?, capo=?, info=? where id=?")) {
                     stat.setString(1, song.getTitle());
                     stat.setString(2, song.getAuthor());
                     stat.setString(3, song.getLyrics(true, true));

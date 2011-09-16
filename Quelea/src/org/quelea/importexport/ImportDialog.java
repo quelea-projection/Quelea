@@ -68,8 +68,16 @@ public abstract class ImportDialog extends JDialog implements PropertyChangeList
     /**
      * Create a new import dialog.
      * @param owner the owner of this dialog.
+     * @param dialogLabels the labels to contain on the dialog as text to the 
+     * user before the file box.
+     * @param fileFilter the filefilter to use in the file dialog, or null if 
+     * there should be no file dialog.
+     * @param parser the parser to use for this import dialog.
+     * @param selectDirectory true if the user should only be allowed to select
+     * directories, false otherwise.
      */
-    public ImportDialog(JFrame owner, String[] dialogLabels, FileFilter fileFilter,
+    //TODO What's causing this netbeans warning about exporting non-public API type? Don't think we're doing that...
+    protected ImportDialog(JFrame owner, String[] dialogLabels, FileFilter fileFilter,
             final SongParser parser, final boolean selectDirectory) {
         super(owner, "Import", true);
         halt = false;
