@@ -48,7 +48,6 @@ public class SplashWindow extends FadeWindow {
             graphics.setFont(new Font("Verdana", 0, 45));
             graphics.drawString(QueleaProperties.VERSION.getVersionString(), 220, 140);
 
-//            setAlwaysOnTop(true);
             JLabel splash = new JLabel(new ImageIcon(image));
             setLayout(new BorderLayout());
             add(splash, BorderLayout.CENTER);
@@ -61,8 +60,8 @@ public class SplashWindow extends FadeWindow {
         int controlScreenProp = QueleaProperties.get().getControlScreen();
         GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
         final GraphicsDevice[] gds = ge.getScreenDevices();
-        if(controlScreenProp >= gds.length) {
-            controlScreenProp = gds.length-1;
+        if (controlScreenProp >= gds.length) {
+            controlScreenProp = gds.length - 1;
         }
         Rectangle bounds = gds[controlScreenProp].getDefaultConfiguration().getBounds();
         setLocation((int) (bounds.getLocation().x + bounds.getWidth() / 2) - getWidth() / 2, (int) (bounds.getLocation().y + bounds.getHeight() / 2) - getHeight() / 2);

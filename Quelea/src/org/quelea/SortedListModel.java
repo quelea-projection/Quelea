@@ -22,6 +22,7 @@ import java.util.*;
 
 /**
  * A list model that sorts its components.
+ * @param <E> the type of element in this sorted list.
  * @author Michael
  */
 public class SortedListModel<E> extends AbstractListModel<E> {
@@ -47,20 +48,22 @@ public class SortedListModel<E> extends AbstractListModel<E> {
      */
     @SuppressWarnings("unchecked")
     public E getElementAt(int index) {
-        return (E)model.toArray()[index];
+        return (E) model.toArray()[index];
     }
 
     /**
      * @inheritDoc
+     * @param element the element to add to the model.
      */
     public void add(E element) {
-        if(model.add(element)) {
+        if (model.add(element)) {
             fireContentsChanged(this, 0, getSize());
         }
     }
 
     /**
      * @inheritDoc
+     * @param elements the elements to add to the model.
      */
     public void addAll(E[] elements) {
         Collection<E> c = Arrays.asList(elements);
@@ -78,6 +81,8 @@ public class SortedListModel<E> extends AbstractListModel<E> {
 
     /**
      * @inheritDoc
+     * @param element the element to check.
+     * @return true if the element is contained in the model, false otherwise.
      */
     public boolean contains(E element) {
         return model.contains(element);
@@ -85,6 +90,7 @@ public class SortedListModel<E> extends AbstractListModel<E> {
 
     /**
      * @inheritDoc
+     * @return the first element in the model.
      */
     public E firstElement() {
         return model.first();
@@ -92,6 +98,7 @@ public class SortedListModel<E> extends AbstractListModel<E> {
 
     /**
      * @inheritDoc
+     * @return an iterator over the model.
      */
     public Iterator<E> iterator() {
         return model.iterator();
@@ -99,6 +106,7 @@ public class SortedListModel<E> extends AbstractListModel<E> {
 
     /**
      * @inheritDoc
+     * @return the last element in the model.
      */
     public E lastElement() {
         return model.last();
@@ -106,14 +114,14 @@ public class SortedListModel<E> extends AbstractListModel<E> {
 
     /**
      * @inheritDoc
+     * @param element the element to remove from the model
+     * @return true if the element was successfully removed, false otherwise.
      */
     public boolean removeElement(E element) {
         boolean removed = model.remove(element);
-        if(removed) {
+        if (removed) {
             fireContentsChanged(this, 0, getSize());
         }
         return removed;
     }
-
-
 }

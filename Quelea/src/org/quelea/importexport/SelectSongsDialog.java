@@ -17,20 +17,28 @@
  */
 package org.quelea.importexport;
 
-import org.quelea.displayable.Song;
-import org.quelea.utils.Utils;
-
-import javax.swing.*;
-import javax.swing.border.EmptyBorder;
-import javax.swing.table.DefaultTableModel;
-import javax.swing.table.TableModel;
-import javax.swing.table.TableRowSorter;
-import java.awt.*;
+import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import javax.swing.BoxLayout;
+import javax.swing.JButton;
+import javax.swing.JDialog;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
+import javax.swing.JToolBar;
+import javax.swing.ListSelectionModel;
+import javax.swing.border.EmptyBorder;
+import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableModel;
+import javax.swing.table.TableRowSorter;
+import org.quelea.displayable.Song;
+import org.quelea.utils.Utils;
 
 /**
  * A dialog where given songs can be selected.
@@ -47,12 +55,16 @@ public class SelectSongsDialog extends JDialog {
     /**
      * Create a new imported songs dialog.
      * @param owner the owner of the dialog.
+     * @param text a list of lines to be shown in the dialog.
+     * @param acceptText text to place on the accpet button.
+     * @param checkboxText text to place in the column header for the
+     * checkboxes.
      */
     public SelectSongsDialog(JFrame owner, String[] text, String acceptText,
                              String checkboxText) {
         super(owner, "Select Songs", true);
         this.checkboxText = checkboxText;
-        songs = new ArrayList<Song>();
+        songs = new ArrayList<>();
         setLayout(new BoxLayout(getContentPane(), BoxLayout.X_AXIS));
         JPanel mainPanel = new JPanel();
         mainPanel.setLayout(new BoxLayout(mainPanel, BoxLayout.Y_AXIS));
@@ -65,7 +77,7 @@ public class SelectSongsDialog extends JDialog {
         JPanel optionsPanel = new JPanel();
         JToolBar options = new JToolBar();
         options.setFloatable(false);
-        options.add(getCheckAllButton());
+        options.add(createCheckAllButton());
         optionsPanel.add(options);
         addButton = new JButton(acceptText);
         mainPanel.add(addButton);
@@ -74,7 +86,11 @@ public class SelectSongsDialog extends JDialog {
         pack();
     }
 
-    private JButton getCheckAllButton() {
+    /**
+     * Create the button that checks all the boxes.
+     * @return the newly created check all button.
+     */
+    private JButton createCheckAllButton() {
         JButton checkButton = new JButton(Utils.getImageIcon("icons/checkbox.jpg"));
         checkButton.setToolTipText("Check / Uncheck all");
         checkButton.setMargin(new Insets(0, 0, 0, 0));
@@ -97,7 +113,7 @@ public class SelectSongsDialog extends JDialog {
     /**
      * Set the songs to be shown in the dialog.
      * @param songs         the list of songs to be shown.
-     * @param existsAlready a list corresponding to the song list - each position is true if the checkbox should be
+     * @param checkList     a list corresponding to the song list - each position is true if the checkbox should be
      *                      selected, false otherwise.
      * @param defaultVal    the default value to use for the checkbox if checkList is null or smaller than the songs
      *                      list.

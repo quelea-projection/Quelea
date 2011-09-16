@@ -15,11 +15,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
-
 package org.quelea.importexport;
 
 import java.io.File;
@@ -28,11 +23,18 @@ import java.util.List;
 import org.quelea.displayable.Song;
 
 /**
- *
+ * The interface for all the different song parsers that parse songs from 
+ * various sources.
  * @author Michael
  */
 interface SongParser {
 
+    /**
+     * Get all the songs from a particular location.
+     * @param location the location to search for the songs.
+     * @return a list of all the songs found in the given location that have 
+     * been parsed.
+     * @throws IOException if something goes wrong accessing the given location.
+     */
     List<Song> getSongs(File location) throws IOException;
-
 }

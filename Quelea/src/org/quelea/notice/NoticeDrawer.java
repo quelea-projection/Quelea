@@ -49,6 +49,10 @@ public class NoticeDrawer {
     private int noticeWidth;
     private final Object lock = new Object();
 
+    /**
+     * Create a new notice drawer.
+     * @param canvas the canvas to draw on.
+     */
     public NoticeDrawer(LyricCanvas canvas) {
         this.canvas = canvas;
         notices = Collections.synchronizedList(new ArrayList<Notice>());
@@ -58,6 +62,10 @@ public class NoticeDrawer {
         start();
     }
 
+    /**
+     * Get the image used for this notice.
+     * @return the notice image.
+     */
     public BufferedImage getNoticeImage() {
         if (boxHeight == 0) {
             return null;
@@ -85,6 +93,10 @@ public class NoticeDrawer {
         return image;
     }
 
+    /**
+     * Recalculate the notice string, called when any notices change.
+     * @param decrement whether to decrement all the notices.
+     */
     private void recalculateNoticeString(boolean decrement) {
         StringBuilder builder = new StringBuilder();
         if (decrement) {
@@ -112,10 +124,17 @@ public class NoticeDrawer {
         noticeString = builder.toString();
     }
 
+    /**
+     * Determine if we need to redraw notices (performance thing.)
+     * @return true if we do, false otherwise.
+     */
     public boolean getRedraw() {
         return redraw;
     }
 
+    /**
+     * Start the background notice thread.
+     */
     private void start() {
         stringPos = canvas.getWidth();
         Runnable runnable = Utils.wrapAsLowPriority(new Runnable() {
@@ -186,6 +205,10 @@ public class NoticeDrawer {
     }
     private boolean first = true; //Yeah... bodge.
 
+    /**
+     * Add a given notice.
+     * @param notice the notice to add.
+     */
     public void addNotice(Notice notice) {
         notices.add(notice);
         if (first) {
@@ -199,14 +222,26 @@ public class NoticeDrawer {
         }
     }
 
+    /**
+     * Remove a given notice.
+     * @param notice notice to remove.
+     */
     public void removeNotice(Notice notice) {
         notices.remove(notice);
     }
 
+    /**
+     * Get all the notices.
+     * @return a list of all the notices.
+     */
     public List<Notice> getNotices() {
         return new ArrayList<>(notices);
     }
 
+    /**
+     * Add a notice changed listener to this drawer.
+     * @param listener the listener to add.
+     */
     public void addNoticeChangedListener(NoticesChangedListener listener) {
         listeners.add(listener);
     }

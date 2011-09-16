@@ -47,7 +47,7 @@ public class BibleInfo {
      * For internal use only.
      */
     private BibleInfo() {
-        attributes = new HashMap<String, String>();
+        attributes = new HashMap<>();
     }
 
     /**

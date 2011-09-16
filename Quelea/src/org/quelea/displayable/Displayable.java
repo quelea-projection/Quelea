@@ -50,7 +50,7 @@ public interface Displayable {
      * @return the preview text.
      */
     String getPreviewText();
-    
+
     /**
      * Get the text to display when printed.
      * @return the printed text.
@@ -63,5 +63,4 @@ public interface Displayable {
      * @return any files that this displayable relies upon.
      */
     Collection<File> getResources();
-
 }

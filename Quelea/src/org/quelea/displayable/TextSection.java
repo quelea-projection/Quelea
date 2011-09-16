@@ -198,18 +198,23 @@ public class TextSection {
         return ret.toArray(new String[ret.size()]);
     }
 
-    private String removeComments(String str) {
-        str = str.trim();
-        if (str.toLowerCase().endsWith("//lyrics")) {
-            return str.substring(0, str.indexOf("//lyrics"));
+    /**
+     * Remove comments from a string.
+     * @param line the line to remove comments from.
+     * @return the string without comments.
+     */
+    private String removeComments(String line) {
+        line = line.trim();
+        if (line.toLowerCase().endsWith("//lyrics")) {
+            return line.substring(0, line.indexOf("//lyrics"));
         }
-        if (str.toLowerCase().endsWith("//chords")) {
-            return str.substring(0, str.indexOf("//chords"));
+        if (line.toLowerCase().endsWith("//chords")) {
+            return line.substring(0, line.indexOf("//chords"));
         }
-        if (str.toLowerCase().endsWith("//title")) {
-            return str.substring(0, str.indexOf("//title"));
+        if (line.toLowerCase().endsWith("//title")) {
+            return line.substring(0, line.indexOf("//title"));
         }
-        return str;
+        return line;
     }
 
     /**
@@ -253,6 +258,11 @@ public class TextSection {
         this.theme = theme;
     }
 
+    /**
+     * Determine if this text section is equal to another object.
+     * @param obj the other object
+     * @return true if it's equal, false otherwise.
+     */
     @Override
     public boolean equals(Object obj) {
         if (obj == null) {
@@ -268,6 +278,10 @@ public class TextSection {
         return true;
     }
 
+    /**
+     * Generate a hashcode of this text section.
+     * @return the hashcode.
+     */
     @Override
     public int hashCode() {
         int hash = 3;

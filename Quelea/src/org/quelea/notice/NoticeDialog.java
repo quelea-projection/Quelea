@@ -53,6 +53,10 @@ public class NoticeDialog extends JDialog implements NoticesChangedListener {
     private JList<Notice> noticeList;
     private List<NoticeDrawer> noticeDrawers;
 
+    /**
+     * Create a new notice dialog.
+     * @param owner the owner of this dialog.
+     */
     public NoticeDialog(JFrame owner) {
         super(owner, true);
         noticeDrawers = new ArrayList<>();
@@ -152,17 +156,29 @@ public class NoticeDialog extends JDialog implements NoticesChangedListener {
         validate();
     }
 
+    /**
+     * Set the dialog to be visible or not. If visible, centre on its owner.
+     * @param visible true if visible, false if invisible.
+     */
     @Override
     public void setVisible(boolean visible) {
         setLocationRelativeTo(getOwner());
         super.setVisible(visible);
     }
 
+    /**
+     * Register a canvas to be updated using this notice dialog.
+     * @param canvas the canvas to register.
+     */
     public void registerCanvas(LyricCanvas canvas) {
         noticeDrawers.add(canvas.getNoticeDrawer());
         canvas.getNoticeDrawer().addNoticeChangedListener(this);
     }
 
+    /**
+     * Testing.
+     * @param args 
+     */
     public static void main(String[] args) {
         NoticeDialog dialog = new NoticeDialog(null);
 //        ((DefaultListModel<Notice>)dialog.noticeList.getModel()).addElement(new Notice("Hello there", 2));

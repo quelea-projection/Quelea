@@ -15,11 +15,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
-
 package org.quelea;
 
 import java.io.File;
@@ -30,7 +25,7 @@ import org.quelea.utils.Utils;
 import org.quelea.windows.main.MainPanel;
 
 /**
- *
+ * Responsible for saving a schedule.
  * @author Michael
  */
 public class ScheduleSaver {

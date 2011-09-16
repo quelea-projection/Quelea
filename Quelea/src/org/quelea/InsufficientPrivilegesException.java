@@ -25,9 +25,10 @@ import java.io.File;
  */
 public class InsufficientPrivilegesException extends Exception {
 
-    public enum RequiredPermissions {READ, WRITE, EXECUTE}
+    public enum RequiredPermissions {
 
-    ;
+        READ, WRITE, EXECUTE
+    };
 
     /**
      * Create a new exception.
@@ -37,5 +38,4 @@ public class InsufficientPrivilegesException extends Exception {
     public InsufficientPrivilegesException(File file, RequiredPermissions missingPermissions) {
         super("Insufficient privileges - " + file + " hasn't got " + missingPermissions + " access.");
     }
-
 }

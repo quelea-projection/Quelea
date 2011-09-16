@@ -22,10 +22,9 @@ package org.quelea.bible;
  * @author Michael
  */
 public interface BibleChangeListener {
-    
+
     /**
      * Called to update bibles.
      */
     void updateBibles();
-    
 }

@@ -27,22 +27,40 @@ import java.util.List;
  */
 public class ChordTransposer {
 
+    /**
+     * Internal class containing the actual chord letter and the "tail" (whatever
+     * comes after the chord letter.)
+     */
     private static class ChordTail {
 
         private String chord;
         private String tail;
 
+        /**
+         * Create a new chord tail object.
+         * @param chord the chord.
+         * @param tail the tail.
+         */
         public ChordTail(String chord, String tail) {
             this.chord = chord;
             this.tail = tail;
         }
     }
+    
+    /**
+     * The most natural keys in order, starting at A.
+     */
     private static final List<String> TRANSPOSE_STEPS = new ArrayList<String>() {
 
         {
             addAll(Arrays.asList(new String[]{"A", "Bb", "B", "C", "C#", "D", "Eb", "E", "F", "F#", "G", "Ab"}));
         }
     };
+    
+    /*
+     * Sometimes we have E/G# like chords, the second part (after the forward 
+     * slash) is the chord2, tail2 variables.
+     */
     private String chord;
     private String chord2;
     private String tail;
@@ -99,6 +117,10 @@ public class ChordTransposer {
             localTail = "";
         }
         String newChord;
+        /*
+         * "Naturalise" the chords - A# is more commonly represented as Bb for 
+         * instance.
+         */
         switch (chord) {
             case "A#":
                 newChord = "Bb";
@@ -144,8 +166,8 @@ public class ChordTransposer {
         int index = TRANSPOSE_STEPS.indexOf(chord);
         index += semitones;
         index %= TRANSPOSE_STEPS.size();
-        if(index<0) {
-            index = TRANSPOSE_STEPS.size()+index;
+        if (index < 0) {
+            index = TRANSPOSE_STEPS.size() + index;
         }
         String transposedChord = TRANSPOSE_STEPS.get(index);
         if (newKey != null) {
@@ -166,6 +188,15 @@ public class ChordTransposer {
         return transposedChord;
     }
 
+    /**
+     * Convert a certain chord that's either a sharp or a flat into a sharp or
+     * a flat chord (A# into Bb for instance.) Chords that are already in their
+     * form proposed for conversion are returned unchanged.
+     * @param sharp true if this chord should be converted into a sharp chord, 
+     * false if it should be converted into a flat chord.
+     * @param chord the chord to convert.
+     * @return the converted chord.
+     */
     private String toSharpFlat(boolean sharp, String chord) {
         if (sharp && isSharpKey(chord)) {
             return chord;
@@ -179,11 +210,17 @@ public class ChordTransposer {
         else if (!sharp && isSharpKey(chord)) {
             return toFlat(chord);
         }
+        //Bug in program if we reach here.
         else {
             throw new AssertionError("Bug with " + sharp + " and " + chord);
         }
     }
 
+    /**
+     * Return the sharp version of a given "flat" chord.
+     * @param chord the flat chord.
+     * @return the equivalent sharp chord.
+     */
     private String toSharp(String chord) {
         switch (chord) {
             case "Db":
@@ -205,6 +242,11 @@ public class ChordTransposer {
         }
     }
 
+    /**
+     * Return the flat version of a given "sharp" chord.
+     * @param chord the sharp chord.
+     * @return the equivalent flat chord.
+     */
     private String toFlat(String chord) {
         switch (chord) {
             case "D#":
@@ -226,6 +268,14 @@ public class ChordTransposer {
         }
     }
 
+    /**
+     * Determine if the given key should use mainly sharps or flats. For 
+     * instance, A contains 5 sharps so is a sharp key, F contains 1 flat so
+     * is a flat key. For keys like Am and C with no sharps or flats, at present
+     * just return sharp.
+     * @param chord the chord to check.
+     * @return true if the key is sharp, false if it's flat.
+     */
     private boolean isSharpKey(String chord) {
         if (chord.contains("#")) {
             return true;

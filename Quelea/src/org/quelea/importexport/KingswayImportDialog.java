@@ -20,13 +20,14 @@ package org.quelea.importexport;
 import javax.swing.JFrame;
 
 /**
- *
+ * The kingsway import dialog, used for importing songs from the online kingsway
+ * library.
  * @author Michael
  */
 public class KingswayImportDialog extends ImportDialog {
     
     /**
-     * Create a new survivor import dialog.
+     * Create a new kingsway import dialog.
      * @param owner the owner of the dialog.
      */
     public KingswayImportDialog(JFrame owner) {

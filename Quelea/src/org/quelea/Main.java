@@ -45,7 +45,7 @@ import org.quelea.splash.SplashWindow;
  * @author Michael
  */
 public final class Main {
-    
+
     private static final Logger LOGGER = LoggerUtils.getLogger();
     private static MainWindow mainWindow;
     private static LyricWindow fullScreenWindow;
@@ -58,11 +58,12 @@ public final class Main {
     }
 
     /**
-     * Go go go!
-     * @param args the command line arguments
+     * Starts the program off, this is the first thing that is executed by 
+     * Quelea when the program starts.
+     * @param args the command line arguments.
      */
     public static void main(String[] args) {
-        
+
         final SplashWindow splashWindow = new SplashWindow();
         splashWindow.setVisible(true);
 
@@ -74,20 +75,20 @@ public final class Main {
         final int controlScreen;
         int projectorScreen = QueleaProperties.get().getProjectorScreen();
 
-        if(gds.length <= controlScreenProp) {
+        if (gds.length <= controlScreenProp) {
             controlScreen = 0;
         }
         else {
             controlScreen = controlScreenProp;
         }
         final boolean hidden;
-        if(projectorScreen >= gds.length || projectorScreen < 0) {
+        if (projectorScreen >= gds.length || projectorScreen < 0) {
             hidden = true;
         }
         else {
             hidden = false;
         }
-        if(hidden) {
+        if (hidden) {
             LOGGER.log(Level.INFO, "Hiding projector display on monitor 0 (base 0!)");
             fullScreenWindow = new LyricWindow(gds[0].getDefaultConfiguration().getBounds());
         }
@@ -108,7 +109,7 @@ public final class Main {
             SpellChecker.getOptions().setLanguageDisableVisible(false);
             SpellChecker.getOptions().setCaseSensitive(false);
         }
-        catch(MalformedURLException ex) {
+        catch (MalformedURLException ex) {
             LOGGER.log(Level.SEVERE, "Couldn't load dictionaries", ex);
         }
         LOGGER.log(Level.INFO, "Registered dictionary");
@@ -118,21 +119,21 @@ public final class Main {
             @Override
             public void run() {
                 setLaf();
-                if(SongDatabase.get().errorOccurred()) {
+                if (SongDatabase.get().errorOccurred()) {
                     JOptionPane.showMessageDialog(null, "It looks like you already have an instance of Quelea running, make sure you close all instances before running the program.", "Already running", JOptionPane.ERROR_MESSAGE);
                     System.exit(0);
                 }
                 mainWindow = new MainWindow(true);
-                
+
                 new UpdateChecker(mainWindow).checkUpdate(false, false, false);
-                
+
                 LOGGER.log(Level.INFO, "Registering canvases");
                 mainWindow.getMainPanel().getLivePanel().registerLyricCanvas(fullScreenWindow.getCanvas());
                 mainWindow.getMainPanel().getLivePanel().registerLyricWindow(fullScreenWindow);
                 mainWindow.getMainPanel().getLivePanel().registerVideoCanvas(fullScreenWindow.getCanvas());
                 fullScreenWindow.setVisible(!hidden);
                 LOGGER.log(Level.INFO, "Registered canvases.");
-                
+
                 LOGGER.log(Level.INFO, "Final loading bits");
                 Utils.centreOnMonitor(mainWindow, controlScreen);
                 mainWindow.setVisible(true);
@@ -140,7 +141,7 @@ public final class Main {
                 new ShortcutManager().addShortcuts();
                 splashWindow.setVisible(false);
                 LOGGER.log(Level.INFO, "Loaded everything.");
-                
+
                 showWarning(gds.length);
             }
         });
@@ -155,7 +156,7 @@ public final class Main {
 //            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
 //            UIManager.setLookAndFeel("com.sun.java.swing.plaf.windows.WindowsLookAndFeel");
         }
-        catch(Exception ex) {
+        catch (Exception ex) {
             LOGGER.log(Level.INFO, "Couldn't set the look and feel to substance.", ex);
         }
 
@@ -168,7 +169,7 @@ public final class Main {
      * @param numMonitors the number of monitors.
      */
     private static void showWarning(int numMonitors) {
-        if(numMonitors <= 1 && QueleaProperties.get().showSingleMonitorWarning()) {
+        if (numMonitors <= 1 && QueleaProperties.get().showSingleMonitorWarning()) {
             JOptionPane.showMessageDialog(mainWindow, "Looks like you've only got one monitor installed. "
                     + "This is fine if you're just using Quelea to prepare some schedules, but if you're "
                     + "using it in a live setting Quelea needs 2 monitors to work properly.", "Only one monitor",

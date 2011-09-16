@@ -69,7 +69,8 @@ public final class BibleManager {
                         WatchKey key;
                         try {
                             key = watcher.take();
-                        } catch (InterruptedException ex) {
+                        }
+                        catch (InterruptedException ex) {
                             return;
                         }
 
@@ -95,7 +96,8 @@ public final class BibleManager {
                     }
                 }
             }.start();
-        } catch (IOException ex) {
+        }
+        catch (IOException ex) {
             ex.printStackTrace();
         }
     }
@@ -108,10 +110,18 @@ public final class BibleManager {
         return INSTANCE;
     }
 
+    /**
+     * Register a bible change listener on this bible manager. The listener
+     * will be activated whenever a change occurs.
+     * @param listener the listener to register.
+     */
     public void registerBibleChangeListener(BibleChangeListener listener) {
         listeners.add(listener);
     }
 
+    /**
+     * Notify all the listeners that a change has occurred.
+     */
     private void updateListeners() {
         for (BibleChangeListener listener : listeners) {
             listener.updateBibles();

@@ -52,7 +52,7 @@ public final class Bible {
      * @param name the name of the bible.
      */
     private Bible(String name) {
-        books = new ArrayList<BibleBook>();
+        books = new ArrayList<>();
         this.name = name;
     }
 
@@ -78,15 +78,7 @@ public final class Bible {
             }
             return null;
         }
-        catch (ParserConfigurationException ex) {
-            LOGGER.log(Level.WARNING, "Couldn't parse the bible", ex);
-            return null;
-        }
-        catch (SAXException ex) {
-            LOGGER.log(Level.WARNING, "Couldn't parse the bible", ex);
-            return null;
-        }
-        catch (IOException ex) {
+        catch (ParserConfigurationException | SAXException | IOException ex) {
             LOGGER.log(Level.WARNING, "Couldn't parse the bible", ex);
             return null;
         }
@@ -94,7 +86,7 @@ public final class Bible {
 
     /**
      * Parse some XML representing this object and return the object it represents.
-     * @param info the XML node representing this object.
+     * @param node the XML node representing this object.
      * @return the object as defined by the XML.
      */
     public static Bible parseXML(Node node) {

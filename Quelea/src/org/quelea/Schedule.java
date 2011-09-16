@@ -137,10 +137,12 @@ public class Schedule implements Iterable<Displayable>, Printable {
                     }
                 }
                 return true;
-            } finally {
+            }
+            finally {
                 zos.close();
             }
-        } catch (IOException ex) {
+        }
+        catch (IOException ex) {
             LOGGER.log(Level.WARNING, "Couldn't write the schedule to file", ex);
             return false;
         }
@@ -182,10 +184,12 @@ public class Schedule implements Iterable<Displayable>, Printable {
                     }
                 }
                 return ret;
-            } finally {
+            }
+            finally {
                 zipFile.close();
             }
-        } catch (IOException ex) {
+        }
+        catch (IOException ex) {
             LOGGER.log(Level.WARNING, "Couldn't read the schedule from file", ex);
             return null;
         }
@@ -222,16 +226,20 @@ public class Schedule implements Iterable<Displayable>, Printable {
                 String name = node.getNodeName();
                 if (name.equalsIgnoreCase("song")) {
                     newSchedule.add(Song.parseXML(node));
-                } else if (name.equalsIgnoreCase("passage")) {
+                }
+                else if (name.equalsIgnoreCase("passage")) {
                     newSchedule.add(BiblePassage.parseXML(node));
-                } else if (name.equalsIgnoreCase("fileimage")) {
+                }
+                else if (name.equalsIgnoreCase("fileimage")) {
                     newSchedule.add(ImageDisplayable.parseXML(node));
-                } else if (name.equalsIgnoreCase("filevideo")) {
+                }
+                else if (name.equalsIgnoreCase("filevideo")) {
                     newSchedule.add(VideoDisplayable.parseXML(node));
                 }
             }
             return newSchedule;
-        } catch (ParserConfigurationException | SAXException | IOException ex) {
+        }
+        catch (ParserConfigurationException | SAXException | IOException ex) {
             LOGGER.log(Level.WARNING, "Couldn't parse the schedule", ex);
             return null;
         }

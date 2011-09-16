@@ -37,6 +37,9 @@ public class ChordLineTransposer {
      * Transpose the line by the given number of semitones.
      * @param semitones the number of semitones to transpose by, positive or
      * negative.
+     * @param newKey the new key to transpose to. This can be null if not known
+     * but if it is known it means we can properly transpose chords (otherwise 
+     * we can end up with things like E/Ab rather than E/G#.
      * @return the transposed line.
      */
     public String transpose(int semitones, String newKey) {
