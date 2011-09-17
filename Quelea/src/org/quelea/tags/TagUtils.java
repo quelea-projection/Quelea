@@ -21,11 +21,23 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- *
+ * Class containing static utility methods useful in tags.
  * @author Michael
  */
 public class TagUtils {
     
+    /**
+     * I bite.
+     */
+    private TagUtils() {
+        throw new AssertionError();
+    }
+    
+    /**
+     * Get a list of tags from a semi-colon delimited string of tags.
+     * @param str the string of tags.
+     * @return a list of tags.
+     */
     public static List<String> getTagsFromString(String str) {
         String[] rawTags = str.toLowerCase().split(";");
         List<String> tags = new ArrayList<>(rawTags.length);
