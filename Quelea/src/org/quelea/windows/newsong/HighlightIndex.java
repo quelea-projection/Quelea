@@ -17,7 +17,7 @@
  */
 package org.quelea.windows.newsong;
 
-import java.awt.*;
+import java.awt.Color;
 
 /**
  * Add some information about where something should be highlighted.

@@ -23,6 +23,9 @@ import java.awt.Canvas;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintStream;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import org.quelea.utils.LoggerUtils;
 import org.quelea.utils.QueleaProperties;
 import uk.co.caprica.vlcj.binding.LibVlcFactory;
 import uk.co.caprica.vlcj.binding.internal.libvlc_media_player_t;
@@ -33,11 +36,15 @@ import uk.co.caprica.vlcj.player.embedded.windows.WindowsEmbeddedMediaPlayer;
 import uk.co.caprica.vlcj.runtime.RuntimeUtil;
 
 /**
- *
+ * An embedded player that sits out of process in a separate VM. In process
+ * players are unstable using VLC due to concurrency bugs in libvlc and its
+ * dependencies, so we need to fall back on a mechanism that's a little more
+ * complicated than the norm!
  * @author Michael
  */
 public class OutOfProcessEmbeddedPlayer extends OutOfProcessPlayer {
 
+    private static final Logger LOGGER = LoggerUtils.getLogger();
     private EmbeddedMediaPlayer mediaPlayer;
 
     public OutOfProcessEmbeddedPlayer(final long canvasId) throws IOException {
@@ -80,13 +87,24 @@ public class OutOfProcessEmbeddedPlayer extends OutOfProcessPlayer {
 
     }
 
+    /**
+     * No special options needed for this player.
+     * @return an empty string array.
+     */
     @Override
     public String[] getPrepareOptions() {
         return new String[0];
     }
     
+    /**
+     * Set this to true if we want to test a file straight off.
+     */
     private static final boolean TEST_MODE = false;
 
+    /**
+     * Testing stuff.
+     * @param args 
+     */
     public static void main(String[] args) {
         if (TEST_MODE) {
             args = new String[]{"0"};
@@ -106,7 +124,7 @@ public class OutOfProcessEmbeddedPlayer extends OutOfProcessPlayer {
             }
         }
         catch (Exception ex) {
-            ex.printStackTrace();
+            LOGGER.log(Level.WARNING, "Error occured", ex);
         }
     }
 }

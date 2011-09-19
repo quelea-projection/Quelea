@@ -27,7 +27,6 @@ import java.awt.image.BufferedImage;
 import javax.swing.JPanel;
 import javax.swing.JWindow;
 
-
 /**
  * The full screen window used for displaying the projection.
  * @author Michael
@@ -38,7 +37,7 @@ public class LyricWindow extends JWindow {
     private final LyricCanvas canvas;
 
     /**
-     * Initialise cursor hiding
+     * Initialise cursor hiding.
      */
     static {
         BufferedImage blankImg = new BufferedImage(16, 16, BufferedImage.TYPE_INT_ARGB);
@@ -76,5 +75,4 @@ public class LyricWindow extends JWindow {
     public LyricCanvas getCanvas() {
         return canvas;
     }
-
 }

@@ -17,12 +17,14 @@
  */
 package org.quelea.windows.main;
 
+import javax.swing.JButton;
+import javax.swing.JToolBar;
 import org.quelea.utils.Utils;
 
-import javax.swing.*;
-
 /**
- * The toolbar displayed on the main window.
+ * The toolbar displayed on the main window. We don't use this now, have the
+ * ribbon instead...
+ * @deprecated
  * @author Michael
  */
 public class MainToolbar extends JToolBar {

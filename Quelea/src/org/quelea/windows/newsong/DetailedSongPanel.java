@@ -174,6 +174,12 @@ public class DetailedSongPanel extends JPanel {
 
     }
 
+    /**
+     * Add a label / input block to a panel.
+     * @param panel the panel to add to.
+     * @param labelText the label text to add to this block.
+     * @param comp the component to add to this block.
+     */
     private void addBlock(JPanel panel, String labelText, Component comp) {
         JLabel label = new JLabel(labelText);
         label.setLabelFor(comp);
@@ -181,6 +187,9 @@ public class DetailedSongPanel extends JPanel {
         panel.add(comp);
     }
 
+    /**
+     * Reset this panel to blank so it can contain a new song.
+     */
     public void resetNewSong() {
         ccli.setText("");
         year.setText("");
@@ -192,6 +201,10 @@ public class DetailedSongPanel extends JPanel {
         info.setText("");
     }
 
+    /**
+     * Set this panel to edit a song.
+     * @param song the song to edit.
+     */
     public void resetEditSong(Song song) {
         ccli.setText(song.getCcli());
         copyright.setText(song.getCopyright());
@@ -203,38 +216,74 @@ public class DetailedSongPanel extends JPanel {
         info.setText(song.getInfo());
     }
 
+    /**
+     * Get the CCLI field.
+     * @return the CCLI field.
+     */
     public JTextField getCcliField() {
         return ccli;
     }
 
+    /**
+     * Get the copyright field.
+     * @return the copyright field.
+     */
     public JTextField getCopyrightField() {
         return copyright;
     }
 
+    /**
+     * Get the publisher field.
+     * @return the publisher field.
+     */
     public JTextField getPublisherField() {
         return publisher;
     }
 
+    /**
+     * Get the tags panel.
+     * @return the tags panel.
+     */
     public TagEntryPanel getTagsPanel() {
         return tags;
     }
 
+    /**
+     * Get the year field.
+     * @return the year field.
+     */
     public JTextField getYearField() {
         return year;
     }
 
+    /**
+     * Get the info field.
+     * @return the info field.
+     */
     public JTextArea getInfoField() {
         return info;
     }
 
+    /**
+     * Get the key field.
+     * @return the key field.
+     */
     public JTextField getKeyField() {
         return key;
     }
 
+    /**
+     * Get the capo field.
+     * @return the capo field.
+     */
     public JTextField getCapoField() {
         return capo;
     }
     
+    /**
+     * Test it.
+     * @param args 
+     */
     public static void main(String[] args) {
         JFrame frame = new JFrame();
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);

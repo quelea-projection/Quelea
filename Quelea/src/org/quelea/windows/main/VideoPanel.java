@@ -30,13 +30,15 @@ public class VideoPanel extends ContainedPanel {
 
     /**
      * Create a new image panel.
-     * @param container the container this panel is contained within.
      */
     public VideoPanel() {
         setLayout(new BorderLayout());
         add(controlPanel, BorderLayout.CENTER);
     }
 
+    /**
+     * Focus on this video panel. Currently unimplemented.
+     */
     @Override
     public void focus() {
         //TODO: Something probably
@@ -50,6 +52,10 @@ public class VideoPanel extends ContainedPanel {
         //Nada. Can't clear a video.
     }
 
+    /**
+     * Get the video control panel on this video panel.
+     * @return the video control panel.
+     */
     public VideoControlPanel getVideoControlPanel() {
         return controlPanel;
     }
@@ -61,5 +67,4 @@ public class VideoPanel extends ContainedPanel {
     public void showDisplayable(VideoDisplayable displayable) {
         controlPanel.loadVideo(displayable.getVLCString());
     }
-
 }

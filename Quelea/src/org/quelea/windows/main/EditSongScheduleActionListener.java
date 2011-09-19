@@ -24,11 +24,15 @@ import org.quelea.displayable.Song;
 import org.quelea.windows.newsong.SongEntryWindow;
 
 /**
- *
+ * Called when the current song in the schedule should be edited.
  * @author Michael
  */
 public class EditSongScheduleActionListener implements ActionListener {
 
+    /**
+     * Edit the currently selected song in the library.
+     * @param e the action event.
+     */
     @Override
     public void actionPerformed(ActionEvent e) {
         SongEntryWindow songEntryWindow = Application.get().getMainWindow().getSongEntryWindow();

@@ -23,15 +23,24 @@ import org.pushingpixels.flamingo.api.ribbon.RibbonElementPriority;
 import org.pushingpixels.flamingo.api.ribbon.RibbonTask;
 
 /**
- *
+ * The projector task (i.e. group of buttons) displayed on the ribbon. Manages
+ * all the projector related actions.
  * @author Michael
  */
 public class ProjectorTask extends RibbonTask {
     
+    /**
+     * Create the projector task.
+     */
     public ProjectorTask() {
         super("Projector", getControlBand());
     }
 
+    /**
+     * Get the control band (at present the only band) of this task. Manages
+     * all the projector controls.
+     * @return the projector control band.
+     */
     private static JRibbonBand getControlBand() {
         JRibbonBand controlBand = new JRibbonBand("Controls", RibbonUtils.getRibbonIcon("icons/projector.png", 100, 100));
         RibbonUtils.applyStandardResizePolicies(controlBand);

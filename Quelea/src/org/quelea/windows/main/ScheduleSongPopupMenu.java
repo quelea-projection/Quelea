@@ -18,7 +18,8 @@
 package org.quelea.windows.main;
 
 import java.awt.event.KeyEvent;
-import javax.swing.*;
+import javax.swing.JMenuItem;
+import javax.swing.JPopupMenu;
 import org.quelea.utils.Utils;
 
 /**

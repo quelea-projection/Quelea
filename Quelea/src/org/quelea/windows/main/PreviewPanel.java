@@ -17,11 +17,12 @@
  */
 package org.quelea.windows.main;
 
-import org.quelea.utils.Utils;
-
-import javax.swing.*;
-import java.awt.*;
+import java.awt.BorderLayout;
+import javax.swing.JButton;
+import javax.swing.JLabel;
+import javax.swing.JToolBar;
 import org.quelea.displayable.Displayable;
+import org.quelea.utils.Utils;
 
 /**
  * The panel displaying the preview lyrics selection - this is viewed before displaying the actual lyrics on the

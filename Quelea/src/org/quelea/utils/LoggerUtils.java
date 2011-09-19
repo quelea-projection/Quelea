@@ -43,6 +43,9 @@ public final class LoggerUtils {
         loggers = new HashMap<>();
     }
 
+    /**
+     * Initialise the handlers.
+     */
     private static void initialise() {
         if (FILE_HANDLER == null) {
             synchronized (LoggerUtils.class) {
@@ -53,7 +56,7 @@ public final class LoggerUtils {
                         FILE_HANDLER.setFormatter(new SimpleFormatter());
                     }
                     catch (IOException ex) {
-                        ex.printStackTrace();
+//                        ex.printStackTrace();
                         //Can't really do a lot here
                     }
                 }
@@ -100,7 +103,7 @@ public final class LoggerUtils {
                 logger.addHandler(FILE_HANDLER);
             }
             catch (Exception ex) {
-                ex.printStackTrace();
+//                ex.printStackTrace();
             }
             loggers.put(name, logger);
         }

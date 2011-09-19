@@ -20,7 +20,8 @@ package org.quelea.utils;
 import javax.swing.JWindow;
 
 /**
- * A window that fades in or out gradually rather than suddenly.
+ * A window that fades in or out gradually rather than suddenly. Requires
+ * hardware acceleration.
  * @author Michael
  */
 public class FadeWindow extends JWindow {
@@ -29,18 +30,34 @@ public class FadeWindow extends JWindow {
     private float speed = 0.03f;
     private boolean nextStateVisible;
 
+    /**
+     * Get the time that should be slept between each fade step.
+     * @return the time that should be slept between each fade step.
+     */
     public int getSleepTime() {
         return sleepTime;
     }
 
+    /**
+     * Set the time that should be slept between each fade step.
+     * @param sleepTime the time that should be slept between each fade step.
+     */
     public void setSleepTime(int sleepTime) {
         this.sleepTime = sleepTime;
     }
 
+    /**
+     * Get the speed of each fade step.
+     * @return the speed of each fade step.
+     */
     public float getSpeed() {
         return speed;
     }
 
+    /**
+     * Set the speed of each fade step.
+     * @param speed the speed of each fade step.
+     */
     public void setSpeed(float speed) {
         this.speed = speed;
     }

@@ -119,9 +119,9 @@ public class ImageListPanel extends JPanel {
         @Override
         public Component getListCellRendererComponent(JList<?> list, Object value, int index,
                 boolean isSelected, boolean cellHasFocus) {
-            CustomCellRenderer ret = (CustomCellRenderer)super.getListCellRendererComponent(list, ((ImageDisplayable)value).getImage(), index, isSelected, cellHasFocus);
+            CustomCellRenderer ret = (CustomCellRenderer) super.getListCellRendererComponent(list, ((ImageDisplayable) value).getImage(), index, isSelected, cellHasFocus);
             ret.setBorder(new EmptyBorder(5, 5, 5, 5));
-            ret.setToolTipText(((ImageDisplayable)value).getFile().getName());
+            ret.setToolTipText(((ImageDisplayable) value).getFile().getName());
             return ret;
         }
     }

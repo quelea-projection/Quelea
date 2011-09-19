@@ -35,21 +35,39 @@ import org.quelea.utils.LoggerUtils;
 import org.quelea.windows.library.LibrarySongList;
 
 /**
- *
+ * A popup window that displays the tags suggested based on what the user
+ * has typed in.
  * @author Michael
  */
 public class TagPopupWindow extends FadeWindow {
 
+    /**
+     * Represents a tag displayed in the popup window. This is not an external
+     * class since it relies on a bit of a bodged method to sort the tags into
+     * the order we want them to be in.
+     */
     private class Tag implements Comparable<Tag> {
 
         private String str;
         private int count;
 
+        /**
+         * Create a new tag.
+         * @param str the tag name.
+         * @param count the number of times the tag has been used.
+         */
         public Tag(String str, int count) {
             this.str = str;
             this.count = count;
         }
 
+        /**
+         * Compare this tag to another tag.
+         * @param o the other tag.
+         * @return -1 if this tag is "less than" another and 1 if it's greater 
+         * than the other. We never return 0 here because that seems to break
+         * things and we don't care about equality anyway.
+         */
         @Override
         public int compareTo(Tag o) { //Bodged method but does what we need!
             if (count == 0) {
@@ -65,6 +83,11 @@ public class TagPopupWindow extends FadeWindow {
             //Don't care about equal ones (in fact this breaks things)
         }
 
+        /**
+         * Determine whether this tag equals another object.
+         * @param obj the other object.
+         * @return true if they're equal, false otherwise.
+         */
         public boolean equals(Object obj) {
             if (obj == null) {
                 return false;
@@ -79,6 +102,10 @@ public class TagPopupWindow extends FadeWindow {
             return true;
         }
 
+        /**
+         * Get a hashcode for this tag.
+         * @return the tag's hashcode.
+         */
         public int hashCode() {
             int hash = 7;
             hash = 29 * hash + Objects.hashCode(this.str);
@@ -92,6 +119,11 @@ public class TagPopupWindow extends FadeWindow {
     private boolean includeUserText;
     private JButton firstButton;
 
+    /**
+     * Create a new tag popup window.
+     * @param includeUserText true if user text should be included in the tag
+     * suggestions, false otherwise.
+     */
     public TagPopupWindow(final boolean includeUserText) {
         this.includeUserText = includeUserText;
         setSpeed(0.07f);
@@ -99,6 +131,12 @@ public class TagPopupWindow extends FadeWindow {
         setAlwaysOnTop(true);
     }
 
+    /**
+     * Refresh the tags displayed in this popup window.
+     * @param search the text field where the user enters their search criteria.
+     * @param panel the panel where the tags are displayed.
+     * @param list the song list currently in use.
+     */
     public void setString(final JTextField search, final TagPanel panel, final LibrarySongList list) {
 
         boolean visible = false;
@@ -133,7 +171,7 @@ public class TagPopupWindow extends FadeWindow {
                     search.setText("");
                     panel.addTag(tag, list);
                     if (list != null) {
-                        list.filterByTag(panel.getTags(), false);
+                        list.filterByTag(panel.getTags());
                     }
                     setVisible(false);
                 }
@@ -162,6 +200,10 @@ public class TagPopupWindow extends FadeWindow {
         }
     }
 
+    /**
+     * Set the tag map to the given tag map.
+     * @param tagMap the tag map to use.
+     */
     public void setTags(Map<String, Integer> tagMap) {
         this.tagMap = tagMap;
     }

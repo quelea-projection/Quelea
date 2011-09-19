@@ -42,6 +42,7 @@ public class SelectLyricsPanel extends ContainedPanel {
 
     /**
      * Create a new lyrics panel.
+     * @param containerPanel the container panel this panel is contained within.
      */
     public SelectLyricsPanel(LivePreviewPanel containerPanel) {
         this.containerPanel = containerPanel;
@@ -84,6 +85,11 @@ public class SelectLyricsPanel extends ContainedPanel {
         });
     }
 
+    /**
+     * Show a given text displayable on this panel.
+     * @param displayable the displayable to show.
+     * @param index the index of the displayable to show.
+     */
     public void showDisplayable(TextDisplayable displayable, int index) {
         clear();
         for (TextSection section : displayable.getSections()) {
@@ -93,21 +99,35 @@ public class SelectLyricsPanel extends ContainedPanel {
         lyricsList.ensureIndexIsVisible(index);
     }
 
+    /**
+     * Get the current displayed index.
+     * @return the current displayed index.
+     */
     public int getIndex() {
         return lyricsList.getSelectedIndex();
     }
 
+    /**
+     * Clear the current panel.
+     */
     @Override
     public void clear() {
         lyricsList.getModel().clear();
         updateCanvases();
     }
 
+    /**
+     * Focus on this panel.
+     */
     @Override
     public void focus() {
         lyricsList.requestFocus();
     }
 
+    /**
+     * Add a key listener to the list on this panel (and this panel.)
+     * @param l the key listener to add.
+     */
     @Override
     public void addKeyListener(KeyListener l) {
         super.addKeyListener(l);

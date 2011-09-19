@@ -24,11 +24,16 @@ import org.quelea.displayable.Song;
 import org.quelea.windows.library.LibraryPanel;
 
 /**
- *
+ * The action listener for adding a song, called when something fires off an 
+ * action that adds a song from the library to the schedule.
  * @author Michael
  */
 public class AddSongActionListener implements ActionListener {
-    
+
+    /**
+     * Get the current selected song from the library to the schedule.
+     * @param e the event.
+     */
     @Override
     public void actionPerformed(ActionEvent e) {
         LibraryPanel libraryPanel = Application.get().getMainWindow().getMainPanel().getLibraryPanel();
@@ -36,5 +41,4 @@ public class AddSongActionListener implements ActionListener {
         Song song = libraryPanel.getLibrarySongPanel().getSongList().getSelectedValue();
         schedulePanel.getScheduleList().getModel().addElement(song);
     }
-    
 }

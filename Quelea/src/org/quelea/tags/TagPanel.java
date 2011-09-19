@@ -37,18 +37,26 @@ import org.quelea.utils.WrapLayout;
 import org.quelea.windows.library.LibrarySongList;
 
 /**
- *
+ * The panel where the tags are displayed.
  * @author Michael
  */
 public class TagPanel extends JPanel {
 
     private Set<String> tags;
 
+    /**
+     * Create a new tag panel.
+     */
     public TagPanel() {
         setLayout(new WrapLayout(FlowLayout.LEFT));
         tags = new HashSet<>();
     }
 
+    /**
+     * Add a tag to the panel.
+     * @param tag the tag text to add.
+     * @param list the library song list in use.
+     */
     public void addTag(final String tag, final LibrarySongList list) {
         tags.add(tag);
         final JPanel tagPanel = new JPanel();
@@ -64,7 +72,7 @@ public class TagPanel extends JPanel {
                 remove(tagPanel);
                 redo(ancestor);
                 if (list != null) {
-                    list.filterByTag(getTags(), false);
+                    list.filterByTag(getTags());
                 }
             }
         });
@@ -74,6 +82,10 @@ public class TagPanel extends JPanel {
         redo(button.getTopLevelAncestor());
     }
 
+    /**
+     * Repaint stuff.
+     * @param ancestor the ancestor of this panel.
+     */
     private void redo(Container ancestor) {
         validate();
         repaint();
@@ -81,6 +93,10 @@ public class TagPanel extends JPanel {
         ((JDialog) ancestor).repaint();
     }
 
+    /**
+     * Set the tags on this panel to a certain list of tags.
+     * @param tags a semi-colon delimited list of tags.
+     */
     public void setTags(String tags) {
         removeTags();
         if(tags.trim().isEmpty()) {
@@ -92,12 +108,20 @@ public class TagPanel extends JPanel {
         }
     }
 
+    /**
+     * Get all the tags in use on this panel as a list.
+     * @return all the tags in use as a list.
+     */
     public List<String> getTags() {
         List<String> ret = new ArrayList<>();
         ret.addAll(tags);
         return ret;
     }
 
+    /**
+     * Get all the tags in use on this panel as a semi-colon delimited string.
+     * @return all the tags in use as a semi-colon delimited string.
+     */
     public String getTagsAsString() {
         StringBuilder ret = new StringBuilder();
         for (String str : getTags()) {
@@ -109,6 +133,9 @@ public class TagPanel extends JPanel {
         return ret.subSequence(0, ret.length() - 1).toString();
     }
 
+    /**
+     * Remove all the tags on this panel.
+     */
     public void removeTags() {
         tags.clear();
         removeAll();

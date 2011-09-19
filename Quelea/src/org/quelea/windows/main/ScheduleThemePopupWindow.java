@@ -69,7 +69,9 @@ import static java.nio.file.StandardWatchEventKinds.ENTRY_MODIFY;
 import static java.nio.file.StandardWatchEventKinds.OVERFLOW;
 
 /**
- *
+ * A popup window that allows the user to select a theme for the current 
+ * schedule. It behaves a bit like a rich menu that fades in and out, and 
+ * replaces the old menu we had.
  * @author Michael
  */
 public class ScheduleThemePopupWindow extends FadeWindow {
@@ -79,6 +81,11 @@ public class ScheduleThemePopupWindow extends FadeWindow {
     private Theme tempTheme;
     private ScheduleList schedule;
 
+    /**
+     * Create a new schedule theme popup window to control a particular
+     * schedule.
+     * @param schedule the schedule to control.
+     */
     public ScheduleThemePopupWindow(final ScheduleList schedule) {
         setSpeed(0.06f);
         this.schedule = schedule;
@@ -91,7 +98,8 @@ public class ScheduleThemePopupWindow extends FadeWindow {
     }
 
     /**
-     * Start the watcher thread.
+     * Start the watcher thread. This runs in the background and if any theme
+     * changes are detected on the folder it updates itself.
      */
     private void startWatching() {
         try {
@@ -140,18 +148,30 @@ public class ScheduleThemePopupWindow extends FadeWindow {
             }.start();
         }
         catch (IOException ex) {
-            ex.printStackTrace();
+            LOGGER.log(Level.WARNING, "Exception in logger thread.", ex);
         }
     }
 
+    /**
+     * Get the temporary theme to be used on the schedule, the one currently 
+     * selected by the user. Or null if it's default or nothing is selected.
+     * @return the user's chosen theme.
+     */
     public Theme getTempTheme() {
         return tempTheme;
     }
 
+    /**
+     * Update the theme on the schedule to the current temporary theme.
+     */
     public void updateTheme() {
         setTheme(tempTheme);
     }
 
+    /**
+     * Refresh all the themes in the window - remove all the old ones, go 
+     * through the folder and find the themes to display.
+     */
     public synchronized final void refresh() {
         List<Theme> themes = null;
         try {
@@ -198,6 +218,9 @@ public class ScheduleThemePopupWindow extends FadeWindow {
         JButton newThemeButton = new JButton("New...");
         newThemeButton.addActionListener(new ActionListener() {
 
+            /**
+             * Invoked when the user wants to add a new theme.
+             */
             @Override
             public void actionPerformed(ActionEvent e) {
                 final JDialog dialog = new JDialog(Application.get().getMainWindow(), "New theme", ModalityType.APPLICATION_MODAL);
@@ -273,6 +296,10 @@ public class ScheduleThemePopupWindow extends FadeWindow {
         contentPanel.repaint();
     }
 
+    /**
+     * Get a list of themes currently in use on this window.
+     * @return the list of themes displayed.
+     */
     private List<Theme> getThemes() {
         List<Theme> themesList = new ArrayList<>();
         File themeDir = new File(QueleaProperties.getQueleaUserHome(), "themes");
@@ -293,6 +320,10 @@ public class ScheduleThemePopupWindow extends FadeWindow {
         return themesList;
     }
 
+    /**
+     * Set the schedule to a given theme.
+     * @param theme the theme to set.
+     */
     private void setTheme(Theme theme) {
         if (schedule == null) {
             LOGGER.log(Level.WARNING, "Null schedule, not setting theme");
@@ -309,6 +340,10 @@ public class ScheduleThemePopupWindow extends FadeWindow {
         }
     }
 
+    /**
+     * Testing stuff.
+     * @param args 
+     */
     public static void main(String[] args) {
         JWindow window = new ScheduleThemePopupWindow(null);
         window.addWindowListener(new WindowAdapter() {

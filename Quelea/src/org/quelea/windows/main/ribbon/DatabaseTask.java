@@ -22,7 +22,6 @@ import java.awt.event.ActionListener;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 import java.util.Arrays;
-import javax.swing.JDialog;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import org.pushingpixels.flamingo.api.common.JCommandButton;
@@ -44,7 +43,8 @@ import org.quelea.windows.main.NewSongActionListener;
 import org.quelea.windows.main.RemoveSongDBActionListener;
 
 /**
- *
+ * The database task (i.e. group of buttons) displayed on the ribbon. Manages
+ * all the database related actions.
  * @author Michael
  */
 public class DatabaseTask extends RibbonTask {
@@ -55,6 +55,9 @@ public class DatabaseTask extends RibbonTask {
     private static final ImportDialog kingswayImportDialog;
     private static final TagDialog tagDialog;
 
+    /**
+     * Sort out all the dialogs.
+     */
     static {
         qspImportDialog = new QSPImportDialog(Application.get().getMainWindow());
         sImportDialog = new SurvivorImportDialog(Application.get().getMainWindow());
@@ -63,10 +66,17 @@ public class DatabaseTask extends RibbonTask {
         tagDialog = new TagDialog();
     }
 
+    /**
+     * Create the database task.
+     */
     public DatabaseTask() {
         super("Database", getSongBand(), getImportBand(), getExportBand());
     }
 
+    /**
+     * Get the import band of this task.
+     * @return the import band.
+     */
     private static JRibbonBand getImportBand() {
         JRibbonBand importBand = new JRibbonBand("Import", RibbonUtils.getRibbonIcon("icons/import.png", 100, 100));
         RibbonUtils.applyStandardResizePolicies(importBand);
@@ -123,6 +133,10 @@ public class DatabaseTask extends RibbonTask {
         return importBand;
     }
 
+    /**
+     * Get the export band of this task.
+     * @return the export band.
+     */
     private static JRibbonBand getExportBand() {
         JRibbonBand exportBand = new JRibbonBand("Export", RibbonUtils.getRibbonIcon("icons/export.png", 100, 100));
         RibbonUtils.applyStandardResizePolicies(exportBand);
@@ -141,6 +155,10 @@ public class DatabaseTask extends RibbonTask {
         return exportBand;
     }
 
+    /**
+     * Get the song band of this task.
+     * @return the song band.
+     */
     private static JRibbonBand getSongBand() {
         final JRibbonBand songBand = new JRibbonBand("Songs", RibbonUtils.getRibbonIcon("icons/database.png", 100, 100));
         RibbonUtils.applyStandardResizePolicies(songBand);
@@ -189,6 +207,10 @@ public class DatabaseTask extends RibbonTask {
         return songBand;
     }
     
+    /**
+     * Check whether the edit / delete buttons should be set to enabled or 
+     * not.
+     */
     private static void checkEditDeleteButtons(JCommandButton editSongButton, JCommandButton deleteSongButton) {
         final LibrarySongList libraryList = Application.get().getMainWindow().getMainPanel().getLibraryPanel().getLibrarySongPanel().getSongList();
         if(!libraryList.isFocusOwner()) {

@@ -17,18 +17,22 @@
  */
 package org.quelea.windows.main.menu;
 
-import org.quelea.utils.LoggerUtils;
-import org.quelea.utils.QueleaProperties;
-import org.quelea.utils.UpdateChecker;
-
-import javax.swing.*;
-import java.awt.*;
+import java.awt.Desktop;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
+import java.io.IOException;
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.JMenu;
+import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
+import javax.swing.JPopupMenu;
+import org.quelea.utils.LoggerUtils;
+import org.quelea.utils.QueleaProperties;
+import org.quelea.utils.UpdateChecker;
 
 /**
  * The help menu.
@@ -56,7 +60,7 @@ public class HelpMenu extends JMenu {
                     try {
                         Desktop.getDesktop().browse(new URI(QueleaProperties.get().getWebsiteLocation()));
                     }
-                    catch(Exception ex) {
+                    catch(URISyntaxException | IOException ex) {
                         LOGGER.log(Level.WARNING, "Couldn't launch Quelea website", ex);
                         showError("the Quelea website");
                     }
@@ -71,7 +75,7 @@ public class HelpMenu extends JMenu {
                     try {
                         Desktop.getDesktop().browse(new URI(QueleaProperties.get().getDiscussLocation()));
                     }
-                    catch(Exception ex) {
+                    catch(URISyntaxException | IOException ex) {
                         LOGGER.log(Level.WARNING, "Couldn't launch Quelea discuss", ex);
                         showError("Quelea discuss");
                     }
@@ -86,7 +90,7 @@ public class HelpMenu extends JMenu {
                     try {
                         Desktop.getDesktop().browse(new URI(QueleaProperties.get().getDownloadLocation()));
                     }
-                    catch(Exception ex) {
+                    catch(URISyntaxException | IOException ex) {
                         LOGGER.log(Level.WARNING, "Couldn't launch Quelea download page", ex);
                         showError("Quelea download page");
                     }

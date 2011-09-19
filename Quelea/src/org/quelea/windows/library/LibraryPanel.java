@@ -19,7 +19,9 @@ package org.quelea.windows.library;
 
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.swing.*;
+import javax.swing.BoxLayout;
+import javax.swing.JPanel;
+import javax.swing.JTabbedPane;
 import org.quelea.utils.LoggerUtils;
 
 /**
@@ -78,5 +80,4 @@ public class LibraryPanel extends JPanel {
     public LibraryImagePanel getImagePanel() {
         return imagePanel;
     }
-
 }

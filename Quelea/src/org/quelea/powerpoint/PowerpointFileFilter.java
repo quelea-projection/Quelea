@@ -15,33 +15,42 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.quelea.windows.library;
+package org.quelea.powerpoint;
 
-import java.awt.BorderLayout;
-import javax.swing.JPanel;
+import org.quelea.utils.ExtensionFileFilter;
 
 /**
- * The image panel in the library.
- * @author Michael
+ * File filter implementation for video files recognised by libvlc.
  */
-public class LibraryImagePanel extends JPanel {
-
-    private final ImageListPanel imagePanel;
+public class PowerpointFileFilter extends ExtensionFileFilter {
 
     /**
-     * Create a new library image panel.
+     * From the vlc_interfaces.h include file.
      */
-    public LibraryImagePanel() {
-        setLayout(new BorderLayout());
-        imagePanel = new ImageListPanel("img");
-        add(imagePanel, BorderLayout.CENTER);
+    private static final String[] EXTENSIONS_POWERPOINT = {
+        "ppt",
+        "pptx",
+        "pps",
+        "ppsx"
+    };
+    /**
+     * Single instance.
+     */
+    public static final PowerpointFileFilter INSTANCE = new PowerpointFileFilter();
+
+    /**
+     * Create a new file filter.
+     */
+    public PowerpointFileFilter() {
+        super(EXTENSIONS_POWERPOINT);
     }
 
     /**
-     * Get the image list panel.
-     * @return the image list panel.
+     * Get a description of this file filter.
+     * @return "Powerpoint files".
      */
-    public ImageListPanel getImagePanel() {
-        return imagePanel;
+    @Override
+    public String getDescription() {
+        return "Powerpoint files";
     }
 }

@@ -38,6 +38,9 @@ public class PowerpointList extends JList<PresentationSlide> {
 
     private Color originalSelectionColour;
 
+    /**
+     * Create a new powerpoint list.
+     */
     public PowerpointList() {
         setModel(new DefaultListModel<PresentationSlide>());
         setCellRenderer(new CustomCellRenderer());
@@ -56,6 +59,10 @@ public class PowerpointList extends JList<PresentationSlide> {
         });
     }
 
+    /**
+     * Clear all current slides and set the slides in the list.
+     * @param slides the slides to put in the list.
+     */
     public void setSlides(PresentationSlide[] slides) {
         DefaultListModel<PresentationSlide> model = (DefaultListModel<PresentationSlide>)getModel();
         model.clear();
@@ -64,6 +71,12 @@ public class PowerpointList extends JList<PresentationSlide> {
         }
     }
 
+    /**
+     * Get the current image in use at the specified width / height.
+     * @param width the width of the image.
+     * @param height the height of the image.
+     * @return the selected slide image at the given dimensions.
+     */
     public BufferedImage getCurrentImage(int width, int height) {
         if (getSelectedValue() == null) {
             return new BufferedImage(10, 10, BufferedImage.TYPE_INT_ARGB);
@@ -76,6 +89,15 @@ public class PowerpointList extends JList<PresentationSlide> {
      */
     private static class CustomCellRenderer extends DefaultListCellRenderer {
 
+        /**
+         * Get the component to display in the list using the custom renderer.
+         * @param list the list to apply the renderer to.
+         * @param value the value to render.
+         * @param index the currently selected index.
+         * @param isSelected true if the value object is selected.
+         * @param cellHasFocus true if the cell has focus, false otherwise.
+         * @return the component to display as this cell.
+         */
         @Override
         public Component getListCellRendererComponent(JList<?> list, Object value, int index,
                 boolean isSelected, boolean cellHasFocus) {

@@ -17,14 +17,19 @@
  */
 package org.quelea.windows.newsong;
 
-import javax.swing.event.ChangeEvent;
-import org.quelea.utils.Utils;
-
-import javax.swing.*;
-import java.awt.*;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Dialog.ModalityType;
+import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import javax.swing.JButton;
+import javax.swing.JDialog;
+import javax.swing.JPanel;
+import javax.swing.JSlider;
+import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
+import org.quelea.utils.Utils;
 
 /**
  * A colour selection window where the user can select a colour they require.
@@ -113,7 +118,6 @@ public class ColourSelectionWindow extends JDialog {
         wheel.getModel().setColor(colour);
         ColorModel model = new ColorModel();
         model.setColor(colour);
-        brightness.setValue((int)(model.getBrightness()*100));
+        brightness.setValue((int) (model.getBrightness() * 100));
     }
-
 }

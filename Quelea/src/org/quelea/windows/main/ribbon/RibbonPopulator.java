@@ -60,6 +60,9 @@ public class RibbonPopulator {
         LOGGER.log(Level.INFO, "Done populating ribbon.");
     }
 
+    /**
+     * Populate the ribbon with the various tasks.
+     */
     public void populate() {
         ribbon.addTask(scheduleTask);
         ribbon.addTask(databaseTask);
@@ -68,6 +71,9 @@ public class RibbonPopulator {
         addTaskbar();
     }
 
+    /**
+     * Add the task bar to the ribbon.
+     */
     private void addTaskbar() {
         JButton saveButton = new JButton(Utils.getImageIcon("icons/filesave.png", 15, 15));
         saveButton.addActionListener(new ActionListener() {
