@@ -32,7 +32,6 @@ public class MainToolbar extends JToolBar {
     private final JButton openButton;
     private final JButton saveButton;
 
-
     /**
      * Initialise the icons and their actions on the main toolbar.
      */
