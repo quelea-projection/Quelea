@@ -24,7 +24,6 @@ import org.quelea.utils.Utils;
 /**
  * The toolbar displayed on the main window. We don't use this now, have the
  * ribbon instead...
- * @deprecated
  * @author Michael
  */
 public class MainToolbar extends JToolBar {
