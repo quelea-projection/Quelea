@@ -8,18 +8,23 @@
     <taskdef name="launch4j" classpath="launch4j/launch4j.jar" classname="net.sf.launch4j.ant.Launch4jTask"/>
     <taskdef name="desktopentry" classpath="antdeb/ant-deb-0.0.1.jar"
              classname="com.googlecode.ant_deb_task.DesktopEntry"/>
-    <taskdef name="deb" classpath="antdeb/ant-deb-0.0.1.jar" classname="com.googlecode.ant_deb_task.Deb"/>
+    <taskdef name="deb" classpath="lib/jdeb-0.8.jar" classname="org.vafer.jdeb.ant.DebAntTask"/>
     <property file="quelea.properties"/>
+    
+    <property name="dist.jar.dir" value="${basedir}/dist"/>
+    
+    <property name="CPInstallerName" value="quelea-${quelea.version}-crossplatform-install.jar"/>
+    <property name="WindowsInstallerName" value="quelea-${quelea.version}-windows-install.exe"/>
+    <property name="DebInstallerName" value="quelea-${quelea.version}-deb-install.deb"/>
+    <property name="PortableName" value="quelea-${quelea.version}-portable.zip"/>
+
+    <property name="CPInstaller" value="${dist.jar.dir}/standalone/${CPInstallerName}"/>
+    <property name="WindowsInstaller" value="${dist.jar.dir}/standalone/${WindowsInstallerName}"/>
+    <property name="DebInstaller" value="${dist.jar.dir}/standalone/${DebInstallerName}"/>
+    <property name="Portable" value="${dist.jar.dir}/standalone/${PortableName}"/>
 
     <target name="-post-jar">
-
-        <property name="CPInstaller"
-                  value="${dist.jar.dir}/standalone/quelea-${quelea.version}-crossplatform-install.jar"/>
-        <property name="WindowsInstaller"
-                  value="${dist.jar.dir}/standalone/quelea-${quelea.version}-windows-install.exe"/>
-        <property name="DebInstaller" value="${dist.jar.dir}/standalone/quelea-${quelea.version}-deb-install.deb"/>
-        <property name="Portable" value="${dist.jar.dir}/standalone/quelea-${quelea.version}-portable.zip"/>
-
+        
         <copy todir="${dist.jar.dir}/lib">
             <fileset dir="${basedir}/lib"/>
         </copy>
@@ -51,34 +56,68 @@
         <copy file="${basedir}/Quelea.vbs" todir="${dist.jar.dir}"/>
         <copy file="${basedir}/licenses/gplv3.txt" tofile="${dist.jar.dir}/license.txt"/>
         <mkdir dir="${dist.jar.dir}/standalone"/>
-        <desktopentry toFile="quelea.desktop" name="Quelea" comment="Quelea version ${quelea.version}"
-                      exec="java -jar usr/share/quelea/Quelea.jar" icon="/usr/share/quelea/img/logo.png"
-                      categories="Utility;Java"/>
-        <!--<deb-->
-        <!--package="quelea"-->
-        <!--todir="${dist.jar.dir}/standalone"-->
-        <!--section="misc"-->
-        <!--depends="sun-java6-jre | openjdk-6-jre">-->
-        <!--<version upstream="${quelea.version}"/>-->
-        <!--<maintainer name="Michael Berry" email="michael@quelea.org"/>-->
-        <!--<description synopsis="An open source lyrics projection package">-->
-        <!--Quelea is an open source lyrics projection package that aims to-->
-        <!--bring together the best features of existing packages and offer-->
-        <!--some new features as well. It's designed to be totally cross-->
-        <!--platform and should run on any platform Java supports without-->
-        <!--many issues. If you encounter any issues with this package-->
-        <!--then please email support@quelea.org or post on the discussion-->
-        <!--list: https://groups.google.com/group/quelea-discuss-->
-        <!--</description>-->
-        <!--<description>Quelea</description>-->
-        <!--<tarfileset file="quelea.desktop" prefix="usr/share/applications" />-->
-        <!--<tarfileset dir="${dist.jar.dir}" prefix="usr/share/quelea" excludes="standalone/"/>-->
-        <!--</deb>-->
-        <!--<move file="${dist.jar.dir}/standalone/quelea_${quelea.version}-1_all.deb" tofile="${DebInstaller}"/>-->
-        <delete file="quelea.desktop"/>
+        
+        <deb destfile="${dist.jar.dir}/standalone/Quelea-temp.deb" control="control">
+            <tarfileset dir="${dist.jar.dir}"
+                        prefix="/usr/share/quelea"/>
+            <tarfileset file="quelea.desktop"
+                        prefix="/usr/share/applications"/>
+        </deb>
+        <move file="${dist.jar.dir}/standalone/Quelea-temp.deb" tofile="${DebInstaller}"/>
+        
         <izpack input="${basedir}/izpack/config.xml" output="${CPInstaller}" basedir="${dist.jar.dir}"/>
         <launch4j jar="${CPInstaller}" configFile="launch4j/config.xml" outfile="${WindowsInstaller}"/>
         <zip destfile="${Portable}" basedir="${dist.jar.dir}" excludes="standalone/"/>
+    </target>
+    
+    <target name="upload" depends="jar">
+        <taskdef classname="net.bluecow.googlecode.ant.GoogleCodeUploadTask" classpath="lib/ant-googlecode-0.0.3.jar" name="gcupload"/>
+<!--        <input
+            message="IMPORTANT: This will upload files to Google code. This cannot be undone. Continue?"
+            validargs="n,y"
+            addproperty="continue"
+        />
+        <condition property="do.abort">
+            <equals arg1="n" arg2="${continue}"/>
+        </condition>
+        <fail if="do.abort">Aborted by user.</fail>-->
+        <input
+            message="Username to use for upload:"
+            addproperty="user"
+        />
+        <input
+            message="Password for ${user}:"
+            addproperty="pass"
+        />
+        <echo message="${pass}"/>
+        
+        <gcupload 
+            username="${user}" 
+            password="${pass}" 
+            projectname="quelea-projection" 
+            filename="${WindowsInstaller}" 
+            targetfilename="${WindowsInstallerName}"
+            summary="Windows installer of Quelea, version ${quelea.version}"
+            labels="Featured, Type-Installer, OpSys-Windows"
+        />
+        <gcupload 
+            username="${user}" 
+            password="${pass}" 
+            projectname="quelea-projection" 
+            filename="${CPInstaller}" 
+            targetfilename="${CPInstallerName}"
+            summary="Cross-platform installer of Quelea, version ${quelea.version}"
+            labels="Featured, Type-Installer, OpSys-Linux"
+        />
+        <gcupload 
+            username="${user}" 
+            password="${pass}" 
+            projectname="quelea-projection" 
+            filename="${DebInstaller}" 
+            targetfilename="${DebInstallerName}"
+            summary="Debian installer of Quelea, version ${quelea.version}"
+            labels="Featured, Type-Package, OpSys-Linux"
+        />
     </target>
     <!--
 
