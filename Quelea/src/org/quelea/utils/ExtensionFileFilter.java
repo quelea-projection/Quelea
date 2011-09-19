@@ -53,7 +53,7 @@ public abstract class ExtensionFileFilter extends javax.swing.filechooser.FileFi
     /**
      * Set of recognised file extensions. 
      */
-    private final Set<String> extensionsSet = new HashSet<String>();
+    private final Set<String> extensionsSet = new HashSet<>();
 
     /**
      * Create a new file filter. 
@@ -66,11 +66,7 @@ public abstract class ExtensionFileFilter extends javax.swing.filechooser.FileFi
         this.extensions = Arrays.asList(extensions).toArray(new String[extensions.length]);
 
         Arrays.sort(this.extensions);
-
-        // Make a hash-set for faster look-up 
-        for (String extension : extensions) {
-            extensionsSet.add(extension);
-        }
+        extensionsSet.addAll(Arrays.asList(extensions));
     }
 
     /**
@@ -81,8 +77,6 @@ public abstract class ExtensionFileFilter extends javax.swing.filechooser.FileFi
      * @return file extensions accepted by the filter
      */
     public String[] getExtensions() {
-//    return Arrays.copyOf(extensions, extensions.length);
-        // Maintain JDK 1.5 compatibility
         return Arrays.asList(extensions).toArray(new String[extensions.length]);
     }
 
@@ -94,9 +88,14 @@ public abstract class ExtensionFileFilter extends javax.swing.filechooser.FileFi
      * @return set of file extensions accepted by the filter
      */
     public Set<String> getExtensionSet() {
-        return new TreeSet<String>(extensionsSet);
+        return new TreeSet<>(extensionsSet);
     }
 
+    /**
+     * Accept the file filter if the extension is one of the given ones.
+     * @param pathname the file to check.
+     * @return true if the file should be accepted, false otherwise.
+     */
     @Override
     public boolean accept(File pathname) {
         if (pathname.isDirectory()) {

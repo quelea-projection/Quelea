@@ -17,8 +17,8 @@
  */
 package org.quelea.windows.main.menu;
 
-import javax.swing.*;
 import java.awt.event.KeyEvent;
+import javax.swing.JMenuBar;
 
 /**
  * The main menu bar that's displayed at the top of the main Quelea window.

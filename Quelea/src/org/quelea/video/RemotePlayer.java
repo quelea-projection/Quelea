@@ -45,6 +45,10 @@ public class RemotePlayer {
         open = true;
     }
 
+    /**
+     * Write a given command out to the remote VM player.
+     * @param command the command to send.
+     */
     private void writeOut(String command) {
         if (!open) {
             throw new IllegalArgumentException("This remote player has been closed!");
@@ -58,6 +62,10 @@ public class RemotePlayer {
         }
     }
 
+    /**
+     * Block until receiving input from the remote VM player.
+     * @return the input string received.
+     */
     private String getInput() {
         try {
             return in.readLine();
@@ -67,16 +75,26 @@ public class RemotePlayer {
         }
     }
 
+    /**
+     * Load the given path into the remote player.
+     * @param path the path to load.
+     */
     public void load(String path) {
         writeOut("open " + path);
     }
 
+    /**
+     * Play the loaded video.
+     */
     public void play() {
         writeOut("play");
         playing = true;
         paused = false;
     }
 
+    /**
+     * Pause the video.
+     */
     public void pause() {
         if(!paused) {
             writeOut("pause");
@@ -85,36 +103,65 @@ public class RemotePlayer {
         }
     }
 
+    /**
+     * Stop the video.
+     */
     public void stop() {
         writeOut("stop");
         playing = false;
         paused = false;
     }
 
+    /**
+     * Determine if the current video is playable, i.e. one is loaded and 
+     * ready to start playing when play() is called.
+     * @return true if the video is playable, false otherwise.
+     */
     public boolean isPlayable() {
         writeOut("playable?");
         return Boolean.parseBoolean(getInput());
     }
 
+    /**
+     * Get the length of the currently loaded video.
+     * @return the length of the currently loaded video.
+     */
     public long getLength() {
         writeOut("length?");
         return Long.parseLong(getInput());
     }
 
+    /**
+     * Get the time in milliseconds of the current position in the video.
+     * @return the time in milliseconds of the current position in the video.
+     */
     public long getTime() {
         writeOut("time?");
         return Long.parseLong(getInput());
     }
 
+    /**
+     * Set the time in milliseconds of the current position in the video.
+     * @param time the time in milliseconds of the current position in the
+     * video.
+     */
     public void setTime(long time) {
         writeOut("setTime " + time);
     }
 
+    /**
+     * Determine if this video is muted.
+     * @return true if it's muted, false if not.
+     */
     public boolean getMute() {
         writeOut("mute?");
         return Boolean.parseBoolean(getInput());
     }
 
+    /**
+     * Set whether this video is muted.
+     * @param mute true to mute, false to unmute.
+     */
     public void setMute(boolean mute) {
         writeOut("setMute " + mute);
     }

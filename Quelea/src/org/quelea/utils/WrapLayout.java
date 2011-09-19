@@ -17,8 +17,11 @@
  */
 package org.quelea.utils;
 
-
-import java.awt.*;
+import java.awt.Component;
+import java.awt.Container;
+import java.awt.Dimension;
+import java.awt.FlowLayout;
+import java.awt.Insets;
 import javax.swing.JScrollPane;
 import javax.swing.SwingUtilities;
 
@@ -26,8 +29,6 @@ import javax.swing.SwingUtilities;
  *  FlowLayout subclass that fully supports wrapping of components.
  */
 public class WrapLayout extends FlowLayout {
-
-    private Dimension preferredLayoutSize;
 
     /**
      * Constructs a new <code>WrapLayout</code> with a left

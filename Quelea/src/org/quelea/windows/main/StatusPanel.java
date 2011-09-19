@@ -27,7 +27,7 @@ import javax.swing.border.EmptyBorder;
 import org.quelea.utils.Utils;
 
 /**
- *
+ * A status panel that denotes a background task in Quelea.
  * @author Michael
  */
 public class StatusPanel extends JPanel {
@@ -38,6 +38,12 @@ public class StatusPanel extends JPanel {
     private StatusPanelGroup group;
     private int index;
 
+    /**
+     * Create a new status panel.
+     * @param group the group this panel is part of.
+     * @param labelText the text to put on the label on this panel.
+     * @param index the index of this panel on the group.
+     */
     StatusPanel(StatusPanelGroup group, String labelText, int index) {
         this.group = group;
         this.index = index;

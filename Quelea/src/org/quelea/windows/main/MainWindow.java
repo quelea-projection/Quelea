@@ -20,16 +20,15 @@ package org.quelea.windows.main;
 import java.awt.Dimension;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import org.quelea.utils.QueleaProperties;
-import org.quelea.windows.newsong.SongEntryWindow;
-
 import javax.swing.JFrame;
 import org.pushingpixels.flamingo.api.ribbon.JRibbonFrame;
 import org.quelea.Application;
 import org.quelea.notice.NoticeDialog;
 import org.quelea.utils.LoggerUtils;
+import org.quelea.utils.QueleaProperties;
 import org.quelea.windows.main.ribbon.RibbonPopulator;
 import org.quelea.windows.main.ribbon.RibbonUtils;
+import org.quelea.windows.newsong.SongEntryWindow;
 
 /**
  * The main window used to control the projection.
@@ -44,6 +43,8 @@ public class MainWindow extends JRibbonFrame {
 
     /**
      * Create a new main window.
+     * @param setApplicationWindow true if this main window should be set as
+     * the application-wide main window, false otherwise.
      */
     public MainWindow(boolean setApplicationWindow) {
         super("Quelea " + QueleaProperties.VERSION.getVersionString());
@@ -78,6 +79,10 @@ public class MainWindow extends JRibbonFrame {
         return mainpanel;
     }
     
+    /**
+     * Get the notice dialog on this main window.
+     * @return the notice dialog.
+     */
     public NoticeDialog getNoticeDialog() {
         return noticeDialog;
     }

@@ -17,23 +17,29 @@
  */
 package org.quelea.windows.main;
 
-import org.quelea.bible.Bible;
-import org.quelea.displayable.BiblePassage;
-import org.quelea.displayable.Song;
-import org.quelea.windows.library.LibraryPanel;
-
-import javax.swing.*;
+import java.awt.BorderLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.swing.JList;
+import javax.swing.JPanel;
+import javax.swing.JSplitPane;
 import javax.swing.event.ListDataEvent;
 import javax.swing.event.ListDataListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
-import java.awt.*;
-import java.awt.event.*;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import org.quelea.bible.Bible;
+import org.quelea.displayable.BiblePassage;
 import org.quelea.displayable.Displayable;
+import org.quelea.displayable.Song;
 import org.quelea.displayable.VideoDisplayable;
 import org.quelea.utils.LoggerUtils;
+import org.quelea.windows.library.LibraryPanel;
 
 /**
  * The main body of the main window, containing the schedule, the media bank, the preview and the live panels.
@@ -71,6 +77,10 @@ public class MainPanel extends JPanel {
 
         previewPanel.getLiveButton().addActionListener(new ActionListener() {
 
+            /**
+             * Action listener on live button.
+             * @param e action event.
+             */
             public void actionPerformed(ActionEvent e) {
 //                DefaultListModel liveModel = livePanel.getLyricsList().getModel();
 //                DefaultListModel previewModel = previewPanel.getLyricsList().getModel();
@@ -84,7 +94,7 @@ public class MainPanel extends JPanel {
 //                }
 //                previewPanel.pauseVideo();
                 livePanel.setDisplayable(previewPanel.getDisplayable(), previewPanel.getIndex());
-                if(previewPanel.getDisplayable() instanceof VideoDisplayable) {
+                if (previewPanel.getDisplayable() instanceof VideoDisplayable) {
                     livePanel.setVideoProperties(previewPanel);
                 }
                 livePanel.focus();
@@ -104,6 +114,9 @@ public class MainPanel extends JPanel {
         add(statusPanelGroup, BorderLayout.SOUTH);
     }
 
+    /**
+     * Add the bible listeners to this main panel.
+     */
     private void addBibleListeners() {
         libraryPanel.getBiblePanel().getAddToSchedule().addActionListener(new ActionListener() {
 
@@ -137,6 +150,9 @@ public class MainPanel extends JPanel {
      */
     private void addKeyListeners() {
 
+        /*
+         * Schedule panel key listeners...
+         */
         schedulePanel.getScheduleList().addKeyListener(new KeyListener() {
 
             public void keyTyped(KeyEvent e) {
@@ -157,6 +173,9 @@ public class MainPanel extends JPanel {
             }
         });
 
+        /*
+         * Preview panel key listeners...
+         */
         previewPanel.addKeyListener(new KeyListener() {
 
             public void keyTyped(KeyEvent e) {
@@ -179,7 +198,10 @@ public class MainPanel extends JPanel {
                 //Nothing needed here
             }
         });
-//
+
+        /*
+         * Live panel key listeners...
+         */
         livePanel.addKeyListener(new KeyListener() {
 
             public void keyTyped(KeyEvent e) {

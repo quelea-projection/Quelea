@@ -23,11 +23,17 @@ import javax.swing.SwingUtilities;
 import org.quelea.windows.main.VideoControlPanel;
 
 /**
- *
+ * An internal test class to play around with the video stuff without launching
+ * a full Quelea instance.
  * @author Michael
  */
 public class Test {
 
+    /**
+     * Start the test.
+     * @param args command line arguments.
+     * @throws Exception if something goes wrong.
+     */
     public static void main(String[] args) throws Exception {
 //        JFrame frame = new JFrame();
 //        frame.setLayout(new GridLayout(1, 2));
@@ -50,6 +56,9 @@ public class Test {
         go();
     }
 
+    /**
+     * Fire off the test.
+     */
     public static void go() {
         SwingUtilities.invokeLater(new Runnable() {
 

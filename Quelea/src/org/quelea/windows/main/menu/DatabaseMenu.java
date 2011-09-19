@@ -17,15 +17,15 @@
  */
 package org.quelea.windows.main.menu;
 
-import org.quelea.Application;
-import org.quelea.SongDatabase;
-import org.quelea.importexport.SelectExportedSongsDialog;
-
-import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.util.Arrays;
+import javax.swing.JMenu;
+import javax.swing.JMenuItem;
+import org.quelea.Application;
+import org.quelea.SongDatabase;
+import org.quelea.importexport.SelectExportedSongsDialog;
 
 /**
  * The database menu.

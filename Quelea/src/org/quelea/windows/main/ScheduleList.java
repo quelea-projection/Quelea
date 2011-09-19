@@ -17,18 +17,11 @@
  */
 package org.quelea.windows.main;
 
-import java.awt.datatransfer.UnsupportedFlavorException;
-import java.io.IOException;
-import org.quelea.Schedule;
-import org.quelea.displayable.Displayable;
-import org.quelea.displayable.Song;
-import org.quelea.displayable.TransferDisplayable;
-import org.quelea.utils.QueleaProperties;
-
-import javax.swing.*;
-import javax.swing.border.EmptyBorder;
-import java.awt.*;
+import java.awt.Color;
+import java.awt.Component;
+import java.awt.Rectangle;
 import java.awt.datatransfer.Transferable;
+import java.awt.datatransfer.UnsupportedFlavorException;
 import java.awt.dnd.DnDConstants;
 import java.awt.dnd.DragGestureEvent;
 import java.awt.dnd.DragGestureListener;
@@ -37,6 +30,21 @@ import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.io.IOException;
+import javax.swing.DefaultListModel;
+import javax.swing.DropMode;
+import javax.swing.JComponent;
+import javax.swing.JLabel;
+import javax.swing.JList;
+import javax.swing.ListCellRenderer;
+import javax.swing.ListSelectionModel;
+import javax.swing.TransferHandler;
+import javax.swing.border.EmptyBorder;
+import org.quelea.Schedule;
+import org.quelea.displayable.Displayable;
+import org.quelea.displayable.Song;
+import org.quelea.displayable.TransferDisplayable;
+import org.quelea.utils.QueleaProperties;
 
 /**
  * The schedule list, all the items that are to be displayed in the service.
@@ -85,8 +93,7 @@ public class ScheduleList extends JList<Displayable> {
     }
 
     /**
-     * Create a new schedule list with a given model.
-     * @param model the model to display.
+     * Create a new schedule list.
      */
     public ScheduleList() {
         super(new DefaultListModel<Displayable>());
@@ -135,6 +142,9 @@ public class ScheduleList extends JList<Displayable> {
         setDropMode(DropMode.INSERT);
         DragSource.getDefaultDragSource().createDefaultDragGestureRecognizer(this, DnDConstants.ACTION_MOVE, new DragGestureListener() {
 
+            /**
+             * Start the internal drag if we have a drag event starting.
+             */
             public void dragGestureRecognized(DragGestureEvent dge) {
                 if (getSelectedValue() != null) {
                     internalDrag = true;
@@ -144,17 +154,22 @@ public class ScheduleList extends JList<Displayable> {
         });
         setTransferHandler(new TransferHandler() {
 
+            /**
+             * Support the displayable flavor, nothing else.
+             */
             @Override
             public boolean canImport(TransferHandler.TransferSupport support) {
                 return support.isDataFlavorSupported(TransferDisplayable.DISPLAYABLE_FLAVOR);
             }
 
+            /**
+             * Import data into this list from a drag.
+             */
             @Override
             public boolean importData(TransferHandler.TransferSupport support) {
                 if (!canImport(support)) {
                     return false;
                 }
-
 
                 Transferable transferable = support.getTransferable();
                 Displayable data;
@@ -191,6 +206,9 @@ public class ScheduleList extends JList<Displayable> {
                 return true;
             }
 
+            /**
+             * If we've exported data from this list, remove it.
+             */
             @Override
             protected void exportDone(JComponent c, Transferable data, int action) {
                 getModel().remove(getSelectedIndex());
@@ -203,7 +221,7 @@ public class ScheduleList extends JList<Displayable> {
 
     /**
      * Get the current schedule in use on this list.
-     * @return
+     * @return the current schedule in use on this list.
      */
     public Schedule getSchedule() {
         schedule.clear();
@@ -212,11 +230,16 @@ public class ScheduleList extends JList<Displayable> {
         }
         return schedule;
     }
-    
+
+    /**
+     * Get the default list model in use on this list. Override to provide the
+     * more specific return type.
+     * @return the default list model in use.
+     */
     @Override
     @SuppressWarnings("unchecked")
     public DefaultListModel<Displayable> getModel() {
-        return (DefaultListModel<Displayable>)super.getModel();
+        return (DefaultListModel<Displayable>) super.getModel();
     }
 
     /**

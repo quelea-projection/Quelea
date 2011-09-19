@@ -17,7 +17,7 @@
  */
 package org.quelea.utils;
 
-import java.awt.*;
+import java.awt.Color;
 
 /**
  * Checks the type of the line.

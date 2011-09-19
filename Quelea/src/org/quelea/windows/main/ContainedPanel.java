@@ -34,5 +34,4 @@ public abstract class ContainedPanel extends JPanel {
      * Clear the panel.
      */
     public abstract void clear();
-
 }

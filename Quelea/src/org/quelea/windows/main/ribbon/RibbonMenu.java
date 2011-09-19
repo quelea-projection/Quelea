@@ -48,7 +48,9 @@ public class RibbonMenu extends RibbonApplicationMenu {
     
     private final OptionsDialog optionsDialog;
     
-
+    /**
+     * Create the ribbon menu.
+     */
     public RibbonMenu() {
         optionsDialog = new OptionsDialog(Application.get().getMainWindow());
         

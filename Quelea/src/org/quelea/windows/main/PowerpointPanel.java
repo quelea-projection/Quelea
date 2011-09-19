@@ -37,6 +37,10 @@ public class PowerpointPanel extends ContainedPanel {
 
     private PowerpointList powerpointList;
 
+    /**
+     * Create a new powerpoint panel.
+     * @param containerPanel the panel to create.
+     */
     public PowerpointPanel(final LivePreviewPanel containerPanel) {
         setLayout(new BorderLayout());
         powerpointList = new PowerpointList();
@@ -57,9 +61,14 @@ public class PowerpointPanel extends ContainedPanel {
         add(scroll, BorderLayout.CENTER);
     }
 
+    /**
+     * Set the displayable to be on this powerpoint panel.
+     * @param displayable the presentation displayable to display.
+     * @param index the index to display.
+     */
     public void setDisplayable(PresentationDisplayable displayable, int index) {
-        DefaultListModel<PresentationSlide> model = (DefaultListModel<PresentationSlide>)powerpointList.getModel();
-        if(displayable==null) {
+        DefaultListModel<PresentationSlide> model = (DefaultListModel<PresentationSlide>) powerpointList.getModel();
+        if (displayable == null) {
             model.clear();
             return;
         }
@@ -69,32 +78,46 @@ public class PowerpointPanel extends ContainedPanel {
             model.addElement(slide);
         }
         powerpointList.setSelectedIndex(index);
-        if(powerpointList.getSelectedIndex()==-1) {
+        if (powerpointList.getSelectedIndex() == -1) {
             powerpointList.setSelectedIndex(0);
         }
         powerpointList.ensureIndexIsVisible(powerpointList.getSelectedIndex());
     }
 
+    /**
+     * Get the currently selected index on this panel.
+     * @return the currently selected index on this panel.
+     */
     public int getIndex() {
         return powerpointList.getSelectedIndex();
     }
-    
+
+    /**
+     * Add a key listener to this powerpoint panel.
+     * @param l the key listener to add.
+     */
     @Override
     public void addKeyListener(KeyListener l) {
         super.addKeyListener(l);
         powerpointList.addKeyListener(l);
     }
 
+    /**
+     * Focus on this panel.
+     */
     @Override
     public void focus() {
         powerpointList.requestFocus();
     }
 
+    /**
+     * Clear this panel (well, actually don't do anything because we can't
+     * clear a presentation.)
+     */
     @Override
     public void clear() {
         //Doesn't really apply
     }
-
 //    public static void main(String[] args) {
 //        final PowerpointPanel panel = new PowerpointPanel(null);
 //        final PresentationDisplayable presentation = new PresentationDisplayable(new File("C:\\java.ppt"));

@@ -50,6 +50,9 @@ public abstract class LivePreviewPanel extends JPanel {
     private ImagePanel picturePanel = new ImagePanel(this);
     private PowerpointPanel powerpointPanel = new PowerpointPanel(this);
     private VideoPanel videoPanel = new VideoPanel();
+    /**
+     * All the contained panels so they can be flipped through easily...
+     */
     private final Set<ContainedPanel> containedSet = new HashSet<ContainedPanel>() {
 
         {
@@ -60,6 +63,10 @@ public abstract class LivePreviewPanel extends JPanel {
         }
     };
 
+    /**
+     * Create the live preview panel, common superclass of live and preview 
+     * panels.
+     */
     public LivePreviewPanel() {
         setLayout(new BorderLayout());
         add(cardPanel, BorderLayout.CENTER);
@@ -70,6 +77,10 @@ public abstract class LivePreviewPanel extends JPanel {
         ((CardLayout) cardPanel.getLayout()).show(cardPanel, LYRICS_LABEL);
     }
 
+    /**
+     * Add a key listener to this panel and all the contained panels.
+     * @param l the listener to add.
+     */
     @Override
     public void addKeyListener(KeyListener l) {
         super.addKeyListener(l);
@@ -78,14 +89,25 @@ public abstract class LivePreviewPanel extends JPanel {
         }
     }
 
+    /**
+     * Get the container panel (the one using the cardlayout that flips between
+     * the various available panels.
+     * @return the container panel.
+     */
     public JPanel getContainerPanel() {
         return cardPanel;
     }
 
+    /**
+     * Focus on this panel.
+     */
     public void focus() {
         getCurrentPanel().focus();
     }
 
+    /**
+     * Clear all the contained panels to a null displayable.
+     */
     public void clear() {
         displayable = null;
         if (PRESENTATION_LABEL.equals(currentLabel)) {
@@ -97,6 +119,11 @@ public abstract class LivePreviewPanel extends JPanel {
         ((CardLayout) cardPanel.getLayout()).show(cardPanel, LYRICS_LABEL);
     }
 
+    /**
+     * Get the currently selected displayable index. Only suitable for 
+     * powerpoint / lyrics panels.
+     * @return the currently selected displayable index.
+     */
     public int getIndex() {
         if (PRESENTATION_LABEL.equals(currentLabel)) {
             return powerpointPanel.getIndex();
@@ -106,6 +133,11 @@ public abstract class LivePreviewPanel extends JPanel {
         }
     }
 
+    /**
+     * Set the displayable shown on this panel.
+     * @param d the displayable to show.
+     * @param index the index of the displayable to show, if relevant.
+     */
     public void setDisplayable(Displayable d, int index) {
         this.displayable = d;
         if (VIDEO_LABEL.equals(currentLabel)) {
@@ -143,12 +175,20 @@ public abstract class LivePreviewPanel extends JPanel {
         }
     }
 
+    /**
+     * Set video properties - used to copy video properties from one panel
+     * to another seamlessly. At present buggy, so commented out.
+     * @param other the panel to copy properties from.
+     */
     public void setVideoProperties(LivePreviewPanel other) {
 //        videoPanel.getVideoControlPanel().playVideo();
 //        videoPanel.getVideoControlPanel().pauseVideo();
 //        videoPanel.getVideoControlPanel().setTime(other.videoPanel.getVideoControlPanel().getTime());
     }
 
+    /**
+     * Pause the current video panel's video.
+     */
     public void pauseVideo() {
         videoPanel.getVideoControlPanel().pauseVideo();
     }
@@ -184,6 +224,10 @@ public abstract class LivePreviewPanel extends JPanel {
         windows.add(window);
     }
 
+    /**
+     * Register a video canvas on this live preview panel.
+     * @param canvas the canvas to register.
+     */
     public final void registerVideoCanvas(final LyricCanvas canvas) {
         videoPanel.getVideoControlPanel().registerCanvas(canvas);
     }

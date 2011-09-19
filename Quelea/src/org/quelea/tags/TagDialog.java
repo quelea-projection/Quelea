@@ -52,12 +52,17 @@ public class TagDialog extends JDialog {
     }
     
     /**
-     * 
+     * Force a reload of all the tags in the panel.
      */
     public void reloadTags() {
         tagEntryPanel.reloadTags();
     }
 
+    /**
+     * Overrides the default behaviour so that when set to visible the tags
+     * are reloaded and centred on parent.
+     * @param visible true if visible, false otherwise.
+     */
     @Override
     public void setVisible(boolean visible) {
         reloadTags();
@@ -65,6 +70,10 @@ public class TagDialog extends JDialog {
         super.setVisible(visible);
     }
 
+    /**
+     * Testing.
+     * @param args 
+     */
     public static void main(String[] args) {
         TagDialog tagDialog = new TagDialog();
         tagDialog.addWindowListener(new WindowAdapter() {

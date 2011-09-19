@@ -28,6 +28,13 @@ import uk.co.caprica.vlcj.player.MediaPlayer;
  */
 public abstract class OutOfProcessPlayer {
 
+    /**
+     * Start the main loop reading from the standard input stream and writing
+     * to sout.
+     * @param mediaPlayer the media player to control via the commands 
+     * received.
+     * @throws IOException if something goes wrong.
+     */
     public void read(MediaPlayer mediaPlayer) throws IOException {
 
         BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
@@ -80,6 +87,12 @@ public abstract class OutOfProcessPlayer {
         }
     }
     
+    /**
+     * This method should return an array of any options that need to be passed 
+     * onto VLCJ and in turn libvlc. If no options are required, an empty array
+     * should be returned rather than null.
+     * @return the options required by libvlc.
+     */
     public abstract String[] getPrepareOptions();
 
 }

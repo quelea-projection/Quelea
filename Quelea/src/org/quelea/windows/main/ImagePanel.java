@@ -84,5 +84,4 @@ public class ImagePanel extends ContainedPanel {
             lCanvas.eraseText();
         }
     }
-
 }

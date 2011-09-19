@@ -44,7 +44,7 @@ public class SongPack {
      * Create a new song pack.
      */
     public SongPack() {
-        songs = new ArrayList<Song>();
+        songs = new ArrayList<>();
     }
 
     /**
@@ -62,46 +62,37 @@ public class SongPack {
      * @throws IOException if something went wrong.
      */
     public static SongPack fromFile(File file) throws IOException {
-        ZipFile zipFile = new ZipFile(file);
-        try {
+        try (ZipFile zipFile = new ZipFile(file)) {
             SongPack ret = new SongPack();
             Enumeration<? extends ZipEntry> entries = zipFile.entries();
-            while(entries.hasMoreElements()) {
+            while (entries.hasMoreElements()) {
                 ZipEntry entry = entries.nextElement();
                 ret.addSong(Song.parseXML(zipFile.getInputStream(entry)));
             }
             return ret;
         }
-        finally {
-            zipFile.close();
-        }
     }
 
     /**
      * Write this song pack to a file.
+     * @param file the file to write to.
      * @return true if the write was successful, false otherwise.
      */
     public boolean writeToFile(File file) {
-        if(file == null) {
+        if (file == null) {
             return false;
         }
-        try {
-            ZipOutputStream zos = new ZipOutputStream(new FileOutputStream(file));
-            try {
-                int count = 0;
-                for(Song song : songs) {
-                    zos.putNextEntry(new ZipEntry("song" + count + ".xml"));
-                    zos.write(song.getXML().getBytes());
-                    zos.closeEntry();
-                    count++;
-                }
-                return true;
+        try (ZipOutputStream zos = new ZipOutputStream(new FileOutputStream(file))) {
+            int count = 0;
+            for (Song song : songs) {
+                zos.putNextEntry(new ZipEntry("song" + count + ".xml"));
+                zos.write(song.getXML().getBytes());
+                zos.closeEntry();
+                count++;
             }
-            finally {
-                zos.close();
-            }
+            return true;
         }
-        catch(IOException ex) {
+        catch (IOException ex) {
             LOGGER.log(Level.WARNING, "Couldn't write the song pack to file", ex);
             return false;
         }
@@ -112,6 +103,6 @@ public class SongPack {
      * @return the songs in this song pack.
      */
     public List<Song> getSongs() {
-        return new ArrayList<Song>(songs);
+        return new ArrayList<>(songs);
     }
 }

@@ -83,8 +83,7 @@ public class SelectLyricsList extends JList<TextSection> {
     }
 
     /**
-     * Create a new schedule list with a given model.
-     * @param model the model to display.
+     * Create a new schedule list.
      */
     public SelectLyricsList() {
         super(new DefaultListModel<TextSection>());

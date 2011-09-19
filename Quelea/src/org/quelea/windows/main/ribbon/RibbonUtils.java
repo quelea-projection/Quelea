@@ -33,10 +33,17 @@ import org.quelea.utils.Utils;
  */
 public class RibbonUtils {
 
+    /**
+     * Don't instantiate me.
+     */
     private RibbonUtils() {
         throw new AssertionError();
     }
 
+    /**
+     * Apply the standard resize policies to the given band.
+     * @param band the band to apply the resize policies to.
+     */
     public static void applyStandardResizePolicies(JRibbonBand band) {
         band.setResizePolicies(Arrays.<RibbonBandResizePolicy>asList(
                 new CoreRibbonResizePolicies.None(band.getControlPanel()),
@@ -50,6 +57,7 @@ public class RibbonUtils {
      * @param file the path of the file
      * @param width the width of the icon
      * @param height the height of the icon
+     * @return the resizable icon. 
      */
     public static ResizableIcon getRibbonIcon(String file, int width, int height) {
         return ImageWrapperResizableIcon.getIcon(Utils.getImage(file), new Dimension(width, height));

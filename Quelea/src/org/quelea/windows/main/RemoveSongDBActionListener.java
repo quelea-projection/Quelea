@@ -26,11 +26,15 @@ import org.quelea.displayable.Song;
 import org.quelea.windows.library.LibrarySongList;
 
 /**
- *
+ * Action listener that removes the selected song from the database.
  * @author Michael
  */
 public class RemoveSongDBActionListener implements ActionListener {
     
+    /**
+     * Remove the selected song from the database.
+     * @param e the action event.
+     */
     public void actionPerformed(ActionEvent e) {
         MainWindow mainWindow = Application.get().getMainWindow();
         LibrarySongList songList = mainWindow.getMainPanel().getLibraryPanel().getLibrarySongPanel().getSongList();
