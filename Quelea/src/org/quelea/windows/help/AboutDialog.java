@@ -29,8 +29,7 @@ import org.quelea.utils.Utils;
 
 /**
  * A dialog giving some information about Quelea.
- * Do we really need this? Potentially remove.
- * @deprecated
+ * Do we really need this? TODO: Potentially remove.
  * @author Michael
  */
 public class AboutDialog extends JDialog {
