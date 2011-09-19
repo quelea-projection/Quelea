@@ -3,3 +3,6 @@ When changing the version number, it needs to be changed in 3 places:
 1) pad.xml
 2) quelea.properties (ant task uses this so must be changed.)
 3) Version constant in QueleaProperties.java
+4) quelea.desktop
+
+This should probably all be automated at some point!
