@@ -103,7 +103,7 @@ public class ImageDisplayable implements Displayable {
 
     /**
      * Get the preview icon for this displayable (30x30.)
-     * @return
+     * @return the preview icon.
      */
     @Override
     public Icon getPreviewIcon() {
