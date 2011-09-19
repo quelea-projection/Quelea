@@ -17,20 +17,33 @@
  */
 package org.quelea.windows.library;
 
-import org.quelea.bible.*;
-import org.quelea.utils.QueleaProperties;
-import org.quelea.utils.Utils;
-
-import javax.swing.*;
-import javax.swing.event.DocumentEvent;
-import javax.swing.event.DocumentListener;
-import java.awt.*;
+import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.util.ArrayList;
 import java.util.List;
+import javax.swing.BoxLayout;
+import javax.swing.DefaultComboBoxModel;
+import javax.swing.JButton;
+import javax.swing.JComboBox;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
+import javax.swing.JTextField;
+import javax.swing.SwingUtilities;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
+import org.quelea.bible.Bible;
+import org.quelea.bible.BibleBook;
+import org.quelea.bible.BibleChangeListener;
+import org.quelea.bible.BibleManager;
+import org.quelea.bible.BibleVerse;
+import org.quelea.bible.ChapterVerseParser;
+import org.quelea.utils.QueleaProperties;
+import org.quelea.utils.Utils;
 
 /**
  * The panel used to get bible verses.
@@ -117,6 +130,10 @@ public class LibraryBiblePanel extends JPanel implements BibleChangeListener {
         addPanel.setMaximumSize(new Dimension(chapterPanel.getMaximumSize().width, addToSchedule.getHeight()));
     }
 
+    /**
+     * Update the bibles in the panel based on the current bibles the bible
+     * manager is aware of.
+     */
     @Override
     public void updateBibles() {
         SwingUtilities.invokeLater(new Runnable() {
@@ -130,21 +147,21 @@ public class LibraryBiblePanel extends JPanel implements BibleChangeListener {
             }
         });
     }
-    
+
     /**
-     * Get the bible selector model 
+     * Get the bible selector model.
      */
     @SuppressWarnings("unchecked")
     private DefaultComboBoxModel<Bible> getBibleSelectorModel() {
-        return (DefaultComboBoxModel<Bible>)bibleSelector.getModel();
+        return (DefaultComboBoxModel<Bible>) bibleSelector.getModel();
     }
-    
+
     /**
      * Get the book selector model.
      */
     @SuppressWarnings("unchecked")
     private DefaultComboBoxModel<BibleBook> getBibleBookSelectorModel() {
-        return (DefaultComboBoxModel<BibleBook>)bookSelector.getModel();
+        return (DefaultComboBoxModel<BibleBook>) bookSelector.getModel();
     }
 
     /**
@@ -225,7 +242,8 @@ public class LibraryBiblePanel extends JPanel implements BibleChangeListener {
             preview.setBackground(Color.RED);
             getAddToSchedule().setEnabled(false);
             return;
-        } else {
+        }
+        else {
             preview.setBackground(null);
             getAddToSchedule().setEnabled(true);
         }

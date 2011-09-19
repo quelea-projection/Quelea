@@ -45,7 +45,7 @@ import org.quelea.displayable.Song;
 import org.quelea.windows.library.LibrarySongList;
 
 /**
- *
+ * The panel used for entering tags and displaying those that have been entered.
  * @author Michael
  */
 public class TagEntryPanel extends JPanel {
@@ -55,6 +55,15 @@ public class TagEntryPanel extends JPanel {
     private TagPanel tagPanel;
     private TagPopupWindow popup;
 
+    /**
+     * Create a new tag entry panel.
+     * @param list the song list currently in use.
+     * @param includeUserText true if the user's current text should be available
+     * as a tag option even if no tags currently exist with that name, false
+     * otherwise.
+     * @param includeLabel true if we should include the "tags: " label, false
+     * otherwise.
+     */
     public TagEntryPanel(final LibrarySongList list, boolean includeUserText, boolean includeLabel) {
         setLayout(new BorderLayout());
         tagPanel = new TagPanel();
@@ -174,19 +183,33 @@ public class TagEntryPanel extends JPanel {
         add(northPanel, BorderLayout.NORTH);
     }
 
+    /**
+     * Remove all the current tags.
+     */
     public void removeTags() {
         tagPanel.removeTags();
     }
 
+    /**
+     * Reload the tags and then set the tags to the given string of tags.
+     * @param tags semi-colon delimited list of tags.
+     */
     public void setTags(String tags) {
         reloadTags();
         tagPanel.setTags(tags);
     }
 
+    /**
+     * Get the list of currently used tags as a semi-colon delimited string.
+     * @return a string containing all the tags.
+     */
     public String getTagsAsString() {
         return tagPanel.getTagsAsString();
     }
 
+    /**
+     * Clear the tags then reload them all from the database.
+     */
     public final void reloadTags() {
         tags.clear();
         for (Song song : SongDatabase.get().getSongs()) {

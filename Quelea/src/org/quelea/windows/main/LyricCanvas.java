@@ -86,6 +86,9 @@ public class LyricCanvas extends Canvas {
         valid = false;
     }
 
+    /**
+     * Force a repaint of this canvas.
+     */
     @Override
     public void repaint() {
         if (getWidth() > 0 && getHeight() > 0) {
@@ -172,6 +175,8 @@ public class LyricCanvas extends Canvas {
 
     /**
      * Draw the text and background to the given graphics object.
+     * @param graphics the graphics object
+     * @param font     the font to use for the text.
      */
     private void drawText(Graphics graphics, Font font) {
         if (cleared || blacked) {
@@ -433,10 +438,19 @@ public class LyricCanvas extends Canvas {
         return Arrays.copyOf(text, text.length);
     }
 
+    /**
+     * Get the notice drawer, used for drawing notices onto this lyrics
+     * canvas.
+     * @return the notice drawer.
+     */
     public NoticeDrawer getNoticeDrawer() {
         return noticeDrawer;
     }
 
+    /**
+     * Testing stuff, nothing to see here...
+     * @param args command line args
+     */
     public static void main(String[] args) {
         LyricCanvas canvas = new LyricCanvas(true);
         JFrame frame = new JFrame();
@@ -447,7 +461,7 @@ public class LyricCanvas extends Canvas {
         frame.setVisible(true);
 
         canvas.setText(new String[]{"Line 1", "line 2", "BLAHBLAH BLAH BLAH"},
-                new String[]{"Tim Hughes", "CCLI number poo", "I hate CCLI really"});
+                new String[]{"Tim Hughes", "CCLI number 1469714", "Another line"});
 
         canvas.getNoticeDrawer().addNotice(new Notice("Hello", 2));
 

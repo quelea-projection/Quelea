@@ -39,6 +39,7 @@ public class GraphicsUtils {
 
     /**
      * Get the inverse color of the one currently in use.
+     * @return the inverse color of the one currently in use.
      */
     public Color getInverseColor() {
         int r = 255 - graphics.getColor().getRed();
@@ -68,18 +69,42 @@ public class GraphicsUtils {
         graphics.drawString(str, x, y);
     }
 
+    /**
+     * Used for outline measurements. Shift north a certain distance.
+     * @param p the initial point.
+     * @param distance the distance to shift.
+     * @return the point after shifting.
+     */
     private int shiftNorth(int p, int distance) {
         return (p - distance);
     }
 
+    /**
+     * Used for outline measurements. Shift south a certain distance.
+     * @param p the initial point.
+     * @param distance the distance to shift.
+     * @return the point after shifting.
+     */
     private int shiftSouth(int p, int distance) {
         return (p + distance);
     }
 
+    /**
+     * Used for outline measurements. Shift east a certain distance.
+     * @param p the initial point.
+     * @param distance the distance to shift.
+     * @return the point after shifting.
+     */
     private int shiftEast(int p, int distance) {
         return (p + distance);
     }
 
+    /**
+     * Used for outline measurements. Shift west a certain distance.
+     * @param p the initial point.
+     * @param distance the distance to shift.
+     * @return the point after shifting.
+     */
     private int shiftWest(int p, int distance) {
         return (p - distance);
     }

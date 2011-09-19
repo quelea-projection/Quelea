@@ -1,20 +1,3 @@
-/* 
- * This file is part of Quelea, free projection software for churches.
- * Copyright (C) 2011 Michael Berry
- * 
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- * 
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- * 
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
 /*
  * Copyright (c) 1995, 2008, Oracle and/or its affiliates. All rights reserved.
  *
@@ -47,8 +30,10 @@
  */
 package org.quelea.utils;
 
-import javax.swing.*;
-import java.awt.*;
+import java.awt.Component;
+import java.awt.Container;
+import javax.swing.Spring;
+import javax.swing.SpringLayout;
 
 /**
  * A 1.4 file that provides utility methods for creating form- or grid-style layouts with SpringLayout. These utilities
@@ -64,6 +49,7 @@ public final class SpringUtilities {
      * Aligns the first <code>rows</code> * <code>cols</code> components of <code>parent</code> in a grid. Each
      * component is as big as the maximum preferred width and height of the components. The parent is made just big
      * enough to fit them all.
+     * @param parent   the parent container.
      * @param rows     number of rows
      * @param cols     number of columns
      * @param initialX x location to start the grid at
@@ -166,6 +152,7 @@ public final class SpringUtilities {
      * Aligns the first <code>rows</code> * <code>cols</code> components of <code>parent</code> in a grid. Each
      * component in a column is as wide as the maximum preferred width of the components in that column; height is
      * similarly determined for each row. The parent is made just big enough to fit them all.
+     * @param parent   the parent container.
      * @param rows     number of rows
      * @param cols     number of columns
      * @param initialX x location to start the grid at

@@ -17,15 +17,17 @@
  */
 package org.quelea.windows.options;
 
+import java.awt.BorderLayout;
+import java.awt.GraphicsDevice;
+import java.awt.GraphicsEnvironment;
+import java.awt.GridLayout;
+import javax.swing.JPanel;
 import org.quelea.Application;
 import org.quelea.utils.PropertyPanel;
 import org.quelea.utils.QueleaProperties;
 import org.quelea.utils.Utils;
 import org.quelea.windows.main.LyricWindow;
 import org.quelea.windows.main.MainWindow;
-
-import javax.swing.*;
-import java.awt.*;
 
 /**
  * A panel that the user uses to set up the displays that match to the outputs.

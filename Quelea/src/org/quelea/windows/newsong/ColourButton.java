@@ -17,12 +17,13 @@
  */
 package org.quelea.windows.newsong;
 
-import org.quelea.utils.Utils;
-
-import javax.swing.*;
-import java.awt.*;
+import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
+import javax.swing.SwingUtilities;
+import org.quelea.utils.Utils;
 
 /**
  * The colour button where the user selects a colour.

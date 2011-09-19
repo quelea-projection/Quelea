@@ -33,7 +33,7 @@ public final class FileFilters {
 
         @Override
         public boolean accept(File f) {
-            if(f.isDirectory()
+            if (f.isDirectory()
                     || f.getName().trim().equalsIgnoreCase("acetates.pdf")) {
                 return true;
             }
@@ -45,7 +45,6 @@ public final class FileFilters {
             return "acetates.pdf";
         }
     };
-
     /**
      * Accept only folders.
      */
@@ -61,7 +60,6 @@ public final class FileFilters {
             return "Folders";
         }
     };
-
     /**
      * Accept only folders.
      */
@@ -80,7 +78,6 @@ public final class FileFilters {
             return "XML bibles";
         }
     };
-
     /**
      * The file filter used for Quelea song packs.
      */
@@ -90,7 +87,7 @@ public final class FileFilters {
 
         @Override
         public boolean accept(File f) {
-            if(f.isDirectory()) {
+            if (f.isDirectory()) {
                 return true;
             }
             return f.getName().toLowerCase().endsWith("." + extension);
@@ -101,7 +98,6 @@ public final class FileFilters {
             return "Quelea song pack (." + extension + ")";
         }
     };
-
     /**
      * The file filter used for Quelea song packs.
      */
@@ -111,7 +107,7 @@ public final class FileFilters {
 
         @Override
         public boolean accept(File f) {
-            if(f.isDirectory()) {
+            if (f.isDirectory()) {
                 return true;
             }
             return f.getName().toLowerCase().endsWith("." + extension);

@@ -17,20 +17,24 @@
  */
 package org.quelea.windows.newsong;
 
+import java.awt.BorderLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
+import javax.swing.JButton;
+import javax.swing.JDialog;
+import javax.swing.JFrame;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JTabbedPane;
+import javax.swing.border.EmptyBorder;
 import org.quelea.Application;
 import org.quelea.SongDatabase;
 import org.quelea.Theme;
 import org.quelea.displayable.Song;
 import org.quelea.displayable.TextSection;
 import org.quelea.utils.Utils;
-
-import javax.swing.*;
-import javax.swing.border.EmptyBorder;
-import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
 
 /**
  * A new song window that users use for inserting the text content of a new song.
@@ -69,7 +73,7 @@ public class SongEntryWindow extends JDialog {
 
             public void actionPerformed(ActionEvent e) {
 
-                if(!SongDatabase.get().updateSong(getSong())) {
+                if (!SongDatabase.get().updateSong(getSong())) {
                     JOptionPane.showMessageDialog(Application.get().getMainWindow(), "There was an error updating the song in the database.", "Error", JOptionPane.ERROR_MESSAGE, null);
                 }
                 setVisible(false);
@@ -168,7 +172,7 @@ public class SongEntryWindow extends JDialog {
     public BasicSongPanel getBasicSongPanel() {
         return basicSongPanel;
     }
-    
+
     /**
      * Get the panel where the user enters the more detailed song information.
      * @return the detailed song panel.
@@ -210,7 +214,7 @@ public class SongEntryWindow extends JDialog {
         confirmButton.setEnabled(true);
         basicSongPanel.resetEditSong(song);
         detailedSongPanel.resetEditSong(song);
-        if(song.getSections().length > 0) {
+        if (song.getSections().length > 0) {
             themePanel.setTheme(song.getSections()[0].getTheme());
         }
         tabbedPane.setSelectedIndex(0);
@@ -221,7 +225,7 @@ public class SongEntryWindow extends JDialog {
      * @return the song.
      */
     public Song getSong() {
-        if(song == null) {
+        if (song == null) {
             song = new Song(getBasicSongPanel().getTitleField().getText(), getBasicSongPanel().getAuthorField().getText());
         }
         song.setLyrics(getBasicSongPanel().getLyricsField().getText());
@@ -235,7 +239,7 @@ public class SongEntryWindow extends JDialog {
         song.setKey(getDetailedSongPanel().getKeyField().getText());
         song.setCapo(getDetailedSongPanel().getCapoField().getText());
         song.setInfo(getDetailedSongPanel().getInfoField().getText());
-        for(TextSection section : song.getSections()) {
+        for (TextSection section : song.getSections()) {
             section.setTheme(themePanel.getTheme());
         }
         return song;
@@ -245,7 +249,7 @@ public class SongEntryWindow extends JDialog {
      * Check whether the confirm button should be enabled or disabled and set it accordingly.
      */
     private void checkConfirmButton() {
-        if(getBasicSongPanel().getLyricsField().getText().trim().equals("")
+        if (getBasicSongPanel().getLyricsField().getText().trim().equals("")
                 || getBasicSongPanel().getTitleField().getText().trim().equals("")) {
             confirmButton.setEnabled(false);
         }
@@ -253,5 +257,4 @@ public class SongEntryWindow extends JDialog {
             confirmButton.setEnabled(true);
         }
     }
-
 }

@@ -62,6 +62,9 @@ public class VideoControlPanel extends JPanel {
     private boolean pauseCheck;
     private String videoPath;
 
+    /**
+     * Create a new video control panel.
+     */
     public VideoControlPanel() {
 
         executorService = Executors.newSingleThreadScheduledExecutor();
@@ -161,7 +164,7 @@ public class VideoControlPanel extends JPanel {
         videoArea.setPreferredSize(new Dimension(100, 100));
         setLayout(new BorderLayout());
         add(videoArea, BorderLayout.CENTER);
-        registeredCanvases = new ArrayList<LyricCanvas>();
+        registeredCanvases = new ArrayList<>();
 
         JPanel controlPanel = new JPanel();
         controlPanel.setLayout(new BorderLayout());
@@ -177,7 +180,7 @@ public class VideoControlPanel extends JPanel {
         buttonPanel.add(mute);
         controlPanel.add(buttonPanel, BorderLayout.NORTH);
         add(controlPanel, BorderLayout.NORTH);
-        mediaPlayers = new ArrayList<RemotePlayer>();
+        mediaPlayers = new ArrayList<>();
         videoArea.addHierarchyListener(new HierarchyListener() {
 
             @Override
@@ -205,6 +208,10 @@ public class VideoControlPanel extends JPanel {
         });
     }
 
+    /**
+     * Register a canvas to be controlled via this video control panel.
+     * @param canvas the canvas to control.
+     */
     public void registerCanvas(final LyricCanvas canvas) {
         registeredCanvases.add(canvas);
         if (!canvas.isShowing()) {
@@ -231,10 +238,18 @@ public class VideoControlPanel extends JPanel {
         }
     }
 
+    /**
+     * Get a list of registered lyric canvases.
+     * @return a list of registered lyric canvases.
+     */
     public List<LyricCanvas> getRegisteredCanvases() {
         return registeredCanvases;
     }
 
+    /**
+     * Load the given video to be controlled via this panel.
+     * @param videoPath the video path to load.
+     */
     public void loadVideo(String videoPath) {
         this.videoPath = videoPath;
         for (RemotePlayer mediaPlayer : mediaPlayers) {
@@ -242,6 +257,9 @@ public class VideoControlPanel extends JPanel {
         }
     }
 
+    /**
+     * Play the loaded video.
+     */
     public void playVideo() {
         for (int i = 0; i < mediaPlayers.size(); i++) {
             final RemotePlayer mediaPlayer = mediaPlayers.get(i);
@@ -268,28 +286,46 @@ public class VideoControlPanel extends JPanel {
         }
     }
 
+    /**
+     * Get the current time of the video.
+     * @return the current time of the video.
+     */
     public long getTime() {
         return mediaPlayers.get(0).getTime();
     }
 
+    /**
+     * Set the current time of the video.
+     * @param time the current time of the video.
+     */
     public void setTime(long time) {
         for (RemotePlayer mediaPlayer : mediaPlayers) {
             mediaPlayer.setTime(time);
         }
     }
 
+    /**
+     * Pause the currently playing video.
+     */
     public void pauseVideo() {
         for (RemotePlayer mediaPlayer : mediaPlayers) {
             mediaPlayer.pause();
         }
     }
 
+    /**
+     * Stop the currently playing video.
+     */
     public void stopVideo() {
         for (RemotePlayer mediaPlayer : mediaPlayers) {
             mediaPlayer.stop();
         }
     }
 
+    /**
+     * Set whether the video is muted.
+     * @param muteState true to mute, false to unmute.
+     */
     public void setMute(boolean muteState) {
         mediaPlayers.get(0).setMute(muteState);
         if (getMute()) {
@@ -300,10 +336,18 @@ public class VideoControlPanel extends JPanel {
         }
     }
 
+    /**
+     * Determine if this video is muted.
+     * @return true if muted, false if not.
+     */
     public boolean getMute() {
         return mediaPlayers.get(0).getMute();
     }
 
+    /**
+     * Close down all the players controlled via this control panel and stop
+     * the external VM's / remote players it controls.
+     */
     public void close() {
         for (RemotePlayer mediaPlayer : mediaPlayers) {
             mediaPlayer.close();
@@ -311,6 +355,10 @@ public class VideoControlPanel extends JPanel {
         executorService.shutdownNow();
     }
 
+    /**
+     * Try and stop and clear up if we haven't already.
+     * @throws Throwable if something goes wrong.
+     */
     @Override
     protected void finalize() throws Throwable {
         stopVideo();
@@ -318,6 +366,10 @@ public class VideoControlPanel extends JPanel {
         close();
     }
 
+    /**
+     * Just for testing.
+     * @param args 
+     */
     public static void main(String[] args) {
         JFrame frame = new JFrame();
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);

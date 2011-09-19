@@ -231,8 +231,14 @@ public class ThemePanel extends JPanel {
         updateTheme(false);
     }
 
-    private void checkAccessibility(Color a, Color b) {
-        int diff = Utils.getColorDifference(a, b);
+    /**
+     * Check whether the two colours are too closely mathced to read clearly.
+     * If they are, display a warning message.
+     * @param col1 first colour.
+     * @param col2 second colour.
+     */
+    private void checkAccessibility(Color col1, Color col2) {
+        int diff = Utils.getColorDifference(col1, col2);
         if (diff < THRESHOLD) {
             JOptionPane.showMessageDialog(this, "The chosen colours are very similar. "
                     + "You may wish to choose different colours, otherwise "
@@ -241,6 +247,10 @@ public class ThemePanel extends JPanel {
         }
     }
 
+    /**
+     * Get the canvas on this theme panel.
+     * @return the canvas on this theme panel.
+     */
     public LyricCanvas getCanvas() {
         return canvas;
     }
@@ -271,6 +281,10 @@ public class ThemePanel extends JPanel {
         return new Theme(font, fontColourButton.getColourSelectionWindow().getSelectedColour(), background);
     }
 
+    /**
+     * Test the themepanel.
+     * @param args 
+     */
     public static void main(String[] args) {
         JFrame frame = new JFrame();
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);

@@ -83,6 +83,7 @@ public final class Utils {
     public static Runnable wrapAsLowPriority(final Runnable task) {
         return new Runnable() {
 
+            @SuppressWarnings("CallToThreadYield")
             public void run() {
                 Thread t = Thread.currentThread();
                 int oldPriority = t.getPriority();
@@ -96,6 +97,7 @@ public final class Utils {
     
     /**
      * Get a font identical to the one given apart from in size.
+     * @param font the original font.
      * @param size the size of the new font.
      * @return the resized font.
      */
@@ -113,6 +115,12 @@ public final class Utils {
     /**
      * Calculates the largest size of the given font for which the given string 
      * will fit into the given size.
+     * @param g the graphics to use in the current context.
+     * @param font the original font to base the returned font on.
+     * @param string the string to fit.
+     * @param width the maximum width available.
+     * @param height the maximum height available.
+     * @return the maximum font size that fits into the given area.
      */
     public static int getMaxFittingFontSize(Graphics g, Font font, String string, int width, int height) {
         int minSize = 0;
@@ -306,6 +314,8 @@ public final class Utils {
     /**
      * Get an image icon from the location of a specified file.
      * @param location the location of the image to use.
+     * @param width the width of the given image icon.
+     * @param height the height of the given image icon.
      * @return the icon formed from the image, or null if an IOException occured.
      */
     public static ImageIcon getImageIcon(String location, int width, int height) {
@@ -328,6 +338,8 @@ public final class Utils {
     /**
      * Get an image from the location of a specified file.
      * @param location the location of the image to use.
+     * @param width the width of the returned image.
+     * @param height the height of the returned image. 
      * @return the icon formed from the image, or null if an IOException occured.
      */
     public static BufferedImage getImage(String location, int width, int height) {

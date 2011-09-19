@@ -50,6 +50,9 @@ public class OptionsBiblePanel extends JPanel implements PropertyPanel, BibleCha
     private final JComboBox<Bible> defaultBibleComboBox;
     private final JSpinner maxVersesSpinner;
 
+    /**
+     * Create the options bible panel.
+     */
     public OptionsBiblePanel() {
         setName("Bible");
         JPanel biblePanel = new JPanel();
@@ -94,6 +97,9 @@ public class OptionsBiblePanel extends JPanel implements PropertyPanel, BibleCha
         readProperties();
     }
 
+    /**
+     * Update all the bibles in the panel.
+     */
     @Override
     public void updateBibles() {
         SwingUtilities.invokeLater(new Runnable() {

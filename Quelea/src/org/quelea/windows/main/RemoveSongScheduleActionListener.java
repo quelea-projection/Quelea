@@ -22,11 +22,15 @@ import java.awt.event.ActionListener;
 import org.quelea.Application;
 
 /**
- *
+ * Action listener to remove a song from the schedule.
  * @author Michael
  */
 public class RemoveSongScheduleActionListener implements ActionListener {
 
+    /**
+     * Remove the currently selected song from the schedule.
+     * @param e the action event.
+     */
     @Override
     public void actionPerformed(ActionEvent e) {
         ScheduleList scheduleList = Application.get().getMainWindow().getMainPanel().getSchedulePanel().getScheduleList();

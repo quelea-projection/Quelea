@@ -27,6 +27,10 @@ import javax.swing.JPanel;
  */
 public class PrintPanelDrawer implements SecondPanelDrawer {
 
+    /**
+     * Draw onto the JPanel.
+     * @param panel the panel to draw onto.
+     */
     @Override
     public void draw(JPanel panel) {
         panel.removeAll();

@@ -20,14 +20,6 @@ package org.quelea.windows.library;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Rectangle;
-import org.quelea.SongDatabase;
-import org.quelea.SortedListModel;
-import org.quelea.displayable.Displayable;
-import org.quelea.displayable.Song;
-import org.quelea.displayable.TextSection;
-import org.quelea.displayable.TransferDisplayable;
-import org.quelea.utils.DatabaseListener;
-
 import java.awt.dnd.DnDConstants;
 import java.awt.dnd.DragGestureEvent;
 import java.awt.dnd.DragGestureListener;
@@ -44,6 +36,13 @@ import javax.swing.DefaultListCellRenderer;
 import javax.swing.JList;
 import javax.swing.ListSelectionModel;
 import javax.swing.SwingUtilities;
+import org.quelea.SongDatabase;
+import org.quelea.SortedListModel;
+import org.quelea.displayable.Displayable;
+import org.quelea.displayable.Song;
+import org.quelea.displayable.TextSection;
+import org.quelea.displayable.TransferDisplayable;
+import org.quelea.utils.DatabaseListener;
 import org.quelea.utils.QueleaProperties;
 
 /**
@@ -129,7 +128,7 @@ public class LibrarySongList extends JList<Song> implements DatabaseListener {
              * mouse is pressed and released for platform-independence.
              */
             private void checkPopup(MouseEvent e) {
-                if (e.isPopupTrigger()&&LibrarySongList.this.popup) {
+                if (e.isPopupTrigger() && LibrarySongList.this.popup) {
                     int index = locationToIndex(e.getPoint());
                     Rectangle Rect = getCellBounds(index, index);
                     index = Rect.contains(e.getPoint().x, e.getPoint().y) ? index : -1;
@@ -149,10 +148,8 @@ public class LibrarySongList extends JList<Song> implements DatabaseListener {
     /**
      * Filter the results in this list by a specific search term.
      * @param search the search term to use.
-     * @param beep true if the system should beep if the search returns 0 results,
-     * false otherwise. At present ignored - never beep.
      */
-    public void filter(final String search, final boolean beep) {
+    public void filter(final String search) {
         if (filterFuture != null) {
             filterFuture.cancel(true);
         }
@@ -166,9 +163,6 @@ public class LibrarySongList extends JList<Song> implements DatabaseListener {
                         model.add(s);
                     }
                 }
-//                if (beep && model.getSize() == 0) {
-//                    java.awt.Toolkit.getDefaultToolkit().beep();
-//                }
                 SwingUtilities.invokeLater(new Runnable() {
 
                     @Override
@@ -181,7 +175,12 @@ public class LibrarySongList extends JList<Song> implements DatabaseListener {
 
     }
 
-    public void filterByTag(final List<String> filterTags, final boolean beep) {
+    /**
+     * Filter songs in this song list by a certain number of tags. Only songs 
+     * that contain all the tags will be displayed and pass the filter.
+     * @param filterTags the tags to filter on.
+     */
+    public void filterByTag(final List<String> filterTags) {
         if (filterFuture != null) {
             filterFuture.cancel(true);
         }
@@ -203,17 +202,14 @@ public class LibrarySongList extends JList<Song> implements DatabaseListener {
                                 inPlace = true;
                             }
                         }
-                        if(!inPlace) {
+                        if (!inPlace) {
                             add = false;
                         }
                     }
-                    if(add) {
+                    if (add) {
                         model.add(s);
                     }
                 }
-//                if (beep && model.getSize() == 0) {
-//                    java.awt.Toolkit.getDefaultToolkit().beep();
-//                }
                 SwingUtilities.invokeLater(new Runnable() {
 
                     @Override
@@ -234,6 +230,11 @@ public class LibrarySongList extends JList<Song> implements DatabaseListener {
         return popupMenu;
     }
 
+    /**
+     * Get the sorted song list model that's used by this library song list. 
+     * Overrides the default method to provide a more specific type.
+     * @return a sorted list model of songs in this list.
+     */
     @Override
     @SuppressWarnings("unchecked")
     public SortedListModel<Song> getModel() {

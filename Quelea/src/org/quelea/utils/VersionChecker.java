@@ -37,6 +37,7 @@ public class VersionChecker {
 
     /**
      * Create a new version checker that checks the specified url for the version number.
+     * @param url the URL to use to check the version.
      */
     public VersionChecker(String url) {
         this.urlStr = url;
@@ -53,17 +54,13 @@ public class VersionChecker {
             URLConnection connection = url.openConnection();
             connection.setConnectTimeout(5000);
             connection.setReadTimeout(5000);
-            BufferedReader reader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
-            try {
+            try (BufferedReader reader = new BufferedReader(new InputStreamReader(connection.getInputStream()))) {
                 StringBuilder content = new StringBuilder();
                 String line;
                 while((line = reader.readLine()) != null) {
                     content.append(line);
                 }
                 return extractVersion(content.toString());
-            }
-            finally {
-                reader.close();
             }
         }
         catch(IOException ex) {

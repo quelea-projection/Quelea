@@ -17,16 +17,17 @@
  */
 package org.quelea.windows.main;
 
-import org.quelea.utils.QueleaProperties;
-import org.quelea.utils.Utils;
-
-import javax.swing.*;
-import java.awt.*;
+import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import javax.swing.JLabel;
+import javax.swing.JToggleButton;
+import javax.swing.JToolBar;
 import org.quelea.displayable.Displayable;
+import org.quelea.utils.QueleaProperties;
+import org.quelea.utils.Utils;
 
 /**
  * The panel displaying the live lyrics selection - changes made on this panel are reflected on the live projection.
@@ -40,7 +41,6 @@ public class LivePanel extends LivePreviewPanel {
 
     /**
      * Create a new live lyrics panel.
-     * @param fullScreenCanvas the full screen canvas that this live window controls.
      */
     public LivePanel() {
         JToolBar header = new JToolBar();
@@ -52,9 +52,13 @@ public class LivePanel extends LivePreviewPanel {
         black.setRequestFocusEnabled(false);
         black.addActionListener(new ActionListener() {
 
+            /**
+             * Toggle all the canvases to black.
+             * @param e the action event.
+             */
             @Override
             public void actionPerformed(ActionEvent e) {
-                for(LyricCanvas canvas : getCanvases()) {
+                for (LyricCanvas canvas : getCanvases()) {
                     canvas.toggleBlack();
                 }
             }
@@ -65,9 +69,13 @@ public class LivePanel extends LivePreviewPanel {
         clear.setRequestFocusEnabled(false);
         clear.addActionListener(new ActionListener() {
 
+            /**
+             * Toggle all the canvases to clear.
+             * @param e the action event.
+             */
             @Override
             public void actionPerformed(ActionEvent e) {
-                for(LyricCanvas canvas : getCanvases()) {
+                for (LyricCanvas canvas : getCanvases()) {
                     canvas.toggleClear();
                 }
             }
@@ -78,12 +86,16 @@ public class LivePanel extends LivePreviewPanel {
         hide.setRequestFocusEnabled(false);
         hide.addActionListener(new ActionListener() {
 
+            /**
+             * Hide the lyric windows.
+             * @param e the action event.
+             */
             @Override
             public void actionPerformed(ActionEvent e) {
-                if(QueleaProperties.get().getProjectorScreen() == -1) {
+                if (QueleaProperties.get().getProjectorScreen() == -1) {
                     return;
                 }
-                for(LyricWindow window : getWindows()) {
+                for (LyricWindow window : getWindows()) {
                     window.setVisible(!window.isVisible());
                 }
             }
@@ -93,24 +105,37 @@ public class LivePanel extends LivePreviewPanel {
 
         addKeyListener(new KeyListener() {
 
+            /**
+             * Nothing when typed...
+             * @param e the key event.
+             */
             @Override
             public void keyTyped(KeyEvent e) {
                 //Nothing needed here
             }
 
+            /**
+             * Detect F1 to go to black, F2 to clear and F3 to hide the 
+             * window.
+             * @param e the key event.
+             */
             @Override
             public void keyPressed(KeyEvent e) {
-                if(e.getKeyCode() == KeyEvent.VK_F1) {
+                if (e.getKeyCode() == KeyEvent.VK_F1) {
                     black.doClick();
                 }
-                else if(e.getKeyCode() == KeyEvent.VK_F2) {
+                else if (e.getKeyCode() == KeyEvent.VK_F2) {
                     clear.doClick();
                 }
-                else if(e.getKeyCode() == KeyEvent.VK_F3) {
+                else if (e.getKeyCode() == KeyEvent.VK_F3) {
                     hide.doClick();
                 }
             }
 
+            /**
+             * Nothing when released...
+             * @param e the key event.
+             */
             @Override
             public void keyReleased(KeyEvent e) {
                 //Nothing needed here
@@ -118,6 +143,11 @@ public class LivePanel extends LivePreviewPanel {
         });
     }
 
+    /**
+     * Set the displayable to be shown on this live panel.
+     * @param d the displayable to show.
+     * @param index the index to use for the displayable, if relevant.
+     */
     @Override
     public void setDisplayable(Displayable d, int index) {
         super.setDisplayable(d, index);
@@ -147,5 +177,4 @@ public class LivePanel extends LivePreviewPanel {
     public JToggleButton getHide() {
         return hide;
     }
-
 }

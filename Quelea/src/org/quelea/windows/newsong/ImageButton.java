@@ -17,21 +17,23 @@
  */
 package org.quelea.windows.newsong;
 
-import org.apache.commons.io.FileUtils;
-import org.quelea.Background;
-import org.quelea.Theme;
-import org.quelea.utils.LoggerUtils;
-import org.quelea.windows.main.LyricCanvas;
-
-import javax.swing.*;
-import javax.swing.filechooser.FileFilter;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.JButton;
+import javax.swing.JFileChooser;
+import javax.swing.JTextField;
+import javax.swing.SwingUtilities;
+import javax.swing.filechooser.FileFilter;
+import org.apache.commons.io.FileUtils;
+import org.quelea.Background;
+import org.quelea.Theme;
+import org.quelea.utils.LoggerUtils;
 import org.quelea.utils.Utils;
+import org.quelea.windows.main.LyricCanvas;
 
 /**
  * The colour button where the user selects a colour.
@@ -45,7 +47,9 @@ public class ImageButton extends JButton {
 
     /**
      * Create and initialise the colour button.
-     * @param defaultColor the default colour of the button.
+     * @param imageLocationField the image location field that goes with this
+     * button.
+     * @param canvas the preview canvas to update.
      */
     public ImageButton(final JTextField imageLocationField, final LyricCanvas canvas) {
         super("Select...");

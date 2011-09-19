@@ -41,9 +41,8 @@ import org.quelea.displayable.Song;
 import org.quelea.displayable.VideoDisplayable;
 import org.quelea.displayable.VideoDisplayable.VideoType;
 import org.quelea.mail.Mailer;
-import org.quelea.notice.NoticeDialog;
 import org.quelea.utils.Utils;
-import org.quelea.video.PowerpointFileFilter;
+import org.quelea.powerpoint.PowerpointFileFilter;
 import org.quelea.utils.VideoFileFilter;
 import org.quelea.windows.library.LibrarySongList;
 import org.quelea.windows.main.AddSongActionListener;
@@ -54,16 +53,25 @@ import org.quelea.windows.main.ScheduleList;
 import org.quelea.windows.main.StatusPanel;
 
 /**
- *
+ * The schedule task (i.e. group of buttons) displayed on the ribbon. Manages
+ * all the schedule related actions.
  * @author Michael
  */
 public class ScheduleTask extends RibbonTask {
-    
+
+    /**
+     * Create a new schedule task.
+     */
     public ScheduleTask() {
         super("Schedule", createSongBand(), createVideoBand(), createShareBand(), createNoticeBand());
         Application.get().getMainWindow().getNoticeDialog().registerCanvas(Application.get().getLyricWindow().getCanvas());
     }
 
+    /**
+     * Check whether the edit or remove buttons should be set to enabled or disabled.
+     * @param editSongButton the edit button to check.
+     * @param removeSongButton the remove button to check.
+     */
     private static void checkEditRemoveButtons(JCommandButton editSongButton, JCommandButton removeSongButton) {
         final MainPanel mainPanel = Application.get().getMainWindow().getMainPanel();
         final ScheduleList scheduleList = mainPanel.getSchedulePanel().getScheduleList();
@@ -87,6 +95,11 @@ public class ScheduleTask extends RibbonTask {
         }
     }
 
+    /**
+     * Check whether the add to schedule button should be set enabled or 
+     * disabled.
+     * @param addSongButton the button to check.
+     */
     private static void checkAddButton(JCommandButton addSongButton) {
         final MainPanel mainPanel = Application.get().getMainWindow().getMainPanel();
         final LibrarySongList songList = mainPanel.getLibraryPanel().getLibrarySongPanel().getSongList();
@@ -102,6 +115,10 @@ public class ScheduleTask extends RibbonTask {
         }
     }
 
+    /**
+     * Create the song ribbon band.
+     * @return the song ribbon band.
+     */
     private static JRibbonBand createSongBand() {
         JRibbonBand songBand = new JRibbonBand("Items", RibbonUtils.getRibbonIcon("icons/schedule.png", 100, 100));
         RibbonUtils.applyStandardResizePolicies(songBand);
@@ -164,6 +181,10 @@ public class ScheduleTask extends RibbonTask {
         return songBand;
     }
 
+    /**
+     * Create the video ribbon band.
+     * @return the video ribbon band.
+     */
     private static JRibbonBand createVideoBand() {
         JRibbonBand videoBand = new JRibbonBand("Add Multimedia", RibbonUtils.getRibbonIcon("icons/video file.png", 100, 100));
         RibbonUtils.applyStandardResizePolicies(videoBand);
@@ -273,8 +294,8 @@ public class ScheduleTask extends RibbonTask {
             public void actionPerformed(ActionEvent e) {
                 File[] arr = File.listRoots();
                 File file = null;
-                for(File f : arr) {
-                    if(f.getUsableSpace()==0 && f.getTotalSpace()>0) {
+                for (File f : arr) {
+                    if (f.getUsableSpace() == 0 && f.getTotalSpace() > 0) {
                         file = f;
                     }
                 }
@@ -293,6 +314,10 @@ public class ScheduleTask extends RibbonTask {
         return videoBand;
     }
 
+    /**
+     * Create the notice ribbon band.
+     * @return the notice ribbon band.
+     */
     private static JRibbonBand createNoticeBand() {
         JRibbonBand noticeBand = new JRibbonBand("Notices", RibbonUtils.getRibbonIcon("icons/info.png", 100, 100));
         RibbonUtils.applyStandardResizePolicies(noticeBand);
@@ -308,6 +333,10 @@ public class ScheduleTask extends RibbonTask {
         return noticeBand;
     }
 
+    /**
+     * Create the share ribbon band.
+     * @return the share ribbon band.
+     */
     private static JRibbonBand createShareBand() {
         JRibbonBand shareBand = new JRibbonBand("Share", RibbonUtils.getRibbonIcon("icons/share.png", 100, 100));
         RibbonUtils.applyStandardResizePolicies(shareBand);
@@ -344,6 +373,7 @@ public class ScheduleTask extends RibbonTask {
         });
         emailButton.addActionListener(new ActionListener() {
 
+            //TODO: Put this message in some form of properties file
             @Override
             public void actionPerformed(ActionEvent e) {
                 Mailer.getInstance().sendSchedule(scheduleList.getSchedule(), "Hi,\n"

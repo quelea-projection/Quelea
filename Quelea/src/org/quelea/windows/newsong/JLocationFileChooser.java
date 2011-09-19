@@ -17,8 +17,10 @@
  */
 package org.quelea.windows.newsong;
 
-import javax.swing.*;
-import java.awt.*;
+import java.awt.Component;
+import java.awt.HeadlessException;
+import javax.swing.JDialog;
+import javax.swing.JFileChooser;
 
 /**
  * A chooser that sets the location to the absolute location of the parent.
@@ -50,5 +52,4 @@ public class JLocationFileChooser extends JFileChooser {
         dialog.setLocation((int) parent.getLocationOnScreen().getX(), (int) parent.getLocationOnScreen().getY());
         return dialog;
     }
-
 }

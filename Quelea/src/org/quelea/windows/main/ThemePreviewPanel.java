@@ -39,7 +39,8 @@ import org.quelea.utils.Utils;
 import org.quelea.windows.newsong.ThemePanel;
 
 /**
- *
+ * Panel that displays a preview of a particular theme. This is part of the 
+ * theme select popup window.
  * @author Michael
  */
 public class ThemePreviewPanel extends JPanel {
@@ -49,6 +50,10 @@ public class ThemePreviewPanel extends JPanel {
     private JRadioButton selectButton;
     private JButton removeButton;
 
+    /**
+     * Create a new theme preview panel.
+     * @param theme the theme to preview.
+     */
     public ThemePreviewPanel(Theme theme) {
         this.theme = theme;
         if (theme != null) {
@@ -127,12 +132,19 @@ public class ThemePreviewPanel extends JPanel {
         add(buttonPanel);
     }
 
+    /**
+     * Get the select radio button used to select this theme.
+     * @return the select radio button.
+     */
     public JRadioButton getSelectButton() {
         return selectButton;
     }
 
+    /**
+     * Get the theme in use on this preview panel.
+     * @return the theme in use on this preview panel.
+     */
     public Theme getTheme() {
         return theme;
     }
-
 }

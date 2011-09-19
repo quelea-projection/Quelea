@@ -23,11 +23,15 @@ import org.quelea.Application;
 import org.quelea.windows.newsong.SongEntryWindow;
 
 /**
- *
+ * The action listener used when creating a new song.
  * @author Michael
  */
 public class NewSongActionListener implements ActionListener {
 
+    /**
+     * Popup the dialog to create a new song...
+     * @param e the action event.
+     */
     @Override
     public void actionPerformed(ActionEvent e) {
         SongEntryWindow songEntryWindow = Application.get().getMainWindow().getSongEntryWindow();

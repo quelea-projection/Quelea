@@ -18,29 +18,40 @@
 package org.quelea.windows.newsong;
 
 import com.inet.jortho.SpellChecker;
-import org.quelea.displayable.Song;
-import org.quelea.utils.LineTypeChecker;
-import org.quelea.utils.SpringUtilities;
-import org.quelea.utils.Utils;
-
-import javax.swing.*;
-import javax.swing.border.EmptyBorder;
-import javax.swing.event.DocumentEvent;
-import javax.swing.event.DocumentListener;
-import javax.swing.text.BadLocationException;
-import javax.swing.text.DefaultHighlighter.DefaultHighlightPainter;
-import javax.swing.text.Highlighter;
-import java.awt.*;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.FlowLayout;
+import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 import java.util.ArrayList;
 import java.util.List;
+import javax.swing.BoxLayout;
+import javax.swing.JButton;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
+import javax.swing.JTextField;
+import javax.swing.JToolBar;
+import javax.swing.SpringLayout;
+import javax.swing.SwingUtilities;
+import javax.swing.border.EmptyBorder;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
+import javax.swing.text.BadLocationException;
+import javax.swing.text.DefaultHighlighter.DefaultHighlightPainter;
+import javax.swing.text.Highlighter;
 import org.quelea.Application;
 import org.quelea.chord.ChordLineTransposer;
 import org.quelea.chord.ChordTransposer;
 import org.quelea.chord.TransposeDialog;
+import org.quelea.displayable.Song;
+import org.quelea.utils.LineTypeChecker;
+import org.quelea.utils.SpringUtilities;
+import org.quelea.utils.Utils;
 
 /**
  * The panel that manages the basic input of song information - the title, author and lyrics.

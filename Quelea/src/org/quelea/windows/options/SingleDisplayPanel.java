@@ -17,12 +17,17 @@
  */
 package org.quelea.windows.options;
 
-import org.quelea.utils.Utils;
-
-import javax.swing.*;
-import java.awt.*;
+import java.awt.GraphicsDevice;
+import java.awt.GraphicsEnvironment;
 import java.util.ArrayList;
 import java.util.List;
+import javax.swing.BoxLayout;
+import javax.swing.ComboBoxModel;
+import javax.swing.DefaultComboBoxModel;
+import javax.swing.JComboBox;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import org.quelea.utils.Utils;
 
 /**
  * A panel used to represent a single type of display that the user can then select the output for.

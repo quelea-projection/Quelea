@@ -17,21 +17,30 @@
  */
 package org.quelea.windows.main;
 
-import javax.swing.event.ListDataEvent;
-import org.quelea.utils.Utils;
-
-import javax.swing.*;
-import javax.swing.border.EmptyBorder;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
-import java.awt.*;
+import java.awt.AWTEvent;
+import java.awt.BorderLayout;
+import java.awt.Point;
+import java.awt.Rectangle;
+import java.awt.Toolkit;
 import java.awt.event.AWTEventListener;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import javax.swing.Box;
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JToolBar;
+import javax.swing.border.EmptyBorder;
+import javax.swing.event.ListDataEvent;
 import javax.swing.event.ListDataListener;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 import org.quelea.Application;
+import org.quelea.utils.Utils;
 
 /**
  * The panel displaying the schedule / order of service. Items from here are loaded into the preview panel where they
@@ -55,6 +64,9 @@ public class SchedulePanel extends JPanel {
         scheduleList = new ScheduleList();
         scheduleList.getModel().addListDataListener(new ListDataListener() {
 
+            /*
+             * Whatever happens here, update the theme.
+             */
             @Override
             public void intervalAdded(ListDataEvent e) {
                 themeMenu.updateTheme();
@@ -74,6 +86,14 @@ public class SchedulePanel extends JPanel {
         themeMenu = new ScheduleThemePopupWindow(scheduleList);
         Toolkit.getDefaultToolkit().addAWTEventListener(new AWTEventListener() {
 
+            /**
+             * Have to hide the theme menu whenever anything else is clicked on 
+             * so this method provides an application wide way of detecting 
+             * these clicks and hiding the window appropriately. Makes it 
+             * behave a bit like a popup menu which is the behaviour we're
+             * after here.
+             * @param event the app-wide awt event.
+             */
             @Override
             public void eventDispatched(AWTEvent event) {
                 MouseEvent mouseEvent = (MouseEvent) event;
@@ -93,10 +113,14 @@ public class SchedulePanel extends JPanel {
         themeButton = new JButton(Utils.getImageIcon("icons/settings.png", 16, 16));
         themeButton.addMouseListener(new MouseAdapter() {
 
+            /**
+             * Centre the "menu" where it should be then display it (fade it
+             * in.)
+             */
             public void mousePressed(MouseEvent e) {
                 themeMenu.setSize(themeMenu.getPreferredSize());
-                int x = (int)themeButton.getLocationOnScreen().getX();
-                int y = (int)themeButton.getLocationOnScreen().getY()+themeButton.getHeight();
+                int x = (int) themeButton.getLocationOnScreen().getX();
+                int y = (int) themeButton.getLocationOnScreen().getY() + themeButton.getHeight();
                 themeMenu.setLocation(x, y);
                 themeMenu.setVisible(true);
             }
@@ -174,6 +198,10 @@ public class SchedulePanel extends JPanel {
         return scheduleList;
     }
 
+    /**
+     * Testing stuff.
+     * @param args command line args.
+     */
     public static void main(String[] args) {
         JFrame frame = new JFrame();
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);

@@ -15,24 +15,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-/*
- * This file is part of VLCJ.
- *
- * VLCJ is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * VLCJ is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with VLCJ.  If not, see <http://www.gnu.org/licenses/>.
- * 
- * Copyright 2009, 2010 Caprica Software Limited.
- */
 package org.quelea.utils;
 
 /**
@@ -41,7 +23,7 @@ package org.quelea.utils;
 public class VideoFileFilter extends ExtensionFileFilter {
 
     /**
-     * From the vlc_interfaces.h include file.
+     * All the file formats libvlc can handle.
      */
     private static final String[] EXTENSIONS_VIDEO = {
         "amv",
@@ -98,11 +80,6 @@ public class VideoFileFilter extends ExtensionFileFilter {
 
     @Override
     public String getDescription() {
-//        StringBuilder ret = new StringBuilder("Video files: ");
-//        for(String extension : EXTENSIONS_VIDEO) {
-//            ret.append(extension).append(", ");
-//        }
-//        return ret.substring(0,ret.length()-2);
         return "Video files";
     }
 }

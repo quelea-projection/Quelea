@@ -17,17 +17,20 @@
  */
 package org.quelea.windows.help;
 
-import org.quelea.utils.QueleaProperties;
-import org.quelea.utils.Utils;
-
-import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import javax.swing.BoxLayout;
+import javax.swing.JButton;
+import javax.swing.JDialog;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import org.quelea.utils.QueleaProperties;
+import org.quelea.utils.Utils;
 
 /**
  * A dialog giving some information about Quelea.
  * Do we really need this? Potentially remove.
- * @Deprecated
+ * @deprecated
  * @author Michael
  */
 public class AboutDialog extends JDialog {

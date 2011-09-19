@@ -17,11 +17,23 @@
  */
 package org.quelea.windows.newsong;
 
-import java.awt.*;
-import java.util.*;
-import java.awt.event.*;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Graphics;
+import java.awt.Image;
+import java.awt.Rectangle;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseMotionAdapter;
+import java.util.Observable;
+import java.util.Observer;
 import javax.swing.JPanel;
 
+/**
+ * A colour wheel. Separate from the in-built one to avoid the Java 7 / 
+ * subtance bugs (plus the built in one is a bit clunky anyway.)
+ * @author Michael
+ */
 public class ColorWheel extends JPanel implements Observer {
 
     private Rectangle wheel;
@@ -32,6 +44,11 @@ public class ColorWheel extends JPanel implements Observer {
     protected Graphics offGraphics = null;
     private Color background;
 
+    /**
+     * Create a new colour wheel.
+     * @param model the model to use.
+     * @param background the background colour.
+     */
     public ColorWheel(ColorModel model, Color background) {
         this.model = model;
         model.addObserver(this);
@@ -40,10 +57,17 @@ public class ColorWheel extends JPanel implements Observer {
         initEvents();
     }
 
+    /**
+     * Get the model in use.
+     * @return the model in use.
+     */
     public ColorModel getModel() {
         return model;
     }
 
+    /**
+     * Notify the wheel has resize, redraw it.
+     */
     private void resized() {
         int w = getWidth();
         int h = getHeight();
@@ -104,14 +128,27 @@ public class ColorWheel extends JPanel implements Observer {
         }
     }
 
+    /**
+     * Update the wheel (repaint it.)
+     * @param o observer.
+     * @param arg arg obj.
+     */
     public void update(Observable o, Object arg) {
         repaint();
     }
 
+    /**
+     * Paint the wheel.
+     * @param g graphics to paint with.
+     */
     public synchronized void paint(Graphics g) {
         update(g);
     }
 
+    /**
+     * Update the wheel.
+     * @param g graphics to paint with.
+     */
     public synchronized void update(Graphics g) {
         Dimension d = getSize();
 
@@ -141,6 +178,9 @@ public class ColorWheel extends JPanel implements Observer {
         g.drawImage(offImage, 0, 0, this);
     }
 
+    /**
+     * Add the events to this wheel.
+     */
     private void initEvents() {
         addMouseMotionListener(new MouseMotionAdapter() {
 
@@ -158,14 +198,26 @@ public class ColorWheel extends JPanel implements Observer {
         });
     }
 
+    /**
+     * Preferred size should always be 200x120.
+     * @return 200x120.
+     */
     public Dimension getPreferredSize() {
         return new Dimension(200, 120);
     }
 
+    /**
+     * Minimum size should always be 20x20.
+     * @return 20x20.
+     */
     public Dimension getMinimumSize() {
         return new Dimension(20, 20);
     }
 
+    /**
+     * Update the colour wheel.
+     * @param e the mouse event.
+     */
     private void update(MouseEvent e) {
         int x = e.getX();
         int y = e.getY();
