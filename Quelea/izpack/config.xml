@@ -59,7 +59,7 @@
             <file src="Quelea.bat" targetdir="$INSTALL_PATH"/>
             <file src="Quelea.vbs" targetdir="$INSTALL_PATH"/>
             <file src="../licenses/gplv3.txt" targetdir="$INSTALL_PATH"/>
-            <file src="quelea.properties" targetdir="$USER_HOME/.quelea"/>
+            <file src="quelea.properties" targetdir="$INSTALL_PATH"/>
         </pack>
         <pack name="dictionaries" required="yes" preselected="yes" hidden="true">
             <description>Dictionaries</description>
@@ -79,7 +79,7 @@
         </pack>-->
         <pack name="themes" required="yes" preselected="yes">
             <description>Sample themes</description>
-            <file src="themes" targetdir="$USER_HOME/.quelea/themes" override="false"/>
+            <file src="themes" targetdir="$INSTALL_PATH" override="false"/>
         </pack>
         <pack name="images" required="no" preselected="yes">
             <description>Images and icons</description>
