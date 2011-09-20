@@ -54,33 +54,33 @@
         <copy file="${basedir}/quelea.properties" todir="${dist.jar.dir}"/>
         <copy file="${basedir}/Quelea.bat" todir="${dist.jar.dir}"/>
         <copy file="${basedir}/Quelea.vbs" todir="${dist.jar.dir}"/>
+        <copy file="${basedir}/Quelea.iss" todir="${dist.jar.dir}"/>
+        <copy file="${basedir}/build-install.bat" todir="${dist.jar.dir}"/>
         <copy file="${basedir}/licenses/gplv3.txt" tofile="${dist.jar.dir}/license.txt"/>
-        <mkdir dir="${dist.jar.dir}/standalone"/>
         
-        <deb destfile="${dist.jar.dir}/standalone/Quelea-temp.deb" control="control">
+        <deb destfile="${dist.jar.dir}/Quelea-temp.deb" control="control">
             <tarfileset dir="${dist.jar.dir}"
                         prefix="/usr/share/quelea"/>
             <tarfileset file="quelea.desktop"
                         prefix="/usr/share/applications"/>
         </deb>
-        <move file="${dist.jar.dir}/standalone/Quelea-temp.deb" tofile="${DebInstaller}"/>
+        <mkdir dir="${dist.jar.dir}/standalone"/>
+        <move file="${dist.jar.dir}/Quelea-temp.deb" tofile="${DebInstaller}"/>
         
         <izpack input="${basedir}/izpack/config.xml" output="${CPInstaller}" basedir="${dist.jar.dir}"/>
-        <launch4j jar="${CPInstaller}" configFile="launch4j/config.xml" outfile="${WindowsInstaller}"/>
-        <zip destfile="${Portable}" basedir="${dist.jar.dir}" excludes="standalone/"/>
+        <echo message="Generating windows installer using inno setup."/>
+        <echo message="For this to work inno setup needs to be installed and the appropriate paths set in build-install.bat. This will only work on Windows."/>
+        <exec dir="${dist.jar.dir}" executable="cmd" failifexecutionfails="false" failonerror="false">
+            <arg value="/c build-install.bat"/>
+        </exec>
+        <move file="${dist.jar.dir}/Output/Quelea.exe" tofile="${WindowsInstaller}" failonerror="false"/>
+        <delete dir="${dist.jar.dir}/Output" verbose="true" failonerror="false"/>
+        
+<!--        <zip destfile="${Portable}" basedir="${dist.jar.dir}" excludes="standalone/"/>-->
     </target>
     
     <target name="upload" depends="jar">
         <taskdef classname="net.bluecow.googlecode.ant.GoogleCodeUploadTask" classpath="lib/ant-googlecode-0.0.3.jar" name="gcupload"/>
-<!--        <input
-            message="IMPORTANT: This will upload files to Google code. This cannot be undone. Continue?"
-            validargs="n,y"
-            addproperty="continue"
-        />
-        <condition property="do.abort">
-            <equals arg1="n" arg2="${continue}"/>
-        </condition>
-        <fail if="do.abort">Aborted by user.</fail>-->
         <input
             message="Username to use for upload:"
             addproperty="user"
