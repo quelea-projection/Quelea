@@ -66,6 +66,8 @@ public final class Main {
 
         final SplashWindow splashWindow = new SplashWindow();
         splashWindow.setVisible(true);
+        
+        new UserFileChecker(QueleaProperties.getQueleaUserHome()).checkUserFiles();
 
         GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
         final GraphicsDevice[] gds = ge.getScreenDevices();

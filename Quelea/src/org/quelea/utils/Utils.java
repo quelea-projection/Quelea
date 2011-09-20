@@ -36,6 +36,8 @@ import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
 import java.nio.channels.FileChannel;
+import java.nio.file.Files;
+import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -238,6 +240,16 @@ public final class Utils {
      * @throws IOException if something goes wrong.
      */
     public static void copyFile(File sourceFile, File destFile) throws IOException {
+        if(sourceFile.isDirectory()) {
+            if(sourceFile.getName().equals(".svn")) {
+                return;
+            }
+            Files.copy(sourceFile.toPath(), destFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
+            for(File file : sourceFile.listFiles()) {
+                copyFile(file, new File(destFile, file.getName()));
+            }
+            return;
+        }
         if (!destFile.exists()) {
             destFile.createNewFile();
         }
@@ -258,7 +270,7 @@ public final class Utils {
             }
         }
     }
-
+    
     /**
      * Capitalise the first letter of a string.
      * @param line the input string.

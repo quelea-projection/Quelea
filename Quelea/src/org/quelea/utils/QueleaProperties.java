@@ -17,14 +17,13 @@
  */
 package org.quelea.utils;
 
-import org.quelea.bible.Bible;
-
-import java.awt.*;
+import java.awt.Color;
 import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Properties;
+import org.quelea.bible.Bible;
 
 /**
  * Manages the properties specific to Quelea.
