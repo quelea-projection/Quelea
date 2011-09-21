@@ -25,6 +25,8 @@
 
     <target name="-post-jar">
         
+        <echo message="Built jar."/>
+        <echo message="Copying necessary files to ${dist.jar.dir}"/>
         <copy todir="${dist.jar.dir}/lib">
             <fileset dir="${basedir}/lib"/>
         </copy>
@@ -58,6 +60,7 @@
         <copy file="${basedir}/build-install.bat" todir="${dist.jar.dir}"/>
         <copy file="${basedir}/licenses/gplv3.txt" tofile="${dist.jar.dir}/license.txt"/>
         
+        <echo message="Building deb package for Ubuntu / Debian installs"/>
         <deb destfile="${dist.jar.dir}/Quelea-temp.deb" control="control">
             <tarfileset dir="${dist.jar.dir}"
                         prefix="/usr/share/quelea"/>
