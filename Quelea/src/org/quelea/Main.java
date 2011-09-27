@@ -66,7 +66,8 @@ public final class Main {
 
         final SplashWindow splashWindow = new SplashWindow();
         splashWindow.setVisible(true);
-        
+        setLaf();
+
         new UserFileChecker(QueleaProperties.getQueleaUserHome()).checkUserFiles();
 
         GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
@@ -120,7 +121,6 @@ public final class Main {
 
             @Override
             public void run() {
-                setLaf();
                 if (SongDatabase.get().errorOccurred()) {
                     JOptionPane.showMessageDialog(null, "It looks like you already have an instance of Quelea running, make sure you close all instances before running the program.", "Already running", JOptionPane.ERROR_MESSAGE);
                     System.exit(0);
@@ -153,17 +153,23 @@ public final class Main {
      * Attempt to set the look and feel of the components.
      */
     private static void setLaf() {
-        try {
-            UIManager.setLookAndFeel(new SubstanceBusinessLookAndFeel());
+        SwingUtilities.invokeLater(new Runnable() {
+
+            @Override
+            public void run() {
+                try {
+                    UIManager.setLookAndFeel(new SubstanceBusinessLookAndFeel());
 //            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
 //            UIManager.setLookAndFeel("com.sun.java.swing.plaf.windows.WindowsLookAndFeel");
-        }
-        catch (Exception ex) {
-            LOGGER.log(Level.INFO, "Couldn't set the look and feel to substance.", ex);
-        }
+                }
+                catch (Exception ex) {
+                    LOGGER.log(Level.INFO, "Couldn't set the look and feel to substance.", ex);
+                }
 
-        JFrame.setDefaultLookAndFeelDecorated(true);
-        JDialog.setDefaultLookAndFeelDecorated(true);
+                JFrame.setDefaultLookAndFeelDecorated(true);
+                JDialog.setDefaultLookAndFeelDecorated(true);
+            }
+        });
     }
 
     /**
