@@ -55,7 +55,12 @@ public final class BibleBook {
             ret.bookName = node.getAttributes().getNamedItem("bname").getNodeValue();
         }
         else {
-            ret.bookName = node.getAttributes().getNamedItem("n").getNodeValue();
+            if (node.getAttributes().getNamedItem("n") != null) {
+                ret.bookName = node.getAttributes().getNamedItem("n").getNodeValue();
+            }
+            else {
+                ret.bookName = "Book " + ret.bookNumber;
+            }
         }
         NodeList list = node.getChildNodes();
         for (int i = 0; i < list.getLength(); i++) {
