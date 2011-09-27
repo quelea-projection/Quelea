@@ -35,6 +35,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.JOptionPane;
+import javax.swing.SwingUtilities;
+import org.quelea.Application;
 
 /**
  * A bible containing a number of books as well as some information.
@@ -61,7 +64,7 @@ public final class Bible {
      * @param file the file where the XML bible is stored.
      * @return the bible as a java object, or null if an error occurred.
      */
-    public static Bible parseBible(File file) {
+    public static Bible parseBible(final File file) {
         try {
             if (file.exists()) {
                 InputStream fis = new FileInputStream(file);
@@ -79,7 +82,18 @@ public final class Bible {
             return null;
         }
         catch (ParserConfigurationException | SAXException | IOException ex) {
-            LOGGER.log(Level.WARNING, "Couldn't parse the bible", ex);
+            LOGGER.log(Level.WARNING, "Couldn't parse the bible " + file, ex);
+            SwingUtilities.invokeLater(new Runnable() {
+                public void run() {
+                    JOptionPane.showMessageDialog(Application.get().getMainWindow(),
+                            "Quelea couldn't load the bible contained in " + file.getName() + " beacuse it "
+                            + "appears to be corrupt. Please check the format of the bible "
+                            + "to make sure it's valid.\nIf not, or you're not sure, feel "
+                            + "free to email the discussion list at quelea-discuss@googlegroups.com "
+                            + "where we'll try to help.",
+                            "Error loading bible", JOptionPane.WARNING_MESSAGE);
+                }
+            });
             return null;
         }
     }
