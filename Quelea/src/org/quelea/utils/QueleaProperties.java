@@ -31,7 +31,7 @@ import org.quelea.bible.Bible;
  */
 public final class QueleaProperties extends Properties {
 
-    public static final Version VERSION = new Version("0.4");
+    public static final Version VERSION = new Version("0.4.1");
     private static final QueleaProperties INSTANCE = new QueleaProperties();
 //    private static final Logger LOGGER = LoggerUtils.getLogger();
     private static final Color ACTIVE_SELECTION = new Color(200, 255, 255);
