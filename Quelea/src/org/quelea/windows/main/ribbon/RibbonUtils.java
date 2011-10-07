@@ -23,7 +23,6 @@ import org.pushingpixels.flamingo.api.common.icon.ImageWrapperResizableIcon;
 import org.pushingpixels.flamingo.api.common.icon.ResizableIcon;
 import org.pushingpixels.flamingo.api.ribbon.JRibbonBand;
 import org.pushingpixels.flamingo.api.ribbon.resize.CoreRibbonResizePolicies;
-import org.pushingpixels.flamingo.api.ribbon.resize.IconRibbonBandResizePolicy;
 import org.pushingpixels.flamingo.api.ribbon.resize.RibbonBandResizePolicy;
 import org.quelea.utils.Utils;
 
@@ -48,8 +47,8 @@ public class RibbonUtils {
         band.setResizePolicies(Arrays.<RibbonBandResizePolicy>asList(
                 new CoreRibbonResizePolicies.None(band.getControlPanel()),
                 new CoreRibbonResizePolicies.Mirror(band.getControlPanel()),
-                new CoreRibbonResizePolicies.Mid2Low(band.getControlPanel()),
-                new IconRibbonBandResizePolicy(band.getControlPanel())));
+                new CoreRibbonResizePolicies.Mid2Low(band.getControlPanel())));
+//                new IconRibbonBandResizePolicy(band.getControlPanel()))); //Breaks on Ubuntu
     }
     
     /**

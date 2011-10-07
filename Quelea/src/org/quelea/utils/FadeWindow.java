@@ -110,10 +110,15 @@ public class FadeWindow extends JWindow {
      */
     @Override
     public void setVisible(boolean visible) {
-        if (nextStateVisible == visible) {
-            return;
+        if(Utils.translucencySupported()) {
+            if (nextStateVisible == visible) {
+                return;
+            }
+            nextStateVisible = visible;
+            fade(visible);
         }
-        nextStateVisible = visible;
-        fade(visible);
+        else {
+            super.setVisible(visible);
+        }
     }
 }
