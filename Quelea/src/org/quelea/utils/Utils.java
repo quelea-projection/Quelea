@@ -82,7 +82,7 @@ public final class Utils {
         catch (InterruptedException ex) {
             //Nothing
         }
-    }
+    } 
 
     /**
      * Get the JFileChooser used for opening and saving schedules.
@@ -114,6 +114,21 @@ public final class Utils {
                 t.setPriority(oldPriority);
             }
         };
+    }
+    
+    /**
+     * Determine whether translucency is supported.
+     * @return true if it's supported, false otherwise.
+     */
+    public static boolean translucencySupported() {
+        GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
+        GraphicsDevice[] gs = ge.getScreenDevices();
+        for(GraphicsDevice device : gs) {
+            if(device.isWindowTranslucencySupported(GraphicsDevice.WindowTranslucency.TRANSLUCENT)) {
+                return true;
+            }
+        }
+        return false;
     }
     
     /**
