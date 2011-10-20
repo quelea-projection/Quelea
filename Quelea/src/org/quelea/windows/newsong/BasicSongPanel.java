@@ -1,19 +1,18 @@
-/* 
- * This file is part of Quelea, free projection software for churches.
- * Copyright (C) 2011 Michael Berry
- * 
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- * 
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- * 
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+/*
+ * This file is part of Quelea, free projection software for churches. Copyright
+ * (C) 2011 Michael Berry
+ *
+ * This program is free software: you can redistribute it and/or modify it under
+ * the terms of the GNU General Public License as published by the Free Software
+ * Foundation, either version 3 of the License, or (at your option) any later
+ * version.
+ *
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License along with
+ * this program. If not, see <http://www.gnu.org/licenses/>.
  */
 package org.quelea.windows.newsong;
 
@@ -54,7 +53,9 @@ import org.quelea.utils.SpringUtilities;
 import org.quelea.utils.Utils;
 
 /**
- * The panel that manages the basic input of song information - the title, author and lyrics.
+ * The panel that manages the basic input of song information - the title,
+ * author and lyrics.
+ *
  * @author Michael
  */
 public class BasicSongPanel extends JPanel {
@@ -228,7 +229,11 @@ public class BasicSongPanel extends JPanel {
         if (key == null || key.isEmpty()) {
             for (String line : getLyricsField().getText().split("\n")) {
                 if (new LineTypeChecker(line).getLineType() == LineTypeChecker.Type.CHORDS) {
-                    String first = line.split("\\s+")[0];
+                    String first;
+                    int i=0;
+                    do {
+                        first = line.split("\\s+")[i++];
+                    } while (first.isEmpty());
                     key = new ChordTransposer(first).transpose(semitones, null);
                     if (key.length() > 2) {
                         key = key.substring(0, 2);
