@@ -92,7 +92,6 @@
             message="Password for ${user}:"
             addproperty="pass"
         />
-        <echo message="${pass}"/>
         
         <gcupload 
             username="${user}" 
