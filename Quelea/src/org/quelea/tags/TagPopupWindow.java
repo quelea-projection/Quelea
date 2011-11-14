@@ -25,6 +25,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.TreeSet;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
@@ -46,7 +47,7 @@ public class TagPopupWindow extends FadeWindow {
      * class since it relies on a bit of a bodged method to sort the tags into
      * the order we want them to be in.
      */
-    private class Tag implements Comparable<Tag> {
+    private static class Tag implements Comparable<Tag> {
 
         private String str;
         private int count;
@@ -88,6 +89,7 @@ public class TagPopupWindow extends FadeWindow {
          * @param obj the other object.
          * @return true if they're equal, false otherwise.
          */
+        @Override
         public boolean equals(Object obj) {
             if (obj == null) {
                 return false;
@@ -106,6 +108,7 @@ public class TagPopupWindow extends FadeWindow {
          * Get a hashcode for this tag.
          * @return the tag's hashcode.
          */
+        @Override
         public int hashCode() {
             int hash = 7;
             hash = 29 * hash + Objects.hashCode(this.str);
@@ -125,6 +128,7 @@ public class TagPopupWindow extends FadeWindow {
      * suggestions, false otherwise.
      */
     public TagPopupWindow(final boolean includeUserText) {
+        LOGGER.log(Level.INFO, "Tag popup window created \"{0}\"", includeUserText);
         this.includeUserText = includeUserText;
         setSpeed(0.07f);
         setLayout(new BoxLayout(this.getContentPane(), BoxLayout.Y_AXIS));
