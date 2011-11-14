@@ -1,19 +1,18 @@
-/* 
- * This file is part of Quelea, free projection software for churches.
- * Copyright (C) 2011 Michael Berry
- * 
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- * 
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- * 
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+/*
+ * This file is part of Quelea, free projection software for churches. Copyright
+ * (C) 2011 Michael Berry
+ *
+ * This program is free software: you can redistribute it and/or modify it under
+ * the terms of the GNU General Public License as published by the Free Software
+ * Foundation, either version 3 of the License, or (at your option) any later
+ * version.
+ *
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License along with
+ * this program. If not, see <http://www.gnu.org/licenses/>.
  */
 package org.quelea.utils;
 
@@ -58,6 +57,7 @@ import javax.swing.JLabel;
 
 /**
  * General utility class containing a bunch of static methods.
+ *
  * @author Michael
  */
 public final class Utils {
@@ -79,10 +79,10 @@ public final class Utils {
         try {
             Thread.sleep(millis);
         }
-        catch (InterruptedException ex) {
+        catch(InterruptedException ex) {
             //Nothing
         }
-    } 
+    }
 
     /**
      * Get the JFileChooser used for opening and saving schedules.
@@ -115,7 +115,7 @@ public final class Utils {
             }
         };
     }
-    
+
     /**
      * Determine whether translucency is supported.
      * @return true if it's supported, false otherwise.
@@ -130,7 +130,7 @@ public final class Utils {
         }
         return false;
     }
-    
+
     /**
      * Get a font identical to the one given apart from in size.
      * @param font the original font.
@@ -139,15 +139,15 @@ public final class Utils {
      */
     public static Font getDifferentSizeFont(Font font, float size) {
         Map<TextAttribute, Object> attributes = new HashMap<>();
-        for (Entry<TextAttribute, ?> entry : font.getAttributes().entrySet()) {
+        for(Entry<TextAttribute, ?> entry : font.getAttributes().entrySet()) {
             attributes.put(entry.getKey(), entry.getValue());
         }
-        if (attributes.get(TextAttribute.SIZE) != null) {
+        if(attributes.get(TextAttribute.SIZE) != null) {
             attributes.put(TextAttribute.SIZE, size);
         }
         return new Font(attributes);
     }
-    
+
     /**
      * Calculates the largest size of the given font for which the given string 
      * will fit into the given size.
@@ -163,12 +163,12 @@ public final class Utils {
         int maxSize = 288;
         int curSize = font.getSize();
 
-        while (maxSize - minSize > 2) {
+        while(maxSize - minSize > 2) {
             FontMetrics fm = g.getFontMetrics(new Font(font.getName(), font.getStyle(), curSize));
             int fontWidth = fm.stringWidth(string);
             int fontHeight = fm.getLeading() + fm.getMaxAscent() + fm.getMaxDescent();
 
-            if ((fontWidth > width) || (fontHeight > height)) {
+            if((fontWidth > width) || (fontHeight > height)) {
                 maxSize = curSize;
                 curSize = (maxSize + minSize) / 2;
             }
@@ -180,7 +180,7 @@ public final class Utils {
 
         return curSize;
     }
-    
+
     /**
      * Get the difference between two colours, from 0 to 100 where 100 is most
      * difference and 0 is least different.
@@ -189,17 +189,17 @@ public final class Utils {
      * @return the difference between the colours.
      */
     public static int getColorDifference(Color a, Color b) {
-        double ret = Math.abs(a.getRed()-b.getRed()) + Math.abs(a.getGreen()-b.getGreen()) + Math.abs(a.getBlue()-b.getBlue());
-        return (int)((ret/(255*3))*100);
+        double ret = Math.abs(a.getRed() - b.getRed()) + Math.abs(a.getGreen() - b.getGreen()) + Math.abs(a.getBlue() - b.getBlue());
+        return (int) ((ret / (255 * 3)) * 100);
     }
-    
+
     /**
      * Remove all HTML tags from a string.
      * @param str the string to remove the tags from.
      * @return the string with the tags removed.
      */
     public static String removeTags(String str) {
-        return str.replaceAll("\\<.*?>","");
+        return str.replaceAll("\\<.*?>", "");
     }
 
     /**
@@ -238,9 +238,9 @@ public final class Utils {
     public static <T> void removeDuplicateWithOrder(List<T> list) {
         Set<T> set = new HashSet<>();
         List<T> newList = new ArrayList<>();
-        for (Iterator<T> iter = list.iterator(); iter.hasNext();) {
+        for(Iterator<T> iter = list.iterator(); iter.hasNext();) {
             T element = iter.next();
-            if (set.add(element)) {
+            if(set.add(element)) {
                 newList.add(element);
             }
         }
@@ -265,7 +265,7 @@ public final class Utils {
             }
             return;
         }
-        if (!destFile.exists()) {
+        if(!destFile.exists()) {
             destFile.createNewFile();
         }
 
@@ -277,22 +277,22 @@ public final class Utils {
             destination.transferFrom(source, 0, source.size());
         }
         finally {
-            if (source != null) {
+            if(source != null) {
                 source.close();
             }
-            if (destination != null) {
+            if(destination != null) {
                 destination.close();
             }
         }
     }
-    
+
     /**
      * Capitalise the first letter of a string.
      * @param line the input string.
      * @return the the string with the first letter capitalised.
      */
     public static String capitaliseFirst(String line) {
-        if (line.isEmpty()) {
+        if(line.isEmpty()) {
             return line;
         }
         StringBuilder ret = new StringBuilder(line);
@@ -308,8 +308,8 @@ public final class Utils {
     public static String getAbbreviation(String name) {
         StringBuilder ret = new StringBuilder();
         String[] parts = name.split(" ");
-        for (String str : parts) {
-            if (!str.isEmpty()) {
+        for(String str : parts) {
+            if(!str.isEmpty()) {
                 ret.append(Character.toUpperCase(str.charAt(0)));
             }
         }
@@ -334,15 +334,15 @@ public final class Utils {
      *         reason.
      */
     public static synchronized String getTextFromFile(String fileName, String errorText) {
-        try (BufferedReader reader = new BufferedReader(new FileReader(fileName))) {
+        try(BufferedReader reader = new BufferedReader(new FileReader(fileName))) {
             StringBuilder content = new StringBuilder();
             String line;
-            while ((line = reader.readLine()) != null) {
+            while((line = reader.readLine()) != null) {
                 content.append(line).append('\n');
             }
             return content.toString();
         }
-        catch (IOException ex) {
+        catch(IOException ex) {
             LOGGER.log(Level.WARNING, "Couldn't get the contents of " + fileName, ex);
             return errorText;
         }
@@ -366,7 +366,7 @@ public final class Utils {
      */
     public static ImageIcon getImageIcon(String location, int width, int height) {
         Image image = getImage(location, width, height);
-        if (image == null) {
+        if(image == null) {
             return null;
         }
         return new ImageIcon(image);
@@ -391,14 +391,14 @@ public final class Utils {
     public static BufferedImage getImage(String location, int width, int height) {
         try {
             BufferedImage image = ImageIO.read(new File(location));
-            if (width > 0 && height > 0) {
+            if(width > 0 && height > 0) {
                 return resizeImage(image, width, height);
             }
             else {
                 return image;
             }
         }
-        catch (IOException ex) {
+        catch(IOException ex) {
             LOGGER.log(Level.WARNING, "Couldn't get image: " + location, ex);
             return null;
         }
@@ -412,7 +412,7 @@ public final class Utils {
      * @return the resized image.
      */
     public static BufferedImage resizeImage(BufferedImage image, int width, int height) {
-        if (width > 0 && height > 0 && (image.getWidth() != width || image.getHeight() != height)) {
+        if(width > 0 && height > 0 && (image.getWidth() != width || image.getHeight() != height)) {
             BufferedImage bdest = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
             Graphics2D g = bdest.createGraphics();
             g.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BICUBIC);
@@ -423,7 +423,7 @@ public final class Utils {
             return image;
         }
     }
-    
+
     /**
      * Convert the given icon to an image.
      * @param icon the icon to convert.
@@ -457,11 +457,11 @@ public final class Utils {
     public static String[] getAllFonts() {
         Font[] fonts = GraphicsEnvironment.getLocalGraphicsEnvironment().getAllFonts();
         Set<String> names = new HashSet<>();
-        for (int i = 0; i < fonts.length; i++) {
+        for(int i = 0; i < fonts.length; i++) {
             names.add(fonts[i].getFamily());
         }
         List<String> namesList = new ArrayList<>(names.size());
-        for (String name : names) {
+        for(String name : names) {
             namesList.add(name);
         }
         Collections.sort(namesList);
