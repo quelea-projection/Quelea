@@ -1,19 +1,18 @@
-/* 
- * This file is part of Quelea, free projection software for churches.
- * Copyright (C) 2011 Michael Berry
- * 
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- * 
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- * 
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+/*
+ * This file is part of Quelea, free projection software for churches. Copyright
+ * (C) 2011 Michael Berry
+ *
+ * This program is free software: you can redistribute it and/or modify it under
+ * the terms of the GNU General Public License as published by the Free Software
+ * Foundation, either version 3 of the License, or (at your option) any later
+ * version.
+ *
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License along with
+ * this program. If not, see <http://www.gnu.org/licenses/>.
  */
 package org.quelea.windows.main;
 
@@ -45,6 +44,7 @@ import org.quelea.video.RemotePlayerFactory;
 
 /**
  * The control panel for displaying the video.
+ *
  * @author Michael
  */
 public class VideoControlPanel extends JPanel {
@@ -112,8 +112,8 @@ public class VideoControlPanel extends JPanel {
 
             @Override
             public void mousePressed(MouseEvent e) {
-                for (RemotePlayer mediaPlayer : mediaPlayers) {
-                    if (mediaPlayer.isPlaying()) {
+                for(RemotePlayer mediaPlayer : mediaPlayers) {
+                    if(mediaPlayer.isPlaying()) {
                         mediaPlayer.pause();
                         pauseCheck = false;
                     }
@@ -125,15 +125,15 @@ public class VideoControlPanel extends JPanel {
 
             @Override
             public void mouseReleased(MouseEvent e) {
-                for (RemotePlayer mediaPlayer : mediaPlayers) {
+                for(RemotePlayer mediaPlayer : mediaPlayers) {
                     mediaPlayer.setTime((long) ((positionSlider.getValue() / (double) 1000) * mediaPlayer.getLength()));
-                    if (!pauseCheck) {
+                    if(!pauseCheck) {
                         mediaPlayer.play();
                     }
                 }
             }
         });
-        if (!TEST_DISABLE_SUBSTANCE) {
+        if(!TEST_DISABLE_SUBSTANCE) {
             try {
                 positionSlider.setUI(new SubstanceSliderUI(positionSlider) {
 
@@ -144,17 +144,17 @@ public class VideoControlPanel extends JPanel {
 
                         int value = positionSlider.getValue();
 
-                        if (positionSlider.getOrientation() == JSlider.HORIZONTAL) {
+                        if(positionSlider.getOrientation() == JSlider.HORIZONTAL) {
                             value = this.valueForXPosition(positionSlider.getMousePosition().x);
                         }
-                        else if (positionSlider.getOrientation() == JSlider.VERTICAL) {
+                        else if(positionSlider.getOrientation() == JSlider.VERTICAL) {
                             value = this.valueForYPosition(positionSlider.getMousePosition().y);
                         }
                         positionSlider.setValue(value);
                     }
                 });
             }
-            catch (Exception ex) {
+            catch(Exception ex) {
                 //UI issue, cannot do a lot and don't want to break program...
             }
         }
@@ -185,14 +185,14 @@ public class VideoControlPanel extends JPanel {
 
             @Override
             public void hierarchyChanged(HierarchyEvent e) {
-                if ((e.getChangeFlags() & HierarchyEvent.SHOWING_CHANGED) > 0 && videoArea.isShowing()) {
+                if((e.getChangeFlags() & HierarchyEvent.SHOWING_CHANGED) != 0 && videoArea.isShowing()) {
                     new Thread() {
 
                         @Override
                         public void run() {
                             RemotePlayer player = RemotePlayerFactory.getEmbeddedRemotePlayer(videoArea);
                             mediaPlayers.add(0, player);
-                            if (videoPath != null) {
+                            if(videoPath != null) {
                                 player.load(videoPath);
                             }
                             play.setEnabled(true);
@@ -214,16 +214,16 @@ public class VideoControlPanel extends JPanel {
      */
     public void registerCanvas(final LyricCanvas canvas) {
         registeredCanvases.add(canvas);
-        if (!canvas.isShowing()) {
+        if(!canvas.isShowing()) {
             canvas.addHierarchyListener(new HierarchyListener() {
 
                 @Override
                 public void hierarchyChanged(HierarchyEvent e) {
-                    if ((e.getChangeFlags() & HierarchyEvent.SHOWING_CHANGED) > 0 && canvas.isShowing()) {
+                    if((e.getChangeFlags() & HierarchyEvent.SHOWING_CHANGED) != 0 && canvas.isShowing()) {
                         RemotePlayer player = RemotePlayerFactory.getEmbeddedRemotePlayer(canvas);
                         player.setMute(true);
                         mediaPlayers.add(player);
-                        if (videoPath != null) {
+                        if(videoPath != null) {
                             player.load(videoPath);
                         }
                         canvas.removeHierarchyListener(this);
@@ -252,7 +252,7 @@ public class VideoControlPanel extends JPanel {
      */
     public void loadVideo(String videoPath) {
         this.videoPath = videoPath;
-        for (RemotePlayer mediaPlayer : mediaPlayers) {
+        for(RemotePlayer mediaPlayer : mediaPlayers) {
             mediaPlayer.load(videoPath);
         }
     }
@@ -261,9 +261,9 @@ public class VideoControlPanel extends JPanel {
      * Play the loaded video.
      */
     public void playVideo() {
-        for (int i = 0; i < mediaPlayers.size(); i++) {
+        for(int i = 0; i < mediaPlayers.size(); i++) {
             final RemotePlayer mediaPlayer = mediaPlayers.get(i);
-            if (i > 0) {
+            if(i > 0) {
                 mediaPlayer.setMute(true);
             }
             mediaPlayer.play();
@@ -271,7 +271,7 @@ public class VideoControlPanel extends JPanel {
 
                 @Override
                 public void run() {
-                    if (mediaPlayer.isPlaying()) {
+                    if(mediaPlayer.isPlaying()) {
                         SwingUtilities.invokeLater(new Runnable() {
 
                             @Override
@@ -299,7 +299,7 @@ public class VideoControlPanel extends JPanel {
      * @param time the current time of the video.
      */
     public void setTime(long time) {
-        for (RemotePlayer mediaPlayer : mediaPlayers) {
+        for(RemotePlayer mediaPlayer : mediaPlayers) {
             mediaPlayer.setTime(time);
         }
     }
@@ -308,7 +308,7 @@ public class VideoControlPanel extends JPanel {
      * Pause the currently playing video.
      */
     public void pauseVideo() {
-        for (RemotePlayer mediaPlayer : mediaPlayers) {
+        for(RemotePlayer mediaPlayer : mediaPlayers) {
             mediaPlayer.pause();
         }
     }
@@ -317,7 +317,7 @@ public class VideoControlPanel extends JPanel {
      * Stop the currently playing video.
      */
     public void stopVideo() {
-        for (RemotePlayer mediaPlayer : mediaPlayers) {
+        for(RemotePlayer mediaPlayer : mediaPlayers) {
             mediaPlayer.stop();
         }
     }
@@ -328,7 +328,7 @@ public class VideoControlPanel extends JPanel {
      */
     public void setMute(boolean muteState) {
         mediaPlayers.get(0).setMute(muteState);
-        if (getMute()) {
+        if(getMute()) {
             mute.setIcon(Utils.getImageIcon("icons/unmute.png"));
         }
         else {
@@ -349,7 +349,7 @@ public class VideoControlPanel extends JPanel {
      * the external VM's / remote players it controls.
      */
     public void close() {
-        for (RemotePlayer mediaPlayer : mediaPlayers) {
+        for(RemotePlayer mediaPlayer : mediaPlayers) {
             mediaPlayer.close();
         }
         executorService.shutdownNow();
