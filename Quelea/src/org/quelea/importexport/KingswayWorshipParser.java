@@ -26,6 +26,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.regex.Pattern;
 import org.quelea.displayable.Song;
 import org.quelea.utils.LoggerUtils;
 
@@ -38,6 +39,9 @@ public class KingswayWorshipParser implements SongParser {
     private static final Logger LOGGER = LoggerUtils.getLogger();
     private static final Song DEFAULT = new Song("", "");
     private int count500 = 0;
+    private final String[] GODWORDS = {"god", "God", "jesus", "Jesus", "christ",
+        "Christ", "you", "You", "he", "He", "lamb", "Lamb", "lord", "Lord", "him",
+        "Him", "son", "Son", "i", "I", "his", "His", "your", "Your", "king", "King"};
 
     /**
      * Get the songs from the kingsway online library.
@@ -54,8 +58,7 @@ public class KingswayWorshipParser implements SongParser {
             Song song = null;
             try {
                 song = parseSong(pageText, i);
-            }
-            catch (Exception ex) {
+            } catch (Exception ex) {
                 LOGGER.log(Level.WARNING, ex.getMessage());
             }
             if (song != DEFAULT) {
@@ -138,9 +141,32 @@ public class KingswayWorshipParser implements SongParser {
         songHtml = songHtml.trim();
 
         StringBuilder lyrics = new StringBuilder();
-        for (String str : songHtml.split("\n")) {
-            lyrics.append(str.trim()).append('\n');
+        String[] strx = songHtml.split("\n");
+
+        //Below uncapitalises the first line of the song.
+        String fl = strx[0];
+        fl = fl.toLowerCase();
+        fl = fl.replaceFirst(fl.substring(0, 1), fl.substring(0, 1).toUpperCase()); //recapitalise first letter
+        for(int c = 0; c < GODWORDS.length; c+=2) {
+            fl = fl.replaceAll("(?<=\\W)" + GODWORDS[c] + "(?=\\W)", GODWORDS[c+1]); //recapitalise God words
         }
+        char[] y = fl.toCharArray();
+        for(int i2 = 0; i2 < y.length-2; i2++) {
+            if(y[i2] == '!' || y[i2] == '.' || y[i2] == '?') { 
+                i2 += 2;
+                y[i2] = Character.toUpperCase(y[i2]); // recaptalise after punctuation
+            }
+        }
+        fl = new String(y);
+        lyrics.append(fl.trim()).append('\n'); //add first line
+
+
+        for (int index = 1;
+                index < strx.length;
+                index++) {
+            lyrics.append(strx[index].trim()).append('\n');
+        }
+
 
         if (title.trim().isEmpty()) {
             title = lyrics.toString().split("\n")[0];
@@ -150,8 +176,7 @@ public class KingswayWorshipParser implements SongParser {
             Song ret = new Song(title, author);
             ret.setLyrics(lyrics.toString());
             return ret;
-        }
-        else {
+        } else {
             LOGGER.log(Level.WARNING, "Page {0} no lyrics found", num);
             return null;
         }
@@ -175,8 +200,7 @@ public class KingswayWorshipParser implements SongParser {
             }
             count500 = 0;
             return content.toString();
-        }
-        catch (Exception ex) {
+        } catch (Exception ex) {
             LOGGER.log(Level.WARNING, ex.getMessage());
             if (ex.getMessage().contains("500")) {
                 count500++;
