@@ -26,13 +26,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import java.util.regex.Pattern;
 import org.quelea.displayable.Song;
 import org.quelea.utils.LoggerUtils;
 
 /**
  * Parse songs imported from the kingsway importer.
- * @author Michael
+ * @author Michael and Ben
  */
 public class KingswayWorshipParser implements SongParser {
 
@@ -41,7 +40,8 @@ public class KingswayWorshipParser implements SongParser {
     private int count500 = 0;
     private final String[] GODWORDS = {"god", "God", "jesus", "Jesus", "christ",
         "Christ", "you", "You", "he", "He", "lamb", "Lamb", "lord", "Lord", "him",
-        "Him", "son", "Son", "i", "I", "his", "His", "your", "Your", "king", "King"};
+        "Him", "son", "Son", "i", "I", "his", "His", "your", "Your", "king", "King",
+        "saviour", "Saviour", "majesty", "Majesty", "alpha", "Alpha", "omega", "Omega"};
 
     /**
      * Get the songs from the kingsway online library.
@@ -149,7 +149,7 @@ public class KingswayWorshipParser implements SongParser {
         fl = fl.replaceFirst(fl.substring(0, 1), fl.substring(0, 1).toUpperCase()); //recapitalise first letter
         for(int c = 0; c < GODWORDS.length; c+=2) {
             fl = fl.replaceAll("(?<=\\W)" + GODWORDS[c] + "(?=\\W)", GODWORDS[c+1]); //recapitalise God words
-        }
+        }                       // ^ Annoying regex.......... ^
         char[] y = fl.toCharArray();
         for(int i2 = 0; i2 < y.length-2; i2++) {
             if(y[i2] == '!' || y[i2] == '.' || y[i2] == '?') { 
