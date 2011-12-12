@@ -1,19 +1,18 @@
-/* 
- * This file is part of Quelea, free projection software for churches.
- * Copyright (C) 2011 Michael Berry
- * 
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- * 
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- * 
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+/*
+ * This file is part of Quelea, free projection software for churches. Copyright
+ * (C) 2011 Michael Berry
+ *
+ * This program is free software: you can redistribute it and/or modify it under
+ * the terms of the GNU General Public License as published by the Free Software
+ * Foundation, either version 3 of the License, or (at your option) any later
+ * version.
+ *
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License along with
+ * this program. If not, see <http://www.gnu.org/licenses/>.
  */
 package org.quelea.importexport;
 
@@ -28,9 +27,11 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.quelea.displayable.Song;
 import org.quelea.utils.LoggerUtils;
+import org.quelea.utils.QueleaProperties;
 
 /**
  * Parse songs imported from the kingsway importer.
+ *
  * @author Michael and Ben
  */
 public class KingswayWorshipParser implements SongParser {
@@ -38,10 +39,6 @@ public class KingswayWorshipParser implements SongParser {
     private static final Logger LOGGER = LoggerUtils.getLogger();
     private static final Song DEFAULT = new Song("", "");
     private int count500 = 0;
-    private final String[] GODWORDS = {"god", "God", "jesus", "Jesus", "christ",
-        "Christ", "you", "You", "he", "He", "lamb", "Lamb", "lord", "Lord", "him",
-        "Him", "son", "Son", "i", "I", "his", "His", "your", "Your", "king", "King",
-        "saviour", "Saviour", "majesty", "Majesty", "alpha", "Alpha", "omega", "Omega"};
 
     /**
      * Get the songs from the kingsway online library.
@@ -58,8 +55,9 @@ public class KingswayWorshipParser implements SongParser {
             Song song = null;
             try {
                 song = parseSong(pageText, i);
-            } catch (Exception ex) {
-                LOGGER.log(Level.WARNING, ex.getMessage());
+            }
+            catch (Exception ex) {
+                LOGGER.log(Level.WARNING, "Error importing song", ex);
             }
             if (song != DEFAULT) {
                 ret.add(song);
@@ -147,12 +145,13 @@ public class KingswayWorshipParser implements SongParser {
         String fl = strx[0];
         fl = fl.toLowerCase();
         fl = fl.replaceFirst(fl.substring(0, 1), fl.substring(0, 1).toUpperCase()); //recapitalise first letter
-        for(int c = 0; c < GODWORDS.length; c+=2) {
-            fl = fl.replaceAll("(?<=\\W)" + GODWORDS[c] + "(?=\\W)", GODWORDS[c+1]); //recapitalise God words
+        String[] godWords = QueleaProperties.get().getGodWords();
+        for (int c = 0; c < godWords.length; c += 2) {
+            fl = fl.replaceAll("(?<=\\W)" + godWords[c] + "(?=\\W)", godWords[c + 1]); //recapitalise God words
         }                       // ^ Annoying regex.......... ^
         char[] y = fl.toCharArray();
-        for(int i2 = 0; i2 < y.length-2; i2++) {
-            if(y[i2] == '!' || y[i2] == '.' || y[i2] == '?') { 
+        for (int i2 = 0; i2 < y.length - 2; i2++) {
+            if (y[i2] == '!' || y[i2] == '.' || y[i2] == '?') {
                 i2 += 2;
                 y[i2] = Character.toUpperCase(y[i2]); // recaptalise after punctuation
             }
@@ -176,7 +175,8 @@ public class KingswayWorshipParser implements SongParser {
             Song ret = new Song(title, author);
             ret.setLyrics(lyrics.toString());
             return ret;
-        } else {
+        }
+        else {
             LOGGER.log(Level.WARNING, "Page {0} no lyrics found", num);
             return null;
         }
@@ -200,7 +200,8 @@ public class KingswayWorshipParser implements SongParser {
             }
             count500 = 0;
             return content.toString();
-        } catch (Exception ex) {
+        }
+        catch (Exception ex) {
             LOGGER.log(Level.WARNING, ex.getMessage());
             if (ex.getMessage().contains("500")) {
                 count500++;
