@@ -5,7 +5,7 @@
     <info>
         <appname>Quelea</appname>
         <appversion>0.x</appversion>
-        <javaversion>1.6</javaversion>
+        <javaversion>1.7</javaversion>
         <url>http://www.quelea.org/</url>
         <run-privileged/>
         <!--Uncomment the following line when going to production, drastically reduces size of the installer-->
