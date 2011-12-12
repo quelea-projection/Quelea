@@ -94,6 +94,11 @@ public final class Main {
         if (hidden) {
             LOGGER.log(Level.INFO, "Hiding projector display on monitor 0 (base 0!)");
             fullScreenWindow = new LyricWindow(gds[0].getDefaultConfiguration().getBounds());
+            fullScreenWindow.setVisible(false);
+        }
+        else if(QueleaProperties.get().isProjectorModeCoords()) {
+            LOGGER.log(Level.INFO, "Starting projector display: ", QueleaProperties.get().getProjectorCoords());
+            fullScreenWindow = new LyricWindow(QueleaProperties.get().getProjectorCoords());
         }
         else {
             LOGGER.log(Level.INFO, "Starting projector display on monitor {0} (base 0!)", projectorScreen);

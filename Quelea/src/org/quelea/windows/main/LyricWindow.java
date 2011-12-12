@@ -63,6 +63,12 @@ public class LyricWindow extends JWindow {
      * @param area the area of the window.
      */
     public final void setArea(Rectangle area) {
+        if(area==null) {
+            setVisible(false);
+        }
+        else {
+            setVisible(true);
+        }
         if (canvas != null) {
             canvas.setPreferredSize(new Dimension((int) (area.getMaxX() - area.getMinX()), (int) (area.getMaxY() - area.getMinY())));
         }

@@ -18,7 +18,6 @@
 package org.quelea.windows.main;
 
 import java.awt.event.ComponentEvent;
-import org.quelea.notice.NoticeDrawer;
 import java.awt.BorderLayout;
 import java.awt.Canvas;
 import java.awt.Color;
@@ -36,6 +35,7 @@ import javax.swing.JFrame;
 import javax.swing.SwingUtilities;
 import org.quelea.Theme;
 import org.quelea.notice.Notice;
+import org.quelea.notice.NoticeDrawer;
 import org.quelea.utils.GraphicsUtils;
 import org.quelea.utils.QueleaProperties;
 import org.quelea.utils.Utils;
@@ -94,6 +94,7 @@ public class LyricCanvas extends Canvas {
         if (getWidth() > 0 && getHeight() > 0) {
             SwingUtilities.invokeLater(new Runnable() {
 
+                @Override
                 public void run() {
                     paint(getGraphics());
                 }
