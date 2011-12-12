@@ -2,7 +2,7 @@
 ; SEE THE DOCUMENTATION FOR DETAILS ON CREATING INNO SETUP SCRIPT FILES!
 
 #define MyAppName "Quelea"
-#define MyAppVersion "0.4"
+#define MyAppVersion "0.4.2"
 #define MyAppPublisher "Michael Berry"
 #define MyAppURL "http://www.quelea.org"
 #define MyAppExeName "Quelea.vbs"
@@ -26,6 +26,32 @@ LicenseFile=../licenses/gplv3.txt
 OutputBaseFilename=setup
 Compression=lzma
 SolidCompression=yes
+
+[Code]
+function InitializeSetup(): Boolean;
+var
+  ErrorCode: Integer;
+  JavaInstalled : Boolean;
+  Result1 : Boolean;
+begin
+  JavaInstalled := RegKeyExists(HKLM,'SOFTWARE\JavaSoft\Java Runtime Environment\1.7');
+  if JavaInstalled then
+  begin
+    Result := true;
+  end else
+    begin
+      Result1 := MsgBox('This tool requires Java 7 to run. Please download and install the JRE and run this setup again. Do you want to download it now?', mbConfirmation, MB_YESNO) = idYes;
+      if Result1 = false then
+      begin
+        Result:=false;
+      end else
+      begin
+        Result:=false;
+        ShellExec('open', 'http://www.oracle.com/technetwork/java/javase/downloads/index.html','','',SW_SHOWNORMAL,ewNoWait,ErrorCode);
+      end;
+    end;
+  end;
+end.
 
 [Languages]
 Name: "english"; MessagesFile: "compiler:Default.isl"
@@ -56,4 +82,3 @@ Name: "{userappdata}\Microsoft\Internet Explorer\Quick Launch\{#MyAppName}"; Ico
 
 [Run]
 Filename: "{app}\{#MyAppExeName}"; Description: "{cm:LaunchProgram,{#StringChange(MyAppName, "&", "&&")}}"; Flags: shellexec postinstall skipifsilent
-
