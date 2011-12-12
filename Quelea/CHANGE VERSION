@@ -5,5 +5,6 @@ When changing the version number, it needs to be changed in :
 3) Version constant in QueleaProperties.java
 4) quelea.desktop
 5) Control file for debian based installs
+6) MyAppVersion in quelea.iss
 
 This should probably all be automated at some point!
