@@ -383,4 +383,18 @@ public final class QueleaProperties extends Properties {
         setProperty("notice.box.speed", Integer.toString(speed));
         write();
     }
+    
+    /**
+     * Get the specially treated words that are auto-capitalised by the song
+     * importer when deciding how to un-caps-lock a line of text.
+     * @return the array of God words, separated by commas in the properties
+     * file.
+     */
+    public String[] getGodWords() {
+        return getProperty("god.words",
+                "god,God,jesus,Jesus,christ,Christ,you,You,he,He,lamb,Lamb,"
+                + "lord,Lord,him,Him,son,Son,i,I,his,His,your,Your,king,King,"
+                + "saviour,Saviour,savior,Savior,majesty,Majesty,alpha,Alpha,omega,Omega") //Yeah.. default testing properties.
+                .trim().split(",");
+    }
 }
