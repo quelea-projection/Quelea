@@ -63,6 +63,7 @@ Name: "quicklaunchicon"; Description: "{cm:CreateQuickLaunchIcon}"; GroupDescrip
 [Files]
 Source: "Quelea.vbs"; DestDir: "{app}"; Flags: ignoreversion
 Source: "Quelea.bat"; DestDir: "{app}"; Flags: ignoreversion
+Source: "MessageBox.vbs"; DestDir: "{app}"; Flags: ignoreversion
 Source: "Quelea.jar"; DestDir: "{app}"; Flags: ignoreversion
 Source: "Readme.txt"; DestDir: "{app}"; Flags: ignoreversion
 Source: "quelea.properties"; DestDir: "{app}"; Flags: ignoreversion
