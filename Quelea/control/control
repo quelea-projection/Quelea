@@ -1,8 +1,8 @@
 Package: quelea
-Version: 0.4
+Version: 0.4.2
 Section: misc
 Priority: optional
-Depends: default-jre
+Depends: openjdk-7-jre
 Recommends: vlc
 Homepage: www.quelea.org
 Architecture: i386
