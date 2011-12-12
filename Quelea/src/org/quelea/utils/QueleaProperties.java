@@ -18,6 +18,7 @@
 package org.quelea.utils;
 
 import java.awt.Color;
+import java.awt.Rectangle;
 import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
@@ -168,6 +169,58 @@ public final class QueleaProperties extends Properties {
      */
     public void setMaxChars(int maxChars) {
         setProperty("max.chars", Integer.toString(maxChars));
+        write();
+    }
+    
+    /**
+     * Get the custom projector co-ordinates.
+     * @return the co-ordinates.
+     */
+    public Rectangle getProjectorCoords() {
+        String[] prop = getProperty("projector.coords", "0,0,0,0").trim().split(",");
+        return new Rectangle(Integer.parseInt(prop[0]),
+                Integer.parseInt(prop[1]),
+                Integer.parseInt(prop[2]),
+                Integer.parseInt(prop[3]));
+    }
+    
+    /**
+     * Set the custom projector co-ordinates.
+     * @param coords the co-ordinates to set.
+     */
+    public void setProjectorCoords(Rectangle coords) {
+        String rectStr = Integer.toString((int)coords.getX())
+                +","+Integer.toString((int)coords.getY())
+                +","+Integer.toString((int)coords.getWidth())
+                +","+Integer.toString((int)coords.getHeight());
+                
+        setProperty("projector.coords", rectStr);
+        write();
+    }
+    
+    /**
+     * Determine if the projector mode is set to manual co-ordinates or a 
+     * screen number.
+     * @return true if it's set to manual co-ordinates, false if it's a screen
+     * number.
+     */
+    public boolean isProjectorModeCoords() {
+        return "coords".equals(getProperty("projector.mode"));
+    }
+    
+    /**
+     * Set the projector mode to be manual co-ordinates.
+     */
+    public void setProjectorModeCoords() {
+        setProperty("projector.mode", "coords");
+        write();
+    }
+    
+    /**
+     * Set the projector mode to be a screen number.
+     */
+    public void setProjectorModeScreen() {
+        setProperty("projector.mode", "screen");
         write();
     }
 
