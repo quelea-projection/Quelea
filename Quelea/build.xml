@@ -55,6 +55,7 @@
         <copy file="${basedir}/README.TXT" todir="${dist.jar.dir}" failonerror="false"/>
         <copy file="${basedir}/quelea.properties" todir="${dist.jar.dir}"/>
         <copy file="${basedir}/Quelea.bat" todir="${dist.jar.dir}"/>
+        <copy file="${basedir}/MessageBox.vbs" todir="${dist.jar.dir}"/>
         <copy file="${basedir}/Quelea.vbs" todir="${dist.jar.dir}"/>
         <copy file="${basedir}/Quelea.iss" todir="${dist.jar.dir}"/>
         <copy file="${basedir}/build-install.bat" todir="${dist.jar.dir}"/>
