@@ -90,7 +90,7 @@
             addproperty="user"
         />
         <input
-            message="Password for ${user}:"
+            message="Password for ${user} (CAREFUL, IT ECHOES!!):"
             addproperty="pass"
         />
         
