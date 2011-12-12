@@ -1,26 +1,22 @@
-/* 
- * This file is part of Quelea, free projection software for churches.
- * Copyright (C) 2011 Michael Berry
- * 
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- * 
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- * 
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+/*
+ * This file is part of Quelea, free projection software for churches. Copyright
+ * (C) 2011 Michael Berry
+ *
+ * This program is free software: you can redistribute it and/or modify it under
+ * the terms of the GNU General Public License as published by the Free Software
+ * Foundation, either version 3 of the License, or (at your option) any later
+ * version.
+ *
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License along with
+ * this program. If not, see <http://www.gnu.org/licenses/>.
  */
 package org.quelea.windows.options;
 
-import java.awt.BorderLayout;
-import java.awt.GraphicsDevice;
-import java.awt.GraphicsEnvironment;
-import java.awt.GridLayout;
+import java.awt.*;
 import javax.swing.JPanel;
 import org.quelea.Application;
 import org.quelea.utils.PropertyPanel;
@@ -45,9 +41,9 @@ public class OptionsDisplaySetupPanel extends JPanel implements PropertyPanel {
         setLayout(new BorderLayout());
         JPanel mainPanel = new JPanel();
         mainPanel.setLayout(new GridLayout(1, 2, 30, 0));
-        monitorPanel = new SingleDisplayPanel("Control screen:", "icons/monitor.png", false);
+        monitorPanel = new SingleDisplayPanel("Control screen:", "icons/monitor.png", false, false);
         mainPanel.add(monitorPanel);
-        projectorPanel = new SingleDisplayPanel("Projector screen:", "icons/projector.png", true);
+        projectorPanel = new SingleDisplayPanel("Projector screen:", "icons/projector.png", true, true);
         mainPanel.add(projectorPanel);
         readProperties();
         add(mainPanel, BorderLayout.CENTER);
@@ -56,56 +52,50 @@ public class OptionsDisplaySetupPanel extends JPanel implements PropertyPanel {
     /**
      * @inheritDoc
      */
+    @Override
     public final void readProperties() {
         monitorPanel.update();
         projectorPanel.update();
         monitorPanel.setScreen(QueleaProperties.get().getControlScreen());
-        projectorPanel.setScreen(QueleaProperties.get().getProjectorScreen());
+        projectorPanel.setCoords(QueleaProperties.get().getProjectorCoords());
+        if (!QueleaProperties.get().isProjectorModeCoords()) {
+            projectorPanel.setScreen(QueleaProperties.get().getProjectorScreen());
+        }
     }
 
     /**
      * @inheritDoc
      */
+    @Override
     public void setProperties() {
         QueleaProperties props = QueleaProperties.get();
         MainWindow mainWindow = Application.get().getMainWindow();
         LyricWindow lyricWindow = Application.get().getLyricWindow();
-        props.setControlScreen(getControlDisplay());
-        props.setProjectorScreen(getProjectorDisplay());
+        props.setControlScreen(monitorPanel.getOutputScreen());
+        props.setProjectorCoords(projectorPanel.getCoords());
+        if(projectorPanel.customPosition()) {
+            props.setProjectorModeCoords();
+        }
+        else {
+            props.setProjectorModeScreen();
+            props.setProjectorScreen(projectorPanel.getOutputScreen());
+        }
 
-        GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
-        final GraphicsDevice[] gds = ge.getScreenDevices();
-        if(getProjectorDisplay() == -1) {
-            if(lyricWindow != null) {
+        if (projectorPanel.getOutputBounds() == null) {
+            if (lyricWindow != null) {
                 lyricWindow.setVisible(false);
             }
         }
         else {
-            if(lyricWindow == null) {
-                lyricWindow = new LyricWindow(gds[getProjectorDisplay()].getDefaultConfiguration().getBounds());
+            if (lyricWindow == null) {
+                lyricWindow = new LyricWindow(projectorPanel.getOutputBounds());
             }
             lyricWindow.setVisible(true);
-            lyricWindow.setArea(gds[getProjectorDisplay()].getDefaultConfiguration().getBounds());
+            lyricWindow.setArea(projectorPanel.getOutputBounds());
         }
-        if(!Utils.isFrameOnScreen(mainWindow, getControlDisplay())) {
-            Utils.centreOnMonitor(mainWindow, getControlDisplay());
+        if (!Utils.isFrameOnScreen(mainWindow, monitorPanel.getOutputScreen())) {
+            Utils.centreOnMonitor(mainWindow, monitorPanel.getOutputScreen());
         }
-    }
-
-    /**
-     * Get the display that the control window should be sent to.
-     * @return the display that the control window should be sent to.
-     */
-    public int getControlDisplay() {
-        return monitorPanel.getOutputDisplay();
-    }
-
-    /**
-     * Get the display that the projector window should be sent to.
-     * @return the display that the projector window should be sent to.
-     */
-    public int getProjectorDisplay() {
-        return projectorPanel.getOutputDisplay();
     }
 
 }
