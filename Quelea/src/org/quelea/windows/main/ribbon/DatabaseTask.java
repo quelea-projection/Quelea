@@ -36,6 +36,7 @@ import org.quelea.importexport.QSPImportDialog;
 import org.quelea.importexport.SelectExportedSongsDialog;
 import org.quelea.importexport.SourceImportDialog;
 import org.quelea.importexport.SurvivorImportDialog;
+import org.quelea.languages.LabelGrabber;
 import org.quelea.tags.TagDialog;
 import org.quelea.windows.library.LibrarySongList;
 import org.quelea.windows.main.EditSongDBActionListener;
@@ -70,7 +71,7 @@ public class DatabaseTask extends RibbonTask {
      * Create the database task.
      */
     public DatabaseTask() {
-        super("Database", getSongBand(), getImportBand(), getExportBand());
+        super(LabelGrabber.INSTANCE.getLabel("database.heading"), getSongBand(), getImportBand(), getExportBand());
     }
 
     /**
@@ -78,9 +79,9 @@ public class DatabaseTask extends RibbonTask {
      * @return the import band.
      */
     private static JRibbonBand getImportBand() {
-        JRibbonBand importBand = new JRibbonBand("Import", RibbonUtils.getRibbonIcon("icons/import.png", 100, 100));
+        JRibbonBand importBand = new JRibbonBand(LabelGrabber.INSTANCE.getLabel("import.heading"), RibbonUtils.getRibbonIcon("icons/import.png", 100, 100));
         RibbonUtils.applyStandardResizePolicies(importBand);
-        JCommandButton qsp = new JCommandButton("Quelea song pack", RibbonUtils.getRibbonIcon("img/logo.png", 100, 100));
+        JCommandButton qsp = new JCommandButton(LabelGrabber.INSTANCE.getLabel("qsp.button"), RibbonUtils.getRibbonIcon("img/logo.png", 100, 100));
         qsp.addActionListener(new ActionListener() {
 
             @Override
@@ -90,7 +91,7 @@ public class DatabaseTask extends RibbonTask {
             }
         });
         importBand.addCommandButton(qsp, RibbonElementPriority.TOP);
-        JCommandButton survivor = new JCommandButton("Survivor songbook", RibbonUtils.getRibbonIcon("icons/survivor.jpg", 100, 100));
+        JCommandButton survivor = new JCommandButton(LabelGrabber.INSTANCE.getLabel("ss.button"), RibbonUtils.getRibbonIcon("icons/survivor.jpg", 100, 100));
         survivor.addActionListener(new ActionListener() {
 
             @Override
@@ -100,7 +101,7 @@ public class DatabaseTask extends RibbonTask {
             }
         });
         importBand.addCommandButton(survivor, RibbonElementPriority.TOP);
-        JCommandButton source = new JCommandButton("The source", RibbonUtils.getRibbonIcon("icons/source.jpg", 100, 100));
+        JCommandButton source = new JCommandButton(LabelGrabber.INSTANCE.getLabel("source.button"), RibbonUtils.getRibbonIcon("icons/source.jpg", 100, 100));
         source.addActionListener(new ActionListener() {
 
             @Override
@@ -110,7 +111,7 @@ public class DatabaseTask extends RibbonTask {
             }
         });
         importBand.addCommandButton(source, RibbonElementPriority.TOP);
-        JCommandButton kingsway = new JCommandButton("Kingsway", RibbonUtils.getRibbonIcon("icons/kingsway.png", 100, 100));
+        JCommandButton kingsway = new JCommandButton(LabelGrabber.INSTANCE.getLabel("kingsway.button"), RibbonUtils.getRibbonIcon("icons/kingsway.png", 100, 100));
         kingsway.addActionListener(new ActionListener() {
 
             @Override
@@ -138,9 +139,9 @@ public class DatabaseTask extends RibbonTask {
      * @return the export band.
      */
     private static JRibbonBand getExportBand() {
-        JRibbonBand exportBand = new JRibbonBand("Export", RibbonUtils.getRibbonIcon("icons/export.png", 100, 100));
+        JRibbonBand exportBand = new JRibbonBand(LabelGrabber.INSTANCE.getLabel("export.heading"), RibbonUtils.getRibbonIcon("icons/export.png", 100, 100));
         RibbonUtils.applyStandardResizePolicies(exportBand);
-        JCommandButton qsp = new JCommandButton("Quelea song pack", RibbonUtils.getRibbonIcon("img/logo.png", 100, 100));
+        JCommandButton qsp = new JCommandButton(LabelGrabber.INSTANCE.getLabel("qsp.button"), RibbonUtils.getRibbonIcon("img/logo.png", 100, 100));
         qsp.addActionListener(new ActionListener() {
 
             @Override
@@ -160,20 +161,20 @@ public class DatabaseTask extends RibbonTask {
      * @return the song band.
      */
     private static JRibbonBand getSongBand() {
-        final JRibbonBand songBand = new JRibbonBand("Songs", RibbonUtils.getRibbonIcon("icons/database.png", 100, 100));
+        final JRibbonBand songBand = new JRibbonBand(LabelGrabber.INSTANCE.getLabel("songs.heading"), RibbonUtils.getRibbonIcon("icons/database.png", 100, 100));
         RibbonUtils.applyStandardResizePolicies(songBand);
-        final JCommandButton newSongButton = new JCommandButton("New song", RibbonUtils.getRibbonIcon("icons/newsong.png", 100, 100));
+        final JCommandButton newSongButton = new JCommandButton(LabelGrabber.INSTANCE.getLabel("new.song.button"), RibbonUtils.getRibbonIcon("icons/newsong.png", 100, 100));
         newSongButton.addActionListener(new NewSongActionListener());
         songBand.addCommandButton(newSongButton, RibbonElementPriority.TOP);
-        final JCommandButton editSongButton = new JCommandButton("Edit song", RibbonUtils.getRibbonIcon("icons/edit.png", 100, 100));
+        final JCommandButton editSongButton = new JCommandButton(LabelGrabber.INSTANCE.getLabel("edit.song.button"), RibbonUtils.getRibbonIcon("icons/edit.png", 100, 100));
         editSongButton.addActionListener(new EditSongDBActionListener());
         editSongButton.setEnabled(false);
         songBand.addCommandButton(editSongButton, RibbonElementPriority.MEDIUM);
-        final JCommandButton deleteSongButton = new JCommandButton("Delete song", RibbonUtils.getRibbonIcon("icons/remove 2.png", 100, 100));
+        final JCommandButton deleteSongButton = new JCommandButton(LabelGrabber.INSTANCE.getLabel("delete.song.button"), RibbonUtils.getRibbonIcon("icons/remove 2.png", 100, 100));
         deleteSongButton.addActionListener(new RemoveSongDBActionListener());
         deleteSongButton.setEnabled(false);
         songBand.addCommandButton(deleteSongButton, RibbonElementPriority.MEDIUM);
-        final JCommandButton tagsButton = new JCommandButton("Tags", RibbonUtils.getRibbonIcon("icons/tag.png", 100, 100));
+        final JCommandButton tagsButton = new JCommandButton(LabelGrabber.INSTANCE.getLabel("tags.button"), RibbonUtils.getRibbonIcon("icons/tag.png", 100, 100));
         tagsButton.addActionListener(new ActionListener() {
 
             @Override

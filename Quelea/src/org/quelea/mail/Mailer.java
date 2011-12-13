@@ -35,6 +35,7 @@ import javax.mail.internet.MimeMultipart;
 import javax.swing.JOptionPane;
 import org.quelea.Application;
 import org.quelea.Schedule;
+import org.quelea.languages.LabelGrabber;
 import org.quelea.utils.LoggerUtils;
 
 /**
@@ -124,12 +125,8 @@ public class Mailer {
                 Desktop.getDesktop().open(temp);
             }
             catch (Throwable ex) {
-                JOptionPane.showMessageDialog(Application.get().getMainWindow(),
-                        "There was an error opening your email client. "
-                        + "Make sure you have an email client installed and "
-                        + "registered to handle eml files. Otherwise, you'll "
-                        + "have to send the email manually.",
-                        "Error sending email", JOptionPane.WARNING_MESSAGE);
+                JOptionPane.showMessageDialog(Application.get().getMainWindow(),LabelGrabber.INSTANCE.getLabel("email.error.text"),
+                        LabelGrabber.INSTANCE.getLabel("email.error.title"), JOptionPane.WARNING_MESSAGE);
             }
 
         }

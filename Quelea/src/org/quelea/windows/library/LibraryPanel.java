@@ -22,6 +22,7 @@ import java.util.logging.Logger;
 import javax.swing.BoxLayout;
 import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
+import org.quelea.languages.LabelGrabber;
 import org.quelea.utils.LoggerUtils;
 
 /**
@@ -46,13 +47,13 @@ public class LibraryPanel extends JPanel {
 
         LOGGER.log(Level.INFO, "Creating library song panel");
         songPanel = new LibrarySongPanel();
-        tabbedPane.addTab("Songs", songPanel);
+        tabbedPane.addTab(LabelGrabber.INSTANCE.getLabel("library.songs.heading"), songPanel);
         LOGGER.log(Level.INFO, "Creating library bible panel");
         biblePanel = new LibraryBiblePanel();
-        tabbedPane.addTab("Bible", biblePanel);
+        tabbedPane.addTab(LabelGrabber.INSTANCE.getLabel("library.bible.heading"), biblePanel);
         LOGGER.log(Level.INFO, "Creating library image panel");
         imagePanel = new LibraryImagePanel();
-        tabbedPane.addTab("Image", imagePanel);
+        tabbedPane.addTab(LabelGrabber.INSTANCE.getLabel("library.image.heading"), imagePanel);
         add(tabbedPane);
 
     }

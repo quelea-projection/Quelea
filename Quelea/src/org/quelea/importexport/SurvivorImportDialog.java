@@ -18,6 +18,7 @@
 package org.quelea.importexport;
 
 import javax.swing.JFrame;
+import org.quelea.languages.LabelGrabber;
 import org.quelea.utils.FileFilters;
 
 /**
@@ -32,8 +33,8 @@ public class SurvivorImportDialog extends ImportDialog {
      */
     public SurvivorImportDialog(JFrame owner) {
         super(owner, new String[]{
-                "Select the location of the Survivor Songbook PDF below.",
-                "<html>This must be the <b>acetates.pdf</b> file, <i>not</i> the guitar chords or the sheet music.</html>"
+                LabelGrabber.INSTANCE.getLabel("survivor.import.line1"),
+                LabelGrabber.INSTANCE.getLabel("survivor.import.line2")
         }, FileFilters.SURVIVOR_SONGBOOK, new SurvivorSongbookParser(), false);
     }
 }

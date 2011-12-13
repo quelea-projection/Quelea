@@ -37,6 +37,7 @@ import javax.swing.JTextField;
 import javax.swing.JToggleButton;
 import org.quelea.Background;
 import org.quelea.Theme;
+import org.quelea.languages.LabelGrabber;
 import org.quelea.utils.Utils;
 import org.quelea.windows.main.LyricCanvas;
 
@@ -63,7 +64,7 @@ public class ThemePanel extends JPanel {
      * Create and initialise the theme panel.
      */
     public ThemePanel() {
-        setName("Theme");
+        setName(LabelGrabber.INSTANCE.getLabel("theme.heading"));
         setLayout(new BorderLayout());
         canvas = new LyricCanvas(false);
         canvas.setText(SAMPLE_LYRICS, null);
@@ -90,15 +91,15 @@ public class ThemePanel extends JPanel {
         backgroundChooserPanel.setLayout(layout);
 
         backgroundTypeSelect = new JComboBox<>();
-        backgroundTypeSelect.addItem("Colour");
-        backgroundTypeSelect.addItem("Image");
+        backgroundTypeSelect.addItem(LabelGrabber.INSTANCE.getLabel("color.theme.label"));
+        backgroundTypeSelect.addItem(LabelGrabber.INSTANCE.getLabel("image.theme.label"));
         backgroundTypeSelect.addActionListener(new ActionListener() {
 
             public void actionPerformed(ActionEvent e) {
                 updateTheme(false);
             }
         });
-        backgroundPanel.add(new JLabel("Background:"));
+        backgroundPanel.add(new JLabel(LabelGrabber.INSTANCE.getLabel("background.theme.label")+":"));
         backgroundPanel.add(backgroundTypeSelect);
         backgroundPanel.add(backgroundChooserPanel);
 
@@ -127,10 +128,10 @@ public class ThemePanel extends JPanel {
         backgroundTypeSelect.addActionListener(new ActionListener() {
 
             public void actionPerformed(ActionEvent e) {
-                if (backgroundTypeSelect.getModel().getSelectedItem().equals("Colour")) {
+                if (backgroundTypeSelect.getModel().getSelectedItem().equals(LabelGrabber.INSTANCE.getLabel("color.theme.label"))) {
                     layout.show(backgroundChooserPanel, "colour");
                 }
-                else if (backgroundTypeSelect.getModel().getSelectedItem().equals("Image")) {
+                else if (backgroundTypeSelect.getModel().getSelectedItem().equals(LabelGrabber.INSTANCE.getLabel("image.theme.label"))) {
                     layout.show(backgroundChooserPanel, "image");
                 }
                 else {
@@ -146,7 +147,7 @@ public class ThemePanel extends JPanel {
     private void setupFontToolbar() {
         fontToolbar = new JPanel();
         fontToolbar.setLayout(new FlowLayout(FlowLayout.LEFT));
-        fontToolbar.add(new JLabel("Font:"));
+        fontToolbar.add(new JLabel(LabelGrabber.INSTANCE.getLabel("font.theme.label")+":"));
         fontSelection = new JComboBox<>();
         for (String font : Utils.getAllFonts()) {
             fontSelection.addItem(font);
@@ -220,12 +221,12 @@ public class ThemePanel extends JPanel {
         fontColourButton.setIconColour(theme.getFontColor());
         Background background = theme.getBackground();
         if (background.isColour()) {
-            backgroundTypeSelect.getModel().setSelectedItem("Colour");
+            backgroundTypeSelect.getModel().setSelectedItem(LabelGrabber.INSTANCE.getLabel("color.theme.label"));
             backgroundColourButton.getColourSelectionWindow().setSelectedColour(background.getColour());
             backgroundColourButton.setIconColour(background.getColour());
         }
         else {
-            backgroundTypeSelect.getModel().setSelectedItem("Image");
+            backgroundTypeSelect.getModel().setSelectedItem(LabelGrabber.INSTANCE.getLabel("image.theme.label"));
             backgroundImageLocation.setText(background.getImageLocation());
         }
         updateTheme(false);
@@ -240,10 +241,8 @@ public class ThemePanel extends JPanel {
     private void checkAccessibility(Color col1, Color col2) {
         int diff = Utils.getColorDifference(col1, col2);
         if (diff < THRESHOLD) {
-            JOptionPane.showMessageDialog(this, "The chosen colours are very similar. "
-                    + "You may wish to choose different colours, otherwise "
-                    + "it could be difficult to read.",
-                    "Warning", JOptionPane.WARNING_MESSAGE);
+            JOptionPane.showMessageDialog(this, LabelGrabber.INSTANCE.getLabel("similar.colors.text"),
+                    LabelGrabber.INSTANCE.getLabel("warning.label"), JOptionPane.WARNING_MESSAGE);
         }
     }
 
@@ -269,10 +268,10 @@ public class ThemePanel extends JPanel {
         }
         Font font = new Font(fontSelection.getSelectedItem().toString(), fontStyle, 72);
         Background background;
-        if (backgroundTypeSelect.getModel().getSelectedItem().equals("Colour") || backgroundImageLocation.getText().isEmpty()) {
+        if (backgroundTypeSelect.getModel().getSelectedItem().equals(LabelGrabber.INSTANCE.getLabel("color.theme.label")) || backgroundImageLocation.getText().isEmpty()) {
             background = new Background(backgroundColourButton.getColourSelectionWindow().getSelectedColour());
         }
-        else if (backgroundTypeSelect.getModel().getSelectedItem().equals("Image")) {
+        else if (backgroundTypeSelect.getModel().getSelectedItem().equals(LabelGrabber.INSTANCE.getLabel("image.theme.label"))) {
             background = new Background(backgroundImageLocation.getText(), null);
         }
         else {

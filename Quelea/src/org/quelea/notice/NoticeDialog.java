@@ -38,6 +38,7 @@ import javax.swing.JScrollPane;
 import javax.swing.ListSelectionModel;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
+import org.quelea.languages.LabelGrabber;
 import org.quelea.windows.main.LyricCanvas;
 
 /**
@@ -63,7 +64,7 @@ public class NoticeDialog extends JDialog implements NoticesChangedListener {
         setTitle("Notices");
         setLayout(new BorderLayout());
         JPanel leftPanel = new JPanel();
-        newNoticeButton = new JButton("New notice");
+        newNoticeButton = new JButton(LabelGrabber.INSTANCE.getLabel("new.notice.text"));
         newNoticeButton.addActionListener(new ActionListener() {
 
             @Override
@@ -77,7 +78,7 @@ public class NoticeDialog extends JDialog implements NoticesChangedListener {
                 }
             }
         });
-        editNoticeButton = new JButton("Edit notice");
+        editNoticeButton = new JButton(LabelGrabber.INSTANCE.getLabel("edit.notice.text"));
         editNoticeButton.setEnabled(false);
         editNoticeButton.addActionListener(new ActionListener() {
 
@@ -87,7 +88,7 @@ public class NoticeDialog extends JDialog implements NoticesChangedListener {
                 validate();
             }
         });
-        removeNoticeButton = new JButton("Remove notice");
+        removeNoticeButton = new JButton(LabelGrabber.INSTANCE.getLabel("remove.notice.text"));
         removeNoticeButton.setEnabled(false);
         removeNoticeButton.addActionListener(new ActionListener() {
 
@@ -123,7 +124,7 @@ public class NoticeDialog extends JDialog implements NoticesChangedListener {
         noticeList.setPreferredSize(new Dimension((int) noticeList.getPreferredSize().getHeight(), 50));
         add(new JScrollPane(noticeList), BorderLayout.CENTER);
 
-        doneButton = new JButton("Done");
+        doneButton = new JButton(LabelGrabber.INSTANCE.getLabel("done.text"));
         doneButton.addActionListener(new ActionListener() {
 
             @Override

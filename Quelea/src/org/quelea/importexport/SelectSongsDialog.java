@@ -38,6 +38,7 @@ import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
 import javax.swing.table.TableRowSorter;
 import org.quelea.displayable.Song;
+import org.quelea.languages.LabelGrabber;
 import org.quelea.utils.Utils;
 
 /**
@@ -62,7 +63,7 @@ public class SelectSongsDialog extends JDialog {
      */
     public SelectSongsDialog(JFrame owner, String[] text, String acceptText,
                              String checkboxText) {
-        super(owner, "Select Songs", true);
+        super(owner, LabelGrabber.INSTANCE.getLabel("select.songs.title"), true);
         this.checkboxText = checkboxText;
         songs = new ArrayList<>();
         setLayout(new BoxLayout(getContentPane(), BoxLayout.X_AXIS));
@@ -92,7 +93,7 @@ public class SelectSongsDialog extends JDialog {
      */
     private JButton createCheckAllButton() {
         JButton checkButton = new JButton(Utils.getImageIcon("icons/checkbox.jpg"));
-        checkButton.setToolTipText("Check / Uncheck all");
+        checkButton.setToolTipText(LabelGrabber.INSTANCE.getLabel("check.uncheck.all.text"));
         checkButton.setMargin(new Insets(0, 0, 0, 0));
         checkButton.setBorder(new EmptyBorder(0, 0, 0, 0));
         checkButton.addActionListener(new ActionListener() {
@@ -126,8 +127,8 @@ public class SelectSongsDialog extends JDialog {
         table.setModel(model);
         TableRowSorter<TableModel> sorter = new TableRowSorter<TableModel>(model);
         table.setRowSorter(sorter);
-        table.getColumnModel().getColumn(0).setHeaderValue("Name");
-        table.getColumnModel().getColumn(1).setHeaderValue("Author");
+        table.getColumnModel().getColumn(0).setHeaderValue(LabelGrabber.INSTANCE.getLabel("name.label"));
+        table.getColumnModel().getColumn(1).setHeaderValue(LabelGrabber.INSTANCE.getLabel("author.label"));
         table.getColumnModel().getColumn(2).setHeaderValue(checkboxText);
         table.getColumnModel().getColumn(2).setCellEditor(table.getDefaultEditor(Boolean.class));
         table.getColumnModel().getColumn(2).setCellRenderer(table.getDefaultRenderer(Boolean.class));

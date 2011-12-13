@@ -40,6 +40,7 @@ import org.quelea.displayable.PresentationDisplayable;
 import org.quelea.displayable.Song;
 import org.quelea.displayable.VideoDisplayable;
 import org.quelea.displayable.VideoDisplayable.VideoType;
+import org.quelea.languages.LabelGrabber;
 import org.quelea.mail.Mailer;
 import org.quelea.utils.Utils;
 import org.quelea.powerpoint.PowerpointFileFilter;
@@ -63,7 +64,7 @@ public class ScheduleTask extends RibbonTask {
      * Create a new schedule task.
      */
     public ScheduleTask() {
-        super("Schedule", createSongBand(), createVideoBand(), createShareBand(), createNoticeBand());
+        super(LabelGrabber.INSTANCE.getLabel("schedule.heading"), createSongBand(), createVideoBand(), createShareBand(), createNoticeBand());
         Application.get().getMainWindow().getNoticeDialog().registerCanvas(Application.get().getLyricWindow().getCanvas());
     }
 
@@ -120,18 +121,18 @@ public class ScheduleTask extends RibbonTask {
      * @return the song ribbon band.
      */
     private static JRibbonBand createSongBand() {
-        JRibbonBand songBand = new JRibbonBand("Items", RibbonUtils.getRibbonIcon("icons/schedule.png", 100, 100));
+        JRibbonBand songBand = new JRibbonBand(LabelGrabber.INSTANCE.getLabel("items.heading"), RibbonUtils.getRibbonIcon("icons/schedule.png", 100, 100));
         RibbonUtils.applyStandardResizePolicies(songBand);
 
-        final JCommandButton addSongButton = new JCommandButton("Add song", RibbonUtils.getRibbonIcon("icons/newsong.png", 100, 100));
+        final JCommandButton addSongButton = new JCommandButton(LabelGrabber.INSTANCE.getLabel("add.song.button"), RibbonUtils.getRibbonIcon("icons/newsong.png", 100, 100));
         addSongButton.addActionListener(new AddSongActionListener());
         songBand.addCommandButton(addSongButton, RibbonElementPriority.TOP);
         addSongButton.setEnabled(false);
-        final JCommandButton editSongButton = new JCommandButton("Edit song", RibbonUtils.getRibbonIcon("icons/edit.png", 100, 100));
+        final JCommandButton editSongButton = new JCommandButton(LabelGrabber.INSTANCE.getLabel("edit.song.button"), RibbonUtils.getRibbonIcon("icons/edit.png", 100, 100));
         editSongButton.addActionListener(new EditSongScheduleActionListener());
         songBand.addCommandButton(editSongButton, RibbonElementPriority.MEDIUM);
         editSongButton.setEnabled(false);
-        final JCommandButton removeSongButton = new JCommandButton("Remove item", RibbonUtils.getRibbonIcon("icons/remove 2.png", 100, 100));
+        final JCommandButton removeSongButton = new JCommandButton(LabelGrabber.INSTANCE.getLabel("remove.item.button"), RibbonUtils.getRibbonIcon("icons/remove 2.png", 100, 100));
         removeSongButton.addActionListener(new RemoveSongScheduleActionListener());
         songBand.addCommandButton(removeSongButton, RibbonElementPriority.MEDIUM);
         removeSongButton.setEnabled(false);
@@ -186,9 +187,9 @@ public class ScheduleTask extends RibbonTask {
      * @return the video ribbon band.
      */
     private static JRibbonBand createVideoBand() {
-        JRibbonBand videoBand = new JRibbonBand("Add Multimedia", RibbonUtils.getRibbonIcon("icons/video file.png", 100, 100));
+        JRibbonBand videoBand = new JRibbonBand(LabelGrabber.INSTANCE.getLabel("add.multimedia.heading"), RibbonUtils.getRibbonIcon("icons/video file.png", 100, 100));
         RibbonUtils.applyStandardResizePolicies(videoBand);
-        final JCommandButton presentationButton = new JCommandButton("Presentation", RibbonUtils.getRibbonIcon("icons/powerpoint.png", 100, 100));
+        final JCommandButton presentationButton = new JCommandButton(LabelGrabber.INSTANCE.getLabel("add.presentation.button"), RibbonUtils.getRibbonIcon("icons/powerpoint.png", 100, 100));
         videoBand.addCommandButton(presentationButton, RibbonElementPriority.TOP);
         presentationButton.addActionListener(new ActionListener() {
 
@@ -211,7 +212,7 @@ public class ScheduleTask extends RibbonTask {
 
                                 @Override
                                 public void run() {
-                                    panel = Application.get().getStatusGroup().addPanel("Adding presentation... ");
+                                    panel = Application.get().getStatusGroup().addPanel(LabelGrabber.INSTANCE.getLabel("adding.presentation.status"));
                                     panel.getProgressBar().setIndeterminate(true);
                                     panel.getCancelButton().addActionListener(new ActionListener() {
 
@@ -243,11 +244,7 @@ public class ScheduleTask extends RibbonTask {
 
                                         @Override
                                         public void run() {
-                                            JOptionPane.showMessageDialog(Application.get().getMainWindow(),
-                                                    "Sorry, this file appears to be in the new powerpoint format. "
-                                                    + "Hopefully Quelea will support this format in the "
-                                                    + "future but it doesn't at the moment. For now, just use "
-                                                    + "the original powerpoint (PPT) format.", "Invalid format", JOptionPane.ERROR_MESSAGE);
+                                            JOptionPane.showMessageDialog(Application.get().getMainWindow(),LabelGrabber.INSTANCE.getLabel("pptx.error"), LabelGrabber.INSTANCE.getLabel("invalid.format.label"), JOptionPane.ERROR_MESSAGE);
                                         }
                                     });
                                 }
@@ -263,7 +260,7 @@ public class ScheduleTask extends RibbonTask {
                 }
             }
         });
-        JCommandButton videoFileButton = new JCommandButton("Video File", RibbonUtils.getRibbonIcon("icons/video file.png", 100, 100));
+        JCommandButton videoFileButton = new JCommandButton(LabelGrabber.INSTANCE.getLabel("add.video.button"), RibbonUtils.getRibbonIcon("icons/video file.png", 100, 100));
         videoFileButton.addActionListener(new ActionListener() {
 
             @Override
@@ -280,13 +277,13 @@ public class ScheduleTask extends RibbonTask {
             }
         });
         videoBand.addCommandButton(videoFileButton, RibbonElementPriority.TOP);
-        JCommandButton youtubeButton = new JCommandButton("Youtube", RibbonUtils.getRibbonIcon("icons/youtube.png", 100, 100));
+        JCommandButton youtubeButton = new JCommandButton(LabelGrabber.INSTANCE.getLabel("add.youtube.button"), RibbonUtils.getRibbonIcon("icons/youtube.png", 100, 100));
         videoBand.addCommandButton(youtubeButton, RibbonElementPriority.MEDIUM);
         youtubeButton.setEnabled(false);
-        JCommandButton liveButton = new JCommandButton("Live Video", RibbonUtils.getRibbonIcon("icons/live.png", 100, 100));
+        JCommandButton liveButton = new JCommandButton(LabelGrabber.INSTANCE.getLabel("add.live.video.button"), RibbonUtils.getRibbonIcon("icons/live.png", 100, 100));
         videoBand.addCommandButton(liveButton, RibbonElementPriority.MEDIUM);
         liveButton.setEnabled(false);
-        JCommandButton dvdButton = new JCommandButton("DVD", RibbonUtils.getRibbonIcon("icons/dvd.png", 100, 100));
+        JCommandButton dvdButton = new JCommandButton(LabelGrabber.INSTANCE.getLabel("add.dvd.button"), RibbonUtils.getRibbonIcon("icons/dvd.png", 100, 100));
         videoBand.addCommandButton(dvdButton, RibbonElementPriority.MEDIUM);
         dvdButton.addActionListener(new ActionListener() {
 
@@ -300,7 +297,7 @@ public class ScheduleTask extends RibbonTask {
                     }
                 }
                 if (file == null) {
-                    JOptionPane.showMessageDialog(Application.get().getMainWindow(), "Couldn't find a DVD...", "No DVD found", JOptionPane.ERROR_MESSAGE);
+                    JOptionPane.showMessageDialog(Application.get().getMainWindow(), LabelGrabber.INSTANCE.getLabel("no.dvd.error"), LabelGrabber.INSTANCE.getLabel("no.dvd.heading"), JOptionPane.ERROR_MESSAGE);
                 }
                 else {
                     VideoDisplayable displayable = new VideoDisplayable(file, VideoType.DVD);
@@ -308,7 +305,7 @@ public class ScheduleTask extends RibbonTask {
                 }
             }
         });
-        JCommandButton audioButton = new JCommandButton("Audio", RibbonUtils.getRibbonIcon("icons/audio.png", 100, 100));
+        JCommandButton audioButton = new JCommandButton(LabelGrabber.INSTANCE.getLabel("add.audio.button"), RibbonUtils.getRibbonIcon("icons/audio.png", 100, 100));
         videoBand.addCommandButton(audioButton, RibbonElementPriority.MEDIUM);
         audioButton.setEnabled(false);
         return videoBand;
@@ -319,9 +316,9 @@ public class ScheduleTask extends RibbonTask {
      * @return the notice ribbon band.
      */
     private static JRibbonBand createNoticeBand() {
-        JRibbonBand noticeBand = new JRibbonBand("Notices", RibbonUtils.getRibbonIcon("icons/info.png", 100, 100));
+        JRibbonBand noticeBand = new JRibbonBand(LabelGrabber.INSTANCE.getLabel("notices.heading"), RibbonUtils.getRibbonIcon("icons/info.png", 100, 100));
         RibbonUtils.applyStandardResizePolicies(noticeBand);
-        JCommandButton alertButton = new JCommandButton("Manage notices", RibbonUtils.getRibbonIcon("icons/info.png", 100, 100));
+        JCommandButton alertButton = new JCommandButton(LabelGrabber.INSTANCE.getLabel("manage.notices.button"), RibbonUtils.getRibbonIcon("icons/info.png", 100, 100));
         alertButton.addActionListener(new ActionListener() {
 
             @Override
@@ -338,9 +335,9 @@ public class ScheduleTask extends RibbonTask {
      * @return the share ribbon band.
      */
     private static JRibbonBand createShareBand() {
-        JRibbonBand shareBand = new JRibbonBand("Share", RibbonUtils.getRibbonIcon("icons/share.png", 100, 100));
+        JRibbonBand shareBand = new JRibbonBand(LabelGrabber.INSTANCE.getLabel("share.heading"), RibbonUtils.getRibbonIcon("icons/share.png", 100, 100));
         RibbonUtils.applyStandardResizePolicies(shareBand);
-        final JCommandButton emailButton = new JCommandButton("Email", RibbonUtils.getRibbonIcon("icons/email.png", 100, 100));
+        final JCommandButton emailButton = new JCommandButton(LabelGrabber.INSTANCE.getLabel("email.button"), RibbonUtils.getRibbonIcon("icons/email.png", 100, 100));
         shareBand.addCommandButton(emailButton, RibbonElementPriority.TOP);
         emailButton.setEnabled(false);
         final ScheduleList scheduleList = Application.get().getMainWindow().getMainPanel().getSchedulePanel().getScheduleList();
@@ -376,15 +373,7 @@ public class ScheduleTask extends RibbonTask {
             //TODO: Put this message in some form of properties file
             @Override
             public void actionPerformed(ActionEvent e) {
-                Mailer.getInstance().sendSchedule(scheduleList.getSchedule(), "Hi,\n"
-                        + "Attached is a Quelea schedule you've been sent. Simply "
-                        + "open it with Quelea and all the items should appear correctly.\n\n"
-                        + "Thanks,\n"
-                        + "Quelea Team\n\n\n"
-                        + "-----\n"
-                        + "Please note this is an automated email, do not reply to this "
-                        + "address. If you wish to reply please be sure to change the "
-                        + "address to the correct person.");
+                Mailer.getInstance().sendSchedule(scheduleList.getSchedule(), LabelGrabber.INSTANCE.getLabel("email.text"));
             }
         });
         return shareBand;

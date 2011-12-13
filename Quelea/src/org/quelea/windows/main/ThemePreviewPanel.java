@@ -35,6 +35,7 @@ import javax.swing.JRadioButton;
 import javax.swing.border.EmptyBorder;
 import org.quelea.Application;
 import org.quelea.Theme;
+import org.quelea.languages.LabelGrabber;
 import org.quelea.utils.Utils;
 import org.quelea.windows.newsong.ThemePanel;
 
@@ -65,7 +66,7 @@ public class ThemePreviewPanel extends JPanel {
         setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
         String name;
         if (theme == null) {
-            name = "<html><i>Default themes</i></html>";
+            name = "<html><i>"+LabelGrabber.INSTANCE.getLabel("default.theme.text")+"</i></html>";
         }
         else {
             name = theme.getThemeName();
@@ -75,12 +76,12 @@ public class ThemePreviewPanel extends JPanel {
             removeButton = new JButton(Utils.getImageIcon("icons/delete.png", 16, 16));
             removeButton.setMargin(new Insets(0, 0, 0, 0));
             removeButton.setBorder(new EmptyBorder(0, 0, 0, 0));
-            removeButton.setToolTipText("Remove this theme");
+            removeButton.setToolTipText(LabelGrabber.INSTANCE.getLabel("remove.theme.tooltip"));
             removeButton.addActionListener(new ActionListener() {
 
                 @Override
                 public void actionPerformed(ActionEvent e) {
-                    int result = JOptionPane.showConfirmDialog(Application.get().getMainWindow(), "Delete this theme?", "Confirm delete", JOptionPane.YES_NO_OPTION);
+                    int result = JOptionPane.showConfirmDialog(Application.get().getMainWindow(), LabelGrabber.INSTANCE.getLabel("delete.theme.question"), LabelGrabber.INSTANCE.getLabel("delete.theme.confirm.title"), JOptionPane.YES_NO_OPTION);
                     if (result != JOptionPane.NO_OPTION) {
                         ThemePreviewPanel.this.theme.getFile().delete();
                     }
@@ -106,7 +107,7 @@ public class ThemePreviewPanel extends JPanel {
         buttonPanel.setAlignmentX(Component.LEFT_ALIGNMENT);
         JPanel canvasPanel = new JPanel();
         if (theme == null) {
-            JLabel label = new JLabel("<html><h1>DEFAULT</h1></html>");
+            JLabel label = new JLabel("<html><h1>"+LabelGrabber.INSTANCE.getLabel("default.theme.name")+"</h1></html>");
             canvasPanel.add(label);
             canvasPanel.addMouseListener(new MouseAdapter() {
 

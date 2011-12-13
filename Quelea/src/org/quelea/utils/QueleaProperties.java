@@ -82,6 +82,15 @@ public final class QueleaProperties extends Properties {
     public static QueleaProperties get() {
         return INSTANCE;
     }
+    
+    /**
+     * Get the languages file that should be used as specified in the properties
+     * file.
+     * @return the languages file for the GUI.
+     */
+    public File getLanguageFile() {
+        return new File("languages", getProperty("language.file", "gb.lang"));
+    }
 
     /**
      * Get the Quelea home directory in the user's directory.

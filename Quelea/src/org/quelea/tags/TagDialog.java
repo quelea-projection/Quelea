@@ -24,6 +24,7 @@ import java.awt.event.WindowEvent;
 import javax.swing.JDialog;
 import javax.swing.JScrollPane;
 import org.quelea.Application;
+import org.quelea.languages.LabelGrabber;
 import org.quelea.windows.library.LibrarySongList;
 
 /**
@@ -39,7 +40,7 @@ public class TagDialog extends JDialog {
      * Create a new tag dialog.
      */
     public TagDialog() {
-        super(Application.get().getMainWindow(), "Filter by tag", ModalityType.MODELESS);
+        super(Application.get().getMainWindow(), LabelGrabber.INSTANCE.getLabel("filter.tag"), ModalityType.MODELESS);
         list = new LibrarySongList(false);
         
         setLayout(new BorderLayout());
