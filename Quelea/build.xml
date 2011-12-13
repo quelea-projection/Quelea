@@ -58,7 +58,7 @@
         <copy file="${basedir}/build-install.bat" todir="${dist.jar.dir}"/>
         <copy file="${basedir}/licenses/gplv3.txt" tofile="${dist.jar.dir}/license.txt"/>
         
-<!--        <echo message="Building deb package for Ubuntu / Debian installs"/>
+        <echo message="Building deb package for Ubuntu / Debian installs"/>
         <deb destfile="${dist.jar.dir}/Quelea-temp.deb" control="control">
             <tarfileset dir="${dist.jar.dir}"
                         excludes="${dist.jar.dir}/standalone"
@@ -70,7 +70,7 @@
         <move file="${dist.jar.dir}/Quelea-temp.deb" tofile="${DebInstaller}"/>
         
         <echo message="Building cross platform installer"/>
-        <izpack input="${basedir}/izpack/config.xml" output="${CPInstaller}" basedir="${dist.jar.dir}"/>-->
+        <izpack input="${basedir}/izpack/config.xml" output="${CPInstaller}" basedir="${dist.jar.dir}"/>
         
         <echo message="Generating windows installer using inno setup."/>
         <echo message="For this to work inno setup needs to be installed and the appropriate paths set in build-install.bat. This will only work on Windows."/>
