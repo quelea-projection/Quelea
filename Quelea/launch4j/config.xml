@@ -25,7 +25,7 @@
         <launcherErr>Sorry, there was an error launching Quelea.</launcherErr>
     </messages>
     <versionInfo>
-        <fileVersion>0.4.2</fileVersion>
+        <fileVersion>0.4.2.0</fileVersion> <!-- Must be format x.x.x.x otherwise launch4j complains -->
         <productName>Quelea</productName>
         <copyright>GPLv3</copyright>
         <originalFilename>Quelea.exe</originalFilename>
