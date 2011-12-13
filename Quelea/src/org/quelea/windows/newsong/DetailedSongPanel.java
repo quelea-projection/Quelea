@@ -33,6 +33,7 @@ import javax.swing.text.AttributeSet;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.PlainDocument;
 import org.quelea.displayable.Song;
+import org.quelea.languages.LabelGrabber;
 import org.quelea.tags.TagEntryPanel;
 import org.quelea.utils.SpringUtilities;
 
@@ -56,7 +57,7 @@ public class DetailedSongPanel extends JPanel {
      */
     public DetailedSongPanel() {
         super(new BorderLayout());
-        setName("Detailed information");
+        setName(LabelGrabber.INSTANCE.getLabel("detailed.info.heading"));
         JPanel formPanel = new JPanel();
         formPanel.setLayout(new SpringLayout());
         ccli = new JTextField(new PlainDocument() {
@@ -157,16 +158,16 @@ public class DetailedSongPanel extends JPanel {
         info.setLineWrap(true);
         info.setWrapStyleWord(true);
 
-        addBlock(formPanel, "CCLI number", ccli);
-        addBlock(formPanel, "Copyright", copyright);
-        addBlock(formPanel, "Year", year);
-        addBlock(formPanel, "Publisher", publisher);
-        addBlock(formPanel, "Tags", tags);
-        addBlock(formPanel, "Key", key);
-        addBlock(formPanel, "Capo", capo);
+        addBlock(formPanel, LabelGrabber.INSTANCE.getLabel("ccli.number.label"), ccli);
+        addBlock(formPanel, LabelGrabber.INSTANCE.getLabel("copyright.label"), copyright);
+        addBlock(formPanel, LabelGrabber.INSTANCE.getLabel("year.label"), year);
+        addBlock(formPanel, LabelGrabber.INSTANCE.getLabel("publisher.label"), publisher);
+        addBlock(formPanel, LabelGrabber.INSTANCE.getLabel("tags.label"), tags);
+        addBlock(formPanel, LabelGrabber.INSTANCE.getLabel("key.label"), key);
+        addBlock(formPanel, LabelGrabber.INSTANCE.getLabel("capo.label"), capo);
         JScrollPane pane = new JScrollPane(info);
         pane.setPreferredSize(new Dimension(pane.getPreferredSize().width, 300));
-        addBlock(formPanel, "Notes", pane);
+        addBlock(formPanel, LabelGrabber.INSTANCE.getLabel("notes.label"), pane);
 
         SpringUtilities.makeCompactGrid(formPanel, 8, 2, 6, 6, 6, 6);
 

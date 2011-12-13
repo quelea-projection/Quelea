@@ -34,6 +34,7 @@ import org.quelea.SongDatabase;
 import org.quelea.Theme;
 import org.quelea.displayable.Song;
 import org.quelea.displayable.TextSection;
+import org.quelea.languages.LabelGrabber;
 import org.quelea.utils.Utils;
 
 /**
@@ -55,7 +56,7 @@ public class SongEntryWindow extends JDialog {
      * @param owner the owner of this window.
      */
     public SongEntryWindow(JFrame owner) {
-        super(owner, "Song entry");
+        super(owner, LabelGrabber.INSTANCE.getLabel("song.entry.heading"));
         setResizable(false);
         setLayout(new BorderLayout());
         tabbedPane = new JTabbedPane();
@@ -68,18 +69,18 @@ public class SongEntryWindow extends JDialog {
         tabbedPane.add(themePanel);
         add(tabbedPane, BorderLayout.CENTER);
 
-        confirmButton = new JButton("Add Song", Utils.getImageIcon("icons/tick.png"));
+        confirmButton = new JButton(LabelGrabber.INSTANCE.getLabel("add.song.button"), Utils.getImageIcon("icons/tick.png"));
         confirmButton.addActionListener(new ActionListener() {
 
             public void actionPerformed(ActionEvent e) {
 
                 if (!SongDatabase.get().updateSong(getSong())) {
-                    JOptionPane.showMessageDialog(Application.get().getMainWindow(), "There was an error updating the song in the database.", "Error", JOptionPane.ERROR_MESSAGE, null);
+                    JOptionPane.showMessageDialog(Application.get().getMainWindow(), LabelGrabber.INSTANCE.getLabel("error.udpating.song.text"), LabelGrabber.INSTANCE.getLabel("error.text"), JOptionPane.ERROR_MESSAGE, null);
                 }
                 setVisible(false);
             }
         });
-        cancelButton = new JButton("Cancel", Utils.getImageIcon("icons/cross.png"));
+        cancelButton = new JButton(LabelGrabber.INSTANCE.getLabel("cancel.button"), Utils.getImageIcon("icons/cross.png"));
         cancelButton.addActionListener(new ActionListener() {
 
             public void actionPerformed(ActionEvent e) {
@@ -193,9 +194,9 @@ public class SongEntryWindow extends JDialog {
      * Set this window up ready to enter a new song.
      */
     public void resetNewSong() {
-        setTitle("New song");
+        setTitle(LabelGrabber.INSTANCE.getLabel("new.song.title"));
         song = null;
-        confirmButton.setText("Add new song");
+        confirmButton.setText(LabelGrabber.INSTANCE.getLabel("new.song.button"));
         confirmButton.setEnabled(false);
         basicSongPanel.resetNewSong();
         detailedSongPanel.resetNewSong();
@@ -208,9 +209,9 @@ public class SongEntryWindow extends JDialog {
      * @param song the song to edit.
      */
     public void resetEditSong(Song song) {
-        setTitle("Edit song");
+        setTitle(LabelGrabber.INSTANCE.getLabel("edit.song.title"));
         this.song = song;
-        confirmButton.setText("Edit song");
+        confirmButton.setText(LabelGrabber.INSTANCE.getLabel("edit.song.button"));
         confirmButton.setEnabled(true);
         basicSongPanel.resetEditSong(song);
         detailedSongPanel.resetEditSong(song);

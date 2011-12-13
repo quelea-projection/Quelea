@@ -18,6 +18,7 @@
 package org.quelea.importexport;
 
 import javax.swing.JFrame;
+import org.quelea.languages.LabelGrabber;
 import org.quelea.utils.FileFilters;
 
 /**
@@ -32,7 +33,7 @@ public class SourceImportDialog extends ImportDialog {
      */
     public SourceImportDialog(JFrame owner) {
         super(owner, new String[]{
-                "<html>Select the location of the <b>hymns</b> directory on the source CD.</html>"
+                LabelGrabber.INSTANCE.getLabel("source.import.line1")
         }, FileFilters.DIR_ONLY, new SourceParser(), true);
     }
 }

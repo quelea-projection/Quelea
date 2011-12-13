@@ -20,6 +20,7 @@ package org.quelea.windows.main.ribbon.secondPanels;
 import java.awt.Font;
 import java.awt.Graphics2D;
 import javax.swing.JPanel;
+import org.quelea.languages.LabelGrabber;
 
 /**
  * PanelDrawer...
@@ -37,9 +38,9 @@ public class NewPanelDrawer implements SecondPanelDrawer {
         Graphics2D graphics = (Graphics2D) panel.getGraphics();
         graphics.clearRect(0, 0, panel.getWidth(), panel.getHeight());
         graphics.setFont(new Font("Verdana", 0, 20));
-        graphics.drawString("New schedule", 20, 40);
+        graphics.drawString(LabelGrabber.INSTANCE.getLabel("new.schedule.text"), 20, 40);
         graphics.setFont(new Font("Verdana", 0, 14));
-        graphics.drawString("Create a new schedule.", 20, 60);
+        graphics.drawString(LabelGrabber.INSTANCE.getLabel("create.new.schedule.text"), 20, 60);
     }
 
 }

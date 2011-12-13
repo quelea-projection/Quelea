@@ -47,6 +47,7 @@ import javax.swing.SwingWorker;
 import org.quelea.Application;
 import org.quelea.SongDatabaseChecker;
 import org.quelea.displayable.Song;
+import org.quelea.languages.LabelGrabber;
 import org.quelea.utils.LoggerUtils;
 import org.quelea.utils.Utils;
 import org.quelea.windows.main.StatusPanel;
@@ -79,7 +80,7 @@ public abstract class ImportDialog extends JDialog implements PropertyChangeList
     //TODO What's causing this netbeans warning about exporting non-public API type? Don't think we're doing that...
     protected ImportDialog(JFrame owner, String[] dialogLabels, FileFilter fileFilter,
             final SongParser parser, final boolean selectDirectory) {
-        super(owner, "Import", true);
+        super(owner, LabelGrabber.INSTANCE.getLabel("import.heading"), true);
         halt = false;
         importedDialog = new SelectImportedSongsDialog(owner);
         setLayout(new BoxLayout(this.getContentPane(), BoxLayout.Y_AXIS));
@@ -95,14 +96,14 @@ public abstract class ImportDialog extends JDialog implements PropertyChangeList
             add(new JLabel(str));
         }
 
-        checkDuplicates = new JCheckBox("Check for duplicates");
+        checkDuplicates = new JCheckBox(LabelGrabber.INSTANCE.getLabel("check.duplicates.text"));
         add(checkDuplicates);
 
         locationField = new JTextField();
         if (fileFilter != null) {
             locationField.setEditable(false);
             locationField.setFont(new Font(locationField.getFont().getName(), Font.ITALIC, locationField.getFont().getSize()));
-            locationField.setText("Click here to select file");
+            locationField.setText(LabelGrabber.INSTANCE.getLabel("click.select.file.text"));
             locationField.addMouseListener(new MouseAdapter() {
 
                 @Override
@@ -120,7 +121,7 @@ public abstract class ImportDialog extends JDialog implements PropertyChangeList
             add(locationField);
         }
 
-        importButton = new JButton("Import");
+        importButton = new JButton(LabelGrabber.INSTANCE.getLabel("import.button"));
         getRootPane().setDefaultButton(importButton);
         if (fileFilter != null) {
             importButton.setEnabled(false);
@@ -130,7 +131,7 @@ public abstract class ImportDialog extends JDialog implements PropertyChangeList
 
             @Override
             public void actionPerformed(ActionEvent e) {
-                statusPanel = Application.get().getStatusGroup().addPanel("Importing... ");
+                statusPanel = Application.get().getStatusGroup().addPanel(LabelGrabber.INSTANCE.getLabel("importing.status"));
                 statusPanel.getCancelButton().addActionListener(new ActionListener() {
 
                     @Override
@@ -191,7 +192,7 @@ public abstract class ImportDialog extends JDialog implements PropertyChangeList
                             return localSongs;
                         }
                         catch (IOException ex) {
-                            JOptionPane.showMessageDialog(getOwner(), "Sorry, there was an error importing the songs.", "Error", JOptionPane.ERROR_MESSAGE, null);
+                            JOptionPane.showMessageDialog(getOwner(), LabelGrabber.INSTANCE.getLabel("import.error.message"), LabelGrabber.INSTANCE.getLabel("error.text"), JOptionPane.ERROR_MESSAGE, null);
                             LOGGER.log(Level.WARNING, "Error importing songs", ex);
                             return null;
                         }
@@ -201,8 +202,7 @@ public abstract class ImportDialog extends JDialog implements PropertyChangeList
                     protected void done() {
                         checkerService.shutdownNow();
                         if ((localSongs == null || localSongs.isEmpty()) && !halt) {
-                            JOptionPane.showMessageDialog(getOwner(), "Sorry, couldn't find any songs to import."
-                                    + "Are you sure it's the right type?", "No songs", JOptionPane.WARNING_MESSAGE, null);
+                            JOptionPane.showMessageDialog(getOwner(), LabelGrabber.INSTANCE.getLabel("import.no.songs.text") , LabelGrabber.INSTANCE.getLabel("import.no.songs.title"), JOptionPane.WARNING_MESSAGE, null);
                         }
                         else if (!(localSongs == null || localSongs.isEmpty())) {
                             getImportedDialog().setSongs(localSongs, localSongsDuplicate, true);
@@ -265,9 +265,9 @@ public abstract class ImportDialog extends JDialog implements PropertyChangeList
     }
 
     private void resetDialog() {
-        getLocationField().setText("Click here to select file");
+        getLocationField().setText(LabelGrabber.INSTANCE.getLabel("click.select.file.text"));
         getLocationField().setEnabled(true);
-        getImportButton().setText("Import");
+        getImportButton().setText(LabelGrabber.INSTANCE.getLabel("import.button"));
         setVisible(false);
         setDefaultCloseOperation(JDialog.HIDE_ON_CLOSE);
     }

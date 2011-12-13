@@ -42,6 +42,7 @@ import org.quelea.bible.BibleChangeListener;
 import org.quelea.bible.BibleManager;
 import org.quelea.bible.BibleVerse;
 import org.quelea.bible.ChapterVerseParser;
+import org.quelea.languages.LabelGrabber;
 import org.quelea.utils.QueleaProperties;
 import org.quelea.utils.Utils;
 
@@ -62,7 +63,7 @@ public class LibraryBiblePanel extends JPanel implements BibleChangeListener {
      * Create and populate a new library bible panel.
      */
     public LibraryBiblePanel() {
-        setName("Bible");
+        setName(LabelGrabber.INSTANCE.getLabel("bible.heading"));
         setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
         verses = new ArrayList<>();
         BibleManager.get().registerBibleChangeListener(this);
@@ -104,7 +105,7 @@ public class LibraryBiblePanel extends JPanel implements BibleChangeListener {
         preview.setLineWrap(true);
         preview.setWrapStyleWord(true);
         add(new JScrollPane(preview));
-        addToSchedule = new JButton("Add to schedule", Utils.getImageIcon("icons/tick.png"));
+        addToSchedule = new JButton(LabelGrabber.INSTANCE.getLabel("add.to.schedule.text"), Utils.getImageIcon("icons/tick.png"));
         JPanel addPanel = new JPanel();
         addToSchedule.setEnabled(false);
         addPanel.add(addToSchedule);
@@ -233,12 +234,15 @@ public class LibraryBiblePanel extends JPanel implements BibleChangeListener {
         }
         int maxVerses = QueleaProperties.get().getMaxVerses();
         if (verses.size() > maxVerses) {
-            preview.setText("Sorry, no more than " + maxVerses + " verses allowed "
-                    + "(at the moment you've selected a total off " + verses.size()
-                    + ".) You can increase this value by going to Tools => Options "
-                    + "and clicking the \"Bible\" tab, but setting this value "
-                    + "too high will crash the program if you're computer isn't "
-                    + "fast enough.");
+            preview.setText(LabelGrabber.INSTANCE.getLabel("too.many.verses.error")
+                    .replace("$(MAXVERSE)", Integer.toString(maxVerses))
+                    .replace("$(VERSENUM)", Integer.toString(verses.size())));
+//            preview.setText("Sorry, no more than " + maxVerses + " verses allowed "
+//                    + "(at the moment you've selected a total off " + verses.size()
+//                    + ".) You can increase this value by going to Tools => Options "
+//                    + "and clicking the \"Bible\" tab, but setting this value "
+//                    + "too high will crash the program if you're computer isn't "
+//                    + "fast enough.");
             preview.setBackground(Color.RED);
             getAddToSchedule().setEnabled(false);
             return;

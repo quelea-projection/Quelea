@@ -25,6 +25,7 @@ import javax.swing.SpringLayout;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import org.quelea.Application;
+import org.quelea.languages.LabelGrabber;
 import org.quelea.utils.PropertyPanel;
 import org.quelea.utils.QueleaProperties;
 import org.quelea.utils.SpringUtilities;
@@ -48,12 +49,12 @@ public class OptionsGeneralPanel extends JPanel implements PropertyPanel {
      * Create a new general panel.
      */
     public OptionsGeneralPanel() {
-        setName("General");
+        setName(LabelGrabber.INSTANCE.getLabel("general.options.heading"));
         JPanel generalPanel = new JPanel(); //Add stuff to generalpanel to avoid leaking this
         generalPanel.setLayout(new SpringLayout());
         int rows = 0;
 
-        JLabel startupLabel = new JLabel("Check for update on startup");
+        JLabel startupLabel = new JLabel(LabelGrabber.INSTANCE.getLabel("check.for.update.label"));
         generalPanel.add(startupLabel);
         startupUpdateCheckBox = new JCheckBox();
         startupLabel.setLabelFor(startupUpdateCheckBox);
@@ -61,7 +62,7 @@ public class OptionsGeneralPanel extends JPanel implements PropertyPanel {
         generalPanel.add(new JLabel()); //Keep springlayout happy
         rows++;
 
-        JLabel warnLabel = new JLabel("Warn if there's just one monitor");
+        JLabel warnLabel = new JLabel(LabelGrabber.INSTANCE.getLabel("1.monitor.warn.label"));
         generalPanel.add(warnLabel);
         oneMonitorWarnCheckBox = new JCheckBox();
         warnLabel.setLabelFor(oneMonitorWarnCheckBox);
@@ -69,7 +70,7 @@ public class OptionsGeneralPanel extends JPanel implements PropertyPanel {
         generalPanel.add(new JLabel()); //Keep springlayout happy
         rows++;
 
-        JLabel capitalFirstLabel = new JLabel("Capitalise the start of each line");
+        JLabel capitalFirstLabel = new JLabel(LabelGrabber.INSTANCE.getLabel("capitalise.start.line.label"));
         generalPanel.add(capitalFirstLabel);
         capitalFirstCheckBox = new JCheckBox();
         startupLabel.setLabelFor(capitalFirstCheckBox);
@@ -77,7 +78,7 @@ public class OptionsGeneralPanel extends JPanel implements PropertyPanel {
         generalPanel.add(new JLabel()); //Keep springlayout happy
         rows++;
 
-        JLabel displaySongInfoLabel = new JLabel("Display song information on each slide");
+        JLabel displaySongInfoLabel = new JLabel(LabelGrabber.INSTANCE.getLabel("display.song.info.label"));
         generalPanel.add(displaySongInfoLabel);
         displaySongInfoCheckBox = new JCheckBox();
         startupLabel.setLabelFor(displaySongInfoCheckBox);
@@ -85,7 +86,7 @@ public class OptionsGeneralPanel extends JPanel implements PropertyPanel {
         generalPanel.add(new JLabel()); //Keep springlayout happy
         rows++;
 
-        JLabel oneLineModeLabel = new JLabel("Only display single line for lyric selection");
+        JLabel oneLineModeLabel = new JLabel(LabelGrabber.INSTANCE.getLabel("one.line.mode.label"));
         generalPanel.add(oneLineModeLabel);
         oneLineModeCheckBox = new JCheckBox();
         startupLabel.setLabelFor(oneLineModeCheckBox);
@@ -93,7 +94,7 @@ public class OptionsGeneralPanel extends JPanel implements PropertyPanel {
         generalPanel.add(new JLabel()); //Keep springlayout happy
         rows++;
 
-        JLabel borderThicknessLabel = new JLabel("Text border thickness");
+        JLabel borderThicknessLabel = new JLabel(LabelGrabber.INSTANCE.getLabel("text.border.thickness.label"));
         generalPanel.add(borderThicknessLabel);
         borderThicknessSlider = new JSlider(0, 5);
         generalPanel.add(borderThicknessSlider);
@@ -109,7 +110,7 @@ public class OptionsGeneralPanel extends JPanel implements PropertyPanel {
         });
         rows++;
 
-        JLabel maxCharsLabel = new JLabel("Maximum number of characters per line");
+        JLabel maxCharsLabel = new JLabel(LabelGrabber.INSTANCE.getLabel("max.chars.line.label"));
         generalPanel.add(maxCharsLabel);
         maxCharsSlider = new JSlider(10, 80);
         generalPanel.add(maxCharsSlider);
@@ -125,7 +126,7 @@ public class OptionsGeneralPanel extends JPanel implements PropertyPanel {
         });
         rows++;
 
-        JLabel minLinesLabel = new JLabel("<html>Minimum number of emulated lines<i> (Advanced)</i></html>");
+        JLabel minLinesLabel = new JLabel("<html>" + LabelGrabber.INSTANCE.getLabel("min.emulated.lines.label") + "<i> (" + LabelGrabber.INSTANCE.getLabel("advanced.label") + ")</i></html>");
         generalPanel.add(minLinesLabel);
         minLinesSlider = new JSlider(1, 20);
         generalPanel.add(minLinesSlider);

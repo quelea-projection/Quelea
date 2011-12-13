@@ -23,6 +23,7 @@ import java.awt.event.ActionListener;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.SwingUtilities;
+import org.quelea.languages.LabelGrabber;
 import org.quelea.utils.Utils;
 
 /**
@@ -39,7 +40,7 @@ public class ColourButton extends JButton {
      * @param defaultColor the default colour of the button.
      */
     public ColourButton(final Color defaultColor) {
-        super("Choose colour...");
+        super(LabelGrabber.INSTANCE.getLabel("choose.color.text"));
         selectionWindow = new ColourSelectionWindow(SwingUtilities.getWindowAncestor(this));
         this.colour = defaultColor;
         selectionWindow.setSelectedColour(colour);

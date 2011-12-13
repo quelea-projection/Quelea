@@ -38,6 +38,7 @@ import javax.swing.event.ListDataEvent;
 import javax.swing.event.ListDataListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
+import org.quelea.languages.LabelGrabber;
 import org.quelea.utils.Utils;
 import org.quelea.windows.main.RemoveSongDBActionListener;
 
@@ -85,7 +86,7 @@ public class LibrarySongPanel extends JPanel {
 
         JPanel northPanel = new JPanel();
         northPanel.setLayout(new BoxLayout(northPanel, BoxLayout.X_AXIS));
-        northPanel.add(new JLabel("Search "));
+        northPanel.add(new JLabel(LabelGrabber.INSTANCE.getLabel("library.song.search")));
         searchBox = new JTextField();
         searchBox.setDragEnabled(false);
         searchBox.addFocusListener(new FocusListener() {
@@ -145,7 +146,7 @@ public class LibrarySongPanel extends JPanel {
         });
         northPanel.add(searchBox);
         searchCancelButton = new JButton(Utils.getImageIcon("icons/cross.png"));
-        searchCancelButton.setToolTipText("Clear search box (Esc)");
+        searchCancelButton.setToolTipText(LabelGrabber.INSTANCE.getLabel("clear.search.box"));
         searchCancelButton.setRequestFocusEnabled(false);
         searchCancelButton.setEnabled(false);
         searchCancelButton.addActionListener(new ActionListener() {
@@ -161,11 +162,11 @@ public class LibrarySongPanel extends JPanel {
         toolbar.setLayout(new BoxLayout(toolbar, BoxLayout.Y_AXIS));
         toolbar.setFloatable(false);
         addButton = new JButton(Utils.getImageIcon("icons/add.png"));
-        addButton.setToolTipText("Add song");
+        addButton.setToolTipText(LabelGrabber.INSTANCE.getLabel("add.song.text"));
         addButton.setRequestFocusEnabled(false);
         toolbar.add(addButton);
         removeButton = new JButton(Utils.getImageIcon("icons/remove.png"));
-        removeButton.setToolTipText("Remove song");
+        removeButton.setToolTipText(LabelGrabber.INSTANCE.getLabel("remove.song.text"));
         removeButton.setRequestFocusEnabled(false);
         removeButton.setEnabled(false);
         removeButton.addActionListener(new RemoveSongDBActionListener());

@@ -35,6 +35,7 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
+import org.quelea.languages.LabelGrabber;
 import org.quelea.utils.SpringUtilities;
 
 /**
@@ -57,7 +58,7 @@ public class NoticeEntryDialog extends JDialog {
      */
     public NoticeEntryDialog(JDialog owner) {
         super(owner, true);
-        setTitle("New notice");
+        setTitle(LabelGrabber.INSTANCE.getLabel("new.notice.heading"));
         text = new JTextField(50);
         text.getDocument().addDocumentListener(new DocumentListener() {
 
@@ -97,19 +98,19 @@ public class NoticeEntryDialog extends JDialog {
 
         JPanel mainPanel = new JPanel();
         mainPanel.setLayout(new SpringLayout());
-        addBlock(mainPanel, "Notice", text);
-        addBlock(mainPanel, "Amount of times", new JPanel() {
+        addBlock(mainPanel, LabelGrabber.INSTANCE.getLabel("notice.text"), text);
+        addBlock(mainPanel, LabelGrabber.INSTANCE.getLabel("notice.times.text"), new JPanel() {
 
             {
                 setLayout(new FlowLayout(FlowLayout.LEFT, 0, 0));
                 add(times);
             }
         });
-        addBlock(mainPanel, "Infinite?", infinite);
+        addBlock(mainPanel, LabelGrabber.INSTANCE.getLabel("notice.infinite.question"), infinite);
         SpringUtilities.makeCompactGrid(mainPanel, 3, 2, 0, 0, 0, 0);
 
         JPanel southPanel = new JPanel();
-        addButton = new JButton("Add notice");
+        addButton = new JButton(LabelGrabber.INSTANCE.getLabel("add.notice.button"));
         getRootPane().setDefaultButton(addButton);
         addButton.addActionListener(new ActionListener() {
 
@@ -133,7 +134,7 @@ public class NoticeEntryDialog extends JDialog {
             }
         });
         southPanel.add(addButton);
-        cancelButton = new JButton("Cancel");
+        cancelButton = new JButton(LabelGrabber.INSTANCE.getLabel("cancel.text"));
         cancelButton.addActionListener(new ActionListener() {
 
             @Override
@@ -205,7 +206,7 @@ public class NoticeEntryDialog extends JDialog {
             infinite.setSelected(false);
             times.setValue(1);
             text.setText("");
-            addButton.setText("Add notice");
+            addButton.setText(LabelGrabber.INSTANCE.getLabel("add.notice.button"));
             addButton.setEnabled(false);
         }
         else {
@@ -214,7 +215,7 @@ public class NoticeEntryDialog extends JDialog {
                 times.setValue(notice.getTimes());
             }
             text.setText(notice.getText());
-            addButton.setText("Edit notice");
+            addButton.setText(LabelGrabber.INSTANCE.getLabel("edit.notice.button"));
         }
     }
 

@@ -26,6 +26,7 @@ import javax.swing.JLabel;
 import javax.swing.JToggleButton;
 import javax.swing.JToolBar;
 import org.quelea.displayable.Displayable;
+import org.quelea.languages.LabelGrabber;
 import org.quelea.utils.QueleaProperties;
 import org.quelea.utils.Utils;
 
@@ -45,10 +46,10 @@ public class LivePanel extends LivePreviewPanel {
     public LivePanel() {
         JToolBar header = new JToolBar();
         header.setFloatable(false);
-        header.add(new JLabel("<html><b>Live</b></html>"));
+        header.add(new JLabel("<html><b>"+LabelGrabber.INSTANCE.getLabel("live.heading")+"</b></html>"));
         header.add(new JToolBar.Separator());
         black = new JToggleButton(Utils.getImageIcon("icons/black.png"));
-        black.setToolTipText("Black screen (F1)");
+        black.setToolTipText(LabelGrabber.INSTANCE.getLabel("black.screen.tooltip")+" (F1)");
         black.setRequestFocusEnabled(false);
         black.addActionListener(new ActionListener() {
 
@@ -65,7 +66,7 @@ public class LivePanel extends LivePreviewPanel {
         });
         header.add(black);
         clear = new JToggleButton(Utils.getImageIcon("icons/clear.png", 16, 16));
-        clear.setToolTipText("Clear text (F2)");
+        clear.setToolTipText(LabelGrabber.INSTANCE.getLabel("clear.text.tooltip")+" (F2)");
         clear.setRequestFocusEnabled(false);
         clear.addActionListener(new ActionListener() {
 
@@ -82,7 +83,7 @@ public class LivePanel extends LivePreviewPanel {
         });
         header.add(clear);
         hide = new JToggleButton(Utils.getImageIcon("icons/cross.png"));
-        hide.setToolTipText("Hide display output (F3)");
+        hide.setToolTipText(LabelGrabber.INSTANCE.getLabel("hide.display.output.tooltip")+" (F3)");
         hide.setRequestFocusEnabled(false);
         hide.addActionListener(new ActionListener() {
 

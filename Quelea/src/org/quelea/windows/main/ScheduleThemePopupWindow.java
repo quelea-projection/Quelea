@@ -67,6 +67,7 @@ import static java.nio.file.StandardWatchEventKinds.ENTRY_CREATE;
 import static java.nio.file.StandardWatchEventKinds.ENTRY_DELETE;
 import static java.nio.file.StandardWatchEventKinds.ENTRY_MODIFY;
 import static java.nio.file.StandardWatchEventKinds.OVERFLOW;
+import org.quelea.languages.LabelGrabber;
 
 /**
  * A popup window that allows the user to select a theme for the current 
@@ -191,7 +192,7 @@ public class ScheduleThemePopupWindow extends FadeWindow {
         contentPanel.setLayout(new BorderLayout());
         final JPanel northPanel = new JPanel();
         northPanel.setLayout(new FlowLayout(FlowLayout.LEFT));
-        northPanel.add(new JLabel("Select the theme to use for the service:"));
+        northPanel.add(new JLabel(LabelGrabber.INSTANCE.getLabel("theme.select.text")));
         contentPanel.add(northPanel, BorderLayout.NORTH);
         final JPanel themePreviews = new JPanel();
         themePreviews.setLayout(new GridLayout((themes.size()/5)+1, 5, 5, 5));
@@ -215,7 +216,7 @@ public class ScheduleThemePopupWindow extends FadeWindow {
         }
         JPanel buttonPanel = new JPanel();
         buttonPanel.setLayout(new FlowLayout(FlowLayout.LEFT));
-        JButton newThemeButton = new JButton("New...");
+        JButton newThemeButton = new JButton(LabelGrabber.INSTANCE.getLabel("new.theme.text"));
         newThemeButton.addActionListener(new ActionListener() {
 
             /**
@@ -223,12 +224,12 @@ public class ScheduleThemePopupWindow extends FadeWindow {
              */
             @Override
             public void actionPerformed(ActionEvent e) {
-                final JDialog dialog = new JDialog(Application.get().getMainWindow(), "New theme", ModalityType.APPLICATION_MODAL);
+                final JDialog dialog = new JDialog(Application.get().getMainWindow(), LabelGrabber.INSTANCE.getLabel("new.theme.title"), ModalityType.APPLICATION_MODAL);
                 dialog.setLayout(new BorderLayout());
                 JPanel northPanel = new JPanel();
                 dialog.add(northPanel, BorderLayout.NORTH);
                 northPanel.setLayout(new FlowLayout(FlowLayout.LEFT));
-                northPanel.add(new JLabel("Theme name"));
+                northPanel.add(new JLabel(LabelGrabber.INSTANCE.getLabel("theme.name.label")));
                 final JTextField nameField = new JTextField(20);
                 northPanel.add(nameField);
                 final ThemePanel themePanel = new ThemePanel();
@@ -237,7 +238,7 @@ public class ScheduleThemePopupWindow extends FadeWindow {
                 JPanel southPanel = new JPanel();
                 dialog.add(southPanel, BorderLayout.SOUTH);
                 southPanel.setLayout(new FlowLayout(FlowLayout.LEFT));
-                final JButton addButton = new JButton("Add theme");
+                final JButton addButton = new JButton(LabelGrabber.INSTANCE.getLabel("add.theme.label"));
                 addButton.setEnabled(false);
                 nameField.getDocument().addDocumentListener(new DocumentListener() {
 

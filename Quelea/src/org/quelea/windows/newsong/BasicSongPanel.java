@@ -48,6 +48,7 @@ import org.quelea.chord.ChordLineTransposer;
 import org.quelea.chord.ChordTransposer;
 import org.quelea.chord.TransposeDialog;
 import org.quelea.displayable.Song;
+import org.quelea.languages.LabelGrabber;
 import org.quelea.utils.LineTypeChecker;
 import org.quelea.utils.SpringUtilities;
 import org.quelea.utils.Utils;
@@ -69,7 +70,7 @@ public class BasicSongPanel extends JPanel {
      * Create and initialise the song panel.
      */
     public BasicSongPanel() {
-        setName("Basic information");
+        setName(LabelGrabber.INSTANCE.getLabel("basic.information.heading"));
         setLayout(new BorderLayout());
         JPanel centrePanel = new JPanel();
         centrePanel.setLayout(new BoxLayout(centrePanel, BoxLayout.Y_AXIS));
@@ -78,10 +79,10 @@ public class BasicSongPanel extends JPanel {
         titleAuthorPanel.setLayout(new BorderLayout());
 
         titleField = new JTextField();
-        titleField.setName("Title");
+        titleField.setName(LabelGrabber.INSTANCE.getLabel("title.label"));
 
         authorField = new JTextField();
-        authorField.setName("Author");
+        authorField.setName(LabelGrabber.INSTANCE.getLabel("author.label"));
 
         transposeDialog = new TransposeDialog();
 
@@ -118,7 +119,7 @@ public class BasicSongPanel extends JPanel {
         });
         JPanel lyricsPanel = new JPanel();
         lyricsPanel.setLayout(new BoxLayout(lyricsPanel, BoxLayout.X_AXIS));
-        JToolBar lyricsToolbar = new JToolBar("Tools", JToolBar.VERTICAL);
+        JToolBar lyricsToolbar = new JToolBar(LabelGrabber.INSTANCE.getLabel("tools.label"), JToolBar.VERTICAL);
         lyricsToolbar.setFloatable(false);
         lyricsToolbar.add(getDictButton());
         lyricsToolbar.add(getAposButton());
@@ -182,7 +183,7 @@ public class BasicSongPanel extends JPanel {
         JButton ret = new JButton(Utils.getImageIcon("icons/transpose.png", 16, 16));
         ret.setMargin(new Insets(0, 0, 0, 0));
         ret.setBorder(new EmptyBorder(0, 0, 0, 0));
-        ret.setToolTipText("Transpose");
+        ret.setToolTipText(LabelGrabber.INSTANCE.getLabel("transpose.tooltip"));
         ret.addActionListener(new ActionListener() {
 
             @Override
@@ -230,7 +231,7 @@ public class BasicSongPanel extends JPanel {
             for (String line : getLyricsField().getText().split("\n")) {
                 if (new LineTypeChecker(line).getLineType() == LineTypeChecker.Type.CHORDS) {
                     String first;
-                    int i=0;
+                    int i = 0;
                     do {
                         first = line.split("\\s+")[i++];
                     } while (first.isEmpty());
@@ -265,7 +266,7 @@ public class BasicSongPanel extends JPanel {
         JButton button = new JButton(Utils.getImageIcon("icons/trimLines.png"));
         button.setMargin(new Insets(0, 0, 0, 0));
         button.setBorder(new EmptyBorder(0, 0, 0, 0));
-        button.setToolTipText("Trim lines");
+        button.setToolTipText(LabelGrabber.INSTANCE.getLabel("trim.lines.tooltip"));
         button.addActionListener(new ActionListener() {
 
             public void actionPerformed(ActionEvent e) {
@@ -311,7 +312,7 @@ public class BasicSongPanel extends JPanel {
         JButton button = new JButton(Utils.getImageIcon("icons/dictionary.png"));
         button.setMargin(new Insets(0, 0, 0, 0));
         button.setBorder(new EmptyBorder(0, 0, 0, 0));
-        button.setToolTipText("Run spellcheck (F7)");
+        button.setToolTipText(LabelGrabber.INSTANCE.getLabel("run.spellcheck.label") + " (F7)");
         button.addActionListener(new ActionListener() {
 
             public void actionPerformed(ActionEvent e) {
@@ -329,7 +330,7 @@ public class BasicSongPanel extends JPanel {
         JButton button = new JButton(Utils.getImageIcon("icons/apos.png"));
         button.setMargin(new Insets(0, 0, 0, 0));
         button.setBorder(new EmptyBorder(0, 0, 0, 0));
-        button.setToolTipText("Fix weird apostrophes");
+        button.setToolTipText(LabelGrabber.INSTANCE.getLabel("fix.apos.label"));
         button.addActionListener(new ActionListener() {
 
             public void actionPerformed(ActionEvent e) {
@@ -347,7 +348,7 @@ public class BasicSongPanel extends JPanel {
     public void resetNewSong() {
         getTitleField().setText("");
         getAuthorField().setText("");
-        getLyricsField().setText("<Type lyrics here>");
+        getLyricsField().setText("<" + LabelGrabber.INSTANCE.getLabel("type.lyrics.here.text") + ">");
         getLyricsField().addFocusListener(new FocusListener() {
 
             public void focusGained(FocusEvent e) {

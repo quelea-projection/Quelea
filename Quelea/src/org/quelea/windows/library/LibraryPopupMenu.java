@@ -25,6 +25,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPopupMenu;
 import org.quelea.Application;
 import org.quelea.displayable.Song;
+import org.quelea.languages.LabelGrabber;
 import org.quelea.print.Printer;
 import org.quelea.utils.Utils;
 
@@ -43,13 +44,13 @@ public class LibraryPopupMenu extends JPopupMenu {
      * Create and initialise the popup menu.
      */
     public LibraryPopupMenu() {
-        addToSchedule = new JMenuItem("Add to schedule", Utils.getImageIcon("icons/add.png", 16, 16));
+        addToSchedule = new JMenuItem(LabelGrabber.INSTANCE.getLabel("library.add.to.schedule.text"), Utils.getImageIcon("icons/add.png", 16, 16));
         addToSchedule.setMnemonic(KeyEvent.VK_A);
-        editDB = new JMenuItem("Edit song", Utils.getImageIcon("icons/edit.png", 16, 16));
+        editDB = new JMenuItem(LabelGrabber.INSTANCE.getLabel("library.edit.song.text"), Utils.getImageIcon("icons/edit.png", 16, 16));
         editDB.setMnemonic(KeyEvent.VK_E);
-        removeFromDB = new JMenuItem("Remove from database", Utils.getImageIcon("icons/remove.png", 16, 16));
+        removeFromDB = new JMenuItem(LabelGrabber.INSTANCE.getLabel("library.remove.song.text"), Utils.getImageIcon("icons/remove.png", 16, 16));
         removeFromDB.setMnemonic(KeyEvent.VK_R);
-        print = new JMenuItem("Print song", Utils.getImageIcon("icons/fileprint.png", 16, 16));
+        print = new JMenuItem(LabelGrabber.INSTANCE.getLabel("library.print.song.text"), Utils.getImageIcon("icons/fileprint.png", 16, 16));
         print.setMnemonic(KeyEvent.VK_P);
 
         print.addActionListener(new ActionListener() {
@@ -58,7 +59,7 @@ public class LibraryPopupMenu extends JPopupMenu {
             public void actionPerformed(ActionEvent e) {
                 Song song = Application.get().getMainWindow().getMainPanel().getLibraryPanel().getLibrarySongPanel().getSongList().getSelectedValue();
                 if (song != null) {
-                    int result = JOptionPane.showConfirmDialog(Application.get().getMainWindow(), "Print chords as well as lyrics?", "Printing options", JOptionPane.YES_NO_OPTION);
+                    int result = JOptionPane.showConfirmDialog(Application.get().getMainWindow(), LabelGrabber.INSTANCE.getLabel("print.chords.question"), LabelGrabber.INSTANCE.getLabel("printing.options.text"), JOptionPane.YES_NO_OPTION);
                     song.setPrintChords(result == JOptionPane.YES_OPTION);
                     Printer.getInstance().print(song);
                 }

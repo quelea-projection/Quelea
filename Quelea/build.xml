@@ -42,6 +42,9 @@
         <copy todir="${dist.jar.dir}/dictionaries">
             <fileset dir="${basedir}/dictionaries"/>
         </copy>
+        <copy todir="${dist.jar.dir}/languages">
+            <fileset dir="${basedir}/languages"/>
+        </copy>
 <!--        <copy todir="${dist.jar.dir}/database">
             <fileset dir="${basedir}/database"/>
         </copy>-->
@@ -74,7 +77,7 @@
         
         <echo message="Generating windows installer using inno setup."/>
         <echo message="For this to work inno setup needs to be installed and the appropriate paths set in build-install.bat. This will only work on Windows."/>
-        <launch4j configFile="launch4j/config.xml" />
+        <launch4j configFile="launch4j/config.xml" /> <!-- Generate exe from jar -->
         <exec dir="${dist.jar.dir}" executable="cmd" failifexecutionfails="false" failonerror="false">
             <arg value="/c build-install.bat"/>
         </exec>

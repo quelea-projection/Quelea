@@ -18,6 +18,7 @@
 package org.quelea.importexport;
 
 import javax.swing.JFrame;
+import org.quelea.languages.LabelGrabber;
 
 /**
  * The kingsway import dialog, used for importing songs from the online kingsway
@@ -32,8 +33,8 @@ public class KingswayImportDialog extends ImportDialog {
      */
     public KingswayImportDialog(JFrame owner) {
         super(owner, new String[]{
-                    "This will import the kingsway song library from online.",
-                    "This will take a long time (potentially hours!), so please be patient and leave Quelea running!"
+                    LabelGrabber.INSTANCE.getLabel("kingsway.import.line1"),
+                    LabelGrabber.INSTANCE.getLabel("kingsway.import.line2")
                 }, null, new KingswayWorshipParser(), false);
     }
     
