@@ -62,7 +62,7 @@ public final class Main {
      * Quelea when the program starts.
      * @param args the command line arguments.
      */
-    public static void main(String[] args) {
+    public static void main(final String[] args) {
 
         final SplashWindow splashWindow = new SplashWindow();
         splashWindow.setVisible(true);
@@ -150,6 +150,11 @@ public final class Main {
                 LOGGER.log(Level.INFO, "Loaded everything.");
 
                 showWarning(gds.length);
+                
+                if(args.length>0) {
+                    LOGGER.log(Level.INFO, "Opening schedule through argument: {0}", args[0]);
+                    Application.get().openSchedule(new File(args[0]));
+                }
             }
         });
     }

@@ -56,9 +56,6 @@
             <file src="lib" targetdir="$INSTALL_PATH"/>
             <file src="Quelea.jar" targetdir="$INSTALL_PATH"/>
             <file src="Readme.txt" targetdir="$INSTALL_PATH"/>
-            <file src="Quelea.bat" targetdir="$INSTALL_PATH"/>
-            <file src="MessageBox.vbs" targetdir="$INSTALL_PATH"/>
-            <file src="Quelea.vbs" targetdir="$INSTALL_PATH"/>
             <file src="../licenses/gplv3.txt" targetdir="$INSTALL_PATH"/>
             <file src="quelea.properties" targetdir="$INSTALL_PATH"/>
         </pack>
