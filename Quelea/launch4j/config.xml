@@ -1,3 +1,4 @@
+
 <launch4jConfig>
     <headerType>gui</headerType>
     <jar>..\dist\Quelea.jar</jar>
@@ -14,6 +15,8 @@
     <jre>
         <minVersion>1.7.0</minVersion>
         <jdkPreference>preferJre</jdkPreference>
+        <initialHeapSize>1024</initialHeapSize>
+        <maxHeapSize>1024</maxHeapSize>
     </jre>
     <messages>
         <startupErr>Sorry, there was an error starting the program.</startupErr>
@@ -21,4 +24,11 @@
         <jreVersionErr>You're running a version of Java that's too old - you need at least version 7.</jreVersionErr>
         <launcherErr>Sorry, there was an error launching Quelea.</launcherErr>
     </messages>
+    <versionInfo>
+        <fileVersion>0.4.2</fileVersion>
+        <productName>Quelea</productName>
+        <copyright>GPLv3</copyright>
+        <originalFilename>Quelea.exe</originalFilename>
+        <companyName>Michael Berry</companyName>
+    </versionInfo>
 </launch4jConfig>
