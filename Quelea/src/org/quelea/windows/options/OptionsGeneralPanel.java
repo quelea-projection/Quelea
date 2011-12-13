@@ -24,6 +24,7 @@ import javax.swing.JSlider;
 import javax.swing.SpringLayout;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
+import org.quelea.Application;
 import org.quelea.utils.PropertyPanel;
 import org.quelea.utils.QueleaProperties;
 import org.quelea.utils.SpringUtilities;
@@ -38,6 +39,7 @@ public class OptionsGeneralPanel extends JPanel implements PropertyPanel {
     private final JCheckBox capitalFirstCheckBox;
     private final JCheckBox oneMonitorWarnCheckBox;
     private final JCheckBox displaySongInfoCheckBox;
+    private final JCheckBox oneLineModeCheckBox;
     private final JSlider borderThicknessSlider;
     private final JSlider maxCharsSlider;
     private final JSlider minLinesSlider;
@@ -80,6 +82,14 @@ public class OptionsGeneralPanel extends JPanel implements PropertyPanel {
         displaySongInfoCheckBox = new JCheckBox();
         startupLabel.setLabelFor(displaySongInfoCheckBox);
         generalPanel.add(displaySongInfoCheckBox);
+        generalPanel.add(new JLabel()); //Keep springlayout happy
+        rows++;
+
+        JLabel oneLineModeLabel = new JLabel("Only display single line for lyric selection");
+        generalPanel.add(oneLineModeLabel);
+        oneLineModeCheckBox = new JCheckBox();
+        startupLabel.setLabelFor(oneLineModeCheckBox);
+        generalPanel.add(oneLineModeCheckBox);
         generalPanel.add(new JLabel()); //Keep springlayout happy
         rows++;
 
@@ -145,6 +155,7 @@ public class OptionsGeneralPanel extends JPanel implements PropertyPanel {
         capitalFirstCheckBox.setSelected(props.checkCapitalFirst());
         oneMonitorWarnCheckBox.setSelected(props.showSingleMonitorWarning());
         displaySongInfoCheckBox.setSelected(props.checkDisplaySongInfoText());
+        oneLineModeCheckBox.setSelected(props.getOneLineMode());
         maxCharsSlider.setValue(props.getMaxChars());
         minLinesSlider.setValue(props.getMinLines());
         borderThicknessSlider.setValue(props.getOutlineThickness());
@@ -163,6 +174,11 @@ public class OptionsGeneralPanel extends JPanel implements PropertyPanel {
         props.setCapitalFirst(checkCapital);
         boolean checkDisplayInfo = getDisplaySongInfoCheckBox().isSelected();
         props.setDisplaySongInfoText(checkDisplayInfo);
+        boolean oneLineMode = getOneLineModeCheckBox().isSelected();
+        props.setOneLineMode(oneLineMode);
+        //One line mode needs to be updated manually
+        Application.get().getMainWindow().getMainPanel().getPreviewPanel().updateOneLineMode();
+        Application.get().getMainWindow().getMainPanel().getLivePanel().updateOneLineMode();
         int maxCharsPerLine = getMaxCharsSlider().getValue();
         props.setMaxChars(maxCharsPerLine);
         int minLines = getMinLinesSlider().getValue();
@@ -219,6 +235,14 @@ public class OptionsGeneralPanel extends JPanel implements PropertyPanel {
         return oneMonitorWarnCheckBox;
     }
 
+    /**
+     * Get the "one line mode" checkbox.
+     * @return the "one line mode" checkbox.
+     */
+    public JCheckBox getOneLineModeCheckBox() {
+        return oneLineModeCheckBox;
+    }
+    
     /**
      * Get the border thickness slider.
      * @return the border thickness slider.

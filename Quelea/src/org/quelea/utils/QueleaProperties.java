@@ -136,6 +136,23 @@ public final class QueleaProperties extends Properties {
         setProperty("control.screen", Integer.toString(screen));
         write();
     }
+    
+    /**
+     * Get the one line mode.
+     * @return true if one line mode should be enabled, false otherwise.
+     */
+    public boolean getOneLineMode() {
+        return Boolean.parseBoolean(getProperty("one.line.mode", "false"));
+    }
+    
+    /**
+     * Set the one line mode property.
+     * @param val the value of the one linde mode.
+     */
+    public void setOneLineMode(boolean val) {
+        setProperty("one.line.mode", Boolean.toString(val));
+        write();
+    }
 
     /**
      * Get the number of the projector screen. This is the screen that the projected output will be displayed on.
