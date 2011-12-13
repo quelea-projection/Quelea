@@ -26,6 +26,7 @@
     </messages>
     <versionInfo>
         <fileVersion>0.4.2.0</fileVersion> <!-- Must be format x.x.x.x otherwise launch4j complains -->
+        <txtProductVersion>0.4.2</txtProductVersion>
         <productName>Quelea</productName>
         <copyright>GPLv3</copyright>
         <originalFilename>Quelea.exe</originalFilename>
