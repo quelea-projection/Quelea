@@ -69,6 +69,7 @@ Name: "quicklaunchicon"; Description: "{cm:CreateQuickLaunchIcon}"; GroupDescrip
 
 [Files]
 Source: "Quelea.exe"; DestDir: "{app}"; Flags: ignoreversion
+Source: "Quelea.jar"; DestDir: "{app}"; Flags: ignoreversion
 Source: "Readme.txt"; DestDir: "{app}"; Flags: ignoreversion
 Source: "quelea.properties"; DestDir: "{app}"; Flags: ignoreversion
 Source: "lib\*"; DestDir: "{app}\lib"; Flags: ignoreversion recursesubdirs createallsubdirs
