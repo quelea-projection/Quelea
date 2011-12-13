@@ -1,19 +1,18 @@
-/* 
- * This file is part of Quelea, free projection software for churches.
- * Copyright (C) 2011 Michael Berry
- * 
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- * 
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- * 
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+/*
+ * This file is part of Quelea, free projection software for churches. Copyright
+ * (C) 2011 Michael Berry
+ *
+ * This program is free software: you can redistribute it and/or modify it under
+ * the terms of the GNU General Public License as published by the Free Software
+ * Foundation, either version 3 of the License, or (at your option) any later
+ * version.
+ *
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License along with
+ * this program. If not, see <http://www.gnu.org/licenses/>.
  */
 package org.quelea.windows.main.ribbon;
 
@@ -42,18 +41,19 @@ import org.quelea.windows.options.OptionsDialog;
 
 /**
  * The menu on the ribbon component.
+ *
  * @author Michael
  */
 public class RibbonMenu extends RibbonApplicationMenu {
-    
+
     private final OptionsDialog optionsDialog;
-    
+
     /**
      * Create the ribbon menu.
      */
     public RibbonMenu() {
         optionsDialog = new OptionsDialog(Application.get().getMainWindow());
-        
+
         RibbonApplicationMenuEntryPrimary newMenuEntry = new RibbonApplicationMenuEntryPrimary(
                 RibbonUtils.getRibbonIcon("icons/filenew.png", 100, 100), "New Schedule", new ActionListener() {
 
@@ -80,14 +80,7 @@ public class RibbonMenu extends RibbonApplicationMenu {
                 if (confirmClear()) {
                     JFileChooser chooser = Utils.getScheduleFileChooser();
                     if (chooser.showOpenDialog(Application.get().getMainWindow()) == JFileChooser.APPROVE_OPTION) {
-                        Schedule schedule = Schedule.fromFile(chooser.getSelectedFile());
-                        if (schedule == null) {
-                            JOptionPane.showMessageDialog(Application.get().getMainWindow(),
-                                    "There was a problem opening the schedule. Perhaps it's corrupt, or is not a schedule saved by Quelea.",
-                                    "Error opening schedule", JOptionPane.ERROR_MESSAGE, null);
-                        } else {
-                            Application.get().getMainWindow().getMainPanel().getSchedulePanel().getScheduleList().setSchedule(schedule);
-                        }
+                        Application.get().openSchedule(chooser.getSelectedFile());
                     }
                 }
             }
@@ -181,7 +174,7 @@ public class RibbonMenu extends RibbonApplicationMenu {
         });
         addMenuEntry(exitMenuEntry);
     }
-    
+
     /**
      * Confirm whether it's ok to clear the current schedule.
      * @return true if this is ok, false otherwise.

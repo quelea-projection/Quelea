@@ -5,7 +5,7 @@
 #define MyAppVersion "0.4.2"
 #define MyAppPublisher "Michael Berry"
 #define MyAppURL "http://www.quelea.org"
-#define MyAppExeName "Quelea.vbs"
+#define MyAppExeName "Quelea.exe"
 
 [Setup]
 ; NOTE: The value of AppId uniquely identifies this application.
@@ -26,6 +26,13 @@ LicenseFile=../licenses/gplv3.txt
 OutputBaseFilename=setup
 Compression=lzma
 SolidCompression=yes
+ChangesAssociations=yes
+
+[Registry]
+Root: HKCR; Subkey: ".qsch"; ValueType: string; ValueName: ""; ValueData: "Quelea Schedule"; Flags: uninsdeletevalue
+Root: HKCR; Subkey: "Quelea Schedule"; ValueType: string; ValueName: ""; ValueData: "Quelea Schedule"; Flags: uninsdeletekey
+Root: HKCR; Subkey: "Quelea Schedule\DefaultIcon"; ValueType: string; ValueName: ""; ValueData: "{app}\icons\logo.ico,0"
+Root: HKCR; Subkey: "Quelea Schedule\shell\open\command"; ValueType: string; ValueName: ""; ValueData: """{app}\Quelea.exe"" ""%1"""
 
 [Code]
 function InitializeSetup(): Boolean;
@@ -61,10 +68,7 @@ Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{
 Name: "quicklaunchicon"; Description: "{cm:CreateQuickLaunchIcon}"; GroupDescription: "{cm:AdditionalIcons}"; Flags: unchecked
 
 [Files]
-Source: "Quelea.vbs"; DestDir: "{app}"; Flags: ignoreversion
-Source: "Quelea.bat"; DestDir: "{app}"; Flags: ignoreversion
-Source: "MessageBox.vbs"; DestDir: "{app}"; Flags: ignoreversion
-Source: "Quelea.jar"; DestDir: "{app}"; Flags: ignoreversion
+Source: "Quelea.exe"; DestDir: "{app}"; Flags: ignoreversion
 Source: "Readme.txt"; DestDir: "{app}"; Flags: ignoreversion
 Source: "quelea.properties"; DestDir: "{app}"; Flags: ignoreversion
 Source: "lib\*"; DestDir: "{app}\lib"; Flags: ignoreversion recursesubdirs createallsubdirs

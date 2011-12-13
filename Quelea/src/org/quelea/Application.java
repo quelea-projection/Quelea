@@ -17,6 +17,8 @@
  */
 package org.quelea;
 
+import java.io.File;
+import javax.swing.JOptionPane;
 import org.quelea.windows.main.LyricWindow;
 import org.quelea.windows.main.MainWindow;
 import org.quelea.windows.main.StatusPanelGroup;
@@ -37,6 +39,22 @@ public class Application {
      */
     public static Application get() {
         return INSTANCE;
+    }
+    
+    /**
+     * Open a given schedule file in Quelea.
+     * @param file the file to open.
+     */
+    public void openSchedule(File file) {
+        Schedule schedule = Schedule.fromFile(file);
+        if (schedule == null) {
+            JOptionPane.showMessageDialog(Application.get().getMainWindow(),
+                    "There was a problem opening the schedule. Perhaps it's corrupt, or is not a schedule saved by Quelea.",
+                    "Error opening schedule", JOptionPane.ERROR_MESSAGE, null);
+        }
+        else {
+            Application.get().getMainWindow().getMainPanel().getSchedulePanel().getScheduleList().setSchedule(schedule);
+        }
     }
 
     /**
