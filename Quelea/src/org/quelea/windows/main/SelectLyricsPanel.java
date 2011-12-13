@@ -84,6 +84,14 @@ public class SelectLyricsPanel extends ContainedPanel {
             }
         });
     }
+    
+    /**
+     * Set one line mode on or off.
+     * @param on if one line mode should be turned on, false otherwise.
+     */
+    public void setOneLineMode(boolean on) {
+        lyricsList.setOneLineMode(on);
+    }
 
     /**
      * Show a given text displayable on this panel.
