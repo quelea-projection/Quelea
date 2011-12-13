@@ -1,34 +1,24 @@
 <launch4jConfig>
-    <dontWrapJar>false</dontWrapJar>
     <headerType>gui</headerType>
-    <jar>..\dist\standalone\quelea-install.jar</jar>
-    <outfile>..\dist\standalone\quelea-install.exe</outfile>
-    <errTitle></errTitle>
-    <cmdLine></cmdLine>
-    <chdir></chdir>
+    <jar>..\dist\Quelea.jar</jar>
+    <outfile>..\dist\quelea.exe</outfile>
+    <chdir>.</chdir>
+    <errTitle>Error</errTitle>
     <priority>normal</priority>
-    <downloadUrl>http://java.com/download</downloadUrl>
+    <downloadUrl>http://www.oracle.com/technetwork/java/javase/downloads/index.html</downloadUrl>
     <supportUrl>https://groups.google.com/group/quelea-discuss</supportUrl>
     <customProcName>false</customProcName>
     <stayAlive>false</stayAlive>
     <manifest></manifest>
     <icon>../icons/logo.ico</icon>
     <jre>
-        <path></path>
-        <minVersion>1.6.0</minVersion>
-        <maxVersion></maxVersion>
+        <minVersion>1.7.0</minVersion>
         <jdkPreference>preferJre</jdkPreference>
     </jre>
-    <!--    <splash>
-        <file>../img/splash.bmp</file>
-        <waitForWindow>true</waitForWindow>
-        <timeout>10</timeout>
-        <timeoutErr>true</timeoutErr>
-    </splash>-->
     <messages>
         <startupErr>Sorry, there was an error starting the program.</startupErr>
         <bundledJreErr>Sorry, there was an error with the bundled JRE.</bundledJreErr>
-        <jreVersionErr>You're running a version of Java that's too old - you need at least version 6.</jreVersionErr>
+        <jreVersionErr>You're running a version of Java that's too old - you need at least version 7.</jreVersionErr>
         <launcherErr>Sorry, there was an error launching Quelea.</launcherErr>
     </messages>
 </launch4jConfig>
