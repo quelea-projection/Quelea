@@ -29,6 +29,7 @@ import org.quelea.displayable.ImageDisplayable;
 import org.quelea.displayable.PresentationDisplayable;
 import org.quelea.displayable.TextDisplayable;
 import org.quelea.displayable.VideoDisplayable;
+import org.quelea.utils.QueleaProperties;
 
 /**
  * The common superclass of the live / preview panels used for selecting the
@@ -75,6 +76,13 @@ public abstract class LivePreviewPanel extends JPanel {
         cardPanel.add(videoPanel, VIDEO_LABEL);
         cardPanel.add(powerpointPanel, PRESENTATION_LABEL);
         ((CardLayout) cardPanel.getLayout()).show(cardPanel, LYRICS_LABEL);
+    }
+    
+    /**
+     * Update the one line mode for the lyrics panel from the properties file.
+     */
+    public void updateOneLineMode() {
+        lyricsPanel.setOneLineMode(QueleaProperties.get().getOneLineMode());
     }
 
     /**
