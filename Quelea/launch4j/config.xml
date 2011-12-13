@@ -26,10 +26,14 @@
     </messages>
     <versionInfo>
         <fileVersion>0.4.2.0</fileVersion> <!-- Must be format x.x.x.x otherwise launch4j complains -->
+        <productVersion>0.4.2.0</productVersion> <!-- Must be format x.x.x.x otherwise launch4j complains -->
         <txtProductVersion>0.4.2</txtProductVersion>
+        <txtFileVersion>0.4.2</txtFileVersion>
         <productName>Quelea</productName>
         <copyright>GPLv3</copyright>
         <originalFilename>Quelea.exe</originalFilename>
         <companyName>Michael Berry</companyName>
+        <fileDescription>Quelea executable</fileDescription>
+        <internalName>Quelea</internalName>
     </versionInfo>
 </launch4jConfig>
