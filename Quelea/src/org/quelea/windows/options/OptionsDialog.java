@@ -25,6 +25,7 @@ import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
+import org.quelea.languages.LabelGrabber;
 import org.quelea.utils.PropertyPanel;
 
 /**
@@ -45,7 +46,7 @@ public class OptionsDialog extends JDialog {
      * @param owner the owner of the dialog - should be the main window.
      */
     public OptionsDialog(JFrame owner) {
-        super(owner, "Options", true);
+        super(owner, LabelGrabber.INSTANCE.getLabel("options.title"), true);
         this.owner = owner;
         setLayout(new BorderLayout());
         tabbedPane = new JTabbedPane();
@@ -57,7 +58,7 @@ public class OptionsDialog extends JDialog {
         tabbedPane.add(biblePanel);
         add(tabbedPane, BorderLayout.CENTER);
         JPanel buttonPanel = new JPanel();
-        okButton = new JButton("OK");
+        okButton = new JButton(LabelGrabber.INSTANCE.getLabel("ok.button"));
         okButton.addActionListener(new ActionListener() {
 
             public void actionPerformed(ActionEvent e) {

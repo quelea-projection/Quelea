@@ -25,8 +25,8 @@ import org.pushingpixels.flamingo.api.common.JCommandButton;
 import org.pushingpixels.flamingo.api.ribbon.RibbonApplicationMenu;
 import org.pushingpixels.flamingo.api.ribbon.RibbonApplicationMenuEntryPrimary;
 import org.quelea.Application;
-import org.quelea.Schedule;
 import org.quelea.ScheduleSaver;
+import org.quelea.languages.LabelGrabber;
 import org.quelea.print.Printer;
 import org.quelea.utils.Utils;
 import org.quelea.windows.main.MainPanel;
@@ -55,7 +55,7 @@ public class RibbonMenu extends RibbonApplicationMenu {
         optionsDialog = new OptionsDialog(Application.get().getMainWindow());
 
         RibbonApplicationMenuEntryPrimary newMenuEntry = new RibbonApplicationMenuEntryPrimary(
-                RibbonUtils.getRibbonIcon("icons/filenew.png", 100, 100), "New Schedule", new ActionListener() {
+                RibbonUtils.getRibbonIcon("icons/filenew.png", 100, 100), LabelGrabber.INSTANCE.getLabel("new.schedule.button"), new ActionListener() {
 
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -73,7 +73,7 @@ public class RibbonMenu extends RibbonApplicationMenu {
         });
         addMenuEntry(newMenuEntry);
         RibbonApplicationMenuEntryPrimary openMenuEntry = new RibbonApplicationMenuEntryPrimary(
-                RibbonUtils.getRibbonIcon("icons/fileopen.png", 100, 100), "Open Schedule", new ActionListener() {
+                RibbonUtils.getRibbonIcon("icons/fileopen.png", 100, 100), LabelGrabber.INSTANCE.getLabel("open.schedule.button"), new ActionListener() {
 
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -94,7 +94,7 @@ public class RibbonMenu extends RibbonApplicationMenu {
         });
         addMenuEntry(openMenuEntry);
         RibbonApplicationMenuEntryPrimary saveMenuEntry = new RibbonApplicationMenuEntryPrimary(
-                RibbonUtils.getRibbonIcon("icons/filesave.png", 100, 100), "Save Schedule", new ActionListener() {
+                RibbonUtils.getRibbonIcon("icons/filesave.png", 100, 100), LabelGrabber.INSTANCE.getLabel("save.schedule.button"), new ActionListener() {
 
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -110,7 +110,7 @@ public class RibbonMenu extends RibbonApplicationMenu {
         });
         addMenuEntry(saveMenuEntry);
         RibbonApplicationMenuEntryPrimary saveAsMenuEntry = new RibbonApplicationMenuEntryPrimary(
-                RibbonUtils.getRibbonIcon("icons/filesaveas.png", 100, 100), "Save Schedule as...", new ActionListener() {
+                RibbonUtils.getRibbonIcon("icons/filesaveas.png", 100, 100), LabelGrabber.INSTANCE.getLabel("save.as.schedule.button"), new ActionListener() {
 
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -126,7 +126,7 @@ public class RibbonMenu extends RibbonApplicationMenu {
         });
         addMenuEntry(saveAsMenuEntry);
         RibbonApplicationMenuEntryPrimary printMenuEntry = new RibbonApplicationMenuEntryPrimary(
-                RibbonUtils.getRibbonIcon("icons/fileprint.png", 100, 100), "Print Schedule", new ActionListener() {
+                RibbonUtils.getRibbonIcon("icons/fileprint.png", 100, 100), LabelGrabber.INSTANCE.getLabel("print.schedule.button"), new ActionListener() {
 
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -142,7 +142,7 @@ public class RibbonMenu extends RibbonApplicationMenu {
         });
         addMenuEntry(printMenuEntry);
         RibbonApplicationMenuEntryPrimary optionsMenuEntry = new RibbonApplicationMenuEntryPrimary(
-                RibbonUtils.getRibbonIcon("icons/options.png", 100, 100), "Options", new ActionListener() {
+                RibbonUtils.getRibbonIcon("icons/options.png", 100, 100), LabelGrabber.INSTANCE.getLabel("options.button"), new ActionListener() {
 
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -158,7 +158,7 @@ public class RibbonMenu extends RibbonApplicationMenu {
         });
         addMenuEntry(optionsMenuEntry);
         RibbonApplicationMenuEntryPrimary exitMenuEntry = new RibbonApplicationMenuEntryPrimary(
-                RibbonUtils.getRibbonIcon("icons/exit.png", 100, 100), "Exit", new ActionListener() {
+                RibbonUtils.getRibbonIcon("icons/exit.png", 100, 100), LabelGrabber.INSTANCE.getLabel("exit.button"), new ActionListener() {
 
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -184,7 +184,7 @@ public class RibbonMenu extends RibbonApplicationMenu {
         if (mainpanel.getSchedulePanel().getScheduleList().isEmpty()) {
             return true;
         }
-        int result = JOptionPane.showConfirmDialog(Application.get().getMainWindow(), "This will clear the current schedule. Is this OK?", "Confirm", JOptionPane.YES_NO_OPTION, JOptionPane.INFORMATION_MESSAGE, null);
+        int result = JOptionPane.showConfirmDialog(Application.get().getMainWindow(), LabelGrabber.INSTANCE.getLabel("schedule.clear.text"), LabelGrabber.INSTANCE.getLabel("confirm.label"), JOptionPane.YES_NO_OPTION, JOptionPane.INFORMATION_MESSAGE, null);
         if (result == JOptionPane.YES_OPTION) {
             return true;
         }

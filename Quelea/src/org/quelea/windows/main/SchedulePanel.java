@@ -40,6 +40,7 @@ import javax.swing.event.ListDataListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import org.quelea.Application;
+import org.quelea.languages.LabelGrabber;
 import org.quelea.utils.Utils;
 
 /**
@@ -125,18 +126,18 @@ public class SchedulePanel extends JPanel {
                 themeMenu.setVisible(true);
             }
         });
-        themeButton.setToolTipText("Adjust theme for service");
+        themeButton.setToolTipText(LabelGrabber.INSTANCE.getLabel("adjust.theme.tooltip"));
 
         JToolBar toolbar = new JToolBar(JToolBar.VERTICAL);
         toolbar.setFloatable(false);
         removeButton = new JButton(Utils.getImageIcon("icons/remove.png"));
-        removeButton.setToolTipText("Remove song");
+        removeButton.setToolTipText(LabelGrabber.INSTANCE.getLabel("remove.song.schedule.tooltip"));
         removeButton.setRequestFocusEnabled(false);
         removeButton.setEnabled(false);
         removeButton.addActionListener(new RemoveSongScheduleActionListener());
 
         upButton = new JButton(Utils.getImageIcon("icons/up.png"));
-        upButton.setToolTipText("Move selected item up");
+        upButton.setToolTipText(LabelGrabber.INSTANCE.getLabel("move.up.schedule.tooltip"));
         upButton.setRequestFocusEnabled(false);
         upButton.setEnabled(false);
         upButton.addActionListener(new ActionListener() {
@@ -147,7 +148,7 @@ public class SchedulePanel extends JPanel {
         });
 
         downButton = new JButton(Utils.getImageIcon("icons/down.png"));
-        downButton.setToolTipText("Move selected item down");
+        downButton.setToolTipText(LabelGrabber.INSTANCE.getLabel("move.down.schedule.tooltip"));
         downButton.setRequestFocusEnabled(false);
         downButton.setEnabled(false);
         downButton.addActionListener(new ActionListener() {
@@ -175,7 +176,7 @@ public class SchedulePanel extends JPanel {
 
         JToolBar header = new JToolBar();
         header.setFloatable(false);
-        header.add(new JLabel("<html><b>Order of Service</b></html>"));
+        header.add(new JLabel("<html><b>"+LabelGrabber.INSTANCE.getLabel("order.service.heading")+"</b></html>"));
         header.add(Box.createHorizontalGlue());
         header.add(themeButton);
 

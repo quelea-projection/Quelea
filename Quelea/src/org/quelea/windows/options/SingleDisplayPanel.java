@@ -25,6 +25,7 @@ import java.awt.event.ItemListener;
 import java.util.ArrayList;
 import java.util.List;
 import javax.swing.*;
+import org.quelea.languages.LabelGrabber;
 import org.quelea.utils.Utils;
 
 /**
@@ -62,7 +63,7 @@ public class SingleDisplayPanel extends JPanel {
         add(outputSelectPanel);
         if (customPos) {
             outputSelect.setEnabled(false);
-            custom = new JCheckBox("Custom position");
+            custom = new JCheckBox(LabelGrabber.INSTANCE.getLabel("custom.position.text"));
             custom.setSelected(true);
             custom.addItemListener(new ItemListener() {
 
@@ -219,10 +220,10 @@ public class SingleDisplayPanel extends JPanel {
         final GraphicsDevice[] gds = ge.getScreenDevices();
         List<String> descriptions = new ArrayList<>();
         if (none) {
-            descriptions.add("<html><i>None</i></html>");
+            descriptions.add("<html><i>"+LabelGrabber.INSTANCE.getLabel("none.text")+"</i></html>");
         }
         for (int i = 0; i < gds.length; i++) {
-            descriptions.add("Output " + (i + 1));
+            descriptions.add(LabelGrabber.INSTANCE.getLabel("output.text") + " " + (i + 1));
         }
         return new DefaultComboBoxModel<>(descriptions.toArray(new String[descriptions.size()]));
     }

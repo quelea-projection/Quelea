@@ -22,6 +22,7 @@ import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JToolBar;
 import org.quelea.displayable.Displayable;
+import org.quelea.languages.LabelGrabber;
 import org.quelea.utils.Utils;
 
 /**
@@ -38,10 +39,10 @@ public class PreviewPanel extends LivePreviewPanel {
     public PreviewPanel() {
         JToolBar header = new JToolBar();
         header.setFloatable(false);
-        header.add(new JLabel("<html><b>Preview</b></html>"));
+        header.add(new JLabel("<html><b>"+LabelGrabber.INSTANCE.getLabel("preview.heading")+"</b></html>"));
         header.add(new JToolBar.Separator());
-        liveButton = new JButton("Go live", Utils.getImageIcon("icons/2rightarrow.png"));
-        liveButton.setToolTipText("Go live (space)");
+        liveButton = new JButton(LabelGrabber.INSTANCE.getLabel("go.live.text"), Utils.getImageIcon("icons/2rightarrow.png"));
+        liveButton.setToolTipText(LabelGrabber.INSTANCE.getLabel("go.live.text")+" (space)");
         liveButton.setRequestFocusEnabled(false);
         header.add(liveButton);
         liveButton.setEnabled(false);

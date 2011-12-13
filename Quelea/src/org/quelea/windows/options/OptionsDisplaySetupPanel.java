@@ -19,6 +19,7 @@ package org.quelea.windows.options;
 import java.awt.*;
 import javax.swing.JPanel;
 import org.quelea.Application;
+import org.quelea.languages.LabelGrabber;
 import org.quelea.utils.PropertyPanel;
 import org.quelea.utils.QueleaProperties;
 import org.quelea.utils.Utils;
@@ -37,13 +38,13 @@ public class OptionsDisplaySetupPanel extends JPanel implements PropertyPanel {
      * Create a new display setup panel.
      */
     public OptionsDisplaySetupPanel() {
-        setName("Display");
+        setName(LabelGrabber.INSTANCE.getLabel("display.options.heading"));
         setLayout(new BorderLayout());
         JPanel mainPanel = new JPanel();
         mainPanel.setLayout(new GridLayout(1, 2, 30, 0));
-        monitorPanel = new SingleDisplayPanel("Control screen:", "icons/monitor.png", false, false);
+        monitorPanel = new SingleDisplayPanel(LabelGrabber.INSTANCE.getLabel("control.screen.label")+":", "icons/monitor.png", false, false);
         mainPanel.add(monitorPanel);
-        projectorPanel = new SingleDisplayPanel("Projector screen:", "icons/projector.png", true, true);
+        projectorPanel = new SingleDisplayPanel(LabelGrabber.INSTANCE.getLabel("projector.screen.label")+":", "icons/projector.png", true, true);
         mainPanel.add(projectorPanel);
         readProperties();
         add(mainPanel, BorderLayout.CENTER);

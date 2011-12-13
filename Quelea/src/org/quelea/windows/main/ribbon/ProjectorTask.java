@@ -21,6 +21,7 @@ import org.pushingpixels.flamingo.api.common.JCommandButton;
 import org.pushingpixels.flamingo.api.ribbon.JRibbonBand;
 import org.pushingpixels.flamingo.api.ribbon.RibbonElementPriority;
 import org.pushingpixels.flamingo.api.ribbon.RibbonTask;
+import org.quelea.languages.LabelGrabber;
 
 /**
  * The projector task (i.e. group of buttons) displayed on the ribbon. Manages
@@ -33,7 +34,7 @@ public class ProjectorTask extends RibbonTask {
      * Create the projector task.
      */
     public ProjectorTask() {
-        super("Projector", getControlBand());
+        super(LabelGrabber.INSTANCE.getLabel("projector.heading"), getControlBand());
     }
 
     /**
@@ -42,15 +43,15 @@ public class ProjectorTask extends RibbonTask {
      * @return the projector control band.
      */
     private static JRibbonBand getControlBand() {
-        JRibbonBand controlBand = new JRibbonBand("Controls", RibbonUtils.getRibbonIcon("icons/projector.png", 100, 100));
+        JRibbonBand controlBand = new JRibbonBand(LabelGrabber.INSTANCE.getLabel("controls.heading"), RibbonUtils.getRibbonIcon("icons/projector.png", 100, 100));
         RibbonUtils.applyStandardResizePolicies(controlBand);
-        JCommandButton onButton = new JCommandButton("On", RibbonUtils.getRibbonIcon("icons/poweron.png", 100, 100));
+        JCommandButton onButton = new JCommandButton(LabelGrabber.INSTANCE.getLabel("on.button"), RibbonUtils.getRibbonIcon("icons/poweron.png", 100, 100));
         controlBand.addCommandButton(onButton, RibbonElementPriority.TOP);
         onButton.setEnabled(false);
-        JCommandButton offButton = new JCommandButton("Off", RibbonUtils.getRibbonIcon("icons/exit.png", 100, 100));
+        JCommandButton offButton = new JCommandButton(LabelGrabber.INSTANCE.getLabel("off.button"), RibbonUtils.getRibbonIcon("icons/exit.png", 100, 100));
         controlBand.addCommandButton(offButton, RibbonElementPriority.TOP);
         offButton.setEnabled(false);
-        JCommandButton inputButton = new JCommandButton("Switch Input", RibbonUtils.getRibbonIcon("icons/projectorinput.png", 100, 100));
+        JCommandButton inputButton = new JCommandButton(LabelGrabber.INSTANCE.getLabel("switch.input.button"), RibbonUtils.getRibbonIcon("icons/projectorinput.png", 100, 100));
         controlBand.addCommandButton(inputButton, RibbonElementPriority.TOP);
         inputButton.setEnabled(false);
         return controlBand;

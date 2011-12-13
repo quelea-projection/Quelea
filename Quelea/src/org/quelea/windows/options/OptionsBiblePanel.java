@@ -38,6 +38,7 @@ import org.quelea.utils.PropertyPanel;
 import org.quelea.utils.QueleaProperties;
 import org.quelea.utils.SpringUtilities;
 import org.quelea.bible.BibleChangeListener;
+import org.quelea.languages.LabelGrabber;
 import org.quelea.utils.FileFilters;
 import org.quelea.utils.Utils;
 
@@ -54,24 +55,24 @@ public class OptionsBiblePanel extends JPanel implements PropertyPanel, BibleCha
      * Create the options bible panel.
      */
     public OptionsBiblePanel() {
-        setName("Bible");
+        setName(LabelGrabber.INSTANCE.getLabel("bible.options.heading"));
         JPanel biblePanel = new JPanel();
         biblePanel.setLayout(new SpringLayout());
 
-        JLabel defaultLabel = new JLabel("Default bible");
+        JLabel defaultLabel = new JLabel(LabelGrabber.INSTANCE.getLabel("default.bible.label"));
         biblePanel.add(defaultLabel);
         BibleManager.get().registerBibleChangeListener(this);
         defaultBibleComboBox = new JComboBox<>(BibleManager.get().getBibles());
         defaultLabel.setLabelFor(defaultBibleComboBox);
         biblePanel.add(defaultBibleComboBox);
 
-        JLabel maxVerseLabel = new JLabel("Maximum allowed verses");
+        JLabel maxVerseLabel = new JLabel(LabelGrabber.INSTANCE.getLabel("max.verses.label"));
         biblePanel.add(maxVerseLabel);
         maxVersesSpinner = new JSpinner(new SpinnerNumberModel(200, 1, 5000, 1));
         maxVerseLabel.setLabelFor(maxVersesSpinner);
         biblePanel.add(maxVersesSpinner);
         
-        final JButton addBibleButton = new JButton("Add bible");
+        final JButton addBibleButton = new JButton(LabelGrabber.INSTANCE.getLabel("add.bible.label"));
         addBibleButton.addActionListener(new ActionListener() {
 
             @Override
@@ -79,13 +80,13 @@ public class OptionsBiblePanel extends JPanel implements PropertyPanel, BibleCha
                 JFileChooser chooser = new JFileChooser();
                 chooser.setFileFilter(FileFilters.XML_BIBLE);
                 chooser.setAcceptAllFileFilterUsed(false);
-                chooser.showDialog(SwingUtilities.getWindowAncestor(addBibleButton), "Add bible");
+                chooser.showDialog(SwingUtilities.getWindowAncestor(addBibleButton), LabelGrabber.INSTANCE.getLabel("add.bible.label"));
                 File file = chooser.getSelectedFile();
                 try {
                     Utils.copyFile(file, new File(QueleaProperties.get().getBibleDir(), file.getName()));
                 }
                 catch(IOException ex) {
-                    JOptionPane.showMessageDialog(chooser, "Sorry, couldn't copy the bible.", "Error copying", JOptionPane.ERROR);
+                    JOptionPane.showMessageDialog(chooser, LabelGrabber.INSTANCE.getLabel("bible.copy.error.text"), LabelGrabber.INSTANCE.getLabel("bible.copy.error.heading"), JOptionPane.ERROR);
                 }
             }
         });

@@ -26,6 +26,7 @@ import javax.swing.border.EmptyBorder;
 import org.pushingpixels.flamingo.api.ribbon.JRibbon;
 import org.quelea.Application;
 import org.quelea.ScheduleSaver;
+import org.quelea.languages.LabelGrabber;
 import org.quelea.print.Printer;
 import org.quelea.utils.LoggerUtils;
 import org.quelea.utils.Utils;
@@ -85,7 +86,7 @@ public class RibbonPopulator {
         });
         saveButton.setBorder(new EmptyBorder(0, 0, 0, 0));
         saveButton.setBorderPainted(false);
-        saveButton.setToolTipText("Save schedule");
+        saveButton.setToolTipText(LabelGrabber.INSTANCE.getLabel("save.schedule.tooltip"));
         ribbon.addTaskbarComponent(saveButton);
 
         JButton printButton = new JButton(Utils.getImageIcon("icons/fileprint.png", 15, 15));
@@ -98,7 +99,7 @@ public class RibbonPopulator {
         });
         printButton.setBorder(new EmptyBorder(0, 0, 0, 0));
         printButton.setBorderPainted(false);
-        printButton.setToolTipText("Print schedule");
+        printButton.setToolTipText(LabelGrabber.INSTANCE.getLabel("print.schedule.tooltip"));
         ribbon.addTaskbarComponent(printButton);
     }
 }

@@ -31,6 +31,7 @@ import javax.swing.filechooser.FileFilter;
 import org.apache.commons.io.FileUtils;
 import org.quelea.Background;
 import org.quelea.Theme;
+import org.quelea.languages.LabelGrabber;
 import org.quelea.utils.LoggerUtils;
 import org.quelea.utils.Utils;
 import org.quelea.windows.main.LyricCanvas;
@@ -52,7 +53,7 @@ public class ImageButton extends JButton {
      * @param canvas the preview canvas to update.
      */
     public ImageButton(final JTextField imageLocationField, final LyricCanvas canvas) {
-        super("Select...");
+        super(LabelGrabber.INSTANCE.getLabel("select.image.button"));
         fileChooser = new JLocationFileChooser("img");
         fileChooser.setAcceptAllFileFilterUsed(false);
         fileChooser.setFileFilter(new FileFilter() {
@@ -64,7 +65,7 @@ public class ImageButton extends JButton {
 
             @Override
             public String getDescription() {
-                return "Image files";
+                return LabelGrabber.INSTANCE.getLabel("image.files.description");
             }
         });
         addActionListener(new ActionListener() {

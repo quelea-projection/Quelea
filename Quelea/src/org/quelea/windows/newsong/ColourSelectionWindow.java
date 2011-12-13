@@ -29,6 +29,7 @@ import javax.swing.JPanel;
 import javax.swing.JSlider;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
+import org.quelea.languages.LabelGrabber;
 import org.quelea.utils.Utils;
 
 /**
@@ -47,7 +48,7 @@ public class ColourSelectionWindow extends JDialog {
      * @param owner the owner of this dialog.
      */
     public ColourSelectionWindow(Window owner) {
-        super(owner, "Select colour", ModalityType.APPLICATION_MODAL);
+        super(owner, LabelGrabber.INSTANCE.getLabel("select.color.title"), ModalityType.APPLICATION_MODAL);
         setLayout(new BorderLayout());
         setResizable(false);
         wheel = new ColorWheel(new ColorModel(), Color.WHITE);
@@ -63,8 +64,8 @@ public class ColourSelectionWindow extends JDialog {
         });
         add(brightness, BorderLayout.WEST);
         JPanel bottomPanel = new JPanel();
-        confirmButton = new JButton("Select Colour", Utils.getImageIcon("icons/tick.png"));
-        cancelButton = new JButton("Cancel", Utils.getImageIcon("icons/cross.png"));
+        confirmButton = new JButton(LabelGrabber.INSTANCE.getLabel("select.color.button"), Utils.getImageIcon("icons/tick.png"));
+        cancelButton = new JButton(LabelGrabber.INSTANCE.getLabel("cancel.button"), Utils.getImageIcon("icons/cross.png"));
         addHideListeners();
         bottomPanel.add(confirmButton);
         bottomPanel.add(cancelButton);

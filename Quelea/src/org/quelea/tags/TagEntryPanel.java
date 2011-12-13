@@ -42,6 +42,7 @@ import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import org.quelea.SongDatabase;
 import org.quelea.displayable.Song;
+import org.quelea.languages.LabelGrabber;
 import org.quelea.windows.library.LibrarySongList;
 
 /**
@@ -68,7 +69,7 @@ public class TagEntryPanel extends JPanel {
         setLayout(new BorderLayout());
         tagPanel = new TagPanel();
         tagField = new JTextField(20);
-        tagField.setText("<Type a tag name here>");
+        tagField.setText(LabelGrabber.INSTANCE.getLabel("type.tag.name.here.text"));
         tagField.addFocusListener(new FocusAdapter() {
 
             @Override
@@ -174,7 +175,7 @@ public class TagEntryPanel extends JPanel {
         JPanel textPanel = new JPanel();
         textPanel.setLayout(new BoxLayout(textPanel, BoxLayout.X_AXIS));
         if (includeLabel) {
-            textPanel.add(new JLabel("Tags:"));
+            textPanel.add(new JLabel(LabelGrabber.INSTANCE.getLabel("tags.colon.label")));
             textPanel.add(Box.createRigidArea(new Dimension(10, 0)));
         }
         textPanel.add(tagField);

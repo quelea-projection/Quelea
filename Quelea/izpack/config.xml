@@ -67,6 +67,10 @@
             <description>Bibles</description>
             <file src="bibles" targetdir="$INSTALL_PATH" override="false"/>
         </pack>
+        <pack name="languages" required="yes" preselected="yes" hidden="true">
+            <description>Language files</description>
+            <file src="languages" targetdir="$INSTALL_PATH" override="true"/>
+        </pack>
         <pack name="source code" required="no" preselected="yes">
             <description>Source code</description>
             <file src="src" targetdir="$INSTALL_PATH"/>
