@@ -55,8 +55,12 @@ public class SingleDisplayPanel extends JPanel {
             boolean customPos) {
         this.none = none;
         setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
-        add(new JLabel(caption));
-        add(new JLabel(Utils.getImageIcon(iconLocation)));
+        JLabel captionLabel = new JLabel(caption);
+        captionLabel.setAlignmentX(0.5f);
+        add(captionLabel);
+        JLabel iconLabel = new JLabel(Utils.getImageIcon(iconLocation));
+        iconLabel.setAlignmentX(0.5f);
+        add(iconLabel);
         outputSelect = new JComboBox<>(getAvailableScreens(none));
         JPanel outputSelectPanel = new JPanel();
         outputSelectPanel.add(outputSelect);
