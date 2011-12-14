@@ -5,6 +5,6 @@ Priority: optional
 Depends: openjdk-7-jre
 Recommends: vlc
 Homepage: www.quelea.org
-Architecture: i386
+Architecture: all
 Maintainer: Michael Berry <michael@quelea.org>
 Description: Quelea is a lyrics projection package designed for churches that supports importing and displaying songs, scripture, videos, and more. It can also print out chord sheets, store chords and transpose chords to various songs.
