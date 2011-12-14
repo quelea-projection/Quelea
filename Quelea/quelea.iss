@@ -42,6 +42,10 @@ var
   Result1 : Boolean;
 begin
   JavaInstalled := RegKeyExists(HKLM,'SOFTWARE\JavaSoft\Java Runtime Environment\1.7');
+  if IsWin64 then
+  begin
+    JavaInstalled := RegKeyExists(HKLM64,'SOFTWARE\JavaSoft\Java Runtime Environment\1.7');
+  end;
   if JavaInstalled then
   begin
     Result := true;
