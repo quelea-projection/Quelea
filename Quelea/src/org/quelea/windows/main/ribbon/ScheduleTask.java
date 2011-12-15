@@ -146,18 +146,18 @@ public class ScheduleTask extends RibbonTask {
                 checkEditRemoveButtons(editSongButton, removeSongButton);
             }
         });
-        scheduleList.addFocusListener(new FocusListener() {
-
-            @Override
-            public void focusGained(FocusEvent e) {
-                checkEditRemoveButtons(editSongButton, removeSongButton);
-            }
-
-            @Override
-            public void focusLost(FocusEvent e) {
-                checkEditRemoveButtons(editSongButton, removeSongButton);
-            }
-        });
+//        scheduleList.addFocusListener(new FocusListener() {
+//
+//            @Override
+//            public void focusGained(FocusEvent e) {
+//                checkEditRemoveButtons(editSongButton, removeSongButton);
+//            }
+//
+//            @Override
+//            public void focusLost(FocusEvent e) {
+//                checkEditRemoveButtons(editSongButton, removeSongButton);
+//            }
+//        });
         final LibrarySongList songList = mainPanel.getLibraryPanel().getLibrarySongPanel().getSongList();
         songList.addListSelectionListener(new ListSelectionListener() {
 
@@ -166,18 +166,18 @@ public class ScheduleTask extends RibbonTask {
                 checkAddButton(addSongButton);
             }
         });
-        songList.addFocusListener(new FocusListener() {
-
-            @Override
-            public void focusGained(FocusEvent e) {
-                checkAddButton(addSongButton);
-            }
-
-            @Override
-            public void focusLost(FocusEvent e) {
-                checkAddButton(addSongButton);
-            }
-        });
+//        songList.addFocusListener(new FocusListener() {
+//
+//            @Override
+//            public void focusGained(FocusEvent e) {
+//                checkAddButton(addSongButton);
+//            }
+//
+//            @Override
+//            public void focusLost(FocusEvent e) {
+//                checkAddButton(addSongButton);
+//            }
+//        });
 
         return songBand;
     }
