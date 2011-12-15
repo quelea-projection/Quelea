@@ -97,6 +97,7 @@ public class OptionsDisplaySetupPanel extends JPanel implements PropertyPanel {
         if (!Utils.isFrameOnScreen(mainWindow, monitorPanel.getOutputScreen())) {
             Utils.centreOnMonitor(mainWindow, monitorPanel.getOutputScreen());
         }
+        Application.get().getMainWindow().repaint();
     }
 
 }

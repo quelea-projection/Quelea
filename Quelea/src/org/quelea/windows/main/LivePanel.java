@@ -25,6 +25,7 @@ import java.awt.event.KeyListener;
 import javax.swing.JLabel;
 import javax.swing.JToggleButton;
 import javax.swing.JToolBar;
+import org.quelea.Application;
 import org.quelea.displayable.Displayable;
 import org.quelea.languages.LabelGrabber;
 import org.quelea.utils.QueleaProperties;
@@ -99,6 +100,7 @@ public class LivePanel extends LivePreviewPanel {
                 for (LyricWindow window : getWindows()) {
                     window.setVisible(!window.isVisible());
                 }
+                Application.get().getMainWindow().repaint();
             }
         });
         header.add(hide);
