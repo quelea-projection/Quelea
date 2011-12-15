@@ -354,6 +354,7 @@ public class LyricCanvas extends Canvas {
      */
     public void toggleClear() {
         cleared ^= true; //invert
+        valid = false;
         repaint();
     }
 
@@ -371,6 +372,7 @@ public class LyricCanvas extends Canvas {
      */
     public void toggleBlack() {
         blacked ^= true; //invert
+        valid = false;
         repaint();
     }
 
@@ -438,7 +440,7 @@ public class LyricCanvas extends Canvas {
     public String[] getText() {
         return Arrays.copyOf(text, text.length);
     }
-
+    
     /**
      * Get the notice drawer, used for drawing notices onto this lyrics
      * canvas.
