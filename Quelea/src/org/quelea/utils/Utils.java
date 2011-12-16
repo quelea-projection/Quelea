@@ -54,6 +54,7 @@ import javax.swing.ImageIcon;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.SwingUtilities;
 
 /**
  * General utility class containing a bunch of static methods.
@@ -219,15 +220,19 @@ public final class Utils {
      * @param frame      the frame to centre.
      * @param monitorNum the monitor number to centre the frame on.
      */
-    public static void centreOnMonitor(JFrame frame, int monitorNum) {
+    public static void centreOnMonitor(final JFrame frame, int monitorNum) {
         GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
         final GraphicsDevice[] gds = ge.getScreenDevices();
         Rectangle bounds = gds[monitorNum].getDefaultConfiguration().getBounds();
-        int centreX = (int) (bounds.getMaxX() - bounds.getMinX()) / 2;
-        int centreY = (int) (bounds.getMaxY() - bounds.getMinY()) / 2;
-        centreX += bounds.getMinX();
-        centreY += bounds.getMinY();
-        frame.setLocation(centreX - frame.getWidth() / 2, centreY - frame.getHeight() / 2);
+        final int centreX = (int)(((int) (bounds.getMaxX() - bounds.getMinX()) / 2)+bounds.getMinX());
+        final int centreY = (int)(((int) (bounds.getMaxY() - bounds.getMinY()) / 2)+bounds.getMinY());
+        SwingUtilities.invokeLater(new Runnable() {
+
+            @Override
+            public void run() {
+                frame.setLocation(centreX - frame.getWidth() / 2, centreY - frame.getHeight() / 2);
+            }
+        });
     }
 
     /**

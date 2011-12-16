@@ -25,6 +25,7 @@ import java.awt.event.KeyListener;
 import javax.swing.JLabel;
 import javax.swing.JToggleButton;
 import javax.swing.JToolBar;
+import javax.swing.SwingUtilities;
 import org.quelea.Application;
 import org.quelea.displayable.Displayable;
 import org.quelea.languages.LabelGrabber;
@@ -97,8 +98,15 @@ public class LivePanel extends LivePreviewPanel {
                 if (QueleaProperties.get().getProjectorScreen() == -1) {
                     return;
                 }
-                for (LyricWindow window : getWindows()) {
-                    window.setVisible(!window.isVisible());
+                for (final LyricWindow window : getWindows()) {
+                    SwingUtilities.invokeLater(new Runnable() {
+
+                        @Override
+                        public void run() {
+                            window.setVisible(!window.isVisible());
+                        }
+                    });
+                    
                 }
                 Application.get().getMainWindow().repaint();
             }
