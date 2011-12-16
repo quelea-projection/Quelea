@@ -18,6 +18,7 @@ package org.quelea.windows.options;
 
 import java.awt.*;
 import javax.swing.JPanel;
+import javax.swing.SwingUtilities;
 import org.quelea.Application;
 import org.quelea.languages.LabelGrabber;
 import org.quelea.utils.PropertyPanel;
@@ -91,8 +92,15 @@ public class OptionsDisplaySetupPanel extends JPanel implements PropertyPanel {
             if (lyricWindow == null) {
                 lyricWindow = new LyricWindow(projectorPanel.getOutputBounds());
             }
-            lyricWindow.setVisible(true);
-            lyricWindow.setArea(projectorPanel.getOutputBounds());
+            final LyricWindow fiLyricWindow = lyricWindow; //Fudge for AIC
+            SwingUtilities.invokeLater(new Runnable() {
+
+                @Override
+                public void run() {
+                    fiLyricWindow.setVisible(true);
+                    fiLyricWindow.setArea(projectorPanel.getOutputBounds());
+                }
+            });
         }
         if (!Utils.isFrameOnScreen(mainWindow, monitorPanel.getOutputScreen())) {
             Utils.centreOnMonitor(mainWindow, monitorPanel.getOutputScreen());

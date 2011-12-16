@@ -25,6 +25,7 @@ import java.awt.Toolkit;
 import java.awt.image.BufferedImage;
 import javax.swing.JPanel;
 import javax.swing.JWindow;
+import javax.swing.SwingUtilities;
 
 /**
  * The full screen window used for displaying the projection.
@@ -62,18 +63,24 @@ public class LyricWindow extends JWindow {
      * Set the area of the lyric window.
      * @param area the area of the window.
      */
-    public final void setArea(Rectangle area) {
-        if(area==null) {
-            setVisible(false);
-        }
-        else {
-            setVisible(true);
-        }
-        if (canvas != null) {
-            canvas.setPreferredSize(new Dimension((int) (area.getMaxX() - area.getMinX()), (int) (area.getMaxY() - area.getMinY())));
-        }
-        setSize((int) (area.getMaxX() - area.getMinX()), (int) (area.getMaxY() - area.getMinY()));
-        setLocation((int) area.getMinX(), (int) area.getMinY());
+    public final void setArea(final Rectangle area) {
+        SwingUtilities.invokeLater(new Runnable() {
+
+            @Override
+            public void run() {
+                if (area == null) {
+                    setVisible(false);
+                }
+                else {
+                    setVisible(true);
+                }
+                if (canvas != null) {
+                    canvas.setPreferredSize(new Dimension((int) (area.getMaxX() - area.getMinX()), (int) (area.getMaxY() - area.getMinY())));
+                }
+                setSize((int) (area.getMaxX() - area.getMinX()), (int) (area.getMaxY() - area.getMinY()));
+                setLocation((int) area.getMinX(), (int) area.getMinY());
+            }
+        });
     }
 
     /**
