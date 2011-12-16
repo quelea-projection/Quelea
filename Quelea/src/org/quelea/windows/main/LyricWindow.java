@@ -68,12 +68,6 @@ public class LyricWindow extends JWindow {
 
             @Override
             public void run() {
-                if (area == null) {
-                    setVisible(false);
-                }
-                else {
-                    setVisible(true);
-                }
                 if (canvas != null) {
                     canvas.setPreferredSize(new Dimension((int) (area.getMaxX() - area.getMinX()), (int) (area.getMaxY() - area.getMinY())));
                 }
