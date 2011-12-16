@@ -64,8 +64,9 @@
         <echo message="Building deb package for Ubuntu / Debian installs"/>
         <deb destfile="${dist.jar.dir}/Quelea-temp.deb" control="control">
             <tarfileset dir="${dist.jar.dir}"
-                        excludes="${dist.jar.dir}/standalone"
-                        prefix="/usr/share/quelea"/>
+                        excludes="${dist.jar.dir}/standalone,${dist.jar.dir}/lib/native"
+                        prefix="/usr/share/quelea"
+                        />
             <tarfileset file="quelea.desktop"
                         prefix="/usr/share/applications"/>
         </deb>
