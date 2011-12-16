@@ -60,16 +60,25 @@
         <copy file="${basedir}/Quelea.iss" todir="${dist.jar.dir}"/>
         <copy file="${basedir}/build-install.bat" todir="${dist.jar.dir}"/>
         <copy file="${basedir}/licenses/gplv3.txt" tofile="${dist.jar.dir}/license.txt"/>
+        <copy file="${basedir}/licenses/copyright" tofile="${dist.jar.dir}/copyright"/>
         
         <echo message="Building deb package for Ubuntu / Debian installs"/>
         <deb destfile="${dist.jar.dir}/Quelea-temp.deb" control="control">
             <tarfileset dir="${dist.jar.dir}"
-                        excludes="${dist.jar.dir}/standalone,${dist.jar.dir}/lib/native"
                         prefix="/usr/share/quelea"
-                        />
+                        >
+                <exclude name="lib/native/**"/> 
+                <exclude name="copyright"/> 
+                <exclude name="license.txt"/> 
+            </tarfileset>
             <tarfileset file="quelea.desktop"
                         prefix="/usr/share/applications"/>
+            <tarfileset file="${dist.jar.dir}/copyright"
+                        username="root"
+                        group="root"
+                        prefix="/usr/share/doc/quelea"/>
         </deb>
+        <delete file="${dist.jar.dir}/copyright"/>
         <mkdir dir="${dist.jar.dir}/standalone"/>
         <move file="${dist.jar.dir}/Quelea-temp.deb" tofile="${DebInstaller}"/>
         
@@ -78,7 +87,7 @@
         
         <echo message="Generating windows installer using inno setup."/>
         <echo message="For this to work inno setup needs to be installed and the appropriate paths set in build-install.bat. This will only work on Windows."/>
-        <launch4j configFile="launch4j/config.xml" /> <!-- Generate exe from jar -->
+        <launch4j configFile="launch4j/config.xml" />  Generate exe from jar 
         <exec dir="${dist.jar.dir}" executable="cmd" failifexecutionfails="false" failonerror="false">
             <arg value="/c build-install.bat"/>
         </exec>
