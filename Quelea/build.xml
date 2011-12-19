@@ -61,12 +61,12 @@
         <copy file="${basedir}/build-install.bat" todir="${dist.jar.dir}"/>
         <copy file="${basedir}/licenses/gplv3.txt" tofile="${dist.jar.dir}/license.txt"/>
         <copy file="${basedir}/licenses/copyright" tofile="${dist.jar.dir}/copyright"/>
+        <copy file="${basedir}/changelogs/changelog-${quelea.version}.gz" tofile="${dist.jar.dir}/changelog.gz"/>
         
         <echo message="Building deb package for Ubuntu / Debian installs"/>
         <deb destfile="${dist.jar.dir}/Quelea-temp.deb" control="control">
             <tarfileset dir="${dist.jar.dir}"
-                        prefix="/usr/share/quelea"
-                        >
+                        prefix="/usr/share/quelea">
                 <exclude name="lib/native/**"/> 
                 <exclude name="copyright"/> 
                 <exclude name="license.txt"/> 
@@ -77,8 +77,13 @@
                         username="root"
                         group="root"
                         prefix="/usr/share/doc/quelea"/>
+            <tarfileset file="${dist.jar.dir}/changelog.gz"
+                        username="root"
+                        group="root"
+                        prefix="/usr/share/doc/quelea"/>
         </deb>
         <delete file="${dist.jar.dir}/copyright"/>
+        <delete file="${dist.jar.dir}/changelog.gz"/>
         <mkdir dir="${dist.jar.dir}/standalone"/>
         <move file="${dist.jar.dir}/Quelea-temp.deb" tofile="${DebInstaller}"/>
         

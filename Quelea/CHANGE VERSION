@@ -9,3 +9,6 @@ When changing the version number, it needs to be changed in :
 7) launch4j/config.xml
 
 This should probably all be automated at some point!
+
+Remember changelogs need to go in changelogs/ folder as .gz files WITH MAXIMUM
+COMPRESSION ("gzip -9"). Otherwise deb package gets a lintian warning.
