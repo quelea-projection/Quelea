@@ -60,45 +60,45 @@
         <copy file="${basedir}/Quelea.iss" todir="${dist.jar.dir}"/>
         <copy file="${basedir}/build-install.bat" todir="${dist.jar.dir}"/>
         <copy file="${basedir}/licenses/gplv3.txt" tofile="${dist.jar.dir}/license.txt"/>
-        <copy file="${basedir}/licenses/copyright" tofile="${dist.jar.dir}/copyright"/>
-        <copy file="${basedir}/changelogs/changelog-${quelea.version}.gz" tofile="${dist.jar.dir}/changelog.gz"/>
+        <mkdir dir="${dist.jar.dir}/queleadoc" />
+        <copy file="${basedir}/licenses/copyright" tofile="${dist.jar.dir}/queleadoc/copyright"/>
+        <copy file="${basedir}/changelogs/changelog-${quelea.version}.gz" tofile="${dist.jar.dir}/queleadoc/changelog.gz"/>
         
         <echo message="Building deb package for Ubuntu / Debian installs"/>
-        <deb destfile="${dist.jar.dir}/Quelea-temp.deb" control="control">
+        <deb destfile="${dist.jar.dir}/Quelea-temp.deb" control="control" verbose="true">
             <tarfileset dir="${dist.jar.dir}"
                         prefix="/usr/share/quelea">
                 <exclude name="lib/native/**"/> 
+                <exclude name="lib/junit/**"/> 
+                <exclude name="lib/junit_4/**"/> 
+                <exclude name="lib/**javadoc.jar"/> 
                 <exclude name="copyright"/> 
                 <exclude name="license.txt"/> 
             </tarfileset>
+            <tarfileset dir="${dist.jar.dir}/queleadoc"
+                        username="root"
+                        group="root"
+                        prefix="/usr/share/doc/quelea">
+            </tarfileset>
             <tarfileset file="quelea.desktop"
                         prefix="/usr/share/applications"/>
-            <tarfileset file="${dist.jar.dir}/copyright"
-                        username="root"
-                        group="root"
-                        prefix="/usr/share/doc/quelea"/>
-            <tarfileset file="${dist.jar.dir}/changelog.gz"
-                        username="root"
-                        group="root"
-                        prefix="/usr/share/doc/quelea"/>
         </deb>
-        <delete file="${dist.jar.dir}/copyright"/>
-        <delete file="${dist.jar.dir}/changelog.gz"/>
+        <delete dir="${dist.jar.dir}/queleadoc"/>
         <mkdir dir="${dist.jar.dir}/standalone"/>
         <move file="${dist.jar.dir}/Quelea-temp.deb" tofile="${DebInstaller}"/>
         
-        <echo message="Building cross platform installer"/>
+<!--        <echo message="Building cross platform installer"/>
         <izpack input="${basedir}/izpack/config.xml" output="${CPInstaller}" basedir="${dist.jar.dir}"/>
         
         <echo message="Generating windows installer using inno setup."/>
         <echo message="For this to work inno setup needs to be installed and the appropriate paths set in build-install.bat. This will only work on Windows."/>
         <launch4j configFile="launch4j/config.xml" />  
-        <!-- Generate exe from jar -->
+         Generate exe from jar 
         <exec dir="${dist.jar.dir}" executable="cmd" failifexecutionfails="false" failonerror="false">
             <arg value="/c build-install.bat"/>
         </exec>
         <move file="${dist.jar.dir}/Output/Quelea.exe" tofile="${WindowsInstaller}" failonerror="false"/>
-        <delete dir="${dist.jar.dir}/Output" verbose="true" failonerror="false"/>
+        <delete dir="${dist.jar.dir}/Output" verbose="true" failonerror="false"/>-->
         
 <!--        <zip destfile="${Portable}" basedir="${dist.jar.dir}" excludes="standalone/"/>-->
     </target>
