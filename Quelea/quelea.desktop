@@ -7,4 +7,4 @@ Type=Application
 Name=Quelea
 Icon=/usr/share/quelea/img/logo.png
 Comment=Projection software for churches
-Exec=java -Xms1024m -Xmx1024m -jar /usr/share/quelea/Quelea.jar
+Exec=/usr/share/quelea/launch.sh
