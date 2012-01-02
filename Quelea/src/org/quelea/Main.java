@@ -37,6 +37,7 @@ import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
+import org.quelea.languages.LabelGrabber;
 import org.quelea.splash.SplashWindow;
 
 /**
@@ -66,10 +67,9 @@ public final class Main {
 
         final SplashWindow splashWindow = new SplashWindow();
         splashWindow.setVisible(true);
-        setLaf();
 
         new UserFileChecker(QueleaProperties.getQueleaUserHome()).checkUserFiles();
-
+        
         GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
         final GraphicsDevice[] gds = ge.getScreenDevices();
         LOGGER.log(Level.INFO, "Number of displays: {0}", gds.length);
@@ -85,7 +85,7 @@ public final class Main {
             controlScreen = controlScreenProp;
         }
         final boolean hidden;
-        if (!QueleaProperties.get().isProjectorModeCoords() && (projectorScreen >= gds.length || projectorScreen < 0)) {
+        if(!QueleaProperties.get().isProjectorModeCoords() && (projectorScreen >= gds.length || projectorScreen < 0)) {
             hidden = true;
         }
         else {
@@ -108,8 +108,16 @@ public final class Main {
         fullScreenWindow.toFront();
 
         LOGGER.log(Level.INFO, "Loading bibles");
-        BibleManager.get(); //Pre-load bibles
-        LOGGER.log(Level.INFO, "Loading bibles done");
+        final Thread bibleLoader = new Thread() {
+
+            @Override
+            public void run() {
+                BibleManager.get();
+            }
+        };
+        bibleLoader.start();
+//        BibleManager.get(); //Pre-load bibles
+//        LOGGER.log(Level.INFO, "Loading bibles done");
 
         LOGGER.log(Level.INFO, "Registering dictionary");
         try {
@@ -122,6 +130,7 @@ public final class Main {
         }
         LOGGER.log(Level.INFO, "Registered dictionary");
 
+        setLaf();
         SwingUtilities.invokeLater(new Runnable() {
 
             @Override
@@ -142,14 +151,18 @@ public final class Main {
                 LOGGER.log(Level.INFO, "Registered canvases.");
 
                 LOGGER.log(Level.INFO, "Final loading bits");
+                try {
+                    bibleLoader.join(); //Make sure bibleloader has finished loading
+                }
+                catch(InterruptedException ex) {
+                }
                 Utils.centreOnMonitor(mainWindow, controlScreen);
-                mainWindow.setVisible(true);
-                mainWindow.toFront();
-                new ShortcutManager().addShortcuts();
-                splashWindow.setVisible(false);
-                LOGGER.log(Level.INFO, "Loaded everything.");
-
                 showWarning(gds.length);
+                mainWindow.toFront();
+                splashWindow.setVisible(false);
+                mainWindow.setVisible(true);
+                new ShortcutManager().addShortcuts();
+                LOGGER.log(Level.INFO, "Loaded everything.");
 
                 if(args.length > 0) {
                     LOGGER.log(Level.INFO, "Opening schedule through argument: {0}", args[0]);
@@ -168,12 +181,12 @@ public final class Main {
             @Override
             public void run() {
                 try {
-                    UIManager.setLookAndFeel(new SubstanceBusinessLookAndFeel());
+//                    UIManager.setLookAndFeel(QueleaProperties.get().getLaf());
 //            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-//            UIManager.setLookAndFeel("com.sun.java.swing.plaf.windows.WindowsLookAndFeel");
+            UIManager.setLookAndFeel("javax.swing.plaf.nimbus.NimbusLookAndFeel");
                 }
                 catch(Exception ex) {
-                    LOGGER.log(Level.INFO, "Couldn't set the look and feel to substance.", ex);
+                    LOGGER.log(Level.INFO, "Couldn't set the look and feel.", ex);
                 }
 
                 JFrame.setDefaultLookAndFeelDecorated(true);
@@ -188,9 +201,7 @@ public final class Main {
      */
     private static void showWarning(int numMonitors) {
         if(numMonitors <= 1 && QueleaProperties.get().showSingleMonitorWarning()) {
-            JOptionPane.showMessageDialog(mainWindow, "Looks like you've only got one monitor installed. "
-                    + "This is fine if you're just using Quelea to prepare some schedules, but if you're "
-                    + "using it in a live setting Quelea needs 2 monitors to work properly.", "Only one monitor",
+            JOptionPane.showMessageDialog(mainWindow, LabelGrabber.INSTANCE.getLabel("one.monitor.warning"), LabelGrabber.INSTANCE.getLabel("one.monitor.title"),
                     JOptionPane.WARNING_MESSAGE, null);
         }
     }

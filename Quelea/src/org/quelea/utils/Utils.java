@@ -224,15 +224,20 @@ public final class Utils {
         GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
         final GraphicsDevice[] gds = ge.getScreenDevices();
         Rectangle bounds = gds[monitorNum].getDefaultConfiguration().getBounds();
-        final int centreX = (int)(((int) (bounds.getMaxX() - bounds.getMinX()) / 2)+bounds.getMinX());
-        final int centreY = (int)(((int) (bounds.getMaxY() - bounds.getMinY()) / 2)+bounds.getMinY());
-        SwingUtilities.invokeLater(new Runnable() {
-
+        final int centreX = (int) (((int) (bounds.getMaxX() - bounds.getMinX()) / 2) + bounds.getMinX());
+        final int centreY = (int) (((int) (bounds.getMaxY() - bounds.getMinY()) / 2) + bounds.getMinY());
+        Runnable locationSetter = new Runnable() {
             @Override
             public void run() {
                 frame.setLocation(centreX - frame.getWidth() / 2, centreY - frame.getHeight() / 2);
             }
-        });
+        };
+        if(SwingUtilities.isEventDispatchThread()) {
+            locationSetter.run();
+        }
+        else {
+            SwingUtilities.invokeLater(locationSetter);
+        }
     }
 
     /**

@@ -91,6 +91,15 @@ public final class QueleaProperties extends Properties {
     public File getLanguageFile() {
         return new File("languages", getProperty("language.file", "gb.lang"));
     }
+    
+    /**
+     * Get the look and feel property that should be used as specified in the 
+     * properties file.
+     * @return the look and feel string name.
+     */
+    public String getLaf() {
+        return getProperty("laf", "");
+    }
 
     /**
      * Get the Quelea home directory in the user's directory.

@@ -32,6 +32,7 @@ import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.ListSelectionModel;
+import javax.swing.SwingUtilities;
 import javax.swing.border.EmptyBorder;
 import org.quelea.displayable.Displayable;
 import org.quelea.displayable.TransferDisplayable;
@@ -93,13 +94,23 @@ public class ImageListPanel extends JPanel {
      * Add the files to the given model.
      * @param model the model to add files to.
      */
-    private void addFiles(DefaultListModel<ImageDisplayable> model) {
-        File[] files = new File(dir).listFiles();
-        for (File file : files) {
-            if (Utils.fileIsImage(file)) {
-                model.addElement(new ImageDisplayable(file));
+    private void addFiles(final DefaultListModel<ImageDisplayable> model) {
+        final File[] files = new File(dir).listFiles();
+        new Thread() {
+            @Override
+            public void run() {
+                for(final File file : files) {
+                    if(Utils.fileIsImage(file)) {
+                        SwingUtilities.invokeLater(new Runnable() {
+                            @Override
+                            public void run() {
+                                model.addElement(new ImageDisplayable(file));
+                            }
+                        });
+                    }
+                }
             }
-        }
+        }.start();
     }
 
     /**
