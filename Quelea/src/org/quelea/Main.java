@@ -181,9 +181,7 @@ public final class Main {
             @Override
             public void run() {
                 try {
-//                    UIManager.setLookAndFeel(QueleaProperties.get().getLaf());
-//            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-            UIManager.setLookAndFeel("javax.swing.plaf.nimbus.NimbusLookAndFeel");
+                    UIManager.setLookAndFeel(QueleaProperties.get().getLaf());
                 }
                 catch(Exception ex) {
                     LOGGER.log(Level.INFO, "Couldn't set the look and feel.", ex);
