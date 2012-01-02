@@ -109,11 +109,10 @@ public final class Main {
             @Override
             public void run() {
                 BibleManager.get();
+                LOGGER.log(Level.INFO, "Loading bibles done");
             }
         };
         bibleLoader.start();
-//        BibleManager.get(); //Pre-load bibles
-//        LOGGER.log(Level.INFO, "Loading bibles done");
 
         LOGGER.log(Level.INFO, "Registering dictionary");
         try {
