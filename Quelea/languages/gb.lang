@@ -170,3 +170,5 @@ check.uncheck.all.text=Check/Uncheck all
 delete.theme.confirm.title=Confirm delete
 delete.theme.question=Really delete this theme?
 too.many.verses.error=Sorry, can't display this many verses... please try a smaller number.
+one.monitor.warning=Looks like you've only got one monitor installed. This is fine if you're just using Quelea to prepare some schedules, but if you're using it in a live setting Quelea needs 2 monitors to work properly.
+one.monitor.title=Only one monitor
