@@ -32,11 +32,7 @@ import java.io.File;
 import java.net.MalformedURLException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.swing.JDialog;
-import javax.swing.JFrame;
-import javax.swing.JOptionPane;
-import javax.swing.SwingUtilities;
-import javax.swing.UIManager;
+import javax.swing.*;
 import org.quelea.languages.LabelGrabber;
 import org.quelea.splash.SplashWindow;
 
@@ -183,7 +179,7 @@ public final class Main {
                 try {
                     UIManager.setLookAndFeel(QueleaProperties.get().getLaf());
                 }
-                catch(Exception ex) {
+                catch(ClassNotFoundException | InstantiationException | IllegalAccessException | UnsupportedLookAndFeelException ex) {
                     LOGGER.log(Level.INFO, "Couldn't set the look and feel.", ex);
                 }
 
