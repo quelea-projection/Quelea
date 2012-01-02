@@ -19,22 +19,20 @@ package org.quelea;
 import com.inet.jortho.SpellChecker;
 import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
-import org.pushingpixels.substance.api.skin.SubstanceBusinessLookAndFeel;
+import java.io.File;
+import java.net.MalformedURLException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.swing.*;
 import org.quelea.bible.BibleManager;
+import org.quelea.languages.LabelGrabber;
+import org.quelea.splash.SplashWindow;
 import org.quelea.utils.LoggerUtils;
 import org.quelea.utils.QueleaProperties;
 import org.quelea.utils.UpdateChecker;
 import org.quelea.utils.Utils;
 import org.quelea.windows.main.LyricWindow;
 import org.quelea.windows.main.MainWindow;
-
-import java.io.File;
-import java.net.MalformedURLException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import javax.swing.*;
-import org.quelea.languages.LabelGrabber;
-import org.quelea.splash.SplashWindow;
 
 /**
  * The main class, sets everything in motion...
