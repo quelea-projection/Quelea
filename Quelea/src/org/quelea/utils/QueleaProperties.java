@@ -35,7 +35,6 @@ public final class QueleaProperties extends Properties {
     public static final Version VERSION = new Version("0.4.2");
     private static final QueleaProperties INSTANCE = new QueleaProperties();
 //    private static final Logger LOGGER = LoggerUtils.getLogger();
-    private static final Color ACTIVE_SELECTION = new Color(200, 255, 255);
 
     /**
      * Load the properties from the properties file.
@@ -418,7 +417,14 @@ public final class QueleaProperties extends Properties {
      * @return the colour used to signify an active list.
      */
     public Color getActiveSelectionColor() {
-        return ACTIVE_SELECTION;
+        String[] color = getProperty("active.selection.color").split(",");
+        return new Color(Integer.parseInt(color[0].trim()),
+                Integer.parseInt(color[1].trim()),
+                Integer.parseInt(color[2].trim()));
+    }
+    
+    public static void main(String[] args) {
+        System.out.println(INSTANCE.getProperty("active.selection.color"));
     }
 
     /**
