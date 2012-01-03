@@ -18,9 +18,12 @@
 package org.quelea.powerpoint;
 
 import java.io.IOException;
+import javax.swing.JOptionPane;
 import org.apache.poi.hslf.HSLFSlideShow;
 import org.apache.poi.hslf.model.Slide;
 import org.apache.poi.hslf.usermodel.SlideShow;
+import org.quelea.Application;
+import org.quelea.languages.LabelGrabber;
 
 /**
  * A presentation that can be displayed. At the moment represents a powerpoint
@@ -41,6 +44,9 @@ public class Presentation {
             slideshow = new SlideShow(new HSLFSlideShow(file));
             slides = makeSlides();
         } catch (IOException ex) {
+            JOptionPane.showMessageDialog(Application.get().getMainWindow(),
+                    LabelGrabber.INSTANCE.getLabel("adding.presentation.error.message"),
+                    LabelGrabber.INSTANCE.getLabel("adding.presentation.error.title"), JOptionPane.ERROR_MESSAGE);
             throw new RuntimeException("Couldn't find " + file, ex);
         }
     }

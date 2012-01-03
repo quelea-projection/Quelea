@@ -1,27 +1,26 @@
-/* 
- * This file is part of Quelea, free projection software for churches.
- * Copyright (C) 2011 Michael Berry
- * 
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- * 
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- * 
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+/*
+ * This file is part of Quelea, free projection software for churches. Copyright
+ * (C) 2011 Michael Berry
+ *
+ * This program is free software: you can redistribute it and/or modify it under
+ * the terms of the GNU General Public License as published by the Free Software
+ * Foundation, either version 3 of the License, or (at your option) any later
+ * version.
+ *
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License along with
+ * this program. If not, see <http://www.gnu.org/licenses/>.
  */
 package org.quelea.windows.main.ribbon;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.FocusEvent;
-import java.awt.event.FocusListener;
 import java.io.File;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
@@ -44,6 +43,7 @@ import org.quelea.languages.LabelGrabber;
 import org.quelea.mail.Mailer;
 import org.quelea.utils.Utils;
 import org.quelea.powerpoint.PowerpointFileFilter;
+import org.quelea.utils.LoggerUtils;
 import org.quelea.utils.VideoFileFilter;
 import org.quelea.windows.library.LibrarySongList;
 import org.quelea.windows.main.AddSongActionListener;
@@ -56,9 +56,12 @@ import org.quelea.windows.main.StatusPanel;
 /**
  * The schedule task (i.e. group of buttons) displayed on the ribbon. Manages
  * all the schedule related actions.
+ *
  * @author Michael
  */
 public class ScheduleTask extends RibbonTask {
+    
+    private static final Logger LOGGER = LoggerUtils.getLogger();
 
     /**
      * Create a new schedule task.
@@ -76,17 +79,17 @@ public class ScheduleTask extends RibbonTask {
     private static void checkEditRemoveButtons(JCommandButton editSongButton, JCommandButton removeSongButton) {
         final MainPanel mainPanel = Application.get().getMainWindow().getMainPanel();
         final ScheduleList scheduleList = mainPanel.getSchedulePanel().getScheduleList();
-        if (!scheduleList.isFocusOwner()) {
+        if(!scheduleList.isFocusOwner()) {
             editSongButton.setEnabled(false);
             removeSongButton.setEnabled(false);
             return;
         }
-        if (scheduleList.getSelectedIndex() == -1) {
+        if(scheduleList.getSelectedIndex() == -1) {
             editSongButton.setEnabled(false);
             removeSongButton.setEnabled(false);
         }
         else {
-            if (scheduleList.getSelectedValue() instanceof Song) {
+            if(scheduleList.getSelectedValue() instanceof Song) {
                 editSongButton.setEnabled(true);
             }
             else {
@@ -104,11 +107,11 @@ public class ScheduleTask extends RibbonTask {
     private static void checkAddButton(JCommandButton addSongButton) {
         final MainPanel mainPanel = Application.get().getMainWindow().getMainPanel();
         final LibrarySongList songList = mainPanel.getLibraryPanel().getLibrarySongPanel().getSongList();
-        if (!songList.isFocusOwner()) {
+        if(!songList.isFocusOwner()) {
             addSongButton.setEnabled(false);
             return;
         }
-        if (songList.getSelectedIndex() == -1) {
+        if(songList.getSelectedIndex() == -1) {
             addSongButton.setEnabled(false);
         }
         else {
@@ -200,7 +203,7 @@ public class ScheduleTask extends RibbonTask {
                 fileChooser.setAcceptAllFileFilterUsed(false);
                 fileChooser.showOpenDialog(Application.get().getMainWindow());
                 File file = fileChooser.getSelectedFile();
-                if (file != null) {
+                if(file != null) {
                     new Thread() {
 
                         private StatusPanel panel;
@@ -228,7 +231,7 @@ public class ScheduleTask extends RibbonTask {
 //                            presentationButton.setEnabled(false);
                             try {
                                 final PresentationDisplayable displayable = new PresentationDisplayable(fileChooser.getSelectedFile());
-                                if (!halt) {
+                                if(!halt) {
                                     SwingUtilities.invokeLater(new Runnable() {
 
                                         @Override
@@ -238,20 +241,23 @@ public class ScheduleTask extends RibbonTask {
                                     });
                                 }
                             }
-                            catch (OfficeXmlFileException ex) {
-                                if (!halt) {
+                            catch(OfficeXmlFileException ex) {
+                                if(!halt) {
                                     SwingUtilities.invokeLater(new Runnable() {
 
                                         @Override
                                         public void run() {
-                                            JOptionPane.showMessageDialog(Application.get().getMainWindow(),LabelGrabber.INSTANCE.getLabel("pptx.error"), LabelGrabber.INSTANCE.getLabel("invalid.format.label"), JOptionPane.ERROR_MESSAGE);
+                                            JOptionPane.showMessageDialog(Application.get().getMainWindow(), LabelGrabber.INSTANCE.getLabel("pptx.error"), LabelGrabber.INSTANCE.getLabel("adding.presentation.error.title"), JOptionPane.ERROR_MESSAGE);
                                         }
                                     });
                                 }
                             }
+                            catch(RuntimeException ex) {
+                                LOGGER.log(Level.WARNING, "Couldn't import presentation", ex);
+                            }
 //                            presentationButton.setIcon(RibbonUtils.getRibbonIcon("icons/powerpoint.png", 100, 100));
 //                            presentationButton.setEnabled(true);
-                            while (panel == null) {
+                            while(panel == null) {
                                 Utils.sleep(1000); //Quick bodge but hey, it works
                             }
                             panel.done();
@@ -270,7 +276,7 @@ public class ScheduleTask extends RibbonTask {
                 fileChooser.setAcceptAllFileFilterUsed(false);
                 fileChooser.showOpenDialog(Application.get().getMainWindow());
                 File file = fileChooser.getSelectedFile();
-                if (file != null) {
+                if(file != null) {
                     VideoDisplayable displayable = new VideoDisplayable(fileChooser.getSelectedFile(), VideoType.FILE);
                     Application.get().getMainWindow().getMainPanel().getSchedulePanel().getScheduleList().getModel().addElement(displayable);
                 }
@@ -291,12 +297,12 @@ public class ScheduleTask extends RibbonTask {
             public void actionPerformed(ActionEvent e) {
                 File[] arr = File.listRoots();
                 File file = null;
-                for (File f : arr) {
-                    if (f.getUsableSpace() == 0 && f.getTotalSpace() > 0) {
+                for(File f : arr) {
+                    if(f.getUsableSpace() == 0 && f.getTotalSpace() > 0) {
                         file = f;
                     }
                 }
-                if (file == null) {
+                if(file == null) {
                     JOptionPane.showMessageDialog(Application.get().getMainWindow(), LabelGrabber.INSTANCE.getLabel("no.dvd.error"), LabelGrabber.INSTANCE.getLabel("no.dvd.heading"), JOptionPane.ERROR_MESSAGE);
                 }
                 else {
@@ -360,7 +366,7 @@ public class ScheduleTask extends RibbonTask {
 
             private void check() {
                 Schedule schedule = scheduleList.getSchedule();
-                if (schedule == null || !schedule.iterator().hasNext()) {
+                if(schedule == null || !schedule.iterator().hasNext()) {
                     emailButton.setEnabled(false);
                 }
                 else {
