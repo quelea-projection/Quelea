@@ -1,36 +1,34 @@
-/* 
- * This file is part of Quelea, free projection software for churches.
- * Copyright (C) 2011 Michael Berry
- * 
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- * 
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- * 
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+/*
+ * This file is part of Quelea, free projection software for churches. Copyright
+ * (C) 2011 Michael Berry
+ *
+ * This program is free software: you can redistribute it and/or modify it under
+ * the terms of the GNU General Public License as published by the Free Software
+ * Foundation, either version 3 of the License, or (at your option) any later
+ * version.
+ *
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License along with
+ * this program. If not, see <http://www.gnu.org/licenses/>.
  */
 /*
  * This file is part of VLCJ.
  *
- * VLCJ is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * VLCJ is free software: you can redistribute it and/or modify it under the
+ * terms of the GNU General Public License as published by the Free Software
+ * Foundation, either version 3 of the License, or (at your option) any later
+ * version.
  *
- * VLCJ is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
+ * VLCJ is distributed in the hope that it will be useful, but WITHOUT ANY
+ * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
+ * A PARTICULAR PURPOSE. See the GNU General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License
- * along with VLCJ.  If not, see <http://www.gnu.org/licenses/>.
- * 
+ * You should have received a copy of the GNU General Public License along with
+ * VLCJ. If not, see <http://www.gnu.org/licenses/>.
+ *
  * Copyright 2009, 2010 Caprica Software Limited.
  */
 package org.quelea.utils;
@@ -51,7 +49,7 @@ public abstract class ExtensionFileFilter extends javax.swing.filechooser.FileFi
      */
     private final String[] extensions;
     /**
-     * Set of recognised file extensions. 
+     * Set of recognised file extensions.
      */
     private final Set<String> extensionsSet = new HashSet<>();
 
@@ -61,12 +59,12 @@ public abstract class ExtensionFileFilter extends javax.swing.filechooser.FileFi
      * @param extensions file extensions to accept
      */
     protected ExtensionFileFilter(String[] extensions) {
-//    this.extensions = Arrays.copyOf(extensions, extensions.length);
-        // Maintain JDK 1.5 compatibility
-        this.extensions = Arrays.asList(extensions).toArray(new String[extensions.length]);
-
+        this.extensions = Arrays.copyOf(extensions, extensions.length);
+        for(int i=0 ; i<extensions.length ; i++) {
+            this.extensions[i] = this.extensions[i].toLowerCase();
+        }
         Arrays.sort(this.extensions);
-        extensionsSet.addAll(Arrays.asList(extensions));
+        extensionsSet.addAll(Arrays.asList(this.extensions));
     }
 
     /**
@@ -98,15 +96,15 @@ public abstract class ExtensionFileFilter extends javax.swing.filechooser.FileFi
      */
     @Override
     public boolean accept(File pathname) {
-        if (pathname.isDirectory()) {
+        if(pathname.isDirectory()) {
             return true;
         }
-        if (pathname.isFile()) {
+        if(pathname.isFile()) {
             String name = pathname.getName();
             int dot = name.lastIndexOf('.');
-            if (dot != -1 && dot + 1 < name.length()) {
+            if(dot != -1 && dot + 1 < name.length()) {
                 String extension = name.substring(dot + 1);
-                return extensionsSet.contains(extension);
+                return extensionsSet.contains(extension.toLowerCase());
             }
         }
         return false;
