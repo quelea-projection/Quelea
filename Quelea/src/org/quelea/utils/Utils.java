@@ -84,6 +84,15 @@ public final class Utils {
             //Nothing
         }
     }
+    
+    /**
+     * Determine if we're running in a 64 bit JVM.
+     * @return true if it's a 64 bit JVM, false if it's 32 bit (or something
+     * else.)
+     */
+    public static boolean is64Bit() {
+        return System.getProperty("os.arch").contains("64"); //Rudimentary...
+    }
 
     /**
      * Get the JFileChooser used for opening and saving schedules.
