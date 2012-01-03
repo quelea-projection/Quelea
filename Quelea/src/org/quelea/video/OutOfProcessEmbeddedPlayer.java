@@ -27,6 +27,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.quelea.utils.LoggerUtils;
 import org.quelea.utils.QueleaProperties;
+import org.quelea.utils.Utils;
 import uk.co.caprica.vlcj.binding.LibVlcFactory;
 import uk.co.caprica.vlcj.binding.internal.libvlc_media_player_t;
 import uk.co.caprica.vlcj.player.embedded.EmbeddedMediaPlayer;
@@ -109,14 +110,20 @@ public class OutOfProcessEmbeddedPlayer extends OutOfProcessPlayer {
         if (TEST_MODE) {
             args = new String[]{"0"};
         }
-        File nativeDir = new File("lib/native");
+        File nativeDir;
+        if(Utils.is64Bit()) {
+            nativeDir = new File("lib/native64");
+        }
+        else {
+            nativeDir = new File("lib/native");
+        }
         NativeLibrary.addSearchPath("libvlc", nativeDir.getAbsolutePath());
         NativeLibrary.addSearchPath("vlc", nativeDir.getAbsolutePath());
         try (PrintStream stream = new PrintStream(new File(QueleaProperties.getQueleaUserHome(), "ooplog.txt"))) {
             System.setErr(stream); //Important, MUST redirect err stream
             OutOfProcessEmbeddedPlayer player = new OutOfProcessEmbeddedPlayer(Integer.parseInt(args[0]));
             if (TEST_MODE) {
-                player.mediaPlayer.prepareMedia("dvdsimple://E:");
+                player.mediaPlayer.prepareMedia("dvd:///D:\\");
                 player.mediaPlayer.play();
             }
             else {

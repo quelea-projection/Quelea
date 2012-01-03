@@ -66,7 +66,7 @@ public class Test {
                 JFrame frame = new JFrame();
                 frame.setLayout(new GridLayout(1, 2));
                 VideoControlPanel panel1 = new VideoControlPanel();
-                panel1.loadVideo("http://www.youtube.com/watch?v=W0WD4nduCsg");
+                panel1.loadVideo("C:\\vid.avi");
                 panel1.playVideo();
                 frame.add(panel1);
                 frame.pack();
