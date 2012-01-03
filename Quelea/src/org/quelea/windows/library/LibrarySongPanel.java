@@ -18,12 +18,7 @@
 package org.quelea.windows.library;
 
 import java.awt.BorderLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.FocusEvent;
-import java.awt.event.FocusListener;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
+import java.awt.event.*;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JLabel;
@@ -101,23 +96,13 @@ public class LibrarySongPanel extends JPanel {
                 //Nothing needed here
             }
         });
-        searchBox.addKeyListener(new KeyListener() {
-
-            @Override
-            public void keyTyped(KeyEvent e) {
-                //Nothing needed here
-            }
+        searchBox.addKeyListener(new KeyAdapter() {
 
             @Override
             public void keyPressed(KeyEvent e) {
                 if(e.getKeyCode() == KeyEvent.VK_ESCAPE) {
                     searchCancelButton.doClick();
                 }
-            }
-
-            @Override
-            public void keyReleased(KeyEvent e) {
-                //Nothing needed here
             }
         });
         searchBox.getDocument().addDocumentListener(new DocumentListener() {
