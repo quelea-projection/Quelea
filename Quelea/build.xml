@@ -70,6 +70,7 @@
             <tarfileset dir="${dist.jar.dir}"
                         prefix="/usr/share/quelea">
                 <exclude name="lib/native/**"/> 
+                <exclude name="lib/native64/**"/> 
                 <exclude name="lib/junit/**"/> 
                 <exclude name="lib/junit_4/**"/> 
                 <exclude name="lib/**javadoc.jar"/> 

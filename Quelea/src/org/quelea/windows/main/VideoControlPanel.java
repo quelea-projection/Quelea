@@ -49,7 +49,7 @@ import org.quelea.video.RemotePlayerFactory;
  */
 public class VideoControlPanel extends JPanel {
 
-    private static final boolean TEST_DISABLE_SUBSTANCE = false;
+    private static final boolean TEST_DISABLE_SUBSTANCE = true;
     private JButton play;
     private JButton pause;
     private JButton stop;

@@ -25,6 +25,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.quelea.utils.LoggerUtils;
 import org.quelea.utils.QueleaProperties;
+import org.quelea.utils.Utils;
 import uk.co.caprica.vlcj.player.MediaPlayer;
 import uk.co.caprica.vlcj.player.MediaPlayerFactory;
 
@@ -90,7 +91,13 @@ public class OutOfProcessHeadlessPlayer extends OutOfProcessPlayer {
         if (TEST_MODE) {
             args = new String[]{"5555"};
         }
-        File nativeDir = new File("lib/native");
+        File nativeDir;
+        if(Utils.is64Bit()) {
+            nativeDir = new File("lib/native64");
+        }
+        else {
+            nativeDir = new File("lib/native");
+        }
         NativeLibrary.addSearchPath("libvlc", nativeDir.getAbsolutePath());
         NativeLibrary.addSearchPath("vlc", nativeDir.getAbsolutePath());
         try (PrintStream stream = new PrintStream(new File(QueleaProperties.getQueleaUserHome(), "ooplog.txt"))) {
