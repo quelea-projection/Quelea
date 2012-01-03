@@ -17,11 +17,10 @@
  */
 package org.quelea.video;
 
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
+import java.io.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import org.quelea.utils.Utils;
 
 /**
  * Controls an OutOfProcessPlayer via input / output process streams.
@@ -82,7 +81,7 @@ public class RemotePlayer {
     public void load(String path) {
         writeOut("open " + path);
     }
-
+    
     /**
      * Play the loaded video.
      */
