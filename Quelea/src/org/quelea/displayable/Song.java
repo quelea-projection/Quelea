@@ -245,6 +245,7 @@ public class Song implements TextDisplayable, Searchable, Comparable<Song>, Prin
     private int id;
     private SoftReference<String> searchLyrics;
     private boolean printChords;
+    private String lastSearch;
 
     /**
      * Copy constructor - creates a shallow copy.
@@ -265,6 +266,7 @@ public class Song implements TextDisplayable, Searchable, Comparable<Song>, Prin
         this.info = song.info;
         this.tags = song.tags;
         this.capo = song.capo;
+        this.lastSearch = song.lastSearch;
     }
 
     /**
@@ -607,14 +609,47 @@ public class Song implements TextDisplayable, Searchable, Comparable<Song>, Prin
      * soft reference to the search lyrics is null or contains null, if it does then new search lyrics will be
      * generated. This acts as a type of cache to speed up searching.
      * @param s the search term.
-     * @return true if the song matches, false otherwise.
+     * @return TITLE if the search is found in the title, LYRICS if it's found
+     * in the lyrics and NONE if it's not found at all.
      */
-    public boolean search(String s) {
+    public SearchResult search(String s) {
+        if(title.toLowerCase().contains(s.toLowerCase())) {
+            lastSearch = s;
+            return SearchResult.TITLE;
+        }
+        lastSearch = null;
         if (searchLyrics == null || searchLyrics.get() == null) {
             searchLyrics = new SoftReference<>(stripPunctuation(getLyrics(false, false).replace("\n", " ")).toLowerCase());
         }
-        return title.toLowerCase().contains(s)
-                || searchLyrics.get().contains(stripPunctuation(s));
+        if(searchLyrics.get().contains(stripPunctuation(s))) {
+            return SearchResult.LYRICS;
+        }
+        return SearchResult.NONE;
+    }
+    
+    /**
+     * Get the HTML that should be displayed in the library song list. This 
+     * depends on what was searched for last, it bolds the search term in the
+     * title (if it appears as such.)
+     * @return the appropriate HTML to display the song in the list.
+     */
+    public String getListHTML() {
+        if(lastSearch==null) {
+            return getTitle();
+        }
+        int startIndex = getTitle().toLowerCase().indexOf(lastSearch.toLowerCase());
+        if(startIndex==-1) {
+            return getTitle();
+        }
+        StringBuilder ret = new StringBuilder();
+        ret.append("<html>");
+        ret.append(getTitle().substring(0,startIndex));
+        ret.append("<b>");
+        ret.append(getTitle().substring(startIndex, startIndex+lastSearch.length()));
+        ret.append("</b>");
+        ret.append(getTitle().substring(startIndex+lastSearch.length()));
+        ret.append("</html>");
+        return ret.toString();
     }
 
     /**
