@@ -22,11 +22,19 @@ package org.quelea.displayable;
  * @author Michael
  */
 public interface Searchable {
+    
+    /**
+     * The possible search results - title if a search string is found in the
+     * title of this song, lyrics if it's in the lyrics, none if it's not found.
+     */
+    public enum SearchResult {
+        TITLE, LYRICS, NONE
+    }
 
     /**
      * Determine whether this object is returned if the user searches for the given string.
      * @param s the search string.
      * @return true if the object should be returned as part of the search results, false otherwise.
      */
-    boolean search(String s);
+    SearchResult search(String s);
 }

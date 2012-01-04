@@ -28,20 +28,16 @@ import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
-import javax.swing.DefaultListCellRenderer;
-import javax.swing.JList;
-import javax.swing.ListSelectionModel;
-import javax.swing.SwingUtilities;
+import javax.swing.*;
 import org.quelea.SongDatabase;
 import org.quelea.SortedListModel;
-import org.quelea.displayable.Displayable;
-import org.quelea.displayable.Song;
-import org.quelea.displayable.TextSection;
-import org.quelea.displayable.TransferDisplayable;
+import org.quelea.displayable.*;
+import org.quelea.displayable.Searchable.SearchResult;
 import org.quelea.utils.DatabaseListener;
 import org.quelea.utils.QueleaProperties;
 
@@ -67,7 +63,7 @@ public class LibrarySongList extends JList<Song> implements DatabaseListener {
 
                 @Override
                 public String toString() {
-                    return getTitle();
+                    return getListHTML();
                 }
             };
             return super.getListCellRendererComponent(list, s, index, isSelected, cellHasFocus);
@@ -156,12 +152,27 @@ public class LibrarySongList extends JList<Song> implements DatabaseListener {
         filterFuture = filterService.submit(new Runnable() {
 
             public void run() {
-                final SortedListModel<Song> model = new SortedListModel<>();
+                final SortedListModel<Song> titleModel = new SortedListModel<>();
+                final SortedListModel<Song> lyricsModel = new SortedListModel<>();
                 for (int i = 0; i < fullModel.getSize(); i++) {
                     Song s = fullModel.getElementAt(i);
-                    if (s.search(search.toLowerCase())) {
-                        model.add(s);
+                    SearchResult result = s.search(search.toLowerCase());
+                    if (result==SearchResult.TITLE) {
+                        titleModel.add(s);
                     }
+                    else if(result==SearchResult.LYRICS) {
+                        lyricsModel.add(s);
+                    }
+                }
+                
+                final DefaultListModel<Song> model = new DefaultListModel<>();
+                Iterator<Song> it = titleModel.iterator();
+                while(it.hasNext()) {
+                    model.addElement(it.next());
+                }
+                it = lyricsModel.iterator();
+                while(it.hasNext()) {
+                    model.addElement(it.next());
                 }
                 SwingUtilities.invokeLater(new Runnable() {
 
@@ -228,17 +239,6 @@ public class LibrarySongList extends JList<Song> implements DatabaseListener {
      */
     public LibraryPopupMenu getPopupMenu() {
         return popupMenu;
-    }
-
-    /**
-     * Get the sorted song list model that's used by this library song list. 
-     * Overrides the default method to provide a more specific type.
-     * @return a sorted list model of songs in this list.
-     */
-    @Override
-    @SuppressWarnings("unchecked")
-    public SortedListModel<Song> getModel() {
-        return (SortedListModel<Song>) super.getModel();
     }
 
     /**
