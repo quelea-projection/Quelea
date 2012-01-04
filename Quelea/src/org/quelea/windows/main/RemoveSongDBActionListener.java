@@ -19,9 +19,12 @@ package org.quelea.windows.main;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import javax.swing.DefaultListModel;
 import javax.swing.JOptionPane;
+import javax.swing.ListModel;
 import org.quelea.Application;
 import org.quelea.SongDatabase;
+import org.quelea.SortedListModel;
 import org.quelea.displayable.Song;
 import org.quelea.windows.library.LibrarySongList;
 
@@ -50,7 +53,16 @@ public class RemoveSongDBActionListener implements ActionListener {
             JOptionPane.showMessageDialog(mainWindow, "There was an error removing the song from the database.", "Error", JOptionPane.ERROR_MESSAGE, null);
         }
         song.setID(-1);
-        songList.getModel().removeElement(song);
+        ListModel<Song> model = songList.getModel();
+        if(model instanceof SortedListModel) {
+            ((SortedListModel<Song>)songList.getModel()).removeElement(song);
+        }
+        if(model instanceof DefaultListModel) {
+            ((DefaultListModel<Song>)songList.getModel()).removeElement(song);
+        }
+        else {
+            throw new RuntimeException("Couldn't remove song, list model is unknown type: " + model.getClass());
+        }
     }
     
 }
