@@ -114,13 +114,11 @@ public class SongDuplicateChecker {
                         d[firstSize * i + j] = mi;
                     }
                 }
-//                return d[firstSize * n + m];
-                return 0;
+                return d[firstSize * n + m];
             }
         };
         kernel.execute(1);
         System.out.println(result[0]);
-//        kernel.run();
         return new boolean[0];
     }
 
