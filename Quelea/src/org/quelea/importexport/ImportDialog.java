@@ -45,7 +45,7 @@ import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
 import javax.swing.SwingWorker;
 import org.quelea.Application;
-import org.quelea.SongDatabaseChecker;
+import org.quelea.SongDuplicateChecker;
 import org.quelea.displayable.Song;
 import org.quelea.languages.LabelGrabber;
 import org.quelea.utils.LoggerUtils;
@@ -167,7 +167,7 @@ public abstract class ImportDialog extends JDialog implements PropertyChangeList
                                         @Override
                                         public void run() {
                                             if (!halt) {
-                                                final boolean result = new SongDatabaseChecker().checkSong(localSongs.get(finali));
+                                                final boolean result = new SongDuplicateChecker().checkSong(localSongs.get(finali));
                                                 localSongsDuplicate[finali] = result;
                                                 final int progress = (int) (((double) finali / localSongs.size()) * 100);
                                                 SwingUtilities.invokeLater(new Runnable() {
