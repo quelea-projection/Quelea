@@ -151,8 +151,11 @@ public abstract class ImportDialog extends JDialog implements PropertyChangeList
                     @Override
                     protected Object doInBackground() {
                         try {
-//                            localSongsDuplicate = Collections.synchronizedList(new ArrayList<Boolean>(1000));
                             localSongs = parser.getSongs(new File(location));
+//                            Song[] localSongsArr = new Song[localSongs.size()];
+//                            for(int i=0 ; i<localSongs.size() ; i++) {
+//                                localSongsArr[i] = localSongs.get(i);
+//                            }
                             localSongsDuplicate = new boolean[localSongs.size()];
                             if (halt) {
                                 localSongs = null;
@@ -160,6 +163,7 @@ public abstract class ImportDialog extends JDialog implements PropertyChangeList
                             }
                             statusPanel.getProgressBar().setIndeterminate(false);
                             if (checkDuplicates.isSelected()) {
+//                                localSongsDuplicate = new SongDuplicateChecker().checkSongs(localSongsArr);
                                 for (int i = 0; i < localSongs.size(); i++) {
                                     final int finali = i;
                                     checkerService.submit(Utils.wrapAsLowPriority(new Runnable() {
