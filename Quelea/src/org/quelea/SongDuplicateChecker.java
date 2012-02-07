@@ -20,6 +20,7 @@ package org.quelea;
 import com.amd.aparapi.Kernel;
 import org.apache.commons.lang.StringUtils;
 import org.quelea.displayable.Song;
+import org.quelea.utils.opencl.LevenshteinDistance;
 
 /**
  * A class responsible for checking a new song against existing songs in the
@@ -29,97 +30,30 @@ import org.quelea.displayable.Song;
  */
 public class SongDuplicateChecker {
 
-    private int x;
-
     public static void main(String[] args) {
         new SongDuplicateChecker().checkSongs(null);
     }
 
-    private int[] toIntArr(String str) {
-        int[] ret = new int[str.length()];
-        for(int i = 0; i < str.length(); i++) {
-            ret[i] = str.charAt(i);
-        }
-        return ret;
-    }
-
     public boolean[] checkSongs(Song[] newSongs) {
-//        final Song[] songs = SongDatabase.get().getSongs();
-//        final String[] songLyrics = new String[songs.length];
-//        for (int i = 0; i < songLyrics.length; i++) {
-//            songLyrics[i] = songs[i].getLyrics(false, false).replaceAll("[^\\p{L}]", "");
-//        }
-
-        final int d[] = new int[10000];
-        final int result[] = new int[1];
-
-        String s1 = "Hello";
-        String s2 = "zello";
-        final int[] s1Arr = toIntArr(s1);
-        final int[] s2Arr = toIntArr(s2);
-        final int s1Length = s1Arr.length;
-        final int s2Length = s2Arr.length;
-
-        Kernel kernel = new Kernel() {
-
-            @Override
-            public void run() {
-                result[0] = ld(s1Arr, s2Arr, s1Length, s2Length);
+        final Song[] songs = SongDatabase.get().getSongs();
+        final String[] songLyrics = new String[songs.length];
+        for (int i = 0; i < songLyrics.length; i++) {
+            songLyrics[i] = songs[i].getLyrics(false, false).replaceAll("[^\\p{L}]", "");
+        }
+        boolean[] sameArr = new boolean[newSongs.length];
+        for(int i=0 ; i<newSongs.length ; i++) {
+            System.out.println(i + " of " + newSongs.length);
+            Song newSong = newSongs[i];
+            String newLyrics = newSong.getLyrics(false, false).replaceAll("[^\\p{L}]", "");
+            int distance = new LevenshteinDistance().leastCompare(newLyrics, songLyrics);
+            if(distance<30) {
+                sameArr[i] = true;
             }
-
-            public int ld(int[] s, int[] t, int sLength, int tLength) {
-                int n; // length of s
-                int m; // length of t
-                int i; // iterates through s
-                int j; // iterates through t
-                int s_i; // ith character of s
-                int t_j; // jth character of t
-                int cost = 0; // cost
-//
-                n = sLength;
-                m = tLength;
-                if(n == 0) {
-                    return m;
-                }
-                if(m == 0) {
-                    return n;
-                }
-                int firstSize = n + 1;
-
-                for(i = 0; i <= n; i++) {
-                    d[firstSize * i + 0] = i;
-                }
-
-                for(j = 0; j <= m; j++) {
-                    d[firstSize * 0 + j] = j;
-                }
-
-                for(i = 1; i <= n; i++) {
-                    s_i = s[i - 1];
-                    for(j = 1; j <= m; j++) {
-                        t_j = t[j - 1];
-                        cost = s_i == t_j ? 0 : 1;
-                        int a = d[firstSize * (i - 1) + j] + 1;
-                        int b = d[firstSize * i + (j - 1)] + 1;
-                        int c = d[firstSize * (i - 1) + (j - 1)] + cost;
-
-                        int mi = a;
-                        if(b < mi) {
-                            mi = b;
-                        }
-                        if(c < mi) {
-                            mi = c;
-                        }
-
-                        d[firstSize * i + j] = mi;
-                    }
-                }
-                return d[firstSize * n + m];
+            else {
+                sameArr[i] = false;
             }
-        };
-        kernel.execute(1);
-        System.out.println(result[0]);
-        return new boolean[0];
+        }
+        return sameArr;
     }
 
     /**
