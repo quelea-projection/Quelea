@@ -111,7 +111,7 @@ public class SchedulePanel extends JPanel {
                 }
             }
         }, AWTEvent.MOUSE_EVENT_MASK);
-        themeButton = new JButton(Utils.getImageIcon("icons/settings.png", 16, 16));
+        themeButton = new JButton("lasdasd", Utils.getImageIcon("icons/settings.png", 16, 16)); //TODO: Fudge positioning
         themeButton.addMouseListener(new MouseAdapter() {
 
             /**
