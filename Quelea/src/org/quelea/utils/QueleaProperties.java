@@ -97,7 +97,7 @@ public final class QueleaProperties extends Properties {
      * @return the look and feel string name.
      */
     public String getLaf() {
-        return getProperty("laf", "");
+        return getProperty("laf", "javax.swing.plaf.nimbus.NimbusLookAndFeel");
     }
 
     /**
