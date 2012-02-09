@@ -180,3 +180,5 @@ adding.presentation.error.title=Error importing presentation
 pptx.error=The file you've selected is in the newer pptx format - at this time Quelea only supports the older ppt format. Please save in that format and try again.
 importing.status=Importing...
 name.label=Name
+similar.colors.text=You've chosen very similar colours for the words and background, which will be hard for the congregation to see. I'd advise you to choose better colours!
+warning.label=Warning
