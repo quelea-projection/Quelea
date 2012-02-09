@@ -24,6 +24,7 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Properties;
+import javax.swing.UIManager;
 import org.quelea.bible.Bible;
 
 /**
@@ -97,7 +98,13 @@ public final class QueleaProperties extends Properties {
      * @return the look and feel string name.
      */
     public String getLaf() {
-        return getProperty("laf", "javax.swing.plaf.nimbus.NimbusLookAndFeel");
+        String laf = getProperty("laf", "javax.swing.plaf.nimbus.NimbusLookAndFeel");
+        if(laf.trim().equalsIgnoreCase("System")) {
+            return UIManager.getSystemLookAndFeelClassName();
+        }
+        else {
+            return laf;
+        }
     }
 
     /**
