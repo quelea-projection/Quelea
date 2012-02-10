@@ -17,6 +17,7 @@
  */
 package org.quelea.windows.main;
 
+import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.io.File;
 import java.io.IOException;
@@ -50,7 +51,7 @@ public class MainWindow extends JFrame {
      */
     public MainWindow(boolean setApplicationWindow) {
         super("Quelea " + QueleaProperties.VERSION.getVersionString());
-        
+        setLayout(new BorderLayout());
         noticeDialog = new NoticeDialog(this);
         
         LOGGER.log(Level.INFO, "Creating main window");
@@ -74,7 +75,7 @@ public class MainWindow extends JFrame {
         menuBar = new MainMenuBar();
         setJMenuBar(menuBar);
         
-        add(mainpanel);
+        add(mainpanel, BorderLayout.CENTER);
         mainpanel.getLibraryPanel().getImagePanel().setPreferredSize(new Dimension(100, 200));
         setSize(800,600);
         LOGGER.log(Level.INFO, "Created main window.");
