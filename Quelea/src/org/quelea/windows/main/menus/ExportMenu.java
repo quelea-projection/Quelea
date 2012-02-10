@@ -42,8 +42,10 @@ public class ExportMenu extends JMenu {
      */
     public ExportMenu() {
         super(LabelGrabber.INSTANCE.getLabel("export.heading"));
+        setMnemonic('x');
         
         qspItem = new JMenuItem(LabelGrabber.INSTANCE.getLabel("qsp.button"), Utils.getImageIcon("img/logo.png", 16, 16));
+        qspItem.setMnemonic('q');
         qspItem.addActionListener(new ActionListener() {
 
             @Override

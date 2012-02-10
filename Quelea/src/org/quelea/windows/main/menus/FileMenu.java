@@ -50,9 +50,11 @@ public class FileMenu extends JMenu {
      */
     public FileMenu() {
         super(LabelGrabber.INSTANCE.getLabel("file.menu"));
+        setMnemonic('f');
         optionsDialog = new OptionsDialog(Application.get().getMainWindow());
 
         newItem = new JMenuItem(LabelGrabber.INSTANCE.getLabel("new.schedule.button"), Utils.getImageIcon("icons/filenew.png", 20, 20));
+        newItem.setMnemonic('n');
         newItem.addActionListener(new ActionListener() {
 
             @Override
@@ -63,6 +65,7 @@ public class FileMenu extends JMenu {
         add(newItem);
 
         openItem = new JMenuItem(LabelGrabber.INSTANCE.getLabel("open.schedule.button"), Utils.getImageIcon("icons/fileopen.png", 20, 20));
+        openItem.setMnemonic('o');
         openItem.addActionListener(new ActionListener() {
 
             @Override
@@ -78,6 +81,7 @@ public class FileMenu extends JMenu {
         add(openItem);
 
         saveItem = new JMenuItem(LabelGrabber.INSTANCE.getLabel("save.schedule.button"), Utils.getImageIcon("icons/filesave.png", 20, 20));
+        saveItem.setMnemonic('s');
         saveItem.addActionListener(new ActionListener() {
 
             @Override
@@ -88,6 +92,7 @@ public class FileMenu extends JMenu {
         add(saveItem);
 
         saveAsItem = new JMenuItem(LabelGrabber.INSTANCE.getLabel("save.as.schedule.button"), Utils.getImageIcon("icons/filesaveas.png", 20, 20));
+        saveAsItem.setMnemonic('a');
         saveAsItem.addActionListener(new ActionListener() {
 
             @Override
@@ -98,6 +103,7 @@ public class FileMenu extends JMenu {
         add(saveAsItem);
 
         printItem = new JMenuItem(LabelGrabber.INSTANCE.getLabel("print.schedule.button"), Utils.getImageIcon("icons/fileprint.png", 20, 20));
+        printItem.setMnemonic('p');
         printItem.addActionListener(new ActionListener() {
 
             @Override
@@ -108,6 +114,7 @@ public class FileMenu extends JMenu {
         add(printItem);
 
         optionsItem = new JMenuItem(LabelGrabber.INSTANCE.getLabel("options.button"), Utils.getImageIcon("icons/options.png", 20, 20));
+        optionsItem.setMnemonic('t');
         optionsItem.addActionListener(new ActionListener() {
 
             @Override
@@ -118,6 +125,7 @@ public class FileMenu extends JMenu {
         add(optionsItem);
 
         exitItem = new JMenuItem(LabelGrabber.INSTANCE.getLabel("exit.button"), Utils.getImageIcon("icons/exit.png", 20, 20));
+        exitItem.setMnemonic('e');
         exitItem.addActionListener(new ActionListener() {
 
             @Override

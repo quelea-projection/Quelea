@@ -67,20 +67,24 @@ public class ScheduleMenu extends JMenu {
      */
     public ScheduleMenu() {
         super(LabelGrabber.INSTANCE.getLabel("schedule.menu"));
+        setMnemonic('s');
         
         Application.get().getMainWindow().getNoticeDialog().registerCanvas(Application.get().getLyricWindow().getCanvas());
         
         addSongItem = new JMenuItem(LabelGrabber.INSTANCE.getLabel("add.song.button"), Utils.getImageIcon("icons/newsong.png", 16, 16));
+        addSongItem.setMnemonic('a');
         addSongItem.addActionListener(new AddSongActionListener());
         addSongItem.setEnabled(false);
         add(addSongItem);
         
         editSongItem = new JMenuItem(LabelGrabber.INSTANCE.getLabel("edit.song.button"), Utils.getImageIcon("icons/edit.png", 16, 16));
+        editSongItem.setMnemonic('e');
         editSongItem.addActionListener(new EditSongScheduleActionListener());
         editSongItem.setEnabled(false);
         add(editSongItem);
         
         removeSongItem = new JMenuItem(LabelGrabber.INSTANCE.getLabel("remove.item.button"), Utils.getImageIcon("icons/remove 2.png", 16, 16));
+        removeSongItem.setMnemonic('r');
         removeSongItem.addActionListener(new RemoveSongScheduleActionListener());
         removeSongItem.setEnabled(false);
         add(removeSongItem);
@@ -106,6 +110,7 @@ public class ScheduleMenu extends JMenu {
         addSeparator();
         
         addPowerpointItem = new JMenuItem(LabelGrabber.INSTANCE.getLabel("add.presentation.button"), Utils.getImageIcon("icons/powerpoint.png", 16, 16));
+        addPowerpointItem.setMnemonic('p');
         addPowerpointItem.addActionListener(new ActionListener() {
 
             @Override
@@ -181,6 +186,7 @@ public class ScheduleMenu extends JMenu {
         add(addPowerpointItem);
         
         addVideoItem = new JMenuItem(LabelGrabber.INSTANCE.getLabel("add.video.button"), Utils.getImageIcon("icons/video file.png", 16, 16));
+        addVideoItem.setMnemonic('v');
         addVideoItem.addActionListener(new ActionListener() {
 
             @Override
@@ -199,6 +205,7 @@ public class ScheduleMenu extends JMenu {
         add(addVideoItem);
         
         addDVDItem = new JMenuItem(LabelGrabber.INSTANCE.getLabel("add.dvd.button"), Utils.getImageIcon("icons/dvd.png", 16, 16));
+        addDVDItem.setMnemonic('d');
         addDVDItem.addActionListener(new ActionListener() {
 
             @Override
@@ -224,6 +231,7 @@ public class ScheduleMenu extends JMenu {
         addSeparator();
         
         manageNoticesItem = new JMenuItem(LabelGrabber.INSTANCE.getLabel("manage.notices.button"), Utils.getImageIcon("icons/info.png", 16, 16));
+        manageNoticesItem.setMnemonic('n');
         manageNoticesItem.addActionListener(new ActionListener() {
 
             @Override
@@ -234,6 +242,7 @@ public class ScheduleMenu extends JMenu {
         add(manageNoticesItem);
         
         shareScheduleItem = new JMenuItem(LabelGrabber.INSTANCE.getLabel("email.button"), Utils.getImageIcon("icons/email.png", 16, 16));
+        shareScheduleItem.setMnemonic('m');
         shareScheduleItem.setEnabled(false);
         scheduleList.getModel().addListDataListener(new ListDataListener() {
 

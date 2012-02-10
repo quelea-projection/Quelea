@@ -55,23 +55,28 @@ public class DatabaseMenu extends JMenu {
      */
     public DatabaseMenu() {
         super(LabelGrabber.INSTANCE.getLabel("database.heading"));
+        setMnemonic('d');
 
         newSongItem = new JMenuItem(LabelGrabber.INSTANCE.getLabel("new.song.button"), Utils.getImageIcon("icons/newsong.png", 16, 16));
+        newSongItem.setMnemonic('n');
         newSongItem.addActionListener(new NewSongActionListener());
         add(newSongItem);
 
         editSongItem = new JMenuItem(LabelGrabber.INSTANCE.getLabel("edit.song.button"), Utils.getImageIcon("icons/edit.png", 16, 16));
+        editSongItem.setMnemonic('e');
         editSongItem.addActionListener(new EditSongDBActionListener());
         editSongItem.setEnabled(false);
         add(newSongItem);
 
         deleteSongItem = new JMenuItem(LabelGrabber.INSTANCE.getLabel("delete.song.button"), Utils.getImageIcon("icons/remove 2.png", 16, 16));
+        deleteSongItem.setMnemonic('d');
         deleteSongItem.addActionListener(new RemoveSongDBActionListener());
         deleteSongItem.setEnabled(false);
         add(newSongItem);
 
         tagDialog = new TagDialog();
         tagsItem = new JMenuItem(LabelGrabber.INSTANCE.getLabel("tags.button"), Utils.getImageIcon("icons/tag.png", 16, 16));
+        tagsItem.setMnemonic('t');
         tagsItem.addActionListener(new ActionListener() {
 
             @Override
