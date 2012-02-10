@@ -18,28 +18,30 @@
 package org.quelea.windows.main;
 
 import java.awt.Dimension;
+import java.io.File;
+import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.imageio.ImageIO;
 import javax.swing.JFrame;
-import org.pushingpixels.flamingo.api.ribbon.JRibbonFrame;
 import org.quelea.Application;
 import org.quelea.notice.NoticeDialog;
 import org.quelea.utils.LoggerUtils;
 import org.quelea.utils.QueleaProperties;
-import org.quelea.windows.main.ribbon.RibbonPopulator;
-import org.quelea.windows.main.ribbon.RibbonUtils;
+import org.quelea.windows.main.menus.MainMenuBar;
 import org.quelea.windows.newsong.SongEntryWindow;
 
 /**
  * The main window used to control the projection.
  * @author Michael
  */
-public class MainWindow extends JRibbonFrame {
+public class MainWindow extends JFrame {
 
     private static final Logger LOGGER = LoggerUtils.getLogger();
     private final MainPanel mainpanel;
     private final SongEntryWindow songEntryWindow;
     private final NoticeDialog noticeDialog;
+    private final MainMenuBar menuBar;
 
     /**
      * Create a new main window.
@@ -56,7 +58,12 @@ public class MainWindow extends JRibbonFrame {
             Application.get().setMainWindow(this);
         }
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setApplicationIcon(RibbonUtils.getRibbonIcon("img/logo.png", 100, 100));
+        try {
+            setIconImage(ImageIO.read(new File("img/logo.png")));
+        }
+        catch (IOException ex) {
+            LOGGER.log(Level.SEVERE, "Couldn't set JFrame image", ex);
+        }
 
         mainpanel = new MainPanel();
         songEntryWindow = new SongEntryWindow(this);
@@ -64,7 +71,9 @@ public class MainWindow extends JRibbonFrame {
         mainpanel.getLibraryPanel().getLibrarySongPanel().getSongList().getPopupMenu().getEditDBButton().addActionListener(new EditSongDBActionListener());
         mainpanel.getSchedulePanel().getScheduleList().getPopupMenu().getEditSongButton().addActionListener(new EditSongScheduleActionListener());
         
-        new RibbonPopulator(getRibbon()).populate();
+        menuBar = new MainMenuBar();
+        setJMenuBar(menuBar);
+        
         add(mainpanel);
         mainpanel.getLibraryPanel().getImagePanel().setPreferredSize(new Dimension(100, 200));
         setSize(800,600);
