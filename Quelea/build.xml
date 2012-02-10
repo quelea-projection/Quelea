@@ -63,7 +63,11 @@
         <copy file="${basedir}/launch.sh" tofile="${dist.jar.dir}/launch.sh"/>
         <mkdir dir="${dist.jar.dir}/queleadoc" />
         <copy file="${basedir}/licenses/copyright" tofile="${dist.jar.dir}/queleadoc/copyright"/>
-        <copy file="${basedir}/changelogs/changelog-${quelea.version}.gz" tofile="${dist.jar.dir}/queleadoc/changelog.gz"/>
+        <!-- Compress and copy changelog to correct location -->
+        <java className="org.quelea.utils.GZMaxFileCompressor" classpath="build/classes" failonerror="true">
+            <arg value="${basedir}/changelogs/changelog-${quelea.version}.txt"/>
+            <arg value="${dist.jar.dir}/queleadoc/changelog.gz"/>
+        </java>
         
         <echo message="Building deb package for Ubuntu / Debian installs"/>
         <deb destfile="${dist.jar.dir}/Quelea-temp.deb" control="control" verbose="true">
