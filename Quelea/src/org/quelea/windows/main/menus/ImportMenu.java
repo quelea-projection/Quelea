@@ -50,6 +50,7 @@ public class ImportMenu extends JMenu {
      */
     public ImportMenu() {
         super(LabelGrabber.INSTANCE.getLabel("import.heading"));
+        setMnemonic('i');
         
         qspImportDialog = new QSPImportDialog(Application.get().getMainWindow());
         sImportDialog = new SurvivorImportDialog(Application.get().getMainWindow());
@@ -58,6 +59,7 @@ public class ImportMenu extends JMenu {
 //        sofImportDialog = new SofImportDialog(Application.get().getMainWindow());
         
         qspItem = new JMenuItem(LabelGrabber.INSTANCE.getLabel("qsp.button"), Utils.getImageIcon("img/logo.png", 16, 16));
+        qspItem.setMnemonic('q');
         qspItem.addActionListener(new ActionListener() {
 
             @Override
@@ -69,6 +71,7 @@ public class ImportMenu extends JMenu {
         add(qspItem);
         
         ssItem = new JMenuItem(LabelGrabber.INSTANCE.getLabel("ss.button"), Utils.getImageIcon("icons/survivor.jpg", 16, 16));
+        ssItem.setMnemonic('s');
         ssItem.addActionListener(new ActionListener() {
 
             @Override
@@ -80,6 +83,7 @@ public class ImportMenu extends JMenu {
         add(ssItem);
         
         sourceItem = new JMenuItem(LabelGrabber.INSTANCE.getLabel("source.button"), Utils.getImageIcon("icons/source.jpg", 16, 16));
+        sourceItem.setMnemonic('o');
         sourceItem.addActionListener(new ActionListener() {
 
             @Override
@@ -91,6 +95,7 @@ public class ImportMenu extends JMenu {
         add(sourceItem);
         
         kingswayItem = new JMenuItem(LabelGrabber.INSTANCE.getLabel("kingsway.button"), Utils.getImageIcon("icons/kingsway.png", 16, 16));
+        kingswayItem.setMnemonic('k');
         kingswayItem.addActionListener(new ActionListener() {
 
             @Override
