@@ -27,13 +27,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import javax.swing.Box;
-import javax.swing.JButton;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JToolBar;
+import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import javax.swing.event.ListDataEvent;
 import javax.swing.event.ListDataListener;
@@ -44,8 +38,10 @@ import org.quelea.languages.LabelGrabber;
 import org.quelea.utils.Utils;
 
 /**
- * The panel displaying the schedule / order of service. Items from here are loaded into the preview panel where they
- * are viewed and then projected live. Items can be added here from the library.
+ * The panel displaying the schedule / order of service. Items from here are
+ * loaded into the preview panel where they are viewed and then projected live.
+ * Items can be added here from the library.
+ *
  * @author Michael
  */
 public class SchedulePanel extends JPanel {
@@ -88,22 +84,22 @@ public class SchedulePanel extends JPanel {
         Toolkit.getDefaultToolkit().addAWTEventListener(new AWTEventListener() {
 
             /**
-             * Have to hide the theme menu whenever anything else is clicked on 
-             * so this method provides an application wide way of detecting 
-             * these clicks and hiding the window appropriately. Makes it 
-             * behave a bit like a popup menu which is the behaviour we're
-             * after here.
+             * Have to hide the theme menu whenever anything else is clicked on
+             * so this method provides an application wide way of detecting
+             * these clicks and hiding the window appropriately. Makes it behave
+             * a bit like a popup menu which is the behaviour we're after here.
+             *
              * @param event the app-wide awt event.
              */
             @Override
             public void eventDispatched(AWTEvent event) {
                 MouseEvent mouseEvent = (MouseEvent) event;
-                if (mouseEvent.getClickCount() > 0) {
+                if(mouseEvent.getClickCount() > 0) {
                     Rectangle bounds = Application.get().getMainWindow().getBounds();
-                    if (bounds.contains(new Point(mouseEvent.getXOnScreen(), mouseEvent.getYOnScreen()))) {
+                    if(bounds.contains(new Point(mouseEvent.getXOnScreen(), mouseEvent.getYOnScreen()))) {
                         Rectangle popupBounds = themeMenu.getBounds();
-                        if (!popupBounds.contains(new Point(mouseEvent.getXOnScreen(), mouseEvent.getYOnScreen()))) {
-                            if (event.getSource() != themeButton) {
+                        if(!popupBounds.contains(new Point(mouseEvent.getXOnScreen(), mouseEvent.getYOnScreen()))) {
+                            if(event.getSource() != themeButton) {
                                 themeMenu.setVisible(false);
                             }
                         }
@@ -111,7 +107,12 @@ public class SchedulePanel extends JPanel {
                 }
             }
         }, AWTEvent.MOUSE_EVENT_MASK);
-        themeButton = new JButton("lasdasd", Utils.getImageIcon("icons/settings.png", 16, 16)); //TODO: Fudge positioning
+        if(UIManager.getLookAndFeel().getName().equalsIgnoreCase("Nimbus")) {
+            themeButton = new JButton("lasdasd", Utils.getImageIcon("icons/settings.png", 16, 16)); //TODO: Fudge positioning
+        }
+        else {
+            themeButton = new JButton(Utils.getImageIcon("icons/settings.png", 16, 16));
+        }
         themeButton.addMouseListener(new MouseAdapter() {
 
             /**
@@ -161,7 +162,7 @@ public class SchedulePanel extends JPanel {
         scheduleList.addListSelectionListener(new ListSelectionListener() {
 
             public void valueChanged(ListSelectionEvent e) {
-                if (scheduleList.getSelectedIndex() == -1) {
+                if(scheduleList.getSelectedIndex() == -1) {
                     removeButton.setEnabled(false);
                     upButton.setEnabled(false);
                     downButton.setEnabled(false);
@@ -176,7 +177,7 @@ public class SchedulePanel extends JPanel {
 
         JToolBar header = new JToolBar();
         header.setFloatable(false);
-        header.add(new JLabel("<html><b>"+LabelGrabber.INSTANCE.getLabel("order.service.heading")+"</b></html>"));
+        header.add(new JLabel("<html><b>" + LabelGrabber.INSTANCE.getLabel("order.service.heading") + "</b></html>"));
         header.add(Box.createHorizontalGlue());
         header.add(themeButton);
 
@@ -193,6 +194,7 @@ public class SchedulePanel extends JPanel {
 
     /**
      * Get the schedule list backing this panel.
+     *
      * @return the schedule list.
      */
     public ScheduleList getScheduleList() {
@@ -201,6 +203,7 @@ public class SchedulePanel extends JPanel {
 
     /**
      * Testing stuff.
+     *
      * @param args command line args.
      */
     public static void main(String[] args) {
