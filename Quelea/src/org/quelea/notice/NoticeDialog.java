@@ -39,6 +39,7 @@ import javax.swing.ListSelectionModel;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import org.quelea.languages.LabelGrabber;
+import org.quelea.utils.Utils;
 import org.quelea.windows.main.LyricCanvas;
 
 /**
@@ -60,6 +61,7 @@ public class NoticeDialog extends JDialog implements NoticesChangedListener {
      */
     public NoticeDialog(JFrame owner) {
         super(owner, true);
+        setIconImage(Utils.getImage("icons/info.png", 16, 16));
         noticeDrawers = new ArrayList<>();
         setTitle("Notices");
         setLayout(new BorderLayout());

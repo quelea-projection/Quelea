@@ -18,10 +18,13 @@
  */
 package org.quelea.windows.main.menus;
 
+import java.awt.event.ActionEvent;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
+import java.awt.event.KeyEvent;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
+import javax.swing.KeyStroke;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import org.quelea.Application;
@@ -55,6 +58,7 @@ public class DatabaseMenu extends JMenu {
         setMnemonic('d');
 
         newSongItem = new JMenuItem(LabelGrabber.INSTANCE.getLabel("new.song.button"), Utils.getImageIcon("icons/newsong.png", 16, 16));
+        newSongItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_N, ActionEvent.CTRL_MASK|ActionEvent.SHIFT_MASK));
         newSongItem.setMnemonic('n');
         newSongItem.addActionListener(new NewSongActionListener());
         add(newSongItem);
@@ -72,6 +76,7 @@ public class DatabaseMenu extends JMenu {
         add(newSongItem);
 
         tagsItem = new JMenuItem(LabelGrabber.INSTANCE.getLabel("tags.button"), Utils.getImageIcon("icons/tag.png", 16, 16));
+        tagsItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_G, ActionEvent.CTRL_MASK));
         tagsItem.setMnemonic('t');
         tagsItem.addActionListener(new ViewTagsActionListener());
         add(tagsItem);

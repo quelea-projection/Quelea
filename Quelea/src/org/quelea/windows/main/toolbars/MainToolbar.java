@@ -34,6 +34,7 @@ public class MainToolbar extends JToolBar {
     private JButton newScheduleButton;
     private JButton openScheduleButton;
     private JButton saveScheduleButton;
+    private JButton printScheduleButton;
     private JButton newSongButton;
     private JButton addPresentationButton;
     private JButton addVideoButton;
@@ -61,6 +62,11 @@ public class MainToolbar extends JToolBar {
         saveScheduleButton.setToolTipText(LabelGrabber.INSTANCE.getLabel("save.schedule.tooltip"));
         saveScheduleButton.addActionListener(new SaveScheduleActionListener(false));
         add(saveScheduleButton);
+
+        printScheduleButton = new JButton(Utils.getImageIcon("icons/fileprint.png", 24, 24));
+        printScheduleButton.setToolTipText(LabelGrabber.INSTANCE.getLabel("print.schedule.tooltip"));
+        printScheduleButton.addActionListener(new PrintScheduleActionListener());
+        add(printScheduleButton);
 
         addSeparator();
 
