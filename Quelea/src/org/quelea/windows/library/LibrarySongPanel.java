@@ -35,7 +35,7 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import org.quelea.languages.LabelGrabber;
 import org.quelea.utils.Utils;
-import org.quelea.windows.main.RemoveSongDBActionListener;
+import org.quelea.windows.main.actionlisteners.RemoveSongDBActionListener;
 
 /**
  * The panel used for browsing the database of songs and adding any songs to the order of service.

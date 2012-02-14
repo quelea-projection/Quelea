@@ -17,6 +17,9 @@
  */
 package org.quelea.windows.main;
 
+import org.quelea.windows.main.actionlisteners.EditSongDBActionListener;
+import org.quelea.windows.main.actionlisteners.NewSongActionListener;
+import org.quelea.windows.main.actionlisteners.EditSongScheduleActionListener;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.io.File;
@@ -24,13 +27,18 @@ import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.imageio.ImageIO;
+import javax.swing.BoxLayout;
 import javax.swing.JFrame;
+import javax.swing.JPanel;
 import org.quelea.Application;
 import org.quelea.notice.NoticeDialog;
+import org.quelea.tags.TagDialog;
 import org.quelea.utils.LoggerUtils;
 import org.quelea.utils.QueleaProperties;
 import org.quelea.windows.main.menus.MainMenuBar;
+import org.quelea.windows.main.toolbars.MainToolbar;
 import org.quelea.windows.newsong.SongEntryWindow;
+import org.quelea.windows.options.OptionsDialog;
 
 /**
  * The main window used to control the projection.
@@ -43,6 +51,9 @@ public class MainWindow extends JFrame {
     private final SongEntryWindow songEntryWindow;
     private final NoticeDialog noticeDialog;
     private final MainMenuBar menuBar;
+    private final MainToolbar mainToolbar;
+    private final TagDialog tagDialog;
+    private final OptionsDialog optionsDialog;
 
     /**
      * Create a new main window.
@@ -65,6 +76,12 @@ public class MainWindow extends JFrame {
         catch (IOException ex) {
             LOGGER.log(Level.SEVERE, "Couldn't set JFrame image", ex);
         }
+        
+        LOGGER.log(Level.INFO, "Creating tag dialog");
+        tagDialog = new TagDialog();
+        
+        LOGGER.log(Level.INFO, "Creating options dialog");
+        optionsDialog = new OptionsDialog(Application.get().getMainWindow());
 
         mainpanel = new MainPanel();
         songEntryWindow = new SongEntryWindow(this);
@@ -74,6 +91,12 @@ public class MainWindow extends JFrame {
         
         menuBar = new MainMenuBar();
         setJMenuBar(menuBar);
+        
+        JPanel toolbarPanel = new JPanel();
+        toolbarPanel.setLayout(new BoxLayout(toolbarPanel, BoxLayout.X_AXIS));
+        mainToolbar = new MainToolbar();
+        toolbarPanel.add(mainToolbar);
+        add(toolbarPanel, BorderLayout.NORTH);
         
         add(mainpanel, BorderLayout.CENTER);
         mainpanel.getLibraryPanel().getImagePanel().setPreferredSize(new Dimension(100, 200));
@@ -97,6 +120,22 @@ public class MainWindow extends JFrame {
         return noticeDialog;
     }
 
+    /**
+     * Get the tag dialog on this main window.
+     * @return the tag dialog.
+     */
+    public TagDialog getTagDialog() {
+        return tagDialog;
+    }
+
+    /**
+     * Get the options dialog on this main window.
+     * @return the options dialog.
+     */
+    public OptionsDialog getOptionsDialog() {
+        return optionsDialog;
+    }
+    
     /**
      * Get the new song window used for this window.
      * @return the song entry window.

@@ -15,7 +15,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.quelea.windows.main;
+package org.quelea.windows.main.actionlisteners;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -27,6 +27,7 @@ import org.quelea.SongDatabase;
 import org.quelea.SortedListModel;
 import org.quelea.displayable.Song;
 import org.quelea.windows.library.LibrarySongList;
+import org.quelea.windows.main.MainWindow;
 
 /**
  * Action listener that removes the selected song from the database.

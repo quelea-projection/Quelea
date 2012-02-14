@@ -39,9 +39,9 @@ import org.quelea.importexport.SurvivorImportDialog;
 import org.quelea.languages.LabelGrabber;
 import org.quelea.tags.TagDialog;
 import org.quelea.windows.library.LibrarySongList;
-import org.quelea.windows.main.EditSongDBActionListener;
-import org.quelea.windows.main.NewSongActionListener;
-import org.quelea.windows.main.RemoveSongDBActionListener;
+import org.quelea.windows.main.actionlisteners.EditSongDBActionListener;
+import org.quelea.windows.main.actionlisteners.NewSongActionListener;
+import org.quelea.windows.main.actionlisteners.RemoveSongDBActionListener;
 
 /**
  * The database task (i.e. group of buttons) displayed on the ribbon. Manages
