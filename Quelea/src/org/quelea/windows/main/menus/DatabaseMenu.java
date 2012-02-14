@@ -18,8 +18,6 @@
  */
 package org.quelea.windows.main.menus;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 import javax.swing.JMenu;
@@ -28,20 +26,19 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import org.quelea.Application;
 import org.quelea.languages.LabelGrabber;
-import org.quelea.tags.TagDialog;
 import org.quelea.utils.Utils;
 import org.quelea.windows.library.LibrarySongList;
-import org.quelea.windows.main.EditSongDBActionListener;
-import org.quelea.windows.main.NewSongActionListener;
-import org.quelea.windows.main.RemoveSongDBActionListener;
+import org.quelea.windows.main.actionlisteners.EditSongDBActionListener;
+import org.quelea.windows.main.actionlisteners.NewSongActionListener;
+import org.quelea.windows.main.actionlisteners.RemoveSongDBActionListener;
+import org.quelea.windows.main.actionlisteners.ViewTagsActionListener;
 
 /**
- * Quelea's database menu
+ * Quelea's database menu.
  * @author Michael
  */
 public class DatabaseMenu extends JMenu {
 
-    private final TagDialog tagDialog;
     private final JMenuItem newSongItem;
     private final JMenuItem editSongItem;
     private final JMenuItem deleteSongItem;
@@ -74,17 +71,9 @@ public class DatabaseMenu extends JMenu {
         deleteSongItem.setEnabled(false);
         add(newSongItem);
 
-        tagDialog = new TagDialog();
         tagsItem = new JMenuItem(LabelGrabber.INSTANCE.getLabel("tags.button"), Utils.getImageIcon("icons/tag.png", 16, 16));
         tagsItem.setMnemonic('t');
-        tagsItem.addActionListener(new ActionListener() {
-
-            @Override
-            public void actionPerformed(ActionEvent ae) {
-                tagDialog.reloadTags();
-                tagDialog.setVisible(true);
-            }
-        });
+        tagsItem.addActionListener(new ViewTagsActionListener());
         add(tagsItem);
 
         final LibrarySongList libraryList = Application.get().getMainWindow().getMainPanel().getLibraryPanel().getLibrarySongPanel().getSongList();

@@ -17,6 +17,7 @@
  */
 package org.quelea.windows.main;
 
+import org.quelea.windows.main.actionlisteners.RemoveSongScheduleActionListener;
 import java.awt.AWTEvent;
 import java.awt.BorderLayout;
 import java.awt.Point;

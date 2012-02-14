@@ -46,10 +46,10 @@ import org.quelea.powerpoint.PowerpointFileFilter;
 import org.quelea.utils.LoggerUtils;
 import org.quelea.utils.VideoFileFilter;
 import org.quelea.windows.library.LibrarySongList;
-import org.quelea.windows.main.AddSongActionListener;
-import org.quelea.windows.main.EditSongScheduleActionListener;
+import org.quelea.windows.main.actionlisteners.AddSongActionListener;
+import org.quelea.windows.main.actionlisteners.EditSongScheduleActionListener;
 import org.quelea.windows.main.MainPanel;
-import org.quelea.windows.main.RemoveSongScheduleActionListener;
+import org.quelea.windows.main.actionlisteners.RemoveSongScheduleActionListener;
 import org.quelea.windows.main.ScheduleList;
 import org.quelea.windows.main.StatusPanel;
 
