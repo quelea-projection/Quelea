@@ -20,6 +20,7 @@ package org.quelea.windows.main.toolbars;
 
 import javax.swing.JButton;
 import javax.swing.JToolBar;
+import org.quelea.languages.LabelGrabber;
 import org.quelea.utils.Utils;
 import org.quelea.windows.main.actionlisteners.*;
 
@@ -47,44 +48,53 @@ public class MainToolbar extends JToolBar {
         setFloatable(false);
 
         newScheduleButton = new JButton(Utils.getImageIcon("icons/filenew.png", 24, 24));
+        newScheduleButton.setToolTipText(LabelGrabber.INSTANCE.getLabel("new.schedule.tooltip"));
         newScheduleButton.addActionListener(new NewScheduleActionListener());
         add(newScheduleButton);
 
         openScheduleButton = new JButton(Utils.getImageIcon("icons/fileopen.png", 24, 24));
+        openScheduleButton.setToolTipText(LabelGrabber.INSTANCE.getLabel("open.schedule.tooltip"));
         openScheduleButton.addActionListener(new OpenScheduleActionListener());
         add(openScheduleButton);
 
         saveScheduleButton = new JButton(Utils.getImageIcon("icons/filesave.png", 24, 24));
+        saveScheduleButton.setToolTipText(LabelGrabber.INSTANCE.getLabel("save.schedule.tooltip"));
         saveScheduleButton.addActionListener(new SaveScheduleActionListener(false));
         add(saveScheduleButton);
 
         addSeparator();
 
         newSongButton = new JButton(Utils.getImageIcon("icons/newsong.png", 24, 24));
+        newSongButton.setToolTipText(LabelGrabber.INSTANCE.getLabel("new.song.tooltip"));
         newSongButton.addActionListener(new NewSongActionListener());
         add(newSongButton);
 
         addSeparator();
 
         addPresentationButton = new JButton(Utils.getImageIcon("icons/powerpoint.png", 24, 24));
+        addPresentationButton.setToolTipText(LabelGrabber.INSTANCE.getLabel("add.presentation.tooltip"));
         addPresentationButton.addActionListener(new AddPowerpointActionListener());
         add(addPresentationButton);
 
         addVideoButton = new JButton(Utils.getImageIcon("icons/video file.png", 24, 24));
+        addVideoButton.setToolTipText(LabelGrabber.INSTANCE.getLabel("add.video.tooltip"));
         addVideoButton.addActionListener(new AddVideoActionListener());
         add(addVideoButton);
 
         addDVDButton = new JButton(Utils.getImageIcon("icons/dvd.png", 24, 24));
+        addDVDButton.setToolTipText(LabelGrabber.INSTANCE.getLabel("add.dvd.tooltip"));
         addDVDButton.addActionListener(new AddDVDActionListener());
         add(addDVDButton);
 
         addSeparator();
 
         manageTagsButton = new JButton(Utils.getImageIcon("icons/tag.png", 24, 24));
+        manageTagsButton.setToolTipText(LabelGrabber.INSTANCE.getLabel("manage.tags.tooltip"));
         manageTagsButton.addActionListener(new ViewTagsActionListener());
         add(manageTagsButton);
 
         manageNoticesButton = new JButton(Utils.getImageIcon("icons/info.png", 24, 24));
+        manageNoticesButton.setToolTipText(LabelGrabber.INSTANCE.getLabel("manage.notices.tooltip"));
         manageNoticesButton.addActionListener(new ShowNoticesActionListener());
         add(manageNoticesButton);
 
