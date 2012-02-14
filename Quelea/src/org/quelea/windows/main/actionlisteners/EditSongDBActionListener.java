@@ -15,7 +15,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.quelea.windows.main;
+package org.quelea.windows.main.actionlisteners;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -23,20 +23,20 @@ import org.quelea.Application;
 import org.quelea.windows.newsong.SongEntryWindow;
 
 /**
- * The action listener used when creating a new song.
+ * Called when the current song in the library should be edited.
  * @author Michael
  */
-public class NewSongActionListener implements ActionListener {
+public class EditSongDBActionListener implements ActionListener {
 
     /**
-     * Popup the dialog to create a new song...
+     * Edit the currently selected song in the library.
      * @param e the action event.
      */
     @Override
     public void actionPerformed(ActionEvent e) {
         SongEntryWindow songEntryWindow = Application.get().getMainWindow().getSongEntryWindow();
         songEntryWindow.setLocationRelativeTo(songEntryWindow.getOwner());
-        songEntryWindow.resetNewSong();
+        songEntryWindow.resetEditSong(Application.get().getMainWindow().getMainPanel().getLibraryPanel().getLibrarySongPanel().getSongList().getSelectedValue());
         songEntryWindow.setVisible(true);
     }
 }

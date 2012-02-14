@@ -15,30 +15,29 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.quelea.windows.main;
+package org.quelea.windows.main.actionlisteners;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import org.quelea.Application;
 import org.quelea.displayable.Song;
-import org.quelea.windows.library.LibraryPanel;
+import org.quelea.windows.newsong.SongEntryWindow;
 
 /**
- * The action listener for adding a song, called when something fires off an 
- * action that adds a song from the library to the schedule.
+ * Called when the current song in the schedule should be edited.
  * @author Michael
  */
-public class AddSongActionListener implements ActionListener {
+public class EditSongScheduleActionListener implements ActionListener {
 
     /**
-     * Get the current selected song from the library to the schedule.
-     * @param e the event.
+     * Edit the currently selected song in the library.
+     * @param e the action event.
      */
     @Override
     public void actionPerformed(ActionEvent e) {
-        LibraryPanel libraryPanel = Application.get().getMainWindow().getMainPanel().getLibraryPanel();
-        SchedulePanel schedulePanel = Application.get().getMainWindow().getMainPanel().getSchedulePanel();
-        Song song = libraryPanel.getLibrarySongPanel().getSongList().getSelectedValue();
-        schedulePanel.getScheduleList().getModel().addElement(song);
+        SongEntryWindow songEntryWindow = Application.get().getMainWindow().getSongEntryWindow();
+        songEntryWindow.setLocationRelativeTo(songEntryWindow.getOwner());
+        songEntryWindow.resetEditSong((Song) Application.get().getMainWindow().getMainPanel().getSchedulePanel().getScheduleList().getSelectedValue());
+        songEntryWindow.setVisible(true);
     }
 }
