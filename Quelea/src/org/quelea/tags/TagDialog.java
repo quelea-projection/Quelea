@@ -25,6 +25,7 @@ import javax.swing.JDialog;
 import javax.swing.JScrollPane;
 import org.quelea.Application;
 import org.quelea.languages.LabelGrabber;
+import org.quelea.utils.Utils;
 import org.quelea.windows.library.LibrarySongList;
 
 /**
@@ -41,6 +42,7 @@ public class TagDialog extends JDialog {
      */
     public TagDialog() {
         super(Application.get().getMainWindow(), LabelGrabber.INSTANCE.getLabel("filter.tag"), ModalityType.MODELESS);
+        setIconImage(Utils.getImage("icons/tag.png", 16, 16));
         list = new LibrarySongList(false);
         
         setLayout(new BorderLayout());

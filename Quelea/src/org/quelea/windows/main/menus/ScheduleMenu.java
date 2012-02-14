@@ -27,9 +27,11 @@ import org.quelea.windows.main.actionlisteners.AddDVDActionListener;
 import org.quelea.windows.main.actionlisteners.EditSongScheduleActionListener;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
 import java.util.logging.Logger;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
+import javax.swing.KeyStroke;
 import javax.swing.event.ListDataEvent;
 import javax.swing.event.ListDataListener;
 import javax.swing.event.ListSelectionEvent;
@@ -108,16 +110,19 @@ public class ScheduleMenu extends JMenu {
         addSeparator();
 
         addPowerpointItem = new JMenuItem(LabelGrabber.INSTANCE.getLabel("add.presentation.button"), Utils.getImageIcon("icons/powerpoint.png", 16, 16));
+        addPowerpointItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_R, ActionEvent.CTRL_MASK));
         addPowerpointItem.setMnemonic('p');
         addPowerpointItem.addActionListener(new AddPowerpointActionListener());
         add(addPowerpointItem);
 
         addVideoItem = new JMenuItem(LabelGrabber.INSTANCE.getLabel("add.video.button"), Utils.getImageIcon("icons/video file.png", 16, 16));
+        addVideoItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_V, ActionEvent.CTRL_MASK));
         addVideoItem.setMnemonic('v');
         addVideoItem.addActionListener(new AddVideoActionListener());
         add(addVideoItem);
 
         addDVDItem = new JMenuItem(LabelGrabber.INSTANCE.getLabel("add.dvd.button"), Utils.getImageIcon("icons/dvd.png", 16, 16));
+        addDVDItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_D, ActionEvent.CTRL_MASK));
         addDVDItem.setMnemonic('d');
         addDVDItem.addActionListener(new AddDVDActionListener());
         add(addDVDItem);
@@ -125,6 +130,7 @@ public class ScheduleMenu extends JMenu {
         addSeparator();
 
         manageNoticesItem = new JMenuItem(LabelGrabber.INSTANCE.getLabel("manage.notices.button"), Utils.getImageIcon("icons/info.png", 16, 16));
+        manageNoticesItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_I, ActionEvent.CTRL_MASK));
         manageNoticesItem.setMnemonic('n');
         manageNoticesItem.addActionListener(new ShowNoticesActionListener());
         add(manageNoticesItem);

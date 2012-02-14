@@ -20,13 +20,10 @@ package org.quelea.windows.options;
 import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import javax.swing.JButton;
-import javax.swing.JDialog;
-import javax.swing.JFrame;
-import javax.swing.JPanel;
-import javax.swing.JTabbedPane;
+import javax.swing.*;
 import org.quelea.languages.LabelGrabber;
 import org.quelea.utils.PropertyPanel;
+import org.quelea.utils.Utils;
 
 /**
  * The dialog that holds all the options the user can set.
@@ -47,6 +44,7 @@ public class OptionsDialog extends JDialog {
      */
     public OptionsDialog(JFrame owner) {
         super(owner, LabelGrabber.INSTANCE.getLabel("options.title"), true);
+        setIconImage(Utils.getImage("icons/options.png", 16, 16));
         this.owner = owner;
         setLayout(new BorderLayout());
         tabbedPane = new JTabbedPane();
@@ -61,6 +59,7 @@ public class OptionsDialog extends JDialog {
         okButton = new JButton(LabelGrabber.INSTANCE.getLabel("ok.button"));
         okButton.addActionListener(new ActionListener() {
 
+            @Override
             public void actionPerformed(ActionEvent e) {
                 for(int i = 0; i < tabbedPane.getComponentCount(); i++) {
                     ((PropertyPanel) tabbedPane.getComponentAt(i)).setProperties();

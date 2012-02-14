@@ -18,8 +18,11 @@
  */
 package org.quelea.windows.main.menus;
 
+import java.awt.event.ActionEvent;
+import java.awt.event.KeyEvent;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
+import javax.swing.KeyStroke;
 import org.quelea.languages.LabelGrabber;
 import org.quelea.utils.Utils;
 import org.quelea.windows.main.actionlisteners.*;
@@ -48,15 +51,18 @@ public class FileMenu extends JMenu {
 
         newItem = new JMenuItem(LabelGrabber.INSTANCE.getLabel("new.schedule.button"), Utils.getImageIcon("icons/filenew.png", 20, 20));
         newItem.setMnemonic('n');
+        newItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_N, ActionEvent.CTRL_MASK));
         newItem.addActionListener(new NewScheduleActionListener());
         add(newItem);
 
         openItem = new JMenuItem(LabelGrabber.INSTANCE.getLabel("open.schedule.button"), Utils.getImageIcon("icons/fileopen.png", 20, 20));
         openItem.setMnemonic('o');
+        openItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_O, ActionEvent.CTRL_MASK));
         openItem.addActionListener(new OpenScheduleActionListener());
         add(openItem);
 
         saveItem = new JMenuItem(LabelGrabber.INSTANCE.getLabel("save.schedule.button"), Utils.getImageIcon("icons/filesave.png", 20, 20));
+        saveItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, ActionEvent.CTRL_MASK));
         saveItem.setMnemonic('s');
         saveItem.addActionListener(new SaveScheduleActionListener(false));
         add(saveItem);
@@ -67,11 +73,13 @@ public class FileMenu extends JMenu {
         add(saveAsItem);
 
         printItem = new JMenuItem(LabelGrabber.INSTANCE.getLabel("print.schedule.button"), Utils.getImageIcon("icons/fileprint.png", 20, 20));
+        printItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_P, ActionEvent.CTRL_MASK));
         printItem.setMnemonic('p');
         printItem.addActionListener(new PrintScheduleActionListener());
         add(printItem);
 
         optionsItem = new JMenuItem(LabelGrabber.INSTANCE.getLabel("options.button"), Utils.getImageIcon("icons/options.png", 20, 20));
+        optionsItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_T, ActionEvent.CTRL_MASK));
         optionsItem.setMnemonic('t');
         optionsItem.addActionListener(new ShowOptionsActionListener());
         add(optionsItem);

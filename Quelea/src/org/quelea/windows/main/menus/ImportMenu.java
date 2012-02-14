@@ -50,6 +50,7 @@ public class ImportMenu extends JMenu {
      */
     public ImportMenu() {
         super(LabelGrabber.INSTANCE.getLabel("import.heading"));
+        setIcon(Utils.getImageIcon("icons/left.png", 16, 16));
         setMnemonic('i');
         
         qspImportDialog = new QSPImportDialog(Application.get().getMainWindow());

@@ -36,6 +36,7 @@ import org.quelea.languages.LabelGrabber;
 import org.quelea.utils.LoggerUtils;
 import org.quelea.utils.QueleaProperties;
 import org.quelea.utils.UpdateChecker;
+import org.quelea.utils.Utils;
 import org.quelea.windows.help.AboutDialog;
 
 /**
@@ -63,7 +64,7 @@ public class HelpMenu extends JMenu {
         aboutDialog = new AboutDialog(Application.get().getMainWindow());
         
         if(Desktop.isDesktopSupported()) {
-            queleaSite = new JMenuItem(LabelGrabber.INSTANCE.getLabel("help.menu.website"));
+            queleaSite = new JMenuItem(LabelGrabber.INSTANCE.getLabel("help.menu.website"), Utils.getImageIcon("icons/website.png", 16, 16));
             queleaSite.addActionListener(new ActionListener() {
 
                 @Override
@@ -79,7 +80,7 @@ public class HelpMenu extends JMenu {
             });
             queleaSite.setMnemonic(KeyEvent.VK_W);
             add(queleaSite);
-            queleaDiscuss = new JMenuItem(LabelGrabber.INSTANCE.getLabel("help.menu.discussion"));
+            queleaDiscuss = new JMenuItem(LabelGrabber.INSTANCE.getLabel("help.menu.discussion"), Utils.getImageIcon("icons/discuss.png", 16, 16));
             queleaDiscuss.addActionListener(new ActionListener() {
 
                 @Override
@@ -95,7 +96,7 @@ public class HelpMenu extends JMenu {
             });
             queleaDiscuss.setMnemonic(KeyEvent.VK_D);
             add(queleaDiscuss);
-            queleaDownload = new JMenuItem(LabelGrabber.INSTANCE.getLabel("help.menu.download"));
+            queleaDownload = new JMenuItem(LabelGrabber.INSTANCE.getLabel("help.menu.download"), Utils.getImageIcon("icons/download.png", 16, 16));
             queleaDownload.addActionListener(new ActionListener() {
 
                 @Override
@@ -117,7 +118,7 @@ public class HelpMenu extends JMenu {
             queleaDiscuss = null;
             queleaDownload = null;
         }
-        updateCheck = new JMenuItem(LabelGrabber.INSTANCE.getLabel("help.menu.update"));
+        updateCheck = new JMenuItem(LabelGrabber.INSTANCE.getLabel("help.menu.update"), Utils.getImageIcon("icons/update.png", 16, 16));
         updateCheck.setMnemonic(KeyEvent.VK_C);
         updateCheck.addActionListener(new ActionListener() {
 
@@ -127,7 +128,7 @@ public class HelpMenu extends JMenu {
             }
         });
         add(updateCheck);
-        about = new JMenuItem(LabelGrabber.INSTANCE.getLabel("help.menu.about"));
+        about = new JMenuItem(LabelGrabber.INSTANCE.getLabel("help.menu.about"), Utils.getImageIcon("icons/about.png", 16, 16));
         about.setMnemonic(KeyEvent.VK_A);
         about.addActionListener(new ActionListener() {
 
