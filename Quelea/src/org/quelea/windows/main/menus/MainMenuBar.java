@@ -29,6 +29,7 @@ public class MainMenuBar extends JMenuBar {
     private FileMenu fileMenu;
     private ScheduleMenu scheduleMenu;
     private DatabaseMenu databaseMenu;
+    private HelpMenu helpMenu;
     
     public MainMenuBar() {
         fileMenu = new FileMenu();
@@ -39,6 +40,9 @@ public class MainMenuBar extends JMenuBar {
         
         databaseMenu = new DatabaseMenu();
         add(databaseMenu);
+        
+        helpMenu = new HelpMenu();
+        add(helpMenu);
     }
     
 }
