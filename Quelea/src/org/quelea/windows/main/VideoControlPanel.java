@@ -154,7 +154,7 @@ public class VideoControlPanel extends JPanel {
                     }
                 });
             }
-            catch(Exception ex) {
+            catch (Exception ex) {
                 //UI issue, cannot do a lot and don't want to break program...
             }
         }
@@ -210,6 +210,7 @@ public class VideoControlPanel extends JPanel {
 
     /**
      * Register a canvas to be controlled via this video control panel.
+     *
      * @param canvas the canvas to control.
      */
     public void registerCanvas(final LyricCanvas canvas) {
@@ -240,6 +241,7 @@ public class VideoControlPanel extends JPanel {
 
     /**
      * Get a list of registered lyric canvases.
+     *
      * @return a list of registered lyric canvases.
      */
     public List<LyricCanvas> getRegisteredCanvases() {
@@ -248,6 +250,7 @@ public class VideoControlPanel extends JPanel {
 
     /**
      * Load the given video to be controlled via this panel.
+     *
      * @param videoPath the video path to load.
      */
     public void loadVideo(String videoPath) {
@@ -276,8 +279,17 @@ public class VideoControlPanel extends JPanel {
 
                             @Override
                             public void run() {
-                                int timeVal = (int) ((mediaPlayer.getTime() / (double) mediaPlayer.getLength()) * 1000);
-                                positionSlider.setValue(timeVal);
+                                long time = mediaPlayer.getTime();
+                                long length = mediaPlayer.getLength();
+                                System.out.println(time + "   "+ length);
+                                if(time >= length && time > 0) {
+                                    positionSlider.setValue(0);
+                                    stopVideo();
+                                }
+                                else {
+                                    int timeVal = (int) ((time / (double) length) * 1000);
+                                    positionSlider.setValue(timeVal);
+                                }
                             }
                         });
                     }
@@ -288,6 +300,7 @@ public class VideoControlPanel extends JPanel {
 
     /**
      * Get the current time of the video.
+     *
      * @return the current time of the video.
      */
     public long getTime() {
@@ -296,6 +309,7 @@ public class VideoControlPanel extends JPanel {
 
     /**
      * Set the current time of the video.
+     *
      * @param time the current time of the video.
      */
     public void setTime(long time) {
@@ -324,6 +338,7 @@ public class VideoControlPanel extends JPanel {
 
     /**
      * Set whether the video is muted.
+     *
      * @param muteState true to mute, false to unmute.
      */
     public void setMute(boolean muteState) {
@@ -338,6 +353,7 @@ public class VideoControlPanel extends JPanel {
 
     /**
      * Determine if this video is muted.
+     *
      * @return true if muted, false if not.
      */
     public boolean getMute() {
@@ -345,8 +361,8 @@ public class VideoControlPanel extends JPanel {
     }
 
     /**
-     * Close down all the players controlled via this control panel and stop
-     * the external VM's / remote players it controls.
+     * Close down all the players controlled via this control panel and stop the
+     * external VM's / remote players it controls.
      */
     public void close() {
         for(RemotePlayer mediaPlayer : mediaPlayers) {
@@ -357,6 +373,7 @@ public class VideoControlPanel extends JPanel {
 
     /**
      * Try and stop and clear up if we haven't already.
+     *
      * @throws Throwable if something goes wrong.
      */
     @Override
@@ -368,7 +385,8 @@ public class VideoControlPanel extends JPanel {
 
     /**
      * Just for testing.
-     * @param args 
+     *
+     * @param args
      */
     public static void main(String[] args) {
         JFrame frame = new JFrame();
