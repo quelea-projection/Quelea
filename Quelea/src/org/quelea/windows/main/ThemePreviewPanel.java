@@ -58,7 +58,7 @@ public class ThemePreviewPanel extends JPanel {
     public ThemePreviewPanel(Theme theme) {
         this.theme = theme;
         if (theme != null) {
-            canvas = new LyricCanvas(false);
+            canvas = new LyricCanvas(false, false);
             canvas.setTheme(theme);
             canvas.setText(ThemePanel.SAMPLE_LYRICS, new String[0]);
             canvas.setPreferredSize(new Dimension(100, 100));
