@@ -281,7 +281,6 @@ public class VideoControlPanel extends JPanel {
                             public void run() {
                                 long time = mediaPlayer.getTime();
                                 long length = mediaPlayer.getLength();
-                                System.out.println(time + "   "+ length);
                                 if(time >= length && time > 0) {
                                     positionSlider.setValue(0);
                                     stopVideo();
