@@ -118,6 +118,16 @@ public final class QueleaProperties extends Properties {
         }
         return ret;
     }
+    
+    /**
+     * Determine whether we should phone home at startup with anonymous 
+     * information. Simply put phonehome=false in the properties file to disable
+     * phonehome.
+     * @return true if we should phone home, false otherwise.
+     */
+    public boolean getPhoneHome() {
+        return Boolean.parseBoolean(getProperty("phonehome", "true"));
+    }
 
     /**
      * Get the directory used for storing the bibles.

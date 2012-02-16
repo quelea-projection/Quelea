@@ -26,6 +26,7 @@ import java.util.logging.Logger;
 import javax.swing.*;
 import org.quelea.bible.BibleManager;
 import org.quelea.languages.LabelGrabber;
+import org.quelea.phonehome.PhoneHome;
 import org.quelea.splash.SplashWindow;
 import org.quelea.utils.LoggerUtils;
 import org.quelea.utils.QueleaProperties;
@@ -134,7 +135,8 @@ public final class Main {
                 }
                 mainWindow = new MainWindow(true);
 
-                new UpdateChecker(mainWindow).checkUpdate(false, false, false);
+                new UpdateChecker(mainWindow).checkUpdate(false, false, false); //Check updates
+                PhoneHome.INSTANCE.phone(); //Phone home
 
                 LOGGER.log(Level.INFO, "Registering canvases");
                 mainWindow.getMainPanel().getLivePanel().registerLyricCanvas(fullScreenWindow.getCanvas());
