@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License along with
  * this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package org.quelea.windows.main;
+package org.quelea.windows.video;
 
 import java.awt.BorderLayout;
 import java.awt.Canvas;
@@ -31,16 +31,12 @@ import java.util.List;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
-import javax.swing.BoxLayout;
-import javax.swing.JButton;
-import javax.swing.JFrame;
-import javax.swing.JPanel;
-import javax.swing.JSlider;
-import javax.swing.SwingUtilities;
+import javax.swing.*;
 import org.pushingpixels.substance.internal.ui.SubstanceSliderUI;
 import org.quelea.utils.Utils;
 import org.quelea.video.RemotePlayer;
 import org.quelea.video.RemotePlayerFactory;
+import org.quelea.windows.main.LyricCanvas;
 
 /**
  * The control panel for displaying the video.
@@ -55,6 +51,7 @@ public class VideoControlPanel extends JPanel {
     private JButton stop;
     private JButton mute;
     private JSlider positionSlider;
+    private VideoStatusPanel vidStatusPanel;
     private Canvas videoArea;
     private List<RemotePlayer> mediaPlayers;
     private List<LyricCanvas> registeredCanvases;
@@ -94,6 +91,8 @@ public class VideoControlPanel extends JPanel {
             public void actionPerformed(ActionEvent e) {
                 stopVideo();
                 positionSlider.setValue(0);
+                vidStatusPanel.getTimeDisplay().setCurrentSeconds(0);
+                vidStatusPanel.getTimeDisplay().setTotalSeconds(0);
             }
         });
         mute = new JButton(Utils.getImageIcon("icons/mute.png"));
@@ -206,6 +205,16 @@ public class VideoControlPanel extends JPanel {
                 }
             }
         });
+        
+        vidStatusPanel = new VideoStatusPanel();
+        vidStatusPanel.getVolumeSlider().addRunner(new Runnable() {
+
+            @Override
+            public void run() {
+                setVolume(vidStatusPanel.getVolumeSlider().getValue());
+            }
+        });
+        add(vidStatusPanel, BorderLayout.SOUTH);
     }
 
     /**
@@ -283,11 +292,15 @@ public class VideoControlPanel extends JPanel {
                                 long length = mediaPlayer.getLength();
                                 if(time >= length && time > 0) {
                                     positionSlider.setValue(0);
+                                    vidStatusPanel.getTimeDisplay().setCurrentSeconds(0);
+                                    vidStatusPanel.getTimeDisplay().setTotalSeconds((int)(length/1000));
                                     stopVideo();
                                 }
                                 else {
                                     int timeVal = (int) ((time / (double) length) * 1000);
                                     positionSlider.setValue(timeVal);
+                                    vidStatusPanel.getTimeDisplay().setCurrentSeconds((int)(time/1000));
+                                    vidStatusPanel.getTimeDisplay().setTotalSeconds((int)(length/1000));
                                 }
                             }
                         });
@@ -358,6 +371,14 @@ public class VideoControlPanel extends JPanel {
     public boolean getMute() {
         return mediaPlayers.get(0).getMute();
     }
+    
+    /**
+     * Set the volume of the video.
+     * @param volume the video volume.
+     */
+    public void setVolume(int volume) {
+        mediaPlayers.get(0).setVolume(volume);
+    }
 
     /**
      * Close down all the players controlled via this control panel and stop the
@@ -396,7 +417,7 @@ public class VideoControlPanel extends JPanel {
         frame.pack();
         frame.setVisible(true);
 
-        panel.loadVideo("F:\\Videos\\Inception\\Inception.mkv");
+        panel.loadVideo("E:\\Films\\Inception\\Inception.mkv");
 //        panel.loadVideo("C:\\1.avi");
         panel.playVideo();
     }

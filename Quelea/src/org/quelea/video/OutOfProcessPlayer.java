@@ -62,6 +62,10 @@ public abstract class OutOfProcessPlayer {
                 inputLine = inputLine.substring("setTime ".length());
                 mediaPlayer.setTime(Long.parseLong(inputLine));
             }
+            else if (inputLine.startsWith("setVolume ")) {
+                inputLine = inputLine.substring("setVolume ".length());
+                mediaPlayer.setVolume(Integer.parseInt(inputLine));
+            }
             else if (inputLine.startsWith("setMute ")) {
                 inputLine = inputLine.substring("setMute ".length());
                 mediaPlayer.mute(Boolean.parseBoolean(inputLine));

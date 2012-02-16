@@ -15,10 +15,11 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.quelea.windows.main;
+package org.quelea.windows.video;
 
 import java.awt.BorderLayout;
 import org.quelea.displayable.VideoDisplayable;
+import org.quelea.windows.main.ContainedPanel;
 
 /**
  * A panel used in the live / preview panels for displaying videos.

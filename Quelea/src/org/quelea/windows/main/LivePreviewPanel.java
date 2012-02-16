@@ -17,6 +17,7 @@
  */
 package org.quelea.windows.main;
 
+import org.quelea.windows.video.VideoPanel;
 import java.awt.BorderLayout;
 import java.awt.CardLayout;
 import java.awt.Component;
