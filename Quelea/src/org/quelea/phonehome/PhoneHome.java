@@ -22,6 +22,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URL;
+import java.util.Locale;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.quelea.utils.LoggerUtils;
@@ -56,13 +57,15 @@ public class PhoneHome {
         }
 
         String os = System.getProperty("os.name") + " : " + System.getProperty("os.version");
-        os = os.replace(" ", "%20");
 
-        final StringBuilder urlStr = new StringBuilder("http://quelea.org/phonehome/store.php?os=");
-        urlStr.append(os);
-        urlStr.append("&version=");
-        urlStr.append(QueleaProperties.VERSION.getVersionString());
+        final StringBuilder urlStrBuilder = new StringBuilder("http://quelea.org/phonehome/store.php?os=");
+        urlStrBuilder.append(os);
+        urlStrBuilder.append("&version=");
+        urlStrBuilder.append(QueleaProperties.VERSION.getVersionString());
+        urlStrBuilder.append("&language=");
+        urlStrBuilder.append(Locale.getDefault().getDisplayLanguage(Locale.ENGLISH));
         
+        final String urlStr = urlStrBuilder.toString().replace(" ", "%20");
 
         //Execute in the background...
         new Thread() {
@@ -71,7 +74,7 @@ public class PhoneHome {
             public void run() {
                 LOGGER.log(Level.INFO, "Phoning home..");
                 final StringBuilder result = new StringBuilder();
-                try (BufferedReader reader = new BufferedReader(new InputStreamReader(new URL(urlStr.toString()).openStream()));) {
+                try (BufferedReader reader = new BufferedReader(new InputStreamReader(new URL(urlStr).openStream()));) {
 
                     String line;
                     while((line = reader.readLine()) != null) {
