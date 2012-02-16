@@ -18,9 +18,6 @@
 package org.quelea.video;
 
 import java.io.*;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import org.quelea.utils.Utils;
 
 /**
  * Controls an OutOfProcessPlayer via input / output process streams.
@@ -109,6 +106,14 @@ public class RemotePlayer {
         writeOut("stop");
         playing = false;
         paused = false;
+    }
+    
+    /**
+     * Set the volume.
+     * @param volume the volume to set the player to.
+     */
+    public void setVolume(int volume) {
+        writeOut("setVolume " + volume);
     }
 
     /**

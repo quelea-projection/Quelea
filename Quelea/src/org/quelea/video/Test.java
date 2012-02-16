@@ -20,7 +20,7 @@ package org.quelea.video;
 import java.awt.GridLayout;
 import javax.swing.JFrame;
 import javax.swing.SwingUtilities;
-import org.quelea.windows.main.VideoControlPanel;
+import org.quelea.windows.video.VideoControlPanel;
 
 /**
  * An internal test class to play around with the video stuff without launching
