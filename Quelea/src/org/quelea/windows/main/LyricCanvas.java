@@ -56,14 +56,16 @@ public class LyricCanvas extends Canvas {
     private boolean valid = false;
     private NoticeDrawer noticeDrawer;
     private Image offscreenImage;
+    private boolean stageView;
 
     /**
      * Create a new canvas where the lyrics should be displayed.
      * @param showBorder true if the border should be shown around any text (only
      * if the options say so) false otherwise.
      */
-    public LyricCanvas(boolean showBorder) {
+    public LyricCanvas(boolean showBorder, boolean stageView) {
         this.showBorder = showBorder;
+        this.stageView = stageView;
         noticeDrawer = new NoticeDrawer(this);
         text = new String[]{};
         theme = Theme.DEFAULT_THEME;
@@ -75,6 +77,14 @@ public class LyricCanvas extends Canvas {
                 valid = false;
             }
         });
+    }
+    
+    /**
+     * Determine if this canvas is part of a stage view.
+     * @return true if its a stage view, false otherwise.
+     */
+    public boolean isStageView() {
+        return stageView;
     }
 
     /**
@@ -455,7 +465,7 @@ public class LyricCanvas extends Canvas {
      * @param args command line args
      */
     public static void main(String[] args) {
-        LyricCanvas canvas = new LyricCanvas(true);
+        LyricCanvas canvas = new LyricCanvas(true, false);
         JFrame frame = new JFrame();
         frame.setLayout(new BorderLayout());
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
