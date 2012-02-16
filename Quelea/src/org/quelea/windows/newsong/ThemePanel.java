@@ -66,7 +66,7 @@ public class ThemePanel extends JPanel {
     public ThemePanel() {
         setName(LabelGrabber.INSTANCE.getLabel("theme.heading"));
         setLayout(new BorderLayout());
-        canvas = new LyricCanvas(false);
+        canvas = new LyricCanvas(false, false);
         canvas.setText(SAMPLE_LYRICS, null);
         add(canvas, BorderLayout.CENTER);
         JPanel toolbarPanel = new JPanel();
