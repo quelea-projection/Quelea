@@ -116,9 +116,9 @@ public final class Main {
             stageWindow = new LyricWindow(gds[0].getDefaultConfiguration().getBounds(), true);
             stageWindow.setVisible(false);
         }
-        else if(QueleaProperties.get().isProjectorModeCoords()) {
-            LOGGER.log(Level.INFO, "Starting stage display: ", QueleaProperties.get().getProjectorCoords());
-            stageWindow = new LyricWindow(QueleaProperties.get().getProjectorCoords(), true);
+        else if(QueleaProperties.get().isStageModeCoords()) {
+            LOGGER.log(Level.INFO, "Starting stage display: ", QueleaProperties.get().getStageCoords());
+            stageWindow = new LyricWindow(QueleaProperties.get().getStageCoords(), true);
         }
         else {
             LOGGER.log(Level.INFO, "Starting stage display on monitor {0} (base 0!)", stageScreen);
