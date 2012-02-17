@@ -81,7 +81,13 @@ public class LibrarySongList extends JList<Song> implements DatabaseListener {
         super(new SortedListModel<Song>());
         this.popup = popup;
         setCellRenderer(new SongRenderer());
-        originalSelectionColour = getSelectionBackground();
+        Color inactiveColor = QueleaProperties.get().getInactiveSelectionColor();
+        if(inactiveColor==null) {
+            originalSelectionColour = getSelectionBackground();
+        }
+        else {
+            originalSelectionColour = inactiveColor;
+        }
         addFocusListener(new FocusListener() {
 
             @Override
@@ -91,6 +97,7 @@ public class LibrarySongList extends JList<Song> implements DatabaseListener {
                 }
             }
 
+            @Override
             public void focusLost(FocusEvent e) {
                 setSelectionBackground(originalSelectionColour);
             }
