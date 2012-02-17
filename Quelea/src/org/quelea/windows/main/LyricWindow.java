@@ -48,12 +48,12 @@ public class LyricWindow extends JWindow {
      * Create a new lyrics window positioned to fill the given rectangle.
      * @param area the area in which the window should be drawn.
      */
-    public LyricWindow(Rectangle area) {
+    public LyricWindow(Rectangle area, boolean stageView) {
         JPanel panel = new JPanel();
         panel.setBackground(Color.BLACK);
         setArea(area);
         setCursor(BLANK_CURSOR);
-        canvas = new LyricCanvas(true, false);
+        canvas = new LyricCanvas(true, stageView);
         canvas.setPreferredSize(new Dimension((int) (area.getMaxX() - area.getMinX()), (int) (area.getMaxY() - area.getMinY())));
         panel.add(canvas);
         add(panel);

@@ -58,7 +58,7 @@ public class SingleDisplayPanel extends JPanel {
         JLabel captionLabel = new JLabel(caption);
         captionLabel.setAlignmentX(0.5f);
         add(captionLabel);
-        JLabel iconLabel = new JLabel(Utils.getImageIcon(iconLocation));
+        JLabel iconLabel = new JLabel(Utils.getImageIcon(iconLocation, 80, 80));
         iconLabel.setAlignmentX(0.5f);
         add(iconLabel);
         outputSelect = new JComboBox<>(getAvailableScreens(none));

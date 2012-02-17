@@ -19,6 +19,7 @@ package org.quelea;
 
 import java.io.File;
 import javax.swing.JOptionPane;
+import org.quelea.languages.LabelGrabber;
 import org.quelea.windows.main.LyricWindow;
 import org.quelea.windows.main.MainWindow;
 import org.quelea.windows.main.StatusPanelGroup;
@@ -32,6 +33,7 @@ public class Application {
     private static final Application INSTANCE = new Application();
     private MainWindow mainWindow;
     private LyricWindow lyricWindow;
+    private LyricWindow stageWindow;
 
     /**
      * Get the singleton instance.
@@ -49,8 +51,8 @@ public class Application {
         Schedule schedule = Schedule.fromFile(file);
         if (schedule == null) {
             JOptionPane.showMessageDialog(Application.get().getMainWindow(),
-                    "There was a problem opening the schedule. Perhaps it's corrupt, or is not a schedule saved by Quelea.",
-                    "Error opening schedule", JOptionPane.ERROR_MESSAGE, null);
+                    LabelGrabber.INSTANCE.getLabel("error.schedule.message"),
+                    LabelGrabber.INSTANCE.getLabel("error.schedule.title"), JOptionPane.ERROR_MESSAGE, null);
         }
         else {
             Application.get().getMainWindow().getMainPanel().getSchedulePanel().getScheduleList().setSchedule(schedule);
@@ -63,6 +65,14 @@ public class Application {
      */
     public LyricWindow getLyricWindow() {
         return lyricWindow;
+    }
+
+    /**
+     * Get the stage window.
+     * @return the stage window.
+     */
+    public LyricWindow getStageWindow() {
+        return stageWindow;
     }
 
     /**
@@ -88,6 +98,14 @@ public class Application {
      */
     public void setLyricWindow(LyricWindow lyricWindow) {
         this.lyricWindow = lyricWindow;
+    }
+
+    /**
+     * Set the stage window.
+     * @param lyricWindow the stage window.
+     */
+    public void setStageWindow(LyricWindow lyricWindow) {
+        this.stageWindow = lyricWindow;
     }
 
     /**

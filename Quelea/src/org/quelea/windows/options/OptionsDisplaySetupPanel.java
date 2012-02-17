@@ -33,7 +33,7 @@ import org.quelea.windows.main.MainWindow;
  */
 public class OptionsDisplaySetupPanel extends JPanel implements PropertyPanel {
 
-    private final SingleDisplayPanel monitorPanel, projectorPanel;
+    private final SingleDisplayPanel monitorPanel, projectorPanel, stagePanel;
 
     /**
      * Create a new display setup panel.
@@ -42,11 +42,13 @@ public class OptionsDisplaySetupPanel extends JPanel implements PropertyPanel {
         setName(LabelGrabber.INSTANCE.getLabel("display.options.heading"));
         setLayout(new BorderLayout());
         JPanel mainPanel = new JPanel();
-        mainPanel.setLayout(new GridLayout(1, 2, 30, 0));
+        mainPanel.setLayout(new GridLayout(1, 3, 30, 0));
         monitorPanel = new SingleDisplayPanel(LabelGrabber.INSTANCE.getLabel("control.screen.label")+":", "icons/monitor.png", false, false);
         mainPanel.add(monitorPanel);
         projectorPanel = new SingleDisplayPanel(LabelGrabber.INSTANCE.getLabel("projector.screen.label")+":", "icons/projector.png", true, true);
         mainPanel.add(projectorPanel);
+        stagePanel = new SingleDisplayPanel(LabelGrabber.INSTANCE.getLabel("stage.screen.label")+":", "icons/stage.png", true, true);
+        mainPanel.add(stagePanel);
         readProperties();
         add(mainPanel, BorderLayout.CENTER);
     }
@@ -58,10 +60,15 @@ public class OptionsDisplaySetupPanel extends JPanel implements PropertyPanel {
     public final void readProperties() {
         monitorPanel.update();
         projectorPanel.update();
+        stagePanel.update();
         monitorPanel.setScreen(QueleaProperties.get().getControlScreen());
         projectorPanel.setCoords(QueleaProperties.get().getProjectorCoords());
         if (!QueleaProperties.get().isProjectorModeCoords()) {
             projectorPanel.setScreen(QueleaProperties.get().getProjectorScreen());
+        }
+        stagePanel.setCoords(QueleaProperties.get().getStageCoords());
+        if (!QueleaProperties.get().isStageModeCoords()) {
+            stagePanel.setScreen(QueleaProperties.get().getStageScreen());
         }
     }
 
@@ -73,14 +80,23 @@ public class OptionsDisplaySetupPanel extends JPanel implements PropertyPanel {
         QueleaProperties props = QueleaProperties.get();
         MainWindow mainWindow = Application.get().getMainWindow();
         LyricWindow lyricWindow = Application.get().getLyricWindow();
+        LyricWindow stageWindow = Application.get().getStageWindow();
         props.setControlScreen(monitorPanel.getOutputScreen());
         props.setProjectorCoords(projectorPanel.getCoords());
+        props.setStageCoords(stagePanel.getCoords());
         if(projectorPanel.customPosition()) {
             props.setProjectorModeCoords();
         }
         else {
             props.setProjectorModeScreen();
             props.setProjectorScreen(projectorPanel.getOutputScreen());
+        }
+        if(stagePanel.customPosition()) {
+            props.setStageModeCoords();
+        }
+        else {
+            props.setStageModeScreen();
+            props.setStageScreen(stagePanel.getOutputScreen());
         }
 
         if (projectorPanel.getOutputBounds() == null) {
@@ -90,7 +106,7 @@ public class OptionsDisplaySetupPanel extends JPanel implements PropertyPanel {
         }
         else {
             if (lyricWindow == null) {
-                lyricWindow = new LyricWindow(projectorPanel.getOutputBounds());
+                lyricWindow = new LyricWindow(projectorPanel.getOutputBounds(), false);
             }
             final LyricWindow fiLyricWindow = lyricWindow; //Fudge for AIC
             SwingUtilities.invokeLater(new Runnable() {
@@ -99,6 +115,25 @@ public class OptionsDisplaySetupPanel extends JPanel implements PropertyPanel {
                 public void run() {
                     fiLyricWindow.setVisible(true);
                     fiLyricWindow.setArea(projectorPanel.getOutputBounds());
+                }
+            });
+        }
+        if (stagePanel.getOutputBounds() == null) {
+            if (stageWindow != null) {
+                stageWindow.setVisible(false);
+            }
+        }
+        else {
+            if (stageWindow == null) {
+                stageWindow = new LyricWindow(projectorPanel.getOutputBounds(), true);
+            }
+            final LyricWindow fiStageWindow = stageWindow; //Fudge for AIC
+            SwingUtilities.invokeLater(new Runnable() {
+
+                @Override
+                public void run() {
+                    fiStageWindow.setVisible(true);
+                    fiStageWindow.setArea(stagePanel.getOutputBounds());
                 }
             });
         }

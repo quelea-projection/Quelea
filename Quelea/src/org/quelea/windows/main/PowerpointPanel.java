@@ -20,6 +20,7 @@ package org.quelea.windows.main;
 import java.awt.BorderLayout;
 import java.awt.event.KeyListener;
 import java.awt.image.BufferedImage;
+import java.util.HashSet;
 import javax.swing.DefaultListModel;
 import javax.swing.JScrollPane;
 import javax.swing.event.ListSelectionEvent;
@@ -31,6 +32,7 @@ import org.quelea.powerpoint.PresentationSlide;
 
 /**
  * The panel for displaying powerpoint slides in the live / preview panels.
+ *
  * @author Michael
  */
 public class PowerpointPanel extends ContainedPanel {
@@ -39,6 +41,7 @@ public class PowerpointPanel extends ContainedPanel {
 
     /**
      * Create a new powerpoint panel.
+     *
      * @param containerPanel the panel to create.
      */
     public PowerpointPanel(final LivePreviewPanel containerPanel) {
@@ -48,8 +51,10 @@ public class PowerpointPanel extends ContainedPanel {
 
             @Override
             public void valueChanged(ListSelectionEvent e) {
-                if (!powerpointList.getValueIsAdjusting()) {
-                    for (LyricCanvas lc : containerPanel.getCanvases()) {
+                if(!powerpointList.getValueIsAdjusting()) {
+                    HashSet<LyricCanvas> canvases = new HashSet<>();
+                    canvases.addAll(containerPanel.getCanvases());
+                    for(LyricCanvas lc : canvases) {
                         lc.eraseText();
                         BufferedImage displayImage = powerpointList.getCurrentImage(lc.getWidth(), lc.getHeight());
                         lc.setTheme(new Theme(null, null, new Background(null, displayImage)));
@@ -63,22 +68,23 @@ public class PowerpointPanel extends ContainedPanel {
 
     /**
      * Set the displayable to be on this powerpoint panel.
+     *
      * @param displayable the presentation displayable to display.
      * @param index the index to display.
      */
     public void setDisplayable(PresentationDisplayable displayable, int index) {
         DefaultListModel<PresentationSlide> model = (DefaultListModel<PresentationSlide>) powerpointList.getModel();
-        if (displayable == null) {
+        if(displayable == null) {
             model.clear();
             return;
         }
         PresentationSlide[] slides = displayable.getPresentation().getSlides();
         model.clear();
-        for (PresentationSlide slide : slides) {
+        for(PresentationSlide slide : slides) {
             model.addElement(slide);
         }
         powerpointList.setSelectedIndex(index);
-        if (powerpointList.getSelectedIndex() == -1) {
+        if(powerpointList.getSelectedIndex() == -1) {
             powerpointList.setSelectedIndex(0);
         }
         powerpointList.ensureIndexIsVisible(powerpointList.getSelectedIndex());
@@ -86,6 +92,7 @@ public class PowerpointPanel extends ContainedPanel {
 
     /**
      * Get the currently selected index on this panel.
+     *
      * @return the currently selected index on this panel.
      */
     public int getIndex() {
@@ -94,6 +101,7 @@ public class PowerpointPanel extends ContainedPanel {
 
     /**
      * Add a key listener to this powerpoint panel.
+     *
      * @param l the key listener to add.
      */
     @Override
@@ -111,8 +119,8 @@ public class PowerpointPanel extends ContainedPanel {
     }
 
     /**
-     * Clear this panel (well, actually don't do anything because we can't
-     * clear a presentation.)
+     * Clear this panel (well, actually don't do anything because we can't clear
+     * a presentation.)
      */
     @Override
     public void clear() {

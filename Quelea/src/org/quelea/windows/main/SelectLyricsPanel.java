@@ -20,6 +20,7 @@ package org.quelea.windows.main;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.event.KeyListener;
+import java.util.HashSet;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.border.EmptyBorder;
@@ -27,11 +28,13 @@ import javax.swing.event.ListDataEvent;
 import javax.swing.event.ListDataListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
+import org.quelea.Application;
 import org.quelea.displayable.TextDisplayable;
 import org.quelea.displayable.TextSection;
 
 /**
  * The panel where the lyrics for different songs can be selected.
+ *
  * @author Michael
  */
 public class SelectLyricsPanel extends ContainedPanel {
@@ -42,6 +45,7 @@ public class SelectLyricsPanel extends ContainedPanel {
 
     /**
      * Create a new lyrics panel.
+     *
      * @param containerPanel the container panel this panel is contained within.
      */
     public SelectLyricsPanel(LivePreviewPanel containerPanel) {
@@ -84,9 +88,10 @@ public class SelectLyricsPanel extends ContainedPanel {
             }
         });
     }
-    
+
     /**
      * Set one line mode on or off.
+     *
      * @param on if one line mode should be turned on, false otherwise.
      */
     public void setOneLineMode(boolean on) {
@@ -95,12 +100,13 @@ public class SelectLyricsPanel extends ContainedPanel {
 
     /**
      * Show a given text displayable on this panel.
+     *
      * @param displayable the displayable to show.
      * @param index the index of the displayable to show.
      */
     public void showDisplayable(TextDisplayable displayable, int index) {
         clear();
-        for (TextSection section : displayable.getSections()) {
+        for(TextSection section : displayable.getSections()) {
             lyricsList.getModel().addElement(section);
         }
         lyricsList.setSelectedIndex(index);
@@ -109,6 +115,7 @@ public class SelectLyricsPanel extends ContainedPanel {
 
     /**
      * Get the current displayed index.
+     *
      * @return the current displayed index.
      */
     public int getIndex() {
@@ -134,6 +141,7 @@ public class SelectLyricsPanel extends ContainedPanel {
 
     /**
      * Add a key listener to the list on this panel (and this panel.)
+     *
      * @param l the key listener to add.
      */
     @Override
@@ -143,25 +151,33 @@ public class SelectLyricsPanel extends ContainedPanel {
     }
 
     /**
-     * Called to update the contents of the canvases when the list selection changes.
+     * Called to update the contents of the canvases when the list selection
+     * changes.
      */
     private void updateCanvases() {
         int selectedIndex = lyricsList.getSelectedIndex();
-        for (LyricCanvas canvas : containerPanel.getCanvases()) {
-            if (selectedIndex == -1 || selectedIndex >= lyricsList.getModel().getSize()) {
+        HashSet<LyricCanvas> canvases = new HashSet<>();
+        canvases.addAll(containerPanel.getCanvases());
+        for(LyricCanvas canvas : canvases) {
+            if(selectedIndex == -1 || selectedIndex >= lyricsList.getModel().getSize()) {
                 canvas.setTheme(null);
                 canvas.eraseText();
                 continue;
             }
             TextSection currentSection = lyricsList.getModel().getElementAt(selectedIndex);
-            if (currentSection.getTempTheme() != null) {
+            if(currentSection.getTempTheme() != null) {
                 canvas.setTheme(currentSection.getTempTheme());
             }
             else {
                 canvas.setTheme(currentSection.getTheme());
             }
             canvas.setCapitaliseFirst(currentSection.shouldCapitaliseFirst());
-            canvas.setText(currentSection.getText(false, false), currentSection.getSmallText());
+            if(canvas.isStageView()) {
+                canvas.setText(currentSection.getText(true, false), currentSection.getSmallText());
+            }
+            else {
+                canvas.setText(currentSection.getText(false, false), currentSection.getSmallText());
+            }
         }
     }
 }

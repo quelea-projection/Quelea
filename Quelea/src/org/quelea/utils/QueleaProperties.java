@@ -274,6 +274,78 @@ public final class QueleaProperties extends Properties {
         setProperty("projector.mode", "screen");
         write();
     }
+    
+    /**
+     * Get the number of the stage screen. This is the screen that the
+     * projected output will be displayed on.
+     *
+     * @return the stage screen number.
+     */
+    public int getStageScreen() {
+        return Integer.parseInt(getProperty("stage.screen", "1"));
+    }
+    
+    /**
+     * Set the stage screen output.
+     *
+     * @param screen the number of the screen to use for the output.
+     */
+    public void setStageScreen(int screen) {
+        setProperty("stage.screen", Integer.toString(screen));
+        write();
+    }
+    
+    /**
+     * Get the custom stage screen co-ordinates.
+     * @return the co-ordinates.
+     */
+    public Rectangle getStageCoords() {
+        String[] prop = getProperty("stage.coords", "0,0,0,0").trim().split(",");
+        return new Rectangle(Integer.parseInt(prop[0]),
+                Integer.parseInt(prop[1]),
+                Integer.parseInt(prop[2]),
+                Integer.parseInt(prop[3]));
+    }
+    
+    /**
+     * Set the custom stage screen co-ordinates.
+     * @param coords the co-ordinates to set.
+     */
+    public void setStageCoords(Rectangle coords) {
+        String rectStr = Integer.toString((int)coords.getX())
+                +","+Integer.toString((int)coords.getY())
+                +","+Integer.toString((int)coords.getWidth())
+                +","+Integer.toString((int)coords.getHeight());
+                
+        setProperty("stage.coords", rectStr);
+        write();
+    }
+    
+    /**
+     * Determine if the stage mode is set to manual co-ordinates or a 
+     * screen number.
+     * @return true if it's set to manual co-ordinates, false if it's a screen
+     * number.
+     */
+    public boolean isStageModeCoords() {
+        return "coords".equals(getProperty("stage.mode"));
+    }
+    
+    /**
+     * Set the stage mode to be manual co-ordinates.
+     */
+    public void setStageModeCoords() {
+        setProperty("stage.mode", "coords");
+        write();
+    }
+    
+    /**
+     * Set the stage mode to be a screen number.
+     */
+    public void setStageModeScreen() {
+        setProperty("stage.mode", "screen");
+        write();
+    }
 
     /**
      * Get the minimum number of lines that should be displayed on each page. This purely applies to font sizes, the

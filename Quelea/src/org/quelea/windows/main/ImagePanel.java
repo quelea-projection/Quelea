@@ -21,6 +21,7 @@ import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.util.HashSet;
 import javax.swing.JPanel;
 import org.quelea.Background;
 import org.quelea.Theme;
@@ -79,7 +80,9 @@ public class ImagePanel extends ContainedPanel {
     private void updateCanvases(Theme theme) {
         canvas.setTheme(theme);
         canvas.eraseText();
-        for (LyricCanvas lCanvas : container.getCanvases()) {
+        HashSet<LyricCanvas> canvases = new HashSet<>();
+        canvases.addAll(container.getCanvases());
+        for (LyricCanvas lCanvas : canvases) {
             lCanvas.setTheme(theme);
             lCanvas.eraseText();
         }
