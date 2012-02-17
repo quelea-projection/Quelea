@@ -511,6 +511,20 @@ public final class QueleaProperties extends Properties {
                 Integer.parseInt(color[1].trim()),
                 Integer.parseInt(color[2].trim()));
     }
+
+    /**
+     * Get the colour used to signify an active list.
+     * @return the colour used to signify an active list.
+     */
+    public Color getInactiveSelectionColor() {
+        if(getProperty("inactive.selection.color")==null) {
+            return null;
+        }
+        String[] color = getProperty("inactive.selection.color").split(",");
+        return new Color(Integer.parseInt(color[0].trim()),
+                Integer.parseInt(color[1].trim()),
+                Integer.parseInt(color[2].trim()));
+    }
     
     public static void main(String[] args) {
         System.out.println(INSTANCE.getProperty("active.selection.color"));
