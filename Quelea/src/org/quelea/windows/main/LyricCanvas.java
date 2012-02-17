@@ -236,7 +236,7 @@ public class LyricCanvas extends Canvas {
                 int width = graphics.getFontMetrics().stringWidth(line);
                 int leftOffset;
                 if(stageView) {
-                    leftOffset = 0;
+                    leftOffset = 5;
                 }
                 else {
                     leftOffset = (getWidth() - width) / 2;
