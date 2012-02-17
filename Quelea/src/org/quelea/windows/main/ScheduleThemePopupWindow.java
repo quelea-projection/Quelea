@@ -67,6 +67,7 @@ import static java.nio.file.StandardWatchEventKinds.ENTRY_CREATE;
 import static java.nio.file.StandardWatchEventKinds.ENTRY_DELETE;
 import static java.nio.file.StandardWatchEventKinds.ENTRY_MODIFY;
 import static java.nio.file.StandardWatchEventKinds.OVERFLOW;
+import java.util.HashSet;
 import org.quelea.languages.LabelGrabber;
 
 /**
@@ -204,7 +205,8 @@ public class ScheduleThemePopupWindow extends FadeWindow {
                 public void actionPerformed(ActionEvent e) {
                     tempTheme = theme;
                     setTheme(theme);
-                    Set<LyricCanvas> canvases = Application.get().getMainWindow().getMainPanel().getPreviewPanel().getCanvases();
+                    HashSet<LyricCanvas> canvases = new HashSet<>();
+                    canvases.addAll(Application.get().getMainWindow().getMainPanel().getPreviewPanel().getCanvases());
                     for(LyricCanvas canvas : canvases) {
                         canvas.setTheme(theme);
                         canvas.repaint();
