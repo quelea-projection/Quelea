@@ -143,6 +143,14 @@ public abstract class LivePreviewPanel extends JPanel {
     }
 
     /**
+     * Get the select lyrics panel on this panel.
+     * @return the select lyrics panel.
+     */
+    public SelectLyricsPanel getLyricsPanel() {
+        return lyricsPanel;
+    }
+
+    /**
      * Set the displayable shown on this panel.
      * @param d the displayable to show.
      * @param index the index of the displayable to show, if relevant.

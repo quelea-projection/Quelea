@@ -123,6 +123,14 @@ public class SelectLyricsPanel extends ContainedPanel {
     }
 
     /**
+     * Get the lyrics list on this panel.
+     * @return the select lyrics list.
+     */
+    public SelectLyricsList getLyricsList() {
+        return lyricsList;
+    }
+    
+    /**
      * Clear the current panel.
      */
     @Override
