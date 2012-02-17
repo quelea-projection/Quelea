@@ -75,7 +75,7 @@ public class Mailer {
     public void sendSchedule(Schedule schedule, String body) {
 
         if (schedule == null || !schedule.iterator().hasNext()) {
-            throw new RuntimeException("Can't send empty schedule: " + schedule);
+            LOGGER.log(Level.WARNING, "Empty schedule passed to email, aborting");
         }
 
         try {
