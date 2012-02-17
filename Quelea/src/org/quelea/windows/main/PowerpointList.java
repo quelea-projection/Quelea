@@ -44,7 +44,13 @@ public class PowerpointList extends JList<PresentationSlide> {
     public PowerpointList() {
         setModel(new DefaultListModel<PresentationSlide>());
         setCellRenderer(new CustomCellRenderer());
-        originalSelectionColour = getSelectionBackground();
+        Color inactiveColor = QueleaProperties.get().getInactiveSelectionColor();
+        if (inactiveColor == null) {
+            originalSelectionColour = getSelectionBackground();
+        }
+        else {
+            originalSelectionColour = inactiveColor;
+        }
         addFocusListener(new FocusListener() {
 
             public void focusGained(FocusEvent e) {

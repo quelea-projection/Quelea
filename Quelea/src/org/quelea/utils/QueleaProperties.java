@@ -527,7 +527,7 @@ public final class QueleaProperties extends Properties {
     }
     
     public static void main(String[] args) {
-        System.out.println(INSTANCE.getProperty("active.selection.color"));
+        System.out.println(INSTANCE.getProperty("inactive.selection.color"));
     }
 
     /**

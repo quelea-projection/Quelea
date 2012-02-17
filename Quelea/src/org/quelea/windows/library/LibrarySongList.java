@@ -99,6 +99,7 @@ public class LibrarySongList extends JList<Song> implements DatabaseListener {
 
             @Override
             public void focusLost(FocusEvent e) {
+                System.out.println("HA");
                 setSelectionBackground(originalSelectionColour);
             }
         });
