@@ -19,12 +19,7 @@ package org.quelea.windows.main;
 
 import org.quelea.windows.main.actionlisteners.AddSongActionListener;
 import java.awt.BorderLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
+import java.awt.event.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JList;
@@ -197,6 +192,15 @@ public class MainPanel extends JPanel {
 
             public void keyReleased(KeyEvent e) {
                 //Nothing needed here
+            }
+        });
+        previewPanel.getLyricsPanel().getLyricsList().addMouseListener(new MouseAdapter() {
+
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                if(e.getClickCount()==2) {
+                    previewPanel.getLiveButton().doClick();
+                }
             }
         });
 
