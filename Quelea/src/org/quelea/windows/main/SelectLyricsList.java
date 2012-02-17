@@ -22,11 +22,7 @@ import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 import java.util.ArrayList;
 import java.util.List;
-import javax.swing.DefaultListModel;
-import javax.swing.JLabel;
-import javax.swing.JList;
-import javax.swing.ListCellRenderer;
-import javax.swing.ListSelectionModel;
+import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import org.quelea.displayable.TextSection;
 import org.quelea.utils.QueleaProperties;
@@ -137,7 +133,7 @@ public class SelectLyricsList extends JList<TextSection> {
         }
         this.oneLineMode = val;
         int selectedIndex = getSelectedIndex();
-        List<TextSection> elements = new ArrayList<TextSection>(getModel().size());
+        List<TextSection> elements = new ArrayList<>(getModel().size());
         for (int i = 0; i < getModel().size(); i++) {
             elements.add(getModel().get(i));
         }
