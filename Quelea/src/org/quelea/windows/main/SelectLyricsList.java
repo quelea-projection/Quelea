@@ -108,6 +108,7 @@ public class SelectLyricsList extends JList<TextSection> {
         else {
             originalSelectionColour = inactiveColor;
         }
+        setSelectionBackground(originalSelectionColour);
         addFocusListener(new FocusListener() {
 
             @Override
