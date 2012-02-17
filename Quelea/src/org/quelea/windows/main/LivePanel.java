@@ -22,6 +22,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.util.HashSet;
 import javax.swing.JLabel;
 import javax.swing.JToggleButton;
 import javax.swing.JToolBar;
@@ -33,7 +34,9 @@ import org.quelea.utils.QueleaProperties;
 import org.quelea.utils.Utils;
 
 /**
- * The panel displaying the live lyrics selection - changes made on this panel are reflected on the live projection.
+ * The panel displaying the live lyrics selection - changes made on this panel
+ * are reflected on the live projection.
+ *
  * @author Michael
  */
 public class LivePanel extends LivePreviewPanel {
@@ -48,57 +51,64 @@ public class LivePanel extends LivePreviewPanel {
     public LivePanel() {
         JToolBar header = new JToolBar();
         header.setFloatable(false);
-        header.add(new JLabel("<html><b>"+LabelGrabber.INSTANCE.getLabel("live.heading")+"</b></html>"));
+        header.add(new JLabel("<html><b>" + LabelGrabber.INSTANCE.getLabel("live.heading") + "</b></html>"));
         header.add(new JToolBar.Separator());
         black = new JToggleButton(Utils.getImageIcon("icons/black.png"));
-        black.setToolTipText(LabelGrabber.INSTANCE.getLabel("black.screen.tooltip")+" (F1)");
+        black.setToolTipText(LabelGrabber.INSTANCE.getLabel("black.screen.tooltip") + " (F1)");
         black.setRequestFocusEnabled(false);
         black.addActionListener(new ActionListener() {
 
             /**
              * Toggle all the canvases to black.
+             *
              * @param e the action event.
              */
             @Override
             public void actionPerformed(ActionEvent e) {
-                for (LyricCanvas canvas : getCanvases()) {
+                HashSet<LyricCanvas> canvases = new HashSet<>();
+                canvases.addAll(getCanvases());
+                for(LyricCanvas canvas : canvases) {
                     canvas.toggleBlack();
                 }
             }
         });
         header.add(black);
         clear = new JToggleButton(Utils.getImageIcon("icons/clear.png", 16, 16));
-        clear.setToolTipText(LabelGrabber.INSTANCE.getLabel("clear.text.tooltip")+" (F2)");
+        clear.setToolTipText(LabelGrabber.INSTANCE.getLabel("clear.text.tooltip") + " (F2)");
         clear.setRequestFocusEnabled(false);
         clear.addActionListener(new ActionListener() {
 
             /**
              * Toggle all the canvases to clear.
+             *
              * @param e the action event.
              */
             @Override
             public void actionPerformed(ActionEvent e) {
-                for (LyricCanvas canvas : getCanvases()) {
+                HashSet<LyricCanvas> canvases = new HashSet<>();
+                canvases.addAll(getCanvases());
+                for(LyricCanvas canvas : canvases) {
                     canvas.toggleClear();
                 }
             }
         });
         header.add(clear);
         hide = new JToggleButton(Utils.getImageIcon("icons/cross.png"));
-        hide.setToolTipText(LabelGrabber.INSTANCE.getLabel("hide.display.output.tooltip")+" (F3)");
+        hide.setToolTipText(LabelGrabber.INSTANCE.getLabel("hide.display.output.tooltip") + " (F3)");
         hide.setRequestFocusEnabled(false);
         hide.addActionListener(new ActionListener() {
 
             /**
              * Hide the lyric windows.
+             *
              * @param e the action event.
              */
             @Override
             public void actionPerformed(ActionEvent e) {
-                if (QueleaProperties.get().getProjectorScreen() == -1) {
+                if(QueleaProperties.get().getProjectorScreen() == -1) {
                     return;
                 }
-                for (final LyricWindow window : getWindows()) {
+                for(final LyricWindow window : getWindows()) {
                     SwingUtilities.invokeLater(new Runnable() {
 
                         @Override
@@ -106,7 +116,7 @@ public class LivePanel extends LivePreviewPanel {
                             window.setVisible(!window.isVisible());
                         }
                     });
-                    
+
                 }
                 Application.get().getMainWindow().repaint();
             }
@@ -118,6 +128,7 @@ public class LivePanel extends LivePreviewPanel {
 
             /**
              * Nothing when typed...
+             *
              * @param e the key event.
              */
             @Override
@@ -126,25 +137,26 @@ public class LivePanel extends LivePreviewPanel {
             }
 
             /**
-             * Detect F1 to go to black, F2 to clear and F3 to hide the 
-             * window.
+             * Detect F1 to go to black, F2 to clear and F3 to hide the window.
+             *
              * @param e the key event.
              */
             @Override
             public void keyPressed(KeyEvent e) {
-                if (e.getKeyCode() == KeyEvent.VK_F1) {
+                if(e.getKeyCode() == KeyEvent.VK_F1) {
                     black.doClick();
                 }
-                else if (e.getKeyCode() == KeyEvent.VK_F2) {
+                else if(e.getKeyCode() == KeyEvent.VK_F2) {
                     clear.doClick();
                 }
-                else if (e.getKeyCode() == KeyEvent.VK_F3) {
+                else if(e.getKeyCode() == KeyEvent.VK_F3) {
                     hide.doClick();
                 }
             }
 
             /**
              * Nothing when released...
+             *
              * @param e the key event.
              */
             @Override
@@ -156,6 +168,7 @@ public class LivePanel extends LivePreviewPanel {
 
     /**
      * Set the displayable to be shown on this live panel.
+     *
      * @param d the displayable to show.
      * @param index the index to use for the displayable, if relevant.
      */
@@ -167,6 +180,7 @@ public class LivePanel extends LivePreviewPanel {
 
     /**
      * Get the "black" toggle button.
+     *
      * @return the "black" toggle button.
      */
     public JToggleButton getBlack() {
@@ -175,6 +189,7 @@ public class LivePanel extends LivePreviewPanel {
 
     /**
      * Get the "clear" toggle button.
+     *
      * @return the "clear" toggle button.
      */
     public JToggleButton getClear() {
@@ -183,6 +198,7 @@ public class LivePanel extends LivePreviewPanel {
 
     /**
      * Get the "hide" toggle button.
+     *
      * @return the "hide" toggle button.
      */
     public JToggleButton getHide() {

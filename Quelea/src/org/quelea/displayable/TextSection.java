@@ -204,7 +204,7 @@ public class TextSection {
      * @return the string without comments.
      */
     private String removeComments(String line) {
-        line = line.trim();
+        line = trimFromEnd(line);
         if (line.toLowerCase().endsWith("//lyrics")) {
             return line.substring(0, line.indexOf("//lyrics"));
         }
@@ -215,6 +215,22 @@ public class TextSection {
             return line.substring(0, line.indexOf("//title"));
         }
         return line;
+    }
+    
+    /**
+     * Trim whitespace from the end of the string (but not the start.)
+     * @param str the string to trim.
+     * @return the trimmed string.
+     */
+    private String trimFromEnd(String str) {
+        int pos = 0;
+        for(int i=str.length()-1 ; i>=0 ; i--) {
+            if(str.charAt(i)!=' ') {
+                pos = i+1;
+                break;
+            }
+        }
+        return str.substring(0,pos);
     }
 
     /**
