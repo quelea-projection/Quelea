@@ -97,7 +97,13 @@ public class ScheduleList extends JList<Displayable> {
      */
     public ScheduleList() {
         super(new DefaultListModel<Displayable>());
-        originalSelectionColour = getSelectionBackground();
+        Color inactiveColor = QueleaProperties.get().getInactiveSelectionColor();
+        if (inactiveColor == null) {
+            originalSelectionColour = getSelectionBackground();
+        }
+        else {
+            originalSelectionColour = inactiveColor;
+        }
         addFocusListener(new FocusListener() {
 
             public void focusGained(FocusEvent e) {
