@@ -101,7 +101,13 @@ public class SelectLyricsList extends JList<TextSection> {
     public SelectLyricsList() {
         super(new DefaultListModel<TextSection>());
         oneLineMode = QueleaProperties.get().getOneLineMode();
-        originalSelectionColour = getSelectionBackground();
+        Color inactiveColor = QueleaProperties.get().getInactiveSelectionColor();
+        if (inactiveColor == null) {
+            originalSelectionColour = getSelectionBackground();
+        }
+        else {
+            originalSelectionColour = inactiveColor;
+        }
         addFocusListener(new FocusListener() {
 
             @Override
