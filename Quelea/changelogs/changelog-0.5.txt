@@ -3,5 +3,11 @@ quelea (0.5) stable; urgency=normal
   * Better searching
   * Reworked UI, no ribbon
   * Added missing labels
+  * Added stage view
+  * Added volume / status bar to videos
+  * File filters now case insensitive
+  * Startup speed improvements
+  * Corrupt powerpoints handled properly with error
+  * Missing labels added to language file
  
  -- Michael Berry <michael@quelea.org>  Sunday, 19 Dec 2011 00:00:00 +0000
