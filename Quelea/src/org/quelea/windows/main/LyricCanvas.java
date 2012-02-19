@@ -243,8 +243,10 @@ public class LyricCanvas extends Canvas {
                 }
                 GraphicsUtils graphicsUtils = new GraphicsUtils(graphics);
                 int originalStyle = graphics.getFont().getStyle();
+                Color originalColor = graphics.getColor();
                 if(stageView && new LineTypeChecker(line).getLineType() == LineTypeChecker.Type.CHORDS) {
                     graphics.setFont(graphics.getFont().deriveFont(originalStyle | Font.ITALIC));
+                    graphics.setColor(QueleaProperties.get().getChordColor());
                 }
                 if(showBorder) {
                     graphicsUtils.drawStringWithOutline(line, leftOffset, heightOffset, graphicsUtils.getInverseColor(), QueleaProperties.get().getOutlineThickness());
@@ -254,6 +256,7 @@ public class LyricCanvas extends Canvas {
                 }
                 heightOffset += graphics.getFontMetrics().getHeight();
                 graphics.setFont(graphics.getFont().deriveFont(originalStyle));
+                graphics.setColor(originalColor);
             }
         }
     }

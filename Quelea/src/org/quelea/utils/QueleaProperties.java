@@ -505,6 +505,17 @@ public final class QueleaProperties extends Properties {
      * Get the colour used to signify an active list.
      * @return the colour used to signify an active list.
      */
+    public Color getChordColor() {
+        String[] color = getProperty("chord.color", "200,200,200").split(",");
+        return new Color(Integer.parseInt(color[0].trim()),
+                Integer.parseInt(color[1].trim()),
+                Integer.parseInt(color[2].trim()));
+    }
+
+    /**
+     * Get the colour used to signify an active list.
+     * @return the colour used to signify an active list.
+     */
     public Color getActiveSelectionColor() {
         String[] color = getProperty("active.selection.color", "23,130,100").split(",");
         return new Color(Integer.parseInt(color[0].trim()),
