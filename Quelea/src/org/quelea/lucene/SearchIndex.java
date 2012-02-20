@@ -113,7 +113,7 @@ public class SearchIndex {
      */
     public void removeSong(Song song) {
         try {
-            IndexReader.open(index).deleteDocuments(new Term("number", Integer.toString(song.getID())));
+            IndexReader.open(index, false).deleteDocuments(new Term("number", Integer.toString(song.getID())));
         }
         catch(IOException ex) {
             LOGGER.log(Level.SEVERE, "Couldn't remove value from index", ex);
