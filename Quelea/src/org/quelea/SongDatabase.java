@@ -32,6 +32,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.quelea.displayable.Song;
 import org.quelea.displayable.TextSection;
+import org.quelea.lucene.SearchIndex;
 import org.quelea.utils.DatabaseListener;
 import org.quelea.utils.LoggerUtils;
 import org.quelea.utils.QueleaProperties;
@@ -47,6 +48,8 @@ public final class SongDatabase {
 
     private static final Logger LOGGER = LoggerUtils.getLogger();
     private static final SongDatabase INSTANCE = new SongDatabase();
+    private SearchIndex index;
+    private boolean addedToIndex;
     private Connection conn;
     private boolean error;
     private final Set<DatabaseListener> listeners;
@@ -56,6 +59,8 @@ public final class SongDatabase {
      */
     private SongDatabase() {
         listeners = new HashSet<>();
+        addedToIndex = false;
+        index = new SearchIndex();
         try {
             LOGGER.log(Level.INFO, "Loading database");
             Class.forName("org.hsqldb.jdbcDriver");
@@ -127,6 +132,14 @@ public final class SongDatabase {
     public static SongDatabase get() {
         return INSTANCE;
     }
+    
+    /**
+     * Get the underlying search index used by this database.
+     * @return the search index.
+     */
+    public SearchIndex getIndex() {
+        return index;
+    }
 
     /**
      * Determine if an error occurred initialising the database.
@@ -178,6 +191,13 @@ public final class SongDatabase {
                     section.setTheme(Theme.parseDBString(rs.getString("background")));
                 }
                 songs.add(song);
+            }
+            if(!addedToIndex) {
+                LOGGER.log(Level.INFO, "Adding songs to index");
+                for(Song song : songs) {
+                    index.addSong(song);
+                }
+                addedToIndex = true;
             }
             return songs.toArray(new Song[songs.size()]);
         }
