@@ -54,7 +54,7 @@ import org.xml.sax.SAXException;
  * A song that contains a number of sections (verses, choruses, etc.)
  * @author Michael
  */
-public class Song implements TextDisplayable, Searchable, Comparable<Song>, Printable {
+public class Song implements TextDisplayable, Comparable<Song>, Printable {
 
     /**
      * The builder responsible for building this song.
@@ -243,7 +243,6 @@ public class Song implements TextDisplayable, Searchable, Comparable<Song>, Prin
     private List<TextSection> sections;
     private Theme theme;
     private int id;
-    private SoftReference<String> searchLyrics;
     private boolean printChords;
     private String lastSearch;
 
@@ -257,7 +256,6 @@ public class Song implements TextDisplayable, Searchable, Comparable<Song>, Prin
         this.sections = song.sections;
         this.theme = song.theme;
         this.id = song.id;
-        this.searchLyrics = song.searchLyrics;
         this.ccli = song.ccli;
         this.year = song.year;
         this.publisher = song.publisher;
@@ -571,7 +569,6 @@ public class Song implements TextDisplayable, Searchable, Comparable<Song>, Prin
             };
             sections.add(new TextSection(sectionTitle, newLyrics, smallLines, true));
         }
-        searchLyrics = null;
     }
 
     /**
@@ -583,7 +580,6 @@ public class Song implements TextDisplayable, Searchable, Comparable<Song>, Prin
             section.setTheme(theme);
         }
         sections.add(section);
-        searchLyrics = null;
     }
 
     /**
@@ -600,31 +596,17 @@ public class Song implements TextDisplayable, Searchable, Comparable<Song>, Prin
      * Get an array of all the sections in this song.
      * @return the song sections.
      */
+    @Override
     public TextSection[] getSections() {
         return sections.toArray(new TextSection[sections.size()]);
     }
 
     /**
-     * Determine whether this song matches a particular search. In doing so this method will check for whether the given
-     * soft reference to the search lyrics is null or contains null, if it does then new search lyrics will be
-     * generated. This acts as a type of cache to speed up searching.
-     * @param s the search term.
-     * @return TITLE if the search is found in the title, LYRICS if it's found
-     * in the lyrics and NONE if it's not found at all.
+     * Set the last search text (for highlighting.)
+     * @param lastSearch 
      */
-    public SearchResult search(String s) {
-        if(title.toLowerCase().contains(s.toLowerCase())) {
-            lastSearch = s;
-            return SearchResult.TITLE;
-        }
-        lastSearch = null;
-        if (searchLyrics == null || searchLyrics.get() == null) {
-            searchLyrics = new SoftReference<>(stripPunctuation(getLyrics(false, false).replace("\n", " ")).toLowerCase());
-        }
-        if(searchLyrics.get().contains(stripPunctuation(s))) {
-            return SearchResult.LYRICS;
-        }
-        return SearchResult.NONE;
+    public void setLastSearch(String lastSearch) {
+        this.lastSearch = lastSearch;
     }
     
     /**

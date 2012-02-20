@@ -37,19 +37,20 @@ import javax.swing.*;
 import org.quelea.SongDatabase;
 import org.quelea.SortedListModel;
 import org.quelea.displayable.*;
-import org.quelea.displayable.Searchable.SearchResult;
+import org.quelea.lucene.SearchIndex;
 import org.quelea.utils.DatabaseListener;
 import org.quelea.utils.QueleaProperties;
 
 /**
  * The list that displays the songs in the library.
+ *
  * @author Michael
  */
 public class LibrarySongList extends JList<Song> implements DatabaseListener {
 
     /**
-     * The toString() method on song returns XML, we don't want to print that so this is a bit of a hack to display the
-     * title instead.
+     * The toString() method on song returns XML, we don't want to print that so
+     * this is a bit of a hack to display the title instead.
      */
     private static class SongRenderer extends DefaultListCellRenderer {
 
@@ -82,7 +83,7 @@ public class LibrarySongList extends JList<Song> implements DatabaseListener {
         this.popup = popup;
         setCellRenderer(new SongRenderer());
         Color inactiveColor = QueleaProperties.get().getInactiveSelectionColor();
-        if(inactiveColor==null) {
+        if(inactiveColor == null) {
             originalSelectionColour = getSelectionBackground();
         }
         else {
@@ -92,7 +93,7 @@ public class LibrarySongList extends JList<Song> implements DatabaseListener {
 
             @Override
             public void focusGained(FocusEvent e) {
-                if (getModel().getSize() > 0) {
+                if(getModel().getSize() > 0) {
                     setSelectionBackground(QueleaProperties.get().getActiveSelectionColor());
                 }
             }
@@ -109,7 +110,7 @@ public class LibrarySongList extends JList<Song> implements DatabaseListener {
 
             @Override
             public void dragGestureRecognized(DragGestureEvent dge) {
-                if (getSelectedValue() != null) {
+                if(getSelectedValue() != null) {
                     dge.startDrag(DragSource.DefaultCopyDrop, new TransferDisplayable((Displayable) getModel().getElementAt(locationToIndex(dge.getDragOrigin()))));
                 }
             }
@@ -131,11 +132,11 @@ public class LibrarySongList extends JList<Song> implements DatabaseListener {
              * mouse is pressed and released for platform-independence.
              */
             private void checkPopup(MouseEvent e) {
-                if (e.isPopupTrigger() && LibrarySongList.this.popup) {
+                if(e.isPopupTrigger() && LibrarySongList.this.popup) {
                     int index = locationToIndex(e.getPoint());
                     Rectangle Rect = getCellBounds(index, index);
                     index = Rect.contains(e.getPoint().x, e.getPoint().y) ? index : -1;
-                    if (index != -1) {
+                    if(index != -1) {
                         setSelectedIndex(index);
                         popupMenu.show(LibrarySongList.this, e.getX(), e.getY());
                     }
@@ -150,10 +151,11 @@ public class LibrarySongList extends JList<Song> implements DatabaseListener {
 
     /**
      * Filter the results in this list by a specific search term.
+     *
      * @param search the search term to use.
      */
     public void filter(final String search) {
-        if (filterFuture != null) {
+        if(filterFuture != null) {
             filterFuture.cancel(true);
         }
         filterFuture = filterService.submit(new Runnable() {
@@ -161,17 +163,20 @@ public class LibrarySongList extends JList<Song> implements DatabaseListener {
             public void run() {
                 final SortedListModel<Song> titleModel = new SortedListModel<>();
                 final SortedListModel<Song> lyricsModel = new SortedListModel<>();
-                for (int i = 0; i < fullModel.getSize(); i++) {
-                    Song s = fullModel.getElementAt(i);
-                    SearchResult result = s.search(search.toLowerCase());
-                    if (result==SearchResult.TITLE) {
-                        titleModel.add(s);
-                    }
-                    else if(result==SearchResult.LYRICS) {
-                        lyricsModel.add(s);
+
+                Song[] titleSongs = SongDatabase.get().getIndex().filterSongs(search, SearchIndex.FilterType.TITLE);
+                for(Song song : titleSongs) {
+                    song.setLastSearch(search);
+                    titleModel.add(song);
+                }
+                Song[] lyricSongs = SongDatabase.get().getIndex().filterSongs(search, SearchIndex.FilterType.LYRICS);
+                for(Song song : lyricSongs) {
+                    if(!titleModel.contains(song)) {
+                        song.setLastSearch(null);
+                        lyricsModel.add(song);
                     }
                 }
-                
+
                 final DefaultListModel<Song> model = new DefaultListModel<>();
                 Iterator<Song> it = titleModel.iterator();
                 while(it.hasNext()) {
@@ -194,37 +199,38 @@ public class LibrarySongList extends JList<Song> implements DatabaseListener {
     }
 
     /**
-     * Filter songs in this song list by a certain number of tags. Only songs 
+     * Filter songs in this song list by a certain number of tags. Only songs
      * that contain all the tags will be displayed and pass the filter.
+     *
      * @param filterTags the tags to filter on.
      */
     public void filterByTag(final List<String> filterTags) {
-        if (filterFuture != null) {
+        if(filterFuture != null) {
             filterFuture.cancel(true);
         }
         filterFuture = filterService.submit(new Runnable() {
 
             public void run() {
                 final SortedListModel<Song> model = new SortedListModel<>();
-                for (int i = 0; i < fullModel.getSize(); i++) {
+                for(int i = 0; i < fullModel.getSize(); i++) {
                     boolean add = true;
                     Song s = fullModel.getElementAt(i);
                     String[] songTags = s.getTags();
-                    for (String filterTag : filterTags) {
-                        if (filterTag.trim().isEmpty()) {
+                    for(String filterTag : filterTags) {
+                        if(filterTag.trim().isEmpty()) {
                             continue;
                         }
                         boolean inPlace = false;
-                        for (String songtag : songTags) {
-                            if (filterTag.trim().equalsIgnoreCase(songtag.trim())) {
+                        for(String songtag : songTags) {
+                            if(filterTag.trim().equalsIgnoreCase(songtag.trim())) {
                                 inPlace = true;
                             }
                         }
-                        if (!inPlace) {
+                        if(!inPlace) {
                             add = false;
                         }
                     }
-                    if (add) {
+                    if(add) {
                         model.add(s);
                     }
                 }
@@ -242,6 +248,7 @@ public class LibrarySongList extends JList<Song> implements DatabaseListener {
 
     /**
      * Get the popup menu associated with this list.
+     *
      * @return the popup menu.
      */
     public LibraryPopupMenu getPopupMenu() {
@@ -250,18 +257,19 @@ public class LibrarySongList extends JList<Song> implements DatabaseListener {
 
     /**
      * Get the tooltip text for items in the list.
+     *
      * @param evt the mouse event generating the tooltip.
      * @return the tooltip text.
      */
     @Override
     public String getToolTipText(MouseEvent evt) {
         int index = locationToIndex(evt.getPoint());
-        if (index < 0) {
+        if(index < 0) {
             return null;
         }
         Song song = getModel().getElementAt(index);
         TextSection[] sections = song.getSections();
-        if (sections.length > 0 && sections[0] != null && sections[0].getText(false, false).length > 0) {
+        if(sections.length > 0 && sections[0] != null && sections[0].getText(false, false).length > 0) {
             return sections[0].getText(false, false)[0] + "...";
         }
         return null;
@@ -272,7 +280,7 @@ public class LibrarySongList extends JList<Song> implements DatabaseListener {
      */
     public final void update() {
         fullModel.clear();
-        for (Song song : SongDatabase.get().getSongs()) {
+        for(Song song : SongDatabase.get().getSongs()) {
             fullModel.add(song);
         }
     }
