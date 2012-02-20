@@ -112,8 +112,8 @@ public class SearchIndex {
      * @param song the song to remove.
      */
     public void removeSong(Song song) {
-        try {
-            IndexReader.open(index, false).deleteDocuments(new Term("number", Integer.toString(song.getID())));
+        try(IndexReader reader = IndexReader.open(index, false)) {
+            reader.deleteDocuments(new Term("number", Integer.toString(song.getID())));
         }
         catch(IOException ex) {
             LOGGER.log(Level.SEVERE, "Couldn't remove value from index", ex);
