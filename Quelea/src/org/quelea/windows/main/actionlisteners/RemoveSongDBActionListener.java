@@ -58,7 +58,7 @@ public class RemoveSongDBActionListener implements ActionListener {
         if(model instanceof SortedListModel) {
             ((SortedListModel<Song>)songList.getModel()).removeElement(song);
         }
-        if(model instanceof DefaultListModel) {
+        else if(model instanceof DefaultListModel) {
             ((DefaultListModel<Song>)songList.getModel()).removeElement(song);
         }
         else {
