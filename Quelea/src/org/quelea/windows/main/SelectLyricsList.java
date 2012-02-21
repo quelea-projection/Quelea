@@ -37,12 +37,13 @@ import org.quelea.utils.Utils;
  */
 public class SelectLyricsList extends JList<TextSection> {
 
-    private static final Cursor Q_CURSOR = Toolkit.getDefaultToolkit().createCustomCursor(Utils.getImage("icons/edit.png"), new Point(0,0), "Q Cursor");
+    private static final Cursor Q_CURSOR = Toolkit.getDefaultToolkit().createCustomCursor(Utils.getImage("icons/edit.png"), new Point(0, 0), "Q Cursor");
     private final Color originalSelectionColour;
     private boolean oneLineMode;
-    
+
     /**
-     * Used for displaying summaries of items in the service in the schedule list.
+     * Used for displaying summaries of items in the service in the schedule
+     * list.
      */
     private class SelectLyricsRenderer extends JLabel implements ListCellRenderer<TextSection> {
 
@@ -60,16 +61,16 @@ public class SelectLyricsList extends JList<TextSection> {
             setBorder(new EmptyBorder(5, 5, 5, 5));
             StringBuilder labelHTML = new StringBuilder();
             labelHTML.append("<html>");
-            if (!value.getTitle().trim().equals("")) {
+            if(!value.getTitle().trim().equals("")) {
                 labelHTML.append("<font color=\"white\"><span style=\"background-color:blue; width:100%;\">&nbsp;");
                 labelHTML.append(value.getTitle());
                 labelHTML.append("&nbsp;</span></font><br/>");
             }
-            for (String line : value.getText(displayChords, false)) {
+            for(String line : value.getText(displayChords, false)) {
                 labelHTML.append(line);
-                if (oneLineMode) {
-                    char lastChar = labelHTML.substring(labelHTML.length()-1, labelHTML.length()).charAt(0);
-                    if(lastChar!=','&&lastChar!=';') {
+                if(oneLineMode) {
+                    char lastChar = labelHTML.substring(labelHTML.length() - 1, labelHTML.length()).charAt(0);
+                    if(lastChar != ',' && lastChar != ';') {
                         labelHTML.append(";");
                     }
                     labelHTML.append(" ");
@@ -80,7 +81,7 @@ public class SelectLyricsList extends JList<TextSection> {
             }
             labelHTML.append("</html>");
             setText(labelHTML.toString());
-            if (isSelected) {
+            if(isSelected) {
                 setBackground(list.getSelectionBackground());
                 setForeground(list.getSelectionForeground());
             }
@@ -102,7 +103,7 @@ public class SelectLyricsList extends JList<TextSection> {
         super(new DefaultListModel<TextSection>());
         oneLineMode = QueleaProperties.get().getOneLineMode();
         Color inactiveColor = QueleaProperties.get().getInactiveSelectionColor();
-        if (inactiveColor == null) {
+        if(inactiveColor == null) {
             originalSelectionColour = getSelectionBackground();
         }
         else {
@@ -113,7 +114,7 @@ public class SelectLyricsList extends JList<TextSection> {
 
             @Override
             public void focusGained(FocusEvent e) {
-                if (getModel().getSize() > 0) {
+                if(getModel().getSize() > 0) {
                     setSelectionBackground(QueleaProperties.get().getActiveSelectionColor());
                 }
             }
@@ -125,7 +126,7 @@ public class SelectLyricsList extends JList<TextSection> {
         });
         setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         setCellRenderer(new SelectLyricsRenderer(false));
-        
+
         addMouseMotionListener(new MouseMotionListener() {
 
             @Override
@@ -135,7 +136,7 @@ public class SelectLyricsList extends JList<TextSection> {
 
             @Override
             public void mouseMoved(MouseEvent me) {
-                if(me.isAltDown()) {
+                if(me.isAltDown() && !getModel().isEmpty()) {
                     setCursor(Q_CURSOR);
                 }
                 else {
@@ -147,17 +148,17 @@ public class SelectLyricsList extends JList<TextSection> {
 
             @Override
             public void keyPressed(KeyEvent ke) {
-                if(ke.isAltDown()) {
+                if(ke.isAltDown() && !getModel().isEmpty()) {
                     setCursor(Q_CURSOR);
                 }
                 else {
                     setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
                 }
             }
-            
+
             @Override
             public void keyReleased(KeyEvent ke) {
-                if(ke.getKeyCode()==KeyEvent.VK_ALT) {
+                if(ke.getKeyCode() == KeyEvent.VK_ALT) {
                     setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
                 }
             }
@@ -166,20 +167,21 @@ public class SelectLyricsList extends JList<TextSection> {
 
     /**
      * Set whether this list should use one line mode.
+     *
      * @param val true if it should be in one line mode, false otherwise.
      */
     public void setOneLineMode(boolean val) {
-        if (this.oneLineMode == val) {
+        if(this.oneLineMode == val) {
             return;
         }
         this.oneLineMode = val;
         int selectedIndex = getSelectedIndex();
         List<TextSection> elements = new ArrayList<>(getModel().size());
-        for (int i = 0; i < getModel().size(); i++) {
+        for(int i = 0; i < getModel().size(); i++) {
             elements.add(getModel().get(i));
         }
         getModel().clear();
-        for (TextSection section : elements) {
+        for(TextSection section : elements) {
             getModel().addElement(section);
         }
         setSelectedIndex(selectedIndex);
@@ -187,8 +189,7 @@ public class SelectLyricsList extends JList<TextSection> {
     }
 
     /**
-     * @return a DefaultListModel that backs this lyrics list.
-     * @inheritDoc
+     * @return a DefaultListModel that backs this lyrics list. @inheritDoc
      */
     @Override
     public DefaultListModel<TextSection> getModel() {
