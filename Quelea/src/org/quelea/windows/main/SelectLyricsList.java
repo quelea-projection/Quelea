@@ -18,14 +18,17 @@ package org.quelea.windows.main;
 
 import java.awt.Color;
 import java.awt.Component;
-import java.awt.event.FocusEvent;
-import java.awt.event.FocusListener;
+import java.awt.Cursor;
+import java.awt.Point;
+import java.awt.Toolkit;
+import java.awt.event.*;
 import java.util.ArrayList;
 import java.util.List;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import org.quelea.displayable.TextSection;
 import org.quelea.utils.QueleaProperties;
+import org.quelea.utils.Utils;
 
 /**
  * A list displaying the different sections in the song.
@@ -34,6 +37,7 @@ import org.quelea.utils.QueleaProperties;
  */
 public class SelectLyricsList extends JList<TextSection> {
 
+    private static final Cursor Q_CURSOR = Toolkit.getDefaultToolkit().createCustomCursor(Utils.getImage("icons/edit.png"), new Point(0,0), "Q Cursor");
     private final Color originalSelectionColour;
     private boolean oneLineMode;
     
@@ -121,6 +125,43 @@ public class SelectLyricsList extends JList<TextSection> {
         });
         setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         setCellRenderer(new SelectLyricsRenderer(false));
+        
+        addMouseMotionListener(new MouseMotionListener() {
+
+            @Override
+            public void mouseDragged(MouseEvent me) {
+                //Nothing here
+            }
+
+            @Override
+            public void mouseMoved(MouseEvent me) {
+                if(me.isAltDown()) {
+                    setCursor(Q_CURSOR);
+                }
+                else {
+                    setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
+                }
+            }
+        });
+        addKeyListener(new KeyAdapter() {
+
+            @Override
+            public void keyPressed(KeyEvent ke) {
+                if(ke.isAltDown()) {
+                    setCursor(Q_CURSOR);
+                }
+                else {
+                    setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
+                }
+            }
+            
+            @Override
+            public void keyReleased(KeyEvent ke) {
+                if(ke.getKeyCode()==KeyEvent.VK_ALT) {
+                    setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
+                }
+            }
+        });
     }
 
     /**
