@@ -28,7 +28,6 @@ import javax.swing.event.ListDataEvent;
 import javax.swing.event.ListDataListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
-import org.quelea.Application;
 import org.quelea.displayable.TextDisplayable;
 import org.quelea.displayable.TextSection;
 

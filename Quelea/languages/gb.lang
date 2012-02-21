@@ -219,3 +219,4 @@ error.schedule.message=There was a problem opening the schedule. Perhaps it's co
 error.schedule.title=Error opening schedule
 print.chords.question=Include the chords when printing this song?
 printing.options.text=Print song
+space.key=space

@@ -36,7 +36,7 @@ public class SelectLyricsList extends JList<TextSection> {
 
     private final Color originalSelectionColour;
     private boolean oneLineMode;
-
+    
     /**
      * Used for displaying summaries of items in the service in the schedule list.
      */
