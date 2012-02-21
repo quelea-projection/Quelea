@@ -29,6 +29,7 @@ import org.quelea.SongDatabase;
 import org.quelea.displayable.Song;
 import org.quelea.displayable.TextSection;
 import org.quelea.languages.LabelGrabber;
+import org.quelea.windows.main.StatusPanel;
 
 /**
  * A frame used for quickly editing a song.
@@ -75,8 +76,22 @@ public class QuickEditDialog extends JDialog {
             public void actionPerformed(ActionEvent ae) {
                 TextSection oldSection = currentSong.getSections()[currentIndex];
                 currentSong.replaceSection(new TextSection(oldSection.getTitle(), getNewText(), oldSection.getSmallText(), oldSection.shouldCapitaliseFirst(), oldSection.getTheme()), currentIndex);
-                SongDatabase.get().updateSong(currentSong);
                 setVisible(false);
+                final StatusPanel statusPanel = Application.get().getStatusGroup().addPanel(LabelGrabber.INSTANCE.getLabel("updating.db"));
+                SwingWorker worker = new SwingWorker() {
+
+                    @Override
+                    protected Object doInBackground() {
+                        SongDatabase.get().updateSong(currentSong);
+                        return null;
+                    }
+                    
+                    @Override
+                    protected void done() {
+                        statusPanel.done();
+                    }
+                };
+                worker.execute();
             }
         });
         cancelButton = new JButton(LabelGrabber.INSTANCE.getLabel("cancel.button"));
@@ -127,7 +142,7 @@ public class QuickEditDialog extends JDialog {
             return;
         }
         currentIndex = sectionIndex;
-        statusLabel.setText("<html><b>"+song.getTitle()+"</b></html>");
+        statusLabel.setText("<html><b>" + song.getTitle() + "</b></html>");
         StringBuilder text = new StringBuilder();
         String[] lines = song.getSections()[sectionIndex].getText(true, true);
         for(int i = 0; i < lines.length; i++) {
