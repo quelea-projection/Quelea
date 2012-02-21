@@ -22,12 +22,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
-import javax.swing.JButton;
-import javax.swing.JDialog;
-import javax.swing.JFrame;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JTabbedPane;
+import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import org.quelea.Application;
 import org.quelea.SongDatabase;
@@ -36,6 +31,7 @@ import org.quelea.displayable.Song;
 import org.quelea.displayable.TextSection;
 import org.quelea.languages.LabelGrabber;
 import org.quelea.utils.Utils;
+import org.quelea.windows.main.StatusPanel;
 
 /**
  * A new song window that users use for inserting the text content of a new song.
@@ -72,17 +68,17 @@ public class SongEntryWindow extends JDialog {
         confirmButton = new JButton(LabelGrabber.INSTANCE.getLabel("add.song.button"), Utils.getImageIcon("icons/tick.png"));
         confirmButton.addActionListener(new ActionListener() {
 
+            @Override
             public void actionPerformed(ActionEvent e) {
 
-                if (!SongDatabase.get().updateSong(getSong())) {
-                    JOptionPane.showMessageDialog(Application.get().getMainWindow(), LabelGrabber.INSTANCE.getLabel("error.udpating.song.text"), LabelGrabber.INSTANCE.getLabel("error.text"), JOptionPane.ERROR_MESSAGE, null);
-                }
                 setVisible(false);
+                Utils.updateSongInBackground(song, true);
             }
         });
         cancelButton = new JButton(LabelGrabber.INSTANCE.getLabel("cancel.button"), Utils.getImageIcon("icons/cross.png"));
         cancelButton.addActionListener(new ActionListener() {
 
+            @Override
             public void actionPerformed(ActionEvent e) {
                 setVisible(false);
             }

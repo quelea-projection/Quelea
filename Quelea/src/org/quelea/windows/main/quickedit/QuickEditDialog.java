@@ -29,6 +29,7 @@ import org.quelea.SongDatabase;
 import org.quelea.displayable.Song;
 import org.quelea.displayable.TextSection;
 import org.quelea.languages.LabelGrabber;
+import org.quelea.utils.Utils;
 import org.quelea.windows.main.StatusPanel;
 
 /**
@@ -77,21 +78,7 @@ public class QuickEditDialog extends JDialog {
                 TextSection oldSection = currentSong.getSections()[currentIndex];
                 currentSong.replaceSection(new TextSection(oldSection.getTitle(), getNewText(), oldSection.getSmallText(), oldSection.shouldCapitaliseFirst(), oldSection.getTheme()), currentIndex);
                 setVisible(false);
-                final StatusPanel statusPanel = Application.get().getStatusGroup().addPanel(LabelGrabber.INSTANCE.getLabel("updating.db"));
-                SwingWorker worker = new SwingWorker() {
-
-                    @Override
-                    protected Object doInBackground() {
-                        SongDatabase.get().updateSong(currentSong);
-                        return null;
-                    }
-                    
-                    @Override
-                    protected void done() {
-                        statusPanel.done();
-                    }
-                };
-                worker.execute();
+                Utils.updateSongInBackground(currentSong, false);
             }
         });
         cancelButton = new JButton(LabelGrabber.INSTANCE.getLabel("cancel.button"));

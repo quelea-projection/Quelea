@@ -220,3 +220,6 @@ error.schedule.title=Error opening schedule
 print.chords.question=Include the chords when printing this song?
 printing.options.text=Print song
 space.key=space
+updating.db=Updating Database
+error.updating.song.text=There was an error updating the song in the database, it may be corrupted.
+error.text=Error
