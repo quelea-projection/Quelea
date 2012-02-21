@@ -156,7 +156,7 @@ public final class Main {
             public void run() {
                 if(SongDatabase.get().errorOccurred()) {
                     JOptionPane.showMessageDialog(null, LabelGrabber.INSTANCE.getLabel("already.running.error"), LabelGrabber.INSTANCE.getLabel("already.running.title"), JOptionPane.ERROR_MESSAGE);
-                    System.exit(0);
+                    System.exit(1);
                 }
                 mainWindow = new MainWindow(true);
 
