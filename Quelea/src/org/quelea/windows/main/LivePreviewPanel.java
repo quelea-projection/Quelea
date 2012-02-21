@@ -21,20 +21,18 @@ import org.quelea.windows.video.VideoPanel;
 import java.awt.BorderLayout;
 import java.awt.CardLayout;
 import java.awt.Component;
-import java.awt.event.KeyListener;
+import java.awt.event.*;
 import java.util.HashSet;
 import java.util.Set;
 import javax.swing.JPanel;
-import org.quelea.displayable.Displayable;
-import org.quelea.displayable.ImageDisplayable;
-import org.quelea.displayable.PresentationDisplayable;
-import org.quelea.displayable.TextDisplayable;
-import org.quelea.displayable.VideoDisplayable;
+import org.quelea.displayable.*;
 import org.quelea.utils.QueleaProperties;
+import org.quelea.windows.main.quickedit.QuickEditDialog;
 
 /**
  * The common superclass of the live / preview panels used for selecting the
  * lyrics / picture.
+ *
  * @author Michael
  */
 public abstract class LivePreviewPanel extends JPanel {
@@ -52,6 +50,7 @@ public abstract class LivePreviewPanel extends JPanel {
     private ImagePanel picturePanel = new ImagePanel(this);
     private PowerpointPanel powerpointPanel = new PowerpointPanel(this);
     private VideoPanel videoPanel = new VideoPanel();
+    private QuickEditDialog quickEditDialog = new QuickEditDialog();
     /**
      * All the contained panels so they can be flipped through easily...
      */
@@ -66,7 +65,7 @@ public abstract class LivePreviewPanel extends JPanel {
     };
 
     /**
-     * Create the live preview panel, common superclass of live and preview 
+     * Create the live preview panel, common superclass of live and preview
      * panels.
      */
     public LivePreviewPanel() {
@@ -77,8 +76,40 @@ public abstract class LivePreviewPanel extends JPanel {
         cardPanel.add(videoPanel, VIDEO_LABEL);
         cardPanel.add(powerpointPanel, PRESENTATION_LABEL);
         ((CardLayout) cardPanel.getLayout()).show(cardPanel, LYRICS_LABEL);
+
+        lyricsPanel.getLyricsList().addMouseListener(new MouseAdapter() {
+
+            @Override
+            public void mouseClicked(MouseEvent me) {
+                if(me.isAltDown()) {
+                    doQuickEdit();
+                }
+            }
+        });
+        lyricsPanel.getLyricsList().addKeyListener(new KeyAdapter() {
+
+            @Override
+            public void keyPressed(KeyEvent ke) {
+                if(ke.isControlDown() && ke.getKeyCode() == KeyEvent.VK_Q) {
+                    doQuickEdit();
+                }
+            }
+        });
     }
-    
+
+    /**
+     * Perform a quick edit on the current section.
+     */
+    public void doQuickEdit() {
+        if(displayable instanceof Song) {
+            Song song = (Song) displayable;
+            quickEditDialog.setLocationRelativeTo(quickEditDialog.getParent());
+            quickEditDialog.setSongSection(song, lyricsPanel.getLyricsList().getSelectedIndex());
+            quickEditDialog.setVisible(true);
+            setDisplayable(song, getIndex());
+        }
+    }
+
     /**
      * Update the one line mode for the lyrics panel from the properties file.
      */
@@ -88,12 +119,13 @@ public abstract class LivePreviewPanel extends JPanel {
 
     /**
      * Add a key listener to this panel and all the contained panels.
+     *
      * @param l the listener to add.
      */
     @Override
     public void addKeyListener(KeyListener l) {
         super.addKeyListener(l);
-        for (ContainedPanel panel : containedSet) {
+        for(ContainedPanel panel : containedSet) {
             panel.addKeyListener(l);
         }
     }
@@ -101,6 +133,7 @@ public abstract class LivePreviewPanel extends JPanel {
     /**
      * Get the container panel (the one using the cardlayout that flips between
      * the various available panels.
+     *
      * @return the container panel.
      */
     public JPanel getContainerPanel() {
@@ -119,22 +152,23 @@ public abstract class LivePreviewPanel extends JPanel {
      */
     public void clear() {
         displayable = null;
-        if (PRESENTATION_LABEL.equals(currentLabel)) {
+        if(PRESENTATION_LABEL.equals(currentLabel)) {
             powerpointPanel.setDisplayable(null, 0);
         }
-        for (ContainedPanel panel : containedSet) {
+        for(ContainedPanel panel : containedSet) {
             panel.clear();
         }
         ((CardLayout) cardPanel.getLayout()).show(cardPanel, LYRICS_LABEL);
     }
 
     /**
-     * Get the currently selected displayable index. Only suitable for 
+     * Get the currently selected displayable index. Only suitable for
      * powerpoint / lyrics panels.
+     *
      * @return the currently selected displayable index.
      */
     public int getIndex() {
-        if (PRESENTATION_LABEL.equals(currentLabel)) {
+        if(PRESENTATION_LABEL.equals(currentLabel)) {
             return powerpointPanel.getIndex();
         }
         else {
@@ -144,6 +178,7 @@ public abstract class LivePreviewPanel extends JPanel {
 
     /**
      * Get the select lyrics panel on this panel.
+     *
      * @return the select lyrics panel.
      */
     public SelectLyricsPanel getLyricsPanel() {
@@ -152,37 +187,38 @@ public abstract class LivePreviewPanel extends JPanel {
 
     /**
      * Set the displayable shown on this panel.
+     *
      * @param d the displayable to show.
      * @param index the index of the displayable to show, if relevant.
      */
     public void setDisplayable(Displayable d, int index) {
         this.displayable = d;
-        if (VIDEO_LABEL.equals(currentLabel)) {
+        if(VIDEO_LABEL.equals(currentLabel)) {
             videoPanel.getVideoControlPanel().stopVideo();
         }
-        if (PRESENTATION_LABEL.equals(currentLabel)) {
+        if(PRESENTATION_LABEL.equals(currentLabel)) {
             powerpointPanel.setDisplayable(null, 0);
         }
-        if (d instanceof TextDisplayable) {
+        if(d instanceof TextDisplayable) {
             lyricsPanel.showDisplayable((TextDisplayable) d, index);
             ((CardLayout) cardPanel.getLayout()).show(cardPanel, LYRICS_LABEL);
             currentLabel = LYRICS_LABEL;
         }
-        else if (d instanceof ImageDisplayable) {
+        else if(d instanceof ImageDisplayable) {
             picturePanel.showDisplayable((ImageDisplayable) d);
             ((CardLayout) cardPanel.getLayout()).show(cardPanel, IMAGE_LABEL);
             currentLabel = IMAGE_LABEL;
         }
-        else if (d instanceof VideoDisplayable) {
+        else if(d instanceof VideoDisplayable) {
             videoPanel.showDisplayable((VideoDisplayable) d);
-            for (LyricCanvas lc : videoPanel.getVideoControlPanel().getRegisteredCanvases()) {
+            for(LyricCanvas lc : videoPanel.getVideoControlPanel().getRegisteredCanvases()) {
                 lc.eraseText();
             }
             ((CardLayout) cardPanel.getLayout()).show(cardPanel, VIDEO_LABEL);
             videoPanel.repaint();
             currentLabel = VIDEO_LABEL;
         }
-        else if (d instanceof PresentationDisplayable) {
+        else if(d instanceof PresentationDisplayable) {
             ((CardLayout) cardPanel.getLayout()).show(cardPanel, PRESENTATION_LABEL);
             powerpointPanel.setDisplayable((PresentationDisplayable) d, index);
             currentLabel = PRESENTATION_LABEL;
@@ -193,8 +229,9 @@ public abstract class LivePreviewPanel extends JPanel {
     }
 
     /**
-     * Set video properties - used to copy video properties from one panel
-     * to another seamlessly. At present buggy, so commented out.
+     * Set video properties - used to copy video properties from one panel to
+     * another seamlessly. At present buggy, so commented out.
+     *
      * @param other the panel to copy properties from.
      */
     public void setVideoProperties(LivePreviewPanel other) {
@@ -213,6 +250,7 @@ public abstract class LivePreviewPanel extends JPanel {
     /**
      * Get the displayable currently being displayed, or null if there isn't
      * one.
+     *
      * @return the current displayable.
      */
     public Displayable getDisplayable() {
@@ -221,10 +259,11 @@ public abstract class LivePreviewPanel extends JPanel {
 
     /**
      * Register a lyric canvas with this lyrics panel.
+     *
      * @param canvas the canvas to register.
      */
     public final void registerLyricCanvas(final LyricCanvas canvas) {
-        if (canvas == null) {
+        if(canvas == null) {
             return;
         }
         canvases.add(canvas);
@@ -232,10 +271,11 @@ public abstract class LivePreviewPanel extends JPanel {
 
     /**
      * Register a lyric window with this lyrics panel.
+     *
      * @param window the window to register.
      */
     public final void registerLyricWindow(final LyricWindow window) {
-        if (window == null) {
+        if(window == null) {
             return;
         }
         windows.add(window);
@@ -243,6 +283,7 @@ public abstract class LivePreviewPanel extends JPanel {
 
     /**
      * Register a video canvas on this live preview panel.
+     *
      * @param canvas the canvas to register.
      */
     public final void registerVideoCanvas(final LyricCanvas canvas) {
@@ -251,6 +292,7 @@ public abstract class LivePreviewPanel extends JPanel {
 
     /**
      * Get the canvases registered to this panel.
+     *
      * @return the canvases.
      */
     public Set<LyricCanvas> getCanvases() {
@@ -259,6 +301,7 @@ public abstract class LivePreviewPanel extends JPanel {
 
     /**
      * Get the windows registered to this panel.
+     *
      * @return the windows.
      */
     public Set<LyricWindow> getWindows() {
@@ -267,12 +310,13 @@ public abstract class LivePreviewPanel extends JPanel {
 
     /**
      * Get the current panel being shown in the card layout.
+     *
      * @return the current panel.
      */
     private ContainedPanel getCurrentPanel() {
         Component[] components = cardPanel.getComponents();
-        for (Component c : components) {
-            if (c.isVisible()) {
+        for(Component c : components) {
+            if(c.isVisible()) {
                 return (ContainedPanel) c;
             }
         }

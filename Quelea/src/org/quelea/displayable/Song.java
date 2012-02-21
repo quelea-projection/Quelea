@@ -591,6 +591,15 @@ public class Song implements TextDisplayable, Comparable<Song>, Printable {
             addSection(section);
         }
     }
+    
+    /**
+     * Replace the text section at the given index with the new section.
+     * @param newSection the new section to use to replace the existing one.
+     * @param index the index of the section to replace.
+     */
+    public void replaceSection(TextSection newSection, int index) {
+        sections.set(index, newSection);
+    }
 
     /**
      * Get an array of all the sections in this song.
