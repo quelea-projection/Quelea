@@ -72,7 +72,7 @@ public class MainWindow extends JFrame {
         if(setApplicationWindow) {
             Application.get().setMainWindow(this);
         }
-//        setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+        setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
         addWindowListener(new WindowAdapter() {
 
             @Override

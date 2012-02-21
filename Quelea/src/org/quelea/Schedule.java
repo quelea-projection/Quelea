@@ -23,19 +23,13 @@ import java.awt.Graphics2D;
 import java.awt.print.PageFormat;
 import java.awt.print.Printable;
 import java.awt.print.PrinterException;
-import org.quelea.displayable.BiblePassage;
-import org.quelea.displayable.Displayable;
-import org.quelea.displayable.Song;
-import org.quelea.utils.LoggerUtils;
-import org.w3c.dom.Document;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
-import org.xml.sax.SAXException;
-
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
-import java.io.*;
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.HashSet;
@@ -47,8 +41,19 @@ import java.util.logging.Logger;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 import java.util.zip.ZipOutputStream;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+import org.quelea.displayable.BiblePassage;
+import org.quelea.displayable.Displayable;
 import org.quelea.displayable.ImageDisplayable;
+import org.quelea.displayable.Song;
 import org.quelea.displayable.VideoDisplayable;
+import org.quelea.utils.LoggerUtils;
+import org.w3c.dom.Document;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+import org.xml.sax.SAXException;
 
 /**
  * A schedule that consists of a number of displayable objects displayed by
@@ -61,16 +66,28 @@ public class Schedule implements Iterable<Displayable>, Printable {
     private static final Logger LOGGER = LoggerUtils.getLogger();
     private final List<Displayable> displayables;
     private File file;
+    private boolean modified;
 
     /**
      * Create a new schedule.
      */
     public Schedule() {
         displayables = new ArrayList<>();
+        modified = false;
+    }
+
+    /**
+     * Determine if this schedule has been modified since it was last saved.
+     *
+     * @return true if it's been modified, false if it hasn't.
+     */
+    public boolean isModified() {
+        return modified;
     }
 
     /**
      * Set the file that this schedule should be saved to.
+     *
      * @param file the file.
      */
     public void setFile(File file) {
@@ -79,6 +96,7 @@ public class Schedule implements Iterable<Displayable>, Printable {
 
     /**
      * Get the file where this schedule is being saved.
+     *
      * @return the file.
      */
     public File getFile() {
@@ -90,18 +108,22 @@ public class Schedule implements Iterable<Displayable>, Printable {
      */
     public void clear() {
         displayables.clear();
+        modified = true;
     }
 
     /**
      * Add a displayable to this schedule.
+     *
      * @param displayable the displayable to add.
      */
     public void add(Displayable displayable) {
         displayables.add(displayable);
+        modified = true;
     }
 
     /**
      * Write this schedule to a file.
+     *
      * @return true if the write was successful, false otherwise.
      */
     public boolean writeToFile() {
@@ -128,25 +150,24 @@ public class Schedule implements Iterable<Displayable>, Printable {
                             ZipEntry entry = new ZipEntry(zipPath);
                             zos.putNextEntry(entry);
                             FileInputStream fi = new FileInputStream(displayableFile);
-                            try(BufferedInputStream origin = new BufferedInputStream(fi, BUFFER)) {
+                            try (BufferedInputStream origin = new BufferedInputStream(fi, BUFFER)) {
                                 int count;
                                 while((count = origin.read(data, 0, BUFFER)) != -1) {
                                     zos.write(data, 0, count);
                                 }
                                 zos.closeEntry();
                             }
-                            finally {
-                            }
                         }
                     }
                 }
+                modified = false;
                 return true;
             }
             finally {
                 zos.close();
             }
         }
-        catch(IOException ex) {
+        catch (IOException ex) {
             LOGGER.log(Level.WARNING, "Couldn't write the schedule to file", ex);
             return false;
         }
@@ -154,6 +175,7 @@ public class Schedule implements Iterable<Displayable>, Printable {
 
     /**
      * Generate a schedule object from a saved file.
+     *
      * @param file the file where the schedule is saved.
      * @return the schedule object.
      */
@@ -170,7 +192,7 @@ public class Schedule implements Iterable<Displayable>, Printable {
                     if(!entry.getName().startsWith("resources/")) {
                         continue;
                     }
-                    try(BufferedInputStream is = new BufferedInputStream(zipFile.getInputStream(entry))) {
+                    try (BufferedInputStream is = new BufferedInputStream(zipFile.getInputStream(entry))) {
                         int count;
                         byte data[] = new byte[BUFFER];
                         File writeFile = new File(entry.getName().substring("resources/".length()));
@@ -178,7 +200,7 @@ public class Schedule implements Iterable<Displayable>, Printable {
                             continue;
                         }
                         FileOutputStream fos = new FileOutputStream(writeFile);
-                        try(BufferedOutputStream dest = new BufferedOutputStream(fos, BUFFER)) {
+                        try (BufferedOutputStream dest = new BufferedOutputStream(fos, BUFFER)) {
                             while((count = is.read(data, 0, BUFFER))
                                     != -1) {
                                 dest.write(data, 0, count);
@@ -187,13 +209,14 @@ public class Schedule implements Iterable<Displayable>, Printable {
                         }
                     }
                 }
+                ret.modified = false;
                 return ret;
             }
             finally {
                 zipFile.close();
             }
         }
-        catch(IOException ex) {
+        catch (IOException ex) {
             LOGGER.log(Level.WARNING, "Couldn't read the schedule from file", ex);
             return null;
         }
@@ -201,6 +224,7 @@ public class Schedule implements Iterable<Displayable>, Printable {
 
     /**
      * Get this schedule as XML.
+     *
      * @return XML describing this schedule.
      */
     private String getXML() {
@@ -215,6 +239,7 @@ public class Schedule implements Iterable<Displayable>, Printable {
 
     /**
      * Parse some given XML from an inputstream to create a schedule.
+     *
      * @param inputStream the inputstream where the xml is being read from.
      * @return the schedule.
      */
@@ -241,9 +266,10 @@ public class Schedule implements Iterable<Displayable>, Printable {
                     newSchedule.add(VideoDisplayable.parseXML(node));
                 }
             }
+            newSchedule.modified = false;
             return newSchedule;
         }
-        catch(ParserConfigurationException | SAXException | IOException ex) {
+        catch (ParserConfigurationException | SAXException | IOException ex) {
             LOGGER.log(Level.WARNING, "Couldn't parse the schedule", ex);
             return null;
         }
@@ -251,19 +277,39 @@ public class Schedule implements Iterable<Displayable>, Printable {
 
     /**
      * Get an iterator over the displayables in the schedule.
+     *
      * @return the iterator.
      */
+    @Override
     public Iterator<Displayable> iterator() {
         return displayables.iterator();
+    }
+    
+    /**
+     * Get the displayable at the given index.
+     * @param index the index to get the displayable at.
+     * @return the displayable at the given index.
+     */
+    public Displayable getDisplayable(int index) {
+        return displayables.get(index);
+    }
+    
+    /**
+     * Get the size of this schedule.
+     * @return the schedule size.
+     */
+    public int getSize() {
+        return displayables.size();
     }
 
     /**
      * Print the schedule.
+     *
      * @param graphics graphics to paint on.
      * @param pageFormat page format.
      * @param pageIndex starting index.
      * @return PAGE_EXISTS if the page exists, NO_SUCH_PAGE otherwise.
-     * @throws PrinterException  if something went wrong
+     * @throws PrinterException if something went wrong
      */
     @Override
     public int print(Graphics graphics, PageFormat pageFormat, int pageIndex) throws PrinterException {

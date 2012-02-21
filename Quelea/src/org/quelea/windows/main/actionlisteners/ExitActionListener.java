@@ -20,28 +20,57 @@ package org.quelea.windows.main.actionlisteners;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.swing.JOptionPane;
+import org.quelea.Application;
+import org.quelea.Schedule;
+import org.quelea.ScheduleSaver;
+import org.quelea.languages.LabelGrabber;
+import org.quelea.utils.LoggerUtils;
 
 /**
  * The exit action listener - called when the user requests they wish to exit
  * Quelea.
+ *
  * @author Michael
  */
 public class ExitActionListener implements ActionListener {
 
+    private static final Logger LOGGER = LoggerUtils.getLogger();
+
     /**
      * Call this method when the event is fired.
+     *
      * @param ae the actionevent. May be null (not used.)
      */
     @Override
     public void actionPerformed(ActionEvent ae) {
         exit();
     }
-    
+
     /**
      * Process the necessary logic to cleanly exit from Quelea.
      */
     private void exit() {
-        System.exit(0); //TODO - Check whether to quit / save schedule
+        LOGGER.log(Level.INFO, "exit() called");
+        Schedule schedule = Application.get().getMainWindow().getMainPanel().getSchedulePanel().getScheduleList().getSchedule();
+        if(schedule.isModified()) {
+            int val = JOptionPane.showConfirmDialog(Application.get().getMainWindow(),
+                    LabelGrabber.INSTANCE.getLabel("save.before.exit.text"),
+                    LabelGrabber.INSTANCE.getLabel("save.before.exit.title"),
+                    JOptionPane.YES_NO_CANCEL_OPTION);
+            switch(val) {
+                case JOptionPane.YES_OPTION:
+                    new ScheduleSaver().saveSchedule(false);
+                    break;
+                case JOptionPane.NO_OPTION:
+                    System.exit(0);
+                    break;
+                case JOptionPane.CANCEL_OPTION: //Don't exit
+                    return;
+            }
+        }
+        System.exit(0);
     }
-    
 }
