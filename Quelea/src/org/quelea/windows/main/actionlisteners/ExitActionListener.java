@@ -28,9 +28,20 @@ import java.awt.event.ActionListener;
  */
 public class ExitActionListener implements ActionListener {
 
+    /**
+     * Call this method when the event is fired.
+     * @param ae the actionevent. May be null (not used.)
+     */
     @Override
     public void actionPerformed(ActionEvent ae) {
-        System.exit(0);
+        exit();
+    }
+    
+    /**
+     * Process the necessary logic to cleanly exit from Quelea.
+     */
+    private void exit() {
+        System.exit(0); //TODO - Check whether to quit / save schedule
     }
     
 }

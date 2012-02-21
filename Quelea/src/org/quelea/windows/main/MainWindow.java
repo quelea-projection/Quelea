@@ -22,6 +22,8 @@ import org.quelea.windows.main.actionlisteners.NewSongActionListener;
 import org.quelea.windows.main.actionlisteners.EditSongScheduleActionListener;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.io.File;
 import java.io.IOException;
 import java.util.logging.Level;
@@ -35,7 +37,7 @@ import org.quelea.notice.NoticeDialog;
 import org.quelea.tags.TagDialog;
 import org.quelea.utils.LoggerUtils;
 import org.quelea.utils.QueleaProperties;
-import org.quelea.windows.main.actionlisteners.RemoveSongDBActionListener;
+import org.quelea.windows.main.actionlisteners.*;
 import org.quelea.windows.main.menus.MainMenuBar;
 import org.quelea.windows.main.toolbars.MainToolbar;
 import org.quelea.windows.newsong.SongEntryWindow;
@@ -70,7 +72,14 @@ public class MainWindow extends JFrame {
         if(setApplicationWindow) {
             Application.get().setMainWindow(this);
         }
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+//        setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+        addWindowListener(new WindowAdapter() {
+
+            @Override
+            public void windowClosing(WindowEvent we) {
+                new ExitActionListener().actionPerformed(null);
+            }
+        });
         try {
             setIconImage(ImageIO.read(new File("img/logo.png")));
         }
