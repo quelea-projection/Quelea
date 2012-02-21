@@ -49,12 +49,12 @@ import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.imageio.ImageIO;
-import javax.swing.Icon;
-import javax.swing.ImageIcon;
-import javax.swing.JFileChooser;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.SwingUtilities;
+import javax.swing.*;
+import org.quelea.Application;
+import org.quelea.SongDatabase;
+import org.quelea.displayable.Song;
+import org.quelea.languages.LabelGrabber;
+import org.quelea.windows.main.StatusPanel;
 
 /**
  * General utility class containing a bunch of static methods.
@@ -92,6 +92,30 @@ public final class Utils {
      */
     public static boolean is64Bit() {
         return System.getProperty("os.arch").contains("64"); //Rudimentary...
+    }
+    
+    /**
+     * Update a song in the background.
+     * @param song the song to update.
+     */
+    public static void updateSongInBackground(final Song song, final boolean showError) {
+        final StatusPanel statusPanel = Application.get().getStatusGroup().addPanel(LabelGrabber.INSTANCE.getLabel("updating.db"));
+        SwingWorker<Void, Void> worker = new SwingWorker<Void, Void>() {
+
+            @Override
+            protected Void doInBackground() {
+                if(!SongDatabase.get().updateSong(song) & showError) {
+                    JOptionPane.showMessageDialog(Application.get().getMainWindow(), LabelGrabber.INSTANCE.getLabel("error.udpating.song.text"), LabelGrabber.INSTANCE.getLabel("error.text"), JOptionPane.ERROR_MESSAGE, null);
+                }
+                return null;
+            }
+
+            @Override
+            protected void done() {
+                statusPanel.done();
+            }
+        };
+        worker.execute();
     }
 
     /**
