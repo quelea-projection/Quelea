@@ -22,16 +22,17 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
-import javax.swing.*;
+import javax.swing.JButton;
+import javax.swing.JDialog;
+import javax.swing.JFrame;
+import javax.swing.JPanel;
+import javax.swing.JTabbedPane;
 import javax.swing.border.EmptyBorder;
-import org.quelea.Application;
-import org.quelea.SongDatabase;
 import org.quelea.Theme;
 import org.quelea.displayable.Song;
 import org.quelea.displayable.TextSection;
 import org.quelea.languages.LabelGrabber;
 import org.quelea.utils.Utils;
-import org.quelea.windows.main.StatusPanel;
 
 /**
  * A new song window that users use for inserting the text content of a new song.

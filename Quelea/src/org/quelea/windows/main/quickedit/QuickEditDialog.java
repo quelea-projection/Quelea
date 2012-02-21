@@ -18,19 +18,27 @@
  */
 package org.quelea.windows.main.quickedit;
 
+import com.inet.jortho.SpellChecker;
 import java.awt.BorderLayout;
+import java.awt.Dialog.ModalityType;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
-import javax.swing.*;
+import javax.swing.BoxLayout;
+import javax.swing.JButton;
+import javax.swing.JComponent;
+import javax.swing.JDialog;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
+import javax.swing.KeyStroke;
 import org.quelea.Application;
-import org.quelea.SongDatabase;
 import org.quelea.displayable.Song;
 import org.quelea.displayable.TextSection;
 import org.quelea.languages.LabelGrabber;
 import org.quelea.utils.Utils;
-import org.quelea.windows.main.StatusPanel;
 
 /**
  * A frame used for quickly editing a song.
@@ -59,6 +67,7 @@ public class QuickEditDialog extends JDialog {
         statusPanel.add(statusLabel);
         add(statusPanel, BorderLayout.NORTH);
         sectionArea = new JTextArea(8, 40);
+        SpellChecker.register(sectionArea);
         sectionArea.addKeyListener(new KeyAdapter() {
 
             @Override
@@ -122,14 +131,13 @@ public class QuickEditDialog extends JDialog {
      */
     public void setSongSection(Song song, int sectionIndex) {
         currentSong = song;
+        setStatusLabel(song);
         if(song == null) {
             currentIndex = -1;
             sectionArea.setText("");
-            statusLabel.setText("");
             return;
         }
         currentIndex = sectionIndex;
-        statusLabel.setText("<html><b>" + song.getTitle() + "</b></html>");
         StringBuilder text = new StringBuilder();
         String[] lines = song.getSections()[sectionIndex].getText(true, true);
         for(int i = 0; i < lines.length; i++) {
@@ -140,6 +148,20 @@ public class QuickEditDialog extends JDialog {
             }
         }
         sectionArea.setText(text.toString());
+        sectionArea.setCaretPosition(0);
         pack();
+    }
+    
+    /**
+     * Set the status label to a particular song.
+     * @param song the song to use.
+     */
+    private void setStatusLabel(Song song) {
+        if(song==null) {
+            statusLabel.setText("");
+        }
+        else {
+            statusLabel.setText("<html><b>" + song.getTitle() + "</b><br/><i>(" + LabelGrabber.INSTANCE.getLabel("quick.shortcut.description") + ")</i></html>");
+        }
     }
 }
