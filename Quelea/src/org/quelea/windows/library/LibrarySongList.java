@@ -268,10 +268,17 @@ public class LibrarySongList extends JList<Song> implements DatabaseListener {
     /**
      * Update the contents of the list.
      */
+    @Override
     public final void update() {
-        fullModel.clear();
-        for (Song song : SongDatabase.get().getSongs()) {
-            fullModel.add(song);
-        }
+        SwingUtilities.invokeLater(new Runnable() {
+
+            @Override
+            public void run() {
+                fullModel.clear();
+                for(Song song : SongDatabase.get().getSongs()) {
+                    fullModel.add(song);
+                }
+            }
+        });
     }
 }
