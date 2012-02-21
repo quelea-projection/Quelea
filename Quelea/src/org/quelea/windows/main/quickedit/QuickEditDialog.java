@@ -23,8 +23,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
-import java.util.ArrayList;
-import java.util.List;
 import javax.swing.*;
 import org.quelea.Application;
 import org.quelea.SongDatabase;
@@ -55,6 +53,7 @@ public class QuickEditDialog extends JDialog {
         setLayout(new BorderLayout());
         statusLabel = new JLabel();
         JPanel statusPanel = new JPanel();
+        statusPanel.setLayout(new BoxLayout(statusPanel, BoxLayout.X_AXIS));
         statusPanel.add(statusLabel);
         add(statusPanel, BorderLayout.NORTH);
         sectionArea = new JTextArea(8, 40);
@@ -67,7 +66,7 @@ public class QuickEditDialog extends JDialog {
                 }
             }
         });
-        add(sectionArea, BorderLayout.NORTH);
+        add(new JScrollPane(sectionArea), BorderLayout.CENTER);
         JPanel buttonPanel = new JPanel();
         okButton = new JButton(LabelGrabber.INSTANCE.getLabel("ok.button"));
         okButton.addActionListener(new ActionListener() {
@@ -77,7 +76,6 @@ public class QuickEditDialog extends JDialog {
                 TextSection oldSection = currentSong.getSections()[currentIndex];
                 currentSong.replaceSection(new TextSection(oldSection.getTitle(), getNewText(), oldSection.getSmallText(), oldSection.shouldCapitaliseFirst(), oldSection.getTheme()), currentIndex);
                 SongDatabase.get().updateSong(currentSong);
-
                 setVisible(false);
             }
         });
@@ -111,11 +109,7 @@ public class QuickEditDialog extends JDialog {
      * @return the new text for the section.
      */
     private String[] getNewText() {
-        List<String> ret = new ArrayList<>();
-        for(String line : sectionArea.getText().split("\n")) {
-            ret.add(line);
-        }
-        return ret.toArray(new String[ret.size()]);
+        return sectionArea.getText().split("\n");
     }
 
     /**
@@ -133,7 +127,7 @@ public class QuickEditDialog extends JDialog {
             return;
         }
         currentIndex = sectionIndex;
-        statusLabel.setText(song.getTitle()+":");
+        statusLabel.setText("<html><b>"+song.getTitle()+"</b></html>");
         StringBuilder text = new StringBuilder();
         String[] lines = song.getSections()[sectionIndex].getText(true, true);
         for(int i = 0; i < lines.length; i++) {
@@ -144,5 +138,6 @@ public class QuickEditDialog extends JDialog {
             }
         }
         sectionArea.setText(text.toString());
+        pack();
     }
 }
