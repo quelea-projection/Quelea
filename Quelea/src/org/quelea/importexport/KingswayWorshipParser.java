@@ -193,7 +193,7 @@ public class KingswayWorshipParser implements SongParser {
 
         if(lyrics.toString().length() > 5) {
             Song ret = new Song(title, author);
-            ret.setLyrics(lyrics.toString());
+            ret.setLyrics(lyrics.toString().replace("QAE", "A"));
             return ret;
         }
         else {
