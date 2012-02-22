@@ -120,6 +120,23 @@ public final class QueleaProperties extends Properties {
     }
     
     /**
+     * Get the number of the next kingsway song that should be imported.
+     * @return the number of the next song.
+     */
+    public int getNextKingswaySong() {
+        return Integer.parseInt(getProperty("next.kingsway.song", "1"));
+    }
+    
+    /**
+     * Set the number of the next kingsway song that should be imported.
+     * @param num the number of the next song.
+     */
+    public void setNextKingswaySong(int num) {
+        setProperty("next.kingsway.song", Integer.toString(num));
+        write();
+    }
+    
+    /**
      * Determine whether we should phone home at startup with anonymous 
      * information. Simply put phonehome=false in the properties file to disable
      * phonehome.
