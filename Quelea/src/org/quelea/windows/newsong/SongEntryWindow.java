@@ -73,7 +73,7 @@ public class SongEntryWindow extends JDialog {
             public void actionPerformed(ActionEvent e) {
 
                 setVisible(false);
-                Utils.updateSongInBackground(song, true);
+                Utils.updateSongInBackground(getSong(), true);
             }
         });
         cancelButton = new JButton(LabelGrabber.INSTANCE.getLabel("cancel.button"), Utils.getImageIcon("icons/cross.png"));
