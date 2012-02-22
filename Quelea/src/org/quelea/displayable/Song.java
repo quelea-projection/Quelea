@@ -27,7 +27,6 @@ import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.lang.ref.SoftReference;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
@@ -677,6 +676,7 @@ public class Song implements TextDisplayable, Comparable<Song>, Printable {
      * Get a representation of this song in XML format.
      * @return the song in XML format.
      */
+    @Override
     public String getXML() {
         StringBuilder xml = new StringBuilder();
         xml.append("<song>");
@@ -815,6 +815,7 @@ public class Song implements TextDisplayable, Comparable<Song>, Printable {
      * @return 1 if this song is greater than the other song, 0 if they're the same, and -1 if this is less than the
      *         other song.
      */
+    @Override
     public int compareTo(Song other) {
         int result = getTitle().compareToIgnoreCase(other.getTitle());
         if (result == 0) {
@@ -841,14 +842,21 @@ public class Song implements TextDisplayable, Comparable<Song>, Printable {
      * Get the preview icon of this song.
      * @return the song's preview icon.
      */
+    @Override
     public Icon getPreviewIcon() {
-        return Utils.getImageIcon("icons/lyrics.png");
+        if(hasChords()) {
+            return Utils.getImageIcon("icons/lyricsandchords.png");
+        }
+        else {
+            return Utils.getImageIcon("icons/lyrics.png");
+        }
     }
 
     /**
      * Get the preview text of this song.
      * @return the song's preview text.
      */
+    @Override
     public String getPreviewText() {
         return "<html>" + getTitle() + "<br/><i>" + getAuthor() + "</i></html>";
     }
@@ -864,6 +872,7 @@ public class Song implements TextDisplayable, Comparable<Song>, Printable {
      * Get all the files used by this song.
      * @return all the files used by this song.
      */
+    @Override
     public Collection<File> getResources() {
         Set<File> ret = new HashSet<>();
         for (TextSection section : getSections()) {
