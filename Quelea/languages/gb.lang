@@ -226,3 +226,5 @@ error.text=Error
 quick.shortcut.description=Escape to cancel, shift+enter to save
 save.before.exit.text=The schedule has been modified. Save before quitting?
 save.before.exit.title=Unsaved schedule
+no.chords.message=This song doesn't have any lines of chords to transpose.
+no.chords.title=No chords
