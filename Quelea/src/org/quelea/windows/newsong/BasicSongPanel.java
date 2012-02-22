@@ -30,6 +30,7 @@ import java.util.List;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
@@ -189,7 +190,15 @@ public class BasicSongPanel extends JPanel {
             @Override
             public void actionPerformed(ActionEvent e) {
 
-                transposeDialog.setKey(getKey(0));
+                String originalKey = getKey(0);
+                if(originalKey==null) {
+                    JOptionPane.showMessageDialog(Application.get().getMainWindow(),
+                            LabelGrabber.INSTANCE.getLabel("no.chords.message"),
+                            LabelGrabber.INSTANCE.getLabel("no.chords.title"),
+                            JOptionPane.INFORMATION_MESSAGE);
+                    return;
+                }
+                transposeDialog.setKey(originalKey);
                 transposeDialog.setVisible(true);
                 int semitones = transposeDialog.getSemitones();
 

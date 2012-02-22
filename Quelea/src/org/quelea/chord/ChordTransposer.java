@@ -23,13 +23,14 @@ import java.util.List;
 
 /**
  * Transposes a chord down or up a certain number of semitones.
+ *
  * @author Michael
  */
 public class ChordTransposer {
 
     /**
-     * Internal class containing the actual chord letter and the "tail" (whatever
-     * comes after the chord letter.)
+     * Internal class containing the actual chord letter and the "tail"
+     * (whatever comes after the chord letter.)
      */
     private static class ChordTail {
 
@@ -38,6 +39,7 @@ public class ChordTransposer {
 
         /**
          * Create a new chord tail object.
+         *
          * @param chord the chord.
          * @param tail the tail.
          */
@@ -46,7 +48,6 @@ public class ChordTransposer {
             this.tail = tail;
         }
     }
-    
     /**
      * The most natural keys in order, starting at A.
      */
@@ -56,9 +57,8 @@ public class ChordTransposer {
             addAll(Arrays.asList(new String[]{"A", "Bb", "B", "C", "C#", "D", "Eb", "E", "F", "F#", "G", "Ab"}));
         }
     };
-    
     /*
-     * Sometimes we have E/G# like chords, the second part (after the forward 
+     * Sometimes we have E/G# like chords, the second part (after the forward
      * slash) is the chord2, tail2 variables.
      */
     private String chord;
@@ -68,11 +68,15 @@ public class ChordTransposer {
 
     /**
      * Create a new chord transposer.
+     *
      * @param chord the chord to transpose.
      */
     public ChordTransposer(String chord) {
+        if(chord == null) {
+            return;
+        }
         chord = chord.trim();
-        if (chord.contains("/")) {
+        if(chord.contains("/")) {
             String[] parts = chord.split("/");
 
             ChordTail ct = sanitise(parts[0]);
@@ -94,17 +98,18 @@ public class ChordTransposer {
 
     /**
      * Put the correct capitalisation on the input and set the tail.
+     *
      * @param chord the chord to sanitise
      * @return sanitised chord.
      */
     private ChordTail sanitise(String chord) {
-        if (chord.isEmpty()) {
+        if(chord == null || chord.isEmpty()) {
             return new ChordTail("", "");
         }
         chord = Character.toUpperCase(chord.charAt(0)) + chord.substring(1);
         String localTail;
-        if (chord.length() > 1) {
-            if (Character.toLowerCase(chord.charAt(1)) == 'b' || chord.charAt(1) == '#') {
+        if(chord.length() > 1) {
+            if(Character.toLowerCase(chord.charAt(1)) == 'b' || chord.charAt(1) == '#') {
                 localTail = chord.substring(2, chord.length());
                 chord = chord.substring(0, 2);
             }
@@ -118,10 +123,10 @@ public class ChordTransposer {
         }
         String newChord;
         /*
-         * "Naturalise" the chords - A# is more commonly represented as Bb for 
+         * "Naturalise" the chords - A# is more commonly represented as Bb for
          * instance.
          */
-        switch (chord) {
+        switch(chord) {
             case "A#":
                 newChord = "Bb";
                 break;
@@ -154,32 +159,33 @@ public class ChordTransposer {
 
     /**
      * Transpose the given chord by the given number of semitones.
+     *
      * @param semitones the number of semitones to transpose by, positive or
      * negative.
      * @param newKey the new key to transpose to.
      * @return the new, transposed chord.
      */
     public String transpose(int semitones, String newKey) {
-        if (chord.isEmpty()) {
+        if(chord == null || chord.isEmpty()) {
             return chord;
         }
         int index = TRANSPOSE_STEPS.indexOf(chord);
         index += semitones;
         index %= TRANSPOSE_STEPS.size();
-        if (index < 0) {
+        if(index < 0) {
             index = TRANSPOSE_STEPS.size() + index;
         }
         String transposedChord = TRANSPOSE_STEPS.get(index);
-        if (newKey != null) {
+        if(newKey != null) {
             transposedChord = toSharpFlat(isSharpKey(newKey), transposedChord);
         }
         transposedChord += tail;
         boolean sharpKey = isSharpKey(transposedChord);
-        if (chord2 != null) {
+        if(chord2 != null) {
             index = TRANSPOSE_STEPS.indexOf(chord2);
             index += semitones;
             index %= TRANSPOSE_STEPS.size();
-            if (index < 0) {
+            if(index < 0) {
                 index = TRANSPOSE_STEPS.size() + index;
             }
             String transposedChord2 = TRANSPOSE_STEPS.get(index) + tail2;
@@ -189,25 +195,26 @@ public class ChordTransposer {
     }
 
     /**
-     * Convert a certain chord that's either a sharp or a flat into a sharp or
-     * a flat chord (A# into Bb for instance.) Chords that are already in their
+     * Convert a certain chord that's either a sharp or a flat into a sharp or a
+     * flat chord (A# into Bb for instance.) Chords that are already in their
      * form proposed for conversion are returned unchanged.
-     * @param sharp true if this chord should be converted into a sharp chord, 
+     *
+     * @param sharp true if this chord should be converted into a sharp chord,
      * false if it should be converted into a flat chord.
      * @param chord the chord to convert.
      * @return the converted chord.
      */
     private String toSharpFlat(boolean sharp, String chord) {
-        if (sharp && isSharpKey(chord)) {
+        if(sharp && isSharpKey(chord)) {
             return chord;
         }
-        else if (!sharp && !isSharpKey(chord)) {
+        else if(!sharp && !isSharpKey(chord)) {
             return chord;
         }
-        else if (sharp && !isSharpKey(chord)) {
+        else if(sharp && !isSharpKey(chord)) {
             return toSharp(chord);
         }
-        else if (!sharp && isSharpKey(chord)) {
+        else if(!sharp && isSharpKey(chord)) {
             return toFlat(chord);
         }
         //Bug in program if we reach here.
@@ -218,11 +225,12 @@ public class ChordTransposer {
 
     /**
      * Return the sharp version of a given "flat" chord.
+     *
      * @param chord the flat chord.
      * @return the equivalent sharp chord.
      */
     private String toSharp(String chord) {
-        switch (chord) {
+        switch(chord) {
             case "Db":
                 return "C#";
             case "Eb":
@@ -244,11 +252,12 @@ public class ChordTransposer {
 
     /**
      * Return the flat version of a given "sharp" chord.
+     *
      * @param chord the sharp chord.
      * @return the equivalent flat chord.
      */
     private String toFlat(String chord) {
-        switch (chord) {
+        switch(chord) {
             case "D#":
                 return "Eb";
             case "E#":
@@ -269,23 +278,24 @@ public class ChordTransposer {
     }
 
     /**
-     * Determine if the given key should use mainly sharps or flats. For 
-     * instance, A contains 5 sharps so is a sharp key, F contains 1 flat so
-     * is a flat key. For keys like Am and C with no sharps or flats, at present
+     * Determine if the given key should use mainly sharps or flats. For
+     * instance, A contains 5 sharps so is a sharp key, F contains 1 flat so is
+     * a flat key. For keys like Am and C with no sharps or flats, at present
      * just return sharp.
+     *
      * @param chord the chord to check.
      * @return true if the key is sharp, false if it's flat.
      */
     private boolean isSharpKey(String chord) {
-        if (chord.contains("#")) {
+        if(chord.contains("#")) {
             return true;
         }
-        if (chord.contains("b")) {
+        if(chord.contains("b")) {
             return false;
         }
         String[] sharpKeys = new String[]{"D", "E", "G", "A", "B", "C", "Em", "Bm", "Am"};
-        for (String key : sharpKeys) {
-            if (chord.equals(key)) {
+        for(String key : sharpKeys) {
+            if(chord.equals(key)) {
                 return true;
             }
         }
