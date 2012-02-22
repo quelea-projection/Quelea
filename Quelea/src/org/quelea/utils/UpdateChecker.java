@@ -17,13 +17,15 @@
  */
 package org.quelea.utils;
 
+import java.awt.Component;
+import java.awt.Desktop;
 import java.io.IOException;
-import java.net.URISyntaxException;
-import javax.swing.*;
-import java.awt.*;
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.JOptionPane;
+import org.quelea.languages.LabelGrabber;
 
 /**
  * Checks for any updates to Quelea.
@@ -34,6 +36,10 @@ public class UpdateChecker {
     private static final Logger LOGGER = LoggerUtils.getLogger();
     private final Component owner;
 
+    /**
+     * Create a new update checker.
+     * @param owner the owner of the checker.
+     */
     public UpdateChecker(Component owner) {
         this.owner = owner;
     }
@@ -59,9 +65,9 @@ public class UpdateChecker {
             if(curVersion.compareTo(latestVersion) == -1) {
                 if(Desktop.isDesktopSupported()) {
                     int result = JOptionPane.showConfirmDialog(owner,
-                            "There is a newer version of Quelea available (" + latestVersion.getVersionString() + "). "
-                                    + "Visit the web page to download it now?",
-                            "Update available", JOptionPane.YES_NO_OPTION, JOptionPane.INFORMATION_MESSAGE, null);
+                            LabelGrabber.INSTANCE.getLabel("newer.version.available")+" (" + latestVersion.getVersionString() + "). "
+                                    + LabelGrabber.INSTANCE.getLabel("visit.webpage.now"),
+                            LabelGrabber.INSTANCE.getLabel("newer.version.available.title"), JOptionPane.YES_NO_OPTION, JOptionPane.INFORMATION_MESSAGE, null);
                     if(result == JOptionPane.YES_OPTION) {
                         try {
                             Desktop.getDesktop().browse(new URI(QueleaProperties.get().getDownloadLocation()));
@@ -78,14 +84,14 @@ public class UpdateChecker {
                 }
                 else {
                     JOptionPane.showMessageDialog(owner,
-                            "There is a newer version of Quelea available (" + latestVersion.getVersionString() + "). "
-                                    + "You can download it here: " + QueleaProperties.get().getDownloadLocation(),
-                            "Update available", JOptionPane.INFORMATION_MESSAGE, null);
+                            LabelGrabber.INSTANCE.getLabel("newer.version.available")+" (" + latestVersion.getVersionString() + "). "
+                                    + LabelGrabber.INSTANCE.getLabel("download.manual.update")+": " + QueleaProperties.get().getDownloadLocation(),
+                            LabelGrabber.INSTANCE.getLabel("newer.version.available.title"), JOptionPane.INFORMATION_MESSAGE, null);
                 }
             }
             else if(showIfLatest) {
-                JOptionPane.showMessageDialog(owner, "You are running the latest version of Quelea ("
-                        + curVersion.getVersionString() + ").", "Already up-to-date!", JOptionPane.INFORMATION_MESSAGE, null);
+                JOptionPane.showMessageDialog(owner, LabelGrabber.INSTANCE.getLabel("no.newer.version.available")+" ("
+                        + curVersion.getVersionString() + ").", LabelGrabber.INSTANCE.getLabel("no.newer.version.available.title"), JOptionPane.INFORMATION_MESSAGE, null);
             }
         }
     }
