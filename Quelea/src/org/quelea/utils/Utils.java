@@ -104,7 +104,8 @@ public final class Utils {
 
             @Override
             protected Void doInBackground() {
-                if(!SongDatabase.get().updateSong(song) & showError) {
+                boolean result = SongDatabase.get().updateSong(song);
+                if(!result && showError) {
                     JOptionPane.showMessageDialog(Application.get().getMainWindow(), LabelGrabber.INSTANCE.getLabel("error.udpating.song.text"), LabelGrabber.INSTANCE.getLabel("error.text"), JOptionPane.ERROR_MESSAGE, null);
                 }
                 return null;
