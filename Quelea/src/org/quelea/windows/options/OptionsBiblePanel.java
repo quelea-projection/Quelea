@@ -44,6 +44,7 @@ import org.quelea.utils.Utils;
 
 /**
  * The panel that shows the bible options
+ *
  * @author Michael
  */
 public class OptionsBiblePanel extends JPanel implements PropertyPanel, BibleChangeListener {
@@ -71,7 +72,7 @@ public class OptionsBiblePanel extends JPanel implements PropertyPanel, BibleCha
         maxVersesSpinner = new JSpinner(new SpinnerNumberModel(200, 1, 5000, 1));
         maxVerseLabel.setLabelFor(maxVersesSpinner);
         biblePanel.add(maxVersesSpinner);
-        
+
         final JButton addBibleButton = new JButton(LabelGrabber.INSTANCE.getLabel("add.bible.label"));
         addBibleButton.addActionListener(new ActionListener() {
 
@@ -82,11 +83,13 @@ public class OptionsBiblePanel extends JPanel implements PropertyPanel, BibleCha
                 chooser.setAcceptAllFileFilterUsed(false);
                 chooser.showDialog(SwingUtilities.getWindowAncestor(addBibleButton), LabelGrabber.INSTANCE.getLabel("add.bible.label"));
                 File file = chooser.getSelectedFile();
-                try {
-                    Utils.copyFile(file, new File(QueleaProperties.get().getBibleDir(), file.getName()));
-                }
-                catch(IOException ex) {
-                    JOptionPane.showMessageDialog(chooser, LabelGrabber.INSTANCE.getLabel("bible.copy.error.text"), LabelGrabber.INSTANCE.getLabel("bible.copy.error.heading"), JOptionPane.ERROR);
+                if(file != null) {
+                    try {
+                        Utils.copyFile(file, new File(QueleaProperties.get().getBibleDir(), file.getName()));
+                    }
+                    catch(IOException ex) {
+                        JOptionPane.showMessageDialog(chooser, LabelGrabber.INSTANCE.getLabel("bible.copy.error.text"), LabelGrabber.INSTANCE.getLabel("bible.copy.error.heading"), JOptionPane.ERROR);
+                    }
                 }
             }
         });
@@ -104,10 +107,11 @@ public class OptionsBiblePanel extends JPanel implements PropertyPanel, BibleCha
     @Override
     public void updateBibles() {
         SwingUtilities.invokeLater(new Runnable() {
+
             public void run() {
                 DefaultComboBoxModel<Bible> model = ((DefaultComboBoxModel<Bible>) defaultBibleComboBox.getModel());
                 model.removeAllElements();
-                for (Bible bible : BibleManager.get().getBibles()) {
+                for(Bible bible : BibleManager.get().getBibles()) {
                     model.addElement(bible);
                 }
             }
@@ -120,9 +124,9 @@ public class OptionsBiblePanel extends JPanel implements PropertyPanel, BibleCha
     public final void readProperties() {
         QueleaProperties props = QueleaProperties.get();
         String selectedBibleName = props.getDefaultBible();
-        for (int i = 0; i < defaultBibleComboBox.getModel().getSize(); i++) {
+        for(int i = 0; i < defaultBibleComboBox.getModel().getSize(); i++) {
             Bible bible = defaultBibleComboBox.getItemAt(i);
-            if (bible.getName().equals(selectedBibleName)) {
+            if(bible.getName().equals(selectedBibleName)) {
                 defaultBibleComboBox.setSelectedIndex(i);
             }
         }
@@ -142,6 +146,7 @@ public class OptionsBiblePanel extends JPanel implements PropertyPanel, BibleCha
 
     /**
      * Get the default bible combo box.
+     *
      * @return the default bible combo box.
      */
     public JComboBox<Bible> getDefaultBibleBox() {
@@ -150,6 +155,7 @@ public class OptionsBiblePanel extends JPanel implements PropertyPanel, BibleCha
 
     /**
      * Get the max verses spinner.
+     *
      * @return the max verses spinner.
      */
     public JSpinner getMaxVersesSpinner() {
