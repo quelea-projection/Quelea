@@ -25,6 +25,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.regex.Pattern;
 import org.quelea.displayable.Song;
 import org.quelea.utils.LoggerUtils;
 import org.quelea.utils.QueleaProperties;
@@ -144,7 +145,7 @@ public class KingswayWorshipParser implements SongParser {
         //Below uncapitalises the first line of the song.
         String fl = strx[0];
         fl = fl.toLowerCase();
-        fl = fl.replaceFirst(fl.substring(0, 1), fl.substring(0, 1).toUpperCase()); //recapitalise first letter
+        fl = fl.replaceFirst(Pattern.quote(fl.substring(0, 1)), Pattern.quote(fl.substring(0, 1).toUpperCase())); //recapitalise first letter
         String[] godWords = QueleaProperties.get().getGodWords();
         for (int c = 0; c < godWords.length; c += 2) {
             fl = fl.replaceAll("(?<=\\W)" + godWords[c] + "(?=\\W)", godWords[c + 1]); //recapitalise God words
