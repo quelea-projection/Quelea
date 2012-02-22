@@ -25,6 +25,7 @@ import java.util.List;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.util.PDFTextStripper;
 import org.quelea.displayable.Song;
+import org.quelea.windows.main.StatusPanel;
 
 /**
  * Parses a PDF from the survivor songbook, this must be the acetates PDF containing only the lyrics (not the guitar
@@ -39,7 +40,7 @@ public class SurvivorSongbookParser implements SongParser {
      * @throws IOException if something went wrong.
      */
     @Override
-    public List<Song> getSongs(File location) throws IOException {
+    public List<Song> getSongs(File location, StatusPanel statusPanel) throws IOException {
         PDDocument document = PDDocument.load(location);
         List<Song> pdfSongs = new ArrayList<>();
         PDFTextStripper stripper = new PDFTextStripper();
