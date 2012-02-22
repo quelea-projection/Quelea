@@ -63,7 +63,7 @@ public class KingswayWorshipParser implements SongParser {
             statusPanel.getProgressBar().setIndeterminate(false);
         }
         while((pageText = getPageText(i)) != null) {
-            int percentage = (int) ((double) i / ROUGH_NUM_SONGS);
+            int percentage = (int) (((double) i / (double)ROUGH_NUM_SONGS)*100);
             LOGGER.log(Level.INFO, "Kingsway import percent complete: {0}", percentage);
             if(statusPanel != null) {
                 statusPanel.getProgressBar().setValue(percentage);
