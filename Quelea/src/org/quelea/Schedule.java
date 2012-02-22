@@ -301,6 +301,14 @@ public class Schedule implements Iterable<Displayable>, Printable {
     public int getSize() {
         return displayables.size();
     }
+    
+    /**
+     * Determine whether this schedule is empty.
+     * @return true if it's empty, false otherwise.
+     */
+    public boolean isEmpty() {
+        return getSize()==0;
+    }
 
     /**
      * Print the schedule.

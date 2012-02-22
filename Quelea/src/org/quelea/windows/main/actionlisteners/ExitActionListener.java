@@ -55,7 +55,7 @@ public class ExitActionListener implements ActionListener {
     private void exit() {
         LOGGER.log(Level.INFO, "exit() called");
         Schedule schedule = Application.get().getMainWindow().getMainPanel().getSchedulePanel().getScheduleList().getSchedule();
-        if(schedule.isModified()) {
+        if(!schedule.isEmpty() && schedule.isModified()) {
             int val = JOptionPane.showConfirmDialog(Application.get().getMainWindow(),
                     LabelGrabber.INSTANCE.getLabel("save.before.exit.text"),
                     LabelGrabber.INSTANCE.getLabel("save.before.exit.title"),
