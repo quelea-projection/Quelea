@@ -124,7 +124,7 @@ public class HelpMenu extends JMenu {
 
             @Override
             public void actionPerformed(ActionEvent e) {
-                new UpdateChecker(((JPopupMenu) updateCheck.getParent()).getInvoker()).checkUpdate(true, true, true);
+                new UpdateChecker(Application.get().getMainWindow()).checkUpdate(true, true, true);
             }
         });
         add(updateCheck);
