@@ -20,13 +20,14 @@ import com.inet.jortho.SpellChecker;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.FlowLayout;
-import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JLabel;
@@ -38,7 +39,6 @@ import javax.swing.JTextField;
 import javax.swing.JToolBar;
 import javax.swing.SpringLayout;
 import javax.swing.SwingUtilities;
-import javax.swing.border.EmptyBorder;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.text.BadLocationException;
@@ -51,6 +51,7 @@ import org.quelea.chord.TransposeDialog;
 import org.quelea.displayable.Song;
 import org.quelea.languages.LabelGrabber;
 import org.quelea.utils.LineTypeChecker;
+import org.quelea.utils.LoggerUtils;
 import org.quelea.utils.SpringUtilities;
 import org.quelea.utils.Utils;
 
@@ -62,6 +63,7 @@ import org.quelea.utils.Utils;
  */
 public class BasicSongPanel extends JPanel {
 
+    private static final Logger LOGGER = LoggerUtils.getLogger();
     private final JTextArea lyricsArea;
     private final JTextField titleField;
     private final JTextField authorField;
@@ -90,7 +92,7 @@ public class BasicSongPanel extends JPanel {
         JTextField[] attributes = new JTextField[]{titleField, authorField};
 
         JPanel topPanel = new JPanel(new SpringLayout());
-        for (int i = 0; i < attributes.length; i++) {
+        for(int i = 0; i < attributes.length; i++) {
             JLabel label = new JLabel(attributes[i].getName(), JLabel.TRAILING);
             topPanel.add(label);
             label.setLabelFor(attributes[i]);
@@ -119,18 +121,15 @@ public class BasicSongPanel extends JPanel {
             }
         });
         JPanel lyricsPanel = new JPanel();
-        lyricsPanel.setLayout(new BoxLayout(lyricsPanel, BoxLayout.X_AXIS));
-        JToolBar lyricsToolbar = new JToolBar(LabelGrabber.INSTANCE.getLabel("tools.label"), JToolBar.VERTICAL);
+        lyricsPanel.setLayout(new BoxLayout(lyricsPanel, BoxLayout.Y_AXIS));
+        JToolBar lyricsToolbar = new JToolBar(LabelGrabber.INSTANCE.getLabel("tools.label"), JToolBar.HORIZONTAL);
         lyricsToolbar.setFloatable(false);
         lyricsToolbar.add(getDictButton());
         lyricsToolbar.add(getAposButton());
         lyricsToolbar.add(getTrimLinesButton());
         lyricsToolbar.add(getTransposeButton());
+        lyricsPanel.add(lyricsToolbar);
         lyricsPanel.add(new JScrollPane(lyricsArea));
-        JPanel lyricsToolbarPanel = new JPanel();
-        lyricsToolbarPanel.setLayout(new FlowLayout(FlowLayout.LEADING, 0, 0));
-        lyricsToolbarPanel.add(lyricsToolbar);
-        lyricsPanel.add(lyricsToolbarPanel);
         centrePanel.add(lyricsPanel);
         add(centrePanel, BorderLayout.CENTER);
 
@@ -141,7 +140,7 @@ public class BasicSongPanel extends JPanel {
      * Manage the highlighting.
      */
     private void doHighlight() {
-        for (Object highlight : highlights) {
+        for(Object highlight : highlights) {
             lyricsArea.getHighlighter().removeHighlight(highlight);
         }
         highlights.clear();
@@ -151,39 +150,39 @@ public class BasicSongPanel extends JPanel {
             String[] lines = text.split("\n");
             List<HighlightIndex> indexes = new ArrayList<>();
             int offset = 0;
-            for (int i = 0; i < lines.length; i++) {
+            for(int i = 0; i < lines.length; i++) {
                 String line = lines[i];
                 LineTypeChecker.Type type = new LineTypeChecker(line).getLineType();
-                if (type == LineTypeChecker.Type.TITLE && i > 0 && !lines[i - 1].trim().isEmpty()) {
+                if(type == LineTypeChecker.Type.TITLE && i > 0 && !lines[i - 1].trim().isEmpty()) {
                     type = LineTypeChecker.Type.NORMAL;
                 }
-                if (type != LineTypeChecker.Type.NORMAL) {
+                if(type != LineTypeChecker.Type.NORMAL) {
                     int startIndex = offset;
                     int endIndex = startIndex + line.length();
                     Color highlightColor = type.getHighlightColor();
-                    if (highlightColor != null) {
+                    if(highlightColor != null) {
                         indexes.add(new HighlightIndex(startIndex, endIndex, highlightColor));
                     }
                 }
                 offset += line.length() + 1;
             }
 
-            for (HighlightIndex index : indexes) {
+            for(HighlightIndex index : indexes) {
                 highlights.add(hilite.addHighlight(index.getStartIndex(), index.getEndIndex(), new DefaultHighlightPainter(index.getHighlightColor())));
             }
         }
-        catch (BadLocationException ex) {
+        catch(BadLocationException ex) {
+            LOGGER.log(Level.SEVERE, "Bug in highlighting", ex);
         }
     }
 
     /**
      * Get the button used for transposing the chords.
+     *
      * @return the button used for transposing the chords.
      */
     private JButton getTransposeButton() {
-        JButton ret = new JButton(Utils.getImageIcon("icons/transpose.png", 16, 16));
-        ret.setMargin(new Insets(0, 0, 0, 0));
-        ret.setBorder(new EmptyBorder(0, 0, 0, 0));
+        JButton ret = new JButton(Utils.getImageIcon("icons/transpose.png", 24, 24));
         ret.setToolTipText(LabelGrabber.INSTANCE.getLabel("transpose.tooltip"));
         ret.addActionListener(new ActionListener() {
 
@@ -191,7 +190,7 @@ public class BasicSongPanel extends JPanel {
             public void actionPerformed(ActionEvent e) {
 
                 String originalKey = getKey(0);
-                if(originalKey==null) {
+                if(originalKey == null) {
                     JOptionPane.showMessageDialog(Application.get().getMainWindow(),
                             LabelGrabber.INSTANCE.getLabel("no.chords.message"),
                             LabelGrabber.INSTANCE.getLabel("no.chords.title"),
@@ -203,15 +202,15 @@ public class BasicSongPanel extends JPanel {
                 int semitones = transposeDialog.getSemitones();
 
                 JTextField keyField = Application.get().getMainWindow().getSongEntryWindow().getDetailedSongPanel().getKeyField();
-                if (!keyField.getText().isEmpty()) {
+                if(!keyField.getText().isEmpty()) {
                     keyField.setText(new ChordTransposer(keyField.getText()).transpose(semitones, null));
                 }
 
                 String key = getKey(semitones);
 
                 StringBuilder newText = new StringBuilder(getLyricsField().getText().length());
-                for (String line : getLyricsField().getText().split("\n")) {
-                    if (new LineTypeChecker(line).getLineType() == LineTypeChecker.Type.CHORDS) {
+                for(String line : getLyricsField().getText().split("\n")) {
+                    if(new LineTypeChecker(line).getLineType() == LineTypeChecker.Type.CHORDS) {
                         newText.append(new ChordLineTransposer(line).transpose(semitones, key));
                     }
                     else {
@@ -228,31 +227,33 @@ public class BasicSongPanel extends JPanel {
     }
 
     /**
-     * Get the given key of the song (or as best we can work out if it's not 
+     * Get the given key of the song (or as best we can work out if it's not
      * specified) transposed by the given number of semitones.
+     *
      * @param semitones the number of semitones to transpose the key.
      * @return the key, transposed.
      */
     private String getKey(int semitones) {
         JTextField keyField = Application.get().getMainWindow().getSongEntryWindow().getDetailedSongPanel().getKeyField();
         String key = keyField.getText();
-        if (key == null || key.isEmpty()) {
-            for (String line : getLyricsField().getText().split("\n")) {
-                if (new LineTypeChecker(line).getLineType() == LineTypeChecker.Type.CHORDS) {
+        if(key == null || key.isEmpty()) {
+            for(String line : getLyricsField().getText().split("\n")) {
+                if(new LineTypeChecker(line).getLineType() == LineTypeChecker.Type.CHORDS) {
                     String first;
                     int i = 0;
                     do {
                         first = line.split("\\s+")[i++];
-                    } while (first.isEmpty());
+                    }
+                    while(first.isEmpty());
                     key = new ChordTransposer(first).transpose(semitones, null);
-                    if (key.length() > 2) {
+                    if(key.length() > 2) {
                         key = key.substring(0, 2);
                     }
-                    if (key.length() == 2) {
-                        if (key.charAt(1) == 'B') {
+                    if(key.length() == 2) {
+                        if(key.charAt(1) == 'B') {
                             key = Character.toString(key.charAt(0)) + "b";
                         }
-                        else if (key.charAt(1) != 'b' && key.charAt(1) != '#') {
+                        else if(key.charAt(1) != 'b' && key.charAt(1) != '#') {
                             key = Character.toString(key.charAt(0));
                         }
                     }
@@ -261,7 +262,7 @@ public class BasicSongPanel extends JPanel {
             }
         }
 
-        if (key.isEmpty()) {
+        if(key.isEmpty()) {
             key = null;
         }
         return key;
@@ -269,18 +270,17 @@ public class BasicSongPanel extends JPanel {
 
     /**
      * Get the remove chords button.
+     *
      * @return the remove chords button.
      */
     private JButton getTrimLinesButton() {
-        JButton button = new JButton(Utils.getImageIcon("icons/trimLines.png"));
-        button.setMargin(new Insets(0, 0, 0, 0));
-        button.setBorder(new EmptyBorder(0, 0, 0, 0));
+        JButton button = new JButton(Utils.getImageIcon("icons/trimLines.png", 24, 24));
         button.setToolTipText(LabelGrabber.INSTANCE.getLabel("trim.lines.tooltip"));
         button.addActionListener(new ActionListener() {
 
             public void actionPerformed(ActionEvent e) {
                 StringBuilder newText = new StringBuilder();
-                for (String line : lyricsArea.getText().split("\n")) {
+                for(String line : lyricsArea.getText().split("\n")) {
                     newText.append(line.trim()).append("\n");
                 }
                 lyricsArea.setText(newText.toString());
@@ -289,38 +289,13 @@ public class BasicSongPanel extends JPanel {
         return button;
     }
 
-//    /**
-//     * Get the remove chords button. We no longer remove chords so this isn't needed - we keep them and use them!
-//     * @return the remove chords button.
-//     * @deprecated
-//     */
-//    private JButton getRemoveChordsButton() {
-//        JButton button = new JButton(Utils.getImageIcon("icons/removeChords.png"));
-//        button.setMargin(new Insets(0, 0, 0, 0));
-//        button.setBorder(new EmptyBorder(0, 0, 0, 0));
-//        button.setToolTipText("Remove guitar chords (marked in red)");
-//        button.addActionListener(new ActionListener() {
-//
-//            public void actionPerformed(ActionEvent e) {
-//                StringBuilder newText = new StringBuilder();
-//                for (String line : lyricsArea.getText().split("\n")) {
-//                    if (new LineTypeChecker(line).getLineType() != LineTypeChecker.Type.CHORDS) {
-//                        newText.append(line).append('\n');
-//                    }
-//                }
-//                lyricsArea.setText(newText.toString());
-//            }
-//        });
-//        return button;
-//    }
     /**
      * Get the spell checker button.
+     *
      * @return the spell checker button.
      */
     private JButton getDictButton() {
-        JButton button = new JButton(Utils.getImageIcon("icons/dictionary.png"));
-        button.setMargin(new Insets(0, 0, 0, 0));
-        button.setBorder(new EmptyBorder(0, 0, 0, 0));
+        JButton button = new JButton(Utils.getImageIcon("icons/dictionary.png", 24, 24));
         button.setToolTipText(LabelGrabber.INSTANCE.getLabel("run.spellcheck.label") + " (F7)");
         button.addActionListener(new ActionListener() {
 
@@ -333,12 +308,11 @@ public class BasicSongPanel extends JPanel {
 
     /**
      * Get the button to fix apostrophes.
+     *
      * @return the button to fix apostrophes.
      */
     private JButton getAposButton() {
-        JButton button = new JButton(Utils.getImageIcon("icons/apos.png"));
-        button.setMargin(new Insets(0, 0, 0, 0));
-        button.setBorder(new EmptyBorder(0, 0, 0, 0));
+        JButton button = new JButton(Utils.getImageIcon("icons/apos.png", 24, 24));
         button.setToolTipText(LabelGrabber.INSTANCE.getLabel("fix.apos.label"));
         button.addActionListener(new ActionListener() {
 
@@ -379,6 +353,7 @@ public class BasicSongPanel extends JPanel {
 
     /**
      * Reset this panel so an existing song can be edited.
+     *
      * @param song the song to edit.
      */
     public void resetEditSong(Song song) {
@@ -391,6 +366,7 @@ public class BasicSongPanel extends JPanel {
 
     /**
      * Get the lyrics field.
+     *
      * @return the lyrics field.
      */
     public JTextArea getLyricsField() {
@@ -399,6 +375,7 @@ public class BasicSongPanel extends JPanel {
 
     /**
      * Get the title field.
+     *
      * @return the title field.
      */
     public JTextField getTitleField() {
@@ -407,6 +384,7 @@ public class BasicSongPanel extends JPanel {
 
     /**
      * Get the author field.
+     *
      * @return the author field.
      */
     public JTextField getAuthorField() {
