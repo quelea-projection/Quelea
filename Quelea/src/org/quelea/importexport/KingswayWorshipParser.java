@@ -63,7 +63,7 @@ public class KingswayWorshipParser implements SongParser {
             statusPanel.getProgressBar().setIndeterminate(false);
         }
         while((pageText = getPageText(i)) != null) {
-            int percentage = (int) (((double) i / (double)ROUGH_NUM_SONGS)*100);
+            int percentage = (int) (((double) i / (double) ROUGH_NUM_SONGS) * 100);
             LOGGER.log(Level.INFO, "Kingsway import percent complete: {0}", percentage);
             if(statusPanel != null) {
                 statusPanel.getProgressBar().setValue(percentage);
@@ -164,7 +164,7 @@ public class KingswayWorshipParser implements SongParser {
         //Below uncapitalises the first line of the song.
         String fl = strx[0];
         fl = fl.toLowerCase();
-        fl = fl.replaceFirst(Pattern.quote(fl.substring(0, 1)), Pattern.quote(fl.substring(0, 1).toUpperCase())); //recapitalise first letter
+        fl = fl.replaceFirst(Pattern.quote(fl.substring(0, 1)), fl.substring(0, 1).toUpperCase()); //recapitalise first letter
         String[] godWords = QueleaProperties.get().getGodWords();
         for(int c = 0; c < godWords.length; c += 2) {
             fl = fl.replaceAll("(?<=\\W)" + godWords[c] + "(?=\\W)", godWords[c + 1]); //recapitalise God words
@@ -179,13 +179,9 @@ public class KingswayWorshipParser implements SongParser {
         fl = new String(y);
         lyrics.append(fl.trim()).append('\n'); //add first line
 
-
-        for(int index = 1;
-                index < strx.length;
-                index++) {
+        for(int index = 1; index < strx.length; index++) {
             lyrics.append(strx[index].trim()).append('\n');
         }
-
 
         if(title.trim().isEmpty()) {
             title = lyrics.toString().split("\n")[0];
@@ -193,7 +189,7 @@ public class KingswayWorshipParser implements SongParser {
 
         if(lyrics.toString().length() > 5) {
             Song ret = new Song(title, author);
-            ret.setLyrics(lyrics.toString().replace("QAE", "A"));
+            ret.setLyrics(lyrics.toString());
             return ret;
         }
         else {
