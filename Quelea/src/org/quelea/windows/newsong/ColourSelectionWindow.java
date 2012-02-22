@@ -49,6 +49,7 @@ public class ColourSelectionWindow extends JDialog {
      */
     public ColourSelectionWindow(Window owner) {
         super(owner, LabelGrabber.INSTANCE.getLabel("select.color.title"), ModalityType.APPLICATION_MODAL);
+        setIconImage(Utils.getImage("img/logo.png"));
         setLayout(new BorderLayout());
         setResizable(false);
         wheel = new ColorWheel(new ColorModel(), Color.WHITE);
