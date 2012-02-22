@@ -26,7 +26,10 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Pattern;
+import javax.swing.JOptionPane;
+import org.quelea.Application;
 import org.quelea.displayable.Song;
+import org.quelea.languages.LabelGrabber;
 import org.quelea.utils.LoggerUtils;
 import org.quelea.utils.QueleaProperties;
 import org.quelea.windows.main.StatusPanel;
@@ -56,8 +59,9 @@ public class KingswayWorshipParser implements SongParser {
      */
     @Override
     public List<Song> getSongs(File location, StatusPanel statusPanel) throws IOException {
+        count500 = 0;
         List<Song> ret = new ArrayList<>();
-        int i = 1;
+        int i = getStart();
         String pageText;
         if(statusPanel != null) {
             statusPanel.getProgressBar().setIndeterminate(false);
@@ -72,7 +76,7 @@ public class KingswayWorshipParser implements SongParser {
             try {
                 song = parseSong(pageText, i);
             }
-            catch (Exception ex) {
+            catch(Exception ex) {
                 LOGGER.log(Level.WARNING, "Error importing song", ex);
             }
             if(song != DEFAULT) {
@@ -80,10 +84,37 @@ public class KingswayWorshipParser implements SongParser {
             }
             i++;
         }
+        int nextVal = i - count500+1;
+        if(nextVal < 0) {
+            nextVal = 0;
+        }
+        QueleaProperties.get().setNextKingswaySong(nextVal);
         if(statusPanel != null) {
             statusPanel.getProgressBar().setIndeterminate(true);
         }
         return ret;
+    }
+
+    /**
+     * Work out the number to start importing at.
+     *
+     * @return the song number to start importing at.
+     */
+    private int getStart() {
+        int start = QueleaProperties.get().getNextKingswaySong();
+        if(start == 0) {
+            return 0;
+        }
+        int option = JOptionPane.showConfirmDialog(Application.get().getMainWindow(),
+                LabelGrabber.INSTANCE.getLabel("check.kingsway.start"),
+                LabelGrabber.INSTANCE.getLabel("check.kingsway.start.title"),
+                JOptionPane.YES_NO_OPTION, JOptionPane.INFORMATION_MESSAGE);
+        if(option == JOptionPane.YES_OPTION) {
+            return start;
+        }
+        else {
+            return 0;
+        }
     }
 
     /**
@@ -209,7 +240,7 @@ public class KingswayWorshipParser implements SongParser {
         try {
             StringBuilder content = new StringBuilder();
             URL url = new URL("http://www.kingswayworship.co.uk/song-library/showsong/" + num);
-            try (BufferedReader in = new BufferedReader(new InputStreamReader(url.openStream()))) {
+            try(BufferedReader in = new BufferedReader(new InputStreamReader(url.openStream()))) {
                 String str;
                 while((str = in.readLine()) != null) {
                     content.append(str).append("\n");
@@ -218,13 +249,13 @@ public class KingswayWorshipParser implements SongParser {
             count500 = 0;
             return content.toString();
         }
-        catch (Exception ex) {
+        catch(Exception ex) {
             LOGGER.log(Level.WARNING, ex.getMessage());
             if(ex.getMessage().contains("500")) {
                 count500++;
                 if(count500 > 10) {
                     LOGGER.log(Level.INFO, "Too many 500's, giving up");
-                    count500 = 0;
+//                    count500 = 0;
                     return null;
                 }
                 return "";
