@@ -234,3 +234,7 @@ visit.webpage.now=Visit the website to download it now?
 download.manual.update=You can download it here
 newer.version.available.title=Update available
 no.newer.version.available.title=Already up-to-date!
+check.kingsway.start=You've already imported some items from the Kingsway library. Do you want to start importing from where you left off?
+check.kingsway.start.title=Already imported items
+import.no.songs.title=No songs found
+import.no.songs.text=Couldn't find any songs to import.
