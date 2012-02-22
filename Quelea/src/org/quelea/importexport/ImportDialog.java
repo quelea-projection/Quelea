@@ -151,7 +151,7 @@ public abstract class ImportDialog extends JDialog implements PropertyChangeList
                     @Override
                     protected Object doInBackground() {
                         try {
-                            localSongs = parser.getSongs(new File(location));
+                            localSongs = parser.getSongs(new File(location), statusPanel);
 //                            Song[] localSongsArr = new Song[localSongs.size()];
 //                            for(int i=0 ; i<localSongs.size() ; i++) {
 //                                localSongsArr[i] = localSongs.get(i);
