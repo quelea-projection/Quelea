@@ -28,6 +28,7 @@ import java.util.regex.Pattern;
 import org.quelea.displayable.Song;
 import org.quelea.utils.LoggerUtils;
 import org.quelea.utils.Utils;
+import org.quelea.windows.main.StatusPanel;
 
 /**
  * A parser for songs in the source songbook in HTML format.
@@ -48,7 +49,7 @@ public class SourceParser implements SongParser {
      * @throws IOException if something went wrong.
      */
     @Override
-    public List<Song> getSongs(File location) throws IOException {
+    public List<Song> getSongs(File location, StatusPanel statusPanel) throws IOException {
         if (!location.isDirectory()) {
             throw new RuntimeException("Must be a directory.");
         }

@@ -22,6 +22,7 @@ import java.io.IOException;
 import java.util.List;
 import org.quelea.displayable.Song;
 import org.quelea.utils.SongPack;
+import org.quelea.windows.main.StatusPanel;
 
 /**
  * A parser for parsing song packs. Not really a parser, but here for 
@@ -37,7 +38,7 @@ public class QSPParser implements SongParser {
      * @throws IOException if something goes wrong.
      */
     @Override
-    public List<Song> getSongs(File location) throws IOException {
+    public List<Song> getSongs(File location, StatusPanel statusPanel) throws IOException {
         return SongPack.fromFile(location).getSongs();
     }
 

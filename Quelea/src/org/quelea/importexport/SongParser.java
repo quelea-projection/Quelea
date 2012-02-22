@@ -21,6 +21,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.List;
 import org.quelea.displayable.Song;
+import org.quelea.windows.main.StatusPanel;
 
 /**
  * The interface for all the different song parsers that parse songs from 
@@ -32,9 +33,11 @@ interface SongParser {
     /**
      * Get all the songs from a particular location.
      * @param location the location to search for the songs.
+     * @param statusPanel the status panel used when parsing this song. It can
+     * be updated or ignored.
      * @return a list of all the songs found in the given location that have 
      * been parsed.
      * @throws IOException if something goes wrong accessing the given location.
      */
-    List<Song> getSongs(File location) throws IOException;
+    List<Song> getSongs(File location, StatusPanel statusPanel) throws IOException;
 }
