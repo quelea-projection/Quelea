@@ -302,6 +302,20 @@ public class Song implements TextDisplayable, Comparable<Song>, Printable {
             }
         }
     }
+    
+    /**
+     * Determine whether this song contains any lines of chords.
+     * @return true if it contains chords, false otherwise.
+     */
+    public boolean hasChords() {
+        String[] lyrics = getLyrics(true, true).split("\n");
+        for(String line : lyrics) {
+            if(new LineTypeChecker(line).getLineType()==LineTypeChecker.Type.CHORDS) {
+                return true;
+            }
+        }
+        return false;
+    }
 
     /**
      * Get the unique ID of the song.
