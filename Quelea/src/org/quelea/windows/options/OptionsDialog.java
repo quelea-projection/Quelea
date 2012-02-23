@@ -36,6 +36,7 @@ public class OptionsDialog extends JDialog {
     private final OptionsDisplaySetupPanel displayPanel;
     private final OptionsGeneralPanel generalPanel;
     private final OptionsBiblePanel biblePanel;
+    private final OptionsStageViewPanel stageViewPanel;
     private final JFrame owner;
 
     /**
@@ -52,6 +53,8 @@ public class OptionsDialog extends JDialog {
         tabbedPane.add(generalPanel);
         displayPanel = new OptionsDisplaySetupPanel();
         tabbedPane.add(displayPanel);
+        stageViewPanel = new OptionsStageViewPanel();
+        tabbedPane.add(stageViewPanel);
         biblePanel = new OptionsBiblePanel();
         tabbedPane.add(biblePanel);
         add(tabbedPane, BorderLayout.CENTER);
@@ -110,6 +113,14 @@ public class OptionsDialog extends JDialog {
      */
     public OptionsBiblePanel getBiblePanel() {
         return biblePanel;
+    }
+
+    /**
+     * Get the stage view panel used in this options dialog.
+     * @return the stage view panel.
+     */
+    public OptionsStageViewPanel getStageViewPanel() {
+        return stageViewPanel;
     }
 
     /**
