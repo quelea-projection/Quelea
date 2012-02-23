@@ -34,6 +34,7 @@ import java.util.List;
 import javax.swing.JFrame;
 import javax.swing.SwingUtilities;
 import org.quelea.Theme;
+import org.quelea.languages.LabelGrabber;
 import org.quelea.notice.Notice;
 import org.quelea.notice.NoticeDrawer;
 import org.quelea.utils.GraphicsUtils;
@@ -140,7 +141,15 @@ public class LyricCanvas extends Canvas {
                 offscreen.setColor(temp);
             }
             else {
-                offscreen.drawImage(theme.getBackground().getImage(getWidth(), getHeight(), Integer.toString(getWidth())), 0, 0, null);
+                if(stageView) {
+                    Color originalColor = offscreen.getColor();
+                    offscreen.setColor(QueleaProperties.get().getStageBackgroundColor());
+                    offscreen.fillRect(0, 0, getWidth(), getHeight());
+                    offscreen.setColor(originalColor);
+                }
+                else {
+                    offscreen.drawImage(theme.getBackground().getImage(getWidth(), getHeight(), Integer.toString(getWidth())), 0, 0, null);
+                }
             }
             Color fontColour = theme.getFontColor();
             if(fontColour == null) {
@@ -219,12 +228,14 @@ public class LyricCanvas extends Canvas {
         Font newFont = Utils.getDifferentSizeFont(font, size);
         graphics.setFont(newFont);
         if(heightOffset > getHeight()) {
-            if(font.getSize() > 8) {
+            if(font.getSize() > 5) {
                 drawText(graphics, Utils.getDifferentSizeFont(font, font.getSize() - 2));
             }
         }
         else {
             if(stageView) {
+                graphics.setFont(new Font(QueleaProperties.get().getStageTextFont(), Font.BOLD, size));
+                graphics.setColor(QueleaProperties.get().getStageLyricsColor());
                 heightOffset = graphics.getFontMetrics().getHeight();
             }
             else {
@@ -235,7 +246,7 @@ public class LyricCanvas extends Canvas {
             for(String line : sanctifiedLines) {
                 int width = graphics.getFontMetrics().stringWidth(line);
                 int leftOffset;
-                if(stageView) {
+                if(stageView && QueleaProperties.get().getStageTextAlignment().equals(LabelGrabber.INSTANCE.getLabel("left"))) {
                     leftOffset = 5;
                 }
                 else {
@@ -245,8 +256,11 @@ public class LyricCanvas extends Canvas {
                 int originalStyle = graphics.getFont().getStyle();
                 Color originalColor = graphics.getColor();
                 if(stageView && new LineTypeChecker(line).getLineType() == LineTypeChecker.Type.CHORDS) {
+                    if(!QueleaProperties.get().getShowChords()) {
+                        continue;
+                    }
                     graphics.setFont(graphics.getFont().deriveFont(originalStyle | Font.ITALIC));
-                    graphics.setColor(QueleaProperties.get().getChordColor());
+                    graphics.setColor(QueleaProperties.get().getStageChordColor());
                 }
                 if(showBorder) {
                     graphicsUtils.drawStringWithOutline(line, leftOffset, heightOffset, graphicsUtils.getInverseColor(), QueleaProperties.get().getOutlineThickness());
@@ -296,7 +310,8 @@ public class LyricCanvas extends Canvas {
         do {
             height = graphics.getFontMetrics(font).getHeight() * lineCount;
             font = Utils.getDifferentSizeFont(font, font.getSize() - 1);
-        } while(height > getHeight() && font.getSize() > 12);
+        }
+        while(height > getHeight() && font.getSize() > 12);
 
         return font.getSize();
     }
