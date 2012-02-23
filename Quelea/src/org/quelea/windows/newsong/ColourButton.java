@@ -78,4 +78,22 @@ public class ColourButton extends JButton {
         return selectionWindow;
     }
 
+    /**
+     * Get the currently selected colour.
+     * @return the currently selected colour.
+     */
+    public Color getColour() {
+        return colour;
+    }
+    
+    /**
+     * Set the currently selected colour.
+     * @param color the colour to select.
+     */
+    public void setColour(Color color) {
+        this.colour = color;
+        selectionWindow.setSelectedColour(colour);
+        setIcon(new ImageIcon(Utils.getImageFromColour(colour, 16, 16)));
+    }
+
 }
