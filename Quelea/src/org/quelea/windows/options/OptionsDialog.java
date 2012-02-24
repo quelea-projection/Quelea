@@ -18,6 +18,7 @@
 package org.quelea.windows.options;
 
 import java.awt.BorderLayout;
+import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import javax.swing.*;
@@ -64,8 +65,11 @@ public class OptionsDialog extends JDialog {
 
             @Override
             public void actionPerformed(ActionEvent e) {
-                for(int i = 0; i < tabbedPane.getComponentCount(); i++) {
-                    ((PropertyPanel) tabbedPane.getComponentAt(i)).setProperties();
+                Component[] components = tabbedPane.getComponents();
+                for(int i = 0; i < components.length; i++) {
+                    if(components[i] instanceof PropertyPanel) {
+                        ((PropertyPanel) components[i]).setProperties();
+                    }
                 }
                 setVisible(false);
             }
@@ -84,8 +88,11 @@ public class OptionsDialog extends JDialog {
     public void setVisible(boolean visible) {
         if(visible) {
             setLocationRelativeTo(owner);
-            for(int i = 0; i < tabbedPane.getComponentCount(); i++) {
-                ((PropertyPanel) tabbedPane.getComponentAt(i)).readProperties();
+            Component[] components = tabbedPane.getComponents();
+            for(int i = 0; i < components.length; i++) {
+                if(components[i] instanceof PropertyPanel) {
+                    ((PropertyPanel) components[i]).readProperties();
+                }
             }
         }
         super.setVisible(visible);
