@@ -64,44 +64,7 @@ public final class Main {
      */
     public static void main(final String[] args) {
         
-        org.simplericity.macify.eawt.Application macApp = new org.simplericity.macify.eawt.DefaultApplication();
-        macApp.addApplicationListener(new ApplicationListener() {
-
-            @Override
-            public void handleAbout(ApplicationEvent ae) {
-                System.out.println("ABOUT");
-            }
-
-            @Override
-            public void handleOpenApplication(ApplicationEvent ae) {
-                
-            }
-
-            @Override
-            public void handleOpenFile(ApplicationEvent ae) {
-                
-            }
-
-            @Override
-            public void handlePreferences(ApplicationEvent ae) {
-                
-            }
-
-            @Override
-            public void handlePrintFile(ApplicationEvent ae) {
-                
-            }
-
-            @Override
-            public void handleQuit(ApplicationEvent ae) {
-                
-            }
-
-            @Override
-            public void handleReOpenApplication(ApplicationEvent ae) {
-                
-            }
-        });
+        new MacIntegrator().run();
 
         final SplashWindow splashWindow = new SplashWindow();
         splashWindow.setVisible(true);
