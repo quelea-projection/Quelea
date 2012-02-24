@@ -42,12 +42,14 @@ import org.quelea.windows.main.menus.MainMenuBar;
 import org.quelea.windows.main.toolbars.MainToolbar;
 import org.quelea.windows.newsong.SongEntryWindow;
 import org.quelea.windows.options.OptionsDialog;
+import org.simplericity.macify.eawt.ApplicationEvent;
+import org.simplericity.macify.eawt.ApplicationListener;
 
 /**
  * The main window used to control the projection.
  * @author Michael
  */
-public class MainWindow extends JFrame {
+public class MainWindow extends JFrame implements ApplicationListener {
 
     private static final Logger LOGGER = LoggerUtils.getLogger();
     private final MainPanel mainpanel;
@@ -57,6 +59,7 @@ public class MainWindow extends JFrame {
     private final MainToolbar mainToolbar;
     private final TagDialog tagDialog;
     private final OptionsDialog optionsDialog;
+    private final org.simplericity.macify.eawt.Application macApp;
 
     /**
      * Create a new main window.
@@ -65,6 +68,9 @@ public class MainWindow extends JFrame {
      */
     public MainWindow(boolean setApplicationWindow) {
         super("Quelea " + QueleaProperties.VERSION.getVersionString());
+        macApp = new org.simplericity.macify.eawt.DefaultApplication();
+        macApp.addApplicationListener(this);
+        
         setLayout(new BorderLayout());
         noticeDialog = new NoticeDialog(this);
         
@@ -153,6 +159,41 @@ public class MainWindow extends JFrame {
      */
     public SongEntryWindow getSongEntryWindow() {
         return songEntryWindow;
+    }
+
+    @Override
+    public void handleAbout(ApplicationEvent ae) {
+        System.out.println("ABOUT");
+    }
+
+    @Override
+    public void handleOpenApplication(ApplicationEvent ae) {
+        
+    }
+
+    @Override
+    public void handleOpenFile(ApplicationEvent ae) {
+        
+    }
+
+    @Override
+    public void handlePreferences(ApplicationEvent ae) {
+        
+    }
+
+    @Override
+    public void handlePrintFile(ApplicationEvent ae) {
+        
+    }
+
+    @Override
+    public void handleQuit(ApplicationEvent ae) {
+        
+    }
+
+    @Override
+    public void handleReOpenApplication(ApplicationEvent ae) {
+        
     }
 
 }
