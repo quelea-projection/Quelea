@@ -37,6 +37,7 @@ import org.quelea.notice.NoticeDialog;
 import org.quelea.tags.TagDialog;
 import org.quelea.utils.LoggerUtils;
 import org.quelea.utils.QueleaProperties;
+import org.quelea.utils.Utils;
 import org.quelea.windows.main.actionlisteners.*;
 import org.quelea.windows.main.menus.MainMenuBar;
 import org.quelea.windows.main.toolbars.MainToolbar;
@@ -70,6 +71,7 @@ public class MainWindow extends JFrame implements ApplicationListener {
         super("Quelea " + QueleaProperties.VERSION.getVersionString());
         macApp = new org.simplericity.macify.eawt.DefaultApplication();
         macApp.addApplicationListener(this);
+        macApp.setApplicationIconImage(Utils.getImage("img/logo.png"));
         
         setLayout(new BorderLayout());
         noticeDialog = new NoticeDialog(this);
