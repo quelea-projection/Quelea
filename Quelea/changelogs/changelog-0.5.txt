@@ -1,6 +1,6 @@
 quelea (0.5) stable; urgency=normal
  
-  * Better searching
+  * Better searching, better UI and much faster algorithm
   * Reworked UI, no ribbon
   * Added missing labels
   * Added stage view
@@ -9,5 +9,10 @@ quelea (0.5) stable; urgency=normal
   * Startup speed improvements
   * Corrupt powerpoints handled properly with error
   * Missing labels added to language file
+  * Dialog to check whether to save the schedule before quitting
+  * Time displayed on video panel
+  * Kingsway importer bug fixed
+  * Add bible bug fixed
+  * Grammar on spellcheck message fixed
  
  -- Michael Berry <michael@quelea.org>  Sunday, 19 Dec 2011 00:00:00 +0000
