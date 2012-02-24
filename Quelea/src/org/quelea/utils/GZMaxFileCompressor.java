@@ -23,6 +23,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.zip.Deflater;
 
 /**
  * Compresses a file using the GZip format and maximum compression.
@@ -43,7 +44,7 @@ public class GZMaxFileCompressor {
     public boolean compress(File input, File output) {
         LOGGER.log(Level.INFO, "Compressing {0} to {1}", new Object[]{input.getAbsolutePath(), output.getAbsolutePath()});
         try(FileInputStream inputStream = new FileInputStream(input);
-                GZipOutputStreamEx outputStream = new GZipOutputStreamEx(new FileOutputStream(output), 1024, 9)) {
+                GZipOutputStreamEx outputStream = new GZipOutputStreamEx(new FileOutputStream(output), 1024, Deflater.BEST_COMPRESSION)) {
             byte[] buf = new byte[1024];
             int length;
             while ((length = inputStream.read(buf)) > 0) {
