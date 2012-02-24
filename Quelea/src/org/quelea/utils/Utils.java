@@ -95,6 +95,14 @@ public final class Utils {
     }
     
     /**
+     * Determine if we're running on a mac.
+     * @return true if we're running on a mac, false otherwise.
+     */
+    public static boolean isMac() {
+        return System.getProperty("os.name").contains("Mac");
+    }
+    
+    /**
      * Update a song in the background.
      * @param song the song to update.
      */
