@@ -55,8 +55,9 @@ public final class Main {
     }
 
     /**
-     * Starts the program off, this is the first thing that is executed by 
+     * Starts the program off, this is the first thing that is executed by
      * Quelea when the program starts.
+     *
      * @param args the command line arguments.
      */
     public static void main(final String[] args) {
@@ -65,7 +66,7 @@ public final class Main {
         splashWindow.setVisible(true);
 
         new UserFileChecker(QueleaProperties.getQueleaUserHome()).checkUserFiles();
-        
+
         GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
         final GraphicsDevice[] gds = ge.getScreenDevices();
         LOGGER.log(Level.INFO, "Number of displays: {0}", gds.length);
@@ -103,7 +104,7 @@ public final class Main {
         }
         Application.get().setLyricWindow(fullScreenWindow);
         fullScreenWindow.toFront();
-        
+
         final boolean stageHidden;
         if(!QueleaProperties.get().isStageModeCoords() && (stageScreen >= gds.length || stageScreen < 0)) {
             stageHidden = true;
@@ -219,6 +220,7 @@ public final class Main {
 
     /**
      * If it's appropriate, show the warning about only having 1 monitor.
+     *
      * @param numMonitors the number of monitors.
      */
     private static void showWarning(int numMonitors) {
