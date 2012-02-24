@@ -107,6 +107,11 @@ public final class QueleaProperties extends Properties {
     public String getLaf() {
         String laf = getProperty("laf", "javax.swing.plaf.nimbus.NimbusLookAndFeel");
         if(laf.trim().equalsIgnoreCase("System")) {
+            if(Utils.isMac()) {
+                return ch.randelshofer.quaqua.QuaquaManager.getLookAndFeel().getClass().getName();
+            }
+            else {
+            }
             return UIManager.getSystemLookAndFeelClassName();
         }
         else {
