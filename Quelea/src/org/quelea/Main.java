@@ -34,8 +34,6 @@ import org.quelea.utils.UpdateChecker;
 import org.quelea.utils.Utils;
 import org.quelea.windows.main.LyricWindow;
 import org.quelea.windows.main.MainWindow;
-import org.simplericity.macify.eawt.ApplicationEvent;
-import org.simplericity.macify.eawt.ApplicationListener;
 
 /**
  * The main class, sets everything in motion...
@@ -63,9 +61,11 @@ public final class Main {
      * @param args the command line arguments.
      */
     public static void main(final String[] args) {
-
+        
         final SplashWindow splashWindow = new SplashWindow();
         splashWindow.setVisible(true);
+        //Needed to stop menus appearing behind video
+        JPopupMenu.setDefaultLightWeightPopupEnabled(false);
 
         new UserFileChecker(QueleaProperties.getQueleaUserHome()).checkUserFiles();
 
