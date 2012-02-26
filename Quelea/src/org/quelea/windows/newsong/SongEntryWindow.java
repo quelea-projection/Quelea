@@ -23,11 +23,13 @@ import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
 import javax.swing.border.EmptyBorder;
+import org.quelea.Application;
 import org.quelea.Theme;
 import org.quelea.displayable.Song;
 import org.quelea.displayable.TextSection;
@@ -46,6 +48,7 @@ public class SongEntryWindow extends JDialog {
     private final JTabbedPane tabbedPane;
     private final JButton confirmButton;
     private final JButton cancelButton;
+    private final JCheckBox addToSchedCBox;
     private Song song;
 
     /**
@@ -74,6 +77,8 @@ public class SongEntryWindow extends JDialog {
 
                 setVisible(false);
                 Utils.updateSongInBackground(getSong(), true);
+                if(addToSchedCBox.isSelected())
+                    Application.get().getMainWindow().getMainPanel().getSchedulePanel().getScheduleList().getModel().addElement(getSong());
             }
         });
         cancelButton = new JButton(LabelGrabber.INSTANCE.getLabel("cancel.button"), Utils.getImageIcon("icons/cross.png"));
@@ -84,7 +89,9 @@ public class SongEntryWindow extends JDialog {
                 setVisible(false);
             }
         });
+        addToSchedCBox = new JCheckBox("Add to schedule?", true);
         JPanel bottomPanel = new JPanel();
+        bottomPanel.add(addToSchedCBox);
         bottomPanel.add(confirmButton);
         bottomPanel.add(cancelButton);
         add(bottomPanel, BorderLayout.SOUTH);

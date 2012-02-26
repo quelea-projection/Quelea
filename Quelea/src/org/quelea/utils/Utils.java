@@ -79,12 +79,11 @@ public final class Utils {
     public static void sleep(long millis) {
         try {
             Thread.sleep(millis);
-        }
-        catch(InterruptedException ex) {
+        } catch (InterruptedException ex) {
             //Nothing
         }
     }
-    
+
     /**
      * Determine if we're running in a 64 bit JVM.
      * @return true if it's a 64 bit JVM, false if it's 32 bit (or something
@@ -93,7 +92,7 @@ public final class Utils {
     public static boolean is64Bit() {
         return System.getProperty("os.arch").contains("64"); //Rudimentary...
     }
-    
+
     /**
      * Determine if we're running on a mac.
      * @return true if we're running on a mac, false otherwise.
@@ -101,7 +100,7 @@ public final class Utils {
     public static boolean isMac() {
         return System.getProperty("os.name").contains("Mac");
     }
-    
+
     /**
      * Update a song in the background.
      * @param song the song to update.
@@ -113,7 +112,7 @@ public final class Utils {
             @Override
             protected Void doInBackground() {
                 boolean result = SongDatabase.get().updateSong(song);
-                if(!result && showError) {
+                if (!result && showError) {
                     JOptionPane.showMessageDialog(Application.get().getMainWindow(), LabelGrabber.INSTANCE.getLabel("error.udpating.song.text"), LabelGrabber.INSTANCE.getLabel("error.text"), JOptionPane.ERROR_MESSAGE, null);
                 }
                 return null;
@@ -166,8 +165,8 @@ public final class Utils {
     public static boolean translucencySupported() {
         GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
         GraphicsDevice[] gs = ge.getScreenDevices();
-        for(GraphicsDevice device : gs) {
-            if(device.isWindowTranslucencySupported(GraphicsDevice.WindowTranslucency.TRANSLUCENT)) {
+        for (GraphicsDevice device : gs) {
+            if (device.isWindowTranslucencySupported(GraphicsDevice.WindowTranslucency.TRANSLUCENT)) {
                 return true;
             }
         }
@@ -182,10 +181,10 @@ public final class Utils {
      */
     public static Font getDifferentSizeFont(Font font, float size) {
         Map<TextAttribute, Object> attributes = new HashMap<>();
-        for(Entry<TextAttribute, ?> entry : font.getAttributes().entrySet()) {
+        for (Entry<TextAttribute, ?> entry : font.getAttributes().entrySet()) {
             attributes.put(entry.getKey(), entry.getValue());
         }
-        if(attributes.get(TextAttribute.SIZE) != null) {
+        if (attributes.get(TextAttribute.SIZE) != null) {
             attributes.put(TextAttribute.SIZE, size);
         }
         return new Font(attributes);
@@ -206,16 +205,15 @@ public final class Utils {
         int maxSize = 288;
         int curSize = font.getSize();
 
-        while(maxSize - minSize > 2) {
+        while (maxSize - minSize > 2) {
             FontMetrics fm = g.getFontMetrics(new Font(font.getName(), font.getStyle(), curSize));
             int fontWidth = fm.stringWidth(string);
             int fontHeight = fm.getLeading() + fm.getMaxAscent() + fm.getMaxDescent();
 
-            if((fontWidth > width) || (fontHeight > height)) {
+            if ((fontWidth > width) || (fontHeight > height)) {
                 maxSize = curSize;
                 curSize = (maxSize + minSize) / 2;
-            }
-            else {
+            } else {
                 minSize = curSize;
                 curSize = (minSize + maxSize) / 2;
             }
@@ -269,15 +267,15 @@ public final class Utils {
         final int centreX = (int) (((int) (bounds.getMaxX() - bounds.getMinX()) / 2) + bounds.getMinX());
         final int centreY = (int) (((int) (bounds.getMaxY() - bounds.getMinY()) / 2) + bounds.getMinY());
         Runnable locationSetter = new Runnable() {
+
             @Override
             public void run() {
                 frame.setLocation(centreX - frame.getWidth() / 2, centreY - frame.getHeight() / 2);
             }
         };
-        if(SwingUtilities.isEventDispatchThread()) {
+        if (SwingUtilities.isEventDispatchThread()) {
             locationSetter.run();
-        }
-        else {
+        } else {
             SwingUtilities.invokeLater(locationSetter);
         }
     }
@@ -290,9 +288,9 @@ public final class Utils {
     public static <T> void removeDuplicateWithOrder(List<T> list) {
         Set<T> set = new HashSet<>();
         List<T> newList = new ArrayList<>();
-        for(Iterator<T> iter = list.iterator(); iter.hasNext();) {
+        for (Iterator<T> iter = list.iterator(); iter.hasNext();) {
             T element = iter.next();
-            if(set.add(element)) {
+            if (set.add(element)) {
                 newList.add(element);
             }
         }
@@ -307,17 +305,17 @@ public final class Utils {
      * @throws IOException if something goes wrong.
      */
     public static void copyFile(File sourceFile, File destFile) throws IOException {
-        if(sourceFile.isDirectory()) {
-            if(sourceFile.getName().equals(".svn")) {
+        if (sourceFile.isDirectory()) {
+            if (sourceFile.getName().equals(".svn")) {
                 return;
             }
             Files.copy(sourceFile.toPath(), destFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
-            for(File file : sourceFile.listFiles()) {
+            for (File file : sourceFile.listFiles()) {
                 copyFile(file, new File(destFile, file.getName()));
             }
             return;
         }
-        if(!destFile.exists()) {
+        if (!destFile.exists()) {
             destFile.createNewFile();
         }
 
@@ -327,12 +325,11 @@ public final class Utils {
             source = new FileInputStream(sourceFile).getChannel();
             destination = new FileOutputStream(destFile).getChannel();
             destination.transferFrom(source, 0, source.size());
-        }
-        finally {
-            if(source != null) {
+        } finally {
+            if (source != null) {
                 source.close();
             }
-            if(destination != null) {
+            if (destination != null) {
                 destination.close();
             }
         }
@@ -344,7 +341,7 @@ public final class Utils {
      * @return the the string with the first letter capitalised.
      */
     public static String capitaliseFirst(String line) {
-        if(line.isEmpty()) {
+        if (line.isEmpty()) {
             return line;
         }
         StringBuilder ret = new StringBuilder(line);
@@ -360,8 +357,8 @@ public final class Utils {
     public static String getAbbreviation(String name) {
         StringBuilder ret = new StringBuilder();
         String[] parts = name.split(" ");
-        for(String str : parts) {
-            if(!str.isEmpty()) {
+        for (String str : parts) {
+            if (!str.isEmpty()) {
                 ret.append(Character.toUpperCase(str.charAt(0)));
             }
         }
@@ -386,15 +383,14 @@ public final class Utils {
      *         reason.
      */
     public static synchronized String getTextFromFile(String fileName, String errorText) {
-        try(BufferedReader reader = new BufferedReader(new FileReader(fileName))) {
+        try (BufferedReader reader = new BufferedReader(new FileReader(fileName))) {
             StringBuilder content = new StringBuilder();
             String line;
-            while((line = reader.readLine()) != null) {
+            while ((line = reader.readLine()) != null) {
                 content.append(line).append('\n');
             }
             return content.toString();
-        }
-        catch(IOException ex) {
+        } catch (IOException ex) {
             LOGGER.log(Level.WARNING, "Couldn't get the contents of " + fileName, ex);
             return errorText;
         }
@@ -418,7 +414,7 @@ public final class Utils {
      */
     public static ImageIcon getImageIcon(String location, int width, int height) {
         Image image = getImage(location, width, height);
-        if(image == null) {
+        if (image == null) {
             return null;
         }
         return new ImageIcon(image);
@@ -443,14 +439,12 @@ public final class Utils {
     public static BufferedImage getImage(String location, int width, int height) {
         try {
             BufferedImage image = ImageIO.read(new File(location));
-            if(width > 0 && height > 0) {
+            if (width > 0 && height > 0) {
                 return resizeImage(image, width, height);
-            }
-            else {
+            } else {
                 return image;
             }
-        }
-        catch(IOException ex) {
+        } catch (IOException ex) {
             LOGGER.log(Level.WARNING, "Couldn't get image: " + location, ex);
             return null;
         }
@@ -464,15 +458,14 @@ public final class Utils {
      * @return the resized image.
      */
     public static BufferedImage resizeImage(BufferedImage image, int width, int height) {
-        if(width > 0 && height > 0 && (image.getWidth() != width || image.getHeight() != height)) {
+        if (width > 0 && height > 0 && (image.getWidth() != width || image.getHeight() != height)) {
             BufferedImage bdest = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
             Graphics2D g = bdest.createGraphics();
             g.setRenderingHint(RenderingHints.KEY_ALPHA_INTERPOLATION, RenderingHints.VALUE_ALPHA_INTERPOLATION_QUALITY);
             g.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BICUBIC);
             g.drawImage(image, 0, 0, width, height, null);
             return bdest;
-        }
-        else {
+        } else {
             return image;
         }
     }
@@ -494,13 +487,17 @@ public final class Utils {
      * @return true if the file is an image, false otherwise.
      */
     public static boolean fileIsImage(File file) {
-        String suffix = file.getName().split("\\.")[file.getName().split("\\.").length - 1].toLowerCase().trim();
-        return (suffix.equals("png")
-                || suffix.equals("bmp")
-                || suffix.equals("tif")
-                || suffix.equals("jpg")
-                || suffix.equals("jpeg")
-                || suffix.equals("gif"));
+        if (file.isDirectory() && !file.isHidden()) {
+            return true;
+        } else {
+            String suffix = file.getName().split("\\.")[file.getName().split("\\.").length - 1].toLowerCase().trim();
+            return (suffix.equals("png")
+                    || suffix.equals("bmp")
+                    || suffix.equals("tif")
+                    || suffix.equals("jpg")
+                    || suffix.equals("jpeg")
+                    || suffix.equals("gif"));
+        }
     }
 
     /**
@@ -510,11 +507,11 @@ public final class Utils {
     public static String[] getAllFonts() {
         Font[] fonts = GraphicsEnvironment.getLocalGraphicsEnvironment().getAllFonts();
         Set<String> names = new HashSet<>();
-        for(int i = 0; i < fonts.length; i++) {
+        for (int i = 0; i < fonts.length; i++) {
             names.add(fonts[i].getFamily());
         }
         List<String> namesList = new ArrayList<>(names.size());
-        for(String name : names) {
+        for (String name : names) {
             namesList.add(name);
         }
         Collections.sort(namesList);
