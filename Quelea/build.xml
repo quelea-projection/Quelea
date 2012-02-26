@@ -6,6 +6,7 @@
     <taskdef name="izpack" classpath="${basedir}/izpack/standalone-compiler.jar"
              classname="com.izforge.izpack.ant.IzPackTask"/>
     <taskdef name="launch4j" classpath="launch4j/launch4j.jar" classname="net.sf.launch4j.ant.Launch4jTask"/>
+    <taskdef name="jarbundler" classpath="osx/jarbundler-2.2.0.jar" classname="net.sourceforge.jarbundler.JarBundler"/>
     <taskdef name="desktopentry" classpath="antdeb/ant-deb-0.0.1.jar"
              classname="com.googlecode.ant_deb_task.DesktopEntry"/>
     <taskdef name="deb" classpath="lib/jdeb-0.8.jar" classname="org.vafer.jdeb.ant.DebAntTask"/>
@@ -68,6 +69,27 @@
             <arg value="${basedir}/changelogs/changelog-${quelea.version}.txt"/>
             <arg value="${dist.jar.dir}/queleadoc/changelog.gz"/>
         </java>
+        
+<!--        <echo message="Building Mac package"/>
+        <jarbundler dir="${dist.jar.dir}/"
+                    name="Quelea-${quelea.version}"
+                    jvmversion="1.6+"
+                    jvmarchs="i386 x86_64 ppc"
+                    stubfile="osx/JavaApplicationStub"
+                    mainclass="org.quelea.Main">
+
+            <jarfileset dir="${dist.jar.dir}">
+                <exclude name="lib/native/**"/> 
+                <exclude name="lib/native64/**"/> 
+                <exclude name="lib/junit/**"/> 
+                <exclude name="lib/junit_4/**"/> 
+                <exclude name="lib/**javadoc.jar"/> 
+                <exclude name="copyright"/> 
+                <exclude name="license.txt"/> 
+                <exclude name="launch.sh"/> 
+            </jarfileset>
+
+        </jarbundler>-->
         
         <echo message="Building deb package for Ubuntu / Debian installs"/>
         <deb destfile="${dist.jar.dir}/Quelea-temp.deb" control="control" verbose="true">
