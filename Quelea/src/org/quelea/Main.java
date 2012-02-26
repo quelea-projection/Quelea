@@ -64,8 +64,11 @@ public final class Main {
         
         final SplashWindow splashWindow = new SplashWindow();
         splashWindow.setVisible(true);
+        
         //Needed to stop menus appearing behind video
         JPopupMenu.setDefaultLightWeightPopupEnabled(false);
+        //Same for tooltips
+        ToolTipManager.sharedInstance().setLightWeightPopupEnabled(false);
 
         new UserFileChecker(QueleaProperties.getQueleaUserHome()).checkUserFiles();
 
