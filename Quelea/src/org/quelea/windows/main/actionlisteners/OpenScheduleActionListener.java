@@ -19,19 +19,15 @@
 package org.quelea.windows.main.actionlisteners;
 
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import javax.swing.JFileChooser;
-import javax.swing.JOptionPane;
 import org.quelea.Application;
-import org.quelea.languages.LabelGrabber;
 import org.quelea.utils.Utils;
-import org.quelea.windows.main.MainPanel;
 
 /**
  * The open schedule action listener.
  * @author Michael
  */
-public class OpenScheduleActionListener implements ActionListener {
+public class OpenScheduleActionListener extends ClearingActionListener {
 
     @Override
     public void actionPerformed(ActionEvent ae) {
@@ -43,20 +39,4 @@ public class OpenScheduleActionListener implements ActionListener {
         }
     }
 
-    /**
-     * Confirm whether it's ok to clear the current schedule.
-     *
-     * @return true if this is ok, false otherwise.
-     */
-    private boolean confirmClear() {
-        MainPanel mainpanel = Application.get().getMainWindow().getMainPanel();
-        if(mainpanel.getSchedulePanel().getScheduleList().isEmpty()) {
-            return true;
-        }
-        int result = JOptionPane.showConfirmDialog(Application.get().getMainWindow(), LabelGrabber.INSTANCE.getLabel("schedule.clear.text"), LabelGrabber.INSTANCE.getLabel("confirm.label"), JOptionPane.YES_NO_OPTION, JOptionPane.INFORMATION_MESSAGE, null);
-        if(result == JOptionPane.YES_OPTION) {
-            return true;
-        }
-        return false;
-    }
 }
