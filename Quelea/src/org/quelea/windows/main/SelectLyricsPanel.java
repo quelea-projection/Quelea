@@ -19,7 +19,12 @@ package org.quelea.windows.main;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
+import java.awt.event.InputEvent;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.util.HashSet;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
@@ -41,6 +46,7 @@ public class SelectLyricsPanel extends ContainedPanel {
     private final SelectLyricsList lyricsList;
     private final LivePreviewPanel containerPanel;
     private final LyricCanvas previewCanvas;
+    private boolean stopUpdate;
 
     /**
      * Create a new lyrics panel.
@@ -68,24 +74,91 @@ public class SelectLyricsPanel extends ContainedPanel {
         containerPanel.registerLyricCanvas(previewCanvas);
         lyricsList.addListSelectionListener(new ListSelectionListener() {
 
+            @Override
             public void valueChanged(ListSelectionEvent e) {
                 updateCanvases();
             }
         });
+        lyricsList.addKeyListener(new KeyAdapter() {
+
+            @Override
+            public void keyPressed(KeyEvent ke) {
+                check(ke);
+            }
+
+            @Override
+            public void keyReleased(KeyEvent ke) {
+                check(ke);
+            }
+        });
+        lyricsList.addMouseListener(new MouseListener() {
+
+            @Override
+            public void mouseClicked(MouseEvent me) {
+                check(me);
+            }
+
+            @Override
+            public void mousePressed(MouseEvent me) {
+                check(me);
+            }
+
+            @Override
+            public void mouseReleased(MouseEvent me) {
+                check(me);
+            }
+
+            @Override
+            public void mouseEntered(MouseEvent me) {
+                check(me);
+            }
+
+            @Override
+            public void mouseExited(MouseEvent me) {
+                check(me);
+            }
+        });
         lyricsList.getModel().addListDataListener(new ListDataListener() {
 
+            @Override
             public void intervalAdded(ListDataEvent e) {
                 updateCanvases();
             }
 
+            @Override
             public void intervalRemoved(ListDataEvent e) {
                 updateCanvases();
             }
 
+            @Override
             public void contentsChanged(ListDataEvent e) {
                 updateCanvases();
             }
         });
+    }
+    
+    /**
+     * Check based on the current input event whether to set stopUpdate.
+     * @param ie the input event.
+     */
+    private void check(InputEvent ie) {
+        if(ie.isAltDown()) {
+            setStopUpdate(true);
+        }
+        else {
+            setStopUpdate(false);
+        }
+    }
+
+    /**
+     * Set stop update. If set to true then selection events on this list won't
+     * update any of the attached canvases.
+     *
+     * @param stopUpdate true if no updates should occur on the canvases, false
+     * otherwise.
+     */
+    private void setStopUpdate(boolean stopUpdate) {
+        this.stopUpdate = stopUpdate;
     }
 
     /**
@@ -123,12 +196,13 @@ public class SelectLyricsPanel extends ContainedPanel {
 
     /**
      * Get the lyrics list on this panel.
+     *
      * @return the select lyrics list.
      */
     public SelectLyricsList getLyricsList() {
         return lyricsList;
     }
-    
+
     /**
      * Clear the current panel.
      */
@@ -162,6 +236,9 @@ public class SelectLyricsPanel extends ContainedPanel {
      * changes.
      */
     private void updateCanvases() {
+        if(stopUpdate) {
+            return;
+        }
         int selectedIndex = lyricsList.getSelectedIndex();
         HashSet<LyricCanvas> canvases = new HashSet<>();
         canvases.addAll(containerPanel.getCanvases());
