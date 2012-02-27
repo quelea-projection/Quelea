@@ -26,6 +26,8 @@ import java.util.ArrayList;
 import java.util.List;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 import org.quelea.displayable.TextSection;
 import org.quelea.utils.QueleaProperties;
 import org.quelea.utils.Utils;
@@ -101,6 +103,20 @@ public class SelectLyricsList extends JList<TextSection> {
      */
     public SelectLyricsList() {
         super(new DefaultListModel<TextSection>());
+        addListSelectionListener(new ListSelectionListener() {
+            
+            private int lastIndex;
+
+            @Override
+            public void valueChanged(ListSelectionEvent lse) {
+                if(lse.getValueIsAdjusting()) {
+                    lastIndex = lse.getFirstIndex();
+                }
+                if(getSelectedIndex()==-1) {
+                    setSelectedIndex(lastIndex);
+                }
+            }
+        });
         oneLineMode = QueleaProperties.get().getOneLineMode();
         Color inactiveColor = QueleaProperties.get().getInactiveSelectionColor();
         if(inactiveColor == null) {
