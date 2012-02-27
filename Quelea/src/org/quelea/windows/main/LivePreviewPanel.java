@@ -82,7 +82,8 @@ public abstract class LivePreviewPanel extends JPanel {
             @Override
             public void mouseClicked(MouseEvent me) {
                 if(me.isAltDown()) {
-                    doQuickEdit();
+                    int index = lyricsPanel.getLyricsList().locationToIndex(me.getPoint());
+                    doQuickEdit(index);
                 }
             }
         });
@@ -91,20 +92,22 @@ public abstract class LivePreviewPanel extends JPanel {
             @Override
             public void keyPressed(KeyEvent ke) {
                 if(ke.isControlDown() && ke.getKeyCode() == KeyEvent.VK_Q) {
-                    doQuickEdit();
+                    doQuickEdit(lyricsPanel.getLyricsList().getSelectedIndex());
                 }
             }
         });
     }
 
     /**
-     * Perform a quick edit on the current section.
+     * Perform a quick edit on the given index.
+     * 
+     * @param index the index on which to perform the quick edit.
      */
-    public void doQuickEdit() {
+    public void doQuickEdit(int index) {
         if(displayable instanceof Song) {
             Song song = (Song) displayable;
             quickEditDialog.setLocationRelativeTo(quickEditDialog.getParent());
-            quickEditDialog.setSongSection(song, lyricsPanel.getLyricsList().getSelectedIndex());
+            quickEditDialog.setSongSection(song, index);
             quickEditDialog.setVisible(true);
             setDisplayable(song, getIndex());
         }

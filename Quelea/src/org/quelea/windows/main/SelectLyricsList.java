@@ -103,8 +103,24 @@ public class SelectLyricsList extends JList<TextSection> {
      */
     public SelectLyricsList() {
         super(new DefaultListModel<TextSection>());
+        addMouseListener(new MouseAdapter() {
+
+            int lastSelectedIndex;
+
+            @Override
+            public void mouseClicked(MouseEvent e) {
+
+                int index = locationToIndex(e.getPoint());
+                if(index != -1 && index != lastSelectedIndex) {
+                    if(getCursor().equals(Q_CURSOR)) {
+                        setSelectedIndex(lastSelectedIndex);
+                    }
+                }
+                lastSelectedIndex = getSelectedIndex();
+            }
+        });
         addListSelectionListener(new ListSelectionListener() {
-            
+
             private int lastIndex;
 
             @Override
@@ -112,7 +128,7 @@ public class SelectLyricsList extends JList<TextSection> {
                 if(lse.getValueIsAdjusting()) {
                     lastIndex = lse.getFirstIndex();
                 }
-                if(getSelectedIndex()==-1) {
+                if(getSelectedIndex() == -1) {
                     setSelectedIndex(lastIndex);
                 }
             }
@@ -153,6 +169,7 @@ public class SelectLyricsList extends JList<TextSection> {
             @Override
             public void mouseMoved(MouseEvent me) {
                 if(me.isAltDown() && !getModel().isEmpty()) {
+                    
                     setCursor(Q_CURSOR);
                 }
                 else {
