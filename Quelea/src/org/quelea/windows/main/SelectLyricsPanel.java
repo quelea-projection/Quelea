@@ -115,7 +115,7 @@ public class SelectLyricsPanel extends ContainedPanel {
 
             @Override
             public void mouseExited(MouseEvent me) {
-                check(me);
+                setStopUpdate(false);
             }
         });
         lyricsList.getModel().addListDataListener(new ListDataListener() {
