@@ -136,9 +136,10 @@ public class SelectLyricsPanel extends ContainedPanel {
             }
         });
     }
-    
+
     /**
      * Check based on the current input event whether to set stopUpdate.
+     *
      * @param ie the input event.
      */
     private void check(InputEvent ie) {
@@ -157,7 +158,7 @@ public class SelectLyricsPanel extends ContainedPanel {
      * @param stopUpdate true if no updates should occur on the canvases, false
      * otherwise.
      */
-    private void setStopUpdate(boolean stopUpdate) {
+    public void setStopUpdate(boolean stopUpdate) {
         this.stopUpdate = stopUpdate;
     }
 
