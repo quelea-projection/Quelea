@@ -54,6 +54,7 @@ import org.quelea.chord.TransposeDialog;
 import org.quelea.displayable.Song;
 import org.quelea.languages.LabelGrabber;
 import org.quelea.utils.LineTypeChecker;
+import org.quelea.utils.LineTypeChecker.Type;
 import org.quelea.utils.LoggerUtils;
 import org.quelea.utils.SpringUtilities;
 import org.quelea.utils.Utils;
@@ -70,6 +71,7 @@ public class BasicSongPanel extends JPanel {
     private final JTextArea lyricsArea;
     private final JTextField titleField;
     private final JTextField authorField;
+    private final JButton transposeButton;
     private final TransposeDialog transposeDialog;
 
     /**
@@ -121,6 +123,7 @@ public class BasicSongPanel extends JPanel {
             }
 
             private void update() {
+                checkChords();
                 doHighlight();
             }
         });
@@ -131,7 +134,8 @@ public class BasicSongPanel extends JPanel {
         lyricsToolbar.add(getDictButton());
         lyricsToolbar.add(getAposButton());
         lyricsToolbar.add(getTrimLinesButton());
-        lyricsToolbar.add(getTransposeButton());
+        transposeButton = getTransposeButton();
+        lyricsToolbar.add(transposeButton);
         lyricsPanel.add(lyricsToolbar);
         lyricsPanel.add(new JScrollPane(lyricsArea));
         centrePanel.add(lyricsPanel);
@@ -145,6 +149,21 @@ public class BasicSongPanel extends JPanel {
         FocusTraversalPolicy customFocus = this.new customFTPolicy(order);
         centrePanel.setFocusTraversalPolicy(customFocus);
         centrePanel.setFocusCycleRoot(true);
+    }
+    
+    /**
+     * Check whether any chords are present and enable / disable the transpose
+     * button appropriately.
+     */
+    private void checkChords() {
+        String[] lines = lyricsArea.getText().split("\n");
+        for(String line : lines) {
+            if(new LineTypeChecker(line).getLineType()==Type.CHORDS) {
+                transposeButton.setEnabled(true);
+                return;
+            }
+        }
+        transposeButton.setEnabled(false);
     }
     private final List<Object> highlights = new ArrayList<>();
 
