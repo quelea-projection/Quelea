@@ -51,6 +51,7 @@ import org.xml.sax.SAXException;
 
 /**
  * A song that contains a number of sections (verses, choruses, etc.)
+ *
  * @author Michael
  */
 public class Song implements TextDisplayable, Comparable<Song>, Printable {
@@ -64,6 +65,7 @@ public class Song implements TextDisplayable, Comparable<Song>, Printable {
 
         /**
          * Create a new builder with the required fields.
+         *
          * @param title the title of the song.
          * @param author the author of the song.
          */
@@ -73,6 +75,7 @@ public class Song implements TextDisplayable, Comparable<Song>, Printable {
 
         /**
          * Set the id of the song.
+         *
          * @param id the song's id.
          * @return this builder.
          */
@@ -83,11 +86,12 @@ public class Song implements TextDisplayable, Comparable<Song>, Printable {
 
         /**
          * Set the ccli number of the song.
+         *
          * @param ccli the song's ccli number.
          * @return this builder.
          */
         public Builder ccli(String ccli) {
-            if (ccli == null) {
+            if(ccli == null) {
                 ccli = "";
             }
             song.ccli = ccli;
@@ -96,11 +100,12 @@ public class Song implements TextDisplayable, Comparable<Song>, Printable {
 
         /**
          * Set the year of the song.
+         *
          * @param year the song's year.
          * @return this builder.
          */
         public Builder year(String year) {
-            if (year == null) {
+            if(year == null) {
                 year = "";
             }
             song.year = year;
@@ -109,11 +114,12 @@ public class Song implements TextDisplayable, Comparable<Song>, Printable {
 
         /**
          * Set the publisher of the song.
+         *
          * @param publisher the song's publisher.
          * @return this builder.
          */
         public Builder publisher(String publisher) {
-            if (publisher == null) {
+            if(publisher == null) {
                 publisher = "";
             }
             song.publisher = publisher;
@@ -122,11 +128,12 @@ public class Song implements TextDisplayable, Comparable<Song>, Printable {
 
         /**
          * Set the tags of this song..
+         *
          * @param tags the song's tags.
          * @return this builder.
          */
         public Builder tags(String tags) {
-            if (tags == null) {
+            if(tags == null) {
                 song.tags = new String[0];
             }
             else {
@@ -137,11 +144,12 @@ public class Song implements TextDisplayable, Comparable<Song>, Printable {
 
         /**
          * Set the tags of this song..
+         *
          * @param tags the song's tags.
          * @return this builder.
          */
         public Builder tags(String[] tags) {
-            if (tags == null) {
+            if(tags == null) {
                 tags = new String[0];
             }
             song.tags = tags;
@@ -150,6 +158,7 @@ public class Song implements TextDisplayable, Comparable<Song>, Printable {
 
         /**
          * Set the theme of this song..
+         *
          * @param theme the song's theme.
          * @return this builder.
          */
@@ -160,6 +169,7 @@ public class Song implements TextDisplayable, Comparable<Song>, Printable {
 
         /**
          * Set the lyrics of this song..
+         *
          * @param lyrics the song's tags.
          * @return this builder.
          */
@@ -170,11 +180,12 @@ public class Song implements TextDisplayable, Comparable<Song>, Printable {
 
         /**
          * Set the copyright info of this song..
+         *
          * @param copyright the song's copyright info.
          * @return this builder.
          */
         public Builder copyright(String copyright) {
-            if (copyright == null) {
+            if(copyright == null) {
                 copyright = "";
             }
             song.copyright = copyright;
@@ -183,11 +194,12 @@ public class Song implements TextDisplayable, Comparable<Song>, Printable {
 
         /**
          * Set the key of this song..
+         *
          * @param key the song's key.
          * @return this builder.
          */
         public Builder key(String key) {
-            if (key == null) {
+            if(key == null) {
                 key = "";
             }
             song.key = key;
@@ -196,11 +208,12 @@ public class Song implements TextDisplayable, Comparable<Song>, Printable {
 
         /**
          * Set the capo of this song..
+         *
          * @param capo the song's capo.
          * @return this builder.
          */
         public Builder capo(String capo) {
-            if (capo == null) {
+            if(capo == null) {
                 capo = "";
             }
             song.capo = capo;
@@ -209,11 +222,12 @@ public class Song implements TextDisplayable, Comparable<Song>, Printable {
 
         /**
          * Set the info string of this song..
+         *
          * @param info the song's information field.
          * @return this builder.
          */
         public Builder info(String info) {
-            if (info == null) {
+            if(info == null) {
                 info = "";
             }
             song.info = info;
@@ -222,6 +236,7 @@ public class Song implements TextDisplayable, Comparable<Song>, Printable {
 
         /**
          * Get the song from this builder with all the fields set appropriately.
+         *
          * @return the song.
          */
         public Song get() {
@@ -247,6 +262,7 @@ public class Song implements TextDisplayable, Comparable<Song>, Printable {
 
     /**
      * Copy constructor - creates a shallow copy.
+     *
      * @param song the song to copy to create the new song.
      */
     public Song(Song song) {
@@ -268,7 +284,8 @@ public class Song implements TextDisplayable, Comparable<Song>, Printable {
 
     /**
      * Create a new, empty song.
-     * @param title  the title of the song.
+     *
+     * @param title the title of the song.
      * @param author the author of the song.
      */
     public Song(String title, String author) {
@@ -277,9 +294,10 @@ public class Song implements TextDisplayable, Comparable<Song>, Printable {
 
     /**
      * Create a new, empty song.
-     * @param title  the title of the song.
+     *
+     * @param title the title of the song.
      * @param author the author of the song.
-     * @param theme  the theme of the song.
+     * @param theme the theme of the song.
      */
     public Song(String title, String author, Theme theme) {
         id = -1;
@@ -290,26 +308,28 @@ public class Song implements TextDisplayable, Comparable<Song>, Printable {
     }
 
     /**
-     * Try and give this song an ID based on the ID in the database. If this can't be done, leave it as -1.
+     * Try and give this song an ID based on the ID in the database. If this
+     * can't be done, leave it as -1.
      */
     public void matchID() {
-        if (id == -1) {
-            for (Song song : SongDatabase.get().getSongs()) {
-                if (this.title.equals(song.title)) {
+        if(id == -1) {
+            for(Song song : SongDatabase.get().getSongs()) {
+                if(this.title.equals(song.title)) {
                     id = song.getID();
                 }
             }
         }
     }
-    
+
     /**
      * Determine whether this song contains any lines of chords.
+     *
      * @return true if it contains chords, false otherwise.
      */
     public boolean hasChords() {
         String[] lyrics = getLyrics(true, true).split("\n");
         for(String line : lyrics) {
-            if(new LineTypeChecker(line).getLineType()==LineTypeChecker.Type.CHORDS) {
+            if(new LineTypeChecker(line).getLineType() == LineTypeChecker.Type.CHORDS) {
                 return true;
             }
         }
@@ -318,6 +338,7 @@ public class Song implements TextDisplayable, Comparable<Song>, Printable {
 
     /**
      * Get the unique ID of the song.
+     *
      * @return the ID of the song.
      */
     public int getID() {
@@ -326,6 +347,7 @@ public class Song implements TextDisplayable, Comparable<Song>, Printable {
 
     /**
      * Set the unique ID of this song.
+     *
      * @param id the id of the song.
      */
     public void setID(int id) {
@@ -334,6 +356,7 @@ public class Song implements TextDisplayable, Comparable<Song>, Printable {
 
     /**
      * Get the title of this song.
+     *
      * @return the title of this song.
      */
     public String getTitle() {
@@ -342,6 +365,7 @@ public class Song implements TextDisplayable, Comparable<Song>, Printable {
 
     /**
      * Set the title of the song.
+     *
      * @param title the new song title.
      */
     public void setTitle(String title) {
@@ -350,6 +374,7 @@ public class Song implements TextDisplayable, Comparable<Song>, Printable {
 
     /**
      * Get the author of this song.
+     *
      * @return the author of the song.
      */
     public String getAuthor() {
@@ -358,6 +383,7 @@ public class Song implements TextDisplayable, Comparable<Song>, Printable {
 
     /**
      * Set the author of the song.
+     *
      * @param author the new song author.
      */
     public void setAuthor(String author) {
@@ -366,6 +392,7 @@ public class Song implements TextDisplayable, Comparable<Song>, Printable {
 
     /**
      * Return true because songs can be cleared.
+     *
      * @return true, always.
      */
     @Override
@@ -375,6 +402,7 @@ public class Song implements TextDisplayable, Comparable<Song>, Printable {
 
     /**
      * Get the CCLI number of this song.
+     *
      * @return the CCLI number of this song.
      */
     public String getCcli() {
@@ -383,6 +411,7 @@ public class Song implements TextDisplayable, Comparable<Song>, Printable {
 
     /**
      * Get the publisher of this song.
+     *
      * @return the publisher of this song.
      */
     public String getPublisher() {
@@ -391,6 +420,7 @@ public class Song implements TextDisplayable, Comparable<Song>, Printable {
 
     /**
      * Get the tags of this song.
+     *
      * @return the tags of this song.
      */
     public String[] getTags() {
@@ -399,16 +429,17 @@ public class Song implements TextDisplayable, Comparable<Song>, Printable {
 
     /**
      * Get the tags of this song as a single string delimited by semicolons.
+     *
      * @return the tags of this song.
      */
     public String getTagsAsString() {
-        if (tags == null) {
+        if(tags == null) {
             return "";
         }
         StringBuilder ret = new StringBuilder(tags.length * 5);
-        for (int i = 0; i < tags.length; i++) {
+        for(int i = 0; i < tags.length; i++) {
             ret.append(tags[i]);
-            if (i != tags.length - 1) {
+            if(i != tags.length - 1) {
                 ret.append("; ");
             }
         }
@@ -417,6 +448,7 @@ public class Song implements TextDisplayable, Comparable<Song>, Printable {
 
     /**
      * Get the year of this song.
+     *
      * @return the year of this song.
      */
     public String getYear() {
@@ -425,6 +457,7 @@ public class Song implements TextDisplayable, Comparable<Song>, Printable {
 
     /**
      * Get the copyright information of this song.
+     *
      * @return the copyright information of this song.
      */
     public String getCopyright() {
@@ -433,6 +466,7 @@ public class Song implements TextDisplayable, Comparable<Song>, Printable {
 
     /**
      * Get the key of this song.
+     *
      * @return the key of this song.
      */
     public String getKey() {
@@ -441,6 +475,7 @@ public class Song implements TextDisplayable, Comparable<Song>, Printable {
 
     /**
      * Get the general information about this song.
+     *
      * @return the general information about this song.
      */
     public String getInfo() {
@@ -449,6 +484,7 @@ public class Song implements TextDisplayable, Comparable<Song>, Printable {
 
     /**
      * Get the capo of this song.
+     *
      * @return the capo of this song.
      */
     public String getCapo() {
@@ -457,6 +493,7 @@ public class Song implements TextDisplayable, Comparable<Song>, Printable {
 
     /**
      * Set the capo of this song.
+     *
      * @param capo the capo of this song.
      */
     public void setCapo(String capo) {
@@ -464,8 +501,9 @@ public class Song implements TextDisplayable, Comparable<Song>, Printable {
     }
 
     /**
-     * Set whether to print the chords of this song - temporary field used 
-     * when printing chords.
+     * Set whether to print the chords of this song - temporary field used when
+     * printing chords.
+     *
      * @param printChords true if chords should be printed, false otherwise.
      */
     public void setPrintChords(boolean printChords) {
@@ -474,6 +512,7 @@ public class Song implements TextDisplayable, Comparable<Song>, Printable {
 
     /**
      * Set the info of this song.
+     *
      * @param info the info of this song.
      */
     public void setInfo(String info) {
@@ -482,6 +521,7 @@ public class Song implements TextDisplayable, Comparable<Song>, Printable {
 
     /**
      * Set the key of this song.
+     *
      * @param key the key of this song.
      */
     public void setKey(String key) {
@@ -490,6 +530,7 @@ public class Song implements TextDisplayable, Comparable<Song>, Printable {
 
     /**
      * Set the ccli number of this song.
+     *
      * @param ccli the ccli number of this song.
      */
     public void setCcli(String ccli) {
@@ -498,6 +539,7 @@ public class Song implements TextDisplayable, Comparable<Song>, Printable {
 
     /**
      * Set the publisher of this song.
+     *
      * @param publisher the publisher of this song.
      */
     public void setPublisher(String publisher) {
@@ -506,6 +548,7 @@ public class Song implements TextDisplayable, Comparable<Song>, Printable {
 
     /**
      * Set the tags of this song.
+     *
      * @param tags the tags of this song.
      */
     public void setTags(String[] tags) {
@@ -514,6 +557,7 @@ public class Song implements TextDisplayable, Comparable<Song>, Printable {
 
     /**
      * Set the tags of this song as a list separated by semi-colons.
+     *
      * @param tags the tags of this song.
      */
     public void setTags(String tags) {
@@ -522,6 +566,7 @@ public class Song implements TextDisplayable, Comparable<Song>, Printable {
 
     /**
      * Set the year of this song.
+     *
      * @param year the year of this song.
      */
     public void setYear(String year) {
@@ -530,6 +575,7 @@ public class Song implements TextDisplayable, Comparable<Song>, Printable {
 
     /**
      * Set the copyright field of this song.
+     *
      * @param copyright the copyright field of this song.
      */
     public void setCopyright(String copyright) {
@@ -537,18 +583,20 @@ public class Song implements TextDisplayable, Comparable<Song>, Printable {
     }
 
     /**
-     * Get all the lyrics to this song as a string. This can be parsed using the setLyrics() method.
+     * Get all the lyrics to this song as a string. This can be parsed using the
+     * setLyrics() method.
+     *
      * @param chords true if any chords should be included, false otherwise.
      * @param comments true if any comments should be included, false otherwise.
      * @return the lyrics to this song.
      */
     public String getLyrics(boolean chords, boolean comments) {
         StringBuilder ret = new StringBuilder();
-        for (TextSection section : sections) {
-            if (section.getTitle() != null && !section.getTitle().equals("")) {
+        for(TextSection section : sections) {
+            if(section.getTitle() != null && !section.getTitle().equals("")) {
                 ret.append(section.getTitle()).append("\n");
             }
-            for (String line : section.getText(chords, comments)) {
+            for(String line : section.getText(chords, comments)) {
                 ret.append(line).append("\n");
             }
             ret.append("\n");
@@ -557,21 +605,23 @@ public class Song implements TextDisplayable, Comparable<Song>, Printable {
     }
 
     /**
-     * Set the lyrics to this song as a string. This will erase any sections currently in the song and parse the given
-     * lyrics into a number of song sections.
+     * Set the lyrics to this song as a string. This will erase any sections
+     * currently in the song and parse the given lyrics into a number of song
+     * sections.
+     *
      * @param lyrics the lyrics to set as this song's lyrics.
      */
     public void setLyrics(String lyrics) {
         sections.clear();
         lyrics = lyrics.replaceAll("\n\n+", "\n\n");
-        for (String section : lyrics.split("\n\n")) {
+        for(String section : lyrics.split("\n\n")) {
             String[] sectionLines = section.split("\n");
             String[] newLyrics = section.split("\n");
             String sectionTitle = "";
-            if (sectionLines.length == 0) {
+            if(sectionLines.length == 0) {
                 continue;
             }
-            if (new LineTypeChecker(sectionLines[0]).getLineType() == LineTypeChecker.Type.TITLE) {
+            if(new LineTypeChecker(sectionLines[0]).getLineType() == LineTypeChecker.Type.TITLE) {
                 sectionTitle = sectionLines[0];
                 newLyrics = new String[sectionLines.length - 1];
                 System.arraycopy(sectionLines, 1, newLyrics, 0, newLyrics.length);
@@ -586,27 +636,43 @@ public class Song implements TextDisplayable, Comparable<Song>, Printable {
 
     /**
      * Add a section to this song.
+     *
      * @param section the section to add.
      */
     public void addSection(TextSection section) {
-        if (section.getTheme() == null) {
+        if(section.getTheme() == null) {
             section.setTheme(theme);
         }
         sections.add(section);
     }
 
     /**
+     * Add a section to this song at the specified index.
+     *
+     * @param index the index to add the song at.
+     * @param section the section to add.
+     */
+    public void addSection(int index, TextSection section) {
+        if(section.getTheme() == null) {
+            section.setTheme(theme);
+        }
+        sections.add(index, section);
+    }
+
+    /**
      * Add a number of sections to this song.
+     *
      * @param sections the sections to add.
      */
     public void addSections(TextSection[] sections) {
-        for (TextSection section : sections) {
+        for(TextSection section : sections) {
             addSection(section);
         }
     }
-    
+
     /**
      * Replace the text section at the given index with the new section.
+     *
      * @param newSection the new section to use to replace the existing one.
      * @param index the index of the section to replace.
      */
@@ -616,6 +682,7 @@ public class Song implements TextDisplayable, Comparable<Song>, Printable {
 
     /**
      * Get an array of all the sections in this song.
+     *
      * @return the song sections.
      */
     @Override
@@ -625,47 +692,50 @@ public class Song implements TextDisplayable, Comparable<Song>, Printable {
 
     /**
      * Set the last search text (for highlighting.)
-     * @param lastSearch 
+     *
+     * @param lastSearch
      */
     public void setLastSearch(String lastSearch) {
         this.lastSearch = lastSearch;
     }
-    
+
     /**
-     * Get the HTML that should be displayed in the library song list. This 
+     * Get the HTML that should be displayed in the library song list. This
      * depends on what was searched for last, it bolds the search term in the
      * title (if it appears as such.)
+     *
      * @return the appropriate HTML to display the song in the list.
      */
     public String getListHTML() {
-        if(lastSearch==null) {
+        if(lastSearch == null) {
             return getTitle();
         }
         int startIndex = getTitle().toLowerCase().indexOf(lastSearch.toLowerCase());
-        if(startIndex==-1) {
+        if(startIndex == -1) {
             return getTitle();
         }
         StringBuilder ret = new StringBuilder();
         ret.append("<html>");
-        ret.append(getTitle().substring(0,startIndex));
+        ret.append(getTitle().substring(0, startIndex));
         ret.append("<b>");
-        ret.append(getTitle().substring(startIndex, startIndex+lastSearch.length()));
+        ret.append(getTitle().substring(startIndex, startIndex + lastSearch.length()));
         ret.append("</b>");
-        ret.append(getTitle().substring(startIndex+lastSearch.length()));
+        ret.append(getTitle().substring(startIndex + lastSearch.length()));
         ret.append("</html>");
         return ret.toString();
     }
 
     /**
      * Strip punctuation from the given string.
+     *
      * @param s the string to use to strip punctuation from
      * @return the "stripped" string.
      */
     private static String stripPunctuation(String s) {
         s = s.replaceAll("[ ]+", " ");
         StringBuilder ret = new StringBuilder();
-        for (char c : s.toCharArray()) {
-            if (Character.isLetterOrDigit(c) || Character.isWhitespace(c)) {
+        for(char c : s.toCharArray()) {
+            if(Character.isLetterOrDigit(c) || Character.isWhitespace(c)) {
                 ret.append(c);
             }
         }
@@ -674,6 +744,7 @@ public class Song implements TextDisplayable, Comparable<Song>, Printable {
 
     /**
      * Get a representation of this song in XML format.
+     *
      * @return the song in XML format.
      */
     @Override
@@ -687,7 +758,7 @@ public class Song implements TextDisplayable, Comparable<Song>, Printable {
         xml.append(Utils.escapeXML(author));
         xml.append("</author>");
         xml.append("<lyrics>");
-        for (TextSection section : sections) {
+        for(TextSection section : sections) {
             xml.append(section.getXML());
         }
         xml.append("</lyrics>");
@@ -697,6 +768,7 @@ public class Song implements TextDisplayable, Comparable<Song>, Printable {
 
     /**
      * Parse a song in XML format and return the song object.
+     *
      * @param xml the xml string to parse.
      * @return the song, or null if an error occurs.
      */
@@ -715,6 +787,7 @@ public class Song implements TextDisplayable, Comparable<Song>, Printable {
 
     /**
      * Parse a song in XML format and return the song object.
+     *
      * @param inputStream the input stream containing the xml.
      * @return the song, or null if an error occurs.
      */
@@ -733,6 +806,7 @@ public class Song implements TextDisplayable, Comparable<Song>, Printable {
 
     /**
      * Parse a song in XML format and return the song object.
+     *
      * @param song the song node to parse.
      * @return the song, or null if an error occurs.
      */
@@ -741,26 +815,26 @@ public class Song implements TextDisplayable, Comparable<Song>, Printable {
         String title = "";
         String author = "";
         List<TextSection> songSections = new ArrayList<>();
-        for (int i = 0; i < list.getLength(); i++) {
+        for(int i = 0; i < list.getLength(); i++) {
             Node node = list.item(i);
-            if (node.getNodeName().equals("title")) {
+            if(node.getNodeName().equals("title")) {
                 title = node.getTextContent();
             }
-            if (node.getNodeName().equals("author")) {
+            if(node.getNodeName().equals("author")) {
                 author = node.getTextContent();
             }
-            if (node.getNodeName().equals("lyrics")) {
+            if(node.getNodeName().equals("lyrics")) {
                 NodeList sections = node.getChildNodes();
-                for (int j = 0; j < sections.getLength(); j++) {
+                for(int j = 0; j < sections.getLength(); j++) {
                     Node sectionNode = sections.item(j);
-                    if (sectionNode.getNodeName().equals("section")) {
+                    if(sectionNode.getNodeName().equals("section")) {
                         songSections.add(TextSection.parseXML(sectionNode));
                     }
                 }
             }
         }
         Song ret = new Song(title, author, new Theme(Theme.DEFAULT_FONT, Theme.DEFAULT_FONT_COLOR, Theme.DEFAULT_BACKGROUND));
-        for (TextSection section : songSections) {
+        for(TextSection section : songSections) {
             ret.addSection(section);
         }
         return ret;
@@ -768,6 +842,7 @@ public class Song implements TextDisplayable, Comparable<Song>, Printable {
 
     /**
      * Generate a hashcode for this song.
+     *
      * @return the hashcode.
      */
     @Override
@@ -782,28 +857,29 @@ public class Song implements TextDisplayable, Comparable<Song>, Printable {
 
     /**
      * Determine whether this song equals another object.
+     *
      * @param obj the other object.
      * @return true if the objects are equal, false otherwise.
      */
     @Override
     public boolean equals(Object obj) {
-        if (obj == null) {
+        if(obj == null) {
             return false;
         }
-        if (!(obj instanceof Song)) {
+        if(!(obj instanceof Song)) {
             return false;
         }
         final Song other = (Song) obj;
-        if ((this.title == null) ? (other.title != null) : !this.title.equals(other.title)) {
+        if((this.title == null) ? (other.title != null) : !this.title.equals(other.title)) {
             return false;
         }
-        if ((this.author == null) ? (other.author != null) : !this.author.equals(other.author)) {
+        if((this.author == null) ? (other.author != null) : !this.author.equals(other.author)) {
             return false;
         }
-        if (this.sections != other.sections && (this.sections == null || !this.sections.equals(other.sections))) {
+        if(this.sections != other.sections && (this.sections == null || !this.sections.equals(other.sections))) {
             return false;
         }
-        if (this.theme != other.theme && (this.theme == null || !this.theme.equals(other.theme))) {
+        if(this.theme != other.theme && (this.theme == null || !this.theme.equals(other.theme))) {
             return false;
         }
         return true;
@@ -811,18 +887,19 @@ public class Song implements TextDisplayable, Comparable<Song>, Printable {
 
     /**
      * Compare this song to another song, first by title and then by author.
+     *
      * @param other the other song.
-     * @return 1 if this song is greater than the other song, 0 if they're the same, and -1 if this is less than the
-     *         other song.
+     * @return 1 if this song is greater than the other song, 0 if they're the
+     * same, and -1 if this is less than the other song.
      */
     @Override
     public int compareTo(Song other) {
         int result = getTitle().compareToIgnoreCase(other.getTitle());
-        if (result == 0) {
-            if (getAuthor() != null && other.getAuthor() != null) {
+        if(result == 0) {
+            if(getAuthor() != null && other.getAuthor() != null) {
                 result = getAuthor().compareToIgnoreCase(other.getAuthor());
             }
-            if (result == 0 && getLyrics(false, false) != null && other.getLyrics(false, false) != null) {
+            if(result == 0 && getLyrics(false, false) != null && other.getLyrics(false, false) != null) {
                 result = getLyrics(false, false).compareTo(other.getLyrics(false, false));
             }
         }
@@ -831,6 +908,7 @@ public class Song implements TextDisplayable, Comparable<Song>, Printable {
 
     /**
      * Get a string representation of this song.
+     *
      * @return a string representation of the song.
      */
     @Override
@@ -840,6 +918,7 @@ public class Song implements TextDisplayable, Comparable<Song>, Printable {
 
     /**
      * Get the preview icon of this song.
+     *
      * @return the song's preview icon.
      */
     @Override
@@ -854,6 +933,7 @@ public class Song implements TextDisplayable, Comparable<Song>, Printable {
 
     /**
      * Get the preview text of this song.
+     *
      * @return the song's preview text.
      */
     @Override
@@ -870,16 +950,17 @@ public class Song implements TextDisplayable, Comparable<Song>, Printable {
 
     /**
      * Get all the files used by this song.
+     *
      * @return all the files used by this song.
      */
     @Override
     public Collection<File> getResources() {
         Set<File> ret = new HashSet<>();
-        for (TextSection section : getSections()) {
+        for(TextSection section : getSections()) {
             Theme sectionTheme = section.getTheme();
-            if (sectionTheme != null) {
+            if(sectionTheme != null) {
                 Background background = sectionTheme.getBackground();
-                if (background.getImageLocation() != null) {
+                if(background.getImageLocation() != null) {
                     ret.add(background.getImageFile());
                 }
             }
@@ -889,6 +970,7 @@ public class Song implements TextDisplayable, Comparable<Song>, Printable {
 
     /**
      * Get the summary text to print in the order of service.
+     *
      * @return the summary text to print in the order of service.
      */
     @Override
@@ -900,6 +982,7 @@ public class Song implements TextDisplayable, Comparable<Song>, Printable {
 
     /**
      * Print out the song.
+     *
      * @param graphics the graphics to print onto.
      * @param pageFormat the page format to print.
      * @param pageIndex the page index to be printed.
@@ -909,11 +992,11 @@ public class Song implements TextDisplayable, Comparable<Song>, Printable {
     @Override
     public int print(Graphics graphics, PageFormat pageFormat, int pageIndex) throws PrinterException {
 
-        if (pageIndex == 0) {
+        if(pageIndex == 0) {
             nextSection.clear();
             nextSection.add(0);
         }
-        else if (nextSection.get(pageIndex) >= getSections().length) {
+        else if(nextSection.get(pageIndex) >= getSections().length) {
             return NO_SUCH_PAGE;
         }
 
@@ -924,23 +1007,23 @@ public class Song implements TextDisplayable, Comparable<Song>, Printable {
 
         int pos = miny;
 
-        if (pageIndex == 0) {
+        if(pageIndex == 0) {
             int fontSize = 38;
             int width;
             do {
                 fontSize -= 2;
                 graphics.setFont(new Font("SansSerif", Font.BOLD, fontSize));
                 width = graphics.getFontMetrics().stringWidth(getTitle().toUpperCase());
-            } while (width > maxx - minx);
+            } while(width > maxx - minx);
 
             graphics.drawString(getTitle().toUpperCase(), minx, miny + graphics.getFontMetrics().getHeight());
             pos += graphics.getFontMetrics().getHeight() + graphics.getFontMetrics().getDescent();
 
-            if (!getAuthor().isEmpty() || (printChords && !getCapo().isEmpty())) {
+            if(!getAuthor().isEmpty() || (printChords && !getCapo().isEmpty())) {
                 graphics.setFont(new Font("SansSerif", Font.ITALIC, 20));
                 pos += graphics.getFontMetrics().getHeight();
                 graphics.drawString(getAuthor(), minx, pos);
-                if (printChords && !getCapo().isEmpty()) {
+                if(printChords && !getCapo().isEmpty()) {
                     String capoStr = "Capo " + getCapo();
                     int capoStrWidth = graphics.getFontMetrics().stringWidth(capoStr);
                     graphics.drawString(capoStr, maxx - capoStrWidth, pos);
@@ -953,20 +1036,20 @@ public class Song implements TextDisplayable, Comparable<Song>, Printable {
 
         pos += 30;
 
-        for (int i = nextSection.get(pageIndex); i < getSections().length; i++) {
+        for(int i = nextSection.get(pageIndex); i < getSections().length; i++) {
             TextSection section = getSections()[i];
             int height = graphics.getFontMetrics().getHeight() * section.getText(printChords, false).length;
-            if (pos + height > maxy - miny) {
-                if (nextSection.size() <= pageIndex + 1) {
+            if(pos + height > maxy - miny) {
+                if(nextSection.size() <= pageIndex + 1) {
                     nextSection.add(0);
                 }
                 nextSection.set(pageIndex + 1, i);
                 return PAGE_EXISTS;
             }
-            for (String str : section.getText(true, false)) {
-                switch (new LineTypeChecker(str).getLineType()) {
+            for(String str : section.getText(true, false)) {
+                switch(new LineTypeChecker(str).getLineType()) {
                     case CHORDS:
-                        if (!printChords) {
+                        if(!printChords) {
                             continue;
                         }
                         graphics.setFont(new Font("SansSerif", Font.BOLD, 16));
@@ -982,7 +1065,7 @@ public class Song implements TextDisplayable, Comparable<Song>, Printable {
             }
             pos += 30;
         }
-        if (nextSection.size() <= pageIndex + 1) {
+        if(nextSection.size() <= pageIndex + 1) {
             nextSection.add(0);
         }
         nextSection.set(pageIndex + 1, getSections().length);
