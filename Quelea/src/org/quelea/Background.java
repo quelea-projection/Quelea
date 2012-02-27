@@ -108,7 +108,7 @@ public class Background {
             return null;
         }
         else {
-            return new File(new File("img").getAbsolutePath(), imageLocation);
+            return new File(new File("img"), imageLocation.trim());
         }
     }
 
