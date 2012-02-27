@@ -19,18 +19,19 @@
 package org.quelea.windows.main.actionlisteners;
 
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import org.quelea.Application;
 
 /**
  * The new schedule action listener.
+ *
  * @author Michael
  */
-public class NewScheduleActionListener implements ActionListener {
-    
+public class NewScheduleActionListener extends ClearingActionListener {
+
     @Override
     public void actionPerformed(ActionEvent ae) {
-        Application.get().getMainWindow().getMainPanel().getSchedulePanel().getScheduleList().clearSchedule();
+        if(confirmClear()) {
+            Application.get().getMainWindow().getMainPanel().getSchedulePanel().getScheduleList().clearSchedule();
+        }
     }
-    
 }
