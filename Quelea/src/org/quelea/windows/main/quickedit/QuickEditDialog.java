@@ -85,7 +85,16 @@ public class QuickEditDialog extends JDialog {
             @Override
             public void actionPerformed(ActionEvent ae) {
                 TextSection oldSection = currentSong.getSections()[currentIndex];
-                currentSong.replaceSection(new TextSection(oldSection.getTitle(), getNewText(), oldSection.getSmallText(), oldSection.shouldCapitaliseFirst(), oldSection.getTheme()), currentIndex);
+                String[] sectionLyrics = sectionArea.getText().split("\n\n");
+                currentSong.replaceSection(new TextSection(oldSection.getTitle(), sectionLyrics[0].split("\n"), oldSection.getSmallText(), oldSection.shouldCapitaliseFirst(), oldSection.getTheme()), currentIndex);
+                for(int i = 1; i < sectionLyrics.length; i++) {
+                    String[] lyrics = sectionLyrics[i].split("\n");
+                    String newTitle = "";
+                    if(oldSection.getTitle() != null && !oldSection.getTitle().trim().isEmpty()) {
+                        newTitle = oldSection.getTitle() + " (" + LabelGrabber.INSTANCE.getLabel("part") + " " + (i + 1) + ")";
+                    }
+                    currentSong.addSection(currentIndex + i, new TextSection(newTitle, lyrics, oldSection.getSmallText(), oldSection.shouldCapitaliseFirst(), oldSection.getTheme()));
+                }
                 setVisible(false);
                 Utils.updateSongInBackground(currentSong, false);
             }
@@ -151,13 +160,14 @@ public class QuickEditDialog extends JDialog {
         sectionArea.setCaretPosition(0);
         pack();
     }
-    
+
     /**
      * Set the status label to a particular song.
+     *
      * @param song the song to use.
      */
     private void setStatusLabel(Song song) {
-        if(song==null) {
+        if(song == null) {
             statusLabel.setText("");
         }
         else {

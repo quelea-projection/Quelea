@@ -109,6 +109,7 @@ public abstract class LivePreviewPanel extends JPanel {
             quickEditDialog.setLocationRelativeTo(quickEditDialog.getParent());
             quickEditDialog.setSongSection(song, index);
             quickEditDialog.setVisible(true);
+            lyricsPanel.setStopUpdate(false);
             setDisplayable(song, getIndex());
         }
     }
