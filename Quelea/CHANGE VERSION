@@ -12,3 +12,5 @@ This should probably all be automated at some point!
 
 Remember changelogs need to go in changelogs/ folder as .gz files WITH MAXIMUM
 COMPRESSION ("gzip -9"). Otherwise deb package gets a lintian warning.
+
+When releasing, change website/download.html and update correspondingly on http://quelea.org/?q=node/46/edit
