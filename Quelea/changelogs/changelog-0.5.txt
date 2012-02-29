@@ -15,4 +15,4 @@ quelea (0.5) stable; urgency=normal
   * Add bible bug fixed
   * Grammar on spellcheck message fixed
  
- -- Michael Berry <michael@quelea.org>  Sunday, 19 Dec 2011 00:00:00 +0000
+ -- Michael Berry <michael@quelea.org>  Wednesday, 29 Feb 2012 00:00:00 +0000
