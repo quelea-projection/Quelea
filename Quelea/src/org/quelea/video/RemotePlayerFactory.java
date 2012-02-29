@@ -20,6 +20,12 @@ package org.quelea.video;
 import com.sun.jna.Native;
 import java.awt.Canvas;
 import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.swing.JOptionPane;
+import org.quelea.Application;
+import org.quelea.languages.LabelGrabber;
+import org.quelea.utils.LoggerUtils;
 
 /**
  * Factory class responsible for creating the out of process video players and
@@ -28,6 +34,7 @@ import java.io.IOException;
  */
 public class RemotePlayerFactory {
     
+    private static final Logger LOGGER = LoggerUtils.getLogger();
     private static int portCounter = 5555;
 
     /**
@@ -50,8 +57,10 @@ public class RemotePlayerFactory {
             });
             return player;
         }
-        catch (IOException ex) {
-            throw new RuntimeException("Couldn't create embedded remote player", ex);
+        catch (Exception ex) {
+            LOGGER.log(Level.WARNING, "Video failed", ex);
+            JOptionPane.showMessageDialog(Application.get().getMainWindow(), LabelGrabber.INSTANCE.getLabel("video.error"), LabelGrabber.INSTANCE.getLabel("video.error.title"), JOptionPane.WARNING_MESSAGE);
+            return null;
         }
     }
     
@@ -80,8 +89,10 @@ public class RemotePlayerFactory {
             });
             return player;
         }
-        catch (IOException ex) {
-            throw new RuntimeException("Couldn't create headless remote player", ex);
+        catch (Exception ex) {
+            LOGGER.log(Level.WARNING, "Video failed", ex);
+            JOptionPane.showMessageDialog(Application.get().getMainWindow(), LabelGrabber.INSTANCE.getLabel("video.error"), LabelGrabber.INSTANCE.getLabel("video.error.title"), JOptionPane.WARNING_MESSAGE);
+            return null;
         }
     }
 
