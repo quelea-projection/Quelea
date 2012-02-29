@@ -31,8 +31,11 @@ import java.util.List;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.*;
 import org.pushingpixels.substance.internal.ui.SubstanceSliderUI;
+import org.quelea.utils.LoggerUtils;
 import org.quelea.utils.Utils;
 import org.quelea.video.RemotePlayer;
 import org.quelea.video.RemotePlayerFactory;
@@ -45,6 +48,7 @@ import org.quelea.windows.main.LyricCanvas;
  */
 public class VideoControlPanel extends JPanel {
 
+    private static final Logger LOGGER = LoggerUtils.getLogger();
     private static final boolean TEST_DISABLE_SUBSTANCE = true;
     private JButton play;
     private JButton pause;
@@ -205,7 +209,7 @@ public class VideoControlPanel extends JPanel {
                 }
             }
         });
-        
+
         vidStatusPanel = new VideoStatusPanel();
         vidStatusPanel.getVolumeSlider().addRunner(new Runnable() {
 
@@ -231,10 +235,15 @@ public class VideoControlPanel extends JPanel {
                 public void hierarchyChanged(HierarchyEvent e) {
                     if((e.getChangeFlags() & HierarchyEvent.SHOWING_CHANGED) != 0 && canvas.isShowing()) {
                         RemotePlayer player = RemotePlayerFactory.getEmbeddedRemotePlayer(canvas);
-                        player.setMute(true);
-                        mediaPlayers.add(player);
-                        if(videoPath != null) {
-                            player.load(videoPath);
+                        if(player == null) {
+                            LOGGER.log(Level.WARNING, "Null video player, there was probably an error setting up video.");
+                        }
+                        else {
+                            player.setMute(true);
+                            mediaPlayers.add(player);
+                            if(videoPath != null) {
+                                player.load(videoPath);
+                            }
                         }
                         canvas.removeHierarchyListener(this);
                     }
@@ -243,8 +252,13 @@ public class VideoControlPanel extends JPanel {
         }
         else {
             RemotePlayer player = RemotePlayerFactory.getEmbeddedRemotePlayer(canvas);
-            player.setMute(true);
-            mediaPlayers.add(player);
+            if(player == null) {
+                LOGGER.log(Level.WARNING, "Null video player, there was probably an error setting up video.");
+            }
+            else {
+                player.setMute(true);
+                mediaPlayers.add(player);
+            }
         }
     }
 
@@ -293,14 +307,14 @@ public class VideoControlPanel extends JPanel {
                                 if(time >= length && time > 0) {
                                     positionSlider.setValue(0);
                                     vidStatusPanel.getTimeDisplay().setCurrentSeconds(0);
-                                    vidStatusPanel.getTimeDisplay().setTotalSeconds((int)(length/1000));
+                                    vidStatusPanel.getTimeDisplay().setTotalSeconds((int) (length / 1000));
                                     stopVideo();
                                 }
                                 else {
                                     int timeVal = (int) ((time / (double) length) * 1000);
                                     positionSlider.setValue(timeVal);
-                                    vidStatusPanel.getTimeDisplay().setCurrentSeconds((int)(time/1000));
-                                    vidStatusPanel.getTimeDisplay().setTotalSeconds((int)(length/1000));
+                                    vidStatusPanel.getTimeDisplay().setCurrentSeconds((int) (time / 1000));
+                                    vidStatusPanel.getTimeDisplay().setTotalSeconds((int) (length / 1000));
                                 }
                             }
                         });
@@ -371,9 +385,10 @@ public class VideoControlPanel extends JPanel {
     public boolean getMute() {
         return mediaPlayers.get(0).getMute();
     }
-    
+
     /**
      * Set the volume of the video.
+     *
      * @param volume the video volume.
      */
     public void setVolume(int volume) {
