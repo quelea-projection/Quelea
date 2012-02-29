@@ -97,6 +97,14 @@ public final class QueleaProperties extends Properties {
     public File getLanguageFile() {
         return new File("languages", getProperty("language.file", "gb.lang"));
     }
+    
+    /**
+     * Get the location of Quelea's Facebook page.
+     * @return the location of the facebook page.
+     */
+    public String getFacebookPageLocation() {
+        return getProperty("facebook.page", "http://www.facebook.com/quelea.projection");
+    }
 
     /**
      * Get the look and feel property that should be used as specified in the
