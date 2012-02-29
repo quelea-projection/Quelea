@@ -100,6 +100,7 @@
                 <exclude name="lib/junit/**"/> 
                 <exclude name="lib/junit_4/**"/> 
                 <exclude name="lib/**javadoc.jar"/> 
+                <exclude name="standalone/**"/> 
                 <exclude name="copyright"/> 
                 <exclude name="license.txt"/> 
                 <exclude name="launch.sh"/> 
