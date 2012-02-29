@@ -1,0 +1,6 @@
+quelea (0.5.1) stable; urgency=normal
+ 
+  * Deal with video errors better
+  * Add link to Facebook page in help menu
+ 
+ -- Michael Berry <michael@quelea.org>  Sunday, 04 Mar 2012 00:00:00 +0000
