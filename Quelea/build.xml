@@ -144,7 +144,7 @@
             addproperty="user"
         />
         <input
-            message="Password for ${user} (CAREFUL, IT ECHOES!!):"
+            message="Googlecode (https://code.google.com/hosting/settings) Password for ${user} (CAREFUL, IT ECHOES!!):"
             addproperty="pass"
         />
         
