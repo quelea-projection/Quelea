@@ -30,7 +30,6 @@ import java.util.logging.Logger;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
-import javax.swing.JPopupMenu;
 import org.quelea.Application;
 import org.quelea.languages.LabelGrabber;
 import org.quelea.utils.LoggerUtils;
@@ -48,6 +47,7 @@ public class HelpMenu extends JMenu {
 
     private static final Logger LOGGER = LoggerUtils.getLogger();
     private final JMenuItem queleaSite;
+    private final JMenuItem queleaFacebook;
     private final JMenuItem queleaDiscuss;
     private final JMenuItem queleaDownload;
     private final JMenuItem updateCheck;
@@ -80,6 +80,22 @@ public class HelpMenu extends JMenu {
             });
             queleaSite.setMnemonic(KeyEvent.VK_W);
             add(queleaSite);
+            queleaFacebook = new JMenuItem(LabelGrabber.INSTANCE.getLabel("help.menu.facebook"), Utils.getImageIcon("icons/facebook.png", 16, 16));
+            queleaFacebook.addActionListener(new ActionListener() {
+
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    try {
+                        Desktop.getDesktop().browse(new URI(QueleaProperties.get().getFacebookPageLocation()));
+                    }
+                    catch (URISyntaxException | IOException ex) {
+                        LOGGER.log(Level.WARNING, "Couldn't launch Quelea Facebook page", ex);
+                        showError();
+                    }
+                }
+            });
+            queleaFacebook.setMnemonic(KeyEvent.VK_F);
+            add(queleaFacebook);
             queleaDiscuss = new JMenuItem(LabelGrabber.INSTANCE.getLabel("help.menu.discussion"), Utils.getImageIcon("icons/discuss.png", 16, 16));
             queleaDiscuss.addActionListener(new ActionListener() {
 
@@ -117,6 +133,7 @@ public class HelpMenu extends JMenu {
             queleaSite = null;
             queleaDiscuss = null;
             queleaDownload = null;
+            queleaFacebook = null;
         }
         updateCheck = new JMenuItem(LabelGrabber.INSTANCE.getLabel("help.menu.update"), Utils.getImageIcon("icons/update.png", 16, 16));
         updateCheck.setMnemonic(KeyEvent.VK_C);
