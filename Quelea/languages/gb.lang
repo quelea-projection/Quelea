@@ -252,5 +252,5 @@ confirm.label=Are you sure?
 schedule.clear.text=The schedule has been modified. Continue without saving?
 part=part
 help.menu.facebook=Facebook page
-video.error=There was an error setting up the video :-(
+video.error=Couldn't initialise the video libraries - video won't work. Please ask on the discuss list (see the help menu) for help solving this.
 video.error.title=Video error
