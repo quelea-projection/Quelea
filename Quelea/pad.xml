@@ -1,10 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <XML_DIZ_INFO>
-    <MASTER_PAD_VERSION_INFO>
-        <MASTER_PAD_VERSION>3.10</MASTER_PAD_VERSION>
-        <MASTER_PAD_EDITOR>Online PAD Generator 1.33 - http://www.padbuilder.com</MASTER_PAD_EDITOR>
-        <MASTER_PAD_INFO>Portable Application Description, or PAD for short, is a data set that is used by shareware authors to disseminate information to anyone interested in their software products. To find out more go to http://www.asp-shareware.org/pad</MASTER_PAD_INFO>
-    </MASTER_PAD_VERSION_INFO>
     <Company_Info>
         <Company_Name />
         <Address_1 />
@@ -85,7 +80,7 @@
             <Application_XML_File_URL />
         </Application_URLs>
         <Download_URLs>
-            <Primary_Download_URL>http://code.google.com/p/quelea-projection/downloads/list</Primary_Download_URL>
+            <Primary_Download_URL>http://quelea.org/download</Primary_Download_URL>
             <Secondary_Download_URL />
             <Additional_Download_URL_1 />
             <Additional_Download_URL_2 />
