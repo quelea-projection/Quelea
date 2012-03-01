@@ -194,15 +194,21 @@ public class VideoControlPanel extends JPanel {
                         @Override
                         public void run() {
                             RemotePlayer player = RemotePlayerFactory.getEmbeddedRemotePlayer(videoArea);
-                            mediaPlayers.add(0, player);
-                            if(videoPath != null) {
-                                player.load(videoPath);
+                            if(player == null) {
+                                LOGGER.log(Level.WARNING, "Null video player, there was probably an error setting up video.");
                             }
-                            play.setEnabled(true);
-                            pause.setEnabled(true);
-                            stop.setEnabled(true);
-                            mute.setEnabled(true);
-                            positionSlider.setEnabled(true);
+                            else {
+                                mediaPlayers.add(0, player);
+                                if(videoPath != null) {
+                                    player.load(videoPath);
+                                }
+                                play.setEnabled(true);
+                                pause.setEnabled(true);
+                                stop.setEnabled(true);
+                                mute.setEnabled(true);
+                                positionSlider.setEnabled(true);
+                            }
+
                         }
                     }.start();
                     videoArea.removeHierarchyListener(this);
