@@ -53,7 +53,7 @@ public class TextSection {
     public TextSection(String title, String[] lines, String[] smallLines, boolean capitaliseFirst) {
         this(title, lines, smallLines, capitaliseFirst, null);
     }
-
+    
     /**
      * Create a new song section with the specified title and lyrics.
      * @param title the title of the section.
@@ -65,11 +65,27 @@ public class TextSection {
      * @param theme the theme of this song section.
      */
     public TextSection(String title, String[] lines, String[] smallLines, boolean capitaliseFirst, Theme theme) {
+        this(title, lines, smallLines, capitaliseFirst, theme, null);
+    }
+
+    /**
+     * Create a new song section with the specified title and lyrics.
+     * @param title the title of the section.
+     * @param lines the lines of the section, one line per array entry.
+     * @param smallLines the lines to be displayed in the bottom left of the 
+     * canvas for this text section
+     * @param capitaliseFirst true if the first character of each line should 
+     * be a capital, false otherwise.
+     * @param theme the theme of this song section.
+     * @param tempTheme the tempTheme of this song section.
+     */
+    public TextSection(String title, String[] lines, String[] smallLines, boolean capitaliseFirst, Theme theme, Theme tempTheme) {
         this.capitaliseFirst = capitaliseFirst;
         this.title = title;
         this.lines = Arrays.copyOf(lines, lines.length);
         this.smallLines = Arrays.copyOf(smallLines, smallLines.length);
         this.theme = theme;
+        this.tempTheme = tempTheme;
     }
 
     /**
