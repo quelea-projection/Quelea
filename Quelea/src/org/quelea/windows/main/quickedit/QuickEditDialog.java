@@ -35,6 +35,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.KeyStroke;
 import org.quelea.Application;
+import org.quelea.Theme;
 import org.quelea.displayable.Song;
 import org.quelea.displayable.TextSection;
 import org.quelea.languages.LabelGrabber;
@@ -86,14 +87,14 @@ public class QuickEditDialog extends JDialog {
             public void actionPerformed(ActionEvent ae) {
                 TextSection oldSection = currentSong.getSections()[currentIndex];
                 String[] sectionLyrics = sectionArea.getText().split("\n\n");
-                currentSong.replaceSection(new TextSection(oldSection.getTitle(), sectionLyrics[0].split("\n"), oldSection.getSmallText(), oldSection.shouldCapitaliseFirst(), oldSection.getTheme()), currentIndex);
+                currentSong.replaceSection(new TextSection(oldSection.getTitle(), sectionLyrics[0].split("\n"), oldSection.getSmallText(), oldSection.shouldCapitaliseFirst(), oldSection.getTheme(), oldSection.getTempTheme()), currentIndex);
                 for(int i = 1; i < sectionLyrics.length; i++) {
                     String[] lyrics = sectionLyrics[i].split("\n");
                     String newTitle = "";
                     if(oldSection.getTitle() != null && !oldSection.getTitle().trim().isEmpty()) {
                         newTitle = oldSection.getTitle() + " (" + LabelGrabber.INSTANCE.getLabel("part") + " " + (i + 1) + ")";
                     }
-                    currentSong.addSection(currentIndex + i, new TextSection(newTitle, lyrics, oldSection.getSmallText(), oldSection.shouldCapitaliseFirst(), oldSection.getTheme()));
+                    currentSong.addSection(currentIndex + i, new TextSection(newTitle, lyrics, oldSection.getSmallText(), oldSection.shouldCapitaliseFirst(), oldSection.getTheme(), oldSection.getTempTheme()));
                 }
                 setVisible(false);
                 Utils.updateSongInBackground(currentSong, false);
