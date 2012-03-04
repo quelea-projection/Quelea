@@ -25,7 +25,9 @@ import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.awt.Image;
+import java.awt.RenderingHints;
 import java.awt.event.ComponentAdapter;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
@@ -210,6 +212,9 @@ public class LyricCanvas extends Canvas {
         if(cleared || blacked) {
             return;
         }
+        if(graphics instanceof Graphics2D) {
+            ((Graphics2D)graphics).setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+        }
         graphics.setFont(font);
         graphics.setColor(theme.getFontColor());
         FontMetrics metrics = graphics.getFontMetrics(font);
@@ -310,8 +315,7 @@ public class LyricCanvas extends Canvas {
         do {
             height = graphics.getFontMetrics(font).getHeight() * lineCount;
             font = Utils.getDifferentSizeFont(font, font.getSize() - 1);
-        }
-        while(height > getHeight() && font.getSize() > 12);
+        } while(height > getHeight() && font.getSize() > 12);
 
         return font.getSize();
     }
