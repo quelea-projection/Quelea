@@ -1,0 +1,285 @@
+#
+# A fatal error has been detected by the Java Runtime Environment:
+#
+#  EXCEPTION_ACCESS_VIOLATION (0xc0000005) at pc=0x00000000776c3332, pid=9584, tid=13776
+#
+# JRE version: 7.0_02-b13
+# Java VM: Java HotSpot(TM) 64-Bit Server VM (22.0-b10 mixed mode windows-amd64 compressed oops)
+# Problematic frame:
+# C  [ntdll.dll+0x53332]
+#
+# Failed to write core dump. Minidumps are not enabled by default on client versions of Windows
+#
+# If you would like to submit a bug report, please visit:
+#   http://bugreport.sun.com/bugreport/crash.jsp
+# The crash happened outside the Java Virtual Machine in native code.
+# See problematic frame for where to report the bug.
+#
+
+---------------  T H R E A D  ---------------
+
+Current thread (0x0000000001e57800):  JavaThread "Finalizer" daemon [_thread_in_native, id=13776, stack(0x0000000007170000,0x0000000007270000)]
+
+siginfo: ExceptionCode=0xc0000005, writing address 0x00000000079804a0
+
+Registers:
+RAX=0x00000000079804a0, RBX=0x0000000001ec52a0, RCX=0x000000ffffffffff, RDX=0x0000000001ecf840
+RSP=0x000000000726ec80, RBP=0x0000000000000001, RSI=0x0000000001ec0000, RDI=0x0000000001ecf850
+R8 =0x646e6958ffff0000, R9 =0x646e6959001d0001, R10=0x00000000021821bc, R11=0x000000005e8f8940
+R12=0x0000000001ecf670, R13=0x0000000100000001, R14=0xffffffff00007fff, R15=0x00000000ffff0000
+RIP=0x00000000776c3332, EFLAGS=0x0000000000010202
+
+Top of Stack: (sp=0x000000000726ec80)
+0x000000000726ec80:   0000000001e582d8 0000000001de66e0
+0x000000000726ec90:   000000000726ed60 000000000000000e
+0x000000000726eca0:   0000000007260000 000000005e81fc57
+0x000000000726ecb0:   000000000726ee30 00000006fb5b2510
+0x000000000726ecc0:   0000000001e57800 000000000726ee30
+0x000000000726ecd0:   00000006fb5b2510 0000000000000000
+0x000000000726ece0:   0000000000000000 0000000001e57800
+0x000000000726ecf0:   000000000726ee08 000000007711301a
+0x000000000726ed00:   0000000001e57800 00000006fb5b2510
+0x000000000726ed10:   0000000001e4d9c0 000000005e7bab36
+0x000000000726ed20:   000000000726f088 000000018001651c
+0x000000000726ed30:   00000000000000b8 0000000001e582d8
+0x000000000726ed40:   0000000001e57800 0000000000000000
+0x000000000726ed50:   00000006fb5b2510 0000000180003aad
+0x000000000726ed60:   0000000001e4d900 0000000001e57800
+0x000000000726ed70:   0000000000000001 0000000001e58318 
+
+Instructions: (pc=0x00000000776c3332)
+0x00000000776c3312:   00 00 48 c1 e8 10 66 89 42 10 48 8b c2 49 2b c4
+0x00000000776c3322:   48 c1 e0 0c 48 25 00 00 ff ff 4c 0b c8 48 8b 03
+0x00000000776c3332:   48 89 18 49 8b c0 f0 4c 0f b1 4b 10 75 b6 4c 8b
+0x00000000776c3342:   7c 24 40 4c 8b 74 24 48 4c 8b 6c 24 50 66 45 85 
+
+
+Register to memory mapping:
+
+RAX=0x00000000079804a0 is an unknown value
+RBX=0x0000000001ec52a0 is an unknown value
+RCX=0x000000ffffffffff is an unknown value
+RDX=0x0000000001ecf840 is an unknown value
+RSP=0x000000000726ec80 is pointing into the stack for thread: 0x0000000001e57800
+RBP=0x0000000000000001 is an unknown value
+RSI=0x0000000001ec0000 is an unknown value
+RDI=0x0000000001ecf850 is an unknown value
+R8 =0x646e6958ffff0000 is an unknown value
+R9 =0x646e6959001d0001 is an unknown value
+R10=0x00000000021821bc is an Interpreter codelet
+method entry point (kind = native)  [0x0000000002181f40, 0x00000000021827c0]  2176 bytes
+R11=0x000000005e8f8940 is an unknown value
+R12=0x0000000001ecf670 is an unknown value
+R13=0x0000000100000001 is an unknown value
+R14=0xffffffff00007fff is an unknown value
+R15=0x00000000ffff0000 is an unknown value
+
+
+Stack: [0x0000000007170000,0x0000000007270000],  sp=0x000000000726ec80,  free space=1019k
+Native frames: (J=compiled Java code, j=interpreted, Vv=VM code, C=native code)
+C  [ntdll.dll+0x53332]  RtlFreeHeap+0x132
+
+Java frames: (J=compiled Java code, j=interpreted, Vv=VM code)
+j  com.sun.jna.Native.free(J)V+0
+j  com.sun.jna.Memory.free(J)V+1
+j  com.sun.jna.Memory.dispose()V+4
+j  com.sun.jna.Memory.finalize()V+1
+v  ~StubRoutines::call_stub
+j  java.lang.ref.Finalizer.invokeFinalizeMethod(Ljava/lang/Object;)V+0
+j  java.lang.ref.Finalizer.runFinalizer()V+45
+j  java.lang.ref.Finalizer.access$100(Ljava/lang/ref/Finalizer;)V+1
+j  java.lang.ref.Finalizer$FinalizerThread.run()V+11
+v  ~StubRoutines::call_stub
+
+---------------  P R O C E S S  ---------------
+
+Java Threads: ( => current thread )
+  0x0000000007fd3000 JavaThread "pool-2-thread-1" [_thread_blocked, id=10092, stack(0x000000000a520000,0x000000000a620000)]
+  0x0000000007ff6000 JavaThread "pool-1-thread-1" [_thread_blocked, id=5008, stack(0x0000000008360000,0x0000000008460000)]
+  0x0000000006738800 JavaThread "Service Thread" daemon [_thread_blocked, id=7956, stack(0x0000000007880000,0x0000000007980000)]
+  0x000000000672e800 JavaThread "C2 CompilerThread1" daemon [_thread_blocked, id=8848, stack(0x0000000007670000,0x0000000007770000)]
+  0x0000000006725800 JavaThread "C2 CompilerThread0" daemon [_thread_blocked, id=12560, stack(0x0000000007060000,0x0000000007160000)]
+  0x0000000006722800 JavaThread "Attach Listener" daemon [_thread_blocked, id=8464, stack(0x0000000007490000,0x0000000007590000)]
+  0x000000000671d800 JavaThread "Signal Dispatcher" daemon [_thread_blocked, id=14128, stack(0x0000000007340000,0x0000000007440000)]
+=>0x0000000001e57800 JavaThread "Finalizer" daemon [_thread_in_native, id=13776, stack(0x0000000007170000,0x0000000007270000)]
+  0x0000000001e50800 JavaThread "Reference Handler" daemon [_thread_blocked, id=2816, stack(0x0000000006e80000,0x0000000006f80000)]
+  0x0000000001f0e000 JavaThread "main" [_thread_blocked, id=396, stack(0x0000000002070000,0x0000000002170000)]
+
+Other Threads:
+  0x0000000001e49000 VMThread [stack: 0x0000000006d20000,0x0000000006e20000] [id=6628]
+
+VM state:at safepoint (normal execution)
+
+VM Mutex/Monitor currently owned by a thread:  ([mutex/lock_event])
+[0x0000000001f0af60] Threads_lock - owner thread: 0x0000000001e49000
+
+Heap
+ PSYoungGen      total 76416K, used 6576K [0x00000007aac00000, 0x00000007b0140000, 0x0000000800000000)
+  eden space 65536K, 6% used [0x00000007aac00000,0x00000007aaff1498,0x00000007aec00000)
+  from space 10880K, 23% used [0x00000007aec00000,0x00000007aee7ade0,0x00000007af6a0000)
+  to   space 10880K, 0% used [0x00000007af6a0000,0x00000007af6a0000,0x00000007b0140000)
+ PSOldGen        total 174592K, used 0K [0x0000000700400000, 0x000000070ae80000, 0x00000007aac00000)
+  object space 174592K, 0% used [0x0000000700400000,0x0000000700400000,0x000000070ae80000)
+ PSPermGen       total 21248K, used 6406K [0x00000006fb200000, 0x00000006fc6c0000, 0x0000000700400000)
+  object space 21248K, 30% used [0x00000006fb200000,0x00000006fb841a08,0x00000006fc6c0000)
+
+Code Cache  [0x0000000002170000, 0x00000000023e0000, 0x0000000005170000)
+ total_blobs=305 nmethods=52 adapters=205 free_code_cache=48639Kb largest_free_block=49786496
+
+Dynamic libraries:
+0x000000013faf0000 - 0x000000013fb23000 	C:\Program Files\Java\jdk1.7.0_02\jre\bin\java.exe
+0x0000000077670000 - 0x0000000077819000 	C:\Windows\SYSTEM32\ntdll.dll
+0x00000000770f0000 - 0x000000007720f000 	C:\Windows\system32\kernel32.dll
+0x000007fefdc40000 - 0x000007fefdcac000 	C:\Windows\system32\KERNELBASE.dll
+0x000007fefe060000 - 0x000007fefe13b000 	C:\Windows\system32\ADVAPI32.dll
+0x000007feff8e0000 - 0x000007feff97f000 	C:\Windows\system32\msvcrt.dll
+0x000007feff4a0000 - 0x000007feff4bf000 	C:\Windows\SYSTEM32\sechost.dll
+0x000007fefe430000 - 0x000007fefe55d000 	C:\Windows\system32\RPCRT4.dll
+0x0000000077210000 - 0x000000007730a000 	C:\Windows\system32\USER32.dll
+0x000007fefe370000 - 0x000007fefe3d7000 	C:\Windows\system32\GDI32.dll
+0x000007fefe3f0000 - 0x000007fefe3fe000 	C:\Windows\system32\LPK.dll
+0x000007feff600000 - 0x000007feff6c9000 	C:\Windows\system32\USP10.dll
+0x000007fefb5d0000 - 0x000007fefb7c4000 	C:\Windows\WinSxS\amd64_microsoft.windows.common-controls_6595b64144ccf1df_6.0.7601.17514_none_fa396087175ac9ac\COMCTL32.dll
+0x000007fefdea0000 - 0x000007fefdf11000 	C:\Windows\system32\SHLWAPI.dll
+0x000007fefe400000 - 0x000007fefe42e000 	C:\Windows\system32\IMM32.DLL
+0x000007feff390000 - 0x000007feff499000 	C:\Windows\system32\MSCTF.dll
+0x00000000660a0000 - 0x0000000066171000 	C:\Program Files\Java\jdk1.7.0_02\jre\bin\msvcr100.dll
+0x000000005e740000 - 0x000000005ee1a000 	C:\Program Files\Java\jdk1.7.0_02\jre\bin\server\jvm.dll
+0x000007fef9be0000 - 0x000007fef9be9000 	C:\Windows\system32\WSOCK32.dll
+0x000007fefe140000 - 0x000007fefe18d000 	C:\Windows\system32\WS2_32.dll
+0x000007fefe3e0000 - 0x000007fefe3e8000 	C:\Windows\system32\NSI.dll
+0x000007fef6410000 - 0x000007fef644b000 	C:\Windows\system32\WINMM.dll
+0x0000000077840000 - 0x0000000077847000 	C:\Windows\system32\PSAPI.DLL
+0x0000000074240000 - 0x000000007424f000 	C:\Program Files\Java\jdk1.7.0_02\jre\bin\verify.dll
+0x00000000741b0000 - 0x00000000741d8000 	C:\Program Files\Java\jdk1.7.0_02\jre\bin\java.dll
+0x0000000072b40000 - 0x0000000072b55000 	C:\Program Files\Java\jdk1.7.0_02\jre\bin\zip.dll
+0x0000000074090000 - 0x00000000740a9000 	C:\Program Files\Java\jdk1.7.0_02\jre\bin\net.dll
+0x000007fefd300000 - 0x000007fefd355000 	C:\Windows\system32\mswsock.dll
+0x000007fefd2f0000 - 0x000007fefd2f7000 	C:\Windows\System32\wship6.dll
+0x0000000072ae0000 - 0x0000000072af1000 	C:\Program Files\Java\jdk1.7.0_02\jre\bin\nio.dll
+0x000007fefd360000 - 0x000007fefd377000 	C:\Windows\system32\CRYPTSP.dll
+0x000007fefd000000 - 0x000007fefd047000 	C:\Windows\system32\rsaenh.dll
+0x000007fefcdc0000 - 0x000007fefcdde000 	C:\Windows\system32\USERENV.dll
+0x000007fefdad0000 - 0x000007fefdadf000 	C:\Windows\system32\profapi.dll
+0x000007fefd9c0000 - 0x000007fefd9cf000 	C:\Windows\system32\CRYPTBASE.dll
+0x000007fefb9f0000 - 0x000007fefba05000 	C:\Windows\system32\NLAapi.dll
+0x000007fef80e0000 - 0x000007fef80f5000 	C:\Windows\system32\napinsp.dll
+0x000007fef8040000 - 0x000007fef8059000 	C:\Windows\system32\pnrpnsp.dll
+0x000007fef8bd0000 - 0x000007fef8bff000 	C:\Program Files\Common Files\Microsoft Shared\Windows Live\WLIDNSP.DLL
+0x000007fefd160000 - 0x000007fefd1bb000 	C:\Windows\system32\DNSAPI.dll
+0x000007fef8030000 - 0x000007fef803b000 	C:\Windows\System32\winrnr.dll
+0x000007fefccb0000 - 0x000007fefccb7000 	C:\Windows\System32\wshtcpip.dll
+0x000007fefab00000 - 0x000007fefab27000 	C:\Windows\system32\IPHLPAPI.DLL
+0x000007fefaae0000 - 0x000007fefaaeb000 	C:\Windows\system32\WINNSI.DLL
+0x000007fef8610000 - 0x000007fef8618000 	C:\Windows\system32\rasadhlp.dll
+0x000007fefbfa0000 - 0x000007fefbff3000 	C:\Windows\System32\fwpuclnt.dll
+0x000000006c600000 - 0x000000006c630000 	C:\Users\Michael\Documents\NetBeansProjects\Quelea\lib\native64\libvlc.dll
+0x0000000065560000 - 0x00000000657a8000 	C:\Users\Michael\Documents\NetBeansProjects\Quelea\lib\native64\libvlccore.dll
+0x000007fefe560000 - 0x000007feff2e8000 	C:\Windows\system32\SHELL32.dll
+0x00000000705f0000 - 0x0000000070610000 	C:\Users\Michael\Documents\NetBeansProjects\Quelea\lib\native64\plugins\libaout_directx_plugin.dll
+0x000000006be70000 - 0x000000006be94000 	C:\Users\Michael\Documents\NetBeansProjects\Quelea\lib\native64\plugins\libdirectx_plugin.dll
+0x000007feff6d0000 - 0x000007feff8d3000 	C:\Windows\system32\ole32.dll
+0x000000006d580000 - 0x000000006d5a0000 	C:\Users\Michael\Documents\NetBeansProjects\Quelea\lib\native64\plugins\libwaveout_plugin.dll
+0x000000006c2c0000 - 0x000000006c2dc000 	C:\Users\Michael\Documents\NetBeansProjects\Quelea\lib\native64\plugins\libmemcpymmxext_plugin.dll
+0x000000006b4a0000 - 0x000000006b4c1000 	C:\Users\Michael\Documents\NetBeansProjects\Quelea\lib\native64\plugins\libhotkeys_plugin.dll
+0x0000000065f00000 - 0x0000000066094000 	C:\Program Files\Java\jdk1.7.0_02\jre\bin\awt.dll
+0x000007fefdf20000 - 0x000007fefdff7000 	C:\Windows\system32\OLEAUT32.dll
+0x000000006b1e0000 - 0x000000006b220000 	C:\Users\Michael\Documents\NetBeansProjects\Quelea\lib\native64\plugins\liblibbluray_plugin.dll
+0x000000006aca0000 - 0x000000006accb000 	C:\Users\Michael\Documents\NetBeansProjects\Quelea\lib\native64\plugins\libaccess_bd_plugin.dll
+0x000000006a4e0000 - 0x000000006a534000 	C:\Users\Michael\Documents\NetBeansProjects\Quelea\lib\native64\plugins\libdvdnav_plugin.dll
+0x000000006bbd0000 - 0x000000006bbee000 	C:\Users\Michael\Documents\NetBeansProjects\Quelea\lib\native64\plugins\libaccess_vdr_plugin.dll
+0x000000006b480000 - 0x000000006b4a0000 	C:\Users\Michael\Documents\NetBeansProjects\Quelea\lib\native64\plugins\libfilesystem_plugin.dll
+0x00000000696c0000 - 0x00000000696e4000 	C:\Users\Michael\Documents\NetBeansProjects\Quelea\lib\native64\plugins\libstream_filter_httplive_plugin.dll
+0x000000006ac80000 - 0x000000006ac9d000 	C:\Users\Michael\Documents\NetBeansProjects\Quelea\lib\native64\plugins\libstream_filter_rar_plugin.dll
+0x0000000069690000 - 0x00000000696b8000 	C:\Users\Michael\Documents\NetBeansProjects\Quelea\lib\native64\plugins\libzip_plugin.dll
+0x0000000069670000 - 0x000000006968c000 	C:\Users\Michael\Documents\NetBeansProjects\Quelea\lib\native64\plugins\libstream_filter_record_plugin.dll
+0x0000000069610000 - 0x0000000069637000 	C:\Users\Michael\Documents\NetBeansProjects\Quelea\lib\native64\plugins\libavi_plugin.dll
+0x00000000695c0000 - 0x0000000069607000 	C:\Users\Michael\Documents\NetBeansProjects\Quelea\lib\native64\plugins\libpng_plugin.dll
+0x0000000069650000 - 0x000000006966d000 	C:\Users\Michael\Documents\NetBeansProjects\Quelea\lib\native64\plugins\libcdg_plugin.dll
+0x0000000066790000 - 0x00000000668ff000 	C:\Users\Michael\Documents\NetBeansProjects\Quelea\lib\native64\plugins\libschroedinger_plugin.dll
+0x00000000695a0000 - 0x00000000695c0000 	C:\Users\Michael\Documents\NetBeansProjects\Quelea\lib\native64\plugins\libaraw_plugin.dll
+0x0000000065390000 - 0x0000000065556000 	C:\Users\Michael\Documents\NetBeansProjects\Quelea\lib\native64\plugins\libvorbis_plugin.dll
+0x0000000069530000 - 0x000000006954d000 	C:\Users\Michael\Documents\NetBeansProjects\Quelea\lib\native64\plugins\libdts_plugin.dll
+0x0000000069450000 - 0x00000000694ca000 	C:\Users\Michael\Documents\NetBeansProjects\Quelea\lib\native64\plugins\libfaad_plugin.dll
+0x00000000694e0000 - 0x0000000069521000 	C:\Users\Michael\Documents\NetBeansProjects\Quelea\lib\native64\plugins\libspeex_plugin.dll
+0x0000000069430000 - 0x000000006944d000 	C:\Users\Michael\Documents\NetBeansProjects\Quelea\lib\native64\plugins\libaes3_plugin.dll
+0x0000000067bd0000 - 0x0000000067c38000 	C:\Users\Michael\Documents\NetBeansProjects\Quelea\lib\native64\plugins\libtheora_plugin.dll
+0x0000000066ea0000 - 0x0000000066ef3000 	C:\Users\Michael\Documents\NetBeansProjects\Quelea\lib\native64\plugins\libflac_plugin.dll
+0x0000000064860000 - 0x0000000064a63000 	C:\Users\Michael\Documents\NetBeansProjects\Quelea\lib\native64\plugins\liblibass_plugin.dll
+0x0000000069410000 - 0x000000006942d000 	C:\Users\Michael\Documents\NetBeansProjects\Quelea\lib\native64\plugins\libmpeg_audio_plugin.dll
+0x00000000693a0000 - 0x00000000693be000 	C:\Users\Michael\Documents\NetBeansProjects\Quelea\lib\native64\plugins\liblpcm_plugin.dll
+0x00000000662f0000 - 0x00000000663aa000 	C:\Users\Michael\Documents\NetBeansProjects\Quelea\lib\native64\plugins\libfluidsynth_plugin.dll
+0x000007fef4ae0000 - 0x000007fef4b68000 	C:\Windows\system32\DSOUND.dll
+0x000007fefc9b0000 - 0x000007fefc9dc000 	C:\Windows\system32\POWRPROF.dll
+0x000007fefe190000 - 0x000007fefe367000 	C:\Windows\system32\SETUPAPI.dll
+0x000007fefde60000 - 0x000007fefde96000 	C:\Windows\system32\CFGMGR32.dll
+0x000007fefdb80000 - 0x000007fefdb9a000 	C:\Windows\system32\DEVOBJ.dll
+0x0000000066e80000 - 0x0000000066e9d000 	C:\Users\Michael\Documents\NetBeansProjects\Quelea\lib\native64\plugins\liba52_plugin.dll
+0x0000000066e60000 - 0x0000000066e7d000 	C:\Users\Michael\Documents\NetBeansProjects\Quelea\lib\native64\plugins\libspudec_plugin.dll
+0x000000005a570000 - 0x000000005b398000 	C:\Users\Michael\Documents\NetBeansProjects\Quelea\lib\native64\plugins\libavcodec_plugin.dll
+0x0000000066630000 - 0x000000006668d000 	C:\Users\Michael\Documents\NetBeansProjects\Quelea\lib\native64\plugins\liblua_plugin.dll
+0x000007feff4c0000 - 0x000007feff559000 	C:\Windows\system32\CLBCatQ.DLL
+0x000007fefbcc0000 - 0x000007fefbd0b000 	C:\Windows\System32\MMDevApi.dll
+0x000007fefbb90000 - 0x000007fefbcbc000 	C:\Windows\System32\PROPSYS.dll
+0x000007fef4950000 - 0x000007fef499f000 	C:\Windows\system32\AUDIOSES.DLL
+0x00000000652b0000 - 0x000000006538a000 	C:\Users\Michael\Documents\NetBeansProjects\Quelea\lib\native64\plugins\libfreetype_plugin.dll
+0x000007fefa380000 - 0x000007fefa3d6000 	C:\Windows\system32\uxtheme.dll
+0x000007fef9da0000 - 0x000007fef9db8000 	C:\Windows\system32\dwmapi.dll
+0x0000000066cc0000 - 0x0000000066ce1000 	C:\Users\Michael\Documents\NetBeansProjects\Quelea\lib\native64\plugins\libi420_yuy2_sse2_plugin.dll
+0x0000000066da0000 - 0x0000000066dbe000 	C:\Users\Michael\Documents\NetBeansProjects\Quelea\lib\native64\plugins\libi420_yuy2_mmx_plugin.dll
+0x0000000066270000 - 0x00000000662ea000 	C:\Users\Michael\Documents\NetBeansProjects\Quelea\lib\native64\plugins\libswscale_plugin.dll
+0x0000000065260000 - 0x00000000652a2000 	C:\Users\Michael\Documents\NetBeansProjects\Quelea\lib\native64\plugins\libdtstofloat32_plugin.dll
+0x0000000066c70000 - 0x0000000066c90000 	C:\Users\Michael\Documents\NetBeansProjects\Quelea\lib\native64\plugins\libi422_yuy2_sse2_plugin.dll
+0x00000000663f0000 - 0x0000000066425000 	C:\Users\Michael\Documents\NetBeansProjects\Quelea\lib\native64\plugins\libi420_rgb_sse2_plugin.dll
+0x0000000066a90000 - 0x0000000066aad000 	C:\Users\Michael\Documents\NetBeansProjects\Quelea\lib\native64\plugins\libi422_yuy2_mmx_plugin.dll
+0x0000000066760000 - 0x0000000066785000 	C:\Users\Michael\Documents\NetBeansProjects\Quelea\lib\native64\plugins\libi420_rgb_mmx_plugin.dll
+0x0000000065240000 - 0x000000006525d000 	C:\Users\Michael\Documents\NetBeansProjects\Quelea\lib\native64\plugins\libi422_yuy2_plugin.dll
+0x0000000064c60000 - 0x0000000064c89000 	C:\Users\Michael\Documents\NetBeansProjects\Quelea\lib\native64\plugins\liba52tofloat32_plugin.dll
+0x0000000065220000 - 0x000000006523e000 	C:\Users\Michael\Documents\NetBeansProjects\Quelea\lib\native64\plugins\libyuy2_i420_plugin.dll
+0x0000000064c30000 - 0x0000000064c51000 	C:\Users\Michael\Documents\NetBeansProjects\Quelea\lib\native64\plugins\libi420_rgb_plugin.dll
+0x0000000064bf0000 - 0x0000000064c22000 	C:\Users\Michael\Documents\NetBeansProjects\Quelea\lib\native64\plugins\libmpgatofixed32_plugin.dll
+0x0000000064bd0000 - 0x0000000064bec000 	C:\Users\Michael\Documents\NetBeansProjects\Quelea\lib\native64\plugins\libgrey_yuv_plugin.dll
+0x0000000064bb0000 - 0x0000000064bcd000 	C:\Users\Michael\Documents\NetBeansProjects\Quelea\lib\native64\plugins\libi420_yuy2_plugin.dll
+0x0000000064b90000 - 0x0000000064baf000 	C:\Users\Michael\Documents\NetBeansProjects\Quelea\lib\native64\plugins\libspeex_resampler_plugin.dll
+0x0000000064b70000 - 0x0000000064b8d000 	C:\Users\Michael\Documents\NetBeansProjects\Quelea\lib\native64\plugins\libyuy2_i422_plugin.dll
+0x0000000064840000 - 0x000000006485c000 	C:\Users\Michael\Documents\NetBeansProjects\Quelea\lib\native64\plugins\libi422_i420_plugin.dll
+0x0000000064820000 - 0x000000006483c000 	C:\Users\Michael\Documents\NetBeansProjects\Quelea\lib\native64\plugins\libscale_plugin.dll
+0x0000000064690000 - 0x0000000064817000 	C:\Users\Michael\Documents\NetBeansProjects\Quelea\lib\native64\plugins\libsamplerate_plugin.dll
+0x0000000064670000 - 0x000000006468c000 	C:\Users\Michael\Documents\NetBeansProjects\Quelea\lib\native64\plugins\libyuvp_plugin.dll
+0x0000000064650000 - 0x000000006466c000 	C:\Users\Michael\Documents\NetBeansProjects\Quelea\lib\native64\plugins\libconverter_fixed_plugin.dll
+0x0000000064630000 - 0x000000006464c000 	C:\Users\Michael\Documents\NetBeansProjects\Quelea\lib\native64\plugins\liba52tospdif_plugin.dll
+0x0000000064610000 - 0x000000006462c000 	C:\Users\Michael\Documents\NetBeansProjects\Quelea\lib\native64\plugins\libdtstospdif_plugin.dll
+0x00000000645f0000 - 0x000000006460d000 	C:\Users\Michael\Documents\NetBeansProjects\Quelea\lib\native64\plugins\libsimple_channel_mixer_plugin.dll
+0x0000000064480000 - 0x00000000644a4000 	C:\Users\Michael\Documents\NetBeansProjects\Quelea\lib\native64\plugins\libdirect3d_plugin.dll
+0x00000000645d0000 - 0x00000000645ec000 	C:\Users\Michael\Documents\NetBeansProjects\Quelea\lib\native64\plugins\libdolby_surround_decoder_plugin.dll
+0x000007fefcbe0000 - 0x000007fefcbec000 	C:\Windows\system32\VERSION.dll
+0x0000000064460000 - 0x000000006447c000 	C:\Users\Michael\Documents\NetBeansProjects\Quelea\lib\native64\plugins\libugly_resampler_plugin.dll
+0x000007fef5540000 - 0x000007fef554e000 	C:\Windows\system32\atiu9p64.dll
+
+VM Arguments:
+jvm_args: -Djna.library.path=null 
+java_command: org.quelea.video.OutOfProcessEmbeddedPlayer 8127728
+Launcher Type: SUN_STANDARD
+
+Environment Variables:
+CLASSPATH=.;C:\Program Files (x86)\QuickTime\QTSystem\QTJava.zip
+PATH=C:\Program Files\Common Files\Microsoft Shared\Windows Live;C:\Program Files (x86)\Common Files\Microsoft Shared\Windows Live;C:\Program Files (x86)\AMD APP\bin\x86_64;C:\Program Files (x86)\AMD APP\bin\x86;C:\Windows\system32;C:\Windows;C:\Windows\System32\Wbem;C:\Windows\System32\WindowsPowerShell\v1.0\;C:\Program Files (x86)\ATI Technologies\ATI.ACE\Core-Static;C:\Program Files (x86)\Windows Live\Shared;C:\Program Files (x86)\QuickTime\QTSystem\;C:\Program Files (x86)\googlecl;C:\Program Files\TortoiseSVN\bin
+USERNAME=Michael
+OS=Windows_NT
+PROCESSOR_IDENTIFIER=Intel64 Family 6 Model 42 Stepping 7, GenuineIntel
+
+
+
+---------------  S Y S T E M  ---------------
+
+OS: Windows 7 , 64 bit Build 7601 Service Pack 1
+
+CPU:total 4 (4 cores per cpu, 1 threads per core) family 6 model 42 stepping 7, cmov, cx8, fxsr, mmx, sse, sse2, sse3, ssse3, sse4.1, sse4.2, popcnt
+
+Memory: 4k page, physical 16757992k(11929432k free), swap 33514136k(27233864k free)
+
+vm_info: Java HotSpot(TM) 64-Bit Server VM (22.0-b10) for windows-amd64 JRE (1.7.0_02-b13), built on Nov 17 2011 13:51:15 by "java_re" with unknown MS VC++:1600
+
+time: Sun Mar 04 17:45:01 2012
+elapsed time: 92 seconds
+

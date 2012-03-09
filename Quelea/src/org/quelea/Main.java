@@ -89,8 +89,8 @@ public final class Main {
         }
         final boolean lyricsHidden;
         if(!QueleaProperties.get().isProjectorModeCoords() && (projectorScreen >= gds.length || projectorScreen < 0)) {
-            lyricsHidden = true;
-        }
+            lyricsHidden = true; 
+       }
         else {
             lyricsHidden = false;
         }
