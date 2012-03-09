@@ -39,7 +39,7 @@ import org.quelea.utils.Utils;
  */
 public class SelectLyricsList extends JList<TextSection> {
 
-    private static final Cursor Q_CURSOR = Toolkit.getDefaultToolkit().createCustomCursor(Utils.getImage("icons/edit.png"), new Point(0, 0), "Q Cursor");
+    private static final Cursor Q_CURSOR = Toolkit.getDefaultToolkit().createCustomCursor(Utils.getImage("icons/edit32.png"), new Point(0, 0), "Q Cursor");
     private final Color originalSelectionColour;
     private boolean oneLineMode;
 
