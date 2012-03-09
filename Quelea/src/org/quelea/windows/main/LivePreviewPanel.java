@@ -81,7 +81,7 @@ public abstract class LivePreviewPanel extends JPanel {
 
             @Override
             public void mouseClicked(MouseEvent me) {
-                if(me.isAltDown()) {
+                if(me.isShiftDown()||me.isAltDown()) {
                     int index = lyricsPanel.getLyricsList().locationToIndex(me.getPoint());
                     doQuickEdit(index);
                 }

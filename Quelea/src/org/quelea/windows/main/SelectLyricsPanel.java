@@ -143,7 +143,7 @@ public class SelectLyricsPanel extends ContainedPanel {
      * @param ie the input event.
      */
     private void check(InputEvent ie) {
-        if(ie.isAltDown()) {
+        if(ie.isShiftDown()||ie.isAltDown()) {
             setStopUpdate(true);
         }
         else {
