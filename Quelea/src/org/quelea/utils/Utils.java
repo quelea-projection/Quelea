@@ -98,7 +98,15 @@ public final class Utils {
      * @return true if we're running on a mac, false otherwise.
      */
     public static boolean isMac() {
-        return System.getProperty("os.name").contains("Mac");
+        return System.getProperty("os.name").toLowerCase().contains("mac");
+    }
+    
+    /**
+     * Determine if we're running on Linux.
+     * @return true if we're running on Linux, false otherwise.
+     */
+    public static boolean isLinux() {
+        return System.getProperty("os.name").toLowerCase().contains("linux");
     }
 
     /**

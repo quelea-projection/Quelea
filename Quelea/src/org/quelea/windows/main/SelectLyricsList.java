@@ -168,8 +168,7 @@ public class SelectLyricsList extends JList<TextSection> {
 
             @Override
             public void mouseMoved(MouseEvent me) {
-                if(me.isAltDown() && !getModel().isEmpty()) {
-                    
+                if((me.isShiftDown()||me.isAltDown()) && !getModel().isEmpty()) {
                     setCursor(Q_CURSOR);
                 }
                 else {
@@ -181,7 +180,7 @@ public class SelectLyricsList extends JList<TextSection> {
 
             @Override
             public void keyPressed(KeyEvent ke) {
-                if(ke.isAltDown() && !getModel().isEmpty()) {
+                if((ke.isShiftDown()||ke.isAltDown()) && !getModel().isEmpty()) {
                     setCursor(Q_CURSOR);
                 }
                 else {
