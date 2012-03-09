@@ -25,6 +25,8 @@ import java.awt.event.ItemListener;
 import java.util.ArrayList;
 import java.util.List;
 import javax.swing.*;
+import org.quelea.GraphicsDeviceListener;
+import org.quelea.GraphicsDeviceWatcher;
 import org.quelea.languages.LabelGrabber;
 import org.quelea.utils.Utils;
 
@@ -46,10 +48,13 @@ public class SingleDisplayPanel extends JPanel {
 
     /**
      * Create a new single display panel.
-     * @param caption      the bit of text at the top describing the display.
+     *
+     * @param caption the bit of text at the top describing the display.
      * @param iconLocation the location of the icon to use.
-     * @param none         true if "none" (i.e. no output) should be an option, false otherwise.
-     * @param customPos    true if a custom position should be allowed for this display panel.
+     * @param none true if "none" (i.e. no output) should be an option, false
+     * otherwise.
+     * @param customPos true if a custom position should be allowed for this
+     * display panel.
      */
     public SingleDisplayPanel(String caption, String iconLocation, boolean none,
             boolean customPos) {
@@ -65,7 +70,7 @@ public class SingleDisplayPanel extends JPanel {
         JPanel outputSelectPanel = new JPanel();
         outputSelectPanel.add(outputSelect);
         add(outputSelectPanel);
-        if (customPos) {
+        if(customPos) {
             outputSelect.setEnabled(false);
             custom = new JCheckBox(LabelGrabber.INSTANCE.getLabel("custom.position.text"));
             custom.setSelected(true);
@@ -73,7 +78,7 @@ public class SingleDisplayPanel extends JPanel {
 
                 @Override
                 public void itemStateChanged(ItemEvent itemEvent) {
-                    if (custom.isSelected()) {
+                    if(custom.isSelected()) {
                         outputSelect.setEnabled(false);
                         customX.setEnabled(true);
                         customY.setEnabled(true);
@@ -117,15 +122,16 @@ public class SingleDisplayPanel extends JPanel {
             add(whContainerPanel);
         }
     }
-    
+
     /**
      * Get the output screen currently selected in the dialog, or -1 if none is
      * selected.
+     *
      * @return the output screen currently selected in the dialog
      */
     public int getOutputScreen() {
         int screenNum;
-        if (none) {
+        if(none) {
             screenNum = outputSelect.getSelectedIndex() - 1;
         }
         else {
@@ -136,16 +142,17 @@ public class SingleDisplayPanel extends JPanel {
 
     /**
      * Determine the output bounds that should be used.
+     *
      * @return the output bounds as a rectangle, or null if "none" is selected.
      */
     public Rectangle getOutputBounds() {
-        if (custom != null && custom.isSelected()) {
+        if(custom != null && custom.isSelected()) {
             return getCoords();
         }
         GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
         GraphicsDevice[] gds = ge.getScreenDevices();
         int screen = getOutputScreen();
-        if(screen==-1) {
+        if(screen == -1) {
             return null;
         }
         else {
@@ -155,6 +162,7 @@ public class SingleDisplayPanel extends JPanel {
 
     /**
      * Determine whether the panel is set to a custom position.
+     *
      * @return the bounds for the custom position.
      */
     public boolean customPosition() {
@@ -163,6 +171,7 @@ public class SingleDisplayPanel extends JPanel {
 
     /**
      * Get the bounds currently selected on the dialog.
+     *
      * @return the bounds currently selected.
      */
     public Rectangle getCoords() {
@@ -171,10 +180,11 @@ public class SingleDisplayPanel extends JPanel {
 
     /**
      * Set the bounds to display on the panel.
+     *
      * @param bounds the bounds to display.
      */
     public void setCoords(Rectangle bounds) {
-        if (custom != null) {
+        if(custom != null) {
             custom.setSelected(true);
         }
         customX.setValue((int) bounds.getX());
@@ -185,23 +195,24 @@ public class SingleDisplayPanel extends JPanel {
 
     /**
      * Set the screen to select on the combo box.
+     *
      * @param num the index (0 based) of the screen to select.
      */
     public void setScreen(int num) {
-        if (custom != null) {
+        if(custom != null) {
             custom.setSelected(false);
         }
         int maxIndex = outputSelect.getModel().getSize() - 1;
-        if (none) {
+        if(none) {
             int index = num + 1;
-            if (index > maxIndex) {
+            if(index > maxIndex) {
                 index = 0;
             }
             outputSelect.setSelectedIndex(index);
         }
         else {
             int index = num;
-            if (index > maxIndex) {
+            if(index > maxIndex) {
                 index = 0;
             }
             outputSelect.setSelectedIndex(index);
@@ -217,16 +228,17 @@ public class SingleDisplayPanel extends JPanel {
 
     /**
      * Get a list model describing the available graphical devices.
+     *
      * @return a list model describing the available graphical devices.
      */
     private ComboBoxModel<String> getAvailableScreens(boolean none) {
         GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
         final GraphicsDevice[] gds = ge.getScreenDevices();
         List<String> descriptions = new ArrayList<>();
-        if (none) {
-            descriptions.add("<html><i>"+LabelGrabber.INSTANCE.getLabel("none.text")+"</i></html>");
+        if(none) {
+            descriptions.add("<html><i>" + LabelGrabber.INSTANCE.getLabel("none.text") + "</i></html>");
         }
-        for (int i = 0; i < gds.length; i++) {
+        for(int i = 0; i < gds.length; i++) {
             descriptions.add(LabelGrabber.INSTANCE.getLabel("output.text") + " " + (i + 1));
         }
         return new DefaultComboBoxModel<>(descriptions.toArray(new String[descriptions.size()]));
@@ -234,6 +246,7 @@ public class SingleDisplayPanel extends JPanel {
 
     /**
      * Test it.
+     *
      * @param args //not used.
      */
     public static void main(String[] args) {
