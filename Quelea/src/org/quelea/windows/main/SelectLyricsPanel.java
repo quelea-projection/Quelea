@@ -79,45 +79,6 @@ public class SelectLyricsPanel extends ContainedPanel {
                 updateCanvases();
             }
         });
-        lyricsList.addKeyListener(new KeyAdapter() {
-
-            @Override
-            public void keyPressed(KeyEvent ke) {
-                check(ke);
-            }
-
-            @Override
-            public void keyReleased(KeyEvent ke) {
-                check(ke);
-            }
-        });
-        lyricsList.addMouseListener(new MouseListener() {
-
-            @Override
-            public void mouseClicked(MouseEvent me) {
-                check(me);
-            }
-
-            @Override
-            public void mousePressed(MouseEvent me) {
-                check(me);
-            }
-
-            @Override
-            public void mouseReleased(MouseEvent me) {
-                check(me);
-            }
-
-            @Override
-            public void mouseEntered(MouseEvent me) {
-                check(me);
-            }
-
-            @Override
-            public void mouseExited(MouseEvent me) {
-                setStopUpdate(false);
-            }
-        });
         lyricsList.getModel().addListDataListener(new ListDataListener() {
 
             @Override
@@ -135,31 +96,6 @@ public class SelectLyricsPanel extends ContainedPanel {
                 updateCanvases();
             }
         });
-    }
-
-    /**
-     * Check based on the current input event whether to set stopUpdate.
-     *
-     * @param ie the input event.
-     */
-    private void check(InputEvent ie) {
-        if(ie.isShiftDown()||ie.isAltDown()) {
-            setStopUpdate(true);
-        }
-        else {
-            setStopUpdate(false);
-        }
-    }
-
-    /**
-     * Set stop update. If set to true then selection events on this list won't
-     * update any of the attached canvases.
-     *
-     * @param stopUpdate true if no updates should occur on the canvases, false
-     * otherwise.
-     */
-    public void setStopUpdate(boolean stopUpdate) {
-        this.stopUpdate = stopUpdate;
     }
 
     /**

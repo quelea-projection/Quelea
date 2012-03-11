@@ -103,20 +103,18 @@ public class SelectLyricsList extends JList<TextSection> {
      */
     public SelectLyricsList() {
         super(new DefaultListModel<TextSection>());
+        for(MouseListener mouseListener : getMouseListeners()) {
+            removeMouseListener(mouseListener);
+        }
         addMouseListener(new MouseAdapter() {
 
-            int lastSelectedIndex;
-
             @Override
-            public void mouseClicked(MouseEvent e) {
-
-                int index = locationToIndex(e.getPoint());
-                if(index != -1 && index != lastSelectedIndex) {
-                    if(getCursor().equals(Q_CURSOR)) {
-                        setSelectedIndex(lastSelectedIndex);
-                    }
+            public void mouseClicked(MouseEvent me) {
+                requestFocus();
+                if(!me.isControlDown()) {
+                    int index = locationToIndex(me.getPoint());
+                    setSelectedIndex(index);
                 }
-                lastSelectedIndex = getSelectedIndex();
             }
         });
         addListSelectionListener(new ListSelectionListener() {
@@ -168,7 +166,7 @@ public class SelectLyricsList extends JList<TextSection> {
 
             @Override
             public void mouseMoved(MouseEvent me) {
-                if((me.isShiftDown()||me.isAltDown()) && !getModel().isEmpty()) {
+                if((me.isShiftDown()||me.isControlDown()) && !getModel().isEmpty()) {
                     setCursor(Q_CURSOR);
                 }
                 else {
@@ -180,7 +178,7 @@ public class SelectLyricsList extends JList<TextSection> {
 
             @Override
             public void keyPressed(KeyEvent ke) {
-                if((ke.isShiftDown()||ke.isAltDown()) && !getModel().isEmpty()) {
+                if((ke.isControlDown()) && !getModel().isEmpty()) {
                     setCursor(Q_CURSOR);
                 }
                 else {
@@ -190,7 +188,7 @@ public class SelectLyricsList extends JList<TextSection> {
 
             @Override
             public void keyReleased(KeyEvent ke) {
-                if(ke.getKeyCode() == KeyEvent.VK_ALT) {
+                if(ke.getKeyCode() == KeyEvent.VK_CONTROL) {
                     setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
                 }
             }
