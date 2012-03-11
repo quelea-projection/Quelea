@@ -81,7 +81,7 @@ public abstract class LivePreviewPanel extends JPanel {
 
             @Override
             public void mouseClicked(MouseEvent me) {
-                if(me.isShiftDown()||me.isAltDown()) {
+                if(me.isControlDown()) {
                     int index = lyricsPanel.getLyricsList().locationToIndex(me.getPoint());
                     doQuickEdit(index);
                 }
@@ -109,7 +109,6 @@ public abstract class LivePreviewPanel extends JPanel {
             quickEditDialog.setLocationRelativeTo(quickEditDialog.getParent());
             quickEditDialog.setSongSection(song, index);
             quickEditDialog.setVisible(true);
-            lyricsPanel.setStopUpdate(false);
             setDisplayable(song, getIndex());
         }
     }
