@@ -19,12 +19,7 @@ package org.quelea.windows.main;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
-import java.awt.event.InputEvent;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
 import java.util.HashSet;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;

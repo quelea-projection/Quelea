@@ -35,7 +35,6 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.KeyStroke;
 import org.quelea.Application;
-import org.quelea.Theme;
 import org.quelea.displayable.Song;
 import org.quelea.displayable.TextSection;
 import org.quelea.languages.LabelGrabber;
@@ -96,8 +95,12 @@ public class QuickEditDialog extends JDialog {
                     }
                     currentSong.addSection(currentIndex + i, new TextSection(newTitle, lyrics, oldSection.getSmallText(), oldSection.shouldCapitaliseFirst(), oldSection.getTheme(), oldSection.getTempTheme()));
                 }
+                if(sectionArea.getText().trim().isEmpty()) {
+                    currentSong.removeSection(currentIndex);
+                }
                 setVisible(false);
-                Utils.updateSongInBackground(currentSong, false);
+                Application.get().getMainWindow().getMainPanel().getPreviewPanel().refresh();
+                Utils.updateSongInBackground(currentSong, false, true);
             }
         });
         cancelButton = new JButton(LabelGrabber.INSTANCE.getLabel("cancel.button"));

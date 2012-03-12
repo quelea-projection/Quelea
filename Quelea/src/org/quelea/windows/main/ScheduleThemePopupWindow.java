@@ -198,12 +198,7 @@ public class ScheduleThemePopupWindow extends FadeWindow {
                 public void actionPerformed(ActionEvent e) {
                     tempTheme = theme;
                     setTheme(theme);
-                    HashSet<LyricCanvas> canvases = new HashSet<>();
-                    canvases.addAll(Application.get().getMainWindow().getMainPanel().getPreviewPanel().getCanvases());
-                    for(LyricCanvas canvas : canvases) {
-                        canvas.setTheme(theme);
-                        canvas.repaint();
-                    }
+                    Application.get().getMainWindow().getMainPanel().getPreviewPanel().refresh();
                 }
             });
             group.add(panel.getSelectButton());
