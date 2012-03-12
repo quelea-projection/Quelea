@@ -25,10 +25,10 @@
         <launcherErr>Sorry, there was an error launching Quelea.</launcherErr>
     </messages>
     <versionInfo>
-        <fileVersion>0.5.0.0</fileVersion> <!-- Must be format x.x.x.x otherwise launch4j complains -->
-        <productVersion>0.5.0.0</productVersion> <!-- Must be format x.x.x.x otherwise launch4j complains -->
-        <txtProductVersion>0.5</txtProductVersion>
-        <txtFileVersion>0.5</txtFileVersion>
+        <fileVersion>0.5.1.0</fileVersion> <!-- Must be format x.x.x.x otherwise launch4j complains -->
+        <productVersion>0.5.1.0</productVersion> <!-- Must be format x.x.x.x otherwise launch4j complains -->
+        <txtProductVersion>0.5.1</txtProductVersion>
+        <txtFileVersion>0.5.1</txtFileVersion>
         <productName>Quelea</productName>
         <copyright>GPLv3</copyright>
         <originalFilename>Quelea.exe</originalFilename>
