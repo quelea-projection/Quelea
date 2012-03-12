@@ -18,7 +18,6 @@
 package org.quelea.utils;
 
 import java.awt.Color;
-import java.awt.Font;
 import java.awt.Rectangle;
 import java.io.File;
 import java.io.FileReader;
@@ -288,6 +287,25 @@ public final class QueleaProperties extends Properties {
      */
     public void setOneLineMode(boolean val) {
         setProperty("one.line.mode", Boolean.toString(val));
+        write();
+    }
+
+    /**
+     * Get the text shadow property.
+     *
+     * @return true if text shadows are enabled, false otherwise.
+     */
+    public boolean getTextShadow() {
+        return Boolean.parseBoolean(getProperty("text.shadow", "false"));
+    }
+
+    /**
+     * Set the text shadow property.
+     *
+     * @param val true if text shadows are enabled, false otherwise.
+     */
+    public void setTextShadow(boolean val) {
+        setProperty("text.shadow", Boolean.toString(val));
         write();
     }
 
