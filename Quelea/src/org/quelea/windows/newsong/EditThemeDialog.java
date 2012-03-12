@@ -155,6 +155,7 @@ public class EditThemeDialog extends JDialog {
         }
         themeFile = theme.getFile();
         nameField.setText(theme.getThemeName());
+        confirmButton.setEnabled(!nameField.getText().isEmpty());
         panel.setTheme(theme);
     }
 }
