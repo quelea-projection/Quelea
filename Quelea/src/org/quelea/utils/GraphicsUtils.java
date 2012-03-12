@@ -68,6 +68,21 @@ public class GraphicsUtils {
         }
         graphics.drawString(str, x, y);
     }
+    
+    /**
+     * Draw a string with a shadow.
+     * @param str the string to draw.
+     * @param x the x position of the string.
+     * @param y the y position of the string.
+     * @param shadowColor the colour of the shadow.
+     */
+    public void drawStringWithShadow(String str, int x, int y, Color shadowColor) {
+        Color originalColor = graphics.getColor();
+        graphics.setColor(shadowColor);
+        graphics.drawString(str, shiftEast(x, 2), shiftSouth(y, 2));
+        graphics.setColor(originalColor);
+        graphics.drawString(str, x, y);
+    }
 
     /**
      * Used for outline measurements. Shift north a certain distance.

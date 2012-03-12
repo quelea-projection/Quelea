@@ -213,7 +213,7 @@ public class LyricCanvas extends Canvas {
             return;
         }
         if(graphics instanceof Graphics2D) {
-            ((Graphics2D)graphics).setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+            ((Graphics2D) graphics).setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
         }
         graphics.setFont(font);
         graphics.setColor(theme.getFontColor());
@@ -268,7 +268,12 @@ public class LyricCanvas extends Canvas {
                     graphics.setColor(QueleaProperties.get().getStageChordColor());
                 }
                 if(showBorder) {
-                    graphicsUtils.drawStringWithOutline(line, leftOffset, heightOffset, graphicsUtils.getInverseColor(), QueleaProperties.get().getOutlineThickness());
+                    if(QueleaProperties.get().getTextShadow()) {
+                        graphicsUtils.drawStringWithShadow(line, leftOffset, heightOffset, graphicsUtils.getInverseColor());
+                    }
+                    else {
+                        graphicsUtils.drawStringWithOutline(line, leftOffset, heightOffset, graphicsUtils.getInverseColor(), QueleaProperties.get().getOutlineThickness());
+                    }
                 }
                 else {
                     graphics.drawString(line, leftOffset, heightOffset);
