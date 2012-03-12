@@ -25,6 +25,10 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
@@ -36,7 +40,9 @@ import javax.swing.border.EmptyBorder;
 import org.quelea.Application;
 import org.quelea.Theme;
 import org.quelea.languages.LabelGrabber;
+import org.quelea.utils.LoggerUtils;
 import org.quelea.utils.Utils;
+import org.quelea.windows.newsong.EditThemeDialog;
 import org.quelea.windows.newsong.ThemePanel;
 
 /**
@@ -46,10 +52,13 @@ import org.quelea.windows.newsong.ThemePanel;
  */
 public class ThemePreviewPanel extends JPanel {
 
+    private static final Logger LOGGER = LoggerUtils.getLogger();
     private Theme theme;
     private LyricCanvas canvas;
     private JRadioButton selectButton;
     private JButton removeButton;
+    private JButton editButton;
+    private EditThemeDialog themeDialog;
 
     /**
      * Create a new theme preview panel.
@@ -71,8 +80,31 @@ public class ThemePreviewPanel extends JPanel {
         else {
             name = theme.getThemeName();
         }
+        themeDialog = new EditThemeDialog();
         selectButton = new JRadioButton(name);
         if (theme != null) {
+            editButton = new JButton(Utils.getImageIcon("icons/edit32.png", 16, 16));
+            editButton.setMargin(new Insets(0, 0, 0, 0));
+            editButton.setBorder(new EmptyBorder(0, 0, 0, 0));
+            editButton.setToolTipText(LabelGrabber.INSTANCE.getLabel("edit.theme.tooltip"));
+            editButton.addActionListener(new ActionListener() {
+
+                @Override
+                public void actionPerformed(ActionEvent ae) {
+                    themeDialog.setTheme(ThemePreviewPanel.this.theme);
+                    themeDialog.setVisible(true);
+                    Theme ret = themeDialog.getTheme();
+                    if(ret != null) {
+                        try (PrintWriter pw = new PrintWriter(ret.getFile())) {
+                            pw.println(ret.toDBString());
+                        }
+                        catch (IOException ex) {
+                            LOGGER.log(Level.WARNING, "Couldn't edit theme", ex);
+                        }
+                    }
+                }
+            });
+            
             removeButton = new JButton(Utils.getImageIcon("icons/delete.png", 16, 16));
             removeButton.setMargin(new Insets(0, 0, 0, 0));
             removeButton.setBorder(new EmptyBorder(0, 0, 0, 0));
@@ -102,6 +134,7 @@ public class ThemePreviewPanel extends JPanel {
         buttonPanel.add(selectButton);
         if (theme != null) {
             buttonPanel.add(Box.createHorizontalGlue());
+            buttonPanel.add(editButton);
             buttonPanel.add(removeButton);
         }
         buttonPanel.setAlignmentX(Component.LEFT_ALIGNMENT);

@@ -17,19 +17,9 @@
  */
 package org.quelea.windows.main;
 
-import java.util.Set;
-import javax.swing.JTextField;
-import javax.swing.JLabel;
-import javax.swing.event.DocumentEvent;
-import org.quelea.Application;
-import javax.swing.JDialog;
-import javax.swing.JButton;
 import java.awt.BorderLayout;
-import java.awt.Component;
-import javax.swing.SwingUtilities;
 import java.awt.Color;
-import java.awt.Dialog.ModalityType;
-import java.awt.Dimension;
+import java.awt.Component;
 import java.awt.FlowLayout;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
@@ -41,34 +31,33 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.nio.file.FileSystems;
 import java.nio.file.Path;
+import java.nio.file.StandardWatchEventKinds;
 import java.nio.file.WatchEvent;
 import java.nio.file.WatchKey;
 import java.nio.file.WatchService;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.ButtonGroup;
+import javax.swing.JButton;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JWindow;
+import javax.swing.SwingUtilities;
 import javax.swing.border.LineBorder;
-import javax.swing.event.DocumentListener;
+import org.quelea.Application;
 import org.quelea.Theme;
 import org.quelea.displayable.Displayable;
 import org.quelea.displayable.TextDisplayable;
 import org.quelea.displayable.TextSection;
+import org.quelea.languages.LabelGrabber;
 import org.quelea.utils.FadeWindow;
 import org.quelea.utils.LoggerUtils;
 import org.quelea.utils.QueleaProperties;
 import org.quelea.utils.Utils;
-
-import org.quelea.windows.newsong.ThemePanel;
-import static java.nio.file.StandardWatchEventKinds.ENTRY_CREATE;
-import static java.nio.file.StandardWatchEventKinds.ENTRY_DELETE;
-import static java.nio.file.StandardWatchEventKinds.ENTRY_MODIFY;
-import static java.nio.file.StandardWatchEventKinds.OVERFLOW;
-import java.util.HashSet;
-import org.quelea.languages.LabelGrabber;
+import org.quelea.windows.newsong.EditThemeDialog;
 
 /**
  * A popup window that allows the user to select a theme for the current 
@@ -82,6 +71,7 @@ public class ScheduleThemePopupWindow extends FadeWindow {
     private JPanel contentPanel;
     private Theme tempTheme;
     private ScheduleList schedule;
+    private EditThemeDialog themeDialog;
 
     /**
      * Create a new schedule theme popup window to control a particular
@@ -91,6 +81,7 @@ public class ScheduleThemePopupWindow extends FadeWindow {
     public ScheduleThemePopupWindow(final ScheduleList schedule) {
         setSpeed(0.06f);
         this.schedule = schedule;
+        themeDialog = new EditThemeDialog();
         contentPanel = new JPanel();
         contentPanel.setLayout(new GridLayout(1, 1, 0, 0));
         contentPanel.setBorder(new LineBorder(Color.BLACK, 1));
@@ -107,10 +98,11 @@ public class ScheduleThemePopupWindow extends FadeWindow {
         try {
             final WatchService watcher = FileSystems.getDefault().newWatchService();
             final Path themePath = FileSystems.getDefault().getPath(new File(QueleaProperties.getQueleaUserHome(), "themes").getAbsolutePath());
-            themePath.register(watcher, ENTRY_CREATE, ENTRY_DELETE, ENTRY_MODIFY);
+            themePath.register(watcher, StandardWatchEventKinds.ENTRY_CREATE, StandardWatchEventKinds.ENTRY_DELETE, StandardWatchEventKinds.ENTRY_MODIFY);
             new Thread() {
 
                 @SuppressWarnings("unchecked")
+                @Override
                 public void run() {
                     while (true) {
                         WatchKey key;
@@ -123,7 +115,7 @@ public class ScheduleThemePopupWindow extends FadeWindow {
 
                         for (WatchEvent<?> event : key.pollEvents()) {
                             WatchEvent.Kind<?> kind = event.kind();
-                            if (kind == OVERFLOW) {
+                            if (kind == StandardWatchEventKinds.OVERFLOW) {
                                 continue;
                             }
 
@@ -139,6 +131,7 @@ public class ScheduleThemePopupWindow extends FadeWindow {
                             Utils.sleep(200); //TODO: Bodge
                             SwingUtilities.invokeLater(new Runnable() {
 
+                                @Override
                                 public void run() {
                                     refresh();
                                 }
@@ -175,7 +168,7 @@ public class ScheduleThemePopupWindow extends FadeWindow {
      * through the folder and find the themes to display.
      */
     public synchronized final void refresh() {
-        List<Theme> themes = null;
+        List<Theme> themes;
         try {
             themes = getThemes();
         }
@@ -226,70 +219,17 @@ public class ScheduleThemePopupWindow extends FadeWindow {
              */
             @Override
             public void actionPerformed(ActionEvent e) {
-                final JDialog dialog = new JDialog(Application.get().getMainWindow(), LabelGrabber.INSTANCE.getLabel("new.theme.title"), ModalityType.APPLICATION_MODAL);
-                dialog.setLayout(new BorderLayout());
-                JPanel northPanel = new JPanel();
-                dialog.add(northPanel, BorderLayout.NORTH);
-                northPanel.setLayout(new FlowLayout(FlowLayout.LEFT));
-                northPanel.add(new JLabel(LabelGrabber.INSTANCE.getLabel("theme.name.label")));
-                final JTextField nameField = new JTextField(20);
-                northPanel.add(nameField);
-                final ThemePanel themePanel = new ThemePanel();
-                themePanel.getCanvas().setPreferredSize(new Dimension(200, 200));
-                dialog.add(themePanel, BorderLayout.CENTER);
-                JPanel southPanel = new JPanel();
-                dialog.add(southPanel, BorderLayout.SOUTH);
-                southPanel.setLayout(new FlowLayout(FlowLayout.LEFT));
-                final JButton addButton = new JButton(LabelGrabber.INSTANCE.getLabel("add.theme.label"));
-                addButton.setEnabled(false);
-                nameField.getDocument().addDocumentListener(new DocumentListener() {
-
-                    @Override
-                    public void insertUpdate(DocumentEvent e) {
-                        check();
+                themeDialog.setTheme(null);
+                themeDialog.setVisible(true);
+                Theme ret = themeDialog.getTheme();
+                if(ret != null) {
+                    try (PrintWriter pw = new PrintWriter(ret.getFile())) {
+                        pw.println(ret.toDBString());
                     }
-
-                    @Override
-                    public void removeUpdate(DocumentEvent e) {
-                        check();
+                    catch (IOException ex) {
+                        LOGGER.log(Level.WARNING, "Couldn't write new theme", ex);
                     }
-
-                    @Override
-                    public void changedUpdate(DocumentEvent e) {
-                        check();
-                    }
-                    
-                    private void check() {
-                        addButton.setEnabled(!nameField.getText().trim().isEmpty());
-                    }
-                });
-                addButton.addActionListener(new ActionListener() {
-
-                    @Override
-                    public void actionPerformed(ActionEvent e) {
-                        dialog.setVisible(false);
-                        Theme theme = themePanel.getTheme();
-                        theme.setThemeName(nameField.getText());
-                        String themeStr = theme.toDBString();
-                        File file;
-                        int filenum = 1;
-                        do {
-                            file = new File(new File(QueleaProperties.getQueleaUserHome(), "themes"), "theme" + filenum + ".th");
-                            filenum++;
-                        } while (file.exists());
-                        try(PrintWriter pw = new PrintWriter(file)) {
-                            pw.println(themeStr);
-                        }
-                        catch(IOException ex) {
-                            LOGGER.log(Level.WARNING, "Couldn't write new theme", ex);
-                        }
-
-                    }
-                });
-                southPanel.add(addButton);
-                dialog.pack();
-                dialog.setLocationRelativeTo(dialog.getOwner());
-                dialog.setVisible(true);
+                }
             }
         });
         buttonPanel.add(newThemeButton);
