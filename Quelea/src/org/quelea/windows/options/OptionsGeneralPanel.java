@@ -17,6 +17,8 @@
  */
 package org.quelea.windows.options;
 
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import javax.swing.JCheckBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -41,6 +43,7 @@ public class OptionsGeneralPanel extends JPanel implements PropertyPanel {
     private final JCheckBox oneMonitorWarnCheckBox;
     private final JCheckBox displaySongInfoCheckBox;
     private final JCheckBox oneLineModeCheckBox;
+    private final JCheckBox textShadowCheckBox;
     private final JSlider borderThicknessSlider;
     private final JSlider maxCharsSlider;
     private final JSlider minLinesSlider;
@@ -94,6 +97,14 @@ public class OptionsGeneralPanel extends JPanel implements PropertyPanel {
         generalPanel.add(new JLabel()); //Keep springlayout happy
         rows++;
 
+        JLabel textShadowLabel = new JLabel(LabelGrabber.INSTANCE.getLabel("text.shadow.label"));
+        generalPanel.add(textShadowLabel);
+        textShadowCheckBox = new JCheckBox();
+        startupLabel.setLabelFor(textShadowCheckBox);
+        generalPanel.add(textShadowCheckBox);
+        generalPanel.add(new JLabel()); //Keep springlayout happy
+        rows++;
+
         JLabel borderThicknessLabel = new JLabel(LabelGrabber.INSTANCE.getLabel("text.border.thickness.label"));
         generalPanel.add(borderThicknessLabel);
         borderThicknessSlider = new JSlider(0, 5);
@@ -104,11 +115,27 @@ public class OptionsGeneralPanel extends JPanel implements PropertyPanel {
         borderThicknessValue.setLabelFor(borderThicknessSlider);
         borderThicknessSlider.addChangeListener(new ChangeListener() {
 
+            @Override
             public void stateChanged(ChangeEvent e) {
                 borderThicknessValue.setText(Integer.toString(borderThicknessSlider.getValue()));
             }
         });
         rows++;
+        
+        textShadowCheckBox.addItemListener(new ItemListener() {
+
+            @Override
+            public void itemStateChanged(ItemEvent ie) {
+                if(textShadowCheckBox.isSelected()) {
+                    borderThicknessValue.setEnabled(false);
+                    borderThicknessSlider.setEnabled(false);
+                }
+                else {
+                    borderThicknessValue.setEnabled(true);
+                    borderThicknessSlider.setEnabled(true);
+                }
+            }
+        });
 
         JLabel maxCharsLabel = new JLabel(LabelGrabber.INSTANCE.getLabel("max.chars.line.label"));
         generalPanel.add(maxCharsLabel);
@@ -120,6 +147,7 @@ public class OptionsGeneralPanel extends JPanel implements PropertyPanel {
         maxCharsValue.setLabelFor(maxCharsSlider);
         maxCharsSlider.addChangeListener(new ChangeListener() {
 
+            @Override
             public void stateChanged(ChangeEvent e) {
                 maxCharsValue.setText(Integer.toString(maxCharsSlider.getValue()));
             }
@@ -136,6 +164,7 @@ public class OptionsGeneralPanel extends JPanel implements PropertyPanel {
         minLinesValue.setLabelFor(minLinesSlider);
         minLinesSlider.addChangeListener(new ChangeListener() {
 
+            @Override
             public void stateChanged(ChangeEvent e) {
                 minLinesValue.setText(Integer.toString(minLinesSlider.getValue()));
             }
@@ -150,6 +179,7 @@ public class OptionsGeneralPanel extends JPanel implements PropertyPanel {
     /**
      * @inheritDoc
      */
+    @Override
     public final void readProperties() {
         QueleaProperties props = QueleaProperties.get();
         startupUpdateCheckBox.setSelected(props.checkUpdate());
@@ -157,6 +187,7 @@ public class OptionsGeneralPanel extends JPanel implements PropertyPanel {
         oneMonitorWarnCheckBox.setSelected(props.showSingleMonitorWarning());
         displaySongInfoCheckBox.setSelected(props.checkDisplaySongInfoText());
         oneLineModeCheckBox.setSelected(props.getOneLineMode());
+        textShadowCheckBox.setSelected(props.getTextShadow());
         maxCharsSlider.setValue(props.getMaxChars());
         minLinesSlider.setValue(props.getMinLines());
         borderThicknessSlider.setValue(props.getOutlineThickness());
@@ -165,6 +196,7 @@ public class OptionsGeneralPanel extends JPanel implements PropertyPanel {
     /**
      * @inheritDoc
      */
+    @Override
     public void setProperties() {
         QueleaProperties props = QueleaProperties.get();
         boolean checkUpdate = getStartupUpdateCheckBox().isSelected();
@@ -175,6 +207,8 @@ public class OptionsGeneralPanel extends JPanel implements PropertyPanel {
         props.setCapitalFirst(checkCapital);
         boolean checkDisplayInfo = getDisplaySongInfoCheckBox().isSelected();
         props.setDisplaySongInfoText(checkDisplayInfo);
+        boolean textShadow = getTextShadowCheckBox().isSelected();
+        props.setTextShadow(textShadow);
         boolean oneLineMode = getOneLineModeCheckBox().isSelected();
         props.setOneLineMode(oneLineMode);
         //One line mode needs to be updated manually
@@ -242,6 +276,14 @@ public class OptionsGeneralPanel extends JPanel implements PropertyPanel {
      */
     public JCheckBox getOneLineModeCheckBox() {
         return oneLineModeCheckBox;
+    }
+
+    /**
+     * Get the "text shadow" checkbox.
+     * @return the "text.shadow" checkbox.
+     */
+    public JCheckBox getTextShadowCheckBox() {
+        return textShadowCheckBox;
     }
     
     /**

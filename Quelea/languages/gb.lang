@@ -256,3 +256,4 @@ part=part
 help.menu.facebook=Facebook page
 video.error=Couldn't initialise the video libraries - video won't work.\nPlease ask on the discuss list (see the help menu) for help solving this.
 video.error.title=Video error
+text.shadow.label=Display text shadow
