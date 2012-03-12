@@ -40,6 +40,7 @@ import org.quelea.utils.Utils;
 
 /**
  * The panel displayed on the library to select the list of images.
+ *
  * @author Michael
  */
 public class ImageListPanel extends JPanel {
@@ -49,6 +50,7 @@ public class ImageListPanel extends JPanel {
 
     /**
      * Create a new image list panel.
+     *
      * @param dir the directory to use.
      */
     public ImageListPanel(String dir) {
@@ -58,13 +60,13 @@ public class ImageListPanel extends JPanel {
         DragSource.getDefaultDragSource().createDefaultDragGestureRecognizer(imageList, DnDConstants.ACTION_MOVE, new DragGestureListener() {
 
             public void dragGestureRecognized(DragGestureEvent dge) {
-                if (imageList.getSelectedValue() != null) {
+                if(imageList.getSelectedValue() != null) {
                     dge.startDrag(DragSource.DefaultCopyDrop, new TransferDisplayable((Displayable) imageList.getModel().getElementAt(imageList.locationToIndex(dge.getDragOrigin()))));
                 }
             }
         });
         imageList.setCellRenderer(new CustomCellRenderer());
-        addFiles((DefaultListModel<ImageDisplayable>) imageList.getModel());
+        addFiles();
         imageList.setLayoutOrientation(JList.HORIZONTAL_WRAP);
         imageList.setVisibleRowCount(-1);
         JScrollPane scroll = new JScrollPane(imageList);
@@ -74,6 +76,7 @@ public class ImageListPanel extends JPanel {
 
     /**
      * Change the panel to display a new directory.
+     *
      * @param newDir the new directory.
      */
     public void changeDir(String newDir) {
@@ -87,34 +90,41 @@ public class ImageListPanel extends JPanel {
     public void refresh() {
         DefaultListModel<ImageDisplayable> model = (DefaultListModel<ImageDisplayable>) imageList.getModel();
         model.clear();
-        addFiles(model);
+        addFiles();
     }
 
     /**
      * Add the files to the given model.
+     *
      * @param model the model to add files to.
      */
-    private void addFiles(final DefaultListModel<ImageDisplayable> model) {
+    private void addFiles() {
         final File[] files = new File(dir).listFiles();
-        new Thread() {
+        final DefaultListModel<ImageDisplayable> tempModel = new DefaultListModel<>();
+        final Thread runner = new Thread() {
+
             @Override
             public void run() {
                 for(final File file : files) {
                     if(Utils.fileIsImage(file)) {
-                        SwingUtilities.invokeLater(new Runnable() {
-                            @Override
-                            public void run() {
-                                model.addElement(new ImageDisplayable(file));
-                            }
-                        });
+                        tempModel.addElement(new ImageDisplayable(file));
                     }
                 }
+                SwingUtilities.invokeLater(new Runnable() {
+
+                    @Override
+                    public void run() {
+                        imageList.setModel(tempModel);
+                    }
+                });
             }
-        }.start();
+        };
+        runner.start();
     }
 
     /**
      * Get the full size currently selected image.
+     *
      * @return the full size currently selected image.
      */
     public BufferedImage getSelectedImage() {
