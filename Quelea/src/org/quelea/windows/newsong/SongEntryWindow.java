@@ -23,7 +23,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
-import java.util.HashSet;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
@@ -38,7 +37,6 @@ import org.quelea.displayable.Song;
 import org.quelea.displayable.TextSection;
 import org.quelea.languages.LabelGrabber;
 import org.quelea.utils.Utils;
-import org.quelea.windows.main.LyricCanvas;
 
 /**
  * A new song window that users use for inserting the text content of a new
@@ -83,7 +81,7 @@ public class SongEntryWindow extends JDialog {
             public void actionPerformed(ActionEvent e) {
 
                 setVisible(false);
-                Utils.updateSongInBackground(getSong(), true);
+                Utils.updateSongInBackground(getSong(), true, false);
                 if(addToSchedCBox.isSelected()) {
                     Application.get().getMainWindow().getMainPanel().getSchedulePanel().getScheduleList().getModel().addElement(getSong());
                 }

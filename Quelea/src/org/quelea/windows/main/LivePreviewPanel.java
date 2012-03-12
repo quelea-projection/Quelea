@@ -17,17 +17,26 @@
  */
 package org.quelea.windows.main;
 
-import org.quelea.windows.video.VideoPanel;
 import java.awt.BorderLayout;
 import java.awt.CardLayout;
 import java.awt.Component;
-import java.awt.event.*;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.util.HashSet;
 import java.util.Set;
 import javax.swing.JPanel;
-import org.quelea.displayable.*;
+import org.quelea.displayable.Displayable;
+import org.quelea.displayable.ImageDisplayable;
+import org.quelea.displayable.PresentationDisplayable;
+import org.quelea.displayable.Song;
+import org.quelea.displayable.TextDisplayable;
+import org.quelea.displayable.VideoDisplayable;
 import org.quelea.utils.QueleaProperties;
 import org.quelea.windows.main.quickedit.QuickEditDialog;
+import org.quelea.windows.video.VideoPanel;
 
 /**
  * The common superclass of the live / preview panels used for selecting the
@@ -229,6 +238,10 @@ public abstract class LivePreviewPanel extends JPanel {
         else {
             throw new RuntimeException("Displayable type not implemented: " + d.getClass());
         }
+    }
+    
+    public void refresh() {
+        setDisplayable(getDisplayable(), getIndex());
     }
 
     /**

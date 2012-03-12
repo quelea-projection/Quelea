@@ -679,6 +679,15 @@ public class Song implements TextDisplayable, Comparable<Song>, Printable {
     public void replaceSection(TextSection newSection, int index) {
         sections.set(index, newSection);
     }
+    
+    /**
+     * Remove the given text section.
+     * 
+     * @param index the index of the text section to remove.
+     */
+    public void removeSection(int index) {
+        sections.remove(index);
+    }
 
     /**
      * Get an array of all the sections in this song.

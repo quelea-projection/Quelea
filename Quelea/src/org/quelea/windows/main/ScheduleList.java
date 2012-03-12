@@ -30,7 +30,9 @@ import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.io.File;
 import java.io.IOException;
+import java.util.HashSet;
 import javax.swing.DefaultListModel;
 import javax.swing.DropMode;
 import javax.swing.JComponent;
@@ -40,11 +42,18 @@ import javax.swing.ListCellRenderer;
 import javax.swing.ListSelectionModel;
 import javax.swing.TransferHandler;
 import javax.swing.border.EmptyBorder;
+import org.quelea.Application;
+import org.quelea.Background;
 import org.quelea.Schedule;
+import org.quelea.Theme;
 import org.quelea.displayable.Displayable;
+import org.quelea.displayable.ImageDisplayable;
 import org.quelea.displayable.Song;
+import org.quelea.displayable.TextDisplayable;
+import org.quelea.displayable.TextSection;
 import org.quelea.displayable.TransferDisplayable;
 import org.quelea.utils.QueleaProperties;
+import org.quelea.utils.Utils;
 
 /**
  * The schedule list, all the items that are to be displayed in the service.
@@ -148,7 +157,7 @@ public class ScheduleList extends JList<Displayable> {
                 }
             }
         });
-        setDropMode(DropMode.INSERT);
+        setDropMode(DropMode.ON_OR_INSERT);
         DragSource.getDefaultDragSource().createDefaultDragGestureRecognizer(this, DnDConstants.ACTION_MOVE, new DragGestureListener() {
 
             /**
@@ -209,7 +218,35 @@ public class ScheduleList extends JList<Displayable> {
                     }
                 }
                 else {
-                    getModel().add(index, data);
+                    if(!dl.isInsert() && data instanceof ImageDisplayable) {
+                        Displayable val = getModel().get(locationToIndex(dl.getDropPoint()));
+                        if(val instanceof TextDisplayable) {
+                            ImageDisplayable imageData = (ImageDisplayable) data;
+                            TextDisplayable textVal = (TextDisplayable) val;
+                            Theme existingTheme = textVal.getSections()[0].getTheme();
+                            if(existingTheme == null) {
+                                existingTheme = Theme.DEFAULT_THEME;
+                            }
+                            Theme newTheme = new Theme(existingTheme.getFont(), existingTheme.getFontColor(), new Background(imageData.getFile().getName(), imageData.getOriginalImage()));
+                            newTheme.setFile(existingTheme.getFile());
+                            newTheme.setThemeName(existingTheme.getThemeName());
+                            for(TextSection section : textVal.getSections()) {
+                                section.setTheme(newTheme);
+                            }
+                            Application.get().getMainWindow().getMainPanel().getPreviewPanel().refresh();
+                            if(val instanceof Song) {
+                                Song song = (Song)val;
+                                Utils.updateSongInBackground(song, false, true);
+                            }
+
+                        }
+                        else {
+                            getModel().add(index, data);
+                        }
+                    }
+                    else {
+                        getModel().add(index, data);
+                    }
                 }
                 internalDrag = false;
                 return true;
