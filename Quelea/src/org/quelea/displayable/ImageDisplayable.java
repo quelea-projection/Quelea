@@ -20,6 +20,7 @@ package org.quelea.displayable;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.lang.ref.SoftReference;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -41,9 +42,9 @@ public class ImageDisplayable implements Displayable {
     public static final int ICON_WIDTH = 60;
     public static final int ICON_HEIGHT = 60;
     private final File file;
-    private final Icon icon;
+    private Icon icon;
     private Icon previewIcon;
-    private BufferedImage originalImage;
+    private SoftReference<BufferedImage> originalImage;
     private static final Logger LOGGER = LoggerUtils.getLogger();
 
     /**
@@ -53,13 +54,14 @@ public class ImageDisplayable implements Displayable {
     public ImageDisplayable(File file) {
         this.file = file;
         try {
-            originalImage = ImageIO.read(file);
+            BufferedImage image = ImageIO.read(file);
+            icon = new ImageIcon(Utils.resizeImage(image, ICON_WIDTH, ICON_HEIGHT));
+            originalImage = new SoftReference<>(image);
         }
         catch (IOException ex) {
             originalImage = null;
             LOGGER.log(Level.WARNING, "Couldn't create image displayable", ex);
         }
-        icon = new ImageIcon(Utils.resizeImage(originalImage, ICON_WIDTH, ICON_HEIGHT));
     }
 
     /**
@@ -118,7 +120,17 @@ public class ImageDisplayable implements Displayable {
      * @return the original image straight from the file.
      */
     public BufferedImage getOriginalImage() {
-        return originalImage;
+        BufferedImage image = originalImage.get();
+        if(image==null) {
+            try {
+                image = ImageIO.read(file);
+            }
+            catch (IOException ex) {
+                LOGGER.log(Level.WARNING, "Couldn't get original image", ex);
+            }
+        }
+        originalImage = new SoftReference<>(image);
+        return image;
     }
 
     /**
