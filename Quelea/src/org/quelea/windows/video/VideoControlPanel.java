@@ -33,8 +33,12 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.swing.*;
-import org.pushingpixels.substance.internal.ui.SubstanceSliderUI;
+import javax.swing.BoxLayout;
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JPanel;
+import javax.swing.JSlider;
+import javax.swing.SwingUtilities;
 import org.quelea.utils.LoggerUtils;
 import org.quelea.utils.Utils;
 import org.quelea.video.RemotePlayer;
@@ -49,7 +53,6 @@ import org.quelea.windows.main.LyricCanvas;
 public class VideoControlPanel extends JPanel {
 
     private static final Logger LOGGER = LoggerUtils.getLogger();
-    private static final boolean TEST_DISABLE_SUBSTANCE = true;
     private JButton play;
     private JButton pause;
     private JButton stop;
@@ -136,31 +139,6 @@ public class VideoControlPanel extends JPanel {
                 }
             }
         });
-        if(!TEST_DISABLE_SUBSTANCE) {
-            try {
-                positionSlider.setUI(new SubstanceSliderUI(positionSlider) {
-
-                    @Override
-                    protected void scrollDueToClickInTrack(int direction) {
-                        // this is the default behaviour, let's comment that out
-                        //scrollByBlock(direction);
-
-                        int value = positionSlider.getValue();
-
-                        if(positionSlider.getOrientation() == JSlider.HORIZONTAL) {
-                            value = this.valueForXPosition(positionSlider.getMousePosition().x);
-                        }
-                        else if(positionSlider.getOrientation() == JSlider.VERTICAL) {
-                            value = this.valueForYPosition(positionSlider.getMousePosition().y);
-                        }
-                        positionSlider.setValue(value);
-                    }
-                });
-            }
-            catch (Exception ex) {
-                //UI issue, cannot do a lot and don't want to break program...
-            }
-        }
         videoArea = new Canvas();
         videoArea.setBackground(Color.BLACK);
         videoArea.setMinimumSize(new Dimension(20, 20));
