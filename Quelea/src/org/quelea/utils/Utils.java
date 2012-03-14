@@ -26,6 +26,7 @@ import java.awt.GraphicsEnvironment;
 import java.awt.Image;
 import java.awt.Rectangle;
 import java.awt.RenderingHints;
+import java.awt.Toolkit;
 import java.awt.font.TextAttribute;
 import java.awt.image.BufferedImage;
 import java.io.BufferedReader;
@@ -70,6 +71,13 @@ public final class Utils {
      */
     private Utils() {
         throw new AssertionError();
+    }
+    
+    /**
+     * Beep!
+     */
+    public static void beep() {
+        Toolkit.getDefaultToolkit().beep();
     }
 
     /**
