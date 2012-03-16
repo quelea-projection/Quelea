@@ -109,7 +109,7 @@ public abstract class LivePreviewPanel extends JPanel {
 
     /**
      * Perform a quick edit on the given index.
-     * 
+     *
      * @param index the index on which to perform the quick edit.
      */
     public void doQuickEdit(int index) {
@@ -239,9 +239,14 @@ public abstract class LivePreviewPanel extends JPanel {
             throw new RuntimeException("Displayable type not implemented: " + d.getClass());
         }
     }
-    
+
+    /**
+     * Refresh the current content of this panel, if any exists.
+     */
     public void refresh() {
-        setDisplayable(getDisplayable(), getIndex());
+        if(getDisplayable() != null) {
+            setDisplayable(getDisplayable(), getIndex());
+        }
     }
 
     /**
