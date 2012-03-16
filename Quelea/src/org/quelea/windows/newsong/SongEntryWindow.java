@@ -262,7 +262,6 @@ public class SongEntryWindow extends JDialog {
         if(song == null) {
             song = new Song(getBasicSongPanel().getTitleField().getText(), getBasicSongPanel().getAuthorField().getText());
         }
-        Theme tempTheme = song.getSections()[0].getTempTheme();
         song.setLyrics(getBasicSongPanel().getLyricsField().getText());
         song.setTitle(getBasicSongPanel().getTitleField().getText());
         song.setAuthor(getBasicSongPanel().getAuthorField().getText());
@@ -274,6 +273,7 @@ public class SongEntryWindow extends JDialog {
         song.setKey(getDetailedSongPanel().getKeyField().getText());
         song.setCapo(getDetailedSongPanel().getCapoField().getText());
         song.setInfo(getDetailedSongPanel().getInfoField().getText());
+        Theme tempTheme = song.getSections()[0].getTempTheme();
         for(TextSection section : song.getSections()) {
             section.setTheme(themePanel.getTheme());
             if(tempTheme != null) {
