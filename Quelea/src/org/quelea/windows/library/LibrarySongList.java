@@ -28,18 +28,12 @@ import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
-import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.swing.DefaultListCellRenderer;
-import javax.swing.DefaultListModel;
-import javax.swing.JList;
-import javax.swing.ListSelectionModel;
-import javax.swing.SwingUtilities;
+import javax.swing.*;
 import org.quelea.SongDatabase;
 import org.quelea.SortedListModel;
 import org.quelea.displayable.Displayable;
@@ -173,17 +167,29 @@ public class LibrarySongList extends JList<Song> implements DatabaseListener {
             
             @Override
             public void run() {
-                final DefaultListModel<Song> model = new DefaultListModel<>();
+                final AbstractListModel<Song> model;
                 
-                Song[] titleSongs = SongDatabase.get().getIndex().filterSongs(search, SearchIndex.FilterType.TITLE);
-                for(Song song : titleSongs) {
-                    song.setLastSearch(search);
-                    model.addElement(song);
-                }
-                Song[] lyricSongs = SongDatabase.get().getIndex().filterSongs(search, SearchIndex.FilterType.LYRICS);
-                for(Song song : lyricSongs) {
-                    song.setLastSearch(null);
-                    model.addElement(song);
+                // empty or null search strings do not need to be filtered - lest they get added twice
+                if(search == null || search.trim().isEmpty()) {
+                    SortedListModel<Song> m = new SortedListModel<>();
+                    for(Song song : SongDatabase.get().getSongs()) {
+                        song.setLastSearch(null);
+                        m.add(song);
+                    }
+                    model = m;
+                } else {
+                    DefaultListModel<Song> m = new DefaultListModel<>();
+                    Song[] titleSongs = SongDatabase.get().getIndex().filterSongs(search, SearchIndex.FilterType.TITLE);
+                    for(Song song : titleSongs) {
+                        song.setLastSearch(search);
+                        m.addElement(song);
+                    }
+                    Song[] lyricSongs = SongDatabase.get().getIndex().filterSongs(search, SearchIndex.FilterType.LYRICS);
+                    for(Song song : lyricSongs) {
+                        song.setLastSearch(null);
+                        m.addElement(song);
+                    }
+                    model = m;
                 }
                 
                 SwingUtilities.invokeLater(new Runnable() {
