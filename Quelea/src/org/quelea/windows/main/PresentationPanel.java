@@ -37,7 +37,7 @@ import org.quelea.powerpoint.PresentationSlide;
  */
 public class PresentationPanel extends ContainedPanel {
 
-    private PowerpointList powerpointList;
+    private PresentationList powerpointList;
 
     /**
      * Create a new presentation panel.
@@ -46,7 +46,7 @@ public class PresentationPanel extends ContainedPanel {
      */
     public PresentationPanel(final LivePreviewPanel containerPanel) {
         setLayout(new BorderLayout());
-        powerpointList = new PowerpointList();
+        powerpointList = new PresentationList();
         powerpointList.addListSelectionListener(new ListSelectionListener() {
 
             @Override
