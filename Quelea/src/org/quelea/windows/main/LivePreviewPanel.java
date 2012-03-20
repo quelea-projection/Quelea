@@ -57,7 +57,7 @@ public abstract class LivePreviewPanel extends JPanel {
     private String currentLabel;
     private SelectLyricsPanel lyricsPanel = new SelectLyricsPanel(this);
     private ImagePanel picturePanel = new ImagePanel(this);
-    private PowerpointPanel powerpointPanel = new PowerpointPanel(this);
+    private PresentationPanel powerpointPanel = new PresentationPanel(this);
     private VideoPanel videoPanel = new VideoPanel();
     private QuickEditDialog quickEditDialog = new QuickEditDialog();
     /**

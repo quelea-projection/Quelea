@@ -31,20 +31,20 @@ import org.quelea.displayable.PresentationDisplayable;
 import org.quelea.powerpoint.PresentationSlide;
 
 /**
- * The panel for displaying powerpoint slides in the live / preview panels.
+ * The panel for displaying presentation slides in the live / preview panels.
  *
  * @author Michael
  */
-public class PowerpointPanel extends ContainedPanel {
+public class PresentationPanel extends ContainedPanel {
 
     private PowerpointList powerpointList;
 
     /**
-     * Create a new powerpoint panel.
+     * Create a new presentation panel.
      *
      * @param containerPanel the panel to create.
      */
-    public PowerpointPanel(final LivePreviewPanel containerPanel) {
+    public PresentationPanel(final LivePreviewPanel containerPanel) {
         setLayout(new BorderLayout());
         powerpointList = new PowerpointList();
         powerpointList.addListSelectionListener(new ListSelectionListener() {
@@ -67,7 +67,7 @@ public class PowerpointPanel extends ContainedPanel {
     }
 
     /**
-     * Set the displayable to be on this powerpoint panel.
+     * Set the displayable to be on this presentation panel.
      *
      * @param displayable the presentation displayable to display.
      * @param index the index to display.
@@ -100,7 +100,7 @@ public class PowerpointPanel extends ContainedPanel {
     }
 
     /**
-     * Add a key listener to this powerpoint panel.
+     * Add a key listener to this presentation panel.
      *
      * @param l the key listener to add.
      */
@@ -124,7 +124,7 @@ public class PowerpointPanel extends ContainedPanel {
      */
     @Override
     public void clear() {
-        //Doesn't really apply
+        //Doesn't apply
     }
 //    public static void main(String[] args) {
 //        final PowerpointPanel panel = new PowerpointPanel(null);
