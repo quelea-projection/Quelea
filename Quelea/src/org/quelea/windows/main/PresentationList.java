@@ -31,17 +31,17 @@ import org.quelea.powerpoint.PresentationSlide;
 import org.quelea.utils.QueleaProperties;
 
 /**
- * A JList for specifically displaying powerpoint slides.
+ * A JList for specifically displaying presentation slides.
  * @author Michael
  */
-public class PowerpointList extends JList<PresentationSlide> {
+public class PresentationList extends JList<PresentationSlide> {
 
     private Color originalSelectionColour;
 
     /**
-     * Create a new powerpoint list.
+     * Create a new presentation list.
      */
-    public PowerpointList() {
+    public PresentationList() {
         setModel(new DefaultListModel<PresentationSlide>());
         setCellRenderer(new CustomCellRenderer());
         Color inactiveColor = QueleaProperties.get().getInactiveSelectionColor();
