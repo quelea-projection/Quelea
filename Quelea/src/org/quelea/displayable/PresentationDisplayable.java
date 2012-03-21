@@ -22,8 +22,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import javax.swing.Icon;
 import org.quelea.powerpoint.Presentation;
-import org.w3c.dom.Node;
 import org.quelea.utils.Utils;
+import org.w3c.dom.Node;
 
 /**
  * A displayable that's a presentation, at this time that means it's a 
