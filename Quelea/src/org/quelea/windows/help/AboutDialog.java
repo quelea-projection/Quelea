@@ -44,7 +44,7 @@ public class AboutDialog extends JDialog {
         this.owner = owner;
         setLayout(new BoxLayout(this.getContentPane(), BoxLayout.Y_AXIS));
         add(new JLabel("<html><h1>Quelea</h1> " + LabelGrabber.INSTANCE.getLabel("help.about.version") + " " + QueleaProperties.VERSION.getVersionString() + "</html>"));
-        add(new JLabel(Utils.getImageIcon("img/logo.png")));
+        add(new JLabel(Utils.getImageIcon("icons/logo.png")));
         add(new JLabel(" "));
         add(new JLabel(LabelGrabber.INSTANCE.getLabel("help.about.line1")));
         add(new JLabel(LabelGrabber.INSTANCE.getLabel("help.about.line2")));

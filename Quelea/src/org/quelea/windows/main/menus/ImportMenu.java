@@ -59,7 +59,7 @@ public class ImportMenu extends JMenu {
         kingswayImportDialog = new KingswayImportDialog(Application.get().getMainWindow());
 //        sofImportDialog = new SofImportDialog(Application.get().getMainWindow());
         
-        qspItem = new JMenuItem(LabelGrabber.INSTANCE.getLabel("qsp.button"), Utils.getImageIcon("img/logo.png", 16, 16));
+        qspItem = new JMenuItem(LabelGrabber.INSTANCE.getLabel("qsp.button"), Utils.getImageIcon("icons/logo.png", 16, 16));
         qspItem.setMnemonic('q');
         qspItem.addActionListener(new ActionListener() {
 
