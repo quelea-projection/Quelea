@@ -43,7 +43,7 @@ public class SplashWindow extends FadeWindow {
      */
     public SplashWindow() {
         try {
-            BufferedImage image = ImageIO.read(new File("img/splash.png"));
+            BufferedImage image = ImageIO.read(new File("icons/splash.png"));
             Graphics2D graphics = (Graphics2D) image.getGraphics();
             graphics.setFont(new Font("Verdana", 0, 45));
             graphics.drawString(QueleaProperties.VERSION.getVersionString(), 220, 140);

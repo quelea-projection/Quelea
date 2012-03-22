@@ -71,7 +71,7 @@ public class MainWindow extends JFrame implements ApplicationListener {
         super("Quelea " + QueleaProperties.VERSION.getVersionString());
         macApp = new org.simplericity.macify.eawt.DefaultApplication();
         macApp.addApplicationListener(this);
-        macApp.setApplicationIconImage(Utils.getImage("img/logo.png"));
+        macApp.setApplicationIconImage(Utils.getImage("icons/logo.png"));
         
         setLayout(new BorderLayout());
         noticeDialog = new NoticeDialog(this);
@@ -89,7 +89,7 @@ public class MainWindow extends JFrame implements ApplicationListener {
             }
         });
         try {
-            setIconImage(ImageIO.read(new File("img/logo.png")));
+            setIconImage(ImageIO.read(new File("icons/logo.png")));
         }
         catch (IOException ex) {
             LOGGER.log(Level.SEVERE, "Couldn't set JFrame image", ex);
