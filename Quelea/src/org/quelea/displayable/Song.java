@@ -1080,4 +1080,9 @@ public class Song implements TextDisplayable, Comparable<Song>, Printable {
         nextSection.set(pageIndex + 1, getSections().length);
         return PAGE_EXISTS;
     }
+    
+    @Override
+    public void dispose() {
+        //Nothing needed here.
+    }
 }

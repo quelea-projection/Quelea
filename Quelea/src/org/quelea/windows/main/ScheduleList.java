@@ -353,6 +353,16 @@ public class ScheduleList extends JList<Displayable> {
     public void removeCurrentItem() {
         int selectedIndex = getSelectedIndex();
         if(selectedIndex != -1) {
+            Displayable d = getSelectedValue();
+            Displayable live = Application.get().getMainWindow().getMainPanel().getLivePanel().getDisplayable();
+            if(d==live) {
+                Application.get().getMainWindow().getMainPanel().getLivePanel().clear();
+            }
+            Displayable preview = Application.get().getMainWindow().getMainPanel().getPreviewPanel().getDisplayable();
+            if(d == preview) {
+                Application.get().getMainWindow().getMainPanel().getPreviewPanel().clear();
+            }
+            d.dispose();
             getModel().remove(getSelectedIndex());
         }
     }

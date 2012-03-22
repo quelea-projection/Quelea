@@ -47,11 +47,11 @@ public final class QueleaProperties extends Properties {
             if(!getPropFile().exists()) {
                 getPropFile().createNewFile();
             }
-            try(FileReader reader = new FileReader(getPropFile())) {
+            try (FileReader reader = new FileReader(getPropFile())) {
                 load(reader);
             }
         }
-        catch(IOException ex) {
+        catch (IOException ex) {
 //            LOGGER.log(Level.SEVERE, "Couldn't load properties", ex);
 //            ex.printStackTrace();
         }
@@ -70,10 +70,10 @@ public final class QueleaProperties extends Properties {
      * Save these properties to the file.
      */
     private void write() {
-        try(FileWriter writer = new FileWriter(getPropFile())) {
+        try (FileWriter writer = new FileWriter(getPropFile())) {
             store(writer, "Auto save");
         }
-        catch(IOException ex) {
+        catch (IOException ex) {
 //            LOGGER.log(Level.WARNING, "Couldn't store properties", ex);
         }
     }
@@ -96,9 +96,10 @@ public final class QueleaProperties extends Properties {
     public File getLanguageFile() {
         return new File("languages", getProperty("language.file", "gb.lang"));
     }
-    
+
     /**
      * Get the location of Quelea's Facebook page.
+     *
      * @return the location of the facebook page.
      */
     public String getFacebookPageLocation() {
@@ -823,5 +824,45 @@ public final class QueleaProperties extends Properties {
                 + "lord,Lord,him,Him,son,Son,i,I,his,His,your,Your,king,King,"
                 + "saviour,Saviour,savior,Savior,majesty,Majesty,alpha,Alpha,omega,Omega") //Yeah.. default testing properties.
                 .trim().split(",");
+    }
+
+    /**
+     * Get whether to use openoffice for presentations.
+     *
+     * @return true if we should use openoffice, false if we should just use the
+     * basic POI images.
+     */
+    public boolean getUseOO() {
+        return Boolean.parseBoolean(getProperty("use.oo", "false"));
+    }
+
+    /**
+     * Set whether to use openoffice for presentations.
+     *
+     * @param val if we should use openoffice, false if we should just use the
+     * basic POI images.
+     */
+    public void setUseOO(boolean val) {
+        setProperty("use.oo", Boolean.toString(val));
+        write();
+    }
+
+    /**
+     * Get the path to the openoffice installation on this machine.
+     *
+     * @return the path to the openoffice installation on this machine.
+     */
+    public String getOOPath() {
+        return getProperty("oo.path", "");
+    }
+    
+    /**
+     * Set the path to the openoffice installation on this machine.
+     *
+     * @param path the path to the openoffice installation on this machine.
+     */
+    public void setOOPath(String path) {
+        setProperty("oo.path", path);
+        write();
     }
 }

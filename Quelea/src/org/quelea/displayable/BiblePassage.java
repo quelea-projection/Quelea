@@ -183,4 +183,9 @@ public class BiblePassage implements TextDisplayable {
     public boolean supportClear() {
         return true;
     }
+
+    @Override
+    public void dispose() {
+        //Nothing needed here.
+    }
 }

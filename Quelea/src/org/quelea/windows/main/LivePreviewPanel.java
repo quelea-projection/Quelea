@@ -27,13 +27,18 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JPanel;
+import org.quelea.Application;
 import org.quelea.displayable.Displayable;
 import org.quelea.displayable.ImageDisplayable;
 import org.quelea.displayable.PresentationDisplayable;
 import org.quelea.displayable.Song;
 import org.quelea.displayable.TextDisplayable;
 import org.quelea.displayable.VideoDisplayable;
+import org.quelea.powerpoint.OOPresentation;
+import org.quelea.utils.LoggerUtils;
 import org.quelea.utils.QueleaProperties;
 import org.quelea.windows.main.quickedit.QuickEditDialog;
 import org.quelea.windows.video.VideoPanel;
@@ -46,6 +51,7 @@ import org.quelea.windows.video.VideoPanel;
  */
 public abstract class LivePreviewPanel extends JPanel {
 
+    private static final Logger LOGGER = LoggerUtils.getLogger();
     private final Set<LyricCanvas> canvases = new HashSet<>();
     private final Set<LyricWindow> windows = new HashSet<>();
     private Displayable displayable;
@@ -57,7 +63,7 @@ public abstract class LivePreviewPanel extends JPanel {
     private String currentLabel;
     private SelectLyricsPanel lyricsPanel = new SelectLyricsPanel(this);
     private ImagePanel picturePanel = new ImagePanel(this);
-    private PresentationPanel powerpointPanel = new PresentationPanel(this);
+    private PresentationPanel presentationPanel = new PresentationPanel(this);
     private VideoPanel videoPanel = new VideoPanel();
     private QuickEditDialog quickEditDialog = new QuickEditDialog();
     /**
@@ -69,7 +75,7 @@ public abstract class LivePreviewPanel extends JPanel {
             this.add(lyricsPanel);
             this.add(picturePanel);
             this.add(videoPanel);
-            this.add(powerpointPanel);
+            this.add(presentationPanel);
         }
     };
 
@@ -83,7 +89,7 @@ public abstract class LivePreviewPanel extends JPanel {
         cardPanel.add(lyricsPanel, LYRICS_LABEL);
         cardPanel.add(picturePanel, IMAGE_LABEL);
         cardPanel.add(videoPanel, VIDEO_LABEL);
-        cardPanel.add(powerpointPanel, PRESENTATION_LABEL);
+        cardPanel.add(presentationPanel, PRESENTATION_LABEL);
         ((CardLayout) cardPanel.getLayout()).show(cardPanel, LYRICS_LABEL);
 
         lyricsPanel.getLyricsList().addMouseListener(new MouseAdapter() {
@@ -107,6 +113,14 @@ public abstract class LivePreviewPanel extends JPanel {
         });
     }
 
+    /**
+     * Get the presentation panel on this live / preview panel.
+     * @return the presentation panel.
+     */
+    protected PresentationPanel getPresentationPanel() {
+        return presentationPanel;
+    }
+    
     /**
      * Perform a quick edit on the given index.
      *
@@ -165,7 +179,7 @@ public abstract class LivePreviewPanel extends JPanel {
     public void clear() {
         displayable = null;
         if(PRESENTATION_LABEL.equals(currentLabel)) {
-            powerpointPanel.setDisplayable(null, 0);
+            presentationPanel.setDisplayable(null, 0);
         }
         for(ContainedPanel panel : containedSet) {
             panel.clear();
@@ -181,7 +195,7 @@ public abstract class LivePreviewPanel extends JPanel {
      */
     public int getIndex() {
         if(PRESENTATION_LABEL.equals(currentLabel)) {
-            return powerpointPanel.getIndex();
+            return presentationPanel.getIndex();
         }
         else {
             return lyricsPanel.getIndex();
@@ -205,11 +219,12 @@ public abstract class LivePreviewPanel extends JPanel {
      */
     public void setDisplayable(Displayable d, int index) {
         this.displayable = d;
+        presentationPanel.stopCurrent();
         if(VIDEO_LABEL.equals(currentLabel)) {
             videoPanel.getVideoControlPanel().stopVideo();
         }
         if(PRESENTATION_LABEL.equals(currentLabel)) {
-            powerpointPanel.setDisplayable(null, 0);
+            presentationPanel.setDisplayable(null, 0);
         }
         if(d instanceof TextDisplayable) {
             lyricsPanel.showDisplayable((TextDisplayable) d, index);
@@ -232,8 +247,12 @@ public abstract class LivePreviewPanel extends JPanel {
         }
         else if(d instanceof PresentationDisplayable) {
             ((CardLayout) cardPanel.getLayout()).show(cardPanel, PRESENTATION_LABEL);
-            powerpointPanel.setDisplayable((PresentationDisplayable) d, index);
+            presentationPanel.setDisplayable((PresentationDisplayable) d, index);
             currentLabel = PRESENTATION_LABEL;
+        }
+        else if(d==null) {
+            LOGGER.log(Level.WARNING, "BUG: Called setDisplayable(null), should probably call clear() instead.");
+            clear();
         }
         else {
             throw new RuntimeException("Displayable type not implemented: " + d.getClass());
