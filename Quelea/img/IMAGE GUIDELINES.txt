@@ -14,4 +14,6 @@ This folder is for background images that we want to include in the release of Q
 
  - Obvious point, but be sensible. If you think it'd be contraversial, take people's focus away from the words, or anything like that - don't use it.
 
+ - Be mindful of licensing. Using free existing work is ok, but to be on the safe side I'd prefer it if we explicitly checked with the author beforehand to make sure it's ok to include. They may want some form of attribution, I've no problem at all with including something somewhere thanking those who have contributed images. We'll cross this bridge if we come to it.
+
  - Before each release, we'll try and audit all the new images on the development group to ensure we think they're all ok.
