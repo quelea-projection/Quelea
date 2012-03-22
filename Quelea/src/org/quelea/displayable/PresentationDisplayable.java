@@ -21,23 +21,34 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
 import javax.swing.Icon;
+import org.quelea.powerpoint.OOPresentation;
 import org.quelea.powerpoint.Presentation;
 import org.quelea.utils.Utils;
 import org.w3c.dom.Node;
 
 /**
- * A displayable that's a presentation, at this time that means it's a 
- * powerpoint presentation converted into a number of static images.
+ * A displayable that's a presentation.
  * @author Michael
  */
 public class PresentationDisplayable implements Displayable {
 
     private final File file;
     private final Presentation presentation;
+    private OOPresentation ooPresentation;
 
+    /**
+     * Create a new presentation displayable
+     * @param file the file to create the presentation from.
+     */
     public PresentationDisplayable(File file) {
         this.file = file;
         presentation = new Presentation(file.getAbsolutePath());
+        try {
+            ooPresentation = new OOPresentation(file.getAbsolutePath());
+        }
+        catch (Exception ex) {
+            ooPresentation = null;
+        }
     }
 
     /**
@@ -46,6 +57,14 @@ public class PresentationDisplayable implements Displayable {
      */
     public Presentation getPresentation() {
         return presentation;
+    }
+
+    /**
+     * Get the OO presentation object.
+     * @return the openoffice API backed presentation.
+     */
+    public OOPresentation getOOPresentation() {
+        return ooPresentation;
     }
 
     /**
@@ -114,5 +133,15 @@ public class PresentationDisplayable implements Displayable {
     @Override
     public boolean supportClear() {
         return false;
+    }
+    
+    /**
+     * Get rid of this presentation displayable.
+     */
+    @Override
+    public void dispose() {
+        if(ooPresentation!=null) {
+            ooPresentation.dispose();
+        }
     }
 }

@@ -26,6 +26,7 @@ import javax.swing.JOptionPane;
 import org.quelea.Application;
 import org.quelea.Schedule;
 import org.quelea.ScheduleSaver;
+import org.quelea.displayable.Displayable;
 import org.quelea.languages.LabelGrabber;
 import org.quelea.utils.LoggerUtils;
 
@@ -65,11 +66,16 @@ public class ExitActionListener implements ActionListener {
                     new ScheduleSaver().saveSchedule(false);
                     break;
                 case JOptionPane.NO_OPTION:
-                    System.exit(0);
                     break;
                 case JOptionPane.CANCEL_OPTION: //Don't exit
                     return;
             }
+        }
+        LOGGER.log(Level.INFO, "Cleaning up displayables before exiting..");
+        for(Object obj : Application.get().getMainWindow().getMainPanel().getSchedulePanel().getScheduleList().getModel().toArray()) {
+            Displayable d = (Displayable)obj;
+            LOGGER.log(Level.INFO, "Cleaning up {0}", d.getClass());
+            d.dispose();
         }
         System.exit(0);
     }
