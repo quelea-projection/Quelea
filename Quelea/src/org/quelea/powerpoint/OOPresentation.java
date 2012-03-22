@@ -17,12 +17,14 @@
  */
 package org.quelea.powerpoint;
 
+import com.sun.star.animations.XAnimationNode;
 import com.sun.star.beans.PropertyValue;
 import com.sun.star.beans.PropertyVetoException;
 import com.sun.star.beans.UnknownPropertyException;
 import com.sun.star.comp.helper.BootstrapException;
 import com.sun.star.frame.XComponentLoader;
 import com.sun.star.frame.XModel;
+import com.sun.star.lang.EventObject;
 import com.sun.star.lang.IllegalArgumentException;
 import com.sun.star.lang.WrappedTargetException;
 import com.sun.star.lang.XComponent;
@@ -30,11 +32,14 @@ import com.sun.star.presentation.XPresentation;
 import com.sun.star.presentation.XPresentation2;
 import com.sun.star.presentation.XPresentationSupplier;
 import com.sun.star.presentation.XSlideShowController;
+import com.sun.star.presentation.XSlideShowListener;
 import com.sun.star.sdbc.SQLException;
 import com.sun.star.sdbc.XCloseable;
 import com.sun.star.uno.UnoRuntime;
 import com.sun.star.uno.XComponentContext;
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.quelea.utils.Utils;
@@ -54,6 +59,7 @@ public class OOPresentation {
     private XSlideShowController controller;
     private XComponent doc;
     private boolean disposed;
+    private List<SlideChangedListener> slideListeners;
 
     /**
      * Initialise the library - this involves connecting to openoffice to
@@ -99,6 +105,7 @@ public class OOPresentation {
         if(!init) {
             throw new IllegalStateException("I'm not initialised yet! init() needs to be called before creating presentations.");
         }
+        slideListeners = new ArrayList<>();
         File sourceFile = new File(file);
         StringBuilder sURL = new StringBuilder("file:///");
         sURL.append(sourceFile.getCanonicalPath().replace('\\', '/'));
@@ -124,8 +131,19 @@ public class OOPresentation {
     }
 
     /**
+     * Add a slide listener to this presentation.
+     *
+     * @param listener the listener to add.
+     */
+    public void addSlideListener(SlideChangedListener listener) {
+        slideListeners.add(listener);
+    }
+
+    /**
      * Start the presentation, displaying it in a full screen window.
-     * @param display the 0 based index of the display to display the presentation on.
+     *
+     * @param display the 0 based index of the display to display the
+     * presentation on.
      */
     public void start(int display) {
         display++; //Openoffice requires base 1, we want base 0.
@@ -137,20 +155,80 @@ public class OOPresentation {
         catch (UnknownPropertyException | PropertyVetoException | IllegalArgumentException | WrappedTargetException ex) {
             LOGGER.log(Level.SEVERE, "Error setting presentation properties", ex);
         }
-        xPresentation.start();
+        if(!xPresentation.isRunning()) {
+            xPresentation.start();
+        }
         while(controller == null) { //Block until we get a controller.
             controller = xPresentation.getController();
             Utils.sleep(50);
         }
+        controller.addSlideShowListener(new XSlideShowListener() {
+
+            @Override
+            public void paused() {
+            }
+
+            @Override
+            public void resumed() {
+            }
+
+            @Override
+            public void slideTransitionStarted() {
+                for(SlideChangedListener listener : slideListeners) {
+                    listener.slideChanged(controller.getCurrentSlideIndex());
+                }
+            }
+
+            @Override
+            public void slideTransitionEnded() {
+//                System.out.println("slide transition end");
+            }
+
+            @Override
+            public void slideAnimationsEnded() {
+//                System.out.println("slide animations end");
+            }
+
+            @Override
+            public void slideEnded(boolean bln) {
+//                System.out.println("slide end");
+            }
+
+            @Override
+            public void hyperLinkClicked(String string) {
+//                throw new UnsupportedOperationException("Not supported yet.");
+            }
+
+            @Override
+            public void beginEvent(XAnimationNode xan) {
+//                System.out.println("begin event");
+            }
+
+            @Override
+            public void endEvent(XAnimationNode xan) {
+//                System.out.println("end event");
+            }
+
+            @Override
+            public void repeat(XAnimationNode xan, int i) {
+//                System.out.println("repeat");
+            }
+
+            @Override
+            public void disposing(EventObject eo) {
+//                System.out.println("disposing");
+            }
+        });
     }
 
     /**
      * Determine if this presentation is running.
+     *
      * @return true if its running, false otherwise.
      */
     public boolean isRunning() {
-        if(controller != null) {
-            return controller.isRunning();
+        if(xPresentation != null) {
+            return xPresentation.isRunning();
         }
         else {
             return false;
@@ -169,11 +247,12 @@ public class OOPresentation {
     }
 
     /**
-     * Advance forward one step. This will involve either advancing to the next animation
-     * in the slide, or advancing to the next slide (depending on the presentation.)
+     * Advance forward one step. This will involve either advancing to the next
+     * animation in the slide, or advancing to the next slide (depending on the
+     * presentation.)
      */
     public void goForward() {
-        if(controller != null) {
+        if(controller != null && controller.getNextSlideIndex() != -1) {
             controller.gotoNextEffect();
         }
     }
@@ -189,6 +268,7 @@ public class OOPresentation {
 
     /**
      * Navigate directly to the slide at the given index.
+     *
      * @param index the index of the slide to navigate to.
      */
     public void gotoSlide(int index) {
@@ -198,7 +278,11 @@ public class OOPresentation {
     }
 
     /**
-     * Clear up this presentation, releasing all the resources associated with it (all the underlying OO library objects.) This must be called before this presentation is eligible for GC to prevent memory leaks. In the event that it isn't called before it's garbage collected, a warning will be printed since this should be classed as a bug.
+     * Clear up this presentation, releasing all the resources associated with
+     * it (all the underlying OO library objects.) This must be called before
+     * this presentation is eligible for GC to prevent memory leaks. In the
+     * event that it isn't called before it's garbage collected, a warning will
+     * be printed since this should be classed as a bug.
      */
     public void dispose() {
         if(!disposed) {
@@ -211,7 +295,9 @@ public class OOPresentation {
             if(doc != null) {
                 XCloseable xcloseable = UnoRuntime.queryInterface(XCloseable.class, doc);
                 try {
-                    xcloseable.close();
+                    if(xcloseable != null) {
+                        xcloseable.close();
+                    }
                 }
                 catch (SQLException ex) {
                     LOGGER.log(Level.WARNING, "Error occured when closing presentation", ex);
@@ -223,7 +309,9 @@ public class OOPresentation {
     }
 
     /**
-     * If the object hasn't been disposed, clean it up at this point and display a warning.
+     * If the object hasn't been disposed, clean it up at this point and display
+     * a warning.
+     *
      * @throws Throwable if something goes wrong in finalisation.
      */
     @Override
@@ -233,7 +321,8 @@ public class OOPresentation {
     }
 
     /**
-     * If the object hasn't been disposed, clean it up at this point and display a warning.
+     * If the object hasn't been disposed, clean it up at this point and display
+     * a warning.
      */
     private void checkDisposed() {
         if(!disposed) {
@@ -250,17 +339,19 @@ public class OOPresentation {
         /**
          * Connect to an office, if no office is running a new instance is
          * started. A new connection is established and the service manger from
-         * the running offic eis returned.
+         * the running office is returned.
          *
          * @param path the path to the openoffice install.
          */
         private static XComponentContext connect(String path) throws BootstrapException {
-            com.sun.star.uno.XComponentContext xOfficeContext = ooo.connector.BootstrapSocketConnector.bootstrap(path);
+            File progPath = new File(path, "program");
+            com.sun.star.uno.XComponentContext xOfficeContext = ooo.connector.BootstrapSocketConnector.bootstrap(progPath.getAbsolutePath());
             return xOfficeContext;
         }
 
         /**
          * Creates and instantiates a new document
+         *
          * @throws Exception if something goes wrong creating the document.
          */
         private static XComponent createDocument(XComponentContext xOfficeContext, String sURL, String sTargetFrame, int nSearchFlags, PropertyValue[] aArgs) throws Exception {

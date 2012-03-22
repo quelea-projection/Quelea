@@ -51,6 +51,7 @@ public class LivePanel extends LivePreviewPanel {
      * Create a new live lyrics panel.
      */
     public LivePanel() {
+        getPresentationPanel().setLive();
         JToolBar header = new JToolBar();
         header.setFloatable(false);
         header.add(new JLabel("<html><b>" + LabelGrabber.INSTANCE.getLabel("live.heading") + "</b></html>"));

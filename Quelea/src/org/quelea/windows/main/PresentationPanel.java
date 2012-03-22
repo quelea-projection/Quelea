@@ -18,17 +18,24 @@
 package org.quelea.windows.main;
 
 import java.awt.BorderLayout;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.image.BufferedImage;
 import java.util.HashSet;
 import javax.swing.DefaultListModel;
 import javax.swing.JScrollPane;
+import javax.swing.SwingUtilities;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
+import org.quelea.Application;
 import org.quelea.Background;
 import org.quelea.Theme;
 import org.quelea.displayable.PresentationDisplayable;
+import org.quelea.powerpoint.OOPresentation;
 import org.quelea.powerpoint.PresentationSlide;
+import org.quelea.powerpoint.SlideChangedListener;
+import org.quelea.utils.QueleaProperties;
 
 /**
  * The panel for displaying presentation slides in the live / preview panels.
@@ -37,7 +44,9 @@ import org.quelea.powerpoint.PresentationSlide;
  */
 public class PresentationPanel extends ContainedPanel {
 
-    private PresentationList powerpointList;
+    private PresentationList presentationList;
+    private PresentationDisplayable displayable;
+    private boolean live;
 
     /**
      * Create a new presentation panel.
@@ -46,24 +55,81 @@ public class PresentationPanel extends ContainedPanel {
      */
     public PresentationPanel(final LivePreviewPanel containerPanel) {
         setLayout(new BorderLayout());
-        powerpointList = new PresentationList();
-        powerpointList.addListSelectionListener(new ListSelectionListener() {
+        presentationList = new PresentationList();
+        presentationList.addListSelectionListener(new ListSelectionListener() {
 
             @Override
             public void valueChanged(ListSelectionEvent e) {
-                if(!powerpointList.getValueIsAdjusting()) {
-                    HashSet<LyricCanvas> canvases = new HashSet<>();
-                    canvases.addAll(containerPanel.getCanvases());
-                    for(LyricCanvas lc : canvases) {
-                        lc.eraseText();
-                        BufferedImage displayImage = powerpointList.getCurrentImage(lc.getWidth(), lc.getHeight());
-                        lc.setTheme(new Theme(null, null, new Background(null, displayImage)));
+                if(live) {
+                    if(!presentationList.getValueIsAdjusting() && !presentationList.isUpdating()) {
+                        if(displayable != null && displayable.getOOPresentation() == null) {
+                            HashSet<LyricCanvas> canvases = new HashSet<>();
+                            canvases.addAll(containerPanel.getCanvases());
+                            for(LyricCanvas lc : canvases) {
+                                lc.eraseText();
+                                BufferedImage displayImage = presentationList.getCurrentImage(lc.getWidth(), lc.getHeight());
+                                lc.setTheme(new Theme(null, null, new Background(null, displayImage)));
+                            }
+                        }
+                        else if(displayable != null) {
+                            OOPresentation pres = displayable.getOOPresentation();
+                            pres.addSlideListener(new SlideChangedListener() {
+
+                                @Override
+                                public void slideChanged(final int newSlideIndex) {
+                                    SwingUtilities.invokeLater(new Runnable() {
+
+                                        @Override
+                                        public void run() {
+                                            presentationList.setUpdating(true);
+                                            presentationList.ensureIndexIsVisible(newSlideIndex);
+                                            presentationList.setSelectedIndex(newSlideIndex);
+                                            presentationList.setUpdating(false);
+                                        }
+                                    });
+                                }
+                            });
+                            startOOPres();
+                            java.awt.EventQueue.invokeLater(new Runnable() {
+
+                                @Override
+                                public void run() {
+                                    Application.get().getMainWindow().toFront();
+                                    Application.get().getMainWindow().repaint();
+                                }
+                            });
+                            pres.gotoSlide(presentationList.getSelectedIndex());
+                        }
                     }
                 }
             }
         });
-        JScrollPane scroll = new JScrollPane(powerpointList);
+        JScrollPane scroll = new JScrollPane(presentationList);
         add(scroll, BorderLayout.CENTER);
+    }
+
+    public void stopCurrent() {
+        if(live && displayable != null && displayable.getOOPresentation() != null) {
+            displayable.getOOPresentation().stop();
+            displayable = null;
+        }
+    }
+
+    /**
+     * If not started already, start the OO presentation.
+     */
+    private void startOOPres() {
+        OOPresentation pres = displayable.getOOPresentation();
+        if(pres != null && !pres.isRunning()) {
+            pres.start(QueleaProperties.get().getProjectorScreen());
+        }
+    }
+
+    /**
+     * Let this panel know it is live and should update accordingly.
+     */
+    public void setLive() {
+        live = true;
     }
 
     /**
@@ -72,22 +138,40 @@ public class PresentationPanel extends ContainedPanel {
      * @param displayable the presentation displayable to display.
      * @param index the index to display.
      */
-    public void setDisplayable(PresentationDisplayable displayable, int index) {
-        DefaultListModel<PresentationSlide> model = (DefaultListModel<PresentationSlide>) powerpointList.getModel();
+    public void setDisplayable(final PresentationDisplayable displayable, int index) {
+        DefaultListModel<PresentationSlide> model = (DefaultListModel<PresentationSlide>) presentationList.getModel();
         if(displayable == null) {
             model.clear();
             return;
+        }
+        this.displayable = displayable;
+        if(live && OOPresentation.isInit()) {
+            for(KeyListener listener : presentationList.getKeyListeners()) {
+                presentationList.removeKeyListener(listener);
+            }
+            presentationList.addKeyListener(new KeyAdapter() {
+
+                @Override
+                public void keyPressed(KeyEvent ke) {
+                    if(ke.getKeyCode() == KeyEvent.VK_RIGHT || ke.getKeyCode() == KeyEvent.VK_SPACE) {
+                        displayable.getOOPresentation().goForward();
+                    }
+                    if(ke.getKeyCode() == KeyEvent.VK_LEFT) {
+                        displayable.getOOPresentation().goBack();
+                    }
+                }
+            });
         }
         PresentationSlide[] slides = displayable.getPresentation().getSlides();
         model.clear();
         for(PresentationSlide slide : slides) {
             model.addElement(slide);
         }
-        powerpointList.setSelectedIndex(index);
-        if(powerpointList.getSelectedIndex() == -1) {
-            powerpointList.setSelectedIndex(0);
+        presentationList.setSelectedIndex(index);
+        if(presentationList.getSelectedIndex() == -1) {
+            presentationList.setSelectedIndex(0);
         }
-        powerpointList.ensureIndexIsVisible(powerpointList.getSelectedIndex());
+        presentationList.ensureIndexIsVisible(presentationList.getSelectedIndex());
     }
 
     /**
@@ -96,7 +180,7 @@ public class PresentationPanel extends ContainedPanel {
      * @return the currently selected index on this panel.
      */
     public int getIndex() {
-        return powerpointList.getSelectedIndex();
+        return presentationList.getSelectedIndex();
     }
 
     /**
@@ -107,7 +191,7 @@ public class PresentationPanel extends ContainedPanel {
     @Override
     public void addKeyListener(KeyListener l) {
         super.addKeyListener(l);
-        powerpointList.addKeyListener(l);
+        presentationList.addKeyListener(l);
     }
 
     /**
@@ -115,7 +199,7 @@ public class PresentationPanel extends ContainedPanel {
      */
     @Override
     public void focus() {
-        powerpointList.requestFocus();
+        presentationList.requestFocus();
     }
 
     /**

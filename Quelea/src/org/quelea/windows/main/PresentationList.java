@@ -37,6 +37,7 @@ import org.quelea.utils.QueleaProperties;
 public class PresentationList extends JList<PresentationSlide> {
 
     private Color originalSelectionColour;
+    private boolean updating;
 
     /**
      * Create a new presentation list.
@@ -63,6 +64,14 @@ public class PresentationList extends JList<PresentationSlide> {
                 setSelectionBackground(originalSelectionColour);
             }
         });
+    }
+
+    public boolean isUpdating() {
+        return updating;
+    }
+
+    public void setUpdating(boolean updating) {
+        this.updating = updating;
     }
 
     /**

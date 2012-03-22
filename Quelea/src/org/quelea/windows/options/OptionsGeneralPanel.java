@@ -17,23 +17,32 @@
  */
 package org.quelea.windows.options;
 
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import java.io.File;
+import javax.swing.JButton;
 import javax.swing.JCheckBox;
+import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JSlider;
+import javax.swing.JTextField;
 import javax.swing.SpringLayout;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import org.quelea.Application;
 import org.quelea.languages.LabelGrabber;
+import org.quelea.powerpoint.OOPresentation;
+import org.quelea.powerpoint.OOUtils;
 import org.quelea.utils.PropertyPanel;
 import org.quelea.utils.QueleaProperties;
 import org.quelea.utils.SpringUtilities;
 
 /**
  * A panel where the general options in the program are set.
+ *
  * @author Michael
  */
 public class OptionsGeneralPanel extends JPanel implements PropertyPanel {
@@ -44,6 +53,10 @@ public class OptionsGeneralPanel extends JPanel implements PropertyPanel {
     private final JCheckBox displaySongInfoCheckBox;
     private final JCheckBox oneLineModeCheckBox;
     private final JCheckBox textShadowCheckBox;
+    private final JCheckBox useOOCheckBox;
+    private final JTextField ooPathTextField;
+    private final JFileChooser ooChooser;
+    private final JButton selectButton;
     private final JSlider borderThicknessSlider;
     private final JSlider maxCharsSlider;
     private final JSlider minLinesSlider;
@@ -63,6 +76,54 @@ public class OptionsGeneralPanel extends JPanel implements PropertyPanel {
         startupLabel.setLabelFor(startupUpdateCheckBox);
         generalPanel.add(startupUpdateCheckBox);
         generalPanel.add(new JLabel()); //Keep springlayout happy
+        rows++;
+
+        JLabel useOOLabel = new JLabel(LabelGrabber.INSTANCE.getLabel("use.oo.label"));
+        generalPanel.add(useOOLabel);
+        useOOCheckBox = new JCheckBox();
+        useOOCheckBox.addChangeListener(new ChangeListener() {
+
+            @Override
+            public void stateChanged(ChangeEvent ce) {
+                if(useOOCheckBox.isSelected()) {
+                    ooChooser.setEnabled(true);
+                    selectButton.setEnabled(true);
+                }
+                else {
+                    ooChooser.setEnabled(false);
+                    selectButton.setEnabled(false);
+                }
+            }
+        });
+        useOOLabel.setLabelFor(useOOCheckBox);
+        generalPanel.add(useOOCheckBox);
+        generalPanel.add(new JLabel()); //Keep springlayout happy
+        rows++;
+
+        JLabel ooPathLabel = new JLabel(LabelGrabber.INSTANCE.getLabel("oo.path"));
+        generalPanel.add(ooPathLabel);
+        ooPathTextField = new JTextField();
+        ooPathTextField.setEditable(false);
+        ooPathLabel.setLabelFor(ooPathTextField);
+        generalPanel.add(ooPathTextField);
+        ooChooser = new JFileChooser();
+        ooChooser.setEnabled(false);
+        ooChooser.setMultiSelectionEnabled(false);
+        ooChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+        selectButton = new JButton(LabelGrabber.INSTANCE.getLabel("browse"));
+        selectButton.setEnabled(false);
+        selectButton.addActionListener(new ActionListener() {
+
+            @Override
+            public void actionPerformed(ActionEvent ae) {
+                ooChooser.showOpenDialog(OptionsGeneralPanel.this);
+                File file = ooChooser.getSelectedFile();
+                if(file != null) {
+                    ooPathTextField.setText(ooChooser.getSelectedFile().getAbsolutePath());
+                }
+            }
+        });
+        generalPanel.add(selectButton);
         rows++;
 
         JLabel warnLabel = new JLabel(LabelGrabber.INSTANCE.getLabel("1.monitor.warn.label"));
@@ -121,7 +182,7 @@ public class OptionsGeneralPanel extends JPanel implements PropertyPanel {
             }
         });
         rows++;
-        
+
         textShadowCheckBox.addItemListener(new ItemListener() {
 
             @Override
@@ -183,6 +244,8 @@ public class OptionsGeneralPanel extends JPanel implements PropertyPanel {
     public final void readProperties() {
         QueleaProperties props = QueleaProperties.get();
         startupUpdateCheckBox.setSelected(props.checkUpdate());
+        useOOCheckBox.setSelected(props.getUseOO());
+        ooPathTextField.setText(props.getOOPath());
         capitalFirstCheckBox.setSelected(props.checkCapitalFirst());
         oneMonitorWarnCheckBox.setSelected(props.showSingleMonitorWarning());
         displaySongInfoCheckBox.setSelected(props.checkDisplaySongInfoText());
@@ -201,6 +264,10 @@ public class OptionsGeneralPanel extends JPanel implements PropertyPanel {
         QueleaProperties props = QueleaProperties.get();
         boolean checkUpdate = getStartupUpdateCheckBox().isSelected();
         props.setCheckUpdate(checkUpdate);
+        boolean useOO = getUseOOCheckBox().isSelected();
+        props.setUseOO(useOO);
+        String ooPath = getOOPathTextField().getText();
+        props.setOOPath(ooPath);
         boolean showWarning = getOneMonitorWarningCheckBox().isSelected();
         props.setSingleMonitorWarning(showWarning);
         boolean checkCapital = getCapitalFirstCheckBox().isSelected();
@@ -220,10 +287,15 @@ public class OptionsGeneralPanel extends JPanel implements PropertyPanel {
         props.setMinLines(minLines);
         int borderThickness = getBorderThicknessSlider().getValue();
         props.setOutlineThickness(borderThickness);
+        //Initialise presentation
+        if(!OOPresentation.isInit()) {
+            OOUtils.attemptInit();
+        }
     }
 
     /**
      * Get the max chars slider.
+     *
      * @return the max chars slider.
      */
     public JSlider getMaxCharsSlider() {
@@ -232,6 +304,7 @@ public class OptionsGeneralPanel extends JPanel implements PropertyPanel {
 
     /**
      * Get the min lines slider.
+     *
      * @return the min lines slider.
      */
     public JSlider getMinLinesSlider() {
@@ -240,6 +313,7 @@ public class OptionsGeneralPanel extends JPanel implements PropertyPanel {
 
     /**
      * Get the startup readProperties checkbox.
+     *
      * @return the startup readProperties checkbox.
      */
     public JCheckBox getStartupUpdateCheckBox() {
@@ -248,6 +322,7 @@ public class OptionsGeneralPanel extends JPanel implements PropertyPanel {
 
     /**
      * Get the capitalise first character in each line checkbox.
+     *
      * @return the capitalise first character in each line checkbox.
      */
     public JCheckBox getCapitalFirstCheckBox() {
@@ -256,6 +331,7 @@ public class OptionsGeneralPanel extends JPanel implements PropertyPanel {
 
     /**
      * Get the display song info checkbox.
+     *
      * @return the display song info checkbox.
      */
     public JCheckBox getDisplaySongInfoCheckBox() {
@@ -264,6 +340,7 @@ public class OptionsGeneralPanel extends JPanel implements PropertyPanel {
 
     /**
      * Get the "one monitor warning" checkbox.
+     *
      * @return the "one monitor warning" checkbox.
      */
     public JCheckBox getOneMonitorWarningCheckBox() {
@@ -272,6 +349,7 @@ public class OptionsGeneralPanel extends JPanel implements PropertyPanel {
 
     /**
      * Get the "one line mode" checkbox.
+     *
      * @return the "one line mode" checkbox.
      */
     public JCheckBox getOneLineModeCheckBox() {
@@ -279,15 +357,35 @@ public class OptionsGeneralPanel extends JPanel implements PropertyPanel {
     }
 
     /**
+     * Get the "use openoffice" checkbox.
+     *
+     * @return the "use openoffice" checkbox.
+     */
+    public JCheckBox getUseOOCheckBox() {
+        return useOOCheckBox;
+    }
+
+    /**
+     * Get the "openoffice path" text field.
+     *
+     * @return the "openoffice path" text field.
+     */
+    public JTextField getOOPathTextField() {
+        return ooPathTextField;
+    }
+
+    /**
      * Get the "text shadow" checkbox.
+     *
      * @return the "text.shadow" checkbox.
      */
     public JCheckBox getTextShadowCheckBox() {
         return textShadowCheckBox;
     }
-    
+
     /**
      * Get the border thickness slider.
+     *
      * @return the border thickness slider.
      */
     public JSlider getBorderThicknessSlider() {

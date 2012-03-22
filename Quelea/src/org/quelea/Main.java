@@ -27,6 +27,8 @@ import javax.swing.*;
 import org.quelea.bible.BibleManager;
 import org.quelea.languages.LabelGrabber;
 import org.quelea.phonehome.PhoneHome;
+import org.quelea.powerpoint.OOPresentation;
+import org.quelea.powerpoint.OOUtils;
 import org.quelea.splash.SplashWindow;
 import org.quelea.utils.LoggerUtils;
 import org.quelea.utils.QueleaProperties;
@@ -61,10 +63,10 @@ public final class Main {
      * @param args the command line arguments.
      */
     public static void main(final String[] args) {
-        
+
         final SplashWindow splashWindow = new SplashWindow();
         splashWindow.setVisible(true);
-        
+
         //Needed to stop menus appearing behind video
         JPopupMenu.setDefaultLightWeightPopupEnabled(false);
         //Same for tooltips
@@ -89,8 +91,8 @@ public final class Main {
         }
         final boolean lyricsHidden;
         if(!QueleaProperties.get().isProjectorModeCoords() && (projectorScreen >= gds.length || projectorScreen < 0)) {
-            lyricsHidden = true; 
-       }
+            lyricsHidden = true;
+        }
         else {
             lyricsHidden = false;
         }
@@ -150,7 +152,7 @@ public final class Main {
             SpellChecker.getOptions().setLanguageDisableVisible(false);
             SpellChecker.getOptions().setCaseSensitive(false);
         }
-        catch(MalformedURLException ex) {
+        catch (MalformedURLException ex) {
             LOGGER.log(Level.SEVERE, "Couldn't load dictionaries", ex);
         }
         LOGGER.log(Level.INFO, "Registered dictionary");
@@ -164,6 +166,7 @@ public final class Main {
                     JOptionPane.showMessageDialog(null, LabelGrabber.INSTANCE.getLabel("already.running.error"), LabelGrabber.INSTANCE.getLabel("already.running.title"), JOptionPane.ERROR_MESSAGE);
                     System.exit(1);
                 }
+                OOUtils.attemptInit();
                 mainWindow = new MainWindow(true);
 
                 new UpdateChecker(mainWindow).checkUpdate(false, false, false); //Check updates
@@ -184,7 +187,7 @@ public final class Main {
                 try {
                     bibleLoader.join(); //Make sure bibleloader has finished loading
                 }
-                catch(InterruptedException ex) {
+                catch (InterruptedException ex) {
                 }
                 Utils.centreOnMonitor(mainWindow, controlScreen);
                 showWarning(gds.length);
@@ -213,7 +216,7 @@ public final class Main {
                 try {
                     UIManager.setLookAndFeel(QueleaProperties.get().getLaf());
                 }
-                catch(ClassNotFoundException | InstantiationException | IllegalAccessException | UnsupportedLookAndFeelException ex) {
+                catch (ClassNotFoundException | InstantiationException | IllegalAccessException | UnsupportedLookAndFeelException ex) {
                     LOGGER.log(Level.INFO, "Couldn't set the look and feel.", ex);
                 }
 

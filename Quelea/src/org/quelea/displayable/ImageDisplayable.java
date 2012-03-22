@@ -172,4 +172,9 @@ public class ImageDisplayable implements Displayable {
     public boolean supportClear() {
         return false;
     }
+    
+    @Override
+    public void dispose() {
+        //Nothing needed here.
+    }
 }
