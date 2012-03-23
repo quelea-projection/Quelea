@@ -136,7 +136,7 @@ public class OOPresentation {
                 xController.getFrame().getContainerWindow().setEnable(false);
             }
         });
-        xModel.getCurrentController().getFrame().getContainerWindow().setPosSize(0, 0, 1, 1, PosSize.POSSIZE);
+        xModel.getCurrentController().getFrame().getContainerWindow().setPosSize(0, 0, 1, 1, PosSize.SIZE);
         xModel.getCurrentController().getFrame().getContainerWindow().setVisible(false);
         XPresentationSupplier xPresSupplier = UnoRuntime.queryInterface(XPresentationSupplier.class, doc);
         XPresentation xPresentation_ = xPresSupplier.getPresentation();
