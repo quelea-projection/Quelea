@@ -108,6 +108,7 @@ public class OOPresentation {
      */
     public OOPresentation(String file) throws Exception {
         if(!init) {
+            LOGGER.log(Level.SEVERE, "BUG: Tried to create OOPresentation before it was initialised");
             throw new IllegalStateException("I'm not initialised yet! init() needs to be called before creating presentations.");
         }
         slideListeners = new ArrayList<>();
