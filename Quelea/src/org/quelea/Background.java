@@ -27,6 +27,7 @@ import java.util.Map;
 
 /**
  * A visual background. This may either be an image or a colour.
+ *
  * @author Michael
  */
 public class Background {
@@ -38,6 +39,7 @@ public class Background {
 
     /**
      * Create a new background that's a certain colour.
+     *
      * @param colour the colour of the background.
      */
     public Background(Color colour) {
@@ -46,8 +48,9 @@ public class Background {
 
     /**
      * Create a new background that's a certain image.
+     *
      * @param imageLocation the location of the background image.
-     * @param originalImage the original image to use. 
+     * @param originalImage the original image to use.
      */
     public Background(String imageLocation, BufferedImage originalImage) {
         this.imageLocation = imageLocation;
@@ -55,17 +58,19 @@ public class Background {
     }
 
     /**
-     * Get the background with a specified width and height. If this background is an image then it will be scaled
-     * accordingly, if it is a colour an image will be given with the specified dimension, filled with the colour.
-     * @param width  the width of the background.
+     * Get the background with a specified width and height. If this background
+     * is an image then it will be scaled accordingly, if it is a colour an
+     * image will be given with the specified dimension, filled with the colour.
+     *
+     * @param width the width of the background.
      * @param height the height of the background.
      * @param key the key to use for the image in the cache.
      * @return an image containing the background with the given dimensions.
      */
     public BufferedImage getImage(int width, int height, String key) {
-        if (key != null && cacheMap.get(key) != null) {
+        if(key != null && cacheMap.get(key) != null) {
             BufferedImage cacheImage = cacheMap.get(key);
-            if (cacheImage.getWidth() == width && cacheImage.getHeight() == height) {
+            if(cacheImage.getWidth() == width && cacheImage.getHeight() == height) {
                 return cacheImage;
             }
         }
@@ -73,26 +78,34 @@ public class Background {
         Graphics2D g = (Graphics2D) ret.getGraphics();
         g.setColor(Color.BLACK);
         g.fillRect(0, 0, width, height);
-        if (colour == null) {
-            if (originalImage == null) {
+        if(colour == null) {
+            if(originalImage == null) {
                 originalImage = Utils.getImage(getImageFile().getAbsolutePath());
             }
-            g.setRenderingHint(RenderingHints.KEY_INTERPOLATION,
-                    RenderingHints.VALUE_INTERPOLATION_BICUBIC);
-            g.drawImage(originalImage, 0, 0, width, height, null);
+            if(originalImage == null) {
+                g.setColor(Color.BLACK);
+                g.fillRect(0, 0, width, height);
+            }
+            else {
+                g.setRenderingHint(RenderingHints.KEY_INTERPOLATION,
+                        RenderingHints.VALUE_INTERPOLATION_BICUBIC);
+                g.drawImage(originalImage, 0, 0, width, height, null);
+            }
         }
         else {
             g.setColor(colour);
             g.fillRect(0, 0, width, height);
         }
-        if (key != null) {
+        if(key != null) {
             cacheMap.put(key, ret);
         }
         return ret;
     }
 
     /**
-     * Get the current colour of this background, or null if the background is currently an image.
+     * Get the current colour of this background, or null if the background is
+     * currently an image.
+     *
      * @return the colour of the background.
      */
     public Color getColour() {
@@ -101,10 +114,12 @@ public class Background {
 
     /**
      * Get the image background file.
-     * @return the file representing the image background, or null if the image background is a colour.
+     *
+     * @return the file representing the image background, or null if the image
+     * background is a colour.
      */
     public File getImageFile() {
-        if (imageLocation == null) {
+        if(imageLocation == null) {
             return null;
         }
         else {
@@ -113,7 +128,9 @@ public class Background {
     }
 
     /**
-     * Get the current image location of this background, or null if the background is currently a colour.
+     * Get the current image location of this background, or null if the
+     * background is currently a colour.
+     *
      * @return the current image location of the background.
      */
     public String getImageLocation() {
@@ -122,6 +139,7 @@ public class Background {
 
     /**
      * Determine whether this background is an image.
+     *
      * @return true if the background is an image, false if its a colour.
      */
     public boolean isImage() {
@@ -130,6 +148,7 @@ public class Background {
 
     /**
      * Determine whether this background is a colour.
+     *
      * @return true if the background is a colour, false if its an image.
      */
     public boolean isColour() {
@@ -138,6 +157,7 @@ public class Background {
 
     /**
      * Generate a hashcode for this background.
+     *
      * @return the hashcode.
      */
     @Override
@@ -150,25 +170,26 @@ public class Background {
 
     /**
      * Determine whether this background is equal to another object.
+     *
      * @param obj the other object.
      * @return true if the objects are equal, false otherwise.
      */
     @Override
     public boolean equals(Object obj) {
-        if (obj == null) {
+        if(obj == null) {
             return false;
         }
-        if (getClass() != obj.getClass()) {
+        if(getClass() != obj.getClass()) {
             return false;
         }
         final Background other = (Background) obj;
-        if (this.colour != other.colour && (this.colour == null || !this.colour.equals(other.colour))) {
+        if(this.colour != other.colour && (this.colour == null || !this.colour.equals(other.colour))) {
             return false;
         }
-        if (this.imageLocation != other.imageLocation && (this.imageLocation == null || !this.imageLocation.equals(other.imageLocation))) {
+        if(this.imageLocation != other.imageLocation && (this.imageLocation == null || !this.imageLocation.equals(other.imageLocation))) {
             return false;
         }
-        if (this.imageLocation == null) {
+        if(this.imageLocation == null) {
             return false;
         }
 //        if(this.originalImage != other.originalImage && (this.originalImage == null || !this.originalImage.equals(other.originalImage))) {
@@ -179,13 +200,14 @@ public class Background {
 
     /**
      * Get some information about this background.
+     *
      * @return information about the background in a string format.
      */
     @Override
     public String toString() {
         StringBuilder ret = new StringBuilder();
         ret.append("Background: ");
-        if (colour == null) {
+        if(colour == null) {
             ret.append("image: ");
             ret.append(imageLocation);
         }
