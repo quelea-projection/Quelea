@@ -19,13 +19,13 @@ package org.quelea.powerpoint;
 
 import com.sun.star.animations.XAnimationNode;
 import com.sun.star.awt.PosSize;
-import com.sun.star.awt.XWindow2;
 import com.sun.star.beans.PropertyValue;
 import com.sun.star.beans.PropertyVetoException;
 import com.sun.star.beans.UnknownPropertyException;
 import com.sun.star.comp.helper.BootstrapException;
-import com.sun.star.document.XEventListener;
+import com.sun.star.document.XEventBroadcaster;
 import com.sun.star.frame.XComponentLoader;
+import com.sun.star.frame.XController;
 import com.sun.star.frame.XModel;
 import com.sun.star.lang.EventObject;
 import com.sun.star.lang.IllegalArgumentException;
@@ -120,22 +120,22 @@ public class OOPresentation {
         props[0].Value = true;
 
         doc = Helper.createDocument(xOfficeContext, sURL.toString(), "_blank", 0, props);
-//        doc.addEventListener(new XEventListener() {
-//
-//            @Override
-//            public void notifyEvent(com.sun.star.document.EventObject eo) {
-//                System.out.println(eo.EventName);
-//                if(eo.EventName.equals("OnStartPresentation")) {
-//                    System.out.println(eo.Source);
-//                }
-//            }
-//
-//            @Override
-//            public void disposing(EventObject eo) {
-//                System.out.println("disposing");
-//            }
-//        });
         XModel xModel = UnoRuntime.queryInterface(XModel.class, doc);
+        XEventBroadcaster xDocEventBroadcaster = UnoRuntime.queryInterface(com.sun.star.document.XEventBroadcaster.class, xModel);
+        xDocEventBroadcaster.addEventListener(new com.sun.star.document.XEventListener() {
+
+            @Override
+            public void disposing(EventObject ev) {
+                //Nothing needed here
+            }
+
+            @Override
+            public void notifyEvent(com.sun.star.document.EventObject ev) {
+                XModel xModel = UnoRuntime.queryInterface(XModel.class, ev.Source);
+                XController xController = xModel.getCurrentController();
+                xController.getFrame().getContainerWindow().setEnable(false);
+            }
+        });
         xModel.getCurrentController().getFrame().getContainerWindow().setPosSize(0, 0, 1, 1, PosSize.POSSIZE);
         xModel.getCurrentController().getFrame().getContainerWindow().setVisible(false);
         XPresentationSupplier xPresSupplier = UnoRuntime.queryInterface(XPresentationSupplier.class, doc);
@@ -149,7 +149,7 @@ public class OOPresentation {
                 checkDisposed();
             }
         });
-        
+
     }
 
     /**
@@ -168,7 +168,7 @@ public class OOPresentation {
      * presentation on.
      */
     public void start(int display) {
-        if(display<0) {
+        if(display < 0) {
             LOGGER.log(Level.INFO, "Not starting presentation, negative display selected");
             return;
         }
