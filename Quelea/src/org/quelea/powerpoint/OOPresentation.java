@@ -18,10 +18,13 @@
 package org.quelea.powerpoint;
 
 import com.sun.star.animations.XAnimationNode;
+import com.sun.star.awt.PosSize;
+import com.sun.star.awt.XWindow2;
 import com.sun.star.beans.PropertyValue;
 import com.sun.star.beans.PropertyVetoException;
 import com.sun.star.beans.UnknownPropertyException;
 import com.sun.star.comp.helper.BootstrapException;
+import com.sun.star.document.XEventListener;
 import com.sun.star.frame.XComponentLoader;
 import com.sun.star.frame.XModel;
 import com.sun.star.lang.EventObject;
@@ -42,6 +45,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import ooo.connector.BootstrapSocketConnector;
 import org.quelea.utils.Utils;
 
 /**
@@ -74,6 +78,7 @@ public class OOPresentation {
         try {
             xOfficeContext = Helper.connect(ooPath);
             init = true;
+            LOGGER.log(Level.INFO, "Openoffice initialised ok");
             return true;
         }
         catch (BootstrapException ex) {
@@ -115,7 +120,23 @@ public class OOPresentation {
         props[0].Value = true;
 
         doc = Helper.createDocument(xOfficeContext, sURL.toString(), "_blank", 0, props);
+//        doc.addEventListener(new XEventListener() {
+//
+//            @Override
+//            public void notifyEvent(com.sun.star.document.EventObject eo) {
+//                System.out.println(eo.EventName);
+//                if(eo.EventName.equals("OnStartPresentation")) {
+//                    System.out.println(eo.Source);
+//                }
+//            }
+//
+//            @Override
+//            public void disposing(EventObject eo) {
+//                System.out.println("disposing");
+//            }
+//        });
         XModel xModel = UnoRuntime.queryInterface(XModel.class, doc);
+        xModel.getCurrentController().getFrame().getContainerWindow().setPosSize(0, 0, 1, 1, PosSize.POSSIZE);
         xModel.getCurrentController().getFrame().getContainerWindow().setVisible(false);
         XPresentationSupplier xPresSupplier = UnoRuntime.queryInterface(XPresentationSupplier.class, doc);
         XPresentation xPresentation_ = xPresSupplier.getPresentation();
@@ -128,6 +149,7 @@ public class OOPresentation {
                 checkDisposed();
             }
         });
+        
     }
 
     /**
@@ -349,7 +371,7 @@ public class OOPresentation {
          */
         private static XComponentContext connect(String path) throws BootstrapException {
             File progPath = new File(path, "program");
-            com.sun.star.uno.XComponentContext xOfficeContext = ooo.connector.BootstrapSocketConnector.bootstrap(progPath.getAbsolutePath());
+            XComponentContext xOfficeContext = BootstrapSocketConnector.bootstrap(progPath.getAbsolutePath());
             return xOfficeContext;
         }
 
