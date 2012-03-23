@@ -146,6 +146,10 @@ public class OOPresentation {
      * presentation on.
      */
     public void start(int display) {
+        if(display<0) {
+            LOGGER.log(Level.INFO, "Not starting presentation, negative display selected");
+            return;
+        }
         display++; //Openoffice requires base 1, we want base 0.
         try {
             xPresentation.setPropertyValue("Display", display);
