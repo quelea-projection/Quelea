@@ -26,6 +26,9 @@
 
     <target name="-post-jar">
         
+        <!-- Check the images conform to spec -->
+        <java className="org.quelea.utils.ImageChecker" classpath="build/classes" failonerror="true"/>
+        
         <echo message="Built jar."/>
         <echo message="Copying necessary files to ${dist.jar.dir}"/>
         <copy todir="${dist.jar.dir}/lib">
