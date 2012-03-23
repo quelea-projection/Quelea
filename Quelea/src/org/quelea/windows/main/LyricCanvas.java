@@ -185,6 +185,9 @@ public class LyricCanvas extends Canvas {
                 || !QueleaProperties.get().checkDisplaySongInfoText()) {
             return 0;
         }
+        if(graphics instanceof Graphics2D) {
+            ((Graphics2D) graphics).setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+        }
         int fontSize = getHeight() / 50;
         font = Utils.getDifferentSizeFont(font, fontSize);
         graphics.setFont(font);
