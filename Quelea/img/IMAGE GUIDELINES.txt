@@ -1,6 +1,6 @@
 This folder is for background images that we want to include in the release of Quelea. Before placing images in this folder, please make sure they conform to the following guidelines, remember a good photo / picture doesn't necessarily make a good worship background.
 
- - All images must be sized 1900x1080. For the general use case this is 1080p resolution, so no-one should need more than this unless they're doing multi-HD projector stuff (in which case they'll probably want to generate their own content anyway.) Most people will be using less resolution than this, sure, but space isn't an issue for storing in HD and we don't lose any quality when scaling down (but obviously we do the other way around if the images are smaller.)
+ - All images must be sized 1920x1080. For the general use case this is 1080p resolution, so no-one should need more than this unless they're doing multi-HD projector stuff (in which case they'll probably want to generate their own content anyway.) Most people will be using less resolution than this, sure, but space isn't an issue for storing in HD and we don't lose any quality when scaling down (but obviously we do the other way around if the images are smaller.)
 
  - JPG for photos, PNG for drawings. Keep it to these two - they're widely supported and there's no real need to introduce any others.
 
