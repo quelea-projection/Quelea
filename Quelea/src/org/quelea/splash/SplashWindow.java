@@ -23,6 +23,7 @@ import java.awt.Graphics2D;
 import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
 import java.awt.Rectangle;
+import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -34,6 +35,7 @@ import org.quelea.utils.QueleaProperties;
 
 /**
  * The splash screen to display when the program starts.
+ *
  * @author Michael
  */
 public class SplashWindow extends FadeWindow {
@@ -46,6 +48,7 @@ public class SplashWindow extends FadeWindow {
             BufferedImage image = ImageIO.read(new File("icons/splash.png"));
             Graphics2D graphics = (Graphics2D) image.getGraphics();
             graphics.setFont(new Font("Verdana", 0, 45));
+            graphics.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
             graphics.drawString(QueleaProperties.VERSION.getVersionString(), 220, 140);
 
             JLabel splash = new JLabel(new ImageIcon(image));
@@ -53,14 +56,14 @@ public class SplashWindow extends FadeWindow {
             add(splash, BorderLayout.CENTER);
             pack();
         }
-        catch (IOException ex) {
+        catch(IOException ex) {
             //Don't really care, just splash.
         }
 
         int controlScreenProp = QueleaProperties.get().getControlScreen();
         GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
         final GraphicsDevice[] gds = ge.getScreenDevices();
-        if (controlScreenProp >= gds.length) {
+        if(controlScreenProp >= gds.length) {
             controlScreenProp = gds.length - 1;
         }
         Rectangle bounds = gds[controlScreenProp].getDefaultConfiguration().getBounds();
@@ -70,6 +73,7 @@ public class SplashWindow extends FadeWindow {
 
     /**
      * Just for testing...
+     *
      * @param args not used.
      */
     public static void main(String[] args) {
