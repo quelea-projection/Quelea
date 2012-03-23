@@ -40,32 +40,59 @@ public class ImageChecker {
      * The width that all the images should be.
      */
     private static final int WIDTH = 1920;
+    /**
+     * Only formats (file extensions) specified in this array are permitted.
+     */
+    private static final String[] ALLOWED_FORMATS = {"png", "jpg"};
+    /**
+     * The image directory to check.
+     */
+    private File imageDir;
+
+    /**
+     * Create a new image checker to check the specified directory.
+     *
+     * @param imageDir the directory to check.
+     */
+    public ImageChecker(File imageDir) {
+        this.imageDir = imageDir;
+    }
 
     /**
      * Run the image checker.
-     *
-     * @param args command line arguments (not used.)
      */
-    public static void main(String[] args) {
+    public void runCheck() {
         boolean ok = true;
         System.out.println("\nChecking images:");
         List<String> badFileNames = new ArrayList<>();
-        for(File file : new File("img").listFiles()) {
+        for(File file : imageDir.listFiles()) {
             if(Utils.fileIsImage(file)) {
+                boolean thisok = true;
                 BufferedImage image = Utils.getImage(file.getAbsolutePath());
-                if(image.getWidth() != WIDTH) {
-                    System.err.println("ERROR: " + file.getName() + " width should be " + WIDTH + " but is " + image.getWidth());
-                    if(!badFileNames.contains(file.getName())) {
-                        badFileNames.add(file.getName());
-                    }
-                    ok = false;
+                if(image == null) {
+                    System.err.println("ERROR: " + file.getName() + " appears to be corrupt.");
+                    thisok = false;
                 }
-                if(image.getHeight() != HEIGHT) {
-                    System.err.println("ERROR: " + file.getName() + " height should be " + HEIGHT + " but is " + image.getHeight());
+                else { //If not corrupt
+                    if(!formatOK(file.getName())) {
+                        System.err.println("ERROR: " + file.getName() + " is not in a required format. It must be in one of the following: " + getFormatsString());
+                        thisok = false;
+                    }
+                    if(image.getWidth() != WIDTH) {
+                        System.err.println("ERROR: " + file.getName() + " width should be " + WIDTH + " but is " + image.getWidth());
+                        thisok = false;
+                    }
+                    if(image.getHeight() != HEIGHT) {
+                        System.err.println("ERROR: " + file.getName() + " height should be " + HEIGHT + " but is " + image.getHeight());
+                        thisok = false;
+                    }
+                }
+
+                if(!thisok) { //If something is wrong with the image
+                    ok = false;
                     if(!badFileNames.contains(file.getName())) {
                         badFileNames.add(file.getName());
                     }
-                    ok = false;
                 }
             }
             else {
@@ -84,5 +111,52 @@ public class ImageChecker {
             System.err.println("Please read IMAGE GUIDELINES.txt in the \"img\" folder, correct these images according to the guidelines and then try again.\n");
             System.exit(1);
         }
+    }
+
+    /**
+     * Get a single string of all the formats we allow. Enables easy printing.
+     *
+     * @return a single string of all the formats we allow.
+     */
+    private static String getFormatsString() {
+        StringBuilder ret = new StringBuilder();
+        for(int i = 0; i < ALLOWED_FORMATS.length; i++) {
+            ret.append(ALLOWED_FORMATS[i]);
+            if(i != ALLOWED_FORMATS.length - 1) {
+                ret.append(", ");
+            }
+        }
+        return ret.toString();
+    }
+
+    /**
+     * Determine if the given file name is in a format we accept.
+     *
+     * @param fileName the file name to check.
+     * @return true if it's in an accepted format, false otherwise.
+     */
+    private static boolean formatOK(String fileName) {
+        String suffix = fileName.split("\\.")[fileName.split("\\.").length - 1].toLowerCase().trim();
+        for(String format : ALLOWED_FORMATS) {
+            if(suffix.equals(format.toLowerCase())) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Run the image checker. If an argument is specified this will be used as
+     * the image directory to check, otherwise the default "img" directory will
+     * be chosen.
+     *
+     * @param args command line arguments.
+     */
+    public static void main(String[] args) {
+        String dir = "img";
+        if(args.length > 0) {
+            dir = args[0];
+        }
+        new ImageChecker(new File(dir)).runCheck();
     }
 }
