@@ -2,6 +2,8 @@ This folder is for background images that we want to include in the release of Q
 
  - All images must be sized 1900x1080. For the general use case this is 1080p resolution, so no-one should need more than this unless they're doing multi-HD projector stuff (in which case they'll probably want to generate their own content anyway.) Most people will be using less resolution than this, sure, but space isn't an issue for storing in HD and we don't lose any quality when scaling down (but obviously we do the other way around if the images are smaller.)
 
+ - JPG for photos, PNG for drawings. Keep it to these two - they're widely supported and there's no real need to introduce any others.
+
  - Contrast and colour must be relatively constant throughout the image. So sky / land photos are bad in this regard because the contrast is too different. Ask yourself whether the same colour for words on each and every part of the image will cause problems. If the answer is yes, even if it's just a small part, then it's a no go. However...
 
  - Remember that, licensing permitting, you don't have to use a photo / image stock. If there's a section that's not suitable, use paint.net / photoshop / whatever to modify it so it is suitable, or at least try to see what happens.
