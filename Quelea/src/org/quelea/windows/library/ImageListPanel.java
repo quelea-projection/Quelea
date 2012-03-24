@@ -106,7 +106,7 @@ public class ImageListPanel extends JPanel {
             @Override
             public void run() {
                 for(final File file : files) {
-                    if(Utils.fileIsImage(file)) {
+                    if(Utils.fileIsImage(file) && !file.isDirectory()) {
                         tempModel.addElement(new ImageDisplayable(file));
                     }
                 }
