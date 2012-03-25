@@ -179,12 +179,12 @@ public class LibrarySongList extends JList<Song> implements DatabaseListener {
                     model = m;
                 } else {
                     DefaultListModel<Song> m = new DefaultListModel<>();
-                    Song[] titleSongs = SongDatabase.get().getIndex().filterSongs(search, SongSearchIndex.FilterType.TITLE);
+                    Song[] titleSongs = SongDatabase.get().getIndex().filter(search, SongSearchIndex.FilterType.TITLE);
                     for(Song song : titleSongs) {
                         song.setLastSearch(search);
                         m.addElement(song);
                     }
-                    Song[] lyricSongs = SongDatabase.get().getIndex().filterSongs(search, SongSearchIndex.FilterType.LYRICS);
+                    Song[] lyricSongs = SongDatabase.get().getIndex().filter(search, SongSearchIndex.FilterType.BODY);
                     for(Song song : lyricSongs) {
                         song.setLastSearch(null);
                         m.addElement(song);
