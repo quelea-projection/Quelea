@@ -237,12 +237,6 @@ public class LibraryBiblePanel extends JPanel implements BibleChangeListener {
             preview.setText(LabelGrabber.INSTANCE.getLabel("too.many.verses.error")
                     .replace("$(MAXVERSE)", Integer.toString(maxVerses))
                     .replace("$(VERSENUM)", Integer.toString(verses.size())));
-//            preview.setText("Sorry, no more than " + maxVerses + " verses allowed "
-//                    + "(at the moment you've selected a total off " + verses.size()
-//                    + ".) You can increase this value by going to Tools => Options "
-//                    + "and clicking the \"Bible\" tab, but setting this value "
-//                    + "too high will crash the program if you're computer isn't "
-//                    + "fast enough.");
             preview.setBackground(Color.RED);
             getAddToSchedule().setEnabled(false);
             return;
