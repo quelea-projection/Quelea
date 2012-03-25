@@ -40,7 +40,7 @@ import org.quelea.displayable.Displayable;
 import org.quelea.displayable.Song;
 import org.quelea.displayable.TextSection;
 import org.quelea.displayable.TransferDisplayable;
-import org.quelea.lucene.SearchIndex;
+import org.quelea.lucene.SongSearchIndex;
 import org.quelea.utils.DatabaseListener;
 import org.quelea.utils.LoggerUtils;
 import org.quelea.utils.QueleaProperties;
@@ -179,12 +179,12 @@ public class LibrarySongList extends JList<Song> implements DatabaseListener {
                     model = m;
                 } else {
                     DefaultListModel<Song> m = new DefaultListModel<>();
-                    Song[] titleSongs = SongDatabase.get().getIndex().filterSongs(search, SearchIndex.FilterType.TITLE);
+                    Song[] titleSongs = SongDatabase.get().getIndex().filterSongs(search, SongSearchIndex.FilterType.TITLE);
                     for(Song song : titleSongs) {
                         song.setLastSearch(search);
                         m.addElement(song);
                     }
-                    Song[] lyricSongs = SongDatabase.get().getIndex().filterSongs(search, SearchIndex.FilterType.LYRICS);
+                    Song[] lyricSongs = SongDatabase.get().getIndex().filterSongs(search, SongSearchIndex.FilterType.LYRICS);
                     for(Song song : lyricSongs) {
                         song.setLastSearch(null);
                         m.addElement(song);

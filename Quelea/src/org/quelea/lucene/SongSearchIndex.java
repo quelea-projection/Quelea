@@ -48,7 +48,7 @@ import org.quelea.utils.LoggerUtils;
  *
  * @author Michael
  */
-public class SearchIndex {
+public class SongSearchIndex {
 
     /**
      * Filter the songs based on the contents of the lyrics or the title.
@@ -65,7 +65,7 @@ public class SearchIndex {
     /**
      * Create a new empty search index.
      */
-    public SearchIndex() {
+    public SongSearchIndex() {
         songs = new HashMap<>();
         analyzer = new StandardAnalyzer(Version.LUCENE_35, new HashSet<String>());
         index = new RAMDirectory();
