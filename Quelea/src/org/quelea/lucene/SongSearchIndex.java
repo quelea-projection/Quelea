@@ -132,13 +132,13 @@ public class SongSearchIndex implements SearchIndex<Song> {
      * Search for songs that match the given filter.
      *
      * @param queryString the query to use to search.
-     * @param type TITLE or BODY, depending on what to search in. BODY is 
+     * @param type TITLE or BODY, depending on what to search in. BODY is
      * equivalent to the lyrics, TITLE the title.
      * @return an array of songs that match the filter.
      */
     @Override
     public Song[] filter(String queryString, FilterType type) {
-        String sanctifyQueryString = sanctifyQuery(queryString);
+        String sanctifyQueryString = SearchIndexUtils.makeLuceneQuery(queryString);
         if(songs.isEmpty() || sanctifyQueryString.isEmpty()) {
             return songs.values().toArray(new Song[songs.size()]);
         }
@@ -179,25 +179,4 @@ public class SongSearchIndex implements SearchIndex<Song> {
         }
     }
 
-    /**
-     * Sanctify the given query so it's "lucene-safe". Make sure it's what we
-     * want as well - treat as a phrase with a partial match for the last word.
-     *
-     * @param query the query to sanctify.
-     * @return the sanctified query.
-     */
-    private String sanctifyQuery(String query) {
-        query = query.replaceAll("[^a-zA-Z0-9 ]", "");
-        query = query.trim();
-        if(query.isEmpty()) {
-            return query;
-        }
-        if(query.contains(" ")) {
-            query = "\"" + query + "*\"";
-        }
-        else {
-            query = query + "*";
-        }
-        return query;
-    }
 }
