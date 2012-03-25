@@ -203,7 +203,7 @@ public final class SongDatabase {
             if(!addedToIndex) {
                 addedToIndex = true;
                 LOGGER.log(Level.INFO, "Adding songs to index");
-                index.addSongs(songs);
+                index.addAll(songs);
             }
             return songs.toArray(new Song[songs.size()]);
         }
@@ -256,7 +256,7 @@ public final class SongDatabase {
                 resultSet.close();
             }
             song.setID(id);
-            index.addSong(song);
+            index.add(song);
             return true;
         }
         catch(SQLException ex) {
@@ -304,7 +304,7 @@ public final class SongDatabase {
                     stat.setString(12, song.getInfo());
                     stat.setInt(13, song.getID());
                     stat.executeUpdate();
-                    index.updateSong(song);
+                    index.update(song);
                     return true;
                 }
                 finally {
@@ -328,7 +328,7 @@ public final class SongDatabase {
         try(PreparedStatement stat = conn.prepareStatement("delete from songs where id=?")) {
             stat.setInt(1, song.getID());
             stat.executeUpdate();
-            index.removeSong(song);
+            index.remove(song);
             return true;
         }
         catch(SQLException ex) {
