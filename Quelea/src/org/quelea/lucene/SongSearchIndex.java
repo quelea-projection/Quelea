@@ -85,7 +85,7 @@ public class SongSearchIndex implements SearchIndex<Song> {
      * @param songList the song list to add.
      */
     @Override
-    public void addAll(Collection<Song> songList) {
+    public void addAll(Collection<? extends Song> songList) {
         try (IndexWriter writer = new IndexWriter(index, new IndexWriterConfig(Version.LUCENE_35, analyzer))) {
             for(Song song : songList) {
                 Document doc = new Document();
