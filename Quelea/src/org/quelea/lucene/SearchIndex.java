@@ -44,7 +44,7 @@ public interface SearchIndex<T> {
      * Add all of the items in this collection to this search index.
      * @param t the collection of items to add.
      */
-    void addAll(Collection<T> t);
+    void addAll(Collection<? extends T> t);
     
     /**
      * Remove the given item from this search index.
