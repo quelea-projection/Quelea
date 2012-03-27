@@ -78,8 +78,6 @@ public class AddPowerpointActionListener implements ActionListener {
                             });
                         }
                     });
-//                            presentationButton.setIcon(RibbonUtils.getRibbonIcon("icons/hourglass.png", 100, 100));
-//                            presentationButton.setEnabled(false);
                     try {
                         final PresentationDisplayable displayable = new PresentationDisplayable(fileChooser.getSelectedFile());
                         if(!halt) {
@@ -106,8 +104,6 @@ public class AddPowerpointActionListener implements ActionListener {
                     catch (RuntimeException ex) {
                         LOGGER.log(Level.WARNING, "Couldn't import presentation", ex);
                     }
-//                            presentationButton.setIcon(RibbonUtils.getRibbonIcon("icons/powerpoint.png", 100, 100));
-//                            presentationButton.setEnabled(true);
                     while(panel == null) {
                         Utils.sleep(1000); //Quick bodge but hey, it works
                     }
