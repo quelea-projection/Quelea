@@ -18,11 +18,16 @@
 package org.quelea.displayable;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.Icon;
 import org.quelea.powerpoint.OOPresentation;
 import org.quelea.powerpoint.Presentation;
+import org.quelea.powerpoint.PresentationFactory;
+import org.quelea.utils.LoggerUtils;
 import org.quelea.utils.Utils;
 import org.w3c.dom.Node;
 
@@ -32,6 +37,7 @@ import org.w3c.dom.Node;
  */
 public class PresentationDisplayable implements Displayable {
 
+    private static final Logger LOGGER = LoggerUtils.getLogger();
     private final File file;
     private final Presentation presentation;
     private OOPresentation ooPresentation;
@@ -40,9 +46,12 @@ public class PresentationDisplayable implements Displayable {
      * Create a new presentation displayable
      * @param file the file to create the presentation from.
      */
-    public PresentationDisplayable(File file) {
+    public PresentationDisplayable(File file) throws IOException {
         this.file = file;
-        presentation = new Presentation(file.getAbsolutePath());
+        presentation = new PresentationFactory().getPresentation(file);
+        if(presentation==null) {
+            throw new IOException("Error with presentation, couldn't open " + file);
+        }
         try {
             ooPresentation = new OOPresentation(file.getAbsolutePath());
         }
@@ -73,7 +82,13 @@ public class PresentationDisplayable implements Displayable {
      * @return the object as defined by the XML.
      */
     public static PresentationDisplayable parseXML(Node node) {
-        return new PresentationDisplayable(new File(node.getTextContent()));
+        try {
+            return new PresentationDisplayable(new File(node.getTextContent()));
+        }
+        catch(IOException ex) {
+            LOGGER.log(Level.INFO, "Couldn't create presentation for schedule", ex);
+            return null;
+        }
     }
 
     /**

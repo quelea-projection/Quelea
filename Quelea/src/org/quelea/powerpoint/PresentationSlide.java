@@ -23,6 +23,7 @@ import java.lang.ref.SoftReference;
 import java.util.HashMap;
 import java.util.Map;
 import org.apache.poi.hslf.model.Slide;
+import org.apache.poi.xslf.usermodel.XSLFSlide;
 import org.quelea.Application;
 import org.quelea.utils.Utils;
 import org.quelea.windows.main.LyricCanvas;
@@ -51,6 +52,24 @@ public class PresentationSlide {
         org.apache.poi.hslf.usermodel.SlideShow slideshow = slide.getSlideShow();
         image = new BufferedImage((int) slideshow.getPageSize().getWidth(), (int) slideshow.getPageSize().getHeight(), BufferedImage.TYPE_INT_ARGB);
         slide.draw(image.createGraphics());
+        initCacheImage();
+    }
+    
+    /**
+     * Create a new presentation slide.
+     * @param slide the underlying apache POI slide.
+     */
+    public PresentationSlide(XSLFSlide slide) {
+        org.apache.poi.xslf.usermodel.XMLSlideShow slideshow = slide.getSlideShow();
+        image = new BufferedImage((int) slideshow.getPageSize().getWidth(), (int) slideshow.getPageSize().getHeight(), BufferedImage.TYPE_INT_ARGB);
+        slide.draw(image.createGraphics());
+        initCacheImage();
+    }
+    
+    /**
+     * "Touch" the current image so it's initialised in the image cache.
+     */
+    private void initCacheImage() {
         LyricCanvas lc = Application.get().getLyricWindow().getCanvas();
         getImage(lc.getWidth(), lc.getHeight()); //just for the cache
     }

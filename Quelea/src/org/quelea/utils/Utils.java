@@ -72,7 +72,7 @@ public final class Utils {
     private Utils() {
         throw new AssertionError();
     }
-    
+
     /**
      * Beep!
      */
@@ -89,7 +89,7 @@ public final class Utils {
         try {
             Thread.sleep(millis);
         }
-        catch (InterruptedException ex) {
+        catch(InterruptedException ex) {
             //Nothing
         }
     }
@@ -440,7 +440,7 @@ public final class Utils {
      * if we can't get the text content for some reason.
      */
     public static synchronized String getTextFromFile(String fileName, String errorText) {
-        try (BufferedReader reader = new BufferedReader(new FileReader(fileName))) {
+        try(BufferedReader reader = new BufferedReader(new FileReader(fileName))) {
             StringBuilder content = new StringBuilder();
             String line;
             while((line = reader.readLine()) != null) {
@@ -448,7 +448,7 @@ public final class Utils {
             }
             return content.toString();
         }
-        catch (IOException ex) {
+        catch(IOException ex) {
             LOGGER.log(Level.WARNING, "Couldn't get the contents of " + fileName, ex);
             return errorText;
         }
@@ -512,7 +512,7 @@ public final class Utils {
                 return image;
             }
         }
-        catch (IOException ex) {
+        catch(IOException ex) {
             LOGGER.log(Level.WARNING, "Couldn't get image: " + location, ex);
             return null;
         }
@@ -563,14 +563,31 @@ public final class Utils {
             return true;
         }
         else {
-            String suffix = file.getName().split("\\.")[file.getName().split("\\.").length - 1].toLowerCase().trim();
-            return (suffix.equals("png")
-                    || suffix.equals("bmp")
-                    || suffix.equals("tif")
-                    || suffix.equals("jpg")
-                    || suffix.equals("jpeg")
-                    || suffix.equals("gif"));
+            return hasExtension(file, "png")
+                    ||hasExtension(file, "tif")
+                    ||hasExtension(file, "jpg")
+                    ||hasExtension(file, "jpeg")
+                    ||hasExtension(file, "gif")
+                    ||hasExtension(file, "bmp");
         }
+    }
+
+    /**
+     * Determine whether the given file has the given case insensitive
+     * extension.
+     *
+     * @param file the file to check.
+     * @param ext the extension to check.
+     * @return true if it has the given extension, false otherwise.
+     */
+    public static boolean hasExtension(File file, String ext) {
+        String name = file.getName();
+        if(!name.contains(".")) {
+            return false;
+        }
+        String[] parts = name.split("\\.");
+        String suffix = parts[parts.length - 1].toLowerCase().trim();
+        return suffix.equals(ext.trim().toLowerCase());
     }
 
     /**
