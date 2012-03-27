@@ -46,6 +46,7 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import ooo.connector.BootstrapSocketConnector;
+import org.quelea.utils.QueleaProperties;
 import org.quelea.utils.Utils;
 
 /**
@@ -81,7 +82,7 @@ public class OOPresentation {
             LOGGER.log(Level.INFO, "Openoffice initialised ok");
             return true;
         }
-        catch (BootstrapException ex) {
+        catch(BootstrapException ex) {
             LOGGER.log(Level.SEVERE, "Couldn't connect to openoffice instance", ex);
             return false;
         }
@@ -177,9 +178,11 @@ public class OOPresentation {
         try {
             xPresentation.setPropertyValue("Display", display);
             xPresentation.setPropertyValue("IsAutomatic", true);
-            xPresentation.setPropertyValue("IsAlwaysOnTop", true);
+            if(QueleaProperties.get().getOOPresOnTop()) {
+                xPresentation.setPropertyValue("IsAlwaysOnTop", true);
+            }
         }
-        catch (UnknownPropertyException | PropertyVetoException | IllegalArgumentException | WrappedTargetException ex) {
+        catch(UnknownPropertyException | PropertyVetoException | IllegalArgumentException | WrappedTargetException ex) {
             LOGGER.log(Level.SEVERE, "Error setting presentation properties", ex);
         }
         if(!xPresentation.isRunning()) {
@@ -326,7 +329,7 @@ public class OOPresentation {
                         xcloseable.close();
                     }
                 }
-                catch (SQLException ex) {
+                catch(SQLException ex) {
                     LOGGER.log(Level.WARNING, "Error occured when closing presentation", ex);
                 }
                 doc.dispose();
