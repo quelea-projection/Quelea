@@ -47,11 +47,11 @@ public final class QueleaProperties extends Properties {
             if(!getPropFile().exists()) {
                 getPropFile().createNewFile();
             }
-            try (FileReader reader = new FileReader(getPropFile())) {
+            try(FileReader reader = new FileReader(getPropFile())) {
                 load(reader);
             }
         }
-        catch (IOException ex) {
+        catch(IOException ex) {
 //            LOGGER.log(Level.SEVERE, "Couldn't load properties", ex);
 //            ex.printStackTrace();
         }
@@ -70,10 +70,10 @@ public final class QueleaProperties extends Properties {
      * Save these properties to the file.
      */
     private void write() {
-        try (FileWriter writer = new FileWriter(getPropFile())) {
+        try(FileWriter writer = new FileWriter(getPropFile())) {
             store(writer, "Auto save");
         }
-        catch (IOException ex) {
+        catch(IOException ex) {
 //            LOGGER.log(Level.WARNING, "Couldn't store properties", ex);
         }
     }
@@ -855,7 +855,7 @@ public final class QueleaProperties extends Properties {
     public String getOOPath() {
         return getProperty("oo.path", "");
     }
-    
+
     /**
      * Set the path to the openoffice installation on this machine.
      *
@@ -864,5 +864,16 @@ public final class QueleaProperties extends Properties {
     public void setOOPath(String path) {
         setProperty("oo.path", path);
         write();
+    }
+
+    /**
+     * Determine if the OO presentation should be always on top or not. Not user
+     * controlled, but useful for testing.
+     *
+     * @return true if the presentation should be always on top, false
+     * otherwise.
+     */
+    public boolean getOOPresOnTop() {
+        return Boolean.parseBoolean(getProperty("oo.ontop", "true"));
     }
 }
