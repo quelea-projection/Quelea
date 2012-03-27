@@ -21,6 +21,7 @@ package org.quelea.windows.main.actionlisteners;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
+import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JFileChooser;
@@ -90,13 +91,13 @@ public class AddPowerpointActionListener implements ActionListener {
                             });
                         }
                     }
-                    catch (OfficeXmlFileException ex) {
+                    catch(IOException ex) {
                         if(!halt) {
                             SwingUtilities.invokeLater(new Runnable() {
 
                                 @Override
                                 public void run() {
-                                    JOptionPane.showMessageDialog(Application.get().getMainWindow(), LabelGrabber.INSTANCE.getLabel("pptx.error"), LabelGrabber.INSTANCE.getLabel("adding.presentation.error.title"), JOptionPane.ERROR_MESSAGE);
+                                    JOptionPane.showMessageDialog(Application.get().getMainWindow(), LabelGrabber.INSTANCE.getLabel("adding.presentation.error.message"), LabelGrabber.INSTANCE.getLabel("adding.presentation.error.title"), JOptionPane.ERROR_MESSAGE);
                                 }
                             });
                         }

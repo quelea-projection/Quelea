@@ -180,7 +180,6 @@ no.dvd.error=Please insert a valid DVD.
 adding.presentation.status=Importing presentation...
 adding.presentation.error.message=There was an error importing the presentation, perhaps it's corrupt?
 adding.presentation.error.title=Error importing presentation
-pptx.error=The file you've selected is in the newer pptx format - at this time Quelea only supports the older ppt format.\nPlease save in that format and try again.
 importing.status=Importing...
 name.label=Name
 similar.colors.text=You've chosen very similar colours for the words and background\nwhich will be hard for the congregation to see. I'd advise you choose better colours!
