@@ -28,6 +28,7 @@ import org.quelea.utils.Utils;
 
 /**
  * A status panel that denotes a background task in Quelea.
+ *
  * @author Michael
  */
 public class StatusPanel extends JPanel {
@@ -40,6 +41,7 @@ public class StatusPanel extends JPanel {
 
     /**
      * Create a new status panel.
+     *
      * @param group the group this panel is part of.
      * @param labelText the text to put on the label on this panel.
      * @param index the index of this panel on the group.
@@ -57,26 +59,52 @@ public class StatusPanel extends JPanel {
         add(cancelButton);
     }
 
+    /**
+     * Called to indicate that the task associated with this panel has finished,
+     * and therefore the panel can be removed.
+     */
     public void done() {
         SwingUtilities.invokeLater(new Runnable() {
+
+            @Override
             public void run() {
                 group.removePanel(index);
             }
         });
     }
 
+    /**
+     * Set the label text for this panel.
+     *
+     * @param text the text on this panel's label.
+     */
     public void setLabelText(String text) {
         label.setText(text);
     }
 
+    /**
+     * Get the progress bar associated with this panel.
+     *
+     * @return the progress bar associated with this panel.
+     */
     public JProgressBar getProgressBar() {
         return progressBar;
     }
 
+    /**
+     * Get the cancel button on this panel.
+     *
+     * @return the cancel button on this panel.
+     */
     public JButton getCancelButton() {
         return cancelButton;
     }
 
+    /**
+     * Set whether this panel is active.
+     *
+     * @param active true if active, false otherwise.
+     */
     public void setActive(boolean active) {
         setVisible(active);
     }
