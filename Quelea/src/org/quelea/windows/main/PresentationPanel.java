@@ -153,8 +153,9 @@ public class PresentationPanel extends ContainedPanel {
 
                 @Override
                 public void keyPressed(KeyEvent ke) {
-                    if(ke.getKeyCode() == KeyEvent.VK_RIGHT || ke.getKeyCode() == KeyEvent.VK_SPACE) {
+                    if(ke.getKeyCode() == KeyEvent.VK_RIGHT || ke.getKeyCode() == KeyEvent.VK_SPACE || ke.getKeyCode() == KeyEvent.VK_DOWN) {
                         displayable.getOOPresentation().goForward();
+                        ke.consume();
                     }
                     if(ke.getKeyCode() == KeyEvent.VK_LEFT) {
                         displayable.getOOPresentation().goBack();
