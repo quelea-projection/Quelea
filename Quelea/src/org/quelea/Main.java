@@ -195,6 +195,7 @@ public final class Main {
                 splashWindow.setVisible(false);
                 mainWindow.setVisible(true);
                 new ShortcutManager().addShortcuts();
+                BibleManager.get().buildIndex();
                 LOGGER.log(Level.INFO, "Loaded everything.");
 
                 if(args.length > 0) {

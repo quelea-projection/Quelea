@@ -262,3 +262,4 @@ setup.oo.failed.title=OpenOffice failed to initialise
 use.oo.label=Use OpenOffice for presentations
 oo.path=OpenOffice path
 browse=Browse...
+building.bible.index=Loading bibles
