@@ -35,6 +35,7 @@ public final class BibleChapter {
     private final List<BibleVerse> verses;
     private String text;
     private int id = -1;
+    private BibleBook book;
 
     /**
      * Create a new bible chapter.
@@ -44,6 +45,22 @@ public final class BibleChapter {
     private BibleChapter(int num) {
         this.num = num;
         verses = new ArrayList<>();
+    }
+    
+    /**
+     * Set the bible book this chapter is part of.
+     * @param book the book this chapter is part of.
+     */
+    void setBook(BibleBook book) {
+        this.book = book;
+    }
+
+    /**
+     * Get the book this chapter is part of.
+     * @return the book this chapter is part of.
+     */
+    public BibleBook getBook() {
+        return book;
     }
 
     /**
@@ -63,7 +80,9 @@ public final class BibleChapter {
         for(int i = 0; i < list.getLength(); i++) {
             if(list.item(i).getNodeName().equalsIgnoreCase("vers")
                     || list.item(i).getNodeName().equalsIgnoreCase("v")) {
-                ret.addVerse(BibleVerse.parseXML(list.item(i)));
+                BibleVerse verse = BibleVerse.parseXML(list.item(i));
+                verse.setChapter(ret);
+                ret.addVerse(verse);
             }
         }
         return ret;
