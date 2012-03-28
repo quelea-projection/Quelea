@@ -33,6 +33,7 @@ import javax.swing.BoxLayout;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import org.quelea.Application;
+import org.quelea.bible.BibleSearchDialog;
 import org.quelea.notice.NoticeDialog;
 import org.quelea.tags.TagDialog;
 import org.quelea.utils.LoggerUtils;
@@ -60,6 +61,7 @@ public class MainWindow extends JFrame implements ApplicationListener {
     private final MainToolbar mainToolbar;
     private final TagDialog tagDialog;
     private final OptionsDialog optionsDialog;
+    private final BibleSearchDialog bibleSearchDialog;
     private final org.simplericity.macify.eawt.Application macApp;
 
     /**
@@ -100,6 +102,9 @@ public class MainWindow extends JFrame implements ApplicationListener {
         
         LOGGER.log(Level.INFO, "Creating options dialog");
         optionsDialog = new OptionsDialog(Application.get().getMainWindow());
+        
+        LOGGER.log(Level.INFO, "Creating bible search dialog");
+        bibleSearchDialog = new BibleSearchDialog();
 
         mainpanel = new MainPanel();
         songEntryWindow = new SongEntryWindow(this);
@@ -153,6 +158,14 @@ public class MainWindow extends JFrame implements ApplicationListener {
      */
     public OptionsDialog getOptionsDialog() {
         return optionsDialog;
+    }
+
+    /**
+     * Get the bible search dialog on this main window.
+     * @return the bible search dialog.
+     */
+    public BibleSearchDialog getBibleSearchDialog() {
+        return bibleSearchDialog;
     }
     
     /**

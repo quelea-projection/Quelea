@@ -39,7 +39,6 @@ public class FileMenu extends JMenu {
     private JMenuItem saveItem;
     private JMenuItem saveAsItem;
     private JMenuItem printItem;
-    private JMenuItem optionsItem;
     private JMenuItem exitItem;
 
     /**
@@ -77,12 +76,6 @@ public class FileMenu extends JMenu {
         printItem.setMnemonic('p');
         printItem.addActionListener(new PrintScheduleActionListener());
         add(printItem);
-
-        optionsItem = new JMenuItem(LabelGrabber.INSTANCE.getLabel("options.button"), Utils.getImageIcon("icons/options.png", 20, 20));
-        optionsItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_T, ActionEvent.CTRL_MASK));
-        optionsItem.setMnemonic('t');
-        optionsItem.addActionListener(new ShowOptionsActionListener());
-        add(optionsItem);
 
         exitItem = new JMenuItem(LabelGrabber.INSTANCE.getLabel("exit.button"), Utils.getImageIcon("icons/exit.png", 20, 20));
         exitItem.setMnemonic('e');

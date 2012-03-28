@@ -37,6 +37,7 @@ import org.apache.lucene.index.IndexWriterConfig;
 import org.apache.lucene.index.Term;
 import org.apache.lucene.queryParser.ParseException;
 import org.apache.lucene.queryParser.complexPhrase.ComplexPhraseQueryParser;
+import org.apache.lucene.search.BooleanQuery;
 import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.search.Query;
 import org.apache.lucene.search.ScoreDoc;
@@ -144,6 +145,7 @@ public class BibleSearchIndex implements SearchIndex<BibleChapter> {
         }
         List<BibleChapter> ret;
         try (IndexSearcher searcher = new IndexSearcher(IndexReader.open(index))) {
+            BooleanQuery.setMaxClauseCount(4000);
             Query q = new ComplexPhraseQueryParser(Version.LUCENE_35, "text", analyzer).parse(sanctifyQueryString);
             TopScoreDocCollector collector = TopScoreDocCollector.create(100, true);
             searcher.search(q, collector);
