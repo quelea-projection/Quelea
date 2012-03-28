@@ -18,17 +18,44 @@
  */
 package org.quelea.lucene;
 
+import java.io.IOException;
+import java.util.HashSet;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import org.apache.lucene.analysis.standard.StandardAnalyzer;
+import org.apache.lucene.index.IndexWriter;
+import org.apache.lucene.index.IndexWriterConfig;
+import org.apache.lucene.store.Directory;
+import org.apache.lucene.util.Version;
+import org.quelea.utils.LoggerUtils;
+
 /**
  * General utility methods for search indexes.
  * @author Michael
  */
 public class SearchIndexUtils {
     
+    private static final Logger LOGGER = LoggerUtils.getLogger();
+    
     /**
      * Don't make me...
      */
     private SearchIndexUtils() {
         throw new AssertionError();
+    }
+    
+    /**
+     * Clear the given index.
+     * @param index the index to clear.
+     */
+    public static void clearIndex(Directory index) {
+        try (IndexWriter writer = new IndexWriter(index, new IndexWriterConfig(Version.LUCENE_35, new StandardAnalyzer(Version.LUCENE_35, new HashSet<String>())))) {
+            writer.deleteAll();
+            writer.commit();
+        }
+        catch (IOException ex) {
+            LOGGER.log(Level.SEVERE, "Couldn't clear the index", ex);
+        }
     }
     
     /**
