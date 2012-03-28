@@ -32,6 +32,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.quelea.displayable.Song;
 import org.quelea.displayable.TextSection;
+import org.quelea.lucene.SearchIndex;
 import org.quelea.lucene.SongSearchIndex;
 import org.quelea.utils.DatabaseListener;
 import org.quelea.utils.LoggerUtils;
@@ -49,7 +50,7 @@ public final class SongDatabase {
 
     private static final Logger LOGGER = LoggerUtils.getLogger();
     private static final SongDatabase INSTANCE = new SongDatabase();
-    private SongSearchIndex index;
+    private SearchIndex<Song> index;
     private boolean addedToIndex;
     private Connection conn;
     private boolean error;
@@ -141,7 +142,7 @@ public final class SongDatabase {
      *
      * @return the search index.
      */
-    public SongSearchIndex getIndex() {
+    public SearchIndex<Song> getIndex() {
         return index;
     }
 

@@ -53,6 +53,11 @@ public interface SearchIndex<T> {
     void remove(T t);
     
     /**
+     * Remove everything from the given search index.
+     */
+    void clear();
+    
+    /**
      * Update the given item in this search index.
      * @param t the item to update.
      */
