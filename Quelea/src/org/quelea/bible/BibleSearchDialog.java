@@ -26,12 +26,12 @@ import java.awt.event.KeyEvent;
 import javax.swing.BoxLayout;
 import javax.swing.DefaultListModel;
 import javax.swing.JDialog;
-import javax.swing.JFrame;
 import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
+import org.quelea.Application;
 import org.quelea.languages.LabelGrabber;
 import org.quelea.utils.Utils;
 
@@ -40,7 +40,7 @@ import org.quelea.utils.Utils;
  *
  * @author mjrb5
  */
-public class BibleSearcherDialog extends JFrame {
+public class BibleSearchDialog extends JDialog {
 
     private JTextField searchField;
     private JList<String> searchResults;
@@ -48,9 +48,8 @@ public class BibleSearcherDialog extends JFrame {
     /**
      * Create a new bible searcher dialog.
      */
-    public BibleSearcherDialog() {
-        BibleManager.get().buildIndex();
-//        super(Application.get().getMainWindow());
+    public BibleSearchDialog() {
+        super(Application.get().getMainWindow());
         setLayout(new BorderLayout());
         setTitle(LabelGrabber.INSTANCE.getLabel("bible.search.title"));
         setIconImage(Utils.getImage("icons/search.png"));
@@ -74,7 +73,7 @@ public class BibleSearcherDialog extends JFrame {
         pack();
         reset();
     }
-    
+
     /**
      * Reset this dialog.
      */
@@ -88,7 +87,6 @@ public class BibleSearcherDialog extends JFrame {
             public void focusGained(FocusEvent fe) {
                 searchField.setText("");
             }
-
         });
         searchField.setEnabled(false);
         BibleManager.get().runOnIndexInit(new Runnable() {
@@ -105,7 +103,7 @@ public class BibleSearcherDialog extends JFrame {
      */
     private void update() {
         if(BibleManager.get().isIndexInit()) {
-            String text = searchField.getText();
+            final String text = searchField.getText();
             final BibleChapter[] results = BibleManager.get().getIndex().filter(text, null);
             SwingUtilities.invokeLater(new Runnable() {
 
@@ -113,12 +111,28 @@ public class BibleSearcherDialog extends JFrame {
                 public void run() {
                     DefaultListModel<String> model = (DefaultListModel<String>) searchResults.getModel();
                     model.clear();
-                    for(BibleChapter chapter : results) {
-                        model.addElement(chapter.getText());
+                    if(!text.trim().isEmpty()) {
+                        for(BibleChapter chapter : results) {
+                            model.addElement(chapter.getText());
+                        }
                     }
                 }
             });
         }
+    }
+
+    /**
+     * Centre the dialog on the parent before displaying.
+     *
+     * @param visible true if visible, false otherwise.
+     */
+    @Override
+    public void setVisible(boolean visible) {
+        if(visible) {
+            reset();
+            setLocationRelativeTo(getOwner());
+        }
+        super.setVisible(visible);
     }
 
     /**
@@ -127,8 +141,8 @@ public class BibleSearcherDialog extends JFrame {
      * @param args command line arguments (not used.)
      */
     public static void main(String[] args) {
-        BibleSearcherDialog dialog = new BibleSearcherDialog();
-        dialog.setDefaultCloseOperation(JDialog.EXIT_ON_CLOSE);
+        BibleSearchDialog dialog = new BibleSearchDialog();
+//        dialog.setDefaultCloseOperation(JDialog.EXIT_ON_CLOSE);
         dialog.setVisible(true);
     }
 }
