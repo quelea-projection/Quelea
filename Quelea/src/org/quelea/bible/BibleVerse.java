@@ -28,12 +28,31 @@ public final class BibleVerse {
 
     private String verse;
     private int num;
+    private BibleChapter chapter;
 
     /**
      * For internal use only.
      */
     private BibleVerse() {
         //For internal use
+    }
+    
+    /**
+     * Set the chapter this verse is part of.
+     *
+     * @param chapter the chapter this verse is part of.
+     */
+    void setChapter(BibleChapter chapter) {
+        this.chapter = chapter;
+    }
+
+    /**
+     * Get the chapter this verse is part of.
+     *
+     * @return the chapter this verse is part of.
+     */
+    public BibleChapter getChapter() {
+        return chapter;
     }
 
     /**

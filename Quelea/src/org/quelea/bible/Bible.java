@@ -116,7 +116,9 @@ public final class Bible {
             }
             else if (list.item(i).getNodeName().equalsIgnoreCase("biblebook")
                     || list.item(i).getNodeName().equalsIgnoreCase("b")) {
-                ret.addBook(BibleBook.parseXML(list.item(i)));
+                BibleBook book =BibleBook.parseXML(list.item(i));
+                book.setBible(ret);
+                ret.addBook(book);
             }
         }
         return ret;
