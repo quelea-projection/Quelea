@@ -16,37 +16,20 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.quelea.windows.main.menus;
+package org.quelea.windows.main.actionlisteners;
 
-import javax.swing.JMenuBar;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 /**
- * Quelea's main menu bar.
+ * Action listener for displaying the dialog to view the contents of bibles.
  * @author Michael
  */
-public class MainMenuBar extends JMenuBar {
-    
-    private FileMenu fileMenu;
-    private ScheduleMenu scheduleMenu;
-    private DatabaseMenu databaseMenu;
-    private ToolsMenu toolsMenu;
-    private HelpMenu helpMenu;
-    
-    public MainMenuBar() {
-        fileMenu = new FileMenu();
-        add(fileMenu);
-        
-        scheduleMenu = new ScheduleMenu();
-        add(scheduleMenu);
-        
-        databaseMenu = new DatabaseMenu();
-        add(databaseMenu);
-        
-        toolsMenu = new ToolsMenu();
-        add(toolsMenu);
-        
-        helpMenu = new HelpMenu();
-        add(helpMenu);
+public class ViewBibleActionListener implements ActionListener {
+
+    @Override
+    public void actionPerformed(ActionEvent ae) {
+        //TODO: Implement
     }
     
 }
