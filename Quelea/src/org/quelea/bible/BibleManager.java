@@ -50,6 +50,8 @@ public final class BibleManager {
     private final List<Bible> bibles;
     private final List<BibleChangeListener> listeners;
     private final SearchIndex<BibleChapter> index;
+    private boolean indexInit;
+    private final List<Runnable> onIndexInit;
 
     /**
      * Create a new bible manager.
@@ -58,6 +60,8 @@ public final class BibleManager {
         bibles = new ArrayList<>();
         listeners = new ArrayList<>();
         index = new BibleSearchIndex();
+        indexInit = false;
+        onIndexInit = new ArrayList<>();
         loadBibles(false);
         startWatching();
     }
@@ -80,7 +84,7 @@ public final class BibleManager {
                         try {
                             key = watcher.take();
                         }
-                        catch (InterruptedException ex) {
+                        catch(InterruptedException ex) {
                             return;
                         }
 
@@ -107,7 +111,7 @@ public final class BibleManager {
                 }
             }.start();
         }
-        catch (IOException ex) {
+        catch(IOException ex) {
             ex.printStackTrace();
         }
     }
@@ -119,6 +123,21 @@ public final class BibleManager {
      */
     public static BibleManager get() {
         return INSTANCE;
+    }
+
+    /**
+     * Run the given runnable as soon as the index is initialised, or
+     * immediately if the index is currently initialised.
+     *
+     * @param r the runnable to run.
+     */
+    public void runOnIndexInit(Runnable r) {
+        if(indexInit) {
+            r.run();
+        }
+        else {
+            onIndexInit.add(r);
+        }
     }
 
     /**
@@ -162,6 +181,9 @@ public final class BibleManager {
      * Reload all the bibles from the bibles directory into this bible manager.
      */
     public void loadBibles(boolean updateIndex) {
+        if(updateIndex) {
+            indexInit = false;
+        }
         bibles.clear();
         File biblesFile = QueleaProperties.get().getBibleDir();
         if(!biblesFile.exists()) {
@@ -181,11 +203,23 @@ public final class BibleManager {
     }
 
     /**
+     * Determine if the search index is initialised.
+     * @return true if the index is initialised, false otherwise.
+     */
+    public boolean isIndexInit() {
+        return indexInit;
+    }
+
+    /**
      * Builds the search index from the current bibles.
      */
     public void buildIndex() {
-        final StatusPanel panel = Application.get().getStatusGroup().addPanel(LabelGrabber.INSTANCE.getLabel("building.bible.index"));
-        panel.getProgressBar().setIndeterminate(true);
+        indexInit = false;
+        final StatusPanel[] panel = new StatusPanel[1];
+        if(Application.get().getMainWindow() != null) {
+            panel[0] = Application.get().getStatusGroup().addPanel(LabelGrabber.INSTANCE.getLabel("building.bible.index"));
+            panel[0].getProgressBar().setIndeterminate(true);
+        }
         SwingWorker<Void, Void> worker = new SwingWorker<Void, Void>() {
 
             @Override
@@ -201,12 +235,20 @@ public final class BibleManager {
                     }
                     LOGGER.log(Level.FINE, "Added {0}.", bible.getName());
                 }
+                LOGGER.log(Level.INFO, "Finished Adding bibles to index");
+                indexInit = true;
+                for(Runnable r : onIndexInit) {
+                    r.run();
+                }
+                onIndexInit.clear();
                 return null;
             }
 
             @Override
             protected void done() {
-                panel.done();
+                if(panel[0] != null) {
+                    panel[0].done();
+                }
             }
         };
         worker.execute();

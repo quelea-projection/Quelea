@@ -263,3 +263,5 @@ use.oo.label=Use OpenOffice for presentations
 oo.path=OpenOffice path
 browse=Browse...
 building.bible.index=Loading bibles
+bible.search.title=Bible searcher
+initial.search.text=<Type here to search>
