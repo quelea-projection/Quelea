@@ -26,6 +26,7 @@ import java.nio.file.WatchEvent;
 import java.nio.file.WatchKey;
 import java.nio.file.WatchService;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -225,16 +226,16 @@ public final class BibleManager {
             @Override
             protected Void doInBackground() {
                 LOGGER.log(Level.INFO, "Adding bibles to index");
-                for(Bible bible : getBibles()) {
+                List<BibleChapter> chapters = new ArrayList<>(bibles.size() * 66);
+                for(Bible bible : bibles) {
                     LOGGER.log(Level.FINE, "Adding {0} bible to index", bible.getName());
                     index.clear();
                     for(BibleBook book : bible.getBooks()) {
-                        for(BibleChapter chapter : book.getChapters()) {
-                            index.add(chapter);
-                        }
+                        chapters.addAll(Arrays.asList(book.getChapters()));
                     }
                     LOGGER.log(Level.FINE, "Added {0}.", bible.getName());
                 }
+                index.addAll(chapters);
                 LOGGER.log(Level.INFO, "Finished Adding bibles to index");
                 indexInit = true;
                 for(Runnable r : onIndexInit) {
