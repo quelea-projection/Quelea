@@ -79,7 +79,7 @@ public class SongSearchIndex implements SearchIndex<Song> {
 
     /**
      * Add a number of songs to the index. This is much more efficient than
-     * calling addSong() repeatedly because it just uses one writer rather than
+     * calling add() repeatedly because it just uses one writer rather than
      * opening and closing one for each individual operation.
      *
      * @param songList the song list to add.
@@ -186,5 +186,4 @@ public class SongSearchIndex implements SearchIndex<Song> {
     public void clear() {
         SearchIndexUtils.clearIndex(index);
     }
-
 }
