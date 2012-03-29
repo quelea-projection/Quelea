@@ -17,6 +17,7 @@
  */
 package org.quelea.bible;
 
+import java.lang.ref.SoftReference;
 import org.quelea.utils.Utils;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -33,7 +34,7 @@ public final class BibleChapter {
 
     private final int num;
     private final List<BibleVerse> verses;
-    private String text;
+    private SoftReference<String> softRefText;
     private int id = -1;
     private BibleBook book;
 
@@ -148,15 +149,16 @@ public final class BibleChapter {
      * @return all the text in this chapter as a string.
      */
     public String getText() {
-        if(text==null) {
+        if(softRefText.get()==null) {
             StringBuilder ret = new StringBuilder();
             for(BibleVerse verse : getVerses()) {
                 ret.append(verse.getText()).append(' ');
             }
-            text = ret.toString();
-            id = text.hashCode();
+            String hardText = ret.toString();
+            this.softRefText = new SoftReference<>(hardText);
+            id = hardText.hashCode();
         }
-        return text;
+        return softRefText.get();
     }
     
     /**
@@ -164,7 +166,7 @@ public final class BibleChapter {
      * @return the unique ID for this bible chapter.
      */
     public int getID() {
-        if(text==null) {
+        if(softRefText.get()==null) {
             getText(); //Initialises id
         }
         return id;
