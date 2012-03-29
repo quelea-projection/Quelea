@@ -208,7 +208,7 @@ public class BibleSearchDialog extends JDialog implements BibleChangeListener {
         public Component getListCellRendererComponent(JList<? extends BibleChapter> list, BibleChapter value, int index, boolean isSelected, boolean cellHasFocus) {
             String tooltip = value.getBook().getBible().getName();
             setToolTipText(tooltip);
-            String introText = "<b>" + value.getBook().getBookName() + " " + value.getNum() + " (" + value.getBook().getBible().getName() + ")" + ": </b>";
+            String introText = "<b>" + value.getBook().getBookName() + " " + value.getNum() + " (" + Utils.getAbbreviation(value.getBook().getBible().getName()) + ")" + ": </b>";
             String searchText = searchField.getText().trim().toLowerCase();
             String passageText = value.getText().trim();
             int pos = passageText.toLowerCase().indexOf(searchText);
