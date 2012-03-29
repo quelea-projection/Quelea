@@ -32,10 +32,11 @@ import java.util.List;
  */
 public final class BibleChapter {
 
+    private static int statId = 0;
     private final int num;
     private final List<BibleVerse> verses;
     private SoftReference<String> softRefText;
-    private int id = -1;
+    private final int id = statId++;
     private BibleBook book;
 
     /**
@@ -158,7 +159,6 @@ public final class BibleChapter {
             }
             String hardText = ret.toString();
             this.softRefText = new SoftReference<>(hardText);
-            id = hardText.hashCode();
         }
         return softRefText.get();
     }
@@ -169,9 +169,6 @@ public final class BibleChapter {
      * @return the unique ID for this bible chapter.
      */
     public int getID() {
-        if(softRefText.get() == null) {
-            getText(); //Initialises id
-        }
         return id;
     }
 

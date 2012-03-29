@@ -49,7 +49,7 @@ import org.quelea.bible.BibleChapter;
 import org.quelea.utils.LoggerUtils;
 
 /**
- *
+ * Search index used for indexing the bibles.
  * @author Michael
  */
 public class BibleSearchIndex implements SearchIndex<BibleChapter> {
@@ -82,7 +82,7 @@ public class BibleSearchIndex implements SearchIndex<BibleChapter> {
 
     /**
      * Add a number of chapters to the index. This is much more efficient than
-     * calling addSong() repeatedly because it just uses one writer rather than
+     * calling add() repeatedly because it just uses one writer rather than
      * opening and closing one for each individual operation.
      *
      * @param bibleList the list of chapters to add.
@@ -145,9 +145,9 @@ public class BibleSearchIndex implements SearchIndex<BibleChapter> {
         }
         List<BibleChapter> ret;
         try (IndexSearcher searcher = new IndexSearcher(IndexReader.open(index))) {
-            BooleanQuery.setMaxClauseCount(4000);
+            BooleanQuery.setMaxClauseCount(3000);
             Query q = new ComplexPhraseQueryParser(Version.LUCENE_35, "text", analyzer).parse(sanctifyQueryString);
-            TopScoreDocCollector collector = TopScoreDocCollector.create(100, true);
+            TopScoreDocCollector collector = TopScoreDocCollector.create(20, true);
             searcher.search(q, collector);
             ScoreDoc[] hits = collector.topDocs().scoreDocs;
             ret = new ArrayList<>();
