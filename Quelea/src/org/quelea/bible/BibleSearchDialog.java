@@ -20,10 +20,14 @@ package org.quelea.bible;
 import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.FlowLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
 import javax.swing.BoxLayout;
+import javax.swing.DefaultComboBoxModel;
 import javax.swing.DefaultListModel;
+import javax.swing.JComboBox;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JList;
@@ -31,6 +35,7 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 import javax.swing.ListCellRenderer;
+import javax.swing.ListSelectionModel;
 import javax.swing.SwingUtilities;
 import javax.swing.border.EmptyBorder;
 import javax.swing.event.DocumentEvent;
@@ -44,10 +49,11 @@ import org.quelea.utils.Utils;
  *
  * @author mjrb5
  */
-public class BibleSearchDialog extends JDialog {
+public class BibleSearchDialog extends JDialog implements BibleChangeListener {
 
     private JTextField searchField;
     private JList<BibleChapter> searchResults;
+    private JComboBox<String> bibles;
 
     /**
      * Create a new bible searcher dialog.
@@ -58,16 +64,29 @@ public class BibleSearchDialog extends JDialog {
         setTitle(LabelGrabber.INSTANCE.getLabel("bible.search.title"));
         setIconImage(Utils.getImage("icons/search.png"));
         searchField = new JTextField(30);
+        bibles = new JComboBox<>(new DefaultComboBoxModel<String>());
+        bibles.setEditable(false);
+        BibleManager.get().registerBibleChangeListener(this);
+        updateBibles();
         JPanel northPanel = new JPanel();
         northPanel.setLayout(new FlowLayout(FlowLayout.LEFT));
+        northPanel.add(bibles);
         northPanel.add(searchField);
         add(northPanel, BorderLayout.NORTH);
         searchResults = new JList<>(new DefaultListModel<BibleChapter>());
+        searchResults.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         searchResults.setCellRenderer(new SearchPreviewRenderer());
         JPanel centrePanel = new JPanel();
         centrePanel.setLayout(new BoxLayout(centrePanel, BoxLayout.Y_AXIS));
         centrePanel.add(new JScrollPane(searchResults));
         add(centrePanel, BorderLayout.CENTER);
+        bibles.addActionListener(new ActionListener() {
+
+            @Override
+            public void actionPerformed(ActionEvent ae) {
+                update();
+            }
+        });
         searchField.getDocument().addDocumentListener(new DocumentListener() {
 
             @Override
@@ -85,7 +104,7 @@ public class BibleSearchDialog extends JDialog {
                 update();
             }
         });
-        setSize(600,400);
+        setSize(600, 400);
         reset();
     }
 
@@ -128,7 +147,9 @@ public class BibleSearchDialog extends JDialog {
                     model.clear();
                     if(!text.trim().isEmpty()) {
                         for(BibleChapter chapter : results) {
-                            model.addElement(chapter);
+                            if(bibles.getSelectedIndex() == 0 || chapter.getBook().getBible().getName().equals(bibles.getSelectedItem())) {
+                                model.addElement(chapter);
+                            }
                         }
                     }
                 }
@@ -162,6 +183,19 @@ public class BibleSearchDialog extends JDialog {
     }
 
     /**
+     * Update the list of bibles on this search dialog.
+     */
+    @Override
+    public final void updateBibles() {
+        DefaultComboBoxModel<String> model = (DefaultComboBoxModel<String>) bibles.getModel();
+        model.removeAllElements();
+        model.addElement("<html><i>" + LabelGrabber.INSTANCE.getLabel("all.text") + "</i></html>");
+        for(Bible bible : BibleManager.get().getBibles()) {
+            model.addElement(bible.getName());
+        }
+    }
+
+    /**
      * Renderer for displaying a preview of the part of the bible chapter
      * containing the search text.
      */
@@ -172,6 +206,8 @@ public class BibleSearchDialog extends JDialog {
          */
         @Override
         public Component getListCellRendererComponent(JList<? extends BibleChapter> list, BibleChapter value, int index, boolean isSelected, boolean cellHasFocus) {
+            String tooltip = value.getBook().getBible().getName();
+            setToolTipText(tooltip);
             String introText = "<b>" + value.getBook().getBookName() + " " + value.getNum() + " (" + value.getBook().getBible().getName() + ")" + ": </b>";
             String searchText = searchField.getText().trim().toLowerCase();
             String passageText = value.getText().trim();
