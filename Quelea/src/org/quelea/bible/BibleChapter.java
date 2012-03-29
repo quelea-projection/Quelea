@@ -47,9 +47,10 @@ public final class BibleChapter {
         this.num = num;
         verses = new ArrayList<>();
     }
-    
+
     /**
      * Set the bible book this chapter is part of.
+     *
      * @param book the book this chapter is part of.
      */
     void setBook(BibleBook book) {
@@ -58,6 +59,7 @@ public final class BibleChapter {
 
     /**
      * Get the book this chapter is part of.
+     *
      * @return the book this chapter is part of.
      */
     public BibleBook getBook() {
@@ -149,7 +151,7 @@ public final class BibleChapter {
      * @return all the text in this chapter as a string.
      */
     public String getText() {
-        if(softRefText.get()==null) {
+        if(softRefText == null || softRefText.get() == null) {
             StringBuilder ret = new StringBuilder();
             for(BibleVerse verse : getVerses()) {
                 ret.append(verse.getText()).append(' ');
@@ -160,13 +162,14 @@ public final class BibleChapter {
         }
         return softRefText.get();
     }
-    
+
     /**
      * Get the unique ID for this bible chapter.
+     *
      * @return the unique ID for this bible chapter.
      */
     public int getID() {
-        if(softRefText.get()==null) {
+        if(softRefText.get() == null) {
             getText(); //Initialises id
         }
         return id;
