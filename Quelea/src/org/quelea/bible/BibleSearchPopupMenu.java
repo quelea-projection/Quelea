@@ -27,6 +27,7 @@ import org.quelea.languages.LabelGrabber;
 
 /**
  * The popup menu that appears on a "searched" bible chapter.
+ *
  * @author Michael
  */
 public class BibleSearchPopupMenu extends JPopupMenu {
@@ -43,23 +44,26 @@ public class BibleSearchPopupMenu extends JPopupMenu {
 
             @Override
             public void actionPerformed(ActionEvent ae) {
-                if(currentChapter != null) {
-                    BibleBrowseDialog dialog = Application.get().getMainWindow().getBibleBrowseDialog();
-                    dialog.setChapter(currentChapter);
-                    dialog.setVisible(true);
-                }
-
+                trigger();
             }
         });
         add(viewVerseItem);
     }
 
+    public void trigger() {
+        if (currentChapter != null) {
+            BibleBrowseDialog dialog = Application.get().getMainWindow().getBibleBrowseDialog();
+            dialog.setChapter(currentChapter);
+            dialog.setVisible(true);
+        }
+    }
+
     /**
      * Set the current chapter the menu should jump to.
+     *
      * @param currentChapter the current chapter.
      */
     public void setCurrentChapter(BibleChapter currentChapter) {
         this.currentChapter = currentChapter;
     }
-    
 }
