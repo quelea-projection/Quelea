@@ -271,3 +271,6 @@ search.bible.button=Search bibles...
 all.text=All
 bible.browser.title=Bible Browser
 open.in.browser=Open in Browser...
+kingsway.button.all=All Songs
+kingsway.button.one=One Song
+song.id.selector=Please select the song ID

@@ -42,7 +42,7 @@ public class ImportMenu extends JMenu {
     private final JMenuItem qspItem;
     private final JMenuItem ssItem;
     private final JMenuItem sourceItem;
-    private final JMenuItem kingswayItem;
+    private final JMenu kingswayItem;
 //    private final JMenuItem sofItem;
     
     /**
@@ -56,7 +56,7 @@ public class ImportMenu extends JMenu {
         qspImportDialog = new QSPImportDialog(Application.get().getMainWindow());
         sImportDialog = new SurvivorImportDialog(Application.get().getMainWindow());
         sourceImportDialog = new SourceImportDialog(Application.get().getMainWindow());
-        kingswayImportDialog = new KingswayImportDialog(Application.get().getMainWindow());
+        kingswayImportDialog = new KingswayImportDialog(Application.get().getMainWindow(), null);
 //        sofImportDialog = new SofImportDialog(Application.get().getMainWindow());
         
         qspItem = new JMenuItem(LabelGrabber.INSTANCE.getLabel("qsp.button"), Utils.getImageIcon("icons/logo.png", 16, 16));
@@ -95,17 +95,37 @@ public class ImportMenu extends JMenu {
         });
         add(sourceItem);
         
-        kingswayItem = new JMenuItem(LabelGrabber.INSTANCE.getLabel("kingsway.button"), Utils.getImageIcon("icons/kingsway.png", 16, 16));
-        kingswayItem.setMnemonic('k');
-        kingswayItem.addActionListener(new ActionListener() {
+        JMenuItem kingswayAll, kingswayOne; 
+        
+        kingswayItem = new JMenu(LabelGrabber.INSTANCE.getLabel("kingsway.button"));
+        kingswayItem.setIcon(Utils.getImageIcon("icons/kingsway.png", 16, 16));
+        kingswayAll = new JMenuItem(LabelGrabber.INSTANCE.getLabel("kingsway.button.all"));
+        kingswayAll.setMnemonic('k');
+        kingswayAll.addActionListener(new ActionListener() {
 
             @Override
             public void actionPerformed(ActionEvent e) {
+                kingswayImportDialog.setAll(true);
                 kingswayImportDialog.setLocationRelativeTo(kingswayImportDialog.getOwner());
                 kingswayImportDialog.setVisible(true);
             }
         });
+        
+        kingswayOne = new JMenuItem(LabelGrabber.INSTANCE.getLabel("kingsway.button.one"));
+        kingswayOne.setMnemonic('k');
+        kingswayOne.addActionListener(new ActionListener() {
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                kingswayImportDialog.setAll(false);
+                kingswayImportDialog.setLocationRelativeTo(kingswayImportDialog.getOwner());
+                kingswayImportDialog.setVisible(true);
+            }
+        });
+        
         add(kingswayItem);
+        kingswayItem.add(kingswayAll);
+        kingswayItem.add(kingswayOne);
         
         //TODO: Implement
 //        sofItem = new JMenuItem(LabelGrabber.INSTANCE.getLabel("sof.button"), Utils.getImageIcon("icons/sof.jpg", 16, 16));

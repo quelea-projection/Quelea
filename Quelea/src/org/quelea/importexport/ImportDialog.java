@@ -289,4 +289,8 @@ public abstract class ImportDialog extends JDialog implements PropertyChangeList
             statusPanel.getProgressBar().setValue(progress);
         }
     }
+    
+    public void setAll(boolean all) {
+        //to be overwritten
+    }
 }
