@@ -27,16 +27,24 @@ import org.quelea.languages.LabelGrabber;
  */
 public class KingswayImportDialog extends ImportDialog {
     
+    private KingswayWorshipParser kwp;
+    
     /**
      * Create a new kingsway import dialog.
      * @param owner the owner of the dialog.
      */
-    public KingswayImportDialog(JFrame owner) {
+    public KingswayImportDialog(JFrame owner, KingswayWorshipParser kwp) {
         super(owner, new String[]{
                     LabelGrabber.INSTANCE.getLabel("kingsway.import.line1"),
                     LabelGrabber.INSTANCE.getLabel("kingsway.import.line2")
-                }, null, new KingswayWorshipParser(), false);
+                }, null, (kwp = new KingswayWorshipParser()), false);
+        this.kwp = kwp;
+        //TODO Messy fix...
     }
     
+    @Override
+    public void setAll(boolean all) {
+        kwp.setAll(all);
+    }
     
 }
