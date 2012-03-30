@@ -24,6 +24,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import javax.swing.BoxLayout;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.DefaultListModel;
@@ -32,6 +34,7 @@ import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 import javax.swing.ListCellRenderer;
@@ -54,6 +57,7 @@ public class BibleSearchDialog extends JDialog implements BibleChangeListener {
     private JTextField searchField;
     private JList<BibleChapter> searchResults;
     private JComboBox<String> bibles;
+    private BibleSearchPopupMenu popupMenu;
 
     /**
      * Create a new bible searcher dialog.
@@ -73,9 +77,30 @@ public class BibleSearchDialog extends JDialog implements BibleChangeListener {
         northPanel.add(bibles);
         northPanel.add(searchField);
         add(northPanel, BorderLayout.NORTH);
+        popupMenu = new BibleSearchPopupMenu();
         searchResults = new JList<>(new DefaultListModel<BibleChapter>());
         searchResults.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         searchResults.setCellRenderer(new SearchPreviewRenderer());
+        searchResults.addMouseListener(new MouseAdapter() {
+
+            @Override
+            public void mousePressed(MouseEvent e) {
+                check(e);
+            }
+
+            @Override
+            public void mouseReleased(MouseEvent e) {
+                check(e);
+            }
+
+            public void check(MouseEvent e) {
+                if(e.isPopupTrigger()) {
+                    searchResults.setSelectedIndex(searchResults.locationToIndex(e.getPoint()));
+                    popupMenu.setCurrentChapter(searchResults.getSelectedValue());
+                    popupMenu.show(searchResults, e.getX(), e.getY());
+                }
+            }
+        });
         JPanel centrePanel = new JPanel();
         centrePanel.setLayout(new BoxLayout(centrePanel, BoxLayout.Y_AXIS));
         centrePanel.add(new JScrollPane(searchResults));
