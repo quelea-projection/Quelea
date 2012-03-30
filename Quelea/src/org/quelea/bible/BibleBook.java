@@ -17,6 +17,7 @@
  */
 package org.quelea.bible;
 
+import java.lang.ref.SoftReference;
 import org.quelea.utils.Utils;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -33,6 +34,8 @@ public final class BibleBook {
     private int bookNumber;
     private String bookName;
     private final List<BibleChapter> chapters;
+    private SoftReference<String> softRefText;
+    private List<Integer> caretPosList;
     private Bible bible;
 
     /**
@@ -40,6 +43,7 @@ public final class BibleBook {
      */
     private BibleBook() {
         chapters = new ArrayList<>();
+        caretPosList = new ArrayList<>();
     }
     
     /**
@@ -49,6 +53,52 @@ public final class BibleBook {
      */
     void setBible(Bible bible) {
         this.bible = bible;
+    }
+    
+    /**
+     * Get the text of this chapter as nicely formatted HTML.
+     * @return the text of this chapter.
+     */
+    public String getHTML() {
+        if(softRefText == null || softRefText.get() == null) {
+            caretPosList.clear();
+            int pos = 0;
+            StringBuilder ret = new StringBuilder(1000);
+            ret.append("<html><body>");
+            for(BibleChapter chapter : getChapters()) {
+                caretPosList.add(pos);
+                ret.append("<h1>");
+                String numStr = Integer.toString(chapter.getNum());
+                pos += numStr.length();
+                ret.append(numStr);
+                ret.append("</h1>");
+                ret.append("<p>");
+                for(BibleVerse verse : chapter.getVerses()) {
+                    ret.append("<sup>");
+                    String verseNumStr = Integer.toString(verse.getNum());
+                    pos += verseNumStr.length();
+                    ret.append(verseNumStr);
+                    ret.append("</sup>");
+                    String verseText = verse.getText();
+                    pos += verseText.length();
+                    ret.append(verseText);
+                }
+                ret.append("</p>");
+            }
+            ret.append("</body></html>");
+            String hardText = ret.toString();
+            this.softRefText = new SoftReference<>(hardText);
+        }
+        return softRefText.get();
+    }
+    
+    /**
+     * Get the caret index of the chapter when used with the getHTML() method.
+     * @param num the number of the chapter in which to get the index.
+     * @return 
+     */
+    public int getCaretIndexOfChapter(int num) {
+        return caretPosList.get(num-1);
     }
 
     /**
