@@ -20,12 +20,7 @@ package org.quelea.bible;
 import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.FlowLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.FocusAdapter;
-import java.awt.event.FocusEvent;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
+import java.awt.event.*;
 import javax.swing.BoxLayout;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.DefaultListModel;
@@ -98,6 +93,27 @@ public class BibleSearchDialog extends JDialog implements BibleChangeListener {
                     searchResults.setSelectedIndex(searchResults.locationToIndex(e.getPoint()));
                     popupMenu.setCurrentChapter(searchResults.getSelectedValue());
                     popupMenu.show(searchResults, e.getX(), e.getY());
+                }
+            }
+        });
+        searchResults.addKeyListener(new KeyListener() {
+
+            @Override
+            public void keyTyped(KeyEvent e) {
+                //
+            }
+
+            @Override
+            public void keyPressed(KeyEvent e) {
+                //
+            }
+
+            @Override
+            public void keyReleased(KeyEvent e) {
+                if(e.getKeyCode() == KeyEvent.VK_ENTER || e.getKeyCode() == KeyEvent.VK_SPACE) {
+                    BibleChapter result = searchResults.getSelectedValue();
+                    popupMenu.setCurrentChapter(searchResults.getSelectedValue());
+                    popupMenu.trigger();
                 }
             }
         });
