@@ -20,6 +20,7 @@ package org.quelea.windows.main.actionlisteners;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import org.quelea.Application;
 
 /**
  * Action listener for displaying the dialog to view the contents of bibles.
@@ -29,7 +30,7 @@ public class ViewBibleActionListener implements ActionListener {
 
     @Override
     public void actionPerformed(ActionEvent ae) {
-        //TODO: Implement
+        Application.get().getMainWindow().getBibleBrowseDialog().setVisible(true);
     }
     
 }
