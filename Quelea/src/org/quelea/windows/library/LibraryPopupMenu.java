@@ -48,7 +48,7 @@ public class LibraryPopupMenu extends JPopupMenu {
         addToSchedule.setMnemonic(KeyEvent.VK_A);
         editDB = new JMenuItem(LabelGrabber.INSTANCE.getLabel("library.edit.song.text"), Utils.getImageIcon("icons/edit.png", 16, 16));
         editDB.setMnemonic(KeyEvent.VK_E);
-        removeFromDB = new JMenuItem(LabelGrabber.INSTANCE.getLabel("library.remove.song.text"), Utils.getImageIcon("icons/remove.png", 16, 16));
+        removeFromDB = new JMenuItem(LabelGrabber.INSTANCE.getLabel("library.remove.song.text"), Utils.getImageIcon("icons/removedb.png", 16, 16));
         removeFromDB.setMnemonic(KeyEvent.VK_R);
         print = new JMenuItem(LabelGrabber.INSTANCE.getLabel("library.print.song.text"), Utils.getImageIcon("icons/fileprint.png", 16, 16));
         print.setMnemonic(KeyEvent.VK_P);
