@@ -69,6 +69,7 @@ public class BasicSongPanel extends JPanel {
 
     private static final Logger LOGGER = LoggerUtils.getLogger();
     private final JTextArea lyricsArea;
+    private FocusListener clearListener;
     private final JTextField titleField;
     private final JTextField authorField;
     private final JButton transposeButton;
@@ -98,7 +99,7 @@ public class BasicSongPanel extends JPanel {
         JTextField[] attributes = new JTextField[]{titleField, authorField};
 
         JPanel topPanel = new JPanel(new SpringLayout());
-        for (int i = 0; i < attributes.length; i++) {
+        for(int i = 0; i < attributes.length; i++) {
             JLabel label = new JLabel(attributes[i].getName(), JLabel.TRAILING);
             topPanel.add(label);
             label.setLabelFor(attributes[i]);
@@ -150,7 +151,7 @@ public class BasicSongPanel extends JPanel {
         centrePanel.setFocusTraversalPolicy(customFocus);
         centrePanel.setFocusCycleRoot(true);
     }
-    
+
     /**
      * Check whether any chords are present and enable / disable the transpose
      * button appropriately.
@@ -158,7 +159,7 @@ public class BasicSongPanel extends JPanel {
     private void checkChords() {
         String[] lines = lyricsArea.getText().split("\n");
         for(String line : lines) {
-            if(new LineTypeChecker(line).getLineType()==Type.CHORDS) {
+            if(new LineTypeChecker(line).getLineType() == Type.CHORDS) {
                 transposeButton.setEnabled(true);
                 return;
             }
@@ -171,7 +172,7 @@ public class BasicSongPanel extends JPanel {
      * Manage the highlighting.
      */
     private void doHighlight() {
-        for (Object highlight : highlights) {
+        for(Object highlight : highlights) {
             lyricsArea.getHighlighter().removeHighlight(highlight);
         }
         highlights.clear();
@@ -181,27 +182,28 @@ public class BasicSongPanel extends JPanel {
             String[] lines = text.split("\n");
             List<HighlightIndex> indexes = new ArrayList<>();
             int offset = 0;
-            for (int i = 0; i < lines.length; i++) {
+            for(int i = 0; i < lines.length; i++) {
                 String line = lines[i];
                 LineTypeChecker.Type type = new LineTypeChecker(line).getLineType();
-                if (type == LineTypeChecker.Type.TITLE && i > 0 && !lines[i - 1].trim().isEmpty()) {
+                if(type == LineTypeChecker.Type.TITLE && i > 0 && !lines[i - 1].trim().isEmpty()) {
                     type = LineTypeChecker.Type.NORMAL;
                 }
-                if (type != LineTypeChecker.Type.NORMAL) {
+                if(type != LineTypeChecker.Type.NORMAL) {
                     int startIndex = offset;
                     int endIndex = startIndex + line.length();
                     Color highlightColor = type.getHighlightColor();
-                    if (highlightColor != null) {
+                    if(highlightColor != null) {
                         indexes.add(new HighlightIndex(startIndex, endIndex, highlightColor));
                     }
                 }
                 offset += line.length() + 1;
             }
 
-            for (HighlightIndex index : indexes) {
+            for(HighlightIndex index : indexes) {
                 highlights.add(hilite.addHighlight(index.getStartIndex(), index.getEndIndex(), new DefaultHighlightPainter(index.getHighlightColor())));
             }
-        } catch (BadLocationException ex) {
+        }
+        catch (BadLocationException ex) {
             LOGGER.log(Level.SEVERE, "Bug in highlighting", ex);
         }
     }
@@ -220,7 +222,7 @@ public class BasicSongPanel extends JPanel {
             public void actionPerformed(ActionEvent e) {
 
                 String originalKey = getKey(0);
-                if (originalKey == null) {
+                if(originalKey == null) {
                     JOptionPane.showMessageDialog(Application.get().getMainWindow(),
                             LabelGrabber.INSTANCE.getLabel("no.chords.message"),
                             LabelGrabber.INSTANCE.getLabel("no.chords.title"),
@@ -232,17 +234,18 @@ public class BasicSongPanel extends JPanel {
                 int semitones = transposeDialog.getSemitones();
 
                 JTextField keyField = Application.get().getMainWindow().getSongEntryWindow().getDetailedSongPanel().getKeyField();
-                if (!keyField.getText().isEmpty()) {
+                if(!keyField.getText().isEmpty()) {
                     keyField.setText(new ChordTransposer(keyField.getText()).transpose(semitones, null));
                 }
 
                 String key = getKey(semitones);
 
                 StringBuilder newText = new StringBuilder(getLyricsField().getText().length());
-                for (String line : getLyricsField().getText().split("\n")) {
-                    if (new LineTypeChecker(line).getLineType() == LineTypeChecker.Type.CHORDS) {
+                for(String line : getLyricsField().getText().split("\n")) {
+                    if(new LineTypeChecker(line).getLineType() == LineTypeChecker.Type.CHORDS) {
                         newText.append(new ChordLineTransposer(line).transpose(semitones, key));
-                    } else {
+                    }
+                    else {
                         newText.append(line);
                     }
                     newText.append('\n');
@@ -265,22 +268,23 @@ public class BasicSongPanel extends JPanel {
     private String getKey(int semitones) {
         JTextField keyField = Application.get().getMainWindow().getSongEntryWindow().getDetailedSongPanel().getKeyField();
         String key = keyField.getText();
-        if (key == null || key.isEmpty()) {
-            for (String line : getLyricsField().getText().split("\n")) {
-                if (new LineTypeChecker(line).getLineType() == LineTypeChecker.Type.CHORDS) {
+        if(key == null || key.isEmpty()) {
+            for(String line : getLyricsField().getText().split("\n")) {
+                if(new LineTypeChecker(line).getLineType() == LineTypeChecker.Type.CHORDS) {
                     String first;
                     int i = 0;
                     do {
                         first = line.split("\\s+")[i++];
-                    } while (first.isEmpty());
+                    } while(first.isEmpty());
                     key = new ChordTransposer(first).transpose(semitones, null);
-                    if (key.length() > 2) {
+                    if(key.length() > 2) {
                         key = key.substring(0, 2);
                     }
-                    if (key.length() == 2) {
-                        if (key.charAt(1) == 'B') {
+                    if(key.length() == 2) {
+                        if(key.charAt(1) == 'B') {
                             key = Character.toString(key.charAt(0)) + "b";
-                        } else if (key.charAt(1) != 'b' && key.charAt(1) != '#') {
+                        }
+                        else if(key.charAt(1) != 'b' && key.charAt(1) != '#') {
                             key = Character.toString(key.charAt(0));
                         }
                     }
@@ -289,7 +293,7 @@ public class BasicSongPanel extends JPanel {
             }
         }
 
-        if (key.isEmpty()) {
+        if(key.isEmpty()) {
             key = null;
         }
         return key;
@@ -307,7 +311,7 @@ public class BasicSongPanel extends JPanel {
 
             public void actionPerformed(ActionEvent e) {
                 StringBuilder newText = new StringBuilder();
-                for (String line : lyricsArea.getText().split("\n")) {
+                for(String line : lyricsArea.getText().split("\n")) {
                     newText.append(line.trim()).append("\n");
                 }
                 lyricsArea.setText(newText.toString());
@@ -359,7 +363,7 @@ public class BasicSongPanel extends JPanel {
         getTitleField().setText("");
         getAuthorField().setText("");
         getLyricsField().setText("<" + LabelGrabber.INSTANCE.getLabel("type.lyrics.here.text") + ">");
-        getLyricsField().addFocusListener(new FocusListener() {
+        clearListener = new FocusListener() {
 
             public void focusGained(FocusEvent e) {
                 SwingUtilities.invokeLater(new Runnable() {
@@ -374,7 +378,8 @@ public class BasicSongPanel extends JPanel {
             public void focusLost(FocusEvent e) {
                 //Nothing needs to be done here.
             }
-        });
+        };
+        getLyricsField().addFocusListener(clearListener);
         getTitleField().requestFocus();
     }
 
@@ -384,6 +389,11 @@ public class BasicSongPanel extends JPanel {
      * @param song the song to edit.
      */
     public void resetEditSong(Song song) {
+        for(FocusListener listener : getLyricsField().getFocusListeners()) {
+            if(listener==clearListener) {
+                getLyricsField().removeFocusListener(listener);
+            }
+        }
         getTitleField().setText(song.getTitle());
         getAuthorField().setText(song.getAuthor());
         getLyricsField().setText(song.getLyrics(true, true));
@@ -421,7 +431,6 @@ public class BasicSongPanel extends JPanel {
     private class customFTPolicy extends FocusTraversalPolicy {
 
         List<Component> c; // components in order
-        
 
         private customFTPolicy(Component[] c) {
             this.c = Arrays.asList(c);
