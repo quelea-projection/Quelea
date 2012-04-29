@@ -146,11 +146,11 @@ public class LibrarySongPanel extends JPanel {
         JToolBar toolbar = new JToolBar();
         toolbar.setLayout(new BoxLayout(toolbar, BoxLayout.Y_AXIS));
         toolbar.setFloatable(false);
-        addButton = new JButton(Utils.getImageIcon("icons/add.png"));
+        addButton = new JButton(Utils.getImageIcon("icons/newsongdb.png", 16, 16));
         addButton.setToolTipText(LabelGrabber.INSTANCE.getLabel("add.song.text"));
         addButton.setRequestFocusEnabled(false);
         toolbar.add(addButton);
-        removeButton = new JButton(Utils.getImageIcon("icons/remove.png"));
+        removeButton = new JButton(Utils.getImageIcon("icons/removedb.png", 16, 16));
         removeButton.setToolTipText(LabelGrabber.INSTANCE.getLabel("remove.song.text"));
         removeButton.setRequestFocusEnabled(false);
         removeButton.setEnabled(false);
