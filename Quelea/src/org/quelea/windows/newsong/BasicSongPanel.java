@@ -363,6 +363,7 @@ public class BasicSongPanel extends JPanel {
         getTitleField().setText("");
         getAuthorField().setText("");
         getLyricsField().setText("<" + LabelGrabber.INSTANCE.getLabel("type.lyrics.here.text") + ">");
+        getLyricsField().removeFocusListener(clearListener);
         clearListener = new FocusListener() {
 
             public void focusGained(FocusEvent e) {
@@ -389,11 +390,7 @@ public class BasicSongPanel extends JPanel {
      * @param song the song to edit.
      */
     public void resetEditSong(Song song) {
-        for(FocusListener listener : getLyricsField().getFocusListeners()) {
-            if(listener==clearListener) {
-                getLyricsField().removeFocusListener(listener);
-            }
-        }
+        getLyricsField().removeFocusListener(clearListener);
         getTitleField().setText(song.getTitle());
         getAuthorField().setText(song.getAuthor());
         getLyricsField().setText(song.getLyrics(true, true));
