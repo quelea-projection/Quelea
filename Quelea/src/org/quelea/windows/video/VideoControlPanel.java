@@ -43,7 +43,6 @@ import org.quelea.utils.LoggerUtils;
 import org.quelea.utils.Utils;
 import org.quelea.video.RemotePlayer;
 import org.quelea.video.RemotePlayerFactory;
-import org.quelea.windows.main.LyricCanvas;
 
 /**
  * The control panel for displaying the video.
@@ -61,7 +60,7 @@ public class VideoControlPanel extends JPanel {
     private VideoStatusPanel vidStatusPanel;
     private Canvas videoArea;
     private List<RemotePlayer> mediaPlayers;
-    private List<LyricCanvas> registeredCanvases;
+    private List<Canvas> registeredCanvases;
     private ScheduledExecutorService executorService;
     private boolean pauseCheck;
     private String videoPath;
@@ -210,7 +209,7 @@ public class VideoControlPanel extends JPanel {
      *
      * @param canvas the canvas to control.
      */
-    public void registerCanvas(final LyricCanvas canvas) {
+    public void registerCanvas(final Canvas canvas) {
         registeredCanvases.add(canvas);
         if(!canvas.isShowing()) {
             canvas.addHierarchyListener(new HierarchyListener() {
@@ -251,7 +250,7 @@ public class VideoControlPanel extends JPanel {
      *
      * @return a list of registered lyric canvases.
      */
-    public List<LyricCanvas> getRegisteredCanvases() {
+    public List<Canvas> getRegisteredCanvases() {
         return registeredCanvases;
     }
 
