@@ -18,6 +18,7 @@
 package org.quelea.windows.main;
 
 import java.awt.BorderLayout;
+import java.awt.Canvas;
 import java.awt.Dimension;
 import java.awt.event.KeyListener;
 import java.util.HashSet;
@@ -40,7 +41,8 @@ public class SelectLyricsPanel extends ContainedPanel {
 
     private final SelectLyricsList lyricsList;
     private final LivePreviewPanel containerPanel;
-    private final LyricCanvas previewCanvas;
+    private final Canvas videoCanvas;
+    private final LyricWindow overlayWindow;
     private boolean stopUpdate;
 
     /**
@@ -55,7 +57,9 @@ public class SelectLyricsPanel extends ContainedPanel {
         JSplitPane splitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT);
         splitPane.setResizeWeight(0.6);
         lyricsList = new SelectLyricsList();
-        previewCanvas = new LyricCanvas(false, false);
+        videoCanvas = new Canvas();
+        videoCanvas.setMinimumSize(new Dimension(20, 20));
+        overlayWindow = new LyricWindow(videoCanvas);
         splitPane.add(new JScrollPane(lyricsList) {
 
             {
@@ -64,9 +68,9 @@ public class SelectLyricsPanel extends ContainedPanel {
             }
         });
         splitPane.setOneTouchExpandable(true);
-        splitPane.add(previewCanvas);
+        splitPane.add(videoCanvas);
         add(splitPane, BorderLayout.CENTER);
-        containerPanel.registerLyricCanvas(previewCanvas);
+        containerPanel.registerLyricCanvas(overlayWindow.getCanvas());
         lyricsList.addListSelectionListener(new ListSelectionListener() {
 
             @Override
