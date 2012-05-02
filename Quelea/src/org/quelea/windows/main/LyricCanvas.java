@@ -17,9 +17,8 @@
  */
 package org.quelea.windows.main;
 
-import java.awt.event.ComponentEvent;
+import java.awt.AlphaComposite;
 import java.awt.BorderLayout;
-import java.awt.Canvas;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
@@ -28,13 +27,11 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.RenderingHints;
-import java.awt.event.ComponentAdapter;
-import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import javax.swing.JFrame;
-import javax.swing.SwingUtilities;
+import javax.swing.JPanel;
 import org.quelea.Theme;
 import org.quelea.languages.LabelGrabber;
 import org.quelea.notice.Notice;
@@ -49,7 +46,7 @@ import org.quelea.utils.Utils;
  *
  * @author Michael
  */
-public class LyricCanvas extends Canvas {
+public class LyricCanvas extends JPanel {
 
     private Theme theme;
     private String[] text;
@@ -58,9 +55,7 @@ public class LyricCanvas extends Canvas {
     private boolean blacked;
     private boolean showBorder;
     private boolean capitaliseFirst;
-    private boolean valid = false;
     private NoticeDrawer noticeDrawer;
-    private Image offscreenImage;
     private boolean stageView;
 
     /**
@@ -76,13 +71,6 @@ public class LyricCanvas extends Canvas {
         text = new String[]{};
         theme = Theme.DEFAULT_THEME;
         setMinimumSize(new Dimension(20, 20));
-        addComponentListener(new ComponentAdapter() {
-
-            @Override
-            public void componentResized(ComponentEvent e) {
-                valid = false;
-            }
-        });
     }
 
     /**
@@ -101,23 +89,6 @@ public class LyricCanvas extends Canvas {
      */
     public void setCapitaliseFirst(boolean val) {
         this.capitaliseFirst = val;
-        valid = false;
-    }
-
-    /**
-     * Force a repaint of this canvas.
-     */
-    @Override
-    public void repaint() {
-        if(getWidth() > 0 && getHeight() > 0) {
-            SwingUtilities.invokeLater(new Runnable() {
-
-                @Override
-                public void run() {
-                    paint(getGraphics());
-                }
-            });
-        }
     }
 
     /**
@@ -127,50 +98,46 @@ public class LyricCanvas extends Canvas {
      */
     @Override
     public void paint(Graphics g) {
+        Graphics2D g2d = (Graphics2D) g;
         Image noticeImage = noticeDrawer.getNoticeImage();
-        if(noticeDrawer.getRedraw()) {
-            valid = false;
+        g2d.setColor(new Color(0, 0, 0, 0));
+        g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC));
+        g2d.fillRect(0, 0, getWidth(), getHeight());
+//            g2d.setColor(getForeground());
+//            super.paint(g2d);
+//            if(blacked || theme == null) {
+//                Color temp = g2d.getColor();
+//                g2d.setColor(Color.BLACK);
+//                g2d.fillRect(0, 0, getWidth(), getHeight());
+//                g2d.setColor(temp);
+//            }
+//            else {
+//                if(stageView) {
+//                    Color originalColor = g2d.getColor();
+//                    g2d.setColor(QueleaProperties.get().getStageBackgroundColor());
+//                    g2d.fillRect(0, 0, getWidth(), getHeight());
+//                    g2d.setColor(originalColor);
+//                }
+//                else {
+//                    g2d.drawImage(theme.getBackground().getImage(getWidth(), getHeight(), Integer.toString(getWidth())), 0, 0, null);
+//                }
+//            }
+        Color fontColour = theme.getFontColor();
+        if(fontColour == null) {
+            fontColour = Theme.DEFAULT_FONT_COLOR;
         }
-        if(!valid) {
-            offscreenImage = new BufferedImage(getWidth(), getHeight(), BufferedImage.TYPE_INT_ARGB);
-            Graphics offscreen = offscreenImage.getGraphics();
-            offscreen.setColor(getForeground());
-            super.paint(offscreen);
-            if(blacked || theme == null) {
-                Color temp = offscreen.getColor();
-                offscreen.setColor(Color.BLACK);
-                offscreen.fillRect(0, 0, getWidth(), getHeight());
-                offscreen.setColor(temp);
-            }
-            else {
-                if(stageView) {
-                    Color originalColor = offscreen.getColor();
-                    offscreen.setColor(QueleaProperties.get().getStageBackgroundColor());
-                    offscreen.fillRect(0, 0, getWidth(), getHeight());
-                    offscreen.setColor(originalColor);
-                }
-                else {
-                    offscreen.drawImage(theme.getBackground().getImage(getWidth(), getHeight(), Integer.toString(getWidth())), 0, 0, null);
-                }
-            }
-            Color fontColour = theme.getFontColor();
-            if(fontColour == null) {
-                fontColour = Theme.DEFAULT_FONT_COLOR;
-            }
-            offscreen.setColor(fontColour);
-            Font themeFont = theme.getFont();
-            if(themeFont == null) {
-                themeFont = Theme.DEFAULT_FONT;
-            }
-            drawSmallText(offscreen, themeFont);
-            drawText(offscreen, themeFont);
+        g2d.setColor(fontColour);
+        Font themeFont = theme.getFont();
+        if(themeFont == null) {
+            themeFont = Theme.DEFAULT_FONT;
         }
+        drawSmallText(g2d, themeFont);
+        drawText(g2d, themeFont);
         if(noticeImage != null) {
-            offscreenImage.getGraphics().drawImage(noticeImage, 0, getHeight() - noticeImage.getHeight(null), null);
+            g2d.drawImage(noticeImage, 0, getHeight() - noticeImage.getHeight(null), null);
         }
 //        offscreenImage = new KeystoneCorrector(offscreenImage).getCorrectedImage();
-        g.drawImage(offscreenImage, 0, 0, this);
-        valid = true;
+        g.dispose();
     }
 
     /**
@@ -323,7 +290,8 @@ public class LyricCanvas extends Canvas {
         do {
             height = graphics.getFontMetrics(font).getHeight() * lineCount;
             font = Utils.getDifferentSizeFont(font, font.getSize() - 1);
-        } while(height > getHeight() && font.getSize() > 12);
+        }
+        while(height > getHeight() && font.getSize() > 12);
 
         return font.getSize();
     }
@@ -438,7 +406,6 @@ public class LyricCanvas extends Canvas {
      */
     public void toggleClear() {
         cleared ^= true; //invert
-        valid = false;
         repaint();
     }
 
@@ -457,7 +424,6 @@ public class LyricCanvas extends Canvas {
      */
     public void toggleBlack() {
         blacked ^= true; //invert
-        valid = false;
         repaint();
     }
 
@@ -480,7 +446,6 @@ public class LyricCanvas extends Canvas {
         Theme t2 = this.theme == null ? Theme.DEFAULT_THEME : this.theme;
         if(!t2.equals(t1)) {
             this.theme = t1;
-            valid = false;
             repaint();
         }
     }
@@ -520,7 +485,6 @@ public class LyricCanvas extends Canvas {
         }
         this.smallText = smallText;
         this.text = Arrays.copyOf(text, text.length);
-        valid = false;
         repaint();
     }
 
