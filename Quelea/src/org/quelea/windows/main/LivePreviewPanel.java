@@ -18,6 +18,7 @@
 package org.quelea.windows.main;
 
 import java.awt.BorderLayout;
+import java.awt.Canvas;
 import java.awt.CardLayout;
 import java.awt.Component;
 import java.awt.event.KeyAdapter;
@@ -236,8 +237,10 @@ public abstract class LivePreviewPanel extends JPanel {
         }
         else if(d instanceof VideoDisplayable) {
             videoPanel.showDisplayable((VideoDisplayable) d);
-            for(LyricCanvas lc : videoPanel.getVideoControlPanel().getRegisteredCanvases()) {
-                lc.eraseText();
+            for(Canvas lc : videoPanel.getVideoControlPanel().getRegisteredCanvases()) {
+                if(lc instanceof LyricCanvas) {
+                    ((LyricCanvas)lc).eraseText();
+                }
             }
             ((CardLayout) cardPanel.getLayout()).show(cardPanel, VIDEO_LABEL);
             videoPanel.repaint();
@@ -324,7 +327,7 @@ public abstract class LivePreviewPanel extends JPanel {
      *
      * @param canvas the canvas to register.
      */
-    public final void registerVideoCanvas(final LyricCanvas canvas) {
+    public final void registerVideoCanvas(final Canvas canvas) {
         videoPanel.getVideoControlPanel().registerCanvas(canvas);
     }
 
