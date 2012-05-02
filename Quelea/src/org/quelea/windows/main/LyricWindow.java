@@ -16,6 +16,7 @@
  */
 package org.quelea.windows.main;
 
+import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Cursor;
 import java.awt.Dimension;
@@ -49,14 +50,11 @@ public class LyricWindow extends JWindow {
      * @param area the area in which the window should be drawn.
      */
     public LyricWindow(Rectangle area, boolean stageView) {
-        JPanel panel = new JPanel();
-        panel.setBackground(Color.BLACK);
+        setLayout(new BorderLayout());
         setArea(area);
         setCursor(BLANK_CURSOR);
         canvas = new LyricCanvas(true, stageView);
-        canvas.setPreferredSize(new Dimension((int) (area.getMaxX() - area.getMinX()), (int) (area.getMaxY() - area.getMinY())));
-        panel.add(canvas);
-        add(panel);
+        add(canvas, BorderLayout.CENTER);
     }
 
     /**
@@ -68,9 +66,6 @@ public class LyricWindow extends JWindow {
 
             @Override
             public void run() {
-                if (canvas != null) {
-                    canvas.setPreferredSize(new Dimension((int) (area.getMaxX() - area.getMinX()), (int) (area.getMaxY() - area.getMinY())));
-                }
                 setSize((int) (area.getMaxX() - area.getMinX()), (int) (area.getMaxY() - area.getMinY()));
                 setLocation((int) area.getMinX(), (int) area.getMinY());
             }
