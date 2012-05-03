@@ -37,7 +37,7 @@ import org.quelea.utils.Utils;
 import org.quelea.windows.main.LyricCanvas;
 
 /**
- * The colour button where the user selects a colour.
+ * The image button where the user selects an image.
  * @author Michael
  */
 public class ImageButton extends JButton {
@@ -47,7 +47,7 @@ public class ImageButton extends JButton {
     private final JFileChooser fileChooser;
 
     /**
-     * Create and initialise the colour button.
+     * Create and initialise the image button.
      * @param imageLocationField the image location field that goes with this
      * button.
      * @param canvas the preview canvas to update.
