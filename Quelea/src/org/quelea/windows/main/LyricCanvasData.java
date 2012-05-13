@@ -16,32 +16,19 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.quelea;
+package org.quelea.windows.main;
 
-import java.awt.image.BufferedImage;
+import org.quelea.Theme;
 
 /**
- * The background interface for different types of background.
  *
  * @author Michael
  */
-public interface Background {
-
-    /**
-     * Get a preview image of this background in the given dimensions.
-     *
-     * @param width the width of the image to get.
-     * @param height the height of the image to get.
-     * @param key the key, can be used for internal caching to speed things up,
-     * or ignored.
-     * @return an image with the given dimensions.
-     */
-    BufferedImage getImage(int width, int height, String key);
-
-    /**
-     * Generate a consistent DB string for storing in a database.
-     *
-     * @return the DB string.
-     */
-    String toDBString();
+public class LyricCanvasData {
+    
+    public boolean cleared;
+    public boolean blacked;
+    public boolean stageView;
+    public Theme theme = Theme.DEFAULT_THEME;
+    
 }

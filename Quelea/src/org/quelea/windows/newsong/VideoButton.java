@@ -20,44 +20,42 @@ package org.quelea.windows.newsong;
 import java.io.File;
 import javax.swing.JTextField;
 import javax.swing.filechooser.FileFilter;
-import org.quelea.Background;
-import org.quelea.ImageBackground;
+import org.quelea.VideoBackground;
 import org.quelea.languages.LabelGrabber;
 import org.quelea.utils.Utils;
 import org.quelea.windows.main.LyricCanvas;
-import org.quelea.windows.main.TopLyricCanvas;
 
 /**
- * The image button where the user selects an image.
+ * The video button where the user selects an video.
  *
  * @author Michael
  */
-public class ImageButton extends BackgroundFileSelectButton {
+public class VideoButton extends BackgroundFileSelectButton {
 
     /**
      * Create and initialise the image button.
      *
-     * @param imageLocationField the image location field that goes with this
+     * @param videoLocationField the video location field that goes with this
      * button.
      * @param canvas the preview canvas to update.
      */
-    public ImageButton(final JTextField imageLocationField, final LyricCanvas canvas) {
-        super(imageLocationField, canvas, LabelGrabber.INSTANCE.getLabel("select.image.button"), "img", new FileFilter() {
+    public VideoButton(final JTextField videoLocationField, final LyricCanvas canvas) {
+        super(videoLocationField, canvas, LabelGrabber.INSTANCE.getLabel("select.vid.button"), "vid", new FileFilter() {
 
             @Override
             public boolean accept(File f) {
-                return Utils.fileIsImage(f);
+                return Utils.fileIsVideo(f);
             }
 
             @Override
             public String getDescription() {
-                return LabelGrabber.INSTANCE.getLabel("image.files.description");
+                return LabelGrabber.INSTANCE.getLabel("vid.files.description");
             }
         });
     }
 
     @Override
-    public ImageBackground getCanvasBackground() {
-        return new ImageBackground(getFileLocation(), null);
+    public VideoBackground getCanvasBackground() {
+        return new VideoBackground(getFileLocation());
     }
 }

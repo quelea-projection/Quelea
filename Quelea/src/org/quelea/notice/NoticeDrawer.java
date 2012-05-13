@@ -27,7 +27,7 @@ import java.util.List;
 import javax.swing.SwingUtilities;
 import org.quelea.utils.QueleaProperties;
 import org.quelea.utils.Utils;
-import org.quelea.windows.main.LyricCanvas;
+import org.quelea.windows.main.TopLyricCanvas;
 
 /**
  * Responsible for drawing the notice animation on a particular canvas.
@@ -37,7 +37,7 @@ public class NoticeDrawer {
 
     private static final int DELAY = 40;
     private Font font = new Font("Sans serif", 0, 2);
-    private LyricCanvas canvas;
+    private TopLyricCanvas canvas;
     private int boxHeight;
     private int stringPos;
     private List<Notice> notices;
@@ -53,7 +53,7 @@ public class NoticeDrawer {
      * Create a new notice drawer.
      * @param canvas the canvas to draw on.
      */
-    public NoticeDrawer(LyricCanvas canvas) {
+    public NoticeDrawer(TopLyricCanvas canvas) {
         this.canvas = canvas;
         notices = Collections.synchronizedList(new ArrayList<Notice>());
         inUseNotices = Collections.synchronizedList(new ArrayList<Notice>());

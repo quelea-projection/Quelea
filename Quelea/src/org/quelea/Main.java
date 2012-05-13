@@ -27,7 +27,6 @@ import javax.swing.*;
 import org.quelea.bible.BibleManager;
 import org.quelea.languages.LabelGrabber;
 import org.quelea.phonehome.PhoneHome;
-import org.quelea.powerpoint.OOPresentation;
 import org.quelea.powerpoint.OOUtils;
 import org.quelea.splash.SplashWindow;
 import org.quelea.utils.LoggerUtils;
@@ -35,6 +34,7 @@ import org.quelea.utils.QueleaProperties;
 import org.quelea.utils.UpdateChecker;
 import org.quelea.utils.Utils;
 import org.quelea.windows.main.LyricWindow;
+import org.quelea.windows.main.OverlayLyricWindow;
 import org.quelea.windows.main.MainWindow;
 
 /**
@@ -175,11 +175,11 @@ public final class Main {
                 LOGGER.log(Level.INFO, "Registering canvases");
                 mainWindow.getMainPanel().getLivePanel().registerLyricCanvas(fullScreenWindow.getCanvas());
                 mainWindow.getMainPanel().getLivePanel().registerLyricWindow(fullScreenWindow);
-//                mainWindow.getMainPanel().getLivePanel().registerVideoCanvas(fullScreenWindow.getCanvas());
+                mainWindow.getMainPanel().getLivePanel().registerVideoCanvas(fullScreenWindow.getCanvas());
                 fullScreenWindow.setVisible(!lyricsHidden);
                 mainWindow.getMainPanel().getLivePanel().registerLyricCanvas(stageWindow.getCanvas());
                 mainWindow.getMainPanel().getLivePanel().registerLyricWindow(stageWindow);
-//                mainWindow.getMainPanel().getLivePanel().registerVideoCanvas(stageWindow.getCanvas());
+                mainWindow.getMainPanel().getLivePanel().registerVideoCanvas(stageWindow.getCanvas());
                 stageWindow.setVisible(!stageHidden);
                 LOGGER.log(Level.INFO, "Registered canvases.");
 
