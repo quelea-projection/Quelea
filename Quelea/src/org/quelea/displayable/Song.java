@@ -39,6 +39,7 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import org.quelea.Background;
+import org.quelea.ImageBackground;
 import org.quelea.SongDatabase;
 import org.quelea.Theme;
 import org.quelea.utils.LineTypeChecker;
@@ -969,8 +970,11 @@ public class Song implements TextDisplayable, Comparable<Song>, Printable {
             Theme sectionTheme = section.getTheme();
             if(sectionTheme != null) {
                 Background background = sectionTheme.getBackground();
-                if(background.getImageLocation() != null) {
-                    ret.add(background.getImageFile());
+                if(background instanceof ImageBackground) {
+                    ImageBackground imageBackground = (ImageBackground)background;
+                    if(imageBackground.getImageLocation() != null) {
+                        ret.add(imageBackground.getImageFile());
+                    }
                 }
             }
         }

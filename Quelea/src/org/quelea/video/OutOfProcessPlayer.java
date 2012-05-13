@@ -21,6 +21,10 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import uk.co.caprica.vlcj.player.MediaPlayer;
+import uk.co.caprica.vlcj.player.MediaPlayerFactory;
+import uk.co.caprica.vlcj.player.list.MediaList;
+import uk.co.caprica.vlcj.player.list.MediaListPlayer;
+import uk.co.caprica.vlcj.player.list.MediaListPlayerMode;
 
 /**
  * Sits out of process so as not to crash the primary VM.
@@ -42,11 +46,27 @@ public abstract class OutOfProcessPlayer {
 
         //Process the input - I know this isn't very OO but it works for now...
         while ((inputLine = in.readLine()) != null) {
-            if (inputLine.startsWith("open ")) {
+            if (inputLine.startsWith("openloop ")) {
+                mediaPlayer.stop();
+                MediaPlayerFactory factory = new MediaPlayerFactory();
+                MediaListPlayer player = factory.newMediaListPlayer();
+                player.setMediaPlayer(mediaPlayer);
+                MediaList mediaList = factory.newMediaList();
+                inputLine = inputLine.substring("openloop ".length());
+                mediaList.addMedia(inputLine);
+                player.setMediaList(mediaList);
+                player.setMode(MediaListPlayerMode.LOOP);
+                mediaPlayer.prepareMedia(inputLine, getPrepareOptions());
+            }
+            else if (inputLine.startsWith("open ")) {
+                mediaPlayer.stop();
                 inputLine = inputLine.substring("open ".length());
                 mediaPlayer.prepareMedia(inputLine, getPrepareOptions());
             }
             else if (inputLine.equalsIgnoreCase("play")) {
+                mediaPlayer.play();
+            }
+            else if (inputLine.equalsIgnoreCase("loop")) {
                 mediaPlayer.play();
             }
             else if (inputLine.equalsIgnoreCase("pause")) {
@@ -86,7 +106,7 @@ public abstract class OutOfProcessPlayer {
                 System.exit(0);
             }
             else {
-                System.out.println("unknown command: ." + inputLine + ".");
+                System.out.println("Unknown command: '" + inputLine + "'");
             }
         }
     }

@@ -41,6 +41,7 @@ import javax.swing.event.ListSelectionListener;
 import org.quelea.languages.LabelGrabber;
 import org.quelea.utils.Utils;
 import org.quelea.windows.main.LyricCanvas;
+import org.quelea.windows.main.TopLyricCanvas;
 
 /**
  * The dialog used to manage the notices.

@@ -358,4 +358,9 @@ public abstract class LivePreviewPanel extends JPanel {
         }
         return null;
     }
+
+    public VideoPanel getVideoPanel() {
+        return videoPanel;
+    }
+    
 }

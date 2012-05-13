@@ -61,7 +61,7 @@ public class SongEntryWindow extends JDialog {
      * @param owner the owner of this window.
      */
     public SongEntryWindow(JFrame owner) {
-        super(owner, LabelGrabber.INSTANCE.getLabel("song.entry.heading"));
+        super(owner, LabelGrabber.INSTANCE.getLabel("song.entry.heading"), true);
         setResizable(false);
         setLayout(new BorderLayout());
         tabbedPane = new JTabbedPane();
@@ -165,6 +165,12 @@ public class SongEntryWindow extends JDialog {
                 checkConfirmButton();
             }
         });
+    }
+    
+    @Override
+    public void setVisible(boolean visible) {
+        super.setVisible(visible);
+        toFront();
     }
 
     /**
