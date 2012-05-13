@@ -41,8 +41,7 @@ public class SelectLyricsPanel extends ContainedPanel {
 
     private final SelectLyricsList lyricsList;
     private final LivePreviewPanel containerPanel;
-    private final Canvas videoCanvas;
-    private final LyricWindow overlayWindow;
+    private final LyricCanvas canvas;
     private boolean stopUpdate;
 
     /**
@@ -57,9 +56,7 @@ public class SelectLyricsPanel extends ContainedPanel {
         JSplitPane splitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT);
         splitPane.setResizeWeight(0.6);
         lyricsList = new SelectLyricsList();
-        videoCanvas = new Canvas();
-        videoCanvas.setMinimumSize(new Dimension(20, 20));
-        overlayWindow = new LyricWindow(videoCanvas);
+        canvas = new LyricCanvas(false, false);
         splitPane.add(new JScrollPane(lyricsList) {
 
             {
@@ -68,9 +65,9 @@ public class SelectLyricsPanel extends ContainedPanel {
             }
         });
         splitPane.setOneTouchExpandable(true);
-        splitPane.add(videoCanvas);
+        splitPane.add(canvas);
         add(splitPane, BorderLayout.CENTER);
-        containerPanel.registerLyricCanvas(overlayWindow.getCanvas());
+        containerPanel.registerLyricCanvas(canvas);
         lyricsList.addListSelectionListener(new ListSelectionListener() {
 
             @Override

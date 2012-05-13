@@ -43,7 +43,7 @@ import javax.swing.ListSelectionModel;
 import javax.swing.TransferHandler;
 import javax.swing.border.EmptyBorder;
 import org.quelea.Application;
-import org.quelea.Background;
+import org.quelea.ImageBackground;
 import org.quelea.Schedule;
 import org.quelea.Theme;
 import org.quelea.displayable.Displayable;
@@ -227,7 +227,7 @@ public class ScheduleList extends JList<Displayable> {
                             if(existingTheme == null) {
                                 existingTheme = Theme.DEFAULT_THEME;
                             }
-                            Theme newTheme = new Theme(existingTheme.getFont(), existingTheme.getFontColor(), new Background(imageData.getFile().getName(), imageData.getOriginalImage()));
+                            Theme newTheme = new Theme(existingTheme.getFont(), existingTheme.getFontColor(), new ImageBackground(imageData.getFile().getName(), imageData.getOriginalImage()));
                             newTheme.setFile(existingTheme.getFile());
                             newTheme.setThemeName(existingTheme.getThemeName());
                             for(TextSection section : textVal.getSections()) {

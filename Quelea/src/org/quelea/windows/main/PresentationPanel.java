@@ -29,7 +29,7 @@ import javax.swing.SwingUtilities;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import org.quelea.Application;
-import org.quelea.Background;
+import org.quelea.ImageBackground;
 import org.quelea.Theme;
 import org.quelea.displayable.PresentationDisplayable;
 import org.quelea.powerpoint.OOPresentation;
@@ -68,7 +68,7 @@ public class PresentationPanel extends ContainedPanel {
                             for(LyricCanvas lc : canvases) {
                                 lc.eraseText();
                                 BufferedImage displayImage = presentationList.getCurrentImage(lc.getWidth(), lc.getHeight());
-                                lc.setTheme(new Theme(null, null, new Background(null, displayImage)));
+                                lc.setTheme(new Theme(null, null, new ImageBackground(null, displayImage)));
                             }
                         }
                         else if(displayable != null) {
@@ -211,20 +211,4 @@ public class PresentationPanel extends ContainedPanel {
     public void clear() {
         //Doesn't apply
     }
-//    public static void main(String[] args) {
-//        final PowerpointPanel panel = new PowerpointPanel(null);
-//        final PresentationDisplayable presentation = new PresentationDisplayable(new File("C:\\java.ppt"));
-//        SwingUtilities.invokeLater(new Runnable() {
-//
-//            public void run() {
-//                JFrame frame = new JFrame();
-//                frame.setLayout(new BorderLayout());
-//                frame.add(panel, BorderLayout.CENTER);
-//                frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-//                frame.pack();
-//                frame.setVisible(true);
-//                panel.setDisplayable(presentation);
-//            }
-//        });
-//    }
 }

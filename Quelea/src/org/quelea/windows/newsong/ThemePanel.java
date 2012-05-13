@@ -27,6 +27,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.BoxLayout;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
@@ -36,8 +38,12 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.JToggleButton;
 import org.quelea.Background;
+import org.quelea.ColourBackground;
+import org.quelea.ImageBackground;
 import org.quelea.Theme;
+import org.quelea.VideoBackground;
 import org.quelea.languages.LabelGrabber;
+import org.quelea.utils.LoggerUtils;
 import org.quelea.utils.Utils;
 import org.quelea.windows.main.LyricCanvas;
 
@@ -47,6 +53,7 @@ import org.quelea.windows.main.LyricCanvas;
  */
 public class ThemePanel extends JPanel {
 
+    private static final Logger LOGGER = LoggerUtils.getLogger();
     private static final int THRESHOLD = 30;
     public static final String[] SAMPLE_LYRICS = {"Amazing Grace how sweet the sound", "That saved a wretch like me", "I once was lost but now am found", "Was blind, but now I see."};
     private JPanel fontToolbar;
@@ -56,6 +63,7 @@ public class ThemePanel extends JPanel {
     private ColourButton backgroundColourButton;
     private JComboBox<String> backgroundTypeSelect;
     private JTextField backgroundImageLocation;
+    private JTextField backgroundVideoLocation;
     private JToggleButton boldButton;
     private JToggleButton italicButton;
     private final LyricCanvas canvas;
@@ -93,6 +101,7 @@ public class ThemePanel extends JPanel {
         backgroundTypeSelect = new JComboBox<>();
         backgroundTypeSelect.addItem(LabelGrabber.INSTANCE.getLabel("color.theme.label"));
         backgroundTypeSelect.addItem(LabelGrabber.INSTANCE.getLabel("image.theme.label"));
+        backgroundTypeSelect.addItem(LabelGrabber.INSTANCE.getLabel("video.theme.label"));
         backgroundTypeSelect.addActionListener(new ActionListener() {
 
             public void actionPerformed(ActionEvent e) {
@@ -122,17 +131,29 @@ public class ThemePanel extends JPanel {
         imagePanel.add(backgroundImageLocation);
         imagePanel.add(new ImageButton(backgroundImageLocation, canvas));
 
+        final JPanel videoPanel = new JPanel();
+        videoPanel.setLayout(new FlowLayout(FlowLayout.LEFT));
+        backgroundVideoLocation = new JTextField(25);
+        backgroundVideoLocation.setEditable(false);
+        videoPanel.add(backgroundVideoLocation);
+        videoPanel.add(new VideoButton(backgroundVideoLocation, canvas));
+
         backgroundChooserPanel.add(colourPanel, "colour");
         backgroundChooserPanel.add(imagePanel, "image");
+        backgroundChooserPanel.add(videoPanel, "video");
 
         backgroundTypeSelect.addActionListener(new ActionListener() {
 
+            @Override
             public void actionPerformed(ActionEvent e) {
                 if (backgroundTypeSelect.getModel().getSelectedItem().equals(LabelGrabber.INSTANCE.getLabel("color.theme.label"))) {
                     layout.show(backgroundChooserPanel, "colour");
                 }
                 else if (backgroundTypeSelect.getModel().getSelectedItem().equals(LabelGrabber.INSTANCE.getLabel("image.theme.label"))) {
                     layout.show(backgroundChooserPanel, "image");
+                }
+                else if (backgroundTypeSelect.getModel().getSelectedItem().equals(LabelGrabber.INSTANCE.getLabel("video.theme.label"))) {
+                    layout.show(backgroundChooserPanel, "video");
                 }
                 else {
                     throw new AssertionError("Bug - " + backgroundTypeSelect.getModel().getSelectedItem() + " is an unknown selection value");
@@ -191,8 +212,8 @@ public class ThemePanel extends JPanel {
      */
     private void updateTheme(boolean warning) {
         Theme theme = getTheme();
-        if (warning && theme.getBackground().isColour()) {
-            checkAccessibility(theme.getFontColor(), theme.getBackground().getColour());
+        if (warning && theme.getBackground() instanceof ColourBackground) {
+            checkAccessibility(theme.getFontColor(), ((ColourBackground)theme.getBackground()).getColour());
         }
         canvas.setTheme(theme);
     }
@@ -220,20 +241,30 @@ public class ThemePanel extends JPanel {
         fontColourButton.getColourSelectionWindow().setSelectedColour(theme.getFontColor());
         fontColourButton.setIconColour(theme.getFontColor());
         Background background = theme.getBackground();
-        if (background.isColour()) {
+        if (background instanceof ColourBackground) {
+            ColourBackground colourBackground = (ColourBackground)background;
             backgroundTypeSelect.getModel().setSelectedItem(LabelGrabber.INSTANCE.getLabel("color.theme.label"));
-            backgroundColourButton.getColourSelectionWindow().setSelectedColour(background.getColour());
-            backgroundColourButton.setIconColour(background.getColour());
+            backgroundColourButton.getColourSelectionWindow().setSelectedColour(colourBackground.getColour());
+            backgroundColourButton.setIconColour(colourBackground.getColour());
+        }
+        else if(background instanceof ImageBackground) {
+            ImageBackground imageBackground = (ImageBackground)background;
+            backgroundTypeSelect.getModel().setSelectedItem(LabelGrabber.INSTANCE.getLabel("image.theme.label"));
+            backgroundImageLocation.setText(imageBackground.getImageLocation());
+        }
+        else if(background instanceof VideoBackground) {
+            VideoBackground vidBackground = (VideoBackground)background;
+            backgroundTypeSelect.getModel().setSelectedItem(LabelGrabber.INSTANCE.getLabel("video.theme.label"));
+            backgroundVideoLocation.setText(vidBackground.getVideoLocation());
         }
         else {
-            backgroundTypeSelect.getModel().setSelectedItem(LabelGrabber.INSTANCE.getLabel("image.theme.label"));
-            backgroundImageLocation.setText(background.getImageLocation());
+            LOGGER.log(Level.SEVERE, "Unknown background type");
         }
         updateTheme(false);
     }
 
     /**
-     * Check whether the two colours are too closely mathced to read clearly.
+     * Check whether the two colours are too closely matched to read clearly.
      * If they are, display a warning message.
      * @param col1 first colour.
      * @param col2 second colour.
@@ -268,11 +299,14 @@ public class ThemePanel extends JPanel {
         }
         Font font = new Font(fontSelection.getSelectedItem().toString(), fontStyle, 72);
         Background background;
-        if (backgroundTypeSelect.getModel().getSelectedItem().equals(LabelGrabber.INSTANCE.getLabel("color.theme.label")) || backgroundImageLocation.getText().isEmpty()) {
-            background = new Background(backgroundColourButton.getColourSelectionWindow().getSelectedColour());
+        if (backgroundTypeSelect.getModel().getSelectedItem().equals(LabelGrabber.INSTANCE.getLabel("color.theme.label"))) {
+            background = new ColourBackground(backgroundColourButton.getColourSelectionWindow().getSelectedColour());
         }
         else if (backgroundTypeSelect.getModel().getSelectedItem().equals(LabelGrabber.INSTANCE.getLabel("image.theme.label"))) {
-            background = new Background(backgroundImageLocation.getText(), null);
+            background = new ImageBackground(backgroundImageLocation.getText(), null);
+        }
+        else if (backgroundTypeSelect.getModel().getSelectedItem().equals(LabelGrabber.INSTANCE.getLabel("video.theme.label"))) {
+            background = new VideoBackground(backgroundVideoLocation.getText());
         }
         else {
             throw new AssertionError("Bug - " + backgroundTypeSelect.getModel().getSelectedItem() + " is an unknown selection value");

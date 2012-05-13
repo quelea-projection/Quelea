@@ -78,6 +78,14 @@ public class RemotePlayer {
     public void load(String path) {
         writeOut("open " + path);
     }
+
+    /**
+     * Load the given path into the remote player as a video to loop.
+     * @param path the path to load.
+     */
+    public void loadLoop(String path) {
+        writeOut("openloop " + path);
+    }
     
     /**
      * Play the loaded video.
