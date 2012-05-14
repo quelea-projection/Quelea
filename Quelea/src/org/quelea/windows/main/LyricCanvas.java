@@ -64,8 +64,7 @@ public class LyricCanvas extends Canvas {
      * @param stageView true if this canvas is a stage view, false otherwise.
      */
     public LyricCanvas(boolean showBorder, boolean stageView) {
-        data = new LyricCanvasData();
-        data.stageView = stageView;
+        data = new LyricCanvasData(stageView);
         setMinimumSize(new Dimension(20, 20));
         addHierarchyListener(new HierarchyListener() {
 
@@ -100,7 +99,7 @@ public class LyricCanvas extends Canvas {
      * @return true if its a stage view, false otherwise.
      */
     public boolean isStageView() {
-        return data.stageView;
+        return data.isStageView();
     }
 
     /**
@@ -111,17 +110,17 @@ public class LyricCanvas extends Canvas {
     @Override
     public void paint(Graphics g) {
         Graphics2D g2d = (Graphics2D) g;
-        if(data.blacked || data.theme == null) {
+        if(data.isBlacked() || data.getTheme() == null) {
             g2d.setColor(Color.BLACK);
             g2d.fillRect(0, 0, getWidth(), getHeight());
         }
         else {
-            if(data.stageView) {
+            if(data.isStageView()) {
                 g2d.setColor(QueleaProperties.get().getStageBackgroundColor());
                 g2d.fillRect(0, 0, getWidth(), getHeight());
             }
             else {
-                g2d.drawImage(data.theme.getBackground().getImage(getWidth(), getHeight(), Integer.toString(getWidth())), 0, 0, null);
+                g2d.drawImage(data.getTheme().getBackground().getImage(getWidth(), getHeight(), Integer.toString(getWidth())), 0, 0, null);
             }
         }
         g.dispose();
@@ -132,7 +131,7 @@ public class LyricCanvas extends Canvas {
      * place but remove all the text.
      */
     public void toggleClear() {
-        data.cleared ^= true; //invert
+        data.toggleCleared();
         repaint();
     }
 
@@ -142,7 +141,7 @@ public class LyricCanvas extends Canvas {
      * @return true if the canvas is cleared, false otherwise.
      */
     public boolean isCleared() {
-        return data.cleared;
+        return data.isCleared();
     }
 
     /**
@@ -150,7 +149,7 @@ public class LyricCanvas extends Canvas {
      * (if any) just displaying a black screen.
      */
     public void toggleBlack() {
-        data.blacked ^= true; //invert
+        data.toggleBlacked();
         repaint();
     }
 
@@ -160,7 +159,7 @@ public class LyricCanvas extends Canvas {
      * @return true if the canvas is blacked, false otherwise.
      */
     public boolean isBlacked() {
-        return data.blacked;
+        return data.isBlacked();
     }
 
     /**
@@ -170,13 +169,13 @@ public class LyricCanvas extends Canvas {
      */
     public void setTheme(Theme theme) {
         Theme t1 = theme == null ? Theme.DEFAULT_THEME : theme;
-        Theme t2 = data.theme == null ? Theme.DEFAULT_THEME : data.theme;
+        Theme t2 = data.getTheme() == null ? Theme.DEFAULT_THEME : data.getTheme();
         if(!t2.equals(t1)) {
-            data.theme = t1;
+            data.setTheme(t1);
             repaint();
             getTopCanvas().repaint();
-            if(data.theme.getBackground() instanceof VideoBackground && isShowing()) {
-                VideoBackground background = (VideoBackground) data.theme.getBackground();
+            if(data.getTheme().getBackground() instanceof VideoBackground && isShowing()) {
+                VideoBackground background = (VideoBackground) data.getTheme().getBackground();
                 if(background != null && !background.getVideoLocation().trim().isEmpty()) {
                     vidPlayer.loadLoop(background.getVideoFile().getAbsolutePath());
                     vidPlayer.play();
@@ -194,7 +193,7 @@ public class LyricCanvas extends Canvas {
      * @return the current theme
      */
     public Theme getTheme() {
-        return data.theme;
+        return data.getTheme();
     }
 
     /**

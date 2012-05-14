@@ -70,7 +70,7 @@ public class TopLyricCanvas extends JPanel {
      * @return true if its a stage view, false otherwise.
      */
     public boolean isStageView() {
-        return data.stageView;
+        return data.isStageView();
     }
 
     /**
@@ -94,12 +94,12 @@ public class TopLyricCanvas extends JPanel {
         g2d.setColor(new Color(0, 0, 0, 0));
         g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC));
         g2d.fillRect(0, 0, getWidth(), getHeight());
-        Color fontColour = data.theme.getFontColor();
+        Color fontColour = data.getTheme().getFontColor();
         if(fontColour == null) {
             fontColour = Theme.DEFAULT_FONT_COLOR;
         }
         g2d.setColor(fontColour);
-        Font themeFont = data.theme.getFont();
+        Font themeFont = data.getTheme().getFont();
         if(themeFont == null) {
             themeFont = Theme.DEFAULT_FONT;
         }
@@ -119,7 +119,7 @@ public class TopLyricCanvas extends JPanel {
      * @return the height the small text takes on the canvas in pixels.
      */
     private int drawSmallText(Graphics graphics, Font font) {
-        if(data.cleared || data.blacked || smallText == null
+        if(data.isCleared() || data.isBlacked() || smallText == null
                 || !QueleaProperties.get().checkDisplaySongInfoText()) {
             return 0;
         }
@@ -129,7 +129,7 @@ public class TopLyricCanvas extends JPanel {
         int fontSize = getHeight() / 50;
         font = Utils.getDifferentSizeFont(font, fontSize);
         graphics.setFont(font);
-        graphics.setColor(data.theme.getFontColor());
+        graphics.setColor(data.getTheme().getFontColor());
         FontMetrics metrics = graphics.getFontMetrics(font);
 
         int height = metrics.getHeight();
@@ -150,14 +150,14 @@ public class TopLyricCanvas extends JPanel {
      * @param font the font to use for the text.
      */
     private void drawText(Graphics graphics, Font font) {
-        if(data.cleared || data.blacked) {
+        if(data.isCleared() || data.isBlacked()) {
             return;
         }
         if(graphics instanceof Graphics2D) {
             ((Graphics2D) graphics).setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
         }
         graphics.setFont(font);
-        graphics.setColor(data.theme.getFontColor());
+        graphics.setColor(data.getTheme().getFontColor());
         FontMetrics metrics = graphics.getFontMetrics(font);
         int heightOffset = 0;
         int maxWidth = 0;
@@ -179,7 +179,7 @@ public class TopLyricCanvas extends JPanel {
             }
         }
         else {
-            if(data.stageView) {
+            if(data.isStageView()) {
                 graphics.setFont(new Font(QueleaProperties.get().getStageTextFont(), Font.BOLD, size));
                 graphics.setColor(QueleaProperties.get().getStageLyricsColor());
                 heightOffset = graphics.getFontMetrics().getHeight();
@@ -192,7 +192,7 @@ public class TopLyricCanvas extends JPanel {
             for(String line : sanctifiedLines) {
                 int width = graphics.getFontMetrics().stringWidth(line);
                 int leftOffset;
-                if(data.stageView && QueleaProperties.get().getStageTextAlignment().equals(LabelGrabber.INSTANCE.getLabel("left"))) {
+                if(data.isStageView() && QueleaProperties.get().getStageTextAlignment().equals(LabelGrabber.INSTANCE.getLabel("left"))) {
                     leftOffset = 5;
                 }
                 else {
@@ -201,7 +201,7 @@ public class TopLyricCanvas extends JPanel {
                 GraphicsUtils graphicsUtils = new GraphicsUtils(graphics);
                 int originalStyle = graphics.getFont().getStyle();
                 Color originalColor = graphics.getColor();
-                if(data.stageView && new LineTypeChecker(line).getLineType() == LineTypeChecker.Type.CHORDS) {
+                if(data.isStageView() && new LineTypeChecker(line).getLineType() == LineTypeChecker.Type.CHORDS) {
                     if(!QueleaProperties.get().getShowChords()) {
                         continue;
                     }
@@ -276,7 +276,7 @@ public class TopLyricCanvas extends JPanel {
         List<String> ret = new ArrayList<>();
         int maxLength = QueleaProperties.get().getMaxChars();
         for(String line : text) {
-            if(data.stageView) {
+            if(data.isStageView()) {
                 ret.add(line);
             }
             else {
@@ -321,7 +321,7 @@ public class TopLyricCanvas extends JPanel {
             }
         }
         else {
-            if(!data.stageView) {
+            if(!data.isStageView()) {
                 line = line.trim();
             }
             if(capitaliseFirst && QueleaProperties.get().checkCapitalFirst()) {
