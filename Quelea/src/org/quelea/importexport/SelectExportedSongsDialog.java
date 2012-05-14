@@ -85,7 +85,7 @@ public class SelectExportedSongsDialog extends SelectSongsDialog {
     private JFileChooser getChooser() {
         JFileChooser chooser = new JFileChooser();
         chooser.setAcceptAllFileFilterUsed(false);
-        chooser.setFileFilter(FileFilters.SCHEDULE);
+        chooser.setFileFilter(FileFilters.SONG_PACK);
         return chooser;
     }
 
