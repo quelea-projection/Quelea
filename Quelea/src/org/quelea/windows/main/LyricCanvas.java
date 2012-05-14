@@ -216,8 +216,9 @@ public class LyricCanvas extends Canvas {
     }
 
     /**
-     * Set whether the first character of each line should be forced to be a 
+     * Set whether the first character of each line should be forced to be a
      * capital.
+     *
      * @param capitalise true if it should be capitalised, false otherwise.
      */
     public void setCapitaliseFirst(boolean capitalise) {
@@ -226,6 +227,7 @@ public class LyricCanvas extends Canvas {
 
     /**
      * Get the notice drawer on the overlayed canvas.
+     *
      * @return the notice drawer.
      */
     public NoticeDrawer getNoticeDrawer() {
