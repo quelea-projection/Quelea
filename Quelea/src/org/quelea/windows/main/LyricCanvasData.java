@@ -21,14 +21,54 @@ package org.quelea.windows.main;
 import org.quelea.Theme;
 
 /**
- *
+ * Shared data between both parts of a lyrics canvas, the base part (used for
+ * the background) and the top part (used for the text and anything else that
+ * should be overlayed on the background.)
  * @author Michael
  */
 public class LyricCanvasData {
-    
-    public boolean cleared;
-    public boolean blacked;
-    public boolean stageView;
-    public Theme theme = Theme.DEFAULT_THEME;
-    
+
+    private boolean cleared;
+    private boolean blacked;
+    private boolean stageView;
+    private Theme theme;
+
+    /**
+     * Create new shared canvas data. The shared theme will be set to the
+     * default theme.
+     */
+    public LyricCanvasData(boolean stageView) {
+        cleared = false;
+        blacked = false;
+        this.stageView = stageView;
+        theme = Theme.DEFAULT_THEME;
+    }
+
+    public void toggleCleared() {
+        cleared ^= true;
+    }
+
+    public void toggleBlacked() {
+        blacked ^= true;
+    }
+
+    public void setTheme(Theme theme) {
+        this.theme = theme;
+    }
+
+    public boolean isBlacked() {
+        return blacked;
+    }
+
+    public boolean isCleared() {
+        return cleared;
+    }
+
+    public boolean isStageView() {
+        return stageView;
+    }
+
+    public Theme getTheme() {
+        return theme;
+    }
 }
