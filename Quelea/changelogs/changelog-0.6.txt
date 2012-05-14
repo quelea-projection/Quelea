@@ -1,0 +1,7 @@
+quelea (0.6) stable; urgency=normal
+ 
+  * Support for motion backgrounds
+  * Better icons for adding / removing songs from database
+  * Bug fixed with creating a song, hitting cancel then editing another song
+ 
+ -- Michael Berry <michael@quelea.org>  Wednesday, 20 May 2012 00:00:00 +0000
