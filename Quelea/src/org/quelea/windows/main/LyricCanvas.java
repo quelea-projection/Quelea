@@ -178,6 +178,7 @@ public class LyricCanvas extends Canvas {
                 VideoBackground background = (VideoBackground) data.getTheme().getBackground();
                 if(background != null && !background.getVideoLocation().trim().isEmpty()) {
                     vidPlayer.loadLoop(background.getVideoFile().getAbsolutePath());
+                    vidPlayer.setMute(true);
                     vidPlayer.play();
                 }
             }
