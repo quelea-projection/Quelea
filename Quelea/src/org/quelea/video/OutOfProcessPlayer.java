@@ -31,6 +31,9 @@ import uk.co.caprica.vlcj.player.list.MediaListPlayerMode;
  * @author Michael
  */
 public abstract class OutOfProcessPlayer {
+    
+    private MediaListPlayer listPlayer = new MediaPlayerFactory().newMediaListPlayer();
+    private MediaList list = new MediaPlayerFactory().newMediaList();
 
     /**
      * Start the main loop reading from the standard input stream and writing
@@ -48,14 +51,14 @@ public abstract class OutOfProcessPlayer {
         while ((inputLine = in.readLine()) != null) {
             if (inputLine.startsWith("openloop ")) {
                 mediaPlayer.stop();
-                MediaPlayerFactory factory = new MediaPlayerFactory();
-                MediaListPlayer player = factory.newMediaListPlayer();
-                player.setMediaPlayer(mediaPlayer);
-                MediaList mediaList = factory.newMediaList();
+                listPlayer.setMediaPlayer(mediaPlayer);
                 inputLine = inputLine.substring("openloop ".length());
-                mediaList.addMedia(inputLine);
-                player.setMediaList(mediaList);
-                player.setMode(MediaListPlayerMode.LOOP);
+                for(int i=0 ; i<list.size() ; i++) {
+                    list.removeMedia(i);
+                }
+                list.addMedia(inputLine);
+                listPlayer.setMediaList(list);
+                listPlayer.setMode(MediaListPlayerMode.LOOP);
                 mediaPlayer.prepareMedia(inputLine, getPrepareOptions());
             }
             else if (inputLine.startsWith("open ")) {
@@ -64,9 +67,6 @@ public abstract class OutOfProcessPlayer {
                 mediaPlayer.prepareMedia(inputLine, getPrepareOptions());
             }
             else if (inputLine.equalsIgnoreCase("play")) {
-                mediaPlayer.play();
-            }
-            else if (inputLine.equalsIgnoreCase("loop")) {
                 mediaPlayer.play();
             }
             else if (inputLine.equalsIgnoreCase("pause")) {
