@@ -53,6 +53,9 @@ public abstract class OutOfProcessPlayer {
                 mediaPlayer.stop();
                 listPlayer.setMediaPlayer(mediaPlayer);
                 inputLine = inputLine.substring("openloop ".length());
+                int pos = inputLine.indexOf(' ');
+                String dimensions = inputLine.substring(0, pos);
+                inputLine = inputLine.substring(pos+1);
                 for(int i=0 ; i<list.size() ; i++) {
                     list.removeMedia(i);
                 }
@@ -60,11 +63,18 @@ public abstract class OutOfProcessPlayer {
                 listPlayer.setMediaList(list);
                 listPlayer.setMode(MediaListPlayerMode.LOOP);
                 mediaPlayer.prepareMedia(inputLine, getPrepareOptions());
+                mediaPlayer.setAspectRatio(dimensions+"+0+0");
+                mediaPlayer.setCropGeometry(dimensions+"+0+0");
             }
             else if (inputLine.startsWith("open ")) {
                 mediaPlayer.stop();
                 inputLine = inputLine.substring("open ".length());
                 mediaPlayer.prepareMedia(inputLine, getPrepareOptions());
+            }
+            else if (inputLine.startsWith("changesize ")) {
+                inputLine = inputLine.substring("changesize ".length());
+                mediaPlayer.setCropGeometry(inputLine+"+0+0");
+                mediaPlayer.setAspectRatio(inputLine+"+0+0");
             }
             else if (inputLine.equalsIgnoreCase("play")) {
                 mediaPlayer.play();
