@@ -17,6 +17,9 @@
  */
 package org.quelea.video;
 
+import java.awt.Canvas;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
 import java.io.*;
 
 /**
@@ -83,8 +86,21 @@ public class RemotePlayer {
      * Load the given path into the remote player as a video to loop.
      * @param path the path to load.
      */
-    public void loadLoop(String path) {
-        writeOut("openloop " + path);
+    public void loadLoop(String path, final Canvas displayCanvas) {
+        int width = displayCanvas.getWidth();
+        int height = displayCanvas.getHeight();
+        writeOut("openloop " + width + "x" + height + " " + path);
+        displayCanvas.addComponentListener(new ComponentAdapter() {
+
+            @Override
+            public void componentResized(ComponentEvent e) {
+                changeSize(displayCanvas.getWidth(), displayCanvas.getHeight());
+            }
+        });
+    }
+    
+    private void changeSize(int width, int height) {
+        writeOut("changesize " + width + "x" + height);
     }
     
     /**
