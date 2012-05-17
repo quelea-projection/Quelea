@@ -50,7 +50,7 @@ public class TopLyricCanvas extends JPanel {
     private boolean capitaliseFirst;
     private NoticeDrawer noticeDrawer;
     private LyricCanvasData data;
-    
+
     /**
      * Create a new canvas where the lyrics should be displayed.
      *
