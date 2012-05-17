@@ -132,6 +132,7 @@ public class LyricCanvas extends Canvas {
      */
     public void toggleClear() {
         data.toggleCleared();
+        getTopCanvas().repaint();
         repaint();
     }
 
@@ -150,6 +151,19 @@ public class LyricCanvas extends Canvas {
      */
     public void toggleBlack() {
         data.toggleBlacked();
+        if(getTheme().getBackground() instanceof VideoBackground) {
+            if(data.isBlacked()) {
+                if(vidPlayer != null) {
+                    vidPlayer.stop();
+                }
+            }
+            else {
+                if(vidPlayer != null) {
+                    vidPlayer.play();
+                }
+            }
+        }
+        getTopCanvas().repaint();
         repaint();
     }
 
