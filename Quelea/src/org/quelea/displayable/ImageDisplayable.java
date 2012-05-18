@@ -45,6 +45,7 @@ public class ImageDisplayable implements Displayable {
     private Icon icon;
     private Icon previewIcon;
     private SoftReference<BufferedImage> originalImage;
+    private String audioPath;
     private static final Logger LOGGER = LoggerUtils.getLogger();
 
     /**
@@ -176,5 +177,15 @@ public class ImageDisplayable implements Displayable {
     @Override
     public void dispose() {
         //Nothing needed here.
+    }
+    
+    @Override
+    public void setAudio(String path) {
+        this.audioPath = path;
+    }
+
+    @Override
+    public String getAudio() {
+        return audioPath;
     }
 }

@@ -32,6 +32,19 @@ public interface Displayable {
      * @return true if it can be cleared, false otherwise.
      */
     boolean supportClear();
+    
+    /**
+     * Set the audio to accompany this displayable when it's being shown.
+     * @param path the path to the accompanying audio.
+     */
+    void setAudio(String path);
+    
+    /**
+     * Get the path to the audio file to be used when this displayable is 
+     * being shown.
+     * @return the path to the accompanying audio.
+     */
+    String getAudio();
 
     /**
      * Get the XML describing this displayable.

@@ -39,6 +39,7 @@ public class VideoDisplayable implements Displayable {
     }
     private final VideoType type;
     private final File file;
+    private String audioPath;
 
     /**
      * Create a new image displayable.
@@ -151,5 +152,15 @@ public class VideoDisplayable implements Displayable {
     @Override
     public void dispose() {
         //Nothing needed here.
+    }
+    
+    @Override
+    public void setAudio(String path) {
+        this.audioPath = path;
+    }
+
+    @Override
+    public String getAudio() {
+        return audioPath;
     }
 }
