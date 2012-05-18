@@ -41,6 +41,7 @@ public class PresentationDisplayable implements Displayable {
     private final File file;
     private final Presentation presentation;
     private OOPresentation ooPresentation;
+    private String audioPath;
 
     /**
      * Create a new presentation displayable
@@ -158,5 +159,15 @@ public class PresentationDisplayable implements Displayable {
         if(ooPresentation!=null) {
             ooPresentation.dispose();
         }
+    }
+    
+    @Override
+    public void setAudio(String path) {
+        this.audioPath = path;
+    }
+
+    @Override
+    public String getAudio() {
+        return audioPath;
     }
 }

@@ -20,8 +20,8 @@ package org.quelea;
 import java.io.File;
 import javax.swing.JOptionPane;
 import org.quelea.languages.LabelGrabber;
+import org.quelea.sound.AudioPlayer;
 import org.quelea.windows.main.LyricWindow;
-import org.quelea.windows.main.OverlayLyricWindow;
 import org.quelea.windows.main.MainWindow;
 import org.quelea.windows.main.StatusPanelGroup;
 
@@ -35,6 +35,7 @@ public class Application {
     private MainWindow mainWindow;
     private LyricWindow lyricWindow;
     private LyricWindow stageWindow;
+    private AudioPlayer audioPlayer = new AudioPlayer();
 
     /**
      * Get the singleton instance.
@@ -58,6 +59,13 @@ public class Application {
         else {
             Application.get().getMainWindow().getMainPanel().getSchedulePanel().getScheduleList().setSchedule(schedule);
         }
+    }
+    
+    /**
+     * Get Quelea's audio player.
+     */
+    public AudioPlayer getAudioPlayer() {
+        return audioPlayer;
     }
 
     /**

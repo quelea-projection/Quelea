@@ -260,6 +260,7 @@ public class Song implements TextDisplayable, Comparable<Song>, Printable {
     private int id;
     private boolean printChords;
     private String lastSearch;
+    private String audioPath;
 
     /**
      * Copy constructor - creates a shallow copy.
@@ -1088,5 +1089,15 @@ public class Song implements TextDisplayable, Comparable<Song>, Printable {
     @Override
     public void dispose() {
         //Nothing needed here.
+    }
+    
+    @Override
+    public void setAudio(String path) {
+        this.audioPath = path;
+    }
+
+    @Override
+    public String getAudio() {
+        return audioPath;
     }
 }
