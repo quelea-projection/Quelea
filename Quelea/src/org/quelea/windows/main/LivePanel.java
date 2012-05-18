@@ -28,10 +28,11 @@ import java.util.HashSet;
 import javax.swing.JLabel;
 import javax.swing.JToggleButton;
 import javax.swing.JToolBar;
-import javax.swing.SwingUtilities;
 import org.quelea.Application;
 import org.quelea.displayable.Displayable;
+import org.quelea.displayable.Song;
 import org.quelea.languages.LabelGrabber;
+import org.quelea.sound.AudioPlayer;
 import org.quelea.utils.QueleaProperties;
 import org.quelea.utils.Utils;
 
@@ -70,7 +71,7 @@ public class LivePanel extends LivePreviewPanel {
             public void actionPerformed(ActionEvent e) {
                 HashSet<LyricCanvas> canvases = new HashSet<>();
                 canvases.addAll(getCanvases());
-                for (LyricCanvas canvas : canvases) {
+                for(LyricCanvas canvas : canvases) {
                     canvas.toggleBlack();
                 }
             }
@@ -90,7 +91,7 @@ public class LivePanel extends LivePreviewPanel {
             public void actionPerformed(ActionEvent e) {
                 HashSet<LyricCanvas> canvases = new HashSet<>();
                 canvases.addAll(getCanvases());
-                for (LyricCanvas canvas : canvases) {
+                for(LyricCanvas canvas : canvases) {
                     canvas.toggleClear();
                 }
             }
@@ -114,23 +115,23 @@ public class LivePanel extends LivePreviewPanel {
                 final GraphicsDevice[] gds = ge.getScreenDevices();
                 LyricWindow lyricWindow = Application.get().getLyricWindow();
                 LyricWindow stageWindow = Application.get().getStageWindow();
-                
+
                 final boolean lyricsHidden;
-                if (!QueleaProperties.get().isProjectorModeCoords() && (projectorScreen >= gds.length || projectorScreen < 0)) {
+                if(!QueleaProperties.get().isProjectorModeCoords() && (projectorScreen >= gds.length || projectorScreen < 0)) {
                     lyricsHidden = true;
                 }
                 else {
                     lyricsHidden = false;
                 }
-                
+
                 final boolean stageHidden;
-                if (!QueleaProperties.get().isStageModeCoords() && (stageScreen >= gds.length || stageScreen < 0)) {
+                if(!QueleaProperties.get().isStageModeCoords() && (stageScreen >= gds.length || stageScreen < 0)) {
                     stageHidden = true;
                 }
                 else {
                     stageHidden = false;
                 }
-                
+
                 if(!lyricsHidden) {
                     lyricWindow.setVisible(!lyricWindow.isVisible());
                 }
@@ -163,13 +164,13 @@ public class LivePanel extends LivePreviewPanel {
              */
             @Override
             public void keyPressed(KeyEvent e) {
-                if (e.getKeyCode() == KeyEvent.VK_F1) {
+                if(e.getKeyCode() == KeyEvent.VK_F1) {
                     black.doClick();
                 }
-                else if (e.getKeyCode() == KeyEvent.VK_F2) {
+                else if(e.getKeyCode() == KeyEvent.VK_F2) {
                     clear.doClick();
                 }
-                else if (e.getKeyCode() == KeyEvent.VK_F3) {
+                else if(e.getKeyCode() == KeyEvent.VK_F3) {
                     hide.doClick();
                 }
             }
@@ -196,6 +197,15 @@ public class LivePanel extends LivePreviewPanel {
     public void setDisplayable(Displayable d, int index) {
         super.setDisplayable(d, index);
         clear.setEnabled(d.supportClear());
+        AudioPlayer player = Application.get().getAudioPlayer();
+        player.stop();
+        if(d != null) {
+            String audioPath = d.getAudio();
+            if(audioPath != null) {
+                Application.get().getAudioPlayer().play(audioPath);
+
+            }
+        }
     }
 
     /**

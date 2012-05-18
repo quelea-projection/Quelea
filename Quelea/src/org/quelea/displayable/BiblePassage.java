@@ -40,6 +40,7 @@ public class BiblePassage implements TextDisplayable {
     private String[] smallText;
     private List<TextSection> textSections;
     private BibleVerse[] verses;
+    private String audioPath;
 
     /**
      * Create a new bible passage.
@@ -187,5 +188,15 @@ public class BiblePassage implements TextDisplayable {
     @Override
     public void dispose() {
         //Nothing needed here.
+    }
+
+    @Override
+    public void setAudio(String path) {
+        this.audioPath = path;
+    }
+
+    @Override
+    public String getAudio() {
+        return audioPath;
     }
 }
