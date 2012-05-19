@@ -46,6 +46,7 @@ public class LivePanel extends LivePreviewPanel {
     private final JToggleButton black;
     private final JToggleButton clear;
     private final JToggleButton hide;
+    private final JToggleButton pause;
 
     /**
      * Create a new live lyrics panel.
@@ -142,6 +143,24 @@ public class LivePanel extends LivePreviewPanel {
             }
         });
         header.add(hide);
+        
+        pause = new JToggleButton(Utils.getImageIcon("icons/pauseaudio.png"));
+        pause.setToolTipText(LabelGrabber.INSTANCE.getLabel("pause.display.output.tooltip") + " (F4)");
+        pause.setRequestFocusEnabled(false);
+        pause.addActionListener(new ActionListener() {
+
+            /**
+             * Pause/unpause the background audio.
+             *
+             * @param e the action event.
+             */
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                Application.get().getAudioPlayer().togglePause();
+            }
+        });
+        header.add(pause);
+        
         add(header, BorderLayout.NORTH);
 
         addKeyListener(new KeyListener() {
