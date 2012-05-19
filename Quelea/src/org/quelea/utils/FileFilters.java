@@ -21,7 +21,9 @@ import javax.swing.filechooser.FileFilter;
 import java.io.File;
 
 /**
- * A class that contains all the file filters as a number of static final fields.
+ * A class that contains all the file filters as a number of static final
+ * fields.
+ *
  * @author Michael
  */
 public final class FileFilters {
@@ -33,7 +35,7 @@ public final class FileFilters {
 
         @Override
         public boolean accept(File f) {
-            if (f.isDirectory()
+            if(f.isDirectory()
                     || f.getName().trim().equalsIgnoreCase("acetates.pdf")) {
                 return true;
             }
@@ -67,7 +69,7 @@ public final class FileFilters {
 
         @Override
         public boolean accept(File f) {
-            if (f.isDirectory()) {
+            if(f.isDirectory()) {
                 return true;
             }
             return f.getName().toLowerCase().endsWith(".xml");
@@ -87,7 +89,7 @@ public final class FileFilters {
 
         @Override
         public boolean accept(File f) {
-            if (f.isDirectory()) {
+            if(f.isDirectory()) {
                 return true;
             }
             return f.getName().toLowerCase().endsWith("." + extension);
@@ -107,7 +109,7 @@ public final class FileFilters {
 
         @Override
         public boolean accept(File f) {
-            if (f.isDirectory()) {
+            if(f.isDirectory()) {
                 return true;
             }
             return f.getName().toLowerCase().endsWith("." + extension);
@@ -116,6 +118,24 @@ public final class FileFilters {
         @Override
         public String getDescription() {
             return "Quelea schedules (." + extension + ")";
+        }
+    };
+    /**
+     * The file filter used for audio files.
+     */
+    public static final FileFilter AUDIO = new FileFilter() {
+
+        @Override
+        public boolean accept(File f) {
+            if(f.isDirectory()) {
+                return true;
+            }
+            return new AudioFileTypeChecker().isType(f);
+        }
+
+        @Override
+        public String getDescription() {
+            return "Audio files";
         }
     };
 

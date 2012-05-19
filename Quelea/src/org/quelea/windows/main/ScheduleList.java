@@ -63,7 +63,6 @@ import org.quelea.utils.Utils;
 public class ScheduleList extends JList<Displayable> {
 
     private Schedule schedule;
-    private final ScheduleSongPopupMenu popupMenu;
     private final Color originalSelectionColour;
     private boolean internalDrag;
 
@@ -128,7 +127,6 @@ public class ScheduleList extends JList<Displayable> {
                 setSelectionBackground(originalSelectionColour);
             }
         });
-        popupMenu = new ScheduleSongPopupMenu();
         this.addMouseListener(new MouseAdapter() {
 
             @Override
@@ -150,8 +148,17 @@ public class ScheduleList extends JList<Displayable> {
                     int index = locationToIndex(e.getPoint());
                     Rectangle Rect = getCellBounds(index, index);
                     index = Rect.contains(e.getPoint().x, e.getPoint().y) ? index : -1;
-                    if(index != -1 && getModel().getElementAt(index) instanceof Song && ((Song) getModel().getElementAt(index)).getID() != -1) {
+                    if(index != -1) {
+                        Displayable displayable = getModel().getElementAt(index);
+                        SchedulePopupMenu popupMenu;
+                        if(displayable instanceof Song) {
+                            popupMenu = new ScheduleSongPopupMenu();
+                        }
+                        else {
+                            popupMenu = new SchedulePopupMenu();
+                        }
                         setSelectedIndex(index);
+                        popupMenu.updateDisplayable(displayable);
                         popupMenu.show(ScheduleList.this, e.getX(), e.getY());
                     }
                 }
@@ -163,6 +170,7 @@ public class ScheduleList extends JList<Displayable> {
             /**
              * Start the internal drag if we have a drag event starting.
              */
+            @Override
             public void dragGestureRecognized(DragGestureEvent dge) {
                 if(getSelectedValue() != null) {
                     internalDrag = true;
@@ -235,7 +243,7 @@ public class ScheduleList extends JList<Displayable> {
                             }
                             Application.get().getMainWindow().getMainPanel().getPreviewPanel().refresh();
                             if(val instanceof Song) {
-                                Song song = (Song)val;
+                                Song song = (Song) val;
                                 Utils.updateSongInBackground(song, false, true);
                             }
 
@@ -329,15 +337,6 @@ public class ScheduleList extends JList<Displayable> {
     }
 
     /**
-     * Get the popup menu on this schedule list.
-     *
-     * @return the popup menu.
-     */
-    public ScheduleSongPopupMenu getPopupMenu() {
-        return popupMenu;
-    }
-
-    /**
      * Determine whether the schedule list is empty.
      *
      * @return true if it's empty, false otherwise.
@@ -355,7 +354,7 @@ public class ScheduleList extends JList<Displayable> {
         if(selectedIndex != -1) {
             Displayable d = getSelectedValue();
             Displayable live = Application.get().getMainWindow().getMainPanel().getLivePanel().getDisplayable();
-            if(d==live) {
+            if(d == live) {
                 Application.get().getMainWindow().getMainPanel().getLivePanel().clear();
             }
             Displayable preview = Application.get().getMainWindow().getMainPanel().getPreviewPanel().getDisplayable();
