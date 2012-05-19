@@ -35,6 +35,7 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import org.quelea.languages.LabelGrabber;
 import org.quelea.utils.Utils;
+import org.quelea.windows.main.actionlisteners.AddSongActionListener;
 import org.quelea.windows.main.actionlisteners.RemoveSongDBActionListener;
 
 /**
@@ -48,6 +49,7 @@ public class LibrarySongPanel extends JPanel {
     private final LibrarySongList songList;
     private final JButton removeButton;
     private final JButton addButton;
+    private final JButton addSchedule;
 
     /**
      * Create and initialise the library song panel.
@@ -146,6 +148,12 @@ public class LibrarySongPanel extends JPanel {
         JToolBar toolbar = new JToolBar();
         toolbar.setLayout(new BoxLayout(toolbar, BoxLayout.Y_AXIS));
         toolbar.setFloatable(false);
+        addSchedule = new JButton(Utils.getImageIcon("icons/up.png", 16, 16));
+        addSchedule.setToolTipText(LabelGrabber.INSTANCE.getLabel("add.to.schedule.text"));
+        addSchedule.setRequestFocusEnabled(false);
+        addSchedule.setEnabled(true);
+        addSchedule.addActionListener(new AddSongActionListener());
+        toolbar.add(addSchedule);
         addButton = new JButton(Utils.getImageIcon("icons/newsongdb.png", 16, 16));
         addButton.setToolTipText(LabelGrabber.INSTANCE.getLabel("add.song.text"));
         addButton.setRequestFocusEnabled(false);
