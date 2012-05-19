@@ -1,0 +1,372 @@
+#
+# A fatal error has been detected by the Java Runtime Environment:
+#
+#  EXCEPTION_ACCESS_VIOLATION (0xc0000005) at pc=0x0000000080003a90, pid=9776, tid=8236
+#
+# JRE version: 7.0_04-b22
+# Java VM: Java HotSpot(TM) 64-Bit Server VM (23.0-b21 mixed mode windows-amd64 compressed oops)
+# Problematic frame:
+# C  0x0000000080003a90
+#
+# Failed to write core dump. Minidumps are not enabled by default on client versions of Windows
+#
+# If you would like to submit a bug report, please visit:
+#   http://bugreport.sun.com/bugreport/crash.jsp
+# The crash happened outside the Java Virtual Machine in native code.
+# See problematic frame for where to report the bug.
+#
+
+---------------  T H R E A D  ---------------
+
+Current thread (0x00000000088ab000):  JavaThread "Finalizer" daemon [_thread_in_native, id=8236, stack(0x00000000098a0000,0x00000000099a0000)]
+
+siginfo: ExceptionCode=0xc0000005, ExceptionInformation=0x0000000000000008 0x0000000080003a90
+
+Registers:
+RAX=0x0000000080003a90, RBX=0x00000000bb1b2bf0, RCX=0x00000000088ab1d8, RDX=0x000000000999e9b8
+RSP=0x000000000999e928, RBP=0x000000000999e9a8, RSI=0x00000000088ab000, RDI=0x0000000000000000
+R8 =0x000000000ab30460, R9 =0x00000000ebe9eef0, R10=0x000000000266235c, R11=0x0000000066c30cc0
+R12=0x0000000000000000, R13=0x00000000bb1b2bf0, R14=0x000000000999e9d0, R15=0x00000000088ab000
+RIP=0x0000000080003a90, EFLAGS=0x0000000000010202
+
+Top of Stack: (sp=0x000000000999e928)
+0x000000000999e928:   0000000002662388 00000000088ab1d8
+0x000000000999e938:   000000000999e9b8 000000000ac6f270
+0x000000000999e948:   00000000baf1f100 00000000baf207dc
+0x000000000999e958:   0000000000000000 00000000088a30d0
+0x000000000999e968:   000000000999e968 0000000000000000
+0x000000000999e978:   000000000999e9d0 00000000bb1c87a8
+0x000000000999e988:   0000000000000000 00000000bb1b2bf0
+0x000000000999e998:   0000000000000000 000000000999e9c8
+0x000000000999e9a8:   000000000999ea18 00000000026561f8
+0x000000000999e9b8:   00000000ebde4010 000000000265f1d8
+0x000000000999e9c8:   000000000ab30460 00000000088abdf8
+0x000000000999e9d8:   000000000999e9d8 00000000bb2b05c9
+0x000000000999e9e8:   000000000999ea30 00000000bb32bca8
+0x000000000999e9f8:   0000000000000000 00000000bb2b05e8
+0x000000000999ea08:   000000000999e9c8 000000000999ea28
+0x000000000999ea18:   000000000999ea88 00000000026561f8 
+
+Instructions: (pc=0x0000000080003a90)
+0x0000000080003a70:   
+[error occurred during error reporting (printing registers, top of stack, instructions near pc), id 0xc0000005]
+
+Register to memory mapping:
+
+RAX=0x0000000080003a90 is an unknown value
+RBX=0x00000000bb1b2bf0 is an oop
+{method} 
+ - klass: {other class}
+RCX=0x00000000088ab1d8 is an unknown value
+RDX=0x000000000999e9b8 is pointing into the stack for thread: 0x00000000088ab000
+RSP=0x000000000999e928 is pointing into the stack for thread: 0x00000000088ab000
+RBP=0x000000000999e9a8 is pointing into the stack for thread: 0x00000000088ab000
+RSI=0x00000000088ab000 is a thread
+RDI=0x0000000000000000 is an unknown value
+R8 =0x000000000ab30460 is an unknown value
+R9 =0x00000000ebe9eef0 is an oop
+com.sun.jna.Structure$AutoAllocated 
+ - klass: 'com/sun/jna/Structure$AutoAllocated'
+R10=0x000000000266235c is an Interpreter codelet
+method entry point (kind = native)  [0x00000000026620e0, 0x0000000002662960]  2176 bytes
+R11=0x0000000066c30cc0 is an unknown value
+R12=0x0000000000000000 is an unknown value
+R13=0x00000000bb1b2bf0 is an oop
+{method} 
+ - klass: {other class}
+R14=0x000000000999e9d0 is pointing into the stack for thread: 0x00000000088ab000
+R15=0x00000000088ab000 is a thread
+
+
+Stack: [0x00000000098a0000,0x00000000099a0000],  sp=0x000000000999e928,  free space=1018k
+Native frames: (J=compiled Java code, j=interpreted, Vv=VM code, C=native code)
+C  0x0000000080003a90
+j  com.sun.jna.Memory.free(J)V+1
+j  com.sun.jna.Memory.dispose()V+4
+j  com.sun.jna.Memory.finalize()V+1
+v  ~StubRoutines::call_stub
+V  [jvm.dll+0x1ad504]
+
+Java frames: (J=compiled Java code, j=interpreted, Vv=VM code)
+j  com.sun.jna.Native.free(J)V+0
+j  com.sun.jna.Memory.free(J)V+1
+j  com.sun.jna.Memory.dispose()V+4
+j  com.sun.jna.Memory.finalize()V+1
+v  ~StubRoutines::call_stub
+j  java.lang.ref.Finalizer.invokeFinalizeMethod(Ljava/lang/Object;)V+0
+j  java.lang.ref.Finalizer.runFinalizer()V+45
+j  java.lang.ref.Finalizer.access$100(Ljava/lang/ref/Finalizer;)V+1
+j  java.lang.ref.Finalizer$FinalizerThread.run()V+11
+v  ~StubRoutines::call_stub
+
+---------------  P R O C E S S  ---------------
+
+Java Threads: ( => current thread )
+  0x000000000a0e6000 JavaThread "pool-3-thread-1" [_thread_blocked, id=7772, stack(0x000000000d1a0000,0x000000000d2a0000)]
+  0x000000000a104800 JavaThread "pool-2-thread-1" [_thread_blocked, id=6808, stack(0x000000000bc40000,0x000000000bd40000)]
+  0x000000000894a000 JavaThread "Service Thread" daemon [_thread_blocked, id=5552, stack(0x0000000009fb0000,0x000000000a0b0000)]
+  0x0000000008946000 JavaThread "C2 CompilerThread1" daemon [_thread_blocked, id=5032, stack(0x00000000099a0000,0x0000000009aa0000)]
+  0x0000000008938000 JavaThread "C2 CompilerThread0" daemon [_thread_blocked, id=9132, stack(0x0000000009e40000,0x0000000009f40000)]
+  0x0000000008936800 JavaThread "Attach Listener" daemon [_thread_blocked, id=6700, stack(0x0000000009d00000,0x0000000009e00000)]
+  0x0000000008935000 JavaThread "Signal Dispatcher" daemon [_thread_blocked, id=5096, stack(0x0000000009b10000,0x0000000009c10000)]
+=>0x00000000088ab000 JavaThread "Finalizer" daemon [_thread_in_native, id=8236, stack(0x00000000098a0000,0x00000000099a0000)]
+  0x00000000088a7800 JavaThread "Reference Handler" daemon [_thread_blocked, id=8120, stack(0x00000000096c0000,0x00000000097c0000)]
+  0x000000000230e800 JavaThread "main" [_thread_blocked, id=9452, stack(0x0000000002550000,0x0000000002650000)]
+
+Other Threads:
+  0x00000000088a0800 VMThread [stack: 0x0000000009470000,0x0000000009570000] [id=9952]
+
+VM state:at safepoint (normal execution)
+
+VM Mutex/Monitor currently owned by a thread:  ([mutex/lock_event])
+[0x000000000230c810] Threads_lock - owner thread: 0x00000000088a0800
+
+Heap
+ PSYoungGen      total 19136K, used 3161K [0x00000000eaab0000, 0x00000000ec000000, 0x0000000000000000)
+  eden space 16448K, 2% used [0x00000000eaab0000,0x00000000eab2a488,0x00000000ebac0000)
+  from space 2688K, 99% used [0x00000000ebd60000,0x00000000ebffc010,0x00000000ec000000)
+  to   space 2688K, 0% used [0x00000000ebac0000,0x00000000ebac0000,0x00000000ebd60000)
+ ParOldGen       total 43712K, used 281K [0x00000000c0000000, 0x00000000c2ab0000, 0x00000000eaab0000)
+  object space 43712K, 0% used [0x00000000c0000000,0x00000000c0046650,0x00000000c2ab0000)
+ PSPermGen       total 21248K, used 6474K [0x00000000bae00000, 0x00000000bc2c0000, 0x00000000c0000000)
+  object space 21248K, 30% used [0x00000000bae00000,0x00000000bb452820,0x00000000bc2c0000)
+
+Code Cache  [0x0000000002650000, 0x00000000028c0000, 0x0000000005650000)
+ total_blobs=334 nmethods=80 adapters=205 free_code_cache=48595Kb largest_free_block=49736448
+
+Compilation events (10 events):
+Event: 149.427 Thread 0x0000000008938000 nmethod 75 0x00000000026d7110 code [0x00000000026d7240, 0x00000000026d72b8]
+Event: 149.428 Thread 0x0000000008946000 nmethod 74 0x00000000026d3f90 code [0x00000000026d40e0, 0x00000000026d41b8]
+Event: 150.026 Thread 0x0000000008938000   76             com.sun.jna.Structure::ensureAllocated (32 bytes)
+Event: 150.027 Thread 0x0000000008938000 nmethod 76 0x00000000026d6dd0 code [0x00000000026d6f20, 0x00000000026d6fb8]
+Event: 150.625 Thread 0x0000000008938000   77             java.util.HashMap$Entry::<init> (26 bytes)
+Event: 150.625 Thread 0x0000000008938000 nmethod 77 0x00000000026d3d90 code [0x00000000026d3ec0, 0x00000000026d3f38]
+Event: 150.924 Thread 0x0000000008938000   78   !         com.sun.jna.Structure::calculateSize (984 bytes)
+Event: 151.014 Thread 0x0000000008938000 nmethod 78 0x00000000026dd450 code [0x00000000026dd7a0, 0x00000000026def28]
+Event: 152.725 Thread 0x0000000008946000   79             com.sun.jna.Structure::size (26 bytes)
+Event: 152.727 Thread 0x0000000008946000 nmethod 79 0x00000000026d3a90 code [0x00000000026d3be0, 0x00000000026d3c98]
+
+GC Heap History (4 events):
+Event: 44.089 GC heap before
+{Heap before GC invocations=1 (full 0):
+ PSYoungGen      total 19136K, used 16448K [0x00000000eaab0000, 0x00000000ec000000, 0x0000000000000000)
+  eden space 16448K, 100% used [0x00000000eaab0000,0x00000000ebac0000,0x00000000ebac0000)
+  from space 2688K, 0% used [0x00000000ebd60000,0x00000000ebd60000,0x00000000ec000000)
+  to   space 2688K, 0% used [0x00000000ebac0000,0x00000000ebac0000,0x00000000ebd60000)
+ ParOldGen       total 43712K, used 0K [0x00000000c0000000, 0x00000000c2ab0000, 0x00000000eaab0000)
+  object space 43712K, 0% used [0x00000000c0000000,0x00000000c0000000,0x00000000c2ab0000)
+ PSPermGen       total 21248K, used 6424K [0x00000000bae00000, 0x00000000bc2c0000, 0x00000000c0000000)
+  object space 21248K, 30% used [0x00000000bae00000,0x00000000bb446280,0x00000000bc2c0000)
+Event: 44.106 GC heap after
+Heap after GC invocations=1 (full 0):
+ PSYoungGen      total 19136K, used 2246K [0x00000000eaab0000, 0x00000000ec000000, 0x0000000000000000)
+  eden space 16448K, 0% used [0x00000000eaab0000,0x00000000eaab0000,0x00000000ebac0000)
+  from space 2688K, 83% used [0x00000000ebac0000,0x00000000ebcf19e0,0x00000000ebd60000)
+  to   space 2688K, 0% used [0x00000000ebd60000,0x00000000ebd60000,0x00000000ec000000)
+ ParOldGen       total 43712K, used 0K [0x00000000c0000000, 0x00000000c2ab0000, 0x00000000eaab0000)
+  object space 43712K, 0% used [0x00000000c0000000,0x00000000c0000000,0x00000000c2ab0000)
+ PSPermGen       total 21248K, used 6424K [0x00000000bae00000, 0x00000000bc2c0000, 0x00000000c0000000)
+  object space 21248K, 30% used [0x00000000bae00000,0x00000000bb446280,0x00000000bc2c0000)
+}
+Event: 1972.877 GC heap before
+{Heap before GC invocations=2 (full 0):
+ PSYoungGen      total 19136K, used 18694K [0x00000000eaab0000, 0x00000000ec000000, 0x0000000000000000)
+  eden space 16448K, 100% used [0x00000000eaab0000,0x00000000ebac0000,0x00000000ebac0000)
+  from space 2688K, 83% used [0x00000000ebac0000,0x00000000ebcf19e0,0x00000000ebd60000)
+  to   space 2688K, 0% used [0x00000000ebd60000,0x00000000ebd60000,0x00000000ec000000)
+ ParOldGen       total 43712K, used 0K [0x00000000c0000000, 0x00000000c2ab0000, 0x00000000eaab0000)
+  object space 43712K, 0% used [0x00000000c0000000,0x00000000c0000000,0x00000000c2ab0000)
+ PSPermGen       total 21248K, used 6468K [0x00000000bae00000, 0x00000000bc2c0000, 0x00000000c0000000)
+  object space 21248K, 30% used [0x00000000bae00000,0x00000000bb451398,0x00000000bc2c0000)
+Event: 1972.894 GC heap after
+Heap after GC invocations=2 (full 0):
+ PSYoungGen      total 19136K, used 2672K [0x00000000eaab0000, 0x00000000ec000000, 0x0000000000000000)
+  eden space 16448K, 0% used [0x00000000eaab0000,0x00000000eaab0000,0x00000000ebac0000)
+  from space 2688K, 99% used [0x00000000ebd60000,0x00000000ebffc010,0x00000000ec000000)
+  to   space 2688K, 0% used [0x00000000ebac0000,0x00000000ebac0000,0x00000000ebd60000)
+ ParOldGen       total 43712K, used 281K [0x00000000c0000000, 0x00000000c2ab0000, 0x00000000eaab0000)
+  object space 43712K, 0% used [0x00000000c0000000,0x00000000c0046650,0x00000000c2ab0000)
+ PSPermGen       total 21248K, used 6468K [0x00000000bae00000, 0x00000000bc2c0000, 0x00000000c0000000)
+  object space 21248K, 30% used [0x00000000bae00000,0x00000000bb451398,0x00000000bc2c0000)
+}
+
+Deoptimization events (8 events):
+Event: 4.004 Thread 0x000000000230e800 Uncommon trap -58 fr.pc 0x00000000026c0594
+Event: 4.006 Thread 0x000000000230e800 Uncommon trap -58 fr.pc 0x00000000026c0594
+Event: 4.006 Thread 0x000000000230e800 Uncommon trap -58 fr.pc 0x00000000026c0594
+Event: 4.007 Thread 0x000000000230e800 Uncommon trap -58 fr.pc 0x00000000026c0594
+Event: 50.958 Thread 0x000000000230e800 Uncommon trap -12 fr.pc 0x00000000026cf538
+Event: 151.223 Thread 0x000000000adf6800 Uncommon trap -12 fr.pc 0x00000000026dec7c
+Event: 1972.928 Thread 0x000000000ad3e800 Uncommon trap -83 fr.pc 0x00000000026d1a58
+Event: 1972.928 Thread 0x000000000ad3e800 Uncommon trap -83 fr.pc 0x00000000026d64d8
+
+Internal exceptions (10 events):
+Event: 7.985 Thread 0x000000000230e800 Threw 0x00000000eb238138 at C:\jdk7u2_64p\jdk7u4\hotspot\src\share\vm\prims\jni.cpp:715
+Event: 41.658 Thread 0x000000000230e800 Threw 0x00000000eb251940 at C:\jdk7u2_64p\jdk7u4\hotspot\src\share\vm\prims\jvm.cpp:1166
+Event: 41.659 Thread 0x000000000230e800 Threw 0x00000000eb257228 at C:\jdk7u2_64p\jdk7u4\hotspot\src\share\vm\prims\jvm.cpp:1166
+Event: 41.666 Thread 0x000000000230e800 Threw 0x00000000eb264248 at C:\jdk7u2_64p\jdk7u4\hotspot\src\share\vm\prims\jvm.cpp:1166
+Event: 41.667 Thread 0x000000000230e800 Threw 0x00000000eb2689f0 at C:\jdk7u2_64p\jdk7u4\hotspot\src\share\vm\prims\jvm.cpp:1166
+Event: 41.669 Thread 0x000000000230e800 Threw 0x00000000eb26d280 at C:\jdk7u2_64p\jdk7u4\hotspot\src\share\vm\prims\jvm.cpp:1166
+Event: 41.934 Thread 0x000000000a104800 Threw 0x00000000eb2aae58 at C:\jdk7u2_64p\jdk7u4\hotspot\src\share\vm\prims\jvm.cpp:1166
+Event: 42.939 Thread 0x000000000a0e6000 Threw 0x00000000eb53cc78 at C:\jdk7u2_64p\jdk7u4\hotspot\src\share\vm\prims\jvm.cpp:1166
+Event: 42.956 Thread 0x000000000a0e6000 Threw 0x00000000eb548f58 at C:\jdk7u2_64p\jdk7u4\hotspot\src\share\vm\prims\jvm.cpp:1166
+Event: 151.223 Thread 0x000000000adf6800 Implicit null exception at 0x00000000026de029 to 0x00000000026dec71
+
+Events (10 events):
+Event: 1972.928 Thread 0x000000000ad3e800 DEOPT PACKING pc=0x00000000026d1a58 sp=0x000000000ba0ed60
+Event: 1972.928 Thread 0x000000000ad3e800 DEOPT UNPACKING pc=0x0000000002689164 sp=0x000000000ba0ed00 mode 2
+Event: 1972.928 Thread 0x000000000ad3e800 DEOPT PACKING pc=0x00000000026d64d8 sp=0x000000000ba0ed70
+Event: 1972.928 Thread 0x000000000ad3e800 DEOPT UNPACKING pc=0x0000000002689164 sp=0x000000000ba0ed18 mode 2
+Event: 1972.928 loading class 0x00000000088a26b0
+Event: 1972.929 loading class 0x00000000088a26b0 done
+Event: 1972.931 Thread 0x000000000ad3e800 Thread exited: 0x000000000ad3e800
+Event: 1972.932 Executing VM operation: RevokeBias
+Event: 1972.932 Executing VM operation: RevokeBias done
+Event: 1972.951 Executing VM operation: Exit
+
+
+Dynamic libraries:
+0x000000003f7a0000 - 0x000000003f7d3000 	C:\Program Files\Java\jdk1.7.0_04\jre\bin\java.exe
+0x0000000077b30000 - 0x0000000077cd9000 	C:\Windows\SYSTEM32\ntdll.dll
+0x0000000077a10000 - 0x0000000077b2f000 	C:\Windows\system32\kernel32.dll
+0x00000000fe040000 - 0x00000000fe0ac000 	C:\Windows\system32\KERNELBASE.dll
+0x0000000075390000 - 0x00000000753d5000 	C:\Program Files\Alwil Software\Avast5\snxhk64.dll
+0x00000000ff870000 - 0x00000000ff94b000 	C:\Windows\system32\ADVAPI32.dll
+0x00000000fe580000 - 0x00000000fe61f000 	C:\Windows\system32\msvcrt.dll
+0x00000000ff7c0000 - 0x00000000ff7df000 	C:\Windows\SYSTEM32\sechost.dll
+0x00000000ff670000 - 0x00000000ff79d000 	C:\Windows\system32\RPCRT4.dll
+0x0000000077450000 - 0x000000007754a000 	C:\Windows\system32\USER32.dll
+0x00000000ff950000 - 0x00000000ff9b7000 	C:\Windows\system32\GDI32.dll
+0x00000000fe360000 - 0x00000000fe36e000 	C:\Windows\system32\LPK.dll
+0x00000000ffad0000 - 0x00000000ffb99000 	C:\Windows\system32\USP10.dll
+0x00000000fc730000 - 0x00000000fc924000 	C:\Windows\WinSxS\amd64_microsoft.windows.common-controls_6595b64144ccf1df_6.0.7601.17514_none_fa396087175ac9ac\COMCTL32.dll
+0x00000000ffc40000 - 0x00000000ffcb1000 	C:\Windows\system32\SHLWAPI.dll
+0x00000000ffcc0000 - 0x00000000ffcee000 	C:\Windows\system32\IMM32.DLL
+0x00000000ff9c0000 - 0x00000000ffac9000 	C:\Windows\system32\MSCTF.dll
+0x000000006c530000 - 0x000000006c601000 	C:\Program Files\Java\jdk1.7.0_04\jre\bin\msvcr100.dll
+0x0000000066a70000 - 0x000000006718a000 	C:\Program Files\Java\jdk1.7.0_04\jre\bin\server\jvm.dll
+0x00000000f2e80000 - 0x00000000f2e89000 	C:\Windows\system32\WSOCK32.dll
+0x00000000ffd90000 - 0x00000000ffddd000 	C:\Windows\system32\WS2_32.dll
+0x00000000ff860000 - 0x00000000ff868000 	C:\Windows\system32\NSI.dll
+0x00000000fb8c0000 - 0x00000000fb8fb000 	C:\Windows\system32\WINMM.dll
+0x0000000077cf0000 - 0x0000000077cf7000 	C:\Windows\system32\PSAPI.DLL
+0x00000000752a0000 - 0x00000000752af000 	C:\Program Files\Java\jdk1.7.0_04\jre\bin\verify.dll
+0x0000000073470000 - 0x0000000073498000 	C:\Program Files\Java\jdk1.7.0_04\jre\bin\java.dll
+0x00000000731d0000 - 0x00000000731e5000 	C:\Program Files\Java\jdk1.7.0_04\jre\bin\zip.dll
+0x0000000073110000 - 0x0000000073129000 	C:\Program Files\Java\jdk1.7.0_04\jre\bin\net.dll
+0x00000000fd7c0000 - 0x00000000fd815000 	C:\Windows\system32\mswsock.dll
+0x00000000fd7b0000 - 0x00000000fd7b7000 	C:\Windows\System32\wship6.dll
+0x00000000730f0000 - 0x0000000073101000 	C:\Program Files\Java\jdk1.7.0_04\jre\bin\nio.dll
+0x00000000fd820000 - 0x00000000fd837000 	C:\Windows\system32\CRYPTSP.dll
+0x00000000fd520000 - 0x00000000fd567000 	C:\Windows\system32\rsaenh.dll
+0x00000000fd290000 - 0x00000000fd2ae000 	C:\Windows\system32\USERENV.dll
+0x00000000fdef0000 - 0x00000000fdeff000 	C:\Windows\system32\profapi.dll
+0x00000000fde80000 - 0x00000000fde8f000 	C:\Windows\system32\CRYPTBASE.dll
+0x00000000fc590000 - 0x00000000fc5a5000 	C:\Windows\system32\NLAapi.dll
+0x00000000fa6c0000 - 0x00000000fa6d5000 	C:\Windows\system32\napinsp.dll
+0x00000000fa6e0000 - 0x00000000fa6f9000 	C:\Windows\system32\pnrpnsp.dll
+0x00000000fd640000 - 0x00000000fd69b000 	C:\Windows\system32\DNSAPI.dll
+0x00000000fa1e0000 - 0x00000000fa1eb000 	C:\Windows\System32\winrnr.dll
+0x00000000fa960000 - 0x00000000fa98f000 	C:\Program Files\Common Files\Microsoft Shared\Windows Live\WLIDNSP.DLL
+0x0000000072300000 - 0x0000000072326000 	C:\Program Files\Bonjour\mdnsNSP.dll
+0x00000000fc0a0000 - 0x00000000fc0c7000 	C:\Windows\system32\Iphlpapi.DLL
+0x00000000fc060000 - 0x00000000fc06b000 	C:\Windows\system32\WINNSI.DLL
+0x00000000fd170000 - 0x00000000fd177000 	C:\Windows\System32\wshtcpip.dll
+0x00000000fa950000 - 0x00000000fa958000 	C:\Windows\system32\rasadhlp.dll
+0x00000000fbee0000 - 0x00000000fbf33000 	C:\Windows\System32\fwpuclnt.dll
+0x0000000063190000 - 0x00000000631c0000 	C:\Users\Ben\Documents\Quelea\trunk\Quelea\lib\native64\libvlc.dll
+0x0000000061a80000 - 0x0000000061cc8000 	C:\Users\Ben\Documents\Quelea\trunk\Quelea\lib\native64\libvlccore.dll
+0x00000000fe620000 - 0x00000000ff3a8000 	C:\Windows\system32\SHELL32.dll
+0x00000000635e0000 - 0x0000000063600000 	C:\Users\Ben\Documents\Quelea\trunk\Quelea\lib\native64\plugins\libaout_directx_plugin.dll
+0x00000000630a0000 - 0x00000000630c4000 	C:\Users\Ben\Documents\Quelea\trunk\Quelea\lib\native64\plugins\libdirectx_plugin.dll
+0x00000000fe370000 - 0x00000000fe573000 	C:\Windows\system32\ole32.dll
+0x0000000063080000 - 0x00000000630a0000 	C:\Users\Ben\Documents\Quelea\trunk\Quelea\lib\native64\plugins\libwaveout_plugin.dll
+0x0000000063060000 - 0x000000006307c000 	C:\Users\Ben\Documents\Quelea\trunk\Quelea\lib\native64\plugins\libmemcpymmxext_plugin.dll
+0x0000000063030000 - 0x0000000063051000 	C:\Users\Ben\Documents\Quelea\trunk\Quelea\lib\native64\plugins\libhotkeys_plugin.dll
+0x00000000668d0000 - 0x0000000066a64000 	C:\Program Files\Java\jdk1.7.0_04\jre\bin\awt.dll
+0x00000000ff590000 - 0x00000000ff667000 	C:\Windows\system32\OLEAUT32.dll
+0x0000000062ff0000 - 0x0000000063030000 	C:\Users\Ben\Documents\Quelea\trunk\Quelea\lib\native64\plugins\liblibbluray_plugin.dll
+0x0000000062fc0000 - 0x0000000062feb000 	C:\Users\Ben\Documents\Quelea\trunk\Quelea\lib\native64\plugins\libaccess_bd_plugin.dll
+0x0000000061a20000 - 0x0000000061a74000 	C:\Users\Ben\Documents\Quelea\trunk\Quelea\lib\native64\plugins\libdvdnav_plugin.dll
+0x0000000062fa0000 - 0x0000000062fbe000 	C:\Users\Ben\Documents\Quelea\trunk\Quelea\lib\native64\plugins\libaccess_vdr_plugin.dll
+0x0000000062a40000 - 0x0000000062a60000 	C:\Users\Ben\Documents\Quelea\trunk\Quelea\lib\native64\plugins\libfilesystem_plugin.dll
+0x0000000061610000 - 0x0000000061634000 	C:\Users\Ben\Documents\Quelea\trunk\Quelea\lib\native64\plugins\libstream_filter_httplive_plugin.dll
+0x00000000623c0000 - 0x00000000623dd000 	C:\Users\Ben\Documents\Quelea\trunk\Quelea\lib\native64\plugins\libstream_filter_rar_plugin.dll
+0x00000000615e0000 - 0x0000000061608000 	C:\Users\Ben\Documents\Quelea\trunk\Quelea\lib\native64\plugins\libzip_plugin.dll
+0x00000000615c0000 - 0x00000000615dc000 	C:\Users\Ben\Documents\Quelea\trunk\Quelea\lib\native64\plugins\libstream_filter_record_plugin.dll
+0x0000000061580000 - 0x00000000615c0000 	C:\Users\Ben\Documents\Quelea\trunk\Quelea\lib\native64\plugins\libmp4_plugin.dll
+0x0000000061530000 - 0x0000000061577000 	C:\Users\Ben\Documents\Quelea\trunk\Quelea\lib\native64\plugins\libpng_plugin.dll
+0x0000000061510000 - 0x000000006152d000 	C:\Users\Ben\Documents\Quelea\trunk\Quelea\lib\native64\plugins\libcdg_plugin.dll
+0x00000000613a0000 - 0x000000006150f000 	C:\Users\Ben\Documents\Quelea\trunk\Quelea\lib\native64\plugins\libschroedinger_plugin.dll
+0x0000000061380000 - 0x00000000613a0000 	C:\Users\Ben\Documents\Quelea\trunk\Quelea\lib\native64\plugins\libaraw_plugin.dll
+0x00000000611b0000 - 0x0000000061376000 	C:\Users\Ben\Documents\Quelea\trunk\Quelea\lib\native64\plugins\libvorbis_plugin.dll
+0x0000000061190000 - 0x00000000611ad000 	C:\Users\Ben\Documents\Quelea\trunk\Quelea\lib\native64\plugins\libdts_plugin.dll
+0x0000000061110000 - 0x000000006118a000 	C:\Users\Ben\Documents\Quelea\trunk\Quelea\lib\native64\plugins\libfaad_plugin.dll
+0x00000000610c0000 - 0x0000000061101000 	C:\Users\Ben\Documents\Quelea\trunk\Quelea\lib\native64\plugins\libspeex_plugin.dll
+0x00000000610a0000 - 0x00000000610bd000 	C:\Users\Ben\Documents\Quelea\trunk\Quelea\lib\native64\plugins\libaes3_plugin.dll
+0x0000000061030000 - 0x0000000061098000 	C:\Users\Ben\Documents\Quelea\trunk\Quelea\lib\native64\plugins\libtheora_plugin.dll
+0x0000000060fd0000 - 0x0000000061023000 	C:\Users\Ben\Documents\Quelea\trunk\Quelea\lib\native64\plugins\libflac_plugin.dll
+0x0000000060dc0000 - 0x0000000060fc3000 	C:\Users\Ben\Documents\Quelea\trunk\Quelea\lib\native64\plugins\liblibass_plugin.dll
+0x0000000060da0000 - 0x0000000060dbd000 	C:\Users\Ben\Documents\Quelea\trunk\Quelea\lib\native64\plugins\libmpeg_audio_plugin.dll
+0x0000000060d80000 - 0x0000000060d9e000 	C:\Users\Ben\Documents\Quelea\trunk\Quelea\lib\native64\plugins\liblpcm_plugin.dll
+0x0000000060cc0000 - 0x0000000060d7a000 	C:\Users\Ben\Documents\Quelea\trunk\Quelea\lib\native64\plugins\libfluidsynth_plugin.dll
+0x00000000f47c0000 - 0x00000000f4848000 	C:\Windows\system32\DSOUND.dll
+0x00000000fd120000 - 0x00000000fd14c000 	C:\Windows\system32\POWRPROF.dll
+0x00000000ff3b0000 - 0x00000000ff587000 	C:\Windows\system32\SETUPAPI.dll
+0x00000000fe0b0000 - 0x00000000fe0e6000 	C:\Windows\system32\CFGMGR32.dll
+0x00000000fe260000 - 0x00000000fe27a000 	C:\Windows\system32\DEVOBJ.dll
+0x0000000060ca0000 - 0x0000000060cbd000 	C:\Users\Ben\Documents\Quelea\trunk\Quelea\lib\native64\plugins\liba52_plugin.dll
+0x0000000060c80000 - 0x0000000060c9d000 	C:\Users\Ben\Documents\Quelea\trunk\Quelea\lib\native64\plugins\libspudec_plugin.dll
+0x000000005c5e0000 - 0x000000005d408000 	C:\Users\Ben\Documents\Quelea\trunk\Quelea\lib\native64\plugins\libavcodec_plugin.dll
+0x0000000060c20000 - 0x0000000060c7d000 	C:\Users\Ben\Documents\Quelea\trunk\Quelea\lib\native64\plugins\liblua_plugin.dll
+0x0000000060b40000 - 0x0000000060c1a000 	C:\Users\Ben\Documents\Quelea\trunk\Quelea\lib\native64\plugins\libfreetype_plugin.dll
+0x0000000060b10000 - 0x0000000060b31000 	C:\Users\Ben\Documents\Quelea\trunk\Quelea\lib\native64\plugins\libi420_yuy2_sse2_plugin.dll
+0x0000000060af0000 - 0x0000000060b0e000 	C:\Users\Ben\Documents\Quelea\trunk\Quelea\lib\native64\plugins\libi420_yuy2_mmx_plugin.dll
+0x0000000060a70000 - 0x0000000060aea000 	C:\Users\Ben\Documents\Quelea\trunk\Quelea\lib\native64\plugins\libswscale_plugin.dll
+0x0000000060a50000 - 0x0000000060a70000 	C:\Users\Ben\Documents\Quelea\trunk\Quelea\lib\native64\plugins\libi422_yuy2_sse2_plugin.dll
+0x0000000060a10000 - 0x0000000060a45000 	C:\Users\Ben\Documents\Quelea\trunk\Quelea\lib\native64\plugins\libi420_rgb_sse2_plugin.dll
+0x00000000609f0000 - 0x0000000060a0d000 	C:\Users\Ben\Documents\Quelea\trunk\Quelea\lib\native64\plugins\libi422_yuy2_mmx_plugin.dll
+0x00000000609c0000 - 0x00000000609e5000 	C:\Users\Ben\Documents\Quelea\trunk\Quelea\lib\native64\plugins\libi420_rgb_mmx_plugin.dll
+0x00000000609a0000 - 0x00000000609bd000 	C:\Users\Ben\Documents\Quelea\trunk\Quelea\lib\native64\plugins\libi422_yuy2_plugin.dll
+0x0000000060980000 - 0x000000006099e000 	C:\Users\Ben\Documents\Quelea\trunk\Quelea\lib\native64\plugins\libyuy2_i420_plugin.dll
+0x0000000060950000 - 0x0000000060971000 	C:\Users\Ben\Documents\Quelea\trunk\Quelea\lib\native64\plugins\libi420_rgb_plugin.dll
+0x0000000060930000 - 0x000000006094c000 	C:\Users\Ben\Documents\Quelea\trunk\Quelea\lib\native64\plugins\libgrey_yuv_plugin.dll
+0x0000000060910000 - 0x000000006092d000 	C:\Users\Ben\Documents\Quelea\trunk\Quelea\lib\native64\plugins\libi420_yuy2_plugin.dll
+0x00000000608f0000 - 0x000000006090d000 	C:\Users\Ben\Documents\Quelea\trunk\Quelea\lib\native64\plugins\libyuy2_i422_plugin.dll
+0x00000000608d0000 - 0x00000000608ec000 	C:\Users\Ben\Documents\Quelea\trunk\Quelea\lib\native64\plugins\libi422_i420_plugin.dll
+0x00000000608b0000 - 0x00000000608cc000 	C:\Users\Ben\Documents\Quelea\trunk\Quelea\lib\native64\plugins\libscale_plugin.dll
+0x0000000060890000 - 0x00000000608ac000 	C:\Users\Ben\Documents\Quelea\trunk\Quelea\lib\native64\plugins\libyuvp_plugin.dll
+0x0000000060860000 - 0x0000000060884000 	C:\Users\Ben\Documents\Quelea\trunk\Quelea\lib\native64\plugins\libdirect3d_plugin.dll
+0x00000000fb810000 - 0x00000000fb828000 	C:\Windows\system32\dwmapi.dll
+0x00000000fc680000 - 0x00000000fc6d6000 	C:\Windows\system32\uxtheme.dll
+0x0000000060840000 - 0x000000006085c000 	C:\Users\Ben\Documents\Quelea\trunk\Quelea\lib\native64\plugins\libdrawable_plugin.dll
+0x00000000ffcf0000 - 0x00000000ffd89000 	C:\Windows\system32\CLBCatQ.DLL
+0x00000000f5bf0000 - 0x00000000f5d15000 	C:\Windows\system32\dbghelp.dll
+
+VM Arguments:
+jvm_args: -Djna.library.path=null 
+java_command: org.quelea.video.OutOfProcessEmbeddedPlayer 23332632
+Launcher Type: SUN_STANDARD
+
+Environment Variables:
+CLASSPATH=.;
+PATH=C:\Program Files (x86)\Haskell\bin;C:\Program Files (x86)\Haskell Platform\2011.4.0.0\lib\extralibs\bin;C:\Program Files (x86)\Haskell Platform\2011.4.0.0\bin;C:\Program Files\WATCOM\BINNT;C:\Program Files\WATCOM\BINW;C:\Program Files\Common Files\Microsoft Shared\Windows Live;C:\Program Files (x86)\Common Files\Microsoft Shared\Windows Live;C:\Windows\system32;C:\Windows;C:\Windows\System32\Wbem;C:\Windows\System32\WindowsPowerShell\v1.0\;C:\Program Files (x86)\ATI Technologies\ATI.ACE\Core-Static;C:\Program Files (x86)\Windows Live\Shared;C:\Program Files\Java\jdk1.6.0_21\bin;C:\Program Files (x86)\Microsoft ASP.NET\ASP.NET Web Pages\v1.0\;C:\Program Files\TortoiseSVN\bin;C:\Program Files (x86)\QuickTime\QTSystem\;C:\Python27\;C:\Users\Ben\AppData\Roaming\cabal\bin
+USERNAME=Ben
+OS=Windows_NT
+PROCESSOR_IDENTIFIER=AMD64 Family 16 Model 6 Stepping 2, AuthenticAMD
+
+
+
+---------------  S Y S T E M  ---------------
+
+OS: Windows 7 , 64 bit Build 7601 Service Pack 1
+
+CPU:total 2 (2 cores per cpu, 1 threads per core) family 16 model 6 stepping 2, cmov, cx8, fxsr, mmx, sse, sse2, sse3, popcnt, mmxext, 3dnowpref, lzcnt, tsc, tscinvbit, tscinv
+
+Memory: 4k page, physical 4192624k(1094816k free), swap 8383396k(3198664k free)
+
+vm_info: Java HotSpot(TM) 64-Bit Server VM (23.0-b21) for windows-amd64 JRE (1.7.0_04-b22), built on May  2 2012 23:28:26 by "java_re" with unknown MS VC++:1600
+
+time: Sat May 19 23:01:40 2012
+elapsed time: 1973 seconds
+
