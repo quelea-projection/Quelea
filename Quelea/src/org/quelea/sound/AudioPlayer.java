@@ -122,7 +122,14 @@ public class AudioPlayer {
                 AudioInputStream in;
                 String parsedPath = path.toLowerCase().trim();
                 //Workaround, AAC doesn't have SPI - and if we give it SPI capability, it hogs everything then fails if it can't play it.
-                if(parsedPath.endsWith("aac") || parsedPath.endsWith("m4a") || parsedPath.endsWith("mp4")) {
+                if(parsedPath.endsWith("aac")
+                        || parsedPath.endsWith("m4a")
+                        || parsedPath.endsWith("m4b")
+                        || parsedPath.endsWith("m4v")
+                        || parsedPath.endsWith("m4p")
+                        || parsedPath.endsWith("m4r")
+                        || parsedPath.endsWith("3gp")
+                        || parsedPath.endsWith("mp4")) {
                     in = new AACAudioFileReader().getAudioInputStream(file);
                 }
                 else {
