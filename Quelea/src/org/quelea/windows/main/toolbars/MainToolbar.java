@@ -41,6 +41,7 @@ public class MainToolbar extends JToolBar {
     private JButton addDVDButton;
     private JButton manageNoticesButton;
     private JButton manageTagsButton;
+    private JButton addAudioButton;
 
     /**
      * Create the toolbar.
@@ -86,6 +87,11 @@ public class MainToolbar extends JToolBar {
         addVideoButton.setToolTipText(LabelGrabber.INSTANCE.getLabel("add.video.tooltip"));
         addVideoButton.addActionListener(new AddVideoActionListener());
         add(addVideoButton);
+        
+        addAudioButton = new JButton(Utils.getImageIcon("icons/audio30.png", 24, 24));
+        addAudioButton.setToolTipText(LabelGrabber.INSTANCE.getLabel("add.audio.tooltip"));
+        addAudioButton.addActionListener(new AddAudioActionListener());
+        add(addAudioButton);
 
         addDVDButton = new JButton(Utils.getImageIcon("icons/dvd.png", 24, 24));
         addDVDButton.setToolTipText(LabelGrabber.INSTANCE.getLabel("add.dvd.tooltip"));

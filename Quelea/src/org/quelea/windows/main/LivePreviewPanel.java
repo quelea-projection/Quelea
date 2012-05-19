@@ -31,12 +31,7 @@ import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JPanel;
-import org.quelea.displayable.Displayable;
-import org.quelea.displayable.ImageDisplayable;
-import org.quelea.displayable.PresentationDisplayable;
-import org.quelea.displayable.Song;
-import org.quelea.displayable.TextDisplayable;
-import org.quelea.displayable.VideoDisplayable;
+import org.quelea.displayable.*;
 import org.quelea.utils.LoggerUtils;
 import org.quelea.utils.QueleaProperties;
 import org.quelea.windows.main.quickedit.QuickEditDialog;
@@ -59,11 +54,13 @@ public abstract class LivePreviewPanel extends JPanel {
     private static final String IMAGE_LABEL = "IMAGE";
     private static final String VIDEO_LABEL = "VIDEO";
     private static final String PRESENTATION_LABEL = "PPT";
+    private static final String AUDIO_LABEL = "AUDIO";
     private String currentLabel;
     private SelectLyricsPanel lyricsPanel = new SelectLyricsPanel(this);
     private ImagePanel picturePanel = new ImagePanel(this);
     private PresentationPanel presentationPanel = new PresentationPanel(this);
     private VideoPanel videoPanel = new VideoPanel();
+    private AudioPanel audioPanel = new AudioPanel(this);
     private QuickEditDialog quickEditDialog = new QuickEditDialog();
     /**
      * All the contained panels so they can be flipped through easily...
@@ -77,6 +74,7 @@ public abstract class LivePreviewPanel extends JPanel {
             this.add(presentationPanel);
         }
     };
+    
 
     /**
      * Create the live preview panel, common superclass of live and preview
@@ -245,6 +243,11 @@ public abstract class LivePreviewPanel extends JPanel {
             ((CardLayout) cardPanel.getLayout()).show(cardPanel, PRESENTATION_LABEL);
             presentationPanel.setDisplayable((PresentationDisplayable) d, index);
             currentLabel = PRESENTATION_LABEL;
+        }
+        else if(d instanceof AudioDisplayable) {
+            audioPanel.showDisplayable((AudioDisplayable) d);
+            ((CardLayout) cardPanel.getLayout()).show(cardPanel, AUDIO_LABEL);
+            currentLabel = AUDIO_LABEL;
         }
         else if(d==null) {
             LOGGER.log(Level.WARNING, "BUG: Called setDisplayable(null), should probably call clear() instead.");
