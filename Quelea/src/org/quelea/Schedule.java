@@ -44,11 +44,7 @@ import java.util.zip.ZipOutputStream;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
-import org.quelea.displayable.BiblePassage;
-import org.quelea.displayable.Displayable;
-import org.quelea.displayable.ImageDisplayable;
-import org.quelea.displayable.Song;
-import org.quelea.displayable.VideoDisplayable;
+import org.quelea.displayable.*;
 import org.quelea.utils.LoggerUtils;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
@@ -264,6 +260,9 @@ public class Schedule implements Iterable<Displayable>, Printable {
                 }
                 else if(name.equalsIgnoreCase("filevideo")) {
                     newSchedule.add(VideoDisplayable.parseXML(node));
+                }
+                else if(name.equalsIgnoreCase("audio")) {
+                    newSchedule.add(AudioDisplayable.parseXML(node));
                 }
             }
             newSchedule.modified = false;
