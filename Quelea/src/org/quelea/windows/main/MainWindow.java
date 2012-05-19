@@ -115,7 +115,6 @@ public class MainWindow extends JFrame implements ApplicationListener {
         mainpanel.getLibraryPanel().getLibrarySongPanel().getAddButton().addActionListener(new NewSongActionListener());
         mainpanel.getLibraryPanel().getLibrarySongPanel().getSongList().getPopupMenu().getEditDBButton().addActionListener(new EditSongDBActionListener());
         mainpanel.getLibraryPanel().getLibrarySongPanel().getSongList().getPopupMenu().getRemoveFromDBButton().addActionListener(new RemoveSongDBActionListener());
-        mainpanel.getSchedulePanel().getScheduleList().getPopupMenu().getEditSongButton().addActionListener(new EditSongScheduleActionListener());
         
         menuBar = new MainMenuBar();
         setJMenuBar(menuBar);
