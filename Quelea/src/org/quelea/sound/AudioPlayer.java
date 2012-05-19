@@ -43,7 +43,7 @@ import org.quelea.utils.LoggerUtils;
 public class AudioPlayer {
 
     private static final Logger LOGGER = LoggerUtils.getLogger();
-    private Object lock = new Object();
+    private final Object lock = new Object();
     private volatile boolean paused = false;
     private PlayThread playThread;
 
