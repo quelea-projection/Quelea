@@ -30,7 +30,6 @@ import javax.swing.JToggleButton;
 import javax.swing.JToolBar;
 import org.quelea.Application;
 import org.quelea.displayable.Displayable;
-import org.quelea.displayable.Song;
 import org.quelea.languages.LabelGrabber;
 import org.quelea.sound.AudioPlayer;
 import org.quelea.utils.QueleaProperties;

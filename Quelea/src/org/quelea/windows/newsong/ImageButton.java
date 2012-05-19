@@ -20,12 +20,10 @@ package org.quelea.windows.newsong;
 import java.io.File;
 import javax.swing.JTextField;
 import javax.swing.filechooser.FileFilter;
-import org.quelea.Background;
 import org.quelea.ImageBackground;
 import org.quelea.languages.LabelGrabber;
-import org.quelea.utils.Utils;
+import org.quelea.utils.ImageFileTypeChecker;
 import org.quelea.windows.main.LyricCanvas;
-import org.quelea.windows.main.TopLyricCanvas;
 
 /**
  * The image button where the user selects an image.
@@ -46,7 +44,7 @@ public class ImageButton extends BackgroundFileSelectButton {
 
             @Override
             public boolean accept(File f) {
-                return Utils.fileIsImage(f);
+                return new ImageFileTypeChecker().isType(f) || (f.isDirectory() && !f.isHidden());
             }
 
             @Override

@@ -554,47 +554,6 @@ public final class Utils {
     }
 
     /**
-     * Determine whether a file is an image file.
-     *
-     * @param file the file to check.
-     * @return true if the file is an image, false otherwise.
-     */
-    public static boolean fileIsImage(File file) {
-        if(file.isDirectory() && !file.isHidden()) {
-            return true;
-        }
-        else {
-            return hasExtension(file, "png")
-                    || hasExtension(file, "tif")
-                    || hasExtension(file, "jpg")
-                    || hasExtension(file, "jpeg")
-                    || hasExtension(file, "gif")
-                    || hasExtension(file, "bmp");
-        }
-    }
-
-    /**
-     * Determine whether a file is a video file.
-     *
-     * @param file the file to check.
-     * @return true if the file is an video, false otherwise.
-     */
-    public static boolean fileIsVideo(File file) {
-        if(file.isDirectory() && !file.isHidden()) {
-            return true;
-        }
-        else {
-            return hasExtension(file, "mpg")
-                    || hasExtension(file, "mpeg")
-                    || hasExtension(file, "mp4")
-                    || hasExtension(file, "avi")
-                    || hasExtension(file, "mkv")
-                    || hasExtension(file, "wmv")
-                    || hasExtension(file, "mov");
-        }
-    }
-
-    /**
      * Determine whether the given file has the given case insensitive
      * extension.
      *

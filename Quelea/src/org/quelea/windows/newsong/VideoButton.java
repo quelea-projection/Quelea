@@ -22,7 +22,7 @@ import javax.swing.JTextField;
 import javax.swing.filechooser.FileFilter;
 import org.quelea.VideoBackground;
 import org.quelea.languages.LabelGrabber;
-import org.quelea.utils.Utils;
+import org.quelea.utils.VideoFileTypeChecker;
 import org.quelea.windows.main.LyricCanvas;
 
 /**
@@ -44,7 +44,7 @@ public class VideoButton extends BackgroundFileSelectButton {
 
             @Override
             public boolean accept(File f) {
-                return Utils.fileIsVideo(f);
+                return new VideoFileTypeChecker().isType(f) || (f.isDirectory() && !f.isHidden());
             }
 
             @Override
