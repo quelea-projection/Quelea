@@ -31,10 +31,12 @@ import javax.sound.sampled.FloatControl.Type;
 import javax.sound.sampled.LineUnavailableException;
 import javax.sound.sampled.SourceDataLine;
 import javax.sound.sampled.UnsupportedAudioFileException;
+import net.sourceforge.jaad.spi.javasound.AACAudioFileReader;
 import org.quelea.utils.LoggerUtils;
 
 /**
- * Player used to play one sound file at a time.
+ * Player used to play one sound file at a time. At present, supports the
+ * following formats: AIFF, AU, WAV, AAC, MP3, OGG, FLAC.
  *
  * @author Michael
  */
@@ -117,7 +119,15 @@ public class AudioPlayer {
             AudioInputStream din = null;
             try {
                 File file = new File(path);
-                AudioInputStream in = AudioSystem.getAudioInputStream(file);
+                AudioInputStream in;
+                String parsedPath = path.toLowerCase().trim();
+                //Workaround, AAC doesn't have SPI - and if we give it SPI capability, it hogs everything then fails if it can't play it.
+                if(parsedPath.endsWith("aac") || parsedPath.endsWith("m4a") || parsedPath.endsWith("mp4")) {
+                    in = new AACAudioFileReader().getAudioInputStream(file);
+                }
+                else {
+                    in = AudioSystem.getAudioInputStream(file);
+                }
                 AudioFormat baseFormat = in.getFormat();
                 AudioFormat decodedFormat = new AudioFormat(
                         AudioFormat.Encoding.PCM_SIGNED,
