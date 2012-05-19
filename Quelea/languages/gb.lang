@@ -215,6 +215,7 @@ new.song.tooltip=New Song
 add.presentation.tooltip=Add Presentation
 add.dvd.tooltip=Add DVD
 add.video.tooltip=Add Video
+add.audio.tooltip=Add Audio File
 manage.tags.tooltip=Manage Tags
 manage.notices.tooltip=Manage Notices
 already.running.error=It looks like you already have an instance of Quelea running.\nMake sure you close all instances before running the program.
