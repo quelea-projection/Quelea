@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import javax.swing.Icon;
 import org.quelea.utils.Utils;
+import org.w3c.dom.Node;
 
 /**
  * A single AudioDisplayable file
@@ -41,6 +42,10 @@ public class AudioDisplayable implements Displayable {
         this.audioPath = path;
     }
 
+    public static Displayable parseXML(Node node) {
+        return new AudioDisplayable(node.getTextContent());
+    }
+    
     @Override
     public boolean supportClear() {
         return false;
@@ -62,7 +67,7 @@ public class AudioDisplayable implements Displayable {
         xml.append("<audio>");
         xml.append("<path>");
         xml.append(Utils.escapeXML(audioPath));
-        xml.append("</path");
+        xml.append("</path>");
         xml.append("</audio>");
         return xml.toString();
     }
@@ -74,8 +79,7 @@ public class AudioDisplayable implements Displayable {
 
     @Override
     public String getPreviewText() {
-        int x = audioPath.split("/").length;
-        return "<html>" + audioPath.split("/")[x - 1] + "<br/></html>";
+        return "<html>" + audioPath + "<br/></html>";
     }
 
     @Override
