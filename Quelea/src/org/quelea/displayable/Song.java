@@ -737,23 +737,6 @@ public class Song implements TextDisplayable, Comparable<Song>, Printable {
     }
 
     /**
-     * Strip punctuation from the given string.
-     *
-     * @param s the string to use to strip punctuation from
-     * @return the "stripped" string.
-     */
-    private static String stripPunctuation(String s) {
-        s = s.replaceAll("[ ]+", " ");
-        StringBuilder ret = new StringBuilder();
-        for(char c : s.toCharArray()) {
-            if(Character.isLetterOrDigit(c) || Character.isWhitespace(c)) {
-                ret.append(c);
-            }
-        }
-        return ret.toString();
-    }
-
-    /**
      * Get a representation of this song in XML format.
      *
      * @return the song in XML format.
