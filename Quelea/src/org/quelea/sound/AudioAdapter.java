@@ -45,4 +45,11 @@ public class AudioAdapter implements AudioListener {
     @Override
     public void stopped() {
     }
+
+    /**
+     * @inheritDoc
+     */
+    @Override
+    public void volumeChanged(int newVolume) {
+    }
 }

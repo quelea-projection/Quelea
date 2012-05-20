@@ -40,4 +40,9 @@ public interface AudioListener {
      */
     void stopped();
     
+    /**
+     * Called when the volume has been changed.
+     */
+    void volumeChanged(int newVolume);
+    
 }
