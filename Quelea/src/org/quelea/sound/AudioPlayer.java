@@ -46,13 +46,6 @@ public class AudioPlayer {
     private int volume;
     private final List<AudioListener> listeners;
 
-    public static void main(String[] args) {
-        AudioPlayer player = new AudioPlayer();
-        player.play("C:\\x.flac");
-        player.setVolume(94);
-        Utils.sleep(5000);
-    }
-
     /**
      * Create the audio player.
      */
@@ -294,8 +287,8 @@ public class AudioPlayer {
             if(line != null) {
                 FloatControl c = (FloatControl) line.getControl(Type.MASTER_GAIN);
                 double range = c.getMaximum() - c.getMinimum();
-                double val = (volume / 100.0) * range + c.getMinimum();
-                val = Math.pow(10, val);
+                int logVal = logToLin(volume);
+                double val = (logVal / 100.0) * range + c.getMinimum();
                 if(val < c.getMinimum()) {
                     LOGGER.log(Level.WARNING, "val out of range, {0}. Minimum is {1}. Volume was set at {2}", new Object[]{val, c.getMinimum(), volume});
                     val = c.getMinimum();
@@ -306,6 +299,13 @@ public class AudioPlayer {
                 }
                 c.setValue((float) val);
             }
+        }
+        
+        /**
+         * Converts a logarithmic value to a linear one, so we get a linear volume control.
+         */
+        private int logToLin(int level) {
+            return (int) ((Math.log(level) / Math.log(100)) * 100);
         }
     }
 }
