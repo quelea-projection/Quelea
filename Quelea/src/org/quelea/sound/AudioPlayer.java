@@ -20,6 +20,8 @@ package org.quelea.sound;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.sound.sampled.AudioFormat;
@@ -46,6 +48,31 @@ public class AudioPlayer {
     private final Object lock = new Object();
     private volatile boolean paused = false;
     private PlayThread playThread;
+    private String currentPath;
+    private final List<AudioListener> listeners;
+    
+    /**
+     * Create the audio player.
+     */
+    public AudioPlayer() {
+        listeners = new ArrayList<>();
+    }
+    
+    /**
+     * Add an audio listener to listen for events on this player.
+     * @param listener the listener to add.
+     */
+    public void addAudioListener(AudioListener listener) {
+        listeners.add(listener);
+    }
+    
+    /**
+     * Remove an audio listener from this player.
+     * @param listener the listener to remove.
+     */
+    public void removeAudioListener(AudioListener listener) {
+        listeners.remove(listener);
+    }
 
     /**
      * Play the given piece of music. Stop any existing music, if playing.
@@ -56,6 +83,18 @@ public class AudioPlayer {
         stop();
         playThread = new PlayThread(path);
         playThread.start();
+        currentPath = path;
+        for(AudioListener listener : listeners) {
+            listener.played();
+        }
+    }
+    
+    /**
+     * Get the current path of the playing track from this player.
+     * @return the path of the playing track.
+     */
+    public String getCurrentTrack() {
+        return currentPath;
     }
 
     /**
@@ -72,6 +111,9 @@ public class AudioPlayer {
                 lock.notifyAll();
             }
         }
+        for(AudioListener listener : listeners) {
+            listener.paused(isPaused());
+        }
     }
     
     public boolean isPaused() {
@@ -85,6 +127,9 @@ public class AudioPlayer {
         if(playThread != null) {
             playThread.halt();
             paused = false;
+        }
+        for(AudioListener listener : listeners) {
+            listener.stopped();
         }
     }
 
