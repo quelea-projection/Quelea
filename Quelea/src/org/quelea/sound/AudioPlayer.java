@@ -28,6 +28,7 @@ import javax.sound.sampled.FloatControl.Type;
 import javax.sound.sampled.*;
 import net.sourceforge.jaad.spi.javasound.AACAudioFileReader;
 import org.quelea.utils.LoggerUtils;
+import org.quelea.utils.Utils;
 
 /**
  * Player used to play one sound file at a time. At present, supports the
@@ -44,7 +45,14 @@ public class AudioPlayer {
     private String currentPath;
     private int volume;
     private final List<AudioListener> listeners;
-    
+
+    public static void main(String[] args) {
+        AudioPlayer player = new AudioPlayer();
+        player.play("C:\\x.flac");
+        player.setVolume(94);
+        Utils.sleep(5000);
+    }
+
     /**
      * Create the audio player.
      */
@@ -52,7 +60,7 @@ public class AudioPlayer {
         listeners = new ArrayList<>();
         volume = 100;
     }
-    
+
     /**
      * Add an audio listener to listen for events on this player.
      *
@@ -73,6 +81,7 @@ public class AudioPlayer {
 
     /**
      * Get the current volume of the player, between 0-100.
+     *
      * @return the current volume.
      */
     public int getVolume() {
@@ -81,10 +90,11 @@ public class AudioPlayer {
 
     /**
      * Set the volume of the player, between 0-100.
+     *
      * @param volume the volume to set.
      */
     public void setVolume(int volume) {
-        if(volume<0||volume>100) {
+        if(volume < 0 || volume > 100) {
             throw new IllegalArgumentException("Volume must be between 0-100, but \"" + volume + "\" was given.");
         }
         this.volume = volume;
@@ -110,9 +120,10 @@ public class AudioPlayer {
             listener.played();
         }
     }
-    
+
     /**
      * Get the current path of the playing track from this player.
+     *
      * @return the path of the playing track.
      */
     public String getCurrentTrack() {
@@ -137,7 +148,7 @@ public class AudioPlayer {
             listener.paused(isPaused());
         }
     }
-    
+
     public boolean isPaused() {
         return paused;
     }
@@ -246,7 +257,7 @@ public class AudioPlayer {
                             if(mustHalt) {
                                 FloatControl c = (FloatControl) line.getControl(Type.MASTER_GAIN);
                                 c.setValue(c.getValue() - HALT_RATE);
-                                if(c.getValue() <= -75) {
+                                if(c.getValue() <= c.getMinimum() + 5) {
                                     break;
                                 }
                             }
@@ -260,7 +271,7 @@ public class AudioPlayer {
                     line.close();
                     din.close();
                 }
-                
+
             }
             catch (UnsupportedAudioFileException | IOException | LineUnavailableException ex) {
                 LOGGER.log(Level.WARNING, "Error playing audio", ex);
@@ -275,13 +286,25 @@ public class AudioPlayer {
                 }
             }
         }
-        
+
+        /**
+         * Internal method to update the volume on this thread.
+         */
         private void updateVolume() {
             if(line != null) {
                 FloatControl c = (FloatControl) line.getControl(Type.MASTER_GAIN);
-                double range = c.getMaximum()-c.getMinimum();
-                double val = ((volume/100.0)*range)+c.getMinimum();
-                c.setValue((float)val);
+                double range = c.getMaximum() - c.getMinimum();
+                double val = (volume / 100.0) * range + c.getMinimum();
+                val = Math.pow(10, val);
+                if(val < c.getMinimum()) {
+                    LOGGER.log(Level.WARNING, "val out of range, {0}. Minimum is {1}. Volume was set at {2}", new Object[]{val, c.getMinimum(), volume});
+                    val = c.getMinimum();
+                }
+                if(val > c.getMaximum()) {
+                    LOGGER.log(Level.WARNING, "val out of range, {0}. Maximum is {1}. Volume was set at {2}", new Object[]{val, c.getMaximum(), volume});
+                    val = c.getMaximum();
+                }
+                c.setValue((float) val);
             }
         }
     }
