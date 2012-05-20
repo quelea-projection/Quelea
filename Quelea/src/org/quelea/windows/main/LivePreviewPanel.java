@@ -87,6 +87,7 @@ public abstract class LivePreviewPanel extends JPanel {
         cardPanel.add(picturePanel, IMAGE_LABEL);
         cardPanel.add(videoPanel, VIDEO_LABEL);
         cardPanel.add(presentationPanel, PRESENTATION_LABEL);
+        cardPanel.add(audioPanel, AUDIO_LABEL);
         ((CardLayout) cardPanel.getLayout()).show(cardPanel, LYRICS_LABEL);
 
         lyricsPanel.getLyricsList().addMouseListener(new MouseAdapter() {
