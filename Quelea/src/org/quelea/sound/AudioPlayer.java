@@ -60,6 +60,24 @@ public class AudioPlayer {
         listeners = new ArrayList<>();
         volume = 100;
     }
+    
+    /**
+     * Add an audio listener to listen for events on this player.
+     *
+     * @param listener the listener to add.
+     */
+    public void addAudioListener(AudioListener listener) {
+        listeners.add(listener);
+    }
+
+    /**
+     * Remove an audio listener from this player.
+     *
+     * @param listener the listener to remove.
+     */
+    public void removeAudioListener(AudioListener listener) {
+        listeners.remove(listener);
+    }
 
     /**
      * Get the current volume of the player, between 0-100.
@@ -81,22 +99,9 @@ public class AudioPlayer {
         if(playThread != null) {
             playThread.updateVolume();
         }
-    }
-    
-    /**
-     * Add an audio listener to listen for events on this player.
-     * @param listener the listener to add.
-     */
-    public void addAudioListener(AudioListener listener) {
-        listeners.add(listener);
-    }
-    
-    /**
-     * Remove an audio listener from this player.
-     * @param listener the listener to remove.
-     */
-    public void removeAudioListener(AudioListener listener) {
-        listeners.remove(listener);
+        for(AudioListener listener : listeners) {
+            listener.volumeChanged(volume);
+        }
     }
 
     /**
