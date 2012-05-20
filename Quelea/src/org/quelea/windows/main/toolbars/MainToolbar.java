@@ -42,6 +42,10 @@ public class MainToolbar extends JToolBar {
     private JButton manageNoticesButton;
     private JButton manageTagsButton;
     private JButton addAudioButton;
+    private JButton playButton;
+    private JButton pauseButton;
+    private JButton skipButton;
+    private JButton muteButton;
 
     /**
      * Create the toolbar.
@@ -109,6 +113,29 @@ public class MainToolbar extends JToolBar {
         manageNoticesButton.setToolTipText(LabelGrabber.INSTANCE.getLabel("manage.notices.tooltip"));
         manageNoticesButton.addActionListener(new ShowNoticesActionListener());
         add(manageNoticesButton);
+        
+        addSeparator(); 
+        //Ideally right align the following (may need panel)
+        
+        playButton = new JButton(Utils.getImageIcon("icons/play.png", 24, 24));
+        playButton.setToolTipText(LabelGrabber.INSTANCE.getLabel("play.audio.control.tooltip"));
+        playButton.addActionListener(new PlayActionListener());
+        add(playButton);
+        
+        pauseButton = new JButton(Utils.getImageIcon("icons/pause.png", 24, 24));
+        pauseButton.setToolTipText(LabelGrabber.INSTANCE.getLabel("pause.audio.control.tooltip"));
+        pauseButton.addActionListener(new PauseActionListener());
+        add(pauseButton);
+        
+        skipButton = new JButton(Utils.getImageIcon("icons/skip.png", 24, 24));
+        skipButton.setToolTipText(LabelGrabber.INSTANCE.getLabel("ski.audio.control.tooltip"));
+        skipButton.addActionListener(new SkipActionListener());
+        add(skipButton);
+        
+        muteButton = new JButton(Utils.getImageIcon("icons/mute.png", 24, 24));
+        muteButton.setToolTipText(LabelGrabber.INSTANCE.getLabel("mute.audio.control.tooltip"));
+        muteButton.addActionListener(new MuteActionListener());
+        add(muteButton);
 
     }
 }
