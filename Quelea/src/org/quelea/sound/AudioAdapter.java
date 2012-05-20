@@ -18,68 +18,28 @@
  */
 package org.quelea.sound;
 
-import javax.swing.JButton;
-import javax.swing.JToggleButton;
-import org.quelea.languages.LabelGrabber;
-import org.quelea.utils.Utils;
-
 /**
- * A blank adapter to provide empty implementations of AudioListener.
  *
- * @author Michael
+ *
+ * @author Ben Goodwin
+ * @version 21-May-2012
  */
 public class AudioAdapter implements AudioListener {
 
-    private JButton play;
-    private JToggleButton mute;
-    
-    public AudioAdapter(JButton play, JToggleButton mute) {
-        this.play = play;
-        this.mute = mute;
-    }
-    
-    /**
-     * @inheritDoc
-     */
     @Override
     public void played() {
-        play.setIcon(Utils.getImageIcon("icons/pause.png", 24, 24));
-        play.setToolTipText(LabelGrabber.INSTANCE.getLabel("pause.audio.control.tooltip"));
     }
 
-    /**
-     * @inheritDoc
-     */
     @Override
     public void paused(boolean isPaused) {
-        if(isPaused) {
-            play.setIcon(Utils.getImageIcon("icons/play.png", 24, 24));
-            play.setToolTipText(LabelGrabber.INSTANCE.getLabel("play.audio.control.tooltip"));
-        }
-        else {
-            play.setIcon(Utils.getImageIcon("icons/pause.png", 24, 24));
-            play.setToolTipText(LabelGrabber.INSTANCE.getLabel("pause.audio.control.tooltip"));
-        }
     }
 
-    /**
-     * @inheritDoc
-     */
     @Override
     public void stopped() {
-        play.setIcon(Utils.getImageIcon("icons/play.png", 24, 24));
-        play.setToolTipText(LabelGrabber.INSTANCE.getLabel("play.audio.control.tooltip"));
     }
 
-    /**
-     * @inheritDoc
-     */
     @Override
     public void volumeChanged(int newVolume) {
-        if(newVolume == 0) {
-            if(!(mute.isSelected())) {
-                mute.doClick();
-            }
-        }
     }
+
 }
