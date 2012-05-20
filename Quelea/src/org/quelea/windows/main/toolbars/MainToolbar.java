@@ -128,7 +128,7 @@ public class MainToolbar extends JToolBar {
         add(pauseButton);
         
         skipButton = new JButton(Utils.getImageIcon("icons/skip.png", 24, 24));
-        skipButton.setToolTipText(LabelGrabber.INSTANCE.getLabel("ski.audio.control.tooltip"));
+        skipButton.setToolTipText(LabelGrabber.INSTANCE.getLabel("skip.audio.control.tooltip"));
         skipButton.addActionListener(new SkipActionListener());
         add(skipButton);
         
