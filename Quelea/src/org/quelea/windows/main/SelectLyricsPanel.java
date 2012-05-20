@@ -175,25 +175,25 @@ public class SelectLyricsPanel extends ContainedPanel {
         int selectedIndex = lyricsList.getSelectedIndex();
         HashSet<LyricCanvas> canvases = new HashSet<>();
         canvases.addAll(containerPanel.getCanvases());
-        for(LyricCanvas canvas : canvases) {
+        for(LyricCanvas curCanvas : canvases) {
             if(selectedIndex == -1 || selectedIndex >= lyricsList.getModel().getSize()) {
-                canvas.setTheme(null);
-                canvas.eraseText();
+//                canvas.setTheme(null);
+//                canvas.eraseText();
                 continue;
             }
             TextSection currentSection = lyricsList.getModel().getElementAt(selectedIndex);
             if(currentSection.getTempTheme() != null) {
-                canvas.setTheme(currentSection.getTempTheme());
+                curCanvas.setTheme(currentSection.getTempTheme());
             }
             else {
-                canvas.setTheme(currentSection.getTheme());
+                curCanvas.setTheme(currentSection.getTheme());
             }
-            canvas.setCapitaliseFirst(currentSection.shouldCapitaliseFirst());
-            if(canvas.isStageView()) {
-                canvas.setText(currentSection.getText(true, false), currentSection.getSmallText());
+            curCanvas.setCapitaliseFirst(currentSection.shouldCapitaliseFirst());
+            if(curCanvas.isStageView()) {
+                curCanvas.setText(currentSection.getText(true, false), currentSection.getSmallText());
             }
             else {
-                canvas.setText(currentSection.getText(false, false), currentSection.getSmallText());
+                curCanvas.setText(currentSection.getText(false, false), currentSection.getSmallText());
             }
         }
     }
