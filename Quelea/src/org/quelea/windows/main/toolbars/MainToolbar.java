@@ -18,6 +18,7 @@
  */
 package org.quelea.windows.main.toolbars;
 
+import javax.swing.Box;
 import javax.swing.JButton;
 import javax.swing.JToolBar;
 import org.quelea.languages.LabelGrabber;
@@ -115,7 +116,8 @@ public class MainToolbar extends JToolBar {
         add(manageNoticesButton);
         
         addSeparator(); 
-        //Ideally right align the following (may need panel)
+        //Right align following
+        add(Box.createHorizontalGlue());
         
         playButton = new JButton(Utils.getImageIcon("icons/play.png", 24, 24));
         playButton.setToolTipText(LabelGrabber.INSTANCE.getLabel("play.audio.control.tooltip"));
