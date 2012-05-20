@@ -19,8 +19,11 @@ package org.quelea.windows.main.actionlisteners;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import javax.swing.JButton;
 import org.quelea.Application;
+import org.quelea.languages.LabelGrabber;
 import org.quelea.sound.AudioPlayer;
+import org.quelea.utils.Utils;
 
 /**
  *
@@ -30,11 +33,24 @@ import org.quelea.sound.AudioPlayer;
  */
 public class PlayActionListener implements ActionListener {
 
+    private JButton button;
+    
+    public PlayActionListener(JButton b) {
+        this.button = b;
+    }
+    
     @Override
     public void actionPerformed(ActionEvent e) {
         AudioPlayer ap = Application.get().getAudioPlayer();
         if(ap.isPaused()) {
             ap.togglePause();
+            button.setIcon(Utils.getImageIcon("icons/pause.png", 24, 24));
+            button.setToolTipText(LabelGrabber.INSTANCE.getLabel("pause.audio.control.tooltip"));
+        }
+        else {
+            ap.togglePause();
+            button.setIcon(Utils.getImageIcon("icons/play.png", 24, 24));
+            button.setToolTipText(LabelGrabber.INSTANCE.getLabel("play.audio.control.tooltip"));
         }
     }
 }

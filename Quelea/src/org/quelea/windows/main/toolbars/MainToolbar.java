@@ -44,8 +44,7 @@ public class MainToolbar extends JToolBar {
     private JButton manageNoticesButton;
     private JButton manageTagsButton;
     private JButton addAudioButton;
-    private JButton playButton;
-    private JButton pauseButton;
+    private JButton playpauseButton;
     private JButton skipButton;
     private JToggleButton muteButton;
 
@@ -120,15 +119,10 @@ public class MainToolbar extends JToolBar {
         //Right align following
         add(Box.createHorizontalGlue());
         
-        playButton = new JButton(Utils.getImageIcon("icons/play.png", 24, 24));
-        playButton.setToolTipText(LabelGrabber.INSTANCE.getLabel("play.audio.control.tooltip"));
-        playButton.addActionListener(new PlayActionListener());
-        add(playButton);
-        
-        pauseButton = new JButton(Utils.getImageIcon("icons/pause.png", 24, 24));
-        pauseButton.setToolTipText(LabelGrabber.INSTANCE.getLabel("pause.audio.control.tooltip"));
-        pauseButton.addActionListener(new PauseActionListener());
-        add(pauseButton);
+        playpauseButton = new JButton(Utils.getImageIcon("icons/pause.png", 24, 24));
+        playpauseButton.setToolTipText(LabelGrabber.INSTANCE.getLabel("pause.audio.control.tooltip"));
+        playpauseButton.addActionListener(new PlayActionListener(playpauseButton));
+        add(playpauseButton);
         
         skipButton = new JButton(Utils.getImageIcon("icons/skip.png", 24, 24));
         skipButton.setToolTipText(LabelGrabber.INSTANCE.getLabel("skip.audio.control.tooltip"));
