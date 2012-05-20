@@ -145,7 +145,7 @@ public class LivePanel extends LivePreviewPanel {
         header.add(hide);
         
         pause = new JToggleButton(Utils.getImageIcon("icons/pauseaudio.png"));
-        pause.setToolTipText(LabelGrabber.INSTANCE.getLabel("pause.display.output.tooltip") + " (F4)");
+        pause.setToolTipText(LabelGrabber.INSTANCE.getLabel("pause.audio.control.tooltip") + " (F4)");
         pause.setRequestFocusEnabled(false);
         pause.addActionListener(new ActionListener() {
 
