@@ -259,6 +259,9 @@ public class AudioPlayer {
                         }
                     }
                     //Stop here
+                    for(AudioListener listener : listeners) {
+                        listener.stopped();
+                    }
                     line.drain();
                     line.stop();
                     line.close();
