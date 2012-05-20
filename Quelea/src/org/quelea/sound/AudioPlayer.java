@@ -35,7 +35,6 @@ import javax.sound.sampled.SourceDataLine;
 import javax.sound.sampled.UnsupportedAudioFileException;
 import net.sourceforge.jaad.spi.javasound.AACAudioFileReader;
 import org.quelea.utils.LoggerUtils;
-import org.quelea.utils.Utils;
 
 /**
  * Player used to play one sound file at a time. At present, supports the
