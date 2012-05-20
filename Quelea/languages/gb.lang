@@ -286,3 +286,4 @@ play.audio.control.tooltip=Play audio
 pause.audio.control.tooltip=Pause audio
 skip.audio.control.tooltip=Skip audio
 mute.audio.control.tooltip=Mute audio
+playlist.select.tooltip=Select playlist audio
