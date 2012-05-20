@@ -35,6 +35,7 @@ import javax.sound.sampled.SourceDataLine;
 import javax.sound.sampled.UnsupportedAudioFileException;
 import net.sourceforge.jaad.spi.javasound.AACAudioFileReader;
 import org.quelea.utils.LoggerUtils;
+import org.quelea.utils.Utils;
 
 /**
  * Player used to play one sound file at a time. At present, supports the
@@ -49,6 +50,7 @@ public class AudioPlayer {
     private volatile boolean paused = false;
     private PlayThread playThread;
     private String currentPath;
+    private int volume;
     private final List<AudioListener> listeners;
     
     /**
@@ -56,6 +58,29 @@ public class AudioPlayer {
      */
     public AudioPlayer() {
         listeners = new ArrayList<>();
+        volume = 100;
+    }
+
+    /**
+     * Get the current volume of the player, between 0-100.
+     * @return the current volume.
+     */
+    public int getVolume() {
+        return volume;
+    }
+
+    /**
+     * Set the volume of the player, between 0-100.
+     * @param volume the volume to set.
+     */
+    public void setVolume(int volume) {
+        if(volume<0||volume>100) {
+            throw new IllegalArgumentException("Volume must be between 0-100, but \"" + volume + "\" was given.");
+        }
+        this.volume = volume;
+        if(playThread != null) {
+            playThread.updateVolume();
+        }
     }
     
     /**
@@ -140,6 +165,7 @@ public class AudioPlayer {
 
         private static final float HALT_RATE = 3f;
         private boolean mustHalt;
+        private SourceDataLine line;
         private String path;
 
         /**
@@ -192,12 +218,13 @@ public class AudioPlayer {
                         false);
                 din = AudioSystem.getAudioInputStream(decodedFormat, in);
                 DataLine.Info info = new DataLine.Info(SourceDataLine.class, decodedFormat);
-                SourceDataLine line = (SourceDataLine) AudioSystem.getLine(info);
+                line = (SourceDataLine) AudioSystem.getLine(info);
                 if(line != null) {
                     line.open(decodedFormat);
                     byte[] data = new byte[4096];
                     // Start
                     line.start();
+                    updateVolume();
 
                     int nBytesRead;
                     synchronized(lock) {
@@ -236,7 +263,7 @@ public class AudioPlayer {
                     line.close();
                     din.close();
                 }
-
+                
             }
             catch (UnsupportedAudioFileException | IOException | LineUnavailableException ex) {
                 LOGGER.log(Level.WARNING, "Error playing audio", ex);
@@ -249,6 +276,15 @@ public class AudioPlayer {
                     catch (IOException e) {
                     }
                 }
+            }
+        }
+        
+        private void updateVolume() {
+            if(line != null) {
+                FloatControl c = (FloatControl) line.getControl(Type.MASTER_GAIN);
+                double range = c.getMaximum()-c.getMinimum();
+                double val = ((volume/100.0)*range)+c.getMinimum();
+                c.setValue((float)val);
             }
         }
     }
