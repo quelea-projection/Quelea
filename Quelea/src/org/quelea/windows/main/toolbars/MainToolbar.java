@@ -22,7 +22,7 @@ import java.awt.Component;
 import javax.swing.*;
 import org.quelea.Application;
 import org.quelea.languages.LabelGrabber;
-import org.quelea.sound.AudioAdapter;
+import org.quelea.sound.AudioControl;
 import org.quelea.utils.Utils;
 import org.quelea.windows.main.actionlisteners.*;
 
