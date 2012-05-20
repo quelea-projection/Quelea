@@ -21,6 +21,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
 import javax.swing.Icon;
+import org.quelea.Application;
 import org.quelea.utils.Utils;
 import org.w3c.dom.Node;
 
@@ -94,6 +95,7 @@ public class AudioDisplayable implements Displayable {
 
     @Override
     public void dispose() {
+        Application.get().getAudioPlayer().stop();
         // Nothing needed here? 
     }
 }
