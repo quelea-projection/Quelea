@@ -1,7 +1,7 @@
 /*
  * This file is part of Quelea, free projection software for churches.
  * 
- * Copyright (C) 2012 Michael Berry
+ * Copyright (C) 2012 Michael Berry and Ben Goodwin
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,6 +20,7 @@ package org.quelea.windows.main.toolbars;
 
 import javax.swing.Box;
 import javax.swing.JButton;
+import javax.swing.JToggleButton;
 import javax.swing.JToolBar;
 import org.quelea.languages.LabelGrabber;
 import org.quelea.utils.Utils;
@@ -28,7 +29,7 @@ import org.quelea.windows.main.actionlisteners.*;
 /**
  * Quelea's main toolbar.
  *
- * @author Michael
+ * @author Michael + Ben
  */
 public class MainToolbar extends JToolBar {
 
@@ -46,7 +47,7 @@ public class MainToolbar extends JToolBar {
     private JButton playButton;
     private JButton pauseButton;
     private JButton skipButton;
-    private JButton muteButton;
+    private JToggleButton muteButton;
 
     /**
      * Create the toolbar.
@@ -134,7 +135,7 @@ public class MainToolbar extends JToolBar {
         skipButton.addActionListener(new SkipActionListener());
         add(skipButton);
         
-        muteButton = new JButton(Utils.getImageIcon("icons/mute.png", 24, 24));
+        muteButton = new JToggleButton(Utils.getImageIcon("icons/mute.png", 24, 24));
         muteButton.setToolTipText(LabelGrabber.INSTANCE.getLabel("mute.audio.control.tooltip"));
         muteButton.addActionListener(new MuteActionListener());
         add(muteButton);
