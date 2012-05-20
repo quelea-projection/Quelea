@@ -22,7 +22,9 @@ import javax.swing.Box;
 import javax.swing.JButton;
 import javax.swing.JToggleButton;
 import javax.swing.JToolBar;
+import org.quelea.Application;
 import org.quelea.languages.LabelGrabber;
+import org.quelea.sound.AudioAdapter;
 import org.quelea.utils.Utils;
 import org.quelea.windows.main.actionlisteners.*;
 
@@ -115,8 +117,7 @@ public class MainToolbar extends JToolBar {
         manageNoticesButton.addActionListener(new ShowNoticesActionListener());
         add(manageNoticesButton);
         
-        addSeparator(); 
-        //Right align following
+        addSeparator();
         add(Box.createHorizontalGlue());
         
         playpauseButton = new JButton(Utils.getImageIcon("icons/pause.png", 24, 24));
@@ -131,8 +132,9 @@ public class MainToolbar extends JToolBar {
         
         muteButton = new JToggleButton(Utils.getImageIcon("icons/mute.png", 24, 24));
         muteButton.setToolTipText(LabelGrabber.INSTANCE.getLabel("mute.audio.control.tooltip"));
-        muteButton.addActionListener(new MuteActionListener());
+        muteButton.addActionListener(new MuteActionListener(muteButton));
         add(muteButton);
+        Application.get().getAudioPlayer().addAudioListener(new AudioAdapter(playpauseButton, muteButton));
 
     }
 }

@@ -19,6 +19,7 @@ package org.quelea.windows.main.actionlisteners;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import javax.swing.JToggleButton;
 import org.quelea.Application;
 import org.quelea.sound.AudioPlayer;
 
@@ -30,9 +31,21 @@ import org.quelea.sound.AudioPlayer;
  */
 public class MuteActionListener implements ActionListener {
 
+    private JToggleButton button;
+    private int volume;
+    
+    public MuteActionListener(JToggleButton b) {
+        this.button = b;
+    }   
+    
     @Override
     public void actionPerformed(ActionEvent e) {
         AudioPlayer ap = Application.get().getAudioPlayer();
+        if(button.isSelected()) {
+            volume = ap.getVolume();
+            ap.setVolume(0);
+        }
+        else ap.setVolume(volume);
     }
 
 }

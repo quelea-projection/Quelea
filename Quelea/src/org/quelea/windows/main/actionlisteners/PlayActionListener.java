@@ -42,15 +42,6 @@ public class PlayActionListener implements ActionListener {
     @Override
     public void actionPerformed(ActionEvent e) {
         AudioPlayer ap = Application.get().getAudioPlayer();
-        if(ap.isPaused()) {
-            ap.togglePause();
-            button.setIcon(Utils.getImageIcon("icons/pause.png", 24, 24));
-            button.setToolTipText(LabelGrabber.INSTANCE.getLabel("pause.audio.control.tooltip"));
-        }
-        else {
-            ap.togglePause();
-            button.setIcon(Utils.getImageIcon("icons/play.png", 24, 24));
-            button.setToolTipText(LabelGrabber.INSTANCE.getLabel("play.audio.control.tooltip"));
-        }
+        ap.togglePause();
     }
 }
