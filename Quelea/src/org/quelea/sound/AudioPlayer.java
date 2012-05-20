@@ -73,6 +73,10 @@ public class AudioPlayer {
             }
         }
     }
+    
+    public boolean isPaused() {
+        return paused;
+    }
 
     /**
      * Stop the currently playing track.

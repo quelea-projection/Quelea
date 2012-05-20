@@ -37,6 +37,7 @@ import javax.swing.event.ListSelectionListener;
 import org.quelea.Application;
 import org.quelea.languages.LabelGrabber;
 import org.quelea.utils.Utils;
+import org.quelea.windows.main.actionlisteners.EditSongScheduleActionListener;
 
 /**
  * The panel displaying the schedule / order of service. Items from here are
@@ -49,6 +50,7 @@ public class SchedulePanel extends JPanel {
 
     private final ScheduleList scheduleList;
     private final JButton removeButton;
+    private final JButton editButton;
     private final JButton upButton;
     private final JButton downButton;
     private final JButton themeButton;
@@ -137,6 +139,12 @@ public class SchedulePanel extends JPanel {
         removeButton.setRequestFocusEnabled(false);
         removeButton.setEnabled(false);
         removeButton.addActionListener(new RemoveSongScheduleActionListener());
+        
+        editButton = new JButton(Utils.getImageIcon("icons/edit32.png", 16, 16));
+        editButton.setToolTipText(LabelGrabber.INSTANCE.getLabel("edit.song.button.tooltip"));
+        editButton.setRequestFocusEnabled(false);
+        editButton.setEnabled(false);
+        editButton.addActionListener(new EditSongScheduleActionListener());
 
         upButton = new JButton(Utils.getImageIcon("icons/up.png"));
         upButton.setToolTipText(LabelGrabber.INSTANCE.getLabel("move.up.schedule.tooltip"));
@@ -165,11 +173,13 @@ public class SchedulePanel extends JPanel {
             public void valueChanged(ListSelectionEvent e) {
                 if(scheduleList.getSelectedIndex() == -1) {
                     removeButton.setEnabled(false);
+                    editButton.setEnabled(false);
                     upButton.setEnabled(false);
                     downButton.setEnabled(false);
                 }
                 else {
                     removeButton.setEnabled(true);
+                    editButton.setEnabled(true);
                     upButton.setEnabled(true);
                     downButton.setEnabled(true);
                 }
@@ -183,6 +193,7 @@ public class SchedulePanel extends JPanel {
         header.add(themeButton);
 
         toolbar.add(removeButton);
+        toolbar.add(editButton);
         toolbar.add(upButton);
         toolbar.add(downButton);
 

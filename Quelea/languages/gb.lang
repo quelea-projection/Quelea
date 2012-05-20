@@ -89,6 +89,7 @@ schedule.heading=Schedule
 add.song.button=Add song
 items.heading=Items
 edit.song.button=Edit song
+edit.song.button.tooltip=Edit song
 remove.item.button=Remove item
 add.multimedia.heading=Add Multimedia
 add.presentation.button=Add Presentation

@@ -33,7 +33,8 @@ public class PlayActionListener implements ActionListener {
     @Override
     public void actionPerformed(ActionEvent e) {
         AudioPlayer ap = Application.get().getAudioPlayer();
-        
+        if(ap.isPaused()) {
+            ap.togglePause();
+        }
     }
-
 }
