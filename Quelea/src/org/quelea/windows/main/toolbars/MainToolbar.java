@@ -18,10 +18,8 @@
  */
 package org.quelea.windows.main.toolbars;
 
-import javax.swing.Box;
-import javax.swing.JButton;
-import javax.swing.JToggleButton;
-import javax.swing.JToolBar;
+import java.awt.Component;
+import javax.swing.*;
 import org.quelea.Application;
 import org.quelea.languages.LabelGrabber;
 import org.quelea.sound.AudioAdapter;
@@ -46,9 +44,6 @@ public class MainToolbar extends JToolBar {
     private JButton manageNoticesButton;
     private JButton manageTagsButton;
     private JButton addAudioButton;
-    private JButton playpauseButton;
-    private JButton skipButton;
-    private JToggleButton muteButton;
 
     /**
      * Create the toolbar.
@@ -117,24 +112,8 @@ public class MainToolbar extends JToolBar {
         manageNoticesButton.addActionListener(new ShowNoticesActionListener());
         add(manageNoticesButton);
         
-        addSeparator();
         add(Box.createHorizontalGlue());
-        
-        playpauseButton = new JButton(Utils.getImageIcon("icons/pause.png", 24, 24));
-        playpauseButton.setToolTipText(LabelGrabber.INSTANCE.getLabel("pause.audio.control.tooltip"));
-        playpauseButton.addActionListener(new PlayActionListener(playpauseButton));
-        add(playpauseButton);
-        
-        skipButton = new JButton(Utils.getImageIcon("icons/skip.png", 24, 24));
-        skipButton.setToolTipText(LabelGrabber.INSTANCE.getLabel("skip.audio.control.tooltip"));
-        skipButton.addActionListener(new SkipActionListener());
-        add(skipButton);
-        
-        muteButton = new JToggleButton(Utils.getImageIcon("icons/mute.png", 24, 24));
-        muteButton.setToolTipText(LabelGrabber.INSTANCE.getLabel("mute.audio.control.tooltip"));
-        muteButton.addActionListener(new MuteActionListener(muteButton));
-        add(muteButton);
-        Application.get().getAudioPlayer().addAudioListener(new AudioAdapter(playpauseButton, muteButton));
+        add(new AudioToolbar());
 
     }
 }
