@@ -64,8 +64,9 @@ public class LyricCanvas extends Canvas {
      * @param stageView true if this canvas is a stage view, false otherwise.
      */
     public LyricCanvas(boolean showBorder, boolean stageView) {
-        data = new LyricCanvasData(stageView);
         setMinimumSize(new Dimension(20, 20));
+        setBackground(Color.BLACK);
+        data = new LyricCanvasData(stageView);
         addHierarchyListener(new HierarchyListener() {
 
             @Override
