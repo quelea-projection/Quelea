@@ -104,6 +104,16 @@ public class LyricCanvas extends Canvas {
     }
 
     /**
+     * Override so we don't clear the canvas when we update - stops flickering.
+     *
+     * @param g the graphics to draw with.
+     */
+    @Override
+    public void update(Graphics g) {
+        paint(g);
+    }
+
+    /**
      * Paint the background image and the lyrics onto the canvas.
      *
      * @param g the graphics used for painting.
@@ -183,6 +193,7 @@ public class LyricCanvas extends Canvas {
      * @param theme the theme to place on the canvas.
      */
     public void setTheme(Theme theme) {
+        System.out.println(theme.getBackground());
         Theme t1 = theme == null ? Theme.DEFAULT_THEME : theme;
         Theme t2 = data.getTheme() == null ? Theme.DEFAULT_THEME : data.getTheme();
         if(!t2.equals(t1)) {
