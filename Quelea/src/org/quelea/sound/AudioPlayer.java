@@ -45,6 +45,12 @@ public class AudioPlayer {
     private String currentPath;
     private int volume;
     private final List<AudioListener> listeners;
+    
+    public static void main(String[] args) {
+        AudioPlayer p = new AudioPlayer();
+        p.play("C:\\x.ape");
+        Utils.sleep(10000);
+    }
 
     /**
      * Create the audio player.

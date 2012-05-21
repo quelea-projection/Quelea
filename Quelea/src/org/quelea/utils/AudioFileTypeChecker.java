@@ -36,6 +36,7 @@ public class AudioFileTypeChecker implements FileTypeChecker {
                 || Utils.hasExtension(file, "flac")
                 || Utils.hasExtension(file, "ogg")
                 || Utils.hasExtension(file, "oga")
+                || Utils.hasExtension(file, "ape")
                 //AAC below this point
                 || Utils.hasExtension(file, "m4a")
                 || Utils.hasExtension(file, "aac")
