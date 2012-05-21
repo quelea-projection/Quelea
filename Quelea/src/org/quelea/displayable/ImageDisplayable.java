@@ -29,6 +29,7 @@ import java.util.logging.Logger;
 import javax.imageio.ImageIO;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
+import org.quelea.sound.AudioTrack;
 import org.quelea.utils.LoggerUtils;
 import org.quelea.utils.Utils;
 import org.w3c.dom.Node;
@@ -45,7 +46,7 @@ public class ImageDisplayable implements Displayable {
     private Icon icon;
     private Icon previewIcon;
     private SoftReference<BufferedImage> originalImage;
-    private String audioPath;
+    private AudioTrack track;
     private static final Logger LOGGER = LoggerUtils.getLogger();
 
     /**
@@ -180,12 +181,12 @@ public class ImageDisplayable implements Displayable {
     }
     
     @Override
-    public void setAudio(String path) {
-        this.audioPath = path;
+    public void setAudio(AudioTrack track) {
+        this.track = track;
     }
 
     @Override
-    public String getAudio() {
-        return audioPath;
+    public AudioTrack getAudio() {
+        return track;
     }
 }

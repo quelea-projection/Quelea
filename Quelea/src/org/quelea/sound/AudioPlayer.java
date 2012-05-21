@@ -18,16 +18,19 @@
  */
 package org.quelea.sound;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.sound.sampled.AudioFormat;
+import javax.sound.sampled.AudioInputStream;
+import javax.sound.sampled.AudioSystem;
+import javax.sound.sampled.DataLine;
+import javax.sound.sampled.FloatControl;
 import javax.sound.sampled.FloatControl.Type;
-import javax.sound.sampled.*;
-import javazoom.spi.mpeg.sampled.file.MpegAudioFileReader;
-import net.sourceforge.jaad.spi.javasound.AACAudioFileReader;
+import javax.sound.sampled.LineUnavailableException;
+import javax.sound.sampled.SourceDataLine;
 import org.quelea.utils.LoggerUtils;
 import org.quelea.utils.Utils;
 
@@ -43,17 +46,18 @@ public class AudioPlayer {
     private final Object lock = new Object();
     private volatile boolean paused = false;
     private PlayThread playThread;
-    private String currentPath;
+    private AudioTrack currentTrack;
     private int volume;
     private final List<AudioListener> listeners;
-    
+
     /**
      * Just for testing.
+     *
      * @param args command line args (not used.)
      */
     public static void main(String[] args) {
         AudioPlayer p = new AudioPlayer();
-        p.play("C:\\Users\\Michael\\Documents\\0.mp3");
+        p.play(new AudioTrack("C:\\x.flac"));
         Utils.sleep(10000);
     }
 
@@ -113,13 +117,13 @@ public class AudioPlayer {
     /**
      * Play the given piece of music. Stop any existing music, if playing.
      *
-     * @param path the path to the music file to play.
+     * @param track the track to play.
      */
-    public void play(final String path) {
+    public void play(final AudioTrack track) {
         stop();
-        playThread = new PlayThread(path);
+        playThread = new PlayThread(track);
         playThread.start();
-        currentPath = path;
+        currentTrack = track;
         for(AudioListener listener : listeners) {
             listener.played();
         }
@@ -130,8 +134,8 @@ public class AudioPlayer {
      *
      * @return the path of the playing track.
      */
-    public String getCurrentTrack() {
-        return currentPath;
+    public AudioTrack getCurrentTrack() {
+        return currentTrack;
     }
 
     /**
@@ -178,15 +182,15 @@ public class AudioPlayer {
         private static final float HALT_RATE = 3f;
         private boolean mustHalt;
         private SourceDataLine line;
-        private String path;
+        private AudioTrack track;
 
         /**
          * Create a new play thread.
          *
          * @param path the path to the file to play.
          */
-        public PlayThread(String path) {
-            this.path = path;
+        public PlayThread(AudioTrack track) {
+            this.track = track;
             setDaemon(true);
         }
 
@@ -205,23 +209,7 @@ public class AudioPlayer {
         public void run() {
             AudioInputStream din = null;
             try {
-                File file = new File(path);
-                AudioInputStream in;
-                String parsedPath = path.toLowerCase().trim();
-                //Workaround, AAC doesn't have SPI - and if we give it SPI capability, it hogs everything then fails if it can't play it.
-                if(parsedPath.endsWith("aac")
-                        || parsedPath.endsWith("m4a")
-                        || parsedPath.endsWith("m4b")
-                        || parsedPath.endsWith("m4v")
-                        || parsedPath.endsWith("m4p")
-                        || parsedPath.endsWith("m4r")
-                        || parsedPath.endsWith("3gp")
-                        || parsedPath.endsWith("mp4")) {
-                    in = new AACAudioFileReader().getAudioInputStream(file);
-                }
-                else {
-                    in = AudioSystem.getAudioInputStream(file);
-                }
+                AudioInputStream in = track.getAudioInputStream();
                 AudioFormat baseFormat = in.getFormat();
                 AudioFormat decodedFormat = new AudioFormat(
                         AudioFormat.Encoding.PCM_SIGNED,
@@ -280,7 +268,7 @@ public class AudioPlayer {
                 }
 
             }
-            catch (UnsupportedAudioFileException | IOException | LineUnavailableException ex) {
+            catch (IOException | LineUnavailableException ex) {
                 LOGGER.log(Level.WARNING, "Error playing audio", ex);
             }
             finally {
@@ -314,9 +302,10 @@ public class AudioPlayer {
                 c.setValue((float) val);
             }
         }
-        
+
         /**
-         * Converts a logarithmic value to a linear one, so we get a linear volume control.
+         * Converts a logarithmic value to a linear one, so we get a linear
+         * volume control.
          */
         private int logToLin(int level) {
             return (int) ((Math.log(level) / Math.log(100)) * 100);
