@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import javax.swing.Icon;
 import org.quelea.Application;
+import org.quelea.sound.AudioTrack;
 import org.quelea.utils.Utils;
 import org.w3c.dom.Node;
 
@@ -33,18 +34,18 @@ import org.w3c.dom.Node;
  */
 public class AudioDisplayable implements Displayable {
 
-    private String audioPath;
+    private AudioTrack track;
 
     public AudioDisplayable() {
         this(null);
     }
 
-    public AudioDisplayable(String path) {
-        this.audioPath = path;
+    public AudioDisplayable(AudioTrack track) {
+        this.track = track;
     }
 
     public static Displayable parseXML(Node node) {
-        return new AudioDisplayable(node.getTextContent());
+        return new AudioDisplayable(new AudioTrack(node.getTextContent()));
     }
     
     @Override
@@ -53,13 +54,13 @@ public class AudioDisplayable implements Displayable {
     }
 
     @Override
-    public void setAudio(String path) {
-        this.audioPath = path;
+    public void setAudio(AudioTrack track) {
+        this.track = track;
     }
 
     @Override
-    public String getAudio() {
-        return audioPath;
+    public AudioTrack getAudio() {
+        return track;
     }
 
     @Override
@@ -67,7 +68,7 @@ public class AudioDisplayable implements Displayable {
         StringBuilder xml = new StringBuilder();
         xml.append("<audio>");
         xml.append("<path>");
-        xml.append(Utils.escapeXML(audioPath));
+        xml.append(Utils.escapeXML(track.getPath()));
         xml.append("</path>");
         xml.append("</audio>");
         return xml.toString();
@@ -80,12 +81,12 @@ public class AudioDisplayable implements Displayable {
 
     @Override
     public String getPreviewText() {
-        return "<html>" + audioPath + "<br/></html>";
+        return "<html>" + track + "<br/></html>";
     }
 
     @Override
     public String getPrintText() {
-        return "Audio: " + audioPath;
+        return "Audio: " + track;
     }
 
     @Override

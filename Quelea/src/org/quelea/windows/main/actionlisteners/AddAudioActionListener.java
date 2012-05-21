@@ -24,9 +24,8 @@ import javax.swing.JFileChooser;
 import org.quelea.Application;
 import org.quelea.displayable.AudioDisplayable;
 import org.quelea.displayable.Displayable;
-import org.quelea.displayable.VideoDisplayable;
+import org.quelea.sound.AudioTrack;
 import org.quelea.utils.FileFilters;
-import org.quelea.utils.VideoFileFilter;
 
 /**
  *
@@ -47,7 +46,7 @@ public class AddAudioActionListener implements ActionListener {
         if (val == JFileChooser.APPROVE_OPTION) {
             File file = fileChooser.getSelectedFile();
             if (file != null) {
-                AudioDisplayable displayable = new AudioDisplayable(fileChooser.getSelectedFile().getAbsolutePath());
+                AudioDisplayable displayable = new AudioDisplayable(new AudioTrack(fileChooser.getSelectedFile().getAbsolutePath()));
                 Application.get().getMainWindow().getMainPanel().getSchedulePanel().getScheduleList().getModel().addElement(displayable);
             }
         }

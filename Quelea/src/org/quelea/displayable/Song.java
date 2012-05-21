@@ -42,6 +42,7 @@ import org.quelea.Background;
 import org.quelea.ImageBackground;
 import org.quelea.SongDatabase;
 import org.quelea.Theme;
+import org.quelea.sound.AudioTrack;
 import org.quelea.utils.LineTypeChecker;
 import org.quelea.utils.LoggerUtils;
 import org.quelea.utils.Utils;
@@ -260,7 +261,7 @@ public class Song implements TextDisplayable, Comparable<Song>, Printable {
     private int id;
     private boolean printChords;
     private String lastSearch;
-    private String audioPath;
+    private AudioTrack track;
 
     /**
      * Copy constructor - creates a shallow copy.
@@ -1075,12 +1076,12 @@ public class Song implements TextDisplayable, Comparable<Song>, Printable {
     }
     
     @Override
-    public void setAudio(String path) {
-        this.audioPath = path;
+    public void setAudio(AudioTrack track) {
+        this.track = track;
     }
 
     @Override
-    public String getAudio() {
-        return audioPath;
+    public AudioTrack getAudio() {
+        return track;
     }
 }

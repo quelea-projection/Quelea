@@ -28,6 +28,7 @@ import javax.swing.JPopupMenu;
 import org.quelea.Application;
 import org.quelea.displayable.Displayable;
 import org.quelea.languages.LabelGrabber;
+import org.quelea.sound.AudioTrack;
 import org.quelea.utils.FileFilters;
 import org.quelea.utils.Utils;
 
@@ -59,7 +60,7 @@ public class SchedulePopupMenu extends JPopupMenu {
                 if(val == JFileChooser.APPROVE_OPTION) {
                     File file = fileChooser.getSelectedFile();
                     if(file != null) {
-                        curDisplayable.setAudio(file.getAbsolutePath());
+                        curDisplayable.setAudio(new AudioTrack(file.getAbsolutePath()));
                     }
                 }
             }

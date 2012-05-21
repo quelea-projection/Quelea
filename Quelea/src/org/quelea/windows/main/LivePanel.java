@@ -32,6 +32,7 @@ import org.quelea.Application;
 import org.quelea.displayable.Displayable;
 import org.quelea.languages.LabelGrabber;
 import org.quelea.sound.AudioPlayer;
+import org.quelea.sound.AudioTrack;
 import org.quelea.utils.QueleaProperties;
 import org.quelea.utils.Utils;
 
@@ -221,9 +222,9 @@ public class LivePanel extends LivePreviewPanel {
         AudioPlayer player = Application.get().getAudioPlayer();
         player.stop();
         if(d != null) {
-            String audioPath = d.getAudio();
-            if(audioPath != null) {
-                Application.get().getAudioPlayer().play(audioPath);
+            AudioTrack track = d.getAudio();
+            if(track != null) {
+                Application.get().getAudioPlayer().play(track);
 
             }
         }
