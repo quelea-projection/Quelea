@@ -193,7 +193,6 @@ public class LyricCanvas extends Canvas {
      * @param theme the theme to place on the canvas.
      */
     public void setTheme(Theme theme) {
-        System.out.println(theme.getBackground());
         Theme t1 = theme == null ? Theme.DEFAULT_THEME : theme;
         Theme t2 = data.getTheme() == null ? Theme.DEFAULT_THEME : data.getTheme();
         if(!t2.equals(t1)) {
