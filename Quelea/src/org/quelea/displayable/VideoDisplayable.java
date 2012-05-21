@@ -21,6 +21,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
 import javax.swing.Icon;
+import org.quelea.sound.AudioTrack;
 import org.quelea.utils.Utils;
 import org.w3c.dom.Node;
 
@@ -39,7 +40,7 @@ public class VideoDisplayable implements Displayable {
     }
     private final VideoType type;
     private final File file;
-    private String audioPath;
+    private AudioTrack track;
 
     /**
      * Create a new image displayable.
@@ -155,12 +156,12 @@ public class VideoDisplayable implements Displayable {
     }
     
     @Override
-    public void setAudio(String path) {
-        this.audioPath = path;
+    public void setAudio(AudioTrack track) {
+        this.track = track;
     }
 
     @Override
-    public String getAudio() {
-        return audioPath;
+    public AudioTrack getAudio() {
+        return track;
     }
 }
