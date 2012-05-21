@@ -62,6 +62,7 @@ public final class Main {
      * @param args the command line arguments.
      */
     public static void main(final String[] args) {
+        //Leave this in place, it stops the LyricCanvas flickering when background is changed.
         System.setProperty("sun.awt.noerasebackground", "true");
 
         final SplashWindow splashWindow = new SplashWindow();
