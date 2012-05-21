@@ -70,12 +70,25 @@ public class RXTXPathSetter {
             fieldSysPath.setAccessible(true);
             fieldSysPath.set(null, null);
         }
-        catch(NoSuchFieldException | SecurityException | IllegalArgumentException | IllegalAccessException ex) {
+        catch (NoSuchFieldException | SecurityException | IllegalArgumentException | IllegalAccessException ex) {
             LOGGER.log(Level.WARNING, "Couldn't initialise RXTX native path.", ex);
             return false;
         }
-        LOGGER.log(Level.INFO, "Initialised RXTX Java path successfully for {0}. java.library.path is now \"{1}\"", new Object[]{System.getProperty("os.name"), System.getProperty("java.library.path")});
+        LOGGER.log(Level.INFO, "Initialised RXTX Java path successfully for {0}. java.library.path is now \"{1}\"", new Object[]{getOSDescription(), System.getProperty("java.library.path")});
         return true;
+    }
+
+    /**
+     * Get a human readable string of the os name, including bitness.
+     *
+     * @return a human readable string of the os name, including bitness.
+     */
+    private static String getOSDescription() {
+        String ret = System.getProperty("os.name");
+        if(is64Bit()) {
+            ret += " (64 bit)";
+        }
+        return ret;
     }
 
     /**
