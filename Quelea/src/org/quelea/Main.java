@@ -64,6 +64,7 @@ public final class Main {
     public static void main(final String[] args) {
         //Leave this in place, it stops the LyricCanvas flickering when background is changed.
         System.setProperty("sun.awt.noerasebackground", "true");
+        RXTXPathSetter.setPaths(); //Initialise RXTX so we can read / write on serial port to projectors.
 
         final SplashWindow splashWindow = new SplashWindow();
         splashWindow.setVisible(true);
