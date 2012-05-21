@@ -26,6 +26,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.sound.sampled.FloatControl.Type;
 import javax.sound.sampled.*;
+import javazoom.spi.mpeg.sampled.file.MpegAudioFileReader;
 import net.sourceforge.jaad.spi.javasound.AACAudioFileReader;
 import org.quelea.utils.LoggerUtils;
 import org.quelea.utils.Utils;
@@ -46,9 +47,13 @@ public class AudioPlayer {
     private int volume;
     private final List<AudioListener> listeners;
     
+    /**
+     * Just for testing.
+     * @param args command line args (not used.)
+     */
     public static void main(String[] args) {
         AudioPlayer p = new AudioPlayer();
-        p.play("C:\\x.ape");
+        p.play("C:\\Users\\Michael\\Documents\\0.mp3");
         Utils.sleep(10000);
     }
 
