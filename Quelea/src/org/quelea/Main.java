@@ -34,7 +34,6 @@ import org.quelea.utils.QueleaProperties;
 import org.quelea.utils.UpdateChecker;
 import org.quelea.utils.Utils;
 import org.quelea.windows.main.LyricWindow;
-import org.quelea.windows.main.OverlayLyricWindow;
 import org.quelea.windows.main.MainWindow;
 
 /**
@@ -63,6 +62,7 @@ public final class Main {
      * @param args the command line arguments.
      */
     public static void main(final String[] args) {
+        System.setProperty("sun.awt.noerasebackground", "true");
 
         final SplashWindow splashWindow = new SplashWindow();
         splashWindow.setVisible(true);
