@@ -24,8 +24,10 @@ import java.awt.event.KeyEvent;
 import java.io.File;
 import javax.swing.JFileChooser;
 import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
 import javax.swing.JPopupMenu;
 import org.quelea.Application;
+import org.quelea.displayable.AudioDisplayable;
 import org.quelea.displayable.Displayable;
 import org.quelea.languages.LabelGrabber;
 import org.quelea.sound.AudioTrack;
@@ -60,7 +62,13 @@ public class SchedulePopupMenu extends JPopupMenu {
                 if(val == JFileChooser.APPROVE_OPTION) {
                     File file = fileChooser.getSelectedFile();
                     if(file != null) {
-                        curDisplayable.setAudio(new AudioTrack(file.getAbsolutePath()));
+                        AudioTrack track = new AudioTrack(file.getAbsolutePath());
+                        if(track.checkOK()) {
+                            curDisplayable.setAudio(track);
+                        }
+                        else {
+                            JOptionPane.showMessageDialog(Application.get().getMainWindow(), LabelGrabber.INSTANCE.getLabel("audio.error"), LabelGrabber.INSTANCE.getLabel("audio.error.title"), JOptionPane.WARNING_MESSAGE);
+                        }
                     }
                 }
             }

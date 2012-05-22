@@ -287,3 +287,5 @@ pause.audio.control.tooltip=Pause audio
 skip.audio.control.tooltip=Skip audio
 mute.audio.control.tooltip=Mute audio
 playlist.select.tooltip=Select playlist audio
+audio.error=Sorry, the audio file appears to be corrupt.
+audio.error.title=Audio error

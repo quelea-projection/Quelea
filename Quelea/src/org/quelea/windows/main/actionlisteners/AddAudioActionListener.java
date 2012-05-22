@@ -21,9 +21,10 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 import javax.swing.JFileChooser;
+import javax.swing.JOptionPane;
 import org.quelea.Application;
 import org.quelea.displayable.AudioDisplayable;
-import org.quelea.displayable.Displayable;
+import org.quelea.languages.LabelGrabber;
 import org.quelea.sound.AudioTrack;
 import org.quelea.utils.FileFilters;
 
@@ -35,19 +36,23 @@ import org.quelea.utils.FileFilters;
  */
 public class AddAudioActionListener implements ActionListener {
 
-    private Displayable curDisplayable;
-
     @Override
     public void actionPerformed(ActionEvent e) {
         JFileChooser fileChooser = new JFileChooser();
         fileChooser.setFileFilter(FileFilters.AUDIO);
         fileChooser.setMultiSelectionEnabled(false);
         int val = fileChooser.showOpenDialog(Application.get().getMainWindow());
-        if (val == JFileChooser.APPROVE_OPTION) {
+        if(val == JFileChooser.APPROVE_OPTION) {
             File file = fileChooser.getSelectedFile();
-            if (file != null) {
-                AudioDisplayable displayable = new AudioDisplayable(new AudioTrack(fileChooser.getSelectedFile().getAbsolutePath()));
-                Application.get().getMainWindow().getMainPanel().getSchedulePanel().getScheduleList().getModel().addElement(displayable);
+            if(file != null) {
+                AudioTrack track = new AudioTrack(fileChooser.getSelectedFile().getAbsolutePath());
+                if(track.checkOK()) {
+                    AudioDisplayable displayable = new AudioDisplayable(track);
+                    Application.get().getMainWindow().getMainPanel().getSchedulePanel().getScheduleList().getModel().addElement(displayable);
+                }
+                else {
+                    JOptionPane.showMessageDialog(Application.get().getMainWindow(), LabelGrabber.INSTANCE.getLabel("audio.error"), LabelGrabber.INSTANCE.getLabel("audio.error.title"), JOptionPane.WARNING_MESSAGE);
+                }
             }
         }
     }
