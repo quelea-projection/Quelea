@@ -7,7 +7,7 @@ import javax.swing.JToggleButton;
 import javax.swing.JToolBar;
 import org.quelea.Application;
 import org.quelea.languages.LabelGrabber;
-import org.quelea.sound.AudioControl;
+import org.quelea.sound.AudioControlListener;
 import org.quelea.utils.Utils;
 import org.quelea.windows.main.actionlisteners.MuteActionListener;
 import org.quelea.windows.main.actionlisteners.PlayActionListener;
@@ -54,7 +54,7 @@ public class AudioToolbar extends JToolBar {
         });
         this.add(playlist);
         
-        Application.get().getAudioPlayer().addAudioListener(new AudioControl(playpauseButton, muteButton));
+        Application.get().getAudioPlayer().addAudioListener(new AudioControlListener(playpauseButton, muteButton));
     }
         
 }
