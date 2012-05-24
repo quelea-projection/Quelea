@@ -120,6 +120,9 @@ public class AudioPlayer {
      * @param track the track to play.
      */
     public void play(final AudioTrack track) {
+        if(track == null) {
+            throw new IllegalArgumentException("Can't play null track");
+        }
         stop();
         playThread = new PlayThread(track);
         playThread.start();

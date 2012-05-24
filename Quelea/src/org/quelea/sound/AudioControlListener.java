@@ -28,12 +28,12 @@ import org.quelea.utils.Utils;
  *
  * @author Michael
  */
-public class AudioControl implements AudioListener {
+public class AudioControlListener implements AudioListener {
 
     private JButton play;
     private JToggleButton mute;
     
-    public AudioControl(JButton play, JToggleButton mute) {
+    public AudioControlListener(JButton play, JToggleButton mute) {
         this.play = play;
         this.mute = mute;
     }
