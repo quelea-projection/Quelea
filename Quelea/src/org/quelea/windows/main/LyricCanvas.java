@@ -93,6 +93,15 @@ public class LyricCanvas extends Canvas {
     private TopLyricCanvas getTopCanvas() {
         return window.getCanvas();
     }
+    
+    /**
+     * Update the state (visibility, position) of the overlay. This is done
+     * automatically where possible, but sometimes in cases where the right
+     * event doesn't get fired this method needs to be called manually.
+     */
+    public void updateOverlayState() {
+        window.updateState(this);
+    }
 
     /**
      * Determine if this canvas is part of a stage view.
