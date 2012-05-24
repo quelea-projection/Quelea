@@ -257,6 +257,9 @@ public abstract class LivePreviewPanel extends JPanel {
         else {
             throw new RuntimeException("Displayable type not implemented: " + d.getClass());
         }
+        for(LyricCanvas c : canvases) {
+            c.updateOverlayState();
+        }
     }
 
     /**
