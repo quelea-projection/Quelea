@@ -93,7 +93,7 @@ public class LyricCanvas extends Canvas {
     private TopLyricCanvas getTopCanvas() {
         return window.getCanvas();
     }
-    
+
     /**
      * Update the state (visibility, position) of the overlay. This is done
      * automatically where possible, but sometimes in cases where the right
@@ -129,6 +129,9 @@ public class LyricCanvas extends Canvas {
      */
     @Override
     public void paint(Graphics g) {
+        if(g == null || getWidth() <= 0 || getHeight() <= 0) {
+            return;
+        }
         Graphics2D g2d = (Graphics2D) g;
         if(data.isBlacked() || data.getTheme() == null) {
             g2d.setColor(Color.BLACK);
@@ -206,7 +209,7 @@ public class LyricCanvas extends Canvas {
         Theme t2 = data.getTheme() == null ? Theme.DEFAULT_THEME : data.getTheme();
         if(!t2.equals(t1)) {
             data.setTheme(t1);
-            repaint();
+            paint(getGraphics());
             getTopCanvas().repaint();
             if(data.getTheme().getBackground() instanceof VideoBackground && isShowing()) {
                 VideoBackground background = (VideoBackground) data.getTheme().getBackground();
