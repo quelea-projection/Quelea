@@ -31,6 +31,7 @@ import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JPanel;
+import org.quelea.Theme;
 import org.quelea.displayable.*;
 import org.quelea.utils.LoggerUtils;
 import org.quelea.utils.QueleaProperties;
@@ -216,6 +217,10 @@ public abstract class LivePreviewPanel extends JPanel {
      * @param index the index of the displayable to show, if relevant.
      */
     public void setDisplayable(Displayable d, int index) {
+        for(LyricCanvas c : canvases) {
+            c.eraseText();
+        }
+        
         this.displayable = d;
         presentationPanel.stopCurrent();
         if(VIDEO_LABEL.equals(currentLabel)) {
@@ -236,6 +241,9 @@ public abstract class LivePreviewPanel extends JPanel {
         }
         else if(d instanceof VideoDisplayable) {
             videoPanel.showDisplayable((VideoDisplayable) d);
+            for(LyricCanvas c : canvases) {
+                c.setTheme(Theme.DEFAULT_THEME);
+            }
             ((CardLayout) cardPanel.getLayout()).show(cardPanel, VIDEO_LABEL);
             videoPanel.repaint();
             currentLabel = VIDEO_LABEL;
@@ -251,7 +259,7 @@ public abstract class LivePreviewPanel extends JPanel {
             currentLabel = AUDIO_LABEL;
         }
         else if(d==null) {
-            LOGGER.log(Level.WARNING, "BUG: Called setDisplayable(null), should probably call clear() instead.");
+            LOGGER.log(Level.WARNING, "BUG: Called setDisplayable(null), should call clear() instead.");
             clear();
         }
         else {
