@@ -299,7 +299,15 @@ public final class Utils {
     public static boolean isFrameOnScreen(JFrame frame, int monitorNum) {
         GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
         final GraphicsDevice[] gds = ge.getScreenDevices();
-        return gds[monitorNum].getDefaultConfiguration().getBounds().contains(frame.getBounds());
+        Rectangle bounds = frame.getBounds();
+        //TODO: Bit of a fudge for maximised state
+        if(frame.getExtendedState() == JFrame.MAXIMIZED_BOTH) {
+            bounds.x += 10;
+            bounds.y += 10;
+            bounds.width -= 20;
+            bounds.height -= 20;
+        }
+        return gds[monitorNum].getDefaultConfiguration().getBounds().contains(bounds);
     }
 
     /**
