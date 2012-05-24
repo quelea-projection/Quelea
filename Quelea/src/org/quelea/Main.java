@@ -190,6 +190,7 @@ public final class Main {
                     bibleLoader.join(); //Make sure bibleloader has finished loading
                 }
                 catch (InterruptedException ex) {
+                    //If interrupted just carry on
                 }
                 Utils.centreOnMonitor(mainWindow, controlScreen);
                 showWarning(gds.length);
