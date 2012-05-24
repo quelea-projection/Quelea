@@ -29,6 +29,7 @@ import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import javax.swing.JWindow;
 import javax.swing.SwingUtilities;
+import org.quelea.Application;
 
 /**
  * A transparent window that displays the lyrics - overlays on a LyricCanvas
@@ -57,7 +58,7 @@ public class OverlayLyricWindow extends JWindow {
                 @Override
                 public void hierarchyChanged(HierarchyEvent e) {
                     if((e.getChangeFlags() & HierarchyEvent.SHOWING_CHANGED) != 0 && canvas.isShowing()) {
-                        Window window = SwingUtilities.getWindowAncestor(backingCanvas);
+                        Window window = Application.get().getMainWindow();
                         window.addWindowListener(new WindowListener() {
 
                             @Override
