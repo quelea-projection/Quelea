@@ -95,6 +95,15 @@ public class LyricCanvas extends Canvas {
     }
 
     /**
+     * Get the top lyric window that's overlayed on this canvas.
+     *
+     * @return the top lyric (overlay) window.
+     */
+    public OverlayLyricWindow getWindow() {
+        return window;
+    }
+
+    /**
      * Update the state (visibility, position) of the overlay. This is done
      * automatically where possible, but sometimes in cases where the right
      * event doesn't get fired this method needs to be called manually.

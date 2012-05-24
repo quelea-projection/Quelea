@@ -74,6 +74,16 @@ public class LyricWindow extends JWindow {
             }
         });
     }
+    
+    /**
+     * Sync the visibility of the overlying canvas with this window.
+     * @param vis true if visible, false otherwise.
+     */
+    @Override
+    public void setVisible(boolean vis) {
+        super.setVisible(vis);
+        canvas.getWindow().setVisible(vis);
+    }
 
     /**
      * Get the canvas object that underlines this lyric window.
