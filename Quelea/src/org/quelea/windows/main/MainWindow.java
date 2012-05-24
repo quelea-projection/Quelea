@@ -186,10 +186,14 @@ public class MainWindow extends JFrame implements ApplicationListener {
     public SongEntryWindow getSongEntryWindow() {
         return songEntryWindow;
     }
+    
+    /*
+     * TODO: The method stubs below this line should be edited appropriately
+     * to handle the given calls from the Mac application menu.
+     */
 
     @Override
     public void handleAbout(ApplicationEvent ae) {
-        System.out.println("ABOUT");
     }
 
     @Override
