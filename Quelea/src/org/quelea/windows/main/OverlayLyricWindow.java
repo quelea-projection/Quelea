@@ -95,63 +95,64 @@ public class OverlayLyricWindow extends JWindow {
 
                             @Override
                             public void componentMoved(ComponentEvent e) {
-                                updatePos(backingCanvas);
+                                updateState(backingCanvas);
                             }
 
                             @Override
                             public void componentResized(ComponentEvent e) {
-                                updatePos(backingCanvas);
+                                updateState(backingCanvas);
                             }
 
                             @Override
                             public void componentShown(ComponentEvent e) {
-                                updatePos(backingCanvas);
+                                updateState(backingCanvas);
                             }
 
                             @Override
                             public void componentHidden(ComponentEvent e) {
-                                updatePos(backingCanvas);
+                                updateState(backingCanvas);
                             }
                         });
-                        updatePos(backingCanvas);
+                        updateState(backingCanvas);
                         backingCanvas.removeHierarchyListener(this);
                     }
                 }
             });
         }
         else {
-            updatePos(backingCanvas);
+            updateState(backingCanvas);
         }
         backingCanvas.addComponentListener(new ComponentListener() {
 
             @Override
             public void componentResized(ComponentEvent e) {
-                updatePos(backingCanvas);
+                updateState(backingCanvas);
             }
 
             @Override
             public void componentMoved(ComponentEvent e) {
-                updatePos(backingCanvas);
+                updateState(backingCanvas);
             }
 
             @Override
             public void componentShown(ComponentEvent e) {
-                updatePos(backingCanvas);
+                updateState(backingCanvas);
             }
 
             @Override
             public void componentHidden(ComponentEvent e) {
-                updatePos(backingCanvas);
+                updateState(backingCanvas);
             }
         });
     }
 
     /**
-     * Update the position of this window to match the given LyricCanvas.
+     * Update the position and visibility of this window to match the given
+     * LyricCanvas.
      *
      * @param c the canvas to match the position of.
      */
-    private void updatePos(LyricCanvas c) {
+    public void updateState(LyricCanvas c) {
         if(c.isShowing()) {
             setArea(getOverlayArea(c));
             canvas.repaint();
