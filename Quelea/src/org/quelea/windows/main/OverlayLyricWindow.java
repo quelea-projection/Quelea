@@ -60,7 +60,7 @@ public class OverlayLyricWindow extends JWindow {
                     if((e.getChangeFlags() & HierarchyEvent.SHOWING_CHANGED) != 0 && canvas.isShowing()) {
                         Window window = Application.get().getMainWindow();
                         window.addWindowListener(new WindowListener() {
-
+                            
                             @Override
                             public void windowOpened(WindowEvent e) {
                             }
@@ -84,7 +84,7 @@ public class OverlayLyricWindow extends JWindow {
 
                             @Override
                             public void windowActivated(WindowEvent e) {
-                                setVisible(true);
+                                updateState(backingCanvas);
                             }
 
                             @Override
