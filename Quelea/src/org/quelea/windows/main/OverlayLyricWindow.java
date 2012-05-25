@@ -25,8 +25,8 @@ import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
 import java.awt.event.HierarchyEvent;
 import java.awt.event.HierarchyListener;
+import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.awt.event.WindowListener;
 import javax.swing.JWindow;
 import javax.swing.SwingUtilities;
 import org.quelea.Application;
@@ -45,6 +45,7 @@ public class OverlayLyricWindow extends JWindow {
      * Create a lyric window that overlays onto the given canvas.
      *
      * @param backingCanvas the canvas to overlay.
+     * @param sharedData the shared canvas data between this and the underlying window. 
      */
     public OverlayLyricWindow(final LyricCanvas backingCanvas, final LyricCanvasData sharedData) {
         canvas = new TopLyricCanvas(false, sharedData);
@@ -59,19 +60,7 @@ public class OverlayLyricWindow extends JWindow {
                 public void hierarchyChanged(HierarchyEvent e) {
                     if((e.getChangeFlags() & HierarchyEvent.SHOWING_CHANGED) != 0 && canvas.isShowing()) {
                         Window window = Application.get().getMainWindow();
-                        window.addWindowListener(new WindowListener() {
-                            
-                            @Override
-                            public void windowOpened(WindowEvent e) {
-                            }
-
-                            @Override
-                            public void windowClosing(WindowEvent e) {
-                            }
-
-                            @Override
-                            public void windowClosed(WindowEvent e) {
-                            }
+                        window.addWindowListener(new WindowAdapter() {
 
                             @Override
                             public void windowIconified(WindowEvent e) {
@@ -79,16 +68,8 @@ public class OverlayLyricWindow extends JWindow {
                             }
 
                             @Override
-                            public void windowDeiconified(WindowEvent e) {
-                            }
-
-                            @Override
                             public void windowActivated(WindowEvent e) {
                                 updateState(backingCanvas);
-                            }
-
-                            @Override
-                            public void windowDeactivated(WindowEvent e) {
                             }
                         });
 
