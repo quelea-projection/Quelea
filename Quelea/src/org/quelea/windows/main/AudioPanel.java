@@ -22,13 +22,13 @@ import java.util.HashSet;
 import java.util.Set;
 import javax.swing.JPanel;
 import org.quelea.ColourBackground;
-import org.quelea.ImageBackground;
 import org.quelea.Theme;
 import org.quelea.displayable.AudioDisplayable;
-import org.quelea.utils.Utils;
 
 /**
  * This is the panel used in the live/ preview panes for displaying audio files
+ * Currently displays a black square. May become deprecated with audio panel
+ * separated from schedule.
  * 
  * @author Ben Goodwin
  * @version 19-May-2012
