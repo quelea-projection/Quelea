@@ -21,12 +21,11 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import javax.swing.JButton;
 import org.quelea.Application;
-import org.quelea.languages.LabelGrabber;
 import org.quelea.sound.AudioPlayer;
-import org.quelea.utils.Utils;
 
 /**
- *
+ * Triggered when the play button on the audio panel is selected
+ * On action, it toggles the pause state of the player
  *
  * @author Ben Goodwin
  * @version 20-May-2012

@@ -24,9 +24,10 @@ import org.quelea.languages.LabelGrabber;
 import org.quelea.utils.Utils;
 
 /**
- * A blank adapter to provide empty implementations of AudioListener.
+ * Implementation of AudioListener to be used on the toolbar audio panel
+ * Updates button state relative to player state
  *
- * @author Michael
+ * @author Ben Goodwin
  */
 public class AudioControlListener implements AudioListener {
 

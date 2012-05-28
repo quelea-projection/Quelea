@@ -23,7 +23,8 @@ import org.quelea.Application;
 import org.quelea.sound.AudioPlayer;
 
 /**
- *
+ * Attached to the Skip button on the audio panel.
+ * Used to move to the next song in the playlist, if there is one.
  *
  * @author Ben Goodwin
  * @version 20-May-2012

@@ -24,7 +24,10 @@ import org.quelea.Application;
 import org.quelea.sound.AudioPlayer;
 
 /**
- *
+ * Triggered on the mute button of the audio panel
+ * If depressed when clicked, it sets the volume of the audio player to 0 and 
+ * stores that current volume.
+ * If not depressed, it sets the volume to the previously stored volume
  *
  * @author Ben Goodwin
  * @version 20-May-2012
@@ -32,7 +35,7 @@ import org.quelea.sound.AudioPlayer;
 public class MuteActionListener implements ActionListener {
 
     private JToggleButton button;
-    private int volume;
+    private int volume = 100;
     
     public MuteActionListener(JToggleButton b) {
         this.button = b;
