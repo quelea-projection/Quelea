@@ -27,7 +27,7 @@ import org.quelea.utils.Utils;
 import org.w3c.dom.Node;
 
 /**
- * A single AudioDisplayable file
+ * A single AudioDisplayable file that can be saved and read from a schedule 
  *
  * @author Ben Goodwin
  * @version 19-May-2012

@@ -29,7 +29,8 @@ import org.quelea.sound.AudioTrack;
 import org.quelea.utils.FileFilters;
 
 /**
- *
+ * Selects a file and verifies it's a correct audio file, and if so, adds it into
+ * the schedule as a displayable 
  *
  * @author Ben Goodwin
  * @version 19-May-2012
