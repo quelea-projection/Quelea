@@ -31,6 +31,7 @@ import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JPanel;
+import org.quelea.Application;
 import org.quelea.Theme;
 import org.quelea.displayable.*;
 import org.quelea.utils.LoggerUtils;
@@ -238,6 +239,7 @@ public abstract class LivePreviewPanel extends JPanel {
             picturePanel.showDisplayable((ImageDisplayable) d);
             ((CardLayout) cardPanel.getLayout()).show(cardPanel, IMAGE_LABEL);
             currentLabel = IMAGE_LABEL;
+            fudge();
         }
         else if(d instanceof VideoDisplayable) {
             videoPanel.showDisplayable((VideoDisplayable) d);
@@ -247,6 +249,7 @@ public abstract class LivePreviewPanel extends JPanel {
             ((CardLayout) cardPanel.getLayout()).show(cardPanel, VIDEO_LABEL);
             videoPanel.repaint();
             currentLabel = VIDEO_LABEL;
+            fudge();
         }
         else if(d instanceof PresentationDisplayable) {
             ((CardLayout) cardPanel.getLayout()).show(cardPanel, PRESENTATION_LABEL);
@@ -268,6 +271,12 @@ public abstract class LivePreviewPanel extends JPanel {
         for(LyricCanvas c : canvases) {
             c.updateOverlayState();
         }
+    }
+    
+    //TODO: This is awful, but for now it's a fudge to display the image / video preview panels properly.
+    private void fudge() {
+        Application.get().getMainWindow().setSize(Application.get().getMainWindow().getWidth(), Application.get().getMainWindow().getHeight()+1);
+        Application.get().getMainWindow().setSize(Application.get().getMainWindow().getWidth(), Application.get().getMainWindow().getHeight()-1);
     }
 
     /**
