@@ -30,7 +30,7 @@ import org.quelea.displayable.TextDisplayable;
 import org.quelea.languages.LabelGrabber;
 import org.quelea.utils.Utils;
 import org.quelea.windows.main.actionlisteners.EditSongScheduleActionListener;
-import org.quelea.windows.main.actionlisteners.RemoveSongScheduleActionListener;
+import org.quelea.windows.main.actionlisteners.RemoveScheduleItemActionListener;
 
 /**
  * The panel displaying the schedule / order of service. Items from here are
@@ -130,7 +130,7 @@ public class SchedulePanel extends JPanel {
         removeButton.setToolTipText(LabelGrabber.INSTANCE.getLabel("remove.song.schedule.tooltip"));
         removeButton.setRequestFocusEnabled(false);
         removeButton.setEnabled(false);
-        removeButton.addActionListener(new RemoveSongScheduleActionListener());
+        removeButton.addActionListener(new RemoveScheduleItemActionListener());
 
         editButton = new JButton(Utils.getImageIcon("icons/edit32.png", 16, 16));
         editButton.setToolTipText(LabelGrabber.INSTANCE.getLabel("edit.song.button.tooltip"));
