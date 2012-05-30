@@ -23,7 +23,9 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.util.HashSet;
 import java.util.Set;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
+import org.quelea.Application;
 import org.quelea.ImageBackground;
 import org.quelea.Theme;
 import org.quelea.displayable.ImageDisplayable;
@@ -47,8 +49,8 @@ public class ImagePanel extends ContainedPanel {
         setLayout(new BorderLayout());
         containerPanel.setLayout(new GridBagLayout());
         containerPanel.add(canvas, new GridBagConstraints());
-        add(containerPanel, BorderLayout.CENTER);
         canvas.setPreferredSize(new Dimension(200, 200));
+        add(containerPanel, BorderLayout.CENTER);
     }
 
     @Override
@@ -69,7 +71,6 @@ public class ImagePanel extends ContainedPanel {
      * @param displayable the image displayable.
      */
     public void showDisplayable(ImageDisplayable displayable) {
-//        canvas.setPreferredSize(new Dimension(container.getWidth(), container.getWidth()));
         Theme theme = new Theme(null, null, new ImageBackground(displayable.getFile().getAbsolutePath(), displayable.getOriginalImage()));
         updateCanvases(theme);
     }
