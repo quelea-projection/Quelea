@@ -36,6 +36,7 @@ import org.quelea.Theme;
 import org.quelea.displayable.*;
 import org.quelea.utils.LoggerUtils;
 import org.quelea.utils.QueleaProperties;
+import org.quelea.utils.Utils;
 import org.quelea.windows.main.quickedit.QuickEditDialog;
 import org.quelea.windows.video.VideoPanel;
 
@@ -181,6 +182,9 @@ public abstract class LivePreviewPanel extends JPanel {
         if(PRESENTATION_LABEL.equals(currentLabel)) {
             presentationPanel.setDisplayable(null, 0);
         }
+        if(VIDEO_LABEL.equals(currentLabel)) {
+            videoPanel.getVideoControlPanel().stopVideo();
+        }
         for(ContainedPanel panel : containedSet) {
             panel.clear();
         }
@@ -296,8 +300,8 @@ public abstract class LivePreviewPanel extends JPanel {
      */
     public void setVideoProperties(LivePreviewPanel other) {
 //        videoPanel.getVideoControlPanel().playVideo();
-//        videoPanel.getVideoControlPanel().pauseVideo();
 //        videoPanel.getVideoControlPanel().setTime(other.videoPanel.getVideoControlPanel().getTime());
+//        videoPanel.getVideoControlPanel().pauseVideo();
     }
 
     /**
