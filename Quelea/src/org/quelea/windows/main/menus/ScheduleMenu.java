@@ -20,7 +20,7 @@ package org.quelea.windows.main.menus;
 
 import org.quelea.windows.main.actionlisteners.AddVideoActionListener;
 import org.quelea.windows.main.actionlisteners.AddSongActionListener;
-import org.quelea.windows.main.actionlisteners.RemoveSongScheduleActionListener;
+import org.quelea.windows.main.actionlisteners.RemoveScheduleItemActionListener;
 import org.quelea.windows.main.actionlisteners.ShowNoticesActionListener;
 import org.quelea.windows.main.actionlisteners.AddPowerpointActionListener;
 import org.quelea.windows.main.actionlisteners.AddDVDActionListener;
@@ -85,7 +85,7 @@ public class ScheduleMenu extends JMenu {
 
         removeSongItem = new JMenuItem(LabelGrabber.INSTANCE.getLabel("remove.item.button"), Utils.getImageIcon("icons/remove 2.png", 16, 16));
         removeSongItem.setMnemonic('r');
-        removeSongItem.addActionListener(new RemoveSongScheduleActionListener());
+        removeSongItem.addActionListener(new RemoveScheduleItemActionListener());
         removeSongItem.setEnabled(false);
         add(removeSongItem);
 
