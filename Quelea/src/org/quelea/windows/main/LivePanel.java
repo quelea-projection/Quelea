@@ -39,7 +39,7 @@ import org.quelea.utils.Utils;
 /**
  * The panel displaying the live lyrics selection - changes made on this panel
  * are reflected on the live projection.
- *
+ * <p/>
  * @author Michael
  */
 public class LivePanel extends LivePreviewPanel {
@@ -65,7 +65,7 @@ public class LivePanel extends LivePreviewPanel {
 
             /**
              * Toggle all the canvases to black.
-             *
+             * <p/>
              * @param e the action event.
              */
             @Override
@@ -85,7 +85,7 @@ public class LivePanel extends LivePreviewPanel {
 
             /**
              * Toggle all the canvases to clear.
-             *
+             * <p/>
              * @param e the action event.
              */
             @Override
@@ -105,7 +105,7 @@ public class LivePanel extends LivePreviewPanel {
 
             /**
              * Hide the lyric windows.
-             *
+             * <p/>
              * @param e the action event.
              */
             @Override
@@ -144,7 +144,7 @@ public class LivePanel extends LivePreviewPanel {
             }
         });
         header.add(hide);
-        
+
 //        pause = new JToggleButton(Utils.getImageIcon("icons/pauseaudio.png"));
 //        pause.setToolTipText(LabelGrabber.INSTANCE.getLabel("pause.audio.control.tooltip") + " (F4)");
 //        pause.setRequestFocusEnabled(false);
@@ -161,14 +161,14 @@ public class LivePanel extends LivePreviewPanel {
 //            }
 //        });
 //        header.add(pause);
-        
+
         add(header, BorderLayout.NORTH);
 
         addKeyListener(new KeyListener() {
 
             /**
              * Nothing when typed...
-             *
+             * <p/>
              * @param e the key event.
              */
             @Override
@@ -178,7 +178,7 @@ public class LivePanel extends LivePreviewPanel {
 
             /**
              * Detect F1 to go to black, F2 to clear and F3 to hide the window.
-             *
+             * <p/>
              * @param e the key event.
              */
             @Override
@@ -199,7 +199,7 @@ public class LivePanel extends LivePreviewPanel {
 
             /**
              * Nothing when released...
-             *
+             * <p/>
              * @param e the key event.
              */
             @Override
@@ -211,7 +211,7 @@ public class LivePanel extends LivePreviewPanel {
 
     /**
      * Set the displayable to be shown on this live panel.
-     *
+     * <p/>
      * @param d the displayable to show.
      * @param index the index to use for the displayable, if relevant.
      */
@@ -225,14 +225,13 @@ public class LivePanel extends LivePreviewPanel {
             AudioTrack track = d.getAudio();
             if(track != null) {
                 Application.get().getAudioPlayer().play(track);
-
             }
         }
     }
 
     /**
      * Get the "black" toggle button.
-     *
+     * <p/>
      * @return the "black" toggle button.
      */
     public JToggleButton getBlack() {
@@ -241,7 +240,7 @@ public class LivePanel extends LivePreviewPanel {
 
     /**
      * Get the "clear" toggle button.
-     *
+     * <p/>
      * @return the "clear" toggle button.
      */
     public JToggleButton getClear() {
@@ -250,7 +249,7 @@ public class LivePanel extends LivePreviewPanel {
 
     /**
      * Get the "hide" toggle button.
-     *
+     * <p/>
      * @return the "hide" toggle button.
      */
     public JToggleButton getHide() {

@@ -29,7 +29,7 @@ public class AudioToolbar extends JToolBar {
     public AudioToolbar() {
         setFloatable(false);
         
-        playpauseButton = new JButton(Utils.getImageIcon("icons/pauseaudio.png", 24, 24));
+        playpauseButton = new JButton(Utils.getImageIcon("icons/pause.png", 24, 24));
         playpauseButton.setToolTipText(LabelGrabber.INSTANCE.getLabel("pause.audio.control.tooltip"));
         playpauseButton.addActionListener(new PlayActionListener(playpauseButton));
         this.add(playpauseButton);
@@ -39,7 +39,7 @@ public class AudioToolbar extends JToolBar {
         skipButton.addActionListener(new SkipActionListener());
         this.add(skipButton);
         
-        muteButton = new JToggleButton(Utils.getImageIcon("icons/muteaudio.png", 24, 24));
+        muteButton = new JToggleButton(Utils.getImageIcon("icons/mute.png", 24, 24));
         muteButton.setToolTipText(LabelGrabber.INSTANCE.getLabel("mute.audio.control.tooltip"));
         muteButton.addActionListener(new MuteActionListener(muteButton));
         this.add(muteButton);
