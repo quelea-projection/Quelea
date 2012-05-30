@@ -44,7 +44,7 @@ public class AudioControlListener implements AudioListener {
      */
     @Override
     public void played() {
-        play.setIcon(Utils.getImageIcon("icons/pauseaudio.png", 24, 24));
+        play.setIcon(Utils.getImageIcon("icons/pause.png", 24, 24));
         play.setToolTipText(LabelGrabber.INSTANCE.getLabel("pause.audio.control.tooltip"));
     }
 
@@ -54,11 +54,11 @@ public class AudioControlListener implements AudioListener {
     @Override
     public void paused(boolean isPaused) {
         if(isPaused) {
-            play.setIcon(Utils.getImageIcon("icons/playaudio.png", 24, 24));
+            play.setIcon(Utils.getImageIcon("icons/play.png", 24, 24));
             play.setToolTipText(LabelGrabber.INSTANCE.getLabel("play.audio.control.tooltip"));
         }
         else {
-            play.setIcon(Utils.getImageIcon("icons/pauseaudio.png", 24, 24));
+            play.setIcon(Utils.getImageIcon("icons/pause.png", 24, 24));
             play.setToolTipText(LabelGrabber.INSTANCE.getLabel("pause.audio.control.tooltip"));
         }
     }
@@ -68,7 +68,7 @@ public class AudioControlListener implements AudioListener {
      */
     @Override
     public void stopped() {
-        play.setIcon(Utils.getImageIcon("icons/playaudio.png", 24, 24));
+        play.setIcon(Utils.getImageIcon("icons/play.png", 24, 24));
         play.setToolTipText(LabelGrabber.INSTANCE.getLabel("play.audio.control.tooltip"));
     }
 
