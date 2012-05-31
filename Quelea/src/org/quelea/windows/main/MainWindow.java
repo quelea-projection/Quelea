@@ -19,7 +19,6 @@ package org.quelea.windows.main;
 
 import org.quelea.windows.main.actionlisteners.EditSongDBActionListener;
 import org.quelea.windows.main.actionlisteners.NewSongActionListener;
-import org.quelea.windows.main.actionlisteners.EditSongScheduleActionListener;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.event.WindowAdapter;
@@ -50,6 +49,7 @@ import org.simplericity.macify.eawt.ApplicationListener;
 
 /**
  * The main window used to control the projection.
+ * <p/>
  * @author Michael
  */
 public class MainWindow extends JFrame implements ApplicationListener {
@@ -68,18 +68,19 @@ public class MainWindow extends JFrame implements ApplicationListener {
 
     /**
      * Create a new main window.
-     * @param setApplicationWindow true if this main window should be set as
-     * the application-wide main window, false otherwise.
+     * <p/>
+     * @param setApplicationWindow true if this main window should be set as the
+     * application-wide main window, false otherwise.
      */
     public MainWindow(boolean setApplicationWindow) {
         super("Quelea " + QueleaProperties.VERSION.getVersionString());
         macApp = new org.simplericity.macify.eawt.DefaultApplication();
         macApp.addApplicationListener(this);
         macApp.setApplicationIconImage(Utils.getImage("icons/logo.png"));
-        
+
         setLayout(new BorderLayout());
         noticeDialog = new NoticeDialog(this);
-        
+
         LOGGER.log(Level.INFO, "Creating main window");
         if(setApplicationWindow) {
             Application.get().setMainWindow(this);
@@ -95,16 +96,16 @@ public class MainWindow extends JFrame implements ApplicationListener {
         try {
             setIconImage(ImageIO.read(new File("icons/logo.png")));
         }
-        catch (IOException ex) {
+        catch(IOException ex) {
             LOGGER.log(Level.SEVERE, "Couldn't set JFrame image", ex);
         }
-        
+
         LOGGER.log(Level.INFO, "Creating tag dialog");
         tagDialog = new TagDialog();
-        
+
         LOGGER.log(Level.INFO, "Creating options dialog");
         optionsDialog = new OptionsDialog(Application.get().getMainWindow());
-        
+
         LOGGER.log(Level.INFO, "Creating bible search dialog");
         bibleSearchDialog = new BibleSearchDialog();
         LOGGER.log(Level.INFO, "Creating bible browse dialog");
@@ -115,32 +116,34 @@ public class MainWindow extends JFrame implements ApplicationListener {
         mainpanel.getLibraryPanel().getLibrarySongPanel().getAddButton().addActionListener(new NewSongActionListener());
         mainpanel.getLibraryPanel().getLibrarySongPanel().getSongList().getPopupMenu().getEditDBButton().addActionListener(new EditSongDBActionListener());
         mainpanel.getLibraryPanel().getLibrarySongPanel().getSongList().getPopupMenu().getRemoveFromDBButton().addActionListener(new RemoveSongDBActionListener());
-        
+
         menuBar = new MainMenuBar();
         setJMenuBar(menuBar);
-        
+
         JPanel toolbarPanel = new JPanel();
         toolbarPanel.setLayout(new BoxLayout(toolbarPanel, BoxLayout.X_AXIS));
         mainToolbar = new MainToolbar();
         toolbarPanel.add(mainToolbar);
         add(toolbarPanel, BorderLayout.NORTH);
-        
+
         add(mainpanel, BorderLayout.CENTER);
         mainpanel.getLibraryPanel().getImagePanel().setPreferredSize(new Dimension(100, 200));
-        setSize(800,600);
+        setSize(800, 600);
         LOGGER.log(Level.INFO, "Created main window.");
     }
 
     /**
      * Get the main panel on this window.
+     * <p/>
      * @return the main panel part of this window.
      */
     public MainPanel getMainPanel() {
         return mainpanel;
     }
-    
+
     /**
      * Get the notice dialog on this main window.
+     * <p/>
      * @return the notice dialog.
      */
     public NoticeDialog getNoticeDialog() {
@@ -149,6 +152,7 @@ public class MainWindow extends JFrame implements ApplicationListener {
 
     /**
      * Get the tag dialog on this main window.
+     * <p/>
      * @return the tag dialog.
      */
     public TagDialog getTagDialog() {
@@ -157,6 +161,7 @@ public class MainWindow extends JFrame implements ApplicationListener {
 
     /**
      * Get the options dialog on this main window.
+     * <p/>
      * @return the options dialog.
      */
     public OptionsDialog getOptionsDialog() {
@@ -165,65 +170,69 @@ public class MainWindow extends JFrame implements ApplicationListener {
 
     /**
      * Get the bible search dialog on this main window.
+     * <p/>
      * @return the bible search dialog.
      */
     public BibleSearchDialog getBibleSearchDialog() {
         return bibleSearchDialog;
     }
-    
+
     /**
      * Get the bible browse dialog on this main window.
+     * <p/>
      * @return the bible browse dialog.
      */
     public BibleBrowseDialog getBibleBrowseDialog() {
         return bibleBrowseDialog;
     }
-    
+
     /**
      * Get the new song window used for this window.
+     * <p/>
      * @return the song entry window.
      */
     public SongEntryWindow getSongEntryWindow() {
         return songEntryWindow;
     }
-    
-    /*
-     * TODO: The method stubs below this line should be edited appropriately
-     * to handle the given calls from the Mac application menu.
-     */
 
+    /**
+     * Get the main toolbar.
+     * <p/>
+     * @return the main toolbar.
+     */
+    public MainToolbar getMainToolbar() {
+        return mainToolbar;
+    }
+
+    /*
+     * TODO: The method stubs below this line should be edited appropriately to
+     * handle the given calls from the Mac application menu.
+     */
     @Override
     public void handleAbout(ApplicationEvent ae) {
     }
 
     @Override
     public void handleOpenApplication(ApplicationEvent ae) {
-        
     }
 
     @Override
     public void handleOpenFile(ApplicationEvent ae) {
-        
     }
 
     @Override
     public void handlePreferences(ApplicationEvent ae) {
-        
     }
 
     @Override
     public void handlePrintFile(ApplicationEvent ae) {
-        
     }
 
     @Override
     public void handleQuit(ApplicationEvent ae) {
-        
     }
 
     @Override
     public void handleReOpenApplication(ApplicationEvent ae) {
-        
     }
-
 }
