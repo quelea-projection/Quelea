@@ -43,7 +43,7 @@ public class AudioControlListener implements AudioListener {
      * @inheritDoc
      */
     @Override
-    public void played() {
+    public void played(AudioTrack track) {
         play.setIcon(Utils.getImageIcon("icons/pause.png", 24, 24));
         play.setToolTipText(LabelGrabber.INSTANCE.getLabel("pause.audio.control.tooltip"));
     }
