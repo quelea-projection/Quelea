@@ -26,8 +26,9 @@ public interface AudioListener {
     
     /**
      * Called when the player has started playing a new track.
+     * @param track the track that has started playing
      */
-    void played();
+    void played(AudioTrack track);
     
     /**
      * Called when the value of "paused" is updated.

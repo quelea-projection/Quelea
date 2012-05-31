@@ -84,6 +84,7 @@ public class ScheduleList extends JList<Displayable> {
         /**
          * @inheritDoc
          */
+        @Override
         public Component getListCellRendererComponent(JList<? extends Displayable> list, Displayable value, int index, boolean isSelected, boolean cellHasFocus) {
             setBorder(new EmptyBorder(5, 5, 5, 5));
             setText(value.getPreviewText());
@@ -117,12 +118,14 @@ public class ScheduleList extends JList<Displayable> {
         }
         addFocusListener(new FocusListener() {
 
+            @Override
             public void focusGained(FocusEvent e) {
                 if(getModel().getSize() > 0) {
                     setSelectionBackground(QueleaProperties.get().getActiveSelectionColor());
                 }
             }
 
+            @Override
             public void focusLost(FocusEvent e) {
                 setSelectionBackground(originalSelectionColour);
             }
@@ -249,7 +252,8 @@ public class ScheduleList extends JList<Displayable> {
 
                         }
                         else {
-                            getModel().add(index, data);
+//                            getModel().add(index, data);
+                            return false;
                         }
                     }
                     else {

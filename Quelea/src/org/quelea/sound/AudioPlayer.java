@@ -128,7 +128,7 @@ public class AudioPlayer {
         playThread.start();
         currentTrack = track;
         for(AudioListener listener : listeners) {
-            listener.played();
+            listener.played(track);
         }
     }
 
