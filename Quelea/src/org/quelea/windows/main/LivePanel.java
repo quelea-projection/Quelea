@@ -33,6 +33,7 @@ import org.quelea.displayable.Displayable;
 import org.quelea.languages.LabelGrabber;
 import org.quelea.sound.AudioPlayer;
 import org.quelea.sound.AudioTrack;
+import org.quelea.sound.Playlist;
 import org.quelea.utils.QueleaProperties;
 import org.quelea.utils.Utils;
 
@@ -219,12 +220,14 @@ public class LivePanel extends LivePreviewPanel {
     public void setDisplayable(Displayable d, int index) {
         super.setDisplayable(d, index);
         clear.setEnabled(d.supportClear());
-        AudioPlayer player = Application.get().getAudioPlayer();
+        AudioPlayer player = Application.get().getMainWindow().getMainToolbar().getAudioToolbar().getPlayer();
         player.stop();
         if(d != null) {
             AudioTrack track = d.getAudio();
             if(track != null) {
-                Application.get().getAudioPlayer().play(track);
+                player.stop();
+                player.getPlaylist().setCurrentTrack(track);
+                player.play();
             }
         }
     }

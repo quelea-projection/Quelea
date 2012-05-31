@@ -30,17 +30,19 @@ import org.quelea.utils.LoggerUtils;
 
 /**
  * An audio track that can be played by the audio player.
- *
+ * <p/>
  * @author Michael
  */
 public class AudioTrack {
 
     private static final Logger LOGGER = LoggerUtils.getLogger();
     private String path;
+    private boolean checkedOK;
+    private boolean ok;
 
     /**
      * Create a new audio track.
-     *
+     * <p/>
      * @param path the path of the audio file this track represents.
      */
     public AudioTrack(String path) {
@@ -50,24 +52,29 @@ public class AudioTrack {
     /**
      * Determine if we can open and play this audio stream. If not, it may be
      * corrupt.
+     * <p/>
      * @return true if the stream is ok, false otherwise.
      */
     public boolean checkOK() {
-        AudioInputStream stream = getAudioInputStream();
-        if(stream != null) {
-            try {
-                stream.close();
+        if(!checkedOK) {
+            AudioInputStream stream = getAudioInputStream();
+            if(stream != null) {
+                try {
+                    stream.close();
+                }
+                catch(IOException ex) {
+                    LOGGER.log(Level.WARNING, "Couldn't close audio input stream", ex);
+                }
             }
-            catch (IOException ex) {
-                LOGGER.log(Level.WARNING, "Couldn't close audio input stream", ex);
-            }
+            ok = stream != null;
+            checkedOK = true;
         }
-        return stream != null;
+        return ok;
     }
 
     /**
      * Get the path to this audio track.
-     *
+     * <p/>
      * @return the path to this audio track.
      */
     public String getPath() {
@@ -76,7 +83,7 @@ public class AudioTrack {
 
     /**
      * Get the audio input stream that can be used to read data from this track.
-     *
+     * <p/>
      * @return the track's audio input stream.
      */
     public AudioInputStream getAudioInputStream() {
@@ -100,7 +107,7 @@ public class AudioTrack {
             }
             return in;
         }
-        catch (UnsupportedAudioFileException | IOException ex) {
+        catch(UnsupportedAudioFileException | IOException ex) {
             LOGGER.log(Level.WARNING, "Couldn't get audio input stream: " + file.getAbsolutePath(), ex);
             return null;
         }
