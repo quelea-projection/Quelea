@@ -47,6 +47,11 @@ public class AudioTrack {
         this.path = path;
     }
 
+    /**
+     * Determine if we can open and play this audio stream. If not, it may be
+     * corrupt.
+     * @return true if the stream is ok, false otherwise.
+     */
     public boolean checkOK() {
         AudioInputStream stream = getAudioInputStream();
         if(stream != null) {
