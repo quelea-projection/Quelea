@@ -19,15 +19,13 @@
 package org.quelea.sound;
 
 /**
- *
- *
- * @author Ben Goodwin
- * @version 21-May-2012
+ * Blank implementation of AudioListener.
+ * @author Michael
  */
 public class AudioAdapter implements AudioListener {
 
     @Override
-    public void played() {
+    public void played(AudioTrack track) {
     }
 
     @Override
