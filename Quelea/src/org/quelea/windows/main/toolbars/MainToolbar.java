@@ -18,13 +18,22 @@
  */
 package org.quelea.windows.main.toolbars;
 
-import java.awt.Component;
-import javax.swing.*;
-import org.quelea.Application;
+import javax.swing.Box;
+import javax.swing.JButton;
+import javax.swing.JToolBar;
 import org.quelea.languages.LabelGrabber;
-import org.quelea.sound.AudioControlListener;
 import org.quelea.utils.Utils;
-import org.quelea.windows.main.actionlisteners.*;
+import org.quelea.windows.main.actionlisteners.AddAudioActionListener;
+import org.quelea.windows.main.actionlisteners.AddDVDActionListener;
+import org.quelea.windows.main.actionlisteners.AddPowerpointActionListener;
+import org.quelea.windows.main.actionlisteners.AddVideoActionListener;
+import org.quelea.windows.main.actionlisteners.NewScheduleActionListener;
+import org.quelea.windows.main.actionlisteners.NewSongActionListener;
+import org.quelea.windows.main.actionlisteners.OpenScheduleActionListener;
+import org.quelea.windows.main.actionlisteners.PrintScheduleActionListener;
+import org.quelea.windows.main.actionlisteners.SaveScheduleActionListener;
+import org.quelea.windows.main.actionlisteners.ShowNoticesActionListener;
+import org.quelea.windows.main.actionlisteners.ViewTagsActionListener;
 
 /**
  * Quelea's main toolbar.
@@ -44,6 +53,7 @@ public class MainToolbar extends JToolBar {
     private JButton manageNoticesButton;
     private JButton manageTagsButton;
     private JButton addAudioButton;
+    private AudioToolbar audioToolbar;
 
     /**
      * Create the toolbar.
@@ -113,7 +123,16 @@ public class MainToolbar extends JToolBar {
         add(manageNoticesButton);
         
         add(Box.createHorizontalGlue());
-        add(new AudioToolbar());
-
+        audioToolbar = new AudioToolbar();
+        add(audioToolbar);
     }
+
+    /**
+     * Get the audio toolbar on this main toolbar.
+     * @return the audio toolbar.
+     */
+    public AudioToolbar getAudioToolbar() {
+        return audioToolbar;
+    }
+    
 }

@@ -96,7 +96,5 @@ public class AudioDisplayable implements Displayable {
 
     @Override
     public void dispose() {
-        Application.get().getAudioPlayer().stop();
-        // Nothing needed here? 
     }
 }

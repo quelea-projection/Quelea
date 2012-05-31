@@ -35,7 +35,6 @@ public class Application {
     private MainWindow mainWindow;
     private LyricWindow lyricWindow;
     private LyricWindow stageWindow;
-    private AudioPlayer audioPlayer = new AudioPlayer();
 
     /**
      * Get the singleton instance.
@@ -59,13 +58,6 @@ public class Application {
         else {
             Application.get().getMainWindow().getMainPanel().getSchedulePanel().getScheduleList().setSchedule(schedule);
         }
-    }
-    
-    /**
-     * Get Quelea's audio player.
-     */
-    public AudioPlayer getAudioPlayer() {
-        return audioPlayer;
     }
 
     /**

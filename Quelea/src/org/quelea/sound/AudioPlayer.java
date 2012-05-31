@@ -46,26 +46,16 @@ public class AudioPlayer {
     private final Object lock = new Object();
     private volatile boolean paused = false;
     private PlayThread playThread;
-    private AudioTrack currentTrack;
+    private Playlist playlist;
     private int volume;
     private final List<AudioListener> listeners;
-
-    /**
-     * Just for testing.
-     *
-     * @param args command line args (not used.)
-     */
-    public static void main(String[] args) {
-        AudioPlayer p = new AudioPlayer();
-        p.play(new AudioTrack("C:\\x.flac"));
-        Utils.sleep(10000);
-    }
 
     /**
      * Create the audio player.
      */
     public AudioPlayer() {
         listeners = new ArrayList<>();
+        playlist = new Playlist();
         volume = 100;
     }
 
@@ -116,29 +106,22 @@ public class AudioPlayer {
 
     /**
      * Play the given piece of music. Stop any existing music, if playing.
-     *
-     * @param track the track to play.
      */
-    public void play(final AudioTrack track) {
+    public void play() {
+        AudioTrack track = playlist.getCurrentTrack();
         if(track == null) {
             throw new IllegalArgumentException("Can't play null track");
         }
         stop();
         playThread = new PlayThread(track);
         playThread.start();
-        currentTrack = track;
         for(AudioListener listener : listeners) {
             listener.played(track);
         }
     }
 
-    /**
-     * Get the current path of the playing track from this player.
-     *
-     * @return the path of the playing track.
-     */
-    public AudioTrack getCurrentTrack() {
-        return currentTrack;
+    public Playlist getPlaylist() {
+        return playlist;
     }
 
     /**
