@@ -20,13 +20,11 @@ package org.quelea.windows.main.toolbars;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import javax.swing.JButton;
-import javax.swing.JToggleButton;
 import javax.swing.JToolBar;
 import org.quelea.languages.LabelGrabber;
 import org.quelea.sound.AudioListener;
 import org.quelea.sound.AudioPlayer;
 import org.quelea.sound.AudioTrack;
-import org.quelea.sound.Playlist;
 import org.quelea.sound.PlaylistListener;
 import org.quelea.utils.Utils;
 
@@ -41,7 +39,6 @@ public class AudioToolbar extends JToolBar {
 
     private JButton playpauseButton;
     private JButton skipButton;
-    private JToggleButton muteButton;
     private JButton playlistButton;
     private AudioPlayer player;
 
@@ -53,7 +50,7 @@ public class AudioToolbar extends JToolBar {
 
         setFloatable(false);
 
-        playpauseButton = new JButton(Utils.getImageIcon("icons/pause.png", 24, 24));
+        playpauseButton = new JButton(Utils.getImageIcon("icons/play.png", 24, 24));
         playpauseButton.setToolTipText(LabelGrabber.INSTANCE.getLabel("pause.audio.control.tooltip"));
         playpauseButton.addActionListener(new ActionListener() {
 
@@ -76,25 +73,6 @@ public class AudioToolbar extends JToolBar {
         });
         this.add(skipButton);
 
-        muteButton = new JToggleButton(Utils.getImageIcon("icons/mute.png", 24, 24));
-        muteButton.setToolTipText(LabelGrabber.INSTANCE.getLabel("mute.audio.control.tooltip"));
-        muteButton.addActionListener(new ActionListener() {
-
-            private int volume;
-            
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                if(muteButton.isSelected()) {
-                    volume = player.getVolume();
-                    player.setVolume(0);
-                }
-                else {
-                    player.setVolume(volume);
-                }
-            }
-        });
-        this.add(muteButton);
-
         playlistButton = new JButton(Utils.getImageIcon("icons/playlist.png", 24, 24));
         playlistButton.setToolTipText(LabelGrabber.INSTANCE.getLabel("playlist.select.tooltip"));
         playlistButton.addActionListener(new ActionListener() {
@@ -105,7 +83,7 @@ public class AudioToolbar extends JToolBar {
             }
         });
         this.add(playlistButton);
-        
+
         player.getPlaylist().addPlaylistListener(new PlaylistListener() {
 
             @Override
@@ -166,11 +144,6 @@ public class AudioToolbar extends JToolBar {
              */
             @Override
             public void volumeChanged(int newVolume) {
-                if(newVolume == 0) {
-                    if(!(muteButton.isSelected())) {
-                        muteButton.doClick();
-                    }
-                }
             }
         });
     }
