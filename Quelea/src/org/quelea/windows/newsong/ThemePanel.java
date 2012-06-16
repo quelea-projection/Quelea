@@ -55,7 +55,7 @@ public class ThemePanel extends JPanel {
 
     private static final Logger LOGGER = LoggerUtils.getLogger();
     private static final int THRESHOLD = 30;
-    public static final String[] SAMPLE_LYRICS = {"Amazing Grace how sweet the sound", "That saved a wretch like me", "I once was lost but now am found", "Was blind, but now I see."};
+//    public static final String[] SAMPLE_LYRICS = {"Amazing Grace how sweet the sound", "That saved a wretch like me", "I once was lost but now am found", "Was blind, but now I see."};
     private JPanel fontToolbar;
     private JPanel backgroundPanel;
     private JComboBox<String> fontSelection;
@@ -75,7 +75,7 @@ public class ThemePanel extends JPanel {
         setName(LabelGrabber.INSTANCE.getLabel("theme.heading"));
         setLayout(new BorderLayout());
         canvas = new LyricCanvas(false, false);
-        canvas.setText(SAMPLE_LYRICS, null);
+//        canvas.setText(SAMPLE_LYRICS, null);
         add(canvas, BorderLayout.CENTER);
         JPanel toolbarPanel = new JPanel();
         toolbarPanel.setLayout(new BoxLayout(toolbarPanel, BoxLayout.Y_AXIS));
