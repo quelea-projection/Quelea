@@ -77,7 +77,11 @@ public class MainWindow extends JFrame implements ApplicationListener {
         macApp = new org.simplericity.macify.eawt.DefaultApplication();
         macApp.addApplicationListener(this);
         macApp.setApplicationIconImage(Utils.getImage("icons/logo.png"));
-
+        macApp.addPreferencesMenuItem();
+        macApp.setEnabledPreferencesMenu(true);
+        macApp.addAboutMenuItem();
+        macApp.setEnabledAboutMenu(true);
+        
         setLayout(new BorderLayout());
         noticeDialog = new NoticeDialog(this);
 
@@ -116,7 +120,7 @@ public class MainWindow extends JFrame implements ApplicationListener {
         mainpanel.getLibraryPanel().getLibrarySongPanel().getAddButton().addActionListener(new NewSongActionListener());
         mainpanel.getLibraryPanel().getLibrarySongPanel().getSongList().getPopupMenu().getEditDBButton().addActionListener(new EditSongDBActionListener());
         mainpanel.getLibraryPanel().getLibrarySongPanel().getSongList().getPopupMenu().getRemoveFromDBButton().addActionListener(new RemoveSongDBActionListener());
-
+        
         menuBar = new MainMenuBar();
         setJMenuBar(menuBar);
 
@@ -210,6 +214,8 @@ public class MainWindow extends JFrame implements ApplicationListener {
      */
     @Override
     public void handleAbout(ApplicationEvent ae) {
+        menuBar.getHelpMenu().getAbout().doClick();
+        ae.setHandled(true);
     }
 
     @Override
@@ -222,6 +228,8 @@ public class MainWindow extends JFrame implements ApplicationListener {
 
     @Override
     public void handlePreferences(ApplicationEvent ae) {
+        menuBar.getToolsMenu().getOptions().doClick();
+        ae.setHandled(true);
     }
 
     @Override

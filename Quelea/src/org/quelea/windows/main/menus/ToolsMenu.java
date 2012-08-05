@@ -65,4 +65,8 @@ public class ToolsMenu extends JMenu {
         add(optionsItem);
     }
     
+    public JMenuItem getOptions() {
+        return optionsItem;
+    }
+    
 }
