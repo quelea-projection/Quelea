@@ -69,6 +69,12 @@ public final class Main {
         final SplashWindow splashWindow = new SplashWindow();
         splashWindow.setVisible(true);
 
+        //Moves the toolbar to the main bar in MacOS
+        if(Utils.isMac()) {
+            System.setProperty("apple.laf.useScreenMenuBar", "true");
+            System.setProperty("com.apple.macos.useScreenMenuBar","true");
+        }
+        
         //Needed to stop menus appearing behind video
         JPopupMenu.setDefaultLightWeightPopupEnabled(false);
         //Same for tooltips
@@ -223,7 +229,7 @@ public final class Main {
                 catch (ClassNotFoundException | InstantiationException | IllegalAccessException | UnsupportedLookAndFeelException ex) {
                     LOGGER.log(Level.INFO, "Couldn't set the look and feel.", ex);
                 }
-
+                
                 JFrame.setDefaultLookAndFeelDecorated(true);
                 JDialog.setDefaultLookAndFeelDecorated(true);
             }
