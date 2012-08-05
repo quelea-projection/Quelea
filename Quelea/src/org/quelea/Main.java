@@ -184,7 +184,7 @@ public final class Main {
                 mainWindow.getMainPanel().getLivePanel().registerLyricCanvas(fullScreenWindow.getCanvas());
                 mainWindow.getMainPanel().getLivePanel().registerLyricWindow(fullScreenWindow);
                 mainWindow.getMainPanel().getLivePanel().registerVideoCanvas(fullScreenWindow.getCanvas());
-                fullScreenWindow.setVisible(!lyricsHidden);
+                if(!Utils.isMac()) fullScreenWindow.setVisible(!lyricsHidden);
                 mainWindow.getMainPanel().getLivePanel().registerLyricCanvas(stageWindow.getCanvas());
                 mainWindow.getMainPanel().getLivePanel().registerLyricWindow(stageWindow);
                 mainWindow.getMainPanel().getLivePanel().registerVideoCanvas(stageWindow.getCanvas());
