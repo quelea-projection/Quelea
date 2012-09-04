@@ -56,6 +56,7 @@
             <description>Core components</description>
             <file src="lib" targetdir="$INSTALL_PATH"/>
             <file src="Quelea.jar" targetdir="$INSTALL_PATH"/>
+            <file src="Quelea.exe" targetdir="$INSTALL_PATH"/>
             <file src="Readme.txt" targetdir="$INSTALL_PATH"/>
             <file src="../licenses/gplv3.txt" targetdir="$INSTALL_PATH"/>
             <file src="quelea.properties" targetdir="$INSTALL_PATH"/>
