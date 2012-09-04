@@ -5,6 +5,6 @@ Path=/usr/share/quelea
 Categories=AudioVideo;
 Type=Application
 Name=Quelea
-Icon=/usr/share/quelea/img/logo.png
+Icon=/usr/share/quelea/icons/logo.png
 Comment=Projection software for churches
 Exec=/usr/share/quelea/launch.sh
