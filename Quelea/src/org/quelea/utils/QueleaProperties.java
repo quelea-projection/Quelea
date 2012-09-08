@@ -35,7 +35,7 @@ import org.quelea.displayable.TextAlignment;
  */
 public final class QueleaProperties extends Properties {
 
-    public static final Version VERSION = new Version("0.6");
+    public static final Version VERSION = new Version("0.5.2");
     private static final QueleaProperties INSTANCE = new QueleaProperties();
 //    private static final Logger LOGGER = LoggerUtils.getLogger();
 
@@ -114,9 +114,7 @@ public final class QueleaProperties extends Properties {
      */
     public String getLaf() {
         if(Utils.isMac()) {
-            // Quaqua look horrid. Back to default Aqua LAF from Apple
-            //return ch.randelshofer.quaqua.QuaquaManager.getLookAndFeel().getClass().getName();
-            return UIManager.getSystemLookAndFeelClassName();
+            return ch.randelshofer.quaqua.QuaquaManager.getLookAndFeel().getClass().getName();
         }
         String laf = getProperty("laf", "javax.swing.plaf.nimbus.NimbusLookAndFeel");
         if(laf.trim().equalsIgnoreCase("System")) {

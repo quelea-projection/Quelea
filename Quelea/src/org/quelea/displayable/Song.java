@@ -39,10 +39,8 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import org.quelea.Background;
-import org.quelea.ImageBackground;
 import org.quelea.SongDatabase;
 import org.quelea.Theme;
-import org.quelea.sound.AudioTrack;
 import org.quelea.utils.LineTypeChecker;
 import org.quelea.utils.LoggerUtils;
 import org.quelea.utils.Utils;
@@ -261,7 +259,6 @@ public class Song implements TextDisplayable, Comparable<Song>, Printable {
     private int id;
     private boolean printChords;
     private String lastSearch;
-    private AudioTrack track;
 
     /**
      * Copy constructor - creates a shallow copy.
@@ -738,6 +735,23 @@ public class Song implements TextDisplayable, Comparable<Song>, Printable {
     }
 
     /**
+     * Strip punctuation from the given string.
+     *
+     * @param s the string to use to strip punctuation from
+     * @return the "stripped" string.
+     */
+    private static String stripPunctuation(String s) {
+        s = s.replaceAll("[ ]+", " ");
+        StringBuilder ret = new StringBuilder();
+        for(char c : s.toCharArray()) {
+            if(Character.isLetterOrDigit(c) || Character.isWhitespace(c)) {
+                ret.append(c);
+            }
+        }
+        return ret.toString();
+    }
+
+    /**
      * Get a representation of this song in XML format.
      *
      * @return the song in XML format.
@@ -955,11 +969,8 @@ public class Song implements TextDisplayable, Comparable<Song>, Printable {
             Theme sectionTheme = section.getTheme();
             if(sectionTheme != null) {
                 Background background = sectionTheme.getBackground();
-                if(background instanceof ImageBackground) {
-                    ImageBackground imageBackground = (ImageBackground)background;
-                    if(imageBackground.getImageLocation() != null) {
-                        ret.add(imageBackground.getImageFile());
-                    }
+                if(background.getImageLocation() != null) {
+                    ret.add(background.getImageFile());
                 }
             }
         }
@@ -1073,15 +1084,5 @@ public class Song implements TextDisplayable, Comparable<Song>, Printable {
     @Override
     public void dispose() {
         //Nothing needed here.
-    }
-    
-    @Override
-    public void setAudio(AudioTrack track) {
-        this.track = track;
-    }
-
-    @Override
-    public AudioTrack getAudio() {
-        return track;
     }
 }

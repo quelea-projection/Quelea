@@ -34,28 +34,28 @@ import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.BoxLayout;
-import javax.swing.ImageIcon;
+import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JSlider;
 import javax.swing.SwingUtilities;
 import org.quelea.utils.LoggerUtils;
-import org.quelea.utils.RoundButton;
 import org.quelea.utils.Utils;
 import org.quelea.video.RemotePlayer;
 import org.quelea.video.RemotePlayerFactory;
 
 /**
  * The control panel for displaying the video.
- * <p/>
+ *
  * @author Michael
  */
 public class VideoControlPanel extends JPanel {
 
     private static final Logger LOGGER = LoggerUtils.getLogger();
-    private RoundButton playPause;
-    private RoundButton stop;
-    private RoundButton mute;
+    private JButton play;
+    private JButton pause;
+    private JButton stop;
+    private JButton mute;
     private JSlider positionSlider;
     private VideoStatusPanel vidStatusPanel;
     private Canvas videoArea;
@@ -64,51 +64,44 @@ public class VideoControlPanel extends JPanel {
     private ScheduledExecutorService executorService;
     private boolean pauseCheck;
     private String videoPath;
-    private ImageIcon playIcon = Utils.getImageIcon("icons/play.png");
-    private ImageIcon pauseIcon = Utils.getImageIcon("icons/pause.png");
-    
+
     /**
      * Create a new video control panel.
      */
     public VideoControlPanel() {
 
         executorService = Executors.newSingleThreadScheduledExecutor();
-        playPause = new RoundButton(playIcon);
-        playPause.setEnabled(false);
-        playPause.addActionListener(new ActionListener() {
-
-            private boolean paused = true;
+        play = new JButton(Utils.getImageIcon("icons/play.png"));
+        play.setEnabled(false);
+        play.addActionListener(new ActionListener() {
 
             @Override
             public void actionPerformed(ActionEvent e) {
-                if(paused || !mediaPlayers.get(0).isPlaying()) {
-                    playVideo();
-                    stop.setEnabled(true);
-                    playPause.setIcon(pauseIcon);
-                    paused = false;
-                }
-                else {
-                    pauseVideo();
-                    playPause.setIcon(playIcon);
-                    paused = true;
-                }
+                playVideo();
             }
         });
-        stop = new RoundButton(Utils.getImageIcon("icons/stop.png"));
+        pause = new JButton(Utils.getImageIcon("icons/pause.png"));
+        pause.setEnabled(false);
+        pause.addActionListener(new ActionListener() {
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                pauseVideo();
+            }
+        });
+        stop = new JButton(Utils.getImageIcon("icons/stop.png"));
         stop.setEnabled(false);
         stop.addActionListener(new ActionListener() {
 
             @Override
             public void actionPerformed(ActionEvent e) {
                 stopVideo();
-                playPause.setIcon(playIcon);
                 positionSlider.setValue(0);
                 vidStatusPanel.getTimeDisplay().setCurrentSeconds(0);
                 vidStatusPanel.getTimeDisplay().setTotalSeconds(0);
-                stop.setEnabled(false);
             }
         });
-        mute = new RoundButton(Utils.getImageIcon("icons/mute.png"));
+        mute = new JButton(Utils.getImageIcon("icons/mute.png"));
         mute.setEnabled(false);
         mute.addActionListener(new ActionListener() {
 
@@ -161,7 +154,8 @@ public class VideoControlPanel extends JPanel {
         controlPanel.add(sliderPanel, BorderLayout.SOUTH);
         JPanel buttonPanel = new JPanel();
         buttonPanel.setLayout(new BoxLayout(buttonPanel, BoxLayout.X_AXIS));
-        buttonPanel.add(playPause);
+        buttonPanel.add(play);
+        buttonPanel.add(pause);
         buttonPanel.add(stop);
         buttonPanel.add(mute);
         controlPanel.add(buttonPanel, BorderLayout.NORTH);
@@ -185,7 +179,8 @@ public class VideoControlPanel extends JPanel {
                                 if(videoPath != null) {
                                     player.load(videoPath);
                                 }
-                                playPause.setEnabled(true);
+                                play.setEnabled(true);
+                                pause.setEnabled(true);
                                 stop.setEnabled(true);
                                 mute.setEnabled(true);
                                 positionSlider.setEnabled(true);
@@ -211,7 +206,7 @@ public class VideoControlPanel extends JPanel {
 
     /**
      * Register a canvas to be controlled via this video control panel.
-     * <p/>
+     *
      * @param canvas the canvas to control.
      */
     public void registerCanvas(final Canvas canvas) {
@@ -252,7 +247,7 @@ public class VideoControlPanel extends JPanel {
 
     /**
      * Get a list of registered lyric canvases.
-     * <p/>
+     *
      * @return a list of registered lyric canvases.
      */
     public List<Canvas> getRegisteredCanvases() {
@@ -261,7 +256,7 @@ public class VideoControlPanel extends JPanel {
 
     /**
      * Load the given video to be controlled via this panel.
-     * <p/>
+     *
      * @param videoPath the video path to load.
      */
     public void loadVideo(String videoPath) {
@@ -269,8 +264,6 @@ public class VideoControlPanel extends JPanel {
         for(RemotePlayer mediaPlayer : mediaPlayers) {
             mediaPlayer.load(videoPath);
         }
-        stop.setEnabled(false);
-        playPause.setIcon(playIcon);
     }
 
     /**
@@ -316,7 +309,7 @@ public class VideoControlPanel extends JPanel {
 
     /**
      * Get the current time of the video.
-     * <p/>
+     *
      * @return the current time of the video.
      */
     public long getTime() {
@@ -325,7 +318,7 @@ public class VideoControlPanel extends JPanel {
 
     /**
      * Set the current time of the video.
-     * <p/>
+     *
      * @param time the current time of the video.
      */
     public void setTime(long time) {
@@ -354,7 +347,7 @@ public class VideoControlPanel extends JPanel {
 
     /**
      * Set whether the video is muted.
-     * <p/>
+     *
      * @param muteState true to mute, false to unmute.
      */
     public void setMute(boolean muteState) {
@@ -369,7 +362,7 @@ public class VideoControlPanel extends JPanel {
 
     /**
      * Determine if this video is muted.
-     * <p/>
+     *
      * @return true if muted, false if not.
      */
     public boolean getMute() {
@@ -378,7 +371,7 @@ public class VideoControlPanel extends JPanel {
 
     /**
      * Set the volume of the video.
-     * <p/>
+     *
      * @param volume the video volume.
      */
     public void setVolume(int volume) {
@@ -398,7 +391,7 @@ public class VideoControlPanel extends JPanel {
 
     /**
      * Try and stop and clear up if we haven't already.
-     * <p/>
+     *
      * @throws Throwable if something goes wrong.
      */
     @Override
@@ -410,7 +403,7 @@ public class VideoControlPanel extends JPanel {
 
     /**
      * Just for testing.
-     * <p/>
+     *
      * @param args
      */
     public static void main(String[] args) {
