@@ -62,19 +62,11 @@ public final class Main {
      * @param args the command line arguments.
      */
     public static void main(final String[] args) {
-        //Leave this in place, it stops the LyricCanvas flickering when background is changed.
         System.setProperty("sun.awt.noerasebackground", "true");
-        RXTXPathSetter.setPaths(); //Initialise RXTX so we can read / write on serial port to projectors.
 
         final SplashWindow splashWindow = new SplashWindow();
         splashWindow.setVisible(true);
 
-        //Moves the toolbar to the main bar in MacOS
-        if(Utils.isMac()) {
-            System.setProperty("apple.laf.useScreenMenuBar", "true");
-            System.setProperty("com.apple.macos.useScreenMenuBar","true");
-        }
-        
         //Needed to stop menus appearing behind video
         JPopupMenu.setDefaultLightWeightPopupEnabled(false);
         //Same for tooltips
@@ -184,7 +176,7 @@ public final class Main {
                 mainWindow.getMainPanel().getLivePanel().registerLyricCanvas(fullScreenWindow.getCanvas());
                 mainWindow.getMainPanel().getLivePanel().registerLyricWindow(fullScreenWindow);
                 mainWindow.getMainPanel().getLivePanel().registerVideoCanvas(fullScreenWindow.getCanvas());
-                if(!Utils.isMac()) fullScreenWindow.setVisible(!lyricsHidden);
+                fullScreenWindow.setVisible(!lyricsHidden);
                 mainWindow.getMainPanel().getLivePanel().registerLyricCanvas(stageWindow.getCanvas());
                 mainWindow.getMainPanel().getLivePanel().registerLyricWindow(stageWindow);
                 mainWindow.getMainPanel().getLivePanel().registerVideoCanvas(stageWindow.getCanvas());
@@ -196,7 +188,6 @@ public final class Main {
                     bibleLoader.join(); //Make sure bibleloader has finished loading
                 }
                 catch (InterruptedException ex) {
-                    //If interrupted just carry on
                 }
                 Utils.centreOnMonitor(mainWindow, controlScreen);
                 showWarning(gds.length);
@@ -229,7 +220,7 @@ public final class Main {
                 catch (ClassNotFoundException | InstantiationException | IllegalAccessException | UnsupportedLookAndFeelException ex) {
                     LOGGER.log(Level.INFO, "Couldn't set the look and feel.", ex);
                 }
-                
+
                 JFrame.setDefaultLookAndFeelDecorated(true);
                 JDialog.setDefaultLookAndFeelDecorated(true);
             }

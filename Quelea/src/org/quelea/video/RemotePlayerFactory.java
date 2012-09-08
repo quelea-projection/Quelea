@@ -26,54 +26,65 @@ import javax.swing.JOptionPane;
 import org.quelea.Application;
 import org.quelea.languages.LabelGrabber;
 import org.quelea.utils.LoggerUtils;
+import org.quelea.utils.Utils;
 
 /**
  * Factory class responsible for creating the out of process video players and
  * providing remote objects to control them.
+ * <p/>
  * @author Michael
  */
 public class RemotePlayerFactory {
-    
+
     private static final Logger LOGGER = LoggerUtils.getLogger();
     private static int portCounter = 5555;
 
     /**
      * Get a remote embedded player, pointing to an embedded player in another
      * VM.
+     * <p/>
      * @param canvas the canvas ID (got using JNA) that the other player should
      * use.
      * @return the remote embedded player.
      */
     public static RemotePlayer getEmbeddedRemotePlayer(Canvas canvas) {
-        try {
-            long drawable = Native.getComponentID(canvas);
-            StreamWrapper wrapper = startSecondPlayerJVM(OutOfProcessEmbeddedPlayer.class, Long.toString(drawable));
-            final RemotePlayer player = new RemotePlayer(wrapper);
-            Runtime.getRuntime().addShutdownHook(new Thread() {
-                @Override
-                public void run() {
-                    player.close();
-                }
-            });
-            return player;
-        }
-        catch (Exception ex) {
-            LOGGER.log(Level.WARNING, "Video failed", ex);
-            JOptionPane.showMessageDialog(Application.get().getMainWindow(), LabelGrabber.INSTANCE.getLabel("video.error"), LabelGrabber.INSTANCE.getLabel("video.error.title"), JOptionPane.WARNING_MESSAGE);
+        if(Utils.isLinux() || Utils.isMac()) {
+            LOGGER.log(Level.WARNING, "Sorry, video won't work on Mac or Linux at the moment :-(");
             return null;
         }
+        else {
+            try {
+                long drawable = Native.getComponentID(canvas);
+                StreamWrapper wrapper = startSecondPlayerJVM(OutOfProcessEmbeddedPlayer.class, Long.toString(drawable));
+                final RemotePlayer player = new RemotePlayer(wrapper);
+                Runtime.getRuntime().addShutdownHook(new Thread() {
+                    @Override
+                    public void run() {
+                        player.close();
+                    }
+                });
+                return player;
+            }
+            catch(Exception ex) {
+                LOGGER.log(Level.WARNING, "Video failed", ex);
+                JOptionPane.showMessageDialog(Application.get().getMainWindow(), LabelGrabber.INSTANCE.getLabel("video.error"), LabelGrabber.INSTANCE.getLabel("video.error.title"), JOptionPane.WARNING_MESSAGE);
+                return null;
+            }
+        }
     }
-    
+
     /**
      * Get the next available port to use for the next headless player.
+     * <p/>
      * @return the next available port number.
      */
     public static int getNextPort() {
         return portCounter;
     }
-    
+
     /**
      * Get a headless remote player interface to a player in a separate VM.
+     * <p/>
      * @return a headless remote player interface to a player in a separate VM.
      */
     public static RemotePlayer getHeadlessRemotePlayer() {
@@ -81,7 +92,6 @@ public class RemotePlayerFactory {
             StreamWrapper wrapper = startSecondPlayerJVM(OutOfProcessHeadlessPlayer.class, Integer.toString(portCounter++));
             final RemotePlayer player = new RemotePlayer(wrapper);
             Runtime.getRuntime().addShutdownHook(new Thread() {
-
                 @Override
                 public void run() {
                     player.close();
@@ -89,7 +99,7 @@ public class RemotePlayerFactory {
             });
             return player;
         }
-        catch (Exception ex) {
+        catch(Exception ex) {
             LOGGER.log(Level.WARNING, "Video failed", ex);
             JOptionPane.showMessageDialog(Application.get().getMainWindow(), LabelGrabber.INSTANCE.getLabel("video.error"), LabelGrabber.INSTANCE.getLabel("video.error.title"), JOptionPane.WARNING_MESSAGE);
             return null;
@@ -98,8 +108,9 @@ public class RemotePlayerFactory {
 
     /**
      * Start a second JVM to control an out of process player.
-     * @param clazz the type of out of process player we're launching (must be
-     * a class with a main method.)
+     * <p/>
+     * @param clazz the type of out of process player we're launching (must be a
+     * class with a main method.)
      * @param option any options to pass to VLCJ.
      * @return a stream wrapper object for controlling the second VM.
      * @throws IOException if something goes wrong.

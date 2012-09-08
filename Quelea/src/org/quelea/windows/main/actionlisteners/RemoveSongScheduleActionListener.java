@@ -23,13 +23,13 @@ import org.quelea.Application;
 import org.quelea.windows.main.ScheduleList;
 
 /**
- * Action listener to remove an item from the schedule.
+ * Action listener to remove a song from the schedule.
  * @author Michael
  */
-public class RemoveScheduleItemActionListener implements ActionListener {
+public class RemoveSongScheduleActionListener implements ActionListener {
 
     /**
-     * Remove the currently selected item from the schedule.
+     * Remove the currently selected song from the schedule.
      * @param e the action event.
      */
     @Override

@@ -36,7 +36,6 @@ import javax.swing.SwingUtilities;
 import javax.swing.border.EmptyBorder;
 import org.quelea.displayable.Displayable;
 import org.quelea.displayable.TransferDisplayable;
-import org.quelea.utils.ImageFileTypeChecker;
 import org.quelea.utils.Utils;
 
 /**
@@ -107,7 +106,7 @@ public class ImageListPanel extends JPanel {
             @Override
             public void run() {
                 for(final File file : files) {
-                    if(new ImageFileTypeChecker().isType(file)) {
+                    if(Utils.fileIsImage(file) && !file.isDirectory()) {
                         tempModel.addElement(new ImageDisplayable(file));
                     }
                 }

@@ -31,12 +31,14 @@ import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JPanel;
-import org.quelea.Application;
-import org.quelea.Theme;
-import org.quelea.displayable.*;
+import org.quelea.displayable.Displayable;
+import org.quelea.displayable.ImageDisplayable;
+import org.quelea.displayable.PresentationDisplayable;
+import org.quelea.displayable.Song;
+import org.quelea.displayable.TextDisplayable;
+import org.quelea.displayable.VideoDisplayable;
 import org.quelea.utils.LoggerUtils;
 import org.quelea.utils.QueleaProperties;
-import org.quelea.utils.Utils;
 import org.quelea.windows.main.quickedit.QuickEditDialog;
 import org.quelea.windows.video.VideoPanel;
 
@@ -57,13 +59,11 @@ public abstract class LivePreviewPanel extends JPanel {
     private static final String IMAGE_LABEL = "IMAGE";
     private static final String VIDEO_LABEL = "VIDEO";
     private static final String PRESENTATION_LABEL = "PPT";
-    private static final String AUDIO_LABEL = "AUDIO";
     private String currentLabel;
     private SelectLyricsPanel lyricsPanel = new SelectLyricsPanel(this);
     private ImagePanel picturePanel = new ImagePanel(this);
     private PresentationPanel presentationPanel = new PresentationPanel(this);
     private VideoPanel videoPanel = new VideoPanel();
-    private AudioPanel audioPanel = new AudioPanel(this);
     private QuickEditDialog quickEditDialog = new QuickEditDialog();
     /**
      * All the contained panels so they can be flipped through easily...
@@ -77,7 +77,6 @@ public abstract class LivePreviewPanel extends JPanel {
             this.add(presentationPanel);
         }
     };
-    
 
     /**
      * Create the live preview panel, common superclass of live and preview
@@ -90,7 +89,6 @@ public abstract class LivePreviewPanel extends JPanel {
         cardPanel.add(picturePanel, IMAGE_LABEL);
         cardPanel.add(videoPanel, VIDEO_LABEL);
         cardPanel.add(presentationPanel, PRESENTATION_LABEL);
-        cardPanel.add(audioPanel, AUDIO_LABEL);
         ((CardLayout) cardPanel.getLayout()).show(cardPanel, LYRICS_LABEL);
 
         lyricsPanel.getLyricsList().addMouseListener(new MouseAdapter() {
@@ -182,9 +180,6 @@ public abstract class LivePreviewPanel extends JPanel {
         if(PRESENTATION_LABEL.equals(currentLabel)) {
             presentationPanel.setDisplayable(null, 0);
         }
-        if(VIDEO_LABEL.equals(currentLabel)) {
-            videoPanel.getVideoControlPanel().stopVideo();
-        }
         for(ContainedPanel panel : containedSet) {
             panel.clear();
         }
@@ -222,10 +217,6 @@ public abstract class LivePreviewPanel extends JPanel {
      * @param index the index of the displayable to show, if relevant.
      */
     public void setDisplayable(Displayable d, int index) {
-        for(LyricCanvas c : canvases) {
-            c.eraseText();
-        }
-        
         this.displayable = d;
         presentationPanel.stopCurrent();
         if(VIDEO_LABEL.equals(currentLabel)) {
@@ -243,44 +234,30 @@ public abstract class LivePreviewPanel extends JPanel {
             picturePanel.showDisplayable((ImageDisplayable) d);
             ((CardLayout) cardPanel.getLayout()).show(cardPanel, IMAGE_LABEL);
             currentLabel = IMAGE_LABEL;
-            fudge();
         }
         else if(d instanceof VideoDisplayable) {
             videoPanel.showDisplayable((VideoDisplayable) d);
-            for(LyricCanvas c : canvases) {
-                c.setTheme(Theme.DEFAULT_THEME);
+            for(Canvas lc : videoPanel.getVideoControlPanel().getRegisteredCanvases()) {
+                if(lc instanceof LyricCanvas) {
+                    ((LyricCanvas)lc).eraseText();
+                }
             }
             ((CardLayout) cardPanel.getLayout()).show(cardPanel, VIDEO_LABEL);
             videoPanel.repaint();
             currentLabel = VIDEO_LABEL;
-            fudge();
         }
         else if(d instanceof PresentationDisplayable) {
             ((CardLayout) cardPanel.getLayout()).show(cardPanel, PRESENTATION_LABEL);
             presentationPanel.setDisplayable((PresentationDisplayable) d, index);
             currentLabel = PRESENTATION_LABEL;
         }
-        else if(d instanceof AudioDisplayable) {
-            audioPanel.showDisplayable((AudioDisplayable) d);
-            ((CardLayout) cardPanel.getLayout()).show(cardPanel, AUDIO_LABEL);
-            currentLabel = AUDIO_LABEL;
-        }
         else if(d==null) {
-            LOGGER.log(Level.WARNING, "BUG: Called setDisplayable(null), should call clear() instead.");
+            LOGGER.log(Level.WARNING, "BUG: Called setDisplayable(null), should probably call clear() instead.");
             clear();
         }
         else {
             throw new RuntimeException("Displayable type not implemented: " + d.getClass());
         }
-        for(LyricCanvas c : canvases) {
-            c.updateOverlayState();
-        }
-    }
-    
-    //TODO: This is awful, but for now it's a fudge to display the image / video preview panels properly.
-    private void fudge() {
-        Application.get().getMainWindow().setSize(Application.get().getMainWindow().getWidth(), Application.get().getMainWindow().getHeight()+1);
-        Application.get().getMainWindow().setSize(Application.get().getMainWindow().getWidth(), Application.get().getMainWindow().getHeight()-1);
     }
 
     /**
@@ -300,8 +277,8 @@ public abstract class LivePreviewPanel extends JPanel {
      */
     public void setVideoProperties(LivePreviewPanel other) {
 //        videoPanel.getVideoControlPanel().playVideo();
-//        videoPanel.getVideoControlPanel().setTime(other.videoPanel.getVideoControlPanel().getTime());
 //        videoPanel.getVideoControlPanel().pauseVideo();
+//        videoPanel.getVideoControlPanel().setTime(other.videoPanel.getVideoControlPanel().getTime());
     }
 
     /**
@@ -386,9 +363,4 @@ public abstract class LivePreviewPanel extends JPanel {
         }
         return null;
     }
-
-    public VideoPanel getVideoPanel() {
-        return videoPanel;
-    }
-    
 }

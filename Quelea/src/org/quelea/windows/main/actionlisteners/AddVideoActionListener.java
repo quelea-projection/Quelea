@@ -28,7 +28,6 @@ import org.quelea.utils.VideoFileFilter;
 
 /**
  * The action listener for adding a video.
- *
  * @author Michael
  */
 public class AddVideoActionListener implements ActionListener {
@@ -38,13 +37,12 @@ public class AddVideoActionListener implements ActionListener {
         JFileChooser fileChooser = new JFileChooser();
         fileChooser.setFileFilter(new VideoFileFilter());
         fileChooser.setAcceptAllFileFilterUsed(false);
-        int val = fileChooser.showOpenDialog(Application.get().getMainWindow());
-        if (val == JFileChooser.APPROVE_OPTION) {
-            File file = fileChooser.getSelectedFile();
-            if (file != null) {
-                VideoDisplayable displayable = new VideoDisplayable(fileChooser.getSelectedFile(), VideoDisplayable.VideoType.FILE);
-                Application.get().getMainWindow().getMainPanel().getSchedulePanel().getScheduleList().getModel().addElement(displayable);
-            }
+        fileChooser.showOpenDialog(Application.get().getMainWindow());
+        File file = fileChooser.getSelectedFile();
+        if(file != null) {
+            VideoDisplayable displayable = new VideoDisplayable(fileChooser.getSelectedFile(), VideoDisplayable.VideoType.FILE);
+            Application.get().getMainWindow().getMainPanel().getSchedulePanel().getScheduleList().getModel().addElement(displayable);
         }
     }
+    
 }

@@ -18,7 +18,6 @@
 package org.quelea.windows.main;
 
 import java.awt.BorderLayout;
-import java.awt.Canvas;
 import java.awt.Dimension;
 import java.awt.event.KeyListener;
 import java.util.HashSet;
@@ -41,7 +40,7 @@ public class SelectLyricsPanel extends ContainedPanel {
 
     private final SelectLyricsList lyricsList;
     private final LivePreviewPanel containerPanel;
-    private final LyricCanvas canvas;
+    private final LyricCanvas previewCanvas;
     private boolean stopUpdate;
 
     /**
@@ -56,7 +55,7 @@ public class SelectLyricsPanel extends ContainedPanel {
         JSplitPane splitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT);
         splitPane.setResizeWeight(0.6);
         lyricsList = new SelectLyricsList();
-        canvas = new LyricCanvas(false, false);
+        previewCanvas = new LyricCanvas(false, false);
         splitPane.add(new JScrollPane(lyricsList) {
 
             {
@@ -65,9 +64,9 @@ public class SelectLyricsPanel extends ContainedPanel {
             }
         });
         splitPane.setOneTouchExpandable(true);
-        splitPane.add(canvas);
+        splitPane.add(previewCanvas);
         add(splitPane, BorderLayout.CENTER);
-        containerPanel.registerLyricCanvas(canvas);
+        containerPanel.registerLyricCanvas(previewCanvas);
         lyricsList.addListSelectionListener(new ListSelectionListener() {
 
             @Override
@@ -175,25 +174,25 @@ public class SelectLyricsPanel extends ContainedPanel {
         int selectedIndex = lyricsList.getSelectedIndex();
         HashSet<LyricCanvas> canvases = new HashSet<>();
         canvases.addAll(containerPanel.getCanvases());
-        for(LyricCanvas curCanvas : canvases) {
+        for(LyricCanvas canvas : canvases) {
             if(selectedIndex == -1 || selectedIndex >= lyricsList.getModel().getSize()) {
-//                canvas.setTheme(null);
-//                canvas.eraseText();
+                canvas.setTheme(null);
+                canvas.eraseText();
                 continue;
             }
             TextSection currentSection = lyricsList.getModel().getElementAt(selectedIndex);
             if(currentSection.getTempTheme() != null) {
-                curCanvas.setTheme(currentSection.getTempTheme());
+                canvas.setTheme(currentSection.getTempTheme());
             }
             else {
-                curCanvas.setTheme(currentSection.getTheme());
+                canvas.setTheme(currentSection.getTheme());
             }
-            curCanvas.setCapitaliseFirst(currentSection.shouldCapitaliseFirst());
-            if(curCanvas.isStageView()) {
-                curCanvas.setText(currentSection.getText(true, false), currentSection.getSmallText());
+            canvas.setCapitaliseFirst(currentSection.shouldCapitaliseFirst());
+            if(canvas.isStageView()) {
+                canvas.setText(currentSection.getText(true, false), currentSection.getSmallText());
             }
             else {
-                curCanvas.setText(currentSection.getText(false, false), currentSection.getSmallText());
+                canvas.setText(currentSection.getText(false, false), currentSection.getSmallText());
             }
         }
     }

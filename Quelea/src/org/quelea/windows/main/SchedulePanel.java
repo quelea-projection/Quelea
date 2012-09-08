@@ -17,8 +17,17 @@
  */
 package org.quelea.windows.main;
 
-import java.awt.*;
-import java.awt.event.*;
+import org.quelea.windows.main.actionlisteners.RemoveSongScheduleActionListener;
+import java.awt.AWTEvent;
+import java.awt.BorderLayout;
+import java.awt.Point;
+import java.awt.Rectangle;
+import java.awt.Toolkit;
+import java.awt.event.AWTEventListener;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import javax.swing.event.ListDataEvent;
@@ -26,11 +35,8 @@ import javax.swing.event.ListDataListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import org.quelea.Application;
-import org.quelea.displayable.TextDisplayable;
 import org.quelea.languages.LabelGrabber;
 import org.quelea.utils.Utils;
-import org.quelea.windows.main.actionlisteners.EditSongScheduleActionListener;
-import org.quelea.windows.main.actionlisteners.RemoveScheduleItemActionListener;
 
 /**
  * The panel displaying the schedule / order of service. Items from here are
@@ -43,7 +49,6 @@ public class SchedulePanel extends JPanel {
 
     private final ScheduleList scheduleList;
     private final JButton removeButton;
-    private final JButton editButton;
     private final JButton upButton;
     private final JButton downButton;
     private final JButton themeButton;
@@ -90,12 +95,12 @@ public class SchedulePanel extends JPanel {
             @Override
             public void eventDispatched(AWTEvent event) {
                 MouseEvent mouseEvent = (MouseEvent) event;
-                if (mouseEvent.getClickCount() > 0) {
+                if(mouseEvent.getClickCount() > 0) {
                     Rectangle bounds = Application.get().getMainWindow().getBounds();
-                    if (bounds.contains(new Point(mouseEvent.getXOnScreen(), mouseEvent.getYOnScreen()))) {
+                    if(bounds.contains(new Point(mouseEvent.getXOnScreen(), mouseEvent.getYOnScreen()))) {
                         Rectangle popupBounds = themeMenu.getBounds();
-                        if (!popupBounds.contains(new Point(mouseEvent.getXOnScreen(), mouseEvent.getYOnScreen()))) {
-                            if (event.getSource() != themeButton) {
+                        if(!popupBounds.contains(new Point(mouseEvent.getXOnScreen(), mouseEvent.getYOnScreen()))) {
+                            if(event.getSource() != themeButton) {
                                 themeMenu.setVisible(false);
                             }
                         }
@@ -103,9 +108,10 @@ public class SchedulePanel extends JPanel {
                 }
             }
         }, AWTEvent.MOUSE_EVENT_MASK);
-        if (UIManager.getLookAndFeel().getName().equalsIgnoreCase("Nimbus")) {
+        if(UIManager.getLookAndFeel().getName().equalsIgnoreCase("Nimbus")) {
             themeButton = new JButton("lasdasd", Utils.getImageIcon("icons/settings.png", 16, 16)); //TODO: Fudge positioning
-        } else {
+        }
+        else {
             themeButton = new JButton(Utils.getImageIcon("icons/settings.png", 16, 16));
         }
         themeButton.addMouseListener(new MouseAdapter() {
@@ -130,13 +136,7 @@ public class SchedulePanel extends JPanel {
         removeButton.setToolTipText(LabelGrabber.INSTANCE.getLabel("remove.song.schedule.tooltip"));
         removeButton.setRequestFocusEnabled(false);
         removeButton.setEnabled(false);
-        removeButton.addActionListener(new RemoveScheduleItemActionListener());
-
-        editButton = new JButton(Utils.getImageIcon("icons/edit32.png", 16, 16));
-        editButton.setToolTipText(LabelGrabber.INSTANCE.getLabel("edit.song.button.tooltip"));
-        editButton.setRequestFocusEnabled(false);
-        editButton.setEnabled(false);
-        editButton.addActionListener(new EditSongScheduleActionListener());
+        removeButton.addActionListener(new RemoveSongScheduleActionListener());
 
         upButton = new JButton(Utils.getImageIcon("icons/up.png"));
         upButton.setToolTipText(LabelGrabber.INSTANCE.getLabel("move.up.schedule.tooltip"));
@@ -163,18 +163,13 @@ public class SchedulePanel extends JPanel {
         scheduleList.addListSelectionListener(new ListSelectionListener() {
 
             public void valueChanged(ListSelectionEvent e) {
-                if (scheduleList.getSelectedIndex() == -1) {
+                if(scheduleList.getSelectedIndex() == -1) {
                     removeButton.setEnabled(false);
-                    editButton.setEnabled(false);
                     upButton.setEnabled(false);
                     downButton.setEnabled(false);
-                } else {
+                }
+                else {
                     removeButton.setEnabled(true);
-                    if (scheduleList.getSelectedValue() instanceof TextDisplayable) {
-                        editButton.setEnabled(true);
-                    } else {
-                        editButton.setEnabled(false);
-                    }
                     upButton.setEnabled(true);
                     downButton.setEnabled(true);
                 }
@@ -188,7 +183,6 @@ public class SchedulePanel extends JPanel {
         header.add(themeButton);
 
         toolbar.add(removeButton);
-        toolbar.add(editButton);
         toolbar.add(upButton);
         toolbar.add(downButton);
 

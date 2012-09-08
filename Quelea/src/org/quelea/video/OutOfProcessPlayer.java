@@ -21,19 +21,12 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import uk.co.caprica.vlcj.player.MediaPlayer;
-import uk.co.caprica.vlcj.player.MediaPlayerFactory;
-import uk.co.caprica.vlcj.player.list.MediaList;
-import uk.co.caprica.vlcj.player.list.MediaListPlayer;
-import uk.co.caprica.vlcj.player.list.MediaListPlayerMode;
 
 /**
  * Sits out of process so as not to crash the primary VM.
  * @author Michael
  */
 public abstract class OutOfProcessPlayer {
-    
-    private MediaListPlayer listPlayer = new MediaPlayerFactory().newMediaListPlayer();
-    private MediaList list = new MediaPlayerFactory().newMediaList();
 
     /**
      * Start the main loop reading from the standard input stream and writing
@@ -49,32 +42,9 @@ public abstract class OutOfProcessPlayer {
 
         //Process the input - I know this isn't very OO but it works for now...
         while ((inputLine = in.readLine()) != null) {
-            if (inputLine.startsWith("openloop ")) {
-                mediaPlayer.stop();
-                listPlayer.setMediaPlayer(mediaPlayer);
-                inputLine = inputLine.substring("openloop ".length());
-                int pos = inputLine.indexOf(' ');
-                String dimensions = inputLine.substring(0, pos);
-                inputLine = inputLine.substring(pos+1);
-                for(int i=0 ; i<list.size() ; i++) {
-                    list.removeMedia(i);
-                }
-                list.addMedia(inputLine);
-                listPlayer.setMediaList(list);
-                listPlayer.setMode(MediaListPlayerMode.LOOP);
-                mediaPlayer.prepareMedia(inputLine, getPrepareOptions());
-                mediaPlayer.setAspectRatio(dimensions+"+0+0");
-                mediaPlayer.setCropGeometry(dimensions+"+0+0");
-            }
-            else if (inputLine.startsWith("open ")) {
-                mediaPlayer.stop();
+            if (inputLine.startsWith("open ")) {
                 inputLine = inputLine.substring("open ".length());
                 mediaPlayer.prepareMedia(inputLine, getPrepareOptions());
-            }
-            else if (inputLine.startsWith("changesize ")) {
-                inputLine = inputLine.substring("changesize ".length());
-                mediaPlayer.setCropGeometry(inputLine+"+0+0");
-                mediaPlayer.setAspectRatio(inputLine+"+0+0");
             }
             else if (inputLine.equalsIgnoreCase("play")) {
                 mediaPlayer.play();
@@ -116,7 +86,7 @@ public abstract class OutOfProcessPlayer {
                 System.exit(0);
             }
             else {
-                System.out.println("Unknown command: '" + inputLine + "'");
+                System.out.println("unknown command: ." + inputLine + ".");
             }
         }
     }

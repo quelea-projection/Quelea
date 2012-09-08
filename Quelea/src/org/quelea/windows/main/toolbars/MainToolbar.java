@@ -1,7 +1,7 @@
 /*
  * This file is part of Quelea, free projection software for churches.
  * 
- * Copyright (C) 2012 Michael Berry and Ben Goodwin
+ * Copyright (C) 2012 Michael Berry
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,27 +18,16 @@
  */
 package org.quelea.windows.main.toolbars;
 
-import javax.swing.Box;
 import javax.swing.JButton;
 import javax.swing.JToolBar;
 import org.quelea.languages.LabelGrabber;
 import org.quelea.utils.Utils;
-import org.quelea.windows.main.actionlisteners.AddAudioActionListener;
-import org.quelea.windows.main.actionlisteners.AddDVDActionListener;
-import org.quelea.windows.main.actionlisteners.AddPowerpointActionListener;
-import org.quelea.windows.main.actionlisteners.AddVideoActionListener;
-import org.quelea.windows.main.actionlisteners.NewScheduleActionListener;
-import org.quelea.windows.main.actionlisteners.NewSongActionListener;
-import org.quelea.windows.main.actionlisteners.OpenScheduleActionListener;
-import org.quelea.windows.main.actionlisteners.PrintScheduleActionListener;
-import org.quelea.windows.main.actionlisteners.SaveScheduleActionListener;
-import org.quelea.windows.main.actionlisteners.ShowNoticesActionListener;
-import org.quelea.windows.main.actionlisteners.ViewTagsActionListener;
+import org.quelea.windows.main.actionlisteners.*;
 
 /**
  * Quelea's main toolbar.
  *
- * @author Michael + Ben
+ * @author Michael
  */
 public class MainToolbar extends JToolBar {
 
@@ -52,8 +41,6 @@ public class MainToolbar extends JToolBar {
     private JButton addDVDButton;
     private JButton manageNoticesButton;
     private JButton manageTagsButton;
-    private JButton addAudioButton;
-    private AudioToolbar audioToolbar;
 
     /**
      * Create the toolbar.
@@ -99,11 +86,6 @@ public class MainToolbar extends JToolBar {
         addVideoButton.setToolTipText(LabelGrabber.INSTANCE.getLabel("add.video.tooltip"));
         addVideoButton.addActionListener(new AddVideoActionListener());
         add(addVideoButton);
-        
-        addAudioButton = new JButton(Utils.getImageIcon("icons/audio30.png", 24, 24));
-        addAudioButton.setToolTipText(LabelGrabber.INSTANCE.getLabel("add.audio.tooltip"));
-        addAudioButton.addActionListener(new AddAudioActionListener());
-        add(addAudioButton);
 
         addDVDButton = new JButton(Utils.getImageIcon("icons/dvd.png", 24, 24));
         addDVDButton.setToolTipText(LabelGrabber.INSTANCE.getLabel("add.dvd.tooltip"));
@@ -121,18 +103,6 @@ public class MainToolbar extends JToolBar {
         manageNoticesButton.setToolTipText(LabelGrabber.INSTANCE.getLabel("manage.notices.tooltip"));
         manageNoticesButton.addActionListener(new ShowNoticesActionListener());
         add(manageNoticesButton);
-        
-        add(Box.createHorizontalGlue());
-        audioToolbar = new AudioToolbar();
-        add(audioToolbar);
-    }
 
-    /**
-     * Get the audio toolbar on this main toolbar.
-     * @return the audio toolbar.
-     */
-    public AudioToolbar getAudioToolbar() {
-        return audioToolbar;
     }
-    
 }

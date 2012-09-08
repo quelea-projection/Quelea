@@ -29,7 +29,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
-import org.quelea.sound.AudioTrack;
 
 /**
  * A displayable passage from the bible.
@@ -41,7 +40,6 @@ public class BiblePassage implements TextDisplayable {
     private String[] smallText;
     private List<TextSection> textSections;
     private BibleVerse[] verses;
-    private AudioTrack track;
 
     /**
      * Create a new bible passage.
@@ -189,15 +187,5 @@ public class BiblePassage implements TextDisplayable {
     @Override
     public void dispose() {
         //Nothing needed here.
-    }
-
-    @Override
-    public void setAudio(AudioTrack track) {
-        this.track = track;
-    }
-
-    @Override
-    public AudioTrack getAudio() {
-        return track;
     }
 }

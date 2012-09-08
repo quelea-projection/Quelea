@@ -284,6 +284,7 @@ public class OOPresentation {
     public void goForward() {
         if(controller != null && controller.getNextSlideIndex() != -1) {
             controller.gotoNextEffect();
+            Utils.sleep(50);
         }
     }
 
@@ -293,6 +294,7 @@ public class OOPresentation {
     public void goBack() {
         if(controller != null) {
             controller.gotoPreviousEffect();
+            Utils.sleep(50);
         }
     }
 
