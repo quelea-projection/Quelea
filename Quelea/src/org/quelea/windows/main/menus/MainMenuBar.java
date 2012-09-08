@@ -49,12 +49,4 @@ public class MainMenuBar extends JMenuBar {
         add(helpMenu);
     }
     
-    public HelpMenu getHelpMenu() {
-        return helpMenu;
-    }
-    
-    public ToolsMenu getToolsMenu() {
-        return toolsMenu;
-    }
-    
 }

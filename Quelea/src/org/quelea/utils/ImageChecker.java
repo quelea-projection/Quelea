@@ -66,7 +66,7 @@ public class ImageChecker {
         System.out.println("\nChecking images:");
         List<String> badFileNames = new ArrayList<>();
         for(File file : imageDir.listFiles()) {
-            if(new ImageFileTypeChecker().isType(file)) {
+            if(Utils.fileIsImage(file)) {
                 boolean thisok = true;
                 BufferedImage image = Utils.getImage(file.getAbsolutePath());
                 if(image == null) {

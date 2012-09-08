@@ -23,16 +23,14 @@ import java.io.File;
 import org.quelea.utils.Utils;
 
 /**
- * A theme for displaying some lyrics on screen. Currently consists of a font
- * and a background.
- *
+ * A theme for displaying some lyrics on screen. Currently consists of a font and a background.
  * @author Michael
  */
 public class Theme {
 
     public static final Font DEFAULT_FONT = new Font("SansSerif", Font.BOLD, 72);
     public static final Color DEFAULT_FONT_COLOR = Color.WHITE;
-    public static final Background DEFAULT_BACKGROUND = new ColourBackground(Color.BLACK);
+    public static final Background DEFAULT_BACKGROUND = new Background(Color.BLACK);
     public static final Theme DEFAULT_THEME = new Theme(DEFAULT_FONT, DEFAULT_FONT_COLOR, DEFAULT_BACKGROUND);
     private final Font font;
     private final Color fontColor;
@@ -42,9 +40,8 @@ public class Theme {
 
     /**
      * Create a new theme with a specified font, font colour and background.
-     *
-     * @param font the font to use for the theme.
-     * @param fontColor the font colour to use for the theme.
+     * @param font       the font to use for the theme.
+     * @param fontColor  the font colour to use for the theme.
      * @param background the background to use for the page.
      */
     public Theme(Font font, Color fontColor, Background background) {
@@ -56,7 +53,6 @@ public class Theme {
 
     /**
      * Get the file associated with this theme.
-     *
      * @return the theme file, or null if one hasn't been set.
      */
     public File getFile() {
@@ -65,7 +61,6 @@ public class Theme {
 
     /**
      * Set the file associated with this theme.
-     *
      * @param file the file to set as the theme file.
      */
     public void setFile(File file) {
@@ -74,7 +69,6 @@ public class Theme {
 
     /**
      * Get the name of the theme.
-     *
      * @return the name of the theme.
      */
     public String getThemeName() {
@@ -83,7 +77,6 @@ public class Theme {
 
     /**
      * Set the theme name.
-     *
      * @param themeName the theme name.
      */
     public void setThemeName(String themeName) {
@@ -92,7 +85,6 @@ public class Theme {
 
     /**
      * Get the background of the theme.
-     *
      * @return the theme background.
      */
     public Background getBackground() {
@@ -101,7 +93,6 @@ public class Theme {
 
     /**
      * Get the font of the theme.
-     *
      * @return the theme font.
      */
     public Font getFont() {
@@ -110,7 +101,6 @@ public class Theme {
 
     /**
      * Get the colour of the font.
-     *
      * @return the theme font colour.
      */
     public Color getFontColor() {
@@ -119,26 +109,25 @@ public class Theme {
 
     /**
      * Determine if this theme is equal to another object.
-     *
      * @param obj the other object.
      * @return true if the two objects are meaningfully equal, false otherwise.
      */
     @Override
     public boolean equals(Object obj) {
-        if(obj == null) {
+        if (obj == null) {
             return false;
         }
-        if(getClass() != obj.getClass()) {
+        if (getClass() != obj.getClass()) {
             return false;
         }
         final Theme other = (Theme) obj;
-        if(this.font != other.font && (this.font == null || !this.font.equals(other.font))) {
+        if (this.font != other.font && (this.font == null || !this.font.equals(other.font))) {
             return false;
         }
-        if(this.fontColor != other.fontColor && (this.fontColor == null || !this.fontColor.equals(other.fontColor))) {
+        if (this.fontColor != other.fontColor && (this.fontColor == null || !this.fontColor.equals(other.fontColor))) {
             return false;
         }
-        if(this.background != other.background && (this.background == null || !this.background.equals(other.background))) {
+        if (this.background != other.background && (this.background == null || !this.background.equals(other.background))) {
             return false;
         }
         return true;
@@ -146,7 +135,6 @@ public class Theme {
 
     /**
      * Determine a hashcode for this theme.
-     *
      * @return the theme's hashcode.
      */
     @Override
@@ -160,7 +148,6 @@ public class Theme {
 
     /**
      * Get a string representation of this theme for storing in the database.
-     *
      * @return the string to store in the database.
      */
     public String toDBString() {
@@ -169,22 +156,25 @@ public class Theme {
         ret.append("$fontbold:").append(font.isBold());
         ret.append("$fontitalic:").append(font.isItalic());
         ret.append("$fontcolour:").append(fontColor.toString());
-        if(!themeName.isEmpty()) {
+        if (!themeName.isEmpty()) {
             ret.append("$themename:").append(themeName);
         }
-        ret.append(background.toDBString());
+        if (background.isColour()) {
+            ret.append("$backgroundcolour:").append(background.getColour());
+        }
+        else {
+            ret.append("$backgroundimage:").append(background.getImageLocation());
+        }
         return ret.toString();
     }
 
     /**
      * Get a theme from a string.
-     *
      * @param s the string to parse.
-     * @return the theme parsed from the string, or null if a parsing error
-     * occurs.
+     * @return the theme parsed from the string, or null if a parsing error occurs.
      */
     public static Theme parseDBString(String s) {
-        if(s == null || s.isEmpty()) {
+        if (s == null || s.isEmpty()) {
             return Theme.DEFAULT_THEME;
         }
         String fontname = "";
@@ -193,59 +183,49 @@ public class Theme {
         String fontcolour = "";
         String backgroundcolour = "";
         String backgroundimage = "";
-        String backgroundvideo = "";
         String themeName = "";
 
-        for(String part : s.split("\\$")) {
-            if(!part.contains(":")) {
+        for (String part : s.split("\\$")) {
+            if (!part.contains(":")) {
                 continue;
             }
             String[] parts = part.split(":");
-            if(parts[0].equalsIgnoreCase("fontname")) {
+            if (parts[0].equalsIgnoreCase("fontname")) {
                 fontname = parts[1];
             }
-            else if(parts[0].equalsIgnoreCase("fontbold")) {
+            else if (parts[0].equalsIgnoreCase("fontbold")) {
                 fontbold = Boolean.parseBoolean(parts[1]);
             }
-            else if(parts[0].equalsIgnoreCase("fontitalic")) {
+            else if (parts[0].equalsIgnoreCase("fontitalic")) {
                 fontitalic = Boolean.parseBoolean(parts[1]);
             }
-            else if(parts[0].equalsIgnoreCase("fontcolour")) {
+            else if (parts[0].equalsIgnoreCase("fontcolour")) {
                 fontcolour = parts[1];
             }
-            else if(parts[0].equalsIgnoreCase("backgroundcolour")) {
+            else if (parts[0].equalsIgnoreCase("backgroundcolour")) {
                 backgroundcolour = parts[1];
             }
-            else if(parts[0].equalsIgnoreCase("backgroundimage")) {
+            else if (parts[0].equalsIgnoreCase("backgroundimage")) {
                 backgroundimage = parts[1];
             }
-            else if(parts[0].equalsIgnoreCase("backgroundvideo")) {
-                backgroundvideo = parts[1];
-            }
-            else if(parts[0].equalsIgnoreCase("themename")) {
+            else if (parts[0].equalsIgnoreCase("themename")) {
                 themeName = parts[1];
             }
         }
         int fontstyle = 0;
-        if(fontbold) {
+        if (fontbold) {
             fontstyle |= Font.BOLD;
         }
-        if(fontitalic) {
+        if (fontitalic) {
             fontstyle |= Font.ITALIC;
         }
         Font font = new Font(fontname, fontstyle, 72);
         Background background;
-        if(backgroundcolour.isEmpty() && backgroundvideo.isEmpty()) {
-            //image
-            background = new ImageBackground(backgroundimage, null);
-        }
-        else if(backgroundcolour.isEmpty()) {
-            //video
-            background = new VideoBackground(backgroundvideo);
+        if (backgroundcolour.isEmpty()) {
+            background = new Background(backgroundimage, null);
         }
         else {
-            //colour
-            background = new ColourBackground(Utils.parseColour(backgroundcolour));
+            background = new Background(Utils.parseColour(backgroundcolour));
         }
         Theme ret = new Theme(font, Utils.parseColour(fontcolour), background);
         ret.themeName = themeName;

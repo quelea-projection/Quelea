@@ -27,7 +27,6 @@ import javax.swing.Icon;
 import org.quelea.powerpoint.OOPresentation;
 import org.quelea.powerpoint.Presentation;
 import org.quelea.powerpoint.PresentationFactory;
-import org.quelea.sound.AudioTrack;
 import org.quelea.utils.LoggerUtils;
 import org.quelea.utils.Utils;
 import org.w3c.dom.Node;
@@ -42,7 +41,6 @@ public class PresentationDisplayable implements Displayable {
     private final File file;
     private final Presentation presentation;
     private OOPresentation ooPresentation;
-    private AudioTrack track;
 
     /**
      * Create a new presentation displayable
@@ -58,6 +56,7 @@ public class PresentationDisplayable implements Displayable {
             ooPresentation = new OOPresentation(file.getAbsolutePath());
         }
         catch (Exception ex) {
+            LOGGER.log(Level.WARNING, "Couldn't create OO presentation", ex);
             ooPresentation = null;
         }
     }
@@ -160,15 +159,5 @@ public class PresentationDisplayable implements Displayable {
         if(ooPresentation!=null) {
             ooPresentation.dispose();
         }
-    }
-    
-    @Override
-    public void setAudio(AudioTrack track) {
-        this.track = track;
-    }
-
-    @Override
-    public AudioTrack getAudio() {
-        return track;
     }
 }

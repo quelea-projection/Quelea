@@ -27,7 +27,6 @@ import org.quelea.utils.PropertyPanel;
 import org.quelea.utils.QueleaProperties;
 import org.quelea.utils.Utils;
 import org.quelea.windows.main.LyricWindow;
-import org.quelea.windows.main.OverlayLyricWindow;
 import org.quelea.windows.main.MainWindow;
 
 /**

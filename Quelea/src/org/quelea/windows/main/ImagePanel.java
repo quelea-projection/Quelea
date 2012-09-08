@@ -22,11 +22,8 @@ import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.util.HashSet;
-import java.util.Set;
-import javax.swing.JLabel;
 import javax.swing.JPanel;
-import org.quelea.Application;
-import org.quelea.ImageBackground;
+import org.quelea.Background;
 import org.quelea.Theme;
 import org.quelea.displayable.ImageDisplayable;
 
@@ -49,8 +46,8 @@ public class ImagePanel extends ContainedPanel {
         setLayout(new BorderLayout());
         containerPanel.setLayout(new GridBagLayout());
         containerPanel.add(canvas, new GridBagConstraints());
-        canvas.setPreferredSize(new Dimension(200, 200));
         add(containerPanel, BorderLayout.CENTER);
+        canvas.setPreferredSize(new Dimension(200, 200));
     }
 
     @Override
@@ -71,7 +68,8 @@ public class ImagePanel extends ContainedPanel {
      * @param displayable the image displayable.
      */
     public void showDisplayable(ImageDisplayable displayable) {
-        Theme theme = new Theme(null, null, new ImageBackground(displayable.getFile().getAbsolutePath(), displayable.getOriginalImage()));
+//        canvas.setPreferredSize(new Dimension(container.getWidth(), container.getWidth()));
+        Theme theme = new Theme(null, null, new Background(displayable.getFile().getAbsolutePath(), displayable.getOriginalImage()));
         updateCanvases(theme);
     }
 
@@ -82,7 +80,7 @@ public class ImagePanel extends ContainedPanel {
     private void updateCanvases(Theme theme) {
         canvas.setTheme(theme);
         canvas.eraseText();
-        Set<LyricCanvas> canvases = new HashSet<>();
+        HashSet<LyricCanvas> canvases = new HashSet<>();
         canvases.addAll(container.getCanvases());
         for (LyricCanvas lCanvas : canvases) {
             lCanvas.setTheme(theme);

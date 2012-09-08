@@ -89,7 +89,7 @@ public final class Utils {
         try {
             Thread.sleep(millis);
         }
-        catch (InterruptedException ex) {
+        catch(InterruptedException ex) {
             //Nothing
         }
     }
@@ -299,15 +299,7 @@ public final class Utils {
     public static boolean isFrameOnScreen(JFrame frame, int monitorNum) {
         GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
         final GraphicsDevice[] gds = ge.getScreenDevices();
-        Rectangle bounds = frame.getBounds();
-        //TODO: Bit of a fudge for maximised state
-        if(frame.getExtendedState() == JFrame.MAXIMIZED_BOTH) {
-            bounds.x += 10;
-            bounds.y += 10;
-            bounds.width -= 20;
-            bounds.height -= 20;
-        }
-        return gds[monitorNum].getDefaultConfiguration().getBounds().contains(bounds);
+        return gds[monitorNum].getDefaultConfiguration().getBounds().contains(frame.getBounds());
     }
 
     /**
@@ -448,7 +440,7 @@ public final class Utils {
      * if we can't get the text content for some reason.
      */
     public static synchronized String getTextFromFile(String fileName, String errorText) {
-        try (BufferedReader reader = new BufferedReader(new FileReader(fileName))) {
+        try(BufferedReader reader = new BufferedReader(new FileReader(fileName))) {
             StringBuilder content = new StringBuilder();
             String line;
             while((line = reader.readLine()) != null) {
@@ -456,7 +448,7 @@ public final class Utils {
             }
             return content.toString();
         }
-        catch (IOException ex) {
+        catch(IOException ex) {
             LOGGER.log(Level.WARNING, "Couldn't get the contents of " + fileName, ex);
             return errorText;
         }
@@ -512,8 +504,7 @@ public final class Utils {
      */
     public static BufferedImage getImage(String location, int width, int height) {
         try {
-            File file = new File(location);
-            BufferedImage image = ImageIO.read(file);
+            BufferedImage image = ImageIO.read(new File(location));
             if(width > 0 && height > 0) {
                 return resizeImage(image, width, height);
             }
@@ -521,7 +512,7 @@ public final class Utils {
                 return image;
             }
         }
-        catch (IOException ex) {
+        catch(IOException ex) {
             LOGGER.log(Level.WARNING, "Couldn't get image: " + location, ex);
             return null;
         }
@@ -559,6 +550,26 @@ public final class Utils {
         BufferedImage ret = new BufferedImage(icon.getIconWidth(), icon.getIconHeight(), BufferedImage.TYPE_INT_RGB);
         icon.paintIcon(new JLabel(), ret.createGraphics(), 0, 0);
         return ret;
+    }
+
+    /**
+     * Determine whether a file is an image file.
+     *
+     * @param file the file to check.
+     * @return true if the file is an image, false otherwise.
+     */
+    public static boolean fileIsImage(File file) {
+        if(file.isDirectory() && !file.isHidden()) {
+            return true;
+        }
+        else {
+            return hasExtension(file, "png")
+                    ||hasExtension(file, "tif")
+                    ||hasExtension(file, "jpg")
+                    ||hasExtension(file, "jpeg")
+                    ||hasExtension(file, "gif")
+                    ||hasExtension(file, "bmp");
+        }
     }
 
     /**
@@ -621,9 +632,6 @@ public final class Utils {
      * @return the colour.
      */
     public static Color parseColour(String colour) {
-        if(colour == null || colour.isEmpty()) {
-            return null;
-        }
         colour = colour.substring(colour.indexOf('[') + 1, colour.indexOf(']'));
         String[] parts = colour.split(",");
         int red = Integer.parseInt(parts[0].split("=")[1]);

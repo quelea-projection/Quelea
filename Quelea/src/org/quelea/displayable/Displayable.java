@@ -20,7 +20,6 @@ package org.quelea.displayable;
 import java.io.File;
 import java.util.Collection;
 import javax.swing.Icon;
-import org.quelea.sound.AudioTrack;
 
 /**
  * An item such as a song that can be displayed on the projection screen.
@@ -33,19 +32,6 @@ public interface Displayable {
      * @return true if it can be cleared, false otherwise.
      */
     boolean supportClear();
-    
-    /**
-     * Set the audio to accompany this displayable when it's being shown.
-     * @param path the path to the accompanying audio.
-     */
-    void setAudio(AudioTrack path);
-    
-    /**
-     * Get the path to the audio file to be used when this displayable is 
-     * being shown.
-     * @return the path to the accompanying audio.
-     */
-    AudioTrack getAudio();
 
     /**
      * Get the XML describing this displayable.
