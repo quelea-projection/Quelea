@@ -18,60 +18,49 @@
  */
 package org.quelea.windows.help;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import javax.swing.*;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
+import javafx.scene.Scene;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.scene.layout.VBox;
+import javafx.stage.Stage;
 import org.quelea.languages.LabelGrabber;
 import org.quelea.utils.QueleaProperties;
-import org.quelea.utils.Utils;
 
 /**
  * Quelea's about Dialog, displaying general features about the program.
- *
+ * <p/>
  * @author Michael
  */
-public class AboutDialog extends JDialog {
-
-    private final JFrame owner;
+public class AboutDialog extends Stage {
 
     /**
      * Create a new about dialog.
-     *
+     * <p/>
      * @param owner the owner of the dialog (should be the main window.)
      */
-    public AboutDialog(JFrame owner) {
-        super(owner, LabelGrabber.INSTANCE.getLabel("help.about.title"));
-        this.owner = owner;
-        setLayout(new BoxLayout(this.getContentPane(), BoxLayout.Y_AXIS));
-        add(new JLabel("<html><h1>Quelea</h1> " + LabelGrabber.INSTANCE.getLabel("help.about.version") + " " + QueleaProperties.VERSION.getVersionString() + "</html>"));
-        add(new JLabel(Utils.getImageIcon("icons/logo.png")));
-        add(new JLabel(" "));
-        add(new JLabel(LabelGrabber.INSTANCE.getLabel("help.about.line1")));
-        add(new JLabel(LabelGrabber.INSTANCE.getLabel("help.about.line2")));
-        add(new JLabel(" "));
-        JButton closeButton = new JButton(LabelGrabber.INSTANCE.getLabel("help.about.close"));
-        closeButton.addActionListener(new ActionListener() {
+    public AboutDialog() {
+        setTitle(LabelGrabber.INSTANCE.getLabel("help.about.title"));
+        VBox layout = new VBox();
+        layout.getChildren().add(new Label("Quelea " + LabelGrabber.INSTANCE.getLabel("help.about.version") + " " + QueleaProperties.VERSION.getVersionString()));
+        layout.getChildren().add(new ImageView(new Image("file:icons/logo.png")));
+        layout.getChildren().add(new Label(" "));
+        layout.getChildren().add(new Label(LabelGrabber.INSTANCE.getLabel("help.about.line1")));
+        layout.getChildren().add(new Label(LabelGrabber.INSTANCE.getLabel("help.about.line2")));
+        layout.getChildren().add(new Label(" "));
+        Button closeButton = new Button(LabelGrabber.INSTANCE.getLabel("help.about.close"));
+        closeButton.setOnAction(new EventHandler<ActionEvent>() {
 
             @Override
-            public void actionPerformed(ActionEvent e) {
-                setVisible(false);
+            public void handle(ActionEvent t) {
+                hide();
             }
         });
-        add(closeButton);
-        pack();
-    }
-
-    /**
-     * When the dialog is made visible, centre it on its owner.
-     *
-     * @param visible true if the dialog should be made visible, false
-     * otherwise.
-     */
-    @Override
-    public void setVisible(boolean visible) {
-        if(visible) {
-            setLocationRelativeTo(owner);
-        }
-        super.setVisible(visible);
+        layout.getChildren().add(closeButton);
+        
+        setScene(new Scene(layout));
     }
 }
