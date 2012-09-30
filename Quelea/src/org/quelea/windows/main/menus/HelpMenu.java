@@ -66,7 +66,7 @@ public class HelpMenu extends JMenu {
 
             @Override
             public void run() {
-                aboutDialog = new AboutDialog(Application.get().getMainWindow());
+                aboutDialog = new AboutDialog();
             }
         });
         
