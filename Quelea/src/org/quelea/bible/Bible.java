@@ -75,15 +75,21 @@ public final class Bible {
                 for (int i = 0; i < list.getLength(); i++) {
                     if (list.item(i).getNodeName().equalsIgnoreCase("xmlbible")
                             || list.item(i).getNodeName().equalsIgnoreCase("bible")) {
-                        return parseXML(list.item(i));
+                        return parseXML(list.item(i), Utils.getFileNameWithoutExtension(file.getName()));
                     }
                 }
+                LOGGER.log(Level.WARNING, "Couldn''t parse the bible {0} because I couldn''t find any <bible> or <xmlbible> root tags :-(", file);
+                return null;
             }
-            return null;
+            else {
+                LOGGER.log(Level.WARNING, "Couldn''t parse the bible {0} because the file doesn''t exist!", file);
+                return null;
+            }
         }
         catch (ParserConfigurationException | SAXException | IOException ex) {
             LOGGER.log(Level.WARNING, "Couldn't parse the bible " + file, ex);
             SwingUtilities.invokeLater(new Runnable() {
+                @Override
                 public void run() {
                     JOptionPane.showMessageDialog(Application.get().getMainWindow(),
                             "Quelea couldn't load the bible contained in " + file.getName() + " beacuse it "
@@ -101,12 +107,16 @@ public final class Bible {
     /**
      * Parse some XML representing this object and return the object it represents.
      * @param node the XML node representing this object.
+     * @param defaultName the name of the bible if none is specified in the XML file.
      * @return the object as defined by the XML.
      */
-    public static Bible parseXML(Node node) {
+    public static Bible parseXML(Node node, String defaultName) {
         String name = "";
         if (node.getAttributes().getNamedItem("biblename") != null) {
             name = node.getAttributes().getNamedItem("biblename").getNodeValue();
+        }
+        else {
+            name = defaultName;
         }
         Bible ret = new Bible(name);
         NodeList list = node.getChildNodes();
@@ -116,11 +126,12 @@ public final class Bible {
             }
             else if (list.item(i).getNodeName().equalsIgnoreCase("biblebook")
                     || list.item(i).getNodeName().equalsIgnoreCase("b")) {
-                BibleBook book =BibleBook.parseXML(list.item(i));
+                BibleBook book =BibleBook.parseXML(list.item(i), i);
                 book.setBible(ret);
                 ret.addBook(book);
             }
         }
+        LOGGER.log(Level.INFO, "Parsed bible: {0}. Contains {1} books.", new Object[]{ret.getName(), ret.getBooks().length});
         return ret;
     }
 
@@ -165,7 +176,12 @@ public final class Bible {
      */
     @Override
     public String toString() {
-        return getName() + " (" + Utils.getAbbreviation(getName()) + ")";
+        String abbrev = Utils.getAbbreviation(getName());
+        StringBuilder ret = new StringBuilder(getName());
+        if(abbrev.length()>1) {
+            ret.append(" (").append(abbrev).append(")");
+        }
+        return ret.toString();
     }
 
     /**

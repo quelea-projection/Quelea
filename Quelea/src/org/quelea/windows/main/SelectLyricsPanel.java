@@ -53,7 +53,7 @@ public class SelectLyricsPanel extends ContainedPanel {
         setPreferredSize(new Dimension(300, 600));
         setLayout(new BorderLayout());
         JSplitPane splitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT);
-        splitPane.setResizeWeight(0.6);
+        splitPane.setResizeWeight(0.75);
         lyricsList = new SelectLyricsList();
         previewCanvas = new LyricCanvas(false, false);
         splitPane.add(new JScrollPane(lyricsList) {
