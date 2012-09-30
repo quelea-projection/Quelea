@@ -60,7 +60,7 @@ public class ImageDisplayable implements Displayable {
         }
         catch (IOException ex) {
             originalImage = null;
-            LOGGER.log(Level.WARNING, "Couldn't create image displayable", ex);
+            LOGGER.log(Level.WARNING, "Couldn't create image displayable from " + file.getAbsolutePath(), ex);
         }
     }
 

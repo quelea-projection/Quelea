@@ -113,12 +113,16 @@ public final class BibleBook {
     /**
      * Parse some XML representing this object and return the object it represents.
      * @param node the XML node representing this object.
+     * @param defaultBookNum the default book number if none is available on the XML file.
      * @return the object as defined by the XML.
      */
-    public static BibleBook parseXML(Node node) {
+    public static BibleBook parseXML(Node node, int defaultBookNum) {
         BibleBook ret = new BibleBook();
         if (node.getAttributes().getNamedItem("bnumber") != null) {
             ret.bookNumber = Integer.parseInt(node.getAttributes().getNamedItem("bnumber").getNodeValue());
+        }
+        else {
+            ret.bookNumber = defaultBookNum;
         }
         if (node.getAttributes().getNamedItem("bname") != null) {
             ret.bookName = node.getAttributes().getNamedItem("bname").getNodeValue();
@@ -135,7 +139,7 @@ public final class BibleBook {
         for (int i = 0; i < list.getLength(); i++) {
             if (list.item(i).getNodeName().equalsIgnoreCase("chapter")
                     || list.item(i).getNodeName().equalsIgnoreCase("c")) {
-                BibleChapter chapter = BibleChapter.parseXML(list.item(i));
+                BibleChapter chapter = BibleChapter.parseXML(list.item(i), i);
                 chapter.setBook(ret);
                 ret.addChapter(chapter);
             }

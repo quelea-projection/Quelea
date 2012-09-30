@@ -108,6 +108,7 @@ public class OptionsBiblePanel extends JPanel implements PropertyPanel, BibleCha
     public void updateBibles() {
         SwingUtilities.invokeLater(new Runnable() {
 
+            @Override
             public void run() {
                 DefaultComboBoxModel<Bible> model = ((DefaultComboBoxModel<Bible>) defaultBibleComboBox.getModel());
                 model.removeAllElements();
@@ -121,6 +122,7 @@ public class OptionsBiblePanel extends JPanel implements PropertyPanel, BibleCha
     /**
      * @inheritDoc
      */
+    @Override
     public final void readProperties() {
         QueleaProperties props = QueleaProperties.get();
         String selectedBibleName = props.getDefaultBible();
@@ -136,6 +138,7 @@ public class OptionsBiblePanel extends JPanel implements PropertyPanel, BibleCha
     /**
      * @inheritDoc
      */
+    @Override
     public void setProperties() {
         QueleaProperties props = QueleaProperties.get();
         Bible bible = (Bible) getDefaultBibleBox().getSelectedItem();

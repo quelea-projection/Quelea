@@ -1,0 +1,12 @@
+quelea (0.5.2) stable; urgency=normal
+ 
+  * Better powerpoint support, including support for the new PPTX format
+  * Fix "edit song" -> cancel clearing text bug
+  * Fix flickering background
+  * Fix clear screen options
+  * Fix file filter on export menu
+  * Change a couple of icons to make them more usable
+  * Anti-alias small text as well as large
+  * Various other bug fixes
+ 
+ -- Michael Berry <michael@quelea.org>  Sunday, 12 Mar 2012 00:00:00 +0000

@@ -2,7 +2,7 @@
 ; SEE THE DOCUMENTATION FOR DETAILS ON CREATING INNO SETUP SCRIPT FILES!
 
 #define MyAppName "Quelea"
-#define MyAppVersion "0.6"
+#define MyAppVersion "0.5.3"
 #define MyAppPublisher "Michael Berry"
 #define MyAppURL "http://www.quelea.org"
 #define MyAppExeName "Quelea.exe"

@@ -27,7 +27,7 @@ import java.util.List;
 
 /**
  * A chapter in the bible.
- *
+ * <p/>
  * @author Michael
  */
 public final class BibleChapter {
@@ -41,7 +41,7 @@ public final class BibleChapter {
 
     /**
      * Create a new bible chapter.
-     *
+     * <p/>
      * @param num the chapter number (or -1 if it's unknown.)
      */
     private BibleChapter(int num) {
@@ -51,7 +51,7 @@ public final class BibleChapter {
 
     /**
      * Set the bible book this chapter is part of.
-     *
+     * <p/>
      * @param book the book this chapter is part of.
      */
     void setBook(BibleBook book) {
@@ -60,7 +60,7 @@ public final class BibleChapter {
 
     /**
      * Get the book this chapter is part of.
-     *
+     * <p/>
      * @return the book this chapter is part of.
      */
     public BibleBook getBook() {
@@ -70,14 +70,22 @@ public final class BibleChapter {
     /**
      * Parse some XML representing this object and return the object it
      * represents.
-     *
+     * <p/>
      * @param node the XML node representing this object.
+     * @param defaultNum the default chapter number if no other information is
+     * available.
      * @return the object as defined by the XML.
      */
-    public static BibleChapter parseXML(Node node) {
+    public static BibleChapter parseXML(Node node, int defaultNum) {
         int num = -1;
         if(node.getAttributes().getNamedItem("cnumber") != null) {
             num = Integer.parseInt(node.getAttributes().getNamedItem("cnumber").getNodeValue());
+        }
+        else if(node.getAttributes().getNamedItem("n") != null) {
+            num = Integer.parseInt(node.getAttributes().getNamedItem("n").getNodeValue());
+        }
+        else {
+            num = defaultNum;
         }
         BibleChapter ret = new BibleChapter(num);
         NodeList list = node.getChildNodes();
@@ -94,7 +102,7 @@ public final class BibleChapter {
 
     /**
      * Generate an XML representation of this chapter.
-     *
+     * <p/>
      * @return an XML representation of this chapter.
      */
     public String toXML() {
@@ -115,7 +123,7 @@ public final class BibleChapter {
 
     /**
      * Add a verse to this chapter.
-     *
+     * <p/>
      * @param verse the verse to add.
      */
     private void addVerse(BibleVerse verse) {
@@ -124,7 +132,7 @@ public final class BibleChapter {
 
     /**
      * Get all the verses in this chapter .
-     *
+     * <p/>
      * @return all the verses in the chapter.
      */
     public BibleVerse[] getVerses() {
@@ -133,7 +141,7 @@ public final class BibleChapter {
 
     /**
      * Get a specific verse from this chapter.
-     *
+     * <p/>
      * @param i the verse number to get.
      * @return the verse at the specified number, or null if it doesn't exist.
      */
@@ -148,7 +156,7 @@ public final class BibleChapter {
 
     /**
      * Get all the text in this chapter as a string.
-     *
+     * <p/>
      * @return all the text in this chapter as a string.
      */
     public String getText() {
@@ -165,7 +173,7 @@ public final class BibleChapter {
 
     /**
      * Get the unique ID for this bible chapter.
-     *
+     * <p/>
      * @return the unique ID for this bible chapter.
      */
     public int getID() {
@@ -174,7 +182,7 @@ public final class BibleChapter {
 
     /**
      * Get the number of this chapter (or -1 if no number has been set.)
-     *
+     * <p/>
      * @return the chapter number.
      */
     public int getNum() {

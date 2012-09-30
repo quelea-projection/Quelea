@@ -121,6 +121,26 @@ public final class Utils {
     public static boolean isLinux() {
         return System.getProperty("os.name").toLowerCase().contains("linux");
     }
+    
+    /**
+     * Get a file name without its extension.
+     * @param nameWithExtension the file name with the extension.
+     * @return the file name without the extension.
+     */
+    public static String getFileNameWithoutExtension(String nameWithExtension) {
+        if(!nameWithExtension.contains(".")) {
+            return nameWithExtension;
+        }
+        String[] parts = nameWithExtension.split("\\.");
+        StringBuilder ret = new StringBuilder();
+        for(int i=0 ; i<parts.length-1 ; i++) {
+            ret.append(parts[i]);
+            if(i!=parts.length-2) {
+                ret.append(".");
+            }
+        }
+        return ret.toString();
+    }
 
     /**
      * Update a song in the background.
@@ -427,7 +447,19 @@ public final class Utils {
      * @return the escaped string.
      */
     public static String escapeXML(String s) {
-        return s.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;").replace("\"", "&quot;").replace("'", "&apos;");
+        return s.replace("&", "&amp;")
+                .replace("<", "&lt;")
+                .replace(">", "&gt;")
+                .replace("\"", "&quot;")
+                .replace("'", "&apos;")
+                .replace("’", "&apos;")
+                /*
+                 * TODO: These last two are there to solve a bug with funny
+                 * characters ending up in the XML file. Still not sure how
+                 * or why, but this does the job for now... Yeah. Bodge.
+                 */
+                .replace(new String(new byte[]{11}), "\n")
+                .replace(new String(new byte[]{-3}), " ");
     }
 
     /**
