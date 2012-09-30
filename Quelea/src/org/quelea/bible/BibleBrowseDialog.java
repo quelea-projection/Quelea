@@ -43,6 +43,7 @@ import org.quelea.utils.Utils;
 
 /**
  * A dialog where the user can browse through the installed bibles.
+ * <p/>
  * @author Michael
  */
 public class BibleBrowseDialog extends JDialog implements BibleChangeListener {
@@ -64,7 +65,6 @@ public class BibleBrowseDialog extends JDialog implements BibleChangeListener {
         bibles = new JComboBox<>(new DefaultComboBoxModel<Bible>());
         bibles.setEditable(false);
         bibles.addActionListener(new ActionListener() {
-
             @Override
             public void actionPerformed(ActionEvent ae) {
                 updateBooks();
@@ -81,7 +81,6 @@ public class BibleBrowseDialog extends JDialog implements BibleChangeListener {
         books = new JList<>(new DefaultListModel<BibleBook>());
         books.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         books.addListSelectionListener(new ListSelectionListener() {
-
             @Override
             public void valueChanged(ListSelectionEvent lse) {
                 BibleBook book = books.getSelectedValue();
@@ -101,19 +100,21 @@ public class BibleBrowseDialog extends JDialog implements BibleChangeListener {
         bibleText.setEditable(false);
         add(new JScrollPane(bibleText), BorderLayout.CENTER);
         updateBibles();
-        setSize(800,600);
+        setSize(800, 600);
     }
-    
+
     /**
      * Set the current selected bible on this dialog.
+     * <p/>
      * @param bible the bible to select.
      */
     public void setBible(Bible bible) {
         bibles.setSelectedItem(bible);
     }
-    
+
     /**
      * Set the current selected book on this dialog.
+     * <p/>
      * @param book the book to select.
      */
     public void setBook(BibleBook book) {
@@ -121,9 +122,10 @@ public class BibleBrowseDialog extends JDialog implements BibleChangeListener {
         DefaultListModel<BibleBook> model = (DefaultListModel<BibleBook>) books.getModel();
         books.setSelectedIndex(model.indexOf(book));
     }
-    
+
     /**
      * Set the current chapter on this dialog.
+     * <p/>
      * @param chapter the chapter to select.
      */
     public void setChapter(BibleChapter chapter) {
@@ -139,10 +141,12 @@ public class BibleBrowseDialog extends JDialog implements BibleChangeListener {
         Bible currentBible = bibles.getItemAt(bibles.getSelectedIndex());
         DefaultListModel<BibleBook> model = (DefaultListModel<BibleBook>) books.getModel();
         model.clear();
-        for(BibleBook book : currentBible.getBooks()) {
-            model.addElement(book);
+        if(currentBible != null) {
+            for(BibleBook book : currentBible.getBooks()) {
+                model.addElement(book);
+            }
+            books.setSelectedIndex(index);
         }
-        books.setSelectedIndex(index);
     }
 
     /**
@@ -156,9 +160,10 @@ public class BibleBrowseDialog extends JDialog implements BibleChangeListener {
             model.addElement(bible);
         }
     }
-    
+
     /**
      * Centre the dialog on the parent before displaying.
+     * <p/>
      * @param visible true if visible, false otherwise.
      */
     @Override
@@ -171,6 +176,7 @@ public class BibleBrowseDialog extends JDialog implements BibleChangeListener {
 
     /**
      * Just for testing.
+     * <p/>
      * @param args command line args (not used.)
      */
     public static void main(String[] args) {

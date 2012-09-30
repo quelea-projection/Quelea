@@ -25,11 +25,14 @@ import java.awt.print.Printable;
 import java.awt.print.PrinterException;
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
+import java.io.BufferedReader;
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.HashSet;
@@ -185,6 +188,9 @@ public class Schedule implements Iterable<Displayable>, Printable {
             final int BUFFER = 2048;
             try {
                 Schedule ret = parseXML(zipFile.getInputStream(zipFile.getEntry("schedule.xml")));
+                if(ret==null) {
+                    return null;
+                }
                 ret.setFile(file);
                 Enumeration<? extends ZipEntry> enumeration = zipFile.entries();
                 while(enumeration.hasMoreElements()) {
@@ -245,9 +251,32 @@ public class Schedule implements Iterable<Displayable>, Printable {
      */
     private static Schedule parseXML(InputStream inputStream) {
         try {
+            /*
+             * TODO: This should solve a problem some people were having with 
+             * entering schedules - though I'm not really sure *why* they're 
+             * having this problem (it seems to be that there's some funny 
+             * characters that end up in the XML file which shouldn't be there.
+             * Character encoding bug perhaps? Oh joy.
+             * 
+             * Start bodge.
+             */
+            BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
+            StringBuilder contentsBuilder = new StringBuilder();
+            String line;
+            while((line=reader.readLine())!=null) {
+                contentsBuilder.append(line).append('\n');
+            }
+            String contents = contentsBuilder.toString();
+            contents = contents.replace(new String(new byte[]{11}), "\n");
+            contents = contents.replace(new String(new byte[]{-3}), " ");
+            InputStream strInputStream = new ByteArrayInputStream(contents.getBytes());
+            /*
+             * End bodge.
+             */
+            
             DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
             DocumentBuilder builder = factory.newDocumentBuilder();
-            Document doc = builder.parse(inputStream);
+            Document doc = builder.parse(strInputStream); //Read from our "bodged" stream.
             NodeList nodes = doc.getFirstChild().getChildNodes();
             Schedule newSchedule = new Schedule();
             for(int i = 0; i < nodes.getLength(); i++) {

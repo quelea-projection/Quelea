@@ -35,7 +35,7 @@ import org.quelea.displayable.TextAlignment;
  */
 public final class QueleaProperties extends Properties {
 
-    public static final Version VERSION = new Version("0.5.2");
+    public static final Version VERSION = new Version("0.5.3");
     private static final QueleaProperties INSTANCE = new QueleaProperties();
 //    private static final Logger LOGGER = LoggerUtils.getLogger();
 
