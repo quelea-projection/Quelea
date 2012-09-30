@@ -27,6 +27,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javafx.application.Platform;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
@@ -52,7 +53,7 @@ public class HelpMenu extends JMenu {
     private final JMenuItem queleaDownload;
     private final JMenuItem updateCheck;
     private final JMenuItem about;
-    private final AboutDialog aboutDialog;
+    private AboutDialog aboutDialog;
 
     /**
      * Create a new help menu
@@ -61,7 +62,13 @@ public class HelpMenu extends JMenu {
         super(LabelGrabber.INSTANCE.getLabel("help.menu"));
         setMnemonic('h');
         
-        aboutDialog = new AboutDialog(Application.get().getMainWindow());
+        Platform.runLater(new Runnable() {
+
+            @Override
+            public void run() {
+                aboutDialog = new AboutDialog(Application.get().getMainWindow());
+            }
+        });
         
         if(Desktop.isDesktopSupported()) {
             queleaSite = new JMenuItem(LabelGrabber.INSTANCE.getLabel("help.menu.website"), Utils.getImageIcon("icons/website.png", 16, 16));
@@ -151,7 +158,13 @@ public class HelpMenu extends JMenu {
 
             @Override
             public void actionPerformed(ActionEvent ae) {
-                aboutDialog.setVisible(true);
+                Platform.runLater(new Runnable() {
+
+                    @Override
+                    public void run() {
+                        aboutDialog.show();
+                    }
+                });
             }
         });
         add(about);

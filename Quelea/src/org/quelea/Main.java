@@ -23,6 +23,7 @@ import java.io.File;
 import java.net.MalformedURLException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javafx.embed.swing.JFXPanel;
 import javax.swing.*;
 import org.quelea.bible.BibleManager;
 import org.quelea.languages.LabelGrabber;
@@ -66,6 +67,9 @@ public final class Main {
 
         final SplashWindow splashWindow = new SplashWindow();
         splashWindow.setVisible(true);
+        
+        //Hack to initialise JavaFX
+        new JFXPanel();
 
         //Needed to stop menus appearing behind video
         JPopupMenu.setDefaultLightWeightPopupEnabled(false);
