@@ -17,37 +17,25 @@
  */
 package org.quelea.windows.main;
 
-import java.awt.BorderLayout;
-import java.awt.Dimension;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.util.HashSet;
-import javax.swing.JPanel;
-import org.quelea.Background;
-import org.quelea.Theme;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.scene.layout.BorderPane;
 import org.quelea.displayable.ImageDisplayable;
 
 /**
  * A panel used in the live / preview panels for displaying images.
  * @author Michael
  */
-public class ImagePanel extends ContainedPanel {
+public class ImagePanel extends BorderPane implements ContainedPanel {
 
-    private JPanel containerPanel = new JPanel();
-    private LyricCanvas canvas = new LyricCanvas(false, false);
-    private LivePreviewPanel container;
+    private ImageView imageView;
 
     /**
      * Create a new image panel.
      * @param container the container this panel is contained within.
      */
-    public ImagePanel(LivePreviewPanel container) {
-        this.container = container;
-        setLayout(new BorderLayout());
-        containerPanel.setLayout(new GridBagLayout());
-        containerPanel.add(canvas, new GridBagConstraints());
-        add(containerPanel, BorderLayout.CENTER);
-        canvas.setPreferredSize(new Dimension(200, 200));
+    public ImagePanel() {
+        imageView = new ImageView();
     }
 
     @Override
@@ -60,7 +48,7 @@ public class ImagePanel extends ContainedPanel {
      */
     @Override
     public void clear() {
-        updateCanvases(null);
+        imageView.setImage(null);
     }
 
     /**
@@ -68,23 +56,13 @@ public class ImagePanel extends ContainedPanel {
      * @param displayable the image displayable.
      */
     public void showDisplayable(ImageDisplayable displayable) {
-//        canvas.setPreferredSize(new Dimension(container.getWidth(), container.getWidth()));
-        Theme theme = new Theme(null, null, new Background(displayable.getFile().getAbsolutePath(), displayable.getOriginalImage()));
-        updateCanvases(theme);
+        Image image = new Image("file:"+displayable.getFile().getAbsolutePath());
+        imageView.setImage(image);
     }
 
-    /**
-     * Update the canvases with the given theme.
-     * @param theme the given theme.
-     */
-    private void updateCanvases(Theme theme) {
-        canvas.setTheme(theme);
-        canvas.eraseText();
-        HashSet<LyricCanvas> canvases = new HashSet<>();
-        canvases.addAll(container.getCanvases());
-        for (LyricCanvas lCanvas : canvases) {
-            lCanvas.setTheme(theme);
-            lCanvas.eraseText();
-        }
+    @Override
+    public int getCurrentIndex() {
+        return 0;
     }
+
 }

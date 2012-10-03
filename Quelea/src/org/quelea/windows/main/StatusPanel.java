@@ -17,31 +17,30 @@
  */
 package org.quelea.windows.main;
 
-import javax.swing.BoxLayout;
-import javax.swing.JButton;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JProgressBar;
-import javax.swing.SwingUtilities;
-import javax.swing.border.EmptyBorder;
-import org.quelea.utils.Utils;
+import javafx.application.Platform;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.control.ProgressBar;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.scene.layout.HBox;
 
 /**
  * A status panel that denotes a background task in Quelea.
- *
+ * <p/>
  * @author Michael
  */
-public class StatusPanel extends JPanel {
+public class StatusPanel extends HBox {
 
-    private JProgressBar progressBar;
-    private JLabel label;
-    private JButton cancelButton;
+    private ProgressBar progressBar;
+    private Label label;
+    private Button cancelButton;
     private StatusPanelGroup group;
     private int index;
 
     /**
      * Create a new status panel.
-     *
+     * <p/>
      * @param group the group this panel is part of.
      * @param labelText the text to put on the label on this panel.
      * @param index the index of this panel on the group.
@@ -49,14 +48,12 @@ public class StatusPanel extends JPanel {
     StatusPanel(StatusPanelGroup group, String labelText, int index) {
         this.group = group;
         this.index = index;
-        label = new JLabel(labelText);
-        progressBar = new JProgressBar();
-        cancelButton = new JButton(Utils.getImageIcon("icons/cross.png", 15, 15));
-        cancelButton.setBorder(new EmptyBorder(0, 0, 0, 0));
-        setLayout(new BoxLayout(this, BoxLayout.X_AXIS));
-        add(label);
-        add(progressBar);
-        add(cancelButton);
+        label = new Label(labelText);
+        progressBar = new ProgressBar();
+        cancelButton = new Button("", new ImageView(new Image("file:icons/cross.png", 15, 15, false, true)));
+        getChildren().add(label);
+        getChildren().add(progressBar);
+        getChildren().add(cancelButton);
     }
 
     /**
@@ -64,8 +61,7 @@ public class StatusPanel extends JPanel {
      * and therefore the panel can be removed.
      */
     public void done() {
-        SwingUtilities.invokeLater(new Runnable() {
-
+        Platform.runLater(new Runnable() {
             @Override
             public void run() {
                 group.removePanel(index);
@@ -75,7 +71,7 @@ public class StatusPanel extends JPanel {
 
     /**
      * Set the label text for this panel.
-     *
+     * <p/>
      * @param text the text on this panel's label.
      */
     public void setLabelText(String text) {
@@ -84,25 +80,25 @@ public class StatusPanel extends JPanel {
 
     /**
      * Get the progress bar associated with this panel.
-     *
+     * <p/>
      * @return the progress bar associated with this panel.
      */
-    public JProgressBar getProgressBar() {
+    public ProgressBar getProgressBar() {
         return progressBar;
     }
 
     /**
      * Get the cancel button on this panel.
-     *
+     * <p/>
      * @return the cancel button on this panel.
      */
-    public JButton getCancelButton() {
+    public Button getCancelButton() {
         return cancelButton;
     }
 
     /**
      * Set whether this panel is active.
-     *
+     * <p/>
      * @param active true if active, false otherwise.
      */
     public void setActive(boolean active) {

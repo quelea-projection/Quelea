@@ -17,82 +17,57 @@
  */
 package org.quelea.windows.library;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.KeyEvent;
-import javax.swing.JMenuItem;
-import javax.swing.JOptionPane;
-import javax.swing.JPopupMenu;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
+import javafx.scene.control.ContextMenu;
+import javafx.scene.control.MenuItem;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import org.quelea.Application;
 import org.quelea.displayable.Song;
 import org.quelea.languages.LabelGrabber;
-import org.quelea.print.Printer;
-import org.quelea.utils.Utils;
+import org.quelea.windows.main.actionlisteners.AddSongActionListener;
+import org.quelea.windows.main.actionlisteners.EditSongDBActionListener;
+import org.quelea.windows.main.actionlisteners.RemoveSongDBActionListener;
 
 /**
  * The popup menu that displays when someone right clicks on a song in the library.
  * @author Michael
  */
-public class LibraryPopupMenu extends JPopupMenu {
+public class LibraryPopupMenu extends ContextMenu {
 
-    private final JMenuItem addToSchedule;
-    private final JMenuItem editDB;
-    private final JMenuItem removeFromDB;
-    private final JMenuItem print;
+    private final MenuItem addToSchedule;
+    private final MenuItem editDB;
+    private final MenuItem removeFromDB;
+    private final MenuItem print;
 
     /**
      * Create and initialise the popup menu.
      */
     public LibraryPopupMenu() {
-        addToSchedule = new JMenuItem(LabelGrabber.INSTANCE.getLabel("library.add.to.schedule.text"), Utils.getImageIcon("icons/add.png", 16, 16));
-        addToSchedule.setMnemonic(KeyEvent.VK_A);
-        editDB = new JMenuItem(LabelGrabber.INSTANCE.getLabel("library.edit.song.text"), Utils.getImageIcon("icons/edit.png", 16, 16));
-        editDB.setMnemonic(KeyEvent.VK_E);
-        removeFromDB = new JMenuItem(LabelGrabber.INSTANCE.getLabel("library.remove.song.text"), Utils.getImageIcon("icons/removedb.png", 16, 16));
-        removeFromDB.setMnemonic(KeyEvent.VK_R);
-        print = new JMenuItem(LabelGrabber.INSTANCE.getLabel("library.print.song.text"), Utils.getImageIcon("icons/fileprint.png", 16, 16));
-        print.setMnemonic(KeyEvent.VK_P);
-
-        print.addActionListener(new ActionListener() {
+        addToSchedule = new MenuItem(LabelGrabber.INSTANCE.getLabel("library.add.to.schedule.text"), new ImageView(new Image("file:icons/add.png", 16, 16, false, true)));
+        addToSchedule.setOnAction(new AddSongActionListener());
+        editDB = new MenuItem(LabelGrabber.INSTANCE.getLabel("library.edit.song.text"), new ImageView(new Image("file:icons/edit.png", 16, 16, false, true)));
+        editDB.setOnAction(new EditSongDBActionListener());
+        removeFromDB = new MenuItem(LabelGrabber.INSTANCE.getLabel("library.remove.song.text"), new ImageView(new Image("file:icons/removedb.png", 16, 16, false, true)));
+        removeFromDB.setOnAction(new RemoveSongDBActionListener());
+        print = new MenuItem(LabelGrabber.INSTANCE.getLabel("library.print.song.text"), new ImageView(new Image("file:icons/fileprint.png", 16, 16, false, true)));
+        print.setOnAction(new EventHandler<ActionEvent>() {
 
             @Override
-            public void actionPerformed(ActionEvent e) {
+            public void handle(ActionEvent t) {
                 Song song = Application.get().getMainWindow().getMainPanel().getLibraryPanel().getLibrarySongPanel().getSongList().getSelectedValue();
-                if (song != null) {
-                    int result = JOptionPane.showConfirmDialog(Application.get().getMainWindow(), LabelGrabber.INSTANCE.getLabel("print.chords.question"), LabelGrabber.INSTANCE.getLabel("printing.options.text"), JOptionPane.YES_NO_OPTION);
-                    song.setPrintChords(result == JOptionPane.YES_OPTION);
-                    Printer.getInstance().print(song);
+                if(song != null) {
+//                    int result = JOptionPane.showConfirmDialog(Application.get().getMainWindow(), LabelGrabber.INSTANCE.getLabel("print.chords.question"), LabelGrabber.INSTANCE.getLabel("printing.options.text"), JOptionPane.YES_NO_OPTION);
+//                    song.setPrintChords(result == JOptionPane.YES_OPTION);
+//                    Printer.getInstance().print(song);
                 }
             }
         });
 
-        add(addToSchedule);
-        add(editDB);
-        add(removeFromDB);
-        add(print);
-    }
-
-    /**
-     * Get the add to schedule button in the popup menu.
-     * @return the add to schedule button.
-     */
-    public JMenuItem getAddToScheduleButton() {
-        return addToSchedule;
-    }
-
-    /**
-     * Get the edit button in the popup menu.
-     * @return the edit button.
-     */
-    public JMenuItem getEditDBButton() {
-        return editDB;
-    }
-
-    /**
-     * Get the remove from db button in the popup menu.
-     * @return the remove from db button.
-     */
-    public JMenuItem getRemoveFromDBButton() {
-        return removeFromDB;
+        getItems().add(addToSchedule);
+        getItems().add(editDB);
+        getItems().add(removeFromDB);
+        getItems().add(print);
     }
 }

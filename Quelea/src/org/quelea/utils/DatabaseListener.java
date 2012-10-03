@@ -26,5 +26,5 @@ public interface DatabaseListener {
     /**
      * Signifies that the database has been updated.
      */
-    void update();
+    void databaseChanged();
 }

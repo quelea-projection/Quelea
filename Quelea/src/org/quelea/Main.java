@@ -23,6 +23,7 @@ import java.io.File;
 import java.net.MalformedURLException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javafx.application.Platform;
 import javafx.embed.swing.JFXPanel;
 import javax.swing.*;
 import org.quelea.bible.BibleManager;
@@ -32,14 +33,13 @@ import org.quelea.powerpoint.OOUtils;
 import org.quelea.splash.SplashWindow;
 import org.quelea.utils.LoggerUtils;
 import org.quelea.utils.QueleaProperties;
-import org.quelea.utils.UpdateChecker;
 import org.quelea.utils.Utils;
 import org.quelea.windows.main.LyricWindow;
 import org.quelea.windows.main.MainWindow;
 
 /**
  * The main class, sets everything in motion...
- *
+ * <p/>
  * @author Michael
  */
 public final class Main {
@@ -59,15 +59,13 @@ public final class Main {
     /**
      * Starts the program off, this is the first thing that is executed by
      * Quelea when the program starts.
-     *
+     * <p/>
      * @param args the command line arguments.
      */
     public static void main(final String[] args) {
-        System.setProperty("sun.awt.noerasebackground", "true");
-
         final SplashWindow splashWindow = new SplashWindow();
         splashWindow.setVisible(true);
-        
+
         //Hack to initialise JavaFX
         new JFXPanel();
 
@@ -84,8 +82,8 @@ public final class Main {
 
         int controlScreenProp = QueleaProperties.get().getControlScreen();
         final int controlScreen;
-        int projectorScreen = QueleaProperties.get().getProjectorScreen();
-        int stageScreen = QueleaProperties.get().getStageScreen();
+        final int projectorScreen = QueleaProperties.get().getProjectorScreen();
+        final int stageScreen = QueleaProperties.get().getStageScreen();
 
         if(gds.length <= controlScreenProp) {
             controlScreen = 0;
@@ -100,22 +98,6 @@ public final class Main {
         else {
             lyricsHidden = false;
         }
-        if(lyricsHidden) {
-            LOGGER.log(Level.INFO, "Hiding projector display on monitor 0 (base 0!)");
-            fullScreenWindow = new LyricWindow(gds[0].getDefaultConfiguration().getBounds(), false);
-            fullScreenWindow.setVisible(false);
-        }
-        else if(QueleaProperties.get().isProjectorModeCoords()) {
-            LOGGER.log(Level.INFO, "Starting projector display: ", QueleaProperties.get().getProjectorCoords());
-            fullScreenWindow = new LyricWindow(QueleaProperties.get().getProjectorCoords(), false);
-        }
-        else {
-            LOGGER.log(Level.INFO, "Starting projector display on monitor {0} (base 0!)", projectorScreen);
-            fullScreenWindow = new LyricWindow(gds[projectorScreen].getDefaultConfiguration().getBounds(), false);
-        }
-        Application.get().setLyricWindow(fullScreenWindow);
-        fullScreenWindow.toFront();
-
         final boolean stageHidden;
         if(!QueleaProperties.get().isStageModeCoords() && (stageScreen >= gds.length || stageScreen < 0)) {
             stageHidden = true;
@@ -123,25 +105,45 @@ public final class Main {
         else {
             stageHidden = false;
         }
-        if(stageHidden) {
-            LOGGER.log(Level.INFO, "Hiding stage display on monitor 0 (base 0!)");
-            stageWindow = new LyricWindow(gds[0].getDefaultConfiguration().getBounds(), true);
-            stageWindow.setVisible(false);
-        }
-        else if(QueleaProperties.get().isStageModeCoords()) {
-            LOGGER.log(Level.INFO, "Starting stage display: ", QueleaProperties.get().getStageCoords());
-            stageWindow = new LyricWindow(QueleaProperties.get().getStageCoords(), true);
-        }
-        else {
-            LOGGER.log(Level.INFO, "Starting stage display on monitor {0} (base 0!)", stageScreen);
-            stageWindow = new LyricWindow(gds[stageScreen].getDefaultConfiguration().getBounds(), true);
-        }
-        Application.get().setStageWindow(stageWindow);
-        stageWindow.toFront();
+        Platform.runLater(new Runnable() {
+            @Override
+            public void run() {
+                if(lyricsHidden) {
+                    LOGGER.log(Level.INFO, "Hiding projector display on monitor 0 (base 0!)");
+                    fullScreenWindow = new LyricWindow(Utils.getBoundsFromRect(gds[0].getDefaultConfiguration().getBounds()), false);
+                    fullScreenWindow.hide();
+                }
+                else if(QueleaProperties.get().isProjectorModeCoords()) {
+                    LOGGER.log(Level.INFO, "Starting projector display: ", QueleaProperties.get().getProjectorCoords());
+                    fullScreenWindow = new LyricWindow(QueleaProperties.get().getProjectorCoords(), false);
+                }
+                else {
+                    LOGGER.log(Level.INFO, "Starting projector display on monitor {0} (base 0!)", projectorScreen);
+                    fullScreenWindow = new LyricWindow(Utils.getBoundsFromRect(gds[projectorScreen].getDefaultConfiguration().getBounds()), false);
+                }
+                Application.get().setLyricWindow(fullScreenWindow);
+                fullScreenWindow.toFront();
+
+                if(stageHidden) {
+                    LOGGER.log(Level.INFO, "Hiding stage display on monitor 0 (base 0!)");
+                    stageWindow = new LyricWindow(Utils.getBoundsFromRect(gds[0].getDefaultConfiguration().getBounds()), true);
+                    stageWindow.hide();
+                }
+                else if(QueleaProperties.get().isStageModeCoords()) {
+                    LOGGER.log(Level.INFO, "Starting stage display: ", QueleaProperties.get().getStageCoords());
+                    stageWindow = new LyricWindow(QueleaProperties.get().getStageCoords(), true);
+                }
+                else {
+                    LOGGER.log(Level.INFO, "Starting stage display on monitor {0} (base 0!)", stageScreen);
+                    stageWindow = new LyricWindow(Utils.getBoundsFromRect(gds[stageScreen].getDefaultConfiguration().getBounds()), true);
+                }
+                Application.get().setStageWindow(stageWindow);
+                stageWindow.toFront();
+            }
+        });
 
         LOGGER.log(Level.INFO, "Loading bibles");
         final Thread bibleLoader = new Thread() {
-
             @Override
             public void run() {
                 BibleManager.get();
@@ -156,14 +158,13 @@ public final class Main {
             SpellChecker.getOptions().setLanguageDisableVisible(false);
             SpellChecker.getOptions().setCaseSensitive(false);
         }
-        catch (MalformedURLException ex) {
+        catch(MalformedURLException ex) {
             LOGGER.log(Level.SEVERE, "Couldn't load dictionaries", ex);
         }
         LOGGER.log(Level.INFO, "Registered dictionary");
 
         setLaf();
-        SwingUtilities.invokeLater(new Runnable() {
-
+        Platform.runLater(new Runnable() {
             @Override
             public void run() {
                 if(SongDatabase.get().errorOccurred()) {
@@ -173,31 +174,39 @@ public final class Main {
                 OOUtils.attemptInit();
                 mainWindow = new MainWindow(true);
 
-                new UpdateChecker(mainWindow).checkUpdate(false, false, false); //Check updates
+//                new UpdateChecker(mainWindow).checkUpdate(false, false, false); //Check updates
                 PhoneHome.INSTANCE.phone(); //Phone home
 
                 LOGGER.log(Level.INFO, "Registering canvases");
                 mainWindow.getMainPanel().getLivePanel().registerLyricCanvas(fullScreenWindow.getCanvas());
                 mainWindow.getMainPanel().getLivePanel().registerLyricWindow(fullScreenWindow);
-                mainWindow.getMainPanel().getLivePanel().registerVideoCanvas(fullScreenWindow.getCanvas());
-                fullScreenWindow.setVisible(!lyricsHidden);
+                if(lyricsHidden) {
+                    fullScreenWindow.hide();
+                }
+                else {
+                    fullScreenWindow.show();
+                }
                 mainWindow.getMainPanel().getLivePanel().registerLyricCanvas(stageWindow.getCanvas());
                 mainWindow.getMainPanel().getLivePanel().registerLyricWindow(stageWindow);
-                mainWindow.getMainPanel().getLivePanel().registerVideoCanvas(stageWindow.getCanvas());
-                stageWindow.setVisible(!stageHidden);
+                if(stageHidden) {
+                    stageWindow.hide();
+                }
+                else {
+                    stageWindow.show();
+                }
                 LOGGER.log(Level.INFO, "Registered canvases.");
 
                 LOGGER.log(Level.INFO, "Final loading bits");
                 try {
                     bibleLoader.join(); //Make sure bibleloader has finished loading
                 }
-                catch (InterruptedException ex) {
+                catch(InterruptedException ex) {
                 }
-                Utils.centreOnMonitor(mainWindow, controlScreen);
+//                Utils.centreOnMonitor(mainWindow, controlScreen);
                 showWarning(gds.length);
                 mainWindow.toFront();
                 splashWindow.setVisible(false);
-                mainWindow.setVisible(true);
+                mainWindow.show();
                 new ShortcutManager().addShortcuts();
                 BibleManager.get().buildIndex();
                 LOGGER.log(Level.INFO, "Loaded everything.");
@@ -215,13 +224,12 @@ public final class Main {
      */
     private static void setLaf() {
         SwingUtilities.invokeLater(new Runnable() {
-
             @Override
             public void run() {
                 try {
                     UIManager.setLookAndFeel(QueleaProperties.get().getLaf());
                 }
-                catch (ClassNotFoundException | InstantiationException | IllegalAccessException | UnsupportedLookAndFeelException ex) {
+                catch(ClassNotFoundException | InstantiationException | IllegalAccessException | UnsupportedLookAndFeelException ex) {
                     LOGGER.log(Level.INFO, "Couldn't set the look and feel.", ex);
                 }
 
@@ -233,13 +241,14 @@ public final class Main {
 
     /**
      * If it's appropriate, show the warning about only having 1 monitor.
-     *
+     * <p/>
      * @param numMonitors the number of monitors.
      */
     private static void showWarning(int numMonitors) {
         if(numMonitors <= 1 && QueleaProperties.get().showSingleMonitorWarning()) {
-            JOptionPane.showMessageDialog(mainWindow, LabelGrabber.INSTANCE.getLabel("one.monitor.warning"), LabelGrabber.INSTANCE.getLabel("one.monitor.title"),
-                    JOptionPane.WARNING_MESSAGE, null);
+            System.out.println("WARNING MONITOR");
+//            JOptionPane.showMessageDialog(mainWindow, LabelGrabber.INSTANCE.getLabel("one.monitor.warning"), LabelGrabber.INSTANCE.getLabel("one.monitor.title"),
+//                    JOptionPane.WARNING_MESSAGE, null);
         }
     }
 }

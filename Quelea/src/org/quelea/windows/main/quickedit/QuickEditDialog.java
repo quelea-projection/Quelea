@@ -58,7 +58,7 @@ public class QuickEditDialog extends JDialog {
      * Construct a quick edit dialog.
      */
     public QuickEditDialog() {
-        super(Application.get().getMainWindow(), "Quick Edit", ModalityType.APPLICATION_MODAL);
+//        super(Application.get().getMainWindow(), "Quick Edit", ModalityType.APPLICATION_MODAL);
         currentIndex = -1;
         setLayout(new BorderLayout());
         statusLabel = new JLabel();

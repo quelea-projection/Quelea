@@ -28,7 +28,11 @@ import java.net.URISyntaxException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.application.Platform;
-import javax.swing.JMenu;
+import javafx.event.EventHandler;
+import javafx.scene.control.Menu;
+import javafx.scene.control.MenuItem;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import org.quelea.Application;
@@ -36,7 +40,6 @@ import org.quelea.languages.LabelGrabber;
 import org.quelea.utils.LoggerUtils;
 import org.quelea.utils.QueleaProperties;
 import org.quelea.utils.UpdateChecker;
-import org.quelea.utils.Utils;
 import org.quelea.windows.help.AboutDialog;
 
 /**
@@ -44,15 +47,15 @@ import org.quelea.windows.help.AboutDialog;
  *
  * @author Michael
  */
-public class HelpMenu extends JMenu {
+public class HelpMenu extends Menu {
 
     private static final Logger LOGGER = LoggerUtils.getLogger();
-    private final JMenuItem queleaSite;
-    private final JMenuItem queleaFacebook;
-    private final JMenuItem queleaDiscuss;
-    private final JMenuItem queleaDownload;
-    private final JMenuItem updateCheck;
-    private final JMenuItem about;
+    private final MenuItem queleaSite;
+    private final MenuItem queleaFacebook;
+    private final MenuItem queleaDiscuss;
+    private final MenuItem queleaDownload;
+    private final MenuItem updateCheck;
+    private final MenuItem about;
     private AboutDialog aboutDialog;
 
     /**
@@ -60,7 +63,6 @@ public class HelpMenu extends JMenu {
      */
     public HelpMenu() {
         super(LabelGrabber.INSTANCE.getLabel("help.menu"));
-        setMnemonic('h');
         
         Platform.runLater(new Runnable() {
 
@@ -71,70 +73,66 @@ public class HelpMenu extends JMenu {
         });
         
         if(Desktop.isDesktopSupported()) {
-            queleaSite = new JMenuItem(LabelGrabber.INSTANCE.getLabel("help.menu.website"), Utils.getImageIcon("icons/website.png", 16, 16));
-            queleaSite.addActionListener(new ActionListener() {
+            queleaSite = new MenuItem(LabelGrabber.INSTANCE.getLabel("help.menu.website"), new ImageView(new Image("file:icons/website.png", 16, 16, false, true)));
+            queleaSite.setOnAction(new EventHandler<javafx.event.ActionEvent>() {
 
                 @Override
-                public void actionPerformed(ActionEvent e) {
+                public void handle(javafx.event.ActionEvent t) {
                     try {
                         Desktop.getDesktop().browse(new URI(QueleaProperties.get().getWebsiteLocation()));
                     }
-                    catch (URISyntaxException | IOException ex) {
+                    catch(URISyntaxException | IOException ex) {
                         LOGGER.log(Level.WARNING, "Couldn't launch Quelea website", ex);
                         showError();
                     }
                 }
             });
-            queleaSite.setMnemonic(KeyEvent.VK_W);
-            add(queleaSite);
-            queleaFacebook = new JMenuItem(LabelGrabber.INSTANCE.getLabel("help.menu.facebook"), Utils.getImageIcon("icons/facebook.png", 16, 16));
-            queleaFacebook.addActionListener(new ActionListener() {
+            getItems().add(queleaSite);
+            queleaFacebook = new MenuItem(LabelGrabber.INSTANCE.getLabel("help.menu.facebook"), new ImageView(new Image("file:icons/facebook.png", 16, 16, false, true)));
+            queleaFacebook.setOnAction(new EventHandler<javafx.event.ActionEvent>() {
 
                 @Override
-                public void actionPerformed(ActionEvent e) {
+                public void handle(javafx.event.ActionEvent t) {
                     try {
                         Desktop.getDesktop().browse(new URI(QueleaProperties.get().getFacebookPageLocation()));
                     }
-                    catch (URISyntaxException | IOException ex) {
+                    catch(URISyntaxException | IOException ex) {
                         LOGGER.log(Level.WARNING, "Couldn't launch Quelea Facebook page", ex);
                         showError();
                     }
                 }
             });
-            queleaFacebook.setMnemonic(KeyEvent.VK_F);
-            add(queleaFacebook);
-            queleaDiscuss = new JMenuItem(LabelGrabber.INSTANCE.getLabel("help.menu.discussion"), Utils.getImageIcon("icons/discuss.png", 16, 16));
-            queleaDiscuss.addActionListener(new ActionListener() {
+            getItems().add(queleaFacebook);
+            queleaDiscuss = new MenuItem(LabelGrabber.INSTANCE.getLabel("help.menu.discussion"), new ImageView(new Image("file:icons/discuss.png", 16, 16, false, true)));
+            queleaDiscuss.setOnAction(new EventHandler<javafx.event.ActionEvent>() {
 
                 @Override
-                public void actionPerformed(ActionEvent e) {
+                public void handle(javafx.event.ActionEvent t) {
                     try {
                         Desktop.getDesktop().browse(new URI(QueleaProperties.get().getDiscussLocation()));
                     }
-                    catch (URISyntaxException | IOException ex) {
+                    catch(URISyntaxException | IOException ex) {
                         LOGGER.log(Level.WARNING, "Couldn't launch Quelea discuss", ex);
                         showError();
                     }
                 }
             });
-            queleaDiscuss.setMnemonic(KeyEvent.VK_D);
-            add(queleaDiscuss);
-            queleaDownload = new JMenuItem(LabelGrabber.INSTANCE.getLabel("help.menu.download"), Utils.getImageIcon("icons/download.png", 16, 16));
-            queleaDownload.addActionListener(new ActionListener() {
+            getItems().add(queleaDiscuss);
+            queleaDownload = new MenuItem(LabelGrabber.INSTANCE.getLabel("help.menu.download"), new ImageView(new Image("file:icons/download.png", 16, 16, false, true)));
+            queleaDownload.setOnAction(new EventHandler<javafx.event.ActionEvent>() {
 
                 @Override
-                public void actionPerformed(ActionEvent e) {
+                public void handle(javafx.event.ActionEvent t) {
                     try {
                         Desktop.getDesktop().browse(new URI(QueleaProperties.get().getDownloadLocation()));
                     }
-                    catch (URISyntaxException | IOException ex) {
+                    catch(URISyntaxException | IOException ex) {
                         LOGGER.log(Level.WARNING, "Couldn't launch Quelea download page", ex);
                         showError();
                     }
                 }
             });
-            queleaDownload.setMnemonic(KeyEvent.VK_O);
-            add(queleaDownload);
+            getItems().add(queleaDownload);
         }
         else {
             queleaSite = null;
@@ -142,32 +140,24 @@ public class HelpMenu extends JMenu {
             queleaDownload = null;
             queleaFacebook = null;
         }
-        updateCheck = new JMenuItem(LabelGrabber.INSTANCE.getLabel("help.menu.update"), Utils.getImageIcon("icons/update.png", 16, 16));
-        updateCheck.setMnemonic(KeyEvent.VK_C);
-        updateCheck.addActionListener(new ActionListener() {
+        updateCheck = new MenuItem(LabelGrabber.INSTANCE.getLabel("help.menu.update"), new ImageView(new Image("file:icons/update.png", 16, 16, false, true)));
+        updateCheck.setOnAction(new EventHandler<javafx.event.ActionEvent>() {
 
             @Override
-            public void actionPerformed(ActionEvent e) {
-                new UpdateChecker(Application.get().getMainWindow()).checkUpdate(true, true, true);
+            public void handle(javafx.event.ActionEvent t) {
+//                new UpdateChecker(Application.get().getMainWindow()).checkUpdate(true, true, true);
             }
         });
-        add(updateCheck);
-        about = new JMenuItem(LabelGrabber.INSTANCE.getLabel("help.menu.about"), Utils.getImageIcon("icons/about.png", 16, 16));
-        about.setMnemonic(KeyEvent.VK_A);
-        about.addActionListener(new ActionListener() {
+        getItems().add(updateCheck);
+        about = new MenuItem(LabelGrabber.INSTANCE.getLabel("help.menu.about"), new ImageView(new Image("file:icons/about.png", 16, 16, false, true)));
+        about.setOnAction(new EventHandler<javafx.event.ActionEvent>() {
 
             @Override
-            public void actionPerformed(ActionEvent ae) {
-                Platform.runLater(new Runnable() {
-
-                    @Override
-                    public void run() {
-                        aboutDialog.show();
-                    }
-                });
+            public void handle(javafx.event.ActionEvent t) {
+                aboutDialog.show();
             }
         });
-        add(about);
+        getItems().add(about);
     }
 
     /**
@@ -176,7 +166,9 @@ public class HelpMenu extends JMenu {
      * @param location the location that failed to open.
      */
     private void showError() {
-        JOptionPane.showMessageDialog(this, LabelGrabber.INSTANCE.getLabel("help.menu.error.text"), LabelGrabber.INSTANCE.getLabel("help.menu.error.title"), JOptionPane.ERROR_MESSAGE, null);
+        //TODO: JFX Dialog
+        System.err.println("Couldn't open the LOCATION");
+//        JOptionPane.showMessageDialog(this, LabelGrabber.INSTANCE.getLabel("help.menu.error.text"), LabelGrabber.INSTANCE.getLabel("help.menu.error.title"), JOptionPane.ERROR_MESSAGE, null);
     }
 
     /**
@@ -184,7 +176,7 @@ public class HelpMenu extends JMenu {
      *
      * @return the quelea discuss menu item.
      */
-    public JMenuItem getQueleaDiscuss() {
+    public MenuItem getQueleaDiscuss() {
         return queleaDiscuss;
     }
 
@@ -193,7 +185,7 @@ public class HelpMenu extends JMenu {
      *
      * @return the quelea download menu item.
      */
-    public JMenuItem getQueleaDownload() {
+    public MenuItem getQueleaDownload() {
         return queleaDownload;
     }
 
@@ -202,7 +194,7 @@ public class HelpMenu extends JMenu {
      *
      * @return the quelea website menu item.
      */
-    public JMenuItem getQueleaSite() {
+    public MenuItem getQueleaSite() {
         return queleaSite;
     }
 
@@ -211,7 +203,7 @@ public class HelpMenu extends JMenu {
      *
      * @return the about menu item.
      */
-    public JMenuItem getAbout() {
+    public MenuItem getAbout() {
         return about;
     }
 
@@ -220,7 +212,7 @@ public class HelpMenu extends JMenu {
      *
      * @return the "check update" menu item.
      */
-    public JMenuItem getUpdateCheck() {
+    public MenuItem getUpdateCheck() {
         return updateCheck;
     }
 }

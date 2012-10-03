@@ -18,13 +18,13 @@
  */
 package org.quelea.windows.main.menus;
 
-import javax.swing.JMenuBar;
+import javafx.scene.control.MenuBar;
 
 /**
- * Quelea's main menu bar.
+ * Quelea's main menu bar. Contains all the sub-menus.
  * @author Michael
  */
-public class MainMenuBar extends JMenuBar {
+public class MainMenuBar extends MenuBar {
     
     private FileMenu fileMenu;
     private ScheduleMenu scheduleMenu;
@@ -34,19 +34,19 @@ public class MainMenuBar extends JMenuBar {
     
     public MainMenuBar() {
         fileMenu = new FileMenu();
-        add(fileMenu);
+        getMenus().add(fileMenu);
         
         scheduleMenu = new ScheduleMenu();
-        add(scheduleMenu);
+        getMenus().add(scheduleMenu);
         
         databaseMenu = new DatabaseMenu();
-        add(databaseMenu);
+        getMenus().add(databaseMenu);
         
         toolsMenu = new ToolsMenu();
-        add(toolsMenu);
+        getMenus().add(toolsMenu);
         
         helpMenu = new HelpMenu();
-        add(helpMenu);
+        getMenus().add(helpMenu);
     }
     
 }

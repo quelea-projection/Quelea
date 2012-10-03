@@ -63,11 +63,11 @@ public class SelectExportedSongsDialog extends SelectSongsDialog {
 
                     boolean writeFile = true;
                     if (file.exists()) {
-                        int result = JOptionPane.showConfirmDialog(Application.get().getMainWindow(), file.getName() + " already exists. Overwrite?",
-                                "Overwrite", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE, null);
-                        if (result != JOptionPane.YES_OPTION) {
-                            writeFile = false;
-                        }
+//                        int result = JOptionPane.showConfirmDialog(Application.get().getMainWindow(), file.getName() + " already exists. Overwrite?",
+//                                "Overwrite", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE, null);
+//                        if (result != JOptionPane.YES_OPTION) {
+//                            writeFile = false;
+//                        }
                     }
                     if (writeFile) {
                         writeSongPack(file);

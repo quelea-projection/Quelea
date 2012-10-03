@@ -17,34 +17,33 @@
  */
 package org.quelea.windows.main;
 
-import java.awt.event.KeyEvent;
-import javax.swing.JMenuItem;
-import javax.swing.JPopupMenu;
+import javafx.scene.control.ContextMenu;
+import javafx.scene.control.MenuItem;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import org.quelea.languages.LabelGrabber;
-import org.quelea.utils.Utils;
 
 /**
  * The popup menu that displays when a song in the schedule is right-clicked.
  * @author Michael
  */
-public class ScheduleSongPopupMenu extends JPopupMenu {
+public class ScheduleSongPopupMenu extends ContextMenu {
 
-    private final JMenuItem editSong;
+    private final MenuItem editSong;
 
     /**
      * Create a new schedule popup menu
      */
     public ScheduleSongPopupMenu() {
-        editSong = new JMenuItem(LabelGrabber.INSTANCE.getLabel("edit.song.text"), Utils.getImageIcon("icons/edit.png", 16, 16));
-        editSong.setMnemonic(KeyEvent.VK_E);
-        add(editSong);
+        editSong = new MenuItem(LabelGrabber.INSTANCE.getLabel("edit.song.text"), new ImageView(new Image("file:icons/edit.png", 16, 16, false, true)));
+        getItems().add(editSong);
     }
 
     /**
      * Get the edit song button.
      * @return the edit song button.
      */
-    public JMenuItem getEditSongButton() {
+    public MenuItem getEditSongButton() {
         return editSong;
     }
 

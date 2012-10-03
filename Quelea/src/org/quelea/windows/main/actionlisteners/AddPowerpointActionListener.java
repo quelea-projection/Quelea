@@ -18,16 +18,15 @@
  */
 package org.quelea.windows.main.actionlisteners;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
-import org.apache.poi.poifs.filesystem.OfficeXmlFileException;
 import org.quelea.Application;
 import org.quelea.displayable.PresentationDisplayable;
 import org.quelea.languages.LabelGrabber;
@@ -40,7 +39,7 @@ import org.quelea.windows.main.StatusPanel;
  * The action listener for adding a powerpoint presentation.
  * @author Michael
  */
-public class AddPowerpointActionListener implements ActionListener {
+public class AddPowerpointActionListener implements EventHandler<ActionEvent> {
     
     private static final Logger LOGGER = LoggerUtils.getLogger();
 
@@ -49,11 +48,11 @@ public class AddPowerpointActionListener implements ActionListener {
      * @param e the event.
      */
     @Override
-    public void actionPerformed(ActionEvent e) {
+    public void handle(ActionEvent t) {
         final JFileChooser fileChooser = new JFileChooser();
         fileChooser.setFileFilter(new PowerpointFileFilter());
         fileChooser.setAcceptAllFileFilterUsed(false);
-        fileChooser.showOpenDialog(Application.get().getMainWindow());
+//        fileChooser.showOpenDialog(Application.get().getMainWindow());
         File file = fileChooser.getSelectedFile();
         if(file != null) {
             new Thread() {
@@ -68,11 +67,11 @@ public class AddPowerpointActionListener implements ActionListener {
                         @Override
                         public void run() {
                             panel = Application.get().getStatusGroup().addPanel(LabelGrabber.INSTANCE.getLabel("adding.presentation.status"));
-                            panel.getProgressBar().setIndeterminate(true);
-                            panel.getCancelButton().addActionListener(new ActionListener() {
+                            panel.getProgressBar().setProgress(-1);
+                            panel.getCancelButton().setOnAction(new EventHandler<ActionEvent>() {
 
                                 @Override
-                                public void actionPerformed(ActionEvent e) {
+                                public void handle(ActionEvent t) {
                                     panel.done();
                                     halt = true;
                                 }
@@ -86,7 +85,7 @@ public class AddPowerpointActionListener implements ActionListener {
 
                                 @Override
                                 public void run() {
-                                    Application.get().getMainWindow().getMainPanel().getSchedulePanel().getScheduleList().getModel().addElement(displayable);
+                                    Application.get().getMainWindow().getMainPanel().getSchedulePanel().getScheduleList().add(displayable);
                                 }
                             });
                         }
@@ -97,7 +96,7 @@ public class AddPowerpointActionListener implements ActionListener {
 
                                 @Override
                                 public void run() {
-                                    JOptionPane.showMessageDialog(Application.get().getMainWindow(), LabelGrabber.INSTANCE.getLabel("adding.presentation.error.message"), LabelGrabber.INSTANCE.getLabel("adding.presentation.error.title"), JOptionPane.ERROR_MESSAGE);
+//                                    JOptionPane.showMessageDialog(Application.get().getMainWindow(), LabelGrabber.INSTANCE.getLabel("adding.presentation.error.message"), LabelGrabber.INSTANCE.getLabel("adding.presentation.error.title"), JOptionPane.ERROR_MESSAGE);
                                 }
                             });
                         }

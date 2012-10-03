@@ -60,8 +60,8 @@ public class SongEntryWindow extends JDialog {
      *
      * @param owner the owner of this window.
      */
-    public SongEntryWindow(JFrame owner) {
-        super(owner, LabelGrabber.INSTANCE.getLabel("song.entry.heading"));
+    public SongEntryWindow() {
+        setTitle(LabelGrabber.INSTANCE.getLabel("song.entry.heading"));
         setResizable(false);
         setLayout(new BorderLayout());
         tabbedPane = new JTabbedPane();
@@ -83,7 +83,7 @@ public class SongEntryWindow extends JDialog {
                 setVisible(false);
                 Utils.updateSongInBackground(getSong(), true, false);
                 if(addToSchedCBox.isSelected()) {
-                    Application.get().getMainWindow().getMainPanel().getSchedulePanel().getScheduleList().getModel().addElement(getSong());
+                    Application.get().getMainWindow().getMainPanel().getSchedulePanel().getScheduleList().add(getSong());
                 }
                 Application.get().getMainWindow().getMainPanel().getPreviewPanel().refresh();
             }
@@ -245,7 +245,7 @@ public class SongEntryWindow extends JDialog {
         }
         tabbedPane.setSelectedIndex(0);
         addToSchedCBox.setSelected(false);
-        if(Application.get().getMainWindow().getMainPanel().getSchedulePanel().getScheduleList().getModel().contains(song)) {
+        if(Application.get().getMainWindow().getMainPanel().getSchedulePanel().getScheduleList().itemsProperty().get().contains(song)) {
             addToSchedCBox.setEnabled(false);
         }
         else {

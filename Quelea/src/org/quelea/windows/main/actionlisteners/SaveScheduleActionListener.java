@@ -18,15 +18,15 @@
  */
 package org.quelea.windows.main.actionlisteners;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import org.quelea.ScheduleSaver;
 
 /**
  * The save schedule action listener.
  * @author Michael
  */
-public class SaveScheduleActionListener implements ActionListener {
+public class SaveScheduleActionListener implements EventHandler<ActionEvent> {
     
     private boolean saveas;
     
@@ -40,7 +40,7 @@ public class SaveScheduleActionListener implements ActionListener {
     }
     
     @Override
-    public void actionPerformed(ActionEvent ae) {
+    public void handle(ActionEvent t) {
         new ScheduleSaver().saveSchedule(saveas);
     }
     

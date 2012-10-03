@@ -91,13 +91,13 @@ public final class Bible {
             SwingUtilities.invokeLater(new Runnable() {
                 @Override
                 public void run() {
-                    JOptionPane.showMessageDialog(Application.get().getMainWindow(),
-                            "Quelea couldn't load the bible contained in " + file.getName() + " beacuse it "
-                            + "appears to be corrupt. Please check the format of the bible "
-                            + "to make sure it's valid.\nIf not, or you're not sure, feel "
-                            + "free to email the discussion list at quelea-discuss@googlegroups.com "
-                            + "where we'll try to help.",
-                            "Error loading bible", JOptionPane.WARNING_MESSAGE);
+//                    JOptionPane.showMessageDialog(Application.get().getMainWindow(),
+//                            "Quelea couldn't load the bible contained in " + file.getName() + " beacuse it "
+//                            + "appears to be corrupt. Please check the format of the bible "
+//                            + "to make sure it's valid.\nIf not, or you're not sure, feel "
+//                            + "free to email the discussion list at quelea-discuss@googlegroups.com "
+//                            + "where we'll try to help.",
+//                            "Error loading bible", JOptionPane.WARNING_MESSAGE);
                 }
             });
             return null;

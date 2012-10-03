@@ -17,7 +17,8 @@
 package org.quelea.windows.options;
 
 import java.awt.*;
-import javax.swing.JPanel;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.GridPane;
 import javax.swing.SwingUtilities;
 import org.quelea.Application;
 import org.quelea.GraphicsDeviceListener;
@@ -25,7 +26,6 @@ import org.quelea.GraphicsDeviceWatcher;
 import org.quelea.languages.LabelGrabber;
 import org.quelea.utils.PropertyPanel;
 import org.quelea.utils.QueleaProperties;
-import org.quelea.utils.Utils;
 import org.quelea.windows.main.LyricWindow;
 import org.quelea.windows.main.MainWindow;
 
@@ -33,7 +33,7 @@ import org.quelea.windows.main.MainWindow;
  * A panel that the user uses to set up the displays that match to the outputs.
  * @author Michael
  */
-public class OptionsDisplaySetupPanel extends JPanel implements PropertyPanel {
+public class OptionsDisplaySetupPanel extends BorderPane implements PropertyPanel {
 
     private final SingleDisplayPanel monitorPanel, projectorPanel, stagePanel;
 
@@ -41,18 +41,18 @@ public class OptionsDisplaySetupPanel extends JPanel implements PropertyPanel {
      * Create a new display setup panel.
      */
     public OptionsDisplaySetupPanel() {
-        setName(LabelGrabber.INSTANCE.getLabel("display.options.heading"));
-        setLayout(new BorderLayout());
-        JPanel mainPanel = new JPanel();
-        mainPanel.setLayout(new GridLayout(1, 3, 30, 0));
+        GridPane mainPanel = new GridPane();
         monitorPanel = new SingleDisplayPanel(LabelGrabber.INSTANCE.getLabel("control.screen.label")+":", "icons/monitor.png", false, false);
-        mainPanel.add(monitorPanel);
+        GridPane.setConstraints(monitorPanel, 1, 1);
+        mainPanel.getChildren().add(monitorPanel);
         projectorPanel = new SingleDisplayPanel(LabelGrabber.INSTANCE.getLabel("projector.screen.label")+":", "icons/projector.png", true, true);
-        mainPanel.add(projectorPanel);
+        GridPane.setConstraints(projectorPanel, 2, 1);
+        mainPanel.getChildren().add(projectorPanel);
         stagePanel = new SingleDisplayPanel(LabelGrabber.INSTANCE.getLabel("stage.screen.label")+":", "icons/stage.png", true, true);
-        mainPanel.add(stagePanel);
+        GridPane.setConstraints(stagePanel, 3, 1);
+        mainPanel.getChildren().add(stagePanel);
         readProperties();
-        add(mainPanel, BorderLayout.CENTER);
+        setCenter(mainPanel);
         
         GraphicsDeviceWatcher.INSTANCE.addGraphicsDeviceListener(new GraphicsDeviceListener() {
 
@@ -102,7 +102,7 @@ public class OptionsDisplaySetupPanel extends JPanel implements PropertyPanel {
         LyricWindow stageWindow = Application.get().getStageWindow();
         if(projectorPanel.getOutputBounds() == null) {
             if(lyricWindow != null) {
-                lyricWindow.setVisible(false);
+                lyricWindow.hide();
             }
         }
         else {
@@ -114,14 +114,14 @@ public class OptionsDisplaySetupPanel extends JPanel implements PropertyPanel {
 
                 @Override
                 public void run() {
-                    fiLyricWindow.setVisible(true);
+                    fiLyricWindow.show();
                     fiLyricWindow.setArea(projectorPanel.getOutputBounds());
                 }
             });
         }
         if(stagePanel.getOutputBounds() == null) {
             if(stageWindow != null) {
-                stageWindow.setVisible(false);
+                stageWindow.hide();
             }
         }
         else {
@@ -133,15 +133,11 @@ public class OptionsDisplaySetupPanel extends JPanel implements PropertyPanel {
 
                 @Override
                 public void run() {
-                    fiStageWindow.setVisible(true);
+                    fiStageWindow.show();
                     fiStageWindow.setArea(stagePanel.getOutputBounds());
                 }
             });
         }
-        if(!Utils.isFrameOnScreen(mainWindow, monitorPanel.getOutputScreen())) {
-            Utils.centreOnMonitor(mainWindow, monitorPanel.getOutputScreen());
-        }
-        Application.get().getMainWindow().repaint();
     }
 
     /**

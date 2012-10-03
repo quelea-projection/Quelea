@@ -36,27 +36,27 @@ public class ShortcutManager {
      * Add in the shortcuts to the main panel.
      */
     public void addShortcuts() {
-        final MainPanel mainPanel = Application.get().getMainWindow().getMainPanel();
-        mainPanel.registerKeyboardAction(new ActionListener() {
-
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                mainPanel.getLibraryPanel().getLibrarySongPanel().getSearchBox().requestFocusInWindow();
-            }
-        }, KeyStroke.getKeyStroke(KeyEvent.VK_L, InputEvent.CTRL_MASK), JComponent.WHEN_IN_FOCUSED_WINDOW);
-        mainPanel.registerKeyboardAction(new ActionListener() {
-
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                new ScheduleSaver().saveSchedule(false);
-            }
-        }, KeyStroke.getKeyStroke(KeyEvent.VK_S, InputEvent.CTRL_MASK), JComponent.WHEN_IN_FOCUSED_WINDOW);
-        mainPanel.registerKeyboardAction(new ActionListener() {
-
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                Printer.getInstance().print(Application.get().getMainWindow().getMainPanel().getSchedulePanel().getScheduleList().getSchedule());
-            }
-        }, KeyStroke.getKeyStroke(KeyEvent.VK_P, InputEvent.CTRL_MASK), JComponent.WHEN_IN_FOCUSED_WINDOW);
+//        final MainPanel mainPanel = Application.get().getMainWindow().getMainPanel();
+//        mainPanel.registerKeyboardAction(new ActionListener() {
+//
+//            @Override
+//            public void actionPerformed(ActionEvent e) {
+//                mainPanel.getLibraryPanel().getLibrarySongPanel().getSearchBox().requestFocusInWindow();
+//            }
+//        }, KeyStroke.getKeyStroke(KeyEvent.VK_L, InputEvent.CTRL_MASK), JComponent.WHEN_IN_FOCUSED_WINDOW);
+//        mainPanel.registerKeyboardAction(new ActionListener() {
+//
+//            @Override
+//            public void actionPerformed(ActionEvent e) {
+//                new ScheduleSaver().saveSchedule(false);
+//            }
+//        }, KeyStroke.getKeyStroke(KeyEvent.VK_S, InputEvent.CTRL_MASK), JComponent.WHEN_IN_FOCUSED_WINDOW);
+//        mainPanel.registerKeyboardAction(new ActionListener() {
+//
+//            @Override
+//            public void actionPerformed(ActionEvent e) {
+//                Printer.getInstance().print(Application.get().getMainWindow().getMainPanel().getSchedulePanel().getScheduleList().getSchedule());
+//            }
+//        }, KeyStroke.getKeyStroke(KeyEvent.VK_P, InputEvent.CTRL_MASK), JComponent.WHEN_IN_FOCUSED_WINDOW);
     }
 }

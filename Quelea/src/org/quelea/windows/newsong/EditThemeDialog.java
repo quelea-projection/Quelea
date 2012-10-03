@@ -55,7 +55,7 @@ public class EditThemeDialog extends JDialog {
      * Create a new edit theme dialog.
      */
     public EditThemeDialog() {
-        super(Application.get().getMainWindow(), LabelGrabber.INSTANCE.getLabel("edit.theme.heading"), true);
+//        super(Application.get().getMainWindow(), LabelGrabber.INSTANCE.getLabel("edit.theme.heading"), true);
         setResizable(false);
         setLayout(new BorderLayout());
         JPanel northPanel = new JPanel();
@@ -86,7 +86,6 @@ public class EditThemeDialog extends JDialog {
         });
         northPanel.add(nameField);
         panel = new ThemePanel();
-        panel.getCanvas().setPreferredSize(new Dimension(200, 200));
         add(panel, BorderLayout.CENTER);
         confirmButton = new JButton(LabelGrabber.INSTANCE.getLabel("ok.button"), Utils.getImageIcon("icons/tick.png"));
         confirmButton.addActionListener(new ActionListener() {

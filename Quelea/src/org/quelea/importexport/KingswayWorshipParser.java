@@ -73,13 +73,13 @@ public class KingswayWorshipParser implements SongParser {
             int i = getStart();
             String pageText;
             if (statusPanel != null) {
-                statusPanel.getProgressBar().setIndeterminate(false);
+                statusPanel.getProgressBar().setProgress(0);
             }
             while ((pageText = getPageText(i)) != null) {
                 int percentage = (int) (((double) i / (double) ROUGH_NUM_SONGS) * 100);
                 LOGGER.log(Level.INFO, "Kingsway import percent complete: {0}", percentage);
                 if (statusPanel != null) {
-                    statusPanel.getProgressBar().setValue(percentage);
+                    statusPanel.getProgressBar().setProgress((double)percentage/100);
                 }
                 Song song = null;
                 try {
@@ -98,7 +98,7 @@ public class KingswayWorshipParser implements SongParser {
             }
             QueleaProperties.get().setNextKingswaySong(nextVal);
             if (statusPanel != null) {
-                statusPanel.getProgressBar().setIndeterminate(true);
+                statusPanel.getProgressBar().setProgress(-1);
             }
             return ret;
         } else {
@@ -153,10 +153,11 @@ public class KingswayWorshipParser implements SongParser {
         if (start == 0) {
             return 0;
         }
-        int option = JOptionPane.showConfirmDialog(Application.get().getMainWindow(),
-                LabelGrabber.INSTANCE.getLabel("check.kingsway.start"),
-                LabelGrabber.INSTANCE.getLabel("check.kingsway.start.title"),
-                JOptionPane.YES_NO_OPTION, JOptionPane.INFORMATION_MESSAGE);
+//        int option = JOptionPane.showConfirmDialog(Application.get().getMainWindow(),
+//                LabelGrabber.INSTANCE.getLabel("check.kingsway.start"),
+//                LabelGrabber.INSTANCE.getLabel("check.kingsway.start.title"),
+//                JOptionPane.YES_NO_OPTION, JOptionPane.INFORMATION_MESSAGE);
+        int option = 0;
         if (option == JOptionPane.YES_OPTION) {
             return start;
         } else {

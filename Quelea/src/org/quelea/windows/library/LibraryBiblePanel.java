@@ -17,118 +17,116 @@
  */
 package org.quelea.windows.library;
 
-import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
 import java.util.ArrayList;
 import java.util.List;
-import javax.swing.BoxLayout;
-import javax.swing.DefaultComboBoxModel;
-import javax.swing.JButton;
-import javax.swing.JComboBox;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTextArea;
-import javax.swing.JTextField;
-import javax.swing.SwingUtilities;
-import javax.swing.event.DocumentEvent;
-import javax.swing.event.DocumentListener;
+import javafx.application.Platform;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
+import javafx.scene.control.Button;
+import javafx.scene.control.ComboBox;
+import javafx.scene.control.SingleSelectionModel;
+import javafx.scene.control.TextArea;
+import javafx.scene.control.TextField;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
+import javafx.scene.layout.VBox;
+import org.quelea.Application;
 import org.quelea.bible.Bible;
 import org.quelea.bible.BibleBook;
 import org.quelea.bible.BibleChangeListener;
 import org.quelea.bible.BibleManager;
 import org.quelea.bible.BibleVerse;
 import org.quelea.bible.ChapterVerseParser;
+import org.quelea.displayable.BiblePassage;
 import org.quelea.languages.LabelGrabber;
 import org.quelea.utils.QueleaProperties;
-import org.quelea.utils.Utils;
 
 /**
  * The panel used to get bible verses.
  * @author Michael
  */
-public class LibraryBiblePanel extends JPanel implements BibleChangeListener {
+public class LibraryBiblePanel extends VBox implements BibleChangeListener {
 
-    private final JComboBox<Bible> bibleSelector;
-    private final JComboBox<BibleBook> bookSelector;
-    private final JTextField passageSelector;
-    private final JTextArea preview;
-    private final JButton addToSchedule;
+    private final ComboBox<Bible> bibleSelector;
+    private final ComboBox<BibleBook> bookSelector;
+    private final TextField passageSelector;
+    private final TextArea preview;
+    private final Button addToSchedule;
     private final List<BibleVerse> verses;
 
     /**
      * Create and populate a new library bible panel.
      */
     public LibraryBiblePanel() {
-        setName(LabelGrabber.INSTANCE.getLabel("bible.heading"));
-        setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
         verses = new ArrayList<>();
         BibleManager.get().registerBibleChangeListener(this);
-        bibleSelector = new JComboBox<>(BibleManager.get().getBibles());
+        bibleSelector = new ComboBox<>(FXCollections.observableArrayList(BibleManager.get().getBibles()));
         String selectedBibleName = QueleaProperties.get().getDefaultBible();
-        for (int i = 0; i < getBibleSelectorModel().getSize(); i++) {
-            Bible bible = bibleSelector.getItemAt(i);
+        for (int i = 0; i < bibleSelector.itemsProperty().get().size(); i++) {
+            Bible bible = bibleSelector.itemsProperty().get().get(i);
             if (bible.getName().equals(selectedBibleName)) {
-                bibleSelector.setSelectedIndex(i);
+                bibleSelector.selectionModelProperty().get().select(i);
             }
         }
-        add(bibleSelector);
-        JPanel chapterPanel = new JPanel();
-        chapterPanel.setLayout(new BoxLayout(chapterPanel, BoxLayout.X_AXIS));
-        bookSelector = new JComboBox<>(getBibleSelectorModel().getElementAt(bibleSelector.getSelectedIndex()).getBooks());
-        chapterPanel.add(bookSelector);
-        passageSelector = new JTextField();
-        chapterPanel.add(passageSelector);
-        passageSelector.addKeyListener(new KeyListener() {
+        bibleSelector.selectionModelProperty().get().select(0);
+        getChildren().add(bibleSelector);
+        HBox chapterPanel = new HBox();
+        bookSelector = new ComboBox<>(FXCollections.observableArrayList(bibleSelector.selectionModelProperty().get().getSelectedItem().getBooks()));
+        chapterPanel.getChildren().add(bookSelector);
+        passageSelector = new TextField();
+        chapterPanel.getChildren().add(passageSelector);
+        passageSelector.setOnAction(new EventHandler<javafx.event.ActionEvent>() {
 
-            public void keyTyped(KeyEvent e) {
-                //Nothing needed here
-            }
-
-            public void keyPressed(KeyEvent e) {
-                if (e.getKeyCode() == KeyEvent.VK_ENTER) {
-                    addToSchedule.doClick();
-                    passageSelector.setText("");
-                }
-            }
-
-            public void keyReleased(KeyEvent e) {
-                //Nothing needed here
+            @Override
+            public void handle(javafx.event.ActionEvent t) {
+                addToSchedule.fire();
+                passageSelector.setText("");
             }
         });
-        add(chapterPanel);
-        preview = new JTextArea();
+        getChildren().add(chapterPanel);
+        preview = new TextArea();
         preview.setEditable(false);
-        preview.setLineWrap(true);
-        preview.setWrapStyleWord(true);
-        add(new JScrollPane(preview));
-        addToSchedule = new JButton(LabelGrabber.INSTANCE.getLabel("add.to.schedule.text"), Utils.getImageIcon("icons/tick.png"));
-        JPanel addPanel = new JPanel();
-        addToSchedule.setEnabled(false);
-        addPanel.add(addToSchedule);
-        add(addPanel);
+        preview.setWrapText(true);
+        BorderPane bottomPane = new BorderPane();
+        VBox.setVgrow(bottomPane, Priority.SOMETIMES);
+        bottomPane.setCenter(preview);
+        addToSchedule = new Button(LabelGrabber.INSTANCE.getLabel("add.to.schedule.text"), new ImageView(new Image("file:icons/tick.png")));
+        addToSchedule.setOnAction(new EventHandler<ActionEvent>() {
+
+            @Override
+            public void handle(ActionEvent t) {
+                BiblePassage passage = new BiblePassage(bibleSelector.getSelectionModel().getSelectedItem().getName(), getBibleLocation(), getVerses());
+                Application.get().getMainWindow().getMainPanel().getSchedulePanel().getScheduleList().itemsProperty().get().add(passage);
+            }
+        });
+        addToSchedule.setDisable(true);
+        bottomPane.setBottom(addToSchedule);
+        getChildren().add(bottomPane);
 
         addUpdateListeners();
-        bibleSelector.addActionListener(new ActionListener() {
+        bibleSelector.selectionModelProperty().addListener(new ChangeListener<SingleSelectionModel<Bible>>() {
 
-            public void actionPerformed(ActionEvent e) {
-                if (bibleSelector.getSelectedIndex() == -1) {
+            @Override
+            public void changed(ObservableValue<? extends SingleSelectionModel<Bible>> ov, SingleSelectionModel<Bible> t, SingleSelectionModel<Bible> t1) {
+                if(bibleSelector.selectionModelProperty().get().isEmpty()) { //Nothing selected
                     return;
                 }
-                getBibleBookSelectorModel().removeAllElements();
-                for (BibleBook book : ((Bible) bibleSelector.getSelectedItem()).getBooks()) {
-                    getBibleBookSelectorModel().addElement(book);
-                }
+                ObservableList<BibleBook> books = FXCollections.observableArrayList(bibleSelector.selectionModelProperty().get().getSelectedItem().getBooks());
+                bookSelector.itemsProperty().set(books);
                 update();
             }
         });
 
-        chapterPanel.setMaximumSize(new Dimension(chapterPanel.getMaximumSize().width, bookSelector.getHeight()));
-        bibleSelector.setMaximumSize(new Dimension(chapterPanel.getMaximumSize().width, bookSelector.getHeight()));
-        addPanel.setMaximumSize(new Dimension(chapterPanel.getMaximumSize().width, addToSchedule.getHeight()));
+//        chapterPanel.setMaximumSize(new Dimension(chapterPanel.getMaximumSize().width, bookSelector.getHeight()));
+//        bibleSelector.setMaximumSize(new Dimension(chapterPanel.getMaximumSize().width, bookSelector.getHeight()));
+//        addPanel.setMaximumSize(new Dimension(chapterPanel.getMaximumSize().width, addToSchedule.getHeight()));
     }
 
     /**
@@ -137,59 +135,34 @@ public class LibraryBiblePanel extends JPanel implements BibleChangeListener {
      */
     @Override
     public void updateBibles() {
-        SwingUtilities.invokeLater(new Runnable() {
+        Platform.runLater(new Runnable() {
 
+            @Override
             public void run() {
-                DefaultComboBoxModel<Bible> model = getBibleSelectorModel();
-                model.removeAllElements();
-                for (Bible bible : BibleManager.get().getBibles()) {
-                    model.addElement(bible);
-                }
+                ObservableList<Bible> bibles = FXCollections.observableArrayList(BibleManager.get().getBibles());
+                bibleSelector.itemsProperty().set(bibles);
             }
         });
-    }
-
-    /**
-     * Get the bible selector model.
-     */
-    @SuppressWarnings("unchecked")
-    private DefaultComboBoxModel<Bible> getBibleSelectorModel() {
-        return (DefaultComboBoxModel<Bible>) bibleSelector.getModel();
-    }
-
-    /**
-     * Get the book selector model.
-     */
-    @SuppressWarnings("unchecked")
-    private DefaultComboBoxModel<BibleBook> getBibleBookSelectorModel() {
-        return (DefaultComboBoxModel<BibleBook>) bookSelector.getModel();
     }
 
     /**
      * Add the listeners that should call the update() method.
      */
     private void addUpdateListeners() {
-        passageSelector.getDocument().addDocumentListener(new DocumentListener() {
+        passageSelector.textProperty().addListener(new ChangeListener<String>() {
 
-            public void insertUpdate(DocumentEvent e) {
-                update();
-            }
-
-            public void removeUpdate(DocumentEvent e) {
-                update();
-            }
-
-            public void changedUpdate(DocumentEvent e) {
+            @Override
+            public void changed(ObservableValue<? extends String> ov, String t, String t1) {
                 update();
             }
         });
-        bookSelector.addActionListener(new ActionListener() {
+        bookSelector.selectionModelProperty().addListener(new ChangeListener<SingleSelectionModel<BibleBook>>() {
 
-            public void actionPerformed(ActionEvent e) {
+            @Override
+            public void changed(ObservableValue<? extends SingleSelectionModel<BibleBook>> ov, SingleSelectionModel<BibleBook> t, SingleSelectionModel<BibleBook> t1) {
                 update();
             }
         });
-
     }
 
     /**
@@ -198,11 +171,11 @@ public class LibraryBiblePanel extends JPanel implements BibleChangeListener {
     private void update() {
         verses.clear();
         ChapterVerseParser cvp = new ChapterVerseParser(passageSelector.getText());
-        BibleBook book = (BibleBook) bookSelector.getSelectedItem();
+        BibleBook book = bookSelector.selectionModelProperty().get().getSelectedItem();
         if (book == null || book.getChapter(cvp.getFromChapter()) == null
                 || book.getChapter(cvp.getToChapter()) == null
                 || passageSelector.getText().isEmpty()) {
-            getAddToSchedule().setEnabled(false);
+            getAddToSchedule().setDisable(true);
             preview.setText("");
             return;
         }
@@ -237,18 +210,14 @@ public class LibraryBiblePanel extends JPanel implements BibleChangeListener {
             preview.setText(LabelGrabber.INSTANCE.getLabel("too.many.verses.error")
                     .replace("$(MAXVERSE)", Integer.toString(maxVerses))
                     .replace("$(VERSENUM)", Integer.toString(verses.size())));
-            preview.setBackground(Color.RED);
-            getAddToSchedule().setEnabled(false);
+            getAddToSchedule().setDisable(true);
             return;
         }
         else {
-            preview.setBackground(null);
-            getAddToSchedule().setEnabled(true);
+            getAddToSchedule().setDisable(false);
         }
 
         preview.setText(ret.toString());
-        preview.setSelectionStart(0);
-        preview.setSelectionEnd(0);
     }
 
     /**
@@ -265,7 +234,7 @@ public class LibraryBiblePanel extends JPanel implements BibleChangeListener {
      */
     public String getBibleLocation() {
         StringBuilder ret = new StringBuilder();
-        ret.append(bookSelector.getSelectedItem()).append(" ");
+        ret.append(bookSelector.selectionModelProperty().get().getSelectedItem()).append(" ");
         ret.append(passageSelector.getText());
         return ret.toString();
     }
@@ -274,7 +243,7 @@ public class LibraryBiblePanel extends JPanel implements BibleChangeListener {
      * Get the bible selector used to select the type of bible to use.
      * @return the bible selector used to select the type of bible to use.
      */
-    public JComboBox<Bible> getBibleSelector() {
+    public ComboBox<Bible> getBibleSelector() {
         return bibleSelector;
     }
 
@@ -282,7 +251,7 @@ public class LibraryBiblePanel extends JPanel implements BibleChangeListener {
      * Get the preview text area.
      * @return the preview text area.
      */
-    public JTextArea getPreview() {
+    public TextArea getPreview() {
         return preview;
     }
 
@@ -290,7 +259,7 @@ public class LibraryBiblePanel extends JPanel implements BibleChangeListener {
      * Get the add to schedule button.
      * @return the add to schedule button.
      */
-    public JButton getAddToSchedule() {
+    public Button getAddToSchedule() {
         return addToSchedule;
     }
 
@@ -298,7 +267,7 @@ public class LibraryBiblePanel extends JPanel implements BibleChangeListener {
      * Get the book selector.
      * @return the book selector.
      */
-    public JComboBox<BibleBook> getBookSelector() {
+    public ComboBox<BibleBook> getBookSelector() {
         return bookSelector;
     }
 
@@ -306,7 +275,7 @@ public class LibraryBiblePanel extends JPanel implements BibleChangeListener {
      * Get the passage selector.
      * @return the passage selector.
      */
-    public JTextField getPassageSelector() {
+    public TextField getPassageSelector() {
         return passageSelector;
     }
 }

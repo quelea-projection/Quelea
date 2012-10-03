@@ -77,7 +77,6 @@ public abstract class ImportDialog extends JDialog implements PropertyChangeList
      * @param selectDirectory true if the user should only be allowed to select
      * directories, false otherwise.
      */
-    //TODO What's causing this netbeans warning about exporting non-public API type? Don't think we're doing that...
     protected ImportDialog(JFrame owner, String[] dialogLabels, FileFilter fileFilter,
             final SongParser parser, final boolean selectDirectory) {
         super(owner, LabelGrabber.INSTANCE.getLabel("import.heading"), true);
@@ -132,14 +131,14 @@ public abstract class ImportDialog extends JDialog implements PropertyChangeList
             @Override
             public void actionPerformed(ActionEvent e) {
                 statusPanel = Application.get().getStatusGroup().addPanel(LabelGrabber.INSTANCE.getLabel("importing.status"));
-                statusPanel.getCancelButton().addActionListener(new ActionListener() {
-
-                    @Override
-                    public void actionPerformed(ActionEvent e) {
-                        statusPanel.done();
-                        halt = true;
-                    }
-                });
+//                statusPanel.getCancelButton().addActionListener(new ActionListener() {
+//
+//                    @Override
+//                    public void actionPerformed(ActionEvent e) {
+//                        statusPanel.done();
+//                        halt = true;
+//                    }
+//                });
                 final String location = locationField.getText();
                 setActive();
                 SwingWorker worker = new SwingWorker() {
@@ -161,7 +160,7 @@ public abstract class ImportDialog extends JDialog implements PropertyChangeList
                                 localSongs = null;
                                 return null;
                             }
-                            statusPanel.getProgressBar().setIndeterminate(false);
+                            statusPanel.getProgressBar().setProgress(0);
                             if (checkDuplicates.isSelected()) {
 //                                localSongsDuplicate = new SongDuplicateChecker().checkSongs(localSongsArr);
                                 for (int i = 0; i < localSongs.size(); i++) {
@@ -177,8 +176,8 @@ public abstract class ImportDialog extends JDialog implements PropertyChangeList
                                                 SwingUtilities.invokeLater(new Runnable() {
 
                                                     public void run() {
-                                                        if (statusPanel.getProgressBar().getValue() < progress) {
-                                                            statusPanel.getProgressBar().setValue(progress);
+                                                        if (statusPanel.getProgressBar().getProgress() < progress) {
+                                                            statusPanel.getProgressBar().setProgress(progress);
                                                         }
                                                     }
                                                 });
@@ -254,7 +253,7 @@ public abstract class ImportDialog extends JDialog implements PropertyChangeList
      * Called when the import is taking place, this disables the appropriate controls.
      */
     public void setActive() {
-        statusPanel.getProgressBar().setIndeterminate(true);
+        statusPanel.getProgressBar().setProgress(-1);
         setVisible(false);
         resetDialog();
     }
@@ -284,9 +283,8 @@ public abstract class ImportDialog extends JDialog implements PropertyChangeList
     public void propertyChange(PropertyChangeEvent evt) {
         String strPropertyName = evt.getPropertyName();
         if ("progress".equals(strPropertyName) && statusPanel != null) {
-            statusPanel.getProgressBar().setIndeterminate(false);
             int progress = (Integer) evt.getNewValue();
-            statusPanel.getProgressBar().setValue(progress);
+            statusPanel.getProgressBar().setProgress(progress);
         }
     }
     

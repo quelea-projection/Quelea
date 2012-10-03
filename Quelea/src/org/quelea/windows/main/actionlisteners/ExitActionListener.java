@@ -18,10 +18,10 @@
  */
 package org.quelea.windows.main.actionlisteners;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javax.swing.JOptionPane;
 import org.quelea.Application;
 import org.quelea.Schedule;
@@ -36,43 +36,43 @@ import org.quelea.utils.LoggerUtils;
  *
  * @author Michael
  */
-public class ExitActionListener implements ActionListener {
+public class ExitActionListener implements EventHandler<ActionEvent> {
 
     private static final Logger LOGGER = LoggerUtils.getLogger();
 
     /**
      * Call this method when the event is fired.
-     *
-     * @param ae the actionevent. May be null (not used.)
      */
     @Override
-    public void actionPerformed(ActionEvent ae) {
+    public void handle(ActionEvent t) {
         exit();
     }
 
     /**
      * Process the necessary logic to cleanly exit from Quelea.
      */
-    private void exit() {
+    public void exit() {
         LOGGER.log(Level.INFO, "exit() called");
-        Schedule schedule = Application.get().getMainWindow().getMainPanel().getSchedulePanel().getScheduleList().getSchedule();
-        if(!schedule.isEmpty() && schedule.isModified()) {
-            int val = JOptionPane.showConfirmDialog(Application.get().getMainWindow(),
-                    LabelGrabber.INSTANCE.getLabel("save.before.exit.text"),
-                    LabelGrabber.INSTANCE.getLabel("save.before.exit.title"),
-                    JOptionPane.YES_NO_CANCEL_OPTION);
-            switch(val) {
-                case JOptionPane.YES_OPTION:
-                    new ScheduleSaver().saveSchedule(false);
-                    break;
-                case JOptionPane.NO_OPTION:
-                    break;
-                case JOptionPane.CANCEL_OPTION: //Don't exit
-                    return;
-            }
-        }
+//        Schedule schedule = Application.get().getMainWindow().getMainPanel().getSchedulePanel().getScheduleList().getSchedule();
+//        if(!schedule.isEmpty() && schedule.isModified()) {
+//            int val = JOptionPane.showConfirmDialog(null,
+//                    LabelGrabber.INSTANCE.getLabel("save.before.exit.text"),
+//                    LabelGrabber.INSTANCE.getLabel("save.before.exit.title"),
+//                    JOptionPane.YES_NO_CANCEL_OPTION);
+//            switch(val) {
+//                case JOptionPane.YES_OPTION:
+//                    new ScheduleSaver().saveSchedule(false);
+//                    break;
+//                case JOptionPane.NO_OPTION:
+//                    break;
+//                case JOptionPane.CANCEL_OPTION: //Don't exit
+//                    return;
+//            }
+//        }
+        LOGGER.log(Level.INFO, "Hiding main window...");
+        Application.get().getMainWindow().hide();
         LOGGER.log(Level.INFO, "Cleaning up displayables before exiting..");
-        for(Object obj : Application.get().getMainWindow().getMainPanel().getSchedulePanel().getScheduleList().getModel().toArray()) {
+        for(Object obj : Application.get().getMainWindow().getMainPanel().getSchedulePanel().getScheduleList().itemsProperty().get()) {
             Displayable d = (Displayable)obj;
             LOGGER.log(Level.INFO, "Cleaning up {0}", d.getClass());
             d.dispose();

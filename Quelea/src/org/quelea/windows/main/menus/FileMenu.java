@@ -18,69 +18,60 @@
  */
 package org.quelea.windows.main.menus;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.KeyEvent;
-import javax.swing.JMenu;
-import javax.swing.JMenuItem;
-import javax.swing.KeyStroke;
+import javafx.scene.control.Menu;
+import javafx.scene.control.MenuItem;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import org.quelea.languages.LabelGrabber;
-import org.quelea.utils.Utils;
-import org.quelea.windows.main.actionlisteners.*;
+import org.quelea.windows.main.actionlisteners.ExitActionListener;
+import org.quelea.windows.main.actionlisteners.NewScheduleActionListener;
+import org.quelea.windows.main.actionlisteners.OpenScheduleActionListener;
+import org.quelea.windows.main.actionlisteners.PrintScheduleActionListener;
+import org.quelea.windows.main.actionlisteners.SaveScheduleActionListener;
 
 /**
  * Quelea's file menu.
  *
  * @author Michael
  */
-public class FileMenu extends JMenu {
+public class FileMenu extends Menu {
 
-    private JMenuItem newItem;
-    private JMenuItem openItem;
-    private JMenuItem saveItem;
-    private JMenuItem saveAsItem;
-    private JMenuItem printItem;
-    private JMenuItem exitItem;
+    private MenuItem newItem;
+    private MenuItem openItem;
+    private MenuItem saveItem;
+    private MenuItem saveAsItem;
+    private MenuItem printItem;
+    private MenuItem exitItem;
 
     /**
      * Create the file menu.
      */
     public FileMenu() {
         super(LabelGrabber.INSTANCE.getLabel("file.menu"));
-        setMnemonic('f');
 
-        newItem = new JMenuItem(LabelGrabber.INSTANCE.getLabel("new.schedule.button"), Utils.getImageIcon("icons/filenew.png", 20, 20));
-        newItem.setMnemonic('n');
-        newItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_N, ActionEvent.CTRL_MASK));
-        newItem.addActionListener(new NewScheduleActionListener());
-        add(newItem);
+        newItem = new MenuItem(LabelGrabber.INSTANCE.getLabel("new.schedule.button"), new ImageView(new Image("file:icons/filenew.png", 20, 20, true, false)));
+        newItem.setOnAction(new NewScheduleActionListener());
+        getItems().add(newItem);
 
-        openItem = new JMenuItem(LabelGrabber.INSTANCE.getLabel("open.schedule.button"), Utils.getImageIcon("icons/fileopen.png", 20, 20));
-        openItem.setMnemonic('o');
-        openItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_O, ActionEvent.CTRL_MASK));
-        openItem.addActionListener(new OpenScheduleActionListener());
-        add(openItem);
+        openItem = new MenuItem(LabelGrabber.INSTANCE.getLabel("open.schedule.button"), new ImageView(new Image("file:icons/fileopen.png", 20, 20, true, false)));
+        openItem.setOnAction(new OpenScheduleActionListener());
+        getItems().add(openItem);
 
-        saveItem = new JMenuItem(LabelGrabber.INSTANCE.getLabel("save.schedule.button"), Utils.getImageIcon("icons/filesave.png", 20, 20));
-        saveItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, ActionEvent.CTRL_MASK));
-        saveItem.setMnemonic('s');
-        saveItem.addActionListener(new SaveScheduleActionListener(false));
-        add(saveItem);
+        saveItem = new MenuItem(LabelGrabber.INSTANCE.getLabel("save.schedule.button"), new ImageView(new Image("file:icons/filesave.png", 20, 20, true, false)));
+        saveItem.setOnAction(new SaveScheduleActionListener(false));
+        getItems().add(saveItem);
 
-        saveAsItem = new JMenuItem(LabelGrabber.INSTANCE.getLabel("save.as.schedule.button"), Utils.getImageIcon("icons/filesaveas.png", 20, 20));
-        saveAsItem.setMnemonic('a');
-        saveAsItem.addActionListener(new SaveScheduleActionListener(true));
-        add(saveAsItem);
+        saveAsItem = new MenuItem(LabelGrabber.INSTANCE.getLabel("save.as.schedule.button"), new ImageView(new Image("file:icons/filesaveas.png", 20, 20, true, false)));
+        saveAsItem.setOnAction(new SaveScheduleActionListener(true));
+        getItems().add(saveAsItem);
 
-        printItem = new JMenuItem(LabelGrabber.INSTANCE.getLabel("print.schedule.button"), Utils.getImageIcon("icons/fileprint.png", 20, 20));
-        printItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_P, ActionEvent.CTRL_MASK));
-        printItem.setMnemonic('p');
-        printItem.addActionListener(new PrintScheduleActionListener());
-        add(printItem);
+        printItem = new MenuItem(LabelGrabber.INSTANCE.getLabel("print.schedule.button"), new ImageView(new Image("file:icons/fileprint.png", 20, 20, true, false)));
+        printItem.setOnAction(new PrintScheduleActionListener());
+        getItems().add(printItem);
 
-        exitItem = new JMenuItem(LabelGrabber.INSTANCE.getLabel("exit.button"), Utils.getImageIcon("icons/exit.png", 20, 20));
-        exitItem.setMnemonic('e');
-        exitItem.addActionListener(new ExitActionListener());
-        add(exitItem);
+        exitItem = new MenuItem(LabelGrabber.INSTANCE.getLabel("exit.button"), new ImageView(new Image("file:icons/exit.png", 20, 20, true, false)));
+        exitItem.setOnAction(new ExitActionListener());
+        getItems().add(exitItem);
     }
 
 }

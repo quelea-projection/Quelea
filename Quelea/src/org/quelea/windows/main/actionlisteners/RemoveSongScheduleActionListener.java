@@ -17,8 +17,8 @@
  */
 package org.quelea.windows.main.actionlisteners;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import org.quelea.Application;
 import org.quelea.windows.main.ScheduleList;
 
@@ -26,22 +26,22 @@ import org.quelea.windows.main.ScheduleList;
  * Action listener to remove a song from the schedule.
  * @author Michael
  */
-public class RemoveSongScheduleActionListener implements ActionListener {
+public class RemoveSongScheduleActionListener implements EventHandler<ActionEvent> {
 
     /**
      * Remove the currently selected song from the schedule.
      * @param e the action event.
      */
     @Override
-    public void actionPerformed(ActionEvent e) {
-        ScheduleList scheduleList = Application.get().getMainWindow().getMainPanel().getSchedulePanel().getScheduleList();
-        int selectedIndex = scheduleList.getSelectedIndex();
-        scheduleList.removeCurrentItem();
-        if (selectedIndex == scheduleList.getModel().getSize()) {
-            selectedIndex--;
-        }
-        if (selectedIndex >= 0) {
-            scheduleList.setSelectedIndex(selectedIndex);
-        }
+    public void handle(ActionEvent t) {
+//        ScheduleList scheduleList = Application.get().getMainWindow().getMainPanel().getSchedulePanel().getScheduleList();
+//        int selectedIndex = scheduleList.getSelectedIndex();
+//        scheduleList.removeCurrentItem();
+//        if (selectedIndex == scheduleList.getModel().getSize()) {
+//            selectedIndex--;
+//        }
+//        if (selectedIndex >= 0) {
+//            scheduleList.setSelectedIndex(selectedIndex);
+//        }
     }
 }

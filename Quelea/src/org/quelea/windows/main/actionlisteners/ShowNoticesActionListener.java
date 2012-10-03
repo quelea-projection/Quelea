@@ -18,18 +18,18 @@
  */
 package org.quelea.windows.main.actionlisteners;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import org.quelea.Application;
 
 /**
  * Action listener to show the notices.
  * @author Michael
  */
-public class ShowNoticesActionListener implements ActionListener {
+public class ShowNoticesActionListener implements EventHandler<ActionEvent> {
 
     @Override
-    public void actionPerformed(ActionEvent ae) {
+    public void handle(ActionEvent t) {
         Application.get().getMainWindow().getNoticeDialog().setVisible(true);
     }
     

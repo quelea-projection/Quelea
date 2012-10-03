@@ -125,8 +125,8 @@ public class Mailer {
                 Desktop.getDesktop().open(temp);
             }
             catch (Throwable ex) {
-                JOptionPane.showMessageDialog(Application.get().getMainWindow(),LabelGrabber.INSTANCE.getLabel("email.error.text"),
-                        LabelGrabber.INSTANCE.getLabel("email.error.title"), JOptionPane.WARNING_MESSAGE);
+//                JOptionPane.showMessageDialog(Application.get().getMainWindow(),LabelGrabber.INSTANCE.getLabel("email.error.text"),
+//                        LabelGrabber.INSTANCE.getLabel("email.error.title"), JOptionPane.WARNING_MESSAGE);
             }
 
         }

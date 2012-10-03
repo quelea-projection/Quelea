@@ -1,13 +1,5 @@
 quelea (0.6) stable; urgency=normal
  
-  * Support for motion backgrounds
-  * Better icons for adding / removing songs from database
-  * Bug fixed with creating a song, hitting cancel then editing another song
-  * Support for PPTX files
-  * Full animation / transition support for presentations using openoffice
-  * Bible navigation support
-  * Much better set of sample images
-  * Edit song icon on Schedule toolbar
-  * Addition of background audio on schedule items
- 
- -- Michael Berry <michael@quelea.org>  Wednesday, 20 May 2012 00:00:00 +0000
+  * Rewritten interface in JavaFX
+
+ -- Michael Berry <michael@quelea.org>  Wednesday, 10 Oct 2012 00:00:00 +0000

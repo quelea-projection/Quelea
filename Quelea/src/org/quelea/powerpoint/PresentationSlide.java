@@ -71,7 +71,6 @@ public class PresentationSlide {
      */
     private void initCacheImage() {
         LyricCanvas lc = Application.get().getLyricWindow().getCanvas();
-        getImage(lc.getWidth(), lc.getHeight()); //just for the cache
     }
 
     /**

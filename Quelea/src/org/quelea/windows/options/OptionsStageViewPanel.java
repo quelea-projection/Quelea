@@ -49,7 +49,6 @@ public class OptionsStageViewPanel extends JPanel implements PropertyPanel {
      * Create the stage view options panel.
      */
     public OptionsStageViewPanel() {
-        setName(LabelGrabber.INSTANCE.getLabel("stage.options.heading"));
 
         JPanel stagePanel = new JPanel();
         stagePanel.setLayout(new SpringLayout());
@@ -96,12 +95,12 @@ public class OptionsStageViewPanel extends JPanel implements PropertyPanel {
      */
     @Override
     public void setProperties() {
-        QueleaProperties.get().setShowChords(showChordsCheckBox.isSelected());
-        QueleaProperties.get().setStageTextAlignment(TextAlignment.parse(lineAlignment.getItemAt(lineAlignment.getSelectedIndex())));
-        QueleaProperties.get().setStageTextFont(fontSelection.getItemAt(fontSelection.getSelectedIndex()));
-        QueleaProperties.get().setStageBackgroundColor(backgroundColourButton.getColour());
-        QueleaProperties.get().setStageChordColor(chordColourButton.getColour());
-        QueleaProperties.get().setStageLyricsColor(lyricsColourButton.getColour());
+//        QueleaProperties.get().setShowChords(showChordsCheckBox.isSelected());
+//        QueleaProperties.get().setStageTextAlignment(TextAlignment.parse(lineAlignment.getItemAt(lineAlignment.getSelectedIndex())));
+//        QueleaProperties.get().setStageTextFont(fontSelection.getItemAt(fontSelection.getSelectedIndex()));
+//        QueleaProperties.get().setStageBackgroundColor(backgroundColourButton.getColour());
+//        QueleaProperties.get().setStageChordColor(chordColourButton.getColour());
+//        QueleaProperties.get().setStageLyricsColor(lyricsColourButton.getColour());
     }
 
     /**
@@ -109,11 +108,11 @@ public class OptionsStageViewPanel extends JPanel implements PropertyPanel {
      */
     @Override
     public final void readProperties() {
-        showChordsCheckBox.setSelected(QueleaProperties.get().getShowChords());
-        lyricsColourButton.setColour(QueleaProperties.get().getStageLyricsColor());
-        backgroundColourButton.setColour(QueleaProperties.get().getStageBackgroundColor());
-        chordColourButton.setColour(QueleaProperties.get().getStageChordColor());
-        fontSelection.setSelectedItem(QueleaProperties.get().getStageTextFont());
-        lineAlignment.setSelectedItem(QueleaProperties.get().getStageTextAlignment());
+//        showChordsCheckBox.setSelected(QueleaProperties.get().getShowChords());
+//        lyricsColourButton.setColour(QueleaProperties.get().getStageLyricsColor());
+//        backgroundColourButton.setColour(QueleaProperties.get().getStageBackgroundColor());
+//        chordColourButton.setColour(QueleaProperties.get().getStageChordColor());
+//        fontSelection.setSelectedItem(QueleaProperties.get().getStageTextFont());
+//        lineAlignment.setSelectedItem(QueleaProperties.get().getStageTextAlignment());
     }
 }
