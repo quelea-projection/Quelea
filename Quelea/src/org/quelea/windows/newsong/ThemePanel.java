@@ -68,7 +68,7 @@ public class ThemePanel extends JPanel {
         setLayout(new BorderLayout());
         canvas = new LyricCanvas(false, false);
         canvas.setText(SAMPLE_LYRICS, null);
-        add(canvas, BorderLayout.CENTER);
+//        add(canvas, BorderLayout.CENTER);
         JPanel toolbarPanel = new JPanel();
         toolbarPanel.setLayout(new BoxLayout(toolbarPanel, BoxLayout.Y_AXIS));
         setupFontToolbar();
@@ -192,7 +192,7 @@ public class ThemePanel extends JPanel {
     private void updateTheme(boolean warning) {
         Theme theme = getTheme();
         if (warning && theme.getBackground().isColour()) {
-            checkAccessibility(theme.getFontColor(), theme.getBackground().getColour());
+//            checkAccessibility(theme.getFontColor(), theme.getBackground().getColour());
         }
         canvas.setTheme(theme);
     }
@@ -205,30 +205,30 @@ public class ThemePanel extends JPanel {
         if (theme == null) {
             theme = Theme.DEFAULT_THEME;
         }
-        Font font = theme.getFont();
-        if (font.isBold()) {
-            boldButton.setSelected(true);
-        }
-        if (font.isItalic()) {
-            italicButton.setSelected(true);
-        }
-        int fontSize = font.getSize();
-        if (fontSize % 2 != 0) {
-            fontSize--;
-        }
-        fontSelection.setSelectedItem(font.getFamily());
-        fontColourButton.getColourSelectionWindow().setSelectedColour(theme.getFontColor());
-        fontColourButton.setIconColour(theme.getFontColor());
-        Background background = theme.getBackground();
-        if (background.isColour()) {
-            backgroundTypeSelect.getModel().setSelectedItem(LabelGrabber.INSTANCE.getLabel("color.theme.label"));
-            backgroundColourButton.getColourSelectionWindow().setSelectedColour(background.getColour());
-            backgroundColourButton.setIconColour(background.getColour());
-        }
-        else {
-            backgroundTypeSelect.getModel().setSelectedItem(LabelGrabber.INSTANCE.getLabel("image.theme.label"));
-            backgroundImageLocation.setText(background.getImageLocation());
-        }
+//        Font font = theme.getFont();
+//        if (font.isBold()) {
+//            boldButton.setSelected(true);
+//        }
+//        if (font.isItalic()) {
+//            italicButton.setSelected(true);
+//        }
+//        int fontSize = font.getSize();
+//        if (fontSize % 2 != 0) {
+//            fontSize--;
+//        }
+//        fontSelection.setSelectedItem(font.getFamily());
+//        fontColourButton.getColourSelectionWindow().setSelectedColour(theme.getFontColor());
+//        fontColourButton.setIconColour(theme.getFontColor());
+//        Background background = theme.getBackground();
+//        if (background.isColour()) {
+//            backgroundTypeSelect.getModel().setSelectedItem(LabelGrabber.INSTANCE.getLabel("color.theme.label"));
+//            backgroundColourButton.getColourSelectionWindow().setSelectedColour(background.getColour());
+//            backgroundColourButton.setIconColour(background.getColour());
+//        }
+//        else {
+//            backgroundTypeSelect.getModel().setSelectedItem(LabelGrabber.INSTANCE.getLabel("image.theme.label"));
+//            backgroundImageLocation.setText(background.getImageLocation());
+//        }
         updateTheme(false);
     }
 
@@ -269,7 +269,7 @@ public class ThemePanel extends JPanel {
         Font font = new Font(fontSelection.getSelectedItem().toString(), fontStyle, 72);
         Background background;
         if (backgroundTypeSelect.getModel().getSelectedItem().equals(LabelGrabber.INSTANCE.getLabel("color.theme.label")) || backgroundImageLocation.getText().isEmpty()) {
-            background = new Background(backgroundColourButton.getColourSelectionWindow().getSelectedColour());
+//            background = new Background(backgroundColourButton.getColourSelectionWindow().getSelectedColour());
         }
         else if (backgroundTypeSelect.getModel().getSelectedItem().equals(LabelGrabber.INSTANCE.getLabel("image.theme.label"))) {
             background = new Background(backgroundImageLocation.getText(), null);
@@ -277,7 +277,8 @@ public class ThemePanel extends JPanel {
         else {
             throw new AssertionError("Bug - " + backgroundTypeSelect.getModel().getSelectedItem() + " is an unknown selection value");
         }
-        return new Theme(font, fontColourButton.getColourSelectionWindow().getSelectedColour(), background);
+//        return new Theme(font, fontColourButton.getColourSelectionWindow().getSelectedColour(), background);
+        return null;
     }
 
     /**

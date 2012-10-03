@@ -56,7 +56,7 @@ public class BibleBrowseDialog extends JDialog implements BibleChangeListener {
      * Create the bible browse dialog.
      */
     public BibleBrowseDialog() {
-        super(Application.get().getMainWindow());
+//        super(Application.get().getMainWindow());
         setTitle(LabelGrabber.INSTANCE.getLabel("bible.browser.title"));
         setIconImage(Utils.getImage("icons/bible.png"));
         setLayout(new BorderLayout());

@@ -19,9 +19,9 @@ package org.quelea.windows.library;
 
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.swing.BoxLayout;
-import javax.swing.JPanel;
-import javax.swing.JTabbedPane;
+import javafx.scene.control.Tab;
+import javafx.scene.control.TabPane;
+import javafx.scene.layout.VBox;
 import org.quelea.languages.LabelGrabber;
 import org.quelea.utils.LoggerUtils;
 
@@ -30,7 +30,7 @@ import org.quelea.utils.LoggerUtils;
  * and added to the order of service.
  * @author Michael
  */
-public class LibraryPanel extends JPanel {
+public class LibraryPanel extends VBox {
 
     private static final Logger LOGGER = LoggerUtils.getLogger();
     private final LibrarySongPanel songPanel;
@@ -42,20 +42,33 @@ public class LibraryPanel extends JPanel {
      */
     public LibraryPanel() {
         LOGGER.log(Level.INFO, "Creating library panel");
-        setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
-        JTabbedPane tabbedPane = new JTabbedPane();
-
+        TabPane tabPane = new TabPane();
+        
         LOGGER.log(Level.INFO, "Creating library song panel");
         songPanel = new LibrarySongPanel();
-        tabbedPane.addTab(LabelGrabber.INSTANCE.getLabel("library.songs.heading"), songPanel);
+        Tab songTab = new Tab();
+        songTab.setClosable(false);
+        songTab.setText(LabelGrabber.INSTANCE.getLabel("library.songs.heading"));
+        songTab.setContent(songPanel);
+        tabPane.getTabs().add(songTab);
+        
         LOGGER.log(Level.INFO, "Creating library bible panel");
         biblePanel = new LibraryBiblePanel();
-        tabbedPane.addTab(LabelGrabber.INSTANCE.getLabel("library.bible.heading"), biblePanel);
+        Tab bibleTab = new Tab();
+        bibleTab.setClosable(false);
+        bibleTab.setText(LabelGrabber.INSTANCE.getLabel("library.bible.heading"));
+        bibleTab.setContent(biblePanel);
+        tabPane.getTabs().add(bibleTab);
+        
         LOGGER.log(Level.INFO, "Creating library image panel");
         imagePanel = new LibraryImagePanel();
-        tabbedPane.addTab(LabelGrabber.INSTANCE.getLabel("library.image.heading"), imagePanel);
-        add(tabbedPane);
-
+        Tab imageTab = new Tab();
+        imageTab.setClosable(false);
+        imageTab.setText(LabelGrabber.INSTANCE.getLabel("library.image.heading"));
+        imageTab.setContent(imagePanel);
+        tabPane.getTabs().add(imageTab);
+        
+        getChildren().add(tabPane);
     }
 
     /**

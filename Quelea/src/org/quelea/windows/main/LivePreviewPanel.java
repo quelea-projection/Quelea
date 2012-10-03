@@ -17,20 +17,13 @@
  */
 package org.quelea.windows.main;
 
-import java.awt.BorderLayout;
 import java.awt.Canvas;
-import java.awt.CardLayout;
-import java.awt.Component;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.swing.JPanel;
+import javafx.scene.Node;
+import javafx.scene.layout.BorderPane;
 import org.quelea.displayable.Displayable;
 import org.quelea.displayable.ImageDisplayable;
 import org.quelea.displayable.PresentationDisplayable;
@@ -48,20 +41,20 @@ import org.quelea.windows.video.VideoPanel;
  *
  * @author Michael
  */
-public abstract class LivePreviewPanel extends JPanel {
+public abstract class LivePreviewPanel extends BorderPane {
 
     private static final Logger LOGGER = LoggerUtils.getLogger();
     private final Set<LyricCanvas> canvases = new HashSet<>();
     private final Set<LyricWindow> windows = new HashSet<>();
     private Displayable displayable;
-    private JPanel cardPanel = new JPanel(new CardLayout());
+    private CardPane cardPanel = new CardPane();
     private static final String LYRICS_LABEL = "LYRICS";
     private static final String IMAGE_LABEL = "IMAGE";
     private static final String VIDEO_LABEL = "VIDEO";
     private static final String PRESENTATION_LABEL = "PPT";
     private String currentLabel;
     private SelectLyricsPanel lyricsPanel = new SelectLyricsPanel(this);
-    private ImagePanel picturePanel = new ImagePanel(this);
+    private ImagePanel picturePanel = new ImagePanel();
     private PresentationPanel presentationPanel = new PresentationPanel(this);
     private VideoPanel videoPanel = new VideoPanel();
     private QuickEditDialog quickEditDialog = new QuickEditDialog();
@@ -83,33 +76,40 @@ public abstract class LivePreviewPanel extends JPanel {
      * panels.
      */
     public LivePreviewPanel() {
-        setLayout(new BorderLayout());
-        add(cardPanel, BorderLayout.CENTER);
+        setCenter(cardPanel);
         cardPanel.add(lyricsPanel, LYRICS_LABEL);
         cardPanel.add(picturePanel, IMAGE_LABEL);
         cardPanel.add(videoPanel, VIDEO_LABEL);
         cardPanel.add(presentationPanel, PRESENTATION_LABEL);
-        ((CardLayout) cardPanel.getLayout()).show(cardPanel, LYRICS_LABEL);
+        cardPanel.show(LYRICS_LABEL);
 
-        lyricsPanel.getLyricsList().addMouseListener(new MouseAdapter() {
-
-            @Override
-            public void mouseClicked(MouseEvent me) {
-                if(me.isControlDown()) {
-                    int index = lyricsPanel.getLyricsList().locationToIndex(me.getPoint());
-                    doQuickEdit(index);
-                }
-            }
-        });
-        lyricsPanel.getLyricsList().addKeyListener(new KeyAdapter() {
-
-            @Override
-            public void keyPressed(KeyEvent ke) {
-                if(ke.isControlDown() && ke.getKeyCode() == KeyEvent.VK_Q) {
-                    doQuickEdit(lyricsPanel.getLyricsList().getSelectedIndex());
-                }
-            }
-        });
+//        lyricsPanel.getLyricsList().addMouseListener(new MouseAdapter() {
+//
+//            @Override
+//            public void mouseClicked(MouseEvent me) {
+//                if(me.isControlDown()) {
+//                    int index = lyricsPanel.getLyricsList().locationToIndex(me.getPoint());
+//                    doQuickEdit(index);
+//                }
+//            }
+//        });
+//        lyricsPanel.getLyricsList().addKeyListener(new KeyAdapter() {
+//
+//            @Override
+//            public void keyPressed(KeyEvent ke) {
+//                if(ke.isControlDown() && ke.getKeyCode() == KeyEvent.VK_Q) {
+//                    doQuickEdit(lyricsPanel.getLyricsList().getSelectedIndex());
+//                }
+//            }
+//        });
+    }
+    
+    /**
+     * Pass focus down to the current card panel pane.
+     */
+    @Override
+    public void requestFocus() {
+        getCurrentPane().requestFocus();
     }
 
     /**
@@ -143,33 +143,13 @@ public abstract class LivePreviewPanel extends JPanel {
     }
 
     /**
-     * Add a key listener to this panel and all the contained panels.
-     *
-     * @param l the listener to add.
-     */
-    @Override
-    public void addKeyListener(KeyListener l) {
-        super.addKeyListener(l);
-        for(ContainedPanel panel : containedSet) {
-            panel.addKeyListener(l);
-        }
-    }
-
-    /**
      * Get the container panel (the one using the cardlayout that flips between
      * the various available panels.
      *
      * @return the container panel.
      */
-    public JPanel getContainerPanel() {
-        return cardPanel;
-    }
-
-    /**
-     * Focus on this panel.
-     */
-    public void focus() {
-        getCurrentPanel().focus();
+    public Node getCurrentPane() {
+        return cardPanel.getCurrentPane();
     }
 
     /**
@@ -183,7 +163,7 @@ public abstract class LivePreviewPanel extends JPanel {
         for(ContainedPanel panel : containedSet) {
             panel.clear();
         }
-        ((CardLayout) cardPanel.getLayout()).show(cardPanel, LYRICS_LABEL);
+        cardPanel.show(LYRICS_LABEL);
     }
 
     /**
@@ -227,27 +207,21 @@ public abstract class LivePreviewPanel extends JPanel {
         }
         if(d instanceof TextDisplayable) {
             lyricsPanel.showDisplayable((TextDisplayable) d, index);
-            ((CardLayout) cardPanel.getLayout()).show(cardPanel, LYRICS_LABEL);
+            cardPanel.show(LYRICS_LABEL);
             currentLabel = LYRICS_LABEL;
         }
         else if(d instanceof ImageDisplayable) {
             picturePanel.showDisplayable((ImageDisplayable) d);
-            ((CardLayout) cardPanel.getLayout()).show(cardPanel, IMAGE_LABEL);
+            cardPanel.show(IMAGE_LABEL);
             currentLabel = IMAGE_LABEL;
         }
         else if(d instanceof VideoDisplayable) {
             videoPanel.showDisplayable((VideoDisplayable) d);
-            for(Canvas lc : videoPanel.getVideoControlPanel().getRegisteredCanvases()) {
-                if(lc instanceof LyricCanvas) {
-                    ((LyricCanvas)lc).eraseText();
-                }
-            }
-            ((CardLayout) cardPanel.getLayout()).show(cardPanel, VIDEO_LABEL);
-            videoPanel.repaint();
+            cardPanel.show(VIDEO_LABEL);
             currentLabel = VIDEO_LABEL;
         }
         else if(d instanceof PresentationDisplayable) {
-            ((CardLayout) cardPanel.getLayout()).show(cardPanel, PRESENTATION_LABEL);
+            cardPanel.show(PRESENTATION_LABEL);
             presentationPanel.setDisplayable((PresentationDisplayable) d, index);
             currentLabel = PRESENTATION_LABEL;
         }
@@ -347,20 +321,5 @@ public abstract class LivePreviewPanel extends JPanel {
      */
     public Set<LyricWindow> getWindows() {
         return windows;
-    }
-
-    /**
-     * Get the current panel being shown in the card layout.
-     *
-     * @return the current panel.
-     */
-    private ContainedPanel getCurrentPanel() {
-        Component[] components = cardPanel.getComponents();
-        for(Component c : components) {
-            if(c.isVisible()) {
-                return (ContainedPanel) c;
-            }
-        }
-        return null;
     }
 }

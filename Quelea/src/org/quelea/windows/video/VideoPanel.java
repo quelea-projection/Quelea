@@ -18,6 +18,7 @@
 package org.quelea.windows.video;
 
 import java.awt.BorderLayout;
+import javafx.scene.layout.BorderPane;
 import org.quelea.displayable.VideoDisplayable;
 import org.quelea.windows.main.ContainedPanel;
 
@@ -25,7 +26,7 @@ import org.quelea.windows.main.ContainedPanel;
  * A panel used in the live / preview panels for displaying videos.
  * @author Michael
  */
-public class VideoPanel extends ContainedPanel {
+public class VideoPanel extends BorderPane implements ContainedPanel {
 
     private VideoControlPanel controlPanel = new VideoControlPanel();
 
@@ -33,8 +34,7 @@ public class VideoPanel extends ContainedPanel {
      * Create a new image panel.
      */
     public VideoPanel() {
-        setLayout(new BorderLayout());
-        add(controlPanel, BorderLayout.CENTER);
+        setCenter(controlPanel);
     }
 
     /**
@@ -67,5 +67,10 @@ public class VideoPanel extends ContainedPanel {
      */
     public void showDisplayable(VideoDisplayable displayable) {
         controlPanel.loadVideo(displayable.getVLCString());
+    }
+
+    @Override
+    public int getCurrentIndex() {
+        return 0;
     }
 }

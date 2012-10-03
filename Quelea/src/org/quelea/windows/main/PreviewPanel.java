@@ -17,13 +17,22 @@
  */
 package org.quelea.windows.main;
 
-import java.awt.BorderLayout;
-import javax.swing.JButton;
-import javax.swing.JLabel;
-import javax.swing.JToolBar;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.control.ToolBar;
+import javafx.scene.control.Tooltip;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
+import javafx.scene.layout.Region;
+import org.quelea.Application;
 import org.quelea.displayable.Displayable;
 import org.quelea.languages.LabelGrabber;
-import org.quelea.utils.Utils;
 
 /**
  * The panel displaying the preview lyrics selection - this is viewed before displaying the actual lyrics on the
@@ -31,22 +40,58 @@ import org.quelea.utils.Utils;
  */
 public class PreviewPanel extends LivePreviewPanel {
 
-    private final JButton liveButton;
+    private final Button liveButton;
 
     /**
      * Create a new preview lyrics panel.
      */
     public PreviewPanel() {
-        JToolBar header = new JToolBar();
-        header.setFloatable(false);
-        header.add(new JLabel("<html><b>"+LabelGrabber.INSTANCE.getLabel("preview.heading")+"</b></html>"));
-        header.add(new JToolBar.Separator());
-        liveButton = new JButton(LabelGrabber.INSTANCE.getLabel("go.live.text"), Utils.getImageIcon("icons/2rightarrow.png"));
-        liveButton.setToolTipText(LabelGrabber.INSTANCE.getLabel("go.live.text")+" (" + LabelGrabber.INSTANCE.getLabel("space.key") + ")");
-        liveButton.setRequestFocusEnabled(false);
-        header.add(liveButton);
-        liveButton.setEnabled(false);
-        add(header, BorderLayout.NORTH);
+        ToolBar header = new ToolBar();
+        Label headerLabel = new Label(LabelGrabber.INSTANCE.getLabel("preview.heading"));
+        headerLabel.setStyle("-fx-font-weight: bold;");
+        header.getItems().add(headerLabel);
+        Region spacer = new Region();
+        HBox.setHgrow(spacer, Priority.ALWAYS);
+        header.getItems().add(spacer);
+        liveButton = new Button(LabelGrabber.INSTANCE.getLabel("go.live.text"), new ImageView(new Image("file:icons/2rightarrow.png")));
+        liveButton.setTooltip(new Tooltip(LabelGrabber.INSTANCE.getLabel("go.live.text")+" (" + LabelGrabber.INSTANCE.getLabel("space.key") + ")"));
+        liveButton.setOnAction(new EventHandler<ActionEvent>() {
+
+            @Override
+            public void handle(ActionEvent t) {
+                Application.get().getMainWindow().getMainPanel().getLivePanel().setDisplayable(getDisplayable(), ((ContainedPanel)getCurrentPane()).getCurrentIndex());
+                Application.get().getMainWindow().getMainPanel().getLivePanel().getCurrentPane().requestFocus();
+            }
+        });
+        header.getItems().add(liveButton);
+        liveButton.setDisable(true);
+        setTop(header);
+        setOnKeyTyped(new EventHandler<KeyEvent>() {
+            @Override
+            public void handle(KeyEvent t) {
+                if(t.getCharacter().equals(" ")) {
+                    Application.get().getMainWindow().getMainPanel().getPreviewPanel().goLive();
+                }
+            }
+        });
+        setOnKeyPressed(new EventHandler<KeyEvent>() {
+            @Override
+            public void handle(KeyEvent t) {
+                if(t.getCode() == KeyCode.RIGHT) {
+                    Application.get().getMainWindow().getMainPanel().getLivePanel().requestFocus();
+                }
+                else if(t.getCode() == KeyCode.LEFT) {
+                    Application.get().getMainWindow().getMainPanel().getSchedulePanel().requestFocus();
+                }
+            }
+        });
+    }
+    
+    /**
+     * Transfer the current preview to live.
+     */
+    public void goLive() {
+        liveButton.fire();
     }
 
     /**
@@ -58,7 +103,7 @@ public class PreviewPanel extends LivePreviewPanel {
     @Override
     public void setDisplayable(Displayable d, int index) {
         super.setDisplayable(d, index);
-        liveButton.setEnabled(true);
+        liveButton.setDisable(false);
     }
 
     /**
@@ -67,15 +112,7 @@ public class PreviewPanel extends LivePreviewPanel {
     @Override
     public void clear() {
         super.clear();
-        liveButton.setEnabled(false);
-    }
-
-    /**
-     * Get the "go live" button.
-     * @return the "go live" button.
-     */
-    public JButton getLiveButton() {
-        return liveButton;
+        liveButton.setDisable(true);
     }
 
 }

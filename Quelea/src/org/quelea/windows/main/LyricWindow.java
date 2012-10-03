@@ -16,23 +16,20 @@
  */
 package org.quelea.windows.main;
 
-import java.awt.BorderLayout;
-import java.awt.Color;
 import java.awt.Cursor;
-import java.awt.Dimension;
 import java.awt.Point;
-import java.awt.Rectangle;
 import java.awt.Toolkit;
 import java.awt.image.BufferedImage;
-import javax.swing.JPanel;
-import javax.swing.JWindow;
+import javafx.geometry.Bounds;
+import javafx.scene.Scene;
+import javafx.stage.Stage;
 import javax.swing.SwingUtilities;
 
 /**
  * The full screen window used for displaying the projection.
  * @author Michael
  */
-public class LyricWindow extends JWindow {
+public class LyricWindow extends Stage {
 
     private static final Cursor BLANK_CURSOR;
     private final LyricCanvas canvas;
@@ -49,25 +46,26 @@ public class LyricWindow extends JWindow {
      * Create a new lyrics window positioned to fill the given rectangle.
      * @param area the area in which the window should be drawn.
      */
-    public LyricWindow(Rectangle area, boolean stageView) {
-        setLayout(new BorderLayout());
+    public LyricWindow(Bounds area, boolean stageView) {
         setArea(area);
-        setCursor(BLANK_CURSOR);
         canvas = new LyricCanvas(true, stageView);
-        add(canvas, BorderLayout.CENTER);
+        Scene scene = new Scene(canvas);
+        setScene(scene);
     }
 
     /**
      * Set the area of the lyric window.
      * @param area the area of the window.
      */
-    public final void setArea(final Rectangle area) {
+    public final void setArea(final Bounds area) {
         SwingUtilities.invokeLater(new Runnable() {
 
             @Override
             public void run() {
-                setSize((int) (area.getMaxX() - area.getMinX()), (int) (area.getMaxY() - area.getMinY()));
-                setLocation((int) area.getMinX(), (int) area.getMinY());
+                setWidth(area.getMaxX() - area.getMinX());
+                setHeight(area.getMaxY() - area.getMinY());
+                setX(area.getMinX());
+                setY(area.getMinY());
             }
         });
     }

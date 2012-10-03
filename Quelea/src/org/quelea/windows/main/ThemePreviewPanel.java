@@ -70,7 +70,6 @@ public class ThemePreviewPanel extends JPanel {
             canvas = new LyricCanvas(false, false);
             canvas.setTheme(theme);
             canvas.setText(ThemePanel.SAMPLE_LYRICS, new String[0]);
-            canvas.setPreferredSize(new Dimension(100, 100));
         }
         setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
         String name;
@@ -113,23 +112,23 @@ public class ThemePreviewPanel extends JPanel {
 
                 @Override
                 public void actionPerformed(ActionEvent e) {
-                    int result = JOptionPane.showConfirmDialog(Application.get().getMainWindow(), LabelGrabber.INSTANCE.getLabel("delete.theme.question"), LabelGrabber.INSTANCE.getLabel("delete.theme.confirm.title"), JOptionPane.YES_NO_OPTION);
-                    if (result != JOptionPane.NO_OPTION) {
-                        ThemePreviewPanel.this.theme.getFile().delete();
-                    }
+//                    int result = JOptionPane.showConfirmDialog(Application.get().getMainWindow(), LabelGrabber.INSTANCE.getLabel("delete.theme.question"), LabelGrabber.INSTANCE.getLabel("delete.theme.confirm.title"), JOptionPane.YES_NO_OPTION);
+//                    if (result != JOptionPane.NO_OPTION) {
+//                        ThemePreviewPanel.this.theme.getFile().delete();
+//                    }
                 }
             });
         }
         JPanel buttonPanel = new JPanel();
         buttonPanel.setLayout(new BoxLayout(buttonPanel, BoxLayout.X_AXIS));
         if (canvas != null) {
-            canvas.addMouseListener(new MouseAdapter() {
-
-                @Override
-                public void mouseClicked(MouseEvent e) {
-                    selectButton.doClick();
-                }
-            });
+//            canvas.addMouseListener(new MouseAdapter() {
+//
+//                @Override
+//                public void mouseClicked(MouseEvent e) {
+//                    selectButton.doClick();
+//                }
+//            });
         }
         buttonPanel.add(selectButton);
         if (theme != null) {
@@ -159,7 +158,7 @@ public class ThemePreviewPanel extends JPanel {
         }
         else {
             canvasPanel.setLayout(new GridLayout(1, 1, 0, 0));
-            canvasPanel.add(canvas);
+//            canvasPanel.add(canvas);
         }
         canvasPanel.setAlignmentX(Component.LEFT_ALIGNMENT);
         add(canvasPanel);

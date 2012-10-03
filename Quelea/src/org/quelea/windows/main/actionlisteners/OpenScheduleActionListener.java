@@ -18,7 +18,6 @@
  */
 package org.quelea.windows.main.actionlisteners;
 
-import java.awt.event.ActionEvent;
 import javax.swing.JFileChooser;
 import org.quelea.Application;
 import org.quelea.utils.Utils;
@@ -30,12 +29,12 @@ import org.quelea.utils.Utils;
 public class OpenScheduleActionListener extends ClearingActionListener {
 
     @Override
-    public void actionPerformed(ActionEvent ae) {
+    public void handle(javafx.event.ActionEvent t) {
         if(confirmClear()) {
             JFileChooser chooser = Utils.getScheduleFileChooser();
-            if(chooser.showOpenDialog(Application.get().getMainWindow()) == JFileChooser.APPROVE_OPTION) {
-                Application.get().openSchedule(chooser.getSelectedFile());
-            }
+//            if(chooser.showOpenDialog(Application.get().getMainWindow()) == JFileChooser.APPROVE_OPTION) {
+//                Application.get().openSchedule(chooser.getSelectedFile());
+//            }
         }
     }
 

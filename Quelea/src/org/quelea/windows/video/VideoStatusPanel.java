@@ -19,14 +19,14 @@
 package org.quelea.windows.video;
 
 import java.awt.BorderLayout;
-import javax.swing.JPanel;
+import javafx.scene.layout.BorderPane;
 
 /**
  * A panel that goes along the bottom of the control panel and shows the video
  * time and volume.
  * @author Michael
  */
-public class VideoStatusPanel extends JPanel {
+public class VideoStatusPanel extends BorderPane {
     
     private TimeDisplay timeDisplay;
     private VolumeSlider volumeSlider;
@@ -35,11 +35,10 @@ public class VideoStatusPanel extends JPanel {
      * Create a new video status panel.
      */
     public VideoStatusPanel() {
-        setLayout(new BorderLayout());
         timeDisplay = new TimeDisplay();
-        add(timeDisplay, BorderLayout.WEST);
+        setLeft(timeDisplay);
         volumeSlider = new VolumeSlider();
-        add(volumeSlider, BorderLayout.CENTER);
+        setCenter(volumeSlider);
     }
 
     /**

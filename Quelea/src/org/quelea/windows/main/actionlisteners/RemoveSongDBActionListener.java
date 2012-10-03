@@ -17,14 +17,11 @@
  */
 package org.quelea.windows.main.actionlisteners;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import javax.swing.DefaultListModel;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javax.swing.JOptionPane;
-import javax.swing.ListModel;
 import org.quelea.Application;
 import org.quelea.SongDatabase;
-import org.quelea.SortedListModel;
 import org.quelea.displayable.Song;
 import org.quelea.windows.library.LibrarySongList;
 import org.quelea.windows.main.MainWindow;
@@ -33,37 +30,29 @@ import org.quelea.windows.main.MainWindow;
  * Action listener that removes the selected song from the database.
  * @author Michael
  */
-public class RemoveSongDBActionListener implements ActionListener {
+public class RemoveSongDBActionListener implements EventHandler<ActionEvent> {
     
     /**
      * Remove the selected song from the database.
      * @param e the action event.
      */
-    public void actionPerformed(ActionEvent e) {
+    @Override
+    public void handle(ActionEvent t) {
         MainWindow mainWindow = Application.get().getMainWindow();
         LibrarySongList songList = mainWindow.getMainPanel().getLibraryPanel().getLibrarySongPanel().getSongList();
-        Song song = songList.getModel().getElementAt(songList.getSelectedIndex());
-        if (song == null) {
+        Song song = songList.itemsProperty().get().get(songList.getSelectionModel().getSelectedIndex());
+        if(song == null) {
             return;
         }
-        int confirmResult = JOptionPane.showConfirmDialog(mainWindow, "Really remove \"" + song.getTitle() + "\" from the database? This action cannnot be undone.", "Confirm remove", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
-        if (confirmResult == JOptionPane.NO_OPTION) {
-            return;
-        }
-        if (!SongDatabase.get().removeSong(song)) {
-            JOptionPane.showMessageDialog(mainWindow, "There was an error removing the song from the database.", "Error", JOptionPane.ERROR_MESSAGE, null);
-        }
+//        int confirmResult = JOptionPane.showConfirmDialog(mainWindow, "Really remove \"" + song.getTitle() + "\" from the database? This action cannnot be undone.", "Confirm remove", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
+//        if(confirmResult == JOptionPane.NO_OPTION) {
+//            return;
+//        }
+//        if(!SongDatabase.get().removeSong(song)) {
+//            JOptionPane.showMessageDialog(mainWindow, "There was an error removing the song from the database.", "Error", JOptionPane.ERROR_MESSAGE, null);
+//        }
         song.setID(-1);
-        ListModel<Song> model = songList.getModel();
-        if(model instanceof SortedListModel) {
-            ((SortedListModel<Song>)songList.getModel()).removeElement(song);
-        }
-        else if(model instanceof DefaultListModel) {
-            ((DefaultListModel<Song>)songList.getModel()).removeElement(song);
-        }
-        else {
-            throw new RuntimeException("Couldn't remove song, list model is unknown type: " + model.getClass());
-        }
+        songList.itemsProperty().get().remove(song);
     }
     
 }

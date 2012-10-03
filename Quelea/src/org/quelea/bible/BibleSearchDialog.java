@@ -58,7 +58,7 @@ public class BibleSearchDialog extends JDialog implements BibleChangeListener {
      * Create a new bible searcher dialog.
      */
     public BibleSearchDialog() {
-        super(Application.get().getMainWindow());
+//        super(Application.get().getMainWindow());
         setLayout(new BorderLayout());
         setTitle(LabelGrabber.INSTANCE.getLabel("bible.search.title"));
         setIconImage(Utils.getImage("icons/search.png"));

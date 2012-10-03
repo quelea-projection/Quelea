@@ -17,17 +17,13 @@
  */
 package org.quelea.windows.main;
 
-import java.awt.BorderLayout;
-import java.awt.Dimension;
-import java.awt.event.KeyListener;
 import java.util.HashSet;
-import javax.swing.JScrollPane;
-import javax.swing.JSplitPane;
-import javax.swing.border.EmptyBorder;
-import javax.swing.event.ListDataEvent;
-import javax.swing.event.ListDataListener;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
+import javafx.collections.ObservableList;
+import javafx.geometry.Orientation;
+import javafx.scene.control.SplitPane;
+import javafx.scene.layout.BorderPane;
 import org.quelea.displayable.TextDisplayable;
 import org.quelea.displayable.TextSection;
 
@@ -36,12 +32,12 @@ import org.quelea.displayable.TextSection;
  *
  * @author Michael
  */
-public class SelectLyricsPanel extends ContainedPanel {
+public class SelectLyricsPanel extends BorderPane implements ContainedPanel {
 
     private final SelectLyricsList lyricsList;
     private final LivePreviewPanel containerPanel;
     private final LyricCanvas previewCanvas;
-    private boolean stopUpdate;
+    private final SplitPane splitPane;
 
     /**
      * Create a new lyrics panel.
@@ -50,44 +46,25 @@ public class SelectLyricsPanel extends ContainedPanel {
      */
     public SelectLyricsPanel(LivePreviewPanel containerPanel) {
         this.containerPanel = containerPanel;
-        setPreferredSize(new Dimension(300, 600));
-        setLayout(new BorderLayout());
-        JSplitPane splitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT);
-        splitPane.setResizeWeight(0.75);
+        splitPane = new SplitPane();
+        splitPane.setOrientation(Orientation.VERTICAL);
         lyricsList = new SelectLyricsList();
         previewCanvas = new LyricCanvas(false, false);
-        splitPane.add(new JScrollPane(lyricsList) {
-
-            {
-                setBorder(new EmptyBorder(0, 0, 0, 0));
-                setPreferredSize(lyricsList.getPreferredSize());
-            }
-        });
-        splitPane.setOneTouchExpandable(true);
-        splitPane.add(previewCanvas);
-        add(splitPane, BorderLayout.CENTER);
-        containerPanel.registerLyricCanvas(previewCanvas);
-        lyricsList.addListSelectionListener(new ListSelectionListener() {
+        splitPane.getItems().add(lyricsList);
+        splitPane.getItems().add(previewCanvas);
+        setCenter(splitPane);
+//        containerPanel.registerLyricCanvas(previewCanvas);
+        lyricsList.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<TextSection>() {
 
             @Override
-            public void valueChanged(ListSelectionEvent e) {
+            public void changed(ObservableValue<? extends TextSection> ov, TextSection t, TextSection t1) {
                 updateCanvases();
             }
         });
-        lyricsList.getModel().addListDataListener(new ListDataListener() {
+        lyricsList.itemsProperty().addListener(new ChangeListener<ObservableList<TextSection>>() {
 
             @Override
-            public void intervalAdded(ListDataEvent e) {
-                updateCanvases();
-            }
-
-            @Override
-            public void intervalRemoved(ListDataEvent e) {
-                updateCanvases();
-            }
-
-            @Override
-            public void contentsChanged(ListDataEvent e) {
+            public void changed(ObservableValue<? extends ObservableList<TextSection>> ov, ObservableList<TextSection> t, ObservableList<TextSection> t1) {
                 updateCanvases();
             }
         });
@@ -101,6 +78,11 @@ public class SelectLyricsPanel extends ContainedPanel {
     public void setOneLineMode(boolean on) {
         lyricsList.setOneLineMode(on);
     }
+    
+    @Override
+    public void requestFocus() {
+        lyricsList.requestFocus();
+    }
 
     /**
      * Show a given text displayable on this panel.
@@ -111,10 +93,10 @@ public class SelectLyricsPanel extends ContainedPanel {
     public void showDisplayable(TextDisplayable displayable, int index) {
         clear();
         for(TextSection section : displayable.getSections()) {
-            lyricsList.getModel().addElement(section);
+            lyricsList.itemsProperty().get().add(section);
         }
-        lyricsList.setSelectedIndex(index);
-        lyricsList.ensureIndexIsVisible(index);
+        lyricsList.selectionModelProperty().get().select(index);
+        lyricsList.scrollTo(index);
     }
 
     /**
@@ -123,7 +105,7 @@ public class SelectLyricsPanel extends ContainedPanel {
      * @return the current displayed index.
      */
     public int getIndex() {
-        return lyricsList.getSelectedIndex();
+        return lyricsList.selectionModelProperty().get().getSelectedIndex();
     }
 
     /**
@@ -140,7 +122,7 @@ public class SelectLyricsPanel extends ContainedPanel {
      */
     @Override
     public void clear() {
-        lyricsList.getModel().clear();
+        lyricsList.itemsProperty().get().clear();
         updateCanvases();
     }
 
@@ -153,34 +135,21 @@ public class SelectLyricsPanel extends ContainedPanel {
     }
 
     /**
-     * Add a key listener to the list on this panel (and this panel.)
-     *
-     * @param l the key listener to add.
-     */
-    @Override
-    public void addKeyListener(KeyListener l) {
-        super.addKeyListener(l);
-        lyricsList.addKeyListener(l);
-    }
-
-    /**
      * Called to update the contents of the canvases when the list selection
      * changes.
      */
     private void updateCanvases() {
-        if(stopUpdate) {
-            return;
-        }
-        int selectedIndex = lyricsList.getSelectedIndex();
+        int selectedIndex = lyricsList.selectionModelProperty().get().getSelectedIndex();
         HashSet<LyricCanvas> canvases = new HashSet<>();
+        canvases.add(previewCanvas);
         canvases.addAll(containerPanel.getCanvases());
         for(LyricCanvas canvas : canvases) {
-            if(selectedIndex == -1 || selectedIndex >= lyricsList.getModel().getSize()) {
+            if(selectedIndex == -1 || selectedIndex >= lyricsList.itemsProperty().get().size()) {
                 canvas.setTheme(null);
                 canvas.eraseText();
                 continue;
             }
-            TextSection currentSection = lyricsList.getModel().getElementAt(selectedIndex);
+            TextSection currentSection = lyricsList.itemsProperty().get().get(selectedIndex);
             if(currentSection.getTempTheme() != null) {
                 canvas.setTheme(currentSection.getTempTheme());
             }
@@ -195,5 +164,14 @@ public class SelectLyricsPanel extends ContainedPanel {
                 canvas.setText(currentSection.getText(false, false), currentSection.getSmallText());
             }
         }
+    }
+
+    @Override
+    public int getCurrentIndex() {
+        return lyricsList.getSelectionModel().getSelectedIndex();
+    }
+    
+    public SplitPane getSplitPane() {
+        return splitPane;
     }
 }

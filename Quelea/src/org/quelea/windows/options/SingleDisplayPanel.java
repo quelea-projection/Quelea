@@ -18,15 +18,20 @@ package org.quelea.windows.options;
 
 import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
-import java.awt.GridLayout;
-import java.awt.Rectangle;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
-import java.util.ArrayList;
-import java.util.List;
-import javax.swing.*;
-import org.quelea.GraphicsDeviceListener;
-import org.quelea.GraphicsDeviceWatcher;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+import javafx.geometry.BoundingBox;
+import javafx.geometry.Bounds;
+import javafx.scene.control.CheckBox;
+import javafx.scene.control.ComboBox;
+import javafx.scene.control.Label;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
+import org.quelea.NumberSpinner;
 import org.quelea.languages.LabelGrabber;
 import org.quelea.utils.Utils;
 
@@ -36,15 +41,15 @@ import org.quelea.utils.Utils;
  *
  * @author Michael
  */
-public class SingleDisplayPanel extends JPanel {
+public class SingleDisplayPanel extends VBox {
 
     private final boolean none;
-    private final JComboBox<String> outputSelect;
-    private JCheckBox custom;
-    private JSpinner customX;
-    private JSpinner customY;
-    private JSpinner customWidth;
-    private JSpinner customHeight;
+    private final ComboBox<String> outputSelect;
+    private CheckBox custom;
+    private NumberSpinner customX;
+    private NumberSpinner customY;
+    private NumberSpinner customWidth;
+    private NumberSpinner customHeight;
 
     /**
      * Create a new single display panel.
@@ -59,67 +64,54 @@ public class SingleDisplayPanel extends JPanel {
     public SingleDisplayPanel(String caption, String iconLocation, boolean none,
             boolean customPos) {
         this.none = none;
-        setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
-        JLabel captionLabel = new JLabel(caption);
-        captionLabel.setAlignmentX(0.5f);
-        add(captionLabel);
-        JLabel iconLabel = new JLabel(Utils.getImageIcon(iconLocation, 80, 80));
-        iconLabel.setAlignmentX(0.5f);
-        add(iconLabel);
-        outputSelect = new JComboBox<>(getAvailableScreens(none));
-        JPanel outputSelectPanel = new JPanel();
-        outputSelectPanel.add(outputSelect);
-        add(outputSelectPanel);
+        Label captionLabel = new Label(caption);
+        getChildren().add(captionLabel);
+        Label iconLabel = new Label("",new ImageView(new Image("file:"+iconLocation, 80, 80, false, true)));
+        getChildren().add(iconLabel);
+        outputSelect = new ComboBox<>(getAvailableScreens(none));
+        getChildren().add(outputSelect);
         if(customPos) {
-            outputSelect.setEnabled(false);
-            custom = new JCheckBox(LabelGrabber.INSTANCE.getLabel("custom.position.text"));
+            outputSelect.setDisable(true);
+            custom = new CheckBox(LabelGrabber.INSTANCE.getLabel("custom.position.text"));
             custom.setSelected(true);
-            custom.addItemListener(new ItemListener() {
+            custom.selectedProperty().addListener(new ChangeListener<Boolean>() {
 
                 @Override
-                public void itemStateChanged(ItemEvent itemEvent) {
+                public void changed(ObservableValue<? extends Boolean> ov, Boolean t, Boolean t1) {
                     if(custom.isSelected()) {
-                        outputSelect.setEnabled(false);
-                        customX.setEnabled(true);
-                        customY.setEnabled(true);
-                        customWidth.setEnabled(true);
-                        customHeight.setEnabled(true);
+                        outputSelect.setDisable(true);
+                        customX.setDisable(false);
+                        customY.setDisable(false);
+                        customWidth.setDisable(false);
+                        customHeight.setDisable(false);
                     }
                     else {
-                        outputSelect.setEnabled(true);
-                        customX.setEnabled(false);
-                        customY.setEnabled(false);
-                        customWidth.setEnabled(false);
-                        customHeight.setEnabled(false);
+                        outputSelect.setDisable(false);
+                        customX.setDisable(true);
+                        customY.setDisable(true);
+                        customWidth.setDisable(true);
+                        customHeight.setDisable(true);
                     }
                 }
             });
-            JPanel customPanel = new JPanel();
-            customPanel.add(custom);
-            add(customPanel);
+            getChildren().add(custom);
 
-            JPanel xyPanel = new JPanel();
-            xyPanel.setLayout(new BoxLayout(xyPanel, BoxLayout.X_AXIS));
-            customX = new JSpinner(new SpinnerNumberModel(0, 0, 10000, 1));
-            customY = new JSpinner(new SpinnerNumberModel(0, 0, 10000, 1));
-            xyPanel.add(new JLabel("X:"));
-            xyPanel.add(customX);
-            xyPanel.add(new JLabel("Y:"));
-            xyPanel.add(customY);
-            JPanel xyContainerPanel = new JPanel();
-            xyContainerPanel.add(xyPanel);
-            add(xyContainerPanel);
-            JPanel whPanel = new JPanel();
-            whPanel.setLayout(new BoxLayout(whPanel, BoxLayout.X_AXIS));
-            customWidth = new JSpinner(new SpinnerNumberModel(0, 0, 10000, 1));
-            customHeight = new JSpinner(new SpinnerNumberModel(0, 0, 10000, 1));
-            whPanel.add(new JLabel("W:"));
-            whPanel.add(customWidth);
-            whPanel.add(new JLabel("H:"));
-            whPanel.add(customHeight);
-            JPanel whContainerPanel = new JPanel();
-            whContainerPanel.add(whPanel);
-            add(whContainerPanel);
+            HBox xyPanel = new HBox();
+            customX = new NumberSpinner(0, 1);
+            customY = new NumberSpinner(0, 1);
+            xyPanel.getChildren().add(new Label("X:"));
+            xyPanel.getChildren().add(customX);
+            xyPanel.getChildren().add(new Label("Y:"));
+            xyPanel.getChildren().add(customY);
+            getChildren().add(xyPanel);
+            HBox whPanel = new HBox();
+            customWidth = new NumberSpinner(0, 1);
+            customHeight = new NumberSpinner(0, 1);
+            whPanel.getChildren().add(new Label("W:"));
+            whPanel.getChildren().add(customWidth);
+            whPanel.getChildren().add(new Label("H:"));
+            whPanel.getChildren().add(customHeight);
+            getChildren().add(whPanel);
         }
     }
 
@@ -132,10 +124,10 @@ public class SingleDisplayPanel extends JPanel {
     public int getOutputScreen() {
         int screenNum;
         if(none) {
-            screenNum = outputSelect.getSelectedIndex() - 1;
+            screenNum = outputSelect.getSelectionModel().getSelectedIndex() - 1;
         }
         else {
-            screenNum = outputSelect.getSelectedIndex();
+            screenNum = outputSelect.getSelectionModel().getSelectedIndex();
         }
         return screenNum;
     }
@@ -145,7 +137,7 @@ public class SingleDisplayPanel extends JPanel {
      *
      * @return the output bounds as a rectangle, or null if "none" is selected.
      */
-    public Rectangle getOutputBounds() {
+    public Bounds getOutputBounds() {
         if(custom != null && custom.isSelected()) {
             return getCoords();
         }
@@ -156,7 +148,7 @@ public class SingleDisplayPanel extends JPanel {
             return null;
         }
         else {
-            return gds[screen].getDefaultConfiguration().getBounds();
+            return Utils.getBoundsFromRect(gds[screen].getDefaultConfiguration().getBounds());
         }
     }
 
@@ -174,8 +166,8 @@ public class SingleDisplayPanel extends JPanel {
      *
      * @return the bounds currently selected.
      */
-    public Rectangle getCoords() {
-        return new Rectangle((int) customX.getValue(), (int) customY.getValue(), (int) customWidth.getValue(), (int) customHeight.getValue());
+    public Bounds getCoords() {
+        return new BoundingBox(customX.getNumber(), customY.getNumber(), customWidth.getNumber(), customHeight.getNumber());
     }
 
     /**
@@ -183,14 +175,14 @@ public class SingleDisplayPanel extends JPanel {
      *
      * @param bounds the bounds to display.
      */
-    public void setCoords(Rectangle bounds) {
+    public void setCoords(Bounds bounds) {
         if(custom != null) {
             custom.setSelected(true);
         }
-        customX.setValue((int) bounds.getX());
-        customY.setValue((int) bounds.getY());
-        customWidth.setValue((int) bounds.getWidth());
-        customHeight.setValue((int) bounds.getHeight());
+        customX.setNumber((int) bounds.getMinX());
+        customY.setNumber((int) bounds.getMinY());
+        customWidth.setNumber((int) bounds.getWidth());
+        customHeight.setNumber((int) bounds.getHeight());
     }
 
     /**
@@ -202,20 +194,20 @@ public class SingleDisplayPanel extends JPanel {
         if(custom != null) {
             custom.setSelected(false);
         }
-        int maxIndex = outputSelect.getModel().getSize() - 1;
+        int maxIndex = outputSelect.itemsProperty().get().size() - 1;
         if(none) {
             int index = num + 1;
             if(index > maxIndex) {
                 index = 0;
             }
-            outputSelect.setSelectedIndex(index);
+            outputSelect.getSelectionModel().select(index);
         }
         else {
             int index = num;
             if(index > maxIndex) {
                 index = 0;
             }
-            outputSelect.setSelectedIndex(index);
+            outputSelect.getSelectionModel().select(index);
         }
     }
 
@@ -223,7 +215,7 @@ public class SingleDisplayPanel extends JPanel {
      * Update the display panel with the monitor information.
      */
     public void update() {
-        outputSelect.setModel(getAvailableScreens(none));
+        outputSelect.itemsProperty().set(getAvailableScreens(none));
     }
 
     /**
@@ -231,30 +223,17 @@ public class SingleDisplayPanel extends JPanel {
      *
      * @return a list model describing the available graphical devices.
      */
-    private ComboBoxModel<String> getAvailableScreens(boolean none) {
+    private ObservableList<String> getAvailableScreens(boolean none) {
         GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
         final GraphicsDevice[] gds = ge.getScreenDevices();
-        List<String> descriptions = new ArrayList<>();
+        ObservableList<String> descriptions = FXCollections.<String>observableArrayList();
         if(none) {
-            descriptions.add("<html><i>" + LabelGrabber.INSTANCE.getLabel("none.text") + "</i></html>");
+            descriptions.add(LabelGrabber.INSTANCE.getLabel("none.text"));
         }
         for(int i = 0; i < gds.length; i++) {
             descriptions.add(LabelGrabber.INSTANCE.getLabel("output.text") + " " + (i + 1));
         }
-        return new DefaultComboBoxModel<>(descriptions.toArray(new String[descriptions.size()]));
+        return descriptions;
     }
 
-    /**
-     * Test it.
-     *
-     * @param args //not used.
-     */
-    public static void main(String[] args) {
-        JFrame frame = new JFrame();
-        frame.setLayout(new GridLayout(1, 1));
-        frame.add(new SingleDisplayPanel("caption", "icons/monitor.png", true, true));
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.pack();
-        frame.setVisible(true);
-    }
 }

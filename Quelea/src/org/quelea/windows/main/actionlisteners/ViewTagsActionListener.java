@@ -18,8 +18,8 @@
  */
 package org.quelea.windows.main.actionlisteners;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import org.quelea.Application;
 import org.quelea.tags.TagDialog;
 
@@ -27,13 +27,13 @@ import org.quelea.tags.TagDialog;
  * Action listener for viewing the tag dialog.
  * @author Michael
  */
-public class ViewTagsActionListener implements ActionListener {
+public class ViewTagsActionListener implements EventHandler<ActionEvent> {
 
     @Override
-    public void actionPerformed(ActionEvent ae) {
+    public void handle(ActionEvent t) {
         TagDialog tagDialog = Application.get().getMainWindow().getTagDialog();
         tagDialog.reloadTags();
         tagDialog.setVisible(true);
     }
-    
+
 }

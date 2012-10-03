@@ -223,10 +223,10 @@ public class BasicSongPanel extends JPanel {
 
                 String originalKey = getKey(0);
                 if(originalKey == null) {
-                    JOptionPane.showMessageDialog(Application.get().getMainWindow(),
-                            LabelGrabber.INSTANCE.getLabel("no.chords.message"),
-                            LabelGrabber.INSTANCE.getLabel("no.chords.title"),
-                            JOptionPane.INFORMATION_MESSAGE);
+//                    JOptionPane.showMessageDialog(Application.get().getMainWindow(),
+//                            LabelGrabber.INSTANCE.getLabel("no.chords.message"),
+//                            LabelGrabber.INSTANCE.getLabel("no.chords.title"),
+//                            JOptionPane.INFORMATION_MESSAGE);
                     return;
                 }
                 transposeDialog.setKey(originalKey);

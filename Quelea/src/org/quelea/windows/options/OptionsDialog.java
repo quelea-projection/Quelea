@@ -17,85 +17,89 @@
  */
 package org.quelea.windows.options;
 
-import java.awt.BorderLayout;
-import java.awt.Component;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import javax.swing.*;
+import java.util.List;
+import javafx.event.EventHandler;
+import javafx.scene.Scene;
+import javafx.scene.control.Button;
+import javafx.scene.control.Tab;
+import javafx.scene.control.TabPane;
+import javafx.scene.image.Image;
+import javafx.scene.layout.BorderPane;
+import javafx.stage.Modality;
+import javafx.stage.Stage;
 import org.quelea.languages.LabelGrabber;
 import org.quelea.utils.PropertyPanel;
-import org.quelea.utils.Utils;
 
 /**
  * The dialog that holds all the options the user can set.
  * @author Michael
  */
-public class OptionsDialog extends JDialog {
+public class OptionsDialog extends Stage {
 
-    private final JButton okButton;
-    private final JTabbedPane tabbedPane;
+    private final BorderPane mainPane;
+    private final Button okButton;
+    private final TabPane tabbedPane;
     private final OptionsDisplaySetupPanel displayPanel;
     private final OptionsGeneralPanel generalPanel;
-    private final OptionsBiblePanel biblePanel;
-    private final OptionsStageViewPanel stageViewPanel;
-    private final JFrame owner;
+    private OptionsBiblePanel biblePanel;
+    private OptionsStageViewPanel stageViewPanel;
 
     /**
      * Create a new options dialog.
      * @param owner the owner of the dialog - should be the main window.
      */
-    public OptionsDialog(JFrame owner) {
-        super(owner, LabelGrabber.INSTANCE.getLabel("options.title"), true);
-        setIconImage(Utils.getImage("icons/options.png", 16, 16));
-        this.owner = owner;
-        setLayout(new BorderLayout());
-        tabbedPane = new JTabbedPane();
+    public OptionsDialog() {
+        setTitle(LabelGrabber.INSTANCE.getLabel("options.title"));
+        initModality(Modality.WINDOW_MODAL);
+        getIcons().add(new Image("file:icons/options.png", 16, 16, false, true));
+        mainPane = new BorderPane();
+        tabbedPane = new TabPane();
+        
         generalPanel = new OptionsGeneralPanel();
-        tabbedPane.add(generalPanel);
+        Tab generalTab = new Tab();
+        generalTab.setClosable(false);
+        generalTab.setText(LabelGrabber.INSTANCE.getLabel("general.options.heading"));
+        generalTab.setContent(generalPanel);
+        tabbedPane.getTabs().add(generalTab);
+        
         displayPanel = new OptionsDisplaySetupPanel();
-        tabbedPane.add(displayPanel);
-        stageViewPanel = new OptionsStageViewPanel();
-        tabbedPane.add(stageViewPanel);
-        biblePanel = new OptionsBiblePanel();
-        tabbedPane.add(biblePanel);
-        add(tabbedPane, BorderLayout.CENTER);
-        JPanel buttonPanel = new JPanel();
-        okButton = new JButton(LabelGrabber.INSTANCE.getLabel("ok.button"));
-        okButton.addActionListener(new ActionListener() {
+        Tab displayTab = new Tab();
+        displayTab.setClosable(false);
+        displayTab.setText(LabelGrabber.INSTANCE.getLabel("display.options.heading"));
+        displayTab.setContent(displayPanel);
+        tabbedPane.getTabs().add(displayTab);
+        
+//        stageViewPanel = new OptionsStageViewPanel();
+//        Tab stageViewTab = new Tab();
+//        stageViewTab.setClosable(false);
+//        stageViewTab.setText(LabelGrabber.INSTANCE.getLabel("stage.options.heading"));
+//        stageViewTab.setContent(stageViewPanel);
+//        tabbedPane.getTabs().add(stageViewTab);
+//        
+//        biblePanel = new OptionsBiblePanel();
+//        Tab bibleTab = new Tab();
+//        bibleTab.setClosable(false);
+//        bibleTab.setText(LabelGrabber.INSTANCE.getLabel("bible.options.heading"));
+//        bibleTab.setContent(biblePanel);
+//        tabbedPane.getTabs().add(bibleTab);
+        
+        mainPane.setCenter(tabbedPane);
+        okButton = new Button(LabelGrabber.INSTANCE.getLabel("ok.button"));
+        okButton.setOnAction(new EventHandler<javafx.event.ActionEvent>() {
 
             @Override
-            public void actionPerformed(ActionEvent e) {
-                Component[] components = tabbedPane.getComponents();
-                for(int i = 0; i < components.length; i++) {
-                    if(components[i] instanceof PropertyPanel) {
-                        ((PropertyPanel) components[i]).setProperties();
+            public void handle(javafx.event.ActionEvent t) {
+                List<Tab> tabs = tabbedPane.getTabs();
+                for(int i = 0; i < tabs.size(); i++) {
+                    if(tabs.get(i) instanceof PropertyPanel) {
+                        ((PropertyPanel) tabs.get(i)).setProperties();
                     }
                 }
-                setVisible(false);
+                hide();
             }
         });
-        buttonPanel.add(okButton);
-        add(buttonPanel, BorderLayout.SOUTH);
-        pack();
-        setResizable(false);
-    }
-
-    /**
-     * When the dialog is made visible, centre it on its owner and sync the forms.
-     * @param visible true if the dialog should be made visible, false otherwise.
-     */
-    @Override
-    public void setVisible(boolean visible) {
-        if(visible) {
-            setLocationRelativeTo(owner);
-            Component[] components = tabbedPane.getComponents();
-            for(int i = 0; i < components.length; i++) {
-                if(components[i] instanceof PropertyPanel) {
-                    ((PropertyPanel) components[i]).readProperties();
-                }
-            }
-        }
-        super.setVisible(visible);
+        mainPane.setBottom(okButton);
+        setScene(new Scene(mainPane));
     }
 
     /**
@@ -134,7 +138,7 @@ public class OptionsDialog extends JDialog {
      * Get the OK button used to affirm the change in options.
      * @return the OK button.
      */
-    public JButton getOKButton() {
+    public Button getOKButton() {
         return okButton;
     }
 

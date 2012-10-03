@@ -18,46 +18,44 @@
  */
 package org.quelea.windows.main.menus;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.util.Arrays;
-import javax.swing.JMenu;
-import javax.swing.JMenuItem;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
+import javafx.scene.control.Menu;
+import javafx.scene.control.MenuItem;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import org.quelea.Application;
 import org.quelea.SongDatabase;
 import org.quelea.importexport.SelectExportedSongsDialog;
 import org.quelea.languages.LabelGrabber;
-import org.quelea.utils.Utils;
 
 /**
  * Quelea's export menu.
  * @author Michael
  */
-public class ExportMenu extends JMenu {
+public class ExportMenu extends Menu {
     
-    private JMenuItem qspItem;
+    private MenuItem qspItem;
     
     /**
      * Create the export menu.
      */
     public ExportMenu() {
-        super(LabelGrabber.INSTANCE.getLabel("export.heading"));
-        setIcon(Utils.getImageIcon("icons/right.png", 16, 16));
-        setMnemonic('x');
+        super(LabelGrabber.INSTANCE.getLabel("export.heading"), new ImageView(new Image("file:icons/right.png", 16, 16, false, true)));
         
-        qspItem = new JMenuItem(LabelGrabber.INSTANCE.getLabel("qsp.button"), Utils.getImageIcon("icons/logo.png", 16, 16));
-        qspItem.setMnemonic('q');
-        qspItem.addActionListener(new ActionListener() {
+        qspItem = new MenuItem(LabelGrabber.INSTANCE.getLabel("qsp.button"),new ImageView(new Image("file:icons/logo.png", 16, 16, false, true)));
+        qspItem.setOnAction(new EventHandler<ActionEvent>() {
 
             @Override
-            public void actionPerformed(ActionEvent e) {
-                SelectExportedSongsDialog dialog = new SelectExportedSongsDialog(Application.get().getMainWindow());
-                dialog.setLocationRelativeTo(dialog.getOwner());
-                dialog.setSongs(Arrays.asList(SongDatabase.get().getSongs()), null, false);
-                dialog.setVisible(true);
+            public void handle(ActionEvent t) {
+//                SelectExportedSongsDialog dialog = new SelectExportedSongsDialog(Application.get().getMainWindow());
+//                dialog.setLocationRelativeTo(dialog.getOwner());
+//                dialog.setSongs(Arrays.asList(SongDatabase.get().getSongs()), null, false);
+//                dialog.setVisible(true);
             }
         });
-        add(qspItem);
+        getItems().add(qspItem);
     }
     
 }

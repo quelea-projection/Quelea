@@ -18,162 +18,134 @@
  */
 package org.quelea.windows.main.menus;
 
-import org.quelea.windows.main.actionlisteners.AddVideoActionListener;
-import org.quelea.windows.main.actionlisteners.AddSongActionListener;
-import org.quelea.windows.main.actionlisteners.RemoveSongScheduleActionListener;
-import org.quelea.windows.main.actionlisteners.ShowNoticesActionListener;
-import org.quelea.windows.main.actionlisteners.AddPowerpointActionListener;
-import org.quelea.windows.main.actionlisteners.AddDVDActionListener;
-import org.quelea.windows.main.actionlisteners.EditSongScheduleActionListener;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.KeyEvent;
 import java.util.logging.Logger;
-import javax.swing.JMenu;
-import javax.swing.JMenuItem;
-import javax.swing.KeyStroke;
-import javax.swing.event.ListDataEvent;
-import javax.swing.event.ListDataListener;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
+import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
+import javafx.scene.control.Menu;
+import javafx.scene.control.MenuItem;
+import javafx.scene.control.SeparatorMenuItem;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import org.quelea.Application;
 import org.quelea.Schedule;
+import org.quelea.displayable.Displayable;
 import org.quelea.languages.LabelGrabber;
 import org.quelea.mail.Mailer;
 import org.quelea.utils.LoggerUtils;
-import org.quelea.utils.Utils;
-import org.quelea.windows.library.LibrarySongList;
-import org.quelea.windows.main.*;
+import org.quelea.windows.main.MainPanel;
+import org.quelea.windows.main.ScheduleList;
+import org.quelea.windows.main.actionlisteners.AddDVDActionListener;
+import org.quelea.windows.main.actionlisteners.AddPowerpointActionListener;
+import org.quelea.windows.main.actionlisteners.AddSongActionListener;
+import org.quelea.windows.main.actionlisteners.AddVideoActionListener;
+import org.quelea.windows.main.actionlisteners.EditSongScheduleActionListener;
+import org.quelea.windows.main.actionlisteners.RemoveSongScheduleActionListener;
+import org.quelea.windows.main.actionlisteners.ShowNoticesActionListener;
 
 /**
  * Quelea's schedule menu.
  *
  * @author Michael
  */
-public class ScheduleMenu extends JMenu {
+public class ScheduleMenu extends Menu {
 
     private static final Logger LOGGER = LoggerUtils.getLogger();
-    private JMenuItem addSongItem;
-    private JMenuItem editSongItem;
-    private JMenuItem removeSongItem;
-    private JMenuItem addPowerpointItem;
-    private JMenuItem addVideoItem;
-    private JMenuItem addDVDItem;
-    private JMenuItem manageNoticesItem;
-    private JMenuItem shareScheduleItem;
+    private MenuItem addSongItem;
+    private MenuItem editSongItem;
+    private MenuItem removeSongItem;
+    private MenuItem addPowerpointItem;
+    private MenuItem addVideoItem;
+    private MenuItem addDVDItem;
+    private MenuItem manageNoticesItem;
+    private MenuItem shareScheduleItem;
 
     /**
      * Create the scheudle menu
      */
     public ScheduleMenu() {
         super(LabelGrabber.INSTANCE.getLabel("schedule.menu"));
-        setMnemonic('s');
 
-        Application.get().getMainWindow().getNoticeDialog().registerCanvas(Application.get().getLyricWindow().getCanvas());
+//        Application.get().getMainWindow().getNoticeDialog().registerCanvas(Application.get().getLyricWindow().getCanvas());
 
-        addSongItem = new JMenuItem(LabelGrabber.INSTANCE.getLabel("add.song.button"), Utils.getImageIcon("icons/newsong.png", 16, 16));
-        addSongItem.setMnemonic('a');
-        addSongItem.addActionListener(new AddSongActionListener());
-        addSongItem.setEnabled(false);
-        add(addSongItem);
+        addSongItem = new MenuItem(LabelGrabber.INSTANCE.getLabel("add.song.button"), new ImageView(new Image("file:icons/newsong.png", 16, 16, false, true)));
+        addSongItem.setOnAction(new AddSongActionListener());
+        addSongItem.setDisable(true);
+        getItems().add(addSongItem);
 
-        editSongItem = new JMenuItem(LabelGrabber.INSTANCE.getLabel("edit.song.button"), Utils.getImageIcon("icons/edit.png", 16, 16));
-        editSongItem.setMnemonic('e');
-        editSongItem.addActionListener(new EditSongScheduleActionListener());
-        editSongItem.setEnabled(false);
-        add(editSongItem);
+        editSongItem = new MenuItem(LabelGrabber.INSTANCE.getLabel("edit.song.button"), new ImageView(new Image("file:icons/edit.png", 16, 16, false, true)));
+        editSongItem.setOnAction(new EditSongScheduleActionListener());
+        editSongItem.setDisable(true);
+        getItems().add(editSongItem);
 
-        removeSongItem = new JMenuItem(LabelGrabber.INSTANCE.getLabel("remove.item.button"), Utils.getImageIcon("icons/remove 2.png", 16, 16));
-        removeSongItem.setMnemonic('r');
-        removeSongItem.addActionListener(new RemoveSongScheduleActionListener());
-        removeSongItem.setEnabled(false);
-        add(removeSongItem);
+        removeSongItem = new MenuItem(LabelGrabber.INSTANCE.getLabel("remove.item.button"), new ImageView(new Image("file:icons/remove 2.png", 16, 16, false, true)));
+        removeSongItem.setOnAction(new RemoveSongScheduleActionListener());
+        removeSongItem.setDisable(true);
+        getItems().add(removeSongItem);
 
         final MainPanel mainPanel = Application.get().getMainWindow().getMainPanel();
         final ScheduleList scheduleList = mainPanel.getSchedulePanel().getScheduleList();
-        scheduleList.addListSelectionListener(new ListSelectionListener() {
+//        scheduleList.addListSelectionListener(new ListSelectionListener() {
+//
+//            @Override
+//            public void valueChanged(ListSelectionEvent e) {
+//                ButtonChecker.INSTANCE.checkEditRemoveButtons(editSongItem, removeSongItem);
+//            }
+//        });
+//        final LibrarySongList songList = mainPanel.getLibraryPanel().getLibrarySongPanel().getSongList();
+//        songList.addListSelectionListener(new ListSelectionListener() {
+//
+//            @Override
+//            public void valueChanged(ListSelectionEvent e) {
+//                ButtonChecker.INSTANCE.checkAddButton(addSongItem);
+//            }
+//        });
+
+        getItems().add(new SeparatorMenuItem());
+
+        addPowerpointItem = new MenuItem(LabelGrabber.INSTANCE.getLabel("add.presentation.button"), new ImageView(new Image("file:icons/powerpoint.png", 16, 16, false, true)));
+        addPowerpointItem.setOnAction(new AddPowerpointActionListener());
+        getItems().add(addPowerpointItem);
+
+        addVideoItem = new MenuItem(LabelGrabber.INSTANCE.getLabel("add.video.button"), new ImageView(new Image("file:icons/video file.png", 16, 16, false, true)));
+        addVideoItem.setOnAction(new AddVideoActionListener());
+        getItems().add(addVideoItem);
+
+        addDVDItem = new MenuItem(LabelGrabber.INSTANCE.getLabel("add.dvd.button"), new ImageView(new Image("file:icons/dvd.png", 16, 16, false, true)));
+        addDVDItem.setOnAction(new AddDVDActionListener());
+        getItems().add(addDVDItem);
+
+        getItems().add(new SeparatorMenuItem());
+
+        manageNoticesItem = new MenuItem(LabelGrabber.INSTANCE.getLabel("manage.notices.button"), new ImageView(new Image("file:icons/info.png", 16, 16, false, true)));
+        manageNoticesItem.setOnAction(new ShowNoticesActionListener());
+        getItems().add(manageNoticesItem);
+
+        shareScheduleItem = new MenuItem(LabelGrabber.INSTANCE.getLabel("email.button"), new ImageView(new Image("file:icons/email.png", 16, 16, false, true)));
+        shareScheduleItem.setDisable(true);
+        scheduleList.itemsProperty().addListener(new ChangeListener<ObservableList<Displayable>>() {
 
             @Override
-            public void valueChanged(ListSelectionEvent e) {
-                ButtonChecker.INSTANCE.checkEditRemoveButtons(editSongItem, removeSongItem);
-            }
-        });
-        final LibrarySongList songList = mainPanel.getLibraryPanel().getLibrarySongPanel().getSongList();
-        songList.addListSelectionListener(new ListSelectionListener() {
-
-            @Override
-            public void valueChanged(ListSelectionEvent e) {
-                ButtonChecker.INSTANCE.checkAddButton(addSongItem);
-            }
-        });
-
-        addSeparator();
-
-        addPowerpointItem = new JMenuItem(LabelGrabber.INSTANCE.getLabel("add.presentation.button"), Utils.getImageIcon("icons/powerpoint.png", 16, 16));
-        addPowerpointItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_R, ActionEvent.CTRL_MASK));
-        addPowerpointItem.setMnemonic('p');
-        addPowerpointItem.addActionListener(new AddPowerpointActionListener());
-        add(addPowerpointItem);
-
-        addVideoItem = new JMenuItem(LabelGrabber.INSTANCE.getLabel("add.video.button"), Utils.getImageIcon("icons/video file.png", 16, 16));
-        addVideoItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_V, ActionEvent.CTRL_MASK));
-        addVideoItem.setMnemonic('v');
-        addVideoItem.addActionListener(new AddVideoActionListener());
-        add(addVideoItem);
-
-        addDVDItem = new JMenuItem(LabelGrabber.INSTANCE.getLabel("add.dvd.button"), Utils.getImageIcon("icons/dvd.png", 16, 16));
-        addDVDItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_D, ActionEvent.CTRL_MASK));
-        addDVDItem.setMnemonic('d');
-        addDVDItem.addActionListener(new AddDVDActionListener());
-        add(addDVDItem);
-
-        addSeparator();
-
-        manageNoticesItem = new JMenuItem(LabelGrabber.INSTANCE.getLabel("manage.notices.button"), Utils.getImageIcon("icons/info.png", 16, 16));
-        manageNoticesItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_I, ActionEvent.CTRL_MASK));
-        manageNoticesItem.setMnemonic('n');
-        manageNoticesItem.addActionListener(new ShowNoticesActionListener());
-        add(manageNoticesItem);
-
-        shareScheduleItem = new JMenuItem(LabelGrabber.INSTANCE.getLabel("email.button"), Utils.getImageIcon("icons/email.png", 16, 16));
-        shareScheduleItem.setMnemonic('m');
-        shareScheduleItem.setEnabled(false);
-        scheduleList.getModel().addListDataListener(new ListDataListener() {
-
-            @Override
-            public void intervalAdded(ListDataEvent e) {
-                check();
-            }
-
-            @Override
-            public void intervalRemoved(ListDataEvent e) {
-                check();
-            }
-
-            @Override
-            public void contentsChanged(ListDataEvent e) {
-                check();
-            }
-
-            private void check() {
+            public void changed(ObservableValue<? extends ObservableList<Displayable>> ov, ObservableList<Displayable> t, ObservableList<Displayable> t1) {
                 Schedule schedule = scheduleList.getSchedule();
                 if(schedule == null || !schedule.iterator().hasNext()) {
-                    shareScheduleItem.setEnabled(false);
+                    shareScheduleItem.setDisable(true);
                 }
                 else {
-                    shareScheduleItem.setEnabled(true);
+                    shareScheduleItem.setDisable(false);
                 }
             }
         });
-        shareScheduleItem.addActionListener(new ActionListener() {
+        shareScheduleItem.setOnAction(new EventHandler<ActionEvent>() {
 
-            //TODO: Put this message in some form of properties file
             @Override
-            public void actionPerformed(ActionEvent e) {
+            public void handle(ActionEvent t) {
                 Mailer.getInstance().sendSchedule(scheduleList.getSchedule(), LabelGrabber.INSTANCE.getLabel("email.text"));
             }
         });
-        add(shareScheduleItem);
+        getItems().add(shareScheduleItem);
 
     }
 }

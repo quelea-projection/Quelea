@@ -16,21 +16,32 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.quelea.windows.main.actionlisteners;
+package org.quelea.windows.library;
 
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
-import org.quelea.Application;
+import javafx.scene.Node;
+import javafx.scene.control.ListCell;
 
-/**
- * The action listener called to show the options dialog.
- * @author Michael
- */
-public class ShowOptionsActionListener implements EventHandler<ActionEvent> {
-    
+public class DefaultListCell<T> extends ListCell<T> {
+
     @Override
-    public void handle(javafx.event.ActionEvent t) {
-        Application.get().getMainWindow().getOptionsDialog().show();
+    public void updateItem(T item, boolean empty) {
+        super.updateItem(item, empty);
+
+        if(empty) {
+            setText(null);
+            setGraphic(null);
+        }
+        else if(item instanceof Node) {
+            setText(null);
+            Node currentNode = getGraphic();
+            Node newNode = (Node) item;
+            if(currentNode == null || !currentNode.equals(newNode)) {
+                setGraphic(newNode);
+            }
+        }
+        else {
+            setText(item == null ? "null" : item.toString());
+            setGraphic(null);
+        }
     }
-    
 }

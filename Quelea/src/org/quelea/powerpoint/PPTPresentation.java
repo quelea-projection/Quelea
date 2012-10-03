@@ -50,9 +50,9 @@ public class PPTPresentation implements Presentation {
             slides = makeSlides();
         }
         catch(IOException ex) {
-            JOptionPane.showMessageDialog(Application.get().getMainWindow(),
-                    LabelGrabber.INSTANCE.getLabel("adding.presentation.error.message"),
-                    LabelGrabber.INSTANCE.getLabel("adding.presentation.error.title"), JOptionPane.ERROR_MESSAGE);
+//            JOptionPane.showMessageDialog(Application.get().getMainWindow(),
+//                    LabelGrabber.INSTANCE.getLabel("adding.presentation.error.message"),
+//                    LabelGrabber.INSTANCE.getLabel("adding.presentation.error.title"), JOptionPane.ERROR_MESSAGE);
             throw new RuntimeException("Couldn't find " + file, ex);
         }
     }

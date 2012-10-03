@@ -18,7 +18,7 @@
  */
 package org.quelea.windows.main;
 
-import javax.swing.JComponent;
+import javafx.scene.control.MenuItem;
 import org.quelea.Application;
 import org.quelea.displayable.Song;
 import org.quelea.windows.library.LibrarySongList;
@@ -45,27 +45,27 @@ public class ButtonChecker {
      * @param editSongButton the edit button to check.
      * @param removeSongButton the remove button to check.
      */
-    public void checkEditRemoveButtons(JComponent editSongButton, JComponent removeSongButton) {
-        final MainPanel mainPanel = Application.get().getMainWindow().getMainPanel();
-        final ScheduleList scheduleList = mainPanel.getSchedulePanel().getScheduleList();
-        if(!scheduleList.isFocusOwner()) {
-            editSongButton.setEnabled(false);
-            removeSongButton.setEnabled(false);
-            return;
-        }
-        if(scheduleList.getSelectedIndex() == -1) {
-            editSongButton.setEnabled(false);
-            removeSongButton.setEnabled(false);
-        }
-        else {
-            if(scheduleList.getSelectedValue() instanceof Song) {
-                editSongButton.setEnabled(true);
-            }
-            else {
-                editSongButton.setEnabled(false);
-            }
-            removeSongButton.setEnabled(true);
-        }
+    public void checkEditRemoveButtons(MenuItem editSongButton, MenuItem removeSongButton) {
+//        final MainPanel mainPanel = Application.get().getMainWindow().getMainPanel();
+//        final ScheduleList scheduleList = mainPanel.getSchedulePanel().getScheduleList();
+//        if(!scheduleList.isFocusOwner()) {
+//            editSongButton.setDisable(true);
+//            removeSongButton.setDisable(true);
+//            return;
+//        }
+//        if(scheduleList.getSelectedIndex() == -1) {
+//            editSongButton.setDisable(true);
+//            removeSongButton.setDisable(true);
+//        }
+//        else {
+//            if(scheduleList.getSelectedValue() instanceof Song) {
+//                editSongButton.setDisable(false);
+//            }
+//            else {
+//                editSongButton.setDisable(true);
+//            }
+//            removeSongButton.setDisable(false);
+//        }
     }
 
     /**
@@ -74,18 +74,18 @@ public class ButtonChecker {
      *
      * @param addSongButton the button to check.
      */
-    public void checkAddButton(JComponent addSongButton) {
-        final MainPanel mainPanel = Application.get().getMainWindow().getMainPanel();
-        final LibrarySongList songList = mainPanel.getLibraryPanel().getLibrarySongPanel().getSongList();
-        if(!songList.isFocusOwner()) {
-            addSongButton.setEnabled(false);
-            return;
-        }
-        if(songList.getSelectedIndex() == -1) {
-            addSongButton.setEnabled(false);
-        }
-        else {
-            addSongButton.setEnabled(true);
-        }
+    public void checkAddButton(MenuItem addSongButton) {
+//        final MainPanel mainPanel = Application.get().getMainWindow().getMainPanel();
+//        final LibrarySongList songList = mainPanel.getLibraryPanel().getLibrarySongPanel().getSongList();
+//        if(!songList.isFocusOwner()) {
+//            addSongButton.setDisable(true);
+//            return;
+//        }
+//        if(songList.getSelectedIndex() == -1) {
+//            addSongButton.setDisable(true);
+//        }
+//        else {
+//            addSongButton.setDisable(false);
+//        }
     }
 }

@@ -17,13 +17,15 @@
  */
 package org.quelea.utils;
 
-import java.awt.Color;
 import java.awt.Rectangle;
 import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Properties;
+import javafx.geometry.BoundingBox;
+import javafx.geometry.Bounds;
+import javafx.scene.paint.Color;
 import javax.swing.UIManager;
 import org.quelea.bible.Bible;
 import org.quelea.displayable.TextAlignment;
@@ -35,7 +37,7 @@ import org.quelea.displayable.TextAlignment;
  */
 public final class QueleaProperties extends Properties {
 
-    public static final Version VERSION = new Version("0.5.3");
+    public static final Version VERSION = new Version("0.6");
     private static final QueleaProperties INSTANCE = new QueleaProperties();
 //    private static final Logger LOGGER = LoggerUtils.getLogger();
 
@@ -357,9 +359,9 @@ public final class QueleaProperties extends Properties {
      *
      * @return the co-ordinates.
      */
-    public Rectangle getProjectorCoords() {
+    public Bounds getProjectorCoords() {
         String[] prop = getProperty("projector.coords", "0,0,0,0").trim().split(",");
-        return new Rectangle(Integer.parseInt(prop[0]),
+        return new BoundingBox(Integer.parseInt(prop[0]),
                 Integer.parseInt(prop[1]),
                 Integer.parseInt(prop[2]),
                 Integer.parseInt(prop[3]));
@@ -370,9 +372,9 @@ public final class QueleaProperties extends Properties {
      *
      * @param coords the co-ordinates to set.
      */
-    public void setProjectorCoords(Rectangle coords) {
-        String rectStr = Integer.toString((int) coords.getX())
-                + "," + Integer.toString((int) coords.getY())
+    public void setProjectorCoords(Bounds coords) {
+        String rectStr = Integer.toString((int) coords.getMinX())
+                + "," + Integer.toString((int) coords.getMinY())
                 + "," + Integer.toString((int) coords.getWidth())
                 + "," + Integer.toString((int) coords.getHeight());
 
@@ -432,9 +434,9 @@ public final class QueleaProperties extends Properties {
      *
      * @return the co-ordinates.
      */
-    public Rectangle getStageCoords() {
+    public Bounds getStageCoords() {
         String[] prop = getProperty("stage.coords", "0,0,0,0").trim().split(",");
-        return new Rectangle(Integer.parseInt(prop[0]),
+        return new BoundingBox(Integer.parseInt(prop[0]),
                 Integer.parseInt(prop[1]),
                 Integer.parseInt(prop[2]),
                 Integer.parseInt(prop[3]));
@@ -445,9 +447,9 @@ public final class QueleaProperties extends Properties {
      *
      * @param coords the co-ordinates to set.
      */
-    public void setStageCoords(Rectangle coords) {
-        String rectStr = Integer.toString((int) coords.getX())
-                + "," + Integer.toString((int) coords.getY())
+    public void setStageCoords(Bounds coords) {
+        String rectStr = Integer.toString((int) coords.getMinX())
+                + "," + Integer.toString((int) coords.getMinY())
                 + "," + Integer.toString((int) coords.getWidth())
                 + "," + Integer.toString((int) coords.getHeight());
 
@@ -723,7 +725,7 @@ public final class QueleaProperties extends Properties {
         String[] color = str.split(",");
         return new Color(Integer.parseInt(color[0].trim()),
                 Integer.parseInt(color[1].trim()),
-                Integer.parseInt(color[2].trim()));
+                Integer.parseInt(color[2].trim()),1);
     }
 
     /**

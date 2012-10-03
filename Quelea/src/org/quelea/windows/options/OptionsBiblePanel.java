@@ -56,7 +56,6 @@ public class OptionsBiblePanel extends JPanel implements PropertyPanel, BibleCha
      * Create the options bible panel.
      */
     public OptionsBiblePanel() {
-        setName(LabelGrabber.INSTANCE.getLabel("bible.options.heading"));
         JPanel biblePanel = new JPanel();
         biblePanel.setLayout(new SpringLayout());
 

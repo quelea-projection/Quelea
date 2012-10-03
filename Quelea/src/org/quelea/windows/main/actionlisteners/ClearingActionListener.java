@@ -18,7 +18,8 @@
  */
 package org.quelea.windows.main.actionlisteners;
 
-import java.awt.event.ActionListener;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javax.swing.JOptionPane;
 import org.quelea.Application;
 import org.quelea.languages.LabelGrabber;
@@ -30,7 +31,7 @@ import org.quelea.windows.main.MainPanel;
  * schedule - anything that clears the current content.
  * @author Michael
  */
-public abstract class ClearingActionListener implements ActionListener {
+public abstract class ClearingActionListener implements EventHandler<ActionEvent> {
 
     /**
      * Confirm whether it's ok to clear the current schedule.
@@ -42,10 +43,10 @@ public abstract class ClearingActionListener implements ActionListener {
         if(mainpanel.getSchedulePanel().getScheduleList().isEmpty()) {
             return true;
         }
-        int result = JOptionPane.showConfirmDialog(Application.get().getMainWindow(), LabelGrabber.INSTANCE.getLabel("schedule.clear.text"), LabelGrabber.INSTANCE.getLabel("confirm.label"), JOptionPane.YES_NO_OPTION, JOptionPane.INFORMATION_MESSAGE, null);
-        if(result == JOptionPane.YES_OPTION) {
-            return true;
-        }
+//        int result = JOptionPane.showConfirmDialog(Application.get().getMainWindow(), LabelGrabber.INSTANCE.getLabel("schedule.clear.text"), LabelGrabber.INSTANCE.getLabel("confirm.label"), JOptionPane.YES_NO_OPTION, JOptionPane.INFORMATION_MESSAGE, null);
+//        if(result == JOptionPane.YES_OPTION) {
+//            return true;
+//        }
         return false;
     }
 }

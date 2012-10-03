@@ -20,18 +20,18 @@ package org.quelea.windows.main;
 import org.quelea.windows.main.actionlisteners.EditSongDBActionListener;
 import org.quelea.windows.main.actionlisteners.NewSongActionListener;
 import org.quelea.windows.main.actionlisteners.EditSongScheduleActionListener;
-import java.awt.BorderLayout;
 import java.awt.Dimension;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
-import java.io.File;
-import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.imageio.ImageIO;
-import javax.swing.BoxLayout;
-import javax.swing.JFrame;
-import javax.swing.JPanel;
+import javafx.event.EventHandler;
+import javafx.scene.Scene;
+import javafx.scene.image.Image;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
+import javafx.scene.layout.VBox;
+import javafx.stage.Stage;
+import javafx.stage.StageStyle;
 import org.quelea.Application;
 import org.quelea.bible.BibleBrowseDialog;
 import org.quelea.bible.BibleSearchDialog;
@@ -52,16 +52,16 @@ import org.simplericity.macify.eawt.ApplicationListener;
  * The main window used to control the projection.
  * @author Michael
  */
-public class MainWindow extends JFrame implements ApplicationListener {
+public class MainWindow extends Stage implements ApplicationListener {
 
     private static final Logger LOGGER = LoggerUtils.getLogger();
     private final MainPanel mainpanel;
-    private final SongEntryWindow songEntryWindow;
-    private final NoticeDialog noticeDialog;
+    private SongEntryWindow songEntryWindow;
+    private NoticeDialog noticeDialog;
     private final MainMenuBar menuBar;
     private final MainToolbar mainToolbar;
     private final TagDialog tagDialog;
-    private final OptionsDialog optionsDialog;
+    private OptionsDialog optionsDialog;
     private final BibleSearchDialog bibleSearchDialog;
     private final BibleBrowseDialog bibleBrowseDialog;
     private final org.simplericity.macify.eawt.Application macApp;
@@ -72,38 +72,34 @@ public class MainWindow extends JFrame implements ApplicationListener {
      * the application-wide main window, false otherwise.
      */
     public MainWindow(boolean setApplicationWindow) {
-        super("Quelea " + QueleaProperties.VERSION.getVersionString());
+        setTitle("Quelea " + QueleaProperties.VERSION.getVersionString());
         macApp = new org.simplericity.macify.eawt.DefaultApplication();
         macApp.addApplicationListener(this);
         macApp.setApplicationIconImage(Utils.getImage("icons/logo.png"));
         
-        setLayout(new BorderLayout());
-        noticeDialog = new NoticeDialog(this);
+        BorderPane mainPane = new BorderPane();
+        VBox.setVgrow(mainPane, Priority.SOMETIMES);
+//        noticeDialog = new NoticeDialog(this);
         
         LOGGER.log(Level.INFO, "Creating main window");
         if(setApplicationWindow) {
             Application.get().setMainWindow(this);
         }
-        setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
-        addWindowListener(new WindowAdapter() {
+        setOnCloseRequest(new EventHandler<javafx.stage.WindowEvent>() {
 
             @Override
-            public void windowClosing(WindowEvent we) {
-                new ExitActionListener().actionPerformed(null);
+            public void handle(javafx.stage.WindowEvent t) {
+                new ExitActionListener().exit();
             }
         });
-        try {
-            setIconImage(ImageIO.read(new File("icons/logo.png")));
-        }
-        catch (IOException ex) {
-            LOGGER.log(Level.SEVERE, "Couldn't set JFrame image", ex);
-        }
+        
+        getIcons().add(new Image("file:icons/logo.png"));
         
         LOGGER.log(Level.INFO, "Creating tag dialog");
         tagDialog = new TagDialog();
         
         LOGGER.log(Level.INFO, "Creating options dialog");
-        optionsDialog = new OptionsDialog(Application.get().getMainWindow());
+        optionsDialog = new OptionsDialog();
         
         LOGGER.log(Level.INFO, "Creating bible search dialog");
         bibleSearchDialog = new BibleSearchDialog();
@@ -111,24 +107,24 @@ public class MainWindow extends JFrame implements ApplicationListener {
         bibleBrowseDialog = new BibleBrowseDialog();
 
         mainpanel = new MainPanel();
-        songEntryWindow = new SongEntryWindow(this);
-        mainpanel.getLibraryPanel().getLibrarySongPanel().getAddButton().addActionListener(new NewSongActionListener());
-        mainpanel.getLibraryPanel().getLibrarySongPanel().getSongList().getPopupMenu().getEditDBButton().addActionListener(new EditSongDBActionListener());
-        mainpanel.getLibraryPanel().getLibrarySongPanel().getSongList().getPopupMenu().getRemoveFromDBButton().addActionListener(new RemoveSongDBActionListener());
-        mainpanel.getSchedulePanel().getScheduleList().getPopupMenu().getEditSongButton().addActionListener(new EditSongScheduleActionListener());
+        songEntryWindow = new SongEntryWindow();
+        mainpanel.getSchedulePanel().getScheduleList().getPopupMenu().getEditSongButton().setOnAction(new EditSongScheduleActionListener());
         
         menuBar = new MainMenuBar();
-        setJMenuBar(menuBar);
         
-        JPanel toolbarPanel = new JPanel();
-        toolbarPanel.setLayout(new BoxLayout(toolbarPanel, BoxLayout.X_AXIS));
+        HBox toolbarPanel = new HBox();
         mainToolbar = new MainToolbar();
-        toolbarPanel.add(mainToolbar);
-        add(toolbarPanel, BorderLayout.NORTH);
+        HBox.setHgrow(mainToolbar, Priority.ALWAYS);
+        toolbarPanel.getChildren().add(mainToolbar);
         
-        add(mainpanel, BorderLayout.CENTER);
-        mainpanel.getLibraryPanel().getImagePanel().setPreferredSize(new Dimension(100, 200));
-        setSize(800,600);
+        VBox menuBox = new VBox();
+        menuBox.setFillWidth(true);
+        menuBox.getChildren().add(menuBar);
+        menuBox.getChildren().add(toolbarPanel);
+        menuBox.getChildren().add(mainPane);
+        
+        mainPane.setCenter(mainpanel);
+        setScene(new Scene(menuBox));
         LOGGER.log(Level.INFO, "Created main window.");
     }
 
