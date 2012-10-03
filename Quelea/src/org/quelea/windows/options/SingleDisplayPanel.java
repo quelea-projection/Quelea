@@ -24,6 +24,7 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.geometry.BoundingBox;
 import javafx.geometry.Bounds;
+import javafx.geometry.Pos;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
@@ -31,7 +32,7 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
-import org.quelea.NumberSpinner;
+import org.quelea.windows.main.NumberSpinner;
 import org.quelea.languages.LabelGrabber;
 import org.quelea.utils.Utils;
 
@@ -63,6 +64,7 @@ public class SingleDisplayPanel extends VBox {
      */
     public SingleDisplayPanel(String caption, String iconLocation, boolean none,
             boolean customPos) {
+        setAlignment(Pos.TOP_CENTER);
         this.none = none;
         Label captionLabel = new Label(caption);
         getChildren().add(captionLabel);

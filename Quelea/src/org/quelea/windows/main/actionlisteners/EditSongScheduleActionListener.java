@@ -36,9 +36,8 @@ public class EditSongScheduleActionListener implements EventHandler<ActionEvent>
     @Override
     public void handle(ActionEvent t) {
         SongEntryWindow songEntryWindow = Application.get().getMainWindow().getSongEntryWindow();
-        songEntryWindow.setLocationRelativeTo(songEntryWindow.getOwner());
-//        songEntryWindow.resetEditSong((Song) Application.get().getMainWindow().getMainPanel().getSchedulePanel().getScheduleList().getSelectedValue());
-        songEntryWindow.setVisible(true);
+        songEntryWindow.resetEditSong((Song) Application.get().getMainWindow().getMainPanel().getSchedulePanel().getScheduleList().getSelectionModel().getSelectedItem());
+        songEntryWindow.show();
     }
 
 }

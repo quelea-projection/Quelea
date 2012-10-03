@@ -19,6 +19,7 @@ package org.quelea.windows.options;
 
 import java.util.List;
 import javafx.event.EventHandler;
+import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Tab;
@@ -69,19 +70,19 @@ public class OptionsDialog extends Stage {
         displayTab.setContent(displayPanel);
         tabbedPane.getTabs().add(displayTab);
         
-//        stageViewPanel = new OptionsStageViewPanel();
-//        Tab stageViewTab = new Tab();
-//        stageViewTab.setClosable(false);
-//        stageViewTab.setText(LabelGrabber.INSTANCE.getLabel("stage.options.heading"));
-//        stageViewTab.setContent(stageViewPanel);
-//        tabbedPane.getTabs().add(stageViewTab);
+        stageViewPanel = new OptionsStageViewPanel();
+        Tab stageViewTab = new Tab();
+        stageViewTab.setClosable(false);
+        stageViewTab.setText(LabelGrabber.INSTANCE.getLabel("stage.options.heading"));
+        stageViewTab.setContent(stageViewPanel);
+        tabbedPane.getTabs().add(stageViewTab);
 //        
-//        biblePanel = new OptionsBiblePanel();
-//        Tab bibleTab = new Tab();
-//        bibleTab.setClosable(false);
-//        bibleTab.setText(LabelGrabber.INSTANCE.getLabel("bible.options.heading"));
-//        bibleTab.setContent(biblePanel);
-//        tabbedPane.getTabs().add(bibleTab);
+        biblePanel = new OptionsBiblePanel();
+        Tab bibleTab = new Tab();
+        bibleTab.setClosable(false);
+        bibleTab.setText(LabelGrabber.INSTANCE.getLabel("bible.options.heading"));
+        bibleTab.setContent(biblePanel);
+        tabbedPane.getTabs().add(bibleTab);
         
         mainPane.setCenter(tabbedPane);
         okButton = new Button(LabelGrabber.INSTANCE.getLabel("ok.button"));
@@ -98,6 +99,7 @@ public class OptionsDialog extends Stage {
                 hide();
             }
         });
+        BorderPane.setAlignment(okButton, Pos.CENTER);
         mainPane.setBottom(okButton);
         setScene(new Scene(mainPane));
     }

@@ -215,7 +215,7 @@ public class ScheduleThemePopupWindow extends FadeWindow {
             @Override
             public void actionPerformed(ActionEvent e) {
                 themeDialog.setTheme(null);
-                themeDialog.setVisible(true);
+                themeDialog.show();
                 Theme ret = themeDialog.getTheme();
                 if(ret != null) {
                     try (PrintWriter pw = new PrintWriter(ret.getFile())) {

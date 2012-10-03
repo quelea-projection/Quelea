@@ -36,7 +36,7 @@ import javafx.scene.layout.Region;
 import org.quelea.Application;
 import org.quelea.displayable.Displayable;
 import org.quelea.languages.LabelGrabber;
-import org.quelea.windows.main.actionlisteners.RemoveSongScheduleActionListener;
+import org.quelea.windows.main.actionlisteners.RemoveScheduleItemActionListener;
 
 /**
  * The panel displaying the schedule / order of service. Items from here are
@@ -72,10 +72,10 @@ public class SchedulePanel extends BorderPane {
 
         ToolBar toolbar = new ToolBar();
         toolbar.setOrientation(Orientation.VERTICAL);
-        removeButton = new Button("",new ImageView(new Image("file:icons/remove.png")));
+        removeButton = new Button("",new ImageView(new Image("file:icons/cross.png")));
         removeButton.setTooltip(new Tooltip(LabelGrabber.INSTANCE.getLabel("remove.song.schedule.tooltip")));
         removeButton.setDisable(true);
-        removeButton.setOnAction(new RemoveSongScheduleActionListener());
+        removeButton.setOnAction(new RemoveScheduleItemActionListener());
 
         upButton = new Button("",new ImageView(new Image("file:icons/up.png")));
         upButton.setTooltip(new Tooltip(LabelGrabber.INSTANCE.getLabel("move.up.schedule.tooltip")));

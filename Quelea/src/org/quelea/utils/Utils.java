@@ -16,14 +16,12 @@
  */
 package org.quelea.utils;
 
-import java.awt.Color;
 import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
-import java.awt.Image;
 import java.awt.Rectangle;
 import java.awt.RenderingHints;
 import java.awt.Toolkit;
@@ -35,6 +33,9 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
+import java.nio.Buffer;
+import java.nio.ByteBuffer;
+import java.nio.IntBuffer;
 import java.nio.channels.FileChannel;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
@@ -49,11 +50,15 @@ import java.util.Map.Entry;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javafx.beans.property.SimpleListProperty;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import javafx.geometry.BoundingBox;
 import javafx.geometry.Bounds;
+import javafx.scene.image.Image;
+import javafx.scene.image.PixelFormat;
+import javafx.scene.image.PixelReader;
+import javafx.scene.image.PixelWriter;
+import javafx.scene.image.WritableImage;
+import javafx.scene.image.WritablePixelFormat;
+import javafx.scene.paint.Color;
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import org.quelea.Application;
@@ -101,6 +106,7 @@ public final class Utils {
 
     /**
      * Converts an AWT rectangle to a JavaFX bounds object.
+     * <p/>
      * @param rect the rectangle to convert.
      * @return the equivalent bounds.
      */
@@ -504,8 +510,9 @@ public final class Utils {
      * @return the icon formed from the image, or null if an IOException
      * occured.
      */
+    //TODO: Delete method
     public static ImageIcon getImageIcon(String location) {
-        return getImageIcon(location, -1, -1);
+        return null;
     }
 
     /**
@@ -517,12 +524,9 @@ public final class Utils {
      * @return the icon formed from the image, or null if an IOException
      * occured.
      */
+    //TODO: Delete method
     public static ImageIcon getImageIcon(String location, int width, int height) {
-        Image image = getImage(location, width, height);
-        if(image == null) {
-            return null;
-        }
-        return new ImageIcon(image);
+        return null;
     }
 
     /**
@@ -606,13 +610,29 @@ public final class Utils {
             return true;
         }
         else {
-            return hasExtension(file, "png")
-                    || hasExtension(file, "tif")
-                    || hasExtension(file, "jpg")
-                    || hasExtension(file, "jpeg")
-                    || hasExtension(file, "gif")
-                    || hasExtension(file, "bmp");
+            for(String ext : getImageExtensions()) {
+                if(hasExtension(file, ext)) {
+                    return true;
+                }
+            }
+            return false;
         }
+    }
+
+    /**
+     * Get a list of all supported image extensions.
+     * <p/>
+     * @return a list of all supported image extensions.
+     */
+    public static List<String> getImageExtensions() {
+        List<String> ret = new ArrayList<>();
+        ret.add("png");
+        ret.add("tiff");
+        ret.add("jpg");
+        ret.add("jpeg");
+        ret.add("gif");
+        ret.add("bmp");
+        return ret;
     }
 
     /**
@@ -660,11 +680,41 @@ public final class Utils {
      * @param height the height of the image.
      * @return the image.
      */
-    public static BufferedImage getImageFromColour(Color color, int width, int height) {
-        BufferedImage image = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
-        Graphics graphics = image.getGraphics();
-        graphics.setColor(color);
-        graphics.fillRect(0, 0, width, height);
+    public static Image getImageFromColour(final Color color, int width, int height) {
+        WritableImage image = new WritableImage(width, height);
+        PixelWriter writer = image.getPixelWriter();
+        writer.setPixels(0, 0, width, height, new PixelReader() {
+            @Override
+            public PixelFormat getPixelFormat() {
+                return null;
+            }
+
+            @Override
+            public int getArgb(int i, int i1) {
+                return (to255(color.getOpacity())<<24)&(to255(color.getRed())<<16)&(to255(color.getGreen())<<8)&(to255(color.getBlue()));
+            }
+            
+            private int to255(double i) {
+                return (int)(i*255);
+            }
+
+            @Override
+            public javafx.scene.paint.Color getColor(int i, int i1) {
+                return null;
+            }
+
+            @Override
+            public <T extends Buffer> void getPixels(int i, int i1, int i2, int i3, WritablePixelFormat<T> wpf, T t, int i4) {
+            }
+
+            @Override
+            public void getPixels(int i, int i1, int i2, int i3, WritablePixelFormat<ByteBuffer> wpf, byte[] bytes, int i4, int i5) {
+            }
+
+            @Override
+            public void getPixels(int i, int i1, int i2, int i3, WritablePixelFormat<IntBuffer> wpf, int[] ints, int i4, int i5) {
+            }
+        }, 0, 0);
         return image;
     }
 
@@ -680,6 +730,6 @@ public final class Utils {
         int red = Integer.parseInt(parts[0].split("=")[1]);
         int green = Integer.parseInt(parts[1].split("=")[1]);
         int blue = Integer.parseInt(parts[2].split("=")[1]);
-        return new Color(red, green, blue);
+        return new Color(red, green, blue, 1);
     }
 }

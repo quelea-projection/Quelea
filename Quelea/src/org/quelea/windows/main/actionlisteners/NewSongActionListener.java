@@ -36,8 +36,7 @@ public class NewSongActionListener implements EventHandler<ActionEvent> {
     @Override
     public void handle(ActionEvent t) {
         SongEntryWindow songEntryWindow = Application.get().getMainWindow().getSongEntryWindow();
-        songEntryWindow.setLocationRelativeTo(songEntryWindow.getOwner());
         songEntryWindow.resetNewSong();
-        songEntryWindow.setVisible(true);
+        songEntryWindow.show();
     }
 }

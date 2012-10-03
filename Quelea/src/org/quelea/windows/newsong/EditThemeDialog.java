@@ -18,112 +18,90 @@
  */
 package org.quelea.windows.newsong;
 
-import java.awt.BorderLayout;
-import java.awt.Dimension;
-import java.awt.FlowLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.io.File;
-import javax.swing.JButton;
-import javax.swing.JDialog;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JTextField;
-import javax.swing.event.DocumentEvent;
-import javax.swing.event.DocumentListener;
-import org.quelea.Application;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
+import javafx.event.EventHandler;
+import javafx.geometry.Pos;
+import javafx.scene.Scene;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.control.TextField;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.HBox;
+import javafx.stage.Modality;
+import javafx.stage.Stage;
 import org.quelea.Theme;
 import org.quelea.languages.LabelGrabber;
 import org.quelea.utils.QueleaProperties;
-import org.quelea.utils.Utils;
 
 /**
  * A modal dialog where a theme can be edited.
  *
  * @author Michael
  */
-public class EditThemeDialog extends JDialog {
+public class EditThemeDialog extends Stage {
 
     private ThemePanel panel;
     private Theme theme;
     private File themeFile;
-    private JButton confirmButton;
-    private JButton cancelButton;
-    private JTextField nameField;
+    private Button confirmButton;
+    private Button cancelButton;
+    private TextField nameField;
 
     /**
      * Create a new edit theme dialog.
      */
     public EditThemeDialog() {
-//        super(Application.get().getMainWindow(), LabelGrabber.INSTANCE.getLabel("edit.theme.heading"), true);
+        initModality(Modality.WINDOW_MODAL);
+        setTitle(LabelGrabber.INSTANCE.getLabel("edit.theme.heading"));
         setResizable(false);
-        setLayout(new BorderLayout());
-        JPanel northPanel = new JPanel();
-        add(northPanel, BorderLayout.NORTH);
-        northPanel.setLayout(new FlowLayout(FlowLayout.LEFT));
-        northPanel.add(new JLabel(LabelGrabber.INSTANCE.getLabel("theme.name.label")));
-        nameField = new JTextField(20);
-        nameField.getDocument().addDocumentListener(new DocumentListener() {
+        
+        BorderPane mainPane = new BorderPane();
+        HBox northPanel = new HBox();
+        mainPane.setTop(northPanel);
+        northPanel.getChildren().add(new Label(LabelGrabber.INSTANCE.getLabel("theme.name.label")));
+        nameField = new TextField();
+        nameField.textProperty().addListener(new ChangeListener<String>() {
 
             @Override
-            public void insertUpdate(DocumentEvent e) {
-                check();
-            }
-
-            @Override
-            public void removeUpdate(DocumentEvent e) {
-                check();
-            }
-
-            @Override
-            public void changedUpdate(DocumentEvent e) {
-                check();
-            }
-
-            private void check() {
-                confirmButton.setEnabled(!nameField.getText().trim().isEmpty());
+            public void changed(ObservableValue<? extends String> ov, String t, String t1) {
+                confirmButton.setDisable(nameField.getText().trim().isEmpty());
             }
         });
-        northPanel.add(nameField);
+        northPanel.getChildren().add(nameField);
         panel = new ThemePanel();
-        add(panel, BorderLayout.CENTER);
-        confirmButton = new JButton(LabelGrabber.INSTANCE.getLabel("ok.button"), Utils.getImageIcon("icons/tick.png"));
-        confirmButton.addActionListener(new ActionListener() {
+        mainPane.setCenter(panel);
+        confirmButton = new Button(LabelGrabber.INSTANCE.getLabel("ok.button"), new ImageView(new Image("file:icons/tick.png")));
+        confirmButton.setOnAction(new EventHandler<javafx.event.ActionEvent>() {
 
             @Override
-            public void actionPerformed(ActionEvent ae) {
+            public void handle(javafx.event.ActionEvent t) {
                 theme = panel.getTheme();
                 theme.setFile(themeFile);
                 theme.setThemeName(nameField.getText());
-                setVisible(false);
+                hide();
             }
         });
-        cancelButton = new JButton(LabelGrabber.INSTANCE.getLabel("cancel.button"), Utils.getImageIcon("icons/cross.png"));
-        cancelButton.addActionListener(new ActionListener() {
+        cancelButton = new Button(LabelGrabber.INSTANCE.getLabel("cancel.button"), new ImageView(new Image("file:icons/cross.png")));
+        cancelButton.setOnAction(new EventHandler<javafx.event.ActionEvent>() {
 
             @Override
-            public void actionPerformed(ActionEvent ae) {
+            public void handle(javafx.event.ActionEvent t) {
                 theme = null;
-                setVisible(false);
+                hide();
             }
         });
-        JPanel southPanel = new JPanel();
-        southPanel.setLayout(new FlowLayout(FlowLayout.CENTER));
-        southPanel.add(confirmButton);
-        southPanel.add(cancelButton);
-        add(southPanel, BorderLayout.SOUTH);
-        pack();
-    }
-
-    /**
-     * Centre on parent before making visible.
-     *
-     * @param vis true if visible, false otherwise.
-     */
-    @Override
-    public void setVisible(boolean vis) {
-        setLocationRelativeTo(getParent());
-        super.setVisible(vis);
+        
+        HBox southPanel = new HBox();
+        southPanel.setAlignment(Pos.CENTER);
+        southPanel.getChildren().add(confirmButton);
+        southPanel.getChildren().add(cancelButton);
+        mainPane.setBottom(southPanel);
+        
+        setScene(new Scene(mainPane));
     }
 
     /**
@@ -154,7 +132,7 @@ public class EditThemeDialog extends JDialog {
         }
         themeFile = theme.getFile();
         nameField.setText(theme.getThemeName());
-        confirmButton.setEnabled(!nameField.getText().isEmpty());
+        confirmButton.setDisable(nameField.getText().isEmpty());
         panel.setTheme(theme);
     }
 }

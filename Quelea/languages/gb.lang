@@ -276,3 +276,5 @@ kingsway.button.one=One Song
 song.id.selector=Please select the song ID
 bible.copy.error.text=Sorry, there was an error copying the bible across to the required directory.
 bible.copy.error.heading=Error
+select.key.label=Select the new key:
+transpose.label=Transpose
