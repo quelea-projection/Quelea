@@ -18,9 +18,9 @@
  */
 package org.quelea.windows.main.actionlisteners;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.io.File;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javax.swing.JFileChooser;
 import org.quelea.Application;
 import org.quelea.displayable.VideoDisplayable;
@@ -30,18 +30,18 @@ import org.quelea.utils.VideoFileFilter;
  * The action listener for adding a video.
  * @author Michael
  */
-public class AddVideoActionListener implements ActionListener {
+public class AddVideoActionListener implements EventHandler<ActionEvent> {
 
     @Override
-    public void actionPerformed(ActionEvent e) {
+    public void handle(ActionEvent t) {
         JFileChooser fileChooser = new JFileChooser();
         fileChooser.setFileFilter(new VideoFileFilter());
         fileChooser.setAcceptAllFileFilterUsed(false);
-        fileChooser.showOpenDialog(Application.get().getMainWindow());
+//        fileChooser.showOpenDialog(Application.get().getMainWindow());
         File file = fileChooser.getSelectedFile();
         if(file != null) {
             VideoDisplayable displayable = new VideoDisplayable(fileChooser.getSelectedFile(), VideoDisplayable.VideoType.FILE);
-            Application.get().getMainWindow().getMainPanel().getSchedulePanel().getScheduleList().getModel().addElement(displayable);
+            Application.get().getMainWindow().getMainPanel().getSchedulePanel().getScheduleList().add(displayable);
         }
     }
     

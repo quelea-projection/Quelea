@@ -50,9 +50,9 @@ public class Application {
     public void openSchedule(File file) {
         Schedule schedule = Schedule.fromFile(file);
         if (schedule == null) {
-            JOptionPane.showMessageDialog(Application.get().getMainWindow(),
-                    LabelGrabber.INSTANCE.getLabel("error.schedule.message"),
-                    LabelGrabber.INSTANCE.getLabel("error.schedule.title"), JOptionPane.ERROR_MESSAGE, null);
+//            JOptionPane.showMessageDialog(Application.get().getMainWindow(),
+//                    LabelGrabber.INSTANCE.getLabel("error.schedule.message"),
+//                    LabelGrabber.INSTANCE.getLabel("error.schedule.title"), JOptionPane.ERROR_MESSAGE, null);
         }
         else {
             Application.get().getMainWindow().getMainPanel().getSchedulePanel().getScheduleList().setSchedule(schedule);

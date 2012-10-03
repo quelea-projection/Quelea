@@ -169,7 +169,7 @@ public final class SongDatabase {
      */
     public void fireUpdate() {
         for(DatabaseListener listener : listeners) {
-            listener.update();
+            listener.databaseChanged();
         }
     }
 

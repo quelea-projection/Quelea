@@ -18,13 +18,13 @@
  */
 package org.quelea.windows.main.menus;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.KeyEvent;
-import javax.swing.JMenu;
-import javax.swing.JMenuItem;
-import javax.swing.KeyStroke;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
+import javafx.scene.control.Menu;
+import javafx.scene.control.MenuItem;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import org.quelea.languages.LabelGrabber;
-import org.quelea.utils.Utils;
 import org.quelea.windows.main.actionlisteners.SearchBibleActionListener;
 import org.quelea.windows.main.actionlisteners.ShowOptionsActionListener;
 import org.quelea.windows.main.actionlisteners.ViewBibleActionListener;
@@ -33,36 +33,29 @@ import org.quelea.windows.main.actionlisteners.ViewBibleActionListener;
  * Quelea's tools menu.
  * @author Michael
  */
-public class ToolsMenu extends JMenu {
+public class ToolsMenu extends Menu {
     
-    private JMenuItem searchBibleItem;
-    private JMenuItem viewBibleItem;
-    private JMenuItem optionsItem;
+    private MenuItem searchBibleItem;
+    private MenuItem viewBibleItem;
+    private MenuItem optionsItem;
     
     /**
      * Create the tools menu.
      */
     public ToolsMenu() {
         super(LabelGrabber.INSTANCE.getLabel("tools.menu"));
-        setMnemonic('t');
         
-        viewBibleItem = new JMenuItem(LabelGrabber.INSTANCE.getLabel("view.bible.button"), Utils.getImageIcon("icons/bible.png", 20, 20));
-//        viewBibleItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_T, ActionEvent.CTRL_MASK));
-        viewBibleItem.setMnemonic('v');
-        viewBibleItem.addActionListener(new ViewBibleActionListener());
-        add(viewBibleItem);
+        viewBibleItem = new MenuItem(LabelGrabber.INSTANCE.getLabel("view.bible.button"), new ImageView(new Image("file:icons/bible.png", 20, 20, false, true)));
+        viewBibleItem.setOnAction(new ViewBibleActionListener());
+        getItems().add(viewBibleItem);
         
-        searchBibleItem = new JMenuItem(LabelGrabber.INSTANCE.getLabel("search.bible.button"), Utils.getImageIcon("icons/bible.png", 20, 20));
-//        viewBibleItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_T, ActionEvent.CTRL_MASK));
-        searchBibleItem.setMnemonic('s');
-        searchBibleItem.addActionListener(new SearchBibleActionListener());
-        add(searchBibleItem);
+        searchBibleItem = new MenuItem(LabelGrabber.INSTANCE.getLabel("search.bible.button"), new ImageView(new Image("file:icons/bible.png", 20, 20, false, true)));
+        searchBibleItem.setOnAction(new SearchBibleActionListener());
+        getItems().add(searchBibleItem);
         
-        optionsItem = new JMenuItem(LabelGrabber.INSTANCE.getLabel("options.button"), Utils.getImageIcon("icons/options.png", 20, 20));
-        optionsItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_T, ActionEvent.CTRL_MASK));
-        optionsItem.setMnemonic('o');
-        optionsItem.addActionListener(new ShowOptionsActionListener());
-        add(optionsItem);
+        optionsItem = new MenuItem(LabelGrabber.INSTANCE.getLabel("options.button"), new ImageView(new Image("file:icons/options.png", 20, 20, false, true)));
+        optionsItem.setOnAction(new ShowOptionsActionListener());
+        getItems().add(optionsItem);
     }
     
 }

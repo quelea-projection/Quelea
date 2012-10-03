@@ -17,138 +17,80 @@
  */
 package org.quelea.windows.library;
 
-import java.awt.Color;
-import java.awt.Component;
-import java.awt.Rectangle;
-import java.awt.dnd.DnDConstants;
-import java.awt.dnd.DragGestureEvent;
-import java.awt.dnd.DragGestureListener;
-import java.awt.dnd.DragSource;
-import java.awt.event.FocusEvent;
-import java.awt.event.FocusListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 import java.util.List;
+import java.util.TreeSet;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.logging.Logger;
-import javax.swing.*;
+import javafx.application.Platform;
+import javafx.beans.property.SimpleListProperty;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+import javafx.event.EventHandler;
+import javafx.scene.control.ListCell;
+import javafx.scene.control.ListView;
+import javafx.scene.control.cell.TextFieldListCell;
+import javafx.scene.input.MouseEvent;
+import javafx.util.Callback;
+import javafx.util.StringConverter;
+import org.quelea.Application;
 import org.quelea.SongDatabase;
-import org.quelea.SortedListModel;
-import org.quelea.displayable.Displayable;
 import org.quelea.displayable.Song;
-import org.quelea.displayable.TextSection;
-import org.quelea.displayable.TransferDisplayable;
 import org.quelea.lucene.SongSearchIndex;
 import org.quelea.utils.DatabaseListener;
 import org.quelea.utils.LoggerUtils;
-import org.quelea.utils.QueleaProperties;
 
 /**
  * The list that displays the songs in the library.
- *
+ * <p/>
  * @author Michael
  */
-public class LibrarySongList extends JList<Song> implements DatabaseListener {
+public class LibrarySongList extends ListView<Song> implements DatabaseListener {
 
-    /**
-     * The toString() method on song returns XML, we don't want to print that so
-     * this is a bit of a hack to display the title instead.
-     */
-    private static class SongRenderer extends DefaultListCellRenderer {
-
-        /**
-         * @inheritDoc
-         */
-        @Override
-        public Component getListCellRendererComponent(JList<?> list, Object value,
-                int index, boolean isSelected, boolean cellHasFocus) {
-            Song s = new Song((Song) value) {
-                
-                @Override
-                public String toString() {
-                    return getListHTML();
-                }
-            };
-            return super.getListCellRendererComponent(list, s, index, isSelected, cellHasFocus);
-        }
-    }
     private static final Logger LOGGER = LoggerUtils.getLogger();
-    private final SortedListModel<Song> fullModel;
     private final LibraryPopupMenu popupMenu;
-    private final Color originalSelectionColour;
     private final boolean popup;
 
     /**
      * Create a new library song list.
+     * <p/>
+     * @popup true if this list should popup a context menu when right clicked,
+     * false otherwise.
      */
     public LibrarySongList(boolean popup) {
-        super(new SortedListModel<Song>());
         this.popup = popup;
-        setCellRenderer(new SongRenderer());
-        Color inactiveColor = QueleaProperties.get().getInactiveSelectionColor();
-        if(inactiveColor == null) {
-            originalSelectionColour = getSelectionBackground();
-        }
-        else {
-            originalSelectionColour = inactiveColor;
-        }
-        addFocusListener(new FocusListener() {
-            
+        Callback<ListView<Song>, ListCell<Song>> callback = new Callback<ListView<Song>, ListCell<Song>>() {
             @Override
-            public void focusGained(FocusEvent e) {
-                if(getModel().getSize() > 0) {
-                    setSelectionBackground(QueleaProperties.get().getActiveSelectionColor());
-                }
-            }
-            
-            @Override
-            public void focusLost(FocusEvent e) {
-                setSelectionBackground(originalSelectionColour);
-            }
-        });
-        setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-        popupMenu = new LibraryPopupMenu();
-        fullModel = (SortedListModel<Song>) super.getModel();
-        DragSource.getDefaultDragSource().createDefaultDragGestureRecognizer(this, DnDConstants.ACTION_MOVE, new DragGestureListener() {
-            
-            @Override
-            public void dragGestureRecognized(DragGestureEvent dge) {
-                if(getSelectedValue() != null) {
-                    dge.startDrag(DragSource.DefaultCopyDrop, new TransferDisplayable((Displayable) getModel().getElementAt(locationToIndex(dge.getDragOrigin()))));
-                }
-            }
-        });
-        this.addMouseListener(new MouseAdapter() {
-            
-            @Override
-            public void mousePressed(MouseEvent e) {
-                checkPopup(e);
-            }
-            
-            @Override
-            public void mouseReleased(MouseEvent e) {
-                checkPopup(e);
-            }
-
-            /**
-             * Display the popup if appropriate. This should be done when the
-             * mouse is pressed and released for platform-independence.
-             */
-            private void checkPopup(MouseEvent e) {
-                if(e.isPopupTrigger() && LibrarySongList.this.popup) {
-                    int index = locationToIndex(e.getPoint());
-                    Rectangle Rect = getCellBounds(index, index);
-                    index = Rect.contains(e.getPoint().x, e.getPoint().y) ? index : -1;
-                    if(index != -1) {
-                        setSelectedIndex(index);
-                        popupMenu.show(LibrarySongList.this, e.getX(), e.getY());
+            public ListCell<Song> call(ListView<Song> p) {
+                return new TextFieldListCell<>(new StringConverter<Song>() {
+                    @Override
+                    public String toString(Song song) {
+                        return song.getListHTML();
                     }
+
+                    @Override
+                    public Song fromString(String string) {
+                        //Implementation not needed.
+                        return null;
+                    }
+                });
+            }
+        };
+        popupMenu = new LibraryPopupMenu();
+        setOnMouseClicked(new EventHandler<MouseEvent>() {
+
+            @Override
+            public void handle(MouseEvent t) {
+                if(t.getClickCount() == 2) {
+                    Application.get().getMainWindow().getMainPanel().getSchedulePanel().getScheduleList().itemsProperty().get().add(getSelectedValue());
                 }
             }
         });
-        update();
+        if(popup) {
+            setCellFactory(ContextMenuListCell.<Song>forListView(popupMenu, callback));
+        }
+        databaseChanged();
         SongDatabase.get().registerDatabaseListener(this);
     }
     private ExecutorService filterService = Executors.newSingleThreadExecutor();
@@ -156,7 +98,7 @@ public class LibrarySongList extends JList<Song> implements DatabaseListener {
 
     /**
      * Filter the results in this list by a specific search term.
-     *
+     * <p/>
      * @param search the search term to use.
      */
     public void filter(final String search) {
@@ -164,50 +106,52 @@ public class LibrarySongList extends JList<Song> implements DatabaseListener {
             filterFuture.cancel(true);
         }
         filterFuture = filterService.submit(new Runnable() {
-            
             @Override
             public void run() {
-                final AbstractListModel<Song> model;
-                
+                final ObservableList<Song> songs = FXCollections.observableArrayList();
+
                 // empty or null search strings do not need to be filtered - lest they get added twice
                 if(search == null || search.trim().isEmpty()) {
-                    SortedListModel<Song> m = new SortedListModel<>();
+                    TreeSet<Song> m = new TreeSet<>();
                     for(Song song : SongDatabase.get().getSongs()) {
                         song.setLastSearch(null);
                         m.add(song);
                     }
-                    model = m;
-                } else {
-                    DefaultListModel<Song> m = new DefaultListModel<>();
+                    songs.addAll(m);
+                }
+                else {
+                    TreeSet<Song> m = new TreeSet<>();
                     Song[] titleSongs = SongDatabase.get().getIndex().filter(search, SongSearchIndex.FilterType.TITLE);
                     for(Song song : titleSongs) {
                         song.setLastSearch(search);
-                        m.addElement(song);
+                        m.add(song);
                     }
+                    songs.addAll(m);
+                    m.clear();
+                    
                     Song[] lyricSongs = SongDatabase.get().getIndex().filter(search, SongSearchIndex.FilterType.BODY);
                     for(Song song : lyricSongs) {
                         song.setLastSearch(null);
-                        m.addElement(song);
+                        m.add(song);
                     }
-                    model = m;
+                    songs.addAll(m);
                 }
-                
-                SwingUtilities.invokeLater(new Runnable() {
-                    
+
+                Platform.runLater(new Runnable() {
                     @Override
                     public void run() {
-                        LibrarySongList.this.setModel(model);
+                        setItems(songs);
                     }
                 });
             }
         });
-        
+
     }
 
     /**
      * Filter songs in this song list by a certain number of tags. Only songs
      * that contain all the tags will be displayed and pass the filter.
-     *
+     * <p/>
      * @param filterTags the tags to filter on.
      */
     public void filterByTag(final List<String> filterTags) {
@@ -215,13 +159,13 @@ public class LibrarySongList extends JList<Song> implements DatabaseListener {
             filterFuture.cancel(true);
         }
         filterFuture = filterService.submit(new Runnable() {
-            
             @Override
             public void run() {
-                final SortedListModel<Song> model = new SortedListModel<>();
-                for(int i = 0; i < fullModel.getSize(); i++) {
+                final ObservableList<Song> allSongs = FXCollections.observableArrayList(SongDatabase.get().getSongs());
+                final ObservableList<Song> songs = new SimpleListProperty<>();
+                for(int i = 0; i < allSongs.size(); i++) {
                     boolean add = true;
-                    Song s = fullModel.getElementAt(i);
+                    Song s = allSongs.get(i);
                     String[] songTags = s.getTags();
                     for(String filterTag : filterTags) {
                         if(filterTag.trim().isEmpty()) {
@@ -238,24 +182,32 @@ public class LibrarySongList extends JList<Song> implements DatabaseListener {
                         }
                     }
                     if(add) {
-                        model.add(s);
+                        songs.add(s);
                     }
                 }
-                SwingUtilities.invokeLater(new Runnable() {
-                    
+                Platform.runLater(new Runnable() {
                     @Override
                     public void run() {
-                        LibrarySongList.this.setModel(model);
+                        setItems(songs);
                     }
                 });
             }
         });
-        
+
+    }
+
+    /**
+     * Get the currently selected song.
+     * <p/>
+     * @return the currently selected song, or null if none is selected.
+     */
+    public Song getSelectedValue() {
+        return selectionModelProperty().get().getSelectedItem();
     }
 
     /**
      * Get the popup menu associated with this list.
-     *
+     * <p/>
      * @return the popup menu.
      */
     public LibraryPopupMenu getPopupMenu() {
@@ -263,48 +215,16 @@ public class LibrarySongList extends JList<Song> implements DatabaseListener {
     }
 
     /**
-     * Get the tooltip text for items in the list.
-     *
-     * @param evt the mouse event generating the tooltip.
-     * @return the tooltip text.
-     */
-    @Override
-    public String getToolTipText(MouseEvent evt) {
-        int index = locationToIndex(evt.getPoint());
-        if(index < 0) {
-            return null;
-        }
-        Song song = getModel().getElementAt(index);
-        TextSection[] sections = song.getSections();
-        if(sections.length > 0 && sections[0] != null && sections[0].getText(false, false).length > 0) {
-            return sections[0].getText(false, false)[0] + "...";
-        }
-        return null;
-    }
-
-    /**
      * Update the contents of the list.
      */
     @Override
-    public final void update() {
-        final Song[] songs = SongDatabase.get().getSongs();
-        Runnable runner = new Runnable() {
-            
+    public final void databaseChanged() {
+        Platform.runLater(new Runnable() {
             @Override
             public void run() {
-                fullModel.clear();
-                for(Song song : songs) {
-                    fullModel.add(song);
-                }
+                itemsProperty().set(FXCollections.observableArrayList(SongDatabase.get().getSongs()));
             }
-        };
-        
-        if(SwingUtilities.isEventDispatchThread()) {
-            runner.run();
-        }
-        else {
-            SwingUtilities.invokeLater(runner);
-        }
-        
+        });
+
     }
 }

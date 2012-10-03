@@ -18,18 +18,17 @@
  */
 package org.quelea.windows.main.menus;
 
-import java.awt.event.ActionEvent;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
-import java.awt.event.KeyEvent;
-import javax.swing.JMenu;
-import javax.swing.JMenuItem;
-import javax.swing.KeyStroke;
+import javafx.scene.control.Menu;
+import javafx.scene.control.MenuItem;
+import javafx.scene.control.SeparatorMenuItem;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import org.quelea.Application;
 import org.quelea.languages.LabelGrabber;
-import org.quelea.utils.Utils;
 import org.quelea.windows.library.LibrarySongList;
 import org.quelea.windows.main.actionlisteners.EditSongDBActionListener;
 import org.quelea.windows.main.actionlisteners.NewSongActionListener;
@@ -40,12 +39,12 @@ import org.quelea.windows.main.actionlisteners.ViewTagsActionListener;
  * Quelea's database menu.
  * @author Michael
  */
-public class DatabaseMenu extends JMenu {
+public class DatabaseMenu extends Menu {
 
-    private final JMenuItem newSongItem;
-    private final JMenuItem editSongItem;
-    private final JMenuItem deleteSongItem;
-    private final JMenuItem tagsItem;
+    private final MenuItem newSongItem;
+    private final MenuItem editSongItem;
+    private final MenuItem deleteSongItem;
+    private final MenuItem tagsItem;
     
     private final ImportMenu importMenu;
     private final ExportMenu exportMenu;
@@ -55,78 +54,71 @@ public class DatabaseMenu extends JMenu {
      */
     public DatabaseMenu() {
         super(LabelGrabber.INSTANCE.getLabel("database.heading"));
-        setMnemonic('d');
 
-        newSongItem = new JMenuItem(LabelGrabber.INSTANCE.getLabel("new.song.button"), Utils.getImageIcon("icons/newsong.png", 16, 16));
-        newSongItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_N, ActionEvent.CTRL_MASK|ActionEvent.SHIFT_MASK));
-        newSongItem.setMnemonic('n');
-        newSongItem.addActionListener(new NewSongActionListener());
-        add(newSongItem);
+        newSongItem = new MenuItem(LabelGrabber.INSTANCE.getLabel("new.song.button"), new ImageView(new Image("file:icons/newsong.png", 16, 16, false, true)));
+        newSongItem.setOnAction(new NewSongActionListener());
+        getItems().add(newSongItem);
 
-        editSongItem = new JMenuItem(LabelGrabber.INSTANCE.getLabel("edit.song.button"), Utils.getImageIcon("icons/edit.png", 16, 16));
-        editSongItem.setMnemonic('e');
-        editSongItem.addActionListener(new EditSongDBActionListener());
-        editSongItem.setEnabled(false);
-        add(newSongItem);
+        editSongItem = new MenuItem(LabelGrabber.INSTANCE.getLabel("edit.song.button"), new ImageView(new Image("file:icons/edit.png", 16, 16, false, true)));
+        editSongItem.setOnAction(new EditSongDBActionListener());
+        editSongItem.setDisable(true);
+        getItems().add(newSongItem);
 
-        deleteSongItem = new JMenuItem(LabelGrabber.INSTANCE.getLabel("delete.song.button"), Utils.getImageIcon("icons/remove 2.png", 16, 16));
-        deleteSongItem.setMnemonic('d');
-        deleteSongItem.addActionListener(new RemoveSongDBActionListener());
-        deleteSongItem.setEnabled(false);
-        add(newSongItem);
+        deleteSongItem = new MenuItem(LabelGrabber.INSTANCE.getLabel("delete.song.button"), new ImageView(new Image("file:icons/remove 2.png", 16, 16, false, true)));
+        deleteSongItem.setOnAction(new RemoveSongDBActionListener());
+        deleteSongItem.setDisable(true);
+        getItems().add(newSongItem);
 
-        tagsItem = new JMenuItem(LabelGrabber.INSTANCE.getLabel("tags.button"), Utils.getImageIcon("icons/tag.png", 16, 16));
-        tagsItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_G, ActionEvent.CTRL_MASK));
-        tagsItem.setMnemonic('t');
-        tagsItem.addActionListener(new ViewTagsActionListener());
-        add(tagsItem);
+        tagsItem = new MenuItem(LabelGrabber.INSTANCE.getLabel("tags.button"), new ImageView(new Image("file:icons/tag.png", 16, 16, false, true)));
+        tagsItem.setOnAction(new ViewTagsActionListener());
+        getItems().add(tagsItem);
 
         final LibrarySongList libraryList = Application.get().getMainWindow().getMainPanel().getLibraryPanel().getLibrarySongPanel().getSongList();
 
-        libraryList.addListSelectionListener(new ListSelectionListener() {
-
-            @Override
-            public void valueChanged(ListSelectionEvent e) {
-                checkEditDeleteItems(editSongItem, deleteSongItem);
-            }
-        });
-        libraryList.addFocusListener(new FocusListener() {
-
-            @Override
-            public void focusGained(FocusEvent e) {
-                checkEditDeleteItems(editSongItem, deleteSongItem);
-            }
-
-            @Override
-            public void focusLost(FocusEvent e) {
-                checkEditDeleteItems(editSongItem, deleteSongItem);
-            }
-        });
+//        libraryList.addListSelectionListener(new ListSelectionListener() {
+//
+//            @Override
+//            public void valueChanged(ListSelectionEvent e) {
+//                checkEditDeleteItems(editSongItem, deleteSongItem);
+//            }
+//        });
+//        libraryList.addFocusListener(new FocusListener() {
+//
+//            @Override
+//            public void focusGained(FocusEvent e) {
+//                checkEditDeleteItems(editSongItem, deleteSongItem);
+//            }
+//
+//            @Override
+//            public void focusLost(FocusEvent e) {
+//                checkEditDeleteItems(editSongItem, deleteSongItem);
+//            }
+//        });
         
-        addSeparator();
+        getItems().add(new SeparatorMenuItem());
         importMenu = new ImportMenu();
-        add(importMenu);
+        getItems().add(importMenu);
         exportMenu = new ExportMenu();
-        add(exportMenu);
+        getItems().add(exportMenu);
     }
 
     /**
      * Check whether the edit / delete buttons should be set to enabled or not.
      */
-    private void checkEditDeleteItems(JMenuItem editSongButton, JMenuItem deleteSongButton) {
-        final LibrarySongList libraryList = Application.get().getMainWindow().getMainPanel().getLibraryPanel().getLibrarySongPanel().getSongList();
-        if(!libraryList.isFocusOwner()) {
-            deleteSongButton.setEnabled(false);
-            editSongButton.setEnabled(false);
-            return;
-        }
-        if(libraryList.getSelectedIndex() == -1) {
-            deleteSongButton.setEnabled(false);
-            editSongButton.setEnabled(false);
-        }
-        else {
-            deleteSongButton.setEnabled(true);
-            editSongButton.setEnabled(true);
-        }
+    private void checkEditDeleteItems(MenuItem editSongButton, MenuItem deleteSongButton) {
+//        final LibrarySongList libraryList = Application.get().getMainWindow().getMainPanel().getLibraryPanel().getLibrarySongPanel().getSongList();
+//        if(!libraryList.isFocusOwner()) {
+//            deleteSongButton.setDisable(true);
+//            editSongButton.setDisable(true);
+//            return;
+//        }
+//        if(libraryList.getSelectedIndex() == -1) {
+//            deleteSongButton.setDisable(true);
+//            editSongButton.setDisable(true);
+//        }
+//        else {
+//            deleteSongButton.setDisable(false);
+//            editSongButton.setDisable(false);
+//        }
     }
 }

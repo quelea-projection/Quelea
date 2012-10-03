@@ -17,21 +17,24 @@
  */
 package org.quelea.windows.main;
 
-import javax.swing.JPanel;
-
 /**
  * A panel that's contained within the live / preview panels.
  * @author Michael
  */
-public abstract class ContainedPanel extends JPanel {
+public interface ContainedPanel {
 
     /**
      * Focus on the panel.
      */
-    public abstract void focus();
+    void focus();
 
     /**
      * Clear the panel.
      */
-    public abstract void clear();
+    void clear();
+    
+    /**
+     * Get the current index of this contained panel.
+     */
+    int getCurrentIndex();
 }

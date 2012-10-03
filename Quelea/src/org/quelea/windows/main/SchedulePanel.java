@@ -17,201 +17,131 @@
  */
 package org.quelea.windows.main;
 
-import org.quelea.windows.main.actionlisteners.RemoveSongScheduleActionListener;
-import java.awt.AWTEvent;
-import java.awt.BorderLayout;
-import java.awt.Point;
-import java.awt.Rectangle;
-import java.awt.Toolkit;
-import java.awt.event.AWTEventListener;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import javax.swing.*;
-import javax.swing.border.EmptyBorder;
-import javax.swing.event.ListDataEvent;
-import javax.swing.event.ListDataListener;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
+import javafx.collections.ObservableList;
+import javafx.event.EventHandler;
+import javafx.geometry.Orientation;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.control.MultipleSelectionModel;
+import javafx.scene.control.ToolBar;
+import javafx.scene.control.Tooltip;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
+import javafx.scene.layout.Region;
 import org.quelea.Application;
+import org.quelea.displayable.Displayable;
 import org.quelea.languages.LabelGrabber;
-import org.quelea.utils.Utils;
+import org.quelea.windows.main.actionlisteners.RemoveSongScheduleActionListener;
 
 /**
  * The panel displaying the schedule / order of service. Items from here are
  * loaded into the preview panel where they are viewed and then projected live.
  * Items can be added here from the library.
- *
+ * <p/>
  * @author Michael
  */
-public class SchedulePanel extends JPanel {
+public class SchedulePanel extends BorderPane {
 
     private final ScheduleList scheduleList;
-    private final JButton removeButton;
-    private final JButton upButton;
-    private final JButton downButton;
-    private final JButton themeButton;
+    private final Button removeButton;
+    private final Button upButton;
+    private final Button downButton;
+    private final Button themeButton;
     private final ScheduleThemePopupWindow themeMenu;
 
     /**
      * Create and initialise the schedule panel.
      */
     public SchedulePanel() {
-        setLayout(new BorderLayout());
         scheduleList = new ScheduleList();
-        scheduleList.getModel().addListDataListener(new ListDataListener() {
-
-            /*
-             * Whatever happens here, update the theme.
-             */
+        scheduleList.itemsProperty().addListener(new ChangeListener<ObservableList<Displayable>>() {
             @Override
-            public void intervalAdded(ListDataEvent e) {
-                themeMenu.updateTheme();
-            }
-
-            @Override
-            public void intervalRemoved(ListDataEvent e) {
-                themeMenu.updateTheme();
-            }
-
-            @Override
-            public void contentsChanged(ListDataEvent e) {
+            public void changed(ObservableValue<? extends ObservableList<Displayable>> ov, ObservableList<Displayable> t, ObservableList<Displayable> t1) {
                 themeMenu.updateTheme();
             }
         });
 
         themeMenu = new ScheduleThemePopupWindow(scheduleList);
-        Toolkit.getDefaultToolkit().addAWTEventListener(new AWTEventListener() {
+        themeButton = new Button("",new ImageView(new Image("file:icons/settings.png", 16, 16, false, true)));
+        themeButton.setTooltip(new Tooltip(LabelGrabber.INSTANCE.getLabel("adjust.theme.tooltip")));
 
-            /**
-             * Have to hide the theme menu whenever anything else is clicked on
-             * so this method provides an application wide way of detecting
-             * these clicks and hiding the window appropriately. Makes it behave
-             * a bit like a popup menu which is the behaviour we're after here.
-             *
-             * @param event the app-wide awt event.
-             */
+        ToolBar toolbar = new ToolBar();
+        toolbar.setOrientation(Orientation.VERTICAL);
+        removeButton = new Button("",new ImageView(new Image("file:icons/remove.png")));
+        removeButton.setTooltip(new Tooltip(LabelGrabber.INSTANCE.getLabel("remove.song.schedule.tooltip")));
+        removeButton.setDisable(true);
+        removeButton.setOnAction(new RemoveSongScheduleActionListener());
+
+        upButton = new Button("",new ImageView(new Image("file:icons/up.png")));
+        upButton.setTooltip(new Tooltip(LabelGrabber.INSTANCE.getLabel("move.up.schedule.tooltip")));
+        upButton.setDisable(true);
+        upButton.setOnAction(new EventHandler<javafx.event.ActionEvent>() {
+
             @Override
-            public void eventDispatched(AWTEvent event) {
-                MouseEvent mouseEvent = (MouseEvent) event;
-                if(mouseEvent.getClickCount() > 0) {
-                    Rectangle bounds = Application.get().getMainWindow().getBounds();
-                    if(bounds.contains(new Point(mouseEvent.getXOnScreen(), mouseEvent.getYOnScreen()))) {
-                        Rectangle popupBounds = themeMenu.getBounds();
-                        if(!popupBounds.contains(new Point(mouseEvent.getXOnScreen(), mouseEvent.getYOnScreen()))) {
-                            if(event.getSource() != themeButton) {
-                                themeMenu.setVisible(false);
-                            }
-                        }
-                    }
-                }
-            }
-        }, AWTEvent.MOUSE_EVENT_MASK);
-        if(UIManager.getLookAndFeel().getName().equalsIgnoreCase("Nimbus")) {
-            themeButton = new JButton("lasdasd", Utils.getImageIcon("icons/settings.png", 16, 16)); //TODO: Fudge positioning
-        }
-        else {
-            themeButton = new JButton(Utils.getImageIcon("icons/settings.png", 16, 16));
-        }
-        themeButton.addMouseListener(new MouseAdapter() {
-
-            /**
-             * Centre the "menu" where it should be then display it (fade it
-             * in.)
-             */
-            public void mousePressed(MouseEvent e) {
-                themeMenu.setSize(themeMenu.getPreferredSize());
-                int x = (int) themeButton.getLocationOnScreen().getX();
-                int y = (int) themeButton.getLocationOnScreen().getY() + themeButton.getHeight();
-                themeMenu.setLocation(x, y);
-                themeMenu.setVisible(true);
-            }
-        });
-        themeButton.setToolTipText(LabelGrabber.INSTANCE.getLabel("adjust.theme.tooltip"));
-
-        JToolBar toolbar = new JToolBar(JToolBar.VERTICAL);
-        toolbar.setFloatable(false);
-        removeButton = new JButton(Utils.getImageIcon("icons/remove.png"));
-        removeButton.setToolTipText(LabelGrabber.INSTANCE.getLabel("remove.song.schedule.tooltip"));
-        removeButton.setRequestFocusEnabled(false);
-        removeButton.setEnabled(false);
-        removeButton.addActionListener(new RemoveSongScheduleActionListener());
-
-        upButton = new JButton(Utils.getImageIcon("icons/up.png"));
-        upButton.setToolTipText(LabelGrabber.INSTANCE.getLabel("move.up.schedule.tooltip"));
-        upButton.setRequestFocusEnabled(false);
-        upButton.setEnabled(false);
-        upButton.addActionListener(new ActionListener() {
-
-            public void actionPerformed(ActionEvent e) {
+            public void handle(javafx.event.ActionEvent t) {
                 scheduleList.moveCurrentItem(ScheduleList.Direction.UP);
             }
         });
 
-        downButton = new JButton(Utils.getImageIcon("icons/down.png"));
-        downButton.setToolTipText(LabelGrabber.INSTANCE.getLabel("move.down.schedule.tooltip"));
-        downButton.setRequestFocusEnabled(false);
-        downButton.setEnabled(false);
-        downButton.addActionListener(new ActionListener() {
+        downButton = new Button("",new ImageView(new Image("file:icons/down.png")));
+        downButton.setTooltip(new Tooltip(LabelGrabber.INSTANCE.getLabel("move.down.schedule.tooltip")));
+        downButton.setDisable(true);
+        downButton.setOnAction(new EventHandler<javafx.event.ActionEvent>() {
 
-            public void actionPerformed(ActionEvent e) {
+            @Override
+            public void handle(javafx.event.ActionEvent t) {
                 scheduleList.moveCurrentItem(ScheduleList.Direction.DOWN);
             }
         });
+        
+        scheduleList.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<Displayable>() {
 
-        scheduleList.addListSelectionListener(new ListSelectionListener() {
-
-            public void valueChanged(ListSelectionEvent e) {
-                if(scheduleList.getSelectedIndex() == -1) {
-                    removeButton.setEnabled(false);
-                    upButton.setEnabled(false);
-                    downButton.setEnabled(false);
+            @Override
+            public void changed(ObservableValue<? extends Displayable> ov, Displayable t, Displayable t1) {
+                if(scheduleList.selectionModelProperty().get().isEmpty()) {
+                    removeButton.setDisable(true);
+                    upButton.setDisable(true);
+                    downButton.setDisable(true);
                 }
                 else {
-                    removeButton.setEnabled(true);
-                    upButton.setEnabled(true);
-                    downButton.setEnabled(true);
+                    removeButton.setDisable(false);
+                    upButton.setDisable(false);
+                    downButton.setDisable(false);
+                    Application.get().getMainWindow().getMainPanel().getPreviewPanel().setDisplayable(scheduleList.selectionModelProperty().get().getSelectedItem(), 0);
                 }
             }
         });
 
-        JToolBar header = new JToolBar();
-        header.setFloatable(false);
-        header.add(new JLabel("<html><b>" + LabelGrabber.INSTANCE.getLabel("order.service.heading") + "</b></html>"));
-        header.add(Box.createHorizontalGlue());
-        header.add(themeButton);
+        ToolBar header = new ToolBar();
+        Label headerLabel = new Label(LabelGrabber.INSTANCE.getLabel("order.service.heading"));
+        headerLabel.setStyle("-fx-font-weight: bold;");
+        header.getItems().add(headerLabel);
+        Region spacer = new Region();
+        HBox.setHgrow(spacer, Priority.ALWAYS);
+        header.getItems().add(spacer);
+        header.getItems().add(themeButton);
 
-        toolbar.add(removeButton);
-        toolbar.add(upButton);
-        toolbar.add(downButton);
+        toolbar.getItems().add(removeButton);
+        toolbar.getItems().add(upButton);
+        toolbar.getItems().add(downButton);
 
-        add(header, BorderLayout.NORTH);
-        JScrollPane scheduleListScroll = new JScrollPane(scheduleList);
-        scheduleListScroll.setBorder(new EmptyBorder(0, 0, 0, 0));
-        add(scheduleListScroll, BorderLayout.CENTER);
-        add(toolbar, BorderLayout.EAST);
+        setTop(header);
+        setLeft(toolbar);
+        setCenter(scheduleList);
     }
 
     /**
      * Get the schedule list backing this panel.
-     *
+     * <p/>
      * @return the schedule list.
      */
     public ScheduleList getScheduleList() {
         return scheduleList;
     }
 
-    /**
-     * Testing stuff.
-     *
-     * @param args command line args.
-     */
-    public static void main(String[] args) {
-        JFrame frame = new JFrame();
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.add(new SchedulePanel());
-        frame.pack();
-        frame.setVisible(true);
-    }
 }

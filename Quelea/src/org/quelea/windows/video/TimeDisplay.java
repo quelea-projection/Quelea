@@ -18,7 +18,7 @@
  */
 package org.quelea.windows.video;
 
-import javax.swing.JLabel;
+import javafx.scene.control.Label;
 
 /**
  * Responsible for showing the current and total time on a video. Converts 
@@ -26,7 +26,7 @@ import javax.swing.JLabel;
  *
  * @author Michael
  */
-public class TimeDisplay extends JLabel {
+public class TimeDisplay extends Label {
 
     private int currentSeconds;
     private int totalSeconds;

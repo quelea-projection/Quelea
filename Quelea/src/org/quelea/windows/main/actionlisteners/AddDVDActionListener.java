@@ -18,9 +18,9 @@
  */
 package org.quelea.windows.main.actionlisteners;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.io.File;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javax.swing.JOptionPane;
 import org.quelea.Application;
 import org.quelea.displayable.VideoDisplayable;
@@ -30,10 +30,10 @@ import org.quelea.languages.LabelGrabber;
  * The action listener for adding a DVD.
  * @author Michael
  */
-public class AddDVDActionListener implements ActionListener {
+public class AddDVDActionListener implements EventHandler<ActionEvent> {
 
     @Override
-    public void actionPerformed(ActionEvent e) {
+    public void handle(ActionEvent t) {
         File[] arr = File.listRoots();
         File file = null;
         for(File f : arr) {
@@ -42,11 +42,11 @@ public class AddDVDActionListener implements ActionListener {
             }
         }
         if(file == null) {
-            JOptionPane.showMessageDialog(Application.get().getMainWindow(), LabelGrabber.INSTANCE.getLabel("no.dvd.error"), LabelGrabber.INSTANCE.getLabel("no.dvd.heading"), JOptionPane.ERROR_MESSAGE);
+//            JOptionPane.showMessageDialog(Application.get().getMainWindow(), LabelGrabber.INSTANCE.getLabel("no.dvd.error"), LabelGrabber.INSTANCE.getLabel("no.dvd.heading"), JOptionPane.ERROR_MESSAGE);
         }
         else {
             VideoDisplayable displayable = new VideoDisplayable(file, VideoDisplayable.VideoType.DVD);
-            Application.get().getMainWindow().getMainPanel().getSchedulePanel().getScheduleList().getModel().addElement(displayable);
+            Application.get().getMainWindow().getMainPanel().getSchedulePanel().getScheduleList().add(displayable);
         }
     }
     

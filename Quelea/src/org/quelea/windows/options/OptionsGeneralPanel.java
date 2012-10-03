@@ -17,223 +17,230 @@
  */
 package org.quelea.windows.options;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
-import java.io.File;
-import javax.swing.JButton;
-import javax.swing.JCheckBox;
+import javafx.beans.value.ObservableValue;
+import javafx.event.EventHandler;
+import javafx.scene.control.Button;
+import javafx.scene.control.CheckBox;
+import javafx.scene.control.Label;
+import javafx.scene.control.Slider;
+import javafx.scene.control.TextField;
+import javafx.scene.layout.GridPane;
 import javax.swing.JFileChooser;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JSlider;
-import javax.swing.JTextField;
-import javax.swing.SpringLayout;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 import org.quelea.Application;
 import org.quelea.languages.LabelGrabber;
 import org.quelea.powerpoint.OOPresentation;
 import org.quelea.powerpoint.OOUtils;
 import org.quelea.utils.PropertyPanel;
 import org.quelea.utils.QueleaProperties;
-import org.quelea.utils.SpringUtilities;
 
 /**
  * A panel where the general options in the program are set.
  *
  * @author Michael
  */
-public class OptionsGeneralPanel extends JPanel implements PropertyPanel {
+public class OptionsGeneralPanel extends GridPane implements PropertyPanel {
 
-    private final JCheckBox startupUpdateCheckBox;
-    private final JCheckBox capitalFirstCheckBox;
-    private final JCheckBox oneMonitorWarnCheckBox;
-    private final JCheckBox displaySongInfoCheckBox;
-    private final JCheckBox oneLineModeCheckBox;
-    private final JCheckBox textShadowCheckBox;
-    private final JCheckBox useOOCheckBox;
-    private final JTextField ooPathTextField;
+    private final CheckBox startupUpdateCheckBox;
+    private final CheckBox capitalFirstCheckBox;
+    private final CheckBox oneMonitorWarnCheckBox;
+    private final CheckBox displaySongInfoCheckBox;
+    private final CheckBox oneLineModeCheckBox;
+    private final CheckBox textShadowCheckBox;
+    private final CheckBox useOOCheckBox;
+    private final TextField ooPathTextField;
     private final JFileChooser ooChooser;
-    private final JButton selectButton;
-    private final JSlider borderThicknessSlider;
-    private final JSlider maxCharsSlider;
-    private final JSlider minLinesSlider;
+    private final Button selectButton;
+    private final Slider borderThicknessSlider;
+    private final Slider maxCharsSlider;
+    private final Slider minLinesSlider;
 
     /**
      * Create a new general panel.
      */
     public OptionsGeneralPanel() {
-        setName(LabelGrabber.INSTANCE.getLabel("general.options.heading"));
-        JPanel generalPanel = new JPanel(); //Add stuff to generalpanel to avoid leaking this
-        generalPanel.setLayout(new SpringLayout());
         int rows = 0;
 
-        JLabel startupLabel = new JLabel(LabelGrabber.INSTANCE.getLabel("check.for.update.label"));
-        generalPanel.add(startupLabel);
-        startupUpdateCheckBox = new JCheckBox();
+        Label startupLabel = new Label(LabelGrabber.INSTANCE.getLabel("check.for.update.label"));
+        GridPane.setConstraints(startupLabel, 1, rows);
+        getChildren().add(startupLabel);
+        startupUpdateCheckBox = new CheckBox();
         startupLabel.setLabelFor(startupUpdateCheckBox);
-        generalPanel.add(startupUpdateCheckBox);
-        generalPanel.add(new JLabel()); //Keep springlayout happy
+        GridPane.setConstraints(startupUpdateCheckBox, 2, rows);
+        getChildren().add(startupUpdateCheckBox);
         rows++;
 
-        JLabel useOOLabel = new JLabel(LabelGrabber.INSTANCE.getLabel("use.oo.label"));
-        generalPanel.add(useOOLabel);
-        useOOCheckBox = new JCheckBox();
-        useOOCheckBox.addChangeListener(new ChangeListener() {
+        Label useOOLabel = new Label(LabelGrabber.INSTANCE.getLabel("use.oo.label"));
+        GridPane.setConstraints(useOOLabel, 1, rows);
+        getChildren().add(useOOLabel);
+        useOOCheckBox = new CheckBox();
+        useOOCheckBox.selectedProperty().addListener(new javafx.beans.value.ChangeListener<Boolean>() {
 
             @Override
-            public void stateChanged(ChangeEvent ce) {
+            public void changed(ObservableValue<? extends Boolean> ov, Boolean t, Boolean t1) {
                 if(useOOCheckBox.isSelected()) {
-                    ooChooser.setEnabled(true);
-                    selectButton.setEnabled(true);
+//                    ooChooser.setDisable(false);
+                    selectButton.setDisable(false);
                 }
                 else {
-                    ooChooser.setEnabled(false);
-                    selectButton.setEnabled(false);
+//                    ooChooser.setDisable(true);
+                    selectButton.setDisable(true);
                 }
             }
         });
         useOOLabel.setLabelFor(useOOCheckBox);
-        generalPanel.add(useOOCheckBox);
-        generalPanel.add(new JLabel()); //Keep springlayout happy
+        GridPane.setConstraints(useOOCheckBox, 2, rows);
+        getChildren().add(useOOCheckBox);
         rows++;
 
-        JLabel ooPathLabel = new JLabel(LabelGrabber.INSTANCE.getLabel("oo.path"));
-        generalPanel.add(ooPathLabel);
-        ooPathTextField = new JTextField();
+        Label ooPathLabel = new Label(LabelGrabber.INSTANCE.getLabel("oo.path"));
+        GridPane.setConstraints(ooPathLabel, 1, rows);
+        getChildren().add(ooPathLabel);
+        ooPathTextField = new TextField();
         ooPathTextField.setEditable(false);
         ooPathLabel.setLabelFor(ooPathTextField);
-        generalPanel.add(ooPathTextField);
+        GridPane.setConstraints(ooPathTextField, 2, rows);
+        getChildren().add(ooPathTextField);
         ooChooser = new JFileChooser();
         ooChooser.setEnabled(false);
         ooChooser.setMultiSelectionEnabled(false);
         ooChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-        selectButton = new JButton(LabelGrabber.INSTANCE.getLabel("browse"));
-        selectButton.setEnabled(false);
-        selectButton.addActionListener(new ActionListener() {
+        selectButton = new Button(LabelGrabber.INSTANCE.getLabel("browse"));
+        selectButton.setDisable(true);
+        selectButton.setOnAction(new EventHandler<javafx.event.ActionEvent>() {
 
             @Override
-            public void actionPerformed(ActionEvent ae) {
-                ooChooser.showOpenDialog(OptionsGeneralPanel.this);
-                File file = ooChooser.getSelectedFile();
-                if(file != null) {
-                    ooPathTextField.setText(ooChooser.getSelectedFile().getAbsolutePath());
-                }
+            public void handle(javafx.event.ActionEvent t) {
+//                ooChooser.showOpenDialog(OptionsGeneralPanel.this);
+//                File file = ooChooser.getSelectedFile();
+//                if(file != null) {
+//                    ooPathTextField.setText(ooChooser.getSelectedFile().getAbsolutePath());
+//                }
             }
         });
-        generalPanel.add(selectButton);
+        GridPane.setConstraints(selectButton, 3, rows);
+        getChildren().add(selectButton);
         rows++;
 
-        JLabel warnLabel = new JLabel(LabelGrabber.INSTANCE.getLabel("1.monitor.warn.label"));
-        generalPanel.add(warnLabel);
-        oneMonitorWarnCheckBox = new JCheckBox();
+        Label warnLabel = new Label(LabelGrabber.INSTANCE.getLabel("1.monitor.warn.label"));
+        GridPane.setConstraints(warnLabel, 1, rows);
+        getChildren().add(warnLabel);
+        oneMonitorWarnCheckBox = new CheckBox();
         warnLabel.setLabelFor(oneMonitorWarnCheckBox);
-        generalPanel.add(oneMonitorWarnCheckBox);
-        generalPanel.add(new JLabel()); //Keep springlayout happy
+        GridPane.setConstraints(oneMonitorWarnCheckBox, 2, rows);
+        getChildren().add(oneMonitorWarnCheckBox);
         rows++;
 
-        JLabel capitalFirstLabel = new JLabel(LabelGrabber.INSTANCE.getLabel("capitalise.start.line.label"));
-        generalPanel.add(capitalFirstLabel);
-        capitalFirstCheckBox = new JCheckBox();
+        Label capitalFirstLabel = new Label(LabelGrabber.INSTANCE.getLabel("capitalise.start.line.label"));
+        GridPane.setConstraints(capitalFirstLabel, 1, rows);
+        getChildren().add(capitalFirstLabel);
+        capitalFirstCheckBox = new CheckBox();
         startupLabel.setLabelFor(capitalFirstCheckBox);
-        generalPanel.add(capitalFirstCheckBox);
-        generalPanel.add(new JLabel()); //Keep springlayout happy
+        GridPane.setConstraints(capitalFirstCheckBox, 2, rows);
+        getChildren().add(capitalFirstCheckBox);
         rows++;
 
-        JLabel displaySongInfoLabel = new JLabel(LabelGrabber.INSTANCE.getLabel("display.song.info.label"));
-        generalPanel.add(displaySongInfoLabel);
-        displaySongInfoCheckBox = new JCheckBox();
+        Label displaySongInfoLabel = new Label(LabelGrabber.INSTANCE.getLabel("display.song.info.label"));
+        GridPane.setConstraints(displaySongInfoLabel, 1, rows);
+        getChildren().add(displaySongInfoLabel);
+        displaySongInfoCheckBox = new CheckBox();
         startupLabel.setLabelFor(displaySongInfoCheckBox);
-        generalPanel.add(displaySongInfoCheckBox);
-        generalPanel.add(new JLabel()); //Keep springlayout happy
+        GridPane.setConstraints(displaySongInfoCheckBox, 2, rows);
+        getChildren().add(displaySongInfoCheckBox);
         rows++;
 
-        JLabel oneLineModeLabel = new JLabel(LabelGrabber.INSTANCE.getLabel("one.line.mode.label"));
-        generalPanel.add(oneLineModeLabel);
-        oneLineModeCheckBox = new JCheckBox();
+        Label oneLineModeLabel = new Label(LabelGrabber.INSTANCE.getLabel("one.line.mode.label"));
+        GridPane.setConstraints(oneLineModeLabel, 1, rows);
+        getChildren().add(oneLineModeLabel);
+        oneLineModeCheckBox = new CheckBox();
         startupLabel.setLabelFor(oneLineModeCheckBox);
-        generalPanel.add(oneLineModeCheckBox);
-        generalPanel.add(new JLabel()); //Keep springlayout happy
+        GridPane.setConstraints(oneLineModeCheckBox, 2, rows);
+        getChildren().add(oneLineModeCheckBox);
         rows++;
 
-        JLabel textShadowLabel = new JLabel(LabelGrabber.INSTANCE.getLabel("text.shadow.label"));
-        generalPanel.add(textShadowLabel);
-        textShadowCheckBox = new JCheckBox();
+        Label textShadowLabel = new Label(LabelGrabber.INSTANCE.getLabel("text.shadow.label"));
+        GridPane.setConstraints(textShadowLabel, 1, rows);
+        getChildren().add(textShadowLabel);
+        textShadowCheckBox = new CheckBox();
         startupLabel.setLabelFor(textShadowCheckBox);
-        generalPanel.add(textShadowCheckBox);
-        generalPanel.add(new JLabel()); //Keep springlayout happy
+        GridPane.setConstraints(textShadowCheckBox, 2, rows);
+        getChildren().add(textShadowCheckBox);
         rows++;
 
-        JLabel borderThicknessLabel = new JLabel(LabelGrabber.INSTANCE.getLabel("text.border.thickness.label"));
-        generalPanel.add(borderThicknessLabel);
-        borderThicknessSlider = new JSlider(0, 5);
-        generalPanel.add(borderThicknessSlider);
+        Label borderThicknessLabel = new Label(LabelGrabber.INSTANCE.getLabel("text.border.thickness.label"));
+        GridPane.setConstraints(borderThicknessLabel, 1, rows);
+        getChildren().add(borderThicknessLabel);
+        borderThicknessSlider = new Slider(0, 5, 0);
+        GridPane.setConstraints(borderThicknessSlider, 2, rows);
+        getChildren().add(borderThicknessSlider);
         borderThicknessLabel.setLabelFor(borderThicknessSlider);
-        final JLabel borderThicknessValue = new JLabel(Integer.toString(borderThicknessSlider.getValue()));
-        generalPanel.add(borderThicknessValue);
+        final Label borderThicknessValue = new Label(Double.toString(borderThicknessSlider.getValue()));
+        GridPane.setConstraints(borderThicknessValue, 3, rows);
+        getChildren().add(borderThicknessValue);
         borderThicknessValue.setLabelFor(borderThicknessSlider);
-        borderThicknessSlider.addChangeListener(new ChangeListener() {
+        borderThicknessSlider.valueProperty().addListener(new javafx.beans.value.ChangeListener<Number>() {
 
             @Override
-            public void stateChanged(ChangeEvent e) {
-                borderThicknessValue.setText(Integer.toString(borderThicknessSlider.getValue()));
+            public void changed(ObservableValue<? extends Number> ov, Number t, Number t1) {
+                borderThicknessValue.setText(Double.toString(borderThicknessSlider.getValue()));
             }
         });
         rows++;
 
-        textShadowCheckBox.addItemListener(new ItemListener() {
+        textShadowCheckBox.selectedProperty().addListener(new javafx.beans.value.ChangeListener<Boolean>() {
 
             @Override
-            public void itemStateChanged(ItemEvent ie) {
+            public void changed(ObservableValue<? extends Boolean> ov, Boolean t, Boolean t1) {
                 if(textShadowCheckBox.isSelected()) {
-                    borderThicknessValue.setEnabled(false);
-                    borderThicknessSlider.setEnabled(false);
+                    borderThicknessValue.setDisable(true);
+                    borderThicknessSlider.setDisable(true);
                 }
                 else {
-                    borderThicknessValue.setEnabled(true);
-                    borderThicknessSlider.setEnabled(true);
+                    borderThicknessValue.setDisable(false);
+                    borderThicknessSlider.setDisable(false);
                 }
             }
         });
 
-        JLabel maxCharsLabel = new JLabel(LabelGrabber.INSTANCE.getLabel("max.chars.line.label"));
-        generalPanel.add(maxCharsLabel);
-        maxCharsSlider = new JSlider(10, 80);
-        generalPanel.add(maxCharsSlider);
+        Label maxCharsLabel = new Label(LabelGrabber.INSTANCE.getLabel("max.chars.line.label"));
+        GridPane.setConstraints(maxCharsLabel, 1, rows);
+        getChildren().add(maxCharsLabel);
+        maxCharsSlider = new Slider(10, 80, 0);
+        GridPane.setConstraints(maxCharsSlider, 2, rows);
+        getChildren().add(maxCharsSlider);
         maxCharsLabel.setLabelFor(maxCharsSlider);
-        final JLabel maxCharsValue = new JLabel(Integer.toString(maxCharsSlider.getValue()));
-        generalPanel.add(maxCharsValue);
+        final Label maxCharsValue = new Label(Double.toString(maxCharsSlider.getValue()));
+        GridPane.setConstraints(maxCharsValue, 3, rows);
+        getChildren().add(maxCharsValue);
         maxCharsValue.setLabelFor(maxCharsSlider);
-        maxCharsSlider.addChangeListener(new ChangeListener() {
+        maxCharsSlider.valueProperty().addListener(new javafx.beans.value.ChangeListener<Number>() {
 
             @Override
-            public void stateChanged(ChangeEvent e) {
-                maxCharsValue.setText(Integer.toString(maxCharsSlider.getValue()));
+            public void changed(ObservableValue<? extends Number> ov, Number t, Number t1) {
+                maxCharsValue.setText(Double.toString(maxCharsSlider.getValue()));
             }
         });
         rows++;
 
-        JLabel minLinesLabel = new JLabel("<html>" + LabelGrabber.INSTANCE.getLabel("min.emulated.lines.label") + "<i> (" + LabelGrabber.INSTANCE.getLabel("advanced.label") + ")</i></html>");
-        generalPanel.add(minLinesLabel);
-        minLinesSlider = new JSlider(1, 20);
-        generalPanel.add(minLinesSlider);
+        Label minLinesLabel = new Label(LabelGrabber.INSTANCE.getLabel("min.emulated.lines.label") + " (" + LabelGrabber.INSTANCE.getLabel("advanced.label") + ")");
+        GridPane.setConstraints(minLinesLabel, 1, rows);
+        getChildren().add(minLinesLabel);
+        minLinesSlider = new Slider(1, 20, 0);
+        GridPane.setConstraints(minLinesSlider, 2, rows);
+        getChildren().add(minLinesSlider);
         minLinesLabel.setLabelFor(minLinesSlider);
-        final JLabel minLinesValue = new JLabel(Integer.toString(minLinesSlider.getValue()));
-        generalPanel.add(minLinesValue);
+        final Label minLinesValue = new Label(Double.toString(minLinesSlider.getValue()));
+        GridPane.setConstraints(minLinesValue, 3, rows);
+        getChildren().add(minLinesValue);
         minLinesValue.setLabelFor(minLinesSlider);
-        minLinesSlider.addChangeListener(new ChangeListener() {
+        minLinesSlider.valueProperty().addListener(new javafx.beans.value.ChangeListener<Number>() {
 
             @Override
-            public void stateChanged(ChangeEvent e) {
-                minLinesValue.setText(Integer.toString(minLinesSlider.getValue()));
+            public void changed(ObservableValue<? extends Number> ov, Number t, Number t1) {
+                minLinesValue.setText(Double.toString(minLinesSlider.getValue()));
             }
         });
         rows++;
 
-        SpringUtilities.makeCompactGrid(generalPanel, rows, 3, 6, 6, 6, 6);
-        add(generalPanel);
         readProperties();
     }
 
@@ -281,11 +288,11 @@ public class OptionsGeneralPanel extends JPanel implements PropertyPanel {
         //One line mode needs to be updated manually
         Application.get().getMainWindow().getMainPanel().getPreviewPanel().updateOneLineMode();
         Application.get().getMainWindow().getMainPanel().getLivePanel().updateOneLineMode();
-        int maxCharsPerLine = getMaxCharsSlider().getValue();
+        int maxCharsPerLine = (int)getMaxCharsSlider().getValue();
         props.setMaxChars(maxCharsPerLine);
-        int minLines = getMinLinesSlider().getValue();
+        int minLines = (int)getMinLinesSlider().getValue();
         props.setMinLines(minLines);
-        int borderThickness = getBorderThicknessSlider().getValue();
+        int borderThickness = (int)getBorderThicknessSlider().getValue();
         props.setOutlineThickness(borderThickness);
         //Initialise presentation
         if(!OOPresentation.isInit()) {
@@ -298,7 +305,7 @@ public class OptionsGeneralPanel extends JPanel implements PropertyPanel {
      *
      * @return the max chars slider.
      */
-    public JSlider getMaxCharsSlider() {
+    public Slider getMaxCharsSlider() {
         return maxCharsSlider;
     }
 
@@ -307,7 +314,7 @@ public class OptionsGeneralPanel extends JPanel implements PropertyPanel {
      *
      * @return the min lines slider.
      */
-    public JSlider getMinLinesSlider() {
+    public Slider getMinLinesSlider() {
         return minLinesSlider;
     }
 
@@ -316,7 +323,7 @@ public class OptionsGeneralPanel extends JPanel implements PropertyPanel {
      *
      * @return the startup readProperties checkbox.
      */
-    public JCheckBox getStartupUpdateCheckBox() {
+    public CheckBox getStartupUpdateCheckBox() {
         return startupUpdateCheckBox;
     }
 
@@ -325,7 +332,7 @@ public class OptionsGeneralPanel extends JPanel implements PropertyPanel {
      *
      * @return the capitalise first character in each line checkbox.
      */
-    public JCheckBox getCapitalFirstCheckBox() {
+    public CheckBox getCapitalFirstCheckBox() {
         return capitalFirstCheckBox;
     }
 
@@ -334,7 +341,7 @@ public class OptionsGeneralPanel extends JPanel implements PropertyPanel {
      *
      * @return the display song info checkbox.
      */
-    public JCheckBox getDisplaySongInfoCheckBox() {
+    public CheckBox getDisplaySongInfoCheckBox() {
         return displaySongInfoCheckBox;
     }
 
@@ -343,7 +350,7 @@ public class OptionsGeneralPanel extends JPanel implements PropertyPanel {
      *
      * @return the "one monitor warning" checkbox.
      */
-    public JCheckBox getOneMonitorWarningCheckBox() {
+    public CheckBox getOneMonitorWarningCheckBox() {
         return oneMonitorWarnCheckBox;
     }
 
@@ -352,7 +359,7 @@ public class OptionsGeneralPanel extends JPanel implements PropertyPanel {
      *
      * @return the "one line mode" checkbox.
      */
-    public JCheckBox getOneLineModeCheckBox() {
+    public CheckBox getOneLineModeCheckBox() {
         return oneLineModeCheckBox;
     }
 
@@ -361,7 +368,7 @@ public class OptionsGeneralPanel extends JPanel implements PropertyPanel {
      *
      * @return the "use openoffice" checkbox.
      */
-    public JCheckBox getUseOOCheckBox() {
+    public CheckBox getUseOOCheckBox() {
         return useOOCheckBox;
     }
 
@@ -370,7 +377,7 @@ public class OptionsGeneralPanel extends JPanel implements PropertyPanel {
      *
      * @return the "openoffice path" text field.
      */
-    public JTextField getOOPathTextField() {
+    public TextField getOOPathTextField() {
         return ooPathTextField;
     }
 
@@ -379,7 +386,7 @@ public class OptionsGeneralPanel extends JPanel implements PropertyPanel {
      *
      * @return the "text.shadow" checkbox.
      */
-    public JCheckBox getTextShadowCheckBox() {
+    public CheckBox getTextShadowCheckBox() {
         return textShadowCheckBox;
     }
 
@@ -388,7 +395,7 @@ public class OptionsGeneralPanel extends JPanel implements PropertyPanel {
      *
      * @return the border thickness slider.
      */
-    public JSlider getBorderThicknessSlider() {
+    public Slider getBorderThicknessSlider() {
         return borderThicknessSlider;
     }
 }

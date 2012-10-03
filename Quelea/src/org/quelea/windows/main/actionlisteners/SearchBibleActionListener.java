@@ -18,8 +18,8 @@
  */
 package org.quelea.windows.main.actionlisteners;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import org.quelea.Application;
 
 /**
@@ -27,14 +27,10 @@ import org.quelea.Application;
  *
  * @author Michael
  */
-public class SearchBibleActionListener implements ActionListener {
-
-    /**
-     * Make the bible search dialog visible.
-     * @param ae the action event.
-     */
+public class SearchBibleActionListener implements EventHandler<ActionEvent> {
+    
     @Override
-    public void actionPerformed(ActionEvent ae) {
+    public void handle(javafx.event.ActionEvent t) {
         Application.get().getMainWindow().getBibleSearchDialog().setVisible(true);
     }
 }

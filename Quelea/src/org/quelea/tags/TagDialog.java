@@ -41,14 +41,14 @@ public class TagDialog extends JDialog {
      * Create a new tag dialog.
      */
     public TagDialog() {
-        super(Application.get().getMainWindow(), LabelGrabber.INSTANCE.getLabel("filter.tag"), ModalityType.MODELESS);
+//        super(Application.get().getMainWindow(), LabelGrabber.INSTANCE.getLabel("filter.tag"), ModalityType.MODELESS);
         setIconImage(Utils.getImage("icons/tag.png", 16, 16));
         list = new LibrarySongList(false);
         
         setLayout(new BorderLayout());
         tagEntryPanel = new TagEntryPanel(list, false, true);
         add(tagEntryPanel, BorderLayout.NORTH);
-        JScrollPane scroll = new JScrollPane(list);
+        JScrollPane scroll = new JScrollPane(null);
         scroll.setPreferredSize(new Dimension(500, 500));
         add(scroll, BorderLayout.CENTER);
         pack();

@@ -1,5 +1,5 @@
 Package: quelea
-Version: 0.5.3
+Version: 0.6
 Section: misc
 Priority: optional
 Depends: openjdk-7-jre

@@ -17,13 +17,15 @@
  */
 package org.quelea;
 
-import org.quelea.utils.Utils;
-
-import java.awt.*;
+import java.awt.Graphics2D;
+import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
+import org.quelea.utils.Utils;
 import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
+import javafx.scene.image.Image;
+import javafx.scene.paint.Color;
 
 /**
  * A visual background. This may either be an image or a colour.
@@ -34,8 +36,7 @@ public class Background {
 
     private Color colour;
     private String imageLocation;
-    private BufferedImage originalImage;
-    private Map<String, BufferedImage> cacheMap = new HashMap<>();
+    private Image originalImage;
 
     /**
      * Create a new background that's a certain colour.
@@ -52,7 +53,7 @@ public class Background {
      * @param imageLocation the location of the background image.
      * @param originalImage the original image to use.
      */
-    public Background(String imageLocation, BufferedImage originalImage) {
+    public Background(String imageLocation, Image originalImage) {
         this.imageLocation = imageLocation;
         this.originalImage = originalImage;
     }
@@ -67,39 +68,8 @@ public class Background {
      * @param key the key to use for the image in the cache.
      * @return an image containing the background with the given dimensions.
      */
-    public BufferedImage getImage(int width, int height, String key) {
-        if(key != null && cacheMap.get(key) != null) {
-            BufferedImage cacheImage = cacheMap.get(key);
-            if(cacheImage.getWidth() == width && cacheImage.getHeight() == height) {
-                return cacheImage;
-            }
-        }
-        BufferedImage ret = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
-        Graphics2D g = (Graphics2D) ret.getGraphics();
-        g.setColor(Color.BLACK);
-        g.fillRect(0, 0, width, height);
-        if(colour == null) {
-            if(originalImage == null) {
-                originalImage = Utils.getImage(getImageFile().getAbsolutePath());
-            }
-            if(originalImage == null) {
-                g.setColor(Color.BLACK);
-                g.fillRect(0, 0, width, height);
-            }
-            else {
-                g.setRenderingHint(RenderingHints.KEY_INTERPOLATION,
-                        RenderingHints.VALUE_INTERPOLATION_BICUBIC);
-                g.drawImage(originalImage, 0, 0, width, height, null);
-            }
-        }
-        else {
-            g.setColor(colour);
-            g.fillRect(0, 0, width, height);
-        }
-        if(key != null) {
-            cacheMap.put(key, ret);
-        }
-        return ret;
+    public Image getImage(int width, int height) {
+        return originalImage;
     }
 
     /**

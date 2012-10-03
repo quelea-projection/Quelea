@@ -29,7 +29,7 @@ import javax.swing.AbstractListModel;
  * @param <E> the type of element in this sorted list.
  * @author Michael
  */
-public class SortedListModel<E> extends AbstractListModel<E> {
+public class SortedListModel<E> extends AbstractListModel<E> implements Iterable<E> {
 
     private final SortedSet<E> model;
 

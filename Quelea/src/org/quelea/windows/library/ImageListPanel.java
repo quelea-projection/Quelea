@@ -18,24 +18,19 @@
 package org.quelea.windows.library;
 
 import org.quelea.displayable.ImageDisplayable;
-import java.awt.BorderLayout;
 import java.awt.Component;
-import java.awt.dnd.DnDConstants;
-import java.awt.dnd.DragGestureEvent;
-import java.awt.dnd.DragGestureListener;
-import java.awt.dnd.DragSource;
 import java.awt.image.BufferedImage;
 import java.io.File;
+import javafx.application.Platform;
+import javafx.beans.property.SimpleListProperty;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+import javafx.scene.control.ListView;
+import javafx.scene.control.ScrollPane;
+import javafx.scene.layout.BorderPane;
 import javax.swing.DefaultListCellRenderer;
-import javax.swing.DefaultListModel;
 import javax.swing.JList;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.ListSelectionModel;
-import javax.swing.SwingUtilities;
 import javax.swing.border.EmptyBorder;
-import org.quelea.displayable.Displayable;
-import org.quelea.displayable.TransferDisplayable;
 import org.quelea.utils.Utils;
 
 /**
@@ -43,9 +38,9 @@ import org.quelea.utils.Utils;
  *
  * @author Michael
  */
-public class ImageListPanel extends JPanel {
+public class ImageListPanel extends BorderPane {
 
-    private final JList<ImageDisplayable> imageList;
+    private final ListView<ImageDisplayable> imageList;
     private String dir;
 
     /**
@@ -55,23 +50,12 @@ public class ImageListPanel extends JPanel {
      */
     public ImageListPanel(String dir) {
         this.dir = dir;
-        imageList = new JList<>(new DefaultListModel<ImageDisplayable>());
-        imageList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-        DragSource.getDefaultDragSource().createDefaultDragGestureRecognizer(imageList, DnDConstants.ACTION_MOVE, new DragGestureListener() {
-
-            public void dragGestureRecognized(DragGestureEvent dge) {
-                if(imageList.getSelectedValue() != null) {
-                    dge.startDrag(DragSource.DefaultCopyDrop, new TransferDisplayable((Displayable) imageList.getModel().getElementAt(imageList.locationToIndex(dge.getDragOrigin()))));
-                }
-            }
-        });
-        imageList.setCellRenderer(new CustomCellRenderer());
+        imageList = new ListView<>();
+//        imageList.setCellRenderer(new CustomCellRenderer());
         addFiles();
-        imageList.setLayoutOrientation(JList.HORIZONTAL_WRAP);
-        imageList.setVisibleRowCount(-1);
-        JScrollPane scroll = new JScrollPane(imageList);
-        setLayout(new BorderLayout());
-        add(scroll, BorderLayout.CENTER);
+//        imageList.setLayoutOrientation(JList.HORIZONTAL_WRAP);
+//        imageList.setVisibleRowCount(-1);
+        setCenter(imageList);
     }
 
     /**
@@ -88,8 +72,6 @@ public class ImageListPanel extends JPanel {
      * Refresh the contents of this image list panel.
      */
     public void refresh() {
-        DefaultListModel<ImageDisplayable> model = (DefaultListModel<ImageDisplayable>) imageList.getModel();
-        model.clear();
         addFiles();
     }
 
@@ -100,21 +82,21 @@ public class ImageListPanel extends JPanel {
      */
     private void addFiles() {
         final File[] files = new File(dir).listFiles();
-        final DefaultListModel<ImageDisplayable> tempModel = new DefaultListModel<>();
+        final ObservableList<ImageDisplayable> images = FXCollections.observableArrayList();
         final Thread runner = new Thread() {
 
             @Override
             public void run() {
                 for(final File file : files) {
                     if(Utils.fileIsImage(file) && !file.isDirectory()) {
-                        tempModel.addElement(new ImageDisplayable(file));
+                        images.add(new ImageDisplayable(file));
                     }
                 }
-                SwingUtilities.invokeLater(new Runnable() {
+                Platform.runLater(new Runnable() {
 
                     @Override
                     public void run() {
-                        imageList.setModel(tempModel);
+                        imageList.itemsProperty().set(images);
                     }
                 });
             }
@@ -128,7 +110,7 @@ public class ImageListPanel extends JPanel {
      * @return the full size currently selected image.
      */
     public BufferedImage getSelectedImage() {
-        File file = imageList.getSelectedValue().getFile();
+        File file = imageList.selectionModelProperty().get().getSelectedItem().getFile();
         return Utils.getImage(file.getAbsolutePath());
     }
 

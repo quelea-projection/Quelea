@@ -267,8 +267,8 @@ public class ScheduleThemePopupWindow extends FadeWindow {
             LOGGER.log(Level.WARNING, "Null schedule, not setting theme");
             return;
         }
-        for (int i = 0; i < schedule.getModel().getSize(); i++) {
-            Displayable displayable = schedule.getModel().get(i);
+        for (int i = 0; i < schedule.itemsProperty().get().size(); i++) {
+            Displayable displayable = schedule.itemsProperty().get().get(i);
             if (displayable instanceof TextDisplayable) {
                 TextDisplayable textDisplayable = (TextDisplayable) displayable;
                 for (TextSection section : textDisplayable.getSections()) {

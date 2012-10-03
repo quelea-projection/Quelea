@@ -17,10 +17,9 @@
  */
 package org.quelea;
 
-import java.awt.Color;
-import java.awt.Font;
 import java.io.File;
-import org.quelea.utils.Utils;
+import javafx.scene.paint.Color;
+import javafx.scene.text.Font;
 
 /**
  * A theme for displaying some lyrics on screen. Currently consists of a font and a background.
@@ -28,7 +27,7 @@ import org.quelea.utils.Utils;
  */
 public class Theme {
 
-    public static final Font DEFAULT_FONT = new Font("SansSerif", Font.BOLD, 72);
+    public static final Font DEFAULT_FONT = new Font("Arial", 72);
     public static final Color DEFAULT_FONT_COLOR = Color.WHITE;
     public static final Background DEFAULT_BACKGROUND = new Background(Color.BLACK);
     public static final Theme DEFAULT_THEME = new Theme(DEFAULT_FONT, DEFAULT_FONT_COLOR, DEFAULT_BACKGROUND);
@@ -153,8 +152,8 @@ public class Theme {
     public String toDBString() {
         StringBuilder ret = new StringBuilder();
         ret.append("fontname:").append(font.getName());
-        ret.append("$fontbold:").append(font.isBold());
-        ret.append("$fontitalic:").append(font.isItalic());
+//        ret.append("$fontbold:").append(font.isBold());
+//        ret.append("$fontitalic:").append(font.isItalic());
         ret.append("$fontcolour:").append(fontColor.toString());
         if (!themeName.isEmpty()) {
             ret.append("$themename:").append(themeName);
@@ -213,22 +212,22 @@ public class Theme {
             }
         }
         int fontstyle = 0;
-        if (fontbold) {
-            fontstyle |= Font.BOLD;
-        }
-        if (fontitalic) {
-            fontstyle |= Font.ITALIC;
-        }
-        Font font = new Font(fontname, fontstyle, 72);
-        Background background;
-        if (backgroundcolour.isEmpty()) {
-            background = new Background(backgroundimage, null);
-        }
-        else {
-            background = new Background(Utils.parseColour(backgroundcolour));
-        }
-        Theme ret = new Theme(font, Utils.parseColour(fontcolour), background);
-        ret.themeName = themeName;
-        return ret;
+//        if (fontbold) {
+//            fontstyle |= Font.BOLD;
+//        }
+//        if (fontitalic) {
+//            fontstyle |= Font.ITALIC;
+//        }
+//        Font font = new Font(fontname, fontstyle, 72);
+//        Background background;
+//        if (backgroundcolour.isEmpty()) {
+//            background = new Background(backgroundimage, null);
+//        }
+//        else {
+//            background = new Background(Utils.parseColour(backgroundcolour));
+//        }
+//        Theme ret = new Theme(font, Utils.parseColour(fontcolour), background);
+//        ret.themeName = themeName;
+        return null;
     }
 }

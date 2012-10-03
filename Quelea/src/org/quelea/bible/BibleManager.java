@@ -219,7 +219,7 @@ public final class BibleManager {
         final StatusPanel[] panel = new StatusPanel[1];
         if(Application.get().getMainWindow() != null) {
             panel[0] = Application.get().getStatusGroup().addPanel(LabelGrabber.INSTANCE.getLabel("building.bible.index"));
-            panel[0].getProgressBar().setIndeterminate(true);
+            panel[0].getProgressBar().setProgress(-1);
         }
         SwingWorker<Void, Void> worker = new SwingWorker<Void, Void>() {
 

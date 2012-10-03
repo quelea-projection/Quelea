@@ -18,126 +18,103 @@
  */
 package org.quelea.windows.main.menus;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import javax.swing.JMenu;
-import javax.swing.JMenuItem;
-import org.quelea.Application;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
+import javafx.scene.control.Menu;
+import javafx.scene.control.MenuItem;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import org.quelea.importexport.*;
 import org.quelea.languages.LabelGrabber;
-import org.quelea.utils.Utils;
 
 /**
  * Quelea's import menu.
  * @author Michael
  */
-public class ImportMenu extends JMenu {
+public class ImportMenu extends Menu {
     
     private final ImportDialog sImportDialog;
     private final ImportDialog qspImportDialog;
     private final ImportDialog sourceImportDialog;
     private final ImportDialog kingswayImportDialog;
-//    private final ImportDialog sofImportDialog;
     
-    private final JMenuItem qspItem;
-    private final JMenuItem ssItem;
-    private final JMenuItem sourceItem;
-    private final JMenu kingswayItem;
-//    private final JMenuItem sofItem;
+    private final MenuItem qspItem;
+    private final MenuItem ssItem;
+    private final MenuItem sourceItem;
+    private final Menu kingswayItem;
     
     /**
      * Create the import menu.
      */
     public ImportMenu() {
-        super(LabelGrabber.INSTANCE.getLabel("import.heading"));
-        setIcon(Utils.getImageIcon("icons/left.png", 16, 16));
-        setMnemonic('i');
+        super(LabelGrabber.INSTANCE.getLabel("import.heading"), new ImageView(new Image("file:icons/left.png", 16, 16, false,true)));
         
-        qspImportDialog = new QSPImportDialog(Application.get().getMainWindow());
-        sImportDialog = new SurvivorImportDialog(Application.get().getMainWindow());
-        sourceImportDialog = new SourceImportDialog(Application.get().getMainWindow());
-        kingswayImportDialog = new KingswayImportDialog(Application.get().getMainWindow(), null);
-//        sofImportDialog = new SofImportDialog(Application.get().getMainWindow());
+        qspImportDialog = new QSPImportDialog(null);
+        sImportDialog = new SurvivorImportDialog(null);
+        sourceImportDialog = new SourceImportDialog(null);
+        kingswayImportDialog = new KingswayImportDialog(null, null);
         
-        qspItem = new JMenuItem(LabelGrabber.INSTANCE.getLabel("qsp.button"), Utils.getImageIcon("icons/logo.png", 16, 16));
-        qspItem.setMnemonic('q');
-        qspItem.addActionListener(new ActionListener() {
+        qspItem = new MenuItem(LabelGrabber.INSTANCE.getLabel("qsp.button"), new ImageView(new Image("file:icons/logo.png", 16, 16, false, true)));
+        qspItem.setOnAction(new EventHandler<ActionEvent>() {
 
             @Override
-            public void actionPerformed(ActionEvent e) {
+            public void handle(ActionEvent t) {
                 qspImportDialog.setLocationRelativeTo(qspImportDialog.getOwner());
                 qspImportDialog.setVisible(true);
             }
         });
-        add(qspItem);
+        getItems().add(qspItem);
         
-        ssItem = new JMenuItem(LabelGrabber.INSTANCE.getLabel("ss.button"), Utils.getImageIcon("icons/survivor.jpg", 16, 16));
-        ssItem.setMnemonic('s');
-        ssItem.addActionListener(new ActionListener() {
+        ssItem = new MenuItem(LabelGrabber.INSTANCE.getLabel("ss.button"), new ImageView(new Image("file:icons/survivor.jpg", 16, 16, false, true)));
+        ssItem.setOnAction(new EventHandler<ActionEvent>() {
 
             @Override
-            public void actionPerformed(ActionEvent e) {
+            public void handle(ActionEvent t) {
                 sImportDialog.setLocationRelativeTo(sImportDialog.getOwner());
                 sImportDialog.setVisible(true);
             }
         });
-        add(ssItem);
+        getItems().add(ssItem);
         
-        sourceItem = new JMenuItem(LabelGrabber.INSTANCE.getLabel("source.button"), Utils.getImageIcon("icons/source.jpg", 16, 16));
-        sourceItem.setMnemonic('o');
-        sourceItem.addActionListener(new ActionListener() {
+        sourceItem = new MenuItem(LabelGrabber.INSTANCE.getLabel("source.button"), new ImageView(new Image("file:icons/source.jpg", 16, 16, false, true)));
+        sourceItem.setOnAction(new EventHandler<ActionEvent>() {
 
             @Override
-            public void actionPerformed(ActionEvent e) {
+            public void handle(ActionEvent t) {
                 sourceImportDialog.setLocationRelativeTo(sourceImportDialog.getOwner());
                 sourceImportDialog.setVisible(true);
             }
         });
-        add(sourceItem);
+        getItems().add(sourceItem);
         
-        JMenuItem kingswayAll, kingswayOne; 
+        MenuItem kingswayAll, kingswayOne; 
         
-        kingswayItem = new JMenu(LabelGrabber.INSTANCE.getLabel("kingsway.button"));
-        kingswayItem.setIcon(Utils.getImageIcon("icons/kingsway.png", 16, 16));
-        kingswayAll = new JMenuItem(LabelGrabber.INSTANCE.getLabel("kingsway.button.all"));
-        kingswayAll.setMnemonic('k');
-        kingswayAll.addActionListener(new ActionListener() {
+        kingswayItem = new Menu(LabelGrabber.INSTANCE.getLabel("kingsway.button"),new ImageView(new Image("file:icons/kingsway.png", 16, 16, false, true)));
+        kingswayAll = new MenuItem(LabelGrabber.INSTANCE.getLabel("kingsway.button.all"));
+        kingswayAll.setOnAction(new EventHandler<ActionEvent>() {
 
             @Override
-            public void actionPerformed(ActionEvent e) {
+            public void handle(ActionEvent t) {
                 kingswayImportDialog.setAll(true);
                 kingswayImportDialog.setLocationRelativeTo(kingswayImportDialog.getOwner());
                 kingswayImportDialog.setVisible(true);
             }
         });
         
-        kingswayOne = new JMenuItem(LabelGrabber.INSTANCE.getLabel("kingsway.button.one"));
-        kingswayOne.setMnemonic('k');
-        kingswayOne.addActionListener(new ActionListener() {
+        kingswayOne = new MenuItem(LabelGrabber.INSTANCE.getLabel("kingsway.button.one"),new ImageView(new Image("file:icons/kingsway.png", 16, 16, false, true)));
+        kingswayOne.setOnAction(new EventHandler<ActionEvent>() {
 
             @Override
-            public void actionPerformed(ActionEvent e) {
+            public void handle(ActionEvent t) {
                 kingswayImportDialog.setAll(false);
                 kingswayImportDialog.setLocationRelativeTo(kingswayImportDialog.getOwner());
                 kingswayImportDialog.setVisible(true);
             }
         });
         
-        add(kingswayItem);
-        kingswayItem.add(kingswayAll);
-        kingswayItem.add(kingswayOne);
-        
-        //TODO: Implement
-//        sofItem = new JMenuItem(LabelGrabber.INSTANCE.getLabel("sof.button"), Utils.getImageIcon("icons/sof.jpg", 16, 16));
-//        sofItem.addActionListener(new ActionListener() {
-//
-//            @Override
-//            public void actionPerformed(ActionEvent e) {
-//                sofImportDialog.setLocationRelativeTo(sofImportDialog.getOwner());
-//                sofImportDialog.setVisible(true);
-//            }
-//        });
-//        add(sofItem);
+        getItems().add(kingswayItem);
+        kingswayItem.getItems().add(kingswayAll);
+        kingswayItem.getItems().add(kingswayOne);
         
     }
     

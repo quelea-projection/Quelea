@@ -16,6 +16,7 @@
  */
 package org.quelea.windows.main;
 
+import com.sun.star.awt.grid.SelectionEventType;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Cursor;
@@ -24,6 +25,8 @@ import java.awt.Toolkit;
 import java.awt.event.*;
 import java.util.ArrayList;
 import java.util.List;
+import javafx.event.EventHandler;
+import javafx.scene.control.ListView;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import javax.swing.event.ListSelectionEvent;
@@ -37,162 +40,81 @@ import org.quelea.utils.Utils;
  *
  * @author Michael
  */
-public class SelectLyricsList extends JList<TextSection> {
+public class SelectLyricsList extends ListView<TextSection> {
 
     private static final Cursor Q_CURSOR = Toolkit.getDefaultToolkit().createCustomCursor(Utils.getImage("icons/edit32.png"), new Point(0, 0), "Q Cursor");
-    private final Color originalSelectionColour;
     private boolean oneLineMode;
-
-    /**
-     * Used for displaying summaries of items in the service in the schedule
-     * list.
-     */
-    private class SelectLyricsRenderer extends JLabel implements ListCellRenderer<TextSection> {
-
-        private boolean displayChords;
-
-        public SelectLyricsRenderer(boolean displayChords) {
-            this.displayChords = displayChords;
-        }
-
-        /**
-         * @inheritDoc
-         */
-        @Override
-        public Component getListCellRendererComponent(JList<? extends TextSection> list, TextSection value, int index, boolean isSelected, boolean cellHasFocus) {
-            setBorder(new EmptyBorder(5, 5, 5, 5));
-            StringBuilder labelHTML = new StringBuilder();
-            labelHTML.append("<html>");
-            if(!value.getTitle().trim().equals("")) {
-                labelHTML.append("<font color=\"white\"><span style=\"background-color:blue; width:100%;\">&nbsp;");
-                labelHTML.append(value.getTitle());
-                labelHTML.append("&nbsp;</span></font><br/>");
-            }
-            for(String line : value.getText(displayChords, false)) {
-                labelHTML.append(line);
-                if(oneLineMode) {
-                    char lastChar = labelHTML.substring(labelHTML.length() - 1, labelHTML.length()).charAt(0);
-                    if(lastChar != ',' && lastChar != ';') {
-                        labelHTML.append(";");
-                    }
-                    labelHTML.append(" ");
-                }
-                else {
-                    labelHTML.append("<br/>");
-                }
-            }
-            labelHTML.append("</html>");
-            setText(labelHTML.toString());
-            if(isSelected) {
-                setBackground(list.getSelectionBackground());
-                setForeground(list.getSelectionForeground());
-            }
-            else {
-                setBackground(list.getBackground());
-                setForeground(list.getForeground());
-            }
-            setEnabled(list.isEnabled());
-            setFont(list.getFont());
-            setOpaque(true);
-            return this;
-        }
-    }
 
     /**
      * Create a new schedule list.
      */
     public SelectLyricsList() {
-        super(new DefaultListModel<TextSection>());
-        for(MouseListener mouseListener : getMouseListeners()) {
-            removeMouseListener(mouseListener);
-        }
-        addMouseListener(new MouseAdapter() {
+        setOnMouseClicked(new EventHandler<javafx.scene.input.MouseEvent>() {
 
             @Override
-            public void mouseClicked(MouseEvent me) {
-                requestFocus();
-                if(!me.isControlDown()) {
-                    int index = locationToIndex(me.getPoint());
-                    setSelectedIndex(index);
-                }
-            }
-        });
-        addListSelectionListener(new ListSelectionListener() {
-
-            private int lastIndex;
-
-            @Override
-            public void valueChanged(ListSelectionEvent lse) {
-                if(lse.getValueIsAdjusting()) {
-                    lastIndex = lse.getFirstIndex();
-                }
-                if(getSelectedIndex() == -1) {
-                    setSelectedIndex(lastIndex);
-                }
+            public void handle(javafx.scene.input.MouseEvent t) {
+//                requestFocus();
+//                if(!t.isControlDown()) {
+//                    int index = locationToIndex(t.getX(), t.getY());
+//                    selectionModelProperty().get().select(index);
+//                }
             }
         });
         oneLineMode = QueleaProperties.get().getOneLineMode();
-        Color inactiveColor = QueleaProperties.get().getInactiveSelectionColor();
-        if(inactiveColor == null) {
-            originalSelectionColour = getSelectionBackground();
-        }
-        else {
-            originalSelectionColour = inactiveColor;
-        }
-        setSelectionBackground(originalSelectionColour);
-        addFocusListener(new FocusListener() {
+//        Color inactiveColor = QueleaProperties.get().getInactiveSelectionColor();
+//        if(inactiveColor == null) {
+//            originalSelectionColour = getSelectionBackground();
+//        }
+//        else {
+//            originalSelectionColour = inactiveColor;
+//        }
+//        setSelectionBackground(originalSelectionColour);
+//        addFocusListener(new FocusListener() {
+//
+//            @Override
+//            public void focusGained(FocusEvent e) {
+//                if(getModel().getSize() > 0) {
+//                    setSelectionBackground(QueleaProperties.get().getActiveSelectionColor());
+//                }
+//            }
+//
+//            @Override
+//            public void focusLost(FocusEvent e) {
+//                setSelectionBackground(originalSelectionColour);
+//            }
+//        });
+
+        setOnMouseMoved(new EventHandler<javafx.scene.input.MouseEvent>() {
 
             @Override
-            public void focusGained(FocusEvent e) {
-                if(getModel().getSize() > 0) {
-                    setSelectionBackground(QueleaProperties.get().getActiveSelectionColor());
-                }
-            }
-
-            @Override
-            public void focusLost(FocusEvent e) {
-                setSelectionBackground(originalSelectionColour);
-            }
-        });
-        setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-        setCellRenderer(new SelectLyricsRenderer(false));
-
-        addMouseMotionListener(new MouseMotionListener() {
-
-            @Override
-            public void mouseDragged(MouseEvent me) {
-                //Nothing here
-            }
-
-            @Override
-            public void mouseMoved(MouseEvent me) {
-                if((me.isShiftDown()||me.isControlDown()) && !getModel().isEmpty()) {
-                    setCursor(Q_CURSOR);
+            public void handle(javafx.scene.input.MouseEvent t) {
+                if((t.isShiftDown() || t.isControlDown()) && !itemsProperty().get().isEmpty()) {
+//                    setCursor(Q_CURSOR);
                 }
                 else {
-                    setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
+//                    setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
                 }
             }
         });
-        addKeyListener(new KeyAdapter() {
-
-            @Override
-            public void keyPressed(KeyEvent ke) {
-                if((ke.isControlDown()) && !getModel().isEmpty()) {
-                    setCursor(Q_CURSOR);
-                }
-                else {
-                    setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
-                }
-            }
-
-            @Override
-            public void keyReleased(KeyEvent ke) {
-                if(ke.getKeyCode() == KeyEvent.VK_CONTROL) {
-                    setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
-                }
-            }
-        });
+//        addKeyListener(new KeyAdapter() {
+//
+//            @Override
+//            public void keyPressed(KeyEvent ke) {
+//                if((ke.isControlDown()) && !getModel().isEmpty()) {
+//                    setCursor(Q_CURSOR);
+//                }
+//                else {
+//                    setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
+//                }
+//            }
+//
+//            @Override
+//            public void keyReleased(KeyEvent ke) {
+//                if(ke.getKeyCode() == KeyEvent.VK_CONTROL) {
+//                    setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
+//                }
+//            }
+//        });
     }
 
     /**
@@ -205,24 +127,16 @@ public class SelectLyricsList extends JList<TextSection> {
             return;
         }
         this.oneLineMode = val;
-        int selectedIndex = getSelectedIndex();
-        List<TextSection> elements = new ArrayList<>(getModel().size());
-        for(int i = 0; i < getModel().size(); i++) {
-            elements.add(getModel().get(i));
+        int selectedIndex = selectionModelProperty().get().getSelectedIndex();
+        List<TextSection> elements = new ArrayList<>(itemsProperty().get().size());
+        for(int i = 0; i < itemsProperty().get().size(); i++) {
+            elements.add(itemsProperty().get().get(i));
         }
-        getModel().clear();
+        itemsProperty().get().clear();
         for(TextSection section : elements) {
-            getModel().addElement(section);
+            itemsProperty().get().add(section);
         }
-        setSelectedIndex(selectedIndex);
-        ensureIndexIsVisible(selectedIndex);
-    }
-
-    /**
-     * @return a DefaultListModel that backs this lyrics list. @inheritDoc
-     */
-    @Override
-    public DefaultListModel<TextSection> getModel() {
-        return (DefaultListModel<TextSection>) super.getModel();
+        selectionModelProperty().get().select(selectedIndex);
+        scrollTo(selectedIndex);
     }
 }

@@ -18,13 +18,13 @@
 package org.quelea.windows.library;
 
 import java.awt.BorderLayout;
-import javax.swing.JPanel;
+import javafx.scene.layout.BorderPane;
 
 /**
  * The image panel in the library.
  * @author Michael
  */
-public class LibraryImagePanel extends JPanel {
+public class LibraryImagePanel extends BorderPane {
 
     private final ImageListPanel imagePanel;
 
@@ -32,9 +32,8 @@ public class LibraryImagePanel extends JPanel {
      * Create a new library image panel.
      */
     public LibraryImagePanel() {
-        setLayout(new BorderLayout());
         imagePanel = new ImageListPanel("img");
-        add(imagePanel, BorderLayout.CENTER);
+        setCenter(imagePanel);
     }
 
     /**

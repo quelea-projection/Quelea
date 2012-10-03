@@ -17,146 +17,115 @@
  */
 package org.quelea.windows.library;
 
-import java.awt.BorderLayout;
-import java.awt.event.*;
-import javax.swing.BoxLayout;
-import javax.swing.JButton;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTextField;
-import javax.swing.JToolBar;
-import javax.swing.border.EmptyBorder;
-import javax.swing.event.DocumentEvent;
-import javax.swing.event.DocumentListener;
-import javax.swing.event.ListDataEvent;
-import javax.swing.event.ListDataListener;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
+import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
+import javafx.geometry.Orientation;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.control.ScrollPane;
+import javafx.scene.control.TextField;
+import javafx.scene.control.ToolBar;
+import javafx.scene.control.Tooltip;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
+import org.quelea.displayable.Song;
 import org.quelea.languages.LabelGrabber;
-import org.quelea.utils.Utils;
+import org.quelea.windows.main.actionlisteners.NewSongActionListener;
 import org.quelea.windows.main.actionlisteners.RemoveSongDBActionListener;
 
 /**
  * The panel used for browsing the database of songs and adding any songs to the order of service.
  * @author Michael
  */
-public class LibrarySongPanel extends JPanel {
+public class LibrarySongPanel extends BorderPane {
 
-    private final JTextField searchBox;
-    private final JButton searchCancelButton;
+    private final TextField searchBox;
+    private final Button searchCancelButton;
     private final LibrarySongList songList;
-    private final JButton removeButton;
-    private final JButton addButton;
+    private final Button removeButton;
+    private final Button addButton;
 
     /**
      * Create and initialise the library song panel.
      */
     public LibrarySongPanel() {
-        setLayout(new BorderLayout());
         songList = new LibrarySongList(true);
-        songList.addListSelectionListener(new ListSelectionListener() {
-
-            public void valueChanged(ListSelectionEvent e) {
-                checkRemoveButton();
-            }
-        });
-        songList.getModel().addListDataListener(new ListDataListener() {
-
-            public void intervalAdded(ListDataEvent e) {
-                checkRemoveButton();
-            }
-
-            public void intervalRemoved(ListDataEvent e) {
-                checkRemoveButton();
-            }
-
-            public void contentsChanged(ListDataEvent e) {
-                checkRemoveButton();
-            }
-        });
-        JScrollPane listScrollPane = new JScrollPane(songList);
-        listScrollPane.setBorder(new EmptyBorder(0, 0, 0, 0));
-        add(listScrollPane, BorderLayout.CENTER);
-
-        JPanel northPanel = new JPanel();
-        northPanel.setLayout(new BoxLayout(northPanel, BoxLayout.X_AXIS));
-        northPanel.add(new JLabel(LabelGrabber.INSTANCE.getLabel("library.song.search")));
-        searchBox = new JTextField();
-        searchBox.setDragEnabled(false);
-        searchBox.addFocusListener(new FocusListener() {
+        songList.getSelectionModel().selectedIndexProperty().addListener(new ChangeListener<Number>() {
 
             @Override
-            public void focusGained(FocusEvent e) {
-                searchBox.setText("");
-            }
-
-            @Override
-            public void focusLost(FocusEvent e) {
-                //Nothing needed here
+            public void changed(ObservableValue<? extends Number> ov, Number t, Number t1) {
+                checkRemoveButton();
             }
         });
-        searchBox.addKeyListener(new KeyAdapter() {
+        songList.itemsProperty().addListener(new ChangeListener<ObservableList<Song>>() {
 
             @Override
-            public void keyPressed(KeyEvent e) {
-                if(e.getKeyCode() == KeyEvent.VK_ESCAPE) {
-                    searchCancelButton.doClick();
-                }
+            public void changed(ObservableValue<? extends ObservableList<Song>> ov, ObservableList<Song> t, ObservableList<Song> t1) {
+                checkRemoveButton();
             }
         });
-        searchBox.getDocument().addDocumentListener(new DocumentListener() {
+        ScrollPane listScrollPane = new ScrollPane();
+        setCenter(listScrollPane);
 
-            public void insertUpdate(DocumentEvent e) {
-                update();
+        HBox northPanel = new HBox();
+        northPanel.getChildren().add(new Label(LabelGrabber.INSTANCE.getLabel("library.song.search")));
+        searchBox = new TextField();
+        HBox.setHgrow(searchBox, Priority.SOMETIMES);
+        searchBox.setMaxWidth(Double.MAX_VALUE);
+        searchBox.setOnAction(new EventHandler<ActionEvent>() {
+
+            @Override
+            public void handle(ActionEvent t) {
+                searchCancelButton.fire();
             }
+        });
+        searchBox.textProperty().addListener(new ChangeListener<String>() {
 
-            public void removeUpdate(DocumentEvent e) {
-                update();
-            }
-
-            public void changedUpdate(DocumentEvent e) {
-                update();
-            }
-
-            private void update() {
+            @Override
+            public void changed(ObservableValue<? extends String> ov, String t, String t1) {
                 if(searchBox.getText().isEmpty()) {
-                    searchCancelButton.setEnabled(false);
+                    searchCancelButton.setDisable(true);
                 }
                 else {
-                    searchCancelButton.setEnabled(true);
+                    searchCancelButton.setDisable(false);
                 }
                 songList.filter(searchBox.getText());
             }
         });
-        northPanel.add(searchBox);
-        searchCancelButton = new JButton(Utils.getImageIcon("icons/cross.png"));
-        searchCancelButton.setToolTipText(LabelGrabber.INSTANCE.getLabel("clear.search.box"));
-        searchCancelButton.setRequestFocusEnabled(false);
-        searchCancelButton.setEnabled(false);
-        searchCancelButton.addActionListener(new ActionListener() {
+        northPanel.getChildren().add(searchBox);
+        searchCancelButton = new Button("", new ImageView(new Image("file:icons/cross.png")));
+        searchCancelButton.setTooltip(new Tooltip(LabelGrabber.INSTANCE.getLabel("clear.search.box")));
+        searchCancelButton.setDisable(true);
+        searchCancelButton.setOnAction(new EventHandler<ActionEvent>() {
 
-            public void actionPerformed(ActionEvent e) {
-                searchBox.setText("");
+            @Override
+            public void handle(ActionEvent t) {
+                searchBox.clear();
             }
         });
-        northPanel.add(searchCancelButton);
-        add(northPanel, BorderLayout.NORTH);
+        northPanel.getChildren().add(searchCancelButton);
+        setTop(northPanel);
 
-        JToolBar toolbar = new JToolBar();
-        toolbar.setLayout(new BoxLayout(toolbar, BoxLayout.Y_AXIS));
-        toolbar.setFloatable(false);
-        addButton = new JButton(Utils.getImageIcon("icons/newsongdb.png", 16, 16));
-        addButton.setToolTipText(LabelGrabber.INSTANCE.getLabel("add.song.text"));
-        addButton.setRequestFocusEnabled(false);
-        toolbar.add(addButton);
-        removeButton = new JButton(Utils.getImageIcon("icons/removedb.png", 16, 16));
-        removeButton.setToolTipText(LabelGrabber.INSTANCE.getLabel("remove.song.text"));
-        removeButton.setRequestFocusEnabled(false);
-        removeButton.setEnabled(false);
-        removeButton.addActionListener(new RemoveSongDBActionListener());
-        toolbar.add(removeButton);
-        add(toolbar, BorderLayout.EAST);
+        ToolBar toolbar = new ToolBar();
+        toolbar.setOrientation(Orientation.VERTICAL);
+        
+        addButton = new Button("",new ImageView(new Image("file:icons/newsongdb.png", 16, 16, false, true)));
+        addButton.setTooltip(new Tooltip(LabelGrabber.INSTANCE.getLabel("add.song.text")));
+        addButton.setOnAction(new NewSongActionListener());
+        toolbar.getItems().add(addButton);
+        removeButton = new Button("", new ImageView(new Image("file:icons/removedb.png", 16, 16, false, true)));
+        removeButton.setTooltip(new Tooltip(LabelGrabber.INSTANCE.getLabel("remove.song.text")));
+        removeButton.setDisable(true);
+        removeButton.setOnAction(new RemoveSongDBActionListener());
+        toolbar.getItems().add(removeButton);
+        setLeft(toolbar);
+        setCenter(songList);
 
     }
 
@@ -164,11 +133,11 @@ public class LibrarySongPanel extends JPanel {
      * Check whether the remove button should be enabled or disabled and set it accordingly.
      */
     private void checkRemoveButton() {
-        if(songList.getSelectedIndex() == -1 || songList.getModel().getSize() == 0) {
-            removeButton.setEnabled(false);
+        if(songList.getSelectionModel().selectedIndexProperty().getValue() == -1 || songList.itemsProperty().get().size() == 0) {
+            removeButton.setDisable(true);
         }
         else {
-            removeButton.setEnabled(true);
+            removeButton.setDisable(false);
         }
     }
 
@@ -178,29 +147,5 @@ public class LibrarySongPanel extends JPanel {
      */
     public LibrarySongList getSongList() {
         return songList;
-    }
-
-    /**
-     * Get the add button on the panel.
-     * @return the add button.
-     */
-    public JButton getAddButton() {
-        return addButton;
-    }
-
-    /**
-     * Get the remove button on the panel.
-     * @return the remove button.
-     */
-    public JButton getRemoveButton() {
-        return removeButton;
-    }
-
-    /**
-     * Get the search box.
-     * @return the search box.
-     */
-    public JTextField getSearchBox() {
-        return searchBox;
     }
 }

@@ -17,55 +17,32 @@
  */
 package org.quelea.windows.main;
 
-import java.awt.Color;
-import java.awt.Component;
-import java.awt.Rectangle;
-import java.awt.datatransfer.Transferable;
-import java.awt.datatransfer.UnsupportedFlavorException;
-import java.awt.dnd.DnDConstants;
-import java.awt.dnd.DragGestureEvent;
-import java.awt.dnd.DragGestureListener;
-import java.awt.dnd.DragSource;
-import java.awt.event.FocusEvent;
-import java.awt.event.FocusListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.io.File;
-import java.io.IOException;
-import java.util.HashSet;
-import javax.swing.DefaultListModel;
-import javax.swing.DropMode;
-import javax.swing.JComponent;
-import javax.swing.JLabel;
-import javax.swing.JList;
-import javax.swing.ListCellRenderer;
-import javax.swing.ListSelectionModel;
-import javax.swing.TransferHandler;
-import javax.swing.border.EmptyBorder;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
+import javafx.collections.ObservableList;
+import javafx.event.EventHandler;
+import javafx.scene.control.ListCell;
+import javafx.scene.control.ListView;
+import javafx.scene.control.cell.TextFieldListCell;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
+import javafx.util.Callback;
+import javafx.util.StringConverter;
 import org.quelea.Application;
-import org.quelea.Background;
 import org.quelea.Schedule;
-import org.quelea.Theme;
 import org.quelea.displayable.Displayable;
-import org.quelea.displayable.ImageDisplayable;
 import org.quelea.displayable.Song;
-import org.quelea.displayable.TextDisplayable;
-import org.quelea.displayable.TextSection;
-import org.quelea.displayable.TransferDisplayable;
-import org.quelea.utils.QueleaProperties;
-import org.quelea.utils.Utils;
+import org.quelea.windows.library.ContextMenuListCell;
 
 /**
  * The schedule list, all the items that are to be displayed in the service.
- *
+ * <p/>
  * @author Michael
  */
-public class ScheduleList extends JList<Displayable> {
+public class ScheduleList extends ListView<Displayable> {
 
     private Schedule schedule;
     private final ScheduleSongPopupMenu popupMenu;
-    private final Color originalSelectionColour;
-    private boolean internalDrag;
 
     /**
      * A direction; either up or down. Used for rearranging the order of items
@@ -77,204 +54,76 @@ public class ScheduleList extends JList<Displayable> {
     }
 
     /**
-     * Used for displaying summaries of items in the service in the schedule
-     * list.
-     */
-    private static class SummaryRenderer extends JLabel implements ListCellRenderer<Displayable> {
-
-        /**
-         * @inheritDoc
-         */
-        public Component getListCellRendererComponent(JList<? extends Displayable> list, Displayable value, int index, boolean isSelected, boolean cellHasFocus) {
-            setBorder(new EmptyBorder(5, 5, 5, 5));
-            setText(value.getPreviewText());
-            setIcon(value.getPreviewIcon());
-            if(isSelected) {
-                setBackground(list.getSelectionBackground());
-                setForeground(list.getSelectionForeground());
-            }
-            else {
-                setBackground(list.getBackground());
-                setForeground(list.getForeground());
-            }
-            setEnabled(list.isEnabled());
-            setFont(list.getFont());
-            setOpaque(true);
-            return this;
-        }
-    }
-
-    /**
      * Create a new schedule list.
      */
     public ScheduleList() {
-        super(new DefaultListModel<Displayable>());
-        Color inactiveColor = QueleaProperties.get().getInactiveSelectionColor();
-        if(inactiveColor == null) {
-            originalSelectionColour = getSelectionBackground();
-        }
-        else {
-            originalSelectionColour = inactiveColor;
-        }
-        addFocusListener(new FocusListener() {
-
-            public void focusGained(FocusEvent e) {
-                if(getModel().getSize() > 0) {
-                    setSelectionBackground(QueleaProperties.get().getActiveSelectionColor());
-                }
-            }
-
-            public void focusLost(FocusEvent e) {
-                setSelectionBackground(originalSelectionColour);
-            }
-        });
         popupMenu = new ScheduleSongPopupMenu();
-        this.addMouseListener(new MouseAdapter() {
-
+        Callback<ListView<Displayable>, ListCell<Displayable>> callback = new Callback<ListView<Displayable>, ListCell<Displayable>>() {
             @Override
-            public void mousePressed(MouseEvent e) {
-                checkPopup(e);
-            }
-
-            @Override
-            public void mouseReleased(MouseEvent e) {
-                checkPopup(e);
-            }
-
-            /**
-             * Display the popup if appropriate. This should be done when the
-             * mouse is pressed and released for platform-independence.
-             */
-            private void checkPopup(MouseEvent e) {
-                if(e.isPopupTrigger() && e.getPoint() != null) {
-                    int index = locationToIndex(e.getPoint());
-                    Rectangle Rect = getCellBounds(index, index);
-                    index = Rect.contains(e.getPoint().x, e.getPoint().y) ? index : -1;
-                    if(index != -1 && getModel().getElementAt(index) instanceof Song && ((Song) getModel().getElementAt(index)).getID() != -1) {
-                        setSelectedIndex(index);
-                        popupMenu.show(ScheduleList.this, e.getX(), e.getY());
+            public ListCell<Displayable> call(ListView<Displayable> p) {
+                return new TextFieldListCell<>(new StringConverter<Displayable>() {
+                    @Override
+                    public String toString(Displayable displayable) {
+                        return displayable.getPreviewText();
                     }
+
+                    @Override
+                    public Song fromString(String string) {
+                        //Implementation not needed.
+                        return null;
+                    }
+                });
+            }
+        };
+        setCellFactory(ContextMenuListCell.<Displayable>forListView(popupMenu, callback));
+        schedule = new Schedule();
+        setOnKeyTyped(new EventHandler<KeyEvent>() {
+            @Override
+            public void handle(KeyEvent t) {
+                if(t.getCharacter().equals(" ")) {
+                    Application.get().getMainWindow().getMainPanel().getPreviewPanel().goLive();
                 }
             }
         });
-        setDropMode(DropMode.ON_OR_INSERT);
-        DragSource.getDefaultDragSource().createDefaultDragGestureRecognizer(this, DnDConstants.ACTION_MOVE, new DragGestureListener() {
-
-            /**
-             * Start the internal drag if we have a drag event starting.
-             */
-            public void dragGestureRecognized(DragGestureEvent dge) {
-                if(getSelectedValue() != null) {
-                    internalDrag = true;
-                    dge.startDrag(DragSource.DefaultMoveDrop, new TransferDisplayable(getModel().getElementAt(locationToIndex(dge.getDragOrigin()))));
+        setOnKeyPressed(new EventHandler<KeyEvent>() {
+            @Override
+            public void handle(KeyEvent t) {
+                if(t.getCode() == KeyCode.RIGHT) {
+                    Application.get().getMainWindow().getMainPanel().getPreviewPanel().requestFocus();
                 }
             }
         });
-        setTransferHandler(new TransferHandler() {
-
-            /**
-             * Support the displayable flavor, nothing else.
-             */
+        itemsProperty().addListener(new ChangeListener<ObservableList<Displayable>>() {
             @Override
-            public boolean canImport(TransferHandler.TransferSupport support) {
-                return support.isDataFlavorSupported(TransferDisplayable.DISPLAYABLE_FLAVOR);
-            }
-
-            /**
-             * Import data into this list from a drag.
-             */
-            @Override
-            public boolean importData(TransferHandler.TransferSupport support) {
-                if(!canImport(support)) {
-                    return false;
+            public void changed(ObservableValue<? extends ObservableList<Displayable>> ov, ObservableList<Displayable> t, ObservableList<Displayable> t1) {
+                if(isEmpty()) {
+                    Application.get().getMainWindow().getMainPanel().getLivePanel().clear();
                 }
-
-                Transferable transferable = support.getTransferable();
-                Displayable data;
-                try {
-                    data = (Displayable) transferable.getTransferData(TransferDisplayable.DISPLAYABLE_FLAVOR);
-                }
-                catch (UnsupportedFlavorException | IOException ex) {
-                    return false;
-                }
-
-                JList.DropLocation dl = (JList.DropLocation) support.getDropLocation();
-                int index = dl.getIndex();
-                if(index == -1) {
-                    index = getModel().getSize();
-                }
-
-                if(internalDrag) {
-                    int val = Math.abs(getSelectedIndex() - index);
-                    if(getSelectedIndex() < index) {
-                        for(int i = 0; i < val; i++) {
-                            moveCurrentItem(Direction.DOWN);
-                        }
-                    }
-                    else {
-                        for(int i = 0; i < val; i++) {
-                            moveCurrentItem(Direction.UP);
-                        }
-                    }
+                if(getSelectionModel().isEmpty()) {
+                    Application.get().getMainWindow().getMainPanel().getPreviewPanel().clear();
                 }
                 else {
-                    if(!dl.isInsert() && data instanceof ImageDisplayable) {
-                        Displayable val = getModel().get(locationToIndex(dl.getDropPoint()));
-                        if(val instanceof TextDisplayable) {
-                            ImageDisplayable imageData = (ImageDisplayable) data;
-                            TextDisplayable textVal = (TextDisplayable) val;
-                            Theme existingTheme = textVal.getSections()[0].getTheme();
-                            if(existingTheme == null) {
-                                existingTheme = Theme.DEFAULT_THEME;
-                            }
-                            Theme newTheme = new Theme(existingTheme.getFont(), existingTheme.getFontColor(), new Background(imageData.getFile().getName(), imageData.getOriginalImage()));
-                            newTheme.setFile(existingTheme.getFile());
-                            newTheme.setThemeName(existingTheme.getThemeName());
-                            for(TextSection section : textVal.getSections()) {
-                                section.setTheme(newTheme);
-                            }
-                            Application.get().getMainWindow().getMainPanel().getPreviewPanel().refresh();
-                            if(val instanceof Song) {
-                                Song song = (Song)val;
-                                Utils.updateSongInBackground(song, false, true);
-                            }
-
-                        }
-                        else {
-                            getModel().add(index, data);
-                        }
-                    }
-                    else {
-                        getModel().add(index, data);
-                    }
+                    Displayable newDisplayable = getSelectionModel().getSelectedItem();
+                    Application.get().getMainWindow().getMainPanel().getPreviewPanel().setDisplayable(newDisplayable, 0);
                 }
-                internalDrag = false;
-                return true;
-            }
-
-            /**
-             * If we've exported data from this list, remove it.
-             */
-            @Override
-            protected void exportDone(JComponent c, Transferable data, int action) {
-                getModel().remove(getSelectedIndex());
             }
         });
-        schedule = new Schedule();
-        setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-        setCellRenderer(new SummaryRenderer());
+    }
+
+    public void add(Displayable displayable) {
+        itemsProperty().get().add(displayable);
     }
 
     /**
      * Get the current schedule in use on this list.
-     *
+     * <p/>
      * @return the current schedule in use on this list.
      */
     public Schedule getSchedule() {
         boolean equal = true;
-        if(getModel().getSize() == schedule.getSize()) {
-            for(int i = 0; i < getModel().getSize(); i++) {
-                if(!getModel().get(i).equals(schedule.getDisplayable(i))) {
+        if(itemsProperty().get().size() == schedule.getSize()) {
+            for(int i = 0; i < itemsProperty().get().size(); i++) {
+                if(!itemsProperty().get().get(i).equals(schedule.getDisplayable(i))) {
                     equal = false;
                 }
             }
@@ -286,28 +135,16 @@ public class ScheduleList extends JList<Displayable> {
             return schedule;
         }
         schedule.clear();
-        for(int i = 0; i < getModel().getSize(); i++) {
-            schedule.add(getModel().getElementAt(i));
+        for(int i = 0; i < itemsProperty().get().size(); i++) {
+            schedule.add(itemsProperty().get().get(i));
         }
         return schedule;
     }
 
     /**
-     * Get the default list model in use on this list. Override to provide the
-     * more specific return type.
-     *
-     * @return the default list model in use.
-     */
-    @Override
-    @SuppressWarnings("unchecked")
-    public DefaultListModel<Displayable> getModel() {
-        return (DefaultListModel<Displayable>) super.getModel();
-    }
-
-    /**
      * Erase everything in the current schedule and set the contents of this
      * list to the current schedule.
-     *
+     * <p/>
      * @param schedule the schedule.
      */
     public void setSchedule(Schedule schedule) {
@@ -316,7 +153,7 @@ public class ScheduleList extends JList<Displayable> {
             if(displayable instanceof Song) {
                 ((Song) displayable).matchID();
             }
-            getModel().addElement(displayable);
+            itemsProperty().get().add(displayable);
         }
         this.schedule = schedule;
     }
@@ -325,12 +162,12 @@ public class ScheduleList extends JList<Displayable> {
      * Clear the current schedule without warning.
      */
     public void clearSchedule() {
-        getModel().clear();
+        itemsProperty().get().clear();
     }
 
     /**
      * Get the popup menu on this schedule list.
-     *
+     * <p/>
      * @return the popup menu.
      */
     public ScheduleSongPopupMenu getPopupMenu() {
@@ -339,11 +176,11 @@ public class ScheduleList extends JList<Displayable> {
 
     /**
      * Determine whether the schedule list is empty.
-     *
+     * <p/>
      * @return true if it's empty, false otherwise.
      */
     public boolean isEmpty() {
-        return getModel().isEmpty();
+        return itemsProperty().get().isEmpty();
     }
 
     /**
@@ -351,11 +188,11 @@ public class ScheduleList extends JList<Displayable> {
      * no selected item.
      */
     public void removeCurrentItem() {
-        int selectedIndex = getSelectedIndex();
+        int selectedIndex = selectionModelProperty().get().getSelectedIndex();
         if(selectedIndex != -1) {
-            Displayable d = getSelectedValue();
+            Displayable d = selectionModelProperty().get().getSelectedItem();
             Displayable live = Application.get().getMainWindow().getMainPanel().getLivePanel().getDisplayable();
-            if(d==live) {
+            if(d == live) {
                 Application.get().getMainWindow().getMainPanel().getLivePanel().clear();
             }
             Displayable preview = Application.get().getMainWindow().getMainPanel().getPreviewPanel().getDisplayable();
@@ -363,32 +200,31 @@ public class ScheduleList extends JList<Displayable> {
                 Application.get().getMainWindow().getMainPanel().getPreviewPanel().clear();
             }
             d.dispose();
-            getModel().remove(getSelectedIndex());
+            itemsProperty().get().remove(selectedIndex);
         }
     }
 
     /**
      * Move the currently selected item in the list in the specified direction.
-     *
+     * <p/>
      * @param direction the direction to move the selected item.
      */
     public void moveCurrentItem(Direction direction) {
-        DefaultListModel<Displayable> model = getModel();
-        int selectedIndex = getSelectedIndex();
+        int selectedIndex = selectionModelProperty().get().getSelectedIndex();
         if(selectedIndex == -1) { //Nothing selected
             return;
         }
         if(direction == Direction.UP && selectedIndex > 0) {
-            Displayable temp = model.get(selectedIndex - 1);
-            model.set(selectedIndex - 1, model.get(selectedIndex));
-            model.set(selectedIndex, temp);
-            setSelectedIndex(selectedIndex - 1);
+            Displayable temp = itemsProperty().get().get(selectedIndex - 1);
+            itemsProperty().get().set(selectedIndex - 1, itemsProperty().get().get(selectedIndex));
+            itemsProperty().get().set(selectedIndex, temp);
+            selectionModelProperty().get().select(selectedIndex - 1);
         }
-        if(direction == Direction.DOWN && selectedIndex < model.getSize() - 1) {
-            Displayable temp = model.get(selectedIndex + 1);
-            model.set(selectedIndex + 1, model.get(selectedIndex));
-            model.set(selectedIndex, temp);
-            setSelectedIndex(selectedIndex + 1);
+        if(direction == Direction.DOWN && selectedIndex < itemsProperty().get().size() - 1) {
+            Displayable temp = itemsProperty().get().get(selectedIndex + 1);
+            itemsProperty().get().set(selectedIndex + 1, itemsProperty().get().get(selectedIndex));
+            itemsProperty().get().set(selectedIndex, temp);
+            selectionModelProperty().get().select(selectedIndex + 1);
         }
     }
 }

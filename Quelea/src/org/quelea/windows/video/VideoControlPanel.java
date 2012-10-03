@@ -18,48 +18,38 @@ package org.quelea.windows.video;
 
 import java.awt.BorderLayout;
 import java.awt.Canvas;
-import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.HierarchyEvent;
-import java.awt.event.HierarchyListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
-import java.util.logging.Level;
 import java.util.logging.Logger;
+import javafx.event.EventHandler;
+import javafx.scene.Group;
+import javafx.scene.Node;
+import javafx.scene.control.Button;
+import javafx.scene.control.Slider;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.HBox;
 import javax.swing.BoxLayout;
-import javax.swing.JButton;
-import javax.swing.JFrame;
-import javax.swing.JPanel;
-import javax.swing.JSlider;
-import javax.swing.SwingUtilities;
 import org.quelea.utils.LoggerUtils;
-import org.quelea.utils.Utils;
-import org.quelea.video.RemotePlayer;
-import org.quelea.video.RemotePlayerFactory;
 
 /**
  * The control panel for displaying the video.
- *
+ * <p/>
  * @author Michael
  */
-public class VideoControlPanel extends JPanel {
+public class VideoControlPanel extends BorderPane {
 
     private static final Logger LOGGER = LoggerUtils.getLogger();
-    private JButton play;
-    private JButton pause;
-    private JButton stop;
-    private JButton mute;
-    private JSlider positionSlider;
+    private Button play;
+    private Button pause;
+    private Button stop;
+    private Button mute;
+    private Slider positionSlider;
     private VideoStatusPanel vidStatusPanel;
-    private Canvas videoArea;
-    private List<RemotePlayer> mediaPlayers;
+    private Node videoArea;
     private List<Canvas> registeredCanvases;
     private ScheduledExecutorService executorService;
     private boolean pauseCheck;
@@ -71,183 +61,83 @@ public class VideoControlPanel extends JPanel {
     public VideoControlPanel() {
 
         executorService = Executors.newSingleThreadScheduledExecutor();
-        play = new JButton(Utils.getImageIcon("icons/play.png"));
-        play.setEnabled(false);
-        play.addActionListener(new ActionListener() {
+        play = new Button("",new ImageView(new Image("file:icons/play.png")));
+        play.setDisable(true);
+        play.setOnAction(new EventHandler<javafx.event.ActionEvent>() {
 
             @Override
-            public void actionPerformed(ActionEvent e) {
+            public void handle(javafx.event.ActionEvent t) {
                 playVideo();
             }
         });
-        pause = new JButton(Utils.getImageIcon("icons/pause.png"));
-        pause.setEnabled(false);
-        pause.addActionListener(new ActionListener() {
-
+        pause = new Button("",new ImageView(new Image("file:icons/pause.png")));
+        pause.setDisable(true);
+        pause.setOnAction(new EventHandler<javafx.event.ActionEvent>() {
             @Override
-            public void actionPerformed(ActionEvent e) {
+            public void handle(javafx.event.ActionEvent t) {
                 pauseVideo();
             }
         });
-        stop = new JButton(Utils.getImageIcon("icons/stop.png"));
-        stop.setEnabled(false);
-        stop.addActionListener(new ActionListener() {
-
+        stop = new Button("",new ImageView(new Image("file:icons/stop.png")));
+        stop.setDisable(true);
+        stop.setOnAction(new EventHandler<javafx.event.ActionEvent>() {
             @Override
-            public void actionPerformed(ActionEvent e) {
+            public void handle(javafx.event.ActionEvent t) {
                 stopVideo();
                 positionSlider.setValue(0);
                 vidStatusPanel.getTimeDisplay().setCurrentSeconds(0);
                 vidStatusPanel.getTimeDisplay().setTotalSeconds(0);
             }
         });
-        mute = new JButton(Utils.getImageIcon("icons/mute.png"));
-        mute.setEnabled(false);
-        mute.addActionListener(new ActionListener() {
-
+        mute = new Button("",new ImageView(new Image("file:icons/mute.png")));
+        mute.setDisable(true);
+        mute.setOnAction(new EventHandler<javafx.event.ActionEvent>() {
             @Override
-            public void actionPerformed(ActionEvent e) {
+            public void handle(javafx.event.ActionEvent t) {
                 setMute(!getMute());
             }
         });
-        positionSlider = new JSlider(0, 1000);
-        positionSlider.setEnabled(false);
+        positionSlider = new Slider(0, 1000, 0);
+        positionSlider.setDisable(true);
         positionSlider.setValue(0);
-        positionSlider.addMouseListener(new MouseAdapter() {
-
-            @Override
-            public void mousePressed(MouseEvent e) {
-                for(RemotePlayer mediaPlayer : mediaPlayers) {
-                    if(mediaPlayer.isPlaying()) {
-                        mediaPlayer.pause();
-                        pauseCheck = false;
-                    }
-                    else {
-                        pauseCheck = true;
-                    }
-                }
-            }
-
-            @Override
-            public void mouseReleased(MouseEvent e) {
-                for(RemotePlayer mediaPlayer : mediaPlayers) {
-                    mediaPlayer.setTime((long) ((positionSlider.getValue() / (double) 1000) * mediaPlayer.getLength()));
-                    if(!pauseCheck) {
-                        mediaPlayer.play();
-                    }
-                }
-            }
-        });
-        videoArea = new Canvas();
-        videoArea.setBackground(Color.BLACK);
-        videoArea.setMinimumSize(new Dimension(20, 20));
-        videoArea.setPreferredSize(new Dimension(100, 100));
-        setLayout(new BorderLayout());
-        add(videoArea, BorderLayout.CENTER);
+        videoArea = new Group();
+        setCenter(videoArea);
         registeredCanvases = new ArrayList<>();
 
-        JPanel controlPanel = new JPanel();
-        controlPanel.setLayout(new BorderLayout());
-        JPanel sliderPanel = new JPanel();
-        sliderPanel.setLayout(new BoxLayout(sliderPanel, BoxLayout.X_AXIS));
-        sliderPanel.add(positionSlider);
-        controlPanel.add(sliderPanel, BorderLayout.SOUTH);
-        JPanel buttonPanel = new JPanel();
-        buttonPanel.setLayout(new BoxLayout(buttonPanel, BoxLayout.X_AXIS));
-        buttonPanel.add(play);
-        buttonPanel.add(pause);
-        buttonPanel.add(stop);
-        buttonPanel.add(mute);
-        controlPanel.add(buttonPanel, BorderLayout.NORTH);
-        add(controlPanel, BorderLayout.NORTH);
-        mediaPlayers = new ArrayList<>();
-        videoArea.addHierarchyListener(new HierarchyListener() {
-
-            @Override
-            public void hierarchyChanged(HierarchyEvent e) {
-                if((e.getChangeFlags() & HierarchyEvent.SHOWING_CHANGED) != 0 && videoArea.isShowing()) {
-                    new Thread() {
-
-                        @Override
-                        public void run() {
-                            RemotePlayer player = RemotePlayerFactory.getEmbeddedRemotePlayer(videoArea);
-                            if(player == null) {
-                                LOGGER.log(Level.WARNING, "Null video player, there was probably an error setting up video.");
-                            }
-                            else {
-                                mediaPlayers.add(0, player);
-                                if(videoPath != null) {
-                                    player.load(videoPath);
-                                }
-                                play.setEnabled(true);
-                                pause.setEnabled(true);
-                                stop.setEnabled(true);
-                                mute.setEnabled(true);
-                                positionSlider.setEnabled(true);
-                            }
-
-                        }
-                    }.start();
-                    videoArea.removeHierarchyListener(this);
-                }
-            }
-        });
+        BorderPane controlPanel = new BorderPane();
+        HBox sliderPanel = new HBox();
+        sliderPanel.getChildren().add(positionSlider);
+        controlPanel.setBottom(sliderPanel);
+        HBox buttonPanel = new HBox();
+        buttonPanel.getChildren().add(play);
+        buttonPanel.getChildren().add(pause);
+        buttonPanel.getChildren().add(stop);
+        buttonPanel.getChildren().add(mute);
+        controlPanel.setTop(buttonPanel);
+        setTop(controlPanel);
 
         vidStatusPanel = new VideoStatusPanel();
         vidStatusPanel.getVolumeSlider().addRunner(new Runnable() {
-
             @Override
             public void run() {
                 setVolume(vidStatusPanel.getVolumeSlider().getValue());
             }
         });
-        add(vidStatusPanel, BorderLayout.SOUTH);
+        setBottom(vidStatusPanel);
     }
 
     /**
      * Register a canvas to be controlled via this video control panel.
-     *
+     * <p/>
      * @param canvas the canvas to control.
      */
     public void registerCanvas(final Canvas canvas) {
         registeredCanvases.add(canvas);
-        if(!canvas.isShowing()) {
-            canvas.addHierarchyListener(new HierarchyListener() {
-
-                @Override
-                public void hierarchyChanged(HierarchyEvent e) {
-                    if((e.getChangeFlags() & HierarchyEvent.SHOWING_CHANGED) != 0 && canvas.isShowing()) {
-                        RemotePlayer player = RemotePlayerFactory.getEmbeddedRemotePlayer(canvas);
-                        if(player == null) {
-                            LOGGER.log(Level.WARNING, "Null video player, there was probably an error setting up video.");
-                        }
-                        else {
-                            player.setMute(true);
-                            mediaPlayers.add(player);
-                            if(videoPath != null) {
-                                player.load(videoPath);
-                            }
-                        }
-                        canvas.removeHierarchyListener(this);
-                    }
-                }
-            });
-        }
-        else {
-            RemotePlayer player = RemotePlayerFactory.getEmbeddedRemotePlayer(canvas);
-            if(player == null) {
-                LOGGER.log(Level.WARNING, "Null video player, there was probably an error setting up video.");
-            }
-            else {
-                player.setMute(true);
-                mediaPlayers.add(player);
-            }
-        }
     }
 
     /**
      * Get a list of registered lyric canvases.
-     *
+     * <p/>
      * @return a list of registered lyric canvases.
      */
     public List<Canvas> getRegisteredCanvases() {
@@ -256,126 +146,71 @@ public class VideoControlPanel extends JPanel {
 
     /**
      * Load the given video to be controlled via this panel.
-     *
+     * <p/>
      * @param videoPath the video path to load.
      */
     public void loadVideo(String videoPath) {
         this.videoPath = videoPath;
-        for(RemotePlayer mediaPlayer : mediaPlayers) {
-            mediaPlayer.load(videoPath);
-        }
     }
 
     /**
      * Play the loaded video.
      */
     public void playVideo() {
-        for(int i = 0; i < mediaPlayers.size(); i++) {
-            final RemotePlayer mediaPlayer = mediaPlayers.get(i);
-            if(i > 0) {
-                mediaPlayer.setMute(true);
-            }
-            mediaPlayer.play();
-            executorService.scheduleAtFixedRate(new Runnable() {
-
-                @Override
-                public void run() {
-                    if(mediaPlayer.isPlaying()) {
-                        SwingUtilities.invokeLater(new Runnable() {
-
-                            @Override
-                            public void run() {
-                                long time = mediaPlayer.getTime();
-                                long length = mediaPlayer.getLength();
-                                if(time >= length && time > 0) {
-                                    positionSlider.setValue(0);
-                                    vidStatusPanel.getTimeDisplay().setCurrentSeconds(0);
-                                    vidStatusPanel.getTimeDisplay().setTotalSeconds((int) (length / 1000));
-                                    stopVideo();
-                                }
-                                else {
-                                    int timeVal = (int) ((time / (double) length) * 1000);
-                                    positionSlider.setValue(timeVal);
-                                    vidStatusPanel.getTimeDisplay().setCurrentSeconds((int) (time / 1000));
-                                    vidStatusPanel.getTimeDisplay().setTotalSeconds((int) (length / 1000));
-                                }
-                            }
-                        });
-                    }
-                }
-            }, 0, 500, TimeUnit.MILLISECONDS);
-        }
     }
 
     /**
      * Get the current time of the video.
-     *
+     * <p/>
      * @return the current time of the video.
      */
     public long getTime() {
-        return mediaPlayers.get(0).getTime();
+        return 0;
     }
 
     /**
      * Set the current time of the video.
-     *
+     * <p/>
      * @param time the current time of the video.
      */
     public void setTime(long time) {
-        for(RemotePlayer mediaPlayer : mediaPlayers) {
-            mediaPlayer.setTime(time);
-        }
     }
 
     /**
      * Pause the currently playing video.
      */
     public void pauseVideo() {
-        for(RemotePlayer mediaPlayer : mediaPlayers) {
-            mediaPlayer.pause();
-        }
     }
 
     /**
      * Stop the currently playing video.
      */
     public void stopVideo() {
-        for(RemotePlayer mediaPlayer : mediaPlayers) {
-            mediaPlayer.stop();
-        }
     }
 
     /**
      * Set whether the video is muted.
-     *
+     * <p/>
      * @param muteState true to mute, false to unmute.
      */
     public void setMute(boolean muteState) {
-        mediaPlayers.get(0).setMute(muteState);
-        if(getMute()) {
-            mute.setIcon(Utils.getImageIcon("icons/unmute.png"));
-        }
-        else {
-            mute.setIcon(Utils.getImageIcon("icons/mute.png"));
-        }
     }
 
     /**
      * Determine if this video is muted.
-     *
+     * <p/>
      * @return true if muted, false if not.
      */
     public boolean getMute() {
-        return mediaPlayers.get(0).getMute();
+        return false;
     }
 
     /**
      * Set the volume of the video.
-     *
+     * <p/>
      * @param volume the video volume.
      */
-    public void setVolume(int volume) {
-        mediaPlayers.get(0).setVolume(volume);
+    public void setVolume(double volume) {
     }
 
     /**
@@ -383,15 +218,11 @@ public class VideoControlPanel extends JPanel {
      * external VM's / remote players it controls.
      */
     public void close() {
-        for(RemotePlayer mediaPlayer : mediaPlayers) {
-            mediaPlayer.close();
-        }
-        executorService.shutdownNow();
     }
 
     /**
      * Try and stop and clear up if we haven't already.
-     *
+     * <p/>
      * @throws Throwable if something goes wrong.
      */
     @Override
@@ -399,24 +230,5 @@ public class VideoControlPanel extends JPanel {
         stopVideo();
         super.finalize();
         close();
-    }
-
-    /**
-     * Just for testing.
-     *
-     * @param args
-     */
-    public static void main(String[] args) {
-        JFrame frame = new JFrame();
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        VideoControlPanel panel = new VideoControlPanel();
-        frame.setLayout(new BorderLayout());
-        frame.add(panel, BorderLayout.CENTER);
-        frame.pack();
-        frame.setVisible(true);
-
-        panel.loadVideo("E:\\Films\\Inception\\Inception.mkv");
-//        panel.loadVideo("C:\\1.avi");
-        panel.playVideo();
     }
 }

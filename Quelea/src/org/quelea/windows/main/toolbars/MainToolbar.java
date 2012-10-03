@@ -18,91 +18,102 @@
  */
 package org.quelea.windows.main.toolbars;
 
-import javax.swing.JButton;
-import javax.swing.JToolBar;
+import javafx.scene.Node;
+import javafx.scene.control.Button;
+import javafx.scene.control.Separator;
+import javafx.scene.control.ToolBar;
+import javafx.scene.control.Tooltip;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import org.quelea.languages.LabelGrabber;
-import org.quelea.utils.Utils;
-import org.quelea.windows.main.actionlisteners.*;
+import org.quelea.windows.main.actionlisteners.AddDVDActionListener;
+import org.quelea.windows.main.actionlisteners.AddPowerpointActionListener;
+import org.quelea.windows.main.actionlisteners.AddVideoActionListener;
+import org.quelea.windows.main.actionlisteners.NewScheduleActionListener;
+import org.quelea.windows.main.actionlisteners.NewSongActionListener;
+import org.quelea.windows.main.actionlisteners.OpenScheduleActionListener;
+import org.quelea.windows.main.actionlisteners.PrintScheduleActionListener;
+import org.quelea.windows.main.actionlisteners.SaveScheduleActionListener;
+import org.quelea.windows.main.actionlisteners.ShowNoticesActionListener;
+import org.quelea.windows.main.actionlisteners.ViewTagsActionListener;
 
 /**
  * Quelea's main toolbar.
  *
  * @author Michael
  */
-public class MainToolbar extends JToolBar {
+public class MainToolbar extends ToolBar {
 
-    private JButton newScheduleButton;
-    private JButton openScheduleButton;
-    private JButton saveScheduleButton;
-    private JButton printScheduleButton;
-    private JButton newSongButton;
-    private JButton addPresentationButton;
-    private JButton addVideoButton;
-    private JButton addDVDButton;
-    private JButton manageNoticesButton;
-    private JButton manageTagsButton;
+    private Button newScheduleButton;
+    private Button openScheduleButton;
+    private Button saveScheduleButton;
+    private Button printScheduleButton;
+    private Button newSongButton;
+    private Button addPresentationButton;
+    private Button addVideoButton;
+    private Button addDVDButton;
+    private Button manageNoticesButton;
+    private Button manageTagsButton;
 
     /**
      * Create the toolbar.
      */
     public MainToolbar() {
-        setFloatable(false);
+        newScheduleButton = new Button("", new ImageView(new Image("file:icons/filenew.png", 24, 24, false, true)));
+        newScheduleButton.setTooltip(new Tooltip(LabelGrabber.INSTANCE.getLabel("new.schedule.tooltip")));
+        newScheduleButton.setOnAction(new NewScheduleActionListener());
+        getItems().add(newScheduleButton);
 
-        newScheduleButton = new JButton(Utils.getImageIcon("icons/filenew.png", 24, 24));
-        newScheduleButton.setToolTipText(LabelGrabber.INSTANCE.getLabel("new.schedule.tooltip"));
-        newScheduleButton.addActionListener(new NewScheduleActionListener());
-        add(newScheduleButton);
+        openScheduleButton = new Button("", new ImageView(new Image("file:icons/fileopen.png", 24, 24, false, true)));
+        openScheduleButton.setTooltip(new Tooltip(LabelGrabber.INSTANCE.getLabel("open.schedule.tooltip")));
+        openScheduleButton.setOnAction(new OpenScheduleActionListener());
+        getItems().add(openScheduleButton);
 
-        openScheduleButton = new JButton(Utils.getImageIcon("icons/fileopen.png", 24, 24));
-        openScheduleButton.setToolTipText(LabelGrabber.INSTANCE.getLabel("open.schedule.tooltip"));
-        openScheduleButton.addActionListener(new OpenScheduleActionListener());
-        add(openScheduleButton);
+        saveScheduleButton = new Button("", new ImageView(new Image("file:icons/filesave.png", 24, 24, false, true)));
+        saveScheduleButton.setTooltip(new Tooltip(LabelGrabber.INSTANCE.getLabel("save.schedule.tooltip")));
+        saveScheduleButton.setOnAction(new SaveScheduleActionListener(false));
+        getItems().add(saveScheduleButton);
 
-        saveScheduleButton = new JButton(Utils.getImageIcon("icons/filesave.png", 24, 24));
-        saveScheduleButton.setToolTipText(LabelGrabber.INSTANCE.getLabel("save.schedule.tooltip"));
-        saveScheduleButton.addActionListener(new SaveScheduleActionListener(false));
-        add(saveScheduleButton);
+        printScheduleButton = new Button("", new ImageView(new Image("file:icons/fileprint.png", 24, 24, false, true)));
+        printScheduleButton.setTooltip(new Tooltip(LabelGrabber.INSTANCE.getLabel("print.schedule.tooltip")));
+        printScheduleButton.setOnAction(new PrintScheduleActionListener());
+        getItems().add(printScheduleButton);
 
-        printScheduleButton = new JButton(Utils.getImageIcon("icons/fileprint.png", 24, 24));
-        printScheduleButton.setToolTipText(LabelGrabber.INSTANCE.getLabel("print.schedule.tooltip"));
-        printScheduleButton.addActionListener(new PrintScheduleActionListener());
-        add(printScheduleButton);
+        getItems().add(new Separator());
 
-        addSeparator();
+        newSongButton = new Button("", new ImageView(new Image("file:icons/newsong.png", 24, 24, false, true)));
+        newSongButton.setTooltip(new Tooltip(LabelGrabber.INSTANCE.getLabel("new.song.tooltip")));
+        newSongButton.setOnAction(new NewSongActionListener());
+        getItems().add(newSongButton);
 
-        newSongButton = new JButton(Utils.getImageIcon("icons/newsong.png", 24, 24));
-        newSongButton.setToolTipText(LabelGrabber.INSTANCE.getLabel("new.song.tooltip"));
-        newSongButton.addActionListener(new NewSongActionListener());
-        add(newSongButton);
+        getItems().add(new Separator());
 
-        addSeparator();
+        addPresentationButton = new Button("", new ImageView(new Image("file:icons/powerpoint.png", 24, 24, false, true)));
+        addPresentationButton.setTooltip(new Tooltip(LabelGrabber.INSTANCE.getLabel("add.presentation.tooltip")));
+        addPresentationButton.setOnAction(new AddPowerpointActionListener());
+        getItems().add(addPresentationButton);
 
-        addPresentationButton = new JButton(Utils.getImageIcon("icons/powerpoint.png", 24, 24));
-        addPresentationButton.setToolTipText(LabelGrabber.INSTANCE.getLabel("add.presentation.tooltip"));
-        addPresentationButton.addActionListener(new AddPowerpointActionListener());
-        add(addPresentationButton);
+        addVideoButton = new Button("", new ImageView(new Image("file:icons/video file.png", 24, 24, false, true)));
+        addVideoButton.setTooltip(new Tooltip(LabelGrabber.INSTANCE.getLabel("add.video.tooltip")));
+        addVideoButton.setOnAction(new AddVideoActionListener());
+        getItems().add(addVideoButton);
 
-        addVideoButton = new JButton(Utils.getImageIcon("icons/video file.png", 24, 24));
-        addVideoButton.setToolTipText(LabelGrabber.INSTANCE.getLabel("add.video.tooltip"));
-        addVideoButton.addActionListener(new AddVideoActionListener());
-        add(addVideoButton);
+        addDVDButton = new Button("", new ImageView(new Image("file:icons/dvd.png", 24, 24, false, true)));
+        addDVDButton.setTooltip(new Tooltip(LabelGrabber.INSTANCE.getLabel("add.dvd.tooltip")));
+        addDVDButton.setOnAction(new AddDVDActionListener());
+        getItems().add(addDVDButton);
 
-        addDVDButton = new JButton(Utils.getImageIcon("icons/dvd.png", 24, 24));
-        addDVDButton.setToolTipText(LabelGrabber.INSTANCE.getLabel("add.dvd.tooltip"));
-        addDVDButton.addActionListener(new AddDVDActionListener());
-        add(addDVDButton);
+        getItems().add(new Separator());
 
-        addSeparator();
+        manageTagsButton = new Button("", new ImageView(new Image("file:icons/tag.png", 24, 24, false, true)));
+        manageTagsButton.setTooltip(new Tooltip(LabelGrabber.INSTANCE.getLabel("manage.tags.tooltip")));
+        manageTagsButton.setOnAction(new ViewTagsActionListener());
+        getItems().add(manageTagsButton);
 
-        manageTagsButton = new JButton(Utils.getImageIcon("icons/tag.png", 24, 24));
-        manageTagsButton.setToolTipText(LabelGrabber.INSTANCE.getLabel("manage.tags.tooltip"));
-        manageTagsButton.addActionListener(new ViewTagsActionListener());
-        add(manageTagsButton);
-
-        manageNoticesButton = new JButton(Utils.getImageIcon("icons/info.png", 24, 24));
-        manageNoticesButton.setToolTipText(LabelGrabber.INSTANCE.getLabel("manage.notices.tooltip"));
-        manageNoticesButton.addActionListener(new ShowNoticesActionListener());
-        add(manageNoticesButton);
-
+        manageNoticesButton = new Button("", new ImageView(new Image("file:icons/info.png", 24, 24, false, true)));
+        manageNoticesButton.setTooltip(new Tooltip(LabelGrabber.INSTANCE.getLabel("manage.notices.tooltip")));
+        manageNoticesButton.setOnAction(new ShowNoticesActionListener());
+        getItems().add(manageNoticesButton);
+        
     }
 }

@@ -17,211 +17,178 @@
  */
 package org.quelea.windows.main;
 
-import java.awt.BorderLayout;
 import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
 import java.util.HashSet;
-import javax.swing.JLabel;
-import javax.swing.JToggleButton;
-import javax.swing.JToolBar;
-import javax.swing.SwingUtilities;
+import javafx.event.EventHandler;
+import javafx.scene.control.Label;
+import javafx.scene.control.ToggleButton;
+import javafx.scene.control.ToolBar;
+import javafx.scene.control.Tooltip;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
+import javafx.scene.layout.Region;
 import org.quelea.Application;
 import org.quelea.displayable.Displayable;
 import org.quelea.languages.LabelGrabber;
 import org.quelea.utils.QueleaProperties;
-import org.quelea.utils.Utils;
 
 /**
  * The panel displaying the live lyrics selection - changes made on this panel
  * are reflected on the live projection.
- *
+ * <p/>
  * @author Michael
  */
 public class LivePanel extends LivePreviewPanel {
 
-    private final JToggleButton black;
-    private final JToggleButton clear;
-    private final JToggleButton hide;
+    private final ToggleButton black;
+    private final ToggleButton clear;
+    private final ToggleButton hide;
 
     /**
      * Create a new live lyrics panel.
      */
     public LivePanel() {
         getPresentationPanel().setLive();
-        JToolBar header = new JToolBar();
-        header.setFloatable(false);
-        header.add(new JLabel("<html><b>" + LabelGrabber.INSTANCE.getLabel("live.heading") + "</b></html>"));
-        header.add(new JToolBar.Separator());
-        black = new JToggleButton(Utils.getImageIcon("icons/black.png"));
-        black.setToolTipText(LabelGrabber.INSTANCE.getLabel("black.screen.tooltip") + " (F1)");
-        black.setRequestFocusEnabled(false);
-        black.addActionListener(new ActionListener() {
-
-            /**
-             * Toggle all the canvases to black.
-             *
-             * @param e the action event.
-             */
+        ToolBar header = new ToolBar();
+        Label headerLabel = new Label(LabelGrabber.INSTANCE.getLabel("live.heading"));
+        headerLabel.setStyle("-fx-font-weight: bold;");
+        header.getItems().add(headerLabel);
+        Region spacer = new Region();
+        HBox.setHgrow(spacer, Priority.ALWAYS);
+        header.getItems().add(spacer);
+        black = new ToggleButton("", new ImageView(new Image("file:icons/black.png")));
+        black.setTooltip(new Tooltip(LabelGrabber.INSTANCE.getLabel("black.screen.tooltip") + " (F1)"));
+        black.setOnAction(new EventHandler<javafx.event.ActionEvent>() {
             @Override
-            public void actionPerformed(ActionEvent e) {
+            public void handle(javafx.event.ActionEvent t) {
                 HashSet<LyricCanvas> canvases = new HashSet<>();
                 canvases.addAll(getCanvases());
-                for (LyricCanvas canvas : canvases) {
+                for(LyricCanvas canvas : canvases) {
                     canvas.toggleBlack();
                 }
             }
         });
-        header.add(black);
-        clear = new JToggleButton(Utils.getImageIcon("icons/clear.png", 16, 16));
-        clear.setToolTipText(LabelGrabber.INSTANCE.getLabel("clear.text.tooltip") + " (F2)");
-        clear.setRequestFocusEnabled(false);
-        clear.addActionListener(new ActionListener() {
-
-            /**
-             * Toggle all the canvases to clear.
-             *
-             * @param e the action event.
-             */
+        header.getItems().add(black);
+        clear = new ToggleButton("", new ImageView(new Image("file:icons/clear.png", 16, 16, false, true)));
+        clear.setTooltip(new Tooltip(LabelGrabber.INSTANCE.getLabel("clear.text.tooltip") + " (F2)"));
+        clear.setOnAction(new EventHandler<javafx.event.ActionEvent>() {
             @Override
-            public void actionPerformed(ActionEvent e) {
+            public void handle(javafx.event.ActionEvent t) {
                 HashSet<LyricCanvas> canvases = new HashSet<>();
                 canvases.addAll(getCanvases());
-                for (LyricCanvas canvas : canvases) {
+                for(LyricCanvas canvas : canvases) {
                     canvas.toggleClear();
                 }
             }
         });
-        header.add(clear);
-        hide = new JToggleButton(Utils.getImageIcon("icons/cross.png"));
-        hide.setToolTipText(LabelGrabber.INSTANCE.getLabel("hide.display.output.tooltip") + " (F3)");
-        hide.setRequestFocusEnabled(false);
-        hide.addActionListener(new ActionListener() {
-
-            /**
-             * Hide the lyric windows.
-             *
-             * @param e the action event.
-             */
+        header.getItems().add(clear);
+        hide = new ToggleButton("", new ImageView(new Image("file:icons/cross.png")));
+        hide.setTooltip(new Tooltip(LabelGrabber.INSTANCE.getLabel("hide.display.output.tooltip") + " (F3)"));
+        hide.setOnAction(new EventHandler<javafx.event.ActionEvent>() {
             @Override
-            public void actionPerformed(ActionEvent e) {
+            public void handle(javafx.event.ActionEvent t) {
                 int projectorScreen = QueleaProperties.get().getProjectorScreen();
                 int stageScreen = QueleaProperties.get().getStageScreen();
                 GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
                 final GraphicsDevice[] gds = ge.getScreenDevices();
                 LyricWindow lyricWindow = Application.get().getLyricWindow();
                 LyricWindow stageWindow = Application.get().getStageWindow();
-                
+
                 final boolean lyricsHidden;
-                if (!QueleaProperties.get().isProjectorModeCoords() && (projectorScreen >= gds.length || projectorScreen < 0)) {
+                if(!QueleaProperties.get().isProjectorModeCoords() && (projectorScreen >= gds.length || projectorScreen < 0)) {
                     lyricsHidden = true;
                 }
                 else {
                     lyricsHidden = false;
                 }
-                
+
                 final boolean stageHidden;
-                if (!QueleaProperties.get().isStageModeCoords() && (stageScreen >= gds.length || stageScreen < 0)) {
+                if(!QueleaProperties.get().isStageModeCoords() && (stageScreen >= gds.length || stageScreen < 0)) {
                     stageHidden = true;
                 }
                 else {
                     stageHidden = false;
                 }
-                
+
                 if(!lyricsHidden) {
-                    lyricWindow.setVisible(!lyricWindow.isVisible());
+                    if(lyricWindow.isShowing()) {
+                        lyricWindow.hide();
+                    }
+                    else {
+                        lyricWindow.show();
+                    }
                 }
                 if(!stageHidden) {
-                    stageWindow.setVisible(!stageWindow.isVisible());
+                    if(stageWindow.isShowing()) {
+                        stageWindow.hide();
+                    }
+                    else {
+                        stageWindow.show();
+                    }
                 }
-
-                Application.get().getMainWindow().repaint();
             }
         });
-        header.add(hide);
-        add(header, BorderLayout.NORTH);
-
-        addKeyListener(new KeyListener() {
-
-            /**
-             * Nothing when typed...
-             *
-             * @param e the key event.
-             */
+        header.getItems().add(hide);
+        setTop(header);
+        setOnKeyTyped(new EventHandler<KeyEvent>() {
             @Override
-            public void keyTyped(KeyEvent e) {
-                //Nothing needed here
-            }
-
-            /**
-             * Detect F1 to go to black, F2 to clear and F3 to hide the window.
-             *
-             * @param e the key event.
-             */
-            @Override
-            public void keyPressed(KeyEvent e) {
-                if (e.getKeyCode() == KeyEvent.VK_F1) {
-                    black.doClick();
-                }
-                else if (e.getKeyCode() == KeyEvent.VK_F2) {
-                    clear.doClick();
-                }
-                else if (e.getKeyCode() == KeyEvent.VK_F3) {
-                    hide.doClick();
+            public void handle(KeyEvent t) {
+                if(t.getCharacter().equals(" ")) {
+                    Application.get().getMainWindow().getMainPanel().getPreviewPanel().goLive();
                 }
             }
-
-            /**
-             * Nothing when released...
-             *
-             * @param e the key event.
-             */
+        });
+        setOnKeyPressed(new EventHandler<KeyEvent>() {
             @Override
-            public void keyReleased(KeyEvent e) {
-                //Nothing needed here
+            public void handle(KeyEvent t) {
+                if(t.getCode() == KeyCode.LEFT) {
+                    Application.get().getMainWindow().getMainPanel().getPreviewPanel().requestFocus();
+                }
             }
         });
     }
 
     /**
      * Set the displayable to be shown on this live panel.
-     *
+     * <p/>
      * @param d the displayable to show.
      * @param index the index to use for the displayable, if relevant.
      */
     @Override
     public void setDisplayable(Displayable d, int index) {
         super.setDisplayable(d, index);
-        clear.setEnabled(d.supportClear());
+        clear.setDisable(!d.supportClear());
     }
 
     /**
      * Get the "black" toggle button.
-     *
+     * <p/>
      * @return the "black" toggle button.
      */
-    public JToggleButton getBlack() {
+    public ToggleButton getBlack() {
         return black;
     }
 
     /**
      * Get the "clear" toggle button.
-     *
+     * <p/>
      * @return the "clear" toggle button.
      */
-    public JToggleButton getClear() {
+    public ToggleButton getClear() {
         return clear;
     }
 
     /**
      * Get the "hide" toggle button.
-     *
+     * <p/>
      * @return the "hide" toggle button.
      */
-    public JToggleButton getHide() {
+    public ToggleButton getHide() {
         return hide;
     }
 }

@@ -18,19 +18,17 @@
  */
 package org.quelea.windows.main.actionlisteners;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import org.quelea.Application;
+import javafx.event.EventHandler;
 
 /**
- * Action listener for displaying the dialog to view the contents of bibles.
+ * Action handler for displaying the dialog to view the contents of bibles.
  * @author Michael
  */
-public class ViewBibleActionListener implements ActionListener {
+public class ViewBibleActionListener implements EventHandler<javafx.event.ActionEvent> {
 
     @Override
-    public void actionPerformed(ActionEvent ae) {
-        Application.get().getMainWindow().getBibleBrowseDialog().setVisible(true);
+    public void handle(javafx.event.ActionEvent t) {
+        throw new UnsupportedOperationException("Not supported yet.");
     }
     
 }

@@ -18,53 +18,52 @@
  */
 package org.quelea.windows.video;
 
-import java.awt.BorderLayout;
 import java.util.ArrayList;
 import java.util.List;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JSlider;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
+import javafx.beans.value.ObservableValue;
+import javafx.scene.control.Label;
+import javafx.scene.control.Slider;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.scene.layout.BorderPane;
 import org.quelea.utils.Utils;
 
 /**
  * A volume slider. Consists of a slider and up / down icons.
  * @author Michael
  */
-public class VolumeSlider extends JPanel {
+public class VolumeSlider extends BorderPane {
     
-    private JSlider volumeSlider;
+    private Slider volumeSlider;
     private List<Runnable> runners;
     
     /**
      * Create the volume slider.
      */
     public VolumeSlider() {
-        volumeSlider = new JSlider(0,100,100);
-        volumeSlider.addChangeListener(new ChangeListener() {
+        volumeSlider = new Slider(0,100,100);
+        runners = new ArrayList<>();
+        volumeSlider.valueProperty().addListener(new javafx.beans.value.ChangeListener<Number>() {
 
             @Override
-            public void stateChanged(ChangeEvent ce) {
+            public void changed(ObservableValue<? extends Number> ov, Number t, Number t1) {
                 for(Runnable runner : runners) {
                     runner.run();
                 }
             }
         });
-        runners = new ArrayList<>();
         
-        setLayout(new BorderLayout());
-        add(new JLabel(Utils.getImageIcon("icons/volumedown.png", 16, 16)), BorderLayout.WEST);
-        add(volumeSlider, BorderLayout.CENTER);
-        add(new JLabel(Utils.getImageIcon("icons/volumeup.png", 16, 16)), BorderLayout.EAST);
+        setLeft(new Label("",new ImageView(new Image("file:icons/volumedown.png", 16, 16, false, true))));
+        setCenter(volumeSlider);
+        setRight(new Label("",new ImageView(new Image("file:icons/volumeup.png", 16, 16, false, true))));
     }
     
     /**
      * Get the current value of the slider.
      * @return the slider's value, between 0-100.
      */
-    public int getValue() {
-        return volumeSlider.getValue();
+    public double getValue() {
+        return (int)volumeSlider.valueProperty().get();
     }
     
     /**

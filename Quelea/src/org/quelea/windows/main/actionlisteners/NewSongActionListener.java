@@ -17,8 +17,8 @@
  */
 package org.quelea.windows.main.actionlisteners;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import org.quelea.Application;
 import org.quelea.windows.newsong.SongEntryWindow;
 
@@ -26,14 +26,15 @@ import org.quelea.windows.newsong.SongEntryWindow;
  * The action listener used when creating a new song.
  * @author Michael
  */
-public class NewSongActionListener implements ActionListener {
+public class NewSongActionListener implements EventHandler<ActionEvent> {
 
     /**
      * Popup the dialog to create a new song...
-     * @param e the action event.
+     * <p/>
+     * @param t the action event.
      */
     @Override
-    public void actionPerformed(ActionEvent e) {
+    public void handle(ActionEvent t) {
         SongEntryWindow songEntryWindow = Application.get().getMainWindow().getSongEntryWindow();
         songEntryWindow.setLocationRelativeTo(songEntryWindow.getOwner());
         songEntryWindow.resetNewSong();

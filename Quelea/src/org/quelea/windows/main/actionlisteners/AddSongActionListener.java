@@ -17,8 +17,8 @@
  */
 package org.quelea.windows.main.actionlisteners;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import org.quelea.Application;
 import org.quelea.displayable.Song;
 import org.quelea.windows.library.LibraryPanel;
@@ -29,17 +29,17 @@ import org.quelea.windows.main.SchedulePanel;
  * action that adds a song from the library to the schedule.
  * @author Michael
  */
-public class AddSongActionListener implements ActionListener {
+public class AddSongActionListener implements EventHandler<ActionEvent> {
 
     /**
      * Get the current selected song from the library to the schedule.
      * @param e the event.
      */
     @Override
-    public void actionPerformed(ActionEvent e) {
+    public void handle(ActionEvent t) {
         LibraryPanel libraryPanel = Application.get().getMainWindow().getMainPanel().getLibraryPanel();
         SchedulePanel schedulePanel = Application.get().getMainWindow().getMainPanel().getSchedulePanel();
         Song song = libraryPanel.getLibrarySongPanel().getSongList().getSelectedValue();
-        schedulePanel.getScheduleList().getModel().addElement(song);
+        schedulePanel.getScheduleList().add(song);
     }
 }

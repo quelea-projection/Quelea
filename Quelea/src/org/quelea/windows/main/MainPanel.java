@@ -17,23 +17,13 @@
  */
 package org.quelea.windows.main;
 
-import org.quelea.windows.main.actionlisteners.AddSongActionListener;
-import java.awt.BorderLayout;
-import java.awt.event.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.swing.JList;
-import javax.swing.JPanel;
-import javax.swing.JSplitPane;
-import javax.swing.event.ListDataEvent;
-import javax.swing.event.ListDataListener;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
-import org.quelea.bible.Bible;
-import org.quelea.displayable.BiblePassage;
-import org.quelea.displayable.Displayable;
-import org.quelea.displayable.Song;
-import org.quelea.displayable.VideoDisplayable;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
+import javafx.geometry.Orientation;
+import javafx.scene.control.SplitPane;
+import javafx.scene.layout.BorderPane;
 import org.quelea.utils.LoggerUtils;
 import org.quelea.windows.library.LibraryPanel;
 
@@ -41,7 +31,7 @@ import org.quelea.windows.library.LibraryPanel;
  * The main body of the main window, containing the schedule, the media bank, the preview and the live panels.
  * @author Michael
  */
-public class MainPanel extends JPanel {
+public class MainPanel extends BorderPane {
 
     private static final Logger LOGGER = LoggerUtils.getLogger();
     private final SchedulePanel schedulePanel;
@@ -54,8 +44,6 @@ public class MainPanel extends JPanel {
      * Create the new main panel.
      */
     public MainPanel() {
-        LOGGER.log(Level.INFO, "Creating main panel");
-        setLayout(new BorderLayout());
         LOGGER.log(Level.INFO, "Creating schedule panel");
         schedulePanel = new SchedulePanel();
         LOGGER.log(Level.INFO, "Creating library panel");
@@ -65,214 +53,36 @@ public class MainPanel extends JPanel {
         LOGGER.log(Level.INFO, "Creating live panel");
         livePanel = new LivePanel();
 
-        LOGGER.log(Level.INFO, "Adding listeners");
-        addKeyListeners();
-        addScheduleListeners();
-        addScheduleAddListeners();
-        addBibleListeners();
+        LOGGER.log(Level.INFO, "Creating split panels");
+        SplitPane scheduleAndLibrary = new SplitPane();
+        scheduleAndLibrary.setOrientation(Orientation.VERTICAL);
+        scheduleAndLibrary.getItems().add(schedulePanel);
+        scheduleAndLibrary.getItems().add(libraryPanel);
+        SplitPane previewAndLive = new SplitPane();
+        previewAndLive.setOrientation(Orientation.HORIZONTAL);
+        previewAndLive.getItems().add(previewPanel);
+        previewAndLive.getItems().add(livePanel);
+        previewPanel.getLyricsPanel().getSplitPane().getDividers().get(0).positionProperty().addListener(new ChangeListener<Number>() {
 
-        previewPanel.getLiveButton().addActionListener(new ActionListener() {
-
-            /**
-             * Action listener on live button.
-             * @param e action event.
-             */
-            public void actionPerformed(ActionEvent e) {
-//                DefaultListModel liveModel = livePanel.getLyricsList().getModel();
-//                DefaultListModel previewModel = previewPanel.getLyricsList().getModel();
-//                liveModel.clear();
-//                for (int i = 0; i < previewModel.getSize(); i++) {
-//                    liveModel.addElement(previewModel.get(i));
-//                }
-//                livePanel.getLyricsList().setSelectedIndex(previewPanel.getLyricsList().getSelectedIndex());
-//                if (schedulePanel.getScheduleList().getSelectedIndex() < schedulePanel.getScheduleList().getModel().getSize()) {
-//                    schedulePanel.getScheduleList().setSelectedIndex(schedulePanel.getScheduleList().getSelectedIndex() + 1);
-//                }
-//                previewPanel.pauseVideo();
-                livePanel.setDisplayable(previewPanel.getDisplayable(), previewPanel.getIndex());
-                if (previewPanel.getDisplayable() instanceof VideoDisplayable) {
-                    livePanel.setVideoProperties(previewPanel);
-                }
-                livePanel.focus();
+            @Override
+            public void changed(ObservableValue<? extends Number> ov, Number t, Number t1) {
+                livePanel.getLyricsPanel().getSplitPane().getDividers().get(0).positionProperty().set(t1.doubleValue());
             }
         });
+        livePanel.getLyricsPanel().getSplitPane().getDividers().get(0).positionProperty().addListener(new ChangeListener<Number>() {
 
-        JSplitPane scheduleAndLibrary = new JSplitPane(JSplitPane.VERTICAL_SPLIT, schedulePanel, libraryPanel);
-        scheduleAndLibrary.setResizeWeight(0.8);
-        scheduleAndLibrary.setOneTouchExpandable(true);
-        JSplitPane previewAndLive = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, previewPanel, livePanel);
-        previewAndLive.setResizeWeight(0.5);
-        JSplitPane mainSplit = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, scheduleAndLibrary, previewAndLive);
-        mainSplit.setResizeWeight(0.2);
-        mainSplit.setSize(300, 300);
-        add(mainSplit, BorderLayout.CENTER);
+            @Override
+            public void changed(ObservableValue<? extends Number> ov, Number t, Number t1) {
+                previewPanel.getLyricsPanel().getSplitPane().getDividers().get(0).positionProperty().set(t1.doubleValue());
+            }
+        });
+        SplitPane mainSplit = new SplitPane();
+        mainSplit.setOrientation(Orientation.HORIZONTAL);
+        mainSplit.getItems().add(scheduleAndLibrary);
+        mainSplit.getItems().add(previewAndLive);
+        setCenter(mainSplit);
         statusPanelGroup = new StatusPanelGroup();
-        add(statusPanelGroup, BorderLayout.SOUTH);
-    }
-
-    /**
-     * Add the bible listeners to this main panel.
-     */
-    private void addBibleListeners() {
-        libraryPanel.getBiblePanel().getAddToSchedule().addActionListener(new ActionListener() {
-
-            public void actionPerformed(ActionEvent e) {
-                BiblePassage passage = new BiblePassage(((Bible) libraryPanel.getBiblePanel().getBibleSelector().getSelectedItem()).getName(), libraryPanel.getBiblePanel().getBibleLocation(), libraryPanel.getBiblePanel().getVerses());
-                schedulePanel.getScheduleList().getModel().addElement(passage);
-            }
-        });
-    }
-
-    /**
-     * Add the listeners that add songs to the schedule.
-     */
-    private void addScheduleAddListeners() {
-        libraryPanel.getLibrarySongPanel().getSongList().getPopupMenu().getAddToScheduleButton().addActionListener(new AddSongActionListener());
-        libraryPanel.getLibrarySongPanel().getSongList().addMouseListener(new MouseAdapter() {
-
-            @Override
-            public void mouseClicked(MouseEvent e) {
-                JList songList = (JList) e.getSource();
-                if (e.getClickCount() == 2) {
-                    Song song = (Song) songList.getSelectedValue();
-                    schedulePanel.getScheduleList().getModel().addElement(song);
-                }
-            }
-        });
-    }
-
-    /**
-     * Add the key listeners to the lists used for switching focus between them.
-     */
-    private void addKeyListeners() {
-
-        /*
-         * Schedule panel key listeners...
-         */
-        schedulePanel.getScheduleList().addKeyListener(new KeyListener() {
-
-            public void keyTyped(KeyEvent e) {
-                if (e.getKeyChar() == ' ') {
-                    previewPanel.getLiveButton().doClick();
-//                    liveLyricsPanel.getLyricsList().ensureIndexIsVisible(liveLyricsPanel.getLyricsList().getSelectedIndex());
-                }
-            }
-
-            public void keyPressed(KeyEvent e) {
-                if (e.getKeyCode() == KeyEvent.VK_RIGHT) {
-                    previewPanel.focus();
-                }
-            }
-
-            public void keyReleased(KeyEvent e) {
-                //Nothing needed here
-            }
-        });
-
-        /*
-         * Preview panel key listeners...
-         */
-        previewPanel.addKeyListener(new KeyListener() {
-
-            public void keyTyped(KeyEvent e) {
-                if (e.getKeyChar() == ' ') {
-                    previewPanel.getLiveButton().doClick();
-//                    liveLyricsPanel.getLyricsList().ensureIndexIsVisible(liveLyricsPanel.getLyricsList().getSelectedIndex());
-                }
-            }
-
-            public void keyPressed(KeyEvent e) {
-                if (e.getKeyCode() == KeyEvent.VK_RIGHT) {
-                    livePanel.focus();
-                }
-                else if (e.getKeyCode() == KeyEvent.VK_LEFT && schedulePanel.getScheduleList().getModel().getSize() > 0) {
-                    schedulePanel.getScheduleList().requestFocus();
-                }
-            }
-
-            public void keyReleased(KeyEvent e) {
-                //Nothing needed here
-            }
-        });
-        previewPanel.getLyricsPanel().getLyricsList().addMouseListener(new MouseAdapter() {
-
-            @Override
-            public void mouseClicked(MouseEvent e) {
-                if(e.getClickCount()==2) {
-                    previewPanel.getLiveButton().doClick();
-                }
-            }
-        });
-
-        /*
-         * Live panel key listeners...
-         */
-        livePanel.addKeyListener(new KeyListener() {
-
-            public void keyTyped(KeyEvent e) {
-                if (e.getKeyChar() == ' ') {
-                    previewPanel.getLiveButton().doClick();
-//                    livePanel.getLyricsList().ensureIndexIsVisible(liveLyricsPanel.getLyricsList().getSelectedIndex());
-                }
-            }
-
-            public void keyPressed(KeyEvent e) {
-                if (e.getKeyCode() == KeyEvent.VK_LEFT) {
-                    previewPanel.focus();
-                }
-            }
-
-            public void keyReleased(KeyEvent e) {
-                //Nothing needed here
-            }
-        });
-    }
-
-    /**
-     * Add the listeners to check for changes in the schedule panel.
-     */
-    private void addScheduleListeners() {
-        schedulePanel.getScheduleList().getModel().addListDataListener(new ListDataListener() {
-
-            public void intervalAdded(ListDataEvent e) {
-                //Nothing needs to be done here.
-            }
-
-            public void intervalRemoved(ListDataEvent e) {
-                //Nothing needs to be done here.
-            }
-
-            /**
-             * listChanged() must be called in case we're removing the last
-             * element in the list, in which case the preview panel must be
-             * cleared.
-             */
-            public void contentsChanged(ListDataEvent e) {
-                scheduleListChanged();
-            }
-        });
-
-        schedulePanel.getScheduleList().addListSelectionListener(new ListSelectionListener() {
-
-            public void valueChanged(ListSelectionEvent e) {
-                scheduleListChanged();
-            }
-        });
-    }
-
-    /**
-     * This method should be called every time the list values are updated or changed.
-     */
-    private void scheduleListChanged() {
-        if (schedulePanel.getScheduleList().isEmpty()) {
-            livePanel.clear();
-        }
-        if (schedulePanel.getScheduleList().getSelectedIndex() == -1) {
-            previewPanel.clear();
-            return;
-        }
-        Displayable newDisplayable = schedulePanel.getScheduleList().getModel().getElementAt(schedulePanel.getScheduleList().getSelectedIndex());
-        previewPanel.setDisplayable(newDisplayable, 0);
+        setBottom(statusPanelGroup);
     }
 
     /**

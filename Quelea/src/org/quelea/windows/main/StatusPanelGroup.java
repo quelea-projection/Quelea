@@ -20,9 +20,8 @@ package org.quelea.windows.main;
 import java.awt.BorderLayout;
 import java.util.ArrayList;
 import java.util.List;
-import javax.swing.BoxLayout;
+import javafx.scene.layout.VBox;
 import javax.swing.JFrame;
-import javax.swing.JPanel;
 import org.quelea.Application;
 import org.quelea.utils.Utils;
 
@@ -31,7 +30,7 @@ import org.quelea.utils.Utils;
  * currently processing.
  * @author Michael
  */
-public class StatusPanelGroup extends JPanel {
+public class StatusPanelGroup extends VBox {
 
     private List<StatusPanel> panels;
 
@@ -40,7 +39,6 @@ public class StatusPanelGroup extends JPanel {
      */
     public StatusPanelGroup() {
         panels = new ArrayList<>();
-        setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
     }
 
     /**
@@ -50,10 +48,8 @@ public class StatusPanelGroup extends JPanel {
      */
     public synchronized StatusPanel addPanel(String label) {
         StatusPanel panel = new StatusPanel(this, label, panels.size());
-        add(panel);
+        getChildren().add(panel);
         panels.add(panel);
-        Application.get().getMainWindow().validate();
-        Application.get().getMainWindow().repaint();
         return panel;
     }
 
@@ -64,33 +60,9 @@ public class StatusPanelGroup extends JPanel {
     public void removePanel(int index) {
         StatusPanel panel = panels.get(index);
         if (panel != null) {
-            remove(panel);
-            Application.get().getMainWindow().validate();
-            Application.get().getMainWindow().repaint();
+            getChildren().remove(panel);
             panels.set(index, null);
         }
     }
 
-    /**
-     * Testing.
-     * @param args 
-     */
-    public static void main(String[] args) {
-        JFrame frame = new JFrame();
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setLayout(new BorderLayout());
-        StatusPanelGroup group = new StatusPanelGroup();
-
-        StatusPanel panel = group.addPanel("Hello");
-        group.addPanel("Hello2");
-        group.addPanel("Hello3");
-        group.addPanel("Hello4");
-
-        frame.add(group, BorderLayout.CENTER);
-        frame.pack();
-        frame.setVisible(true);
-
-        Utils.sleep(1000);
-        panel.done();
-    }
 }
