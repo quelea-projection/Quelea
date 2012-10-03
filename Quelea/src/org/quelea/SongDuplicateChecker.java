@@ -17,10 +17,8 @@
  */
 package org.quelea;
 
-import com.amd.aparapi.Kernel;
 import org.apache.commons.lang.StringUtils;
 import org.quelea.displayable.Song;
-import org.quelea.utils.opencl.LevenshteinDistance;
 
 /**
  * A class responsible for checking a new song against existing songs in the

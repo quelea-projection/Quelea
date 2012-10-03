@@ -17,22 +17,20 @@
  */
 package org.quelea.tags;
 
-import java.awt.BorderLayout;
-import java.awt.Dimension;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
-import javax.swing.JDialog;
-import javax.swing.JScrollPane;
-import org.quelea.Application;
+import javafx.scene.Scene;
+import javafx.scene.image.Image;
+import javafx.scene.layout.BorderPane;
+import javafx.stage.Modality;
+import javafx.stage.Stage;
+import javafx.stage.StageStyle;
 import org.quelea.languages.LabelGrabber;
-import org.quelea.utils.Utils;
 import org.quelea.windows.library.LibrarySongList;
 
 /**
  * A dialog used for finding songs with certain tags.
  * @author Michael
  */
-public class TagDialog extends JDialog {
+public class TagDialog extends Stage {
 
     private TagEntryPanel tagEntryPanel;
     private LibrarySongList list;
@@ -41,17 +39,20 @@ public class TagDialog extends JDialog {
      * Create a new tag dialog.
      */
     public TagDialog() {
-//        super(Application.get().getMainWindow(), LabelGrabber.INSTANCE.getLabel("filter.tag"), ModalityType.MODELESS);
-        setIconImage(Utils.getImage("icons/tag.png", 16, 16));
+        initModality(Modality.WINDOW_MODAL);
+        initStyle(StageStyle.UTILITY);
+        setTitle(LabelGrabber.INSTANCE.getLabel("filter.tag"));
+        
+        getIcons().add(new Image("file:icons/tag.png", 16, 16, false, true));
         list = new LibrarySongList(false);
         
-        setLayout(new BorderLayout());
+        BorderPane mainPane = new BorderPane();
+        
         tagEntryPanel = new TagEntryPanel(list, false, true);
-        add(tagEntryPanel, BorderLayout.NORTH);
-        JScrollPane scroll = new JScrollPane(null);
-        scroll.setPreferredSize(new Dimension(500, 500));
-        add(scroll, BorderLayout.CENTER);
-        pack();
+        mainPane.setTop(tagEntryPanel);
+        mainPane.setCenter(list);
+        
+        setScene(new Scene(mainPane));
     }
     
     /**
@@ -59,33 +60,5 @@ public class TagDialog extends JDialog {
      */
     public void reloadTags() {
         tagEntryPanel.reloadTags();
-    }
-
-    /**
-     * Overrides the default behaviour so that when set to visible the tags
-     * are reloaded and centred on parent.
-     * @param visible true if visible, false otherwise.
-     */
-    @Override
-    public void setVisible(boolean visible) {
-        reloadTags();
-        setLocationRelativeTo(getParent());
-        super.setVisible(visible);
-    }
-
-    /**
-     * Testing.
-     * @param args 
-     */
-    public static void main(String[] args) {
-        TagDialog tagDialog = new TagDialog();
-        tagDialog.addWindowListener(new WindowAdapter() {
-
-            @Override
-            public void windowClosing(WindowEvent e) {
-                System.exit(0);
-            }
-        });
-        tagDialog.setVisible(true);
     }
 }

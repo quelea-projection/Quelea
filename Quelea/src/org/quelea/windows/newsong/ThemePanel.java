@@ -17,66 +17,61 @@
  */
 package org.quelea.windows.newsong;
 
-import java.awt.BorderLayout;
-import java.awt.CardLayout;
-import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.FlowLayout;
-import java.awt.Font;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
-import javax.swing.BoxLayout;
-import javax.swing.JComboBox;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JTextField;
-import javax.swing.JToggleButton;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
+import javafx.event.EventHandler;
+import javafx.scene.control.ColorPicker;
+import javafx.scene.control.ComboBox;
+import javafx.scene.control.Label;
+import javafx.scene.control.TextField;
+import javafx.scene.control.ToggleButton;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
+import javafx.scene.text.Font;
+import name.antonsmirnov.javafx.dialog.Dialog;
 import org.quelea.Background;
 import org.quelea.Theme;
 import org.quelea.languages.LabelGrabber;
 import org.quelea.utils.Utils;
+import org.quelea.windows.main.CardPane;
 import org.quelea.windows.main.LyricCanvas;
 
 /**
  * The panel where the user chooses what visual theme a song should have.
  * @author Michael
  */
-public class ThemePanel extends JPanel {
+public class ThemePanel extends BorderPane {
 
     private static final int THRESHOLD = 30;
     public static final String[] SAMPLE_LYRICS = {"Amazing Grace how sweet the sound", "That saved a wretch like me", "I once was lost but now am found", "Was blind, but now I see."};
-    private JPanel fontToolbar;
-    private JPanel backgroundPanel;
-    private JComboBox<String> fontSelection;
-    private ColourButton fontColourButton;
-    private ColourButton backgroundColourButton;
-    private JComboBox<String> backgroundTypeSelect;
-    private JTextField backgroundImageLocation;
-    private JToggleButton boldButton;
-    private JToggleButton italicButton;
+    private HBox fontToolbar;
+    private HBox backgroundPanel;
+    private ComboBox<String> fontSelection;
+    private ColorPicker fontColorPicker;
+    private ColorPicker backgroundColorPicker;
+    private ComboBox<String> backgroundTypeSelect;
+    private TextField backgroundImageLocation;
+    private ToggleButton boldButton;
+    private ToggleButton italicButton;
     private final LyricCanvas canvas;
 
     /**
      * Create and initialise the theme panel.
      */
     public ThemePanel() {
-        setName(LabelGrabber.INSTANCE.getLabel("theme.heading"));
-        setLayout(new BorderLayout());
         canvas = new LyricCanvas(false, false);
         canvas.setText(SAMPLE_LYRICS, null);
-//        add(canvas, BorderLayout.CENTER);
-        JPanel toolbarPanel = new JPanel();
-        toolbarPanel.setLayout(new BoxLayout(toolbarPanel, BoxLayout.Y_AXIS));
+        setCenter(canvas);
+        VBox toolbarPanel = new VBox();
         setupFontToolbar();
-        toolbarPanel.add(fontToolbar);
+        toolbarPanel.getChildren().add(fontToolbar);
         setupBackgroundToolbar();
-        toolbarPanel.add(backgroundPanel);
-        backgroundPanel.setMaximumSize(new Dimension(1000, 10));
-        add(toolbarPanel, BorderLayout.NORTH);
+        toolbarPanel.getChildren().add(backgroundPanel);
+        setTop(toolbarPanel);
         updateTheme(false);
     }
 
@@ -84,58 +79,56 @@ public class ThemePanel extends JPanel {
      * Setup the background toolbar.
      */
     private void setupBackgroundToolbar() {
-        backgroundPanel = new JPanel();
-        backgroundPanel.setLayout(new FlowLayout(FlowLayout.LEFT));
-        final JPanel backgroundChooserPanel = new JPanel();
-        final CardLayout layout = new CardLayout();
-        backgroundChooserPanel.setLayout(layout);
+        backgroundPanel = new HBox();
+        final CardPane backgroundChooserPanel = new CardPane();
 
-        backgroundTypeSelect = new JComboBox<>();
-        backgroundTypeSelect.addItem(LabelGrabber.INSTANCE.getLabel("color.theme.label"));
-        backgroundTypeSelect.addItem(LabelGrabber.INSTANCE.getLabel("image.theme.label"));
-        backgroundTypeSelect.addActionListener(new ActionListener() {
+        backgroundTypeSelect = new ComboBox<>();
+        backgroundTypeSelect.getItems().add(LabelGrabber.INSTANCE.getLabel("color.theme.label"));
+        backgroundTypeSelect.getItems().add(LabelGrabber.INSTANCE.getLabel("image.theme.label"));
+        backgroundTypeSelect.setOnAction(new EventHandler<javafx.event.ActionEvent>() {
 
-            public void actionPerformed(ActionEvent e) {
+            @Override
+            public void handle(javafx.event.ActionEvent t) {
                 updateTheme(false);
             }
         });
-        backgroundPanel.add(new JLabel(LabelGrabber.INSTANCE.getLabel("background.theme.label")+":"));
-        backgroundPanel.add(backgroundTypeSelect);
-        backgroundPanel.add(backgroundChooserPanel);
+        backgroundPanel.getChildren().add(new Label(LabelGrabber.INSTANCE.getLabel("background.theme.label")+":"));
+        backgroundPanel.getChildren().add(backgroundTypeSelect);
+        backgroundPanel.getChildren().add(backgroundChooserPanel);
 
-        final JPanel colourPanel = new JPanel();
-        colourPanel.setLayout(new FlowLayout(FlowLayout.LEFT));
+        final HBox colourPanel = new HBox();
 
-        backgroundColourButton = new ColourButton(Color.BLACK);
-        colourPanel.add(backgroundColourButton);
-        backgroundColourButton.getColourSelectionWindow().getConfirmButton().addActionListener(new ActionListener() {
+        backgroundColorPicker = new ColorPicker(Color.BLACK);
+        colourPanel.getChildren().add(backgroundColorPicker);
+        backgroundColorPicker.valueProperty().addListener(new ChangeListener<Color>() {
 
-            public void actionPerformed(ActionEvent e) {
+            @Override
+            public void changed(ObservableValue<? extends Color> ov, Color t, Color t1) {
                 updateTheme(true);
             }
         });
-
-        final JPanel imagePanel = new JPanel();
-        imagePanel.setLayout(new FlowLayout(FlowLayout.LEFT));
-        backgroundImageLocation = new JTextField(25);
+        
+        final HBox imagePanel = new HBox();
+        backgroundImageLocation = new TextField();
         backgroundImageLocation.setEditable(false);
-        imagePanel.add(backgroundImageLocation);
-        imagePanel.add(new ImageButton(backgroundImageLocation, canvas));
+        imagePanel.getChildren().add(backgroundImageLocation);
+        imagePanel.getChildren().add(new ImageButton(backgroundImageLocation, canvas));
 
         backgroundChooserPanel.add(colourPanel, "colour");
         backgroundChooserPanel.add(imagePanel, "image");
 
-        backgroundTypeSelect.addActionListener(new ActionListener() {
+        backgroundTypeSelect.setOnAction(new EventHandler<javafx.event.ActionEvent>() {
 
-            public void actionPerformed(ActionEvent e) {
-                if (backgroundTypeSelect.getModel().getSelectedItem().equals(LabelGrabber.INSTANCE.getLabel("color.theme.label"))) {
-                    layout.show(backgroundChooserPanel, "colour");
+            @Override
+            public void handle(javafx.event.ActionEvent t) {
+                if(backgroundTypeSelect.getSelectionModel().getSelectedItem().equals(LabelGrabber.INSTANCE.getLabel("color.theme.label"))) {
+                    backgroundChooserPanel.show("colour");
                 }
-                else if (backgroundTypeSelect.getModel().getSelectedItem().equals(LabelGrabber.INSTANCE.getLabel("image.theme.label"))) {
-                    layout.show(backgroundChooserPanel, "image");
+                else if(backgroundTypeSelect.getSelectionModel().getSelectedItem().equals(LabelGrabber.INSTANCE.getLabel("image.theme.label"))) {
+                    backgroundChooserPanel.show("image");
                 }
                 else {
-                    throw new AssertionError("Bug - " + backgroundTypeSelect.getModel().getSelectedItem() + " is an unknown selection value");
+                    throw new AssertionError("Bug - " + backgroundTypeSelect.getSelectionModel().getSelectedItem() + " is an unknown selection value");
                 }
             }
         });
@@ -145,44 +138,45 @@ public class ThemePanel extends JPanel {
      * Setup the font toolbar.
      */
     private void setupFontToolbar() {
-        fontToolbar = new JPanel();
-        fontToolbar.setLayout(new FlowLayout(FlowLayout.LEFT));
-        fontToolbar.add(new JLabel(LabelGrabber.INSTANCE.getLabel("font.theme.label")+":"));
-        fontSelection = new JComboBox<>();
+        fontToolbar = new HBox();
+        fontToolbar.getChildren().add(new Label(LabelGrabber.INSTANCE.getLabel("font.theme.label")+":"));
+        fontSelection = new ComboBox<>();
         for (String font : Utils.getAllFonts()) {
-            fontSelection.addItem(font);
+            fontSelection.itemsProperty().get().add(font);
         }
-        fontSelection.addItemListener(new ItemListener() {
+        fontSelection.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
 
-            public void itemStateChanged(ItemEvent e) {
+            @Override
+            public void changed(ObservableValue<? extends String> ov, String t, String t1) {
                 updateTheme(false);
             }
         });
-        fontToolbar.add(fontSelection);
-        boldButton = new JToggleButton(Utils.getImageIcon("icons/bold.png"));
-        boldButton.addActionListener(new ActionListener() {
+        fontToolbar.getChildren().add(fontSelection);
+        boldButton = new ToggleButton("",new ImageView(new Image("file:icons/bold.png")));
+        boldButton.setOnAction(new EventHandler<javafx.event.ActionEvent>() {
 
-            public void actionPerformed(ActionEvent e) {
+            @Override
+            public void handle(javafx.event.ActionEvent t) {
                 updateTheme(false);
             }
         });
-        fontToolbar.add(boldButton);
-        italicButton = new JToggleButton(Utils.getImageIcon("icons/italic.png"));
-        italicButton.addActionListener(new ActionListener() {
-
-            public void actionPerformed(ActionEvent e) {
+        fontToolbar.getChildren().add(boldButton);
+        italicButton = new ToggleButton("",new ImageView(new Image("file:icons/italic.png")));
+        italicButton.setOnAction(new EventHandler<javafx.event.ActionEvent>() {
+            @Override
+            public void handle(javafx.event.ActionEvent t) {
                 updateTheme(false);
             }
         });
-        fontToolbar.add(italicButton);
-        fontColourButton = new ColourButton(Color.WHITE);
-        fontColourButton.getColourSelectionWindow().getConfirmButton().addActionListener(new ActionListener() {
-
-            public void actionPerformed(ActionEvent e) {
+        fontToolbar.getChildren().add(italicButton);
+        fontColorPicker = new ColorPicker(Color.WHITE);
+        fontColorPicker.valueProperty().addListener(new ChangeListener<Color>() {
+            @Override
+            public void changed(ObservableValue<? extends Color> ov, Color t, Color t1) {
                 updateTheme(true);
             }
         });
-        fontToolbar.add(fontColourButton);
+        fontToolbar.getChildren().add(fontColorPicker);
 
     }
 
@@ -192,7 +186,7 @@ public class ThemePanel extends JPanel {
     private void updateTheme(boolean warning) {
         Theme theme = getTheme();
         if (warning && theme.getBackground().isColour()) {
-//            checkAccessibility(theme.getFontColor(), theme.getBackground().getColour());
+            checkAccessibility(theme.getFontColor(), theme.getBackground().getColour());
         }
         canvas.setTheme(theme);
     }
@@ -205,35 +199,23 @@ public class ThemePanel extends JPanel {
         if (theme == null) {
             theme = Theme.DEFAULT_THEME;
         }
-//        Font font = theme.getFont();
-//        if (font.isBold()) {
-//            boldButton.setSelected(true);
-//        }
-//        if (font.isItalic()) {
-//            italicButton.setSelected(true);
-//        }
-//        int fontSize = font.getSize();
-//        if (fontSize % 2 != 0) {
-//            fontSize--;
-//        }
-//        fontSelection.setSelectedItem(font.getFamily());
-//        fontColourButton.getColourSelectionWindow().setSelectedColour(theme.getFontColor());
-//        fontColourButton.setIconColour(theme.getFontColor());
-//        Background background = theme.getBackground();
-//        if (background.isColour()) {
-//            backgroundTypeSelect.getModel().setSelectedItem(LabelGrabber.INSTANCE.getLabel("color.theme.label"));
-//            backgroundColourButton.getColourSelectionWindow().setSelectedColour(background.getColour());
-//            backgroundColourButton.setIconColour(background.getColour());
-//        }
-//        else {
-//            backgroundTypeSelect.getModel().setSelectedItem(LabelGrabber.INSTANCE.getLabel("image.theme.label"));
-//            backgroundImageLocation.setText(background.getImageLocation());
-//        }
+        Font font = theme.getFont();
+        fontSelection.getSelectionModel().select(font.getFamily());
+        fontColorPicker.setValue(theme.getFontColor());
+        Background background = theme.getBackground();
+        if (background.isColour()) {
+            backgroundTypeSelect.getSelectionModel().select(LabelGrabber.INSTANCE.getLabel("color.theme.label"));
+            backgroundColorPicker.setValue(background.getColour());
+        }
+        else {
+            backgroundTypeSelect.getSelectionModel().select(LabelGrabber.INSTANCE.getLabel("image.theme.label"));
+            backgroundImageLocation.setText(background.getImageLocation());
+        }
         updateTheme(false);
     }
 
     /**
-     * Check whether the two colours are too closely mathced to read clearly.
+     * Check whether the two colours are too closely matched to read clearly.
      * If they are, display a warning message.
      * @param col1 first colour.
      * @param col2 second colour.
@@ -241,8 +223,7 @@ public class ThemePanel extends JPanel {
     private void checkAccessibility(Color col1, Color col2) {
         int diff = Utils.getColorDifference(col1, col2);
         if (diff < THRESHOLD) {
-            JOptionPane.showMessageDialog(this, LabelGrabber.INSTANCE.getLabel("similar.colors.text"),
-                    LabelGrabber.INSTANCE.getLabel("warning.label"), JOptionPane.WARNING_MESSAGE);
+            Dialog.showInfo(LabelGrabber.INSTANCE.getLabel("warning.label"), LabelGrabber.INSTANCE.getLabel("similar.colors.text"));
         }
     }
 
@@ -259,37 +240,21 @@ public class ThemePanel extends JPanel {
      * @return the current theme.
      */
     public Theme getTheme() {
-        int fontStyle = 0;
-        if (boldButton.isSelected()) {
-            fontStyle |= Font.BOLD;
-        }
-        if (italicButton.isSelected()) {
-            fontStyle |= Font.ITALIC;
-        }
-        Font font = new Font(fontSelection.getSelectedItem().toString(), fontStyle, 72);
+        Font font = new Font(fontSelection.getSelectionModel().getSelectedItem(),  72);
         Background background;
-        if (backgroundTypeSelect.getModel().getSelectedItem().equals(LabelGrabber.INSTANCE.getLabel("color.theme.label")) || backgroundImageLocation.getText().isEmpty()) {
-//            background = new Background(backgroundColourButton.getColourSelectionWindow().getSelectedColour());
+        if(backgroundTypeSelect.getSelectionModel().getSelectedItem()==null) {
+            return Theme.DEFAULT_THEME;
         }
-        else if (backgroundTypeSelect.getModel().getSelectedItem().equals(LabelGrabber.INSTANCE.getLabel("image.theme.label"))) {
+        if (backgroundTypeSelect.getSelectionModel().getSelectedItem().equals(LabelGrabber.INSTANCE.getLabel("color.theme.label")) || backgroundImageLocation.getText().isEmpty()) {
+            background = new Background(backgroundColorPicker.getValue());
+        }
+        else if (backgroundTypeSelect.getSelectionModel().getSelectedItem().equals(LabelGrabber.INSTANCE.getLabel("image.theme.label"))) {
             background = new Background(backgroundImageLocation.getText(), null);
         }
         else {
-            throw new AssertionError("Bug - " + backgroundTypeSelect.getModel().getSelectedItem() + " is an unknown selection value");
+            throw new AssertionError("Bug - " + backgroundTypeSelect.getSelectionModel().getSelectedItem() + " is an unknown selection value");
         }
-//        return new Theme(font, fontColourButton.getColourSelectionWindow().getSelectedColour(), background);
-        return null;
+        return new Theme(font, fontColorPicker.getValue(), background);
     }
 
-    /**
-     * Test the themepanel.
-     * @param args 
-     */
-    public static void main(String[] args) {
-        JFrame frame = new JFrame();
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.add(new ThemePanel());
-        frame.setSize(800, 600);
-        frame.setVisible(true);
-    }
 }

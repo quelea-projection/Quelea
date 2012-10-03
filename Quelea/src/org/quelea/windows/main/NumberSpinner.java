@@ -16,7 +16,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.quelea;
+package org.quelea.windows.main;
 
 import java.math.BigDecimal;
 import java.text.NumberFormat;
@@ -178,6 +178,9 @@ public class NumberSpinner extends HBox {
     private void decrement() {
         Integer value = numberField.getNumber();
         value -= stepWitdhProperty.get();
+        if(value < 0) {
+            value = 0;
+        }
         numberField.setNumber(value);
     }
 

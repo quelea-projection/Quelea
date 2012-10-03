@@ -19,9 +19,13 @@ package org.quelea.utils;
 
 import javax.swing.filechooser.FileFilter;
 import java.io.File;
+import javafx.stage.FileChooser;
+import org.quelea.languages.LabelGrabber;
 
 /**
- * A class that contains all the file filters as a number of static final fields.
+ * A class that contains all the file filters as a number of static final
+ * fields.
+ * <p/>
  * @author Michael
  */
 public final class FileFilters {
@@ -30,10 +34,9 @@ public final class FileFilters {
      * The file filter used for the survivor songbooks.
      */
     public static final FileFilter SURVIVOR_SONGBOOK = new FileFilter() {
-
         @Override
         public boolean accept(File f) {
-            if (f.isDirectory()
+            if(f.isDirectory()
                     || f.getName().trim().equalsIgnoreCase("acetates.pdf")) {
                 return true;
             }
@@ -49,7 +52,6 @@ public final class FileFilters {
      * Accept only folders.
      */
     public static final FileFilter DIR_ONLY = new FileFilter() {
-
         @Override
         public boolean accept(File f) {
             return f.isDirectory();
@@ -61,33 +63,20 @@ public final class FileFilters {
         }
     };
     /**
-     * Accept only folders.
+     * Accept XML bbibles.
      */
-    public static final FileFilter XML_BIBLE = new FileFilter() {
-
-        @Override
-        public boolean accept(File f) {
-            if (f.isDirectory()) {
-                return true;
-            }
-            return f.getName().toLowerCase().endsWith(".xml");
-        }
-
-        @Override
-        public String getDescription() {
-            return "XML bibles";
-        }
-    };
+    public static final FileChooser.ExtensionFilter XML_BIBLE = new FileChooser.ExtensionFilter("XML bibles (*.xml)", "*.xml");
+    
+    public static final FileChooser.ExtensionFilter IMAGES_ONLY = new FileChooser.ExtensionFilter(LabelGrabber.INSTANCE.getLabel("image.files.description"), Utils.getImageExtensions());
     /**
      * The file filter used for Quelea song packs.
      */
     public static final FileFilter SONG_PACK = new FileFilter() {
-
         private final String extension = QueleaProperties.get().getSongPackExtension();
 
         @Override
         public boolean accept(File f) {
-            if (f.isDirectory()) {
+            if(f.isDirectory()) {
                 return true;
             }
             return f.getName().toLowerCase().endsWith("." + extension);
@@ -102,12 +91,11 @@ public final class FileFilters {
      * The file filter used for Quelea song packs.
      */
     public static final FileFilter SCHEDULE = new FileFilter() {
-
         private final String extension = QueleaProperties.get().getScheduleExtension();
 
         @Override
         public boolean accept(File f) {
-            if (f.isDirectory()) {
+            if(f.isDirectory()) {
                 return true;
             }
             return f.getName().toLowerCase().endsWith("." + extension);

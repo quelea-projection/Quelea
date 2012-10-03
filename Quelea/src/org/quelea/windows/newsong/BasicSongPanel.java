@@ -16,37 +16,27 @@
  */
 package org.quelea.windows.newsong;
 
-import com.inet.jortho.SpellChecker;
-import java.awt.BorderLayout;
-import java.awt.Color;
 import java.awt.Component;
 import java.awt.Container;
 import java.awt.FocusTraversalPolicy;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.FocusEvent;
-import java.awt.event.FocusListener;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.swing.BoxLayout;
-import javax.swing.JButton;
-import javax.swing.JLabel;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTextArea;
-import javax.swing.JTextField;
-import javax.swing.JToolBar;
-import javax.swing.SpringLayout;
-import javax.swing.SwingUtilities;
-import javax.swing.event.DocumentEvent;
-import javax.swing.event.DocumentListener;
-import javax.swing.text.BadLocationException;
-import javax.swing.text.DefaultHighlighter.DefaultHighlightPainter;
-import javax.swing.text.Highlighter;
+import javafx.event.EventHandler;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.control.TextArea;
+import javafx.scene.control.TextField;
+import javafx.scene.control.ToolBar;
+import javafx.scene.control.Tooltip;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.GridPane;
+import javafx.scene.layout.Priority;
+import javafx.scene.layout.VBox;
+import name.antonsmirnov.javafx.dialog.Dialog;
 import org.quelea.Application;
 import org.quelea.chord.ChordLineTransposer;
 import org.quelea.chord.ChordTransposer;
@@ -56,100 +46,83 @@ import org.quelea.languages.LabelGrabber;
 import org.quelea.utils.LineTypeChecker;
 import org.quelea.utils.LineTypeChecker.Type;
 import org.quelea.utils.LoggerUtils;
-import org.quelea.utils.SpringUtilities;
-import org.quelea.utils.Utils;
 
 /**
  * The panel that manages the basic input of song information - the title,
  * author and lyrics.
- *
+ * <p/>
  * @author Michael
  */
-public class BasicSongPanel extends JPanel {
+public class BasicSongPanel extends BorderPane {
 
     private static final Logger LOGGER = LoggerUtils.getLogger();
-    private final JTextArea lyricsArea;
-    private FocusListener clearListener;
-    private final JTextField titleField;
-    private final JTextField authorField;
-    private final JButton transposeButton;
+    private final TextArea lyricsArea;
+    private final TextField titleField;
+    private final TextField authorField;
+    private final Button transposeButton;
     private final TransposeDialog transposeDialog;
 
     /**
      * Create and initialise the song panel.
      */
     public BasicSongPanel() {
-        setName(LabelGrabber.INSTANCE.getLabel("basic.information.heading"));
-        setLayout(new BorderLayout());
-        JPanel centrePanel = new JPanel();
-        centrePanel.setLayout(new BoxLayout(centrePanel, BoxLayout.Y_AXIS));
-
-        JPanel titleAuthorPanel = new JPanel();
-        titleAuthorPanel.setLayout(new BorderLayout());
-
-        titleField = new JTextField();
-        titleField.setName(LabelGrabber.INSTANCE.getLabel("title.label"));
-
-        authorField = new JTextField();
-        authorField.setName(LabelGrabber.INSTANCE.getLabel("author.label"));
-
-
+        VBox centrePanel = new VBox();
         transposeDialog = new TransposeDialog();
+        GridPane topPanel = new GridPane();
+        
+        titleField = new TextField();
+        Label titleLabel = new Label(LabelGrabber.INSTANCE.getLabel("title.label"));
+        GridPane.setConstraints(titleLabel, 1, 1);
+        topPanel.getChildren().add(titleLabel);
+        titleLabel.setLabelFor(titleField);
+        GridPane.setConstraints(titleField, 2, 1, 4, 1);
+        topPanel.getChildren().add(titleField);
+        
+        authorField = new TextField();
+        Label authorLabel = new Label(LabelGrabber.INSTANCE.getLabel("author.label"));
+        GridPane.setConstraints(authorLabel, 1, 2);
+        topPanel.getChildren().add(authorLabel);
+        authorLabel.setLabelFor(authorField);
+        GridPane.setConstraints(authorField, 2, 2);
+        topPanel.getChildren().add(authorField);
 
-        JTextField[] attributes = new JTextField[]{titleField, authorField};
 
-        JPanel topPanel = new JPanel(new SpringLayout());
-        for(int i = 0; i < attributes.length; i++) {
-            JLabel label = new JLabel(attributes[i].getName(), JLabel.TRAILING);
-            topPanel.add(label);
-            label.setLabelFor(attributes[i]);
-            topPanel.add(attributes[i]);
-        }
-        SpringUtilities.makeCompactGrid(topPanel, attributes.length, 2, 6, 6, 6, 6);
-        centrePanel.add(topPanel);
-        lyricsArea = new JTextArea(25, 50);
-        SpellChecker.register(lyricsArea);
-        lyricsArea.getDocument().addDocumentListener(new DocumentListener() {
-
-            public void insertUpdate(DocumentEvent e) {
-                update();
-            }
-
-            public void removeUpdate(DocumentEvent e) {
-                update();
-            }
-
-            public void changedUpdate(DocumentEvent e) {
-                update();
-            }
-
-            private void update() {
-                checkChords();
-                doHighlight();
-            }
-        });
-        JPanel lyricsPanel = new JPanel();
-        lyricsPanel.setLayout(new BoxLayout(lyricsPanel, BoxLayout.Y_AXIS));
-        JToolBar lyricsToolbar = new JToolBar(LabelGrabber.INSTANCE.getLabel("tools.label"), JToolBar.HORIZONTAL);
-        lyricsToolbar.setFloatable(false);
-        lyricsToolbar.add(getDictButton());
-        lyricsToolbar.add(getAposButton());
-        lyricsToolbar.add(getTrimLinesButton());
+        centrePanel.getChildren().add(topPanel);
+        lyricsArea = new TextArea();
+//        SpellChecker.register(lyricsArea); //TODO: Spell check.
+        
+//        lyricsArea.getDocument().addDocumentListener(new DocumentListener() { //TODO: Highlight
+//            public void insertUpdate(DocumentEvent e) {
+//                update();
+//            }
+//
+//            public void removeUpdate(DocumentEvent e) {
+//                update();
+//            }
+//
+//            public void changedUpdate(DocumentEvent e) {
+//                update();
+//            }
+//
+//            private void update() {
+//                checkChords();
+//                doHighlight();
+//            }
+//        });
+        
+        VBox lyricsPanel = new VBox();
+        VBox.setVgrow(lyricsPanel, Priority.ALWAYS);
+        ToolBar lyricsToolbar = new ToolBar();
+        lyricsToolbar.getItems().add(getDictButton());
+        lyricsToolbar.getItems().add(getAposButton());
+        lyricsToolbar.getItems().add(getTrimLinesButton());
         transposeButton = getTransposeButton();
-        lyricsToolbar.add(transposeButton);
-        lyricsPanel.add(lyricsToolbar);
-        lyricsPanel.add(new JScrollPane(lyricsArea));
-        centrePanel.add(lyricsPanel);
-        add(centrePanel, BorderLayout.CENTER);
-
-        // Added by Ben Goodwin
-        Component[] order = new Component[3];
-        order[0] = titleField;
-        order[1] = authorField;
-        order[2] = lyricsArea;
-        FocusTraversalPolicy customFocus = this.new customFTPolicy(order);
-        centrePanel.setFocusTraversalPolicy(customFocus);
-        centrePanel.setFocusCycleRoot(true);
+        lyricsToolbar.getItems().add(transposeButton);
+        lyricsPanel.getChildren().add(lyricsToolbar);
+        VBox.setVgrow(lyricsArea, Priority.ALWAYS);
+        lyricsPanel.getChildren().add(lyricsArea);
+        centrePanel.getChildren().add(lyricsPanel);
+        setCenter(centrePanel);
     }
 
     /**
@@ -160,80 +133,75 @@ public class BasicSongPanel extends JPanel {
         String[] lines = lyricsArea.getText().split("\n");
         for(String line : lines) {
             if(new LineTypeChecker(line).getLineType() == Type.CHORDS) {
-                transposeButton.setEnabled(true);
+                transposeButton.setDisable(false);
                 return;
             }
         }
-        transposeButton.setEnabled(false);
+        transposeButton.setDisable(true);
     }
     private final List<Object> highlights = new ArrayList<>();
 
     /**
      * Manage the highlighting.
      */
-    private void doHighlight() {
-        for(Object highlight : highlights) {
-            lyricsArea.getHighlighter().removeHighlight(highlight);
-        }
-        highlights.clear();
-        try {
-            Highlighter hilite = lyricsArea.getHighlighter();
-            String text = lyricsArea.getText();
-            String[] lines = text.split("\n");
-            List<HighlightIndex> indexes = new ArrayList<>();
-            int offset = 0;
-            for(int i = 0; i < lines.length; i++) {
-                String line = lines[i];
-                LineTypeChecker.Type type = new LineTypeChecker(line).getLineType();
-                if(type == LineTypeChecker.Type.TITLE && i > 0 && !lines[i - 1].trim().isEmpty()) {
-                    type = LineTypeChecker.Type.NORMAL;
-                }
-                if(type != LineTypeChecker.Type.NORMAL) {
-                    int startIndex = offset;
-                    int endIndex = startIndex + line.length();
-                    Color highlightColor = type.getHighlightColor();
-                    if(highlightColor != null) {
-                        indexes.add(new HighlightIndex(startIndex, endIndex, highlightColor));
-                    }
-                }
-                offset += line.length() + 1;
-            }
-
-            for(HighlightIndex index : indexes) {
-                highlights.add(hilite.addHighlight(index.getStartIndex(), index.getEndIndex(), new DefaultHighlightPainter(index.getHighlightColor())));
-            }
-        }
-        catch (BadLocationException ex) {
-            LOGGER.log(Level.SEVERE, "Bug in highlighting", ex);
-        }
-    }
+//    private void doHighlight() {
+//        for(Object highlight : highlights) {
+//            lyricsArea.getHighlighter().removeHighlight(highlight);
+//        }
+//        highlights.clear();
+//        try {
+//            Highlighter hilite = lyricsArea.getHighlighter();
+//            String text = lyricsArea.getText();
+//            String[] lines = text.split("\n");
+//            List<HighlightIndex> indexes = new ArrayList<>();
+//            int offset = 0;
+//            for(int i = 0; i < lines.length; i++) {
+//                String line = lines[i];
+//                LineTypeChecker.Type type = new LineTypeChecker(line).getLineType();
+//                if(type == LineTypeChecker.Type.TITLE && i > 0 && !lines[i - 1].trim().isEmpty()) {
+//                    type = LineTypeChecker.Type.NORMAL;
+//                }
+//                if(type != LineTypeChecker.Type.NORMAL) {
+//                    int startIndex = offset;
+//                    int endIndex = startIndex + line.length();
+//                    Color highlightColor = type.getHighlightColor();
+//                    if(highlightColor != null) {
+//                        indexes.add(new HighlightIndex(startIndex, endIndex, highlightColor));
+//                    }
+//                }
+//                offset += line.length() + 1;
+//            }
+//
+//            for(HighlightIndex index : indexes) {
+//                highlights.add(hilite.addHighlight(index.getStartIndex(), index.getEndIndex(), new DefaultHighlightPainter(index.getHighlightColor())));
+//            }
+//        }
+//        catch(BadLocationException ex) {
+//            LOGGER.log(Level.SEVERE, "Bug in highlighting", ex);
+//        }
+//    }
 
     /**
      * Get the button used for transposing the chords.
-     *
+     * <p/>
      * @return the button used for transposing the chords.
      */
-    private JButton getTransposeButton() {
-        JButton ret = new JButton(Utils.getImageIcon("icons/transpose.png", 24, 24));
-        ret.setToolTipText(LabelGrabber.INSTANCE.getLabel("transpose.tooltip"));
-        ret.addActionListener(new ActionListener() {
-
+    private Button getTransposeButton() {
+        Button ret = new Button("", new ImageView(new Image("file:icons/transpose.png", 24, 24, false, true)));
+        ret.setTooltip(new Tooltip(LabelGrabber.INSTANCE.getLabel("transpose.tooltip")));
+        ret.setOnAction(new EventHandler<javafx.event.ActionEvent>() {
             @Override
-            public void actionPerformed(ActionEvent e) {
-
+            public void handle(javafx.event.ActionEvent t) {
                 String originalKey = getKey(0);
                 if(originalKey == null) {
-//                    JOptionPane.showMessageDialog(Application.get().getMainWindow(),
-//                            LabelGrabber.INSTANCE.getLabel("no.chords.message"),
-//                            LabelGrabber.INSTANCE.getLabel("no.chords.title"),
-//                            JOptionPane.INFORMATION_MESSAGE);
+                    Dialog.showInfo(LabelGrabber.INSTANCE.getLabel("no.chords.title"), LabelGrabber.INSTANCE.getLabel("no.chords.message"));
                     return;
                 }
                 transposeDialog.setKey(originalKey);
-                transposeDialog.setVisible(true);
+                transposeDialog.show();
                 int semitones = transposeDialog.getSemitones();
 
-                JTextField keyField = Application.get().getMainWindow().getSongEntryWindow().getDetailedSongPanel().getKeyField();
+                TextField keyField = Application.get().getMainWindow().getSongEntryWindow().getDetailedSongPanel().getKeyField();
                 if(!keyField.getText().isEmpty()) {
                     keyField.setText(new ChordTransposer(keyField.getText()).transpose(semitones, null));
                 }
@@ -252,7 +220,6 @@ public class BasicSongPanel extends JPanel {
                 }
                 int pos = getLyricsField().getCaretPosition();
                 getLyricsField().setText(newText.toString());
-                getLyricsField().setCaretPosition(pos);
             }
         });
         return ret;
@@ -261,12 +228,12 @@ public class BasicSongPanel extends JPanel {
     /**
      * Get the given key of the song (or as best we can work out if it's not
      * specified) transposed by the given number of semitones.
-     *
+     * <p/>
      * @param semitones the number of semitones to transpose the key.
      * @return the key, transposed.
      */
     private String getKey(int semitones) {
-        JTextField keyField = Application.get().getMainWindow().getSongEntryWindow().getDetailedSongPanel().getKeyField();
+        TextField keyField = Application.get().getMainWindow().getSongEntryWindow().getDetailedSongPanel().getKeyField();
         String key = keyField.getText();
         if(key == null || key.isEmpty()) {
             for(String line : getLyricsField().getText().split("\n")) {
@@ -301,15 +268,16 @@ public class BasicSongPanel extends JPanel {
 
     /**
      * Get the remove chords button.
-     *
+     * <p/>
      * @return the remove chords button.
      */
-    private JButton getTrimLinesButton() {
-        JButton button = new JButton(Utils.getImageIcon("icons/trimLines.png", 24, 24));
-        button.setToolTipText(LabelGrabber.INSTANCE.getLabel("trim.lines.tooltip"));
-        button.addActionListener(new ActionListener() {
+    private Button getTrimLinesButton() {
+        Button button = new Button("", new ImageView(new Image("file:icons/trimLines.png", 24, 24, false, true)));
+        button.setTooltip(new Tooltip(LabelGrabber.INSTANCE.getLabel("trim.lines.tooltip")));
+        button.setOnAction(new EventHandler<javafx.event.ActionEvent>() {
 
-            public void actionPerformed(ActionEvent e) {
+            @Override
+            public void handle(javafx.event.ActionEvent t) {
                 StringBuilder newText = new StringBuilder();
                 for(String line : lyricsArea.getText().split("\n")) {
                     newText.append(line.trim()).append("\n");
@@ -322,35 +290,36 @@ public class BasicSongPanel extends JPanel {
 
     /**
      * Get the spell checker button.
-     *
+     * <p/>
      * @return the spell checker button.
      */
-    private JButton getDictButton() {
-        JButton button = new JButton(Utils.getImageIcon("icons/dictionary.png", 24, 24));
-        button.setToolTipText(LabelGrabber.INSTANCE.getLabel("run.spellcheck.label") + " (F7)");
-        button.addActionListener(new ActionListener() {
+    private Button getDictButton() {
+        Button button = new Button("", new ImageView(new Image("file:icons/dictionary.png", 24, 24, false, true)));
+        button.setTooltip(new Tooltip(LabelGrabber.INSTANCE.getLabel("run.spellcheck.label") + " (F7)"));
+        button.setOnAction(new EventHandler<javafx.event.ActionEvent>() {
 
-            public void actionPerformed(ActionEvent e) {
-                SpellChecker.showSpellCheckerDialog(lyricsArea, SpellChecker.getOptions());
+            @Override
+            public void handle(javafx.event.ActionEvent t) {
+//                SpellChecker.showSpellCheckerDialog(lyricsArea, SpellChecker.getOptions());
             }
         });
+        button.setDisable(true); //TOOD: Enable
         return button;
     }
 
     /**
      * Get the button to fix apostrophes.
-     *
+     * <p/>
      * @return the button to fix apostrophes.
      */
-    private JButton getAposButton() {
-        JButton button = new JButton(Utils.getImageIcon("icons/apos.png", 24, 24));
-        button.setToolTipText(LabelGrabber.INSTANCE.getLabel("fix.apos.label"));
-        button.addActionListener(new ActionListener() {
+    private Button getAposButton() {
+        Button button = new Button("", new ImageView(new Image("file:icons/apos.png", 24, 24, false, true)));
+        button.setTooltip(new Tooltip(LabelGrabber.INSTANCE.getLabel("fix.apos.label")));
+        button.setOnAction(new EventHandler<javafx.event.ActionEvent>() {
 
-            public void actionPerformed(ActionEvent e) {
-                int pos = lyricsArea.getCaretPosition();
+            @Override
+            public void handle(javafx.event.ActionEvent t) {
                 lyricsArea.setText(lyricsArea.getText().replace("`", "'").replace("’", "'"));
-                lyricsArea.setCaretPosition(pos);
             }
         });
         return button;
@@ -362,66 +331,45 @@ public class BasicSongPanel extends JPanel {
     public void resetNewSong() {
         getTitleField().setText("");
         getAuthorField().setText("");
-        getLyricsField().setText("<" + LabelGrabber.INSTANCE.getLabel("type.lyrics.here.text") + ">");
-        getLyricsField().removeFocusListener(clearListener);
-        clearListener = new FocusListener() {
-
-            public void focusGained(FocusEvent e) {
-                SwingUtilities.invokeLater(new Runnable() {
-
-                    public void run() {
-                        getLyricsField().setText("");
-                    }
-                });
-                getLyricsField().removeFocusListener(this);
-            }
-
-            public void focusLost(FocusEvent e) {
-                //Nothing needs to be done here.
-            }
-        };
-        getLyricsField().addFocusListener(clearListener);
         getTitleField().requestFocus();
     }
 
     /**
      * Reset this panel so an existing song can be edited.
-     *
+     * <p/>
      * @param song the song to edit.
      */
     public void resetEditSong(Song song) {
-        getLyricsField().removeFocusListener(clearListener);
         getTitleField().setText(song.getTitle());
         getAuthorField().setText(song.getAuthor());
         getLyricsField().setText(song.getLyrics(true, true));
-        getLyricsField().setCaretPosition(0);
         getLyricsField().requestFocus();
     }
 
     /**
      * Get the lyrics field.
-     *
+     * <p/>
      * @return the lyrics field.
      */
-    public JTextArea getLyricsField() {
+    public TextArea getLyricsField() {
         return lyricsArea;
     }
 
     /**
      * Get the title field.
-     *
+     * <p/>
      * @return the title field.
      */
-    public JTextField getTitleField() {
+    public TextField getTitleField() {
         return titleField;
     }
 
     /**
      * Get the author field.
-     *
+     * <p/>
      * @return the author field.
      */
-    public JTextField getAuthorField() {
+    public TextField getAuthorField() {
         return authorField;
     }
 

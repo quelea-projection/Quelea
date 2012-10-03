@@ -17,86 +17,82 @@
  */
 package org.quelea.windows.options;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.IOException;
-import javax.swing.DefaultComboBoxModel;
-import javax.swing.JButton;
-import javax.swing.JComboBox;
-import javax.swing.JFileChooser;
-import javax.swing.JLabel;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JSpinner;
-import javax.swing.SpinnerNumberModel;
-import javax.swing.SpringLayout;
-import javax.swing.SwingUtilities;
+import javafx.application.Platform;
+import javafx.collections.FXCollections;
+import javafx.event.EventHandler;
+import javafx.scene.control.Button;
+import javafx.scene.control.ComboBox;
+import javafx.scene.control.Label;
+import javafx.scene.layout.GridPane;
+import javafx.stage.FileChooser;
+import org.quelea.Application;
+import org.quelea.windows.main.NumberSpinner;
 import org.quelea.bible.Bible;
-import org.quelea.bible.BibleManager;
-import org.quelea.utils.PropertyPanel;
-import org.quelea.utils.QueleaProperties;
-import org.quelea.utils.SpringUtilities;
 import org.quelea.bible.BibleChangeListener;
+import org.quelea.bible.BibleManager;
 import org.quelea.languages.LabelGrabber;
 import org.quelea.utils.FileFilters;
+import org.quelea.utils.PropertyPanel;
+import org.quelea.utils.QueleaProperties;
 import org.quelea.utils.Utils;
 
 /**
  * The panel that shows the bible options
- *
+ * <p/>
  * @author Michael
  */
-public class OptionsBiblePanel extends JPanel implements PropertyPanel, BibleChangeListener {
+public class OptionsBiblePanel extends GridPane implements PropertyPanel, BibleChangeListener {
 
-    private final JComboBox<Bible> defaultBibleComboBox;
-    private final JSpinner maxVersesSpinner;
+    private final ComboBox<Bible> defaultBibleComboBox;
+    private final NumberSpinner maxVersesSpinner;
 
     /**
      * Create the options bible panel.
      */
     public OptionsBiblePanel() {
-        JPanel biblePanel = new JPanel();
-        biblePanel.setLayout(new SpringLayout());
+        setVgap(5);
 
-        JLabel defaultLabel = new JLabel(LabelGrabber.INSTANCE.getLabel("default.bible.label"));
-        biblePanel.add(defaultLabel);
+        Label defaultLabel = new Label(LabelGrabber.INSTANCE.getLabel("default.bible.label"));
+        GridPane.setConstraints(defaultLabel, 1, 1);
+        getChildren().add(defaultLabel);
         BibleManager.get().registerBibleChangeListener(this);
-        defaultBibleComboBox = new JComboBox<>(BibleManager.get().getBibles());
+        defaultBibleComboBox = new ComboBox<>();
+        defaultBibleComboBox.itemsProperty().set(FXCollections.observableArrayList(BibleManager.get().getBibles()));
         defaultLabel.setLabelFor(defaultBibleComboBox);
-        biblePanel.add(defaultBibleComboBox);
+        GridPane.setConstraints(defaultBibleComboBox, 2, 1);
+        getChildren().add(defaultBibleComboBox);
 
-        JLabel maxVerseLabel = new JLabel(LabelGrabber.INSTANCE.getLabel("max.verses.label"));
-        biblePanel.add(maxVerseLabel);
-        maxVersesSpinner = new JSpinner(new SpinnerNumberModel(200, 1, 5000, 1));
+        Label maxVerseLabel = new Label(LabelGrabber.INSTANCE.getLabel("max.verses.label"));
+        GridPane.setConstraints(maxVerseLabel, 1, 2);
+        getChildren().add(maxVerseLabel);
+        maxVersesSpinner = new NumberSpinner(200, 1);
         maxVerseLabel.setLabelFor(maxVersesSpinner);
-        biblePanel.add(maxVersesSpinner);
+        GridPane.setConstraints(maxVersesSpinner, 2, 2);
+        getChildren().add(maxVersesSpinner);
 
-        final JButton addBibleButton = new JButton(LabelGrabber.INSTANCE.getLabel("add.bible.label"));
-        addBibleButton.addActionListener(new ActionListener() {
-
+        final Button addBibleButton = new Button(LabelGrabber.INSTANCE.getLabel("add.bible.label"));
+        addBibleButton.setOnAction(new EventHandler<javafx.event.ActionEvent>() {
             @Override
-            public void actionPerformed(ActionEvent e) {
-                JFileChooser chooser = new JFileChooser();
-                chooser.setFileFilter(FileFilters.XML_BIBLE);
-                chooser.setAcceptAllFileFilterUsed(false);
-                chooser.showDialog(SwingUtilities.getWindowAncestor(addBibleButton), LabelGrabber.INSTANCE.getLabel("add.bible.label"));
-                File file = chooser.getSelectedFile();
+            public void handle(javafx.event.ActionEvent t) {
+                FileChooser chooser = new FileChooser();
+                chooser.getExtensionFilters().add(FileFilters.XML_BIBLE);
+                File file = chooser.showOpenDialog(Application.get().getMainWindow());
                 if(file != null) {
                     try {
                         Utils.copyFile(file, new File(QueleaProperties.get().getBibleDir(), file.getName()));
                     }
                     catch(IOException ex) {
-                        JOptionPane.showMessageDialog(chooser, LabelGrabber.INSTANCE.getLabel("bible.copy.error.text"), LabelGrabber.INSTANCE.getLabel("bible.copy.error.heading"), JOptionPane.ERROR);
+                        ex.printStackTrace();
+//                        JOptionPane.showMessageDialog(chooser, LabelGrabber.INSTANCE.getLabel("bible.copy.error.text"), LabelGrabber.INSTANCE.getLabel("bible.copy.error.heading"), JOptionPane.ERROR);
                     }
                 }
             }
         });
-        biblePanel.add(addBibleButton);
-        biblePanel.add(new JLabel());
+        GridPane.setConstraints(addBibleButton, 1, 3);
+        getChildren().add(addBibleButton);
 
-        SpringUtilities.makeCompactGrid(biblePanel, 3, 2, 6, 6, 6, 6);
-        add(biblePanel);
         readProperties();
     }
 
@@ -105,14 +101,12 @@ public class OptionsBiblePanel extends JPanel implements PropertyPanel, BibleCha
      */
     @Override
     public void updateBibles() {
-        SwingUtilities.invokeLater(new Runnable() {
-
+        Platform.runLater(new Runnable() {
             @Override
             public void run() {
-                DefaultComboBoxModel<Bible> model = ((DefaultComboBoxModel<Bible>) defaultBibleComboBox.getModel());
-                model.removeAllElements();
+                defaultBibleComboBox.itemsProperty().get().clear();
                 for(Bible bible : BibleManager.get().getBibles()) {
-                    model.addElement(bible);
+                    defaultBibleComboBox.itemsProperty().get().add(bible);
                 }
             }
         });
@@ -125,13 +119,13 @@ public class OptionsBiblePanel extends JPanel implements PropertyPanel, BibleCha
     public final void readProperties() {
         QueleaProperties props = QueleaProperties.get();
         String selectedBibleName = props.getDefaultBible();
-        for(int i = 0; i < defaultBibleComboBox.getModel().getSize(); i++) {
-            Bible bible = defaultBibleComboBox.getItemAt(i);
+        for(int i = 0; i < defaultBibleComboBox.itemsProperty().get().size(); i++) {
+            Bible bible = defaultBibleComboBox.itemsProperty().get().get(i);
             if(bible.getName().equals(selectedBibleName)) {
-                defaultBibleComboBox.setSelectedIndex(i);
+                defaultBibleComboBox.getSelectionModel().select(i);
             }
         }
-        maxVersesSpinner.setValue(props.getMaxVerses());
+        maxVersesSpinner.setNumber(props.getMaxVerses());
     }
 
     /**
@@ -140,27 +134,27 @@ public class OptionsBiblePanel extends JPanel implements PropertyPanel, BibleCha
     @Override
     public void setProperties() {
         QueleaProperties props = QueleaProperties.get();
-        Bible bible = (Bible) getDefaultBibleBox().getSelectedItem();
+        Bible bible = getDefaultBibleBox().getSelectionModel().getSelectedItem();
         props.setDefaultBible(bible);
-        int maxVerses = (Integer) getMaxVersesSpinner().getValue();
+        int maxVerses = getMaxVersesSpinner().getNumber();
         props.setMaxVerses(maxVerses);
     }
 
     /**
      * Get the default bible combo box.
-     *
+     * <p/>
      * @return the default bible combo box.
      */
-    public JComboBox<Bible> getDefaultBibleBox() {
+    public ComboBox<Bible> getDefaultBibleBox() {
         return defaultBibleComboBox;
     }
 
     /**
      * Get the max verses spinner.
-     *
+     * <p/>
      * @return the max verses spinner.
      */
-    public JSpinner getMaxVersesSpinner() {
+    public NumberSpinner getMaxVersesSpinner() {
         return maxVersesSpinner;
     }
 }

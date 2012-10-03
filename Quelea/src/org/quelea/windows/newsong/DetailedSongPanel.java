@@ -17,161 +17,57 @@
  */
 package org.quelea.windows.newsong;
 
-import java.awt.BorderLayout;
-import java.awt.Component;
-import java.awt.Dimension;
-import java.util.Calendar;
-import java.util.GregorianCalendar;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTextArea;
-import javax.swing.JTextField;
-import javax.swing.SpringLayout;
-import javax.swing.text.AttributeSet;
-import javax.swing.text.BadLocationException;
-import javax.swing.text.PlainDocument;
+import javafx.scene.Node;
+import javafx.scene.control.Label;
+import javafx.scene.control.TextArea;
+import javafx.scene.control.TextField;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.GridPane;
 import org.quelea.displayable.Song;
 import org.quelea.languages.LabelGrabber;
 import org.quelea.tags.TagEntryPanel;
-import org.quelea.utils.SpringUtilities;
+import org.quelea.windows.main.IntegerTextField;
 
 /**
  * A panel where more detailed information about a song is entered.
  * @author Michael
  */
-public class DetailedSongPanel extends JPanel {
+public class DetailedSongPanel extends BorderPane {
 
-    private JTextField ccli;
-    private JTextField year;
-    private JTextField publisher;
-    private JTextField copyright;
+    private TextField ccli;
+    private TextField year;
+    private TextField publisher;
+    private TextField copyright;
     private TagEntryPanel tags;
-    private JTextField key;
-    private JTextField capo;
-    private JTextArea info;
+    private TextField key;
+    private TextField capo;
+    private TextArea info;
 
     /**
      * Create a new detailed song panel.
      */
     public DetailedSongPanel() {
-        super(new BorderLayout());
-        setName(LabelGrabber.INSTANCE.getLabel("detailed.info.heading"));
-        JPanel formPanel = new JPanel();
-        formPanel.setLayout(new SpringLayout());
-        ccli = new JTextField(new PlainDocument() {
-
-            public void insertString(int offs, String str, AttributeSet a) throws BadLocationException {
-                if (str == null) {
-                    return;
-                }
-                if (str.isEmpty() || str.matches("[0-9]")) {
-                    super.insertString(offs, str, a);
-                }
-            }
-        }, "", 10);
-        year = new JTextField(new PlainDocument() {
-
-            @Override
-            public void insertString(int offs, String str, AttributeSet a) throws BadLocationException {
-
-                if (str == null) {
-                    return;
-                }
-                String oldString = getText(0, getLength());
-                String newString = oldString.substring(0, offs) + str
-                        + oldString.substring(offs);
-                try {
-                    if (newString.length() <= 4) {
-                        int val = Integer.parseInt(newString + "0") / 10;
-                        if (val > 0 && val <= new GregorianCalendar().get(Calendar.YEAR) + 1) {
-                            super.insertString(offs, str, a);
-                        }
-                    }
-                }
-                catch (NumberFormatException e) {
-                    //Not a number
-                }
-            }
-        }, "", 10);
-        publisher = new JTextField(10);
-        copyright = new JTextField(10);
+        GridPane formPanel = new GridPane();
+        ccli = new IntegerTextField();
+        publisher = new IntegerTextField();
+        year = new IntegerTextField();
+        copyright = new TextField();
         tags = new TagEntryPanel(null, true, false);
-        key = new JTextField(new PlainDocument() {
+        key = new TextField();
+        capo = new IntegerTextField();
+        info = new TextArea();
+        info.setWrapText(true);
 
-            @Override
-            public void insertString(int offs, String str, AttributeSet a) throws BadLocationException {
+        addBlock(formPanel, LabelGrabber.INSTANCE.getLabel("ccli.number.label"), ccli, 1);
+        addBlock(formPanel, LabelGrabber.INSTANCE.getLabel("copyright.label"), copyright, 2);
+        addBlock(formPanel, LabelGrabber.INSTANCE.getLabel("year.label"), year, 3);
+        addBlock(formPanel, LabelGrabber.INSTANCE.getLabel("publisher.label"), publisher, 4);
+        addBlock(formPanel, LabelGrabber.INSTANCE.getLabel("tags.label"), tags, 5);
+        addBlock(formPanel, LabelGrabber.INSTANCE.getLabel("key.label"), key, 6);
+        addBlock(formPanel, LabelGrabber.INSTANCE.getLabel("capo.label"), capo, 7);
+        addBlock(formPanel, LabelGrabber.INSTANCE.getLabel("notes.label"), info, 8);
 
-                if (str == null) {
-                    return;
-                }
-                String oldString = getText(0, getLength());
-                String newString = oldString.substring(0, offs) + str
-                        + oldString.substring(offs);
-                if (newString.isEmpty() || newString.matches("[a-gA-G][#b]?")) {
-                    if (Character.isLowerCase(newString.charAt(0))) {
-                        str = Character.toString(Character.toUpperCase(str.substring(0, 1).charAt(0))) + str.substring(1);
-                    }
-                    super.insertString(offs, str, a);
-                }
-            }
-        }, "", 10);
-        capo = new JTextField(new PlainDocument() {
-
-            @Override
-            public void insertString(int offs, String str, AttributeSet a) throws BadLocationException {
-
-                if (str == null) {
-                    return;
-                }
-                String oldString = getText(0, getLength());
-                String newString = oldString.substring(0, offs) + str
-                        + oldString.substring(offs);
-                try {
-                    if (newString.length() <= 4) {
-                        int val = Integer.parseInt(newString + "0") / 10;
-                        if (val > 0 && val <= 24) {
-                            super.insertString(offs, str, a);
-                        }
-                    }
-                }
-                catch (NumberFormatException e) {
-                    //Not a number
-                }
-            }
-        }, "", 10);
-        info = new JTextArea(new PlainDocument() {
-
-            @Override
-            public void insertString(int offs, String str, AttributeSet a) throws BadLocationException {
-
-                if (str == null) {
-                    return;
-                }
-
-                if ((getLength() + str.length()) <= 20000) {
-                    super.insertString(offs, str, a);
-                }
-            }
-        }, "", 10, 10);
-        info.setLineWrap(true);
-        info.setWrapStyleWord(true);
-
-        addBlock(formPanel, LabelGrabber.INSTANCE.getLabel("ccli.number.label"), ccli);
-        addBlock(formPanel, LabelGrabber.INSTANCE.getLabel("copyright.label"), copyright);
-        addBlock(formPanel, LabelGrabber.INSTANCE.getLabel("year.label"), year);
-        addBlock(formPanel, LabelGrabber.INSTANCE.getLabel("publisher.label"), publisher);
-        addBlock(formPanel, LabelGrabber.INSTANCE.getLabel("tags.label"), tags);
-        addBlock(formPanel, LabelGrabber.INSTANCE.getLabel("key.label"), key);
-        addBlock(formPanel, LabelGrabber.INSTANCE.getLabel("capo.label"), capo);
-        JScrollPane pane = new JScrollPane(info);
-        pane.setPreferredSize(new Dimension(pane.getPreferredSize().width, 300));
-        addBlock(formPanel, LabelGrabber.INSTANCE.getLabel("notes.label"), pane);
-
-        SpringUtilities.makeCompactGrid(formPanel, 8, 2, 6, 6, 6, 6);
-
-        add(formPanel, BorderLayout.NORTH);
+        setTop(formPanel);
 
     }
 
@@ -181,11 +77,13 @@ public class DetailedSongPanel extends JPanel {
      * @param labelText the label text to add to this block.
      * @param comp the component to add to this block.
      */
-    private void addBlock(JPanel panel, String labelText, Component comp) {
-        JLabel label = new JLabel(labelText);
+    private void addBlock(GridPane panel, String labelText, Node comp, int i) {
+        Label label = new Label(labelText);
         label.setLabelFor(comp);
-        panel.add(label);
-        panel.add(comp);
+        GridPane.setConstraints(label, 1, i);
+        GridPane.setConstraints(comp, 2, i);
+        panel.getChildren().add(label);
+        panel.getChildren().add(comp);
     }
 
     /**
@@ -221,7 +119,7 @@ public class DetailedSongPanel extends JPanel {
      * Get the CCLI field.
      * @return the CCLI field.
      */
-    public JTextField getCcliField() {
+    public TextField getCcliField() {
         return ccli;
     }
 
@@ -229,7 +127,7 @@ public class DetailedSongPanel extends JPanel {
      * Get the copyright field.
      * @return the copyright field.
      */
-    public JTextField getCopyrightField() {
+    public TextField getCopyrightField() {
         return copyright;
     }
 
@@ -237,7 +135,7 @@ public class DetailedSongPanel extends JPanel {
      * Get the publisher field.
      * @return the publisher field.
      */
-    public JTextField getPublisherField() {
+    public TextField getPublisherField() {
         return publisher;
     }
 
@@ -253,7 +151,7 @@ public class DetailedSongPanel extends JPanel {
      * Get the year field.
      * @return the year field.
      */
-    public JTextField getYearField() {
+    public TextField getYearField() {
         return year;
     }
 
@@ -261,7 +159,7 @@ public class DetailedSongPanel extends JPanel {
      * Get the info field.
      * @return the info field.
      */
-    public JTextArea getInfoField() {
+    public TextArea getInfoField() {
         return info;
     }
 
@@ -269,7 +167,7 @@ public class DetailedSongPanel extends JPanel {
      * Get the key field.
      * @return the key field.
      */
-    public JTextField getKeyField() {
+    public TextField getKeyField() {
         return key;
     }
 
@@ -277,19 +175,8 @@ public class DetailedSongPanel extends JPanel {
      * Get the capo field.
      * @return the capo field.
      */
-    public JTextField getCapoField() {
+    public TextField getCapoField() {
         return capo;
     }
     
-    /**
-     * Test it.
-     * @param args 
-     */
-    public static void main(String[] args) {
-        JFrame frame = new JFrame();
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.add(new DetailedSongPanel());
-        frame.pack();
-        frame.setVisible(true);
-    }
 }

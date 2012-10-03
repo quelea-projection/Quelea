@@ -26,7 +26,9 @@ import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.VBox;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
+import javafx.stage.StageStyle;
 import org.quelea.languages.LabelGrabber;
 import org.quelea.utils.QueleaProperties;
 
@@ -43,6 +45,9 @@ public class AboutDialog extends Stage {
      * @param owner the owner of the dialog (should be the main window.)
      */
     public AboutDialog() {
+        initModality(Modality.APPLICATION_MODAL);
+        initStyle(StageStyle.UTILITY);
+        
         setTitle(LabelGrabber.INSTANCE.getLabel("help.about.title"));
         VBox layout = new VBox();
         layout.getChildren().add(new Label("Quelea " + LabelGrabber.INSTANCE.getLabel("help.about.version") + " " + QueleaProperties.VERSION.getVersionString()));
