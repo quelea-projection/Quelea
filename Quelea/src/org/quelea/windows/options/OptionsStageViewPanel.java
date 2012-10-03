@@ -17,76 +17,88 @@
  */
 package org.quelea.windows.options;
 
-import java.awt.Color;
-import javax.swing.JCheckBox;
-import javax.swing.JComboBox;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.SpringLayout;
+import javafx.scene.control.CheckBox;
+import javafx.scene.control.ColorPicker;
+import javafx.scene.control.ComboBox;
+import javafx.scene.control.Label;
+import javafx.scene.layout.GridPane;
+import javafx.scene.paint.Color;
 import org.quelea.displayable.TextAlignment;
 import org.quelea.languages.LabelGrabber;
 import org.quelea.utils.PropertyPanel;
 import org.quelea.utils.QueleaProperties;
-import org.quelea.utils.SpringUtilities;
 import org.quelea.utils.Utils;
-import org.quelea.windows.newsong.ColourButton;
 
 /**
  * The panel that shows the stage view options.
  *
  * @author mjrb5
  */
-public class OptionsStageViewPanel extends JPanel implements PropertyPanel {
+public class OptionsStageViewPanel extends GridPane implements PropertyPanel {
 
-    private JCheckBox showChordsCheckBox;
-    private JComboBox<String> lineAlignment;
-    private JComboBox<String> fontSelection;
-    private ColourButton backgroundColourButton;
-    private ColourButton chordColourButton;
-    private ColourButton lyricsColourButton;
+    private CheckBox showChordsCheckBox;
+    private ComboBox<String> lineAlignment;
+    private ComboBox<String> fontSelection;
+    private ColorPicker backgroundColorPicker;
+    private ColorPicker chordColorPicker;
+    private ColorPicker lyricsColorPicker;
 
     /**
      * Create the stage view options panel.
      */
     public OptionsStageViewPanel() {
+        setVgap(5);
+        
+        Label chordsLabel = new Label(LabelGrabber.INSTANCE.getLabel("stage.show.chords"));
+        GridPane.setConstraints(chordsLabel, 1, 1);
+        getChildren().add(chordsLabel);
+        showChordsCheckBox = new CheckBox();
+        GridPane.setConstraints(showChordsCheckBox, 2, 1);
+        getChildren().add(showChordsCheckBox);
 
-        JPanel stagePanel = new JPanel();
-        stagePanel.setLayout(new SpringLayout());
-
-        stagePanel.add(new JLabel(LabelGrabber.INSTANCE.getLabel("stage.show.chords")));
-        showChordsCheckBox = new JCheckBox();
-        stagePanel.add(showChordsCheckBox);
-
-        stagePanel.add(new JLabel(LabelGrabber.INSTANCE.getLabel("stage.line.alignment")));
-        lineAlignment = new JComboBox<>();
+        Label alignmentLabel = new Label(LabelGrabber.INSTANCE.getLabel("stage.line.alignment"));
+        GridPane.setConstraints(alignmentLabel, 1, 2);
+        getChildren().add(alignmentLabel);
+        lineAlignment = new ComboBox<>();
         lineAlignment.setEditable(false);
         for(TextAlignment alignment : TextAlignment.values()) {
-            lineAlignment.addItem(alignment.toFriendlyString());
+            lineAlignment.itemsProperty().get().add(alignment.toFriendlyString());
         }
-        stagePanel.add(lineAlignment);
+        GridPane.setConstraints(lineAlignment, 2, 2);
+        getChildren().add(lineAlignment);
 
-        stagePanel.add(new JLabel(LabelGrabber.INSTANCE.getLabel("stage.font.selection")));
-        fontSelection = new JComboBox<>();
+        Label fontLabel = new Label(LabelGrabber.INSTANCE.getLabel("stage.font.selection"));
+        GridPane.setConstraints(fontLabel, 1, 3);
+        getChildren().add(fontLabel);
+        fontSelection = new ComboBox<>();
         fontSelection.setEditable(false);
         for(String font : Utils.getAllFonts()) {
-            fontSelection.addItem(font);
+            fontSelection.itemsProperty().get().add(font);
         }
-        stagePanel.add(fontSelection);
+        GridPane.setConstraints(fontSelection, 2, 3);
+        getChildren().add(fontSelection);
 
-        stagePanel.add(new JLabel(LabelGrabber.INSTANCE.getLabel("stage.background.colour")));
-        backgroundColourButton = new ColourButton(Color.BLACK);
-        stagePanel.add(backgroundColourButton);
+        Label backgroundLabel = new Label(LabelGrabber.INSTANCE.getLabel("stage.background.colour"));
+        GridPane.setConstraints(backgroundLabel, 1, 4);
+        getChildren().add(backgroundLabel);
+        backgroundColorPicker = new ColorPicker(Color.BLACK);
+        GridPane.setConstraints(backgroundColorPicker, 2, 4);
+        getChildren().add(backgroundColorPicker);
 
-        stagePanel.add(new JLabel(LabelGrabber.INSTANCE.getLabel("stage.lyrics.colour")));
-        lyricsColourButton = new ColourButton(Color.BLACK);
-        stagePanel.add(lyricsColourButton);
+        Label colourLabel = new Label(LabelGrabber.INSTANCE.getLabel("stage.lyrics.colour"));
+        GridPane.setConstraints(colourLabel, 1, 5);
+        getChildren().add(colourLabel);
+        lyricsColorPicker = new ColorPicker(Color.BLACK);
+        GridPane.setConstraints(lyricsColorPicker, 2, 5);
+        getChildren().add(lyricsColorPicker);
 
-        stagePanel.add(new JLabel(LabelGrabber.INSTANCE.getLabel("stage.chord.colour")));
-        chordColourButton = new ColourButton(Color.BLACK);
-        stagePanel.add(chordColourButton);
+        Label chordColourLabel = new Label(LabelGrabber.INSTANCE.getLabel("stage.chord.colour"));
+        GridPane.setConstraints(chordColourLabel, 1, 6);
+        getChildren().add(chordColourLabel);
+        chordColorPicker = new ColorPicker(Color.BLACK);
+        GridPane.setConstraints(chordColorPicker, 2, 6);
+        getChildren().add(chordColorPicker);
 
-        add(stagePanel);
-        SpringUtilities.makeCompactGrid(stagePanel, 6, 2, 6, 6, 6, 6);
         readProperties();
     }
 
@@ -95,12 +107,12 @@ public class OptionsStageViewPanel extends JPanel implements PropertyPanel {
      */
     @Override
     public void setProperties() {
-//        QueleaProperties.get().setShowChords(showChordsCheckBox.isSelected());
-//        QueleaProperties.get().setStageTextAlignment(TextAlignment.parse(lineAlignment.getItemAt(lineAlignment.getSelectedIndex())));
-//        QueleaProperties.get().setStageTextFont(fontSelection.getItemAt(fontSelection.getSelectedIndex()));
-//        QueleaProperties.get().setStageBackgroundColor(backgroundColourButton.getColour());
-//        QueleaProperties.get().setStageChordColor(chordColourButton.getColour());
-//        QueleaProperties.get().setStageLyricsColor(lyricsColourButton.getColour());
+        QueleaProperties.get().setShowChords(showChordsCheckBox.isSelected());
+        QueleaProperties.get().setStageTextAlignment(TextAlignment.parse(lineAlignment.itemsProperty().get().get(lineAlignment.getSelectionModel().getSelectedIndex())));
+        QueleaProperties.get().setStageTextFont(fontSelection.itemsProperty().get().get(fontSelection.getSelectionModel().getSelectedIndex()));
+        QueleaProperties.get().setStageBackgroundColor(backgroundColorPicker.getValue());
+        QueleaProperties.get().setStageChordColor(chordColorPicker.getValue());
+        QueleaProperties.get().setStageLyricsColor(lyricsColorPicker.getValue());
     }
 
     /**
@@ -108,11 +120,11 @@ public class OptionsStageViewPanel extends JPanel implements PropertyPanel {
      */
     @Override
     public final void readProperties() {
-//        showChordsCheckBox.setSelected(QueleaProperties.get().getShowChords());
-//        lyricsColourButton.setColour(QueleaProperties.get().getStageLyricsColor());
-//        backgroundColourButton.setColour(QueleaProperties.get().getStageBackgroundColor());
-//        chordColourButton.setColour(QueleaProperties.get().getStageChordColor());
-//        fontSelection.setSelectedItem(QueleaProperties.get().getStageTextFont());
-//        lineAlignment.setSelectedItem(QueleaProperties.get().getStageTextAlignment());
+        showChordsCheckBox.setSelected(QueleaProperties.get().getShowChords());
+        lyricsColorPicker.setValue(QueleaProperties.get().getStageLyricsColor());
+        backgroundColorPicker.setValue(QueleaProperties.get().getStageBackgroundColor());
+        chordColorPicker.setValue(QueleaProperties.get().getStageChordColor());
+        fontSelection.getSelectionModel().select(QueleaProperties.get().getStageTextFont());
+        lineAlignment.getSelectionModel().select(QueleaProperties.get().getStageTextAlignment());
     }
 }

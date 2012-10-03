@@ -17,7 +17,6 @@
 package org.quelea.windows.options;
 
 import java.awt.*;
-import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javax.swing.SwingUtilities;
 import org.quelea.Application;
@@ -33,7 +32,7 @@ import org.quelea.windows.main.MainWindow;
  * A panel that the user uses to set up the displays that match to the outputs.
  * @author Michael
  */
-public class OptionsDisplaySetupPanel extends BorderPane implements PropertyPanel {
+public class OptionsDisplaySetupPanel extends GridPane implements PropertyPanel {
 
     private final SingleDisplayPanel monitorPanel, projectorPanel, stagePanel;
 
@@ -41,18 +40,16 @@ public class OptionsDisplaySetupPanel extends BorderPane implements PropertyPane
      * Create a new display setup panel.
      */
     public OptionsDisplaySetupPanel() {
-        GridPane mainPanel = new GridPane();
         monitorPanel = new SingleDisplayPanel(LabelGrabber.INSTANCE.getLabel("control.screen.label")+":", "icons/monitor.png", false, false);
         GridPane.setConstraints(monitorPanel, 1, 1);
-        mainPanel.getChildren().add(monitorPanel);
+        getChildren().add(monitorPanel);
         projectorPanel = new SingleDisplayPanel(LabelGrabber.INSTANCE.getLabel("projector.screen.label")+":", "icons/projector.png", true, true);
         GridPane.setConstraints(projectorPanel, 2, 1);
-        mainPanel.getChildren().add(projectorPanel);
+        getChildren().add(projectorPanel);
         stagePanel = new SingleDisplayPanel(LabelGrabber.INSTANCE.getLabel("stage.screen.label")+":", "icons/stage.png", true, true);
         GridPane.setConstraints(stagePanel, 3, 1);
-        mainPanel.getChildren().add(stagePanel);
+        getChildren().add(stagePanel);
         readProperties();
-        setCenter(mainPanel);
         
         GraphicsDeviceWatcher.INSTANCE.addGraphicsDeviceListener(new GraphicsDeviceListener() {
 

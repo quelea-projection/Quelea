@@ -17,29 +17,13 @@
  */
 package org.quelea.tags;
 
-import java.awt.BorderLayout;
-import java.awt.Dimension;
-import java.awt.IllegalComponentStateException;
-import java.awt.event.ComponentAdapter;
-import java.awt.event.ComponentEvent;
-import java.awt.event.FocusAdapter;
-import java.awt.event.FocusEvent;
-import java.awt.event.FocusListener;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 import java.util.HashMap;
 import java.util.Map;
-import javax.swing.Box;
-import javax.swing.BoxLayout;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JTextField;
-import javax.swing.event.AncestorEvent;
-import javax.swing.event.AncestorListener;
-import javax.swing.event.DocumentEvent;
-import javax.swing.event.DocumentListener;
+import javafx.scene.control.Label;
+import javafx.scene.control.TextField;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
 import org.quelea.SongDatabase;
 import org.quelea.displayable.Song;
 import org.quelea.languages.LabelGrabber;
@@ -49,12 +33,12 @@ import org.quelea.windows.library.LibrarySongList;
  * The panel used for entering tags and displaying those that have been entered.
  * @author Michael
  */
-public class TagEntryPanel extends JPanel {
+public class TagEntryPanel extends BorderPane {
 
-    private JTextField tagField;
+    private TextField tagField;
     private Map<String, Integer> tags;
     private TagPanel tagPanel;
-    private TagPopupWindow popup;
+    private TagPopupWindow popup; //TODO: popup window
 
     /**
      * Create a new tag entry panel.
@@ -66,122 +50,69 @@ public class TagEntryPanel extends JPanel {
      * otherwise.
      */
     public TagEntryPanel(final LibrarySongList list, boolean includeUserText, boolean includeLabel) {
-        setLayout(new BorderLayout());
         tagPanel = new TagPanel();
-        tagField = new JTextField(20);
-        tagField.setText(LabelGrabber.INSTANCE.getLabel("type.tag.name.here.text"));
-        tagField.addFocusListener(new FocusAdapter() {
-
-            @Override
-            public void focusGained(FocusEvent e) {
-                tagField.setText("");
-                removeFocusListener(this);
-            }
-        });
-        tagField.addKeyListener(new KeyAdapter() {
-
-            @Override
-            public void keyPressed(KeyEvent e) {
-                if(e.getKeyCode()==KeyEvent.VK_ENTER) {
-                    popup.clickFirst();
-                }
-            }
-        });
+        tagField = new TextField();
         tags = new HashMap<>();
-        popup = new TagPopupWindow(includeUserText);
-        addAncestorListener(new AncestorListener() {
-
-            private ComponentAdapter adapter = new ComponentAdapter() {
-
-                @Override
-                public void componentMoved(ComponentEvent e) {
-                    if (popup.isVisible() && tagField.isVisible()) {
-                        try {
-                            popup.setLocation((int) tagField.getLocationOnScreen().getX(), (int) tagField.getLocationOnScreen().getY() + tagField.getHeight());
-                        }
-                        catch (IllegalComponentStateException ex) {
-                            //Never mind...
-                        }
-                    }
-                }
-            };
-
-            @Override
-            public void ancestorAdded(AncestorEvent event) {
-                event.getAncestor().addComponentListener(adapter);
-            }
-
-            @Override
-            public void ancestorRemoved(AncestorEvent event) {
-                event.getAncestor().removeComponentListener(adapter);
-            }
-
-            @Override
-            public void ancestorMoved(AncestorEvent event) {
-            }
-        });
-        popup.setTags(tags);
-        tagField.getDocument().addDocumentListener(new DocumentListener() {
-
-            @Override
-            public void insertUpdate(DocumentEvent e) {
-                check();
-            }
-
-            @Override
-            public void removeUpdate(DocumentEvent e) {
-                check();
-            }
-
-            @Override
-            public void changedUpdate(DocumentEvent e) {
-                check();
-            }
-
-            private void check() {
-                popup.setLocation((int) tagField.getLocationOnScreen().getX(), (int) tagField.getLocationOnScreen().getY() + tagField.getHeight());
-                popup.setString(tagField, tagPanel, list);
-            }
-        });
-        tagField.addFocusListener(new FocusListener() {
-
-            @Override
-            public void focusGained(FocusEvent e) {
-                popup.setString(tagField, tagPanel, list);
-                if (popup.isVisible() && tagField.isVisible()) {
-                    try {
-                        popup.setLocation((int) tagField.getLocationOnScreen().getX(), (int) tagField.getLocationOnScreen().getY() + tagField.getHeight());
-                    }
-                    catch (IllegalComponentStateException ex) {
-                        //Never mind...
-                    }
-                }
-            }
-
-            @Override
-            public void focusLost(FocusEvent e) {
-                popup.setVisible(false);
-            }
-        });
-        tagField.addMouseListener(new MouseAdapter() {
-
-            @Override
-            public void mouseClicked(MouseEvent e) {
-                popup.setString(tagField, tagPanel, list);
-            }
-        });
-        JPanel northPanel = new JPanel();
-        northPanel.setLayout(new BoxLayout(northPanel, BoxLayout.Y_AXIS));
-        JPanel textPanel = new JPanel();
-        textPanel.setLayout(new BoxLayout(textPanel, BoxLayout.X_AXIS));
+//        popup = new TagPopupWindow(includeUserText);
+//        popup.setTags(tags);
+//        tagField.getDocument().addDocumentListener(new DocumentListener() {
+//
+//            @Override
+//            public void insertUpdate(DocumentEvent e) {
+//                check();
+//            }
+//
+//            @Override
+//            public void removeUpdate(DocumentEvent e) {
+//                check();
+//            }
+//
+//            @Override
+//            public void changedUpdate(DocumentEvent e) {
+//                check();
+//            }
+//
+//            private void check() {
+//                popup.setLocation((int) tagField.getLocationOnScreen().getX(), (int) tagField.getLocationOnScreen().getY() + tagField.getHeight());
+//                popup.setString(tagField, tagPanel, list);
+//            }
+//        });
+//        tagField.addFocusListener(new FocusListener() {
+//
+//            @Override
+//            public void focusGained(FocusEvent e) {
+//                popup.setString(tagField, tagPanel, list);
+//                if (popup.isVisible() && tagField.isVisible()) {
+//                    try {
+//                        popup.setLocation((int) tagField.getLocationOnScreen().getX(), (int) tagField.getLocationOnScreen().getY() + tagField.getHeight());
+//                    }
+//                    catch (IllegalComponentStateException ex) {
+//                        //Never mind...
+//                    }
+//                }
+//            }
+//
+//            @Override
+//            public void focusLost(FocusEvent e) {
+//                popup.setVisible(false);
+//            }
+//        });
+//        tagField.addMouseListener(new MouseAdapter() {
+//
+//            @Override
+//            public void mouseClicked(MouseEvent e) {
+//                popup.setString(tagField, tagPanel, list);
+//            }
+//        });
+        VBox northPanel = new VBox();
+        HBox textPanel = new HBox();
         if (includeLabel) {
-            textPanel.add(new JLabel(LabelGrabber.INSTANCE.getLabel("tags.colon.label")));
-            textPanel.add(Box.createRigidArea(new Dimension(10, 0)));
+            textPanel.getChildren().add(new Label(LabelGrabber.INSTANCE.getLabel("tags.colon.label")));
         }
-        textPanel.add(tagField);
-        northPanel.add(textPanel);
-        northPanel.add(tagPanel);
-        add(northPanel, BorderLayout.NORTH);
+        textPanel.getChildren().add(tagField);
+        northPanel.getChildren().add(textPanel);
+        northPanel.getChildren().add(tagPanel);
+        setTop(northPanel);
     }
 
     /**

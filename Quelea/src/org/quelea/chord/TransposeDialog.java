@@ -17,75 +17,71 @@
  */
 package org.quelea.chord;
 
-import java.awt.Component;
-import java.awt.FlowLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import javax.swing.Box;
-import javax.swing.BoxLayout;
-import javax.swing.DefaultComboBoxModel;
-import javax.swing.JButton;
-import javax.swing.JComboBox;
-import javax.swing.JDialog;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import org.quelea.Application;
+import javafx.event.EventHandler;
+import javafx.geometry.Pos;
+import javafx.scene.Scene;
+import javafx.scene.control.Button;
+import javafx.scene.control.ComboBox;
+import javafx.scene.control.Label;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
+import javafx.stage.Modality;
+import javafx.stage.Stage;
+import org.quelea.languages.LabelGrabber;
 
 /**
  * The dialog shown to the user when choosing how to transpose the chords of 
  * a song.
  * @author Michael
  */
-public class TransposeDialog extends JDialog {
+public class TransposeDialog extends Stage {
 
-    private JComboBox<String> keySelection;
+    private ComboBox<String> keySelection;
     private int semitones = 0;
 
     /**
      * Create a new transpose dialog.
      */
     public TransposeDialog() {
-//        super(Application.get().getMainWindow(), "Transpose", true);
-        keySelection = new JComboBox<>();
-        keySelection.setAlignmentX(Component.LEFT_ALIGNMENT);
-        setLayout(new BoxLayout(getContentPane(), BoxLayout.Y_AXIS));
-        JLabel label = new JLabel("Select the new key:");
-        label.setAlignmentX(Component.LEFT_ALIGNMENT);
-        add(label);
-        add(Box.createVerticalStrut(5));
-        add(keySelection);
-        add(Box.createVerticalStrut(5));
+        initModality(Modality.WINDOW_MODAL);
+        setTitle(LabelGrabber.INSTANCE.getLabel("transpose.label"));
+        
+        VBox contentPane = new VBox();
+        contentPane.setSpacing(5);
+        
+        keySelection = new ComboBox<>();
+        Label label = new Label(LabelGrabber.INSTANCE.getLabel("select.key.label"));
+        label.setAlignment(Pos.BASELINE_LEFT);
+        contentPane.getChildren().add(label);
+        contentPane.getChildren().add(keySelection);
 
-        JPanel buttonPanel = new JPanel();
-        buttonPanel.setLayout(new FlowLayout(FlowLayout.LEFT, 5, 0));
-        JButton okButton = new JButton("Transpose");
-        okButton.setAlignmentX(Component.LEFT_ALIGNMENT);
-        okButton.addActionListener(new ActionListener() {
+        HBox buttonPanel = new HBox();
+        Button okButton = new Button(LabelGrabber.INSTANCE.getLabel("transpose.label"));
+        okButton.setOnAction(new EventHandler<javafx.event.ActionEvent>() {
 
             @Override
-            public void actionPerformed(ActionEvent e) {
-                semitones = keySelection.getSelectedIndex() - 4;
-                if (semitones <= 0) {
+            public void handle(javafx.event.ActionEvent t) {
+                semitones = keySelection.getSelectionModel().getSelectedIndex() - 4;
+                if(semitones <= 0) {
                     semitones--;
                 }
-                setVisible(false);
+                hide();
             }
         });
-        buttonPanel.add(okButton);
-        JButton cancelButton = new JButton("Cancel");
-        cancelButton.setAlignmentX(Component.LEFT_ALIGNMENT);
-        cancelButton.addActionListener(new ActionListener() {
+        buttonPanel.getChildren().add(okButton);
+        Button cancelButton = new Button(LabelGrabber.INSTANCE.getLabel("cancel.text"));
+        cancelButton.setOnAction(new EventHandler<javafx.event.ActionEvent>() {
 
             @Override
-            public void actionPerformed(ActionEvent e) {
-                setVisible(false);
+            public void handle(javafx.event.ActionEvent t) {
+                hide();
             }
         });
-        buttonPanel.add(cancelButton);
-        buttonPanel.setAlignmentX(Component.LEFT_ALIGNMENT);
-        add(buttonPanel);
-        getRootPane().setDefaultButton(okButton);
-        pack();
+        buttonPanel.getChildren().add(cancelButton);
+        buttonPanel.setAlignment(Pos.BASELINE_LEFT);
+        contentPane.getChildren().add(buttonPanel);
+        
+        setScene(new Scene(contentPane));
     }
 
     /**
@@ -93,8 +89,7 @@ public class TransposeDialog extends JDialog {
      * @param key the key the song is currently in.
      */
     public void setKey(String key) {
-        DefaultComboBoxModel<String> model = ((DefaultComboBoxModel<String>) keySelection.getModel());
-        model.removeAllElements();
+        keySelection.itemsProperty().get().clear();
         for (int i = -5; i < 7; i++) {
             if (i == 0) {
                 continue;
@@ -104,11 +99,10 @@ public class TransposeDialog extends JDialog {
             if (i > 0) {
                 istr = "+" + istr;
             }
-            model.addElement(transKey + " (" + istr + ")");
+            keySelection.itemsProperty().get().add(transKey + " (" + istr + ")");
         }
 
-        keySelection.setSelectedIndex(5);
-        keySelection.setMaximumSize(keySelection.getPreferredSize());
+        keySelection.getSelectionModel().select(5);
     }
 
     /**
@@ -117,18 +111,5 @@ public class TransposeDialog extends JDialog {
      */
     public int getSemitones() {
         return semitones;
-    }
-
-    /**
-     * If setting the dialog to visible, reset it and position it appropriately.
-     * @param visible true if visible, false otherwise.
-     */
-    @Override
-    public void setVisible(boolean visible) {
-        if (visible) {
-            semitones = 0;
-            setLocationRelativeTo(getOwner());
-        }
-        super.setVisible(visible);
     }
 }

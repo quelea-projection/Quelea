@@ -42,7 +42,7 @@ import org.quelea.windows.main.actionlisteners.AddPowerpointActionListener;
 import org.quelea.windows.main.actionlisteners.AddSongActionListener;
 import org.quelea.windows.main.actionlisteners.AddVideoActionListener;
 import org.quelea.windows.main.actionlisteners.EditSongScheduleActionListener;
-import org.quelea.windows.main.actionlisteners.RemoveSongScheduleActionListener;
+import org.quelea.windows.main.actionlisteners.RemoveScheduleItemActionListener;
 import org.quelea.windows.main.actionlisteners.ShowNoticesActionListener;
 
 /**
@@ -81,7 +81,7 @@ public class ScheduleMenu extends Menu {
         getItems().add(editSongItem);
 
         removeSongItem = new MenuItem(LabelGrabber.INSTANCE.getLabel("remove.item.button"), new ImageView(new Image("file:icons/remove 2.png", 16, 16, false, true)));
-        removeSongItem.setOnAction(new RemoveSongScheduleActionListener());
+        removeSongItem.setOnAction(new RemoveScheduleItemActionListener());
         removeSongItem.setDisable(true);
         getItems().add(removeSongItem);
 

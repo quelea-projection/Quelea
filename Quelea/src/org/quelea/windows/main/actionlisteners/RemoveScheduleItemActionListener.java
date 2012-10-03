@@ -24,24 +24,26 @@ import org.quelea.windows.main.ScheduleList;
 
 /**
  * Action listener to remove a song from the schedule.
+ * <p/>
  * @author Michael
  */
-public class RemoveSongScheduleActionListener implements EventHandler<ActionEvent> {
+public class RemoveScheduleItemActionListener implements EventHandler<ActionEvent> {
 
     /**
      * Remove the currently selected song from the schedule.
+     * <p/>
      * @param e the action event.
      */
     @Override
     public void handle(ActionEvent t) {
-//        ScheduleList scheduleList = Application.get().getMainWindow().getMainPanel().getSchedulePanel().getScheduleList();
-//        int selectedIndex = scheduleList.getSelectedIndex();
-//        scheduleList.removeCurrentItem();
-//        if (selectedIndex == scheduleList.getModel().getSize()) {
-//            selectedIndex--;
-//        }
-//        if (selectedIndex >= 0) {
-//            scheduleList.setSelectedIndex(selectedIndex);
-//        }
+        ScheduleList scheduleList = Application.get().getMainWindow().getMainPanel().getSchedulePanel().getScheduleList();
+        int selectedIndex = scheduleList.getSelectionModel().getSelectedIndex();
+        scheduleList.removeCurrentItem();
+        if(selectedIndex == scheduleList.itemsProperty().get().size()) {
+            selectedIndex--;
+        }
+        if(selectedIndex >= 0) {
+            scheduleList.getSelectionModel().select(selectedIndex);
+        }
     }
 }

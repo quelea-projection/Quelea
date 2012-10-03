@@ -33,7 +33,7 @@ public class ViewTagsActionListener implements EventHandler<ActionEvent> {
     public void handle(ActionEvent t) {
         TagDialog tagDialog = Application.get().getMainWindow().getTagDialog();
         tagDialog.reloadTags();
-        tagDialog.setVisible(true);
+        tagDialog.show();
     }
 
 }

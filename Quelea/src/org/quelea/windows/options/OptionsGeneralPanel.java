@@ -17,6 +17,7 @@
  */
 package org.quelea.windows.options;
 
+import java.io.File;
 import javafx.beans.value.ObservableValue;
 import javafx.event.EventHandler;
 import javafx.scene.control.Button;
@@ -25,7 +26,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.Slider;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.GridPane;
-import javax.swing.JFileChooser;
+import javafx.stage.DirectoryChooser;
 import org.quelea.Application;
 import org.quelea.languages.LabelGrabber;
 import org.quelea.powerpoint.OOPresentation;
@@ -48,7 +49,7 @@ public class OptionsGeneralPanel extends GridPane implements PropertyPanel {
     private final CheckBox textShadowCheckBox;
     private final CheckBox useOOCheckBox;
     private final TextField ooPathTextField;
-    private final JFileChooser ooChooser;
+    private final DirectoryChooser ooChooser;
     private final Button selectButton;
     private final Slider borderThicknessSlider;
     private final Slider maxCharsSlider;
@@ -59,6 +60,7 @@ public class OptionsGeneralPanel extends GridPane implements PropertyPanel {
      */
     public OptionsGeneralPanel() {
         int rows = 0;
+        setVgap(5);
 
         Label startupLabel = new Label(LabelGrabber.INSTANCE.getLabel("check.for.update.label"));
         GridPane.setConstraints(startupLabel, 1, rows);
@@ -78,11 +80,11 @@ public class OptionsGeneralPanel extends GridPane implements PropertyPanel {
             @Override
             public void changed(ObservableValue<? extends Boolean> ov, Boolean t, Boolean t1) {
                 if(useOOCheckBox.isSelected()) {
-//                    ooChooser.setDisable(false);
+                    ooPathTextField.setDisable(true);
                     selectButton.setDisable(false);
                 }
                 else {
-//                    ooChooser.setDisable(true);
+                    ooPathTextField.setDisable(true);
                     selectButton.setDisable(true);
                 }
             }
@@ -100,21 +102,17 @@ public class OptionsGeneralPanel extends GridPane implements PropertyPanel {
         ooPathLabel.setLabelFor(ooPathTextField);
         GridPane.setConstraints(ooPathTextField, 2, rows);
         getChildren().add(ooPathTextField);
-        ooChooser = new JFileChooser();
-        ooChooser.setEnabled(false);
-        ooChooser.setMultiSelectionEnabled(false);
-        ooChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+        ooChooser = new DirectoryChooser();
         selectButton = new Button(LabelGrabber.INSTANCE.getLabel("browse"));
         selectButton.setDisable(true);
         selectButton.setOnAction(new EventHandler<javafx.event.ActionEvent>() {
 
             @Override
             public void handle(javafx.event.ActionEvent t) {
-//                ooChooser.showOpenDialog(OptionsGeneralPanel.this);
-//                File file = ooChooser.getSelectedFile();
-//                if(file != null) {
-//                    ooPathTextField.setText(ooChooser.getSelectedFile().getAbsolutePath());
-//                }
+                File dir = ooChooser.showDialog(Application.get().getMainWindow());
+                if(dir != null) {
+                    ooPathTextField.setText(dir.getAbsolutePath());
+                }
             }
         });
         GridPane.setConstraints(selectButton, 3, rows);

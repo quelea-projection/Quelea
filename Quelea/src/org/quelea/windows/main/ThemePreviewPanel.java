@@ -91,7 +91,7 @@ public class ThemePreviewPanel extends JPanel {
                 @Override
                 public void actionPerformed(ActionEvent ae) {
                     themeDialog.setTheme(ThemePreviewPanel.this.theme);
-                    themeDialog.setVisible(true);
+                    themeDialog.show();
                     Theme ret = themeDialog.getTheme();
                     if(ret != null) {
                         try (PrintWriter pw = new PrintWriter(ret.getFile())) {

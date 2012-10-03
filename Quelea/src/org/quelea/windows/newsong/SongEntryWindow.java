@@ -17,20 +17,22 @@
  */
 package org.quelea.windows.newsong;
 
-import java.awt.BorderLayout;
-import java.awt.FlowLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
-import javax.swing.BoxLayout;
-import javax.swing.JButton;
-import javax.swing.JCheckBox;
-import javax.swing.JDialog;
-import javax.swing.JFrame;
-import javax.swing.JPanel;
-import javax.swing.JTabbedPane;
-import javax.swing.border.EmptyBorder;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
+import javafx.event.EventHandler;
+import javafx.scene.Scene;
+import javafx.scene.control.Button;
+import javafx.scene.control.CheckBox;
+import javafx.scene.control.Tab;
+import javafx.scene.control.TabPane;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
+import javafx.stage.Modality;
+import javafx.stage.Stage;
+import javafx.stage.StageStyle;
 import org.quelea.Application;
 import org.quelea.Theme;
 import org.quelea.displayable.Song;
@@ -41,46 +43,59 @@ import org.quelea.utils.Utils;
 /**
  * A new song window that users use for inserting the text content of a new
  * song.
- *
+ * <p/>
  * @author Michael
  */
-public class SongEntryWindow extends JDialog {
+public class SongEntryWindow extends Stage {
 
     private BasicSongPanel basicSongPanel;
     private DetailedSongPanel detailedSongPanel;
     private ThemePanel themePanel;
-    private final JTabbedPane tabbedPane;
-    private final JButton confirmButton;
-    private final JButton cancelButton;
-    private final JCheckBox addToSchedCBox;
+    private final TabPane tabPane;
+    private final Button confirmButton;
+    private final Button cancelButton;
+    private final CheckBox addToSchedCBox;
     private Song song;
 
     /**
      * Create and initialise the new song window.
-     *
+     * <p/>
      * @param owner the owner of this window.
      */
     public SongEntryWindow() {
+        initModality(Modality.NONE);
+        initStyle(StageStyle.UTILITY);
+        getIcons().add(new Image("file:icons/logo.png"));
+        
+        BorderPane mainPane = new BorderPane();
         setTitle(LabelGrabber.INSTANCE.getLabel("song.entry.heading"));
-        setResizable(false);
-        setLayout(new BorderLayout());
-        tabbedPane = new JTabbedPane();
-        tabbedPane.setBorder(new EmptyBorder(0, 0, 0, 0));
+        tabPane = new TabPane();
+
         setupBasicSongPanel();
-        tabbedPane.add(basicSongPanel);
+        Tab basicTab = new Tab(LabelGrabber.INSTANCE.getLabel("basic.information.heading"));
+        basicTab.setContent(basicSongPanel);
+        basicTab.setClosable(false);
+        tabPane.getTabs().add(basicTab);
+
         setupDetailedSongPanel();
-        tabbedPane.add(detailedSongPanel);
+        Tab detailedTab = new Tab(LabelGrabber.INSTANCE.getLabel("detailed.info.heading"));
+        detailedTab.setContent(detailedSongPanel);
+        detailedTab.setClosable(false);
+        tabPane.getTabs().add(detailedTab);
+
         setupThemePanel();
-        tabbedPane.add(themePanel);
-        add(tabbedPane, BorderLayout.CENTER);
+        Tab themeTab = new Tab(LabelGrabber.INSTANCE.getLabel("theme.heading"));
+        themeTab.setContent(themePanel);
+        themeTab.setClosable(false);
+        tabPane.getTabs().add(themeTab);
 
-        confirmButton = new JButton(LabelGrabber.INSTANCE.getLabel("add.song.button"), Utils.getImageIcon("icons/tick.png"));
-        confirmButton.addActionListener(new ActionListener() {
+        mainPane.setCenter(tabPane);
 
+        confirmButton = new Button(LabelGrabber.INSTANCE.getLabel("add.song.button"), new ImageView(new Image("file:icons/tick.png")));
+        confirmButton.setOnAction(new EventHandler<javafx.event.ActionEvent>() {
             @Override
-            public void actionPerformed(ActionEvent e) {
-
-                setVisible(false);
+            public void handle(javafx.event.ActionEvent t) {
+                hide();
                 Utils.updateSongInBackground(getSong(), true, false);
                 if(addToSchedCBox.isSelected()) {
                     Application.get().getMainWindow().getMainPanel().getSchedulePanel().getScheduleList().add(getSong());
@@ -88,27 +103,25 @@ public class SongEntryWindow extends JDialog {
                 Application.get().getMainWindow().getMainPanel().getPreviewPanel().refresh();
             }
         });
-        cancelButton = new JButton(LabelGrabber.INSTANCE.getLabel("cancel.button"), Utils.getImageIcon("icons/cross.png"));
-        cancelButton.addActionListener(new ActionListener() {
-
+        cancelButton = new Button(LabelGrabber.INSTANCE.getLabel("cancel.button"), new ImageView(new Image("file:icons/cross.png")));
+        cancelButton.setOnAction(new EventHandler<javafx.event.ActionEvent>() {
             @Override
-            public void actionPerformed(ActionEvent e) {
-                setVisible(false);
+            public void handle(javafx.event.ActionEvent t) {
+                hide();
             }
         });
-        addToSchedCBox = new JCheckBox(LabelGrabber.INSTANCE.getLabel("add.to.schedule.text"), false);
-        JPanel checkBoxPanel = new JPanel();
-        checkBoxPanel.setLayout(new FlowLayout(FlowLayout.LEFT));
-        checkBoxPanel.add(addToSchedCBox);
-        JPanel bottomPanel = new JPanel();
-        bottomPanel.setLayout(new BoxLayout(bottomPanel, BoxLayout.Y_AXIS));
-        JPanel buttonPanel = new JPanel();
-        buttonPanel.add(confirmButton);
-        buttonPanel.add(cancelButton);
-        bottomPanel.add(checkBoxPanel);
-        bottomPanel.add(buttonPanel);
-        add(bottomPanel, BorderLayout.SOUTH);
-        pack();
+        addToSchedCBox = new CheckBox(LabelGrabber.INSTANCE.getLabel("add.to.schedule.text"));
+        HBox checkBoxPanel = new HBox();
+        checkBoxPanel.getChildren().add(addToSchedCBox);
+        VBox bottomPanel = new VBox();
+        HBox buttonPanel = new HBox();
+        buttonPanel.getChildren().add(confirmButton);
+        buttonPanel.getChildren().add(cancelButton);
+        bottomPanel.getChildren().add(checkBoxPanel);
+        bottomPanel.getChildren().add(buttonPanel);
+        mainPane.setBottom(bottomPanel);
+
+        setScene(new Scene(mainPane));
     }
 
     /**
@@ -130,38 +143,18 @@ public class SongEntryWindow extends JDialog {
      */
     private void setupBasicSongPanel() {
         basicSongPanel = new BasicSongPanel();
-        basicSongPanel.getLyricsField().addKeyListener(new KeyListener() {
+        
+        basicSongPanel.getLyricsField().textProperty().addListener(new ChangeListener<String>() {
 
-            public void keyTyped(KeyEvent e) {
-                checkHighlight();
+            @Override
+            public void changed(ObservableValue<? extends String> ov, String t, String t1) {
                 checkConfirmButton();
-            }
-
-            public void keyPressed(KeyEvent e) {
-                checkHighlight();
-                checkConfirmButton();
-            }
-
-            public void keyReleased(KeyEvent e) {
-                checkHighlight();
-                checkConfirmButton();
-            }
-
-            private void checkHighlight() {
-                //TODO: Highlighting
             }
         });
-        basicSongPanel.getTitleField().addKeyListener(new KeyListener() {
+        basicSongPanel.getTitleField().textProperty().addListener(new ChangeListener<String>() {
 
-            public void keyTyped(KeyEvent e) {
-                checkConfirmButton();
-            }
-
-            public void keyPressed(KeyEvent e) {
-                checkConfirmButton();
-            }
-
-            public void keyReleased(KeyEvent e) {
+            @Override
+            public void changed(ObservableValue<? extends String> ov, String t, String t1) {
                 checkConfirmButton();
             }
         });
@@ -169,25 +162,25 @@ public class SongEntryWindow extends JDialog {
 
     /**
      * Get the confirm button on the new song window.
-     *
+     * <p/>
      * @return the confirm button.
      */
-    public JButton getConfirmButton() {
+    public Button getConfirmButton() {
         return confirmButton;
     }
 
     /**
      * Get the cancel button on the new song window.
-     *
+     * <p/>
      * @return the cancel button.
      */
-    public JButton getCancelButton() {
+    public Button getCancelButton() {
         return cancelButton;
     }
 
     /**
      * Get the panel where the user enters the basic song information.
-     *
+     * <p/>
      * @return the basic song panel.
      */
     public BasicSongPanel getBasicSongPanel() {
@@ -196,7 +189,7 @@ public class SongEntryWindow extends JDialog {
 
     /**
      * Get the panel where the user enters the more detailed song information.
-     *
+     * <p/>
      * @return the detailed song panel.
      */
     public DetailedSongPanel getDetailedSongPanel() {
@@ -205,7 +198,7 @@ public class SongEntryWindow extends JDialog {
 
     /**
      * Get the theme currently displayed on this window.
-     *
+     * <p/>
      * @return the current theme.
      */
     public Theme getTheme() {
@@ -219,43 +212,43 @@ public class SongEntryWindow extends JDialog {
         setTitle(LabelGrabber.INSTANCE.getLabel("new.song.title"));
         song = null;
         confirmButton.setText(LabelGrabber.INSTANCE.getLabel("new.song.button"));
-        confirmButton.setEnabled(false);
+        confirmButton.setDisable(true);
         basicSongPanel.resetNewSong();
         detailedSongPanel.resetNewSong();
         themePanel.setTheme(Theme.DEFAULT_THEME);
-        tabbedPane.setSelectedIndex(0);
+        tabPane.getSelectionModel().select(0);
         addToSchedCBox.setSelected(false);
-        addToSchedCBox.setEnabled(true);
+        addToSchedCBox.setDisable(false);
     }
 
     /**
      * Set this window up ready to edit an existing song.
-     *
+     * <p/>
      * @param song the song to edit.
      */
     public void resetEditSong(Song song) {
         setTitle(LabelGrabber.INSTANCE.getLabel("edit.song.title"));
         this.song = song;
         confirmButton.setText(LabelGrabber.INSTANCE.getLabel("edit.song.button"));
-        confirmButton.setEnabled(true);
+        confirmButton.setDisable(false);
         basicSongPanel.resetEditSong(song);
         detailedSongPanel.resetEditSong(song);
         if(song.getSections().length > 0) {
             themePanel.setTheme(song.getSections()[0].getTheme());
         }
-        tabbedPane.setSelectedIndex(0);
+        tabPane.getSelectionModel().select(0);
         addToSchedCBox.setSelected(false);
         if(Application.get().getMainWindow().getMainPanel().getSchedulePanel().getScheduleList().itemsProperty().get().contains(song)) {
-            addToSchedCBox.setEnabled(false);
+            addToSchedCBox.setDisable(true);
         }
         else {
-            addToSchedCBox.setEnabled(true);
+            addToSchedCBox.setDisable(false);
         }
     }
 
     /**
      * Get the song that's been edited or created by the window.
-     *
+     * <p/>
      * @return the song.
      */
     public Song getSong() {
@@ -290,10 +283,10 @@ public class SongEntryWindow extends JDialog {
     private void checkConfirmButton() {
         if(getBasicSongPanel().getLyricsField().getText().trim().equals("")
                 || getBasicSongPanel().getTitleField().getText().trim().equals("")) {
-            confirmButton.setEnabled(false);
+            confirmButton.setDisable(true);
         }
         else {
-            confirmButton.setEnabled(true);
+            confirmButton.setDisable(false);
         }
     }
 }

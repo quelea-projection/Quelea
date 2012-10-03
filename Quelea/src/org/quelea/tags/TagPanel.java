@@ -17,30 +17,23 @@
  */
 package org.quelea.tags;
 
-import java.awt.Color;
-import java.awt.Container;
-import java.awt.FlowLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import javax.swing.JButton;
-import javax.swing.JDialog;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.border.EmptyBorder;
-import javax.swing.border.LineBorder;
-import org.quelea.utils.Utils;
-import org.quelea.utils.WrapLayout;
+import javafx.event.EventHandler;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.scene.layout.HBox;
 import org.quelea.windows.library.LibrarySongList;
 
 /**
  * The panel where the tags are displayed.
  * @author Michael
  */
-public class TagPanel extends JPanel {
+public class TagPanel extends HBox {
 
     private Set<String> tags;
 
@@ -48,7 +41,6 @@ public class TagPanel extends JPanel {
      * Create a new tag panel.
      */
     public TagPanel() {
-        setLayout(new WrapLayout(FlowLayout.LEFT));
         tags = new HashSet<>();
     }
 
@@ -59,38 +51,22 @@ public class TagPanel extends JPanel {
      */
     public void addTag(final String tag, final LibrarySongList list) {
         tags.add(tag);
-        final JPanel tagPanel = new JPanel();
-        tagPanel.setBorder(new LineBorder(Color.BLACK, 2));
-        tagPanel.add(new JLabel(tag));
-        final JButton button = new JButton(Utils.getImageIcon("icons/delete.png", 10, 10));
-        button.addActionListener(new ActionListener() {
+        final HBox tagPanel = new HBox();
+        tagPanel.getChildren().add(new Label(tag));
+        final Button button = new Button("",new ImageView(new Image("file:icons/delete.png", 10, 10, false, true)));
+        button.setOnAction(new EventHandler<javafx.event.ActionEvent>() {
 
             @Override
-            public void actionPerformed(ActionEvent e) {
-                Container ancestor = button.getTopLevelAncestor();
+            public void handle(javafx.event.ActionEvent t) {
                 tags.remove(tag);
-                remove(tagPanel);
-                redo(ancestor);
-                if (list != null) {
+                getChildren().remove(tagPanel);
+                if(list != null) {
                     list.filterByTag(getTags());
                 }
             }
         });
-        button.setBorder(new EmptyBorder(0, 0, 0, 0));
-        tagPanel.add(button);
-        add(tagPanel);
-        redo(button.getTopLevelAncestor());
-    }
-
-    /**
-     * Repaint stuff.
-     * @param ancestor the ancestor of this panel.
-     */
-    private void redo(Container ancestor) {
-        validate();
-        repaint();
-        ((JDialog) ancestor).validate();
-        ((JDialog) ancestor).repaint();
+        tagPanel.getChildren().add(button);
+        getChildren().add(tagPanel);
     }
 
     /**
@@ -138,6 +114,6 @@ public class TagPanel extends JPanel {
      */
     public void removeTags() {
         tags.clear();
-        removeAll();
+        getChildren().clear();
     }
 }
