@@ -18,12 +18,11 @@
 package org.quelea.bible;
 
 import java.lang.ref.SoftReference;
+import java.util.ArrayList;
+import java.util.List;
 import org.quelea.utils.Utils;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * A book in the bible.
@@ -59,37 +58,29 @@ public final class BibleBook {
      * Get the text of this chapter as nicely formatted HTML.
      * @return the text of this chapter.
      */
-    public String getHTML() {
+    public String getText() {
+        String hardText = "";
         if(softRefText == null || softRefText.get() == null) {
             caretPosList.clear();
             int pos = 0;
             StringBuilder ret = new StringBuilder(1000);
-            ret.append("<html><body>");
             for(BibleChapter chapter : getChapters()) {
                 caretPosList.add(pos);
-                ret.append("<h1>");
                 String numStr = Integer.toString(chapter.getNum());
                 pos += numStr.length();
-                ret.append(numStr);
-                ret.append("</h1>");
-                ret.append("<p>");
+                ret.append("Chapter ").append(numStr);
+                ret.append("\n");
                 for(BibleVerse verse : chapter.getVerses()) {
-                    ret.append("<sup>");
-                    String verseNumStr = Integer.toString(verse.getNum());
-                    pos += verseNumStr.length();
-                    ret.append(verseNumStr);
-                    ret.append("</sup>");
                     String verseText = verse.getText();
                     pos += verseText.length();
-                    ret.append(verseText);
+                    ret.append(verseText).append(' ');
                 }
-                ret.append("</p>");
+                ret.append("\n");
             }
-            ret.append("</body></html>");
-            String hardText = ret.toString();
+            hardText = ret.toString();
             this.softRefText = new SoftReference<>(hardText);
         }
-        return softRefText.get();
+        return hardText;
     }
     
     /**

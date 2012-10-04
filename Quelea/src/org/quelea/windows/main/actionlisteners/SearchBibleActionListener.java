@@ -31,6 +31,6 @@ public class SearchBibleActionListener implements EventHandler<ActionEvent> {
     
     @Override
     public void handle(javafx.event.ActionEvent t) {
-        Application.get().getMainWindow().getBibleSearchDialog().setVisible(true);
+        Application.get().getMainWindow().getBibleSearchDialog().show();
     }
 }

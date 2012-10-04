@@ -19,15 +19,18 @@ package org.quelea.windows.options;
 
 import java.util.List;
 import javafx.event.EventHandler;
+import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import javafx.stage.StageStyle;
 import org.quelea.languages.LabelGrabber;
 import org.quelea.utils.PropertyPanel;
 
@@ -51,7 +54,10 @@ public class OptionsDialog extends Stage {
      */
     public OptionsDialog() {
         setTitle(LabelGrabber.INSTANCE.getLabel("options.title"));
-        initModality(Modality.WINDOW_MODAL);
+        initModality(Modality.APPLICATION_MODAL);
+        initStyle(StageStyle.UTILITY);
+        setResizable(false);
+        
         getIcons().add(new Image("file:icons/options.png", 16, 16, false, true));
         mainPane = new BorderPane();
         tabbedPane = new TabPane();
@@ -85,7 +91,8 @@ public class OptionsDialog extends Stage {
         tabbedPane.getTabs().add(bibleTab);
         
         mainPane.setCenter(tabbedPane);
-        okButton = new Button(LabelGrabber.INSTANCE.getLabel("ok.button"));
+        okButton = new Button(LabelGrabber.INSTANCE.getLabel("ok.button"), new ImageView(new Image("file:icons/tick.png")));
+        BorderPane.setMargin(okButton, new Insets(5));
         okButton.setOnAction(new EventHandler<javafx.event.ActionEvent>() {
 
             @Override

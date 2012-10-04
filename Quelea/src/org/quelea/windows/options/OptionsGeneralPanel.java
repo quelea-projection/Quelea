@@ -26,6 +26,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.Slider;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.Priority;
 import javafx.stage.DirectoryChooser;
 import org.quelea.Application;
 import org.quelea.languages.LabelGrabber;
@@ -98,6 +99,8 @@ public class OptionsGeneralPanel extends GridPane implements PropertyPanel {
         GridPane.setConstraints(ooPathLabel, 1, rows);
         getChildren().add(ooPathLabel);
         ooPathTextField = new TextField();
+        ooPathTextField.setMaxWidth(Double.MAX_VALUE);
+        GridPane.setHgrow(ooPathTextField, Priority.ALWAYS);
         ooPathTextField.setEditable(false);
         ooPathLabel.setLabelFor(ooPathTextField);
         GridPane.setConstraints(ooPathTextField, 2, rows);
@@ -171,7 +174,7 @@ public class OptionsGeneralPanel extends GridPane implements PropertyPanel {
         GridPane.setConstraints(borderThicknessSlider, 2, rows);
         getChildren().add(borderThicknessSlider);
         borderThicknessLabel.setLabelFor(borderThicknessSlider);
-        final Label borderThicknessValue = new Label(Double.toString(borderThicknessSlider.getValue()));
+        final Label borderThicknessValue = new Label(Integer.toString((int)borderThicknessSlider.getValue()));
         GridPane.setConstraints(borderThicknessValue, 3, rows);
         getChildren().add(borderThicknessValue);
         borderThicknessValue.setLabelFor(borderThicknessSlider);
@@ -179,7 +182,7 @@ public class OptionsGeneralPanel extends GridPane implements PropertyPanel {
 
             @Override
             public void changed(ObservableValue<? extends Number> ov, Number t, Number t1) {
-                borderThicknessValue.setText(Double.toString(borderThicknessSlider.getValue()));
+                borderThicknessValue.setText(Integer.toString((int)borderThicknessSlider.getValue()));
             }
         });
         rows++;
@@ -206,7 +209,7 @@ public class OptionsGeneralPanel extends GridPane implements PropertyPanel {
         GridPane.setConstraints(maxCharsSlider, 2, rows);
         getChildren().add(maxCharsSlider);
         maxCharsLabel.setLabelFor(maxCharsSlider);
-        final Label maxCharsValue = new Label(Double.toString(maxCharsSlider.getValue()));
+        final Label maxCharsValue = new Label(Integer.toString((int)maxCharsSlider.getValue()));
         GridPane.setConstraints(maxCharsValue, 3, rows);
         getChildren().add(maxCharsValue);
         maxCharsValue.setLabelFor(maxCharsSlider);
@@ -214,7 +217,7 @@ public class OptionsGeneralPanel extends GridPane implements PropertyPanel {
 
             @Override
             public void changed(ObservableValue<? extends Number> ov, Number t, Number t1) {
-                maxCharsValue.setText(Double.toString(maxCharsSlider.getValue()));
+                maxCharsValue.setText(Integer.toString((int)maxCharsSlider.getValue()));
             }
         });
         rows++;
@@ -226,7 +229,7 @@ public class OptionsGeneralPanel extends GridPane implements PropertyPanel {
         GridPane.setConstraints(minLinesSlider, 2, rows);
         getChildren().add(minLinesSlider);
         minLinesLabel.setLabelFor(minLinesSlider);
-        final Label minLinesValue = new Label(Double.toString(minLinesSlider.getValue()));
+        final Label minLinesValue = new Label(Integer.toString((int)minLinesSlider.getValue()));
         GridPane.setConstraints(minLinesValue, 3, rows);
         getChildren().add(minLinesValue);
         minLinesValue.setLabelFor(minLinesSlider);
@@ -234,7 +237,7 @@ public class OptionsGeneralPanel extends GridPane implements PropertyPanel {
 
             @Override
             public void changed(ObservableValue<? extends Number> ov, Number t, Number t1) {
-                minLinesValue.setText(Double.toString(minLinesSlider.getValue()));
+                minLinesValue.setText(Integer.toString((int)minLinesSlider.getValue()));
             }
         });
         rows++;

@@ -641,27 +641,6 @@ public final class QueleaProperties extends Properties {
     }
 
     /**
-     * Get the maximum number of verses allowed in any one bible reading. Too
-     * many will crash the program!
-     * <p/>
-     * @return the maximum number of verses allowed.
-     */
-    public int getMaxVerses() {
-        return Integer.parseInt(getProperty("max.verses", "100"));
-    }
-
-    /**
-     * Set the maximum number of verses allowed in any one bible reading. Too
-     * many will crash the program!
-     * <p/>
-     * @param val the maximum number of verses allowed.
-     */
-    public void setMaxVerses(int val) {
-        setProperty("max.verses", Integer.toString(val));
-        write();
-    }
-
-    /**
      * Get the colour used to display chords in stage view.
      * <p/>
      * @return the colour used to display chords in stage view.

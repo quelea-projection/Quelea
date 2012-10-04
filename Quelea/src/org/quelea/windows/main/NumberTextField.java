@@ -63,10 +63,10 @@ public class NumberTextField extends TextField {
     }
 
     public NumberTextField(Integer value, NumberFormat nf) {
-        super();
         this.nf = nf;
         initHandlers();
         setNumber(value);
+        setPrefWidth(30);
     }
 
     private void initHandlers() {

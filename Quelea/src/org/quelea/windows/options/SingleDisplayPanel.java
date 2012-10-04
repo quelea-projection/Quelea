@@ -30,11 +30,11 @@ import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.layout.HBox;
+import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
-import org.quelea.windows.main.NumberSpinner;
 import org.quelea.languages.LabelGrabber;
 import org.quelea.utils.Utils;
+import org.quelea.windows.main.NumberSpinner;
 
 /**
  * A panel used to represent a single type of display that the user can then
@@ -64,6 +64,7 @@ public class SingleDisplayPanel extends VBox {
      */
     public SingleDisplayPanel(String caption, String iconLocation, boolean none,
             boolean customPos) {
+        setSpacing(10);
         setAlignment(Pos.TOP_CENTER);
         this.none = none;
         Label captionLabel = new Label(caption);
@@ -98,22 +99,35 @@ public class SingleDisplayPanel extends VBox {
             });
             getChildren().add(custom);
 
-            HBox xyPanel = new HBox();
+            GridPane posPanel = new GridPane();
+            posPanel.setVgap(5);
             customX = new NumberSpinner(0, 1);
             customY = new NumberSpinner(0, 1);
-            xyPanel.getChildren().add(new Label("X:"));
-            xyPanel.getChildren().add(customX);
-            xyPanel.getChildren().add(new Label("Y:"));
-            xyPanel.getChildren().add(customY);
-            getChildren().add(xyPanel);
-            HBox whPanel = new HBox();
             customWidth = new NumberSpinner(0, 1);
             customHeight = new NumberSpinner(0, 1);
-            whPanel.getChildren().add(new Label("W:"));
-            whPanel.getChildren().add(customWidth);
-            whPanel.getChildren().add(new Label("H:"));
-            whPanel.getChildren().add(customHeight);
-            getChildren().add(whPanel);
+            
+            Label xLabel = new Label("X:");
+            GridPane.setConstraints(xLabel, 1, 1);
+            posPanel.getChildren().add(xLabel);
+            GridPane.setConstraints(customX, 2, 1);
+            posPanel.getChildren().add(customX);
+            Label yLabel = new Label("Y:");
+            GridPane.setConstraints(yLabel, 3, 1);
+            posPanel.getChildren().add(yLabel);
+            GridPane.setConstraints(customY, 4, 1);
+            posPanel.getChildren().add(customY);
+            Label wLabel = new Label("W:");
+            GridPane.setConstraints(wLabel, 1, 2);
+            posPanel.getChildren().add(wLabel);
+            GridPane.setConstraints(customWidth, 2, 2);
+            posPanel.getChildren().add(customWidth);
+            Label hLabel = new Label("H:");
+            GridPane.setConstraints(hLabel, 3, 2);
+            posPanel.getChildren().add(hLabel);
+            GridPane.setConstraints(customHeight, 4, 2);
+            posPanel.getChildren().add(customHeight);
+            posPanel.setMaxWidth(Double.MAX_VALUE);
+            getChildren().add(posPanel);
         }
     }
 
