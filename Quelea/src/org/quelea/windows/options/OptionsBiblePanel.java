@@ -19,21 +19,26 @@ package org.quelea.windows.options;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.event.EventHandler;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.GridPane;
 import javafx.stage.FileChooser;
+import name.antonsmirnov.javafx.dialog.Dialog;
 import org.quelea.Application;
-import org.quelea.windows.main.NumberSpinner;
 import org.quelea.bible.Bible;
 import org.quelea.bible.BibleChangeListener;
 import org.quelea.bible.BibleManager;
 import org.quelea.languages.LabelGrabber;
 import org.quelea.utils.FileFilters;
+import org.quelea.utils.LoggerUtils;
 import org.quelea.utils.PropertyPanel;
 import org.quelea.utils.QueleaProperties;
 import org.quelea.utils.Utils;
@@ -45,8 +50,8 @@ import org.quelea.utils.Utils;
  */
 public class OptionsBiblePanel extends GridPane implements PropertyPanel, BibleChangeListener {
 
+    private static final Logger LOGGER = LoggerUtils.getLogger();
     private final ComboBox<Bible> defaultBibleComboBox;
-    private final NumberSpinner maxVersesSpinner;
 
     /**
      * Create the options bible panel.
@@ -64,15 +69,7 @@ public class OptionsBiblePanel extends GridPane implements PropertyPanel, BibleC
         GridPane.setConstraints(defaultBibleComboBox, 2, 1);
         getChildren().add(defaultBibleComboBox);
 
-        Label maxVerseLabel = new Label(LabelGrabber.INSTANCE.getLabel("max.verses.label"));
-        GridPane.setConstraints(maxVerseLabel, 1, 2);
-        getChildren().add(maxVerseLabel);
-        maxVersesSpinner = new NumberSpinner(200, 1);
-        maxVerseLabel.setLabelFor(maxVersesSpinner);
-        GridPane.setConstraints(maxVersesSpinner, 2, 2);
-        getChildren().add(maxVersesSpinner);
-
-        final Button addBibleButton = new Button(LabelGrabber.INSTANCE.getLabel("add.bible.label"));
+        final Button addBibleButton = new Button(LabelGrabber.INSTANCE.getLabel("add.bible.label"), new ImageView(new Image("file:icons/add.png")));
         addBibleButton.setOnAction(new EventHandler<javafx.event.ActionEvent>() {
             @Override
             public void handle(javafx.event.ActionEvent t) {
@@ -84,8 +81,8 @@ public class OptionsBiblePanel extends GridPane implements PropertyPanel, BibleC
                         Utils.copyFile(file, new File(QueleaProperties.get().getBibleDir(), file.getName()));
                     }
                     catch(IOException ex) {
-                        ex.printStackTrace();
-//                        JOptionPane.showMessageDialog(chooser, LabelGrabber.INSTANCE.getLabel("bible.copy.error.text"), LabelGrabber.INSTANCE.getLabel("bible.copy.error.heading"), JOptionPane.ERROR);
+                        LOGGER.log(Level.WARNING, "Errpr copying bible file", ex);
+                        Dialog.showError(LabelGrabber.INSTANCE.getLabel("bible.copy.error.heading"), LabelGrabber.INSTANCE.getLabel("bible.copy.error.text"));
                     }
                 }
             }
@@ -125,7 +122,6 @@ public class OptionsBiblePanel extends GridPane implements PropertyPanel, BibleC
                 defaultBibleComboBox.getSelectionModel().select(i);
             }
         }
-        maxVersesSpinner.setNumber(props.getMaxVerses());
     }
 
     /**
@@ -136,8 +132,6 @@ public class OptionsBiblePanel extends GridPane implements PropertyPanel, BibleC
         QueleaProperties props = QueleaProperties.get();
         Bible bible = getDefaultBibleBox().getSelectionModel().getSelectedItem();
         props.setDefaultBible(bible);
-        int maxVerses = getMaxVersesSpinner().getNumber();
-        props.setMaxVerses(maxVerses);
     }
 
     /**
@@ -147,14 +141,5 @@ public class OptionsBiblePanel extends GridPane implements PropertyPanel, BibleC
      */
     public ComboBox<Bible> getDefaultBibleBox() {
         return defaultBibleComboBox;
-    }
-
-    /**
-     * Get the max verses spinner.
-     * <p/>
-     * @return the max verses spinner.
-     */
-    public NumberSpinner getMaxVersesSpinner() {
-        return maxVersesSpinner;
     }
 }

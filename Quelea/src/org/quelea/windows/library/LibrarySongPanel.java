@@ -23,6 +23,7 @@ import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Orientation;
+import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
@@ -74,7 +75,9 @@ public class LibrarySongPanel extends BorderPane {
         setCenter(listScrollPane);
 
         HBox northPanel = new HBox();
-        northPanel.getChildren().add(new Label(LabelGrabber.INSTANCE.getLabel("library.song.search")));
+        Label searchLabel = new Label(LabelGrabber.INSTANCE.getLabel("library.song.search"));
+        searchLabel.setAlignment(Pos.CENTER);
+        northPanel.getChildren().add(searchLabel);
         searchBox = new TextField();
         HBox.setHgrow(searchBox, Priority.SOMETIMES);
         searchBox.setMaxWidth(Double.MAX_VALUE);

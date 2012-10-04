@@ -17,41 +17,42 @@
  */
 package org.quelea.importexport;
 
-import java.awt.Insets;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import javax.swing.BoxLayout;
-import javax.swing.JButton;
-import javax.swing.JDialog;
+import javafx.event.EventHandler;
+import javafx.scene.Scene;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableView;
+import javafx.scene.control.ToolBar;
+import javafx.scene.control.Tooltip;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
+import javafx.stage.Modality;
+import javafx.stage.Stage;
+import javafx.stage.StageStyle;
 import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTable;
-import javax.swing.JToolBar;
-import javax.swing.ListSelectionModel;
-import javax.swing.border.EmptyBorder;
-import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
 import javax.swing.table.TableRowSorter;
 import org.quelea.displayable.Song;
 import org.quelea.languages.LabelGrabber;
-import org.quelea.utils.Utils;
 
 /**
  * A dialog where given songs can be selected.
  * @author Michael
  */
-public class SelectSongsDialog extends JDialog {
+public class SelectSongsDialog extends Stage {
 
-    private final JButton addButton;
-    private final JTable table;
+    private final Button addButton;
+    private final TableView table;
     private List<Song> songs;
     private boolean[] checkList;
     private final String checkboxText;
+    private TableModel model;
 
     /**
      * Create a new imported songs dialog.
@@ -63,42 +64,41 @@ public class SelectSongsDialog extends JDialog {
      */
     public SelectSongsDialog(JFrame owner, String[] text, String acceptText,
                              String checkboxText) {
-        super(owner, LabelGrabber.INSTANCE.getLabel("select.songs.title"), true);
+        initModality(Modality.APPLICATION_MODAL);
+        initStyle(StageStyle.UTILITY);
+        setTitle(LabelGrabber.INSTANCE.getLabel("select.songs.title"));
         this.checkboxText = checkboxText;
         songs = new ArrayList<>();
-        setLayout(new BoxLayout(getContentPane(), BoxLayout.X_AXIS));
-        JPanel mainPanel = new JPanel();
-        mainPanel.setLayout(new BoxLayout(mainPanel, BoxLayout.Y_AXIS));
+        
+        HBox rootPane = new HBox();
+        VBox mainPanel = new VBox();
         for(String str : text) {
-            mainPanel.add(new JLabel(str));
+            mainPanel.getChildren().add(new Label(str));
         }
-        table = new JTable();
-        table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-        mainPanel.add(new JScrollPane(table));
-        JPanel optionsPanel = new JPanel();
-        JToolBar options = new JToolBar();
-        options.setFloatable(false);
-        options.add(createCheckAllButton());
-        optionsPanel.add(options);
-        addButton = new JButton(acceptText);
-        mainPanel.add(addButton);
-        add(mainPanel);
-        add(optionsPanel);
-        pack();
+        table = new TableView();
+        mainPanel.getChildren().add(table);
+        
+        ToolBar options = new ToolBar();
+        options.getItems().add(createCheckAllButton());
+        addButton = new Button(acceptText, new ImageView(new Image("file:icons/tick.png")));
+        mainPanel.getChildren().add(addButton);
+        rootPane.getChildren().add(mainPanel);
+        rootPane.getChildren().add(options);
+        
+        setScene(new Scene(rootPane));
     }
 
     /**
      * Create the button that checks all the boxes.
      * @return the newly created check all button.
      */
-    private JButton createCheckAllButton() {
-        JButton checkButton = new JButton(Utils.getImageIcon("icons/checkbox.jpg"));
-        checkButton.setToolTipText(LabelGrabber.INSTANCE.getLabel("check.uncheck.all.text"));
-        checkButton.setMargin(new Insets(0, 0, 0, 0));
-        checkButton.setBorder(new EmptyBorder(0, 0, 0, 0));
-        checkButton.addActionListener(new ActionListener() {
+    private Button createCheckAllButton() {
+        Button checkButton = new Button("",new ImageView(new Image("file:icons/checkbox.jpg")));
+        checkButton.setTooltip(new Tooltip(LabelGrabber.INSTANCE.getLabel("check.uncheck.all.text")));
+        checkButton.setOnAction(new EventHandler<javafx.event.ActionEvent>() {
 
-            public void actionPerformed(ActionEvent e) {
+            @Override
+            public void handle(javafx.event.ActionEvent t) {
                 if(getSongs().isEmpty()) {
                     return;
                 }
@@ -123,10 +123,17 @@ public class SelectSongsDialog extends JDialog {
         Collections.sort(songs);
         this.songs = songs;
         this.checkList = checkList;
-        DefaultTableModel model = new DefaultTableModel(songs.size(), 3);
-        table.setModel(model);
-        TableRowSorter<TableModel> sorter = new TableRowSorter<TableModel>(model);
-        table.setRowSorter(sorter);
+//        TableRowSorter<TableModel> sorter = new TableRowSorter<>(model);
+//        table.setRowSorter(sorter);
+        
+        table.getColumns().clear();
+        TableColumn nameColumn = new TableColumn(LabelGrabber.INSTANCE.getLabel("name.label"));
+        table.getColumns().add(nameColumn);
+        TableColumn authorColumn = new TableColumn(LabelGrabber.INSTANCE.getLabel("author.label"));
+        table.getColumns().add(authorColumn);
+        TableColumn checkedColumn = new TableColumn(checkboxText);
+        table.getColumns().add(checkedColumn);
+        
         table.getColumnModel().getColumn(0).setHeaderValue(LabelGrabber.INSTANCE.getLabel("name.label"));
         table.getColumnModel().getColumn(1).setHeaderValue(LabelGrabber.INSTANCE.getLabel("author.label"));
         table.getColumnModel().getColumn(2).setHeaderValue(checkboxText);
@@ -167,7 +174,7 @@ public class SelectSongsDialog extends JDialog {
      * Get the table in this dialog.
      * @return the table.
      */
-    public JTable getTable() {
+    public TableView getTable() {
         return table;
     }
 
@@ -175,7 +182,7 @@ public class SelectSongsDialog extends JDialog {
      * Get the add button.
      * @return the add button.
      */
-    public JButton getAddButton() {
+    public Button getAddButton() {
         return addButton;
     }
 }

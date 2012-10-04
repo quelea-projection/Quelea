@@ -205,18 +205,6 @@ public class LibraryBiblePanel extends VBox implements BibleChangeListener {
                 }
             }
         }
-        int maxVerses = QueleaProperties.get().getMaxVerses();
-        if (verses.size() > maxVerses) {
-            preview.setText(LabelGrabber.INSTANCE.getLabel("too.many.verses.error")
-                    .replace("$(MAXVERSE)", Integer.toString(maxVerses))
-                    .replace("$(VERSENUM)", Integer.toString(verses.size())));
-            getAddToSchedule().setDisable(true);
-            return;
-        }
-        else {
-            getAddToSchedule().setDisable(false);
-        }
-
         preview.setText(ret.toString());
     }
 

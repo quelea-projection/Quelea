@@ -21,30 +21,35 @@ import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import org.quelea.Application;
+import org.quelea.displayable.Song;
 import org.quelea.windows.newsong.SongEntryWindow;
 
 /**
  * Called when the current song in the library should be edited.
+ *
  * @author Michael
  */
 public class EditSongDBActionListener implements EventHandler<ActionEvent> {
 
     /**
      * Edit the currently selected song in the library.
+     *
      * @param e the action event.
      */
     @Override
     public void handle(ActionEvent t) {
         Platform.runLater(new Runnable() {
-
             @Override
             public void run() {
                 SongEntryWindow songEntryWindow = Application.get().getMainWindow().getSongEntryWindow();
-                songEntryWindow.resetEditSong(Application.get().getMainWindow().getMainPanel().getLibraryPanel().getLibrarySongPanel().getSongList().getSelectedValue());
-                songEntryWindow.show();
-                songEntryWindow.toFront();
+                Song song = Application.get().getMainWindow().getMainPanel().getLibraryPanel().getLibrarySongPanel().getSongList().getSelectedValue();
+                if(song != null) {
+                    songEntryWindow.resetEditSong(song);
+                    songEntryWindow.show();
+                    songEntryWindow.toFront();
+                }
             }
         });
-        
+
     }
 }

@@ -69,11 +69,6 @@ public final class Main {
         //Hack to initialise JavaFX
         new JFXPanel();
 
-        //Needed to stop menus appearing behind video
-        JPopupMenu.setDefaultLightWeightPopupEnabled(false);
-        //Same for tooltips
-        ToolTipManager.sharedInstance().setLightWeightPopupEnabled(false);
-
         new UserFileChecker(QueleaProperties.getQueleaUserHome()).checkUserFiles();
 
         GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();

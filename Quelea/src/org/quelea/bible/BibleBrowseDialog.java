@@ -18,89 +18,76 @@
  */
 package org.quelea.bible;
 
-import java.awt.BorderLayout;
-import java.awt.FlowLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import javax.swing.DefaultComboBoxModel;
-import javax.swing.DefaultListModel;
-import javax.swing.JComboBox;
-import javax.swing.JDialog;
-import javax.swing.JEditorPane;
-import javax.swing.JLabel;
-import javax.swing.JList;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.ListSelectionModel;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
-import javax.swing.text.Document;
-import javax.swing.text.html.HTMLEditorKit;
-import javax.swing.text.html.StyleSheet;
-import org.quelea.Application;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
+import javafx.event.EventHandler;
+import javafx.scene.Scene;
+import javafx.scene.control.ComboBox;
+import javafx.scene.control.Label;
+import javafx.scene.control.ListView;
+import javafx.scene.control.TextArea;
+import javafx.scene.image.Image;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.HBox;
+import javafx.stage.Stage;
 import org.quelea.languages.LabelGrabber;
-import org.quelea.utils.Utils;
 
 /**
  * A dialog where the user can browse through the installed bibles.
  * <p/>
  * @author Michael
  */
-public class BibleBrowseDialog extends JDialog implements BibleChangeListener {
+public class BibleBrowseDialog extends Stage implements BibleChangeListener {
 
-    private JComboBox<Bible> bibles;
-    private JList<BibleBook> books;
-    private JEditorPane bibleText;
+    private ComboBox<Bible> bibles;
+    private ListView<BibleBook> books;
+    private TextArea bibleText;
 
     /**
      * Create the bible browse dialog.
      */
     public BibleBrowseDialog() {
-//        super(Application.get().getMainWindow());
+        BorderPane mainPane = new BorderPane();
         setTitle(LabelGrabber.INSTANCE.getLabel("bible.browser.title"));
-        setIconImage(Utils.getImage("icons/bible.png"));
-        setLayout(new BorderLayout());
+        getIcons().add(new Image("file:icons/bible.png"));
 
-        JPanel northPanel = new JPanel();
-        bibles = new JComboBox<>(new DefaultComboBoxModel<Bible>());
+        HBox northPanel = new HBox();
+        bibles = new ComboBox<>();
         bibles.setEditable(false);
-        bibles.addActionListener(new ActionListener() {
+        bibles.setOnAction(new EventHandler<javafx.event.ActionEvent>() {
+
             @Override
-            public void actionPerformed(ActionEvent ae) {
+            public void handle(javafx.event.ActionEvent t) {
                 updateBooks();
             }
         });
         BibleManager.get().registerBibleChangeListener(this);
-        JLabel selectBibleLabel = new JLabel(LabelGrabber.INSTANCE.getLabel("bible.heading"));
+        Label selectBibleLabel = new Label(LabelGrabber.INSTANCE.getLabel("bible.heading"));
         selectBibleLabel.setLabelFor(bibles);
-        northPanel.setLayout(new FlowLayout(FlowLayout.LEFT));
-        northPanel.add(selectBibleLabel);
-        northPanel.add(bibles);
-        add(northPanel, BorderLayout.NORTH);
+        northPanel.getChildren().add(selectBibleLabel);
+        northPanel.getChildren().add(bibles);
+        mainPane.setTop(northPanel);
 
-        books = new JList<>(new DefaultListModel<BibleBook>());
-        books.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-        books.addListSelectionListener(new ListSelectionListener() {
+        books = new ListView<>();
+        books.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<BibleBook>() {
+
             @Override
-            public void valueChanged(ListSelectionEvent lse) {
-                BibleBook book = books.getSelectedValue();
+            public void changed(ObservableValue<? extends BibleBook> ov, BibleBook t, BibleBook t1) {
+                BibleBook book = books.getSelectionModel().getSelectedItem();
                 if(book != null) {
-                    bibleText.setText(book.getHTML());
-                    bibleText.setCaretPosition(0);
+                    bibleText.setText(book.getText());
                 }
             }
         });
-        add(new JScrollPane(books), BorderLayout.WEST);
-
-        bibleText = new JEditorPane();
-        HTMLEditorKit kit = new HTMLEditorKit();
-        Document doc = kit.createDefaultDocument();
-        bibleText.setDocument(doc);
-        bibleText.setEditorKit(kit);
+        mainPane.setLeft(books);
+        bibleText = new TextArea();
+        bibleText.setWrapText(true);
         bibleText.setEditable(false);
-        add(new JScrollPane(bibleText), BorderLayout.CENTER);
+        
+        mainPane.setCenter(bibleText);
         updateBibles();
-        setSize(800, 600);
+        
+        setScene(new Scene(mainPane));
     }
 
     /**
@@ -109,7 +96,7 @@ public class BibleBrowseDialog extends JDialog implements BibleChangeListener {
      * @param bible the bible to select.
      */
     public void setBible(Bible bible) {
-        bibles.setSelectedItem(bible);
+        bibles.getSelectionModel().select(bible);
     }
 
     /**
@@ -119,8 +106,7 @@ public class BibleBrowseDialog extends JDialog implements BibleChangeListener {
      */
     public void setBook(BibleBook book) {
         setBible(book.getBible());
-        DefaultListModel<BibleBook> model = (DefaultListModel<BibleBook>) books.getModel();
-        books.setSelectedIndex(model.indexOf(book));
+        books.getSelectionModel().select(book);
     }
 
     /**
@@ -130,22 +116,20 @@ public class BibleBrowseDialog extends JDialog implements BibleChangeListener {
      */
     public void setChapter(BibleChapter chapter) {
         setBook(chapter.getBook());
-//        bibleText.setCaretPosition(chapter.getBook().getCaretIndexOfChapter(chapter.getNum()));
     }
 
     /**
      * Update the books based on the bible selection
      */
     public final void updateBooks() {
-        int index = books.getSelectedIndex();
-        Bible currentBible = bibles.getItemAt(bibles.getSelectedIndex());
-        DefaultListModel<BibleBook> model = (DefaultListModel<BibleBook>) books.getModel();
-        model.clear();
+        int index = books.getSelectionModel().getSelectedIndex();
+        Bible currentBible = bibles.getSelectionModel().getSelectedItem();
+        books.itemsProperty().get().clear();
         if(currentBible != null) {
             for(BibleBook book : currentBible.getBooks()) {
-                model.addElement(book);
+                books.itemsProperty().get().add(book);
             }
-            books.setSelectedIndex(index);
+            books.getSelectionModel().select(index);
         }
     }
 
@@ -154,34 +138,10 @@ public class BibleBrowseDialog extends JDialog implements BibleChangeListener {
      */
     @Override
     public final void updateBibles() {
-        DefaultComboBoxModel<Bible> model = (DefaultComboBoxModel<Bible>) bibles.getModel();
-        model.removeAllElements();
+        bibles.itemsProperty().get().clear();
         for(Bible bible : BibleManager.get().getBibles()) {
-            model.addElement(bible);
+            bibles.itemsProperty().get().add(bible);
         }
     }
 
-    /**
-     * Centre the dialog on the parent before displaying.
-     * <p/>
-     * @param visible true if visible, false otherwise.
-     */
-    @Override
-    public void setVisible(boolean visible) {
-        if(visible) {
-            setLocationRelativeTo(getOwner());
-        }
-        super.setVisible(visible);
-    }
-
-    /**
-     * Just for testing.
-     * <p/>
-     * @param args command line args (not used.)
-     */
-    public static void main(String[] args) {
-        BibleBrowseDialog dialog = new BibleBrowseDialog();
-//        dialog.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        dialog.setVisible(true);
-    }
 }

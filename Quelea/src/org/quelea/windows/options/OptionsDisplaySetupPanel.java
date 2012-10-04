@@ -16,7 +16,7 @@
  */
 package org.quelea.windows.options;
 
-import java.awt.*;
+import java.awt.GraphicsDevice;
 import javafx.scene.layout.GridPane;
 import javax.swing.SwingUtilities;
 import org.quelea.Application;
@@ -40,6 +40,7 @@ public class OptionsDisplaySetupPanel extends GridPane implements PropertyPanel 
      * Create a new display setup panel.
      */
     public OptionsDisplaySetupPanel() {
+        setHgap(30);
         monitorPanel = new SingleDisplayPanel(LabelGrabber.INSTANCE.getLabel("control.screen.label")+":", "icons/monitor.png", false, false);
         GridPane.setConstraints(monitorPanel, 1, 1);
         getChildren().add(monitorPanel);

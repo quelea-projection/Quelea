@@ -57,11 +57,11 @@ import org.quelea.windows.main.StatusPanel;
  * An import dialog used for importing songs.
  * @author Michael
  */
-public abstract class ImportDialog extends JDialog implements PropertyChangeListener {
+public abstract class ImportDialog extends Stage implements PropertyChangeListener {
 
-    private final JTextField locationField;
-    private final JButton importButton;
-    private final JCheckBox checkDuplicates;
+    private final TextField locationField;
+    private final Button importButton;
+    private final CheckBox checkDuplicates;
     private final SelectSongsDialog importedDialog;
     private StatusPanel statusPanel;
     private boolean halt;

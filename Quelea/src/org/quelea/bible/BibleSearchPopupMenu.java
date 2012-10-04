@@ -18,10 +18,9 @@
  */
 package org.quelea.bible;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import javax.swing.JMenuItem;
-import javax.swing.JPopupMenu;
+import javafx.event.EventHandler;
+import javafx.scene.control.ContextMenu;
+import javafx.scene.control.MenuItem;
 import org.quelea.Application;
 import org.quelea.languages.LabelGrabber;
 
@@ -30,31 +29,31 @@ import org.quelea.languages.LabelGrabber;
  *
  * @author Michael
  */
-public class BibleSearchPopupMenu extends JPopupMenu {
+public class BibleSearchPopupMenu extends ContextMenu {
 
-    private JMenuItem viewVerseItem;
+    private MenuItem viewVerseItem;
     private BibleChapter currentChapter;
 
     /**
      * Create the bible search popup menu.
      */
     public BibleSearchPopupMenu() {
-        viewVerseItem = new JMenuItem(LabelGrabber.INSTANCE.getLabel("open.in.browser"));
-        viewVerseItem.addActionListener(new ActionListener() {
+        viewVerseItem = new MenuItem(LabelGrabber.INSTANCE.getLabel("open.in.browser"));
+        viewVerseItem.setOnAction(new EventHandler<javafx.event.ActionEvent>() {
 
             @Override
-            public void actionPerformed(ActionEvent ae) {
+            public void handle(javafx.event.ActionEvent t) {
                 trigger();
             }
         });
-        add(viewVerseItem);
+        getItems().add(viewVerseItem);
     }
 
     public void trigger() {
         if (currentChapter != null) {
             BibleBrowseDialog dialog = Application.get().getMainWindow().getBibleBrowseDialog();
             dialog.setChapter(currentChapter);
-            dialog.setVisible(true);
+            dialog.show();
         }
     }
 
