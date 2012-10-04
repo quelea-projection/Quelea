@@ -55,7 +55,7 @@ public class ImageButton extends Button {
         fileChooser = new FileChooser();
         final File imageDir = new File("img");
         fileChooser.setInitialDirectory(imageDir);
-        fileChooser.getExtensionFilters().add(FileFilters.IMAGES_ONLY);
+        fileChooser.getExtensionFilters().add(FileFilters.IMAGES);
         setOnAction(new EventHandler<javafx.event.ActionEvent>() {
 
             @Override

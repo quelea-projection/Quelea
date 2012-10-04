@@ -18,23 +18,26 @@
  */
 package org.quelea.windows.main.actionlisteners;
 
-import javax.swing.JFileChooser;
+import java.io.File;
+import javafx.stage.FileChooser;
 import org.quelea.Application;
-import org.quelea.utils.Utils;
+import org.quelea.utils.FileFilters;
 
 /**
  * The open schedule action listener.
  * @author Michael
  */
-public class OpenScheduleActionListener extends ClearingActionListener {
+public class OpenScheduleActionListener extends ClearingEventHandler {
 
     @Override
     public void handle(javafx.event.ActionEvent t) {
         if(confirmClear()) {
-            JFileChooser chooser = Utils.getScheduleFileChooser();
-//            if(chooser.showOpenDialog(Application.get().getMainWindow()) == JFileChooser.APPROVE_OPTION) {
-//                Application.get().openSchedule(chooser.getSelectedFile());
-//            }
+            FileChooser chooser = new FileChooser();
+            chooser.getExtensionFilters().add(FileFilters.SCHEDULE);
+            File file = chooser.showOpenDialog(Application.get().getMainWindow());
+            if(file!=null) {
+                Application.get().openSchedule(file);
+            }
         }
     }
 

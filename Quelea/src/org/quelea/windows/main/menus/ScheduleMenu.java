@@ -29,12 +29,17 @@ import javafx.scene.control.MenuItem;
 import javafx.scene.control.SeparatorMenuItem;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 import org.quelea.Application;
 import org.quelea.Schedule;
 import org.quelea.displayable.Displayable;
+import org.quelea.displayable.Song;
 import org.quelea.languages.LabelGrabber;
 import org.quelea.mail.Mailer;
 import org.quelea.utils.LoggerUtils;
+import org.quelea.windows.library.LibrarySongList;
+import org.quelea.windows.main.ButtonChecker;
 import org.quelea.windows.main.MainPanel;
 import org.quelea.windows.main.ScheduleList;
 import org.quelea.windows.main.actionlisteners.AddDVDActionListener;
@@ -87,21 +92,21 @@ public class ScheduleMenu extends Menu {
 
         final MainPanel mainPanel = Application.get().getMainWindow().getMainPanel();
         final ScheduleList scheduleList = mainPanel.getSchedulePanel().getScheduleList();
-//        scheduleList.addListSelectionListener(new ListSelectionListener() {
-//
-//            @Override
-//            public void valueChanged(ListSelectionEvent e) {
-//                ButtonChecker.INSTANCE.checkEditRemoveButtons(editSongItem, removeSongItem);
-//            }
-//        });
-//        final LibrarySongList songList = mainPanel.getLibraryPanel().getLibrarySongPanel().getSongList();
-//        songList.addListSelectionListener(new ListSelectionListener() {
-//
-//            @Override
-//            public void valueChanged(ListSelectionEvent e) {
-//                ButtonChecker.INSTANCE.checkAddButton(addSongItem);
-//            }
-//        });
+        scheduleList.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<Displayable>() {
+
+            @Override
+            public void changed(ObservableValue<? extends Displayable> ov, Displayable t, Displayable t1) {
+                ButtonChecker.INSTANCE.checkEditRemoveButtons(editSongItem, removeSongItem);
+            }
+        });
+        final LibrarySongList songList = mainPanel.getLibraryPanel().getLibrarySongPanel().getSongList();
+        songList.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<Song>() {
+
+            @Override
+            public void changed(ObservableValue<? extends Song> ov, Song t, Song t1) {
+                ButtonChecker.INSTANCE.checkAddButton(addSongItem);
+            }
+        });
 
         getItems().add(new SeparatorMenuItem());
 
@@ -113,9 +118,10 @@ public class ScheduleMenu extends Menu {
         addVideoItem.setOnAction(new AddVideoActionListener());
         getItems().add(addVideoItem);
 
-        addDVDItem = new MenuItem(LabelGrabber.INSTANCE.getLabel("add.dvd.button"), new ImageView(new Image("file:icons/dvd.png", 16, 16, false, true)));
-        addDVDItem.setOnAction(new AddDVDActionListener());
-        getItems().add(addDVDItem);
+        //TODO: Investigate putting DVD support back in
+//        addDVDItem = new MenuItem(LabelGrabber.INSTANCE.getLabel("add.dvd.button"), new ImageView(new Image("file:icons/dvd.png", 16, 16, false, true)));
+//        addDVDItem.setOnAction(new AddDVDActionListener());
+//        getItems().add(addDVDItem);
 
         getItems().add(new SeparatorMenuItem());
 

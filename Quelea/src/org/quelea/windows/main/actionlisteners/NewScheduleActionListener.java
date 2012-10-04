@@ -26,7 +26,7 @@ import org.quelea.Application;
  *
  * @author Michael
  */
-public class NewScheduleActionListener extends ClearingActionListener {
+public class NewScheduleActionListener extends ClearingEventHandler {
 
     @Override
     public void handle(ActionEvent t) {

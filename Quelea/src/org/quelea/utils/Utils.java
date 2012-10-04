@@ -204,19 +204,6 @@ public final class Utils {
     }
 
     /**
-     * Get the JFileChooser used for opening and saving schedules.
-     * <p/>
-     * @return the JFileChooser.
-     */
-    public static JFileChooser getScheduleFileChooser() {
-        JFileChooser chooser = new JFileChooser();
-        chooser.setAcceptAllFileFilterUsed(false);
-        chooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
-        chooser.setFileFilter(FileFilters.SCHEDULE);
-        return chooser;
-    }
-
-    /**
      * Wrap a runnable as one having a low priority.
      * <p/>
      * @param task the runnable to wrap.
@@ -225,6 +212,7 @@ public final class Utils {
     public static Runnable wrapAsLowPriority(final Runnable task) {
         return new Runnable() {
             @SuppressWarnings("CallToThreadYield")
+            @Override
             public void run() {
                 Thread t = Thread.currentThread();
                 int oldPriority = t.getPriority();
