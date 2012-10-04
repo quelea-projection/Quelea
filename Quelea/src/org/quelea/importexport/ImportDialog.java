@@ -33,6 +33,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javafx.event.EventHandler;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
@@ -131,14 +132,14 @@ public abstract class ImportDialog extends JDialog implements PropertyChangeList
             @Override
             public void actionPerformed(ActionEvent e) {
                 statusPanel = Application.get().getStatusGroup().addPanel(LabelGrabber.INSTANCE.getLabel("importing.status"));
-//                statusPanel.getCancelButton().addActionListener(new ActionListener() {
-//
-//                    @Override
-//                    public void actionPerformed(ActionEvent e) {
-//                        statusPanel.done();
-//                        halt = true;
-//                    }
-//                });
+                statusPanel.getCancelButton().setOnAction(new EventHandler<javafx.event.ActionEvent>() {
+
+                    @Override
+                    public void handle(javafx.event.ActionEvent t) {
+                        statusPanel.done();
+                        halt = true;
+                    }
+                });
                 final String location = locationField.getText();
                 setActive();
                 SwingWorker worker = new SwingWorker() {

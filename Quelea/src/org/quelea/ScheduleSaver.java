@@ -18,10 +18,13 @@
 package org.quelea;
 
 import java.io.File;
-import javax.swing.JFileChooser;
-import javax.swing.JOptionPane;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
+import javafx.stage.FileChooser;
+import name.antonsmirnov.javafx.dialog.Dialog;
+import org.quelea.languages.LabelGrabber;
+import org.quelea.utils.FileFilters;
 import org.quelea.utils.QueleaProperties;
-import org.quelea.utils.Utils;
 import org.quelea.windows.main.MainPanel;
 
 /**
@@ -29,39 +32,54 @@ import org.quelea.windows.main.MainPanel;
  * @author Michael
  */
 public class ScheduleSaver {
+    
+    private boolean yes = false;
 
     /**
      * Save the current schedule.
      * @param saveAs true if the file location should be specified, false if the current one should be used.
      */
     public void saveSchedule(boolean saveAs) {
-//        MainPanel mainpanel = Application.get().getMainWindow().getMainPanel();
-//        Schedule schedule = mainpanel.getSchedulePanel().getScheduleList().getSchedule();
-//        File file = schedule.getFile();
-//        if (saveAs || file == null) {
-//            JFileChooser chooser = Utils.getScheduleFileChooser();
-//            if (chooser.showSaveDialog(Application.get().getMainWindow()) == JFileChooser.APPROVE_OPTION) {
-//                String extension = QueleaProperties.get().getScheduleExtension();
-//                file = chooser.getSelectedFile();
-//                if (!file.getName().endsWith("." + extension)) {
-//                    file = new File(file.getAbsoluteFile() + "." + extension);
-//                }
-//                if (file.exists()) {
-//                    int result = JOptionPane.showConfirmDialog(Application.get().getMainWindow(), file.getName() + " already exists. Overwrite?",
-//                            "Overwrite", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE, null);
-//                    if (result != JOptionPane.YES_OPTION) {
-//                        file = null;
-//                    }
-//                }
-//                schedule.setFile(file);
-//            }
-//        }
-//        if (file != null) {
-//            boolean success = schedule.writeToFile();
-//            if (!success) {
-//                JOptionPane.showMessageDialog(Application.get().getMainWindow(), "Couldn't save schedule", "Error", JOptionPane.ERROR_MESSAGE, null);
-//            }
-//        }
+        MainPanel mainpanel = Application.get().getMainWindow().getMainPanel();
+        Schedule schedule = mainpanel.getSchedulePanel().getScheduleList().getSchedule();
+        File file = schedule.getFile();
+        if (saveAs || file == null) {
+            FileChooser chooser = new FileChooser();
+            chooser.getExtensionFilters().add(FileFilters.SCHEDULE);
+            File selectedFile = chooser.showSaveDialog(Application.get().getMainWindow());
+            if (selectedFile != null) {
+                String extension = QueleaProperties.get().getScheduleExtension();
+                if (!selectedFile.getName().endsWith("." + extension)) {
+                    selectedFile = new File(selectedFile.getAbsoluteFile() + "." + extension);
+                }
+                if (selectedFile.exists()) {
+                    yes = false;
+                    Dialog confirm = Dialog.buildConfirmation(LabelGrabber.INSTANCE.getLabel("overwrite.text"), LabelGrabber.INSTANCE.getLabel("already.exists.overwrite.label")).addYesButton(new EventHandler<ActionEvent>() {
+
+                        @Override
+                        public void handle(ActionEvent t) {
+                            yes = true;
+                        }
+                    }).addNoButton(new EventHandler<ActionEvent>() {
+
+                        @Override
+                        public void handle(ActionEvent t) {
+                        }
+                    }).build();
+                    confirm.showAndWait();
+                    if (!yes) {
+                        selectedFile = null;
+                    }
+                }
+                schedule.setFile(selectedFile);
+            }
+        }
+        if (file != null) {
+            boolean success = schedule.writeToFile();
+            if (!success) {
+                Dialog.showError(LabelGrabber.INSTANCE.getLabel("cant.save.schedule.title"), LabelGrabber.INSTANCE.getLabel("cant.save.schedule.text"));
+            }
+        }
     }
 
 }

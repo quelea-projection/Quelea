@@ -51,7 +51,7 @@ public class MainToolbar extends ToolBar {
     private Button newSongButton;
     private Button addPresentationButton;
     private Button addVideoButton;
-    private Button addDVDButton;
+//    private Button addDVDButton;
     private Button manageNoticesButton;
     private Button manageTagsButton;
 
@@ -98,10 +98,11 @@ public class MainToolbar extends ToolBar {
         addVideoButton.setOnAction(new AddVideoActionListener());
         getItems().add(addVideoButton);
 
-        addDVDButton = new Button("", new ImageView(new Image("file:icons/dvd.png", 24, 24, false, true)));
-        addDVDButton.setTooltip(new Tooltip(LabelGrabber.INSTANCE.getLabel("add.dvd.tooltip")));
-        addDVDButton.setOnAction(new AddDVDActionListener());
-        getItems().add(addDVDButton);
+        //TODO: Investigate DVD support
+//        addDVDButton = new Button("", new ImageView(new Image("file:icons/dvd.png", 24, 24, false, true)));
+//        addDVDButton.setTooltip(new Tooltip(LabelGrabber.INSTANCE.getLabel("add.dvd.tooltip")));
+//        addDVDButton.setOnAction(new AddDVDActionListener());
+//        getItems().add(addDVDButton);
 
         getItems().add(new Separator());
 

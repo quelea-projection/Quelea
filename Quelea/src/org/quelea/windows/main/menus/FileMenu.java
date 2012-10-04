@@ -22,6 +22,7 @@ import javafx.scene.control.Menu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import org.quelea.Application;
 import org.quelea.languages.LabelGrabber;
 import org.quelea.windows.main.actionlisteners.ExitActionListener;
 import org.quelea.windows.main.actionlisteners.NewScheduleActionListener;

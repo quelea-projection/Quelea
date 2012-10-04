@@ -19,7 +19,6 @@ package org.quelea.importexport;
 
 import javax.swing.JFrame;
 import org.quelea.languages.LabelGrabber;
-import org.quelea.utils.FileFilters;
 
 /**
  * An import dialog for Quelea song packs.
@@ -34,6 +33,6 @@ public class QSPImportDialog extends ImportDialog {
     public QSPImportDialog(JFrame owner) {
         super(owner, new String[]{
                 LabelGrabber.INSTANCE.getLabel("qsp.import.line1")
-        }, FileFilters.SCHEDULE, new QSPParser(), false);
+        }, null, new QSPParser(), false);
     }
 }
