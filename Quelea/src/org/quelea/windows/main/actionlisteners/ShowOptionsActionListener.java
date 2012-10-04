@@ -31,6 +31,7 @@ public class ShowOptionsActionListener implements EventHandler<ActionEvent> {
     @Override
     public void handle(javafx.event.ActionEvent t) {
         Application.get().getMainWindow().getOptionsDialog().show();
+        Application.get().getMainWindow().getOptionsDialog().toFront();
     }
     
 }

@@ -71,21 +71,22 @@ public class BasicSongPanel extends BorderPane {
         GridPane topPanel = new GridPane();
         
         titleField = new TextField();
+        GridPane.setHgrow(titleField, Priority.ALWAYS);
         Label titleLabel = new Label(LabelGrabber.INSTANCE.getLabel("title.label"));
         GridPane.setConstraints(titleLabel, 1, 1);
         topPanel.getChildren().add(titleLabel);
         titleLabel.setLabelFor(titleField);
-        GridPane.setConstraints(titleField, 2, 1, 4, 1);
+        GridPane.setConstraints(titleField, 2, 1);
         topPanel.getChildren().add(titleField);
         
         authorField = new TextField();
+        GridPane.setHgrow(authorField, Priority.ALWAYS);
         Label authorLabel = new Label(LabelGrabber.INSTANCE.getLabel("author.label"));
         GridPane.setConstraints(authorLabel, 1, 2);
         topPanel.getChildren().add(authorLabel);
         authorLabel.setLabelFor(authorField);
         GridPane.setConstraints(authorField, 2, 2);
         topPanel.getChildren().add(authorField);
-
 
         centrePanel.getChildren().add(topPanel);
         lyricsArea = new TextArea();
@@ -329,8 +330,9 @@ public class BasicSongPanel extends BorderPane {
      * Reset this panel so new song data can be entered.
      */
     public void resetNewSong() {
-        getTitleField().setText("");
-        getAuthorField().setText("");
+        getTitleField().clear();
+        getAuthorField().clear();
+        getLyricsField().clear();
         getTitleField().requestFocus();
     }
 

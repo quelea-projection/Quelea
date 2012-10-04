@@ -17,158 +17,100 @@
  */
 package org.quelea.bible;
 
-import java.awt.BorderLayout;
 import java.awt.Component;
-import java.awt.FlowLayout;
-import java.awt.event.*;
-import javax.swing.BoxLayout;
-import javax.swing.DefaultComboBoxModel;
-import javax.swing.DefaultListModel;
-import javax.swing.JComboBox;
-import javax.swing.JDialog;
+import javafx.application.Platform;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
+import javafx.event.EventHandler;
+import javafx.scene.Scene;
+import javafx.scene.control.ComboBox;
+import javafx.scene.control.ListView;
+import javafx.scene.control.TextField;
+import javafx.scene.image.Image;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
+import javafx.stage.Stage;
 import javax.swing.JLabel;
 import javax.swing.JList;
-import javax.swing.JPanel;
-import javax.swing.JPopupMenu;
-import javax.swing.JScrollPane;
-import javax.swing.JTextField;
 import javax.swing.ListCellRenderer;
-import javax.swing.ListSelectionModel;
-import javax.swing.SwingUtilities;
 import javax.swing.border.EmptyBorder;
-import javax.swing.event.DocumentEvent;
-import javax.swing.event.DocumentListener;
-import org.quelea.Application;
 import org.quelea.languages.LabelGrabber;
 import org.quelea.utils.Utils;
+import org.quelea.windows.library.ContextMenuListCell;
 
 /**
  * A dialog that can be used for searching for bible passages.
  *
  * @author mjrb5
  */
-public class BibleSearchDialog extends JDialog implements BibleChangeListener {
+public class BibleSearchDialog extends Stage implements BibleChangeListener {
 
-    private JTextField searchField;
-    private JList<BibleChapter> searchResults;
-    private JComboBox<String> bibles;
+    private TextField searchField;
+    private ListView<BibleChapter> searchResults;
+    private ComboBox<String> bibles;
     private BibleSearchPopupMenu popupMenu;
 
     /**
      * Create a new bible searcher dialog.
      */
     public BibleSearchDialog() {
-//        super(Application.get().getMainWindow());
-        setLayout(new BorderLayout());
+        BorderPane mainPane = new BorderPane();
         setTitle(LabelGrabber.INSTANCE.getLabel("bible.search.title"));
-        setIconImage(Utils.getImage("icons/search.png"));
-        searchField = new JTextField(30);
-        bibles = new JComboBox<>(new DefaultComboBoxModel<String>());
+        getIcons().add(new Image("file:icons/search.png"));
+        searchField = new TextField();
+        bibles = new ComboBox<>();
         bibles.setEditable(false);
         BibleManager.get().registerBibleChangeListener(this);
         updateBibles();
-        JPanel northPanel = new JPanel();
-        northPanel.setLayout(new FlowLayout(FlowLayout.LEFT));
-        northPanel.add(bibles);
-        northPanel.add(searchField);
-        add(northPanel, BorderLayout.NORTH);
+        HBox northPanel = new HBox();
+        northPanel.getChildren().add(bibles);
+        northPanel.getChildren().add(searchField);
+        mainPane.setTop(northPanel);
         popupMenu = new BibleSearchPopupMenu();
-        searchResults = new JList<>(new DefaultListModel<BibleChapter>());
-        searchResults.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-        searchResults.setCellRenderer(new SearchPreviewRenderer());
-        searchResults.addMouseListener(new MouseAdapter() {
-
+        searchResults = new ListView<>();
+//        searchResults.setCellRenderer(new SearchPreviewRenderer());
+        searchResults.setCellFactory(ContextMenuListCell.<BibleChapter>forListView(popupMenu));
+        VBox centrePanel = new VBox();
+        centrePanel.getChildren().add(searchResults);
+        mainPane.setCenter(centrePanel);
+        bibles.setOnAction(new EventHandler<javafx.event.ActionEvent>() {
             @Override
-            public void mousePressed(MouseEvent e) {
-                check(e);
-            }
-
-            @Override
-            public void mouseReleased(MouseEvent e) {
-                check(e);
-            }
-
-            public void check(MouseEvent e) {
-                if(e.isPopupTrigger()) {
-                    searchResults.setSelectedIndex(searchResults.locationToIndex(e.getPoint()));
-                    popupMenu.setCurrentChapter(searchResults.getSelectedValue());
-                    popupMenu.show(searchResults, e.getX(), e.getY());
-                }
-            }
-        });
-        searchResults.addKeyListener(new KeyListener() {
-
-            @Override
-            public void keyTyped(KeyEvent e) {
-                //
-            }
-
-            @Override
-            public void keyPressed(KeyEvent e) {
-                //
-            }
-
-            @Override
-            public void keyReleased(KeyEvent e) {
-                if(e.getKeyCode() == KeyEvent.VK_ENTER || e.getKeyCode() == KeyEvent.VK_SPACE) {
-                    BibleChapter result = searchResults.getSelectedValue();
-                    popupMenu.setCurrentChapter(searchResults.getSelectedValue());
-                    popupMenu.trigger();
-                }
-            }
-        });
-        JPanel centrePanel = new JPanel();
-        centrePanel.setLayout(new BoxLayout(centrePanel, BoxLayout.Y_AXIS));
-        centrePanel.add(new JScrollPane(searchResults));
-        add(centrePanel, BorderLayout.CENTER);
-        bibles.addActionListener(new ActionListener() {
-
-            @Override
-            public void actionPerformed(ActionEvent ae) {
+            public void handle(javafx.event.ActionEvent t) {
                 update();
             }
         });
-        searchField.getDocument().addDocumentListener(new DocumentListener() {
-
+        searchField.textProperty().addListener(new ChangeListener<String>() {
             @Override
-            public void insertUpdate(DocumentEvent de) {
-                update();
-            }
-
-            @Override
-            public void removeUpdate(DocumentEvent de) {
-                update();
-            }
-
-            @Override
-            public void changedUpdate(DocumentEvent de) {
+            public void changed(ObservableValue<? extends String> ov, String t, String t1) {
                 update();
             }
         });
-        setSize(600, 400);
         reset();
+
+        setScene(new Scene(mainPane));
     }
 
     /**
      * Reset this dialog.
      */
     public final void reset() {
-        DefaultListModel<BibleChapter> model = (DefaultListModel<BibleChapter>) searchResults.getModel();
-        model.clear();
+        searchResults.itemsProperty().get().clear();
         searchField.setText(LabelGrabber.INSTANCE.getLabel("initial.search.text"));
-        searchField.addFocusListener(new FocusAdapter() {
-
+        searchField.focusedProperty().addListener(new ChangeListener<Boolean>() {
             @Override
-            public void focusGained(FocusEvent fe) {
-                searchField.setText("");
+            public void changed(ObservableValue<? extends Boolean> ov, Boolean t, Boolean t1) {
+                if(t1.booleanValue()) {
+                    searchField.setText("");
+                    searchField.focusedProperty().removeListener(this);
+                }
             }
         });
-        searchField.setEnabled(false);
+        searchField.setDisable(true);
         BibleManager.get().runOnIndexInit(new Runnable() {
-
             @Override
             public void run() {
-                searchField.setEnabled(true);
+                searchField.setDisable(false);
             }
         });
     }
@@ -180,16 +122,14 @@ public class BibleSearchDialog extends JDialog implements BibleChangeListener {
         if(BibleManager.get().isIndexInit()) {
             final String text = searchField.getText();
             final BibleChapter[] results = BibleManager.get().getIndex().filter(text, null);
-            SwingUtilities.invokeLater(new Runnable() {
-
+            Platform.runLater(new Runnable() {
                 @Override
                 public void run() {
-                    DefaultListModel<BibleChapter> model = (DefaultListModel<BibleChapter>) searchResults.getModel();
-                    model.clear();
+                    searchResults.itemsProperty().get().clear();
                     if(!text.trim().isEmpty()) {
                         for(BibleChapter chapter : results) {
-                            if(bibles.getSelectedIndex() == 0 || chapter.getBook().getBible().getName().equals(bibles.getSelectedItem())) {
-                                model.addElement(chapter);
+                            if(bibles.getSelectionModel().getSelectedIndex() == 0 || chapter.getBook().getBible().getName().equals(bibles.getSelectionModel().getSelectedItem())) {
+                                searchResults.itemsProperty().get().add(chapter);
                             }
                         }
                     }
@@ -199,40 +139,14 @@ public class BibleSearchDialog extends JDialog implements BibleChangeListener {
     }
 
     /**
-     * Centre the dialog on the parent before displaying.
-     *
-     * @param visible true if visible, false otherwise.
-     */
-    @Override
-    public void setVisible(boolean visible) {
-        if(visible) {
-            reset();
-            setLocationRelativeTo(getOwner());
-        }
-        super.setVisible(visible);
-    }
-
-    /**
-     * Just for testing.
-     *
-     * @param args command line arguments (not used.)
-     */
-    public static void main(String[] args) {
-        BibleSearchDialog dialog = new BibleSearchDialog();
-//        dialog.setDefaultCloseOperation(JDialog.EXIT_ON_CLOSE);
-        dialog.setVisible(true);
-    }
-
-    /**
      * Update the list of bibles on this search dialog.
      */
     @Override
     public final void updateBibles() {
-        DefaultComboBoxModel<String> model = (DefaultComboBoxModel<String>) bibles.getModel();
-        model.removeAllElements();
-        model.addElement("<html><i>" + LabelGrabber.INSTANCE.getLabel("all.text") + "</i></html>");
+        bibles.itemsProperty().get().clear();
+        bibles.itemsProperty().get().add(LabelGrabber.INSTANCE.getLabel("all.text"));
         for(Bible bible : BibleManager.get().getBibles()) {
-            model.addElement(bible.getName());
+            bibles.itemsProperty().get().add(bible.getName());
         }
     }
 

@@ -39,7 +39,7 @@ public class TagDialog extends Stage {
      * Create a new tag dialog.
      */
     public TagDialog() {
-        initModality(Modality.WINDOW_MODAL);
+        initModality(Modality.APPLICATION_MODAL);
         initStyle(StageStyle.UTILITY);
         setTitle(LabelGrabber.INSTANCE.getLabel("filter.tag"));
         

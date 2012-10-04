@@ -20,6 +20,8 @@ package org.quelea.windows.newsong;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.EventHandler;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
@@ -63,10 +65,10 @@ public class SongEntryWindow extends Stage {
      * @param owner the owner of this window.
      */
     public SongEntryWindow() {
-        initModality(Modality.NONE);
+        initModality(Modality.APPLICATION_MODAL);
         initStyle(StageStyle.UTILITY);
         getIcons().add(new Image("file:icons/logo.png"));
-        
+
         BorderPane mainPane = new BorderPane();
         setTitle(LabelGrabber.INSTANCE.getLabel("song.entry.heading"));
         tabPane = new TabPane();
@@ -114,11 +116,15 @@ public class SongEntryWindow extends Stage {
         HBox checkBoxPanel = new HBox();
         checkBoxPanel.getChildren().add(addToSchedCBox);
         VBox bottomPanel = new VBox();
+        bottomPanel.setSpacing(5);
         HBox buttonPanel = new HBox();
+        buttonPanel.setSpacing(10);
+        buttonPanel.setAlignment(Pos.CENTER);
         buttonPanel.getChildren().add(confirmButton);
         buttonPanel.getChildren().add(cancelButton);
         bottomPanel.getChildren().add(checkBoxPanel);
         bottomPanel.getChildren().add(buttonPanel);
+        BorderPane.setMargin(bottomPanel, new Insets(10, 0, 5, 0));
         mainPane.setBottom(bottomPanel);
 
         setScene(new Scene(mainPane));
@@ -143,16 +149,14 @@ public class SongEntryWindow extends Stage {
      */
     private void setupBasicSongPanel() {
         basicSongPanel = new BasicSongPanel();
-        
-        basicSongPanel.getLyricsField().textProperty().addListener(new ChangeListener<String>() {
 
+        basicSongPanel.getLyricsField().textProperty().addListener(new ChangeListener<String>() {
             @Override
             public void changed(ObservableValue<? extends String> ov, String t, String t1) {
                 checkConfirmButton();
             }
         });
         basicSongPanel.getTitleField().textProperty().addListener(new ChangeListener<String>() {
-
             @Override
             public void changed(ObservableValue<? extends String> ov, String t, String t1) {
                 checkConfirmButton();

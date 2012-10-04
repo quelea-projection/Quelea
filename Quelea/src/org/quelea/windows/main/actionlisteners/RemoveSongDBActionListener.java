@@ -20,20 +20,26 @@ package org.quelea.windows.main.actionlisteners;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javax.swing.JOptionPane;
+import name.antonsmirnov.javafx.dialog.Dialog;
 import org.quelea.Application;
 import org.quelea.SongDatabase;
 import org.quelea.displayable.Song;
+import org.quelea.languages.LabelGrabber;
 import org.quelea.windows.library.LibrarySongList;
 import org.quelea.windows.main.MainWindow;
 
 /**
  * Action listener that removes the selected song from the database.
+ *
  * @author Michael
  */
 public class RemoveSongDBActionListener implements EventHandler<ActionEvent> {
-    
+
+    private boolean yes = false;
+
     /**
      * Remove the selected song from the database.
+     *
      * @param e the action event.
      */
     @Override
@@ -44,15 +50,27 @@ public class RemoveSongDBActionListener implements EventHandler<ActionEvent> {
         if(song == null) {
             return;
         }
-//        int confirmResult = JOptionPane.showConfirmDialog(mainWindow, "Really remove \"" + song.getTitle() + "\" from the database? This action cannnot be undone.", "Confirm remove", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
-//        if(confirmResult == JOptionPane.NO_OPTION) {
-//            return;
-//        }
-//        if(!SongDatabase.get().removeSong(song)) {
-//            JOptionPane.showMessageDialog(mainWindow, "There was an error removing the song from the database.", "Error", JOptionPane.ERROR_MESSAGE, null);
-//        }
-        song.setID(-1);
-        songList.itemsProperty().get().remove(song);
+        yes = false;
+        Dialog.buildConfirmation(LabelGrabber.INSTANCE.getLabel("confirm.remove.text"),
+                LabelGrabber.INSTANCE.getLabel("confirm.remove.question").replace("$1", song.getTitle()))
+                .addYesButton(new EventHandler<ActionEvent>() {
+
+            @Override
+            public void handle(ActionEvent t) {
+                yes = true;
+            }
+        }).addNoButton(new EventHandler<ActionEvent>() {
+
+            @Override
+            public void handle(ActionEvent t) {
+            }
+        }).build();
+        if(yes) {
+            if(!SongDatabase.get().removeSong(song)) {
+                Dialog.showError(LabelGrabber.INSTANCE.getLabel("error.text"), LabelGrabber.INSTANCE.getLabel("error.removing.song.db"));
+            }
+            song.setID(-1);
+            songList.itemsProperty().get().remove(song);
+        }
     }
-    
 }

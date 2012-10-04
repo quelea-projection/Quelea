@@ -18,7 +18,6 @@
  */
 package org.quelea.windows.main;
 
-import java.math.BigDecimal;
 import java.text.NumberFormat;
 import javafx.beans.binding.NumberBinding;
 import javafx.beans.property.ObjectProperty;
@@ -119,8 +118,8 @@ public class NumberSpinner extends HBox {
         buttons.setId(BUTTONS_BOX);
         incrementButton = new Button();
         incrementButton.setId(SPINNER_BUTTON_UP);
-        incrementButton.prefWidthProperty().bind(numberField.heightProperty());
-        incrementButton.minWidthProperty().bind(numberField.heightProperty());
+//        incrementButton.prefWidthProperty().bind(numberField.heightProperty());
+//        incrementButton.minWidthProperty().bind(numberField.heightProperty());
         incrementButton.maxHeightProperty().bind(buttonHeight.add(spacing));
         incrementButton.prefHeightProperty().bind(buttonHeight.add(spacing));
         incrementButton.minHeightProperty().bind(buttonHeight.add(spacing));
@@ -140,8 +139,8 @@ public class NumberSpinner extends HBox {
 
         decrementButton = new Button();
         decrementButton.setId(SPINNER_BUTTON_DOWN);
-        decrementButton.prefWidthProperty().bind(numberField.heightProperty());
-        decrementButton.minWidthProperty().bind(numberField.heightProperty());
+//        decrementButton.prefWidthProperty().bind(numberField.heightProperty());
+//        decrementButton.minWidthProperty().bind(numberField.heightProperty());
         decrementButton.maxHeightProperty().bind(buttonHeight);
         decrementButton.prefHeightProperty().bind(buttonHeight);
         decrementButton.minHeightProperty().bind(buttonHeight);
@@ -160,7 +159,8 @@ public class NumberSpinner extends HBox {
         decPane.setAlignment(Pos.CENTER);
 
         buttons.getChildren().addAll(incPane, decPane);
-        this.getChildren().addAll(numberField, buttons);
+        getChildren().addAll(numberField, buttons);
+        setPrefWidth(60);
     }
 
     /**
