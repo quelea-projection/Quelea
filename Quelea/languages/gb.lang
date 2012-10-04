@@ -278,3 +278,7 @@ bible.copy.error.text=Sorry, there was an error copying the bible across to the 
 bible.copy.error.heading=Error
 select.key.label=Select the new key:
 transpose.label=Transpose
+already.exists.overwrite.label=already exists. Overwrite?
+overwrite.text=Overwrite
+cant.save.schedule.title=Error saving schedule
+cant.save.schedule.text=Sorry, couldn't save schedule - an error occurred

@@ -21,6 +21,7 @@ package org.quelea.windows.main.actionlisteners;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javax.swing.JOptionPane;
+import name.antonsmirnov.javafx.dialog.Dialog;
 import org.quelea.Application;
 import org.quelea.languages.LabelGrabber;
 import org.quelea.windows.main.MainPanel;
@@ -31,7 +32,9 @@ import org.quelea.windows.main.MainPanel;
  * schedule - anything that clears the current content.
  * @author Michael
  */
-public abstract class ClearingActionListener implements EventHandler<ActionEvent> {
+public abstract class ClearingEventHandler implements EventHandler<ActionEvent> {
+    
+    private boolean yes = false;
 
     /**
      * Confirm whether it's ok to clear the current schedule.
@@ -43,10 +46,20 @@ public abstract class ClearingActionListener implements EventHandler<ActionEvent
         if(mainpanel.getSchedulePanel().getScheduleList().isEmpty()) {
             return true;
         }
-//        int result = JOptionPane.showConfirmDialog(Application.get().getMainWindow(), LabelGrabber.INSTANCE.getLabel("schedule.clear.text"), LabelGrabber.INSTANCE.getLabel("confirm.label"), JOptionPane.YES_NO_OPTION, JOptionPane.INFORMATION_MESSAGE, null);
-//        if(result == JOptionPane.YES_OPTION) {
-//            return true;
-//        }
-        return false;
+        yes = false;
+        final Dialog dialog = Dialog.buildConfirmation(LabelGrabber.INSTANCE.getLabel("confirm.label"), LabelGrabber.INSTANCE.getLabel("schedule.clear.text")).addYesButton(new EventHandler<ActionEvent>() {
+
+            @Override
+            public void handle(ActionEvent t) {
+                yes = true;
+            }
+        }).addNoButton(new EventHandler<ActionEvent>() {
+
+            @Override
+            public void handle(ActionEvent t) {
+            }
+        }).build();
+        dialog.showAndWait();
+        return yes;
     }
 }

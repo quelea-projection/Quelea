@@ -46,26 +46,26 @@ public class ButtonChecker {
      * @param removeSongButton the remove button to check.
      */
     public void checkEditRemoveButtons(MenuItem editSongButton, MenuItem removeSongButton) {
-//        final MainPanel mainPanel = Application.get().getMainWindow().getMainPanel();
-//        final ScheduleList scheduleList = mainPanel.getSchedulePanel().getScheduleList();
-//        if(!scheduleList.isFocusOwner()) {
-//            editSongButton.setDisable(true);
-//            removeSongButton.setDisable(true);
-//            return;
-//        }
-//        if(scheduleList.getSelectedIndex() == -1) {
-//            editSongButton.setDisable(true);
-//            removeSongButton.setDisable(true);
-//        }
-//        else {
-//            if(scheduleList.getSelectedValue() instanceof Song) {
-//                editSongButton.setDisable(false);
-//            }
-//            else {
-//                editSongButton.setDisable(true);
-//            }
-//            removeSongButton.setDisable(false);
-//        }
+        final MainPanel mainPanel = Application.get().getMainWindow().getMainPanel();
+        final ScheduleList scheduleList = mainPanel.getSchedulePanel().getScheduleList();
+        if(!scheduleList.focusedProperty().get()) {
+            editSongButton.setDisable(true);
+            removeSongButton.setDisable(true);
+            return;
+        }
+        if(scheduleList.getSelectionModel().getSelectedIndex() == -1) {
+            editSongButton.setDisable(true);
+            removeSongButton.setDisable(true);
+        }
+        else {
+            if(scheduleList.getSelectionModel().getSelectedItem() instanceof Song) {
+                editSongButton.setDisable(false);
+            }
+            else {
+                editSongButton.setDisable(true);
+            }
+            removeSongButton.setDisable(false);
+        }
     }
 
     /**
@@ -75,17 +75,17 @@ public class ButtonChecker {
      * @param addSongButton the button to check.
      */
     public void checkAddButton(MenuItem addSongButton) {
-//        final MainPanel mainPanel = Application.get().getMainWindow().getMainPanel();
-//        final LibrarySongList songList = mainPanel.getLibraryPanel().getLibrarySongPanel().getSongList();
-//        if(!songList.isFocusOwner()) {
-//            addSongButton.setDisable(true);
-//            return;
-//        }
-//        if(songList.getSelectedIndex() == -1) {
-//            addSongButton.setDisable(true);
-//        }
-//        else {
-//            addSongButton.setDisable(false);
-//        }
+        final MainPanel mainPanel = Application.get().getMainWindow().getMainPanel();
+        final LibrarySongList songList = mainPanel.getLibraryPanel().getLibrarySongPanel().getSongList();
+        if(!songList.focusedProperty().get()) {
+            addSongButton.setDisable(true);
+            return;
+        }
+        if(songList.getSelectionModel().getSelectedIndex() == -1) {
+            addSongButton.setDisable(true);
+        }
+        else {
+            addSongButton.setDisable(false);
+        }
     }
 }

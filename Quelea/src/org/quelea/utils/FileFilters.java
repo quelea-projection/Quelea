@@ -17,9 +17,9 @@
  */
 package org.quelea.utils;
 
-import javax.swing.filechooser.FileFilter;
 import java.io.File;
 import javafx.stage.FileChooser;
+import javax.swing.filechooser.FileFilter;
 import org.quelea.languages.LabelGrabber;
 
 /**
@@ -67,7 +67,7 @@ public final class FileFilters {
      */
     public static final FileChooser.ExtensionFilter XML_BIBLE = new FileChooser.ExtensionFilter("XML bibles (*.xml)", "*.xml");
     
-    public static final FileChooser.ExtensionFilter IMAGES_ONLY = new FileChooser.ExtensionFilter(LabelGrabber.INSTANCE.getLabel("image.files.description"), Utils.getImageExtensions());
+    public static final FileChooser.ExtensionFilter IMAGES = new FileChooser.ExtensionFilter(LabelGrabber.INSTANCE.getLabel("image.files.description"), Utils.getImageExtensions());
     /**
      * The file filter used for Quelea song packs.
      */
@@ -87,25 +87,12 @@ public final class FileFilters {
             return "Quelea song pack (." + extension + ")";
         }
     };
+    
     /**
-     * The file filter used for Quelea song packs.
+     * The file filter used for Quelea schedules.
      */
-    public static final FileFilter SCHEDULE = new FileFilter() {
-        private final String extension = QueleaProperties.get().getScheduleExtension();
+    public static final FileChooser.ExtensionFilter SCHEDULE = new FileChooser.ExtensionFilter("Quelea schedules", "."+QueleaProperties.get().getScheduleExtension());
 
-        @Override
-        public boolean accept(File f) {
-            if(f.isDirectory()) {
-                return true;
-            }
-            return f.getName().toLowerCase().endsWith("." + extension);
-        }
-
-        @Override
-        public String getDescription() {
-            return "Quelea schedules (." + extension + ")";
-        }
-    };
 
     /**
      * No instantiation for me thanks.

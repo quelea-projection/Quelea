@@ -17,13 +17,9 @@
  */
 package org.quelea.windows.main;
 
-import java.awt.BorderLayout;
 import java.util.ArrayList;
 import java.util.List;
 import javafx.scene.layout.VBox;
-import javax.swing.JFrame;
-import org.quelea.Application;
-import org.quelea.utils.Utils;
 
 /**
  * A group of status panels that shows all the background tasks Quelea is 
