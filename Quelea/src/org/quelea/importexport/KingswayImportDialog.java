@@ -33,8 +33,8 @@ public class KingswayImportDialog extends ImportDialog {
      * Create a new kingsway import dialog.
      * @param owner the owner of the dialog.
      */
-    public KingswayImportDialog(JFrame owner, KingswayWorshipParser kwp) {
-        super(owner, new String[]{
+    public KingswayImportDialog(KingswayWorshipParser kwp) {
+        super(new String[]{
                     LabelGrabber.INSTANCE.getLabel("kingsway.import.line1"),
                     LabelGrabber.INSTANCE.getLabel("kingsway.import.line2")
                 }, null, (kwp = new KingswayWorshipParser()), false);

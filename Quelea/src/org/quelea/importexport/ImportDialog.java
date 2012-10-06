@@ -17,12 +17,6 @@
  */
 package org.quelea.importexport;
 
-import java.awt.Font;
-import javax.swing.filechooser.FileFilter;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.File;
@@ -34,17 +28,21 @@ import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.event.EventHandler;
-import javax.swing.BoxLayout;
-import javax.swing.JButton;
-import javax.swing.JCheckBox;
-import javax.swing.JDialog;
+import javafx.scene.Scene;
+import javafx.scene.control.Button;
+import javafx.scene.control.CheckBox;
+import javafx.scene.control.Label;
+import javafx.scene.control.TextField;
+import javafx.scene.layout.VBox;
+import javafx.stage.DirectoryChooser;
+import javafx.stage.FileChooser;
+import javafx.stage.FileChooser.ExtensionFilter;
+import javafx.stage.Modality;
+import javafx.stage.Stage;
 import javax.swing.JFileChooser;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JOptionPane;
-import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
 import javax.swing.SwingWorker;
+import name.antonsmirnov.javafx.dialog.Dialog;
 import org.quelea.Application;
 import org.quelea.SongDuplicateChecker;
 import org.quelea.displayable.Song;
@@ -55,6 +53,7 @@ import org.quelea.windows.main.StatusPanel;
 
 /**
  * An import dialog used for importing songs.
+ *
  * @author Michael
  */
 public abstract class ImportDialog extends Stage implements PropertyChangeListener {
@@ -69,71 +68,68 @@ public abstract class ImportDialog extends Stage implements PropertyChangeListen
 
     /**
      * Create a new import dialog.
+     *
      * @param owner the owner of this dialog.
-     * @param dialogLabels the labels to contain on the dialog as text to the 
+     * @param dialogLabels the labels to contain on the dialog as text to the
      * user before the file box.
-     * @param fileFilter the filefilter to use in the file dialog, or null if 
+     * @param fileFilter the filefilter to use in the file dialog, or null if
      * there should be no file dialog.
      * @param parser the parser to use for this import dialog.
      * @param selectDirectory true if the user should only be allowed to select
      * directories, false otherwise.
      */
-    protected ImportDialog(JFrame owner, String[] dialogLabels, FileFilter fileFilter,
+    protected ImportDialog(String[] dialogLabels, ExtensionFilter fileFilter,
             final SongParser parser, final boolean selectDirectory) {
-        super(owner, LabelGrabber.INSTANCE.getLabel("import.heading"), true);
+        initModality(Modality.APPLICATION_MODAL);
+        setTitle(LabelGrabber.INSTANCE.getLabel("import.heading"));
         halt = false;
-        importedDialog = new SelectImportedSongsDialog(owner);
-        setLayout(new BoxLayout(this.getContentPane(), BoxLayout.Y_AXIS));
-        final JFileChooser locationChooser = new JFileChooser();
-        locationChooser.setFileFilter(fileFilter);
-        locationChooser.setAcceptAllFileFilterUsed(false);
-        locationChooser.setMultiSelectionEnabled(false);
-        if (selectDirectory) {
-            locationChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+        importedDialog = new SelectImportedSongsDialog();
+        VBox mainPane = new VBox();
+        final FileChooser locationChooser = new FileChooser();
+        locationChooser.getExtensionFilters().add(fileFilter);
+        final DirectoryChooser dirChooser = new DirectoryChooser();
+        for(String str : dialogLabels) {
+            mainPane.getChildren().add(new Label(str));
         }
 
-        for (String str : dialogLabels) {
-            add(new JLabel(str));
-        }
+        checkDuplicates = new CheckBox(LabelGrabber.INSTANCE.getLabel("check.duplicates.text"));
+        mainPane.getChildren().add(checkDuplicates);
 
-        checkDuplicates = new JCheckBox(LabelGrabber.INSTANCE.getLabel("check.duplicates.text"));
-        add(checkDuplicates);
-
-        locationField = new JTextField();
-        if (fileFilter != null) {
+        locationField = new TextField();
+        if(fileFilter != null) {
             locationField.setEditable(false);
-            locationField.setFont(new Font(locationField.getFont().getName(), Font.ITALIC, locationField.getFont().getSize()));
             locationField.setText(LabelGrabber.INSTANCE.getLabel("click.select.file.text"));
-            locationField.addMouseListener(new MouseAdapter() {
-
+            locationField.setOnMouseClicked(new EventHandler<javafx.scene.input.MouseEvent>() {
                 @Override
-                public void mouseClicked(MouseEvent e) {
-                    if (locationField.isEnabled()) {
-                        locationChooser.showOpenDialog(getRootPane());
-                        if (locationChooser.getSelectedFile() != null) {
-                            locationField.setFont(new Font(locationField.getFont().getName(), 0, locationField.getFont().getSize()));
-                            locationField.setText(locationChooser.getSelectedFile().getAbsolutePath());
-                            importButton.setEnabled(true);
+                public void handle(javafx.scene.input.MouseEvent t) {
+                    if(!locationField.isDisable()) {
+                        File file;
+                        if(selectDirectory) {
+                            file = dirChooser.showDialog(ImportDialog.this);
+                        }
+                        else {
+                            file = locationChooser.showOpenDialog(ImportDialog.this);
+                        }
+                        if(file != null) {
+                            locationField.setText(file.getAbsolutePath());
+                            importButton.setDisable(false);
                         }
                     }
                 }
             });
-            add(locationField);
+            mainPane.getChildren().add(locationField);
         }
 
-        importButton = new JButton(LabelGrabber.INSTANCE.getLabel("import.button"));
-        getRootPane().setDefaultButton(importButton);
-        if (fileFilter != null) {
-            importButton.setEnabled(false);
+        importButton = new Button(LabelGrabber.INSTANCE.getLabel("import.button"));
+        if(fileFilter != null) {
+            importButton.setDisable(true);
         }
-        add(importButton);
-        importButton.addActionListener(new ActionListener() {
-
+        mainPane.getChildren().add(importButton);
+        importButton.setOnAction(new EventHandler<javafx.event.ActionEvent>() {
             @Override
-            public void actionPerformed(ActionEvent e) {
+            public void handle(javafx.event.ActionEvent t) {
                 statusPanel = Application.get().getStatusGroup().addPanel(LabelGrabber.INSTANCE.getLabel("importing.status"));
                 statusPanel.getCancelButton().setOnAction(new EventHandler<javafx.event.ActionEvent>() {
-
                     @Override
                     public void handle(javafx.event.ActionEvent t) {
                         statusPanel.done();
@@ -143,7 +139,6 @@ public abstract class ImportDialog extends Stage implements PropertyChangeListen
                 final String location = locationField.getText();
                 setActive();
                 SwingWorker worker = new SwingWorker() {
-
                     private List<Song> localSongs;
                     private boolean[] localSongsDuplicate;
                     private ExecutorService checkerService = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
@@ -157,27 +152,25 @@ public abstract class ImportDialog extends Stage implements PropertyChangeListen
 //                                localSongsArr[i] = localSongs.get(i);
 //                            }
                             localSongsDuplicate = new boolean[localSongs.size()];
-                            if (halt) {
+                            if(halt) {
                                 localSongs = null;
                                 return null;
                             }
                             statusPanel.getProgressBar().setProgress(0);
-                            if (checkDuplicates.isSelected()) {
+                            if(checkDuplicates.isSelected()) {
 //                                localSongsDuplicate = new SongDuplicateChecker().checkSongs(localSongsArr);
-                                for (int i = 0; i < localSongs.size(); i++) {
+                                for(int i = 0; i < localSongs.size(); i++) {
                                     final int finali = i;
                                     checkerService.submit(Utils.wrapAsLowPriority(new Runnable() {
-
                                         @Override
                                         public void run() {
-                                            if (!halt) {
+                                            if(!halt) {
                                                 final boolean result = new SongDuplicateChecker().checkSong(localSongs.get(finali));
                                                 localSongsDuplicate[finali] = result;
                                                 final int progress = (int) (((double) finali / localSongs.size()) * 100);
                                                 SwingUtilities.invokeLater(new Runnable() {
-
                                                     public void run() {
-                                                        if (statusPanel.getProgressBar().getProgress() < progress) {
+                                                        if(statusPanel.getProgressBar().getProgress() < progress) {
                                                             statusPanel.getProgressBar().setProgress(progress);
                                                         }
                                                     }
@@ -190,13 +183,13 @@ public abstract class ImportDialog extends Stage implements PropertyChangeListen
                                     checkerService.shutdown();
                                     checkerService.awaitTermination(365, TimeUnit.DAYS); //Year eh? ;-)
                                 }
-                                catch (InterruptedException ex) {
+                                catch(InterruptedException ex) {
                                 }
                             }
                             return localSongs;
                         }
-                        catch (IOException ex) {
-                            JOptionPane.showMessageDialog(getOwner(), LabelGrabber.INSTANCE.getLabel("import.error.message"), LabelGrabber.INSTANCE.getLabel("error.text"), JOptionPane.ERROR_MESSAGE, null);
+                        catch(IOException ex) {
+                            Dialog.showError(LabelGrabber.INSTANCE.getLabel("error.text"), LabelGrabber.INSTANCE.getLabel("import.error.message"));
                             LOGGER.log(Level.WARNING, "Error importing songs", ex);
                             return null;
                         }
@@ -205,13 +198,12 @@ public abstract class ImportDialog extends Stage implements PropertyChangeListen
                     @Override
                     protected void done() {
                         checkerService.shutdownNow();
-                        if ((localSongs == null || localSongs.isEmpty()) && !halt) {
-                            JOptionPane.showMessageDialog(getOwner(), LabelGrabber.INSTANCE.getLabel("import.no.songs.text") , LabelGrabber.INSTANCE.getLabel("import.no.songs.title"), JOptionPane.WARNING_MESSAGE, null);
+                        if((localSongs == null || localSongs.isEmpty()) && !halt) {
+                            Dialog.showWarning(LabelGrabber.INSTANCE.getLabel("import.no.songs.title"), LabelGrabber.INSTANCE.getLabel("import.no.songs.text"));
                         }
-                        else if (!(localSongs == null || localSongs.isEmpty())) {
+                        else if(!(localSongs == null || localSongs.isEmpty())) {
                             getImportedDialog().setSongs(localSongs, localSongsDuplicate, true);
-                            getImportedDialog().setLocationRelativeTo(getImportedDialog().getOwner());
-                            getImportedDialog().setVisible(true);
+                            getImportedDialog().show();
                         }
                         setIdle();
                     }
@@ -220,30 +212,32 @@ public abstract class ImportDialog extends Stage implements PropertyChangeListen
                 worker.execute();
             }
         });
-
-        pack();
         setResizable(false);
 
+        setScene(new Scene(mainPane));
     }
 
     /**
      * Get the import button.
+     *
      * @return the import button.
      */
-    public JButton getImportButton() {
+    public Button getImportButton() {
         return importButton;
     }
 
     /**
      * Get the location field.
+     *
      * @return the location field.
      */
-    public JTextField getLocationField() {
+    public TextField getLocationField() {
         return locationField;
     }
 
     /**
      * Get the dialog that appears after the songs have been imported.
+     *
      * @return the imported songs dialog.
      */
     public SelectSongsDialog getImportedDialog() {
@@ -251,16 +245,18 @@ public abstract class ImportDialog extends Stage implements PropertyChangeListen
     }
 
     /**
-     * Called when the import is taking place, this disables the appropriate controls.
+     * Called when the import is taking place, this disables the appropriate
+     * controls.
      */
     public void setActive() {
         statusPanel.getProgressBar().setProgress(-1);
-        setVisible(false);
+        hide();
         resetDialog();
     }
 
     /**
-     * Called when the import has finished taking place, this resets the controls.
+     * Called when the import has finished taking place, this resets the
+     * controls.
      */
     public void setIdle() {
         statusPanel.done();
@@ -270,25 +266,25 @@ public abstract class ImportDialog extends Stage implements PropertyChangeListen
 
     private void resetDialog() {
         getLocationField().setText(LabelGrabber.INSTANCE.getLabel("click.select.file.text"));
-        getLocationField().setEnabled(true);
+        getLocationField().setDisable(false);
         getImportButton().setText(LabelGrabber.INSTANCE.getLabel("import.button"));
-        setVisible(false);
-        setDefaultCloseOperation(JDialog.HIDE_ON_CLOSE);
+        hide();
     }
 
     /**
      * Update the progress bar.
+     *
      * @param evt the property change event.
      */
     @Override
     public void propertyChange(PropertyChangeEvent evt) {
         String strPropertyName = evt.getPropertyName();
-        if ("progress".equals(strPropertyName) && statusPanel != null) {
+        if("progress".equals(strPropertyName) && statusPanel != null) {
             int progress = (Integer) evt.getNewValue();
             statusPanel.getProgressBar().setProgress(progress);
         }
     }
-    
+
     public void setAll(boolean all) {
         //to be overwritten
     }

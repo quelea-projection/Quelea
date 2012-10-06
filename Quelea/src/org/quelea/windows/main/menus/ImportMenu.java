@@ -49,18 +49,17 @@ public class ImportMenu extends Menu {
     public ImportMenu() {
         super(LabelGrabber.INSTANCE.getLabel("import.heading"), new ImageView(new Image("file:icons/left.png", 16, 16, false,true)));
         
-        qspImportDialog = new QSPImportDialog(null);
-        sImportDialog = new SurvivorImportDialog(null);
-        sourceImportDialog = new SourceImportDialog(null);
-        kingswayImportDialog = new KingswayImportDialog(null, null);
+        qspImportDialog = new QSPImportDialog();
+        sImportDialog = new SurvivorImportDialog();
+        sourceImportDialog = new SourceImportDialog();
+        kingswayImportDialog = new KingswayImportDialog(null);
         
         qspItem = new MenuItem(LabelGrabber.INSTANCE.getLabel("qsp.button"), new ImageView(new Image("file:icons/logo.png", 16, 16, false, true)));
         qspItem.setOnAction(new EventHandler<ActionEvent>() {
 
             @Override
             public void handle(ActionEvent t) {
-                qspImportDialog.setLocationRelativeTo(qspImportDialog.getOwner());
-                qspImportDialog.setVisible(true);
+                qspImportDialog.show();
             }
         });
         getItems().add(qspItem);
@@ -70,8 +69,7 @@ public class ImportMenu extends Menu {
 
             @Override
             public void handle(ActionEvent t) {
-                sImportDialog.setLocationRelativeTo(sImportDialog.getOwner());
-                sImportDialog.setVisible(true);
+                sImportDialog.show();
             }
         });
         getItems().add(ssItem);
@@ -81,8 +79,7 @@ public class ImportMenu extends Menu {
 
             @Override
             public void handle(ActionEvent t) {
-                sourceImportDialog.setLocationRelativeTo(sourceImportDialog.getOwner());
-                sourceImportDialog.setVisible(true);
+                sourceImportDialog.show();
             }
         });
         getItems().add(sourceItem);
@@ -96,8 +93,7 @@ public class ImportMenu extends Menu {
             @Override
             public void handle(ActionEvent t) {
                 kingswayImportDialog.setAll(true);
-                kingswayImportDialog.setLocationRelativeTo(kingswayImportDialog.getOwner());
-                kingswayImportDialog.setVisible(true);
+                kingswayImportDialog.show();
             }
         });
         
@@ -107,8 +103,7 @@ public class ImportMenu extends Menu {
             @Override
             public void handle(ActionEvent t) {
                 kingswayImportDialog.setAll(false);
-                kingswayImportDialog.setLocationRelativeTo(kingswayImportDialog.getOwner());
-                kingswayImportDialog.setVisible(true);
+                kingswayImportDialog.show();
             }
         });
         

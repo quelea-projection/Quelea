@@ -19,7 +19,6 @@ package org.quelea.importexport;
 
 import javax.swing.JFrame;
 import org.quelea.languages.LabelGrabber;
-import org.quelea.utils.FileFilters;
 
 /**
  * An import dialog for the survivor song books in PDF format.
@@ -31,9 +30,9 @@ public class SourceImportDialog extends ImportDialog {
      * Create a new survivor import dialog.
      * @param owner the owner of the dialog.
      */
-    public SourceImportDialog(JFrame owner) {
-        super(owner, new String[]{
+    public SourceImportDialog() {
+        super(new String[]{
                 LabelGrabber.INSTANCE.getLabel("source.import.line1")
-        }, FileFilters.DIR_ONLY, new SourceParser(), true);
+        }, null, new SourceParser(), true);
     }
 }

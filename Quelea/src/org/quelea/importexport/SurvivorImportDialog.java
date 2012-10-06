@@ -31,8 +31,8 @@ public class SurvivorImportDialog extends ImportDialog {
      * Create a new survivor import dialog.
      * @param owner the owner of the dialog.
      */
-    public SurvivorImportDialog(JFrame owner) {
-        super(owner, new String[]{
+    public SurvivorImportDialog() {
+        super(new String[]{
                 LabelGrabber.INSTANCE.getLabel("survivor.import.line1"),
                 LabelGrabber.INSTANCE.getLabel("survivor.import.line2")
         }, FileFilters.SURVIVOR_SONGBOOK, new SurvivorSongbookParser(), false);

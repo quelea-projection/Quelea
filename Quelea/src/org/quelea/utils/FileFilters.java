@@ -33,66 +33,23 @@ public final class FileFilters {
     /**
      * The file filter used for the survivor songbooks.
      */
-    public static final FileFilter SURVIVOR_SONGBOOK = new FileFilter() {
-        @Override
-        public boolean accept(File f) {
-            if(f.isDirectory()
-                    || f.getName().trim().equalsIgnoreCase("acetates.pdf")) {
-                return true;
-            }
-            return false;
-        }
-
-        @Override
-        public String getDescription() {
-            return "acetates.pdf";
-        }
-    };
-    /**
-     * Accept only folders.
-     */
-    public static final FileFilter DIR_ONLY = new FileFilter() {
-        @Override
-        public boolean accept(File f) {
-            return f.isDirectory();
-        }
-
-        @Override
-        public String getDescription() {
-            return "Folders";
-        }
-    };
+    public static final FileChooser.ExtensionFilter SURVIVOR_SONGBOOK = new FileChooser.ExtensionFilter("Survivor acetates file (acetates.pdf)", "acetates.pdf");
     /**
      * Accept XML bbibles.
      */
     public static final FileChooser.ExtensionFilter XML_BIBLE = new FileChooser.ExtensionFilter("XML bibles (*.xml)", "*.xml");
-    
+    /**
+     * Only accept images.
+     */
     public static final FileChooser.ExtensionFilter IMAGES = new FileChooser.ExtensionFilter(LabelGrabber.INSTANCE.getLabel("image.files.description"), Utils.getImageExtensions());
     /**
      * The file filter used for Quelea song packs.
      */
-    public static final FileFilter SONG_PACK = new FileFilter() {
-        private final String extension = QueleaProperties.get().getSongPackExtension();
-
-        @Override
-        public boolean accept(File f) {
-            if(f.isDirectory()) {
-                return true;
-            }
-            return f.getName().toLowerCase().endsWith("." + extension);
-        }
-
-        @Override
-        public String getDescription() {
-            return "Quelea song pack (." + extension + ")";
-        }
-    };
-    
+    public static final FileChooser.ExtensionFilter SONG_PACK = new FileChooser.ExtensionFilter("Quelea song pack (*.qsp)", "*.qsp");
     /**
      * The file filter used for Quelea schedules.
      */
-    public static final FileChooser.ExtensionFilter SCHEDULE = new FileChooser.ExtensionFilter("Quelea schedules", "."+QueleaProperties.get().getScheduleExtension());
-
+    public static final FileChooser.ExtensionFilter SCHEDULE = new FileChooser.ExtensionFilter("Quelea schedules", "." + QueleaProperties.get().getScheduleExtension());
 
     /**
      * No instantiation for me thanks.
