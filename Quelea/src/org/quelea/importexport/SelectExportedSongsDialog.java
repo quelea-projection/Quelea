@@ -17,14 +17,10 @@
  */
 package org.quelea.importexport;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.io.File;
-import javax.swing.JFileChooser;
-import javax.swing.JFrame;
-import javax.swing.JOptionPane;
+import javafx.event.EventHandler;
+import javafx.stage.FileChooser;
 import javax.swing.SwingWorker;
-import org.quelea.Application;
 import org.quelea.utils.FileFilters;
 import org.quelea.utils.QueleaProperties;
 import org.quelea.utils.SongPack;
@@ -39,37 +35,32 @@ public class SelectExportedSongsDialog extends SelectSongsDialog {
      * Create a new exported songs dialog.
      * @param owner the owner of the dialog.
      */
-    public SelectExportedSongsDialog(final JFrame owner) {
-        super(owner, new String[]{
+    public SelectExportedSongsDialog() {
+        super(new String[]{
                     "The following songs are in the database.",
                     "Select the ones you want to add to the song pack then hit \"Add\"."
                 }, "Add", "Add to song pack?");
 
-        getAddButton().addActionListener(new ActionListener() {
+        getAddButton().setOnAction(new EventHandler<javafx.event.ActionEvent>() {
 
             @Override
-            public void actionPerformed(ActionEvent e) {
+            public void handle(javafx.event.ActionEvent t) {
                 final String extension = QueleaProperties.get().getSongPackExtension();
-                JFileChooser chooser = getChooser();
-                int chooserResult = chooser.showSaveDialog(owner);
-                if (chooserResult == JFileChooser.APPROVE_OPTION) {
-                    final File file;
-                    if (chooser.getSelectedFile().getName().endsWith("." + extension)) {
-                        file = chooser.getSelectedFile();
+                FileChooser chooser = getChooser();
+                File file =chooser.showSaveDialog(SelectExportedSongsDialog.this);
+                if(file!=null) {
+                    if(!file.getName().endsWith("." + extension)) {
+                        file = new File(file.getAbsoluteFile() + "." + extension);
                     }
-                    else {
-                        file = new File(chooser.getSelectedFile().getAbsoluteFile() + "." + extension);
-                    }
-
                     boolean writeFile = true;
-                    if (file.exists()) {
+                    if(file.exists()) {
 //                        int result = JOptionPane.showConfirmDialog(Application.get().getMainWindow(), file.getName() + " already exists. Overwrite?",
 //                                "Overwrite", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE, null);
 //                        if (result != JOptionPane.YES_OPTION) {
 //                            writeFile = false;
 //                        }
                     }
-                    if (writeFile) {
+                    if(writeFile) {
                         writeSongPack(file);
                     }
 
@@ -82,10 +73,9 @@ public class SelectExportedSongsDialog extends SelectSongsDialog {
      * Get the JFileChooser to be used.
      * @return the song pack JFileChooser.
      */
-    private JFileChooser getChooser() {
-        JFileChooser chooser = new JFileChooser();
-        chooser.setAcceptAllFileFilterUsed(false);
-        chooser.setFileFilter(FileFilters.SONG_PACK);
+    private FileChooser getChooser() {
+        FileChooser chooser = new FileChooser();
+        chooser.getExtensionFilters().add(FileFilters.SONG_PACK);
         return chooser;
     }
 
@@ -95,7 +85,7 @@ public class SelectExportedSongsDialog extends SelectSongsDialog {
      */
     private void writeSongPack(final File file) {
         final SongPack pack = new SongPack();
-        getAddButton().setEnabled(false);
+        getAddButton().setDisable(true);
         SwingWorker<Void, Void> worker = new SwingWorker<Void, Void>() {
 
             @Override
@@ -111,8 +101,8 @@ public class SelectExportedSongsDialog extends SelectSongsDialog {
             @Override
             protected void done() {
                 pack.writeToFile(file);
-                setVisible(false);
-                getAddButton().setEnabled(true);
+                hide();
+                getAddButton().setDisable(false);
             }
         };
         worker.execute();
