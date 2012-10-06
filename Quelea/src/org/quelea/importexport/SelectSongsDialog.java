@@ -37,7 +37,6 @@ import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import javax.swing.JFrame;
 import javax.swing.table.TableModel;
-import javax.swing.table.TableRowSorter;
 import org.quelea.displayable.Song;
 import org.quelea.languages.LabelGrabber;
 
@@ -62,7 +61,7 @@ public class SelectSongsDialog extends Stage {
      * @param checkboxText text to place in the column header for the
      * checkboxes.
      */
-    public SelectSongsDialog(JFrame owner, String[] text, String acceptText,
+    public SelectSongsDialog(String[] text, String acceptText,
                              String checkboxText) {
         initModality(Modality.APPLICATION_MODAL);
         initStyle(StageStyle.UTILITY);

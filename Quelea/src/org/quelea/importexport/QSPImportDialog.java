@@ -19,20 +19,23 @@ package org.quelea.importexport;
 
 import javax.swing.JFrame;
 import org.quelea.languages.LabelGrabber;
+import org.quelea.utils.FileFilters;
 
 /**
  * An import dialog for Quelea song packs.
+ *
  * @author Michael
  */
 public class QSPImportDialog extends ImportDialog {
 
     /**
      * Create a new QSP import dialog.
+     *
      * @param owner the owner of the dialog.
      */
-    public QSPImportDialog(JFrame owner) {
-        super(owner, new String[]{
-                LabelGrabber.INSTANCE.getLabel("qsp.import.line1")
-        }, null, new QSPParser(), false);
+    public QSPImportDialog() {
+        super(new String[]{
+                    LabelGrabber.INSTANCE.getLabel("qsp.import.line1")
+                }, FileFilters.SONG_PACK, new QSPParser(), false);
     }
 }
