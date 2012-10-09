@@ -27,6 +27,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javafx.application.Platform;
 import javafx.event.EventHandler;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
@@ -39,7 +40,7 @@ import javafx.stage.FileChooser;
 import javafx.stage.FileChooser.ExtensionFilter;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
-import javax.swing.JFileChooser;
+import javafx.stage.StageStyle;
 import javax.swing.SwingUtilities;
 import javax.swing.SwingWorker;
 import name.antonsmirnov.javafx.dialog.Dialog;
@@ -53,7 +54,7 @@ import org.quelea.windows.main.StatusPanel;
 
 /**
  * An import dialog used for importing songs.
- *
+ * <p/>
  * @author Michael
  */
 public abstract class ImportDialog extends Stage implements PropertyChangeListener {
@@ -68,7 +69,7 @@ public abstract class ImportDialog extends Stage implements PropertyChangeListen
 
     /**
      * Create a new import dialog.
-     *
+     * <p/>
      * @param owner the owner of this dialog.
      * @param dialogLabels the labels to contain on the dialog as text to the
      * user before the file box.
@@ -81,6 +82,7 @@ public abstract class ImportDialog extends Stage implements PropertyChangeListen
     protected ImportDialog(String[] dialogLabels, ExtensionFilter fileFilter,
             final SongParser parser, final boolean selectDirectory) {
         initModality(Modality.APPLICATION_MODAL);
+        initStyle(StageStyle.UTILITY);
         setTitle(LabelGrabber.INSTANCE.getLabel("import.heading"));
         halt = false;
         importedDialog = new SelectImportedSongsDialog();
@@ -198,14 +200,21 @@ public abstract class ImportDialog extends Stage implements PropertyChangeListen
                     @Override
                     protected void done() {
                         checkerService.shutdownNow();
-                        if((localSongs == null || localSongs.isEmpty()) && !halt) {
-                            Dialog.showWarning(LabelGrabber.INSTANCE.getLabel("import.no.songs.title"), LabelGrabber.INSTANCE.getLabel("import.no.songs.text"));
-                        }
-                        else if(!(localSongs == null || localSongs.isEmpty())) {
-                            getImportedDialog().setSongs(localSongs, localSongsDuplicate, true);
-                            getImportedDialog().show();
-                        }
-                        setIdle();
+                        Platform.runLater(new Runnable() {
+
+                            @Override
+                            public void run() {
+                                if((localSongs == null || localSongs.isEmpty()) && !halt) {
+                                    Dialog.showWarning(LabelGrabber.INSTANCE.getLabel("import.no.songs.title"), LabelGrabber.INSTANCE.getLabel("import.no.songs.text"));
+                                }
+                                else if(!(localSongs == null || localSongs.isEmpty())) {
+
+                                    getImportedDialog().setSongs(localSongs, localSongsDuplicate, true);
+                                    getImportedDialog().show();
+                                }
+                                setIdle();
+                            }
+                        });
                     }
                 };
                 worker.addPropertyChangeListener(ImportDialog.this);
@@ -219,7 +228,7 @@ public abstract class ImportDialog extends Stage implements PropertyChangeListen
 
     /**
      * Get the import button.
-     *
+     * <p/>
      * @return the import button.
      */
     public Button getImportButton() {
@@ -228,7 +237,7 @@ public abstract class ImportDialog extends Stage implements PropertyChangeListen
 
     /**
      * Get the location field.
-     *
+     * <p/>
      * @return the location field.
      */
     public TextField getLocationField() {
@@ -237,7 +246,7 @@ public abstract class ImportDialog extends Stage implements PropertyChangeListen
 
     /**
      * Get the dialog that appears after the songs have been imported.
-     *
+     * <p/>
      * @return the imported songs dialog.
      */
     public SelectSongsDialog getImportedDialog() {
@@ -273,7 +282,7 @@ public abstract class ImportDialog extends Stage implements PropertyChangeListen
 
     /**
      * Update the progress bar.
-     *
+     * <p/>
      * @param evt the property change event.
      */
     @Override
