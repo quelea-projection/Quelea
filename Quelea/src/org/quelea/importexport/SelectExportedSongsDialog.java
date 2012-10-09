@@ -91,7 +91,7 @@ public class SelectExportedSongsDialog extends SelectSongsDialog {
             @Override
             protected Void doInBackground() {
                 for (int i = 0; i < getSongs().size(); i++) {
-                    if ((Boolean) getTable().getValueAt(i, 2)) {
+                    if (getCheckedColumn().getCellData(i)) {
                         pack.addSong(getSongs().get(i));
                     }
                 }
