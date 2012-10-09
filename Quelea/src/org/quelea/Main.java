@@ -25,7 +25,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.application.Platform;
 import javafx.embed.swing.JFXPanel;
-import javax.swing.*;
+import name.antonsmirnov.javafx.dialog.Dialog;
 import org.quelea.bible.BibleManager;
 import org.quelea.languages.LabelGrabber;
 import org.quelea.phonehome.PhoneHome;
@@ -33,6 +33,7 @@ import org.quelea.powerpoint.OOUtils;
 import org.quelea.splash.SplashWindow;
 import org.quelea.utils.LoggerUtils;
 import org.quelea.utils.QueleaProperties;
+import org.quelea.utils.UpdateChecker;
 import org.quelea.utils.Utils;
 import org.quelea.windows.main.LyricWindow;
 import org.quelea.windows.main.MainWindow;
@@ -158,18 +159,17 @@ public final class Main {
         }
         LOGGER.log(Level.INFO, "Registered dictionary");
 
-        setLaf();
         Platform.runLater(new Runnable() {
             @Override
             public void run() {
                 if(SongDatabase.get().errorOccurred()) {
-                    JOptionPane.showMessageDialog(null, LabelGrabber.INSTANCE.getLabel("already.running.error"), LabelGrabber.INSTANCE.getLabel("already.running.title"), JOptionPane.ERROR_MESSAGE);
+                    Dialog.showError(LabelGrabber.INSTANCE.getLabel("already.running.title"), LabelGrabber.INSTANCE.getLabel("already.running.error"));
                     System.exit(1);
                 }
                 OOUtils.attemptInit();
                 mainWindow = new MainWindow(true);
 
-//                new UpdateChecker(mainWindow).checkUpdate(false, false, false); //Check updates
+                new UpdateChecker().checkUpdate(false, false, false); //Check updates
                 PhoneHome.INSTANCE.phone(); //Phone home
 
                 LOGGER.log(Level.INFO, "Registering canvases");
@@ -215,35 +215,13 @@ public final class Main {
     }
 
     /**
-     * Attempt to set the look and feel of the components.
-     */
-    private static void setLaf() {
-        SwingUtilities.invokeLater(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    UIManager.setLookAndFeel(QueleaProperties.get().getLaf());
-                }
-                catch(ClassNotFoundException | InstantiationException | IllegalAccessException | UnsupportedLookAndFeelException ex) {
-                    LOGGER.log(Level.INFO, "Couldn't set the look and feel.", ex);
-                }
-
-                JFrame.setDefaultLookAndFeelDecorated(true);
-                JDialog.setDefaultLookAndFeelDecorated(true);
-            }
-        });
-    }
-
-    /**
      * If it's appropriate, show the warning about only having 1 monitor.
      * <p/>
      * @param numMonitors the number of monitors.
      */
     private static void showWarning(int numMonitors) {
         if(numMonitors <= 1 && QueleaProperties.get().showSingleMonitorWarning()) {
-            System.out.println("WARNING MONITOR");
-//            JOptionPane.showMessageDialog(mainWindow, LabelGrabber.INSTANCE.getLabel("one.monitor.warning"), LabelGrabber.INSTANCE.getLabel("one.monitor.title"),
-//                    JOptionPane.WARNING_MESSAGE, null);
+            Dialog.showWarning(LabelGrabber.INSTANCE.getLabel("one.monitor.title"), LabelGrabber.INSTANCE.getLabel("one.monitor.warning"));
         }
     }
 }

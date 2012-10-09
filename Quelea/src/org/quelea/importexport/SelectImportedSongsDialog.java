@@ -17,10 +17,8 @@
  */
 package org.quelea.importexport;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import javafx.application.Platform;
 import javafx.event.EventHandler;
-import javax.swing.SwingWorker;
 import org.quelea.SongDatabase;
 
 /**
@@ -45,25 +43,25 @@ public class SelectImportedSongsDialog extends SelectSongsDialog {
             @Override
             public void handle(javafx.event.ActionEvent t) {
                 getAddButton().setDisable(true);
-                SwingWorker worker = new SwingWorker<Void, Void>() {
-                    @Override
-                    protected Void doInBackground() {
+                new Thread() {
+                    public void run() {
                         for(int i = 0; i < getSongs().size(); i++) {
-                            if((Boolean) getTable().getValueAt(i, 2)) {
+                            if(getCheckedColumn().getCellData(i)) {
                                 SongDatabase.get().addSong(getSongs().get(i), false);
                             }
                         }
-                        return null;
-                    }
+                        
+                        Platform.runLater(new Runnable() {
 
-                    @Override
-                    protected void done() {
-                        SongDatabase.get().fireUpdate();
-                        hide();
-                        getAddButton().setDisable(false);
+                            @Override
+                            public void run() {
+                                SongDatabase.get().fireUpdate();
+                                hide();
+                                getAddButton().setDisable(false);
+                            }
+                        });
                     }
-                };
-                worker.execute();
+                }.start();
             }
         });
     }

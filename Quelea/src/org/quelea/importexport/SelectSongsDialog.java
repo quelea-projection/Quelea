@@ -20,41 +20,52 @@ package org.quelea.importexport;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import javafx.beans.property.SimpleBooleanProperty;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.value.ObservableValue;
+import javafx.collections.FXCollections;
 import javafx.event.EventHandler;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableColumn.CellDataFeatures;
 import javafx.scene.control.TableView;
 import javafx.scene.control.ToolBar;
 import javafx.scene.control.Tooltip;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
-import javax.swing.JFrame;
-import javax.swing.table.TableModel;
+import javafx.util.Callback;
 import org.quelea.displayable.Song;
 import org.quelea.languages.LabelGrabber;
+import org.quelea.windows.main.BooleanCell;
 
 /**
  * A dialog where given songs can be selected.
+ * <p/>
  * @author Michael
  */
 public class SelectSongsDialog extends Stage {
 
     private final Button addButton;
-    private final TableView table;
+    private final TableView<Song> table;
     private List<Song> songs;
     private boolean[] checkList;
     private final String checkboxText;
-    private TableModel model;
+    private TableColumn<Song, String> nameColumn;
+    private TableColumn<Song, String> authorColumn;
+    private TableColumn<Song, Boolean> checkedColumn;
 
     /**
      * Create a new imported songs dialog.
+     * <p/>
      * @param owner the owner of the dialog.
      * @param text a list of lines to be shown in the dialog.
      * @param acceptText text to place on the accpet button.
@@ -62,48 +73,54 @@ public class SelectSongsDialog extends Stage {
      * checkboxes.
      */
     public SelectSongsDialog(String[] text, String acceptText,
-                             String checkboxText) {
+            String checkboxText) {
         initModality(Modality.APPLICATION_MODAL);
         initStyle(StageStyle.UTILITY);
         setTitle(LabelGrabber.INSTANCE.getLabel("select.songs.title"));
         this.checkboxText = checkboxText;
         songs = new ArrayList<>();
-        
-        HBox rootPane = new HBox();
+
         VBox mainPanel = new VBox();
         for(String str : text) {
             mainPanel.getChildren().add(new Label(str));
         }
-        table = new TableView();
-        mainPanel.getChildren().add(table);
-        
         ToolBar options = new ToolBar();
         options.getItems().add(createCheckAllButton());
+        table = new TableView<>();
+        VBox.setVgrow(table, Priority.ALWAYS);
+        mainPanel.getChildren().add(table);
         addButton = new Button(acceptText, new ImageView(new Image("file:icons/tick.png")));
         mainPanel.getChildren().add(addButton);
-        rootPane.getChildren().add(mainPanel);
-        rootPane.getChildren().add(options);
-        
-        setScene(new Scene(rootPane));
+
+        setScene(new Scene(mainPanel));
+    }
+    
+    public TableColumn<Song, Boolean> getCheckedColumn() {
+        return checkedColumn;
     }
 
     /**
      * Create the button that checks all the boxes.
+     * <p/>
      * @return the newly created check all button.
      */
     private Button createCheckAllButton() {
-        Button checkButton = new Button("",new ImageView(new Image("file:icons/checkbox.jpg")));
+        Button checkButton = new Button("", new ImageView(new Image("file:icons/checkbox.jpg")));
         checkButton.setTooltip(new Tooltip(LabelGrabber.INSTANCE.getLabel("check.uncheck.all.text")));
         checkButton.setOnAction(new EventHandler<javafx.event.ActionEvent>() {
-
             @Override
             public void handle(javafx.event.ActionEvent t) {
                 if(getSongs().isEmpty()) {
                     return;
                 }
-                boolean val = !(Boolean) getTable().getValueAt(0, 2);
+                final boolean checked = checkedColumn.getCellData(0);
                 for(int i = 0; i < getSongs().size(); i++) {
-                    getTable().setValueAt(val, i, 2);
+                    checkedColumn.setCellValueFactory(new Callback<CellDataFeatures<Song, Boolean>, ObservableValue<Boolean>>() {
+                        @Override
+                        public ObservableValue<Boolean> call(CellDataFeatures<Song, Boolean> p) {
+                            return new SimpleBooleanProperty(!checked);
+                        }
+                    });
                 }
             }
         });
@@ -112,49 +129,70 @@ public class SelectSongsDialog extends Stage {
 
     /**
      * Set the songs to be shown in the dialog.
-     * @param songs         the list of songs to be shown.
-     * @param checkList     a list corresponding to the song list - each position is true if the checkbox should be
-     *                      selected, false otherwise.
-     * @param defaultVal    the default value to use for the checkbox if checkList is null or smaller than the songs
-     *                      list.
+     * <p/>
+     * @param songs the list of songs to be shown.
+     * @param checkList a list corresponding to the song list - each position is
+     * true if the checkbox should be selected, false otherwise.
+     * @param defaultVal the default value to use for the checkbox if checkList
+     * is null or smaller than the songs list.
      */
-    public void setSongs(List<Song> songs, boolean[] checkList, boolean defaultVal) {
+    public void setSongs(final List<Song> songs, final boolean[] checkList, final boolean defaultVal) {
         Collections.sort(songs);
         this.songs = songs;
         this.checkList = checkList;
-//        TableRowSorter<TableModel> sorter = new TableRowSorter<>(model);
-//        table.setRowSorter(sorter);
-        
+
         table.getColumns().clear();
-        TableColumn nameColumn = new TableColumn(LabelGrabber.INSTANCE.getLabel("name.label"));
+        nameColumn = new TableColumn<>(LabelGrabber.INSTANCE.getLabel("name.label"));
         table.getColumns().add(nameColumn);
-        TableColumn authorColumn = new TableColumn(LabelGrabber.INSTANCE.getLabel("author.label"));
+        authorColumn = new TableColumn<>(LabelGrabber.INSTANCE.getLabel("author.label"));
         table.getColumns().add(authorColumn);
-        TableColumn checkedColumn = new TableColumn(checkboxText);
+        checkedColumn = new TableColumn<>(checkboxText);
         table.getColumns().add(checkedColumn);
-        
-        table.getColumnModel().getColumn(0).setHeaderValue(LabelGrabber.INSTANCE.getLabel("name.label"));
-        table.getColumnModel().getColumn(1).setHeaderValue(LabelGrabber.INSTANCE.getLabel("author.label"));
-        table.getColumnModel().getColumn(2).setHeaderValue(checkboxText);
-        table.getColumnModel().getColumn(2).setCellEditor(table.getDefaultEditor(Boolean.class));
-        table.getColumnModel().getColumn(2).setCellRenderer(table.getDefaultRenderer(Boolean.class));
-        for(int i = 0; i < songs.size(); i++) {
-            table.getModel().setValueAt(songs.get(i).getTitle(), i, 0);
-            table.getModel().setValueAt(songs.get(i).getAuthor(), i, 1);
-            boolean val;
-            if(checkList != null && i < checkList.length) {
-                val = !checkList[i]; //invert
+
+        nameColumn.setCellValueFactory(new Callback<CellDataFeatures<Song, String>, ObservableValue<String>>() {
+            @Override
+            public ObservableValue<String> call(CellDataFeatures<Song, String> p) {
+                return new SimpleStringProperty(p.getValue().getTitle());
             }
-            else {
-                val = defaultVal;
+        });
+
+        authorColumn.setCellValueFactory(new Callback<CellDataFeatures<Song, String>, ObservableValue<String>>() {
+            @Override
+            public ObservableValue<String> call(CellDataFeatures<Song, String> p) {
+                return new SimpleStringProperty(p.getValue().getAuthor());
             }
-            table.getModel().setValueAt(val, i, 2);
-        }
+        });
+
+        Callback<TableColumn<Song, Boolean>, TableCell<Song, Boolean>> booleanCellFactory =
+                new Callback<TableColumn<Song, Boolean>, TableCell<Song, Boolean>>() {
+                    @Override
+                    public TableCell<Song, Boolean> call(TableColumn<Song, Boolean> p) {
+                        return new BooleanCell<Song>();
+                    }
+                };
+        checkedColumn.setCellFactory(booleanCellFactory);
+        checkedColumn.setCellValueFactory(new Callback<CellDataFeatures<Song, Boolean>, ObservableValue<Boolean>>() {
+            @Override
+            public ObservableValue<Boolean> call(CellDataFeatures<Song, Boolean> p) {
+                int position = songs.indexOf(p.getValue());
+                boolean bool;
+                if(checkList != null && position < checkList.length) {
+                    bool = !checkList[position]; //invert
+                }
+                else {
+                    bool = defaultVal;
+                }
+                return new SimpleBooleanProperty(bool);
+            }
+        });
+
+        table.setItems(FXCollections.observableArrayList(songs));
     }
 
     /**
-     * Get the check list. This list corresponds with the list of songs to determine whether the checkbox by each song
-     * should be checked or not.
+     * Get the check list. This list corresponds with the list of songs to
+     * determine whether the checkbox by each song should be checked or not.
+     * <p/>
      * @return the check list.
      */
     public boolean[] getCheckList() {
@@ -163,6 +201,7 @@ public class SelectSongsDialog extends Stage {
 
     /**
      * Get the song list.
+     * <p/>
      * @return the list of songs.
      */
     public List<Song> getSongs() {
@@ -171,14 +210,16 @@ public class SelectSongsDialog extends Stage {
 
     /**
      * Get the table in this dialog.
+     * <p/>
      * @return the table.
      */
-    public TableView getTable() {
+    public TableView<Song> getTable() {
         return table;
     }
 
     /**
      * Get the add button.
+     * <p/>
      * @return the add button.
      */
     public Button getAddButton() {

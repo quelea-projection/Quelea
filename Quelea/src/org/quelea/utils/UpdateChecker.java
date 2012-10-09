@@ -17,14 +17,15 @@
  */
 package org.quelea.utils;
 
-import java.awt.Component;
 import java.awt.Desktop;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.swing.JOptionPane;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
+import name.antonsmirnov.javafx.dialog.Dialog;
 import org.quelea.languages.LabelGrabber;
 
 /**
@@ -34,15 +35,6 @@ import org.quelea.languages.LabelGrabber;
 public class UpdateChecker {
 
     private static final Logger LOGGER = LoggerUtils.getLogger();
-    private final Component owner;
-
-    /**
-     * Create a new update checker.
-     * @param owner the owner of the checker.
-     */
-    public UpdateChecker(Component owner) {
-        this.owner = owner;
-    }
 
     /**
      * Check whether there's an update to Quelea, display a message if so.
@@ -50,7 +42,7 @@ public class UpdateChecker {
      * @param showIfError  true if the user should see a message if there is an error.
      * @param forceCheck   true if we should check even if the properties state otherwise.
      */
-    public void checkUpdate(boolean showIfLatest, boolean showIfError, boolean forceCheck) {
+    public void checkUpdate(boolean showIfLatest, final boolean showIfError, boolean forceCheck) {
         if(forceCheck || QueleaProperties.get().checkUpdate()) {
             Version latestVersion = new VersionChecker(QueleaProperties.get().getUpdateURL()).getLatestVersion();
             if(latestVersion == null) {
@@ -64,34 +56,39 @@ public class UpdateChecker {
                     new Object[]{curVersion.getVersionString(), latestVersion.getVersionString()});
             if(curVersion.compareTo(latestVersion) == -1) {
                 if(Desktop.isDesktopSupported()) {
-                    int result = JOptionPane.showConfirmDialog(owner,
-                            LabelGrabber.INSTANCE.getLabel("newer.version.available")+" (" + latestVersion.getVersionString() + "). "
-                                    + LabelGrabber.INSTANCE.getLabel("visit.webpage.now"),
-                            LabelGrabber.INSTANCE.getLabel("newer.version.available.title"), JOptionPane.YES_NO_OPTION, JOptionPane.INFORMATION_MESSAGE, null);
-                    if(result == JOptionPane.YES_OPTION) {
-                        try {
-                            Desktop.getDesktop().browse(new URI(QueleaProperties.get().getDownloadLocation()));
-                        }
-                        catch(URISyntaxException | IOException ex) {
-                            LOGGER.log(Level.WARNING, "Couldn't open browser", ex);
-                            if(showIfError) {
-                                showUpdateError();
+                    Dialog.buildConfirmation(LabelGrabber.INSTANCE.getLabel("newer.version.available.title"), LabelGrabber.INSTANCE.getLabel("newer.version.available")+" (" + latestVersion.getVersionString() + "). "
+                                    + LabelGrabber.INSTANCE.getLabel("visit.webpage.now")).addYesButton(new EventHandler<ActionEvent>() {
+
+                        @Override
+                        public void handle(ActionEvent t) {
+                            try {
+                                Desktop.getDesktop().browse(new URI(QueleaProperties.get().getDownloadLocation()));
                             }
-                            return;
-       
+                            catch(URISyntaxException | IOException ex) {
+                                LOGGER.log(Level.WARNING, "Couldn't open browser", ex);
+                                if(showIfError) {
+                                    showUpdateError();
+                                }
+                                return;
+                            }
                         }
-                    }
+                    }).addNoButton(new EventHandler<ActionEvent>() {
+
+                        @Override
+                        public void handle(ActionEvent t) {
+                            //Nothing needed
+                        }
+                    }).build().showAndWait();
+                    
                 }
                 else {
-                    JOptionPane.showMessageDialog(owner,
-                            LabelGrabber.INSTANCE.getLabel("newer.version.available")+" (" + latestVersion.getVersionString() + "). "
-                                    + LabelGrabber.INSTANCE.getLabel("download.manual.update")+": " + QueleaProperties.get().getDownloadLocation(),
-                            LabelGrabber.INSTANCE.getLabel("newer.version.available.title"), JOptionPane.INFORMATION_MESSAGE, null);
+                    Dialog.showInfo(LabelGrabber.INSTANCE.getLabel("newer.version.available.title"), LabelGrabber.INSTANCE.getLabel("newer.version.available")+" (" + latestVersion.getVersionString() + "). "
+                                    + LabelGrabber.INSTANCE.getLabel("download.manual.update")+": " + QueleaProperties.get().getDownloadLocation());
                 }
             }
             else if(showIfLatest) {
-                JOptionPane.showMessageDialog(owner, LabelGrabber.INSTANCE.getLabel("no.newer.version.available")+" ("
-                        + curVersion.getVersionString() + ").", LabelGrabber.INSTANCE.getLabel("no.newer.version.available.title"), JOptionPane.INFORMATION_MESSAGE, null);
+                Dialog.showInfo(LabelGrabber.INSTANCE.getLabel("no.newer.version.available.title"), LabelGrabber.INSTANCE.getLabel("no.newer.version.available")+" ("
+                        + curVersion.getVersionString() + ").");
             }
         }
     }
@@ -100,8 +97,8 @@ public class UpdateChecker {
      * Show a message saying there was an error checking for updates.
      */
     private void showUpdateError() {
-        JOptionPane.showMessageDialog(owner, "Sorry, there was an error checking for updates."
-                + "Please check your internet connection then try again.", "Error", JOptionPane.ERROR_MESSAGE, null);
+        Dialog.showError("Error", "Sorry, there was an error checking for updates."
+                + "Please check your internet connection then try again.");
     }
 
 }
