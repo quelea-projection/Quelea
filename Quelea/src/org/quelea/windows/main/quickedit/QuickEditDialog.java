@@ -18,22 +18,21 @@
  */
 package org.quelea.windows.main.quickedit;
 
-import com.inet.jortho.SpellChecker;
-import java.awt.BorderLayout;
-import java.awt.Dialog.ModalityType;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
-import javax.swing.BoxLayout;
-import javax.swing.JButton;
-import javax.swing.JComponent;
-import javax.swing.JDialog;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTextArea;
-import javax.swing.KeyStroke;
+import javafx.event.EventHandler;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
+import javafx.scene.Scene;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.control.TextArea;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.scene.input.KeyCode;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.HBox;
+import javafx.stage.Modality;
+import javafx.stage.Stage;
+import javafx.stage.StageStyle;
 import org.quelea.Application;
 import org.quelea.displayable.Song;
 import org.quelea.displayable.TextSection;
@@ -45,12 +44,12 @@ import org.quelea.utils.Utils;
  *
  * @author Michael
  */
-public class QuickEditDialog extends JDialog {
+public class QuickEditDialog extends Stage {
 
-    private JTextArea sectionArea;
-    private JLabel statusLabel;
-    private JButton okButton;
-    private JButton cancelButton;
+    private TextArea sectionArea;
+    private Label statusLabel;
+    private Button okButton;
+    private Button cancelButton;
     private Song currentSong;
     private int currentIndex;
 
@@ -58,32 +57,40 @@ public class QuickEditDialog extends JDialog {
      * Construct a quick edit dialog.
      */
     public QuickEditDialog() {
-//        super(Application.get().getMainWindow(), "Quick Edit", ModalityType.APPLICATION_MODAL);
+        initStyle(StageStyle.UTILITY);
+        initModality(Modality.APPLICATION_MODAL);
+        setTitle(LabelGrabber.INSTANCE.getLabel("quick.edit.text"));
         currentIndex = -1;
-        setLayout(new BorderLayout());
-        statusLabel = new JLabel();
-        JPanel statusPanel = new JPanel();
-        statusPanel.setLayout(new BoxLayout(statusPanel, BoxLayout.X_AXIS));
-        statusPanel.add(statusLabel);
-        add(statusPanel, BorderLayout.NORTH);
-        sectionArea = new JTextArea(8, 40);
-        SpellChecker.register(sectionArea);
-        sectionArea.addKeyListener(new KeyAdapter() {
+        BorderPane mainPane = new BorderPane();
+        
+        statusLabel = new Label();
+        HBox statusPanel = new HBox();
+        statusPanel.getChildren().add(statusLabel);
+        mainPane.setTop(statusPanel);
+        sectionArea = new TextArea();
+        
+        sectionArea.setOnKeyPressed(new EventHandler<javafx.scene.input.KeyEvent>() {
 
             @Override
-            public void keyPressed(KeyEvent ke) {
-                if(ke.isShiftDown() && ke.getKeyCode() == KeyEvent.VK_ENTER) {
-                    okButton.doClick();
+            public void handle(javafx.scene.input.KeyEvent t ){
+                if(t.isShiftDown() && t.getCode()==KeyCode.ENTER) {
+                    okButton.fire();
+                }
+                else if(t.getCode()==KeyCode.ESCAPE) {
+                    hide();
                 }
             }
         });
-        add(new JScrollPane(sectionArea), BorderLayout.CENTER);
-        JPanel buttonPanel = new JPanel();
-        okButton = new JButton(LabelGrabber.INSTANCE.getLabel("ok.button"));
-        okButton.addActionListener(new ActionListener() {
+        mainPane.setCenter(sectionArea);
+        HBox buttonPanel = new HBox();
+        buttonPanel.setAlignment(Pos.CENTER);
+        BorderPane.setMargin(buttonPanel, new Insets(5,0,5,0));
+        buttonPanel.setSpacing(5);
+        okButton = new Button(LabelGrabber.INSTANCE.getLabel("ok.button"), new ImageView(new Image("file:icons/tick.png")));
+        okButton.setOnAction(new EventHandler<javafx.event.ActionEvent>() {
 
             @Override
-            public void actionPerformed(ActionEvent ae) {
+            public void handle(javafx.event.ActionEvent t) {
                 TextSection oldSection = currentSong.getSections()[currentIndex];
                 String[] sectionLyrics = sectionArea.getText().split("\n\n");
                 currentSong.replaceSection(new TextSection(oldSection.getTitle(), sectionLyrics[0].split("\n"), oldSection.getSmallText(), oldSection.shouldCapitaliseFirst(), oldSection.getTheme(), oldSection.getTempTheme()), currentIndex);
@@ -98,32 +105,24 @@ public class QuickEditDialog extends JDialog {
                 if(sectionArea.getText().trim().isEmpty()) {
                     currentSong.removeSection(currentIndex);
                 }
-                setVisible(false);
+                hide();
                 Application.get().getMainWindow().getMainPanel().getPreviewPanel().refresh();
                 Utils.updateSongInBackground(currentSong, false, true);
             }
         });
-        cancelButton = new JButton(LabelGrabber.INSTANCE.getLabel("cancel.button"));
-        cancelButton.addActionListener(new ActionListener() {
+        cancelButton = new Button(LabelGrabber.INSTANCE.getLabel("cancel.button"), new ImageView(new Image("file:icons/cross.png")));
+        cancelButton.setOnAction(new EventHandler<javafx.event.ActionEvent>() {
 
             @Override
-            public void actionPerformed(ActionEvent ae) {
-                setSongSection(null, 0);
-                setVisible(false);
+            public void handle(javafx.event.ActionEvent t) {
+                hide();
             }
         });
-        buttonPanel.add(okButton);
-        getRootPane().setDefaultButton(okButton);
-        buttonPanel.add(cancelButton);
-        getRootPane().registerKeyboardAction(new ActionListener() {
-
-            @Override
-            public void actionPerformed(ActionEvent ae) {
-                cancelButton.doClick();
-            }
-        }, KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), JComponent.WHEN_IN_FOCUSED_WINDOW);
-        add(buttonPanel, BorderLayout.SOUTH);
-        pack();
+        buttonPanel.getChildren().add(okButton);
+        buttonPanel.getChildren().add(cancelButton);
+        mainPane.setBottom(buttonPanel);
+        
+        setScene(new Scene(mainPane));
     }
 
     /**
@@ -161,8 +160,6 @@ public class QuickEditDialog extends JDialog {
             }
         }
         sectionArea.setText(text.toString());
-        sectionArea.setCaretPosition(0);
-        pack();
     }
 
     /**
@@ -175,7 +172,7 @@ public class QuickEditDialog extends JDialog {
             statusLabel.setText("");
         }
         else {
-            statusLabel.setText("<html><b>" + song.getTitle() + "</b><br/><i>(" + LabelGrabber.INSTANCE.getLabel("quick.shortcut.description") + ")</i></html>");
+            statusLabel.setText(song.getTitle() + "  (" + LabelGrabber.INSTANCE.getLabel("quick.shortcut.description") + ")");
         }
     }
 }
