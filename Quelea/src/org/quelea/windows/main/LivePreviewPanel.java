@@ -22,7 +22,11 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javafx.event.EventHandler;
 import javafx.scene.Node;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 import org.quelea.displayable.Displayable;
 import org.quelea.displayable.ImageDisplayable;
@@ -82,26 +86,27 @@ public abstract class LivePreviewPanel extends BorderPane {
         cardPanel.add(videoPanel, VIDEO_LABEL);
         cardPanel.add(presentationPanel, PRESENTATION_LABEL);
         cardPanel.show(LYRICS_LABEL);
+        
+        lyricsPanel.getLyricsList().setOnMouseClicked(new EventHandler<MouseEvent>() {
 
-//        lyricsPanel.getLyricsList().addMouseListener(new MouseAdapter() {
-//
-//            @Override
-//            public void mouseClicked(MouseEvent me) {
-//                if(me.isControlDown()) {
-//                    int index = lyricsPanel.getLyricsList().locationToIndex(me.getPoint());
-//                    doQuickEdit(index);
-//                }
-//            }
-//        });
-//        lyricsPanel.getLyricsList().addKeyListener(new KeyAdapter() {
-//
-//            @Override
-//            public void keyPressed(KeyEvent ke) {
-//                if(ke.isControlDown() && ke.getKeyCode() == KeyEvent.VK_Q) {
-//                    doQuickEdit(lyricsPanel.getLyricsList().getSelectedIndex());
-//                }
-//            }
-//        });
+            @Override
+            public void handle(MouseEvent me) {
+                if(me.isControlDown()) {
+                    doQuickEdit(lyricsPanel.getLyricsList().getSelectionModel().getSelectedIndex());
+                }
+            }
+        });
+        
+        lyricsPanel.getLyricsList().setOnKeyPressed(new EventHandler<KeyEvent>() {
+
+            @Override
+            public void handle(KeyEvent ke) {
+                if(ke.isControlDown() && ke.getCode() == KeyCode.Q) {
+                    doQuickEdit(lyricsPanel.getLyricsList().getSelectionModel().getSelectedIndex());
+                }
+            }
+        });
+
     }
     
     /**
@@ -128,9 +133,8 @@ public abstract class LivePreviewPanel extends BorderPane {
     public void doQuickEdit(int index) {
         if(displayable instanceof Song) {
             Song song = (Song) displayable;
-            quickEditDialog.setLocationRelativeTo(quickEditDialog.getParent());
             quickEditDialog.setSongSection(song, index);
-            quickEditDialog.setVisible(true);
+            quickEditDialog.show();
             setDisplayable(song, getIndex());
         }
     }

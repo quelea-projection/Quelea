@@ -61,6 +61,7 @@ import javafx.scene.image.WritablePixelFormat;
 import javafx.scene.paint.Color;
 import javax.imageio.ImageIO;
 import javax.swing.*;
+import name.antonsmirnov.javafx.dialog.Dialog;
 import org.quelea.Application;
 import org.quelea.SongDatabase;
 import org.quelea.displayable.Song;
@@ -178,7 +179,7 @@ public final class Utils {
             public void run() {
                 boolean result = SongDatabase.get().updateSong(song);
                 if(!result && showError) {
-//                    JOptionPane.showMessageDialog(Application.get().getMainWindow(), LabelGrabber.INSTANCE.getLabel("error.udpating.song.text"), LabelGrabber.INSTANCE.getLabel("error.text"), JOptionPane.ERROR_MESSAGE, null);
+                    Dialog.showError(LabelGrabber.INSTANCE.getLabel("error.text"), LabelGrabber.INSTANCE.getLabel("error.udpating.song.text"));
                 }
             }
         };
