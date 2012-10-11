@@ -17,19 +17,14 @@
  */
 package org.quelea;
 
-import java.awt.Graphics2D;
-import java.awt.RenderingHints;
-import java.awt.image.BufferedImage;
-import org.quelea.utils.Utils;
 import java.io.File;
-import java.util.HashMap;
-import java.util.Map;
 import javafx.scene.image.Image;
 import javafx.scene.paint.Color;
+import org.quelea.utils.Utils;
 
 /**
  * A visual background. This may either be an image or a colour.
- *
+ * <p/>
  * @author Michael
  */
 public class Background {
@@ -40,42 +35,35 @@ public class Background {
 
     /**
      * Create a new background that's a certain colour.
-     *
+     * <p/>
      * @param colour the colour of the background.
      */
     public Background(Color colour) {
         this.colour = colour;
+        this.originalImage = Utils.getImageFromColour(colour);
     }
 
     /**
      * Create a new background that's a certain image.
-     *
+     * <p/>
      * @param imageLocation the location of the background image.
-     * @param originalImage the original image to use.
      */
-    public Background(String imageLocation, Image originalImage) {
+    public Background(String imageLocation) {
         this.imageLocation = imageLocation;
-        this.originalImage = originalImage;
+        originalImage = new Image("file:" + imageLocation);
     }
 
     /**
-     * Get the background with a specified width and height. If this background
-     * is an image then it will be scaled accordingly, if it is a colour an
-     * image will be given with the specified dimension, filled with the colour.
-     *
-     * @param width the width of the background.
-     * @param height the height of the background.
-     * @param key the key to use for the image in the cache.
-     * @return an image containing the background with the given dimensions.
+     * Get the background image.
      */
-    public Image getImage(int width, int height) {
+    public Image getImage() {
         return originalImage;
     }
 
     /**
      * Get the current colour of this background, or null if the background is
      * currently an image.
-     *
+     * <p/>
      * @return the colour of the background.
      */
     public Color getColour() {
@@ -84,7 +72,7 @@ public class Background {
 
     /**
      * Get the image background file.
-     *
+     * <p/>
      * @return the file representing the image background, or null if the image
      * background is a colour.
      */
@@ -100,7 +88,7 @@ public class Background {
     /**
      * Get the current image location of this background, or null if the
      * background is currently a colour.
-     *
+     * <p/>
      * @return the current image location of the background.
      */
     public String getImageLocation() {
@@ -109,7 +97,7 @@ public class Background {
 
     /**
      * Determine whether this background is an image.
-     *
+     * <p/>
      * @return true if the background is an image, false if its a colour.
      */
     public boolean isImage() {
@@ -118,7 +106,7 @@ public class Background {
 
     /**
      * Determine whether this background is a colour.
-     *
+     * <p/>
      * @return true if the background is a colour, false if its an image.
      */
     public boolean isColour() {
@@ -127,7 +115,7 @@ public class Background {
 
     /**
      * Generate a hashcode for this background.
-     *
+     * <p/>
      * @return the hashcode.
      */
     @Override
@@ -140,7 +128,7 @@ public class Background {
 
     /**
      * Determine whether this background is equal to another object.
-     *
+     * <p/>
      * @param obj the other object.
      * @return true if the objects are equal, false otherwise.
      */
@@ -170,7 +158,7 @@ public class Background {
 
     /**
      * Get some information about this background.
-     *
+     * <p/>
      * @return information about the background in a string format.
      */
     @Override

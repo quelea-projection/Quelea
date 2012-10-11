@@ -20,6 +20,8 @@ package org.quelea.windows.main.menus;
 
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.SeparatorMenuItem;
@@ -28,6 +30,7 @@ import javafx.scene.image.ImageView;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import org.quelea.Application;
+import org.quelea.displayable.Song;
 import org.quelea.languages.LabelGrabber;
 import org.quelea.windows.library.LibrarySongList;
 import org.quelea.windows.main.actionlisteners.EditSongDBActionListener;
@@ -62,12 +65,12 @@ public class DatabaseMenu extends Menu {
         editSongItem = new MenuItem(LabelGrabber.INSTANCE.getLabel("edit.song.button"), new ImageView(new Image("file:icons/edit.png", 16, 16, false, true)));
         editSongItem.setOnAction(new EditSongDBActionListener());
         editSongItem.setDisable(true);
-        getItems().add(newSongItem);
+        getItems().add(editSongItem);
 
         deleteSongItem = new MenuItem(LabelGrabber.INSTANCE.getLabel("delete.song.button"), new ImageView(new Image("file:icons/remove 2.png", 16, 16, false, true)));
         deleteSongItem.setOnAction(new RemoveSongDBActionListener());
         deleteSongItem.setDisable(true);
-        getItems().add(newSongItem);
+        getItems().add(deleteSongItem);
 
         tagsItem = new MenuItem(LabelGrabber.INSTANCE.getLabel("tags.button"), new ImageView(new Image("file:icons/tag.png", 16, 16, false, true)));
         tagsItem.setOnAction(new ViewTagsActionListener());
@@ -75,25 +78,20 @@ public class DatabaseMenu extends Menu {
 
         final LibrarySongList libraryList = Application.get().getMainWindow().getMainPanel().getLibraryPanel().getLibrarySongPanel().getSongList();
 
-//        libraryList.addListSelectionListener(new ListSelectionListener() {
-//
-//            @Override
-//            public void valueChanged(ListSelectionEvent e) {
-//                checkEditDeleteItems(editSongItem, deleteSongItem);
-//            }
-//        });
-//        libraryList.addFocusListener(new FocusListener() {
-//
-//            @Override
-//            public void focusGained(FocusEvent e) {
-//                checkEditDeleteItems(editSongItem, deleteSongItem);
-//            }
-//
-//            @Override
-//            public void focusLost(FocusEvent e) {
-//                checkEditDeleteItems(editSongItem, deleteSongItem);
-//            }
-//        });
+        libraryList.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<Song>() {
+
+            @Override
+            public void changed(ObservableValue<? extends Song> ov, Song t, Song t1) {
+                checkEditDeleteItems(editSongItem, deleteSongItem);
+            }
+        });
+        libraryList.focusedProperty().addListener(new ChangeListener<Boolean>() {
+
+            @Override
+            public void changed(ObservableValue<? extends Boolean> ov, Boolean t, Boolean t1) {
+                checkEditDeleteItems(editSongItem, deleteSongItem);
+            }
+        });
         
         getItems().add(new SeparatorMenuItem());
         importMenu = new ImportMenu();
@@ -106,19 +104,19 @@ public class DatabaseMenu extends Menu {
      * Check whether the edit / delete buttons should be set to enabled or not.
      */
     private void checkEditDeleteItems(MenuItem editSongButton, MenuItem deleteSongButton) {
-//        final LibrarySongList libraryList = Application.get().getMainWindow().getMainPanel().getLibraryPanel().getLibrarySongPanel().getSongList();
-//        if(!libraryList.isFocusOwner()) {
-//            deleteSongButton.setDisable(true);
-//            editSongButton.setDisable(true);
-//            return;
-//        }
-//        if(libraryList.getSelectedIndex() == -1) {
-//            deleteSongButton.setDisable(true);
-//            editSongButton.setDisable(true);
-//        }
-//        else {
-//            deleteSongButton.setDisable(false);
-//            editSongButton.setDisable(false);
-//        }
+        final LibrarySongList libraryList = Application.get().getMainWindow().getMainPanel().getLibraryPanel().getLibrarySongPanel().getSongList();
+        if(!libraryList.isFocused()) {
+            deleteSongButton.setDisable(true);
+            editSongButton.setDisable(true);
+            return;
+        }
+        if(libraryList.getSelectedValue()==null) {
+            deleteSongButton.setDisable(true);
+            editSongButton.setDisable(true);
+        }
+        else {
+            deleteSongButton.setDisable(false);
+            editSongButton.setDisable(false);
+        }
     }
 }

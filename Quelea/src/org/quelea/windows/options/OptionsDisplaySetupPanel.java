@@ -17,8 +17,8 @@
 package org.quelea.windows.options;
 
 import java.awt.GraphicsDevice;
+import javafx.application.Platform;
 import javafx.scene.layout.GridPane;
-import javax.swing.SwingUtilities;
 import org.quelea.Application;
 import org.quelea.GraphicsDeviceListener;
 import org.quelea.GraphicsDeviceWatcher;
@@ -56,7 +56,7 @@ public class OptionsDisplaySetupPanel extends GridPane implements PropertyPanel 
 
             @Override
             public void devicesChanged(GraphicsDevice[] devices) {
-                SwingUtilities.invokeLater(new Runnable() {
+                Platform.runLater(new Runnable() {
 
                     @Override
                     public void run() {
@@ -95,7 +95,7 @@ public class OptionsDisplaySetupPanel extends GridPane implements PropertyPanel 
      * panels.
      */
     private void updatePos() {
-        MainWindow mainWindow = Application.get().getMainWindow();
+//        MainWindow mainWindow = Application.get().getMainWindow();
         LyricWindow lyricWindow = Application.get().getLyricWindow();
         LyricWindow stageWindow = Application.get().getStageWindow();
         if(projectorPanel.getOutputBounds() == null) {
@@ -108,7 +108,7 @@ public class OptionsDisplaySetupPanel extends GridPane implements PropertyPanel 
                 lyricWindow = new LyricWindow(projectorPanel.getOutputBounds(), false);
             }
             final LyricWindow fiLyricWindow = lyricWindow; //Fudge for AIC
-            SwingUtilities.invokeLater(new Runnable() {
+            Platform.runLater(new Runnable() {
 
                 @Override
                 public void run() {
@@ -127,7 +127,7 @@ public class OptionsDisplaySetupPanel extends GridPane implements PropertyPanel 
                 stageWindow = new LyricWindow(projectorPanel.getOutputBounds(), true);
             }
             final LyricWindow fiStageWindow = stageWindow; //Fudge for AIC
-            SwingUtilities.invokeLater(new Runnable() {
+            Platform.runLater(new Runnable() {
 
                 @Override
                 public void run() {
