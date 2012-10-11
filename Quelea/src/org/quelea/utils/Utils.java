@@ -624,6 +624,14 @@ public final class Utils {
         return ret;
     }
 
+    public static List<String> getImageFileExtensions() {
+        List<String> ret = new ArrayList<>();
+        for(String str : getImageExtensions()) {
+            ret.add("*." + str);
+        }
+        return ret;
+    }
+
     /**
      * Determine whether the given file has the given case insensitive
      * extension.
@@ -669,41 +677,10 @@ public final class Utils {
      * @param height the height of the image.
      * @return the image.
      */
-    public static Image getImageFromColour(final Color color, int width, int height) {
-        WritableImage image = new WritableImage(width, height);
+    public static Image getImageFromColour(final Color color) {
+        WritableImage image = new WritableImage(1, 1);
         PixelWriter writer = image.getPixelWriter();
-        writer.setPixels(0, 0, width, height, new PixelReader() {
-            @Override
-            public PixelFormat getPixelFormat() {
-                return null;
-            }
-
-            @Override
-            public int getArgb(int i, int i1) {
-                return (to255(color.getOpacity())<<24)&(to255(color.getRed())<<16)&(to255(color.getGreen())<<8)&(to255(color.getBlue()));
-            }
-            
-            private int to255(double i) {
-                return (int)(i*255);
-            }
-
-            @Override
-            public javafx.scene.paint.Color getColor(int i, int i1) {
-                return null;
-            }
-
-            @Override
-            public <T extends Buffer> void getPixels(int i, int i1, int i2, int i3, WritablePixelFormat<T> wpf, T t, int i4) {
-            }
-
-            @Override
-            public void getPixels(int i, int i1, int i2, int i3, WritablePixelFormat<ByteBuffer> wpf, byte[] bytes, int i4, int i5) {
-            }
-
-            @Override
-            public void getPixels(int i, int i1, int i2, int i3, WritablePixelFormat<IntBuffer> wpf, int[] ints, int i4, int i5) {
-            }
-        }, 0, 0);
+        writer.setColor(0, 0, color);
         return image;
     }
 

@@ -27,12 +27,13 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.embed.swing.JFXPanel;
 import javafx.event.EventHandler;
+import javafx.geometry.Pos;
 import javafx.scene.Group;
 import javafx.scene.Scene;
-import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.Priority;
-import javafx.scene.layout.VBox;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.scene.layout.StackPane;
+import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
@@ -47,7 +48,7 @@ import org.quelea.utils.Utils;
  * <p/>
  * @author Michael
  */
-public class LyricCanvas extends BorderPane {
+public class LyricCanvas extends StackPane {
 
     private Theme theme;
     private String[] text;
@@ -57,7 +58,9 @@ public class LyricCanvas extends BorderPane {
     private boolean capitaliseFirst;
     private NoticeDrawer noticeDrawer;
     private boolean stageView;
-    private Group group;
+    private Group textGroup;
+    private ImageView background;
+
     /**
      * Create a new canvas where the lyrics should be displayed.
      * <p/>
@@ -71,17 +74,18 @@ public class LyricCanvas extends BorderPane {
         noticeDrawer = new NoticeDrawer(this);
         text = new String[]{};
         theme = Theme.DEFAULT_THEME;
-        group = new Group();
-        setCenter(group);
+        textGroup = new Group();
+        background = new ImageView(Utils.getImageFromColour(Color.BLACK));
+        StackPane.setAlignment(background, Pos.CENTER);
+        getChildren().add(background);
+        getChildren().add(textGroup);
         heightProperty().addListener(new ChangeListener<Number>() {
-
             @Override
             public void changed(ObservableValue<? extends Number> ov, Number t, Number t1) {
                 drawText();
             }
         });
         widthProperty().addListener(new ChangeListener<Number>() {
-
             @Override
             public void changed(ObservableValue<? extends Number> ov, Number t, Number t1) {
                 drawText();
@@ -93,8 +97,10 @@ public class LyricCanvas extends BorderPane {
         Platform.runLater(new Runnable() {
             @Override
             public void run() {
+                background.setFitHeight(getHeight());
+                background.setFitWidth(getWidth());
                 Font font = theme.getFont();
-                group.getChildren().clear();
+                textGroup.getChildren().clear();
                 List<String> text = sanctifyText();
                 double fontSize = pickFontSize(font, text, getWidth(), getHeight());
                 font = new Font(font.getName(), fontSize);
@@ -103,32 +109,33 @@ public class LyricCanvas extends BorderPane {
                 for(String line : text) {
                     Text t = new Text(line);
                     double width = metrics.computeStringWidth(line);
-                    double centreOffset = (getWidth()-width)/2;
+                    double centreOffset = (getWidth() - width) / 2;
                     t.setFont(font);
                     t.setX(centreOffset);
                     t.setY(y);
+                    t.setFill(theme.getFontPaint());
                     y += metrics.getLineHeight();
-                    group.getChildren().add(t);
+                    textGroup.getChildren().add(t);
                 }
             }
         });
     }
-    
+
     private double pickFontSize(Font font, List<String> text, double width, double height) {
         FontMetrics metrics = Toolkit.getToolkit().getFontLoader().getFontMetrics(font);
-        double totalHeight = (metrics.getLineHeight())*text.size();
-        while(totalHeight>height) {
-            font = new Font(font.getName(), font.getSize()-0.5);
-            if(font.getSize()<1) {
+        double totalHeight = (metrics.getLineHeight()) * text.size();
+        while(totalHeight > height) {
+            font = new Font(font.getName(), font.getSize() - 0.5);
+            if(font.getSize() < 1) {
                 return 1;
             }
             metrics = Toolkit.getToolkit().getFontLoader().getFontMetrics(font);
             totalHeight = (metrics.getLineHeight()) * text.size();
         }
-        
+
         String longestLine = longestLine(font, text);
         double totalWidth = metrics.computeStringWidth(longestLine);
-        while(totalWidth>width) {
+        while(totalWidth > width) {
             font = new Font(font.getName(), font.getSize() - 0.5);
             if(font.getSize() < 1) {
                 return 1;
@@ -136,17 +143,17 @@ public class LyricCanvas extends BorderPane {
             metrics = Toolkit.getToolkit().getFontLoader().getFontMetrics(font);
             totalWidth = metrics.computeStringWidth(longestLine);
         }
-        
+
         return font.getSize();
     }
-    
+
     private String longestLine(Font font, List<String> text) {
         FontMetrics metrics = Toolkit.getToolkit().getFontLoader().getFontMetrics(font);
         double longestWidth = -1;
         String longestStr = null;
         for(String line : text) {
             double width = metrics.computeStringWidth(line);
-            if(width>longestWidth) {
+            if(width > longestWidth) {
                 longestWidth = width;
                 longestStr = line;
             }
@@ -316,11 +323,13 @@ public class LyricCanvas extends BorderPane {
      * @param theme the theme to place on the canvas.
      */
     public void setTheme(Theme theme) {
-        Theme t1 = theme == null ? Theme.DEFAULT_THEME : theme;
-        Theme t2 = this.theme == null ? Theme.DEFAULT_THEME : this.theme;
-        if(!t2.equals(t1)) {
-            this.theme = t1;
+        if(theme == null) {
+            theme = Theme.DEFAULT_THEME;
         }
+        this.theme = theme;
+        Image image = theme.getBackground().getImage();
+        background.setImage(image);
+        drawText();
     }
 
     /**

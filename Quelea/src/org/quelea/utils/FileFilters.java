@@ -17,9 +17,7 @@
  */
 package org.quelea.utils;
 
-import java.io.File;
 import javafx.stage.FileChooser;
-import javax.swing.filechooser.FileFilter;
 import org.quelea.languages.LabelGrabber;
 
 /**
@@ -41,7 +39,7 @@ public final class FileFilters {
     /**
      * Only accept images.
      */
-    public static final FileChooser.ExtensionFilter IMAGES = new FileChooser.ExtensionFilter(LabelGrabber.INSTANCE.getLabel("image.files.description"), Utils.getImageExtensions());
+    public static final FileChooser.ExtensionFilter IMAGES = new FileChooser.ExtensionFilter(LabelGrabber.INSTANCE.getLabel("image.files.description"), Utils.getImageFileExtensions());
     /**
      * The file filter used for Quelea song packs.
      */

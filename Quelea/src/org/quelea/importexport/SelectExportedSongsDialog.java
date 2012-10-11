@@ -18,21 +18,26 @@
 package org.quelea.importexport;
 
 import java.io.File;
+import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.stage.FileChooser;
 import javax.swing.SwingWorker;
+import name.antonsmirnov.javafx.dialog.Dialog;
 import org.quelea.utils.FileFilters;
 import org.quelea.utils.QueleaProperties;
 import org.quelea.utils.SongPack;
 
 /**
- * A dialog used for selecting the songs to be put in the song pack after export.
+ * A dialog used for selecting the songs to be put in the song pack after
+ * export.
+ * <p/>
  * @author Michael
  */
 public class SelectExportedSongsDialog extends SelectSongsDialog {
 
     /**
      * Create a new exported songs dialog.
+     * <p/>
      * @param owner the owner of the dialog.
      */
     public SelectExportedSongsDialog() {
@@ -42,28 +47,29 @@ public class SelectExportedSongsDialog extends SelectSongsDialog {
                 }, "Add", "Add to song pack?");
 
         getAddButton().setOnAction(new EventHandler<javafx.event.ActionEvent>() {
-
             @Override
             public void handle(javafx.event.ActionEvent t) {
                 final String extension = QueleaProperties.get().getSongPackExtension();
                 FileChooser chooser = getChooser();
-                File file =chooser.showSaveDialog(SelectExportedSongsDialog.this);
-                if(file!=null) {
+                File file = chooser.showSaveDialog(SelectExportedSongsDialog.this);
+                if(file != null) {
                     if(!file.getName().endsWith("." + extension)) {
                         file = new File(file.getAbsoluteFile() + "." + extension);
                     }
-                    boolean writeFile = true;
                     if(file.exists()) {
-//                        int result = JOptionPane.showConfirmDialog(Application.get().getMainWindow(), file.getName() + " already exists. Overwrite?",
-//                                "Overwrite", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE, null);
-//                        if (result != JOptionPane.YES_OPTION) {
-//                            writeFile = false;
-//                        }
-                    }
-                    if(writeFile) {
-                        writeSongPack(file);
-                    }
+                        final File theFile = file;
+                        Dialog.buildConfirmation("Overwrite", file.getName() + " already exists. Overwrite?").addYesButton(new EventHandler<ActionEvent>() {
+                            @Override
+                            public void handle(ActionEvent t) {
+                                writeSongPack(theFile);
+                            }
+                        }).addNoButton(new EventHandler<ActionEvent>() {
+                            @Override
+                            public void handle(ActionEvent t) {
+                            }
+                        }).build().showAndWait();
 
+                    }
                 }
             }
         });
@@ -71,6 +77,7 @@ public class SelectExportedSongsDialog extends SelectSongsDialog {
 
     /**
      * Get the JFileChooser to be used.
+     * <p/>
      * @return the song pack JFileChooser.
      */
     private FileChooser getChooser() {
@@ -81,17 +88,17 @@ public class SelectExportedSongsDialog extends SelectSongsDialog {
 
     /**
      * Write the song pack to the specified file, closing the window when done.
+     * <p/>
      * @param file the file to write the song pack to.
      */
     private void writeSongPack(final File file) {
         final SongPack pack = new SongPack();
         getAddButton().setDisable(true);
         SwingWorker<Void, Void> worker = new SwingWorker<Void, Void>() {
-
             @Override
             protected Void doInBackground() {
-                for (int i = 0; i < getSongs().size(); i++) {
-                    if (getCheckedColumn().getCellData(i)) {
+                for(int i = 0; i < getSongs().size(); i++) {
+                    if(getCheckedColumn().getCellData(i)) {
                         pack.addSong(getSongs().get(i));
                     }
                 }
