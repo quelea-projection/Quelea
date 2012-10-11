@@ -17,6 +17,8 @@
  */
 package org.quelea.windows.newsong;
 
+import java.io.File;
+import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.EventHandler;
@@ -110,6 +112,13 @@ public class ThemePanel extends BorderPane {
         
         final HBox imagePanel = new HBox();
         backgroundImageLocation = new TextField();
+        backgroundImageLocation.textProperty().addListener(new ChangeListener<String>() {
+
+            @Override
+            public void changed(ObservableValue<? extends String> ov, String t, String t1) {
+                updateTheme(true);
+            }
+        });
         backgroundImageLocation.setEditable(false);
         imagePanel.getChildren().add(backgroundImageLocation);
         imagePanel.getChildren().add(new ImageButton(backgroundImageLocation, canvas));
@@ -184,11 +193,17 @@ public class ThemePanel extends BorderPane {
      * Update the canvas with the current theme.
      */
     private void updateTheme(boolean warning) {
-        Theme theme = getTheme();
+        final Theme theme = getTheme();
         if (warning && theme.getBackground().isColour()) {
-            checkAccessibility(theme.getFontColor(), theme.getBackground().getColour());
+            checkAccessibility((Color)theme.getFontPaint(), theme.getBackground().getColour());
         }
-        canvas.setTheme(theme);
+        Platform.runLater(new Runnable() {
+
+            @Override
+            public void run() {
+                canvas.setTheme(theme);
+            }
+        });
     }
 
     /**
@@ -201,7 +216,7 @@ public class ThemePanel extends BorderPane {
         }
         Font font = theme.getFont();
         fontSelection.getSelectionModel().select(font.getFamily());
-        fontColorPicker.setValue(theme.getFontColor());
+        fontColorPicker.setValue((Color)theme.getFontPaint());
         Background background = theme.getBackground();
         if (background.isColour()) {
             backgroundTypeSelect.getSelectionModel().select(LabelGrabber.INSTANCE.getLabel("color.theme.label"));
@@ -209,7 +224,7 @@ public class ThemePanel extends BorderPane {
         }
         else {
             backgroundTypeSelect.getSelectionModel().select(LabelGrabber.INSTANCE.getLabel("image.theme.label"));
-            backgroundImageLocation.setText(background.getImageLocation());
+            backgroundImageLocation.setText(new File(background.getImageLocation()).getName());
         }
         updateTheme(false);
     }
@@ -249,7 +264,8 @@ public class ThemePanel extends BorderPane {
             background = new Background(backgroundColorPicker.getValue());
         }
         else if (backgroundTypeSelect.getSelectionModel().getSelectedItem().equals(LabelGrabber.INSTANCE.getLabel("image.theme.label"))) {
-            background = new Background(backgroundImageLocation.getText(), null);
+            String path = new File("img", backgroundImageLocation.getText()).getAbsolutePath();
+            background = new Background(path);
         }
         else {
             throw new AssertionError("Bug - " + backgroundTypeSelect.getSelectionModel().getSelectedItem() + " is an unknown selection value");

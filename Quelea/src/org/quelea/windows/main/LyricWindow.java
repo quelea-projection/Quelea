@@ -20,10 +20,10 @@ import java.awt.Cursor;
 import java.awt.Point;
 import java.awt.Toolkit;
 import java.awt.image.BufferedImage;
+import javafx.application.Platform;
 import javafx.geometry.Bounds;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
-import javax.swing.SwingUtilities;
 
 /**
  * The full screen window used for displaying the projection.
@@ -58,7 +58,7 @@ public class LyricWindow extends Stage {
      * @param area the area of the window.
      */
     public final void setArea(final Bounds area) {
-        SwingUtilities.invokeLater(new Runnable() {
+        Platform.runLater(new Runnable() {
 
             @Override
             public void run() {

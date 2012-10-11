@@ -19,6 +19,7 @@ package org.quelea;
 
 import java.io.File;
 import javafx.scene.paint.Color;
+import javafx.scene.paint.Paint;
 import javafx.scene.text.Font;
 
 /**
@@ -32,7 +33,7 @@ public class Theme {
     public static final Background DEFAULT_BACKGROUND = new Background(Color.BLACK);
     public static final Theme DEFAULT_THEME = new Theme(DEFAULT_FONT, DEFAULT_FONT_COLOR, DEFAULT_BACKGROUND);
     private final Font font;
-    private final Color fontColor;
+    private final Paint fontColor;
     private final Background background;
     private String themeName;
     private File file;
@@ -40,12 +41,12 @@ public class Theme {
     /**
      * Create a new theme with a specified font, font colour and background.
      * @param font       the font to use for the theme.
-     * @param fontColor  the font colour to use for the theme.
+     * @param fontPaint  the font colour to use for the theme.
      * @param background the background to use for the page.
      */
-    public Theme(Font font, Color fontColor, Background background) {
+    public Theme(Font font, Paint fontPaint, Background background) {
         this.font = font;
-        this.fontColor = fontColor;
+        this.fontColor = fontPaint;
         this.background = background;
         themeName = "";
     }
@@ -99,10 +100,10 @@ public class Theme {
     }
 
     /**
-     * Get the colour of the font.
-     * @return the theme font colour.
+     * Get the paint of the font.
+     * @return the theme font paint.
      */
-    public Color getFontColor() {
+    public Paint getFontPaint() {
         return fontColor;
     }
 

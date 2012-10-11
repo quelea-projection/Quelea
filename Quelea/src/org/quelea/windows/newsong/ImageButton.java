@@ -74,7 +74,7 @@ public class ImageButton extends Button {
 
                     imageLocation = imageDir.toURI().relativize(newFile.toURI()).getPath();
                     imageLocationField.setText(imageLocation);
-                    canvas.setTheme(new Theme(canvas.getTheme().getFont(), canvas.getTheme().getFontColor(), new Background(imageLocation, null)));
+                    canvas.setTheme(new Theme(canvas.getTheme().getFont(), canvas.getTheme().getFontPaint(), new Background(imageLocation)));
                 }
             }
         });
