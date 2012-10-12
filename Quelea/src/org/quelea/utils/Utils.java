@@ -301,9 +301,9 @@ public final class Utils {
      * @param b the second colour
      * @return the difference between the colours.
      */
-    public static int getColorDifference(Color a, Color b) {
+    public static double getColorDifference(Color a, Color b) {
         double ret = Math.abs(a.getRed() - b.getRed()) + Math.abs(a.getGreen() - b.getGreen()) + Math.abs(a.getBlue() - b.getBlue());
-        return (int) ((ret / (255 * 3)) * 100);
+        return (ret / (255 * 3)) * 100;
     }
 
     /**

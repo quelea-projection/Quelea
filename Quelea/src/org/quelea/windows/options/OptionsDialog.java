@@ -99,8 +99,8 @@ public class OptionsDialog extends Stage {
             public void handle(javafx.event.ActionEvent t) {
                 List<Tab> tabs = tabbedPane.getTabs();
                 for(int i = 0; i < tabs.size(); i++) {
-                    if(tabs.get(i) instanceof PropertyPanel) {
-                        ((PropertyPanel) tabs.get(i)).setProperties();
+                    if(tabs.get(i).getContent() instanceof PropertyPanel) {
+                        ((PropertyPanel) tabs.get(i).getContent()).setProperties();
                     }
                 }
                 hide();

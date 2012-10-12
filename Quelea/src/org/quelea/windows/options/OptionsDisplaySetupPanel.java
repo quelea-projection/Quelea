@@ -26,7 +26,6 @@ import org.quelea.languages.LabelGrabber;
 import org.quelea.utils.PropertyPanel;
 import org.quelea.utils.QueleaProperties;
 import org.quelea.windows.main.LyricWindow;
-import org.quelea.windows.main.MainWindow;
 
 /**
  * A panel that the user uses to set up the displays that match to the outputs.
@@ -112,8 +111,8 @@ public class OptionsDisplaySetupPanel extends GridPane implements PropertyPanel 
 
                 @Override
                 public void run() {
-                    fiLyricWindow.show();
                     fiLyricWindow.setArea(projectorPanel.getOutputBounds());
+                    fiLyricWindow.show();
                 }
             });
         }
