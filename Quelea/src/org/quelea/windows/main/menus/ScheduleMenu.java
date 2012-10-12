@@ -31,7 +31,7 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
-import org.quelea.Application;
+import org.quelea.QueleaApp;
 import org.quelea.Schedule;
 import org.quelea.displayable.Displayable;
 import org.quelea.displayable.Song;
@@ -90,7 +90,7 @@ public class ScheduleMenu extends Menu {
         removeSongItem.setDisable(true);
         getItems().add(removeSongItem);
 
-        final MainPanel mainPanel = Application.get().getMainWindow().getMainPanel();
+        final MainPanel mainPanel = QueleaApp.get().getMainWindow().getMainPanel();
         final ScheduleList scheduleList = mainPanel.getSchedulePanel().getScheduleList();
         scheduleList.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<Displayable>() {
 

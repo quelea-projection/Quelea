@@ -25,7 +25,7 @@ import javafx.scene.control.Menu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import org.quelea.Application;
+import org.quelea.QueleaApp;
 import org.quelea.SongDatabase;
 import org.quelea.importexport.SelectExportedSongsDialog;
 import org.quelea.languages.LabelGrabber;

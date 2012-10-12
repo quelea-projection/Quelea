@@ -21,7 +21,7 @@ package org.quelea.bible;
 import javafx.event.EventHandler;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.MenuItem;
-import org.quelea.Application;
+import org.quelea.QueleaApp;
 import org.quelea.languages.LabelGrabber;
 
 /**
@@ -51,7 +51,7 @@ public class BibleSearchPopupMenu extends ContextMenu {
 
     public void trigger() {
         if (currentChapter != null) {
-            BibleBrowseDialog dialog = Application.get().getMainWindow().getBibleBrowseDialog();
+            BibleBrowseDialog dialog = QueleaApp.get().getMainWindow().getBibleBrowseDialog();
             dialog.setChapter(currentChapter);
             dialog.show();
         }

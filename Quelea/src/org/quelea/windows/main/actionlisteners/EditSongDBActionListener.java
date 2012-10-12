@@ -20,7 +20,7 @@ package org.quelea.windows.main.actionlisteners;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
-import org.quelea.Application;
+import org.quelea.QueleaApp;
 import org.quelea.displayable.Song;
 import org.quelea.windows.newsong.SongEntryWindow;
 
@@ -41,8 +41,8 @@ public class EditSongDBActionListener implements EventHandler<ActionEvent> {
         Platform.runLater(new Runnable() {
             @Override
             public void run() {
-                SongEntryWindow songEntryWindow = Application.get().getMainWindow().getSongEntryWindow();
-                Song song = Application.get().getMainWindow().getMainPanel().getLibraryPanel().getLibrarySongPanel().getSongList().getSelectedValue();
+                SongEntryWindow songEntryWindow = QueleaApp.get().getMainWindow().getSongEntryWindow();
+                Song song = QueleaApp.get().getMainWindow().getMainPanel().getLibraryPanel().getLibrarySongPanel().getSongList().getSelectedValue();
                 if(song != null) {
                     songEntryWindow.resetEditSong(song);
                     songEntryWindow.show();

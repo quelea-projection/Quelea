@@ -34,7 +34,7 @@ import javafx.scene.control.cell.TextFieldListCell;
 import javafx.scene.input.MouseEvent;
 import javafx.util.Callback;
 import javafx.util.StringConverter;
-import org.quelea.Application;
+import org.quelea.QueleaApp;
 import org.quelea.SongDatabase;
 import org.quelea.displayable.Song;
 import org.quelea.lucene.SongSearchIndex;
@@ -83,7 +83,7 @@ public class LibrarySongList extends ListView<Song> implements DatabaseListener 
             @Override
             public void handle(MouseEvent t) {
                 if(t.getClickCount() == 2) {
-                    Application.get().getMainWindow().getMainPanel().getSchedulePanel().getScheduleList().itemsProperty().get().add(getSelectedValue());
+                    QueleaApp.get().getMainWindow().getMainPanel().getSchedulePanel().getScheduleList().itemsProperty().get().add(getSelectedValue());
                 }
             }
         });

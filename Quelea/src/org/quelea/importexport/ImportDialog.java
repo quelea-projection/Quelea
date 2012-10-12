@@ -44,7 +44,7 @@ import javafx.stage.StageStyle;
 import javax.swing.SwingUtilities;
 import javax.swing.SwingWorker;
 import name.antonsmirnov.javafx.dialog.Dialog;
-import org.quelea.Application;
+import org.quelea.QueleaApp;
 import org.quelea.SongDuplicateChecker;
 import org.quelea.displayable.Song;
 import org.quelea.languages.LabelGrabber;
@@ -130,7 +130,7 @@ public abstract class ImportDialog extends Stage implements PropertyChangeListen
         importButton.setOnAction(new EventHandler<javafx.event.ActionEvent>() {
             @Override
             public void handle(javafx.event.ActionEvent t) {
-                statusPanel = Application.get().getStatusGroup().addPanel(LabelGrabber.INSTANCE.getLabel("importing.status"));
+                statusPanel = QueleaApp.get().getStatusGroup().addPanel(LabelGrabber.INSTANCE.getLabel("importing.status"));
                 statusPanel.getCancelButton().setOnAction(new EventHandler<javafx.event.ActionEvent>() {
                     @Override
                     public void handle(javafx.event.ActionEvent t) {

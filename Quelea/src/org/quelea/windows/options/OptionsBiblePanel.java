@@ -32,7 +32,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.GridPane;
 import javafx.stage.FileChooser;
 import name.antonsmirnov.javafx.dialog.Dialog;
-import org.quelea.Application;
+import org.quelea.QueleaApp;
 import org.quelea.bible.Bible;
 import org.quelea.bible.BibleChangeListener;
 import org.quelea.bible.BibleManager;
@@ -75,7 +75,7 @@ public class OptionsBiblePanel extends GridPane implements PropertyPanel, BibleC
             public void handle(javafx.event.ActionEvent t) {
                 FileChooser chooser = new FileChooser();
                 chooser.getExtensionFilters().add(FileFilters.XML_BIBLE);
-                File file = chooser.showOpenDialog(Application.get().getMainWindow());
+                File file = chooser.showOpenDialog(QueleaApp.get().getMainWindow());
                 if(file != null) {
                     try {
                         Utils.copyFile(file, new File(QueleaProperties.get().getBibleDir(), file.getName()));

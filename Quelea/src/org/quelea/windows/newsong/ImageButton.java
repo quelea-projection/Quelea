@@ -26,7 +26,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
 import javafx.stage.FileChooser;
 import org.apache.commons.io.FileUtils;
-import org.quelea.Application;
+import org.quelea.QueleaApp;
 import org.quelea.Background;
 import org.quelea.Theme;
 import org.quelea.languages.LabelGrabber;
@@ -60,7 +60,7 @@ public class ImageButton extends Button {
 
             @Override
             public void handle(javafx.event.ActionEvent t) {
-                File selectedFile = fileChooser.showOpenDialog(Application.get().getMainWindow());
+                File selectedFile = fileChooser.showOpenDialog(QueleaApp.get().getMainWindow());
                 if(selectedFile != null) {
                     File newFile = new File(imageDir, selectedFile.getName());
                     try {

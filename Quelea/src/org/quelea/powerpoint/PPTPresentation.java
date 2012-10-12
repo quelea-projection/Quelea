@@ -24,7 +24,7 @@ import org.apache.poi.hslf.HSLFSlideShow;
 import org.apache.poi.hslf.model.Slide;
 import org.apache.poi.hslf.usermodel.SlideShow;
 import org.apache.poi.poifs.filesystem.OfficeXmlFileException;
-import org.quelea.Application;
+import org.quelea.QueleaApp;
 import org.quelea.languages.LabelGrabber;
 import org.quelea.utils.LoggerUtils;
 

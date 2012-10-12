@@ -37,7 +37,7 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import name.antonsmirnov.javafx.dialog.Dialog;
-import org.quelea.Application;
+import org.quelea.QueleaApp;
 import org.quelea.chord.ChordLineTransposer;
 import org.quelea.chord.ChordTransposer;
 import org.quelea.chord.TransposeDialog;
@@ -202,7 +202,7 @@ public class BasicSongPanel extends BorderPane {
                 transposeDialog.show();
                 int semitones = transposeDialog.getSemitones();
 
-                TextField keyField = Application.get().getMainWindow().getSongEntryWindow().getDetailedSongPanel().getKeyField();
+                TextField keyField = QueleaApp.get().getMainWindow().getSongEntryWindow().getDetailedSongPanel().getKeyField();
                 if(!keyField.getText().isEmpty()) {
                     keyField.setText(new ChordTransposer(keyField.getText()).transpose(semitones, null));
                 }
@@ -234,7 +234,7 @@ public class BasicSongPanel extends BorderPane {
      * @return the key, transposed.
      */
     private String getKey(int semitones) {
-        TextField keyField = Application.get().getMainWindow().getSongEntryWindow().getDetailedSongPanel().getKeyField();
+        TextField keyField = QueleaApp.get().getMainWindow().getSongEntryWindow().getDetailedSongPanel().getKeyField();
         String key = keyField.getText();
         if(key == null || key.isEmpty()) {
             for(String line : getLyricsField().getText().split("\n")) {

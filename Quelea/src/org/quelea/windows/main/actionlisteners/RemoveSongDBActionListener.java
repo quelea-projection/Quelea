@@ -21,7 +21,7 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javax.swing.JOptionPane;
 import name.antonsmirnov.javafx.dialog.Dialog;
-import org.quelea.Application;
+import org.quelea.QueleaApp;
 import org.quelea.SongDatabase;
 import org.quelea.displayable.Song;
 import org.quelea.languages.LabelGrabber;
@@ -44,7 +44,7 @@ public class RemoveSongDBActionListener implements EventHandler<ActionEvent> {
      */
     @Override
     public void handle(ActionEvent t) {
-        MainWindow mainWindow = Application.get().getMainWindow();
+        MainWindow mainWindow = QueleaApp.get().getMainWindow();
         LibrarySongList songList = mainWindow.getMainPanel().getLibraryPanel().getLibrarySongPanel().getSongList();
         Song song = songList.itemsProperty().get().get(songList.getSelectionModel().getSelectedIndex());
         if(song == null) {

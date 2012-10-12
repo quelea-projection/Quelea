@@ -27,7 +27,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Pattern;
 import javax.swing.JOptionPane;
-import org.quelea.Application;
+import org.quelea.QueleaApp;
 import org.quelea.displayable.Song;
 import org.quelea.languages.LabelGrabber;
 import org.quelea.utils.LoggerUtils;
