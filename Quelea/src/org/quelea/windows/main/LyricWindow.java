@@ -23,7 +23,9 @@ import java.awt.image.BufferedImage;
 import javafx.application.Platform;
 import javafx.geometry.Bounds;
 import javafx.scene.Scene;
+import javafx.scene.image.Image;
 import javafx.stage.Stage;
+import javafx.stage.StageStyle;
 
 /**
  * The full screen window used for displaying the projection.
@@ -47,6 +49,9 @@ public class LyricWindow extends Stage {
      * @param area the area in which the window should be drawn.
      */
     public LyricWindow(Bounds area, boolean stageView) {
+        initStyle(StageStyle.UNDECORATED);
+        getIcons().add(new Image("file:icons/logo.png"));
+        setTitle("Projection window");
         setArea(area);
         canvas = new LyricCanvas(true, stageView);
         Scene scene = new Scene(canvas);

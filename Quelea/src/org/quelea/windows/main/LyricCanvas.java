@@ -22,10 +22,16 @@ import com.sun.javafx.tk.Toolkit;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import javafx.animation.FadeTransition;
+import javafx.animation.KeyFrame;
+import javafx.animation.KeyValue;
+import javafx.animation.ParallelTransition;
+import javafx.animation.Timeline;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.embed.swing.JFXPanel;
+import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Pos;
 import javafx.scene.Group;
@@ -34,10 +40,15 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
+import javafx.scene.paint.Paint;
 import javafx.scene.text.Font;
+import javafx.scene.text.FontPosture;
+import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
+import javafx.util.Duration;
+import org.quelea.Background;
 import org.quelea.Theme;
 import org.quelea.notice.NoticeDrawer;
 import org.quelea.utils.QueleaProperties;
@@ -75,9 +86,8 @@ public class LyricCanvas extends StackPane {
         text = new String[]{};
         theme = Theme.DEFAULT_THEME;
         textGroup = new Group();
-        background = new ImageView(Utils.getImageFromColour(Color.BLACK));
-        StackPane.setAlignment(background, Pos.CENTER);
-        getChildren().add(background);
+        background = getNewImageView();
+        getChildren().add(0, background);
         getChildren().add(textGroup);
         heightProperty().addListener(new ChangeListener<Number>() {
             @Override
@@ -93,6 +103,15 @@ public class LyricCanvas extends StackPane {
         });
     }
 
+    private ImageView getNewImageView() {
+        ImageView ret = new ImageView(Utils.getImageFromColour(Color.BLACK));
+        ret.setFitHeight(getHeight());
+        ret.setFitWidth(getWidth());
+        StackPane.setAlignment(ret, Pos.CENTER);
+        return ret;
+    }
+    private Paint lastColor;
+
     public void drawText() {
         Platform.runLater(new Runnable() {
             @Override
@@ -103,9 +122,10 @@ public class LyricCanvas extends StackPane {
                 textGroup.getChildren().clear();
                 List<String> text = sanctifyText();
                 double fontSize = pickFontSize(font, text, getWidth(), getHeight());
-                font = new Font(font.getName(), fontSize);
+                font = Font.font(font.getName(), fontSize);
                 FontMetrics metrics = Toolkit.getToolkit().getFontLoader().getFontMetrics(font);
                 int y = 0;
+                ParallelTransition transition = new ParallelTransition();
                 for(String line : text) {
                     Text t = new Text(line);
                     double width = metrics.computeStringWidth(line);
@@ -113,10 +133,21 @@ public class LyricCanvas extends StackPane {
                     t.setFont(font);
                     t.setX(centreOffset);
                     t.setY(y);
-                    t.setFill(theme.getFontPaint());
+                    if(theme.getFontPaint() == lastColor || lastColor == null) {
+                        t.setFill(theme.getFontPaint());
+                    }
+                    else {
+                        Timeline timeline = new Timeline(new KeyFrame(Duration.ZERO, new KeyValue(t.fillProperty(), lastColor)),
+                                new KeyFrame(Duration.seconds(0.3), new KeyValue(t.fillProperty(), theme.getFontPaint())));
+                        transition.getChildren().add(timeline);
+                    }
                     y += metrics.getLineHeight();
                     textGroup.getChildren().add(t);
                 }
+                if(!transition.getChildren().isEmpty()) {
+                    transition.play();
+                }
+                lastColor = theme.getFontPaint();
             }
         });
     }
@@ -326,9 +357,28 @@ public class LyricCanvas extends StackPane {
         if(theme == null) {
             theme = Theme.DEFAULT_THEME;
         }
+        if(this.theme==theme) {
+            return;
+        }
         this.theme = theme;
         Image image = theme.getBackground().getImage();
-        background.setImage(image);
+        FadeTransition fadeOut = new FadeTransition(Duration.seconds(0.3), background);
+        fadeOut.setFromValue(1);
+        fadeOut.setToValue(0);
+        final ImageView newBackground = getNewImageView();
+        newBackground.setFitHeight(getHeight());
+        newBackground.setFitWidth(getWidth());
+        newBackground.setImage(image);
+        getChildren().add(0, newBackground);
+        final ImageView oldBackground = background;
+        fadeOut.setOnFinished(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent t) {
+                getChildren().remove(oldBackground);
+            }
+        });
+        background = newBackground;
+        fadeOut.play();
         drawText();
     }
 
@@ -401,6 +451,8 @@ public class LyricCanvas extends StackPane {
             public void run() {
                 LyricCanvas canvas = new LyricCanvas(false, false);
                 Stage stage = new Stage();
+                stage.setWidth(800);
+                stage.setHeight(600);
                 stage.setOnCloseRequest(new EventHandler<WindowEvent>() {
                     @Override
                     public void handle(WindowEvent t) {
@@ -412,6 +464,8 @@ public class LyricCanvas extends StackPane {
 
                 canvas.setText(new String[]{"Line 1", "line 2", "BLAHBLAH BLAH BLAH"},
                         new String[]{"Tim Hughes", "CCLI number 1469714", "Another line"});
+
+                canvas.setTheme(new Theme(Theme.DEFAULT_FONT, Color.WHITE, new Background(Color.BLUE)));
             }
         });
 
