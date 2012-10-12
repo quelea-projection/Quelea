@@ -24,7 +24,7 @@ import java.util.HashMap;
 import java.util.Map;
 import org.apache.poi.hslf.model.Slide;
 import org.apache.poi.xslf.usermodel.XSLFSlide;
-import org.quelea.Application;
+import org.quelea.QueleaApp;
 import org.quelea.utils.Utils;
 import org.quelea.windows.main.LyricCanvas;
 
@@ -70,7 +70,7 @@ public class PresentationSlide {
      * "Touch" the current image so it's initialised in the image cache.
      */
     private void initCacheImage() {
-        LyricCanvas lc = Application.get().getLyricWindow().getCanvas();
+        LyricCanvas lc = QueleaApp.get().getLyricWindow().getCanvas();
     }
 
     /**

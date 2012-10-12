@@ -33,7 +33,7 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.Region;
-import org.quelea.Application;
+import org.quelea.QueleaApp;
 import org.quelea.displayable.Displayable;
 import org.quelea.languages.LabelGrabber;
 import org.quelea.windows.main.actionlisteners.RemoveScheduleItemActionListener;
@@ -112,7 +112,7 @@ public class SchedulePanel extends BorderPane {
                     removeButton.setDisable(false);
                     upButton.setDisable(false);
                     downButton.setDisable(false);
-                    Application.get().getMainWindow().getMainPanel().getPreviewPanel().setDisplayable(scheduleList.selectionModelProperty().get().getSelectedItem(), 0);
+                    QueleaApp.get().getMainWindow().getMainPanel().getPreviewPanel().setDisplayable(scheduleList.selectionModelProperty().get().getSelectedItem(), 0);
                 }
             }
         });

@@ -29,7 +29,7 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
-import org.quelea.Application;
+import org.quelea.QueleaApp;
 import org.quelea.displayable.Song;
 import org.quelea.languages.LabelGrabber;
 import org.quelea.windows.library.LibrarySongList;
@@ -76,7 +76,7 @@ public class DatabaseMenu extends Menu {
         tagsItem.setOnAction(new ViewTagsActionListener());
         getItems().add(tagsItem);
 
-        final LibrarySongList libraryList = Application.get().getMainWindow().getMainPanel().getLibraryPanel().getLibrarySongPanel().getSongList();
+        final LibrarySongList libraryList = QueleaApp.get().getMainWindow().getMainPanel().getLibraryPanel().getLibrarySongPanel().getSongList();
 
         libraryList.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<Song>() {
 
@@ -104,7 +104,7 @@ public class DatabaseMenu extends Menu {
      * Check whether the edit / delete buttons should be set to enabled or not.
      */
     private void checkEditDeleteItems(MenuItem editSongButton, MenuItem deleteSongButton) {
-        final LibrarySongList libraryList = Application.get().getMainWindow().getMainPanel().getLibraryPanel().getLibrarySongPanel().getSongList();
+        final LibrarySongList libraryList = QueleaApp.get().getMainWindow().getMainPanel().getLibraryPanel().getLibrarySongPanel().getSongList();
         if(!libraryList.isFocused()) {
             deleteSongButton.setDisable(true);
             editSongButton.setDisable(true);

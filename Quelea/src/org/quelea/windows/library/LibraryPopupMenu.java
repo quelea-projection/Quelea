@@ -23,7 +23,7 @@ import javafx.scene.control.ContextMenu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import org.quelea.Application;
+import org.quelea.QueleaApp;
 import org.quelea.displayable.Song;
 import org.quelea.languages.LabelGrabber;
 import org.quelea.windows.main.actionlisteners.AddSongActionListener;
@@ -56,7 +56,7 @@ public class LibraryPopupMenu extends ContextMenu {
 
             @Override
             public void handle(ActionEvent t) {
-                Song song = Application.get().getMainWindow().getMainPanel().getLibraryPanel().getLibrarySongPanel().getSongList().getSelectedValue();
+                Song song = QueleaApp.get().getMainWindow().getMainPanel().getLibraryPanel().getLibrarySongPanel().getSongList().getSelectedValue();
                 if(song != null) {
 //                    int result = JOptionPane.showConfirmDialog(Application.get().getMainWindow(), LabelGrabber.INSTANCE.getLabel("print.chords.question"), LabelGrabber.INSTANCE.getLabel("printing.options.text"), JOptionPane.YES_NO_OPTION);
 //                    song.setPrintChords(result == JOptionPane.YES_OPTION);

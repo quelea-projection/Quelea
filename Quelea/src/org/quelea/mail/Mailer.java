@@ -33,7 +33,7 @@ import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeMultipart;
 import javax.swing.JOptionPane;
-import org.quelea.Application;
+import org.quelea.QueleaApp;
 import org.quelea.Schedule;
 import org.quelea.languages.LabelGrabber;
 import org.quelea.utils.LoggerUtils;

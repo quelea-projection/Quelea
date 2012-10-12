@@ -27,7 +27,7 @@ import javafx.event.EventHandler;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
-import org.quelea.Application;
+import org.quelea.QueleaApp;
 import org.quelea.displayable.PresentationDisplayable;
 import org.quelea.languages.LabelGrabber;
 import org.quelea.powerpoint.PowerpointFileFilter;
@@ -66,7 +66,7 @@ public class AddPowerpointActionListener implements EventHandler<ActionEvent> {
 
                         @Override
                         public void run() {
-                            panel = Application.get().getStatusGroup().addPanel(LabelGrabber.INSTANCE.getLabel("adding.presentation.status"));
+                            panel = QueleaApp.get().getStatusGroup().addPanel(LabelGrabber.INSTANCE.getLabel("adding.presentation.status"));
                             panel.getProgressBar().setProgress(-1);
                             panel.getCancelButton().setOnAction(new EventHandler<ActionEvent>() {
 
@@ -85,7 +85,7 @@ public class AddPowerpointActionListener implements EventHandler<ActionEvent> {
 
                                 @Override
                                 public void run() {
-                                    Application.get().getMainWindow().getMainPanel().getSchedulePanel().getScheduleList().add(displayable);
+                                    QueleaApp.get().getMainWindow().getMainPanel().getSchedulePanel().getScheduleList().add(displayable);
                                 }
                             });
                         }

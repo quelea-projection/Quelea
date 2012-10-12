@@ -40,13 +40,13 @@ public class ScheduleSaver {
      * @param saveAs true if the file location should be specified, false if the current one should be used.
      */
     public void saveSchedule(boolean saveAs) {
-        MainPanel mainpanel = Application.get().getMainWindow().getMainPanel();
+        MainPanel mainpanel = QueleaApp.get().getMainWindow().getMainPanel();
         Schedule schedule = mainpanel.getSchedulePanel().getScheduleList().getSchedule();
         File file = schedule.getFile();
         if (saveAs || file == null) {
             FileChooser chooser = new FileChooser();
             chooser.getExtensionFilters().add(FileFilters.SCHEDULE);
-            File selectedFile = chooser.showSaveDialog(Application.get().getMainWindow());
+            File selectedFile = chooser.showSaveDialog(QueleaApp.get().getMainWindow());
             if (selectedFile != null) {
                 String extension = QueleaProperties.get().getScheduleExtension();
                 if (!selectedFile.getName().endsWith("." + extension)) {

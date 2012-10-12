@@ -37,7 +37,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
-import org.quelea.Application;
+import org.quelea.QueleaApp;
 
 /**
  * A bible containing a number of books as well as some information.

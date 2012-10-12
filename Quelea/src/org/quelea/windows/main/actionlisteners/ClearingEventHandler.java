@@ -22,7 +22,7 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javax.swing.JOptionPane;
 import name.antonsmirnov.javafx.dialog.Dialog;
-import org.quelea.Application;
+import org.quelea.QueleaApp;
 import org.quelea.languages.LabelGrabber;
 import org.quelea.windows.main.MainPanel;
 
@@ -42,7 +42,7 @@ public abstract class ClearingEventHandler implements EventHandler<ActionEvent> 
      * @return true if this is ok, false otherwise.
      */
     public boolean confirmClear() {
-        MainPanel mainpanel = Application.get().getMainWindow().getMainPanel();
+        MainPanel mainpanel = QueleaApp.get().getMainWindow().getMainPanel();
         if(mainpanel.getSchedulePanel().getScheduleList().isEmpty()) {
             return true;
         }

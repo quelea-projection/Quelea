@@ -37,7 +37,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.border.EmptyBorder;
-import org.quelea.Application;
+import org.quelea.QueleaApp;
 import org.quelea.Theme;
 import org.quelea.languages.LabelGrabber;
 import org.quelea.utils.LoggerUtils;

@@ -19,7 +19,7 @@
 package org.quelea.windows.main.actionlisteners;
 
 import javafx.event.ActionEvent;
-import org.quelea.Application;
+import org.quelea.QueleaApp;
 
 /**
  * The new schedule action listener.
@@ -31,7 +31,7 @@ public class NewScheduleActionListener extends ClearingEventHandler {
     @Override
     public void handle(ActionEvent t) {
         if(confirmClear()) {
-            Application.get().getMainWindow().getMainPanel().getSchedulePanel().getScheduleList().clearSchedule();
+            QueleaApp.get().getMainWindow().getMainPanel().getSchedulePanel().getScheduleList().clearSchedule();
         }
     }
 }

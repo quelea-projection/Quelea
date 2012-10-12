@@ -28,7 +28,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Priority;
 import javafx.stage.DirectoryChooser;
-import org.quelea.Application;
+import org.quelea.QueleaApp;
 import org.quelea.languages.LabelGrabber;
 import org.quelea.powerpoint.OOPresentation;
 import org.quelea.powerpoint.OOUtils;
@@ -112,7 +112,7 @@ public class OptionsGeneralPanel extends GridPane implements PropertyPanel {
 
             @Override
             public void handle(javafx.event.ActionEvent t) {
-                File dir = ooChooser.showDialog(Application.get().getMainWindow());
+                File dir = ooChooser.showDialog(QueleaApp.get().getMainWindow());
                 if(dir != null) {
                     ooPathTextField.setText(dir.getAbsolutePath());
                 }
@@ -287,8 +287,8 @@ public class OptionsGeneralPanel extends GridPane implements PropertyPanel {
         boolean oneLineMode = getOneLineModeCheckBox().isSelected();
         props.setOneLineMode(oneLineMode);
         //One line mode needs to be updated manually
-        Application.get().getMainWindow().getMainPanel().getPreviewPanel().updateOneLineMode();
-        Application.get().getMainWindow().getMainPanel().getLivePanel().updateOneLineMode();
+        QueleaApp.get().getMainWindow().getMainPanel().getPreviewPanel().updateOneLineMode();
+        QueleaApp.get().getMainWindow().getMainPanel().getLivePanel().updateOneLineMode();
         int maxCharsPerLine = (int)getMaxCharsSlider().getValue();
         props.setMaxChars(maxCharsPerLine);
         int minLines = (int)getMinLinesSlider().getValue();

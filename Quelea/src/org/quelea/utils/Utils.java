@@ -62,7 +62,7 @@ import javafx.scene.paint.Color;
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import name.antonsmirnov.javafx.dialog.Dialog;
-import org.quelea.Application;
+import org.quelea.QueleaApp;
 import org.quelea.SongDatabase;
 import org.quelea.displayable.Song;
 import org.quelea.languages.LabelGrabber;
@@ -187,7 +187,7 @@ public final class Utils {
             new Thread(updateRunner).start();
         }
         else {
-            final StatusPanel statusPanel = Application.get().getStatusGroup().addPanel(LabelGrabber.INSTANCE.getLabel("updating.db"));
+            final StatusPanel statusPanel = QueleaApp.get().getStatusGroup().addPanel(LabelGrabber.INSTANCE.getLabel("updating.db"));
             SwingWorker<Void, Void> worker = new SwingWorker<Void, Void>() {
                 @Override
                 protected Void doInBackground() {

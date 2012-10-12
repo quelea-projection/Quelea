@@ -29,7 +29,7 @@ import javax.swing.DefaultListModel;
 import javax.swing.SwingUtilities;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
-import org.quelea.Application;
+import org.quelea.QueleaApp;
 import org.quelea.Background;
 import org.quelea.Theme;
 import org.quelea.displayable.PresentationDisplayable;

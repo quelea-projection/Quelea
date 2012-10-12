@@ -47,7 +47,7 @@ import javax.swing.JPanel;
 import javax.swing.JWindow;
 import javax.swing.SwingUtilities;
 import javax.swing.border.LineBorder;
-import org.quelea.Application;
+import org.quelea.QueleaApp;
 import org.quelea.Theme;
 import org.quelea.displayable.Displayable;
 import org.quelea.displayable.TextDisplayable;
@@ -198,7 +198,7 @@ public class ScheduleThemePopupWindow extends FadeWindow {
                 public void actionPerformed(ActionEvent e) {
                     tempTheme = theme;
                     setTheme(theme);
-                    Application.get().getMainWindow().getMainPanel().getPreviewPanel().refresh();
+                    QueleaApp.get().getMainWindow().getMainPanel().getPreviewPanel().refresh();
                 }
             });
             group.add(panel.getSelectButton());

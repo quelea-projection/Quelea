@@ -20,7 +20,7 @@ package org.quelea.windows.main.actionlisteners;
 
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
-import org.quelea.Application;
+import org.quelea.QueleaApp;
 
 /**
  * Action listener to show the notices.
@@ -30,7 +30,7 @@ public class ShowNoticesActionListener implements EventHandler<ActionEvent> {
 
     @Override
     public void handle(ActionEvent t) {
-        Application.get().getMainWindow().getNoticeDialog().setVisible(true);
+        QueleaApp.get().getMainWindow().getNoticeDialog().setVisible(true);
     }
     
 }
