@@ -20,7 +20,7 @@ package org.quelea.windows.main.actionlisteners;
 
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
-import org.quelea.Application;
+import org.quelea.QueleaApp;
 import org.quelea.tags.TagDialog;
 
 /**
@@ -31,7 +31,7 @@ public class ViewTagsActionListener implements EventHandler<ActionEvent> {
 
     @Override
     public void handle(ActionEvent t) {
-        TagDialog tagDialog = Application.get().getMainWindow().getTagDialog();
+        TagDialog tagDialog = QueleaApp.get().getMainWindow().getTagDialog();
         tagDialog.reloadTags();
         tagDialog.show();
     }

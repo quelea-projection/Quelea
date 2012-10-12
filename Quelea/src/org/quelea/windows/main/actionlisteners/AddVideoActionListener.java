@@ -22,7 +22,7 @@ import java.io.File;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javax.swing.JFileChooser;
-import org.quelea.Application;
+import org.quelea.QueleaApp;
 import org.quelea.displayable.VideoDisplayable;
 import org.quelea.utils.VideoFileFilter;
 
@@ -41,7 +41,7 @@ public class AddVideoActionListener implements EventHandler<ActionEvent> {
         File file = fileChooser.getSelectedFile();
         if(file != null) {
             VideoDisplayable displayable = new VideoDisplayable(fileChooser.getSelectedFile(), VideoDisplayable.VideoType.FILE);
-            Application.get().getMainWindow().getMainPanel().getSchedulePanel().getScheduleList().add(displayable);
+            QueleaApp.get().getMainWindow().getMainPanel().getSchedulePanel().getScheduleList().add(displayable);
         }
     }
     

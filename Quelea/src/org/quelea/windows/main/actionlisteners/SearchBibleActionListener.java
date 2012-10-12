@@ -20,7 +20,7 @@ package org.quelea.windows.main.actionlisteners;
 
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
-import org.quelea.Application;
+import org.quelea.QueleaApp;
 
 /**
  * Action listener called to display the bible search dialog.
@@ -31,6 +31,6 @@ public class SearchBibleActionListener implements EventHandler<ActionEvent> {
     
     @Override
     public void handle(javafx.event.ActionEvent t) {
-        Application.get().getMainWindow().getBibleSearchDialog().show();
+        QueleaApp.get().getMainWindow().getBibleSearchDialog().show();
     }
 }

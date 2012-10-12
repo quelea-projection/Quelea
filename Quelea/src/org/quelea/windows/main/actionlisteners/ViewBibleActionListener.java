@@ -19,7 +19,7 @@
 package org.quelea.windows.main.actionlisteners;
 
 import javafx.event.EventHandler;
-import org.quelea.Application;
+import org.quelea.QueleaApp;
 
 /**
  * Action handler for displaying the dialog to view the contents of bibles.
@@ -29,7 +29,7 @@ public class ViewBibleActionListener implements EventHandler<javafx.event.Action
 
     @Override
     public void handle(javafx.event.ActionEvent t) {
-        Application.get().getMainWindow().getBibleBrowseDialog().show();
+        QueleaApp.get().getMainWindow().getBibleBrowseDialog().show();
     }
     
 }

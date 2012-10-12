@@ -19,7 +19,7 @@ package org.quelea.windows.main.actionlisteners;
 
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
-import org.quelea.Application;
+import org.quelea.QueleaApp;
 import org.quelea.windows.main.ScheduleList;
 
 /**
@@ -36,7 +36,7 @@ public class RemoveScheduleItemActionListener implements EventHandler<ActionEven
      */
     @Override
     public void handle(ActionEvent t) {
-        ScheduleList scheduleList = Application.get().getMainWindow().getMainPanel().getSchedulePanel().getScheduleList();
+        ScheduleList scheduleList = QueleaApp.get().getMainWindow().getMainPanel().getSchedulePanel().getScheduleList();
         int selectedIndex = scheduleList.getSelectionModel().getSelectedIndex();
         scheduleList.removeCurrentItem();
         if(selectedIndex == scheduleList.itemsProperty().get().size()) {

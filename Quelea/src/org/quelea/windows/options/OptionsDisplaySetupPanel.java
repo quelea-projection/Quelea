@@ -19,7 +19,7 @@ package org.quelea.windows.options;
 import java.awt.GraphicsDevice;
 import javafx.application.Platform;
 import javafx.scene.layout.GridPane;
-import org.quelea.Application;
+import org.quelea.QueleaApp;
 import org.quelea.GraphicsDeviceListener;
 import org.quelea.GraphicsDeviceWatcher;
 import org.quelea.languages.LabelGrabber;
@@ -95,8 +95,8 @@ public class OptionsDisplaySetupPanel extends GridPane implements PropertyPanel 
      */
     private void updatePos() {
 //        MainWindow mainWindow = Application.get().getMainWindow();
-        LyricWindow lyricWindow = Application.get().getLyricWindow();
-        LyricWindow stageWindow = Application.get().getStageWindow();
+        LyricWindow lyricWindow = QueleaApp.get().getLyricWindow();
+        LyricWindow stageWindow = QueleaApp.get().getStageWindow();
         if(projectorPanel.getOutputBounds() == null) {
             if(lyricWindow != null) {
                 lyricWindow.hide();

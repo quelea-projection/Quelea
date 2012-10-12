@@ -30,7 +30,7 @@ import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.Region;
-import org.quelea.Application;
+import org.quelea.QueleaApp;
 import org.quelea.displayable.Displayable;
 import org.quelea.languages.LabelGrabber;
 
@@ -59,8 +59,8 @@ public class PreviewPanel extends LivePreviewPanel {
 
             @Override
             public void handle(ActionEvent t) {
-                Application.get().getMainWindow().getMainPanel().getLivePanel().setDisplayable(getDisplayable(), ((ContainedPanel)getCurrentPane()).getCurrentIndex());
-                Application.get().getMainWindow().getMainPanel().getLivePanel().getCurrentPane().requestFocus();
+                QueleaApp.get().getMainWindow().getMainPanel().getLivePanel().setDisplayable(getDisplayable(), ((ContainedPanel)getCurrentPane()).getCurrentIndex());
+                QueleaApp.get().getMainWindow().getMainPanel().getLivePanel().getCurrentPane().requestFocus();
             }
         });
         header.getItems().add(liveButton);
@@ -70,7 +70,7 @@ public class PreviewPanel extends LivePreviewPanel {
             @Override
             public void handle(KeyEvent t) {
                 if(t.getCharacter().equals(" ")) {
-                    Application.get().getMainWindow().getMainPanel().getPreviewPanel().goLive();
+                    QueleaApp.get().getMainWindow().getMainPanel().getPreviewPanel().goLive();
                 }
             }
         });
@@ -78,10 +78,10 @@ public class PreviewPanel extends LivePreviewPanel {
             @Override
             public void handle(KeyEvent t) {
                 if(t.getCode() == KeyCode.RIGHT) {
-                    Application.get().getMainWindow().getMainPanel().getLivePanel().requestFocus();
+                    QueleaApp.get().getMainWindow().getMainPanel().getLivePanel().requestFocus();
                 }
                 else if(t.getCode() == KeyCode.LEFT) {
-                    Application.get().getMainWindow().getMainPanel().getSchedulePanel().requestFocus();
+                    QueleaApp.get().getMainWindow().getMainPanel().getSchedulePanel().requestFocus();
                 }
             }
         });

@@ -20,7 +20,7 @@ package org.quelea.windows.main.actionlisteners;
 
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
-import org.quelea.Application;
+import org.quelea.QueleaApp;
 
 /**
  * The action listener called to show the options dialog.
@@ -30,8 +30,8 @@ public class ShowOptionsActionListener implements EventHandler<ActionEvent> {
     
     @Override
     public void handle(javafx.event.ActionEvent t) {
-        Application.get().getMainWindow().getOptionsDialog().show();
-        Application.get().getMainWindow().getOptionsDialog().toFront();
+        QueleaApp.get().getMainWindow().getOptionsDialog().show();
+        QueleaApp.get().getMainWindow().getOptionsDialog().toFront();
     }
     
 }

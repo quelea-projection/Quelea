@@ -23,7 +23,7 @@ import java.util.logging.Logger;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javax.swing.JOptionPane;
-import org.quelea.Application;
+import org.quelea.QueleaApp;
 import org.quelea.Schedule;
 import org.quelea.ScheduleSaver;
 import org.quelea.displayable.Displayable;
@@ -70,9 +70,9 @@ public class ExitActionListener implements EventHandler<ActionEvent> {
 //            }
 //        }
         LOGGER.log(Level.INFO, "Hiding main window...");
-        Application.get().getMainWindow().hide();
+        QueleaApp.get().getMainWindow().hide();
         LOGGER.log(Level.INFO, "Cleaning up displayables before exiting..");
-        for(Object obj : Application.get().getMainWindow().getMainPanel().getSchedulePanel().getScheduleList().itemsProperty().get()) {
+        for(Object obj : QueleaApp.get().getMainWindow().getMainPanel().getSchedulePanel().getScheduleList().itemsProperty().get()) {
             Displayable d = (Displayable)obj;
             LOGGER.log(Level.INFO, "Cleaning up {0}", d.getClass());
             d.dispose();

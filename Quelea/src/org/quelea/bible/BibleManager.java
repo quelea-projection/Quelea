@@ -31,7 +31,7 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.SwingWorker;
-import org.quelea.Application;
+import org.quelea.QueleaApp;
 import org.quelea.languages.LabelGrabber;
 import org.quelea.lucene.BibleSearchIndex;
 import org.quelea.lucene.SearchIndex;
@@ -217,8 +217,8 @@ public final class BibleManager {
     public void buildIndex() {
         indexInit = false;
         final StatusPanel[] panel = new StatusPanel[1];
-        if(Application.get().getMainWindow() != null) {
-            panel[0] = Application.get().getStatusGroup().addPanel(LabelGrabber.INSTANCE.getLabel("building.bible.index"));
+        if(QueleaApp.get().getMainWindow() != null) {
+            panel[0] = QueleaApp.get().getStatusGroup().addPanel(LabelGrabber.INSTANCE.getLabel("building.bible.index"));
             panel[0].getProgressBar().setProgress(-1);
         }
         SwingWorker<Void, Void> worker = new SwingWorker<Void, Void>() {

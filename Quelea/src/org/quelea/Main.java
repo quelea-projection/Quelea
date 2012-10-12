@@ -23,8 +23,10 @@ import java.io.File;
 import java.net.MalformedURLException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.embed.swing.JFXPanel;
+import javafx.stage.Stage;
 import name.antonsmirnov.javafx.dialog.Dialog;
 import org.quelea.bible.BibleManager;
 import org.quelea.languages.LabelGrabber;
@@ -43,32 +45,21 @@ import org.quelea.windows.main.MainWindow;
  * <p/>
  * @author Michael
  */
-public final class Main {
+public final class Main extends Application {
 
     private static final Logger LOGGER = LoggerUtils.getLogger();
-    private static MainWindow mainWindow;
-    private static LyricWindow fullScreenWindow;
-    private static LyricWindow stageWindow;
-
-    /**
-     * Don't instantiate me. I bite.
-     */
-    private Main() {
-        throw new AssertionError();
-    }
+    private MainWindow mainWindow;
+    private LyricWindow fullScreenWindow;
+    private LyricWindow stageWindow;
 
     /**
      * Starts the program off, this is the first thing that is executed by
      * Quelea when the program starts.
-     * <p/>
-     * @param args the command line arguments.
      */
-    public static void main(final String[] args) {
+    @Override
+    public void start(Stage stage) {
         final SplashWindow splashWindow = new SplashWindow();
         splashWindow.setVisible(true);
-
-        //Hack to initialise JavaFX
-        new JFXPanel();
 
         new UserFileChecker(QueleaProperties.getQueleaUserHome()).checkUserFiles();
 
@@ -117,7 +108,7 @@ public final class Main {
                     LOGGER.log(Level.INFO, "Starting projector display on monitor {0} (base 0!)", projectorScreen);
                     fullScreenWindow = new LyricWindow(Utils.getBoundsFromRect(gds[projectorScreen].getDefaultConfiguration().getBounds()), false);
                 }
-                Application.get().setLyricWindow(fullScreenWindow);
+                QueleaApp.get().setLyricWindow(fullScreenWindow);
                 fullScreenWindow.toFront();
 
                 if(stageHidden) {
@@ -133,7 +124,7 @@ public final class Main {
                     LOGGER.log(Level.INFO, "Starting stage display on monitor {0} (base 0!)", stageScreen);
                     stageWindow = new LyricWindow(Utils.getBoundsFromRect(gds[stageScreen].getDefaultConfiguration().getBounds()), true);
                 }
-                Application.get().setStageWindow(stageWindow);
+                QueleaApp.get().setStageWindow(stageWindow);
                 stageWindow.toFront();
             }
         });
@@ -206,10 +197,10 @@ public final class Main {
                 BibleManager.get().buildIndex();
                 LOGGER.log(Level.INFO, "Loaded everything.");
 
-                if(args.length > 0) {
-                    LOGGER.log(Level.INFO, "Opening schedule through argument: {0}", args[0]);
-                    Application.get().openSchedule(new File(args[0]));
-                }
+//                if(args.length > 0) {
+//                    LOGGER.log(Level.INFO, "Opening schedule through argument: {0}", args[0]);
+//                    QueleaApp.get().openSchedule(new File(args[0]));
+//                }
             }
         });
     }
@@ -219,7 +210,7 @@ public final class Main {
      * <p/>
      * @param numMonitors the number of monitors.
      */
-    private static void showWarning(int numMonitors) {
+    private void showWarning(int numMonitors) {
         if(numMonitors <= 1 && QueleaProperties.get().showSingleMonitorWarning()) {
             Dialog.showWarning(LabelGrabber.INSTANCE.getLabel("one.monitor.title"), LabelGrabber.INSTANCE.getLabel("one.monitor.warning"));
         }

@@ -22,7 +22,7 @@ import java.io.File;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javax.swing.JOptionPane;
-import org.quelea.Application;
+import org.quelea.QueleaApp;
 import org.quelea.displayable.VideoDisplayable;
 import org.quelea.languages.LabelGrabber;
 
@@ -46,7 +46,7 @@ public class AddDVDActionListener implements EventHandler<ActionEvent> {
         }
         else {
             VideoDisplayable displayable = new VideoDisplayable(file, VideoDisplayable.VideoType.DVD);
-            Application.get().getMainWindow().getMainPanel().getSchedulePanel().getScheduleList().add(displayable);
+            QueleaApp.get().getMainWindow().getMainPanel().getSchedulePanel().getScheduleList().add(displayable);
         }
     }
     

@@ -20,7 +20,7 @@ package org.quelea.windows.main.actionlisteners;
 
 import java.io.File;
 import javafx.stage.FileChooser;
-import org.quelea.Application;
+import org.quelea.QueleaApp;
 import org.quelea.utils.FileFilters;
 
 /**
@@ -34,9 +34,9 @@ public class OpenScheduleActionListener extends ClearingEventHandler {
         if(confirmClear()) {
             FileChooser chooser = new FileChooser();
             chooser.getExtensionFilters().add(FileFilters.SCHEDULE);
-            File file = chooser.showOpenDialog(Application.get().getMainWindow());
+            File file = chooser.showOpenDialog(QueleaApp.get().getMainWindow());
             if(file!=null) {
-                Application.get().openSchedule(file);
+                QueleaApp.get().openSchedule(file);
             }
         }
     }

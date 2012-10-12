@@ -35,7 +35,7 @@ import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
-import org.quelea.Application;
+import org.quelea.QueleaApp;
 import org.quelea.Theme;
 import org.quelea.displayable.Song;
 import org.quelea.displayable.TextSection;
@@ -100,9 +100,9 @@ public class SongEntryWindow extends Stage {
                 hide();
                 Utils.updateSongInBackground(getSong(), true, false);
                 if(addToSchedCBox.isSelected()) {
-                    Application.get().getMainWindow().getMainPanel().getSchedulePanel().getScheduleList().add(getSong());
+                    QueleaApp.get().getMainWindow().getMainPanel().getSchedulePanel().getScheduleList().add(getSong());
                 }
-                Application.get().getMainWindow().getMainPanel().getPreviewPanel().refresh();
+                QueleaApp.get().getMainWindow().getMainPanel().getPreviewPanel().refresh();
             }
         });
         cancelButton = new Button(LabelGrabber.INSTANCE.getLabel("cancel.button"), new ImageView(new Image("file:icons/cross.png")));
@@ -242,7 +242,7 @@ public class SongEntryWindow extends Stage {
         }
         tabPane.getSelectionModel().select(0);
         addToSchedCBox.setSelected(false);
-        if(Application.get().getMainWindow().getMainPanel().getSchedulePanel().getScheduleList().itemsProperty().get().contains(song)) {
+        if(QueleaApp.get().getMainWindow().getMainPanel().getSchedulePanel().getScheduleList().itemsProperty().get().contains(song)) {
             addToSchedCBox.setDisable(true);
         }
         else {

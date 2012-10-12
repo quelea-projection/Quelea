@@ -33,7 +33,7 @@ import javafx.scene.layout.HBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
-import org.quelea.Application;
+import org.quelea.QueleaApp;
 import org.quelea.displayable.Song;
 import org.quelea.displayable.TextSection;
 import org.quelea.languages.LabelGrabber;
@@ -106,7 +106,7 @@ public class QuickEditDialog extends Stage {
                     currentSong.removeSection(currentIndex);
                 }
                 hide();
-                Application.get().getMainWindow().getMainPanel().getPreviewPanel().refresh();
+                QueleaApp.get().getMainWindow().getMainPanel().getPreviewPanel().refresh();
                 Utils.updateSongInBackground(currentSong, false, true);
             }
         });

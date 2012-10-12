@@ -28,9 +28,9 @@ import org.quelea.windows.main.StatusPanelGroup;
  * A singleton class for grabbing application wide objects with ease such as the main window.
  * @author Michael
  */
-public class Application {
+public class QueleaApp {
 
-    private static final Application INSTANCE = new Application();
+    private static final QueleaApp INSTANCE = new QueleaApp();
     private MainWindow mainWindow;
     private LyricWindow lyricWindow;
     private LyricWindow stageWindow;
@@ -39,7 +39,7 @@ public class Application {
      * Get the singleton instance.
      * @return the instance.
      */
-    public static Application get() {
+    public static QueleaApp get() {
         return INSTANCE;
     }
     
@@ -55,7 +55,7 @@ public class Application {
 //                    LabelGrabber.INSTANCE.getLabel("error.schedule.title"), JOptionPane.ERROR_MESSAGE, null);
         }
         else {
-            Application.get().getMainWindow().getMainPanel().getSchedulePanel().getScheduleList().setSchedule(schedule);
+            QueleaApp.get().getMainWindow().getMainPanel().getSchedulePanel().getScheduleList().setSchedule(schedule);
         }
     }
 

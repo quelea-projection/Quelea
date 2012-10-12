@@ -32,7 +32,7 @@ import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.Region;
-import org.quelea.Application;
+import org.quelea.QueleaApp;
 import org.quelea.displayable.Displayable;
 import org.quelea.languages.LabelGrabber;
 import org.quelea.utils.QueleaProperties;
@@ -96,8 +96,8 @@ public class LivePanel extends LivePreviewPanel {
                 int stageScreen = QueleaProperties.get().getStageScreen();
                 GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
                 final GraphicsDevice[] gds = ge.getScreenDevices();
-                LyricWindow lyricWindow = Application.get().getLyricWindow();
-                LyricWindow stageWindow = Application.get().getStageWindow();
+                LyricWindow lyricWindow = QueleaApp.get().getLyricWindow();
+                LyricWindow stageWindow = QueleaApp.get().getStageWindow();
 
                 final boolean lyricsHidden;
                 if(!QueleaProperties.get().isProjectorModeCoords() && (projectorScreen >= gds.length || projectorScreen < 0)) {
@@ -139,7 +139,7 @@ public class LivePanel extends LivePreviewPanel {
             @Override
             public void handle(KeyEvent t) {
                 if(t.getCharacter().equals(" ")) {
-                    Application.get().getMainWindow().getMainPanel().getPreviewPanel().goLive();
+                    QueleaApp.get().getMainWindow().getMainPanel().getPreviewPanel().goLive();
                 }
             }
         });
@@ -147,7 +147,7 @@ public class LivePanel extends LivePreviewPanel {
             @Override
             public void handle(KeyEvent t) {
                 if(t.getCode() == KeyCode.LEFT) {
-                    Application.get().getMainWindow().getMainPanel().getPreviewPanel().requestFocus();
+                    QueleaApp.get().getMainWindow().getMainPanel().getPreviewPanel().requestFocus();
                 }
             }
         });

@@ -28,7 +28,7 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.util.Callback;
 import javafx.util.StringConverter;
-import org.quelea.Application;
+import org.quelea.QueleaApp;
 import org.quelea.Schedule;
 import org.quelea.displayable.Displayable;
 import org.quelea.displayable.Song;
@@ -81,7 +81,7 @@ public class ScheduleList extends ListView<Displayable> {
             @Override
             public void handle(KeyEvent t) {
                 if(t.getCharacter().equals(" ")) {
-                    Application.get().getMainWindow().getMainPanel().getPreviewPanel().goLive();
+                    QueleaApp.get().getMainWindow().getMainPanel().getPreviewPanel().goLive();
                 }
             }
         });
@@ -89,7 +89,7 @@ public class ScheduleList extends ListView<Displayable> {
             @Override
             public void handle(KeyEvent t) {
                 if(t.getCode() == KeyCode.RIGHT) {
-                    Application.get().getMainWindow().getMainPanel().getPreviewPanel().requestFocus();
+                    QueleaApp.get().getMainWindow().getMainPanel().getPreviewPanel().requestFocus();
                 }
             }
         });
@@ -97,14 +97,14 @@ public class ScheduleList extends ListView<Displayable> {
             @Override
             public void changed(ObservableValue<? extends ObservableList<Displayable>> ov, ObservableList<Displayable> t, ObservableList<Displayable> t1) {
                 if(isEmpty()) {
-                    Application.get().getMainWindow().getMainPanel().getLivePanel().clear();
+                    QueleaApp.get().getMainWindow().getMainPanel().getLivePanel().clear();
                 }
                 if(getSelectionModel().isEmpty()) {
-                    Application.get().getMainWindow().getMainPanel().getPreviewPanel().clear();
+                    QueleaApp.get().getMainWindow().getMainPanel().getPreviewPanel().clear();
                 }
                 else {
                     Displayable newDisplayable = getSelectionModel().getSelectedItem();
-                    Application.get().getMainWindow().getMainPanel().getPreviewPanel().setDisplayable(newDisplayable, 0);
+                    QueleaApp.get().getMainWindow().getMainPanel().getPreviewPanel().setDisplayable(newDisplayable, 0);
                 }
             }
         });
@@ -191,13 +191,13 @@ public class ScheduleList extends ListView<Displayable> {
         int selectedIndex = selectionModelProperty().get().getSelectedIndex();
         if(selectedIndex != -1) {
             Displayable d = selectionModelProperty().get().getSelectedItem();
-            Displayable live = Application.get().getMainWindow().getMainPanel().getLivePanel().getDisplayable();
+            Displayable live = QueleaApp.get().getMainWindow().getMainPanel().getLivePanel().getDisplayable();
             if(d == live) {
-                Application.get().getMainWindow().getMainPanel().getLivePanel().clear();
+                QueleaApp.get().getMainWindow().getMainPanel().getLivePanel().clear();
             }
-            Displayable preview = Application.get().getMainWindow().getMainPanel().getPreviewPanel().getDisplayable();
+            Displayable preview = QueleaApp.get().getMainWindow().getMainPanel().getPreviewPanel().getDisplayable();
             if(d == preview) {
-                Application.get().getMainWindow().getMainPanel().getPreviewPanel().clear();
+                QueleaApp.get().getMainWindow().getMainPanel().getPreviewPanel().clear();
             }
             d.dispose();
             itemsProperty().get().remove(selectedIndex);

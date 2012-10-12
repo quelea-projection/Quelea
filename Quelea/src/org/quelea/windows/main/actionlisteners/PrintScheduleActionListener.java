@@ -21,7 +21,7 @@ package org.quelea.windows.main.actionlisteners;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javax.swing.SwingUtilities;
-import org.quelea.Application;
+import org.quelea.QueleaApp;
 import org.quelea.print.Printer;
 
 /**
@@ -36,7 +36,7 @@ public class PrintScheduleActionListener implements EventHandler<ActionEvent> {
 
             @Override
             public void run() {
-                Printer.getInstance().print(Application.get().getMainWindow().getMainPanel().getSchedulePanel().getScheduleList().getSchedule());
+                Printer.getInstance().print(QueleaApp.get().getMainWindow().getMainPanel().getSchedulePanel().getScheduleList().getSchedule());
             }
         });
     }

@@ -19,7 +19,7 @@ package org.quelea.windows.main.actionlisteners;
 
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
-import org.quelea.Application;
+import org.quelea.QueleaApp;
 import org.quelea.windows.newsong.SongEntryWindow;
 
 /**
@@ -35,7 +35,7 @@ public class NewSongActionListener implements EventHandler<ActionEvent> {
      */
     @Override
     public void handle(ActionEvent t) {
-        SongEntryWindow songEntryWindow = Application.get().getMainWindow().getSongEntryWindow();
+        SongEntryWindow songEntryWindow = QueleaApp.get().getMainWindow().getSongEntryWindow();
         songEntryWindow.resetNewSong();
         songEntryWindow.show();
     }

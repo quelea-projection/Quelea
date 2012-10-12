@@ -37,7 +37,7 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
-import org.quelea.Application;
+import org.quelea.QueleaApp;
 import org.quelea.bible.Bible;
 import org.quelea.bible.BibleBook;
 import org.quelea.bible.BibleChangeListener;
@@ -103,7 +103,7 @@ public class LibraryBiblePanel extends VBox implements BibleChangeListener {
             @Override
             public void handle(ActionEvent t) {
                 BiblePassage passage = new BiblePassage(bibleSelector.getSelectionModel().getSelectedItem().getName(), getBibleLocation(), getVerses());
-                Application.get().getMainWindow().getMainPanel().getSchedulePanel().getScheduleList().itemsProperty().get().add(passage);
+                QueleaApp.get().getMainWindow().getMainPanel().getSchedulePanel().getScheduleList().itemsProperty().get().add(passage);
             }
         });
         addToSchedule.setDisable(true);
