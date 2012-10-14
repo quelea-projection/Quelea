@@ -29,11 +29,13 @@ import org.quelea.powerpoint.OOPresentation;
 import org.quelea.powerpoint.Presentation;
 import org.quelea.powerpoint.PresentationFactory;
 import org.quelea.utils.LoggerUtils;
+import org.quelea.utils.QueleaProperties;
 import org.quelea.utils.Utils;
 import org.w3c.dom.Node;
 
 /**
  * A displayable that's a presentation.
+ * <p/>
  * @author Michael
  */
 public class PresentationDisplayable implements Displayable {
@@ -45,25 +47,29 @@ public class PresentationDisplayable implements Displayable {
 
     /**
      * Create a new presentation displayable
+     * <p/>
      * @param file the file to create the presentation from.
      */
     public PresentationDisplayable(File file) throws IOException {
         this.file = file;
         presentation = new PresentationFactory().getPresentation(file);
-        if(presentation==null) {
+        if(presentation == null) {
             throw new IOException("Error with presentation, couldn't open " + file);
         }
-        try {
-            ooPresentation = new OOPresentation(file.getAbsolutePath());
-        }
-        catch (Exception ex) {
-            LOGGER.log(Level.WARNING, "Couldn't create OO presentation", ex);
-            ooPresentation = null;
+        if(QueleaProperties.get().getUseOO()) {
+            try {
+                ooPresentation = new OOPresentation(file.getAbsolutePath());
+            }
+            catch(Exception ex) {
+                LOGGER.log(Level.WARNING, "Couldn't create OO presentation", ex);
+                ooPresentation = null;
+            }
         }
     }
 
     /**
      * Get the displayable file.
+     * <p/>
      * @return the displayable file.
      */
     public Presentation getPresentation() {
@@ -72,6 +78,7 @@ public class PresentationDisplayable implements Displayable {
 
     /**
      * Get the OO presentation object.
+     * <p/>
      * @return the openoffice API backed presentation.
      */
     public OOPresentation getOOPresentation() {
@@ -79,7 +86,9 @@ public class PresentationDisplayable implements Displayable {
     }
 
     /**
-     * Parse some XML representing this object and return the object it represents.
+     * Parse some XML representing this object and return the object it
+     * represents.
+     * <p/>
      * @param node the XML node representing this object.
      * @return the object as defined by the XML.
      */
@@ -95,6 +104,7 @@ public class PresentationDisplayable implements Displayable {
 
     /**
      * Get the XML that forms this presentation displayable.
+     * <p/>
      * @return the XML.
      */
     @Override
@@ -108,6 +118,7 @@ public class PresentationDisplayable implements Displayable {
 
     /**
      * Get the preview icon of this video.
+     * <p/>
      * @return the powerpoint preview icon.
      */
     @Override
@@ -117,6 +128,7 @@ public class PresentationDisplayable implements Displayable {
 
     /**
      * Get the preview text to display in the schedule.
+     * <p/>
      * @return the preview text.
      */
     @Override
@@ -126,6 +138,7 @@ public class PresentationDisplayable implements Displayable {
 
     /**
      * Get the text to display when printing the order of service.
+     * <p/>
      * @return the text to display when printing.
      */
     @Override
@@ -134,8 +147,8 @@ public class PresentationDisplayable implements Displayable {
     }
 
     /**
-     * Give a blank list (no resources.)
-     * TODO: Include powerpoint as resource
+     * Give a blank list (no resources.) TODO: Include powerpoint as resource
+     * <p/>
      * @return blank list since presentations at the moment contain no resources
      */
     @Override
@@ -145,19 +158,20 @@ public class PresentationDisplayable implements Displayable {
 
     /**
      * Presentations cannot be meaningfully cleared, so return false.
+     * <p/>
      * @return false, always.
      */
     @Override
     public boolean supportClear() {
         return false;
     }
-    
+
     /**
      * Get rid of this presentation displayable.
      */
     @Override
     public void dispose() {
-        if(ooPresentation!=null) {
+        if(ooPresentation != null) {
             ooPresentation.dispose();
         }
     }
