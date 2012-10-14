@@ -143,7 +143,7 @@ public class LyricCanvas extends StackPane {
     }
 
     private void drawText() {
-        if(cleared||blacked) {
+        if(cleared || blacked) {
             textGroup.getChildren().clear();
             return;
         }
@@ -461,9 +461,6 @@ public class LyricCanvas extends StackPane {
     public void setText(TextDisplayable displayable, int index) {
         boolean fade;
         if(curDisplayable == displayable) {
-            if(curIndex == index) {
-                return;
-            }
             fade = false;
         }
         else {
