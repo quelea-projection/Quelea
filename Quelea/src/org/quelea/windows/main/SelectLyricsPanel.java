@@ -38,6 +38,7 @@ public class SelectLyricsPanel extends BorderPane implements ContainedPanel {
     private final LivePreviewPanel containerPanel;
     private final LyricCanvas previewCanvas;
     private final SplitPane splitPane;
+    private TextDisplayable curDisplayable;
 
     /**
      * Create a new lyrics panel.
@@ -92,6 +93,7 @@ public class SelectLyricsPanel extends BorderPane implements ContainedPanel {
      */
     public void showDisplayable(TextDisplayable displayable, int index) {
         clear();
+        curDisplayable = displayable;
         for(TextSection section : displayable.getSections()) {
             lyricsList.itemsProperty().get().add(section);
         }
@@ -157,12 +159,12 @@ public class SelectLyricsPanel extends BorderPane implements ContainedPanel {
                 canvas.setTheme(currentSection.getTheme());
             }
             canvas.setCapitaliseFirst(currentSection.shouldCapitaliseFirst());
-            if(canvas.isStageView()) {
-                canvas.setText(currentSection.getText(true, false), currentSection.getSmallText());
-            }
-            else {
-                canvas.setText(currentSection.getText(false, false), currentSection.getSmallText());
-            }
+//            if(canvas.isStageView()) {
+                canvas.setText(curDisplayable, selectedIndex);
+//            }
+//            else {
+//                canvas.setText(currentSection.getText(false, false), currentSection.getSmallText());
+//            }
         }
     }
 

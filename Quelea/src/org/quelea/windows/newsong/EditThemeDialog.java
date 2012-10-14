@@ -73,6 +73,7 @@ public class EditThemeDialog extends Stage {
         });
         northPanel.getChildren().add(nameField);
         panel = new ThemePanel();
+        panel.setPrefSize(500, 500);
         mainPane.setCenter(panel);
         confirmButton = new Button(LabelGrabber.INSTANCE.getLabel("ok.button"), new ImageView(new Image("file:icons/tick.png")));
         confirmButton.setOnAction(new EventHandler<javafx.event.ActionEvent>() {
