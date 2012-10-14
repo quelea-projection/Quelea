@@ -68,7 +68,7 @@ public class ThemePanel extends BorderPane {
      */
     public ThemePanel() {
         canvas = new LyricCanvas(false, false);
-        canvas.setText(SAMPLE_LYRICS, null);
+        canvas.setText(SAMPLE_LYRICS, null, false);
         setCenter(canvas);
         VBox toolbarPanel = new VBox();
         setupFontToolbar();

@@ -717,22 +717,23 @@ public class Song implements TextDisplayable, Comparable<Song>, Printable {
      * @return the appropriate HTML to display the song in the list.
      */
     public String getListHTML() {
-        if(lastSearch == null) {
-            return getTitle();
-        }
-        int startIndex = getTitle().toLowerCase().indexOf(lastSearch.toLowerCase());
-        if(startIndex == -1) {
-            return getTitle();
-        }
-        StringBuilder ret = new StringBuilder();
-        ret.append("<html>");
-        ret.append(getTitle().substring(0, startIndex));
-        ret.append("<b>");
-        ret.append(getTitle().substring(startIndex, startIndex + lastSearch.length()));
-        ret.append("</b>");
-        ret.append(getTitle().substring(startIndex + lastSearch.length()));
-        ret.append("</html>");
-        return ret.toString();
+        return getTitle();
+//        if(lastSearch == null) {
+//            return getTitle();
+//        }
+//        int startIndex = getTitle().toLowerCase().indexOf(lastSearch.toLowerCase());
+//        if(startIndex == -1) {
+//            return getTitle();
+//        }
+//        StringBuilder ret = new StringBuilder();
+//        ret.append("<html>");
+//        ret.append(getTitle().substring(0, startIndex));
+//        ret.append("<b>");
+//        ret.append(getTitle().substring(startIndex, startIndex + lastSearch.length()));
+//        ret.append("</b>");
+//        ret.append(getTitle().substring(startIndex + lastSearch.length()));
+//        ret.append("</html>");
+//        return ret.toString();
     }
 
     /**

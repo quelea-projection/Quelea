@@ -20,10 +20,14 @@ package org.quelea.windows.main;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Orientation;
+import javafx.geometry.Side;
 import javafx.scene.control.Button;
+import javafx.scene.control.ContextMenu;
 import javafx.scene.control.Label;
+import javafx.scene.control.MenuItem;
 import javafx.scene.control.MultipleSelectionModel;
 import javafx.scene.control.ToolBar;
 import javafx.scene.control.Tooltip;
@@ -52,7 +56,7 @@ public class SchedulePanel extends BorderPane {
     private final Button upButton;
     private final Button downButton;
     private final Button themeButton;
-    private final ScheduleThemePopupWindow themeMenu;
+    private final ScheduleThemeNode scheduleThemeNode;
 
     /**
      * Create and initialise the schedule panel.
@@ -62,12 +66,24 @@ public class SchedulePanel extends BorderPane {
         scheduleList.itemsProperty().addListener(new ChangeListener<ObservableList<Displayable>>() {
             @Override
             public void changed(ObservableValue<? extends ObservableList<Displayable>> ov, ObservableList<Displayable> t, ObservableList<Displayable> t1) {
-                themeMenu.updateTheme();
+                scheduleThemeNode.updateTheme();
             }
         });
 
-        themeMenu = new ScheduleThemePopupWindow(scheduleList);
+        scheduleThemeNode = new ScheduleThemeNode(scheduleList);
         themeButton = new Button("",new ImageView(new Image("file:icons/settings.png", 16, 16, false, true)));
+        themeButton.setOnAction(new EventHandler<ActionEvent>() {
+
+            @Override
+            public void handle(ActionEvent t) {
+                ContextMenu themeMenu = new ContextMenu();
+                MenuItem themeItem = new MenuItem("", scheduleThemeNode);
+                themeItem.setDisable(true);
+                themeItem.setStyle("-fx-background-color: #000000;");
+                themeMenu.getItems().add(themeItem);
+                themeMenu.show(themeButton, Side.BOTTOM, 0, 0);
+            }
+        });
         themeButton.setTooltip(new Tooltip(LabelGrabber.INSTANCE.getLabel("adjust.theme.tooltip")));
 
         ToolBar toolbar = new ToolBar();

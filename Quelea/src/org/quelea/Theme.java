@@ -21,6 +21,7 @@ import java.io.File;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 import javafx.scene.text.Font;
+import org.quelea.utils.Utils;
 
 /**
  * A theme for displaying some lyrics on screen. Currently consists of a font and a background.
@@ -212,23 +213,23 @@ public class Theme {
                 themeName = parts[1];
             }
         }
-        int fontstyle = 0;
+//        int fontstyle = 0;
 //        if (fontbold) {
 //            fontstyle |= Font.BOLD;
 //        }
 //        if (fontitalic) {
 //            fontstyle |= Font.ITALIC;
 //        }
-//        Font font = new Font(fontname, fontstyle, 72);
-//        Background background;
-//        if (backgroundcolour.isEmpty()) {
-//            background = new Background(backgroundimage, null);
-//        }
-//        else {
-//            background = new Background(Utils.parseColour(backgroundcolour));
-//        }
-//        Theme ret = new Theme(font, Utils.parseColour(fontcolour), background);
-//        ret.themeName = themeName;
-        return null;
+        Font font = new Font(fontname, 72);
+        Background background;
+        if (backgroundcolour.isEmpty()) {
+            background = new Background(backgroundimage);
+        }
+        else {
+            background = new Background(Utils.parseColour(backgroundcolour));
+        }
+        Theme ret = new Theme(font, Utils.parseColour(fontcolour), background);
+        ret.themeName = themeName;
+        return ret;
     }
 }
