@@ -136,6 +136,10 @@ public class SelectLyricsPanel extends BorderPane implements ContainedPanel {
         lyricsList.requestFocus();
     }
 
+    public LyricCanvas getPreviewCanvas() {
+        return previewCanvas;
+    }
+    
     /**
      * Called to update the contents of the canvases when the list selection
      * changes.

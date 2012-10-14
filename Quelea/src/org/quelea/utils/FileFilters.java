@@ -37,6 +37,10 @@ public final class FileFilters {
      */
     public static final FileChooser.ExtensionFilter XML_BIBLE = new FileChooser.ExtensionFilter("XML bibles (*.xml)", "*.xml");
     /**
+     * Accept powerpoint files.
+     */
+    public static final FileChooser.ExtensionFilter POWERPOINT = new FileChooser.ExtensionFilter("Powerpoint Presentations (*.ppt, *.pptx)", "*.ppt", "*.pptx");
+    /**
      * Only accept images.
      */
     public static final FileChooser.ExtensionFilter IMAGES = new FileChooser.ExtensionFilter(LabelGrabber.INSTANCE.getLabel("image.files.description"), Utils.getImageFileExtensions());

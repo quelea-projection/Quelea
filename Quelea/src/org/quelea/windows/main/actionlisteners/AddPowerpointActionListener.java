@@ -22,15 +22,15 @@ import java.io.File;
 import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
-import javax.swing.JFileChooser;
-import javax.swing.JOptionPane;
-import javax.swing.SwingUtilities;
+import javafx.stage.FileChooser;
+import name.antonsmirnov.javafx.dialog.Dialog;
 import org.quelea.QueleaApp;
 import org.quelea.displayable.PresentationDisplayable;
 import org.quelea.languages.LabelGrabber;
-import org.quelea.powerpoint.PowerpointFileFilter;
+import org.quelea.utils.FileFilters;
 import org.quelea.utils.LoggerUtils;
 import org.quelea.utils.Utils;
 import org.quelea.windows.main.StatusPanel;
@@ -49,11 +49,9 @@ public class AddPowerpointActionListener implements EventHandler<ActionEvent> {
      */
     @Override
     public void handle(ActionEvent t) {
-        final JFileChooser fileChooser = new JFileChooser();
-        fileChooser.setFileFilter(new PowerpointFileFilter());
-        fileChooser.setAcceptAllFileFilterUsed(false);
-//        fileChooser.showOpenDialog(Application.get().getMainWindow());
-        File file = fileChooser.getSelectedFile();
+        FileChooser chooser = new FileChooser();
+        chooser.getExtensionFilters().add(FileFilters.POWERPOINT);
+        final File file = chooser.showOpenDialog(QueleaApp.get().getMainWindow());
         if(file != null) {
             new Thread() {
 
@@ -62,7 +60,7 @@ public class AddPowerpointActionListener implements EventHandler<ActionEvent> {
 
                 @Override
                 public void run() {
-                    SwingUtilities.invokeLater(new Runnable() {
+                    Platform.runLater(new Runnable() {
 
                         @Override
                         public void run() {
@@ -79,9 +77,9 @@ public class AddPowerpointActionListener implements EventHandler<ActionEvent> {
                         }
                     });
                     try {
-                        final PresentationDisplayable displayable = new PresentationDisplayable(fileChooser.getSelectedFile());
+                        final PresentationDisplayable displayable = new PresentationDisplayable(file);
                         if(!halt) {
-                            SwingUtilities.invokeLater(new Runnable() {
+                            Platform.runLater(new Runnable() {
 
                                 @Override
                                 public void run() {
@@ -92,11 +90,11 @@ public class AddPowerpointActionListener implements EventHandler<ActionEvent> {
                     }
                     catch(IOException ex) {
                         if(!halt) {
-                            SwingUtilities.invokeLater(new Runnable() {
+                            Platform.runLater(new Runnable() {
 
                                 @Override
                                 public void run() {
-//                                    JOptionPane.showMessageDialog(Application.get().getMainWindow(), LabelGrabber.INSTANCE.getLabel("adding.presentation.error.message"), LabelGrabber.INSTANCE.getLabel("adding.presentation.error.title"), JOptionPane.ERROR_MESSAGE);
+                                    Dialog.showError(LabelGrabber.INSTANCE.getLabel("adding.presentation.error.title"), LabelGrabber.INSTANCE.getLabel("adding.presentation.error.message"));
                                 }
                             });
                         }

@@ -161,10 +161,7 @@ public class PresentationPanel extends BorderPane implements ContainedPanel {
 //            });
         }
         PresentationSlide[] slides = displayable.getPresentation().getSlides();
-        presentationList.itemsProperty().get().clear();
-        for(PresentationSlide slide : slides) {
-            presentationList.itemsProperty().get().add(slide);
-        }
+        presentationList.setSlides(slides);
         presentationList.selectionModelProperty().get().select(index);
         if(presentationList.selectionModelProperty().get().isEmpty()) {
             presentationList.selectionModelProperty().get().select(0);
