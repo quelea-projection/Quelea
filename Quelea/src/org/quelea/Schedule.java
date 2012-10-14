@@ -50,6 +50,7 @@ import javax.xml.parsers.ParserConfigurationException;
 import org.quelea.displayable.BiblePassage;
 import org.quelea.displayable.Displayable;
 import org.quelea.displayable.ImageDisplayable;
+import org.quelea.displayable.PresentationDisplayable;
 import org.quelea.displayable.Song;
 import org.quelea.displayable.VideoDisplayable;
 import org.quelea.utils.LoggerUtils;
@@ -293,6 +294,9 @@ public class Schedule implements Iterable<Displayable>, Printable {
                 }
                 else if(name.equalsIgnoreCase("filevideo")) {
                     newSchedule.add(VideoDisplayable.parseXML(node));
+                }
+                else if(name.equalsIgnoreCase("filepresentation")) {
+                    newSchedule.add(PresentationDisplayable.parseXML(node));
                 }
             }
             newSchedule.modified = false;
