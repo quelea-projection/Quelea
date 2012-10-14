@@ -85,6 +85,7 @@ public abstract class LivePreviewPanel extends BorderPane {
         cardPanel.add(picturePanel, IMAGE_LABEL);
         cardPanel.add(videoPanel, VIDEO_LABEL);
         cardPanel.add(presentationPanel, PRESENTATION_LABEL);
+        registerLyricCanvas(lyricsPanel.getPreviewCanvas());
         cardPanel.show(LYRICS_LABEL);
         
         lyricsPanel.getLyricsList().setOnMouseClicked(new EventHandler<MouseEvent>() {
@@ -197,44 +198,41 @@ public abstract class LivePreviewPanel extends BorderPane {
     /**
      * Set the displayable shown on this panel.
      *
-     * @param d the displayable to show.
+     * @param displayable the displayable to show.
      * @param index the index of the displayable to show, if relevant.
      */
-    public void setDisplayable(Displayable d, int index) {
-        this.displayable = d;
+    public void setDisplayable(Displayable displayable, int index) {
+        this.displayable = displayable;
         presentationPanel.stopCurrent();
-        if(VIDEO_LABEL.equals(currentLabel)) {
-            videoPanel.getVideoControlPanel().stopVideo();
-        }
         if(PRESENTATION_LABEL.equals(currentLabel)) {
             presentationPanel.setDisplayable(null, 0);
         }
-        if(d instanceof TextDisplayable) {
-            lyricsPanel.showDisplayable((TextDisplayable) d, index);
+        if(displayable instanceof TextDisplayable) {
+            lyricsPanel.showDisplayable((TextDisplayable) displayable, index);
             cardPanel.show(LYRICS_LABEL);
             currentLabel = LYRICS_LABEL;
         }
-        else if(d instanceof ImageDisplayable) {
-            picturePanel.showDisplayable((ImageDisplayable) d);
+        else if(displayable instanceof ImageDisplayable) {
+            picturePanel.showDisplayable((ImageDisplayable) displayable);
             cardPanel.show(IMAGE_LABEL);
             currentLabel = IMAGE_LABEL;
         }
-        else if(d instanceof VideoDisplayable) {
-            videoPanel.showDisplayable((VideoDisplayable) d);
+        else if(displayable instanceof VideoDisplayable) {
+            videoPanel.showDisplayable((VideoDisplayable) displayable);
             cardPanel.show(VIDEO_LABEL);
             currentLabel = VIDEO_LABEL;
         }
-        else if(d instanceof PresentationDisplayable) {
+        else if(displayable instanceof PresentationDisplayable) {
+            presentationPanel.setDisplayable((PresentationDisplayable) displayable, index);
             cardPanel.show(PRESENTATION_LABEL);
-            presentationPanel.setDisplayable((PresentationDisplayable) d, index);
             currentLabel = PRESENTATION_LABEL;
         }
-        else if(d==null) {
+        else if(displayable==null) {
             LOGGER.log(Level.WARNING, "BUG: Called setDisplayable(null), should probably call clear() instead.");
             clear();
         }
         else {
-            throw new RuntimeException("Displayable type not implemented: " + d.getClass());
+            throw new RuntimeException("Displayable type not implemented: " + displayable.getClass());
         }
     }
 

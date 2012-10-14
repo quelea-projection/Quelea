@@ -17,18 +17,17 @@
  */
 package org.quelea.windows.main;
 
-import java.awt.Component;
-import java.awt.image.BufferedImage;
+import java.util.Arrays;
+import javafx.application.Platform;
+import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
-import javax.swing.DefaultListCellRenderer;
-import javax.swing.DefaultListModel;
-import javax.swing.ImageIcon;
-import javax.swing.JList;
-import javax.swing.border.EmptyBorder;
+import javafx.scene.image.ImageView;
+import javafx.util.Callback;
 import org.quelea.powerpoint.PresentationSlide;
 
 /**
  * A JList for specifically displaying presentation slides.
+ * <p/>
  * @author Michael
  */
 public class PresentationList extends ListView<PresentationSlide> {
@@ -40,25 +39,22 @@ public class PresentationList extends ListView<PresentationSlide> {
      * Create a new presentation list.
      */
     public PresentationList() {
-//        Color inactiveColor = QueleaProperties.get().getInactiveSelectionColor();
-//        if (inactiveColor == null) {
-//            originalSelectionColour = getSelectionBackground();
-//        }
-//        else {
-//            originalSelectionColour = inactiveColor;
-//        }
-//        addFocusListener(new FocusListener() {
-//
-//            public void focusGained(FocusEvent e) {
-//                if (getModel().getSize() > 0) {
-////                    setSelectionBackground(QueleaProperties.get().getActiveSelectionColor());
-//                }
-//            }
-//
-//            public void focusLost(FocusEvent e) {
-//                setSelectionBackground(originalSelectionColour);
-//            }
-//        });
+        setCellFactory(new Callback<ListView<PresentationSlide>, ListCell<PresentationSlide>>() {
+            @Override
+            public ListCell<PresentationSlide> call(ListView<PresentationSlide> p) {
+                return new ListCell<PresentationSlide>() {
+                    @Override
+                    public void updateItem(PresentationSlide item, boolean empty) {
+                        super.updateItem(item, empty);
+                        if(item != null) {
+                            ImageView iv = new ImageView(item.getImage());
+                            setGraphic(iv);
+                            setText("Testiung!");
+                        }
+                    }
+                };
+            }
+        });
     }
 
     public boolean isUpdating() {
@@ -71,49 +67,11 @@ public class PresentationList extends ListView<PresentationSlide> {
 
     /**
      * Clear all current slides and set the slides in the list.
+     * <p/>
      * @param slides the slides to put in the list.
      */
     public void setSlides(PresentationSlide[] slides) {
         itemsProperty().get().clear();
-        for (PresentationSlide slide : slides) {
-            itemsProperty().get().add(slide);
-        }
-    }
-
-    /**
-     * Get the current image in use at the specified width / height.
-     * @param width the width of the image.
-     * @param height the height of the image.
-     * @return the selected slide image at the given dimensions.
-     */
-    public BufferedImage getCurrentImage(int width, int height) {
-        if (selectionModelProperty().get().isEmpty()) {
-            return new BufferedImage(10, 10, BufferedImage.TYPE_INT_ARGB);
-        }
-        return selectionModelProperty().get().getSelectedItem().getImage(width, height);
-    }
-
-    /**
-     * The custom cell renderer for the JList behind the panel.
-     */
-    private static class CustomCellRenderer extends DefaultListCellRenderer {
-
-        /**
-         * Get the component to display in the list using the custom renderer.
-         * @param list the list to apply the renderer to.
-         * @param value the value to render.
-         * @param index the currently selected index.
-         * @param isSelected true if the value object is selected.
-         * @param cellHasFocus true if the cell has focus, false otherwise.
-         * @return the component to display as this cell.
-         */
-        @Override
-        public Component getListCellRendererComponent(JList<?> list, Object value, int index,
-                boolean isSelected, boolean cellHasFocus) {
-            CustomCellRenderer ret = (CustomCellRenderer) super.getListCellRendererComponent(list, "", index, isSelected, cellHasFocus);
-            ret.setBorder(new EmptyBorder(10, 5, 10, 5));
-            ret.setIcon(new ImageIcon(((PresentationSlide) value).getImage( list.getWidth() > 400 ? 390 : list.getWidth() - 10, 200)));
-            return ret;
-        }
+        itemsProperty().get().addAll(Arrays.asList(slides));
     }
 }

@@ -17,16 +17,12 @@
  */
 package org.quelea.powerpoint;
 
-import java.awt.Dimension;
 import java.awt.image.BufferedImage;
-import java.lang.ref.SoftReference;
-import java.util.HashMap;
-import java.util.Map;
+import javafx.embed.swing.SwingFXUtils;
+import javafx.scene.image.Image;
+import javafx.scene.image.WritableImage;
 import org.apache.poi.hslf.model.Slide;
 import org.apache.poi.xslf.usermodel.XSLFSlide;
-import org.quelea.QueleaApp;
-import org.quelea.utils.Utils;
-import org.quelea.windows.main.LyricCanvas;
 
 /**
  * A slide in a powerpoint presentation.
@@ -34,15 +30,7 @@ import org.quelea.windows.main.LyricCanvas;
  */
 public class PresentationSlide {
 
-    private BufferedImage image;
-    private Map<Dimension, SoftReference<BufferedImage>> cache;
-
-    /*
-     * Initialise cache.
-     */
-    {
-        cache = new HashMap<>();
-    }
+    private WritableImage image;
 
     /**
      * Create a new presentation slide.
@@ -50,9 +38,10 @@ public class PresentationSlide {
      */
     public PresentationSlide(Slide slide) {
         org.apache.poi.hslf.usermodel.SlideShow slideshow = slide.getSlideShow();
-        image = new BufferedImage((int) slideshow.getPageSize().getWidth(), (int) slideshow.getPageSize().getHeight(), BufferedImage.TYPE_INT_ARGB);
-        slide.draw(image.createGraphics());
-        initCacheImage();
+        BufferedImage originalImage = new BufferedImage((int) slideshow.getPageSize().getWidth(), (int) slideshow.getPageSize().getHeight(), BufferedImage.TYPE_INT_ARGB);
+        slide.draw(originalImage.createGraphics());
+        image = new WritableImage(originalImage.getWidth(), originalImage.getHeight());
+        SwingFXUtils.toFXImage(originalImage, image);
     }
     
     /**
@@ -61,35 +50,17 @@ public class PresentationSlide {
      */
     public PresentationSlide(XSLFSlide slide) {
         org.apache.poi.xslf.usermodel.XMLSlideShow slideshow = slide.getSlideShow();
-        image = new BufferedImage((int) slideshow.getPageSize().getWidth(), (int) slideshow.getPageSize().getHeight(), BufferedImage.TYPE_INT_ARGB);
-        slide.draw(image.createGraphics());
-        initCacheImage();
-    }
-    
-    /**
-     * "Touch" the current image so it's initialised in the image cache.
-     */
-    private void initCacheImage() {
-        LyricCanvas lc = QueleaApp.get().getLyricWindow().getCanvas();
+        BufferedImage originalImage = new BufferedImage((int) slideshow.getPageSize().getWidth(), (int) slideshow.getPageSize().getHeight(), BufferedImage.TYPE_INT_ARGB);
+        slide.draw(originalImage.createGraphics());
+        image = new WritableImage(originalImage.getWidth(), originalImage.getHeight());
+        SwingFXUtils.toFXImage(originalImage, image);
     }
 
     /**
      * Get the image from this slide.
-     * @param width the width of the image.
-     * @param height the height of the image.
      * @return the image of this slide.
      */
-    public final BufferedImage getImage(int width, int height) {
-        Dimension d = new Dimension(width, height);
-        SoftReference<BufferedImage> cacheReference = cache.get(d);
-        if (cacheReference != null) {
-            BufferedImage cacheImage = cacheReference.get();
-            if (cacheImage != null) {
-                return cacheImage;
-            }
-        }
-        BufferedImage ret = Utils.resizeImage(image, width, height);
-        cache.put(d, new SoftReference<>(ret));
-        return ret;
+    public final Image getImage() {
+        return image;
     }
 }
