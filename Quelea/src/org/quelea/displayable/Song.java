@@ -34,7 +34,8 @@ import java.util.List;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.swing.Icon;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -914,12 +915,12 @@ public class Song implements TextDisplayable, Comparable<Song>, Printable {
      * @return the song's preview icon.
      */
     @Override
-    public Icon getPreviewIcon() {
+    public ImageView getPreviewIcon() {
         if(hasChords()) {
-            return Utils.getImageIcon("icons/lyricsandchords.png");
+            return new ImageView(new Image("file:icons/lyricsandchords.png"));
         }
         else {
-            return Utils.getImageIcon("icons/lyrics.png");
+            return new ImageView(new Image("file:icons/lyrics.png"));
         }
     }
 
@@ -930,7 +931,7 @@ public class Song implements TextDisplayable, Comparable<Song>, Printable {
      */
     @Override
     public String getPreviewText() {
-        return "<html>" + getTitle() + "\n<i>" + getAuthor() + "</i></html>";
+        return getTitle() + "\n" + getAuthor();
     }
 
     /**

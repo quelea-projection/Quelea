@@ -23,7 +23,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.swing.Icon;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import org.quelea.powerpoint.OOPresentation;
 import org.quelea.powerpoint.Presentation;
 import org.quelea.powerpoint.PresentationFactory;
@@ -110,8 +111,8 @@ public class PresentationDisplayable implements Displayable {
      * @return the powerpoint preview icon.
      */
     @Override
-    public Icon getPreviewIcon() {
-        return Utils.getImageIcon("icons/powerpoint.png", 30, 30);
+    public ImageView getPreviewIcon() {
+        return new ImageView(new Image("file:icons/powerpoint.png", 30, 30, false, true));
     }
 
     /**

@@ -23,11 +23,9 @@ import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
-import javafx.scene.control.cell.TextFieldListCell;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.util.Callback;
-import javafx.util.StringConverter;
 import org.quelea.QueleaApp;
 import org.quelea.Schedule;
 import org.quelea.displayable.Displayable;
@@ -59,20 +57,19 @@ public class ScheduleList extends ListView<Displayable> {
     public ScheduleList() {
         popupMenu = new ScheduleSongPopupMenu();
         Callback<ListView<Displayable>, ListCell<Displayable>> callback = new Callback<ListView<Displayable>, ListCell<Displayable>>() {
+
             @Override
             public ListCell<Displayable> call(ListView<Displayable> p) {
-                return new TextFieldListCell<>(new StringConverter<Displayable>() {
+                return new ListCell<Displayable>() {
                     @Override
-                    public String toString(Displayable displayable) {
-                        return displayable.getPreviewText();
-                    }
-
-                    @Override
-                    public Song fromString(String string) {
-                        //Implementation not needed.
-                        return null;
-                    }
-                });
+                    public void updateItem(Displayable item, boolean empty) {
+                        super.updateItem(item, empty);
+                        if(item != null) {
+                            setGraphic(item.getPreviewIcon());
+                            setText(item.getPreviewText());
+                        }
+                    }  
+                };
             }
         };
         setCellFactory(ContextMenuListCell.<Displayable>forListView(popupMenu, callback));

@@ -30,7 +30,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.swing.SwingWorker;
+import javafx.application.Platform;
 import org.quelea.QueleaApp;
 import org.quelea.languages.LabelGrabber;
 import org.quelea.lucene.BibleSearchIndex;
@@ -221,10 +221,9 @@ public final class BibleManager {
             panel[0] = QueleaApp.get().getStatusGroup().addPanel(LabelGrabber.INSTANCE.getLabel("building.bible.index"));
             panel[0].getProgressBar().setProgress(-1);
         }
-        SwingWorker<Void, Void> worker = new SwingWorker<Void, Void>() {
-
+        new Thread() {
             @Override
-            protected Void doInBackground() {
+            public void run() {
                 LOGGER.log(Level.INFO, "Adding bibles to index");
                 List<BibleChapter> chapters = new ArrayList<>(bibles.size() * 66);
                 for(Bible bible : bibles) {
@@ -242,16 +241,17 @@ public final class BibleManager {
                     r.run();
                 }
                 onIndexInit.clear();
-                return null;
-            }
+                
+                Platform.runLater(new Runnable() {
 
-            @Override
-            protected void done() {
-                if(panel[0] != null) {
-                    panel[0].done();
-                }
+                    @Override
+                    public void run() {
+                        if(panel[0] != null) {
+                            panel[0].done();
+                        }
+                    }
+                });
             }
-        };
-        worker.execute();
+        }.start();
     }
 }
