@@ -20,7 +20,8 @@ package org.quelea.displayable;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
-import javax.swing.Icon;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import org.quelea.utils.Utils;
 import org.w3c.dom.Node;
 
@@ -101,8 +102,8 @@ public class VideoDisplayable implements Displayable {
      * @return the video's preview icon.
      */
     @Override
-    public Icon getPreviewIcon() {
-        return Utils.getImageIcon("icons/video.png");
+    public ImageView getPreviewIcon() {
+        return new ImageView(new Image("file:icons/video.png"));
     }
 
     /**

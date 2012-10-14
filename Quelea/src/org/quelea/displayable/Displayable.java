@@ -19,7 +19,7 @@ package org.quelea.displayable;
 
 import java.io.File;
 import java.util.Collection;
-import javax.swing.Icon;
+import javafx.scene.image.ImageView;
 
 /**
  * An item such as a song that can be displayed on the projection screen.
@@ -43,7 +43,7 @@ public interface Displayable {
      * Get the preview icon to be displayed in the schedule.
      * @return the preview icon.
      */
-    Icon getPreviewIcon();
+    ImageView getPreviewIcon();
 
     /**
      * Get the preview text to be displayed in the schedule.

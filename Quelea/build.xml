@@ -28,7 +28,7 @@
     <property name="DebInstaller" value="${dist.jar.dir}/standalone/${DebInstallerName}"/>
     <property name="Portable" value="${dist.jar.dir}/standalone/${PortableName}"/>
     
-    <target name="-post-jfx-jar">
+    <target name="build-dist" depends="jar">
         <property name="FXClasspath" value="${javafx.sdk}/jre/lib/jfxrt.jar"/>
         
         <!-- Check the images conform to spec -->

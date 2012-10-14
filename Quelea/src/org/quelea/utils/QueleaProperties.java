@@ -702,9 +702,9 @@ public final class QueleaProperties extends Properties {
      */
     private Color getColor(String str) {
         String[] color = str.split(",");
-        double red = Integer.parseInt(color[0].trim());
-        double green = Integer.parseInt(color[1].trim());
-        double blue = Integer.parseInt(color[2].trim());
+        double red = Double.parseDouble(color[0].trim());
+        double green = Double.parseDouble(color[1].trim());
+        double blue = Double.parseDouble(color[2].trim());
         if(red > 1 || green > 1 || blue > 1) {
             red /= 255;
             green /= 255;

@@ -25,7 +25,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.application.Application;
 import javafx.application.Platform;
-import javafx.embed.swing.JFXPanel;
 import javafx.stage.Stage;
 import name.antonsmirnov.javafx.dialog.Dialog;
 import org.quelea.bible.BibleManager;
@@ -149,6 +148,8 @@ public final class Main extends Application {
             LOGGER.log(Level.SEVERE, "Couldn't load dictionaries", ex);
         }
         LOGGER.log(Level.INFO, "Registered dictionary");
+        
+        BibleManager.get().buildIndex();
 
         Platform.runLater(new Runnable() {
             @Override
@@ -191,18 +192,19 @@ public final class Main extends Application {
 //                Utils.centreOnMonitor(mainWindow, controlScreen);
                 showWarning(gds.length);
                 mainWindow.toFront();
-                splashWindow.setVisible(false);
-                mainWindow.show();
                 new ShortcutManager().addShortcuts();
-                BibleManager.get().buildIndex();
                 LOGGER.log(Level.INFO, "Loaded everything.");
 
 //                if(args.length > 0) {
 //                    LOGGER.log(Level.INFO, "Opening schedule through argument: {0}", args[0]);
 //                    QueleaApp.get().openSchedule(new File(args[0]));
 //                }
+                
+                mainWindow.show();
+                splashWindow.setVisible(false);
             }
         });
+        
     }
 
     /**

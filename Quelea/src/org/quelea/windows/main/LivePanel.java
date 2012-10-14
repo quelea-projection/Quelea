@@ -162,7 +162,12 @@ public class LivePanel extends LivePreviewPanel {
     @Override
     public void setDisplayable(Displayable d, int index) {
         super.setDisplayable(d, index);
-        clear.setDisable(!d.supportClear());
+        if(d == null) {
+            clear.setDisable(true);
+        }
+        else {
+            clear.setDisable(!d.supportClear());
+        }
     }
 
     /**

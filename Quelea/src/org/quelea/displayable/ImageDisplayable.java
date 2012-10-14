@@ -17,18 +17,13 @@
  */
 package org.quelea.displayable;
 
-import java.awt.image.BufferedImage;
 import java.io.File;
-import java.io.IOException;
-import java.lang.ref.SoftReference;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.imageio.ImageIO;
-import javax.swing.Icon;
-import javax.swing.ImageIcon;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import org.quelea.utils.LoggerUtils;
 import org.quelea.utils.Utils;
 import org.w3c.dom.Node;
@@ -42,9 +37,7 @@ public class ImageDisplayable implements Displayable {
     public static final int ICON_WIDTH = 60;
     public static final int ICON_HEIGHT = 60;
     private final File file;
-    private Icon icon;
-    private Icon previewIcon;
-    private SoftReference<BufferedImage> originalImage;
+    private ImageView image;
     private static final Logger LOGGER = LoggerUtils.getLogger();
 
     /**
@@ -53,15 +46,7 @@ public class ImageDisplayable implements Displayable {
      */
     public ImageDisplayable(File file) {
         this.file = file;
-        try {
-            BufferedImage image = ImageIO.read(file);
-            icon = new ImageIcon(Utils.resizeImage(image, ICON_WIDTH, ICON_HEIGHT));
-            originalImage = new SoftReference<>(image);
-        }
-        catch (IOException ex) {
-            originalImage = null;
-            LOGGER.log(Level.WARNING, "Couldn't create image displayable from " + file.getAbsolutePath(), ex);
-        }
+        image = new ImageView(new Image("file:"+file.getAbsolutePath()));
     }
 
     /**
@@ -76,8 +61,8 @@ public class ImageDisplayable implements Displayable {
      * Get the displayable image.
      * @return the displayable image.
      */
-    public Icon getImage() {
-        return icon;
+    public ImageView getImage() {
+        return image;
     }
 
     /**
@@ -108,29 +93,9 @@ public class ImageDisplayable implements Displayable {
      * @return the preview icon.
      */
     @Override
-    public Icon getPreviewIcon() {
-        if (previewIcon == null) {
-            previewIcon = new ImageIcon(Utils.resizeImage(Utils.iconToImage(icon), 30, 30));
-        }
-        return previewIcon;
-    }
-
-    /**
-     * Get the original image in its original size.
-     * @return the original image straight from the file.
-     */
-    public BufferedImage getOriginalImage() {
-        BufferedImage image = originalImage.get();
-        if(image==null) {
-            try {
-                image = ImageIO.read(file);
-            }
-            catch (IOException ex) {
-                LOGGER.log(Level.WARNING, "Couldn't get original image", ex);
-            }
-        }
-        originalImage = new SoftReference<>(image);
-        return image;
+    public ImageView getPreviewIcon() {
+        ImageView small = new ImageView(new Image("file:"+file.getAbsolutePath(), 30, 30, false, true));
+        return small;
     }
 
     /**
