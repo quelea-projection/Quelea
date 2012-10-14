@@ -23,12 +23,13 @@ import org.quelea.utils.Utils;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
-import javax.swing.*;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 
 /**
  * A displayable passage from the bible.
@@ -48,7 +49,7 @@ public class BiblePassage implements TextDisplayable {
      * @param verses the verses, in order, that make up the passage.
      */
     public BiblePassage(String biblename, String location, BibleVerse[] verses) {
-        this("<html>" + location + "<br/><i>" + biblename + "</i></html>", verses);
+        this(location + "\n" + biblename, verses);
     }
 
     /**
@@ -138,14 +139,16 @@ public class BiblePassage implements TextDisplayable {
      * Get the bible preview icon.
      * @return the bible preview icon.
      */
-    public Icon getPreviewIcon() {
-        return Utils.getImageIcon("icons/bible.png");
+    @Override
+    public ImageView getPreviewIcon() {
+        return new ImageView(new Image("file:icons/bible.png"));
     }
 
     /**
      * Get the preview text.
      * @return the preview text.
      */
+    @Override
     public String getPreviewText() {
         return summary;
     }
@@ -172,7 +175,7 @@ public class BiblePassage implements TextDisplayable {
      */
     @Override
     public String getPrintText() {
-        return "Bible passage: " + summary.substring("<html>".length(), summary.indexOf("<br"));
+        return "Bible passage: " + summary;
     }
 
     /**

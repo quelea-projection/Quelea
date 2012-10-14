@@ -17,7 +17,6 @@
  */
 package org.quelea.windows.library;
 
-import java.awt.BorderLayout;
 import javafx.scene.layout.BorderPane;
 
 /**

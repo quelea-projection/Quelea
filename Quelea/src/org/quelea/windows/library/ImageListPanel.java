@@ -22,12 +22,15 @@ import java.awt.Component;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import javafx.application.Platform;
-import javafx.beans.property.SimpleListProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.geometry.Orientation;
+import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
-import javafx.scene.control.ScrollPane;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
+import javafx.util.Callback;
 import javax.swing.DefaultListCellRenderer;
 import javax.swing.JList;
 import javax.swing.border.EmptyBorder;
@@ -51,10 +54,15 @@ public class ImageListPanel extends BorderPane {
     public ImageListPanel(String dir) {
         this.dir = dir;
         imageList = new ListView<>();
-//        imageList.setCellRenderer(new CustomCellRenderer());
+        imageList.setCellFactory(new Callback<ListView<ImageDisplayable>, ListCell<ImageDisplayable>>() {
+
+            @Override
+            public ListCell<ImageDisplayable> call(ListView<ImageDisplayable> p) {
+                return new ImageCell();
+            }
+        });
+        imageList.setOrientation(Orientation.VERTICAL);
         addFiles();
-//        imageList.setLayoutOrientation(JList.HORIZONTAL_WRAP);
-//        imageList.setVisibleRowCount(-1);
         setCenter(imageList);
     }
 
@@ -112,6 +120,18 @@ public class ImageListPanel extends BorderPane {
     public BufferedImage getSelectedImage() {
         File file = imageList.selectionModelProperty().get().getSelectedItem().getFile();
         return Utils.getImage(file.getAbsolutePath());
+    }
+    
+    private static class ImageCell extends ListCell<ImageDisplayable> {
+        @Override
+        public void updateItem(ImageDisplayable item, boolean empty) {
+            super.updateItem(item, empty);
+            if(item != null) {
+                ImageView iv = new ImageView(new Image("file:"+item.getFile().getAbsolutePath(), 100, 100, false, false));
+                setGraphic(iv);
+                setText(null);
+            }
+        }
     }
 
     /**
