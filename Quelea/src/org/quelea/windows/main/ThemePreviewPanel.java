@@ -17,167 +17,165 @@
  */
 package org.quelea.windows.main;
 
-import java.awt.Component;
-import java.awt.Dimension;
-import java.awt.GridLayout;
-import java.awt.Insets;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.swing.Box;
-import javax.swing.BoxLayout;
-import javax.swing.JButton;
-import javax.swing.JLabel;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JRadioButton;
-import javax.swing.border.EmptyBorder;
-import org.quelea.QueleaApp;
+import javafx.application.Platform;
+import javafx.embed.swing.JFXPanel;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
+import javafx.scene.Scene;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.control.RadioButton;
+import javafx.scene.control.Tooltip;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
+import javafx.stage.Stage;
+import javafx.stage.WindowEvent;
+import name.antonsmirnov.javafx.dialog.Dialog;
 import org.quelea.Theme;
 import org.quelea.languages.LabelGrabber;
 import org.quelea.utils.LoggerUtils;
-import org.quelea.utils.Utils;
 import org.quelea.windows.newsong.EditThemeDialog;
 import org.quelea.windows.newsong.ThemePanel;
 
 /**
- * Panel that displays a preview of a particular theme. This is part of the 
+ * Panel that displays a preview of a particular theme. This is part of the
  * theme select popup window.
+ * <p/>
  * @author Michael
  */
-public class ThemePreviewPanel extends JPanel {
+public class ThemePreviewPanel extends VBox {
 
     private static final Logger LOGGER = LoggerUtils.getLogger();
     private Theme theme;
     private LyricCanvas canvas;
-    private JRadioButton selectButton;
-    private JButton removeButton;
-    private JButton editButton;
+    private RadioButton selectButton;
+    private Button removeButton;
+    private Button editButton;
     private EditThemeDialog themeDialog;
 
     /**
      * Create a new theme preview panel.
+     * <p/>
      * @param theme the theme to preview.
      */
     public ThemePreviewPanel(Theme theme) {
         this.theme = theme;
-        if (theme != null) {
-            canvas = new LyricCanvas(false, false);
-            canvas.setTheme(theme);
-            canvas.setText(ThemePanel.SAMPLE_LYRICS, new String[0]);
+        if(theme == null) {
+            theme = Theme.DEFAULT_THEME;
         }
-        setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
+        canvas = new LyricCanvas(false, false);
+        canvas.setTheme(theme);
+        canvas.setPrefSize(200, 200);
+        canvas.setText(ThemePanel.SAMPLE_LYRICS, new String[0], false);
         String name;
-        if (theme == null) {
-            name = "<html><i>"+LabelGrabber.INSTANCE.getLabel("default.theme.text")+"</i></html>";
+        if(theme == Theme.DEFAULT_THEME) {
+            name = LabelGrabber.INSTANCE.getLabel("default.theme.text");
         }
         else {
             name = theme.getThemeName();
         }
         themeDialog = new EditThemeDialog();
-        selectButton = new JRadioButton(name);
-        if (theme != null) {
-            editButton = new JButton(Utils.getImageIcon("icons/edit32.png", 16, 16));
-            editButton.setMargin(new Insets(0, 0, 0, 0));
-            editButton.setBorder(new EmptyBorder(0, 0, 0, 0));
-            editButton.setToolTipText(LabelGrabber.INSTANCE.getLabel("edit.theme.tooltip"));
-            editButton.addActionListener(new ActionListener() {
-
+        selectButton = new RadioButton(name);
+        if(theme != Theme.DEFAULT_THEME) {
+            editButton = new Button("", new ImageView(new Image("file:icons/edit32.png", 16, 16, false, true)));
+            editButton.setTooltip(new Tooltip(LabelGrabber.INSTANCE.getLabel("edit.theme.tooltip")));
+            editButton.setOnAction(new EventHandler<javafx.event.ActionEvent>() {
                 @Override
-                public void actionPerformed(ActionEvent ae) {
+                public void handle(javafx.event.ActionEvent t) {
                     themeDialog.setTheme(ThemePreviewPanel.this.theme);
                     themeDialog.show();
                     Theme ret = themeDialog.getTheme();
                     if(ret != null) {
-                        try (PrintWriter pw = new PrintWriter(ret.getFile())) {
+                        try(PrintWriter pw = new PrintWriter(ret.getFile())) {
                             pw.println(ret.toDBString());
                         }
-                        catch (IOException ex) {
+                        catch(IOException ex) {
                             LOGGER.log(Level.WARNING, "Couldn't edit theme", ex);
                         }
                     }
                 }
             });
-            
-            removeButton = new JButton(Utils.getImageIcon("icons/delete.png", 16, 16));
-            removeButton.setMargin(new Insets(0, 0, 0, 0));
-            removeButton.setBorder(new EmptyBorder(0, 0, 0, 0));
-            removeButton.setToolTipText(LabelGrabber.INSTANCE.getLabel("remove.theme.tooltip"));
-            removeButton.addActionListener(new ActionListener() {
 
+            removeButton = new Button("", new ImageView(new Image("file:icons/delete.png", 16, 16, false, true)));
+            removeButton.setTooltip(new Tooltip(LabelGrabber.INSTANCE.getLabel("remove.theme.tooltip")));
+            removeButton.setOnAction(new EventHandler<javafx.event.ActionEvent>() {
                 @Override
-                public void actionPerformed(ActionEvent e) {
-//                    int result = JOptionPane.showConfirmDialog(Application.get().getMainWindow(), LabelGrabber.INSTANCE.getLabel("delete.theme.question"), LabelGrabber.INSTANCE.getLabel("delete.theme.confirm.title"), JOptionPane.YES_NO_OPTION);
-//                    if (result != JOptionPane.NO_OPTION) {
-//                        ThemePreviewPanel.this.theme.getFile().delete();
-//                    }
+                public void handle(javafx.event.ActionEvent t) {
+                    Dialog.buildConfirmation(LabelGrabber.INSTANCE.getLabel("delete.theme.confirm.title"), LabelGrabber.INSTANCE.getLabel("delete.theme.question"), null).addYesButton(new EventHandler<ActionEvent>() {
+                        @Override
+                        public void handle(ActionEvent t) {
+                            ThemePreviewPanel.this.theme.getFile().delete();
+                        }
+                    }).addNoButton(new EventHandler<ActionEvent>() {
+                        @Override
+                        public void handle(ActionEvent t) {
+                            //Nothing needed here
+                        }
+                    }).build().showAndWait();
                 }
             });
         }
-        JPanel buttonPanel = new JPanel();
-        buttonPanel.setLayout(new BoxLayout(buttonPanel, BoxLayout.X_AXIS));
-        if (canvas != null) {
-//            canvas.addMouseListener(new MouseAdapter() {
-//
-//                @Override
-//                public void mouseClicked(MouseEvent e) {
-//                    selectButton.doClick();
-//                }
-//            });
-        }
-        buttonPanel.add(selectButton);
-        if (theme != null) {
-            buttonPanel.add(Box.createHorizontalGlue());
-            buttonPanel.add(editButton);
-            buttonPanel.add(removeButton);
-        }
-        buttonPanel.setAlignmentX(Component.LEFT_ALIGNMENT);
-        JPanel canvasPanel = new JPanel();
-        if (theme == null) {
-            JLabel label = new JLabel("<html><h1>"+LabelGrabber.INSTANCE.getLabel("default.theme.name")+"</h1></html>");
-            canvasPanel.add(label);
-            canvasPanel.addMouseListener(new MouseAdapter() {
-
+        HBox buttonPanel = new HBox();
+        if(canvas != null) {
+            canvas.setOnMouseClicked(new EventHandler<MouseEvent>() {
                 @Override
-                public void mouseClicked(MouseEvent e) {
-                    selectButton.doClick();
-                }
-            });
-            label.addMouseListener(new MouseAdapter() {
-
-                @Override
-                public void mouseClicked(MouseEvent e) {
-                    selectButton.doClick();
+                public void handle(MouseEvent t) {
+                    t.consume();
+                    selectButton.fire();
                 }
             });
         }
-        else {
-            canvasPanel.setLayout(new GridLayout(1, 1, 0, 0));
-//            canvasPanel.add(canvas);
+        buttonPanel.getChildren().add(selectButton);
+        if(theme != Theme.DEFAULT_THEME) {
+            buttonPanel.getChildren().add(editButton);
+            buttonPanel.getChildren().add(removeButton);
         }
-        canvasPanel.setAlignmentX(Component.LEFT_ALIGNMENT);
-        add(canvasPanel);
-        add(buttonPanel);
+        HBox canvasPanel = new HBox();
+        canvasPanel.getChildren().add(canvas);
+        getChildren().add(canvasPanel);
+        getChildren().add(buttonPanel);
     }
 
     /**
      * Get the select radio button used to select this theme.
+     * <p/>
      * @return the select radio button.
      */
-    public JRadioButton getSelectButton() {
+    public RadioButton getSelectButton() {
         return selectButton;
     }
 
     /**
      * Get the theme in use on this preview panel.
+     * <p/>
      * @return the theme in use on this preview panel.
      */
     public Theme getTheme() {
         return theme;
+    }
+
+    public static void main(String[] args) {
+        new JFXPanel();
+        Platform.runLater(new Runnable() {
+            @Override
+            public void run() {
+                Stage stage = new Stage();
+                stage.setOnCloseRequest(new EventHandler<WindowEvent>() {
+                    @Override
+                    public void handle(WindowEvent t) {
+                        System.exit(0);
+                    }
+                });
+                stage.setScene(new Scene(new ScheduleThemeNode(null)));
+                stage.show();
+            }
+        });
     }
 }

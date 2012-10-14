@@ -33,9 +33,6 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
-import java.nio.Buffer;
-import java.nio.ByteBuffer;
-import java.nio.IntBuffer;
 import java.nio.channels.FileChannel;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
@@ -53,11 +50,8 @@ import java.util.logging.Logger;
 import javafx.geometry.BoundingBox;
 import javafx.geometry.Bounds;
 import javafx.scene.image.Image;
-import javafx.scene.image.PixelFormat;
-import javafx.scene.image.PixelReader;
 import javafx.scene.image.PixelWriter;
 import javafx.scene.image.WritableImage;
-import javafx.scene.image.WritablePixelFormat;
 import javafx.scene.paint.Color;
 import javax.imageio.ImageIO;
 import javax.swing.*;
@@ -693,9 +687,18 @@ public final class Utils {
     public static Color parseColour(String colour) {
         colour = colour.substring(colour.indexOf('[') + 1, colour.indexOf(']'));
         String[] parts = colour.split(",");
-        int red = Integer.parseInt(parts[0].split("=")[1]);
-        int green = Integer.parseInt(parts[1].split("=")[1]);
-        int blue = Integer.parseInt(parts[2].split("=")[1]);
+        double red = Double.parseDouble(parts[0].split("=")[1]);
+        double green = Double.parseDouble(parts[1].split("=")[1]);
+        double blue = Double.parseDouble(parts[2].split("=")[1]);
+        if(red>1.0) {
+            red/=255;
+        }
+        if(green>1.0) {
+            green/=255;
+        }
+        if(blue>1.0) {
+            blue/=255;
+        }
         return new Color(red, green, blue, 1);
     }
 }

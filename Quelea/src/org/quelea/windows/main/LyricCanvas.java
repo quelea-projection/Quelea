@@ -27,6 +27,7 @@ import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
 import javafx.animation.ParallelTransition;
 import javafx.animation.Timeline;
+import javafx.animation.Transition;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -42,14 +43,13 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 import javafx.scene.text.Font;
-import javafx.scene.text.FontPosture;
-import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 import javafx.util.Duration;
 import org.quelea.Background;
 import org.quelea.Theme;
+import org.quelea.displayable.TextDisplayable;
 import org.quelea.notice.NoticeDrawer;
 import org.quelea.utils.QueleaProperties;
 import org.quelea.utils.Utils;
@@ -64,13 +64,18 @@ public class LyricCanvas extends StackPane {
     private Theme theme;
     private String[] text;
     private String[] smallText;
+    private boolean fadeText;
+    private Paint lastColor;
     private boolean cleared;
     private boolean blacked;
     private boolean capitaliseFirst;
     private NoticeDrawer noticeDrawer;
     private boolean stageView;
     private Group textGroup;
+    private TextDisplayable curDisplayable;
+    private int curIndex;
     private ImageView background;
+    private ImageView blackImg;
 
     /**
      * Create a new canvas where the lyrics should be displayed.
@@ -82,6 +87,7 @@ public class LyricCanvas extends StackPane {
         setMinHeight(0);
         setMinWidth(0);
         this.stageView = stageView;
+        blackImg = new ImageView(Utils.getImageFromColour(Color.BLACK));
         noticeDrawer = new NoticeDrawer(this);
         text = new String[]{};
         theme = Theme.DEFAULT_THEME;
@@ -92,13 +98,13 @@ public class LyricCanvas extends StackPane {
         heightProperty().addListener(new ChangeListener<Number>() {
             @Override
             public void changed(ObservableValue<? extends Number> ov, Number t, Number t1) {
-                drawText();
+                update();
             }
         });
         widthProperty().addListener(new ChangeListener<Number>() {
             @Override
             public void changed(ObservableValue<? extends Number> ov, Number t, Number t1) {
-                drawText();
+                update();
             }
         });
     }
@@ -110,46 +116,98 @@ public class LyricCanvas extends StackPane {
         StackPane.setAlignment(ret, Pos.CENTER);
         return ret;
     }
-    private Paint lastColor;
 
-    public void drawText() {
+    public void update() {
         Platform.runLater(new Runnable() {
             @Override
             public void run() {
+                drawText();
+                if(blacked) {
+                    if(getChildren().contains(background)) {
+                        getChildren().add(0, blackImg);
+                        getChildren().remove(background);
+                    }
+                }
+                else {
+                    if(!getChildren().contains(background)) {
+                        getChildren().remove(blackImg);
+                        getChildren().add(0, background);
+                    }
+                }
                 background.setFitHeight(getHeight());
                 background.setFitWidth(getWidth());
-                Font font = theme.getFont();
-                textGroup.getChildren().clear();
-                List<String> text = sanctifyText();
-                double fontSize = pickFontSize(font, text, getWidth(), getHeight());
-                font = Font.font(font.getName(), fontSize);
-                FontMetrics metrics = Toolkit.getToolkit().getFontLoader().getFontMetrics(font);
-                int y = 0;
-                ParallelTransition transition = new ParallelTransition();
-                for(String line : text) {
-                    Text t = new Text(line);
-                    double width = metrics.computeStringWidth(line);
-                    double centreOffset = (getWidth() - width) / 2;
-                    t.setFont(font);
-                    t.setX(centreOffset);
-                    t.setY(y);
-                    if(theme.getFontPaint() == lastColor || lastColor == null) {
-                        t.setFill(theme.getFontPaint());
-                    }
-                    else {
-                        Timeline timeline = new Timeline(new KeyFrame(Duration.ZERO, new KeyValue(t.fillProperty(), lastColor)),
-                                new KeyFrame(Duration.seconds(0.3), new KeyValue(t.fillProperty(), theme.getFontPaint())));
-                        transition.getChildren().add(timeline);
-                    }
-                    y += metrics.getLineHeight();
-                    textGroup.getChildren().add(t);
-                }
-                if(!transition.getChildren().isEmpty()) {
-                    transition.play();
-                }
-                lastColor = theme.getFontPaint();
+                blackImg.setFitHeight(getHeight());
+                blackImg.setFitWidth(getWidth());
             }
         });
+    }
+
+    private void drawText() {
+        if(cleared||blacked) {
+            textGroup.getChildren().clear();
+            return;
+        }
+        Font font = theme.getFont();
+        List<String> newText = sanctifyText();
+        double fontSize = pickFontSize(font, newText, getWidth(), getHeight());
+        font = Font.font(font.getName(), fontSize);
+        FontMetrics metrics = Toolkit.getToolkit().getFontLoader().getFontMetrics(font);
+        int y = 0;
+        final Group newTextGroup = new Group();
+        final Group oldTextGroup = textGroup;
+//        newTextGroup.setOpacity(0);
+        getChildren().add(newTextGroup);
+        getChildren().remove(oldTextGroup);
+
+        ParallelTransition paintTransition = new ParallelTransition();
+        for(String line : newText) {
+            Text t = new Text(line);
+            double width = metrics.computeStringWidth(line);
+            double centreOffset = (getWidth() - width) / 2;
+            t.setFont(font);
+            t.setX(centreOffset);
+            t.setY(y);
+            if(theme.getFontPaint() == lastColor || lastColor == null) {
+                t.setFill(theme.getFontPaint());
+            }
+            else {
+                Timeline paintTimeline = new Timeline(new KeyFrame(Duration.ZERO, new KeyValue(t.fillProperty(), lastColor)),
+                        new KeyFrame(Duration.seconds(0.3), new KeyValue(t.fillProperty(), theme.getFontPaint())));
+                paintTransition.getChildren().add(paintTimeline);
+            }
+            y += metrics.getLineHeight();
+            newTextGroup.getChildren().add(t);
+        }
+        if(!paintTransition.getChildren().isEmpty()) {
+            paintTransition.play();
+        }
+        lastColor = theme.getFontPaint();
+
+//        double fadeTime;
+//        if(fadeText) {
+//            fadeTime = 0.5;
+//        }
+//        else {
+//            fadeTime = 0.01;
+//        }
+
+//        ParallelTransition fadeTransition = new ParallelTransition();
+//        Timeline fadeOutTimeline = new Timeline(new KeyFrame(Duration.ZERO, new KeyValue(oldTextGroup.opacityProperty(), 1)),
+//                new KeyFrame(Duration.seconds(fadeTime), new KeyValue(oldTextGroup.opacityProperty(), 0)));
+//        fadeTransition.getChildren().add(fadeOutTimeline);
+//        Timeline fadeInTimeline = new Timeline(new KeyFrame(Duration.ZERO, new KeyValue(newTextGroup.opacityProperty(), 0)),
+//                new KeyFrame(Duration.seconds(fadeTime), new KeyValue(newTextGroup.opacityProperty(), 1)));
+//        fadeTransition.getChildren().add(fadeInTimeline);
+//
+//        fadeTransition.setOnFinished(new EventHandler<ActionEvent>() {
+//            @Override
+//            public void handle(ActionEvent t) {
+//                getChildren().remove(oldTextGroup);
+//            }
+//        });
+        textGroup = newTextGroup;
+//
+//        fadeTransition.play();
     }
 
     private double pickFontSize(Font font, List<String> text, double width, double height) {
@@ -320,6 +378,7 @@ public class LyricCanvas extends StackPane {
      */
     public void toggleClear() {
         cleared ^= true; //invert
+        update();
     }
 
     /**
@@ -337,6 +396,7 @@ public class LyricCanvas extends StackPane {
      */
     public void toggleBlack() {
         blacked ^= true; //invert
+        update();
     }
 
     /**
@@ -357,7 +417,7 @@ public class LyricCanvas extends StackPane {
         if(theme == null) {
             theme = Theme.DEFAULT_THEME;
         }
-        if(this.theme==theme) {
+        if(this.theme == theme) {
             return;
         }
         this.theme = theme;
@@ -379,7 +439,7 @@ public class LyricCanvas extends StackPane {
         });
         background = newBackground;
         fadeOut.play();
-        drawText();
+        update();
     }
 
     /**
@@ -395,7 +455,23 @@ public class LyricCanvas extends StackPane {
      * Erase all the text on the canvas.
      */
     public void eraseText() {
-        setText(null, null);
+        setText(null, null, true);
+    }
+
+    public void setText(TextDisplayable displayable, int index) {
+        boolean fade;
+        if(curDisplayable == displayable) {
+            if(curIndex == index) {
+                return;
+            }
+            fade = false;
+        }
+        else {
+            fade = true;
+        }
+        curDisplayable = displayable;
+        curIndex = index;
+        setText(displayable.getSections()[index].getText(false, false), displayable.getSections()[index].getSmallText(), fade);
     }
 
     /**
@@ -408,16 +484,17 @@ public class LyricCanvas extends StackPane {
      * @param smallText an array of the small lines to be displayed on the
      * canvas.
      */
-    public void setText(String[] text, String[] smallText) {
+    public void setText(String[] text, String[] smallText, boolean fade) {
         if(text == null) {
             text = new String[0];
         }
         if(smallText == null) {
             smallText = new String[0];
         }
-        this.smallText = smallText;
+        this.smallText = Arrays.copyOf(smallText, smallText.length);
         this.text = Arrays.copyOf(text, text.length);
-        drawText();
+        this.fadeText = fade;
+        update();
     }
 
     /**
@@ -463,7 +540,7 @@ public class LyricCanvas extends StackPane {
                 stage.show();
 
                 canvas.setText(new String[]{"Line 1", "line 2", "BLAHBLAH BLAH BLAH"},
-                        new String[]{"Tim Hughes", "CCLI number 1469714", "Another line"});
+                        new String[]{"Tim Hughes", "CCLI number 1469714", "Another line"}, true);
 
                 canvas.setTheme(new Theme(Theme.DEFAULT_FONT, Color.WHITE, new Background(Color.BLUE)));
             }
