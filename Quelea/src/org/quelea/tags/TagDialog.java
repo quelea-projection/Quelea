@@ -44,7 +44,7 @@ public class TagDialog extends Stage {
         setTitle(LabelGrabber.INSTANCE.getLabel("filter.tag"));
         
         getIcons().add(new Image("file:icons/tag.png", 16, 16, false, true));
-        list = new LibrarySongList(false);
+        list = new LibrarySongList(true);
         
         BorderPane mainPane = new BorderPane();
         

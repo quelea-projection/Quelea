@@ -17,6 +17,8 @@
  */
 package org.quelea.windows.main;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.ObservableList;
@@ -30,6 +32,7 @@ import org.quelea.QueleaApp;
 import org.quelea.Schedule;
 import org.quelea.displayable.Displayable;
 import org.quelea.displayable.Song;
+import org.quelea.utils.LoggerUtils;
 import org.quelea.windows.library.ContextMenuListCell;
 
 /**
@@ -41,6 +44,7 @@ public class ScheduleList extends ListView<Displayable> {
 
     private Schedule schedule;
     private final ScheduleSongPopupMenu popupMenu;
+    private static final Logger LOGGER = LoggerUtils.getLogger();
 
     /**
      * A direction; either up or down. Used for rearranging the order of items
@@ -57,7 +61,6 @@ public class ScheduleList extends ListView<Displayable> {
     public ScheduleList() {
         popupMenu = new ScheduleSongPopupMenu();
         Callback<ListView<Displayable>, ListCell<Displayable>> callback = new Callback<ListView<Displayable>, ListCell<Displayable>>() {
-
             @Override
             public ListCell<Displayable> call(ListView<Displayable> p) {
                 return new ListCell<Displayable>() {
@@ -68,7 +71,7 @@ public class ScheduleList extends ListView<Displayable> {
                             setGraphic(item.getPreviewIcon());
                             setText(item.getPreviewText());
                         }
-                    }  
+                    }
                 };
             }
         };
@@ -196,7 +199,12 @@ public class ScheduleList extends ListView<Displayable> {
             if(d == preview) {
                 QueleaApp.get().getMainWindow().getMainPanel().getPreviewPanel().clear();
             }
-            d.dispose();
+            if(d == null) {
+                LOGGER.log(Level.WARNING, "Tried to remove null from schedule?");
+            }
+            else {
+                d.dispose();
+            }
             itemsProperty().get().remove(selectedIndex);
         }
     }
