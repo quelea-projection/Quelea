@@ -30,7 +30,7 @@ import org.quelea.windows.main.MainWindow;
 
 /**
  * Action listener that removes the selected song from the database.
- *
+ * <p/>
  * @author Michael
  */
 public class RemoveSongDBActionListener implements EventHandler<ActionEvent> {
@@ -39,7 +39,7 @@ public class RemoveSongDBActionListener implements EventHandler<ActionEvent> {
 
     /**
      * Remove the selected song from the database.
-     *
+     * <p/>
      * @param e the action event.
      */
     @Override
@@ -54,17 +54,15 @@ public class RemoveSongDBActionListener implements EventHandler<ActionEvent> {
         Dialog.buildConfirmation(LabelGrabber.INSTANCE.getLabel("confirm.remove.text"),
                 LabelGrabber.INSTANCE.getLabel("confirm.remove.question").replace("$1", song.getTitle()))
                 .addYesButton(new EventHandler<ActionEvent>() {
-
             @Override
             public void handle(ActionEvent t) {
                 yes = true;
             }
         }).addNoButton(new EventHandler<ActionEvent>() {
-
             @Override
             public void handle(ActionEvent t) {
             }
-        }).build();
+        }).build().showAndWait();
         if(yes) {
             if(!SongDatabase.get().removeSong(song)) {
                 Dialog.showError(LabelGrabber.INSTANCE.getLabel("error.text"), LabelGrabber.INSTANCE.getLabel("error.removing.song.db"));
