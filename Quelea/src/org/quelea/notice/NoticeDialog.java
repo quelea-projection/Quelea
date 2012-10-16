@@ -17,127 +17,118 @@
  */
 package org.quelea.notice;
 
-import java.awt.BorderLayout;
-import java.awt.Dimension;
-import java.awt.GridLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
-import javax.swing.DefaultListModel;
-import javax.swing.JButton;
-import javax.swing.JDialog;
-import javax.swing.JFrame;
-import javax.swing.JList;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.ListSelectionModel;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
+import javafx.event.EventHandler;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
+import javafx.scene.Scene;
+import javafx.scene.control.Button;
+import javafx.scene.control.ListView;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.VBox;
+import javafx.stage.Stage;
+import javafx.stage.StageStyle;
 import org.quelea.languages.LabelGrabber;
-import org.quelea.utils.Utils;
 import org.quelea.windows.main.LyricCanvas;
 
 /**
  * The dialog used to manage the notices.
  * @author Michael
  */
-public class NoticeDialog extends JDialog implements NoticesChangedListener {
+public class NoticeDialog extends Stage implements NoticesChangedListener {
 
-    private JButton newNoticeButton;
-    private JButton removeNoticeButton;
-    private JButton editNoticeButton;
-    private JButton doneButton;
-    private JList<Notice> noticeList;
+    private Button newNoticeButton;
+    private Button removeNoticeButton;
+    private Button editNoticeButton;
+    private Button doneButton;
+    private ListView<Notice> noticeList;
     private List<NoticeDrawer> noticeDrawers;
 
     /**
      * Create a new notice dialog.
      * @param owner the owner of this dialog.
      */
-    public NoticeDialog(JFrame owner) {
-        super(owner, true);
-        setIconImage(Utils.getImage("icons/info.png", 16, 16));
+    public NoticeDialog() {
+        initStyle(StageStyle.UTILITY);
+        BorderPane mainPane = new BorderPane();
+        getIcons().add(new Image("file:icons/info.png"));
         noticeDrawers = new ArrayList<>();
         setTitle("Notices");
-        setLayout(new BorderLayout());
-        JPanel leftPanel = new JPanel();
-        newNoticeButton = new JButton(LabelGrabber.INSTANCE.getLabel("new.notice.text"));
-        newNoticeButton.addActionListener(new ActionListener() {
+        newNoticeButton = new Button(LabelGrabber.INSTANCE.getLabel("new.notice.text"));
+        newNoticeButton.setAlignment(Pos.CENTER);
+        newNoticeButton.setOnAction(new EventHandler<javafx.event.ActionEvent>() {
 
             @Override
-            public void actionPerformed(ActionEvent e) {
-                Notice notice = NoticeEntryDialog.getNotice(NoticeDialog.this, null);
-                if (notice != null) {
-                    ((DefaultListModel<Notice>) noticeList.getModel()).addElement(notice);
-                    for (NoticeDrawer drawer : noticeDrawers) {
+            public void handle(javafx.event.ActionEvent t) {
+                Notice notice = NoticeEntryDialog.getNotice(null);
+                if(notice != null) {
+                    noticeList.getItems().add(notice);
+                    for(NoticeDrawer drawer : noticeDrawers) {
                         drawer.addNotice(notice);
                     }
                 }
             }
         });
-        editNoticeButton = new JButton(LabelGrabber.INSTANCE.getLabel("edit.notice.text"));
-        editNoticeButton.setEnabled(false);
-        editNoticeButton.addActionListener(new ActionListener() {
+        editNoticeButton = new Button(LabelGrabber.INSTANCE.getLabel("edit.notice.text"));
+        editNoticeButton.setAlignment(Pos.CENTER);
+        editNoticeButton.setDisable(true);
+        editNoticeButton.setOnAction(new EventHandler<javafx.event.ActionEvent>() {
 
             @Override
-            public void actionPerformed(ActionEvent e) {
-                NoticeEntryDialog.getNotice(NoticeDialog.this, noticeList.getSelectedValue());
-                validate();
+            public void handle(javafx.event.ActionEvent t) {
+                NoticeEntryDialog.getNotice(noticeList.getSelectionModel().getSelectedItem());
             }
         });
-        removeNoticeButton = new JButton(LabelGrabber.INSTANCE.getLabel("remove.notice.text"));
-        removeNoticeButton.setEnabled(false);
-        removeNoticeButton.addActionListener(new ActionListener() {
+        removeNoticeButton = new Button(LabelGrabber.INSTANCE.getLabel("remove.notice.text"));
+        removeNoticeButton.setAlignment(Pos.CENTER);
+        removeNoticeButton.setDisable(true);
+        removeNoticeButton.setOnAction(new EventHandler<javafx.event.ActionEvent>() {
 
             @Override
-            public void actionPerformed(ActionEvent e) {
-                Notice notice = noticeList.getSelectedValue();
-                ((DefaultListModel) noticeList.getModel()).remove(noticeList.getSelectedIndex());
-                for (NoticeDrawer drawer : noticeDrawers) {
+            public void handle(javafx.event.ActionEvent t) {
+                Notice notice = noticeList.getSelectionModel().getSelectedItem();
+                noticeList.getItems().remove(noticeList.getSelectionModel().getSelectedIndex());
+                for(NoticeDrawer drawer : noticeDrawers) {
                     drawer.removeNotice(notice);
                 }
-                noticeList.validate();
             }
         });
-        leftPanel.setLayout(new GridLayout(3, 1));
-        leftPanel.add(newNoticeButton);
-        leftPanel.add(editNoticeButton);
-        leftPanel.add(removeNoticeButton);
-        JPanel leftPanelBorder = new JPanel();
-        leftPanelBorder.setLayout(new BorderLayout());
-        leftPanelBorder.add(leftPanel, BorderLayout.NORTH);
-        add(leftPanelBorder, BorderLayout.WEST);
+        VBox leftPanel = new VBox();
+        leftPanel.getChildren().add(newNoticeButton);
+        leftPanel.getChildren().add(editNoticeButton);
+        leftPanel.getChildren().add(removeNoticeButton);
+        BorderPane leftPanelBorder = new BorderPane();
+        leftPanelBorder.setTop(leftPanel);
+        mainPane.setLeft(leftPanelBorder);
 
-        noticeList = new JList<>(new DefaultListModel<Notice>());
-        noticeList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-        noticeList.addListSelectionListener(new ListSelectionListener() {
+        noticeList = new ListView<>();
+        noticeList.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<Notice>() {
 
             @Override
-            public void valueChanged(ListSelectionEvent e) {
-                editNoticeButton.setEnabled(noticeList.getSelectedValue() != null);
-                removeNoticeButton.setEnabled(noticeList.getSelectedValue() != null);
+            public void changed(ObservableValue<? extends Notice> ov, Notice t, Notice t1) {
+                editNoticeButton.setDisable(noticeList.getSelectionModel().getSelectedItem() == null);
+                removeNoticeButton.setDisable(noticeList.getSelectionModel().getSelectedItem() == null);
             }
         });
-        noticeList.setPreferredSize(new Dimension((int) noticeList.getPreferredSize().getHeight(), 50));
-        add(new JScrollPane(noticeList), BorderLayout.CENTER);
+        mainPane.setCenter(noticeList);
 
-        doneButton = new JButton(LabelGrabber.INSTANCE.getLabel("done.text"));
-        doneButton.addActionListener(new ActionListener() {
+        doneButton = new Button(LabelGrabber.INSTANCE.getLabel("done.text"), new ImageView(new Image("file:icons/tick.png")));
+        doneButton.setOnAction(new EventHandler<javafx.event.ActionEvent>() {
 
             @Override
-            public void actionPerformed(ActionEvent e) {
-                setVisible(false);
+            public void handle(javafx.event.ActionEvent t) {
+                hide();
             }
         });
-        JPanel southPanel = new JPanel();
-        southPanel.add(doneButton);
-        add(southPanel, BorderLayout.SOUTH);
-        pack();
+        BorderPane.setAlignment(doneButton, Pos.CENTER);
+        BorderPane.setMargin(doneButton, new Insets(5));
+        mainPane.setBottom(doneButton);
+        setScene(new Scene(mainPane));
     }
 
     /**
@@ -148,26 +139,16 @@ public class NoticeDialog extends JDialog implements NoticesChangedListener {
      */
     @Override
     public void noticesUpdated(List<Notice> notices) {
-        ((DefaultListModel<Notice>) noticeList.getModel()).removeAllElements();
-        Set<Notice> noticesSet = new HashSet<>();
-        for (NoticeDrawer drawer : noticeDrawers) {
-            noticesSet.addAll(drawer.getNotices());
-        }
-        for (Notice notice : noticesSet) {
-            ((DefaultListModel<Notice>) noticeList.getModel()).addElement(notice);
-        }
-        validate();
+//        ((DefaultListModel<Notice>) noticeList.getModel()).removeAllElements();
+//        Set<Notice> noticesSet = new HashSet<>();
+//        for (NoticeDrawer drawer : noticeDrawers) {
+//            noticesSet.addAll(drawer.getNotices());
+//        }
+//        for (Notice notice : noticesSet) {
+//            ((DefaultListModel<Notice>) noticeList.getModel()).addElement(notice);
+//        }
     }
 
-    /**
-     * Set the dialog to be visible or not. If visible, centre on its owner.
-     * @param visible true if visible, false if invisible.
-     */
-    @Override
-    public void setVisible(boolean visible) {
-        setLocationRelativeTo(getOwner());
-        super.setVisible(visible);
-    }
 
     /**
      * Register a canvas to be updated using this notice dialog.
@@ -178,22 +159,4 @@ public class NoticeDialog extends JDialog implements NoticesChangedListener {
         canvas.getNoticeDrawer().addNoticeChangedListener(this);
     }
 
-    /**
-     * Testing.
-     * @param args 
-     */
-    public static void main(String[] args) {
-        NoticeDialog dialog = new NoticeDialog(null);
-//        ((DefaultListModel<Notice>)dialog.noticeList.getModel()).addElement(new Notice("Hello there", 2));
-//        ((DefaultListModel<Notice>)dialog.noticeList.getModel()).addElement(new Notice("Hello there 535 ", 2));
-//        ((DefaultListModel<Notice>)dialog.noticeList.getModel()).addElement(new Notice("Hello there 2", 2));
-        dialog.addWindowListener(new WindowAdapter() {
-
-            @Override
-            public void windowClosing(WindowEvent e) {
-                System.exit(0);
-            }
-        });
-        dialog.setVisible(true);
-    }
 }

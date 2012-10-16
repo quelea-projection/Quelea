@@ -17,152 +17,134 @@
  */
 package org.quelea.notice;
 
-import java.awt.BorderLayout;
-import java.awt.Component;
-import java.awt.FlowLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import javax.swing.JButton;
-import javax.swing.JCheckBox;
-import javax.swing.JDialog;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JSpinner;
-import javax.swing.JTextField;
-import javax.swing.SpinnerNumberModel;
-import javax.swing.SpringLayout;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
-import javax.swing.event.DocumentEvent;
-import javax.swing.event.DocumentListener;
+import javafx.beans.value.ObservableValue;
+import javafx.event.EventHandler;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
+import javafx.scene.Scene;
+import javafx.scene.control.Button;
+import javafx.scene.control.CheckBox;
+import javafx.scene.control.Label;
+import javafx.scene.control.TextField;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.GridPane;
+import javafx.scene.layout.HBox;
+import javafx.stage.Modality;
+import javafx.stage.Stage;
+import javafx.stage.StageStyle;
 import org.quelea.languages.LabelGrabber;
-import org.quelea.utils.SpringUtilities;
+import org.quelea.windows.main.NumberSpinner;
 
 /**
  * The entry dialog for creating a notice.
  * @author Michael
  */
-public class NoticeEntryDialog extends JDialog {
+public class NoticeEntryDialog extends Stage {
 
     private static NoticeEntryDialog dialog;
-    private JTextField text;
-    private JSpinner times;
-    private JCheckBox infinite;
-    private JButton addButton;
-    private JButton cancelButton;
+    private TextField text;
+    private NumberSpinner times;
+    private CheckBox infinite;
+    private Button addButton;
+    private Button cancelButton;
     private Notice notice;
 
     /**
      * Create a new notice entry dialog.
      * @param owner the owner of this dialog.
      */
-    public NoticeEntryDialog(JDialog owner) {
-        super(owner, true);
+    public NoticeEntryDialog() {
         setTitle(LabelGrabber.INSTANCE.getLabel("new.notice.heading"));
-        text = new JTextField(50);
-        text.getDocument().addDocumentListener(new DocumentListener() {
+        initModality(Modality.APPLICATION_MODAL);
+        initStyle(StageStyle.UTILITY);
+        getIcons().add(new Image("file:icons/info.png"));
+        text = new TextField();
+        text.textProperty().addListener(new javafx.beans.value.ChangeListener<String>() {
 
             @Override
-            public void insertUpdate(DocumentEvent e) {
-                check();
-            }
-
-            @Override
-            public void removeUpdate(DocumentEvent e) {
-                check();
-            }
-
-            @Override
-            public void changedUpdate(DocumentEvent e) {
-                check();
-            }
-
-            private void check() {
-                addButton.setEnabled(!text.getText().trim().isEmpty());
+            public void changed(ObservableValue<? extends String> ov, String t, String t1) {
+                addButton.setDisable(t1.trim().isEmpty());
             }
         });
-        times = new JSpinner(new SpinnerNumberModel(1, 1, 100, 1));
-        infinite = new JCheckBox();
-        infinite.addChangeListener(new ChangeListener() {
+        times = new NumberSpinner(1,1);
+        infinite = new CheckBox();
+        infinite.selectedProperty().addListener(new javafx.beans.value.ChangeListener<Boolean>() {
 
             @Override
-            public void stateChanged(ChangeEvent e) {
-                if (infinite.isSelected()) {
-                    times.setEnabled(false);
+            public void changed(ObservableValue<? extends Boolean> ov, Boolean t, Boolean t1) {
+                if(infinite.isSelected()) {
+                    times.setDisable(true);
                 }
                 else {
-                    times.setEnabled(true);
+                    times.setDisable(false);
                 }
             }
         });
 
-        JPanel mainPanel = new JPanel();
-        mainPanel.setLayout(new SpringLayout());
-        addBlock(mainPanel, LabelGrabber.INSTANCE.getLabel("notice.text"), text);
-        addBlock(mainPanel, LabelGrabber.INSTANCE.getLabel("notice.times.text"), new JPanel() {
-
-            {
-                setLayout(new FlowLayout(FlowLayout.LEFT, 0, 0));
-                add(times);
-            }
-        });
-        addBlock(mainPanel, LabelGrabber.INSTANCE.getLabel("notice.infinite.question"), infinite);
-        SpringUtilities.makeCompactGrid(mainPanel, 3, 2, 0, 0, 0, 0);
-
-        JPanel southPanel = new JPanel();
-        addButton = new JButton(LabelGrabber.INSTANCE.getLabel("add.notice.button"));
-        getRootPane().setDefaultButton(addButton);
-        addButton.addActionListener(new ActionListener() {
+        GridPane mainPanel = new GridPane();
+        
+        Label noticeText = new Label(LabelGrabber.INSTANCE.getLabel("notice.text"));
+        GridPane.setConstraints(noticeText, 0, 0);
+        mainPanel.getChildren().add(noticeText);
+        GridPane.setConstraints(text, 1, 0);
+        mainPanel.getChildren().add(text);
+        
+        Label noticeTimesText = new Label(LabelGrabber.INSTANCE.getLabel("notice.times.text"));
+        GridPane.setConstraints(noticeTimesText, 0, 1);
+        mainPanel.getChildren().add(noticeTimesText);
+        GridPane.setConstraints(times, 1, 1);
+        mainPanel.getChildren().add(times);
+        
+        Label noticeInfiniteText = new Label(LabelGrabber.INSTANCE.getLabel("notice.infinite.question"));
+        GridPane.setConstraints(noticeInfiniteText, 0, 2);
+        mainPanel.getChildren().add(noticeInfiniteText);
+        GridPane.setConstraints(infinite, 1, 2);
+        mainPanel.getChildren().add(infinite);
+        
+        HBox southPanel = new HBox();
+        addButton = new Button(LabelGrabber.INSTANCE.getLabel("add.notice.button"), new ImageView(new Image("file:icons/tick.png")));
+        addButton.setOnAction(new EventHandler<javafx.event.ActionEvent>() {
 
             @Override
-            public void actionPerformed(ActionEvent e) {
+            public void handle(javafx.event.ActionEvent t) {
                 int numberTimes;
-                if (infinite.isSelected()) {
+                if(infinite.isSelected()) {
                     numberTimes = Integer.MAX_VALUE;
                 }
                 else {
-                    numberTimes = (int) times.getValue();
+                    numberTimes = times.getNumber();
                 }
-                if (notice == null) {
+                if(notice == null) {
                     notice = new Notice(text.getText(), numberTimes);
                 }
                 else {
                     notice.setText(text.getText());
                     notice.setTimes(numberTimes);
                 }
-                setVisible(false);
+                hide();
             }
         });
-        southPanel.add(addButton);
-        cancelButton = new JButton(LabelGrabber.INSTANCE.getLabel("cancel.text"));
-        cancelButton.addActionListener(new ActionListener() {
+        southPanel.getChildren().add(addButton);
+        cancelButton = new Button(LabelGrabber.INSTANCE.getLabel("cancel.text"), new ImageView(new Image("file:icons/cross.png")));
+        cancelButton.setOnAction(new EventHandler<javafx.event.ActionEvent>() {
 
             @Override
-            public void actionPerformed(ActionEvent e) {
+            public void handle(javafx.event.ActionEvent t) {
                 notice = null;
-                setVisible(false);
+                hide();
             }
         });
-        southPanel.add(cancelButton);
+        southPanel.getChildren().add(cancelButton);
+        southPanel.setSpacing(5);
+        southPanel.setAlignment(Pos.CENTER);
+        BorderPane.setMargin(southPanel, new Insets(5));
 
-        setLayout(new BorderLayout());
-        add(mainPanel, BorderLayout.CENTER);
-        add(southPanel, BorderLayout.SOUTH);
-        pack();
-    }
-
-    /**
-     * Add a "block" to a panel, consisting of a label and then a component to
-     * go with that label.
-     * @param panel the panel to add the "block" to.
-     * @param labelText the text to display on the label.
-     * @param component the component to go with the label.
-     */
-    private void addBlock(JPanel panel, String labelText, Component component) {
-        JLabel label = new JLabel(labelText);
-        label.setLabelFor(component);
-        panel.add(label);
-        panel.add(component);
+        BorderPane mainPane = new BorderPane();
+        mainPane.setCenter(mainPanel);
+        mainPane.setBottom(southPanel);
+        setScene(new Scene(mainPane));
     }
 
     /**
@@ -181,19 +163,7 @@ public class NoticeEntryDialog extends JDialog {
         if (infinite.isSelected()) {
             return Integer.MAX_VALUE;
         }
-        return (int) times.getValue();
-    }
-
-    /**
-     * Set the dialog to be visible or not, if visible centre on parent.
-     * @param visible true if visible, false otherwise.
-     */
-    @Override
-    public void setVisible(boolean visible) {
-        if (visible) {
-            setLocationRelativeTo(getOwner());
-        }
-        super.setVisible(visible);
+        return (int) times.getNumber();
     }
 
     /**
@@ -204,15 +174,15 @@ public class NoticeEntryDialog extends JDialog {
         this.notice = notice;
         if (notice == null) {
             infinite.setSelected(false);
-            times.setValue(1);
+            times.setNumber(1);
             text.setText("");
             addButton.setText(LabelGrabber.INSTANCE.getLabel("add.notice.button"));
-            addButton.setEnabled(false);
+            addButton.setDisable(true);
         }
         else {
             infinite.setSelected(notice.getTimes() == Integer.MAX_VALUE);
             if (!infinite.isSelected()) {
-                times.setValue(notice.getTimes());
+                times.setNumber(notice.getTimes());
             }
             text.setText(notice.getText());
             addButton.setText(LabelGrabber.INSTANCE.getLabel("edit.notice.button"));
@@ -221,16 +191,15 @@ public class NoticeEntryDialog extends JDialog {
 
     /**
      * Get a notice that the user enters.
-     * @param owner the owner of the dialog that will be created.
      * @param existing any existing notice to fill the dialog with.
      * @return the user-entered notice.
      */
-    public static Notice getNotice(JDialog owner, Notice existing) {
+    public static Notice getNotice(Notice existing) {
         if (dialog == null) {
-            dialog = new NoticeEntryDialog(owner);
+            dialog = new NoticeEntryDialog();
         }
         dialog.setNotice(existing);
-        dialog.setVisible(true);
+        dialog.showAndWait();
         return dialog.notice;
     }
 }

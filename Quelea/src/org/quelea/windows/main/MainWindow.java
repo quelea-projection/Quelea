@@ -73,7 +73,7 @@ public class MainWindow extends Stage {
         
         BorderPane mainPane = new BorderPane();
         VBox.setVgrow(mainPane, Priority.SOMETIMES);
-//        noticeDialog = new NoticeDialog(this);
+        noticeDialog = new NoticeDialog();
         
         LOGGER.log(Level.INFO, "Creating main window");
         if(setApplicationWindow) {
