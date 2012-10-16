@@ -30,7 +30,7 @@ public class ShowNoticesActionListener implements EventHandler<ActionEvent> {
 
     @Override
     public void handle(ActionEvent t) {
-        QueleaApp.get().getMainWindow().getNoticeDialog().setVisible(true);
+        QueleaApp.get().getMainWindow().getNoticeDialog().show();
     }
     
 }
