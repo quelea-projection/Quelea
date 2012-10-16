@@ -32,7 +32,7 @@
         <property name="FXClasspath" value="${javafx.sdk}/jre/lib/jfxrt.jar"/>
         
         <!-- Check the images conform to spec -->
-        <java className="org.quelea.utils.ImageChecker" classpath="${FXClasspath};build/classes" failonerror="true"/>
+        <java className="org.quelea.utils.ImageChecker" classpath="${FXClasspath};build/classes" failonerror="false"/>
         
         <echo message="Built jar."/>
         <echo message="Copying necessary files to ${dist.jar.dir}"/>
@@ -73,7 +73,7 @@
         <mkdir dir="${dist.jar.dir}/queleadoc" />
         <copy file="${basedir}/licenses/copyright" tofile="${dist.jar.dir}/queleadoc/copyright"/>
         <!-- Compress and copy changelog to correct location -->
-        <java className="org.quelea.utils.GZMaxFileCompressor" classpath="build/classes;${FXClasspath}" failonerror="true">
+        <java className="org.quelea.utils.GZMaxFileCompressor" classpath="build/classes;${FXClasspath}" failonerror="false">
             <arg value="${basedir}/changelogs/changelog-${quelea.version}.txt"/>
             <arg value="${dist.jar.dir}/queleadoc/changelog.gz"/>
         </java>
