@@ -31,7 +31,7 @@ import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JTextField;
-import org.quelea.utils.FadeWindow;
+import javax.swing.JWindow;
 import org.quelea.utils.LoggerUtils;
 import org.quelea.windows.library.LibrarySongList;
 
@@ -40,7 +40,7 @@ import org.quelea.windows.library.LibrarySongList;
  * has typed in.
  * @author Michael
  */
-public class TagPopupWindow extends FadeWindow {
+public class TagPopupWindow extends JWindow {
 
     /**
      * Represents a tag displayed in the popup window. This is not an external
@@ -130,7 +130,7 @@ public class TagPopupWindow extends FadeWindow {
     public TagPopupWindow(final boolean includeUserText) {
         LOGGER.log(Level.INFO, "Tag popup window created \"{0}\"", includeUserText);
         this.includeUserText = includeUserText;
-        setSpeed(0.07f);
+//        setSpeed(0.07f);
         setLayout(new BoxLayout(this.getContentPane(), BoxLayout.Y_AXIS));
         setAlwaysOnTop(true);
     }
