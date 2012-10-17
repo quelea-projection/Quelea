@@ -20,7 +20,7 @@ package org.quelea.powerpoint;
 
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.swing.JOptionPane;
+import org.javafx.dialog.Dialog;
 import org.quelea.languages.LabelGrabber;
 import org.quelea.utils.LoggerUtils;
 import org.quelea.utils.QueleaProperties;
@@ -54,7 +54,7 @@ public class OOUtils {
             }
             else {
                 LOGGER.log(Level.INFO, "Failed to set up openoffice");
-                JOptionPane.showMessageDialog(null, LabelGrabber.INSTANCE.getLabel("setup.oo.failed.text"), LabelGrabber.INSTANCE.getLabel("setup.oo.failed.title"), JOptionPane.WARNING_MESSAGE);
+                Dialog.showWarning(LabelGrabber.INSTANCE.getLabel("setup.oo.failed.title"), LabelGrabber.INSTANCE.getLabel("setup.oo.failed.text"));
             }
         }
         else {

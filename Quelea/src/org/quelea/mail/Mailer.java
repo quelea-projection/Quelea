@@ -32,8 +32,7 @@ import javax.mail.Session;
 import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeMultipart;
-import javax.swing.JOptionPane;
-import org.quelea.QueleaApp;
+import org.javafx.dialog.Dialog;
 import org.quelea.Schedule;
 import org.quelea.languages.LabelGrabber;
 import org.quelea.utils.LoggerUtils;
@@ -41,6 +40,7 @@ import org.quelea.utils.LoggerUtils;
 /**
  * A singleton class used for sending off a schedule using the default email
  * program.
+ * <p/>
  * @author Michael
  */
 public class Mailer {
@@ -54,12 +54,13 @@ public class Mailer {
 
     /**
      * Get the singleton instance of this class.
+     * <p/>
      * @return the singleton instance of this class.
      */
     public static Mailer getInstance() {
-        if (instance == null) {
-            synchronized (Mailer.class) {
-                if (instance == null) {
+        if(instance == null) {
+            synchronized(Mailer.class) {
+                if(instance == null) {
                     instance = new Mailer();
                 }
             }
@@ -69,17 +70,17 @@ public class Mailer {
 
     /**
      * Send the given schedule via e-mail.
+     * <p/>
      * @param schedule the schedule to send as an attachment.
      * @param body the body of the email.
      */
     public void sendSchedule(Schedule schedule, String body) {
 
-        if (schedule == null || !schedule.iterator().hasNext()) {
+        if(schedule == null || !schedule.iterator().hasNext()) {
             LOGGER.log(Level.WARNING, "Empty schedule passed to email, aborting");
         }
 
         try {
-
             MimeMessage msg = new MimeMessage(Session.getInstance(System.getProperties()));
             msg.setSubject("Quelea schedule");
 
@@ -105,32 +106,28 @@ public class Mailer {
             mbp2.setDataHandler(new DataHandler(fds));
             mbp2.setFileName("schedule.qsch");
 
-            // create the Multipart and add its parts to it
             Multipart mp = new MimeMultipart();
             mp.addBodyPart(mbp1);
             mp.addBodyPart(mbp2);
-
-            // add the Multipart to the message
             msg.setContent(mp);
 
-            // set the Date: header
             msg.setSentDate(new Date());
 
             File temp = File.createTempFile("quelea", ".eml");
             temp.deleteOnExit();
-            try (FileOutputStream stream = new FileOutputStream(temp)) {
+            try(FileOutputStream stream = new FileOutputStream(temp)) {
                 msg.writeTo(stream);
             }
             try {
                 Desktop.getDesktop().open(temp);
             }
-            catch (Throwable ex) {
-//                JOptionPane.showMessageDialog(Application.get().getMainWindow(),LabelGrabber.INSTANCE.getLabel("email.error.text"),
-//                        LabelGrabber.INSTANCE.getLabel("email.error.title"), JOptionPane.WARNING_MESSAGE);
+            catch(Throwable ex) {
+                LOGGER.log(Level.WARNING, "Error with mailer", ex);
+                Dialog.showWarning(LabelGrabber.INSTANCE.getLabel("email.error.title"), LabelGrabber.INSTANCE.getLabel("email.error.text"));
             }
 
         }
-        catch (MessagingException | IOException ex) {
+        catch(MessagingException | IOException ex) {
             LOGGER.log(Level.WARNING, "Error sending mail", ex);
         }
     }

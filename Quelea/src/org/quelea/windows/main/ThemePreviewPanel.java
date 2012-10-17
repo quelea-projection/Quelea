@@ -37,7 +37,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
-import name.antonsmirnov.javafx.dialog.Dialog;
+import org.javafx.dialog.Dialog;
 import org.quelea.Theme;
 import org.quelea.languages.LabelGrabber;
 import org.quelea.utils.LoggerUtils;

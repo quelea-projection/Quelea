@@ -26,7 +26,7 @@ import java.util.logging.Logger;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.stage.Stage;
-import name.antonsmirnov.javafx.dialog.Dialog;
+import org.javafx.dialog.Dialog;
 import org.quelea.bible.BibleManager;
 import org.quelea.languages.LabelGrabber;
 import org.quelea.phonehome.PhoneHome;

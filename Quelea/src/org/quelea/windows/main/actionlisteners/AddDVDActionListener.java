@@ -21,7 +21,7 @@ package org.quelea.windows.main.actionlisteners;
 import java.io.File;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
-import javax.swing.JOptionPane;
+import org.javafx.dialog.Dialog;
 import org.quelea.QueleaApp;
 import org.quelea.displayable.VideoDisplayable;
 import org.quelea.languages.LabelGrabber;
@@ -42,7 +42,7 @@ public class AddDVDActionListener implements EventHandler<ActionEvent> {
             }
         }
         if(file == null) {
-//            JOptionPane.showMessageDialog(Application.get().getMainWindow(), LabelGrabber.INSTANCE.getLabel("no.dvd.error"), LabelGrabber.INSTANCE.getLabel("no.dvd.heading"), JOptionPane.ERROR_MESSAGE);
+            Dialog.showError(LabelGrabber.INSTANCE.getLabel("no.dvd.heading"), LabelGrabber.INSTANCE.getLabel("no.dvd.error"));
         }
         else {
             VideoDisplayable displayable = new VideoDisplayable(file, VideoDisplayable.VideoType.DVD);

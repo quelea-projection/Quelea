@@ -20,8 +20,7 @@ package org.quelea.windows.main.actionlisteners;
 
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
-import javax.swing.JOptionPane;
-import name.antonsmirnov.javafx.dialog.Dialog;
+import org.javafx.dialog.Dialog;
 import org.quelea.QueleaApp;
 import org.quelea.languages.LabelGrabber;
 import org.quelea.windows.main.MainPanel;

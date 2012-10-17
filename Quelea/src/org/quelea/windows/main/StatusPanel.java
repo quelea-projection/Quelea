@@ -25,6 +25,7 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
+import org.quelea.utils.Utils;
 
 /**
  * A status panel that denotes a background task in Quelea.
@@ -57,6 +58,37 @@ public class StatusPanel extends HBox {
         getChildren().add(label);
         getChildren().add(progressBar);
         getChildren().add(cancelButton);
+    }
+    
+    /**
+     * Convenience method to set the progress of the progress bar. Thread safe.
+     * @param progress the progress to set the bar to.
+     */
+    public void setProgress(final double progress) {
+        Platform.runLater(new Runnable() {
+
+            @Override
+            public void run() {
+                progressBar.setProgress(progress);
+            }
+        });
+    }
+    
+    private double progressVal = 0;
+    /**
+     * Convenience method to get the current progress. Thread safe.
+     * @return the current progress.
+     */
+    public double getProgress() {
+        progressVal = 0;
+        Utils.fxRunAndWait(new Runnable() {
+
+            @Override
+            public void run() {
+                progressVal = progressBar.getProgress();
+            }
+        });
+        return progressVal;
     }
 
     /**
