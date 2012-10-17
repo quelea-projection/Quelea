@@ -21,7 +21,7 @@ import java.io.File;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.stage.FileChooser;
-import name.antonsmirnov.javafx.dialog.Dialog;
+import org.javafx.dialog.Dialog;
 import org.quelea.languages.LabelGrabber;
 import org.quelea.utils.FileFilters;
 import org.quelea.utils.QueleaProperties;

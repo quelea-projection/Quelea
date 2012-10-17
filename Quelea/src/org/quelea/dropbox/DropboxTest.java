@@ -28,7 +28,7 @@ import com.dropbox.client2.session.WebAuthSession.WebAuthInfo;
 import java.awt.Desktop;
 import java.io.ByteArrayInputStream;
 import java.net.URL;
-import javax.swing.JOptionPane;
+import org.javafx.dialog.Dialog;
 
 /**
  * A very basic dropbox example.
@@ -50,7 +50,7 @@ public class DropboxTest {
         String url = authInfo.url;
 
         Desktop.getDesktop().browse(new URL(url).toURI());
-        JOptionPane.showMessageDialog(null, "Press ok to continue once you have authenticated.");
+        Dialog.showInfo("Press ok to continue once you have authenticated.", "Authentication");
         session.retrieveWebAccessToken(pair);
 
         AccessTokenPair tokens = session.getAccessTokenPair();

@@ -17,7 +17,6 @@
  */
 package org.quelea.utils;
 
-import java.awt.Rectangle;
 import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
@@ -26,7 +25,6 @@ import java.util.Properties;
 import javafx.geometry.BoundingBox;
 import javafx.geometry.Bounds;
 import javafx.scene.paint.Color;
-import javax.swing.UIManager;
 import org.quelea.bible.Bible;
 import org.quelea.displayable.TextAlignment;
 
@@ -108,24 +106,6 @@ public final class QueleaProperties extends Properties {
         return getProperty("facebook.page", "http://www.facebook.com/quelea.projection");
     }
 
-    /**
-     * Get the look and feel property that should be used as specified in the
-     * properties file.
-     * <p/>
-     * @return the look and feel string name.
-     */
-    public String getLaf() {
-        if(Utils.isMac()) {
-            return ch.randelshofer.quaqua.QuaquaManager.getLookAndFeel().getClass().getName();
-        }
-        String laf = getProperty("laf", "javax.swing.plaf.nimbus.NimbusLookAndFeel");
-        if(laf.trim().equalsIgnoreCase("System")) {
-            return UIManager.getSystemLookAndFeelClassName();
-        }
-        else {
-            return laf;
-        }
-    }
 
     /**
      * Get the Quelea home directory in the user's directory.

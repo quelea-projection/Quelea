@@ -17,7 +17,6 @@
  */
 package org.quelea.bible;
 
-import java.awt.Component;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -31,17 +30,12 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
-import javax.swing.JLabel;
-import javax.swing.JList;
-import javax.swing.ListCellRenderer;
-import javax.swing.border.EmptyBorder;
 import org.quelea.languages.LabelGrabber;
-import org.quelea.utils.Utils;
 import org.quelea.windows.library.ContextMenuListCell;
 
 /**
  * A dialog that can be used for searching for bible passages.
- *
+ * <p/>
  * @author mjrb5
  */
 public class BibleSearchDialog extends Stage implements BibleChangeListener {
@@ -147,60 +141,6 @@ public class BibleSearchDialog extends Stage implements BibleChangeListener {
         bibles.itemsProperty().get().add(LabelGrabber.INSTANCE.getLabel("all.text"));
         for(Bible bible : BibleManager.get().getBibles()) {
             bibles.itemsProperty().get().add(bible.getName());
-        }
-    }
-
-    /**
-     * Renderer for displaying a preview of the part of the bible chapter
-     * containing the search text.
-     */
-    private class SearchPreviewRenderer extends JLabel implements ListCellRenderer<BibleChapter> {
-
-        /**
-         * @inheritDoc
-         */
-        @Override
-        public Component getListCellRendererComponent(JList<? extends BibleChapter> list, BibleChapter value, int index, boolean isSelected, boolean cellHasFocus) {
-            String tooltip = value.getBook().getBible().getName();
-            setToolTipText(tooltip);
-            String introText = "<b>" + value.getBook().getBookName() + " " + value.getNum() + " (" + Utils.getAbbreviation(value.getBook().getBible().getName()) + ")" + ": </b>";
-            String searchText = searchField.getText().trim().toLowerCase();
-            String passageText = value.getText().trim();
-            int pos = passageText.toLowerCase().indexOf(searchText);
-            int startIndex = pos - 10;
-            while(startIndex >= 0 && !Character.isWhitespace(value.getText().charAt(startIndex))) {
-                startIndex++;
-            }
-            if(startIndex < 0) {
-                startIndex = 0;
-            }
-            int endIndex = pos + 10 + searchText.length();
-            while(endIndex < passageText.length() && !Character.isWhitespace(value.getText().charAt(endIndex))) {
-                endIndex++;
-            }
-            if(endIndex > passageText.length()) {
-                endIndex = passageText.length();
-            }
-            String subStr = "..." + passageText.substring(startIndex, endIndex).trim() + "...";
-            setBorder(new EmptyBorder(5, 5, 5, 5));
-            StringBuilder labelHTML = new StringBuilder();
-            labelHTML.append("<html>");
-            labelHTML.append(introText);
-            labelHTML.append(subStr);
-            labelHTML.append("</html>");
-            setText(labelHTML.toString());
-            if(isSelected) {
-                setBackground(list.getSelectionBackground());
-                setForeground(list.getSelectionForeground());
-            }
-            else {
-                setBackground(list.getBackground());
-                setForeground(list.getForeground());
-            }
-            setEnabled(list.isEnabled());
-            setFont(list.getFont());
-            setOpaque(true);
-            return this;
         }
     }
 }

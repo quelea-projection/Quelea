@@ -19,9 +19,6 @@
 package org.quelea.windows.main.menus;
 
 import java.awt.Desktop;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.KeyEvent;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -33,13 +30,10 @@ import javafx.scene.control.Menu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javax.swing.JMenuItem;
-import javax.swing.JOptionPane;
-import org.quelea.QueleaApp;
+import org.javafx.dialog.Dialog;
 import org.quelea.languages.LabelGrabber;
 import org.quelea.utils.LoggerUtils;
 import org.quelea.utils.QueleaProperties;
-import org.quelea.utils.UpdateChecker;
 import org.quelea.windows.help.AboutDialog;
 
 /**
@@ -166,9 +160,7 @@ public class HelpMenu extends Menu {
      * @param location the location that failed to open.
      */
     private void showError() {
-        //TODO: JFX Dialog
-        System.err.println("Couldn't open the LOCATION");
-//        JOptionPane.showMessageDialog(this, LabelGrabber.INSTANCE.getLabel("help.menu.error.text"), LabelGrabber.INSTANCE.getLabel("help.menu.error.title"), JOptionPane.ERROR_MESSAGE, null);
+        Dialog.showError(LabelGrabber.INSTANCE.getLabel("help.menu.error.title"), LabelGrabber.INSTANCE.getLabel("help.menu.error.text"));
     }
 
     /**

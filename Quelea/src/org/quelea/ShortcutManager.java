@@ -17,15 +17,6 @@
  */
 package org.quelea;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.InputEvent;
-import java.awt.event.KeyEvent;
-import javax.swing.JComponent;
-import javax.swing.KeyStroke;
-import org.quelea.print.Printer;
-import org.quelea.windows.main.MainPanel;
-
 /**
  * Manage adding the shortcuts for the application.
  * @author Michael
@@ -35,6 +26,7 @@ public class ShortcutManager {
     /**
      * Add in the shortcuts to the main panel.
      */
+    //TODO: Add back in
     public void addShortcuts() {
 //        final MainPanel mainPanel = Application.get().getMainWindow().getMainPanel();
 //        mainPanel.registerKeyboardAction(new ActionListener() {

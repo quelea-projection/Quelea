@@ -19,7 +19,6 @@ package org.quelea.windows.library;
 
 import org.quelea.displayable.ImageDisplayable;
 import java.awt.Component;
-import java.awt.image.BufferedImage;
 import java.io.File;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
@@ -31,9 +30,6 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
 import javafx.util.Callback;
-import javax.swing.DefaultListCellRenderer;
-import javax.swing.JList;
-import javax.swing.border.EmptyBorder;
 import org.quelea.utils.Utils;
 
 /**
@@ -112,16 +108,6 @@ public class ImageListPanel extends BorderPane {
         runner.start();
     }
 
-    /**
-     * Get the full size currently selected image.
-     *
-     * @return the full size currently selected image.
-     */
-    public BufferedImage getSelectedImage() {
-        File file = imageList.selectionModelProperty().get().getSelectedItem().getFile();
-        return Utils.getImage(file.getAbsolutePath());
-    }
-    
     private static class ImageCell extends ListCell<ImageDisplayable> {
         @Override
         public void updateItem(ImageDisplayable item, boolean empty) {
@@ -131,21 +117,6 @@ public class ImageListPanel extends BorderPane {
                 setGraphic(iv);
                 setText(null);
             }
-        }
-    }
-
-    /**
-     * The custom cell renderer for the JList behind the panel.
-     */
-    private static class CustomCellRenderer extends DefaultListCellRenderer {
-
-        @Override
-        public Component getListCellRendererComponent(JList<?> list, Object value, int index,
-                boolean isSelected, boolean cellHasFocus) {
-            CustomCellRenderer ret = (CustomCellRenderer) super.getListCellRendererComponent(list, ((ImageDisplayable) value).getImage(), index, isSelected, cellHasFocus);
-            ret.setBorder(new EmptyBorder(5, 5, 5, 5));
-            ret.setToolTipText(((ImageDisplayable) value).getFile().getName());
-            return ret;
         }
     }
 }

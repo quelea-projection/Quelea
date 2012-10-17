@@ -41,9 +41,7 @@ import javafx.stage.FileChooser.ExtensionFilter;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
-import javax.swing.SwingUtilities;
-import javax.swing.SwingWorker;
-import name.antonsmirnov.javafx.dialog.Dialog;
+import org.javafx.dialog.Dialog;
 import org.quelea.QueleaApp;
 import org.quelea.SongDuplicateChecker;
 import org.quelea.displayable.Song;
@@ -140,25 +138,24 @@ public abstract class ImportDialog extends Stage implements PropertyChangeListen
                 });
                 final String location = locationField.getText();
                 setActive();
-                SwingWorker worker = new SwingWorker() {
+                Thread worker = new Thread() {
                     private List<Song> localSongs;
                     private boolean[] localSongsDuplicate;
                     private ExecutorService checkerService = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
 
                     @Override
-                    protected Object doInBackground() {
+                    public void run() {
                         try {
                             localSongs = parser.getSongs(new File(location), statusPanel);
 //                            Song[] localSongsArr = new Song[localSongs.size()];
 //                            for(int i=0 ; i<localSongs.size() ; i++) {
 //                                localSongsArr[i] = localSongs.get(i);
 //                            }
-                            localSongsDuplicate = new boolean[localSongs.size()];
+//                            localSongsDuplicate = new boolean[localSongs.size()];
                             if(halt) {
                                 localSongs = null;
-                                return null;
                             }
-                            statusPanel.getProgressBar().setProgress(0);
+                            statusPanel.setProgress(0);
                             if(checkDuplicates.isSelected()) {
 //                                localSongsDuplicate = new SongDuplicateChecker().checkSongs(localSongsArr);
                                 for(int i = 0; i < localSongs.size(); i++) {
@@ -169,14 +166,10 @@ public abstract class ImportDialog extends Stage implements PropertyChangeListen
                                             if(!halt) {
                                                 final boolean result = new SongDuplicateChecker().checkSong(localSongs.get(finali));
                                                 localSongsDuplicate[finali] = result;
-                                                final int progress = (int) (((double) finali / localSongs.size()) * 100);
-                                                SwingUtilities.invokeLater(new Runnable() {
-                                                    public void run() {
-                                                        if(statusPanel.getProgressBar().getProgress() < progress) {
-                                                            statusPanel.getProgressBar().setProgress(progress);
-                                                        }
-                                                    }
-                                                });
+                                                final double progress = ((double) finali / localSongs.size());
+                                                if(statusPanel.getProgress() < progress) {
+                                                    statusPanel.setProgress(progress);
+                                                }
                                             }
                                         }
                                     }));
@@ -184,41 +177,34 @@ public abstract class ImportDialog extends Stage implements PropertyChangeListen
                                 try {
                                     checkerService.shutdown();
                                     checkerService.awaitTermination(365, TimeUnit.DAYS); //Year eh? ;-)
+                                    Platform.runLater(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            if((localSongs == null || localSongs.isEmpty()) && !halt) {
+                                                Dialog.showWarning(LabelGrabber.INSTANCE.getLabel("import.no.songs.title"), LabelGrabber.INSTANCE.getLabel("import.no.songs.text"));
+                                            }
+                                            else if(!(localSongs == null || localSongs.isEmpty())) {
+
+                                                getImportedDialog().setSongs(localSongs, localSongsDuplicate, true);
+                                                getImportedDialog().show();
+                                            }
+                                            setIdle();
+                                        }
+                                    });
                                 }
                                 catch(InterruptedException ex) {
+                                    LOGGER.log(Level.WARNING, "Interrupted?!", ex);
                                 }
                             }
-                            return localSongs;
+
                         }
                         catch(IOException ex) {
                             Dialog.showError(LabelGrabber.INSTANCE.getLabel("error.text"), LabelGrabber.INSTANCE.getLabel("import.error.message"));
                             LOGGER.log(Level.WARNING, "Error importing songs", ex);
-                            return null;
                         }
                     }
-
-                    @Override
-                    protected void done() {
-                        checkerService.shutdownNow();
-                        Platform.runLater(new Runnable() {
-
-                            @Override
-                            public void run() {
-                                if((localSongs == null || localSongs.isEmpty()) && !halt) {
-                                    Dialog.showWarning(LabelGrabber.INSTANCE.getLabel("import.no.songs.title"), LabelGrabber.INSTANCE.getLabel("import.no.songs.text"));
-                                }
-                                else if(!(localSongs == null || localSongs.isEmpty())) {
-
-                                    getImportedDialog().setSongs(localSongs, localSongsDuplicate, true);
-                                    getImportedDialog().show();
-                                }
-                                setIdle();
-                            }
-                        });
-                    }
                 };
-                worker.addPropertyChangeListener(ImportDialog.this);
-                worker.execute();
+                worker.start();
             }
         });
         setResizable(false);

@@ -22,7 +22,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
-import javax.swing.JOptionPane;
+import org.javafx.dialog.Dialog;
 import org.quelea.QueleaApp;
 import org.quelea.Schedule;
 import org.quelea.ScheduleSaver;
@@ -33,12 +33,13 @@ import org.quelea.utils.LoggerUtils;
 /**
  * The exit action listener - called when the user requests they wish to exit
  * Quelea.
- *
+ * <p/>
  * @author Michael
  */
 public class ExitActionListener implements EventHandler<ActionEvent> {
 
     private static final Logger LOGGER = LoggerUtils.getLogger();
+    private boolean cancel = false;
 
     /**
      * Call this method when the event is fired.
@@ -53,27 +54,38 @@ public class ExitActionListener implements EventHandler<ActionEvent> {
      */
     public void exit() {
         LOGGER.log(Level.INFO, "exit() called");
-//        Schedule schedule = Application.get().getMainWindow().getMainPanel().getSchedulePanel().getScheduleList().getSchedule();
-//        if(!schedule.isEmpty() && schedule.isModified()) {
-//            int val = JOptionPane.showConfirmDialog(null,
-//                    LabelGrabber.INSTANCE.getLabel("save.before.exit.text"),
-//                    LabelGrabber.INSTANCE.getLabel("save.before.exit.title"),
-//                    JOptionPane.YES_NO_CANCEL_OPTION);
-//            switch(val) {
-//                case JOptionPane.YES_OPTION:
-//                    new ScheduleSaver().saveSchedule(false);
-//                    break;
-//                case JOptionPane.NO_OPTION:
-//                    break;
-//                case JOptionPane.CANCEL_OPTION: //Don't exit
-//                    return;
-//            }
-//        }
+        Schedule schedule = QueleaApp.get().getMainWindow().getMainPanel().getSchedulePanel().getScheduleList().getSchedule();
+        if(!schedule.isEmpty() && schedule.isModified()) {
+            cancel = false;
+            Dialog.buildConfirmation(LabelGrabber.INSTANCE.getLabel("save.before.exit.title"), LabelGrabber.INSTANCE.getLabel("save.before.exit.text")).addYesButton(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent t) {
+                    //Save schedule
+                    new ScheduleSaver().saveSchedule(false);
+                }
+            }).addNoButton(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent t) {
+                    //Don't do anything
+                }
+            }).addCancelButton(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent t) {
+                    //Don't exit
+                    cancel = true;
+                }
+            });
+            if(cancel) {
+                return; //Don't exit
+            }
+        }
+        
+        
         LOGGER.log(Level.INFO, "Hiding main window...");
         QueleaApp.get().getMainWindow().hide();
         LOGGER.log(Level.INFO, "Cleaning up displayables before exiting..");
         for(Object obj : QueleaApp.get().getMainWindow().getMainPanel().getSchedulePanel().getScheduleList().itemsProperty().get()) {
-            Displayable d = (Displayable)obj;
+            Displayable d = (Displayable) obj;
             LOGGER.log(Level.INFO, "Cleaning up {0}", d.getClass());
             d.dispose();
         }

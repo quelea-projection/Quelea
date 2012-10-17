@@ -17,25 +17,10 @@
  */
 package org.quelea.windows.main;
 
-import java.awt.BorderLayout;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
-import java.awt.image.BufferedImage;
-import java.util.HashSet;
-import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.BorderPane;
-import javax.swing.DefaultListModel;
-import javax.swing.SwingUtilities;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
-import org.quelea.QueleaApp;
-import org.quelea.Background;
-import org.quelea.Theme;
 import org.quelea.displayable.PresentationDisplayable;
 import org.quelea.powerpoint.OOPresentation;
 import org.quelea.powerpoint.PresentationSlide;
-import org.quelea.powerpoint.SlideChangedListener;
 import org.quelea.utils.QueleaProperties;
 
 /**
