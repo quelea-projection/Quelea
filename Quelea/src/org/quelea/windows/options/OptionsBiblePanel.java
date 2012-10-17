@@ -31,7 +31,7 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.GridPane;
 import javafx.stage.FileChooser;
-import name.antonsmirnov.javafx.dialog.Dialog;
+import org.javafx.dialog.Dialog;
 import org.quelea.QueleaApp;
 import org.quelea.bible.Bible;
 import org.quelea.bible.BibleChangeListener;

@@ -45,17 +45,18 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
+import java.util.concurrent.Semaphore;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javafx.application.Platform;
 import javafx.geometry.BoundingBox;
 import javafx.geometry.Bounds;
 import javafx.scene.image.Image;
 import javafx.scene.image.PixelWriter;
 import javafx.scene.image.WritableImage;
 import javafx.scene.paint.Color;
-import javax.imageio.ImageIO;
-import javax.swing.*;
-import name.antonsmirnov.javafx.dialog.Dialog;
+import javafx.stage.Stage;
+import org.javafx.dialog.Dialog;
 import org.quelea.QueleaApp;
 import org.quelea.SongDatabase;
 import org.quelea.displayable.Song;
@@ -96,6 +97,38 @@ public final class Utils {
         }
         catch(InterruptedException ex) {
             //Nothing
+        }
+    }
+    
+    /**
+     * Run something on the JavaFX platform thread and wait for it to complete.
+     * <p/>
+     * @param runnable the runnable to run.
+     */
+    public static void fxRunAndWait(Runnable runnable) {
+        if(Platform.isFxApplicationThread()) {
+            runnable.run();
+            return;
+        }
+        final Semaphore sem = new Semaphore(1);
+        try {
+            sem.acquire();
+        }
+        catch(InterruptedException ex) {
+            LOGGER.log(Level.SEVERE, "Interrupted!", ex);
+        }
+        Platform.runLater(runnable);
+        Platform.runLater(new Runnable() {
+            @Override
+            public void run() {
+                sem.release();
+            }
+        });
+        try {
+            sem.acquire();
+        }
+        catch(InterruptedException ex) {
+            LOGGER.log(Level.SEVERE, "Interrupted!", ex);
         }
     }
 
@@ -182,19 +215,18 @@ public final class Utils {
         }
         else {
             final StatusPanel statusPanel = QueleaApp.get().getStatusGroup().addPanel(LabelGrabber.INSTANCE.getLabel("updating.db"));
-            SwingWorker<Void, Void> worker = new SwingWorker<Void, Void>() {
+            new Thread() {
                 @Override
-                protected Void doInBackground() {
+                public void run() {
                     updateRunner.run();
-                    return null;
+                    Platform.runLater(new Runnable() {
+                        @Override
+                        public void run() {
+                            statusPanel.done();
+                        }
+                    });
                 }
-
-                @Override
-                protected void done() {
-                    statusPanel.done();
-                }
-            };
-            worker.execute();
+            }.start();
         }
     }
 
@@ -311,25 +343,25 @@ public final class Utils {
     }
 
     /**
-     * Determine whether the given frame is completely on the given screen.
+     * Determine whether the given stage is completely on the given screen.
      * <p/>
-     * @param frame the frame to check.
+     * @param stage the stage to check.
      * @param monitorNum the monitor number to check.
      * @return true if the frame is totally on the screen, false otherwise.
      */
-    public static boolean isFrameOnScreen(JFrame frame, int monitorNum) {
+    public static boolean isFrameOnScreen(Stage stage, int monitorNum) {
         GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
         final GraphicsDevice[] gds = ge.getScreenDevices();
-        return gds[monitorNum].getDefaultConfiguration().getBounds().contains(frame.getBounds());
+        return gds[monitorNum].getDefaultConfiguration().getBounds().contains(stage.getX(), stage.getY(), stage.getWidth(), stage.getHeight());
     }
 
     /**
-     * Centre the given frame on the given monitor.
+     * Centre the given stage on the given monitor.
      * <p/>
-     * @param frame the frame to centre.
+     * @param stage the stage to centre.
      * @param monitorNum the monitor number to centre the frame on.
      */
-    public static void centreOnMonitor(final JFrame frame, int monitorNum) {
+    public static void centreOnMonitor(final Stage stage, int monitorNum) {
         GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
         final GraphicsDevice[] gds = ge.getScreenDevices();
         Rectangle bounds = gds[monitorNum].getDefaultConfiguration().getBounds();
@@ -338,14 +370,15 @@ public final class Utils {
         Runnable locationSetter = new Runnable() {
             @Override
             public void run() {
-                frame.setLocation(centreX - frame.getWidth() / 2, centreY - frame.getHeight() / 2);
+                stage.setX(centreX - stage.getWidth() / 2);
+                stage.setY(centreY - stage.getHeight() / 2);
             }
         };
-        if(SwingUtilities.isEventDispatchThread()) {
+        if(Platform.isFxApplicationThread()) {
             locationSetter.run();
         }
         else {
-            SwingUtilities.invokeLater(locationSetter);
+            Platform.runLater(locationSetter);
         }
     }
 
@@ -487,68 +520,6 @@ public final class Utils {
     }
 
     /**
-     * Get an image icon from the location of a specified file.
-     * <p/>
-     * @param location the location of the image to use.
-     * @return the icon formed from the image, or null if an IOException
-     * occured.
-     */
-    //TODO: Delete method
-    public static ImageIcon getImageIcon(String location) {
-        return null;
-    }
-
-    /**
-     * Get an image icon from the location of a specified file.
-     * <p/>
-     * @param location the location of the image to use.
-     * @param width the width of the given image icon.
-     * @param height the height of the given image icon.
-     * @return the icon formed from the image, or null if an IOException
-     * occured.
-     */
-    //TODO: Delete method
-    public static ImageIcon getImageIcon(String location, int width, int height) {
-        return null;
-    }
-
-    /**
-     * Get an image from the location of a specified file.
-     * <p/>
-     * @param location the location of the image to use.
-     * @return the icon formed from the image, or null if an IOException
-     * occured.
-     */
-    public static BufferedImage getImage(String location) {
-        return getImage(location, -1, -1);
-    }
-
-    /**
-     * Get an image from the location of a specified file.
-     * <p/>
-     * @param location the location of the image to use.
-     * @param width the width of the returned image.
-     * @param height the height of the returned image.
-     * @return the icon formed from the image, or null if an IOException
-     * occured.
-     */
-    public static BufferedImage getImage(String location, int width, int height) {
-        try {
-            BufferedImage image = ImageIO.read(new File(location));
-            if(width > 0 && height > 0) {
-                return resizeImage(image, width, height);
-            }
-            else {
-                return image;
-            }
-        }
-        catch(IOException ex) {
-            LOGGER.log(Level.WARNING, "Couldn't get image: " + location, ex);
-            return null;
-        }
-    }
-
-    /**
      * Resize a given image to the given width and height.
      * <p/>
      * @param image the image to resize.
@@ -568,18 +539,6 @@ public final class Utils {
         else {
             return image;
         }
-    }
-
-    /**
-     * Convert the given icon to an image.
-     * <p/>
-     * @param icon the icon to convert.
-     * @return the converted icon.
-     */
-    public static BufferedImage iconToImage(Icon icon) {
-        BufferedImage ret = new BufferedImage(icon.getIconWidth(), icon.getIconHeight(), BufferedImage.TYPE_INT_RGB);
-        icon.paintIcon(new JLabel(), ret.createGraphics(), 0, 0);
-        return ret;
     }
 
     /**
@@ -690,14 +649,14 @@ public final class Utils {
         double red = Double.parseDouble(parts[0].split("=")[1]);
         double green = Double.parseDouble(parts[1].split("=")[1]);
         double blue = Double.parseDouble(parts[2].split("=")[1]);
-        if(red>1.0) {
-            red/=255;
+        if(red > 1.0) {
+            red /= 255;
         }
-        if(green>1.0) {
-            green/=255;
+        if(green > 1.0) {
+            green /= 255;
         }
-        if(blue>1.0) {
-            blue/=255;
+        if(blue > 1.0) {
+            blue /= 255;
         }
         return new Color(red, green, blue, 1);
     }

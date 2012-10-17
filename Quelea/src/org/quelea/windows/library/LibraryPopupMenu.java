@@ -23,9 +23,11 @@ import javafx.scene.control.ContextMenu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import org.javafx.dialog.Dialog;
 import org.quelea.QueleaApp;
 import org.quelea.displayable.Song;
 import org.quelea.languages.LabelGrabber;
+import org.quelea.print.Printer;
 import org.quelea.windows.main.actionlisteners.AddSongActionListener;
 import org.quelea.windows.main.actionlisteners.EditSongDBActionListener;
 import org.quelea.windows.main.actionlisteners.RemoveSongDBActionListener;
@@ -56,11 +58,22 @@ public class LibraryPopupMenu extends ContextMenu {
 
             @Override
             public void handle(ActionEvent t) {
-                Song song = QueleaApp.get().getMainWindow().getMainPanel().getLibraryPanel().getLibrarySongPanel().getSongList().getSelectedValue();
+                final Song song = QueleaApp.get().getMainWindow().getMainPanel().getLibraryPanel().getLibrarySongPanel().getSongList().getSelectedValue();
                 if(song != null) {
-//                    int result = JOptionPane.showConfirmDialog(Application.get().getMainWindow(), LabelGrabber.INSTANCE.getLabel("print.chords.question"), LabelGrabber.INSTANCE.getLabel("printing.options.text"), JOptionPane.YES_NO_OPTION);
-//                    song.setPrintChords(result == JOptionPane.YES_OPTION);
-//                    Printer.getInstance().print(song);
+                    Dialog.buildConfirmation(LabelGrabber.INSTANCE.getLabel("printing.options.text"), LabelGrabber.INSTANCE.getLabel("print.chords.question")).addYesButton(new EventHandler<ActionEvent>() {
+
+                        @Override
+                        public void handle(ActionEvent t) {
+                            song.setPrintChords(true);
+                        }
+                    }).addNoButton(new EventHandler<ActionEvent>() {
+
+                        @Override
+                        public void handle(ActionEvent t) {
+                            song.setPrintChords(true);
+                        }
+                    }).build().showAndWait();
+                    Printer.getInstance().print(song);
                 }
             }
         });

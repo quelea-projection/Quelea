@@ -18,15 +18,11 @@
 package org.quelea.powerpoint;
 
 import java.io.IOException;
-import java.util.logging.Logger;
-import javax.swing.JOptionPane;
 import org.apache.poi.hslf.HSLFSlideShow;
 import org.apache.poi.hslf.model.Slide;
 import org.apache.poi.hslf.usermodel.SlideShow;
-import org.apache.poi.poifs.filesystem.OfficeXmlFileException;
-import org.quelea.QueleaApp;
+import org.javafx.dialog.Dialog;
 import org.quelea.languages.LabelGrabber;
-import org.quelea.utils.LoggerUtils;
 
 /**
  * A presentation that can be displayed. At the moment represents a powerpoint
@@ -50,9 +46,7 @@ public class PPTPresentation implements Presentation {
             slides = makeSlides();
         }
         catch(IOException ex) {
-//            JOptionPane.showMessageDialog(Application.get().getMainWindow(),
-//                    LabelGrabber.INSTANCE.getLabel("adding.presentation.error.message"),
-//                    LabelGrabber.INSTANCE.getLabel("adding.presentation.error.title"), JOptionPane.ERROR_MESSAGE);
+            Dialog.showError(LabelGrabber.INSTANCE.getLabel("adding.presentation.error.title"), LabelGrabber.INSTANCE.getLabel("adding.presentation.error.message"));
             throw new RuntimeException("Couldn't find " + file, ex);
         }
     }

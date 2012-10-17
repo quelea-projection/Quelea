@@ -26,8 +26,10 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Pattern;
-import javax.swing.JOptionPane;
-import org.quelea.QueleaApp;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
+import org.javafx.dialog.Dialog;
+import org.javafx.dialog.InputDialog;
 import org.quelea.displayable.Song;
 import org.quelea.languages.LabelGrabber;
 import org.quelea.utils.LoggerUtils;
@@ -36,7 +38,7 @@ import org.quelea.windows.main.StatusPanel;
 
 /**
  * Parse songs imported from the kingsway importer.
- *
+ * <p/>
  * @author Michael and Ben
  */
 public class KingswayWorshipParser implements SongParser {
@@ -59,7 +61,7 @@ public class KingswayWorshipParser implements SongParser {
 
     /**
      * Get the songs from the kingsway online library.
-     *
+     * <p/>
      * @param location not used.
      * @param the status panel. May be null.
      * @return a list of all the songs found.
@@ -67,46 +69,49 @@ public class KingswayWorshipParser implements SongParser {
      */
     @Override
     public List<Song> getSongs(File location, StatusPanel statusPanel) throws IOException {
-        if (all) {
+        if(all) {
             count500 = 0;
             List<Song> ret = new ArrayList<>();
             int i = getStart();
             String pageText;
-            if (statusPanel != null) {
+            if(statusPanel != null) {
                 statusPanel.getProgressBar().setProgress(0);
             }
-            while ((pageText = getPageText(i)) != null) {
+            while((pageText = getPageText(i)) != null) {
                 int percentage = (int) (((double) i / (double) ROUGH_NUM_SONGS) * 100);
                 LOGGER.log(Level.INFO, "Kingsway import percent complete: {0}", percentage);
-                if (statusPanel != null) {
-                    statusPanel.getProgressBar().setProgress((double)percentage/100);
+                if(statusPanel != null) {
+                    statusPanel.getProgressBar().setProgress((double) percentage / 100);
                 }
                 Song song = null;
                 try {
                     song = parseSong(pageText, i);
-                } catch (Exception ex) {
+                }
+                catch(Exception ex) {
                     LOGGER.log(Level.WARNING, "Error importing song", ex);
                 }
-                if (song != DEFAULT) {
+                if(song != DEFAULT) {
                     ret.add(song);
                 }
                 i++;
             }
             int nextVal = i - count500 + 1;
-            if (nextVal < 0) {
+            if(nextVal < 0) {
                 nextVal = 0;
             }
             QueleaProperties.get().setNextKingswaySong(nextVal);
-            if (statusPanel != null) {
+            if(statusPanel != null) {
                 statusPanel.getProgressBar().setProgress(-1);
             }
             return ret;
-        } else {
-            String entry = JOptionPane.showInputDialog(LabelGrabber.INSTANCE.getLabel("song.id.selector"));
+        }
+        else {
+            String entry = InputDialog.getUserInput(LabelGrabber.INSTANCE.getLabel("song.id.selector"), LabelGrabber.INSTANCE.getLabel("song.id.selector"));
             try {
                 int id = Integer.parseInt(entry);
                 return getSong(id);
-            } catch (NumberFormatException nfe) {
+            }
+            catch(NumberFormatException nfe) {
                 return null;
             }
         }
@@ -117,7 +122,7 @@ public class KingswayWorshipParser implements SongParser {
      */
     /**
      * Returns a list containing a single song of the ID given
-     *
+     * <p/>
      * @param songID Kingsway song number
      * @return List of one Song if ID exists or null if not.
      */
@@ -125,12 +130,14 @@ public class KingswayWorshipParser implements SongParser {
         Song song;
         String html = getPageText(songID);
         try {
-            if (html == null || html.equals("")) {
+            if(html == null || html.equals("")) {
                 return null;
-            } else {
+            }
+            else {
                 song = parseSong(html, songID);
             }
-        } catch (Exception ex) {
+        }
+        catch(Exception ex) {
             LOGGER.log(Level.WARNING, "Error importing song: " + songID, ex);
             return null;
         }
@@ -139,49 +146,51 @@ public class KingswayWorshipParser implements SongParser {
         ret.add(song);
         return ret;
     }
-    /*
-     * End of code by Ben Goodwin
-     *
-     * /**
+    private int returnVal;
+
+    /**
      * Work out the number to start importing at.
-     *
+     * <p/>
      * @return the song number to start importing at.
      */
-
     private int getStart() {
-        int start = QueleaProperties.get().getNextKingswaySong();
-        if (start == 0) {
+        final int start = QueleaProperties.get().getNextKingswaySong();
+        if(start == 0) {
             return 0;
         }
-//        int option = JOptionPane.showConfirmDialog(Application.get().getMainWindow(),
-//                LabelGrabber.INSTANCE.getLabel("check.kingsway.start"),
-//                LabelGrabber.INSTANCE.getLabel("check.kingsway.start.title"),
-//                JOptionPane.YES_NO_OPTION, JOptionPane.INFORMATION_MESSAGE);
-        int option = 0;
-        if (option == JOptionPane.YES_OPTION) {
-            return start;
-        } else {
-            return 0;
-        }
+        returnVal = 0;
+        Dialog.buildConfirmation(LabelGrabber.INSTANCE.getLabel("check.kingsway.start.title"), LabelGrabber.INSTANCE.getLabel("check.kingsway.start"))
+                .addYesButton(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent t) {
+                returnVal = start;
+            }
+        }).addNoButton(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent t) {
+                returnVal = 0;
+            }
+        }).build().showAndWait();
+        return returnVal;
     }
 
     /**
      * Parse the given HTML to produce a song object.
-     *
+     * <p/>
      * @param html the HTML to parse.
      * @param num the number of the song (debugging use only)
      * @return the song from the given HTML
      */
     private Song parseSong(String html, int num) {
-        if (html == null) {
+        if(html == null) {
             return null;
         }
-        if (html.isEmpty()) {
+        if(html.isEmpty()) {
             return DEFAULT;
         }
         int startIndex = html.indexOf("<h1>SONG LIBRARY</h1>") + "<h1>SONG LIBRARY</h1>".length();
         int endIndex = html.indexOf("<a class=", startIndex);
-        if (endIndex == -1) {
+        if(endIndex == -1) {
             endIndex = html.indexOf("</div>", startIndex);
         }
         String songHtml = html.substring(startIndex, endIndex).trim();
@@ -219,13 +228,13 @@ public class KingswayWorshipParser implements SongParser {
         songHtml = songHtml.trim();
 
         int i = songHtml.length() - 1;
-        for (int j = 0; j < 2; j++) {
-            while (i > 1) {
-                if (songHtml.charAt(i) == '\n') {
-                    while (songHtml.charAt(i) == ' ') {
+        for(int j = 0; j < 2; j++) {
+            while(i > 1) {
+                if(songHtml.charAt(i) == '\n') {
+                    while(songHtml.charAt(i) == ' ') {
                         i--;
                     }
-                    if (songHtml.charAt(i) == '\n') {
+                    if(songHtml.charAt(i) == '\n') {
                         i--;
                         break;
                     }
@@ -248,12 +257,12 @@ public class KingswayWorshipParser implements SongParser {
         fl = fl.toLowerCase();
         fl = fl.replaceFirst(Pattern.quote(fl.substring(0, 1)), fl.substring(0, 1).toUpperCase()); //recapitalise first letter
         String[] godWords = QueleaProperties.get().getGodWords();
-        for (int c = 0; c < godWords.length; c += 2) {
+        for(int c = 0; c < godWords.length; c += 2) {
             fl = fl.replaceAll("(?<=\\W)" + godWords[c] + "(?=\\W)", godWords[c + 1]); //recapitalise God words
         }
         char[] y = fl.toCharArray();
-        for (int i2 = 0; i2 < y.length - 2; i2++) {
-            if (y[i2] == '!' || y[i2] == '.' || y[i2] == '?') {
+        for(int i2 = 0; i2 < y.length - 2; i2++) {
+            if(y[i2] == '!' || y[i2] == '.' || y[i2] == '?') {
                 i2 += 2;
                 y[i2] = Character.toUpperCase(y[i2]); // recaptalise after punctuation
             }
@@ -264,19 +273,20 @@ public class KingswayWorshipParser implements SongParser {
          * End of code by Ben Goodwin
          */
 
-        for (int index = 1; index < strx.length; index++) {
+        for(int index = 1; index < strx.length; index++) {
             lyrics.append(strx[index].trim()).append('\n');
         }
 
-        if (title.trim().isEmpty()) {
+        if(title.trim().isEmpty()) {
             title = lyrics.toString().split("\n")[0];
         }
 
-        if (lyrics.toString().length() > 5) {
+        if(lyrics.toString().length() > 5) {
             Song ret = new Song(title, author);
             ret.setLyrics(lyrics.toString());
             return ret;
-        } else {
+        }
+        else {
             LOGGER.log(Level.WARNING, "Page {0} no lyrics found", num);
             return null;
         }
@@ -284,7 +294,7 @@ public class KingswayWorshipParser implements SongParser {
 
     /**
      * Get the raw page text for a particular page number.
-     *
+     * <p/>
      * @param num the page number.
      * @return the raw text on the page.
      */
@@ -293,19 +303,20 @@ public class KingswayWorshipParser implements SongParser {
         try {
             StringBuilder content = new StringBuilder();
             URL url = new URL("http://www.kingswayworship.co.uk/song-library/showsong/" + num);
-            try (BufferedReader in = new BufferedReader(new InputStreamReader(url.openStream()))) {
+            try(BufferedReader in = new BufferedReader(new InputStreamReader(url.openStream()))) {
                 String str;
-                while ((str = in.readLine()) != null) {
+                while((str = in.readLine()) != null) {
                     content.append(str).append("\n");
                 }
             }
             count500 = 0;
             return content.toString();
-        } catch (Exception ex) {
+        }
+        catch(Exception ex) {
             LOGGER.log(Level.WARNING, ex.getMessage());
-            if (ex.getMessage().contains("500")) {
+            if(ex.getMessage().contains("500")) {
                 count500++;
-                if (count500 > 10) {
+                if(count500 > 10) {
                     LOGGER.log(Level.INFO, "Too many 500's, giving up");
 //                    count500 = 0;
                     return null;
@@ -319,7 +330,7 @@ public class KingswayWorshipParser implements SongParser {
 
     /**
      * Testing.
-     *
+     * <p/>
      * @param args
      * @throws IOException
      */

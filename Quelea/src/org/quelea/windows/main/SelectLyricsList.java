@@ -16,24 +16,15 @@
  */
 package org.quelea.windows.main;
 
-import com.sun.star.awt.grid.SelectionEventType;
-import java.awt.Color;
-import java.awt.Component;
-import java.awt.Cursor;
-import java.awt.Point;
-import java.awt.Toolkit;
-import java.awt.event.*;
 import java.util.ArrayList;
 import java.util.List;
 import javafx.event.EventHandler;
+import javafx.scene.Cursor;
+import javafx.scene.ImageCursor;
 import javafx.scene.control.ListView;
-import javax.swing.*;
-import javax.swing.border.EmptyBorder;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
+import javafx.scene.image.Image;
 import org.quelea.displayable.TextSection;
 import org.quelea.utils.QueleaProperties;
-import org.quelea.utils.Utils;
 
 /**
  * A list displaying the different sections in the song.
@@ -42,7 +33,7 @@ import org.quelea.utils.Utils;
  */
 public class SelectLyricsList extends ListView<TextSection> {
 
-    private static final Cursor Q_CURSOR = Toolkit.getDefaultToolkit().createCustomCursor(Utils.getImage("icons/edit32.png"), new Point(0, 0), "Q Cursor");
+    private static final Cursor Q_CURSOR = new ImageCursor(new Image("file:icons/edit32.png"));
     private boolean oneLineMode;
 
     /**
@@ -89,10 +80,10 @@ public class SelectLyricsList extends ListView<TextSection> {
             @Override
             public void handle(javafx.scene.input.MouseEvent t) {
                 if((t.isShiftDown() || t.isControlDown()) && !itemsProperty().get().isEmpty()) {
-//                    setCursor(Q_CURSOR);
+                    setCursor(Q_CURSOR);
                 }
                 else {
-//                    setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
+                    setCursor(Cursor.DEFAULT);
                 }
             }
         });

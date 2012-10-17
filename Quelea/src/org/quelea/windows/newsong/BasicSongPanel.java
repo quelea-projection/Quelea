@@ -36,7 +36,7 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
-import name.antonsmirnov.javafx.dialog.Dialog;
+import org.javafx.dialog.Dialog;
 import org.quelea.QueleaApp;
 import org.quelea.chord.ChordLineTransposer;
 import org.quelea.chord.ChordTransposer;

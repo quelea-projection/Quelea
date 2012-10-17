@@ -24,7 +24,6 @@ import javafx.event.EventHandler;
 import javax.swing.JFileChooser;
 import org.quelea.QueleaApp;
 import org.quelea.displayable.VideoDisplayable;
-import org.quelea.utils.VideoFileFilter;
 
 /**
  * The action listener for adding a video.
@@ -35,7 +34,6 @@ public class AddVideoActionListener implements EventHandler<ActionEvent> {
     @Override
     public void handle(ActionEvent t) {
         JFileChooser fileChooser = new JFileChooser();
-        fileChooser.setFileFilter(new VideoFileFilter());
         fileChooser.setAcceptAllFileFilterUsed(false);
 //        fileChooser.showOpenDialog(Application.get().getMainWindow());
         File file = fileChooser.getSelectedFile();

@@ -17,7 +17,6 @@
  */
 package org.quelea.importexport;
 
-import javax.swing.JFrame;
 import org.quelea.languages.LabelGrabber;
 import org.quelea.utils.FileFilters;
 

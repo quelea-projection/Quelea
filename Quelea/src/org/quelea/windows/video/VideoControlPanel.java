@@ -16,7 +16,6 @@
  */
 package org.quelea.windows.video;
 
-import java.awt.BorderLayout;
 import java.awt.Canvas;
 import java.util.ArrayList;
 import java.util.List;
@@ -32,7 +31,6 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
-import javax.swing.BoxLayout;
 import org.quelea.utils.LoggerUtils;
 
 /**

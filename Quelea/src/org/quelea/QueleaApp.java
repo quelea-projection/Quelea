@@ -18,7 +18,7 @@
 package org.quelea;
 
 import java.io.File;
-import javax.swing.JOptionPane;
+import org.javafx.dialog.Dialog;
 import org.quelea.languages.LabelGrabber;
 import org.quelea.windows.main.LyricWindow;
 import org.quelea.windows.main.MainWindow;
@@ -50,9 +50,7 @@ public class QueleaApp {
     public void openSchedule(File file) {
         Schedule schedule = Schedule.fromFile(file);
         if (schedule == null) {
-//            JOptionPane.showMessageDialog(Application.get().getMainWindow(),
-//                    LabelGrabber.INSTANCE.getLabel("error.schedule.message"),
-//                    LabelGrabber.INSTANCE.getLabel("error.schedule.title"), JOptionPane.ERROR_MESSAGE, null);
+            Dialog.showError(LabelGrabber.INSTANCE.getLabel("error.schedule.title"), LabelGrabber.INSTANCE.getLabel("error.schedule.message"));
         }
         else {
             QueleaApp.get().getMainWindow().getMainPanel().getSchedulePanel().getScheduleList().setSchedule(schedule);
