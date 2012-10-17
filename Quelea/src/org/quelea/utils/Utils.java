@@ -252,22 +252,6 @@ public final class Utils {
     }
 
     /**
-     * Determine whether translucency is supported.
-     * <p/>
-     * @return true if it's supported, false otherwise.
-     */
-    public static boolean translucencySupported() {
-        GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
-        GraphicsDevice[] gs = ge.getScreenDevices();
-        for(GraphicsDevice device : gs) {
-            if(device.isWindowTranslucencySupported(GraphicsDevice.WindowTranslucency.TRANSLUCENT)) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    /**
      * Get a font identical to the one given apart from in size.
      * <p/>
      * @param font the original font.

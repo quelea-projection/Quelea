@@ -17,48 +17,48 @@
  */
 package org.quelea.splash;
 
-import java.awt.BorderLayout;
-import java.awt.Font;
-import java.awt.Graphics2D;
 import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
 import java.awt.Rectangle;
-import java.awt.RenderingHints;
-import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.IOException;
-import javax.imageio.ImageIO;
-import javax.swing.ImageIcon;
-import javax.swing.JLabel;
-import org.quelea.utils.FadeWindow;
+import javafx.scene.Group;
+import javafx.scene.Scene;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.scene.paint.Color;
+import javafx.scene.text.Font;
+import javafx.scene.text.Text;
+import javafx.stage.Modality;
+import javafx.stage.Stage;
+import javafx.stage.StageStyle;
 import org.quelea.utils.QueleaProperties;
 
 /**
  * The splash screen to display when the program starts.
- *
+ * <p/>
  * @author Michael
  */
-public class SplashWindow extends FadeWindow {
+public class SplashStage extends Stage {
 
     /**
      * Create a new splash window.
      */
-    public SplashWindow() {
-        try {
-            BufferedImage image = ImageIO.read(new File("icons/splash.png"));
-            Graphics2D graphics = (Graphics2D) image.getGraphics();
-            graphics.setFont(new Font("Verdana", 0, 45));
-            graphics.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-            graphics.drawString(QueleaProperties.VERSION.getVersionString(), 220, 140);
+    public SplashStage() {
+        initModality(Modality.APPLICATION_MODAL);
+        initStyle(StageStyle.UNDECORATED);
+        getIcons().add(new Image("file:icons/logo.png"));
+        setTitle("Quelea loading...");
+        Image splashImage = new Image("file:icons/splash.png");
+        ImageView imageView = new ImageView(splashImage);
+        Text text = new Text(QueleaProperties.VERSION.getVersionString());
+        text.setStroke(Color.WHITE);
+        text.setFont(new Font("Verdana", 30));
+        text.setLayoutX(170);
+        text.setLayoutY(230);
 
-            JLabel splash = new JLabel(new ImageIcon(image));
-            setLayout(new BorderLayout());
-            add(splash, BorderLayout.CENTER);
-            pack();
-        }
-        catch(IOException ex) {
-            //Don't really care, just splash.
-        }
+        Group mainPane = new Group();
+        mainPane.getChildren().add(imageView);
+        mainPane.getChildren().add(text);
+        setScene(new Scene(mainPane));
 
         int controlScreenProp = QueleaProperties.get().getControlScreen();
         GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
@@ -67,16 +67,9 @@ public class SplashWindow extends FadeWindow {
             controlScreenProp = gds.length - 1;
         }
         Rectangle bounds = gds[controlScreenProp].getDefaultConfiguration().getBounds();
-        setLocation((int) (bounds.getLocation().x + bounds.getWidth() / 2) - getWidth() / 2, (int) (bounds.getLocation().y + bounds.getHeight() / 2) - getHeight() / 2);
-
-    }
-
-    /**
-     * Just for testing...
-     *
-     * @param args not used.
-     */
-    public static void main(String[] args) {
-        new SplashWindow().setVisible(true);
+        
+        //Centre on monitor
+        setX((bounds.getLocation().x + bounds.getWidth() / 2) - splashImage.getWidth() / 2);
+        setY((bounds.getLocation().y + bounds.getHeight() / 2) - splashImage.getHeight() / 2);
     }
 }

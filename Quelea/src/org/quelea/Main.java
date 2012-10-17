@@ -31,7 +31,7 @@ import org.quelea.bible.BibleManager;
 import org.quelea.languages.LabelGrabber;
 import org.quelea.phonehome.PhoneHome;
 import org.quelea.powerpoint.OOUtils;
-import org.quelea.splash.SplashWindow;
+import org.quelea.splash.SplashStage;
 import org.quelea.utils.LoggerUtils;
 import org.quelea.utils.QueleaProperties;
 import org.quelea.utils.UpdateChecker;
@@ -57,8 +57,8 @@ public final class Main extends Application {
      */
     @Override
     public void start(Stage stage) {
-        final SplashWindow splashWindow = new SplashWindow();
-        splashWindow.setVisible(true);
+        final SplashStage splashWindow = new SplashStage();
+        splashWindow.show();
 
         new UserFileChecker(QueleaProperties.getQueleaUserHome()).checkUserFiles();
 
@@ -194,14 +194,15 @@ public final class Main extends Application {
                 mainWindow.toFront();
                 new ShortcutManager().addShortcuts();
                 LOGGER.log(Level.INFO, "Loaded everything.");
-
-//                if(args.length > 0) {
-//                    LOGGER.log(Level.INFO, "Opening schedule through argument: {0}", args[0]);
-//                    QueleaApp.get().openSchedule(new File(args[0]));
-//                }
+                
+                if(!getParameters().getRaw().isEmpty()) {
+                    String schedulePath = getParameters().getRaw().get(0);
+                    LOGGER.log(Level.INFO, "Opening schedule through argument: {0}", schedulePath);
+                    QueleaApp.get().openSchedule(new File(schedulePath));
+                }
                 
                 mainWindow.show();
-                splashWindow.setVisible(false);
+                splashWindow.hide();
             }
         });
         
