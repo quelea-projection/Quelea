@@ -17,9 +17,10 @@
  */
 package org.quelea.windows.main;
 
-import org.quelea.windows.main.actionlisteners.EditSongDBActionListener;
-import org.quelea.windows.main.actionlisteners.NewSongActionListener;
-import org.quelea.windows.main.actionlisteners.EditSongScheduleActionListener;
+import org.quelea.windows.main.actionhandlers.ExitActionHandler;
+import org.quelea.windows.main.actionhandlers.EditSongDBActionHandler;
+import org.quelea.windows.main.actionhandlers.NewSongActionHandler;
+import org.quelea.windows.main.actionhandlers.EditSongScheduleActionHandler;
 import java.awt.Dimension;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -40,7 +41,6 @@ import org.quelea.tags.TagDialog;
 import org.quelea.utils.LoggerUtils;
 import org.quelea.utils.QueleaProperties;
 import org.quelea.utils.Utils;
-import org.quelea.windows.main.actionlisteners.*;
 import org.quelea.windows.main.menus.MainMenuBar;
 import org.quelea.windows.main.toolbars.MainToolbar;
 import org.quelea.windows.newsong.SongEntryWindow;
@@ -83,7 +83,7 @@ public class MainWindow extends Stage {
 
             @Override
             public void handle(javafx.stage.WindowEvent t) {
-                new ExitActionListener().exit();
+                new ExitActionHandler().exit();
             }
         });
         
@@ -102,7 +102,7 @@ public class MainWindow extends Stage {
 
         mainpanel = new MainPanel();
         songEntryWindow = new SongEntryWindow();
-        mainpanel.getSchedulePanel().getScheduleList().getPopupMenu().getEditSongButton().setOnAction(new EditSongScheduleActionListener());
+        mainpanel.getSchedulePanel().getScheduleList().getPopupMenu().getEditSongButton().setOnAction(new EditSongScheduleActionHandler());
         
         menuBar = new MainMenuBar();
         

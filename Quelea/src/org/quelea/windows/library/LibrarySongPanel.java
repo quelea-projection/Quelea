@@ -37,8 +37,8 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import org.quelea.displayable.Song;
 import org.quelea.languages.LabelGrabber;
-import org.quelea.windows.main.actionlisteners.NewSongActionListener;
-import org.quelea.windows.main.actionlisteners.RemoveSongDBActionListener;
+import org.quelea.windows.main.actionhandlers.NewSongActionHandler;
+import org.quelea.windows.main.actionhandlers.RemoveSongDBActionHandler;
 
 /**
  * The panel used for browsing the database of songs and adding any songs to the order of service.
@@ -120,12 +120,12 @@ public class LibrarySongPanel extends BorderPane {
         
         addButton = new Button("",new ImageView(new Image("file:icons/newsongdb.png", 16, 16, false, true)));
         addButton.setTooltip(new Tooltip(LabelGrabber.INSTANCE.getLabel("add.song.text")));
-        addButton.setOnAction(new NewSongActionListener());
+        addButton.setOnAction(new NewSongActionHandler());
         toolbar.getItems().add(addButton);
         removeButton = new Button("", new ImageView(new Image("file:icons/removedb.png", 16, 16, false, true)));
         removeButton.setTooltip(new Tooltip(LabelGrabber.INSTANCE.getLabel("remove.song.text")));
         removeButton.setDisable(true);
-        removeButton.setOnAction(new RemoveSongDBActionListener());
+        removeButton.setOnAction(new RemoveSongDBActionHandler());
         toolbar.getItems().add(removeButton);
         setLeft(toolbar);
         setCenter(songList);
