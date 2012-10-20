@@ -24,11 +24,11 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import org.quelea.QueleaApp;
 import org.quelea.languages.LabelGrabber;
-import org.quelea.windows.main.actionlisteners.ExitActionListener;
-import org.quelea.windows.main.actionlisteners.NewScheduleActionListener;
-import org.quelea.windows.main.actionlisteners.OpenScheduleActionListener;
-import org.quelea.windows.main.actionlisteners.PrintScheduleActionListener;
-import org.quelea.windows.main.actionlisteners.SaveScheduleActionListener;
+import org.quelea.windows.main.actionhandlers.ExitActionHandler;
+import org.quelea.windows.main.actionhandlers.NewScheduleActionHandler;
+import org.quelea.windows.main.actionhandlers.OpenScheduleActionHandler;
+import org.quelea.windows.main.actionhandlers.PrintScheduleActionHandler;
+import org.quelea.windows.main.actionhandlers.SaveScheduleActionHandler;
 
 /**
  * Quelea's file menu.
@@ -51,27 +51,27 @@ public class FileMenu extends Menu {
         super(LabelGrabber.INSTANCE.getLabel("file.menu"));
 
         newItem = new MenuItem(LabelGrabber.INSTANCE.getLabel("new.schedule.button"), new ImageView(new Image("file:icons/filenew.png", 20, 20, true, false)));
-        newItem.setOnAction(new NewScheduleActionListener());
+        newItem.setOnAction(new NewScheduleActionHandler());
         getItems().add(newItem);
 
         openItem = new MenuItem(LabelGrabber.INSTANCE.getLabel("open.schedule.button"), new ImageView(new Image("file:icons/fileopen.png", 20, 20, true, false)));
-        openItem.setOnAction(new OpenScheduleActionListener());
+        openItem.setOnAction(new OpenScheduleActionHandler());
         getItems().add(openItem);
 
         saveItem = new MenuItem(LabelGrabber.INSTANCE.getLabel("save.schedule.button"), new ImageView(new Image("file:icons/filesave.png", 20, 20, true, false)));
-        saveItem.setOnAction(new SaveScheduleActionListener(false));
+        saveItem.setOnAction(new SaveScheduleActionHandler(false));
         getItems().add(saveItem);
 
         saveAsItem = new MenuItem(LabelGrabber.INSTANCE.getLabel("save.as.schedule.button"), new ImageView(new Image("file:icons/filesaveas.png", 20, 20, true, false)));
-        saveAsItem.setOnAction(new SaveScheduleActionListener(true));
+        saveAsItem.setOnAction(new SaveScheduleActionHandler(true));
         getItems().add(saveAsItem);
 
         printItem = new MenuItem(LabelGrabber.INSTANCE.getLabel("print.schedule.button"), new ImageView(new Image("file:icons/fileprint.png", 20, 20, true, false)));
-        printItem.setOnAction(new PrintScheduleActionListener());
+        printItem.setOnAction(new PrintScheduleActionHandler());
         getItems().add(printItem);
 
         exitItem = new MenuItem(LabelGrabber.INSTANCE.getLabel("exit.button"), new ImageView(new Image("file:icons/exit.png", 20, 20, true, false)));
-        exitItem.setOnAction(new ExitActionListener());
+        exitItem.setOnAction(new ExitActionHandler());
         getItems().add(exitItem);
     }
 
