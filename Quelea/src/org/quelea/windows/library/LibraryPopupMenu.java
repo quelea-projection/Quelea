@@ -30,6 +30,7 @@ import org.quelea.languages.LabelGrabber;
 import org.quelea.print.Printer;
 import org.quelea.windows.main.actionlisteners.AddSongActionListener;
 import org.quelea.windows.main.actionlisteners.EditSongDBActionListener;
+import org.quelea.windows.main.actionlisteners.PreviewSongActionHandler;
 import org.quelea.windows.main.actionlisteners.RemoveSongDBActionListener;
 
 /**
@@ -39,6 +40,7 @@ import org.quelea.windows.main.actionlisteners.RemoveSongDBActionListener;
 public class LibraryPopupMenu extends ContextMenu {
 
     private final MenuItem addToSchedule;
+    private final MenuItem preview;
     private final MenuItem editDB;
     private final MenuItem removeFromDB;
     private final MenuItem print;
@@ -49,6 +51,8 @@ public class LibraryPopupMenu extends ContextMenu {
     public LibraryPopupMenu() {
         addToSchedule = new MenuItem(LabelGrabber.INSTANCE.getLabel("library.add.to.schedule.text"), new ImageView(new Image("file:icons/add.png", 16, 16, false, true)));
         addToSchedule.setOnAction(new AddSongActionListener());
+        preview = new MenuItem(LabelGrabber.INSTANCE.getLabel("library.preview.song.text"), new ImageView(new Image("file:icons/prev.png", 16, 16, false, true)));
+        preview.setOnAction(new PreviewSongActionHandler());
         editDB = new MenuItem(LabelGrabber.INSTANCE.getLabel("library.edit.song.text"), new ImageView(new Image("file:icons/edit.png", 16, 16, false, true)));
         editDB.setOnAction(new EditSongDBActionListener());
         removeFromDB = new MenuItem(LabelGrabber.INSTANCE.getLabel("library.remove.song.text"), new ImageView(new Image("file:icons/removedb.png", 16, 16, false, true)));
@@ -79,6 +83,7 @@ public class LibraryPopupMenu extends ContextMenu {
         });
 
         getItems().add(addToSchedule);
+        getItems().add(preview);
         getItems().add(editDB);
         getItems().add(removeFromDB);
         getItems().add(print);
