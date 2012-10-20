@@ -26,8 +26,8 @@ import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
 import javafx.stage.FileChooser;
 import org.apache.commons.io.FileUtils;
+import org.quelea.ImageBackground;
 import org.quelea.QueleaApp;
-import org.quelea.Background;
 import org.quelea.Theme;
 import org.quelea.languages.LabelGrabber;
 import org.quelea.utils.FileFilters;
@@ -74,7 +74,7 @@ public class ImageButton extends Button {
 
                     imageLocation = imageDir.toURI().relativize(newFile.toURI()).getPath();
                     imageLocationField.setText(imageLocation);
-                    canvas.setTheme(new Theme(canvas.getTheme().getFont(), canvas.getTheme().getFontPaint(), new Background(imageLocation)));
+                    canvas.setTheme(new Theme(canvas.getTheme().getFont(), canvas.getTheme().getFontPaint(), new ImageBackground(imageLocation)));
                 }
             }
         });

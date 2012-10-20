@@ -17,7 +17,6 @@
  */
 package org.quelea.windows.video;
 
-import java.awt.BorderLayout;
 import javafx.scene.layout.BorderPane;
 import org.quelea.displayable.VideoDisplayable;
 import org.quelea.windows.main.ContainedPanel;
@@ -66,7 +65,7 @@ public class VideoPanel extends BorderPane implements ContainedPanel {
      * @param displayable the video displayable.
      */
     public void showDisplayable(VideoDisplayable displayable) {
-        controlPanel.loadVideo(displayable.getVLCString());
+        controlPanel.loadVideo(displayable);
     }
 
     @Override

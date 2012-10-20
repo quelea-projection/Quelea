@@ -31,14 +31,6 @@ import org.w3c.dom.Node;
  */
 public class VideoDisplayable implements Displayable {
 
-    /**
-     * The type of video, for instance DVD, FILE, etc.
-     */
-    public enum VideoType {
-
-        FILE, DVD
-    }
-    private final VideoType type;
     private final File file;
 
     /**
@@ -46,24 +38,8 @@ public class VideoDisplayable implements Displayable {
      * @param file the file for the displayable.
      * @param type the type of video.
      */
-    public VideoDisplayable(File file, VideoType type) {
-        this.type = type;
+    public VideoDisplayable(File file) {
         this.file = file;
-    }
-
-    /**
-     * Get the string to open this video displayable with vlc.
-     * @return the string to open this video displayable with vlc.
-     */
-    public String getVLCString() {
-        switch (type) {
-            case FILE:
-                return file.getAbsolutePath();
-            case DVD:
-                return "dvdsimple://" + file.getAbsolutePath();
-            default:
-                throw new AssertionError("Unhandled video case");
-        }
     }
 
     /**
@@ -80,8 +56,7 @@ public class VideoDisplayable implements Displayable {
      * @return the object as defined by the XML.
      */
     public static VideoDisplayable parseXML(Node node) {
-        VideoType type = VideoType.valueOf(node.getAttributes().getNamedItem("type").getNodeValue());
-        return new VideoDisplayable(new File(node.getTextContent()), type);
+        return new VideoDisplayable(new File(node.getTextContent()));
     }
 
     /**
@@ -91,7 +66,7 @@ public class VideoDisplayable implements Displayable {
     @Override
     public String getXML() {
         StringBuilder ret = new StringBuilder();
-        ret.append("<filevideo type=\"").append(type).append("\">");
+        ret.append("<filevideo>");
         ret.append(Utils.escapeXML(file.getAbsolutePath()));
         ret.append("</filevideo>");
         return ret.toString();
@@ -112,14 +87,7 @@ public class VideoDisplayable implements Displayable {
      */
     @Override
     public String getPreviewText() {
-        switch (type) {
-            case FILE:
-                return file.getName();
-            case DVD:
-                return "DVD";
-            default:
-                throw new AssertionError("Unhandled video case");
-        }
+        return file.getName();
     }
 
     /**

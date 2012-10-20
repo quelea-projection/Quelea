@@ -287,3 +287,6 @@ confirm.remove.text=Confirm remove
 confirm.remove.question=Really remove $1 from the database? This action cannnot be undone.
 quick.edit.text=Quick Edit
 library.preview.song.text=Preview song
+video.error.title=Video error
+video.error.unsupported=Sorry, the video file you selected isn't supported.
+video.error.general=Sorry, there was an error with the video file you selected.

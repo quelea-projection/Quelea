@@ -20,7 +20,7 @@ package org.quelea.windows.main;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
-import org.quelea.Background;
+import org.quelea.ImageBackground;
 import org.quelea.Theme;
 import org.quelea.displayable.ImageDisplayable;
 
@@ -65,7 +65,7 @@ public class ImagePanel extends BorderPane implements ContainedPanel {
         imageView.setImage(image);
         for(LyricCanvas canvas : containerPanel.getCanvases()) {
             canvas.setText(null, null, true);
-            canvas.setTheme(new Theme(null, null, new Background(imageView.getImage())));
+            canvas.setTheme(new Theme(null, null, new ImageBackground(imageView.getImage())));
         }
     }
 
