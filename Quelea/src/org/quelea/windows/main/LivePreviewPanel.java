@@ -261,7 +261,7 @@ public abstract class LivePreviewPanel extends BorderPane {
      * Pause the current video panel's video.
      */
     public void pauseVideo() {
-        videoPanel.getVideoControlPanel().pauseVideo();
+//        videoPanel.getVideoControlPanel().pause();
     }
 
     /**

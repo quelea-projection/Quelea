@@ -18,7 +18,6 @@
  */
 package org.quelea.windows.video;
 
-import java.awt.BorderLayout;
 import javafx.scene.layout.BorderPane;
 
 /**

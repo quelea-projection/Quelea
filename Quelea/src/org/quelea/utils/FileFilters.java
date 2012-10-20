@@ -37,6 +37,10 @@ public final class FileFilters {
      */
     public static final FileChooser.ExtensionFilter XML_BIBLE = new FileChooser.ExtensionFilter("XML bibles (*.xml)", "*.xml");
     /**
+     * Accept video files.
+     */
+    public static final FileChooser.ExtensionFilter VIDEOS = new FileChooser.ExtensionFilter("Video files (*.flv, *.mp4, *.m4v, *.mkv)", "*.xml", "*.flv", "*.mp4", "*.m4v", "*.mkv");
+    /**
      * Accept powerpoint files.
      */
     public static final FileChooser.ExtensionFilter POWERPOINT = new FileChooser.ExtensionFilter("Powerpoint Presentations (*.ppt, *.pptx)", "*.ppt", "*.pptx");

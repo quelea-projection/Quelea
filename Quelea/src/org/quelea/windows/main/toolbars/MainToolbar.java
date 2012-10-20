@@ -18,7 +18,6 @@
  */
 package org.quelea.windows.main.toolbars;
 
-import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.Separator;
 import javafx.scene.control.ToolBar;
@@ -26,7 +25,6 @@ import javafx.scene.control.Tooltip;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import org.quelea.languages.LabelGrabber;
-import org.quelea.windows.main.actionhandlers.AddDVDActionHandler;
 import org.quelea.windows.main.actionhandlers.AddPowerpointActionHandler;
 import org.quelea.windows.main.actionhandlers.AddVideoActionHandler;
 import org.quelea.windows.main.actionhandlers.NewScheduleActionHandler;
@@ -51,7 +49,6 @@ public class MainToolbar extends ToolBar {
     private Button newSongButton;
     private Button addPresentationButton;
     private Button addVideoButton;
-//    private Button addDVDButton;
     private Button manageNoticesButton;
     private Button manageTagsButton;
 
@@ -97,12 +94,6 @@ public class MainToolbar extends ToolBar {
         addVideoButton.setTooltip(new Tooltip(LabelGrabber.INSTANCE.getLabel("add.video.tooltip")));
         addVideoButton.setOnAction(new AddVideoActionHandler());
         getItems().add(addVideoButton);
-
-        //TODO: Investigate DVD support
-//        addDVDButton = new Button("", new ImageView(new Image("file:icons/dvd.png", 24, 24, false, true)));
-//        addDVDButton.setTooltip(new Tooltip(LabelGrabber.INSTANCE.getLabel("add.dvd.tooltip")));
-//        addDVDButton.setOnAction(new AddDVDActionListener());
-//        getItems().add(addDVDButton);
 
         getItems().add(new Separator());
 
