@@ -148,6 +148,9 @@ public class LyricCanvas extends StackPane {
             return;
         }
         Font font = theme.getFont();
+        if(font==null) {
+            font = Theme.DEFAULT_FONT;
+        }
         List<String> newText = sanctifyText();
         double fontSize = pickFontSize(font, newText, getWidth(), getHeight());
         font = Font.font(font.getName(), fontSize);

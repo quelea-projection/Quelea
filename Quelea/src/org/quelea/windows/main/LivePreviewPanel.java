@@ -58,7 +58,7 @@ public abstract class LivePreviewPanel extends BorderPane {
     private static final String PRESENTATION_LABEL = "PPT";
     private String currentLabel;
     private SelectLyricsPanel lyricsPanel = new SelectLyricsPanel(this);
-    private ImagePanel picturePanel = new ImagePanel();
+    private ImagePanel picturePanel = new ImagePanel(this);
     private PresentationPanel presentationPanel = new PresentationPanel(this);
     private VideoPanel videoPanel = new VideoPanel();
     private QuickEditDialog quickEditDialog = new QuickEditDialog();
