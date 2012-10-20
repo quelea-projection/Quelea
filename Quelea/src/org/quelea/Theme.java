@@ -18,9 +18,12 @@
 package org.quelea;
 
 import java.io.File;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 import javafx.scene.text.Font;
+import org.quelea.utils.LoggerUtils;
 import org.quelea.utils.Utils;
 
 /**
@@ -29,9 +32,10 @@ import org.quelea.utils.Utils;
  */
 public class Theme {
 
+    private static final Logger LOGGER = LoggerUtils.getLogger();
     public static final Font DEFAULT_FONT = new Font("Arial", 72);
     public static final Color DEFAULT_FONT_COLOR = Color.WHITE;
-    public static final Background DEFAULT_BACKGROUND = new Background(Color.BLACK);
+    public static final Background DEFAULT_BACKGROUND = new ColourBackground(Color.BLACK);
     public static final Theme DEFAULT_THEME = new Theme(DEFAULT_FONT, DEFAULT_FONT_COLOR, DEFAULT_BACKGROUND);
     private final Font font;
     private final Paint fontColor;
@@ -160,12 +164,7 @@ public class Theme {
         if (!themeName.isEmpty()) {
             ret.append("$themename:").append(themeName);
         }
-        if (background.isColour()) {
-            ret.append("$backgroundcolour:").append(background.getColour());
-        }
-        else {
-            ret.append("$backgroundimage:").append(background.getImageLocation());
-        }
+        ret.append(background.getDBString());
         return ret.toString();
     }
 
@@ -183,6 +182,7 @@ public class Theme {
         boolean fontitalic = false;
         String fontcolour = "";
         String backgroundcolour = "";
+        String backgroundvid = "";
         String backgroundimage = "";
         String themeName = "";
 
@@ -209,6 +209,9 @@ public class Theme {
             else if (parts[0].equalsIgnoreCase("backgroundimage")) {
                 backgroundimage = parts[1];
             }
+            else if (parts[0].equalsIgnoreCase("backgroundvid")) {
+                backgroundvid = parts[1];
+            }
             else if (parts[0].equalsIgnoreCase("themename")) {
                 themeName = parts[1];
             }
@@ -222,11 +225,18 @@ public class Theme {
 //        }
         Font font = new Font(fontname, 72);
         Background background;
-        if (backgroundcolour.isEmpty()) {
-            background = new Background(backgroundimage);
+        if (!backgroundcolour.isEmpty()) {
+            background = new ColourBackground(Utils.parseColour(backgroundcolour));
+        }
+        else if (!backgroundimage.isEmpty()) {
+            background = new ImageBackground(backgroundimage);
+        }
+        else if (!backgroundvid.isEmpty()) {
+            background = new ColourBackground(Utils.parseColour(backgroundcolour));
         }
         else {
-            background = new Background(Utils.parseColour(backgroundcolour));
+            LOGGER.log(Level.SEVERE, "Bug: Unhandled background");
+            background = null;
         }
         Theme ret = new Theme(font, Utils.parseColour(fontcolour), background);
         ret.themeName = themeName;

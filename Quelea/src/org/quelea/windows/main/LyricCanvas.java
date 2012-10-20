@@ -27,7 +27,6 @@ import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
 import javafx.animation.ParallelTransition;
 import javafx.animation.Timeline;
-import javafx.animation.Transition;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -40,6 +39,8 @@ import javafx.scene.Scene;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.StackPane;
+import javafx.scene.media.MediaPlayer;
+import javafx.scene.media.MediaView;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 import javafx.scene.text.Font;
@@ -48,6 +49,8 @@ import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 import javafx.util.Duration;
 import org.quelea.Background;
+import org.quelea.ColourBackground;
+import org.quelea.ImageBackground;
 import org.quelea.Theme;
 import org.quelea.displayable.TextDisplayable;
 import org.quelea.notice.NoticeDrawer;
@@ -74,6 +77,8 @@ public class LyricCanvas extends StackPane {
     private Group textGroup;
     private TextDisplayable curDisplayable;
     private int curIndex;
+    private MediaView motionBackground;
+    private MediaPlayer curPlayer;
     private ImageView background;
     private ImageView blackImg;
 
@@ -148,7 +153,7 @@ public class LyricCanvas extends StackPane {
             return;
         }
         Font font = theme.getFont();
-        if(font==null) {
+        if(font == null) {
             font = Theme.DEFAULT_FONT;
         }
         List<String> newText = sanctifyText();
@@ -424,7 +429,17 @@ public class LyricCanvas extends StackPane {
             return;
         }
         this.theme = theme;
-        Image image = theme.getBackground().getImage();
+        Image image;
+        if(theme.getBackground() instanceof ImageBackground) {
+            image = ((ImageBackground)theme.getBackground()).getImage();
+        }
+        else if(theme.getBackground() instanceof ColourBackground) {
+            Color color = ((ColourBackground)theme.getBackground()).getColour();
+            image = Utils.getImageFromColour(color);
+        }
+        else {
+            throw new AssertionError("Bug: Unhandled theme case");
+        }
         FadeTransition fadeOut = new FadeTransition(Duration.seconds(0.3), background);
         fadeOut.setFromValue(1);
         fadeOut.setToValue(0);
@@ -514,37 +529,5 @@ public class LyricCanvas extends StackPane {
      */
     public NoticeDrawer getNoticeDrawer() {
         return noticeDrawer;
-    }
-
-    /**
-     * Testing stuff, nothing to see here...
-     * <p/>
-     * @param args command line args
-     */
-    public static void main(String[] args) {
-        new JFXPanel();
-        Platform.runLater(new Runnable() {
-            @Override
-            public void run() {
-                LyricCanvas canvas = new LyricCanvas(false, false);
-                Stage stage = new Stage();
-                stage.setWidth(800);
-                stage.setHeight(600);
-                stage.setOnCloseRequest(new EventHandler<WindowEvent>() {
-                    @Override
-                    public void handle(WindowEvent t) {
-                        System.exit(0);
-                    }
-                });
-                stage.setScene(new Scene(canvas));
-                stage.show();
-
-                canvas.setText(new String[]{"Line 1", "line 2", "BLAHBLAH BLAH BLAH"},
-                        new String[]{"Tim Hughes", "CCLI number 1469714", "Another line"}, true);
-
-                canvas.setTheme(new Theme(Theme.DEFAULT_FONT, Color.WHITE, new Background(Color.BLUE)));
-            }
-        });
-
     }
 }

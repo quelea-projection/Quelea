@@ -954,9 +954,7 @@ public class Song implements TextDisplayable, Comparable<Song>, Printable {
             Theme sectionTheme = section.getTheme();
             if(sectionTheme != null) {
                 Background background = sectionTheme.getBackground();
-                if(background.getImageLocation() != null) {
-                    ret.add(background.getImageFile());
-                }
+                ret.addAll(background.getResources());
             }
         }
         return ret;

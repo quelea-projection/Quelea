@@ -37,6 +37,8 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import org.javafx.dialog.Dialog;
 import org.quelea.Background;
+import org.quelea.ColourBackground;
+import org.quelea.ImageBackground;
 import org.quelea.Theme;
 import org.quelea.languages.LabelGrabber;
 import org.quelea.utils.Utils;
@@ -58,7 +60,7 @@ public class ThemePanel extends BorderPane {
     private ColorPicker fontColorPicker;
     private ColorPicker backgroundColorPicker;
     private ComboBox<String> backgroundTypeSelect;
-    private TextField backgroundImageLocation;
+    private TextField backgroundLocation;
     private ToggleButton boldButton;
     private ToggleButton italicButton;
     private final LyricCanvas canvas;
@@ -111,16 +113,16 @@ public class ThemePanel extends BorderPane {
         });
 
         final HBox imagePanel = new HBox();
-        backgroundImageLocation = new TextField();
-        backgroundImageLocation.textProperty().addListener(new ChangeListener<String>() {
+        backgroundLocation = new TextField();
+        backgroundLocation.textProperty().addListener(new ChangeListener<String>() {
             @Override
             public void changed(ObservableValue<? extends String> ov, String t, String t1) {
                 updateTheme(true);
             }
         });
-        backgroundImageLocation.setEditable(false);
-        imagePanel.getChildren().add(backgroundImageLocation);
-        imagePanel.getChildren().add(new ImageButton(backgroundImageLocation, canvas));
+        backgroundLocation.setEditable(false);
+        imagePanel.getChildren().add(backgroundLocation);
+        imagePanel.getChildren().add(new ImageButton(backgroundLocation, canvas));
 
         backgroundChooserPanel.add(colourPanel, "colour");
         backgroundChooserPanel.add(imagePanel, "image");
@@ -191,8 +193,8 @@ public class ThemePanel extends BorderPane {
      */
     private void updateTheme(boolean warning) {
         final Theme theme = getTheme();
-        if(warning && theme.getBackground().isColour()) {
-            checkAccessibility((Color) theme.getFontPaint(), theme.getBackground().getColour());
+        if(warning && theme.getBackground() instanceof ColourBackground) {
+            checkAccessibility((Color) theme.getFontPaint(), ((ColourBackground)theme.getBackground()).getColour());
         }
         Platform.runLater(new Runnable() {
             @Override
@@ -215,14 +217,7 @@ public class ThemePanel extends BorderPane {
         fontSelection.getSelectionModel().select(font.getFamily());
         fontColorPicker.setValue((Color) theme.getFontPaint());
         Background background = theme.getBackground();
-        if(background.isColour()) {
-            backgroundTypeSelect.getSelectionModel().select(LabelGrabber.INSTANCE.getLabel("color.theme.label"));
-            backgroundColorPicker.setValue(background.getColour());
-        }
-        else {
-            backgroundTypeSelect.getSelectionModel().select(LabelGrabber.INSTANCE.getLabel("image.theme.label"));
-            backgroundImageLocation.setText(new File(background.getImageLocation()).getName());
-        }
+        background.setThemeForm(backgroundColorPicker, backgroundTypeSelect, backgroundLocation);
         updateTheme(false);
     }
 
@@ -260,12 +255,12 @@ public class ThemePanel extends BorderPane {
         if(backgroundTypeSelect.getSelectionModel().getSelectedItem() == null) {
             return Theme.DEFAULT_THEME;
         }
-        if(backgroundTypeSelect.getSelectionModel().getSelectedItem().equals(LabelGrabber.INSTANCE.getLabel("color.theme.label")) || backgroundImageLocation.getText().isEmpty()) {
-            background = new Background(backgroundColorPicker.getValue());
+        if(backgroundTypeSelect.getSelectionModel().getSelectedItem().equals(LabelGrabber.INSTANCE.getLabel("color.theme.label")) || backgroundLocation.getText().isEmpty()) {
+            background = new ColourBackground(backgroundColorPicker.getValue());
         }
         else if(backgroundTypeSelect.getSelectionModel().getSelectedItem().equals(LabelGrabber.INSTANCE.getLabel("image.theme.label"))) {
-            String path = new File("img", backgroundImageLocation.getText()).getAbsolutePath();
-            background = new Background(path);
+            String path = new File("img", backgroundLocation.getText()).getAbsolutePath();
+            background = new ImageBackground(path);
         }
         else {
             throw new AssertionError("Bug - " + backgroundTypeSelect.getSelectionModel().getSelectedItem() + " is an unknown selection value");

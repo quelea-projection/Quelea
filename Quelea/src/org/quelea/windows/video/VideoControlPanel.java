@@ -17,10 +17,10 @@
 package org.quelea.windows.video;
 
 import java.awt.Canvas;
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.event.EventHandler;
 import javafx.scene.Group;
@@ -31,6 +31,14 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
+import javafx.scene.media.Media;
+import javafx.scene.media.MediaException;
+import javafx.scene.media.MediaPlayer;
+import javafx.scene.media.MediaView;
+import org.javafx.dialog.Dialog;
+import org.quelea.displayable.VideoDisplayable;
+import org.quelea.languages.LabelGrabber;
 import org.quelea.utils.LoggerUtils;
 
 /**
@@ -47,80 +55,71 @@ public class VideoControlPanel extends BorderPane {
     private Button mute;
     private Slider positionSlider;
     private VideoStatusPanel vidStatusPanel;
-    private Node videoArea;
     private List<Canvas> registeredCanvases;
-    private ScheduledExecutorService executorService;
-    private boolean pauseCheck;
     private String videoPath;
+    private MediaView view;
+    private MediaPlayer player;
 
     /**
      * Create a new video control panel.
      */
     public VideoControlPanel() {
-
-        executorService = Executors.newSingleThreadScheduledExecutor();
-        play = new Button("",new ImageView(new Image("file:icons/play.png")));
-        play.setDisable(true);
+        view = new MediaView();
+        view.setSmooth(true);
+        play = new Button("", new ImageView(new Image("file:icons/play.png")));
+//        play.setDisable(true);
         play.setOnAction(new EventHandler<javafx.event.ActionEvent>() {
-
             @Override
             public void handle(javafx.event.ActionEvent t) {
-                playVideo();
+                player.play();
             }
         });
-        pause = new Button("",new ImageView(new Image("file:icons/pause.png")));
-        pause.setDisable(true);
+        pause = new Button("", new ImageView(new Image("file:icons/pause.png")));
+//        pause.setDisable(true);
         pause.setOnAction(new EventHandler<javafx.event.ActionEvent>() {
             @Override
             public void handle(javafx.event.ActionEvent t) {
-                pauseVideo();
+                player.pause();
             }
         });
-        stop = new Button("",new ImageView(new Image("file:icons/stop.png")));
-        stop.setDisable(true);
+        stop = new Button("", new ImageView(new Image("file:icons/stop.png")));
+//        stop.setDisable(true);
         stop.setOnAction(new EventHandler<javafx.event.ActionEvent>() {
             @Override
             public void handle(javafx.event.ActionEvent t) {
-                stopVideo();
+                player.stop();
                 positionSlider.setValue(0);
                 vidStatusPanel.getTimeDisplay().setCurrentSeconds(0);
                 vidStatusPanel.getTimeDisplay().setTotalSeconds(0);
             }
         });
-        mute = new Button("",new ImageView(new Image("file:icons/mute.png")));
-        mute.setDisable(true);
+        mute = new Button("", new ImageView(new Image("file:icons/mute.png")));
+//        mute.setDisable(true);
         mute.setOnAction(new EventHandler<javafx.event.ActionEvent>() {
             @Override
             public void handle(javafx.event.ActionEvent t) {
-                setMute(!getMute());
+                player.setMute(!player.isMute());
             }
         });
         positionSlider = new Slider(0, 1000, 0);
         positionSlider.setDisable(true);
         positionSlider.setValue(0);
-        videoArea = new Group();
-        setCenter(videoArea);
+        setCenter(view);
         registeredCanvases = new ArrayList<>();
 
-        BorderPane controlPanel = new BorderPane();
+        VBox controlPanel = new VBox();
         HBox sliderPanel = new HBox();
         sliderPanel.getChildren().add(positionSlider);
-        controlPanel.setBottom(sliderPanel);
         HBox buttonPanel = new HBox();
         buttonPanel.getChildren().add(play);
         buttonPanel.getChildren().add(pause);
         buttonPanel.getChildren().add(stop);
         buttonPanel.getChildren().add(mute);
-        controlPanel.setTop(buttonPanel);
+        controlPanel.getChildren().add(buttonPanel);
+        controlPanel.getChildren().add(sliderPanel);
         setTop(controlPanel);
 
         vidStatusPanel = new VideoStatusPanel();
-        vidStatusPanel.getVolumeSlider().addRunner(new Runnable() {
-            @Override
-            public void run() {
-                setVolume(vidStatusPanel.getVolumeSlider().getValue());
-            }
-        });
         setBottom(vidStatusPanel);
     }
 
@@ -147,86 +146,23 @@ public class VideoControlPanel extends BorderPane {
      * <p/>
      * @param videoPath the video path to load.
      */
-    public void loadVideo(String videoPath) {
-        this.videoPath = videoPath;
-    }
-
-    /**
-     * Play the loaded video.
-     */
-    public void playVideo() {
-    }
-
-    /**
-     * Get the current time of the video.
-     * <p/>
-     * @return the current time of the video.
-     */
-    public long getTime() {
-        return 0;
-    }
-
-    /**
-     * Set the current time of the video.
-     * <p/>
-     * @param time the current time of the video.
-     */
-    public void setTime(long time) {
-    }
-
-    /**
-     * Pause the currently playing video.
-     */
-    public void pauseVideo() {
-    }
-
-    /**
-     * Stop the currently playing video.
-     */
-    public void stopVideo() {
-    }
-
-    /**
-     * Set whether the video is muted.
-     * <p/>
-     * @param muteState true to mute, false to unmute.
-     */
-    public void setMute(boolean muteState) {
-    }
-
-    /**
-     * Determine if this video is muted.
-     * <p/>
-     * @return true if muted, false if not.
-     */
-    public boolean getMute() {
-        return false;
-    }
-
-    /**
-     * Set the volume of the video.
-     * <p/>
-     * @param volume the video volume.
-     */
-    public void setVolume(double volume) {
-    }
-
-    /**
-     * Close down all the players controlled via this control panel and stop the
-     * external VM's / remote players it controls.
-     */
-    public void close() {
-    }
-
-    /**
-     * Try and stop and clear up if we haven't already.
-     * <p/>
-     * @throws Throwable if something goes wrong.
-     */
-    @Override
-    protected void finalize() throws Throwable {
-        stopVideo();
-        super.finalize();
-        close();
+    public void loadVideo(VideoDisplayable video) {
+        this.videoPath = video.getFile().getAbsolutePath();
+        try {
+            player = new MediaPlayer(new Media(new File(videoPath).toURI().toString()));
+            view.setMediaPlayer(player);
+            player.play();
+        }
+        catch(MediaException ex) {
+            LOGGER.log(Level.WARNING, "Video Error", ex);
+            MediaException.Type type = ex.getType();
+            switch(type) {
+                case MEDIA_UNSUPPORTED:
+                    Dialog.showError(LabelGrabber.INSTANCE.getLabel("video.error.title"), LabelGrabber.INSTANCE.getLabel("video.error.unsupported"));
+                    break;
+                default:
+                    Dialog.showError(LabelGrabber.INSTANCE.getLabel("video.error.title"), LabelGrabber.INSTANCE.getLabel("video.error.general"));
+            }
+        }
     }
 }
