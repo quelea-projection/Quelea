@@ -28,10 +28,10 @@ import org.quelea.QueleaApp;
 import org.quelea.displayable.Song;
 import org.quelea.languages.LabelGrabber;
 import org.quelea.print.Printer;
-import org.quelea.windows.main.actionlisteners.AddSongActionListener;
-import org.quelea.windows.main.actionlisteners.EditSongDBActionListener;
-import org.quelea.windows.main.actionlisteners.PreviewSongActionHandler;
-import org.quelea.windows.main.actionlisteners.RemoveSongDBActionListener;
+import org.quelea.windows.main.actionhandlers.AddSongActionHandler;
+import org.quelea.windows.main.actionhandlers.EditSongDBActionHandler;
+import org.quelea.windows.main.actionhandlers.PreviewSongActionHandler;
+import org.quelea.windows.main.actionhandlers.RemoveSongDBActionHandler;
 
 /**
  * The popup menu that displays when someone right clicks on a song in the library.
@@ -50,13 +50,13 @@ public class LibraryPopupMenu extends ContextMenu {
      */
     public LibraryPopupMenu() {
         addToSchedule = new MenuItem(LabelGrabber.INSTANCE.getLabel("library.add.to.schedule.text"), new ImageView(new Image("file:icons/add.png", 16, 16, false, true)));
-        addToSchedule.setOnAction(new AddSongActionListener());
+        addToSchedule.setOnAction(new AddSongActionHandler());
         preview = new MenuItem(LabelGrabber.INSTANCE.getLabel("library.preview.song.text"), new ImageView(new Image("file:icons/prev.png", 16, 16, false, true)));
         preview.setOnAction(new PreviewSongActionHandler());
         editDB = new MenuItem(LabelGrabber.INSTANCE.getLabel("library.edit.song.text"), new ImageView(new Image("file:icons/edit.png", 16, 16, false, true)));
-        editDB.setOnAction(new EditSongDBActionListener());
+        editDB.setOnAction(new EditSongDBActionHandler());
         removeFromDB = new MenuItem(LabelGrabber.INSTANCE.getLabel("library.remove.song.text"), new ImageView(new Image("file:icons/removedb.png", 16, 16, false, true)));
-        removeFromDB.setOnAction(new RemoveSongDBActionListener());
+        removeFromDB.setOnAction(new RemoveSongDBActionHandler());
         print = new MenuItem(LabelGrabber.INSTANCE.getLabel("library.print.song.text"), new ImageView(new Image("file:icons/fileprint.png", 16, 16, false, true)));
         print.setOnAction(new EventHandler<ActionEvent>() {
 

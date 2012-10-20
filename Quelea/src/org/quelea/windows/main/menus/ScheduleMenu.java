@@ -40,12 +40,12 @@ import org.quelea.windows.library.LibrarySongList;
 import org.quelea.windows.main.ButtonChecker;
 import org.quelea.windows.main.MainPanel;
 import org.quelea.windows.main.ScheduleList;
-import org.quelea.windows.main.actionlisteners.AddPowerpointActionListener;
-import org.quelea.windows.main.actionlisteners.AddSongActionListener;
-import org.quelea.windows.main.actionlisteners.AddVideoActionListener;
-import org.quelea.windows.main.actionlisteners.EditSongScheduleActionListener;
-import org.quelea.windows.main.actionlisteners.RemoveScheduleItemActionListener;
-import org.quelea.windows.main.actionlisteners.ShowNoticesActionListener;
+import org.quelea.windows.main.actionhandlers.AddPowerpointActionHandler;
+import org.quelea.windows.main.actionhandlers.AddSongActionHandler;
+import org.quelea.windows.main.actionhandlers.AddVideoActionHandler;
+import org.quelea.windows.main.actionhandlers.EditSongScheduleActionHandler;
+import org.quelea.windows.main.actionhandlers.RemoveScheduleItemActionHandler;
+import org.quelea.windows.main.actionhandlers.ShowNoticesActionHandler;
 
 /**
  * Quelea's schedule menu.
@@ -73,17 +73,17 @@ public class ScheduleMenu extends Menu {
 //        Application.get().getMainWindow().getNoticeDialog().registerCanvas(Application.get().getLyricWindow().getCanvas());
 
         addSongItem = new MenuItem(LabelGrabber.INSTANCE.getLabel("add.song.button"), new ImageView(new Image("file:icons/newsong.png", 16, 16, false, true)));
-        addSongItem.setOnAction(new AddSongActionListener());
+        addSongItem.setOnAction(new AddSongActionHandler());
         addSongItem.setDisable(true);
         getItems().add(addSongItem);
 
         editSongItem = new MenuItem(LabelGrabber.INSTANCE.getLabel("edit.song.button"), new ImageView(new Image("file:icons/edit.png", 16, 16, false, true)));
-        editSongItem.setOnAction(new EditSongScheduleActionListener());
+        editSongItem.setOnAction(new EditSongScheduleActionHandler());
         editSongItem.setDisable(true);
         getItems().add(editSongItem);
 
         removeSongItem = new MenuItem(LabelGrabber.INSTANCE.getLabel("remove.item.button"), new ImageView(new Image("file:icons/remove 2.png", 16, 16, false, true)));
-        removeSongItem.setOnAction(new RemoveScheduleItemActionListener());
+        removeSongItem.setOnAction(new RemoveScheduleItemActionHandler());
         removeSongItem.setDisable(true);
         getItems().add(removeSongItem);
 
@@ -108,11 +108,11 @@ public class ScheduleMenu extends Menu {
         getItems().add(new SeparatorMenuItem());
 
         addPowerpointItem = new MenuItem(LabelGrabber.INSTANCE.getLabel("add.presentation.button"), new ImageView(new Image("file:icons/powerpoint.png", 16, 16, false, true)));
-        addPowerpointItem.setOnAction(new AddPowerpointActionListener());
+        addPowerpointItem.setOnAction(new AddPowerpointActionHandler());
         getItems().add(addPowerpointItem);
 
         addVideoItem = new MenuItem(LabelGrabber.INSTANCE.getLabel("add.video.button"), new ImageView(new Image("file:icons/video file.png", 16, 16, false, true)));
-        addVideoItem.setOnAction(new AddVideoActionListener());
+        addVideoItem.setOnAction(new AddVideoActionHandler());
         getItems().add(addVideoItem);
 
         //TODO: Investigate putting DVD support back in
@@ -123,7 +123,7 @@ public class ScheduleMenu extends Menu {
         getItems().add(new SeparatorMenuItem());
 
         manageNoticesItem = new MenuItem(LabelGrabber.INSTANCE.getLabel("manage.notices.button"), new ImageView(new Image("file:icons/info.png", 16, 16, false, true)));
-        manageNoticesItem.setOnAction(new ShowNoticesActionListener());
+        manageNoticesItem.setOnAction(new ShowNoticesActionHandler());
         getItems().add(manageNoticesItem);
 
         shareScheduleItem = new MenuItem(LabelGrabber.INSTANCE.getLabel("email.button"), new ImageView(new Image("file:icons/email.png", 16, 16, false, true)));

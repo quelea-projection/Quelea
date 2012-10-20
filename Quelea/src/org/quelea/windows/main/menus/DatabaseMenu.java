@@ -29,10 +29,10 @@ import org.quelea.QueleaApp;
 import org.quelea.displayable.Song;
 import org.quelea.languages.LabelGrabber;
 import org.quelea.windows.library.LibrarySongList;
-import org.quelea.windows.main.actionlisteners.EditSongDBActionListener;
-import org.quelea.windows.main.actionlisteners.NewSongActionListener;
-import org.quelea.windows.main.actionlisteners.RemoveSongDBActionListener;
-import org.quelea.windows.main.actionlisteners.ViewTagsActionListener;
+import org.quelea.windows.main.actionhandlers.EditSongDBActionHandler;
+import org.quelea.windows.main.actionhandlers.NewSongActionHandler;
+import org.quelea.windows.main.actionhandlers.RemoveSongDBActionHandler;
+import org.quelea.windows.main.actionhandlers.ViewTagsActionHandler;
 
 /**
  * Quelea's database menu.
@@ -55,21 +55,21 @@ public class DatabaseMenu extends Menu {
         super(LabelGrabber.INSTANCE.getLabel("database.heading"));
 
         newSongItem = new MenuItem(LabelGrabber.INSTANCE.getLabel("new.song.button"), new ImageView(new Image("file:icons/newsong.png", 16, 16, false, true)));
-        newSongItem.setOnAction(new NewSongActionListener());
+        newSongItem.setOnAction(new NewSongActionHandler());
         getItems().add(newSongItem);
 
         editSongItem = new MenuItem(LabelGrabber.INSTANCE.getLabel("edit.song.button"), new ImageView(new Image("file:icons/edit.png", 16, 16, false, true)));
-        editSongItem.setOnAction(new EditSongDBActionListener());
+        editSongItem.setOnAction(new EditSongDBActionHandler());
         editSongItem.setDisable(true);
         getItems().add(editSongItem);
 
         deleteSongItem = new MenuItem(LabelGrabber.INSTANCE.getLabel("delete.song.button"), new ImageView(new Image("file:icons/remove 2.png", 16, 16, false, true)));
-        deleteSongItem.setOnAction(new RemoveSongDBActionListener());
+        deleteSongItem.setOnAction(new RemoveSongDBActionHandler());
         deleteSongItem.setDisable(true);
         getItems().add(deleteSongItem);
 
         tagsItem = new MenuItem(LabelGrabber.INSTANCE.getLabel("tags.button"), new ImageView(new Image("file:icons/tag.png", 16, 16, false, true)));
-        tagsItem.setOnAction(new ViewTagsActionListener());
+        tagsItem.setOnAction(new ViewTagsActionHandler());
         getItems().add(tagsItem);
 
         final LibrarySongList libraryList = QueleaApp.get().getMainWindow().getMainPanel().getLibraryPanel().getLibrarySongPanel().getSongList();

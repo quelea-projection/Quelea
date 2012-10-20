@@ -23,9 +23,9 @@ import javafx.scene.control.MenuItem;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import org.quelea.languages.LabelGrabber;
-import org.quelea.windows.main.actionlisteners.SearchBibleActionListener;
-import org.quelea.windows.main.actionlisteners.ShowOptionsActionListener;
-import org.quelea.windows.main.actionlisteners.ViewBibleActionListener;
+import org.quelea.windows.main.actionhandlers.SearchBibleActionHandler;
+import org.quelea.windows.main.actionhandlers.ShowOptionsActionHandler;
+import org.quelea.windows.main.actionhandlers.ViewBibleActionHandler;
 
 /**
  * Quelea's tools menu.
@@ -44,15 +44,15 @@ public class ToolsMenu extends Menu {
         super(LabelGrabber.INSTANCE.getLabel("tools.menu"));
         
         viewBibleItem = new MenuItem(LabelGrabber.INSTANCE.getLabel("view.bible.button"), new ImageView(new Image("file:icons/bible.png", 20, 20, false, true)));
-        viewBibleItem.setOnAction(new ViewBibleActionListener());
+        viewBibleItem.setOnAction(new ViewBibleActionHandler());
         getItems().add(viewBibleItem);
         
         searchBibleItem = new MenuItem(LabelGrabber.INSTANCE.getLabel("search.bible.button"), new ImageView(new Image("file:icons/bible.png", 20, 20, false, true)));
-        searchBibleItem.setOnAction(new SearchBibleActionListener());
+        searchBibleItem.setOnAction(new SearchBibleActionHandler());
         getItems().add(searchBibleItem);
         
         optionsItem = new MenuItem(LabelGrabber.INSTANCE.getLabel("options.button"), new ImageView(new Image("file:icons/options.png", 20, 20, false, true)));
-        optionsItem.setOnAction(new ShowOptionsActionListener());
+        optionsItem.setOnAction(new ShowOptionsActionHandler());
         getItems().add(optionsItem);
     }
     
