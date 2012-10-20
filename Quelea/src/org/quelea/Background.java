@@ -54,6 +54,15 @@ public class Background {
     }
 
     /**
+     * Create a new background that's a certain image.
+     * <p/>
+     * @param image the background image.
+     */
+    public Background(Image image) {
+        originalImage = image;
+    }
+
+    /**
      * Get the background image.
      */
     public Image getImage() {
