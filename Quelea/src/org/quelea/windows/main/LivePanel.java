@@ -143,14 +143,6 @@ public class LivePanel extends LivePreviewPanel {
                 }
             }
         });
-        setOnKeyPressed(new EventHandler<KeyEvent>() {
-            @Override
-            public void handle(KeyEvent t) {
-                if(t.getCode() == KeyCode.LEFT) {
-                    QueleaApp.get().getMainWindow().getMainPanel().getPreviewPanel().requestFocus();
-                }
-            }
-        });
     }
 
     /**

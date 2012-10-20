@@ -63,20 +63,7 @@ public class MainPanel extends BorderPane {
         previewAndLive.setOrientation(Orientation.HORIZONTAL);
         previewAndLive.getItems().add(previewPanel);
         previewAndLive.getItems().add(livePanel);
-        previewPanel.getLyricsPanel().getSplitPane().getDividers().get(0).positionProperty().addListener(new ChangeListener<Number>() {
-
-            @Override
-            public void changed(ObservableValue<? extends Number> ov, Number t, Number t1) {
-                livePanel.getLyricsPanel().getSplitPane().getDividers().get(0).positionProperty().set(t1.doubleValue());
-            }
-        });
-        livePanel.getLyricsPanel().getSplitPane().getDividers().get(0).positionProperty().addListener(new ChangeListener<Number>() {
-
-            @Override
-            public void changed(ObservableValue<? extends Number> ov, Number t, Number t1) {
-                previewPanel.getLyricsPanel().getSplitPane().getDividers().get(0).positionProperty().set(t1.doubleValue());
-            }
-        });
+        previewPanel.getLyricsPanel().getSplitPane().getDividers().get(0).positionProperty().bindBidirectional(livePanel.getLyricsPanel().getSplitPane().getDividers().get(0).positionProperty());
         SplitPane mainSplit = new SplitPane();
         mainSplit.setOrientation(Orientation.HORIZONTAL);
         mainSplit.getItems().add(scheduleAndLibrary);

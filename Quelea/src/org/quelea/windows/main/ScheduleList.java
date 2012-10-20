@@ -85,14 +85,6 @@ public class ScheduleList extends ListView<Displayable> {
                 }
             }
         });
-        setOnKeyPressed(new EventHandler<KeyEvent>() {
-            @Override
-            public void handle(KeyEvent t) {
-                if(t.getCode() == KeyCode.RIGHT) {
-                    QueleaApp.get().getMainWindow().getMainPanel().getPreviewPanel().requestFocus();
-                }
-            }
-        });
         itemsProperty().addListener(new ChangeListener<ObservableList<Displayable>>() {
             @Override
             public void changed(ObservableValue<? extends ObservableList<Displayable>> ov, ObservableList<Displayable> t, ObservableList<Displayable> t1) {

@@ -628,6 +628,9 @@ public final class Utils {
      * @return the colour.
      */
     public static Color parseColour(String colour) {
+        if(!colour.contains("[")) {
+            return Color.web(colour);
+        }
         colour = colour.substring(colour.indexOf('[') + 1, colour.indexOf(']'));
         String[] parts = colour.split(",");
         double red = Double.parseDouble(parts[0].split("=")[1]);

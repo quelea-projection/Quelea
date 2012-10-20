@@ -20,6 +20,8 @@ package org.quelea.windows.main;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
+import org.quelea.Background;
+import org.quelea.Theme;
 import org.quelea.displayable.ImageDisplayable;
 
 /**
@@ -29,13 +31,16 @@ import org.quelea.displayable.ImageDisplayable;
 public class ImagePanel extends BorderPane implements ContainedPanel {
 
     private ImageView imageView;
+    private LivePreviewPanel containerPanel;
 
     /**
      * Create a new image panel.
      * @param container the container this panel is contained within.
      */
-    public ImagePanel() {
+    public ImagePanel(LivePreviewPanel panel) {
+        this.containerPanel = panel;
         imageView = new ImageView();
+        getChildren().add(imageView);
     }
 
     @Override
@@ -58,6 +63,10 @@ public class ImagePanel extends BorderPane implements ContainedPanel {
     public void showDisplayable(ImageDisplayable displayable) {
         Image image = new Image("file:"+displayable.getFile().getAbsolutePath());
         imageView.setImage(image);
+        for(LyricCanvas canvas : containerPanel.getCanvases()) {
+            canvas.setText(null, null, true);
+            canvas.setTheme(new Theme(null, null, new Background(imageView.getImage())));
+        }
     }
 
     @Override

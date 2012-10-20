@@ -57,7 +57,7 @@ public class ExitActionListener implements EventHandler<ActionEvent> {
         Schedule schedule = QueleaApp.get().getMainWindow().getMainPanel().getSchedulePanel().getScheduleList().getSchedule();
         if(!schedule.isEmpty() && schedule.isModified()) {
             cancel = false;
-            Dialog.buildConfirmation(LabelGrabber.INSTANCE.getLabel("save.before.exit.title"), LabelGrabber.INSTANCE.getLabel("save.before.exit.text")).addYesButton(new EventHandler<ActionEvent>() {
+            Dialog d = Dialog.buildConfirmation(LabelGrabber.INSTANCE.getLabel("save.before.exit.title"), LabelGrabber.INSTANCE.getLabel("save.before.exit.text")).addYesButton(new EventHandler<ActionEvent>() {
                 @Override
                 public void handle(ActionEvent t) {
                     //Save schedule
@@ -74,12 +74,12 @@ public class ExitActionListener implements EventHandler<ActionEvent> {
                     //Don't exit
                     cancel = true;
                 }
-            });
+            }).build();
+            d.showAndWait();
             if(cancel) {
                 return; //Don't exit
             }
         }
-        
         
         LOGGER.log(Level.INFO, "Hiding main window...");
         QueleaApp.get().getMainWindow().hide();
