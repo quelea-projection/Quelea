@@ -22,6 +22,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Objects;
 import javafx.scene.control.ColorPicker;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.TextField;
@@ -44,7 +45,7 @@ public class ImageBackground implements Background {
      */
     public ImageBackground(String imageLocation) {
         this.imageLocation = imageLocation;
-        originalImage = new Image("file:" + imageLocation);
+        originalImage = new Image("file:img/"+imageLocation);
     }
 
     /**
@@ -66,16 +67,10 @@ public class ImageBackground implements Background {
     /**
      * Get the image background file.
      * <p/>
-     * @return the file representing the image background, or null if the image
-     * background is a colour.
+     * @return the file representing the image background.
      */
     public File getImageFile() {
-        if(imageLocation == null) {
-            return null;
-        }
-        else {
-            return new File(new File("img"), imageLocation.trim());
-        }
+        return new File(new File("img"), imageLocation.trim());
     }
 
     /**
@@ -97,9 +92,10 @@ public class ImageBackground implements Background {
     public String getDBString() {
         return "$backgroundimage:" + getImageLocation();
     }
-    
+
     /**
      * Return any resources we depend upon, in this case the background image.
+     * <p/>
      * @return the background image.
      */
     @Override
@@ -110,8 +106,30 @@ public class ImageBackground implements Background {
     }
 
     @Override
-    public void setThemeForm(ColorPicker backgroundColorPicker, ComboBox<String> backgroundTypeSelect, TextField backgroundLocation) {
+    public void setThemeForm(ColorPicker backgroundColorPicker, ComboBox<String> backgroundTypeSelect, TextField backgroundImgLocation, TextField backgroundVidLocation) {
         backgroundTypeSelect.getSelectionModel().select(LabelGrabber.INSTANCE.getLabel("image.theme.label"));
-        backgroundLocation.setText(new File(getImageLocation()).getName());
+        backgroundImgLocation.setText(new File(getImageLocation()).getName());
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 5;
+        hash = 97 * hash + Objects.hashCode(this.imageLocation);
+        return hash;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if(obj == null) {
+            return false;
+        }
+        if(getClass() != obj.getClass()) {
+            return false;
+        }
+        final ImageBackground other = (ImageBackground) obj;
+        if(!Objects.equals(this.imageLocation, other.imageLocation)) {
+            return false;
+        }
+        return true;
     }
 }
