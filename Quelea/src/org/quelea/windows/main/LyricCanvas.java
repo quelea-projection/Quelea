@@ -41,6 +41,7 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.StackPane;
 import javafx.scene.media.Media;
+import javafx.scene.media.MediaException;
 import javafx.scene.media.MediaPlayer;
 import javafx.scene.media.MediaView;
 import javafx.scene.paint.Color;
@@ -141,12 +142,12 @@ public class LyricCanvas extends StackPane {
                     }
                 }
                 if(background instanceof ImageView) {
-                    ImageView imgBackground = (ImageView)background;
+                    ImageView imgBackground = (ImageView) background;
                     imgBackground.setFitHeight(getHeight());
                     imgBackground.setFitWidth(getWidth());
                 }
                 else if(background instanceof MediaView) {
-                    MediaView vidBackground = (MediaView)background;
+                    MediaView vidBackground = (MediaView) background;
                     vidBackground.setPreserveRatio(false);
                     vidBackground.setFitHeight(getHeight());
                     vidBackground.setFitWidth(getWidth());
@@ -459,17 +460,24 @@ public class LyricCanvas extends StackPane {
         FadeTransition fadeOut = new FadeTransition(Duration.seconds(0.3), background);
         fadeOut.setFromValue(1);
         fadeOut.setToValue(0);
-        
+
         Node newBackground;
         if(image == null) {
             final MediaView newVideo = new MediaView();
-            MediaPlayer player = new MediaPlayer(new Media(((VideoBackground)theme.getBackground()).getVideoFile().toURI().toString()));
-            player.setVolume(0);
-            player.setAutoPlay(true);
-            player.setCycleCount(javafx.scene.media.MediaPlayer.INDEFINITE);
-            newVideo.setMediaPlayer(player);
-            getChildren().add(0, newVideo);
-            newBackground = newVideo;
+            String location = ((VideoBackground) theme.getBackground()).getVideoFile().toURI().toString();
+            try {
+                MediaPlayer player = new MediaPlayer(new Media(location));
+                player.setVolume(0);
+                player.setAutoPlay(true);
+                player.setCycleCount(javafx.scene.media.MediaPlayer.INDEFINITE);
+                newVideo.setMediaPlayer(player);
+                getChildren().add(0, newVideo);
+                newBackground = newVideo;
+            }
+            catch(MediaException ex) {
+                return;
+                //Don't shout about it at this point.
+            }
         }
         else {
             final ImageView newImage = getNewImageView();
