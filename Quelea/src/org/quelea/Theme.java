@@ -209,7 +209,7 @@ public class Theme {
             else if (parts[0].equalsIgnoreCase("backgroundimage")) {
                 backgroundimage = parts[1];
             }
-            else if (parts[0].equalsIgnoreCase("backgroundvid")) {
+            else if (parts[0].equalsIgnoreCase("backgroundvideo")) {
                 backgroundvid = parts[1];
             }
             else if (parts[0].equalsIgnoreCase("themename")) {
@@ -232,7 +232,7 @@ public class Theme {
             background = new ImageBackground(backgroundimage);
         }
         else if (!backgroundvid.isEmpty()) {
-            background = new ColourBackground(Utils.parseColour(backgroundcolour));
+            background = new VideoBackground(backgroundvid);
         }
         else {
             LOGGER.log(Level.SEVERE, "Bug: Unhandled background");

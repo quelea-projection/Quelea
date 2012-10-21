@@ -177,26 +177,25 @@ public abstract class ImportDialog extends Stage implements PropertyChangeListen
                                 try {
                                     checkerService.shutdown();
                                     checkerService.awaitTermination(365, TimeUnit.DAYS); //Year eh? ;-)
-                                    Platform.runLater(new Runnable() {
-                                        @Override
-                                        public void run() {
-                                            if((localSongs == null || localSongs.isEmpty()) && !halt) {
-                                                Dialog.showWarning(LabelGrabber.INSTANCE.getLabel("import.no.songs.title"), LabelGrabber.INSTANCE.getLabel("import.no.songs.text"));
-                                            }
-                                            else if(!(localSongs == null || localSongs.isEmpty())) {
-
-                                                getImportedDialog().setSongs(localSongs, localSongsDuplicate, true);
-                                                getImportedDialog().show();
-                                            }
-                                            setIdle();
-                                        }
-                                    });
                                 }
                                 catch(InterruptedException ex) {
                                     LOGGER.log(Level.WARNING, "Interrupted?!", ex);
                                 }
                             }
+                            Platform.runLater(new Runnable() {
+                                @Override
+                                public void run() {
+                                    if((localSongs == null || localSongs.isEmpty()) && !halt) {
+                                        Dialog.showWarning(LabelGrabber.INSTANCE.getLabel("import.no.songs.title"), LabelGrabber.INSTANCE.getLabel("import.no.songs.text"));
+                                    }
+                                    else if(!(localSongs == null || localSongs.isEmpty())) {
 
+                                        getImportedDialog().setSongs(localSongs, localSongsDuplicate, true);
+                                        getImportedDialog().show();
+                                    }
+                                    setIdle();
+                                }
+                            });
                         }
                         catch(IOException ex) {
                             Dialog.showError(LabelGrabber.INSTANCE.getLabel("error.text"), LabelGrabber.INSTANCE.getLabel("import.error.message"));
