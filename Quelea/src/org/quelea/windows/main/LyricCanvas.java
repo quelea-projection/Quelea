@@ -22,6 +22,8 @@ import com.sun.javafx.tk.Toolkit;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javafx.animation.FadeTransition;
 import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
@@ -30,30 +32,29 @@ import javafx.animation.Timeline;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
-import javafx.embed.swing.JFXPanel;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Pos;
 import javafx.scene.Group;
-import javafx.scene.Scene;
+import javafx.scene.Node;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.StackPane;
+import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
 import javafx.scene.media.MediaView;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
-import javafx.stage.Stage;
-import javafx.stage.WindowEvent;
 import javafx.util.Duration;
-import org.quelea.Background;
 import org.quelea.ColourBackground;
 import org.quelea.ImageBackground;
 import org.quelea.Theme;
+import org.quelea.VideoBackground;
 import org.quelea.displayable.TextDisplayable;
 import org.quelea.notice.NoticeDrawer;
+import org.quelea.utils.LoggerUtils;
 import org.quelea.utils.QueleaProperties;
 import org.quelea.utils.Utils;
 
@@ -64,6 +65,7 @@ import org.quelea.utils.Utils;
  */
 public class LyricCanvas extends StackPane {
 
+    private static final Logger LOGGER = LoggerUtils.getLogger();
     private Theme theme;
     private String[] text;
     private String[] smallText;
@@ -78,8 +80,7 @@ public class LyricCanvas extends StackPane {
     private TextDisplayable curDisplayable;
     private int curIndex;
     private MediaView motionBackground;
-    private MediaPlayer curPlayer;
-    private ImageView background;
+    private Node background;
     private ImageView blackImg;
 
     /**
@@ -139,8 +140,20 @@ public class LyricCanvas extends StackPane {
                         getChildren().add(0, background);
                     }
                 }
-                background.setFitHeight(getHeight());
-                background.setFitWidth(getWidth());
+                if(background instanceof ImageView) {
+                    ImageView imgBackground = (ImageView)background;
+                    imgBackground.setFitHeight(getHeight());
+                    imgBackground.setFitWidth(getWidth());
+                }
+                else if(background instanceof MediaView) {
+                    MediaView vidBackground = (MediaView)background;
+                    vidBackground.setPreserveRatio(false);
+                    vidBackground.setFitHeight(getHeight());
+                    vidBackground.setFitWidth(getWidth());
+                }
+                else {
+                    LOGGER.log(Level.WARNING, "BUG: Unrecognised image background");
+                }
                 blackImg.setFitHeight(getHeight());
                 blackImg.setFitWidth(getWidth());
             }
@@ -425,17 +438,20 @@ public class LyricCanvas extends StackPane {
         if(theme == null) {
             theme = Theme.DEFAULT_THEME;
         }
-        if(this.theme == theme) {
+        if(this.theme.equals(theme)) {
             return;
         }
         this.theme = theme;
         Image image;
         if(theme.getBackground() instanceof ImageBackground) {
-            image = ((ImageBackground)theme.getBackground()).getImage();
+            image = ((ImageBackground) theme.getBackground()).getImage();
         }
         else if(theme.getBackground() instanceof ColourBackground) {
-            Color color = ((ColourBackground)theme.getBackground()).getColour();
+            Color color = ((ColourBackground) theme.getBackground()).getColour();
             image = Utils.getImageFromColour(color);
+        }
+        else if(theme.getBackground() instanceof VideoBackground) {
+            image = null;
         }
         else {
             throw new AssertionError("Bug: Unhandled theme case");
@@ -443,12 +459,27 @@ public class LyricCanvas extends StackPane {
         FadeTransition fadeOut = new FadeTransition(Duration.seconds(0.3), background);
         fadeOut.setFromValue(1);
         fadeOut.setToValue(0);
-        final ImageView newBackground = getNewImageView();
-        newBackground.setFitHeight(getHeight());
-        newBackground.setFitWidth(getWidth());
-        newBackground.setImage(image);
-        getChildren().add(0, newBackground);
-        final ImageView oldBackground = background;
+        
+        Node newBackground;
+        if(image == null) {
+            final MediaView newVideo = new MediaView();
+            MediaPlayer player = new MediaPlayer(new Media(((VideoBackground)theme.getBackground()).getVideoFile().toURI().toString()));
+            player.setVolume(0);
+            player.setAutoPlay(true);
+            player.setCycleCount(javafx.scene.media.MediaPlayer.INDEFINITE);
+            newVideo.setMediaPlayer(player);
+            getChildren().add(0, newVideo);
+            newBackground = newVideo;
+        }
+        else {
+            final ImageView newImage = getNewImageView();
+            newImage.setFitHeight(getHeight());
+            newImage.setFitWidth(getWidth());
+            newImage.setImage(image);
+            getChildren().add(0, newImage);
+            newBackground = newImage;
+        }
+        final Node oldBackground = background;
         fadeOut.setOnFinished(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent t) {

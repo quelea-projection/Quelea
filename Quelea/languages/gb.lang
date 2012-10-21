@@ -290,3 +290,5 @@ library.preview.song.text=Preview song
 video.error.title=Video error
 video.error.unsupported=Sorry, the video file you selected isn't supported.
 video.error.general=Sorry, there was an error with the video file you selected.
+video.theme.label=Video
+select.video.button=Select Video

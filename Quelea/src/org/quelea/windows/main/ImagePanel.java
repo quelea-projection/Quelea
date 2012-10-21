@@ -61,11 +61,11 @@ public class ImagePanel extends BorderPane implements ContainedPanel {
      * @param displayable the image displayable.
      */
     public void showDisplayable(ImageDisplayable displayable) {
-        Image image = new Image("file:"+displayable.getFile().getAbsolutePath());
+        Image image = new Image("file:"+displayable.getFile().getName());
         imageView.setImage(image);
         for(LyricCanvas canvas : containerPanel.getCanvases()) {
             canvas.setText(null, null, true);
-            canvas.setTheme(new Theme(null, null, new ImageBackground(imageView.getImage())));
+            canvas.setTheme(new Theme(null, null, new ImageBackground(displayable.getFile().getName())));
         }
     }
 

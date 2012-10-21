@@ -49,5 +49,5 @@ public interface Background {
      * @param backgroundTypeSelect the ComboBox to select the background type.
      * @param backgroundLocation the text field representing the background "location".
      */
-    void setThemeForm(ColorPicker backgroundColorPicker, ComboBox<String> backgroundTypeSelect, TextField backgroundLocation);
+    void setThemeForm(ColorPicker backgroundColorPicker, ComboBox<String> backgroundTypeSelect, TextField backgroundImgLocation, TextField backgroundVidLocation);
 }
