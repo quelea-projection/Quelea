@@ -1,6 +1,6 @@
 /*
- * This file is part of Quelea, free projection software for churches. Copyright
- * (C) 2011 Michael Berry
+ * This file is part of Quelea, free projection software for churches.
+ * 
  *
  * This program is free software: you can redistribute it and/or modify it under
  * the terms of the GNU General Public License as published by the Free Software

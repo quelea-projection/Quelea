@@ -1,5 +1,5 @@
 /*
- * This file is part of Quelea, free projection software for churches. Copyright
+ * This file is part of Quelea, free projection software for churches.
  * (C) 2012 Michael Berry
  *
  * This program is free software: you can redistribute it and/or modify it under
