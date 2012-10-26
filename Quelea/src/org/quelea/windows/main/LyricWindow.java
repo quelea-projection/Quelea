@@ -16,7 +16,8 @@
  */
 package org.quelea.windows.main;
 
-import java.awt.Cursor;
+//import java.awt.Cursor;
+import javafx.scene.Cursor;
 import java.awt.Point;
 import java.awt.Toolkit;
 import java.awt.image.BufferedImage;
@@ -40,8 +41,9 @@ public class LyricWindow extends Stage {
      * Initialise cursor hiding.
      */
     static {
-        BufferedImage blankImg = new BufferedImage(16, 16, BufferedImage.TYPE_INT_ARGB);
-        BLANK_CURSOR = Toolkit.getDefaultToolkit().createCustomCursor(blankImg, new Point(0, 0), "blank cursor");
+        //BufferedImage blankImg = new BufferedImage(16, 16, BufferedImage.TYPE_INT_ARGB);
+        //BLANK_CURSOR = Toolkit.getDefaultToolkit().createCustomCursor(blankImg, new Point(0, 0), "blank cursor");
+        BLANK_CURSOR = javafx.scene.Cursor.NONE;
     }
 
     /**

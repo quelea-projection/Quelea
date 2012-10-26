@@ -32,7 +32,9 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
+import javafx.stage.Screen;
 import org.quelea.languages.LabelGrabber;
+import org.quelea.utils.QueleaProperties;
 import org.quelea.utils.Utils;
 import org.quelea.windows.main.NumberSpinner;
 
@@ -157,14 +159,16 @@ public class SingleDisplayPanel extends VBox {
         if(custom != null && custom.isSelected()) {
             return getCoords();
         }
-        GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
-        GraphicsDevice[] gds = ge.getScreenDevices();
+        //GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
+        //GraphicsDevice[] gds = ge.getScreenDevices();
+        ObservableList<Screen> monitors = Screen.getScreens();
+        
         int screen = getOutputScreen();
         if(screen == -1) {
             return null;
         }
         else {
-            return Utils.getBoundsFromRect(gds[screen].getDefaultConfiguration().getBounds());
+            return Utils.getBoundsFromRect2D(monitors.get(screen).getBounds());
         }
     }
 
@@ -240,13 +244,16 @@ public class SingleDisplayPanel extends VBox {
      * @return a list model describing the available graphical devices.
      */
     private ObservableList<String> getAvailableScreens(boolean none) {
-        GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
-        final GraphicsDevice[] gds = ge.getScreenDevices();
+//        GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
+//        final GraphicsDevice[] gds = ge.getScreenDevices();
+        
+        ObservableList<Screen> monitors = Screen.getScreens();
+        
         ObservableList<String> descriptions = FXCollections.<String>observableArrayList();
         if(none) {
             descriptions.add(LabelGrabber.INSTANCE.getLabel("none.text"));
         }
-        for(int i = 0; i < gds.length; i++) {
+        for(int i = 0; i < monitors.size(); i++) {
             descriptions.add(LabelGrabber.INSTANCE.getLabel("output.text") + " " + (i + 1));
         }
         return descriptions;
