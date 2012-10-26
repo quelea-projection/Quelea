@@ -20,6 +20,8 @@ package org.quelea.splash;
 import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
 import java.awt.Rectangle;
+import javafx.collections.ObservableList;
+import javafx.geometry.Rectangle2D;
 import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.image.Image;
@@ -28,6 +30,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.stage.Modality;
+import javafx.stage.Screen;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import org.quelea.utils.QueleaProperties;
@@ -60,16 +63,37 @@ public class SplashStage extends Stage {
         mainPane.getChildren().add(text);
         setScene(new Scene(mainPane));
 
-        int controlScreenProp = QueleaProperties.get().getControlScreen();
-        GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
-        final GraphicsDevice[] gds = ge.getScreenDevices();
-        if(controlScreenProp >= gds.length) {
-            controlScreenProp = gds.length - 1;
-        }
-        Rectangle bounds = gds[controlScreenProp].getDefaultConfiguration().getBounds();
         
-        //Centre on monitor
-        setX((bounds.getLocation().x + bounds.getWidth() / 2) - splashImage.getWidth() / 2);
-        setY((bounds.getLocation().y + bounds.getHeight() / 2) - splashImage.getHeight() / 2);
+//        GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
+//        final GraphicsDevice[] gds = ge.getScreenDevices();
+//        if(controlScreenProp >= gds.length) {
+//            controlScreenProp = gds.length - 1;
+//        }
+//        Rectangle bounds = gds[controlScreenProp].getDefaultConfiguration().getBounds();
+        
+        ObservableList<Screen> monitors = Screen.getScreens();
+        Screen screen;
+        int controlScreenProp = QueleaProperties.get().getControlScreen();
+        if(controlScreenProp < monitors.size()) {
+            screen = monitors.get(controlScreenProp);
+        }
+        else {
+            screen = Screen.getPrimary();
+        }
+        
+        Rectangle2D bounds = screen.getVisualBounds();
+        
+        setX((bounds.getWidth() / 2) - splashImage.getWidth() / 2);
+        setY((bounds.getHeight() / 2) - splashImage.getHeight() / 2);
+//        
+//        
+//        
+//        
+//        //Centre on monitor
+//        setX((bounds.getLocation().x + bounds.getWidth() / 2) - splashImage.getWidth() / 2);
+//        setY((bounds.getLocation().y + bounds.getHeight() / 2) - splashImage.getHeight() / 2);
+    
+    // centerOnScreen();
+    
     }
 }

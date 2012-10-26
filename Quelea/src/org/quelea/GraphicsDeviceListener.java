@@ -19,6 +19,7 @@
 package org.quelea;
 
 import java.awt.GraphicsDevice;
+import javafx.collections.ObservableList;
 
 /**
  * Provides an interface for a callback when the graphics devices have changed.
@@ -30,6 +31,7 @@ public interface GraphicsDeviceListener {
      * Called when the graphics devices have changed.
      * @param devices the new devices.
      */
-    void devicesChanged(GraphicsDevice[] devices);
+    //void devicesChanged(GraphicsDevice[] devices);
+    void devicesChanged(ObservableList<javafx.stage.Screen> devices);
     
 }

@@ -111,6 +111,10 @@ public class MainWindow extends Stage {
         HBox.setHgrow(mainToolbar, Priority.ALWAYS);
         toolbarPanel.getChildren().add(mainToolbar);
         
+        if(Utils.isMac()) {
+            menuBar.setUseSystemMenuBar(true);
+        }
+        
         VBox menuBox = new VBox();
         menuBox.setFillWidth(true);
         menuBox.getChildren().add(menuBar);
