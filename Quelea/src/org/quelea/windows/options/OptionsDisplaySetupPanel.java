@@ -18,7 +18,9 @@ package org.quelea.windows.options;
 
 import java.awt.GraphicsDevice;
 import javafx.application.Platform;
+import javafx.collections.ObservableList;
 import javafx.scene.layout.GridPane;
+import javafx.stage.Screen;
 import org.quelea.QueleaApp;
 import org.quelea.GraphicsDeviceListener;
 import org.quelea.GraphicsDeviceWatcher;
@@ -53,8 +55,23 @@ public class OptionsDisplaySetupPanel extends GridPane implements PropertyPanel 
         
         GraphicsDeviceWatcher.INSTANCE.addGraphicsDeviceListener(new GraphicsDeviceListener() {
 
+//            @Override
+//            public void devicesChanged(GraphicsDevice[] devices) {
+//                Platform.runLater(new Runnable() {
+//
+//                    @Override
+//                    public void run() {
+//                        monitorPanel.update();
+//                        projectorPanel.update();
+//                        stagePanel.update();
+//                        updatePos();
+//                    }
+//                });
+//             
+//            }
+
             @Override
-            public void devicesChanged(GraphicsDevice[] devices) {
+            public void devicesChanged(ObservableList<Screen> devices) {
                 Platform.runLater(new Runnable() {
 
                     @Override
@@ -65,7 +82,6 @@ public class OptionsDisplaySetupPanel extends GridPane implements PropertyPanel 
                         updatePos();
                     }
                 });
-             
             }
         });
     }

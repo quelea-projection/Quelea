@@ -51,6 +51,7 @@ import java.util.logging.Logger;
 import javafx.application.Platform;
 import javafx.geometry.BoundingBox;
 import javafx.geometry.Bounds;
+import javafx.geometry.Rectangle2D;
 import javafx.scene.image.Image;
 import javafx.scene.image.PixelWriter;
 import javafx.scene.image.WritableImage;
@@ -140,6 +141,17 @@ public final class Utils {
      */
     public static Bounds getBoundsFromRect(Rectangle rect) {
         return new BoundingBox(rect.getX(), rect.getY(), rect.getWidth(), rect.getHeight());
+    }
+    
+    /**
+     * Converts a JavaFX Rectangle2D to a JavaFX bounds object.
+     * <p/>
+     * @param rect the Rectangle2D to convert.
+     * @return the equivalent bounds.
+     * 
+     */
+    public static Bounds getBoundsFromRect2D(Rectangle2D rect) {
+        return new BoundingBox(rect.getMinX(), rect.getMinY(), rect.getWidth(), rect.getHeight());
     }
 
     /**

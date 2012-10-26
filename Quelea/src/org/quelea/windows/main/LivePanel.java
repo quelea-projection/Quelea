@@ -20,6 +20,7 @@ package org.quelea.windows.main;
 import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
 import java.util.HashSet;
+import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
 import javafx.scene.control.Label;
 import javafx.scene.control.ToggleButton;
@@ -32,6 +33,7 @@ import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.Region;
+import javafx.stage.Screen;
 import org.quelea.QueleaApp;
 import org.quelea.displayable.Displayable;
 import org.quelea.languages.LabelGrabber;
@@ -94,13 +96,15 @@ public class LivePanel extends LivePreviewPanel {
             public void handle(javafx.event.ActionEvent t) {
                 int projectorScreen = QueleaProperties.get().getProjectorScreen();
                 int stageScreen = QueleaProperties.get().getStageScreen();
-                GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
-                final GraphicsDevice[] gds = ge.getScreenDevices();
+                //GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
+                //final GraphicsDevice[] gds = ge.getScreenDevices();
+                final ObservableList<Screen> monitors = Screen.getScreens();
+                
                 LyricWindow lyricWindow = QueleaApp.get().getLyricWindow();
                 LyricWindow stageWindow = QueleaApp.get().getStageWindow();
 
                 final boolean lyricsHidden;
-                if(!QueleaProperties.get().isProjectorModeCoords() && (projectorScreen >= gds.length || projectorScreen < 0)) {
+                if(!QueleaProperties.get().isProjectorModeCoords() && (projectorScreen >= monitors.size() || projectorScreen < 0)) {
                     lyricsHidden = true;
                 }
                 else {
@@ -108,7 +112,7 @@ public class LivePanel extends LivePreviewPanel {
                 }
 
                 final boolean stageHidden;
-                if(!QueleaProperties.get().isStageModeCoords() && (stageScreen >= gds.length || stageScreen < 0)) {
+                if(!QueleaProperties.get().isStageModeCoords() && (stageScreen >= monitors.size() || stageScreen < 0)) {
                     stageHidden = true;
                 }
                 else {

@@ -27,7 +27,9 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javafx.collections.ObservableList;
 import org.quelea.utils.LoggerUtils;
+//import sun.awt.X11.Screen;
 
 /**
  * A singleton class that watches graphics devices. Any other class can register
@@ -48,20 +50,22 @@ public class GraphicsDeviceWatcher {
      * Create a new device watcher. Internal use only (singleton.)
      */
     private GraphicsDeviceWatcher() {
-        lastDeviceCount = GraphicsEnvironment.getLocalGraphicsEnvironment().getScreenDevices().length;
+        //lastDeviceCount = GraphicsEnvironment.getLocalGraphicsEnvironment().getScreenDevices().length;
+        lastDeviceCount = javafx.stage.Screen.getScreens().size();
         listeners = new ArrayList<>();
         poller = Executors.newScheduledThreadPool(1);
         poller.scheduleAtFixedRate(new Runnable() {
 
             @Override
             public void run() {
-                GraphicsDevice[] devices = GraphicsEnvironment.getLocalGraphicsEnvironment().getScreenDevices();
-                int thisDeviceCount = devices.length;
+                //GraphicsDevice[] devices = GraphicsEnvironment.getLocalGraphicsEnvironment().getScreenDevices();
+                ObservableList<javafx.stage.Screen> monitors = javafx.stage.Screen.getScreens();
+                int thisDeviceCount = monitors.size();  // devices.length;
                 if(thisDeviceCount != lastDeviceCount) {
                     for(GraphicsDeviceListener listener : listeners) {
                         LOGGER.log(Level.INFO, "Number of devices changed, was {0} now {1}", new Object[]{lastDeviceCount, thisDeviceCount});
                         lastDeviceCount = thisDeviceCount;
-                        listener.devicesChanged(devices);
+                        listener.devicesChanged(monitors);
                     }
                 }
             }

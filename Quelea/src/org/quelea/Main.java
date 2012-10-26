@@ -25,6 +25,9 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.application.Application;
 import javafx.application.Platform;
+import javafx.collections.ObservableList;
+import javafx.geometry.Rectangle2D;
+import javafx.stage.Screen;
 import javafx.stage.Stage;
 import org.javafx.dialog.Dialog;
 import org.quelea.bible.BibleManager;
@@ -62,41 +65,75 @@ public final class Main extends Application {
 
         new UserFileChecker(QueleaProperties.getQueleaUserHome()).checkUserFiles();
 
-        GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
-        final GraphicsDevice[] gds = ge.getScreenDevices();
-        LOGGER.log(Level.INFO, "Number of displays: {0}", gds.length);
-
+        final ObservableList<Screen> monitors = Screen.getScreens();
+        Screen screen;
+        LOGGER.log(Level.INFO, "Number of displays: {0}", monitors.size());
+        
         int controlScreenProp = QueleaProperties.get().getControlScreen();
         final int controlScreen;
         final int projectorScreen = QueleaProperties.get().getProjectorScreen();
         final int stageScreen = QueleaProperties.get().getStageScreen();
-
-        if(gds.length <= controlScreenProp) {
-            controlScreen = 0;
-        }
-        else {
+        final int monitorNumber = monitors.size();
+        
+        if(controlScreenProp < monitorNumber) {
             controlScreen = controlScreenProp;
         }
+        else {
+            controlScreen = 0;
+        }
+        
         final boolean lyricsHidden;
-        if(!QueleaProperties.get().isProjectorModeCoords() && (projectorScreen >= gds.length || projectorScreen < 0)) {
+        if(!QueleaProperties.get().isProjectorModeCoords() && (projectorScreen >= monitorNumber || projectorScreen < 0)) {
             lyricsHidden = true;
         }
         else {
             lyricsHidden = false;
         }
         final boolean stageHidden;
-        if(!QueleaProperties.get().isStageModeCoords() && (stageScreen >= gds.length || stageScreen < 0)) {
+        if(!QueleaProperties.get().isStageModeCoords() && (stageScreen >= monitorNumber || stageScreen < 0)) {
             stageHidden = true;
         }
         else {
             stageHidden = false;
         }
+        
+//        GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
+//        final GraphicsDevice[] gds = ge.getScreenDevices();
+//        LOGGER.log(Level.INFO, "Number of displays: {0}", gds.length);
+//
+//        int controlScreenProp = QueleaProperties.get().getControlScreen();
+//        final int controlScreen;
+//        final int projectorScreen = QueleaProperties.get().getProjectorScreen();
+//        final int stageScreen = QueleaProperties.get().getStageScreen();
+//
+//        if(gds.length <= controlScreenProp) {
+//            controlScreen = 0;
+//        }
+//        else {
+//            controlScreen = controlScreenProp;
+//        }
+//        final boolean lyricsHidden;
+//        if(!QueleaProperties.get().isProjectorModeCoords() && (projectorScreen >= gds.length || projectorScreen < 0)) {
+//            lyricsHidden = true;
+//        }
+//        else {
+//            lyricsHidden = false;
+//        }
+//        final boolean stageHidden;
+//        if(!QueleaProperties.get().isStageModeCoords() && (stageScreen >= gds.length || stageScreen < 0)) {
+//            stageHidden = true;
+//        }
+//        else {
+//            stageHidden = false;
+//        }
+        
+        
         Platform.runLater(new Runnable() {
             @Override
             public void run() {
                 if(lyricsHidden) {
                     LOGGER.log(Level.INFO, "Hiding projector display on monitor 0 (base 0!)");
-                    fullScreenWindow = new LyricWindow(Utils.getBoundsFromRect(gds[0].getDefaultConfiguration().getBounds()), false);
+                    fullScreenWindow = new LyricWindow(Utils.getBoundsFromRect2D(monitors.get(0).getVisualBounds()), false);
                     fullScreenWindow.hide();
                 }
                 else if(QueleaProperties.get().isProjectorModeCoords()) {
@@ -105,14 +142,14 @@ public final class Main extends Application {
                 }
                 else {
                     LOGGER.log(Level.INFO, "Starting projector display on monitor {0} (base 0!)", projectorScreen);
-                    fullScreenWindow = new LyricWindow(Utils.getBoundsFromRect(gds[projectorScreen].getDefaultConfiguration().getBounds()), false);
+                    fullScreenWindow = new LyricWindow(Utils.getBoundsFromRect2D(monitors.get(projectorScreen).getVisualBounds()), false);
                 }
                 QueleaApp.get().setLyricWindow(fullScreenWindow);
                 fullScreenWindow.toFront();
 
                 if(stageHidden) {
                     LOGGER.log(Level.INFO, "Hiding stage display on monitor 0 (base 0!)");
-                    stageWindow = new LyricWindow(Utils.getBoundsFromRect(gds[0].getDefaultConfiguration().getBounds()), true);
+                    stageWindow = new LyricWindow(Utils.getBoundsFromRect2D(monitors.get(0).getVisualBounds()), true);
                     stageWindow.hide();
                 }
                 else if(QueleaProperties.get().isStageModeCoords()) {
@@ -121,7 +158,7 @@ public final class Main extends Application {
                 }
                 else {
                     LOGGER.log(Level.INFO, "Starting stage display on monitor {0} (base 0!)", stageScreen);
-                    stageWindow = new LyricWindow(Utils.getBoundsFromRect(gds[stageScreen].getDefaultConfiguration().getBounds()), true);
+                    stageWindow = new LyricWindow(Utils.getBoundsFromRect2D(monitors.get(stageScreen).getVisualBounds()), true);
                 }
                 QueleaApp.get().setStageWindow(stageWindow);
                 stageWindow.toFront();
@@ -190,7 +227,7 @@ public final class Main extends Application {
                 catch(InterruptedException ex) {
                 }
 //                Utils.centreOnMonitor(mainWindow, controlScreen);
-                showWarning(gds.length);
+                showWarning(monitorNumber);
                 mainWindow.toFront();
                 new ShortcutManager().addShortcuts();
                 LOGGER.log(Level.INFO, "Loaded everything.");
