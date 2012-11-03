@@ -44,14 +44,13 @@ public final class QueleaProperties extends Properties {
      */
     private QueleaProperties() {
         try {
-            if(!getPropFile().exists()) {
+            if (!getPropFile().exists()) {
                 getPropFile().createNewFile();
             }
-            try(FileReader reader = new FileReader(getPropFile())) {
+            try (FileReader reader = new FileReader(getPropFile())) {
                 load(reader);
             }
-        }
-        catch(IOException ex) {
+        } catch (IOException ex) {
 //            LOGGER.log(Level.SEVERE, "Couldn't load properties", ex);
 //            ex.printStackTrace();
         }
@@ -70,10 +69,9 @@ public final class QueleaProperties extends Properties {
      * Save these properties to the file.
      */
     private void write() {
-        try(FileWriter writer = new FileWriter(getPropFile())) {
+        try (FileWriter writer = new FileWriter(getPropFile())) {
             store(writer, "Auto save");
-        }
-        catch(IOException ex) {
+        } catch (IOException ex) {
 //            LOGGER.log(Level.WARNING, "Couldn't store properties", ex);
         }
     }
@@ -106,7 +104,6 @@ public final class QueleaProperties extends Properties {
         return getProperty("facebook.page", "http://www.facebook.com/quelea.projection");
     }
 
-
     /**
      * Get the Quelea home directory in the user's directory.
      * <p/>
@@ -114,7 +111,7 @@ public final class QueleaProperties extends Properties {
      */
     public static File getQueleaUserHome() {
         File ret = new File(new File(System.getProperty("user.home")), ".quelea");
-        if(!ret.exists()) {
+        if (!ret.exists()) {
             ret.mkdir();
         }
         return ret;
@@ -685,7 +682,7 @@ public final class QueleaProperties extends Properties {
         double red = Double.parseDouble(color[0].trim());
         double green = Double.parseDouble(color[1].trim());
         double blue = Double.parseDouble(color[2].trim());
-        if(red > 1 || green > 1 || blue > 1) {
+        if (red > 1 || green > 1 || blue > 1) {
             red /= 255;
             green /= 255;
             blue /= 255;
@@ -842,5 +839,14 @@ public final class QueleaProperties extends Properties {
      */
     public boolean getOOPresOnTop() {
         return Boolean.parseBoolean(getProperty("oo.ontop", "true"));
+    }
+
+    /**
+     * Determine if drag and drop is enabled
+     * <p/>
+     * @return true if we can use drag and drop functions
+     */
+    public boolean getDragAndDrop() {
+        return Boolean.parseBoolean(getProperty("enable.drag.and.drop", "false"));
     }
 }

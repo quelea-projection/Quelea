@@ -659,4 +659,8 @@ public final class Utils {
         }
         return new Color(red, green, blue, 1);
     }
+    
+    public static void enableDragAndDrop() {
+        DragAndDrop.enable();
+    }
 }

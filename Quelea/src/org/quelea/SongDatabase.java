@@ -213,6 +213,27 @@ public final class SongDatabase {
             return null;
         }
     }
+    
+    /**
+     * Get individual song
+     * @param id of the song to be selected
+     * @return song 
+     */
+    public Song getSong(int id) {
+        try(ResultSet rs = runSelectExpression("select * from songs where id=" + id)) {
+            if(rs.next()) {
+                Song song = new Song.Builder(rs.getString("title"), rs.getString("author")).lyrics(rs.getString("lyrics")).ccli(rs.getString("ccli")).year(rs.getString("year")).tags(rs.getString("tags")).publisher(rs.getString("publisher")).copyright(rs.getString("copyright")).key(rs.getString("key")).info(rs.getString("info")).capo(rs.getString("capo")).id(rs.getInt("id")).get();
+                for(TextSection section : song.getSections()) {
+                    section.setTheme(Theme.parseDBString(rs.getString("background")));
+                }
+                return song;
+            }
+        }
+        catch(SQLException ex) {
+            LOGGER.log(Level.WARNING, "Couldn't get the songs", ex);
+        }
+        return null;
+    }
 
     /**
      * Add a song to the database.
