@@ -28,18 +28,26 @@ import org.quelea.windows.library.LibrarySongList;
 import org.quelea.windows.main.ScheduleList;
 
 /**
- * This class contains and controls all of the drag and drop functions associated with the UI
- * 
- * @author begoodwi
+ * This class contains and controls all of the drag and drop functions
+ * associated with the UI
+ *
+ * @author Ben Goodwin
  */
 class DragAndDrop {
 
+    /**
+     * Public method to be called to add the required listeners to the various scenes. 
+     */
     static public void enable() {
         setLibToSchedDD();
     }
 
+    /**
+     * Sets up all drag events to move a song from the LibrarySongList into the ScheduleList
+     * to add it as a schedule item.
+     */
     static private void setLibToSchedDD() {
-        
+
         final LibrarySongList source = QueleaApp.get().getMainWindow().getMainPanel().getLibraryPanel().getLibrarySongPanel().getSongList();
         final ScheduleList target = QueleaApp.get().getMainWindow().getMainPanel().getSchedulePanel().getScheduleList();
 
@@ -55,37 +63,33 @@ class DragAndDrop {
                 t.consume();
             }
         });
-        
-        target.setOnDragOver(new EventHandler <DragEvent>() {
+
+        target.setOnDragOver(new EventHandler<DragEvent>() {
             @Override
             public void handle(DragEvent t) {
-                /* accept it only if it is from source and if it has a string data */
+                /* accept it only if it is from source */
                 if (t.getGestureSource() == source) {
                     t.acceptTransferModes(TransferMode.COPY_OR_MOVE);
                 }
-                
+
                 t.consume();
             }
         });
 
-        
+
         target.setOnDragDropped(new EventHandler<DragEvent>() {
             @Override
             public void handle(DragEvent t) {
-                /* data dropped */
-                /* if there is a string data on dragboard, read it and use it */
+                
                 Dragboard db = t.getDragboard();
                 //int id = Integer.parseInt(db.getString());
                 //target.add(SongDatabase.get().getSong(id));
                 target.add(source.getSelectedValue());
-                
-                /* let the source know whether the string was successfully 
-                 * transferred and used */
+
                 t.setDropCompleted(true);
                 t.consume();
             }
         });
-        
-        
     }
+    
 }
