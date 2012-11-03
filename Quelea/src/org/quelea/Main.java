@@ -219,7 +219,12 @@ public final class Main extends Application {
                     stageWindow.show();
                 }
                 LOGGER.log(Level.INFO, "Registered canvases.");
-
+                
+                if(QueleaProperties.get().getDragAndDrop()) {
+                    Utils.enableDragAndDrop();
+                    LOGGER.log(Level.INFO, "Enabled drag and drop functionality.");
+                }
+                
                 LOGGER.log(Level.INFO, "Final loading bits");
                 try {
                     bibleLoader.join(); //Make sure bibleloader has finished loading
