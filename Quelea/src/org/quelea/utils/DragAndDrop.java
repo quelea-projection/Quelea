@@ -24,10 +24,14 @@ import javafx.scene.input.Dragboard;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.TransferMode;
 import org.quelea.QueleaApp;
-import org.quelea.SongDatabase;
 import org.quelea.windows.library.LibrarySongList;
 import org.quelea.windows.main.ScheduleList;
 
+/**
+ * This class contains and controls all of the drag and drop functions associated with the UI
+ * 
+ * @author begoodwi
+ */
 class DragAndDrop {
 
     static public void enable() {
@@ -46,7 +50,7 @@ class DragAndDrop {
 
                 /* Put a string on a dragboard */
                 ClipboardContent content = new ClipboardContent();
-                content.putString("" + source.getSelectedValue().getID());
+                content.putString("");
                 db.setContent(content);
                 t.consume();
             }
@@ -56,7 +60,7 @@ class DragAndDrop {
             @Override
             public void handle(DragEvent t) {
                 /* accept it only if it is from source and if it has a string data */
-                if (t.getGestureSource() == source && t.getDragboard().hasString()) {
+                if (t.getGestureSource() == source) {
                     t.acceptTransferModes(TransferMode.COPY_OR_MOVE);
                 }
                 
@@ -71,15 +75,13 @@ class DragAndDrop {
                 /* data dropped */
                 /* if there is a string data on dragboard, read it and use it */
                 Dragboard db = t.getDragboard();
-                boolean success = false;
-                if (db.hasString()) {
-                    int id = Integer.parseInt(db.getString());
-                    target.add(SongDatabase.get().getSong(id));
-                    success = true;
-                }
+                //int id = Integer.parseInt(db.getString());
+                //target.add(SongDatabase.get().getSong(id));
+                target.add(source.getSelectedValue());
+                
                 /* let the source know whether the string was successfully 
                  * transferred and used */
-                t.setDropCompleted(success);
+                t.setDropCompleted(true);
                 t.consume();
             }
         });
