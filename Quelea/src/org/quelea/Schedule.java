@@ -51,7 +51,7 @@ import org.quelea.displayable.BiblePassage;
 import org.quelea.displayable.Displayable;
 import org.quelea.displayable.ImageDisplayable;
 import org.quelea.displayable.PresentationDisplayable;
-import org.quelea.displayable.Song;
+import org.quelea.displayable.SongDisplayable;
 import org.quelea.displayable.VideoDisplayable;
 import org.quelea.utils.LoggerUtils;
 import org.w3c.dom.Document;
@@ -284,7 +284,7 @@ public class Schedule implements Iterable<Displayable>, Printable {
                 Node node = nodes.item(i);
                 String name = node.getNodeName();
                 if(name.equalsIgnoreCase("song")) {
-                    newSchedule.add(Song.parseXML(node));
+                    newSchedule.add(SongDisplayable.parseXML(node));
                 }
                 else if(name.equalsIgnoreCase("passage")) {
                     newSchedule.add(BiblePassage.parseXML(node));

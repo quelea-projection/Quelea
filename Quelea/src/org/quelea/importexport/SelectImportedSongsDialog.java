@@ -19,7 +19,7 @@ package org.quelea.importexport;
 
 import javafx.application.Platform;
 import javafx.event.EventHandler;
-import org.quelea.SongDatabase;
+import org.quelea.SongManager;
 
 /**
  * A dialog used for selecting the songs to be entered into the database after they've been imported.
@@ -47,7 +47,7 @@ public class SelectImportedSongsDialog extends SelectSongsDialog {
                     public void run() {
                         for(int i = 0; i < getSongs().size(); i++) {
                             if(getCheckedColumn().getCellData(i)) {
-                                SongDatabase.get().addSong(getSongs().get(i), false);
+                                SongManager.get().addSong(getSongs().get(i), false);
                             }
                         }
                         
@@ -55,7 +55,7 @@ public class SelectImportedSongsDialog extends SelectSongsDialog {
 
                             @Override
                             public void run() {
-                                SongDatabase.get().fireUpdate();
+                                SongManager.get().fireUpdate();
                                 hide();
                                 getAddButton().setDisable(false);
                             }

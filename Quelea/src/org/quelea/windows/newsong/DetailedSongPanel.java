@@ -23,7 +23,7 @@ import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
-import org.quelea.displayable.Song;
+import org.quelea.displayable.SongDisplayable;
 import org.quelea.languages.LabelGrabber;
 import org.quelea.tags.TagEntryPanel;
 import org.quelea.windows.main.IntegerTextField;
@@ -104,7 +104,7 @@ public class DetailedSongPanel extends BorderPane {
      * Set this panel to edit a song.
      * @param song the song to edit.
      */
-    public void resetEditSong(Song song) {
+    public void resetEditSong(SongDisplayable song) {
         ccli.setText(song.getCcli());
         copyright.setText(song.getCopyright());
         tags.setTags(song.getTagsAsString());

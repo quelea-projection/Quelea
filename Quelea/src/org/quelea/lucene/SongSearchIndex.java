@@ -41,7 +41,7 @@ import org.apache.lucene.search.TopScoreDocCollector;
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.RAMDirectory;
 import org.apache.lucene.util.Version;
-import org.quelea.displayable.Song;
+import org.quelea.displayable.SongDisplayable;
 import org.quelea.utils.LoggerUtils;
 
 /**
@@ -49,12 +49,12 @@ import org.quelea.utils.LoggerUtils;
  *
  * @author Michael
  */
-public class SongSearchIndex implements SearchIndex<Song> {
+public class SongSearchIndex implements SearchIndex<SongDisplayable> {
 
     private static final Logger LOGGER = LoggerUtils.getLogger();
     private Analyzer analyzer;
     private Directory index;
-    private Map<Integer, Song> songs;
+    private Map<Long, SongDisplayable> songs;
 
     /**
      * Create a new empty search index.
@@ -71,8 +71,8 @@ public class SongSearchIndex implements SearchIndex<Song> {
      * @param song the song to add.
      */
     @Override
-    public void add(Song song) {
-        List<Song> songList = new ArrayList<>();
+    public void add(SongDisplayable song) {
+        List<SongDisplayable> songList = new ArrayList<>();
         songList.add(song);
         addAll(songList);
     }
@@ -85,13 +85,13 @@ public class SongSearchIndex implements SearchIndex<Song> {
      * @param songList the song list to add.
      */
     @Override
-    public void addAll(Collection<? extends Song> songList) {
+    public void addAll(Collection<? extends SongDisplayable> songList) {
         try (IndexWriter writer = new IndexWriter(index, new IndexWriterConfig(Version.LUCENE_35, analyzer))) {
-            for(Song song : songList) {
+            for(SongDisplayable song : songList) {
                 Document doc = new Document();
                 doc.add(new Field("title", song.getTitle(), Field.Store.NO, Field.Index.ANALYZED));
                 doc.add(new Field("lyrics", song.getLyrics(false, false), Field.Store.NO, Field.Index.ANALYZED));
-                doc.add(new Field("number", Integer.toString(song.getID()), Field.Store.YES, Field.Index.ANALYZED));
+                doc.add(new Field("number", Long.toString(song.getID()), Field.Store.YES, Field.Index.ANALYZED));
                 writer.addDocument(doc);
                 songs.put(song.getID(), song);
                 LOGGER.log(Level.FINE, "Added song to index: {0}", song.getTitle());
@@ -108,9 +108,9 @@ public class SongSearchIndex implements SearchIndex<Song> {
      * @param song the song to remove.
      */
     @Override
-    public void remove(Song song) {
+    public void remove(SongDisplayable song) {
         try (IndexReader reader = IndexReader.open(index, false)) {
-            reader.deleteDocuments(new Term("number", Integer.toString(song.getID())));
+            reader.deleteDocuments(new Term("number", Long.toString(song.getID())));
         }
         catch (IOException ex) {
             LOGGER.log(Level.SEVERE, "Couldn't remove value from index", ex);
@@ -123,7 +123,7 @@ public class SongSearchIndex implements SearchIndex<Song> {
      * @param song the song to update.
      */
     @Override
-    public void update(Song song) {
+    public void update(SongDisplayable song) {
         remove(song);
         add(song);
     }
@@ -137,10 +137,10 @@ public class SongSearchIndex implements SearchIndex<Song> {
      * @return an array of songs that match the filter.
      */
     @Override
-    public Song[] filter(String queryString, FilterType type) {
+    public SongDisplayable[] filter(String queryString, FilterType type) {
         String sanctifyQueryString = SearchIndexUtils.makeLuceneQuery(queryString);
         if(songs.isEmpty() || sanctifyQueryString.isEmpty()) {
-            return songs.values().toArray(new Song[songs.size()]);
+            return songs.values().toArray(new SongDisplayable[songs.size()]);
         }
         String typeStr;
         if(type == FilterType.BODY) {
@@ -151,9 +151,9 @@ public class SongSearchIndex implements SearchIndex<Song> {
         }
         else {
             LOGGER.log(Level.SEVERE, "Unknown type: {0}", type);
-            return new Song[0];
+            return new SongDisplayable[0];
         }
-        List<Song> ret;
+        List<SongDisplayable> ret;
         try (IndexSearcher searcher = new IndexSearcher(IndexReader.open(index))) {
             Query q = new ComplexPhraseQueryParser(Version.LUCENE_35, typeStr, analyzer).parse(sanctifyQueryString);
             TopScoreDocCollector collector = TopScoreDocCollector.create(100, true);
@@ -163,19 +163,19 @@ public class SongSearchIndex implements SearchIndex<Song> {
             for(int i = 0; i < hits.length; ++i) {
                 int docId = hits[i].doc;
                 Document d = searcher.doc(docId);
-                Song song = songs.get(Integer.parseInt(d.get("number")));
+                SongDisplayable song = songs.get(Integer.parseInt(d.get("number")));
                 ret.add(song);
             }
             if(type == FilterType.BODY) {
-                for(Song song : filter(queryString, FilterType.TITLE)) {
+                for(SongDisplayable song : filter(queryString, FilterType.TITLE)) {
                     ret.remove(song);
                 }
             }
-            return ret.toArray(new Song[ret.size()]);
+            return ret.toArray(new SongDisplayable[ret.size()]);
         }
         catch (ParseException | IOException ex) {
             LOGGER.log(Level.WARNING, "Invalid query string: " + sanctifyQueryString, ex);
-            return new Song[0];
+            return new SongDisplayable[0];
         }
     }
 

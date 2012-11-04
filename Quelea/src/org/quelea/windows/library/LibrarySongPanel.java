@@ -35,7 +35,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
-import org.quelea.displayable.Song;
+import org.quelea.displayable.SongDisplayable;
 import org.quelea.languages.LabelGrabber;
 import org.quelea.windows.main.actionhandlers.NewSongActionHandler;
 import org.quelea.windows.main.actionhandlers.RemoveSongDBActionHandler;
@@ -64,10 +64,10 @@ public class LibrarySongPanel extends BorderPane {
                 checkRemoveButton();
             }
         });
-        songList.itemsProperty().addListener(new ChangeListener<ObservableList<Song>>() {
+        songList.itemsProperty().addListener(new ChangeListener<ObservableList<SongDisplayable>>() {
 
             @Override
-            public void changed(ObservableValue<? extends ObservableList<Song>> ov, ObservableList<Song> t, ObservableList<Song> t1) {
+            public void changed(ObservableValue<? extends ObservableList<SongDisplayable>> ov, ObservableList<SongDisplayable> t, ObservableList<SongDisplayable> t1) {
                 checkRemoveButton();
             }
         });

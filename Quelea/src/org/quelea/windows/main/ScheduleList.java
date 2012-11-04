@@ -31,7 +31,7 @@ import javafx.util.Callback;
 import org.quelea.QueleaApp;
 import org.quelea.Schedule;
 import org.quelea.displayable.Displayable;
-import org.quelea.displayable.Song;
+import org.quelea.displayable.SongDisplayable;
 import org.quelea.utils.LoggerUtils;
 import org.quelea.windows.library.ContextMenuListCell;
 
@@ -142,8 +142,8 @@ public class ScheduleList extends ListView<Displayable> {
     public void setSchedule(Schedule schedule) {
         clearSchedule();
         for(Displayable displayable : schedule) {
-            if(displayable instanceof Song) {
-                ((Song) displayable).matchID();
+            if(displayable instanceof SongDisplayable) {
+                ((SongDisplayable) displayable).matchID();
             }
             itemsProperty().get().add(displayable);
         }

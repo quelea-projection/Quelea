@@ -89,8 +89,8 @@ public class ImageBackground implements Background {
      * @return the background's DB string.
      */
     @Override
-    public String getDBString() {
-        return "$backgroundimage:" + getImageLocation();
+    public String getString() {
+        return getImageLocation();
     }
 
     /**

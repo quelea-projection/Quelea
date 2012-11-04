@@ -62,8 +62,8 @@ public class ColourBackground implements Background {
      * @return the background's DB string.
      */
     @Override
-    public String getDBString() {
-        return "$backgroundcolour:" + getColour();
+    public String getString() {
+        return getColour().toString();
     }
     
     /**

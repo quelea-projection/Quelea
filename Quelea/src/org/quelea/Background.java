@@ -35,7 +35,7 @@ public interface Background {
      * <p/>
      * @return the background's DB string.
      */
-    String getDBString();
+    String getString();
     
     /**
      * Get any resources this background may possess.

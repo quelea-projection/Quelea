@@ -33,7 +33,7 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
-import org.quelea.Theme;
+import org.quelea.ThemeDTO;
 import org.quelea.languages.LabelGrabber;
 import org.quelea.utils.QueleaProperties;
 
@@ -45,7 +45,7 @@ import org.quelea.utils.QueleaProperties;
 public class EditThemeDialog extends Stage {
 
     private ThemePanel panel;
-    private Theme theme;
+    private ThemeDTO theme;
     private File themeFile;
     private Button confirmButton;
     private Button cancelButton;
@@ -110,7 +110,7 @@ public class EditThemeDialog extends Stage {
      *
      * @return the theme.
      */
-    public Theme getTheme() {
+    public ThemeDTO getTheme() {
         return theme;
     }
 
@@ -119,9 +119,10 @@ public class EditThemeDialog extends Stage {
      *
      * @param theme the theme.
      */
-    public void setTheme(Theme theme) {
+    public void setTheme(ThemeDTO theme) {
         if(theme == null) {
-            theme = new Theme(Theme.DEFAULT_FONT, Theme.DEFAULT_FONT_COLOR, Theme.DEFAULT_BACKGROUND);
+            theme = new ThemeDTO(ThemeDTO.DEFAULT_FONT, ThemeDTO.DEFAULT_FONT_COLOR,
+                    ThemeDTO.DEFAULT_BACKGROUND, ThemeDTO.DEFAULT_SHADOW);
             theme.setThemeName("");
             File file;
             int filenum = 1;

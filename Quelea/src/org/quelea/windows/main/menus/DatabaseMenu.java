@@ -26,7 +26,7 @@ import javafx.scene.control.SeparatorMenuItem;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import org.quelea.QueleaApp;
-import org.quelea.displayable.Song;
+import org.quelea.displayable.SongDisplayable;
 import org.quelea.languages.LabelGrabber;
 import org.quelea.windows.library.LibrarySongList;
 import org.quelea.windows.main.actionhandlers.EditSongDBActionHandler;
@@ -74,10 +74,10 @@ public class DatabaseMenu extends Menu {
 
         final LibrarySongList libraryList = QueleaApp.get().getMainWindow().getMainPanel().getLibraryPanel().getLibrarySongPanel().getSongList();
 
-        libraryList.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<Song>() {
+        libraryList.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<SongDisplayable>() {
 
             @Override
-            public void changed(ObservableValue<? extends Song> ov, Song t, Song t1) {
+            public void changed(ObservableValue<? extends SongDisplayable> ov, SongDisplayable t, SongDisplayable t1) {
                 checkEditDeleteItems(editSongItem, deleteSongItem);
             }
         });

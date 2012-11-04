@@ -37,6 +37,7 @@ import javafx.event.EventHandler;
 import javafx.geometry.Pos;
 import javafx.scene.Group;
 import javafx.scene.Node;
+import javafx.scene.effect.DropShadow;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.StackPane;
@@ -51,7 +52,7 @@ import javafx.scene.text.Text;
 import javafx.util.Duration;
 import org.quelea.ColourBackground;
 import org.quelea.ImageBackground;
-import org.quelea.Theme;
+import org.quelea.ThemeDTO;
 import org.quelea.VideoBackground;
 import org.quelea.displayable.TextDisplayable;
 import org.quelea.notice.NoticeDrawer;
@@ -67,7 +68,7 @@ import org.quelea.utils.Utils;
 public class LyricCanvas extends StackPane {
 
     private static final Logger LOGGER = LoggerUtils.getLogger();
-    private Theme theme;
+    private ThemeDTO theme;
     private String[] text;
     private String[] smallText;
     private boolean fadeText;
@@ -97,7 +98,7 @@ public class LyricCanvas extends StackPane {
         blackImg = new ImageView(Utils.getImageFromColour(Color.BLACK));
         noticeDrawer = new NoticeDrawer(this);
         text = new String[]{};
-        theme = Theme.DEFAULT_THEME;
+        theme = ThemeDTO.DEFAULT_THEME;
         textGroup = new Group();
         background = getNewImageView();
         getChildren().add(0, background);
@@ -168,8 +169,13 @@ public class LyricCanvas extends StackPane {
         }
         Font font = theme.getFont();
         if(font == null) {
-            font = Theme.DEFAULT_FONT;
+            font = ThemeDTO.DEFAULT_FONT;
         }
+        DropShadow shadow = theme.getShadow();
+        if(shadow == null) {
+            shadow = ThemeDTO.DEFAULT_SHADOW;
+        }
+        
         List<String> newText = sanctifyText();
         double fontSize = pickFontSize(font, newText, getWidth(), getHeight());
         font = Font.font(font.getName(), fontSize);
@@ -187,6 +193,7 @@ public class LyricCanvas extends StackPane {
             double width = metrics.computeStringWidth(line);
             double centreOffset = (getWidth() - width) / 2;
             t.setFont(font);
+            t.setEffect(shadow);
             t.setX(centreOffset);
             t.setY(y);
             if(theme.getFontPaint() == lastColor || lastColor == null) {
@@ -435,9 +442,9 @@ public class LyricCanvas extends StackPane {
      * <p/>
      * @param theme the theme to place on the canvas.
      */
-    public void setTheme(Theme theme) {
+    public void setTheme(ThemeDTO theme) {
         if(theme == null) {
-            theme = Theme.DEFAULT_THEME;
+            theme = ThemeDTO.DEFAULT_THEME;
         }
         if(this.theme.equals(theme)) {
             return;
@@ -504,7 +511,7 @@ public class LyricCanvas extends StackPane {
      * <p/>
      * @return the current theme
      */
-    public Theme getTheme() {
+    public ThemeDTO getTheme() {
         return theme;
     }
 

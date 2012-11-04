@@ -20,7 +20,7 @@ package org.quelea.importexport;
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
-import org.quelea.displayable.Song;
+import org.quelea.displayable.SongDisplayable;
 import org.quelea.windows.main.StatusPanel;
 
 /**
@@ -39,5 +39,5 @@ interface SongParser {
      * been parsed.
      * @throws IOException if something goes wrong accessing the given location.
      */
-    List<Song> getSongs(File location, StatusPanel statusPanel) throws IOException;
+    List<SongDisplayable> getSongs(File location, StatusPanel statusPanel) throws IOException;
 }

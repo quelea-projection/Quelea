@@ -30,7 +30,7 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import org.javafx.dialog.Dialog;
 import org.javafx.dialog.InputDialog;
-import org.quelea.displayable.Song;
+import org.quelea.displayable.SongDisplayable;
 import org.quelea.languages.LabelGrabber;
 import org.quelea.utils.LoggerUtils;
 import org.quelea.utils.QueleaProperties;
@@ -48,7 +48,7 @@ public class KingswayWorshipParser implements SongParser {
      * Rough number of songs in the library at present.
      */
     private static final int ROUGH_NUM_SONGS = 2600;
-    private static final Song DEFAULT = new Song("", "");
+    private static final SongDisplayable DEFAULT = new SongDisplayable("", "");
     private int count500 = 0;
     private boolean all;
 
@@ -68,10 +68,10 @@ public class KingswayWorshipParser implements SongParser {
      * @throws IOException if something went wrong.
      */
     @Override
-    public List<Song> getSongs(File location, StatusPanel statusPanel) throws IOException {
+    public List<SongDisplayable> getSongs(File location, StatusPanel statusPanel) throws IOException {
         if(all) {
             count500 = 0;
-            List<Song> ret = new ArrayList<>();
+            List<SongDisplayable> ret = new ArrayList<>();
             int i = getStart();
             String pageText;
             if(statusPanel != null) {
@@ -83,7 +83,7 @@ public class KingswayWorshipParser implements SongParser {
                 if(statusPanel != null) {
                     statusPanel.getProgressBar().setProgress((double) percentage / 100);
                 }
-                Song song = null;
+                SongDisplayable song = null;
                 try {
                     song = parseSong(pageText, i);
                 }
@@ -126,8 +126,8 @@ public class KingswayWorshipParser implements SongParser {
      * @param songID Kingsway song number
      * @return List of one Song if ID exists or null if not.
      */
-    public List<Song> getSong(int songID) {
-        Song song;
+    public List<SongDisplayable> getSong(int songID) {
+        SongDisplayable song;
         String html = getPageText(songID);
         try {
             if(html == null || html.equals("")) {
@@ -142,7 +142,7 @@ public class KingswayWorshipParser implements SongParser {
             return null;
         }
 
-        List<Song> ret = new ArrayList<>();
+        List<SongDisplayable> ret = new ArrayList<>();
         ret.add(song);
         return ret;
     }
@@ -181,7 +181,7 @@ public class KingswayWorshipParser implements SongParser {
      * @param num the number of the song (debugging use only)
      * @return the song from the given HTML
      */
-    private Song parseSong(String html, int num) {
+    private SongDisplayable parseSong(String html, int num) {
         if(html == null) {
             return null;
         }
@@ -282,7 +282,7 @@ public class KingswayWorshipParser implements SongParser {
         }
 
         if(lyrics.toString().length() > 5) {
-            Song ret = new Song(title, author);
+            SongDisplayable ret = new SongDisplayable(title, author);
             ret.setLyrics(lyrics.toString());
             return ret;
         }
