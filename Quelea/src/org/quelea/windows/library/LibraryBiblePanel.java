@@ -103,7 +103,7 @@ public class LibraryBiblePanel extends VBox implements BibleChangeListener {
             @Override
             public void handle(ActionEvent t) {
                 BiblePassage passage = new BiblePassage(bibleSelector.getSelectionModel().getSelectedItem().getName(), getBibleLocation(), getVerses());
-                QueleaApp.get().getMainWindow().getMainPanel().getSchedulePanel().getScheduleList().itemsProperty().get().add(passage);
+                QueleaApp.get().getMainWindow().getMainPanel().getSchedulePanel().getScheduleList().add(passage);
             }
         });
         addToSchedule.setDisable(true);
@@ -179,6 +179,7 @@ public class LibraryBiblePanel extends VBox implements BibleChangeListener {
             preview.setText("");
             return;
         }
+        getAddToSchedule().setDisable(false);
         StringBuilder ret = new StringBuilder();
         int toVerse = book.getChapter(cvp.getFromChapter()).getVerses().length - 1;
         if ((cvp.getFromChapter() == cvp.getToChapter()) && cvp.getToVerse() >= 0 && cvp.getToVerse() < book.getChapter(cvp.getFromChapter()).getVerses().length) {
