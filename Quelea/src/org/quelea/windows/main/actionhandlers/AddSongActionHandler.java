@@ -20,7 +20,7 @@ package org.quelea.windows.main.actionhandlers;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import org.quelea.QueleaApp;
-import org.quelea.displayable.Song;
+import org.quelea.displayable.SongDisplayable;
 import org.quelea.windows.library.LibraryPanel;
 import org.quelea.windows.main.SchedulePanel;
 
@@ -39,7 +39,7 @@ public class AddSongActionHandler implements EventHandler<ActionEvent> {
     public void handle(ActionEvent t) {
         LibraryPanel libraryPanel = QueleaApp.get().getMainWindow().getMainPanel().getLibraryPanel();
         SchedulePanel schedulePanel = QueleaApp.get().getMainWindow().getMainPanel().getSchedulePanel();
-        Song song = libraryPanel.getLibrarySongPanel().getSongList().getSelectedValue();
+        SongDisplayable song = libraryPanel.getLibrarySongPanel().getSongList().getSelectedValue();
         schedulePanel.getScheduleList().add(song);
     }
 }

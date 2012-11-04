@@ -31,7 +31,7 @@ import javafx.scene.layout.BorderPane;
 import org.quelea.displayable.Displayable;
 import org.quelea.displayable.ImageDisplayable;
 import org.quelea.displayable.PresentationDisplayable;
-import org.quelea.displayable.Song;
+import org.quelea.displayable.SongDisplayable;
 import org.quelea.displayable.TextDisplayable;
 import org.quelea.displayable.VideoDisplayable;
 import org.quelea.utils.LoggerUtils;
@@ -132,8 +132,8 @@ public abstract class LivePreviewPanel extends BorderPane {
      * @param index the index on which to perform the quick edit.
      */
     public void doQuickEdit(int index) {
-        if(displayable instanceof Song) {
-            Song song = (Song) displayable;
+        if(displayable instanceof SongDisplayable) {
+            SongDisplayable song = (SongDisplayable) displayable;
             quickEditDialog.setSongSection(song, index);
             quickEditDialog.show();
             setDisplayable(song, getIndex());

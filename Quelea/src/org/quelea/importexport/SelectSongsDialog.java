@@ -43,7 +43,7 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import javafx.util.Callback;
-import org.quelea.displayable.Song;
+import org.quelea.displayable.SongDisplayable;
 import org.quelea.languages.LabelGrabber;
 import org.quelea.windows.main.BooleanCell;
 
@@ -55,13 +55,13 @@ import org.quelea.windows.main.BooleanCell;
 public class SelectSongsDialog extends Stage {
 
     private final Button addButton;
-    private final TableView<Song> table;
-    private List<Song> songs;
+    private final TableView<SongDisplayable> table;
+    private List<SongDisplayable> songs;
     private boolean[] checkList;
     private final String checkboxText;
-    private TableColumn<Song, String> nameColumn;
-    private TableColumn<Song, String> authorColumn;
-    private TableColumn<Song, Boolean> checkedColumn;
+    private TableColumn<SongDisplayable, String> nameColumn;
+    private TableColumn<SongDisplayable, String> authorColumn;
+    private TableColumn<SongDisplayable, Boolean> checkedColumn;
 
     /**
      * Create a new imported songs dialog.
@@ -95,7 +95,7 @@ public class SelectSongsDialog extends Stage {
         setScene(new Scene(mainPanel));
     }
     
-    public TableColumn<Song, Boolean> getCheckedColumn() {
+    public TableColumn<SongDisplayable, Boolean> getCheckedColumn() {
         return checkedColumn;
     }
 
@@ -115,9 +115,9 @@ public class SelectSongsDialog extends Stage {
                 }
                 final boolean checked = checkedColumn.getCellData(0);
                 for(int i = 0; i < getSongs().size(); i++) {
-                    checkedColumn.setCellValueFactory(new Callback<CellDataFeatures<Song, Boolean>, ObservableValue<Boolean>>() {
+                    checkedColumn.setCellValueFactory(new Callback<CellDataFeatures<SongDisplayable, Boolean>, ObservableValue<Boolean>>() {
                         @Override
-                        public ObservableValue<Boolean> call(CellDataFeatures<Song, Boolean> p) {
+                        public ObservableValue<Boolean> call(CellDataFeatures<SongDisplayable, Boolean> p) {
                             return new SimpleBooleanProperty(!checked);
                         }
                     });
@@ -136,7 +136,7 @@ public class SelectSongsDialog extends Stage {
      * @param defaultVal the default value to use for the checkbox if checkList
      * is null or smaller than the songs list.
      */
-    public void setSongs(final List<Song> songs, final boolean[] checkList, final boolean defaultVal) {
+    public void setSongs(final List<SongDisplayable> songs, final boolean[] checkList, final boolean defaultVal) {
         Collections.sort(songs);
         this.songs = songs;
         this.checkList = checkList;
@@ -149,31 +149,31 @@ public class SelectSongsDialog extends Stage {
         checkedColumn = new TableColumn<>(checkboxText);
         table.getColumns().add(checkedColumn);
 
-        nameColumn.setCellValueFactory(new Callback<CellDataFeatures<Song, String>, ObservableValue<String>>() {
+        nameColumn.setCellValueFactory(new Callback<CellDataFeatures<SongDisplayable, String>, ObservableValue<String>>() {
             @Override
-            public ObservableValue<String> call(CellDataFeatures<Song, String> p) {
+            public ObservableValue<String> call(CellDataFeatures<SongDisplayable, String> p) {
                 return new SimpleStringProperty(p.getValue().getTitle());
             }
         });
 
-        authorColumn.setCellValueFactory(new Callback<CellDataFeatures<Song, String>, ObservableValue<String>>() {
+        authorColumn.setCellValueFactory(new Callback<CellDataFeatures<SongDisplayable, String>, ObservableValue<String>>() {
             @Override
-            public ObservableValue<String> call(CellDataFeatures<Song, String> p) {
+            public ObservableValue<String> call(CellDataFeatures<SongDisplayable, String> p) {
                 return new SimpleStringProperty(p.getValue().getAuthor());
             }
         });
 
-        Callback<TableColumn<Song, Boolean>, TableCell<Song, Boolean>> booleanCellFactory =
-                new Callback<TableColumn<Song, Boolean>, TableCell<Song, Boolean>>() {
+        Callback<TableColumn<SongDisplayable, Boolean>, TableCell<SongDisplayable, Boolean>> booleanCellFactory =
+                new Callback<TableColumn<SongDisplayable, Boolean>, TableCell<SongDisplayable, Boolean>>() {
                     @Override
-                    public TableCell<Song, Boolean> call(TableColumn<Song, Boolean> p) {
-                        return new BooleanCell<Song>();
+                    public TableCell<SongDisplayable, Boolean> call(TableColumn<SongDisplayable, Boolean> p) {
+                        return new BooleanCell<SongDisplayable>();
                     }
                 };
         checkedColumn.setCellFactory(booleanCellFactory);
-        checkedColumn.setCellValueFactory(new Callback<CellDataFeatures<Song, Boolean>, ObservableValue<Boolean>>() {
+        checkedColumn.setCellValueFactory(new Callback<CellDataFeatures<SongDisplayable, Boolean>, ObservableValue<Boolean>>() {
             @Override
-            public ObservableValue<Boolean> call(CellDataFeatures<Song, Boolean> p) {
+            public ObservableValue<Boolean> call(CellDataFeatures<SongDisplayable, Boolean> p) {
                 int position = songs.indexOf(p.getValue());
                 boolean bool;
                 if(checkList != null && position < checkList.length) {
@@ -204,7 +204,7 @@ public class SelectSongsDialog extends Stage {
      * <p/>
      * @return the list of songs.
      */
-    public List<Song> getSongs() {
+    public List<SongDisplayable> getSongs() {
         return songs;
     }
 
@@ -213,7 +213,7 @@ public class SelectSongsDialog extends Stage {
      * <p/>
      * @return the table.
      */
-    public TableView<Song> getTable() {
+    public TableView<SongDisplayable> getTable() {
         return table;
     }
 

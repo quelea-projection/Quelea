@@ -17,7 +17,6 @@
  */
 package org.quelea.windows.newsong;
 
-import java.io.File;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -28,6 +27,8 @@ import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.control.ToggleButton;
+import javafx.scene.effect.BlurType;
+import javafx.scene.effect.DropShadow;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
@@ -39,7 +40,7 @@ import org.javafx.dialog.Dialog;
 import org.quelea.Background;
 import org.quelea.ColourBackground;
 import org.quelea.ImageBackground;
-import org.quelea.Theme;
+import org.quelea.ThemeDTO;
 import org.quelea.VideoBackground;
 import org.quelea.languages.LabelGrabber;
 import org.quelea.utils.Utils;
@@ -57,10 +58,20 @@ public class ThemePanel extends BorderPane {
     public static final String[] SAMPLE_LYRICS = {"Amazing Grace how sweet the sound", "That saved a wretch like me", "I once was lost but now am found", "Was blind, but now I see."};
     private HBox fontToolbar;
     private HBox backgroundPanel;
+
     private ComboBox<String> fontSelection;
     private ColorPicker fontColorPicker;
     private ColorPicker backgroundColorPicker;
     private ComboBox<String> backgroundTypeSelect;
+    
+    //Text shadow options
+    private VBox shadowPanel;
+    private ColorPicker shadowColorPicker;
+    private TextField shadowOffsetX;
+    private TextField shadowOffsetY;
+    private TextField shadowRadius;
+    private TextField shadowWidth;
+    
     private TextField backgroundImgLocation;
     private TextField backgroundVidLocation;
     private ToggleButton boldButton;
@@ -79,6 +90,8 @@ public class ThemePanel extends BorderPane {
         toolbarPanel.getChildren().add(fontToolbar);
         setupBackgroundToolbar();
         toolbarPanel.getChildren().add(backgroundPanel);
+        setupShadowPanel();
+        toolbarPanel.getChildren().add(shadowPanel);
         setTop(toolbarPanel);
         updateTheme(false);
     }
@@ -146,20 +159,60 @@ public class ThemePanel extends BorderPane {
         backgroundTypeSelect.setOnAction(new EventHandler<javafx.event.ActionEvent>() {
             @Override
             public void handle(javafx.event.ActionEvent t) {
-                if(backgroundTypeSelect.getSelectionModel().getSelectedItem().equals(LabelGrabber.INSTANCE.getLabel("color.theme.label"))) {
+                if (backgroundTypeSelect.getSelectionModel().getSelectedItem().equals(LabelGrabber.INSTANCE.getLabel("color.theme.label"))) {
                     backgroundChooserPanel.show("colour");
-                }
-                else if(backgroundTypeSelect.getSelectionModel().getSelectedItem().equals(LabelGrabber.INSTANCE.getLabel("image.theme.label"))) {
+                } else if (backgroundTypeSelect.getSelectionModel().getSelectedItem().equals(LabelGrabber.INSTANCE.getLabel("image.theme.label"))) {
                     backgroundChooserPanel.show("image");
-                }
-                else if(backgroundTypeSelect.getSelectionModel().getSelectedItem().equals(LabelGrabber.INSTANCE.getLabel("video.theme.label"))) {
+                } else if (backgroundTypeSelect.getSelectionModel().getSelectedItem().equals(LabelGrabber.INSTANCE.getLabel("video.theme.label"))) {
                     backgroundChooserPanel.show("video");
-                }
-                else {
+                } else {
                     throw new AssertionError("Bug - " + backgroundTypeSelect.getSelectionModel().getSelectedItem() + " is an unknown selection value");
                 }
             }
         });
+    }
+
+    /**
+     *
+     */
+    private void setupShadowPanel() {
+        shadowPanel = new VBox();
+        final HBox confFirstLine = new HBox();
+        confFirstLine.getChildren().add(new Label("shadow type"));
+
+        shadowColorPicker = new ColorPicker(Color.BLACK);
+        final HBox colourPanel = new HBox();
+        colourPanel.getChildren().add(new Label("shadow color"));
+        colourPanel.getChildren().add(shadowColorPicker);
+        confFirstLine.getChildren().add(colourPanel);
+        shadowColorPicker.valueProperty().addListener(new ChangeListener<Color>() {
+            @Override
+            public void changed(ObservableValue<? extends Color> ov, Color t, Color t1) {
+                updateTheme(true);
+            }
+        });
+        shadowPanel.getChildren().add(confFirstLine);
+        final HBox confSecondLine = new HBox();
+        confSecondLine.getChildren().add(new Label("shadow X"));
+        shadowOffsetX = new TextField();
+        confSecondLine.getChildren().add(shadowOffsetX);
+        shadowOffsetX.textProperty().addListener(new ChangeListener<String>() {
+            @Override
+            public void changed(ObservableValue<? extends String> ov, String t, String t1) {
+                updateTheme(true);
+            }
+        });
+
+        confSecondLine.getChildren().add(new Label("shadow Y"));
+        shadowOffsetY = new TextField();
+        confSecondLine.getChildren().add(shadowOffsetY);
+        shadowOffsetY.textProperty().addListener(new ChangeListener<String>() {
+            @Override
+            public void changed(ObservableValue<? extends String> ov, String t, String t1) {
+                updateTheme(true);
+            }
+        });
+        shadowPanel.getChildren().add(confSecondLine);
     }
 
     /**
@@ -169,7 +222,7 @@ public class ThemePanel extends BorderPane {
         fontToolbar = new HBox();
         fontToolbar.getChildren().add(new Label(LabelGrabber.INSTANCE.getLabel("font.theme.label") + ":"));
         fontSelection = new ComboBox<>();
-        for(String font : Utils.getAllFonts()) {
+        for (String font : Utils.getAllFonts()) {
             fontSelection.itemsProperty().get().add(font);
         }
         fontSelection.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
@@ -210,8 +263,8 @@ public class ThemePanel extends BorderPane {
      * Update the canvas with the current theme.
      */
     private void updateTheme(boolean warning) {
-        final Theme theme = getTheme();
-        if(warning && theme.getBackground() instanceof ColourBackground) {
+        final ThemeDTO theme = getTheme();
+        if (warning && theme.getBackground() instanceof ColourBackground) {
             checkAccessibility((Color) theme.getFontPaint(), ((ColourBackground) theme.getBackground()).getColour());
         }
         Platform.runLater(new Runnable() {
@@ -227,9 +280,9 @@ public class ThemePanel extends BorderPane {
      * <p/>
      * @param theme the theme to represent.
      */
-    public void setTheme(Theme theme) {
-        if(theme == null) {
-            theme = Theme.DEFAULT_THEME;
+    public void setTheme(ThemeDTO theme) {
+        if (theme == null) {
+            theme = ThemeDTO.DEFAULT_THEME;
         }
         Font font = theme.getFont();
         fontSelection.getSelectionModel().select(font.getFamily());
@@ -248,7 +301,7 @@ public class ThemePanel extends BorderPane {
      */
     private void checkAccessibility(Color col1, Color col2) {
         double diff = Utils.getColorDifference(col1, col2);
-        if(diff < THRESHOLD) {
+        if (diff < THRESHOLD) {
             Dialog.showInfo(LabelGrabber.INSTANCE.getLabel("warning.label"), LabelGrabber.INSTANCE.getLabel("similar.colors.text"));
         }
     }
@@ -267,24 +320,25 @@ public class ThemePanel extends BorderPane {
      * <p/>
      * @return the current theme.
      */
-    public Theme getTheme() {
+    public ThemeDTO getTheme() {
         Font font = new Font(fontSelection.getSelectionModel().getSelectedItem(), 72);
         Background background;
-        if(backgroundTypeSelect.getSelectionModel().getSelectedItem() == null) {
-            return Theme.DEFAULT_THEME;
+        if (backgroundTypeSelect.getSelectionModel().getSelectedItem() == null) {
+            return ThemeDTO.DEFAULT_THEME;
         }
-        if(backgroundTypeSelect.getSelectionModel().getSelectedItem().equals(LabelGrabber.INSTANCE.getLabel("color.theme.label"))) {
+        if (backgroundTypeSelect.getSelectionModel().getSelectedItem().equals(LabelGrabber.INSTANCE.getLabel("color.theme.label"))) {
             background = new ColourBackground(backgroundColorPicker.getValue());
-        }
-        else if(backgroundTypeSelect.getSelectionModel().getSelectedItem().equals(LabelGrabber.INSTANCE.getLabel("image.theme.label"))) {
+        } else if (backgroundTypeSelect.getSelectionModel().getSelectedItem().equals(LabelGrabber.INSTANCE.getLabel("image.theme.label"))) {
             background = new ImageBackground(backgroundImgLocation.getText());
-        }
-        else if(backgroundTypeSelect.getSelectionModel().getSelectedItem().equals(LabelGrabber.INSTANCE.getLabel("video.theme.label"))) {
+        } else if (backgroundTypeSelect.getSelectionModel().getSelectedItem().equals(LabelGrabber.INSTANCE.getLabel("video.theme.label"))) {
             background = new VideoBackground(backgroundVidLocation.getText());
-        }
-        else {
+        } else {
             throw new AssertionError("Bug - " + backgroundTypeSelect.getSelectionModel().getSelectedItem() + " is an unknown selection value");
         }
-        return new Theme(font, fontColorPicker.getValue(), background);
+        final DropShadow shadow = new DropShadow();
+        shadow.setColor(shadowColorPicker.getValue());
+        shadow.setOffsetX(Double.valueOf(shadowOffsetX.getText().isEmpty() ? "3" : shadowOffsetX.getText()));
+        shadow.setOffsetY(Double.valueOf(shadowOffsetY.getText().isEmpty() ? "3" : shadowOffsetY.getText()));
+        return new ThemeDTO(font, fontColorPicker.getValue(), background, shadow);
     }
 }

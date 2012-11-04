@@ -28,7 +28,7 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import org.quelea.QueleaApp;
-import org.quelea.Theme;
+import org.quelea.ThemeDTO;
 import org.quelea.displayable.Displayable;
 import org.quelea.displayable.TextDisplayable;
 import org.quelea.displayable.TextSection;
@@ -46,7 +46,7 @@ public class ScheduleThemeNode extends BorderPane {
 
     private static final Logger LOGGER = LoggerUtils.getLogger();
     private VBox contentPanel;
-    private Theme tempTheme;
+    private ThemeDTO tempTheme;
     private ScheduleList schedule;
     private EditThemeDialog themeDialog;
 
@@ -121,7 +121,7 @@ public class ScheduleThemeNode extends BorderPane {
      * <p/>
      * @return the user's chosen theme.
      */
-    public Theme getTempTheme() {
+    public ThemeDTO getTempTheme() {
         return tempTheme;
     }
 
@@ -137,7 +137,7 @@ public class ScheduleThemeNode extends BorderPane {
      * through the folder and find the themes to display.
      */
     public synchronized final void refresh() {
-        List<Theme> themes;
+        List<ThemeDTO> themes;
         try {
             themes = getThemes();
         }
@@ -156,7 +156,7 @@ public class ScheduleThemeNode extends BorderPane {
         final HBox themePreviews = new HBox();
         themePreviews.setSpacing(10);
         themePreviews.setFillHeight(true);
-        for(final Theme theme : themes) {
+        for(final ThemeDTO theme : themes) {
             ThemePreviewPanel panel = new ThemePreviewPanel(theme);
             panel.getSelectButton().setOnAction(new EventHandler<javafx.event.ActionEvent>() {
                 @Override
@@ -176,10 +176,10 @@ public class ScheduleThemeNode extends BorderPane {
             public void handle(javafx.event.ActionEvent t) {
                 themeDialog.setTheme(null);
                 themeDialog.show();
-                Theme ret = themeDialog.getTheme();
+                ThemeDTO ret = themeDialog.getTheme();
                 if(ret != null) {
                     try(PrintWriter pw = new PrintWriter(ret.getFile())) {
-                        pw.println(ret.toDBString());
+                        pw.println(ret.getTheme());
                     }
                     catch(IOException ex) {
                         LOGGER.log(Level.WARNING, "Couldn't write new theme", ex);
@@ -197,16 +197,16 @@ public class ScheduleThemeNode extends BorderPane {
      * <p/>
      * @return the list of themes displayed.
      */
-    private List<Theme> getThemes() {
-        List<Theme> themesList = new ArrayList<>();
+    private List<ThemeDTO> getThemes() {
+        List<ThemeDTO> themesList = new ArrayList<>();
         File themeDir = new File(QueleaProperties.getQueleaUserHome(), "themes");
         if(!themeDir.exists()) {
             themeDir.mkdir();
         }
         for(File file : themeDir.listFiles()) {
             if(file.getName().endsWith(".th")) {
-                final Theme theme = Theme.parseDBString(Utils.getTextFromFile(file.getAbsolutePath(), ""));
-                if(theme.equals(Theme.DEFAULT_THEME)) {
+                final ThemeDTO theme = ThemeDTO.fromString(Utils.getTextFromFile(file.getAbsolutePath(), ""));
+                if(theme.equals(ThemeDTO.DEFAULT_THEME)) {
                     LOGGER.log(Level.WARNING, "Error parsing theme file: {0}", file.getAbsolutePath());
                     continue;  //error
                 }
@@ -222,7 +222,7 @@ public class ScheduleThemeNode extends BorderPane {
      * <p/>
      * @param theme the theme to set.
      */
-    private void setTheme(Theme theme) {
+    private void setTheme(ThemeDTO theme) {
         if(schedule == null) {
             LOGGER.log(Level.WARNING, "Null schedule, not setting theme");
             return;

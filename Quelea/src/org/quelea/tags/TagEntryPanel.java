@@ -24,8 +24,8 @@ import javafx.scene.control.TextField;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
-import org.quelea.SongDatabase;
-import org.quelea.displayable.Song;
+import org.quelea.SongManager;
+import org.quelea.displayable.SongDisplayable;
 import org.quelea.languages.LabelGrabber;
 import org.quelea.windows.library.LibrarySongList;
 
@@ -144,7 +144,7 @@ public class TagEntryPanel extends BorderPane {
      */
     public final void reloadTags() {
         tags.clear();
-        for (Song song : SongDatabase.get().getSongs()) {
+        for (SongDisplayable song : SongManager.get().getSongs()) {
             for (String tag : song.getTags()) {
                 tag = tag.trim();
                 if (tag.isEmpty()) {

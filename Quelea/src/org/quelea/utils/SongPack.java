@@ -17,7 +17,7 @@
  */
 package org.quelea.utils;
 
-import org.quelea.displayable.Song;
+import org.quelea.displayable.SongDisplayable;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -38,7 +38,7 @@ import java.util.zip.ZipOutputStream;
 public class SongPack {
 
     private static final Logger LOGGER = LoggerUtils.getLogger();
-    private final List<Song> songs;
+    private final List<SongDisplayable> songs;
 
     /**
      * Create a new song pack.
@@ -51,7 +51,7 @@ public class SongPack {
      * Add a song to this pack.
      * @param song the song to add.
      */
-    public void addSong(Song song) {
+    public void addSong(SongDisplayable song) {
         songs.add(song);
     }
 
@@ -67,7 +67,7 @@ public class SongPack {
             Enumeration<? extends ZipEntry> entries = zipFile.entries();
             while (entries.hasMoreElements()) {
                 ZipEntry entry = entries.nextElement();
-                ret.addSong(Song.parseXML(zipFile.getInputStream(entry)));
+                ret.addSong(SongDisplayable.parseXML(zipFile.getInputStream(entry)));
             }
             return ret;
         }
@@ -84,7 +84,7 @@ public class SongPack {
         }
         try (ZipOutputStream zos = new ZipOutputStream(new FileOutputStream(file))) {
             int count = 0;
-            for (Song song : songs) {
+            for (SongDisplayable song : songs) {
                 zos.putNextEntry(new ZipEntry("song" + count + ".xml"));
                 zos.write(song.getXML().getBytes());
                 zos.closeEntry();
@@ -102,7 +102,7 @@ public class SongPack {
      * Get the songs in this song pack.
      * @return the songs in this song pack.
      */
-    public List<Song> getSongs() {
+    public List<SongDisplayable> getSongs() {
         return new ArrayList<>(songs);
     }
 }

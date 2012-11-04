@@ -25,7 +25,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import org.quelea.displayable.Song;
+import org.quelea.displayable.SongDisplayable;
 import org.quelea.utils.LoggerUtils;
 import org.quelea.utils.Utils;
 import org.quelea.windows.main.StatusPanel;
@@ -49,12 +49,12 @@ public class SourceParser implements SongParser {
      * @throws IOException if something went wrong.
      */
     @Override
-    public List<Song> getSongs(File location, StatusPanel statusPanel) throws IOException {
+    public List<SongDisplayable> getSongs(File location, StatusPanel statusPanel) throws IOException {
         if (!location.isDirectory()) {
             throw new RuntimeException("Must be a directory.");
         }
         File[] files = location.listFiles();
-        List<Song> ret = new ArrayList<>();
+        List<SongDisplayable> ret = new ArrayList<>();
         for (File file : files) {
             if (file.getName().endsWith("htm") || file.getName().endsWith("html")) {
                 String contents = Utils.getTextFromFile(file.getAbsolutePath(), null);
@@ -71,7 +71,7 @@ public class SourceParser implements SongParser {
                     continue;
                 }
                 String title = getTitle(lyrics, 0);
-                Song newSong = new Song(title, getAuthor(contents));
+                SongDisplayable newSong = new SongDisplayable(title, getAuthor(contents));
                 newSong.setLyrics(lyrics);
                 ret.add(newSong);
             }

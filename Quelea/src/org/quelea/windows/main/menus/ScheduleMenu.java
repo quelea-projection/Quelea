@@ -32,7 +32,7 @@ import javafx.scene.image.ImageView;
 import org.quelea.QueleaApp;
 import org.quelea.Schedule;
 import org.quelea.displayable.Displayable;
-import org.quelea.displayable.Song;
+import org.quelea.displayable.SongDisplayable;
 import org.quelea.languages.LabelGrabber;
 import org.quelea.mail.Mailer;
 import org.quelea.utils.LoggerUtils;
@@ -97,10 +97,10 @@ public class ScheduleMenu extends Menu {
             }
         });
         final LibrarySongList songList = mainPanel.getLibraryPanel().getLibrarySongPanel().getSongList();
-        songList.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<Song>() {
+        songList.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<SongDisplayable>() {
 
             @Override
-            public void changed(ObservableValue<? extends Song> ov, Song t, Song t1) {
+            public void changed(ObservableValue<? extends SongDisplayable> ov, SongDisplayable t, SongDisplayable t1) {
                 ButtonChecker.INSTANCE.checkAddButton(addSongItem);
             }
         });

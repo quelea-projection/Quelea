@@ -27,7 +27,7 @@ import javafx.scene.control.TextField;
 import javafx.stage.FileChooser;
 import org.apache.commons.io.FileUtils;
 import org.quelea.QueleaApp;
-import org.quelea.Theme;
+import org.quelea.ThemeDTO;
 import org.quelea.VideoBackground;
 import org.quelea.languages.LabelGrabber;
 import org.quelea.utils.FileFilters;
@@ -75,7 +75,9 @@ public class VideoButton extends Button {
 
                     vidLocation = vidDir.toURI().relativize(newFile.toURI()).getPath();
                     videoLocationField.setText(vidLocation);
-                    canvas.setTheme(new Theme(canvas.getTheme().getFont(), canvas.getTheme().getFontPaint(), new VideoBackground(vidLocation)));
+                    canvas.setTheme(new ThemeDTO(canvas.getTheme().getFont(),
+                            canvas.getTheme().getFontPaint(), new VideoBackground(vidLocation), 
+                            canvas.getTheme().getShadow()));
                 }
             }
         });

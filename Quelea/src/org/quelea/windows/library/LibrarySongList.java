@@ -35,8 +35,8 @@ import javafx.scene.input.MouseEvent;
 import javafx.util.Callback;
 import javafx.util.StringConverter;
 import org.quelea.QueleaApp;
-import org.quelea.SongDatabase;
-import org.quelea.displayable.Song;
+import org.quelea.SongManager;
+import org.quelea.displayable.SongDisplayable;
 import org.quelea.lucene.SongSearchIndex;
 import org.quelea.utils.DatabaseListener;
 import org.quelea.utils.LoggerUtils;
@@ -46,7 +46,7 @@ import org.quelea.utils.LoggerUtils;
  * <p/>
  * @author Michael
  */
-public class LibrarySongList extends ListView<Song> implements DatabaseListener {
+public class LibrarySongList extends ListView<SongDisplayable> implements DatabaseListener {
 
     private static final Logger LOGGER = LoggerUtils.getLogger();
     private final LibraryPopupMenu popupMenu;
@@ -60,17 +60,17 @@ public class LibrarySongList extends ListView<Song> implements DatabaseListener 
      */
     public LibrarySongList(boolean popup) {
         this.popup = popup;
-        Callback<ListView<Song>, ListCell<Song>> callback = new Callback<ListView<Song>, ListCell<Song>>() {
+        Callback<ListView<SongDisplayable>, ListCell<SongDisplayable>> callback = new Callback<ListView<SongDisplayable>, ListCell<SongDisplayable>>() {
             @Override
-            public ListCell<Song> call(ListView<Song> p) {
-                return new TextFieldListCell<>(new StringConverter<Song>() {
+            public ListCell<SongDisplayable> call(ListView<SongDisplayable> p) {
+                return new TextFieldListCell<>(new StringConverter<SongDisplayable>() {
                     @Override
-                    public String toString(Song song) {
+                    public String toString(SongDisplayable song) {
                         return song.getListHTML();
                     }
 
                     @Override
-                    public Song fromString(String string) {
+                    public SongDisplayable fromString(String string) {
                         //Implementation not needed.
                         return null;
                     }
@@ -88,10 +88,10 @@ public class LibrarySongList extends ListView<Song> implements DatabaseListener 
             }
         });
         if(popup) {
-            setCellFactory(ContextMenuListCell.<Song>forListView(popupMenu, callback));
+            setCellFactory(ContextMenuListCell.<SongDisplayable>forListView(popupMenu, callback));
         }
         databaseChanged();
-        SongDatabase.get().registerDatabaseListener(this);
+        SongManager.get().registerDatabaseListener(this);
     }
     private ExecutorService filterService = Executors.newSingleThreadExecutor();
     private Future<?> filterFuture;
@@ -108,29 +108,29 @@ public class LibrarySongList extends ListView<Song> implements DatabaseListener 
         filterFuture = filterService.submit(new Runnable() {
             @Override
             public void run() {
-                final ObservableList<Song> songs = FXCollections.observableArrayList();
+                final ObservableList<SongDisplayable> songs = FXCollections.observableArrayList();
 
                 // empty or null search strings do not need to be filtered - lest they get added twice
                 if(search == null || search.trim().isEmpty()) {
-                    TreeSet<Song> m = new TreeSet<>();
-                    for(Song song : SongDatabase.get().getSongs()) {
+                    TreeSet<SongDisplayable> m = new TreeSet<>();
+                    for(SongDisplayable song : SongManager.get().getSongs()) {
                         song.setLastSearch(null);
                         m.add(song);
                     }
                     songs.addAll(m);
                 }
                 else {
-                    TreeSet<Song> m = new TreeSet<>();
-                    Song[] titleSongs = SongDatabase.get().getIndex().filter(search, SongSearchIndex.FilterType.TITLE);
-                    for(Song song : titleSongs) {
+                    TreeSet<SongDisplayable> m = new TreeSet<>();
+                    SongDisplayable[] titleSongs = SongManager.get().getIndex().filter(search, SongSearchIndex.FilterType.TITLE);
+                    for(SongDisplayable song : titleSongs) {
                         song.setLastSearch(search);
                         m.add(song);
                     }
                     songs.addAll(m);
                     m.clear();
                     
-                    Song[] lyricSongs = SongDatabase.get().getIndex().filter(search, SongSearchIndex.FilterType.BODY);
-                    for(Song song : lyricSongs) {
+                    SongDisplayable[] lyricSongs = SongManager.get().getIndex().filter(search, SongSearchIndex.FilterType.BODY);
+                    for(SongDisplayable song : lyricSongs) {
                         song.setLastSearch(null);
                         m.add(song);
                     }
@@ -161,11 +161,11 @@ public class LibrarySongList extends ListView<Song> implements DatabaseListener 
         filterFuture = filterService.submit(new Runnable() {
             @Override
             public void run() {
-                final ObservableList<Song> allSongs = FXCollections.observableArrayList(SongDatabase.get().getSongs());
-                final ObservableList<Song> songs = new SimpleListProperty<>();
+                final ObservableList<SongDisplayable> allSongs = FXCollections.observableArrayList(SongManager.get().getSongs());
+                final ObservableList<SongDisplayable> songs = new SimpleListProperty<>();
                 for(int i = 0; i < allSongs.size(); i++) {
                     boolean add = true;
-                    Song s = allSongs.get(i);
+                    SongDisplayable s = allSongs.get(i);
                     String[] songTags = s.getTags();
                     for(String filterTag : filterTags) {
                         if(filterTag.trim().isEmpty()) {
@@ -201,7 +201,7 @@ public class LibrarySongList extends ListView<Song> implements DatabaseListener 
      * <p/>
      * @return the currently selected song, or null if none is selected.
      */
-    public Song getSelectedValue() {
+    public SongDisplayable getSelectedValue() {
         return selectionModelProperty().get().getSelectedItem();
     }
 
@@ -222,7 +222,7 @@ public class LibrarySongList extends ListView<Song> implements DatabaseListener 
         Platform.runLater(new Runnable() {
             @Override
             public void run() {
-                itemsProperty().set(FXCollections.observableArrayList(SongDatabase.get().getSongs()));
+                itemsProperty().set(FXCollections.observableArrayList(SongManager.get().getSongs()));
             }
         });
 

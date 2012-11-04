@@ -83,7 +83,7 @@ class DragAndDrop {
                 
                 Dragboard db = t.getDragboard();
                 //int id = Integer.parseInt(db.getString());
-                //target.add(SongDatabase.get().getSong(id));
+                //target.add(SongDatabase.get().getSong(id)); //@todo please change using new db mapping layer
                 target.add(source.getSelectedValue());
 
                 t.setDropCompleted(true);

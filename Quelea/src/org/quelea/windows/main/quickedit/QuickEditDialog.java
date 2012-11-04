@@ -34,7 +34,7 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import org.quelea.QueleaApp;
-import org.quelea.displayable.Song;
+import org.quelea.displayable.SongDisplayable;
 import org.quelea.displayable.TextSection;
 import org.quelea.languages.LabelGrabber;
 import org.quelea.utils.Utils;
@@ -50,7 +50,7 @@ public class QuickEditDialog extends Stage {
     private Label statusLabel;
     private Button okButton;
     private Button cancelButton;
-    private Song currentSong;
+    private SongDisplayable currentSong;
     private int currentIndex;
 
     /**
@@ -141,7 +141,7 @@ public class QuickEditDialog extends Stage {
      * @param song the song to set the dialog to.
      * @param sectionIndex the section to set the dialog to.
      */
-    public void setSongSection(Song song, int sectionIndex) {
+    public void setSongSection(SongDisplayable song, int sectionIndex) {
         currentSong = song;
         setStatusLabel(song);
         if(song == null) {
@@ -167,7 +167,7 @@ public class QuickEditDialog extends Stage {
      *
      * @param song the song to use.
      */
-    private void setStatusLabel(Song song) {
+    private void setStatusLabel(SongDisplayable song) {
         if(song == null) {
             statusLabel.setText("");
         }

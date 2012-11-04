@@ -41,7 +41,7 @@ import org.quelea.QueleaApp;
 import org.quelea.chord.ChordLineTransposer;
 import org.quelea.chord.ChordTransposer;
 import org.quelea.chord.TransposeDialog;
-import org.quelea.displayable.Song;
+import org.quelea.displayable.SongDisplayable;
 import org.quelea.languages.LabelGrabber;
 import org.quelea.utils.LineTypeChecker;
 import org.quelea.utils.LineTypeChecker.Type;
@@ -341,7 +341,7 @@ public class BasicSongPanel extends BorderPane {
      * <p/>
      * @param song the song to edit.
      */
-    public void resetEditSong(Song song) {
+    public void resetEditSong(SongDisplayable song) {
         getTitleField().setText(song.getTitle());
         getAuthorField().setText(song.getAuthor());
         getLyricsField().setText(song.getLyrics(true, true));

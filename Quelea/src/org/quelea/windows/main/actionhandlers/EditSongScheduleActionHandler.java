@@ -20,7 +20,7 @@ package org.quelea.windows.main.actionhandlers;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import org.quelea.QueleaApp;
-import org.quelea.displayable.Song;
+import org.quelea.displayable.SongDisplayable;
 import org.quelea.windows.newsong.SongEntryWindow;
 
 /**
@@ -36,7 +36,7 @@ public class EditSongScheduleActionHandler implements EventHandler<ActionEvent> 
     @Override
     public void handle(ActionEvent t) {
         SongEntryWindow songEntryWindow = QueleaApp.get().getMainWindow().getSongEntryWindow();
-        songEntryWindow.resetEditSong((Song) QueleaApp.get().getMainWindow().getMainPanel().getSchedulePanel().getScheduleList().getSelectionModel().getSelectedItem());
+        songEntryWindow.resetEditSong((SongDisplayable) QueleaApp.get().getMainWindow().getMainPanel().getSchedulePanel().getScheduleList().getSelectionModel().getSelectedItem());
         songEntryWindow.show();
     }
 
