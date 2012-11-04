@@ -51,9 +51,9 @@ public class VideoBackground implements Background {
     }
 
     @Override
-    public String getDBString() {
+    public String getString() {
         vidLocation = new File(vidLocation).getName();
-        return "$backgroundvideo:" + vidLocation.trim();
+        return vidLocation.trim();
     }
 
     @Override

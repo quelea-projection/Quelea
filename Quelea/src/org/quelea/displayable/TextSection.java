@@ -17,7 +17,7 @@
  */
 package org.quelea.displayable;
 
-import org.quelea.Theme;
+import org.quelea.ThemeDTO;
 import org.quelea.utils.Utils;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
@@ -37,8 +37,8 @@ public class TextSection {
     private String title;
     private String[] lines;
     private String[] smallLines;
-    private Theme theme;
-    private Theme tempTheme;
+    private ThemeDTO theme;
+    private ThemeDTO tempTheme;
     private boolean capitaliseFirst;
 
     /**
@@ -64,7 +64,7 @@ public class TextSection {
      * be a capital, false otherwise.
      * @param theme the theme of this song section.
      */
-    public TextSection(String title, String[] lines, String[] smallLines, boolean capitaliseFirst, Theme theme) {
+    public TextSection(String title, String[] lines, String[] smallLines, boolean capitaliseFirst, ThemeDTO theme) {
         this(title, lines, smallLines, capitaliseFirst, theme, null);
     }
 
@@ -79,7 +79,7 @@ public class TextSection {
      * @param theme the theme of this song section.
      * @param tempTheme the tempTheme of this song section.
      */
-    public TextSection(String title, String[] lines, String[] smallLines, boolean capitaliseFirst, Theme theme, Theme tempTheme) {
+    public TextSection(String title, String[] lines, String[] smallLines, boolean capitaliseFirst, ThemeDTO theme, ThemeDTO tempTheme) {
         this.capitaliseFirst = capitaliseFirst;
         this.title = title;
         this.lines = Arrays.copyOf(lines, lines.length);
@@ -97,7 +97,7 @@ public class TextSection {
         xml.append("<section ").append("title=\"").append(getTitle()).append("\" capitalise=\"").append(shouldCapitaliseFirst()).append("\">");
         if (theme != null) {
             xml.append("<theme>");
-            xml.append(Utils.escapeXML(theme.toDBString()));
+            xml.append(Utils.escapeXML(theme.asString()));
             xml.append("</theme>");
         }
         if (smallLines != null) {
@@ -125,7 +125,7 @@ public class TextSection {
         String sectionTitle = null;
         String[] lyrics = null;
         String[] smallLines = null;
-        Theme theme = null;
+        ThemeDTO theme = null;
         boolean capitalise = true;
 
         if (attributes != null) {
@@ -143,7 +143,7 @@ public class TextSection {
             Node node = nodelist.item(i);
             switch (node.getNodeName()) {
                 case "theme":
-                    theme = Theme.parseDBString(node.getTextContent());
+                    theme = ThemeDTO.fromString(node.getTextContent());
                     break;
                 case "lyrics":
                     String[] rawLyrics = node.getTextContent().split("\n");
@@ -261,7 +261,7 @@ public class TextSection {
      * Get the theme of the section.
      * @return the theme of the section.
      */
-    public Theme getTheme() {
+    public ThemeDTO getTheme() {
         return theme;
     }
 
@@ -270,7 +270,7 @@ public class TextSection {
      * @return the temporary theme of the section, or null if none has been
      * set.
      */
-    public Theme getTempTheme() {
+    public ThemeDTO getTempTheme() {
         return tempTheme;
     }
 
@@ -278,7 +278,7 @@ public class TextSection {
      * Set the temporary theme of the section.
      * @param tempTheme the temporary theme.
      */
-    public void setTempTheme(Theme tempTheme) {
+    public void setTempTheme(ThemeDTO tempTheme) {
         this.tempTheme = tempTheme;
     }
 
@@ -286,7 +286,7 @@ public class TextSection {
      * Set the theme of the section.
      * @param theme the new theme.
      */
-    public void setTheme(Theme theme) {
+    public void setTheme(ThemeDTO theme) {
         this.theme = theme;
     }
 

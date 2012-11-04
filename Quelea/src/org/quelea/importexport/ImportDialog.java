@@ -44,7 +44,7 @@ import javafx.stage.StageStyle;
 import org.javafx.dialog.Dialog;
 import org.quelea.QueleaApp;
 import org.quelea.SongDuplicateChecker;
-import org.quelea.displayable.Song;
+import org.quelea.displayable.SongDisplayable;
 import org.quelea.languages.LabelGrabber;
 import org.quelea.utils.LoggerUtils;
 import org.quelea.utils.Utils;
@@ -139,7 +139,7 @@ public abstract class ImportDialog extends Stage implements PropertyChangeListen
                 final String location = locationField.getText();
                 setActive();
                 Thread worker = new Thread() {
-                    private List<Song> localSongs;
+                    private List<SongDisplayable> localSongs;
                     private boolean[] localSongsDuplicate;
                     private ExecutorService checkerService = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
 

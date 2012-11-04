@@ -20,7 +20,7 @@ package org.quelea.windows.main;
 
 import javafx.scene.control.MenuItem;
 import org.quelea.QueleaApp;
-import org.quelea.displayable.Song;
+import org.quelea.displayable.SongDisplayable;
 import org.quelea.windows.library.LibrarySongList;
 
 /**
@@ -58,7 +58,7 @@ public class ButtonChecker {
             removeSongButton.setDisable(true);
         }
         else {
-            if(scheduleList.getSelectionModel().getSelectedItem() instanceof Song) {
+            if(scheduleList.getSelectionModel().getSelectedItem() instanceof SongDisplayable) {
                 editSongButton.setDisable(false);
             }
             else {

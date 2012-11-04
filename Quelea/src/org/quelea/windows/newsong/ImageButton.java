@@ -28,7 +28,7 @@ import javafx.stage.FileChooser;
 import org.apache.commons.io.FileUtils;
 import org.quelea.ImageBackground;
 import org.quelea.QueleaApp;
-import org.quelea.Theme;
+import org.quelea.ThemeDTO;
 import org.quelea.languages.LabelGrabber;
 import org.quelea.utils.FileFilters;
 import org.quelea.utils.LoggerUtils;
@@ -74,7 +74,9 @@ public class ImageButton extends Button {
 
                     imageLocation = imageDir.toURI().relativize(newFile.toURI()).getPath();
                     imageLocationField.setText(imageLocation);
-                    canvas.setTheme(new Theme(canvas.getTheme().getFont(), canvas.getTheme().getFontPaint(), new ImageBackground(imageLocation)));
+                    canvas.setTheme(new ThemeDTO(canvas.getTheme().getFont(),
+                            canvas.getTheme().getFontPaint(), new ImageBackground(imageLocation),
+                            canvas.getTheme().getShadow()));
                 }
             }
         });

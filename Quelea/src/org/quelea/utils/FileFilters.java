@@ -55,7 +55,7 @@ public final class FileFilters {
     /**
      * The file filter used for Quelea schedules.
      */
-    public static final FileChooser.ExtensionFilter SCHEDULE = new FileChooser.ExtensionFilter("Quelea schedules", "." + QueleaProperties.get().getScheduleExtension());
+    public static final FileChooser.ExtensionFilter SCHEDULE = new FileChooser.ExtensionFilter("Quelea schedules", "*." + QueleaProperties.get().getScheduleExtension());
 
     /**
      * No instantiation for me thanks.

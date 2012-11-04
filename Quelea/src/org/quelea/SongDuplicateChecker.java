@@ -18,7 +18,7 @@
 package org.quelea;
 
 import org.apache.commons.lang.StringUtils;
-import org.quelea.displayable.Song;
+import org.quelea.displayable.SongDisplayable;
 
 /**
  * A class responsible for checking a new song against existing songs in the
@@ -32,8 +32,8 @@ public class SongDuplicateChecker {
         new SongDuplicateChecker().checkSongs(null);
     }
 
-    public boolean[] checkSongs(Song[] newSongs) {
-        final Song[] songs = SongDatabase.get().getSongs();
+    public boolean[] checkSongs(SongDisplayable[] newSongs) {
+        final SongDisplayable[] songs = SongManager.get().getSongs();
         final String[] songLyrics = new String[songs.length];
         for (int i = 0; i < songLyrics.length; i++) {
             songLyrics[i] = songs[i].getLyrics(false, false).replaceAll("[^\\p{L}]", "");
@@ -41,7 +41,7 @@ public class SongDuplicateChecker {
         boolean[] sameArr = new boolean[newSongs.length];
         for(int i=0 ; i<newSongs.length ; i++) {
             System.out.println(i + " of " + newSongs.length);
-            Song newSong = newSongs[i];
+            SongDisplayable newSong = newSongs[i];
             String newLyrics = newSong.getLyrics(false, false).replaceAll("[^\\p{L}]", "");
             int distance = new LevenshteinDistance().leastCompare(newLyrics, songLyrics);
             if(distance<30) {
@@ -62,8 +62,8 @@ public class SongDuplicateChecker {
      * @return true if the song is the same or similar to an existing song,
      * false otherwise.
      */
-    public boolean checkSong(Song newSong) {
-        for(Song databaseSong : SongDatabase.get().getSongs()) {
+    public boolean checkSong(SongDisplayable newSong) {
+        for(SongDisplayable databaseSong : SongManager.get().getSongs()) {
             String databaseLyrics = databaseSong.getLyrics(false, false).replaceAll("[^\\p{L}]", "");
             String newLyrics = newSong.getLyrics(false, false).replaceAll("[^\\p{L}]", "");
             int maxDistance;

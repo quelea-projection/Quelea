@@ -38,7 +38,7 @@ import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 import org.javafx.dialog.Dialog;
-import org.quelea.Theme;
+import org.quelea.ThemeDTO;
 import org.quelea.languages.LabelGrabber;
 import org.quelea.utils.LoggerUtils;
 import org.quelea.windows.newsong.EditThemeDialog;
@@ -53,7 +53,7 @@ import org.quelea.windows.newsong.ThemePanel;
 public class ThemePreviewPanel extends VBox {
 
     private static final Logger LOGGER = LoggerUtils.getLogger();
-    private Theme theme;
+    private ThemeDTO theme;
     private LyricCanvas canvas;
     private RadioButton selectButton;
     private Button removeButton;
@@ -65,17 +65,17 @@ public class ThemePreviewPanel extends VBox {
      * <p/>
      * @param theme the theme to preview.
      */
-    public ThemePreviewPanel(Theme theme) {
+    public ThemePreviewPanel(ThemeDTO theme) {
         this.theme = theme;
         if(theme == null) {
-            theme = Theme.DEFAULT_THEME;
+            theme = ThemeDTO.DEFAULT_THEME;
         }
         canvas = new LyricCanvas(false, false);
         canvas.setTheme(theme);
         canvas.setPrefSize(200, 200);
         canvas.setText(ThemePanel.SAMPLE_LYRICS, new String[0], false);
         String name;
-        if(theme == Theme.DEFAULT_THEME) {
+        if(theme == ThemeDTO.DEFAULT_THEME) {
             name = LabelGrabber.INSTANCE.getLabel("default.theme.text");
         }
         else {
@@ -83,7 +83,7 @@ public class ThemePreviewPanel extends VBox {
         }
         themeDialog = new EditThemeDialog();
         selectButton = new RadioButton(name);
-        if(theme != Theme.DEFAULT_THEME) {
+        if(theme != ThemeDTO.DEFAULT_THEME) {
             editButton = new Button("", new ImageView(new Image("file:icons/edit32.png", 16, 16, false, true)));
             editButton.setTooltip(new Tooltip(LabelGrabber.INSTANCE.getLabel("edit.theme.tooltip")));
             editButton.setOnAction(new EventHandler<javafx.event.ActionEvent>() {
@@ -91,10 +91,10 @@ public class ThemePreviewPanel extends VBox {
                 public void handle(javafx.event.ActionEvent t) {
                     themeDialog.setTheme(ThemePreviewPanel.this.theme);
                     themeDialog.show();
-                    Theme ret = themeDialog.getTheme();
+                    ThemeDTO ret = themeDialog.getTheme();
                     if(ret != null) {
                         try(PrintWriter pw = new PrintWriter(ret.getFile())) {
-                            pw.println(ret.toDBString());
+                            pw.println(ret.getTheme());
                         }
                         catch(IOException ex) {
                             LOGGER.log(Level.WARNING, "Couldn't edit theme", ex);
@@ -133,7 +133,7 @@ public class ThemePreviewPanel extends VBox {
             });
         }
         buttonPanel.getChildren().add(selectButton);
-        if(theme != Theme.DEFAULT_THEME) {
+        if(theme != ThemeDTO.DEFAULT_THEME) {
             buttonPanel.getChildren().add(editButton);
             buttonPanel.getChildren().add(removeButton);
         }
@@ -157,7 +157,7 @@ public class ThemePreviewPanel extends VBox {
      * <p/>
      * @return the theme in use on this preview panel.
      */
-    public Theme getTheme() {
+    public ThemeDTO getTheme() {
         return theme;
     }
 

@@ -36,8 +36,8 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import org.quelea.QueleaApp;
-import org.quelea.Theme;
-import org.quelea.displayable.Song;
+import org.quelea.ThemeDTO;
+import org.quelea.displayable.SongDisplayable;
 import org.quelea.displayable.TextSection;
 import org.quelea.languages.LabelGrabber;
 import org.quelea.utils.Utils;
@@ -57,7 +57,7 @@ public class SongEntryWindow extends Stage {
     private final Button confirmButton;
     private final Button cancelButton;
     private final CheckBox addToSchedCBox;
-    private Song song;
+    private SongDisplayable song;
 
     /**
      * Create and initialise the new song window.
@@ -205,7 +205,7 @@ public class SongEntryWindow extends Stage {
      * <p/>
      * @return the current theme.
      */
-    public Theme getTheme() {
+    public ThemeDTO getTheme() {
         return themePanel.getTheme();
     }
 
@@ -219,7 +219,7 @@ public class SongEntryWindow extends Stage {
         confirmButton.setDisable(true);
         basicSongPanel.resetNewSong();
         detailedSongPanel.resetNewSong();
-        themePanel.setTheme(Theme.DEFAULT_THEME);
+        themePanel.setTheme(ThemeDTO.DEFAULT_THEME);
         tabPane.getSelectionModel().select(0);
         addToSchedCBox.setSelected(false);
         addToSchedCBox.setDisable(false);
@@ -230,7 +230,7 @@ public class SongEntryWindow extends Stage {
      * <p/>
      * @param song the song to edit.
      */
-    public void resetEditSong(Song song) {
+    public void resetEditSong(SongDisplayable song) {
         setTitle(LabelGrabber.INSTANCE.getLabel("edit.song.title"));
         this.song = song;
         confirmButton.setText(LabelGrabber.INSTANCE.getLabel("edit.song.button"));
@@ -255,9 +255,9 @@ public class SongEntryWindow extends Stage {
      * <p/>
      * @return the song.
      */
-    public Song getSong() {
+    public SongDisplayable getSong() {
         if(song == null) {
-            song = new Song(getBasicSongPanel().getTitleField().getText(), getBasicSongPanel().getAuthorField().getText());
+            song = new SongDisplayable(getBasicSongPanel().getTitleField().getText(), getBasicSongPanel().getAuthorField().getText());
         }
         song.setLyrics(getBasicSongPanel().getLyricsField().getText());
         song.setTitle(getBasicSongPanel().getTitleField().getText());
@@ -270,7 +270,7 @@ public class SongEntryWindow extends Stage {
         song.setKey(getDetailedSongPanel().getKeyField().getText());
         song.setCapo(getDetailedSongPanel().getCapoField().getText());
         song.setInfo(getDetailedSongPanel().getInfoField().getText());
-        Theme tempTheme = song.getSections()[0].getTempTheme();
+        ThemeDTO tempTheme = song.getSections()[0].getTempTheme();
         for(TextSection section : song.getSections()) {
             section.setTheme(themePanel.getTheme());
             if(tempTheme != null) {

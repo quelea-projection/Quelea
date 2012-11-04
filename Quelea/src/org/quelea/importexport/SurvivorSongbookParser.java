@@ -24,7 +24,7 @@ import java.util.ArrayList;
 import java.util.List;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.util.PDFTextStripper;
-import org.quelea.displayable.Song;
+import org.quelea.displayable.SongDisplayable;
 import org.quelea.windows.main.StatusPanel;
 
 /**
@@ -40,9 +40,9 @@ public class SurvivorSongbookParser implements SongParser {
      * @throws IOException if something went wrong.
      */
     @Override
-    public List<Song> getSongs(File location, StatusPanel statusPanel) throws IOException {
+    public List<SongDisplayable> getSongs(File location, StatusPanel statusPanel) throws IOException {
         PDDocument document = PDDocument.load(location);
-        List<Song> pdfSongs = new ArrayList<>();
+        List<SongDisplayable> pdfSongs = new ArrayList<>();
         PDFTextStripper stripper = new PDFTextStripper();
         List<String> songParts = new ArrayList<>();
         for (int i = 0; i < document.getNumberOfPages(); i++) {
@@ -59,7 +59,7 @@ public class SurvivorSongbookParser implements SongParser {
                 }
             }
             if (!twoPart) {
-                Song song = processSong(songParts.toArray(new String[songParts.size()]));
+                SongDisplayable song = processSong(songParts.toArray(new String[songParts.size()]));
                 if (song != null) {
                     pdfSongs.add(song);
                 }
@@ -96,7 +96,7 @@ public class SurvivorSongbookParser implements SongParser {
      * @param parts the parts (one part per page in the PDF) of the song.
      * @return the song object from these parts.
      */
-    private Song processSong(String[] parts) {
+    private SongDisplayable processSong(String[] parts) {
         //May look like I'm checking the same thing twice, but I'm not I promise!!!
         if (parts[0].contains("first line")
                 || parts[0].contains("first line")
@@ -134,7 +134,7 @@ public class SurvivorSongbookParser implements SongParser {
         if (!title.isEmpty() && !Character.isLetterOrDigit(title.charAt(title.length() - 1))) { //Remove ending punctuation from titles
             title = title.substring(0, title.length() - 1);
         }
-        Song song = new Song(title, author);
+        SongDisplayable song = new SongDisplayable(title, author);
         song.setLyrics(songLyricsStr);
         song.removeDuplicateSections();
         return song;

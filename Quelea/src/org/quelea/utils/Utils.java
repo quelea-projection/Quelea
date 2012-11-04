@@ -59,8 +59,8 @@ import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import org.javafx.dialog.Dialog;
 import org.quelea.QueleaApp;
-import org.quelea.SongDatabase;
-import org.quelea.displayable.Song;
+import org.quelea.SongManager;
+import org.quelea.displayable.SongDisplayable;
 import org.quelea.languages.LabelGrabber;
 import org.quelea.windows.main.StatusPanel;
 
@@ -212,11 +212,11 @@ public final class Utils {
      * @param silent true if we should update the song without showing a bar on
      * the status panel.
      */
-    public static void updateSongInBackground(final Song song, final boolean showError, final boolean silent) {
+    public static void updateSongInBackground(final SongDisplayable song, final boolean showError, final boolean silent) {
         final Runnable updateRunner = new Runnable() {
             @Override
             public void run() {
-                boolean result = SongDatabase.get().updateSong(song);
+                boolean result = SongManager.get().updateSong(song);
                 if(!result && showError) {
                     Dialog.showError(LabelGrabber.INSTANCE.getLabel("error.text"), LabelGrabber.INSTANCE.getLabel("error.udpating.song.text"));
                 }

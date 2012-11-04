@@ -21,8 +21,8 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import org.javafx.dialog.Dialog;
 import org.quelea.QueleaApp;
-import org.quelea.SongDatabase;
-import org.quelea.displayable.Song;
+import org.quelea.SongManager;
+import org.quelea.displayable.SongDisplayable;
 import org.quelea.languages.LabelGrabber;
 import org.quelea.windows.library.LibrarySongList;
 import org.quelea.windows.main.MainWindow;
@@ -45,7 +45,7 @@ public class RemoveSongDBActionHandler implements EventHandler<ActionEvent> {
     public void handle(ActionEvent t) {
         MainWindow mainWindow = QueleaApp.get().getMainWindow();
         LibrarySongList songList = mainWindow.getMainPanel().getLibraryPanel().getLibrarySongPanel().getSongList();
-        Song song = songList.itemsProperty().get().get(songList.getSelectionModel().getSelectedIndex());
+        SongDisplayable song = songList.itemsProperty().get().get(songList.getSelectionModel().getSelectedIndex());
         if(song == null) {
             return;
         }
@@ -63,7 +63,7 @@ public class RemoveSongDBActionHandler implements EventHandler<ActionEvent> {
             }
         }).build().showAndWait();
         if(yes) {
-            if(!SongDatabase.get().removeSong(song)) {
+            if(!SongManager.get().removeSong(song)) {
                 Dialog.showError(LabelGrabber.INSTANCE.getLabel("error.text"), LabelGrabber.INSTANCE.getLabel("error.removing.song.db"));
             }
             song.setID(-1);
