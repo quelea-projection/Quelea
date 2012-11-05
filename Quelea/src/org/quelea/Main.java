@@ -232,7 +232,6 @@ public final class Main extends Application {
                 catch(InterruptedException ex) {
                 }
 //                Utils.centreOnMonitor(mainWindow, controlScreen);
-                showWarning(monitorNumber);
                 mainWindow.toFront();
                 new ShortcutManager().addShortcuts();
                 LOGGER.log(Level.INFO, "Loaded everything.");
@@ -245,6 +244,7 @@ public final class Main extends Application {
                 
                 mainWindow.show();
                 splashWindow.hide();
+                showWarning(monitorNumber);
             }
         });
         
