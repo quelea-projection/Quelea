@@ -54,6 +54,9 @@ class DragAndDrop {
         source.setOnDragDetected(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent t) {
+                if(source.getSelectedValue() == null) {
+                    return;
+                }
                 Dragboard db = source.startDragAndDrop(TransferMode.ANY);
 
                 /* Put a string on a dragboard */
