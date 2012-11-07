@@ -1,4 +1,4 @@
-package org.quelea.db.model;
+package org.quelea.data.db.model;
 
 import java.util.List;
 import javax.persistence.CascadeType;

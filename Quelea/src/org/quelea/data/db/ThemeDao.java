@@ -1,9 +1,9 @@
-package org.quelea.db;
+package org.quelea.data.db;
 
 import java.util.List;
 import org.hibernate.Query;
 import org.hibernate.Session;
-import org.quelea.db.model.Theme;
+import org.quelea.data.db.model.Theme;
 
 /**
  * Implements theme entities retrieval operations.
