@@ -20,6 +20,7 @@ package org.quelea;
 import java.io.File;
 import org.javafx.dialog.Dialog;
 import org.quelea.languages.LabelGrabber;
+import org.quelea.watcher.ImageFileWatcher;
 import org.quelea.windows.main.LyricWindow;
 import org.quelea.windows.main.MainWindow;
 import org.quelea.windows.main.StatusPanelGroup;
@@ -34,6 +35,7 @@ public class QueleaApp {
     private MainWindow mainWindow;
     private LyricWindow lyricWindow;
     private LyricWindow stageWindow;
+    private ImageFileWatcher imageWatcher;
 
     /**
      * Get the singleton instance.
@@ -112,5 +114,9 @@ public class QueleaApp {
      */
     public void setMainWindow(MainWindow mainWindow) {
         this.mainWindow = mainWindow;
+    }
+
+    public void initialiseWatchers() {
+        imageWatcher = ImageFileWatcher.get();
     }
 }
