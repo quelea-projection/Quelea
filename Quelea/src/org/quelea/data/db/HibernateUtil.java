@@ -1,4 +1,4 @@
-package org.quelea.db;
+package org.quelea.data.db;
 
 import java.io.File;
 import java.util.logging.Logger;
@@ -36,9 +36,9 @@ public class HibernateUtil {
             cfg.setProperty("hibernate.connection.driver_class", "org.hsqldb.jdbcDriver");
             cfg.setProperty("hibernate.show_sql", "false");
             cfg.setProperty("hibernate.hbm2ddl.auto", "update");
-            cfg.addAnnotatedClass(org.quelea.db.model.Song.class);//@todo add reflection code which retrieve all classes from package
-            cfg.addAnnotatedClass(org.quelea.db.model.Theme.class);
-            cfg.addAnnotatedClass(org.quelea.db.model.TextShadow.class);
+            cfg.addAnnotatedClass(org.quelea.data.db.model.Song.class);//@todo add reflection code which retrieve all classes from package
+            cfg.addAnnotatedClass(org.quelea.data.db.model.Theme.class);
+            cfg.addAnnotatedClass(org.quelea.data.db.model.TextShadow.class);
             sessionFactory = cfg.buildSessionFactory();
         } catch (Throwable ex) {
             // Log the exception. 
