@@ -17,8 +17,6 @@
 package org.quelea;
 
 import com.inet.jortho.SpellChecker;
-import java.awt.GraphicsDevice;
-import java.awt.GraphicsEnvironment;
 import java.io.File;
 import java.net.MalformedURLException;
 import java.util.logging.Level;
@@ -26,7 +24,6 @@ import java.util.logging.Logger;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.collections.ObservableList;
-import javafx.geometry.Rectangle2D;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
 import org.javafx.dialog.Dialog;
@@ -163,6 +160,7 @@ public final class Main extends Application {
                 QueleaApp.get().setStageWindow(stageWindow);
                 stageWindow.toFront();
             }
+            
         });
 
         LOGGER.log(Level.INFO, "Loading bibles");
@@ -243,6 +241,7 @@ public final class Main extends Application {
                 }
                 
                 mainWindow.show();
+                QueleaApp.get().initialiseWatchers();
                 splashWindow.hide();
                 showWarning(monitorNumber);
             }

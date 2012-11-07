@@ -212,6 +212,15 @@ public final class QueleaProperties extends Properties {
     public File getBibleDir() {
         return new File(getProperty("bibles.dir", "bibles"));
     }
+    
+    /**
+     * Get the directory used for storing images.
+     * <p/>
+     * @return the img directory 
+     */
+    public File getImageDir() {
+        return new File(getProperty("img.dir", "img"));
+    }
 
     /**
      * Get the extension used for quelea schedules.

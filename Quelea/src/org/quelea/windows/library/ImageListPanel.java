@@ -18,24 +18,33 @@
 package org.quelea.windows.library;
 
 import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.util.List;
 import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
 import javafx.animation.Timeline;
 import javafx.application.Platform;
-import javafx.collections.FXCollections;
 import javafx.event.EventHandler;
 import javafx.geometry.Orientation;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.Clipboard;
+import javafx.scene.input.ClipboardContent;
+import javafx.scene.input.DragEvent;
+import javafx.scene.input.Dragboard;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.input.TransferMode;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.TilePane;
 import javafx.util.Duration;
 import org.quelea.QueleaApp;
 import org.quelea.displayable.ImageDisplayable;
 import org.quelea.utils.Utils;
+import org.quelea.watcher.ImageFileWatcher;
 
 /**
  * The panel displayed on the library to select the list of images.
@@ -46,6 +55,7 @@ public class ImageListPanel extends BorderPane {
 
     private final TilePane imageList;
     private String dir;
+    private Thread t;
 
     /**
      * Create a new image list panel.
@@ -58,6 +68,32 @@ public class ImageListPanel extends BorderPane {
         imageList.setHgap(10);
         imageList.setVgap(10);
         imageList.setOrientation(Orientation.HORIZONTAL);
+        imageList.setOnDragOver(new EventHandler<DragEvent>() {
+            @Override
+            public void handle(DragEvent t) {
+                t.acceptTransferModes(TransferMode.COPY_OR_MOVE);
+            }
+        });
+        imageList.setOnDragDropped(new EventHandler<DragEvent>() {
+            @Override
+            public void handle(DragEvent t) {
+                if (t.getGestureSource() == null) {
+                    Clipboard cb = Clipboard.getSystemClipboard();
+                    if (cb.hasFiles()) {
+                        List<File> files = cb.getFiles();
+                        for (File f : files) {
+                            if (Utils.fileIsImage(f) && !f.isDirectory()) {
+                                try {
+                                    Files.copy(f.getAbsoluteFile().toPath(), Paths.get(getDir(), f.getName()), StandardCopyOption.COPY_ATTRIBUTES);
+                                } catch (IOException ex) {
+                                    ex.printStackTrace();
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        });
         updateImages();
         ScrollPane scroll = new ScrollPane();
         scroll.setFitToWidth(true);
@@ -72,7 +108,16 @@ public class ImageListPanel extends BorderPane {
      */
     public void changeDir(String newDir) {
         dir = newDir;
+        ImageFileWatcher.get().changeDir(new File(dir).getAbsoluteFile());
         refresh();
+    }
+
+    /**
+     * Returns the absolute path of the currently selected directory
+     *
+     */
+    public String getDir() {
+        return dir;
     }
 
     /**
@@ -83,39 +128,46 @@ public class ImageListPanel extends BorderPane {
     }
 
     /**
-     * Add the files to the given model.
+     * Add the files.
      * <p/>
-     * @param model the model to add files to.
      */
     private void updateImages() {
         imageList.getChildren().clear();
         final File[] files = new File(dir).listFiles();
-        final List<ImageView> views = FXCollections.observableArrayList();
-        final Thread runner = new Thread() {
+        t = new Thread() {
             @Override
             public void run() {
-                for(final File file : files) {
-                    if(Utils.fileIsImage(file) && !file.isDirectory()) {
-                        ImageView view = new ImageView(new Image("file:" + file, 72, 72, false, true));
+                for (final File file : files) {
+                    if (Utils.fileIsImage(file) && !file.isDirectory()) {
+                        final ImageView view = new ImageView(new Image("file:" + file, 72, 72, false, true));
                         view.setOnMouseClicked(new EventHandler<MouseEvent>() {
                             @Override
                             public void handle(MouseEvent t) {
                                 QueleaApp.get().getMainWindow().getMainPanel().getSchedulePanel().getScheduleList().add(new ImageDisplayable(file));
                             }
                         });
+                        view.setOnDragDetected(new EventHandler<MouseEvent>() {
+                            @Override
+                            public void handle(MouseEvent t) {
+                                Dragboard db = startDragAndDrop(TransferMode.ANY);
+                                ClipboardContent content = new ClipboardContent();
+                                content.putString(file.getAbsolutePath());
+                                db.setContent(content);
+                                t.consume();
+                            }
+                        });
                         setupHover(view);
-                        views.add(view);
+                        Platform.runLater(new Runnable() {
+                            @Override
+                            public void run() {
+                                imageList.getChildren().add(view);
+                            }
+                        });
                     }
                 }
             }
         };
-        Platform.runLater(new Runnable() {
-            @Override
-            public void run() {
-                imageList.getChildren().addAll(views);
-            }
-        });
-        runner.start();
+        t.start();
     }
 
     private void setupHover(final ImageView view) {
@@ -125,7 +177,7 @@ public class ImageListPanel extends BorderPane {
         view.setOnMouseEntered(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent t) {
-                if(view.getScaleX() == 1) {
+                if (view.getScaleX() == 1) {
                     view.toFront();
                     final Timeline timeline = new Timeline();
                     timeline.getKeyFrames().add(new KeyFrame(Duration.ZERO, new KeyValue(view.scaleXProperty(), 1)));

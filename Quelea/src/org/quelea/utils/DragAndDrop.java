@@ -36,15 +36,16 @@ import org.quelea.windows.main.ScheduleList;
 class DragAndDrop {
 
     /**
-     * Public method to be called to add the required listeners to the various scenes. 
+     * Public method to be called to add the required listeners to the various
+     * scenes.
      */
     static public void enable() {
         setLibToSchedDD();
     }
 
     /**
-     * Sets up all drag events to move a song from the LibrarySongList into the ScheduleList
-     * to add it as a schedule item.
+     * Sets up all drag events to move a song from the LibrarySongList into the
+     * ScheduleList to add it as a schedule item.
      */
     static private void setLibToSchedDD() {
 
@@ -74,7 +75,6 @@ class DragAndDrop {
                 if (t.getGestureSource() == source) {
                     t.acceptTransferModes(TransferMode.COPY_OR_MOVE);
                 }
-
                 t.consume();
             }
         });
@@ -83,16 +83,14 @@ class DragAndDrop {
         target.setOnDragDropped(new EventHandler<DragEvent>() {
             @Override
             public void handle(DragEvent t) {
-                
                 Dragboard db = t.getDragboard();
                 //int id = Integer.parseInt(db.getString());
                 //target.add(SongDatabase.get().getSong(id)); //@todo please change using new db mapping layer
                 target.add(source.getSelectedValue());
-
+                
                 t.setDropCompleted(true);
                 t.consume();
             }
         });
     }
-    
 }
