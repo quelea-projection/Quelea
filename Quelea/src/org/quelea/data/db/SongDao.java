@@ -1,9 +1,9 @@
-package org.quelea.db;
+package org.quelea.data.db;
 
 import java.util.List;
 import org.hibernate.Query;
 import org.hibernate.Session;
-import org.quelea.db.model.Song;
+import org.quelea.data.db.model.Song;
 /**
  * Implements song entities retrieval operations.
  * @author tomaszpio@gmail.com

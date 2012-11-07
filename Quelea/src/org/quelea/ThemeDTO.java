@@ -24,8 +24,8 @@ import javafx.scene.effect.DropShadow;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 import javafx.scene.text.Font;
-import org.quelea.db.model.TextShadow;
-import org.quelea.db.model.Theme;
+import org.quelea.data.db.model.TextShadow;
+import org.quelea.data.db.model.Theme;
 import org.quelea.utils.LoggerUtils;
 import org.quelea.utils.Utils;
 
