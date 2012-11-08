@@ -40,6 +40,7 @@ import javafx.scene.layout.HBox;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
 import org.quelea.QueleaApp;
+import org.quelea.languages.LabelGrabber;
 import org.quelea.utils.FileFilters;
 import org.quelea.utils.QueleaProperties;
 
@@ -62,7 +63,7 @@ public class LibraryImagePanel extends BorderPane {
         setCenter(imagePanel);
         northPanel = new HBox();
         Button refreshButton = new Button("", new ImageView(new Image("file:icons/green_refresh128.png", 22, 22, true, true)));
-        refreshButton.setTooltip(new Tooltip("Refresh Images"));
+        refreshButton.setTooltip(new Tooltip(LabelGrabber.INSTANCE.getLabel("refresh.images.panel")));
         refreshButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent t) {
@@ -71,7 +72,7 @@ public class LibraryImagePanel extends BorderPane {
         });
         
         Button addButton = new Button("", new ImageView(new Image("file:icons/add.png", 22, 22, true, true)));
-        addButton.setTooltip(new Tooltip("Add Images"));
+        addButton.setTooltip(new Tooltip(LabelGrabber.INSTANCE.getLabel("add.images.panel")));
         addButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent t) {
@@ -95,7 +96,7 @@ public class LibraryImagePanel extends BorderPane {
         list.addAll(getComboBoxOptions());
         
         ComboBox cb = new ComboBox(list);
-        cb.setTooltip(new Tooltip("Select Folder"));
+        cb.setTooltip(new Tooltip(LabelGrabber.INSTANCE.getLabel("select.folder.images.panel")));
         cb.valueProperty().addListener(new ChangeListener() {
             @Override
             public void changed(ObservableValue ov, Object t, Object t1) {
