@@ -55,35 +55,33 @@ public class ImageFileWatcher {
         try {
             watcher = FileSystems.getDefault().newWatchService();
             imgPath.register(watcher, StandardWatchEventKinds.ENTRY_CREATE, StandardWatchEventKinds.ENTRY_DELETE, StandardWatchEventKinds.ENTRY_MODIFY);
-            System.out.println("0");
             t = new Thread() {
                 @Override
                 public void run() {
-                    System.out.println("1");
                     final WatchKey key;
                     try {
                         key = watcher.take();
                     } catch (InterruptedException ex) {
                         return;
                     }
-                    System.out.println("2");
                     while (running) {
                         for (WatchEvent<?> event : key.pollEvents()) {
-                            System.out.println("3");
                             WatchEvent.Kind<?> kind = event.kind();
                             if (kind == StandardWatchEventKinds.OVERFLOW) {
                                 continue;
                             }
-                            System.out.println("4");
                             Platform.runLater(new Runnable() {
                                 @Override
                                 public void run() {
-                                    System.out.println("5");
                                     imageLP.refresh();
-                                    System.out.println("6");
                                 }
                             });
                         }
+                    }
+                    try {
+                        watcher.close();
+                    } catch (IOException ex) {
+                        ex.printStackTrace();
                     }
                 }
             };
@@ -101,11 +99,6 @@ public class ImageFileWatcher {
     public void changeDir(File newDir) {
         imgPath = newDir.getAbsoluteFile().toPath();
         running = false;
-        try {
-            watcher.close();
-        } catch (IOException ex) {
-            ex.printStackTrace();
-        }
         running = true;
         startWatching();
     }

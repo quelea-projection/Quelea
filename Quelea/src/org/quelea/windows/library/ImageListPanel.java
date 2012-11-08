@@ -109,7 +109,6 @@ public class ImageListPanel extends BorderPane {
     public void changeDir(String newDir) {
         dir = newDir;
         ImageFileWatcher.get().changeDir(new File(dir).getAbsoluteFile());
-        refresh();
     }
 
     /**

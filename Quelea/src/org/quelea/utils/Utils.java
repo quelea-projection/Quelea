@@ -590,7 +590,7 @@ public final class Utils {
      * @return true if it has the given extension, false otherwise.
      */
     public static boolean hasExtension(File file, String ext) {
-        String name = file.getName();
+        String name = file.getName().toLowerCase();
         if(!name.contains(".")) {
             return false;
         }
