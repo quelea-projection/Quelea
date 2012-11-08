@@ -15,14 +15,14 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.quelea.print;
+package org.quelea.services.print;
 
 import java.awt.print.Printable;
 import java.awt.print.PrinterJob;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.quelea.utils.LoggerUtils;
-
+//@todo never used
 /**
  * Used for printing schedules.
  * @author Michael
