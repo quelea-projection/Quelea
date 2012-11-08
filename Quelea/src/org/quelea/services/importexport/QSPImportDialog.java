@@ -15,35 +15,26 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.quelea.importexport;
+package org.quelea.services.importexport;
 
 import org.quelea.languages.LabelGrabber;
+import org.quelea.utils.FileFilters;
 
 /**
- * The kingsway import dialog, used for importing songs from the online kingsway
- * library.
+ * An import dialog for Quelea song packs.
+ *
  * @author Michael
  */
-public class KingswayImportDialog extends ImportDialog {
-    
-    private KingswayWorshipParser kwp;
-    
+public class QSPImportDialog extends ImportDialog {
+
     /**
-     * Create a new kingsway import dialog.
+     * Create a new QSP import dialog.
+     *
      * @param owner the owner of the dialog.
      */
-    public KingswayImportDialog(KingswayWorshipParser kwp) {
+    public QSPImportDialog() {
         super(new String[]{
-                    LabelGrabber.INSTANCE.getLabel("kingsway.import.line1"),
-                    LabelGrabber.INSTANCE.getLabel("kingsway.import.line2")
-                }, null, (kwp = new KingswayWorshipParser()), false);
-        this.kwp = kwp;
-        //TODO Messy fix...
+                    LabelGrabber.INSTANCE.getLabel("qsp.import.line1")
+                }, FileFilters.SONG_PACK, new QSPParser(), false);
     }
-    
-    @Override
-    public void setAll(boolean all) {
-        kwp.setAll(all);
-    }
-    
 }
