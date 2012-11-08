@@ -94,37 +94,6 @@ public final class Main extends Application {
             stageHidden = false;
         }
         
-//        GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
-//        final GraphicsDevice[] gds = ge.getScreenDevices();
-//        LOGGER.log(Level.INFO, "Number of displays: {0}", gds.length);
-//
-//        int controlScreenProp = QueleaProperties.get().getControlScreen();
-//        final int controlScreen;
-//        final int projectorScreen = QueleaProperties.get().getProjectorScreen();
-//        final int stageScreen = QueleaProperties.get().getStageScreen();
-//
-//        if(gds.length <= controlScreenProp) {
-//            controlScreen = 0;
-//        }
-//        else {
-//            controlScreen = controlScreenProp;
-//        }
-//        final boolean lyricsHidden;
-//        if(!QueleaProperties.get().isProjectorModeCoords() && (projectorScreen >= gds.length || projectorScreen < 0)) {
-//            lyricsHidden = true;
-//        }
-//        else {
-//            lyricsHidden = false;
-//        }
-//        final boolean stageHidden;
-//        if(!QueleaProperties.get().isStageModeCoords() && (stageScreen >= gds.length || stageScreen < 0)) {
-//            stageHidden = true;
-//        }
-//        else {
-//            stageHidden = false;
-//        }
-        
-        
         Platform.runLater(new Runnable() {
             @Override
             public void run() {
