@@ -23,19 +23,22 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
-import javafx.scene.control.Label;
+import javafx.scene.control.ComboBox;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
-import javafx.scene.layout.Priority;
+import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
+import org.quelea.QueleaApp;
 import org.quelea.utils.FileFilters;
 import org.quelea.utils.QueleaProperties;
 
@@ -48,6 +51,7 @@ public class LibraryImagePanel extends BorderPane {
 
     private final ImageListPanel imagePanel;
     private HBox northPanel;
+    private ObservableList<NewFile> list = FXCollections.observableArrayList();
 
     /**
      * Create a new library image panel.
@@ -56,24 +60,22 @@ public class LibraryImagePanel extends BorderPane {
         imagePanel = new ImageListPanel("img");
         setCenter(imagePanel);
         northPanel = new HBox();
-        Button refreshButton = new Button("", new ImageView(new Image("file:icons/about.png")));
+        Button refreshButton = new Button("", new ImageView(new Image("file:icons/green_refresh128.png", 22, 22, true, true)));
         refreshButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent t) {
                 imagePanel.refresh();
             }
         });
-        refreshButton.setAlignment(Pos.CENTER_RIGHT);
-        northPanel.getChildren().add(refreshButton);
-
-        Button addButton = new Button("", new ImageView(new Image("file:icons/add.png")));
+        
+        Button addButton = new Button("", new ImageView(new Image("file:icons/add.png", 22, 22, true, true)));
         addButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent t) {
                 FileChooser chooser = new FileChooser();
                 chooser.getExtensionFilters().add(FileFilters.IMAGES);
-                chooser.setInitialDirectory(QueleaProperties.getQueleaUserHome());
-                List<File> files = chooser.showOpenMultipleDialog(null);
+                chooser.setInitialDirectory(QueleaProperties.get().getImageDir());
+                List<File> files = chooser.showOpenMultipleDialog(QueleaApp.get().getMainWindow());
                 if (files != null) {
                     for (File f : files) {
                         try {
@@ -85,11 +87,39 @@ public class LibraryImagePanel extends BorderPane {
                 }
             }
         });
-        addButton.setAlignment(Pos.CENTER_LEFT);
+        
+        final ObservableList<NewFile> list = FXCollections.observableArrayList();
+        list.addAll(getComboBoxOptions());
+        
+        ComboBox cb = new ComboBox(list);
+        cb.valueProperty().addListener(new ChangeListener() {
+            @Override
+            public void changed(ObservableValue ov, Object t, Object t1) {
+                NewFile nf = (NewFile) t1;
+                if(nf.getFile() == null) {
+                    DirectoryChooser chooser = new DirectoryChooser();
+                    chooser.setInitialDirectory(QueleaProperties.get().getImageDir());
+                    File f = chooser.showDialog(QueleaApp.get().getMainWindow());
+                    if(f != null && f.isDirectory()) {
+                        imagePanel.changeDir(f.getAbsolutePath());
+                        list.add(list.size()-1, new NewFile(f));
+                        }
+                    else {
+                        // Throw error?
+                    }
+                }
+                else {
+                    imagePanel.changeDir(nf.getFile().getAbsolutePath());
+                }
+                imagePanel.refresh();
+            }
+        });
+        cb.setMinWidth(250.0);
+        northPanel.getChildren().add(cb);
         northPanel.getChildren().add(addButton);
+        northPanel.getChildren().add(refreshButton);
+        northPanel.alignmentProperty().setValue(Pos.CENTER);
 
-
-        HBox.setHgrow(refreshButton, Priority.NEVER);
         setTop(northPanel);
 
     }
@@ -101,5 +131,39 @@ public class LibraryImagePanel extends BorderPane {
      */
     public ImageListPanel getImagePanel() {
         return imagePanel;
+    }
+
+    private ObservableList<NewFile> getComboBoxOptions() {
+        list.add(new NewFile(new File(System.getProperty("user.home"))));
+        list.add(new NewFile(QueleaProperties.get().getImageDir()));
+        list.add(new NewFile(null));
+        return list;
+    }
+
+    private static class NewFile {
+
+        private File file;
+        
+        public NewFile(File f) {
+            file = f;
+        }
+        
+        @Override
+        public String toString() {
+            if(file==null) { 
+                return "Select...";
+            }
+            else {
+                return file.getName();
+            }
+        }
+        
+        public void set(File f) {
+            file = f;
+        }
+        
+        public File getFile() {
+            return file;
+        }
     }
 }
