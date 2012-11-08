@@ -15,29 +15,31 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.quelea.importexport;
+package org.quelea.services.importexport;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
 import org.quelea.displayable.SongDisplayable;
+import org.quelea.utils.SongPack;
 import org.quelea.windows.main.StatusPanel;
 
 /**
- * The interface for all the different song parsers that parse songs from 
- * various sources.
+ * A parser for parsing song packs. Not really a parser, but here for 
+ * completeness.
  * @author Michael
  */
-interface SongParser {
+public class QSPParser implements SongParser {
 
     /**
-     * Get all the songs from a particular location.
-     * @param location the location to search for the songs.
-     * @param statusPanel the status panel used when parsing this song. It can
-     * be updated or ignored.
-     * @return a list of all the songs found in the given location that have 
-     * been parsed.
-     * @throws IOException if something goes wrong accessing the given location.
+     * Get a list of the songs contained in the given pack.
+     * @param location the location of the QSP file.
+     * @return a list of the songs found.
+     * @throws IOException if something goes wrong.
      */
-    List<SongDisplayable> getSongs(File location, StatusPanel statusPanel) throws IOException;
+    @Override
+    public List<SongDisplayable> getSongs(File location, StatusPanel statusPanel) throws IOException {
+        return SongPack.fromFile(location).getSongs();
+    }
+
 }

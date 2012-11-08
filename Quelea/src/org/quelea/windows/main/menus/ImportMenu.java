@@ -24,8 +24,12 @@ import javafx.scene.control.Menu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import org.quelea.importexport.*;
 import org.quelea.languages.LabelGrabber;
+import org.quelea.services.importexport.ImportDialog;
+import org.quelea.services.importexport.KingswayImportDialog;
+import org.quelea.services.importexport.QSPImportDialog;
+import org.quelea.services.importexport.SourceImportDialog;
+import org.quelea.services.importexport.SurvivorImportDialog;
 
 /**
  * Quelea's import menu.
