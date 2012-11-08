@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License along with
  * this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package org.quelea.importexport;
+package org.quelea.services.importexport;
 
 import java.io.BufferedReader;
 import java.io.File;

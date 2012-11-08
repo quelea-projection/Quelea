@@ -18,16 +18,12 @@
  */
 package org.quelea.windows.main.menus;
 
-import java.util.Arrays;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import org.quelea.QueleaApp;
-import org.quelea.SongManager;
-import org.quelea.importexport.SelectExportedSongsDialog;
 import org.quelea.languages.LabelGrabber;
 
 /**
