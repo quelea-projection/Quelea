@@ -32,6 +32,7 @@ import javafx.event.EventHandler;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
+import javafx.scene.control.Tooltip;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
@@ -61,6 +62,7 @@ public class LibraryImagePanel extends BorderPane {
         setCenter(imagePanel);
         northPanel = new HBox();
         Button refreshButton = new Button("", new ImageView(new Image("file:icons/green_refresh128.png", 22, 22, true, true)));
+        refreshButton.setTooltip(new Tooltip("Refresh Images"));
         refreshButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent t) {
@@ -69,6 +71,7 @@ public class LibraryImagePanel extends BorderPane {
         });
         
         Button addButton = new Button("", new ImageView(new Image("file:icons/add.png", 22, 22, true, true)));
+        addButton.setTooltip(new Tooltip("Add Images"));
         addButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent t) {
@@ -92,6 +95,7 @@ public class LibraryImagePanel extends BorderPane {
         list.addAll(getComboBoxOptions());
         
         ComboBox cb = new ComboBox(list);
+        cb.setTooltip(new Tooltip("Select Folder"));
         cb.valueProperty().addListener(new ChangeListener() {
             @Override
             public void changed(ObservableValue ov, Object t, Object t1) {
