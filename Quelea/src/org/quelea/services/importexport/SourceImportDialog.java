@@ -15,25 +15,23 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.quelea.importexport;
+package org.quelea.services.importexport;
 
 import org.quelea.languages.LabelGrabber;
-import org.quelea.utils.FileFilters;
 
 /**
  * An import dialog for the survivor song books in PDF format.
  * @author Michael
  */
-public class SurvivorImportDialog extends ImportDialog {
+public class SourceImportDialog extends ImportDialog {
 
     /**
      * Create a new survivor import dialog.
      * @param owner the owner of the dialog.
      */
-    public SurvivorImportDialog() {
+    public SourceImportDialog() {
         super(new String[]{
-                LabelGrabber.INSTANCE.getLabel("survivor.import.line1"),
-                LabelGrabber.INSTANCE.getLabel("survivor.import.line2")
-        }, FileFilters.SURVIVOR_SONGBOOK, new SurvivorSongbookParser(), false);
+                LabelGrabber.INSTANCE.getLabel("source.import.line1")
+        }, null, new SourceParser(), true);
     }
 }
