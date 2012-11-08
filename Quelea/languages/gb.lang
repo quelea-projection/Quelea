@@ -292,3 +292,6 @@ video.error.unsupported=Sorry, the video file you selected isn't supported.
 video.error.general=Sorry, there was an error with the video file you selected.
 video.theme.label=Video
 select.video.button=Select Video
+refresh.images.panel=Refresh Images
+add.images.panel=Add Images
+select.folder.images.panel=Select Folder...
