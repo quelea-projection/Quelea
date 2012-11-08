@@ -29,8 +29,8 @@ import javafx.stage.Stage;
 import org.javafx.dialog.Dialog;
 import org.quelea.bible.BibleManager;
 import org.quelea.languages.LabelGrabber;
-import org.quelea.phonehome.PhoneHome;
 import org.quelea.powerpoint.OOUtils;
+import org.quelea.services.phonehome.PhoneHome;
 import org.quelea.splash.SplashStage;
 import org.quelea.utils.LoggerUtils;
 import org.quelea.utils.QueleaProperties;
@@ -166,7 +166,7 @@ public final class Main extends Application {
                 mainWindow = new MainWindow(true);
 
                 new UpdateChecker().checkUpdate(false, false, false); //Check updates
-                PhoneHome.INSTANCE.phone(); //Phone home
+                    PhoneHome.INSTANCE.phone(); //Phone home
 
                 LOGGER.log(Level.INFO, "Registering canvases");
                 mainWindow.getMainPanel().getLivePanel().registerLyricCanvas(fullScreenWindow.getCanvas());
