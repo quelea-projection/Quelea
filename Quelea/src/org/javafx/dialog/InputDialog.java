@@ -16,9 +16,6 @@
  */
 package org.javafx.dialog;
 
-import com.sun.javafx.application.PlatformImpl;
-import javafx.application.Platform;
-import javafx.embed.swing.JFXPanel;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
@@ -34,7 +31,7 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import org.quelea.languages.LabelGrabber;
-import org.quelea.utils.Utils;
+import org.quelea.services.utils.Utils;
 
 /**
  * A JavaFX simple input dialog - since one isn't provided for us.
