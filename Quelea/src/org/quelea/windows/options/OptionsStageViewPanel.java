@@ -25,9 +25,9 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.paint.Color;
 import org.quelea.displayable.TextAlignment;
 import org.quelea.languages.LabelGrabber;
-import org.quelea.utils.PropertyPanel;
-import org.quelea.utils.QueleaProperties;
-import org.quelea.utils.Utils;
+import org.quelea.services.utils.PropertyPanel;
+import org.quelea.services.utils.QueleaProperties;
+import org.quelea.services.utils.Utils;
 
 /**
  * The panel that shows the stage view options.

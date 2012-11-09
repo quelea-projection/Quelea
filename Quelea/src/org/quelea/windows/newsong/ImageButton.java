@@ -30,8 +30,8 @@ import org.quelea.ImageBackground;
 import org.quelea.QueleaApp;
 import org.quelea.ThemeDTO;
 import org.quelea.languages.LabelGrabber;
-import org.quelea.utils.FileFilters;
-import org.quelea.utils.LoggerUtils;
+import org.quelea.services.utils.FileFilters;
+import org.quelea.services.utils.LoggerUtils;
 import org.quelea.windows.main.LyricCanvas;
 
 /**

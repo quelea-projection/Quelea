@@ -16,8 +16,6 @@
  */
 package org.quelea.windows.options;
 
-import java.awt.GraphicsDevice;
-import java.awt.GraphicsEnvironment;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
@@ -34,8 +32,7 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Screen;
 import org.quelea.languages.LabelGrabber;
-import org.quelea.utils.QueleaProperties;
-import org.quelea.utils.Utils;
+import org.quelea.services.utils.Utils;
 import org.quelea.windows.main.NumberSpinner;
 
 /**

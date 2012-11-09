@@ -32,10 +32,10 @@ import org.quelea.data.db.model.Song;
 import org.quelea.data.db.model.Theme;
 import org.quelea.displayable.SongDisplayable;
 import org.quelea.displayable.TextSection;
-import org.quelea.lucene.SearchIndex;
-import org.quelea.lucene.SongSearchIndex;
-import org.quelea.utils.DatabaseListener;
-import org.quelea.utils.LoggerUtils;
+import org.quelea.services.lucene.SearchIndex;
+import org.quelea.services.lucene.SongSearchIndex;
+import org.quelea.services.utils.DatabaseListener;
+import org.quelea.services.utils.LoggerUtils;
 
 /**
  * Manage songs persistent operations. 

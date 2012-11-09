@@ -46,8 +46,8 @@ import org.quelea.QueleaApp;
 import org.quelea.SongDuplicateChecker;
 import org.quelea.displayable.SongDisplayable;
 import org.quelea.languages.LabelGrabber;
-import org.quelea.utils.LoggerUtils;
-import org.quelea.utils.Utils;
+import org.quelea.services.utils.LoggerUtils;
+import org.quelea.services.utils.Utils;
 import org.quelea.windows.main.StatusPanel;
 
 /**

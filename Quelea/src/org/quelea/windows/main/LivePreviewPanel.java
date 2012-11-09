@@ -34,8 +34,8 @@ import org.quelea.displayable.PresentationDisplayable;
 import org.quelea.displayable.SongDisplayable;
 import org.quelea.displayable.TextDisplayable;
 import org.quelea.displayable.VideoDisplayable;
-import org.quelea.utils.LoggerUtils;
-import org.quelea.utils.QueleaProperties;
+import org.quelea.services.utils.LoggerUtils;
+import org.quelea.services.utils.QueleaProperties;
 import org.quelea.windows.main.quickedit.QuickEditDialog;
 import org.quelea.windows.video.VideoPanel;
 

@@ -21,8 +21,8 @@ import java.io.File;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.apache.poi.poifs.filesystem.OfficeXmlFileException;
-import org.quelea.utils.LoggerUtils;
-import org.quelea.utils.Utils;
+import org.quelea.services.utils.LoggerUtils;
+import org.quelea.services.utils.Utils;
 
 /**
  * Responsible for generating presentations.

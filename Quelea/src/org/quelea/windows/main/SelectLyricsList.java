@@ -24,7 +24,7 @@ import javafx.scene.ImageCursor;
 import javafx.scene.control.ListView;
 import javafx.scene.image.Image;
 import org.quelea.displayable.TextSection;
-import org.quelea.utils.QueleaProperties;
+import org.quelea.services.utils.QueleaProperties;
 
 /**
  * A list displaying the different sections in the song.

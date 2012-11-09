@@ -37,9 +37,9 @@ import javafx.util.StringConverter;
 import org.quelea.QueleaApp;
 import org.quelea.SongManager;
 import org.quelea.displayable.SongDisplayable;
-import org.quelea.lucene.SongSearchIndex;
-import org.quelea.utils.DatabaseListener;
-import org.quelea.utils.LoggerUtils;
+import org.quelea.services.lucene.SongSearchIndex;
+import org.quelea.services.utils.DatabaseListener;
+import org.quelea.services.utils.LoggerUtils;
 
 /**
  * The list that displays the songs in the library.

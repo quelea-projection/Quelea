@@ -17,9 +17,6 @@
  */
 package org.quelea.splash;
 
-import java.awt.GraphicsDevice;
-import java.awt.GraphicsEnvironment;
-import java.awt.Rectangle;
 import javafx.collections.ObservableList;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.Group;
@@ -33,7 +30,7 @@ import javafx.stage.Modality;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
-import org.quelea.utils.QueleaProperties;
+import org.quelea.services.utils.QueleaProperties;
 
 /**
  * The splash screen to display when the program starts.

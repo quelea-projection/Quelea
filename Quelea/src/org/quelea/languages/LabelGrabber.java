@@ -23,8 +23,8 @@ import java.io.InputStream;
 import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import org.quelea.utils.LoggerUtils;
-import org.quelea.utils.QueleaProperties;
+import org.quelea.services.utils.LoggerUtils;
+import org.quelea.services.utils.QueleaProperties;
 
 /**
  * Responsible for grabbing the appropriate labels from the current langauges

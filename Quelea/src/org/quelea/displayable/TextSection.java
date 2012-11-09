@@ -18,7 +18,6 @@
 package org.quelea.displayable;
 
 import org.quelea.ThemeDTO;
-import org.quelea.utils.Utils;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -26,7 +25,8 @@ import org.w3c.dom.NodeList;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import org.quelea.utils.LineTypeChecker;
+import org.quelea.services.utils.LineTypeChecker;
+import org.quelea.services.utils.Utils;
 
 /**
  * Represents a section of text in a song or passage.

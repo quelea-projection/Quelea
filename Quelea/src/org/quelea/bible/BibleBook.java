@@ -20,7 +20,7 @@ package org.quelea.bible;
 import java.lang.ref.SoftReference;
 import java.util.ArrayList;
 import java.util.List;
-import org.quelea.utils.Utils;
+import org.quelea.services.utils.Utils;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 

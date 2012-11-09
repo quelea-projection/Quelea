@@ -23,8 +23,6 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.event.EventHandler;
-import javafx.scene.Group;
-import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.Slider;
 import javafx.scene.image.Image;
@@ -39,7 +37,7 @@ import javafx.scene.media.MediaView;
 import org.javafx.dialog.Dialog;
 import org.quelea.displayable.VideoDisplayable;
 import org.quelea.languages.LabelGrabber;
-import org.quelea.utils.LoggerUtils;
+import org.quelea.services.utils.LoggerUtils;
 
 /**
  * The control panel for displaying the video.

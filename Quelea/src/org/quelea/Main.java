@@ -31,11 +31,11 @@ import org.quelea.bible.BibleManager;
 import org.quelea.languages.LabelGrabber;
 import org.quelea.powerpoint.OOUtils;
 import org.quelea.services.phonehome.PhoneHome;
+import org.quelea.services.utils.LoggerUtils;
+import org.quelea.services.utils.QueleaProperties;
+import org.quelea.services.utils.UpdateChecker;
+import org.quelea.services.utils.Utils;
 import org.quelea.splash.SplashStage;
-import org.quelea.utils.LoggerUtils;
-import org.quelea.utils.QueleaProperties;
-import org.quelea.utils.UpdateChecker;
-import org.quelea.utils.Utils;
 import org.quelea.windows.main.LyricWindow;
 import org.quelea.windows.main.MainWindow;
 

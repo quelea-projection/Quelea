@@ -23,8 +23,8 @@ import javafx.event.EventHandler;
 import javafx.stage.FileChooser;
 import org.javafx.dialog.Dialog;
 import org.quelea.languages.LabelGrabber;
-import org.quelea.utils.FileFilters;
-import org.quelea.utils.QueleaProperties;
+import org.quelea.services.utils.FileFilters;
+import org.quelea.services.utils.QueleaProperties;
 import org.quelea.windows.main.MainPanel;
 
 /**

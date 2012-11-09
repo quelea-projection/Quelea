@@ -32,8 +32,8 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import org.javafx.dialog.Dialog;
 import org.quelea.languages.LabelGrabber;
-import org.quelea.utils.LoggerUtils;
-import org.quelea.utils.QueleaProperties;
+import org.quelea.services.utils.LoggerUtils;
+import org.quelea.services.utils.QueleaProperties;
 import org.quelea.windows.help.AboutDialog;
 
 /**
