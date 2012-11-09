@@ -28,7 +28,7 @@ import org.quelea.Schedule;
 import org.quelea.ScheduleSaver;
 import org.quelea.displayable.Displayable;
 import org.quelea.languages.LabelGrabber;
-import org.quelea.utils.LoggerUtils;
+import org.quelea.services.utils.LoggerUtils;
 
 /**
  * The exit action listener - called when the user requests they wish to exit

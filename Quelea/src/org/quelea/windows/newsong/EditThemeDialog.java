@@ -35,7 +35,7 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 import org.quelea.ThemeDTO;
 import org.quelea.languages.LabelGrabber;
-import org.quelea.utils.QueleaProperties;
+import org.quelea.services.utils.QueleaProperties;
 
 /**
  * A modal dialog where a theme can be edited.

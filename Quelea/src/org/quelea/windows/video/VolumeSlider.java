@@ -26,7 +26,6 @@ import javafx.scene.control.Slider;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
-import org.quelea.utils.Utils;
 
 /**
  * A volume slider. Consists of a slider and up / down icons.

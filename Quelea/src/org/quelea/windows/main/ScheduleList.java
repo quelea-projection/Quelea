@@ -25,14 +25,13 @@ import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
-import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.util.Callback;
 import org.quelea.QueleaApp;
 import org.quelea.Schedule;
 import org.quelea.displayable.Displayable;
 import org.quelea.displayable.SongDisplayable;
-import org.quelea.utils.LoggerUtils;
+import org.quelea.services.utils.LoggerUtils;
 import org.quelea.windows.library.ContextMenuListCell;
 
 /**

@@ -46,7 +46,7 @@ import org.quelea.bible.BibleVerse;
 import org.quelea.bible.ChapterVerseParser;
 import org.quelea.displayable.BiblePassage;
 import org.quelea.languages.LabelGrabber;
-import org.quelea.utils.QueleaProperties;
+import org.quelea.services.utils.QueleaProperties;
 
 /**
  * The panel used to get bible verses.

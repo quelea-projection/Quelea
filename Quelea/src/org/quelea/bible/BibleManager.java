@@ -33,10 +33,10 @@ import java.util.logging.Logger;
 import javafx.application.Platform;
 import org.quelea.QueleaApp;
 import org.quelea.languages.LabelGrabber;
-import org.quelea.lucene.BibleSearchIndex;
-import org.quelea.lucene.SearchIndex;
-import org.quelea.utils.LoggerUtils;
-import org.quelea.utils.QueleaProperties;
+import org.quelea.services.lucene.BibleSearchIndex;
+import org.quelea.services.lucene.SearchIndex;
+import org.quelea.services.utils.LoggerUtils;
+import org.quelea.services.utils.QueleaProperties;
 import org.quelea.windows.main.StatusPanel;
 
 /**

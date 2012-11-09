@@ -19,13 +19,10 @@ package org.quelea.windows.main;
 
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.geometry.Orientation;
-import javafx.scene.control.ProgressBar;
 import javafx.scene.control.SplitPane;
 import javafx.scene.layout.BorderPane;
-import org.quelea.utils.LoggerUtils;
+import org.quelea.services.utils.LoggerUtils;
 import org.quelea.windows.library.LibraryPanel;
 
 /**

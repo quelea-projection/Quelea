@@ -26,8 +26,8 @@ import javafx.scene.paint.Paint;
 import javafx.scene.text.Font;
 import org.quelea.data.db.model.TextShadow;
 import org.quelea.data.db.model.Theme;
-import org.quelea.utils.LoggerUtils;
-import org.quelea.utils.Utils;
+import org.quelea.services.utils.LoggerUtils;
+import org.quelea.services.utils.Utils;
 
 /**
  * A theme data transfer object used to deliver theme data from DB to view layer 

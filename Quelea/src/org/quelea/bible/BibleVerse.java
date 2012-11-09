@@ -17,7 +17,7 @@
  */
 package org.quelea.bible;
 
-import org.quelea.utils.Utils;
+import org.quelea.services.utils.Utils;
 import org.w3c.dom.Node;
 
 /**

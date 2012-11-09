@@ -25,7 +25,7 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
-import org.quelea.utils.Utils;
+import org.quelea.services.utils.Utils;
 
 /**
  * A status panel that denotes a background task in Quelea.

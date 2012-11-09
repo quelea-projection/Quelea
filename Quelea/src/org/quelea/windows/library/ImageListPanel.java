@@ -43,8 +43,8 @@ import javafx.scene.layout.TilePane;
 import javafx.util.Duration;
 import org.quelea.QueleaApp;
 import org.quelea.displayable.ImageDisplayable;
-import org.quelea.utils.Utils;
-import org.quelea.watcher.ImageFileWatcher;
+import org.quelea.services.utils.Utils;
+import org.quelea.services.watcher.ImageFileWatcher;
 
 /**
  * The panel displayed on the library to select the list of images.

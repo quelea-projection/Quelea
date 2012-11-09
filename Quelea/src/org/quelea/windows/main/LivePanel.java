@@ -17,8 +17,6 @@
  */
 package org.quelea.windows.main;
 
-import java.awt.GraphicsDevice;
-import java.awt.GraphicsEnvironment;
 import java.util.HashSet;
 import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
@@ -28,7 +26,6 @@ import javafx.scene.control.ToolBar;
 import javafx.scene.control.Tooltip;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
@@ -37,7 +34,7 @@ import javafx.stage.Screen;
 import org.quelea.QueleaApp;
 import org.quelea.displayable.Displayable;
 import org.quelea.languages.LabelGrabber;
-import org.quelea.utils.QueleaProperties;
+import org.quelea.services.utils.QueleaProperties;
 
 /**
  * The panel displaying the live lyrics selection - changes made on this panel

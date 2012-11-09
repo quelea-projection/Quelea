@@ -27,7 +27,6 @@ import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.control.ToggleButton;
-import javafx.scene.effect.BlurType;
 import javafx.scene.effect.DropShadow;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -43,7 +42,7 @@ import org.quelea.ImageBackground;
 import org.quelea.ThemeDTO;
 import org.quelea.VideoBackground;
 import org.quelea.languages.LabelGrabber;
-import org.quelea.utils.Utils;
+import org.quelea.services.utils.Utils;
 import org.quelea.windows.main.CardPane;
 import org.quelea.windows.main.LyricCanvas;
 
