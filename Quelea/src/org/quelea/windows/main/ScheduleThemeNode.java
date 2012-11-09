@@ -33,9 +33,9 @@ import org.quelea.displayable.Displayable;
 import org.quelea.displayable.TextDisplayable;
 import org.quelea.displayable.TextSection;
 import org.quelea.languages.LabelGrabber;
-import org.quelea.utils.LoggerUtils;
-import org.quelea.utils.QueleaProperties;
-import org.quelea.utils.Utils;
+import org.quelea.services.utils.LoggerUtils;
+import org.quelea.services.utils.QueleaProperties;
+import org.quelea.services.utils.Utils;
 import org.quelea.windows.newsong.EditThemeDialog;
 
 /**

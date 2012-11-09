@@ -24,8 +24,8 @@ import java.util.List;
 import java.util.logging.Logger;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import org.quelea.utils.LoggerUtils;
-import org.quelea.utils.Utils;
+import org.quelea.services.utils.LoggerUtils;
+import org.quelea.services.utils.Utils;
 import org.w3c.dom.Node;
 
 /**

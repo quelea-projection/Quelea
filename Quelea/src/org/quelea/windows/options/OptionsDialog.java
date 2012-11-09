@@ -32,7 +32,7 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import org.quelea.languages.LabelGrabber;
-import org.quelea.utils.PropertyPanel;
+import org.quelea.services.utils.PropertyPanel;
 
 /**
  * The dialog that holds all the options the user can set.

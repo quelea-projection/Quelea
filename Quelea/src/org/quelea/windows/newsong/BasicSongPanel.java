@@ -43,9 +43,9 @@ import org.quelea.chord.ChordTransposer;
 import org.quelea.chord.TransposeDialog;
 import org.quelea.displayable.SongDisplayable;
 import org.quelea.languages.LabelGrabber;
-import org.quelea.utils.LineTypeChecker;
-import org.quelea.utils.LineTypeChecker.Type;
-import org.quelea.utils.LoggerUtils;
+import org.quelea.services.utils.LineTypeChecker;
+import org.quelea.services.utils.LineTypeChecker.Type;
+import org.quelea.services.utils.LoggerUtils;
 
 /**
  * The panel that manages the basic input of song information - the title,

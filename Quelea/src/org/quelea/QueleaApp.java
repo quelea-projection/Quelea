@@ -20,7 +20,7 @@ package org.quelea;
 import java.io.File;
 import org.javafx.dialog.Dialog;
 import org.quelea.languages.LabelGrabber;
-import org.quelea.watcher.ImageFileWatcher;
+import org.quelea.services.watcher.ImageFileWatcher;
 import org.quelea.windows.main.LyricWindow;
 import org.quelea.windows.main.MainWindow;
 import org.quelea.windows.main.StatusPanelGroup;

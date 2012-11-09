@@ -37,7 +37,7 @@ import org.quelea.QueleaApp;
 import org.quelea.displayable.SongDisplayable;
 import org.quelea.displayable.TextSection;
 import org.quelea.languages.LabelGrabber;
-import org.quelea.utils.Utils;
+import org.quelea.services.utils.Utils;
 
 /**
  * A frame used for quickly editing a song.

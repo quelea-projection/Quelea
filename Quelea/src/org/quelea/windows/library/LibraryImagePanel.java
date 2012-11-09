@@ -41,8 +41,8 @@ import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
 import org.quelea.QueleaApp;
 import org.quelea.languages.LabelGrabber;
-import org.quelea.utils.FileFilters;
-import org.quelea.utils.QueleaProperties;
+import org.quelea.services.utils.FileFilters;
+import org.quelea.services.utils.QueleaProperties;
 
 /**
  * The image panel in the library.

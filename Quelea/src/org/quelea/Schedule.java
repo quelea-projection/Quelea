@@ -53,7 +53,7 @@ import org.quelea.displayable.ImageDisplayable;
 import org.quelea.displayable.PresentationDisplayable;
 import org.quelea.displayable.SongDisplayable;
 import org.quelea.displayable.VideoDisplayable;
-import org.quelea.utils.LoggerUtils;
+import org.quelea.services.utils.LoggerUtils;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;

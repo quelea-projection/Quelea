@@ -5,8 +5,8 @@ import java.util.logging.Logger;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.cfg.Configuration;
-import org.quelea.utils.LoggerUtils;
-import org.quelea.utils.QueleaProperties;
+import org.quelea.services.utils.LoggerUtils;
+import org.quelea.services.utils.QueleaProperties;
 
 /**
  * Hibernate Utility class with a convenient method to get Session Factory

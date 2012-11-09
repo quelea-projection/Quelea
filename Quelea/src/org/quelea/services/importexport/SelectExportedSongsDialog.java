@@ -23,9 +23,9 @@ import javafx.event.EventHandler;
 import javafx.stage.FileChooser;
 import javax.swing.SwingWorker;
 import org.javafx.dialog.Dialog;
-import org.quelea.utils.FileFilters;
-import org.quelea.utils.QueleaProperties;
-import org.quelea.utils.SongPack;
+import org.quelea.services.utils.FileFilters;
+import org.quelea.services.utils.QueleaProperties;
+import org.quelea.services.utils.SongPack;
 
 /**
  * A dialog used for selecting the songs to be put in the song pack after

@@ -17,13 +17,13 @@
  */
 package org.quelea.bible;
 
-import org.quelea.utils.Utils;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
+import org.quelea.services.utils.Utils;
 
 /**
  * General information about a specified bible.

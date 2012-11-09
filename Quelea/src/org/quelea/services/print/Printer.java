@@ -21,7 +21,7 @@ import java.awt.print.Printable;
 import java.awt.print.PrinterJob;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import org.quelea.utils.LoggerUtils;
+import org.quelea.services.utils.LoggerUtils;
 //@todo never used
 /**
  * Used for printing schedules.
