@@ -21,7 +21,7 @@ package org.quelea.windows.main.actionhandlers;
 import java.io.File;
 import javafx.stage.FileChooser;
 import org.quelea.QueleaApp;
-import org.quelea.utils.FileFilters;
+import org.quelea.services.utils.FileFilters;
 
 /**
  * The open schedule action listener.

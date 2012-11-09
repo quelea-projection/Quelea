@@ -23,7 +23,7 @@ import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.scene.layout.VBox;
 import org.quelea.languages.LabelGrabber;
-import org.quelea.utils.LoggerUtils;
+import org.quelea.services.utils.LoggerUtils;
 
 /**
  * The panel that's used to display the library of media (pictures, video) and songs. Items can be selected from here

@@ -22,7 +22,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import org.quelea.utils.Utils;
+import org.quelea.services.utils.Utils;
 import org.w3c.dom.Node;
 
 /**

@@ -32,8 +32,8 @@ import org.javafx.dialog.Dialog;
 import org.javafx.dialog.InputDialog;
 import org.quelea.displayable.SongDisplayable;
 import org.quelea.languages.LabelGrabber;
-import org.quelea.utils.LoggerUtils;
-import org.quelea.utils.QueleaProperties;
+import org.quelea.services.utils.LoggerUtils;
+import org.quelea.services.utils.QueleaProperties;
 import org.quelea.windows.main.StatusPanel;
 
 /**

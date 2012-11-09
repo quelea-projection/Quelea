@@ -40,7 +40,7 @@ import org.quelea.ThemeDTO;
 import org.quelea.displayable.SongDisplayable;
 import org.quelea.displayable.TextSection;
 import org.quelea.languages.LabelGrabber;
-import org.quelea.utils.Utils;
+import org.quelea.services.utils.Utils;
 
 /**
  * A new song window that users use for inserting the text content of a new

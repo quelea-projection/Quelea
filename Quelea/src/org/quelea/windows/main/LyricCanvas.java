@@ -55,10 +55,10 @@ import org.quelea.ImageBackground;
 import org.quelea.ThemeDTO;
 import org.quelea.VideoBackground;
 import org.quelea.displayable.TextDisplayable;
-import org.quelea.notice.NoticeDrawer;
-import org.quelea.utils.LoggerUtils;
-import org.quelea.utils.QueleaProperties;
-import org.quelea.utils.Utils;
+import org.quelea.services.notice.NoticeDrawer;
+import org.quelea.services.utils.LoggerUtils;
+import org.quelea.services.utils.QueleaProperties;
+import org.quelea.services.utils.Utils;
 
 /**
  * The canvas where the lyrics / images / media are drawn.

@@ -18,8 +18,6 @@
 package org.quelea.displayable;
 
 import org.quelea.bible.BibleVerse;
-import org.quelea.utils.QueleaProperties;
-import org.quelea.utils.Utils;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
@@ -30,6 +28,8 @@ import java.util.Collection;
 import java.util.List;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import org.quelea.services.utils.QueleaProperties;
+import org.quelea.services.utils.Utils;
 
 /**
  * A displayable passage from the bible.

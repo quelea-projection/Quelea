@@ -16,7 +16,6 @@
  */
 package org.quelea.windows.options;
 
-import java.awt.GraphicsDevice;
 import javafx.application.Platform;
 import javafx.collections.ObservableList;
 import javafx.scene.layout.GridPane;
@@ -25,8 +24,8 @@ import org.quelea.QueleaApp;
 import org.quelea.GraphicsDeviceListener;
 import org.quelea.GraphicsDeviceWatcher;
 import org.quelea.languages.LabelGrabber;
-import org.quelea.utils.PropertyPanel;
-import org.quelea.utils.QueleaProperties;
+import org.quelea.services.utils.PropertyPanel;
+import org.quelea.services.utils.QueleaProperties;
 import org.quelea.windows.main.LyricWindow;
 
 /**

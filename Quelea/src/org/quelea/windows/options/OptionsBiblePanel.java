@@ -37,11 +37,11 @@ import org.quelea.bible.Bible;
 import org.quelea.bible.BibleChangeListener;
 import org.quelea.bible.BibleManager;
 import org.quelea.languages.LabelGrabber;
-import org.quelea.utils.FileFilters;
-import org.quelea.utils.LoggerUtils;
-import org.quelea.utils.PropertyPanel;
-import org.quelea.utils.QueleaProperties;
-import org.quelea.utils.Utils;
+import org.quelea.services.utils.FileFilters;
+import org.quelea.services.utils.LoggerUtils;
+import org.quelea.services.utils.PropertyPanel;
+import org.quelea.services.utils.QueleaProperties;
+import org.quelea.services.utils.Utils;
 
 /**
  * The panel that shows the bible options

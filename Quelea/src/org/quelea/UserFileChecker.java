@@ -21,8 +21,8 @@ import java.io.File;
 import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import org.quelea.utils.LoggerUtils;
-import org.quelea.utils.Utils;
+import org.quelea.services.utils.LoggerUtils;
+import org.quelea.services.utils.Utils;
 
 /**
  * Checks to see whether the user has the theme / properties / etc. files in 

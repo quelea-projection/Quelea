@@ -28,9 +28,9 @@ import javafx.scene.image.ImageView;
 import org.quelea.powerpoint.OOPresentation;
 import org.quelea.powerpoint.Presentation;
 import org.quelea.powerpoint.PresentationFactory;
-import org.quelea.utils.LoggerUtils;
-import org.quelea.utils.QueleaProperties;
-import org.quelea.utils.Utils;
+import org.quelea.services.utils.LoggerUtils;
+import org.quelea.services.utils.QueleaProperties;
+import org.quelea.services.utils.Utils;
 import org.w3c.dom.Node;
 
 /**

@@ -21,7 +21,7 @@ import javafx.scene.layout.BorderPane;
 import org.quelea.displayable.PresentationDisplayable;
 import org.quelea.powerpoint.OOPresentation;
 import org.quelea.powerpoint.PresentationSlide;
-import org.quelea.utils.QueleaProperties;
+import org.quelea.services.utils.QueleaProperties;
 
 /**
  * The panel for displaying presentation slides in the live / preview panels.
