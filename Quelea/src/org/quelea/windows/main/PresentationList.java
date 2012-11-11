@@ -18,12 +18,11 @@
 package org.quelea.windows.main;
 
 import java.util.Arrays;
-import javafx.application.Platform;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
 import javafx.scene.image.ImageView;
 import javafx.util.Callback;
-import org.quelea.powerpoint.PresentationSlide;
+import org.quelea.data.powerpoint.PresentationSlide;
 
 /**
  * A JList for specifically displaying presentation slides.
