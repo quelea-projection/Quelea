@@ -15,7 +15,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.quelea.bible;
+package org.quelea.data.bible;
 
 /**
  * An interface for when the state of the bible changes.

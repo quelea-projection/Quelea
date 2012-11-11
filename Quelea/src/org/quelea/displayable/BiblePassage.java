@@ -17,7 +17,6 @@
  */
 package org.quelea.displayable;
 
-import org.quelea.bible.BibleVerse;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
@@ -28,6 +27,7 @@ import java.util.Collection;
 import java.util.List;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import org.quelea.data.bible.BibleVerse;
 import org.quelea.services.utils.QueleaProperties;
 import org.quelea.services.utils.Utils;
 

@@ -21,7 +21,7 @@ package org.quelea.windows.main.actionhandlers;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import org.quelea.QueleaApp;
-import org.quelea.tags.TagDialog;
+import org.quelea.data.tags.TagDialog;
 
 /**
  * Action listener for viewing the tag dialog.

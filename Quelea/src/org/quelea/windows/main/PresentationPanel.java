@@ -18,9 +18,9 @@
 package org.quelea.windows.main;
 
 import javafx.scene.layout.BorderPane;
+import org.quelea.data.powerpoint.OOPresentation;
+import org.quelea.data.powerpoint.PresentationSlide;
 import org.quelea.displayable.PresentationDisplayable;
-import org.quelea.powerpoint.OOPresentation;
-import org.quelea.powerpoint.PresentationSlide;
 import org.quelea.services.utils.QueleaProperties;
 
 /**
