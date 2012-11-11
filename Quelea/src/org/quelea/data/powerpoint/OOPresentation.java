@@ -15,7 +15,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.quelea.powerpoint;
+package org.quelea.data.powerpoint;
 
 import com.sun.star.animations.XAnimationNode;
 import com.sun.star.awt.PosSize;

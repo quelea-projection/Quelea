@@ -15,7 +15,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.quelea.bible;
+package org.quelea.data.bible;
 
 /**
  * Parses an input string into from / to chapter / verse. This class accepts an input string that's base 1 (i.e. 1:1 is
