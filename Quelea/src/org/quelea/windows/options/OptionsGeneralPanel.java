@@ -29,9 +29,9 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Priority;
 import javafx.stage.DirectoryChooser;
 import org.quelea.QueleaApp;
+import org.quelea.data.powerpoint.OOPresentation;
+import org.quelea.data.powerpoint.OOUtils;
 import org.quelea.languages.LabelGrabber;
-import org.quelea.powerpoint.OOPresentation;
-import org.quelea.powerpoint.OOUtils;
 import org.quelea.services.utils.PropertyPanel;
 import org.quelea.services.utils.QueleaProperties;
 

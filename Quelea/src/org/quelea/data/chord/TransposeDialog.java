@@ -15,7 +15,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.quelea.chord;
+package org.quelea.data.chord;
 
 import javafx.event.EventHandler;
 import javafx.geometry.Pos;

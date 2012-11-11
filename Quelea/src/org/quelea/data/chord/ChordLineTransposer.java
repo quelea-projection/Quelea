@@ -15,7 +15,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.quelea.chord;
+package org.quelea.data.chord;
 
 /**
  * Transposes a line of chords down or up a certain amount of semitones.

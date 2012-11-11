@@ -1,7 +1,6 @@
 /*
  * This file is part of Quelea, free projection software for churches.
  * 
- * 
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,20 +15,26 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.quelea.powerpoint;
+package org.quelea.data.powerpoint;
 
 /**
- * An interface called when a running presentation slide is updated.
- *
- * @author Michael
+ * A common interface for different presentation types.
+ * @author mjrb5
  */
-public interface SlideChangedListener {
-
+public interface Presentation {
+    
     /**
-     * Called to indicate that a slide has changed.
-     *
-     * @param newSlideIndex the 0 based index of the new slide that is now being
-     * displayed.
+     * Get the presentation slide at the given index.
+     * @param index the index of the slide to get.
+     * @return the slide at the given index.
      */
-    void slideChanged(int newSlideIndex);
+    PresentationSlide getSlide(int index);
+    
+    /**
+     * Get all the presentation slides in this presentation.
+     * @return an array of all the presentation slides in this presentation,
+     * in order.
+     */
+    PresentationSlide[] getSlides();
+    
 }
