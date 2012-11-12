@@ -20,7 +20,7 @@ package org.quelea.windows.main.actionhandlers;
 
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
-import org.quelea.QueleaApp;
+import org.quelea.windows.main.QueleaApp;
 
 /**
  * Action listener to show the notices.

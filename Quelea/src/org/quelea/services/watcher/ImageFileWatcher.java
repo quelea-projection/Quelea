@@ -26,9 +26,9 @@ import java.nio.file.WatchEvent;
 import java.nio.file.WatchKey;
 import java.nio.file.WatchService;
 import javafx.application.Platform;
-import org.quelea.QueleaApp;
 import org.quelea.services.utils.QueleaProperties;
 import org.quelea.windows.library.ImageListPanel;
+import org.quelea.windows.main.QueleaApp;
 
 /**
  * This file watcher calls the update method on the ImageListPanel class when a

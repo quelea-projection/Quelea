@@ -23,8 +23,8 @@ import javafx.scene.input.DragEvent;
 import javafx.scene.input.Dragboard;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.TransferMode;
-import org.quelea.QueleaApp;
 import org.quelea.windows.library.LibrarySongList;
+import org.quelea.windows.main.QueleaApp;
 import org.quelea.windows.main.ScheduleList;
 
 /**

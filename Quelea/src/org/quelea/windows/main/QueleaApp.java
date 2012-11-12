@@ -15,15 +15,13 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.quelea;
+package org.quelea.windows.main;
 
 import java.io.File;
 import org.javafx.dialog.Dialog;
+import org.quelea.data.Schedule;
 import org.quelea.languages.LabelGrabber;
 import org.quelea.services.watcher.ImageFileWatcher;
-import org.quelea.windows.main.LyricWindow;
-import org.quelea.windows.main.MainWindow;
-import org.quelea.windows.main.StatusPanelGroup;
 
 /**
  * A singleton class for grabbing application wide objects with ease such as the main window.

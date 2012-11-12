@@ -19,7 +19,7 @@ package org.quelea.services.importexport;
 
 import javafx.application.Platform;
 import javafx.event.EventHandler;
-import org.quelea.SongManager;
+import org.quelea.data.db.SongManager;
 
 /**
  * A dialog used for selecting the songs to be entered into the database after they've been imported.

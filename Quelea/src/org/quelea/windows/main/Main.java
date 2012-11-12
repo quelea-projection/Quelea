@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License along with
  * this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package org.quelea;
+package org.quelea.windows.main;
 
 import com.inet.jortho.SpellChecker;
 import java.io.File;
@@ -28,16 +28,17 @@ import javafx.stage.Screen;
 import javafx.stage.Stage;
 import org.javafx.dialog.Dialog;
 import org.quelea.data.bible.BibleManager;
+import org.quelea.data.db.SongManager;
 import org.quelea.data.powerpoint.OOUtils;
 import org.quelea.languages.LabelGrabber;
 import org.quelea.services.phonehome.PhoneHome;
 import org.quelea.services.utils.LoggerUtils;
 import org.quelea.services.utils.QueleaProperties;
+import org.quelea.services.utils.ShortcutManager;
 import org.quelea.services.utils.UpdateChecker;
+import org.quelea.services.utils.UserFileChecker;
 import org.quelea.services.utils.Utils;
 import org.quelea.splash.SplashStage;
-import org.quelea.windows.main.LyricWindow;
-import org.quelea.windows.main.MainWindow;
 
 /**
  * The main class, sets everything in motion...

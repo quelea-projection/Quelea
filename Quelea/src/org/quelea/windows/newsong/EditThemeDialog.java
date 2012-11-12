@@ -33,7 +33,7 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
-import org.quelea.ThemeDTO;
+import org.quelea.data.ThemeDTO;
 import org.quelea.languages.LabelGrabber;
 import org.quelea.services.utils.QueleaProperties;
 

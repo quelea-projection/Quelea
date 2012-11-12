@@ -28,12 +28,12 @@ import javafx.scene.control.TextField;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Priority;
 import javafx.stage.DirectoryChooser;
-import org.quelea.QueleaApp;
 import org.quelea.data.powerpoint.OOPresentation;
 import org.quelea.data.powerpoint.OOUtils;
 import org.quelea.languages.LabelGrabber;
 import org.quelea.services.utils.PropertyPanel;
 import org.quelea.services.utils.QueleaProperties;
+import org.quelea.windows.main.QueleaApp;
 
 /**
  * A panel where the general options in the program are set.

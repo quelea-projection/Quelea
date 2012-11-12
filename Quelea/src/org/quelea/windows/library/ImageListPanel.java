@@ -41,10 +41,10 @@ import javafx.scene.input.TransferMode;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.TilePane;
 import javafx.util.Duration;
-import org.quelea.QueleaApp;
 import org.quelea.data.displayable.ImageDisplayable;
 import org.quelea.services.utils.Utils;
 import org.quelea.services.watcher.ImageFileWatcher;
+import org.quelea.windows.main.QueleaApp;
 
 /**
  * The panel displayed on the library to select the list of images.

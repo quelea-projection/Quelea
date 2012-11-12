@@ -33,11 +33,11 @@ import javafx.scene.layout.HBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
-import org.quelea.QueleaApp;
 import org.quelea.data.displayable.SongDisplayable;
 import org.quelea.data.displayable.TextSection;
 import org.quelea.languages.LabelGrabber;
 import org.quelea.services.utils.Utils;
+import org.quelea.windows.main.QueleaApp;
 
 /**
  * A frame used for quickly editing a song.

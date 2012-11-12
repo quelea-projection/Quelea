@@ -37,7 +37,7 @@ import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 import org.javafx.dialog.Dialog;
-import org.quelea.ThemeDTO;
+import org.quelea.data.ThemeDTO;
 import org.quelea.languages.LabelGrabber;
 import org.quelea.services.utils.LoggerUtils;
 import org.quelea.windows.newsong.EditThemeDialog;

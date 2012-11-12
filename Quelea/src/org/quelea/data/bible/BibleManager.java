@@ -31,12 +31,12 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.application.Platform;
-import org.quelea.QueleaApp;
 import org.quelea.languages.LabelGrabber;
 import org.quelea.services.lucene.BibleSearchIndex;
 import org.quelea.services.lucene.SearchIndex;
 import org.quelea.services.utils.LoggerUtils;
 import org.quelea.services.utils.QueleaProperties;
+import org.quelea.windows.main.QueleaApp;
 import org.quelea.windows.main.StatusPanel;
 
 /**
