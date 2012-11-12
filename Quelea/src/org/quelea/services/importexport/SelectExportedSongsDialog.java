@@ -18,14 +18,15 @@
 package org.quelea.services.importexport;
 
 import java.io.File;
+import java.util.Arrays;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.stage.FileChooser;
-import javax.swing.SwingWorker;
 import org.javafx.dialog.Dialog;
-import org.quelea.services.utils.FileFilters;
-import org.quelea.services.utils.QueleaProperties;
-import org.quelea.services.utils.SongPack;
+import org.quelea.data.db.SongManager;
+import org.quelea.utils.FileFilters;
+import org.quelea.utils.QueleaProperties;
+import org.quelea.utils.SongPack;
 
 /**
  * A dialog used for selecting the songs to be put in the song pack after
@@ -46,17 +47,20 @@ public class SelectExportedSongsDialog extends SelectSongsDialog {
                     "Select the ones you want to add to the song pack then hit \"Add\"."
                 }, "Add", "Add to song pack?");
 
+        setSongs(Arrays.asList(SongManager.get().getSongs()), null, false);
+        
+        
         getAddButton().setOnAction(new EventHandler<javafx.event.ActionEvent>() {
             @Override
             public void handle(javafx.event.ActionEvent t) {
                 final String extension = QueleaProperties.get().getSongPackExtension();
                 FileChooser chooser = getChooser();
                 File file = chooser.showSaveDialog(SelectExportedSongsDialog.this);
-                if(file != null) {
-                    if(!file.getName().endsWith("." + extension)) {
+                if (file != null) {
+                    if (!file.getName().endsWith("." + extension)) {
                         file = new File(file.getAbsoluteFile() + "." + extension);
                     }
-                    if(file.exists()) {
+                    if (file.exists()) {
                         final File theFile = file;
                         Dialog.buildConfirmation("Overwrite", file.getName() + " already exists. Overwrite?").addYesButton(new EventHandler<ActionEvent>() {
                             @Override
@@ -68,11 +72,17 @@ public class SelectExportedSongsDialog extends SelectSongsDialog {
                             public void handle(ActionEvent t) {
                             }
                         }).build().showAndWait();
-
+                    }
+                    else {
+                        writeSongPack(file);
                     }
                 }
             }
         });
+        showAndWait();
+
+        System.out.println("10");
+        System.out.println(getSongs().size());
     }
 
     /**
@@ -94,24 +104,22 @@ public class SelectExportedSongsDialog extends SelectSongsDialog {
     private void writeSongPack(final File file) {
         final SongPack pack = new SongPack();
         getAddButton().setDisable(true);
-        SwingWorker<Void, Void> worker = new SwingWorker<Void, Void>() {
+        System.out.println("WriteSongPack called");
+        new Thread() {
             @Override
-            protected Void doInBackground() {
-                for(int i = 0; i < getSongs().size(); i++) {
-                    if(getCheckedColumn().getCellData(i)) {
+            public void run() {
+                for (int i = 0; i < getSongs().size(); i++) {
+                    if (getCheckedColumn().getCellData(i)) {
+                        System.out.println("adding song");
                         pack.addSong(getSongs().get(i));
                     }
                 }
-                return null;
-            }
-
-            @Override
-            protected void done() {
                 pack.writeToFile(file);
+                System.out.println("sent to pack");
                 hide();
+                System.out.println("hiding?");
                 getAddButton().setDisable(false);
             }
         };
-        worker.execute();
     }
 }
