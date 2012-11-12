@@ -32,7 +32,6 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.GridPane;
 import javafx.stage.FileChooser;
 import org.javafx.dialog.Dialog;
-import org.quelea.QueleaApp;
 import org.quelea.data.bible.Bible;
 import org.quelea.data.bible.BibleChangeListener;
 import org.quelea.data.bible.BibleManager;
@@ -42,6 +41,7 @@ import org.quelea.services.utils.LoggerUtils;
 import org.quelea.services.utils.PropertyPanel;
 import org.quelea.services.utils.QueleaProperties;
 import org.quelea.services.utils.Utils;
+import org.quelea.windows.main.QueleaApp;
 
 /**
  * The panel that shows the bible options

@@ -34,12 +34,12 @@ import javafx.scene.control.cell.TextFieldListCell;
 import javafx.scene.input.MouseEvent;
 import javafx.util.Callback;
 import javafx.util.StringConverter;
-import org.quelea.QueleaApp;
-import org.quelea.SongManager;
+import org.quelea.data.db.SongManager;
 import org.quelea.data.displayable.SongDisplayable;
 import org.quelea.services.lucene.SongSearchIndex;
 import org.quelea.services.utils.DatabaseListener;
 import org.quelea.services.utils.LoggerUtils;
+import org.quelea.windows.main.QueleaApp;
 
 /**
  * The list that displays the songs in the library.

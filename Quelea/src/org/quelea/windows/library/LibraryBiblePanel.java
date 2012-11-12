@@ -37,7 +37,6 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
-import org.quelea.QueleaApp;
 import org.quelea.data.bible.Bible;
 import org.quelea.data.bible.BibleBook;
 import org.quelea.data.bible.BibleChangeListener;
@@ -47,6 +46,7 @@ import org.quelea.data.bible.ChapterVerseParser;
 import org.quelea.data.displayable.BiblePassage;
 import org.quelea.languages.LabelGrabber;
 import org.quelea.services.utils.QueleaProperties;
+import org.quelea.windows.main.QueleaApp;
 
 /**
  * The panel used to get bible verses.

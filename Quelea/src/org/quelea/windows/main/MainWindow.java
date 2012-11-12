@@ -29,7 +29,6 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
-import org.quelea.QueleaApp;
 import org.quelea.data.bible.BibleBrowseDialog;
 import org.quelea.data.bible.BibleSearchDialog;
 import org.quelea.data.tags.TagDialog;

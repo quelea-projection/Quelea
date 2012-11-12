@@ -15,7 +15,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.quelea;
+package org.quelea.data.db;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -26,8 +26,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.hibernate.ObjectNotFoundException;
 import org.hibernate.Session;
-import org.quelea.data.db.HibernateUtil;
-import org.quelea.data.db.SongDao;
+import org.quelea.data.ThemeDTO;
 import org.quelea.data.db.model.Song;
 import org.quelea.data.db.model.Theme;
 import org.quelea.data.displayable.SongDisplayable;

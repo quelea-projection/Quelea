@@ -19,7 +19,6 @@
 package org.quelea.windows.main;
 
 import javafx.scene.control.MenuItem;
-import org.quelea.QueleaApp;
 import org.quelea.data.displayable.SongDisplayable;
 import org.quelea.windows.library.LibrarySongList;
 

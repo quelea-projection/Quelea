@@ -20,13 +20,13 @@ import javafx.application.Platform;
 import javafx.collections.ObservableList;
 import javafx.scene.layout.GridPane;
 import javafx.stage.Screen;
-import org.quelea.QueleaApp;
-import org.quelea.GraphicsDeviceListener;
-import org.quelea.GraphicsDeviceWatcher;
 import org.quelea.languages.LabelGrabber;
 import org.quelea.services.utils.PropertyPanel;
 import org.quelea.services.utils.QueleaProperties;
+import org.quelea.windows.main.GraphicsDeviceListener;
+import org.quelea.windows.main.GraphicsDeviceWatcher;
 import org.quelea.windows.main.LyricWindow;
+import org.quelea.windows.main.QueleaApp;
 
 /**
  * A panel that the user uses to set up the displays that match to the outputs.

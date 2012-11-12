@@ -19,7 +19,7 @@
 package org.quelea.windows.main.actionhandlers;
 
 import javafx.event.EventHandler;
-import org.quelea.QueleaApp;
+import org.quelea.windows.main.QueleaApp;
 
 /**
  * Action handler for displaying the dialog to view the contents of bibles.
