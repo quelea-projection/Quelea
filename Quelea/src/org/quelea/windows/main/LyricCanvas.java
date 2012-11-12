@@ -54,7 +54,7 @@ import org.quelea.ColourBackground;
 import org.quelea.ImageBackground;
 import org.quelea.ThemeDTO;
 import org.quelea.VideoBackground;
-import org.quelea.displayable.TextDisplayable;
+import org.quelea.data.displayable.TextDisplayable;
 import org.quelea.services.notice.NoticeDrawer;
 import org.quelea.services.utils.LoggerUtils;
 import org.quelea.services.utils.QueleaProperties;

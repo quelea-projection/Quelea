@@ -18,7 +18,7 @@
 package org.quelea.windows.video;
 
 import javafx.scene.layout.BorderPane;
-import org.quelea.displayable.VideoDisplayable;
+import org.quelea.data.displayable.VideoDisplayable;
 import org.quelea.windows.main.ContainedPanel;
 
 /**

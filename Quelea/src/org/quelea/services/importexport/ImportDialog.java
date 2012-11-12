@@ -44,7 +44,7 @@ import javafx.stage.StageStyle;
 import org.javafx.dialog.Dialog;
 import org.quelea.QueleaApp;
 import org.quelea.SongDuplicateChecker;
-import org.quelea.displayable.SongDisplayable;
+import org.quelea.data.displayable.SongDisplayable;
 import org.quelea.languages.LabelGrabber;
 import org.quelea.services.utils.LoggerUtils;
 import org.quelea.services.utils.Utils;
