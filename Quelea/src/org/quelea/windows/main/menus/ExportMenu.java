@@ -25,6 +25,7 @@ import javafx.scene.control.MenuItem;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import org.quelea.languages.LabelGrabber;
+import org.quelea.services.importexport.SelectExportedSongsDialog;
 
 /**
  * Quelea's export menu.
@@ -45,10 +46,7 @@ public class ExportMenu extends Menu {
 
             @Override
             public void handle(ActionEvent t) {
-//                SelectExportedSongsDialog dialog = new SelectExportedSongsDialog(Application.get().getMainWindow());
-//                dialog.setLocationRelativeTo(dialog.getOwner());
-//                dialog.setSongs(Arrays.asList(SongManager.get().getSongs()), null, false);
-//                dialog.setVisible(true);
+                SelectExportedSongsDialog dialog = new SelectExportedSongsDialog();
             }
         });
         getItems().add(qspItem);
