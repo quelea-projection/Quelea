@@ -35,7 +35,7 @@ import javafx.scene.media.MediaException;
 import javafx.scene.media.MediaPlayer;
 import javafx.scene.media.MediaView;
 import org.javafx.dialog.Dialog;
-import org.quelea.displayable.VideoDisplayable;
+import org.quelea.data.displayable.VideoDisplayable;
 import org.quelea.languages.LabelGrabber;
 import org.quelea.services.utils.LoggerUtils;
 

@@ -32,7 +32,7 @@ import javafx.scene.layout.Priority;
 import javafx.scene.layout.Region;
 import javafx.stage.Screen;
 import org.quelea.QueleaApp;
-import org.quelea.displayable.Displayable;
+import org.quelea.data.displayable.Displayable;
 import org.quelea.languages.LabelGrabber;
 import org.quelea.services.utils.QueleaProperties;
 

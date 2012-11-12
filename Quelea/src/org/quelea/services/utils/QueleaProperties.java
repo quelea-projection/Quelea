@@ -26,7 +26,7 @@ import javafx.geometry.BoundingBox;
 import javafx.geometry.Bounds;
 import javafx.scene.paint.Color;
 import org.quelea.data.bible.Bible;
-import org.quelea.displayable.TextAlignment;
+import org.quelea.data.displayable.TextAlignment;
 
 /**
  * Manages the properties specific to Quelea.

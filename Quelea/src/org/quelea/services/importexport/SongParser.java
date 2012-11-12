@@ -20,7 +20,7 @@ package org.quelea.services.importexport;
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
-import org.quelea.displayable.SongDisplayable;
+import org.quelea.data.displayable.SongDisplayable;
 import org.quelea.windows.main.StatusPanel;
 
 /**
