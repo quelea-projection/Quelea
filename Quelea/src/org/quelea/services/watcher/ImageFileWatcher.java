@@ -26,7 +26,7 @@ import java.nio.file.WatchEvent;
 import java.nio.file.WatchKey;
 import java.nio.file.WatchService;
 import javafx.application.Platform;
-import org.quelea.services.utils.QueleaProperties;
+import org.quelea.utils.QueleaProperties;
 import org.quelea.windows.library.ImageListPanel;
 import org.quelea.windows.main.QueleaApp;
 
@@ -43,7 +43,7 @@ public class ImageFileWatcher {
     private Path imgPath = QueleaProperties.get().getImageDir().getAbsoluteFile().toPath();
     private WatchService watcher;
     private boolean running = true;
-    private Thread t;
+    private int count = 0;
 
     private ImageFileWatcher() {
         imageLP = QueleaApp.get().getMainWindow().getMainPanel().getLibraryPanel().getImagePanel().getImagePanel();
@@ -55,7 +55,7 @@ public class ImageFileWatcher {
         try {
             watcher = FileSystems.getDefault().newWatchService();
             imgPath.register(watcher, StandardWatchEventKinds.ENTRY_CREATE, StandardWatchEventKinds.ENTRY_DELETE, StandardWatchEventKinds.ENTRY_MODIFY);
-            t = new Thread() {
+            final Thread t = new Thread() {
                 @Override
                 public void run() {
                     final WatchKey key;
@@ -64,7 +64,7 @@ public class ImageFileWatcher {
                     } catch (InterruptedException ex) {
                         return;
                     }
-                    while (running) {
+                    while (!isInterrupted()) {
                         for (WatchEvent<?> event : key.pollEvents()) {
                             WatchEvent.Kind<?> kind = event.kind();
                             if (kind == StandardWatchEventKinds.OVERFLOW) {
@@ -83,8 +83,11 @@ public class ImageFileWatcher {
                     } catch (IOException ex) {
                         ex.printStackTrace();
                     }
+                    return;
                 }
             };
+            t.setName("file-watcher" + count);
+            count++;
             t.start();
         } catch (IOException e) {
             e.printStackTrace();
@@ -98,8 +101,17 @@ public class ImageFileWatcher {
      */
     public void changeDir(File newDir) {
         imgPath = newDir.getAbsoluteFile().toPath();
-        running = false;
-        running = true;
+        for(Thread th : Thread.getAllStackTraces().keySet()) {
+            if(th.getName().startsWith("file-watcher")) {
+                try {
+                    th.interrupt();
+                }
+                catch(Exception e) {
+                    e.printStackTrace();
+                    return;
+                }
+            }
+        }
         startWatching();
     }
 

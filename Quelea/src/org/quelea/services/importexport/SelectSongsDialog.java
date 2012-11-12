@@ -90,7 +90,7 @@ public class SelectSongsDialog extends Stage {
         mainPanel.getChildren().add(table);
         addButton = new Button(acceptText, new ImageView(new Image("file:icons/tick.png")));
         mainPanel.getChildren().add(addButton);
-
+        
         setScene(new Scene(mainPanel));
     }
     
@@ -135,10 +135,10 @@ public class SelectSongsDialog extends Stage {
      * @param defaultVal the default value to use for the checkbox if checkList
      * is null or smaller than the songs list.
      */
-    public void setSongs(final List<SongDisplayable> songs, final boolean[] checkList, final boolean defaultVal) {
+    public void setSongs(final List<SongDisplayable> songs, final boolean[] checkLis, final boolean defaultVal) {
         Collections.sort(songs);
         this.songs = songs;
-        this.checkList = checkList;
+        this.checkList = checkLis;
 
         table.getColumns().clear();
         nameColumn = new TableColumn<>(LabelGrabber.INSTANCE.getLabel("name.label"));
