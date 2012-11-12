@@ -23,7 +23,7 @@ import javafx.scene.Cursor;
 import javafx.scene.ImageCursor;
 import javafx.scene.control.ListView;
 import javafx.scene.image.Image;
-import org.quelea.displayable.TextSection;
+import org.quelea.data.displayable.TextSection;
 import org.quelea.services.utils.QueleaProperties;
 
 /**

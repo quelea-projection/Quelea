@@ -44,7 +44,7 @@ import org.quelea.data.bible.BibleChangeListener;
 import org.quelea.data.bible.BibleManager;
 import org.quelea.data.bible.BibleVerse;
 import org.quelea.data.bible.ChapterVerseParser;
-import org.quelea.displayable.BiblePassage;
+import org.quelea.data.displayable.BiblePassage;
 import org.quelea.languages.LabelGrabber;
 import org.quelea.services.utils.QueleaProperties;
 

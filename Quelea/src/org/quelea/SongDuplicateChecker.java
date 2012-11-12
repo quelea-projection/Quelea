@@ -18,7 +18,7 @@
 package org.quelea;
 
 import org.apache.commons.lang.StringUtils;
-import org.quelea.displayable.SongDisplayable;
+import org.quelea.data.displayable.SongDisplayable;
 
 /**
  * A class responsible for checking a new song against existing songs in the

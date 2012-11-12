@@ -22,7 +22,7 @@ import javafx.event.EventHandler;
 import org.javafx.dialog.Dialog;
 import org.quelea.QueleaApp;
 import org.quelea.SongManager;
-import org.quelea.displayable.SongDisplayable;
+import org.quelea.data.displayable.SongDisplayable;
 import org.quelea.languages.LabelGrabber;
 import org.quelea.windows.library.LibrarySongList;
 import org.quelea.windows.main.MainWindow;

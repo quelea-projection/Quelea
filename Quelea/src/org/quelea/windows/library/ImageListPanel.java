@@ -42,7 +42,7 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.TilePane;
 import javafx.util.Duration;
 import org.quelea.QueleaApp;
-import org.quelea.displayable.ImageDisplayable;
+import org.quelea.data.displayable.ImageDisplayable;
 import org.quelea.services.utils.Utils;
 import org.quelea.services.watcher.ImageFileWatcher;
 

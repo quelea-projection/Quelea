@@ -26,7 +26,7 @@ import javafx.scene.control.SeparatorMenuItem;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import org.quelea.QueleaApp;
-import org.quelea.displayable.SongDisplayable;
+import org.quelea.data.displayable.SongDisplayable;
 import org.quelea.languages.LabelGrabber;
 import org.quelea.windows.library.LibrarySongList;
 import org.quelea.windows.main.actionhandlers.EditSongDBActionHandler;

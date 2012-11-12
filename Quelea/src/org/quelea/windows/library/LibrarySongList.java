@@ -36,7 +36,7 @@ import javafx.util.Callback;
 import javafx.util.StringConverter;
 import org.quelea.QueleaApp;
 import org.quelea.SongManager;
-import org.quelea.displayable.SongDisplayable;
+import org.quelea.data.displayable.SongDisplayable;
 import org.quelea.services.lucene.SongSearchIndex;
 import org.quelea.services.utils.DatabaseListener;
 import org.quelea.services.utils.LoggerUtils;

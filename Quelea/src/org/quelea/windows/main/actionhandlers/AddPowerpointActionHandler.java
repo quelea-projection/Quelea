@@ -28,7 +28,7 @@ import javafx.event.EventHandler;
 import javafx.stage.FileChooser;
 import org.javafx.dialog.Dialog;
 import org.quelea.QueleaApp;
-import org.quelea.displayable.PresentationDisplayable;
+import org.quelea.data.displayable.PresentationDisplayable;
 import org.quelea.languages.LabelGrabber;
 import org.quelea.services.utils.FileFilters;
 import org.quelea.services.utils.LoggerUtils;
