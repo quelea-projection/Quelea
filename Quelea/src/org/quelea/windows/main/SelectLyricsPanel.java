@@ -24,8 +24,8 @@ import javafx.collections.ObservableList;
 import javafx.geometry.Orientation;
 import javafx.scene.control.SplitPane;
 import javafx.scene.layout.BorderPane;
-import org.quelea.displayable.TextDisplayable;
-import org.quelea.displayable.TextSection;
+import org.quelea.data.displayable.TextDisplayable;
+import org.quelea.data.displayable.TextSection;
 
 /**
  * The panel where the lyrics for different songs can be selected.

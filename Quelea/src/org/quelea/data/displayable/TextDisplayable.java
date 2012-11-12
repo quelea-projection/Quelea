@@ -15,31 +15,18 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.quelea.services.importexport;
-
-import java.io.File;
-import java.io.IOException;
-import java.util.List;
-import org.quelea.data.displayable.SongDisplayable;
-import org.quelea.services.utils.SongPack;
-import org.quelea.windows.main.StatusPanel;
+package org.quelea.data.displayable;
 
 /**
- * A parser for parsing song packs. Not really a parser, but here for 
- * completeness.
+ * A displayable object that displays text such as liturgy, songs or bible passages.
  * @author Michael
  */
-public class QSPParser implements SongParser {
+public interface TextDisplayable extends Displayable {
 
     /**
-     * Get a list of the songs contained in the given pack.
-     * @param location the location of the QSP file.
-     * @return a list of the songs found.
-     * @throws IOException if something goes wrong.
+     * Get the text sections in this displayable.
+     * @return the text sections.
      */
-    @Override
-    public List<SongDisplayable> getSongs(File location, StatusPanel statusPanel) throws IOException {
-        return SongPack.fromFile(location).getSongs();
-    }
+    TextSection[] getSections();
 
 }

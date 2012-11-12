@@ -36,14 +36,13 @@ import javafx.scene.control.ToolBar;
 import javafx.scene.control.Tooltip;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import javafx.util.Callback;
-import org.quelea.displayable.SongDisplayable;
+import org.quelea.data.displayable.SongDisplayable;
 import org.quelea.languages.LabelGrabber;
 import org.quelea.windows.main.BooleanCell;
 

@@ -31,7 +31,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.Region;
 import org.quelea.QueleaApp;
-import org.quelea.displayable.Displayable;
+import org.quelea.data.displayable.Displayable;
 import org.quelea.languages.LabelGrabber;
 
 /**

@@ -34,8 +34,8 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import org.quelea.QueleaApp;
-import org.quelea.displayable.SongDisplayable;
-import org.quelea.displayable.TextSection;
+import org.quelea.data.displayable.SongDisplayable;
+import org.quelea.data.displayable.TextSection;
 import org.quelea.languages.LabelGrabber;
 import org.quelea.services.utils.Utils;
 

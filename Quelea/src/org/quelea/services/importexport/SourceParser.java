@@ -25,7 +25,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import org.quelea.displayable.SongDisplayable;
+import org.quelea.data.displayable.SongDisplayable;
 import org.quelea.services.utils.LoggerUtils;
 import org.quelea.services.utils.Utils;
 import org.quelea.windows.main.StatusPanel;

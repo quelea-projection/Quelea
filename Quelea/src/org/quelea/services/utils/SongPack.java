@@ -17,7 +17,6 @@
  */
 package org.quelea.services.utils;
 
-import org.quelea.displayable.SongDisplayable;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -30,6 +29,7 @@ import java.util.logging.Logger;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 import java.util.zip.ZipOutputStream;
+import org.quelea.data.displayable.SongDisplayable;
 
 /**
  * A song pack that contains a number of songs and can be written to a compressed archive.

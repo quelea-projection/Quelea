@@ -28,7 +28,6 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.Label;
 import javafx.scene.control.MenuItem;
-import javafx.scene.control.MultipleSelectionModel;
 import javafx.scene.control.ToolBar;
 import javafx.scene.control.Tooltip;
 import javafx.scene.image.Image;
@@ -38,7 +37,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.Region;
 import org.quelea.QueleaApp;
-import org.quelea.displayable.Displayable;
+import org.quelea.data.displayable.Displayable;
 import org.quelea.languages.LabelGrabber;
 import org.quelea.windows.main.actionhandlers.RemoveScheduleItemActionHandler;
 

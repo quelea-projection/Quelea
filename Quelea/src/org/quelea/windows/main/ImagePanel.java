@@ -22,7 +22,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
 import org.quelea.ImageBackground;
 import org.quelea.ThemeDTO;
-import org.quelea.displayable.ImageDisplayable;
+import org.quelea.data.displayable.ImageDisplayable;
 
 /**
  * A panel used in the live / preview panels for displaying images.
