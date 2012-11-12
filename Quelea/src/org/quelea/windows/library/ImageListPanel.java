@@ -102,16 +102,6 @@ public class ImageListPanel extends BorderPane {
     }
 
     /**
-     * Change the panel to display a new directory.
-     * <p/>
-     * @param newDir the new directory.
-     */
-    public void changeDir(String newDir) {
-        dir = newDir;
-        ImageFileWatcher.get().changeDir(new File(dir).getAbsoluteFile());
-    }
-
-    /**
      * Returns the absolute path of the currently selected directory
      *
      */
@@ -133,7 +123,7 @@ public class ImageListPanel extends BorderPane {
     private void updateImages() {
         imageList.getChildren().clear();
         final File[] files = new File(dir).listFiles();
-        t = new Thread() {
+        new Thread() {
             @Override
             public void run() {
                 for (final File file : files) {
@@ -155,7 +145,7 @@ public class ImageListPanel extends BorderPane {
                                 t.consume();
                             }
                         });
-                        setupHover(view);
+                        //setupHover(view);
                         Platform.runLater(new Runnable() {
                             @Override
                             public void run() {
@@ -165,8 +155,7 @@ public class ImageListPanel extends BorderPane {
                     }
                 }
             }
-        };
-        t.start();
+        }.start();
     }
 
     private void setupHover(final ImageView view) {
@@ -199,5 +188,10 @@ public class ImageListPanel extends BorderPane {
                 timeline.play();
             }
         });
+    }
+
+    public void changeDir(File absoluteFile) {
+        dir = absoluteFile.getAbsolutePath();
+        ImageFileWatcher.get().changeDir(absoluteFile);
     }
 }

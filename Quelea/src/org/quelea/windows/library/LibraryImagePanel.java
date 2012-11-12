@@ -23,6 +23,7 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.List;
+import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
@@ -70,7 +71,7 @@ public class LibraryImagePanel extends BorderPane {
                 imagePanel.refresh();
             }
         });
-        
+
         Button addButton = new Button("", new ImageView(new Image("file:icons/add.png", 22, 22, true, true)));
         addButton.setTooltip(new Tooltip(LabelGrabber.INSTANCE.getLabel("add.images.panel")));
         addButton.setOnAction(new EventHandler<ActionEvent>() {
@@ -78,7 +79,7 @@ public class LibraryImagePanel extends BorderPane {
             public void handle(ActionEvent t) {
                 FileChooser chooser = new FileChooser();
                 chooser.getExtensionFilters().add(FileFilters.IMAGES);
-                chooser.setInitialDirectory(QueleaProperties.get().getImageDir());
+                chooser.setInitialDirectory(QueleaProperties.get().getImageDir().getAbsoluteFile());
                 List<File> files = chooser.showOpenMultipleDialog(QueleaApp.get().getMainWindow());
                 if (files != null) {
                     for (File f : files) {
@@ -91,42 +92,51 @@ public class LibraryImagePanel extends BorderPane {
                 }
             }
         });
-        
+
         final ObservableList<NewFile> list = FXCollections.observableArrayList();
         list.addAll(getComboBoxOptions());
-        
+
         ComboBox cb = new ComboBox(list);
         cb.setTooltip(new Tooltip(LabelGrabber.INSTANCE.getLabel("select.folder.images.panel")));
         cb.valueProperty().addListener(new ChangeListener() {
             @Override
             public void changed(ObservableValue ov, Object t, Object t1) {
-                NewFile nf = (NewFile) t1;
-                if(nf.getFile() == null) {
+                NewFile nf  = (NewFile) t1;
+                if (nf.getFile() == null) {
                     DirectoryChooser chooser = new DirectoryChooser();
-                    chooser.setInitialDirectory(QueleaProperties.get().getImageDir());
+                    chooser.setInitialDirectory(QueleaProperties.get().getImageDir().getAbsoluteFile());
                     File f = chooser.showDialog(QueleaApp.get().getMainWindow());
-                    if(f != null && f.isDirectory()) {
-                        imagePanel.changeDir(f.getAbsolutePath());
-                        list.add(list.size()-1, new NewFile(f));
-                        }
-                    else {
-                        // Throw error?
+                    if (f != null) {
+                        nf = new NewFile(f);
+                        list.add(list.size() - 1, nf);
+                    } else {
+                        return;
                     }
                 }
                 else {
-                    imagePanel.changeDir(nf.getFile().getAbsolutePath());
+                    nf = (NewFile) t1;
                 }
-                imagePanel.refresh();
+                imagePanel.changeDir(nf.getFile().getAbsoluteFile());
+                Platform.runLater(new Runnable() {
+                    @Override
+                    public void run() {
+                        imagePanel.refresh();
+                    }
+                });
             }
         });
-        cb.setMinWidth(250.0);
-        northPanel.getChildren().add(cb);
-        northPanel.getChildren().add(addButton);
-        northPanel.getChildren().add(refreshButton);
-        northPanel.alignmentProperty().setValue(Pos.CENTER);
+        cb.setMinWidth(
+                250.0);
+        northPanel.getChildren()
+                .add(cb);
+        northPanel.getChildren()
+                .add(addButton);
+        northPanel.getChildren()
+                .add(refreshButton);
+        northPanel.alignmentProperty()
+                .setValue(Pos.CENTER);
 
         setTop(northPanel);
-
     }
 
     /**
@@ -143,30 +153,31 @@ public class LibraryImagePanel extends BorderPane {
         list.add(new NewFile(QueleaProperties.get().getImageDir()));
         list.add(new NewFile(null));
         return list;
+
+
     }
 
     private static class NewFile {
 
         private File file;
-        
+
         public NewFile(File f) {
             file = f;
         }
-        
+
         @Override
         public String toString() {
-            if(file==null) { 
-                return "Select...";
-            }
-            else {
+            if (file == null) {
+                return LabelGrabber.INSTANCE.getLabel("select.folder.images.panel");
+            } else {
                 return file.getName();
             }
         }
-        
+
         public void set(File f) {
             file = f;
         }
-        
+
         public File getFile() {
             return file;
         }
