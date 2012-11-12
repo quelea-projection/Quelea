@@ -37,7 +37,6 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import org.javafx.dialog.Dialog;
-import org.quelea.QueleaApp;
 import org.quelea.data.chord.ChordLineTransposer;
 import org.quelea.data.chord.ChordTransposer;
 import org.quelea.data.chord.TransposeDialog;
@@ -46,6 +45,7 @@ import org.quelea.languages.LabelGrabber;
 import org.quelea.services.utils.LineTypeChecker;
 import org.quelea.services.utils.LineTypeChecker.Type;
 import org.quelea.services.utils.LoggerUtils;
+import org.quelea.windows.main.QueleaApp;
 
 /**
  * The panel that manages the basic input of song information - the title,

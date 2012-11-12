@@ -23,12 +23,12 @@ import java.util.logging.Logger;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import org.javafx.dialog.Dialog;
-import org.quelea.QueleaApp;
-import org.quelea.Schedule;
-import org.quelea.ScheduleSaver;
+import org.quelea.data.Schedule;
+import org.quelea.data.ScheduleSaver;
 import org.quelea.data.displayable.Displayable;
 import org.quelea.languages.LabelGrabber;
 import org.quelea.services.utils.LoggerUtils;
+import org.quelea.windows.main.QueleaApp;
 
 /**
  * The exit action listener - called when the user requests they wish to exit

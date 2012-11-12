@@ -15,9 +15,10 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.quelea;
+package org.quelea.services.utils;
 
 import org.apache.commons.lang.StringUtils;
+import org.quelea.data.db.SongManager;
 import org.quelea.data.displayable.SongDisplayable;
 
 /**

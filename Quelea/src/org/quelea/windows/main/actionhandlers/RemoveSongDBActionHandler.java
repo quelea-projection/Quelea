@@ -20,12 +20,12 @@ package org.quelea.windows.main.actionhandlers;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import org.javafx.dialog.Dialog;
-import org.quelea.QueleaApp;
-import org.quelea.SongManager;
+import org.quelea.data.db.SongManager;
 import org.quelea.data.displayable.SongDisplayable;
 import org.quelea.languages.LabelGrabber;
 import org.quelea.windows.library.LibrarySongList;
 import org.quelea.windows.main.MainWindow;
+import org.quelea.windows.main.QueleaApp;
 
 /**
  * Action listener that removes the selected song from the database.

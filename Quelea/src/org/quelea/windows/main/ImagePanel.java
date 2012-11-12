@@ -20,8 +20,8 @@ package org.quelea.windows.main;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
-import org.quelea.ImageBackground;
-import org.quelea.ThemeDTO;
+import org.quelea.data.ImageBackground;
+import org.quelea.data.ThemeDTO;
 import org.quelea.data.displayable.ImageDisplayable;
 
 /**

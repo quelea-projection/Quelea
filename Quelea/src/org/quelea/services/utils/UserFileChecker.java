@@ -15,14 +15,12 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.quelea;
+package org.quelea.services.utils;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import org.quelea.services.utils.LoggerUtils;
-import org.quelea.services.utils.Utils;
 
 /**
  * Checks to see whether the user has the theme / properties / etc. files in 

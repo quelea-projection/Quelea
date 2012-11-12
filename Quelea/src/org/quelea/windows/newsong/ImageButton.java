@@ -26,13 +26,13 @@ import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
 import javafx.stage.FileChooser;
 import org.apache.commons.io.FileUtils;
-import org.quelea.ImageBackground;
-import org.quelea.QueleaApp;
-import org.quelea.ThemeDTO;
+import org.quelea.data.ImageBackground;
+import org.quelea.data.ThemeDTO;
 import org.quelea.languages.LabelGrabber;
 import org.quelea.services.utils.FileFilters;
 import org.quelea.services.utils.LoggerUtils;
 import org.quelea.windows.main.LyricCanvas;
+import org.quelea.windows.main.QueleaApp;
 
 /**
  * The image button where the user selects a image.

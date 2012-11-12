@@ -19,8 +19,8 @@ package org.quelea.windows.main.actionhandlers;
 
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
-import org.quelea.QueleaApp;
 import org.quelea.data.displayable.SongDisplayable;
+import org.quelea.windows.main.QueleaApp;
 import org.quelea.windows.newsong.SongEntryWindow;
 
 /**
