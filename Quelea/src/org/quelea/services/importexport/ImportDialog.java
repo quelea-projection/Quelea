@@ -42,12 +42,12 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import org.javafx.dialog.Dialog;
-import org.quelea.QueleaApp;
-import org.quelea.SongDuplicateChecker;
 import org.quelea.data.displayable.SongDisplayable;
 import org.quelea.languages.LabelGrabber;
 import org.quelea.services.utils.LoggerUtils;
+import org.quelea.services.utils.SongDuplicateChecker;
 import org.quelea.services.utils.Utils;
+import org.quelea.windows.main.QueleaApp;
 import org.quelea.windows.main.StatusPanel;
 
 /**

@@ -58,10 +58,10 @@ import javafx.scene.image.WritableImage;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import org.javafx.dialog.Dialog;
-import org.quelea.QueleaApp;
-import org.quelea.SongManager;
+import org.quelea.data.db.SongManager;
 import org.quelea.data.displayable.SongDisplayable;
 import org.quelea.languages.LabelGrabber;
+import org.quelea.windows.main.QueleaApp;
 import org.quelea.windows.main.StatusPanel;
 
 /**

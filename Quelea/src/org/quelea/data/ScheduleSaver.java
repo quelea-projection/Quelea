@@ -15,7 +15,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.quelea;
+package org.quelea.data;
 
 import java.io.File;
 import javafx.event.ActionEvent;
@@ -26,6 +26,7 @@ import org.quelea.languages.LabelGrabber;
 import org.quelea.services.utils.FileFilters;
 import org.quelea.services.utils.QueleaProperties;
 import org.quelea.windows.main.MainPanel;
+import org.quelea.windows.main.QueleaApp;
 
 /**
  * Responsible for saving a schedule.

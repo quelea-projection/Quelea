@@ -21,9 +21,9 @@ package org.quelea.windows.main.actionhandlers;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import org.javafx.dialog.Dialog;
-import org.quelea.QueleaApp;
 import org.quelea.languages.LabelGrabber;
 import org.quelea.windows.main.MainPanel;
+import org.quelea.windows.main.QueleaApp;
 
 /**
  * An action listener that needs to check whether to clear the schedule before

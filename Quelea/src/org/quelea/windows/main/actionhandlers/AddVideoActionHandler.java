@@ -22,9 +22,9 @@ import java.io.File;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.stage.FileChooser;
-import org.quelea.QueleaApp;
 import org.quelea.data.displayable.VideoDisplayable;
 import org.quelea.services.utils.FileFilters;
+import org.quelea.windows.main.QueleaApp;
 
 /**
  * The action handler for adding a video.

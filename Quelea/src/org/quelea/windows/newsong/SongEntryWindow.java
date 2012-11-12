@@ -35,12 +35,12 @@ import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
-import org.quelea.QueleaApp;
-import org.quelea.ThemeDTO;
+import org.quelea.data.ThemeDTO;
 import org.quelea.data.displayable.SongDisplayable;
 import org.quelea.data.displayable.TextSection;
 import org.quelea.languages.LabelGrabber;
 import org.quelea.services.utils.Utils;
+import org.quelea.windows.main.QueleaApp;
 
 /**
  * A new song window that users use for inserting the text content of a new

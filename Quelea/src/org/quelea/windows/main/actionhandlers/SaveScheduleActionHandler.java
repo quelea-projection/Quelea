@@ -20,7 +20,7 @@ package org.quelea.windows.main.actionhandlers;
 
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
-import org.quelea.ScheduleSaver;
+import org.quelea.data.ScheduleSaver;
 
 /**
  * The save schedule action listener.

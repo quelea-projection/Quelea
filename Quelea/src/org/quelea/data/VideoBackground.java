@@ -16,7 +16,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.quelea;
+package org.quelea.data;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -26,67 +26,53 @@ import java.util.Objects;
 import javafx.scene.control.ColorPicker;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.TextField;
-import javafx.scene.paint.Color;
 import org.quelea.languages.LabelGrabber;
 
 /**
- *
+ * A background comprising of a video.
+ * <p/>
  * @author Michael
  */
-public class ColourBackground implements Background {
+public class VideoBackground implements Background {
 
-    private Color colour;
+    private String vidLocation;
 
-    /**
-     * Create a new background that's a certain colour.
-     * <p/>
-     * @param colour the colour of the background.
-     */
-    public ColourBackground(Color colour) {
-        this.colour = colour;
+    public VideoBackground(String vidLocation) {
+        this.vidLocation = vidLocation;
     }
 
     /**
-     * Get the current colour of this background, or null if the background is
-     * currently an image.
+     * Get the video background file.
      * <p/>
-     * @return the colour of the background.
+     * @return the file representing the video background
      */
-    public Color getColour() {
-        return colour;
+    public File getVideoFile() {
+        return new File(new File("vid"), vidLocation.trim());
     }
-    
-    /**
-     * Get the DB string of this background to store in the database.
-     * <p/>
-     * @return the background's DB string.
-     */
+
     @Override
     public String getString() {
-        return getColour().toString();
+        vidLocation = new File(vidLocation).getName();
+        return vidLocation.trim();
     }
-    
-    /**
-     * We don't depend on any resources.
-     * <p/>
-     * @return empty collection.
-     */
+
     @Override
     public Collection<File> getResources() {
         List<File> ret = new ArrayList<>();
+        ret.add(getVideoFile());
         return ret;
     }
 
     @Override
-    public void setThemeForm(ColorPicker backgroundColorPicker, ComboBox<String> backgroundTypeSelect, TextField backgroundLocation, TextField backgroundVidLocation) {
-        backgroundTypeSelect.getSelectionModel().select(LabelGrabber.INSTANCE.getLabel("color.theme.label"));
-        backgroundColorPicker.setValue(getColour());
+    public void setThemeForm(ColorPicker backgroundColorPicker, ComboBox<String> backgroundTypeSelect, TextField backgroundImgLocation, TextField backgroundVidLocation) {
+        backgroundTypeSelect.getSelectionModel().select(LabelGrabber.INSTANCE.getLabel("video.theme.label"));
+        backgroundVidLocation.setText(getVideoFile().getName());
     }
 
     @Override
     public int hashCode() {
         int hash = 7;
-        hash = 13 * hash + Objects.hashCode(this.colour);
+        hash = 17 * hash + Objects.hashCode(this.vidLocation);
         return hash;
     }
 
@@ -98,8 +84,8 @@ public class ColourBackground implements Background {
         if(getClass() != obj.getClass()) {
             return false;
         }
-        final ColourBackground other = (ColourBackground) obj;
-        if(!Objects.equals(this.colour, other.colour)) {
+        final VideoBackground other = (VideoBackground) obj;
+        if(!Objects.equals(this.vidLocation, other.vidLocation)) {
             return false;
         }
         return true;

@@ -20,8 +20,8 @@ package org.quelea.windows.main.actionhandlers;
 
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
-import org.quelea.QueleaApp;
 import org.quelea.services.print.Printer;
+import org.quelea.windows.main.QueleaApp;
 
 /**
  * The print action listener.
