@@ -228,7 +228,7 @@ public abstract class LivePreviewPanel extends BorderPane {
             currentLabel = PRESENTATION_LABEL;
         }
         else if(displayable==null) {
-            LOGGER.log(Level.WARNING, "BUG: Called setDisplayable(null), should probably call clear() instead.");
+//            LOGGER.log(Level.WARNING, "BUG: Called setDisplayable(null), should probably call clear() instead.", new RuntimeException("BUG: Called setDisplayable(null), should probably call clear() instead."));
             clear();
         }
         else {
