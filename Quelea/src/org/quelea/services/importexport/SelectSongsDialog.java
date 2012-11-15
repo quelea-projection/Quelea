@@ -44,7 +44,7 @@ import javafx.stage.StageStyle;
 import javafx.util.Callback;
 import org.quelea.data.displayable.SongDisplayable;
 import org.quelea.languages.LabelGrabber;
-import org.quelea.windows.main.BooleanCell;
+import org.quelea.windows.main.widgets.BooleanCell;
 
 /**
  * A dialog where given songs can be selected.

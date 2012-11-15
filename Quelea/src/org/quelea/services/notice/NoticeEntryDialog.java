@@ -35,7 +35,7 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import org.quelea.languages.LabelGrabber;
-import org.quelea.windows.main.NumberSpinner;
+import org.quelea.windows.main.widgets.NumberSpinner;
 
 /**
  * The entry dialog for creating a notice.

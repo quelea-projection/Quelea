@@ -33,7 +33,7 @@ import javafx.scene.layout.VBox;
 import javafx.stage.Screen;
 import org.quelea.languages.LabelGrabber;
 import org.quelea.services.utils.Utils;
-import org.quelea.windows.main.NumberSpinner;
+import org.quelea.windows.main.widgets.NumberSpinner;
 
 /**
  * A panel used to represent a single type of display that the user can then
