@@ -17,6 +17,7 @@
  */
 package org.quelea.windows.main;
 
+import org.quelea.windows.lyrics.LyricCanvas;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;

@@ -15,8 +15,10 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.quelea.windows.main;
+package org.quelea.windows.lyrics;
 
+import org.quelea.windows.lyrics.SelectLyricsList;
+import org.quelea.windows.lyrics.LyricCanvas;
 import java.util.HashSet;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -26,6 +28,8 @@ import javafx.scene.control.SplitPane;
 import javafx.scene.layout.BorderPane;
 import org.quelea.data.displayable.TextDisplayable;
 import org.quelea.data.displayable.TextSection;
+import org.quelea.windows.main.ContainedPanel;
+import org.quelea.windows.main.LivePreviewPanel;
 
 /**
  * The panel where the lyrics for different songs can be selected.

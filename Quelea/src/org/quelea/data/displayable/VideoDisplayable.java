@@ -29,7 +29,7 @@ import org.w3c.dom.Node;
  * A displayable that's a video.
  * @author Michael
  */
-public class VideoDisplayable implements Displayable {
+public class VideoDisplayable implements MultimediaDisplayable {
 
     private final File file;
 
@@ -114,7 +114,7 @@ public class VideoDisplayable implements Displayable {
      */
     @Override
     public boolean supportClear() {
-        return false;
+        return true;
     }
     
     @Override

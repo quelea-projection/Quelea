@@ -17,6 +17,8 @@
  */
 package org.quelea.windows.main;
 
+import org.quelea.windows.lyrics.LyricWindow;
+import org.quelea.windows.lyrics.LyricCanvas;
 import java.util.HashSet;
 import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
