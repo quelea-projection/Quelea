@@ -17,6 +17,7 @@
  */
 package org.quelea.windows.main;
 
+import org.quelea.windows.lyrics.LyricWindow;
 import java.io.File;
 import org.javafx.dialog.Dialog;
 import org.quelea.data.Schedule;
