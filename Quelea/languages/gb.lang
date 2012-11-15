@@ -97,6 +97,7 @@ add.youtube.button=Add Youtube Video
 add.live.video.button=Add Live Video
 add.dvd.button=Add DVD
 add.audio.button=Audio
+add.audio.tooltip=Add Audio
 share.heading=Share
 email.button=Email
 manage.notices.button=Manage Notices...
