@@ -17,6 +17,7 @@
  */
 package org.quelea.windows.main;
 
+import org.quelea.windows.lyrics.LyricCanvas;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.logging.Level;

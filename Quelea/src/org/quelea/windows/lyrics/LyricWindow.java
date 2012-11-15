@@ -14,9 +14,10 @@
  * You should have received a copy of the GNU General Public License along with
  * this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package org.quelea.windows.main;
+package org.quelea.windows.lyrics;
 
 //import java.awt.Cursor;
+import org.quelea.windows.lyrics.LyricCanvas;
 import javafx.scene.Cursor;
 import java.awt.Point;
 import java.awt.Toolkit;

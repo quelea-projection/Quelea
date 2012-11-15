@@ -14,49 +14,52 @@
  * You should have received a copy of the GNU General Public License along with
  * this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package org.quelea.windows.video;
+package org.quelea.windows.audio;
 
+import org.quelea.data.tags.services.multimedia.MultimediaControlPanel;
 import java.io.File;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 import javafx.scene.media.MediaException;
 import org.javafx.dialog.Dialog;
 import org.quelea.data.displayable.MultimediaDisplayable;
 import org.quelea.data.tags.services.multimedia.MediaPlayerFactory;
-import org.quelea.data.tags.services.multimedia.MultimediaControlPanel;
 import org.quelea.languages.LabelGrabber;
-import org.quelea.services.utils.LoggerUtils;
 
 /**
- * The control panel for displaying the video.
+ * The control panel for displaying the audio.
  * <p/>
- * @author Michael
+ * @author tomaszpio@gmail.com
  */
-public class VideoControlPanel extends MultimediaControlPanel {
+public class AudioControlPanel extends MultimediaControlPanel {
 
-    private static final Logger LOGGER = LoggerUtils.getLogger();
-    
+    /**
+     * Create a new video control panel.
+     */
+    public AudioControlPanel() {
+    }
+
     /**
      * Load the given video to be controlled via this panel.
      * <p/>
      * @param videoPath the video path to load.
      */
-    public void loadMultimedia(MultimediaDisplayable video) {
-        this.filePath = video.getFile().getAbsolutePath();
+    @Override
+    public void loadMultimedia(MultimediaDisplayable audio) {
+        this.filePath = audio.getFile().getAbsolutePath();
         try {
             player = MediaPlayerFactory.getInstance(new File(filePath).toURI().toString());
+            player.currentTimeProperty().addListener(new CurrentTimeListener());
             view.setMediaPlayer(player);
             player.play();
-        }
-        catch(MediaException ex) {
-            LOGGER.log(Level.WARNING, "Video Error", ex);
+        } catch (MediaException ex) {
+            LOGGER.log(Level.WARNING, "Audio Error", ex);
             MediaException.Type type = ex.getType();
-            switch(type) {
+            switch (type) {
                 case MEDIA_UNSUPPORTED:
-                    Dialog.showError(LabelGrabber.INSTANCE.getLabel("video.error.title"), LabelGrabber.INSTANCE.getLabel("video.error.unsupported"));
+                    Dialog.showError(LabelGrabber.INSTANCE.getLabel("audio.error.title"), LabelGrabber.INSTANCE.getLabel("audio.error.unsupported"));
                     break;
                 default:
-                    Dialog.showError(LabelGrabber.INSTANCE.getLabel("video.error.title"), LabelGrabber.INSTANCE.getLabel("video.error.general"));
+                    Dialog.showError(LabelGrabber.INSTANCE.getLabel("audio.error.title"), LabelGrabber.INSTANCE.getLabel("audio.error.general"));
             }
         }
     }

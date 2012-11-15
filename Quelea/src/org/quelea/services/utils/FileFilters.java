@@ -41,6 +41,10 @@ public final class FileFilters {
      */
     public static final FileChooser.ExtensionFilter VIDEOS = new FileChooser.ExtensionFilter("Video files (*.flv, *.mp4, *.m4v, *.mkv)", "*.xml", "*.flv", "*.mp4", "*.m4v", "*.mkv");
     /**
+     * Accept audio files.
+     */
+    public static final FileChooser.ExtensionFilter AUDIOS = new FileChooser.ExtensionFilter("Audio files (*.mp3)", "*.mp3");
+    /**
      * Accept powerpoint files.
      */
     public static final FileChooser.ExtensionFilter POWERPOINT = new FileChooser.ExtensionFilter("Powerpoint Presentations (*.ppt, *.pptx)", "*.ppt", "*.pptx");

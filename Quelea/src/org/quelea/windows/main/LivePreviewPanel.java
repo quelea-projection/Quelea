@@ -17,6 +17,9 @@
  */
 package org.quelea.windows.main;
 
+import org.quelea.windows.lyrics.SelectLyricsPanel;
+import org.quelea.windows.lyrics.LyricWindow;
+import org.quelea.windows.lyrics.LyricCanvas;
 import java.awt.Canvas;
 import java.util.HashSet;
 import java.util.Set;
@@ -28,6 +31,7 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
+import org.quelea.data.displayable.AudioDisplayable;
 import org.quelea.data.displayable.Displayable;
 import org.quelea.data.displayable.ImageDisplayable;
 import org.quelea.data.displayable.PresentationDisplayable;
@@ -36,6 +40,7 @@ import org.quelea.data.displayable.TextDisplayable;
 import org.quelea.data.displayable.VideoDisplayable;
 import org.quelea.services.utils.LoggerUtils;
 import org.quelea.services.utils.QueleaProperties;
+import org.quelea.windows.audio.AudioPanel;
 import org.quelea.windows.main.quickedit.QuickEditDialog;
 import org.quelea.windows.video.VideoPanel;
 
@@ -55,12 +60,14 @@ public abstract class LivePreviewPanel extends BorderPane {
     private static final String LYRICS_LABEL = "LYRICS";
     private static final String IMAGE_LABEL = "IMAGE";
     private static final String VIDEO_LABEL = "VIDEO";
+    private static final String AUDIO_LABEL = "AUDIO";
     private static final String PRESENTATION_LABEL = "PPT";
     private String currentLabel;
     private SelectLyricsPanel lyricsPanel = new SelectLyricsPanel(this);
     private ImagePanel picturePanel = new ImagePanel(this);
     private PresentationPanel presentationPanel = new PresentationPanel(this);
     private VideoPanel videoPanel = new VideoPanel();
+    private AudioPanel audioPanel = new AudioPanel();
     private QuickEditDialog quickEditDialog = new QuickEditDialog();
     /**
      * All the contained panels so they can be flipped through easily...
@@ -71,6 +78,7 @@ public abstract class LivePreviewPanel extends BorderPane {
             this.add(lyricsPanel);
             this.add(picturePanel);
             this.add(videoPanel);
+            this.add(audioPanel);
             this.add(presentationPanel);
         }
     };
@@ -84,6 +92,7 @@ public abstract class LivePreviewPanel extends BorderPane {
         cardPanel.add(lyricsPanel, LYRICS_LABEL);
         cardPanel.add(picturePanel, IMAGE_LABEL);
         cardPanel.add(videoPanel, VIDEO_LABEL);
+        cardPanel.add(audioPanel, AUDIO_LABEL);
         cardPanel.add(presentationPanel, PRESENTATION_LABEL);
         registerLyricCanvas(lyricsPanel.getPreviewCanvas());
         cardPanel.show(LYRICS_LABEL);
@@ -222,13 +231,18 @@ public abstract class LivePreviewPanel extends BorderPane {
             cardPanel.show(VIDEO_LABEL);
             currentLabel = VIDEO_LABEL;
         }
+        else if(displayable instanceof AudioDisplayable) {
+            audioPanel.showDisplayable((AudioDisplayable) displayable);
+            cardPanel.show(AUDIO_LABEL);
+            currentLabel = AUDIO_LABEL;
+        }
         else if(displayable instanceof PresentationDisplayable) {
             presentationPanel.setDisplayable((PresentationDisplayable) displayable, index);
             cardPanel.show(PRESENTATION_LABEL);
             currentLabel = PRESENTATION_LABEL;
         }
         else if(displayable==null) {
-//            LOGGER.log(Level.WARNING, "BUG: Called setDisplayable(null), should probably call clear() instead.", new RuntimeException("BUG: Called setDisplayable(null), should probably call clear() instead."));
+            LOGGER.log(Level.WARNING, "BUG: Called setDisplayable(null), should probably call clear() instead.");
             clear();
         }
         else {
@@ -252,16 +266,16 @@ public abstract class LivePreviewPanel extends BorderPane {
      * @param other the panel to copy properties from.
      */
     public void setVideoProperties(LivePreviewPanel other) {
-//        videoPanel.getVideoControlPanel().playVideo();
-//        videoPanel.getVideoControlPanel().pauseVideo();
-//        videoPanel.getVideoControlPanel().setTime(other.videoPanel.getVideoControlPanel().getTime());
+//        videoPanel.getMultimediaControlPanel().playVideo();
+//        videoPanel.getMultimediaControlPanel().pauseVideo();
+//        videoPanel.getMultimediaControlPanel().setTime(other.videoPanel.getMultimediaControlPanel().getTime());
     }
 
     /**
      * Pause the current video panel's video.
      */
     public void pauseVideo() {
-//        videoPanel.getVideoControlPanel().pause();
+//        videoPanel.getMultimediaControlPanel().pause();
     }
 
     /**
@@ -304,9 +318,18 @@ public abstract class LivePreviewPanel extends BorderPane {
      * @param canvas the canvas to register.
      */
     public final void registerVideoCanvas(final Canvas canvas) {
-        videoPanel.getVideoControlPanel().registerCanvas(canvas);
+        videoPanel.getMultimediaControlPanel().registerCanvas(canvas);
     }
 
+    /**
+     * Register a video canvas on this live preview panel.
+     *
+     * @param canvas the canvas to register.
+     */
+    public final void registerAudioCanvas(final Canvas canvas) {
+        audioPanel.getMultimediaControlPanel().registerCanvas(canvas);
+    }
+    
     /**
      * Get the canvases registered to this panel.
      *
