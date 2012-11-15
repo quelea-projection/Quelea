@@ -15,25 +15,29 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.quelea.windows.video;
+package org.quelea.windows.audio;
 
+import java.util.logging.Logger;
 import javafx.scene.layout.BorderPane;
-import org.quelea.data.displayable.VideoDisplayable;
+import org.quelea.data.displayable.AudioDisplayable;
 import org.quelea.data.tags.services.multimedia.MultimediaControlPanel;
+import org.quelea.services.utils.LoggerUtils;
 import org.quelea.windows.main.ContainedPanel;
 
 /**
- * A panel used in the live / preview panels for displaying videos.
- * @author Michael
+ * A panel used in the live / preview panels for playing audio.
+ *
+ * @author tomaszpio@gmail.com
  */
-public class VideoPanel extends BorderPane implements ContainedPanel {
+public class AudioPanel extends BorderPane implements ContainedPanel {
 
-    private MultimediaControlPanel controlPanel = new VideoControlPanel();
+    private static final Logger LOGGER = LoggerUtils.getLogger();
+    private MultimediaControlPanel controlPanel = new AudioControlPanel();
 
     /**
      * Create a new image panel.
      */
-    public VideoPanel() {
+    public AudioPanel() {
         setCenter(controlPanel);
     }
 
@@ -50,11 +54,12 @@ public class VideoPanel extends BorderPane implements ContainedPanel {
      */
     @Override
     public void clear() {
-        //Nada. Can't clear a video.
+       
     }
 
     /**
      * Get the video control panel on this video panel.
+     *
      * @return the video control panel.
      */
     public MultimediaControlPanel getMultimediaControlPanel() {
@@ -63,9 +68,10 @@ public class VideoPanel extends BorderPane implements ContainedPanel {
 
     /**
      * Show a given video displayable on the panel.
+     *
      * @param displayable the video displayable.
      */
-    public void showDisplayable(VideoDisplayable displayable) {
+    public void showDisplayable(AudioDisplayable displayable) {
         controlPanel.loadMultimedia(displayable);
     }
 

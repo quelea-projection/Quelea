@@ -31,7 +31,7 @@ import org.quelea.data.ThemeDTO;
 import org.quelea.languages.LabelGrabber;
 import org.quelea.services.utils.FileFilters;
 import org.quelea.services.utils.LoggerUtils;
-import org.quelea.windows.main.LyricCanvas;
+import org.quelea.windows.lyrics.LyricCanvas;
 import org.quelea.windows.main.QueleaApp;
 
 /**

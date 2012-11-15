@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License along with
  * this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package org.quelea.windows.main;
+package org.quelea.windows.lyrics;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -52,28 +52,6 @@ public class SelectLyricsList extends ListView<TextSection> {
             }
         });
         oneLineMode = QueleaProperties.get().getOneLineMode();
-//        Color inactiveColor = QueleaProperties.get().getInactiveSelectionColor();
-//        if(inactiveColor == null) {
-//            originalSelectionColour = getSelectionBackground();
-//        }
-//        else {
-//            originalSelectionColour = inactiveColor;
-//        }
-//        setSelectionBackground(originalSelectionColour);
-//        addFocusListener(new FocusListener() {
-//
-//            @Override
-//            public void focusGained(FocusEvent e) {
-//                if(getModel().getSize() > 0) {
-//                    setSelectionBackground(QueleaProperties.get().getActiveSelectionColor());
-//                }
-//            }
-//
-//            @Override
-//            public void focusLost(FocusEvent e) {
-//                setSelectionBackground(originalSelectionColour);
-//            }
-//        });
 
         setOnMouseMoved(new EventHandler<javafx.scene.input.MouseEvent>() {
 
@@ -87,25 +65,6 @@ public class SelectLyricsList extends ListView<TextSection> {
                 }
             }
         });
-//        addKeyListener(new KeyAdapter() {
-//
-//            @Override
-//            public void keyPressed(KeyEvent ke) {
-//                if((ke.isControlDown()) && !getModel().isEmpty()) {
-//                    setCursor(Q_CURSOR);
-//                }
-//                else {
-//                    setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
-//                }
-//            }
-//
-//            @Override
-//            public void keyReleased(KeyEvent ke) {
-//                if(ke.getKeyCode() == KeyEvent.VK_CONTROL) {
-//                    setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
-//                }
-//            }
-//        });
     }
 
     /**

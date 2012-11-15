@@ -40,6 +40,7 @@ import org.quelea.windows.main.ButtonChecker;
 import org.quelea.windows.main.MainPanel;
 import org.quelea.windows.main.QueleaApp;
 import org.quelea.windows.main.ScheduleList;
+import org.quelea.windows.main.actionhandlers.AddAudioActionHandler;
 import org.quelea.windows.main.actionhandlers.AddPowerpointActionHandler;
 import org.quelea.windows.main.actionhandlers.AddSongActionHandler;
 import org.quelea.windows.main.actionhandlers.AddVideoActionHandler;
@@ -60,6 +61,7 @@ public class ScheduleMenu extends Menu {
     private MenuItem removeSongItem;
     private MenuItem addPowerpointItem;
     private MenuItem addVideoItem;
+    private MenuItem addAudioItem;
     private MenuItem addDVDItem;
     private MenuItem manageNoticesItem;
     private MenuItem shareScheduleItem;
@@ -114,6 +116,10 @@ public class ScheduleMenu extends Menu {
         addVideoItem = new MenuItem(LabelGrabber.INSTANCE.getLabel("add.video.button"), new ImageView(new Image("file:icons/video file.png", 16, 16, false, true)));
         addVideoItem.setOnAction(new AddVideoActionHandler());
         getItems().add(addVideoItem);
+        
+        addAudioItem = new MenuItem(LabelGrabber.INSTANCE.getLabel("add.audio.button"), new ImageView(new Image("file:icons/audio30.png", 16, 16, false, true)));
+        addAudioItem.setOnAction(new AddAudioActionHandler());
+        getItems().add(addAudioItem);
 
         //TODO: Investigate putting DVD support back in
 //        addDVDItem = new MenuItem(LabelGrabber.INSTANCE.getLabel("add.dvd.button"), new ImageView(new Image("file:icons/dvd.png", 16, 16, false, true)));
