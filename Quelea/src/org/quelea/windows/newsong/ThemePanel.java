@@ -43,8 +43,8 @@ import org.quelea.data.ThemeDTO;
 import org.quelea.data.VideoBackground;
 import org.quelea.languages.LabelGrabber;
 import org.quelea.services.utils.Utils;
-import org.quelea.windows.main.CardPane;
 import org.quelea.windows.lyrics.LyricCanvas;
+import org.quelea.windows.main.widgets.CardPane;
 
 /**
  * The panel where the user chooses what visual theme a song should have.

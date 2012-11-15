@@ -42,6 +42,7 @@ import org.quelea.services.utils.LoggerUtils;
 import org.quelea.services.utils.QueleaProperties;
 import org.quelea.windows.audio.AudioPanel;
 import org.quelea.windows.main.quickedit.QuickEditDialog;
+import org.quelea.windows.main.widgets.CardPane;
 import org.quelea.windows.video.VideoPanel;
 
 /**
