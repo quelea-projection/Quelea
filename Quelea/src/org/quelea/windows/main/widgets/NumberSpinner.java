@@ -16,7 +16,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.quelea.windows.main;
+package org.quelea.windows.main.widgets;
 
 import java.text.NumberFormat;
 import javafx.beans.binding.NumberBinding;

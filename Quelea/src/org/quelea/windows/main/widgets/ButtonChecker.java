@@ -16,11 +16,14 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.quelea.windows.main;
+package org.quelea.windows.main.widgets;
 
 import javafx.scene.control.MenuItem;
 import org.quelea.data.displayable.SongDisplayable;
 import org.quelea.windows.library.LibrarySongList;
+import org.quelea.windows.main.MainPanel;
+import org.quelea.windows.main.QueleaApp;
+import org.quelea.windows.main.ScheduleList;
 
 /**
  * Responsible for checking, enabling, disabling etc. buttons.
