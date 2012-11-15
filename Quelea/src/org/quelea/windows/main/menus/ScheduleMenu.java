@@ -36,7 +36,6 @@ import org.quelea.languages.LabelGrabber;
 import org.quelea.services.mail.Mailer;
 import org.quelea.services.utils.LoggerUtils;
 import org.quelea.windows.library.LibrarySongList;
-import org.quelea.windows.main.ButtonChecker;
 import org.quelea.windows.main.MainPanel;
 import org.quelea.windows.main.QueleaApp;
 import org.quelea.windows.main.ScheduleList;
@@ -47,6 +46,7 @@ import org.quelea.windows.main.actionhandlers.AddVideoActionHandler;
 import org.quelea.windows.main.actionhandlers.EditSongScheduleActionHandler;
 import org.quelea.windows.main.actionhandlers.RemoveScheduleItemActionHandler;
 import org.quelea.windows.main.actionhandlers.ShowNoticesActionHandler;
+import org.quelea.windows.main.widgets.ButtonChecker;
 
 /**
  * Quelea's schedule menu.

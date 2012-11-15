@@ -26,7 +26,7 @@ import javafx.scene.layout.GridPane;
 import org.quelea.data.displayable.SongDisplayable;
 import org.quelea.data.tags.TagEntryPanel;
 import org.quelea.languages.LabelGrabber;
-import org.quelea.windows.main.IntegerTextField;
+import org.quelea.windows.main.widgets.IntegerTextField;
 
 /**
  * A panel where more detailed information about a song is entered.
