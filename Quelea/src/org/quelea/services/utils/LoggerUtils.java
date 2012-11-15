@@ -115,7 +115,7 @@ public final class LoggerUtils {
                     if(record.getLevel().intValue() >= Level.WARNING.intValue()) {
                         StringBuilder sendText = new StringBuilder();
                         sendText.append(record.getLevel().getName()).append("\n");
-                        sendText.append(record.getMessage()).append("\n");
+                        sendText.append(new SimpleFormatter().format(record)).append("\n");
                         if(record.getThrown() != null) {
                             for(StackTraceElement e : record.getThrown().getStackTrace()) {
                                 sendText.append(e.toString()).append("\n");
