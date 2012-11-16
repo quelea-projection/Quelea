@@ -184,6 +184,7 @@ public class LyricCanvas extends StackPane {
         final Group newTextGroup = new Group();
         final Group oldTextGroup = textGroup;
 //        newTextGroup.setOpacity(0);
+        StackPane.setAlignment(newTextGroup, QueleaProperties.get().getTextPosition().getLayouPos());
         getChildren().add(newTextGroup);
         getChildren().remove(oldTextGroup);
 
