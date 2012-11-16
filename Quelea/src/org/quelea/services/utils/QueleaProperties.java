@@ -27,6 +27,7 @@ import javafx.geometry.Bounds;
 import javafx.scene.paint.Color;
 import org.quelea.data.bible.Bible;
 import org.quelea.data.displayable.TextAlignment;
+import org.quelea.windows.options.TextPosition;
 
 /**
  * Manages the properties specific to Quelea.
@@ -44,13 +45,14 @@ public final class QueleaProperties extends Properties {
      */
     private QueleaProperties() {
         try {
-            if (!getPropFile().exists()) {
+            if(!getPropFile().exists()) {
                 getPropFile().createNewFile();
             }
-            try (FileReader reader = new FileReader(getPropFile())) {
+            try(FileReader reader = new FileReader(getPropFile())) {
                 load(reader);
             }
-        } catch (IOException ex) {
+        }
+        catch(IOException ex) {
 //            LOGGER.log(Level.SEVERE, "Couldn't load properties", ex);
 //            ex.printStackTrace();
         }
@@ -69,9 +71,10 @@ public final class QueleaProperties extends Properties {
      * Save these properties to the file.
      */
     private void write() {
-        try (FileWriter writer = new FileWriter(getPropFile())) {
+        try(FileWriter writer = new FileWriter(getPropFile())) {
             store(writer, "Auto save");
-        } catch (IOException ex) {
+        }
+        catch(IOException ex) {
 //            LOGGER.log(Level.WARNING, "Couldn't store properties", ex);
         }
     }
@@ -111,7 +114,7 @@ public final class QueleaProperties extends Properties {
      */
     public static File getQueleaUserHome() {
         File ret = new File(new File(System.getProperty("user.home")), ".quelea");
-        if (!ret.exists()) {
+        if(!ret.exists()) {
             ret.mkdir();
         }
         return ret;
@@ -212,11 +215,11 @@ public final class QueleaProperties extends Properties {
     public File getBibleDir() {
         return new File(getProperty("bibles.dir", "bibles"));
     }
-    
+
     /**
      * Get the directory used for storing images.
      * <p/>
-     * @return the img directory 
+     * @return the img directory
      */
     public File getImageDir() {
         return new File(getProperty("img.dir", "img"));
@@ -337,6 +340,27 @@ public final class QueleaProperties extends Properties {
      */
     public void setMaxChars(int maxChars) {
         setProperty("max.chars", Integer.toString(maxChars));
+        write();
+    }
+
+    /**
+     * Get the text position to be used for positioning text on a lyrics canvas.
+     * <p/>
+     * @return the text position to be used for positioning text on a lyrics
+     * canvas.
+     */
+    public TextPosition getTextPosition() {
+        return TextPosition.parseTextPosition(getProperty("text.position", "Middle"));
+    }
+
+    /**
+     * Set the text position to be used for positioning text on a lyrics canvas.
+     * <p/>
+     * @param position the text position to be used for positioning text on a
+     * lyrics canvas.
+     */
+    public void setTextPosition(TextPosition position) {
+        setProperty("text.position", position.toString());
         write();
     }
 
@@ -691,7 +715,7 @@ public final class QueleaProperties extends Properties {
         double red = Double.parseDouble(color[0].trim());
         double green = Double.parseDouble(color[1].trim());
         double blue = Double.parseDouble(color[2].trim());
-        if (red > 1 || green > 1 || blue > 1) {
+        if(red > 1 || green > 1 || blue > 1) {
             red /= 255;
             green /= 255;
             blue /= 255;

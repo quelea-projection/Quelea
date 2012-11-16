@@ -22,6 +22,7 @@ import javafx.beans.value.ObservableValue;
 import javafx.event.EventHandler;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.Slider;
 import javafx.scene.control.TextField;
@@ -37,7 +38,7 @@ import org.quelea.windows.main.QueleaApp;
 
 /**
  * A panel where the general options in the program are set.
- *
+ * <p/>
  * @author Michael
  */
 public class OptionsGeneralPanel extends GridPane implements PropertyPanel {
@@ -49,6 +50,7 @@ public class OptionsGeneralPanel extends GridPane implements PropertyPanel {
     private final CheckBox oneLineModeCheckBox;
     private final CheckBox textShadowCheckBox;
     private final CheckBox useOOCheckBox;
+    private final ComboBox<TextPosition> textPositionComboBox;
     private final TextField ooPathTextField;
     private final DirectoryChooser ooChooser;
     private final Button selectButton;
@@ -77,7 +79,6 @@ public class OptionsGeneralPanel extends GridPane implements PropertyPanel {
         getChildren().add(useOOLabel);
         useOOCheckBox = new CheckBox();
         useOOCheckBox.selectedProperty().addListener(new javafx.beans.value.ChangeListener<Boolean>() {
-
             @Override
             public void changed(ObservableValue<? extends Boolean> ov, Boolean t, Boolean t1) {
                 if(useOOCheckBox.isSelected()) {
@@ -109,7 +110,6 @@ public class OptionsGeneralPanel extends GridPane implements PropertyPanel {
         selectButton = new Button(LabelGrabber.INSTANCE.getLabel("browse"));
         selectButton.setDisable(true);
         selectButton.setOnAction(new EventHandler<javafx.event.ActionEvent>() {
-
             @Override
             public void handle(javafx.event.ActionEvent t) {
                 File dir = ooChooser.showDialog(QueleaApp.get().getMainWindow());
@@ -167,6 +167,18 @@ public class OptionsGeneralPanel extends GridPane implements PropertyPanel {
         getChildren().add(textShadowCheckBox);
         rows++;
 
+        Label textPositionLabel = new Label(LabelGrabber.INSTANCE.getLabel("text.position.label"));
+        GridPane.setConstraints(textPositionLabel, 1, rows);
+        getChildren().add(textPositionLabel);
+        textPositionComboBox = new ComboBox<>();
+        for(TextPosition position : TextPosition.values()) {
+            textPositionComboBox.getItems().add(position);
+        }
+        startupLabel.setLabelFor(textPositionComboBox);
+        GridPane.setConstraints(textPositionComboBox, 2, rows);
+        getChildren().add(textPositionComboBox);
+        rows++;
+
         Label borderThicknessLabel = new Label(LabelGrabber.INSTANCE.getLabel("text.border.thickness.label"));
         GridPane.setConstraints(borderThicknessLabel, 1, rows);
         getChildren().add(borderThicknessLabel);
@@ -174,21 +186,19 @@ public class OptionsGeneralPanel extends GridPane implements PropertyPanel {
         GridPane.setConstraints(borderThicknessSlider, 2, rows);
         getChildren().add(borderThicknessSlider);
         borderThicknessLabel.setLabelFor(borderThicknessSlider);
-        final Label borderThicknessValue = new Label(Integer.toString((int)borderThicknessSlider.getValue()));
+        final Label borderThicknessValue = new Label(Integer.toString((int) borderThicknessSlider.getValue()));
         GridPane.setConstraints(borderThicknessValue, 3, rows);
         getChildren().add(borderThicknessValue);
         borderThicknessValue.setLabelFor(borderThicknessSlider);
         borderThicknessSlider.valueProperty().addListener(new javafx.beans.value.ChangeListener<Number>() {
-
             @Override
             public void changed(ObservableValue<? extends Number> ov, Number t, Number t1) {
-                borderThicknessValue.setText(Integer.toString((int)borderThicknessSlider.getValue()));
+                borderThicknessValue.setText(Integer.toString((int) borderThicknessSlider.getValue()));
             }
         });
         rows++;
 
         textShadowCheckBox.selectedProperty().addListener(new javafx.beans.value.ChangeListener<Boolean>() {
-
             @Override
             public void changed(ObservableValue<? extends Boolean> ov, Boolean t, Boolean t1) {
                 if(textShadowCheckBox.isSelected()) {
@@ -209,15 +219,14 @@ public class OptionsGeneralPanel extends GridPane implements PropertyPanel {
         GridPane.setConstraints(maxCharsSlider, 2, rows);
         getChildren().add(maxCharsSlider);
         maxCharsLabel.setLabelFor(maxCharsSlider);
-        final Label maxCharsValue = new Label(Integer.toString((int)maxCharsSlider.getValue()));
+        final Label maxCharsValue = new Label(Integer.toString((int) maxCharsSlider.getValue()));
         GridPane.setConstraints(maxCharsValue, 3, rows);
         getChildren().add(maxCharsValue);
         maxCharsValue.setLabelFor(maxCharsSlider);
         maxCharsSlider.valueProperty().addListener(new javafx.beans.value.ChangeListener<Number>() {
-
             @Override
             public void changed(ObservableValue<? extends Number> ov, Number t, Number t1) {
-                maxCharsValue.setText(Integer.toString((int)maxCharsSlider.getValue()));
+                maxCharsValue.setText(Integer.toString((int) maxCharsSlider.getValue()));
             }
         });
         rows++;
@@ -229,15 +238,14 @@ public class OptionsGeneralPanel extends GridPane implements PropertyPanel {
         GridPane.setConstraints(minLinesSlider, 2, rows);
         getChildren().add(minLinesSlider);
         minLinesLabel.setLabelFor(minLinesSlider);
-        final Label minLinesValue = new Label(Integer.toString((int)minLinesSlider.getValue()));
+        final Label minLinesValue = new Label(Integer.toString((int) minLinesSlider.getValue()));
         GridPane.setConstraints(minLinesValue, 3, rows);
         getChildren().add(minLinesValue);
         minLinesValue.setLabelFor(minLinesSlider);
         minLinesSlider.valueProperty().addListener(new javafx.beans.value.ChangeListener<Number>() {
-
             @Override
             public void changed(ObservableValue<? extends Number> ov, Number t, Number t1) {
-                minLinesValue.setText(Integer.toString((int)minLinesSlider.getValue()));
+                minLinesValue.setText(Integer.toString((int) minLinesSlider.getValue()));
             }
         });
         rows++;
@@ -262,6 +270,7 @@ public class OptionsGeneralPanel extends GridPane implements PropertyPanel {
         maxCharsSlider.setValue(props.getMaxChars());
         minLinesSlider.setValue(props.getMinLines());
         borderThicknessSlider.setValue(props.getOutlineThickness());
+        textPositionComboBox.setValue(props.getTextPosition());
     }
 
     /**
@@ -289,12 +298,13 @@ public class OptionsGeneralPanel extends GridPane implements PropertyPanel {
         //One line mode needs to be updated manually
         QueleaApp.get().getMainWindow().getMainPanel().getPreviewPanel().updateOneLineMode();
         QueleaApp.get().getMainWindow().getMainPanel().getLivePanel().updateOneLineMode();
-        int maxCharsPerLine = (int)getMaxCharsSlider().getValue();
+        int maxCharsPerLine = (int) getMaxCharsSlider().getValue();
         props.setMaxChars(maxCharsPerLine);
-        int minLines = (int)getMinLinesSlider().getValue();
+        int minLines = (int) getMinLinesSlider().getValue();
         props.setMinLines(minLines);
-        int borderThickness = (int)getBorderThicknessSlider().getValue();
+        int borderThickness = (int) getBorderThicknessSlider().getValue();
         props.setOutlineThickness(borderThickness);
+        props.setTextPosition(textPositionComboBox.getValue());
         //Initialise presentation
         if(!OOPresentation.isInit()) {
             OOUtils.attemptInit();
@@ -303,7 +313,7 @@ public class OptionsGeneralPanel extends GridPane implements PropertyPanel {
 
     /**
      * Get the max chars slider.
-     *
+     * <p/>
      * @return the max chars slider.
      */
     public Slider getMaxCharsSlider() {
@@ -312,7 +322,7 @@ public class OptionsGeneralPanel extends GridPane implements PropertyPanel {
 
     /**
      * Get the min lines slider.
-     *
+     * <p/>
      * @return the min lines slider.
      */
     public Slider getMinLinesSlider() {
@@ -321,7 +331,7 @@ public class OptionsGeneralPanel extends GridPane implements PropertyPanel {
 
     /**
      * Get the startup readProperties checkbox.
-     *
+     * <p/>
      * @return the startup readProperties checkbox.
      */
     public CheckBox getStartupUpdateCheckBox() {
@@ -330,7 +340,7 @@ public class OptionsGeneralPanel extends GridPane implements PropertyPanel {
 
     /**
      * Get the capitalise first character in each line checkbox.
-     *
+     * <p/>
      * @return the capitalise first character in each line checkbox.
      */
     public CheckBox getCapitalFirstCheckBox() {
@@ -339,7 +349,7 @@ public class OptionsGeneralPanel extends GridPane implements PropertyPanel {
 
     /**
      * Get the display song info checkbox.
-     *
+     * <p/>
      * @return the display song info checkbox.
      */
     public CheckBox getDisplaySongInfoCheckBox() {
@@ -348,7 +358,7 @@ public class OptionsGeneralPanel extends GridPane implements PropertyPanel {
 
     /**
      * Get the "one monitor warning" checkbox.
-     *
+     * <p/>
      * @return the "one monitor warning" checkbox.
      */
     public CheckBox getOneMonitorWarningCheckBox() {
@@ -357,7 +367,7 @@ public class OptionsGeneralPanel extends GridPane implements PropertyPanel {
 
     /**
      * Get the "one line mode" checkbox.
-     *
+     * <p/>
      * @return the "one line mode" checkbox.
      */
     public CheckBox getOneLineModeCheckBox() {
@@ -366,7 +376,7 @@ public class OptionsGeneralPanel extends GridPane implements PropertyPanel {
 
     /**
      * Get the "use openoffice" checkbox.
-     *
+     * <p/>
      * @return the "use openoffice" checkbox.
      */
     public CheckBox getUseOOCheckBox() {
@@ -375,7 +385,7 @@ public class OptionsGeneralPanel extends GridPane implements PropertyPanel {
 
     /**
      * Get the "openoffice path" text field.
-     *
+     * <p/>
      * @return the "openoffice path" text field.
      */
     public TextField getOOPathTextField() {
@@ -384,7 +394,7 @@ public class OptionsGeneralPanel extends GridPane implements PropertyPanel {
 
     /**
      * Get the "text shadow" checkbox.
-     *
+     * <p/>
      * @return the "text.shadow" checkbox.
      */
     public CheckBox getTextShadowCheckBox() {
@@ -393,7 +403,7 @@ public class OptionsGeneralPanel extends GridPane implements PropertyPanel {
 
     /**
      * Get the border thickness slider.
-     *
+     * <p/>
      * @return the border thickness slider.
      */
     public Slider getBorderThicknessSlider() {
