@@ -20,15 +20,19 @@ package org.quelea.services.importexport;
 import javafx.application.Platform;
 import javafx.event.EventHandler;
 import org.quelea.data.db.SongManager;
+import org.quelea.data.displayable.SongDisplayable;
 
 /**
- * A dialog used for selecting the songs to be entered into the database after they've been imported.
+ * A dialog used for selecting the songs to be entered into the database after
+ * they've been imported.
+ * <p/>
  * @author Michael
  */
 public class SelectImportedSongsDialog extends SelectSongsDialog {
 
     /**
      * Create a new imported songs dialog.
+     * <p/>
      * @param owner the owner of the dialog.
      */
     public SelectImportedSongsDialog() {
@@ -39,20 +43,19 @@ public class SelectImportedSongsDialog extends SelectSongsDialog {
                 }, "Add", "Add to database?");
 
         getAddButton().setOnAction(new EventHandler<javafx.event.ActionEvent>() {
-
             @Override
             public void handle(javafx.event.ActionEvent t) {
                 getAddButton().setDisable(true);
                 new Thread() {
                     public void run() {
                         for(int i = 0; i < getSongs().size(); i++) {
+                            SongDisplayable song = getSongs().get(i);
                             if(getCheckedColumn().getCellData(i)) {
-                                SongManager.get().addSong(getSongs().get(i), false);
+                                SongManager.get().addSong(song, false);
                             }
                         }
-                        
-                        Platform.runLater(new Runnable() {
 
+                        Platform.runLater(new Runnable() {
                             @Override
                             public void run() {
                                 SongManager.get().fireUpdate();
