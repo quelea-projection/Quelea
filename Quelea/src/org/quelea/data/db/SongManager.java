@@ -160,6 +160,8 @@ public final class SongManager {
      * @return true if the operation succeeded, false otherwise.
      */
     public boolean addSong(final SongDisplayable song, boolean fireUpdate) {
+        final boolean nullTheme = song.getSections()[0].getTheme()==null;
+        final boolean nullTags = song.getTags()==null;
         HibernateUtil.execute(new HibernateUtil.SessionCallback() {
             @Override
             public void execute(Session session) {
@@ -171,10 +173,10 @@ public final class SongManager {
                         song.getYear(),
                         song.getPublisher(),
                         song.getKey(), 
-                        song.getCapo(), 
+                        song.getCapo(),
                         song.getInfo(),
-                        new Theme(song.getSections()[0].getTheme().getTheme()),//@todo check if theme mapping is correct
-                        Arrays.asList(song.getTags()));
+                        nullTheme ? ThemeDTO.DEFAULT_THEME.getTheme() : new Theme(song.getSections()[0].getTheme().getTheme()),//@todo check if theme mapping is correct
+                        nullTags ? new ArrayList<String>() : Arrays.asList(song.getTags()));
                 session.save(newSong);
             }
         });
