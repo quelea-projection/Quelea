@@ -26,6 +26,7 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Pattern;
+import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import org.javafx.dialog.Dialog;
@@ -34,6 +35,7 @@ import org.quelea.data.displayable.SongDisplayable;
 import org.quelea.languages.LabelGrabber;
 import org.quelea.services.utils.LoggerUtils;
 import org.quelea.services.utils.QueleaProperties;
+import org.quelea.services.utils.Utils;
 import org.quelea.windows.main.StatusPanel;
 
 /**
@@ -68,14 +70,20 @@ public class KingswayWorshipParser implements SongParser {
      * @throws IOException if something went wrong.
      */
     @Override
-    public List<SongDisplayable> getSongs(File location, StatusPanel statusPanel) throws IOException {
+    public List<SongDisplayable> getSongs(File location, final StatusPanel statusPanel) throws IOException {
         if(all) {
             count500 = 0;
             List<SongDisplayable> ret = new ArrayList<>();
             int i = getStart();
             String pageText;
             if(statusPanel != null) {
-                statusPanel.getProgressBar().setProgress(0);
+                Platform.runLater(new Runnable() {
+
+                    @Override
+                    public void run() {
+                        statusPanel.getProgressBar().setProgress(0);
+                    }
+                });
             }
             while((pageText = getPageText(i)) != null) {
                 int percentage = (int) (((double) i / (double) ROUGH_NUM_SONGS) * 100);
@@ -158,19 +166,29 @@ public class KingswayWorshipParser implements SongParser {
         if(start == 0) {
             return 0;
         }
-        returnVal = 0;
-        Dialog.buildConfirmation(LabelGrabber.INSTANCE.getLabel("check.kingsway.start.title"), LabelGrabber.INSTANCE.getLabel("check.kingsway.start"))
-                .addYesButton(new EventHandler<ActionEvent>() {
+        returnVal = -1;
+        Platform.runLater(new Runnable() {
+
             @Override
-            public void handle(ActionEvent t) {
-                returnVal = start;
+            public void run() {
+                Dialog.buildConfirmation(LabelGrabber.INSTANCE.getLabel("check.kingsway.start.title"), LabelGrabber.INSTANCE.getLabel("check.kingsway.start"))
+                        .addYesButton(new EventHandler<ActionEvent>() {
+                    @Override
+                    public void handle(ActionEvent t) {
+                        returnVal = start;
+                    }
+                }).addNoButton(new EventHandler<ActionEvent>() {
+                    @Override
+                    public void handle(ActionEvent t) {
+                        returnVal = 0;
+                    }
+                }).build().showAndWait();
+                
             }
-        }).addNoButton(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent t) {
-                returnVal = 0;
-            }
-        }).build().showAndWait();
+        });
+        while(returnVal==-1) {
+            Utils.sleep(10);
+        }
         return returnVal;
     }
 
