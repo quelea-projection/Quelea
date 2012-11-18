@@ -34,11 +34,12 @@ import org.javafx.dialog.Dialog;
 import org.quelea.languages.LabelGrabber;
 import org.quelea.services.utils.LoggerUtils;
 import org.quelea.services.utils.QueleaProperties;
+import org.quelea.services.utils.UpdateChecker;
 import org.quelea.windows.help.AboutDialog;
 
 /**
  * Quelea's help menu.
- *
+ * <p/>
  * @author Michael
  */
 public class HelpMenu extends Menu {
@@ -57,19 +58,17 @@ public class HelpMenu extends Menu {
      */
     public HelpMenu() {
         super(LabelGrabber.INSTANCE.getLabel("help.menu"));
-        
-        Platform.runLater(new Runnable() {
 
+        Platform.runLater(new Runnable() {
             @Override
             public void run() {
                 aboutDialog = new AboutDialog();
             }
         });
-        
+
         if(Desktop.isDesktopSupported()) {
             queleaSite = new MenuItem(LabelGrabber.INSTANCE.getLabel("help.menu.website"), new ImageView(new Image("file:icons/website.png", 16, 16, false, true)));
             queleaSite.setOnAction(new EventHandler<javafx.event.ActionEvent>() {
-
                 @Override
                 public void handle(javafx.event.ActionEvent t) {
                     try {
@@ -84,7 +83,6 @@ public class HelpMenu extends Menu {
             getItems().add(queleaSite);
             queleaFacebook = new MenuItem(LabelGrabber.INSTANCE.getLabel("help.menu.facebook"), new ImageView(new Image("file:icons/facebook.png", 16, 16, false, true)));
             queleaFacebook.setOnAction(new EventHandler<javafx.event.ActionEvent>() {
-
                 @Override
                 public void handle(javafx.event.ActionEvent t) {
                     try {
@@ -99,7 +97,6 @@ public class HelpMenu extends Menu {
             getItems().add(queleaFacebook);
             queleaDiscuss = new MenuItem(LabelGrabber.INSTANCE.getLabel("help.menu.discussion"), new ImageView(new Image("file:icons/discuss.png", 16, 16, false, true)));
             queleaDiscuss.setOnAction(new EventHandler<javafx.event.ActionEvent>() {
-
                 @Override
                 public void handle(javafx.event.ActionEvent t) {
                     try {
@@ -114,7 +111,6 @@ public class HelpMenu extends Menu {
             getItems().add(queleaDiscuss);
             queleaDownload = new MenuItem(LabelGrabber.INSTANCE.getLabel("help.menu.download"), new ImageView(new Image("file:icons/download.png", 16, 16, false, true)));
             queleaDownload.setOnAction(new EventHandler<javafx.event.ActionEvent>() {
-
                 @Override
                 public void handle(javafx.event.ActionEvent t) {
                     try {
@@ -136,16 +132,14 @@ public class HelpMenu extends Menu {
         }
         updateCheck = new MenuItem(LabelGrabber.INSTANCE.getLabel("help.menu.update"), new ImageView(new Image("file:icons/update.png", 16, 16, false, true)));
         updateCheck.setOnAction(new EventHandler<javafx.event.ActionEvent>() {
-
             @Override
             public void handle(javafx.event.ActionEvent t) {
-//                new UpdateChecker(Application.get().getMainWindow()).checkUpdate(true, true, true);
+                new UpdateChecker().checkUpdate(true, true, true);
             }
         });
         getItems().add(updateCheck);
         about = new MenuItem(LabelGrabber.INSTANCE.getLabel("help.menu.about"), new ImageView(new Image("file:icons/about.png", 16, 16, false, true)));
         about.setOnAction(new EventHandler<javafx.event.ActionEvent>() {
-
             @Override
             public void handle(javafx.event.ActionEvent t) {
                 aboutDialog.show();
@@ -156,55 +150,10 @@ public class HelpMenu extends Menu {
 
     /**
      * Show a dialog saying we couldn't open the given location.
-     *
+     * <p/>
      * @param location the location that failed to open.
      */
     private void showError() {
         Dialog.showError(LabelGrabber.INSTANCE.getLabel("help.menu.error.title"), LabelGrabber.INSTANCE.getLabel("help.menu.error.text"));
-    }
-
-    /**
-     * Get the quelea discuss menu item.
-     *
-     * @return the quelea discuss menu item.
-     */
-    public MenuItem getQueleaDiscuss() {
-        return queleaDiscuss;
-    }
-
-    /**
-     * Get the quelea download menu item.
-     *
-     * @return the quelea download menu item.
-     */
-    public MenuItem getQueleaDownload() {
-        return queleaDownload;
-    }
-
-    /**
-     * Get the quelea website menu item.
-     *
-     * @return the quelea website menu item.
-     */
-    public MenuItem getQueleaSite() {
-        return queleaSite;
-    }
-
-    /**
-     * Get the about menu item.
-     *
-     * @return the about menu item.
-     */
-    public MenuItem getAbout() {
-        return about;
-    }
-
-    /**
-     * Get the "check update" menu item.
-     *
-     * @return the "check update" menu item.
-     */
-    public MenuItem getUpdateCheck() {
-        return updateCheck;
     }
 }
