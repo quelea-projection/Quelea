@@ -33,6 +33,7 @@ import javafx.event.EventHandler;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
+import javafx.scene.control.Label;
 import javafx.scene.control.Tooltip;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -60,7 +61,7 @@ public class LibraryImagePanel extends BorderPane {
      * Create a new library image panel.
      */
     public LibraryImagePanel() {
-        imagePanel = new ImageListPanel("img");
+        imagePanel = new ImageListPanel(QueleaProperties.get().getImageDir().getName());
         setCenter(imagePanel);
         northPanel = new HBox();
         Button refreshButton = new Button("", new ImageView(new Image("file:icons/green_refresh128.png", 22, 22, true, true)));
@@ -96,7 +97,8 @@ public class LibraryImagePanel extends BorderPane {
         final ObservableList<NewFile> list = FXCollections.observableArrayList();
         list.addAll(getComboBoxOptions());
 
-        ComboBox cb = new ComboBox(list);
+        ComboBox<NewFile> cb = new ComboBox<>(list);
+        cb.setValue(cb.getItems().get(1));
         cb.setTooltip(new Tooltip(LabelGrabber.INSTANCE.getLabel("select.folder.images.panel")));
         cb.valueProperty().addListener(new ChangeListener() {
             @Override
@@ -125,17 +127,13 @@ public class LibraryImagePanel extends BorderPane {
                 });
             }
         });
-        cb.setMinWidth(
-                250.0);
-        northPanel.getChildren()
-                .add(cb);
-        northPanel.getChildren()
-                .add(addButton);
-        northPanel.getChildren()
-                .add(refreshButton);
-        northPanel.alignmentProperty()
-                .setValue(Pos.CENTER);
-
+        cb.setMinWidth(250.0);
+        northPanel.getChildren().add(new Label(LabelGrabber.INSTANCE.getLabel("image.folder")));
+        northPanel.getChildren().add(cb);
+        northPanel.getChildren().add(addButton);
+        northPanel.getChildren().add(refreshButton);
+        northPanel.setSpacing(10);
+        northPanel.alignmentProperty().setValue(Pos.CENTER_LEFT);
         setTop(northPanel);
     }
 
