@@ -78,7 +78,6 @@ public class KingswayWorshipParser implements SongParser {
             String pageText;
             if(statusPanel != null) {
                 Platform.runLater(new Runnable() {
-
                     @Override
                     public void run() {
                         statusPanel.getProgressBar().setProgress(0);
@@ -110,7 +109,6 @@ public class KingswayWorshipParser implements SongParser {
             QueleaProperties.get().setNextKingswaySong(nextVal);
             if(statusPanel != null) {
                 Platform.runLater(new Runnable() {
-
                     @Override
                     public void run() {
                         statusPanel.getProgressBar().setProgress(-1);
@@ -174,7 +172,6 @@ public class KingswayWorshipParser implements SongParser {
         }
         returnVal = -1;
         Platform.runLater(new Runnable() {
-
             @Override
             public void run() {
                 Dialog.buildConfirmation(LabelGrabber.INSTANCE.getLabel("check.kingsway.start.title"), LabelGrabber.INSTANCE.getLabel("check.kingsway.start"))
@@ -189,10 +186,10 @@ public class KingswayWorshipParser implements SongParser {
                         returnVal = 0;
                     }
                 }).build().showAndWait();
-                
+
             }
         });
-        while(returnVal==-1) {
+        while(returnVal == -1) {
             Utils.sleep(10);
         }
         return returnVal;
@@ -337,7 +334,6 @@ public class KingswayWorshipParser implements SongParser {
             return content.toString();
         }
         catch(Exception ex) {
-            LOGGER.log(Level.WARNING, ex.getMessage());
             if(ex.getMessage().contains("500")) {
                 count500++;
                 if(count500 > 10) {
@@ -346,6 +342,9 @@ public class KingswayWorshipParser implements SongParser {
                     return null;
                 }
                 return "";
+            }
+            else {
+                LOGGER.log(Level.WARNING, ex.getMessage());
             }
             return null;
         }
