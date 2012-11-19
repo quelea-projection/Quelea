@@ -23,6 +23,7 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.List;
+import java.util.logging.Level;
 import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
 import javafx.animation.Timeline;
@@ -42,6 +43,7 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.TilePane;
 import javafx.util.Duration;
 import org.quelea.data.displayable.ImageDisplayable;
+import org.quelea.services.utils.LoggerUtils;
 import org.quelea.services.utils.Utils;
 import org.quelea.services.watcher.ImageFileWatcher;
 import org.quelea.windows.main.QueleaApp;
@@ -86,7 +88,7 @@ public class ImageListPanel extends BorderPane {
                                 try {
                                     Files.copy(f.getAbsoluteFile().toPath(), Paths.get(getDir(), f.getName()), StandardCopyOption.COPY_ATTRIBUTES);
                                 } catch (IOException ex) {
-                                    ex.printStackTrace();
+                                    LoggerUtils.getLogger().log(Level.WARNING, "Could not copy file into ImagePanel through system drag and drop.");
                                 }
                             }
                         }

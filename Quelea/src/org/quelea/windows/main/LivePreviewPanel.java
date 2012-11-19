@@ -17,9 +17,6 @@
  */
 package org.quelea.windows.main;
 
-import org.quelea.windows.lyrics.SelectLyricsPanel;
-import org.quelea.windows.lyrics.LyricWindow;
-import org.quelea.windows.lyrics.LyricCanvas;
 import java.awt.Canvas;
 import java.util.HashSet;
 import java.util.Set;
@@ -41,6 +38,9 @@ import org.quelea.data.displayable.VideoDisplayable;
 import org.quelea.services.utils.LoggerUtils;
 import org.quelea.services.utils.QueleaProperties;
 import org.quelea.windows.audio.AudioPanel;
+import org.quelea.windows.lyrics.LyricCanvas;
+import org.quelea.windows.lyrics.LyricWindow;
+import org.quelea.windows.lyrics.SelectLyricsPanel;
 import org.quelea.windows.main.quickedit.QuickEditDialog;
 import org.quelea.windows.main.widgets.CardPane;
 import org.quelea.windows.video.VideoPanel;
