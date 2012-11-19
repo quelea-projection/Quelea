@@ -5,6 +5,8 @@ import java.util.logging.Logger;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.cfg.Configuration;
+import org.hibernate.service.ServiceRegistry;
+import org.hibernate.service.ServiceRegistryBuilder;
 import org.quelea.services.utils.LoggerUtils;
 import org.quelea.services.utils.QueleaProperties;
 
@@ -17,6 +19,7 @@ import org.quelea.services.utils.QueleaProperties;
 public class HibernateUtil {
 
     private static final SessionFactory sessionFactory;
+    private static final ServiceRegistry serviceRegistry;
     private static final Logger LOGGER = LoggerUtils.getLogger();
 
     public interface SessionCallback {
@@ -39,7 +42,8 @@ public class HibernateUtil {
             cfg.addAnnotatedClass(org.quelea.data.db.model.Song.class);//@todo add reflection code which retrieve all classes from package
             cfg.addAnnotatedClass(org.quelea.data.db.model.Theme.class);
             cfg.addAnnotatedClass(org.quelea.data.db.model.TextShadow.class);
-            sessionFactory = cfg.buildSessionFactory();
+            serviceRegistry = new ServiceRegistryBuilder().applySettings(cfg.getProperties()).buildServiceRegistry();
+            sessionFactory = cfg.buildSessionFactory(serviceRegistry);
         } catch (Throwable ex) {
             // Log the exception. 
             System.err.println("Initial SessionFactory creation failed." + ex);
