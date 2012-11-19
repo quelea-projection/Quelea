@@ -113,7 +113,7 @@ public final class BibleManager {
             }.start();
         }
         catch(IOException ex) {
-            ex.printStackTrace();
+            LOGGER.log(Level.WARNING, "Could not start watching underlying file structure for Bible Manager");
         }
     }
 

@@ -23,6 +23,7 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.List;
+import java.util.logging.Level;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -43,6 +44,7 @@ import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
 import org.quelea.languages.LabelGrabber;
 import org.quelea.services.utils.FileFilters;
+import org.quelea.services.utils.LoggerUtils;
 import org.quelea.services.utils.QueleaProperties;
 import org.quelea.windows.main.QueleaApp;
 
@@ -87,7 +89,7 @@ public class LibraryImagePanel extends BorderPane {
                         try {
                             Files.copy(f.getAbsoluteFile().toPath(), Paths.get(imagePanel.getDir(), f.getName()), StandardCopyOption.COPY_ATTRIBUTES);
                         } catch (IOException ex) {
-                            ex.printStackTrace();
+                            LoggerUtils.getLogger().log(Level.WARNING, "Could not copy file into ImagePanel from FileChooser selection");
                         }
                     }
                 }

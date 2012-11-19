@@ -19,6 +19,7 @@ package org.quelea.services.importexport;
 
 import java.io.File;
 import java.util.Arrays;
+import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.stage.FileChooser;
@@ -80,9 +81,6 @@ public class SelectExportedSongsDialog extends SelectSongsDialog {
             }
         });
         showAndWait();
-
-        System.out.println("10");
-        System.out.println(getSongs().size());
     }
 
     /**
@@ -104,22 +102,23 @@ public class SelectExportedSongsDialog extends SelectSongsDialog {
     private void writeSongPack(final File file) {
         final SongPack pack = new SongPack();
         getAddButton().setDisable(true);
-        System.out.println("WriteSongPack called");
         new Thread() {
             @Override
             public void run() {
                 for (int i = 0; i < getSongs().size(); i++) {
                     if (getCheckedColumn().getCellData(i)) {
-                        System.out.println("adding song");
                         pack.addSong(getSongs().get(i));
                     }
                 }
                 pack.writeToFile(file);
-                System.out.println("sent to pack");
-                hide();
-                System.out.println("hiding?");
-                getAddButton().setDisable(false);
+                Platform.runLater(new Runnable() {
+                    @Override
+                    public void run() {
+                        hide();
+                        getAddButton().setDisable(false);
+                    }
+                });
             }
-        };
+        }.start();
     }
 }

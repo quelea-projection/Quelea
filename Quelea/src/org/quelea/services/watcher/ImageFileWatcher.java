@@ -25,7 +25,9 @@ import java.nio.file.StandardWatchEventKinds;
 import java.nio.file.WatchEvent;
 import java.nio.file.WatchKey;
 import java.nio.file.WatchService;
+import java.util.logging.Level;
 import javafx.application.Platform;
+import org.quelea.services.utils.LoggerUtils;
 import org.quelea.services.utils.QueleaProperties;
 import org.quelea.windows.library.ImageListPanel;
 import org.quelea.windows.main.QueleaApp;
@@ -81,7 +83,7 @@ public class ImageFileWatcher {
                     try {
                         watcher.close();
                     } catch (IOException ex) {
-                        ex.printStackTrace();
+                        LoggerUtils.getLogger().log(Level.WARNING, "Could not close watcher, will cause memory leak");
                     }
                     return;
                 }
@@ -90,7 +92,7 @@ public class ImageFileWatcher {
             count++;
             t.start();
         } catch (IOException e) {
-            e.printStackTrace();
+            LoggerUtils.getLogger().log(Level.WARNING, "Could not start watching underlying file structure for Image panel");
         }
     }
 
@@ -107,7 +109,7 @@ public class ImageFileWatcher {
                     th.interrupt();
                 }
                 catch(Exception e) {
-                    e.printStackTrace();
+                    LoggerUtils.getLogger().log(Level.WARNING, "Could not interupt current watcher thread - thread overload");
                     return;
                 }
             }
