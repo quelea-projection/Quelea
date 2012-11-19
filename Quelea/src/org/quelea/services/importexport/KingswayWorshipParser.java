@@ -49,7 +49,7 @@ public class KingswayWorshipParser implements SongParser {
     /**
      * Rough number of songs in the library at present.
      */
-    private static final int ROUGH_NUM_SONGS = 2600;
+    private static final int ROUGH_NUM_SONGS = 2800;
     private static final SongDisplayable DEFAULT = new SongDisplayable("", "");
     private int count500 = 0;
     private boolean all;
@@ -109,7 +109,13 @@ public class KingswayWorshipParser implements SongParser {
             }
             QueleaProperties.get().setNextKingswaySong(nextVal);
             if(statusPanel != null) {
-                statusPanel.getProgressBar().setProgress(-1);
+                Platform.runLater(new Runnable() {
+
+                    @Override
+                    public void run() {
+                        statusPanel.getProgressBar().setProgress(-1);
+                    }
+                });
             }
             return ret;
         }
