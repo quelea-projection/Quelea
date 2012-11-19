@@ -20,7 +20,6 @@ package org.quelea.windows.main;
 import java.awt.Canvas;
 import java.util.HashSet;
 import java.util.Set;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.event.EventHandler;
 import javafx.scene.Node;
@@ -38,8 +37,8 @@ import org.quelea.data.displayable.VideoDisplayable;
 import org.quelea.services.utils.LoggerUtils;
 import org.quelea.services.utils.QueleaProperties;
 import org.quelea.windows.audio.AudioPanel;
-import org.quelea.windows.lyrics.LyricCanvas;
-import org.quelea.windows.lyrics.LyricWindow;
+import org.quelea.windows.lyrics.DisplayCanvas;
+import org.quelea.windows.lyrics.DisplayWindow;
 import org.quelea.windows.lyrics.SelectLyricsPanel;
 import org.quelea.windows.main.quickedit.QuickEditDialog;
 import org.quelea.windows.main.widgets.CardPane;
@@ -54,8 +53,8 @@ import org.quelea.windows.video.VideoPanel;
 public abstract class LivePreviewPanel extends BorderPane {
 
     private static final Logger LOGGER = LoggerUtils.getLogger();
-    private final Set<LyricCanvas> canvases = new HashSet<>();
-    private final Set<LyricWindow> windows = new HashSet<>();
+    private final Set<DisplayCanvas> canvases = new HashSet<>();
+    private final Set<DisplayWindow> windows = new HashSet<>();
     private Displayable displayable;
     private CardPane cardPanel = new CardPane();
     private static final String LYRICS_LABEL = "LYRICS";
@@ -214,6 +213,11 @@ public abstract class LivePreviewPanel extends BorderPane {
     public void setDisplayable(Displayable displayable, int index) {
         this.displayable = displayable;
         presentationPanel.stopCurrent();
+        audioPanel.clear();
+        videoPanel.clear();
+        lyricsPanel.clear();
+        picturePanel.clear();
+        presentationPanel.clear();
         if(PRESENTATION_LABEL.equals(currentLabel)) {
             presentationPanel.setDisplayable(null, 0);
         }
@@ -260,24 +264,6 @@ public abstract class LivePreviewPanel extends BorderPane {
         }
     }
 
-    /**
-     * Set video properties - used to copy video properties from one panel to
-     * another seamlessly. At present buggy, so commented out.
-     *
-     * @param other the panel to copy properties from.
-     */
-    public void setVideoProperties(LivePreviewPanel other) {
-//        videoPanel.getMultimediaControlPanel().playVideo();
-//        videoPanel.getMultimediaControlPanel().pauseVideo();
-//        videoPanel.getMultimediaControlPanel().setTime(other.videoPanel.getMultimediaControlPanel().getTime());
-    }
-
-    /**
-     * Pause the current video panel's video.
-     */
-    public void pauseVideo() {
-//        videoPanel.getMultimediaControlPanel().pause();
-    }
 
     /**
      * Get the displayable currently being displayed, or null if there isn't
@@ -294,7 +280,7 @@ public abstract class LivePreviewPanel extends BorderPane {
      *
      * @param canvas the canvas to register.
      */
-    public final void registerLyricCanvas(final LyricCanvas canvas) {
+    public final void registerLyricCanvas(final DisplayCanvas canvas) {
         if(canvas == null) {
             return;
         }
@@ -306,7 +292,7 @@ public abstract class LivePreviewPanel extends BorderPane {
      *
      * @param window the window to register.
      */
-    public final void registerLyricWindow(final LyricWindow window) {
+    public final void registerLyricWindow(final DisplayWindow window) {
         if(window == null) {
             return;
         }
@@ -336,7 +322,7 @@ public abstract class LivePreviewPanel extends BorderPane {
      *
      * @return the canvases.
      */
-    public Set<LyricCanvas> getCanvases() {
+    public Set<DisplayCanvas> getCanvases() {
         return canvases;
     }
 
@@ -345,7 +331,7 @@ public abstract class LivePreviewPanel extends BorderPane {
      *
      * @return the windows.
      */
-    public Set<LyricWindow> getWindows() {
+    public Set<DisplayWindow> getWindows() {
         return windows;
     }
 }

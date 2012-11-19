@@ -16,12 +16,7 @@
  */
 package org.quelea.windows.lyrics;
 
-//import java.awt.Cursor;
-import org.quelea.windows.lyrics.LyricCanvas;
 import javafx.scene.Cursor;
-import java.awt.Point;
-import java.awt.Toolkit;
-import java.awt.image.BufferedImage;
 import javafx.application.Platform;
 import javafx.geometry.Bounds;
 import javafx.scene.Scene;
@@ -33,10 +28,10 @@ import javafx.stage.StageStyle;
  * The full screen window used for displaying the projection.
  * @author Michael
  */
-public class LyricWindow extends Stage {
+public class DisplayWindow extends Stage {
 
     private static final Cursor BLANK_CURSOR;
-    private final LyricCanvas canvas;
+    private final DisplayCanvas canvas;
 
     /**
      * Initialise cursor hiding.
@@ -49,12 +44,12 @@ public class LyricWindow extends Stage {
      * Create a new lyrics window positioned to fill the given rectangle.
      * @param area the area in which the window should be drawn.
      */
-    public LyricWindow(Bounds area, boolean stageView) {
+    public DisplayWindow(Bounds area, boolean stageView) {
         initStyle(StageStyle.UNDECORATED);
         getIcons().add(new Image("file:icons/logo.png"));
         setTitle("Projection window");
         setArea(area);
-        canvas = new LyricCanvas(true, stageView);
+        canvas = new DisplayCanvas(true, stageView);
         Scene scene = new Scene(canvas);
         setScene(scene);
     }
@@ -80,7 +75,7 @@ public class LyricWindow extends Stage {
      * Get the canvas object that underlines this lyric window.
      * @return the lyric canvas backing this window.
      */
-    public LyricCanvas getCanvas() {
+    public DisplayCanvas getCanvas() {
         return canvas;
     }
 }

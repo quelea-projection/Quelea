@@ -17,7 +17,7 @@
  */
 package org.quelea.windows.main;
 
-import org.quelea.windows.lyrics.LyricWindow;
+import org.quelea.windows.lyrics.DisplayWindow;
 import java.io.File;
 import org.javafx.dialog.Dialog;
 import org.quelea.data.Schedule;
@@ -32,8 +32,8 @@ public class QueleaApp {
 
     private static final QueleaApp INSTANCE = new QueleaApp();
     private MainWindow mainWindow;
-    private LyricWindow lyricWindow;
-    private LyricWindow stageWindow;
+    private DisplayWindow lyricWindow;
+    private DisplayWindow stageWindow;
     private ImageFileWatcher imageWatcher;
 
     /**
@@ -62,7 +62,7 @@ public class QueleaApp {
      * Get the lyric window.
      * @return the lyric window.
      */
-    public LyricWindow getLyricWindow() {
+    public DisplayWindow getLyricWindow() {
         return lyricWindow;
     }
 
@@ -70,7 +70,7 @@ public class QueleaApp {
      * Get the stage window.
      * @return the stage window.
      */
-    public LyricWindow getStageWindow() {
+    public DisplayWindow getStageWindow() {
         return stageWindow;
     }
 
@@ -95,7 +95,7 @@ public class QueleaApp {
      * Set the lyric window.
      * @param lyricWindow the lyric window.
      */
-    public void setLyricWindow(LyricWindow lyricWindow) {
+    public void setLyricWindow(DisplayWindow lyricWindow) {
         this.lyricWindow = lyricWindow;
     }
 
@@ -103,7 +103,7 @@ public class QueleaApp {
      * Set the stage window.
      * @param lyricWindow the stage window.
      */
-    public void setStageWindow(LyricWindow lyricWindow) {
+    public void setStageWindow(DisplayWindow lyricWindow) {
         this.stageWindow = lyricWindow;
     }
 

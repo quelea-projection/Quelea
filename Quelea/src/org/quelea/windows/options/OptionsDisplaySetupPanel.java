@@ -25,7 +25,7 @@ import org.quelea.services.utils.PropertyPanel;
 import org.quelea.services.utils.QueleaProperties;
 import org.quelea.windows.main.GraphicsDeviceListener;
 import org.quelea.windows.main.GraphicsDeviceWatcher;
-import org.quelea.windows.lyrics.LyricWindow;
+import org.quelea.windows.lyrics.DisplayWindow;
 import org.quelea.windows.main.QueleaApp;
 
 /**
@@ -110,8 +110,8 @@ public class OptionsDisplaySetupPanel extends GridPane implements PropertyPanel 
      */
     private void updatePos() {
 //        MainWindow mainWindow = Application.get().getMainWindow();
-        LyricWindow lyricWindow = QueleaApp.get().getLyricWindow();
-        LyricWindow stageWindow = QueleaApp.get().getStageWindow();
+        DisplayWindow lyricWindow = QueleaApp.get().getLyricWindow();
+        DisplayWindow stageWindow = QueleaApp.get().getStageWindow();
         if(projectorPanel.getOutputBounds() == null) {
             if(lyricWindow != null) {
                 lyricWindow.hide();
@@ -119,9 +119,9 @@ public class OptionsDisplaySetupPanel extends GridPane implements PropertyPanel 
         }
         else {
             if(lyricWindow == null) {
-                lyricWindow = new LyricWindow(projectorPanel.getOutputBounds(), false);
+                lyricWindow = new DisplayWindow(projectorPanel.getOutputBounds(), false);
             }
-            final LyricWindow fiLyricWindow = lyricWindow; //Fudge for AIC
+            final DisplayWindow fiLyricWindow = lyricWindow; //Fudge for AIC
             Platform.runLater(new Runnable() {
 
                 @Override
@@ -138,9 +138,9 @@ public class OptionsDisplaySetupPanel extends GridPane implements PropertyPanel 
         }
         else {
             if(stageWindow == null) {
-                stageWindow = new LyricWindow(projectorPanel.getOutputBounds(), true);
+                stageWindow = new DisplayWindow(projectorPanel.getOutputBounds(), true);
             }
-            final LyricWindow fiStageWindow = stageWindow; //Fudge for AIC
+            final DisplayWindow fiStageWindow = stageWindow; //Fudge for AIC
             Platform.runLater(new Runnable() {
 
                 @Override
