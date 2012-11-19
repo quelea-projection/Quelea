@@ -22,7 +22,7 @@ import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import org.quelea.windows.lyrics.LyricCanvas;
+import org.quelea.windows.lyrics.DisplayCanvas;
 
 /**
  * Responsible for drawing the notice animation on a particular canvas.
@@ -32,7 +32,7 @@ public class NoticeDrawer {
 
     private static final int DELAY = 40;
     private Font font = new Font("Sans serif", 0, 2);
-    private LyricCanvas canvas;
+    private DisplayCanvas canvas;
     private int boxHeight;
     private int stringPos;
     private List<Notice> notices;
@@ -48,7 +48,7 @@ public class NoticeDrawer {
      * Create a new notice drawer.
      * @param canvas the canvas to draw on.
      */
-    public NoticeDrawer(LyricCanvas canvas) {
+    public NoticeDrawer(DisplayCanvas canvas) {
         this.canvas = canvas;
         notices = Collections.synchronizedList(new ArrayList<Notice>());
         inUseNotices = Collections.synchronizedList(new ArrayList<Notice>());

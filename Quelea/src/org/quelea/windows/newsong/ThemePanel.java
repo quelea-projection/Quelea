@@ -43,7 +43,7 @@ import org.quelea.data.ThemeDTO;
 import org.quelea.data.VideoBackground;
 import org.quelea.languages.LabelGrabber;
 import org.quelea.services.utils.Utils;
-import org.quelea.windows.lyrics.LyricCanvas;
+import org.quelea.windows.lyrics.DisplayCanvas;
 import org.quelea.windows.main.widgets.CardPane;
 
 /**
@@ -75,13 +75,13 @@ public class ThemePanel extends BorderPane {
     private TextField backgroundVidLocation;
     private ToggleButton boldButton;
     private ToggleButton italicButton;
-    private final LyricCanvas canvas;
+    private final DisplayCanvas canvas;
 
     /**
      * Create and initialise the theme panel.
      */
     public ThemePanel() {
-        canvas = new LyricCanvas(false, false);
+        canvas = new DisplayCanvas(false, false);
         canvas.setText(SAMPLE_LYRICS, null, false);
         setCenter(canvas);
         VBox toolbarPanel = new VBox();
@@ -310,7 +310,7 @@ public class ThemePanel extends BorderPane {
      * <p/>
      * @return the canvas on this theme panel.
      */
-    public LyricCanvas getCanvas() {
+    public DisplayCanvas getCanvas() {
         return canvas;
     }
 

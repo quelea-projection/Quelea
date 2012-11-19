@@ -49,7 +49,7 @@ public class AudioControlPanel extends MultimediaControlPanel {
         try {
             player = MediaPlayerFactory.getInstance(new File(filePath).toURI().toString());
             player.currentTimeProperty().addListener(new CurrentTimeListener());
-            view.setMediaPlayer(player);
+            multimediaView.setMediaPlayer(player);
             player.play();
         } catch (MediaException ex) {
             LOGGER.log(Level.WARNING, "Audio Error", ex);

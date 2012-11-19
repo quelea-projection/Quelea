@@ -17,7 +17,7 @@
  */
 package org.quelea.windows.main;
 
-import org.quelea.windows.lyrics.LyricCanvas;
+import org.quelea.windows.lyrics.DisplayCanvas;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
@@ -64,7 +64,7 @@ public class ImagePanel extends BorderPane implements ContainedPanel {
     public void showDisplayable(ImageDisplayable displayable) {
         Image image = new Image("file:"+displayable.getFile().getName());
         imageView.setImage(image);
-        for(LyricCanvas canvas : containerPanel.getCanvases()) {
+        for(DisplayCanvas canvas : containerPanel.getCanvases()) {
             canvas.setText(null, null, true);
             canvas.setTheme(new ThemeDTO(null, null, new ImageBackground(displayable.getFile().getName()),
                     ThemeDTO.DEFAULT_SHADOW));
