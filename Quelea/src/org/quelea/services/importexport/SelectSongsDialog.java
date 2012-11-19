@@ -24,6 +24,7 @@ import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
@@ -83,8 +84,7 @@ public class SelectSongsDialog extends Stage {
         for(String str : text) {
             mainPanel.getChildren().add(new Label(str));
         }
-        ToolBar options = new ToolBar();
-        options.getItems().add(createCheckAllButton());
+        mainPanel.getChildren().add(createCheckAllButton());
         table = new TableView<>();
         VBox.setVgrow(table, Priority.ALWAYS);
         mainPanel.getChildren().add(table);
@@ -104,7 +104,7 @@ public class SelectSongsDialog extends Stage {
      * @return the newly created check all button.
      */
     private Button createCheckAllButton() {
-        Button checkButton = new Button("", new ImageView(new Image("file:icons/checkbox.jpg")));
+        Button checkButton = new Button("Select All", new ImageView(new Image("file:icons/checkbox.jpg")));
         checkButton.setTooltip(new Tooltip(LabelGrabber.INSTANCE.getLabel("check.uncheck.all.text")));
         checkButton.setOnAction(new EventHandler<javafx.event.ActionEvent>() {
             @Override
@@ -121,6 +121,10 @@ public class SelectSongsDialog extends Stage {
                         }
                     });
                 }
+                ObservableList<SongDisplayable> tmp = table.getItems();
+                table.setItems(null);
+                table.layout(); 
+                table.setItems(tmp);
             }
         });
         return checkButton;

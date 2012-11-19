@@ -41,7 +41,7 @@ public class SongDuplicateChecker {
         }
         boolean[] sameArr = new boolean[newSongs.length];
         for(int i=0 ; i<newSongs.length ; i++) {
-            System.out.println(i + " of " + newSongs.length);
+            //System.out.println(i + " of " + newSongs.length);
             SongDisplayable newSong = newSongs[i];
             String newLyrics = newSong.getLyrics(false, false).replaceAll("[^\\p{L}]", "");
             int distance = new LevenshteinDistance().leastCompare(newLyrics, songLyrics);
