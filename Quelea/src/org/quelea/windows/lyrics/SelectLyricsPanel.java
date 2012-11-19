@@ -18,7 +18,7 @@
 package org.quelea.windows.lyrics;
 
 import org.quelea.windows.lyrics.SelectLyricsList;
-import org.quelea.windows.lyrics.LyricCanvas;
+import org.quelea.windows.lyrics.DisplayCanvas;
 import java.util.HashSet;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -40,7 +40,7 @@ public class SelectLyricsPanel extends BorderPane implements ContainedPanel {
 
     private final SelectLyricsList lyricsList;
     private final LivePreviewPanel containerPanel;
-    private final LyricCanvas previewCanvas;
+    private final DisplayCanvas previewCanvas;
     private final SplitPane splitPane;
     private TextDisplayable curDisplayable;
 
@@ -54,7 +54,7 @@ public class SelectLyricsPanel extends BorderPane implements ContainedPanel {
         splitPane = new SplitPane();
         splitPane.setOrientation(Orientation.VERTICAL);
         lyricsList = new SelectLyricsList();
-        previewCanvas = new LyricCanvas(false, false);
+        previewCanvas = new DisplayCanvas(false, false);
         splitPane.getItems().add(lyricsList);
         splitPane.getItems().add(previewCanvas);
         setCenter(splitPane);
@@ -140,7 +140,7 @@ public class SelectLyricsPanel extends BorderPane implements ContainedPanel {
         lyricsList.requestFocus();
     }
 
-    public LyricCanvas getPreviewCanvas() {
+    public DisplayCanvas getPreviewCanvas() {
         return previewCanvas;
     }
     
@@ -150,10 +150,10 @@ public class SelectLyricsPanel extends BorderPane implements ContainedPanel {
      */
     private void updateCanvases() {
         int selectedIndex = lyricsList.selectionModelProperty().get().getSelectedIndex();
-        HashSet<LyricCanvas> canvases = new HashSet<>();
+        HashSet<DisplayCanvas> canvases = new HashSet<>();
         canvases.add(previewCanvas);
         canvases.addAll(containerPanel.getCanvases());
-        for(LyricCanvas canvas : canvases) {
+        for(DisplayCanvas canvas : canvases) {
             if(selectedIndex == -1 || selectedIndex >= lyricsList.itemsProperty().get().size()) {
                 canvas.setTheme(null);
                 canvas.eraseText();

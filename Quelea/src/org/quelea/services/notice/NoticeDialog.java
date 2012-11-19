@@ -34,7 +34,7 @@ import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import org.quelea.languages.LabelGrabber;
-import org.quelea.windows.lyrics.LyricCanvas;
+import org.quelea.windows.lyrics.DisplayCanvas;
 
 /**
  * The dialog used to manage the notices.
@@ -154,7 +154,7 @@ public class NoticeDialog extends Stage implements NoticesChangedListener {
      * Register a canvas to be updated using this notice dialog.
      * @param canvas the canvas to register.
      */
-    public void registerCanvas(LyricCanvas canvas) {
+    public void registerCanvas(DisplayCanvas canvas) {
         noticeDrawers.add(canvas.getNoticeDrawer());
         canvas.getNoticeDrawer().addNoticeChangedListener(this);
     }

@@ -39,7 +39,7 @@ public abstract class MultimediaControlPanel extends BorderPane {
     protected Slider positionSlider;
     protected List<Canvas> registeredCanvases;
     protected Button stop;
-    protected MediaView view;
+    protected MediaView multimediaView;
 
     protected class CurrentTimeListener implements InvalidationListener {
 
@@ -58,6 +58,13 @@ public abstract class MultimediaControlPanel extends BorderPane {
         }
     }
 
+    public MediaPlayer getPlayer() {
+        return player;
+    }
+    
+    public MediaView getView() {
+        return multimediaView;
+    }
     protected class PositionListener implements ChangeListener<Boolean> {
 
         @Override
@@ -73,8 +80,8 @@ public abstract class MultimediaControlPanel extends BorderPane {
 
     public MultimediaControlPanel() {
 
-        view = new MediaView();
-        view.setSmooth(true);
+        multimediaView = new MediaView();
+        multimediaView.setSmooth(true);
         play = new Button("", new ImageView(new Image("file:icons/play.png")));
 //        play.setDisable(true);
         play.setOnAction(new EventHandler<javafx.event.ActionEvent>() {
@@ -112,7 +119,7 @@ public abstract class MultimediaControlPanel extends BorderPane {
         positionSlider.setDisable(false);
         positionSlider.setValue(0);
         positionSlider.valueChangingProperty().addListener(new PositionListener());
-        setCenter(view);
+        setCenter(multimediaView);
         registeredCanvases = new ArrayList<>();
 
         VBox controlPanel = new VBox();

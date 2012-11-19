@@ -17,8 +17,8 @@
  */
 package org.quelea.windows.main;
 
-import org.quelea.windows.lyrics.LyricWindow;
-import org.quelea.windows.lyrics.LyricCanvas;
+import org.quelea.windows.lyrics.DisplayWindow;
+import org.quelea.windows.lyrics.DisplayCanvas;
 import java.util.HashSet;
 import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
@@ -66,9 +66,9 @@ public class LivePanel extends LivePreviewPanel {
         black.setOnAction(new EventHandler<javafx.event.ActionEvent>() {
             @Override
             public void handle(javafx.event.ActionEvent t) {
-                HashSet<LyricCanvas> canvases = new HashSet<>();
+                HashSet<DisplayCanvas> canvases = new HashSet<>();
                 canvases.addAll(getCanvases());
-                for(LyricCanvas canvas : canvases) {
+                for(DisplayCanvas canvas : canvases) {
                     canvas.toggleBlack();
                 }
             }
@@ -79,9 +79,9 @@ public class LivePanel extends LivePreviewPanel {
         clear.setOnAction(new EventHandler<javafx.event.ActionEvent>() {
             @Override
             public void handle(javafx.event.ActionEvent t) {
-                HashSet<LyricCanvas> canvases = new HashSet<>();
+                HashSet<DisplayCanvas> canvases = new HashSet<>();
                 canvases.addAll(getCanvases());
-                for(LyricCanvas canvas : canvases) {
+                for(DisplayCanvas canvas : canvases) {
                     canvas.toggleClear();
                 }
             }
@@ -98,8 +98,8 @@ public class LivePanel extends LivePreviewPanel {
                 //final GraphicsDevice[] gds = ge.getScreenDevices();
                 final ObservableList<Screen> monitors = Screen.getScreens();
                 
-                LyricWindow lyricWindow = QueleaApp.get().getLyricWindow();
-                LyricWindow stageWindow = QueleaApp.get().getStageWindow();
+                DisplayWindow lyricWindow = QueleaApp.get().getLyricWindow();
+                DisplayWindow stageWindow = QueleaApp.get().getStageWindow();
 
                 final boolean lyricsHidden;
                 if(!QueleaProperties.get().isProjectorModeCoords() && (projectorScreen >= monitors.size() || projectorScreen < 0)) {

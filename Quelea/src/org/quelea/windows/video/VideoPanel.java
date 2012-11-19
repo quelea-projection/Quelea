@@ -18,6 +18,7 @@
 package org.quelea.windows.video;
 
 import javafx.scene.layout.BorderPane;
+import javafx.scene.media.MediaView;
 import org.quelea.data.displayable.VideoDisplayable;
 import org.quelea.data.tags.services.multimedia.MultimediaControlPanel;
 import org.quelea.windows.main.ContainedPanel;
@@ -50,7 +51,10 @@ public class VideoPanel extends BorderPane implements ContainedPanel {
      */
     @Override
     public void clear() {
-        //Nada. Can't clear a video.
+        if (controlPanel.getPlayer() != null) {
+            controlPanel.getPlayer().stop();
+            ((MediaView)controlPanel.getView()).setMediaPlayer(null);
+        }
     }
 
     /**

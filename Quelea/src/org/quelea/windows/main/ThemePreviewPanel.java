@@ -17,7 +17,7 @@
  */
 package org.quelea.windows.main;
 
-import org.quelea.windows.lyrics.LyricCanvas;
+import org.quelea.windows.lyrics.DisplayCanvas;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.logging.Level;
@@ -54,7 +54,7 @@ public class ThemePreviewPanel extends VBox {
 
     private static final Logger LOGGER = LoggerUtils.getLogger();
     private ThemeDTO theme;
-    private LyricCanvas canvas;
+    private DisplayCanvas canvas;
     private RadioButton selectButton;
     private Button removeButton;
     private Button editButton;
@@ -70,7 +70,7 @@ public class ThemePreviewPanel extends VBox {
         if(theme == null) {
             theme = ThemeDTO.DEFAULT_THEME;
         }
-        canvas = new LyricCanvas(false, false);
+        canvas = new DisplayCanvas(false, false);
         canvas.setTheme(theme);
         canvas.setPrefSize(200, 200);
         canvas.setText(ThemePanel.SAMPLE_LYRICS, new String[0], false);

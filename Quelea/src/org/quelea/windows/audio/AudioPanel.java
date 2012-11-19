@@ -19,6 +19,7 @@ package org.quelea.windows.audio;
 
 import java.util.logging.Logger;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.media.MediaView;
 import org.quelea.data.displayable.AudioDisplayable;
 import org.quelea.data.tags.services.multimedia.MultimediaControlPanel;
 import org.quelea.services.utils.LoggerUtils;
@@ -54,7 +55,10 @@ public class AudioPanel extends BorderPane implements ContainedPanel {
      */
     @Override
     public void clear() {
-       
+        if (controlPanel.getPlayer() != null) {
+            controlPanel.getPlayer().stop();
+            ((MediaView)controlPanel.getView()).setMediaPlayer(null);
+        }
     }
 
     /**

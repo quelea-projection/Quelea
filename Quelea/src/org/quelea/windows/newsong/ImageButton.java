@@ -31,7 +31,7 @@ import org.quelea.data.ThemeDTO;
 import org.quelea.languages.LabelGrabber;
 import org.quelea.services.utils.FileFilters;
 import org.quelea.services.utils.LoggerUtils;
-import org.quelea.windows.lyrics.LyricCanvas;
+import org.quelea.windows.lyrics.DisplayCanvas;
 import org.quelea.windows.main.QueleaApp;
 
 /**
@@ -50,7 +50,7 @@ public class ImageButton extends Button {
      * button.
      * @param canvas the preview canvas to update.
      */
-    public ImageButton(final TextField imageLocationField, final LyricCanvas canvas) {
+    public ImageButton(final TextField imageLocationField, final DisplayCanvas canvas) {
         super(LabelGrabber.INSTANCE.getLabel("select.image.button"));
         fileChooser = new FileChooser();
         final File imageDir = new File("img");

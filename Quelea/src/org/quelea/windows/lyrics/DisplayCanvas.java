@@ -65,7 +65,7 @@ import org.quelea.services.utils.Utils;
  * <p/>
  * @author Michael
  */
-public class LyricCanvas extends StackPane {
+public class DisplayCanvas extends StackPane {
 
     private static final Logger LOGGER = LoggerUtils.getLogger();
     private ThemeDTO theme;
@@ -91,7 +91,7 @@ public class LyricCanvas extends StackPane {
      * @param showBorder true if the border should be shown around any text
      * (only if the options say so) false otherwise.
      */
-    public LyricCanvas(boolean showBorder, boolean stageView) {
+    public DisplayCanvas(boolean showBorder, boolean stageView) {
         setMinHeight(0);
         setMinWidth(0);
         this.stageView = stageView;
@@ -183,7 +183,6 @@ public class LyricCanvas extends StackPane {
         int y = 0;
         final Group newTextGroup = new Group();
         final Group oldTextGroup = textGroup;
-//        newTextGroup.setOpacity(0);
         StackPane.setAlignment(newTextGroup, QueleaProperties.get().getTextPosition().getLayouPos());
         getChildren().add(newTextGroup);
         getChildren().remove(oldTextGroup);
@@ -213,31 +212,7 @@ public class LyricCanvas extends StackPane {
         }
         lastColor = theme.getFontPaint();
 
-//        double fadeTime;
-//        if(fadeText) {
-//            fadeTime = 0.5;
-//        }
-//        else {
-//            fadeTime = 0.01;
-//        }
-
-//        ParallelTransition fadeTransition = new ParallelTransition();
-//        Timeline fadeOutTimeline = new Timeline(new KeyFrame(Duration.ZERO, new KeyValue(oldTextGroup.opacityProperty(), 1)),
-//                new KeyFrame(Duration.seconds(fadeTime), new KeyValue(oldTextGroup.opacityProperty(), 0)));
-//        fadeTransition.getChildren().add(fadeOutTimeline);
-//        Timeline fadeInTimeline = new Timeline(new KeyFrame(Duration.ZERO, new KeyValue(newTextGroup.opacityProperty(), 0)),
-//                new KeyFrame(Duration.seconds(fadeTime), new KeyValue(newTextGroup.opacityProperty(), 1)));
-//        fadeTransition.getChildren().add(fadeInTimeline);
-//
-//        fadeTransition.setOnFinished(new EventHandler<ActionEvent>() {
-//            @Override
-//            public void handle(ActionEvent t) {
-//                getChildren().remove(oldTextGroup);
-//            }
-//        });
         textGroup = newTextGroup;
-//
-//        fadeTransition.play();
     }
 
     private double pickFontSize(Font font, List<String> text, double width, double height) {
