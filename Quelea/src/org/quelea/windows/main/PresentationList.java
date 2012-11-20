@@ -31,7 +31,6 @@ import org.quelea.data.powerpoint.PresentationSlide;
  */
 public class PresentationList extends ListView<PresentationSlide> {
 
-//    private Color originalSelectionColour;
     private boolean updating;
 
     /**
@@ -47,8 +46,9 @@ public class PresentationList extends ListView<PresentationSlide> {
                         super.updateItem(item, empty);
                         if(item != null) {
                             ImageView iv = new ImageView(item.getImage());
+                            iv.setPreserveRatio(true);
+                            iv.fitWidthProperty().bind(PresentationList.this.widthProperty());
                             setGraphic(iv);
-                            setText("Testiung!");
                         }
                     }
                 };
