@@ -20,6 +20,7 @@ package org.quelea.windows.main;
 import java.awt.Canvas;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.event.EventHandler;
 import javafx.scene.Node;
@@ -252,7 +253,7 @@ public abstract class LivePreviewPanel extends BorderPane {
             clear();
         }
         else {
-            throw new RuntimeException("Displayable type not implemented: " + displayable.getClass());
+            LOGGER.log(Level.SEVERE, "Displayable type not implemented: {0}", displayable.getClass());
         }
     }
 
