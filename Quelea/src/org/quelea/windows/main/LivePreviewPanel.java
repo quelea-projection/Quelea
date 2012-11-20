@@ -249,6 +249,7 @@ public abstract class LivePreviewPanel extends BorderPane {
         else if(displayable==null) {
 //            LOGGER.log(Level.WARNING, "BUG: Called setDisplayable(null), should probably call clear() instead.", 
 //                    new RuntimeException("BUG: Called setDisplayable(null), should probably call clear() instead.")); clear();
+            clear();
         }
         else {
             throw new RuntimeException("Displayable type not implemented: " + displayable.getClass());
