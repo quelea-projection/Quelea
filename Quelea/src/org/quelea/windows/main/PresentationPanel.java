@@ -121,7 +121,7 @@ public class PresentationPanel extends BorderPane implements ContainedPanel {
      * @param displayable the presentation displayable to display.
      * @param index the index to display.
      */
-    public void setDisplayable(final PresentationDisplayable displayable, int index) {
+    public void showDisplayable(final PresentationDisplayable displayable, int index) {
         if(displayable == null) {
             presentationList.itemsProperty().get().clear();
             return;

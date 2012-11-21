@@ -1,4 +1,4 @@
-package org.quelea.data.tags.services.multimedia;
+package org.quelea.windows.multimedia;
 
 import java.awt.Canvas;
 import java.util.ArrayList;
@@ -23,6 +23,7 @@ import javafx.scene.media.MediaView;
 import javafx.util.Duration;
 import org.quelea.data.displayable.MultimediaDisplayable;
 import org.quelea.services.utils.LoggerUtils;
+import org.quelea.windows.main.LivePreviewPanel;
 
 /**
  *
