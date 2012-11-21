@@ -17,6 +17,7 @@
  */
 package org.quelea.windows.main;
 
+import org.quelea.windows.main.schedule.SchedulePanel;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.geometry.Orientation;

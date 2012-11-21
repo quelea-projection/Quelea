@@ -20,7 +20,7 @@ package org.quelea.windows.main.actionhandlers;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import org.quelea.windows.main.QueleaApp;
-import org.quelea.windows.main.ScheduleList;
+import org.quelea.windows.main.schedule.ScheduleList;
 
 /**
  * Action listener to remove a song from the schedule.

@@ -15,7 +15,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.quelea.windows.main;
+package org.quelea.windows.main.schedule;
 
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -32,6 +32,7 @@ import org.quelea.data.displayable.Displayable;
 import org.quelea.data.displayable.SongDisplayable;
 import org.quelea.services.utils.LoggerUtils;
 import org.quelea.windows.library.ContextMenuListCell;
+import org.quelea.windows.main.QueleaApp;
 
 /**
  * The schedule list, all the items that are to be displayed in the service.
