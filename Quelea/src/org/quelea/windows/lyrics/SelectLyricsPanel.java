@@ -17,8 +17,6 @@
  */
 package org.quelea.windows.lyrics;
 
-import org.quelea.windows.lyrics.SelectLyricsList;
-import org.quelea.windows.lyrics.DisplayCanvas;
 import java.util.HashSet;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -58,7 +56,7 @@ public class SelectLyricsPanel extends BorderPane implements ContainedPanel {
         splitPane.getItems().add(lyricsList);
         splitPane.getItems().add(previewCanvas);
         setCenter(splitPane);
-//        containerPanel.registerLyricCanvas(previewCanvas);
+//        containerPanel.registerDisplayCanvas(previewCanvas);
         lyricsList.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<TextSection>() {
 
             @Override
