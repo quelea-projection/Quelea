@@ -171,16 +171,16 @@ public final class Main extends Application {
                     PhoneHome.INSTANCE.phone(); //Phone home
 
                 LOGGER.log(Level.INFO, "Registering canvases");
-                mainWindow.getMainPanel().getLivePanel().registerLyricCanvas(fullScreenWindow.getCanvas());
-                mainWindow.getMainPanel().getLivePanel().registerLyricWindow(fullScreenWindow);
+                mainWindow.getMainPanel().getLivePanel().registerDisplayCanvas(fullScreenWindow.getCanvas());
+                mainWindow.getMainPanel().getLivePanel().registerDisplayWindow(fullScreenWindow);
                 if(lyricsHidden) {
                     fullScreenWindow.hide();
                 }
                 else {
                     fullScreenWindow.show();
                 }
-                mainWindow.getMainPanel().getLivePanel().registerLyricCanvas(stageWindow.getCanvas());
-                mainWindow.getMainPanel().getLivePanel().registerLyricWindow(stageWindow);
+                mainWindow.getMainPanel().getLivePanel().registerDisplayCanvas(stageWindow.getCanvas());
+                mainWindow.getMainPanel().getLivePanel().registerDisplayWindow(stageWindow);
                 if(stageHidden) {
                     stageWindow.hide();
                 }

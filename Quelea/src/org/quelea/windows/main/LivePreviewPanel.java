@@ -17,10 +17,10 @@
  */
 package org.quelea.windows.main;
 
+import org.quelea.windows.image.ImagePanel;
 import java.awt.Canvas;
 import java.util.HashSet;
 import java.util.Set;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.event.EventHandler;
 import javafx.scene.Node;
@@ -31,19 +31,21 @@ import javafx.scene.layout.BorderPane;
 import org.quelea.data.displayable.AudioDisplayable;
 import org.quelea.data.displayable.Displayable;
 import org.quelea.data.displayable.ImageDisplayable;
+import org.quelea.data.displayable.MultimediaDisplayable;
 import org.quelea.data.displayable.PresentationDisplayable;
 import org.quelea.data.displayable.SongDisplayable;
 import org.quelea.data.displayable.TextDisplayable;
 import org.quelea.data.displayable.VideoDisplayable;
 import org.quelea.services.utils.LoggerUtils;
 import org.quelea.services.utils.QueleaProperties;
-import org.quelea.windows.audio.AudioPanel;
+import org.quelea.windows.audio.AudioControlPanel;
 import org.quelea.windows.lyrics.DisplayCanvas;
 import org.quelea.windows.lyrics.DisplayWindow;
 import org.quelea.windows.lyrics.SelectLyricsPanel;
 import org.quelea.windows.main.quickedit.QuickEditDialog;
 import org.quelea.windows.main.widgets.CardPane;
-import org.quelea.windows.video.VideoPanel;
+import org.quelea.windows.multimedia.MultimediaPanel;
+import org.quelea.windows.video.VideoControlPanel;
 
 /**
  * The common superclass of the live / preview panels used for selecting the
@@ -67,8 +69,8 @@ public abstract class LivePreviewPanel extends BorderPane {
     private SelectLyricsPanel lyricsPanel = new SelectLyricsPanel(this);
     private ImagePanel picturePanel = new ImagePanel(this);
     private PresentationPanel presentationPanel = new PresentationPanel(this);
-    private VideoPanel videoPanel = new VideoPanel();
-    private AudioPanel audioPanel = new AudioPanel();
+    private MultimediaPanel videoPanel = new MultimediaPanel(new VideoControlPanel(), this);
+    private MultimediaPanel audioPanel = new MultimediaPanel(new AudioControlPanel(), this);
     private QuickEditDialog quickEditDialog = new QuickEditDialog();
     /**
      * All the contained panels so they can be flipped through easily...
@@ -95,7 +97,7 @@ public abstract class LivePreviewPanel extends BorderPane {
         cardPanel.add(videoPanel, VIDEO_LABEL);
         cardPanel.add(audioPanel, AUDIO_LABEL);
         cardPanel.add(presentationPanel, PRESENTATION_LABEL);
-        registerLyricCanvas(lyricsPanel.getPreviewCanvas());
+        registerDisplayCanvas(lyricsPanel.getPreviewCanvas());
         cardPanel.show(LYRICS_LABEL);
         
         lyricsPanel.getLyricsList().setOnMouseClicked(new EventHandler<MouseEvent>() {
@@ -173,7 +175,7 @@ public abstract class LivePreviewPanel extends BorderPane {
     public void clear() {
         displayable = null;
         if(PRESENTATION_LABEL.equals(currentLabel)) {
-            presentationPanel.setDisplayable(null, 0);
+            presentationPanel.showDisplayable(null, 0);
         }
         for(ContainedPanel panel : containedSet) {
             panel.clear();
@@ -220,7 +222,7 @@ public abstract class LivePreviewPanel extends BorderPane {
         picturePanel.clear();
         presentationPanel.clear();
         if(PRESENTATION_LABEL.equals(currentLabel)) {
-            presentationPanel.setDisplayable(null, 0);
+            presentationPanel.showDisplayable(null, 0);
         }
         if(displayable instanceof TextDisplayable) {
             lyricsPanel.showDisplayable((TextDisplayable) displayable, index);
@@ -233,27 +235,26 @@ public abstract class LivePreviewPanel extends BorderPane {
             currentLabel = IMAGE_LABEL;
         }
         else if(displayable instanceof VideoDisplayable) {
-            videoPanel.showDisplayable((VideoDisplayable) displayable);
+            videoPanel.showDisplayable((MultimediaDisplayable) displayable);
             cardPanel.show(VIDEO_LABEL);
             currentLabel = VIDEO_LABEL;
         }
         else if(displayable instanceof AudioDisplayable) {
-            audioPanel.showDisplayable((AudioDisplayable) displayable);
+            audioPanel.showDisplayable((MultimediaDisplayable) displayable);
             cardPanel.show(AUDIO_LABEL);
             currentLabel = AUDIO_LABEL;
         }
         else if(displayable instanceof PresentationDisplayable) {
-            presentationPanel.setDisplayable((PresentationDisplayable) displayable, index);
+            presentationPanel.showDisplayable((PresentationDisplayable) displayable, index);
             cardPanel.show(PRESENTATION_LABEL);
             currentLabel = PRESENTATION_LABEL;
         }
         else if(displayable==null) {
-//            LOGGER.log(Level.WARNING, "BUG: Called setDisplayable(null), should probably call clear() instead.", 
-//                    new RuntimeException("BUG: Called setDisplayable(null), should probably call clear() instead.")); clear();
-            clear();
+//            LOGGER.log(Level.WARNING, "BUG: Called showDisplayable(null), should probably call clear() instead.", 
+//                    new RuntimeException("BUG: Called showDisplayable(null), should probably call clear() instead.")); clear();
         }
         else {
-            LOGGER.log(Level.SEVERE, "Displayable type not implemented: {0}", displayable.getClass());
+            throw new RuntimeException("Displayable type not implemented: " + displayable.getClass());
         }
     }
 
@@ -278,11 +279,11 @@ public abstract class LivePreviewPanel extends BorderPane {
     }
 
     /**
-     * Register a lyric canvas with this lyrics panel.
+     * Register a display canvas with this lyrics panel.
      *
      * @param canvas the canvas to register.
      */
-    public final void registerLyricCanvas(final DisplayCanvas canvas) {
+    public final void registerDisplayCanvas(final DisplayCanvas canvas) {
         if(canvas == null) {
             return;
         }
@@ -290,11 +291,11 @@ public abstract class LivePreviewPanel extends BorderPane {
     }
 
     /**
-     * Register a lyric window with this lyrics panel.
+     * Register a display window with this lyrics panel.
      *
      * @param window the window to register.
      */
-    public final void registerLyricWindow(final DisplayWindow window) {
+    public final void registerDisplayWindow(final DisplayWindow window) {
         if(window == null) {
             return;
         }

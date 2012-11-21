@@ -1275,29 +1275,46 @@
 
     <!-- Main Deployment Target -->
 
-    <!-- Note: target "jfx-deployment" is referenced from NB 7.1 build-impl.xml -->
-    <target name="jfx-deployment" depends="-check-jfx-deployment-ant-support,-do-jfx-deployment-script,-do-jfx-deployment-noscript" if="jfx-deployment-available"/>
+    <!-- Note: target "jfx-deployment" is referenced from NB 7.1+ build-impl.xml -->
+    <target name="jfx-deployment" depends="-check-jfx-deployment-launch,-do-jfx-deployment-script,-do-jfx-deployment-noscript" if="jfx-deployment-available"/>
 
-    <target name="-check-jfx-deployment-ant-support" depends="-check-jfx-deployment">
+    <target name="-check-dist-lib-exists">
+        <deploy-defines/>
+        <available file="${jfx.deployment.dir}${file.separator}lib" type="dir" property="dist.lib.exists"/>
+    </target>
+    <target name="-check-jfx-deployment-jar-current-nolib" depends="-check-dist-lib-exists" unless="dist.lib.exists">
+        <uptodate property="jfx-deployment-jar-current" targetfile="${jfx.deployment.dir}${file.separator}${jfx.deployment.jar}" >
+            <srcfiles dir="${basedir}${file.separator}${build.classes.dir}" includes="**${file.separator}*"/>
+            <srcfiles dir="${basedir}${file.separator}nbproject" includes="**${file.separator}*"/>
+        </uptodate>
+    </target>
+    <target name="-check-jfx-deployment-jar-current-lib" depends="-check-dist-lib-exists" if="dist.lib.exists">
+        <uptodate property="jfx-deployment-jar-current" targetfile="${jfx.deployment.dir}${file.separator}${jfx.deployment.jar}" >
+            <srcfiles dir="${basedir}${file.separator}${build.classes.dir}" includes="**${file.separator}*"/>
+            <srcfiles dir="${jfx.deployment.dir}${file.separator}lib" includes="**${file.separator}*"/>
+            <srcfiles dir="${basedir}${file.separator}nbproject" includes="**${file.separator}*"/>
+        </uptodate>
+    </target>
+    <target name="-check-jfx-deployment-launch" depends="-check-jfx-deployment,-check-jfx-deployment-jar-current-nolib,-check-jfx-deployment-jar-current-lib">
         <condition property="do-jfx-deployment-script">
             <and>
                 <isset property="jfx-deployment-available"/>
                 <not><isset property="fallback.no.javascript"/></not>
+                <not><isset property="jfx-deployment-jar-current"/></not>
             </and>
         </condition>
         <condition property="do-jfx-deployment-noscript">
             <and>
                 <isset property="jfx-deployment-available"/>
                 <isset property="fallback.no.javascript"/>
+                <not><isset property="jfx-deployment-jar-current"/></not>
             </and>
         </condition>
     </target>
-    <target name="-do-jfx-deployment-script" depends="-check-jfx-deployment-ant-support" if="do-jfx-deployment-script">
-        <deploy-defines/>
+    <target name="-do-jfx-deployment-script" depends="-check-jfx-deployment-launch" if="do-jfx-deployment-script">
         <antcall target="jfx-deployment-script"/>
     </target>
-    <target name="-do-jfx-deployment-noscript" depends="-check-jfx-deployment-ant-support" if="do-jfx-deployment-noscript">
-        <deploy-defines/>
+    <target name="-do-jfx-deployment-noscript" depends="-check-jfx-deployment-launch" if="do-jfx-deployment-noscript">
         <antcall target="jfx-deployment-noscript"/>
     </target>
 
@@ -2663,11 +2680,11 @@
 
     <!-- Project Build Targets -->
 
-    <target name="jfx-build" depends="-jfx-do-compile, -jfx-do-jar"/>
-    <target name="jfx-build-noscript" depends="-set-fallback-no-javascript, -jfx-do-compile, -jfx-do-jar"/>
+    <target name="jfx-build" depends="-jfx-do-compile, -jfx-do-jar, -jfx-do-post-jar"/>
+    <target name="jfx-build-noscript" depends="-set-fallback-no-javascript, -jfx-do-compile, -jfx-do-jar, -jfx-do-post-jar"/>
     
-    <target name="jfx-rebuild" depends="clean, -jfx-do-compile, -jfx-do-jar"/>
-    <target name="jfx-rebuild-noscript" depends="-set-fallback-no-javascript, clean, -jfx-do-compile, -jfx-do-jar"/>
+    <target name="jfx-rebuild" depends="clean, -jfx-do-compile, -jfx-do-jar, -jfx-do-post-jar"/>
+    <target name="jfx-rebuild-noscript" depends="-set-fallback-no-javascript, clean, -jfx-do-compile, -jfx-do-jar, -jfx-do-post-jar"/>
 
     <target name="jfx-build-native" depends="-set-do-build-native-package, -check-ant-jre-supports-native-packaging, -check-native-packager-external-tools, jfx-rebuild"/>
     <target name="jfx-build-native-noscript" depends="-set-do-build-native-package, -check-ant-jre-supports-native-packaging, -check-native-packager-external-tools, jfx-rebuild-noscript"/>
@@ -2689,6 +2706,10 @@
     </target>
     <target name="-jfx-do-jar" depends="-check-do-jar" unless="do-jar-false">
         <antcall target="jar"/>
+    </target>
+    <target name="-jfx-do-post-jar" depends="-init-check,-check-project" if="preloader-app">
+        <!-- Preloaders are created using SE copylibs task that creates readme file relevant for SE only -->
+        <delete file="${basedir}${file.separator}${dist.dir}${file.separator}README.TXT"/>
     </target>
     
     <target name="-set-do-build-native-package">
@@ -2798,6 +2819,10 @@
         <property name="project.state.profiling" value="true"/>
         <echo message="project.state.profiling = ${project.state.profiling}" level="verbose"/>
     </target>
+    <target name="-mark-project-needs-jnlp">
+        <property name="project.needs.jnlp" value="true"/>
+        <echo message="project.needs.jnlp = ${project.needs.jnlp}" level="verbose"/>
+    </target>
     
     <!-- set property javafx.disable.concurrent.runs=true to disable runs from temporary directory -->
     <target name="-check-concurrent-runs">
@@ -2820,7 +2845,7 @@
     <target name="-create-temp-run-dir" depends="-check-concurrent-runs" unless="disable-concurrent-runs">
         <echo message="Creating temp run dir" level="verbose"/>
         <tempfile property="temp.run.dir" destDir="${basedir}${file.separator}${dist.dir}${file.separator}" prefix="run"/>
-        <echo message="temp.run.dir=${temp.run.dir}" level="verbose"/>
+        <echo message="temp.run.dir = ${temp.run.dir}" level="verbose"/>
         <copy todir="${temp.run.dir}" includeemptydirs="true" overwrite="true">
             <fileset dir="${basedir}${file.separator}${dist.dir}">
                 <exclude name="**${file.separator}bundles${file.separator}**"/>
@@ -2861,14 +2886,33 @@
 
     <!-- Running/Debugging/Profiling Standalone -->
 
-    <target name="jfxsa-run" depends="-mark-project-state-running,-check-jfx-runtime,-warn-of-preloader,jfx-project-run"/>
+    <target name="jfxsa-run" depends="-mark-project-state-running,-clean-if-config-changed,-check-jfx-runtime,-warn-of-preloader,jfx-project-run"/>
     <target name="jfxsa-run-noscript" depends="-set-fallback-no-javascript, jfxsa-run"/>
 
-    <target name="jfxsa-debug" depends="-mark-project-state-debugging,jar,-check-jfx-runtime,-warn-of-preloader,debug"/>
+    <target name="jfxsa-debug" depends="-mark-project-state-debugging,-clean-if-config-changed,jar,-check-jfx-runtime,-warn-of-preloader,debug"/>
     <target name="jfxsa-debug-noscript" depends="-set-fallback-no-javascript, jfxsa-debug"/>
     
     <target name="jfxsa-profile" depends="-mark-project-state-profiling,-check-jfx-runtime,-warn-of-preloader,profile"/>
     <target name="jfxsa-profile-noscript" depends="-set-fallback-no-javascript, jfxsa-profile"/>
+
+    <target name="-check-clean-if-config-changed" depends="-init-project">
+        <deploy-defines/>
+        <uptodate property="jfx.deployment.jar.newer.than.nbproject" targetfile="${jfx.deployment.dir}${file.separator}${jfx.deployment.jar}" >
+            <srcfiles dir="${basedir}${file.separator}nbproject" includes="**${file.separator}*"/>
+        </uptodate>
+        <echo message="jfx.deployment.jar.newer.than.nbproject = ${jfx.deployment.jar.newer.than.nbproject}" level="verbose"/>
+        <available file="${jfx.deployment.dir}${file.separator}${jfx.deployment.jar}" type="file" property="jfx.deployment.jar.exists"/>
+        <condition property="request.clean.due.to.config.change">
+            <and>
+                <isset property="jfx.deployment.jar.exists"/>
+                <not><isset property="jfx.deployment.jar.newer.than.nbproject"/></not>
+            </and>
+        </condition>
+    </target>
+    <target name="-clean-if-config-changed" depends="-check-clean-if-config-changed" if="request.clean.due.to.config.change">
+        <echo message="Config change detected. Invoking clean." level="verbose"/>
+        <antcall target="clean"/>
+    </target>
 
 
     <!-- Shared Debugging init -->
@@ -2940,7 +2984,7 @@
         <echo message="Note: Concurrent Run as WebStart enabled.${line.separator}Temporary directory ${temp.run.dir}${line.separator}will remain unused when WebStart execution has finished. Use project Clean to delete unused directories."/>
     </target>
 
-    <target name="jfxws-run" if="jnlp-file-exists" depends="-mark-project-state-running,-check-jdk-7u4or5-mac,jar,
+    <target name="jfxws-run" if="jnlp-file-exists" depends="-mark-project-state-running,-clean-if-config-changed,-mark-project-needs-jnlp,-check-jdk-7u4or5-mac,jar,
             -check-jfx-webstart,-resolve-jnlp-file,-check-jfx-runtime,-check-concurrent-jnlp-runs,-create-temp-run-dir" 
             description="Start JavaFX javaws execution">
         <echo message="Executing ${temp.run.jnlp} using ${active.webstart.executable}"/>
@@ -2950,7 +2994,7 @@
         <antcall target="-warn-concurrent-jnlp-runs"/>
     </target>
     
-    <target name="jfxws-debug" if="jnlp-file-exists+netbeans.home" depends="-mark-project-state-debugging,
+    <target name="jfxws-debug" if="jnlp-file-exists+netbeans.home" depends="-mark-project-state-debugging,-clean-if-config-changed,-mark-project-needs-jnlp,
             -check-jdk-7u4or5-mac,jar,-check-jfx-webstart,-resolve-jnlp-file,-check-jfx-runtime,
             -debug-start-debugger,-debug-javaws-debuggee" description="Debug JavaFX javaws project in IDE"/>
         
@@ -2977,7 +3021,7 @@
         <antcall target="-profile-check-1"/>
     </target>
     
-    <target name="-do-jfxws-profile" depends="-mark-project-state-profiling,
+    <target name="-do-jfxws-profile" depends="-mark-project-state-profiling,-mark-project-needs-jnlp,
             -check-jdk-7u4or5-mac,jar,-check-jfx-webstart,-resolve-jnlp-file,-check-jfx-runtime">
         <echo message="Executing ${jfx.deployment.jnlp} in profile mode using ${active.webstart.executable}"/>
         <property name="run.jvmargs.ide" value=""/>        
@@ -3082,7 +3126,7 @@
         <echo message="Note: Concurrent Run in Browser enabled.${line.separator}Temporary directory ${temp.run.dir}${line.separator}will remain unused when execution in browser has finished. Use project Clean to delete unused directories."/>
     </target>
 
-    <target name="jfxbe-run" if="html-file-exists" depends="-mark-project-state-running,-check-jdk-7u4or5-mac,jar,
+    <target name="jfxbe-run" if="html-file-exists" depends="-mark-project-state-running,-clean-if-config-changed,-mark-project-needs-jnlp,-check-jdk-7u4or5-mac,jar,
             -check-selected-browser-path,-set-html-file,-check-jfx-runtime,-check-concurrent-html-runs,-create-temp-run-dir"
             description="Start JavaFX execution in browser">
         <echo message="Executing ${temp.run.html} using ${javafx.run.inbrowser}"/>
@@ -3093,7 +3137,7 @@
         <antcall target="-warn-concurrent-html-runs"/>
     </target>
     
-    <target name="jfxbe-debug" if="html-file-exists+netbeans.home" depends="-mark-project-state-debugging,
+    <target name="jfxbe-debug" if="html-file-exists+netbeans.home" depends="-mark-project-state-debugging,-clean-if-config-changed,-mark-project-needs-jnlp,
             -check-jdk-7u4or5-mac,jar,-check-selected-browser-path,-set-html-file,-check-jfx-runtime,
             -debug-start-debugger,-debug-jfxbe-debuggee" description="Debug JavaFX project in browser"/>
         
@@ -3110,7 +3154,7 @@
         <antcall target="-profile-check-1"/>
     </target>
 
-    <target name="-do-jfxbe-profile" depends="-mark-project-state-profiling,
+    <target name="-do-jfxbe-profile" depends="-mark-project-state-profiling,-mark-project-needs-jnlp,
             -check-jdk-7u4or5-mac,jar,-check-selected-browser-path,-set-html-file,-check-jfx-runtime">
         <echo message="Executing ${jfx.deployment.html} in profile mode using ${javafx.run.inbrowser}"/>
         <echo message="(${javafx.run.inbrowser.path})"/>
