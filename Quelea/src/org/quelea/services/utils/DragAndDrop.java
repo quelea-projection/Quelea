@@ -25,7 +25,7 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.input.TransferMode;
 import org.quelea.windows.library.LibrarySongList;
 import org.quelea.windows.main.QueleaApp;
-import org.quelea.windows.main.ScheduleList;
+import org.quelea.windows.main.schedule.ScheduleList;
 
 /**
  * This class contains and controls all of the drag and drop functions

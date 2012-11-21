@@ -17,6 +17,7 @@
  */
 package org.quelea.windows.main;
 
+import org.quelea.windows.presentation.PresentationPanel;
 import org.quelea.windows.image.ImagePanel;
 import java.awt.Canvas;
 import java.util.HashSet;

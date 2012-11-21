@@ -15,13 +15,15 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.quelea.windows.main;
+package org.quelea.windows.presentation;
 
 import javafx.scene.layout.BorderPane;
 import org.quelea.data.displayable.PresentationDisplayable;
 import org.quelea.data.powerpoint.OOPresentation;
 import org.quelea.data.powerpoint.PresentationSlide;
 import org.quelea.services.utils.QueleaProperties;
+import org.quelea.windows.main.ContainedPanel;
+import org.quelea.windows.main.LivePreviewPanel;
 
 /**
  * The panel for displaying presentation slides in the live / preview panels.
