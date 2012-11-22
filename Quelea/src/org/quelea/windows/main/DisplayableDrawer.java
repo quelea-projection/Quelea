@@ -1,8 +1,8 @@
-package org.quelea.windows.lyrics;
+package org.quelea.windows.main;
 
 public abstract class DisplayableDrawer {
 
-    final DisplayCanvas canvas;
+    final protected DisplayCanvas canvas;
 
     public DisplayableDrawer(DisplayCanvas canvas) {
         this.canvas = canvas;
