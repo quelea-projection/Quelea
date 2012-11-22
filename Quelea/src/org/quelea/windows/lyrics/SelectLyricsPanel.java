@@ -17,6 +17,7 @@
  */
 package org.quelea.windows.lyrics;
 
+import org.quelea.windows.main.DisplayCanvas;
 import java.util.HashSet;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
