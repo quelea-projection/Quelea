@@ -24,6 +24,7 @@ import javafx.scene.layout.BorderPane;
 import org.quelea.data.ImageBackground;
 import org.quelea.data.ThemeDTO;
 import org.quelea.data.displayable.ImageDisplayable;
+import org.quelea.windows.lyrics.LyricDrawer;
 import org.quelea.windows.main.ContainedPanel;
 import org.quelea.windows.main.LivePreviewPanel;
 
@@ -67,8 +68,9 @@ public class ImagePanel extends BorderPane implements ContainedPanel {
         Image image = new Image("file:"+displayable.getFile().getName());
         imageView.setImage(image);
         for(DisplayCanvas canvas : containerPanel.getCanvases()) {
-            canvas.setText(null, null, true);
-            canvas.setTheme(new ThemeDTO(null, null, new ImageBackground(displayable.getFile().getName()),
+            LyricDrawer drawer = new LyricDrawer(canvas); //@todo check  if here should be theme setting
+            drawer.setText(null, null, true);
+            drawer.setTheme(new ThemeDTO(null, null, new ImageBackground(displayable.getFile().getName()),
                     ThemeDTO.DEFAULT_SHADOW));
         }
     }
