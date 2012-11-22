@@ -32,6 +32,7 @@ import org.quelea.languages.LabelGrabber;
 import org.quelea.services.utils.FileFilters;
 import org.quelea.services.utils.LoggerUtils;
 import org.quelea.windows.lyrics.DisplayCanvas;
+import org.quelea.windows.lyrics.LyricDrawer;
 import org.quelea.windows.main.QueleaApp;
 
 /**
@@ -74,9 +75,11 @@ public class ImageButton extends Button {
 
                     imageLocation = imageDir.toURI().relativize(newFile.toURI()).getPath();
                     imageLocationField.setText(imageLocation);
-                    canvas.setTheme(new ThemeDTO(canvas.getTheme().getFont(),
-                            canvas.getTheme().getFontPaint(), new ImageBackground(imageLocation),
-                            canvas.getTheme().getShadow()));
+                    LyricDrawer drawer = new LyricDrawer(canvas); //@todo check  if here should be theme setting
+                
+                    drawer.setTheme(new ThemeDTO(drawer.getTheme().getFont(),
+                            drawer.getTheme().getFontPaint(), new ImageBackground(imageLocation),
+                            drawer.getTheme().getShadow()));
                 }
             }
         });

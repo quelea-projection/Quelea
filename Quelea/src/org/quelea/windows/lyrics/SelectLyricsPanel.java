@@ -58,14 +58,12 @@ public class SelectLyricsPanel extends BorderPane implements ContainedPanel {
         setCenter(splitPane);
 //        containerPanel.registerDisplayCanvas(previewCanvas);
         lyricsList.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<TextSection>() {
-
             @Override
             public void changed(ObservableValue<? extends TextSection> ov, TextSection t, TextSection t1) {
                 updateCanvases();
             }
         });
         lyricsList.itemsProperty().addListener(new ChangeListener<ObservableList<TextSection>>() {
-
             @Override
             public void changed(ObservableValue<? extends ObservableList<TextSection>> ov, ObservableList<TextSection> t, ObservableList<TextSection> t1) {
                 updateCanvases();
@@ -81,7 +79,7 @@ public class SelectLyricsPanel extends BorderPane implements ContainedPanel {
     public void setOneLineMode(boolean on) {
         lyricsList.setOneLineMode(on);
     }
-    
+
     @Override
     public void requestFocus() {
         lyricsList.requestFocus();
@@ -96,7 +94,7 @@ public class SelectLyricsPanel extends BorderPane implements ContainedPanel {
     public void showDisplayable(TextDisplayable displayable, int index) {
         clear();
         curDisplayable = displayable;
-        for(TextSection section : displayable.getSections()) {
+        for (TextSection section : displayable.getSections()) {
             lyricsList.itemsProperty().get().add(section);
         }
         lyricsList.selectionModelProperty().get().select(index);
@@ -141,7 +139,7 @@ public class SelectLyricsPanel extends BorderPane implements ContainedPanel {
     public DisplayCanvas getPreviewCanvas() {
         return previewCanvas;
     }
-    
+
     /**
      * Called to update the contents of the canvases when the list selection
      * changes.
@@ -151,22 +149,24 @@ public class SelectLyricsPanel extends BorderPane implements ContainedPanel {
         HashSet<DisplayCanvas> canvases = new HashSet<>();
         canvases.add(previewCanvas);
         canvases.addAll(containerPanel.getCanvases());
-        for(DisplayCanvas canvas : canvases) {
-            if(selectedIndex == -1 || selectedIndex >= lyricsList.itemsProperty().get().size()) {
-                canvas.setTheme(null);
-                canvas.eraseText();
+
+        for (DisplayCanvas canvas : canvases) {
+            LyricDrawer drawer = new LyricDrawer(canvas);
+            if (selectedIndex == -1 || selectedIndex >= lyricsList.itemsProperty().get().size()) {
+
+                drawer.setTheme(null);
+                drawer.eraseText();
                 continue;
             }
             TextSection currentSection = lyricsList.itemsProperty().get().get(selectedIndex);
-            if(currentSection.getTempTheme() != null) {
-                canvas.setTheme(currentSection.getTempTheme());
+            if (currentSection.getTempTheme() != null) {
+                drawer.setTheme(currentSection.getTempTheme());
+            } else {
+                drawer.setTheme(currentSection.getTheme());
             }
-            else {
-                canvas.setTheme(currentSection.getTheme());
-            }
-            canvas.setCapitaliseFirst(currentSection.shouldCapitaliseFirst());
+            drawer.setCapitaliseFirst(currentSection.shouldCapitaliseFirst());
 //            if(canvas.isStageView()) {
-                canvas.setText(curDisplayable, selectedIndex);
+            drawer.setText(curDisplayable, selectedIndex);
 //            }
 //            else {
 //                canvas.setText(currentSection.getText(false, false), currentSection.getSmallText());
@@ -178,7 +178,7 @@ public class SelectLyricsPanel extends BorderPane implements ContainedPanel {
     public int getCurrentIndex() {
         return lyricsList.getSelectionModel().getSelectedIndex();
     }
-    
+
     public SplitPane getSplitPane() {
         return splitPane;
     }
