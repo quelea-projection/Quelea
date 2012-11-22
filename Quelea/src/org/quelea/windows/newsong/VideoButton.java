@@ -31,7 +31,7 @@ import org.quelea.data.VideoBackground;
 import org.quelea.languages.LabelGrabber;
 import org.quelea.services.utils.FileFilters;
 import org.quelea.services.utils.LoggerUtils;
-import org.quelea.windows.lyrics.DisplayCanvas;
+import org.quelea.windows.main.DisplayCanvas;
 import org.quelea.windows.lyrics.LyricDrawer;
 import org.quelea.windows.main.QueleaApp;
 

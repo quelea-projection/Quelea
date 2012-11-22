@@ -25,7 +25,7 @@ import org.quelea.data.VideoBackground;
 import org.quelea.data.displayable.MultimediaDisplayable;
 import org.quelea.data.displayable.VideoDisplayable;
 import org.quelea.services.utils.LoggerUtils;
-import org.quelea.windows.lyrics.DisplayCanvas;
+import org.quelea.windows.main.DisplayCanvas;
 import org.quelea.windows.lyrics.LyricDrawer;
 import org.quelea.windows.main.ContainedPanel;
 import org.quelea.windows.main.LivePreviewPanel;

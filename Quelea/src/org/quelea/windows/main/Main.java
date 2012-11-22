@@ -16,7 +16,6 @@
  */
 package org.quelea.windows.main;
 
-import org.quelea.windows.lyrics.DisplayWindow;
 import com.inet.jortho.SpellChecker;
 import java.io.File;
 import java.net.MalformedURLException;

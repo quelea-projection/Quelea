@@ -15,7 +15,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.quelea.windows.lyrics;
+package org.quelea.windows.main;
 
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -60,7 +60,7 @@ public class DisplayCanvas extends StackPane {
     public void setBackground(Node background) {
         this.background = background;
     }
-    interface CanvasCallback {
+    public interface CanvasCallback {
 
         void update();
     }
