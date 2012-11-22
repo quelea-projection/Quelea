@@ -42,6 +42,7 @@ import org.javafx.dialog.Dialog;
 import org.quelea.data.ThemeDTO;
 import org.quelea.languages.LabelGrabber;
 import org.quelea.services.utils.LoggerUtils;
+import org.quelea.windows.lyrics.LyricDrawer;
 import org.quelea.windows.newsong.EditThemeDialog;
 import org.quelea.windows.newsong.ThemePanel;
 
@@ -68,23 +69,23 @@ public class ThemePreviewPanel extends VBox {
      */
     public ThemePreviewPanel(ThemeDTO theme) {
         this.theme = theme;
-        if(theme == null) {
+        if (theme == null) {
             theme = ThemeDTO.DEFAULT_THEME;
         }
         canvas = new DisplayCanvas(false, false);
-        canvas.setTheme(theme);
         canvas.setPrefSize(200, 200);
-        canvas.setText(ThemePanel.SAMPLE_LYRICS, new String[0], false);
+        LyricDrawer drawer = new LyricDrawer(canvas); //@todo check  if here should be theme setting
+        drawer.setTheme(theme);
+        drawer.setText(ThemePanel.SAMPLE_LYRICS, new String[0], false);
         String name;
-        if(theme == ThemeDTO.DEFAULT_THEME) {
+        if (theme == ThemeDTO.DEFAULT_THEME) {
             name = LabelGrabber.INSTANCE.getLabel("default.theme.text");
-        }
-        else {
+        } else {
             name = theme.getThemeName();
         }
         themeDialog = new EditThemeDialog();
         selectButton = new RadioButton(name);
-        if(theme != ThemeDTO.DEFAULT_THEME) {
+        if (theme != ThemeDTO.DEFAULT_THEME) {
             editButton = new Button("", new ImageView(new Image("file:icons/edit32.png", 16, 16, false, true)));
             editButton.setTooltip(new Tooltip(LabelGrabber.INSTANCE.getLabel("edit.theme.tooltip")));
             editButton.setOnAction(new EventHandler<javafx.event.ActionEvent>() {
@@ -93,11 +94,10 @@ public class ThemePreviewPanel extends VBox {
                     themeDialog.setTheme(ThemePreviewPanel.this.theme);
                     themeDialog.show();
                     ThemeDTO ret = themeDialog.getTheme();
-                    if(ret != null) {
-                        try(PrintWriter pw = new PrintWriter(ret.getFile())) {
+                    if (ret != null) {
+                        try (PrintWriter pw = new PrintWriter(ret.getFile())) {
                             pw.println(ret.getTheme());
-                        }
-                        catch(IOException ex) {
+                        } catch (IOException ex) {
                             LOGGER.log(Level.WARNING, "Couldn't edit theme", ex);
                         }
                     }
@@ -124,7 +124,7 @@ public class ThemePreviewPanel extends VBox {
             });
         }
         HBox buttonPanel = new HBox();
-        if(canvas != null) {
+        if (canvas != null) {
             canvas.setOnMouseClicked(new EventHandler<MouseEvent>() {
                 @Override
                 public void handle(MouseEvent t) {
@@ -134,7 +134,7 @@ public class ThemePreviewPanel extends VBox {
             });
         }
         buttonPanel.getChildren().add(selectButton);
-        if(theme != ThemeDTO.DEFAULT_THEME) {
+        if (theme != ThemeDTO.DEFAULT_THEME) {
             buttonPanel.getChildren().add(editButton);
             buttonPanel.getChildren().add(removeButton);
         }

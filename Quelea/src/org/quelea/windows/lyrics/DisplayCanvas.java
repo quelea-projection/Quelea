@@ -17,47 +17,19 @@
  */
 package org.quelea.windows.lyrics;
 
-import com.sun.javafx.tk.FontMetrics;
-import com.sun.javafx.tk.Toolkit;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javafx.animation.FadeTransition;
-import javafx.animation.KeyFrame;
-import javafx.animation.KeyValue;
-import javafx.animation.ParallelTransition;
-import javafx.animation.Timeline;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.geometry.Pos;
-import javafx.scene.Group;
 import javafx.scene.Node;
-import javafx.scene.effect.DropShadow;
-import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.StackPane;
-import javafx.scene.media.Media;
-import javafx.scene.media.MediaException;
-import javafx.scene.media.MediaPlayer;
 import javafx.scene.media.MediaView;
 import javafx.scene.paint.Color;
-import javafx.scene.paint.Paint;
-import javafx.scene.text.Font;
-import javafx.scene.text.Text;
-import javafx.util.Duration;
-import org.quelea.data.ColourBackground;
-import org.quelea.data.ImageBackground;
-import org.quelea.data.ThemeDTO;
-import org.quelea.data.VideoBackground;
-import org.quelea.data.displayable.TextDisplayable;
 import org.quelea.services.notice.NoticeDrawer;
 import org.quelea.services.utils.LoggerUtils;
-import org.quelea.services.utils.QueleaProperties;
 import org.quelea.services.utils.Utils;
 
 /**
@@ -68,23 +40,37 @@ import org.quelea.services.utils.Utils;
 public class DisplayCanvas extends StackPane {
 
     private static final Logger LOGGER = LoggerUtils.getLogger();
-    private ThemeDTO theme;
-    private String[] text;
-    private String[] smallText;
-    private boolean fadeText;
-    private Paint lastColor;
     private boolean cleared;
     private boolean blacked;
-    private boolean capitaliseFirst;
     private NoticeDrawer noticeDrawer;
     private boolean stageView;
-    private Group textGroup;
-    private TextDisplayable curDisplayable;
-    private int curIndex;
-    private MediaView motionBackground;
-    private Node background;
     private ImageView blackImg;
+    private Node background;
 
+    /**
+     * @return the background
+     */
+    public Node getBackground() {
+        return background;
+    }
+
+    /**
+     * @param background the background to set
+     */
+    public void setBackground(Node background) {
+        this.background = background;
+    }
+    interface CanvasCallback {
+
+        void update();
+    }
+     public ImageView getNewImageView() {
+        ImageView ret = new ImageView(Utils.getImageFromColour(Color.BLACK));
+        ret.setFitHeight(getHeight());
+        ret.setFitWidth(getWidth());
+        StackPane.setAlignment(ret, Pos.CENTER);
+        return ret;
+    }
     /**
      * Create a new canvas where the lyrics should be displayed.
      * <p/>
@@ -97,162 +83,56 @@ public class DisplayCanvas extends StackPane {
         this.stageView = stageView;
         blackImg = new ImageView(Utils.getImageFromColour(Color.BLACK));
         noticeDrawer = new NoticeDrawer(this);
-        text = new String[]{};
-        theme = ThemeDTO.DEFAULT_THEME;
-        textGroup = new Group();
         background = getNewImageView();
-        getChildren().add(0, background);
-        getChildren().add(textGroup);
         heightProperty().addListener(new ChangeListener<Number>() {
             @Override
             public void changed(ObservableValue<? extends Number> ov, Number t, Number t1) {
-                update();
+                update(null);
             }
         });
         widthProperty().addListener(new ChangeListener<Number>() {
             @Override
             public void changed(ObservableValue<? extends Number> ov, Number t, Number t1) {
-                update();
+                update(null);
             }
         });
     }
 
-    private ImageView getNewImageView() {
-        ImageView ret = new ImageView(Utils.getImageFromColour(Color.BLACK));
-        ret.setFitHeight(getHeight());
-        ret.setFitWidth(getWidth());
-        StackPane.setAlignment(ret, Pos.CENTER);
-        return ret;
-    }
-
-    public void update() {
+    public void update(final CanvasCallback callback) {
         Platform.runLater(new Runnable() {
             @Override
             public void run() {
-                drawText();
-                if(blacked) {
-                    if(getChildren().contains(background)) {
+                if (callback != null) {
+                    callback.update();
+                }
+
+                if (blacked) {
+                    if (getChildren().contains(getBackground())) {
                         getChildren().add(0, blackImg);
-                        getChildren().remove(background);
+                        getChildren().remove(getBackground());
                     }
-                }
-                else {
-                    if(!getChildren().contains(background)) {
+                } else {
+                    if (!getChildren().contains(getBackground())) {
                         getChildren().remove(blackImg);
-                        getChildren().add(0, background);
+                        getChildren().add(0, getBackground());
                     }
                 }
-                if(background instanceof ImageView) {
-                    ImageView imgBackground = (ImageView) background;
+                if (getBackground() instanceof ImageView) {
+                    ImageView imgBackground = (ImageView) getBackground();
                     imgBackground.setFitHeight(getHeight());
                     imgBackground.setFitWidth(getWidth());
-                }
-                else if(background instanceof MediaView) {
-                    MediaView vidBackground = (MediaView) background;
+                } else if (getBackground() instanceof MediaView) {
+                    MediaView vidBackground = (MediaView) getBackground();
                     vidBackground.setPreserveRatio(false);
                     vidBackground.setFitHeight(getHeight());
                     vidBackground.setFitWidth(getWidth());
-                }
-                else {
+                } else {
                     LOGGER.log(Level.WARNING, "BUG: Unrecognised image background");
                 }
                 blackImg.setFitHeight(getHeight());
                 blackImg.setFitWidth(getWidth());
             }
         });
-    }
-
-    private void drawText() {
-        if(cleared || blacked) {
-            textGroup.getChildren().clear();
-            return;
-        }
-        Font font = theme.getFont();
-        if(font == null) {
-            font = ThemeDTO.DEFAULT_FONT;
-        }
-        DropShadow shadow = theme.getShadow();
-        if(shadow == null) {
-            shadow = ThemeDTO.DEFAULT_SHADOW;
-        }
-        
-        List<String> newText = sanctifyText();
-        double fontSize = pickFontSize(font, newText, getWidth(), getHeight());
-        font = Font.font(font.getName(), fontSize);
-        FontMetrics metrics = Toolkit.getToolkit().getFontLoader().getFontMetrics(font);
-        int y = 0;
-        final Group newTextGroup = new Group();
-        final Group oldTextGroup = textGroup;
-        StackPane.setAlignment(newTextGroup, QueleaProperties.get().getTextPosition().getLayouPos());
-        getChildren().add(newTextGroup);
-        getChildren().remove(oldTextGroup);
-
-        ParallelTransition paintTransition = new ParallelTransition();
-        for(String line : newText) {
-            Text t = new Text(line);
-            double width = metrics.computeStringWidth(line);
-            double centreOffset = (getWidth() - width) / 2;
-            t.setFont(font);
-            t.setEffect(shadow);
-            t.setX(centreOffset);
-            t.setY(y);
-            if(theme.getFontPaint() == lastColor || lastColor == null) {
-                t.setFill(theme.getFontPaint());
-            }
-            else {
-                Timeline paintTimeline = new Timeline(new KeyFrame(Duration.ZERO, new KeyValue(t.fillProperty(), lastColor)),
-                        new KeyFrame(Duration.seconds(0.3), new KeyValue(t.fillProperty(), theme.getFontPaint())));
-                paintTransition.getChildren().add(paintTimeline);
-            }
-            y += metrics.getLineHeight();
-            newTextGroup.getChildren().add(t);
-        }
-        if(!paintTransition.getChildren().isEmpty()) {
-            paintTransition.play();
-        }
-        lastColor = theme.getFontPaint();
-
-        textGroup = newTextGroup;
-    }
-
-    private double pickFontSize(Font font, List<String> text, double width, double height) {
-        FontMetrics metrics = Toolkit.getToolkit().getFontLoader().getFontMetrics(font);
-        double totalHeight = (metrics.getLineHeight()) * text.size();
-        while(totalHeight > height) {
-            font = new Font(font.getName(), font.getSize() - 0.5);
-            if(font.getSize() < 1) {
-                return 1;
-            }
-            metrics = Toolkit.getToolkit().getFontLoader().getFontMetrics(font);
-            totalHeight = (metrics.getLineHeight()) * text.size();
-        }
-
-        String longestLine = longestLine(font, text);
-        double totalWidth = metrics.computeStringWidth(longestLine);
-        while(totalWidth > width) {
-            font = new Font(font.getName(), font.getSize() - 0.5);
-            if(font.getSize() < 1) {
-                return 1;
-            }
-            metrics = Toolkit.getToolkit().getFontLoader().getFontMetrics(font);
-            totalWidth = metrics.computeStringWidth(longestLine);
-        }
-
-        return font.getSize();
-    }
-
-    private String longestLine(Font font, List<String> text) {
-        FontMetrics metrics = Toolkit.getToolkit().getFontLoader().getFontMetrics(font);
-        double longestWidth = -1;
-        String longestStr = null;
-        for(String line : text) {
-            double width = metrics.computeStringWidth(line);
-            if(width > longestWidth) {
-                longestWidth = width;
-                longestStr = line;
-            }
-        }
-        return longestStr;
     }
 
     /**
@@ -265,125 +145,12 @@ public class DisplayCanvas extends StackPane {
     }
 
     /**
-     * Set whether the first of each line should be capitalised.
-     * <p/>
-     * @param val true if the first character should be, false otherwise.
-     */
-    public void setCapitaliseFirst(boolean val) {
-        this.capitaliseFirst = val;
-    }
-
-    /**
-     * Take the raw text and format it into a number of lines nicely, where the
-     * lines aren't more than the maximum length.
-     * <p/>
-     * @return processed, sanctified text that can be displayed nicely.
-     */
-    private List<String> sanctifyText() {
-        List<String> ret = new ArrayList<>();
-        int maxLength = QueleaProperties.get().getMaxChars();
-        for(String line : text) {
-            if(stageView) {
-                ret.add(line);
-            }
-            else {
-                ret.addAll(splitLine(line, maxLength));
-            }
-        }
-        return ret;
-    }
-
-    /**
-     * Given a line of any length, sensibly split it up into several lines.
-     * <p/>
-     * @param line the line to split.
-     * @return the split line (or the unaltered line if it is less than or equal
-     * to the allowed length.
-     */
-    private List<String> splitLine(String line, int maxLength) {
-        List<String> sections = new ArrayList<>();
-        if(line.length() > maxLength) {
-            if(containsNotAtEnd(line, ";")) {
-                for(String s : splitMiddle(line, ';')) {
-                    sections.addAll(splitLine(s, maxLength));
-                }
-            }
-            else if(containsNotAtEnd(line, ",")) {
-                for(String s : splitMiddle(line, ',')) {
-                    sections.addAll(splitLine(s, maxLength));
-                }
-            }
-            else if(containsNotAtEnd(line, " ")) {
-                for(String s : splitMiddle(line, ' ')) {
-                    sections.addAll(splitLine(s, maxLength));
-                }
-            }
-//            else if(containsNotAtEnd(line, "-")) {
-//                for(String s : splitMiddle(line, '-')) {
-//                    sections.addAll(splitLine(s, maxLength));
-//                }
-//            }
-            else {
-                sections.addAll(splitLine(new StringBuilder(line).insert(line.length() / 2, "-").toString(), maxLength));
-            }
-        }
-        else {
-            if(!stageView) {
-                line = line.trim();
-            }
-            if(capitaliseFirst && QueleaProperties.get().checkCapitalFirst()) {
-                line = Utils.capitaliseFirst(line);
-            }
-            sections.add(line);
-        }
-        return sections;
-    }
-
-    /**
-     * Determine if the given line contains the given string in the middle 80%
-     * of the line.
-     * <p/>
-     * @param line the line to check.
-     * @param str the string to use.
-     * @return true if the line contains the delimiter, false otherwise.
-     */
-    private static boolean containsNotAtEnd(String line, String str) {
-        final int percentage = 80;
-        int removeChars = (int) ((double) line.length() * ((double) (100 - percentage) / 100));
-        return line.substring(removeChars, line.length() - removeChars).contains(str);
-    }
-
-    /**
-     * Split a string with the given delimiter into two parts, using the
-     * delimiter closest to the middle of the string.
-     * <p/>
-     * @param line the line to split.
-     * @param delimiter the delimiter.
-     * @return an array containing two strings split in the middle by the
-     * delimiter.
-     */
-    private static String[] splitMiddle(String line, char delimiter) {
-        final int middle = (int) (((double) line.length() / 2) + 0.5);
-        int nearestIndex = -1;
-        for(int i = 0; i < line.length(); i++) {
-            if(line.charAt(i) == delimiter) {
-                int curDistance = Math.abs(nearestIndex - middle);
-                int newDistance = Math.abs(i - middle);
-                if(newDistance < curDistance || nearestIndex < 0) {
-                    nearestIndex = i;
-                }
-            }
-        }
-        return new String[]{line.substring(0, nearestIndex + 1), line.substring(nearestIndex + 1, line.length())};
-    }
-
-    /**
      * Toggle the clearing of this canvas - still leave the background image in
      * place but remove all the text.
      */
     public void toggleClear() {
         cleared ^= true; //invert
-        update();
+        update(null);
     }
 
     /**
@@ -401,7 +168,7 @@ public class DisplayCanvas extends StackPane {
      */
     public void toggleBlack() {
         blacked ^= true; //invert
-        update();
+        update(null);
     }
 
     /**
@@ -411,137 +178,6 @@ public class DisplayCanvas extends StackPane {
      */
     public boolean isBlacked() {
         return blacked;
-    }
-
-    /**
-     * Set the theme of this canvas.
-     * <p/>
-     * @param theme the theme to place on the canvas.
-     */
-    public void setTheme(ThemeDTO theme) {
-        if(theme == null) {
-            theme = ThemeDTO.DEFAULT_THEME;
-        }
-        if(this.theme.equals(theme)) {
-            return;
-        }
-        this.theme = theme;
-        Image image;
-        if(theme.getBackground() instanceof ImageBackground) {
-            image = ((ImageBackground) theme.getBackground()).getImage();
-        }
-        else if(theme.getBackground() instanceof ColourBackground) {
-            Color color = ((ColourBackground) theme.getBackground()).getColour();
-            image = Utils.getImageFromColour(color);
-        }
-        else if(theme.getBackground() instanceof VideoBackground) {
-            image = null;
-        }
-        else {
-            throw new AssertionError("Bug: Unhandled theme case");
-        }
-        FadeTransition fadeOut = new FadeTransition(Duration.seconds(0.3), background);
-        fadeOut.setFromValue(1);
-        fadeOut.setToValue(0);
-
-        Node newBackground;
-        if(image == null) {
-            final MediaView newVideo = new MediaView();
-            String location = ((VideoBackground) theme.getBackground()).getVideoFile().toURI().toString();
-            try {
-                MediaPlayer player = new MediaPlayer(new Media(location));
-                player.setVolume(0);
-                player.setAutoPlay(true);
-                player.setCycleCount(javafx.scene.media.MediaPlayer.INDEFINITE);
-                newVideo.setMediaPlayer(player);
-                getChildren().add(0, newVideo);
-                newBackground = newVideo;
-            }
-            catch(MediaException ex) {
-                return;
-                //Don't shout about it at this point.
-            }
-        }
-        else {
-            final ImageView newImage = getNewImageView();
-            newImage.setFitHeight(getHeight());
-            newImage.setFitWidth(getWidth());
-            newImage.setImage(image);
-            getChildren().add(0, newImage);
-            newBackground = newImage;
-        }
-        final Node oldBackground = background;
-        fadeOut.setOnFinished(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent t) {
-                getChildren().remove(oldBackground);
-            }
-        });
-        background = newBackground;
-        fadeOut.play();
-        update();
-    }
-
-    /**
-     * Get the theme currently in use on the canvas.
-     * <p/>
-     * @return the current theme
-     */
-    public ThemeDTO getTheme() {
-        return theme;
-    }
-
-    /**
-     * Erase all the text on the canvas.
-     */
-    public void eraseText() {
-        setText(null, null, true);
-    }
-
-    public void setText(TextDisplayable displayable, int index) {
-        boolean fade;
-        if(curDisplayable == displayable) {
-            fade = false;
-        }
-        else {
-            fade = true;
-        }
-        curDisplayable = displayable;
-        curIndex = index;
-        setText(displayable.getSections()[index].getText(false, false), displayable.getSections()[index].getSmallText(), fade);
-    }
-
-    /**
-     * Set the text to appear on the canvas. The lines will be automatically
-     * wrapped and if the text is too large to fit on the screen in the current
-     * font, the size will be decreased until all the text fits.
-     * <p/>
-     * @param text an array of the lines to display on the canvas, one entry in
-     * the array is one line.
-     * @param smallText an array of the small lines to be displayed on the
-     * canvas.
-     */
-    public void setText(String[] text, String[] smallText, boolean fade) {
-        if(text == null) {
-            text = new String[0];
-        }
-        if(smallText == null) {
-            smallText = new String[0];
-        }
-        this.smallText = Arrays.copyOf(smallText, smallText.length);
-        this.text = Arrays.copyOf(text, text.length);
-        this.fadeText = fade;
-        update();
-    }
-
-    /**
-     * Get the text currently set to appear on the canvas. The text may or may
-     * not be shown depending on whether the canvas is blacked or cleared.
-     * <p/>
-     * @return the current text.
-     */
-    public String[] getText() {
-        return Arrays.copyOf(text, text.length);
     }
 
     /**
