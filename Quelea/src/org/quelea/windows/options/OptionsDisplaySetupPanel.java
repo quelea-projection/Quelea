@@ -25,7 +25,7 @@ import org.quelea.services.utils.PropertyPanel;
 import org.quelea.services.utils.QueleaProperties;
 import org.quelea.windows.main.GraphicsDeviceListener;
 import org.quelea.windows.main.GraphicsDeviceWatcher;
-import org.quelea.windows.lyrics.DisplayWindow;
+import org.quelea.windows.main.DisplayWindow;
 import org.quelea.windows.main.QueleaApp;
 
 /**

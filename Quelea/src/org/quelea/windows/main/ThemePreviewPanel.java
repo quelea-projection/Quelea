@@ -18,7 +18,6 @@
 package org.quelea.windows.main;
 
 import org.quelea.windows.main.schedule.ScheduleThemeNode;
-import org.quelea.windows.lyrics.DisplayCanvas;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.logging.Level;
