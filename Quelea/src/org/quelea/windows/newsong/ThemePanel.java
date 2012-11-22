@@ -44,6 +44,7 @@ import org.quelea.data.VideoBackground;
 import org.quelea.languages.LabelGrabber;
 import org.quelea.services.utils.Utils;
 import org.quelea.windows.lyrics.DisplayCanvas;
+import org.quelea.windows.lyrics.LyricDrawer;
 import org.quelea.windows.main.widgets.CardPane;
 
 /**
@@ -82,7 +83,8 @@ public class ThemePanel extends BorderPane {
      */
     public ThemePanel() {
         canvas = new DisplayCanvas(false, false);
-        canvas.setText(SAMPLE_LYRICS, null, false);
+        LyricDrawer drawer = new LyricDrawer(canvas); //@todo check  if here should be theme setting    
+        drawer.setText(SAMPLE_LYRICS, null, false);
         setCenter(canvas);
         VBox toolbarPanel = new VBox();
         setupFontToolbar();
@@ -269,7 +271,8 @@ public class ThemePanel extends BorderPane {
         Platform.runLater(new Runnable() {
             @Override
             public void run() {
-                canvas.setTheme(theme);
+                LyricDrawer drawer = new LyricDrawer(canvas); //@todo check  if here should be theme setting
+                drawer.setTheme(theme);
             }
         });
     }
