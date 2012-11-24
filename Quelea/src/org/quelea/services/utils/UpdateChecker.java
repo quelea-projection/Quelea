@@ -97,8 +97,8 @@ public class UpdateChecker {
      * Show a message saying there was an error checking for updates.
      */
     private void showUpdateError() {
-        Dialog.showError("Error", "Sorry, there was an error checking for updates."
-                + "Please check your internet connection then try again.");
+        Dialog.showError(LabelGrabber.INSTANCE.getLabel("error.checking.updates.title"),
+                LabelGrabber.INSTANCE.getLabel("error.checking.updates.text"));
     }
 
 }
