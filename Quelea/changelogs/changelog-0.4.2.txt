@@ -1,0 +1,14 @@
+quelea (0.4.2) stable; urgency=normal
+ 
+  * Custom position for projector window
+  * Text now in languages file
+  * Convert first line of Kingsway songs to sentence case
+  * Add "single line" mode to song panels
+  * Better error for old Java
+  * RSV bible names now in English
+  * Canvas now resizes properly
+  * Better out of memory error
+  * Repainting bugs
+  * Layout bug in options
+ 
+ -- Michael Berry <michael@quelea.org>  Sunday, 19 Dec 2011 00:00:00 +0000
