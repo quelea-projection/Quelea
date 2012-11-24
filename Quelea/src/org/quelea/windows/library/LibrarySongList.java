@@ -88,7 +88,7 @@ public class LibrarySongList extends ListView<SongDisplayable> implements Databa
             }
         });
         if(popup) {
-            setCellFactory(ContextMenuListCell.<SongDisplayable>forListView(popupMenu, callback));
+            setCellFactory(DisplayableListCell.<SongDisplayable>forListView(popupMenu, callback, null));
         }
         databaseChanged();
         SongManager.get().registerDatabaseListener(this);
