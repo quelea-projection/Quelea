@@ -31,7 +31,8 @@ import org.quelea.data.Schedule;
 import org.quelea.data.displayable.Displayable;
 import org.quelea.data.displayable.SongDisplayable;
 import org.quelea.services.utils.LoggerUtils;
-import org.quelea.windows.library.ContextMenuListCell;
+import org.quelea.windows.library.Constraint;
+import org.quelea.windows.library.DisplayableListCell;
 
 /**
  * The schedule list, all the items that are to be displayed in the service.
@@ -73,7 +74,13 @@ public class ScheduleList extends ListView<Displayable> {
                 };
             }
         };
-        setCellFactory(ContextMenuListCell.<Displayable>forListView(popupMenu, callback));
+        setCellFactory(DisplayableListCell.<Displayable>forListView(popupMenu, callback, new Constraint<Displayable>() {
+
+            @Override
+            public boolean isTrue(Displayable d) {
+                return d instanceof SongDisplayable;
+            }
+        }));
         schedule = new Schedule();
         setOnKeyTyped(new EventHandler<KeyEvent>() {
             @Override

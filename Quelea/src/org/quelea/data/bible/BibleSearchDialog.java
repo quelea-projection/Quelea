@@ -31,7 +31,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import org.quelea.languages.LabelGrabber;
-import org.quelea.windows.library.ContextMenuListCell;
+import org.quelea.windows.library.DisplayableListCell;
 
 /**
  * A dialog that can be used for searching for bible passages.
@@ -64,7 +64,7 @@ public class BibleSearchDialog extends Stage implements BibleChangeListener {
         popupMenu = new BibleSearchPopupMenu();
         searchResults = new ListView<>();
 //        searchResults.setCellRenderer(new SearchPreviewRenderer());
-        searchResults.setCellFactory(ContextMenuListCell.<BibleChapter>forListView(popupMenu));
+        searchResults.setCellFactory(DisplayableListCell.<BibleChapter>forListView(popupMenu));
         VBox centrePanel = new VBox();
         centrePanel.getChildren().add(searchResults);
         mainPane.setCenter(centrePanel);
