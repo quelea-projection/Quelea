@@ -18,6 +18,7 @@
 package org.quelea.windows.main;
 
 import java.util.Arrays;
+import javafx.application.Platform;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
 import javafx.scene.image.ImageView;
@@ -30,8 +31,6 @@ import org.quelea.data.powerpoint.PresentationSlide;
  * @author Michael
  */
 public class PresentationList extends ListView<PresentationSlide> {
-
-    private boolean updating;
 
     /**
      * Create a new presentation list.
@@ -54,14 +53,6 @@ public class PresentationList extends ListView<PresentationSlide> {
                 };
             }
         });
-    }
-
-    public boolean isUpdating() {
-        return updating;
-    }
-
-    public void setUpdating(boolean updating) {
-        this.updating = updating;
     }
 
     /**
