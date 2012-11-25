@@ -17,7 +17,10 @@
  */
 package org.quelea.windows.main;
 
+import javafx.application.Platform;
+import javafx.scene.control.ListView;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.text.Text;
 import org.quelea.data.displayable.PresentationDisplayable;
 import org.quelea.data.powerpoint.OOPresentation;
 import org.quelea.data.powerpoint.PresentationSlide;
@@ -121,13 +124,13 @@ public class PresentationPanel extends BorderPane implements ContainedPanel {
      * @param displayable the presentation displayable to display.
      * @param index the index to display.
      */
-    public void setDisplayable(final PresentationDisplayable displayable, int index) {
+    public void showDisplayable(final PresentationDisplayable displayable, int index) {
         if(displayable == null) {
             presentationList.itemsProperty().get().clear();
             return;
         }
         this.displayable = displayable;
-        if(live && OOPresentation.isInit()) {
+//        if(live && OOPresentation.isInit()) {
 //            for(KeyListener listener : presentationList.getKeyListeners()) {
 //                presentationList.removeKeyListener(listener);
 //            }
@@ -144,14 +147,13 @@ public class PresentationPanel extends BorderPane implements ContainedPanel {
 //                    }
 //                }
 //            });
-        }
+//        }
         PresentationSlide[] slides = displayable.getPresentation().getSlides();
         presentationList.setSlides(slides);
         presentationList.selectionModelProperty().get().select(index);
         if(presentationList.selectionModelProperty().get().isEmpty()) {
             presentationList.selectionModelProperty().get().select(0);
         }
-        presentationList.scrollTo(getIndex());
     }
 
     /**
