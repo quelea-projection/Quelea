@@ -67,20 +67,20 @@ public final class Main extends Application {
         final ObservableList<Screen> monitors = Screen.getScreens();
         Screen screen;
         LOGGER.log(Level.INFO, "Number of displays: {0}", monitors.size());
-        
+
         int controlScreenProp = QueleaProperties.get().getControlScreen();
         final int controlScreen;
         final int projectorScreen = QueleaProperties.get().getProjectorScreen();
         final int stageScreen = QueleaProperties.get().getStageScreen();
         final int monitorNumber = monitors.size();
-        
+
         if(controlScreenProp < monitorNumber) {
             controlScreen = controlScreenProp;
         }
         else {
             controlScreen = 0;
         }
-        
+
         final boolean lyricsHidden;
         if(!QueleaProperties.get().isProjectorModeCoords() && (projectorScreen >= monitorNumber || projectorScreen < 0)) {
             lyricsHidden = true;
@@ -95,7 +95,7 @@ public final class Main extends Application {
         else {
             stageHidden = false;
         }
-        
+
         Platform.runLater(new Runnable() {
             @Override
             public void run() {
@@ -131,7 +131,6 @@ public final class Main extends Application {
                 QueleaApp.get().setStageWindow(stageWindow);
                 stageWindow.toFront();
             }
-            
         });
 
         LOGGER.log(Level.INFO, "Loading bibles");
@@ -154,7 +153,7 @@ public final class Main extends Application {
             LOGGER.log(Level.SEVERE, "Couldn't load dictionaries", ex);
         }
         LOGGER.log(Level.INFO, "Registered dictionary");
-        
+
         BibleManager.get().buildIndex();
 
         Platform.runLater(new Runnable() {
@@ -164,11 +163,12 @@ public final class Main extends Application {
                     Dialog.showError(LabelGrabber.INSTANCE.getLabel("already.running.title"), LabelGrabber.INSTANCE.getLabel("already.running.error"));
                     System.exit(1);
                 }
+                SongManager.get().getSongs(); //Add all the songs to the index
                 OOUtils.attemptInit();
                 mainWindow = new MainWindow(true);
 
                 new UpdateChecker().checkUpdate(false, false, false); //Check updates
-                    PhoneHome.INSTANCE.phone(); //Phone home
+                PhoneHome.INSTANCE.phone(); //Phone home
 
                 LOGGER.log(Level.INFO, "Registering canvases");
                 mainWindow.getMainPanel().getLivePanel().registerLyricCanvas(fullScreenWindow.getCanvas());
@@ -188,12 +188,12 @@ public final class Main extends Application {
                     stageWindow.show();
                 }
                 LOGGER.log(Level.INFO, "Registered canvases.");
-                
+
                 if(QueleaProperties.get().getDragAndDrop()) {
                     Utils.enableDragAndDrop();
                     LOGGER.log(Level.INFO, "Enabled drag and drop functionality.");
                 }
-                
+
                 LOGGER.log(Level.INFO, "Final loading bits");
                 try {
                     bibleLoader.join(); //Make sure bibleloader has finished loading
@@ -204,20 +204,20 @@ public final class Main extends Application {
                 mainWindow.toFront();
                 new ShortcutManager().addShortcuts();
                 LOGGER.log(Level.INFO, "Loaded everything.");
-                
+
                 if(!getParameters().getRaw().isEmpty()) {
                     String schedulePath = getParameters().getRaw().get(0);
                     LOGGER.log(Level.INFO, "Opening schedule through argument: {0}", schedulePath);
                     QueleaApp.get().openSchedule(new File(schedulePath));
                 }
-                
+
                 mainWindow.show();
                 QueleaApp.get().initialiseWatchers();
                 splashWindow.hide();
                 showWarning(monitorNumber);
             }
         });
-        
+
     }
 
     /**
