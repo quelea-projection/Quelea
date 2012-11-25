@@ -17,9 +17,12 @@
  */
 package org.quelea.windows.main.widgets;
 
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.Iterator;
 import javafx.scene.Node;
 import javafx.scene.layout.StackPane;
+import javafx.scene.text.Text;
 
 /**
  * Emulates (sort of) a swing card layout - JavaFX doesn't have one but we can
@@ -27,10 +30,10 @@ import javafx.scene.layout.StackPane;
  * <p/>
  * @author Michael
  */
-public class CardPane extends StackPane {
+public class CardPane<T extends Node> extends StackPane implements Iterable<T> {
 
-    private HashMap<String, Node> items = new HashMap<>();
-    private Node currentPane = null;
+    private HashMap<String, T> items = new HashMap<>();
+    private T currentPane = null;
 
     /**
      * Add a node to this card pane.
@@ -38,8 +41,26 @@ public class CardPane extends StackPane {
      * @param node the node to add.
      * @param label the label used for selecting this node.
      */
-    public void add(Node node, String label) {
+    public void add(T node, String label) {
         items.put(label, node);
+    }
+
+    /**
+     * Remove a node on this card pane.
+     * <p/>
+     * @param label the label of the node to remove.
+     */
+    public void remove(String label) {
+        items.remove(label);
+    }
+
+    /**
+     * Get all the panels currently on the card pane.
+     * <p/>
+     * @return
+     */
+    public Collection<T> getPanels() {
+        return items.values();
     }
 
     /**
@@ -66,5 +87,10 @@ public class CardPane extends StackPane {
      */
     public Node getCurrentPane() {
         return currentPane;
+    }
+
+    @Override
+    public Iterator<T> iterator() {
+        return getPanels().iterator();
     }
 }
