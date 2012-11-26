@@ -114,7 +114,8 @@ public class ImageBackground implements Background {
     @Override
     public int hashCode() {
         int hash = 5;
-        hash = 97 * hash + Objects.hashCode(this.imageLocation);
+        hash = 71 * hash + Objects.hashCode(this.imageLocation);
+        hash = 71 * hash + Objects.hashCode(this.originalImage);
         return hash;
     }
 
@@ -128,6 +129,9 @@ public class ImageBackground implements Background {
         }
         final ImageBackground other = (ImageBackground) obj;
         if(!Objects.equals(this.imageLocation, other.imageLocation)) {
+            return false;
+        }
+        if(!Objects.equals(this.originalImage, other.originalImage)) {
             return false;
         }
         return true;
