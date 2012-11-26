@@ -22,7 +22,9 @@ import org.quelea.windows.image.ImagePanel;
 import java.awt.Canvas;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.logging.Level;
 import java.util.logging.Logger;
+import javafx.application.Platform;
 import javafx.event.EventHandler;
 import javafx.scene.Node;
 import javafx.scene.input.KeyCode;
@@ -78,7 +80,6 @@ public abstract class LivePreviewPanel extends BorderPane {
      * All the contained panels so they can be flipped through easily...
      */
     private final Set<ContainedPanel> containedSet = new HashSet<ContainedPanel>() {
-
         {
             this.add(lyricsPanel);
             this.add(picturePanel);
@@ -178,11 +179,10 @@ public abstract class LivePreviewPanel extends BorderPane {
         if (PRESENTATION_LABEL.equals(currentLabel)) {
             presentationPanel.showDisplayable(null, 0);
         }
-        for(Node panel : cardPanel) {
-            if(panel instanceof ContainedPanel) {
+        for (Node panel : cardPanel) {
+            if (panel instanceof ContainedPanel) {
                 ((ContainedPanel) panel).clear();
-            }
-            else {
+            } else {
                 LOGGER.log(Level.WARNING, "Panel was {0} which isn''t a ContainedPanel... can''t clear it.", panel.getClass());
             }
         }
@@ -218,54 +218,56 @@ public abstract class LivePreviewPanel extends BorderPane {
      * @param displayable the displayable to show.
      * @param index the index of the displayable to show, if relevant.
      */
-    public void setDisplayable(Displayable displayable, int index) {
+    public void setDisplayable(final Displayable displayable, final int index) {
         Platform.runLater(new Runnable() {
-
             @Override
             public void run() {
                 LivePreviewPanel.this.displayable = displayable;
 
-        presentationPanel.stopCurrent();
-        audioPanel.clear();
-        videoPanel.clear();
-        lyricsPanel.clear();
-        picturePanel.clear();
-        presentationPanel.clear();
-        if (PRESENTATION_LABEL.equals(currentLabel)) {
-            presentationPanel.showDisplayable(null, 0);
-        }
-        if (displayable instanceof TextDisplayable) {
-            drawer = new LyricDrawer();
-            lyricsPanel.showDisplayable((TextDisplayable) displayable, index);
-            cardPanel.show(LYRICS_LABEL);
-            currentLabel = LYRICS_LABEL;
+                presentationPanel.stopCurrent();
+                audioPanel.clear();
+                videoPanel.clear();
+                lyricsPanel.clear();
+                picturePanel.clear();
+                presentationPanel.clear();
+                if (PRESENTATION_LABEL.equals(currentLabel)) {
+                    presentationPanel.showDisplayable(null, 0);
+                }
+                if (displayable instanceof TextDisplayable) {
+                    drawer = new LyricDrawer();
+                    lyricsPanel.showDisplayable((TextDisplayable) displayable, index);
+                    cardPanel.show(LYRICS_LABEL);
+                    currentLabel = LYRICS_LABEL;
 
-        } else if (displayable instanceof ImageDisplayable) {
-            drawer = new ImageDrawer((ImageDisplayable) displayable);
-            picturePanel.showDisplayable((ImageDisplayable) displayable);
-            cardPanel.show(IMAGE_LABEL);
-            currentLabel = IMAGE_LABEL;
+                } else if (displayable instanceof ImageDisplayable) {
+                    drawer = new ImageDrawer();
+                    picturePanel.showDisplayable((ImageDisplayable) displayable);
+                    cardPanel.show(IMAGE_LABEL);
+                    currentLabel = IMAGE_LABEL;
 
-        } else if (displayable instanceof VideoDisplayable) {
-            videoPanel.showDisplayable((MultimediaDisplayable) displayable);
-            cardPanel.show(VIDEO_LABEL);
-            currentLabel = VIDEO_LABEL;
-        } else if (displayable instanceof AudioDisplayable) {
-            audioPanel.showDisplayable((MultimediaDisplayable) displayable);
-            cardPanel.show(AUDIO_LABEL);
-            currentLabel = AUDIO_LABEL;
-        } else if (displayable instanceof PresentationDisplayable) {
-            presentationPanel.showDisplayable((PresentationDisplayable) displayable, index);
-            cardPanel.show(PRESENTATION_LABEL);
-            currentLabel = PRESENTATION_LABEL;
-        } else if (displayable == null) {
+                } else if (displayable instanceof VideoDisplayable) {
+                    videoPanel.showDisplayable((MultimediaDisplayable) displayable);
+                    cardPanel.show(VIDEO_LABEL);
+                    currentLabel = VIDEO_LABEL;
+                } else if (displayable instanceof AudioDisplayable) {
+                    audioPanel.showDisplayable((MultimediaDisplayable) displayable);
+                    cardPanel.show(AUDIO_LABEL);
+                    currentLabel = AUDIO_LABEL;
+                } else if (displayable instanceof PresentationDisplayable) {
+                    drawer = new ImageDrawer();
+                    presentationPanel.showDisplayable((PresentationDisplayable) displayable, index);
+                    cardPanel.show(PRESENTATION_LABEL);
+                    currentLabel = PRESENTATION_LABEL;
+                } else if (displayable == null) {
 //            LOGGER.log(Level.WARNING, "BUG: Called showDisplayable(null), should probably call clear() instead.", 
 //                    new RuntimeException("BUG: Called showDisplayable(null), should probably call clear() instead.")); clear();
-        } else {
-            throw new RuntimeException("Displayable type not implemented: " + displayable.getClass());
-        }
- });
+                } else {
+                    throw new RuntimeException("Displayable type not implemented: " + displayable.getClass());
+                }
 
+
+            }
+        });
     }
 
     /**
@@ -354,12 +356,11 @@ public abstract class LivePreviewPanel extends BorderPane {
         drawer.setCanvas(canvas);
         return drawer;
     }
-    
+
     /**
      * @return the drawer
      */
     public DisplayableDrawer getDrawer() {
         return drawer;
     }
-    
 }
