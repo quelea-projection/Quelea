@@ -183,6 +183,15 @@ public final class Utils {
     }
 
     /**
+     * Determine if we're running on Windows.
+     * <p/>
+     * @return true if we're running on Windows, false otherwise.
+     */
+    public static boolean isWindows() {
+        return System.getProperty("os.name").toLowerCase().contains("windows");
+    }
+
+    /**
      * Get a file name without its extension.
      * <p/>
      * @param nameWithExtension the file name with the extension.
