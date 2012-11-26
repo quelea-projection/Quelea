@@ -175,7 +175,7 @@ public final class SongManager {
                         song.getKey(), 
                         song.getCapo(),
                         song.getInfo(),
-                        nullTheme ? ThemeDTO.DEFAULT_THEME.getTheme() : new Theme(song.getSections()[0].getTheme().getTheme()),//@todo check if theme mapping is correct
+                        nullTheme ? ThemeDTO.DEFAULT_THEME.getTheme() : new Theme(song.getSections()[0].getTheme().getTheme()),
                         nullTags ? new ArrayList<String>() : Arrays.asList(song.getTags()));
                 session.save(newSong);
             }

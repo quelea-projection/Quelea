@@ -43,58 +43,11 @@ public class PresentationPanel extends BorderPane implements ContainedPanel {
      */
     public PresentationPanel(final LivePreviewPanel containerPanel) {
         presentationList = new PresentationList();
-//        presentationList.addListSelectionListener(new ListSelectionListener() {
-//
-//            @Override
-//            public void valueChanged(ListSelectionEvent e) {
-//                if(live) {
-//                    if(!presentationList.getValueIsAdjusting() && !presentationList.isUpdating()) {
-//                        if(displayable != null && displayable.getOOPresentation() == null) {
-//                            HashSet<LyricCanvas> canvases = new HashSet<>();
-//                            canvases.addAll(containerPanel.getCanvases());
-//                            for(LyricCanvas lc : canvases) {
-//                                lc.eraseText();
-//                                BufferedImage displayImage = presentationList.getCurrentImage(lc.getWidth(), lc.getHeight());
-//                                lc.setTheme(new Theme(null, null, new Background(null, displayImage)));
-//                            }
-//                        }
-//                        else if(displayable != null) {
-//                            OOPresentation pres = displayable.getOOPresentation();
-//                            pres.addSlideListener(new SlideChangedListener() {
-//
-//                                @Override
-//                                public void slideChanged(final int newSlideIndex) {
-//                                    SwingUtilities.invokeLater(new Runnable() {
-//
-//                                        @Override
-//                                        public void run() {
-//                                            presentationList.setUpdating(true);
-//                                            presentationList.ensureIndexIsVisible(newSlideIndex);
-//                                            presentationList.setSelectedIndex(newSlideIndex);
-//                                            presentationList.setUpdating(false);
-//                                        }
-//                                    });
-//                                }
-//                            });
-//                            startOOPres();
-//                            java.awt.EventQueue.invokeLater(new Runnable() {
-//
-//                                @Override
-//                                public void run() {
-//                                    Application.get().getMainWindow().toFront();
-//                                }
-//                            });
-//                            pres.gotoSlide(presentationList.getSelectedIndex());
-//                        }
-//                    }
-//                }
-//            }
-//        });
         setCenter(presentationList);
     }
 
     public void stopCurrent() {
-        if(live && displayable != null && displayable.getOOPresentation() != null) {
+        if (live && displayable != null && displayable.getOOPresentation() != null) {
             displayable.getOOPresentation().stop();
             displayable = null;
         }
@@ -105,7 +58,7 @@ public class PresentationPanel extends BorderPane implements ContainedPanel {
      */
     private void startOOPres() {
         OOPresentation pres = displayable.getOOPresentation();
-        if(pres != null && !pres.isRunning()) {
+        if (pres != null && !pres.isRunning()) {
             pres.start(QueleaProperties.get().getProjectorScreen());
         }
     }
@@ -124,33 +77,15 @@ public class PresentationPanel extends BorderPane implements ContainedPanel {
      * @param index the index to display.
      */
     public void showDisplayable(final PresentationDisplayable displayable, int index) {
-        if(displayable == null) {
+        if (displayable == null) {
             presentationList.itemsProperty().get().clear();
             return;
         }
         this.displayable = displayable;
-        if(live && OOPresentation.isInit()) {
-//            for(KeyListener listener : presentationList.getKeyListeners()) {
-//                presentationList.removeKeyListener(listener);
-//            }
-//            presentationList.addKeyListener(new KeyAdapter() {
-//
-//                @Override
-//                public void keyPressed(KeyEvent ke) {
-//                    if(ke.getKeyCode() == KeyEvent.VK_RIGHT || ke.getKeyCode() == KeyEvent.VK_SPACE || ke.getKeyCode() == KeyEvent.VK_DOWN) {
-//                        displayable.getOOPresentation().goForward();
-//                        ke.consume();
-//                    }
-//                    if(ke.getKeyCode() == KeyEvent.VK_LEFT) {
-//                        displayable.getOOPresentation().goBack();
-//                    }
-//                }
-//            });
-        }
         PresentationSlide[] slides = displayable.getPresentation().getSlides();
         presentationList.setSlides(slides);
         presentationList.selectionModelProperty().get().select(index);
-        if(presentationList.selectionModelProperty().get().isEmpty()) {
+        if (presentationList.selectionModelProperty().get().isEmpty()) {
             presentationList.selectionModelProperty().get().select(0);
         }
         presentationList.scrollTo(getIndex());
@@ -179,11 +114,15 @@ public class PresentationPanel extends BorderPane implements ContainedPanel {
      */
     @Override
     public void clear() {
-        //Doesn't apply
+        updateCanvases();
     }
 
     @Override
     public int getCurrentIndex() {
         return presentationList.getSelectionModel().getSelectedIndex();
+    }
+
+    @Override
+    public void updateCanvases() {
     }
 }
