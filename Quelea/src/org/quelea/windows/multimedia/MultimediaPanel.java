@@ -25,9 +25,11 @@ import org.quelea.data.VideoBackground;
 import org.quelea.data.displayable.MultimediaDisplayable;
 import org.quelea.data.displayable.VideoDisplayable;
 import org.quelea.services.utils.LoggerUtils;
-import org.quelea.windows.lyrics.DisplayCanvas;
+import org.quelea.windows.main.DisplayCanvas;
+import org.quelea.windows.lyrics.LyricDrawer;
 import org.quelea.windows.main.ContainedPanel;
 import org.quelea.windows.main.LivePreviewPanel;
+import org.quelea.windows.main.QueleaApp;
 
 /**
  * A panel used in the live / preview panels for playing audio.
@@ -66,6 +68,7 @@ public class MultimediaPanel extends BorderPane implements ContainedPanel {
             controlPanel.getPlayer().stop();
             ((MediaView) controlPanel.getView()).setMediaPlayer(null);
         }
+        updateCanvases();
     }
 
     /**
@@ -86,8 +89,9 @@ public class MultimediaPanel extends BorderPane implements ContainedPanel {
         controlPanel.loadMultimedia(displayable);
         if (displayable instanceof VideoDisplayable) {
             for (DisplayCanvas canvas : containerPanel.getCanvases()) {
-                canvas.setText(null, null, true);
-                canvas.setTheme(new ThemeDTO(null, null,
+                LyricDrawer drawer = (LyricDrawer)containerPanel.getDrawer(canvas);
+                drawer.setText(null, null, true);
+                drawer.setTheme(new ThemeDTO(null, null,
                         new VideoBackground(displayable.getFile().getName()),
                         ThemeDTO.DEFAULT_SHADOW));
             }
@@ -97,5 +101,9 @@ public class MultimediaPanel extends BorderPane implements ContainedPanel {
     @Override
     public int getCurrentIndex() {
         return 0;
+    }
+
+    @Override
+    public void updateCanvases() {
     }
 }
