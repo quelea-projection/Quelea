@@ -376,7 +376,7 @@ public class LyricDrawer extends DisplayableDrawer {
             smallText = new String[0];
         }
         this.text = Arrays.copyOf(text, text.length);
-        draw(); //@todo tomaszpio to be reviewed it's now run synchronously
+        draw(curDisplayable); //@todo tomaszpio to be reviewed it's now run synchronously
     }
 
     /**
@@ -396,7 +396,7 @@ public class LyricDrawer extends DisplayableDrawer {
         return Arrays.copyOf(text, text.length);
     }
 
-    public void draw() {
+    public void draw(Displayable displayable) {
         drawText();
         if (canvas.isBlacked()) {
             if (canvas.getChildren().contains(canvas.getBackground())) {
