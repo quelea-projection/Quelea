@@ -17,18 +17,24 @@
  */
 package org.quelea.windows.main;
 
-import javafx.application.Platform;
-import javafx.scene.control.ListView;
+import java.util.HashSet;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
+import javafx.scene.image.Image;
 import javafx.scene.layout.BorderPane;
-import javafx.scene.text.Text;
+import javax.swing.SwingUtilities;
+import org.quelea.data.ImageBackground;
+import org.quelea.data.ThemeDTO;
 import org.quelea.data.displayable.PresentationDisplayable;
 import org.quelea.data.powerpoint.OOPresentation;
 import org.quelea.data.powerpoint.PresentationSlide;
+import org.quelea.data.powerpoint.SlideChangedListener;
 import org.quelea.services.utils.QueleaProperties;
+import org.quelea.windows.lyrics.DisplayCanvas;
 
 /**
  * The panel for displaying presentation slides in the live / preview panels.
- *
+ * <p/>
  * @author Michael
  */
 public class PresentationPanel extends BorderPane implements ContainedPanel {
@@ -39,58 +45,39 @@ public class PresentationPanel extends BorderPane implements ContainedPanel {
 
     /**
      * Create a new presentation panel.
-     *
+     * <p/>
      * @param containerPanel the panel to create.
      */
     public PresentationPanel(final LivePreviewPanel containerPanel) {
         presentationList = new PresentationList();
-//        presentationList.addListSelectionListener(new ListSelectionListener() {
-//
-//            @Override
-//            public void valueChanged(ListSelectionEvent e) {
-//                if(live) {
-//                    if(!presentationList.getValueIsAdjusting() && !presentationList.isUpdating()) {
-//                        if(displayable != null && displayable.getOOPresentation() == null) {
-//                            HashSet<LyricCanvas> canvases = new HashSet<>();
-//                            canvases.addAll(containerPanel.getCanvases());
-//                            for(LyricCanvas lc : canvases) {
-//                                lc.eraseText();
-//                                BufferedImage displayImage = presentationList.getCurrentImage(lc.getWidth(), lc.getHeight());
-//                                lc.setTheme(new Theme(null, null, new Background(null, displayImage)));
-//                            }
-//                        }
-//                        else if(displayable != null) {
-//                            OOPresentation pres = displayable.getOOPresentation();
-//                            pres.addSlideListener(new SlideChangedListener() {
-//
-//                                @Override
-//                                public void slideChanged(final int newSlideIndex) {
-//                                    SwingUtilities.invokeLater(new Runnable() {
-//
-//                                        @Override
-//                                        public void run() {
-//                                            presentationList.setUpdating(true);
-//                                            presentationList.ensureIndexIsVisible(newSlideIndex);
-//                                            presentationList.setSelectedIndex(newSlideIndex);
-//                                            presentationList.setUpdating(false);
-//                                        }
-//                                    });
-//                                }
-//                            });
-//                            startOOPres();
-//                            java.awt.EventQueue.invokeLater(new Runnable() {
-//
-//                                @Override
-//                                public void run() {
-//                                    Application.get().getMainWindow().toFront();
-//                                }
-//                            });
-//                            pres.gotoSlide(presentationList.getSelectedIndex());
-//                        }
-//                    }
-//                }
-//            }
-//        });
+        presentationList.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<PresentationSlide>() {
+            @Override
+            public void changed(ObservableValue<? extends PresentationSlide> val, PresentationSlide oldSlide, PresentationSlide newSlide) {
+                if(live) {
+                    if(newSlide != null && displayable != null) {
+                        if(displayable.getOOPresentation() == null) {
+                            for(DisplayCanvas canvas : containerPanel.getCanvases()) {
+                                canvas.eraseText();
+                                Image displayImage = newSlide.getImage();
+                                canvas.setTheme(new ThemeDTO(null, null, new ImageBackground(displayImage), null));
+                            }
+                        }
+                        else {
+                            OOPresentation pres = displayable.getOOPresentation();
+                            pres.addSlideListener(new SlideChangedListener() {
+                                @Override
+                                public void slideChanged(final int newSlideIndex) {
+                                    presentationList.scrollTo(newSlideIndex);
+                                }
+                            });
+                            startOOPres();
+                            QueleaApp.get().getMainWindow().toFront();
+                            pres.gotoSlide(presentationList.getSelectionModel().getSelectedIndex());
+                        }
+                    }
+                }
+            }
+        });
         setCenter(presentationList);
     }
 
@@ -120,7 +107,7 @@ public class PresentationPanel extends BorderPane implements ContainedPanel {
 
     /**
      * Set the displayable to be on this presentation panel.
-     *
+     * <p/>
      * @param displayable the presentation displayable to display.
      * @param index the index to display.
      */
@@ -158,7 +145,7 @@ public class PresentationPanel extends BorderPane implements ContainedPanel {
 
     /**
      * Get the currently selected index on this panel.
-     *
+     * <p/>
      * @return the currently selected index on this panel.
      */
     public int getIndex() {
