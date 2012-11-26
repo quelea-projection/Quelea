@@ -29,13 +29,14 @@ import java.util.logging.Level;
 import javafx.application.Platform;
 import org.quelea.services.utils.LoggerUtils;
 import org.quelea.services.utils.QueleaProperties;
+import org.quelea.services.utils.Utils;
 import org.quelea.windows.library.ImageListPanel;
 import org.quelea.windows.main.QueleaApp;
 
 /**
  * This file watcher calls the update method on the ImageListPanel class when a
  * change has been made on the native file structure.
- *
+ * <p/>
  * @author Ben Goodwin
  */
 public class ImageFileWatcher {
@@ -63,42 +64,43 @@ public class ImageFileWatcher {
                     final WatchKey key;
                     try {
                         key = watcher.take();
-                    } catch (InterruptedException ex) {
+                    }
+                    catch(InterruptedException ex) {
                         return;
                     }
-                    while (!isInterrupted()) {
-                        for (WatchEvent<?> event : key.pollEvents()) {
+                    while(!isInterrupted()) {
+                        for(WatchEvent<?> event : key.pollEvents()) {
                             WatchEvent.Kind<?> kind = event.kind();
-                            if (kind == StandardWatchEventKinds.OVERFLOW) {
-                                continue;
+                            if(kind != StandardWatchEventKinds.OVERFLOW) {
+                                Utils.fxRunAndWait(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        imageLP.refresh();
+                                    }
+                                });
                             }
-                            Platform.runLater(new Runnable() {
-                                @Override
-                                public void run() {
-                                    imageLP.refresh();
-                                }
-                            });
                         }
                     }
                     try {
                         watcher.close();
-                    } catch (IOException ex) {
+                    }
+                    catch(IOException ex) {
                         LoggerUtils.getLogger().log(Level.WARNING, "Could not close watcher, will cause memory leak");
                     }
-                    return;
                 }
             };
             t.setName("file-watcher" + count);
             count++;
             t.start();
-        } catch (IOException e) {
+        }
+        catch(IOException e) {
             LoggerUtils.getLogger().log(Level.WARNING, "Could not start watching underlying file structure for Image panel");
         }
     }
 
     /**
      * Is called when the directory of the ImagePanel is changed </p>
-     *
+     * <p/>
      * @param newDir The new image directory location
      */
     public void changeDir(File newDir) {
@@ -119,7 +121,7 @@ public class ImageFileWatcher {
 
     /**
      * Returns the instance of this class </p>
-     *
+     * <p/>
      * @return INSTANCE
      */
     public static ImageFileWatcher get() {
