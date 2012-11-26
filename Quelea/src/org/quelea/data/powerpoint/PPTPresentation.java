@@ -46,7 +46,6 @@ public class PPTPresentation implements Presentation {
             slides = makeSlides();
         }
         catch(IOException ex) {
-            Dialog.showError(LabelGrabber.INSTANCE.getLabel("adding.presentation.error.title"), LabelGrabber.INSTANCE.getLabel("adding.presentation.error.message"));
             throw new RuntimeException("Couldn't find " + file, ex);
         }
     }

@@ -101,6 +101,13 @@ public class AddPowerpointActionHandler implements EventHandler<ActionEvent> {
                     }
                     catch (RuntimeException ex) {
                         LOGGER.log(Level.WARNING, "Couldn't import presentation", ex);
+                        Platform.runLater(new Runnable() {
+
+                            @Override
+                            public void run() {
+                                Dialog.showError(LabelGrabber.INSTANCE.getLabel("adding.presentation.error.title"), LabelGrabber.INSTANCE.getLabel("adding.presentation.error.message"));
+                            }
+                        });
                     }
                     while(panel == null) {
                         Utils.sleep(1000); //Quick bodge but hey, it works
