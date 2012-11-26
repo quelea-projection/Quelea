@@ -19,6 +19,7 @@ package org.quelea.windows.lyrics;
 
 import org.quelea.windows.main.DisplayCanvas;
 import java.util.HashSet;
+import java.util.logging.Logger;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.ObservableList;
@@ -27,6 +28,7 @@ import javafx.scene.control.SplitPane;
 import javafx.scene.layout.BorderPane;
 import org.quelea.data.displayable.TextDisplayable;
 import org.quelea.data.displayable.TextSection;
+import org.quelea.services.utils.LoggerUtils;
 import org.quelea.windows.main.ContainedPanel;
 import org.quelea.windows.main.LivePreviewPanel;
 
@@ -42,7 +44,7 @@ public class SelectLyricsPanel extends BorderPane implements ContainedPanel {
     private final DisplayCanvas previewCanvas;
     private final SplitPane splitPane;
     private TextDisplayable curDisplayable;
-
+    private static final Logger LOGGER = LoggerUtils.getLogger();
     /**
      * Create a new lyrics panel.
      *
@@ -53,11 +55,11 @@ public class SelectLyricsPanel extends BorderPane implements ContainedPanel {
         splitPane = new SplitPane();
         splitPane.setOrientation(Orientation.VERTICAL);
         lyricsList = new SelectLyricsList();
-        previewCanvas = new DisplayCanvas(false, false);
+        previewCanvas = new DisplayCanvas(false, false, "PreviewCanvas");
         splitPane.getItems().add(lyricsList);
         splitPane.getItems().add(previewCanvas);
         setCenter(splitPane);
-//        containerPanel.registerDisplayCanvas(previewCanvas);
+        containerPanel.registerDisplayCanvas(previewCanvas);
         lyricsList.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<TextSection>() {
             @Override
             public void changed(ObservableValue<? extends TextSection> ov, TextSection t, TextSection t1) {
@@ -145,14 +147,15 @@ public class SelectLyricsPanel extends BorderPane implements ContainedPanel {
      * Called to update the contents of the canvases when the list selection
      * changes.
      */
-    private void updateCanvases() {
+    @Override
+    public void updateCanvases() {
         int selectedIndex = lyricsList.selectionModelProperty().get().getSelectedIndex();
         HashSet<DisplayCanvas> canvases = new HashSet<>();
         canvases.add(previewCanvas);
         canvases.addAll(containerPanel.getCanvases());
-
         for (DisplayCanvas canvas : canvases) {
-            LyricDrawer drawer = new LyricDrawer(canvas);
+            LyricDrawer drawer = new LyricDrawer();
+            drawer.setCanvas(canvas);
             if (selectedIndex == -1 || selectedIndex >= lyricsList.itemsProperty().get().size()) {
 
                 drawer.setTheme(null);
