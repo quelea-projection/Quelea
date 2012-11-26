@@ -68,7 +68,7 @@ public class ImagePanel extends BorderPane implements ContainedPanel {
      */
     public void showDisplayable(ImageDisplayable displayable) {
         for (DisplayCanvas canvas : containerPanel.getCanvases()) {
-            containerPanel.getDrawer(canvas).draw();
+            containerPanel.getDrawer(canvas).draw(displayable);
         }
 
     }

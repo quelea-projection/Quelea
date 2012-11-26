@@ -17,13 +17,22 @@
  */
 package org.quelea.windows.presentation;
 
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
+import javafx.scene.image.Image;
 import javafx.scene.layout.BorderPane;
+import org.quelea.data.ImageBackground;
+import org.quelea.data.ThemeDTO;
+import org.quelea.data.displayable.ImageDisplayable;
 import org.quelea.data.displayable.PresentationDisplayable;
 import org.quelea.data.powerpoint.OOPresentation;
 import org.quelea.data.powerpoint.PresentationSlide;
+import org.quelea.data.powerpoint.SlideChangedListener;
 import org.quelea.services.utils.QueleaProperties;
 import org.quelea.windows.main.ContainedPanel;
+import org.quelea.windows.main.DisplayCanvas;
 import org.quelea.windows.main.LivePreviewPanel;
+import org.quelea.windows.main.QueleaApp;
 
 /**
  * The panel for displaying presentation slides in the live / preview panels.
@@ -50,9 +59,9 @@ public class PresentationPanel extends BorderPane implements ContainedPanel {
                     if(newSlide != null && displayable != null) {
                         if(displayable.getOOPresentation() == null) {
                             for(DisplayCanvas canvas : containerPanel.getCanvases()) {
-                                canvas.eraseText();
                                 Image displayImage = newSlide.getImage();
-                                canvas.setTheme(new ThemeDTO(null, null, new ImageBackground(displayImage), null));
+                                ImageDisplayable displayable = new ImageDisplayable(displayImage);
+                                containerPanel.getDrawer(canvas).draw(displayable);
                             }
                         }
                         else {
