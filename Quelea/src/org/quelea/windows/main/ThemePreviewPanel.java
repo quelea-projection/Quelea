@@ -71,9 +71,10 @@ public class ThemePreviewPanel extends VBox {
         if (theme == null) {
             theme = ThemeDTO.DEFAULT_THEME;
         }
-        canvas = new DisplayCanvas(false, false);
+        canvas = new DisplayCanvas(false, false, "ThemePrevievCanvas");
         canvas.setPrefSize(200, 200);
-        LyricDrawer drawer = new LyricDrawer(canvas); //@todo check  if here should be theme setting
+        LyricDrawer drawer = new LyricDrawer();
+        drawer.setCanvas(canvas);
         drawer.setTheme(theme);
         drawer.setText(ThemePanel.SAMPLE_LYRICS, new String[0], false);
         String name;

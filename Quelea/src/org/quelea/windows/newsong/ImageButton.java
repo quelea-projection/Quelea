@@ -37,6 +37,7 @@ import org.quelea.windows.main.QueleaApp;
 
 /**
  * The image button where the user selects a image.
+ *
  * @author Michael
  */
 public class ImageButton extends Button {
@@ -47,6 +48,7 @@ public class ImageButton extends Button {
 
     /**
      * Create and initialise the image button.
+     *
      * @param imageLocationField the image location field that goes with this
      * button.
      * @param canvas the preview canvas to update.
@@ -58,25 +60,24 @@ public class ImageButton extends Button {
         fileChooser.setInitialDirectory(imageDir);
         fileChooser.getExtensionFilters().add(FileFilters.IMAGES);
         setOnAction(new EventHandler<javafx.event.ActionEvent>() {
-
             @Override
             public void handle(javafx.event.ActionEvent t) {
                 File selectedFile = fileChooser.showOpenDialog(QueleaApp.get().getMainWindow());
-                if(selectedFile != null) {
+                if (selectedFile != null) {
                     File newFile = new File(imageDir, selectedFile.getName());
                     try {
-                        if(!selectedFile.getCanonicalPath().startsWith(imageDir.getCanonicalPath())) {
+                        if (!selectedFile.getCanonicalPath().startsWith(imageDir.getCanonicalPath())) {
                             FileUtils.copyFile(selectedFile, newFile);
                         }
-                    }
-                    catch(IOException ex) {
+                    } catch (IOException ex) {
                         LOGGER.log(Level.WARNING, "", ex);
                     }
 
                     imageLocation = imageDir.toURI().relativize(newFile.toURI()).getPath();
                     imageLocationField.setText(imageLocation);
-                    LyricDrawer drawer = new LyricDrawer(canvas); //@todo check  if here should be theme setting
-                
+                    LyricDrawer drawer = (LyricDrawer) QueleaApp.get().getMainWindow()
+                            .getMainPanel().getLivePanel().getDrawer(canvas);
+
                     drawer.setTheme(new ThemeDTO(drawer.getTheme().getFont(),
                             drawer.getTheme().getFontPaint(), new ImageBackground(imageLocation),
                             drawer.getTheme().getShadow()));
@@ -87,6 +88,7 @@ public class ImageButton extends Button {
 
     /**
      * Get the location of the selected image.
+     *
      * @return the selected image location.
      */
     public String getImageLocation() {
