@@ -14,15 +14,11 @@ import org.quelea.windows.main.DisplayableDrawer;
 public class ImageDrawer extends DisplayableDrawer {
 
     private ImageView imageView = null;
-    private final Image image;
-
-    public ImageDrawer(ImageDisplayable displayable) {
-        image = displayable.getImage();
-
-    }
+    private Image image = null;
 
     @Override
-    public void draw() {
+    public void draw(Displayable displayable) {
+        image = ((ImageDisplayable)displayable).getImage();
         imageView = canvas.getNewImageView();
         imageView.setFitHeight(canvas.getHeight());
         imageView.setFitWidth(canvas.getWidth());

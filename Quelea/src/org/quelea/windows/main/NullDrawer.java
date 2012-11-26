@@ -1,7 +1,6 @@
 package org.quelea.windows.main;
 
 import org.quelea.data.displayable.Displayable;
-import org.quelea.windows.lyrics.SelectLyricsList;
 
 /**
  *
@@ -10,7 +9,7 @@ import org.quelea.windows.lyrics.SelectLyricsList;
 public class NullDrawer extends DisplayableDrawer {
 
     @Override
-    public void draw() {
+    public void draw(Displayable displayable) {
     }
 
     @Override

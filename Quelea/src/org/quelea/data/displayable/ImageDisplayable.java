@@ -51,6 +51,10 @@ public class ImageDisplayable implements Displayable {
         image = new Image("file:" + file.getAbsolutePath());
     }
 
+    public ImageDisplayable(Image image) {
+        this.file = null;
+        this.image = image;
+    }
     /**
      * Get the displayable file.
      *
