@@ -16,14 +16,14 @@
  */
 package org.quelea.windows.audio;
 
-import org.quelea.data.tags.services.multimedia.MultimediaControlPanel;
 import java.io.File;
 import java.util.logging.Level;
 import javafx.scene.media.MediaException;
 import org.javafx.dialog.Dialog;
 import org.quelea.data.displayable.MultimediaDisplayable;
-import org.quelea.data.tags.services.multimedia.MediaPlayerFactory;
 import org.quelea.languages.LabelGrabber;
+import org.quelea.windows.multimedia.MediaPlayerFactory;
+import org.quelea.windows.multimedia.MultimediaControlPanel;
 
 /**
  * The control panel for displaying the audio.

@@ -15,7 +15,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.quelea.windows.main;
+package org.quelea.windows.main.schedule;
 
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -38,6 +38,7 @@ import javafx.scene.layout.Priority;
 import javafx.scene.layout.Region;
 import org.quelea.data.displayable.Displayable;
 import org.quelea.languages.LabelGrabber;
+import org.quelea.windows.main.QueleaApp;
 import org.quelea.windows.main.actionhandlers.RemoveScheduleItemActionHandler;
 
 /**

@@ -1,4 +1,4 @@
-package org.quelea.data.tags.services.multimedia;
+package org.quelea.windows.multimedia;
 
 import java.util.logging.Logger;
 import javafx.scene.media.Media;

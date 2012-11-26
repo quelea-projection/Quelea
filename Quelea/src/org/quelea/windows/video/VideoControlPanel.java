@@ -22,10 +22,10 @@ import java.util.logging.Logger;
 import javafx.scene.media.MediaException;
 import org.javafx.dialog.Dialog;
 import org.quelea.data.displayable.MultimediaDisplayable;
-import org.quelea.data.tags.services.multimedia.MediaPlayerFactory;
-import org.quelea.data.tags.services.multimedia.MultimediaControlPanel;
 import org.quelea.languages.LabelGrabber;
 import org.quelea.services.utils.LoggerUtils;
+import org.quelea.windows.multimedia.MediaPlayerFactory;
+import org.quelea.windows.multimedia.MultimediaControlPanel;
 
 /**
  * The control panel for displaying the video.
