@@ -17,7 +17,6 @@
  */
 package org.quelea.windows.main;
 
-import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
@@ -26,7 +25,6 @@ import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.StackPane;
-import javafx.scene.media.MediaView;
 import javafx.scene.paint.Color;
 import org.quelea.services.notice.NoticeDrawer;
 import org.quelea.services.utils.LoggerUtils;
@@ -38,14 +36,41 @@ import org.quelea.services.utils.Utils;
  * @author Michael
  */
 public class DisplayCanvas extends StackPane {
-
+    
     private static final Logger LOGGER = LoggerUtils.getLogger();
     private boolean cleared;
     private boolean blacked;
     private NoticeDrawer noticeDrawer;
     private boolean stageView;
-    private ImageView blackImg;
     private Node background;
+    private String name;
+
+    /**
+     * Create a new canvas where the lyrics should be displayed.
+     * <p/>
+     * @param showBorder true if the border should be shown around any text
+     * (only if the options say so) false otherwise.
+     */
+    public DisplayCanvas(boolean showBorder, boolean stageView, String name) {
+        setMinHeight(0);
+        setMinWidth(0);
+        this.stageView = stageView;
+        this.name = name;
+        noticeDrawer = new NoticeDrawer(this);
+        background = getNewImageView();
+        heightProperty().addListener(new ChangeListener<Number>() {
+            @Override
+            public void changed(ObservableValue<? extends Number> ov, Number t, Number t1) {
+                //(null); @todo redraw
+            }
+        });
+        widthProperty().addListener(new ChangeListener<Number>() {
+            @Override
+            public void changed(ObservableValue<? extends Number> ov, Number t, Number t1) {
+               //(null); @todo redraw
+            }
+        });
+    }
 
     /**
      * @return the background
@@ -60,79 +85,25 @@ public class DisplayCanvas extends StackPane {
     public void setBackground(Node background) {
         this.background = background;
     }
-    public interface CanvasCallback {
 
+    /**
+     * @return the name
+     */
+    public String getName() {
+        return name;
+    }
+    
+    public interface CanvasCallback {
+        
         void update();
     }
-     public ImageView getNewImageView() {
+    
+    public ImageView getNewImageView() {
         ImageView ret = new ImageView(Utils.getImageFromColour(Color.BLACK));
         ret.setFitHeight(getHeight());
         ret.setFitWidth(getWidth());
         StackPane.setAlignment(ret, Pos.CENTER);
         return ret;
-    }
-    /**
-     * Create a new canvas where the lyrics should be displayed.
-     * <p/>
-     * @param showBorder true if the border should be shown around any text
-     * (only if the options say so) false otherwise.
-     */
-    public DisplayCanvas(boolean showBorder, boolean stageView) {
-        setMinHeight(0);
-        setMinWidth(0);
-        this.stageView = stageView;
-        blackImg = new ImageView(Utils.getImageFromColour(Color.BLACK));
-        noticeDrawer = new NoticeDrawer(this);
-        background = getNewImageView();
-        heightProperty().addListener(new ChangeListener<Number>() {
-            @Override
-            public void changed(ObservableValue<? extends Number> ov, Number t, Number t1) {
-                update(null);
-            }
-        });
-        widthProperty().addListener(new ChangeListener<Number>() {
-            @Override
-            public void changed(ObservableValue<? extends Number> ov, Number t, Number t1) {
-                update(null);
-            }
-        });
-    }
-
-    public void update(final CanvasCallback callback) {
-        Platform.runLater(new Runnable() {
-            @Override
-            public void run() {
-                if (callback != null) {
-                    callback.update();
-                }
-
-                if (blacked) {
-                    if (getChildren().contains(getBackground())) {
-                        getChildren().add(0, blackImg);
-                        getChildren().remove(getBackground());
-                    }
-                } else {
-                    if (!getChildren().contains(getBackground())) {
-                        getChildren().remove(blackImg);
-                        getChildren().add(0, getBackground());
-                    }
-                }
-                if (getBackground() instanceof ImageView) {
-                    ImageView imgBackground = (ImageView) getBackground();
-                    imgBackground.setFitHeight(getHeight());
-                    imgBackground.setFitWidth(getWidth());
-                } else if (getBackground() instanceof MediaView) {
-                    MediaView vidBackground = (MediaView) getBackground();
-                    vidBackground.setPreserveRatio(false);
-                    vidBackground.setFitHeight(getHeight());
-                    vidBackground.setFitWidth(getWidth());
-                } else {
-                    LOGGER.log(Level.WARNING, "BUG: Unrecognised image background");
-                }
-                blackImg.setFitHeight(getHeight());
-                blackImg.setFitWidth(getWidth());
-            }
-        });
     }
 
     /**
@@ -150,7 +121,7 @@ public class DisplayCanvas extends StackPane {
      */
     public void toggleClear() {
         cleared ^= true; //invert
-        update(null);
+        //(null); @todo redraw
     }
 
     /**
@@ -168,7 +139,7 @@ public class DisplayCanvas extends StackPane {
      */
     public void toggleBlack() {
         blacked ^= true; //invert
-        update(null);
+        //(null); @todo redraw
     }
 
     /**

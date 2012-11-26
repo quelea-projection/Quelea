@@ -7,11 +7,14 @@ import com.sun.javafx.tk.Toolkit;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javafx.animation.FadeTransition;
 import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
 import javafx.animation.ParallelTransition;
 import javafx.animation.Timeline;
+import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.Group;
@@ -33,7 +36,10 @@ import org.quelea.data.ColourBackground;
 import org.quelea.data.ImageBackground;
 import org.quelea.data.ThemeDTO;
 import org.quelea.data.VideoBackground;
+import org.quelea.data.displayable.Displayable;
 import org.quelea.data.displayable.TextDisplayable;
+import org.quelea.data.displayable.TextSection;
+import org.quelea.services.utils.LoggerUtils;
 import org.quelea.services.utils.QueleaProperties;
 import org.quelea.services.utils.Utils;
 
@@ -42,26 +48,30 @@ import org.quelea.services.utils.Utils;
  */
 public class LyricDrawer extends DisplayableDrawer {
 
+    private static final Logger LOGGER = LoggerUtils.getLogger();
     private String[] text;
     private Group textGroup;
     private Paint lastColor;
     private ThemeDTO theme;
     private TextDisplayable curDisplayable;
     private boolean capitaliseFirst;
+    private ImageView blackImg = new ImageView(Utils.getImageFromColour(Color.BLACK));
 
-    public LyricDrawer(DisplayCanvas canvas) {
-        super(canvas);
+    ;
+
+    public LyricDrawer() {
         text = new String[]{};
         theme = ThemeDTO.DEFAULT_THEME;
         textGroup = new Group();
-        if (!canvas.getChildren().contains(canvas.getBackground())
-                && !canvas.getChildren().contains(textGroup)) {
-            canvas.getChildren().add(0, this.canvas.getBackground());
-            canvas.getChildren().add(textGroup);
-        }
+
     }
 
     private void drawText() {
+        if (!canvas.getChildren().contains(canvas.getBackground())
+                && !canvas.getChildren().contains(textGroup)) {
+            canvas.getChildren().add(0, canvas.getBackground());
+            canvas.getChildren().add(textGroup);
+        }
         if (canvas.isCleared() || canvas.isBlacked()) {
             textGroup.getChildren().clear();
             return;
@@ -76,21 +86,21 @@ public class LyricDrawer extends DisplayableDrawer {
         }
 
         List<String> newText = sanctifyText();
-        double fontSize = pickFontSize(font, newText, this.canvas.getWidth(), this.canvas.getHeight());
+        double fontSize = pickFontSize(font, newText, canvas.getWidth(), canvas.getHeight());
         font = Font.font(font.getName(), fontSize);
         FontMetrics metrics = Toolkit.getToolkit().getFontLoader().getFontMetrics(font);
         int y = 0;
         final Group newTextGroup = new Group();
         StackPane.setAlignment(newTextGroup, QueleaProperties.get().getTextPosition().getLayouPos());
-        this.canvas.getChildren().clear();
-        this.canvas.getChildren().add(newTextGroup);
+        canvas.getChildren().clear();
+        canvas.getChildren().add(newTextGroup);
 
 
         ParallelTransition paintTransition = new ParallelTransition();
         for (String line : newText) {
             Text t = new Text(line);
             double width = metrics.computeStringWidth(line);
-            double centreOffset = (this.canvas.getWidth() - width) / 2;
+            double centreOffset = (canvas.getWidth() - width) / 2;
             t.setFont(font);
             t.setEffect(shadow);
             t.setX(centreOffset);
@@ -137,7 +147,7 @@ public class LyricDrawer extends DisplayableDrawer {
         } else {
             throw new AssertionError("Bug: Unhandled theme case");
         }
-        FadeTransition fadeOut = new FadeTransition(Duration.seconds(0.3), this.canvas.getBackground());
+        FadeTransition fadeOut = new FadeTransition(Duration.seconds(0.3), canvas.getBackground());
         fadeOut.setFromValue(1);
         fadeOut.setToValue(0);
 
@@ -151,7 +161,7 @@ public class LyricDrawer extends DisplayableDrawer {
                 player.setAutoPlay(true);
                 player.setCycleCount(javafx.scene.media.MediaPlayer.INDEFINITE);
                 newVideo.setMediaPlayer(player);
-                this.canvas.getChildren().add(0, newVideo);
+                canvas.getChildren().add(0, newVideo);
                 newBackground = newVideo;
             } catch (MediaException ex) {
                 return;
@@ -159,10 +169,10 @@ public class LyricDrawer extends DisplayableDrawer {
             }
         } else {
             final ImageView newImage = canvas.getNewImageView();
-            newImage.setFitHeight(this.canvas.getHeight());
-            newImage.setFitWidth(this.canvas.getWidth());
+            newImage.setFitHeight(canvas.getHeight());
+            newImage.setFitWidth(canvas.getWidth());
             newImage.setImage(image);
-            this.canvas.getChildren().add(0, newImage);
+            canvas.getChildren().add(0, newImage);
             newBackground = newImage;
         }
         final Node oldBackground = canvas.getBackground();
@@ -174,7 +184,6 @@ public class LyricDrawer extends DisplayableDrawer {
         });
         canvas.setBackground(newBackground);
         fadeOut.play();
-        this.canvas.update(null);
     }
 
     /**
@@ -184,6 +193,10 @@ public class LyricDrawer extends DisplayableDrawer {
      */
     public ThemeDTO getTheme() {
         return theme;
+    }
+
+    @Override
+    public void requestFocus() {
     }
 
     /**
@@ -355,7 +368,7 @@ public class LyricDrawer extends DisplayableDrawer {
      * @param smallText an array of the small lines to be displayed on the
      * canvas.
      */
-    public void setText(String[] text, String[] smallText, boolean fade) {
+    public void setText(String[] text, String[] smallText, boolean fade) { //@todo called when image is set
         if (text == null) {
             text = new String[0];
         }
@@ -363,12 +376,7 @@ public class LyricDrawer extends DisplayableDrawer {
             smallText = new String[0];
         }
         this.text = Arrays.copyOf(text, text.length);
-        canvas.update(new DisplayCanvas.CanvasCallback() {
-            @Override
-            public void update() {
-                draw();
-            }
-        });
+        draw(); //@todo tomaszpio to be reviewed it's now run synchronously
     }
 
     /**
@@ -390,5 +398,48 @@ public class LyricDrawer extends DisplayableDrawer {
 
     public void draw() {
         drawText();
+        if (canvas.isBlacked()) {
+            if (canvas.getChildren().contains(canvas.getBackground())) {
+                canvas.getChildren().add(0, blackImg);
+                canvas.getChildren().remove(canvas.getBackground());
+            }
+        } else {
+            if (!canvas.getChildren().contains(canvas.getBackground())) {
+                canvas.getChildren().remove(blackImg);
+                canvas.getChildren().add(0, canvas.getBackground());
+            }
+        }
+        if (canvas.getBackground() instanceof ImageView) {
+            ImageView imgBackground = (ImageView) canvas.getBackground();
+            imgBackground.setFitHeight(canvas.getHeight());
+            imgBackground.setFitWidth(canvas.getWidth());
+        } else if (canvas.getBackground() instanceof MediaView) {
+            MediaView vidBackground = (MediaView) canvas.getBackground();
+            vidBackground.setPreserveRatio(false);
+            vidBackground.setFitHeight(canvas.getHeight());
+            vidBackground.setFitWidth(canvas.getWidth());
+        } else {
+            LOGGER.log(Level.WARNING, "BUG: Unrecognised image background");
+        }
+        blackImg.setFitHeight(canvas.getHeight());
+        blackImg.setFitWidth(canvas.getWidth());
+    }
+
+    @Override
+    public void clear() {
+        canvas.getChildren().clear();
+        setTheme(null);
+        eraseText();
+    }
+    public void updateCanvas(Displayable displayable, SelectLyricsList lyricsList, int selectedIndex) {
+        curDisplayable = (TextDisplayable) displayable;
+        TextSection currentSection = lyricsList.itemsProperty().get().get(selectedIndex);
+        if (currentSection.getTempTheme() != null) {
+            setTheme(currentSection.getTempTheme());
+        } else {
+            setTheme(currentSection.getTheme());
+        }
+        setCapitaliseFirst(currentSection.shouldCapitaliseFirst());
+        setText(curDisplayable, selectedIndex);
     }
 }
