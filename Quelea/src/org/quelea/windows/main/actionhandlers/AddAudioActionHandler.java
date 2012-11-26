@@ -27,7 +27,7 @@ import org.quelea.services.utils.FileFilters;
 import org.quelea.windows.main.QueleaApp;
 
 /**
- * The action handler for adding a video.
+ * The action handler for adding an audio clip.
  * @author Michael
  */
 public class AddAudioActionHandler implements EventHandler<ActionEvent> {
