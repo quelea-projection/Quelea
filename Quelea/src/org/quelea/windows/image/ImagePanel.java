@@ -17,38 +17,40 @@
  */
 package org.quelea.windows.image;
 
-import org.quelea.windows.lyrics.DisplayCanvas;
+import org.quelea.windows.main.DisplayCanvas;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
-import org.quelea.data.ImageBackground;
-import org.quelea.data.ThemeDTO;
 import org.quelea.data.displayable.ImageDisplayable;
 import org.quelea.windows.main.ContainedPanel;
+import org.quelea.windows.main.DisplayableDrawer;
 import org.quelea.windows.main.LivePreviewPanel;
 
 /**
  * A panel used in the live / preview panels for displaying images.
+ *
  * @author Michael
  */
 public class ImagePanel extends BorderPane implements ContainedPanel {
 
-    private ImageView imageView;
     private LivePreviewPanel containerPanel;
+    private final DisplayCanvas previewCanvas;
 
     /**
      * Create a new image panel.
+     *
      * @param container the container this panel is contained within.
      */
     public ImagePanel(LivePreviewPanel panel) {
         this.containerPanel = panel;
-        imageView = new ImageView();
-        getChildren().add(imageView);
+        previewCanvas = new DisplayCanvas(false, false, "PreviewCanvas");
+        containerPanel.registerDisplayCanvas(previewCanvas);
+        setCenter(previewCanvas);
     }
 
     @Override
     public void focus() {
-        //TODO: Something probably
+        containerPanel.getDrawer().requestFocus();
     }
 
     /**
@@ -56,21 +58,19 @@ public class ImagePanel extends BorderPane implements ContainedPanel {
      */
     @Override
     public void clear() {
-        imageView.setImage(null);
+        //updateCanvases();
     }
 
     /**
      * Show a given image displayable on the panel.
+     *
      * @param displayable the image displayable.
      */
     public void showDisplayable(ImageDisplayable displayable) {
-        Image image = new Image("file:"+displayable.getFile().getName());
-        imageView.setImage(image);
-        for(DisplayCanvas canvas : containerPanel.getCanvases()) {
-            canvas.setText(null, null, true);
-            canvas.setTheme(new ThemeDTO(null, null, new ImageBackground(displayable.getFile().getName()),
-                    ThemeDTO.DEFAULT_SHADOW));
+        for (DisplayCanvas canvas : containerPanel.getCanvases()) {
+            containerPanel.getDrawer(canvas).draw();
         }
+
     }
 
     @Override
@@ -78,4 +78,7 @@ public class ImagePanel extends BorderPane implements ContainedPanel {
         return 0;
     }
 
+    @Override
+    public void updateCanvases() {
+    }
 }

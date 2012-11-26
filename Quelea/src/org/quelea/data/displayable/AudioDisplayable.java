@@ -3,6 +3,7 @@ package org.quelea.data.displayable;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import org.quelea.services.utils.Utils;
@@ -13,7 +14,6 @@ import org.w3c.dom.Node;
  * @author tomaszpio@gmail.com
  */
 public class AudioDisplayable implements MultimediaDisplayable {
-
     private final File file;
 
     /**
@@ -26,33 +26,38 @@ public class AudioDisplayable implements MultimediaDisplayable {
     }
 
     /**
-     * Parse some XML representing this object and return the object it represents.
+     * Parse some XML representing this object and return the object it
+     * represents.
+     *
      * @param node the XML node representing this object.
      * @return the object as defined by the XML.
      */
-     public static AudioDisplayable parseXML(Node node) {
+    public static AudioDisplayable parseXML(Node node) {
         return new AudioDisplayable(new File(node.getTextContent()));
     }
-     
-     /**
+
+    /**
      * Get the displayable file.
+     *
      * @return the displayable file.
      */
     public File getFile() {
         return file;
     }
-    
+
     /**
      * Determine whether videos support clearing, which they don't.
+     *
      * @return false, always.
      */
     @Override
     public boolean supportClear() {
-        return true; 
+        return true;
     }
 
-      /**
+    /**
      * Get the XML that forms this image displayable.
+     *
      * @return the XML.
      */
     @Override
@@ -66,6 +71,7 @@ public class AudioDisplayable implements MultimediaDisplayable {
 
     /**
      * Get the preview icon of this audio.
+     *
      * @return the video's preview icon.
      */
     @Override
@@ -75,6 +81,7 @@ public class AudioDisplayable implements MultimediaDisplayable {
 
     /**
      * Get the preview text for the image.
+     *
      * @return the file name.
      */
     @Override
@@ -82,8 +89,9 @@ public class AudioDisplayable implements MultimediaDisplayable {
         return file.getName();
     }
 
-     /**
+    /**
      * Get the text to print on the order of service.
+     *
      * @return "Video file: " and the name of the video file.
      */
     @Override
@@ -93,6 +101,7 @@ public class AudioDisplayable implements MultimediaDisplayable {
 
     /**
      * Get any resources this displayable needs.
+     *
      * @return the image backing this displayable.
      */
     @Override
