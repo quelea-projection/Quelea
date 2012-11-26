@@ -43,7 +43,9 @@ import org.quelea.data.ThemeDTO;
 import org.quelea.data.VideoBackground;
 import org.quelea.languages.LabelGrabber;
 import org.quelea.services.utils.Utils;
-import org.quelea.windows.lyrics.DisplayCanvas;
+import org.quelea.windows.main.DisplayCanvas;
+import org.quelea.windows.lyrics.LyricDrawer;
+import org.quelea.windows.main.QueleaApp;
 import org.quelea.windows.main.widgets.CardPane;
 
 /**
@@ -81,8 +83,10 @@ public class ThemePanel extends BorderPane {
      * Create and initialise the theme panel.
      */
     public ThemePanel() {
-        canvas = new DisplayCanvas(false, false);
-        canvas.setText(SAMPLE_LYRICS, null, false);
+        canvas = new DisplayCanvas(false, false, "ThemePanelCanvas");
+        LyricDrawer drawer = new LyricDrawer();
+        drawer.setCanvas(canvas);
+        drawer.setText(SAMPLE_LYRICS, null, false);
         setCenter(canvas);
         VBox toolbarPanel = new VBox();
         setupFontToolbar();
@@ -261,7 +265,7 @@ public class ThemePanel extends BorderPane {
     /**
      * Update the canvas with the current theme.
      */
-    private void updateTheme(boolean warning) {
+    private void updateTheme(boolean warning) { //@todo is called to often
         final ThemeDTO theme = getTheme();
         if (warning && theme.getBackground() instanceof ColourBackground) {
             checkAccessibility((Color) theme.getFontPaint(), ((ColourBackground) theme.getBackground()).getColour());
@@ -269,7 +273,9 @@ public class ThemePanel extends BorderPane {
         Platform.runLater(new Runnable() {
             @Override
             public void run() {
-                canvas.setTheme(theme);
+                LyricDrawer drawer = new LyricDrawer();
+                drawer.setCanvas(canvas);
+                drawer.setTheme(theme);
             }
         });
     }
