@@ -79,16 +79,17 @@ public class ImageListPanel extends BorderPane {
         imageList.setOnDragDropped(new EventHandler<DragEvent>() {
             @Override
             public void handle(DragEvent t) {
-                if (t.getGestureSource() == null) {
-                    Clipboard cb = Clipboard.getSystemClipboard();
-                    if (cb.hasFiles()) {
+                if(t.getGestureSource() == null) {
+                    Clipboard cb = t.getDragboard();
+                    if(cb.hasFiles()) {
                         List<File> files = cb.getFiles();
-                        for (File f : files) {
-                            if (Utils.fileIsImage(f) && !f.isDirectory()) {
+                        for(File f : files) {
+                            if(Utils.fileIsImage(f) && !f.isDirectory()) {
                                 try {
                                     Files.copy(f.getAbsoluteFile().toPath(), Paths.get(getDir(), f.getName()), StandardCopyOption.COPY_ATTRIBUTES);
-                                } catch (IOException ex) {
-                                    LoggerUtils.getLogger().log(Level.WARNING, "Could not copy file into ImagePanel through system drag and drop.");
+                                }
+                                catch(IOException ex) {
+                                    LoggerUtils.getLogger().log(Level.WARNING, "Could not copy file into ImagePanel through system drag and drop.", ex);
                                 }
                             }
                         }
@@ -105,7 +106,7 @@ public class ImageListPanel extends BorderPane {
 
     /**
      * Returns the absolute path of the currently selected directory
-     *
+     * <p/>
      */
     public String getDir() {
         return dir;
@@ -125,12 +126,15 @@ public class ImageListPanel extends BorderPane {
     private void updateImages() {
         imageList.getChildren().clear();
         final File[] files = new File(dir).listFiles();
-        new Thread() {
+        if(t != null && t.isAlive()) {
+            return;
+        }
+        t = new Thread() {
             @Override
             public void run() {
-                for (final File file : files) {
-                    if (Utils.fileIsImage(file) && !file.isDirectory()) {
-                        final ImageView view = new ImageView(new Image("file:" + file, 72, 72, false, true));
+                for(final File file : files) {
+                    if(Utils.fileIsImage(file) && !file.isDirectory()) {
+                        final ImageView view = new ImageView(new Image(file.toURI().toString(), 72, 72, false, true));
                         view.setOnMouseClicked(new EventHandler<MouseEvent>() {
                             @Override
                             public void handle(MouseEvent t) {
@@ -147,7 +151,7 @@ public class ImageListPanel extends BorderPane {
                                 t.consume();
                             }
                         });
-                        //setupHover(view);
+//                        setupHover(view);
                         Platform.runLater(new Runnable() {
                             @Override
                             public void run() {
@@ -157,7 +161,8 @@ public class ImageListPanel extends BorderPane {
                     }
                 }
             }
-        }.start();
+        };
+        t.start();
     }
 
     private void setupHover(final ImageView view) {
@@ -167,7 +172,7 @@ public class ImageListPanel extends BorderPane {
         view.setOnMouseEntered(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent t) {
-                if (view.getScaleX() == 1) {
+                if(view.getScaleX() == 1) {
                     view.toFront();
                     final Timeline timeline = new Timeline();
                     timeline.getKeyFrames().add(new KeyFrame(Duration.ZERO, new KeyValue(view.scaleXProperty(), 1)));
