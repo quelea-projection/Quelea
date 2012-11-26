@@ -84,7 +84,7 @@ public class ImageFileWatcher {
                         watcher.close();
                     }
                     catch(IOException ex) {
-                        LoggerUtils.getLogger().log(Level.WARNING, "Could not close watcher, will cause memory leak");
+                        LoggerUtils.getLogger().log(Level.WARNING, "Could not close watcher, will cause memory leak.", ex);
                     }
                 }
             };
@@ -93,7 +93,7 @@ public class ImageFileWatcher {
             t.start();
         }
         catch(IOException e) {
-            LoggerUtils.getLogger().log(Level.WARNING, "Could not start watching underlying file structure for Image panel");
+            LoggerUtils.getLogger().log(Level.WARNING, "Could not start watching underlying file structure for Image panel.", e);
         }
     }
 
