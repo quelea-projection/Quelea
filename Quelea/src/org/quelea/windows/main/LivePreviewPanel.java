@@ -38,14 +38,16 @@ import org.quelea.data.displayable.TextDisplayable;
 import org.quelea.data.displayable.VideoDisplayable;
 import org.quelea.services.utils.LoggerUtils;
 import org.quelea.services.utils.QueleaProperties;
-import org.quelea.services.utils.Utils;
-import org.quelea.windows.audio.AudioPanel;
+import org.quelea.windows.audio.AudioControlPanel;
+import org.quelea.windows.image.ImagePanel;
 import org.quelea.windows.lyrics.DisplayCanvas;
 import org.quelea.windows.lyrics.DisplayWindow;
 import org.quelea.windows.lyrics.SelectLyricsPanel;
 import org.quelea.windows.main.quickedit.QuickEditDialog;
 import org.quelea.windows.main.widgets.CardPane;
-import org.quelea.windows.video.VideoPanel;
+import org.quelea.windows.multimedia.MultimediaPanel;
+import org.quelea.windows.presentation.PresentationPanel;
+import org.quelea.windows.video.VideoControlPanel;
 
 /**
  * The common superclass of the live / preview panels used for selecting the
@@ -69,8 +71,8 @@ public abstract class LivePreviewPanel extends BorderPane {
     private SelectLyricsPanel lyricsPanel = new SelectLyricsPanel(this);
     private ImagePanel picturePanel = new ImagePanel(this);
     private PresentationPanel presentationPanel = new PresentationPanel(this);
-    private VideoPanel videoPanel = new VideoPanel();
-    private AudioPanel audioPanel = new AudioPanel();
+    private MultimediaPanel videoPanel = new MultimediaPanel(new VideoControlPanel(), this);
+    private MultimediaPanel audioPanel = new MultimediaPanel(new AudioControlPanel(), this);
     private QuickEditDialog quickEditDialog = new QuickEditDialog();
 
     /**
@@ -84,7 +86,7 @@ public abstract class LivePreviewPanel extends BorderPane {
         cardPanel.add(videoPanel, VIDEO_LABEL);
         cardPanel.add(audioPanel, AUDIO_LABEL);
         cardPanel.add(presentationPanel, PRESENTATION_LABEL);
-        registerLyricCanvas(lyricsPanel.getPreviewCanvas());
+        registerDisplayCanvas(lyricsPanel.getPreviewCanvas());
         cardPanel.show(LYRICS_LABEL);
 
         lyricsPanel.getLyricsList().setOnMouseClicked(new EventHandler<MouseEvent>() {
@@ -276,11 +278,11 @@ public abstract class LivePreviewPanel extends BorderPane {
     }
 
     /**
-     * Register a lyric canvas with this lyrics panel.
-     * <p/>
+     * Register a display canvas with this lyrics panel.
+     *
      * @param canvas the canvas to register.
      */
-    public final void registerLyricCanvas(final DisplayCanvas canvas) {
+    public final void registerDisplayCanvas(final DisplayCanvas canvas) {
         if(canvas == null) {
             return;
         }
@@ -288,11 +290,11 @@ public abstract class LivePreviewPanel extends BorderPane {
     }
 
     /**
-     * Register a lyric window with this lyrics panel.
-     * <p/>
+     * Register a display window with this lyrics panel.
+     *
      * @param window the window to register.
      */
-    public final void registerLyricWindow(final DisplayWindow window) {
+    public final void registerDisplayWindow(final DisplayWindow window) {
         if(window == null) {
             return;
         }

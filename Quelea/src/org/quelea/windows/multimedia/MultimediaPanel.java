@@ -15,31 +15,38 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.quelea.windows.audio;
+package org.quelea.windows.multimedia;
 
 import java.util.logging.Logger;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.media.MediaView;
-import org.quelea.data.displayable.AudioDisplayable;
-import org.quelea.data.tags.services.multimedia.MultimediaControlPanel;
+import org.quelea.data.ThemeDTO;
+import org.quelea.data.VideoBackground;
+import org.quelea.data.displayable.MultimediaDisplayable;
+import org.quelea.data.displayable.VideoDisplayable;
 import org.quelea.services.utils.LoggerUtils;
+import org.quelea.windows.lyrics.DisplayCanvas;
 import org.quelea.windows.main.ContainedPanel;
+import org.quelea.windows.main.LivePreviewPanel;
 
 /**
  * A panel used in the live / preview panels for playing audio.
  *
  * @author tomaszpio@gmail.com
  */
-public class AudioPanel extends BorderPane implements ContainedPanel {
+public class MultimediaPanel extends BorderPane implements ContainedPanel {
 
     private static final Logger LOGGER = LoggerUtils.getLogger();
-    private MultimediaControlPanel controlPanel = new AudioControlPanel();
+    private MultimediaControlPanel controlPanel;
+    private LivePreviewPanel containerPanel;
 
     /**
      * Create a new image panel.
      */
-    public AudioPanel() {
-        setCenter(controlPanel);
+    public MultimediaPanel(MultimediaControlPanel controlPanel, LivePreviewPanel panel) {
+        this.controlPanel = controlPanel;
+        setCenter(this.controlPanel);
+        this.containerPanel = panel;
     }
 
     /**
@@ -57,7 +64,7 @@ public class AudioPanel extends BorderPane implements ContainedPanel {
     public void clear() {
         if (controlPanel.getPlayer() != null) {
             controlPanel.getPlayer().stop();
-            ((MediaView)controlPanel.getView()).setMediaPlayer(null);
+            ((MediaView) controlPanel.getView()).setMediaPlayer(null);
         }
     }
 
@@ -75,8 +82,16 @@ public class AudioPanel extends BorderPane implements ContainedPanel {
      *
      * @param displayable the video displayable.
      */
-    public void showDisplayable(AudioDisplayable displayable) {
+    public void showDisplayable(MultimediaDisplayable displayable) {
         controlPanel.loadMultimedia(displayable);
+        if (displayable instanceof VideoDisplayable) {
+            for (DisplayCanvas canvas : containerPanel.getCanvases()) {
+                canvas.setText(null, null, true);
+                canvas.setTheme(new ThemeDTO(null, null,
+                        new VideoBackground(displayable.getFile().getName()),
+                        ThemeDTO.DEFAULT_SHADOW));
+            }
+        }
     }
 
     @Override

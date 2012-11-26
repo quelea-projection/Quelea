@@ -22,7 +22,7 @@ import javafx.event.EventHandler;
 import org.quelea.data.displayable.SongDisplayable;
 import org.quelea.windows.library.LibraryPanel;
 import org.quelea.windows.main.QueleaApp;
-import org.quelea.windows.main.SchedulePanel;
+import org.quelea.windows.main.schedule.SchedulePanel;
 
 /**
  * The action listener for adding a song, called when something fires off an 

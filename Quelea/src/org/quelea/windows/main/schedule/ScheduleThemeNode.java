@@ -2,7 +2,7 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package org.quelea.windows.main;
+package org.quelea.windows.main.schedule;
 
 import java.io.File;
 import java.io.IOException;
@@ -35,6 +35,8 @@ import org.quelea.languages.LabelGrabber;
 import org.quelea.services.utils.LoggerUtils;
 import org.quelea.services.utils.QueleaProperties;
 import org.quelea.services.utils.Utils;
+import org.quelea.windows.main.QueleaApp;
+import org.quelea.windows.main.ThemePreviewPanel;
 import org.quelea.windows.newsong.EditThemeDialog;
 
 /**
