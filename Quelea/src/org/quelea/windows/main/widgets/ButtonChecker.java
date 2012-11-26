@@ -23,7 +23,7 @@ import org.quelea.data.displayable.SongDisplayable;
 import org.quelea.windows.library.LibrarySongList;
 import org.quelea.windows.main.MainPanel;
 import org.quelea.windows.main.QueleaApp;
-import org.quelea.windows.main.ScheduleList;
+import org.quelea.windows.main.schedule.ScheduleList;
 
 /**
  * Responsible for checking, enabling, disabling etc. buttons.
