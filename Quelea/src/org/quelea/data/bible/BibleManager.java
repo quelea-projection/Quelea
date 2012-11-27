@@ -36,12 +36,13 @@ import org.quelea.services.lucene.BibleSearchIndex;
 import org.quelea.services.lucene.SearchIndex;
 import org.quelea.services.utils.LoggerUtils;
 import org.quelea.services.utils.QueleaProperties;
+import org.quelea.services.utils.Utils;
 import org.quelea.windows.main.QueleaApp;
 import org.quelea.windows.main.StatusPanel;
 
 /**
  * Loads and manages the available getBibles.
- *
+ * <p/>
  * @author Michael
  */
 public final class BibleManager {
@@ -76,7 +77,6 @@ public final class BibleManager {
             final Path biblePath = FileSystems.getDefault().getPath(QueleaProperties.get().getBibleDir().getAbsolutePath());
             biblePath.register(watcher, StandardWatchEventKinds.ENTRY_CREATE, StandardWatchEventKinds.ENTRY_DELETE, StandardWatchEventKinds.ENTRY_MODIFY);
             new Thread() {
-
                 @SuppressWarnings("unchecked")
                 @Override
                 public void run() {
@@ -119,7 +119,7 @@ public final class BibleManager {
 
     /**
      * Get the instance of this singleton class.
-     *
+     * <p/>
      * @return the instance of this singleton class.
      */
     public static BibleManager get() {
@@ -129,7 +129,7 @@ public final class BibleManager {
     /**
      * Run the given runnable as soon as the index is initialised, or
      * immediately if the index is currently initialised.
-     *
+     * <p/>
      * @param r the runnable to run.
      */
     public void runOnIndexInit(Runnable r) {
@@ -144,7 +144,7 @@ public final class BibleManager {
     /**
      * Register a bible change listener on this bible manager. The listener will
      * be activated whenever a change occurs.
-     *
+     * <p/>
      * @param listener the listener to register.
      */
     public void registerBibleChangeListener(BibleChangeListener listener) {
@@ -162,7 +162,7 @@ public final class BibleManager {
 
     /**
      * Get all the bibles held in this manager.
-     *
+     * <p/>
      * @return all the getBibles.
      */
     public Bible[] getBibles() {
@@ -171,7 +171,7 @@ public final class BibleManager {
 
     /**
      * Get the underlying search index used by this bible manager.
-     *
+     * <p/>
      * @return the search index.
      */
     public SearchIndex<BibleChapter> getIndex() {
@@ -205,6 +205,7 @@ public final class BibleManager {
 
     /**
      * Determine if the search index is initialised.
+     * <p/>
      * @return true if the index is initialised, false otherwise.
      */
     public boolean isIndexInit() {
@@ -218,8 +219,13 @@ public final class BibleManager {
         indexInit = false;
         final StatusPanel[] panel = new StatusPanel[1];
         if(QueleaApp.get().getMainWindow() != null) {
-            panel[0] = QueleaApp.get().getStatusGroup().addPanel(LabelGrabber.INSTANCE.getLabel("building.bible.index"));
-            panel[0].getProgressBar().setProgress(-1);
+            Utils.fxRunAndWait(new Runnable() {
+                @Override
+                public void run() {
+                    panel[0] = QueleaApp.get().getStatusGroup().addPanel(LabelGrabber.INSTANCE.getLabel("building.bible.index"));
+                    panel[0].getProgressBar().setProgress(-1);
+                }
+            });
         }
         new Thread() {
             @Override
@@ -241,9 +247,8 @@ public final class BibleManager {
                     r.run();
                 }
                 onIndexInit.clear();
-                
-                Platform.runLater(new Runnable() {
 
+                Platform.runLater(new Runnable() {
                     @Override
                     public void run() {
                         if(panel[0] != null) {
