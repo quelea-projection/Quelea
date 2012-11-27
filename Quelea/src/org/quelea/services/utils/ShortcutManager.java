@@ -17,38 +17,33 @@
  */
 package org.quelea.services.utils;
 
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyCodeCombination;
+import javafx.scene.input.KeyCombination;
+import org.quelea.windows.main.MainPanel;
+import org.quelea.windows.main.MainWindow;
+import org.quelea.windows.main.QueleaApp;
+
 /**
- * Manage adding the shortcuts for the application.
+ * Manage adding the shortcuts for the application. This is responsible for
+ * adding the sort of shortcuts that do things such as focus the user on a
+ * particular node. Shortcuts for buttons or menu items are declared in the same
+ * place as the corresponding node.
+ * <p/>
  * @author Michael
  */
 public class ShortcutManager {
 
     /**
-     * Add in the shortcuts to the main panel.
+     * Add in the shortcuts.
      */
-    //TODO: Add back in
-    public void addShortcuts() {
-//        final MainPanel mainPanel = Application.get().getMainWindow().getMainPanel();
-//        mainPanel.registerKeyboardAction(new ActionListener() {
-//
-//            @Override
-//            public void actionPerformed(ActionEvent e) {
-//                mainPanel.getLibraryPanel().getLibrarySongPanel().getSearchBox().requestFocusInWindow();
-//            }
-//        }, KeyStroke.getKeyStroke(KeyEvent.VK_L, InputEvent.CTRL_MASK), JComponent.WHEN_IN_FOCUSED_WINDOW);
-//        mainPanel.registerKeyboardAction(new ActionListener() {
-//
-//            @Override
-//            public void actionPerformed(ActionEvent e) {
-//                new ScheduleSaver().saveSchedule(false);
-//            }
-//        }, KeyStroke.getKeyStroke(KeyEvent.VK_S, InputEvent.CTRL_MASK), JComponent.WHEN_IN_FOCUSED_WINDOW);
-//        mainPanel.registerKeyboardAction(new ActionListener() {
-//
-//            @Override
-//            public void actionPerformed(ActionEvent e) {
-//                Printer.getInstance().print(Application.get().getMainWindow().getMainPanel().getSchedulePanel().getScheduleList().getSchedule());
-//            }
-//        }, KeyStroke.getKeyStroke(KeyEvent.VK_P, InputEvent.CTRL_MASK), JComponent.WHEN_IN_FOCUSED_WINDOW);
+    public void addShortcuts(MainWindow mainWindow) {
+        final MainPanel mainPanel = QueleaApp.get().getMainWindow().getMainPanel();
+        mainPanel.getScene().getAccelerators().put(new KeyCodeCombination(KeyCode.L, KeyCombination.CONTROL_DOWN), new Runnable() {
+            @Override
+            public void run() {
+                mainPanel.getLibraryPanel().getLibrarySongPanel().getSearchBox().requestFocus();
+            }
+        });
     }
 }
