@@ -43,6 +43,8 @@ public class QuickInsertActionHandler implements EventHandler<ActionEvent> {
         sew.resetQuickEdit();
         sew.showAndWait();
         SongDisplayable quickSong = sew.getSong();
-        QueleaApp.get().getMainWindow().getMainPanel().getSchedulePanel().getScheduleList().add(quickSong);
+        if(!quickSong.getTitle().trim().isEmpty()) {
+            QueleaApp.get().getMainWindow().getMainPanel().getSchedulePanel().getScheduleList().add(quickSong);
+        }
     }
 }
