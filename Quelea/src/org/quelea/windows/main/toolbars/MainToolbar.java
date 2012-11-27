@@ -32,6 +32,7 @@ import org.quelea.windows.main.actionhandlers.NewScheduleActionHandler;
 import org.quelea.windows.main.actionhandlers.NewSongActionHandler;
 import org.quelea.windows.main.actionhandlers.OpenScheduleActionHandler;
 import org.quelea.windows.main.actionhandlers.PrintScheduleActionHandler;
+import org.quelea.windows.main.actionhandlers.QuickInsertActionHandler;
 import org.quelea.windows.main.actionhandlers.SaveScheduleActionHandler;
 import org.quelea.windows.main.actionhandlers.ShowNoticesActionHandler;
 import org.quelea.windows.main.actionhandlers.ViewTagsActionHandler;
@@ -48,6 +49,7 @@ public class MainToolbar extends ToolBar {
     private Button saveScheduleButton;
     private Button printScheduleButton;
     private Button newSongButton;
+    private Button quickInsertButton;
     private Button addPresentationButton;
     private Button addVideoButton;
     private Button addAudioButton;
@@ -86,6 +88,11 @@ public class MainToolbar extends ToolBar {
         getItems().add(newSongButton);
 
         getItems().add(new Separator());
+
+        quickInsertButton = new Button("", new ImageView(new Image("file:icons/lightning.png", 24, 24, false, true)));
+        quickInsertButton.setTooltip(new Tooltip(LabelGrabber.INSTANCE.getLabel("quick.insert.text")));
+        quickInsertButton.setOnAction(new QuickInsertActionHandler());
+        getItems().add(quickInsertButton);
 
         addPresentationButton = new Button("", new ImageView(new Image("file:icons/powerpoint.png", 24, 24, false, true)));
         addPresentationButton.setTooltip(new Tooltip(LabelGrabber.INSTANCE.getLabel("add.presentation.tooltip")));
