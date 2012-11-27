@@ -47,6 +47,7 @@ import org.quelea.windows.lyrics.LyricDrawer;
 import org.quelea.windows.lyrics.SelectLyricsPanel;
 import org.quelea.windows.main.quickedit.QuickEditDialog;
 import org.quelea.windows.main.widgets.CardPane;
+import org.quelea.windows.multimedia.MultimediaDrawer;
 import org.quelea.windows.multimedia.MultimediaPanel;
 import org.quelea.windows.video.VideoControlPanel;
 
@@ -72,8 +73,8 @@ public abstract class LivePreviewPanel extends BorderPane {
     private SelectLyricsPanel lyricsPanel = new SelectLyricsPanel(this);
     private ImagePanel picturePanel = new ImagePanel(this);
     private PresentationPanel presentationPanel = new PresentationPanel(this);
-    private MultimediaPanel videoPanel = new MultimediaPanel(new VideoControlPanel(), this);
-    private MultimediaPanel audioPanel = new MultimediaPanel(new AudioControlPanel(), this);
+    private MultimediaPanel videoPanel = new MultimediaPanel(this);
+    private MultimediaPanel audioPanel = new MultimediaPanel(this);
     private QuickEditDialog quickEditDialog = new QuickEditDialog();
     private DisplayableDrawer drawer = new NullDrawer();
     /**
@@ -246,10 +247,12 @@ public abstract class LivePreviewPanel extends BorderPane {
                     currentLabel = IMAGE_LABEL;
 
                 } else if (displayable instanceof VideoDisplayable) {
+                    drawer = new MultimediaDrawer(new VideoControlPanel());
                     videoPanel.showDisplayable((MultimediaDisplayable) displayable);
                     cardPanel.show(VIDEO_LABEL);
                     currentLabel = VIDEO_LABEL;
                 } else if (displayable instanceof AudioDisplayable) {
+                    drawer = new MultimediaDrawer(new AudioControlPanel());
                     audioPanel.showDisplayable((MultimediaDisplayable) displayable);
                     cardPanel.show(AUDIO_LABEL);
                     currentLabel = AUDIO_LABEL;
