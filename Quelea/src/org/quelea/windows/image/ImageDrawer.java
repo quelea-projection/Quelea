@@ -4,7 +4,6 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import org.quelea.data.displayable.Displayable;
 import org.quelea.data.displayable.ImageDisplayable;
-import org.quelea.windows.lyrics.SelectLyricsList;
 import org.quelea.windows.main.DisplayableDrawer;
 
 /**
@@ -28,7 +27,9 @@ public class ImageDrawer extends DisplayableDrawer {
 
     @Override
     public void clear() {
-        canvas.getChildren().clear();
+        if (canvas.getChildren() != null) {
+            canvas.getChildren().clear();
+        }
     }
 
     public void requestFocus() {

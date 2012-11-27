@@ -427,10 +427,13 @@ public class LyricDrawer extends DisplayableDrawer {
 
     @Override
     public void clear() {
-        canvas.getChildren().clear();
+        if (canvas.getChildren() != null) {
+            canvas.getChildren().clear();
+        }
         setTheme(null);
         eraseText();
     }
+
     public void updateCanvas(Displayable displayable, SelectLyricsList lyricsList, int selectedIndex) {
         curDisplayable = (TextDisplayable) displayable;
         TextSection currentSection = lyricsList.itemsProperty().get().get(selectedIndex);
