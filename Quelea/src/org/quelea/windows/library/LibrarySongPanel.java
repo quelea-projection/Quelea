@@ -151,4 +151,13 @@ public class LibrarySongPanel extends BorderPane {
     public LibrarySongList getSongList() {
         return songList;
     }
+
+    /**
+     * Get the search box in this panel.
+     * @return the search box.
+     */
+    public TextField getSearchBox() {
+        return searchBox;
+    }
+    
 }
