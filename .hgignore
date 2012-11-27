@@ -3,3 +3,8 @@ Quelea/nbproject/private/*
 Quelea/nbproject/jfx-impl*
 Quelea/build/*
 Quelea/dist/*
+\.orig\..*$
+\.orig$
+\.chg\..*$
+\.rej$
+\.conflict\~$
