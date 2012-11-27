@@ -85,6 +85,15 @@ public final class BibleVerse {
         ret.append("</vers>");
         return ret.toString();
     }
+    
+    /**
+     * Get this verse as a string.
+     * @return this verse as a string.
+     */
+    @Override
+    public String toString() {
+        return verse;
+    }
 
     /**
      * Get the number of this verse.
