@@ -202,7 +202,7 @@ public final class Main extends Application {
                 }
 //                Utils.centreOnMonitor(mainWindow, controlScreen);
                 mainWindow.toFront();
-                new ShortcutManager().addShortcuts();
+                new ShortcutManager().addShortcuts(mainWindow);
                 LOGGER.log(Level.INFO, "Loaded everything.");
 
                 if(!getParameters().getRaw().isEmpty()) {
