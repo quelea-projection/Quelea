@@ -18,12 +18,19 @@
  */
 package org.quelea.windows.main.toolbars;
 
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Separator;
 import javafx.scene.control.ToolBar;
 import javafx.scene.control.Tooltip;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyCodeCombination;
+import javafx.scene.input.KeyCombination;
 import org.quelea.languages.LabelGrabber;
 import org.quelea.windows.main.actionhandlers.AddAudioActionHandler;
 import org.quelea.windows.main.actionhandlers.AddPowerpointActionHandler;
@@ -32,13 +39,14 @@ import org.quelea.windows.main.actionhandlers.NewScheduleActionHandler;
 import org.quelea.windows.main.actionhandlers.NewSongActionHandler;
 import org.quelea.windows.main.actionhandlers.OpenScheduleActionHandler;
 import org.quelea.windows.main.actionhandlers.PrintScheduleActionHandler;
+import org.quelea.windows.main.actionhandlers.QuickInsertActionHandler;
 import org.quelea.windows.main.actionhandlers.SaveScheduleActionHandler;
 import org.quelea.windows.main.actionhandlers.ShowNoticesActionHandler;
 import org.quelea.windows.main.actionhandlers.ViewTagsActionHandler;
 
 /**
  * Quelea's main toolbar.
- *
+ * <p/>
  * @author Michael
  */
 public class MainToolbar extends ToolBar {
@@ -48,6 +56,7 @@ public class MainToolbar extends ToolBar {
     private Button saveScheduleButton;
     private Button printScheduleButton;
     private Button newSongButton;
+    private Button quickInsertButton;
     private Button addPresentationButton;
     private Button addVideoButton;
     private Button addAudioButton;
@@ -55,7 +64,7 @@ public class MainToolbar extends ToolBar {
     private Button manageTagsButton;
 
     /**
-     * Create the toolbar.
+     * Create the toolbar and any associated shortcuts.
      */
     public MainToolbar() {
         newScheduleButton = new Button("", new ImageView(new Image("file:icons/filenew.png", 24, 24, false, true)));
@@ -87,6 +96,11 @@ public class MainToolbar extends ToolBar {
 
         getItems().add(new Separator());
 
+        quickInsertButton = new Button("", new ImageView(new Image("file:icons/lightning.png", 24, 24, false, true)));
+        quickInsertButton.setTooltip(new Tooltip(LabelGrabber.INSTANCE.getLabel("quick.insert.text")));
+        quickInsertButton.setOnAction(new QuickInsertActionHandler());
+        getItems().add(quickInsertButton);
+
         addPresentationButton = new Button("", new ImageView(new Image("file:icons/powerpoint.png", 24, 24, false, true)));
         addPresentationButton.setTooltip(new Tooltip(LabelGrabber.INSTANCE.getLabel("add.presentation.tooltip")));
         addPresentationButton.setOnAction(new AddPowerpointActionHandler());
@@ -96,7 +110,7 @@ public class MainToolbar extends ToolBar {
         addVideoButton.setTooltip(new Tooltip(LabelGrabber.INSTANCE.getLabel("add.video.tooltip")));
         addVideoButton.setOnAction(new AddVideoActionHandler());
         getItems().add(addVideoButton);
-        
+
         addAudioButton = new Button("", new ImageView(new Image("file:icons/audio30.png", 24, 24, false, true)));
         addAudioButton.setTooltip(new Tooltip(LabelGrabber.INSTANCE.getLabel("add.audio.tooltip")));
         addAudioButton.setOnAction(new AddAudioActionHandler());
@@ -114,5 +128,21 @@ public class MainToolbar extends ToolBar {
         manageNoticesButton.setOnAction(new ShowNoticesActionHandler());
         getItems().add(manageNoticesButton);
         
+        //Add shortcuts when we're part of a scene
+        sceneProperty().addListener(new ChangeListener<Scene>() {
+            @Override
+            public void changed(ObservableValue<? extends Scene> ov, Scene oldScene, Scene newScene) {
+                if(newScene != null) {
+                    newScene.getAccelerators().put(new KeyCodeCombination(KeyCode.Q, KeyCombination.CONTROL_DOWN), new Runnable() {
+                        @Override
+                        public void run() {
+                            quickInsertButton.fire();
+                        }
+                    });
+                    sceneProperty().removeListener(this);
+                }
+            }
+        });
+
     }
 }

@@ -67,6 +67,13 @@ public class BibleSearchDialog extends Stage implements BibleChangeListener {
         searchResults.setCellFactory(DisplayableListCell.<BibleChapter>forListView(popupMenu));
         VBox centrePanel = new VBox();
         centrePanel.getChildren().add(searchResults);
+        searchResults.selectionModelProperty().get().selectedItemProperty().addListener(new ChangeListener<BibleChapter>() {
+
+            @Override
+            public void changed(ObservableValue<? extends BibleChapter> val, BibleChapter oldChapter, BibleChapter newChapter) {
+                popupMenu.setCurrentChapter(newChapter);
+            }
+        });
         mainPane.setCenter(centrePanel);
         bibles.setOnAction(new EventHandler<javafx.event.ActionEvent>() {
             @Override

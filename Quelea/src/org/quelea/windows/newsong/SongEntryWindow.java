@@ -53,6 +53,7 @@ public class SongEntryWindow extends Stage {
     private BasicSongPanel basicSongPanel;
     private DetailedSongPanel detailedSongPanel;
     private ThemePanel themePanel;
+    private boolean updateDBOnHide;
     private final TabPane tabPane;
     private final Button confirmButton;
     private final Button cancelButton;
@@ -67,6 +68,7 @@ public class SongEntryWindow extends Stage {
     public SongEntryWindow() {
         initModality(Modality.APPLICATION_MODAL);
         initStyle(StageStyle.UTILITY);
+        updateDBOnHide = true;
         getIcons().add(new Image("file:icons/logo.png"));
 
         BorderPane mainPane = new BorderPane();
@@ -98,7 +100,9 @@ public class SongEntryWindow extends Stage {
             @Override
             public void handle(javafx.event.ActionEvent t) {
                 hide();
-                Utils.updateSongInBackground(getSong(), true, false);
+                if(updateDBOnHide) {
+                    Utils.updateSongInBackground(getSong(), true, false);
+                }
                 if(addToSchedCBox.isSelected()) {
                     QueleaApp.get().getMainWindow().getMainPanel().getSchedulePanel().getScheduleList().add(getSong());
                 }
@@ -223,6 +227,24 @@ public class SongEntryWindow extends Stage {
         tabPane.getSelectionModel().select(0);
         addToSchedCBox.setSelected(false);
         addToSchedCBox.setDisable(false);
+        updateDBOnHide = true;
+    }
+
+    /**
+     * Set this window up ready to enter a new song.
+     */
+    public void resetQuickEdit() {
+        setTitle(LabelGrabber.INSTANCE.getLabel("quick.insert.text"));
+        song = null;
+        confirmButton.setText(LabelGrabber.INSTANCE.getLabel("library.add.to.schedule.text"));
+        confirmButton.setDisable(true);
+        basicSongPanel.resetNewSong();
+        detailedSongPanel.resetNewSong();
+        themePanel.setTheme(ThemeDTO.DEFAULT_THEME);
+        tabPane.getSelectionModel().select(0);
+        addToSchedCBox.setSelected(false);
+        addToSchedCBox.setDisable(true);
+        updateDBOnHide = false;
     }
 
     /**
@@ -248,6 +270,7 @@ public class SongEntryWindow extends Stage {
         else {
             addToSchedCBox.setDisable(false);
         }
+        updateDBOnHide = true;
     }
 
     /**
