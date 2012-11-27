@@ -33,7 +33,7 @@ public final class BibleBook {
     private int bookNumber;
     private String bookName;
     private final List<BibleChapter> chapters;
-    private SoftReference<String> softRefText;
+    private String htmlText;
     private List<Integer> caretPosList;
     private Bible bible;
 
@@ -59,8 +59,7 @@ public final class BibleBook {
      * @return the text of this chapter.
      */
     public String getText() {
-        String hardText = "";
-        if(softRefText == null || softRefText.get() == null) {
+        if(htmlText==null) {
             caretPosList.clear();
             int pos = 0;
             StringBuilder ret = new StringBuilder(1000);
@@ -77,10 +76,9 @@ public final class BibleBook {
                 }
                 ret.append("\n");
             }
-            hardText = ret.toString();
-            this.softRefText = new SoftReference<>(hardText);
+            htmlText = ret.toString();
         }
-        return hardText;
+        return htmlText;
     }
     
     /**
