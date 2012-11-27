@@ -21,6 +21,8 @@ package org.quelea.data.bible;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.EventHandler;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
@@ -66,6 +68,8 @@ public class BibleBrowseDialog extends Stage implements BibleChangeListener {
         selectBibleLabel.setLabelFor(bibles);
         northPanel.getChildren().add(selectBibleLabel);
         northPanel.getChildren().add(bibles);
+        northPanel.setSpacing(5);
+        BorderPane.setMargin(northPanel, new Insets(0, 5, 5, 5));
         mainPane.setTop(northPanel);
 
         books = new ListView<>();
