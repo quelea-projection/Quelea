@@ -16,7 +16,6 @@
  */
 package org.quelea.windows.main;
 
-import org.quelea.windows.lyrics.DisplayWindow;
 import com.inet.jortho.SpellChecker;
 import java.io.File;
 import java.net.MalformedURLException;
@@ -40,6 +39,7 @@ import org.quelea.services.utils.UpdateChecker;
 import org.quelea.services.utils.UserFileChecker;
 import org.quelea.services.utils.Utils;
 import org.quelea.splash.SplashStage;
+import org.quelea.windows.lyrics.DisplayWindow;
 
 /**
  * The main class, sets everything in motion...
