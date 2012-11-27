@@ -120,6 +120,20 @@ public final class BibleChapter {
         ret.append("</chapter>");
         return ret.toString();
     }
+    
+    /**
+     * Return the first verse as a string in this chapter.
+     * @return the first verse as a string.
+     */
+    @Override
+    public String toString() {
+        if(verses.isEmpty()) {
+            return Integer.toString(num);
+        }
+        else {
+            return verses.get(0).toString();
+        }
+    }
 
     /**
      * Add a verse to this chapter.

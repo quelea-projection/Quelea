@@ -17,9 +17,6 @@
  */
 package org.quelea.data.displayable;
 
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
-
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -30,6 +27,8 @@ import javafx.scene.image.ImageView;
 import org.quelea.data.bible.BibleVerse;
 import org.quelea.services.utils.QueleaProperties;
 import org.quelea.services.utils.Utils;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 /**
  * A displayable passage from the bible.
@@ -105,6 +104,7 @@ public class BiblePassage implements TextDisplayable {
      * Get the XML behind this bible passage.
      * @return the XML.
      */
+    @Override
     public String getXML() {
         StringBuilder ret = new StringBuilder();
         ret.append("<passage summary=\"");
@@ -115,6 +115,20 @@ public class BiblePassage implements TextDisplayable {
         }
         ret.append("</passage>");
         return ret.toString();
+    }
+    
+    /**
+     * Return the first verse in this passage as a "preview".
+     * @return the first verse in this passage as a "preview".
+     */
+    @Override
+    public String toString() {
+        if(textSections.isEmpty()) {
+            return "";
+        }
+        else {
+            return textSections.get(0).getText(false, false)[0];
+        }
     }
 
     /**
@@ -157,6 +171,7 @@ public class BiblePassage implements TextDisplayable {
      * Get the text sections in this passage.
      * @return the text sections in this passage.
      */
+    @Override
     public TextSection[] getSections() {
         return textSections.toArray(new TextSection[textSections.size()]);
     }
@@ -165,6 +180,7 @@ public class BiblePassage implements TextDisplayable {
      * Bible passages don't need any resources, return an empty collection.
      * @return an empty list, always.
      */
+    @Override
     public Collection<File> getResources() {
         return new ArrayList<>();
     }
