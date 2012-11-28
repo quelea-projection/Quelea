@@ -23,49 +23,57 @@ import javafx.scene.image.ImageView;
 
 /**
  * An item such as a song that can be displayed on the projection screen.
+ *
  * @author Michael
  */
 public interface Displayable {
 
     /**
      * Determine if this displayable can be "cleared" in some way.
+     *
      * @return true if it can be cleared, false otherwise.
      */
     boolean supportClear();
 
     /**
      * Get the XML describing this displayable.
+     *
      * @return the xml.
      */
     String getXML();
 
     /**
      * Get the preview icon to be displayed in the schedule.
+     *
      * @return the preview icon.
      */
     ImageView getPreviewIcon();
 
     /**
      * Get the preview text to be displayed in the schedule.
+     *
      * @return the preview text.
      */
     String getPreviewText();
 
     /**
      * Get the text to display when printed.
+     *
      * @return the printed text.
      */
     String getPrintText();
 
     /**
-     * Get any file resources that this displayable needs to work. For songs this can be backgrounds, for videos this is
-     * the video file, etc.
+     * Get any file resources that this displayable needs to work. For songs
+     * this can be backgrounds, for videos this is the video file, etc.
+     *
      * @return any files that this displayable relies upon.
      */
     Collection<File> getResources();
-    
+
     /**
      * Free any resources used by this displayable when it's no longer needed.
      */
     void dispose();
+
 }

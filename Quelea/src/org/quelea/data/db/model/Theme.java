@@ -160,7 +160,7 @@ public class Theme {
     /**
      * @return the shadow
      */
-    @ManyToOne(cascade = CascadeType.ALL) //@todo check this type of mapping
+    @ManyToOne(cascade = CascadeType.ALL) 
     public TextShadow getTextShadow() {
         return textShadow;
     }

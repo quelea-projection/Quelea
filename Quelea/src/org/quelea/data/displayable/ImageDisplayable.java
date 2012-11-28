@@ -30,6 +30,7 @@ import org.w3c.dom.Node;
 
 /**
  * A displayable that's an image.
+ *
  * @author Michael
  */
 public class ImageDisplayable implements Displayable {
@@ -37,20 +38,26 @@ public class ImageDisplayable implements Displayable {
     public static final int ICON_WIDTH = 60;
     public static final int ICON_HEIGHT = 60;
     private final File file;
-    private ImageView image;
+    private Image image;
     private static final Logger LOGGER = LoggerUtils.getLogger();
 
     /**
      * Create a new image displayable.
+     *
      * @param file the file for the displayable.
      */
     public ImageDisplayable(File file) {
         this.file = file;
-        image = new ImageView(new Image("file:"+file.getAbsolutePath()));
+        image = new Image("file:" + file.getAbsolutePath());
     }
 
+    public ImageDisplayable(Image image) {
+        this.file = null;
+        this.image = image;
+    }
     /**
      * Get the displayable file.
+     *
      * @return the displayable file.
      */
     public File getFile() {
@@ -59,14 +66,17 @@ public class ImageDisplayable implements Displayable {
 
     /**
      * Get the displayable image.
+     *
      * @return the displayable image.
      */
-    public ImageView getImage() {
+    public Image getImage() {
         return image;
     }
 
     /**
-     * Parse some XML representing this object and return the object it represents.
+     * Parse some XML representing this object and return the object it
+     * represents.
+     *
      * @param node the XML node representing this object.
      * @return the object as defined by the XML.
      */
@@ -77,6 +87,7 @@ public class ImageDisplayable implements Displayable {
 
     /**
      * Get the XML that forms this image displayable.
+     *
      * @return the XML.
      */
     @Override
@@ -90,16 +101,18 @@ public class ImageDisplayable implements Displayable {
 
     /**
      * Get the preview icon for this displayable (30x30.)
+     *
      * @return the preview icon.
      */
     @Override
     public ImageView getPreviewIcon() {
-        ImageView small = new ImageView(new Image("file:"+file.getAbsolutePath(), 30, 30, false, true));
+        ImageView small = new ImageView(new Image("file:" + file.getAbsolutePath(), 30, 30, false, true));
         return small;
     }
 
     /**
      * Get the preview text for the image.
+     *
      * @return the file name.
      */
     @Override
@@ -109,6 +122,7 @@ public class ImageDisplayable implements Displayable {
 
     /**
      * Get any resources this displayable needs (in this case the image.)
+     *
      * @return the image backing this displayable.
      */
     @Override
@@ -120,6 +134,7 @@ public class ImageDisplayable implements Displayable {
 
     /**
      * Get the summary to print in an order of service.
+     *
      * @return the summary as a string. Just the image and the file name at
      * present.
      */
@@ -129,15 +144,16 @@ public class ImageDisplayable implements Displayable {
     }
 
     /**
-     * Images don't support clearing of text (they contain no text) so false, 
+     * Images don't support clearing of text (they contain no text) so false,
      * always.
+     *
      * @return false, always.
      */
     @Override
     public boolean supportClear() {
         return false;
     }
-    
+
     @Override
     public void dispose() {
         //Nothing needed here.

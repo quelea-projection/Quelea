@@ -118,7 +118,7 @@ public class Song {
     /**
      * @return the theme
      */
-    @ManyToOne(cascade = CascadeType.ALL) //@todo check this type of mapping
+    @ManyToOne(cascade = CascadeType.ALL) 
     public Theme getTheme() {
         return theme;
     }

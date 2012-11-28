@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License along with
  * this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package org.quelea.windows.lyrics;
+package org.quelea.windows.main;
 
 import javafx.scene.Cursor;
 import javafx.application.Platform;
@@ -41,7 +41,7 @@ public class DisplayWindow extends Stage {
     }
 
     /**
-     * Create a new lyrics window positioned to fill the given rectangle.
+     * Create a new display window positioned to fill the given rectangle.
      * @param area the area in which the window should be drawn.
      */
     public DisplayWindow(Bounds area, boolean stageView) {
@@ -49,13 +49,13 @@ public class DisplayWindow extends Stage {
         getIcons().add(new Image("file:icons/logo.png"));
         setTitle("Projection window");
         setArea(area);
-        canvas = new DisplayCanvas(true, stageView);
+        canvas = new DisplayCanvas(true, stageView, "DisplayWindowCanvas");
         Scene scene = new Scene(canvas);
         setScene(scene);
     }
 
     /**
-     * Set the area of the lyric window.
+     * Set the area of the display window.
      * @param area the area of the window.
      */
     public final void setArea(final Bounds area) {
@@ -72,7 +72,7 @@ public class DisplayWindow extends Stage {
     }
 
     /**
-     * Get the canvas object that underlines this lyric window.
+     * Get the canvas object that underlines this display window.
      * @return the lyric canvas backing this window.
      */
     public DisplayCanvas getCanvas() {

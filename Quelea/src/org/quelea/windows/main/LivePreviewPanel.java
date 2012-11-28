@@ -17,6 +17,8 @@
  */
 package org.quelea.windows.main;
 
+import org.quelea.windows.presentation.PresentationPanel;
+import org.quelea.windows.image.ImagePanel;
 import java.awt.Canvas;
 import java.util.HashSet;
 import java.util.Set;
@@ -32,6 +34,7 @@ import javafx.scene.layout.BorderPane;
 import org.quelea.data.displayable.AudioDisplayable;
 import org.quelea.data.displayable.Displayable;
 import org.quelea.data.displayable.ImageDisplayable;
+import org.quelea.data.displayable.MultimediaDisplayable;
 import org.quelea.data.displayable.PresentationDisplayable;
 import org.quelea.data.displayable.SongDisplayable;
 import org.quelea.data.displayable.TextDisplayable;
@@ -39,14 +42,13 @@ import org.quelea.data.displayable.VideoDisplayable;
 import org.quelea.services.utils.LoggerUtils;
 import org.quelea.services.utils.QueleaProperties;
 import org.quelea.windows.audio.AudioControlPanel;
-import org.quelea.windows.image.ImagePanel;
-import org.quelea.windows.lyrics.DisplayCanvas;
-import org.quelea.windows.lyrics.DisplayWindow;
+import org.quelea.windows.image.ImageDrawer;
+import org.quelea.windows.lyrics.LyricDrawer;
 import org.quelea.windows.lyrics.SelectLyricsPanel;
 import org.quelea.windows.main.quickedit.QuickEditDialog;
 import org.quelea.windows.main.widgets.CardPane;
+import org.quelea.windows.multimedia.MultimediaDrawer;
 import org.quelea.windows.multimedia.MultimediaPanel;
-import org.quelea.windows.presentation.PresentationPanel;
 import org.quelea.windows.video.VideoControlPanel;
 
 /**
@@ -71,9 +73,22 @@ public abstract class LivePreviewPanel extends BorderPane {
     private SelectLyricsPanel lyricsPanel = new SelectLyricsPanel(this);
     private ImagePanel picturePanel = new ImagePanel(this);
     private PresentationPanel presentationPanel = new PresentationPanel(this);
-    private MultimediaPanel videoPanel = new MultimediaPanel(new VideoControlPanel(), this);
-    private MultimediaPanel audioPanel = new MultimediaPanel(new AudioControlPanel(), this);
+    private MultimediaPanel videoPanel = new MultimediaPanel(this);
+    private MultimediaPanel audioPanel = new MultimediaPanel(this);
     private QuickEditDialog quickEditDialog = new QuickEditDialog();
+    private DisplayableDrawer drawer = new NullDrawer();
+    /**
+     * All the contained panels so they can be flipped through easily...
+     */
+    private final Set<ContainedPanel> containedSet = new HashSet<ContainedPanel>() {
+        {
+            this.add(lyricsPanel);
+            this.add(picturePanel);
+            this.add(videoPanel);
+            this.add(audioPanel);
+            this.add(presentationPanel);
+        }
+    };
 
     /**
      * Create the live preview panel, common superclass of live and preview
@@ -92,7 +107,7 @@ public abstract class LivePreviewPanel extends BorderPane {
         lyricsPanel.getLyricsList().setOnMouseClicked(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent me) {
-                if(me.isControlDown()) {
+                if (me.isControlDown()) {
                     doQuickEdit(lyricsPanel.getLyricsList().getSelectionModel().getSelectedIndex());
                 }
             }
@@ -101,7 +116,7 @@ public abstract class LivePreviewPanel extends BorderPane {
         lyricsPanel.getLyricsList().setOnKeyPressed(new EventHandler<KeyEvent>() {
             @Override
             public void handle(KeyEvent ke) {
-                if(ke.isControlDown() && ke.getCode() == KeyCode.Q) {
+                if (ke.isControlDown() && ke.getCode() == KeyCode.Q) {
                     doQuickEdit(lyricsPanel.getLyricsList().getSelectionModel().getSelectedIndex());
                 }
             }
@@ -132,7 +147,7 @@ public abstract class LivePreviewPanel extends BorderPane {
      * @param index the index on which to perform the quick edit.
      */
     public void doQuickEdit(int index) {
-        if(displayable instanceof SongDisplayable) {
+        if (displayable instanceof SongDisplayable) {
             SongDisplayable song = (SongDisplayable) displayable;
             quickEditDialog.setSongSection(song, index);
             quickEditDialog.show();
@@ -162,14 +177,13 @@ public abstract class LivePreviewPanel extends BorderPane {
      */
     public void clear() {
         displayable = null;
-        if(PRESENTATION_LABEL.equals(currentLabel)) {
+        if (PRESENTATION_LABEL.equals(currentLabel)) {
             presentationPanel.showDisplayable(null, 0);
         }
-        for(Node panel : cardPanel) {
-            if(panel instanceof ContainedPanel) {
+        for (Node panel : cardPanel) {
+            if (panel instanceof ContainedPanel) {
                 ((ContainedPanel) panel).clear();
-            }
-            else {
+            } else {
                 LOGGER.log(Level.WARNING, "Panel was {0} which isn''t a ContainedPanel... can''t clear it.", panel.getClass());
             }
         }
@@ -183,10 +197,9 @@ public abstract class LivePreviewPanel extends BorderPane {
      * @return the currently selected displayable index.
      */
     public int getIndex() {
-        if(PRESENTATION_LABEL.equals(currentLabel)) {
+        if (PRESENTATION_LABEL.equals(currentLabel)) {
             return presentationPanel.getIndex();
-        }
-        else {
+        } else {
             return lyricsPanel.getIndex();
         }
     }
@@ -208,52 +221,54 @@ public abstract class LivePreviewPanel extends BorderPane {
      */
     public void setDisplayable(final Displayable displayable, final int index) {
         Platform.runLater(new Runnable() {
-
             @Override
             public void run() {
                 LivePreviewPanel.this.displayable = displayable;
+
                 presentationPanel.stopCurrent();
                 audioPanel.clear();
                 videoPanel.clear();
                 lyricsPanel.clear();
                 picturePanel.clear();
                 presentationPanel.clear();
-                if(PRESENTATION_LABEL.equals(currentLabel)) {
+                if (PRESENTATION_LABEL.equals(currentLabel)) {
                     presentationPanel.showDisplayable(null, 0);
                 }
-                if(displayable instanceof TextDisplayable) {
+                if (displayable instanceof TextDisplayable) {
+                    drawer = new LyricDrawer();
                     lyricsPanel.showDisplayable((TextDisplayable) displayable, index);
                     cardPanel.show(LYRICS_LABEL);
                     currentLabel = LYRICS_LABEL;
-                }
-                else if(displayable instanceof ImageDisplayable) {
+
+                } else if (displayable instanceof ImageDisplayable) {
+                    drawer = new ImageDrawer();
                     picturePanel.showDisplayable((ImageDisplayable) displayable);
                     cardPanel.show(IMAGE_LABEL);
                     currentLabel = IMAGE_LABEL;
-                }
-                else if(displayable instanceof VideoDisplayable) {
-                    videoPanel.showDisplayable((VideoDisplayable) displayable);
+
+                } else if (displayable instanceof VideoDisplayable) {
+                    drawer = new MultimediaDrawer(new VideoControlPanel());
+                    videoPanel.showDisplayable((MultimediaDisplayable) displayable);
                     cardPanel.show(VIDEO_LABEL);
                     currentLabel = VIDEO_LABEL;
-                }
-                else if(displayable instanceof AudioDisplayable) {
-                    audioPanel.showDisplayable((AudioDisplayable) displayable);
+                } else if (displayable instanceof AudioDisplayable) {
+                    drawer = new MultimediaDrawer(new AudioControlPanel());
+                    audioPanel.showDisplayable((MultimediaDisplayable) displayable);
                     cardPanel.show(AUDIO_LABEL);
                     currentLabel = AUDIO_LABEL;
-                }
-                else if(displayable instanceof PresentationDisplayable) {
+                } else if (displayable instanceof PresentationDisplayable) {
+                    drawer = new ImageDrawer();
                     presentationPanel.showDisplayable((PresentationDisplayable) displayable, index);
                     cardPanel.show(PRESENTATION_LABEL);
                     currentLabel = PRESENTATION_LABEL;
+                } else if (displayable == null) {
+//            LOGGER.log(Level.WARNING, "BUG: Called showDisplayable(null), should probably call clear() instead.", 
+//                    new RuntimeException("BUG: Called showDisplayable(null), should probably call clear() instead.")); clear();
+                } else {
+                    throw new RuntimeException("Displayable type not implemented: " + displayable.getClass());
                 }
-                else if(displayable == null) {
-//                    LOGGER.log(Level.WARNING, "BUG: Called setDisplayable(null), should probably call clear() instead.",
-//                            new RuntimeException("BUG: Called setDisplayable(null), should probably call clear() instead."));
-                    clear();
-                }
-                else {
-                    LOGGER.log(Level.SEVERE, "Displayable type not implemented: {0}", displayable.getClass());
-                }
+
+
             }
         });
     }
@@ -262,7 +277,7 @@ public abstract class LivePreviewPanel extends BorderPane {
      * Refresh the current content of this panel, if any exists.
      */
     public void refresh() {
-        if(getDisplayable() != null) {
+        if (getDisplayable() != null) {
             setDisplayable(getDisplayable(), getIndex());
         }
     }
@@ -270,7 +285,7 @@ public abstract class LivePreviewPanel extends BorderPane {
     /**
      * Get the displayable currently being displayed, or null if there isn't
      * one.
-     * <p/>
+     *
      * @return the current displayable.
      */
     public Displayable getDisplayable() {
@@ -283,7 +298,7 @@ public abstract class LivePreviewPanel extends BorderPane {
      * @param canvas the canvas to register.
      */
     public final void registerDisplayCanvas(final DisplayCanvas canvas) {
-        if(canvas == null) {
+        if (canvas == null) {
             return;
         }
         canvases.add(canvas);
@@ -295,7 +310,7 @@ public abstract class LivePreviewPanel extends BorderPane {
      * @param window the window to register.
      */
     public final void registerDisplayWindow(final DisplayWindow window) {
-        if(window == null) {
+        if (window == null) {
             return;
         }
         windows.add(window);
@@ -335,5 +350,20 @@ public abstract class LivePreviewPanel extends BorderPane {
      */
     public Set<DisplayWindow> getWindows() {
         return windows;
+    }
+
+    /**
+     * @return the drawer
+     */
+    public DisplayableDrawer getDrawer(DisplayCanvas canvas) {
+        drawer.setCanvas(canvas);
+        return drawer;
+    }
+
+    /**
+     * @return the drawer
+     */
+    public DisplayableDrawer getDrawer() {
+        return drawer;
     }
 }

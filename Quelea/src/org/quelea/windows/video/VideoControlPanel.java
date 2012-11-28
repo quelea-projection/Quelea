@@ -45,7 +45,6 @@ public class VideoControlPanel extends MultimediaControlPanel {
         this.filePath = video.getFile().getAbsolutePath();
         try {
             player = MediaPlayerFactory.getInstance(new File(filePath).toURI().toString());
-            multimediaView.setMediaPlayer(player);
             player.play();
         }
         catch(MediaException ex) {
