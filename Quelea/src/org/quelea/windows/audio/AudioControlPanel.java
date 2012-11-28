@@ -48,8 +48,7 @@ public class AudioControlPanel extends MultimediaControlPanel {
         this.filePath = audio.getFile().getAbsolutePath();
         try {
             player = MediaPlayerFactory.getInstance(new File(filePath).toURI().toString());
-            player.currentTimeProperty().addListener(new CurrentTimeListener());
-            multimediaView.setMediaPlayer(player);
+            player.currentTimeProperty().addListener(new CurrentTimeListener());;
             player.play();
         } catch (MediaException ex) {
             LOGGER.log(Level.WARNING, "Audio Error", ex);

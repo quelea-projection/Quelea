@@ -17,15 +17,9 @@
  */
 package org.quelea.windows.multimedia;
 
-import java.util.logging.Logger;
 import javafx.scene.layout.BorderPane;
-import javafx.scene.media.MediaView;
-import org.quelea.data.ThemeDTO;
-import org.quelea.data.VideoBackground;
 import org.quelea.data.displayable.MultimediaDisplayable;
-import org.quelea.data.displayable.VideoDisplayable;
-import org.quelea.services.utils.LoggerUtils;
-import org.quelea.windows.lyrics.DisplayCanvas;
+import org.quelea.windows.main.DisplayCanvas;
 import org.quelea.windows.main.ContainedPanel;
 import org.quelea.windows.main.LivePreviewPanel;
 
@@ -36,16 +30,12 @@ import org.quelea.windows.main.LivePreviewPanel;
  */
 public class MultimediaPanel extends BorderPane implements ContainedPanel {
 
-    private static final Logger LOGGER = LoggerUtils.getLogger();
-    private MultimediaControlPanel controlPanel;
     private LivePreviewPanel containerPanel;
 
     /**
      * Create a new image panel.
      */
-    public MultimediaPanel(MultimediaControlPanel controlPanel, LivePreviewPanel panel) {
-        this.controlPanel = controlPanel;
-        setCenter(this.controlPanel);
+    public MultimediaPanel(LivePreviewPanel panel) {
         this.containerPanel = panel;
     }
 
@@ -54,7 +44,7 @@ public class MultimediaPanel extends BorderPane implements ContainedPanel {
      */
     @Override
     public void focus() {
-        //TODO: Something probably
+        containerPanel.getDrawer().requestFocus();
     }
 
     /**
@@ -62,10 +52,7 @@ public class MultimediaPanel extends BorderPane implements ContainedPanel {
      */
     @Override
     public void clear() {
-        if (controlPanel.getPlayer() != null) {
-            controlPanel.getPlayer().stop();
-            ((MediaView) controlPanel.getView()).setMediaPlayer(null);
-        }
+        containerPanel.getDrawer().clear();
     }
 
     /**
@@ -74,7 +61,7 @@ public class MultimediaPanel extends BorderPane implements ContainedPanel {
      * @return the video control panel.
      */
     public MultimediaControlPanel getMultimediaControlPanel() {
-        return controlPanel;
+        return ((MultimediaDrawer)containerPanel.getDrawer()).getControlPanel();
     }
 
     /**
@@ -83,19 +70,20 @@ public class MultimediaPanel extends BorderPane implements ContainedPanel {
      * @param displayable the video displayable.
      */
     public void showDisplayable(MultimediaDisplayable displayable) {
-        controlPanel.loadMultimedia(displayable);
-        if (displayable instanceof VideoDisplayable) {
-            for (DisplayCanvas canvas : containerPanel.getCanvases()) {
-                canvas.setText(null, null, true);
-                canvas.setTheme(new ThemeDTO(null, null,
-                        new VideoBackground(displayable.getFile().getName()),
-                        ThemeDTO.DEFAULT_SHADOW));
-            }
+        
+        for (DisplayCanvas canvas : containerPanel.getCanvases()) {
+            MultimediaDrawer drawer = (MultimediaDrawer) containerPanel.getDrawer(canvas);
+            drawer.draw(displayable);
         }
+
     }
 
     @Override
     public int getCurrentIndex() {
         return 0;
+    }
+
+    @Override
+    public void updateCanvases() {
     }
 }
