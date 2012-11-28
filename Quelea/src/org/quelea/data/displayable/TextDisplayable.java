@@ -27,6 +27,6 @@ public interface TextDisplayable extends Displayable {
      * Get the text sections in this displayable.
      * @return the text sections.
      */
-    TextSection[] getSections();
+    TextSection[] getSections(); //@todo tobe removed
 
 }
