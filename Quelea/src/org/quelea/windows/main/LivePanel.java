@@ -17,8 +17,6 @@
  */
 package org.quelea.windows.main;
 
-import org.quelea.windows.lyrics.DisplayWindow;
-import org.quelea.windows.lyrics.DisplayCanvas;
 import java.util.HashSet;
 import javafx.collections.ObservableList;
 import javafx.event.EventHandler;

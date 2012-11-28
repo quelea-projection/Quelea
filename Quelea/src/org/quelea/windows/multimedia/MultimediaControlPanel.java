@@ -19,11 +19,9 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.media.MediaPlayer;
 import javafx.scene.media.MediaPlayer.Status;
-import javafx.scene.media.MediaView;
 import javafx.util.Duration;
 import org.quelea.data.displayable.MultimediaDisplayable;
 import org.quelea.services.utils.LoggerUtils;
-import org.quelea.windows.main.LivePreviewPanel;
 
 /**
  *
@@ -40,7 +38,6 @@ public abstract class MultimediaControlPanel extends BorderPane {
     protected Slider positionSlider;
     protected List<Canvas> registeredCanvases;
     protected Button stop;
-    protected MediaView multimediaView;
 
     protected class CurrentTimeListener implements InvalidationListener {
 
@@ -63,9 +60,6 @@ public abstract class MultimediaControlPanel extends BorderPane {
         return player;
     }
     
-    public MediaView getView() {
-        return multimediaView;
-    }
     protected class PositionListener implements ChangeListener<Boolean> {
 
         @Override
@@ -80,9 +74,6 @@ public abstract class MultimediaControlPanel extends BorderPane {
     }
 
     public MultimediaControlPanel() {
-
-        multimediaView = new MediaView();
-        multimediaView.setSmooth(true);
         play = new Button("", new ImageView(new Image("file:icons/play.png")));
 //        play.setDisable(true);
         play.setOnAction(new EventHandler<javafx.event.ActionEvent>() {
@@ -120,7 +111,6 @@ public abstract class MultimediaControlPanel extends BorderPane {
         positionSlider.setDisable(false);
         positionSlider.setValue(0);
         positionSlider.valueChangingProperty().addListener(new PositionListener());
-        setCenter(multimediaView);
         registeredCanvases = new ArrayList<>();
 
         VBox controlPanel = new VBox();
@@ -133,7 +123,7 @@ public abstract class MultimediaControlPanel extends BorderPane {
         buttonPanel.getChildren().add(mute);
         controlPanel.getChildren().add(buttonPanel);
         controlPanel.getChildren().add(sliderPanel);
-        setTop(controlPanel);
+        setCenter(controlPanel);
     }
 
     /**

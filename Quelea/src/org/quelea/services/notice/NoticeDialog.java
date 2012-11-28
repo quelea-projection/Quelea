@@ -34,7 +34,7 @@ import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import org.quelea.languages.LabelGrabber;
-import org.quelea.windows.lyrics.DisplayCanvas;
+import org.quelea.windows.main.DisplayCanvas;
 
 /**
  * The dialog used to manage the notices.

@@ -37,4 +37,10 @@ public interface ContainedPanel {
      * Get the current index of this contained panel.
      */
     int getCurrentIndex();
+    
+    /**
+     * Called to update the contents of the canvases when the list selection
+     * changes.
+     */
+    void updateCanvases();
 }

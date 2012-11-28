@@ -23,19 +23,20 @@ import javafx.scene.image.Image;
 import javafx.scene.layout.BorderPane;
 import org.quelea.data.ImageBackground;
 import org.quelea.data.ThemeDTO;
+import org.quelea.data.displayable.ImageDisplayable;
 import org.quelea.data.displayable.PresentationDisplayable;
 import org.quelea.data.powerpoint.OOPresentation;
 import org.quelea.data.powerpoint.PresentationSlide;
 import org.quelea.data.powerpoint.SlideChangedListener;
 import org.quelea.services.utils.QueleaProperties;
-import org.quelea.windows.lyrics.DisplayCanvas;
 import org.quelea.windows.main.ContainedPanel;
+import org.quelea.windows.main.DisplayCanvas;
 import org.quelea.windows.main.LivePreviewPanel;
 import org.quelea.windows.main.QueleaApp;
 
 /**
  * The panel for displaying presentation slides in the live / preview panels.
- * <p/>
+ *
  * @author Michael
  */
 public class PresentationPanel extends BorderPane implements ContainedPanel {
@@ -46,7 +47,7 @@ public class PresentationPanel extends BorderPane implements ContainedPanel {
 
     /**
      * Create a new presentation panel.
-     * <p/>
+     *
      * @param containerPanel the panel to create.
      */
     public PresentationPanel(final LivePreviewPanel containerPanel) {
@@ -58,9 +59,9 @@ public class PresentationPanel extends BorderPane implements ContainedPanel {
                     if(newSlide != null && displayable != null) {
                         if(displayable.getOOPresentation() == null) {
                             for(DisplayCanvas canvas : containerPanel.getCanvases()) {
-                                canvas.eraseText();
                                 Image displayImage = newSlide.getImage();
-                                canvas.setTheme(new ThemeDTO(null, null, new ImageBackground(displayImage), null));
+                                ImageDisplayable displayable = new ImageDisplayable(displayImage);
+                                containerPanel.getDrawer(canvas).draw(displayable);
                             }
                         }
                         else {
@@ -83,7 +84,7 @@ public class PresentationPanel extends BorderPane implements ContainedPanel {
     }
 
     public void stopCurrent() {
-        if(live && displayable != null && displayable.getOOPresentation() != null) {
+        if (live && displayable != null && displayable.getOOPresentation() != null) {
             displayable.getOOPresentation().stop();
             displayable = null;
         }
@@ -94,7 +95,7 @@ public class PresentationPanel extends BorderPane implements ContainedPanel {
      */
     private void startOOPres() {
         OOPresentation pres = displayable.getOOPresentation();
-        if(pres != null && !pres.isRunning()) {
+        if (pres != null && !pres.isRunning()) {
             pres.start(QueleaProperties.get().getProjectorScreen());
         }
     }
@@ -108,12 +109,12 @@ public class PresentationPanel extends BorderPane implements ContainedPanel {
 
     /**
      * Set the displayable to be on this presentation panel.
-     * <p/>
+     *
      * @param displayable the presentation displayable to display.
      * @param index the index to display.
      */
     public void showDisplayable(final PresentationDisplayable displayable, int index) {
-        if(displayable == null) {
+        if (displayable == null) {
             presentationList.itemsProperty().get().clear();
             return;
         }
@@ -139,9 +140,10 @@ public class PresentationPanel extends BorderPane implements ContainedPanel {
         PresentationSlide[] slides = displayable.getPresentation().getSlides();
         presentationList.setSlides(slides);
         presentationList.selectionModelProperty().get().select(index);
-        if(presentationList.selectionModelProperty().get().isEmpty()) {
+        if (presentationList.selectionModelProperty().get().isEmpty()) {
             presentationList.selectionModelProperty().get().select(0);
         }
+        presentationList.scrollTo(getIndex());
     }
 
     /**
@@ -173,5 +175,9 @@ public class PresentationPanel extends BorderPane implements ContainedPanel {
     @Override
     public int getCurrentIndex() {
         return presentationList.getSelectionModel().getSelectedIndex();
+    }
+
+    @Override
+    public void updateCanvases() {
     }
 }

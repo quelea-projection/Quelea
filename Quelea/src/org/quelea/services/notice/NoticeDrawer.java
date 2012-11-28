@@ -22,7 +22,7 @@ import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import org.quelea.windows.lyrics.DisplayCanvas;
+import org.quelea.windows.main.DisplayCanvas;
 
 /**
  * Responsible for drawing the notice animation on a particular canvas.
