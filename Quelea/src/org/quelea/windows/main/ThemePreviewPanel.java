@@ -52,7 +52,7 @@ import org.quelea.windows.newsong.ThemePanel;
  * @author Michael
  */
 public class ThemePreviewPanel extends VBox {
-
+    
     private static final Logger LOGGER = LoggerUtils.getLogger();
     private ThemeDTO theme;
     private DisplayCanvas canvas;
@@ -71,12 +71,15 @@ public class ThemePreviewPanel extends VBox {
         if (theme == null) {
             theme = ThemeDTO.DEFAULT_THEME;
         }
-        canvas = new DisplayCanvas(false, false, "ThemePrevievCanvas");
+        final ThemeDTO updateTheme = theme; //@todo to be removed
+        canvas = new DisplayCanvas(false, false, new DisplayCanvas.CanvasUpdater() {
+            @Override
+            public void updateOnSizeChange() {
+                updateThemePreviewCanvas(updateTheme);
+            }
+        });
         canvas.setPrefSize(200, 200);
-        LyricDrawer drawer = new LyricDrawer();
-        drawer.setCanvas(canvas);
-        drawer.setTheme(theme);
-        drawer.setText(ThemePanel.SAMPLE_LYRICS, new String[0], false);
+        updateThemePreviewCanvas(theme);
         String name;
         if (theme == ThemeDTO.DEFAULT_THEME) {
             name = LabelGrabber.INSTANCE.getLabel("default.theme.text");
@@ -103,7 +106,7 @@ public class ThemePreviewPanel extends VBox {
                     }
                 }
             });
-
+            
             removeButton = new Button("", new ImageView(new Image("file:icons/delete.png", 16, 16, false, true)));
             removeButton.setTooltip(new Tooltip(LabelGrabber.INSTANCE.getLabel("remove.theme.tooltip")));
             removeButton.setOnAction(new EventHandler<javafx.event.ActionEvent>() {
@@ -161,7 +164,7 @@ public class ThemePreviewPanel extends VBox {
     public ThemeDTO getTheme() {
         return theme;
     }
-
+    
     public static void main(String[] args) {
         new JFXPanel();
         Platform.runLater(new Runnable() {
@@ -178,5 +181,12 @@ public class ThemePreviewPanel extends VBox {
                 stage.show();
             }
         });
+    }
+
+    private void updateThemePreviewCanvas(ThemeDTO theme) {
+        LyricDrawer drawer = new LyricDrawer();
+        drawer.setCanvas(canvas);
+        drawer.setTheme(theme);
+        drawer.setText(ThemePanel.SAMPLE_LYRICS, new String[0], false);
     }
 }
