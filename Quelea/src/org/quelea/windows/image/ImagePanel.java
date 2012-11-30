@@ -18,12 +18,9 @@
 package org.quelea.windows.image;
 
 import org.quelea.windows.main.DisplayCanvas;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
 import org.quelea.data.displayable.ImageDisplayable;
 import org.quelea.windows.main.ContainedPanel;
-import org.quelea.windows.main.DisplayableDrawer;
 import org.quelea.windows.main.LivePreviewPanel;
 
 /**
@@ -35,15 +32,34 @@ public class ImagePanel extends BorderPane implements ContainedPanel {
 
     private LivePreviewPanel containerPanel;
     private final DisplayCanvas previewCanvas;
+    private ImageDisplayable currentDisplayable = null;
 
     /**
      * Create a new image panel.
      *
      * @param container the container this panel is contained within.
      */
+    class ImageUpdater implements DisplayCanvas.CanvasUpdater {
+
+        @Override
+        public void updateOnSizeChange() {
+        }
+    }
+
+    private void updateCanvas() {
+        for (DisplayCanvas canvas : containerPanel.getCanvases()) {
+            containerPanel.getDrawer(canvas).draw(currentDisplayable);
+        }
+    }
+
     public ImagePanel(LivePreviewPanel panel) {
         this.containerPanel = panel;
-        previewCanvas = new DisplayCanvas(false, false, "PreviewCanvas");
+        previewCanvas = new DisplayCanvas(false, false, new DisplayCanvas.CanvasUpdater() {
+            @Override
+            public void updateOnSizeChange() {
+                updateCanvas();
+            }
+        });
         containerPanel.registerDisplayCanvas(previewCanvas);
         setCenter(previewCanvas);
     }
@@ -67,10 +83,8 @@ public class ImagePanel extends BorderPane implements ContainedPanel {
      * @param displayable the image displayable.
      */
     public void showDisplayable(ImageDisplayable displayable) {
-        for (DisplayCanvas canvas : containerPanel.getCanvases()) {
-            containerPanel.getDrawer(canvas).draw(displayable);
-        }
-
+        currentDisplayable = displayable;
+        updateCanvas();
     }
 
     @Override
