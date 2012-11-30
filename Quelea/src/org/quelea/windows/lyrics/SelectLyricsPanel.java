@@ -45,6 +45,7 @@ public class SelectLyricsPanel extends BorderPane implements ContainedPanel {
     private final SplitPane splitPane;
     private TextDisplayable curDisplayable;
     private static final Logger LOGGER = LoggerUtils.getLogger();
+
     /**
      * Create a new lyrics panel.
      *
@@ -55,7 +56,12 @@ public class SelectLyricsPanel extends BorderPane implements ContainedPanel {
         splitPane = new SplitPane();
         splitPane.setOrientation(Orientation.VERTICAL);
         lyricsList = new SelectLyricsList();
-        previewCanvas = new DisplayCanvas(false, false, "PreviewCanvas");
+        previewCanvas = new DisplayCanvas(false, false, new DisplayCanvas.CanvasUpdater() {
+            @Override
+            public void updateOnSizeChange() {
+                updateCanvases();
+            }
+        });
         splitPane.getItems().add(lyricsList);
         splitPane.getItems().add(previewCanvas);
         setCenter(splitPane);
@@ -144,7 +150,7 @@ public class SelectLyricsPanel extends BorderPane implements ContainedPanel {
     }
 
     /**
-     * Called to update the contents of the canvases when the list selection
+     * Called to updateOnSizeChange the contents of the canvases when the list selection
      * changes.
      */
     @Override

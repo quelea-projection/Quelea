@@ -36,7 +36,7 @@ import org.quelea.services.utils.Utils;
  * @author Michael
  */
 public class DisplayCanvas extends StackPane {
-    
+
     private static final Logger LOGGER = LoggerUtils.getLogger();
     private boolean cleared;
     private boolean blacked;
@@ -45,29 +45,44 @@ public class DisplayCanvas extends StackPane {
     private Node background;
     private String name;
 
+    public interface CanvasUpdater {
+
+        void updateOnSizeChange();
+    }
+
+    private void updateCanvas(final CanvasUpdater updater) {
+        Platform.runLater(new Runnable() {
+            @Override
+            public void run() {
+                if (updater != null) {
+                    updater.updateOnSizeChange();
+                }
+            }
+        });
+    }
+
     /**
      * Create a new canvas where the lyrics should be displayed.
      * <p/>
      * @param showBorder true if the border should be shown around any text
      * (only if the options say so) false otherwise.
      */
-    public DisplayCanvas(boolean showBorder, boolean stageView, String name) {
+    public DisplayCanvas(boolean showBorder, boolean stageView, final CanvasUpdater updater) {
         setMinHeight(0);
         setMinWidth(0);
         this.stageView = stageView;
-        this.name = name;
         noticeDrawer = new NoticeDrawer(this);
         background = getNewImageView();
         heightProperty().addListener(new ChangeListener<Number>() {
             @Override
             public void changed(ObservableValue<? extends Number> ov, Number t, Number t1) {
-                //(null); @todo redraw
+                updateCanvas(updater);
             }
         });
         widthProperty().addListener(new ChangeListener<Number>() {
             @Override
             public void changed(ObservableValue<? extends Number> ov, Number t, Number t1) {
-               //(null); @todo redraw
+                updateCanvas(updater);
             }
         });
     }
@@ -86,18 +101,11 @@ public class DisplayCanvas extends StackPane {
         this.background = background;
     }
 
-    /**
-     * @return the name
-     */
-    public String getName() {
-        return name;
-    }
-    
     public interface CanvasCallback {
-        
+
         void update();
     }
-    
+
     public ImageView getNewImageView() {
         ImageView ret = new ImageView(Utils.getImageFromColour(Color.BLACK));
         ret.setFitHeight(getHeight());
@@ -121,7 +129,7 @@ public class DisplayCanvas extends StackPane {
      */
     public void toggleClear() {
         cleared ^= true; //invert
-        //(null); @todo redraw
+        //(null); @todo updateOnSizeChange
     }
 
     /**
@@ -139,7 +147,7 @@ public class DisplayCanvas extends StackPane {
      */
     public void toggleBlack() {
         blacked ^= true; //invert
-        //(null); @todo redraw
+        //(null); @todo updateOnSizeChange
     }
 
     /**

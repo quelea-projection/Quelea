@@ -59,12 +59,10 @@ public class ThemePanel extends BorderPane {
     public static final String[] SAMPLE_LYRICS = {"Amazing Grace how sweet the sound", "That saved a wretch like me", "I once was lost but now am found", "Was blind, but now I see."};
     private HBox fontToolbar;
     private HBox backgroundPanel;
-
     private ComboBox<String> fontSelection;
     private ColorPicker fontColorPicker;
     private ColorPicker backgroundColorPicker;
     private ComboBox<String> backgroundTypeSelect;
-    
     //Text shadow options
     private VBox shadowPanel;
     private ColorPicker shadowColorPicker;
@@ -72,7 +70,6 @@ public class ThemePanel extends BorderPane {
     private TextField shadowOffsetY;
     private TextField shadowRadius;
     private TextField shadowWidth;
-    
     private TextField backgroundImgLocation;
     private TextField backgroundVidLocation;
     private ToggleButton boldButton;
@@ -83,7 +80,12 @@ public class ThemePanel extends BorderPane {
      * Create and initialise the theme panel.
      */
     public ThemePanel() {
-        canvas = new DisplayCanvas(false, false, "ThemePanelCanvas");
+        canvas = new DisplayCanvas(false, false, new DisplayCanvas.CanvasUpdater() {
+            @Override
+            public void updateOnSizeChange() {
+                updateTheme(true);
+            }
+        });
         LyricDrawer drawer = new LyricDrawer();
         drawer.setCanvas(canvas);
         drawer.setText(SAMPLE_LYRICS, null, false);
