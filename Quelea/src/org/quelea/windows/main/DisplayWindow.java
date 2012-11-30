@@ -49,7 +49,7 @@ public class DisplayWindow extends Stage {
         getIcons().add(new Image("file:icons/logo.png"));
         setTitle("Projection window");
         setArea(area);
-        canvas = new DisplayCanvas(true, stageView, "DisplayWindowCanvas");
+        canvas = new DisplayCanvas(true, stageView, null);
         Scene scene = new Scene(canvas);
         setScene(scene);
     }
