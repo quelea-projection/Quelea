@@ -85,7 +85,7 @@ public class ThemePanel extends BorderPane {
             public void updateOnSizeChange() {
                 updateTheme(true);
             }
-        });
+        }, "ThemePanel canvas");
         LyricDrawer drawer = new LyricDrawer();
         drawer.setCanvas(canvas);
         drawer.setText(SAMPLE_LYRICS, null, false);
@@ -267,7 +267,7 @@ public class ThemePanel extends BorderPane {
     /**
      * Update the canvas with the current theme.
      */
-    private void updateTheme(boolean warning) { //@todo is called to often
+    private void updateTheme(boolean warning) {
         final ThemeDTO theme = getTheme();
         if (warning && theme.getBackground() instanceof ColourBackground) {
             checkAccessibility((Color) theme.getFontPaint(), ((ColourBackground) theme.getBackground()).getColour());

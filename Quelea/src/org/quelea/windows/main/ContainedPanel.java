@@ -17,6 +17,8 @@
  */
 package org.quelea.windows.main;
 
+import java.util.Set;
+
 /**
  * A panel that's contained within the live / preview panels.
  * @author Michael
@@ -39,8 +41,11 @@ public interface ContainedPanel {
     int getCurrentIndex();
     
     /**
-     * Called to update the contents of the canvases when the list selection
-     * changes.
+     * register canvas in panel
+     * @param canvas 
      */
-    void updateCanvases();
+    void registerDisplayCanvas(DisplayCanvas canvas);
+    
+    Set<DisplayCanvas> getCanvases();
+    
 }
