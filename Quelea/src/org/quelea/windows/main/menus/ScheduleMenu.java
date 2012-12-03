@@ -74,9 +74,6 @@ public class ScheduleMenu extends Menu {
      */
     public ScheduleMenu() {
         super(LabelGrabber.INSTANCE.getLabel("schedule.menu"));
-
-//        Application.get().getMainWindow().getNoticeDialog().registerCanvas(Application.get().getLyricWindow().getCanvas());
-
         addSongItem = new MenuItem(LabelGrabber.INSTANCE.getLabel("add.song.button"), new ImageView(new Image("file:icons/newsong.png", 16, 16, false, true)));
         addSongItem.setOnAction(new AddSongActionHandler());
         addSongItem.setDisable(true);

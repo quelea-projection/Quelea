@@ -17,10 +17,8 @@
  */
 package org.quelea.windows.multimedia;
 
-import javafx.scene.layout.BorderPane;
-import org.quelea.data.displayable.MultimediaDisplayable;
+import org.quelea.windows.image.AbstractPanel;
 import org.quelea.windows.main.DisplayCanvas;
-import org.quelea.windows.main.ContainedPanel;
 import org.quelea.windows.main.LivePreviewPanel;
 
 /**
@@ -28,15 +26,23 @@ import org.quelea.windows.main.LivePreviewPanel;
  *
  * @author tomaszpio@gmail.com
  */
-public class MultimediaPanel extends BorderPane implements ContainedPanel {
+public class MultimediaPanel extends AbstractPanel {
 
-    private LivePreviewPanel containerPanel;
+    private final DisplayCanvas previewCanvas;
 
     /**
      * Create a new image panel.
      */
     public MultimediaPanel(LivePreviewPanel panel) {
         this.containerPanel = panel;
+        previewCanvas = new DisplayCanvas(false, false, new DisplayCanvas.CanvasUpdater() {
+            @Override
+            public void updateOnSizeChange() {
+                updateCanvas();
+            }
+        }, "MultimediaPanel preview");
+        registerDisplayCanvas(previewCanvas);
+        setCenter(previewCanvas);
     }
 
     /**
@@ -52,7 +58,6 @@ public class MultimediaPanel extends BorderPane implements ContainedPanel {
      */
     @Override
     public void clear() {
-        containerPanel.getDrawer().clear();
     }
 
     /**
@@ -61,29 +66,11 @@ public class MultimediaPanel extends BorderPane implements ContainedPanel {
      * @return the video control panel.
      */
     public MultimediaControlPanel getMultimediaControlPanel() {
-        return ((MultimediaDrawer)containerPanel.getDrawer()).getControlPanel();
-    }
-
-    /**
-     * Show a given video displayable on the panel.
-     *
-     * @param displayable the video displayable.
-     */
-    public void showDisplayable(MultimediaDisplayable displayable) {
-        
-        for (DisplayCanvas canvas : containerPanel.getCanvases()) {
-            MultimediaDrawer drawer = (MultimediaDrawer) containerPanel.getDrawer(canvas);
-            drawer.draw(displayable);
-        }
-
+        return ((MultimediaDrawer) containerPanel.getDrawer()).getControlPanel();
     }
 
     @Override
     public int getCurrentIndex() {
         return 0;
-    }
-
-    @Override
-    public void updateCanvases() {
     }
 }

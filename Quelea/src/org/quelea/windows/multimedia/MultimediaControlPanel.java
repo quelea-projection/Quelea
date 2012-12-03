@@ -1,8 +1,7 @@
 package org.quelea.windows.multimedia;
 
-import java.awt.Canvas;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.logging.Logger;
 import javafx.application.Platform;
 import javafx.beans.InvalidationListener;
@@ -22,6 +21,7 @@ import javafx.scene.media.MediaPlayer.Status;
 import javafx.util.Duration;
 import org.quelea.data.displayable.MultimediaDisplayable;
 import org.quelea.services.utils.LoggerUtils;
+import org.quelea.windows.main.DisplayCanvas;
 
 /**
  *
@@ -36,7 +36,7 @@ public abstract class MultimediaControlPanel extends BorderPane {
     protected Button play;
     protected MediaPlayer player;
     protected Slider positionSlider;
-    protected List<Canvas> registeredCanvases;
+    
     protected Button stop;
 
     protected class CurrentTimeListener implements InvalidationListener {
@@ -111,7 +111,6 @@ public abstract class MultimediaControlPanel extends BorderPane {
         positionSlider.setDisable(false);
         positionSlider.setValue(0);
         positionSlider.valueChangingProperty().addListener(new PositionListener());
-        registeredCanvases = new ArrayList<>();
 
         VBox controlPanel = new VBox();
         HBox sliderPanel = new HBox();
@@ -127,30 +126,12 @@ public abstract class MultimediaControlPanel extends BorderPane {
     }
 
     /**
-     * Get a list of registered lyric canvases.
-     * <p/>
-     * @return a list of registered lyric canvases.
-     */
-    public List<Canvas> getRegisteredCanvases() {
-        return registeredCanvases;
-    }
-
-    /**
      * Load the given video to be controlled via this panel.
      * <p/>
      * @param multimedia the video path to load.
      */
     public abstract void loadMultimedia(MultimediaDisplayable displayable);
-
-    /**
-     * Register a canvas to be controlled via this video control panel.
-     * <p/>
-     * @param canvas the canvas to control.
-     */
-    public void registerCanvas(final Canvas canvas) {
-        registeredCanvases.add(canvas);
-    }
-
+    
     protected void seekAndUpdatePosition(Duration duration) {
         if (player.getStatus() == Status.STOPPED) {
             player.pause();
