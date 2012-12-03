@@ -1,6 +1,5 @@
 package org.quelea.windows.lyrics;
 
-import org.quelea.windows.main.DisplayCanvas;
 import org.quelea.windows.main.DisplayableDrawer;
 import com.sun.javafx.tk.FontMetrics;
 import com.sun.javafx.tk.Toolkit;
@@ -14,7 +13,6 @@ import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
 import javafx.animation.ParallelTransition;
 import javafx.animation.Timeline;
-import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.Group;
@@ -67,6 +65,7 @@ public class LyricDrawer extends DisplayableDrawer {
     }
 
     private void drawText() {
+        LOGGER.log(Level.INFO, "lyric drawer on {0}", canvas.getName());
         if (!canvas.getChildren().contains(canvas.getBackground())
                 && !canvas.getChildren().contains(textGroup)) {
             canvas.getChildren().add(0, canvas.getBackground());
@@ -368,7 +367,7 @@ public class LyricDrawer extends DisplayableDrawer {
      * @param smallText an array of the small lines to be displayed on the
      * canvas.
      */
-    public void setText(String[] text, String[] smallText, boolean fade) { //@todo called when image is set
+    public void setText(String[] text, String[] smallText, boolean fade) {
         if (text == null) {
             text = new String[0];
         }
@@ -376,7 +375,7 @@ public class LyricDrawer extends DisplayableDrawer {
             smallText = new String[0];
         }
         this.text = Arrays.copyOf(text, text.length);
-        draw(curDisplayable); //@todo tomaszpio to be reviewed it's now run synchronously
+        draw(curDisplayable);
     }
 
     /**

@@ -18,18 +18,16 @@
 package org.quelea.windows.lyrics;
 
 import org.quelea.windows.main.DisplayCanvas;
-import java.util.HashSet;
 import java.util.logging.Logger;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.ObservableList;
 import javafx.geometry.Orientation;
 import javafx.scene.control.SplitPane;
-import javafx.scene.layout.BorderPane;
 import org.quelea.data.displayable.TextDisplayable;
 import org.quelea.data.displayable.TextSection;
 import org.quelea.services.utils.LoggerUtils;
-import org.quelea.windows.main.ContainedPanel;
+import org.quelea.windows.image.AbstractPanel;
 import org.quelea.windows.main.LivePreviewPanel;
 
 /**
@@ -37,13 +35,11 @@ import org.quelea.windows.main.LivePreviewPanel;
  *
  * @author Michael
  */
-public class SelectLyricsPanel extends BorderPane implements ContainedPanel {
+public class SelectLyricsPanel extends AbstractPanel {
 
     private final SelectLyricsList lyricsList;
-    private final LivePreviewPanel containerPanel;
     private final DisplayCanvas previewCanvas;
     private final SplitPane splitPane;
-    private TextDisplayable curDisplayable;
     private static final Logger LOGGER = LoggerUtils.getLogger();
 
     /**
@@ -59,23 +55,23 @@ public class SelectLyricsPanel extends BorderPane implements ContainedPanel {
         previewCanvas = new DisplayCanvas(false, false, new DisplayCanvas.CanvasUpdater() {
             @Override
             public void updateOnSizeChange() {
-                updateCanvases();
+                updateCanvas();
             }
-        });
+        }, "SelectLyricsPanel preview");
         splitPane.getItems().add(lyricsList);
         splitPane.getItems().add(previewCanvas);
         setCenter(splitPane);
-        containerPanel.registerDisplayCanvas(previewCanvas);
+        registerDisplayCanvas(previewCanvas);
         lyricsList.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<TextSection>() {
             @Override
             public void changed(ObservableValue<? extends TextSection> ov, TextSection t, TextSection t1) {
-                updateCanvases();
+                updateCanvas();
             }
         });
         lyricsList.itemsProperty().addListener(new ChangeListener<ObservableList<TextSection>>() {
             @Override
             public void changed(ObservableValue<? extends ObservableList<TextSection>> ov, ObservableList<TextSection> t, ObservableList<TextSection> t1) {
-                updateCanvases();
+                updateCanvas();
             }
         });
     }
@@ -102,7 +98,7 @@ public class SelectLyricsPanel extends BorderPane implements ContainedPanel {
      */
     public void showDisplayable(TextDisplayable displayable, int index) {
         clear();
-        curDisplayable = displayable;
+        currentDisplayable = displayable;
         for (TextSection section : displayable.getSections()) {
             lyricsList.itemsProperty().get().add(section);
         }
@@ -134,7 +130,7 @@ public class SelectLyricsPanel extends BorderPane implements ContainedPanel {
     @Override
     public void clear() {
         lyricsList.itemsProperty().get().clear();
-        updateCanvases();
+        updateCanvas();
     }
 
     /**
@@ -150,16 +146,13 @@ public class SelectLyricsPanel extends BorderPane implements ContainedPanel {
     }
 
     /**
-     * Called to updateOnSizeChange the contents of the canvases when the list selection
-     * changes.
+     * Called to updateOnSizeChange the contents of the canvases when the list
+     * selection changes.
      */
     @Override
-    public void updateCanvases() {
+    public void updateCanvas() {
         int selectedIndex = lyricsList.selectionModelProperty().get().getSelectedIndex();
-        HashSet<DisplayCanvas> canvases = new HashSet<>();
-        canvases.add(previewCanvas);
-        canvases.addAll(containerPanel.getCanvases());
-        for (DisplayCanvas canvas : canvases) {
+        for (DisplayCanvas canvas : getCanvases()) {
             LyricDrawer drawer = new LyricDrawer();
             drawer.setCanvas(canvas);
             if (selectedIndex == -1 || selectedIndex >= lyricsList.itemsProperty().get().size()) {
@@ -176,7 +169,7 @@ public class SelectLyricsPanel extends BorderPane implements ContainedPanel {
             }
             drawer.setCapitaliseFirst(currentSection.shouldCapitaliseFirst());
 //            if(canvas.isStageView()) {
-            drawer.setText(curDisplayable, selectedIndex);
+            drawer.setText((TextDisplayable) currentDisplayable, selectedIndex);
 //            }
 //            else {
 //                canvas.setText(currentSection.getText(false, false), currentSection.getSmallText());

@@ -17,6 +17,7 @@ public class ImageDrawer extends DisplayableDrawer {
 
     @Override
     public void draw(Displayable displayable) {
+        LOGGER.info("ImageDrawer drawer on " + canvas.getName());
         image = ((ImageDisplayable)displayable).getImage();
         imageView = canvas.getNewImageView();
         imageView.setFitHeight(canvas.getHeight());

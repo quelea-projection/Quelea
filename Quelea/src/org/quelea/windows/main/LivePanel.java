@@ -96,7 +96,7 @@ public class LivePanel extends LivePreviewPanel {
                 //final GraphicsDevice[] gds = ge.getScreenDevices();
                 final ObservableList<Screen> monitors = Screen.getScreens();
                 
-                DisplayWindow lyricWindow = QueleaApp.get().getLyricWindow();
+                DisplayWindow appWindow = QueleaApp.get().getAppWindow();
                 DisplayWindow stageWindow = QueleaApp.get().getStageWindow();
 
                 final boolean lyricsHidden;
@@ -116,11 +116,11 @@ public class LivePanel extends LivePreviewPanel {
                 }
 
                 if(!lyricsHidden) {
-                    if(lyricWindow.isShowing()) {
-                        lyricWindow.hide();
+                    if(appWindow.isShowing()) {
+                        appWindow.hide();
                     }
                     else {
-                        lyricWindow.show();
+                        appWindow.show();
                     }
                 }
                 if(!stageHidden) {
