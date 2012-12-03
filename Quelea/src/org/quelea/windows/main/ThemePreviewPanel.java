@@ -71,13 +71,13 @@ public class ThemePreviewPanel extends VBox {
         if (theme == null) {
             theme = ThemeDTO.DEFAULT_THEME;
         }
-        final ThemeDTO updateTheme = theme; //@todo to be removed
+        final ThemeDTO updateTheme = theme;
         canvas = new DisplayCanvas(false, false, new DisplayCanvas.CanvasUpdater() {
             @Override
             public void updateOnSizeChange() {
                 updateThemePreviewCanvas(updateTheme);
             }
-        });
+        }, "ThemePreviewPanel canvas");
         canvas.setPrefSize(200, 200);
         updateThemePreviewCanvas(theme);
         String name;

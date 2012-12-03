@@ -67,7 +67,7 @@ public class DisplayCanvas extends StackPane {
      * @param showBorder true if the border should be shown around any text
      * (only if the options say so) false otherwise.
      */
-    public DisplayCanvas(boolean showBorder, boolean stageView, final CanvasUpdater updater) {
+    public DisplayCanvas(boolean showBorder, boolean stageView, final CanvasUpdater updater, String name) {
         setMinHeight(0);
         setMinWidth(0);
         this.stageView = stageView;
@@ -85,6 +85,7 @@ public class DisplayCanvas extends StackPane {
                 updateCanvas(updater);
             }
         });
+        this.name = name;
     }
 
     /**
@@ -101,17 +102,16 @@ public class DisplayCanvas extends StackPane {
         this.background = background;
     }
 
-    public interface CanvasCallback {
-
-        void update();
-    }
-
     public ImageView getNewImageView() {
         ImageView ret = new ImageView(Utils.getImageFromColour(Color.BLACK));
         ret.setFitHeight(getHeight());
         ret.setFitWidth(getWidth());
         StackPane.setAlignment(ret, Pos.CENTER);
         return ret;
+    }
+
+    public String getName() {
+        return name;
     }
 
     /**

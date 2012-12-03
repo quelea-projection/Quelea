@@ -16,6 +16,7 @@
  */
 package org.quelea.windows.main;
 
+import java.util.logging.Logger;
 import javafx.scene.Cursor;
 import javafx.application.Platform;
 import javafx.geometry.Bounds;
@@ -23,13 +24,15 @@ import javafx.scene.Scene;
 import javafx.scene.image.Image;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
+import org.quelea.services.utils.LoggerUtils;
 
 /**
  * The full screen window used for displaying the projection.
+ *
  * @author Michael
  */
 public class DisplayWindow extends Stage {
-
+    private static final Logger LOGGER = LoggerUtils.getLogger();
     private static final Cursor BLANK_CURSOR;
     private final DisplayCanvas canvas;
 
@@ -42,6 +45,7 @@ public class DisplayWindow extends Stage {
 
     /**
      * Create a new display window positioned to fill the given rectangle.
+     *
      * @param area the area in which the window should be drawn.
      */
     public DisplayWindow(Bounds area, boolean stageView) {
@@ -49,18 +53,23 @@ public class DisplayWindow extends Stage {
         getIcons().add(new Image("file:icons/logo.png"));
         setTitle("Projection window");
         setArea(area);
-        canvas = new DisplayCanvas(true, stageView, null);
+        canvas = new DisplayCanvas(true, stageView, new DisplayCanvas.CanvasUpdater() {
+            @Override
+            public void updateOnSizeChange() {
+                LOGGER.info("update DisplayWindow size");
+            }
+        }, "DisplayWindow canvas");
         Scene scene = new Scene(canvas);
         setScene(scene);
     }
 
     /**
      * Set the area of the display window.
+     *
      * @param area the area of the window.
      */
     public final void setArea(final Bounds area) {
         Platform.runLater(new Runnable() {
-
             @Override
             public void run() {
                 setWidth(area.getMaxX() - area.getMinX());
@@ -73,6 +82,7 @@ public class DisplayWindow extends Stage {
 
     /**
      * Get the canvas object that underlines this display window.
+     *
      * @return the lyric canvas backing this window.
      */
     public DisplayCanvas getCanvas() {

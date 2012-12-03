@@ -20,16 +20,13 @@ package org.quelea.windows.presentation;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.scene.image.Image;
-import javafx.scene.layout.BorderPane;
-import org.quelea.data.ImageBackground;
-import org.quelea.data.ThemeDTO;
 import org.quelea.data.displayable.ImageDisplayable;
 import org.quelea.data.displayable.PresentationDisplayable;
 import org.quelea.data.powerpoint.OOPresentation;
 import org.quelea.data.powerpoint.PresentationSlide;
 import org.quelea.data.powerpoint.SlideChangedListener;
 import org.quelea.services.utils.QueleaProperties;
-import org.quelea.windows.main.ContainedPanel;
+import org.quelea.windows.image.AbstractPanel;
 import org.quelea.windows.main.DisplayCanvas;
 import org.quelea.windows.main.LivePreviewPanel;
 import org.quelea.windows.main.QueleaApp;
@@ -39,7 +36,7 @@ import org.quelea.windows.main.QueleaApp;
  *
  * @author Michael
  */
-public class PresentationPanel extends BorderPane implements ContainedPanel {
+public class PresentationPanel extends AbstractPanel {
 
     private PresentationList presentationList;
     private PresentationDisplayable displayable;
@@ -55,16 +52,15 @@ public class PresentationPanel extends BorderPane implements ContainedPanel {
         presentationList.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<PresentationSlide>() {
             @Override
             public void changed(ObservableValue<? extends PresentationSlide> val, PresentationSlide oldSlide, PresentationSlide newSlide) {
-                if(live) {
-                    if(newSlide != null && displayable != null) {
-                        if(displayable.getOOPresentation() == null) {
-                            for(DisplayCanvas canvas : containerPanel.getCanvases()) {
+                if (live) {
+                    if (newSlide != null && displayable != null) {
+                        if (displayable.getOOPresentation() == null) {
+                            for (DisplayCanvas canvas : getCanvases()) {
                                 Image displayImage = newSlide.getImage();
                                 ImageDisplayable displayable = new ImageDisplayable(displayImage);
                                 containerPanel.getDrawer(canvas).draw(displayable);
                             }
-                        }
-                        else {
+                        } else {
                             OOPresentation pres = displayable.getOOPresentation();
                             pres.addSlideListener(new SlideChangedListener() {
                                 @Override
@@ -178,6 +174,6 @@ public class PresentationPanel extends BorderPane implements ContainedPanel {
     }
 
     @Override
-    public void updateCanvases() {
+    public void updateCanvas() {
     }
 }

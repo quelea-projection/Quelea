@@ -110,18 +110,18 @@ public class OptionsDisplaySetupPanel extends GridPane implements PropertyPanel 
      */
     private void updatePos() {
 //        MainWindow mainWindow = Application.get().getMainWindow();
-        DisplayWindow lyricWindow = QueleaApp.get().getLyricWindow();
+        DisplayWindow appWindow = QueleaApp.get().getAppWindow();
         DisplayWindow stageWindow = QueleaApp.get().getStageWindow();
         if(projectorPanel.getOutputBounds() == null) {
-            if(lyricWindow != null) {
-                lyricWindow.hide();
+            if(appWindow != null) {
+                appWindow.hide();
             }
         }
         else {
-            if(lyricWindow == null) {
-                lyricWindow = new DisplayWindow(projectorPanel.getOutputBounds(), false);
+            if(appWindow == null) {
+                appWindow = new DisplayWindow(projectorPanel.getOutputBounds(), false);
             }
-            final DisplayWindow fiLyricWindow = lyricWindow; //Fudge for AIC
+            final DisplayWindow fiLyricWindow = appWindow; //Fudge for AIC
             Platform.runLater(new Runnable() {
 
                 @Override

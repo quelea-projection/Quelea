@@ -18,9 +18,7 @@
 package org.quelea.windows.image;
 
 import org.quelea.windows.main.DisplayCanvas;
-import javafx.scene.layout.BorderPane;
 import org.quelea.data.displayable.ImageDisplayable;
-import org.quelea.windows.main.ContainedPanel;
 import org.quelea.windows.main.LivePreviewPanel;
 
 /**
@@ -28,39 +26,25 @@ import org.quelea.windows.main.LivePreviewPanel;
  *
  * @author Michael
  */
-public class ImagePanel extends BorderPane implements ContainedPanel {
+public class ImagePanel extends AbstractPanel {
 
-    private LivePreviewPanel containerPanel;
     private final DisplayCanvas previewCanvas;
-    private ImageDisplayable currentDisplayable = null;
 
     /**
      * Create a new image panel.
      *
      * @param container the container this panel is contained within.
      */
-    class ImageUpdater implements DisplayCanvas.CanvasUpdater {
-
-        @Override
-        public void updateOnSizeChange() {
-        }
-    }
-
-    private void updateCanvas() {
-        for (DisplayCanvas canvas : containerPanel.getCanvases()) {
-            containerPanel.getDrawer(canvas).draw(currentDisplayable);
-        }
-    }
-
     public ImagePanel(LivePreviewPanel panel) {
+
         this.containerPanel = panel;
         previewCanvas = new DisplayCanvas(false, false, new DisplayCanvas.CanvasUpdater() {
             @Override
             public void updateOnSizeChange() {
                 updateCanvas();
             }
-        });
-        containerPanel.registerDisplayCanvas(previewCanvas);
+        }, "ImagePanel preview");
+        registerDisplayCanvas(previewCanvas);
         setCenter(previewCanvas);
     }
 
@@ -74,7 +58,7 @@ public class ImagePanel extends BorderPane implements ContainedPanel {
      */
     @Override
     public void clear() {
-        //updateCanvases();
+        //updateCanvases(); //@todo check resource releasing
     }
 
     /**
@@ -90,9 +74,5 @@ public class ImagePanel extends BorderPane implements ContainedPanel {
     @Override
     public int getCurrentIndex() {
         return 0;
-    }
-
-    @Override
-    public void updateCanvases() {
     }
 }
