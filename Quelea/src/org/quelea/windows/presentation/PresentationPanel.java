@@ -27,7 +27,9 @@ import org.quelea.data.powerpoint.PresentationSlide;
 import org.quelea.data.powerpoint.SlideChangedListener;
 import org.quelea.services.utils.QueleaProperties;
 import org.quelea.windows.image.AbstractPanel;
+import org.quelea.windows.image.ImageDrawer;
 import org.quelea.windows.main.DisplayCanvas;
+import org.quelea.windows.main.DisplayableDrawer;
 import org.quelea.windows.main.LivePreviewPanel;
 import org.quelea.windows.main.QueleaApp;
 
@@ -41,7 +43,7 @@ public class PresentationPanel extends AbstractPanel {
     private PresentationList presentationList;
     private PresentationDisplayable displayable;
     private boolean live;
-
+    private DisplayableDrawer drawer = new ImageDrawer();
     /**
      * Create a new presentation panel.
      *
@@ -58,7 +60,8 @@ public class PresentationPanel extends AbstractPanel {
                             for (DisplayCanvas canvas : getCanvases()) {
                                 Image displayImage = newSlide.getImage();
                                 ImageDisplayable displayable = new ImageDisplayable(displayImage);
-                                containerPanel.getDrawer(canvas).draw(displayable);
+                                drawer.setCanvas(canvas);
+                                drawer.draw(displayable);
                             }
                         } else {
                             OOPresentation pres = displayable.getOOPresentation();
@@ -175,5 +178,10 @@ public class PresentationPanel extends AbstractPanel {
 
     @Override
     public void updateCanvas() {
+    }
+
+    @Override
+    public DisplayableDrawer getDrawer(DisplayCanvas canvas) {
+        return drawer;
     }
 }

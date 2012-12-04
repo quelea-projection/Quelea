@@ -26,6 +26,7 @@ import javafx.scene.Node;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
+import org.quelea.data.displayable.Displayable;
 import org.quelea.services.notice.NoticeDrawer;
 import org.quelea.services.utils.LoggerUtils;
 import org.quelea.services.utils.Utils;
@@ -44,6 +45,21 @@ public class DisplayCanvas extends StackPane {
     private boolean stageView;
     private Node background;
     private String name;
+    private Displayable currentDisplayable;
+
+    /**
+     * @return the currentDisplayable
+     */
+    public Displayable getCurrentDisplayable() {
+        return currentDisplayable;
+    }
+
+    /**
+     * @param currentDisplayable the currentDisplayable to set
+     */
+    public void setCurrentDisplayable(Displayable currentDisplayable) {
+        this.currentDisplayable = currentDisplayable;
+    }
 
     public interface CanvasUpdater {
 

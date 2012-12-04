@@ -7,6 +7,7 @@ import org.quelea.data.displayable.Displayable;
 import org.quelea.data.displayable.MultimediaDisplayable;
 import org.quelea.windows.main.ContainedPanel;
 import org.quelea.windows.main.DisplayCanvas;
+import org.quelea.windows.main.DisplayableDrawer;
 import org.quelea.windows.main.LivePreviewPanel;
 
 /**
@@ -44,17 +45,15 @@ public abstract class AbstractPanel extends BorderPane implements ContainedPanel
      */
     public void showDisplayable(MultimediaDisplayable displayable) {
 
-        if (currentDisplayable != null && !currentDisplayable.equals(displayable)) {
-            updateCanvas();
-        } else if (currentDisplayable == null) {
-            currentDisplayable = displayable;
-            updateCanvas();
-        }
+        currentDisplayable = displayable;
+        updateCanvas();
     }
 
     public void updateCanvas() {
+        final String  hej = "";
         for (DisplayCanvas canvas : getCanvases()) {
-            containerPanel.getDrawer(canvas).draw(currentDisplayable);
+            canvas.setCurrentDisplayable(currentDisplayable);
+            getDrawer(canvas).draw(currentDisplayable);
         }
     }
 
@@ -62,8 +61,14 @@ public abstract class AbstractPanel extends BorderPane implements ContainedPanel
     public abstract void focus();
 
     @Override
-    public abstract void clear();
+    public void clear() {
+        for (DisplayCanvas canvas : getCanvases()) {
+            canvas.getChildren().clear();;
+        }
+    }
 
     @Override
     public abstract int getCurrentIndex();
+    
+    public abstract DisplayableDrawer getDrawer(DisplayCanvas canvas);
 }
