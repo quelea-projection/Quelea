@@ -74,11 +74,11 @@ public abstract class LivePreviewPanel extends BorderPane {
     private SelectLyricsPanel lyricsPanel = new SelectLyricsPanel(this);
     private ImagePanel picturePanel = new ImagePanel(this);
     private PresentationPanel presentationPanel = new PresentationPanel(this);
-    private MultimediaPanel videoPanel = new MultimediaPanel(this);
-    private MultimediaPanel audioPanel = new MultimediaPanel(this);
+    private MultimediaPanel videoPanel = new MultimediaPanel(this, new VideoControlPanel());
+    private MultimediaPanel audioPanel = new MultimediaPanel(this, new AudioControlPanel());
     private QuickEditDialog quickEditDialog = new QuickEditDialog();
-    private DisplayableDrawer drawer = new NullDrawer();
-
+    private MultimediaControlPanel videoControlPanel = new VideoControlPanel();
+    private MultimediaControlPanel audioControlPanel = new VideoControlPanel();
     /**
      * Create the live preview panel, common superclass of live and preview
      * panels.
@@ -211,7 +211,6 @@ public abstract class LivePreviewPanel extends BorderPane {
             @Override
             public void run() {
                 LivePreviewPanel.this.displayable = displayable;
-
                 presentationPanel.stopCurrent();
                 audioPanel.clear();
                 videoPanel.clear();
@@ -222,31 +221,24 @@ public abstract class LivePreviewPanel extends BorderPane {
                     presentationPanel.showDisplayable(null, 0);
                 }
                 if (displayable instanceof TextDisplayable) {
-                    drawer = new LyricDrawer();
                     lyricsPanel.showDisplayable((TextDisplayable) displayable, index);
                     cardPanel.show(LYRICS_LABEL);
                     currentLabel = LYRICS_LABEL;
 
                 } else if (displayable instanceof ImageDisplayable) {
-                    drawer = new ImageDrawer();
                     picturePanel.showDisplayable((ImageDisplayable) displayable);
                     cardPanel.show(IMAGE_LABEL);
                     currentLabel = IMAGE_LABEL;
 
                 } else if (displayable instanceof VideoDisplayable) {
-                    MultimediaControlPanel panel = new VideoControlPanel();
-                    drawer = new MultimediaDrawer(panel);
                     videoPanel.showDisplayable((MultimediaDisplayable) displayable);
                     cardPanel.show(VIDEO_LABEL);
                     currentLabel = VIDEO_LABEL;
                 } else if (displayable instanceof AudioDisplayable) {
-                    MultimediaControlPanel panel = new AudioControlPanel();
-                    drawer = new MultimediaDrawer(panel);
                     audioPanel.showDisplayable((MultimediaDisplayable) displayable);
                     cardPanel.show(AUDIO_LABEL);
                     currentLabel = AUDIO_LABEL;
                 } else if (displayable instanceof PresentationDisplayable) {
-                    drawer = new ImageDrawer();
                     presentationPanel.showDisplayable((PresentationDisplayable) displayable, index);
                     cardPanel.show(PRESENTATION_LABEL);
                     currentLabel = PRESENTATION_LABEL;
@@ -324,20 +316,5 @@ public abstract class LivePreviewPanel extends BorderPane {
      */
     public Set<DisplayWindow> getWindows() {
         return windows;
-    }
-
-    /**
-     * @return the drawer
-     */
-    public DisplayableDrawer getDrawer(DisplayCanvas canvas) {
-        drawer.setCanvas(canvas);
-        return drawer;
-    }
-
-    /**
-     * @return the drawer
-     */
-    public DisplayableDrawer getDrawer() {
-        return drawer;
     }
 }

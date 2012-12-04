@@ -15,7 +15,6 @@ public class MultimediaDrawer extends DisplayableDrawer {
 
     protected MediaView multimediaView = new MediaView();
     private MultimediaControlPanel controlPanel;
-    private Displayable currentDisplayable = null;
 
     public MultimediaDrawer(MultimediaControlPanel controlPanel) {
         this.controlPanel = controlPanel;
@@ -23,18 +22,13 @@ public class MultimediaDrawer extends DisplayableDrawer {
 
     @Override
     public void draw(Displayable displayable) {
-        if (currentDisplayable != null && !currentDisplayable.equals(displayable)) {
             drawDisplayable(displayable);
-        } else if (currentDisplayable == null) {
-            currentDisplayable = displayable;
-            drawDisplayable(displayable);
-        }
     }
 
     @Override
     public void clear() {
-        if (getControlPanel().getPlayer() != null) {
-            getControlPanel().getPlayer().stop();
+        if (controlPanel.getPlayer() != null) {
+            controlPanel.getPlayer().stop();
             multimediaView.setMediaPlayer(null);
         }
         if (canvas.getChildren() != null) {
@@ -47,23 +41,16 @@ public class MultimediaDrawer extends DisplayableDrawer {
         multimediaView.requestFocus();
     }
 
-    /**
-     * @return the controlPanel
-     */
-    public MultimediaControlPanel getControlPanel() {
-        return controlPanel;
-    }
-
     private void drawDisplayable(Displayable displayable) {
         LOGGER.info("MultimediaDrawer drawer on " + canvas.getName());
-        getControlPanel().loadMultimedia((MultimediaDisplayable) displayable);
+        controlPanel.loadMultimedia((MultimediaDisplayable) displayable);
         multimediaView.setSmooth(true);
         multimediaView.setFitHeight(canvas.getHeight());
         multimediaView.setFitWidth(canvas.getWidth());
-        multimediaView.setMediaPlayer(getControlPanel().getPlayer());
+        multimediaView.setMediaPlayer(controlPanel.getPlayer());
         VBox pane = new VBox();
-        pane.setPadding(new Insets(10));
-        pane.setSpacing(8);
-        pane.getChildren().addAll(multimediaView, getControlPanel());
+        pane.getChildren().add(multimediaView);
+        pane.getChildren().add(controlPanel);
+        canvas.getChildren().add(pane);
     }
 }
