@@ -28,6 +28,7 @@ import org.quelea.data.displayable.TextDisplayable;
 import org.quelea.data.displayable.TextSection;
 import org.quelea.services.utils.LoggerUtils;
 import org.quelea.windows.image.AbstractPanel;
+import org.quelea.windows.main.DisplayableDrawer;
 import org.quelea.windows.main.LivePreviewPanel;
 
 /**
@@ -41,7 +42,7 @@ public class SelectLyricsPanel extends AbstractPanel {
     private final DisplayCanvas previewCanvas;
     private final SplitPane splitPane;
     private static final Logger LOGGER = LoggerUtils.getLogger();
-
+    private DisplayableDrawer drawer = new LyricDrawer();
     /**
      * Create a new lyrics panel.
      *
@@ -130,7 +131,7 @@ public class SelectLyricsPanel extends AbstractPanel {
     @Override
     public void clear() {
         lyricsList.itemsProperty().get().clear();
-        updateCanvas();
+        super.clear();
     }
 
     /**
@@ -184,5 +185,10 @@ public class SelectLyricsPanel extends AbstractPanel {
 
     public SplitPane getSplitPane() {
         return splitPane;
+    }
+
+    @Override
+    public DisplayableDrawer getDrawer(DisplayCanvas canvas) {
+        return drawer;
     }
 }

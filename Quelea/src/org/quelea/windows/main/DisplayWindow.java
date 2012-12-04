@@ -32,6 +32,7 @@ import org.quelea.services.utils.LoggerUtils;
  * @author Michael
  */
 public class DisplayWindow extends Stage {
+
     private static final Logger LOGGER = LoggerUtils.getLogger();
     private static final Cursor BLANK_CURSOR;
     private final DisplayCanvas canvas;
@@ -58,7 +59,7 @@ public class DisplayWindow extends Stage {
             public void updateOnSizeChange() {
                 LOGGER.info("update DisplayWindow size");
             }
-        }, "DisplayWindow canvas");
+        }, "DisplayWindow canvas" + (stageView ? "stage view" : "full screen"));
         Scene scene = new Scene(canvas);
         setScene(scene);
     }

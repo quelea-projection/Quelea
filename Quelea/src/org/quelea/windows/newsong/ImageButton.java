@@ -75,9 +75,8 @@ public class ImageButton extends Button {
 
                     imageLocation = imageDir.toURI().relativize(newFile.toURI()).getPath();
                     imageLocationField.setText(imageLocation);
-                    LyricDrawer drawer = (LyricDrawer) QueleaApp.get().getMainWindow()
-                            .getMainPanel().getLivePanel().getDrawer(canvas);
-
+                    LyricDrawer drawer = new LyricDrawer();
+                    drawer.setCanvas(canvas);
                     drawer.setTheme(new ThemeDTO(drawer.getTheme().getFont(),
                             drawer.getTheme().getFontPaint(), new ImageBackground(imageLocation),
                             drawer.getTheme().getShadow()));
