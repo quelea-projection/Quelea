@@ -19,6 +19,7 @@ package org.quelea.windows.image;
 
 import org.quelea.windows.main.DisplayCanvas;
 import org.quelea.data.displayable.ImageDisplayable;
+import org.quelea.windows.main.DisplayableDrawer;
 import org.quelea.windows.main.LivePreviewPanel;
 
 /**
@@ -29,7 +30,7 @@ import org.quelea.windows.main.LivePreviewPanel;
 public class ImagePanel extends AbstractPanel {
 
     private final DisplayCanvas previewCanvas;
-
+    private final ImageDrawer drawer = new ImageDrawer();
     /**
      * Create a new image panel.
      *
@@ -50,14 +51,20 @@ public class ImagePanel extends AbstractPanel {
 
     @Override
     public void focus() {
-        containerPanel.getDrawer().requestFocus();
+        drawer.requestFocus();
     }
 
+    @Override
+    public DisplayableDrawer getDrawer(DisplayCanvas canvas) {
+        drawer.setCanvas(canvas);
+        return drawer;
+    }
     /**
      * Clear the panel and all canvases associated with it.
      */
     @Override
     public void clear() {
+        super.clear();
         //updateCanvases(); //@todo check resource releasing
     }
 

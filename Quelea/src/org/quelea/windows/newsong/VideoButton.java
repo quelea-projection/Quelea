@@ -75,9 +75,8 @@ public class VideoButton extends Button {
 
                     vidLocation = vidDir.toURI().relativize(newFile.toURI()).getPath();
                     videoLocationField.setText(vidLocation);
-                    LyricDrawer drawer = (LyricDrawer) QueleaApp.get().getMainWindow()
-                            .getMainPanel().getLivePanel().getDrawer(canvas);
-
+                    LyricDrawer drawer = new LyricDrawer();
+                    drawer.setCanvas(canvas);
                     drawer.setTheme(new ThemeDTO(drawer.getTheme().getFont(),
                             drawer.getTheme().getFontPaint(), new VideoBackground(vidLocation),
                             drawer.getTheme().getShadow()));
