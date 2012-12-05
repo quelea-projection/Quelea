@@ -1,6 +1,5 @@
 package org.quelea.windows.multimedia;
 
-import javafx.geometry.Insets;
 import javafx.scene.layout.VBox;
 import javafx.scene.media.MediaView;
 import org.quelea.data.displayable.Displayable;
@@ -22,11 +21,12 @@ public class MultimediaDrawer extends DisplayableDrawer {
 
     @Override
     public void draw(Displayable displayable) {
-            drawDisplayable(displayable);
+        drawDisplayable(displayable);
     }
 
     @Override
     public void clear() {
+        LOGGER.info("MultimediaDrawer clear " + canvas.getName());
         if (controlPanel.getPlayer() != null) {
             controlPanel.getPlayer().stop();
             multimediaView.setMediaPlayer(null);
@@ -42,7 +42,7 @@ public class MultimediaDrawer extends DisplayableDrawer {
     }
 
     private void drawDisplayable(Displayable displayable) {
-        LOGGER.info("MultimediaDrawer drawer on " + canvas.getName());
+        LOGGER.info("MultimediaDrawer drawer on " + canvas.getName() + " is on stage " + canvas.isStageView());
         controlPanel.loadMultimedia((MultimediaDisplayable) displayable);
         multimediaView.setSmooth(true);
         multimediaView.setFitHeight(canvas.getHeight());
@@ -50,7 +50,10 @@ public class MultimediaDrawer extends DisplayableDrawer {
         multimediaView.setMediaPlayer(controlPanel.getPlayer());
         VBox pane = new VBox();
         pane.getChildren().add(multimediaView);
-        pane.getChildren().add(controlPanel);
+
+        if (canvas instanceof MultimediaPreviewCanvas) {
+            pane.getChildren().add(controlPanel);
+        }
         canvas.getChildren().add(pane);
     }
 }

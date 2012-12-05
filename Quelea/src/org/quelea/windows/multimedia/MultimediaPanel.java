@@ -19,7 +19,7 @@ package org.quelea.windows.multimedia;
 
 import javafx.scene.media.MediaPlayer;
 import javafx.util.Duration;
-import org.quelea.windows.image.AbstractPanel;
+import org.quelea.windows.main.AbstractPanel;
 import org.quelea.windows.main.DisplayCanvas;
 import org.quelea.windows.main.DisplayableDrawer;
 import org.quelea.windows.main.LivePreviewPanel;
@@ -42,7 +42,7 @@ public class MultimediaPanel extends AbstractPanel {
         this.containerPanel = panel;
         this.controlPanel = controlPanel;
         drawer = new MultimediaDrawer(controlPanel);
-        previewCanvas = new DisplayCanvas(false, false, new DisplayCanvas.CanvasUpdater() {
+        previewCanvas = new MultimediaPreviewCanvas(false, false, new DisplayCanvas.CanvasUpdater() {
             @Override
             public void updateOnSizeChange() {
                 updateCanvas();

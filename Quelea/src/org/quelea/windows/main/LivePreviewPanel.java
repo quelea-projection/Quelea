@@ -23,7 +23,6 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javafx.application.Platform;
 import javafx.event.EventHandler;
 import javafx.scene.Node;
 import javafx.scene.input.KeyCode;
@@ -41,14 +40,10 @@ import org.quelea.data.displayable.VideoDisplayable;
 import org.quelea.services.utils.LoggerUtils;
 import org.quelea.services.utils.QueleaProperties;
 import org.quelea.windows.audio.AudioControlPanel;
-import org.quelea.windows.image.AbstractPanel;
-import org.quelea.windows.image.ImageDrawer;
-import org.quelea.windows.lyrics.LyricDrawer;
 import org.quelea.windows.lyrics.SelectLyricsPanel;
 import org.quelea.windows.main.quickedit.QuickEditDialog;
 import org.quelea.windows.main.widgets.CardPane;
 import org.quelea.windows.multimedia.MultimediaControlPanel;
-import org.quelea.windows.multimedia.MultimediaDrawer;
 import org.quelea.windows.multimedia.MultimediaPanel;
 import org.quelea.windows.video.VideoControlPanel;
 
@@ -77,8 +72,6 @@ public abstract class LivePreviewPanel extends BorderPane {
     private MultimediaPanel videoPanel = new MultimediaPanel(this, new VideoControlPanel());
     private MultimediaPanel audioPanel = new MultimediaPanel(this, new AudioControlPanel());
     private QuickEditDialog quickEditDialog = new QuickEditDialog();
-    private MultimediaControlPanel videoControlPanel = new VideoControlPanel();
-    private MultimediaControlPanel audioControlPanel = new VideoControlPanel();
     /**
      * Create the live preview panel, common superclass of live and preview
      * panels.
@@ -207,9 +200,9 @@ public abstract class LivePreviewPanel extends BorderPane {
      * @param index the index of the displayable to show, if relevant.
      */
     public void setDisplayable(final Displayable displayable, final int index) {
-        Platform.runLater(new Runnable() {
-            @Override
-            public void run() {
+//        Platform.runLater(new Runnable() {
+//            @Override
+//            public void run() {
                 LivePreviewPanel.this.displayable = displayable;
                 presentationPanel.stopCurrent();
                 audioPanel.clear();
@@ -250,8 +243,8 @@ public abstract class LivePreviewPanel extends BorderPane {
                 }
 
 
-            }
-        });
+//            }
+//        });
     }
 
     /**
