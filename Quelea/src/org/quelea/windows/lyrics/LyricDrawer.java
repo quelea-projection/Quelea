@@ -40,6 +40,7 @@ import org.quelea.data.displayable.TextSection;
 import org.quelea.services.utils.LoggerUtils;
 import org.quelea.services.utils.QueleaProperties;
 import org.quelea.services.utils.Utils;
+import org.quelea.windows.multimedia.MediaPlayerFactory;
 
 /**
  * @author tomaszpio@gmail.com
@@ -155,7 +156,7 @@ public class LyricDrawer extends DisplayableDrawer {
             final MediaView newVideo = new MediaView();
             String location = ((VideoBackground) theme.getBackground()).getVideoFile().toURI().toString();
             try {
-                MediaPlayer player = new MediaPlayer(new Media(location));
+                MediaPlayer player = MediaPlayerFactory.getInstance(location);
                 player.setVolume(0);
                 player.setAutoPlay(true);
                 player.setCycleCount(javafx.scene.media.MediaPlayer.INDEFINITE);

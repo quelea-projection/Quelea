@@ -17,6 +17,7 @@
  */
 package org.quelea.windows.image;
 
+import org.quelea.windows.main.AbstractPanel;
 import org.quelea.windows.main.DisplayCanvas;
 import org.quelea.data.displayable.ImageDisplayable;
 import org.quelea.windows.main.DisplayableDrawer;

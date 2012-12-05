@@ -26,7 +26,7 @@ import org.quelea.data.powerpoint.OOPresentation;
 import org.quelea.data.powerpoint.PresentationSlide;
 import org.quelea.data.powerpoint.SlideChangedListener;
 import org.quelea.services.utils.QueleaProperties;
-import org.quelea.windows.image.AbstractPanel;
+import org.quelea.windows.main.AbstractPanel;
 import org.quelea.windows.image.ImageDrawer;
 import org.quelea.windows.main.DisplayCanvas;
 import org.quelea.windows.main.DisplayableDrawer;
