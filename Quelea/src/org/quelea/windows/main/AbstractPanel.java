@@ -1,14 +1,12 @@
-package org.quelea.windows.image;
+package org.quelea.windows.main;
 
 import java.util.HashSet;
 import java.util.Set;
+import java.util.logging.Logger;
 import javafx.scene.layout.BorderPane;
 import org.quelea.data.displayable.Displayable;
 import org.quelea.data.displayable.MultimediaDisplayable;
-import org.quelea.windows.main.ContainedPanel;
-import org.quelea.windows.main.DisplayCanvas;
-import org.quelea.windows.main.DisplayableDrawer;
-import org.quelea.windows.main.LivePreviewPanel;
+import org.quelea.services.utils.LoggerUtils;
 
 /**
  * Implements ContainedPanel with additional canvas registering
@@ -20,7 +18,7 @@ public abstract class AbstractPanel extends BorderPane implements ContainedPanel
     Set<DisplayCanvas> canvases = new HashSet<>();
     protected LivePreviewPanel containerPanel;
     protected Displayable currentDisplayable = null;
-
+    private static final Logger LOGGER = LoggerUtils.getLogger();
     public AbstractPanel() {
     }
 
@@ -50,7 +48,7 @@ public abstract class AbstractPanel extends BorderPane implements ContainedPanel
     }
 
     public void updateCanvas() {
-        final String  hej = "";
+
         for (DisplayCanvas canvas : getCanvases()) {
             canvas.setCurrentDisplayable(currentDisplayable);
             getDrawer(canvas).draw(currentDisplayable);

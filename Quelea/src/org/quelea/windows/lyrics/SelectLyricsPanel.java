@@ -27,7 +27,7 @@ import javafx.scene.control.SplitPane;
 import org.quelea.data.displayable.TextDisplayable;
 import org.quelea.data.displayable.TextSection;
 import org.quelea.services.utils.LoggerUtils;
-import org.quelea.windows.image.AbstractPanel;
+import org.quelea.windows.main.AbstractPanel;
 import org.quelea.windows.main.DisplayableDrawer;
 import org.quelea.windows.main.LivePreviewPanel;
 
