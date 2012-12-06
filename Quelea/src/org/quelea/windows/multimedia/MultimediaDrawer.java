@@ -1,5 +1,6 @@
 package org.quelea.windows.multimedia;
 
+import javafx.application.Platform;
 import javafx.scene.layout.VBox;
 import javafx.scene.media.MediaView;
 import org.quelea.data.displayable.Displayable;
@@ -41,19 +42,24 @@ public class MultimediaDrawer extends DisplayableDrawer {
         multimediaView.requestFocus();
     }
 
-    private void drawDisplayable(Displayable displayable) {
-        LOGGER.info("MultimediaDrawer drawer on " + canvas.getName() + " is on stage " + canvas.isStageView());
-        controlPanel.loadMultimedia((MultimediaDisplayable) displayable);
-        multimediaView.setSmooth(true);
-        multimediaView.setFitHeight(canvas.getHeight());
-        multimediaView.setFitWidth(canvas.getWidth());
-        multimediaView.setMediaPlayer(controlPanel.getPlayer());
-        VBox pane = new VBox();
-        pane.getChildren().add(multimediaView);
+    private void drawDisplayable(final Displayable displayable) {
+        if (canvas.isCleared() || canvas.isBlacked()) {
+            clear();
+        } else {
 
-        if (canvas instanceof MultimediaPreviewCanvas) {
-            pane.getChildren().add(controlPanel);
+            LOGGER.info("MultimediaDrawer drawer on " + canvas.getName() + " is on stage " + canvas.isStageView());
+            controlPanel.loadMultimedia((MultimediaDisplayable) displayable);
+            multimediaView.setSmooth(true);
+            multimediaView.setFitHeight(canvas.getHeight());
+            multimediaView.setFitWidth(canvas.getWidth());
+            multimediaView.setMediaPlayer(controlPanel.getPlayer());
+            VBox pane = new VBox();
+            pane.getChildren().add(multimediaView);
+
+            if (canvas instanceof MultimediaPreviewCanvas) {
+                pane.getChildren().add(controlPanel);
+            }
+            canvas.getChildren().add(pane);
         }
-        canvas.getChildren().add(pane);
     }
 }
