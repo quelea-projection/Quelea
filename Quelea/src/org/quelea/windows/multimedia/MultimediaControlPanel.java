@@ -1,7 +1,5 @@
 package org.quelea.windows.multimedia;
 
-import java.util.HashSet;
-import java.util.Set;
 import java.util.logging.Logger;
 import javafx.application.Platform;
 import javafx.beans.InvalidationListener;
@@ -21,7 +19,6 @@ import javafx.scene.media.MediaPlayer.Status;
 import javafx.util.Duration;
 import org.quelea.data.displayable.MultimediaDisplayable;
 import org.quelea.services.utils.LoggerUtils;
-import org.quelea.windows.main.DisplayCanvas;
 
 /**
  *
