@@ -61,7 +61,9 @@ public class MainPanel extends BorderPane {
         previewAndLive.setOrientation(Orientation.HORIZONTAL);
         previewAndLive.getItems().add(previewPanel);
         previewAndLive.getItems().add(livePanel);
-        previewPanel.getLyricsPanel().getSplitPane().getDividers().get(0).positionProperty().bindBidirectional(livePanel.getLyricsPanel().getSplitPane().getDividers().get(0).positionProperty());
+        previewPanel.getLyricsPanel().getSplitPane().
+                getDividers().get(0).positionProperty().
+                bindBidirectional(livePanel.getLyricsPanel().getSplitPane().getDividers().get(0).positionProperty());
         SplitPane mainSplit = new SplitPane();
         mainSplit.setOrientation(Orientation.HORIZONTAL);
         mainSplit.getItems().add(scheduleAndLibrary);

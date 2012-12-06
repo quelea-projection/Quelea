@@ -46,6 +46,7 @@ public class DisplayCanvas extends StackPane {
     private Node background;
     private String name;
     private Displayable currentDisplayable;
+    private final CanvasUpdater updater;
 
     /**
      * @return the currentDisplayable
@@ -89,6 +90,7 @@ public class DisplayCanvas extends StackPane {
         this.stageView = stageView;
         noticeDrawer = new NoticeDrawer(this);
         background = getNewImageView();
+        this.updater = updater;
         heightProperty().addListener(new ChangeListener<Number>() {
             @Override
             public void changed(ObservableValue<? extends Number> ov, Number t, Number t1) {
@@ -145,7 +147,7 @@ public class DisplayCanvas extends StackPane {
      */
     public void toggleClear() {
         cleared ^= true; //invert
-        //(null); @todo updateOnSizeChange
+        updateCanvas(this.updater);
     }
 
     /**
@@ -163,7 +165,7 @@ public class DisplayCanvas extends StackPane {
      */
     public void toggleBlack() {
         blacked ^= true; //invert
-        //(null); @todo updateOnSizeChange
+        updateCanvas(this.updater);
     }
 
     /**
