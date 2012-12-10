@@ -85,9 +85,9 @@ public class DisplayCanvas extends StackPane {
      * (only if the options say so) false otherwise.
      */
     public DisplayCanvas(boolean showBorder, boolean stageView, final CanvasUpdater updater, String name) {
+        this.stageView = stageView;
         setMinHeight(0);
         setMinWidth(0);
-        this.stageView = stageView;
         noticeDrawer = new NoticeDrawer(this);
         background = getNewImageView();
         this.updater = updater;
@@ -104,6 +104,7 @@ public class DisplayCanvas extends StackPane {
             }
         });
         this.name = name;
+        getChildren().add(background);
     }
 
     /**
@@ -139,6 +140,10 @@ public class DisplayCanvas extends StackPane {
      */
     public boolean isStageView() {
         return stageView;
+    }
+
+    public void update() {
+        updateCanvas(this.updater);
     }
 
     /**
