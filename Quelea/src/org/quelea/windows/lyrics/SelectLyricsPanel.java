@@ -58,7 +58,7 @@ public class SelectLyricsPanel extends AbstractPanel {
             public void updateOnSizeChange() {
                 updateCanvas();
             }
-        }, "SelectLyricsPanel preview");
+        });
         splitPane.getItems().add(lyricsList);
         splitPane.getItems().add(previewCanvas);
         setCenter(splitPane);

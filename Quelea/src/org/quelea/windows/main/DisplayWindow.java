@@ -59,7 +59,7 @@ public class DisplayWindow extends Stage {
             public void updateOnSizeChange() {
                 //canvas.update();
             }
-        }, "DisplayWindow canvas" + (stageView ? "stage view" : "full screen"));
+        });
         Scene scene = new Scene(canvas);
         setScene(scene);
     }
