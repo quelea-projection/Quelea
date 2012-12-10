@@ -44,7 +44,6 @@ public class DisplayCanvas extends StackPane {
     private NoticeDrawer noticeDrawer;
     private boolean stageView;
     private Node background;
-    private String name;
     private Displayable currentDisplayable;
     private final CanvasUpdater updater;
 
@@ -84,7 +83,7 @@ public class DisplayCanvas extends StackPane {
      * @param showBorder true if the border should be shown around any text
      * (only if the options say so) false otherwise.
      */
-    public DisplayCanvas(boolean showBorder, boolean stageView, final CanvasUpdater updater, String name) {
+    public DisplayCanvas(boolean showBorder, boolean stageView, final CanvasUpdater updater) {
         this.stageView = stageView;
         setMinHeight(0);
         setMinWidth(0);
@@ -103,7 +102,6 @@ public class DisplayCanvas extends StackPane {
                 updateCanvas(updater);
             }
         });
-        this.name = name;
         getChildren().add(background);
     }
 
@@ -127,10 +125,6 @@ public class DisplayCanvas extends StackPane {
         ret.setFitWidth(getWidth());
         StackPane.setAlignment(ret, Pos.CENTER);
         return ret;
-    }
-
-    public String getName() {
-        return name;
     }
 
     /**

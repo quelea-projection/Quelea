@@ -27,7 +27,6 @@ public class MultimediaDrawer extends DisplayableDrawer {
 
     @Override
     public void clear() {
-        LOGGER.info("MultimediaDrawer clear " + canvas.getName());
         if (controlPanel.getPlayer() != null) {
             controlPanel.getPlayer().stop();
             multimediaView.setMediaPlayer(null);
@@ -47,7 +46,6 @@ public class MultimediaDrawer extends DisplayableDrawer {
             clear();
         } else {
 
-            LOGGER.info("MultimediaDrawer drawer on " + canvas.getName() + " is on stage " + canvas.isStageView());
             controlPanel.loadMultimedia((MultimediaDisplayable) displayable);
             multimediaView.setSmooth(true);
             multimediaView.setFitHeight(canvas.getHeight());
