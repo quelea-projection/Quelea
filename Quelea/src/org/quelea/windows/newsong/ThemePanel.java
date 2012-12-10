@@ -45,7 +45,6 @@ import org.quelea.languages.LabelGrabber;
 import org.quelea.services.utils.Utils;
 import org.quelea.windows.main.DisplayCanvas;
 import org.quelea.windows.lyrics.LyricDrawer;
-import org.quelea.windows.main.QueleaApp;
 import org.quelea.windows.main.widgets.CardPane;
 
 /**
@@ -86,10 +85,12 @@ public class ThemePanel extends BorderPane {
                 updateTheme(true);
             }
         }, "ThemePanel canvas");
+        canvas.setMinWidth(getWidth());
+        canvas.setMinHeight(getHeight());
+        setCenter(canvas);
         LyricDrawer drawer = new LyricDrawer();
         drawer.setCanvas(canvas);
         drawer.setText(SAMPLE_LYRICS, null, false);
-        setCenter(canvas);
         VBox toolbarPanel = new VBox();
         setupFontToolbar();
         toolbarPanel.getChildren().add(fontToolbar);
@@ -99,6 +100,7 @@ public class ThemePanel extends BorderPane {
         toolbarPanel.getChildren().add(shadowPanel);
         setTop(toolbarPanel);
         updateTheme(false);
+
     }
 
     /**
@@ -278,6 +280,7 @@ public class ThemePanel extends BorderPane {
                 LyricDrawer drawer = new LyricDrawer();
                 drawer.setCanvas(canvas);
                 drawer.setTheme(theme);
+                drawer.setText(SAMPLE_LYRICS, null, false);
             }
         });
     }
