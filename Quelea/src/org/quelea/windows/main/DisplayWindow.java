@@ -57,7 +57,7 @@ public class DisplayWindow extends Stage {
         canvas = new DisplayCanvas(true, stageView, new DisplayCanvas.CanvasUpdater() {
             @Override
             public void updateOnSizeChange() {
-                canvas.update();
+                //canvas.update();
             }
         }, "DisplayWindow canvas" + (stageView ? "stage view" : "full screen"));
         Scene scene = new Scene(canvas);
