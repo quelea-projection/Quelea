@@ -66,7 +66,6 @@ public class ImagePanel extends AbstractPanel {
     @Override
     public void clear() {
         super.clear();
-        //updateCanvases(); //@todo check resource releasing
     }
 
     /**
