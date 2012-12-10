@@ -65,7 +65,6 @@ public class LyricDrawer extends DisplayableDrawer {
     }
 
     private void drawText() {
-        LOGGER.log(Level.INFO, "lyric drawer on {0}", canvas.getName());
         if (!canvas.getChildren().contains(canvas.getBackground())
                 && !canvas.getChildren().contains(textGroup)) {
             canvas.getChildren().add(0, canvas.getBackground());

@@ -45,7 +45,7 @@ public class ImagePanel extends AbstractPanel {
             public void updateOnSizeChange() {
                 updateCanvas();
             }
-        }, "ImagePanel preview");
+        });
         registerDisplayCanvas(previewCanvas);
         setCenter(previewCanvas);
     }
