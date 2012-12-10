@@ -84,7 +84,7 @@ public class ThemePanel extends BorderPane {
             public void updateOnSizeChange() {
                 updateTheme(true);
             }
-        }, "ThemePanel canvas");
+        });
         canvas.setMinWidth(getWidth());
         canvas.setMinHeight(getHeight());
         setCenter(canvas);

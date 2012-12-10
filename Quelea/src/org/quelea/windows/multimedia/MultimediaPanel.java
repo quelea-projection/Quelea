@@ -47,7 +47,7 @@ public class MultimediaPanel extends AbstractPanel {
             public void updateOnSizeChange() {
                 updateCanvas();
             }
-        }, "MultimediaPanel preview");
+        });
         registerDisplayCanvas(previewCanvas);
         setCenter(previewCanvas);
     }
