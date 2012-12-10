@@ -44,6 +44,8 @@ public class PresentationPanel extends AbstractPanel {
     private PresentationDisplayable displayable;
     private boolean live;
     private DisplayableDrawer drawer = new ImageDrawer();
+    private PresentationSlide currentSlide = null;
+
     /**
      * Create a new presentation panel.
      *
@@ -57,12 +59,8 @@ public class PresentationPanel extends AbstractPanel {
                 if (live) {
                     if (newSlide != null && displayable != null) {
                         if (displayable.getOOPresentation() == null) {
-                            for (DisplayCanvas canvas : getCanvases()) {
-                                Image displayImage = newSlide.getImage();
-                                ImageDisplayable displayable = new ImageDisplayable(displayImage);
-                                drawer.setCanvas(canvas);
-                                drawer.draw(displayable);
-                            }
+                            currentSlide = newSlide;
+                            updateCanvas();
                         } else {
                             OOPresentation pres = displayable.getOOPresentation();
                             pres.addSlideListener(new SlideChangedListener() {
@@ -79,7 +77,15 @@ public class PresentationPanel extends AbstractPanel {
                 }
             }
         });
+
         setCenter(presentationList);
+    }
+
+    private void drawSlide(PresentationSlide newSlide, DisplayCanvas canvas) {
+        Image displayImage = newSlide.getImage();
+        ImageDisplayable displayable = new ImageDisplayable(displayImage);
+        drawer.setCanvas(canvas);
+        drawer.draw(displayable);
     }
 
     public void stopCurrent() {
@@ -118,31 +124,15 @@ public class PresentationPanel extends AbstractPanel {
             return;
         }
         this.displayable = displayable;
-//        if(live && OOPresentation.isInit()) {
-//            for(KeyListener listener : presentationList.getKeyListeners()) {
-//                presentationList.removeKeyListener(listener);
-//            }
-//            presentationList.addKeyListener(new KeyAdapter() {
-//
-//                @Override
-//                public void keyPressed(KeyEvent ke) {
-//                    if(ke.getKeyCode() == KeyEvent.VK_RIGHT || ke.getKeyCode() == KeyEvent.VK_SPACE || ke.getKeyCode() == KeyEvent.VK_DOWN) {
-//                        displayable.getOOPresentation().goForward();
-//                        ke.consume();
-//                    }
-//                    if(ke.getKeyCode() == KeyEvent.VK_LEFT) {
-//                        displayable.getOOPresentation().goBack();
-//                    }
-//                }
-//            });
-//        }
         PresentationSlide[] slides = displayable.getPresentation().getSlides();
         presentationList.setSlides(slides);
         presentationList.selectionModelProperty().get().select(index);
+        presentationList.getFocusModel().focus(index);
         if (presentationList.selectionModelProperty().get().isEmpty()) {
             presentationList.selectionModelProperty().get().select(0);
         }
         presentationList.scrollTo(getIndex());
+        updateCanvas();
     }
 
     /**
@@ -178,6 +168,9 @@ public class PresentationPanel extends AbstractPanel {
 
     @Override
     public void updateCanvas() {
+        for (DisplayCanvas canvas : getCanvases()) {
+            drawSlide(currentSlide, canvas);
+        }
     }
 
     @Override
