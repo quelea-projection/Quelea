@@ -145,7 +145,7 @@ public final class SongManager {
 
         if (!addedToIndex) {
             addedToIndex = true;
-            LOGGER.log(Level.INFO, "Adding songs to index");
+            LOGGER.log(Level.INFO, "Adding "+songs.size()+" songs to index");
             index.addAll(songs);
         }
         return songs.toArray(new SongDisplayable[songs.size()]);
