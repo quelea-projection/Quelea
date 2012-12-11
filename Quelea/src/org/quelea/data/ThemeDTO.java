@@ -30,7 +30,7 @@ import org.quelea.services.utils.LoggerUtils;
 import org.quelea.services.utils.Utils;
 
 /**
- * A theme data transfer object used to deliver theme data from DB to view layer 
+ * A theme data transfer object used to deliver theme data from DB to view layer
  *
  * @author Michael
  */
@@ -212,7 +212,13 @@ public class ThemeDTO {
             LOGGER.log(Level.SEVERE, "Bug: Unhandled background");
             background = null;
         }
-        ThemeDTO ret = new ThemeDTO(font, Utils.parseColour(theme.getFontcolour()), background, DEFAULT_SHADOW);//@todo tp get shadow from db
+        DropShadow shadow = new DropShadow();
+        TextShadow givenShadow = theme.getTextShadow();
+        shadow.setColor(Utils.parseColour(givenShadow.getShadowColor()));
+        shadow.setOffsetX(givenShadow.getOffsetX());
+        shadow.setOffsetY(givenShadow.getOffsetY());
+        //@todo shadow settings could be buggy, to be tested
+        ThemeDTO ret = new ThemeDTO(font, Utils.parseColour(theme.getFontcolour()), background, shadow);
         ret.themeName = theme.getName();
         return ret;
     }
@@ -220,29 +226,42 @@ public class ThemeDTO {
     public DropShadow getShadow() {
         return textShadow;
     }
-    
+
     /**
-     * Presents theme as string representation //@todo move to SimpleXML framework.
+     * Presents theme as string representation //
+     *
+     * @todo move to SimpleXML framework.
      * @return theme as string representation
      */
-    public String asString(){
-         StringBuilder ret = new StringBuilder();
+    public String asString() {
+        StringBuilder ret = new StringBuilder();
         ret.append("fontname:").append(font.getName());
         ret.append("$fontcolour:").append(fontColor.toString());
         if (!themeName.isEmpty()) {
             ret.append("$themename:").append(themeName);
         }
-        ret.append(background.getString());
+        
+        if (background instanceof VideoBackground) {
+            ret.append("$backgroundvideo:").append(((VideoBackground)background).getString());
+        } else if (background instanceof ImageBackground) {
+            ret.append("$backgroundimage:").append(((ImageBackground)background).getString());
+        } else if (background instanceof ColourBackground) {
+            ret.append("$backgroundcolour:").append(((ColourBackground)background).getString());
+        }
+        ret.append("$shadowcolor:").append(textShadow.getColor().toString());
+        ret.append("$shadowX:").append(textShadow.getOffsetX());
+        ret.append("$shadowY:").append(textShadow.getOffsetY());
         return ret.toString();
     }
-    
+
     /**
      * Create Theme DTO form its String representation
+     *
      * @param content Theme String representation
      * @return theme DTO
      */
-    public static ThemeDTO fromString(String content){
-         if (content == null || content.isEmpty()) {
+    public static ThemeDTO fromString(String content) {
+        if (content == null || content.isEmpty()) {
             return ThemeDTO.DEFAULT_THEME;
         }
         String fontname = "";
@@ -251,7 +270,9 @@ public class ThemeDTO {
         String backgroundvid = "";
         String backgroundimage = "";
         String themeName = "";
-
+        String shadowColor = "";
+        String shadowOffsetX = "";
+        String shadowOffsetY = "";
         for (String part : content.split("\\$")) {
             if (!part.contains(":")) {
                 continue;
@@ -259,39 +280,41 @@ public class ThemeDTO {
             String[] parts = part.split(":");
             if (parts[0].equalsIgnoreCase("fontname")) {
                 fontname = parts[1];
-            }
-            else if (parts[0].equalsIgnoreCase("fontcolour")) {
+            } else if (parts[0].equalsIgnoreCase("fontcolour")) {
                 fontcolour = parts[1];
-            }
-            else if (parts[0].equalsIgnoreCase("backgroundcolour")) {
+            } else if (parts[0].equalsIgnoreCase("backgroundcolour")) {
                 backgroundcolour = parts[1];
-            }
-            else if (parts[0].equalsIgnoreCase("backgroundimage")) {
+            } else if (parts[0].equalsIgnoreCase("backgroundimage")) {
                 backgroundimage = parts[1];
-            }
-            else if (parts[0].equalsIgnoreCase("backgroundvideo")) {
+            } else if (parts[0].equalsIgnoreCase("backgroundvideo")) {
                 backgroundvid = parts[1];
-            }
-            else if (parts[0].equalsIgnoreCase("themename")) {
+            } else if (parts[0].equalsIgnoreCase("themename")) {
                 themeName = parts[1];
+            }else if (parts[0].equalsIgnoreCase("shadowcolor")) {
+                shadowColor = parts[1];
+            }else if (parts[0].equalsIgnoreCase("shadowX")) {
+                shadowOffsetX = parts[1];
+            }else if (parts[0].equalsIgnoreCase("shadowY")) {
+                shadowOffsetY = parts[1];
             }
         }
         Font font = new Font(fontname, 72);
         Background background;
         if (!backgroundcolour.isEmpty()) {
             background = new ColourBackground(Utils.parseColour(backgroundcolour));
-        }
-        else if (!backgroundimage.isEmpty()) {
+        } else if (!backgroundimage.isEmpty()) {
             background = new ImageBackground(backgroundimage);
-        }
-        else if (!backgroundvid.isEmpty()) {
+        } else if (!backgroundvid.isEmpty()) {
             background = new VideoBackground(backgroundvid);
-        }
-        else {
+        } else {
             LOGGER.log(Level.SEVERE, "Bug: Unhandled background");
             background = null;
         }
-        ThemeDTO ret = new ThemeDTO(font, Utils.parseColour(fontcolour), background, DEFAULT_SHADOW);
+        DropShadow shadow = new DropShadow();
+        shadow.setColor(Utils.parseColour(fontcolour));
+        shadow.setOffsetX(Double.parseDouble(shadowOffsetX));
+        shadow.setOffsetY(Double.parseDouble(shadowOffsetY));
+        ThemeDTO ret = new ThemeDTO(font, Utils.parseColour(fontcolour), background, shadow);
         ret.themeName = themeName;
         return ret;
     }
