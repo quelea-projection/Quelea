@@ -75,7 +75,7 @@ public class ScheduleSaver {
                 schedule.setFile(selectedFile);
             }
         }
-        if (file != null) {
+        if (schedule.getFile() != null) {
             boolean success = schedule.writeToFile();
             if (!success) {
                 Dialog.showError(LabelGrabber.INSTANCE.getLabel("cant.save.schedule.title"), LabelGrabber.INSTANCE.getLabel("cant.save.schedule.text"));
