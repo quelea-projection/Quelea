@@ -26,14 +26,13 @@ import org.quelea.services.utils.LoggerUtils;
  */
 public abstract class MultimediaControlPanel extends BorderPane {
 
-    protected static final Logger LOGGER = LoggerUtils.getLogger();
+    private static final Logger LOGGER = LoggerUtils.getLogger();
     protected String filePath;
     protected Button mute;
     protected Button pause;
     protected Button play;
     protected MediaPlayer player;
     protected Slider positionSlider;
-    
     protected Button stop;
 
     protected class CurrentTimeListener implements InvalidationListener {
