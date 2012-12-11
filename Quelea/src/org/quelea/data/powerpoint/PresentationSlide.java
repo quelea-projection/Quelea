@@ -17,6 +17,8 @@
  */
 package org.quelea.data.powerpoint;
 
+import java.awt.Graphics2D;
+import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.scene.image.Image;
@@ -39,7 +41,10 @@ public class PresentationSlide {
     public PresentationSlide(Slide slide) {
         org.apache.poi.hslf.usermodel.SlideShow slideshow = slide.getSlideShow();
         BufferedImage originalImage = new BufferedImage((int) slideshow.getPageSize().getWidth(), (int) slideshow.getPageSize().getHeight(), BufferedImage.TYPE_INT_ARGB);
-        slide.draw(originalImage.createGraphics());
+        Graphics2D g2 = originalImage.createGraphics();
+        g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
+                    RenderingHints.VALUE_ANTIALIAS_ON);
+        slide.draw(g2);
         image = new WritableImage(originalImage.getWidth(), originalImage.getHeight());
         SwingFXUtils.toFXImage(originalImage, image);
     }
