@@ -18,10 +18,12 @@ package org.quelea.windows.audio;
 
 import java.io.File;
 import java.util.logging.Level;
+import java.util.logging.Logger;
 import javafx.scene.media.MediaException;
 import org.javafx.dialog.Dialog;
 import org.quelea.data.displayable.MultimediaDisplayable;
 import org.quelea.languages.LabelGrabber;
+import org.quelea.services.utils.LoggerUtils;
 import org.quelea.windows.multimedia.MediaPlayerFactory;
 import org.quelea.windows.multimedia.MultimediaControlPanel;
 
@@ -31,6 +33,8 @@ import org.quelea.windows.multimedia.MultimediaControlPanel;
  * @author tomaszpio@gmail.com
  */
 public class AudioControlPanel extends MultimediaControlPanel {
+    
+    private static final Logger LOGGER = LoggerUtils.getLogger();
 
     /**
      * Create a new video control panel.
