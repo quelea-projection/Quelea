@@ -131,7 +131,13 @@ public class PresentationPanel extends AbstractPanel {
         if (presentationList.selectionModelProperty().get().isEmpty()) {
             presentationList.selectionModelProperty().get().select(0);
         }
-        presentationList.scrollTo(getIndex());
+        /*
+         * TODO
+         * For some reason the following scroll to line causes a bug whereby 
+         * the contents are only registered the second time of viewing? So 
+         * leave commented out until we can get to the bottom of it.
+         */
+//        presentationList.scrollTo(getIndex());
         updateCanvas();
     }
 
