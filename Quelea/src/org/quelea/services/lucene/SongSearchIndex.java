@@ -163,7 +163,8 @@ public class SongSearchIndex implements SearchIndex<SongDisplayable> {
             for(int i = 0; i < hits.length; ++i) {
                 int docId = hits[i].doc;
                 Document d = searcher.doc(docId);
-                SongDisplayable song = songs.get(Integer.parseInt(d.get("number")));
+                final Long songNumber = Long.parseLong(d.get("number"));
+                SongDisplayable song = songs.get(songNumber);
                 ret.add(song);
             }
             if(type == FilterType.BODY) {
