@@ -37,7 +37,7 @@ import org.quelea.services.utils.DatabaseListener;
 import org.quelea.services.utils.LoggerUtils;
 
 /**
- * Manage songs persistent operations. 
+ * Manage songs persistent operations.
  *
  * @author Michael
  */
@@ -118,8 +118,8 @@ public final class SongManager {
             public void execute(Session session) {
                 for (Song song : new SongDao(session).getSongs()) {
                     final String[] tags = new String[song.getTags().size()];
-                    
-                    for(int i = 0; i < song.getTags().size(); i++){
+
+                    for (int i = 0; i < song.getTags().size(); i++) {
                         tags[i] = song.getTags().get(i);
                     }
                     final SongDisplayable songDisplayable = new SongDisplayable.Builder(song.getTitle(),
@@ -145,7 +145,7 @@ public final class SongManager {
 
         if (!addedToIndex) {
             addedToIndex = true;
-            LOGGER.log(Level.INFO, "Adding "+songs.size()+" songs to index");
+            LOGGER.log(Level.INFO, "Adding " + songs.size() + " songs to index");
             index.addAll(songs);
         }
         return songs.toArray(new SongDisplayable[songs.size()]);
@@ -160,8 +160,8 @@ public final class SongManager {
      * @return true if the operation succeeded, false otherwise.
      */
     public boolean addSong(final SongDisplayable song, boolean fireUpdate) {
-        final boolean nullTheme = song.getSections()[0].getTheme()==null;
-        final boolean nullTags = song.getTags()==null;
+        final boolean nullTheme = song.getSections()[0].getTheme() == null;
+        final boolean nullTags = song.getTags() == null;
         HibernateUtil.execute(new HibernateUtil.SessionCallback() {
             @Override
             public void execute(Session session) {
@@ -172,7 +172,7 @@ public final class SongManager {
                         song.getCopyright(),
                         song.getYear(),
                         song.getPublisher(),
-                        song.getKey(), 
+                        song.getKey(),
                         song.getCapo(),
                         song.getInfo(),
                         nullTheme ? ThemeDTO.DEFAULT_THEME.getTheme() : new Theme(song.getSections()[0].getTheme().getTheme()),
@@ -198,6 +198,8 @@ public final class SongManager {
             @Override
             public void execute(Session session) {
                 Song updatedSong = null;
+                final boolean nullTheme = song.getSections()[0].getTheme() == null;
+                final boolean nullTags = song.getTags() == null;
                 try {
                     updatedSong = new SongDao(session).getSongById(song.getID());
                     updatedSong.setAuthor(song.getAuthor());
@@ -209,8 +211,9 @@ public final class SongManager {
                     updatedSong.setLyrics(song.getLyrics(false, false));
                     updatedSong.setKey(song.getKey());
                     updatedSong.setPublisher(song.getPublisher());
-                    updatedSong.setTags(Arrays.asList(song.getTags()));
+                    updatedSong.setTags(nullTags ? new ArrayList<String>() : Arrays.asList(song.getTags()));
                     updatedSong.setTitle(song.getTitle());
+                    updatedSong.setTheme(nullTheme ? ThemeDTO.DEFAULT_THEME.getTheme() : new Theme(song.getSections()[0].getTheme().getTheme()));
                     session.update(updatedSong);
                 } catch (ObjectNotFoundException e) {
                     LOGGER.log(Level.INFO, "Updating song that doesn't exist, adding instead");

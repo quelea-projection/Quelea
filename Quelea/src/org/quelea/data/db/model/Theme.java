@@ -15,7 +15,7 @@ import javax.persistence.Table;
 @Table(name = "theme")
 public class Theme {
 
-    private static final int STRING_LENGTH = 255;
+    private static final int STRING_LENGTH = 2048;
     private long id;
     private String name;
     private String fontname;
