@@ -7,22 +7,24 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+
 /**
-  * theme table  mapping
+ * theme table mapping
+ *
  * @author tomaszpio@gmail.com
  */
 @Entity
 @Table(name = "theme")
 public class Theme {
 
-    private static final int STRING_LENGTH = 2048;
+    private static final int STRING_LENGTH = DBConstants.STRING_LENGTH;
     private long id;
     private String name;
     private String fontname;
     private String fontcolour;
-    private String backgroundcolour = "";
-    private String backgroundvid = "";
-    private String backgroundimage = "";
+    private String backgroundcolour;
+    private String backgroundvid;
+    private String backgroundimage;
     private TextShadow textShadow = new TextShadow();
 
     public Theme() {
@@ -70,7 +72,7 @@ public class Theme {
     /**
      * @return the name
      */
-    @Column(name = "name", nullable = false)
+    @Column(name = "name", nullable = false, length = STRING_LENGTH)
     public String getName() {
         return name;
     }
@@ -160,7 +162,7 @@ public class Theme {
     /**
      * @return the shadow
      */
-    @ManyToOne(cascade = CascadeType.ALL) 
+    @ManyToOne(cascade = CascadeType.ALL)
     public TextShadow getTextShadow() {
         return textShadow;
     }
