@@ -105,7 +105,9 @@ public class VideoDisplayable implements MultimediaDisplayable {
      */
     @Override
     public Collection<File> getResources() {
-        return new ArrayList<>();
+        List<File> files = new ArrayList<>();
+        files.add(file);
+        return files;
     }
 
     /**
