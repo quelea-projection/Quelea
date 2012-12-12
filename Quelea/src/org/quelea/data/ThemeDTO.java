@@ -311,7 +311,7 @@ public class ThemeDTO {
             background = null;
         }
         DropShadow shadow = new DropShadow();
-        shadow.setColor(Utils.parseColour(fontcolour));
+        shadow.setColor(Utils.parseColour(shadowColor));
         shadow.setOffsetX(Double.parseDouble(shadowOffsetX));
         shadow.setOffsetY(Double.parseDouble(shadowOffsetY));
         ThemeDTO ret = new ThemeDTO(font, Utils.parseColour(fontcolour), background, shadow);
