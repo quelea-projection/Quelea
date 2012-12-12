@@ -13,7 +13,7 @@ import javax.persistence.Table;
 @Entity
 @Table(name = "textShadow")
 public class TextShadow {
-
+    private static final int STRING_LENGTH = DBConstants.STRING_LENGTH;
     private long id;
     private String shadowColor;
     private Double offsetX;
@@ -52,7 +52,7 @@ public class TextShadow {
     /**
      * @return the shadowColor
      */
-    @Column(name = "shadowcolor", nullable = false)
+    @Column(name = "shadowcolor", nullable = false, length = STRING_LENGTH)
     public String getShadowColor() {
         return shadowColor;
     }
