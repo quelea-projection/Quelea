@@ -14,6 +14,7 @@ import org.w3c.dom.Node;
  * @author tomaszpio@gmail.com
  */
 public class AudioDisplayable implements MultimediaDisplayable {
+
     private final File file;
 
     /**
@@ -106,7 +107,9 @@ public class AudioDisplayable implements MultimediaDisplayable {
      */
     @Override
     public Collection<File> getResources() {
-        return new ArrayList<>();
+        List<File> files = new ArrayList<>();
+        files.add(file);
+        return files;
     }
 
     @Override
