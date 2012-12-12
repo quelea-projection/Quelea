@@ -296,7 +296,7 @@ public class Schedule implements Iterable<Displayable>, Printable {
                 else if(name.equalsIgnoreCase("filevideo")) {
                     newSchedule.add(VideoDisplayable.parseXML(node));
                 }
-                else if(name.equalsIgnoreCase("audiofile")) {
+                else if(name.equalsIgnoreCase("fileaudio")) {
                     newSchedule.add(AudioDisplayable.parseXML(node));
                 }
                 else if(name.equalsIgnoreCase("filepresentation")) {
