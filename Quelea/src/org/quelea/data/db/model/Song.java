@@ -19,7 +19,7 @@ import javax.persistence.Table;
 @Table(name = "songs")
 public class Song {
 
-    private static final int STRING_LENGTH = 2048;
+    private static final int STRING_LENGTH = DBConstants.STRING_LENGTH;
     private long id;
     private String title;
     private String author;
