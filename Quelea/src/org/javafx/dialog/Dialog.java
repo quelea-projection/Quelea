@@ -339,6 +339,10 @@ public class Dialog extends Stage {
         public Builder addCancelButton(EventHandler<ActionEvent> actionHandler) {
             return addConfirmationButton("Cancel", actionHandler);
         }
+        
+        public Builder addLabelledButton(String label, EventHandler<ActionEvent> actionHandler) {
+            return addConfirmationButton(label, actionHandler);
+        }
 
         /**
          * Build dialog
