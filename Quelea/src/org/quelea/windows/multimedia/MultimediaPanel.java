@@ -21,6 +21,7 @@ import javafx.scene.media.MediaPlayer;
 import javafx.util.Duration;
 import org.quelea.windows.main.AbstractPanel;
 import org.quelea.windows.main.DisplayCanvas;
+import org.quelea.windows.main.DisplayCanvas.Priority;
 import org.quelea.windows.main.DisplayableDrawer;
 import org.quelea.windows.main.LivePreviewPanel;
 
@@ -47,7 +48,7 @@ public class MultimediaPanel extends AbstractPanel {
             public void updateOnSizeChange() {
                 updateCanvas();
             }
-        });
+        }, Priority.LOW);
         registerDisplayCanvas(previewCanvas);
         setCenter(previewCanvas);
     }

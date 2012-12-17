@@ -25,6 +25,7 @@ import javafx.scene.image.Image;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import org.quelea.services.utils.LoggerUtils;
+import org.quelea.windows.main.DisplayCanvas.Priority;
 
 /**
  * The full screen window used for displaying the projection.
@@ -59,7 +60,7 @@ public class DisplayWindow extends Stage {
             public void updateOnSizeChange() {
                 //canvas.update();
             }
-        });
+        }, stageView ? Priority.HIGH : Priority.MID);
         Scene scene = new Scene(canvas);
         setScene(scene);
     }
