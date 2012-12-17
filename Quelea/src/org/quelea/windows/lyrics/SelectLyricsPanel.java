@@ -18,6 +18,7 @@
 package org.quelea.windows.lyrics;
 
 import org.quelea.windows.main.DisplayCanvas;
+import org.quelea.windows.main.DisplayCanvas.Priority;
 import java.util.logging.Logger;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -58,7 +59,7 @@ public class SelectLyricsPanel extends AbstractPanel {
             public void updateOnSizeChange() {
                 updateCanvas();
             }
-        });
+        }, Priority.LOW);
         splitPane.getItems().add(lyricsList);
         splitPane.getItems().add(previewCanvas);
         setCenter(splitPane);
