@@ -20,23 +20,28 @@ package org.quelea.windows.library;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.List;
 import java.util.logging.Level;
+import java.util.logging.Logger;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
-import javafx.scene.control.Label;
 import javafx.scene.control.Tooltip;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.stage.FileChooser;
+import org.apache.commons.io.FilenameUtils;
+import org.javafx.dialog.Dialog;
+import org.javafx.dialog.InputDialog;
+import org.quelea.data.ScheduleSaver;
 import org.quelea.languages.LabelGrabber;
 import org.quelea.services.utils.FileFilters;
 import org.quelea.services.utils.LoggerUtils;
@@ -53,6 +58,7 @@ public class LibraryImagePanel extends BorderPane {
     private final ImageListPanel imagePanel;
     private HBox northPanel;
     private ObservableList<NewFile> list = FXCollections.observableArrayList();
+    private static final Logger LOGGER = LoggerUtils.getLogger();
 
     /**
      * Create a new library image panel.
@@ -80,13 +86,55 @@ public class LibraryImagePanel extends BorderPane {
                 chooser.setInitialDirectory(QueleaProperties.get().getImageDir().getAbsoluteFile());
                 List<File> files = chooser.showOpenMultipleDialog(QueleaApp.get().getMainWindow());
                 if (files != null) {
-                    for (File f : files) {
+                    for (final File f : files) {
                         try {
-                            Files.copy(f.getAbsoluteFile().toPath(), Paths.get(imagePanel.getDir(), f.getName()), StandardCopyOption.COPY_ATTRIBUTES);
+                            final Path sourceFile = f.getAbsoluteFile().toPath();
+                            final String fExtension = FilenameUtils.getExtension(f.getAbsolutePath());
+
+                            if (new File(imagePanel.getDir(), f.getName()).exists()) {
+                                Dialog d = Dialog.buildConfirmation(LabelGrabber.INSTANCE.getLabel("confirm.overwrite.title"), f.getName() + "\n" + LabelGrabber.INSTANCE.getLabel("confirm.overwrite.text"))
+//                                        + "addLabelledButton(LabelGrabber.INSTANCE.getLabel("file.rename.button"), new EventHandler<ActionEvent>() {
+//                                    @Override
+//                                    public void handle(ActionEvent t) {
+//                                        String fname;
+//                                        fname = InputDialog.getUserInput(LabelGrabber.INSTANCE.getLabel("file.rename.dialog.text"), LabelGrabber.INSTANCE.getLabel("file.rename.dialog.title"));
+//                                        System.out.println(fname);
+//                                        if (!fname.endsWith("." + fExtension)) {
+//                                            fname += "." + fExtension;
+//                                        }
+//                                        try {
+//                                            System.out.println(fname);
+//                                            Files.copy(sourceFile, Paths.get(imagePanel.getDir(), fname), StandardCopyOption.COPY_ATTRIBUTES);
+//                                        } catch (IOException ex) {
+//                                            LOGGER.log(Level.WARNING, "Could not save the renamed file.", ex);
+//                                        }
+//                                    }
+//                                })
+                                .addLabelledButton(LabelGrabber.INSTANCE.getLabel("file.replace.button"), new EventHandler<ActionEvent>() {
+                                    @Override
+                                    public void handle(ActionEvent t) {
+                                        try {
+                                            Files.delete(Paths.get(imagePanel.getDir(), f.getName()));
+                                            Files.copy(sourceFile, Paths.get(imagePanel.getDir(), f.getName()), StandardCopyOption.COPY_ATTRIBUTES);
+                                        } catch (IOException e) {
+                                            LOGGER.log(Level.WARNING, "Could not delete or copy file back into directory.", e);
+                                        }
+                                    }
+                                }).addLabelledButton(LabelGrabber.INSTANCE.getLabel("file.continue.button"), new EventHandler<ActionEvent>() {
+                                    @Override
+                                    public void handle(ActionEvent t) {
+                                        // DO NOTHING
+                                    }
+                                }).build();
+                                d.showAndWait();
+                            } else {
+                                Files.copy(sourceFile, Paths.get(imagePanel.getDir(), f.getName()), StandardCopyOption.COPY_ATTRIBUTES);
+                            }
                         } catch (IOException ex) {
-                            LoggerUtils.getLogger().log(Level.WARNING, "Could not copy file into ImagePanel from FileChooser selection");
+                            LOGGER.log(Level.WARNING, "Could not copy file into ImagePanel from FileChooser selection", ex);
                         }
                     }
+
                 }
             }
         });
@@ -148,6 +196,8 @@ public class LibraryImagePanel extends BorderPane {
         list.add(new NewFile(QueleaProperties.get().getImageDir()));
         list.add(new NewFile(null));
         return list;
+
+
 
 
     }
