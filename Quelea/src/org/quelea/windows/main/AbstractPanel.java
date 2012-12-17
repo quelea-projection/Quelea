@@ -1,7 +1,9 @@
 package org.quelea.windows.main;
 
-import java.util.HashSet;
+import java.util.Comparator;
 import java.util.Set;
+import java.util.SortedSet;
+import java.util.TreeSet;
 import java.util.logging.Logger;
 import javafx.scene.layout.BorderPane;
 import org.quelea.data.displayable.Displayable;
@@ -15,7 +17,15 @@ import org.quelea.services.utils.LoggerUtils;
  */
 public abstract class AbstractPanel extends BorderPane implements ContainedPanel {
 
-    Set<DisplayCanvas> canvases = new HashSet<>();
+    private class PriorityComparator implements Comparator<DisplayCanvas> {
+
+        @Override
+        public int compare(DisplayCanvas o1, DisplayCanvas o2) {
+            return o2.getDravingPriority().getPriority() - o1.getDravingPriority().getPriority();
+        }
+        
+    }
+    SortedSet<DisplayCanvas> canvases = new TreeSet<>(new PriorityComparator());
     protected LivePreviewPanel containerPanel;
     protected Displayable currentDisplayable = null;
     private static final Logger LOGGER = LoggerUtils.getLogger();
