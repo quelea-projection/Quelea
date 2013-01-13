@@ -271,8 +271,8 @@ public class ThemeDTO {
         String backgroundimage = "";
         String themeName = "";
         String shadowColor = "";
-        String shadowOffsetX = "";
-        String shadowOffsetY = "";
+        String shadowOffsetX = "0";
+        String shadowOffsetY = "0";
         for (String part : content.split("\\$")) {
             if (!part.contains(":")) {
                 continue;
@@ -293,9 +293,9 @@ public class ThemeDTO {
             }else if (parts[0].equalsIgnoreCase("shadowcolor")) {
                 shadowColor = parts[1];
             }else if (parts[0].equalsIgnoreCase("shadowX")) {
-                shadowOffsetX = parts[1];
+                shadowOffsetX = defaultIfEmpty(parts[1], "0");
             }else if (parts[0].equalsIgnoreCase("shadowY")) {
-                shadowOffsetY = parts[1];
+                shadowOffsetY = defaultIfEmpty(parts[1], "0");
             }
         }
         Font font = new Font(fontname, 72);
@@ -317,5 +317,21 @@ public class ThemeDTO {
         ThemeDTO ret = new ThemeDTO(font, Utils.parseColour(fontcolour), background, shadow);
         ret.themeName = themeName;
         return ret;
+    }
+    
+    /**
+     * Return a set value if the given string is empty.
+     * @param val the string to check.
+     * @param defaultVal the value to return if the string is empty.
+     * @return val, or defaultVal if the string is empty (or just whitespace.)
+     */
+    private static String defaultIfEmpty(String val, String defaultVal) {
+        if(val==null) {
+            return defaultVal;
+        }
+        if(val.trim().isEmpty()) {
+            return defaultVal;
+        }
+        return val;
     }
 }
