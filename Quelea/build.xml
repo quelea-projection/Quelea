@@ -28,7 +28,7 @@
     <property name="DebInstaller" value="${dist.jar.dir}/standalone/${DebInstallerName}"/>
     <property name="Portable" value="${dist.jar.dir}/standalone/${PortableName}"/>
     
-    <target name="pre-compile" depends="jar">
+    <target name="-post-init">
         <copy todir="${dist.jar.dir}/languages">
             <fileset dir="${basedir}/languages"/>
         </copy>
