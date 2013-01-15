@@ -26,6 +26,7 @@ import org.javafx.dialog.Dialog;
 import org.quelea.data.Schedule;
 import org.quelea.data.ScheduleSaver;
 import org.quelea.data.displayable.Displayable;
+import org.quelea.data.powerpoint.OOUtils;
 import org.quelea.languages.LabelGrabber;
 import org.quelea.services.utils.LoggerUtils;
 import org.quelea.windows.main.QueleaApp;
@@ -55,7 +56,7 @@ public class ExitActionHandler implements EventHandler<ActionEvent> {
     public void exit() {
         LOGGER.log(Level.INFO, "exit() called");
         Schedule schedule = QueleaApp.get().getMainWindow().getMainPanel().getSchedulePanel().getScheduleList().getSchedule();
-        if(!schedule.isEmpty() && schedule.isModified()) {
+        if (!schedule.isEmpty() && schedule.isModified()) {
             cancel = false;
             Dialog d = Dialog.buildConfirmation(LabelGrabber.INSTANCE.getLabel("save.before.exit.title"), LabelGrabber.INSTANCE.getLabel("save.before.exit.text")).addYesButton(new EventHandler<ActionEvent>() {
                 @Override
@@ -76,19 +77,22 @@ public class ExitActionHandler implements EventHandler<ActionEvent> {
                 }
             }).build();
             d.showAndWait();
-            if(cancel) {
+            if (cancel) {
                 return; //Don't exit
             }
         }
-        
+
         LOGGER.log(Level.INFO, "Hiding main window...");
         QueleaApp.get().getMainWindow().hide();
         LOGGER.log(Level.INFO, "Cleaning up displayables before exiting..");
-        for(Object obj : QueleaApp.get().getMainWindow().getMainPanel().getSchedulePanel().getScheduleList().itemsProperty().get()) {
+        for (Object obj : QueleaApp.get().getMainWindow().getMainPanel().getSchedulePanel().getScheduleList().itemsProperty().get()) {
             Displayable d = (Displayable) obj;
             LOGGER.log(Level.INFO, "Cleaning up {0}", d.getClass());
             d.dispose();
         }
+
+        LOGGER.log(Level.INFO, "Try close OOfice if opened");
+        OOUtils.closeOOApp();
         System.exit(0);
     }
 }

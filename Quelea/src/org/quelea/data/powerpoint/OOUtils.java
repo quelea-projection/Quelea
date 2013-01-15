@@ -27,39 +27,41 @@ import org.quelea.services.utils.QueleaProperties;
 
 /**
  * Static methods useful for the openoffice world of presentations.
+ *
  * @author Michael
  */
 public class OOUtils {
-    
+
     private static final Logger LOGGER = LoggerUtils.getLogger();
-    
+
     /**
      * No instantiation.
      */
     private OOUtils() {
         throw new AssertionError();
     }
-    
+
     /**
      * Attempt to initialise the openoffice presentation system, if the relevant
      * properties are set. If initialisation fails an appropriate message will
      * be displayed to the user.
      */
     public static void attemptInit() {
-        if(QueleaProperties.get().getUseOO()) {
+        if (QueleaProperties.get().getUseOO()) {
             LOGGER.log(Level.INFO, "Setting up openoffice");
             OOPresentation.init(QueleaProperties.get().getOOPath());
-            if(OOPresentation.isInit()) {
+            if (OOPresentation.isInit()) {
                 LOGGER.log(Level.INFO, "Successfully set up openoffice");
-            }
-            else {
+            } else {
                 LOGGER.log(Level.INFO, "Failed to set up openoffice");
                 Dialog.showWarning(LabelGrabber.INSTANCE.getLabel("setup.oo.failed.title"), LabelGrabber.INSTANCE.getLabel("setup.oo.failed.text"));
             }
-        }
-        else {
+        } else {
             LOGGER.log(Level.INFO, "Not setting up openoffice, option not selected");
         }
     }
-    
+
+    public static void closeOOApp() {
+        OOPresentation.closeOOApp();
+    }
 }

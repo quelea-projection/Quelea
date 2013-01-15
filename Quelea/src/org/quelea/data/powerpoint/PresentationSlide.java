@@ -56,7 +56,10 @@ public class PresentationSlide {
     public PresentationSlide(XSLFSlide slide) {
         org.apache.poi.xslf.usermodel.XMLSlideShow slideshow = slide.getSlideShow();
         BufferedImage originalImage = new BufferedImage((int) slideshow.getPageSize().getWidth(), (int) slideshow.getPageSize().getHeight(), BufferedImage.TYPE_INT_ARGB);
-        slide.draw(originalImage.createGraphics());
+        Graphics2D g2 = originalImage.createGraphics();
+        g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
+                    RenderingHints.VALUE_ANTIALIAS_ON);
+        slide.draw(g2);
         image = new WritableImage(originalImage.getWidth(), originalImage.getHeight());
         SwingFXUtils.toFXImage(originalImage, image);
     }

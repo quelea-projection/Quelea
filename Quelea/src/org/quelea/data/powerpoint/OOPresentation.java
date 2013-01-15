@@ -22,15 +22,23 @@ import com.sun.star.awt.PosSize;
 import com.sun.star.beans.PropertyValue;
 import com.sun.star.beans.PropertyVetoException;
 import com.sun.star.beans.UnknownPropertyException;
+import com.sun.star.bridge.XBridge;
+import com.sun.star.bridge.XBridgeFactory;
+import com.sun.star.comp.helper.Bootstrap;
 import com.sun.star.comp.helper.BootstrapException;
+import com.sun.star.connection.XConnection;
+import com.sun.star.connection.XConnector;
 import com.sun.star.document.XEventBroadcaster;
+import com.sun.star.document.XEventListener;
 import com.sun.star.frame.XComponentLoader;
 import com.sun.star.frame.XController;
 import com.sun.star.frame.XModel;
+import com.sun.star.lang.DisposedException;
 import com.sun.star.lang.EventObject;
 import com.sun.star.lang.IllegalArgumentException;
 import com.sun.star.lang.WrappedTargetException;
 import com.sun.star.lang.XComponent;
+import com.sun.star.lang.XMultiComponentFactory;
 import com.sun.star.presentation.XPresentation;
 import com.sun.star.presentation.XPresentation2;
 import com.sun.star.presentation.XPresentationSupplier;
@@ -55,7 +63,7 @@ import org.quelea.services.utils.Utils;
  *
  * @author Michael
  */
-public class OOPresentation {
+public class OOPresentation implements XEventListener {
 
     private static final Logger LOGGER = Logger.getLogger(OOPresentation.class.getName());
     private static XComponentContext xOfficeContext;
@@ -81,11 +89,18 @@ public class OOPresentation {
             init = true;
             LOGGER.log(Level.INFO, "Openoffice initialised ok");
             return true;
-        }
-        catch(BootstrapException ex) {
+        } catch (BootstrapException ex) {
+            LOGGER.log(Level.SEVERE, "Couldn't connect to openoffice instance", ex);
+            return false;
+        } catch (Exception ex) {
             LOGGER.log(Level.SEVERE, "Couldn't connect to openoffice instance", ex);
             return false;
         }
+
+    }
+
+    public static void closeOOApp() {
+        Helper.dispose();
     }
 
     /**
@@ -108,7 +123,7 @@ public class OOPresentation {
      * @throws Exception if something goes wrong creating the presentation.
      */
     public OOPresentation(String file) throws Exception {
-        if(!init) {
+        if (!init) {
             LOGGER.log(Level.SEVERE, "BUG: Tried to create OOPresentation before it was initialised");
             throw new IllegalStateException("I'm not initialised yet! init() needs to be called before creating presentations.");
         }
@@ -124,20 +139,7 @@ public class OOPresentation {
         doc = Helper.createDocument(xOfficeContext, sURL.toString(), "_blank", 0, props);
         XModel xModel = UnoRuntime.queryInterface(XModel.class, doc);
         XEventBroadcaster xDocEventBroadcaster = UnoRuntime.queryInterface(com.sun.star.document.XEventBroadcaster.class, xModel);
-        xDocEventBroadcaster.addEventListener(new com.sun.star.document.XEventListener() {
-
-            @Override
-            public void disposing(EventObject ev) {
-                //Nothing needed here
-            }
-
-            @Override
-            public void notifyEvent(com.sun.star.document.EventObject ev) {
-                XModel xModel = UnoRuntime.queryInterface(XModel.class, ev.Source);
-                XController xController = xModel.getCurrentController();
-                xController.getFrame().getContainerWindow().setEnable(false);
-            }
-        });
+        xDocEventBroadcaster.addEventListener(this);
         xModel.getCurrentController().getFrame().getContainerWindow().setPosSize(0, 0, 1, 1, PosSize.SIZE);
         xModel.getCurrentController().getFrame().getContainerWindow().setVisible(false);
         XPresentationSupplier xPresSupplier = UnoRuntime.queryInterface(XPresentationSupplier.class, doc);
@@ -145,7 +147,6 @@ public class OOPresentation {
         xPresentation = UnoRuntime.queryInterface(XPresentation2.class, xPresentation_);
 
         Runtime.getRuntime().addShutdownHook(new Thread() {
-
             @Override
             public void run() {
                 checkDisposed();
@@ -170,7 +171,7 @@ public class OOPresentation {
      * presentation on.
      */
     public void start(int display) {
-        if(display < 0) {
+        if (display < 0) {
             LOGGER.log(Level.INFO, "Not starting presentation, negative display selected");
             return;
         }
@@ -178,22 +179,20 @@ public class OOPresentation {
         try {
             xPresentation.setPropertyValue("Display", display);
             xPresentation.setPropertyValue("IsAutomatic", true);
-            if(QueleaProperties.get().getOOPresOnTop()) {
+            if (QueleaProperties.get().getOOPresOnTop()) {
                 xPresentation.setPropertyValue("IsAlwaysOnTop", true);
             }
-        }
-        catch(UnknownPropertyException | PropertyVetoException | IllegalArgumentException | WrappedTargetException ex) {
+        } catch (UnknownPropertyException | PropertyVetoException | IllegalArgumentException | WrappedTargetException ex) {
             LOGGER.log(Level.SEVERE, "Error setting presentation properties", ex);
         }
-        if(!xPresentation.isRunning()) {
+        if (!xPresentation.isRunning()) {
             xPresentation.start();
         }
-        while(controller == null) { //Block until we get a controller.
+        while (controller == null) { //Block until we get a controller.
             controller = xPresentation.getController();
             Utils.sleep(50);
         }
         controller.addSlideShowListener(new XSlideShowListener() {
-
             @Override
             public void paused() {
             }
@@ -204,7 +203,7 @@ public class OOPresentation {
 
             @Override
             public void slideTransitionStarted() {
-                for(SlideChangedListener listener : slideListeners) {
+                for (SlideChangedListener listener : slideListeners) {
                     listener.slideChanged(controller.getCurrentSlideIndex());
                 }
             }
@@ -257,10 +256,9 @@ public class OOPresentation {
      * @return true if its running, false otherwise.
      */
     public boolean isRunning() {
-        if(xPresentation != null) {
+        if (xPresentation != null) {
             return xPresentation.isRunning();
-        }
-        else {
+        } else {
             return false;
         }
     }
@@ -269,7 +267,7 @@ public class OOPresentation {
      * Stop the presentation if it's running.
      */
     public void stop() {
-        if(controller != null) {
+        if (controller != null) {
             xPresentation.end();
             controller.deactivate();
             controller = null;
@@ -282,7 +280,7 @@ public class OOPresentation {
      * presentation.)
      */
     public void goForward() {
-        if(controller != null && controller.getNextSlideIndex() != -1) {
+        if (controller != null && controller.getNextSlideIndex() != -1) {
             controller.gotoNextEffect();
             Utils.sleep(50);
         }
@@ -292,7 +290,7 @@ public class OOPresentation {
      * Go backwards one step.
      */
     public void goBack() {
-        if(controller != null) {
+        if (controller != null) {
             controller.gotoPreviousEffect();
             Utils.sleep(50);
         }
@@ -304,7 +302,7 @@ public class OOPresentation {
      * @param index the index of the slide to navigate to.
      */
     public void gotoSlide(int index) {
-        if(controller != null) {
+        if (controller != null) {
             controller.gotoSlideIndex(index);
         }
     }
@@ -317,21 +315,20 @@ public class OOPresentation {
      * be printed since this should be classed as a bug.
      */
     public void dispose() {
-        if(!disposed) {
-            if(controller != null && controller.isActive()) {
+        if (!disposed) {
+            if (controller != null && controller.isActive()) {
                 controller.deactivate();
             }
-            if(xPresentation != null) {
+            if (xPresentation != null) {
                 xPresentation.end();
             }
-            if(doc != null) {
+            if (doc != null) {
                 XCloseable xcloseable = UnoRuntime.queryInterface(XCloseable.class, doc);
                 try {
-                    if(xcloseable != null) {
+                    if (xcloseable != null) {
                         xcloseable.close();
                     }
-                }
-                catch(SQLException ex) {
+                } catch (SQLException ex) {
                     LOGGER.log(Level.WARNING, "Error occured when closing presentation", ex);
                 }
                 doc.dispose();
@@ -357,16 +354,34 @@ public class OOPresentation {
      * a warning.
      */
     private void checkDisposed() {
-        if(!disposed) {
+        if (!disposed) {
             LOGGER.log(Level.WARNING, "BUG: Presentation was not correctly disposed!");
             dispose();
         }
+    }
+
+    @Override
+    public void disposing(EventObject ev) {
+        //Nothing needed here
+    }
+
+    @Override
+    public void notifyEvent(com.sun.star.document.EventObject ev) {
+        XModel xModel = UnoRuntime.queryInterface(XModel.class, ev.Source);
+        XController xController = xModel.getCurrentController();
+        xController.getFrame().getContainerWindow().setEnable(false);
     }
 
     /**
      * Helper methods for doing openoffice specific stuff.
      */
     private static class Helper {
+
+        private static XComponent bridgeComponent;
+        private static XBridge bridge;
+        public static final String DEFAULT_HOST = "localhost";
+        public static final int DEFAULT_PORT = 8100;
+        public static final String RUN_ARGS = "socket,host=" + DEFAULT_HOST + ",port=" + DEFAULT_PORT + ",tcpNoDelay=1";
 
         /**
          * Connect to an office, if no office is running a new instance is
@@ -375,10 +390,37 @@ public class OOPresentation {
          *
          * @param path the path to the openoffice install.
          */
-        private static XComponentContext connect(String path) throws BootstrapException {
+        private static XComponentContext connect(String path) throws BootstrapException, Exception {
             File progPath = new File(path, "program");
-            XComponentContext xOfficeContext = BootstrapSocketConnector.bootstrap(progPath.getAbsolutePath());
+            xOfficeContext = BootstrapSocketConnector.bootstrap(progPath.getAbsolutePath());
+            XComponentContext localContext = Bootstrap.createInitialComponentContext(null);
+            XMultiComponentFactory localServiceManager = localContext.getServiceManager();
+            XConnector connector = (XConnector) UnoRuntime.queryInterface(XConnector.class,
+                    localServiceManager.createInstanceWithContext("com.sun.star.connection.Connector",
+                    localContext));
+            XConnection connection = connector.connect(RUN_ARGS);
+            XBridgeFactory bridgeFactory = (XBridgeFactory) UnoRuntime.queryInterface(XBridgeFactory.class,
+                    localServiceManager.createInstanceWithContext("com.sun.star.bridge.BridgeFactory", localContext));
+            bridge = bridgeFactory.createBridge("", "urp", connection, null);
+            bridgeComponent = (XComponent) UnoRuntime.queryInterface(XComponent.class, bridge);
+            bridgeComponent.addEventListener(new com.sun.star.lang.XEventListener() {
+                @Override
+                public void disposing(EventObject eo) {
+                }
+            });
             return xOfficeContext;
+
+        }
+
+        public static void dispose() {
+            try {
+                if (bridgeComponent != null) {
+                    bridgeComponent.dispose();
+                    bridgeComponent = null;
+                }
+            } catch (DisposedException ex) {
+                throw new RuntimeException(ex.getMessage());
+            }
         }
 
         /**
@@ -390,7 +432,7 @@ public class OOPresentation {
             XComponentLoader aLoader = UnoRuntime.queryInterface(XComponentLoader.class, xOfficeContext.getServiceManager().createInstanceWithContext("com.sun.star.frame.Desktop", xOfficeContext));
             XComponent xComponent = UnoRuntime.queryInterface(XComponent.class, aLoader.loadComponentFromURL(sURL, sTargetFrame, nSearchFlags, aArgs));
 
-            if(xComponent == null) {
+            if (xComponent == null) {
                 throw new Exception("Could not create document: " + sURL);
             }
             return xComponent;

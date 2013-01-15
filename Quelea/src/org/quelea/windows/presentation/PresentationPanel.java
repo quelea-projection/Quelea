@@ -69,6 +69,7 @@ public class PresentationPanel extends AbstractPanel {
                                     presentationList.scrollTo(newSlideIndex);
                                 }
                             });
+                            currentSlide = newSlide;
                             startOOPres();
                             QueleaApp.get().getMainWindow().toFront();
                             pres.gotoSlide(presentationList.getSelectionModel().getSelectedIndex());
