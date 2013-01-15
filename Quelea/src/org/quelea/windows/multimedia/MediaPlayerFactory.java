@@ -1,7 +1,10 @@
 package org.quelea.windows.multimedia;
 
 import java.util.logging.Logger;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.scene.media.Media;
+import javafx.scene.media.MediaException;
 import javafx.scene.media.MediaPlayer;
 import org.quelea.services.utils.LoggerUtils;
 
@@ -19,12 +22,26 @@ public class MediaPlayerFactory {
     private MediaPlayerFactory() {
     }
 
-    public static MediaPlayer getInstance(String filePath) {
+    public static MediaPlayer getInstance(final String filePath) {
         if (player_ == null || (!filePath_.equals(filePath))) {
-            if(player_ != null) {
+            if (player_ != null) {
                 player_.stop();
             }
             player_ = new MediaPlayer(new Media(filePath));
+            player_.errorProperty().addListener(new ChangeListener<MediaException>() {
+                @Override
+                public void changed(ObservableValue<? extends MediaException> ov, MediaException t, MediaException t1) {
+                    LOGGER.info("MEDIAPLAYER EXCEPTION" + ov.getValue().toString());
+                }
+            });
+            player_.setOnError(new Runnable() {
+                @Override
+                public void run() {
+
+                    LOGGER.info("RUNTIME MEDIAPLAYER EXCEPTION");
+                    player_ = null;
+                }
+            });
         }
         return player_;
     }

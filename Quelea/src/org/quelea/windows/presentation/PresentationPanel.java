@@ -176,7 +176,9 @@ public class PresentationPanel extends AbstractPanel {
     @Override
     public void updateCanvas() {
         for (DisplayCanvas canvas : getCanvases()) {
-            drawSlide(currentSlide, canvas);
+            if (currentSlide != null) {
+                drawSlide(currentSlide, canvas);
+            }
         }
     }
 
