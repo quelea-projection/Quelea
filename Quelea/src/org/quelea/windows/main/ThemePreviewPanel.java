@@ -42,6 +42,7 @@ import org.quelea.data.ThemeDTO;
 import org.quelea.languages.LabelGrabber;
 import org.quelea.services.utils.LoggerUtils;
 import org.quelea.windows.lyrics.LyricDrawer;
+import org.quelea.windows.main.DisplayCanvas.Priority;
 import org.quelea.windows.newsong.EditThemeDialog;
 import org.quelea.windows.newsong.ThemePanel;
 
@@ -77,7 +78,7 @@ public class ThemePreviewPanel extends VBox {
             public void updateOnSizeChange() {
                 updateThemePreviewCanvas(updateTheme);
             }
-        });
+        }, Priority.LOW);
         canvas.setPrefSize(200, 200);
         updateThemePreviewCanvas(theme);
         String name;

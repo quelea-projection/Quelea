@@ -46,6 +46,22 @@ public class DisplayCanvas extends StackPane {
     private Node background;
     private Displayable currentDisplayable;
     private final CanvasUpdater updater;
+    private Priority dravingPriority = Priority.LOW;
+
+    public enum Priority {
+
+        HIGH(0),
+        MID(1),
+        LOW(2);
+
+        private Priority(int priority) {
+            this.priority = priority;
+        }
+        private int priority;
+        public int getPriority() {
+            return priority;
+        }
+    };
 
     /**
      * @return the currentDisplayable
@@ -59,6 +75,13 @@ public class DisplayCanvas extends StackPane {
      */
     public void setCurrentDisplayable(Displayable currentDisplayable) {
         this.currentDisplayable = currentDisplayable;
+    }
+
+    /**
+     * @return the dravingPriority
+     */
+    public Priority getDravingPriority() {
+        return dravingPriority;
     }
 
     public interface CanvasUpdater {
@@ -83,8 +106,9 @@ public class DisplayCanvas extends StackPane {
      * @param showBorder true if the border should be shown around any text
      * (only if the options say so) false otherwise.
      */
-    public DisplayCanvas(boolean showBorder, boolean stageView, final CanvasUpdater updater) {
+    public DisplayCanvas(boolean showBorder, boolean stageView, final CanvasUpdater updater, Priority dravingPriority) {
         this.stageView = stageView;
+        this.dravingPriority = dravingPriority;
         setMinHeight(0);
         setMinWidth(0);
         noticeDrawer = new NoticeDrawer(this);

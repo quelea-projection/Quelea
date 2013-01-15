@@ -58,6 +58,7 @@ import javafx.scene.image.WritableImage;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import org.javafx.dialog.Dialog;
+import org.quelea.data.ThemeDTO;
 import org.quelea.data.db.SongManager;
 import org.quelea.data.displayable.SongDisplayable;
 import org.quelea.languages.LabelGrabber;
@@ -649,6 +650,9 @@ public final class Utils {
      * @return the colour.
      */
     public static Color parseColour(String colour) {
+        if(colour==null||colour.trim().isEmpty()) {
+            return ThemeDTO.DEFAULT_FONT_COLOR;
+        }
         if(!colour.contains("[")) {
             return Color.web(colour);
         }
