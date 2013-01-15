@@ -20,6 +20,7 @@ package org.quelea.windows.image;
 import org.quelea.windows.main.AbstractPanel;
 import org.quelea.windows.main.DisplayCanvas;
 import org.quelea.data.displayable.ImageDisplayable;
+import org.quelea.windows.main.DisplayCanvas.Priority;
 import org.quelea.windows.main.DisplayableDrawer;
 import org.quelea.windows.main.LivePreviewPanel;
 
@@ -45,7 +46,7 @@ public class ImagePanel extends AbstractPanel {
             public void updateOnSizeChange() {
                 updateCanvas();
             }
-        });
+        }, Priority.LOW);
         registerDisplayCanvas(previewCanvas);
         setCenter(previewCanvas);
     }

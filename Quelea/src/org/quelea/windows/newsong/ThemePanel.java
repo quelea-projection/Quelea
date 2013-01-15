@@ -45,6 +45,7 @@ import org.quelea.languages.LabelGrabber;
 import org.quelea.services.utils.Utils;
 import org.quelea.windows.main.DisplayCanvas;
 import org.quelea.windows.lyrics.LyricDrawer;
+import org.quelea.windows.main.DisplayCanvas.Priority;
 import org.quelea.windows.main.widgets.CardPane;
 
 /**
@@ -84,7 +85,7 @@ public class ThemePanel extends BorderPane {
             public void updateOnSizeChange() {
                 updateTheme(true);
             }
-        });
+        }, Priority.LOW);
         canvas.setMinWidth(getWidth());
         canvas.setMinHeight(getHeight());
         setCenter(canvas);
