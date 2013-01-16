@@ -160,6 +160,7 @@ public final class SongManager {
      * @return true if the operation succeeded, false otherwise.
      */
     public boolean addSong(final SongDisplayable song, boolean fireUpdate) {
+        if(song.getSections().length == 0) return false;
         final boolean nullTheme = song.getSections()[0].getTheme() == null;
         final boolean nullTags = song.getTags() == null;
         HibernateUtil.execute(new HibernateUtil.SessionCallback() {
