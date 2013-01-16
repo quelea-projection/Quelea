@@ -793,7 +793,7 @@ public class SongDisplayable implements TextDisplayable, Comparable<SongDisplaya
         } catch (ParserConfigurationException | SAXException | IOException ex) {
             LOGGER.log(Level.WARNING, "Couldn't parse the schedule", ex);
             return null;
-        }
+        } 
     }
 
     /**
