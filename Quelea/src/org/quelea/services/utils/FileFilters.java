@@ -61,6 +61,7 @@ public final class FileFilters {
      */
     public static final FileChooser.ExtensionFilter SCHEDULE = new FileChooser.ExtensionFilter("Quelea schedules", "*." + QueleaProperties.get().getScheduleExtension());
 
+    public static final FileChooser.ExtensionFilter PLAIN_TEXT = new FileChooser.ExtensionFilter("Plain text song", "*.txt");
     /**
      * No instantiation for me thanks.
      */
