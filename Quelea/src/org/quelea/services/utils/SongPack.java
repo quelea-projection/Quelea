@@ -17,7 +17,6 @@
  */
 package org.quelea.services.utils;
 
-
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -32,7 +31,9 @@ import java.util.zip.ZipOutputStream;
 import org.quelea.data.displayable.SongDisplayable;
 
 /**
- * A song pack that contains a number of songs and can be written to a compressed archive.
+ * A song pack that contains a number of songs and can be written to a
+ * compressed archive.
+ *
  * @author Michael
  */
 public class SongPack {
@@ -49,6 +50,7 @@ public class SongPack {
 
     /**
      * Add a song to this pack.
+     *
      * @param song the song to add.
      */
     public void addSong(SongDisplayable song) {
@@ -57,6 +59,7 @@ public class SongPack {
 
     /**
      * Create a new song pack from a file.
+     *
      * @param file the file to create the song pack from.
      * @return the song pack that's been created
      * @throws IOException if something went wrong.
@@ -67,7 +70,10 @@ public class SongPack {
             Enumeration<? extends ZipEntry> entries = zipFile.entries();
             while (entries.hasMoreElements()) {
                 ZipEntry entry = entries.nextElement();
-                ret.addSong(SongDisplayable.parseXML(zipFile.getInputStream(entry)));
+                SongDisplayable song = SongDisplayable.parseXML(zipFile.getInputStream(entry));
+                if (song != null) {
+                    ret.addSong(song);
+                }
             }
             return ret;
         }
@@ -75,6 +81,7 @@ public class SongPack {
 
     /**
      * Write this song pack to a file.
+     *
      * @param file the file to write to.
      * @return true if the write was successful, false otherwise.
      */
@@ -91,8 +98,7 @@ public class SongPack {
                 count++;
             }
             return true;
-        }
-        catch (IOException ex) {
+        } catch (IOException ex) {
             LOGGER.log(Level.WARNING, "Couldn't write the song pack to file", ex);
             return false;
         }
@@ -100,6 +106,7 @@ public class SongPack {
 
     /**
      * Get the songs in this song pack.
+     *
      * @return the songs in this song pack.
      */
     public List<SongDisplayable> getSongs() {

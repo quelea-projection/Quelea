@@ -33,6 +33,7 @@ import com.sun.star.document.XEventListener;
 import com.sun.star.frame.XComponentLoader;
 import com.sun.star.frame.XController;
 import com.sun.star.frame.XModel;
+import com.sun.star.io.IOException;
 import com.sun.star.lang.DisposedException;
 import com.sun.star.lang.EventObject;
 import com.sun.star.lang.IllegalArgumentException;
@@ -379,6 +380,7 @@ public class OOPresentation implements XEventListener {
 
         private static XComponent bridgeComponent;
         private static XBridge bridge;
+        private static XConnection connection;
         public static final String DEFAULT_HOST = "localhost";
         public static final int DEFAULT_PORT = 8100;
         public static final String RUN_ARGS = "socket,host=" + DEFAULT_HOST + ",port=" + DEFAULT_PORT + ",tcpNoDelay=1";
@@ -398,7 +400,7 @@ public class OOPresentation implements XEventListener {
             XConnector connector = (XConnector) UnoRuntime.queryInterface(XConnector.class,
                     localServiceManager.createInstanceWithContext("com.sun.star.connection.Connector",
                     localContext));
-            XConnection connection = connector.connect(RUN_ARGS);
+            connection = connector.connect(RUN_ARGS);
             XBridgeFactory bridgeFactory = (XBridgeFactory) UnoRuntime.queryInterface(XBridgeFactory.class,
                     localServiceManager.createInstanceWithContext("com.sun.star.bridge.BridgeFactory", localContext));
             bridge = bridgeFactory.createBridge("", "urp", connection, null);
@@ -415,11 +417,17 @@ public class OOPresentation implements XEventListener {
         public static void dispose() {
             try {
                 if (bridgeComponent != null) {
+                    connection.flush();;
+                    connection.close();
                     bridgeComponent.dispose();
                     bridgeComponent = null;
+                    
+                    
                 }
             } catch (DisposedException ex) {
                 throw new RuntimeException(ex.getMessage());
+            } catch (IOException ex) {
+                throw new RuntimeException(ex.getMessage());    
             }
         }
 
