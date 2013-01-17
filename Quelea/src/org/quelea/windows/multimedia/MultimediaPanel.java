@@ -46,7 +46,8 @@ public class MultimediaPanel extends AbstractPanel {
         previewCanvas = new MultimediaPreviewCanvas(false, false, new DisplayCanvas.CanvasUpdater() {
             @Override
             public void updateOnSizeChange() {
-                updateCanvas();
+                //updateCanvas(); //@todo comment out updating on resize due to some errors which appears when updating
+                //of multimedia canvas  occur to often
             }
         }, Priority.LOW);
         registerDisplayCanvas(previewCanvas);

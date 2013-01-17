@@ -33,6 +33,7 @@ public abstract class MultimediaControlPanel extends BorderPane {
     protected Button play;
     protected MediaPlayer player;
     protected Slider positionSlider;
+    protected Slider volumeSlider;
     protected Button stop;
 
     protected class CurrentTimeListener implements InvalidationListener {
@@ -53,6 +54,7 @@ public abstract class MultimediaControlPanel extends BorderPane {
     }
 
     public MediaPlayer getPlayer() {
+        //volumeSlider.setValue(player.getVolume());//@todo NullPointer
         return player;
     }
     
@@ -65,6 +67,18 @@ public abstract class MultimediaControlPanel extends BorderPane {
                 double pos = positionSlider.getValue();
                 final Duration seekTo = player.getTotalDuration().multiply(pos);
                 seekAndUpdatePosition(seekTo);
+            }
+        }
+    }
+    
+    protected class VolumeListener implements ChangeListener<Boolean> {
+
+        @Override
+        public void changed(ObservableValue<? extends Boolean> observable,
+                Boolean oldValue, Boolean newValue) {
+            if (oldValue && !newValue) {
+                double pos = volumeSlider.getValue();
+                player.setVolume(pos);
             }
         }
     }
@@ -108,9 +122,14 @@ public abstract class MultimediaControlPanel extends BorderPane {
         positionSlider.setValue(0);
         positionSlider.valueChangingProperty().addListener(new PositionListener());
 
+        volumeSlider = new Slider(0, 1.0, 0.1);
+        volumeSlider.setValue(0);
+        volumeSlider.valueChangingProperty().addListener(new VolumeListener());
+        
         VBox controlPanel = new VBox();
-        HBox sliderPanel = new HBox();
+        VBox sliderPanel = new VBox();
         sliderPanel.getChildren().add(positionSlider);
+        sliderPanel.getChildren().add(volumeSlider);
         HBox buttonPanel = new HBox();
         buttonPanel.getChildren().add(play);
         buttonPanel.getChildren().add(pause);
