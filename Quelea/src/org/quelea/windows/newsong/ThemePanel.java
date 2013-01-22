@@ -89,7 +89,7 @@ public class ThemePanel extends BorderPane {
         canvas.setMinWidth(getWidth());
         canvas.setMinHeight(getHeight());
         setCenter(canvas);
-        LyricDrawer drawer = new LyricDrawer();
+        LyricDrawer drawer = new LyricDrawer(false, null);
         drawer.setCanvas(canvas);
         drawer.setText(SAMPLE_LYRICS, null, false);
         VBox toolbarPanel = new VBox();
@@ -278,7 +278,7 @@ public class ThemePanel extends BorderPane {
         Platform.runLater(new Runnable() {
             @Override
             public void run() {
-                LyricDrawer drawer = new LyricDrawer();
+                LyricDrawer drawer = new LyricDrawer(false, null);
                 drawer.setCanvas(canvas);
                 drawer.setTheme(theme);
                 drawer.setText(SAMPLE_LYRICS, null, false);

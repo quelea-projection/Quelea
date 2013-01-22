@@ -58,6 +58,7 @@ public class PreviewPanel extends LivePreviewPanel {
 
             @Override
             public void handle(ActionEvent t) {
+                QueleaApp.get().getMainWindow().getMainPanel().getLivePanel().clear();
                 QueleaApp.get().getMainWindow().getMainPanel().getLivePanel().setDisplayable(getDisplayable(), ((ContainedPanel)getCurrentPane()).getCurrentIndex());
                 QueleaApp.get().getMainWindow().getMainPanel().getLivePanel().getCurrentPane().requestFocus();
             }

@@ -45,6 +45,7 @@ public class VideoControlPanel extends MultimediaControlPanel {
         this.filePath = video.getFile().getAbsolutePath();
         try {
             player = MediaPlayerFactory.getInstance(new File(filePath).toURI().toString());
+            player.stop();
             player.currentTimeProperty().addListener(new CurrentTimeListener());
         }
         catch(MediaException ex) {

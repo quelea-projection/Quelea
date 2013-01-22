@@ -3,6 +3,7 @@ package org.quelea.windows.lyrics;
 import org.quelea.windows.main.DisplayableDrawer;
 import com.sun.javafx.tk.FontMetrics;
 import com.sun.javafx.tk.Toolkit;
+import java.awt.Panel;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -13,14 +14,19 @@ import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
 import javafx.animation.ParallelTransition;
 import javafx.animation.Timeline;
+import javafx.beans.property.DoubleProperty;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.Group;
 import javafx.scene.Node;
+import javafx.scene.control.Button;
 import javafx.scene.effect.DropShadow;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
+import javafx.scene.media.Media;
 import javafx.scene.media.MediaException;
 import javafx.scene.media.MediaPlayer;
 import javafx.scene.media.MediaView;
@@ -29,16 +35,19 @@ import javafx.scene.paint.Paint;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.util.Duration;
+import org.quelea.data.Background;
 import org.quelea.data.ColourBackground;
 import org.quelea.data.ImageBackground;
 import org.quelea.data.ThemeDTO;
 import org.quelea.data.VideoBackground;
 import org.quelea.data.displayable.Displayable;
+import org.quelea.data.displayable.SongDisplayable;
 import org.quelea.data.displayable.TextDisplayable;
 import org.quelea.data.displayable.TextSection;
 import org.quelea.services.utils.LoggerUtils;
 import org.quelea.services.utils.QueleaProperties;
 import org.quelea.services.utils.Utils;
+import org.quelea.windows.main.DisplayCanvas;
 import org.quelea.windows.multimedia.MediaPlayerFactory;
 
 /**
@@ -54,10 +63,14 @@ public class LyricDrawer extends DisplayableDrawer {
     private TextDisplayable curDisplayable;
     private boolean capitaliseFirst;
     private ImageView blackImg = new ImageView(Utils.getImageFromColour(Color.BLACK));
+    private boolean showVideoControls = false;
+    private MediaView newVideo = null;
+    private MediaPlayer player = null;
+    private BorderPane buttonsPanel = null;
 
-    ;
-
-    public LyricDrawer() {
+    public LyricDrawer(boolean showVideoControls, BorderPane buttonsPanel) {
+        this.showVideoControls = showVideoControls;
+        this.buttonsPanel = buttonsPanel;
         text = new String[]{};
         theme = ThemeDTO.DEFAULT_THEME;
         textGroup = new Group();
@@ -130,8 +143,20 @@ public class LyricDrawer extends DisplayableDrawer {
         if (theme == null) {
             theme = ThemeDTO.DEFAULT_THEME;
         }
-        if (this.theme.equals(theme)) {
-            return;
+        if (this.canvas.getCurrentDisplayable() instanceof SongDisplayable) {
+            final SongDisplayable song = (SongDisplayable) this.canvas.getCurrentDisplayable();
+            if (song != null) {
+                final Background sectionThemeBackground = song.getSections()[0].getTheme().getBackground();
+                if (theme.getBackground() instanceof VideoBackground
+                        && sectionThemeBackground instanceof VideoBackground) {
+                    String newLocation = ((VideoBackground) theme.getBackground()).getVideoFile().toURI().toString();
+
+                    String oldLocation = ((VideoBackground) sectionThemeBackground).getVideoFile().toURI().toString();
+                    if (newLocation.equals(oldLocation)) {
+                        return;
+                    }
+                }
+            }
         }
         this.theme = theme;
         Image image;
@@ -151,14 +176,40 @@ public class LyricDrawer extends DisplayableDrawer {
 
         Node newBackground;
         if (image == null) {
-            final MediaView newVideo = new MediaView();
+            newVideo = new MediaView();
             String location = ((VideoBackground) theme.getBackground()).getVideoFile().toURI().toString();
             try {
-                MediaPlayer player = MediaPlayerFactory.getInstance(location);
+                player = MediaPlayerFactory.getInstance(location);
                 player.setVolume(0);
-                player.setAutoPlay(true);
+                player.setAutoPlay(!canvas.getType().equals(DisplayCanvas.Type.PREVIEW));
                 player.setCycleCount(javafx.scene.media.MediaPlayer.INDEFINITE);
                 newVideo.setMediaPlayer(player);
+                if (showVideoControls) {
+                    HBox buttonPanel = new HBox();
+                    Button play = new Button("", new ImageView(new Image("file:icons/play.png", 16, 16, false, true)));
+                    play.setOnAction(new EventHandler<javafx.event.ActionEvent>() {
+                        @Override
+                        public void handle(javafx.event.ActionEvent t) {
+                            if (player != null) {
+                                player.play();
+                            }
+                        }
+                    });
+                    Button pause = new Button("", new ImageView(new Image("file:icons/pause.png", 16, 16, false, true)));
+
+                    pause.setOnAction(new EventHandler<javafx.event.ActionEvent>() {
+                        @Override
+                        public void handle(javafx.event.ActionEvent t) {
+                            if (player != null) {
+                                player.pause();
+                            }
+                        }
+                    });
+                    buttonPanel.getChildren().add(play);
+                    buttonPanel.getChildren().add(pause);
+                    buttonsPanel.getChildren().add(buttonPanel);
+                }
+
                 canvas.getChildren().add(0, newVideo);
                 newBackground = newVideo;
             } catch (MediaException ex) {
@@ -174,13 +225,16 @@ public class LyricDrawer extends DisplayableDrawer {
             newBackground = newImage;
         }
         final Node oldBackground = canvas.getBackground();
-        fadeOut.setOnFinished(new EventHandler<ActionEvent>() {
+
+        fadeOut.setOnFinished(
+                new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent t) {
                 canvas.getChildren().remove(oldBackground);
             }
         });
         canvas.setBackground(newBackground);
+
         fadeOut.play();
     }
 
@@ -429,6 +483,11 @@ public class LyricDrawer extends DisplayableDrawer {
             canvas.getChildren().clear();
         }
         setTheme(null);
+        if (player != null) {
+            player.stop();
+        }
+        player = null;
+        newVideo = null;
         eraseText();
     }
 

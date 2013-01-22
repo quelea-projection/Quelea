@@ -75,7 +75,7 @@ public class ImageButton extends Button {
 
                     imageLocation = imageDir.toURI().relativize(newFile.toURI()).getPath();
                     imageLocationField.setText(imageLocation);
-                    LyricDrawer drawer = new LyricDrawer();
+                    LyricDrawer drawer = new LyricDrawer(false, null);
                     drawer.setCanvas(canvas);
                     drawer.setTheme(new ThemeDTO(drawer.getTheme().getFont(),
                             drawer.getTheme().getFontPaint(), new ImageBackground(imageLocation),
