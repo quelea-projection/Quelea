@@ -134,10 +134,11 @@ public final class SongManager {
                             .info(song.getInfo())
                             .capo(song.getCapo())
                             .id(song.getId()).get();
+                    final Theme theme = song.getTheme();
                     for (TextSection section : songDisplayable.getSections()) {
-                        final Theme theme = song.getTheme();
                         section.setTheme(ThemeDTO.getDTO(theme));
                     }
+                    song.setTheme(theme);
                     songs.add(songDisplayable);
                 }
             }
