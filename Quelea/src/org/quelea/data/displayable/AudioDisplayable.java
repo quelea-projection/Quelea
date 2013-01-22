@@ -97,7 +97,7 @@ public class AudioDisplayable implements MultimediaDisplayable {
      */
     @Override
     public String getPrintText() {
-        return "Audio file: " + file.getName(); //@todo add translation
+        return "Audio file: " + file.getName();
     }
 
     /**
