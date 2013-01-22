@@ -217,7 +217,6 @@ public class ThemeDTO {
         shadow.setColor(Utils.parseColour(givenShadow.getShadowColor()));
         shadow.setOffsetX(givenShadow.getOffsetX());
         shadow.setOffsetY(givenShadow.getOffsetY());
-        //@todo shadow settings could be buggy, to be tested
         ThemeDTO ret = new ThemeDTO(font, Utils.parseColour(theme.getFontcolour()), background, shadow);
         ret.themeName = theme.getName();
         return ret;
