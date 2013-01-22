@@ -61,6 +61,7 @@ public class DisplayWindow extends Stage {
                 //canvas.update();
             }
         }, stageView ? Priority.HIGH : Priority.MID);
+        canvas.setType(stageView ? DisplayCanvas.Type.STAGE : DisplayCanvas.Type.FULLSCREEN);
         Scene scene = new Scene(canvas);
         setScene(scene);
     }

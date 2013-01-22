@@ -29,6 +29,7 @@ public class MultimediaDrawer extends DisplayableDrawer {
     public void clear() {
         if (controlPanel.getPlayer() != null) {
             controlPanel.getPlayer().stop();
+            controlPanel.clear();
             multimediaView.setMediaPlayer(null);
         }
         if (canvas.getChildren() != null) {

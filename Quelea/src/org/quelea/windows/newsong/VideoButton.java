@@ -75,7 +75,7 @@ public class VideoButton extends Button {
 
                     vidLocation = vidDir.toURI().relativize(newFile.toURI()).getPath();
                     videoLocationField.setText(vidLocation);
-                    LyricDrawer drawer = new LyricDrawer();
+                    LyricDrawer drawer = new LyricDrawer(false, null);
                     drawer.setCanvas(canvas);
                     drawer.setTheme(new ThemeDTO(drawer.getTheme().getFont(),
                             drawer.getTheme().getFontPaint(), new VideoBackground(vidLocation),
