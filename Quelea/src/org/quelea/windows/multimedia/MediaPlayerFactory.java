@@ -24,9 +24,6 @@ public class MediaPlayerFactory {
 
     public static MediaPlayer getInstance(final String filePath) {
         if (player_ == null || (!filePath_.equals(filePath))) {
-            if (player_ != null) {
-                player_.stop();
-            }
             player_ = new MediaPlayer(new Media(filePath));
             player_.errorProperty().addListener(new ChangeListener<MediaException>() {
                 @Override
