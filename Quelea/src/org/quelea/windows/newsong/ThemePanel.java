@@ -186,11 +186,10 @@ public class ThemePanel extends BorderPane {
     private void setupShadowPanel() {
         shadowPanel = new VBox();
         final HBox confFirstLine = new HBox();
-        confFirstLine.getChildren().add(new Label("shadow type"));
 
         shadowColorPicker = new ColorPicker(Color.BLACK);
         final HBox colourPanel = new HBox();
-        colourPanel.getChildren().add(new Label("shadow color"));
+        colourPanel.getChildren().add(new Label("shadow color")); //@todo add languages
         colourPanel.getChildren().add(shadowColorPicker);
         confFirstLine.getChildren().add(colourPanel);
         shadowColorPicker.valueProperty().addListener(new ChangeListener<Color>() {
