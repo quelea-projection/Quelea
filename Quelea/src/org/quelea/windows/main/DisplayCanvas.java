@@ -17,6 +17,7 @@
  */
 package org.quelea.windows.main;
 
+import java.util.Objects;
 import java.util.logging.Logger;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
@@ -47,22 +48,70 @@ public class DisplayCanvas extends StackPane {
     private Displayable currentDisplayable;
     private final CanvasUpdater updater;
     private Priority dravingPriority = Priority.LOW;
+    private Type type = Type.PREVIEW;
+
+    public enum Type {
+
+        STAGE,
+        PREVIEW,
+        FULLSCREEN
+    };
 
     public enum Priority {
 
         HIGH(0),
         MID(1),
         LOW(2);
+        private int priority;
 
         private Priority(int priority) {
             this.priority = priority;
         }
-        private int priority;
+
         public int getPriority() {
             return priority;
         }
     };
 
+    /**
+     * Create a new canvas where the lyrics should be displayed.
+     * <p/>
+     * @param showBorder true if the border should be shown around any text
+     * (only if the options say so) false otherwise.
+     */
+    public DisplayCanvas(boolean showBorder, boolean stageView, final CanvasUpdater updater, Priority dravingPriority) {
+        this.stageView = stageView;
+        this.dravingPriority = dravingPriority;
+        setMinHeight(0);
+        setMinWidth(0);
+        noticeDrawer = new NoticeDrawer(this);
+        background = getNewImageView();
+        this.updater = updater;
+        heightProperty().addListener(new ChangeListener<Number>() {
+            @Override
+            public void changed(ObservableValue<? extends Number> ov, Number t, Number t1) {
+                updateCanvas(updater);
+            }
+        });
+        widthProperty().addListener(new ChangeListener<Number>() {
+            @Override
+            public void changed(ObservableValue<? extends Number> ov, Number t, Number t1) {
+                updateCanvas(updater);
+            }
+        });
+        getChildren().add(background);
+    }
+
+    public void clear() {
+        setCurrentDisplayable(null);
+    }
+    public void setType(Type type){
+        this.type = type;
+    }
+    
+    public Type getType() {
+        return this.type;
+    }
     /**
      * @return the currentDisplayable
      */
@@ -100,35 +149,13 @@ public class DisplayCanvas extends StackPane {
         });
     }
 
-    /**
-     * Create a new canvas where the lyrics should be displayed.
-     * <p/>
-     * @param showBorder true if the border should be shown around any text
-     * (only if the options say so) false otherwise.
-     */
-    public DisplayCanvas(boolean showBorder, boolean stageView, final CanvasUpdater updater, Priority dravingPriority) {
-        this.stageView = stageView;
-        this.dravingPriority = dravingPriority;
-        setMinHeight(0);
-        setMinWidth(0);
-        noticeDrawer = new NoticeDrawer(this);
-        background = getNewImageView();
-        this.updater = updater;
-        heightProperty().addListener(new ChangeListener<Number>() {
-            @Override
-            public void changed(ObservableValue<? extends Number> ov, Number t, Number t1) {
-                updateCanvas(updater);
-            }
-        });
-        widthProperty().addListener(new ChangeListener<Number>() {
-            @Override
-            public void changed(ObservableValue<? extends Number> ov, Number t, Number t1) {
-                updateCanvas(updater);
-            }
-        });
-        getChildren().add(background);
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 17 * hash + Objects.hashCode(this.type);
+        return hash;
     }
-
+    
     /**
      * @return the background
      */

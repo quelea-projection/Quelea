@@ -25,12 +25,14 @@ import javafx.beans.value.ObservableValue;
 import javafx.collections.ObservableList;
 import javafx.geometry.Orientation;
 import javafx.scene.control.SplitPane;
+import org.quelea.data.ThemeDTO;
 import org.quelea.data.displayable.TextDisplayable;
 import org.quelea.data.displayable.TextSection;
 import org.quelea.services.utils.LoggerUtils;
 import org.quelea.windows.main.AbstractPanel;
 import org.quelea.windows.main.DisplayableDrawer;
 import org.quelea.windows.main.LivePreviewPanel;
+import org.quelea.windows.main.PreviewPanel;
 
 /**
  * The panel where the lyrics for different songs can be selected.
@@ -43,7 +45,8 @@ public class SelectLyricsPanel extends AbstractPanel {
     private final DisplayCanvas previewCanvas;
     private final SplitPane splitPane;
     private static final Logger LOGGER = LoggerUtils.getLogger();
-    private DisplayableDrawer drawer = new LyricDrawer();
+    private LyricDrawer drawer;
+
     /**
      * Create a new lyrics panel.
      *
@@ -51,6 +54,7 @@ public class SelectLyricsPanel extends AbstractPanel {
      */
     public SelectLyricsPanel(LivePreviewPanel containerPanel) {
         this.containerPanel = containerPanel;
+        drawer = new LyricDrawer((containerPanel instanceof PreviewPanel), containerPanel);
         splitPane = new SplitPane();
         splitPane.setOrientation(Orientation.VERTICAL);
         lyricsList = new SelectLyricsList();
@@ -132,6 +136,7 @@ public class SelectLyricsPanel extends AbstractPanel {
     @Override
     public void clear() {
         lyricsList.itemsProperty().get().clear();
+        drawer.clear();
         super.clear();
     }
 
@@ -155,7 +160,7 @@ public class SelectLyricsPanel extends AbstractPanel {
     public void updateCanvas() {
         int selectedIndex = lyricsList.selectionModelProperty().get().getSelectedIndex();
         for (DisplayCanvas canvas : getCanvases()) {
-            LyricDrawer drawer = new LyricDrawer();
+
             drawer.setCanvas(canvas);
             if (selectedIndex == -1 || selectedIndex >= lyricsList.itemsProperty().get().size()) {
 
@@ -167,7 +172,8 @@ public class SelectLyricsPanel extends AbstractPanel {
             if (currentSection.getTempTheme() != null) {
                 drawer.setTheme(currentSection.getTempTheme());
             } else {
-                drawer.setTheme(currentSection.getTheme());
+                ThemeDTO newTheme = currentSection.getTheme();
+                drawer.setTheme(newTheme);
             }
             drawer.setCapitaliseFirst(currentSection.shouldCapitaliseFirst());
 //            if(canvas.isStageView()) {
@@ -176,6 +182,7 @@ public class SelectLyricsPanel extends AbstractPanel {
 //            else {
 //                canvas.setText(currentSection.getText(false, false), currentSection.getSmallText());
 //            }
+            canvas.setCurrentDisplayable(currentDisplayable);
         }
     }
 
