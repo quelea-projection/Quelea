@@ -53,6 +53,9 @@ public abstract class MultimediaControlPanel extends BorderPane {
         }
     }
 
+    public void clear() {
+        player = null;
+    }
     public MediaPlayer getPlayer() {
         //volumeSlider.setValue(player.getVolume());//@todo NullPointer
         return player;

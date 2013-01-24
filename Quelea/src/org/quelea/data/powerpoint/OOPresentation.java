@@ -33,7 +33,6 @@ import com.sun.star.document.XEventListener;
 import com.sun.star.frame.XComponentLoader;
 import com.sun.star.frame.XController;
 import com.sun.star.frame.XModel;
-import com.sun.star.io.IOException;
 import com.sun.star.lang.DisposedException;
 import com.sun.star.lang.EventObject;
 import com.sun.star.lang.IllegalArgumentException;
@@ -50,6 +49,7 @@ import com.sun.star.sdbc.XCloseable;
 import com.sun.star.uno.UnoRuntime;
 import com.sun.star.uno.XComponentContext;
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
@@ -377,7 +377,7 @@ public class OOPresentation implements XEventListener {
      * Helper methods for doing openoffice specific stuff.
      */
     private static class Helper {
-
+        
         private static XComponent bridgeComponent;
         private static XBridge bridge;
         private static XConnection connection;
@@ -421,13 +421,17 @@ public class OOPresentation implements XEventListener {
                     connection.close();
                     bridgeComponent.dispose();
                     bridgeComponent = null;
-                    
-                    
+                    try {
+                        Process p = Runtime.getRuntime().exec("taskkill /F /IM soffice.bin"); 
+                        //@todo the only way to kill this process. to be added other system support
+                    } catch (IOException e) {
+                    }
+
                 }
             } catch (DisposedException ex) {
                 throw new RuntimeException(ex.getMessage());
-            } catch (IOException ex) {
-                throw new RuntimeException(ex.getMessage());    
+            } catch (com.sun.star.io.IOException ex) {
+                throw new RuntimeException(ex.getMessage());
             }
         }
 

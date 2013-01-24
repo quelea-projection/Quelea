@@ -457,6 +457,13 @@ public class SongDisplayable implements TextDisplayable, Comparable<SongDisplaya
     }
 
     /**
+     * Retrieve assigned theme
+     * @return assigned theme
+     */
+    public ThemeDTO getTheme() {
+        return this.theme;
+    }
+    /**
      * Get the copyright information of this song.
      *
      * @return the copyright information of this song.
