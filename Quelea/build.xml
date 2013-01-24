@@ -1,0 +1,196 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="Quelea" default="default" basedir="." xmlns:fx="javafx:com.sun.javafx.tools.ant">
+    <description>Builds, tests, and runs Quelea.</description>
+    <taskdef resource="com/sun/javafx/tools/ant/antlib.xml"      
+             uri="javafx:com.sun.javafx.tools.ant"
+             classpath=".:path/to/sdk/lib/ant-javafx.jar"/>   
+    <import file="nbproject/build-impl.xml"/>
+    <import file="nbproject/jfx-impl.xml"/>
+    
+    <taskdef name="izpack" classpath="${basedir}/izpack/standalone-compiler.jar"
+             classname="com.izforge.izpack.ant.IzPackTask"/>
+    <taskdef name="launch4j" classpath="launch4j/launch4j.jar" classname="net.sf.launch4j.ant.Launch4jTask"/>
+    <taskdef name="jarbundler" classpath="osx/jarbundler-2.2.0.jar" classname="net.sourceforge.jarbundler.JarBundler"/>
+    <taskdef name="desktopentry" classpath="antdeb/ant-deb-0.0.1.jar"
+             classname="com.googlecode.ant_deb_task.DesktopEntry"/>
+    <taskdef name="deb" classpath="lib/jdeb-0.8.jar" classname="org.vafer.jdeb.ant.DebAntTask"/>
+    <property file="quelea.properties"/>
+    
+    <property name="dist.jar.dir" value="${basedir}/dist"/>
+    
+    <property name="CPInstallerName" value="quelea-${quelea.version}-crossplatform-install.jar"/>
+    <property name="WindowsInstallerName" value="quelea-${quelea.version}-windows-install.exe"/>
+    <property name="DebInstallerName" value="quelea-${quelea.version}-deb-install.deb"/>
+    <property name="PortableName" value="quelea-${quelea.version}-portable.zip"/>
+
+    <property name="CPInstaller" value="${dist.jar.dir}/standalone/${CPInstallerName}"/>
+    <property name="WindowsInstaller" value="${dist.jar.dir}/standalone/${WindowsInstallerName}"/>
+    <property name="DebInstaller" value="${dist.jar.dir}/standalone/${DebInstallerName}"/>
+    <property name="Portable" value="${dist.jar.dir}/standalone/${PortableName}"/>
+    
+    <target name="-post-init">
+        <copy todir="${dist.jar.dir}/languages">
+            <fileset dir="${basedir}/languages"/>
+        </copy>
+    </target>
+    
+    <target name="build-dist" depends="jar">
+        <property name="FXClasspath" value="${javafx.sdk}/jre/lib/jfxrt.jar"/>
+        
+        <!-- Check the images conform to spec -->
+        <java className="org.quelea.utils.ImageChecker" classpath="${FXClasspath};build/classes" failonerror="false"/>
+        
+        <echo message="Built jar."/>
+        <echo message="Copying necessary files to ${dist.jar.dir}"/>
+        <copy todir="${dist.jar.dir}/lib">
+            <fileset dir="${basedir}/lib"/>
+        </copy>
+        <copy todir="${dist.jar.dir}/themes">
+            <fileset dir="${basedir}/themes"/>
+        </copy>
+        <copy todir="${dist.jar.dir}/icons">
+            <fileset dir="${basedir}/icons"/>
+        </copy>
+        <copy todir="${dist.jar.dir}/bibles">
+            <fileset dir="${basedir}/bibles"/>
+        </copy>
+        <copy todir="${dist.jar.dir}/dictionaries">
+            <fileset dir="${basedir}/dictionaries"/>
+        </copy>
+        <copy todir="${dist.jar.dir}/languages">
+            <fileset dir="${basedir}/languages"/>
+        </copy>
+<!--        <copy todir="${dist.jar.dir}/database">
+            <fileset dir="${basedir}/database"/>
+        </copy>-->
+        <copy todir="${dist.jar.dir}/img">
+            <fileset dir="${basedir}/img"/>
+        </copy>
+        <copy todir="${dist.jar.dir}/vid">
+            <fileset dir="${basedir}/vid"/>
+        </copy>
+        <copy todir="${dist.jar.dir}/src">
+            <fileset dir="${basedir}/src"/>
+        </copy>
+        <delete file="${dist.jar.dir}/README.TXT" failonerror="false"/>
+        <copy file="${basedir}/README.TXT" todir="${dist.jar.dir}" failonerror="false"/>
+        <copy file="${basedir}/quelea.properties" todir="${dist.jar.dir}"/>
+        <copy file="${basedir}/Quelea.iss" todir="${dist.jar.dir}"/>
+        <copy file="${basedir}/build-install.bat" todir="${dist.jar.dir}"/>
+        <copy file="${basedir}/licenses/gplv3.txt" tofile="${dist.jar.dir}/license.txt"/>
+        <copy file="${basedir}/launch.sh" tofile="${dist.jar.dir}/launch.sh"/>
+        <mkdir dir="${dist.jar.dir}/queleadoc" />
+        <copy file="${basedir}/licenses/copyright" tofile="${dist.jar.dir}/queleadoc/copyright"/>
+        <!-- Compress and copy changelog to correct location -->
+        <java className="org.quelea.utils.GZMaxFileCompressor" classpath="build/classes;${FXClasspath}" failonerror="false">
+            <arg value="${basedir}/changelogs/changelog-${quelea.version}.txt"/>
+            <arg value="${dist.jar.dir}/queleadoc/changelog.gz"/>
+        </java>
+        
+<!--        <echo message="Building Mac package"/>
+        <jarbundler dir="${dist.jar.dir}/"
+                    name="Quelea-${quelea.version}"
+                    jvmversion="1.6+"
+                    jvmarchs="i386 x86_64 ppc"
+                    stubfile="osx/JavaApplicationStub"
+                    mainclass="org.quelea.Main">
+
+            <jarfileset dir="${dist.jar.dir}">
+                <exclude name="lib/native/**"/> 
+                <exclude name="lib/native64/**"/> 
+                <exclude name="lib/junit/**"/> 
+                <exclude name="lib/junit_4/**"/> 
+                <exclude name="lib/**javadoc.jar"/> 
+                <exclude name="copyright"/> 
+                <exclude name="license.txt"/> 
+                <exclude name="launch.sh"/> 
+            </jarfileset>
+
+        </jarbundler>-->
+        
+        <echo message="Building deb package for Ubuntu / Debian installs"/>
+        <deb destfile="${dist.jar.dir}/Quelea-temp.deb" control="control" verbose="true">
+            <tarfileset dir="${dist.jar.dir}"
+                        prefix="/usr/share/quelea">
+                <exclude name="lib/native/**"/> 
+                <exclude name="lib/native64/**"/> 
+                <exclude name="lib/junit/**"/> 
+                <exclude name="lib/junit_4/**"/> 
+                <exclude name="lib/**javadoc.jar"/> 
+                <exclude name="standalone/**"/> 
+                <exclude name="copyright"/> 
+                <exclude name="license.txt"/> 
+                <exclude name="launch.sh"/> 
+            </tarfileset>
+            <tarfileset file="${dist.jar.dir}/launch.sh"
+                        filemode="755"
+                        prefix="/usr/share/quelea">
+            </tarfileset>
+            <tarfileset dir="${dist.jar.dir}/queleadoc"
+                        username="root"
+                        group="root"
+                        prefix="/usr/share/doc/quelea">
+            </tarfileset>
+            <tarfileset file="quelea.desktop"
+                        prefix="/usr/share/applications"/>
+        </deb>
+        <delete dir="${dist.jar.dir}/queleadoc"/>
+        <delete file="${dist.jar.dir}/launch.sh"/>
+        <mkdir dir="${dist.jar.dir}/standalone"/>
+        <move file="${dist.jar.dir}/Quelea-temp.deb" tofile="${DebInstaller}"/>
+        
+        <launch4j configFile="launch4j/config.xml" />  
+        <echo message="Building cross platform installer"/>
+        <izpack input="${basedir}/izpack/config.xml" output="${CPInstaller}" basedir="${dist.jar.dir}"/>
+        
+        <echo message="Generating windows installer using inno setup."/>
+        <echo message="For this to work inno setup needs to be installed and the appropriate paths set in build-install.bat. This will only work on Windows."/>
+        <exec dir="${dist.jar.dir}" executable="cmd" failifexecutionfails="false" failonerror="false">
+            <arg value="/c build-install.bat"/>
+        </exec>
+        <move file="${dist.jar.dir}/Output/Quelea.exe" tofile="${WindowsInstaller}" failonerror="false"/>
+        <delete dir="${dist.jar.dir}/Output" verbose="true" failonerror="false"/>
+        
+<!--        <zip destfile="${Portable}" basedir="${dist.jar.dir}" excludes="standalone/"/>-->
+    </target>
+    
+<!--    <target name="upload" depends="jfx-jar">
+        <taskdef classname="net.bluecow.googlecode.ant.GoogleCodeUploadTask" classpath="lib/ant-googlecode-0.0.3.jar" name="gcupload"/>
+        <input
+            message="Username to use for upload:"
+            addproperty="user"
+        />
+        <input
+            message="Googlecode (https://code.google.com/hosting/settings) Password for ${user} (CAREFUL, IT ECHOES!!):"
+            addproperty="pass"
+        />
+        
+        <gcupload 
+            username="${user}" 
+            password="${pass}" 
+            projectname="quelea-projection" 
+            filename="${WindowsInstaller}" 
+            targetfilename="${WindowsInstallerName}"
+            summary="Windows installer of Quelea, version ${quelea.version}"
+            labels="Featured, Type-Installer, OpSys-Windows"
+        />
+        <gcupload 
+            username="${user}" 
+            password="${pass}" 
+            projectname="quelea-projection" 
+            filename="${CPInstaller}" 
+            targetfilename="${CPInstallerName}"
+            summary="Cross-platform installer of Quelea, version ${quelea.version}"
+            labels="Featured, Type-Installer, OpSys-Linux"
+        />
+        <gcupload 
+            username="${user}" 
+            password="${pass}" 
+            projectname="quelea-projection" 
+            filename="${DebInstaller}" 
+            targetfilename="${DebInstallerName}"
+            summary="Debian installer of Quelea, version ${quelea.version}"
+            labels="Featured, Type-Package, OpSys-Linux"
+        />
+    </target>-->
+</project>
