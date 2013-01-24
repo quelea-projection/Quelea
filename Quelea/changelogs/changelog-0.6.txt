@@ -1,0 +1,5 @@
+quelea (0.6) stable; urgency=normal
+ 
+  * Rewritten interface in JavaFX
+
+ -- Michael Berry <michael@quelea.org>  Wednesday, 10 Oct 2012 00:00:00 +0000
