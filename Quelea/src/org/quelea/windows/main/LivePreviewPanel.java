@@ -57,7 +57,7 @@ public abstract class LivePreviewPanel extends BorderPane {
 
     private static final Logger LOGGER = LoggerUtils.getLogger();
     private final Set<DisplayCanvas> canvases = new HashSet<>();
-    private final Set<DisplayWindow> windows = new HashSet<>();
+    private final Set<DisplayStage> windows = new HashSet<>();
     private Displayable displayable;
     private CardPane<AbstractPanel> cardPanel = new CardPane<>();
     private static final String LYRICS_LABEL = "LYRICS";
@@ -285,7 +285,7 @@ public abstract class LivePreviewPanel extends BorderPane {
      *
      * @param window the window to register.
      */
-    public final void registerDisplayWindow(final DisplayWindow window) {
+    public final void registerDisplayWindow(final DisplayStage window) {
         if (window == null) {
             return;
         }
@@ -306,7 +306,7 @@ public abstract class LivePreviewPanel extends BorderPane {
      * <p/>
      * @return the windows.
      */
-    public Set<DisplayWindow> getWindows() {
+    public Set<DisplayStage> getWindows() {
         return windows;
     }
 }

@@ -92,12 +92,10 @@ public class LivePanel extends LivePreviewPanel {
             public void handle(javafx.event.ActionEvent t) {
                 int projectorScreen = QueleaProperties.get().getProjectorScreen();
                 int stageScreen = QueleaProperties.get().getStageScreen();
-                //GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
-                //final GraphicsDevice[] gds = ge.getScreenDevices();
                 final ObservableList<Screen> monitors = Screen.getScreens();
                 
-                DisplayWindow appWindow = QueleaApp.get().getAppWindow();
-                DisplayWindow stageWindow = QueleaApp.get().getStageWindow();
+                DisplayStage appWindow = QueleaApp.get().getAppWindow();
+                DisplayStage stageWindow = QueleaApp.get().getStageWindow();
 
                 final boolean lyricsHidden;
                 if(!QueleaProperties.get().isProjectorModeCoords() && (projectorScreen >= monitors.size() || projectorScreen < 0)) {
