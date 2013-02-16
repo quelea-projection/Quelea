@@ -32,7 +32,7 @@ import org.quelea.windows.main.DisplayCanvas.Priority;
  *
  * @author Michael
  */
-public class DisplayWindow extends Stage {
+public class DisplayStage extends Stage {
 
     private static final Logger LOGGER = LoggerUtils.getLogger();
     private static final Cursor BLANK_CURSOR;
@@ -50,7 +50,7 @@ public class DisplayWindow extends Stage {
      *
      * @param area the area in which the window should be drawn.
      */
-    public DisplayWindow(Bounds area, boolean stageView) {
+    public DisplayStage(Bounds area, boolean stageView) {
         initStyle(StageStyle.UNDECORATED);
         getIcons().add(new Image("file:icons/logo.png"));
         setTitle("Projection window");

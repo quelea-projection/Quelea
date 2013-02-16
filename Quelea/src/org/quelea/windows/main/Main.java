@@ -49,8 +49,8 @@ public final class Main extends Application {
 
     private static final Logger LOGGER = LoggerUtils.getLogger();
     private MainWindow mainWindow;
-    private DisplayWindow fullScreenWindow;
-    private DisplayWindow stageWindow;
+    private DisplayStage fullScreenWindow;
+    private DisplayStage stageWindow;
 
     /**
      * Starts the program off, this is the first thing that is executed by
@@ -100,32 +100,32 @@ public final class Main extends Application {
             public void run() {
                 if(lyricsHidden) {
                     LOGGER.log(Level.INFO, "Hiding projector display on monitor 0 (base 0!)");
-                    fullScreenWindow = new DisplayWindow(Utils.getBoundsFromRect2D(monitors.get(0).getVisualBounds()), false);
+                    fullScreenWindow = new DisplayStage(Utils.getBoundsFromRect2D(monitors.get(0).getVisualBounds()), false);
                     fullScreenWindow.hide();
                 }
                 else if(QueleaProperties.get().isProjectorModeCoords()) {
                     LOGGER.log(Level.INFO, "Starting projector display: ", QueleaProperties.get().getProjectorCoords());
-                    fullScreenWindow = new DisplayWindow(QueleaProperties.get().getProjectorCoords(), false);
+                    fullScreenWindow = new DisplayStage(QueleaProperties.get().getProjectorCoords(), false);
                 }
                 else {
                     LOGGER.log(Level.INFO, "Starting projector display on monitor {0} (base 0!)", projectorScreen);
-                    fullScreenWindow = new DisplayWindow(Utils.getBoundsFromRect2D(monitors.get(projectorScreen).getVisualBounds()), false);
+                    fullScreenWindow = new DisplayStage(Utils.getBoundsFromRect2D(monitors.get(projectorScreen).getVisualBounds()), false);
                 }
                 QueleaApp.get().setAppWindow(fullScreenWindow);
                 fullScreenWindow.toFront();
 
                 if(stageHidden) {
                     LOGGER.log(Level.INFO, "Hiding stage display on monitor 0 (base 0!)");
-                    stageWindow = new DisplayWindow(Utils.getBoundsFromRect2D(monitors.get(0).getVisualBounds()), true);
+                    stageWindow = new DisplayStage(Utils.getBoundsFromRect2D(monitors.get(0).getVisualBounds()), true);
                     stageWindow.hide();
                 }
                 else if(QueleaProperties.get().isStageModeCoords()) {
                     LOGGER.log(Level.INFO, "Starting stage display: ", QueleaProperties.get().getStageCoords());
-                    stageWindow = new DisplayWindow(QueleaProperties.get().getStageCoords(), true);
+                    stageWindow = new DisplayStage(QueleaProperties.get().getStageCoords(), true);
                 }
                 else {
                     LOGGER.log(Level.INFO, "Starting stage display on monitor {0} (base 0!)", stageScreen);
-                    stageWindow = new DisplayWindow(Utils.getBoundsFromRect2D(monitors.get(stageScreen).getVisualBounds()), true);
+                    stageWindow = new DisplayStage(Utils.getBoundsFromRect2D(monitors.get(stageScreen).getVisualBounds()), true);
                 }
                 QueleaApp.get().setStageWindow(stageWindow);
                 stageWindow.toFront();
