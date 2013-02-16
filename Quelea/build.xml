@@ -66,6 +66,9 @@
         <copy todir="${dist.jar.dir}/img">
             <fileset dir="${basedir}/img"/>
         </copy>
+        <copy todir="${dist.jar.dir}/licenses">
+            <fileset dir="${basedir}/licenses"/>
+        </copy>
         <copy todir="${dist.jar.dir}/vid">
             <fileset dir="${basedir}/vid"/>
         </copy>
@@ -112,8 +115,6 @@
         <deb destfile="${dist.jar.dir}/Quelea-temp.deb" control="control" verbose="true">
             <tarfileset dir="${dist.jar.dir}"
                         prefix="/usr/share/quelea">
-                <exclude name="lib/native/**"/> 
-                <exclude name="lib/native64/**"/> 
                 <exclude name="lib/junit/**"/> 
                 <exclude name="lib/junit_4/**"/> 
                 <exclude name="lib/**javadoc.jar"/> 
