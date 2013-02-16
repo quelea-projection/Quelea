@@ -23,11 +23,9 @@ import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Orientation;
-import javafx.geometry.Side;
 import javafx.scene.control.Button;
-import javafx.scene.control.ContextMenu;
 import javafx.scene.control.Label;
-import javafx.scene.control.MenuItem;
+import javafx.scene.control.ToggleButton;
 import javafx.scene.control.ToolBar;
 import javafx.scene.control.Tooltip;
 import javafx.scene.image.Image;
@@ -36,6 +34,7 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.Region;
+import javafx.stage.Popup;
 import org.quelea.data.displayable.Displayable;
 import org.quelea.languages.LabelGrabber;
 import org.quelea.windows.main.QueleaApp;
@@ -54,8 +53,9 @@ public class SchedulePanel extends BorderPane {
     private final Button removeButton;
     private final Button upButton;
     private final Button downButton;
-    private final Button themeButton;
+    private final ToggleButton themeButton;
     private final ScheduleThemeNode scheduleThemeNode;
+    private Popup themePopup;
 
     /**
      * Create and initialise the schedule panel.
@@ -70,52 +70,53 @@ public class SchedulePanel extends BorderPane {
         });
 
         scheduleThemeNode = new ScheduleThemeNode(scheduleList);
-        themeButton = new Button("",new ImageView(new Image("file:icons/settings.png", 16, 16, false, true)));
+        themeButton = new ToggleButton("", new ImageView(new Image("file:icons/settings.png", 16, 16, false, true)));
         themeButton.setOnAction(new EventHandler<ActionEvent>() {
-
             @Override
             public void handle(ActionEvent t) {
-                ContextMenu themeMenu = new ContextMenu();
-                MenuItem themeItem = new MenuItem("", scheduleThemeNode);
-                themeItem.setDisable(true);
-                themeItem.setStyle("-fx-background-color: #000000;");
-                themeMenu.getItems().add(themeItem);
-                themeMenu.show(themeButton, Side.BOTTOM, 0, 0);
+                if(themePopup == null) {
+                    themePopup = new Popup();
+                    scheduleThemeNode.setStyle("-fx-background-color:WHITE;-fx-border-color: rgb(49, 89, 23);-fx-border-radius: 5;");
+                    themePopup.getContent().add(scheduleThemeNode);
+                }
+                if(themePopup.isShowing()) {
+                    themePopup.hide();
+                }
+                else {
+                    themePopup.show(themeButton, themeButton.localToScene(0, 0).getX() + QueleaApp.get().getMainWindow().getX(), themeButton.localToScene(0, 0).getY() + 45 + QueleaApp.get().getMainWindow().getY());
+                }
             }
         });
         themeButton.setTooltip(new Tooltip(LabelGrabber.INSTANCE.getLabel("adjust.theme.tooltip")));
 
         ToolBar toolbar = new ToolBar();
         toolbar.setOrientation(Orientation.VERTICAL);
-        removeButton = new Button("",new ImageView(new Image("file:icons/cross.png")));
+        removeButton = new Button("", new ImageView(new Image("file:icons/cross.png")));
         removeButton.setTooltip(new Tooltip(LabelGrabber.INSTANCE.getLabel("remove.song.schedule.tooltip")));
         removeButton.setDisable(true);
         removeButton.setOnAction(new RemoveScheduleItemActionHandler());
 
-        upButton = new Button("",new ImageView(new Image("file:icons/up.png")));
+        upButton = new Button("", new ImageView(new Image("file:icons/up.png")));
         upButton.setTooltip(new Tooltip(LabelGrabber.INSTANCE.getLabel("move.up.schedule.tooltip")));
         upButton.setDisable(true);
         upButton.setOnAction(new EventHandler<javafx.event.ActionEvent>() {
-
             @Override
             public void handle(javafx.event.ActionEvent t) {
                 scheduleList.moveCurrentItem(ScheduleList.Direction.UP);
             }
         });
 
-        downButton = new Button("",new ImageView(new Image("file:icons/down.png")));
+        downButton = new Button("", new ImageView(new Image("file:icons/down.png")));
         downButton.setTooltip(new Tooltip(LabelGrabber.INSTANCE.getLabel("move.down.schedule.tooltip")));
         downButton.setDisable(true);
         downButton.setOnAction(new EventHandler<javafx.event.ActionEvent>() {
-
             @Override
             public void handle(javafx.event.ActionEvent t) {
                 scheduleList.moveCurrentItem(ScheduleList.Direction.DOWN);
             }
         });
-        
-        scheduleList.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<Displayable>() {
 
+        scheduleList.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<Displayable>() {
             @Override
             public void changed(ObservableValue<? extends Displayable> ov, Displayable t, Displayable t1) {
                 if(scheduleList.selectionModelProperty().get().isEmpty()) {
@@ -158,5 +159,4 @@ public class SchedulePanel extends BorderPane {
     public ScheduleList getScheduleList() {
         return scheduleList;
     }
-
 }
