@@ -12,7 +12,7 @@ import org.quelea.services.utils.LoggerUtils;
 
 /**
  * Implements ContainedPanel with additional canvas registering
- *
+ * <p/>
  * @author tomaszpio@gmail.com
  */
 public abstract class AbstractPanel extends BorderPane implements ContainedPanel {
@@ -23,14 +23,11 @@ public abstract class AbstractPanel extends BorderPane implements ContainedPanel
         public int compare(DisplayCanvas o1, DisplayCanvas o2) {
             return o2.getDravingPriority().getPriority() - o1.getDravingPriority().getPriority();
         }
-        
     }
     SortedSet<DisplayCanvas> canvases = new TreeSet<>(new PriorityComparator());
     protected LivePreviewPanel containerPanel;
     protected Displayable currentDisplayable = null;
     private static final Logger LOGGER = LoggerUtils.getLogger();
-    public AbstractPanel() {
-    }
 
     /**
      *
@@ -48,18 +45,16 @@ public abstract class AbstractPanel extends BorderPane implements ContainedPanel
 
     /**
      * Show a given video displayable on the panel.
-     *
+     * <p/>
      * @param displayable the video displayable.
      */
     public void showDisplayable(MultimediaDisplayable displayable) {
-
         currentDisplayable = displayable;
         updateCanvas();
     }
 
     public void updateCanvas() {
-
-        for (DisplayCanvas canvas : getCanvases()) {
+        for(DisplayCanvas canvas : getCanvases()) {
             canvas.setCurrentDisplayable(currentDisplayable);
             getDrawer(canvas).draw(currentDisplayable);
         }
@@ -70,7 +65,7 @@ public abstract class AbstractPanel extends BorderPane implements ContainedPanel
 
     @Override
     public void clear() {
-        for (DisplayCanvas canvas : getCanvases()) {
+        for(DisplayCanvas canvas : getCanvases()) {
             canvas.clear();
             canvas.getChildren().clear();;
         }
@@ -78,6 +73,6 @@ public abstract class AbstractPanel extends BorderPane implements ContainedPanel
 
     @Override
     public abstract int getCurrentIndex();
-    
+
     public abstract DisplayableDrawer getDrawer(DisplayCanvas canvas);
 }

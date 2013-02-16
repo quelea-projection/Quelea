@@ -31,8 +31,8 @@ public class QueleaApp {
 
     private static final QueleaApp INSTANCE = new QueleaApp();
     private MainWindow mainWindow;
-    private DisplayWindow appWindow;
-    private DisplayWindow stageWindow;
+    private DisplayStage appWindow;
+    private DisplayStage stageWindow;
     private ImageFileWatcher imageWatcher;
 
     /**
@@ -61,7 +61,7 @@ public class QueleaApp {
      * Get the app window.
      * @return the app window.
      */
-    public DisplayWindow getAppWindow() {
+    public DisplayStage getAppWindow() {
         return appWindow;
     }
 
@@ -69,7 +69,7 @@ public class QueleaApp {
      * Get the stage window.
      * @return the stage window.
      */
-    public DisplayWindow getStageWindow() {
+    public DisplayStage getStageWindow() {
         return stageWindow;
     }
 
@@ -94,7 +94,7 @@ public class QueleaApp {
      * Set the app window.
      * @param appWindow the app window.
      */
-    public void setAppWindow(DisplayWindow appWindow) {
+    public void setAppWindow(DisplayStage appWindow) {
         this.appWindow = appWindow;
     }
 
@@ -102,7 +102,7 @@ public class QueleaApp {
      * Set the stage window.
      * @param appWindow the stage window.
      */
-    public void setStageWindow(DisplayWindow lyricWindow) {
+    public void setStageWindow(DisplayStage lyricWindow) {
         this.stageWindow = lyricWindow;
     }
 

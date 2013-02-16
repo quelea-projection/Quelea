@@ -25,7 +25,7 @@ import org.quelea.services.utils.PropertyPanel;
 import org.quelea.services.utils.QueleaProperties;
 import org.quelea.windows.main.GraphicsDeviceListener;
 import org.quelea.windows.main.GraphicsDeviceWatcher;
-import org.quelea.windows.main.DisplayWindow;
+import org.quelea.windows.main.DisplayStage;
 import org.quelea.windows.main.QueleaApp;
 
 /**
@@ -110,8 +110,8 @@ public class OptionsDisplaySetupPanel extends GridPane implements PropertyPanel 
      */
     private void updatePos() {
 //        MainWindow mainWindow = Application.get().getMainWindow();
-        DisplayWindow appWindow = QueleaApp.get().getAppWindow();
-        DisplayWindow stageWindow = QueleaApp.get().getStageWindow();
+        DisplayStage appWindow = QueleaApp.get().getAppWindow();
+        DisplayStage stageWindow = QueleaApp.get().getStageWindow();
         if(projectorPanel.getOutputBounds() == null) {
             if(appWindow != null) {
                 appWindow.hide();
@@ -119,9 +119,9 @@ public class OptionsDisplaySetupPanel extends GridPane implements PropertyPanel 
         }
         else {
             if(appWindow == null) {
-                appWindow = new DisplayWindow(projectorPanel.getOutputBounds(), false);
+                appWindow = new DisplayStage(projectorPanel.getOutputBounds(), false);
             }
-            final DisplayWindow fiLyricWindow = appWindow; //Fudge for AIC
+            final DisplayStage fiLyricWindow = appWindow; //Fudge for AIC
             Platform.runLater(new Runnable() {
 
                 @Override
@@ -138,9 +138,9 @@ public class OptionsDisplaySetupPanel extends GridPane implements PropertyPanel 
         }
         else {
             if(stageWindow == null) {
-                stageWindow = new DisplayWindow(projectorPanel.getOutputBounds(), true);
+                stageWindow = new DisplayStage(projectorPanel.getOutputBounds(), true);
             }
-            final DisplayWindow fiStageWindow = stageWindow; //Fudge for AIC
+            final DisplayStage fiStageWindow = stageWindow; //Fudge for AIC
             Platform.runLater(new Runnable() {
 
                 @Override
