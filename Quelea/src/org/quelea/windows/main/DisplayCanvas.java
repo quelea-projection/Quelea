@@ -105,6 +105,7 @@ public class DisplayCanvas extends StackPane {
     public void clear() {
         setCurrentDisplayable(null);
     }
+    
     public void setType(Type type){
         this.type = type;
     }
