@@ -57,6 +57,12 @@
         <copy todir="${dist.jar.dir}/dictionaries">
             <fileset dir="${basedir}/dictionaries"/>
         </copy>
+        <copy todir="${dist.jar.dir}/vid">
+            <fileset dir="${basedir}/vid"/>
+        </copy>
+        <copy todir="${dist.jar.dir}/licenses">
+            <fileset dir="${basedir}/licenses"/>
+        </copy>
         <copy todir="${dist.jar.dir}/languages">
             <fileset dir="${basedir}/languages"/>
         </copy>
@@ -149,10 +155,10 @@
         <exec dir="${dist.jar.dir}" executable="cmd" failifexecutionfails="false" failonerror="false">
             <arg value="/c build-install.bat"/>
         </exec>
-        <move file="${dist.jar.dir}/Output/Quelea.exe" tofile="${WindowsInstaller}" failonerror="false"/>
-        <delete dir="${dist.jar.dir}/Output" verbose="true" failonerror="false"/>
+        <move file="${dist.jar.dir}/Quelea.exe" tofile="${WindowsInstaller}" failonerror="false"/>
+        <!-- <delete dir="${dist.jar.dir}/Output" verbose="true" failonerror="false"/> -->
         
-<!--        <zip destfile="${Portable}" basedir="${dist.jar.dir}" excludes="standalone/"/>-->
+        <zip destfile="${Portable}" basedir="${dist.jar.dir}" excludes="standalone/"/>
     </target>
     
 <!--    <target name="upload" depends="jfx-jar">

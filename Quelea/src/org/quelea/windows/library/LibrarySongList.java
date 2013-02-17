@@ -219,7 +219,7 @@ public class LibrarySongList extends ListView<SongDisplayable> implements Databa
      */
     @Override
     public final void databaseChanged() {
-        Platform.runLater(new Runnable() {
+            Platform.runLater(new Runnable() {
             @Override
             public void run() {
                 itemsProperty().set(FXCollections.observableArrayList(SongManager.get().getSongs()));

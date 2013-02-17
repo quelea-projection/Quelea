@@ -1068,6 +1068,9 @@ public class SongDisplayable implements TextDisplayable, Comparable<SongDisplaya
         return PAGE_EXISTS;
     }
 
+    public void setTheme(ThemeDTO theme) {
+        this.theme = theme;
+    }
     @Override
     public void dispose() {
         //Nothing needed here.

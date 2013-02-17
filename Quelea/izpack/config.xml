@@ -90,6 +90,14 @@
             <file src="icons" targetdir="$INSTALL_PATH"/>
             <file src="img" targetdir="$INSTALL_PATH" override="false"/>
         </pack>
+        <pack name="videos" required="no" preselected="yes">
+            <description>Background videos</description>
+            <file src="vid" targetdir="$INSTALL_PATH" override="false"/>
+        </pack>
+        <pack name="licenses" required="no" preselected="yes">
+            <description>licenses</description>
+            <file src="licenses" targetdir="$INSTALL_PATH" override="false"/>
+        </pack>
     </packs>
 
 </installation>
