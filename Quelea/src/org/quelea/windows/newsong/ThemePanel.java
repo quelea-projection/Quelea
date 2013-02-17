@@ -17,16 +17,24 @@
  */
 package org.quelea.windows.newsong;
 
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
+import javafx.geometry.Side;
+import javafx.scene.control.Button;
 import javafx.scene.control.ColorPicker;
 import javafx.scene.control.ComboBox;
+import javafx.scene.control.ContextMenu;
 import javafx.scene.control.Label;
+import javafx.scene.control.MenuItem;
 import javafx.scene.control.TextField;
 import javafx.scene.control.ToggleButton;
+import javafx.scene.control.Tooltip;
 import javafx.scene.effect.DropShadow;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -42,10 +50,12 @@ import org.quelea.data.ImageBackground;
 import org.quelea.data.ThemeDTO;
 import org.quelea.data.VideoBackground;
 import org.quelea.languages.LabelGrabber;
+import org.quelea.services.utils.QueleaProperties;
 import org.quelea.services.utils.Utils;
 import org.quelea.windows.main.DisplayCanvas;
 import org.quelea.windows.lyrics.LyricDrawer;
 import org.quelea.windows.main.DisplayCanvas.Priority;
+import org.quelea.windows.main.schedule.ScheduleThemeNode;
 import org.quelea.windows.main.widgets.CardPane;
 
 /**
@@ -65,16 +75,20 @@ public class ThemePanel extends BorderPane {
     private ComboBox<String> backgroundTypeSelect;
     //Text shadow options
     private VBox shadowPanel;
+    private HBox themeActionsPanel;
     private ColorPicker shadowColorPicker;
     private TextField shadowOffsetX;
     private TextField shadowOffsetY;
-    private TextField shadowRadius;
     private TextField shadowWidth;
     private TextField backgroundImgLocation;
     private TextField backgroundVidLocation;
     private ToggleButton boldButton;
     private ToggleButton italicButton;
+    private TextField themeNameField;
+    private Button saveThemeButton;
+    private Button selectThemeButton;
     private final DisplayCanvas canvas;
+    private ThemeDTO selectedTheme = null;
 
     /**
      * Create and initialise the theme panel.
@@ -83,7 +97,7 @@ public class ThemePanel extends BorderPane {
         canvas = new DisplayCanvas(false, false, new DisplayCanvas.CanvasUpdater() {
             @Override
             public void updateOnSizeChange() {
-                updateTheme(true);
+                updateTheme(true, null);
             }
         }, Priority.LOW);
         canvas.setMinWidth(getWidth());
@@ -99,8 +113,10 @@ public class ThemePanel extends BorderPane {
         toolbarPanel.getChildren().add(backgroundPanel);
         setupShadowPanel();
         toolbarPanel.getChildren().add(shadowPanel);
+        setupThemeActionsToolbars();
+        toolbarPanel.getChildren().add(themeActionsPanel);
         setTop(toolbarPanel);
-        updateTheme(false);
+        updateTheme(false, null);
 
     }
 
@@ -118,7 +134,7 @@ public class ThemePanel extends BorderPane {
         backgroundTypeSelect.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
             @Override
             public void changed(ObservableValue<? extends String> ov, String t, String t1) {
-                updateTheme(false);
+                updateTheme(false, null);
             }
         });
         backgroundPanel.getChildren().add(new Label(LabelGrabber.INSTANCE.getLabel("background.theme.label") + ":"));
@@ -132,7 +148,7 @@ public class ThemePanel extends BorderPane {
         backgroundColorPicker.valueProperty().addListener(new ChangeListener<Color>() {
             @Override
             public void changed(ObservableValue<? extends Color> ov, Color t, Color t1) {
-                updateTheme(true);
+                updateTheme(true, null);
             }
         });
 
@@ -141,7 +157,7 @@ public class ThemePanel extends BorderPane {
         backgroundImgLocation.textProperty().addListener(new ChangeListener<String>() {
             @Override
             public void changed(ObservableValue<? extends String> ov, String t, String t1) {
-                updateTheme(true);
+                updateTheme(true, null);
             }
         });
         backgroundImgLocation.setEditable(false);
@@ -153,7 +169,7 @@ public class ThemePanel extends BorderPane {
         backgroundVidLocation.textProperty().addListener(new ChangeListener<String>() {
             @Override
             public void changed(ObservableValue<? extends String> ov, String t, String t1) {
-                updateTheme(true);
+                updateTheme(true, null);
             }
         });
         backgroundVidLocation.setEditable(false);
@@ -195,7 +211,7 @@ public class ThemePanel extends BorderPane {
         shadowColorPicker.valueProperty().addListener(new ChangeListener<Color>() {
             @Override
             public void changed(ObservableValue<? extends Color> ov, Color t, Color t1) {
-                updateTheme(true);
+                updateTheme(true, null);
             }
         });
         shadowPanel.getChildren().add(confFirstLine);
@@ -206,7 +222,7 @@ public class ThemePanel extends BorderPane {
         shadowOffsetX.textProperty().addListener(new ChangeListener<String>() {
             @Override
             public void changed(ObservableValue<? extends String> ov, String t, String t1) {
-                updateTheme(true);
+                updateTheme(true, null);
             }
         });
 
@@ -216,7 +232,7 @@ public class ThemePanel extends BorderPane {
         shadowOffsetY.textProperty().addListener(new ChangeListener<String>() {
             @Override
             public void changed(ObservableValue<? extends String> ov, String t, String t1) {
-                updateTheme(true);
+                updateTheme(true, null);
             }
         });
         shadowPanel.getChildren().add(confSecondLine);
@@ -235,7 +251,7 @@ public class ThemePanel extends BorderPane {
         fontSelection.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
             @Override
             public void changed(ObservableValue<? extends String> ov, String t, String t1) {
-                updateTheme(false);
+                updateTheme(false, null);
             }
         });
         fontToolbar.getChildren().add(fontSelection);
@@ -243,7 +259,8 @@ public class ThemePanel extends BorderPane {
         boldButton.setOnAction(new EventHandler<javafx.event.ActionEvent>() {
             @Override
             public void handle(javafx.event.ActionEvent t) {
-                updateTheme(false);
+                getTheme().setBold(!getTheme().isBold());
+                updateTheme(false, null);
             }
         });
         fontToolbar.getChildren().add(boldButton);
@@ -251,7 +268,8 @@ public class ThemePanel extends BorderPane {
         italicButton.setOnAction(new EventHandler<javafx.event.ActionEvent>() {
             @Override
             public void handle(javafx.event.ActionEvent t) {
-                updateTheme(false);
+                getTheme().setItalic(!getTheme().isItalic());
+                updateTheme(false, null);
             }
         });
         fontToolbar.getChildren().add(italicButton);
@@ -259,7 +277,7 @@ public class ThemePanel extends BorderPane {
         fontColorPicker.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent t) {
-                updateTheme(true);
+                updateTheme(true, null);
             }
         });
         fontToolbar.getChildren().add(fontColorPicker);
@@ -267,10 +285,70 @@ public class ThemePanel extends BorderPane {
     }
 
     /**
+     * Setup the font toolbar.
+     */
+    private void setupThemeActionsToolbars() {
+        themeActionsPanel = new HBox();
+        themeActionsPanel.getChildren().add(new Label(LabelGrabber.INSTANCE.getLabel("theme.name.label")));
+        themeNameField = new TextField();
+        themeActionsPanel.getChildren().add(themeNameField);
+        themeNameField.textProperty().addListener(new ChangeListener<String>() {
+            @Override
+            public void changed(ObservableValue<? extends String> ov, String t, String t1) {
+                saveThemeButton.setDisable(themeNameField.getText().trim().isEmpty());
+            }
+        });
+        saveThemeButton = new Button(LabelGrabber.INSTANCE.getLabel("save"));
+        themeActionsPanel.getChildren().add(saveThemeButton);
+        saveThemeButton.setDisable(true);
+        saveThemeButton.setOnAction(new EventHandler<javafx.event.ActionEvent>() {
+            @Override
+            public void handle(javafx.event.ActionEvent t) {
+                ThemeDTO theme = getTheme();
+                File themeFile = new File(QueleaProperties.getQueleaUserHome()
+                        + "/themes/" + themeNameField.getText() + ".th");
+                theme.setFile(themeFile);
+                theme.setThemeName(themeNameField.getText());
+                try {
+                    FileWriter fstream = new FileWriter(themeFile);
+                    BufferedWriter out = new BufferedWriter(fstream);
+                    out.write(theme.asString());
+                    out.close();
+                } catch (Exception e) {
+                    System.err.println("Error: " + e.getMessage());
+                }
+            }
+        });
+        selectThemeButton = new Button("", new ImageView(new Image("file:icons/settings.png", 16, 16, false, true)));
+        themeActionsPanel.getChildren().add(selectThemeButton);
+        final ThemePanel panel = this;
+        selectThemeButton.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent t) {
+                ContextMenu themeMenu = new ContextMenu();
+
+                MenuItem themeItem = new MenuItem("", new ScheduleThemeNode(new ScheduleThemeNode.UpdateThemeCallback() {
+                    @Override
+                    public void updateTheme(ThemeDTO theme) {
+                        panel.updateTheme(true, theme);
+                        selectedTheme = theme;
+                    }
+                }));
+                themeItem.setDisable(true);
+                themeItem.setStyle("-fx-background-color: #000000;");
+                themeMenu.getItems().add(themeItem);
+                themeMenu.show(selectThemeButton, Side.BOTTOM, 0, 0);
+            }
+        });
+        selectThemeButton.setTooltip(new Tooltip(LabelGrabber.INSTANCE.getLabel("adjust.theme.tooltip")));
+    }
+
+    /**
      * Update the canvas with the current theme.
      */
-    private void updateTheme(boolean warning) {
-        final ThemeDTO theme = getTheme();
+    private void updateTheme(boolean warning, ThemeDTO newTheme) {
+
+        final ThemeDTO theme = (newTheme != null) ? newTheme : getTheme();
         if (warning && theme.getBackground() instanceof ColourBackground) {
             checkAccessibility((Color) theme.getFontPaint(), ((ColourBackground) theme.getBackground()).getColour());
         }
@@ -299,7 +377,7 @@ public class ThemePanel extends BorderPane {
         fontColorPicker.setValue((Color) theme.getFontPaint());
         Background background = theme.getBackground();
         background.setThemeForm(backgroundColorPicker, backgroundTypeSelect, backgroundImgLocation, backgroundVidLocation);
-        updateTheme(false);
+        updateTheme(false, null);
     }
 
     /**
@@ -350,5 +428,12 @@ public class ThemePanel extends BorderPane {
         shadow.setOffsetX(Double.valueOf(shadowOffsetX.getText().isEmpty() ? "3" : shadowOffsetX.getText()));
         shadow.setOffsetY(Double.valueOf(shadowOffsetY.getText().isEmpty() ? "3" : shadowOffsetY.getText()));
         return new ThemeDTO(font, fontColorPicker.getValue(), background, shadow);
+    }
+
+    /**
+     * @return the selectedTheme
+     */
+    public ThemeDTO getSelectedTheme() {
+        return selectedTheme;
     }
 }

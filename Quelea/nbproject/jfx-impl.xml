@@ -184,9 +184,22 @@
                 <contains string="${version-output}" substring="java version &quot;1.7.0_05"/>
             </or>
         </condition>
+        <condition property="have-jdk7-css2bin-bug">
+            <or>
+                <contains string="${version-output}" substring="java version &quot;1.7.0_04"/>
+                <contains string="${version-output}" substring="java version &quot;1.7.0_05"/>
+                <contains string="${version-output}" substring="java version &quot;1.7.0_06"/>
+                <contains string="${version-output}" substring="java version &quot;1.7.0_07"/>
+                <contains string="${version-output}" substring="java version &quot;1.7.0_08"/>
+                <contains string="${version-output}" substring="java version &quot;1.7.0_09"/>
+                <contains string="${version-output}" substring="java version &quot;1.7.0_10"/>
+                <contains string="${version-output}" substring="java version &quot;1.7.0_11"/>
+            </or>
+        </condition>
         <property name="jdk-version-checked-in-jfximpl" value="true"/>
         <echo message="have-jdk-7u4or5-mac = ${have-jdk-7u4or5-mac}" level="verbose"/>
         <echo message="have-jdk-pre7u6 = ${have-jdk-pre7u6}" level="verbose"/>
+        <echo message="have-jdk7-css2bin-bug = ${have-jdk7-css2bin-bug}" level="verbose"/>
     </target>
         
     <target name="-check-ant-jre-version" unless="ant-jre-version-checked-in-jfximpl">
@@ -979,18 +992,41 @@
         <property name="permissions.elevated" value="false"/>
     </target>
 
-    <target name="-set-binary-css" depends="-check-project" if="binary-encode-css">
+    <target name="-set-binary-css" depends="-check-project,-init-css-conversion" if="do.copy.binary.css">
         <property name="css-include-ext" value="bss"/>
         <property name="css-exclude-ext" value="css"/>
     </target>
-    <target name="-unset-binary-css" depends="-check-project" unless="binary-encode-css">
+    <target name="-unset-binary-css" depends="-check-project,-init-css-conversion" unless="do.copy.binary.css">
         <property name="css-include-ext" value="css"/>
         <property name="css-exclude-ext" value="bss"/>
     </target>
-    <target name="-copy-binary-css" depends="-check-project" if="binary-encode-css">
+    <target name="-copy-binary-css" depends="-init-css-conversion,-set-binary-css,-unset-binary-css,-copy-binary-css-bypass,-copy-binary-css-impl"/>
+    <target name="-init-css-conversion" depends="-check-project,-check-jdk-version">
         <fileset id="cssfiles" dir="${basedir}${file.separator}${build.classes.dir}">
             <include name="**${file.separator}*.css"/>
         </fileset>
+        <pathconvert refid="cssfiles" property="cssfileset.notempty" setonempty="false"/>
+        <condition property="do.copy.binary.css">
+            <and>
+                <isset property="binary-encode-css"/>
+                <isset property="cssfileset.notempty"/>
+                <not><isset property="have-jdk7-css2bin-bug"/></not>
+            </and>
+        </condition>
+        <condition property="do.bypass.binary.css">
+            <and>
+                <isset property="binary-encode-css"/>
+                <isset property="cssfileset.notempty"/>
+                <isset property="have-jdk7-css2bin-bug"/>
+            </and>
+        </condition>
+        <echo message="do.copy.binary.css = ${do.copy.binary.css}" level="verbose"/>
+        <echo message="do.bypass.binary.css = ${do.bypass.binary.css}" level="verbose"/>
+    </target>
+    <target name="-copy-binary-css-bypass" depends="-init-css-conversion" if="do.bypass.binary.css">
+        <echo message="Warning: Bypassing FX CSS to BSS conversion due to a bug in &lt;fx:csstobin&gt; task in current JDK platform" level="warning"/>
+    </target>
+    <target name="-copy-binary-css-impl" depends="-init-css-conversion" if="do.copy.binary.css">
         <property name="cssfileslist" refid="cssfiles"/>
         <echo message="css files to binary convert: " level="verbose">${cssfileslist}</echo>
         <fx:csstobin outdir="${basedir}${file.separator}${build.classes.dir}">
@@ -1322,7 +1358,7 @@
         -swing-api-warning,-icon-warning,
         -set-dimensions,-reset-dimensions,-set-update-mode-background,-set-update-mode-eager,
         -set-permissions-elevated,-reset-permissions-elevated,
-        -copy-external-preloader-jar,-set-binary-css,-unset-binary-css,-copy-binary-css,
+        -copy-external-preloader-jar,-copy-binary-css,
         -deploy-app-sign-nopreloader-notemplate,
         -deploy-app-sign-preloader-notemplate,
         -deploy-app-sign-nopreloader-template,
@@ -1342,7 +1378,7 @@
         -swing-api-warning,-icon-warning,
         -set-dimensions,-reset-dimensions,-set-update-mode-background,-set-update-mode-eager,
         -set-permissions-elevated,-reset-permissions-elevated,
-        -copy-external-preloader-jar,-set-binary-css,-unset-binary-css,-copy-binary-css,
+        -copy-external-preloader-jar,-copy-binary-css,
         -fallback-deploy-app-sign-nopreloader-notemplate,
         -fallback-deploy-app-sign-preloader-notemplate,
         -fallback-deploy-app-sign-nopreloader-template,

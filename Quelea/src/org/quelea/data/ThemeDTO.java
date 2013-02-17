@@ -49,6 +49,8 @@ public class ThemeDTO {
     private final DropShadow textShadow;
     private String themeName;
     private File file;
+    private boolean bold = false;
+    private boolean italic = false;
 
     /**
      * Create a new theme with a specified font, font colour and background.
@@ -332,5 +334,33 @@ public class ThemeDTO {
             return defaultVal;
         }
         return val;
+    }
+
+    /**
+     * @return the bold
+     */
+    public boolean isBold() {
+        return bold;
+    }
+
+    /**
+     * @param bold the bold to set
+     */
+    public void setBold(boolean bold) {
+        this.bold = bold;
+    }
+
+    /**
+     * @return the italic
+     */
+    public boolean isItalic() {
+        return italic;
+    }
+
+    /**
+     * @param italic the italic to set
+     */
+    public void setItalic(boolean italic) {
+        this.italic = italic;
     }
 }

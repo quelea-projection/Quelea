@@ -28,9 +28,6 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import org.quelea.data.ThemeDTO;
-import org.quelea.data.displayable.Displayable;
-import org.quelea.data.displayable.TextDisplayable;
-import org.quelea.data.displayable.TextSection;
 import org.quelea.languages.LabelGrabber;
 import org.quelea.services.utils.LoggerUtils;
 import org.quelea.services.utils.QueleaProperties;
@@ -44,15 +41,16 @@ import org.quelea.windows.newsong.EditThemeDialog;
  * @author Michael
  */
 public class ScheduleThemeNode extends BorderPane {
-
+    public interface UpdateThemeCallback {
+        public void updateTheme(ThemeDTO theme);
+    }
     private static final Logger LOGGER = LoggerUtils.getLogger();
     private VBox contentPanel;
     private ThemeDTO tempTheme;
-    private ScheduleList schedule;
     private EditThemeDialog themeDialog;
-
-    public ScheduleThemeNode(final ScheduleList schedule) {
-        this.schedule = schedule;
+    UpdateThemeCallback callback = null;
+    public ScheduleThemeNode(UpdateThemeCallback callback) {
+        this.callback = callback;
         themeDialog = new EditThemeDialog();
         contentPanel = new VBox();
         contentPanel.setSpacing(5);
@@ -74,28 +72,27 @@ public class ScheduleThemeNode extends BorderPane {
                 @SuppressWarnings("unchecked")
                 @Override
                 public void run() {
-                    while(true) {
+                    while (true) {
                         WatchKey key;
                         try {
                             key = watcher.take();
-                        }
-                        catch(InterruptedException ex) {
+                        } catch (InterruptedException ex) {
                             return;
                         }
 
-                        for(WatchEvent<?> event : key.pollEvents()) {
+                        for (WatchEvent<?> event : key.pollEvents()) {
                             WatchEvent.Kind<?> kind = event.kind();
-                            if(kind == StandardWatchEventKinds.OVERFLOW) {
+                            if (kind == StandardWatchEventKinds.OVERFLOW) {
                                 continue;
                             }
 
                             WatchEvent<Path> ev = (WatchEvent<Path>) event;
                             Path filename = ev.context();
-                            if(!filename.toFile().toString().toLowerCase().endsWith(".th")) {
+                            if (!filename.toFile().toString().toLowerCase().endsWith(".th")) {
                                 continue;
                             }
 
-                            if(!key.reset()) {
+                            if (!key.reset()) {
                                 break;
                             }
                             Utils.sleep(200); //TODO: Bodge
@@ -110,8 +107,7 @@ public class ScheduleThemeNode extends BorderPane {
                     }
                 }
             }.start();
-        }
-        catch(IOException ex) {
+        } catch (IOException ex) {
             LOGGER.log(Level.WARNING, "Exception in logger thread.", ex);
         }
     }
@@ -141,8 +137,7 @@ public class ScheduleThemeNode extends BorderPane {
         List<ThemeDTO> themes;
         try {
             themes = getThemes();
-        }
-        catch(Exception ex) {
+        } catch (Exception ex) {
             LoggerUtils.getLogger().log(Level.SEVERE, "Cannot get themes when refreshing. Something majorly broke here.", ex);
             return;
         }
@@ -157,7 +152,7 @@ public class ScheduleThemeNode extends BorderPane {
         final HBox themePreviews = new HBox();
         themePreviews.setSpacing(10);
         themePreviews.setFillHeight(true);
-        for(final ThemeDTO theme : themes) {
+        for (final ThemeDTO theme : themes) {
             ThemePreviewPanel panel = new ThemePreviewPanel(theme);
             panel.getSelectButton().setOnAction(new EventHandler<javafx.event.ActionEvent>() {
                 @Override
@@ -178,11 +173,10 @@ public class ScheduleThemeNode extends BorderPane {
                 themeDialog.setTheme(null);
                 themeDialog.show();
                 ThemeDTO ret = themeDialog.getTheme();
-                if(ret != null) {
-                    try(PrintWriter pw = new PrintWriter(ret.getFile())) {
+                if (ret != null) {
+                    try (PrintWriter pw = new PrintWriter(ret.getFile())) {
                         pw.println(ret.getTheme());
-                    }
-                    catch(IOException ex) {
+                    } catch (IOException ex) {
                         LOGGER.log(Level.WARNING, "Couldn't write new theme", ex);
                     }
                 }
@@ -201,14 +195,14 @@ public class ScheduleThemeNode extends BorderPane {
     private List<ThemeDTO> getThemes() {
         List<ThemeDTO> themesList = new ArrayList<>();
         File themeDir = new File(QueleaProperties.getQueleaUserHome(), "themes");
-        if(!themeDir.exists()) {
+        if (!themeDir.exists()) {
             themeDir.mkdir();
         }
-        for(File file : themeDir.listFiles()) {
-            if(file.getName().endsWith(".th")) {
+        for (File file : themeDir.listFiles()) {
+            if (file.getName().endsWith(".th")) {
                 String fileText = Utils.getTextFromFile(file.getAbsolutePath(), "");
                 final ThemeDTO theme = ThemeDTO.fromString(fileText);
-                if(theme==ThemeDTO.DEFAULT_THEME) {
+                if (theme == ThemeDTO.DEFAULT_THEME) {
                     LOGGER.log(Level.WARNING, "Error parsing theme file: {0}", fileText);
                     continue;  //error
                 }
@@ -225,18 +219,6 @@ public class ScheduleThemeNode extends BorderPane {
      * @param theme the theme to set.
      */
     private void setTheme(ThemeDTO theme) {
-        if(schedule == null) {
-            LOGGER.log(Level.WARNING, "Null schedule, not setting theme");
-            return;
-        }
-        for(int i = 0; i < schedule.itemsProperty().get().size(); i++) {
-            Displayable displayable = schedule.itemsProperty().get().get(i);
-            if(displayable instanceof TextDisplayable) {
-                TextDisplayable textDisplayable = (TextDisplayable) displayable;
-                for(TextSection section : textDisplayable.getSections()) {
-                    section.setTempTheme(theme);
-                }
-            }
-        }
+        callback.updateTheme(theme);
     }
 }

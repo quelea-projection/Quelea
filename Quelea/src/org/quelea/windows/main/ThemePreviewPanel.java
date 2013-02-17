@@ -178,7 +178,13 @@ public class ThemePreviewPanel extends VBox {
                         System.exit(0);
                     }
                 });
-                stage.setScene(new Scene(new ScheduleThemeNode(null)));
+                stage.setScene(new Scene(new ScheduleThemeNode(new ScheduleThemeNode.UpdateThemeCallback() {
+
+                    @Override
+                    public void updateTheme(ThemeDTO theme) {
+                        //@todo nothing to do ??
+                        }
+                })));
                 stage.show();
             }
         });
