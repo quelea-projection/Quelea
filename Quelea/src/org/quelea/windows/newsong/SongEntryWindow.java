@@ -37,6 +37,7 @@ import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import org.quelea.data.ThemeDTO;
 import org.quelea.data.displayable.SongDisplayable;
+import org.quelea.data.displayable.TextDisplayable;
 import org.quelea.data.displayable.TextSection;
 import org.quelea.languages.LabelGrabber;
 import org.quelea.services.utils.Utils;
@@ -100,10 +101,19 @@ public class SongEntryWindow extends Stage {
             @Override
             public void handle(javafx.event.ActionEvent t) {
                 hide();
-                if(updateDBOnHide) {
+                ThemeDTO selectedTheme = themePanel.getSelectedTheme();
+                if (selectedTheme != null && getSong() instanceof TextDisplayable) {
+                    TextDisplayable textDisplayable = (TextDisplayable) getSong();
+                    for (TextSection section : textDisplayable.getSections()) {
+                        section.setTempTheme(selectedTheme);
+                    }
+                    getSong().setTheme(selectedTheme);
+
+                }
+                if (updateDBOnHide) {
                     Utils.updateSongInBackground(getSong(), true, false);
                 }
-                if(addToSchedCBox.isSelected()) {
+                if (addToSchedCBox.isSelected()) {
                     QueleaApp.get().getMainWindow().getMainPanel().getSchedulePanel().getScheduleList().add(getSong());
                 }
                 QueleaApp.get().getMainWindow().getMainPanel().getPreviewPanel().refresh();
@@ -259,15 +269,14 @@ public class SongEntryWindow extends Stage {
         confirmButton.setDisable(false);
         basicSongPanel.resetEditSong(song);
         detailedSongPanel.resetEditSong(song);
-        if(song.getSections().length > 0) {
+        if (song.getSections().length > 0) {
             themePanel.setTheme(song.getSections()[0].getTheme());
         }
         tabPane.getSelectionModel().select(0);
         addToSchedCBox.setSelected(false);
-        if(QueleaApp.get().getMainWindow().getMainPanel().getSchedulePanel().getScheduleList().itemsProperty().get().contains(song)) {
+        if (QueleaApp.get().getMainWindow().getMainPanel().getSchedulePanel().getScheduleList().itemsProperty().get().contains(song)) {
             addToSchedCBox.setDisable(true);
-        }
-        else {
+        } else {
             addToSchedCBox.setDisable(false);
         }
         updateDBOnHide = true;
@@ -279,7 +288,7 @@ public class SongEntryWindow extends Stage {
      * @return the song.
      */
     public SongDisplayable getSong() {
-        if(song == null) {
+        if (song == null) {
             song = new SongDisplayable(getBasicSongPanel().getTitleField().getText(), getBasicSongPanel().getAuthorField().getText());
         }
         song.setLyrics(getBasicSongPanel().getLyricsField().getText());
@@ -294,12 +303,13 @@ public class SongEntryWindow extends Stage {
         song.setCapo(getDetailedSongPanel().getCapoField().getText());
         song.setInfo(getDetailedSongPanel().getInfoField().getText());
         ThemeDTO tempTheme = song.getSections()[0].getTempTheme();
-        for(TextSection section : song.getSections()) {
+        for (TextSection section : song.getSections()) {
             section.setTheme(themePanel.getTheme());
-            if(tempTheme != null) {
+            if (tempTheme != null) {
                 section.setTempTheme(tempTheme);
             }
         }
+        song.setTheme(tempTheme);
         return song;
     }
 
@@ -308,11 +318,10 @@ public class SongEntryWindow extends Stage {
      * accordingly.
      */
     private void checkConfirmButton() {
-        if(getBasicSongPanel().getLyricsField().getText().trim().equals("")
+        if (getBasicSongPanel().getLyricsField().getText().trim().equals("")
                 || getBasicSongPanel().getTitleField().getText().trim().equals("")) {
             confirmButton.setDisable(true);
-        }
-        else {
+        } else {
             confirmButton.setDisable(false);
         }
     }
