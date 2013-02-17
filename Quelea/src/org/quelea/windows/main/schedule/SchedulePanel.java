@@ -17,6 +17,8 @@
  */
 package org.quelea.windows.main.schedule;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.ObservableList;
@@ -34,9 +36,15 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.Region;
+import org.quelea.data.ThemeDTO;
 import javafx.stage.Popup;
 import org.quelea.data.displayable.Displayable;
+import org.quelea.data.displayable.SongDisplayable;
+import org.quelea.data.displayable.TextDisplayable;
+import org.quelea.data.displayable.TextSection;
 import org.quelea.languages.LabelGrabber;
+import org.quelea.services.utils.LoggerUtils;
+import org.quelea.services.utils.Utils;
 import org.quelea.windows.main.QueleaApp;
 import org.quelea.windows.main.actionhandlers.RemoveScheduleItemActionHandler;
 
@@ -49,11 +57,12 @@ import org.quelea.windows.main.actionhandlers.RemoveScheduleItemActionHandler;
  */
 public class SchedulePanel extends BorderPane {
 
+    private static final Logger LOGGER = LoggerUtils.getLogger();
     private final ScheduleList scheduleList;
     private final Button removeButton;
     private final Button upButton;
     private final Button downButton;
-    private final ToggleButton themeButton;
+    private final Button themeButton;
     private final ScheduleThemeNode scheduleThemeNode;
     private Popup themePopup;
 
@@ -69,8 +78,29 @@ public class SchedulePanel extends BorderPane {
             }
         });
 
-        scheduleThemeNode = new ScheduleThemeNode(scheduleList);
-        themeButton = new ToggleButton("", new ImageView(new Image("file:icons/settings.png", 16, 16, false, true)));
+        scheduleThemeNode = new ScheduleThemeNode(new ScheduleThemeNode.UpdateThemeCallback() {
+            @Override
+            public void updateTheme(ThemeDTO theme) {
+                if (scheduleList == null) {
+                    LOGGER.log(Level.WARNING, "Null schedule, not setting theme");
+                    return;
+                }
+                for (int i = 0; i < scheduleList.itemsProperty().get().size(); i++) {
+                    Displayable displayable = scheduleList.itemsProperty().get().get(i);
+                    if (displayable instanceof TextDisplayable) {
+                        TextDisplayable textDisplayable = (TextDisplayable) displayable;
+                        for (TextSection section : textDisplayable.getSections()) {
+                            section.setTempTheme(theme);
+                        }
+
+                        SongDisplayable song = ((SongDisplayable) textDisplayable);
+                        song.setTheme(theme);
+                        Utils.updateSongInBackground(song, true, true);
+                    }
+                }
+            }
+        });
+        themeButton = new Button("", new ImageView(new Image("file:icons/settings.png", 16, 16, false, true)));
         themeButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent t) {
@@ -119,12 +149,11 @@ public class SchedulePanel extends BorderPane {
         scheduleList.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<Displayable>() {
             @Override
             public void changed(ObservableValue<? extends Displayable> ov, Displayable t, Displayable t1) {
-                if(scheduleList.selectionModelProperty().get().isEmpty()) {
+                if (scheduleList.selectionModelProperty().get().isEmpty()) {
                     removeButton.setDisable(true);
                     upButton.setDisable(true);
                     downButton.setDisable(true);
-                }
-                else {
+                } else {
                     removeButton.setDisable(false);
                     upButton.setDisable(false);
                     downButton.setDisable(false);

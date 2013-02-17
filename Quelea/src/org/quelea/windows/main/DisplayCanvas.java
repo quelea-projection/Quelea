@@ -189,6 +189,7 @@ public class DisplayCanvas extends StackPane {
     }
 
     public void update() {
+        
         updateCanvas(this.updater);
     }
 

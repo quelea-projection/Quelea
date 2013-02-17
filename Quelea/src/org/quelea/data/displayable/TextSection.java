@@ -17,6 +17,7 @@
  */
 package org.quelea.data.displayable;
 
+import java.io.UnsupportedEncodingException;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -24,6 +25,8 @@ import org.w3c.dom.NodeList;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.quelea.data.ThemeDTO;
 import org.quelea.services.utils.LineTypeChecker;
 import org.quelea.services.utils.Utils;
@@ -103,13 +106,21 @@ public class TextSection {
         if (smallLines != null) {
             xml.append("<smalllines>");
             for (String line : smallLines) {
-                xml.append(Utils.escapeXML(line)).append('\n');
+                try {
+                    xml.append(new String(Utils.escapeXML(line).getBytes(), "UTF-8")).append('\n');
+                } catch (UnsupportedEncodingException ex) {
+                    Logger.getLogger(TextSection.class.getName()).log(Level.SEVERE, null, ex);
+                }
             }
             xml.append("</smalllines>");
         }
         xml.append("<lyrics>");
         for (String line : getText(true, true)) {
-            xml.append(Utils.escapeXML(line)).append('\n');
+            try {
+                xml.append(new String(Utils.escapeXML(line).getBytes(), "UTF-8")).append('\n');
+            } catch (UnsupportedEncodingException ex) {
+                Logger.getLogger(TextSection.class.getName()).log(Level.SEVERE, null, ex);
+            }
         }
         xml.append("</lyrics></section>");
         return xml.toString();
@@ -140,32 +151,38 @@ public class TextSection {
         }
         NodeList nodelist = sectionNode.getChildNodes();
         for (int i = 0; i < nodelist.getLength(); i++) {
-            Node node = nodelist.item(i);
-            switch (node.getNodeName()) {
-                case "theme":
-                    theme = ThemeDTO.fromString(node.getTextContent());
-                    break;
-                case "lyrics":
-                    String[] rawLyrics = node.getTextContent().split("\n");
-                    List<String> newLyrics = new ArrayList<>();
-                    for (String line : rawLyrics) {
-                        if (!line.isEmpty()) {
-                            newLyrics.add(line);
+            //try {
+                Node node = nodelist.item(i);
+                switch (node.getNodeName()) {
+                    case "theme":
+                        theme = ThemeDTO.fromString(node.getTextContent());
+                        break;
+                    case "lyrics":
+                        //String[] rawLyrics = new String(node.getTextContent().getBytes(), "UTF-8").split("\n");
+                        String[] rawLyrics = node.getTextContent().split("\n");
+                        List<String> newLyrics = new ArrayList<>();
+                        for (String line : rawLyrics) {
+                            if (!line.isEmpty()) {
+                                newLyrics.add(line);
+                            }
                         }
-                    }
-                    lyrics = newLyrics.toArray(new String[newLyrics.size()]);
-                    break;
-                case "smalllines":
-                    String[] rawSmallLines = node.getTextContent().split("\n");
-                    List<String> newSmallLines = new ArrayList<>();
-                    for (String line : rawSmallLines) {
-                        if (!line.isEmpty()) {
-                            newSmallLines.add(line);
+                        lyrics = newLyrics.toArray(new String[newLyrics.size()]);
+                        break;
+                    case "smalllines":
+                        //String[] rawSmallLines = new String(node.getTextContent().getBytes(), "UTF-8").split("\n");
+                        String[] rawSmallLines = node.getTextContent().split("\n");
+                        List<String> newSmallLines = new ArrayList<>();
+                        for (String line : rawSmallLines) {
+                            if (!line.isEmpty()) {
+                                newSmallLines.add(line);
+                            }
                         }
-                    }
-                    smallLines = newSmallLines.toArray(new String[newSmallLines.size()]);
-                    break;
-            }
+                        smallLines = newSmallLines.toArray(new String[newSmallLines.size()]);
+                        break;
+                }
+            //} catch (UnsupportedEncodingException ex) {
+            //    Logger.getLogger(TextSection.class.getName()).log(Level.SEVERE, null, ex);
+            //}
         }
         TextSection ret = new TextSection(sectionTitle, lyrics, smallLines, capitalise);
         if (theme != null) {
