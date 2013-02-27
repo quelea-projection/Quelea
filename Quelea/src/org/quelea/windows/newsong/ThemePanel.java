@@ -96,7 +96,7 @@ public class ThemePanel extends BorderPane {
     public ThemePanel() {
         canvas = new DisplayCanvas(false, false, new DisplayCanvas.CanvasUpdater() {
             @Override
-            public void updateOnSizeChange() {
+            public void updateCallback() {
                 updateTheme(true, null);
             }
         }, Priority.LOW);
