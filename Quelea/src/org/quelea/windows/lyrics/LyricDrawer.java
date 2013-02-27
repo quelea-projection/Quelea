@@ -5,6 +5,7 @@ import com.sun.javafx.tk.FontMetrics;
 import com.sun.javafx.tk.Toolkit;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Iterator;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -105,8 +106,18 @@ public class LyricDrawer extends DisplayableDrawer {
         int y = 0;
         final Group newTextGroup = new Group();
         StackPane.setAlignment(newTextGroup, QueleaProperties.get().getTextPosition().getLayouPos());
-        canvas.getChildren().clear();
+       
+        for( Iterator< Node > it = canvas.getChildren().iterator(); it.hasNext() ; )
+        {
+            Node node = it.next();
+            if(node instanceof Group) {
+                it.remove();
+            }
+            
+        }
+        
         canvas.getChildren().add(newTextGroup);
+        
         ParallelTransition paintTransition = new ParallelTransition();
         boolean secondLanguageYShift = false;
         for (String line : newText) {
@@ -159,7 +170,7 @@ public class LyricDrawer extends DisplayableDrawer {
      * @param theme the theme to place on the canvas.
      */
     public void setTheme(ThemeDTO theme) {
-        if (theme == null) {
+        if (theme == null || canvas.isBlacked()) {
             theme = ThemeDTO.DEFAULT_THEME;
         }
         if (this.canvas.getCurrentDisplayable() instanceof SongDisplayable) {
@@ -236,12 +247,12 @@ public class LyricDrawer extends DisplayableDrawer {
                 //Don't shout about it at this point.
             }
         } else {
-            final ImageView newImage = canvas.getNewImageView();
-            newImage.setFitHeight(canvas.getHeight());
-            newImage.setFitWidth(canvas.getWidth());
-            newImage.setImage(image);
-            canvas.getChildren().add(0, newImage);
-            newBackground = newImage;
+            final ImageView newImageVIew = canvas.getNewImageView();
+            newImageVIew.setFitHeight(canvas.getHeight());
+            newImageVIew.setFitWidth(canvas.getWidth());
+            newImageVIew.setImage(image);
+            canvas.getChildren().add(newImageVIew);
+            newBackground = newImageVIew;
         }
         final Node oldBackground = canvas.getBackground();
 
@@ -469,18 +480,6 @@ public class LyricDrawer extends DisplayableDrawer {
 
     public void draw(Displayable displayable) {
         drawText();
-        if (canvas.isBlacked()) {
-            if (canvas.getChildren().contains(canvas.getBackground())) {
-                canvas.getChildren().add(0, blackImg);
-                canvas.getChildren().remove(canvas.getBackground());
-            }
-        } else {
-
-            if (!canvas.getChildren().contains(canvas.getBackground())) {
-                canvas.getChildren().remove(blackImg);
-                canvas.getChildren().add(0, canvas.getBackground());
-            }
-
             if (canvas.getBackground() instanceof ImageView) {
                 ImageView imgBackground = (ImageView) canvas.getBackground();
                 imgBackground.setFitHeight(canvas.getHeight());
@@ -493,9 +492,6 @@ public class LyricDrawer extends DisplayableDrawer {
             } else {
                 LOGGER.log(Level.WARNING, "BUG: Unrecognised image background");
             }
-        }
-        blackImg.setFitHeight(canvas.getHeight());
-        blackImg.setFitWidth(canvas.getWidth());
     }
 
     @Override

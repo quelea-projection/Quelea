@@ -60,7 +60,7 @@ public class SelectLyricsPanel extends AbstractPanel {
         lyricsList = new SelectLyricsList();
         previewCanvas = new DisplayCanvas(false, false, new DisplayCanvas.CanvasUpdater() {
             @Override
-            public void updateOnSizeChange() {
+            public void updateCallback() {
                 updateCanvas();
             }
         }, Priority.LOW);

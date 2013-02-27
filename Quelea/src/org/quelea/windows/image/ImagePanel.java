@@ -43,7 +43,7 @@ public class ImagePanel extends AbstractPanel {
         this.containerPanel = panel;
         previewCanvas = new DisplayCanvas(false, false, new DisplayCanvas.CanvasUpdater() {
             @Override
-            public void updateOnSizeChange() {
+            public void updateCallback() {
                 updateCanvas();
             }
         }, Priority.LOW);
