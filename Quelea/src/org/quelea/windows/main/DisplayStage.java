@@ -55,12 +55,8 @@ public class DisplayStage extends Stage {
         getIcons().add(new Image("file:icons/logo.png"));
         setTitle("Projection window");
         setArea(area);
-        canvas = new DisplayCanvas(true, stageView, new DisplayCanvas.CanvasUpdater() {
-            @Override
-            public void updateOnSizeChange() {
-                //canvas.update();
-            }
-        }, stageView ? Priority.HIGH : Priority.MID);
+        canvas = new DisplayCanvas(true, stageView, null,
+                stageView ? Priority.HIGH : Priority.MID);
         canvas.setType(stageView ? DisplayCanvas.Type.STAGE : DisplayCanvas.Type.FULLSCREEN);
         Scene scene = new Scene(canvas);
         setScene(scene);

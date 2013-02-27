@@ -17,16 +17,19 @@
  */
 package org.quelea.windows.main;
 
+import java.util.Iterator;
 import java.util.Objects;
 import java.util.logging.Logger;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.geometry.Pos;
+import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
+import org.quelea.data.Background;
 import org.quelea.data.displayable.Displayable;
 import org.quelea.services.notice.NoticeDrawer;
 import org.quelea.services.utils.LoggerUtils;
@@ -45,6 +48,8 @@ public class DisplayCanvas extends StackPane {
     private NoticeDrawer noticeDrawer;
     private boolean stageView;
     private Node background;
+    private ImageView blackImg = new ImageView(Utils.getImageFromColour(Color.BLACK));
+    private Node currentBackground;
     private Displayable currentDisplayable;
     private final CanvasUpdater updater;
     private Priority dravingPriority = Priority.LOW;
@@ -105,14 +110,15 @@ public class DisplayCanvas extends StackPane {
     public void clear() {
         setCurrentDisplayable(null);
     }
-    
-    public void setType(Type type){
+
+    public void setType(Type type) {
         this.type = type;
     }
-    
+
     public Type getType() {
         return this.type;
     }
+
     /**
      * @return the currentDisplayable
      */
@@ -136,7 +142,7 @@ public class DisplayCanvas extends StackPane {
 
     public interface CanvasUpdater {
 
-        void updateOnSizeChange();
+        void updateCallback();
     }
 
     private void updateCanvas(final CanvasUpdater updater) {
@@ -144,7 +150,7 @@ public class DisplayCanvas extends StackPane {
             @Override
             public void run() {
                 if (updater != null) {
-                    updater.updateOnSizeChange();
+                    updater.updateCallback();
                 }
             }
         });
@@ -156,7 +162,7 @@ public class DisplayCanvas extends StackPane {
         hash = 17 * hash + Objects.hashCode(this.type);
         return hash;
     }
-    
+
     /**
      * @return the background
      */
@@ -189,8 +195,9 @@ public class DisplayCanvas extends StackPane {
     }
 
     public void update() {
-        
-        updateCanvas(this.updater);
+        if (this.updater != null) {
+            updateCanvas(this.updater);
+        }
     }
 
     /**
@@ -199,7 +206,9 @@ public class DisplayCanvas extends StackPane {
      */
     public void toggleClear() {
         cleared ^= true; //invert
-        updateCanvas(this.updater);
+        if (this.updater != null) {
+            updateCanvas(this.updater);
+        }
     }
 
     /**
@@ -217,7 +226,17 @@ public class DisplayCanvas extends StackPane {
      */
     public void toggleBlack() {
         blacked ^= true; //invert
-        updateCanvas(this.updater);
+        if (blacked) {
+            currentBackground = getBackground();
+            getChildren().clear();
+            setBackground(blackImg);
+        } else {
+            getChildren().add(currentBackground);
+            setBackground(currentBackground);
+        }
+        if (this.updater != null) {
+            updateCanvas(this.updater);
+        }
     }
 
     /**
