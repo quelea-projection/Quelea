@@ -117,8 +117,8 @@ public class ThemePanel extends BorderPane {
         toolbarPanel.getChildren().add(backgroundPanel);
         setupShadowPanel();
         toolbarPanel.getChildren().add(shadowPanel);
-        setupThemeActionsToolbars();
-        toolbarPanel.getChildren().add(themeActionsPanel);
+        //setupThemeActionsToolbars(); //@todo to be finished
+        //toolbarPanel.getChildren().add(themeActionsPanel);
         setTop(toolbarPanel);
         updateTheme(false, null);
 
