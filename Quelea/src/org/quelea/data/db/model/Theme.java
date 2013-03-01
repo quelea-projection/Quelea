@@ -25,13 +25,16 @@ public class Theme {
     private String backgroundcolour;
     private String backgroundvid;
     private String backgroundimage;
+    private Boolean fontBold;
+    private Boolean fontItalic;
     private TextShadow textShadow = new TextShadow();
 
     public Theme() {
     }
 
     public Theme(String name, String fontname, String fontcolour,
-            String backgroundcolour, String backgroundvid, String backgroundimage, TextShadow shadow) {
+            String backgroundcolour, String backgroundvid, String backgroundimage,
+            TextShadow shadow,boolean isFontBold, boolean isFontitalic) {
         this.name = name;
         this.fontname = fontname;
         this.fontcolour = fontcolour;
@@ -39,6 +42,8 @@ public class Theme {
         this.backgroundvid = backgroundvid;
         this.backgroundimage = backgroundimage;
         this.textShadow = shadow;
+        this.fontBold = isFontBold;
+        this.fontItalic = isFontitalic;
     }
 
     public Theme(Theme theme) {
@@ -172,5 +177,35 @@ public class Theme {
      */
     public void setTextShadow(TextShadow textShadow) {
         this.textShadow = textShadow;
+    }
+
+    /**
+     * @return the isFontBold
+     */
+    @Column(name = "isfontbold")
+    public Boolean isFontBold() {
+        return fontBold == null ? false : fontBold;
+    }
+
+    /**
+     * @param isFontBold the isFontBold to set
+     */
+    public void setFontBold(Boolean isFontBold) {
+        this.fontBold = isFontBold;
+    }
+
+    /**
+     * @return the isFontItalic
+     */
+    @Column(name = "isfontitalic")
+    public Boolean isFontItalic() {
+        return fontItalic  == null ? false : fontItalic;
+    }
+
+    /**
+     * @param isFontItalic the isFontItalic to set
+     */
+    public void setFontItalic(Boolean isFontItalic) {
+        this.fontItalic = isFontItalic;
     }
 }

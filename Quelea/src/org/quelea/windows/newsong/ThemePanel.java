@@ -43,6 +43,8 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
+import javafx.scene.text.FontPosture;
+import javafx.scene.text.FontWeight;
 import org.javafx.dialog.Dialog;
 import org.quelea.data.Background;
 import org.quelea.data.ColourBackground;
@@ -83,7 +85,9 @@ public class ThemePanel extends BorderPane {
     private TextField backgroundImgLocation;
     private TextField backgroundVidLocation;
     private ToggleButton boldButton;
+    private Boolean isFontBold = false;
     private ToggleButton italicButton;
+    private Boolean isFontItalic = false;
     private TextField themeNameField;
     private Button saveThemeButton;
     private Button selectThemeButton;
@@ -259,7 +263,7 @@ public class ThemePanel extends BorderPane {
         boldButton.setOnAction(new EventHandler<javafx.event.ActionEvent>() {
             @Override
             public void handle(javafx.event.ActionEvent t) {
-                getTheme().setBold(!getTheme().isBold());
+                isFontBold =!isFontBold;
                 updateTheme(false, null);
             }
         });
@@ -268,7 +272,7 @@ public class ThemePanel extends BorderPane {
         italicButton.setOnAction(new EventHandler<javafx.event.ActionEvent>() {
             @Override
             public void handle(javafx.event.ActionEvent t) {
-                getTheme().setItalic(!getTheme().isItalic());
+                isFontItalic = !isFontItalic;
                 updateTheme(false, null);
             }
         });
@@ -410,6 +414,11 @@ public class ThemePanel extends BorderPane {
      */
     public ThemeDTO getTheme() {
         Font font = new Font(fontSelection.getSelectionModel().getSelectedItem(), 72);
+        Font.font(font.getName(),
+                isFontBold ? FontWeight.BOLD : FontWeight.NORMAL,
+                isFontItalic ? FontPosture.ITALIC : FontPosture.REGULAR,
+                72);
+        
         Background background;
         if (backgroundTypeSelect.getSelectionModel().getSelectedItem() == null) {
             return ThemeDTO.DEFAULT_THEME;
@@ -427,7 +436,9 @@ public class ThemePanel extends BorderPane {
         shadow.setColor(shadowColorPicker.getValue());
         shadow.setOffsetX(Double.valueOf(shadowOffsetX.getText().isEmpty() ? "3" : shadowOffsetX.getText()));
         shadow.setOffsetY(Double.valueOf(shadowOffsetY.getText().isEmpty() ? "3" : shadowOffsetY.getText()));
-        return new ThemeDTO(font, fontColorPicker.getValue(), background, shadow);
+        ThemeDTO resultTheme = new ThemeDTO(font, fontColorPicker.getValue(),
+                background, shadow, isFontBold, isFontItalic);
+        return resultTheme;
     }
 
     /**
