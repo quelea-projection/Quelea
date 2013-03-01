@@ -122,7 +122,7 @@ public class EditThemeDialog extends Stage {
     public void setTheme(ThemeDTO theme) {
         if(theme == null) {
             theme = new ThemeDTO(ThemeDTO.DEFAULT_FONT, ThemeDTO.DEFAULT_FONT_COLOR,
-                    ThemeDTO.DEFAULT_BACKGROUND, ThemeDTO.DEFAULT_SHADOW);
+                    ThemeDTO.DEFAULT_BACKGROUND, ThemeDTO.DEFAULT_SHADOW, false, false);
             theme.setThemeName("");
             File file;
             int filenum = 1;

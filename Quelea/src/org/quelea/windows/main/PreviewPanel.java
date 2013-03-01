@@ -102,7 +102,7 @@ public class PreviewPanel extends LivePreviewPanel {
      */
     @Override
     public void setDisplayable(Displayable d, int index) {
-        super.setDisplayable(d, index);
+            super.setDisplayable(d, index);
         liveButton.setDisable(false);
     }
 

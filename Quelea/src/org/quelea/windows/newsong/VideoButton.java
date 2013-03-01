@@ -77,9 +77,12 @@ public class VideoButton extends Button {
                     videoLocationField.setText(vidLocation);
                     LyricDrawer drawer = new LyricDrawer(false, null);
                     drawer.setCanvas(canvas);
-                    drawer.setTheme(new ThemeDTO(drawer.getTheme().getFont(),
+                    ThemeDTO theme = new ThemeDTO(drawer.getTheme().getFont(),
                             drawer.getTheme().getFontPaint(), new VideoBackground(vidLocation),
-                            drawer.getTheme().getShadow()));
+                            drawer.getTheme().getShadow(),
+                            drawer.getTheme().isBold(),
+                            drawer.getTheme().isBold());
+                    drawer.setTheme(theme);
                 }
             }
         });
