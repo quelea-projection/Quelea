@@ -246,8 +246,8 @@ public class ThemeDTO {
         if (!themeName.isEmpty()) {
             ret.append("$themename:").append(themeName);
         }
-        ret.append("isFontBold:").append(isFontBold);
-        ret.append("isFontItalic:").append(isFontItalic);
+        ret.append("$isFontBold:").append(isFontBold);
+        ret.append("$isFontItalic:").append(isFontItalic);
         if (background instanceof VideoBackground) {
             ret.append("$backgroundvideo:").append(((VideoBackground)background).getString());
         } else if (background instanceof ImageBackground) {
