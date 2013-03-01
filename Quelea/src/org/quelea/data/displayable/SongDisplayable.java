@@ -289,8 +289,9 @@ public class SongDisplayable implements TextDisplayable, Comparable<SongDisplaya
      * @param author the author of the song.
      */
     public SongDisplayable(String title, String author) {
-        this(title, author, new ThemeDTO(ThemeDTO.DEFAULT_FONT, ThemeDTO.DEFAULT_FONT_COLOR,
-                ThemeDTO.DEFAULT_BACKGROUND, ThemeDTO.DEFAULT_SHADOW));
+        this(title, author, new ThemeDTO(ThemeDTO.DEFAULT_FONT,
+                ThemeDTO.DEFAULT_FONT_COLOR,
+                ThemeDTO.DEFAULT_BACKGROUND, ThemeDTO.DEFAULT_SHADOW, false, false));
     }
 
     /**
@@ -832,8 +833,9 @@ public class SongDisplayable implements TextDisplayable, Comparable<SongDisplaya
                 }
             }
         }
-        SongDisplayable ret = new SongDisplayable(title, author, new ThemeDTO(ThemeDTO.DEFAULT_FONT, ThemeDTO.DEFAULT_FONT_COLOR,
-                ThemeDTO.DEFAULT_BACKGROUND, ThemeDTO.DEFAULT_SHADOW));
+        SongDisplayable ret = new SongDisplayable(title, author,
+                new ThemeDTO(ThemeDTO.DEFAULT_FONT, ThemeDTO.DEFAULT_FONT_COLOR,
+                ThemeDTO.DEFAULT_BACKGROUND, ThemeDTO.DEFAULT_SHADOW, false, false));
         for (TextSection section : songSections) {
             ret.addSection(section);
         }
