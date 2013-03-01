@@ -31,6 +31,8 @@ import javafx.scene.media.MediaView;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 import javafx.scene.text.Font;
+import javafx.scene.text.FontPosture;
+import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 import javafx.util.Duration;
 import org.quelea.data.Background;
@@ -101,23 +103,25 @@ public class LyricDrawer extends DisplayableDrawer {
 
         List<String> newText = sanctifyText();
         double fontSize = pickFontSize(font, newText, canvas.getWidth(), canvas.getHeight());
-        font = Font.font(font.getName(), fontSize);
+        font = Font.font(font.getName(),
+                theme.isBold() ? FontWeight.BOLD : FontWeight.NORMAL,
+                theme.isItalic() ? FontPosture.ITALIC : FontPosture.REGULAR,
+                fontSize);
         FontMetrics metrics = Toolkit.getToolkit().getFontLoader().getFontMetrics(font);
         int y = 0;
         final Group newTextGroup = new Group();
         StackPane.setAlignment(newTextGroup, QueleaProperties.get().getTextPosition().getLayouPos());
-       
-        for( Iterator< Node > it = canvas.getChildren().iterator(); it.hasNext() ; )
-        {
+
+        for (Iterator< Node> it = canvas.getChildren().iterator(); it.hasNext();) {
             Node node = it.next();
-            if(node instanceof Group) {
+            if (node instanceof Group) {
                 it.remove();
             }
-            
+
         }
-        
+
         canvas.getChildren().add(newTextGroup);
-        
+
         ParallelTransition paintTransition = new ParallelTransition();
         boolean secondLanguageYShift = false;
         for (String line : newText) {
@@ -134,6 +138,9 @@ public class LyricDrawer extends DisplayableDrawer {
 
             double width = metrics.computeStringWidth(line);
             double centreOffset = (canvas.getWidth() - width) / 2;
+
+
+
 
             t.setFont(font);
 
@@ -480,18 +487,18 @@ public class LyricDrawer extends DisplayableDrawer {
 
     public void draw(Displayable displayable) {
         drawText();
-            if (canvas.getBackground() instanceof ImageView) {
-                ImageView imgBackground = (ImageView) canvas.getBackground();
-                imgBackground.setFitHeight(canvas.getHeight());
-                imgBackground.setFitWidth(canvas.getWidth());
-            } else if (canvas.getBackground() instanceof MediaView) {
-                MediaView vidBackground = (MediaView) canvas.getBackground();
-                vidBackground.setPreserveRatio(false);
-                vidBackground.setFitHeight(canvas.getHeight());
-                vidBackground.setFitWidth(canvas.getWidth());
-            } else {
-                LOGGER.log(Level.WARNING, "BUG: Unrecognised image background");
-            }
+        if (canvas.getBackground() instanceof ImageView) {
+            ImageView imgBackground = (ImageView) canvas.getBackground();
+            imgBackground.setFitHeight(canvas.getHeight());
+            imgBackground.setFitWidth(canvas.getWidth());
+        } else if (canvas.getBackground() instanceof MediaView) {
+            MediaView vidBackground = (MediaView) canvas.getBackground();
+            vidBackground.setPreserveRatio(false);
+            vidBackground.setFitHeight(canvas.getHeight());
+            vidBackground.setFitWidth(canvas.getWidth());
+        } else {
+            LOGGER.log(Level.WARNING, "BUG: Unrecognised image background");
+        }
     }
 
     @Override

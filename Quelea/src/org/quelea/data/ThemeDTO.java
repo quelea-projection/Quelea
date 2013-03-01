@@ -41,16 +41,17 @@ public class ThemeDTO {
     public static final Color DEFAULT_FONT_COLOR = Color.WHITE;
     public static final DropShadow DEFAULT_SHADOW = new DropShadow();
     public static final Background DEFAULT_BACKGROUND = new ColourBackground(Color.BLACK);
-    public static final ThemeDTO DEFAULT_THEME = new ThemeDTO(DEFAULT_FONT, DEFAULT_FONT_COLOR,
-            DEFAULT_BACKGROUND, DEFAULT_SHADOW);
+    public static final ThemeDTO DEFAULT_THEME = new ThemeDTO(DEFAULT_FONT,
+            DEFAULT_FONT_COLOR,
+            DEFAULT_BACKGROUND, DEFAULT_SHADOW, false, false);
     private final Font font;
     private final Paint fontColor;
     private final Background background;
     private final DropShadow textShadow;
     private String themeName;
     private File file;
-    private boolean bold = false;
-    private boolean italic = false;
+    private Boolean isFontBold = false;
+    private Boolean isFontItalic = false;
 
     /**
      * Create a new theme with a specified font, font colour and background.
@@ -59,12 +60,15 @@ public class ThemeDTO {
      * @param fontPaint the font colour to use for the theme.
      * @param background the background to use for the page.
      */
-    public ThemeDTO(Font font, Paint fontPaint, Background background, DropShadow shadow) {
+    public ThemeDTO(Font font, Paint fontPaint, Background background,
+            DropShadow shadow, Boolean isFontBold, Boolean isFontItalic) {
         this.font = font;
         this.fontColor = fontPaint;
         this.background = background;
         themeName = "";
         this.textShadow = shadow;
+        this.isFontBold = isFontBold;
+        this.isFontItalic = isFontItalic;
     }
 
     /**
@@ -190,7 +194,7 @@ public class ThemeDTO {
         final TextShadow shadow = new TextShadow(textShadow.getColor().toString(),
                 textShadow.getOffsetX(), textShadow.getOffsetY());
         final Theme theme = new Theme(themeName, font.getName(), fontColor.toString(), backgroundColor,
-                backgroundVideo, backgroundImage, shadow);
+                backgroundVideo, backgroundImage, shadow, isFontBold, isFontItalic);
         return theme;
     }
 
@@ -219,7 +223,8 @@ public class ThemeDTO {
         shadow.setColor(Utils.parseColour(givenShadow.getShadowColor()));
         shadow.setOffsetX(givenShadow.getOffsetX());
         shadow.setOffsetY(givenShadow.getOffsetY());
-        ThemeDTO ret = new ThemeDTO(font, Utils.parseColour(theme.getFontcolour()), background, shadow);
+        ThemeDTO ret = new ThemeDTO(font, Utils.parseColour(theme.getFontcolour()),
+                background, shadow, theme.isFontBold(), theme.isFontItalic());
         ret.themeName = theme.getName();
         return ret;
     }
@@ -241,7 +246,8 @@ public class ThemeDTO {
         if (!themeName.isEmpty()) {
             ret.append("$themename:").append(themeName);
         }
-        
+        ret.append("isFontBold:").append(isFontBold);
+        ret.append("isFontItalic:").append(isFontItalic);
         if (background instanceof VideoBackground) {
             ret.append("$backgroundvideo:").append(((VideoBackground)background).getString());
         } else if (background instanceof ImageBackground) {
@@ -267,6 +273,8 @@ public class ThemeDTO {
         }
         String fontname = "";
         String fontcolour = "";
+        String isFontBold = "";
+        String isFontItalic = "";
         String backgroundcolour = "";
         String backgroundvid = "";
         String backgroundimage = "";
@@ -283,6 +291,10 @@ public class ThemeDTO {
                 fontname = parts[1];
             } else if (parts[0].equalsIgnoreCase("fontcolour")) {
                 fontcolour = parts[1];
+            }else if (parts[0].equalsIgnoreCase("isFontBold")) {
+                isFontBold = parts[1];
+            }else if (parts[0].equalsIgnoreCase("isFontItalic")) {
+                isFontItalic = parts[1];
             } else if (parts[0].equalsIgnoreCase("backgroundcolour")) {
                 backgroundcolour = parts[1];
             } else if (parts[0].equalsIgnoreCase("backgroundimage")) {
@@ -315,7 +327,9 @@ public class ThemeDTO {
         shadow.setColor(Utils.parseColour(shadowColor));
         shadow.setOffsetX(Double.parseDouble(shadowOffsetX));
         shadow.setOffsetY(Double.parseDouble(shadowOffsetY));
-        ThemeDTO ret = new ThemeDTO(font, Utils.parseColour(fontcolour), background, shadow);
+        ThemeDTO ret = new ThemeDTO(font, Utils.parseColour(fontcolour),
+                background, shadow, Boolean.valueOf(isFontBold),
+                Boolean.valueOf(isFontItalic));
         ret.themeName = themeName;
         return ret;
     }
@@ -335,32 +349,18 @@ public class ThemeDTO {
         }
         return val;
     }
-
-    /**
-     * @return the bold
-     */
-    public boolean isBold() {
-        return bold;
-    }
-
-    /**
-     * @param bold the bold to set
-     */
-    public void setBold(boolean bold) {
-        this.bold = bold;
-    }
-
+    
     /**
      * @return the italic
      */
     public boolean isItalic() {
-        return italic;
+        return isFontItalic;
     }
-
+    
     /**
-     * @param italic the italic to set
+     * @return the bold
      */
-    public void setItalic(boolean italic) {
-        this.italic = italic;
+    public boolean isBold() {
+        return isFontBold;
     }
 }
