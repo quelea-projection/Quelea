@@ -56,8 +56,6 @@ import org.quelea.windows.multimedia.MediaPlayerFactory;
 public class LyricDrawer extends DisplayableDrawer {
 
     private static final Logger LOGGER = LoggerUtils.getLogger();
-    private static final String SECONGLANG_STARTTAG = "[";
-    public static final String SECONDLANG_ENDTAG = "]";
     private String[] text;
     private Group textGroup;
     private Paint lastColor;
@@ -123,32 +121,17 @@ public class LyricDrawer extends DisplayableDrawer {
         canvas.getChildren().add(newTextGroup);
 
         ParallelTransition paintTransition = new ParallelTransition();
-        boolean secondLanguageYShift = false;
         for (String line : newText) {
             Text t;
-            if (line.startsWith(SECONGLANG_STARTTAG)) {
-                secondLanguageYShift = true;
-                t = new Text(line.substring(1, line.length()));
-
-            } else if (line.endsWith(SECONDLANG_ENDTAG)) {
-                t = new Text(line.substring(0, line.length() - 1));
-            } else {
-                t = new Text(line);
-            }
+            t = new Text(line);
 
             double width = metrics.computeStringWidth(line);
             double centreOffset = (canvas.getWidth() - width) / 2;
 
-
-
-
             t.setFont(font);
-
             t.setEffect(shadow);
-
             t.setX(centreOffset);
-
-            t.setY(secondLanguageYShift ? y + fontSize : y);
+            t.setY(y);
 
             if (theme.getFontPaint()
                     == lastColor || lastColor == null) {
