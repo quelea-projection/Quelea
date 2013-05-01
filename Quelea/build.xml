@@ -158,7 +158,6 @@
         <move file="${dist.jar.dir}/Quelea.exe" tofile="${WindowsInstaller}" failonerror="false"/>
         <!-- <delete dir="${dist.jar.dir}/Output" verbose="true" failonerror="false"/> -->
         
-        <zip destfile="${Portable}" basedir="${dist.jar.dir}" excludes="standalone/"/>
     </target>
     
 <!--    <target name="upload" depends="jfx-jar">
