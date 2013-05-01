@@ -1,5 +1,12 @@
 quelea (0.6) stable; urgency=normal
  
   * Rewritten interface in JavaFX
+  * Added text import
+  * Rewritten video support without VLC
+  * Added video background support
+  * Changed to more efficient database format
+  * Added music support
+  * Added more / better sample images
+  * Fixed several bugs
 
  -- Michael Berry <michael@quelea.org>  Wednesday, 10 Oct 2012 00:00:00 +0000
