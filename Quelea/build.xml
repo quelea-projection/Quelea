@@ -125,6 +125,8 @@
                 <exclude name="lib/junit_4/**"/> 
                 <exclude name="lib/**javadoc.jar"/> 
                 <exclude name="standalone/**"/> 
+                <exclude name="Output/**"/> 
+                <exclude name="web-files/**"/> 
                 <exclude name="copyright"/> 
                 <exclude name="license.txt"/> 
                 <exclude name="launch.sh"/> 
@@ -155,8 +157,8 @@
         <exec dir="${dist.jar.dir}" executable="cmd" failifexecutionfails="false" failonerror="false">
             <arg value="/c build-install.bat"/>
         </exec>
-        <move file="${dist.jar.dir}/Quelea.exe" tofile="${WindowsInstaller}" failonerror="false"/>
-        <!-- <delete dir="${dist.jar.dir}/Output" verbose="true" failonerror="false"/> -->
+        <move file="${dist.jar.dir}/Output/Quelea.exe" tofile="${WindowsInstaller}" failonerror="false"/>
+        <delete dir="${dist.jar.dir}/Output" verbose="true" failonerror="false"/> 
         
     </target>
     

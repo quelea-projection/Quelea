@@ -185,15 +185,10 @@
             </or>
         </condition>
         <condition property="have-jdk7-css2bin-bug">
+            <!-- as of NB7.3 release date the external css-to-bss converter is unreliable in almost all JDK7/8 versions -->
             <or>
-                <contains string="${version-output}" substring="java version &quot;1.7.0_04"/>
-                <contains string="${version-output}" substring="java version &quot;1.7.0_05"/>
-                <contains string="${version-output}" substring="java version &quot;1.7.0_06"/>
-                <contains string="${version-output}" substring="java version &quot;1.7.0_07"/>
-                <contains string="${version-output}" substring="java version &quot;1.7.0_08"/>
-                <contains string="${version-output}" substring="java version &quot;1.7.0_09"/>
-                <contains string="${version-output}" substring="java version &quot;1.7.0_10"/>
-                <contains string="${version-output}" substring="java version &quot;1.7.0_11"/>
+                <contains string="${version-output}" substring="java version &quot;1.7"/>
+                <contains string="${version-output}" substring="java version &quot;1.8"/>
             </or>
         </condition>
         <property name="jdk-version-checked-in-jfximpl" value="true"/>
