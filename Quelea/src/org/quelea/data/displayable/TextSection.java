@@ -86,6 +86,9 @@ public class TextSection {
         this.capitaliseFirst = capitaliseFirst;
         this.title = title;
         this.lines = Arrays.copyOf(lines, lines.length);
+        if(smallLines==null) { //Guard against NPE
+            smallLines = new String[0];
+        }
         this.smallLines = Arrays.copyOf(smallLines, smallLines.length);
         this.theme = theme;
         this.tempTheme = tempTheme;
