@@ -25,6 +25,7 @@ import javafx.scene.control.MenuItem;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import org.quelea.languages.LabelGrabber;
+import org.quelea.services.importexport.EasySlidesImportDialog;
 import org.quelea.services.importexport.ImportDialog;
 import org.quelea.services.importexport.KingswayImportDialog;
 import org.quelea.services.importexport.PlainTextSongsImportDialog;
@@ -44,10 +45,12 @@ public class ImportMenu extends Menu {
     private final ImportDialog sourceImportDialog;
     private final ImportDialog kingswayImportDialog;
     private final ImportDialog plainTextImportDialog;
+    private final ImportDialog easySlidesImportDialog;
     private final MenuItem qspItem;
     private final MenuItem ssItem;
     private final MenuItem sourceItem;
     private final MenuItem plainTextItem;
+    private final MenuItem easySlidesItem;
     private final Menu kingswayItem;
 
     /**
@@ -61,6 +64,7 @@ public class ImportMenu extends Menu {
         sourceImportDialog = new SourceImportDialog();
         kingswayImportDialog = new KingswayImportDialog(null);
         plainTextImportDialog = new PlainTextSongsImportDialog();
+        easySlidesImportDialog = new EasySlidesImportDialog();
 
         qspItem = new MenuItem(LabelGrabber.INSTANCE.getLabel("qsp.button"), new ImageView(new Image("file:icons/logo.png", 16, 16, false, true)));
         qspItem.setOnAction(new EventHandler<ActionEvent>() {
@@ -88,6 +92,15 @@ public class ImportMenu extends Menu {
             }
         });
         getItems().add(sourceItem);
+
+        easySlidesItem = new MenuItem(LabelGrabber.INSTANCE.getLabel("easyslides.button"), new ImageView(new Image("file:icons/easyslides.png", 16, 16, false, true)));
+        easySlidesItem.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent t) {
+                easySlidesImportDialog.show();
+            }
+        });
+        getItems().add(easySlidesItem);
 
         MenuItem kingswayAll, kingswayOne;
 
