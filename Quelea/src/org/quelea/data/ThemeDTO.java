@@ -31,7 +31,7 @@ import org.quelea.services.utils.Utils;
 
 /**
  * A theme data transfer object used to deliver theme data from DB to view layer
- *
+ * <p/>
  * @author Michael
  */
 public class ThemeDTO {
@@ -55,7 +55,7 @@ public class ThemeDTO {
 
     /**
      * Create a new theme with a specified font, font colour and background.
-     *
+     * <p/>
      * @param font the font to use for the theme.
      * @param fontPaint the font colour to use for the theme.
      * @param background the background to use for the page.
@@ -73,7 +73,7 @@ public class ThemeDTO {
 
     /**
      * Get the file associated with this theme.
-     *
+     * <p/>
      * @return the theme file, or null if one hasn't been set.
      */
     public File getFile() {
@@ -82,7 +82,7 @@ public class ThemeDTO {
 
     /**
      * Set the file associated with this theme.
-     *
+     * <p/>
      * @param file the file to set as the theme file.
      */
     public void setFile(File file) {
@@ -91,7 +91,7 @@ public class ThemeDTO {
 
     /**
      * Get the name of the theme.
-     *
+     * <p/>
      * @return the name of the theme.
      */
     public String getThemeName() {
@@ -100,7 +100,7 @@ public class ThemeDTO {
 
     /**
      * Set the theme name.
-     *
+     * <p/>
      * @param themeName the theme name.
      */
     public void setThemeName(String themeName) {
@@ -109,7 +109,7 @@ public class ThemeDTO {
 
     /**
      * Get the background of the theme.
-     *
+     * <p/>
      * @return the theme background.
      */
     public Background getBackground() {
@@ -118,7 +118,7 @@ public class ThemeDTO {
 
     /**
      * Get the font of the theme.
-     *
+     * <p/>
      * @return the theme font.
      */
     public Font getFont() {
@@ -127,7 +127,7 @@ public class ThemeDTO {
 
     /**
      * Get the paint of the font.
-     *
+     * <p/>
      * @return the theme font paint.
      */
     public Paint getFontPaint() {
@@ -136,26 +136,26 @@ public class ThemeDTO {
 
     /**
      * Determine if this theme is equal to another object.
-     *
+     * <p/>
      * @param obj the other object.
      * @return true if the two objects are meaningfully equal, false otherwise.
      */
     @Override
     public boolean equals(Object obj) {
-        if (obj == null) {
+        if(obj == null) {
             return false;
         }
-        if (getClass() != obj.getClass()) {
+        if(getClass() != obj.getClass()) {
             return false;
         }
         final ThemeDTO other = (ThemeDTO) obj;
-        if (this.font != other.font && (this.font == null || !this.font.equals(other.font))) {
+        if(this.font != other.font && (this.font == null || !this.font.equals(other.font))) {
             return false;
         }
-        if (this.fontColor != other.fontColor && (this.fontColor == null || !this.fontColor.equals(other.fontColor))) {
+        if(this.fontColor != other.fontColor && (this.fontColor == null || !this.fontColor.equals(other.fontColor))) {
             return false;
         }
-        if (this.background != other.background && (this.background == null || !this.background.equals(other.background))) {
+        if(this.background != other.background && (this.background == null || !this.background.equals(other.background))) {
             return false;
         }
         return true;
@@ -163,7 +163,7 @@ public class ThemeDTO {
 
     /**
      * Determine a hashcode for this theme.
-     *
+     * <p/>
      * @return the theme's hashcode.
      */
     @Override
@@ -177,18 +177,20 @@ public class ThemeDTO {
 
     /**
      * Get a string representation of this theme for storing in the database.
-     *
+     * <p/>
      * @return the string to store in the database.
      */
     public Theme getTheme() {
         String backgroundColor = "";
         String backgroundVideo = "";
         String backgroundImage = "";
-        if (background instanceof VideoBackground) {
+        if(background instanceof VideoBackground) {
             backgroundVideo = background.getString();
-        } else if (background instanceof ImageBackground) {
+        }
+        else if(background instanceof ImageBackground) {
             backgroundImage = background.getString();
-        } else if (background instanceof ColourBackground) {
+        }
+        else if(background instanceof ColourBackground) {
             backgroundColor = background.getString();
         }
         final TextShadow shadow = new TextShadow(textShadow.getColor().toString(),
@@ -200,23 +202,22 @@ public class ThemeDTO {
 
     /**
      * Get a themeDTO from a Theme which is DB table mapping
-     *
-     * @param s the string to parse.
-     * @return the theme parsed from the string, or null if a parsing error
-     * occurs.
+     * <p/>
      */
     public static ThemeDTO getDTO(Theme theme) {
         Font font = new Font(theme.getFontname(), 72);
         Background background;
-        if (!theme.getBackgroundcolour().isEmpty()) {
+        if(!theme.getBackgroundcolour().isEmpty()) {
             background = new ColourBackground(Utils.parseColour(theme.getBackgroundcolour()));
-        } else if (!theme.getBackgroundimage().isEmpty()) {
+        }
+        else if(!theme.getBackgroundimage().isEmpty()) {
             background = new ImageBackground(theme.getBackgroundimage());
-        } else if (!theme.getBackgroundvid().isEmpty()) {
+        }
+        else if(!theme.getBackgroundvid().isEmpty()) {
             background = new VideoBackground(theme.getBackgroundvid());
-        } else {
-            LOGGER.log(Level.SEVERE, "Bug: Unhandled background");
-            background = null;
+        }
+        else {
+            background = new ColourBackground(Color.BLACK);
         }
         DropShadow shadow = new DropShadow();
         TextShadow givenShadow = theme.getTextShadow();
@@ -235,7 +236,7 @@ public class ThemeDTO {
 
     /**
      * Presents theme as string representation //
-     *
+     * <p/>
      * @todo move to SimpleXML framework.
      * @return theme as string representation
      */
@@ -243,17 +244,19 @@ public class ThemeDTO {
         StringBuilder ret = new StringBuilder();
         ret.append("fontname:").append(font.getName());
         ret.append("$fontcolour:").append(fontColor.toString());
-        if (!themeName.isEmpty()) {
+        if(!themeName.isEmpty()) {
             ret.append("$themename:").append(themeName);
         }
         ret.append("$isFontBold:").append(isFontBold);
         ret.append("$isFontItalic:").append(isFontItalic);
-        if (background instanceof VideoBackground) {
-            ret.append("$backgroundvideo:").append(((VideoBackground)background).getString());
-        } else if (background instanceof ImageBackground) {
-            ret.append("$backgroundimage:").append(((ImageBackground)background).getString());
-        } else if (background instanceof ColourBackground) {
-            ret.append("$backgroundcolour:").append(((ColourBackground)background).getString());
+        if(background instanceof VideoBackground) {
+            ret.append("$backgroundvideo:").append(((VideoBackground) background).getString());
+        }
+        else if(background instanceof ImageBackground) {
+            ret.append("$backgroundimage:").append(((ImageBackground) background).getString());
+        }
+        else if(background instanceof ColourBackground) {
+            ret.append("$backgroundcolour:").append(((ColourBackground) background).getString());
         }
         ret.append("$shadowcolor:").append(textShadow.getColor().toString());
         ret.append("$shadowX:").append(textShadow.getOffsetX());
@@ -263,12 +266,12 @@ public class ThemeDTO {
 
     /**
      * Create Theme DTO form its String representation
-     *
+     * <p/>
      * @param content Theme String representation
      * @return theme DTO
      */
     public static ThemeDTO fromString(String content) {
-        if (content == null || content.isEmpty()) {
+        if(content == null || content.isEmpty()) {
             return ThemeDTO.DEFAULT_THEME;
         }
         String fontname = "";
@@ -282,44 +285,57 @@ public class ThemeDTO {
         String shadowColor = "";
         String shadowOffsetX = "0";
         String shadowOffsetY = "0";
-        for (String part : content.split("\\$")) {
-            if (!part.contains(":")) {
+        for(String part : content.split("\\$")) {
+            if(!part.contains(":")) {
                 continue;
             }
             String[] parts = part.split(":");
-            if (parts[0].equalsIgnoreCase("fontname")) {
+            if(parts[0].equalsIgnoreCase("fontname")) {
                 fontname = parts[1];
-            } else if (parts[0].equalsIgnoreCase("fontcolour")) {
+            }
+            else if(parts[0].equalsIgnoreCase("fontcolour")) {
                 fontcolour = parts[1];
-            }else if (parts[0].equalsIgnoreCase("isFontBold")) {
+            }
+            else if(parts[0].equalsIgnoreCase("isFontBold")) {
                 isFontBold = parts[1];
-            }else if (parts[0].equalsIgnoreCase("isFontItalic")) {
+            }
+            else if(parts[0].equalsIgnoreCase("isFontItalic")) {
                 isFontItalic = parts[1];
-            } else if (parts[0].equalsIgnoreCase("backgroundcolour")) {
+            }
+            else if(parts[0].equalsIgnoreCase("backgroundcolour")) {
                 backgroundcolour = parts[1];
-            } else if (parts[0].equalsIgnoreCase("backgroundimage")) {
+            }
+            else if(parts[0].equalsIgnoreCase("backgroundimage")) {
                 backgroundimage = parts[1];
-            } else if (parts[0].equalsIgnoreCase("backgroundvideo")) {
+            }
+            else if(parts[0].equalsIgnoreCase("backgroundvideo")) {
                 backgroundvid = parts[1];
-            } else if (parts[0].equalsIgnoreCase("themename")) {
+            }
+            else if(parts[0].equalsIgnoreCase("themename")) {
                 themeName = parts[1];
-            }else if (parts[0].equalsIgnoreCase("shadowcolor")) {
+            }
+            else if(parts[0].equalsIgnoreCase("shadowcolor")) {
                 shadowColor = parts[1];
-            }else if (parts[0].equalsIgnoreCase("shadowX")) {
+            }
+            else if(parts[0].equalsIgnoreCase("shadowX")) {
                 shadowOffsetX = defaultIfEmpty(parts[1], "0");
-            }else if (parts[0].equalsIgnoreCase("shadowY")) {
+            }
+            else if(parts[0].equalsIgnoreCase("shadowY")) {
                 shadowOffsetY = defaultIfEmpty(parts[1], "0");
             }
         }
         Font font = new Font(fontname, 72);
         Background background;
-        if (!backgroundcolour.isEmpty()) {
+        if(!backgroundcolour.isEmpty()) {
             background = new ColourBackground(Utils.parseColour(backgroundcolour));
-        } else if (!backgroundimage.isEmpty()) {
+        }
+        else if(!backgroundimage.isEmpty()) {
             background = new ImageBackground(backgroundimage);
-        } else if (!backgroundvid.isEmpty()) {
+        }
+        else if(!backgroundvid.isEmpty()) {
             background = new VideoBackground(backgroundvid);
-        } else {
+        }
+        else {
             LOGGER.log(Level.SEVERE, "Bug: Unhandled background");
             background = null;
         }
@@ -333,15 +349,16 @@ public class ThemeDTO {
         ret.themeName = themeName;
         return ret;
     }
-    
+
     /**
      * Return a set value if the given string is empty.
+     * <p/>
      * @param val the string to check.
      * @param defaultVal the value to return if the string is empty.
      * @return val, or defaultVal if the string is empty (or just whitespace.)
      */
     private static String defaultIfEmpty(String val, String defaultVal) {
-        if(val==null) {
+        if(val == null) {
             return defaultVal;
         }
         if(val.trim().isEmpty()) {
@@ -349,14 +366,14 @@ public class ThemeDTO {
         }
         return val;
     }
-    
+
     /**
      * @return the italic
      */
     public boolean isItalic() {
         return isFontItalic;
     }
-    
+
     /**
      * @return the bold
      */
