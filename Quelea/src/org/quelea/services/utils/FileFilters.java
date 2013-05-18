@@ -37,6 +37,14 @@ public final class FileFilters {
      */
     public static final FileChooser.ExtensionFilter XML_BIBLE = new FileChooser.ExtensionFilter("XML bibles (*.xml)", "*.xml");
     /**
+     * Accept XML easyslide files.
+     */
+    public static final FileChooser.ExtensionFilter XML_EASYSLIDES = new FileChooser.ExtensionFilter("XML Easyslide files (*.xml)", "*.xml");
+    /**
+     * Accept generic XML files.
+     */
+    public static final FileChooser.ExtensionFilter XML_GENERIC = new FileChooser.ExtensionFilter("XML files (*.xml)", "*.xml");
+    /**
      * Accept video files.
      */
     public static final FileChooser.ExtensionFilter VIDEOS = new FileChooser.ExtensionFilter("Video files (*.flv, *.mp4, *.m4v, *.mkv)", "*.xml", "*.flv", "*.mp4", "*.m4v", "*.mkv");
