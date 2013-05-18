@@ -27,7 +27,9 @@ import javafx.scene.control.ColorPicker;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
+import javafx.scene.paint.Color;
 import org.quelea.languages.LabelGrabber;
+import org.quelea.services.utils.Utils;
 
 /**
  *
@@ -44,8 +46,14 @@ public class ImageBackground implements Background {
      * @param imageLocation the location of the background image.
      */
     public ImageBackground(String imageLocation) {
+        File f = new File("img", imageLocation);
         this.imageLocation = imageLocation;
-        originalImage = new Image("file:img/"+imageLocation);
+        if(f.exists()) {
+            originalImage = new Image(f.toURI().toString());
+        }
+        else {
+            originalImage = Utils.getImageFromColour(Color.BLACK);
+        }
     }
 
     /**
