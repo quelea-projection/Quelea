@@ -9,6 +9,7 @@ quelea (0.6) stable; urgency=normal
   * Added more / better sample images
   * Plain text import
   * Easyslides import
+  * Fix Kingsway import
   * Many bugfixes
 
  -- Michael Berry <michael@quelea.org>  Wednesday, 10 Oct 2012 00:00:00 +0000
