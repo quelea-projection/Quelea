@@ -49,9 +49,9 @@ public class KingswayWorshipParser implements SongParser {
     /**
      * Rough number of songs in the library at present.
      */
-    private static final int ROUGH_NUM_SONGS = 2800;
+    private static final int ROUGH_NUM_SONGS = 3500;
     private static final SongDisplayable DEFAULT = new SongDisplayable("", "");
-    private int count500 = 0;
+    private int errorCount = 0;
     private boolean all;
 
     /**
@@ -72,7 +72,7 @@ public class KingswayWorshipParser implements SongParser {
     @Override
     public List<SongDisplayable> getSongs(File location, final StatusPanel statusPanel) throws IOException {
         if(all) {
-            count500 = 0;
+            errorCount = 0;
             List<SongDisplayable> ret = new ArrayList<>();
             int i = getStart();
             String pageText;
@@ -97,12 +97,15 @@ public class KingswayWorshipParser implements SongParser {
                 catch(Exception ex) {
                     LOGGER.log(Level.WARNING, "Error importing song", ex);
                 }
-                if(song != DEFAULT) {
+                if(song != DEFAULT&&song!=null) {
                     ret.add(song);
+                }
+                if(song==null) {
+                    errorCount++;
                 }
                 i++;
             }
-            int nextVal = i - count500 + 1;
+            int nextVal = i - errorCount + 1;
             if(nextVal < 0) {
                 nextVal = 0;
             }
@@ -206,16 +209,20 @@ public class KingswayWorshipParser implements SongParser {
         if(html == null) {
             return null;
         }
+        if(html.contains("Server error")) {
+            return null;
+        }
         if(html.isEmpty()) {
             return DEFAULT;
         }
-        int startIndex = html.indexOf("<h1>SONG LIBRARY</h1>") + "<h1>SONG LIBRARY</h1>".length();
-        int endIndex = html.indexOf("<a class=", startIndex);
+        int startIndex = html.indexOf("<div class=\"span8\">") + "<div class=\"span8\">".length();
+        int endIndex = html.indexOf("<div class=\"sharer\">", startIndex);
         if(endIndex == -1) {
             endIndex = html.indexOf("</div>", startIndex);
         }
         String songHtml = html.substring(startIndex, endIndex).trim();
         songHtml = songHtml.replace("&#39;", "'");
+        songHtml = songHtml.replace("&#039;", "'");
         songHtml = songHtml.replace("&#160;", " ");
         songHtml = songHtml.replace("&nbsp;", " ");
         songHtml = songHtml.replace(Character.toString((char) 160), " ");
@@ -227,8 +234,8 @@ public class KingswayWorshipParser implements SongParser {
         songHtml = songHtml.replace("&rsquo;", "'");
         songHtml = songHtml.replace("&copy;", "©");
 
-        String title = songHtml.substring(4, songHtml.indexOf("</h2>"));
-        songHtml = songHtml.substring(songHtml.indexOf("</h2>") + 5);
+        String title = songHtml.substring(4, songHtml.indexOf("</h1>"));
+        songHtml = songHtml.substring(songHtml.indexOf("</h1>") + 5);
         songHtml = songHtml.trim();
 
         String author = songHtml.substring(4, songHtml.indexOf("</h3>"));
@@ -323,20 +330,20 @@ public class KingswayWorshipParser implements SongParser {
         LOGGER.log(Level.INFO, "Doing page {0}", num);
         try {
             StringBuilder content = new StringBuilder();
-            URL url = new URL("http://www.kingswayworship.co.uk/song-library/showsong/" + num);
+            URL url = new URL("http://www.weareworship.com/songs/song-library/showsong/" + num);
             try(BufferedReader in = new BufferedReader(new InputStreamReader(url.openStream()))) {
                 String str;
                 while((str = in.readLine()) != null) {
                     content.append(str).append("\n");
                 }
             }
-            count500 = 0;
+            errorCount = 0;
             return content.toString();
         }
         catch(Exception ex) {
             if(ex.getMessage().contains("500")) {
-                count500++;
-                if(count500 > 10) {
+                errorCount++;
+                if(errorCount > 10) {
                     LOGGER.log(Level.INFO, "Too many 500's, giving up");
 //                    count500 = 0;
                     return null;
