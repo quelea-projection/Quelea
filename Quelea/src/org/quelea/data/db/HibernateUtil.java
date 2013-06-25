@@ -1,6 +1,7 @@
-    package org.quelea.data.db;
+package org.quelea.data.db;
 
 import java.io.File;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -13,7 +14,7 @@ import org.quelea.services.utils.QueleaProperties;
 /**
  * Hibernate Utility class with a convenient method to get Session Factory
  * object.
- *
+ * <p/>
  * @author tomaszpio@gmail.com
  */
 public class HibernateUtil {
@@ -44,18 +45,18 @@ public class HibernateUtil {
             cfg.addAnnotatedClass(org.quelea.data.db.model.TextShadow.class);
             serviceRegistry = new ServiceRegistryBuilder().applySettings(cfg.getProperties()).buildServiceRegistry();
             sessionFactory = cfg.buildSessionFactory(serviceRegistry);
-        } catch (Throwable ex) {
-            // Log the exception. 
-            System.err.println("Initial SessionFactory creation failed." + ex);
+        }
+        catch(Throwable ex) {
+            LOGGER.log(Level.SEVERE, "Initial SessionFactory creation failed.", ex);
             throw new ExceptionInInitializerError(ex);
         }
     }
 
     /**
-     * Encapsulate session management operations. All db operation code should be implemented
-     * in callback execute method implementation.
-     * 
-     * @param callback 
+     * Encapsulate session management operations. All db operation code should
+     * be implemented in callback execute method implementation.
+     * <p/>
+     * @param callback
      */
     public static void execute(SessionCallback callback) {
         final Session session = sessionFactory.openSession();
