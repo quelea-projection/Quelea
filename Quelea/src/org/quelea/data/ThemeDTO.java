@@ -336,7 +336,7 @@ public class ThemeDTO {
             background = new VideoBackground(backgroundvid);
         }
         else {
-            LOGGER.log(Level.SEVERE, "Bug: Unhandled background");
+            LOGGER.log(Level.WARNING, "WARNING: Unhandled or empty background, defaulting to null. Raw content: " + content, new RuntimeException("DEBUG EXCEPTION"));
             background = null;
         }
         DropShadow shadow = new DropShadow();
