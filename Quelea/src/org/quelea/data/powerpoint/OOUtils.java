@@ -21,7 +21,7 @@ package org.quelea.data.powerpoint;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.javafx.dialog.Dialog;
-import org.quelea.servivces.languages.LabelGrabber;
+import org.quelea.services.languages.LabelGrabber;
 import org.quelea.services.utils.LoggerUtils;
 import org.quelea.services.utils.QueleaProperties;
 

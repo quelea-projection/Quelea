@@ -61,7 +61,7 @@ import org.javafx.dialog.Dialog;
 import org.quelea.data.ThemeDTO;
 import org.quelea.data.db.SongManager;
 import org.quelea.data.displayable.SongDisplayable;
-import org.quelea.servivces.languages.LabelGrabber;
+import org.quelea.services.languages.LabelGrabber;
 import org.quelea.windows.main.QueleaApp;
 import org.quelea.windows.main.StatusPanel;
 

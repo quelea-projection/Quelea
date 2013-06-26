@@ -22,7 +22,7 @@ import org.apache.poi.hslf.HSLFSlideShow;
 import org.apache.poi.hslf.model.Slide;
 import org.apache.poi.hslf.usermodel.SlideShow;
 import org.javafx.dialog.Dialog;
-import org.quelea.servivces.languages.LabelGrabber;
+import org.quelea.services.languages.LabelGrabber;
 
 /**
  * A presentation that can be displayed. At the moment represents a powerpoint

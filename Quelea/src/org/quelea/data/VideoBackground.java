@@ -26,7 +26,7 @@ import java.util.Objects;
 import javafx.scene.control.ColorPicker;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.TextField;
-import org.quelea.servivces.languages.LabelGrabber;
+import org.quelea.services.languages.LabelGrabber;
 
 /**
  * A background comprising of a video.
