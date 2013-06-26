@@ -30,6 +30,7 @@ public class ShowOptionsActionHandler implements EventHandler<ActionEvent> {
     
     @Override
     public void handle(javafx.event.ActionEvent t) {
+        QueleaApp.get().getMainWindow().getOptionsDialog().callBeforeShowing();
         QueleaApp.get().getMainWindow().getOptionsDialog().show();
         QueleaApp.get().getMainWindow().getOptionsDialog().toFront();
     }

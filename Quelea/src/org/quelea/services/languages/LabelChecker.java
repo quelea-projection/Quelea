@@ -22,9 +22,11 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.StringReader;
 import java.util.Properties;
 import java.util.Set;
 import org.quelea.services.utils.QueleaProperties;
+import org.quelea.services.utils.Utils;
 
 /**
  * Run as a standalone script - checks to see whether the language files are
@@ -44,15 +46,15 @@ public class LabelChecker {
         labels = new Properties();
         engLabels = new Properties();
         File langFile = new File("languages", name);
-        try(InputStream stream = new FileInputStream(langFile)) {
-            labels.load(stream);
+        try(StringReader reader = new StringReader(Utils.getTextFromFile(langFile.getAbsolutePath(), ""))) {
+            labels.load(reader);
         }
         catch(IOException ex) {
             ex.printStackTrace();
         }
         File englangFile = QueleaProperties.get().getEnglishLanguageFile();
-        try(InputStream stream = new FileInputStream(englangFile)) {
-            engLabels.load(stream);
+        try(StringReader reader = new StringReader(Utils.getTextFromFile(englangFile.getAbsolutePath(), ""))) {
+            engLabels.load(reader);
         }
         catch(IOException ex) {
             ex.printStackTrace();

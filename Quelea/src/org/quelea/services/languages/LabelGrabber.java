@@ -20,11 +20,13 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.StringReader;
 import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.quelea.services.utils.LoggerUtils;
 import org.quelea.services.utils.QueleaProperties;
+import org.quelea.services.utils.Utils;
 
 /**
  * Responsible for grabbing the appropriate labels from the current langauges
@@ -52,8 +54,8 @@ public class LabelGrabber {
             return;
         }
         LOGGER.log(Level.INFO, "Using languages file {0}", langFile.getAbsolutePath());
-        try(InputStream stream = new FileInputStream(langFile)) {
-            labels.load(stream);
+        try(StringReader reader = new StringReader(Utils.getTextFromFile(langFile.getAbsolutePath(), ""))) {
+            labels.load(reader);
         }
         catch(IOException ex) {
             LOGGER.log(Level.SEVERE, "Couldn't load languages file", ex);
@@ -69,8 +71,8 @@ public class LabelGrabber {
                 LOGGER.log(Level.SEVERE, "No english language file!");
             }
             else {
-                try(InputStream stream = new FileInputStream(englangFile)) {
-                    engLabels.load(stream);
+                try(StringReader reader = new StringReader(Utils.getTextFromFile(englangFile.getAbsolutePath(), ""))) {
+                    engLabels.load(reader);
                     LOGGER.log(Level.INFO, "Using english language file as backup");
                 }
                 catch(IOException ex) {
