@@ -34,7 +34,7 @@ import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeMultipart;
 import org.javafx.dialog.Dialog;
 import org.quelea.data.Schedule;
-import org.quelea.languages.LabelGrabber;
+import org.quelea.servivces.languages.LabelGrabber;
 import org.quelea.services.utils.LoggerUtils;
 
 /**
