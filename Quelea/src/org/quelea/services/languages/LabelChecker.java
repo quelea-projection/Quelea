@@ -77,7 +77,9 @@ public class LabelChecker {
 
     public static void main(String[] args) {
         for(File file : new File("languages").listFiles()) {
-            new LabelChecker(file.getName()).compare();
+            if(!file.getName().equals("gb.lang")) { //Exclude english file since this is what we work from!
+                new LabelChecker(file.getName()).compare();
+            }
         }
     }
 }
