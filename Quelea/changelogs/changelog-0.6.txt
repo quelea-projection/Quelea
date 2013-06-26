@@ -8,6 +8,7 @@ quelea (0.6) stable; urgency=normal
   * Added music support
   * Added more / better sample images
   * Plain text import
+  * Added Czech and German translations
   * Easyslides import
   * Fix Kingsway import
   * Many bugfixes
