@@ -7,6 +7,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import org.quelea.data.ThemeDTO;
 
 /**
  * theme table mapping
@@ -207,5 +208,10 @@ public class Theme {
      */
     public void setFontItalic(Boolean isFontItalic) {
         this.fontItalic = isFontItalic;
+    }
+    
+    @Override
+    public String toString() {
+        return ThemeDTO.getDTO(this).asString();
     }
 }

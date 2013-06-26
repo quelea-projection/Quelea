@@ -40,7 +40,7 @@ public class ThemeDTO {
     public static final Font DEFAULT_FONT = new Font("Arial", 72);
     public static final Color DEFAULT_FONT_COLOR = Color.WHITE;
     public static final DropShadow DEFAULT_SHADOW = new DropShadow();
-    public static final Background DEFAULT_BACKGROUND = new ColourBackground(Color.BLACK);
+    public static final ColourBackground DEFAULT_BACKGROUND = new ColourBackground(Color.BLACK);
     public static final ThemeDTO DEFAULT_THEME = new ThemeDTO(DEFAULT_FONT,
             DEFAULT_FONT_COLOR,
             DEFAULT_BACKGROUND, DEFAULT_SHADOW, false, false);
@@ -336,8 +336,8 @@ public class ThemeDTO {
             background = new VideoBackground(backgroundvid);
         }
         else {
-            LOGGER.log(Level.WARNING, "WARNING: Unhandled or empty background, defaulting to null. Raw content: " + content, new RuntimeException("DEBUG EXCEPTION"));
-            background = null;
+            LOGGER.log(Level.WARNING, "WARNING: Unhandled or empty background, using default background. Raw content: " + content, new RuntimeException("DEBUG EXCEPTION FOR STACK TRACE"));
+            background = ThemeDTO.DEFAULT_BACKGROUND;
         }
         DropShadow shadow = new DropShadow();
         shadow.setColor(Utils.parseColour(shadowColor));
