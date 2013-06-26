@@ -17,7 +17,7 @@
  */
 package org.quelea.data.displayable;
 
-import org.quelea.servivces.languages.LabelGrabber;
+import org.quelea.services.languages.LabelGrabber;
 
 /**
  * Used for describing the position the alignment of text can take.
