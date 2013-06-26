@@ -28,7 +28,7 @@ import javafx.stage.FileChooser;
 import org.apache.commons.io.FileUtils;
 import org.quelea.data.ThemeDTO;
 import org.quelea.data.VideoBackground;
-import org.quelea.languages.LabelGrabber;
+import org.quelea.servivces.languages.LabelGrabber;
 import org.quelea.services.utils.FileFilters;
 import org.quelea.services.utils.LoggerUtils;
 import org.quelea.windows.main.DisplayCanvas;

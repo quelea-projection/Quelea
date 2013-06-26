@@ -41,7 +41,7 @@ import org.quelea.data.chord.ChordLineTransposer;
 import org.quelea.data.chord.ChordTransposer;
 import org.quelea.data.chord.TransposeDialog;
 import org.quelea.data.displayable.SongDisplayable;
-import org.quelea.languages.LabelGrabber;
+import org.quelea.servivces.languages.LabelGrabber;
 import org.quelea.services.utils.LineTypeChecker;
 import org.quelea.services.utils.LineTypeChecker.Type;
 import org.quelea.services.utils.LoggerUtils;

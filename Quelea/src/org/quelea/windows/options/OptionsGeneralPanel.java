@@ -31,7 +31,7 @@ import javafx.scene.layout.Priority;
 import javafx.stage.DirectoryChooser;
 import org.quelea.data.powerpoint.OOPresentation;
 import org.quelea.data.powerpoint.OOUtils;
-import org.quelea.languages.LabelGrabber;
+import org.quelea.servivces.languages.LabelGrabber;
 import org.quelea.services.utils.PropertyPanel;
 import org.quelea.services.utils.QueleaProperties;
 import org.quelea.windows.main.QueleaApp;
