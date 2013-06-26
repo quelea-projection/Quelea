@@ -31,7 +31,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyCodeCombination;
 import javafx.scene.input.KeyCombination;
-import org.quelea.languages.LabelGrabber;
+import org.quelea.servivces.languages.LabelGrabber;
 import org.quelea.windows.main.actionhandlers.AddAudioActionHandler;
 import org.quelea.windows.main.actionhandlers.AddPowerpointActionHandler;
 import org.quelea.windows.main.actionhandlers.AddVideoActionHandler;

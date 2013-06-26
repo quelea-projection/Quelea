@@ -20,7 +20,7 @@ package org.quelea.windows.main;
 import java.io.File;
 import org.javafx.dialog.Dialog;
 import org.quelea.data.Schedule;
-import org.quelea.languages.LabelGrabber;
+import org.quelea.servivces.languages.LabelGrabber;
 import org.quelea.services.watcher.ImageFileWatcher;
 
 /**

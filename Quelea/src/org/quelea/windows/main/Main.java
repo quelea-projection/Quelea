@@ -30,7 +30,7 @@ import org.javafx.dialog.Dialog;
 import org.quelea.data.bible.BibleManager;
 import org.quelea.data.db.SongManager;
 import org.quelea.data.powerpoint.OOUtils;
-import org.quelea.languages.LabelGrabber;
+import org.quelea.servivces.languages.LabelGrabber;
 import org.quelea.services.phonehome.PhoneHome;
 import org.quelea.services.utils.LoggerUtils;
 import org.quelea.services.utils.QueleaProperties;

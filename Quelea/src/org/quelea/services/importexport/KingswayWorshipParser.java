@@ -32,7 +32,7 @@ import javafx.event.EventHandler;
 import org.javafx.dialog.Dialog;
 import org.javafx.dialog.InputDialog;
 import org.quelea.data.displayable.SongDisplayable;
-import org.quelea.languages.LabelGrabber;
+import org.quelea.servivces.languages.LabelGrabber;
 import org.quelea.services.utils.LoggerUtils;
 import org.quelea.services.utils.QueleaProperties;
 import org.quelea.services.utils.Utils;

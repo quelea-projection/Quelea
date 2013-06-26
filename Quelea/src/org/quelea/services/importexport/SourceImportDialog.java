@@ -17,7 +17,7 @@
  */
 package org.quelea.services.importexport;
 
-import org.quelea.languages.LabelGrabber;
+import org.quelea.servivces.languages.LabelGrabber;
 
 /**
  * An import dialog for the survivor song books in PDF format.

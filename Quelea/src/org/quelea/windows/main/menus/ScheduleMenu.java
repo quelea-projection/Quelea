@@ -37,7 +37,7 @@ import javafx.scene.input.KeyCombination;
 import org.quelea.data.Schedule;
 import org.quelea.data.displayable.Displayable;
 import org.quelea.data.displayable.SongDisplayable;
-import org.quelea.languages.LabelGrabber;
+import org.quelea.servivces.languages.LabelGrabber;
 import org.quelea.services.mail.Mailer;
 import org.quelea.services.utils.LoggerUtils;
 import org.quelea.windows.library.LibrarySongList;

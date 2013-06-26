@@ -26,7 +26,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import org.quelea.data.db.SongManager;
 import org.quelea.data.displayable.SongDisplayable;
-import org.quelea.languages.LabelGrabber;
+import org.quelea.servivces.languages.LabelGrabber;
 import org.quelea.windows.library.LibrarySongList;
 
 /**
