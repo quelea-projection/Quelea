@@ -32,6 +32,8 @@ import javafx.stage.DirectoryChooser;
 import org.quelea.data.powerpoint.OOPresentation;
 import org.quelea.data.powerpoint.OOUtils;
 import org.quelea.services.languages.LabelGrabber;
+import org.quelea.services.languages.LanguageFile;
+import org.quelea.services.languages.LanguageFileManager;
 import org.quelea.services.utils.PropertyPanel;
 import org.quelea.services.utils.QueleaProperties;
 import org.quelea.windows.main.QueleaApp;
@@ -51,12 +53,14 @@ public class OptionsGeneralPanel extends GridPane implements PropertyPanel {
     private final CheckBox textShadowCheckBox;
     private final CheckBox useOOCheckBox;
     private final ComboBox<TextPosition> textPositionComboBox;
+    private final ComboBox<LanguageFile> languageFileComboBox;
     private final TextField ooPathTextField;
     private final DirectoryChooser ooChooser;
     private final Button selectButton;
     private final Slider borderThicknessSlider;
     private final Slider maxCharsSlider;
     private final Slider minLinesSlider;
+    private LanguageFile currentLanguageFile;
 
     /**
      * Create a new general panel.
@@ -166,7 +170,7 @@ public class OptionsGeneralPanel extends GridPane implements PropertyPanel {
         GridPane.setConstraints(textShadowCheckBox, 2, rows);
         getChildren().add(textShadowCheckBox);
         rows++;
-
+        
         Label textPositionLabel = new Label(LabelGrabber.INSTANCE.getLabel("text.position.label"));
         GridPane.setConstraints(textPositionLabel, 1, rows);
         getChildren().add(textPositionLabel);
@@ -177,6 +181,18 @@ public class OptionsGeneralPanel extends GridPane implements PropertyPanel {
         startupLabel.setLabelFor(textPositionComboBox);
         GridPane.setConstraints(textPositionComboBox, 2, rows);
         getChildren().add(textPositionComboBox);
+        rows++;
+
+        Label interfaceLanguageLabel = new Label(LabelGrabber.INSTANCE.getLabel("interface.language.label"));
+        GridPane.setConstraints(interfaceLanguageLabel, 1, rows);
+        getChildren().add(interfaceLanguageLabel);
+        languageFileComboBox = new ComboBox<>();
+        for(LanguageFile file : LanguageFileManager.INSTANCE.languageFiles()) {
+            languageFileComboBox.getItems().add(file);
+        }
+        interfaceLanguageLabel.setLabelFor(languageFileComboBox);
+        GridPane.setConstraints(languageFileComboBox, 2, rows);
+        getChildren().add(languageFileComboBox);
         rows++;
 
         Label borderThicknessLabel = new Label(LabelGrabber.INSTANCE.getLabel("text.border.thickness.label"));
@@ -252,6 +268,20 @@ public class OptionsGeneralPanel extends GridPane implements PropertyPanel {
 
         readProperties();
     }
+    
+    /**
+     * Reset the mechanism for determining if the user has changed the interface language. Call before showing the options dialog.
+     */
+    public void resetLanguageChanged() {
+        currentLanguageFile = languageFileComboBox.getValue();
+    }
+    
+    /**
+     * Determine if the user has changed the interface language since the last call of resetLanguageChanged().
+     */
+    public boolean hasLanguageChanged() {
+        return !languageFileComboBox.getValue().equals(currentLanguageFile);
+    }
 
     /**
      * @inheritDoc
@@ -259,6 +289,7 @@ public class OptionsGeneralPanel extends GridPane implements PropertyPanel {
     @Override
     public final void readProperties() {
         QueleaProperties props = QueleaProperties.get();
+        languageFileComboBox.setValue(LanguageFileManager.INSTANCE.getCurrentFile());
         startupUpdateCheckBox.setSelected(props.checkUpdate());
         useOOCheckBox.setSelected(props.getUseOO());
         ooPathTextField.setText(props.getOOPath());
@@ -279,6 +310,7 @@ public class OptionsGeneralPanel extends GridPane implements PropertyPanel {
     @Override
     public void setProperties() {
         QueleaProperties props = QueleaProperties.get();
+        props.setLanguageFile(languageFileComboBox.getValue().getFile().getName());
         boolean checkUpdate = getStartupUpdateCheckBox().isSelected();
         props.setCheckUpdate(checkUpdate);
         boolean useOO = getUseOOCheckBox().isSelected();

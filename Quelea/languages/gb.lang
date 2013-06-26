@@ -1,3 +1,4 @@
+LANGUAGENAME=English (GB)
 database.heading=Database
 import.heading=Import
 qsp.button=Quelea Song Pack
@@ -312,3 +313,6 @@ file.replace.button=Replace
 file.continue.button=Continue
 file.rename.dialog.title=Rename
 file.rename.dialog.text=Please enter the new file name:
+interface.language.label=Interface language:
+language.changed=Language Changed
+language.changed.message=You must restart Quelea before the language change will take effect.

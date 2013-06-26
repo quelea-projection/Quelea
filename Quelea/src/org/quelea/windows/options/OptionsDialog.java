@@ -31,8 +31,10 @@ import javafx.scene.layout.BorderPane;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
+import org.javafx.dialog.Dialog;
 import org.quelea.services.languages.LabelGrabber;
 import org.quelea.services.utils.PropertyPanel;
+import org.quelea.windows.main.QueleaApp;
 
 /**
  * The dialog that holds all the options the user can set.
@@ -103,12 +105,29 @@ public class OptionsDialog extends Stage {
                         ((PropertyPanel) tabs.get(i).getContent()).setProperties();
                     }
                 }
+                callBeforeHiding();
                 hide();
             }
         });
         BorderPane.setAlignment(okButton, Pos.CENTER);
         mainPane.setBottom(okButton);
         setScene(new Scene(mainPane));
+    }
+    
+    /**
+     * Call this method before showing this dialog to set it up properly.
+     */
+    public void callBeforeShowing() {
+        getGeneralPanel().resetLanguageChanged();
+    }
+    
+    /**
+     * Call this method before hiding this dialog to tear it down properly.
+     */
+    private void callBeforeHiding() {
+        if(getGeneralPanel().hasLanguageChanged()) {
+            Dialog.showInfo(LabelGrabber.INSTANCE.getLabel("language.changed"), LabelGrabber.INSTANCE.getLabel("language.changed.message"), QueleaApp.get().getMainWindow());
+        }
     }
 
     /**
