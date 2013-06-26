@@ -29,45 +29,73 @@ import org.quelea.services.utils.QueleaProperties;
 /**
  * Responsible for grabbing the appropriate labels from the current langauges
  * file based on keys.
- *
+ * <p/>
  * @author Michael
  */
 public class LabelGrabber {
 
     private static final Logger LOGGER = LoggerUtils.getLogger();
     public static final LabelGrabber INSTANCE = new LabelGrabber();
-    
     private Properties labels;
+    private Properties engLabels;
+    private boolean english;
 
     /**
      * Create the label grabber.
      */
     private LabelGrabber() {
         labels = new Properties();
+        engLabels = new Properties();
         File langFile = QueleaProperties.get().getLanguageFile();
-        if(langFile==null) {
+        if(langFile == null) {
             LOGGER.log(Level.SEVERE, "Couldn't load languages file, file was null");
             return;
         }
         LOGGER.log(Level.INFO, "Using languages file {0}", langFile.getAbsolutePath());
-        try (InputStream stream = new FileInputStream(langFile)) {
+        try(InputStream stream = new FileInputStream(langFile)) {
             labels.load(stream);
         }
-        catch (IOException ex) {
+        catch(IOException ex) {
             LOGGER.log(Level.SEVERE, "Couldn't load languages file", ex);
         }
+        
+        if(langFile.getName().equals("gb.lang")) {
+            english = true;
+        }
+        else {
+            english = false;
+            File englangFile = QueleaProperties.get().getEnglishLanguageFile();
+            if(englangFile == null) {
+                LOGGER.log(Level.SEVERE, "No english language file!");
+            }
+            else {
+                try(InputStream stream = new FileInputStream(englangFile)) {
+                    engLabels.load(stream);
+                    LOGGER.log(Level.INFO, "Using english language file as backup");
+                }
+                catch(IOException ex) {
+                    LOGGER.log(Level.SEVERE, "Couldn't load english language file", ex);
+                }
+            }
+        }
     }
-    
+
     /**
      * Get a label from the language file.
+     * <p/>
      * @param key the key to use to get the label.
      * @return the textual string in the appropriate language.
      */
     public String getLabel(String key) {
         String ret = labels.getProperty(key);
-        if(ret==null) {
-            LOGGER.log(Level.WARNING, "Missing label in language file: {0}", key);
-            return key;
+        if(ret == null) {
+            ret = engLabels.getProperty(key);
+            if(english) { //Only a warning for the default english lang file - others will probably have stuff missing.
+                LOGGER.log(Level.WARNING, "Missing label in language file: {0}", key);
+            }
+            if(ret == null) {
+                return key;
+            }
         }
         return ret;
     }

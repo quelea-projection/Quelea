@@ -99,6 +99,15 @@ public final class QueleaProperties extends Properties {
     }
 
     /**
+     * Get the english languages file that should be present on all installations. We can default to this if labels are missing in other languages.
+     * <p/>
+     * @return the english languages file for the GUI.
+     */
+    public File getEnglishLanguageFile() {
+        return new File("languages", "gb.lang");
+    }
+
+    /**
      * Get the location of Quelea's Facebook page.
      * <p/>
      * @return the location of the facebook page.
