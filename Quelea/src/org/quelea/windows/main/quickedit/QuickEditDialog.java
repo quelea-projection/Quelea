@@ -35,7 +35,7 @@ import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import org.quelea.data.displayable.SongDisplayable;
 import org.quelea.data.displayable.TextSection;
-import org.quelea.servivces.languages.LabelGrabber;
+import org.quelea.services.languages.LabelGrabber;
 import org.quelea.services.utils.Utils;
 import org.quelea.windows.main.QueleaApp;
 

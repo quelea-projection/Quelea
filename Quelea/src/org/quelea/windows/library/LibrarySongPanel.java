@@ -36,7 +36,7 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import org.quelea.data.displayable.SongDisplayable;
-import org.quelea.servivces.languages.LabelGrabber;
+import org.quelea.services.languages.LabelGrabber;
 import org.quelea.windows.main.actionhandlers.NewSongActionHandler;
 import org.quelea.windows.main.actionhandlers.RemoveSongDBActionHandler;
 

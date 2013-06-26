@@ -25,7 +25,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyCodeCombination;
 import javafx.scene.input.KeyCombination;
-import org.quelea.servivces.languages.LabelGrabber;
+import org.quelea.services.languages.LabelGrabber;
 import org.quelea.windows.main.actionhandlers.SearchBibleActionHandler;
 import org.quelea.windows.main.actionhandlers.ShowOptionsActionHandler;
 import org.quelea.windows.main.actionhandlers.ViewBibleActionHandler;

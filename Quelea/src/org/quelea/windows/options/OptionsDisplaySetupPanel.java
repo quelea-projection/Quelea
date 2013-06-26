@@ -20,7 +20,7 @@ import javafx.application.Platform;
 import javafx.collections.ObservableList;
 import javafx.scene.layout.GridPane;
 import javafx.stage.Screen;
-import org.quelea.servivces.languages.LabelGrabber;
+import org.quelea.services.languages.LabelGrabber;
 import org.quelea.services.utils.PropertyPanel;
 import org.quelea.services.utils.QueleaProperties;
 import org.quelea.windows.main.GraphicsDeviceListener;

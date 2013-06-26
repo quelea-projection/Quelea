@@ -18,7 +18,7 @@
 package org.quelea.services.utils;
 
 import javafx.stage.FileChooser;
-import org.quelea.servivces.languages.LabelGrabber;
+import org.quelea.services.languages.LabelGrabber;
 
 /**
  * A class that contains all the file filters as a number of static final
