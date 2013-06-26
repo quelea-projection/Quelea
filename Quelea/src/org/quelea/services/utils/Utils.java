@@ -31,8 +31,8 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
-import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.nio.channels.FileChannel;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
@@ -511,7 +511,7 @@ public final class Utils {
      * if we can't get the text content for some reason.
      */
     public static synchronized String getTextFromFile(String fileName, String errorText) {
-        try(BufferedReader reader = new BufferedReader(new FileReader(fileName))) {
+        try(BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(fileName), "UTF-8"))) {
             StringBuilder content = new StringBuilder();
             String line;
             while((line = reader.readLine()) != null) {

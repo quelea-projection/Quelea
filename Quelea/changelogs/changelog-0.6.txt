@@ -9,6 +9,8 @@ quelea (0.6) stable; urgency=normal
   * Added more / better sample images
   * Plain text import
   * Added Czech and German translations
+  * Fix interface to display UTF-8 translations properly
+  * Add option within interface to change language
   * Easyslides import
   * Fix Kingsway import
   * Many bugfixes

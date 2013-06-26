@@ -21,6 +21,7 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.StringReader;
 import java.util.Properties;
 import javafx.geometry.BoundingBox;
 import javafx.geometry.Bounds;
@@ -48,7 +49,7 @@ public final class QueleaProperties extends Properties {
             if(!getPropFile().exists()) {
                 getPropFile().createNewFile();
             }
-            try(FileReader reader = new FileReader(getPropFile())) {
+            try(StringReader reader = new StringReader(Utils.getTextFromFile(getPropFile().getAbsolutePath(), ""))) {
                 load(reader);
             }
         }
@@ -96,6 +97,16 @@ public final class QueleaProperties extends Properties {
      */
     public File getLanguageFile() {
         return new File("languages", getProperty("language.file", "gb.lang"));
+    }
+    
+    /**
+     * Set the name of the language file to use.
+     * <p/>
+     * @param file the name of the language file to use.
+     */
+    public void setLanguageFile(String file) {
+        setProperty("language.file", file);
+        write();
     }
 
     /**
