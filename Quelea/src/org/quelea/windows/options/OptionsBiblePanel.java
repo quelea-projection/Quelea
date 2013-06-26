@@ -35,7 +35,7 @@ import org.javafx.dialog.Dialog;
 import org.quelea.data.bible.Bible;
 import org.quelea.data.bible.BibleChangeListener;
 import org.quelea.data.bible.BibleManager;
-import org.quelea.servivces.languages.LabelGrabber;
+import org.quelea.services.languages.LabelGrabber;
 import org.quelea.services.utils.FileFilters;
 import org.quelea.services.utils.LoggerUtils;
 import org.quelea.services.utils.PropertyPanel;

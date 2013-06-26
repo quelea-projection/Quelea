@@ -22,7 +22,7 @@ import java.util.logging.Logger;
 import javafx.scene.media.MediaException;
 import org.javafx.dialog.Dialog;
 import org.quelea.data.displayable.MultimediaDisplayable;
-import org.quelea.servivces.languages.LabelGrabber;
+import org.quelea.services.languages.LabelGrabber;
 import org.quelea.services.utils.LoggerUtils;
 import org.quelea.windows.multimedia.MediaPlayerFactory;
 import org.quelea.windows.multimedia.MultimediaControlPanel;

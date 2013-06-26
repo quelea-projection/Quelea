@@ -17,7 +17,7 @@
  */
 package org.quelea.services.importexport;
 
-import org.quelea.servivces.languages.LabelGrabber;
+import org.quelea.services.languages.LabelGrabber;
 
 /**
  * The kingsway import dialog, used for importing songs from the online kingsway
