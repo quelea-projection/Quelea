@@ -308,3 +308,7 @@ file.replace.button=Nahradit
 file.continue.button=Pokračovat
 file.rename.dialog.title=Přejmenování
 file.rename.dialog.text=Zadejte, prosím, nový název souboru:
+plainText.button=Prostý text
+plaintext.import.line1=Toto zavede knihovnu s písněmi z adresáře obsahujícího písně jako soubory s prostým textem.
+easyslides.import.line1=Toto zavede písně ze souboru XML EasySlides.
+easyslides.button=EasySlides
