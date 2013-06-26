@@ -21,7 +21,7 @@ package org.quelea.data.bible;
 import javafx.event.EventHandler;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.MenuItem;
-import org.quelea.languages.LabelGrabber;
+import org.quelea.servivces.languages.LabelGrabber;
 import org.quelea.windows.main.QueleaApp;
 
 /**

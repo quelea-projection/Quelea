@@ -21,7 +21,7 @@ import javafx.scene.control.ContextMenu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import org.quelea.languages.LabelGrabber;
+import org.quelea.servivces.languages.LabelGrabber;
 
 /**
  * The popup menu that displays when a song in the schedule is right-clicked.

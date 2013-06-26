@@ -29,7 +29,7 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyCodeCombination;
 import javafx.scene.input.KeyCombination;
 import org.quelea.data.displayable.SongDisplayable;
-import org.quelea.languages.LabelGrabber;
+import org.quelea.servivces.languages.LabelGrabber;
 import org.quelea.windows.library.LibrarySongList;
 import org.quelea.windows.main.QueleaApp;
 import org.quelea.windows.main.actionhandlers.EditSongDBActionHandler;
