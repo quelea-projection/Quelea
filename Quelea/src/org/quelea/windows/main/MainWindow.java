@@ -78,7 +78,7 @@ public class MainWindow extends Stage {
 
             @Override
             public void handle(javafx.stage.WindowEvent t) {
-                new ExitActionHandler().exit();
+                new ExitActionHandler().exit(t);
             }
         });
         
