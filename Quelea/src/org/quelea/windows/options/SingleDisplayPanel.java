@@ -156,12 +156,10 @@ public class SingleDisplayPanel extends VBox {
         if(custom != null && custom.isSelected()) {
             return getCoords();
         }
-        //GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
-        //GraphicsDevice[] gds = ge.getScreenDevices();
         ObservableList<Screen> monitors = Screen.getScreens();
         
         int screen = getOutputScreen();
-        if(screen == -1) {
+        if(screen < 0) {
             return null;
         }
         else {
