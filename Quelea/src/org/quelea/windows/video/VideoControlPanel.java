@@ -41,6 +41,7 @@ public class VideoControlPanel extends MultimediaControlPanel {
      * <p/>
      * @param videoPath the video path to load.
      */
+    @Override
     public void loadMultimedia(MultimediaDisplayable video) {
         this.filePath = video.getFile().getAbsolutePath();
         try {
@@ -49,7 +50,7 @@ public class VideoControlPanel extends MultimediaControlPanel {
             player.currentTimeProperty().addListener(new CurrentTimeListener());
         }
         catch(MediaException ex) {
-            LOGGER.log(Level.WARNING, "Video Error", ex);
+            LOGGER.log(Level.WARNING, "Video Error with path: " + filePath, ex);
             MediaException.Type type = ex.getType();
             switch(type) {
                 case MEDIA_UNSUPPORTED:
