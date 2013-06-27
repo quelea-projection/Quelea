@@ -169,7 +169,7 @@ public final class SongManager {
             public void execute(Session session) {
                 Song newSong = new Song(song.getTitle(),
                         song.getAuthor(),
-                        song.getLyrics(false, false),
+                        song.getLyrics(true, true),
                         song.getCcli(),
                         song.getCopyright(),
                         song.getYear(),
@@ -210,7 +210,7 @@ public final class SongManager {
                     updatedSong.setCcli(song.getCcli());
                     updatedSong.setCopyright(song.getCopyright());
                     updatedSong.setInfo(song.getInfo());
-                    updatedSong.setLyrics(song.getLyrics(false, false));
+                    updatedSong.setLyrics(song.getLyrics(true, true));
                     updatedSong.setKey(song.getKey());
                     updatedSong.setPublisher(song.getPublisher());
                     updatedSong.setTags(nullTags ? new ArrayList<String>() : Arrays.asList(song.getTags()));
