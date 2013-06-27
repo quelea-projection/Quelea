@@ -439,7 +439,14 @@ public class LyricDrawer extends DisplayableDrawer {
             fade = true;
         }
         curDisplayable = displayable;
-        setText(displayable.getSections()[index].getText(false, false), displayable.getSections()[index].getSmallText(), fade);
+        String[] bigText;
+        if(canvas.isStageView()) {
+            bigText = displayable.getSections()[index].getText(true, false);
+        }
+        else {
+            bigText = displayable.getSections()[index].getText(false, false);
+        }
+        setText(bigText, displayable.getSections()[index].getSmallText(), fade);
     }
 
     /**
