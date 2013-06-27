@@ -127,22 +127,5 @@ public class MainToolbar extends ToolBar {
         manageNoticesButton.setTooltip(new Tooltip(LabelGrabber.INSTANCE.getLabel("manage.notices.tooltip")));
         manageNoticesButton.setOnAction(new ShowNoticesActionHandler());
         getItems().add(manageNoticesButton);
-        
-        //Add shortcuts when we're part of a scene
-        sceneProperty().addListener(new ChangeListener<Scene>() {
-            @Override
-            public void changed(ObservableValue<? extends Scene> ov, Scene oldScene, Scene newScene) {
-                if(newScene != null) {
-                    newScene.getAccelerators().put(new KeyCodeCombination(KeyCode.Q, KeyCombination.CONTROL_DOWN), new Runnable() {
-                        @Override
-                        public void run() {
-                            quickInsertButton.fire();
-                        }
-                    });
-                    sceneProperty().removeListener(this);
-                }
-            }
-        });
-
     }
 }
