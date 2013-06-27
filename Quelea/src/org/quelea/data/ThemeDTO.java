@@ -326,13 +326,13 @@ public class ThemeDTO {
         }
         Font font = new Font(fontname, 72);
         Background background;
-        if(!backgroundcolour.isEmpty()) {
+        if(!backgroundcolour.trim().isEmpty()) {
             background = new ColourBackground(Utils.parseColour(backgroundcolour));
         }
-        else if(!backgroundimage.isEmpty()) {
+        else if(!backgroundimage.trim().isEmpty()) {
             background = new ImageBackground(backgroundimage);
         }
-        else if(!backgroundvid.isEmpty()) {
+        else if(!backgroundvid.trim().isEmpty()) {
             background = new VideoBackground(backgroundvid);
         }
         else {
