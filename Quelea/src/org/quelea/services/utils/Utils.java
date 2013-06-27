@@ -228,7 +228,13 @@ public final class Utils {
             public void run() {
                 boolean result = SongManager.get().updateSong(song);
                 if(!result && showError) {
-                    Dialog.showError(LabelGrabber.INSTANCE.getLabel("error.text"), LabelGrabber.INSTANCE.getLabel("error.udpating.song.text"));
+                    Platform.runLater(new Runnable() {
+
+                        @Override
+                        public void run() {
+                            Dialog.showError(LabelGrabber.INSTANCE.getLabel("error.text"), LabelGrabber.INSTANCE.getLabel("error.udpating.song.text"));
+                        }
+                    });
                 }
             }
         };
@@ -236,19 +242,25 @@ public final class Utils {
             new Thread(updateRunner).start();
         }
         else {
-            final StatusPanel statusPanel = QueleaApp.get().getStatusGroup().addPanel(LabelGrabber.INSTANCE.getLabel("updating.db"));
-            new Thread() {
+            Utils.fxRunAndWait(new Runnable() {
+
                 @Override
                 public void run() {
-                    updateRunner.run();
-                    Platform.runLater(new Runnable() {
+                    final StatusPanel statusPanel = QueleaApp.get().getStatusGroup().addPanel(LabelGrabber.INSTANCE.getLabel("updating.db"));
+                    new Thread() {
                         @Override
                         public void run() {
-                            statusPanel.done();
+                            updateRunner.run();
+                            Platform.runLater(new Runnable() {
+                                @Override
+                                public void run() {
+                                    statusPanel.done();
+                                }
+                            });
                         }
-                    });
+                    }.start();
                 }
-            }.start();
+            });
         }
     }
 
