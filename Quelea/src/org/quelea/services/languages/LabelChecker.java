@@ -19,12 +19,9 @@
 package org.quelea.services.languages;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.StringReader;
 import java.util.Properties;
-import java.util.Set;
 import org.quelea.services.utils.QueleaProperties;
 import org.quelea.services.utils.Utils;
 
