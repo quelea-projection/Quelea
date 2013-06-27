@@ -138,7 +138,7 @@ public class ScheduleThemeNode extends BorderPane {
         try {
             themes = getThemes();
         } catch (Exception ex) {
-            LoggerUtils.getLogger().log(Level.SEVERE, "Cannot get themes when refreshing. Something majorly broke here.", ex);
+            LoggerUtils.getLogger().log(Level.SEVERE, "Couldn't get themes when refreshing.", ex);
             return;
         }
         themes.add(null);
