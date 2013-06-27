@@ -27,7 +27,6 @@ import javafx.event.EventHandler;
 import javafx.geometry.Orientation;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
-import javafx.scene.control.ToggleButton;
 import javafx.scene.control.ToolBar;
 import javafx.scene.control.Tooltip;
 import javafx.scene.image.Image;
@@ -38,6 +37,7 @@ import javafx.scene.layout.Priority;
 import javafx.scene.layout.Region;
 import org.quelea.data.ThemeDTO;
 import javafx.stage.Popup;
+import org.quelea.data.displayable.BiblePassage;
 import org.quelea.data.displayable.Displayable;
 import org.quelea.data.displayable.SongDisplayable;
 import org.quelea.data.displayable.TextDisplayable;
@@ -81,21 +81,21 @@ public class SchedulePanel extends BorderPane {
         scheduleThemeNode = new ScheduleThemeNode(new ScheduleThemeNode.UpdateThemeCallback() {
             @Override
             public void updateTheme(ThemeDTO theme) {
-                if (scheduleList == null) {
+                if(scheduleList == null) {
                     LOGGER.log(Level.WARNING, "Null schedule, not setting theme");
                     return;
                 }
-                for (int i = 0; i < scheduleList.itemsProperty().get().size(); i++) {
+                for(int i = 0; i < scheduleList.itemsProperty().get().size(); i++) {
                     Displayable displayable = scheduleList.itemsProperty().get().get(i);
-                    if (displayable instanceof TextDisplayable) {
+                    if(displayable instanceof TextDisplayable) {
                         TextDisplayable textDisplayable = (TextDisplayable) displayable;
-                        for (TextSection section : textDisplayable.getSections()) {
+                        for(TextSection section : textDisplayable.getSections()) {
                             section.setTempTheme(theme);
                         }
-
-                        SongDisplayable song = ((SongDisplayable) textDisplayable);
-                        song.setTheme(theme);
-                        Utils.updateSongInBackground(song, true, true);
+                        if(displayable instanceof SongDisplayable) {
+                            SongDisplayable song = ((SongDisplayable) textDisplayable);
+                            song.setTheme(theme);
+                        }
                     }
                 }
             }
@@ -149,11 +149,12 @@ public class SchedulePanel extends BorderPane {
         scheduleList.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<Displayable>() {
             @Override
             public void changed(ObservableValue<? extends Displayable> ov, Displayable t, Displayable t1) {
-                if (scheduleList.getItems().isEmpty()) {
+                if(scheduleList.getItems().isEmpty()) {
                     removeButton.setDisable(true);
                     upButton.setDisable(true);
                     downButton.setDisable(true);
-                } else {
+                }
+                else {
                     removeButton.setDisable(false);
                     upButton.setDisable(false);
                     downButton.setDisable(false);
