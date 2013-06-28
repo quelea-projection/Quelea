@@ -2,7 +2,7 @@ When changing the version number, it needs to be changed in :
 
 1) pad.xml
 2) quelea.properties (ant task uses this so must be changed.)
-3) Version constant in QueleaProperties.java
+3) Version constant in QueleaProperties.java (remember the minor version constant as the second argument if this is an Alpha / Beta / another dev release.)
 4) quelea.desktop
 5) Control file for debian based installs
 6) MyAppVersion in quelea.iss
