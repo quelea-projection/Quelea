@@ -58,27 +58,48 @@ public class LabelChecker {
         }
     }
 
-    public void compare() {
+    public boolean compare() {
         boolean ok = true;
-        System.err.println("File: " + name);
+        boolean first = false;
+        System.out.print("Checking \"" + name + "\"...");
         for(Object okey : engLabels.keySet()) {
             String key = (String) okey;
             String prop = labels.getProperty(key);
             if(prop == null) {
                 ok = false;
-                System.err.println("MISSING: " + key + " (" + engLabels.getProperty(key) + ")");
+                if(!first) {
+                    first = true;
+                    System.out.println();
+                    System.err.println("MISSING LABELS:");
+                }
+                System.err.println(key + " (" + engLabels.getProperty(key) + ")");
             }
         }
         if(ok) {
-            System.err.println("ALL LABELS OK.");
+            System.out.println("All good.");
         }
+        return ok;
     }
 
     public static void main(String[] args) {
+        boolean ok = true;
         for(File file : new File("languages").listFiles()) {
             if(!file.getName().equals("gb.lang")) { //Exclude english file since this is what we work from!
-                new LabelChecker(file.getName()).compare();
+                boolean result = new LabelChecker(file.getName()).compare();
+                if(!result) {
+                    ok = false;
+                }
             }
+        }
+        if(!ok) {
+            System.err.println();
+            System.err.println("WARNING: Some language files have missing labels. "
+                    + "This is normal for intermediate builds and development releases, "
+                    + "but for final releases this should be fixed if possible ."
+                    + "Ideally find the original person who contributed the file "
+                    + "and ask them to translate the missing labels, "
+                    + "or if this isn't possible use Google Translate "
+                    + "(only as a last resort though!)");
         }
     }
 }

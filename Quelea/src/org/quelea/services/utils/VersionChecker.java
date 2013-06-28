@@ -20,7 +20,6 @@ package org.quelea.services.utils;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.logging.Level;
@@ -78,7 +77,7 @@ public class VersionChecker {
     private Version extractVersion(String content) {
         try {
             int startIndex = content.indexOf(PREFIX);
-            return new Version(content.substring(startIndex + PREFIX.length(), content.indexOf('<', startIndex)).trim());
+            return new Version(content.substring(startIndex + PREFIX.length(), content.indexOf('<', startIndex)).trim(), "");
         }
         catch(Exception ex) {
             LOGGER.log(Level.WARNING, "Couldn't extract version from string: " + content, ex);

@@ -18,23 +18,30 @@
 package org.quelea.services.utils;
 
 /**
- * A version number that can be compared against another version to see what one is greatest.
+ * A version number that can be compared against another version to see what one
+ * is greatest.
+ * <p/>
  * @author Michael
  */
 public class Version implements Comparable<Version> {
 
     private final String versionStr;
+    private final String minorVersionName;
 
     /**
      * Create a new version.
-     * @param version the version number in the form x.x.x.x (all x's must be positive integers.)
+     * <p/>
+     * @param version the version number in the form x.x.x.x (all x's must be
+     * positive integers.)
      */
-    public Version(String version) {
+    public Version(String version, String minorName) {
         this.versionStr = version;
+        this.minorVersionName = minorName;
     }
 
     /**
      * Get the version string.
+     * <p/>
      * @return the version string.
      */
     public String getVersionString() {
@@ -42,7 +49,23 @@ public class Version implements Comparable<Version> {
     }
 
     /**
+     * Get the version string including the minor name.
+     * <p/>
+     * @return the version string with the minor name attached. Useful for error
+     * reporting.
+     */
+    public String getFullVersionString() {
+        StringBuilder ret = new StringBuilder();
+        ret.append(versionStr);
+        if(minorVersionName!=null&&!minorVersionName.trim().isEmpty()) {
+            ret.append(" (").append(minorVersionName).append(")");
+        }
+        return ret.toString();
+    }
+
+    /**
      * Determine if this version is equal to another.
+     * <p/>
      * @param obj the other object.
      * @return true if the objects are equal, false otherwise.
      */
@@ -73,6 +96,7 @@ public class Version implements Comparable<Version> {
 
     /**
      * Generate a string representation of this version.
+     * <p/>
      * @return a string representation of this version.
      */
     @Override
@@ -82,9 +106,12 @@ public class Version implements Comparable<Version> {
 
     /**
      * Compare this version to another.
+     * <p/>
      * @param o the other version.
-     * @return -1 if this version is less than the other one, 0 if they are the same and 1 if this version is greater.
+     * @return -1 if this version is less than the other one, 0 if they are the
+     * same and 1 if this version is greater.
      */
+    @Override
     public int compareTo(Version o) {
         String[] theseParts = versionStr.split("\\.");
         String[] otherParts = o.versionStr.split("\\.");
