@@ -21,8 +21,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import java.util.zip.Deflater;
 
 /**
@@ -32,8 +30,6 @@ import java.util.zip.Deflater;
  */
 public class GZMaxFileCompressor {
 
-    private static final Logger LOGGER = LoggerUtils.getLogger();
-
     /**
      * Compresses the given file with maximum compression.
      *
@@ -42,7 +38,6 @@ public class GZMaxFileCompressor {
      * @return true if the operation completed successfully, false otherwise.
      */
     public boolean compress(File input, File output) {
-        LOGGER.log(Level.INFO, "Compressing {0} to {1}", new Object[]{input.getAbsolutePath(), output.getAbsolutePath()});
         try(FileInputStream inputStream = new FileInputStream(input);
                 GZipOutputStreamEx outputStream = new GZipOutputStreamEx(new FileOutputStream(output), 1024, Deflater.BEST_COMPRESSION)) {
             byte[] buf = new byte[1024];
@@ -52,10 +47,10 @@ public class GZMaxFileCompressor {
             }
         }
         catch (IOException ex) {
-            LOGGER.log(Level.SEVERE, "Couldn't compress " + input, ex);
+            ex.printStackTrace();
             return false;
         }
-        LOGGER.log(Level.INFO, "Compression done successfully");
+        System.out.println("Compressed " + input.getAbsolutePath() + " to " + output.getAbsolutePath() + " successfully.");
         return true;
     }
     
