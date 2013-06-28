@@ -5,7 +5,7 @@
 #define MyAppVersion "0.6"
 #define MyAppPublisher "Michael Berry"
 #define MyAppURL "http://www.quelea.org"
-#define MyAppExeName "Quelea.exe"
+#define MyAppExeName "setup.exe"
 
 [Setup]
 ; NOTE: The value of AppId uniquely identifies this application.

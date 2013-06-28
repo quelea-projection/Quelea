@@ -82,6 +82,7 @@ public class LabelChecker {
     }
 
     public static void main(String[] args) {
+        System.out.println("Checking language files:");
         boolean ok = true;
         for(File file : new File("languages").listFiles()) {
             if(!file.getName().equals("gb.lang")) { //Exclude english file since this is what we work from!
