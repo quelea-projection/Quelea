@@ -39,6 +39,8 @@
         
         <!-- Check the images conform to spec -->
         <java className="org.quelea.services.utils.ImageChecker" classpath="${FXClasspath};${basedir}/build/classes" failonerror="false"/>
+        <!-- Check the language files -->
+        <java className="org.quelea.services.languages.LabelChecker" classpath="${FXClasspath};${basedir}/build/classes" failonerror="false"/>
         
         <echo message="Built jar."/>
         <echo message="Copying necessary files to ${dist.jar.dir}"/>

@@ -17,8 +17,10 @@
  */
 package org.quelea.windows.main.actionhandlers;
 
+import java.util.logging.Level;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
+import org.quelea.services.utils.LoggerUtils;
 import org.quelea.windows.main.QueleaApp;
 import org.quelea.windows.newsong.SongEntryWindow;
 
