@@ -120,7 +120,7 @@
         </jarbundler>-->
         
         <echo message="Building deb package for Ubuntu / Debian installs"/>
-        <deb destfile="${dist.jar.dir}/Quelea-temp.deb" control="control" verbose="true">
+        <deb destfile="${dist.jar.dir}/Quelea-temp.deb" control="control" verbose="false">
             <tarfileset dir="${dist.jar.dir}"
                         prefix="/usr/share/quelea">
                 <exclude name="lib/junit/**"/> 
