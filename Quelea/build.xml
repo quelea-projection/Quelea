@@ -38,7 +38,7 @@
         <property name="FXClasspath" value="${javafx.sdk}/jre/lib/jfxrt.jar"/>
         
         <!-- Check the images conform to spec -->
-        <java className="org.quelea.utils.ImageChecker" classpath="${FXClasspath};build/classes" failonerror="false"/>
+        <java className="org.quelea.services.utils.ImageChecker" classpath="${FXClasspath};${basedir}/build/classes" failonerror="false"/>
         
         <echo message="Built jar."/>
         <echo message="Copying necessary files to ${dist.jar.dir}"/>
@@ -91,7 +91,7 @@
         <mkdir dir="${dist.jar.dir}/queleadoc" />
         <copy file="${basedir}/licenses/copyright" tofile="${dist.jar.dir}/queleadoc/copyright"/>
         <!-- Compress and copy changelog to correct location -->
-        <java className="org.quelea.utils.GZMaxFileCompressor" classpath="build/classes;${FXClasspath}" failonerror="false">
+        <java className="org.quelea.services.utils.GZMaxFileCompressor" classpath="${basedir}/build/classes;${FXClasspath}" failonerror="false">
             <arg value="${basedir}/changelogs/changelog-${quelea.version}.txt"/>
             <arg value="${dist.jar.dir}/queleadoc/changelog.gz"/>
         </java>
@@ -162,43 +162,4 @@
         
     </target>
     
-<!--    <target name="upload" depends="jfx-jar">
-        <taskdef classname="net.bluecow.googlecode.ant.GoogleCodeUploadTask" classpath="lib/ant-googlecode-0.0.3.jar" name="gcupload"/>
-        <input
-            message="Username to use for upload:"
-            addproperty="user"
-        />
-        <input
-            message="Googlecode (https://code.google.com/hosting/settings) Password for ${user} (CAREFUL, IT ECHOES!!):"
-            addproperty="pass"
-        />
-        
-        <gcupload 
-            username="${user}" 
-            password="${pass}" 
-            projectname="quelea-projection" 
-            filename="${WindowsInstaller}" 
-            targetfilename="${WindowsInstallerName}"
-            summary="Windows installer of Quelea, version ${quelea.version}"
-            labels="Featured, Type-Installer, OpSys-Windows"
-        />
-        <gcupload 
-            username="${user}" 
-            password="${pass}" 
-            projectname="quelea-projection" 
-            filename="${CPInstaller}" 
-            targetfilename="${CPInstallerName}"
-            summary="Cross-platform installer of Quelea, version ${quelea.version}"
-            labels="Featured, Type-Installer, OpSys-Linux"
-        />
-        <gcupload 
-            username="${user}" 
-            password="${pass}" 
-            projectname="quelea-projection" 
-            filename="${DebInstaller}" 
-            targetfilename="${DebInstallerName}"
-            summary="Debian installer of Quelea, version ${quelea.version}"
-            labels="Featured, Type-Package, OpSys-Linux"
-        />
-    </target>-->
 </project>
