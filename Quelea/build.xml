@@ -44,54 +44,54 @@
         
         <echo message="Built jar."/>
         <echo message="Copying necessary files to ${dist.jar.dir}"/>
-        <copy todir="${dist.jar.dir}/lib">
+        <copy todir="${dist.jar.dir}/lib" quiet="yes">
             <fileset dir="${basedir}/lib"/>
         </copy>
-        <copy todir="${dist.jar.dir}/themes">
+        <copy todir="${dist.jar.dir}/themes" quiet="yes">
             <fileset dir="${basedir}/themes"/>
         </copy>
-        <copy todir="${dist.jar.dir}/icons">
+        <copy todir="${dist.jar.dir}/icons" quiet="yes">
             <fileset dir="${basedir}/icons"/>
         </copy>
-        <copy todir="${dist.jar.dir}/bibles">
+        <copy todir="${dist.jar.dir}/bibles" quiet="yes">
             <fileset dir="${basedir}/bibles"/>
         </copy>
-        <copy todir="${dist.jar.dir}/dictionaries">
+        <copy todir="${dist.jar.dir}/dictionaries" quiet="yes">
             <fileset dir="${basedir}/dictionaries"/>
         </copy>
-        <copy todir="${dist.jar.dir}/vid">
+        <copy todir="${dist.jar.dir}/vid" quiet="yes">
             <fileset dir="${basedir}/vid"/>
         </copy>
-        <copy todir="${dist.jar.dir}/licenses">
+        <copy todir="${dist.jar.dir}/licenses" quiet="yes">
             <fileset dir="${basedir}/licenses"/>
         </copy>
-        <copy todir="${dist.jar.dir}/languages">
+        <copy todir="${dist.jar.dir}/languages" quiet="yes">
             <fileset dir="${basedir}/languages"/>
         </copy>
 <!--        <copy todir="${dist.jar.dir}/database">
             <fileset dir="${basedir}/database"/>
         </copy>-->
-        <copy todir="${dist.jar.dir}/img">
+        <copy todir="${dist.jar.dir}/img" quiet="yes">
             <fileset dir="${basedir}/img"/>
         </copy>
-        <copy todir="${dist.jar.dir}/licenses">
+        <copy todir="${dist.jar.dir}/licenses" quiet="yes">
             <fileset dir="${basedir}/licenses"/>
         </copy>
-        <copy todir="${dist.jar.dir}/vid">
+        <copy todir="${dist.jar.dir}/vid" quiet="yes">
             <fileset dir="${basedir}/vid"/>
         </copy>
-        <copy todir="${dist.jar.dir}/src">
+        <copy todir="${dist.jar.dir}/src" quiet="yes">
             <fileset dir="${basedir}/src"/>
         </copy>
-        <delete file="${dist.jar.dir}/README.TXT" failonerror="false"/>
-        <copy file="${basedir}/README.TXT" todir="${dist.jar.dir}" failonerror="false"/>
-        <copy file="${basedir}/quelea.properties" todir="${dist.jar.dir}"/>
-        <copy file="${basedir}/Quelea.iss" todir="${dist.jar.dir}"/>
-        <copy file="${basedir}/build-install.bat" todir="${dist.jar.dir}"/>
-        <copy file="${basedir}/licenses/gplv3.txt" tofile="${dist.jar.dir}/license.txt"/>
-        <copy file="${basedir}/launch.sh" tofile="${dist.jar.dir}/launch.sh"/>
-        <mkdir dir="${dist.jar.dir}/queleadoc" />
-        <copy file="${basedir}/licenses/copyright" tofile="${dist.jar.dir}/queleadoc/copyright"/>
+        <delete file="${dist.jar.dir}/README.TXT" failonerror="false" quiet="yes"/>
+        <copy file="${basedir}/README.TXT" todir="${dist.jar.dir}" failonerror="false" quiet="yes"/>
+        <copy file="${basedir}/quelea.properties" todir="${dist.jar.dir}" quiet="yes"/>
+        <copy file="${basedir}/Quelea.iss" todir="${dist.jar.dir}" quiet="yes"/>
+        <copy file="${basedir}/build-install.bat" todir="${dist.jar.dir}" quiet="yes"/>
+        <copy file="${basedir}/licenses/gplv3.txt" tofile="${dist.jar.dir}/license.txt" quiet="yes"/>
+        <copy file="${basedir}/launch.sh" tofile="${dist.jar.dir}/launch.sh" quiet="yes"/>
+        <mkdir dir="${dist.jar.dir}/queleadoc"/>
+        <copy file="${basedir}/licenses/copyright" tofile="${dist.jar.dir}/queleadoc/copyright" quiet="yes"/>
         <!-- Compress and copy changelog to correct location -->
         <java className="org.quelea.services.utils.GZMaxFileCompressor" classpath="${basedir}/build/classes;${FXClasspath}" failonerror="false">
             <arg value="${basedir}/changelogs/changelog-${quelea.version}.txt"/>
@@ -159,7 +159,7 @@
         <exec dir="${dist.jar.dir}" executable="cmd" failifexecutionfails="false" failonerror="false">
             <arg value="/c build-install.bat"/>
         </exec>
-        <move file="${dist.jar.dir}/Output/Quelea.exe" tofile="${WindowsInstaller}" failonerror="false"/>
+        <move file="${dist.jar.dir}/Output/setup.exe" tofile="${WindowsInstaller}" failonerror="false"/>
         <delete dir="${dist.jar.dir}/Output" verbose="true" failonerror="false"/> 
         
     </target>
