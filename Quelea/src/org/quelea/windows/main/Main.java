@@ -211,7 +211,6 @@ public final class Main extends Application {
                 }
 
                 mainWindow.show();
-                QueleaApp.get().initialiseWatchers();
                 splashWindow.hide();
                 showWarning(monitorNumber);
             }
