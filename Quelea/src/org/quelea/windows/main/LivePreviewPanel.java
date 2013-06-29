@@ -56,7 +56,6 @@ import org.quelea.windows.video.VideoControlPanel;
 public abstract class LivePreviewPanel extends BorderPane {
 
     private static final Logger LOGGER = LoggerUtils.getLogger();
-    private final Set<DisplayCanvas> canvases = new HashSet<>();
     private final Set<DisplayStage> windows = new HashSet<>();
     private Displayable displayable;
     private CardPane<AbstractPanel> cardPanel = new CardPane<>();

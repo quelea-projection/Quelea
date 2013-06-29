@@ -57,7 +57,6 @@ public class Theme {
         this.textShadow = theme.textShadow;
     }
 
-    //private TextShadow textShadow;
     /**
      * @return the id
      */
