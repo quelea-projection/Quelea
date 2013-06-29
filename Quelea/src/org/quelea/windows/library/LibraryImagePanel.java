@@ -40,8 +40,6 @@ import javafx.scene.layout.HBox;
 import javafx.stage.FileChooser;
 import org.apache.commons.io.FilenameUtils;
 import org.javafx.dialog.Dialog;
-import org.javafx.dialog.InputDialog;
-import org.quelea.data.ScheduleSaver;
 import org.quelea.services.languages.LabelGrabber;
 import org.quelea.services.utils.FileFilters;
 import org.quelea.services.utils.LoggerUtils;
@@ -134,8 +132,8 @@ public class LibraryImagePanel extends BorderPane {
                             LOGGER.log(Level.WARNING, "Could not copy file into ImagePanel from FileChooser selection", ex);
                         }
                     }
-
                 }
+                imagePanel.refresh();
             }
         });
 

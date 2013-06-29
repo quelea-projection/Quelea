@@ -45,7 +45,6 @@ import javafx.util.Duration;
 import org.quelea.data.displayable.ImageDisplayable;
 import org.quelea.services.utils.LoggerUtils;
 import org.quelea.services.utils.Utils;
-import org.quelea.services.watcher.ImageFileWatcher;
 import org.quelea.windows.main.QueleaApp;
 
 /**
@@ -199,6 +198,5 @@ public class ImageListPanel extends BorderPane {
 
     public void changeDir(File absoluteFile) {
         dir = absoluteFile.getAbsolutePath();
-        ImageFileWatcher.get().changeDir(absoluteFile);
     }
 }
