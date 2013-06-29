@@ -82,6 +82,7 @@ public class DisplayCanvas extends StackPane {
      * (only if the options say so) false otherwise.
      */
     public DisplayCanvas(boolean showBorder, boolean stageView, final CanvasUpdater updater, Priority dravingPriority) {
+        setStyle("-fx-background-color: black;");
         this.stageView = stageView;
         this.dravingPriority = dravingPriority;
         setMinHeight(0);
