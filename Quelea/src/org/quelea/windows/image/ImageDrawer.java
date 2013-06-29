@@ -18,20 +18,21 @@ public class ImageDrawer extends DisplayableDrawer {
     @Override
     public void draw(Displayable displayable) {
         image = ((ImageDisplayable)displayable).getImage();
-        imageView = canvas.getNewImageView();
-        imageView.setFitHeight(canvas.getHeight());
-        imageView.setFitWidth(canvas.getWidth());
+        imageView = getCanvas().getNewImageView();
+        imageView.setFitHeight(getCanvas().getHeight());
+        imageView.setFitWidth(getCanvas().getWidth());
         imageView.setImage(image);
-        canvas.getChildren().add(imageView);
+        getCanvas().getChildren().add(imageView);
     }
 
     @Override
     public void clear() {
-        if (canvas.getChildren() != null) {
-            canvas.getChildren().clear();
+        if (getCanvas().getChildren() != null) {
+            getCanvas().getChildren().clear();
         }
     }
 
+    @Override
     public void requestFocus() {
         imageView.requestFocus();;
     }
