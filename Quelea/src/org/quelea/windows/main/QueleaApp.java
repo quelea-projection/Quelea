@@ -21,7 +21,6 @@ import java.io.File;
 import org.javafx.dialog.Dialog;
 import org.quelea.data.Schedule;
 import org.quelea.services.languages.LabelGrabber;
-import org.quelea.services.watcher.ImageFileWatcher;
 
 /**
  * A singleton class for grabbing application wide objects with ease such as the main window.
@@ -33,7 +32,6 @@ public class QueleaApp {
     private MainWindow mainWindow;
     private DisplayStage appWindow;
     private DisplayStage stageWindow;
-    private ImageFileWatcher imageWatcher;
 
     /**
      * Get the singleton instance.
@@ -112,9 +110,5 @@ public class QueleaApp {
      */
     public void setMainWindow(MainWindow mainWindow) {
         this.mainWindow = mainWindow;
-    }
-
-    public void initialiseWatchers() {
-        imageWatcher = ImageFileWatcher.get();
     }
 }
