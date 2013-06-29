@@ -36,7 +36,7 @@ import java.util.logging.SimpleFormatter;
 
 /**
  * Provides some static utility methods to do with logging.
- *
+ * <p/>
  * @author Michael
  */
 public final class LoggerUtils {
@@ -47,6 +47,7 @@ public final class LoggerUtils {
     public static final Level DEFAULT_LEVEL = Level.INFO;
     private static volatile FileHandler FILE_HANDLER;
     private static final Map<String, Logger> loggers;
+    private static File handlerFile;
 
     static {
         loggers = new HashMap<>();
@@ -60,8 +61,8 @@ public final class LoggerUtils {
             synchronized(LoggerUtils.class) {
                 if(FILE_HANDLER == null) {
                     try {
-                        File handler = new File(QueleaProperties.getQueleaUserHome(), "quelea-debuglog.txt");
-                        FILE_HANDLER = new FileHandler(handler.getAbsolutePath());
+                        handlerFile = new File(QueleaProperties.getQueleaUserHome(), "quelea-debuglog.txt");
+                        FILE_HANDLER = new FileHandler(handlerFile.getAbsolutePath());
                         FILE_HANDLER.setFormatter(new SimpleFormatter());
                     }
                     catch(IOException ex) {
@@ -79,24 +80,17 @@ public final class LoggerUtils {
     private LoggerUtils() {
         throw new AssertionError();
     }
-
-    /**
-     * Get a logger with its appropriate class name.
-     *
-     * @return a logger that uses the called class as its name.
-     */
-    public static Logger getLogger() {
-        return getLogger(true);
+    
+    public static String getHandlerFileLocation() {
+        return handlerFile.getAbsolutePath();
     }
 
     /**
      * Get a logger with its appropriate class name.
-     *
-     * @param file true if the logger should write to the debug file, false
-     * otherwise. Should only be false with out of process loggers...
+     * <p/>
      * @return a logger that uses the called class as its name.
      */
-    public static synchronized Logger getLogger(boolean file) {
+    public static synchronized Logger getLogger() {
         initialise();
         StackTraceElement[] ele = new Throwable().getStackTrace();
         String name;
@@ -177,7 +171,7 @@ public final class LoggerUtils {
         String urlStr = urlStrBuilder.toString().replace(" ", "%20");
         urlStr += "&error=";
         urlStr += error;
-        
+
         final StringBuilder result = new StringBuilder();
         try(BufferedReader reader = new BufferedReader(new InputStreamReader(new URL(urlStr).openStream()));) {
             String line;
@@ -194,7 +188,7 @@ public final class LoggerUtils {
     /**
      * Determine if we were able to write to the file handler or not. If not
      * then the debug log won't be written.
-     *
+     * <p/>
      * @return true if all is ok, false if there is a problem.
      */
     public boolean isFileHandlerOK() {
