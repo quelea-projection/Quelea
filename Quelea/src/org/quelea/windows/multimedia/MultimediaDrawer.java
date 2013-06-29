@@ -32,8 +32,8 @@ public class MultimediaDrawer extends DisplayableDrawer {
             controlPanel.clear();
             multimediaView.setMediaPlayer(null);
         }
-        if (canvas.getChildren() != null) {
-            canvas.getChildren().clear();
+        if (getCanvas().getChildren() != null) {
+            getCanvas().getChildren().clear();
         }
     }
 
@@ -43,22 +43,22 @@ public class MultimediaDrawer extends DisplayableDrawer {
     }
 
     private void drawDisplayable(final Displayable displayable) {
-        if (canvas.isCleared() || canvas.isBlacked()) {
+        if (getCanvas().isCleared() || getCanvas().isBlacked()) {
             clear();
         } else {
 
             controlPanel.loadMultimedia((MultimediaDisplayable) displayable);
             multimediaView.setSmooth(true);
-            multimediaView.setFitHeight(canvas.getHeight());
-            multimediaView.setFitWidth(canvas.getWidth());
+            multimediaView.setFitHeight(getCanvas().getHeight());
+            multimediaView.setFitWidth(getCanvas().getWidth());
             multimediaView.setMediaPlayer(controlPanel.getPlayer());
             VBox pane = new VBox();
             pane.getChildren().add(multimediaView);
 
-            if (canvas instanceof MultimediaPreviewCanvas) {
+            if (getCanvas() instanceof MultimediaPreviewCanvas) {
                 pane.getChildren().add(controlPanel);
             }
-            canvas.getChildren().add(pane);
+            getCanvas().getChildren().add(pane);
         }
     }
 }

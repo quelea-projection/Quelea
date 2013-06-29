@@ -17,19 +17,16 @@
  */
 package org.quelea.windows.main;
 
-import java.util.Iterator;
 import java.util.Objects;
 import java.util.logging.Logger;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.geometry.Pos;
-import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
-import org.quelea.data.Background;
 import org.quelea.data.displayable.Displayable;
 import org.quelea.services.notice.NoticeDrawer;
 import org.quelea.services.utils.LoggerUtils;
