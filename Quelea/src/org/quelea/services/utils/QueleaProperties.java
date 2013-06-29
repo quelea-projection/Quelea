@@ -18,11 +18,11 @@
 package org.quelea.services.utils;
 
 import java.io.File;
-import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.StringReader;
 import java.util.Properties;
+import java.util.logging.Level;
 import javafx.geometry.BoundingBox;
 import javafx.geometry.Bounds;
 import javafx.scene.paint.Color;
@@ -98,7 +98,7 @@ public final class QueleaProperties extends Properties {
     public File getLanguageFile() {
         return new File("languages", getProperty("language.file", "gb.lang"));
     }
-    
+
     /**
      * Set the name of the language file to use.
      * <p/>
@@ -110,12 +110,43 @@ public final class QueleaProperties extends Properties {
     }
 
     /**
-     * Get the english languages file that should be present on all installations. We can default to this if labels are missing in other languages.
+     * Get the english languages file that should be present on all
+     * installations. We can default to this if labels are missing in other
+     * languages.
      * <p/>
      * @return the english languages file for the GUI.
      */
     public File getEnglishLanguageFile() {
         return new File("languages", "gb.lang");
+    }
+
+    /**
+     * Get the scene info as stored from the last exit of Quelea (or some
+     * default values if it doesn't exist in the properties file.)
+     * <p/>
+     * @return the scene info.
+     */
+    public SceneInfo getSceneInfo() {
+        try {
+            String[] parts = getProperty("scene.info", "461,15,997,995").split(",");
+            return new SceneInfo(Integer.parseInt(parts[0]), Integer.parseInt(parts[1]), Integer.parseInt(parts[2]), Integer.parseInt(parts[3]));
+        }
+        catch(Exception ex) {
+            LoggerUtils.getLogger().log(Level.WARNING, "Invalid scene info: " + getProperty("scene.info"), ex);
+            return null;
+        }
+    }
+
+    /**
+     * Set the scene info for Quelea's main window - generally called just
+     * before exit so the next invocation of the program can display the window
+     * in the same position.
+     * <p/>
+     * @param info the scene info.
+     */
+    public void setSceneInfo(SceneInfo info) {
+        setProperty("scene.info", info.toString());
+        write();
     }
 
     /**

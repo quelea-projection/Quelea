@@ -30,6 +30,9 @@ import org.quelea.data.displayable.Displayable;
 import org.quelea.data.powerpoint.OOUtils;
 import org.quelea.services.languages.LabelGrabber;
 import org.quelea.services.utils.LoggerUtils;
+import org.quelea.services.utils.QueleaProperties;
+import org.quelea.services.utils.SceneInfo;
+import org.quelea.windows.main.MainWindow;
 import org.quelea.windows.main.QueleaApp;
 
 /**
@@ -56,8 +59,9 @@ public class ExitActionHandler implements EventHandler<ActionEvent> {
      */
     public void exit(Event t) {
         LOGGER.log(Level.INFO, "exit() called");
+        MainWindow mainWindow = QueleaApp.get().getMainWindow();
         t.consume();
-        Schedule schedule = QueleaApp.get().getMainWindow().getMainPanel().getSchedulePanel().getScheduleList().getSchedule();
+        Schedule schedule = mainWindow.getMainPanel().getSchedulePanel().getScheduleList().getSchedule();
         if(!schedule.isEmpty() && schedule.isModified()) {
             cancel = false;
             Dialog d = Dialog.buildConfirmation(LabelGrabber.INSTANCE.getLabel("save.before.exit.title"), LabelGrabber.INSTANCE.getLabel("save.before.exit.text")).addYesButton(new EventHandler<ActionEvent>() {
@@ -80,15 +84,15 @@ public class ExitActionHandler implements EventHandler<ActionEvent> {
             }).build();
             d.showAndWait();
             if(cancel) {
-                QueleaApp.get().getMainWindow().show();
                 return; //Don't exit
             }
         }
-
+        LOGGER.log(Level.INFO, "Saving window position...");
+        QueleaProperties.get().setSceneInfo(new SceneInfo(mainWindow.getX(), mainWindow.getY(), mainWindow.getWidth(), mainWindow.getHeight()));
         LOGGER.log(Level.INFO, "Hiding main window...");
-        QueleaApp.get().getMainWindow().hide();
+        mainWindow.hide();
         LOGGER.log(Level.INFO, "Cleaning up displayables before exiting..");
-        for(Object obj : QueleaApp.get().getMainWindow().getMainPanel().getSchedulePanel().getScheduleList().itemsProperty().get()) {
+        for(Object obj : mainWindow.getMainPanel().getSchedulePanel().getScheduleList().itemsProperty().get()) {
             Displayable d = (Displayable) obj;
             LOGGER.log(Level.INFO, "Cleaning up {0}", d.getClass());
             d.dispose();
