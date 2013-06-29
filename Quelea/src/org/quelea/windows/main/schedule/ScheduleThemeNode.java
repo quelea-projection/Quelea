@@ -7,17 +7,10 @@ package org.quelea.windows.main.schedule;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.nio.file.FileSystems;
-import java.nio.file.Path;
-import java.nio.file.StandardWatchEventKinds;
-import java.nio.file.WatchEvent;
-import java.nio.file.WatchKey;
-import java.nio.file.WatchService;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javafx.application.Platform;
 import javafx.event.EventHandler;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -27,6 +20,8 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import javafx.stage.Modality;
+import javafx.stage.Popup;
 import org.quelea.data.ThemeDTO;
 import org.quelea.services.languages.LabelGrabber;
 import org.quelea.services.utils.LoggerUtils;
@@ -41,75 +36,27 @@ import org.quelea.windows.newsong.EditThemeDialog;
  * @author Michael
  */
 public class ScheduleThemeNode extends BorderPane {
+
     public interface UpdateThemeCallback {
+
         public void updateTheme(ThemeDTO theme);
     }
     private static final Logger LOGGER = LoggerUtils.getLogger();
     private VBox contentPanel;
     private ThemeDTO tempTheme;
     private EditThemeDialog themeDialog;
-    UpdateThemeCallback callback = null;
-    public ScheduleThemeNode(UpdateThemeCallback callback) {
+    private UpdateThemeCallback callback = null;
+    private Popup popup;
+
+    public ScheduleThemeNode(UpdateThemeCallback callback, Popup popup) {
         this.callback = callback;
+        this.popup = popup;
         themeDialog = new EditThemeDialog();
+        themeDialog.initModality(Modality.APPLICATION_MODAL);
         contentPanel = new VBox();
         contentPanel.setSpacing(5);
         refresh();
         setCenter(contentPanel);
-        startWatching();
-    }
-
-    /**
-     * Start the watcher thread. This runs in the background and if any theme
-     * changes are detected on the folder it updates itself.
-     */
-    private void startWatching() {
-        try {
-            final WatchService watcher = FileSystems.getDefault().newWatchService();
-            final Path themePath = FileSystems.getDefault().getPath(new File(QueleaProperties.getQueleaUserHome(), "themes").getAbsolutePath());
-            themePath.register(watcher, StandardWatchEventKinds.ENTRY_CREATE, StandardWatchEventKinds.ENTRY_DELETE, StandardWatchEventKinds.ENTRY_MODIFY);
-            new Thread() {
-                @SuppressWarnings("unchecked")
-                @Override
-                public void run() {
-                    while (true) {
-                        WatchKey key;
-                        try {
-                            key = watcher.take();
-                        } catch (InterruptedException ex) {
-                            return;
-                        }
-
-                        for (WatchEvent<?> event : key.pollEvents()) {
-                            WatchEvent.Kind<?> kind = event.kind();
-                            if (kind == StandardWatchEventKinds.OVERFLOW) {
-                                continue;
-                            }
-
-                            WatchEvent<Path> ev = (WatchEvent<Path>) event;
-                            Path filename = ev.context();
-                            if (!filename.toFile().toString().toLowerCase().endsWith(".th")) {
-                                continue;
-                            }
-
-                            if (!key.reset()) {
-                                break;
-                            }
-                            Utils.sleep(200); //TODO: Bodge
-                            Platform.runLater(new Runnable() {
-                                @Override
-                                public void run() {
-                                    refresh();
-                                }
-                            });
-
-                        }
-                    }
-                }
-            }.start();
-        } catch (IOException ex) {
-            LOGGER.log(Level.WARNING, "Exception in logger thread.", ex);
-        }
     }
 
     /**
@@ -137,7 +84,8 @@ public class ScheduleThemeNode extends BorderPane {
         List<ThemeDTO> themes;
         try {
             themes = getThemes();
-        } catch (Exception ex) {
+        }
+        catch(Exception ex) {
             LoggerUtils.getLogger().log(Level.SEVERE, "Couldn't get themes when refreshing.", ex);
             return;
         }
@@ -152,8 +100,8 @@ public class ScheduleThemeNode extends BorderPane {
         final HBox themePreviews = new HBox();
         themePreviews.setSpacing(10);
         themePreviews.setFillHeight(true);
-        for (final ThemeDTO theme : themes) {
-            ThemePreviewPanel panel = new ThemePreviewPanel(theme);
+        for(final ThemeDTO theme : themes) {
+            ThemePreviewPanel panel = new ThemePreviewPanel(theme, popup);
             panel.getSelectButton().setOnAction(new EventHandler<javafx.event.ActionEvent>() {
                 @Override
                 public void handle(javafx.event.ActionEvent t) {
@@ -170,15 +118,21 @@ public class ScheduleThemeNode extends BorderPane {
         newThemeButton.setOnAction(new EventHandler<javafx.event.ActionEvent>() {
             @Override
             public void handle(javafx.event.ActionEvent t) {
+                if(popup != null) {
+                    popup.hide();
+                }
                 themeDialog.setTheme(null);
-                themeDialog.show();
+                themeDialog.showAndWait();
+                themeDialog.toFront();
                 ThemeDTO ret = themeDialog.getTheme();
-                if (ret != null) {
-                    try (PrintWriter pw = new PrintWriter(ret.getFile())) {
+                if(ret != null) {
+                    try(PrintWriter pw = new PrintWriter(ret.getFile())) {
                         pw.println(ret.getTheme());
-                    } catch (IOException ex) {
+                    }
+                    catch(IOException ex) {
                         LOGGER.log(Level.WARNING, "Couldn't write new theme", ex);
                     }
+                    refresh();
                 }
             }
         });
@@ -195,14 +149,14 @@ public class ScheduleThemeNode extends BorderPane {
     private List<ThemeDTO> getThemes() {
         List<ThemeDTO> themesList = new ArrayList<>();
         File themeDir = new File(QueleaProperties.getQueleaUserHome(), "themes");
-        if (!themeDir.exists()) {
+        if(!themeDir.exists()) {
             themeDir.mkdir();
         }
-        for (File file : themeDir.listFiles()) {
-            if (file.getName().endsWith(".th")) {
+        for(File file : themeDir.listFiles()) {
+            if(file.getName().endsWith(".th")) {
                 String fileText = Utils.getTextFromFile(file.getAbsolutePath(), "");
                 final ThemeDTO theme = ThemeDTO.fromString(fileText);
-                if (theme == ThemeDTO.DEFAULT_THEME) {
+                if(theme == ThemeDTO.DEFAULT_THEME) {
                     LOGGER.log(Level.WARNING, "Error parsing theme file: {0}", fileText);
                     continue;  //error
                 }
