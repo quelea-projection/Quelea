@@ -18,13 +18,6 @@
 package org.quelea.data.bible;
 
 import java.io.File;
-import java.io.IOException;
-import java.nio.file.FileSystems;
-import java.nio.file.Path;
-import java.nio.file.StandardWatchEventKinds;
-import java.nio.file.WatchEvent;
-import java.nio.file.WatchKey;
-import java.nio.file.WatchService;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -65,56 +58,6 @@ public final class BibleManager {
         indexInit = false;
         onIndexInit = new ArrayList<>();
         loadBibles(false);
-        startWatching();
-    }
-
-    /**
-     * Start the watcher thread.
-     */
-    private void startWatching() {
-        try {
-            final WatchService watcher = FileSystems.getDefault().newWatchService();
-            final Path biblePath = FileSystems.getDefault().getPath(QueleaProperties.get().getBibleDir().getAbsolutePath());
-            biblePath.register(watcher, StandardWatchEventKinds.ENTRY_CREATE, StandardWatchEventKinds.ENTRY_DELETE, StandardWatchEventKinds.ENTRY_MODIFY);
-            new Thread() {
-                @SuppressWarnings("unchecked")
-                @Override
-                public void run() {
-                    while(true) {
-                        WatchKey key;
-                        try {
-                            key = watcher.take();
-                        }
-                        catch(InterruptedException ex) {
-                            return;
-                        }
-
-                        for(WatchEvent<?> event : key.pollEvents()) {
-                            WatchEvent.Kind<?> kind = event.kind();
-                            if(kind == StandardWatchEventKinds.OVERFLOW) {
-                                continue;
-                            }
-
-                            WatchEvent<Path> ev = (WatchEvent<Path>) event;
-                            Path filename = ev.context();
-                            if(!filename.toFile().toString().toLowerCase().endsWith(".xml")) {
-                                continue;
-                            }
-
-                            if(!key.reset()) {
-                                break;
-                            }
-                            loadBibles(true);
-                            updateListeners();
-
-                        }
-                    }
-                }
-            }.start();
-        }
-        catch(IOException ex) {
-            LOGGER.log(Level.WARNING, "Could not start watching underlying file structure for Bible Manager");
-        }
     }
 
     /**
@@ -176,6 +119,11 @@ public final class BibleManager {
      */
     public SearchIndex<BibleChapter> getIndex() {
         return index;
+    }
+    
+    public void refresh() {
+        loadBibles(false);
+        updateListeners();
     }
 
     /**
