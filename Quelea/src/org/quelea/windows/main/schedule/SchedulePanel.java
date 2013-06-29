@@ -21,6 +21,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -37,14 +38,11 @@ import javafx.scene.layout.Priority;
 import javafx.scene.layout.Region;
 import org.quelea.data.ThemeDTO;
 import javafx.stage.Popup;
-import org.quelea.data.displayable.BiblePassage;
 import org.quelea.data.displayable.Displayable;
-import org.quelea.data.displayable.SongDisplayable;
 import org.quelea.data.displayable.TextDisplayable;
 import org.quelea.data.displayable.TextSection;
 import org.quelea.services.languages.LabelGrabber;
 import org.quelea.services.utils.LoggerUtils;
-import org.quelea.services.utils.Utils;
 import org.quelea.windows.main.QueleaApp;
 import org.quelea.windows.main.actionhandlers.RemoveScheduleItemActionHandler;
 
@@ -71,12 +69,15 @@ public class SchedulePanel extends BorderPane {
      */
     public SchedulePanel() {
         scheduleList = new ScheduleList();
-        scheduleList.itemsProperty().addListener(new ChangeListener<ObservableList<Displayable>>() {
+        scheduleList.itemsProperty().get().addListener(new ListChangeListener<Displayable>() {
+
             @Override
-            public void changed(ObservableValue<? extends ObservableList<Displayable>> ov, ObservableList<Displayable> t, ObservableList<Displayable> t1) {
+            public void onChanged(ListChangeListener.Change<? extends Displayable> change) {
                 scheduleThemeNode.updateTheme();
             }
         });
+        
+        themePopup = new Popup();
 
         scheduleThemeNode = new ScheduleThemeNode(new ScheduleThemeNode.UpdateThemeCallback() {
             @Override
@@ -92,27 +93,22 @@ public class SchedulePanel extends BorderPane {
                         for(TextSection section : textDisplayable.getSections()) {
                             section.setTempTheme(theme);
                         }
-                        if(displayable instanceof SongDisplayable) {
-                            SongDisplayable song = ((SongDisplayable) textDisplayable);
-                            song.setTheme(theme);
-                        }
                     }
                 }
             }
-        });
+        }, themePopup);
+        scheduleThemeNode.setStyle("-fx-background-color:WHITE;-fx-border-color: rgb(49, 89, 23);-fx-border-radius: 5;");
+        themePopup.getContent().add(scheduleThemeNode);
+        
         themeButton = new Button("", new ImageView(new Image("file:icons/settings.png", 16, 16, false, true)));
         themeButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent t) {
-                if(themePopup == null) {
-                    themePopup = new Popup();
-                    scheduleThemeNode.setStyle("-fx-background-color:WHITE;-fx-border-color: rgb(49, 89, 23);-fx-border-radius: 5;");
-                    themePopup.getContent().add(scheduleThemeNode);
-                }
                 if(themePopup.isShowing()) {
                     themePopup.hide();
                 }
                 else {
+                    scheduleThemeNode.refresh();
                     themePopup.show(themeButton, themeButton.localToScene(0, 0).getX() + QueleaApp.get().getMainWindow().getX(), themeButton.localToScene(0, 0).getY() + 45 + QueleaApp.get().getMainWindow().getY());
                 }
             }

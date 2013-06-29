@@ -35,6 +35,8 @@ import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import javafx.stage.Modality;
+import javafx.stage.Popup;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 import org.javafx.dialog.Dialog;
@@ -61,13 +63,15 @@ public class ThemePreviewPanel extends VBox {
     private Button removeButton;
     private Button editButton;
     private EditThemeDialog themeDialog;
+    private Popup popup;
 
     /**
      * Create a new theme preview panel.
      * <p/>
      * @param theme the theme to preview.
      */
-    public ThemePreviewPanel(ThemeDTO theme) {
+    public ThemePreviewPanel(ThemeDTO theme, final Popup popup) {
+        this.popup = popup;
         this.theme = theme;
         if (theme == null) {
             theme = ThemeDTO.DEFAULT_THEME;
@@ -88,6 +92,7 @@ public class ThemePreviewPanel extends VBox {
             name = theme.getThemeName();
         }
         themeDialog = new EditThemeDialog();
+        themeDialog.initModality(Modality.APPLICATION_MODAL);
         selectButton = new RadioButton(name);
         if (theme != ThemeDTO.DEFAULT_THEME) {
             editButton = new Button("", new ImageView(new Image("file:icons/edit32.png", 16, 16, false, true)));
@@ -96,7 +101,8 @@ public class ThemePreviewPanel extends VBox {
                 @Override
                 public void handle(javafx.event.ActionEvent t) {
                     themeDialog.setTheme(ThemePreviewPanel.this.theme);
-                    themeDialog.show();
+                    popup.hide();
+                    themeDialog.showAndWait();
                     ThemeDTO ret = themeDialog.getTheme();
                     if (ret != null) {
                         try (PrintWriter pw = new PrintWriter(ret.getFile())) {
@@ -113,6 +119,7 @@ public class ThemePreviewPanel extends VBox {
             removeButton.setOnAction(new EventHandler<javafx.event.ActionEvent>() {
                 @Override
                 public void handle(javafx.event.ActionEvent t) {
+                    popup.hide();
                     Dialog.buildConfirmation(LabelGrabber.INSTANCE.getLabel("delete.theme.confirm.title"), LabelGrabber.INSTANCE.getLabel("delete.theme.question"), null).addYesButton(new EventHandler<ActionEvent>() {
                         @Override
                         public void handle(ActionEvent t) {
@@ -164,30 +171,6 @@ public class ThemePreviewPanel extends VBox {
      */
     public ThemeDTO getTheme() {
         return theme;
-    }
-    
-    public static void main(String[] args) {
-        new JFXPanel();
-        Platform.runLater(new Runnable() {
-            @Override
-            public void run() {
-                Stage stage = new Stage();
-                stage.setOnCloseRequest(new EventHandler<WindowEvent>() {
-                    @Override
-                    public void handle(WindowEvent t) {
-                        System.exit(0);
-                    }
-                });
-                stage.setScene(new Scene(new ScheduleThemeNode(new ScheduleThemeNode.UpdateThemeCallback() {
-
-                    @Override
-                    public void updateTheme(ThemeDTO theme) {
-                        //@todo nothing to do ??
-                        }
-                })));
-                stage.show();
-            }
-        });
     }
 
     private void updateThemePreviewCanvas(ThemeDTO theme) {
