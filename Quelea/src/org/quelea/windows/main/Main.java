@@ -38,7 +38,7 @@ import org.quelea.services.utils.ShortcutManager;
 import org.quelea.services.utils.UpdateChecker;
 import org.quelea.services.utils.UserFileChecker;
 import org.quelea.services.utils.Utils;
-import org.quelea.splash.SplashStage;
+import org.quelea.windows.splash.SplashStage;
 
 /**
  * The main class, sets everything in motion...

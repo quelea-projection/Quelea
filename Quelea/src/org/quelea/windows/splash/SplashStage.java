@@ -15,16 +15,21 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.quelea.splash;
+package org.quelea.windows.splash;
 
 import javafx.collections.ObservableList;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.Group;
 import javafx.scene.Scene;
+import javafx.scene.effect.Bloom;
+import javafx.scene.effect.DropShadow;
+import javafx.scene.effect.Glow;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
+import javafx.scene.text.FontPosture;
+import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 import javafx.stage.Modality;
 import javafx.stage.Screen;
@@ -50,24 +55,27 @@ public class SplashStage extends Stage {
         Image splashImage = new Image("file:icons/splash.png");
         ImageView imageView = new ImageView(splashImage);
         Text text = new Text(QueleaProperties.VERSION.getVersionString());
-        text.setStroke(Color.WHITE);
-        text.setFont(new Font("Verdana", 30));
-        text.setLayoutX(170);
-        text.setLayoutY(230);
+        text.setFont(Font.font("SansSerif", FontWeight.BOLD, FontPosture.ITALIC, 30));
+        text.setLayoutX(447);
+        text.setLayoutY(183);
+        text.setEffect(new DropShadow(5, 2, 2, Color.GRAY));
+        Text minorText = null;
+        if(QueleaProperties.VERSION.getMinorVersionString() != null) {
+            minorText = new Text(QueleaProperties.VERSION.getMinorVersionString());
+            minorText.setFont(Font.font("SansSerif", FontWeight.BOLD, FontPosture.ITALIC, 30));
+            minorText.setLayoutX(40);
+            minorText.setLayoutY(235);
+            minorText.setEffect(new DropShadow(5, 2, 2, Color.GRAY));
+        }
 
         Group mainPane = new Group();
         mainPane.getChildren().add(imageView);
         mainPane.getChildren().add(text);
+        if(minorText != null) {
+            mainPane.getChildren().add(minorText);
+        }
         setScene(new Scene(mainPane));
 
-        
-//        GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
-//        final GraphicsDevice[] gds = ge.getScreenDevices();
-//        if(controlScreenProp >= gds.length) {
-//            controlScreenProp = gds.length - 1;
-//        }
-//        Rectangle bounds = gds[controlScreenProp].getDefaultConfiguration().getBounds();
-        
         ObservableList<Screen> monitors = Screen.getScreens();
         Screen screen;
         int controlScreenProp = QueleaProperties.get().getControlScreen();
@@ -77,20 +85,10 @@ public class SplashStage extends Stage {
         else {
             screen = Screen.getPrimary();
         }
-        
+
         Rectangle2D bounds = screen.getVisualBounds();
-        
+
         setX((bounds.getWidth() / 2) - splashImage.getWidth() / 2);
         setY((bounds.getHeight() / 2) - splashImage.getHeight() / 2);
-//        
-//        
-//        
-//        
-//        //Centre on monitor
-//        setX((bounds.getLocation().x + bounds.getWidth() / 2) - splashImage.getWidth() / 2);
-//        setY((bounds.getLocation().y + bounds.getHeight() / 2) - splashImage.getHeight() / 2);
-    
-    // centerOnScreen();
-    
     }
 }

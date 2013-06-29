@@ -49,6 +49,15 @@ public class Version implements Comparable<Version> {
     }
 
     /**
+     * Get the minor version string.
+     * <p/>
+     * @return the minor version string.
+     */
+    public String getMinorVersionString() {
+        return minorVersionName;
+    }
+
+    /**
      * Get the version string including the minor name.
      * <p/>
      * @return the version string with the minor name attached. Useful for error
