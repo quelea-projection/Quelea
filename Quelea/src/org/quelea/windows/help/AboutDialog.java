@@ -26,10 +26,15 @@ import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.VBox;
+import javafx.scene.text.Font;
+import javafx.scene.text.FontPosture;
+import javafx.scene.text.FontWeight;
+import javafx.scene.text.Text;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import org.quelea.services.languages.LabelGrabber;
+import org.quelea.services.utils.LoggerUtils;
 import org.quelea.services.utils.QueleaProperties;
 
 /**
@@ -50,12 +55,16 @@ public class AboutDialog extends Stage {
         
         setTitle(LabelGrabber.INSTANCE.getLabel("help.about.title"));
         VBox layout = new VBox();
-        layout.getChildren().add(new Label("Quelea " + LabelGrabber.INSTANCE.getLabel("help.about.version") + " " + QueleaProperties.VERSION.getVersionString()));
+        Text headingText = new Text("Quelea: " + LabelGrabber.INSTANCE.getLabel("help.about.version") + " " + QueleaProperties.VERSION.getFullVersionString());
+        headingText.setFont(Font.font("Arial", FontWeight.BOLD, FontPosture.REGULAR, 20));
+        layout.getChildren().add(headingText);
         layout.getChildren().add(new ImageView(new Image("file:icons/logo.png")));
-        layout.getChildren().add(new Label(" "));
-        layout.getChildren().add(new Label(LabelGrabber.INSTANCE.getLabel("help.about.line1")));
-        layout.getChildren().add(new Label(LabelGrabber.INSTANCE.getLabel("help.about.line2")));
-        layout.getChildren().add(new Label(" "));
+        layout.getChildren().add(new Text(" "));
+        layout.getChildren().add(new Text(LabelGrabber.INSTANCE.getLabel("help.about.line1")));
+        layout.getChildren().add(new Text(LabelGrabber.INSTANCE.getLabel("help.about.line2")));
+        layout.getChildren().add(new Text(" "));
+        layout.getChildren().add(new Text("Java: " + System.getProperty("java.version")));
+        layout.getChildren().add(new Text(LabelGrabber.INSTANCE.getLabel("debug.location") + ": " + LoggerUtils.getHandlerFileLocation()));
         Button closeButton = new Button(LabelGrabber.INSTANCE.getLabel("help.about.close"));
         closeButton.setOnAction(new EventHandler<ActionEvent>() {
 
