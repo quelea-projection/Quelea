@@ -35,6 +35,7 @@ import org.quelea.data.tags.TagDialog;
 import org.quelea.services.notice.NoticeDialog;
 import org.quelea.services.utils.LoggerUtils;
 import org.quelea.services.utils.QueleaProperties;
+import org.quelea.services.utils.SceneInfo;
 import org.quelea.services.utils.Utils;
 import org.quelea.windows.main.menus.MainMenuBar;
 import org.quelea.windows.main.toolbars.MainToolbar;
@@ -43,6 +44,7 @@ import org.quelea.windows.options.OptionsDialog;
 
 /**
  * The main window used to control the projection.
+ * <p/>
  * @author Michael
  */
 public class MainWindow extends Stage {
@@ -60,36 +62,36 @@ public class MainWindow extends Stage {
 
     /**
      * Create a new main window.
-     * @param setApplicationWindow true if this main window should be set as
-     * the application-wide main window, false otherwise.
+     * <p/>
+     * @param setApplicationWindow true if this main window should be set as the
+     * application-wide main window, false otherwise.
      */
     public MainWindow(boolean setApplicationWindow) {
         setTitle("Quelea " + QueleaProperties.VERSION.getVersionString());
-        
+
         BorderPane mainPane = new BorderPane();
         VBox.setVgrow(mainPane, Priority.SOMETIMES);
         noticeDialog = new NoticeDialog();
-        
+
         LOGGER.log(Level.INFO, "Creating main window");
         if(setApplicationWindow) {
             QueleaApp.get().setMainWindow(this);
         }
         setOnCloseRequest(new EventHandler<javafx.stage.WindowEvent>() {
-
             @Override
             public void handle(javafx.stage.WindowEvent t) {
                 new ExitActionHandler().exit(t);
             }
         });
-        
+
         getIcons().add(new Image("file:icons/logo.png"));
-        
+
         LOGGER.log(Level.INFO, "Creating tag dialog");
         tagDialog = new TagDialog();
-        
+
         LOGGER.log(Level.INFO, "Creating options dialog");
         optionsDialog = new OptionsDialog();
-        
+
         LOGGER.log(Level.INFO, "Creating bible search dialog");
         bibleSearchDialog = new BibleSearchDialog();
         LOGGER.log(Level.INFO, "Creating bible browse dialog");
@@ -98,39 +100,48 @@ public class MainWindow extends Stage {
         mainpanel = new MainPanel();
         songEntryWindow = new SongEntryWindow();
         mainpanel.getSchedulePanel().getScheduleList().getPopupMenu().getEditSongButton().setOnAction(new EditSongScheduleActionHandler());
-        
+
         menuBar = new MainMenuBar();
-        
+
         HBox toolbarPanel = new HBox();
         mainToolbar = new MainToolbar();
         HBox.setHgrow(mainToolbar, Priority.ALWAYS);
         toolbarPanel.getChildren().add(mainToolbar);
-        
+
         if(Utils.isMac()) {
             menuBar.setUseSystemMenuBar(true);
         }
-        
+
         VBox menuBox = new VBox();
         menuBox.setFillWidth(true);
         menuBox.getChildren().add(menuBar);
         menuBox.getChildren().add(toolbarPanel);
         menuBox.getChildren().add(mainPane);
-        
+
         mainPane.setCenter(mainpanel);
         setScene(new Scene(menuBox));
+        SceneInfo sceneInfo = QueleaProperties.get().getSceneInfo();
+        if(sceneInfo != null) { //Shouldn't be null unless something goes wrong, but guard against it anyway
+            setWidth(sceneInfo.getWidth());
+            setHeight(sceneInfo.getHeight());
+            setX(sceneInfo.getX());
+            setY(sceneInfo.getY());
+        }
         LOGGER.log(Level.INFO, "Created main window.");
     }
 
     /**
      * Get the main panel on this window.
+     * <p/>
      * @return the main panel part of this window.
      */
     public MainPanel getMainPanel() {
         return mainpanel;
     }
-    
+
     /**
      * Get the notice dialog on this main window.
+     * <p/>
      * @return the notice dialog.
      */
     public NoticeDialog getNoticeDialog() {
@@ -139,6 +150,7 @@ public class MainWindow extends Stage {
 
     /**
      * Get the tag dialog on this main window.
+     * <p/>
      * @return the tag dialog.
      */
     public TagDialog getTagDialog() {
@@ -147,6 +159,7 @@ public class MainWindow extends Stage {
 
     /**
      * Get the options dialog on this main window.
+     * <p/>
      * @return the options dialog.
      */
     public OptionsDialog getOptionsDialog() {
@@ -155,26 +168,28 @@ public class MainWindow extends Stage {
 
     /**
      * Get the bible search dialog on this main window.
+     * <p/>
      * @return the bible search dialog.
      */
     public BibleSearchDialog getBibleSearchDialog() {
         return bibleSearchDialog;
     }
-    
+
     /**
      * Get the bible browse dialog on this main window.
+     * <p/>
      * @return the bible browse dialog.
      */
     public BibleBrowseDialog getBibleBrowseDialog() {
         return bibleBrowseDialog;
     }
-    
+
     /**
      * Get the new song window used for this window.
+     * <p/>
      * @return the song entry window.
      */
     public SongEntryWindow getSongEntryWindow() {
         return songEntryWindow;
     }
-
 }
