@@ -316,3 +316,4 @@ file.rename.dialog.text=Please enter the new file name:
 interface.language.label=Interface language:
 language.changed=Language Changed
 language.changed.message=You must restart Quelea before the language change will take effect.
+debug.location=Debug Log Location
