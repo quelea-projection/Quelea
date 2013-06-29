@@ -26,6 +26,7 @@ import javafx.collections.ObservableList;
 import javafx.geometry.Orientation;
 import javafx.scene.control.SplitPane;
 import org.quelea.data.ThemeDTO;
+import org.quelea.data.db.model.Theme;
 import org.quelea.data.displayable.TextDisplayable;
 import org.quelea.data.displayable.TextSection;
 import org.quelea.services.utils.LoggerUtils;
@@ -163,8 +164,7 @@ public class SelectLyricsPanel extends AbstractPanel {
 
             drawer.setCanvas(canvas);
             if (selectedIndex == -1 || selectedIndex >= lyricsList.itemsProperty().get().size()) {
-
-                drawer.setTheme(null);
+                drawer.setTheme(ThemeDTO.DEFAULT_THEME);
                 drawer.eraseText();
                 continue;
             }
@@ -176,12 +176,7 @@ public class SelectLyricsPanel extends AbstractPanel {
                 drawer.setTheme(newTheme);
             }
             drawer.setCapitaliseFirst(currentSection.shouldCapitaliseFirst());
-//            if(canvas.isStageView()) {
             drawer.setText((TextDisplayable) currentDisplayable, selectedIndex);
-//            }
-//            else {
-//                canvas.setText(currentSection.getText(false, false), currentSection.getSmallText());
-//            }
             canvas.setCurrentDisplayable(currentDisplayable);
         }
     }
