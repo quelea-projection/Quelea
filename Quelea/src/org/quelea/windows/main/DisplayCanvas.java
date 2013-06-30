@@ -154,24 +154,17 @@ public class DisplayCanvas extends StackPane {
         });
     }
 
-    @Override
-    public int hashCode() {
-        int hash = 7;
-        hash = 17 * hash + Objects.hashCode(this.type);
-        return hash;
-    }
-
     /**
      * @return the background
      */
-    public Node getBackground() {
+    public Node getCanvasBackground() {
         return background;
     }
 
     /**
      * @param background the background to set
      */
-    public void setBackground(Node background) {
+    public void setCanvasBackground(Node background) {
         this.background = background;
     }
 
@@ -225,12 +218,12 @@ public class DisplayCanvas extends StackPane {
     public void toggleBlack() {
         blacked ^= true; //invert
         if (blacked) {
-            currentBackground = getBackground();
+            currentBackground = getCanvasBackground();
             getChildren().clear();
-            setBackground(blackImg);
+            setCanvasBackground(blackImg);
         } else {
             getChildren().add(currentBackground);
-            setBackground(currentBackground);
+            setCanvasBackground(currentBackground);
         }
         if (this.updater != null) {
             updateCanvas(this.updater);

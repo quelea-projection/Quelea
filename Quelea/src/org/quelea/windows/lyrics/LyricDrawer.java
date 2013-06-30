@@ -77,9 +77,9 @@ public class LyricDrawer extends DisplayableDrawer {
     }
 
     private void drawText() {
-        if(!getCanvas().getChildren().contains(getCanvas().getBackground())
+        if(!getCanvas().getChildren().contains(getCanvas().getCanvasBackground())
                 && !getCanvas().getChildren().contains(textGroup)) {
-            getCanvas().getChildren().add(0, getCanvas().getBackground());
+            getCanvas().getChildren().add(0, getCanvas().getCanvasBackground());
             getCanvas().getChildren().add(textGroup);
         }
         if(getCanvas().isCleared() || getCanvas().isBlacked()) {
@@ -194,7 +194,7 @@ public class LyricDrawer extends DisplayableDrawer {
             LOGGER.log(Level.SEVERE, "Bug: Unhandled theme background case, trying to use default background: " + theme.getBackground(), new RuntimeException("DEBUG EXCEPTION FOR STACK TRACE"));
             image = Utils.getImageFromColour(ThemeDTO.DEFAULT_BACKGROUND.getColour());
         }
-        FadeTransition fadeOut = new FadeTransition(Duration.seconds(0.3), getCanvas().getBackground());
+        FadeTransition fadeOut = new FadeTransition(Duration.seconds(0.3), getCanvas().getCanvasBackground());
         fadeOut.setFromValue(1);
         fadeOut.setToValue(0);
 
@@ -250,7 +250,7 @@ public class LyricDrawer extends DisplayableDrawer {
             getCanvas().getChildren().add(newImageVIew);
             newBackground = newImageVIew;
         }
-        final Node oldBackground = getCanvas().getBackground();
+        final Node oldBackground = getCanvas().getCanvasBackground();
 
         fadeOut.setOnFinished(
                 new EventHandler<ActionEvent>() {
@@ -259,7 +259,7 @@ public class LyricDrawer extends DisplayableDrawer {
                 getCanvas().getChildren().remove(oldBackground);
             }
         });
-        getCanvas().setBackground(newBackground);
+        getCanvas().setCanvasBackground(newBackground);
 
         fadeOut.play();
     }
@@ -488,13 +488,13 @@ public class LyricDrawer extends DisplayableDrawer {
 
     public void draw(Displayable displayable) {
         drawText();
-        if(getCanvas().getBackground() instanceof ImageView) {
-            ImageView imgBackground = (ImageView) getCanvas().getBackground();
+        if(getCanvas().getCanvasBackground() instanceof ImageView) {
+            ImageView imgBackground = (ImageView) getCanvas().getCanvasBackground();
             imgBackground.setFitHeight(getCanvas().getHeight());
             imgBackground.setFitWidth(getCanvas().getWidth());
         }
-        else if(getCanvas().getBackground() instanceof MediaView) {
-            MediaView vidBackground = (MediaView) getCanvas().getBackground();
+        else if(getCanvas().getCanvasBackground() instanceof MediaView) {
+            MediaView vidBackground = (MediaView) getCanvas().getCanvasBackground();
             vidBackground.setPreserveRatio(false);
             vidBackground.setFitHeight(getCanvas().getHeight());
             vidBackground.setFitWidth(getCanvas().getWidth());
