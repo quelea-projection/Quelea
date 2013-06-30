@@ -19,11 +19,8 @@
 package org.quelea.windows.main.menus;
 
 import java.util.logging.Logger;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ListChangeListener.Change;
-import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.control.Menu;
@@ -36,38 +33,28 @@ import javafx.scene.input.KeyCodeCombination;
 import javafx.scene.input.KeyCombination;
 import org.quelea.data.Schedule;
 import org.quelea.data.displayable.Displayable;
-import org.quelea.data.displayable.SongDisplayable;
 import org.quelea.services.languages.LabelGrabber;
 import org.quelea.services.mail.Mailer;
 import org.quelea.services.utils.LoggerUtils;
-import org.quelea.windows.library.LibrarySongList;
 import org.quelea.windows.main.MainPanel;
 import org.quelea.windows.main.QueleaApp;
 import org.quelea.windows.main.schedule.ScheduleList;
 import org.quelea.windows.main.actionhandlers.AddAudioActionHandler;
 import org.quelea.windows.main.actionhandlers.AddPowerpointActionHandler;
-import org.quelea.windows.main.actionhandlers.AddSongActionHandler;
 import org.quelea.windows.main.actionhandlers.AddVideoActionHandler;
-import org.quelea.windows.main.actionhandlers.EditSongScheduleActionHandler;
-import org.quelea.windows.main.actionhandlers.RemoveScheduleItemActionHandler;
 import org.quelea.windows.main.actionhandlers.ShowNoticesActionHandler;
-import org.quelea.windows.main.widgets.ButtonChecker;
 
 /**
  * Quelea's schedule menu.
- *
+ * <p/>
  * @author Michael
  */
 public class ScheduleMenu extends Menu {
 
     private static final Logger LOGGER = LoggerUtils.getLogger();
-//    private MenuItem addSongItem;
-//    private MenuItem editSongItem;
-//    private MenuItem removeSongItem;
     private MenuItem addPowerpointItem;
     private MenuItem addVideoItem;
     private MenuItem addAudioItem;
-//    private MenuItem addDVDItem;
     private MenuItem manageNoticesItem;
     private MenuItem shareScheduleItem;
 
@@ -76,40 +63,9 @@ public class ScheduleMenu extends Menu {
      */
     public ScheduleMenu() {
         super(LabelGrabber.INSTANCE.getLabel("schedule.menu"));
-//        addSongItem = new MenuItem(LabelGrabber.INSTANCE.getLabel("add.song.button"), new ImageView(new Image("file:icons/newsong.png", 16, 16, false, true)));
-//        addSongItem.setOnAction(new AddSongActionHandler());
-//        addSongItem.setDisable(true);
-//        getItems().add(addSongItem);
-
-//        editSongItem = new MenuItem(LabelGrabber.INSTANCE.getLabel("edit.song.button"), new ImageView(new Image("file:icons/edit.png", 16, 16, false, true)));
-//        editSongItem.setOnAction(new EditSongScheduleActionHandler());
-//        editSongItem.setDisable(true);
-//        getItems().add(editSongItem);
-
-//        removeSongItem = new MenuItem(LabelGrabber.INSTANCE.getLabel("remove.item.button"), new ImageView(new Image("file:icons/remove 2.png", 16, 16, false, true)));
-//        removeSongItem.setOnAction(new RemoveScheduleItemActionHandler());
-//        removeSongItem.setDisable(true);
-//        getItems().add(removeSongItem);
 
         final MainPanel mainPanel = QueleaApp.get().getMainWindow().getMainPanel();
         final ScheduleList scheduleList = mainPanel.getSchedulePanel().getScheduleList();
-//        scheduleList.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<Displayable>() {
-//
-//            @Override
-//            public void changed(ObservableValue<? extends Displayable> ov, Displayable t, Displayable t1) {
-//                ButtonChecker.INSTANCE.checkEditRemoveButtons(editSongItem, removeSongItem);
-//            }
-//        });
-//        final LibrarySongList songList = mainPanel.getLibraryPanel().getLibrarySongPanel().getSongList();
-//        songList.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<SongDisplayable>() {
-//
-//            @Override
-//            public void changed(ObservableValue<? extends SongDisplayable> ov, SongDisplayable t, SongDisplayable t1) {
-//                ButtonChecker.INSTANCE.checkAddButton(addSongItem);
-//            }
-//        });
-
-        getItems().add(new SeparatorMenuItem());
 
         addPowerpointItem = new MenuItem(LabelGrabber.INSTANCE.getLabel("add.presentation.button"), new ImageView(new Image("file:icons/powerpoint.png", 16, 16, false, true)));
         addPowerpointItem.setOnAction(new AddPowerpointActionHandler());
@@ -118,15 +74,10 @@ public class ScheduleMenu extends Menu {
         addVideoItem = new MenuItem(LabelGrabber.INSTANCE.getLabel("add.video.button"), new ImageView(new Image("file:icons/video file.png", 16, 16, false, true)));
         addVideoItem.setOnAction(new AddVideoActionHandler());
         getItems().add(addVideoItem);
-        
+
         addAudioItem = new MenuItem(LabelGrabber.INSTANCE.getLabel("add.audio.button"), new ImageView(new Image("file:icons/audio30.png", 16, 16, false, true)));
         addAudioItem.setOnAction(new AddAudioActionHandler());
         getItems().add(addAudioItem);
-
-        //TODO: Investigate putting DVD support back in
-//        addDVDItem = new MenuItem(LabelGrabber.INSTANCE.getLabel("add.dvd.button"), new ImageView(new Image("file:icons/dvd.png", 16, 16, false, true)));
-//        addDVDItem.setOnAction(new AddDVDActionListener());
-//        getItems().add(addDVDItem);
 
         getItems().add(new SeparatorMenuItem());
 
@@ -138,7 +89,6 @@ public class ScheduleMenu extends Menu {
         shareScheduleItem = new MenuItem(LabelGrabber.INSTANCE.getLabel("email.button"), new ImageView(new Image("file:icons/email.png", 16, 16, false, true)));
         shareScheduleItem.setDisable(true);
         scheduleList.getItems().addListener(new ListChangeListener<Displayable>() {
-
             @Override
             public void onChanged(Change<? extends Displayable> change) {
                 Schedule schedule = scheduleList.getSchedule();
@@ -151,7 +101,6 @@ public class ScheduleMenu extends Menu {
             }
         });
         shareScheduleItem.setOnAction(new EventHandler<ActionEvent>() {
-
             @Override
             public void handle(ActionEvent t) {
                 Mailer.getInstance().sendSchedule(scheduleList.getSchedule(), LabelGrabber.INSTANCE.getLabel("email.text"));
