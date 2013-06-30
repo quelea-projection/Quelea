@@ -64,21 +64,11 @@ public final class Main extends Application {
         new UserFileChecker(QueleaProperties.getQueleaUserHome()).checkUserFiles();
 
         final ObservableList<Screen> monitors = Screen.getScreens();
-        Screen screen;
         LOGGER.log(Level.INFO, "Number of displays: {0}", monitors.size());
 
-        int controlScreenProp = QueleaProperties.get().getControlScreen();
-        final int controlScreen;
         final int projectorScreen = QueleaProperties.get().getProjectorScreen();
         final int stageScreen = QueleaProperties.get().getStageScreen();
         final int monitorNumber = monitors.size();
-
-        if(controlScreenProp < monitorNumber) {
-            controlScreen = controlScreenProp;
-        }
-        else {
-            controlScreen = 0;
-        }
 
         final boolean lyricsHidden;
         if(!QueleaProperties.get().isProjectorModeCoords() && (projectorScreen >= monitorNumber || projectorScreen < 0)) {
