@@ -20,7 +20,10 @@ package org.quelea.services.utils;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import javafx.application.Application;
+import javafx.embed.swing.JFXPanel;
 import javafx.scene.image.Image;
+import javafx.stage.Stage;
 
 /**
  * Check that the images in the "img" folder conform to the requirements. At the
@@ -62,6 +65,14 @@ public class ImageChecker {
      * Run the image checker.
      */
     public void runCheck() {
+        Application test = new Application() {
+
+            @Override
+            public void start(Stage stage) throws Exception {
+                //
+            }
+        };
+        Application.launch(test.getClass());
         boolean ok = true;
         System.out.println("\nChecking images:");
         List<String> badFileNames = new ArrayList<>();
