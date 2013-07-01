@@ -18,10 +18,12 @@
 package org.quelea.services.utils;
 
 import java.io.File;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.List;
 import javafx.application.Application;
-import javafx.embed.swing.JFXPanel;
 import javafx.scene.image.Image;
 import javafx.stage.Stage;
 
@@ -30,7 +32,7 @@ import javafx.stage.Stage;
  * moment this just involves checking they're the right size, but could be
  * expanded later to check other things like constrast and colour matching as
  * well.
- *
+ * <p>
  * @author Michael
  */
 public class ImageChecker {
@@ -54,32 +56,57 @@ public class ImageChecker {
 
     /**
      * Create a new image checker to check the specified directory.
-     *
+     * <p>
      * @param imageDir the directory to check.
      */
     public ImageChecker(File imageDir) {
         this.imageDir = imageDir;
     }
 
+    //TODO: There *must* be a better way to do this... creating a JFXPanel doesn't seem to cut it.
+    private void hackInit() {
+        PrintStream err = System.err;
+        System.setErr(new PrintStream(new OutputStream() {
+
+            @Override
+            public void write(int b) throws IOException {
+                //Nothing
+            }
+        }, true));
+        try {
+            Application test = new Application() {
+
+                @Override
+                public void start(Stage stage) throws Exception {
+                }
+            };
+            Application.launch(test.getClass());
+        }
+        catch(Exception ex) {
+        }
+        finally {
+            System.setErr(err);
+        }
+    }
+
     /**
      * Run the image checker.
      */
     public void runCheck() {
-        Application test = new Application() {
-
-            @Override
-            public void start(Stage stage) throws Exception {
-                //
-            }
-        };
-        Application.launch(test.getClass());
+        hackInit();
         boolean ok = true;
         System.out.println("\nChecking images:");
         List<String> badFileNames = new ArrayList<>();
         for(File file : imageDir.listFiles()) {
             if(Utils.fileIsImage(file)) {
                 boolean thisok = true;
-                Image image = new Image("file:"+file.getAbsolutePath());
+                Image image = null;
+                try {
+                    image = new Image("file:" + file.getAbsolutePath());
+                }
+                catch(Exception ex) {
+                    ex.printStackTrace();
+                }
                 if(image == null) {
                     System.err.println("ERROR: " + file.getName() + " appears to be corrupt.");
                     thisok = false;
@@ -126,7 +153,7 @@ public class ImageChecker {
 
     /**
      * Get a single string of all the formats we allow. Enables easy printing.
-     *
+     * <p>
      * @return a single string of all the formats we allow.
      */
     private static String getFormatsString() {
@@ -142,7 +169,7 @@ public class ImageChecker {
 
     /**
      * Determine if the given file name is in a format we accept.
-     *
+     * <p>
      * @param fileName the file name to check.
      * @return true if it's in an accepted format, false otherwise.
      */
@@ -160,7 +187,7 @@ public class ImageChecker {
      * Run the image checker. If an argument is specified this will be used as
      * the image directory to check, otherwise the default "img" directory will
      * be chosen.
-     *
+     * <p>
      * @param args command line arguments.
      */
     public static void main(String[] args) {
