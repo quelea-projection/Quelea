@@ -1,6 +1,9 @@
 
 <launch4jConfig>
     <headerType>gui</headerType>
+    <jre>
+        <path>winjre8</path>
+    </jre>
     <jar>..\dist\Quelea.jar</jar>
     <outfile>..\dist\quelea.exe</outfile>
     <chdir>.</chdir>
@@ -12,12 +15,6 @@
     <stayAlive>false</stayAlive>
     <manifest></manifest>
     <icon>../icons/logo.ico</icon>
-    <jre>
-        <minVersion>1.7.0</minVersion>
-        <jdkPreference>preferJre</jdkPreference>
-        <initialHeapSize>1024</initialHeapSize>
-        <maxHeapSize>1024</maxHeapSize>
-    </jre>
     <messages>
         <startupErr>Sorry, there was an error starting the program.</startupErr>
         <bundledJreErr>Sorry, there was an error with the bundled JRE.</bundledJreErr>
