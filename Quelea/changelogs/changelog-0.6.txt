@@ -12,6 +12,7 @@ quelea (0.6) stable; urgency=normal
   * Added Czech and German translations
   * Fix interface to display UTF-8 translations properly
   * Add option within interface to change language
+  * Window position now saved between runs
   * Easyslides import
   * Fix Kingsway import
   * Bundle JRE
