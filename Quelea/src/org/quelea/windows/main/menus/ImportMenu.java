@@ -105,7 +105,7 @@ public class ImportMenu extends Menu {
         MenuItem kingswayAll, kingswayOne;
 
         kingswayItem = new Menu(LabelGrabber.INSTANCE.getLabel("kingsway.button"), new ImageView(new Image("file:icons/kingsway.png", 16, 16, false, true)));
-        kingswayAll = new MenuItem(LabelGrabber.INSTANCE.getLabel("kingsway.button.all"));
+        kingswayAll = new MenuItem(LabelGrabber.INSTANCE.getLabel("kingsway.button.all"), new ImageView(new Image("file:icons/kingsway.png", 16, 16, false, true)));
         kingswayAll.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent t) {
