@@ -126,7 +126,6 @@ public class MainWindow extends Stage {
             setHeight(sceneInfo.getHeight());
             setX(sceneInfo.getX());
             setY(sceneInfo.getY());
-            setMaximized(sceneInfo.isMaximised());
         }
         LOGGER.log(Level.INFO, "Created main window.");
     }
