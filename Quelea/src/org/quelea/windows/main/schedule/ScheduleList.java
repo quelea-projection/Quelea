@@ -17,14 +17,10 @@
  */
 package org.quelea.windows.main.schedule;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
+import javafx.application.Platform;
 import javafx.collections.ListChangeListener;
-import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
@@ -90,6 +86,8 @@ public class ScheduleList extends ListView<Displayable> {
             @Override
             public void handle(KeyEvent t) {
                 if(t.getCharacter().equals(" ")) {
+                    QueleaApp.get().getMainWindow().getMainPanel().getPreviewPanel().requestFocus();
+                    QueleaApp.get().getMainWindow().getMainPanel().getPreviewPanel().selectFirstLyric();
                     QueleaApp.get().getMainWindow().getMainPanel().getPreviewPanel().goLive();
                 }
             }
@@ -97,6 +95,9 @@ public class ScheduleList extends ListView<Displayable> {
     }
 
     public void add(Displayable displayable) {
+        if(!Platform.isFxApplicationThread()) {
+            LOGGER.log(Level.WARNING, "Not on the platform thread!", new RuntimeException("DEBUG EX"));
+        }
         itemsProperty().get().add(displayable);
     }
 

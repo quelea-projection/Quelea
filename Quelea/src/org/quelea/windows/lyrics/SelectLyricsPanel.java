@@ -26,7 +26,6 @@ import javafx.collections.ObservableList;
 import javafx.geometry.Orientation;
 import javafx.scene.control.SplitPane;
 import org.quelea.data.ThemeDTO;
-import org.quelea.data.db.model.Theme;
 import org.quelea.data.displayable.TextDisplayable;
 import org.quelea.data.displayable.TextSection;
 import org.quelea.services.utils.LoggerUtils;
@@ -37,7 +36,7 @@ import org.quelea.windows.main.PreviewPanel;
 
 /**
  * The panel where the lyrics for different songs can be selected.
- *
+ * <p/>
  * @author Michael
  */
 public class SelectLyricsPanel extends AbstractPanel {
@@ -50,7 +49,7 @@ public class SelectLyricsPanel extends AbstractPanel {
 
     /**
      * Create a new lyrics panel.
-     *
+     * <p/>
      * @param containerPanel the container panel this panel is contained within.
      */
     public SelectLyricsPanel(LivePreviewPanel containerPanel) {
@@ -83,9 +82,15 @@ public class SelectLyricsPanel extends AbstractPanel {
         });
     }
 
+    public void selectFirst() {
+        if(lyricsList.getItems().size() > 0) {
+            lyricsList.selectionModelProperty().get().clearAndSelect(0);
+        }
+    }
+
     /**
      * Set one line mode on or off.
-     *
+     * <p/>
      * @param on if one line mode should be turned on, false otherwise.
      */
     public void setOneLineMode(boolean on) {
@@ -99,14 +104,14 @@ public class SelectLyricsPanel extends AbstractPanel {
 
     /**
      * Show a given text displayable on this panel.
-     *
+     * <p/>
      * @param displayable the displayable to show.
      * @param index the index of the displayable to show.
      */
     public void showDisplayable(TextDisplayable displayable, int index) {
         clear();
         currentDisplayable = displayable;
-        for (TextSection section : displayable.getSections()) {
+        for(TextSection section : displayable.getSections()) {
             lyricsList.itemsProperty().get().add(section);
         }
         lyricsList.selectionModelProperty().get().select(index);
@@ -115,7 +120,7 @@ public class SelectLyricsPanel extends AbstractPanel {
 
     /**
      * Get the current displayed index.
-     *
+     * <p/>
      * @return the current displayed index.
      */
     public int getIndex() {
@@ -124,7 +129,7 @@ public class SelectLyricsPanel extends AbstractPanel {
 
     /**
      * Get the lyrics list on this panel.
-     *
+     * <p/>
      * @return the select lyrics list.
      */
     public SelectLyricsList getLyricsList() {
@@ -160,18 +165,19 @@ public class SelectLyricsPanel extends AbstractPanel {
     @Override
     public void updateCanvas() {
         int selectedIndex = lyricsList.selectionModelProperty().get().getSelectedIndex();
-        for (DisplayCanvas canvas : getCanvases()) {
+        for(DisplayCanvas canvas : getCanvases()) {
 
             drawer.setCanvas(canvas);
-            if (selectedIndex == -1 || selectedIndex >= lyricsList.itemsProperty().get().size()) {
+            if(selectedIndex == -1 || selectedIndex >= lyricsList.itemsProperty().get().size()) {
                 drawer.setTheme(ThemeDTO.DEFAULT_THEME);
                 drawer.eraseText();
                 continue;
             }
             TextSection currentSection = lyricsList.itemsProperty().get().get(selectedIndex);
-            if (currentSection.getTempTheme() != null) {
+            if(currentSection.getTempTheme() != null) {
                 drawer.setTheme(currentSection.getTempTheme());
-            } else {
+            }
+            else {
                 ThemeDTO newTheme = currentSection.getTheme();
                 drawer.setTheme(newTheme);
             }
