@@ -127,7 +127,7 @@ public class ImportMenu extends Menu {
         kingswayItem.getItems().add(kingswayAll);
         kingswayItem.getItems().add(kingswayOne);
 
-        plainTextItem = new MenuItem(LabelGrabber.INSTANCE.getLabel("plainText.button"), new ImageView(new Image("file:icons/logo.png", 16, 16, false, true)));
+        plainTextItem = new MenuItem(LabelGrabber.INSTANCE.getLabel("plainText.button"), new ImageView(new Image("file:icons/text.png", 16, 16, false, true)));
         plainTextItem.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent t) {
