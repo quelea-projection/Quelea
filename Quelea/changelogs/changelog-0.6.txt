@@ -14,6 +14,7 @@ quelea (0.6) stable; urgency=normal
   * Add option within interface to change language
   * Easyslides import
   * Fix Kingsway import
+  * Bundle JRE
   * Many bugfixes
 
  -- Michael Berry <michael@quelea.org>  Wednesday, 10 Oct 2012 00:00:00 +0000

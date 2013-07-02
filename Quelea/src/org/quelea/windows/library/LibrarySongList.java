@@ -83,7 +83,7 @@ public class LibrarySongList extends ListView<SongDisplayable> implements Databa
             @Override
             public void handle(MouseEvent t) {
                 if(t.getClickCount() == 2) {
-                    QueleaApp.get().getMainWindow().getMainPanel().getSchedulePanel().getScheduleList().itemsProperty().get().add(getSelectedValue());
+                    QueleaApp.get().getMainWindow().getMainPanel().getSchedulePanel().getScheduleList().add(getSelectedValue());
                 }
             }
         });

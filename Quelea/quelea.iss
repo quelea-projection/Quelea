@@ -5,7 +5,7 @@
 #define MyAppVersion "0.6"
 #define MyAppPublisher "Michael Berry"
 #define MyAppURL "http://www.quelea.org"
-#define MyAppExeName "setup.exe"
+#define MyAppExeName "quelea.exe"
 
 [Setup]
 ; NOTE: The value of AppId uniquely identifies this application.
@@ -34,36 +34,6 @@ Root: HKCR; Subkey: "Quelea Schedule"; ValueType: string; ValueName: ""; ValueDa
 Root: HKCR; Subkey: "Quelea Schedule\DefaultIcon"; ValueType: string; ValueName: ""; ValueData: "{app}\icons\logo.ico,0"
 Root: HKCR; Subkey: "Quelea Schedule\shell\open\command"; ValueType: string; ValueName: ""; ValueData: """{app}\Quelea.exe"" ""%1"""
 
-[Code]
-function InitializeSetup(): Boolean;
-var
-  ErrorCode: Integer;
-  JavaInstalled : Boolean;
-  Result1 : Boolean;
-begin
-  JavaInstalled := RegKeyExists(HKLM,'SOFTWARE\JavaSoft\Java Runtime Environment\1.7');
-  if IsWin64 then
-  begin
-    JavaInstalled := RegKeyExists(HKLM64,'SOFTWARE\JavaSoft\Java Runtime Environment\1.7');
-  end;
-  if JavaInstalled then
-  begin
-    Result := true;
-  end else
-    begin
-      Result1 := MsgBox('This tool requires Java 7 to run. Please download and install the JRE and run this setup again. Do you want to download it now?', mbConfirmation, MB_YESNO) = idYes;
-      if Result1 = false then
-      begin
-        Result:=false;
-      end else
-      begin
-        Result:=false;
-        ShellExec('open', 'http://www.oracle.com/technetwork/java/javase/downloads/index.html','','',SW_SHOWNORMAL,ewNoWait,ErrorCode);
-      end;
-    end;
-  end;
-end.
-
 [Languages]
 Name: "english"; MessagesFile: "compiler:Default.isl"
 
@@ -86,6 +56,7 @@ Source: "img\*"; DestDir: "{app}\img"; Flags: ignoreversion recursesubdirs creat
 Source: "vid\*"; DestDir: "{app}\vid"; Flags: ignoreversion recursesubdirs createallsubdirs
 Source: "licenses\*"; DestDir: "{app}\licenses"; Flags: ignoreversion recursesubdirs createallsubdirs
 Source: "themes\*"; DestDir: "{app}\themes"; Flags: ignoreversion recursesubdirs createallsubdirs
+Source: "winjre\*"; DestDir: "{app}\winjre"; Flags: ignoreversion recursesubdirs createallsubdirs
 ; NOTE: Don't use "Flags: ignoreversion" on any shared system files
 
 [Icons]
