@@ -20,11 +20,13 @@ package org.quelea.windows.help;
 
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
-import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontPosture;
@@ -38,7 +40,9 @@ import org.quelea.services.utils.LoggerUtils;
 import org.quelea.services.utils.QueleaProperties;
 
 /**
- * Quelea's about Dialog, displaying general features about the program.
+ * Quelea's about Dialog, displaying general features about the program and the
+ * debug log location (so we can point any users here who may be looking for
+ * it.)
  * <p/>
  * @author Michael
  */
@@ -46,25 +50,28 @@ public class AboutDialog extends Stage {
 
     /**
      * Create a new about dialog.
-     * <p/>
-     * @param owner the owner of the dialog (should be the main window.)
      */
     public AboutDialog() {
         initModality(Modality.APPLICATION_MODAL);
         initStyle(StageStyle.UTILITY);
-        
+        setResizable(false);
         setTitle(LabelGrabber.INSTANCE.getLabel("help.about.title"));
-        VBox layout = new VBox();
-        Text headingText = new Text("Quelea: " + LabelGrabber.INSTANCE.getLabel("help.about.version") + " " + QueleaProperties.VERSION.getFullVersionString());
+
+        BorderPane newLayout = new BorderPane();
+        ImageView logo = new ImageView(new Image("file:icons/full logo.png"));
+        BorderPane.setAlignment(logo, Pos.CENTER);
+        newLayout.setTop(logo);
+
+        VBox subLayout = new VBox();
+        Text headingText = new Text(LabelGrabber.INSTANCE.getLabel("help.about.version") + " " + QueleaProperties.VERSION.getFullVersionString());
         headingText.setFont(Font.font("Arial", FontWeight.BOLD, FontPosture.REGULAR, 20));
-        layout.getChildren().add(headingText);
-        layout.getChildren().add(new ImageView(new Image("file:icons/logo.png")));
-        layout.getChildren().add(new Text(" "));
-        layout.getChildren().add(new Text(LabelGrabber.INSTANCE.getLabel("help.about.line1")));
-        layout.getChildren().add(new Text(LabelGrabber.INSTANCE.getLabel("help.about.line2")));
-        layout.getChildren().add(new Text(" "));
-        layout.getChildren().add(new Text("Java: " + System.getProperty("java.version")));
-        layout.getChildren().add(new Text(LabelGrabber.INSTANCE.getLabel("debug.location") + ": " + LoggerUtils.getHandlerFileLocation()));
+        subLayout.getChildren().add(headingText);
+        subLayout.getChildren().add(new Text(" "));
+        subLayout.getChildren().add(new Text(LabelGrabber.INSTANCE.getLabel("help.about.line1")));
+        subLayout.getChildren().add(new Text(LabelGrabber.INSTANCE.getLabel("help.about.line2")));
+        subLayout.getChildren().add(new Text(" "));
+        subLayout.getChildren().add(new Text("Java: " + System.getProperty("java.version")));
+        subLayout.getChildren().add(new Text(LabelGrabber.INSTANCE.getLabel("debug.location") + ": " + LoggerUtils.getHandlerFileLocation()));
         Button closeButton = new Button(LabelGrabber.INSTANCE.getLabel("help.about.close"));
         closeButton.setOnAction(new EventHandler<ActionEvent>() {
 
@@ -73,8 +80,12 @@ public class AboutDialog extends Stage {
                 hide();
             }
         });
-        layout.getChildren().add(closeButton);
-        
-        setScene(new Scene(layout));
+        newLayout.setCenter(subLayout);
+        BorderPane.setMargin(subLayout, new Insets(10));
+        BorderPane.setAlignment(closeButton, Pos.CENTER);
+        BorderPane.setMargin(closeButton, new Insets(10));
+        newLayout.setBottom(closeButton);
+
+        setScene(new Scene(newLayout));
     }
 }

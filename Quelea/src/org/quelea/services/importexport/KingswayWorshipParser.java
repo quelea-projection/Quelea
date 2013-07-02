@@ -47,9 +47,10 @@ public class KingswayWorshipParser implements SongParser {
 
     private static final Logger LOGGER = LoggerUtils.getLogger();
     /**
-     * Rough number of songs in the library at present.
+     * Rough number of songs in the library at present. This is used to update
+     * the progress bar.
      */
-    private static final int ROUGH_NUM_SONGS = 3500;
+    private static final int ROUGH_NUM_SONGS = 3600;
     private static final SongDisplayable DEFAULT = new SongDisplayable("", "");
     private int errorCount = 0;
     private boolean all;
@@ -97,10 +98,10 @@ public class KingswayWorshipParser implements SongParser {
                 catch(Exception ex) {
                     LOGGER.log(Level.WARNING, "Error importing song", ex);
                 }
-                if(song != DEFAULT&&song!=null) {
+                if(song != DEFAULT && song != null) {
                     ret.add(song);
                 }
-                if(song==null) {
+                if(song == null) {
                     errorCount++;
                 }
                 i++;
@@ -314,8 +315,11 @@ public class KingswayWorshipParser implements SongParser {
             ret.setLyrics(lyrics.toString());
             return ret;
         }
+        else if(!title.trim().toLowerCase().equals("test hymn")) {
+            LOGGER.log(Level.WARNING, "Page {0} no lyrics found. Title: {1}", new Object[]{num, title});
+            return null;
+        }
         else {
-            LOGGER.log(Level.WARNING, "Page {0} no lyrics found", num);
             return null;
         }
     }
@@ -355,7 +359,6 @@ public class KingswayWorshipParser implements SongParser {
             }
             return null;
         }
-
     }
 
     /**

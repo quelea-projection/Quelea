@@ -4,7 +4,7 @@ Section: misc
 Priority: optional
 Depends: openjdk-7-jre
 Homepage: http://www.quelea.org
-Architecture: all
+Architecture: i386
 Maintainer: Michael Berry <michael@quelea.org>
 Description:Lyrics projection package designed for use in churches.
  Supports importing and displaying songs, scripture, videos and more.
