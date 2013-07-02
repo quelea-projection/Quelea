@@ -50,6 +50,9 @@
         <copy todir="${dist.jar.dir}/themes" quiet="yes">
             <fileset dir="${basedir}/themes"/>
         </copy>
+        <unzip src="bundlejre/winjre.zip" dest="${dist.jar.dir}"/>
+        <unzip src="bundlejre/nixjre.zip" dest="${dist.jar.dir}"/>
+        <chmod file="${dist.jar.dir}/nixjre" perm="777" type="both"/>
         <copy todir="${dist.jar.dir}/icons" quiet="yes">
             <fileset dir="${basedir}/icons"/>
         </copy>
@@ -120,30 +123,22 @@
         </jarbundler>-->
         
         <echo message="Building deb package for Ubuntu / Debian installs"/>
-        <deb destfile="${dist.jar.dir}/Quelea-temp.deb" control="control" verbose="false">
-            <tarfileset dir="${dist.jar.dir}"
-                        prefix="/usr/share/quelea">
-                <exclude name="lib/junit/**"/> 
-                <exclude name="lib/junit_4/**"/> 
-                <exclude name="lib/**javadoc.jar"/> 
-                <exclude name="standalone/**"/> 
-                <exclude name="Output/**"/> 
-                <exclude name="web-files/**"/> 
-                <exclude name="copyright"/> 
-                <exclude name="license.txt"/> 
-                <exclude name="launch.sh"/> 
+        <deb control="control" destfile="${dist.jar.dir}/Quelea-temp.deb" verbose="false">
+            <tarfileset dir="${dist.jar.dir}" prefix="/usr/share/quelea" filemode="777" dirmode="777">
+                <exclude name="lib/junit/**"/>
+                <exclude name="lib/junit_4/**"/>
+                <exclude name="lib/**javadoc.jar"/>
+                <exclude name="standalone/**"/>
+                <exclude name="winjre/**"/>
+                <exclude name="Output/**"/>
+                <exclude name="web-files/**"/>
+                <exclude name="copyright"/>
+                <exclude name="license.txt"/>
+                <exclude name="launch.sh"/>
             </tarfileset>
-            <tarfileset file="${dist.jar.dir}/launch.sh"
-                        filemode="755"
-                        prefix="/usr/share/quelea">
-            </tarfileset>
-            <tarfileset dir="${dist.jar.dir}/queleadoc"
-                        username="root"
-                        group="root"
-                        prefix="/usr/share/doc/quelea">
-            </tarfileset>
-            <tarfileset file="quelea.desktop"
-                        prefix="/usr/share/applications"/>
+            <tarfileset file="${dist.jar.dir}/launch.sh" filemode="755" prefix="/usr/share/quelea"/>
+            <tarfileset dir="${dist.jar.dir}/queleadoc" group="root" prefix="/usr/share/doc/quelea" username="root"/>
+            <tarfileset file="quelea.desktop" prefix="/usr/share/applications"/>
         </deb>
         <delete dir="${dist.jar.dir}/queleadoc"/>
         <delete file="${dist.jar.dir}/launch.sh"/>
