@@ -100,7 +100,7 @@
             <arg value="${dist.jar.dir}/queleadoc/changelog.gz"/>
         </java>
         
-        <echo message="Building Mac package"/>
+<!--        <echo message="Building Mac package"/>
         <mkdir dir="${dist.jar.dir}/standalone"/>
         <bundleapp outputdirectory="${dist.jar.dir}/standalone"
                    name="Quelea"
@@ -112,7 +112,7 @@
                 <include name="Quelea.jar"/>
                 <include name="lib/**"/>
             </classpath>
-        </bundleapp>
+        </bundleapp>-->
         <delete dir="${dist.jar.dir}/macjre"/>
         
         <echo message="Building deb package for Ubuntu / Debian installs"/>
