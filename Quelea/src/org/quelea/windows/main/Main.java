@@ -22,8 +22,6 @@ import java.net.MalformedURLException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.application.Application;
-import static javafx.application.Application.STYLESHEET_CASPIAN;
-import static javafx.application.Application.setUserAgentStylesheet;
 import javafx.application.Platform;
 import javafx.collections.ObservableList;
 import javafx.stage.Screen;
@@ -60,7 +58,6 @@ public final class Main extends Application {
      */
     @Override
     public void start(Stage stage) {
-        setUserAgentStylesheet(STYLESHEET_CASPIAN);
         final SplashStage splashWindow = new SplashStage();
         splashWindow.show();
 
