@@ -80,7 +80,7 @@ public final class LoggerUtils {
     private LoggerUtils() {
         throw new AssertionError();
     }
-    
+
     public static String getHandlerFileLocation() {
         return handlerFile.getAbsolutePath();
     }
@@ -94,7 +94,7 @@ public final class LoggerUtils {
         initialise();
         StackTraceElement[] ele = new Throwable().getStackTrace();
         String name;
-        if(ele == null || ele[2] == null || ele[2].getClassName() == null) {
+        if(ele == null || ele.length < 3 || ele[2] == null || ele[2].getClassName() == null) {
             name = "DEFAULT";
         }
         else {
