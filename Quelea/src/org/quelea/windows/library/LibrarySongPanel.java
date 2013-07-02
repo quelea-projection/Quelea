@@ -76,7 +76,6 @@ public class LibrarySongPanel extends BorderPane {
 
         HBox northPanel = new HBox();
         Label searchLabel = new Label(LabelGrabber.INSTANCE.getLabel("library.song.search"));
-        searchLabel.setMaxHeight(Double.MAX_VALUE);
         searchLabel.setAlignment(Pos.CENTER);
         northPanel.getChildren().add(searchLabel);
         searchBox = new TextField();

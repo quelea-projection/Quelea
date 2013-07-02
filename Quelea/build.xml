@@ -1,101 +1,104 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns:fx="javafx:com.sun.javafx.tools.ant" basedir="." default="default" name="Quelea">
+<project name="Quelea" default="default" basedir="." xmlns:fx="javafx:com.sun.javafx.tools.ant">
     <description>Builds, tests, and runs Quelea.</description>
-    <taskdef classpath=".:path/to/sdk/lib/ant-javafx.jar" resource="com/sun/javafx/tools/ant/antlib.xml" uri="javafx:com.sun.javafx.tools.ant"/>
+    <taskdef resource="com/sun/javafx/tools/ant/antlib.xml"      
+             uri="javafx:com.sun.javafx.tools.ant"
+             classpath=".:path/to/sdk/lib/ant-javafx.jar"/>   
     <import file="nbproject/build-impl.xml"/>
-    <taskdef classname="com.izforge.izpack.ant.IzPackTask" classpath="${basedir}/izpack/standalone-compiler.jar" name="izpack"/>
-    <taskdef classname="net.sf.launch4j.ant.Launch4jTask" classpath="launch4j/launch4j.jar" name="launch4j"/>
-    <taskdef classname="net.sourceforge.jarbundler.JarBundler" classpath="osx/jarbundler-2.2.0.jar" name="jarbundler"/>
-    <taskdef classname="com.googlecode.ant_deb_task.DesktopEntry" classpath="antdeb/ant-deb-0.0.1.jar" name="desktopentry"/>
-    <taskdef classname="org.vafer.jdeb.ant.DebAntTask" classpath="lib/jdeb-0.8.jar" name="deb"/>
+    <import file="nbproject/jfx-impl.xml"/>
+    
+    <taskdef name="izpack" classpath="${basedir}/izpack/standalone-compiler.jar"
+             classname="com.izforge.izpack.ant.IzPackTask"/>
+    <taskdef name="launch4j" classpath="launch4j/launch4j.jar" classname="net.sf.launch4j.ant.Launch4jTask"/>
+    <taskdef name="jarbundler" classpath="osx/jarbundler-2.2.0.jar" classname="net.sourceforge.jarbundler.JarBundler"/>
+    <taskdef name="desktopentry" classpath="antdeb/ant-deb-0.0.1.jar"
+             classname="com.googlecode.ant_deb_task.DesktopEntry"/>
+    <taskdef name="deb" classpath="lib/jdeb-0.8.jar" classname="org.vafer.jdeb.ant.DebAntTask"/>
     <property file="quelea.properties"/>
+    
     <property name="dist.jar.dir" value="${basedir}/dist"/>
+    
     <property name="CPInstallerName" value="quelea-${quelea.version}-crossplatform-install.jar"/>
     <property name="WindowsInstallerName" value="quelea-${quelea.version}-windows-install.exe"/>
     <property name="DebInstallerName" value="quelea-${quelea.version}-deb-install.deb"/>
     <property name="PortableName" value="quelea-${quelea.version}-portable.zip"/>
+
     <property name="CPInstaller" value="${dist.jar.dir}/standalone/${CPInstallerName}"/>
     <property name="WindowsInstaller" value="${dist.jar.dir}/standalone/${WindowsInstallerName}"/>
     <property name="DebInstaller" value="${dist.jar.dir}/standalone/${DebInstallerName}"/>
     <property name="Portable" value="${dist.jar.dir}/standalone/${PortableName}"/>
-    <target name="-pre-init">
-        <delete dir="dist"/>
-        <mkdir dir="dist"/>
-    </target>
+    
     <target name="-post-init">
         <copy todir="${dist.jar.dir}/languages">
             <fileset dir="${basedir}/languages"/>
         </copy>
     </target>
-    <target depends="jar" name="build-dist">
+    
+    <target name="build-dist" depends="jar">
         <property name="FXClasspath" value="${javafx.sdk}/jre/lib/jfxrt.jar"/>
+        
         <!-- Check the images conform to spec -->
         <java className="org.quelea.services.utils.ImageChecker" classpath="${FXClasspath};${basedir}/build/classes" failonerror="false"/>
         <!-- Check the language files -->
         <java className="org.quelea.services.languages.LabelChecker" classpath="${FXClasspath};${basedir}/build/classes" failonerror="false"/>
+        
         <echo message="Built jar."/>
         <echo message="Copying necessary files to ${dist.jar.dir}"/>
-        <copy quiet="yes" todir="${dist.jar.dir}/lib">
+        <copy todir="${dist.jar.dir}/lib" quiet="yes">
             <fileset dir="${basedir}/lib"/>
         </copy>
-        <copy quiet="yes" todir="${dist.jar.dir}/themes">
+        <copy todir="${dist.jar.dir}/themes" quiet="yes">
             <fileset dir="${basedir}/themes"/>
         </copy>
-        <copy quiet="yes" todir="${dist.jar.dir}/winjre8">
-            <fileset dir="${basedir}/winjre8"/>
-        </copy>
-        <copy quiet="yes" todir="${dist.jar.dir}/nixjre8">
-            <fileset dir="${basedir}/nixjre8"/>
-        </copy>
-        <chmod file="${dist.jar.dir}/nixjre8" perm="777" type="both"/>
-        <copy quiet="yes" todir="${dist.jar.dir}/icons">
+        <copy todir="${dist.jar.dir}/icons" quiet="yes">
             <fileset dir="${basedir}/icons"/>
         </copy>
-        <copy quiet="yes" todir="${dist.jar.dir}/bibles">
+        <copy todir="${dist.jar.dir}/bibles" quiet="yes">
             <fileset dir="${basedir}/bibles"/>
         </copy>
-        <copy quiet="yes" todir="${dist.jar.dir}/dictionaries">
+        <copy todir="${dist.jar.dir}/dictionaries" quiet="yes">
             <fileset dir="${basedir}/dictionaries"/>
         </copy>
-        <copy quiet="yes" todir="${dist.jar.dir}/vid">
+        <copy todir="${dist.jar.dir}/vid" quiet="yes">
             <fileset dir="${basedir}/vid"/>
         </copy>
-        <copy quiet="yes" todir="${dist.jar.dir}/licenses">
+        <copy todir="${dist.jar.dir}/licenses" quiet="yes">
             <fileset dir="${basedir}/licenses"/>
         </copy>
-        <copy quiet="yes" todir="${dist.jar.dir}/languages">
+        <copy todir="${dist.jar.dir}/languages" quiet="yes">
             <fileset dir="${basedir}/languages"/>
         </copy>
-        <!--        <copy todir="${dist.jar.dir}/database">
+<!--        <copy todir="${dist.jar.dir}/database">
             <fileset dir="${basedir}/database"/>
         </copy>-->
-        <copy quiet="yes" todir="${dist.jar.dir}/img">
+        <copy todir="${dist.jar.dir}/img" quiet="yes">
             <fileset dir="${basedir}/img"/>
         </copy>
-        <copy quiet="yes" todir="${dist.jar.dir}/licenses">
+        <copy todir="${dist.jar.dir}/licenses" quiet="yes">
             <fileset dir="${basedir}/licenses"/>
         </copy>
-        <copy quiet="yes" todir="${dist.jar.dir}/vid">
+        <copy todir="${dist.jar.dir}/vid" quiet="yes">
             <fileset dir="${basedir}/vid"/>
         </copy>
-        <copy quiet="yes" todir="${dist.jar.dir}/src">
+        <copy todir="${dist.jar.dir}/src" quiet="yes">
             <fileset dir="${basedir}/src"/>
         </copy>
-        <delete failonerror="false" file="${dist.jar.dir}/README.TXT" quiet="yes"/>
-        <copy failonerror="false" file="${basedir}/README.TXT" quiet="yes" todir="${dist.jar.dir}"/>
-        <copy file="${basedir}/quelea.properties" quiet="yes" todir="${dist.jar.dir}"/>
-        <copy file="${basedir}/Quelea.iss" quiet="yes" todir="${dist.jar.dir}"/>
-        <copy file="${basedir}/build-install.bat" quiet="yes" todir="${dist.jar.dir}"/>
-        <copy file="${basedir}/licenses/gplv3.txt" quiet="yes" tofile="${dist.jar.dir}/license.txt"/>
-        <copy file="${basedir}/launch.sh" quiet="yes" tofile="${dist.jar.dir}/launch.sh"/>
+        <delete file="${dist.jar.dir}/README.TXT" failonerror="false" quiet="yes"/>
+        <copy file="${basedir}/README.TXT" todir="${dist.jar.dir}" failonerror="false" quiet="yes"/>
+        <copy file="${basedir}/quelea.properties" todir="${dist.jar.dir}" quiet="yes"/>
+        <copy file="${basedir}/Quelea.iss" todir="${dist.jar.dir}" quiet="yes"/>
+        <copy file="${basedir}/build-install.bat" todir="${dist.jar.dir}" quiet="yes"/>
+        <copy file="${basedir}/licenses/gplv3.txt" tofile="${dist.jar.dir}/license.txt" quiet="yes"/>
+        <copy file="${basedir}/launch.sh" tofile="${dist.jar.dir}/launch.sh" quiet="yes"/>
         <mkdir dir="${dist.jar.dir}/queleadoc"/>
-        <copy file="${basedir}/licenses/copyright" quiet="yes" tofile="${dist.jar.dir}/queleadoc/copyright"/>
+        <copy file="${basedir}/licenses/copyright" tofile="${dist.jar.dir}/queleadoc/copyright" quiet="yes"/>
         <!-- Compress and copy changelog to correct location -->
         <java className="org.quelea.services.utils.GZMaxFileCompressor" classpath="${basedir}/build/classes;${FXClasspath}" failonerror="false">
             <arg value="${basedir}/changelogs/changelog-${quelea.version}.txt"/>
             <arg value="${dist.jar.dir}/queleadoc/changelog.gz"/>
         </java>
-        <!--        <echo message="Building Mac package"/>
+        
+<!--        <echo message="Building Mac package"/>
         <jarbundler dir="${dist.jar.dir}/"
                     name="Quelea-${quelea.version}"
                     jvmversion="1.6+"
@@ -115,39 +118,50 @@
             </jarfileset>
 
         </jarbundler>-->
+        
         <echo message="Building deb package for Ubuntu / Debian installs"/>
-        <deb control="control" destfile="${dist.jar.dir}/Quelea-temp.deb" verbose="false">
-            <tarfileset dir="${dist.jar.dir}" prefix="/usr/share/quelea" filemode="777" dirmode="777">
-                <exclude name="lib/junit/**"/>
-                <exclude name="lib/junit_4/**"/>
-                <exclude name="lib/**javadoc.jar"/>
-                <exclude name="standalone/**"/>
-                <exclude name="winjre8/**"/>
-                <exclude name="Output/**"/>
-                <exclude name="web-files/**"/>
-                <exclude name="copyright"/>
-                <exclude name="license.txt"/>
-                <exclude name="launch.sh"/>
+        <deb destfile="${dist.jar.dir}/Quelea-temp.deb" control="control" verbose="false">
+            <tarfileset dir="${dist.jar.dir}"
+                        prefix="/usr/share/quelea">
+                <exclude name="lib/junit/**"/> 
+                <exclude name="lib/junit_4/**"/> 
+                <exclude name="lib/**javadoc.jar"/> 
+                <exclude name="standalone/**"/> 
+                <exclude name="Output/**"/> 
+                <exclude name="web-files/**"/> 
+                <exclude name="copyright"/> 
+                <exclude name="license.txt"/> 
+                <exclude name="launch.sh"/> 
             </tarfileset>
-            <tarfileset file="${dist.jar.dir}/launch.sh" filemode="755" prefix="/usr/share/quelea"/>
-            <tarfileset dir="${dist.jar.dir}/queleadoc" group="root" prefix="/usr/share/doc/quelea" username="root"/>
-            <tarfileset file="quelea.desktop" prefix="/usr/share/applications"/>
+            <tarfileset file="${dist.jar.dir}/launch.sh"
+                        filemode="755"
+                        prefix="/usr/share/quelea">
+            </tarfileset>
+            <tarfileset dir="${dist.jar.dir}/queleadoc"
+                        username="root"
+                        group="root"
+                        prefix="/usr/share/doc/quelea">
+            </tarfileset>
+            <tarfileset file="quelea.desktop"
+                        prefix="/usr/share/applications"/>
         </deb>
         <delete dir="${dist.jar.dir}/queleadoc"/>
-        <delete dir="${dist.jar.dir}/nixjre8"/>
         <delete file="${dist.jar.dir}/launch.sh"/>
         <mkdir dir="${dist.jar.dir}/standalone"/>
         <move file="${dist.jar.dir}/Quelea-temp.deb" tofile="${DebInstaller}"/>
-        <launch4j configFile="launch4j/config.xml"/>
+        
+        <launch4j configFile="launch4j/config.xml" />  
         <echo message="Building cross platform installer"/>
-        <izpack basedir="${dist.jar.dir}" input="${basedir}/izpack/config.xml" output="${CPInstaller}"/>
+        <izpack input="${basedir}/izpack/config.xml" output="${CPInstaller}" basedir="${dist.jar.dir}"/>
+        
         <echo message="Generating windows installer using inno setup."/>
         <echo message="For this to work inno setup needs to be installed and the appropriate paths set in build-install.bat. This will only work on Windows."/>
         <exec dir="${dist.jar.dir}" executable="cmd" failifexecutionfails="false" failonerror="false">
             <arg value="/c build-install.bat"/>
         </exec>
-        <move failonerror="false" file="${dist.jar.dir}/Output/setup.exe" tofile="${WindowsInstaller}"/>
-        <delete dir="${dist.jar.dir}/Output" failonerror="false" verbose="true"/>
-        <delete dir="${dist.jar.dir}/winjre8"/>
+        <move file="${dist.jar.dir}/Output/setup.exe" tofile="${WindowsInstaller}" failonerror="false"/>
+        <delete dir="${dist.jar.dir}/Output" verbose="true" failonerror="false"/> 
+        
     </target>
+    
 </project>

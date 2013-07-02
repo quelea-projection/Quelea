@@ -31,14 +31,12 @@ public class SceneInfo {
     private int y;
     private int w;
     private int h;
-    private boolean maximised;
 
-    public SceneInfo(double x, double y, double w, double h, boolean maximised) {
+    public SceneInfo(double x, double y, double w, double h) {
         this.x = (int) x;
         this.y = (int) y;
         this.w = (int) w;
         this.h = (int) h;
-        this.maximised = maximised;
     }
 
     public int getX() {
@@ -57,12 +55,8 @@ public class SceneInfo {
         return h;
     }
 
-    public boolean isMaximised() {
-        return maximised;
-    }
-
     @Override
     public String toString() {
-        return x + "," + y + "," + w + "," + h + "," + maximised;
+        return x + "," + y + "," + w + "," + h;
     }
 }
