@@ -45,13 +45,13 @@ import org.quelea.windows.main.StatusPanel;
  */
 public class KingswayWorshipParser implements SongParser {
 
+    private static final int CONSECUTIVE_ERROR_THRESHOLD = 10;
     private static final Logger LOGGER = LoggerUtils.getLogger();
     /**
      * Rough number of songs in the library at present. This is used to update
      * the progress bar.
      */
     private static final int ROUGH_NUM_SONGS = 3600;
-    private static final SongDisplayable DEFAULT = new SongDisplayable("", "");
     private int errorCount = 0;
     private boolean all;
 
@@ -98,11 +98,17 @@ public class KingswayWorshipParser implements SongParser {
                 catch(Exception ex) {
                     LOGGER.log(Level.WARNING, "Error importing song", ex);
                 }
-                if(song != DEFAULT && song != null) {
+                if(song != null) {
                     ret.add(song);
                 }
                 if(song == null) {
                     errorCount++;
+                }
+                else {
+                    errorCount = 0;
+                }
+                if(errorCount > CONSECUTIVE_ERROR_THRESHOLD) {
+                    break;
                 }
                 i++;
             }
@@ -213,8 +219,8 @@ public class KingswayWorshipParser implements SongParser {
         if(html.contains("Server error")) {
             return null;
         }
-        if(html.isEmpty()) {
-            return DEFAULT;
+        if(html.trim().isEmpty()) {
+            return null;
         }
         int startIndex = html.indexOf("<div class=\"span8\">") + "<div class=\"span8\">".length();
         int endIndex = html.indexOf("<div class=\"sharer\">", startIndex);
@@ -239,7 +245,10 @@ public class KingswayWorshipParser implements SongParser {
         songHtml = songHtml.substring(songHtml.indexOf("</h1>") + 5);
         songHtml = songHtml.trim();
 
-        String author = songHtml.substring(4, songHtml.indexOf("</h3>"));
+        String author = songHtml.substring(4, songHtml.indexOf("</h3>")).trim();
+        if(author.toLowerCase().startsWith("by")) {
+            author = author.substring(2).trim();
+        }
         songHtml = songHtml.substring(songHtml.indexOf("</h3>") + 5);
         songHtml = songHtml.trim();
 
@@ -335,23 +344,16 @@ public class KingswayWorshipParser implements SongParser {
         try {
             StringBuilder content = new StringBuilder();
             URL url = new URL("http://www.weareworship.com/songs/song-library/showsong/" + num);
-            try(BufferedReader in = new BufferedReader(new InputStreamReader(url.openStream()))) {
+            try(BufferedReader in = new BufferedReader(new InputStreamReader(url.openStream(), "UTF-8"))) {
                 String str;
                 while((str = in.readLine()) != null) {
                     content.append(str).append("\n");
                 }
             }
-            errorCount = 0;
             return content.toString();
         }
         catch(Exception ex) {
             if(ex.getMessage().contains("500")) {
-                errorCount++;
-                if(errorCount > 10) {
-                    LOGGER.log(Level.INFO, "Too many 500's, giving up");
-//                    count500 = 0;
-                    return null;
-                }
                 return "";
             }
             else {
