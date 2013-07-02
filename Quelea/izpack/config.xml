@@ -9,7 +9,7 @@
         <url>http://www.quelea.org/</url>
         <run-privileged/>
         <!--Uncomment the following line when going to production, drastically reduces size of the installer-->
-        <!--<pack200/>-->
+        <pack200/>
     </info>
 
     <guiprefs width="640" height="480" resizable="no"/>
