@@ -102,6 +102,10 @@ public abstract class LivePreviewPanel extends BorderPane {
         });
 
     }
+    
+    public void selectFirstLyric() {
+        lyricsPanel.selectFirst();
+    }
 
     /**
      * Pass focus down to the current card panel pane.
