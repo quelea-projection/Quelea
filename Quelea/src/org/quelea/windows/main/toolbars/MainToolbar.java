@@ -120,7 +120,7 @@ public class MainToolbar extends ToolBar {
         addVideoButton.setOnAction(new AddVideoActionHandler());
         getItems().add(addVideoButton);
 
-        addAudioButton = new Button("", new ImageView(new Image("file:icons/audio30.png", 24, 24, false, true)));
+        addAudioButton = new Button("", new ImageView(new Image("file:icons/add audio.png", 24, 24, false, true)));
         addAudioButton.setStyle(TOOLBAR_BUTTON_STYLE);
         addAudioButton.setTooltip(new Tooltip(LabelGrabber.INSTANCE.getLabel("add.audio.tooltip")));
         addAudioButton.setOnAction(new AddAudioActionHandler());
