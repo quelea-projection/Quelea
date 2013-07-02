@@ -209,6 +209,13 @@ public final class Main extends Application {
     }
 
     /**
+     * Fallback for non-fx aware runtimes.
+     */
+    public static void main(String[] args) {
+        Application.launch(Main.class, args);
+    }
+
+    /**
      * If it's appropriate, show the warning about only having 1 monitor.
      * <p/>
      * @param numMonitors the number of monitors.
