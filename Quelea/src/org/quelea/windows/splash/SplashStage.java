@@ -21,9 +21,8 @@ import javafx.collections.ObservableList;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.Group;
 import javafx.scene.Scene;
-import javafx.scene.effect.Bloom;
 import javafx.scene.effect.DropShadow;
-import javafx.scene.effect.Glow;
+import javafx.scene.effect.InnerShadow;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.paint.Color;
@@ -58,14 +57,18 @@ public class SplashStage extends Stage {
         text.setFont(Font.font("SansSerif", FontWeight.BOLD, FontPosture.ITALIC, 30));
         text.setLayoutX(447);
         text.setLayoutY(183);
-        text.setEffect(new DropShadow(5, 2, 2, Color.GRAY));
+        InnerShadow is = new InnerShadow();
+        is.setOffsetX(2.0f);
+        is.setOffsetY(2.0f);
+        is.setColor(Color.GRAY);
+        text.setEffect(is);
         Text minorText = null;
         if(QueleaProperties.VERSION.getMinorVersionString() != null) {
             minorText = new Text(QueleaProperties.VERSION.getMinorVersionString());
             minorText.setFont(Font.font("SansSerif", FontWeight.BOLD, FontPosture.ITALIC, 30));
             minorText.setLayoutX(40);
             minorText.setLayoutY(235);
-            minorText.setEffect(new DropShadow(5, 2, 2, Color.GRAY));
+            minorText.setEffect(is);
         }
 
         Group mainPane = new Group();
