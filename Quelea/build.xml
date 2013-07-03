@@ -26,6 +26,13 @@
     <property name="DebInstaller" value="${dist.jar.dir}/standalone/${DebInstallerName}"/>
     <property name="Portable" value="${dist.jar.dir}/standalone/${PortableName}"/>
     
+    <target name="-pre-init">
+        <delete dir="${dist.jar.dir}"/>
+        <mkdir dir="${dist.jar.dir}"/>
+        <copy todir="${dist.jar.dir}/lib" quiet="yes">
+            <fileset dir="${basedir}/lib"/>
+        </copy>
+    </target>
     <target name="-post-init">
         <copy todir="${dist.jar.dir}/languages">
             <fileset dir="${basedir}/languages"/>
@@ -47,9 +54,6 @@
         
         <echo message="Built jar."/>
         <echo message="Copying necessary files to ${dist.jar.dir}"/>
-        <copy todir="${dist.jar.dir}/lib" quiet="yes">
-            <fileset dir="${basedir}/lib"/>
-        </copy>
         <copy todir="${dist.jar.dir}/themes" quiet="yes">
             <fileset dir="${basedir}/themes"/>
         </copy>
