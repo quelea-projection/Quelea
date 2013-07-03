@@ -59,7 +59,7 @@ public class OptionsGeneralPanel extends GridPane implements PropertyPanel {
     private final Button selectButton;
     private final Slider borderThicknessSlider;
     private final Slider maxCharsSlider;
-    private final Slider minLinesSlider;
+//    private final Slider minLinesSlider;
     private LanguageFile currentLanguageFile;
 
     /**
@@ -247,24 +247,24 @@ public class OptionsGeneralPanel extends GridPane implements PropertyPanel {
         });
         rows++;
 
-        Label minLinesLabel = new Label(LabelGrabber.INSTANCE.getLabel("min.emulated.lines.label") + " (" + LabelGrabber.INSTANCE.getLabel("advanced.label") + ")");
-        GridPane.setConstraints(minLinesLabel, 1, rows);
-        getChildren().add(minLinesLabel);
-        minLinesSlider = new Slider(1, 20, 0);
-        GridPane.setConstraints(minLinesSlider, 2, rows);
-        getChildren().add(minLinesSlider);
-        minLinesLabel.setLabelFor(minLinesSlider);
-        final Label minLinesValue = new Label(Integer.toString((int) minLinesSlider.getValue()));
-        GridPane.setConstraints(minLinesValue, 3, rows);
-        getChildren().add(minLinesValue);
-        minLinesValue.setLabelFor(minLinesSlider);
-        minLinesSlider.valueProperty().addListener(new javafx.beans.value.ChangeListener<Number>() {
-            @Override
-            public void changed(ObservableValue<? extends Number> ov, Number t, Number t1) {
-                minLinesValue.setText(Integer.toString((int) minLinesSlider.getValue()));
-            }
-        });
-        rows++;
+//        Label minLinesLabel = new Label(LabelGrabber.INSTANCE.getLabel("min.emulated.lines.label") + " (" + LabelGrabber.INSTANCE.getLabel("advanced.label") + ")");
+//        GridPane.setConstraints(minLinesLabel, 1, rows);
+//        getChildren().add(minLinesLabel);
+//        minLinesSlider = new Slider(1, 20, 0);
+//        GridPane.setConstraints(minLinesSlider, 2, rows);
+//        getChildren().add(minLinesSlider);
+//        minLinesLabel.setLabelFor(minLinesSlider);
+//        final Label minLinesValue = new Label(Integer.toString((int) minLinesSlider.getValue()));
+//        GridPane.setConstraints(minLinesValue, 3, rows);
+//        getChildren().add(minLinesValue);
+//        minLinesValue.setLabelFor(minLinesSlider);
+//        minLinesSlider.valueProperty().addListener(new javafx.beans.value.ChangeListener<Number>() {
+//            @Override
+//            public void changed(ObservableValue<? extends Number> ov, Number t, Number t1) {
+//                minLinesValue.setText(Integer.toString((int) minLinesSlider.getValue()));
+//            }
+//        });
+//        rows++;
 
         readProperties();
     }
@@ -299,7 +299,7 @@ public class OptionsGeneralPanel extends GridPane implements PropertyPanel {
         oneLineModeCheckBox.setSelected(props.getOneLineMode());
         textShadowCheckBox.setSelected(props.getTextShadow());
         maxCharsSlider.setValue(props.getMaxChars());
-        minLinesSlider.setValue(props.getMinLines());
+//        minLinesSlider.setValue(props.getMinLines());
         borderThicknessSlider.setValue(props.getOutlineThickness());
         textPositionComboBox.setValue(props.getTextPosition());
     }
@@ -332,8 +332,8 @@ public class OptionsGeneralPanel extends GridPane implements PropertyPanel {
         QueleaApp.get().getMainWindow().getMainPanel().getLivePanel().updateOneLineMode();
         int maxCharsPerLine = (int) getMaxCharsSlider().getValue();
         props.setMaxChars(maxCharsPerLine);
-        int minLines = (int) getMinLinesSlider().getValue();
-        props.setMinLines(minLines);
+//        int minLines = (int) getMinLinesSlider().getValue();
+//        props.setMinLines(minLines);
         int borderThickness = (int) getBorderThicknessSlider().getValue();
         props.setOutlineThickness(borderThickness);
         props.setTextPosition(textPositionComboBox.getValue());
@@ -352,14 +352,14 @@ public class OptionsGeneralPanel extends GridPane implements PropertyPanel {
         return maxCharsSlider;
     }
 
-    /**
-     * Get the min lines slider.
-     * <p/>
-     * @return the min lines slider.
-     */
-    public Slider getMinLinesSlider() {
-        return minLinesSlider;
-    }
+//    /**
+//     * Get the min lines slider.
+//     * <p/>
+//     * @return the min lines slider.
+//     */
+//    public Slider getMinLinesSlider() {
+//        return minLinesSlider;
+//    }
 
     /**
      * Get the startup readProperties checkbox.
