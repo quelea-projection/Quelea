@@ -20,10 +20,10 @@ package org.quelea.windows.main.schedule;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.application.Platform;
-import javafx.collections.ListChangeListener;
 import javafx.event.EventHandler;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
+import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.util.Callback;
 import org.quelea.data.Schedule;
@@ -33,6 +33,7 @@ import org.quelea.services.utils.LoggerUtils;
 import org.quelea.windows.library.Constraint;
 import org.quelea.windows.library.DisplayableListCell;
 import org.quelea.windows.main.QueleaApp;
+import org.quelea.windows.main.actionhandlers.RemoveScheduleItemActionHandler;
 
 /**
  * The schedule list, all the items that are to be displayed in the service.
@@ -89,6 +90,15 @@ public class ScheduleList extends ListView<Displayable> {
                     QueleaApp.get().getMainWindow().getMainPanel().getPreviewPanel().requestFocus();
                     QueleaApp.get().getMainWindow().getMainPanel().getPreviewPanel().selectFirstLyric();
                     QueleaApp.get().getMainWindow().getMainPanel().getPreviewPanel().goLive();
+                }
+            }
+        });
+        setOnKeyPressed(new EventHandler<KeyEvent>() {
+
+            @Override
+            public void handle(KeyEvent t) {
+                if(t.getCode() == KeyCode.DELETE) {
+                    new RemoveScheduleItemActionHandler().handle(null);
                 }
             }
         });
