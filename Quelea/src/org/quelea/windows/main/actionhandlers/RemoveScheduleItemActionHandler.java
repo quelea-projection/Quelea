@@ -32,7 +32,7 @@ public class RemoveScheduleItemActionHandler implements EventHandler<ActionEvent
     /**
      * Remove the currently selected song from the schedule.
      * <p/>
-     * @param e the action event.
+     * @param e the action event (ignored.)
      */
     @Override
     public void handle(ActionEvent t) {
