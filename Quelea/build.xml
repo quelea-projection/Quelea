@@ -33,6 +33,11 @@
     </target>
     
     <target name="build-dist" depends="jar">
+        <delete includeemptydirs="true">
+            <fileset dir="dist" defaultexcludes="false">
+                <include name="run*/**" />
+            </fileset>
+        </delete>
         <property name="FXClasspath" value="${javafx.sdk}/jre/lib/jfxrt.jar"/>
         
         <!-- Check the images conform to spec -->
@@ -100,7 +105,7 @@
             <arg value="${dist.jar.dir}/queleadoc/changelog.gz"/>
         </java>
         
-<!--        <echo message="Building Mac package"/>
+        <!--        <echo message="Building Mac package"/>
         <mkdir dir="${dist.jar.dir}/standalone"/>
         <bundleapp outputdirectory="${dist.jar.dir}/standalone"
                    name="Quelea"
@@ -123,6 +128,7 @@
                 <exclude name="lib/**javadoc.jar"/>
                 <exclude name="standalone/**"/>
                 <exclude name="winjre/**"/>
+                <exclude name="macjre/**"/>
                 <exclude name="Output/**"/>
                 <exclude name="web-files/**"/>
                 <exclude name="copyright"/>
