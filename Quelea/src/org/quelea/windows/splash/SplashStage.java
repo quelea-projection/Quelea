@@ -54,21 +54,23 @@ public class SplashStage extends Stage {
         Image splashImage = new Image("file:icons/splash.png");
         ImageView imageView = new ImageView(splashImage);
         Text text = new Text(QueleaProperties.VERSION.getVersionString());
+        text.setFill(new Color(0, 0, 0, 0.5));
         text.setFont(Font.font("SansSerif", FontWeight.BOLD, FontPosture.ITALIC, 30));
         text.setLayoutX(447);
         text.setLayoutY(183);
-        InnerShadow is = new InnerShadow();
-        is.setOffsetX(2.0f);
-        is.setOffsetY(2.0f);
-        is.setColor(Color.GRAY);
-        text.setEffect(is);
+//        InnerShadow is = new InnerShadow();
+//        is.setOffsetX(2.0f);
+//        is.setOffsetY(2.0f);
+//        is.setColor(Color.GRAY);
+//        text.setEffect(is);
         Text minorText = null;
         if(QueleaProperties.VERSION.getMinorVersionString() != null) {
             minorText = new Text(QueleaProperties.VERSION.getMinorVersionString());
             minorText.setFont(Font.font("SansSerif", FontWeight.BOLD, FontPosture.ITALIC, 30));
+            minorText.setFill(new Color(0, 0, 0, 0.5));
             minorText.setLayoutX(40);
             minorText.setLayoutY(235);
-            minorText.setEffect(is);
+//            minorText.setEffect(is);
         }
 
         Group mainPane = new Group();
