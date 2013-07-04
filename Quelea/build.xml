@@ -11,6 +11,8 @@
              classname="com.izforge.izpack.ant.IzPackTask"/>
     <taskdef name="launch4j" classpath="launch4j/launch4j.jar" classname="net.sf.launch4j.ant.Launch4jTask"/>
     <taskdef name="bundleapp" classname="com.oracle.appbundler.AppBundlerTask" classpath="lib/appbundler-1.0.jar" />
+    <taskdef name="desktopentry" classpath="antdeb/ant-deb-0.0.1.jar"
+             classname="com.googlecode.ant_deb_task.DesktopEntry"/>
     <taskdef name="deb" classpath="lib/jdeb-0.8.jar" classname="org.vafer.jdeb.ant.DebAntTask"/>
     <property file="quelea.properties"/>
     
@@ -26,13 +28,6 @@
     <property name="DebInstaller" value="${dist.jar.dir}/standalone/${DebInstallerName}"/>
     <property name="Portable" value="${dist.jar.dir}/standalone/${PortableName}"/>
     
-    <target name="-pre-init">
-        <delete dir="${dist.jar.dir}"/>
-        <mkdir dir="${dist.jar.dir}"/>
-        <copy todir="${dist.jar.dir}/lib" quiet="yes">
-            <fileset dir="${basedir}/lib"/>
-        </copy>
-    </target>
     <target name="-post-init">
         <copy todir="${dist.jar.dir}/languages">
             <fileset dir="${basedir}/languages"/>
@@ -40,11 +35,6 @@
     </target>
     
     <target name="build-dist" depends="jar">
-        <delete includeemptydirs="true">
-            <fileset dir="dist" defaultexcludes="false">
-                <include name="run*/**" />
-            </fileset>
-        </delete>
         <property name="FXClasspath" value="${javafx.sdk}/jre/lib/jfxrt.jar"/>
         
         <!-- Check the images conform to spec -->
@@ -54,6 +44,9 @@
         
         <echo message="Built jar."/>
         <echo message="Copying necessary files to ${dist.jar.dir}"/>
+        <copy todir="${dist.jar.dir}/lib" quiet="yes">
+            <fileset dir="${basedir}/lib"/>
+        </copy>
         <copy todir="${dist.jar.dir}/themes" quiet="yes">
             <fileset dir="${basedir}/themes"/>
         </copy>
@@ -79,7 +72,7 @@
         <copy todir="${dist.jar.dir}/languages" quiet="yes">
             <fileset dir="${basedir}/languages"/>
         </copy>
-        <!--        <copy todir="${dist.jar.dir}/database">
+<!--        <copy todir="${dist.jar.dir}/database">
             <fileset dir="${basedir}/database"/>
         </copy>-->
         <copy todir="${dist.jar.dir}/img" quiet="yes">
@@ -132,7 +125,6 @@
                 <exclude name="lib/**javadoc.jar"/>
                 <exclude name="standalone/**"/>
                 <exclude name="winjre/**"/>
-                <exclude name="macjre/**"/>
                 <exclude name="Output/**"/>
                 <exclude name="web-files/**"/>
                 <exclude name="copyright"/>
