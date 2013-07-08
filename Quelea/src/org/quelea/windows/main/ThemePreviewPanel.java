@@ -17,16 +17,12 @@
  */
 package org.quelea.windows.main;
 
-import org.quelea.windows.main.schedule.ScheduleThemeNode;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javafx.application.Platform;
-import javafx.embed.swing.JFXPanel;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
-import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.Tooltip;
@@ -36,9 +32,7 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
-import javafx.stage.Popup;
-import javafx.stage.Stage;
-import javafx.stage.WindowEvent;
+import javafx.stage.Window;
 import org.javafx.dialog.Dialog;
 import org.quelea.data.ThemeDTO;
 import org.quelea.services.languages.LabelGrabber;
@@ -63,14 +57,14 @@ public class ThemePreviewPanel extends VBox {
     private Button removeButton;
     private Button editButton;
     private EditThemeDialog themeDialog;
-    private Popup popup;
+    private Window popup;
 
     /**
      * Create a new theme preview panel.
      * <p/>
      * @param theme the theme to preview.
      */
-    public ThemePreviewPanel(ThemeDTO theme, final Popup popup) {
+    public ThemePreviewPanel(ThemeDTO theme, final Window popup) {
         this.popup = popup;
         this.theme = theme;
         if (theme == null) {

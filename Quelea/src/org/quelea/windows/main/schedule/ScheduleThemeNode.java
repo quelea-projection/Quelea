@@ -34,7 +34,7 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
-import javafx.stage.Popup;
+import javafx.stage.Window;
 import org.quelea.data.ThemeDTO;
 import org.quelea.services.languages.LabelGrabber;
 import org.quelea.services.utils.LoggerUtils;
@@ -59,9 +59,9 @@ public class ScheduleThemeNode extends BorderPane {
     private ThemeDTO tempTheme;
     private EditThemeDialog themeDialog;
     private UpdateThemeCallback callback = null;
-    private Popup popup;
+    private Window popup;
 
-    public ScheduleThemeNode(UpdateThemeCallback callback, Popup popup) {
+    public ScheduleThemeNode(UpdateThemeCallback callback, Window popup) {
         this.callback = callback;
         this.popup = popup;
         themeDialog = new EditThemeDialog();
