@@ -18,40 +18,50 @@
  */
 package org.quelea.windows.options;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javafx.geometry.Pos;
+import org.quelea.services.languages.LabelGrabber;
+import org.quelea.services.utils.LoggerUtils;
 
 /**
  * The enum used to represent text position on the lyrics panel.
+ * <p/>
  * @author Michael
  */
 public enum TextPosition {
-    
-    TOP("Top", Pos.TOP_CENTER), MIDDLE("Middle", Pos.CENTER), BOTTOM("Bottom", Pos.BOTTOM_CENTER);
-    
+
+    TOP(LabelGrabber.INSTANCE.getLabel("top.text.position"), Pos.TOP_CENTER), MIDDLE(LabelGrabber.INSTANCE.getLabel("middle.text.position"), Pos.CENTER), BOTTOM(LabelGrabber.INSTANCE.getLabel("bottom.text.position"), Pos.BOTTOM_CENTER);
+    private static final Logger LOGGER = LoggerUtils.getLogger();
     private String description;
     private Pos layoutPos;
-    
+
     public static TextPosition parseTextPosition(String position) {
-        switch(position) {
-            case "Top":return TOP;
-            case "Middle":return MIDDLE;
-            case "Bottom":return BOTTOM;
-            default:return null;
+
+        if(position.equals(LabelGrabber.INSTANCE.getLabel("top.text.position"))) {
+            return TOP;
         }
+        else if(position.equals(LabelGrabber.INSTANCE.getLabel("middle.text.position"))) {
+            return MIDDLE;
+        }
+        else if(position.equals(LabelGrabber.INSTANCE.getLabel("bottom.text.position"))) {
+            return BOTTOM;
+        }
+        LOGGER.log(Level.WARNING, "Unrecognised text position: {0}. Options are {1}, {2}, {3}", new Object[]{position, LabelGrabber.INSTANCE.getLabel("top.text.position"), LabelGrabber.INSTANCE.getLabel("middle.text.position"), LabelGrabber.INSTANCE.getLabel("bottom.text.position")});
+        return null;
     }
-    
+
     private TextPosition(String description, Pos layoutPos) {
         this.description = description;
         this.layoutPos = layoutPos;
     }
-    
+
     public Pos getLayouPos() {
         return layoutPos;
     }
-    
+
     @Override
     public String toString() {
         return description;
     }
-    
 }

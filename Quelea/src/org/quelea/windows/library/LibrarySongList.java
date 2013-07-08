@@ -31,6 +31,8 @@ import javafx.event.EventHandler;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
 import javafx.scene.control.cell.TextFieldListCell;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.util.Callback;
 import javafx.util.StringConverter;
@@ -83,6 +85,15 @@ public class LibrarySongList extends ListView<SongDisplayable> implements Databa
             @Override
             public void handle(MouseEvent t) {
                 if(t.getClickCount() == 2) {
+                    QueleaApp.get().getMainWindow().getMainPanel().getSchedulePanel().getScheduleList().add(getSelectedValue());
+                }
+            }
+        });
+        setOnKeyPressed(new EventHandler<KeyEvent>() {
+
+            @Override
+            public void handle(KeyEvent t) {
+                if(t.getCode()==KeyCode.ENTER) {
                     QueleaApp.get().getMainWindow().getMainPanel().getSchedulePanel().getScheduleList().add(getSelectedValue());
                 }
             }

@@ -209,7 +209,7 @@ public class ThemePanel extends BorderPane {
 
         shadowColorPicker = new ColorPicker(Color.BLACK);
         final HBox colourPanel = new HBox();
-        colourPanel.getChildren().add(new Label("shadow color")); //@todo add languages
+        colourPanel.getChildren().add(new Label(LabelGrabber.INSTANCE.getLabel("shadow.color"))); //@todo add languages
         colourPanel.getChildren().add(shadowColorPicker);
         confFirstLine.getChildren().add(colourPanel);
         shadowColorPicker.valueProperty().addListener(new ChangeListener<Color>() {
@@ -220,7 +220,7 @@ public class ThemePanel extends BorderPane {
         });
         shadowPanel.getChildren().add(confFirstLine);
         final HBox confSecondLine = new HBox();
-        confSecondLine.getChildren().add(new Label("shadow X"));
+        confSecondLine.getChildren().add(new Label(LabelGrabber.INSTANCE.getLabel("shadow.x")));
         shadowOffsetX = new TextField();
         confSecondLine.getChildren().add(shadowOffsetX);
         shadowOffsetX.textProperty().addListener(new ChangeListener<String>() {
@@ -230,7 +230,7 @@ public class ThemePanel extends BorderPane {
             }
         });
 
-        confSecondLine.getChildren().add(new Label("shadow Y"));
+        confSecondLine.getChildren().add(new Label(LabelGrabber.INSTANCE.getLabel("shadow.y")));
         shadowOffsetY = new TextField();
         confSecondLine.getChildren().add(shadowOffsetY);
         shadowOffsetY.textProperty().addListener(new ChangeListener<String>() {
