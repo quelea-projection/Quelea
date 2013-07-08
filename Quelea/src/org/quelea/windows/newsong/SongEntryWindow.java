@@ -73,7 +73,6 @@ public class SongEntryWindow extends Stage {
         getIcons().add(new Image("file:icons/logo.png"));
 
         BorderPane mainPane = new BorderPane();
-        setTitle(LabelGrabber.INSTANCE.getLabel("song.entry.heading"));
         tabPane = new TabPane();
 
         setupBasicSongPanel();
