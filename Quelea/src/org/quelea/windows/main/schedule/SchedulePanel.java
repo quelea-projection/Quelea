@@ -22,10 +22,10 @@ import java.util.logging.Logger;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.ListChangeListener;
-import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Orientation;
+import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ToolBar;
@@ -36,8 +36,10 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.Region;
+import javafx.stage.Stage;
+import javafx.stage.StageStyle;
 import org.quelea.data.ThemeDTO;
-import javafx.stage.Popup;
+import javafx.stage.Window;
 import org.quelea.data.displayable.Displayable;
 import org.quelea.data.displayable.TextDisplayable;
 import org.quelea.data.displayable.TextSection;
@@ -62,7 +64,7 @@ public class SchedulePanel extends BorderPane {
     private final Button downButton;
     private final Button themeButton;
     private final ScheduleThemeNode scheduleThemeNode;
-    private Popup themePopup;
+    private Stage themePopup;
 
     /**
      * Create and initialise the schedule panel.
@@ -70,14 +72,22 @@ public class SchedulePanel extends BorderPane {
     public SchedulePanel() {
         scheduleList = new ScheduleList();
         scheduleList.itemsProperty().get().addListener(new ListChangeListener<Displayable>() {
-
             @Override
             public void onChanged(ListChangeListener.Change<? extends Displayable> change) {
                 scheduleThemeNode.updateTheme();
             }
         });
-        
-        themePopup = new Popup();
+
+        themePopup = new Stage();
+        themePopup.initStyle(StageStyle.UNDECORATED);
+        themePopup.focusedProperty().addListener(new ChangeListener<Boolean>() {
+            @Override
+            public void changed(ObservableValue<? extends Boolean> ov, Boolean t, Boolean t1) {
+                if(t && !t1) {
+                    themePopup.hide();
+                }
+            }
+        });
 
         scheduleThemeNode = new ScheduleThemeNode(new ScheduleThemeNode.UpdateThemeCallback() {
             @Override
@@ -98,8 +108,9 @@ public class SchedulePanel extends BorderPane {
             }
         }, themePopup);
         scheduleThemeNode.setStyle("-fx-background-color:WHITE;-fx-border-color: rgb(49, 89, 23);-fx-border-radius: 5;");
-        themePopup.getContent().add(scheduleThemeNode);
-        
+        themePopup.setScene(new Scene(scheduleThemeNode));
+//        themePopup.getContent().add(scheduleThemeNode);
+
         themeButton = new Button("", new ImageView(new Image("file:icons/settings.png", 16, 16, false, true)));
         themeButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override
@@ -109,7 +120,10 @@ public class SchedulePanel extends BorderPane {
                 }
                 else {
                     scheduleThemeNode.refresh();
-                    themePopup.show(themeButton, themeButton.localToScene(0, 0).getX() + QueleaApp.get().getMainWindow().getX(), themeButton.localToScene(0, 0).getY() + 45 + QueleaApp.get().getMainWindow().getY());
+                    themePopup.setX(themeButton.localToScene(0, 0).getX() + QueleaApp.get().getMainWindow().getX());
+                    themePopup.setY(themeButton.localToScene(0, 0).getY() + 45 + QueleaApp.get().getMainWindow().getY());
+                    themePopup.show();
+//                    themePopup.show(themeButton, themeButton.localToScene(0, 0).getX() + QueleaApp.get().getMainWindow().getX(), themeButton.localToScene(0, 0).getY() + 45 + QueleaApp.get().getMainWindow().getY());
                 }
             }
         });
