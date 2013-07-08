@@ -67,7 +67,7 @@ public class MainWindow extends Stage {
      * application-wide main window, false otherwise.
      */
     public MainWindow(boolean setApplicationWindow) {
-        setTitle("Quelea " + QueleaProperties.VERSION.getVersionString());
+        setTitle("Quelea " + QueleaProperties.VERSION.getFullVersionString());
 
         BorderPane mainPane = new BorderPane();
         VBox.setVgrow(mainPane, Priority.SOMETIMES);
