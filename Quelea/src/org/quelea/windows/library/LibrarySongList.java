@@ -132,7 +132,7 @@ public class LibrarySongList extends StackPane implements DatabaseListener {
         Platform.runLater(new Runnable() {
             @Override
             public void run() {
-                overlay.show();
+                setLoading(true);
             }
         });
         filterFuture = filterService.submit(new Runnable() {
@@ -171,7 +171,7 @@ public class LibrarySongList extends StackPane implements DatabaseListener {
                     @Override
                     public void run() {
                         songList.setItems(songs);
-                        overlay.hide();
+                        setLoading(false);
                     }
                 });
             }
@@ -192,7 +192,7 @@ public class LibrarySongList extends StackPane implements DatabaseListener {
         Platform.runLater(new Runnable() {
             @Override
             public void run() {
-                overlay.show();
+                setLoading(true);
             }
         });
         filterFuture = filterService.submit(new Runnable() {
@@ -226,7 +226,7 @@ public class LibrarySongList extends StackPane implements DatabaseListener {
                     @Override
                     public void run() {
                         songList.setItems(songs);
-                        overlay.hide();
+                        setLoading(false);
                     }
                 });
             }
@@ -259,6 +259,15 @@ public class LibrarySongList extends StackPane implements DatabaseListener {
     public ListView<SongDisplayable> getListView() {
         return songList;
     }
+    
+    public void setLoading(boolean loading) {
+        if(loading) {
+            overlay.show();
+        }
+        else {
+            overlay.hide();
+        }
+    }
 
     /**
      * Update the contents of the list.
@@ -269,7 +278,7 @@ public class LibrarySongList extends StackPane implements DatabaseListener {
 
             @Override
             public void run() {
-                overlay.show();
+                setLoading(true);
             }
         });
         final ObservableList<SongDisplayable> songs = FXCollections.observableArrayList(SongManager.get().getSongs());
@@ -277,7 +286,7 @@ public class LibrarySongList extends StackPane implements DatabaseListener {
             @Override
             public void run() {
                 songList.itemsProperty().set(songs);
-                overlay.hide();
+                setLoading(false);
             }
         });
 
