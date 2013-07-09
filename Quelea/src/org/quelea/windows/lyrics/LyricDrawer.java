@@ -107,7 +107,7 @@ public class LyricDrawer extends DisplayableDrawer {
         FontMetrics metrics = Toolkit.getToolkit().getFontLoader().getFontMetrics(font);
         int y = 0;
         final Group newTextGroup = new Group();
-        StackPane.setAlignment(newTextGroup, QueleaProperties.get().getTextPosition().getLayouPos());
+        StackPane.setAlignment(newTextGroup, QueleaProperties.get().getTextPositionInternal().getLayoutPos());
 
         for(Iterator< Node> it = getCanvas().getChildren().iterator(); it.hasNext();) {
             Node node = it.next();

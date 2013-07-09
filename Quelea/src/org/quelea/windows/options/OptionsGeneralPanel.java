@@ -301,7 +301,7 @@ public class OptionsGeneralPanel extends GridPane implements PropertyPanel {
         maxCharsSlider.setValue(props.getMaxChars());
 //        minLinesSlider.setValue(props.getMinLines());
         borderThicknessSlider.setValue(props.getOutlineThickness());
-        textPositionComboBox.setValue(props.getTextPosition());
+        textPositionComboBox.setValue(props.getTextPositionInternal());
     }
 
     /**
@@ -336,7 +336,7 @@ public class OptionsGeneralPanel extends GridPane implements PropertyPanel {
 //        props.setMinLines(minLines);
         int borderThickness = (int) getBorderThicknessSlider().getValue();
         props.setOutlineThickness(borderThickness);
-        props.setTextPosition(textPositionComboBox.getValue());
+        props.setTextPositionInternal(textPositionComboBox.getValue());
         //Initialise presentation
         if(!OOPresentation.isInit()) {
             OOUtils.attemptInit();
