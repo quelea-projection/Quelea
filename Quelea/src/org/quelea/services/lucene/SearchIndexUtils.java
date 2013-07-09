@@ -69,7 +69,7 @@ public class SearchIndexUtils {
      * @return the sanitised query.
      */
     public static String makeLuceneQuery(String query) {
-        query = Pattern.compile("\\W", Pattern.UNICODE_CHARACTER_CLASS).matcher(query).replaceAll("");
+        query = Pattern.compile("[^\\w ]", Pattern.UNICODE_CHARACTER_CLASS).matcher(query).replaceAll("");
         query = query.trim();
         if(query.isEmpty()) {
             return query;
