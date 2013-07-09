@@ -57,14 +57,14 @@ public class LibrarySongPanel extends BorderPane {
      */
     public LibrarySongPanel() {
         songList = new LibrarySongList(true);
-        songList.getSelectionModel().selectedIndexProperty().addListener(new ChangeListener<Number>() {
+        songList.getListView().getSelectionModel().selectedIndexProperty().addListener(new ChangeListener<Number>() {
 
             @Override
             public void changed(ObservableValue<? extends Number> ov, Number t, Number t1) {
                 checkRemoveButton();
             }
         });
-        songList.itemsProperty().addListener(new ChangeListener<ObservableList<SongDisplayable>>() {
+        songList.getListView().itemsProperty().addListener(new ChangeListener<ObservableList<SongDisplayable>>() {
 
             @Override
             public void changed(ObservableValue<? extends ObservableList<SongDisplayable>> ov, ObservableList<SongDisplayable> t, ObservableList<SongDisplayable> t1) {
@@ -137,7 +137,7 @@ public class LibrarySongPanel extends BorderPane {
      * Check whether the remove button should be enabled or disabled and set it accordingly.
      */
     private void checkRemoveButton() {
-        if(songList.getSelectionModel().selectedIndexProperty().getValue() == -1 || songList.itemsProperty().get().size() == 0) {
+        if(songList.getListView().getSelectionModel().selectedIndexProperty().getValue() == -1 || songList.getListView().itemsProperty().get().size() == 0) {
             removeButton.setDisable(true);
         }
         else {
