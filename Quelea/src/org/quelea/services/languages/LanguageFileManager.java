@@ -19,8 +19,8 @@
 package org.quelea.services.languages;
 
 import java.io.File;
-import java.util.HashSet;
 import java.util.Set;
+import java.util.TreeSet;
 import org.quelea.services.utils.QueleaProperties;
 
 /**
@@ -33,7 +33,7 @@ public class LanguageFileManager {
     private Set<LanguageFile> languageFiles;
     
     private LanguageFileManager() {
-        languageFiles = new HashSet<>();
+        languageFiles = new TreeSet<>();
         for(File file : new File("languages").listFiles()) {
             languageFiles.add(new LanguageFile(file));
         }
@@ -52,7 +52,7 @@ public class LanguageFileManager {
      * @return the set of language files.
      */
     public Set<LanguageFile> languageFiles() {
-        return new HashSet<>(languageFiles);
+        return new TreeSet<>(languageFiles);
     }
     
 }
