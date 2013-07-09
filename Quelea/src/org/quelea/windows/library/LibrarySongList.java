@@ -81,7 +81,6 @@ public class LibrarySongList extends ListView<SongDisplayable> implements Databa
         };
         popupMenu = new LibraryPopupMenu();
         setOnMouseClicked(new EventHandler<MouseEvent>() {
-
             @Override
             public void handle(MouseEvent t) {
                 if(t.getClickCount() == 2) {
@@ -90,10 +89,9 @@ public class LibrarySongList extends ListView<SongDisplayable> implements Databa
             }
         });
         setOnKeyPressed(new EventHandler<KeyEvent>() {
-
             @Override
             public void handle(KeyEvent t) {
-                if(t.getCode()==KeyCode.ENTER) {
+                if(t.getCode() == KeyCode.ENTER) {
                     QueleaApp.get().getMainWindow().getMainPanel().getSchedulePanel().getScheduleList().add(getSelectedValue());
                 }
             }
@@ -101,7 +99,11 @@ public class LibrarySongList extends ListView<SongDisplayable> implements Databa
         if(popup) {
             setCellFactory(DisplayableListCell.<SongDisplayable>forListView(popupMenu, callback, null));
         }
-        databaseChanged();
+        new Thread() {
+            public void run() {
+                databaseChanged();
+            }
+        }.start();
         SongManager.get().registerDatabaseListener(this);
     }
     private ExecutorService filterService = Executors.newSingleThreadExecutor();
@@ -139,7 +141,7 @@ public class LibrarySongList extends ListView<SongDisplayable> implements Databa
                     }
                     songs.addAll(m);
                     m.clear();
-                    
+
                     SongDisplayable[] lyricSongs = SongManager.get().getIndex().filter(search, SongSearchIndex.FilterType.BODY);
                     for(SongDisplayable song : lyricSongs) {
                         song.setLastSearch(null);
@@ -230,10 +232,13 @@ public class LibrarySongList extends ListView<SongDisplayable> implements Databa
      */
     @Override
     public final void databaseChanged() {
-            Platform.runLater(new Runnable() {
+        long x = System.currentTimeMillis();
+        final ObservableList<SongDisplayable> songs = FXCollections.observableArrayList(SongManager.get().getSongs());
+        System.out.println(System.currentTimeMillis()-x);
+        Platform.runLater(new Runnable() {
             @Override
             public void run() {
-                itemsProperty().set(FXCollections.observableArrayList(SongManager.get().getSongs()));
+                itemsProperty().set(songs);
             }
         });
 

@@ -143,20 +143,20 @@ public class TagEntryPanel extends BorderPane {
      * Clear the tags then reload them all from the database.
      */
     public final void reloadTags() {
-        tags.clear();
-        for (SongDisplayable song : SongManager.get().getSongs()) {
-            for (String tag : song.getTags()) {
-                tag = tag.trim();
-                if (tag.isEmpty()) {
-                    continue;
-                }
-                if (tags.get(tag.toLowerCase()) == null) {
-                    tags.put(tag.toLowerCase(), 1);
-                }
-                else {
-                    tags.put(tag.toLowerCase(), tags.get(tag.toLowerCase()) + 1);
-                }
-            }
-        }
+//        tags.clear();
+//        for (SongDisplayable song : SongManager.get().getSongs()) {
+//            for (String tag : song.getTags()) {
+//                tag = tag.trim();
+//                if (tag.isEmpty()) {
+//                    continue;
+//                }
+//                if (tags.get(tag.toLowerCase()) == null) {
+//                    tags.put(tag.toLowerCase(), 1);
+//                }
+//                else {
+//                    tags.put(tag.toLowerCase(), tags.get(tag.toLowerCase()) + 1);
+//                }
+//            }
+//        }
     }
 }
