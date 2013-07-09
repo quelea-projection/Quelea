@@ -31,16 +31,18 @@ import org.quelea.services.utils.Utils;
 
 /**
  * A language file used by Quelea to display interface labels.
+ * <p/>
  * @author Michael
  */
 public class LanguageFile implements Comparable<LanguageFile> {
-    
+
     private static final Logger LOGGER = LoggerUtils.getLogger();
     private String languageName;
     private File languageFile;
-    
+
     /**
      * Create a language file from a specified file.
+     * <p/>
      * @param file the file to create the language file from.
      */
     public LanguageFile(File file) {
@@ -65,7 +67,7 @@ public class LanguageFile implements Comparable<LanguageFile> {
     public File getFile() {
         return languageFile;
     }
-    
+
     @Override
     public String toString() {
         return languageName;
@@ -96,16 +98,15 @@ public class LanguageFile implements Comparable<LanguageFile> {
     @Override
     public int compareTo(LanguageFile o) {
         Collator collator = Collator.getInstance();
-        if(languageName==null&&o.languageName==null) {
+        if(languageName == null && o.languageName == null) {
             return 0;
         }
-        if(languageName==null) {
+        if(languageName == null) {
             return -1;
         }
-        if(o.languageName==null) {
+        if(o.languageName == null) {
             return 1;
         }
         return collator.compare(languageName, o.languageName);
     }
-    
 }

@@ -395,23 +395,25 @@ public final class QueleaProperties extends Properties {
     }
 
     /**
-     * Get the text position to be used for positioning text on a lyrics canvas.
+     * Get the (internal name) text position to be used for positioning text on
+     * a lyrics canvas.
      * <p/>
-     * @return the text position to be used for positioning text on a lyrics
-     * canvas.
+     * @return the (internal name) text position to be used for positioning text
+     * on a lyrics canvas.
      */
-    public TextPosition getTextPosition() {
-        return TextPosition.parseTextPosition(getProperty("text.position", "Middle"));
+    public TextPosition getTextPositionInternal() {
+        return TextPosition.parseTextPosition(getProperty("text.position.internal", "Middle"));
     }
 
     /**
-     * Set the text position to be used for positioning text on a lyrics canvas.
+     * Set the (internal name) text position to be used for positioning text on
+     * a lyrics canvas.
      * <p/>
-     * @param position the text position to be used for positioning text on a
-     * lyrics canvas.
+     * @param position the (internal name) text position to be used for
+     * positioning text on a lyrics canvas.
      */
-    public void setTextPosition(TextPosition position) {
-        setProperty("text.position", position.toString());
+    public void setTextPositionInternal(TextPosition position) {
+        setProperty("text.position.internal", position.getInternalName());
         write();
     }
 
