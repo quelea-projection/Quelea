@@ -22,6 +22,7 @@ import java.io.IOException;
 import java.util.HashSet;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.regex.Pattern;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.index.IndexWriterConfig;
@@ -31,42 +32,44 @@ import org.quelea.services.utils.LoggerUtils;
 
 /**
  * General utility methods for search indexes.
+ * <p/>
  * @author Michael
  */
 public class SearchIndexUtils {
-    
+
     private static final Logger LOGGER = LoggerUtils.getLogger();
-    
+
     /**
      * Don't make me...
      */
     private SearchIndexUtils() {
         throw new AssertionError();
     }
-    
+
     /**
      * Clear the given index.
+     * <p/>
      * @param index the index to clear.
      */
     public static void clearIndex(Directory index) {
-        try (IndexWriter writer = new IndexWriter(index, new IndexWriterConfig(Version.LUCENE_35, new StandardAnalyzer(Version.LUCENE_35, new HashSet<String>())))) {
+        try(IndexWriter writer = new IndexWriter(index, new IndexWriterConfig(Version.LUCENE_35, new StandardAnalyzer(Version.LUCENE_35, new HashSet<String>())))) {
             writer.deleteAll();
             writer.commit();
         }
-        catch (IOException ex) {
+        catch(IOException ex) {
             LOGGER.log(Level.SEVERE, "Couldn't clear the index", ex);
         }
     }
-    
+
     /**
      * Sanitise the given query so it's "lucene-safe". Make sure it's what we
      * want as well - treat as a phrase with a partial match for the last word.
-     *
+     * <p/>
      * @param query the query to sanitise.
      * @return the sanitised query.
      */
     public static String makeLuceneQuery(String query) {
-        query = query.replaceAll("[^a-zA-Z0-9 ]", "");
+        query = Pattern.compile("\\W", Pattern.UNICODE_CHARACTER_CLASS).matcher(query).replaceAll("");
         query = query.trim();
         if(query.isEmpty()) {
             return query;
@@ -79,5 +82,4 @@ public class SearchIndexUtils {
         }
         return query;
     }
-    
 }

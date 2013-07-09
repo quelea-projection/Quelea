@@ -17,6 +17,7 @@
  */
 package org.quelea.windows.main.actionhandlers;
 
+import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import org.javafx.dialog.Dialog;
@@ -44,8 +45,8 @@ public class RemoveSongDBActionHandler implements EventHandler<ActionEvent> {
     @Override
     public void handle(ActionEvent t) {
         MainWindow mainWindow = QueleaApp.get().getMainWindow();
-        LibrarySongList songList = mainWindow.getMainPanel().getLibraryPanel().getLibrarySongPanel().getSongList();
-        SongDisplayable song = songList.itemsProperty().get().get(songList.getSelectionModel().getSelectedIndex());
+        final LibrarySongList songList = mainWindow.getMainPanel().getLibraryPanel().getLibrarySongPanel().getSongList();
+        final SongDisplayable song = songList.itemsProperty().get().get(songList.getSelectionModel().getSelectedIndex());
         if(song == null) {
             return;
         }
@@ -63,11 +64,22 @@ public class RemoveSongDBActionHandler implements EventHandler<ActionEvent> {
             }
         }).build().showAndWait();
         if(yes) {
-            if(!SongManager.get().removeSong(song)) {
-                Dialog.showError(LabelGrabber.INSTANCE.getLabel("error.text"), LabelGrabber.INSTANCE.getLabel("error.removing.song.db"));
-            }
-            song.setID(-1);
-            songList.itemsProperty().get().remove(song);
+            new Thread() {
+                public void run() {
+                    if(!SongManager.get().removeSong(song)) {
+                        Platform.runLater(new Runnable() {
+                            @Override
+                            public void run() {
+                                Dialog.showError(LabelGrabber.INSTANCE.getLabel("error.text"), LabelGrabber.INSTANCE.getLabel("error.removing.song.db"));
+                            }
+                        });
+                    }
+                    else {
+                        song.setID(-1);
+                        songList.itemsProperty().get().remove(song);
+                    }
+                }
+            }.start();
         }
     }
 }

@@ -152,7 +152,12 @@ public final class Main extends Application {
                     Dialog.showError(LabelGrabber.INSTANCE.getLabel("already.running.title"), LabelGrabber.INSTANCE.getLabel("already.running.error"));
                     System.exit(1);
                 }
-                SongManager.get().getSongs(); //Add all the songs to the index
+                Thread songInitThread = new Thread() {
+                    public void run() {
+                        SongManager.get().getSongs(); //Add all the songs to the index
+                    }
+                };
+                songInitThread.start();
                 OOUtils.attemptInit();
                 mainWindow = new MainWindow(true);
 
@@ -199,7 +204,11 @@ public final class Main extends Application {
                     LOGGER.log(Level.INFO, "Opening schedule through argument: {0}", schedulePath);
                     QueleaApp.get().openSchedule(new File(schedulePath));
                 }
-
+                try {
+                    songInitThread.join(); //Make sure bibleloader has finished loading
+                }
+                catch(InterruptedException ex) {
+                }
                 mainWindow.show();
                 splashWindow.hide();
                 showWarning(monitorNumber);
