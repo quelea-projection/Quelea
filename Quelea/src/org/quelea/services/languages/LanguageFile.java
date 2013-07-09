@@ -21,6 +21,7 @@ package org.quelea.services.languages;
 import java.io.File;
 import java.io.IOException;
 import java.io.StringReader;
+import java.text.Collator;
 import java.util.Objects;
 import java.util.Properties;
 import java.util.logging.Level;
@@ -32,7 +33,7 @@ import org.quelea.services.utils.Utils;
  * A language file used by Quelea to display interface labels.
  * @author Michael
  */
-public class LanguageFile {
+public class LanguageFile implements Comparable<LanguageFile> {
     
     private static final Logger LOGGER = LoggerUtils.getLogger();
     private String languageName;
@@ -90,6 +91,12 @@ public class LanguageFile {
             return false;
         }
         return true;
+    }
+
+    @Override
+    public int compareTo(LanguageFile o) {
+        Collator collator = Collator.getInstance();
+        return collator.compare(languageName, o.languageName);
     }
     
 }
