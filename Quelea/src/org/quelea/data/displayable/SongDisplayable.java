@@ -27,6 +27,7 @@ import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.text.Collator;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
@@ -896,13 +897,14 @@ public class SongDisplayable implements TextDisplayable, Comparable<SongDisplaya
      */
     @Override
     public int compareTo(SongDisplayable other) {
-        int result = getTitle().compareToIgnoreCase(other.getTitle());
+        Collator collator = Collator.getInstance();
+        int result = collator.compare(getTitle(), other.getTitle());
         if (result == 0) {
             if (getAuthor() != null && other.getAuthor() != null) {
-                result = getAuthor().compareToIgnoreCase(other.getAuthor());
+                result = collator.compare(getAuthor(), other.getAuthor());
             }
             if (result == 0 && getLyrics(false, false) != null && other.getLyrics(false, false) != null) {
-                result = getLyrics(false, false).compareTo(other.getLyrics(false, false));
+                result = collator.compare(getLyrics(false, false), other.getLyrics(false, false));
             }
         }
         return result;
