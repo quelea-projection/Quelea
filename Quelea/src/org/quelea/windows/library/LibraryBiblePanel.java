@@ -73,12 +73,13 @@ public class LibraryBiblePanel extends VBox implements BibleChangeListener {
             Bible bible = bibleSelector.itemsProperty().get().get(i);
             if (bible.getName().equals(selectedBibleName)) {
                 bibleSelector.selectionModelProperty().get().select(i);
+                break;
             }
         }
-        bibleSelector.selectionModelProperty().get().select(0);
         getChildren().add(bibleSelector);
         HBox chapterPanel = new HBox();
         bookSelector = new ComboBox<>(FXCollections.observableArrayList(bibleSelector.selectionModelProperty().get().getSelectedItem().getBooks()));
+        bookSelector.selectionModelProperty().get().select(0);
         chapterPanel.getChildren().add(bookSelector);
         passageSelector = new TextField();
         chapterPanel.getChildren().add(passageSelector);
@@ -111,22 +112,22 @@ public class LibraryBiblePanel extends VBox implements BibleChangeListener {
         getChildren().add(bottomPane);
 
         addUpdateListeners();
-        bibleSelector.selectionModelProperty().addListener(new ChangeListener<SingleSelectionModel<Bible>>() {
+        bibleSelector.valueProperty().addListener(new ChangeListener<Bible>() {
 
             @Override
-            public void changed(ObservableValue<? extends SingleSelectionModel<Bible>> ov, SingleSelectionModel<Bible> t, SingleSelectionModel<Bible> t1) {
+            public void changed(ObservableValue<? extends Bible> ov, Bible t, Bible t1) {
                 if(bibleSelector.selectionModelProperty().get().isEmpty()) { //Nothing selected
                     return;
                 }
-                ObservableList<BibleBook> books = FXCollections.observableArrayList(bibleSelector.selectionModelProperty().get().getSelectedItem().getBooks());
+                ObservableList<BibleBook> books = FXCollections.observableArrayList(bibleSelector.getSelectionModel().getSelectedItem().getBooks());
+                int selectedIndex = bookSelector.getSelectionModel().getSelectedIndex();
                 bookSelector.itemsProperty().set(books);
+                if(bookSelector.getItems().size()>selectedIndex) {
+                    bookSelector.getSelectionModel().select(selectedIndex);
+                }
                 update();
             }
         });
-
-//        chapterPanel.setMaximumSize(new Dimension(chapterPanel.getMaximumSize().width, bookSelector.getHeight()));
-//        bibleSelector.setMaximumSize(new Dimension(chapterPanel.getMaximumSize().width, bookSelector.getHeight()));
-//        addPanel.setMaximumSize(new Dimension(chapterPanel.getMaximumSize().width, addToSchedule.getHeight()));
     }
 
     /**
@@ -156,10 +157,10 @@ public class LibraryBiblePanel extends VBox implements BibleChangeListener {
                 update();
             }
         });
-        bookSelector.selectionModelProperty().addListener(new ChangeListener<SingleSelectionModel<BibleBook>>() {
+        bookSelector.valueProperty().addListener(new ChangeListener<BibleBook>() {
 
             @Override
-            public void changed(ObservableValue<? extends SingleSelectionModel<BibleBook>> ov, SingleSelectionModel<BibleBook> t, SingleSelectionModel<BibleBook> t1) {
+            public void changed(ObservableValue<? extends BibleBook> ov, BibleBook t, BibleBook t1) {
                 update();
             }
         });
