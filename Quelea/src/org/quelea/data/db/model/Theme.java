@@ -204,8 +204,8 @@ public class Theme {
 
     /**
      * @param isFontItalic the isFontItalic to set
-     */
-    public void setFontItalic(Boolean isFontItalic) {
+     */ 
+   public void setFontItalic(Boolean isFontItalic) {
         this.fontItalic = isFontItalic;
     }
     
