@@ -109,7 +109,6 @@ public class SchedulePanel extends BorderPane {
         }, themePopup);
         scheduleThemeNode.setStyle("-fx-background-color:WHITE;-fx-border-color: rgb(49, 89, 23);-fx-border-radius: 5;");
         themePopup.setScene(new Scene(scheduleThemeNode));
-//        themePopup.getContent().add(scheduleThemeNode);
 
         themeButton = new Button("", new ImageView(new Image("file:icons/settings.png", 16, 16, false, true)));
         themeButton.setOnAction(new EventHandler<ActionEvent>() {
