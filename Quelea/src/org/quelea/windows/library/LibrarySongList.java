@@ -28,12 +28,15 @@ import javafx.beans.property.SimpleListProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
+import javafx.geometry.Pos;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
+import javafx.scene.control.ProgressBar;
 import javafx.scene.control.cell.TextFieldListCell;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.StackPane;
 import javafx.util.Callback;
 import javafx.util.StringConverter;
 import org.quelea.data.db.SongManager;
@@ -42,16 +45,19 @@ import org.quelea.services.lucene.SongSearchIndex;
 import org.quelea.services.utils.DatabaseListener;
 import org.quelea.services.utils.LoggerUtils;
 import org.quelea.windows.main.QueleaApp;
+import org.quelea.windows.main.widgets.LoadingPane;
 
 /**
  * The list that displays the songs in the library.
  * <p/>
  * @author Michael
  */
-public class LibrarySongList extends ListView<SongDisplayable> implements DatabaseListener {
+public class LibrarySongList extends StackPane implements DatabaseListener {
 
     private static final Logger LOGGER = LoggerUtils.getLogger();
     private final LibraryPopupMenu popupMenu;
+    private ListView<SongDisplayable> songList;
+    private LoadingPane overlay;
     private final boolean popup;
 
     /**
@@ -61,6 +67,11 @@ public class LibrarySongList extends ListView<SongDisplayable> implements Databa
      * false otherwise.
      */
     public LibrarySongList(boolean popup) {
+        songList = new ListView<>();
+        overlay = new LoadingPane();
+        setAlignment(Pos.CENTER);
+        getChildren().add(songList);
+        getChildren().add(overlay);
         this.popup = popup;
         Callback<ListView<SongDisplayable>, ListCell<SongDisplayable>> callback = new Callback<ListView<SongDisplayable>, ListCell<SongDisplayable>>() {
             @Override
@@ -80,7 +91,7 @@ public class LibrarySongList extends ListView<SongDisplayable> implements Databa
             }
         };
         popupMenu = new LibraryPopupMenu();
-        setOnMouseClicked(new EventHandler<MouseEvent>() {
+        songList.setOnMouseClicked(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent t) {
                 if(t.getClickCount() == 2) {
@@ -88,7 +99,7 @@ public class LibrarySongList extends ListView<SongDisplayable> implements Databa
                 }
             }
         });
-        setOnKeyPressed(new EventHandler<KeyEvent>() {
+        songList.setOnKeyPressed(new EventHandler<KeyEvent>() {
             @Override
             public void handle(KeyEvent t) {
                 if(t.getCode() == KeyCode.ENTER) {
@@ -97,7 +108,7 @@ public class LibrarySongList extends ListView<SongDisplayable> implements Databa
             }
         });
         if(popup) {
-            setCellFactory(DisplayableListCell.<SongDisplayable>forListView(popupMenu, callback, null));
+            songList.setCellFactory(DisplayableListCell.<SongDisplayable>forListView(popupMenu, callback, null));
         }
         new Thread() {
             public void run() {
@@ -118,6 +129,12 @@ public class LibrarySongList extends ListView<SongDisplayable> implements Databa
         if(filterFuture != null) {
             filterFuture.cancel(true);
         }
+        Platform.runLater(new Runnable() {
+            @Override
+            public void run() {
+                overlay.show();
+            }
+        });
         filterFuture = filterService.submit(new Runnable() {
             @Override
             public void run() {
@@ -153,7 +170,8 @@ public class LibrarySongList extends ListView<SongDisplayable> implements Databa
                 Platform.runLater(new Runnable() {
                     @Override
                     public void run() {
-                        setItems(songs);
+                        songList.setItems(songs);
+                        overlay.hide();
                     }
                 });
             }
@@ -171,6 +189,12 @@ public class LibrarySongList extends ListView<SongDisplayable> implements Databa
         if(filterFuture != null) {
             filterFuture.cancel(true);
         }
+        Platform.runLater(new Runnable() {
+            @Override
+            public void run() {
+                overlay.show();
+            }
+        });
         filterFuture = filterService.submit(new Runnable() {
             @Override
             public void run() {
@@ -201,7 +225,8 @@ public class LibrarySongList extends ListView<SongDisplayable> implements Databa
                 Platform.runLater(new Runnable() {
                     @Override
                     public void run() {
-                        setItems(songs);
+                        songList.setItems(songs);
+                        overlay.hide();
                     }
                 });
             }
@@ -215,7 +240,7 @@ public class LibrarySongList extends ListView<SongDisplayable> implements Databa
      * @return the currently selected song, or null if none is selected.
      */
     public SongDisplayable getSelectedValue() {
-        return selectionModelProperty().get().getSelectedItem();
+        return songList.selectionModelProperty().get().getSelectedItem();
     }
 
     /**
@@ -228,17 +253,31 @@ public class LibrarySongList extends ListView<SongDisplayable> implements Databa
     }
 
     /**
+     * Get the actual list view in this song list.
+     * @return the list view object.
+     */
+    public ListView<SongDisplayable> getListView() {
+        return songList;
+    }
+
+    /**
      * Update the contents of the list.
      */
     @Override
     public final void databaseChanged() {
-        long x = System.currentTimeMillis();
+        Platform.runLater(new Runnable() {
+
+            @Override
+            public void run() {
+                overlay.show();
+            }
+        });
         final ObservableList<SongDisplayable> songs = FXCollections.observableArrayList(SongManager.get().getSongs());
-        System.out.println(System.currentTimeMillis()-x);
         Platform.runLater(new Runnable() {
             @Override
             public void run() {
-                itemsProperty().set(songs);
+                songList.itemsProperty().set(songs);
+                overlay.hide();
             }
         });
 
