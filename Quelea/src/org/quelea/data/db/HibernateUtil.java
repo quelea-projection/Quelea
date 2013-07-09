@@ -30,9 +30,6 @@ public class HibernateUtil {
 
     static {
         try {
-            // Create the SessionFactory from standard (hibernate.cfg.xml) 
-            // config file.
-
             final String location = new File(new File(QueleaProperties.getQueleaUserHome(), "database_new"), "database_new").getAbsolutePath();
             final Configuration cfg = new Configuration();
             cfg.setProperty("hibernate.connection.url", "jdbc:hsqldb:" + location);
@@ -40,6 +37,7 @@ public class HibernateUtil {
             cfg.setProperty("hibernate.connection.driver_class", "org.hsqldb.jdbcDriver");
             cfg.setProperty("hibernate.show_sql", "false");
             cfg.setProperty("hibernate.hbm2ddl.auto", "update");
+            cfg.setProperty("hibernate.connection.characterEncoding", "utf8");
             cfg.addAnnotatedClass(org.quelea.data.db.model.Song.class);//@todo add reflection code which retrieve all classes from package
             cfg.addAnnotatedClass(org.quelea.data.db.model.Theme.class);
             cfg.addAnnotatedClass(org.quelea.data.db.model.TextShadow.class);

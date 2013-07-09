@@ -85,7 +85,7 @@ public class SongSearchIndex implements SearchIndex<SongDisplayable> {
      * @param songList the song list to add.
      */
     @Override
-    public void addAll(Collection<? extends SongDisplayable> songList) {
+    public synchronized void addAll(Collection<? extends SongDisplayable> songList) {
         try (IndexWriter writer = new IndexWriter(index, new IndexWriterConfig(Version.LUCENE_35, analyzer))) {
             for(SongDisplayable song : songList) {
                 Document doc = new Document();
@@ -108,7 +108,7 @@ public class SongSearchIndex implements SearchIndex<SongDisplayable> {
      * @param song the song to remove.
      */
     @Override
-    public void remove(SongDisplayable song) {
+    public synchronized void remove(SongDisplayable song) {
         try (IndexReader reader = IndexReader.open(index, false)) {
             reader.deleteDocuments(new Term("number", Long.toString(song.getID())));
         }
@@ -137,7 +137,7 @@ public class SongSearchIndex implements SearchIndex<SongDisplayable> {
      * @return an array of songs that match the filter.
      */
     @Override
-    public SongDisplayable[] filter(String queryString, FilterType type) {
+    public synchronized SongDisplayable[] filter(String queryString, FilterType type) {
         String sanctifyQueryString = SearchIndexUtils.makeLuceneQuery(queryString);
         if(songs.isEmpty() || sanctifyQueryString.isEmpty()) {
             return songs.values().toArray(new SongDisplayable[songs.size()]);
@@ -184,7 +184,7 @@ public class SongSearchIndex implements SearchIndex<SongDisplayable> {
      * Remove everything from this index.
      */
     @Override
-    public void clear() {
+    public synchronized void clear() {
         SearchIndexUtils.clearIndex(index);
     }
 }
