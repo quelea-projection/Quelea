@@ -7,7 +7,7 @@ package org.quelea.data.db.model;
  */
 public class DBConstants {
 
-    public static final int STRING_LENGTH = 2048;
+    public static final int STRING_LENGTH = 200_000_000;
 
     private DBConstants() {
     }
