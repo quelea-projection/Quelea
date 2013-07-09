@@ -78,14 +78,14 @@ public class DatabaseMenu extends Menu {
 
         final LibrarySongList libraryList = QueleaApp.get().getMainWindow().getMainPanel().getLibraryPanel().getLibrarySongPanel().getSongList();
 
-        libraryList.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<SongDisplayable>() {
+        libraryList.getListView().getSelectionModel().selectedItemProperty().addListener(new ChangeListener<SongDisplayable>() {
 
             @Override
             public void changed(ObservableValue<? extends SongDisplayable> ov, SongDisplayable t, SongDisplayable t1) {
                 checkEditDeleteItems(editSongItem, deleteSongItem);
             }
         });
-        libraryList.focusedProperty().addListener(new ChangeListener<Boolean>() {
+        libraryList.getListView().focusedProperty().addListener(new ChangeListener<Boolean>() {
 
             @Override
             public void changed(ObservableValue<? extends Boolean> ov, Boolean t, Boolean t1) {
