@@ -26,6 +26,7 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import javafx.stage.Window;
+import org.quelea.services.languages.LabelGrabber;
 
 /**
  *
@@ -317,7 +318,7 @@ public class Dialog extends Stage {
          * @return
          */
         public Builder addYesButton(EventHandler<ActionEvent> actionHandler) {
-            return addConfirmationButton("Yes", actionHandler);
+            return addConfirmationButton(LabelGrabber.INSTANCE.getLabel("yes.text"), actionHandler);
         }
 
         /**
@@ -327,7 +328,7 @@ public class Dialog extends Stage {
          * @return
          */
         public Builder addNoButton(EventHandler<ActionEvent> actionHandler) {
-            return addConfirmationButton("No", actionHandler);
+            return addConfirmationButton(LabelGrabber.INSTANCE.getLabel("no.text"), actionHandler);
         }
 
         /**
@@ -337,7 +338,7 @@ public class Dialog extends Stage {
          * @return
          */
         public Builder addCancelButton(EventHandler<ActionEvent> actionHandler) {
-            return addConfirmationButton("Cancel", actionHandler);
+            return addConfirmationButton(LabelGrabber.INSTANCE.getLabel("cancel.text"), actionHandler);
         }
         
         public Builder addLabelledButton(String label, EventHandler<ActionEvent> actionHandler) {
