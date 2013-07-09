@@ -271,6 +271,7 @@ setup.oo.failed.title=OpenOffice failed to initialise
 use.oo.label=Use OpenOffice for presentations
 oo.path=OpenOffice path
 browse=Browse...
+loading.text=Loading...
 building.bible.index=Loading bibles
 bible.search.title=Bible searcher
 initial.search.text=<Type here to search>
