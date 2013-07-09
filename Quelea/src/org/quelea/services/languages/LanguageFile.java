@@ -96,6 +96,12 @@ public class LanguageFile implements Comparable<LanguageFile> {
     @Override
     public int compareTo(LanguageFile o) {
         Collator collator = Collator.getInstance();
+        if(languageName==null) {
+            return -1;
+        }
+        if(o.languageName==null) {
+            return 1;
+        }
         return collator.compare(languageName, o.languageName);
     }
     
