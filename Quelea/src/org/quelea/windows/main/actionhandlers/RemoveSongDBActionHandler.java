@@ -64,6 +64,7 @@ public class RemoveSongDBActionHandler implements EventHandler<ActionEvent> {
             }
         }).build().showAndWait();
         if(yes) {
+            songList.setLoading(true);
             new Thread() {
                 public void run() {
                     if(!SongManager.get().removeSong(song)) {
@@ -76,7 +77,14 @@ public class RemoveSongDBActionHandler implements EventHandler<ActionEvent> {
                     }
                     else {
                         song.setID(-1);
-                        songList.getListView().itemsProperty().get().remove(song);
+                        Platform.runLater(new Runnable() {
+
+                            @Override
+                            public void run() {
+                                songList.getListView().itemsProperty().get().remove(song);
+                                songList.setLoading(false);
+                            }
+                        });
                     }
                 }
             }.start();
