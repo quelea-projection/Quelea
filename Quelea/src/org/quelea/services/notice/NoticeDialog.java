@@ -58,7 +58,7 @@ public class NoticeDialog extends Stage implements NoticesChangedListener {
         BorderPane mainPane = new BorderPane();
         getIcons().add(new Image("file:icons/info.png"));
         noticeDrawers = new ArrayList<>();
-        setTitle("Notices");
+        setTitle(LabelGrabber.INSTANCE.getLabel("notices.heading"));
         newNoticeButton = new Button(LabelGrabber.INSTANCE.getLabel("new.notice.text"));
         newNoticeButton.setAlignment(Pos.CENTER);
         newNoticeButton.setOnAction(new EventHandler<javafx.event.ActionEvent>() {
