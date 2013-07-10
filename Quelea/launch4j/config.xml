@@ -4,6 +4,7 @@
     <jar>..\dist\Quelea.jar</jar>
     <jre>
         <path>winjre</path>
+        <opt>-Xms1024m</opt>
     </jre>
     <outfile>..\dist\quelea.exe</outfile>
     <chdir>.</chdir>
