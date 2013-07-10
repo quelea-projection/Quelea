@@ -21,6 +21,7 @@ import javafx.application.Platform;
 import javafx.event.EventHandler;
 import org.quelea.data.db.SongManager;
 import org.quelea.data.displayable.SongDisplayable;
+import org.quelea.services.languages.LabelGrabber;
 
 /**
  * A dialog used for selecting the songs to be entered into the database after
@@ -37,10 +38,10 @@ public class SelectImportedSongsDialog extends SelectSongsDialog {
      */
     public SelectImportedSongsDialog() {
         super(new String[]{
-                    "The following songs have been imported.",
-                    "Select the ones you want to add to the database then hit \"Add\".",
-                    "Songs that Quelea thinks are duplicates have been unchecked."
-                }, "Add", "Add to database?");
+                    LabelGrabber.INSTANCE.getLabel("select.imported.songs.line1"),
+                    LabelGrabber.INSTANCE.getLabel("select.imported.songs.line2"),
+                    LabelGrabber.INSTANCE.getLabel("select.imported.songs.line3")
+                }, LabelGrabber.INSTANCE.getLabel("add.text"), LabelGrabber.INSTANCE.getLabel("add.to.database.question"));
 
         getAddButton().setOnAction(new EventHandler<javafx.event.ActionEvent>() {
             @Override
