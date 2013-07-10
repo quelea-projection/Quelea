@@ -101,7 +101,7 @@ public final class Utils {
             //Nothing
         }
     }
-    
+
     /**
      * Run something on the JavaFX platform thread and wait for it to complete.
      * <p/>
@@ -143,13 +143,13 @@ public final class Utils {
     public static Bounds getBoundsFromRect(Rectangle rect) {
         return new BoundingBox(rect.getX(), rect.getY(), rect.getWidth(), rect.getHeight());
     }
-    
+
     /**
      * Converts a JavaFX Rectangle2D to a JavaFX bounds object.
      * <p/>
      * @param rect the Rectangle2D to convert.
      * @return the equivalent bounds.
-     * 
+     * <p/>
      */
     public static Bounds getBoundsFromRect2D(Rectangle2D rect) {
         return new BoundingBox(rect.getMinX(), rect.getMinY(), rect.getWidth(), rect.getHeight());
@@ -229,7 +229,6 @@ public final class Utils {
                 boolean result = SongManager.get().updateSong(song);
                 if(!result && showError) {
                     Platform.runLater(new Runnable() {
-
                         @Override
                         public void run() {
                             Dialog.showError(LabelGrabber.INSTANCE.getLabel("error.text"), LabelGrabber.INSTANCE.getLabel("error.udpating.song.text"));
@@ -243,7 +242,6 @@ public final class Utils {
         }
         else {
             Utils.fxRunAndWait(new Runnable() {
-
                 @Override
                 public void run() {
                     final StatusPanel statusPanel = QueleaApp.get().getStatusGroup().addPanel(LabelGrabber.INSTANCE.getLabel("updating.db"));
@@ -662,11 +660,16 @@ public final class Utils {
      * @return the colour.
      */
     public static Color parseColour(String colour) {
-        if(colour==null||colour.trim().isEmpty()) {
+        if(colour == null || colour.trim().isEmpty()) {
             return ThemeDTO.DEFAULT_FONT_COLOR;
         }
         if(!colour.contains("[")) {
-            return Color.web(colour);
+            try {
+                return Color.web(colour);
+            }
+            catch(IllegalArgumentException ex) {
+                return ThemeDTO.DEFAULT_FONT_COLOR;
+            }
         }
         colour = colour.substring(colour.indexOf('[') + 1, colour.indexOf(']'));
         String[] parts = colour.split(",");
@@ -684,7 +687,7 @@ public final class Utils {
         }
         return new Color(red, green, blue, 1);
     }
-    
+
     public static void enableDragAndDrop() {
         DragAndDrop.enable();
     }

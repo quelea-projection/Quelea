@@ -19,8 +19,9 @@ public class ThemeDao {
        return (Theme) session.load(Theme.class, id);
     }
     
+    @SuppressWarnings("unchecked")
     public List<Theme> getThemes() {
         Query getAllSongQuery = session.createQuery("from Theme");
-        return getAllSongQuery.list();
+        return (List<Theme>)getAllSongQuery.list();
     }
 }
