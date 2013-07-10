@@ -28,7 +28,10 @@ import javafx.stage.Screen;
 import javafx.stage.Stage;
 import org.javafx.dialog.Dialog;
 import org.quelea.data.bible.BibleManager;
+import org.quelea.data.db.LegacyDB;
 import org.quelea.data.db.SongManager;
+import org.quelea.data.db.model.Song;
+import org.quelea.data.displayable.SongDisplayable;
 import org.quelea.data.powerpoint.OOUtils;
 import org.quelea.services.languages.LabelGrabber;
 import org.quelea.services.phonehome.PhoneHome;
@@ -62,6 +65,15 @@ public final class Main extends Application {
         splashWindow.show();
 
         new UserFileChecker(QueleaProperties.getQueleaUserHome()).checkUserFiles();
+
+        if(!new File(QueleaProperties.getQueleaUserHome(), "database_new").exists()
+                && new File(QueleaProperties.getQueleaUserHome(), "database").exists()) {
+            SongDisplayable[] songs = LegacyDB.get().getSongs();
+            LOGGER.log(Level.INFO, "Importing {0} songs from legacy DB", songs.length);
+            for(SongDisplayable song : songs) {
+                SongManager.get().addSong(song, false);
+            }
+        }
 
         final ObservableList<Screen> monitors = Screen.getScreens();
         LOGGER.log(Level.INFO, "Number of displays: {0}", monitors.size());
