@@ -18,15 +18,17 @@
 package org.quelea.data;
 
 import java.io.File;
+import java.io.Serializable;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javafx.scene.effect.DropShadow;
 import javafx.scene.paint.Color;
-import javafx.scene.paint.Paint;
 import javafx.scene.text.Font;
 import org.quelea.data.db.model.TextShadow;
 import org.quelea.data.db.model.Theme;
 import org.quelea.services.utils.LoggerUtils;
+import org.quelea.services.utils.SerializableColor;
+import org.quelea.services.utils.SerializableDropShadow;
+import org.quelea.services.utils.SerializableFont;
 import org.quelea.services.utils.Utils;
 
 /**
@@ -34,20 +36,20 @@ import org.quelea.services.utils.Utils;
  * <p/>
  * @author Michael
  */
-public class ThemeDTO {
+public class ThemeDTO implements Serializable {
 
     private static final Logger LOGGER = LoggerUtils.getLogger();
-    public static final Font DEFAULT_FONT = new Font("Arial", 72);
+    public static final SerializableFont DEFAULT_FONT = new SerializableFont(new Font("Arial", 72));
     public static final Color DEFAULT_FONT_COLOR = Color.WHITE;
-    public static final DropShadow DEFAULT_SHADOW = new DropShadow();
+    public static final SerializableDropShadow DEFAULT_SHADOW = new SerializableDropShadow(DEFAULT_FONT_COLOR, 0, 0);
     public static final ColourBackground DEFAULT_BACKGROUND = new ColourBackground(Color.BLACK);
     public static final ThemeDTO DEFAULT_THEME = new ThemeDTO(DEFAULT_FONT,
             DEFAULT_FONT_COLOR,
             DEFAULT_BACKGROUND, DEFAULT_SHADOW, false, false);
-    private final Font font;
-    private final Paint fontColor;
+    private final SerializableFont font;
+    private final SerializableColor fontColor;
     private final Background background;
-    private final DropShadow textShadow;
+    private final SerializableDropShadow textShadow;
     private String themeName;
     private File file;
     private Boolean isFontBold = false;
@@ -60,10 +62,10 @@ public class ThemeDTO {
      * @param fontPaint the font colour to use for the theme.
      * @param background the background to use for the page.
      */
-    public ThemeDTO(Font font, Paint fontPaint, Background background,
-            DropShadow shadow, Boolean isFontBold, Boolean isFontItalic) {
+    public ThemeDTO(SerializableFont font, Color fontPaint, Background background,
+            SerializableDropShadow shadow, Boolean isFontBold, Boolean isFontItalic) {
         this.font = font;
-        this.fontColor = fontPaint;
+        this.fontColor = new SerializableColor(fontPaint);
         this.background = background;
         themeName = "";
         this.textShadow = shadow;
@@ -122,7 +124,7 @@ public class ThemeDTO {
      * @return the theme font.
      */
     public Font getFont() {
-        return font;
+        return font.getFont();
     }
 
     /**
@@ -130,8 +132,8 @@ public class ThemeDTO {
      * <p/>
      * @return the theme font paint.
      */
-    public Paint getFontPaint() {
-        return fontColor;
+    public Color getFontPaint() {
+        return fontColor.getColor();
     }
 
     /**
@@ -195,7 +197,7 @@ public class ThemeDTO {
         }
         final TextShadow shadow = new TextShadow(textShadow.getColor().toString(),
                 textShadow.getOffsetX(), textShadow.getOffsetY());
-        final Theme theme = new Theme(themeName, font.getName(), fontColor.toString(), backgroundColor,
+        final Theme theme = new Theme(themeName, font.getFont().getName(), fontColor.toString(), backgroundColor,
                 backgroundVideo, backgroundImage, shadow, isFontBold, isFontItalic);
         return theme;
     }
@@ -205,7 +207,7 @@ public class ThemeDTO {
      * <p/>
      */
     public static ThemeDTO getDTO(Theme theme) {
-        Font font = new Font(theme.getFontname(), 72);
+        SerializableFont font = new SerializableFont(new Font(theme.getFontname(), 72));
         Background background;
         if(!theme.getBackgroundcolour().isEmpty()) {
             background = new ColourBackground(Utils.parseColour(theme.getBackgroundcolour()));
@@ -219,18 +221,16 @@ public class ThemeDTO {
         else {
             background = new ColourBackground(Color.BLACK);
         }
-        DropShadow shadow = new DropShadow();
         TextShadow givenShadow = theme.getTextShadow();
-        shadow.setColor(Utils.parseColour(givenShadow.getShadowColor()));
-        shadow.setOffsetX(givenShadow.getOffsetX());
-        shadow.setOffsetY(givenShadow.getOffsetY());
+        SerializableDropShadow shadow = new SerializableDropShadow(Utils.parseColour(givenShadow.getShadowColor()),
+                givenShadow.getOffsetX(), givenShadow.getOffsetY());
         ThemeDTO ret = new ThemeDTO(font, Utils.parseColour(theme.getFontcolour()),
                 background, shadow, theme.isFontBold(), theme.isFontItalic());
         ret.themeName = theme.getName();
         return ret;
     }
 
-    public DropShadow getShadow() {
+    public SerializableDropShadow getShadow() {
         return textShadow;
     }
 
@@ -242,7 +242,7 @@ public class ThemeDTO {
      */
     public String asString() {
         StringBuilder ret = new StringBuilder();
-        ret.append("fontname:").append(font.getName());
+        ret.append("fontname:").append(font.getFont().getName());
         ret.append("$fontcolour:").append(fontColor.toString());
         if(!themeName.isEmpty()) {
             ret.append("$themename:").append(themeName);
@@ -324,7 +324,7 @@ public class ThemeDTO {
                 shadowOffsetY = defaultIfEmpty(parts[1], "0");
             }
         }
-        Font font = new Font(fontname, 72);
+        SerializableFont font = new SerializableFont(new Font(fontname, 72));
         Background background;
         if(!backgroundcolour.trim().isEmpty()) {
             background = new ColourBackground(Utils.parseColour(backgroundcolour));
@@ -339,10 +339,7 @@ public class ThemeDTO {
             LOGGER.log(Level.WARNING, "WARNING: Unhandled or empty background, using default background. Raw content: " + content, new RuntimeException("DEBUG EXCEPTION FOR STACK TRACE"));
             background = ThemeDTO.DEFAULT_BACKGROUND;
         }
-        DropShadow shadow = new DropShadow();
-        shadow.setColor(Utils.parseColour(shadowColor));
-        shadow.setOffsetX(Double.parseDouble(shadowOffsetX));
-        shadow.setOffsetY(Double.parseDouble(shadowOffsetY));
+        SerializableDropShadow shadow = new SerializableDropShadow(Utils.parseColour(shadowColor), Double.parseDouble(shadowOffsetX), Double.parseDouble(shadowOffsetY));
         ThemeDTO ret = new ThemeDTO(font, Utils.parseColour(fontcolour),
                 background, shadow, Boolean.valueOf(isFontBold),
                 Boolean.valueOf(isFontItalic));

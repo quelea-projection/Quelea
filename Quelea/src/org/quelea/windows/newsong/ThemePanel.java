@@ -35,7 +35,6 @@ import javafx.scene.control.MenuItem;
 import javafx.scene.control.TextField;
 import javafx.scene.control.ToggleButton;
 import javafx.scene.control.Tooltip;
-import javafx.scene.effect.DropShadow;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
@@ -53,6 +52,8 @@ import org.quelea.data.ThemeDTO;
 import org.quelea.data.VideoBackground;
 import org.quelea.services.languages.LabelGrabber;
 import org.quelea.services.utils.QueleaProperties;
+import org.quelea.services.utils.SerializableDropShadow;
+import org.quelea.services.utils.SerializableFont;
 import org.quelea.services.utils.Utils;
 import org.quelea.windows.main.DisplayCanvas;
 import org.quelea.windows.lyrics.LyricDrawer;
@@ -129,7 +130,7 @@ public class ThemePanel extends BorderPane {
      */
     private void setupBackgroundToolbar() {
         backgroundPanel = new HBox();
-        final CardPane backgroundChooserPanel = new CardPane();
+        final CardPane<HBox> backgroundChooserPanel = new CardPane<>();
 
         backgroundTypeSelect = new ComboBox<>();
         backgroundTypeSelect.getItems().add(LabelGrabber.INSTANCE.getLabel("color.theme.label"));
@@ -354,7 +355,7 @@ public class ThemePanel extends BorderPane {
 
         final ThemeDTO theme = (newTheme != null) ? newTheme : getTheme();
         if (warning && theme.getBackground() instanceof ColourBackground) {
-            checkAccessibility((Color) theme.getFontPaint(), ((ColourBackground) theme.getBackground()).getColour());
+            checkAccessibility(theme.getFontPaint(), ((ColourBackground) theme.getBackground()).getColour());
         }
         Platform.runLater(new Runnable() {
             @Override
@@ -378,7 +379,7 @@ public class ThemePanel extends BorderPane {
         }
         Font font = theme.getFont();
         fontSelection.getSelectionModel().select(font.getFamily());
-        fontColorPicker.setValue((Color) theme.getFontPaint());
+        fontColorPicker.setValue(theme.getFontPaint());
         Background background = theme.getBackground();
         background.setThemeForm(backgroundColorPicker, backgroundTypeSelect, backgroundImgLocation, backgroundVidLocation);
         updateTheme(false, null);
@@ -432,11 +433,10 @@ public class ThemePanel extends BorderPane {
         } else {
             throw new AssertionError("Bug - " + backgroundTypeSelect.getSelectionModel().getSelectedItem() + " is an unknown selection value");
         }
-        final DropShadow shadow = new DropShadow();
-        shadow.setColor(shadowColorPicker.getValue());
-        shadow.setOffsetX(Double.valueOf(shadowOffsetX.getText().isEmpty() ? "3" : shadowOffsetX.getText()));
-        shadow.setOffsetY(Double.valueOf(shadowOffsetY.getText().isEmpty() ? "3" : shadowOffsetY.getText()));
-        ThemeDTO resultTheme = new ThemeDTO(font, fontColorPicker.getValue(),
+        final SerializableDropShadow shadow = new SerializableDropShadow(shadowColorPicker.getValue(),
+                Double.valueOf(shadowOffsetX.getText().isEmpty() ? "3" : shadowOffsetX.getText()),
+                Double.valueOf(shadowOffsetY.getText().isEmpty() ? "3" : shadowOffsetY.getText()));
+        ThemeDTO resultTheme = new ThemeDTO(new SerializableFont(font), fontColorPicker.getValue(),
                 background, shadow, isFontBold, isFontItalic);
         return resultTheme;
     }

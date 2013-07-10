@@ -27,6 +27,7 @@ import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.Serializable;
 import java.text.Collator;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -37,6 +38,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.DataFormat;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -56,7 +58,7 @@ import org.xml.sax.SAXException;
  * <p/>
  * @author Michael
  */
-public class SongDisplayable implements TextDisplayable, Comparable<SongDisplayable>, Printable {
+public class SongDisplayable implements TextDisplayable, Comparable<SongDisplayable>, Printable, Serializable {
 
     /**
      * The builder responsible for building this song.
@@ -245,6 +247,7 @@ public class SongDisplayable implements TextDisplayable, Comparable<SongDisplaya
             return song;
         }
     }
+    public static final DataFormat SONG_DISPLAYABLE_FORMAT = new DataFormat("songdisplayable");
     private static final Logger LOGGER = LoggerUtils.getLogger();
     private String title = "";
     private String author = "";
