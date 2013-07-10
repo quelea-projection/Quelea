@@ -19,7 +19,9 @@ package org.quelea.windows.newsong;
 
 import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.FileWriter;
+import java.io.OutputStreamWriter;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -188,13 +190,16 @@ public class ThemePanel extends BorderPane {
         backgroundTypeSelect.setOnAction(new EventHandler<javafx.event.ActionEvent>() {
             @Override
             public void handle(javafx.event.ActionEvent t) {
-                if (backgroundTypeSelect.getSelectionModel().getSelectedItem().equals(LabelGrabber.INSTANCE.getLabel("color.theme.label"))) {
+                if(backgroundTypeSelect.getSelectionModel().getSelectedItem().equals(LabelGrabber.INSTANCE.getLabel("color.theme.label"))) {
                     backgroundChooserPanel.show("colour");
-                } else if (backgroundTypeSelect.getSelectionModel().getSelectedItem().equals(LabelGrabber.INSTANCE.getLabel("image.theme.label"))) {
+                }
+                else if(backgroundTypeSelect.getSelectionModel().getSelectedItem().equals(LabelGrabber.INSTANCE.getLabel("image.theme.label"))) {
                     backgroundChooserPanel.show("image");
-                } else if (backgroundTypeSelect.getSelectionModel().getSelectedItem().equals(LabelGrabber.INSTANCE.getLabel("video.theme.label"))) {
+                }
+                else if(backgroundTypeSelect.getSelectionModel().getSelectedItem().equals(LabelGrabber.INSTANCE.getLabel("video.theme.label"))) {
                     backgroundChooserPanel.show("video");
-                } else {
+                }
+                else {
                     throw new AssertionError("Bug - " + backgroundTypeSelect.getSelectionModel().getSelectedItem() + " is an unknown selection value");
                 }
             }
@@ -250,7 +255,7 @@ public class ThemePanel extends BorderPane {
         fontToolbar = new HBox();
         fontToolbar.getChildren().add(new Label(LabelGrabber.INSTANCE.getLabel("font.theme.label") + ":"));
         fontSelection = new ComboBox<>();
-        for (String font : Utils.getAllFonts()) {
+        for(String font : Utils.getAllFonts()) {
             fontSelection.itemsProperty().get().add(font);
         }
         fontSelection.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
@@ -264,7 +269,7 @@ public class ThemePanel extends BorderPane {
         boldButton.setOnAction(new EventHandler<javafx.event.ActionEvent>() {
             @Override
             public void handle(javafx.event.ActionEvent t) {
-                isFontBold =!isFontBold;
+                isFontBold = !isFontBold;
                 updateTheme(false, null);
             }
         });
@@ -315,11 +320,11 @@ public class ThemePanel extends BorderPane {
                 theme.setFile(themeFile);
                 theme.setThemeName(themeNameField.getText());
                 try {
-                    FileWriter fstream = new FileWriter(themeFile);
-                    BufferedWriter out = new BufferedWriter(fstream);
-                    out.write(theme.asString());
-                    out.close();
-                } catch (Exception e) {
+                    try (BufferedWriter out = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(themeFile), "UTF-8"))) {
+                        out.write(theme.asString());
+                    }
+                }
+                catch(Exception e) {
                     System.err.println("Error: " + e.getMessage());
                 }
             }
@@ -354,7 +359,7 @@ public class ThemePanel extends BorderPane {
     private void updateTheme(boolean warning, ThemeDTO newTheme) {
 
         final ThemeDTO theme = (newTheme != null) ? newTheme : getTheme();
-        if (warning && theme.getBackground() instanceof ColourBackground) {
+        if(warning && theme.getBackground() instanceof ColourBackground) {
             checkAccessibility(theme.getFontPaint(), ((ColourBackground) theme.getBackground()).getColour());
         }
         Platform.runLater(new Runnable() {
@@ -374,7 +379,7 @@ public class ThemePanel extends BorderPane {
      * @param theme the theme to represent.
      */
     public void setTheme(ThemeDTO theme) {
-        if (theme == null) {
+        if(theme == null) {
             theme = ThemeDTO.DEFAULT_THEME;
         }
         Font font = theme.getFont();
@@ -394,7 +399,7 @@ public class ThemePanel extends BorderPane {
      */
     private void checkAccessibility(Color col1, Color col2) {
         double diff = Utils.getColorDifference(col1, col2);
-        if (diff < THRESHOLD) {
+        if(diff < THRESHOLD) {
             Dialog.showInfo(LabelGrabber.INSTANCE.getLabel("warning.label"), LabelGrabber.INSTANCE.getLabel("similar.colors.text"));
         }
     }
@@ -419,18 +424,21 @@ public class ThemePanel extends BorderPane {
                 isFontBold ? FontWeight.BOLD : FontWeight.NORMAL,
                 isFontItalic ? FontPosture.ITALIC : FontPosture.REGULAR,
                 72);
-        
+
         Background background;
-        if (backgroundTypeSelect.getSelectionModel().getSelectedItem() == null) {
+        if(backgroundTypeSelect.getSelectionModel().getSelectedItem() == null) {
             return ThemeDTO.DEFAULT_THEME;
         }
-        if (backgroundTypeSelect.getSelectionModel().getSelectedItem().equals(LabelGrabber.INSTANCE.getLabel("color.theme.label"))) {
+        if(backgroundTypeSelect.getSelectionModel().getSelectedItem().equals(LabelGrabber.INSTANCE.getLabel("color.theme.label"))) {
             background = new ColourBackground(backgroundColorPicker.getValue());
-        } else if (backgroundTypeSelect.getSelectionModel().getSelectedItem().equals(LabelGrabber.INSTANCE.getLabel("image.theme.label"))) {
+        }
+        else if(backgroundTypeSelect.getSelectionModel().getSelectedItem().equals(LabelGrabber.INSTANCE.getLabel("image.theme.label"))) {
             background = new ImageBackground(backgroundImgLocation.getText());
-        } else if (backgroundTypeSelect.getSelectionModel().getSelectedItem().equals(LabelGrabber.INSTANCE.getLabel("video.theme.label"))) {
+        }
+        else if(backgroundTypeSelect.getSelectionModel().getSelectedItem().equals(LabelGrabber.INSTANCE.getLabel("video.theme.label"))) {
             background = new VideoBackground(backgroundVidLocation.getText());
-        } else {
+        }
+        else {
             throw new AssertionError("Bug - " + backgroundTypeSelect.getSelectionModel().getSelectedItem() + " is an unknown selection value");
         }
         final SerializableDropShadow shadow = new SerializableDropShadow(shadowColorPicker.getValue(),
