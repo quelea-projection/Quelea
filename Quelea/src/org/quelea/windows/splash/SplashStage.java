@@ -26,6 +26,9 @@ import javafx.scene.effect.InnerShadow;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.paint.Color;
+import javafx.scene.paint.CycleMethod;
+import javafx.scene.paint.LinearGradient;
+import javafx.scene.paint.Stop;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontPosture;
 import javafx.scene.text.FontWeight;
@@ -43,6 +46,12 @@ import org.quelea.services.utils.QueleaProperties;
  */
 public class SplashStage extends Stage {
 
+    private enum Version {
+
+        ALPHA, BETA, FINAL
+    }
+    private Version version;
+
     /**
      * Create a new splash window.
      */
@@ -51,26 +60,45 @@ public class SplashStage extends Stage {
         initStyle(StageStyle.UNDECORATED);
         getIcons().add(new Image("file:icons/logo.png"));
         setTitle("Quelea loading...");
-        Image splashImage = new Image("file:icons/splash.png");
+        String minorVersion = QueleaProperties.VERSION.getMinorVersionString();
+        Image splashImage = new Image("file:icons/splash-bare.png");
+        version = Version.FINAL;
+        if(minorVersion.toLowerCase().trim().startsWith("alpha")) {
+            splashImage = new Image("file:icons/splash-alpha.png");
+            version = Version.ALPHA;
+        }
+        else if(minorVersion.toLowerCase().trim().startsWith("beta")) {
+            splashImage = new Image("file:icons/splash-beta.png");
+            version = Version.BETA;
+        }
         ImageView imageView = new ImageView(splashImage);
         Text text = new Text(QueleaProperties.VERSION.getVersionString());
-        text.setFill(new Color(0, 0, 0, 0.5));
-        text.setFont(Font.font("SansSerif", FontWeight.BOLD, FontPosture.ITALIC, 30));
+        LinearGradient grad = new LinearGradient(0, 1, 0, 0, true, CycleMethod.REPEAT, new Stop(0, Color.web("#000000")), new Stop(1, Color.web("#666666")));
+        text.setFill(grad);
+        text.setFont(Font.loadFont("file:icons/Ubuntu-RI.ttf", 35));
         text.setLayoutX(447);
         text.setLayoutY(183);
-//        InnerShadow is = new InnerShadow();
-//        is.setOffsetX(2.0f);
-//        is.setOffsetY(2.0f);
-//        is.setColor(Color.GRAY);
-//        text.setEffect(is);
         Text minorText = null;
-        if(QueleaProperties.VERSION.getMinorVersionString() != null) {
-            minorText = new Text(QueleaProperties.VERSION.getMinorVersionString());
-            minorText.setFont(Font.font("SansSerif", FontWeight.BOLD, FontPosture.ITALIC, 30));
-            minorText.setFill(new Color(0, 0, 0, 0.5));
-            minorText.setLayoutX(40);
-            minorText.setLayoutY(235);
-//            minorText.setEffect(is);
+        String minorNum = null;
+        if(version != Version.FINAL) {
+            String[] parts = minorVersion.split(" ");
+            if(parts.length > 1) {
+                minorNum = parts[1];
+            }
+        }
+        if(minorNum != null) {
+            minorText = new Text(minorNum);
+            minorText.setFill(grad);
+            if(version == Version.ALPHA) {
+                minorText.setFont(Font.loadFont("file:icons/Ubuntu-RI.ttf", 30));
+                minorText.setLayoutX(30);
+                minorText.setLayoutY(305);
+            }
+            else if(version == Version.BETA) {
+                minorText.setFont(Font.loadFont("file:icons/Ubuntu-RI.ttf", 26));
+                minorText.setLayoutX(36);
+                minorText.setLayoutY(305);
+            }
         }
 
         Group mainPane = new Group();
