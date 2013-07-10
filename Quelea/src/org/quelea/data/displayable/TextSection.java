@@ -17,6 +17,7 @@
  */
 package org.quelea.data.displayable;
 
+import java.io.Serializable;
 import java.io.UnsupportedEncodingException;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
@@ -35,7 +36,7 @@ import org.quelea.services.utils.Utils;
  * Represents a section of text in a song or passage.
  * @author Michael
  */
-public class TextSection {
+public class TextSection implements Serializable {
 
     private String title;
     private String[] lines;

@@ -88,11 +88,11 @@ public class LyricDrawer extends DisplayableDrawer {
         }
         Font font = theme.getFont();
         if(font == null) {
-            font = ThemeDTO.DEFAULT_FONT;
+            font = ThemeDTO.DEFAULT_FONT.getFont();
         }
-        DropShadow shadow = theme.getShadow();
+        DropShadow shadow = theme.getShadow().getDropShadow();
         if(shadow == null) {
-            shadow = ThemeDTO.DEFAULT_SHADOW;
+            shadow = ThemeDTO.DEFAULT_SHADOW.getDropShadow();
         }
 
         shadow.setHeight(5);

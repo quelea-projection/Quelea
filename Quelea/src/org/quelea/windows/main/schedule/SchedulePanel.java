@@ -122,7 +122,6 @@ public class SchedulePanel extends BorderPane {
                     themePopup.setX(themeButton.localToScene(0, 0).getX() + QueleaApp.get().getMainWindow().getX());
                     themePopup.setY(themeButton.localToScene(0, 0).getY() + 45 + QueleaApp.get().getMainWindow().getY());
                     themePopup.show();
-//                    themePopup.show(themeButton, themeButton.localToScene(0, 0).getX() + QueleaApp.get().getMainWindow().getX(), themeButton.localToScene(0, 0).getY() + 45 + QueleaApp.get().getMainWindow().getY());
                 }
             }
         });

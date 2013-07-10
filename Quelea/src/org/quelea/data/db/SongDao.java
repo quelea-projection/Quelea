@@ -20,9 +20,10 @@ public class SongDao {
        return (Song) session.load(Song.class, id);
     }
     
+    @SuppressWarnings("unchecked")
     public List<Song> getSongs() {
         Query getAllSongQuery = session.createQuery("from Song");
-        return getAllSongQuery.list();
+        return (List<Song>)getAllSongQuery.list();
     }
     
 }

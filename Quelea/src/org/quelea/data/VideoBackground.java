@@ -19,6 +19,7 @@
 package org.quelea.data;
 
 import java.io.File;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -33,7 +34,7 @@ import org.quelea.services.languages.LabelGrabber;
  * <p/>
  * @author Michael
  */
-public class VideoBackground implements Background {
+public class VideoBackground implements Background, Serializable {
 
     private String vidLocation;
 

@@ -17,17 +17,21 @@
  */
 package org.quelea.windows.main.schedule;
 
+import java.io.File;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.application.Platform;
 import javafx.event.EventHandler;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
+import javafx.scene.input.DragEvent;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
+import javafx.scene.input.TransferMode;
 import javafx.util.Callback;
 import org.quelea.data.Schedule;
 import org.quelea.data.displayable.Displayable;
+import org.quelea.data.displayable.ImageDisplayable;
 import org.quelea.data.displayable.SongDisplayable;
 import org.quelea.services.utils.LoggerUtils;
 import org.quelea.windows.library.Constraint;
@@ -76,7 +80,6 @@ public class ScheduleList extends ListView<Displayable> {
             }
         };
         setCellFactory(DisplayableListCell.<Displayable>forListView(popupMenu, callback, new Constraint<Displayable>() {
-
             @Override
             public boolean isTrue(Displayable d) {
                 return d instanceof SongDisplayable;
@@ -94,12 +97,32 @@ public class ScheduleList extends ListView<Displayable> {
             }
         });
         setOnKeyPressed(new EventHandler<KeyEvent>() {
-
             @Override
             public void handle(KeyEvent t) {
                 if(t.getCode() == KeyCode.DELETE) {
                     new RemoveScheduleItemActionHandler().handle(null);
                 }
+            }
+        });
+        setOnDragOver(new EventHandler<DragEvent>() {
+            @Override
+            public void handle(DragEvent t) {
+                t.acceptTransferModes(TransferMode.ANY);
+            }
+        });
+        setOnDragDropped(new EventHandler<DragEvent>() {
+            @Override
+            public void handle(DragEvent event) {
+                String imageLocation = event.getDragboard().getString();
+                if(imageLocation != null) {
+                    ImageDisplayable img = new ImageDisplayable(new File(imageLocation));
+                    add(img);
+                }
+                SongDisplayable displayable = (SongDisplayable) event.getDragboard().getContent(SongDisplayable.SONG_DISPLAYABLE_FORMAT);
+                if(displayable != null) {
+                    add(displayable);
+                }
+                event.consume();
             }
         });
     }

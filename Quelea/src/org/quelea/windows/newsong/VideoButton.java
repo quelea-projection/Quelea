@@ -31,6 +31,7 @@ import org.quelea.data.VideoBackground;
 import org.quelea.services.languages.LabelGrabber;
 import org.quelea.services.utils.FileFilters;
 import org.quelea.services.utils.LoggerUtils;
+import org.quelea.services.utils.SerializableFont;
 import org.quelea.windows.main.DisplayCanvas;
 import org.quelea.windows.lyrics.LyricDrawer;
 import org.quelea.windows.main.QueleaApp;
@@ -77,7 +78,7 @@ public class VideoButton extends Button {
                     videoLocationField.setText(vidLocation);
                     LyricDrawer drawer = new LyricDrawer(false, null);
                     drawer.setCanvas(canvas);
-                    ThemeDTO theme = new ThemeDTO(drawer.getTheme().getFont(),
+                    ThemeDTO theme = new ThemeDTO(new SerializableFont(drawer.getTheme().getFont()),
                             drawer.getTheme().getFontPaint(), new VideoBackground(vidLocation),
                             drawer.getTheme().getShadow(),
                             drawer.getTheme().isBold(),
