@@ -25,6 +25,7 @@ import javafx.event.EventHandler;
 import javafx.stage.FileChooser;
 import org.javafx.dialog.Dialog;
 import org.quelea.data.db.SongManager;
+import org.quelea.services.languages.LabelGrabber;
 import org.quelea.services.utils.FileFilters;
 import org.quelea.services.utils.QueleaProperties;
 import org.quelea.services.utils.SongPack;
@@ -44,9 +45,9 @@ public class SelectExportedSongsDialog extends SelectSongsDialog {
      */
     public SelectExportedSongsDialog() {
         super(new String[]{
-                    "The following songs are in the database.",
-                    "Select the ones you want to add to the song pack then hit \"Add\"."
-                }, "Add", "Add to song pack?");
+                    LabelGrabber.INSTANCE.getLabel("select.export.songs.line1"),
+                    LabelGrabber.INSTANCE.getLabel("select.export.songs.line2")
+                }, LabelGrabber.INSTANCE.getLabel("add.text"), LabelGrabber.INSTANCE.getLabel("add.to.songpack.question"));
 
         setSongs(Arrays.asList(SongManager.get().getSongs()), null, false);
         
@@ -63,7 +64,7 @@ public class SelectExportedSongsDialog extends SelectSongsDialog {
                     }
                     if (file.exists()) {
                         final File theFile = file;
-                        Dialog.buildConfirmation("Overwrite", file.getName() + " already exists. Overwrite?").addYesButton(new EventHandler<ActionEvent>() {
+                        Dialog.buildConfirmation(LabelGrabber.INSTANCE.getLabel("overwrite.text"), file.getName() + " " + LabelGrabber.INSTANCE.getLabel("already.exists.overwrite.label")).addYesButton(new EventHandler<ActionEvent>() {
                             @Override
                             public void handle(ActionEvent t) {
                                 writeSongPack(theFile);
