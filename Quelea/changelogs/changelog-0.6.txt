@@ -9,8 +9,9 @@ quelea (0.6) stable; urgency=normal
   * Added more / better sample images
   * Added sample videos
   * Plain text import
-  * Added Czech and German translations
+  * Added Czech, German Swedish and US English translations
   * Fix interface to display UTF-8 translations properly
+  * Theme selector window now behaves as a proper popup window
   * Add option within interface to change language
   * Window position now saved between runs
   * Easyslides import
