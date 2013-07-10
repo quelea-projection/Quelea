@@ -37,7 +37,7 @@ import org.quelea.windows.options.TextPosition;
  */
 public final class QueleaProperties extends Properties {
 
-    public static final Version VERSION = new Version("0.6", "ALPHA 6");
+    public static final Version VERSION = new Version("0.6", "ALPHA 7");
     private static final QueleaProperties INSTANCE = new QueleaProperties();
 //    private static final Logger LOGGER = LoggerUtils.getLogger();
 
