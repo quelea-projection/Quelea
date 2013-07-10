@@ -397,14 +397,14 @@ public class OOPresentation implements XEventListener {
             xOfficeContext = BootstrapSocketConnector.bootstrap(progPath.getAbsolutePath());
             XComponentContext localContext = Bootstrap.createInitialComponentContext(null);
             XMultiComponentFactory localServiceManager = localContext.getServiceManager();
-            XConnector connector = (XConnector) UnoRuntime.queryInterface(XConnector.class,
+            XConnector connector = UnoRuntime.queryInterface(XConnector.class,
                     localServiceManager.createInstanceWithContext("com.sun.star.connection.Connector",
                     localContext));
             connection = connector.connect(RUN_ARGS);
-            XBridgeFactory bridgeFactory = (XBridgeFactory) UnoRuntime.queryInterface(XBridgeFactory.class,
+            XBridgeFactory bridgeFactory = UnoRuntime.queryInterface(XBridgeFactory.class,
                     localServiceManager.createInstanceWithContext("com.sun.star.bridge.BridgeFactory", localContext));
             bridge = bridgeFactory.createBridge("", "urp", connection, null);
-            bridgeComponent = (XComponent) UnoRuntime.queryInterface(XComponent.class, bridge);
+            bridgeComponent = UnoRuntime.queryInterface(XComponent.class, bridge);
             bridgeComponent.addEventListener(new com.sun.star.lang.XEventListener() {
                 @Override
                 public void disposing(EventObject eo) {

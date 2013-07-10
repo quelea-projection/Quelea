@@ -31,11 +31,13 @@ import javafx.event.EventHandler;
 import javafx.geometry.Pos;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
-import javafx.scene.control.ProgressBar;
 import javafx.scene.control.cell.TextFieldListCell;
+import javafx.scene.input.ClipboardContent;
+import javafx.scene.input.Dragboard;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.input.TransferMode;
 import javafx.scene.layout.StackPane;
 import javafx.util.Callback;
 import javafx.util.StringConverter;
@@ -76,7 +78,7 @@ public class LibrarySongList extends StackPane implements DatabaseListener {
         Callback<ListView<SongDisplayable>, ListCell<SongDisplayable>> callback = new Callback<ListView<SongDisplayable>, ListCell<SongDisplayable>>() {
             @Override
             public ListCell<SongDisplayable> call(ListView<SongDisplayable> p) {
-                return new TextFieldListCell<>(new StringConverter<SongDisplayable>() {
+                final TextFieldListCell<SongDisplayable> cell = new TextFieldListCell<>(new StringConverter<SongDisplayable>() {
                     @Override
                     public String toString(SongDisplayable song) {
                         return song.getListHTML();
@@ -88,6 +90,18 @@ public class LibrarySongList extends StackPane implements DatabaseListener {
                         return null;
                     }
                 });
+                cell.setOnDragDetected(new EventHandler<MouseEvent>() {
+
+                    @Override
+                    public void handle(MouseEvent event) {
+                        Dragboard db = cell.startDragAndDrop(TransferMode.ANY);
+                        ClipboardContent content = new ClipboardContent();
+                        content.put(SongDisplayable.SONG_DISPLAYABLE_FORMAT, cell.getItem());
+                        db.setContent(content);
+                        event.consume();
+                    }
+                });
+                return cell;
             }
         };
         popupMenu = new LibraryPopupMenu();

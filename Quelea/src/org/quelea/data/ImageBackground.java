@@ -19,6 +19,7 @@
 package org.quelea.data;
 
 import java.io.File;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -35,10 +36,11 @@ import org.quelea.services.utils.Utils;
  *
  * @author Michael
  */
-public class ImageBackground implements Background {
+public class ImageBackground implements Background, Serializable {
 
     private String imageLocation;
-    private Image originalImage;
+    private transient Image originalImage;
+    private transient boolean init = false;
 
     /**
      * Create a new background that's a certain image.
@@ -46,13 +48,20 @@ public class ImageBackground implements Background {
      * @param imageLocation the location of the background image.
      */
     public ImageBackground(String imageLocation) {
-        File f = new File("img", imageLocation);
         this.imageLocation = imageLocation;
-        if(f.exists()) {
-            originalImage = new Image(f.toURI().toString());
-        }
-        else {
-            originalImage = Utils.getImageFromColour(Color.BLACK);
+        initImage();
+    }
+    
+    private void initImage() {
+        if(!init) {
+            init=true;
+            File f = new File("img", imageLocation);
+            if(f.exists()) {
+                originalImage = new Image(f.toURI().toString());
+            }
+            else {
+                originalImage = Utils.getImageFromColour(Color.BLACK);
+            }
         }
     }
 
@@ -69,6 +78,7 @@ public class ImageBackground implements Background {
      * Get the background image.
      */
     public Image getImage() {
+        initImage();
         return originalImage;
     }
 

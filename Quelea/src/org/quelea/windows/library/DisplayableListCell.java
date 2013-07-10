@@ -57,7 +57,7 @@ public class DisplayableListCell<T> extends ListCell<T> {
      * @return a callback that sets the given context menu on each cell.
      */
     public static <T> Callback<ListView<T>, ListCell<T>> forListView(final ContextMenu contextMenu, final Callback<ListView<T>, ListCell<T>> cellFactory,
-            final Constraint constraint) {
+            final Constraint<T> constraint) {
         return new Callback<ListView<T>, ListCell<T>>() {
             @Override
             public ListCell<T> call(ListView<T> listView) {

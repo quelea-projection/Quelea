@@ -19,6 +19,7 @@
 package org.quelea.data;
 
 import java.io.File;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -28,14 +29,15 @@ import javafx.scene.control.ComboBox;
 import javafx.scene.control.TextField;
 import javafx.scene.paint.Color;
 import org.quelea.services.languages.LabelGrabber;
+import org.quelea.services.utils.SerializableColor;
 
 /**
  *
  * @author Michael
  */
-public class ColourBackground implements Background {
+public class ColourBackground implements Background, Serializable {
 
-    private Color colour;
+    private SerializableColor colour;
 
     /**
      * Create a new background that's a certain colour.
@@ -43,7 +45,7 @@ public class ColourBackground implements Background {
      * @param colour the colour of the background.
      */
     public ColourBackground(Color colour) {
-        this.colour = colour;
+        this.colour = new SerializableColor(colour);
     }
 
     /**
@@ -53,7 +55,7 @@ public class ColourBackground implements Background {
      * @return the colour of the background.
      */
     public Color getColour() {
-        return colour;
+        return colour.getColor();
     }
     
     /**
@@ -85,8 +87,8 @@ public class ColourBackground implements Background {
 
     @Override
     public int hashCode() {
-        int hash = 7;
-        hash = 13 * hash + Objects.hashCode(this.colour);
+        int hash = 5;
+        hash = 47 * hash + Objects.hashCode(this.colour);
         return hash;
     }
 
@@ -104,5 +106,5 @@ public class ColourBackground implements Background {
         }
         return true;
     }
-    
+
 }
