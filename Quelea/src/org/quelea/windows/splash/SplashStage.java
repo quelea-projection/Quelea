@@ -96,7 +96,7 @@ public class SplashStage extends Stage {
             }
             else if(version == Version.BETA) {
                 minorText.setFont(Font.loadFont("file:icons/Ubuntu-RI.ttf", 26));
-                minorText.setLayoutX(36);
+                minorText.setLayoutX(70);
                 minorText.setLayoutY(305);
             }
         }
