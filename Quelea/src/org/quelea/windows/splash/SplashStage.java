@@ -38,6 +38,7 @@ import javafx.stage.Screen;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import org.quelea.services.utils.QueleaProperties;
+import org.quelea.services.utils.Utils;
 
 /**
  * The splash screen to display when the program starts.
@@ -58,7 +59,7 @@ public class SplashStage extends Stage {
     public SplashStage() {
         initModality(Modality.APPLICATION_MODAL);
         initStyle(StageStyle.UNDECORATED);
-        getIcons().add(new Image("file:icons/logo.png"));
+        Utils.addIconsToStage(this);
         setTitle("Quelea loading...");
         String minorVersion = QueleaProperties.VERSION.getMinorVersionString();
         Image splashImage = new Image("file:icons/splash-bare.png");

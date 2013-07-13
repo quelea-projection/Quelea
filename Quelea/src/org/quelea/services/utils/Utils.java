@@ -135,6 +135,18 @@ public final class Utils {
     }
 
     /**
+     * Add the Quelea icon(s) to a stage.
+     * <p/>
+     * @param stage the stage to add the icons to.
+     */
+    public static void addIconsToStage(Stage stage) {
+//        stage.getIcons().add(new Image("file:icons/logo64.png"));
+//        stage.getIcons().add(new Image("file:icons/logo48.png"));
+        stage.getIcons().add(new Image("file:icons/logo32.png"));
+//        stage.getIcons().add(new Image("file:icons/logo16.png"));
+    }
+
+    /**
      * Converts an AWT rectangle to a JavaFX bounds object.
      * <p/>
      * @param rect the rectangle to convert.
