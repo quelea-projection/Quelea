@@ -51,6 +51,7 @@ public class OptionsGeneralPanel extends GridPane implements PropertyPanel {
     private final CheckBox displaySongInfoCheckBox;
     private final CheckBox oneLineModeCheckBox;
     private final CheckBox textShadowCheckBox;
+    private final CheckBox clearLiveOnRemoveCheckBox;
     private final CheckBox useOOCheckBox;
     private final ComboBox<TextPosition> textPositionComboBox;
     private final ComboBox<LanguageFile> languageFileComboBox;
@@ -169,6 +170,15 @@ public class OptionsGeneralPanel extends GridPane implements PropertyPanel {
         startupLabel.setLabelFor(textShadowCheckBox);
         GridPane.setConstraints(textShadowCheckBox, 2, rows);
         getChildren().add(textShadowCheckBox);
+        rows++;
+
+        Label clearLiveOnRemoveLabel = new Label(LabelGrabber.INSTANCE.getLabel("clear.live.on.remove.schedule") + " ");
+        GridPane.setConstraints(clearLiveOnRemoveLabel, 1, rows);
+        getChildren().add(clearLiveOnRemoveLabel);
+        clearLiveOnRemoveCheckBox = new CheckBox();
+        startupLabel.setLabelFor(clearLiveOnRemoveCheckBox);
+        GridPane.setConstraints(clearLiveOnRemoveCheckBox, 2, rows);
+        getChildren().add(clearLiveOnRemoveCheckBox);
         rows++;
         
         Label textPositionLabel = new Label(LabelGrabber.INSTANCE.getLabel("text.position.label"));
@@ -298,6 +308,7 @@ public class OptionsGeneralPanel extends GridPane implements PropertyPanel {
         displaySongInfoCheckBox.setSelected(props.checkDisplaySongInfoText());
         oneLineModeCheckBox.setSelected(props.getOneLineMode());
         textShadowCheckBox.setSelected(props.getTextShadow());
+        clearLiveOnRemoveCheckBox.setSelected(props.getClearLiveOnRemove());
         maxCharsSlider.setValue(props.getMaxChars());
 //        minLinesSlider.setValue(props.getMinLines());
         borderThicknessSlider.setValue(props.getOutlineThickness());
@@ -325,6 +336,8 @@ public class OptionsGeneralPanel extends GridPane implements PropertyPanel {
         props.setDisplaySongInfoText(checkDisplayInfo);
         boolean textShadow = getTextShadowCheckBox().isSelected();
         props.setTextShadow(textShadow);
+        boolean clearLive = clearLiveOnRemoveCheckBox.isSelected();
+        props.setClearLiveOnRemove(clearLive);
         boolean oneLineMode = getOneLineModeCheckBox().isSelected();
         props.setOneLineMode(oneLineMode);
         //One line mode needs to be updated manually
