@@ -150,6 +150,28 @@ public final class QueleaProperties extends Properties {
     }
 
     /**
+     * Determine if, when an item is removed from the schedule and displayed on
+     * the live view, whether it should be removed from the live view or kept
+     * until something replaces it.
+     * <p/>
+     * @return true if it should be cleared, false otherwise.
+     */
+    public boolean getClearLiveOnRemove() {
+        return Boolean.parseBoolean(getProperty("clear.live.on.remove", "true"));
+    }
+
+    /**
+     * Set if, when an item is removed from the schedule and displayed on
+     * the live view, whether it should be removed from the live view or kept
+     * until something replaces it.
+     * <p/>
+     * @param val true if it should be cleared, false otherwise.
+     */
+    public void setClearLiveOnRemove(boolean val) {
+        setProperty("clear.live.on.remove", Boolean.toString(val));
+    }
+
+    /**
      * Get the location of Quelea's Facebook page.
      * <p/>
      * @return the location of the facebook page.

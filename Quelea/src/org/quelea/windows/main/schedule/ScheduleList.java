@@ -34,6 +34,7 @@ import org.quelea.data.displayable.Displayable;
 import org.quelea.data.displayable.ImageDisplayable;
 import org.quelea.data.displayable.SongDisplayable;
 import org.quelea.services.utils.LoggerUtils;
+import org.quelea.services.utils.QueleaProperties;
 import org.quelea.windows.library.Constraint;
 import org.quelea.windows.library.DisplayableListCell;
 import org.quelea.windows.main.QueleaApp;
@@ -212,7 +213,7 @@ public class ScheduleList extends ListView<Displayable> {
         if(selectedIndex != -1) {
             Displayable d = selectionModelProperty().get().getSelectedItem();
             Displayable live = QueleaApp.get().getMainWindow().getMainPanel().getLivePanel().getDisplayable();
-            if(d == live) {
+            if(d == live && QueleaProperties.get().getClearLiveOnRemove()) {
                 QueleaApp.get().getMainWindow().getMainPanel().getLivePanel().clear();
             }
             Displayable preview = QueleaApp.get().getMainWindow().getMainPanel().getPreviewPanel().getDisplayable();
