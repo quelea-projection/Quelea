@@ -332,3 +332,4 @@ add.to.database.question=Add to database?
 select.export.songs.line1=The following songs are in the database.
 select.export.songs.line2=Select the ones you want to add to the song pack then hit "Add".
 add.to.songpack.question=Add to song pack?
+projection.window.title=Projection Window
