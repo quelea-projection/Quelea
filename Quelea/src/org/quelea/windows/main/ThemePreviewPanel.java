@@ -30,6 +30,7 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.Window;
@@ -140,6 +141,9 @@ public class ThemePreviewPanel extends VBox {
         }
         buttonPanel.getChildren().add(selectButton);
         if (theme != ThemeDTO.DEFAULT_THEME) {
+            Region spacer = new Region();
+            HBox.setHgrow(spacer, javafx.scene.layout.Priority.ALWAYS);
+            buttonPanel.getChildren().add(spacer);
             buttonPanel.getChildren().add(editButton);
             buttonPanel.getChildren().add(removeButton);
         }

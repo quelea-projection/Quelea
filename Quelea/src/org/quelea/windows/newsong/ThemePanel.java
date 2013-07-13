@@ -343,7 +343,7 @@ public class ThemePanel extends BorderPane {
                         panel.updateTheme(true, theme);
                         selectedTheme = theme;
                     }
-                }, null));
+                }, null, null));
                 themeItem.setDisable(true);
                 themeItem.setStyle("-fx-background-color: #000000;");
                 themeMenu.getItems().add(themeItem);

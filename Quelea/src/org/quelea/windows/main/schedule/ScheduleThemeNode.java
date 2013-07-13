@@ -24,13 +24,18 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.event.EventHandler;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
@@ -40,6 +45,7 @@ import org.quelea.services.languages.LabelGrabber;
 import org.quelea.services.utils.LoggerUtils;
 import org.quelea.services.utils.QueleaProperties;
 import org.quelea.services.utils.Utils;
+import org.quelea.windows.main.MainWindow;
 import org.quelea.windows.main.QueleaApp;
 import org.quelea.windows.main.ThemePreviewPanel;
 import org.quelea.windows.newsong.EditThemeDialog;
@@ -58,15 +64,29 @@ public class ScheduleThemeNode extends BorderPane {
     private VBox contentPanel;
     private ThemeDTO tempTheme;
     private EditThemeDialog themeDialog;
+    private FlowPane themePreviews;
     private UpdateThemeCallback callback = null;
     private Window popup;
 
-    public ScheduleThemeNode(UpdateThemeCallback callback, Window popup) {
+    public ScheduleThemeNode(UpdateThemeCallback callback, Window popup, Button themeButton) {
         this.callback = callback;
         this.popup = popup;
         themeDialog = new EditThemeDialog();
         themeDialog.initModality(Modality.APPLICATION_MODAL);
         contentPanel = new VBox();
+        BorderPane.setMargin(contentPanel, new Insets(10));
+        themeButton.layoutXProperty().addListener(new ChangeListener<Number>() {
+            @Override
+            public void changed(ObservableValue<? extends Number> ov, Number t, Number t1) {
+                MainWindow mainWindow = QueleaApp.get().getMainWindow();
+                double width = mainWindow.getWidth() - t1.doubleValue() - 100;
+                if(width < 50) {
+                    width = 50;
+                }
+                contentPanel.setPrefWidth(width);
+                contentPanel.setMaxWidth(width);
+            }
+        });
         contentPanel.setSpacing(5);
         refresh();
         setCenter(contentPanel);
@@ -110,9 +130,10 @@ public class ScheduleThemeNode extends BorderPane {
         selectThemeLabel.setStyle("-fx-font-weight: bold;");
         northPanel.getChildren().add(selectThemeLabel);
         contentPanel.getChildren().add(northPanel);
-        final HBox themePreviews = new HBox();
-        themePreviews.setSpacing(10);
-        themePreviews.setFillHeight(true);
+        themePreviews = new FlowPane();
+        themePreviews.setAlignment(Pos.CENTER);
+        themePreviews.setHgap(10);
+        themePreviews.setVgap(10);
         for(final ThemeDTO theme : themes) {
             ThemePreviewPanel panel = new ThemePreviewPanel(theme, popup);
             panel.getSelectButton().setOnAction(new EventHandler<javafx.event.ActionEvent>() {
