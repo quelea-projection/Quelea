@@ -156,7 +156,7 @@ public class SongSearchIndex implements SearchIndex<SongDisplayable> {
         List<SongDisplayable> ret;
         try (IndexSearcher searcher = new IndexSearcher(IndexReader.open(index))) {
             Query q = new ComplexPhraseQueryParser(Version.LUCENE_35, typeStr, analyzer).parse(sanctifyQueryString);
-            TopScoreDocCollector collector = TopScoreDocCollector.create(100, true);
+            TopScoreDocCollector collector = TopScoreDocCollector.create(10000, true);
             searcher.search(q, collector);
             ScoreDoc[] hits = collector.topDocs().scoreDocs;
             ret = new ArrayList<>();
