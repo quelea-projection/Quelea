@@ -39,12 +39,12 @@ import javafx.scene.layout.Region;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import org.quelea.data.ThemeDTO;
-import javafx.stage.Window;
 import org.quelea.data.displayable.Displayable;
 import org.quelea.data.displayable.TextDisplayable;
 import org.quelea.data.displayable.TextSection;
 import org.quelea.services.languages.LabelGrabber;
 import org.quelea.services.utils.LoggerUtils;
+import org.quelea.services.utils.Utils;
 import org.quelea.windows.main.QueleaApp;
 import org.quelea.windows.main.actionhandlers.RemoveScheduleItemActionHandler;
 
@@ -70,6 +70,7 @@ public class SchedulePanel extends BorderPane {
      * Create and initialise the schedule panel.
      */
     public SchedulePanel() {
+        themeButton = new Button("", new ImageView(new Image("file:icons/settings.png", 16, 16, false, true)));
         scheduleList = new ScheduleList();
         scheduleList.itemsProperty().get().addListener(new ListChangeListener<Displayable>() {
             @Override
@@ -79,6 +80,8 @@ public class SchedulePanel extends BorderPane {
         });
 
         themePopup = new Stage();
+        themePopup.setTitle(LabelGrabber.INSTANCE.getLabel("theme.select.text"));
+        Utils.addIconsToStage(themePopup);
         themePopup.initStyle(StageStyle.UNDECORATED);
         themePopup.focusedProperty().addListener(new ChangeListener<Boolean>() {
             @Override
@@ -106,11 +109,10 @@ public class SchedulePanel extends BorderPane {
                     }
                 }
             }
-        }, themePopup);
+        }, themePopup, themeButton);
         scheduleThemeNode.setStyle("-fx-background-color:WHITE;-fx-border-color: rgb(49, 89, 23);-fx-border-radius: 5;");
         themePopup.setScene(new Scene(scheduleThemeNode));
 
-        themeButton = new Button("", new ImageView(new Image("file:icons/settings.png", 16, 16, false, true)));
         themeButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent t) {
@@ -197,4 +199,9 @@ public class SchedulePanel extends BorderPane {
     public ScheduleList getScheduleList() {
         return scheduleList;
     }
+
+    public Button getThemeButton() {
+        return themeButton;
+    }
+    
 }
