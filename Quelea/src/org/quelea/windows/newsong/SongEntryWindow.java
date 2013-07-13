@@ -70,7 +70,7 @@ public class SongEntryWindow extends Stage {
         initModality(Modality.APPLICATION_MODAL);
         initStyle(StageStyle.UTILITY);
         updateDBOnHide = true;
-        getIcons().add(new Image("file:icons/logo.png"));
+        Utils.addIconsToStage(this);
 
         BorderPane mainPane = new BorderPane();
         tabPane = new TabPane();
