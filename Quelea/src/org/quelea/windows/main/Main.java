@@ -154,7 +154,13 @@ public final class Main extends Application {
             LOGGER.log(Level.SEVERE, "Couldn't load dictionaries", ex);
         }
         LOGGER.log(Level.INFO, "Registered dictionary");
-
+        
+        try {
+            bibleLoader.join();
+        }
+        catch(InterruptedException ex) {
+            ex.printStackTrace();
+        }
         BibleManager.get().buildIndex();
 
         Platform.runLater(new Runnable() {
