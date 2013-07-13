@@ -68,6 +68,7 @@ public class MainWindow extends Stage {
      */
     public MainWindow(boolean setApplicationWindow) {
         setTitle("Quelea " + QueleaProperties.VERSION.getFullVersionString());
+        Utils.addIconsToStage(this);
 
         BorderPane mainPane = new BorderPane();
         VBox.setVgrow(mainPane, Priority.SOMETIMES);
@@ -83,8 +84,6 @@ public class MainWindow extends Stage {
                 new ExitActionHandler().exit(t);
             }
         });
-
-        getIcons().add(new Image("file:icons/logo.png"));
 
         LOGGER.log(Level.INFO, "Creating tag dialog");
         tagDialog = new TagDialog();

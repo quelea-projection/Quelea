@@ -24,7 +24,9 @@ import javafx.scene.Scene;
 import javafx.scene.image.Image;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
+import org.quelea.services.languages.LabelGrabber;
 import org.quelea.services.utils.LoggerUtils;
+import org.quelea.services.utils.Utils;
 import org.quelea.windows.main.DisplayCanvas.Priority;
 
 /**
@@ -52,8 +54,8 @@ public class DisplayStage extends Stage {
      */
     public DisplayStage(Bounds area, boolean stageView) {
         initStyle(StageStyle.UNDECORATED);
-        getIcons().add(new Image("file:icons/logo.png"));
-        setTitle("Projection window");
+        Utils.addIconsToStage(this);
+        setTitle(LabelGrabber.INSTANCE.getLabel("projection.window.title"));
         setArea(area);
         canvas = new DisplayCanvas(true, stageView, null,
                 stageView ? Priority.HIGH : Priority.MID);
