@@ -332,3 +332,5 @@ add.to.database.question=Lägg till i databasen?
 select.export.songs.line1=Följande sånger finns i databasen.
 select.export.songs.line2=Välj vilka du vill lägga till i sångboken och tryck sedan på "Lägg till".
 add.to.songpack.question=Lägg till i sångbok?
+projection.window.title=Projektionsfönster
+clear.live.on.remove.schedule=Ta även bort från live-visning när något raderas från gudstjänstordningen
