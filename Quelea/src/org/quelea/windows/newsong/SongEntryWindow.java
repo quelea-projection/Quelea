@@ -116,6 +116,7 @@ public class SongEntryWindow extends Stage {
                     QueleaApp.get().getMainWindow().getMainPanel().getSchedulePanel().getScheduleList().add(getSong());
                 }
                 QueleaApp.get().getMainWindow().getMainPanel().getPreviewPanel().refresh();
+                QueleaApp.get().getMainWindow().getMainPanel().getLivePanel().refresh();
             }
         });
         cancelButton = new Button(LabelGrabber.INSTANCE.getLabel("cancel.button"), new ImageView(new Image("file:icons/cross.png")));
