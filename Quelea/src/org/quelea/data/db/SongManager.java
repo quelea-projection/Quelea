@@ -17,6 +17,7 @@
  */
 package org.quelea.data.db;
 
+import java.lang.ref.SoftReference;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -49,6 +50,7 @@ public final class SongManager {
     private SearchIndex<SongDisplayable> index;
     private boolean addedToIndex;
     private boolean error;
+    private SoftReference<SongDisplayable[]> cacheSongs = new SoftReference<>(null);
     private final Set<DatabaseListener> listeners;
 
     /**
@@ -115,6 +117,9 @@ public final class SongManager {
         if(Platform.isFxApplicationThread()) {
             LOGGER.log(Level.WARNING, "getSongs() should not be called on platform thread!", new RuntimeException("Debug exception"));
         }
+        if(cacheSongs.get()!=null) {
+            return cacheSongs.get();
+        }
         final Set<SongDisplayable> songs = new TreeSet<>();
         HibernateUtil.execute(new HibernateUtil.SessionCallback() {
             @Override
@@ -152,7 +157,9 @@ public final class SongManager {
             LOGGER.log(Level.INFO, "Adding {0} songs to index", songs.size());
             index.addAll(songs);
         }
-        return songs.toArray(new SongDisplayable[songs.size()]);
+        SongDisplayable[] songArr = songs.toArray(new SongDisplayable[songs.size()]);
+        cacheSongs = new SoftReference<>(songArr);
+        return songArr;
     }
 
     /**
@@ -164,6 +171,7 @@ public final class SongManager {
      * @return true if the operation succeeded, false otherwise.
      */
     public synchronized boolean addSong(final SongDisplayable song, final boolean fireUpdate) {
+        cacheSongs.clear();
         if(song.getSections().length == 0) {
             return false;
         }
@@ -203,6 +211,7 @@ public final class SongManager {
      * @return true if the operation succeeded, false otherwise.
      */
     public synchronized boolean updateSong(final SongDisplayable song) {
+        cacheSongs.clear();
         HibernateUtil.execute(new HibernateUtil.SessionCallback() {
             @Override
             public void execute(Session session) {
@@ -250,6 +259,7 @@ public final class SongManager {
      * @return true if the operation succeeded, false otherwise.
      */
     public synchronized boolean removeSong(final SongDisplayable song) {
+        cacheSongs.clear();
         HibernateUtil.execute(new HibernateUtil.SessionCallback() {
             @Override
             public void execute(Session session) {
