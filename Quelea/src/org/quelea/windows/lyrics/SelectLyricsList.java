@@ -21,14 +21,16 @@ import java.util.List;
 import javafx.event.EventHandler;
 import javafx.scene.Cursor;
 import javafx.scene.ImageCursor;
+import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
 import javafx.scene.image.Image;
+import javafx.util.Callback;
 import org.quelea.data.displayable.TextSection;
 import org.quelea.services.utils.QueleaProperties;
 
 /**
  * A list displaying the different sections in the song.
- *
+ * <p/>
  * @author Michael
  */
 public class SelectLyricsList extends ListView<TextSection> {
@@ -41,7 +43,6 @@ public class SelectLyricsList extends ListView<TextSection> {
      */
     public SelectLyricsList() {
         setOnMouseClicked(new EventHandler<javafx.scene.input.MouseEvent>() {
-
             @Override
             public void handle(javafx.scene.input.MouseEvent t) {
 //                requestFocus();
@@ -54,7 +55,6 @@ public class SelectLyricsList extends ListView<TextSection> {
         oneLineMode = QueleaProperties.get().getOneLineMode();
 
         setOnMouseMoved(new EventHandler<javafx.scene.input.MouseEvent>() {
-
             @Override
             public void handle(javafx.scene.input.MouseEvent t) {
                 if((t.isShiftDown() || t.isControlDown()) && !itemsProperty().get().isEmpty()) {
@@ -65,11 +65,38 @@ public class SelectLyricsList extends ListView<TextSection> {
                 }
             }
         });
+        setCellFactory(new Callback<ListView<TextSection>, ListCell<TextSection>>() {
+            @Override
+            public ListCell<TextSection> call(ListView<TextSection> p) {
+                ListCell<TextSection> cell = new ListCell<TextSection>() {
+                    @Override
+                    protected void updateItem(TextSection t, boolean bln) {
+                        super.updateItem(t, bln);
+                        if(t != null) {
+                            String[] text = t.getText(false, false);
+                            StringBuilder builder = new StringBuilder();
+                            for(String str : text) {
+                                builder.append(str);
+                                if(oneLineMode) {
+                                    builder.append(" ");
+                                }
+                                else {
+                                    builder.append("\n");
+                                }
+                            }
+                            setText(builder.toString().trim());
+                        }
+                    }
+                };
+
+                return cell;
+            }
+        });
     }
 
     /**
      * Set whether this list should use one line mode.
-     *
+     * <p/>
      * @param val true if it should be in one line mode, false otherwise.
      */
     public void setOneLineMode(boolean val) {
