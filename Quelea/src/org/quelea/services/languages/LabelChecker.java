@@ -61,7 +61,7 @@ public class LabelChecker {
     public boolean compare() {
         boolean ok = true;
         boolean first = false;
-        System.out.print("Checking \"" + name + "\"...");
+        System.err.print("\nChecking \"" + name + "\"...");
         for(Object okey : engLabels.keySet()) {
             String key = (String) okey;
             String prop = labels.getProperty(key);
@@ -69,14 +69,14 @@ public class LabelChecker {
                 ok = false;
                 if(!first) {
                     first = true;
-                    System.out.println();
+                    System.err.println();
                     System.err.println("MISSING LABELS:");
                 }
-                System.err.println(key + " (" + engLabels.getProperty(key) + ")");
+                System.err.println(key + "=" + engLabels.getProperty(key));
             }
         }
         if(ok) {
-            System.out.println("All good.");
+            System.err.println("All good.");
         }
         return ok;
     }
