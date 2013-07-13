@@ -85,7 +85,8 @@ public class LabelChecker {
         System.out.println("Checking language files:");
         boolean ok = true;
         for(File file : new File("languages").listFiles()) {
-            if(!file.getName().equals("gb.lang")) { //Exclude english file since this is what we work from!
+            if(!file.getName().equals("gb.lang")
+                    && !file.getName().equals("us.lang")) { //Exclude GB english file since this is what we work from, and US file because it gets translated automatically!
                 boolean result = new LabelChecker(file.getName()).compare();
                 if(!result) {
                     ok = false;
@@ -93,8 +94,7 @@ public class LabelChecker {
             }
         }
         if(!ok) {
-            System.err.println();
-            System.err.println("WARNING: Some language files have missing labels. "
+            System.err.println("\nWARNING: Some language files have missing labels. "
                     + "This is normal for intermediate builds and development releases, "
                     + "but for final releases this should be fixed if possible ."
                     + "Ideally find the original person who contributed the file "
