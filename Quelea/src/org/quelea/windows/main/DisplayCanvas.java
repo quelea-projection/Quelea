@@ -17,11 +17,13 @@
  */
 package org.quelea.windows.main;
 
-import java.util.Objects;
 import java.util.logging.Logger;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.collections.FXCollections;
+import javafx.collections.ListChangeListener;
+import javafx.collections.ObservableList;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.image.ImageView;
@@ -29,6 +31,7 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import org.quelea.data.displayable.Displayable;
 import org.quelea.services.notice.NoticeDrawer;
+import org.quelea.services.notice.NoticeOverlay;
 import org.quelea.services.utils.LoggerUtils;
 import org.quelea.services.utils.Utils;
 
@@ -87,7 +90,6 @@ public class DisplayCanvas extends StackPane {
         this.dravingPriority = dravingPriority;
         setMinHeight(0);
         setMinWidth(0);
-        noticeDrawer = new NoticeDrawer(this);
         background = getNewImageView();
         this.updater = updater;
         heightProperty().addListener(new ChangeListener<Number>() {
@@ -103,10 +105,32 @@ public class DisplayCanvas extends StackPane {
             }
         });
         getChildren().add(background);
+        noticeDrawer = new NoticeDrawer(this);
+        final Node noticeOverlay = noticeDrawer.getOverlay();
+        getChildren().addListener(new ListChangeListener<Node>() {
+            @Override
+            public void onChanged(ListChangeListener.Change<? extends Node> change) {
+                while(change.next()) {
+                    if(!change.wasRemoved()) {
+                        noticeOverlay.toFront();
+                    }
+                }
+            }
+        });
+        getChildren().add(noticeOverlay);
     }
 
     public void clear() {
         setCurrentDisplayable(null);
+    }
+    
+    public void clearApartFromNotice() {
+        ObservableList<Node> list = FXCollections.observableArrayList(getChildren());
+        for(Node node : list) {
+            if(!(node instanceof NoticeOverlay)) {
+                getChildren().remove(node);
+            }
+        }
     }
 
     public void setType(Type type) {
@@ -147,7 +171,7 @@ public class DisplayCanvas extends StackPane {
         Platform.runLater(new Runnable() {
             @Override
             public void run() {
-                if (updater != null) {
+                if(updater != null) {
                     updater.updateCallback();
                 }
             }
@@ -186,7 +210,7 @@ public class DisplayCanvas extends StackPane {
     }
 
     public void update() {
-        if (this.updater != null) {
+        if(this.updater != null) {
             updateCanvas(this.updater);
         }
     }
@@ -197,7 +221,7 @@ public class DisplayCanvas extends StackPane {
      */
     public void toggleClear() {
         cleared ^= true; //invert
-        if (this.updater != null) {
+        if(this.updater != null) {
             updateCanvas(this.updater);
         }
     }
@@ -217,15 +241,16 @@ public class DisplayCanvas extends StackPane {
      */
     public void toggleBlack() {
         blacked ^= true; //invert
-        if (blacked) {
+        if(blacked) {
             currentBackground = getCanvasBackground();
-            getChildren().clear();
+            clearApartFromNotice();
             setCanvasBackground(blackImg);
-        } else {
+        }
+        else {
             getChildren().add(currentBackground);
             setCanvasBackground(currentBackground);
         }
-        if (this.updater != null) {
+        if(this.updater != null) {
             updateCanvas(this.updater);
         }
     }

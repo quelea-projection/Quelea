@@ -18,7 +18,9 @@
 package org.quelea.services.notice;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.EventHandler;
@@ -38,6 +40,7 @@ import org.quelea.windows.main.DisplayCanvas;
 
 /**
  * The dialog used to manage the notices.
+ * <p/>
  * @author Michael
  */
 public class NoticeDialog extends Stage implements NoticesChangedListener {
@@ -51,6 +54,7 @@ public class NoticeDialog extends Stage implements NoticesChangedListener {
 
     /**
      * Create a new notice dialog.
+     * <p/>
      * @param owner the owner of this dialog.
      */
     public NoticeDialog() {
@@ -62,7 +66,6 @@ public class NoticeDialog extends Stage implements NoticesChangedListener {
         newNoticeButton = new Button(LabelGrabber.INSTANCE.getLabel("new.notice.text"));
         newNoticeButton.setAlignment(Pos.CENTER);
         newNoticeButton.setOnAction(new EventHandler<javafx.event.ActionEvent>() {
-
             @Override
             public void handle(javafx.event.ActionEvent t) {
                 Notice notice = NoticeEntryDialog.getNotice(null);
@@ -78,7 +81,6 @@ public class NoticeDialog extends Stage implements NoticesChangedListener {
         editNoticeButton.setAlignment(Pos.CENTER);
         editNoticeButton.setDisable(true);
         editNoticeButton.setOnAction(new EventHandler<javafx.event.ActionEvent>() {
-
             @Override
             public void handle(javafx.event.ActionEvent t) {
                 NoticeEntryDialog.getNotice(noticeList.getSelectionModel().getSelectedItem());
@@ -88,7 +90,6 @@ public class NoticeDialog extends Stage implements NoticesChangedListener {
         removeNoticeButton.setAlignment(Pos.CENTER);
         removeNoticeButton.setDisable(true);
         removeNoticeButton.setOnAction(new EventHandler<javafx.event.ActionEvent>() {
-
             @Override
             public void handle(javafx.event.ActionEvent t) {
                 Notice notice = noticeList.getSelectionModel().getSelectedItem();
@@ -108,7 +109,6 @@ public class NoticeDialog extends Stage implements NoticesChangedListener {
 
         noticeList = new ListView<>();
         noticeList.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<Notice>() {
-
             @Override
             public void changed(ObservableValue<? extends Notice> ov, Notice t, Notice t1) {
                 editNoticeButton.setDisable(noticeList.getSelectionModel().getSelectedItem() == null);
@@ -119,7 +119,6 @@ public class NoticeDialog extends Stage implements NoticesChangedListener {
 
         doneButton = new Button(LabelGrabber.INSTANCE.getLabel("done.text"), new ImageView(new Image("file:icons/tick.png")));
         doneButton.setOnAction(new EventHandler<javafx.event.ActionEvent>() {
-
             @Override
             public void handle(javafx.event.ActionEvent t) {
                 hide();
@@ -132,31 +131,30 @@ public class NoticeDialog extends Stage implements NoticesChangedListener {
     }
 
     /**
-     * Called when the notice status has updated, i.e. it's removed or the 
+     * Called when the notice status has updated, i.e. it's removed or the
      * counter is decremented.
-     * @param notices the list of notices currently in possession by the calling 
-     * canvas.
      */
     @Override
-    public void noticesUpdated(List<Notice> notices) {
-//        ((DefaultListModel<Notice>) noticeList.getModel()).removeAllElements();
-//        Set<Notice> noticesSet = new HashSet<>();
-//        for (NoticeDrawer drawer : noticeDrawers) {
-//            noticesSet.addAll(drawer.getNotices());
-//        }
-//        for (Notice notice : noticesSet) {
-//            ((DefaultListModel<Notice>) noticeList.getModel()).addElement(notice);
-//        }
+    public void noticesUpdated() {
+        Notice selected = noticeList.getSelectionModel().getSelectedItem();
+        noticeList.getItems().clear();
+        Set<Notice> noticesSet = new HashSet<>();
+        for(NoticeDrawer drawer : noticeDrawers) {
+            noticesSet.addAll(drawer.getNotices());
+        }
+        for(Notice notice : noticesSet) {
+            noticeList.getItems().add(notice);
+        }
+        noticeList.getSelectionModel().select(selected);
     }
-
 
     /**
      * Register a canvas to be updated using this notice dialog.
+     * <p/>
      * @param canvas the canvas to register.
      */
     public void registerCanvas(DisplayCanvas canvas) {
         noticeDrawers.add(canvas.getNoticeDrawer());
         canvas.getNoticeDrawer().addNoticeChangedListener(this);
     }
-
 }
