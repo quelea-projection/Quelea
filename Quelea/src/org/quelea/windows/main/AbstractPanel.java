@@ -67,7 +67,7 @@ public abstract class AbstractPanel extends BorderPane implements ContainedPanel
     public void clear() {
         for(DisplayCanvas canvas : getCanvases()) {
             canvas.clear();
-            canvas.getChildren().clear();;
+            canvas.clearApartFromNotice();
         }
     }
 
