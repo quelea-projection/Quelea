@@ -17,11 +17,16 @@
  */
 package org.quelea.services.importexport;
 
+import java.util.ArrayList;
+import java.util.List;
 import javafx.application.Platform;
 import javafx.event.EventHandler;
 import org.quelea.data.db.SongManager;
+import org.quelea.data.db.model.Song;
 import org.quelea.data.displayable.SongDisplayable;
 import org.quelea.services.languages.LabelGrabber;
+import org.quelea.windows.main.QueleaApp;
+import org.quelea.windows.main.StatusPanel;
 
 /**
  * A dialog used for selecting the songs to be entered into the database after
@@ -31,6 +36,8 @@ import org.quelea.services.languages.LabelGrabber;
  */
 public class SelectImportedSongsDialog extends SelectSongsDialog {
 
+    private StatusPanel statusPanel;
+
     /**
      * Create a new imported songs dialog.
      * <p/>
@@ -38,10 +45,10 @@ public class SelectImportedSongsDialog extends SelectSongsDialog {
      */
     public SelectImportedSongsDialog() {
         super(new String[]{
-                    LabelGrabber.INSTANCE.getLabel("select.imported.songs.line1"),
-                    LabelGrabber.INSTANCE.getLabel("select.imported.songs.line2"),
-                    LabelGrabber.INSTANCE.getLabel("select.imported.songs.line3")
-                }, LabelGrabber.INSTANCE.getLabel("add.text"), LabelGrabber.INSTANCE.getLabel("add.to.database.question"));
+            LabelGrabber.INSTANCE.getLabel("select.imported.songs.line1"),
+            LabelGrabber.INSTANCE.getLabel("select.imported.songs.line2"),
+            LabelGrabber.INSTANCE.getLabel("select.imported.songs.line3")
+        }, LabelGrabber.INSTANCE.getLabel("add.text"), LabelGrabber.INSTANCE.getLabel("add.to.database.question"));
 
         getAddButton().setOnAction(new EventHandler<javafx.event.ActionEvent>() {
             @Override
@@ -49,21 +56,27 @@ public class SelectImportedSongsDialog extends SelectSongsDialog {
                 getAddButton().setDisable(true);
                 new Thread() {
                     public void run() {
-                        for(int i = 0; i < getSongs().size(); i++) {
-                            SongDisplayable song = getSongs().get(i);
-                            if(getCheckedColumn().getCellData(i)) {
-                                SongManager.get().addSong(song, false);
-                            }
-                        }
-
                         Platform.runLater(new Runnable() {
                             @Override
                             public void run() {
-                                SongManager.get().fireUpdate();
                                 hide();
                                 getAddButton().setDisable(false);
+                                statusPanel = QueleaApp.get().getStatusGroup().addPanel(LabelGrabber.INSTANCE.getLabel("importing.status"));
+                                statusPanel.removeCancelButton();
                             }
                         });
+                        List<SongDisplayable> songDisplayables = new ArrayList<>();
+                        for(int i = 0; i < getSongs().size(); i++) {
+                            SongDisplayable song = getSongs().get(i);
+                            if(getCheckedColumn().getCellData(i)) {
+                                songDisplayables.add(song);
+                            }
+                        }
+                        SongManager.get().addSong(songDisplayables, false);
+                        SongManager.get().fireUpdate();
+                        if(statusPanel != null) {
+                            statusPanel.done();
+                        }
                     }
                 }.start();
             }
