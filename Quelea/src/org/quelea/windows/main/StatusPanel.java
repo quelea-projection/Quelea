@@ -18,6 +18,7 @@
 package org.quelea.windows.main;
 
 import javafx.application.Platform;
+import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ProgressBar;
@@ -48,16 +49,25 @@ public class StatusPanel extends HBox {
      * @param index the index of this panel on the group.
      */
     StatusPanel(StatusPanelGroup group, String labelText, int index) {
+        setAlignment(Pos.CENTER);
         this.group = group;
         this.index = index;
         label = new Label(labelText);
         progressBar = new ProgressBar();
         progressBar.setMaxWidth(Double.MAX_VALUE); //Allow progress bar to fill space.
         HBox.setHgrow(progressBar, Priority.ALWAYS);
-        cancelButton = new Button("", new ImageView(new Image("file:icons/cross.png", 15, 15, false, true)));
+        cancelButton = new Button("", new ImageView(new Image("file:icons/cross.png", 13, 13, false, true)));
+        cancelButton.setStyle("-fx-background-insets: 0;-fx-background-color: rgba(0, 0, 0, 0);");
         getChildren().add(label);
         getChildren().add(progressBar);
         getChildren().add(cancelButton);
+    }
+    
+    /**
+     * Remove the cancel button from this status bar.
+     */
+    public void removeCancelButton() {
+        getChildren().remove(cancelButton);
     }
     
     /**

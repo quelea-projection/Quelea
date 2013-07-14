@@ -20,7 +20,9 @@ package org.quelea.data.db;
 import java.lang.ref.SoftReference;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.logging.Level;
@@ -48,7 +50,7 @@ public final class SongManager {
     private static final Logger LOGGER = LoggerUtils.getLogger();
     private static final SongManager INSTANCE = new SongManager();
     private SearchIndex<SongDisplayable> index;
-    private boolean addedToIndex;
+    private boolean indexIsClear;
     private boolean error;
     private SoftReference<SongDisplayable[]> cacheSongs = new SoftReference<>(null);
     private final Set<DatabaseListener> listeners;
@@ -58,7 +60,7 @@ public final class SongManager {
      */
     private SongManager() {
         listeners = new HashSet<>();
-        addedToIndex = false;
+        indexIsClear = true;
         index = new SongSearchIndex();
         error = false;
     }
@@ -117,7 +119,7 @@ public final class SongManager {
         if(Platform.isFxApplicationThread()) {
             LOGGER.log(Level.WARNING, "getSongs() should not be called on platform thread!", new RuntimeException("Debug exception"));
         }
-        if(cacheSongs.get()!=null) {
+        if(cacheSongs.get() != null) {
             return cacheSongs.get();
         }
         final Set<SongDisplayable> songs = new TreeSet<>();
@@ -152,14 +154,22 @@ public final class SongManager {
             }
         });
 
-        if(!addedToIndex) {
-            addedToIndex = true;
+        if(indexIsClear) {
+            indexIsClear = false;
             LOGGER.log(Level.INFO, "Adding {0} songs to index", songs.size());
             index.addAll(songs);
         }
         SongDisplayable[] songArr = songs.toArray(new SongDisplayable[songs.size()]);
         cacheSongs = new SoftReference<>(songArr);
         return songArr;
+    }
+
+    public boolean addSong(final SongDisplayable song, final boolean fireUpdate) {
+        return addSong(new SongDisplayable[]{song}, fireUpdate);
+    }
+
+    public boolean addSong(final Collection<SongDisplayable> song, final boolean fireUpdate) {
+        return addSong(song.toArray(new SongDisplayable[song.size()]), fireUpdate);
     }
 
     /**
@@ -170,34 +180,41 @@ public final class SongManager {
      * adding this song, false otherwise.
      * @return true if the operation succeeded, false otherwise.
      */
-    public synchronized boolean addSong(final SongDisplayable song, final boolean fireUpdate) {
+    public synchronized boolean addSong(final SongDisplayable[] songs, final boolean fireUpdate) {
         cacheSongs.clear();
-        if(song.getSections().length == 0) {
+        clearIndex();
+        final List<SongDisplayable> adjustedSongs = new ArrayList<>();
+        for(SongDisplayable song : songs) {
+            if(song.getSections().length > 0) {
+                adjustedSongs.add(song);
+            }
+        }
+        if(adjustedSongs.isEmpty()) {
             return false;
         }
-        final boolean nullTheme = song.getSections()[0].getTheme() == null;
-        final boolean nullTags = song.getTags() == null;
         HibernateUtil.execute(new HibernateUtil.SessionCallback() {
             @Override
             public void execute(Session session) {
-                Song newSong = new Song(song.getTitle(),
-                        song.getAuthor(),
-                        song.getLyrics(true, true),
-                        song.getCcli(),
-                        song.getCopyright(),
-                        song.getYear(),
-                        song.getPublisher(),
-                        song.getKey(),
-                        song.getCapo(),
-                        song.getInfo(),
-                        nullTheme ? ThemeDTO.DEFAULT_THEME.getTheme() : new Theme(song.getSections()[0].getTheme().getTheme()),
-                        nullTags ? new ArrayList<String>() : Arrays.asList(song.getTags()));
-                session.save(newSong);
+                for(SongDisplayable song : adjustedSongs) {
+                    final boolean nullTheme = song.getSections()[0].getTheme() == null;
+                    final boolean nullTags = song.getTags() == null;
+                    Song newSong = new Song(song.getTitle(),
+                            song.getAuthor(),
+                            song.getLyrics(true, true),
+                            song.getCcli(),
+                            song.getCopyright(),
+                            song.getYear(),
+                            song.getPublisher(),
+                            song.getKey(),
+                            song.getCapo(),
+                            song.getInfo(),
+                            nullTheme ? ThemeDTO.DEFAULT_THEME.getTheme() : new Theme(song.getSections()[0].getTheme().getTheme()),
+                            nullTags ? new ArrayList<String>() : Arrays.asList(song.getTags()));
+                    session.save(newSong);
+                }
             }
         });
-        if(addedToIndex) {
-            index.add(song);
-        }
+        getSongs();
         if(fireUpdate) {
             fireUpdate();
         }
@@ -212,6 +229,8 @@ public final class SongManager {
      */
     public synchronized boolean updateSong(final SongDisplayable song) {
         cacheSongs.clear();
+        clearIndex();
+
         HibernateUtil.execute(new HibernateUtil.SessionCallback() {
             @Override
             public void execute(Session session) {
@@ -233,14 +252,6 @@ public final class SongManager {
                     updatedSong.setTitle(song.getTitle());
                     updatedSong.setTheme(nullTheme ? ThemeDTO.DEFAULT_THEME.getTheme() : new Theme(song.getSections()[0].getTheme().getTheme()));
                     session.update(updatedSong);
-                    new Thread() {
-                        public void run() {
-                            if(addedToIndex) {
-                                index.remove(song);
-                                index.add(song);
-                            }
-                        }
-                    }.start();
                 }
                 catch(ObjectNotFoundException e) {
                     LOGGER.log(Level.INFO, "Updating song that doesn't exist, adding instead");
@@ -269,5 +280,10 @@ public final class SongManager {
         });
         fireUpdate();
         return true;
+    }
+
+    private void clearIndex() {
+        index.clear();
+        indexIsClear = true;
     }
 }
