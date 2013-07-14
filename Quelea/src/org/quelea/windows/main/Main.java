@@ -177,6 +177,11 @@ public final class Main extends Application {
                 };
                 songInitThread.start();
                 OOUtils.attemptInit();
+                try {
+                    bibleLoader.join(); //Make sure bibleloader has finished loading
+                }
+                catch(InterruptedException ex) {
+                }
                 mainWindow = new MainWindow(true);
 
                 new UpdateChecker().checkUpdate(false, false, false); //Check updates
@@ -208,11 +213,6 @@ public final class Main extends Application {
                 }
 
                 LOGGER.log(Level.INFO, "Final loading bits");
-                try {
-                    bibleLoader.join(); //Make sure bibleloader has finished loading
-                }
-                catch(InterruptedException ex) {
-                }
 //                Utils.centreOnMonitor(mainWindow, controlScreen);
                 mainWindow.toFront();
                 new ShortcutManager().addShortcuts(mainWindow);
