@@ -17,228 +17,181 @@
  */
 package org.quelea.services.notice;
 
-import java.awt.Font;
-import java.awt.image.BufferedImage;
+import com.sun.javafx.tk.FontMetrics;
+import com.sun.javafx.tk.Toolkit;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import javafx.animation.FadeTransition;
+import javafx.animation.KeyFrame;
+import javafx.animation.KeyValue;
+import javafx.animation.Timeline;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
+import javafx.geometry.Pos;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.StackPane;
+import javafx.scene.paint.Color;
+import javafx.scene.shape.Rectangle;
+import javafx.scene.text.Font;
+import javafx.scene.text.FontPosture;
+import javafx.scene.text.Text;
+import javafx.util.Duration;
 import org.quelea.windows.main.DisplayCanvas;
+import org.quelea.windows.main.QueleaApp;
 
 /**
  * Responsible for drawing the notice animation on a particular canvas.
+ * <p/>
  * @author Michael
  */
 public class NoticeDrawer {
 
-    private static final int DELAY = 40;
-    private Font font = new Font("Sans serif", 0, 2);
+    private static final double BACKGROUND_OPACITY = 0.6;
+    private static final double BACKGROUND_FADE_DURATION = 0.5;
+    private static final double TEXT_SCROLL_DURATION = 10;
+    private NoticeOverlay overlay;
     private DisplayCanvas canvas;
-    private int boxHeight;
-    private int stringPos;
     private List<Notice> notices;
-    private List<Notice> inUseNotices;
     private List<NoticesChangedListener> listeners;
-    private String noticeString;
-    private BufferedImage image;
-    private boolean redraw;
-    private int noticeWidth;
-    private final Object lock = new Object();
+    private boolean playing;
+    private Rectangle backing;
+    private Font noticeFont;
 
     /**
      * Create a new notice drawer.
+     * <p/>
      * @param canvas the canvas to draw on.
      */
     public NoticeDrawer(DisplayCanvas canvas) {
         this.canvas = canvas;
         notices = Collections.synchronizedList(new ArrayList<Notice>());
-        inUseNotices = Collections.synchronizedList(new ArrayList<Notice>());
-        noticeString = "";
         listeners = new ArrayList<>();
-        start();
+        overlay = new NoticeOverlay();
+        noticeFont = Font.font("Arial", FontPosture.ITALIC, 50);
+        playing = false;
     }
 
-    /**
-     * Get the image used for this notice.
-     * @return the notice image.
-     */
-    public BufferedImage getNoticeImage() {
-//        if (boxHeight == 0) {
-//            return null;
-//        }
-//        if (image == null || redraw) {
-//            image = new BufferedImage(canvas.getWidth(), boxHeight, BufferedImage.TYPE_INT_RGB);
-//        }
-//        else {
-//            image.getGraphics().clearRect(0, 0, image.getWidth(), image.getHeight());
-//        }
-//        int finalHeight = QueleaProperties.get().getNoticeBoxHeight();
-//        Graphics g = image.getGraphics();
-//        if (boxHeight == finalHeight - finalHeight / 20) {
-//            font = Utils.getDifferentSizeFont(font, Utils.getMaxFittingFontSize(g, font, noticeString, Integer.MAX_VALUE, finalHeight));
-//        }
-//        noticeWidth = g.getFontMetrics(font).stringWidth(noticeString.toString());
-//        int height = g.getFontMetrics(font).getHeight();
-//        g.setColor(Color.GRAY);
-//        g.fillRect(0, 0, image.getWidth(), image.getHeight());
-//        if (boxHeight == finalHeight) {
-//            g.setFont(font);
-//            g.setColor(Color.WHITE);
-//            g.drawString(noticeString.toString(), stringPos, image.getHeight() / 2 + height / 4);
-//        }
-//        return image;
-        return null;
+    public NoticeOverlay getOverlay() {
+        return overlay;
     }
-
-    /**
-     * Recalculate the notice string, called when any notices change.
-     * @param decrement whether to decrement all the notices.
-     */
-    private void recalculateNoticeString(boolean decrement) {
-        StringBuilder builder = new StringBuilder();
-        if (decrement) {
-            for (Notice notice : inUseNotices) {
-                notice.decrementTimes();
-            }
-            for (int i = notices.size() - 1; i >= 0; i--) {
-                if (notices.get(i) == null || notices.get(i).getTimes() <= 0) {
-                    notices.remove(notices.get(i));
-                }
-            }
-        }
-        for (NoticesChangedListener listener : listeners) {
-            listener.noticesUpdated(notices);
-        }
-        inUseNotices.clear();
-        for (int i = 0; i < notices.size(); i++) {
-            Notice notice = notices.get(i);
-            inUseNotices.add(notice);
-            builder.append(notice.getText());
-            if (i != notices.size() - 1) {
-                builder.append("    //    ");
-            }
-        }
-        noticeString = builder.toString();
-    }
-
-    /**
-     * Determine if we need to redraw notices (performance thing.)
-     * @return true if we do, false otherwise.
-     */
-    public boolean getRedraw() {
-        return redraw;
-    }
-
-    /**
-     * Start the background notice thread.
-     */
-    private void start() {
-//        stringPos = canvas.getWidth();
-//        Runnable runnable = Utils.wrapAsLowPriority(new Runnable() {
-//
-//            public void run() {
-//                while (true) {
-//                    redraw = false;
-//                    if (notices.isEmpty()) {
-//                        synchronized (lock) {
-//                            try {
-//                                lock.wait();
-//                            }
-//                            catch (InterruptedException ex) {
-//                                continue;
-//                            }
-//                        }
-//                    }
-//                    int finalHeight = QueleaProperties.get().getNoticeBoxHeight();
-//                    int speed = QueleaProperties.get().getNoticeBoxSpeed();
-//
-//                    redraw = true;
-//                    while (boxHeight < finalHeight) {
-//                        boxHeight += finalHeight / 20;
-//                        SwingUtilities.invokeLater(new Runnable() {
-//
-//                            @Override
-//                            public void run() {
-//                                canvas.repaint();
-//                            }
-//                        });
-//                        Utils.sleep(DELAY);
-//                    }
-//                    redraw = false;
-//                    recalculateNoticeString(false);
-//                    while (!notices.isEmpty()) {
-//                        while (stringPos > -noticeWidth) {
-//                            stringPos -= speed;
-//                            SwingUtilities.invokeLater(new Runnable() {
-//
-//                                @Override
-//                                public void run() {
-//                                    canvas.repaint();
-//                                }
-//                            });
-//                            Utils.sleep(DELAY);
-//                        }
-//                        recalculateNoticeString(true);
-//                        stringPos = canvas.getWidth();
-//                    }
-//                    redraw = true;
-//                    while (boxHeight > 0) {
-//                        boxHeight -= finalHeight / 20;
-//                        SwingUtilities.invokeLater(new Runnable() {
-//
-//                            @Override
-//                            public void run() {
-//                                canvas.repaint();
-//                            }
-//                        });
-//                        Utils.sleep(DELAY);
-//                    }
-//                }
-//            }
-//        });
-//
-//
-//        new Thread(runnable).start();
-    }
-    private boolean first = true; //Yeah... bodge.
 
     /**
      * Add a given notice.
+     * <p/>
      * @param notice the notice to add.
      */
-    public void addNotice(Notice notice) {
+    public synchronized void addNotice(Notice notice) {
         notices.add(notice);
-        if (first) {
-            first = false;
-            notice.setTimes(notice.getTimes() + 1);
-        }
-        if (notices.size() == 1) {
-            synchronized (lock) {
-                lock.notifyAll();
+        playNotices();
+    }
+
+    private void playNotices() {
+        if(!playing) {
+            FontMetrics metrics = Toolkit.getToolkit().getFontLoader().getFontMetrics(noticeFont);
+            if(!overlay.getChildren().contains(backing)) {
+                backing = new Rectangle(canvas.getWidth(), metrics.getLineHeight(), Color.BROWN);
+                backing.setOpacity(0);
+                overlay.getChildren().add(backing);
+                FadeTransition fadeTrans = new FadeTransition(Duration.seconds(BACKGROUND_FADE_DURATION), backing);
+                fadeTrans.setFromValue(0);
+                fadeTrans.setToValue(BACKGROUND_OPACITY);
+                fadeTrans.play();
             }
+            playing = true;
+            final List<Notice> oldNotices = new ArrayList<>(notices);
+            final HBox textGroup = new HBox(noticeFont.getSize()*2);
+            final StringBuilder builder = new StringBuilder();
+            textGroup.setAlignment(Pos.BOTTOM_LEFT);
+            for(int i = 0; i < notices.size(); i++) {
+                Notice notice = notices.get(i);
+                builder.append(notice.getText());
+                Text noticeText = new Text(notice.getText());
+                if(i % 2 == 0) {
+                    noticeText.setFill(Color.WHITE);
+                }
+                else {
+                    noticeText.setFill(Color.BLANCHEDALMOND);
+                }
+                noticeText.setFont(noticeFont);
+                textGroup.getChildren().add(noticeText);
+            }
+            double width = metrics.computeStringWidth(builder.toString()) + textGroup.getSpacing() * (notices.size() - 1);
+            textGroup.setTranslateX(canvas.getWidth());
+            overlay.getChildren().add(textGroup);
+            Timeline timeline = new Timeline();
+            timeline.getKeyFrames().add(new KeyFrame(Duration.ZERO, new KeyValue(textGroup.translateXProperty(), textGroup.getTranslateX())));
+            timeline.getKeyFrames().add(new KeyFrame(Duration.seconds(TEXT_SCROLL_DURATION), new KeyValue(textGroup.translateXProperty(), -width)));
+            timeline.play();
+            timeline.setOnFinished(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent t) {
+                    playing = false;
+                    overlay.getChildren().remove(textGroup);
+                    for(int i = notices.size() - 1; i >= 0; i--) {
+                        Notice notice = notices.get(i);
+                        if(oldNotices.contains(notice)) {
+                            notice.decrementTimes();
+                        }
+                        if(notice.getTimes() == 0) {
+                            notices.remove(notice);
+                        }
+                    }
+                    QueleaApp.get().getMainWindow().getNoticeDialog().noticesUpdated();
+                    if(!notices.isEmpty()) {
+                        playNotices();
+                    }
+                    else {
+                        FadeTransition fadeTrans = new FadeTransition(Duration.seconds(BACKGROUND_FADE_DURATION), backing);
+                        fadeTrans.setFromValue(BACKGROUND_OPACITY);
+                        fadeTrans.setToValue(0);
+                        fadeTrans.play();
+                        fadeTrans.setOnFinished(new EventHandler<ActionEvent>() {
+
+                            @Override
+                            public void handle(ActionEvent t) {
+                                overlay.getChildren().remove(backing);
+                            }
+                        });
+                    }
+                }
+            });
         }
     }
 
     /**
      * Remove a given notice.
+     * <p/>
      * @param notice notice to remove.
      */
-    public void removeNotice(Notice notice) {
+    public synchronized void removeNotice(Notice notice) {
         notices.remove(notice);
     }
 
     /**
      * Get all the notices.
+     * <p/>
      * @return a list of all the notices.
      */
-    public List<Notice> getNotices() {
+    public synchronized List<Notice> getNotices() {
         return new ArrayList<>(notices);
     }
 
     /**
      * Add a notice changed listener to this drawer.
+     * <p/>
      * @param listener the listener to add.
      */
-    public void addNoticeChangedListener(NoticesChangedListener listener) {
+    public synchronized void addNoticeChangedListener(NoticesChangedListener listener) {
         listeners.add(listener);
     }
+
+    public Font getNoticeFont() {
+        return noticeFont;
+    }
+
+    public void setNoticeFont(Font noticeFont) {
+        this.noticeFont = noticeFont;
+    }
+    
 }

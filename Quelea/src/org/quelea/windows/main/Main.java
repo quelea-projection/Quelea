@@ -185,6 +185,7 @@ public final class Main extends Application {
                 LOGGER.log(Level.INFO, "Registering canvases");
                 mainWindow.getMainPanel().getLivePanel().registerDisplayCanvas(fullScreenWindow.getCanvas());
                 mainWindow.getMainPanel().getLivePanel().registerDisplayWindow(fullScreenWindow);
+                mainWindow.getNoticeDialog().registerCanvas(fullScreenWindow.getCanvas());
                 if(lyricsHidden) {
                     fullScreenWindow.hide();
                 }

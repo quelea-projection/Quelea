@@ -27,7 +27,6 @@ public interface NoticesChangedListener {
 
     /**
      * Signifies that the notices have changed and therefore need to be updated.
-     * @param notices the list of notices.
      */
-    void noticesUpdated(List<Notice> notices);
+    void noticesUpdated();
 }

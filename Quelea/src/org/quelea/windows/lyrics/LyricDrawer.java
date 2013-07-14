@@ -132,8 +132,7 @@ public class LyricDrawer extends DisplayableDrawer {
             t.setX(centreOffset);
             t.setY(y);
 
-            if(theme.getFontPaint()
-                    == lastColor || lastColor == null) {
+            if(theme.getFontPaint() == lastColor || lastColor == null) {
                 t.setFill(theme.getFontPaint());
             }
             else {
@@ -445,9 +444,9 @@ public class LyricDrawer extends DisplayableDrawer {
     }
 
     /**
-     * Set the text to appear on the getCanvas(). The lines will be automatically
-     * wrapped and if the text is too large to fit on the screen in the current
-     * font, the size will be decreased until all the text fits.
+     * Set the text to appear on the getCanvas(). The lines will be
+     * automatically wrapped and if the text is too large to fit on the screen
+     * in the current font, the size will be decreased until all the text fits.
      * <p/>
      * @param text an array of the lines to display on the canvas, one entry in
      * the array is one line.
@@ -473,8 +472,8 @@ public class LyricDrawer extends DisplayableDrawer {
     }
 
     /**
-     * Get the text currently set to appear on the getCanvas(). The text may or may
-     * not be shown depending on whether the canvas is blacked or cleared.
+     * Get the text currently set to appear on the getCanvas(). The text may or
+     * may not be shown depending on whether the canvas is blacked or cleared.
      * <p/>
      * @return the current text.
      */
@@ -503,7 +502,7 @@ public class LyricDrawer extends DisplayableDrawer {
     @Override
     public void clear() {
         if(getCanvas().getChildren() != null) {
-            getCanvas().getChildren().clear();
+            getCanvas().clearApartFromNotice();
         }
         setTheme(ThemeDTO.DEFAULT_THEME);
         if(player != null) {
