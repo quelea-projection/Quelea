@@ -171,6 +171,7 @@ public final class BibleManager {
                 @Override
                 public void run() {
                     panel[0] = QueleaApp.get().getStatusGroup().addPanel(LabelGrabber.INSTANCE.getLabel("building.bible.index"));
+                    panel[0].removeCancelButton();
                     panel[0].getProgressBar().setProgress(-1);
                 }
             });

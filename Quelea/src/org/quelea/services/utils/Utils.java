@@ -257,6 +257,7 @@ public final class Utils {
                 @Override
                 public void run() {
                     final StatusPanel statusPanel = QueleaApp.get().getStatusGroup().addPanel(LabelGrabber.INSTANCE.getLabel("updating.db"));
+                    statusPanel.removeCancelButton();
                     new Thread() {
                         @Override
                         public void run() {
