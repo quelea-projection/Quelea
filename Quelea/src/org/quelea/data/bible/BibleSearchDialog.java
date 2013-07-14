@@ -28,10 +28,12 @@ import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import org.quelea.services.languages.LabelGrabber;
 import org.quelea.windows.library.DisplayableListCell;
+import org.quelea.windows.main.widgets.LoadingPane;
 
 /**
  * A dialog that can be used for searching for bible passages.
@@ -44,6 +46,7 @@ public class BibleSearchDialog extends Stage implements BibleChangeListener {
     private ListView<BibleChapter> searchResults;
     private ComboBox<String> bibles;
     private BibleSearchPopupMenu popupMenu;
+    private LoadingPane overlay;
 
     /**
      * Create a new bible searcher dialog.
@@ -52,6 +55,7 @@ public class BibleSearchDialog extends Stage implements BibleChangeListener {
         BorderPane mainPane = new BorderPane();
         setTitle(LabelGrabber.INSTANCE.getLabel("bible.search.title"));
         getIcons().add(new Image("file:icons/search.png"));
+        overlay = new LoadingPane();
         searchField = new TextField();
         bibles = new ComboBox<>();
         bibles.setEditable(false);
@@ -66,9 +70,11 @@ public class BibleSearchDialog extends Stage implements BibleChangeListener {
 //        searchResults.setCellRenderer(new SearchPreviewRenderer());
         searchResults.setCellFactory(DisplayableListCell.<BibleChapter>forListView(popupMenu));
         VBox centrePanel = new VBox();
-        centrePanel.getChildren().add(searchResults);
+        StackPane searchPane = new StackPane();
+        searchPane.getChildren().add(searchResults);
+        searchPane.getChildren().add(overlay);
+        centrePanel.getChildren().add(searchPane);
         searchResults.selectionModelProperty().get().selectedItemProperty().addListener(new ChangeListener<BibleChapter>() {
-
             @Override
             public void changed(ObservableValue<? extends BibleChapter> val, BibleChapter oldChapter, BibleChapter newChapter) {
                 popupMenu.setCurrentChapter(newChapter);
@@ -121,21 +127,28 @@ public class BibleSearchDialog extends Stage implements BibleChangeListener {
      */
     private void update() {
         if(BibleManager.get().isIndexInit()) {
+            overlay.show();
             final String text = searchField.getText();
-            final BibleChapter[] results = BibleManager.get().getIndex().filter(text, null);
-            Platform.runLater(new Runnable() {
-                @Override
+            new Thread() {
                 public void run() {
-                    searchResults.itemsProperty().get().clear();
-                    if(!text.trim().isEmpty()) {
-                        for(BibleChapter chapter : results) {
-                            if(bibles.getSelectionModel().getSelectedIndex() == 0 || chapter.getBook().getBible().getName().equals(bibles.getSelectionModel().getSelectedItem())) {
-                                searchResults.itemsProperty().get().add(chapter);
+                    final BibleChapter[] results = BibleManager.get().getIndex().filter(text, null);
+                    Platform.runLater(new Runnable() {
+                        @Override
+                        public void run() {
+                            searchResults.itemsProperty().get().clear();
+                            if(!text.trim().isEmpty()) {
+                                for(BibleChapter chapter : results) {
+                                    if(bibles.getSelectionModel().getSelectedIndex() == 0 || chapter.getBook().getBible().getName().equals(bibles.getSelectionModel().getSelectedItem())) {
+                                        searchResults.itemsProperty().get().add(chapter);
+                                    }
+                                }
                             }
+                            overlay.hide();
                         }
-                    }
+                    });
                 }
-            });
+            }.start();
+            
         }
     }
 
