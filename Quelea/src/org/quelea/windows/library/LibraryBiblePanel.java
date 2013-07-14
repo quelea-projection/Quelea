@@ -50,6 +50,7 @@ import org.quelea.windows.main.QueleaApp;
 
 /**
  * The panel used to get bible verses.
+ * <p/>
  * @author Michael
  */
 public class LibraryBiblePanel extends VBox implements BibleChangeListener {
@@ -69,22 +70,31 @@ public class LibraryBiblePanel extends VBox implements BibleChangeListener {
         BibleManager.get().registerBibleChangeListener(this);
         bibleSelector = new ComboBox<>(FXCollections.observableArrayList(BibleManager.get().getBibles()));
         String selectedBibleName = QueleaProperties.get().getDefaultBible();
-        for (int i = 0; i < bibleSelector.itemsProperty().get().size(); i++) {
+        for(int i = 0; i < bibleSelector.itemsProperty().get().size(); i++) {
             Bible bible = bibleSelector.itemsProperty().get().get(i);
-            if (bible.getName().equals(selectedBibleName)) {
+            if(bible.getName().equals(selectedBibleName)) {
                 bibleSelector.selectionModelProperty().get().select(i);
                 break;
             }
         }
         getChildren().add(bibleSelector);
         HBox chapterPanel = new HBox();
-        bookSelector = new ComboBox<>(FXCollections.observableArrayList(bibleSelector.selectionModelProperty().get().getSelectedItem().getBooks()));
-        bookSelector.selectionModelProperty().get().select(0);
+        if(bibleSelector.getItems().isEmpty()) {
+            bookSelector = new ComboBox<>();
+        }
+        else {
+            Bible bible = bibleSelector.selectionModelProperty().get().getSelectedItem();
+            if(bible==null) {
+                bible = bibleSelector.getItems().get(0);
+                bibleSelector.setValue(bibleSelector.getItems().get(0));
+            }
+            bookSelector = new ComboBox<>(FXCollections.observableArrayList(bible.getBooks()));
+            bookSelector.selectionModelProperty().get().select(0);
+        }
         chapterPanel.getChildren().add(bookSelector);
         passageSelector = new TextField();
         chapterPanel.getChildren().add(passageSelector);
         passageSelector.setOnAction(new EventHandler<javafx.event.ActionEvent>() {
-
             @Override
             public void handle(javafx.event.ActionEvent t) {
                 addToSchedule.fire();
@@ -100,7 +110,6 @@ public class LibraryBiblePanel extends VBox implements BibleChangeListener {
         bottomPane.setCenter(preview);
         addToSchedule = new Button(LabelGrabber.INSTANCE.getLabel("add.to.schedule.text"), new ImageView(new Image("file:icons/tick.png")));
         addToSchedule.setOnAction(new EventHandler<ActionEvent>() {
-
             @Override
             public void handle(ActionEvent t) {
                 BiblePassage passage = new BiblePassage(bibleSelector.getSelectionModel().getSelectedItem().getName(), getBibleLocation(), getVerses());
@@ -113,7 +122,6 @@ public class LibraryBiblePanel extends VBox implements BibleChangeListener {
 
         addUpdateListeners();
         bibleSelector.valueProperty().addListener(new ChangeListener<Bible>() {
-
             @Override
             public void changed(ObservableValue<? extends Bible> ov, Bible t, Bible t1) {
                 if(bibleSelector.selectionModelProperty().get().isEmpty()) { //Nothing selected
@@ -122,7 +130,7 @@ public class LibraryBiblePanel extends VBox implements BibleChangeListener {
                 ObservableList<BibleBook> books = FXCollections.observableArrayList(bibleSelector.getSelectionModel().getSelectedItem().getBooks());
                 int selectedIndex = bookSelector.getSelectionModel().getSelectedIndex();
                 bookSelector.itemsProperty().set(books);
-                if(bookSelector.getItems().size()>selectedIndex) {
+                if(bookSelector.getItems().size() > selectedIndex) {
                     bookSelector.getSelectionModel().select(selectedIndex);
                 }
                 update();
@@ -137,7 +145,6 @@ public class LibraryBiblePanel extends VBox implements BibleChangeListener {
     @Override
     public void updateBibles() {
         Platform.runLater(new Runnable() {
-
             @Override
             public void run() {
                 ObservableList<Bible> bibles = FXCollections.observableArrayList(BibleManager.get().getBibles());
@@ -151,14 +158,12 @@ public class LibraryBiblePanel extends VBox implements BibleChangeListener {
      */
     private void addUpdateListeners() {
         passageSelector.textProperty().addListener(new ChangeListener<String>() {
-
             @Override
             public void changed(ObservableValue<? extends String> ov, String t, String t1) {
                 update();
             }
         });
         bookSelector.valueProperty().addListener(new ChangeListener<BibleBook>() {
-
             @Override
             public void changed(ObservableValue<? extends BibleBook> ov, BibleBook t, BibleBook t1) {
                 update();
@@ -173,7 +178,7 @@ public class LibraryBiblePanel extends VBox implements BibleChangeListener {
         verses.clear();
         ChapterVerseParser cvp = new ChapterVerseParser(passageSelector.getText());
         BibleBook book = bookSelector.selectionModelProperty().get().getSelectedItem();
-        if (book == null || book.getChapter(cvp.getFromChapter()) == null
+        if(book == null || book.getChapter(cvp.getFromChapter()) == null
                 || book.getChapter(cvp.getToChapter()) == null
                 || passageSelector.getText().isEmpty()) {
             getAddToSchedule().setDisable(true);
@@ -183,25 +188,25 @@ public class LibraryBiblePanel extends VBox implements BibleChangeListener {
         getAddToSchedule().setDisable(false);
         StringBuilder ret = new StringBuilder();
         int toVerse = book.getChapter(cvp.getFromChapter()).getVerses().length - 1;
-        if ((cvp.getFromChapter() == cvp.getToChapter()) && cvp.getToVerse() >= 0 && cvp.getToVerse() < book.getChapter(cvp.getFromChapter()).getVerses().length) {
+        if((cvp.getFromChapter() == cvp.getToChapter()) && cvp.getToVerse() >= 0 && cvp.getToVerse() < book.getChapter(cvp.getFromChapter()).getVerses().length) {
             toVerse = cvp.getToVerse();
         }
 
-        for (int v = cvp.getFromVerse(); v <= toVerse; v++) {
+        for(int v = cvp.getFromVerse(); v <= toVerse; v++) {
             BibleVerse verse = book.getChapter(cvp.getFromChapter()).getVerse(v);
             ret.append(verse.getText()).append(' ');
             verses.add(verse);
         }
-        for (int c = cvp.getFromChapter() + 1; c < cvp.getToChapter(); c++) {
-            for (BibleVerse verse : book.getChapter(c).getVerses()) {
+        for(int c = cvp.getFromChapter() + 1; c < cvp.getToChapter(); c++) {
+            for(BibleVerse verse : book.getChapter(c).getVerses()) {
                 ret.append(verse.getText()).append(' ');
                 verses.add(verse);
             }
         }
-        if (cvp.getFromChapter() != cvp.getToChapter()) {
-            for (int v = 0; v <= cvp.getToVerse(); v++) {
+        if(cvp.getFromChapter() != cvp.getToChapter()) {
+            for(int v = 0; v <= cvp.getToVerse(); v++) {
                 BibleVerse verse = book.getChapter(cvp.getToChapter()).getVerse(v);
-                if (verse != null) {
+                if(verse != null) {
                     ret.append(verse.getText()).append(' ');
                     verses.add(verse);
                 }
@@ -212,6 +217,7 @@ public class LibraryBiblePanel extends VBox implements BibleChangeListener {
 
     /**
      * Get all the verses currently shown in this panel.
+     * <p/>
      * @return all the verses in the current preview
      */
     public BibleVerse[] getVerses() {
@@ -220,6 +226,7 @@ public class LibraryBiblePanel extends VBox implements BibleChangeListener {
 
     /**
      * Return the book, chapter and verse numbers as a string.
+     * <p/>
      * @return the location of the current passage.
      */
     public String getBibleLocation() {
@@ -231,6 +238,7 @@ public class LibraryBiblePanel extends VBox implements BibleChangeListener {
 
     /**
      * Get the bible selector used to select the type of bible to use.
+     * <p/>
      * @return the bible selector used to select the type of bible to use.
      */
     public ComboBox<Bible> getBibleSelector() {
@@ -239,6 +247,7 @@ public class LibraryBiblePanel extends VBox implements BibleChangeListener {
 
     /**
      * Get the preview text area.
+     * <p/>
      * @return the preview text area.
      */
     public TextArea getPreview() {
@@ -247,6 +256,7 @@ public class LibraryBiblePanel extends VBox implements BibleChangeListener {
 
     /**
      * Get the add to schedule button.
+     * <p/>
      * @return the add to schedule button.
      */
     public Button getAddToSchedule() {
@@ -255,6 +265,7 @@ public class LibraryBiblePanel extends VBox implements BibleChangeListener {
 
     /**
      * Get the book selector.
+     * <p/>
      * @return the book selector.
      */
     public ComboBox<BibleBook> getBookSelector() {
@@ -263,6 +274,7 @@ public class LibraryBiblePanel extends VBox implements BibleChangeListener {
 
     /**
      * Get the passage selector.
+     * <p/>
      * @return the passage selector.
      */
     public TextField getPassageSelector() {
