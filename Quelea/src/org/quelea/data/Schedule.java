@@ -33,6 +33,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.HashSet;
@@ -136,7 +137,7 @@ public class Schedule implements Iterable<Displayable>, Printable {
             return false;
         }
         try {
-            ZipOutputStream zos = new ZipOutputStream(new FileOutputStream(file));
+            ZipOutputStream zos = new ZipOutputStream(new FileOutputStream(file), Charset.forName("UTF-8"));
             final int BUFFER = 2048;
             byte data[] = new byte[BUFFER];
             try {
@@ -186,7 +187,7 @@ public class Schedule implements Iterable<Displayable>, Printable {
      */
     public static Schedule fromFile(File file) {
         try {
-            ZipFile zipFile = new ZipFile(file);
+            ZipFile zipFile = new ZipFile(file, Charset.forName("UTF-8"));
             final int BUFFER = 2048;
             try {
                 Schedule ret = parseXML(zipFile.getInputStream(zipFile.getEntry("schedule.xml")));
