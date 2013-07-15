@@ -46,8 +46,8 @@ import org.quelea.windows.main.actionhandlers.ViewTagsActionHandler;
  */
 public class MainToolbar extends ToolBar {
 
-    private static final String TOOLBAR_BUTTON_STYLE="-fx-background-insets: 0;-fx-background-color: rgba(0, 0, 0, 0);";
-    private static final String HOVER_TOOLBAR_BUTTON_STYLE="-fx-background-insets: 0;";
+    private static final String TOOLBAR_BUTTON_STYLE="-fx-background-insets: 0;-fx-background-color: rgba(0, 0, 0, 0);-fx-padding:3,6,3,6;";
+    private static final String HOVER_TOOLBAR_BUTTON_STYLE="-fx-background-insets: 0;-fx-padding:3,6,3,6;";
     private Button newScheduleButton;
     private Button openScheduleButton;
     private Button saveScheduleButton;
