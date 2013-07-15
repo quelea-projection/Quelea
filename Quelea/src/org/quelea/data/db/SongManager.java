@@ -116,9 +116,9 @@ public final class SongManager {
      * @return an array of all the songs in the database.
      */
     public synchronized SongDisplayable[] getSongs() {
-        if(Platform.isFxApplicationThread()) {
-            LOGGER.log(Level.WARNING, "getSongs() should not be called on platform thread!", new RuntimeException("Debug exception"));
-        }
+//        if(Platform.isFxApplicationThread()) {
+//            LOGGER.log(Level.WARNING, "getSongs() should not be called on platform thread!", new RuntimeException("Debug exception"));
+//        }
         if(cacheSongs.get() != null) {
             return cacheSongs.get();
         }
