@@ -334,3 +334,4 @@ debug.location=Ablageort der Fehleraufzeichnungsdatei - Debug Log
 bible.copy.error.text=Beim Kopieren der Bibeldatei an den gewünschten Speicherort trat ein Fehler auf.
 language.changed.message=Quelea muss neu gestartet werden damit die Sprachänderung eine Auswirkung zeigt.
 cant.save.schedule.title=Fehler beim Speichern des Ablaufes
+select.key.label=Neue Tonart auswählen:
