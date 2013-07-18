@@ -32,6 +32,7 @@ import org.quelea.data.powerpoint.PresentationFactory;
 import org.quelea.services.utils.LoggerUtils;
 import org.quelea.services.utils.QueleaProperties;
 import org.quelea.services.utils.Utils;
+import org.quelea.windows.presentation.PowerpointSlideShowRunner;
 import org.w3c.dom.Node;
 
 /**
@@ -45,6 +46,8 @@ public class PresentationDisplayable implements Displayable {
     private final File file;
     private final Presentation presentation;
     private OOPresentation ooPresentation;
+    private PowerpointSlideShowRunner ppPresentation;
+
     /**
      * Create a new presentation displayable
      * <p/>
@@ -53,10 +56,13 @@ public class PresentationDisplayable implements Displayable {
     public PresentationDisplayable(File file) throws IOException {
         this.file = file;
         presentation = new PresentationFactory().getPresentation(file);
+        if(PowerpointSlideShowRunner.isSupported()) {
+            ppPresentation = new PowerpointSlideShowRunner(file.getAbsolutePath());
+        }
         if(presentation == null) {
             throw new IOException("Error with presentation, couldn't open " + file);
         }
-        if(QueleaProperties.get().getUseOO()) {
+        if(!PowerpointSlideShowRunner.isSupported() && QueleaProperties.get().getUseOO()) {
             try {
                 ooPresentation = new OOPresentation(file.getAbsolutePath());
             }
@@ -83,6 +89,10 @@ public class PresentationDisplayable implements Displayable {
      */
     public OOPresentation getOOPresentation() {
         return ooPresentation;
+    }
+    
+    public PowerpointSlideShowRunner getPPPresentation() {
+        return ppPresentation;
     }
 
     /**

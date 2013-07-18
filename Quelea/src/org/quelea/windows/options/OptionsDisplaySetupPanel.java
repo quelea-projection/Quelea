@@ -110,7 +110,7 @@ public class OptionsDisplaySetupPanel extends GridPane implements PropertyPanel 
      */
     private void updatePos() {
 //        MainWindow mainWindow = Application.get().getMainWindow();
-        DisplayStage appWindow = QueleaApp.get().getAppWindow();
+        DisplayStage appWindow = QueleaApp.get().getProjectionWindow();
         DisplayStage stageWindow = QueleaApp.get().getStageWindow();
         if(projectorPanel.getOutputBounds() == null) {
             if(appWindow != null) {

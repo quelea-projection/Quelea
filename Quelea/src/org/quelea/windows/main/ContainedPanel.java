@@ -26,11 +26,6 @@ import java.util.Set;
 public interface ContainedPanel {
 
     /**
-     * Focus on the panel.
-     */
-    void focus();
-
-    /**
      * Clear the panel.
      */
     void clear();

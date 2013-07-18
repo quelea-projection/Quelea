@@ -30,7 +30,7 @@ public class QueleaApp {
 
     private static final QueleaApp INSTANCE = new QueleaApp();
     private MainWindow mainWindow;
-    private DisplayStage appWindow;
+    private DisplayStage projectionWindow;
     private DisplayStage stageWindow;
 
     /**
@@ -56,11 +56,11 @@ public class QueleaApp {
     }
 
     /**
-     * Get the app window.
-     * @return the app window.
+     * Get the projection window.
+     * @return the projection window.
      */
-    public DisplayStage getAppWindow() {
-        return appWindow;
+    public DisplayStage getProjectionWindow() {
+        return projectionWindow;
     }
 
     /**
@@ -93,7 +93,7 @@ public class QueleaApp {
      * @param appWindow the app window.
      */
     public void setAppWindow(DisplayStage appWindow) {
-        this.appWindow = appWindow;
+        this.projectionWindow = appWindow;
     }
 
     /**
