@@ -24,12 +24,11 @@ import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.List;
 import java.util.logging.Level;
-import javafx.animation.KeyFrame;
-import javafx.animation.KeyValue;
-import javafx.animation.Timeline;
 import javafx.application.Platform;
 import javafx.event.EventHandler;
 import javafx.geometry.Orientation;
+import javafx.geometry.Pos;
+import javafx.scene.Node;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -40,8 +39,8 @@ import javafx.scene.input.Dragboard;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.TransferMode;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.TilePane;
-import javafx.util.Duration;
 import org.quelea.data.displayable.ImageDisplayable;
 import org.quelea.services.utils.LoggerUtils;
 import org.quelea.services.utils.Utils;
@@ -54,6 +53,8 @@ import org.quelea.windows.main.QueleaApp;
  */
 public class ImageListPanel extends BorderPane {
 
+    private static final String BORDER_STYLE_SELECTED = "-fx-padding: 0.2em;-fx-border-color: #0093ff;-fx-border-radius: 5;-fx-border-width: 0.1em;";
+    private static final String BORDER_STYLE_DESELECTED = "-fx-padding: 0.2em;-fx-border-color: rgb(0,0,0,0);-fx-border-radius: 5;-fx-border-width: 0.1em;";
     private final TilePane imageList;
     private String dir;
     private Thread t;
@@ -66,8 +67,9 @@ public class ImageListPanel extends BorderPane {
     public ImageListPanel(String dir) {
         this.dir = dir;
         imageList = new TilePane();
-        imageList.setHgap(10);
-        imageList.setVgap(10);
+        imageList.setAlignment(Pos.CENTER);
+        imageList.setHgap(15);
+        imageList.setVgap(15);
         imageList.setOrientation(Orientation.HORIZONTAL);
         imageList.setOnDragOver(new EventHandler<DragEvent>() {
             @Override
@@ -133,7 +135,9 @@ public class ImageListPanel extends BorderPane {
             public void run() {
                 for(final File file : files) {
                     if(Utils.fileIsImage(file) && !file.isDirectory()) {
-                        final ImageView view = new ImageView(new Image(file.toURI().toString(), 72, 72, false, true));
+                        final ImageView view = new ImageView(new Image(file.toURI().toString()));
+                        view.setPreserveRatio(true);
+                        view.setFitWidth(160);
                         view.setOnMouseClicked(new EventHandler<MouseEvent>() {
                             @Override
                             public void handle(MouseEvent t) {
@@ -150,11 +154,13 @@ public class ImageListPanel extends BorderPane {
                                 t.consume();
                             }
                         });
-//                        setupHover(view);
+                        final HBox viewBox = new HBox();
+                        viewBox.getChildren().add(view);
+                        setupHover(viewBox);
                         Platform.runLater(new Runnable() {
                             @Override
                             public void run() {
-                                imageList.getChildren().add(view);
+                                imageList.getChildren().add(viewBox);
                             }
                         });
                     }
@@ -164,34 +170,18 @@ public class ImageListPanel extends BorderPane {
         t.start();
     }
 
-    private void setupHover(final ImageView view) {
-        final double SECONDS = 0.2;
-        final double SCALE = 2;
-
+    private void setupHover(final Node view) {
+        view.setStyle(BORDER_STYLE_DESELECTED);
         view.setOnMouseEntered(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent t) {
-                if(view.getScaleX() == 1) {
-                    view.toFront();
-                    final Timeline timeline = new Timeline();
-                    timeline.getKeyFrames().add(new KeyFrame(Duration.ZERO, new KeyValue(view.scaleXProperty(), 1)));
-                    timeline.getKeyFrames().add(new KeyFrame(Duration.ZERO, new KeyValue(view.scaleYProperty(), 1)));
-                    timeline.getKeyFrames().add(new KeyFrame(Duration.seconds(SECONDS), new KeyValue(view.scaleXProperty(), SCALE)));
-                    timeline.getKeyFrames().add(new KeyFrame(Duration.seconds(SECONDS), new KeyValue(view.scaleYProperty(), SCALE)));
-                    timeline.play();
-                }
+                view.setStyle(BORDER_STYLE_SELECTED);
             }
         });
         view.setOnMouseExited(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent t) {
-                view.toFront();
-                final Timeline timeline = new Timeline();
-                timeline.getKeyFrames().add(new KeyFrame(Duration.ZERO, new KeyValue(view.scaleXProperty(), view.getScaleX())));
-                timeline.getKeyFrames().add(new KeyFrame(Duration.ZERO, new KeyValue(view.scaleYProperty(), view.getScaleY())));
-                timeline.getKeyFrames().add(new KeyFrame(Duration.seconds(SECONDS), new KeyValue(view.scaleXProperty(), 1)));
-                timeline.getKeyFrames().add(new KeyFrame(Duration.seconds(SECONDS), new KeyValue(view.scaleYProperty(), 1)));
-                timeline.play();
+                view.setStyle(BORDER_STYLE_DESELECTED);
             }
         });
     }
