@@ -27,6 +27,7 @@ import javafx.scene.image.Image;
 import javafx.util.Callback;
 import org.quelea.data.displayable.TextSection;
 import org.quelea.services.utils.QueleaProperties;
+import org.quelea.services.utils.Utils;
 
 /**
  * A list displaying the different sections in the song.
@@ -42,18 +43,7 @@ public class SelectLyricsList extends ListView<TextSection> {
      * Create a new schedule list.
      */
     public SelectLyricsList() {
-        setOnMouseClicked(new EventHandler<javafx.scene.input.MouseEvent>() {
-            @Override
-            public void handle(javafx.scene.input.MouseEvent t) {
-//                requestFocus();
-//                if(!t.isControlDown()) {
-//                    int index = locationToIndex(t.getX(), t.getY());
-//                    selectionModelProperty().get().select(index);
-//                }
-            }
-        });
         oneLineMode = QueleaProperties.get().getOneLineMode();
-
         setOnMouseMoved(new EventHandler<javafx.scene.input.MouseEvent>() {
             @Override
             public void handle(javafx.scene.input.MouseEvent t) {

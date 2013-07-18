@@ -52,11 +52,6 @@ public class ImagePanel extends AbstractPanel {
     }
 
     @Override
-    public void focus() {
-        drawer.requestFocus();
-    }
-
-    @Override
     public DisplayableDrawer getDrawer(DisplayCanvas canvas) {
         drawer.setCanvas(canvas);
         return drawer;

@@ -22,7 +22,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import javafx.scene.Node;
 import javafx.scene.layout.StackPane;
-import javafx.scene.text.Text;
 
 /**
  * Emulates (sort of) a swing card layout - JavaFX doesn't have one but we can
