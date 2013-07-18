@@ -61,9 +61,6 @@ public abstract class AbstractPanel extends BorderPane implements ContainedPanel
     }
 
     @Override
-    public abstract void focus();
-
-    @Override
     public void clear() {
         for(DisplayCanvas canvas : getCanvases()) {
             canvas.clear();
