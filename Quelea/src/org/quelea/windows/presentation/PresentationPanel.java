@@ -17,9 +17,9 @@
  */
 package org.quelea.windows.presentation;
 
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.scene.image.Image;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.HBox;
 import org.quelea.data.displayable.ImageDisplayable;
 import org.quelea.data.displayable.PresentationDisplayable;
 import org.quelea.data.powerpoint.OOPresentation;
@@ -30,56 +30,87 @@ import org.quelea.windows.main.AbstractPanel;
 import org.quelea.windows.image.ImageDrawer;
 import org.quelea.windows.main.DisplayCanvas;
 import org.quelea.windows.main.DisplayableDrawer;
+import org.quelea.windows.main.LivePanel;
 import org.quelea.windows.main.LivePreviewPanel;
 import org.quelea.windows.main.QueleaApp;
 
 /**
  * The panel for displaying presentation slides in the live / preview panels.
- *
+ * <p/>
  * @author Michael
  */
 public class PresentationPanel extends AbstractPanel {
 
-    private PresentationList presentationList;
+    private PresentationPreview presentationPreview;
     private PresentationDisplayable displayable;
     private boolean live;
     private DisplayableDrawer drawer = new ImageDrawer();
     private PresentationSlide currentSlide = null;
+    private LivePreviewPanel containerPanel;
 
     /**
      * Create a new presentation panel.
-     *
+     * <p/>
      * @param containerPanel the panel to create.
      */
     public PresentationPanel(final LivePreviewPanel containerPanel) {
-        presentationList = new PresentationList();
-        presentationList.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<PresentationSlide>() {
+        this.containerPanel = containerPanel;
+        BorderPane mainPanel = new BorderPane();
+        HBox buttons = new HBox(5);
+//        buttons.getChildren().add(new Button("Previous"));
+//        buttons.getChildren().add(new Button("Next"));
+        mainPanel.setTop(buttons);
+        presentationPreview = new PresentationPreview();
+        presentationPreview.addSlideChangedListener(new org.quelea.windows.presentation.SlideChangedListener() {
+
             @Override
-            public void changed(ObservableValue<? extends PresentationSlide> val, PresentationSlide oldSlide, PresentationSlide newSlide) {
-                if (live) {
-                    if (newSlide != null && displayable != null) {
-                        if (displayable.getOOPresentation() == null) {
-                            currentSlide = newSlide;
-                            updateCanvas();
-                        } else {
-                            OOPresentation pres = displayable.getOOPresentation();
-                            pres.addSlideListener(new SlideChangedListener() {
+            public void slideChanged(PresentationSlide newSlide) {
+                if(live) {
+                    if(newSlide != null && displayable != null) {
+                        if(displayable.getPPPresentation() == null) {
+                            if(displayable.getOOPresentation() == null) {
+                                currentSlide = newSlide;
+                                updateCanvas();
+                            }
+                            else {
+                                OOPresentation pres = displayable.getOOPresentation();
+                                pres.addSlideListener(new SlideChangedListener() {
+                                    @Override
+                                    public void slideChanged(final int newSlideIndex) {
+                                        presentationPreview.select(newSlideIndex);
+                                    }
+                                });
+                                currentSlide = newSlide;
+                                startOOPres();
+                                QueleaApp.get().getMainWindow().toFront();
+                                pres.gotoSlide(presentationPreview.getSelectedIndex());
+                            }
+                        }
+                        else {
+                            PowerpointSlideShowRunner runner = displayable.getPPPresentation();
+                            if(!runner.isInit()) {
+                                runner.setPos(QueleaApp.get().getProjectionWindow().getX(),
+                                        QueleaApp.get().getProjectionWindow().getY(),
+                                        QueleaApp.get().getProjectionWindow().getWidth(),
+                                        QueleaApp.get().getProjectionWindow().getHeight());
+                                runner.init();
+                            }
+                            runner.run();
+                            runner.addSlideAdvanceListener(new PowerpointSlideShowRunner.SlideChangeListener() {
                                 @Override
-                                public void slideChanged(final int newSlideIndex) {
-                                    presentationList.scrollTo(newSlideIndex);
+                                public void slideChanged(int oldSlide, int newSlide) {
+                                    presentationPreview.select(newSlide, false);
                                 }
                             });
-                            currentSlide = newSlide;
-                            startOOPres();
-                            QueleaApp.get().getMainWindow().toFront();
-                            pres.gotoSlide(presentationList.getSelectionModel().getSelectedIndex());
+                            runner.goToSlide(presentationPreview.getSelectedIndex());
                         }
                     }
                 }
             }
         });
 
-        setCenter(presentationList);
+        mainPanel.setCenter(presentationPreview);
+        setCenter(mainPanel);
     }
 
     private void drawSlide(PresentationSlide newSlide, DisplayCanvas canvas) {
@@ -90,9 +121,15 @@ public class PresentationPanel extends AbstractPanel {
     }
 
     public void stopCurrent() {
-        if (live && displayable != null && displayable.getOOPresentation() != null) {
-            displayable.getOOPresentation().stop();
-            displayable = null;
+        if(live && displayable != null) {
+            if(displayable.getOOPresentation() != null) {
+                displayable.getOOPresentation().stop();
+                displayable = null;
+            }
+            if(displayable.getPPPresentation() != null) {
+                displayable.getPPPresentation().stop();
+                displayable = null;
+            }
         }
     }
 
@@ -101,7 +138,7 @@ public class PresentationPanel extends AbstractPanel {
      */
     private void startOOPres() {
         OOPresentation pres = displayable.getOOPresentation();
-        if (pres != null && !pres.isRunning()) {
+        if(pres != null && !pres.isRunning()) {
             pres.start(QueleaProperties.get().getProjectorScreen());
         }
     }
@@ -115,23 +152,25 @@ public class PresentationPanel extends AbstractPanel {
 
     /**
      * Set the displayable to be on this presentation panel.
-     *
+     * <p/>
      * @param displayable the presentation displayable to display.
      * @param index the index to display.
      */
     public void showDisplayable(final PresentationDisplayable displayable, int index) {
-        if (displayable == null) {
-            presentationList.itemsProperty().get().clear();
+        if(this.displayable == displayable) {
             return;
         }
-        this.displayable = displayable;
-        PresentationSlide[] slides = displayable.getPresentation().getSlides();
-        presentationList.setSlides(slides);
-        presentationList.selectionModelProperty().get().select(index);
-        presentationList.getFocusModel().focus(index);
-        if (presentationList.selectionModelProperty().get().isEmpty()) {
-            presentationList.selectionModelProperty().get().select(0);
+        if(this.displayable != null && this.displayable.getPPPresentation() != null && containerPanel instanceof LivePanel) {
+            this.displayable.getPPPresentation().stop();
         }
+        this.displayable = displayable;
+        if(displayable == null) {
+            presentationPreview.clear();
+            return;
+        }
+        PresentationSlide[] slides = displayable.getPresentation().getSlides();
+        presentationPreview.setSlides(slides);
+        presentationPreview.select(index);
         /*
          * TODO
          * For some reason the following scroll to line causes a bug whereby 
@@ -148,15 +187,7 @@ public class PresentationPanel extends AbstractPanel {
      * @return the currently selected index on this panel.
      */
     public int getIndex() {
-        return presentationList.selectionModelProperty().get().getSelectedIndex();
-    }
-
-    /**
-     * Focus on this panel.
-     */
-    @Override
-    public void focus() {
-        presentationList.requestFocus();
+        return presentationPreview.getSelectedIndex();
     }
 
     /**
@@ -170,13 +201,13 @@ public class PresentationPanel extends AbstractPanel {
 
     @Override
     public int getCurrentIndex() {
-        return presentationList.getSelectionModel().getSelectedIndex();
+        return presentationPreview.getSelectedIndex();
     }
 
     @Override
     public void updateCanvas() {
-        for (DisplayCanvas canvas : getCanvases()) {
-            if (currentSlide != null) {
+        for(DisplayCanvas canvas : getCanvases()) {
+            if(currentSlide != null) {
                 drawSlide(currentSlide, canvas);
             }
         }

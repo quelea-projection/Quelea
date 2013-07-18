@@ -146,14 +146,6 @@ public class SelectLyricsPanel extends AbstractPanel {
         super.clear();
     }
 
-    /**
-     * Focus on this panel.
-     */
-    @Override
-    public void focus() {
-        lyricsList.requestFocus();
-    }
-
     public DisplayCanvas getPreviewCanvas() {
         return previewCanvas;
     }

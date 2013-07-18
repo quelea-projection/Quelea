@@ -94,7 +94,7 @@ public class LivePanel extends LivePreviewPanel {
                 int stageScreen = QueleaProperties.get().getStageScreen();
                 final ObservableList<Screen> monitors = Screen.getScreens();
                 
-                DisplayStage appWindow = QueleaApp.get().getAppWindow();
+                DisplayStage appWindow = QueleaApp.get().getProjectionWindow();
                 DisplayStage stageWindow = QueleaApp.get().getStageWindow();
 
                 final boolean lyricsHidden;

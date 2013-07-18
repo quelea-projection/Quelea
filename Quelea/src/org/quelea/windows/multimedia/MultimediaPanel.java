@@ -54,14 +54,6 @@ public class MultimediaPanel extends AbstractPanel {
         setCenter(previewCanvas);
     }
 
-    /**
-     * Focus on this video panel. Currently unimplemented.
-     */
-    @Override
-    public void focus() {
-        drawer.requestFocus();
-    }
-
     @Override
     public void registerDisplayCanvas(DisplayCanvas canvas) {
         super.registerDisplayCanvas(canvas); //To change body of generated methods, choose Tools | Templates.
