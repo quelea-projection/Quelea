@@ -26,8 +26,6 @@ import java.nio.file.StandardCopyOption;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Pos;
@@ -38,7 +36,6 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.stage.FileChooser;
-import org.apache.commons.io.FilenameUtils;
 import org.javafx.dialog.Dialog;
 import org.quelea.services.languages.LabelGrabber;
 import org.quelea.services.utils.FileFilters;
@@ -55,7 +52,6 @@ public class LibraryImagePanel extends BorderPane {
 
     private final ImageListPanel imagePanel;
     private HBox northPanel;
-    private ObservableList<NewFile> list = FXCollections.observableArrayList();
     private static final Logger LOGGER = LoggerUtils.getLogger();
 
     /**
@@ -65,14 +61,6 @@ public class LibraryImagePanel extends BorderPane {
         imagePanel = new ImageListPanel(QueleaProperties.get().getImageDir().getName());
         setCenter(imagePanel);
         northPanel = new HBox();
-//        Button refreshButton = new Button("", new ImageView(new Image("file:icons/green_refresh128.png", 22, 22, true, true)));
-//        refreshButton.setTooltip(new Tooltip(LabelGrabber.INSTANCE.getLabel("refresh.images.panel")));
-//        refreshButton.setOnAction(new EventHandler<ActionEvent>() {
-//            @Override
-//            public void handle(ActionEvent t) {
-//                imagePanel.refresh();
-//            }
-//        });
 
         Button addButton = new Button(LabelGrabber.INSTANCE.getLabel("add.images.panel"), new ImageView(new Image("file:icons/add.png", 20, 20, true, true)));
         addButton.setTooltip(new Tooltip(LabelGrabber.INSTANCE.getLabel("add.images.panel")));
@@ -87,27 +75,9 @@ public class LibraryImagePanel extends BorderPane {
                     for (final File f : files) {
                         try {
                             final Path sourceFile = f.getAbsoluteFile().toPath();
-                            final String fExtension = FilenameUtils.getExtension(f.getAbsolutePath());
 
                             if (new File(imagePanel.getDir(), f.getName()).exists()) {
                                 Dialog d = Dialog.buildConfirmation(LabelGrabber.INSTANCE.getLabel("confirm.overwrite.title"), f.getName() + "\n" + LabelGrabber.INSTANCE.getLabel("confirm.overwrite.text"))
-//                                        + "addLabelledButton(LabelGrabber.INSTANCE.getLabel("file.rename.button"), new EventHandler<ActionEvent>() {
-//                                    @Override
-//                                    public void handle(ActionEvent t) {
-//                                        String fname;
-//                                        fname = InputDialog.getUserInput(LabelGrabber.INSTANCE.getLabel("file.rename.dialog.text"), LabelGrabber.INSTANCE.getLabel("file.rename.dialog.title"));
-//                                        System.out.println(fname);
-//                                        if (!fname.endsWith("." + fExtension)) {
-//                                            fname += "." + fExtension;
-//                                        }
-//                                        try {
-//                                            System.out.println(fname);
-//                                            Files.copy(sourceFile, Paths.get(imagePanel.getDir(), fname), StandardCopyOption.COPY_ATTRIBUTES);
-//                                        } catch (IOException ex) {
-//                                            LOGGER.log(Level.WARNING, "Could not save the renamed file.", ex);
-//                                        }
-//                                    }
-//                                })
                                 .addLabelledButton(LabelGrabber.INSTANCE.getLabel("file.replace.button"), new EventHandler<ActionEvent>() {
                                     @Override
                                     public void handle(ActionEvent t) {
@@ -136,45 +106,7 @@ public class LibraryImagePanel extends BorderPane {
                 imagePanel.refresh();
             }
         });
-
-//        final ObservableList<NewFile> list = FXCollections.observableArrayList();
-//        list.addAll(getComboBoxOptions());
-//
-//        ComboBox<NewFile> cb = new ComboBox<>(list);
-//        cb.setValue(cb.getItems().get(1));
-//        cb.setTooltip(new Tooltip(LabelGrabber.INSTANCE.getLabel("select.folder.images.panel")));
-//        cb.valueProperty().addListener(new ChangeListener() {
-//            @Override
-//            public void changed(ObservableValue ov, Object t, Object t1) {
-//                NewFile nf  = (NewFile) t1;
-//                if (nf.getFile() == null) {
-//                    DirectoryChooser chooser = new DirectoryChooser();
-//                    chooser.setInitialDirectory(QueleaProperties.get().getImageDir().getAbsoluteFile());
-//                    File f = chooser.showDialog(QueleaApp.get().getMainWindow());
-//                    if (f != null) {
-//                        nf = new NewFile(f);
-//                        list.add(list.size() - 1, nf);
-//                    } else {
-//                        return;
-//                    }
-//                }
-//                else {
-//                    nf = (NewFile) t1;
-//                }
-//                imagePanel.changeDir(nf.getFile().getAbsoluteFile());
-//                Platform.runLater(new Runnable() {
-//                    @Override
-//                    public void run() {
-//                        imagePanel.refresh();
-//                    }
-//                });
-//            }
-//        });
-//        cb.setMinWidth(250.0);
-//        northPanel.getChildren().add(new Label(LabelGrabber.INSTANCE.getLabel("image.folder")));
-//        northPanel.getChildren().add(cb);
         northPanel.getChildren().add(addButton);
-//        northPanel.getChildren().add(refreshButton);
         northPanel.setSpacing(10);
         northPanel.alignmentProperty().setValue(Pos.CENTER_RIGHT);
         setTop(northPanel);
@@ -187,42 +119,5 @@ public class LibraryImagePanel extends BorderPane {
      */
     public ImageListPanel getImagePanel() {
         return imagePanel;
-    }
-
-    private ObservableList<NewFile> getComboBoxOptions() {
-        list.add(new NewFile(new File(System.getProperty("user.home"))));
-        list.add(new NewFile(QueleaProperties.get().getImageDir()));
-        list.add(new NewFile(null));
-        return list;
-
-
-
-
-    }
-
-    private static class NewFile {
-
-        private File file;
-
-        public NewFile(File f) {
-            file = f;
-        }
-
-        @Override
-        public String toString() {
-            if (file == null) {
-                return LabelGrabber.INSTANCE.getLabel("select.folder.images.panel");
-            } else {
-                return file.getName();
-            }
-        }
-
-        public void set(File f) {
-            file = f;
-        }
-
-        public File getFile() {
-            return file;
-        }
     }
 }
