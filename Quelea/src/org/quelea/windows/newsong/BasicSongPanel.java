@@ -19,7 +19,6 @@ package org.quelea.windows.newsong;
 import java.awt.Component;
 import java.awt.Container;
 import java.awt.FocusTraversalPolicy;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.logging.Logger;
@@ -42,8 +41,8 @@ import org.quelea.data.chord.ChordTransposer;
 import org.quelea.data.chord.TransposeDialog;
 import org.quelea.data.displayable.SongDisplayable;
 import org.quelea.services.languages.LabelGrabber;
+import org.quelea.services.languages.spelling.SpellTextArea;
 import org.quelea.services.utils.LineTypeChecker;
-import org.quelea.services.utils.LineTypeChecker.Type;
 import org.quelea.services.utils.LoggerUtils;
 import org.quelea.windows.main.QueleaApp;
 
@@ -56,7 +55,7 @@ import org.quelea.windows.main.QueleaApp;
 public class BasicSongPanel extends BorderPane {
 
     private static final Logger LOGGER = LoggerUtils.getLogger();
-    private final TextArea lyricsArea;
+    private final SpellTextArea lyricsArea;
     private final TextField titleField;
     private final TextField authorField;
     private final Button transposeButton;
@@ -66,10 +65,10 @@ public class BasicSongPanel extends BorderPane {
      * Create and initialise the song panel.
      */
     public BasicSongPanel() {
-        VBox centrePanel = new VBox();
+        final VBox centrePanel = new VBox();
         transposeDialog = new TransposeDialog();
         GridPane topPanel = new GridPane();
-        
+
         titleField = new TextField();
         GridPane.setHgrow(titleField, Priority.ALWAYS);
         Label titleLabel = new Label(LabelGrabber.INSTANCE.getLabel("title.label"));
@@ -78,7 +77,7 @@ public class BasicSongPanel extends BorderPane {
         titleLabel.setLabelFor(titleField);
         GridPane.setConstraints(titleField, 2, 1);
         topPanel.getChildren().add(titleField);
-        
+
         authorField = new TextField();
         GridPane.setHgrow(authorField, Priority.ALWAYS);
         Label authorLabel = new Label(LabelGrabber.INSTANCE.getLabel("author.label"));
@@ -89,29 +88,9 @@ public class BasicSongPanel extends BorderPane {
         topPanel.getChildren().add(authorField);
 
         centrePanel.getChildren().add(topPanel);
-        lyricsArea = new TextArea();
-//        SpellChecker.register(lyricsArea); //TODO: Spell check.
-        
-//        lyricsArea.getDocument().addDocumentListener(new DocumentListener() { //TODO: Highlight
-//            public void insertUpdate(DocumentEvent e) {
-//                update();
-//            }
-//
-//            public void removeUpdate(DocumentEvent e) {
-//                update();
-//            }
-//
-//            public void changedUpdate(DocumentEvent e) {
-//                update();
-//            }
-//
-//            private void update() {
-//                checkChords();
-//                doHighlight();
-//            }
-//        });
-        
-        VBox lyricsPanel = new VBox();
+        lyricsArea = new SpellTextArea();
+
+        final VBox lyricsPanel = new VBox();
         VBox.setVgrow(lyricsPanel, Priority.ALWAYS);
         ToolBar lyricsToolbar = new ToolBar();
         lyricsToolbar.getItems().add(getDictButton());
@@ -125,22 +104,36 @@ public class BasicSongPanel extends BorderPane {
         centrePanel.getChildren().add(lyricsPanel);
         setCenter(centrePanel);
     }
+//    private String[] chordsLines;
 
-    /**
-     * Check whether any chords are present and enable / disable the transpose
-     * button appropriately.
-     */
-    private void checkChords() {
-        String[] lines = lyricsArea.getText().split("\n");
-        for(String line : lines) {
-            if(new LineTypeChecker(line).getLineType() == Type.CHORDS) {
-                transposeButton.setDisable(false);
-                return;
-            }
-        }
-        transposeButton.setDisable(true);
-    }
-    private final List<Object> highlights = new ArrayList<>();
+//    /**
+//     * Check whether any chords are present and enable / disable the transpose
+//     * button appropriately.
+//     */
+//    private void checkChords() {
+//        try {
+//            SwingUtilities.invokeAndWait(new Runnable() {
+//                @Override
+//                public void run() {
+//                    chordsLines = lyricsArea.getText().split("\n");
+//                }
+//            });
+//        }
+//        catch(InterruptedException ex) {
+//            Logger.getLogger(BasicSongPanel.class.getName()).log(Level.SEVERE, null, ex);
+//        }
+//        catch(InvocationTargetException ex) {
+//            Logger.getLogger(BasicSongPanel.class.getName()).log(Level.SEVERE, null, ex);
+//        }
+//        for(String line : chordsLines) {
+//            if(new LineTypeChecker(line).getLineType() == Type.CHORDS) {
+//                transposeButton.setDisable(false);
+//                return;
+//            }
+//        }
+//        transposeButton.setDisable(true);
+//    }
+//    private final List<Object> highlights = new ArrayList<>();
 
     /**
      * Manage the highlighting.
@@ -181,7 +174,6 @@ public class BasicSongPanel extends BorderPane {
 //            LOGGER.log(Level.SEVERE, "Bug in highlighting", ex);
 //        }
 //    }
-
     /**
      * Get the button used for transposing the chords.
      * <p/>
@@ -276,14 +268,13 @@ public class BasicSongPanel extends BorderPane {
         Button button = new Button("", new ImageView(new Image("file:icons/trimLines.png", 24, 24, false, true)));
         button.setTooltip(new Tooltip(LabelGrabber.INSTANCE.getLabel("trim.lines.tooltip")));
         button.setOnAction(new EventHandler<javafx.event.ActionEvent>() {
-
             @Override
             public void handle(javafx.event.ActionEvent t) {
-                StringBuilder newText = new StringBuilder();
-                for(String line : lyricsArea.getText().split("\n")) {
-                    newText.append(line.trim()).append("\n");
-                }
-                lyricsArea.setText(newText.toString());
+//                StringBuilder newText = new StringBuilder();
+//                for(String line : lyricsArea.getText().split("\n")) {
+//                    newText.append(line.trim()).append("\n");
+//                }
+//                lyricsArea.setText(newText.toString());
             }
         });
         return button;
@@ -298,7 +289,6 @@ public class BasicSongPanel extends BorderPane {
         Button button = new Button("", new ImageView(new Image("file:icons/dictionary.png", 24, 24, false, true)));
         button.setTooltip(new Tooltip(LabelGrabber.INSTANCE.getLabel("run.spellcheck.label") + " (F7)"));
         button.setOnAction(new EventHandler<javafx.event.ActionEvent>() {
-
             @Override
             public void handle(javafx.event.ActionEvent t) {
 //                SpellChecker.showSpellCheckerDialog(lyricsArea, SpellChecker.getOptions());
@@ -317,10 +307,9 @@ public class BasicSongPanel extends BorderPane {
         Button button = new Button("", new ImageView(new Image("file:icons/apos.png", 24, 24, false, true)));
         button.setTooltip(new Tooltip(LabelGrabber.INSTANCE.getLabel("fix.apos.label")));
         button.setOnAction(new EventHandler<javafx.event.ActionEvent>() {
-
             @Override
             public void handle(javafx.event.ActionEvent t) {
-                lyricsArea.setText(lyricsArea.getText().replace("`", "'").replace("’", "'"));
+//                lyricsArea.setText(lyricsArea.getText().replace("`", "'").replace("’", "'"));
             }
         });
         return button;
@@ -332,7 +321,7 @@ public class BasicSongPanel extends BorderPane {
     public void resetNewSong() {
         getTitleField().clear();
         getAuthorField().clear();
-        getLyricsField().clear();
+        getLyricsField().setText("");
         getTitleField().requestFocus();
     }
 
@@ -354,7 +343,7 @@ public class BasicSongPanel extends BorderPane {
      * @return the lyrics field.
      */
     public TextArea getLyricsField() {
-        return lyricsArea;
+        return lyricsArea.getArea();
     }
 
     /**
