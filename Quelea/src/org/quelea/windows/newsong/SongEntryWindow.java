@@ -17,6 +17,7 @@
  */
 package org.quelea.windows.newsong;
 
+import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.EventHandler;
@@ -35,6 +36,8 @@ import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 import org.quelea.data.ThemeDTO;
 import org.quelea.data.displayable.SongDisplayable;
 import org.quelea.data.displayable.TextDisplayable;
@@ -163,13 +166,13 @@ public class SongEntryWindow extends Stage {
      */
     private void setupBasicSongPanel() {
         basicSongPanel = new BasicSongPanel();
-
         basicSongPanel.getLyricsField().textProperty().addListener(new ChangeListener<String>() {
             @Override
             public void changed(ObservableValue<? extends String> ov, String t, String t1) {
                 checkConfirmButton();
             }
         });
+
         basicSongPanel.getTitleField().textProperty().addListener(new ChangeListener<String>() {
             @Override
             public void changed(ObservableValue<? extends String> ov, String t, String t1) {
