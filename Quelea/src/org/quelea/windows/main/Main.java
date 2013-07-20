@@ -30,7 +30,6 @@ import org.javafx.dialog.Dialog;
 import org.quelea.data.bible.BibleManager;
 import org.quelea.data.db.LegacyDB;
 import org.quelea.data.db.SongManager;
-import org.quelea.data.db.model.Song;
 import org.quelea.data.displayable.SongDisplayable;
 import org.quelea.data.powerpoint.OOUtils;
 import org.quelea.services.languages.LabelGrabber;
@@ -154,7 +153,7 @@ public final class Main extends Application {
             LOGGER.log(Level.SEVERE, "Couldn't load dictionaries", ex);
         }
         LOGGER.log(Level.INFO, "Registered dictionary");
-        
+
         try {
             bibleLoader.join();
         }
@@ -234,13 +233,6 @@ public final class Main extends Application {
             }
         });
 
-    }
-
-    /**
-     * Fallback for non-fx aware runtimes.
-     */
-    public static void main(String[] args) {
-        Application.launch(Main.class, args);
     }
 
     /**

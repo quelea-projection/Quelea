@@ -100,6 +100,28 @@ public final class QueleaProperties extends Properties {
     }
 
     /**
+     * Get the languages file that should be used as specified in the properties
+     * file.
+     * <p/>
+     * @return the languages file for the GUI.
+     */
+    public File getDictionaryFile() {
+        String dict = getProperty("language.file", "gb.lang");
+        String[] parts = dict.split("\\.");
+        StringBuilder builder = new StringBuilder();
+        for(int i = 0; i < parts.length - 1; i++) {
+            builder.append(parts[i]);
+            builder.append(".");
+        }
+        builder.append("words");
+        File ret = new File("languages", builder.toString());
+        if(!ret.exists()) {
+            ret = new File("languages", "gb.words");
+        }
+        return ret;
+    }
+
+    /**
      * Set the name of the language file to use.
      * <p/>
      * @param file the name of the language file to use.
@@ -161,9 +183,9 @@ public final class QueleaProperties extends Properties {
     }
 
     /**
-     * Set if, when an item is removed from the schedule and displayed on
-     * the live view, whether it should be removed from the live view or kept
-     * until something replaces it.
+     * Set if, when an item is removed from the schedule and displayed on the
+     * live view, whether it should be removed from the live view or kept until
+     * something replaces it.
      * <p/>
      * @param val true if it should be cleared, false otherwise.
      */
