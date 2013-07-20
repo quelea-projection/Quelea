@@ -202,8 +202,8 @@ public class Speller {
     }
 
     private boolean anagram(String firstWord, String secondWord) {
-        char[] word1 = firstWord.toCharArray();
-        char[] word2 = secondWord.toCharArray();
+        char[] word1 = firstWord.toLowerCase().toCharArray();
+        char[] word2 = secondWord.toLowerCase().toCharArray();
         Arrays.sort(word1);
         Arrays.sort(word2);
         return Arrays.equals(word1, word2);
