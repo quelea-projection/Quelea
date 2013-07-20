@@ -18,10 +18,14 @@
 package org.quelea.services.languages.spelling;
 
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileReader;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -33,6 +37,7 @@ import java.util.regex.Pattern;
 
 /**
  * Checks text for spelling errors, and provides correction suggestions.
+ * <p/>
  * @author Michael
  */
 public class Speller {
@@ -44,7 +49,9 @@ public class Speller {
 
     /**
      * Create a new speller with a specified dictionary file. Must exist.
-     * @param dictFile the dictionary file. Must be a list of words in the dictionary, one per line.
+     * <p/>
+     * @param dictFile the dictionary file. Must be a list of words in the
+     * dictionary, one per line.
      */
     public Speller(File dictFile) {
         this.dictFile = dictFile;
@@ -56,7 +63,7 @@ public class Speller {
             words = new HashSet<>();
             dictionaries.put(dictFile, words);
             try {
-                BufferedReader reader = new BufferedReader(new FileReader(dictFile));
+                BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(dictFile), "UTF-8"));
                 String line;
                 while((line = reader.readLine()) != null) {
                     line = sanitiseWord(line);
@@ -73,6 +80,7 @@ public class Speller {
 
     /**
      * Check to see if a particular word is in the dictionary.
+     * <p/>
      * @param word the word to check.
      * @return true if it is correct, false if not.
      */
@@ -83,6 +91,7 @@ public class Speller {
 
     /**
      * Add a word to the ignore list.
+     * <p/>
      * @param word the word to add.
      */
     public void addIgnoreWord(String word) {
@@ -92,6 +101,7 @@ public class Speller {
 
     /**
      * Get the list of misspelt words, if any, in the given text.
+     * <p/>
      * @param text the text to check.
      * @return the list of misspelt words.
      */
@@ -111,6 +121,7 @@ public class Speller {
 
     /**
      * Get suggestions for a misspelt word.
+     * <p/>
      * @param misspell the misspelt word.
      * @return the best suggestions from the dictionary file.
      */
@@ -118,11 +129,11 @@ public class Speller {
         PriorityQueue<Suggestion> list = new PriorityQueue<>();
         for(String word : words) {
             int distance = LevenshteinDistance.computeLevenshteinDistance(word, misspell);
-            if(word.length()==misspell.length()) {
+            if(word.length() == misspell.length()) {
                 distance--;
             }
             if(anagram(word, misspell)) {
-                distance-=word.length();
+                distance -= word.length();
             }
             if(distance < 5) {
                 list.add(new Suggestion(word, distance));
@@ -142,8 +153,10 @@ public class Speller {
 
     /**
      * Check a block of text to see if the spelling is ok.
+     * <p/>
      * @param text the text to check for correctness.
-     * @param checkLastWord true if the last word should be checked, false if it should be ignored (since the user may be part way through typing it.)
+     * @param checkLastWord true if the last word should be checked, false if it
+     * should be ignored (since the user may be part way through typing it.)
      * @return true if the check is all ok, false if there are misspelt words.
      */
     public boolean checkText(String text, boolean checkLastWord) {
@@ -165,6 +178,7 @@ public class Speller {
 
     /**
      * Add a word to the dictionary file.
+     * <p/>
      * @param word the word to add.
      */
     public void addWord(String word) {
@@ -172,7 +186,8 @@ public class Speller {
         try {
             if(!words.contains(word)) {
                 words.add(word);
-                new FileWriter(dictFile, true).append("\n" + word).close();
+                BufferedWriter out = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(dictFile, true), "UTF-8"));
+                out.append("\n" + word).close();
             }
         }
         catch(IOException ex) {
@@ -185,7 +200,7 @@ public class Speller {
         word = Pattern.compile("[^\\w ]", Pattern.UNICODE_CHARACTER_CLASS).matcher(word).replaceAll("");
         return word;
     }
-    
+
     private boolean anagram(String firstWord, String secondWord) {
         char[] word1 = firstWord.toCharArray();
         char[] word2 = secondWord.toCharArray();
