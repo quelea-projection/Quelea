@@ -25,10 +25,13 @@ import java.nio.file.StandardCopyOption;
 import java.util.List;
 import java.util.logging.Level;
 import javafx.application.Platform;
+import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Orientation;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
+import javafx.scene.control.ContextMenu;
+import javafx.scene.control.MenuItem;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -36,12 +39,15 @@ import javafx.scene.input.Clipboard;
 import javafx.scene.input.ClipboardContent;
 import javafx.scene.input.DragEvent;
 import javafx.scene.input.Dragboard;
+import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.TransferMode;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.TilePane;
+import org.javafx.dialog.Dialog;
 import org.quelea.data.displayable.ImageDisplayable;
+import org.quelea.services.languages.LabelGrabber;
 import org.quelea.services.utils.LoggerUtils;
 import org.quelea.services.utils.Utils;
 import org.quelea.windows.main.QueleaApp;
@@ -57,7 +63,7 @@ public class ImageListPanel extends BorderPane {
     private static final String BORDER_STYLE_DESELECTED = "-fx-padding: 0.2em;-fx-border-color: rgb(0,0,0,0);-fx-border-radius: 5;-fx-border-width: 0.1em;";
     private final TilePane imageList;
     private String dir;
-    private Thread t;
+    private Thread updateThread;
 
     /**
      * Create a new image list panel.
@@ -127,21 +133,53 @@ public class ImageListPanel extends BorderPane {
     private void updateImages() {
         imageList.getChildren().clear();
         final File[] files = new File(dir).listFiles();
-        if(t != null && t.isAlive()) {
+        if(updateThread != null && updateThread.isAlive()) {
             return;
         }
-        t = new Thread() {
+        updateThread = new Thread() {
             @Override
             public void run() {
                 for(final File file : files) {
                     if(Utils.fileIsImage(file) && !file.isDirectory()) {
+                        final HBox viewBox = new HBox();
                         final ImageView view = new ImageView(new Image(file.toURI().toString()));
                         view.setPreserveRatio(true);
                         view.setFitWidth(160);
                         view.setOnMouseClicked(new EventHandler<MouseEvent>() {
                             @Override
                             public void handle(MouseEvent t) {
-                                QueleaApp.get().getMainWindow().getMainPanel().getSchedulePanel().getScheduleList().add(new ImageDisplayable(file));
+                                if(t.getButton() == MouseButton.PRIMARY) {
+                                    QueleaApp.get().getMainWindow().getMainPanel().getSchedulePanel().getScheduleList().add(new ImageDisplayable(file));
+                                }
+                                else if(t.getButton() == MouseButton.SECONDARY) {
+                                    ContextMenu removeMenu = new ContextMenu();
+                                    MenuItem removeItem = new MenuItem(LabelGrabber.INSTANCE.getLabel("remove.image.text"));
+                                    removeItem.setOnAction(new EventHandler<ActionEvent>() {
+                                        @Override
+                                        public void handle(ActionEvent t) {
+                                            final boolean[] reallyDelete = new boolean[]{false};
+                                            Dialog.buildConfirmation(LabelGrabber.INSTANCE.getLabel("delete.image.title"),
+                                                    LabelGrabber.INSTANCE.getLabel("delete.image.confirmation"))
+                                                    .addYesButton(new EventHandler<ActionEvent>() {
+                                                        @Override
+                                                        public void handle(ActionEvent t) {
+                                                            reallyDelete[0] = true;
+                                                        }
+                                                    })
+                                                    .addNoButton(new EventHandler<ActionEvent>() {
+                                                        @Override
+                                                        public void handle(ActionEvent t) {
+                                                        }
+                                                    }).build().showAndWait();
+                                            if(reallyDelete[0]) {
+                                                file.delete();
+                                                imageList.getChildren().remove(viewBox);
+                                            }
+                                        }
+                                    });
+                                    removeMenu.getItems().add(removeItem);
+                                    removeMenu.show(view, t.getScreenX(), t.getScreenY());
+                                }
                             }
                         });
                         view.setOnDragDetected(new EventHandler<MouseEvent>() {
@@ -154,7 +192,6 @@ public class ImageListPanel extends BorderPane {
                                 t.consume();
                             }
                         });
-                        final HBox viewBox = new HBox();
                         viewBox.getChildren().add(view);
                         setupHover(viewBox);
                         Platform.runLater(new Runnable() {
@@ -167,7 +204,7 @@ public class ImageListPanel extends BorderPane {
                 }
             }
         };
-        t.start();
+        updateThread.start();
     }
 
     private void setupHover(final Node view) {
