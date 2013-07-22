@@ -340,3 +340,6 @@ spelling.check.title=Spelling check
 correct.text=Correct
 ignore.text=Ignore
 spelling.errors.in.doc.label=There are spelling errors in the document. Hit "F7" to open the spell check dialog.
+remove.image.text=Remove Image
+delete.image.title=Delete Image
+delete.image.confirmation=Really remove this image from the library? This action cannot be undone.
