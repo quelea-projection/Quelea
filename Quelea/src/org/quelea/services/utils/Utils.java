@@ -56,6 +56,7 @@ import javafx.scene.image.Image;
 import javafx.scene.image.PixelWriter;
 import javafx.scene.image.WritableImage;
 import javafx.scene.paint.Color;
+import javafx.stage.Screen;
 import javafx.stage.Stage;
 import org.javafx.dialog.Dialog;
 import org.quelea.data.ThemeDTO;
@@ -100,6 +101,15 @@ public final class Utils {
         catch(InterruptedException ex) {
             //Nothing
         }
+    }
+    
+    public static boolean isOffscreen(SceneInfo info) {
+        for(Screen screen : Screen.getScreens()) {
+            if(screen.getBounds().intersects(info.getBounds())) {
+                return false;
+            }
+        }
+        return true;
     }
 
     /**
