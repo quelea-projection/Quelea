@@ -62,7 +62,7 @@ public class LibraryImagePanel extends BorderPane {
         setCenter(imagePanel);
         northPanel = new HBox();
 
-        Button addButton = new Button(LabelGrabber.INSTANCE.getLabel("add.images.panel"), new ImageView(new Image("file:icons/add.png", 20, 20, true, true)));
+        Button addButton = new Button(LabelGrabber.INSTANCE.getLabel("add.images.panel"), new ImageView(new Image("file:icons/add.png")));
         addButton.setTooltip(new Tooltip(LabelGrabber.INSTANCE.getLabel("add.images.panel")));
         addButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override
