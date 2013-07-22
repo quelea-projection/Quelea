@@ -41,10 +41,10 @@ import org.quelea.windows.main.PreviewPanel;
  */
 public class SelectLyricsPanel extends AbstractPanel {
 
+    private static final Logger LOGGER = LoggerUtils.getLogger();
     private final SelectLyricsList lyricsList;
     private final DisplayCanvas previewCanvas;
     private final SplitPane splitPane;
-    private static final Logger LOGGER = LoggerUtils.getLogger();
     private LyricDrawer drawer;
 
     /**
@@ -53,7 +53,6 @@ public class SelectLyricsPanel extends AbstractPanel {
      * @param containerPanel the container panel this panel is contained within.
      */
     public SelectLyricsPanel(LivePreviewPanel containerPanel) {
-        this.containerPanel = containerPanel;
         drawer = new LyricDrawer((containerPanel instanceof PreviewPanel), containerPanel);
         splitPane = new SplitPane();
         splitPane.setOrientation(Orientation.VERTICAL);
@@ -110,7 +109,7 @@ public class SelectLyricsPanel extends AbstractPanel {
      */
     public void showDisplayable(TextDisplayable displayable, int index) {
         clear();
-        currentDisplayable = displayable;
+        setCurrentDisplayable(displayable);
         for(TextSection section : displayable.getSections()) {
             lyricsList.itemsProperty().get().add(section);
         }
@@ -174,8 +173,8 @@ public class SelectLyricsPanel extends AbstractPanel {
                 drawer.setTheme(newTheme);
             }
             drawer.setCapitaliseFirst(currentSection.shouldCapitaliseFirst());
-            drawer.setText((TextDisplayable) currentDisplayable, selectedIndex);
-            canvas.setCurrentDisplayable(currentDisplayable);
+            drawer.setText((TextDisplayable) getCurrentDisplayable(), selectedIndex);
+            canvas.setCurrentDisplayable(getCurrentDisplayable());
         }
     }
 
