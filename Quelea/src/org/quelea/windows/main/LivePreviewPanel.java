@@ -66,10 +66,10 @@ public abstract class LivePreviewPanel extends BorderPane {
     private static final String PRESENTATION_LABEL = "PPT";
     private String currentLabel;
     private SelectLyricsPanel lyricsPanel = new SelectLyricsPanel(this);
-    private ImagePanel picturePanel = new ImagePanel(this);
+    private ImagePanel picturePanel = new ImagePanel();
     private PresentationPanel presentationPanel = new PresentationPanel(this);
-    private MultimediaPanel videoPanel = new MultimediaPanel(this, new VideoControlPanel());
-    private MultimediaPanel audioPanel = new MultimediaPanel(this, new AudioControlPanel());
+    private MultimediaPanel videoPanel = new MultimediaPanel(new VideoControlPanel());
+    private MultimediaPanel audioPanel = new MultimediaPanel(new AudioControlPanel());
     private QuickEditDialog quickEditDialog = new QuickEditDialog();
 
     /**
@@ -108,13 +108,6 @@ public abstract class LivePreviewPanel extends BorderPane {
         lyricsPanel.selectFirst();
     }
 
-    /**
-     * Pass focus down to the current card panel pane.
-     */
-//    @Override
-//    public void requestFocus() {
-//        getCurrentPane().requestFocus();
-//    }
     /**
      * Get the presentation panel on this live / preview panel.
      * <p/>
