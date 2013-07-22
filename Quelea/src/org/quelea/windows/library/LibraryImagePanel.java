@@ -28,8 +28,10 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
+import javafx.geometry.Orientation;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
+import javafx.scene.control.ToolBar;
 import javafx.scene.control.Tooltip;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -45,13 +47,13 @@ import org.quelea.windows.main.QueleaApp;
 
 /**
  * The image panel in the library.
- *
+ * <p/>
  * @author Michael
  */
 public class LibraryImagePanel extends BorderPane {
 
     private final ImageListPanel imagePanel;
-    private HBox northPanel;
+    private ToolBar toolbar;
     private static final Logger LOGGER = LoggerUtils.getLogger();
 
     /**
@@ -60,9 +62,9 @@ public class LibraryImagePanel extends BorderPane {
     public LibraryImagePanel() {
         imagePanel = new ImageListPanel(QueleaProperties.get().getImageDir().getName());
         setCenter(imagePanel);
-        northPanel = new HBox();
+        toolbar = new ToolBar();
 
-        Button addButton = new Button(LabelGrabber.INSTANCE.getLabel("add.images.panel"), new ImageView(new Image("file:icons/add.png")));
+        Button addButton = new Button("", new ImageView(new Image("file:icons/add.png")));
         addButton.setTooltip(new Tooltip(LabelGrabber.INSTANCE.getLabel("add.images.panel")));
         addButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override
@@ -71,34 +73,37 @@ public class LibraryImagePanel extends BorderPane {
                 chooser.getExtensionFilters().add(FileFilters.IMAGES);
                 chooser.setInitialDirectory(QueleaProperties.get().getImageDir().getAbsoluteFile());
                 List<File> files = chooser.showOpenMultipleDialog(QueleaApp.get().getMainWindow());
-                if (files != null) {
-                    for (final File f : files) {
+                if(files != null) {
+                    for(final File f : files) {
                         try {
                             final Path sourceFile = f.getAbsoluteFile().toPath();
 
-                            if (new File(imagePanel.getDir(), f.getName()).exists()) {
+                            if(new File(imagePanel.getDir(), f.getName()).exists()) {
                                 Dialog d = Dialog.buildConfirmation(LabelGrabber.INSTANCE.getLabel("confirm.overwrite.title"), f.getName() + "\n" + LabelGrabber.INSTANCE.getLabel("confirm.overwrite.text"))
-                                .addLabelledButton(LabelGrabber.INSTANCE.getLabel("file.replace.button"), new EventHandler<ActionEvent>() {
-                                    @Override
-                                    public void handle(ActionEvent t) {
-                                        try {
-                                            Files.delete(Paths.get(imagePanel.getDir(), f.getName()));
-                                            Files.copy(sourceFile, Paths.get(imagePanel.getDir(), f.getName()), StandardCopyOption.COPY_ATTRIBUTES);
-                                        } catch (IOException e) {
-                                            LOGGER.log(Level.WARNING, "Could not delete or copy file back into directory.", e);
-                                        }
-                                    }
-                                }).addLabelledButton(LabelGrabber.INSTANCE.getLabel("file.continue.button"), new EventHandler<ActionEvent>() {
-                                    @Override
-                                    public void handle(ActionEvent t) {
-                                        // DO NOTHING
-                                    }
-                                }).build();
+                                        .addLabelledButton(LabelGrabber.INSTANCE.getLabel("file.replace.button"), new EventHandler<ActionEvent>() {
+                                            @Override
+                                            public void handle(ActionEvent t) {
+                                                try {
+                                                    Files.delete(Paths.get(imagePanel.getDir(), f.getName()));
+                                                    Files.copy(sourceFile, Paths.get(imagePanel.getDir(), f.getName()), StandardCopyOption.COPY_ATTRIBUTES);
+                                                }
+                                                catch(IOException e) {
+                                                    LOGGER.log(Level.WARNING, "Could not delete or copy file back into directory.", e);
+                                                }
+                                            }
+                                        }).addLabelledButton(LabelGrabber.INSTANCE.getLabel("file.continue.button"), new EventHandler<ActionEvent>() {
+                                            @Override
+                                            public void handle(ActionEvent t) {
+                                                // DO NOTHING
+                                            }
+                                        }).build();
                                 d.showAndWait();
-                            } else {
+                            }
+                            else {
                                 Files.copy(sourceFile, Paths.get(imagePanel.getDir(), f.getName()), StandardCopyOption.COPY_ATTRIBUTES);
                             }
-                        } catch (IOException ex) {
+                        }
+                        catch(IOException ex) {
                             LOGGER.log(Level.WARNING, "Could not copy file into ImagePanel from FileChooser selection", ex);
                         }
                     }
@@ -106,15 +111,16 @@ public class LibraryImagePanel extends BorderPane {
                 imagePanel.refresh();
             }
         });
-        northPanel.getChildren().add(addButton);
-        northPanel.setSpacing(10);
-        northPanel.alignmentProperty().setValue(Pos.CENTER_RIGHT);
-        setTop(northPanel);
+        HBox toolbarBox = new HBox();
+        toolbar.setOrientation(Orientation.VERTICAL);
+        toolbarBox.getChildren().add(toolbar);
+        toolbar.getItems().add(addButton);
+        setLeft(toolbarBox);
     }
 
     /**
      * Get the image list panel.
-     *
+     * <p/>
      * @return the image list panel.
      */
     public ImageListPanel getImagePanel() {
