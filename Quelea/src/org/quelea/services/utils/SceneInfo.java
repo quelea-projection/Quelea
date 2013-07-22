@@ -18,6 +18,9 @@
  */
 package org.quelea.services.utils;
 
+import javafx.geometry.BoundingBox;
+import javafx.geometry.Rectangle2D;
+
 /**
  * The scene info used for storing the position and size of the main window
  * between runs of Quelea. Just a convenience class really; nothing fancy going
@@ -53,6 +56,10 @@ public class SceneInfo {
 
     public int getHeight() {
         return h;
+    }
+    
+    public Rectangle2D getBounds() {
+        return new Rectangle2D(x, y, w, h);
     }
 
     @Override
