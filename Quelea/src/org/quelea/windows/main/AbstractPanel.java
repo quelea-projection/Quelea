@@ -17,22 +17,26 @@ import org.quelea.services.utils.LoggerUtils;
  */
 public abstract class AbstractPanel extends BorderPane implements ContainedPanel {
 
-    private class PriorityComparator implements Comparator<DisplayCanvas> {
+    private static class PriorityComparator implements Comparator<DisplayCanvas> {
 
         @Override
         public int compare(DisplayCanvas o1, DisplayCanvas o2) {
             return o2.getDravingPriority().getPriority() - o1.getDravingPriority().getPriority();
         }
     }
-    SortedSet<DisplayCanvas> canvases = new TreeSet<>(new PriorityComparator());
-    protected LivePreviewPanel containerPanel;
-    protected Displayable currentDisplayable = null;
+    
     private static final Logger LOGGER = LoggerUtils.getLogger();
+    private SortedSet<DisplayCanvas> canvases = new TreeSet<>(new PriorityComparator());
+    private Displayable currentDisplayable = null;
 
-    /**
-     *
-     * @return
-     */
+    public void setCurrentDisplayable(Displayable currentDisplayable) {
+        this.currentDisplayable = currentDisplayable;
+    }
+
+    public Displayable getCurrentDisplayable() {
+        return currentDisplayable;
+    }
+
     @Override
     public Set<DisplayCanvas> getCanvases() {
         return canvases;

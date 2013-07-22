@@ -23,7 +23,6 @@ import org.quelea.windows.main.AbstractPanel;
 import org.quelea.windows.main.DisplayCanvas;
 import org.quelea.windows.main.DisplayCanvas.Priority;
 import org.quelea.windows.main.DisplayableDrawer;
-import org.quelea.windows.main.LivePreviewPanel;
 
 /**
  * A panel used in the live / preview panels for playing audio.
@@ -34,13 +33,12 @@ public class MultimediaPanel extends AbstractPanel {
 
     private final DisplayCanvas previewCanvas;
     private MultimediaDrawer drawer;
-    MultimediaControlPanel controlPanel;
+    private MultimediaControlPanel controlPanel;
 
     /**
      * Create a new image panel.
      */
-    public MultimediaPanel(LivePreviewPanel panel, MultimediaControlPanel controlPanel) {
-        this.containerPanel = panel;
+    public MultimediaPanel(MultimediaControlPanel controlPanel) {
         this.controlPanel = controlPanel;
         drawer = new MultimediaDrawer(controlPanel);
         previewCanvas = new MultimediaPreviewCanvas(false, false, new DisplayCanvas.CanvasUpdater() {

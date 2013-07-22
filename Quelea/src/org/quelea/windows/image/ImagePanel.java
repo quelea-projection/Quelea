@@ -22,7 +22,6 @@ import org.quelea.windows.main.DisplayCanvas;
 import org.quelea.data.displayable.ImageDisplayable;
 import org.quelea.windows.main.DisplayCanvas.Priority;
 import org.quelea.windows.main.DisplayableDrawer;
-import org.quelea.windows.main.LivePreviewPanel;
 
 /**
  * A panel used in the live / preview panels for displaying images.
@@ -38,9 +37,7 @@ public class ImagePanel extends AbstractPanel {
      *
      * @param container the container this panel is contained within.
      */
-    public ImagePanel(LivePreviewPanel panel) {
-
-        this.containerPanel = panel;
+    public ImagePanel() {
         previewCanvas = new DisplayCanvas(false, false, new DisplayCanvas.CanvasUpdater() {
             @Override
             public void updateCallback() {
@@ -70,7 +67,7 @@ public class ImagePanel extends AbstractPanel {
      * @param displayable the image displayable.
      */
     public void showDisplayable(ImageDisplayable displayable) {
-        currentDisplayable = displayable;
+        setCurrentDisplayable(displayable);
         updateCanvas();
     }
 
