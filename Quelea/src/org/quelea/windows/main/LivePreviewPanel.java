@@ -40,7 +40,6 @@ import org.quelea.data.displayable.TextDisplayable;
 import org.quelea.data.displayable.VideoDisplayable;
 import org.quelea.services.utils.LoggerUtils;
 import org.quelea.services.utils.QueleaProperties;
-import org.quelea.services.utils.Utils;
 import org.quelea.windows.audio.AudioControlPanel;
 import org.quelea.windows.lyrics.SelectLyricsPanel;
 import org.quelea.windows.main.quickedit.QuickEditDialog;

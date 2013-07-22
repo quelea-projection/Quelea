@@ -52,7 +52,7 @@ public class PreviewPanel extends LivePreviewPanel {
         Region spacer = new Region();
         HBox.setHgrow(spacer, Priority.ALWAYS);
         header.getItems().add(spacer);
-        liveButton = new Button(LabelGrabber.INSTANCE.getLabel("go.live.text"), new ImageView(new Image("file:icons/2rightarrow.png")));
+        liveButton = new Button(LabelGrabber.INSTANCE.getLabel("go.live.text"), new ImageView(new Image("file:icons/golivearrow.png")));
         liveButton.setTooltip(new Tooltip(LabelGrabber.INSTANCE.getLabel("go.live.text")+" (" + LabelGrabber.INSTANCE.getLabel("space.key") + ")"));
         liveButton.setOnAction(new EventHandler<ActionEvent>() {
 
