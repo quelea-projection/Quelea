@@ -74,6 +74,7 @@ public class LibraryImagePanel extends BorderPane {
                 chooser.setInitialDirectory(QueleaProperties.get().getImageDir().getAbsoluteFile());
                 List<File> files = chooser.showOpenMultipleDialog(QueleaApp.get().getMainWindow());
                 if(files != null) {
+                    final boolean[] refresh = new boolean[]{false};
                     for(final File f : files) {
                         try {
                             final Path sourceFile = f.getAbsoluteFile().toPath();
@@ -86,6 +87,7 @@ public class LibraryImagePanel extends BorderPane {
                                                 try {
                                                     Files.delete(Paths.get(imagePanel.getDir(), f.getName()));
                                                     Files.copy(sourceFile, Paths.get(imagePanel.getDir(), f.getName()), StandardCopyOption.COPY_ATTRIBUTES);
+                                                    refresh[0] = true;
                                                 }
                                                 catch(IOException e) {
                                                     LOGGER.log(Level.WARNING, "Could not delete or copy file back into directory.", e);
@@ -101,14 +103,17 @@ public class LibraryImagePanel extends BorderPane {
                             }
                             else {
                                 Files.copy(sourceFile, Paths.get(imagePanel.getDir(), f.getName()), StandardCopyOption.COPY_ATTRIBUTES);
+                                refresh[0] = true;
                             }
                         }
                         catch(IOException ex) {
                             LOGGER.log(Level.WARNING, "Could not copy file into ImagePanel from FileChooser selection", ex);
                         }
                     }
+                    if(refresh[0]) {
+                        imagePanel.refresh();
+                    }
                 }
-                imagePanel.refresh();
             }
         });
         HBox toolbarBox = new HBox();
