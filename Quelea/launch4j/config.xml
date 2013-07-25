@@ -1,7 +1,7 @@
 
 <launch4jConfig>
     <headerType>gui</headerType>
-    <jar>..\dist\Quelea.jar</jar>
+    <jar>Quelea.jar</jar>
     <jre>
         <path>winjre</path>
         <opt>-Xms1024m</opt>
