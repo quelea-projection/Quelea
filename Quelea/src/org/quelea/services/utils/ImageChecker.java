@@ -17,10 +17,14 @@
  */
 package org.quelea.services.utils;
 
+import java.awt.image.BufferedImage;
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import javafx.scene.image.Image;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.imageio.ImageIO;
 
 /**
  * Check that the images in the "img" folder conform to the requirements. At the
@@ -68,7 +72,13 @@ public class ImageChecker {
         for(File file : imageDir.listFiles()) {
             if(Utils.fileIsImage(file)) {
                 boolean thisok = true;
-                Image image = new Image("file:"+file.getAbsolutePath());
+                BufferedImage image=null;
+                try {
+                    image = ImageIO.read(file);
+                }
+                catch(IOException ex) {
+                    Logger.getLogger(ImageChecker.class.getName()).log(Level.SEVERE, null, ex);
+                }
                 if(image == null) {
                     System.err.println("ERROR: " + file.getName() + " appears to be corrupt.");
                     thisok = false;
