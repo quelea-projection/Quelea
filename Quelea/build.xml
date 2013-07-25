@@ -39,7 +39,7 @@
     </target>
     
     <target name="build-dist" depends="jar">
-        <property name="FXClasspath" value="${javafx.sdk}/jre/lib/jfxrt.jar"/>
+        <property name="FXClasspath" value="lib/jfxrt.jar"/>
         
         <!-- Check the images conform to spec -->
         <java className="org.quelea.services.utils.ImageChecker" classpath="${FXClasspath};${basedir}/build/classes" failonerror="false"/>
