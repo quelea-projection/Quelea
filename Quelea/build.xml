@@ -74,7 +74,7 @@
         <copy todir="${dist.jar.dir}/languages" quiet="yes">
             <fileset dir="${basedir}/languages"/>
         </copy>
-<!--        <copy todir="${dist.jar.dir}/database">
+        <!--        <copy todir="${dist.jar.dir}/database">
             <fileset dir="${basedir}/database"/>
         </copy>-->
         <copy todir="${dist.jar.dir}/img" quiet="yes">
@@ -142,7 +142,9 @@
         <mkdir dir="${dist.jar.dir}/standalone"/>
         <move file="${dist.jar.dir}/Quelea-temp.deb" tofile="${DebInstaller}"/>
         
+        <copy file="${dist.jar.dir}/Quelea.jar" todir="launch4j" quiet="true"/>
         <launch4j configFile="launch4j/config.xml" />  
+        <delete file="launch4j/Quelea.jar"/>
         <echo message="Building cross platform installer"/>
         <izpack input="${basedir}/izpack/config.xml" output="${CPInstaller}" basedir="${dist.jar.dir}"/>
         
