@@ -105,6 +105,7 @@ public class NoticeEntryDialog extends Stage {
         
         HBox southPanel = new HBox();
         addButton = new Button(LabelGrabber.INSTANCE.getLabel("add.notice.button"), new ImageView(new Image("file:icons/tick.png")));
+        addButton.setDefaultButton(true);
         addButton.setOnAction(new EventHandler<javafx.event.ActionEvent>() {
 
             @Override
@@ -199,6 +200,7 @@ public class NoticeEntryDialog extends Stage {
             dialog = new NoticeEntryDialog();
         }
         dialog.setNotice(existing);
+        dialog.text.requestFocus();
         dialog.showAndWait();
         return dialog.notice;
     }
