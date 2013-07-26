@@ -58,7 +58,7 @@ public class NoticeDialog extends Stage implements NoticesChangedListener {
      * @param owner the owner of this dialog.
      */
     public NoticeDialog() {
-        initStyle(StageStyle.UTILITY);
+//        initStyle(StageStyle.UTILITY);
         BorderPane mainPane = new BorderPane();
         getIcons().add(new Image("file:icons/info.png"));
         noticeDrawers = new ArrayList<>();
