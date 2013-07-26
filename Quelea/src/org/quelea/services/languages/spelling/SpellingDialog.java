@@ -123,7 +123,7 @@ public class SpellingDialog {
         dialogStage = new Stage();
         dialogStage.setResizable(false);
         dialogStage.initModality(Modality.APPLICATION_MODAL);
-        dialogStage.initStyle(StageStyle.UTILITY);
+//        dialogStage.initStyle(StageStyle.UTILITY);
         dialogStage.setTitle(LabelGrabber.INSTANCE.getLabel("spelling.check.title"));
         BorderPane mainPane = new BorderPane();
         VBox rightPanel = new VBox(5);
