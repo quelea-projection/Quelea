@@ -27,7 +27,6 @@ import javafx.scene.image.Image;
 import javafx.util.Callback;
 import org.quelea.data.displayable.TextSection;
 import org.quelea.services.utils.QueleaProperties;
-import org.quelea.services.utils.Utils;
 
 /**
  * A list displaying the different sections in the song.
@@ -36,7 +35,7 @@ import org.quelea.services.utils.Utils;
  */
 public class SelectLyricsList extends ListView<TextSection> {
 
-    private static final Cursor Q_CURSOR = new ImageCursor(new Image("file:icons/edit32.png"));
+    private static final Cursor Q_CURSOR = new ImageCursor(new Image("file:icons/edit32.png"), 6, 27);
     private boolean oneLineMode;
 
     /**
