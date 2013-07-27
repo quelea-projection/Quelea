@@ -31,12 +31,13 @@ import org.quelea.services.languages.LabelGrabber;
 
 /**
  * A pane that can be overlaid on a component when it's loading something.
+ * <p/>
  * @author Michael
  */
 public class LoadingPane extends StackPane {
-    
+
     private FadeTransition trans;
-    
+
     /**
      * Create the loading pane.
      */
@@ -44,7 +45,7 @@ public class LoadingPane extends StackPane {
         setAlignment(Pos.CENTER);
         VBox content = new VBox();
         content.setAlignment(Pos.CENTER);
-        Text text = new Text(LabelGrabber.INSTANCE.getLabel("loading.text"));
+        Text text = new Text(LabelGrabber.INSTANCE.getLabel("loading.text") + "...");
         ProgressBar bar = new ProgressBar();
         bar.setProgress(-1);
         content.getChildren().add(text);
@@ -54,13 +55,13 @@ public class LoadingPane extends StackPane {
         setStyle("-fx-background-color: #555555;");
         setVisible(false);
     }
-    
+
     /**
      * Show (fade in) the loading pane.
      */
     public synchronized void show() {
         setVisible(true);
-        if(trans!=null) {
+        if(trans != null) {
             trans.stop();
         }
         trans = new FadeTransition(Duration.seconds(0.2), this);
@@ -68,7 +69,7 @@ public class LoadingPane extends StackPane {
         trans.setToValue(0.6);
         trans.play();
     }
-    
+
     /**
      * Hide (fade out) the loading pane.
      */
@@ -81,12 +82,10 @@ public class LoadingPane extends StackPane {
         trans.setToValue(0);
         trans.play();
         trans.setOnFinished(new EventHandler<ActionEvent>() {
-
             @Override
             public void handle(ActionEvent t) {
                 setVisible(false);
             }
         });
     }
-    
 }

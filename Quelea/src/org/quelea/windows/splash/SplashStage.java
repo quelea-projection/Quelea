@@ -17,12 +17,12 @@
  */
 package org.quelea.windows.splash;
 
+import com.sun.javafx.tk.FontMetrics;
+import com.sun.javafx.tk.Toolkit;
 import javafx.collections.ObservableList;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.Group;
 import javafx.scene.Scene;
-import javafx.scene.effect.DropShadow;
-import javafx.scene.effect.InnerShadow;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.paint.Color;
@@ -30,13 +30,12 @@ import javafx.scene.paint.CycleMethod;
 import javafx.scene.paint.LinearGradient;
 import javafx.scene.paint.Stop;
 import javafx.scene.text.Font;
-import javafx.scene.text.FontPosture;
-import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 import javafx.stage.Modality;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
+import org.quelea.services.languages.LabelGrabber;
 import org.quelea.services.utils.QueleaProperties;
 import org.quelea.services.utils.Utils;
 
@@ -60,7 +59,7 @@ public class SplashStage extends Stage {
         initModality(Modality.APPLICATION_MODAL);
         initStyle(StageStyle.UNDECORATED);
         Utils.addIconsToStage(this);
-        setTitle("Quelea loading...");
+        setTitle("Quelea " + LabelGrabber.INSTANCE.getLabel("loading.text") + "...");
         String minorVersion = QueleaProperties.VERSION.getMinorVersionString();
         Image splashImage = new Image("file:icons/splash-bare.png");
         version = Version.FINAL;
@@ -73,12 +72,20 @@ public class SplashStage extends Stage {
             version = Version.BETA;
         }
         ImageView imageView = new ImageView(splashImage);
-        Text text = new Text(QueleaProperties.VERSION.getVersionString());
-        LinearGradient grad = new LinearGradient(0, 1, 0, 0, true, CycleMethod.REPEAT, new Stop(0, Color.web("#000000")), new Stop(1, Color.web("#666666")));
-        text.setFill(grad);
-        text.setFont(Font.loadFont("file:icons/Ubuntu-RI.ttf", 35));
-        text.setLayoutX(447);
-        text.setLayoutY(183);
+        Text loadingText = new Text(LabelGrabber.INSTANCE.getLabel("loading.text"));
+        Font loadingFont = Font.loadFont("file:icons/Ubuntu-RI.ttf", 33);
+        FontMetrics loadingMetrics = Toolkit.getToolkit().getFontLoader().getFontMetrics(loadingFont);
+        LinearGradient loadingGrad = new LinearGradient(0, 1, 0, 0, true, CycleMethod.REPEAT, new Stop(0, Color.web("#666666")), new Stop(1, Color.web("#000000")));
+        loadingText.setFill(loadingGrad);
+        loadingText.setFont(loadingFont);
+        loadingText.setLayoutX(splashImage.getWidth() - loadingMetrics.computeStringWidth(loadingText.getText() + "...")-20);
+        loadingText.setLayoutY(325);
+        Text versionText = new Text(QueleaProperties.VERSION.getVersionString());
+        LinearGradient versionGrad = new LinearGradient(0, 1, 0, 0, true, CycleMethod.REPEAT, new Stop(0, Color.web("#000000")), new Stop(1, Color.web("#666666")));
+        versionText.setFill(versionGrad);
+        versionText.setFont(Font.loadFont("file:icons/Ubuntu-RI.ttf", 35));
+        versionText.setLayoutX(447);
+        versionText.setLayoutY(183);
         Text minorText = null;
         String minorNum = null;
         if(version != Version.FINAL) {
@@ -89,7 +96,7 @@ public class SplashStage extends Stage {
         }
         if(minorNum != null) {
             minorText = new Text(minorNum);
-            minorText.setFill(grad);
+            minorText.setFill(versionGrad);
             if(version == Version.ALPHA) {
                 minorText.setFont(Font.loadFont("file:icons/Ubuntu-RI.ttf", 30));
                 minorText.setLayoutX(30);
@@ -101,10 +108,14 @@ public class SplashStage extends Stage {
                 minorText.setLayoutY(305);
             }
         }
-
+        Pips pips = new Pips(loadingFont, loadingGrad);
+        pips.setLayoutX(loadingText.getLayoutX()+loadingMetrics.computeStringWidth(LabelGrabber.INSTANCE.getLabel("loading.text")));
+        pips.setLayoutY(loadingText.getLayoutY());
         Group mainPane = new Group();
         mainPane.getChildren().add(imageView);
-        mainPane.getChildren().add(text);
+        mainPane.getChildren().add(loadingText);
+        mainPane.getChildren().add(versionText);
+        mainPane.getChildren().add(pips);
         if(minorText != null) {
             mainPane.getChildren().add(minorText);
         }
