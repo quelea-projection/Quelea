@@ -26,7 +26,6 @@
     <property name="WindowsInstallerName" value="quelea-${quelea.version}-windows-install.exe"/>
     <property name="DebInstallerName" value="quelea-${quelea.version}-deb-install.deb"/>
     <property name="PortableName" value="quelea-${quelea.version}-portable.zip"/>
-    <antcall target="nightly-override"/>
 
     <property name="CPInstaller" value="${dist.jar.dir}/standalone/${CPInstallerName}"/>
     <property name="WindowsInstaller" value="${dist.jar.dir}/standalone/${WindowsInstallerName}"/>
@@ -41,6 +40,7 @@
     
     <target name="build-dist" depends="jar">
         <property name="FXClasspath" value="lib/jfxrt.jar"/>
+        <antcall target="nightly-override"/>
         
         <!-- Check the images conform to spec -->
         <java className="org.quelea.services.utils.ImageChecker" classpath="${FXClasspath};${basedir}/build/classes" failonerror="false"/>
