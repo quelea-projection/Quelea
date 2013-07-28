@@ -33,12 +33,12 @@
     <property name="Portable" value="${dist.jar.dir}/standalone/${PortableName}"/>
     
     <tstamp>
-        <format property="touch.time" pattern="dd.MM.yyyy__hh:mm"/>
+        <format property="touch.time" pattern="dd.MM.yyyy-hh:mm"/>
     </tstamp>
-    <property name="CPInstallerNightly" value="quelea-${quelea.version}-NIGHTLY-${touch.time}-crossplatform-install.jar"/>
-    <property name="WindowsInstallerNightly" value="quelea-${quelea.version}-NIGHTLY-${touch.time}-windows-install.exe"/>
-    <property name="DebInstallerNightly" value="quelea-${quelea.version}-NIGHTLY-${touch.time}-deb-install.deb"/>
-    <property name="PortableNightly" value="quelea-${quelea.version}-NIGHTLY-${touch.time}-portable.zip"/>
+    <property name="CPInstallerNightly" value="${dist.jar.dir}/standalone/quelea-${quelea.version}-NIGHTLY-${touch.time}-crossplatform-install.jar"/>
+    <property name="WindowsInstallerNightly" value="${dist.jar.dir}/standalone/quelea-${quelea.version}-NIGHTLY-${touch.time}-windows-install.exe"/>
+    <property name="DebInstallerNightly" value="${dist.jar.dir}/standalone/quelea-${quelea.version}-NIGHTLY-${touch.time}-deb-install.deb"/>
+    <property name="PortableNightly" value="${dist.jar.dir}/standalone/quelea-${quelea.version}-NIGHTLY-${touch.time}-portable.zip"/>
     
     <target name="-post-init">
         <copy todir="${dist.jar.dir}/languages">
@@ -151,6 +151,7 @@
         </deb>
         <delete dir="${dist.jar.dir}/queleadoc"/>
         <delete file="${dist.jar.dir}/launch.sh"/>
+        <delete dir="${dist.jar.dir}/standalone"/>
         <mkdir dir="${dist.jar.dir}/standalone"/>
         
         <antcall target="normal-exec"/>
