@@ -32,6 +32,14 @@
     <property name="DebInstaller" value="${dist.jar.dir}/standalone/${DebInstallerName}"/>
     <property name="Portable" value="${dist.jar.dir}/standalone/${PortableName}"/>
     
+    <tstamp>
+        <format property="touch.time" pattern="dd.MM.yyyy__hh:mm"/>
+    </tstamp>
+    <property name="CPInstallerNightly" value="quelea-${quelea.version}-NIGHTLY-${touch.time}-crossplatform-install.jar"/>
+    <property name="WindowsInstallerNightly" value="quelea-${quelea.version}-NIGHTLY-${touch.time}-windows-install.exe"/>
+    <property name="DebInstallerNightly" value="quelea-${quelea.version}-NIGHTLY-${touch.time}-deb-install.deb"/>
+    <property name="PortableNightly" value="quelea-${quelea.version}-NIGHTLY-${touch.time}-portable.zip"/>
+    
     <target name="-post-init">
         <copy todir="${dist.jar.dir}/languages">
             <fileset dir="${basedir}/languages"/>
@@ -40,7 +48,6 @@
     
     <target name="build-dist" depends="jar">
         <property name="FXClasspath" value="lib/jfxrt.jar"/>
-        <antcall target="nightly-override"/>
         
         <!-- Check the images conform to spec -->
         <java className="org.quelea.services.utils.ImageChecker" classpath="${FXClasspath};${basedir}/build/classes" failonerror="false"/>
@@ -145,25 +152,28 @@
         <delete dir="${dist.jar.dir}/queleadoc"/>
         <delete file="${dist.jar.dir}/launch.sh"/>
         <mkdir dir="${dist.jar.dir}/standalone"/>
+        
+        <antcall target="normal-exec"/>
+        <antcall target="nightly-exec"/>
+        
+        <antcall target="windows-specific-dist"/>
+        
+    </target>
+    
+    <!--Execute this normally-->
+    <target name="normal-exec" unless="is.nightly">
         <move file="${dist.jar.dir}/Quelea-temp.deb" tofile="${DebInstaller}"/>
         
         <echo message="Building cross platform installer"/>
         <izpack input="${basedir}/izpack/config.xml" output="${CPInstaller}" basedir="${dist.jar.dir}"/>
-        
-        <antcall target="windows-specific-dist"/>
     </target>
     
     <!--Only execute this if we're a nightly!-->
-    <target name="nightly-override" if="is.nightly">
+    <target name="nightly-exec" if="is.nightly">
+        <move file="${dist.jar.dir}/Quelea-temp.deb" tofile="${DebInstallerNightly}"/>
         
-        <tstamp>
-            <format property="touch.time" pattern="dd.MM.yyyy__hh:mm"/>
-        </tstamp>
-        <property name="CPInstallerName" value="quelea-${quelea.version}-NIGHTLY-${touch.time}-crossplatform-install.jar"/>
-        <property name="WindowsInstallerName" value="quelea-${quelea.version}-NIGHTLY-${touch.time}-windows-install.exe"/>
-        <property name="DebInstallerName" value="quelea-${quelea.version}-NIGHTLY-${touch.time}-deb-install.deb"/>
-        <property name="PortableName" value="quelea-${quelea.version}-NIGHTLY-${touch.time}-portable.zip"/>
-        
+        <echo message="Building cross platform installer"/>
+        <izpack input="${basedir}/izpack/config.xml" output="${CPInstallerNightly}" basedir="${dist.jar.dir}"/>
     </target>
     
     <!-- Only execute windows specific stuff if we're on windows! -->
