@@ -33,7 +33,7 @@ public class MultimediaDrawer extends DisplayableDrawer {
             multimediaView.setMediaPlayer(null);
         }
         if (getCanvas().getChildren() != null) {
-            getCanvas().getChildren().clear();
+            getCanvas().clearApartFromNotice();
         }
     }
 
