@@ -291,10 +291,10 @@ public class BasicSongPanel extends BorderPane {
         button.setOnAction(new EventHandler<javafx.event.ActionEvent>() {
             @Override
             public void handle(javafx.event.ActionEvent t) {
-//                SpellChecker.showSpellCheckerDialog(lyricsArea, SpellChecker.getOptions());
+                lyricsArea.runSpellCheck();
             }
         });
-        button.setDisable(true); //TOOD: Enable
+        button.disableProperty().bind(lyricsArea.spellingOkProperty());
         return button;
     }
 
