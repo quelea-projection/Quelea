@@ -89,6 +89,8 @@ public class NoticeEntryDialog extends Stage {
         });
 
         GridPane mainPanel = new GridPane();
+        mainPanel.setHgap(5);
+        mainPanel.setVgap(5);
 
         Label noticeText = new Label(LabelGrabber.INSTANCE.getLabel("notice.text"));
         GridPane.setConstraints(noticeText, 0, 0);
@@ -163,6 +165,7 @@ public class NoticeEntryDialog extends Stage {
         BorderPane.setMargin(southPanel, new Insets(5));
 
         BorderPane mainPane = new BorderPane();
+        BorderPane.setMargin(mainPanel, new Insets(5));
         mainPane.setCenter(mainPanel);
         mainPane.setBottom(southPanel);
         setScene(new Scene(mainPane));
