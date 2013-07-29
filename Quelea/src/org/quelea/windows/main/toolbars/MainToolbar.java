@@ -18,15 +18,14 @@
  */
 package org.quelea.windows.main.toolbars;
 
-import javafx.event.EventHandler;
 import javafx.scene.control.Button;
 import javafx.scene.control.Separator;
 import javafx.scene.control.ToolBar;
 import javafx.scene.control.Tooltip;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.input.MouseEvent;
 import org.quelea.services.languages.LabelGrabber;
+import org.quelea.services.utils.Utils;
 import org.quelea.windows.main.actionhandlers.AddAudioActionHandler;
 import org.quelea.windows.main.actionhandlers.AddPowerpointActionHandler;
 import org.quelea.windows.main.actionhandlers.AddVideoActionHandler;
@@ -46,8 +45,6 @@ import org.quelea.windows.main.actionhandlers.ViewTagsActionHandler;
  */
 public class MainToolbar extends ToolBar {
 
-    private static final String TOOLBAR_BUTTON_STYLE="-fx-background-insets: 0;-fx-background-color: rgba(0, 0, 0, 0);-fx-padding:3,6,3,6;";
-    private static final String HOVER_TOOLBAR_BUTTON_STYLE="-fx-background-insets: 0;-fx-padding:3,6,3,6;";
     private Button newScheduleButton;
     private Button openScheduleButton;
     private Button saveScheduleButton;
@@ -65,25 +62,25 @@ public class MainToolbar extends ToolBar {
      */
     public MainToolbar() {
         newScheduleButton = new Button("", new ImageView(new Image("file:icons/filenew.png", 24, 24, false, true)));
-        setButtonStyle(newScheduleButton);
+        Utils.setToolbarButtonStyle(newScheduleButton);
         newScheduleButton.setTooltip(new Tooltip(LabelGrabber.INSTANCE.getLabel("new.schedule.tooltip")));
         newScheduleButton.setOnAction(new NewScheduleActionHandler());
         getItems().add(newScheduleButton);
 
         openScheduleButton = new Button("", new ImageView(new Image("file:icons/fileopen.png", 24, 24, false, true)));
-        setButtonStyle(openScheduleButton);
+        Utils.setToolbarButtonStyle(openScheduleButton);
         openScheduleButton.setTooltip(new Tooltip(LabelGrabber.INSTANCE.getLabel("open.schedule.tooltip")));
         openScheduleButton.setOnAction(new OpenScheduleActionHandler());
         getItems().add(openScheduleButton);
 
         saveScheduleButton = new Button("", new ImageView(new Image("file:icons/filesave.png", 24, 24, false, true)));
-        setButtonStyle(saveScheduleButton);
+        Utils.setToolbarButtonStyle(saveScheduleButton);
         saveScheduleButton.setTooltip(new Tooltip(LabelGrabber.INSTANCE.getLabel("save.schedule.tooltip")));
         saveScheduleButton.setOnAction(new SaveScheduleActionHandler(false));
         getItems().add(saveScheduleButton);
 
         printScheduleButton = new Button("", new ImageView(new Image("file:icons/fileprint.png", 24, 24, false, true)));
-        setButtonStyle(printScheduleButton);
+        Utils.setToolbarButtonStyle(printScheduleButton);
         printScheduleButton.setTooltip(new Tooltip(LabelGrabber.INSTANCE.getLabel("print.schedule.tooltip")));
         printScheduleButton.setOnAction(new PrintScheduleActionHandler());
         getItems().add(printScheduleButton);
@@ -91,7 +88,7 @@ public class MainToolbar extends ToolBar {
         getItems().add(new Separator());
 
         newSongButton = new Button("", new ImageView(new Image("file:icons/newsong.png", 24, 24, false, true)));
-        setButtonStyle(newSongButton);
+        Utils.setToolbarButtonStyle(newSongButton);
         newSongButton.setTooltip(new Tooltip(LabelGrabber.INSTANCE.getLabel("new.song.tooltip")));
         newSongButton.setOnAction(new NewSongActionHandler());
         getItems().add(newSongButton);
@@ -99,25 +96,25 @@ public class MainToolbar extends ToolBar {
         getItems().add(new Separator());
 
         quickInsertButton = new Button("", new ImageView(new Image("file:icons/lightning.png", 24, 24, false, true)));
-        setButtonStyle(quickInsertButton);
+        Utils.setToolbarButtonStyle(quickInsertButton);
         quickInsertButton.setTooltip(new Tooltip(LabelGrabber.INSTANCE.getLabel("quick.insert.text")));
         quickInsertButton.setOnAction(new QuickInsertActionHandler());
         getItems().add(quickInsertButton);
 
         addPresentationButton = new Button("", new ImageView(new Image("file:icons/powerpoint.png", 24, 24, false, true)));
-        setButtonStyle(addPresentationButton);
+        Utils.setToolbarButtonStyle(addPresentationButton);
         addPresentationButton.setTooltip(new Tooltip(LabelGrabber.INSTANCE.getLabel("add.presentation.tooltip")));
         addPresentationButton.setOnAction(new AddPowerpointActionHandler());
         getItems().add(addPresentationButton);
 
         addVideoButton = new Button("", new ImageView(new Image("file:icons/video file.png", 24, 24, false, true)));
-        setButtonStyle(addVideoButton);
+        Utils.setToolbarButtonStyle(addVideoButton);
         addVideoButton.setTooltip(new Tooltip(LabelGrabber.INSTANCE.getLabel("add.video.tooltip")));
         addVideoButton.setOnAction(new AddVideoActionHandler());
         getItems().add(addVideoButton);
 
         addAudioButton = new Button("", new ImageView(new Image("file:icons/add audio.png", 24, 24, false, true)));
-        setButtonStyle(addAudioButton);
+        Utils.setToolbarButtonStyle(addAudioButton);
         addAudioButton.setTooltip(new Tooltip(LabelGrabber.INSTANCE.getLabel("add.audio.tooltip")));
         addAudioButton.setOnAction(new AddAudioActionHandler());
         getItems().add(addAudioButton);
@@ -125,31 +122,16 @@ public class MainToolbar extends ToolBar {
         getItems().add(new Separator());
 
         manageTagsButton = new Button("", new ImageView(new Image("file:icons/tag.png", 24, 24, false, true)));
-        setButtonStyle(manageTagsButton);
+        Utils.setToolbarButtonStyle(manageTagsButton);
         manageTagsButton.setTooltip(new Tooltip(LabelGrabber.INSTANCE.getLabel("manage.tags.tooltip")));
         manageTagsButton.setOnAction(new ViewTagsActionHandler());
         getItems().add(manageTagsButton);
 
         manageNoticesButton = new Button("", new ImageView(new Image("file:icons/info.png", 24, 24, false, true)));
-        setButtonStyle(manageNoticesButton);
+        Utils.setToolbarButtonStyle(manageNoticesButton);
         manageNoticesButton.setTooltip(new Tooltip(LabelGrabber.INSTANCE.getLabel("manage.notices.tooltip")));
         manageNoticesButton.setOnAction(new ShowNoticesActionHandler());
         getItems().add(manageNoticesButton);
     }
     
-    private void setButtonStyle(final Button button) {
-        button.setStyle(TOOLBAR_BUTTON_STYLE);
-        button.setOnMouseEntered(new EventHandler<MouseEvent>() {
-            @Override
-            public void handle(MouseEvent mouseEvent) {
-                button.setStyle(HOVER_TOOLBAR_BUTTON_STYLE);
-            }
-        });
-        button.setOnMouseExited(new EventHandler<MouseEvent>() {
-            @Override
-            public void handle(MouseEvent mouseEvent) {
-                button.setStyle(TOOLBAR_BUTTON_STYLE);
-            }
-        });
-    }
 }

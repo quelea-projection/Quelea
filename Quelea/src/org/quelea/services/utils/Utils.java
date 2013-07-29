@@ -49,12 +49,15 @@ import java.util.concurrent.Semaphore;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.application.Platform;
+import javafx.event.EventHandler;
 import javafx.geometry.BoundingBox;
 import javafx.geometry.Bounds;
 import javafx.geometry.Rectangle2D;
+import javafx.scene.control.Button;
 import javafx.scene.image.Image;
 import javafx.scene.image.PixelWriter;
 import javafx.scene.image.WritableImage;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
@@ -74,6 +77,8 @@ import org.quelea.windows.main.StatusPanel;
 public final class Utils {
 
     private static final Logger LOGGER = LoggerUtils.getLogger();
+    public static final String TOOLBAR_BUTTON_STYLE = "-fx-background-insets: 0;-fx-background-color: rgba(0, 0, 0, 0);-fx-padding:3,6,3,6;";
+    public static final String HOVER_TOOLBAR_BUTTON_STYLE = "-fx-background-insets: 0;-fx-padding:3,6,3,6;";
 
     /**
      * Don't instantiate me. I bite.
@@ -90,6 +95,28 @@ public final class Utils {
     }
 
     /**
+     * Set the button style for any buttons that are to be placed on a toolbar.
+     * Change the padding and remove the default border.
+     * <p/>
+     * @param button the button to style.
+     */
+    public static void setToolbarButtonStyle(final Button button) {
+        button.setStyle(Utils.TOOLBAR_BUTTON_STYLE);
+        button.setOnMouseEntered(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent mouseEvent) {
+                button.setStyle(Utils.HOVER_TOOLBAR_BUTTON_STYLE);
+            }
+        });
+        button.setOnMouseExited(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent mouseEvent) {
+                button.setStyle(Utils.TOOLBAR_BUTTON_STYLE);
+            }
+        });
+    }
+
+    /**
      * Sleep ignoring the exception.
      * <p/>
      * @param millis milliseconds to sleep.
@@ -102,7 +129,7 @@ public final class Utils {
             //Nothing
         }
     }
-    
+
     public static boolean isOffscreen(SceneInfo info) {
         for(Screen screen : Screen.getScreens()) {
             if(screen.getBounds().intersects(info.getBounds())) {
