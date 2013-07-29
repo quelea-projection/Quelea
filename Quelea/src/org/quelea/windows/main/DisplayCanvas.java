@@ -50,6 +50,7 @@ public class DisplayCanvas extends StackPane {
     private Node background;
     private ImageView blackImg = new ImageView(Utils.getImageFromColour(Color.BLACK));
     private Node currentBackground;
+    private Node noticeOverlay;
     private Displayable currentDisplayable;
     private final CanvasUpdater updater;
     private Priority dravingPriority = Priority.LOW;
@@ -106,7 +107,7 @@ public class DisplayCanvas extends StackPane {
         });
         getChildren().add(background);
         noticeDrawer = new NoticeDrawer(this);
-        final Node noticeOverlay = noticeDrawer.getOverlay();
+        noticeOverlay = noticeDrawer.getOverlay();
         getChildren().addListener(new ListChangeListener<Node>() {
             @Override
             public void onChanged(ListChangeListener.Change<? extends Node> change) {
@@ -118,6 +119,12 @@ public class DisplayCanvas extends StackPane {
             }
         });
         getChildren().add(noticeOverlay);
+    }
+    
+    public void ensureNoticesVisible() {
+        if(!getChildren().contains(noticeOverlay)) {
+            getChildren().add(noticeOverlay);
+        }
     }
 
     public void clear() {
