@@ -171,7 +171,7 @@ public class SpellingDialog {
     private void nextWord() {
         if(wordsToCorrect.isEmpty()) {
             dialogStage.hide();
-            area.checkSpelling(true);
+            area.updateSpelling(true);
             Button ok = new Button(LabelGrabber.INSTANCE.getLabel("ok.button"));
             VBox.setMargin(ok, new Insets(10));
             final Stage doneSpellingStage = new Stage();

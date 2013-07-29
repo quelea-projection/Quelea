@@ -19,6 +19,8 @@ package org.quelea.services.languages.spelling;
 
 import javafx.animation.FadeTransition;
 import javafx.application.Platform;
+import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.EventHandler;
@@ -52,7 +54,7 @@ public class SpellTextArea extends StackPane {
     private Speller speller;
     private ImageView warning;
     private Thread checkerThread;
-    private volatile boolean spellingOk;
+    private volatile SimpleBooleanProperty spellingOkProperty;
 
     /**
      * Create a new spell text area.
@@ -61,7 +63,7 @@ public class SpellTextArea extends StackPane {
         runSpellKey = KeyCode.F7;
         speller = new Speller(QueleaProperties.get().getDictionaryFile());
         area = new TextArea();
-        spellingOk = speller.checkText(area.getText(), true);
+        spellingOkProperty = new SimpleBooleanProperty(speller.checkText(area.getText(), true));
         getChildren().add(area);
         warning = new ImageView("file:icons/warning.png");
         Tooltip.install(warning, new Tooltip(LabelGrabber.INSTANCE.getLabel("spelling.errors.in.doc.label")));
@@ -74,14 +76,14 @@ public class SpellTextArea extends StackPane {
             @Override
             public void handle(KeyEvent t) {
                 if(t.getCode() == runSpellKey) {
-                    dialog.check(SpellTextArea.this);
+                    runSpellCheck();
                 }
             }
         });
         area.textProperty().addListener(new ChangeListener<String>() {
             @Override
             public void changed(ObservableValue<? extends String> ov, String t, final String t1) {
-                checkSpelling(false);
+                updateSpelling(false);
 
                 if(checkerThread != null && checkerThread.isAlive()) {
                     checkerThread.interrupt();
@@ -93,7 +95,7 @@ public class SpellTextArea extends StackPane {
                             Platform.runLater(new Runnable() {
                                 @Override
                                 public void run() {
-                                    checkSpelling(true);
+                                    updateSpelling(true);
                                 }
                             });
                         }
@@ -106,6 +108,13 @@ public class SpellTextArea extends StackPane {
             }
         });
     }
+    
+    /**
+     * Activate a spell check for this area.
+     */
+    public void runSpellCheck() {
+        dialog.check(SpellTextArea.this);
+    }
 
     /**
      * Check the spelling on this text area - called internally to update state,
@@ -114,10 +123,10 @@ public class SpellTextArea extends StackPane {
      * @param lastWord true if the last word should be included in the spell
      * check.
      */
-    public void checkSpelling(boolean lastWord) {
-        spellingOk = speller.checkText(getText(), lastWord);
+    public void updateSpelling(boolean lastWord) {
+        spellingOkProperty.set(speller.checkText(getText(), lastWord));
         FadeTransition transition = new FadeTransition(Duration.seconds(0.2), warning);
-        if(spellingOk) {
+        if(spellingOkProperty.get()) {
             transition.setFromValue(warning.getOpacity());
             transition.setToValue(0);
         }
@@ -126,6 +135,14 @@ public class SpellTextArea extends StackPane {
             transition.setToValue(WARNING_OPACITY);
         }
         transition.play();
+    }
+    
+    /**
+     * Get the boolean property representing whether the spelling is ok.
+     * @return true if the spelling is ok, false otherwise.
+     */
+    public BooleanProperty spellingOkProperty() {
+        return spellingOkProperty;
     }
 
     /**
