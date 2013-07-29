@@ -21,11 +21,9 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.ListChangeListener;
-import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -60,7 +58,6 @@ public class NoticeDialog extends Stage implements NoticesChangedListener {
      * @param owner the owner of this dialog.
      */
     public NoticeDialog() {
-//        initStyle(StageStyle.UTILITY);
         BorderPane mainPane = new BorderPane();
         getIcons().add(new Image("file:icons/info.png"));
         noticeDrawers = new ArrayList<>();
@@ -107,11 +104,15 @@ public class NoticeDialog extends Stage implements NoticesChangedListener {
                 }
             }
         });
-        VBox leftPanel = new VBox();
+        VBox leftPanel = new VBox(5);
+        newNoticeButton.setMaxWidth(Double.MAX_VALUE);
+        editNoticeButton.setMaxWidth(Double.MAX_VALUE);
+        removeNoticeButton.setMaxWidth(Double.MAX_VALUE);
         leftPanel.getChildren().add(newNoticeButton);
         leftPanel.getChildren().add(editNoticeButton);
         leftPanel.getChildren().add(removeNoticeButton);
         BorderPane leftPanelBorder = new BorderPane();
+        BorderPane.setMargin(leftPanelBorder, new Insets(5));
         leftPanelBorder.setTop(leftPanel);
         mainPane.setLeft(leftPanelBorder);
 
