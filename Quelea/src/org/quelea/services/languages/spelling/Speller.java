@@ -110,7 +110,7 @@ public class Speller {
         if(text.trim().isEmpty()) {
             return ret;
         }
-        String[] tempWords = text.split("[ \\t\\r\\n]+");
+        String[] tempWords = Pattern.compile("[^\\p{Alnum}]+", Pattern.UNICODE_CHARACTER_CLASS).split(text);
         for(String word : tempWords) {
             if(!checkWord(word)) {
                 ret.add(word);
@@ -163,7 +163,7 @@ public class Speller {
         if(text.trim().isEmpty()) {
             return true;
         }
-        String[] tempWords = text.split("[ \\t\\r\\n]+");
+        String[] tempWords = Pattern.compile("[^\\p{Alnum}]+", Pattern.UNICODE_CHARACTER_CLASS).split(text);
         for(int i = 0; i < tempWords.length; i++) {
             if(i == tempWords.length - 1 && !checkLastWord) {
                 break;
