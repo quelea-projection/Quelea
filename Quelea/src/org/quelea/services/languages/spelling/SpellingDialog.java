@@ -22,6 +22,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.regex.Pattern;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
@@ -189,7 +190,7 @@ public class SpellingDialog {
             doneSpellingStage.show();
             return;
         }
-        List<String> origPieces = Arrays.asList(origText.split("[ \\t\\r\\n]+"));
+        List<String> origPieces = Arrays.asList(Pattern.compile("[^\\p{Alnum}]+", Pattern.UNICODE_CHARACTER_CLASS).split(origText));
         String replaceWord = wordsToCorrect.iterator().next();
         int index = origPieces.indexOf(replaceWord);
         int lower = index - 6;
