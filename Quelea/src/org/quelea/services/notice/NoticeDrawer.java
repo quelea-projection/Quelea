@@ -30,7 +30,6 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Pos;
 import javafx.scene.layout.HBox;
-import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
@@ -87,6 +86,7 @@ public class NoticeDrawer {
     }
 
     private void playNotices() {
+        canvas.ensureNoticesVisible(); //Shouldn't need this, but guards against any cases where the notice overlay may have been removed.
         if(!playing) {
             FontMetrics metrics = Toolkit.getToolkit().getFontLoader().getFontMetrics(noticeFont);
             if(!overlay.getChildren().contains(backing)) {
@@ -100,7 +100,7 @@ public class NoticeDrawer {
             }
             playing = true;
             final List<Notice> oldNotices = new ArrayList<>(notices);
-            final HBox textGroup = new HBox(noticeFont.getSize()*2);
+            final HBox textGroup = new HBox(noticeFont.getSize() * 2);
             final StringBuilder builder = new StringBuilder();
             textGroup.setAlignment(Pos.BOTTOM_LEFT);
             for(int i = 0; i < notices.size(); i++) {
@@ -147,7 +147,6 @@ public class NoticeDrawer {
                         fadeTrans.setToValue(0);
                         fadeTrans.play();
                         fadeTrans.setOnFinished(new EventHandler<ActionEvent>() {
-
                             @Override
                             public void handle(ActionEvent t) {
                                 overlay.getChildren().remove(backing);
@@ -193,5 +192,4 @@ public class NoticeDrawer {
     public void setNoticeFont(Font noticeFont) {
         this.noticeFont = noticeFont;
     }
-    
 }
