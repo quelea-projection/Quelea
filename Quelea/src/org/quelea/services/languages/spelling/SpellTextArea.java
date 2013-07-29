@@ -61,7 +61,7 @@ public class SpellTextArea extends StackPane {
      */
     public SpellTextArea() {
         runSpellKey = KeyCode.F7;
-        speller = new Speller(QueleaProperties.get().getDictionaryFile());
+        speller = new Speller(QueleaProperties.get().getDictionary());
         area = new TextArea();
         spellingOkProperty = new SimpleBooleanProperty(speller.checkText(area.getText(), true));
         getChildren().add(area);
@@ -114,6 +114,11 @@ public class SpellTextArea extends StackPane {
      */
     public void runSpellCheck() {
         dialog.check(SpellTextArea.this);
+    }
+    
+    public void setDictionary(Dictionary dict) {
+        speller.setDictionary(dict);
+        updateSpelling(true);
     }
 
     /**
