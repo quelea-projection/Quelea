@@ -345,3 +345,4 @@ delete.image.title=Delete Image
 delete.image.confirmation=Really remove this image from the library? This action cannot be undone.
 notice.expired.title=Notice expired
 notice.expired.text=The notice you are editing has expired. Do you want to add it again?
+dictionary.language.text=Dictionary Language

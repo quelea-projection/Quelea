@@ -22,7 +22,6 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
@@ -45,30 +44,42 @@ public class Speller {
     private static HashMap<File, HashSet<String>> dictionaries = new HashMap<>();
     private HashSet<String> ignoreWords;
     private HashSet<String> words;
-    private File dictFile;
+    private Dictionary dict;
 
     /**
      * Create a new speller with a specified dictionary file. Must exist.
      * <p/>
-     * @param dictFile the dictionary file. Must be a list of words in the
+     * @param dict the dictionary file. Must be a list of words in the
      * dictionary, one per line.
      */
-    public Speller(File dictFile) {
-        this.dictFile = dictFile;
+    public Speller(Dictionary dict) {
         ignoreWords = new HashSet<>();
-        if(dictionaries.containsKey(dictFile)) {
-            words = dictionaries.get(dictFile);
+        setDictionary(dict);
+    }
+
+    /**
+     * Set this speller to use a dictionary.
+     * <p/>
+     * @param dict the dictionary to use.
+     */
+    public void setDictionary(Dictionary dict) {
+        if(dict == null) {
+            return;
+        }
+        this.dict = dict;
+        if(dictionaries.containsKey(dict.getDictFile())) {
+            words = dictionaries.get(dict.getDictFile());
         }
         else {
             words = new HashSet<>();
-            dictionaries.put(dictFile, words);
+            dictionaries.put(dict.getDictFile(), words);
             try {
-                BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(dictFile), "UTF-8"));
+                BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(dict.getDictFile()), "UTF-8"));
                 String line;
                 while((line = reader.readLine()) != null) {
                     line = sanitiseWord(line);
                     if(!line.isEmpty()) {
-                        dictionaries.get(dictFile).add(line);
+                        dictionaries.get(dict.getDictFile()).add(line);
                     }
                 }
             }
@@ -186,7 +197,7 @@ public class Speller {
         try {
             if(!words.contains(word)) {
                 words.add(word);
-                BufferedWriter out = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(dictFile, true), "UTF-8"));
+                BufferedWriter out = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(dict.getDictFile(), true), "UTF-8"));
                 out.append("\n" + word).close();
             }
         }

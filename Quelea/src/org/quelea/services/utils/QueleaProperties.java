@@ -28,6 +28,8 @@ import javafx.geometry.Bounds;
 import javafx.scene.paint.Color;
 import org.quelea.data.bible.Bible;
 import org.quelea.data.displayable.TextAlignment;
+import org.quelea.services.languages.spelling.Dictionary;
+import org.quelea.services.languages.spelling.DictionaryManager;
 import org.quelea.windows.options.TextPosition;
 
 /**
@@ -105,7 +107,7 @@ public final class QueleaProperties extends Properties {
      * <p/>
      * @return the languages file for the GUI.
      */
-    public File getDictionaryFile() {
+    public Dictionary getDictionary() {
         String dict = getProperty("language.file", "gb.lang");
         String[] parts = dict.split("\\.");
         StringBuilder builder = new StringBuilder();
@@ -114,11 +116,7 @@ public final class QueleaProperties extends Properties {
             builder.append(".");
         }
         builder.append("words");
-        File ret = new File("languages", builder.toString());
-        if(!ret.exists()) {
-            ret = new File("languages", "gb.words");
-        }
-        return ret;
+        return DictionaryManager.INSTANCE.getFromFilename(builder.toString());
     }
 
     /**
