@@ -24,7 +24,6 @@ public abstract class AbstractPanel extends BorderPane implements ContainedPanel
             return o2.getDravingPriority().getPriority() - o1.getDravingPriority().getPriority();
         }
     }
-    
     private static final Logger LOGGER = LoggerUtils.getLogger();
     private SortedSet<DisplayCanvas> canvases = new TreeSet<>(new PriorityComparator());
     private Displayable currentDisplayable = null;
@@ -60,7 +59,9 @@ public abstract class AbstractPanel extends BorderPane implements ContainedPanel
     public void updateCanvas() {
         for(DisplayCanvas canvas : getCanvases()) {
             canvas.setCurrentDisplayable(currentDisplayable);
-            getDrawer(canvas).draw(currentDisplayable);
+            if(!canvas.isBlacked()) {
+                getDrawer(canvas).draw(currentDisplayable);
+            }
         }
     }
 
