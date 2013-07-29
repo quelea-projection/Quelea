@@ -17,6 +17,7 @@
  */
 package org.quelea.windows.main;
 
+import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
@@ -120,9 +121,16 @@ public class DisplayCanvas extends StackPane {
         });
         getChildren().add(noticeOverlay);
     }
-    
+
+    /**
+     * If the notice overlay has been removed from this canvas, add it. This
+     * shouldn't ever be the case, but means the notices will still work if it
+     * has been removed somehow. Otherwise, notices would require a restart to
+     * work.
+     */
     public void ensureNoticesVisible() {
         if(!getChildren().contains(noticeOverlay)) {
+            LOGGER.log(Level.WARNING, "Notice overlay was removed");
             getChildren().add(noticeOverlay);
         }
     }
@@ -228,7 +236,9 @@ public class DisplayCanvas extends StackPane {
      * normal.
      */
     public void setCleared(boolean cleared) {
-        if(this.cleared==cleared) return;
+        if(this.cleared == cleared) {
+            return;
+        }
         this.cleared = cleared;
         if(this.updater != null) {
             updateCanvas(this.updater);
@@ -250,7 +260,9 @@ public class DisplayCanvas extends StackPane {
      * display as normal.
      */
     public void setBlacked(boolean blacked) {
-        if(this.blacked==blacked) return;
+        if(this.blacked == blacked) {
+            return;
+        }
         this.blacked = blacked;
         if(blacked) {
             currentBackground = getCanvasBackground();
