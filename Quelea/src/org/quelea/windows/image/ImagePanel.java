@@ -25,16 +25,17 @@ import org.quelea.windows.main.DisplayableDrawer;
 
 /**
  * A panel used in the live / preview panels for displaying images.
- *
+ * <p/>
  * @author Michael
  */
 public class ImagePanel extends AbstractPanel {
 
     private final DisplayCanvas previewCanvas;
     private final ImageDrawer drawer = new ImageDrawer();
+
     /**
      * Create a new image panel.
-     *
+     * <p/>
      * @param container the container this panel is contained within.
      */
     public ImagePanel() {
@@ -53,6 +54,7 @@ public class ImagePanel extends AbstractPanel {
         drawer.setCanvas(canvas);
         return drawer;
     }
+
     /**
      * Clear the panel and all canvases associated with it.
      */
@@ -63,7 +65,7 @@ public class ImagePanel extends AbstractPanel {
 
     /**
      * Show a given image displayable on the panel.
-     *
+     * <p/>
      * @param displayable the image displayable.
      */
     public void showDisplayable(ImageDisplayable displayable) {

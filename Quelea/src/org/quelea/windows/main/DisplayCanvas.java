@@ -123,7 +123,7 @@ public class DisplayCanvas extends StackPane {
     public void clear() {
         setCurrentDisplayable(null);
     }
-    
+
     public void clearApartFromNotice() {
         ObservableList<Node> list = FXCollections.observableArrayList(getChildren());
         for(Node node : list) {
@@ -216,11 +216,13 @@ public class DisplayCanvas extends StackPane {
     }
 
     /**
-     * Toggle the clearing of this canvas - still leave the background image in
-     * place but remove all the text.
+     * Toggle the clearing of this canvas - if cleared, still leave the
+     * background image in place but remove all the text. Otherwise display as
+     * normal.
      */
-    public void toggleClear() {
-        cleared ^= true; //invert
+    public void setCleared(boolean cleared) {
+        if(this.cleared==cleared) return;
+        this.cleared = cleared;
         if(this.updater != null) {
             updateCanvas(this.updater);
         }
@@ -236,11 +238,13 @@ public class DisplayCanvas extends StackPane {
     }
 
     /**
-     * Toggle the blacking of this canvas - remove the text and background image
-     * (if any) just displaying a black screen.
+     * Toggle the blacking of this canvas - if blacked, remove the text and
+     * background image (if any) just displaying a black screen. Otherwise
+     * display as normal.
      */
-    public void toggleBlack() {
-        blacked ^= true; //invert
+    public void setBlacked(boolean blacked) {
+        if(this.blacked==blacked) return;
+        this.blacked = blacked;
         if(blacked) {
             currentBackground = getCanvasBackground();
             clearApartFromNotice();
