@@ -67,7 +67,7 @@ public class LivePanel extends LivePreviewPanel {
                 HashSet<DisplayCanvas> canvases = new HashSet<>();
                 canvases.addAll(getCanvases());
                 for(DisplayCanvas canvas : canvases) {
-                    canvas.toggleBlack();
+                    canvas.setBlacked(black.isSelected());
                 }
             }
         });
@@ -80,7 +80,7 @@ public class LivePanel extends LivePreviewPanel {
                 HashSet<DisplayCanvas> canvases = new HashSet<>();
                 canvases.addAll(getCanvases());
                 for(DisplayCanvas canvas : canvases) {
-                    canvas.toggleClear();
+                    canvas.setCleared(clear.isSelected());
                 }
             }
         });
@@ -153,10 +153,20 @@ public class LivePanel extends LivePreviewPanel {
     public void setDisplayable(Displayable d, int index) {
         super.setDisplayable(d, index);
         if(d == null) {
+            clear.setSelected(false);
             clear.setDisable(true);
         }
         else {
             clear.setDisable(!d.supportClear());
+            if(!d.supportClear()) {
+                clear.setSelected(false);
+            }
+        }
+        HashSet<DisplayCanvas> canvases = new HashSet<>();
+        canvases.addAll(getCanvases());
+        for(DisplayCanvas canvas : canvases) {
+            canvas.setBlacked(black.isSelected());
+            canvas.setCleared(clear.isSelected());
         }
     }
 
