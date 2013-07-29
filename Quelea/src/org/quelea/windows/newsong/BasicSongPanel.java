@@ -16,15 +16,15 @@
  */
 package org.quelea.windows.newsong;
 
-import java.awt.Component;
-import java.awt.Container;
-import java.awt.FocusTraversalPolicy;
-import java.util.Arrays;
-import java.util.List;
 import java.util.logging.Logger;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.event.EventHandler;
+import javafx.geometry.VPos;
 import javafx.scene.control.Button;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
+import javafx.scene.control.Separator;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.control.ToolBar;
@@ -33,7 +33,9 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
+import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import org.javafx.dialog.Dialog;
 import org.quelea.data.chord.ChordLineTransposer;
@@ -41,9 +43,13 @@ import org.quelea.data.chord.ChordTransposer;
 import org.quelea.data.chord.TransposeDialog;
 import org.quelea.data.displayable.SongDisplayable;
 import org.quelea.services.languages.LabelGrabber;
+import org.quelea.services.languages.spelling.Dictionary;
+import org.quelea.services.languages.spelling.DictionaryManager;
 import org.quelea.services.languages.spelling.SpellTextArea;
 import org.quelea.services.utils.LineTypeChecker;
 import org.quelea.services.utils.LoggerUtils;
+import org.quelea.services.utils.QueleaProperties;
+import org.quelea.services.utils.Utils;
 import org.quelea.windows.main.QueleaApp;
 
 /**
@@ -59,6 +65,7 @@ public class BasicSongPanel extends BorderPane {
     private final TextField titleField;
     private final TextField authorField;
     private final Button transposeButton;
+    private final ComboBox<Dictionary> dictSelector;
     private final TransposeDialog transposeDialog;
 
     /**
@@ -89,19 +96,36 @@ public class BasicSongPanel extends BorderPane {
 
         centrePanel.getChildren().add(topPanel);
         lyricsArea = new SpellTextArea();
+        lyricsArea.setMaxHeight(Double.MAX_VALUE);
 
-        final VBox lyricsPanel = new VBox();
-        VBox.setVgrow(lyricsPanel, Priority.ALWAYS);
+        final VBox mainPanel = new VBox();
         ToolBar lyricsToolbar = new ToolBar();
-        lyricsToolbar.getItems().add(getDictButton());
         lyricsToolbar.getItems().add(getAposButton());
         lyricsToolbar.getItems().add(getTrimLinesButton());
         transposeButton = getTransposeButton();
         lyricsToolbar.getItems().add(transposeButton);
-        lyricsPanel.getChildren().add(lyricsToolbar);
+        lyricsToolbar.getItems().add(new Separator());
+        lyricsToolbar.getItems().add(getDictButton());
+        dictSelector = new ComboBox<>();
+        Tooltip.install(dictSelector, new Tooltip(LabelGrabber.INSTANCE.getLabel("dictionary.language.text")));
+        for(Dictionary dict : DictionaryManager.INSTANCE.getDictionaries()) {
+            dictSelector.getItems().add(dict);
+        }
+        dictSelector.selectionModelProperty().get().selectedItemProperty().addListener(new ChangeListener<Dictionary>() {
+
+            @Override
+            public void changed(ObservableValue<? extends Dictionary> ov, Dictionary t, Dictionary t1) {
+                lyricsArea.setDictionary(dictSelector.getValue());
+            }
+        });
+
+        dictSelector.getSelectionModel().select(QueleaProperties.get().getDictionary());
+        lyricsToolbar.getItems().add(dictSelector);
+        VBox.setVgrow(mainPanel, Priority.ALWAYS);
+        mainPanel.getChildren().add(lyricsToolbar);
         VBox.setVgrow(lyricsArea, Priority.ALWAYS);
-        lyricsPanel.getChildren().add(lyricsArea);
-        centrePanel.getChildren().add(lyricsPanel);
+        mainPanel.getChildren().add(lyricsArea);
+        centrePanel.getChildren().add(mainPanel);
         setCenter(centrePanel);
     }
 //    private String[] chordsLines;
@@ -213,8 +237,10 @@ public class BasicSongPanel extends BorderPane {
                 }
                 int pos = getLyricsField().getCaretPosition();
                 getLyricsField().setText(newText.toString());
+                getLyricsField().positionCaret(pos);
             }
         });
+        Utils.setToolbarButtonStyle(ret);
         return ret;
     }
 
@@ -277,6 +303,7 @@ public class BasicSongPanel extends BorderPane {
 //                lyricsArea.setText(newText.toString());
             }
         });
+        Utils.setToolbarButtonStyle(button);
         return button;
     }
 
@@ -295,6 +322,7 @@ public class BasicSongPanel extends BorderPane {
             }
         });
         button.disableProperty().bind(lyricsArea.spellingOkProperty());
+        Utils.setToolbarButtonStyle(button);
         return button;
     }
 
@@ -312,6 +340,7 @@ public class BasicSongPanel extends BorderPane {
 //                lyricsArea.setText(lyricsArea.getText().replace("`", "'").replace("’", "'"));
             }
         });
+        Utils.setToolbarButtonStyle(button);
         return button;
     }
 
@@ -364,38 +393,4 @@ public class BasicSongPanel extends BorderPane {
         return authorField;
     }
 
-    private class customFTPolicy extends FocusTraversalPolicy {
-
-        List<Component> c; // components in order
-
-        private customFTPolicy(Component[] c) {
-            this.c = Arrays.asList(c);
-        }
-
-        @Override
-        public Component getComponentAfter(Container aContainer, Component aComponent) {
-            return c.get((c.indexOf(aComponent) + 1) % c.size());
-        }
-
-        @Override
-        public Component getComponentBefore(Container aContainer, Component aComponent) {
-            int x = (c.indexOf(aComponent) - 1);
-            return c.get((x < 0) ? c.size() - 1 : x);
-        }
-
-        @Override
-        public Component getFirstComponent(Container aContainer) {
-            return c.get(0);
-        }
-
-        @Override
-        public Component getLastComponent(Container aContainer) {
-            return c.get(c.size() - 1);
-        }
-
-        @Override
-        public Component getDefaultComponent(Container aContainer) {
-            return c.get(0);
-        }
-    }
 }
