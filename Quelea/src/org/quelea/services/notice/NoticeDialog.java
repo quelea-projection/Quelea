@@ -21,8 +21,11 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.collections.ListChangeListener;
+import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -34,7 +37,6 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
-import javafx.stage.StageStyle;
 import org.quelea.services.languages.LabelGrabber;
 import org.quelea.windows.main.DisplayCanvas;
 
@@ -83,7 +85,13 @@ public class NoticeDialog extends Stage implements NoticesChangedListener {
         editNoticeButton.setOnAction(new EventHandler<javafx.event.ActionEvent>() {
             @Override
             public void handle(javafx.event.ActionEvent t) {
-                NoticeEntryDialog.getNotice(noticeList.getSelectionModel().getSelectedItem());
+                Notice notice = NoticeEntryDialog.getNotice(noticeList.getSelectionModel().getSelectedItem());
+                if(notice != null) {
+                    noticeList.getItems().add(notice);
+                    for(NoticeDrawer drawer : noticeDrawers) {
+                        drawer.addNotice(notice);
+                    }
+                }
             }
         });
         removeNoticeButton = new Button(LabelGrabber.INSTANCE.getLabel("remove.notice.text"));
@@ -111,10 +119,26 @@ public class NoticeDialog extends Stage implements NoticesChangedListener {
         noticeList.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<Notice>() {
             @Override
             public void changed(ObservableValue<? extends Notice> ov, Notice t, Notice t1) {
-                editNoticeButton.setDisable(noticeList.getSelectionModel().getSelectedItem() == null);
-                removeNoticeButton.setDisable(noticeList.getSelectionModel().getSelectedItem() == null);
+                boolean disable = noticeList.getSelectionModel().getSelectedItem() == null;
+                if(!noticeList.getItems().contains(noticeList.getSelectionModel().getSelectedItem())) {
+                    disable = true;
+                }
+                editNoticeButton.setDisable(disable);
+                removeNoticeButton.setDisable(disable);
             }
         });
+        noticeList.getItems().addListener(new ListChangeListener<Notice>() {
+            @Override
+            public void onChanged(ListChangeListener.Change<? extends Notice> change) {
+                boolean disable = noticeList.getSelectionModel().getSelectedItem() == null;
+                editNoticeButton.setDisable(disable);
+                removeNoticeButton.setDisable(disable);
+                if(disable) {
+                    noticeList.getSelectionModel().clearSelection();
+                }
+            }
+        });
+
         mainPane.setCenter(noticeList);
 
         doneButton = new Button(LabelGrabber.INSTANCE.getLabel("done.text"), new ImageView(new Image("file:icons/tick.png")));
@@ -145,6 +169,7 @@ public class NoticeDialog extends Stage implements NoticesChangedListener {
         for(Notice notice : noticesSet) {
             noticeList.getItems().add(notice);
         }
+        NoticeEntryDialog.noticesUpdated(noticesSet);
         noticeList.getSelectionModel().select(selected);
     }
 

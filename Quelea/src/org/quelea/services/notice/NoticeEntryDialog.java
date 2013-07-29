@@ -17,7 +17,9 @@
  */
 package org.quelea.services.notice;
 
+import java.util.Set;
 import javafx.beans.value.ObservableValue;
+import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -34,11 +36,13 @@ import javafx.scene.layout.HBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
+import org.javafx.dialog.Dialog;
 import org.quelea.services.languages.LabelGrabber;
 import org.quelea.windows.main.widgets.NumberSpinner;
 
 /**
  * The entry dialog for creating a notice.
+ * <p/>
  * @author Michael
  */
 public class NoticeEntryDialog extends Stage {
@@ -50,28 +54,29 @@ public class NoticeEntryDialog extends Stage {
     private Button addButton;
     private Button cancelButton;
     private Notice notice;
+    private boolean noticeRemoved;
 
     /**
      * Create a new notice entry dialog.
+     * <p/>
      * @param owner the owner of this dialog.
      */
     public NoticeEntryDialog() {
         setTitle(LabelGrabber.INSTANCE.getLabel("new.notice.heading"));
         initModality(Modality.APPLICATION_MODAL);
         initStyle(StageStyle.UTILITY);
+        setResizable(false);
         getIcons().add(new Image("file:icons/info.png"));
         text = new TextField();
         text.textProperty().addListener(new javafx.beans.value.ChangeListener<String>() {
-
             @Override
             public void changed(ObservableValue<? extends String> ov, String t, String t1) {
                 addButton.setDisable(t1.trim().isEmpty());
             }
         });
-        times = new NumberSpinner(1,1);
+        times = new NumberSpinner(1, 1);
         infinite = new CheckBox();
         infinite.selectedProperty().addListener(new javafx.beans.value.ChangeListener<Boolean>() {
-
             @Override
             public void changed(ObservableValue<? extends Boolean> ov, Boolean t, Boolean t1) {
                 if(infinite.isSelected()) {
@@ -84,30 +89,29 @@ public class NoticeEntryDialog extends Stage {
         });
 
         GridPane mainPanel = new GridPane();
-        
+
         Label noticeText = new Label(LabelGrabber.INSTANCE.getLabel("notice.text"));
         GridPane.setConstraints(noticeText, 0, 0);
         mainPanel.getChildren().add(noticeText);
         GridPane.setConstraints(text, 1, 0);
         mainPanel.getChildren().add(text);
-        
+
         Label noticeTimesText = new Label(LabelGrabber.INSTANCE.getLabel("notice.times.text"));
         GridPane.setConstraints(noticeTimesText, 0, 1);
         mainPanel.getChildren().add(noticeTimesText);
         GridPane.setConstraints(times, 1, 1);
         mainPanel.getChildren().add(times);
-        
+
         Label noticeInfiniteText = new Label(LabelGrabber.INSTANCE.getLabel("notice.infinite.question"));
         GridPane.setConstraints(noticeInfiniteText, 0, 2);
         mainPanel.getChildren().add(noticeInfiniteText);
         GridPane.setConstraints(infinite, 1, 2);
         mainPanel.getChildren().add(infinite);
-        
+
         HBox southPanel = new HBox();
         addButton = new Button(LabelGrabber.INSTANCE.getLabel("add.notice.button"), new ImageView(new Image("file:icons/tick.png")));
         addButton.setDefaultButton(true);
         addButton.setOnAction(new EventHandler<javafx.event.ActionEvent>() {
-
             @Override
             public void handle(javafx.event.ActionEvent t) {
                 int numberTimes;
@@ -117,12 +121,29 @@ public class NoticeEntryDialog extends Stage {
                 else {
                     numberTimes = times.getNumber();
                 }
+                boolean edit = true;
                 if(notice == null) {
+                    edit = false;
                     notice = new Notice(text.getText(), numberTimes);
                 }
                 else {
                     notice.setText(text.getText());
                     notice.setTimes(numberTimes);
+                }
+                if(edit && noticeRemoved) {
+                    Dialog.buildConfirmation(LabelGrabber.INSTANCE.getLabel("notice.expired.title"), LabelGrabber.INSTANCE.getLabel("notice.expired.text")).addYesButton(new EventHandler<ActionEvent>() {
+                        @Override
+                        public void handle(ActionEvent t) {
+                        }
+                    }).addNoButton(new EventHandler<ActionEvent>() {
+                        @Override
+                        public void handle(ActionEvent t) {
+                            notice = null;
+                        }
+                    }).build().showAndWait();
+                }
+                else if(edit) {
+                    notice = null;
                 }
                 hide();
             }
@@ -130,7 +151,6 @@ public class NoticeEntryDialog extends Stage {
         southPanel.getChildren().add(addButton);
         cancelButton = new Button(LabelGrabber.INSTANCE.getLabel("cancel.text"), new ImageView(new Image("file:icons/cross.png")));
         cancelButton.setOnAction(new EventHandler<javafx.event.ActionEvent>() {
-
             @Override
             public void handle(javafx.event.ActionEvent t) {
                 notice = null;
@@ -148,8 +168,13 @@ public class NoticeEntryDialog extends Stage {
         setScene(new Scene(mainPane));
     }
 
+    private void setNoticeRemoved() {
+        noticeRemoved = true;
+    }
+
     /**
      * Get the notice text.
+     * <p/>
      * @return the notice text.
      */
     public String getNoticeText() {
@@ -158,10 +183,11 @@ public class NoticeEntryDialog extends Stage {
 
     /**
      * Get the number of times remaining (Integer.MAX_VALUE) if infinite.
+     * <p/>
      * @return the number of times remaining (Integer.MAX_VALUE) if infinite.
      */
     public int getTimes() {
-        if (infinite.isSelected()) {
+        if(infinite.isSelected()) {
             return Integer.MAX_VALUE;
         }
         return (int) times.getNumber();
@@ -169,11 +195,12 @@ public class NoticeEntryDialog extends Stage {
 
     /**
      * Set the dialog to show the given notice.
+     * <p/>
      * @param notice the notice to show.
      */
     private void setNotice(Notice notice) {
         this.notice = notice;
-        if (notice == null) {
+        if(notice == null) {
             infinite.setSelected(false);
             times.setNumber(1);
             text.setText("");
@@ -182,7 +209,7 @@ public class NoticeEntryDialog extends Stage {
         }
         else {
             infinite.setSelected(notice.getTimes() == Integer.MAX_VALUE);
-            if (!infinite.isSelected()) {
+            if(!infinite.isSelected()) {
                 times.setNumber(notice.getTimes());
             }
             text.setText(notice.getText());
@@ -192,16 +219,24 @@ public class NoticeEntryDialog extends Stage {
 
     /**
      * Get a notice that the user enters.
+     * <p/>
      * @param existing any existing notice to fill the dialog with.
      * @return the user-entered notice.
      */
     public static Notice getNotice(Notice existing) {
-        if (dialog == null) {
+        if(dialog == null) {
             dialog = new NoticeEntryDialog();
         }
+        dialog.noticeRemoved = false;
         dialog.setNotice(existing);
         dialog.text.requestFocus();
         dialog.showAndWait();
         return dialog.notice;
+    }
+
+    public static void noticesUpdated(Set<Notice> noticeSet) {
+        if(dialog.notice != null && !noticeSet.contains(dialog.notice)) {
+            dialog.setNoticeRemoved();
+        }
     }
 }
