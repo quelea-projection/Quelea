@@ -30,6 +30,7 @@ import org.quelea.windows.main.QueleaApp;
 
 /**
  * A panel that the user uses to set up the displays that match to the outputs.
+ * <p/>
  * @author Michael
  */
 public class OptionsDisplaySetupPanel extends GridPane implements PropertyPanel {
@@ -41,19 +42,18 @@ public class OptionsDisplaySetupPanel extends GridPane implements PropertyPanel 
      */
     public OptionsDisplaySetupPanel() {
         setHgap(30);
-        monitorPanel = new SingleDisplayPanel(LabelGrabber.INSTANCE.getLabel("control.screen.label")+":", "icons/monitor.png", false, false);
+        monitorPanel = new SingleDisplayPanel(LabelGrabber.INSTANCE.getLabel("control.screen.label") + ":", "icons/monitor.png", false, false);
         GridPane.setConstraints(monitorPanel, 1, 1);
         getChildren().add(monitorPanel);
-        projectorPanel = new SingleDisplayPanel(LabelGrabber.INSTANCE.getLabel("projector.screen.label")+":", "icons/projector.png", true, true);
+        projectorPanel = new SingleDisplayPanel(LabelGrabber.INSTANCE.getLabel("projector.screen.label") + ":", "icons/projector.png", true, true);
         GridPane.setConstraints(projectorPanel, 2, 1);
         getChildren().add(projectorPanel);
-        stagePanel = new SingleDisplayPanel(LabelGrabber.INSTANCE.getLabel("stage.screen.label")+":", "icons/stage.png", true, true);
+        stagePanel = new SingleDisplayPanel(LabelGrabber.INSTANCE.getLabel("stage.screen.label") + ":", "icons/stage.png", true, true);
         GridPane.setConstraints(stagePanel, 3, 1);
         getChildren().add(stagePanel);
         readProperties();
-        
-        GraphicsDeviceWatcher.INSTANCE.addGraphicsDeviceListener(new GraphicsDeviceListener() {
 
+        GraphicsDeviceWatcher.INSTANCE.addGraphicsDeviceListener(new GraphicsDeviceListener() {
 //            @Override
 //            public void devicesChanged(GraphicsDevice[] devices) {
 //                Platform.runLater(new Runnable() {
@@ -68,11 +68,9 @@ public class OptionsDisplaySetupPanel extends GridPane implements PropertyPanel 
 //                });
 //             
 //            }
-
             @Override
             public void devicesChanged(ObservableList<Screen> devices) {
                 Platform.runLater(new Runnable() {
-
                     @Override
                     public void run() {
                         monitorPanel.update();
@@ -95,17 +93,17 @@ public class OptionsDisplaySetupPanel extends GridPane implements PropertyPanel 
         stagePanel.update();
         monitorPanel.setScreen(QueleaProperties.get().getControlScreen());
         projectorPanel.setCoords(QueleaProperties.get().getProjectorCoords());
-        if (!QueleaProperties.get().isProjectorModeCoords()) {
+        if(!QueleaProperties.get().isProjectorModeCoords()) {
             projectorPanel.setScreen(QueleaProperties.get().getProjectorScreen());
         }
         stagePanel.setCoords(QueleaProperties.get().getStageCoords());
-        if (!QueleaProperties.get().isStageModeCoords()) {
+        if(!QueleaProperties.get().isStageModeCoords()) {
             stagePanel.setScreen(QueleaProperties.get().getStageScreen());
         }
     }
-    
+
     /**
-     * Update the position of the windows based on the options set in the 
+     * Update the position of the windows based on the options set in the
      * panels.
      */
     private void updatePos() {
@@ -123,11 +121,12 @@ public class OptionsDisplaySetupPanel extends GridPane implements PropertyPanel 
             }
             final DisplayStage fiLyricWindow = appWindow; //Fudge for AIC
             Platform.runLater(new Runnable() {
-
                 @Override
                 public void run() {
                     fiLyricWindow.setArea(projectorPanel.getOutputBounds());
-                    fiLyricWindow.show();
+                    if(!QueleaApp.get().getMainWindow().getMainPanel().getLivePanel().getHide().isSelected()) {
+                        fiLyricWindow.show();
+                    }
                 }
             });
         }
@@ -142,11 +141,12 @@ public class OptionsDisplaySetupPanel extends GridPane implements PropertyPanel 
             }
             final DisplayStage fiStageWindow = stageWindow; //Fudge for AIC
             Platform.runLater(new Runnable() {
-
                 @Override
                 public void run() {
-                    fiStageWindow.show();
                     fiStageWindow.setArea(stagePanel.getOutputBounds());
+                    if(!QueleaApp.get().getMainWindow().getMainPanel().getLivePanel().getHide().isSelected()) {
+                        fiStageWindow.show();
+                    }
                 }
             });
         }
@@ -177,5 +177,4 @@ public class OptionsDisplaySetupPanel extends GridPane implements PropertyPanel 
         }
         updatePos();
     }
-
 }
