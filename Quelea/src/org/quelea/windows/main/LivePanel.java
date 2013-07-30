@@ -114,7 +114,7 @@ public class LivePanel extends LivePreviewPanel {
                 }
 
                 if(!lyricsHidden) {
-                    if(appWindow.isShowing()) {
+                    if(hide.isSelected()) {
                         appWindow.hide();
                     }
                     else {
@@ -122,7 +122,7 @@ public class LivePanel extends LivePreviewPanel {
                     }
                 }
                 if(!stageHidden) {
-                    if(stageWindow.isShowing()) {
+                    if(hide.isSelected()) {
                         stageWindow.hide();
                     }
                     else {
