@@ -40,7 +40,7 @@ public class QuickInsertActionHandler implements EventHandler<ActionEvent> {
     @Override
     public void handle(ActionEvent t) {
         SongEntryWindow sew = QueleaApp.get().getMainWindow().getSongEntryWindow();
-        sew.resetQuickEdit();
+        sew.resetQuickInsert();
         sew.showAndWait();
         SongDisplayable quickSong = sew.getSong();
         if(!quickSong.getTitle().trim().isEmpty()) {
