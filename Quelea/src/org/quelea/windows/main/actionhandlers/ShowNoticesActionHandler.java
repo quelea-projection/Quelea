@@ -31,6 +31,7 @@ public class ShowNoticesActionHandler implements EventHandler<ActionEvent> {
     @Override
     public void handle(ActionEvent t) {
         QueleaApp.get().getMainWindow().getNoticeDialog().show();
+        QueleaApp.get().getMainWindow().getNoticeDialog().toFront();
     }
     
 }
