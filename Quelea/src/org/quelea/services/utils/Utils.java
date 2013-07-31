@@ -53,7 +53,7 @@ import javafx.event.EventHandler;
 import javafx.geometry.BoundingBox;
 import javafx.geometry.Bounds;
 import javafx.geometry.Rectangle2D;
-import javafx.scene.control.Button;
+import javafx.scene.Node;
 import javafx.scene.image.Image;
 import javafx.scene.image.PixelWriter;
 import javafx.scene.image.WritableImage;
@@ -100,7 +100,7 @@ public final class Utils {
      * <p/>
      * @param button the button to style.
      */
-    public static void setToolbarButtonStyle(final Button button) {
+    public static void setToolbarButtonStyle(final Node button) {
         button.setStyle(Utils.TOOLBAR_BUTTON_STYLE);
         button.setOnMouseEntered(new EventHandler<MouseEvent>() {
             @Override
