@@ -19,6 +19,7 @@
 package org.quelea.services.utils;
 
 import java.io.Serializable;
+import java.util.Objects;
 import javafx.scene.text.Font;
 
 /**
@@ -42,6 +43,32 @@ public class SerializableFont implements Serializable {
     public Font getFont() {
         Font ret = Font.font(family, size);
         return ret;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 5;
+        hash = 41 * hash + Objects.hashCode(this.family);
+        hash = 41 * hash + (int) (Double.doubleToLongBits(this.size) ^ (Double.doubleToLongBits(this.size) >>> 32));
+        return hash;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if(obj == null) {
+            return false;
+        }
+        if(getClass() != obj.getClass()) {
+            return false;
+        }
+        final SerializableFont other = (SerializableFont) obj;
+        if(!Objects.equals(this.family, other.family)) {
+            return false;
+        }
+        if(Double.doubleToLongBits(this.size) != Double.doubleToLongBits(other.size)) {
+            return false;
+        }
+        return true;
     }
     
 }
