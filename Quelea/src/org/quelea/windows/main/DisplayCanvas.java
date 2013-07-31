@@ -114,7 +114,12 @@ public class DisplayCanvas extends StackPane {
             public void onChanged(ListChangeListener.Change<? extends Node> change) {
                 while(change.next()) {
                     if(!change.wasRemoved()) {
-                        noticeOverlay.toFront();
+                        try {
+                            noticeOverlay.toFront();
+                        }
+                        catch(Exception ex) {
+                            ex.printStackTrace();
+                        }
                     }
                 }
             }
