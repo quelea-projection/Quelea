@@ -22,6 +22,7 @@ import javafx.beans.value.ObservableValue;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
+import javafx.geometry.Insets;
 import javafx.geometry.Orientation;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
@@ -32,16 +33,21 @@ import javafx.scene.control.ToolBar;
 import javafx.scene.control.Tooltip;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import org.quelea.data.displayable.SongDisplayable;
 import org.quelea.services.languages.LabelGrabber;
+import org.quelea.services.utils.Utils;
 import org.quelea.windows.main.actionhandlers.NewSongActionHandler;
 import org.quelea.windows.main.actionhandlers.RemoveSongDBActionHandler;
 
 /**
- * The panel used for browsing the database of songs and adding any songs to the order of service.
+ * The panel used for browsing the database of songs and adding any songs to the
+ * order of service.
+ * <p/>
  * @author Michael
  */
 public class LibrarySongPanel extends BorderPane {
@@ -58,14 +64,12 @@ public class LibrarySongPanel extends BorderPane {
     public LibrarySongPanel() {
         songList = new LibrarySongList(true);
         songList.getListView().getSelectionModel().selectedIndexProperty().addListener(new ChangeListener<Number>() {
-
             @Override
             public void changed(ObservableValue<? extends Number> ov, Number t, Number t1) {
                 checkRemoveButton();
             }
         });
         songList.getListView().itemsProperty().addListener(new ChangeListener<ObservableList<SongDisplayable>>() {
-
             @Override
             public void changed(ObservableValue<? extends ObservableList<SongDisplayable>> ov, ObservableList<SongDisplayable> t, ObservableList<SongDisplayable> t1) {
                 checkRemoveButton();
@@ -74,7 +78,7 @@ public class LibrarySongPanel extends BorderPane {
         ScrollPane listScrollPane = new ScrollPane();
         setCenter(listScrollPane);
 
-        HBox northPanel = new HBox();
+        HBox northPanel = new HBox(3);
         Label searchLabel = new Label(LabelGrabber.INSTANCE.getLabel("library.song.search"));
         searchLabel.setMaxHeight(Double.MAX_VALUE);
         searchLabel.setAlignment(Pos.CENTER);
@@ -82,44 +86,40 @@ public class LibrarySongPanel extends BorderPane {
         searchBox = new TextField();
         HBox.setHgrow(searchBox, Priority.SOMETIMES);
         searchBox.setMaxWidth(Double.MAX_VALUE);
-        searchBox.setOnAction(new EventHandler<ActionEvent>() {
-
+        searchBox.setOnKeyPressed(new EventHandler<KeyEvent>() {
             @Override
-            public void handle(ActionEvent t) {
-                searchCancelButton.fire();
+            public void handle(KeyEvent t) {
+                if(t.getCode() == KeyCode.ESCAPE) {
+                    searchCancelButton.fire();
+                }
             }
         });
         searchBox.textProperty().addListener(new ChangeListener<String>() {
-
             @Override
             public void changed(ObservableValue<? extends String> ov, String t, String t1) {
-                if(searchBox.getText().isEmpty()) {
-                    searchCancelButton.setDisable(true);
-                }
-                else {
-                    searchCancelButton.setDisable(false);
-                }
+                searchCancelButton.setDisable(searchBox.getText().isEmpty());
                 songList.filter(searchBox.getText());
             }
         });
         northPanel.getChildren().add(searchBox);
         searchCancelButton = new Button("", new ImageView(new Image("file:icons/cross.png")));
+        Utils.setToolbarButtonStyle(searchCancelButton);
         searchCancelButton.setTooltip(new Tooltip(LabelGrabber.INSTANCE.getLabel("clear.search.box")));
         searchCancelButton.setDisable(true);
         searchCancelButton.setOnAction(new EventHandler<ActionEvent>() {
-
             @Override
             public void handle(ActionEvent t) {
                 searchBox.clear();
             }
         });
         northPanel.getChildren().add(searchCancelButton);
+        BorderPane.setMargin(northPanel, new Insets(0, 5, 0, 5));
         setTop(northPanel);
 
         ToolBar toolbar = new ToolBar();
         toolbar.setOrientation(Orientation.VERTICAL);
-        
-        addButton = new Button("",new ImageView(new Image("file:icons/newsongdb.png", 16, 16, false, true)));
+
+        addButton = new Button("", new ImageView(new Image("file:icons/newsongdb.png", 16, 16, false, true)));
         addButton.setTooltip(new Tooltip(LabelGrabber.INSTANCE.getLabel("add.song.text")));
         addButton.setOnAction(new NewSongActionHandler());
         toolbar.getItems().add(addButton);
@@ -134,7 +134,8 @@ public class LibrarySongPanel extends BorderPane {
     }
 
     /**
-     * Check whether the remove button should be enabled or disabled and set it accordingly.
+     * Check whether the remove button should be enabled or disabled and set it
+     * accordingly.
      */
     private void checkRemoveButton() {
         if(songList.getListView().getSelectionModel().selectedIndexProperty().getValue() == -1 || songList.getListView().itemsProperty().get().size() == 0) {
@@ -147,6 +148,7 @@ public class LibrarySongPanel extends BorderPane {
 
     /**
      * Get the song list behind this panel.
+     * <p/>
      * @return the song list.
      */
     public LibrarySongList getSongList() {
@@ -155,10 +157,10 @@ public class LibrarySongPanel extends BorderPane {
 
     /**
      * Get the search box in this panel.
+     * <p/>
      * @return the search box.
      */
     public TextField getSearchBox() {
         return searchBox;
     }
-    
 }
