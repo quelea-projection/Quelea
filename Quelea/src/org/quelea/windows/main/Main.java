@@ -113,7 +113,7 @@ public final class Main extends Application {
                     fullScreenWindow = new DisplayStage(Utils.getBoundsFromRect2D(monitors.get(projectorScreen).getVisualBounds()), false);
                 }
                 QueleaApp.get().setAppWindow(fullScreenWindow);
-                fullScreenWindow.toFront();
+//                fullScreenWindow.toFront();
 
                 if(stageHidden) {
                     LOGGER.log(Level.INFO, "Hiding stage display on monitor 0 (base 0!)");
@@ -129,7 +129,7 @@ public final class Main extends Application {
                     stageWindow = new DisplayStage(Utils.getBoundsFromRect2D(monitors.get(stageScreen).getVisualBounds()), true);
                 }
                 QueleaApp.get().setStageWindow(stageWindow);
-                stageWindow.toFront();
+//                stageWindow.toFront();
             }
         });
 
@@ -213,7 +213,7 @@ public final class Main extends Application {
 
                 LOGGER.log(Level.INFO, "Final loading bits");
 //                Utils.centreOnMonitor(mainWindow, controlScreen);
-                mainWindow.toFront();
+//                mainWindow.toFront();
                 new ShortcutManager().addShortcuts(mainWindow);
                 LOGGER.log(Level.INFO, "Loaded everything.");
 
