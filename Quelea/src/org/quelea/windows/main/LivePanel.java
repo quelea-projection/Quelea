@@ -34,6 +34,7 @@ import javafx.stage.Screen;
 import org.quelea.data.displayable.Displayable;
 import org.quelea.services.languages.LabelGrabber;
 import org.quelea.services.utils.QueleaProperties;
+import org.quelea.services.utils.Utils;
 
 /**
  * The panel displaying the live lyrics selection - changes made on this panel
@@ -60,6 +61,7 @@ public class LivePanel extends LivePreviewPanel {
         HBox.setHgrow(spacer, Priority.ALWAYS);
         header.getItems().add(spacer);
         black = new ToggleButton("", new ImageView(new Image("file:icons/black.png")));
+        Utils.setToolbarButtonStyle(black);
         black.setTooltip(new Tooltip(LabelGrabber.INSTANCE.getLabel("black.screen.tooltip") + " (F1)"));
         black.setOnAction(new EventHandler<javafx.event.ActionEvent>() {
             @Override
@@ -73,6 +75,7 @@ public class LivePanel extends LivePreviewPanel {
         });
         header.getItems().add(black);
         clear = new ToggleButton("", new ImageView(new Image("file:icons/clear.png", 16, 16, false, true)));
+        Utils.setToolbarButtonStyle(clear);
         clear.setTooltip(new Tooltip(LabelGrabber.INSTANCE.getLabel("clear.text.tooltip") + " (F2)"));
         clear.setOnAction(new EventHandler<javafx.event.ActionEvent>() {
             @Override
@@ -86,6 +89,7 @@ public class LivePanel extends LivePreviewPanel {
         });
         header.getItems().add(clear);
         hide = new ToggleButton("", new ImageView(new Image("file:icons/cross.png")));
+        Utils.setToolbarButtonStyle(hide);
         hide.setTooltip(new Tooltip(LabelGrabber.INSTANCE.getLabel("hide.display.output.tooltip") + " (F3)"));
         hide.setOnAction(new EventHandler<javafx.event.ActionEvent>() {
             @Override
