@@ -43,6 +43,7 @@ import org.quelea.services.languages.LabelGrabber;
 import org.quelea.services.utils.FileFilters;
 import org.quelea.services.utils.LoggerUtils;
 import org.quelea.services.utils.QueleaProperties;
+import org.quelea.services.utils.Utils;
 import org.quelea.windows.main.QueleaApp;
 
 /**
@@ -119,6 +120,7 @@ public class LibraryImagePanel extends BorderPane {
         HBox toolbarBox = new HBox();
         toolbar.setOrientation(Orientation.VERTICAL);
         toolbarBox.getChildren().add(toolbar);
+        Utils.setToolbarButtonStyle(addButton);
         toolbar.getItems().add(addButton);
         setLeft(toolbarBox);
     }
