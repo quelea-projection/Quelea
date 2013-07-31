@@ -346,3 +346,7 @@ delete.image.confirmation=Really remove this image from the library? This action
 notice.expired.title=Notice expired
 notice.expired.text=The notice you are editing has expired. Do you want to add it again?
 dictionary.language.text=Dictionary Language
+confirm.entry.exit.text=Do you wish to save your changes to this song?
+confirm.entry.exit.title=Save song?
+save.text=Save
+dont.save.text=Don't Save

@@ -20,6 +20,7 @@ package org.quelea.windows.newsong;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -36,8 +37,10 @@ import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
+import javafx.stage.WindowEvent;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
+import org.javafx.dialog.Dialog;
 import org.quelea.data.ThemeDTO;
 import org.quelea.data.displayable.SongDisplayable;
 import org.quelea.data.displayable.TextDisplayable;
@@ -63,6 +66,7 @@ public class SongEntryWindow extends Stage {
     private final Button cancelButton;
     private final CheckBox addToSchedCBox;
     private SongDisplayable song;
+    private boolean checkEdit;
 
     /**
      * Create and initialise the new song window.
@@ -102,31 +106,14 @@ public class SongEntryWindow extends Stage {
         confirmButton.setOnAction(new EventHandler<javafx.event.ActionEvent>() {
             @Override
             public void handle(javafx.event.ActionEvent t) {
-                hide();
-                ThemeDTO selectedTheme = themePanel.getSelectedTheme();
-                if(selectedTheme != null && getSong() instanceof TextDisplayable) {
-                    TextDisplayable textDisplayable = (TextDisplayable) getSong();
-                    for(TextSection section : textDisplayable.getSections()) {
-                        section.setTempTheme(selectedTheme);
-                    }
-                    getSong().setTheme(selectedTheme);
-
-                }
-                if(updateDBOnHide) {
-                    Utils.updateSongInBackground(getSong(), true, false);
-                }
-                if(addToSchedCBox.isSelected()) {
-                    QueleaApp.get().getMainWindow().getMainPanel().getSchedulePanel().getScheduleList().add(getSong());
-                }
-                QueleaApp.get().getMainWindow().getMainPanel().getPreviewPanel().refresh();
-                QueleaApp.get().getMainWindow().getMainPanel().getLivePanel().refresh();
+                saveSong();
             }
         });
         cancelButton = new Button(LabelGrabber.INSTANCE.getLabel("cancel.button"), new ImageView(new Image("file:icons/cross.png")));
         cancelButton.setOnAction(new EventHandler<javafx.event.ActionEvent>() {
             @Override
             public void handle(javafx.event.ActionEvent t) {
-                hide();
+                checkSave();
             }
         });
         addToSchedCBox = new CheckBox(LabelGrabber.INSTANCE.getLabel("add.to.schedule.text"));
@@ -144,7 +131,51 @@ public class SongEntryWindow extends Stage {
         BorderPane.setMargin(bottomPanel, new Insets(10, 0, 5, 0));
         mainPane.setBottom(bottomPanel);
 
+        setOnCloseRequest(new EventHandler<WindowEvent>() {
+            @Override
+            public void handle(WindowEvent t) {
+                checkSave();
+            }
+        });
+
         setScene(new Scene(mainPane));
+    }
+
+    private void checkSave() {
+        if(checkEdit && attributesOk()) {
+            Dialog.buildConfirmation(LabelGrabber.INSTANCE.getLabel("confirm.entry.exit.title"),
+                    LabelGrabber.INSTANCE.getLabel("confirm.entry.exit.text"), SongEntryWindow.this)
+                    .addLabelledButton(LabelGrabber.INSTANCE.getLabel("save.text"), new EventHandler<ActionEvent>() {
+                        @Override
+                        public void handle(ActionEvent t) {
+                            saveSong();
+                        }
+                    }).addLabelledButton(LabelGrabber.INSTANCE.getLabel("dont.save.text"), null)
+                    .build().showAndWait();
+        }
+        hide();
+    }
+
+    private void saveSong() {
+        checkEdit = false;
+        hide();
+        ThemeDTO selectedTheme = themePanel.getSelectedTheme();
+        if(selectedTheme != null && getSong() instanceof TextDisplayable) {
+            TextDisplayable textDisplayable = (TextDisplayable) getSong();
+            for(TextSection section : textDisplayable.getSections()) {
+                section.setTempTheme(selectedTheme);
+            }
+            getSong().setTheme(selectedTheme);
+
+        }
+        if(updateDBOnHide) {
+            Utils.updateSongInBackground(getSong(), true, false);
+        }
+        if(addToSchedCBox.isSelected()) {
+            QueleaApp.get().getMainWindow().getMainPanel().getSchedulePanel().getScheduleList().add(getSong());
+        }
+        QueleaApp.get().getMainWindow().getMainPanel().getPreviewPanel().refresh();
+        QueleaApp.get().getMainWindow().getMainPanel().getLivePanel().refresh();
     }
 
     /**
@@ -230,6 +261,7 @@ public class SongEntryWindow extends Stage {
      * Set this window up ready to enter a new song.
      */
     public void resetNewSong() {
+        checkEdit = true;
         setTitle(LabelGrabber.INSTANCE.getLabel("new.song.title"));
         song = null;
         confirmButton.setText(LabelGrabber.INSTANCE.getLabel("new.song.button"));
@@ -247,6 +279,7 @@ public class SongEntryWindow extends Stage {
      * Set this window up ready to enter a new song.
      */
     public void resetQuickInsert() {
+        checkEdit = false;
         setTitle(LabelGrabber.INSTANCE.getLabel("quick.insert.text"));
         song = null;
         confirmButton.setText(LabelGrabber.INSTANCE.getLabel("library.add.to.schedule.text"));
@@ -266,6 +299,7 @@ public class SongEntryWindow extends Stage {
      * @param song the song to edit.
      */
     public void resetEditSong(SongDisplayable song) {
+        checkEdit = true;
         setTitle(LabelGrabber.INSTANCE.getLabel("edit.song.title"));
         this.song = song;
         confirmButton.setText(LabelGrabber.INSTANCE.getLabel("edit.song.button"));
@@ -325,12 +359,17 @@ public class SongEntryWindow extends Stage {
      * accordingly.
      */
     private void checkConfirmButton() {
-        if(getBasicSongPanel().getLyricsField().getText().trim().equals("")
-                || getBasicSongPanel().getTitleField().getText().trim().equals("")) {
-            confirmButton.setDisable(true);
-        }
-        else {
-            confirmButton.setDisable(false);
-        }
+        confirmButton.setDisable(!attributesOk());
+    }
+
+    /**
+     * Determine if this song entry window contains a song that could be saved.
+     * <p/>
+     * @return true if the song is viable (has a title and lyrics), false
+     * otherwise.
+     */
+    private boolean attributesOk() {
+        return !(getBasicSongPanel().getLyricsField().getText().trim().isEmpty()
+                || getBasicSongPanel().getTitleField().getText().trim().isEmpty());
     }
 }
