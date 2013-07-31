@@ -156,8 +156,8 @@
         </deb>
         <delete dir="${dist.jar.dir}/queleadoc"/>
         <delete file="${dist.jar.dir}/launch.sh"/>
-        <delete dir="${dist.jar.dir}/standalone"/>
-        <mkdir dir="${dist.jar.dir}/standalone"/>
+<!--        <delete dir="${dist.jar.dir}/standalone"/>
+        <mkdir dir="${dist.jar.dir}/standalone"/>-->
         
         <antcall target="normal-exec"/>
         <antcall target="nightly-exec"/>
