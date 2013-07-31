@@ -246,7 +246,7 @@ public class SongEntryWindow extends Stage {
     /**
      * Set this window up ready to enter a new song.
      */
-    public void resetQuickEdit() {
+    public void resetQuickInsert() {
         setTitle(LabelGrabber.INSTANCE.getLabel("quick.insert.text"));
         song = null;
         confirmButton.setText(LabelGrabber.INSTANCE.getLabel("library.add.to.schedule.text"));
