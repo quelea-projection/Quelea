@@ -24,6 +24,8 @@ import javafx.scene.ImageCursor;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
 import javafx.scene.image.Image;
+import javafx.scene.input.KeyEvent;
+import javafx.scene.input.MouseEvent;
 import javafx.util.Callback;
 import org.quelea.data.displayable.TextSection;
 import org.quelea.services.utils.QueleaProperties;
@@ -43,15 +45,37 @@ public class SelectLyricsList extends ListView<TextSection> {
      */
     public SelectLyricsList() {
         oneLineMode = QueleaProperties.get().getOneLineMode();
-        setOnMouseMoved(new EventHandler<javafx.scene.input.MouseEvent>() {
+        setOnMouseMoved(new EventHandler<MouseEvent>() {
             @Override
-            public void handle(javafx.scene.input.MouseEvent t) {
+            public void handle(MouseEvent t) {
                 if((t.isShiftDown() || t.isControlDown()) && !itemsProperty().get().isEmpty()) {
                     setCursor(Q_CURSOR);
                 }
                 else {
                     setCursor(Cursor.DEFAULT);
                 }
+                getScene().setOnKeyPressed(new EventHandler<KeyEvent>() {
+                    @Override
+                    public void handle(KeyEvent t) {
+                        if((t.isShiftDown() || t.isControlDown()) && !itemsProperty().get().isEmpty()) {
+                            setCursor(Q_CURSOR);
+                        }
+                        else {
+                            setCursor(Cursor.DEFAULT);
+                        }
+                    }
+                });
+                getScene().setOnKeyReleased(new EventHandler<KeyEvent>() {
+                    @Override
+                    public void handle(KeyEvent t) {
+                        if((t.isShiftDown() || t.isControlDown()) && !itemsProperty().get().isEmpty()) {
+                            setCursor(Q_CURSOR);
+                        }
+                        else {
+                            setCursor(Cursor.DEFAULT);
+                        }
+                    }
+                });
             }
         });
         setCellFactory(new Callback<ListView<TextSection>, ListCell<TextSection>>() {
