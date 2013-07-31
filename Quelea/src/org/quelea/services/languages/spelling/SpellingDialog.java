@@ -190,7 +190,7 @@ public class SpellingDialog {
             doneSpellingStage.show();
             return;
         }
-        List<String> origPieces = Arrays.asList(Pattern.compile("[^\\p{Alnum}]+", Pattern.UNICODE_CHARACTER_CLASS).split(origText));
+        List<String> origPieces = Arrays.asList(Pattern.compile(Speller.SPELLING_REGEX, Pattern.UNICODE_CHARACTER_CLASS).split(origText));
         String replaceWord = wordsToCorrect.iterator().next();
         int index = origPieces.indexOf(replaceWord);
         int lower = index - 6;

@@ -41,6 +41,7 @@ import java.util.regex.Pattern;
  */
 public class Speller {
 
+    public static final String SPELLING_REGEX = "([^\\p{Alnum}'\\-])+";
     private static HashMap<File, HashSet<String>> dictionaries = new HashMap<>();
     private HashSet<String> ignoreWords;
     private HashSet<String> words;
@@ -62,7 +63,7 @@ public class Speller {
      * <p/>
      * @param dict the dictionary to use.
      */
-    public void setDictionary(Dictionary dict) {
+    public final void setDictionary(Dictionary dict) {
         if(dict == null) {
             return;
         }
@@ -121,7 +122,7 @@ public class Speller {
         if(text.trim().isEmpty()) {
             return ret;
         }
-        String[] tempWords = Pattern.compile("[^\\p{Alnum}]+", Pattern.UNICODE_CHARACTER_CLASS).split(text);
+        String[] tempWords = Pattern.compile(SPELLING_REGEX, Pattern.UNICODE_CHARACTER_CLASS).split(text);
         for(String word : tempWords) {
             if(!checkWord(word)) {
                 ret.add(word);
@@ -174,7 +175,7 @@ public class Speller {
         if(text.trim().isEmpty()) {
             return true;
         }
-        String[] tempWords = Pattern.compile("[^\\p{Alnum}]+", Pattern.UNICODE_CHARACTER_CLASS).split(text);
+        String[] tempWords = Pattern.compile(SPELLING_REGEX, Pattern.UNICODE_CHARACTER_CLASS).split(text);
         for(int i = 0; i < tempWords.length; i++) {
             if(i == tempWords.length - 1 && !checkLastWord) {
                 break;
@@ -208,7 +209,7 @@ public class Speller {
 
     private String sanitiseWord(String word) {
         word = word.trim().toLowerCase();
-        word = Pattern.compile("[^\\w ]", Pattern.UNICODE_CHARACTER_CLASS).matcher(word).replaceAll("");
+        word = Pattern.compile("[^\\p{Alnum}'\\- ]", Pattern.UNICODE_CHARACTER_CLASS).matcher(word).replaceAll("");
         return word;
     }
 
