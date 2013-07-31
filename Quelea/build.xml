@@ -33,7 +33,7 @@
     <property name="Portable" value="${dist.jar.dir}/standalone/${PortableName}"/>
     
     <tstamp>
-        <format property="touch.time" pattern="dd.MM.yyyy-hh:mm"/>
+        <format property="touch.time" pattern="dd.MM.yyyy-HH:mm"/>
     </tstamp>
     <property name="CPInstallerNightly" value="${dist.jar.dir}/standalone/quelea-${quelea.version}-NIGHTLY-${touch.time}-crossplatform-install.jar"/>
     <property name="WindowsInstallerNightly" value="${dist.jar.dir}/standalone/quelea-${quelea.version}-NIGHTLY-${touch.time}-windows-install.exe"/>
@@ -106,6 +106,7 @@
         <copy file="${basedir}/quelea.properties" todir="${dist.jar.dir}" quiet="yes"/>
         <copy file="${basedir}/Quelea.vbs" todir="${dist.jar.dir}" quiet="yes"/>
         <copy file="${basedir}/Quelea.bat" todir="${dist.jar.dir}" quiet="yes"/>
+        <copy file="${basedir}/quelea.iss" todir="${dist.jar.dir}" quiet="yes"/>
         <copy file="${basedir}/build-install.bat" todir="${dist.jar.dir}" quiet="yes"/>
         <copy file="${basedir}/licenses/gplv3.txt" tofile="${dist.jar.dir}/license.txt" quiet="yes"/>
         <copy file="${basedir}/launch.sh" tofile="${dist.jar.dir}/launch.sh" quiet="yes"/>
@@ -147,6 +148,7 @@
                 <exclude name="launch.sh"/>
                 <exclude name="Quelea.vbs"/>
                 <exclude name="Quelea.bat"/>
+                <exclude name="quelea.iss"/>
             </tarfileset>
             <tarfileset file="${dist.jar.dir}/launch.sh" filemode="755" prefix="/usr/share/quelea"/>
             <tarfileset dir="${dist.jar.dir}/queleadoc" group="root" prefix="/usr/share/doc/quelea" username="root"/>
