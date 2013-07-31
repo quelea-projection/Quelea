@@ -30,6 +30,7 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
+import javafx.stage.WindowEvent;
 import org.quelea.data.displayable.AudioDisplayable;
 import org.quelea.data.displayable.Displayable;
 import org.quelea.data.displayable.ImageDisplayable;
@@ -87,7 +88,7 @@ public abstract class LivePreviewPanel extends BorderPane {
         lyricsPanel.getLyricsList().setOnMouseClicked(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent me) {
-                if(me.isControlDown()) {
+                if(me.isControlDown() || me.isShiftDown()) {
                     doQuickEdit(lyricsPanel.getLyricsList().getSelectionModel().getSelectedIndex());
                 }
             }
