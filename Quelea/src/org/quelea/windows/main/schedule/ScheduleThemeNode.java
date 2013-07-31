@@ -29,6 +29,7 @@ import javafx.beans.value.ObservableValue;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ToggleGroup;
@@ -39,7 +40,7 @@ import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
-import javafx.stage.Window;
+import javafx.stage.Stage;
 import org.quelea.data.ThemeDTO;
 import org.quelea.services.languages.LabelGrabber;
 import org.quelea.services.utils.LoggerUtils;
@@ -66,9 +67,9 @@ public class ScheduleThemeNode extends BorderPane {
     private EditThemeDialog themeDialog;
     private FlowPane themePreviews;
     private UpdateThemeCallback callback = null;
-    private Window popup;
+    private Stage popup;
 
-    public ScheduleThemeNode(UpdateThemeCallback callback, Window popup, Button themeButton) {
+    public ScheduleThemeNode(UpdateThemeCallback callback, Stage popup, Button themeButton) {
         this.callback = callback;
         this.popup = popup;
         themeDialog = new EditThemeDialog();
@@ -130,34 +131,56 @@ public class ScheduleThemeNode extends BorderPane {
         selectThemeLabel.setStyle("-fx-font-weight: bold;");
         northPanel.getChildren().add(selectThemeLabel);
         contentPanel.getChildren().add(northPanel);
+        ThemeDTO selectedTheme = null;
+        if(themePreviews != null) {
+            for(Node node : themePreviews.getChildren()) {
+                if(node instanceof ThemePreviewPanel) {
+                    ThemePreviewPanel panel = (ThemePreviewPanel) node;
+                    if(panel.getSelectButton().isSelected()) {
+                        selectedTheme = panel.getTheme();
+                    }
+                }
+            }
+        }
         themePreviews = new FlowPane();
         themePreviews.setAlignment(Pos.CENTER);
         themePreviews.setHgap(10);
         themePreviews.setVgap(10);
         for(final ThemeDTO theme : themes) {
             ThemePreviewPanel panel = new ThemePreviewPanel(theme, popup);
+            if(selectedTheme != null && selectedTheme.equals(theme)) {
+                panel.getSelectButton().fire();
+            }
             panel.getSelectButton().setOnAction(new EventHandler<javafx.event.ActionEvent>() {
                 @Override
                 public void handle(javafx.event.ActionEvent t) {
                     tempTheme = theme;
                     setTheme(theme);
-                    QueleaApp.get().getMainWindow().getMainPanel().getPreviewPanel().refresh();
+                    if(QueleaApp.get().getMainWindow().getMainPanel() != null) {
+                        QueleaApp.get().getMainWindow().getMainPanel().getPreviewPanel().refresh();
+                    }
                 }
             });
             group.getToggles().add(panel.getSelectButton());
             themePreviews.getChildren().add(panel);
+        }
+        if(group.getSelectedToggle() == null) {
+            for(Node node : themePreviews.getChildren()) {
+                if(node instanceof ThemePreviewPanel) {
+                    ThemePreviewPanel panel = (ThemePreviewPanel) node;
+                    if(panel.getTheme() == null) {
+                        panel.getSelectButton().fire();
+                    }
+                }
+            }
         }
         HBox buttonPanel = new HBox();
         Button newThemeButton = new Button(LabelGrabber.INSTANCE.getLabel("new.theme.text"), new ImageView(new Image("file:icons/add.png")));
         newThemeButton.setOnAction(new EventHandler<javafx.event.ActionEvent>() {
             @Override
             public void handle(javafx.event.ActionEvent t) {
-                if(popup != null) {
-                    popup.hide();
-                }
                 themeDialog.setTheme(null);
                 themeDialog.showAndWait();
-                themeDialog.toFront();
                 ThemeDTO ret = themeDialog.getTheme();
                 if(ret != null) {
                     try(PrintWriter pw = new PrintWriter(ret.getFile())) {
@@ -168,6 +191,7 @@ public class ScheduleThemeNode extends BorderPane {
                     }
                     refresh();
                 }
+                popup.show();
             }
         });
         buttonPanel.getChildren().add(newThemeButton);
