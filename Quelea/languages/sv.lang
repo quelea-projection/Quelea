@@ -346,3 +346,7 @@ remove.image.text=Ta bort bild
 delete.image.confirmation=Vill du verkligen ta bort bilden från biblioteket? Denna borttagning kan inte ångras.
 notice.expired.text=Meddelandet du redigerar har löpt ut. Vill du lägga till det igen?
 notice.expired.title=Meddelande löpt ut
+confirm.entry.exit.text=Vill du spara ändringarna du gjort på denna sång?
+confirm.entry.exit.title=Spara sång?
+save.text=Spara
+dont.save.text=Spara inte
