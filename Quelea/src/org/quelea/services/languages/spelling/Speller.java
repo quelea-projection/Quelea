@@ -199,7 +199,7 @@ public class Speller {
             if(!words.contains(word)) {
                 words.add(word);
                 BufferedWriter out = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(dict.getDictFile(), true), "UTF-8"));
-                out.append("\n" + word).close();
+                out.append(System.getProperty("line.separator") + word).close();
             }
         }
         catch(IOException ex) {
