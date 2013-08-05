@@ -26,6 +26,7 @@ import javafx.scene.text.Font;
 import org.quelea.data.db.model.TextShadow;
 import org.quelea.data.db.model.Theme;
 import org.quelea.services.utils.LoggerUtils;
+import org.quelea.services.utils.QueleaProperties;
 import org.quelea.services.utils.SerializableColor;
 import org.quelea.services.utils.SerializableDropShadow;
 import org.quelea.services.utils.SerializableFont;
@@ -46,6 +47,13 @@ public class ThemeDTO implements Serializable {
     public static final ThemeDTO DEFAULT_THEME = new ThemeDTO(DEFAULT_FONT,
             DEFAULT_FONT_COLOR,
             DEFAULT_BACKGROUND, DEFAULT_SHADOW, false, false);
+    public static final SerializableFont STAGE_FONT = new SerializableFont(new Font(QueleaProperties.get().getStageTextFont(), 72));
+    public static final Color STAGE_FONT_COLOR = QueleaProperties.get().getStageLyricsColor();
+    public static final SerializableDropShadow STAGE_SHADOW = new SerializableDropShadow(STAGE_FONT_COLOR, 0, 0);
+    public static final ColourBackground STAGE_BACKGROUND = new ColourBackground(QueleaProperties.get().getStageBackgroundColor());
+    public static final ThemeDTO STAGE_THEME = new ThemeDTO(STAGE_FONT,
+            STAGE_FONT_COLOR,
+            STAGE_BACKGROUND, STAGE_SHADOW, false, false);
     private final SerializableFont font;
     private final SerializableColor fontColor;
     private final Background background;
