@@ -159,8 +159,11 @@ public class LyricDrawer extends DisplayableDrawer {
      * @param theme the theme to place on the getCanvas().
      */
     public void setTheme(ThemeDTO theme) {
-        if(theme == null || getCanvas().isBlacked()) {
+        if(theme == null || getCanvas().isBlacked() && !getCanvas().isStageView()) {
             theme = ThemeDTO.DEFAULT_THEME;
+        }
+        if(getCanvas().isStageView()) {
+            theme = ThemeDTO.STAGE_THEME;
         }
         if(this.getCanvas().getCurrentDisplayable() instanceof SongDisplayable) {
             final SongDisplayable song = (SongDisplayable) this.getCanvas().getCurrentDisplayable();
