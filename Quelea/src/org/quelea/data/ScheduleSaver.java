@@ -40,7 +40,7 @@ public class ScheduleSaver {
      * Save the current schedule.
      * @param saveAs true if the file location should be specified, false if the current one should be used.
      */
-    public void saveSchedule(boolean saveAs) {
+    public boolean saveSchedule(boolean saveAs) {
         MainPanel mainpanel = QueleaApp.get().getMainWindow().getMainPanel();
         Schedule schedule = mainpanel.getSchedulePanel().getScheduleList().getSchedule();
         File file = schedule.getFile();
@@ -79,8 +79,15 @@ public class ScheduleSaver {
             boolean success = schedule.writeToFile();
             if (!success) {
                 Dialog.showError(LabelGrabber.INSTANCE.getLabel("cant.save.schedule.title"), LabelGrabber.INSTANCE.getLabel("cant.save.schedule.text"));
+                return false;
+            }
+            else {
+                return true;
             }
         }
+        else {
+            return false;
+        } 
     }
 
 }
