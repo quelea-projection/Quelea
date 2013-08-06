@@ -53,7 +53,7 @@ import org.quelea.windows.main.DisplayCanvas;
 import org.quelea.windows.multimedia.MediaPlayerFactory;
 
 /**
- * @author Ben Goodwin && tomaszpio@gmail.com
+ * @author Ben Goodwin and tomaszpio@gmail.com
  */
 public class LyricDrawer extends DisplayableDrawer {
 
