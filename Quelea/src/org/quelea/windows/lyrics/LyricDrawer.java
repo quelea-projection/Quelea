@@ -109,10 +109,16 @@ public class LyricDrawer extends DisplayableDrawer {
 
         List<String> newText = sanctifyText();
         double fontSize = pickFontSize(font, newText, getCanvas().getWidth(), getCanvas().getHeight());
-        font = Font.font(font.getName(),
+        if(stageView) {
+            font = Font.font(font.getName(), FontWeight.NORMAL,
+                FontPosture.REGULAR, fontSize);
+        }
+        else {
+            font = Font.font(font.getName(),
                 theme.isBold() ? FontWeight.BOLD : FontWeight.NORMAL,
                 theme.isItalic() ? FontPosture.ITALIC : FontPosture.REGULAR,
                 fontSize);
+        }
         FontMetrics metrics = Toolkit.getToolkit().getFontLoader().getFontMetrics(font);
         int y = 0;
         final Group newTextGroup = new Group();
