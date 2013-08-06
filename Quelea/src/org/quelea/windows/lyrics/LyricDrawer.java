@@ -139,7 +139,7 @@ public class LyricDrawer extends DisplayableDrawer {
             t.setFont(font);
             t.setEffect(shadow);
             if(stageView && QueleaProperties.get().getStageTextAlignment().equalsIgnoreCase("Left")) {
-                    t.setX(0);
+                    t.setX(getCanvas().getWidth());
             }
             else {
                 t.setX(centreOffset);
