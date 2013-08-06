@@ -44,8 +44,10 @@ import org.quelea.data.displayable.Displayable;
 import org.quelea.data.displayable.SongDisplayable;
 import org.quelea.data.displayable.TextDisplayable;
 import org.quelea.data.displayable.TextSection;
+import org.quelea.services.utils.LineTypeChecker;
 import org.quelea.services.utils.LoggerUtils;
 import org.quelea.services.utils.QueleaProperties;
+import org.quelea.services.utils.SerializableFont;
 import org.quelea.services.utils.Utils;
 import org.quelea.windows.main.DisplayCanvas;
 import org.quelea.windows.multimedia.MediaPlayerFactory;
@@ -77,6 +79,7 @@ public class LyricDrawer extends DisplayableDrawer {
     }
 
     private void drawText() {
+        boolean stageView = getCanvas().isStageView();
         if(!getCanvas().getChildren().contains(getCanvas().getCanvasBackground())
                 && !getCanvas().getChildren().contains(textGroup)) {
             getCanvas().getChildren().add(0, getCanvas().getCanvasBackground());
@@ -87,10 +90,16 @@ public class LyricDrawer extends DisplayableDrawer {
             this.text = Arrays.copyOf(text, text.length);
         }
         Font font = theme.getFont();
-        if(font == null) {
+        if(stageView) {
+            font = new Font(QueleaProperties.get().getStageTextFont(), 72);
+        }
+        if (font == null) {
             font = ThemeDTO.DEFAULT_FONT.getFont();
         }
         DropShadow shadow = theme.getShadow().getDropShadow();
+        if(stageView) {
+            shadow = new DropShadow();
+        }
         if(shadow == null) {
             shadow = ThemeDTO.DEFAULT_SHADOW.getDropShadow();
         }
@@ -107,7 +116,7 @@ public class LyricDrawer extends DisplayableDrawer {
         FontMetrics metrics = Toolkit.getToolkit().getFontLoader().getFontMetrics(font);
         int y = 0;
         final Group newTextGroup = new Group();
-        StackPane.setAlignment(newTextGroup, QueleaProperties.get().getTextPositionInternal().getLayoutPos());
+            StackPane.setAlignment(newTextGroup, QueleaProperties.get().getTextPositionInternal().getLayoutPos());
 
         for(Iterator< Node> it = getCanvas().getChildren().iterator(); it.hasNext();) {
             Node node = it.next();
@@ -129,26 +138,46 @@ public class LyricDrawer extends DisplayableDrawer {
 
             t.setFont(font);
             t.setEffect(shadow);
-            t.setX(centreOffset);
-            t.setY(y);
-
-            if(theme.getFontPaint() == lastColor || lastColor == null) {
-                t.setFill(theme.getFontPaint());
+            if(stageView && QueleaProperties.get().getStageTextAlignment().equalsIgnoreCase("Left")) {
+                    t.setX(0);
             }
             else {
-                Timeline paintTimeline = new Timeline(new KeyFrame(Duration.ZERO, new KeyValue(t.fillProperty(), lastColor)),
-                        new KeyFrame(Duration.seconds(0.3), new KeyValue(t.fillProperty(), theme.getFontPaint())));
-                paintTransition.getChildren().add(paintTimeline);
+                t.setX(centreOffset);
             }
+            t.setY(y);
+
+            Color lineColor;
+            if(stageView && new LineTypeChecker(line).getLineType() == LineTypeChecker.Type.CHORDS) {
+                lineColor = QueleaProperties.get().getStageChordColor();
+            }
+            else if(stageView) {
+                lineColor = QueleaProperties.get().getStageLyricsColor(); 
+            }
+            else {
+                lineColor = theme.getFontPaint();
+            }
+            if(lineColor == null) {
+                LOGGER.log(Level.WARNING, "Warning: Font Color not initialised correctly. Using default font colour.");
+                lineColor = ThemeDTO.DEFAULT_FONT_COLOR;
+            }
+            t.setFill(lineColor);
+
+//            if(theme.getFontPaint() == lastColor || lastColor == null) {
+//                t.setFill(theme.getFontPaint());
+//            }
+//            else {
+//                Timeline paintTimeline = new Timeline(new KeyFrame(Duration.ZERO, new KeyValue(t.fillProperty(), lastColor)),
+//                        new KeyFrame(Duration.seconds(0.3), new KeyValue(t.fillProperty(), theme.getFontPaint())));
+//                paintTransition.getChildren().add(paintTimeline);
+//            }
             y += metrics.getLineHeight();
 
-            newTextGroup.getChildren()
-                    .add(t);
+            newTextGroup.getChildren().add(t);
         }
         if(!paintTransition.getChildren().isEmpty()) {
             paintTransition.play();
         }
-        lastColor = theme.getFontPaint();
+//        lastColor = theme.getFontPaint();
 
         textGroup = newTextGroup;
     }
@@ -159,11 +188,8 @@ public class LyricDrawer extends DisplayableDrawer {
      * @param theme the theme to place on the getCanvas().
      */
     public void setTheme(ThemeDTO theme) {
-        if(theme == null || getCanvas().isBlacked() && !getCanvas().isStageView()) {
+        if(theme == null || getCanvas().isBlacked()) {
             theme = ThemeDTO.DEFAULT_THEME;
-        }
-        if(getCanvas().isStageView()) {
-            theme = ThemeDTO.STAGE_THEME;
         }
         if(this.getCanvas().getCurrentDisplayable() instanceof SongDisplayable) {
             final SongDisplayable song = (SongDisplayable) this.getCanvas().getCurrentDisplayable();
@@ -182,7 +208,10 @@ public class LyricDrawer extends DisplayableDrawer {
         }
         this.theme = theme;
         Image image = null;
-        if(theme.getBackground() instanceof ImageBackground) {
+        if(getCanvas().isStageView()) {
+            image = Utils.getImageFromColour(QueleaProperties.get().getStageBackgroundColor());
+        }
+        else if(theme.getBackground() instanceof ImageBackground) {
             image = ((ImageBackground) theme.getBackground()).getImage();
         }
         else if(theme.getBackground() instanceof ColourBackground) {
