@@ -68,7 +68,7 @@ public class ExitActionHandler implements EventHandler<ActionEvent> {
                 @Override
                 public void handle(ActionEvent t) {
                     //Save schedule
-                    new ScheduleSaver().saveSchedule(false);
+                   cancel = !(new ScheduleSaver().saveSchedule(false));
                 }
             }).addNoButton(new EventHandler<ActionEvent>() {
                 @Override
