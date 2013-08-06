@@ -53,7 +53,7 @@ import org.quelea.windows.main.DisplayCanvas;
 import org.quelea.windows.multimedia.MediaPlayerFactory;
 
 /**
- * @author tomaszpio@gmail.com
+ * @author Ben Goodwin && tomaszpio@gmail.com
  */
 public class LyricDrawer extends DisplayableDrawer {
 
@@ -109,15 +109,15 @@ public class LyricDrawer extends DisplayableDrawer {
 
         List<String> newText = sanctifyText();
         double fontSize = pickFontSize(font, newText, getCanvas().getWidth(), getCanvas().getHeight());
-        if(stageView) {
-            font = Font.font(font.getName(), FontWeight.NORMAL,
-                FontPosture.REGULAR, fontSize);
-        }
-        else {
+        if(stageView) { 
             font = Font.font(font.getName(),
                 theme.isBold() ? FontWeight.BOLD : FontWeight.NORMAL,
                 theme.isItalic() ? FontPosture.ITALIC : FontPosture.REGULAR,
                 fontSize);
+        }
+        else {
+            font = Font.font(font.getName(), FontWeight.NORMAL,
+                FontPosture.REGULAR, fontSize);
         }
         FontMetrics metrics = Toolkit.getToolkit().getFontLoader().getFontMetrics(font);
         int y = 0;
