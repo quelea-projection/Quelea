@@ -42,7 +42,7 @@ import org.xml.sax.SAXException;
  * <p/>
  * @author Michael
  */
-public final class Bible {
+public final class Bible implements BibleInterface  {
 
     private static final Logger LOGGER = LoggerUtils.getLogger();
     private final String name;
@@ -172,7 +172,7 @@ public final class Bible {
      * <p/>
      * @return the name of the bible.
      */
-    public String getName() {
+    public String getBibleName() {
         return name;
     }
 
@@ -207,5 +207,25 @@ public final class Bible {
      */
     public BibleBook[] getBooks() {
         return books.toArray(new BibleBook[books.size()]);
+    }
+
+    @Override
+    public int getNum() {
+        return -1;
+    }
+
+    @Override
+    public String getText() {
+        return toString();
+    }
+    
+    @Override
+    public String getName() {
+        return getBibleName();
+    }
+
+    @Override
+    public BibleInterface getParent() {
+        return null;
     }
 }
