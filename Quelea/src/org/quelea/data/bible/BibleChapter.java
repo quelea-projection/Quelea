@@ -30,7 +30,7 @@ import org.quelea.services.utils.Utils;
  * <p/>
  * @author Michael
  */
-public final class BibleChapter {
+public final class BibleChapter implements BibleInterface {
 
     private static int statId = 0;
     private final int num;
@@ -173,7 +173,7 @@ public final class BibleChapter {
      * <p/>
      * @return all the text in this chapter as a string.
      */
-    public String getText() {
+    public String getFullText() {
         if(softRefText == null || softRefText.get() == null) {
             StringBuilder ret = new StringBuilder();
             for(BibleVerse verse : getVerses()) {
@@ -199,7 +199,23 @@ public final class BibleChapter {
      * <p/>
      * @return the chapter number.
      */
+    @Override
     public int getNum() {
         return num;
+    }
+
+    @Override
+    public String getName() {
+        return toString();
+    }
+    
+    @Override
+    public String getText() {
+        return getFullText();
+    }
+
+    @Override
+    public BibleInterface getParent() {
+        return getBook();
     }
 }

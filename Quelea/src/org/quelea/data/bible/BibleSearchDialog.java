@@ -20,19 +20,25 @@ package org.quelea.data.bible;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
+import javafx.geometry.Bounds;
 import javafx.scene.Scene;
+import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
-import javafx.scene.control.ListView;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
+import org.quelea.data.displayable.BiblePassage;
 import org.quelea.services.languages.LabelGrabber;
-import org.quelea.windows.library.DisplayableListCell;
+import org.quelea.windows.main.QueleaApp;
 import org.quelea.windows.main.widgets.LoadingPane;
 
 /**
@@ -43,10 +49,13 @@ import org.quelea.windows.main.widgets.LoadingPane;
 public class BibleSearchDialog extends Stage implements BibleChangeListener {
 
     private TextField searchField;
-    private ListView<BibleChapter> searchResults;
+    //private ListView<BibleChapter> searchResults;
+    private BibleSearchTreeView searchResults;
     private ComboBox<String> bibles;
     private BibleSearchPopupMenu popupMenu;
     private LoadingPane overlay;
+    private FlowPane chapterPane;
+    private final Button addToSchedule;
 
     /**
      * Create a new bible searcher dialog.
@@ -61,26 +70,35 @@ public class BibleSearchDialog extends Stage implements BibleChangeListener {
         bibles.setEditable(false);
         BibleManager.get().registerBibleChangeListener(this);
         updateBibles();
+        addToSchedule = new Button(LabelGrabber.INSTANCE.getLabel("add.to.schedule.text"), new ImageView(new Image("file:icons/tick.png")));
+        addToSchedule.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent t) {
+                BibleChapter chap = (BibleChapter) searchResults.getSelectionModel().getSelectedItem().getValue().getParent();
+                Bible bib = (Bible) chap.getParent().getParent();
+                BiblePassage passage = new BiblePassage(bib.getBibleName(), chap.getBook() + " " + chap.getParent().getNum(), chap.getVerses());
+                QueleaApp.get().getMainWindow().getMainPanel().getSchedulePanel().getScheduleList().add(passage);
+            }
+        });
         HBox northPanel = new HBox();
         northPanel.getChildren().add(bibles);
         northPanel.getChildren().add(searchField);
+        northPanel.getChildren().add(addToSchedule);
         mainPane.setTop(northPanel);
         popupMenu = new BibleSearchPopupMenu();
-        searchResults = new ListView<>();
-//        searchResults.setCellRenderer(new SearchPreviewRenderer());
-        searchResults.setCellFactory(DisplayableListCell.<BibleChapter>forListView(popupMenu));
+        ScrollPane scrollPane = new ScrollPane();
+        chapterPane = new FlowPane();
+        scrollPane.setContent(chapterPane);
+        scrollPane.setMinWidth(600);
+        searchResults = new BibleSearchTreeView(chapterPane);
         VBox centrePanel = new VBox();
         StackPane searchPane = new StackPane();
         searchPane.getChildren().add(searchResults);
         searchPane.getChildren().add(overlay);
         centrePanel.getChildren().add(searchPane);
-        searchResults.selectionModelProperty().get().selectedItemProperty().addListener(new ChangeListener<BibleChapter>() {
-            @Override
-            public void changed(ObservableValue<? extends BibleChapter> val, BibleChapter oldChapter, BibleChapter newChapter) {
-                popupMenu.setCurrentChapter(newChapter);
-            }
-        });
-        mainPane.setCenter(centrePanel);
+        mainPane.setCenter(scrollPane);
+        centrePanel.setMinWidth(200);
+        mainPane.setLeft(centrePanel);
         bibles.setOnAction(new EventHandler<javafx.event.ActionEvent>() {
             @Override
             public void handle(javafx.event.ActionEvent t) {
@@ -102,12 +120,12 @@ public class BibleSearchDialog extends Stage implements BibleChangeListener {
      * Reset this dialog.
      */
     public final void reset() {
-        searchResults.itemsProperty().get().clear();
+//        searchResults.itemsProperty().get().clear();
         searchField.setText(LabelGrabber.INSTANCE.getLabel("initial.search.text"));
         searchField.focusedProperty().addListener(new ChangeListener<Boolean>() {
             @Override
             public void changed(ObservableValue<? extends Boolean> ov, Boolean t, Boolean t1) {
-                if(t1.booleanValue()) {
+                if (t1.booleanValue()) {
                     searchField.setText("");
                     searchField.focusedProperty().removeListener(this);
                 }
@@ -126,7 +144,8 @@ public class BibleSearchDialog extends Stage implements BibleChangeListener {
      * Update the results based on the entered text.
      */
     private void update() {
-        if(BibleManager.get().isIndexInit()) {
+        if (BibleManager.get().isIndexInit()) {
+            searchResults.reset();
             overlay.show();
             final String text = searchField.getText();
             new Thread() {
@@ -135,11 +154,14 @@ public class BibleSearchDialog extends Stage implements BibleChangeListener {
                     Platform.runLater(new Runnable() {
                         @Override
                         public void run() {
-                            searchResults.itemsProperty().get().clear();
-                            if(!text.trim().isEmpty()) {
-                                for(BibleChapter chapter : results) {
-                                    if(bibles.getSelectionModel().getSelectedIndex() == 0 || chapter.getBook().getBible().getName().equals(bibles.getSelectionModel().getSelectedItem())) {
-                                        searchResults.itemsProperty().get().add(chapter);
+                            if (!text.trim().isEmpty()) {
+                                for (BibleChapter chapter : results) {
+                                    if (bibles.getSelectionModel().getSelectedIndex() == 0 || chapter.getBook().getBible().getName().equals(bibles.getSelectionModel().getSelectedItem())) {
+                                        for (BibleVerse verse : chapter.getVerses()) {
+                                            if (verse.getText().toLowerCase().contains(text.toLowerCase())) {
+                                                searchResults.add(verse);
+                                            }
+                                        }
                                     }
                                 }
                             }
@@ -148,7 +170,6 @@ public class BibleSearchDialog extends Stage implements BibleChangeListener {
                     });
                 }
             }.start();
-            
         }
     }
 
@@ -159,8 +180,9 @@ public class BibleSearchDialog extends Stage implements BibleChangeListener {
     public final void updateBibles() {
         bibles.itemsProperty().get().clear();
         bibles.itemsProperty().get().add(LabelGrabber.INSTANCE.getLabel("all.text"));
-        for(Bible bible : BibleManager.get().getBibles()) {
+        for (Bible bible : BibleManager.get().getBibles()) {
             bibles.itemsProperty().get().add(bible.getName());
         }
+        bibles.getSelectionModel().selectFirst();
     }
 }
