@@ -24,7 +24,7 @@ import org.w3c.dom.Node;
  * A verse in the bible.
  * @author Michael
  */
-public final class BibleVerse {
+public final class BibleVerse implements BibleInterface  {
 
     private String verse;
     private int num;
@@ -99,7 +99,7 @@ public final class BibleVerse {
      * Get the number of this verse.
      * @return the verse number.
      */
-    public int getNum() {
+    public int getVerseNum() {
         return num;
     }
 
@@ -107,8 +107,27 @@ public final class BibleVerse {
      * Get the textual content of the verse.
      * @return the textual content of the verse.
      */
-    public String getText() {
+    public String getVerseText() {
         return verse;
     }
 
+    @Override
+    public String getName() {
+        return getNum() + " " + getText();
+    }
+    
+    @Override 
+    public String getText(){
+        return getVerseText();
+    }
+
+    @Override
+    public int getNum() {
+        return getVerseNum();
+    }
+
+    @Override
+    public BibleInterface getParent() {
+        return getChapter();
+    }
 }

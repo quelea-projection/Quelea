@@ -28,7 +28,7 @@ import org.w3c.dom.NodeList;
  * A book in the bible.
  * @author Michael
  */
-public final class BibleBook {
+public final class BibleBook implements BibleInterface  {
 
     private int bookNumber;
     private String bookName;
@@ -58,7 +58,7 @@ public final class BibleBook {
      * Get the text of this chapter as nicely formatted HTML.
      * @return the text of this chapter.
      */
-    public String getText() {
+    public String getFullText() {
         if(htmlText==null) {
             caretPosList.clear();
             int pos = 0;
@@ -207,5 +207,25 @@ public final class BibleBook {
      */
     public BibleChapter[] getChapters() {
         return chapters.toArray(new BibleChapter[chapters.size()]);
+    }
+
+    @Override
+    public int getNum() {
+        return getBookNumber();
+    }
+
+    @Override
+    public String getName() {
+        return getBookName();
+    }
+    
+    @Override
+    public String getText() {
+        return getFullText();
+    }
+
+    @Override
+    public BibleInterface getParent() {
+        return getBible();
     }
 }
