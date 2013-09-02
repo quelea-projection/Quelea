@@ -62,47 +62,26 @@ public class PresentationPanel extends AbstractPanel {
         mainPanel.setTop(buttons);
         presentationPreview = new PresentationPreview();
         presentationPreview.addSlideChangedListener(new org.quelea.windows.presentation.SlideChangedListener() {
-
             @Override
             public void slideChanged(PresentationSlide newSlide) {
                 if(live) {
                     if(newSlide != null && displayable != null) {
-                        if(displayable.getPPPresentation() == null) {
-                            if(displayable.getOOPresentation() == null) {
-                                currentSlide = newSlide;
-                                updateCanvas();
-                            }
-                            else {
-                                OOPresentation pres = displayable.getOOPresentation();
-                                pres.addSlideListener(new SlideChangedListener() {
-                                    @Override
-                                    public void slideChanged(final int newSlideIndex) {
-                                        presentationPreview.select(newSlideIndex);
-                                    }
-                                });
-                                currentSlide = newSlide;
-                                startOOPres();
-                                QueleaApp.get().getMainWindow().toFront();
-                                pres.gotoSlide(presentationPreview.getSelectedIndex());
-                            }
+                        if(displayable.getOOPresentation() == null) {
+                            currentSlide = newSlide;
+                            updateCanvas();
                         }
                         else {
-                            PowerpointSlideShowRunner runner = displayable.getPPPresentation();
-                            if(!runner.isInit()) {
-                                runner.setPos(QueleaApp.get().getProjectionWindow().getX(),
-                                        QueleaApp.get().getProjectionWindow().getY(),
-                                        QueleaApp.get().getProjectionWindow().getWidth(),
-                                        QueleaApp.get().getProjectionWindow().getHeight());
-                                runner.init();
-                            }
-                            runner.run();
-                            runner.addSlideAdvanceListener(new PowerpointSlideShowRunner.SlideChangeListener() {
+                            OOPresentation pres = displayable.getOOPresentation();
+                            pres.addSlideListener(new SlideChangedListener() {
                                 @Override
-                                public void slideChanged(int oldSlide, int newSlide) {
-                                    presentationPreview.select(newSlide, false);
+                                public void slideChanged(final int newSlideIndex) {
+                                    presentationPreview.select(newSlideIndex);
                                 }
                             });
-                            runner.goToSlide(presentationPreview.getSelectedIndex());
+                            currentSlide = newSlide;
+                            startOOPres();
+                            QueleaApp.get().getMainWindow().toFront();
+                            pres.gotoSlide(presentationPreview.getSelectedIndex());
                         }
                     }
                 }
@@ -124,10 +103,6 @@ public class PresentationPanel extends AbstractPanel {
         if(live && displayable != null) {
             if(displayable.getOOPresentation() != null) {
                 displayable.getOOPresentation().stop();
-                displayable = null;
-            }
-            if(displayable.getPPPresentation() != null) {
-                displayable.getPPPresentation().stop();
                 displayable = null;
             }
         }
@@ -159,9 +134,6 @@ public class PresentationPanel extends AbstractPanel {
     public void showDisplayable(final PresentationDisplayable displayable, int index) {
         if(this.displayable == displayable) {
             return;
-        }
-        if(this.displayable != null && this.displayable.getPPPresentation() != null && containerPanel instanceof LivePanel) {
-            this.displayable.getPPPresentation().stop();
         }
         this.displayable = displayable;
         if(displayable == null) {
