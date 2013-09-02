@@ -49,11 +49,14 @@ import java.util.concurrent.Semaphore;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.application.Platform;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.event.EventHandler;
 import javafx.geometry.BoundingBox;
 import javafx.geometry.Bounds;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.Node;
+import javafx.scene.control.ToggleButton;
 import javafx.scene.image.Image;
 import javafx.scene.image.PixelWriter;
 import javafx.scene.image.WritableImage;
@@ -102,6 +105,20 @@ public final class Utils {
      */
     public static void setToolbarButtonStyle(final Node button) {
         button.setStyle(Utils.TOOLBAR_BUTTON_STYLE);
+        if(button instanceof ToggleButton) {
+            ToggleButton toggle = (ToggleButton) button;
+            toggle.selectedProperty().addListener(new ChangeListener<Boolean>() {
+                @Override
+                public void changed(ObservableValue<? extends Boolean> ov, Boolean t, Boolean t1) {
+                    if(t1) {
+                        button.setStyle(Utils.HOVER_TOOLBAR_BUTTON_STYLE);
+                    }
+                    else {
+                        button.setStyle(Utils.TOOLBAR_BUTTON_STYLE);
+                    }
+                }
+            });
+        }
         button.setOnMouseEntered(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent mouseEvent) {
@@ -111,7 +128,9 @@ public final class Utils {
         button.setOnMouseExited(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent mouseEvent) {
-                button.setStyle(Utils.TOOLBAR_BUTTON_STYLE);
+                if(!(button instanceof ToggleButton && ((ToggleButton) button).isSelected())) {
+                    button.setStyle(Utils.TOOLBAR_BUTTON_STYLE);
+                }
             }
         });
     }
