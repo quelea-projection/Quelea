@@ -54,7 +54,7 @@ import org.quelea.windows.main.widgets.LoadingPane;
  * <p/>
  * @author Michael
  */
-public class LibrarySongList extends StackPane implements DatabaseListener {
+public class LibrarySongList extends StackPane {
 
     private static final Logger LOGGER = LoggerUtils.getLogger();
     private final LibraryPopupMenu popupMenu;
@@ -126,10 +126,16 @@ public class LibrarySongList extends StackPane implements DatabaseListener {
         }
         new Thread() {
             public void run() {
-                databaseChanged();
+                refresh();
             }
         }.start();
-        SongManager.get().registerDatabaseListener(this);
+        SongManager.get().registerDatabaseListener(new DatabaseListener() {
+
+            @Override
+            public void databaseChanged() {
+                refresh();
+            }
+        });
     }
     private ExecutorService filterService = Executors.newSingleThreadExecutor();
     private Future<?> filterFuture;
@@ -274,22 +280,8 @@ public class LibrarySongList extends StackPane implements DatabaseListener {
         return songList;
     }
     
-    public void setLoading(boolean loading) {
-        if(loading) {
-            overlay.show();
-        }
-        else {
-            overlay.hide();
-        }
-    }
-
-    /**
-     * Update the contents of the list.
-     */
-    @Override
-    public final void databaseChanged() {
+    private void refresh() {
         Platform.runLater(new Runnable() {
-
             @Override
             public void run() {
                 setLoading(true);
@@ -303,6 +295,14 @@ public class LibrarySongList extends StackPane implements DatabaseListener {
                 setLoading(false);
             }
         });
-
+    }
+    
+    public void setLoading(boolean loading) {
+        if(loading) {
+            overlay.show();
+        }
+        else {
+            overlay.hide();
+        }
     }
 }
