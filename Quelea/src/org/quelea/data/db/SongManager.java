@@ -128,7 +128,6 @@ public final class SongManager {
             public void execute(Session session) {
                 for(Song song : new SongDao(session).getSongs()) {
                     final String[] tags = new String[song.getTags().size()];
-
                     for(int i = 0; i < song.getTags().size(); i++) {
                         tags[i] = song.getTags().get(i);
                     }
@@ -228,9 +227,7 @@ public final class SongManager {
      * @return true if the operation succeeded, false otherwise.
      */
     public synchronized boolean updateSong(final SongDisplayable song) {
-        cacheSongs.clear();
-        clearIndex();
-
+        index.remove(song);
         HibernateUtil.execute(new HibernateUtil.SessionCallback() {
             @Override
             public void execute(Session session) {
@@ -252,6 +249,7 @@ public final class SongManager {
                     updatedSong.setTitle(song.getTitle());
                     updatedSong.setTheme(nullTheme ? ThemeDTO.DEFAULT_THEME.getTheme() : new Theme(song.getSections()[0].getTheme().getTheme()));
                     session.update(updatedSong);
+                    index.add(song);
                 }
                 catch(ObjectNotFoundException e) {
                     LOGGER.log(Level.INFO, "Updating song that doesn't exist, adding instead");
