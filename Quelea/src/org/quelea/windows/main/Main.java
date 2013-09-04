@@ -41,6 +41,7 @@ import org.quelea.services.utils.UpdateChecker;
 import org.quelea.services.utils.UserFileChecker;
 import org.quelea.services.utils.Utils;
 import org.quelea.windows.splash.SplashStage;
+import uk.co.caprica.vlcj.discovery.NativeDiscovery;
 
 /**
  * The main class, sets everything in motion...
@@ -62,7 +63,8 @@ public final class Main extends Application {
     public void start(Stage stage) {
         final SplashStage splashWindow = new SplashStage();
         splashWindow.show();
-
+        
+        new NativeDiscovery().discover();
         new UserFileChecker(QueleaProperties.getQueleaUserHome()).checkUserFiles();
 
         if(!new File(QueleaProperties.getQueleaUserHome(), "database_new").exists()

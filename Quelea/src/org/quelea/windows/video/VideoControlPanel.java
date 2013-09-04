@@ -24,8 +24,8 @@ import org.javafx.dialog.Dialog;
 import org.quelea.data.displayable.MultimediaDisplayable;
 import org.quelea.services.languages.LabelGrabber;
 import org.quelea.services.utils.LoggerUtils;
-import org.quelea.windows.multimedia.MediaPlayerFactory;
 import org.quelea.windows.multimedia.MultimediaControlPanel;
+import org.quelea.windows.multimedia.VLCMediaPlayer;
 
 /**
  * The control panel for displaying the video.
@@ -44,21 +44,23 @@ public class VideoControlPanel extends MultimediaControlPanel {
     @Override
     public void loadMultimedia(MultimediaDisplayable video) {
         this.filePath = video.getFile().getAbsolutePath();
-        try {
-            player = MediaPlayerFactory.getInstance(new File(filePath).toURI().toString());
-            player.stop();
-            player.currentTimeProperty().addListener(new CurrentTimeListener());
-        }
-        catch(MediaException ex) {
-            LOGGER.log(Level.WARNING, "Video Error with path: " + filePath, ex);
-            MediaException.Type type = ex.getType();
-            switch(type) {
-                case MEDIA_UNSUPPORTED:
-                    Dialog.showError(LabelGrabber.INSTANCE.getLabel("video.error.title"), LabelGrabber.INSTANCE.getLabel("video.error.unsupported"));
-                    break;
-                default:
-                    Dialog.showError(LabelGrabber.INSTANCE.getLabel("video.error.title"), LabelGrabber.INSTANCE.getLabel("video.error.general"));
-            }
-        }
+//        try {
+            player = new VLCMediaPlayer();
+            player.load(filePath);
+//            player = MediaPlayerFactory.getInstance(new File(filePath).toURI().toString());
+//            player.stop();
+//            player.currentTimeProperty().addListener(new CurrentTimeListener());
+//        }
+//        catch(MediaException ex) {
+//            LOGGER.log(Level.WARNING, "Video Error with path: " + filePath, ex);
+//            MediaException.Type type = ex.getType();
+//            switch(type) {
+//                case MEDIA_UNSUPPORTED:
+//                    Dialog.showError(LabelGrabber.INSTANCE.getLabel("video.error.title"), LabelGrabber.INSTANCE.getLabel("video.error.unsupported"));
+//                    break;
+//                default:
+//                    Dialog.showError(LabelGrabber.INSTANCE.getLabel("video.error.title"), LabelGrabber.INSTANCE.getLabel("video.error.general"));
+//            }
+//        }
     }
 }

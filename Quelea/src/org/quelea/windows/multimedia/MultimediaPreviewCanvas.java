@@ -8,6 +8,6 @@ import org.quelea.windows.main.DisplayCanvas;
 public class MultimediaPreviewCanvas extends DisplayCanvas {
 
     public MultimediaPreviewCanvas(boolean showBorder, boolean stageView, CanvasUpdater updater, Priority priority) {
-        super(showBorder, stageView, updater, priority);
+        super(showBorder, stageView, false, updater, priority);
     }
 }

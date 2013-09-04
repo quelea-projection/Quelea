@@ -13,7 +13,6 @@ import org.quelea.windows.main.DisplayableDrawer;
  */
 public class MultimediaDrawer extends DisplayableDrawer {
 
-    protected MediaView multimediaView = new MediaView();
     private MultimediaControlPanel controlPanel;
 
     public MultimediaDrawer(MultimediaControlPanel controlPanel) {
@@ -27,35 +26,29 @@ public class MultimediaDrawer extends DisplayableDrawer {
 
     @Override
     public void clear() {
-        if (controlPanel.getPlayer() != null) {
+        if(controlPanel.getPlayer() != null) {
             controlPanel.getPlayer().stop();
             controlPanel.clear();
-            multimediaView.setMediaPlayer(null);
         }
-        if (getCanvas().getChildren() != null) {
+        if(getCanvas().getChildren() != null) {
             getCanvas().clearApartFromNotice();
         }
     }
 
     @Override
     public void requestFocus() {
-        multimediaView.requestFocus();
     }
 
     private void drawDisplayable(final Displayable displayable) {
-        if (getCanvas().isCleared() || getCanvas().isBlacked()) {
+        if(getCanvas().isCleared() || getCanvas().isBlacked()) {
             clear();
-        } else {
-
+        }
+        else {
             controlPanel.loadMultimedia((MultimediaDisplayable) displayable);
-            multimediaView.setSmooth(true);
-            multimediaView.setFitHeight(getCanvas().getHeight());
-            multimediaView.setFitWidth(getCanvas().getWidth());
-            multimediaView.setMediaPlayer(controlPanel.getPlayer());
             VBox pane = new VBox();
-            pane.getChildren().add(multimediaView);
+            pane.getChildren().add(controlPanel.getPlayer());
 
-            if (getCanvas() instanceof MultimediaPreviewCanvas) {
+            if(getCanvas() instanceof MultimediaPreviewCanvas) {
                 pane.getChildren().add(controlPanel);
             }
             getCanvas().getChildren().add(pane);

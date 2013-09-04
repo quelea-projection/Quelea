@@ -32,7 +32,6 @@ import org.quelea.services.utils.LoggerUtils;
 import org.quelea.windows.main.AbstractPanel;
 import org.quelea.windows.main.DisplayableDrawer;
 import org.quelea.windows.main.LivePreviewPanel;
-import org.quelea.windows.main.PreviewPanel;
 
 /**
  * The panel where the lyrics for different songs can be selected.
@@ -53,11 +52,11 @@ public class SelectLyricsPanel extends AbstractPanel {
      * @param containerPanel the container panel this panel is contained within.
      */
     public SelectLyricsPanel(LivePreviewPanel containerPanel) {
-        drawer = new LyricDrawer((containerPanel instanceof PreviewPanel), containerPanel);
+        drawer = new LyricDrawer(containerPanel);
         splitPane = new SplitPane();
         splitPane.setOrientation(Orientation.VERTICAL);
         lyricsList = new SelectLyricsList();
-        previewCanvas = new DisplayCanvas(false, false, new DisplayCanvas.CanvasUpdater() {
+        previewCanvas = new DisplayCanvas(false, false, false, new DisplayCanvas.CanvasUpdater() {
             @Override
             public void updateCallback() {
                 updateCanvas();
@@ -157,8 +156,8 @@ public class SelectLyricsPanel extends AbstractPanel {
     public void updateCanvas() {
         int selectedIndex = lyricsList.selectionModelProperty().get().getSelectedIndex();
         for(DisplayCanvas canvas : getCanvases()) {
-
             drawer.setCanvas(canvas);
+            drawer.setPlayVideo(canvas.getPlayVideo());
             if(selectedIndex == -1 || selectedIndex >= lyricsList.itemsProperty().get().size()) {
                 drawer.setTheme(ThemeDTO.DEFAULT_THEME);
                 drawer.eraseText();
