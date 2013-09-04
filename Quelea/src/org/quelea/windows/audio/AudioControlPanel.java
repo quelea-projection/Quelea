@@ -24,8 +24,8 @@ import org.javafx.dialog.Dialog;
 import org.quelea.data.displayable.MultimediaDisplayable;
 import org.quelea.services.languages.LabelGrabber;
 import org.quelea.services.utils.LoggerUtils;
-import org.quelea.windows.multimedia.MediaPlayerFactory;
 import org.quelea.windows.multimedia.MultimediaControlPanel;
+import uk.co.caprica.vlcj.player.MediaPlayerFactory;
 
 /**
  * The control panel for displaying the audio.
@@ -51,9 +51,9 @@ public class AudioControlPanel extends MultimediaControlPanel {
     public void loadMultimedia(MultimediaDisplayable audio) {
         this.filePath = audio.getFile().getAbsolutePath();
         try {
-            player = MediaPlayerFactory.getInstance(new File(filePath).toURI().toString());
+//            player = MediaPlayerFactory.getInstance(new File(filePath).toURI().toString());
             player.stop();
-            player.currentTimeProperty().addListener(new CurrentTimeListener());;
+//            player.currentTimeProperty().addListener(new CurrentTimeListener());
         } catch (MediaException ex) {
             LOGGER.log(Level.WARNING, "Audio Error", ex);
             MediaException.Type type = ex.getType();

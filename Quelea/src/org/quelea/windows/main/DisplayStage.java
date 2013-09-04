@@ -21,17 +21,17 @@ import javafx.scene.Cursor;
 import javafx.application.Platform;
 import javafx.geometry.Bounds;
 import javafx.scene.Scene;
-import javafx.scene.image.Image;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import org.quelea.services.languages.LabelGrabber;
 import org.quelea.services.utils.LoggerUtils;
 import org.quelea.services.utils.Utils;
 import org.quelea.windows.main.DisplayCanvas.Priority;
+import org.quelea.windows.multimedia.VLCMediaPlayer;
 
 /**
  * The full screen window used for displaying the projection.
- *
+ * <p/>
  * @author Michael
  */
 public class DisplayStage extends Stage {
@@ -49,7 +49,7 @@ public class DisplayStage extends Stage {
 
     /**
      * Create a new display window positioned to fill the given rectangle.
-     *
+     * <p/>
      * @param area the area in which the window should be drawn.
      */
     public DisplayStage(Bounds area, boolean stageView) {
@@ -57,16 +57,16 @@ public class DisplayStage extends Stage {
         Utils.addIconsToStage(this);
         setTitle(LabelGrabber.INSTANCE.getLabel("projection.window.title"));
         setArea(area);
-        canvas = new DisplayCanvas(true, stageView, null,
-                stageView ? Priority.HIGH : Priority.MID);
+        canvas = new DisplayCanvas(true, stageView, true, null, stageView ? Priority.HIGH : Priority.MID);
         canvas.setType(stageView ? DisplayCanvas.Type.STAGE : DisplayCanvas.Type.FULLSCREEN);
+        canvas.setCursor(BLANK_CURSOR);
         Scene scene = new Scene(canvas);
         setScene(scene);
     }
 
     /**
      * Set the area of the display window.
-     *
+     * <p/>
      * @param area the area of the window.
      */
     public final void setArea(final Bounds area) {
@@ -83,7 +83,7 @@ public class DisplayStage extends Stage {
 
     /**
      * Get the canvas object that underlines this display window.
-     *
+     * <p/>
      * @return the lyric canvas backing this window.
      */
     public DisplayCanvas getCanvas() {

@@ -35,6 +35,7 @@ import org.quelea.services.notice.NoticeDrawer;
 import org.quelea.services.notice.NoticeOverlay;
 import org.quelea.services.utils.LoggerUtils;
 import org.quelea.services.utils.Utils;
+import org.quelea.windows.multimedia.VLCMediaPlayer;
 
 /**
  * The canvas where the lyrics / images / media are drawn.
@@ -56,6 +57,7 @@ public class DisplayCanvas extends StackPane {
     private final CanvasUpdater updater;
     private Priority dravingPriority = Priority.LOW;
     private Type type = Type.PREVIEW;
+    private boolean playVideo;
 
     public enum Type {
 
@@ -86,8 +88,9 @@ public class DisplayCanvas extends StackPane {
      * @param showBorder true if the border should be shown around any text
      * (only if the options say so) false otherwise.
      */
-    public DisplayCanvas(boolean showBorder, boolean stageView, final CanvasUpdater updater, Priority dravingPriority) {
+    public DisplayCanvas(boolean showBorder, boolean stageView, boolean playVideo, final CanvasUpdater updater, Priority dravingPriority) {
         setStyle("-fx-background-color: black;");
+        this.playVideo=playVideo;
         this.stageView = stageView;
         this.dravingPriority = dravingPriority;
         setMinHeight(0);
@@ -125,6 +128,10 @@ public class DisplayCanvas extends StackPane {
             }
         });
         getChildren().add(noticeOverlay);
+    }
+
+    public boolean getPlayVideo() {
+        return playVideo;
     }
 
     /**
