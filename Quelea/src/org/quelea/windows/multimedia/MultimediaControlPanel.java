@@ -31,7 +31,7 @@ public abstract class MultimediaControlPanel extends BorderPane {
     protected Button mute;
     protected Button pause;
     protected Button play;
-    protected MediaPlayer player;
+    protected VLCMediaPlayer player;
     protected Slider positionSlider;
     protected Slider volumeSlider;
     protected Button stop;
@@ -40,14 +40,13 @@ public abstract class MultimediaControlPanel extends BorderPane {
 
         public CurrentTimeListener() {
         }
-        
+
         @Override
         public void invalidated(Observable observable) {
             Platform.runLater(new Runnable() {
                 @Override
                 public void run() {
-                    final Duration currentTime = player.getCurrentTime();
-                    updatePositionSlider(currentTime);
+                    updatePositionSlider(player.getCurrentTime(), player.getTotalTime());
                 }
             });
         }
@@ -56,32 +55,32 @@ public abstract class MultimediaControlPanel extends BorderPane {
     public void clear() {
         player = null;
     }
-    public MediaPlayer getPlayer() {
-        //volumeSlider.setValue(player.getVolume());//@todo NullPointer
+
+    public VLCMediaPlayer getPlayer() {
         return player;
     }
-    
+
     protected class PositionListener implements ChangeListener<Boolean> {
 
         @Override
         public void changed(ObservableValue<? extends Boolean> observable,
                 Boolean oldValue, Boolean newValue) {
-            if (oldValue && !newValue) {
+            if(oldValue && !newValue) {
                 double pos = positionSlider.getValue();
-                final Duration seekTo = player.getTotalDuration().multiply(pos);
+                long seekTo= (long)(player.getTotalTime()*pos);
                 seekAndUpdatePosition(seekTo);
             }
         }
     }
-    
+
     protected class VolumeListener implements ChangeListener<Boolean> {
 
         @Override
         public void changed(ObservableValue<? extends Boolean> observable,
                 Boolean oldValue, Boolean newValue) {
-            if (oldValue && !newValue) {
+            if(oldValue && !newValue) {
                 double pos = volumeSlider.getValue();
-                player.setVolume(pos);
+//                player.setVolume(pos);
             }
         }
     }
@@ -117,7 +116,7 @@ public abstract class MultimediaControlPanel extends BorderPane {
         mute.setOnAction(new EventHandler<javafx.event.ActionEvent>() {
             @Override
             public void handle(javafx.event.ActionEvent t) {
-                player.setMute(!player.isMute());
+//                player.setMute(!player.isMute());
             }
         });
         positionSlider = new Slider(0, 1.0, 0.1);
@@ -128,7 +127,7 @@ public abstract class MultimediaControlPanel extends BorderPane {
         volumeSlider = new Slider(0, 1.0, 0.1);
         volumeSlider.setValue(0);
         volumeSlider.valueChangingProperty().addListener(new VolumeListener());
-        
+
         VBox controlPanel = new VBox();
         VBox sliderPanel = new VBox();
         sliderPanel.getChildren().add(positionSlider);
@@ -149,26 +148,14 @@ public abstract class MultimediaControlPanel extends BorderPane {
      * @param multimedia the video path to load.
      */
     public abstract void loadMultimedia(MultimediaDisplayable displayable);
-    
-    protected void seekAndUpdatePosition(Duration duration) {
-        if (player.getStatus() == Status.STOPPED) {
-            player.pause();
-        }
-        player.seek(duration);
-        if (player.getStatus() != Status.PLAYING) {
-            updatePositionSlider(duration);
-        }
+
+    protected void seekAndUpdatePosition(long seekTo) {
     }
 
-    protected void updatePositionSlider(Duration currentTime) {
-        if (positionSlider.isValueChanging()) {
+    protected void updatePositionSlider(long currentTime, long totalTime) {
+        if(positionSlider.isValueChanging()) {
             return;
         }
-        final Duration total = player.getTotalDuration();
-        if (total == null || currentTime == null) {
-            positionSlider.setValue(0);
-        } else {
-            positionSlider.setValue(currentTime.toMillis() / total.toMillis());
-        }
+        positionSlider.setValue(currentTime / totalTime);
     }
 }

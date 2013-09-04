@@ -721,6 +721,14 @@ public final class Utils {
         writer.setColor(0, 0, color);
         return image;
     }
+    
+    /**
+     * Get an image to be shown as the background in place of a playing video.
+     * @return the image to be shown in place of a playing video.
+     */
+    public static Image getVidBlankImage() {
+        return new Image("file:icons/vid preview.png");
+    }
 
     /**
      * Parse a colour string to a colour.

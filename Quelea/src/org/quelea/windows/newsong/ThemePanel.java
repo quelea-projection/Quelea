@@ -20,7 +20,6 @@ package org.quelea.windows.newsong;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileOutputStream;
-import java.io.FileWriter;
 import java.io.OutputStreamWriter;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
@@ -101,7 +100,7 @@ public class ThemePanel extends BorderPane {
      * Create and initialise the theme panel.
      */
     public ThemePanel() {
-        canvas = new DisplayCanvas(false, false, new DisplayCanvas.CanvasUpdater() {
+        canvas = new DisplayCanvas(false, false, false, new DisplayCanvas.CanvasUpdater() {
             @Override
             public void updateCallback() {
                 updateTheme(true, null);
@@ -110,7 +109,7 @@ public class ThemePanel extends BorderPane {
         canvas.setMinWidth(getWidth());
         canvas.setMinHeight(getHeight());
         setCenter(canvas);
-        LyricDrawer drawer = new LyricDrawer(false, null);
+        LyricDrawer drawer = new LyricDrawer(null);
         drawer.setCanvas(canvas);
         drawer.setText(SAMPLE_LYRICS, null, false);
         VBox toolbarPanel = new VBox();
@@ -365,7 +364,7 @@ public class ThemePanel extends BorderPane {
         Platform.runLater(new Runnable() {
             @Override
             public void run() {
-                LyricDrawer drawer = new LyricDrawer(false, null);
+                LyricDrawer drawer = new LyricDrawer(null);
                 drawer.setCanvas(canvas);
                 drawer.setTheme(theme);
                 drawer.setText(SAMPLE_LYRICS, null, false);

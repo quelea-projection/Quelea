@@ -10,24 +10,19 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.animation.FadeTransition;
-import javafx.animation.KeyFrame;
-import javafx.animation.KeyValue;
 import javafx.animation.ParallelTransition;
-import javafx.animation.Timeline;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.Group;
 import javafx.scene.Node;
-import javafx.scene.control.Button;
+import javafx.scene.Scene;
 import javafx.scene.effect.DropShadow;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
-import javafx.scene.media.MediaException;
-import javafx.scene.media.MediaPlayer;
-import javafx.scene.media.MediaView;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 import javafx.scene.text.Font;
@@ -47,13 +42,13 @@ import org.quelea.data.displayable.TextSection;
 import org.quelea.services.utils.LineTypeChecker;
 import org.quelea.services.utils.LoggerUtils;
 import org.quelea.services.utils.QueleaProperties;
-import org.quelea.services.utils.SerializableFont;
 import org.quelea.services.utils.Utils;
-import org.quelea.windows.main.DisplayCanvas;
-import org.quelea.windows.multimedia.MediaPlayerFactory;
+import org.quelea.windows.multimedia.VLCMediaPlayer;
 
 /**
- * @author Ben Goodwin and tomaszpio@gmail.com
+ * Responsible for drawing lyircs and their background.
+ * <p/>
+ * @author Ben Goodwin, tomaszpio@gmail.com, Michael
  */
 public class LyricDrawer extends DisplayableDrawer {
 
@@ -64,13 +59,10 @@ public class LyricDrawer extends DisplayableDrawer {
     private ThemeDTO theme;
     private TextDisplayable curDisplayable;
     private boolean capitaliseFirst;
-    private boolean showVideoControls = false;
-    private MediaView newVideo = null;
-    private MediaPlayer player = null;
+    private boolean playVideo;
     private BorderPane buttonsPanel = null;
 
-    public LyricDrawer(boolean showVideoControls, BorderPane buttonsPanel) {
-        this.showVideoControls = showVideoControls;
+    public LyricDrawer(BorderPane buttonsPanel) {
         this.buttonsPanel = buttonsPanel;
         text = new String[]{};
         theme = ThemeDTO.DEFAULT_THEME;
@@ -93,7 +85,7 @@ public class LyricDrawer extends DisplayableDrawer {
         if(stageView) {
             font = new Font(QueleaProperties.get().getStageTextFont(), 72);
         }
-        if (font == null) {
+        if(font == null) {
             font = ThemeDTO.DEFAULT_FONT.getFont();
         }
         DropShadow shadow = theme.getShadow().getDropShadow();
@@ -109,20 +101,20 @@ public class LyricDrawer extends DisplayableDrawer {
 
         List<String> newText = sanctifyText();
         double fontSize = pickFontSize(font, newText, getCanvas().getWidth(), getCanvas().getHeight());
-        if(!stageView) { 
+        if(!stageView) {
             font = Font.font(font.getName(),
-                theme.isBold() ? FontWeight.BOLD : FontWeight.NORMAL,
-                theme.isItalic() ? FontPosture.ITALIC : FontPosture.REGULAR,
-                fontSize);
+                    theme.isBold() ? FontWeight.BOLD : FontWeight.NORMAL,
+                    theme.isItalic() ? FontPosture.ITALIC : FontPosture.REGULAR,
+                    fontSize);
         }
         else {
             font = Font.font(font.getName(), FontWeight.NORMAL,
-                FontPosture.REGULAR, fontSize);
+                    FontPosture.REGULAR, fontSize);
         }
         FontMetrics metrics = Toolkit.getToolkit().getFontLoader().getFontMetrics(font);
         int y = 0;
         final Group newTextGroup = new Group();
-            StackPane.setAlignment(newTextGroup, QueleaProperties.get().getTextPositionInternal().getLayoutPos());
+        StackPane.setAlignment(newTextGroup, QueleaProperties.get().getTextPositionInternal().getLayoutPos());
 
         for(Iterator< Node> it = getCanvas().getChildren().iterator(); it.hasNext();) {
             Node node = it.next();
@@ -145,7 +137,7 @@ public class LyricDrawer extends DisplayableDrawer {
             t.setFont(font);
             t.setEffect(shadow);
             if(stageView && QueleaProperties.get().getStageTextAlignment().equalsIgnoreCase("Left")) {
-                    t.setX(getCanvas().getWidth());
+                t.setX(getCanvas().getWidth());
             }
             else {
                 t.setX(centreOffset);
@@ -157,7 +149,7 @@ public class LyricDrawer extends DisplayableDrawer {
                 lineColor = QueleaProperties.get().getStageChordColor();
             }
             else if(stageView) {
-                lineColor = QueleaProperties.get().getStageLyricsColor(); 
+                lineColor = QueleaProperties.get().getStageLyricsColor();
             }
             else {
                 lineColor = theme.getFontPaint();
@@ -213,7 +205,7 @@ public class LyricDrawer extends DisplayableDrawer {
             }
         }
         this.theme = theme;
-        Image image = null;
+        Image image;
         if(getCanvas().isStageView()) {
             image = Utils.getImageFromColour(QueleaProperties.get().getStageBackgroundColor());
         }
@@ -224,8 +216,11 @@ public class LyricDrawer extends DisplayableDrawer {
             Color color = ((ColourBackground) theme.getBackground()).getColour();
             image = Utils.getImageFromColour(color);
         }
-        else if(theme.getBackground() instanceof VideoBackground) {
+        else if(theme.getBackground() instanceof VideoBackground && playVideo) {
             image = null;
+        }
+        else if(theme.getBackground() instanceof VideoBackground) {
+            image = Utils.getVidBlankImage();
         }
         else {
             LOGGER.log(Level.SEVERE, "Bug: Unhandled theme background case, trying to use default background: " + theme.getBackground(), new RuntimeException("DEBUG EXCEPTION FOR STACK TRACE"));
@@ -237,55 +232,31 @@ public class LyricDrawer extends DisplayableDrawer {
 
         Node newBackground;
         if(image == null) {
-            newVideo = new MediaView();
-            String location = ((VideoBackground) theme.getBackground()).getVideoFile().toURI().toString();
-            try {
-                player = MediaPlayerFactory.getInstance(location);
-                player.setVolume(0);
-                player.setAutoPlay(!getCanvas().getType().equals(DisplayCanvas.Type.PREVIEW));
-                player.setCycleCount(javafx.scene.media.MediaPlayer.INDEFINITE);
-                newVideo.setMediaPlayer(player);
-                if(showVideoControls) {
-                    HBox buttonPanel = new HBox();
-                    Button play = new Button("", new ImageView(new Image("file:icons/play.png", 16, 16, false, true)));
-                    play.setOnAction(new EventHandler<javafx.event.ActionEvent>() {
-                        @Override
-                        public void handle(javafx.event.ActionEvent t) {
-                            if(player != null) {
-                                player.play();
-                            }
-                        }
-                    });
-                    Button pause = new Button("", new ImageView(new Image("file:icons/pause.png", 16, 16, false, true)));
+            final String location = ((VideoBackground) theme.getBackground()).getVideoFile().getAbsolutePath();
+            final VLCMediaPlayer player = new VLCMediaPlayer();
+            player.sceneProperty().addListener(new ChangeListener<Scene>() {
 
-                    pause.setOnAction(new EventHandler<javafx.event.ActionEvent>() {
-                        @Override
-                        public void handle(javafx.event.ActionEvent t) {
-                            if(player != null) {
-                                player.pause();
-                            }
-                        }
-                    });
-                    buttonPanel.getChildren().add(play);
-                    buttonPanel.getChildren().add(pause);
-                    buttonsPanel.getChildren().add(buttonPanel);
+                @Override
+                public void changed(ObservableValue<? extends Scene> ov, Scene t, Scene t1) {
+                    if(t1==null) {
+                        player.sceneProperty().removeListener(this);
+                        player.dispose();
+                    }
                 }
-
-                getCanvas().getChildren().add(0, newVideo);
-                newBackground = newVideo;
-            }
-            catch(MediaException ex) {
-                return;
-                //Don't shout about it at this point.
-            }
+            });
+            player.load(location);
+            player.setRepeat(true);
+            getCanvas().getChildren().add(0, player);
+            player.play();
+            newBackground = player;
         }
         else {
-            final ImageView newImageVIew = getCanvas().getNewImageView();
-            newImageVIew.setFitHeight(getCanvas().getHeight());
-            newImageVIew.setFitWidth(getCanvas().getWidth());
-            newImageVIew.setImage(image);
-            getCanvas().getChildren().add(newImageVIew);
-            newBackground = newImageVIew;
+            final ImageView newImageView = getCanvas().getNewImageView();
+            newImageView.setFitHeight(getCanvas().getHeight());
+            newImageView.setFitWidth(getCanvas().getWidth());
+            newImageView.setImage(image);
+            getCanvas().getChildren().add(newImageView);
+            newBackground = newImageView;
         }
         final Node oldBackground = getCanvas().getCanvasBackground();
 
@@ -312,6 +283,10 @@ public class LyricDrawer extends DisplayableDrawer {
 
     @Override
     public void requestFocus() {
+    }
+
+    public void setPlayVideo(boolean playVideo) {
+        this.playVideo = playVideo;
     }
 
     /**
@@ -519,6 +494,7 @@ public class LyricDrawer extends DisplayableDrawer {
         return Arrays.copyOf(text, text.length);
     }
 
+    @Override
     public void draw(Displayable displayable) {
         drawText();
         if(getCanvas().getCanvasBackground() instanceof ImageView) {
@@ -526,11 +502,10 @@ public class LyricDrawer extends DisplayableDrawer {
             imgBackground.setFitHeight(getCanvas().getHeight());
             imgBackground.setFitWidth(getCanvas().getWidth());
         }
-        else if(getCanvas().getCanvasBackground() instanceof MediaView) {
-            MediaView vidBackground = (MediaView) getCanvas().getCanvasBackground();
-            vidBackground.setPreserveRatio(false);
-            vidBackground.setFitHeight(getCanvas().getHeight());
-            vidBackground.setFitWidth(getCanvas().getWidth());
+        else if(getCanvas().getCanvasBackground() instanceof VLCMediaPlayer) {
+            VLCMediaPlayer vidBackground = (VLCMediaPlayer) getCanvas().getCanvasBackground();
+            vidBackground.setHeight(getCanvas().getHeight());
+            vidBackground.setWidth(getCanvas().getWidth());
         }
         else {
             LOGGER.log(Level.WARNING, "BUG: Unrecognised image background");
@@ -543,11 +518,10 @@ public class LyricDrawer extends DisplayableDrawer {
             getCanvas().clearApartFromNotice();
         }
         setTheme(ThemeDTO.DEFAULT_THEME);
-        if(player != null) {
-            player.stop();
-        }
-        player = null;
-        newVideo = null;
+//        if(player != null) {
+//            player.stop();
+//        }
+//        player = null;
         eraseText();
     }
 
