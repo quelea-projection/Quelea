@@ -39,7 +39,7 @@ public class ImagePanel extends AbstractPanel {
      * @param container the container this panel is contained within.
      */
     public ImagePanel() {
-        previewCanvas = new DisplayCanvas(false, false, new DisplayCanvas.CanvasUpdater() {
+        previewCanvas = new DisplayCanvas(false, false, false, new DisplayCanvas.CanvasUpdater() {
             @Override
             public void updateCallback() {
                 updateCanvas();

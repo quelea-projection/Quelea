@@ -72,7 +72,7 @@ public class ThemePreviewPanel extends VBox {
             theme = ThemeDTO.DEFAULT_THEME;
         }
         final ThemeDTO updateTheme = theme;
-        canvas = new DisplayCanvas(false, false, new DisplayCanvas.CanvasUpdater() {
+        canvas = new DisplayCanvas(false, false, false, new DisplayCanvas.CanvasUpdater() {
             @Override
             public void updateCallback() {
                 updateThemePreviewCanvas(updateTheme);
@@ -172,7 +172,7 @@ public class ThemePreviewPanel extends VBox {
     }
 
     private void updateThemePreviewCanvas(ThemeDTO theme) {
-        LyricDrawer drawer = new LyricDrawer(false, null);
+        LyricDrawer drawer = new LyricDrawer(null);
         drawer.setCanvas(canvas);
         drawer.setTheme(theme);
         drawer.setText(ThemePanel.SAMPLE_LYRICS, new String[0], false);
