@@ -16,16 +16,10 @@
  */
 package org.quelea.windows.video;
 
-import java.io.File;
-import java.util.logging.Level;
 import java.util.logging.Logger;
-import javafx.scene.media.MediaException;
-import org.javafx.dialog.Dialog;
 import org.quelea.data.displayable.MultimediaDisplayable;
-import org.quelea.services.languages.LabelGrabber;
 import org.quelea.services.utils.LoggerUtils;
 import org.quelea.windows.multimedia.MultimediaControlPanel;
-import org.quelea.windows.multimedia.VLCMediaPlayer;
 
 /**
  * The control panel for displaying the video.
@@ -45,8 +39,8 @@ public class VideoControlPanel extends MultimediaControlPanel {
     public void loadMultimedia(MultimediaDisplayable video) {
         this.filePath = video.getFile().getAbsolutePath();
 //        try {
-            player = new VLCMediaPlayer();
-            player.load(filePath);
+//            player = new VLCMediaPlayer();
+//            player.load(filePath);
 //            player = MediaPlayerFactory.getInstance(new File(filePath).toURI().toString());
 //            player.stop();
 //            player.currentTimeProperty().addListener(new CurrentTimeListener());

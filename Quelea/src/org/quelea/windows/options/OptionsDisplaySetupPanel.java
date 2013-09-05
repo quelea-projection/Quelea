@@ -27,6 +27,7 @@ import org.quelea.windows.main.GraphicsDeviceListener;
 import org.quelea.windows.main.GraphicsDeviceWatcher;
 import org.quelea.windows.main.DisplayStage;
 import org.quelea.windows.main.QueleaApp;
+import org.quelea.windows.multimedia.VLCWindow;
 
 /**
  * A panel that the user uses to set up the displays that match to the outputs.
@@ -150,6 +151,13 @@ public class OptionsDisplaySetupPanel extends GridPane implements PropertyPanel 
                 }
             });
         }
+        Platform.runLater(new Runnable() {
+
+            @Override
+            public void run() {
+                VLCWindow.INSTANCE.refreshPosition();
+            }
+        });
     }
 
     /**
