@@ -35,7 +35,6 @@ import org.quelea.services.notice.NoticeDrawer;
 import org.quelea.services.notice.NoticeOverlay;
 import org.quelea.services.utils.LoggerUtils;
 import org.quelea.services.utils.Utils;
-import org.quelea.windows.multimedia.VLCMediaPlayer;
 
 /**
  * The canvas where the lyrics / images / media are drawn.
@@ -45,12 +44,12 @@ import org.quelea.windows.multimedia.VLCMediaPlayer;
 public class DisplayCanvas extends StackPane {
 
     private static final Logger LOGGER = LoggerUtils.getLogger();
+    private static final ImageView BLACK_IMAGE = new ImageView(Utils.getImageFromColour(Color.BLACK));
     private boolean cleared;
     private boolean blacked;
     private NoticeDrawer noticeDrawer;
     private boolean stageView;
     private Node background;
-    private ImageView blackImg = new ImageView(Utils.getImageFromColour(Color.BLACK));
     private Node currentBackground;
     private Node noticeOverlay;
     private Displayable currentDisplayable;
@@ -89,8 +88,8 @@ public class DisplayCanvas extends StackPane {
      * (only if the options say so) false otherwise.
      */
     public DisplayCanvas(boolean showBorder, boolean stageView, boolean playVideo, final CanvasUpdater updater, Priority dravingPriority) {
-        setStyle("-fx-background-color: black;");
-        this.playVideo=playVideo;
+        setStyle("-fx-background-color: rgba(0, 0, 0, 0);");
+        this.playVideo = playVideo;
         this.stageView = stageView;
         this.dravingPriority = dravingPriority;
         setMinHeight(0);
@@ -279,10 +278,12 @@ public class DisplayCanvas extends StackPane {
         if(blacked) {
             currentBackground = getCanvasBackground();
             clearApartFromNotice();
-            setCanvasBackground(blackImg);
+            setCanvasBackground(BLACK_IMAGE);
         }
         else {
-            getChildren().add(currentBackground);
+            if(currentBackground != null) {
+                getChildren().add(currentBackground);
+            }
             setCanvasBackground(currentBackground);
         }
         if(this.updater != null) {

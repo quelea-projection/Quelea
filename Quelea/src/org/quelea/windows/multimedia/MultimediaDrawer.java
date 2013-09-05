@@ -26,10 +26,10 @@ public class MultimediaDrawer extends DisplayableDrawer {
 
     @Override
     public void clear() {
-        if(controlPanel.getPlayer() != null) {
-            controlPanel.getPlayer().stop();
-            controlPanel.clear();
-        }
+//        if(controlPanel.getPlayer() != null) {
+//            controlPanel.getPlayer().stop();
+//            controlPanel.clear();
+//        }
         if(getCanvas().getChildren() != null) {
             getCanvas().clearApartFromNotice();
         }
@@ -46,7 +46,7 @@ public class MultimediaDrawer extends DisplayableDrawer {
         else {
             controlPanel.loadMultimedia((MultimediaDisplayable) displayable);
             VBox pane = new VBox();
-            pane.getChildren().add(controlPanel.getPlayer());
+//            pane.getChildren().add(controlPanel.getPlayer());
 
             if(getCanvas() instanceof MultimediaPreviewCanvas) {
                 pane.getChildren().add(controlPanel);

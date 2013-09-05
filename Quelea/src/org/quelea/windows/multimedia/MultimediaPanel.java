@@ -62,10 +62,10 @@ public class MultimediaPanel extends AbstractPanel {
      */
     @Override
     public void clear() {
-        VLCMediaPlayer player = controlPanel.getPlayer();
-        if (player != null) {
-            player.stop();
-        }
+//        VLCMediaPlayer player = controlPanel.getPlayer();
+//        if (player != null) {
+//            player.stop();
+//        }
         super.clear();
     }
 
