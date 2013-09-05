@@ -89,11 +89,11 @@ public class QueleaApp {
     }
 
     /**
-     * Set the app window.
-     * @param appWindow the app window.
+     * Set the projection window.
+     * @param projectionWindow the projection window.
      */
-    public void setAppWindow(DisplayStage appWindow) {
-        this.projectionWindow = appWindow;
+    public void setProjectionWindow(DisplayStage projectionWindow) {
+        this.projectionWindow = projectionWindow;
     }
 
     /**

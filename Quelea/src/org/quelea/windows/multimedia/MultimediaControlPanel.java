@@ -14,9 +14,6 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
-import javafx.scene.media.MediaPlayer;
-import javafx.scene.media.MediaPlayer.Status;
-import javafx.util.Duration;
 import org.quelea.data.displayable.MultimediaDisplayable;
 import org.quelea.services.utils.LoggerUtils;
 
@@ -31,7 +28,7 @@ public abstract class MultimediaControlPanel extends BorderPane {
     protected Button mute;
     protected Button pause;
     protected Button play;
-    protected VLCMediaPlayer player;
+//    protected VLCMediaPlayer player;
     protected Slider positionSlider;
     protected Slider volumeSlider;
     protected Button stop;
@@ -46,19 +43,18 @@ public abstract class MultimediaControlPanel extends BorderPane {
             Platform.runLater(new Runnable() {
                 @Override
                 public void run() {
-                    updatePositionSlider(player.getCurrentTime(), player.getTotalTime());
+//                    updatePositionSlider(player.getCurrentTime(), player.getTotalTime());
                 }
             });
         }
     }
 
     public void clear() {
-        player = null;
     }
 
-    public VLCMediaPlayer getPlayer() {
-        return player;
-    }
+//    public VLCMediaPlayer getPlayer() {
+//        return player;
+//    }
 
     protected class PositionListener implements ChangeListener<Boolean> {
 
@@ -67,8 +63,8 @@ public abstract class MultimediaControlPanel extends BorderPane {
                 Boolean oldValue, Boolean newValue) {
             if(oldValue && !newValue) {
                 double pos = positionSlider.getValue();
-                long seekTo= (long)(player.getTotalTime()*pos);
-                seekAndUpdatePosition(seekTo);
+//                long seekTo= (long)(player.getTotalTime()*pos);
+//                seekAndUpdatePosition(seekTo);
             }
         }
     }
@@ -91,7 +87,7 @@ public abstract class MultimediaControlPanel extends BorderPane {
         play.setOnAction(new EventHandler<javafx.event.ActionEvent>() {
             @Override
             public void handle(javafx.event.ActionEvent t) {
-                player.play();
+//                player.play();
             }
         });
         pause = new Button("", new ImageView(new Image("file:icons/pause.png")));
@@ -99,7 +95,7 @@ public abstract class MultimediaControlPanel extends BorderPane {
         pause.setOnAction(new EventHandler<javafx.event.ActionEvent>() {
             @Override
             public void handle(javafx.event.ActionEvent t) {
-                player.pause();
+//                player.pause();
             }
         });
         stop = new Button("", new ImageView(new Image("file:icons/stop.png")));
@@ -107,7 +103,7 @@ public abstract class MultimediaControlPanel extends BorderPane {
         stop.setOnAction(new EventHandler<javafx.event.ActionEvent>() {
             @Override
             public void handle(javafx.event.ActionEvent t) {
-                player.stop();
+//                player.stop();
                 positionSlider.setValue(0);
             }
         });

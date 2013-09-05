@@ -27,7 +27,6 @@ import org.quelea.services.languages.LabelGrabber;
 import org.quelea.services.utils.LoggerUtils;
 import org.quelea.services.utils.Utils;
 import org.quelea.windows.main.DisplayCanvas.Priority;
-import org.quelea.windows.multimedia.VLCMediaPlayer;
 
 /**
  * The full screen window used for displaying the projection.
@@ -53,7 +52,7 @@ public class DisplayStage extends Stage {
      * @param area the area in which the window should be drawn.
      */
     public DisplayStage(Bounds area, boolean stageView) {
-        initStyle(StageStyle.UNDECORATED);
+        initStyle(StageStyle.TRANSPARENT);
         Utils.addIconsToStage(this);
         setTitle(LabelGrabber.INSTANCE.getLabel("projection.window.title"));
         setArea(area);
@@ -61,6 +60,7 @@ public class DisplayStage extends Stage {
         canvas.setType(stageView ? DisplayCanvas.Type.STAGE : DisplayCanvas.Type.FULLSCREEN);
         canvas.setCursor(BLANK_CURSOR);
         Scene scene = new Scene(canvas);
+        scene.setFill(null);
         setScene(scene);
     }
 

@@ -114,7 +114,7 @@ public final class Main extends Application {
                     LOGGER.log(Level.INFO, "Starting projector display on monitor {0} (base 0!)", projectorScreen);
                     fullScreenWindow = new DisplayStage(Utils.getBoundsFromRect2D(monitors.get(projectorScreen).getVisualBounds()), false);
                 }
-                QueleaApp.get().setAppWindow(fullScreenWindow);
+                QueleaApp.get().setProjectionWindow(fullScreenWindow);
 //                fullScreenWindow.toFront();
 
                 if(stageHidden) {

@@ -35,6 +35,7 @@ import org.quelea.data.displayable.Displayable;
 import org.quelea.services.languages.LabelGrabber;
 import org.quelea.services.utils.QueleaProperties;
 import org.quelea.services.utils.Utils;
+import org.quelea.windows.multimedia.VLCWindow;
 
 /**
  * The panel displaying the live lyrics selection - changes made on this panel
@@ -133,6 +134,7 @@ public class LivePanel extends LivePreviewPanel {
                         stageWindow.show();
                     }
                 }
+                VLCWindow.INSTANCE.setHideButton(hide.isSelected());
             }
         });
         header.getItems().add(hide);
