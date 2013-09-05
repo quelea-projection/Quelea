@@ -52,7 +52,7 @@ public class SelectLyricsPanel extends AbstractPanel {
      * @param containerPanel the container panel this panel is contained within.
      */
     public SelectLyricsPanel(LivePreviewPanel containerPanel) {
-        drawer = new LyricDrawer(containerPanel);
+        drawer = new LyricDrawer();
         splitPane = new SplitPane();
         splitPane.setOrientation(Orientation.VERTICAL);
         lyricsList = new SelectLyricsList();

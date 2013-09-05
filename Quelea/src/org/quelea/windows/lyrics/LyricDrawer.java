@@ -11,17 +11,13 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.animation.FadeTransition;
 import javafx.animation.ParallelTransition;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.Group;
 import javafx.scene.Node;
-import javafx.scene.Scene;
 import javafx.scene.effect.DropShadow;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
@@ -43,7 +39,7 @@ import org.quelea.services.utils.LineTypeChecker;
 import org.quelea.services.utils.LoggerUtils;
 import org.quelea.services.utils.QueleaProperties;
 import org.quelea.services.utils.Utils;
-import org.quelea.windows.multimedia.VLCMediaPlayer;
+import org.quelea.windows.multimedia.VLCWindow;
 
 /**
  * Responsible for drawing lyircs and their background.
@@ -60,10 +56,8 @@ public class LyricDrawer extends DisplayableDrawer {
     private TextDisplayable curDisplayable;
     private boolean capitaliseFirst;
     private boolean playVideo;
-    private BorderPane buttonsPanel = null;
 
-    public LyricDrawer(BorderPane buttonsPanel) {
-        this.buttonsPanel = buttonsPanel;
+    public LyricDrawer() {
         text = new String[]{};
         theme = ThemeDTO.DEFAULT_THEME;
         textGroup = new Group();
@@ -72,10 +66,12 @@ public class LyricDrawer extends DisplayableDrawer {
 
     private void drawText() {
         boolean stageView = getCanvas().isStageView();
-        if(!getCanvas().getChildren().contains(getCanvas().getCanvasBackground())
-                && !getCanvas().getChildren().contains(textGroup)) {
-            getCanvas().getChildren().add(0, getCanvas().getCanvasBackground());
-            getCanvas().getChildren().add(textGroup);
+        if(getCanvas().getCanvasBackground() != null) {
+            if(!getCanvas().getChildren().contains(getCanvas().getCanvasBackground())
+                    && !getCanvas().getChildren().contains(textGroup)) {
+                getCanvas().getChildren().add(0, getCanvas().getCanvasBackground());
+                getCanvas().getChildren().add(textGroup);
+            }
         }
         if(getCanvas().isCleared() || getCanvas().isBlacked()) {
             text = new String[0];
@@ -196,9 +192,8 @@ public class LyricDrawer extends DisplayableDrawer {
                 if(theme.getBackground() instanceof VideoBackground
                         && sectionThemeBackground instanceof VideoBackground) {
                     String newLocation = ((VideoBackground) theme.getBackground()).getVideoFile().toURI().toString();
-
                     String oldLocation = ((VideoBackground) sectionThemeBackground).getVideoFile().toURI().toString();
-                    if(newLocation.equals(oldLocation)) {
+                    if(newLocation.equals(oldLocation) && getCanvas().getCanvasBackground()==null) {
                         return;
                     }
                 }
@@ -233,22 +228,11 @@ public class LyricDrawer extends DisplayableDrawer {
         Node newBackground;
         if(image == null) {
             final String location = ((VideoBackground) theme.getBackground()).getVideoFile().getAbsolutePath();
-            final VLCMediaPlayer player = new VLCMediaPlayer();
-            player.sceneProperty().addListener(new ChangeListener<Scene>() {
-
-                @Override
-                public void changed(ObservableValue<? extends Scene> ov, Scene t, Scene t1) {
-                    if(t1==null) {
-                        player.sceneProperty().removeListener(this);
-                        player.dispose();
-                    }
-                }
-            });
-            player.load(location);
-            player.setRepeat(true);
-            getCanvas().getChildren().add(0, player);
-            player.play();
-            newBackground = player;
+            VLCWindow.INSTANCE.refreshPosition();
+            VLCWindow.INSTANCE.show();
+            VLCWindow.INSTANCE.setRepeat(true);
+            VLCWindow.INSTANCE.play(location);
+            newBackground = null; //transparent
         }
         else {
             final ImageView newImageView = getCanvas().getNewImageView();
@@ -260,8 +244,7 @@ public class LyricDrawer extends DisplayableDrawer {
         }
         final Node oldBackground = getCanvas().getCanvasBackground();
 
-        fadeOut.setOnFinished(
-                new EventHandler<ActionEvent>() {
+        fadeOut.setOnFinished(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent t) {
                 getCanvas().getChildren().remove(oldBackground);
@@ -502,13 +485,8 @@ public class LyricDrawer extends DisplayableDrawer {
             imgBackground.setFitHeight(getCanvas().getHeight());
             imgBackground.setFitWidth(getCanvas().getWidth());
         }
-        else if(getCanvas().getCanvasBackground() instanceof VLCMediaPlayer) {
-            VLCMediaPlayer vidBackground = (VLCMediaPlayer) getCanvas().getCanvasBackground();
-            vidBackground.setHeight(getCanvas().getHeight());
-            vidBackground.setWidth(getCanvas().getWidth());
-        }
-        else {
-            LOGGER.log(Level.WARNING, "BUG: Unrecognised image background");
+        else if(getCanvas().getCanvasBackground() != null) {
+            LOGGER.log(Level.WARNING, "BUG: Unrecognised image background - " + getCanvas().getCanvasBackground().getClass(), new RuntimeException("DEBUG EXCEPTION"));
         }
     }
 
@@ -518,10 +496,6 @@ public class LyricDrawer extends DisplayableDrawer {
             getCanvas().clearApartFromNotice();
         }
         setTheme(ThemeDTO.DEFAULT_THEME);
-//        if(player != null) {
-//            player.stop();
-//        }
-//        player = null;
         eraseText();
     }
 
