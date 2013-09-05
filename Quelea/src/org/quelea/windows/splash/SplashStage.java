@@ -132,8 +132,7 @@ public class SplashStage extends Stage {
         }
 
         Rectangle2D bounds = screen.getVisualBounds();
-
-        setX((bounds.getWidth() / 2) - splashImage.getWidth() / 2);
-        setY((bounds.getHeight() / 2) - splashImage.getHeight() / 2);
+        setX(bounds.getMinX()+((bounds.getWidth() / 2) - splashImage.getWidth() / 2));
+        setY(bounds.getMinY()+((bounds.getHeight() / 2) - splashImage.getHeight() / 2));
     }
 }
