@@ -19,11 +19,14 @@ package org.quelea.windows.main;
 import com.inet.jortho.SpellChecker;
 import java.io.File;
 import java.net.MalformedURLException;
+import java.net.URI;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
 import org.javafx.dialog.Dialog;
@@ -54,6 +57,7 @@ public final class Main extends Application {
     private MainWindow mainWindow;
     private DisplayStage fullScreenWindow;
     private DisplayStage stageWindow;
+    private Dialog vlcWarningDialog;
 
     /**
      * Starts the program off, this is the first thing that is executed by
@@ -63,8 +67,8 @@ public final class Main extends Application {
     public void start(Stage stage) {
         final SplashStage splashWindow = new SplashStage();
         splashWindow.show();
-        
-        new NativeDiscovery().discover();
+
+        final boolean VLC_OK = new NativeDiscovery().discover();
         new UserFileChecker(QueleaProperties.getQueleaUserHome()).checkUserFiles();
 
         if(!new File(QueleaProperties.getQueleaUserHome(), "database_new").exists()
@@ -231,7 +235,34 @@ public final class Main extends Application {
                 }
                 mainWindow.show();
                 splashWindow.hide();
-                showWarning(monitorNumber);
+                showMonitorWarning(monitorNumber);
+                if(!VLC_OK) { //Couldn't find the VLC libraries.
+                    vlcWarningDialog = new Dialog.Builder()
+                            .create()
+                            .setTitle(LabelGrabber.INSTANCE.getLabel("vlc.warning.title"))
+                            .setMessage(LabelGrabber.INSTANCE.getLabel("vlc.warning.message"))
+                            .addLabelledButton(LabelGrabber.INSTANCE.getLabel("continue.without.video"), new EventHandler<ActionEvent>() {
+                                @Override
+                                public void handle(ActionEvent t) {
+                                    vlcWarningDialog.hide();
+                                }
+                            })
+                            .addLabelledButton(LabelGrabber.INSTANCE.getLabel("download.vlc"), new EventHandler<ActionEvent>() {
+                                @Override
+                                public void handle(ActionEvent t) {
+                                    try {
+                                        java.awt.Desktop.getDesktop().browse(new URI("http://www.videolan.org/vlc/index.html"));
+                                    }
+                                    catch(Exception ex) {
+                                        LOGGER.log(Level.WARNING, "Couldn't open browser", ex);
+                                    }
+                                    vlcWarningDialog.hide();
+                                }
+                            })
+                            .setWarningIcon()
+                            .build();
+                    vlcWarningDialog.showAndWait();
+                }
             }
         });
 
@@ -242,7 +273,7 @@ public final class Main extends Application {
      * <p/>
      * @param numMonitors the number of monitors.
      */
-    private void showWarning(int numMonitors) {
+    private void showMonitorWarning(int numMonitors) {
         if(numMonitors <= 1 && QueleaProperties.get().showSingleMonitorWarning()) {
             Dialog.showWarning(LabelGrabber.INSTANCE.getLabel("one.monitor.title"), LabelGrabber.INSTANCE.getLabel("one.monitor.warning"));
         }

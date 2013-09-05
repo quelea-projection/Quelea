@@ -258,12 +258,12 @@ public class Dialog extends Stage {
             stage.icon.setImage(image);
         }
 
-        protected Builder setWarningIcon() {
+        public Builder setWarningIcon() {
             setIconFromResource(ICON_PATH + "warningIcon.png");
             return this;
         }
 
-        protected Builder setErrorIcon() {
+        public Builder setErrorIcon() {
             setIconFromResource(ICON_PATH + "errorIcon.png");
             return this;
         }
