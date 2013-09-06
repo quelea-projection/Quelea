@@ -30,7 +30,6 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
-import javafx.stage.WindowEvent;
 import org.quelea.data.displayable.AudioDisplayable;
 import org.quelea.data.displayable.Displayable;
 import org.quelea.data.displayable.ImageDisplayable;
@@ -41,12 +40,10 @@ import org.quelea.data.displayable.TextDisplayable;
 import org.quelea.data.displayable.VideoDisplayable;
 import org.quelea.services.utils.LoggerUtils;
 import org.quelea.services.utils.QueleaProperties;
-import org.quelea.windows.audio.AudioControlPanel;
 import org.quelea.windows.lyrics.SelectLyricsPanel;
 import org.quelea.windows.main.quickedit.QuickEditDialog;
 import org.quelea.windows.main.widgets.CardPane;
 import org.quelea.windows.multimedia.MultimediaPanel;
-import org.quelea.windows.video.VideoControlPanel;
 
 /**
  * The common superclass of the live / preview panels used for selecting the
@@ -69,8 +66,8 @@ public abstract class LivePreviewPanel extends BorderPane {
     private SelectLyricsPanel lyricsPanel = new SelectLyricsPanel(this);
     private ImagePanel picturePanel = new ImagePanel();
     private PresentationPanel presentationPanel = new PresentationPanel(this);
-    private MultimediaPanel videoPanel = new MultimediaPanel(new VideoControlPanel());
-    private MultimediaPanel audioPanel = new MultimediaPanel(new AudioControlPanel());
+    private MultimediaPanel videoPanel = new MultimediaPanel();
+    private MultimediaPanel audioPanel = new MultimediaPanel();
     private QuickEditDialog quickEditDialog = new QuickEditDialog();
 
     /**
