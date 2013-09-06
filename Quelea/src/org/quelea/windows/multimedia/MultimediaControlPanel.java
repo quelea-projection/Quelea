@@ -9,29 +9,28 @@ import javafx.beans.value.ObservableValue;
 import javafx.event.EventHandler;
 import javafx.scene.control.Button;
 import javafx.scene.control.Slider;
+import javafx.scene.control.ToggleButton;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
-import org.quelea.data.displayable.MultimediaDisplayable;
 import org.quelea.services.utils.LoggerUtils;
 
 /**
  *
  * @author tomaszpio@gmail.com
  */
-public abstract class MultimediaControlPanel extends BorderPane {
+public class MultimediaControlPanel extends BorderPane {
 
     private static final Logger LOGGER = LoggerUtils.getLogger();
-    protected String filePath;
-    protected Button mute;
-    protected Button pause;
-    protected Button play;
-//    protected VLCMediaPlayer player;
-    protected Slider positionSlider;
-    protected Slider volumeSlider;
-    protected Button stop;
+    private String filePath;
+    private ToggleButton mute;
+    private Button pause;
+    private Button play;
+    private Slider positionSlider;
+    private Slider volumeSlider;
+    private Button stop;
 
     protected class CurrentTimeListener implements InvalidationListener {
 
@@ -51,10 +50,6 @@ public abstract class MultimediaControlPanel extends BorderPane {
 
     public void clear() {
     }
-
-//    public VLCMediaPlayer getPlayer() {
-//        return player;
-//    }
 
     protected class PositionListener implements ChangeListener<Boolean> {
 
@@ -83,36 +78,33 @@ public abstract class MultimediaControlPanel extends BorderPane {
 
     public MultimediaControlPanel() {
         play = new Button("", new ImageView(new Image("file:icons/play.png")));
-//        play.setDisable(true);
         play.setOnAction(new EventHandler<javafx.event.ActionEvent>() {
             @Override
             public void handle(javafx.event.ActionEvent t) {
-//                player.play();
+                VLCWindow.INSTANCE.setRepeat(false);
+                VLCWindow.INSTANCE.play();
             }
         });
         pause = new Button("", new ImageView(new Image("file:icons/pause.png")));
-//        pause.setDisable(true);
         pause.setOnAction(new EventHandler<javafx.event.ActionEvent>() {
             @Override
             public void handle(javafx.event.ActionEvent t) {
-//                player.pause();
+                VLCWindow.INSTANCE.pause();
             }
         });
         stop = new Button("", new ImageView(new Image("file:icons/stop.png")));
-//        stop.setDisable(true);
         stop.setOnAction(new EventHandler<javafx.event.ActionEvent>() {
             @Override
             public void handle(javafx.event.ActionEvent t) {
-//                player.stop();
+                VLCWindow.INSTANCE.stop();
                 positionSlider.setValue(0);
             }
         });
-        mute = new Button("", new ImageView(new Image("file:icons/mute.png")));
-//        mute.setDisable(true);
+        mute = new ToggleButton("", new ImageView(new Image("file:icons/mute.png")));
         mute.setOnAction(new EventHandler<javafx.event.ActionEvent>() {
             @Override
             public void handle(javafx.event.ActionEvent t) {
-//                player.setMute(!player.isMute());
+                VLCWindow.INSTANCE.setMute(mute.isSelected());
             }
         });
         positionSlider = new Slider(0, 1.0, 0.1);
@@ -134,16 +126,27 @@ public abstract class MultimediaControlPanel extends BorderPane {
         buttonPanel.getChildren().add(stop);
         buttonPanel.getChildren().add(mute);
         controlPanel.getChildren().add(buttonPanel);
-        controlPanel.getChildren().add(sliderPanel);
+//        controlPanel.getChildren().add(sliderPanel);
         setCenter(controlPanel);
     }
 
+    public void setDisableControls(boolean disable) {
+        play.setDisable(disable);
+        pause.setDisable(disable);
+        stop.setDisable(disable);
+        mute.setDisable(disable);
+    }
+
     /**
-     * Load the given video to be controlled via this panel.
+     * Load the given multimedia to be controlled via this panel.
      * <p/>
-     * @param multimedia the video path to load.
+     * @param path the multimedia path to load.
      */
-    public abstract void loadMultimedia(MultimediaDisplayable displayable);
+    public void loadMultimedia(String path) {
+        this.filePath = path;
+        VLCWindow.INSTANCE.stop();
+        VLCWindow.INSTANCE.load(filePath);
+    }
 
     protected void seekAndUpdatePosition(long seekTo) {
     }
