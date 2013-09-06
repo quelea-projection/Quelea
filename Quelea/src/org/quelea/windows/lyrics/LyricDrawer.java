@@ -20,7 +20,6 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
-import javafx.scene.paint.Paint;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontPosture;
 import javafx.scene.text.FontWeight;
@@ -51,7 +50,6 @@ public class LyricDrawer extends DisplayableDrawer {
     private static final Logger LOGGER = LoggerUtils.getLogger();
     private String[] text;
     private Group textGroup;
-    private Paint lastColor;
     private ThemeDTO theme;
     private TextDisplayable curDisplayable;
     private boolean capitaliseFirst;
@@ -155,15 +153,6 @@ public class LyricDrawer extends DisplayableDrawer {
                 lineColor = ThemeDTO.DEFAULT_FONT_COLOR;
             }
             t.setFill(lineColor);
-
-//            if(theme.getFontPaint() == lastColor || lastColor == null) {
-//                t.setFill(theme.getFontPaint());
-//            }
-//            else {
-//                Timeline paintTimeline = new Timeline(new KeyFrame(Duration.ZERO, new KeyValue(t.fillProperty(), lastColor)),
-//                        new KeyFrame(Duration.seconds(0.3), new KeyValue(t.fillProperty(), theme.getFontPaint())));
-//                paintTransition.getChildren().add(paintTimeline);
-//            }
             y += metrics.getLineHeight();
 
             newTextGroup.getChildren().add(t);
@@ -171,7 +160,6 @@ public class LyricDrawer extends DisplayableDrawer {
         if(!paintTransition.getChildren().isEmpty()) {
             paintTransition.play();
         }
-//        lastColor = theme.getFontPaint();
 
         textGroup = newTextGroup;
     }
@@ -250,6 +238,7 @@ public class LyricDrawer extends DisplayableDrawer {
                 getCanvas().getChildren().remove(oldBackground);
             }
         });
+        getCanvas().setOpacity(1);
         getCanvas().setCanvasBackground(newBackground);
 
         fadeOut.play();

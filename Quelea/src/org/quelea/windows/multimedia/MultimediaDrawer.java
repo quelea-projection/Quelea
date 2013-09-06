@@ -1,19 +1,17 @@
 package org.quelea.windows.multimedia;
 
-import javafx.application.Platform;
-import javafx.scene.layout.VBox;
-import javafx.scene.media.MediaView;
 import org.quelea.data.displayable.Displayable;
 import org.quelea.data.displayable.MultimediaDisplayable;
 import org.quelea.windows.main.DisplayableDrawer;
 
 /**
  *
- * @author tomaszpio@gmail.com
+ * @author tomaszpio@gmail.com, Michael
  */
 public class MultimediaDrawer extends DisplayableDrawer {
 
     private MultimediaControlPanel controlPanel;
+    private boolean playVideo;
 
     public MultimediaDrawer(MultimediaControlPanel controlPanel) {
         this.controlPanel = controlPanel;
@@ -21,15 +19,26 @@ public class MultimediaDrawer extends DisplayableDrawer {
 
     @Override
     public void draw(Displayable displayable) {
-        drawDisplayable(displayable);
+        if(playVideo) {
+            controlPanel.loadMultimedia(((MultimediaDisplayable) displayable).getFile().getAbsolutePath());
+            VLCWindow.INSTANCE.refreshPosition();
+            VLCWindow.INSTANCE.show();
+        }
+    }
+
+    public void setPlayVideo(boolean playVideo) {
+        this.playVideo = playVideo;
+        if(playVideo) {
+            getCanvas().setOpacity(0);
+        }
+        else {
+            getCanvas().setOpacity(1);
+        }
+        controlPanel.setDisableControls(!playVideo);
     }
 
     @Override
     public void clear() {
-//        if(controlPanel.getPlayer() != null) {
-//            controlPanel.getPlayer().stop();
-//            controlPanel.clear();
-//        }
         if(getCanvas().getChildren() != null) {
             getCanvas().clearApartFromNotice();
         }
@@ -37,21 +46,5 @@ public class MultimediaDrawer extends DisplayableDrawer {
 
     @Override
     public void requestFocus() {
-    }
-
-    private void drawDisplayable(final Displayable displayable) {
-        if(getCanvas().isCleared() || getCanvas().isBlacked()) {
-            clear();
-        }
-        else {
-            controlPanel.loadMultimedia((MultimediaDisplayable) displayable);
-            VBox pane = new VBox();
-//            pane.getChildren().add(controlPanel.getPlayer());
-
-            if(getCanvas() instanceof MultimediaPreviewCanvas) {
-                pane.getChildren().add(controlPanel);
-            }
-            getCanvas().getChildren().add(pane);
-        }
     }
 }

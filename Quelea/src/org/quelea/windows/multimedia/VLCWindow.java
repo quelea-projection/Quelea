@@ -20,7 +20,6 @@ package org.quelea.windows.multimedia;
 
 import java.awt.Canvas;
 import java.awt.Color;
-import java.awt.Graphics2D;
 import java.awt.Window;
 import org.quelea.windows.main.QueleaApp;
 import uk.co.caprica.vlcj.player.MediaPlayerFactory;
@@ -56,18 +55,19 @@ public class VLCWindow {
         CanvasVideoSurface videoSurface = mediaPlayerFactory.newVideoSurface(canvas);
         mediaPlayer.setVideoSurface(videoSurface);
         window.add(canvas);
-        window.setOpacity(0);
+//        window.setOpacity(0);
+        show = true;
         window.setVisible(true);
     }
 
     public void setRepeat(boolean repeat) {
         mediaPlayer.setRepeat(repeat);
     }
-    
+
     public void load(String path) {
         mediaPlayer.prepareMedia(path);
     }
-    
+
     public void play() {
         mediaPlayer.play();
     }
@@ -83,11 +83,11 @@ public class VLCWindow {
     public void stop() {
         mediaPlayer.stop();
     }
-    
+
     public boolean isMute() {
         return mediaPlayer.isMute();
     }
-    
+
     public void setMute(boolean mute) {
         mediaPlayer.mute(mute);
     }

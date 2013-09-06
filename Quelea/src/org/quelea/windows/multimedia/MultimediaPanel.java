@@ -17,8 +17,6 @@
  */
 package org.quelea.windows.multimedia;
 
-import javafx.scene.media.MediaPlayer;
-import javafx.util.Duration;
 import org.quelea.windows.main.AbstractPanel;
 import org.quelea.windows.main.DisplayCanvas;
 import org.quelea.windows.main.DisplayCanvas.Priority;
@@ -38,23 +36,32 @@ public class MultimediaPanel extends AbstractPanel {
     /**
      * Create a new image panel.
      */
-    public MultimediaPanel(MultimediaControlPanel controlPanel) {
-        this.controlPanel = controlPanel;
+    public MultimediaPanel() {
+        this.controlPanel = new MultimediaControlPanel();
         drawer = new MultimediaDrawer(controlPanel);
         previewCanvas = new MultimediaPreviewCanvas(false, false, new DisplayCanvas.CanvasUpdater() {
             @Override
             public void updateCallback() {
-                updateCanvas(); //@todo to be fixed updating on resize due to some errors which appears when updating
-                //of multimedia canvas  occur to often
+                updateCanvas();
             }
         }, Priority.LOW);
         registerDisplayCanvas(previewCanvas);
-        setCenter(previewCanvas);
+        setCenter(controlPanel);
     }
 
     @Override
     public void registerDisplayCanvas(DisplayCanvas canvas) {
-        super.registerDisplayCanvas(canvas); //To change body of generated methods, choose Tools | Templates.
+        super.registerDisplayCanvas(canvas);
+    }
+    
+    @Override
+    public void updateCanvas() {
+        for(DisplayCanvas canvas : getCanvases()) {
+            drawer.setCanvas(canvas);
+            drawer.setPlayVideo(canvas.getPlayVideo());
+            canvas.setCurrentDisplayable(getCurrentDisplayable());
+            drawer.draw(getCurrentDisplayable());
+        }
     }
 
     /**
@@ -62,10 +69,6 @@ public class MultimediaPanel extends AbstractPanel {
      */
     @Override
     public void clear() {
-//        VLCMediaPlayer player = controlPanel.getPlayer();
-//        if (player != null) {
-//            player.stop();
-//        }
         super.clear();
     }
 
