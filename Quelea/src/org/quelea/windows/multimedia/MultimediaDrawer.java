@@ -10,16 +10,17 @@ import org.quelea.windows.main.DisplayableDrawer;
  */
 public class MultimediaDrawer extends DisplayableDrawer {
 
-    private MultimediaControlPanel controlPanel;
+    private MultimediaControls controlPanel;
     private boolean playVideo;
 
-    public MultimediaDrawer(MultimediaControlPanel controlPanel) {
+    public MultimediaDrawer(MultimediaControls controlPanel) {
         this.controlPanel = controlPanel;
     }
 
     @Override
     public void draw(Displayable displayable) {
         if(playVideo) {
+            controlPanel.reset();
             controlPanel.loadMultimedia(((MultimediaDisplayable) displayable).getFile().getAbsolutePath());
             VLCWindow.INSTANCE.refreshPosition();
             VLCWindow.INSTANCE.show();
