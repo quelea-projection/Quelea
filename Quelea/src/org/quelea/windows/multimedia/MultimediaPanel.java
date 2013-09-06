@@ -31,13 +31,13 @@ public class MultimediaPanel extends AbstractPanel {
 
     private final DisplayCanvas previewCanvas;
     private MultimediaDrawer drawer;
-    private MultimediaControlPanel controlPanel;
+    private MultimediaControls controlPanel;
 
     /**
      * Create a new image panel.
      */
     public MultimediaPanel() {
-        this.controlPanel = new MultimediaControlPanel();
+        this.controlPanel = new MultimediaControls();
         drawer = new MultimediaDrawer(controlPanel);
         previewCanvas = new MultimediaPreviewCanvas(false, false, new DisplayCanvas.CanvasUpdater() {
             @Override
@@ -70,15 +70,6 @@ public class MultimediaPanel extends AbstractPanel {
     @Override
     public void clear() {
         super.clear();
-    }
-
-    /**
-     * Get the video control panel on this video panel.
-     *
-     * @return the video control panel.
-     */
-    public MultimediaControlPanel getMultimediaControlPanel() {
-        return controlPanel;
     }
 
     @Override
