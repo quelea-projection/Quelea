@@ -39,7 +39,6 @@ import org.quelea.services.utils.LoggerUtils;
 import org.quelea.windows.main.MainPanel;
 import org.quelea.windows.main.QueleaApp;
 import org.quelea.windows.main.schedule.ScheduleList;
-import org.quelea.windows.main.actionhandlers.AddAudioActionHandler;
 import org.quelea.windows.main.actionhandlers.AddPowerpointActionHandler;
 import org.quelea.windows.main.actionhandlers.AddVideoActionHandler;
 import org.quelea.windows.main.actionhandlers.ShowNoticesActionHandler;
@@ -54,7 +53,6 @@ public class ScheduleMenu extends Menu {
     private static final Logger LOGGER = LoggerUtils.getLogger();
     private MenuItem addPowerpointItem;
     private MenuItem addVideoItem;
-    private MenuItem addAudioItem;
     private MenuItem manageNoticesItem;
     private MenuItem shareScheduleItem;
 
@@ -74,10 +72,6 @@ public class ScheduleMenu extends Menu {
         addVideoItem = new MenuItem(LabelGrabber.INSTANCE.getLabel("add.video.button"), new ImageView(new Image("file:icons/video file.png", 16, 16, false, true)));
         addVideoItem.setOnAction(new AddVideoActionHandler());
         getItems().add(addVideoItem);
-
-        addAudioItem = new MenuItem(LabelGrabber.INSTANCE.getLabel("add.audio.button"), new ImageView(new Image("file:icons/audio30.png", 16, 16, false, true)));
-        addAudioItem.setOnAction(new AddAudioActionHandler());
-        getItems().add(addAudioItem);
 
         getItems().add(new SeparatorMenuItem());
 

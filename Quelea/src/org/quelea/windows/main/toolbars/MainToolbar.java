@@ -26,7 +26,6 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import org.quelea.services.languages.LabelGrabber;
 import org.quelea.services.utils.Utils;
-import org.quelea.windows.main.actionhandlers.AddAudioActionHandler;
 import org.quelea.windows.main.actionhandlers.AddPowerpointActionHandler;
 import org.quelea.windows.main.actionhandlers.AddVideoActionHandler;
 import org.quelea.windows.main.actionhandlers.NewScheduleActionHandler;
@@ -53,7 +52,6 @@ public class MainToolbar extends ToolBar {
     private Button quickInsertButton;
     private Button addPresentationButton;
     private Button addVideoButton;
-    private Button addAudioButton;
     private Button manageNoticesButton;
     private Button manageTagsButton;
 
@@ -112,12 +110,6 @@ public class MainToolbar extends ToolBar {
         addVideoButton.setTooltip(new Tooltip(LabelGrabber.INSTANCE.getLabel("add.video.tooltip")));
         addVideoButton.setOnAction(new AddVideoActionHandler());
         getItems().add(addVideoButton);
-
-        addAudioButton = new Button("", new ImageView(new Image("file:icons/add audio.png", 24, 24, false, true)));
-        Utils.setToolbarButtonStyle(addAudioButton);
-        addAudioButton.setTooltip(new Tooltip(LabelGrabber.INSTANCE.getLabel("add.audio.tooltip")));
-        addAudioButton.setOnAction(new AddAudioActionHandler());
-        getItems().add(addAudioButton);
 
         getItems().add(new Separator());
 
