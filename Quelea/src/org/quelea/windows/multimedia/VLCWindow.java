@@ -22,6 +22,8 @@ import java.awt.Canvas;
 import java.awt.Color;
 import java.awt.Window;
 import org.quelea.windows.main.QueleaApp;
+import uk.co.caprica.vlcj.player.MediaPlayer;
+import uk.co.caprica.vlcj.player.MediaPlayerEventAdapter;
 import uk.co.caprica.vlcj.player.MediaPlayerFactory;
 import uk.co.caprica.vlcj.player.embedded.EmbeddedMediaPlayer;
 import uk.co.caprica.vlcj.player.embedded.videosurface.CanvasVideoSurface;
@@ -44,6 +46,7 @@ public class VLCWindow {
     private EmbeddedMediaPlayer mediaPlayer;
     private boolean hideButton;
     private boolean show;
+    private boolean paused;
 
     private VLCWindow() {
         window = new Window(null);
@@ -65,22 +68,27 @@ public class VLCWindow {
     }
 
     public void load(String path) {
+        paused = false;
         mediaPlayer.prepareMedia(path);
     }
 
     public void play() {
+        paused = false;
         mediaPlayer.play();
     }
 
     public void play(String vid) {
+        paused = false;
         mediaPlayer.playMedia(vid);
     }
 
     public void pause() {
+        paused = true;
         mediaPlayer.pause();
     }
 
     public void stop() {
+        paused = false;
         mediaPlayer.stop();
     }
 
@@ -90,6 +98,32 @@ public class VLCWindow {
 
     public void setMute(boolean mute) {
         mediaPlayer.mute(mute);
+    }
+
+    public double getProgressPercent() {
+        return (double)mediaPlayer.getTime()/mediaPlayer.getLength();
+    }
+    
+    public void setProgressPercent(double percent) {
+        mediaPlayer.setPosition((float)percent);
+    }
+
+    public boolean isPlaying() {
+        return mediaPlayer.isPlaying();
+    }
+    
+    public boolean isPaused() {
+        return paused;
+    }
+
+    public void setOnFinished(final Runnable onFinished) {
+        paused = false;
+        mediaPlayer.addMediaPlayerEventListener(new MediaPlayerEventAdapter() {
+            @Override
+            public void finished(MediaPlayer mediaPlayer) {
+                onFinished.run();
+            }
+        });
     }
 
     public void show() {
