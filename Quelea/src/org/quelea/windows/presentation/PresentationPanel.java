@@ -30,7 +30,6 @@ import org.quelea.windows.main.AbstractPanel;
 import org.quelea.windows.image.ImageDrawer;
 import org.quelea.windows.main.DisplayCanvas;
 import org.quelea.windows.main.DisplayableDrawer;
-import org.quelea.windows.main.LivePanel;
 import org.quelea.windows.main.LivePreviewPanel;
 import org.quelea.windows.main.QueleaApp;
 
@@ -94,9 +93,9 @@ public class PresentationPanel extends AbstractPanel {
 
     private void drawSlide(PresentationSlide newSlide, DisplayCanvas canvas) {
         Image displayImage = newSlide.getImage();
-        ImageDisplayable displayable = new ImageDisplayable(displayImage);
+        ImageDisplayable imageDisplayable = new ImageDisplayable(displayImage);
         drawer.setCanvas(canvas);
-        drawer.draw(displayable);
+        drawer.draw(imageDisplayable);
     }
 
     public void stopCurrent() {
