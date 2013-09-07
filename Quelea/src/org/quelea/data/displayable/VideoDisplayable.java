@@ -127,7 +127,7 @@ public class VideoDisplayable implements MultimediaDisplayable {
      */
     @Override
     public boolean supportClear() {
-        return true;
+        return false;
     }
 
     @Override
