@@ -33,9 +33,6 @@ public class MultimediaControls extends StackPane {
     private static final Image PAUSE_IMAGE_DISABLE = new Image("file:icons/pausedisable.png");
     private static final Image STOP_IMAGE_DISABLE = new Image("file:icons/stopdisable.png");
     private boolean playpause;
-    private EventHandler<ActionEvent> playEvent;
-    private EventHandler<ActionEvent> pauseEvent;
-    private EventHandler<ActionEvent> stopEvent;
     private ImageView playButton;
     private ImageView stopButton;
     private Slider posSlider;
@@ -68,11 +65,12 @@ public class MultimediaControls extends StackPane {
                     playpause = !playpause;
                     if(playpause) {
                         playButton.setImage(PAUSE_IMAGE);
-                        playEvent.handle(new ActionEvent());
+                        VLCWindow.INSTANCE.setRepeat(false);
+                        VLCWindow.INSTANCE.play();
                     }
                     else {
                         playButton.setImage(PLAY_IMAGE);
-                        pauseEvent.handle(new ActionEvent());
+                        VLCWindow.INSTANCE.pause();
                     }
                 }
             }
@@ -86,7 +84,7 @@ public class MultimediaControls extends StackPane {
                     playButton.setImage(PLAY_IMAGE);
                     playpause = false;
                     posSlider.setValue(0);
-                    stopEvent.handle(new ActionEvent());
+                    VLCWindow.INSTANCE.stop();
                 }
             }
         });
@@ -99,29 +97,10 @@ public class MultimediaControls extends StackPane {
         posSlider.setPrefWidth(rect.getWidth() - 20);
         posSlider.setMaxWidth(rect.getWidth() - 20);
         getChildren().add(posSlider);
-        setOnPlay(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent t) {
-                VLCWindow.INSTANCE.setRepeat(false);
-                VLCWindow.INSTANCE.play();
-            }
-        });
-        setOnPause(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent t) {
-                VLCWindow.INSTANCE.pause();
-            }
-        });
-        setOnStop(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent t) {
-                VLCWindow.INSTANCE.stop();
-            }
-        });
     }
 
     public void loadMultimedia(String path) {
-        VLCWindow.INSTANCE.stop();
+        reset();
         VLCWindow.INSTANCE.load(path);
     }
 
@@ -173,17 +152,5 @@ public class MultimediaControls extends StackPane {
         button.setFitWidth(50);
         button.setPreserveRatio(true);
         button.setTranslateY(-10);
-    }
-
-    public final void setOnPlay(EventHandler<ActionEvent> event) {
-        this.playEvent = event;
-    }
-
-    public final void setOnPause(EventHandler<ActionEvent> event) {
-        this.pauseEvent = event;
-    }
-
-    public final void setOnStop(EventHandler<ActionEvent> event) {
-        this.stopEvent = event;
     }
 }
