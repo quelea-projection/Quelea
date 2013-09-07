@@ -21,6 +21,9 @@ package org.quelea.windows.multimedia;
 import java.awt.Canvas;
 import java.awt.Color;
 import java.awt.Window;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import org.quelea.services.utils.LoggerUtils;
 import org.quelea.windows.main.QueleaApp;
 import uk.co.caprica.vlcj.player.MediaPlayer;
 import uk.co.caprica.vlcj.player.MediaPlayerEventAdapter;
@@ -39,6 +42,7 @@ import uk.co.caprica.vlcj.player.embedded.videosurface.CanvasVideoSurface;
  */
 public class VLCWindow {
 
+    private static final Logger LOGGER = LoggerUtils.getLogger();
     public static final VLCWindow INSTANCE = new VLCWindow();
     private Window window;
     private Canvas canvas;
@@ -47,114 +51,173 @@ public class VLCWindow {
     private boolean hideButton;
     private boolean show;
     private boolean paused;
+    private boolean init;
 
     private VLCWindow() {
-        window = new Window(null);
-        window.setBackground(Color.BLACK);
-        canvas = new Canvas();
-        canvas.setBackground(Color.BLACK);
-        mediaPlayerFactory = new MediaPlayerFactory("--no-video-title-show");
-        mediaPlayer = mediaPlayerFactory.newEmbeddedMediaPlayer();
-        CanvasVideoSurface videoSurface = mediaPlayerFactory.newVideoSurface(canvas);
-        mediaPlayer.setVideoSurface(videoSurface);
-        window.add(canvas);
-//        window.setOpacity(0);
-        show = true;
-        window.setVisible(true);
+        try {
+            window = new Window(null);
+            window.setBackground(Color.BLACK);
+            canvas = new Canvas();
+            canvas.setBackground(Color.BLACK);
+            mediaPlayerFactory = new MediaPlayerFactory("--no-video-title-show");
+            mediaPlayer = mediaPlayerFactory.newEmbeddedMediaPlayer();
+            CanvasVideoSurface videoSurface = mediaPlayerFactory.newVideoSurface(canvas);
+            mediaPlayer.setVideoSurface(videoSurface);
+            window.add(canvas);
+            show = true;
+            window.setVisible(true);
+            init = true;
+            LOGGER.log(Level.INFO, "Video initialised ok");
+        }
+        catch(Exception ex) {
+            LOGGER.log(Level.INFO, "Couldn't initialise video, almost definitely because VLC was not found.", ex);
+        }
     }
 
     public void setRepeat(boolean repeat) {
-        mediaPlayer.setRepeat(repeat);
+        if(init) {
+            mediaPlayer.setRepeat(repeat);
+        }
     }
 
     public void load(String path) {
-        paused = false;
-        mediaPlayer.prepareMedia(path);
+        if(init) {
+            paused = false;
+            mediaPlayer.prepareMedia(path);
+        }
     }
 
     public void play() {
-        paused = false;
-        mediaPlayer.play();
+        if(init) {
+            paused = false;
+            mediaPlayer.play();
+        }
     }
 
     public void play(String vid) {
-        paused = false;
-        mediaPlayer.playMedia(vid);
+        if(init) {
+            paused = false;
+            mediaPlayer.playMedia(vid);
+        }
     }
 
     public void pause() {
-        paused = true;
-        mediaPlayer.pause();
+        if(init) {
+            paused = true;
+            mediaPlayer.pause();
+        }
     }
 
     public void stop() {
-        paused = false;
-        mediaPlayer.stop();
+        if(init) {
+            paused = false;
+            mediaPlayer.stop();
+        }
     }
 
     public boolean isMute() {
-        return mediaPlayer.isMute();
+        if(init) {
+            return mediaPlayer.isMute();
+        }
+        else {
+            return false;
+        }
     }
 
     public void setMute(boolean mute) {
-        mediaPlayer.mute(mute);
+        if(init) {
+            mediaPlayer.mute(mute);
+        }
     }
 
     public double getProgressPercent() {
-        return (double)mediaPlayer.getTime()/mediaPlayer.getLength();
+        if(init) {
+            return (double) mediaPlayer.getTime() / mediaPlayer.getLength();
+        }
+        else {
+            return 0;
+        }
     }
-    
+
     public void setProgressPercent(double percent) {
-        mediaPlayer.setPosition((float)percent);
+        if(init) {
+            mediaPlayer.setPosition((float) percent);
+        }
     }
 
     public boolean isPlaying() {
-        return mediaPlayer.isPlaying();
+        if(init) {
+            return mediaPlayer.isPlaying();
+        }
+        else {
+            return false;
+        }
     }
-    
+
     public boolean isPaused() {
-        return paused;
+        if(init) {
+            return paused;
+        }
+        else {
+            return false;
+        }
     }
 
     public void setOnFinished(final Runnable onFinished) {
-        paused = false;
-        mediaPlayer.addMediaPlayerEventListener(new MediaPlayerEventAdapter() {
-            @Override
-            public void finished(MediaPlayer mediaPlayer) {
-                onFinished.run();
-            }
-        });
+        if(init) {
+            paused = false;
+            mediaPlayer.addMediaPlayerEventListener(new MediaPlayerEventAdapter() {
+                @Override
+                public void finished(MediaPlayer mediaPlayer) {
+                    onFinished.run();
+                }
+            });
+        }
     }
 
     public void show() {
-        show = true;
-        updateState();
+        if(init) {
+            show = true;
+            updateState();
+        }
     }
 
     public void hide() {
-        show = false;
-        updateState();
+        if(init) {
+            show = false;
+            updateState();
+        }
     }
 
     public void setHideButton(boolean hide) {
-        this.hideButton = hide;
-        updateState();
+        if(init) {
+            this.hideButton = hide;
+            updateState();
+        }
     }
 
     private void updateState() {
-        window.setOpacity((hideButton || !show) ? 0 : 1);
+        if(init) {
+            window.setOpacity((hideButton || !show) ? 0 : 1);
+        }
     }
 
     public void setLocation(int x, int y) {
-        window.setLocation(x, y);
+        if(init) {
+            window.setLocation(x, y);
+        }
     }
 
     public void setSize(int width, int height) {
-        window.setSize(width, height);
+        if(init) {
+            window.setSize(width, height);
+        }
     }
 
     public void refreshPosition() {
-        setLocation((int) QueleaApp.get().getProjectionWindow().getX(), (int) QueleaApp.get().getProjectionWindow().getY());
-        setSize((int) QueleaApp.get().getProjectionWindow().getWidth(), (int) QueleaApp.get().getProjectionWindow().getHeight());
+        if(init) {
+            setLocation((int) QueleaApp.get().getProjectionWindow().getX(), (int) QueleaApp.get().getProjectionWindow().getY());
+            setSize((int) QueleaApp.get().getProjectionWindow().getWidth(), (int) QueleaApp.get().getProjectionWindow().getHeight());
+        }
     }
 }
