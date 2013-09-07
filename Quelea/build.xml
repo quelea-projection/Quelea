@@ -44,6 +44,7 @@
         <copy todir="${dist.jar.dir}/languages">
             <fileset dir="${basedir}/languages"/>
         </copy>
+        <antcall target="nightly-image-change"/>
     </target>
     
     <target name="build-dist" depends="jar">
@@ -56,7 +57,6 @@
         <!-- Generate the US language file -->
         <java className="org.quelea.services.languages.USEnglishConverter" classpath="${FXClasspath};${basedir}/build/classes" failonerror="false"/>
         
-        <echo message="Built jar."/>
         <echo message="Copying necessary files to ${dist.jar.dir}"/>
         <copy todir="${dist.jar.dir}/lib" quiet="yes">
             <fileset dir="${basedir}/lib"/>
@@ -156,7 +156,7 @@
         </deb>
         <delete dir="${dist.jar.dir}/queleadoc"/>
         <delete file="${dist.jar.dir}/launch.sh"/>
-<!--        <delete dir="${dist.jar.dir}/standalone"/>
+        <!--        <delete dir="${dist.jar.dir}/standalone"/>
         <mkdir dir="${dist.jar.dir}/standalone"/>-->
         
         <antcall target="normal-exec"/>
@@ -176,10 +176,21 @@
     
     <!--Only execute this if we're a nightly!-->
     <target name="nightly-exec" if="is.nightly">
+        <!--Clean out old nightlies-->
+        <delete>
+            <fileset dir="${dist.jar.dir}/standalone">
+                <include name="*"/>
+            </fileset>
+        </delete>
         <move file="${dist.jar.dir}/Quelea-temp.deb" tofile="${DebInstallerNightly}"/>
         
         <echo message="Building cross platform installer"/>
         <izpack input="${basedir}/izpack/config.xml" output="${CPInstallerNightly}" basedir="${dist.jar.dir}"/>
+    </target>
+    <target name="nightly-image-change" if="is.nightly">
+        <move file="splash-alpha-nightly.png" tofile="splash-alpha.png"/>
+        <move file="splash-beta-nightly.png" tofile="splash-beta.png"/>
+        <move file="splash-bare-nightly.png" tofile="splash-bare.png"/>
     </target>
     
     <!-- Only execute windows specific stuff if we're on windows! -->
