@@ -30,7 +30,7 @@ import org.quelea.services.languages.LabelGrabber;
 
 /**
  *
- * @author Anton Smirnov (dev@antonsmirnov.name)
+ * @author Anton Smirnov (dev@antonsmirnov.name), Michael Berry
  */
 public class Dialog extends Stage {
 
@@ -111,6 +111,7 @@ public class Dialog extends Stage {
             BorderPane.setMargin(stage.buttonsPanel, new Insets(0, 0, 1.5 * MARGIN, 0));
             stage.borderPanel.setBottom(stage.buttonsPanel);
             stage.borderPanel.widthProperty().addListener(new ChangeListener<Number>() {
+                @Override
                 public void changed(ObservableValue<? extends Number> ov, Number t, Number t1) {
                     stage.buttonsPanel.layout();
                 }
@@ -193,12 +194,14 @@ public class Dialog extends Stage {
             // stacktrace text
             stage.stackTraceLabel = new Label();
             stage.stackTraceLabel.widthProperty().addListener(new ChangeListener<Number>() {
+                @Override
                 public void changed(ObservableValue<? extends Number> ov, Number oldValue, Number newValue) {
                     alignScrollPane();
                 }
             });
 
             stage.stackTraceLabel.heightProperty().addListener(new ChangeListener<Number>() {
+                @Override
                 public void changed(ObservableValue<? extends Number> ov, Number oldValue, Number newValue) {
                     alignScrollPane();
                 }
@@ -211,6 +214,7 @@ public class Dialog extends Stage {
             stage.scrollPane.setContent(stage.stackTraceLabel);
 
             stage.viewStacktraceButton.setOnAction(new EventHandler<ActionEvent>() {
+                @Override
                 public void handle(ActionEvent t) {
                     stage.stacktraceVisible = !stage.stacktraceVisible;
                     if(stage.stacktraceVisible) {
@@ -233,15 +237,17 @@ public class Dialog extends Stage {
             });
 
             stage.copyStacktraceButton.setOnAction(new EventHandler<ActionEvent>() {
+                @Override
                 public void handle(ActionEvent t) {
                     Clipboard clipboard = Clipboard.getSystemClipboard();
-                    Map<DataFormat, Object> map = new HashMap<DataFormat, Object>();
+                    Map<DataFormat, Object> map = new HashMap<>();
                     map.put(DataFormat.PLAIN_TEXT, stage.stacktrace);
                     clipboard.setContent(map);
                 }
             });
 
             stage.showingProperty().addListener(new ChangeListener<Boolean>() {
+                @Override
                 public void changed(ObservableValue<? extends Boolean> ov, Boolean oldValue, Boolean newValue) {
                     if(newValue) {
                         stage.originalWidth = stage.getWidth();
@@ -287,6 +293,7 @@ public class Dialog extends Stage {
             stage.okButton = new Button("OK");
             stage.okButton.setPrefWidth(BUTTON_WIDTH);
             stage.okButton.setOnAction(new EventHandler<ActionEvent>() {
+                @Override
                 public void handle(ActionEvent t) {
                     stage.close();
                 }
@@ -299,6 +306,7 @@ public class Dialog extends Stage {
             Button confirmationButton = new Button(buttonCaption);
             confirmationButton.setMinWidth(BUTTON_WIDTH);
             confirmationButton.setOnAction(new EventHandler<ActionEvent>() {
+                @Override
                 public void handle(ActionEvent t) {
                     stage.close();
                     if(actionHandler != null) {
@@ -442,9 +450,38 @@ public class Dialog extends Stage {
      * <p/>
      * @param title dialog title
      * @param message dialog message
+     * @param owner parent window
+     */
+    public static void showAndWaitError(String title, String message, Window owner) {
+        new Builder()
+                .create()
+                .setOwner(owner)
+                .setTitle(title)
+                .setErrorIcon()
+                .setMessage(message)
+                .addOkButton()
+                .build()
+                .showAndWait();
+    }
+
+    /**
+     * Show error dialog box
+     * <p/>
+     * @param title dialog title
+     * @param message dialog message
      */
     public static void showError(String title, String message) {
         showError(title, message, null);
+    }
+
+    /**
+     * Show error dialog box
+     * <p/>
+     * @param title dialog title
+     * @param message dialog message
+     */
+    public static void showAndWaitError(String title, String message) {
+        showAndWaitError(title, message, null);
     }
 
     /**
