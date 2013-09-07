@@ -35,14 +35,12 @@ public class MultimediaDrawer extends DisplayableDrawer {
         else {
             getCanvas().setOpacity(1);
         }
+        controlPanel.reset();
         controlPanel.setDisableControls(!playVideo);
     }
 
     @Override
     public void clear() {
-        if(getCanvas().getChildren() != null) {
-            getCanvas().clearApartFromNotice();
-        }
     }
 
     @Override
