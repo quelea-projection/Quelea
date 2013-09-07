@@ -35,7 +35,6 @@ public class MultimediaDrawer extends DisplayableDrawer {
         else {
             getCanvas().setOpacity(1);
         }
-        controlPanel.reset();
         controlPanel.setDisableControls(!playVideo);
     }
 
