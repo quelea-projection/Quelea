@@ -26,12 +26,12 @@ import javafx.scene.shape.Rectangle;
  */
 public class MultimediaControls extends StackPane {
 
-    private static final Image PLAY_IMAGE = new Image("file:C:\\users\\michael\\desktop\\png\\play.png");
-    private static final Image PAUSE_IMAGE = new Image("file:C:\\users\\michael\\desktop\\png\\pause.png");
-    private static final Image STOP_IMAGE = new Image("file:C:\\users\\michael\\desktop\\png\\stop.png");
-    private static final Image PLAY_IMAGE_DISABLE = new Image("file:C:\\users\\michael\\desktop\\png\\playdisable.png");
-    private static final Image PAUSE_IMAGE_DISABLE = new Image("file:C:\\users\\michael\\desktop\\png\\pausedisable.png");
-    private static final Image STOP_IMAGE_DISABLE = new Image("file:C:\\users\\michael\\desktop\\png\\stopdisable.png");
+    private static final Image PLAY_IMAGE = new Image("file:icons/play.png");
+    private static final Image PAUSE_IMAGE = new Image("file:icons/pause.png");
+    private static final Image STOP_IMAGE = new Image("file:icons/stop.png");
+    private static final Image PLAY_IMAGE_DISABLE = new Image("file:icons/playdisable.png");
+    private static final Image PAUSE_IMAGE_DISABLE = new Image("file:icons/pausedisable.png");
+    private static final Image STOP_IMAGE_DISABLE = new Image("file:icons/stopdisable.png");
     private boolean playpause;
     private EventHandler<ActionEvent> playEvent;
     private EventHandler<ActionEvent> pauseEvent;
