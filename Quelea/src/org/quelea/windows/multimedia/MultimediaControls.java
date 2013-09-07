@@ -149,7 +149,10 @@ public class MultimediaControls extends StackPane {
     }
 
     public void reset() {
-        stopEvent.handle(new ActionEvent());
+        VLCWindow.INSTANCE.stop();
+        playButton.setImage(PLAY_IMAGE);
+        playpause = false;
+        posSlider.setValue(0);
     }
 
     private void setButtonParams(final ImageView button) {
