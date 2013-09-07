@@ -98,6 +98,14 @@ public final class Utils {
     }
 
     /**
+     * Get the debug log file, useful for debugging if something goes wrong (the
+     * log is printed out to this location.)
+     */
+    public static File getDebugLog() {
+        return new File(QueleaProperties.getQueleaUserHome(), "quelea-debuglog.txt");
+    }
+
+    /**
      * Set the button style for any buttons that are to be placed on a toolbar.
      * Change the padding and remove the default border.
      * <p/>
@@ -721,9 +729,10 @@ public final class Utils {
         writer.setColor(0, 0, color);
         return image;
     }
-    
+
     /**
      * Get an image to be shown as the background in place of a playing video.
+     * <p/>
      * @return the image to be shown in place of a playing video.
      */
     public static Image getVidBlankImage() {

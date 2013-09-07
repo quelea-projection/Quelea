@@ -61,7 +61,7 @@ public final class LoggerUtils {
             synchronized(LoggerUtils.class) {
                 if(FILE_HANDLER == null) {
                     try {
-                        handlerFile = new File(QueleaProperties.getQueleaUserHome(), "quelea-debuglog.txt");
+                        handlerFile = Utils.getDebugLog();
                         FILE_HANDLER = new FileHandler(handlerFile.getAbsolutePath());
                         FILE_HANDLER.setFormatter(new SimpleFormatter());
                     }
