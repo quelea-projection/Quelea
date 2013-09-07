@@ -49,6 +49,7 @@ public class VideoDisplayable implements MultimediaDisplayable {
      *
      * @return the displayable file.
      */
+    @Override
     public File getFile() {
         return file;
     }
