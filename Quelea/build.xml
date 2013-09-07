@@ -188,9 +188,9 @@
         <izpack input="${basedir}/izpack/config.xml" output="${CPInstallerNightly}" basedir="${dist.jar.dir}"/>
     </target>
     <target name="nightly-image-change" if="is.nightly">
-        <move file="icons/splash-alpha-nightly.png" tofile="icons/splash-alpha.png"/>
-        <move file="icons/splash-beta-nightly.png" tofile="icons/splash-beta.png"/>
-        <move file="icons/splash-bare-nightly.png" tofile="icons/splash-bare.png"/>
+        <copy file="icons/splash-alpha-nightly.png" tofile="icons/splash-alpha.png" overwrite="true"/>
+        <copy file="icons/splash-beta-nightly.png" tofile="icons/splash-beta.png" overwrite="true"/>
+        <copy file="icons/splash-bare-nightly.png" tofile="icons/splash-bare.png" overwrite="true"/>
     </target>
     
     <!-- Only execute windows specific stuff if we're on windows! -->
