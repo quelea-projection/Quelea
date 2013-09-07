@@ -4,7 +4,11 @@
  */
 package org.quelea.windows.multimedia;
 
-import javafx.event.ActionEvent;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.event.EventHandler;
 import javafx.scene.control.Slider;
 import javafx.scene.effect.DropShadow;
@@ -21,11 +25,14 @@ import javafx.scene.paint.Stop;
 import javafx.scene.shape.Rectangle;
 
 /**
- *
+ * The multimedia controls containing a play / pause button, stop button, and a
+ * position slider on a gradient background.
+ * <p/>
  * @author Michael
  */
 public class MultimediaControls extends StackPane {
 
+    private static final int SLIDER_UPDATE_RATE = 100;
     private static final Image PLAY_IMAGE = new Image("file:icons/play.png");
     private static final Image PAUSE_IMAGE = new Image("file:icons/pause.png");
     private static final Image STOP_IMAGE = new Image("file:icons/stop.png");
@@ -67,6 +74,7 @@ public class MultimediaControls extends StackPane {
                         playButton.setImage(PAUSE_IMAGE);
                         VLCWindow.INSTANCE.setRepeat(false);
                         VLCWindow.INSTANCE.play();
+                        posSlider.setDisable(false);
                     }
                     else {
                         playButton.setImage(PLAY_IMAGE);
@@ -81,10 +89,7 @@ public class MultimediaControls extends StackPane {
             @Override
             public void handle(MouseEvent t) {
                 if(!disableControls) {
-                    playButton.setImage(PLAY_IMAGE);
-                    playpause = false;
-                    posSlider.setValue(0);
-                    VLCWindow.INSTANCE.stop();
+                    reset();
                 }
             }
         });
@@ -93,10 +98,37 @@ public class MultimediaControls extends StackPane {
         getChildren().add(stopButton);
 
         posSlider = new Slider(0, 1, 0);
+        posSlider.setDisable(true);
+        posSlider.valueProperty().addListener(new ChangeListener<Number>() {
+            @Override
+            public void changed(ObservableValue<? extends Number> ov, Number t, Number t1) {
+                if(!disableControls && (VLCWindow.INSTANCE.isPlaying() || VLCWindow.INSTANCE.isPaused()) && posSlider.isValueChanging()) {
+                    VLCWindow.INSTANCE.setProgressPercent(posSlider.getValue());
+                }
+            }
+        });
         posSlider.setTranslateY(30);
         posSlider.setPrefWidth(rect.getWidth() - 20);
         posSlider.setMaxWidth(rect.getWidth() - 20);
         getChildren().add(posSlider);
+
+        ScheduledExecutorService service = Executors.newSingleThreadScheduledExecutor();
+        service.scheduleAtFixedRate(new Runnable() {
+            @Override
+            public void run() {
+                if(!disableControls && VLCWindow.INSTANCE.isPlaying() && !posSlider.isValueChanging()) {
+                    posSlider.setValue(VLCWindow.INSTANCE.getProgressPercent());
+                }
+            }
+        }, 0, SLIDER_UPDATE_RATE, TimeUnit.MILLISECONDS);
+        VLCWindow.INSTANCE.setOnFinished(new Runnable() {
+            @Override
+            public void run() {
+                if(getScene() != null && !disableControls) {
+                    reset();
+                }
+            }
+        });
     }
 
     public void loadMultimedia(String path) {
@@ -124,14 +156,19 @@ public class MultimediaControls extends StackPane {
             }
             stopButton.setImage(STOP_IMAGE);
         }
-        posSlider.setDisable(disable);
     }
 
     public void reset() {
         VLCWindow.INSTANCE.stop();
-        playButton.setImage(PLAY_IMAGE);
+        if(disableControls) {
+            playButton.setImage(PLAY_IMAGE_DISABLE);
+        }
+        else {
+            playButton.setImage(PLAY_IMAGE);
+        }
         playpause = false;
         posSlider.setValue(0);
+        posSlider.setDisable(true);
     }
 
     private void setButtonParams(final ImageView button) {
