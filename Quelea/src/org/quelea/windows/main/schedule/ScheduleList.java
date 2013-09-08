@@ -144,7 +144,8 @@ public class ScheduleList extends ListView<Displayable> {
         boolean equal = true;
         if(itemsProperty().get().size() == schedule.getSize()) {
             for(int i = 0; i < itemsProperty().get().size(); i++) {
-                if(!itemsProperty().get().get(i).equals(schedule.getDisplayable(i))) {
+                Displayable displayable = itemsProperty().get().get(i);
+                if(displayable != null && !displayable.equals(schedule.getDisplayable(i))) {
                     equal = false;
                 }
             }
