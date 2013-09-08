@@ -139,9 +139,9 @@ public class SelectLyricsPanel extends AbstractPanel {
      */
     @Override
     public void clear() {
+        super.clear();
         lyricsList.itemsProperty().get().clear();
         drawer.clear();
-        super.clear();
     }
 
     public DisplayCanvas getPreviewCanvas() {
