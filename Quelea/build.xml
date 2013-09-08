@@ -177,7 +177,7 @@
     <!--Only execute this if we're a nightly!-->
     <target name="nightly-exec" if="is.nightly">
         <!--Clean out old nightlies-->
-        <delete>
+        <delete failonerror="false">
             <fileset dir="${dist.jar.dir}/standalone">
                 <include name="*"/>
             </fileset>
