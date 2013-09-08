@@ -159,10 +159,13 @@ public abstract class LivePreviewPanel extends BorderPane {
                 ((ContainedPanel) panel).clear();
             }
             else {
-                LOGGER.log(Level.WARNING, "Panel was {0} which isn''t a ContainedPanel... can''t clear it.", panel.getClass());
+                LOGGER.log(Level.WARNING, "Panel was {0} which isn't a ContainedPanel... can't clear it.", panel.getClass());
             }
         }
-        cardPanel.show(LYRICS_LABEL);
+        if(currentLabel == null || !currentLabel.equals(LYRICS_LABEL)) {
+            cardPanel.show(LYRICS_LABEL);
+            currentLabel = LYRICS_LABEL;
+        }
     }
 
     /**
