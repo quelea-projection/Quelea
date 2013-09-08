@@ -77,6 +77,7 @@ public class VLCWindow {
                     window.add(canvas);
                     show = true;
                     window.setVisible(true);
+                    window.toBack();
                     init = true;
                     LOGGER.log(Level.INFO, "Video initialised ok");
                 }
