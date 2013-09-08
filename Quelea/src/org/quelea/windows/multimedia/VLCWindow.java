@@ -21,9 +21,12 @@ package org.quelea.windows.multimedia;
 import java.awt.Canvas;
 import java.awt.Color;
 import java.awt.Window;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.quelea.services.utils.LoggerUtils;
+import org.quelea.services.utils.Utils;
 import org.quelea.windows.main.QueleaApp;
 import uk.co.caprica.vlcj.player.MediaPlayer;
 import uk.co.caprica.vlcj.player.MediaPlayerEventAdapter;
@@ -42,6 +45,11 @@ import uk.co.caprica.vlcj.player.embedded.videosurface.CanvasVideoSurface;
  */
 public class VLCWindow {
 
+    /**
+     * Use this thread for all VLC media player stuff to keep this class thread
+     * safe.
+     */
+    private static final ExecutorService VLC_EXECUTOR = Executors.newSingleThreadExecutor();
     private static final Logger LOGGER = LoggerUtils.getLogger();
     public static final VLCWindow INSTANCE = new VLCWindow();
     private Window window;
@@ -54,170 +62,303 @@ public class VLCWindow {
     private boolean init;
 
     private VLCWindow() {
-        try {
-            window = new Window(null);
-            window.setBackground(Color.BLACK);
-            canvas = new Canvas();
-            canvas.setBackground(Color.BLACK);
-            mediaPlayerFactory = new MediaPlayerFactory("--no-video-title-show");
-            mediaPlayer = mediaPlayerFactory.newEmbeddedMediaPlayer();
-            CanvasVideoSurface videoSurface = mediaPlayerFactory.newVideoSurface(canvas);
-            mediaPlayer.setVideoSurface(videoSurface);
-            window.add(canvas);
-            show = true;
-            window.setVisible(true);
-            init = true;
-            LOGGER.log(Level.INFO, "Video initialised ok");
-        }
-        catch(Exception ex) {
-            LOGGER.log(Level.INFO, "Couldn't initialise video, almost definitely because VLC was not found.", ex);
-        }
+        runOnVLCThread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    window = new Window(null);
+                    window.setBackground(Color.BLACK);
+                    canvas = new Canvas();
+                    canvas.setBackground(Color.BLACK);
+                    mediaPlayerFactory = new MediaPlayerFactory("--no-video-title-show");
+                    mediaPlayer = mediaPlayerFactory.newEmbeddedMediaPlayer();
+                    CanvasVideoSurface videoSurface = mediaPlayerFactory.newVideoSurface(canvas);
+                    mediaPlayer.setVideoSurface(videoSurface);
+                    window.add(canvas);
+                    show = true;
+                    window.setVisible(true);
+                    init = true;
+                    LOGGER.log(Level.INFO, "Video initialised ok");
+                }
+                catch(Exception ex) {
+                    LOGGER.log(Level.INFO, "Couldn't initialise video, almost definitely because VLC (or correct version of VLC) was not found.", ex);
+                }
+            }
+        });
     }
 
-    public void setRepeat(boolean repeat) {
-        if(init) {
-            mediaPlayer.setRepeat(repeat);
-        }
+    public void setRepeat(final boolean repeat) {
+        runOnVLCThread(new Runnable() {
+            @Override
+            public void run() {
+                if(init) {
+                    mediaPlayer.setRepeat(repeat);
+                }
+            }
+        });
     }
 
-    public void load(String path) {
-        if(init) {
-            paused = false;
-            mediaPlayer.prepareMedia(path);
-        }
+    public void load(final String path) {
+        runOnVLCThread(new Runnable() {
+            @Override
+            public void run() {
+                if(init) {
+                    paused = false;
+                    mediaPlayer.prepareMedia(path);
+                }
+            }
+        });
     }
 
     public void play() {
-        if(init) {
-            paused = false;
-            mediaPlayer.play();
-        }
+        runOnVLCThread(new Runnable() {
+            @Override
+            public void run() {
+                if(init) {
+                    paused = false;
+                    mediaPlayer.play();
+                }
+            }
+        });
     }
 
-    public void play(String vid) {
-        if(init) {
-            paused = false;
-            mediaPlayer.playMedia(vid);
-        }
+    public void play(final String vid) {
+        runOnVLCThread(new Runnable() {
+            @Override
+            public void run() {
+                if(init) {
+                    paused = false;
+                    mediaPlayer.playMedia(vid);
+                }
+            }
+        });
     }
 
     public void pause() {
-        if(init) {
-            paused = true;
-            mediaPlayer.pause();
-        }
+        runOnVLCThread(new Runnable() {
+            @Override
+            public void run() {
+                if(init) {
+                    paused = true;
+                    mediaPlayer.pause();
+                }
+            }
+        });
     }
 
     public void stop() {
-        if(init) {
-            paused = false;
-            mediaPlayer.stop();
-        }
+        runOnVLCThread(new Runnable() {
+            @Override
+            public void run() {
+                if(init) {
+                    paused = false;
+                    mediaPlayer.stop();
+                }
+            }
+        });
     }
+    private boolean muteTemp;
 
     public boolean isMute() {
-        if(init) {
-            return mediaPlayer.isMute();
-        }
-        else {
-            return false;
-        }
+        runOnVLCThread(new Runnable() {
+            @Override
+            public void run() {
+                if(init) {
+                    muteTemp = mediaPlayer.isMute();
+                }
+                else {
+                    muteTemp = false;
+                }
+            }
+        });
+        return muteTemp;
     }
 
-    public void setMute(boolean mute) {
-        if(init) {
-            mediaPlayer.mute(mute);
-        }
+    public void setMute(final boolean mute) {
+        runOnVLCThread(new Runnable() {
+            @Override
+            public void run() {
+                if(init) {
+                    mediaPlayer.mute(mute);
+                }
+            }
+        });
     }
+    private double progressTemp;
 
     public double getProgressPercent() {
-        if(init) {
-            return (double) mediaPlayer.getTime() / mediaPlayer.getLength();
-        }
-        else {
-            return 0;
-        }
+        runOnVLCThread(new Runnable() {
+            @Override
+            public void run() {
+                if(init) {
+                    progressTemp = (double) mediaPlayer.getTime() / mediaPlayer.getLength();
+                }
+                else {
+                    progressTemp = 0;
+                }
+            }
+        });
+        return progressTemp;
     }
 
-    public void setProgressPercent(double percent) {
-        if(init) {
-            mediaPlayer.setPosition((float) percent);
-        }
+    public void setProgressPercent(final double percent) {
+        runOnVLCThread(new Runnable() {
+            @Override
+            public void run() {
+                if(init) {
+                    mediaPlayer.setPosition((float) percent);
+                }
+            }
+        });
     }
+    private boolean isPlayingTemp;
 
     public boolean isPlaying() {
-        if(init) {
-            return mediaPlayer.isPlaying();
-        }
-        else {
-            return false;
-        }
+        runOnVLCThread(new Runnable() {
+            @Override
+            public void run() {
+                if(init) {
+                    isPlayingTemp = mediaPlayer.isPlaying();
+                }
+                else {
+                    isPlayingTemp = false;
+                }
+            }
+        });
+        return isPlayingTemp;
     }
+    private boolean isPausedTemp;
 
     public boolean isPaused() {
-        if(init) {
-            return paused;
-        }
-        else {
-            return false;
-        }
+        runOnVLCThread(new Runnable() {
+            @Override
+            public void run() {
+                if(init) {
+                    isPausedTemp = paused;
+                }
+                else {
+                    isPausedTemp = false;
+                }
+            }
+        });
+        return isPausedTemp;
     }
 
     public void setOnFinished(final Runnable onFinished) {
-        if(init) {
-            paused = false;
-            mediaPlayer.addMediaPlayerEventListener(new MediaPlayerEventAdapter() {
-                @Override
-                public void finished(MediaPlayer mediaPlayer) {
-                    onFinished.run();
+        runOnVLCThread(new Runnable() {
+            @Override
+            public void run() {
+                if(init) {
+                    paused = false;
+                    mediaPlayer.addMediaPlayerEventListener(new MediaPlayerEventAdapter() {
+                        @Override
+                        public void finished(MediaPlayer mediaPlayer) {
+                            onFinished.run();
+                        }
+                    });
                 }
-            });
-        }
+            }
+        });
     }
 
     public void show() {
-        if(init) {
-            show = true;
-            updateState();
-        }
+        runOnVLCThread(new Runnable() {
+            @Override
+            public void run() {
+                if(init) {
+                    show = true;
+                    updateState();
+                }
+            }
+        });
     }
 
     public void hide() {
-        if(init) {
-            show = false;
-            updateState();
-        }
+        runOnVLCThread(new Runnable() {
+            @Override
+            public void run() {
+                if(init) {
+                    show = false;
+                    updateState();
+                }
+            }
+        });
     }
 
-    public void setHideButton(boolean hide) {
-        if(init) {
-            this.hideButton = hide;
-            updateState();
-        }
+    public void setHideButton(final boolean hide) {
+        runOnVLCThread(new Runnable() {
+            @Override
+            public void run() {
+                if(init) {
+                    hideButton = hide;
+                    updateState();
+                }
+            }
+        });
     }
 
     private void updateState() {
-        if(init) {
-            window.setOpacity((hideButton || !show) ? 0 : 1);
-        }
+        runOnVLCThread(new Runnable() {
+            @Override
+            public void run() {
+                if(init) {
+                    window.setOpacity((hideButton || !show) ? 0 : 1);
+                }
+            }
+        });
     }
 
-    public void setLocation(int x, int y) {
-        if(init) {
-            window.setLocation(x, y);
-        }
+    public void setLocation(final int x, final int y) {
+        runOnVLCThread(new Runnable() {
+            @Override
+            public void run() {
+                if(init) {
+                    window.setLocation(x, y);
+                }
+            }
+        });
     }
 
-    public void setSize(int width, int height) {
-        if(init) {
-            window.setSize(width, height);
-        }
+    public void setSize(final int width, final int height) {
+        runOnVLCThread(new Runnable() {
+            @Override
+            public void run() {
+                if(init) {
+                    window.setSize(width, height);
+                }
+            }
+        });
     }
+    private int tempX, tempY, tempWidth, tempHeight;
 
     public void refreshPosition() {
-        if(init) {
-            setLocation((int) QueleaApp.get().getProjectionWindow().getX(), (int) QueleaApp.get().getProjectionWindow().getY());
-            setSize((int) QueleaApp.get().getProjectionWindow().getWidth(), (int) QueleaApp.get().getProjectionWindow().getHeight());
-        }
+        runOnVLCThread(new Runnable() {
+            @Override
+            public void run() {
+                if(init) {
+                    Utils.fxRunAndWait(new Runnable() {
+                        @Override
+                        public void run() {
+                            tempX = (int) QueleaApp.get().getProjectionWindow().getX();
+                            tempY = (int) QueleaApp.get().getProjectionWindow().getY();
+                            tempWidth = (int) QueleaApp.get().getProjectionWindow().getWidth();
+                            tempHeight = (int) QueleaApp.get().getProjectionWindow().getHeight();
+                        }
+                    });
+                    setLocation(tempX, tempY);
+                    setSize(tempWidth, tempHeight);
+                }
+            }
+        });
+    }
+
+    /**
+     * Run the specified runnable on the VLC thread. All VLC actions should be
+     * executed this way to avoid threading issues.
+     * <p/>
+     * @param r the runnable to run.
+     */
+    private void runOnVLCThread(Runnable r) {
+        VLC_EXECUTOR.submit(r);
     }
 }
