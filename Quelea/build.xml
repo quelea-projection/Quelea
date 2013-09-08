@@ -3,7 +3,7 @@
     <description>Builds, tests, and runs Quelea.</description>
     <taskdef resource="com/sun/javafx/tools/ant/antlib.xml"      
              uri="javafx:com.sun.javafx.tools.ant"
-             classpath=".:path/to/sdk/lib/ant-javafx.jar"/>   
+             classpath="lib/ant-javafx.jar"/>   
     <import file="nbproject/build-impl.xml"/>
     <import file="nbproject/jfx-impl.xml"/>
     
