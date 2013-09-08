@@ -670,9 +670,34 @@ public final class Utils {
         return ret;
     }
 
-    public static List<String> getImageFileExtensions() {
+    /**
+     * Get a list of all supported video extensions.
+     * <p/>
+     * @return a list of all supported video extensions.
+     */
+    public static List<String> getVideoExtensions() {
         List<String> ret = new ArrayList<>();
-        for(String str : getImageExtensions()) {
+        ret.add("mkv");
+        ret.add("mp4");
+        ret.add("m4v");
+        ret.add("flv");
+        ret.add("avi");
+        ret.add("rm");
+        ret.add("mpg");
+        ret.add("mpeg");
+        ret.add("wmv");
+        ret.add("ogm");
+        return ret;
+    }
+    
+    /**
+     * Get file extensions (in *.ext format) from a list of normal extensions.
+     * @param extensions the list of normal extensions.
+     * @return a list of file extensions.
+     */
+    public static List<String> getFileExtensions(List<String> extensions) {
+        List<String> ret = new ArrayList<>();
+        for(String str : extensions) {
             ret.add("*." + str);
         }
         return ret;
