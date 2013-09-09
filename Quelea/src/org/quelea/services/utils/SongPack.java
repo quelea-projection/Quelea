@@ -20,6 +20,7 @@ package org.quelea.services.utils;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
@@ -65,7 +66,7 @@ public class SongPack {
      * @throws IOException if something went wrong.
      */
     public static SongPack fromFile(File file) throws IOException {
-        try (ZipFile zipFile = new ZipFile(file)) {
+        try (ZipFile zipFile = new ZipFile(file, Charset.forName("UTF-8"))) {
             SongPack ret = new SongPack();
             Enumeration<? extends ZipEntry> entries = zipFile.entries();
             while (entries.hasMoreElements()) {
@@ -89,7 +90,7 @@ public class SongPack {
         if (file == null) {
             return false;
         }
-        try (ZipOutputStream zos = new ZipOutputStream(new FileOutputStream(file))) {
+        try (ZipOutputStream zos = new ZipOutputStream(new FileOutputStream(file), Charset.forName("UTF-8"))) {
             int count = 0;
             for (SongDisplayable song : songs) {
                 zos.putNextEntry(new ZipEntry("song" + count + ".xml"));
