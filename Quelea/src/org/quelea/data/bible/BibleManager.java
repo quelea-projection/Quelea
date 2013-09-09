@@ -125,6 +125,11 @@ public final class BibleManager {
         loadBibles(false);
         updateListeners();
     }
+    
+    public void refreshAndLoad() {
+        loadBibles(true);
+        updateListeners();
+    }
 
     /**
      * Reload all the bibles from the bibles directory into this bible manager.

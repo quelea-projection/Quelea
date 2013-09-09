@@ -70,13 +70,15 @@ public class BibleSearchDialog extends Stage implements BibleChangeListener {
         bibles.setEditable(false);
         BibleManager.get().registerBibleChangeListener(this);
         updateBibles();
+        chapterPane = new FlowPane();
+        searchResults = new BibleSearchTreeView(chapterPane, bibles);
         addToSchedule = new Button(LabelGrabber.INSTANCE.getLabel("add.to.schedule.text"), new ImageView(new Image("file:icons/tick.png")));
         addToSchedule.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent t) {
                 BibleChapter chap = (BibleChapter) searchResults.getSelectionModel().getSelectedItem().getValue().getParent();
                 Bible bib = (Bible) chap.getParent().getParent();
-                BiblePassage passage = new BiblePassage(bib.getBibleName(), chap.getBook() + " " + chap.getParent().getNum(), chap.getVerses());
+                BiblePassage passage = new BiblePassage(bib.getBibleName(), chap.getBook() + " " + chap.toString(), chap.getVerses());
                 QueleaApp.get().getMainWindow().getMainPanel().getSchedulePanel().getScheduleList().add(passage);
             }
         });
@@ -87,10 +89,8 @@ public class BibleSearchDialog extends Stage implements BibleChangeListener {
         mainPane.setTop(northPanel);
         popupMenu = new BibleSearchPopupMenu();
         ScrollPane scrollPane = new ScrollPane();
-        chapterPane = new FlowPane();
         scrollPane.setContent(chapterPane);
         scrollPane.setMinWidth(600);
-        searchResults = new BibleSearchTreeView(chapterPane);
         VBox centrePanel = new VBox();
         StackPane searchPane = new StackPane();
         searchPane.getChildren().add(searchResults);
@@ -102,6 +102,7 @@ public class BibleSearchDialog extends Stage implements BibleChangeListener {
         bibles.setOnAction(new EventHandler<javafx.event.ActionEvent>() {
             @Override
             public void handle(javafx.event.ActionEvent t) {
+                searchResults.resetRoot();
                 update();
             }
         });

@@ -79,7 +79,7 @@ public class OptionsBiblePanel extends GridPane implements PropertyPanel, BibleC
                 if(file != null) {
                     try {
                         Utils.copyFile(file, new File(QueleaProperties.get().getBibleDir(), file.getName()));
-                        BibleManager.get().refresh();
+                        BibleManager.get().refreshAndLoad();
                     }
                     catch(IOException ex) {
                         LOGGER.log(Level.WARNING, "Errpr copying bible file", ex);
