@@ -127,12 +127,7 @@ public final class BibleChapter implements BibleInterface {
      */
     @Override
     public String toString() {
-        if(verses.isEmpty()) {
-            return Integer.toString(num);
-        }
-        else {
-            return verses.get(0).toString();
-        }
+        return Integer.toString(num);
     }
 
     /**

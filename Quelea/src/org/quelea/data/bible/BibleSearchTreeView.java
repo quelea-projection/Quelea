@@ -20,6 +20,7 @@ package org.quelea.data.bible;
 
 import java.util.Collection;
 import javafx.event.EventHandler;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.SelectionMode;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
@@ -38,11 +39,15 @@ public class BibleSearchTreeView extends TreeView<BibleInterface> {
 
     private TreeItem<BibleInterface> root;
     private FlowPane textPane;
+    private ComboBox bibles;
+    private boolean all = true;
 
-    public BibleSearchTreeView(FlowPane chapterPane) {
+    public BibleSearchTreeView(FlowPane chapterPane, ComboBox bibles) {
+        this.bibles = bibles;
         setRoot(new TreeItem<BibleInterface>());
-        this.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
         root = getRoot();
+        root.setExpanded(true);
+        this.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
         textPane = chapterPane;
         this.setOnMouseClicked(new EventHandler<MouseEvent>() {
             @Override
@@ -75,12 +80,15 @@ public class BibleSearchTreeView extends TreeView<BibleInterface> {
                         ti.setExpanded(true);
                     }
                 }
+                else {
+                    tv.selectionModelProperty().get().selectFirst();
+                }
             }
         });
     }
 
     public void reset() {
-        setRoot(new TreeItem<BibleInterface>());
+        this.setShowRoot(false);
         root = getRoot();
         root.setExpanded(true);
     }
@@ -92,7 +100,13 @@ public class BibleSearchTreeView extends TreeView<BibleInterface> {
 
 
         // Get the current bible
-        TreeItem<BibleInterface> cbible = existsOrCreateInt(root.getChildren(), bible);
+        TreeItem<BibleInterface> cbible;
+        if(all) {
+            cbible = existsOrCreateInt(root.getChildren(), bible); 
+        }
+        else {
+            cbible = root;
+        }
 
         // Get the current book
         TreeItem<BibleInterface> cbook = existsOrCreateInt(cbible.getChildren(), book);
@@ -114,5 +128,23 @@ public class BibleSearchTreeView extends TreeView<BibleInterface> {
         TreeItem<BibleInterface> temp = new TreeItem<>(toFind);
         coll.add(temp);
         return temp;
+    }
+
+    public void resetRoot() {
+        if(bibles.getSelectionModel().getSelectedIndex() != 0) {
+            String bib = (String) bibles.getSelectionModel().getSelectedItem();
+            for(Bible b : BibleManager.get().getBibles()) {
+                if(b.getName().equals(bib)) {
+                    setRoot(new TreeItem<BibleInterface>(b));
+                    all = false;
+                }
+            }
+        }
+        else {
+            setRoot(new TreeItem<BibleInterface>());
+            all = true;
+        }
+        root = getRoot();
+        this.setShowRoot(false);
     }
 }
