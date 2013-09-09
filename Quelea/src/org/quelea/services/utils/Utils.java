@@ -578,14 +578,7 @@ public final class Utils {
                 .replace(">", "&gt;")
                 .replace("\"", "&quot;")
                 .replace("'", "&apos;")
-                .replace("’", "&apos;")
-                /*
-                 * TODO: These last two are there to solve a bug with funny
-                 * characters ending up in the XML file. Still not sure how
-                 * or why, but this does the job for now... Yeah. Bodge.
-                 */
-                .replace(new String(new byte[]{11}), "\n")
-                .replace(new String(new byte[]{-3}), " ");
+                .replace("’", "&apos;");
     }
 
     /**
