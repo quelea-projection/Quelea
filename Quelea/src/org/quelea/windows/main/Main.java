@@ -45,6 +45,7 @@ import org.quelea.services.utils.ShortcutManager;
 import org.quelea.services.utils.UpdateChecker;
 import org.quelea.services.utils.UserFileChecker;
 import org.quelea.services.utils.Utils;
+import org.quelea.windows.multimedia.VLCWindow;
 import org.quelea.windows.splash.SplashStage;
 import uk.co.caprica.vlcj.discovery.NativeDiscovery;
 
@@ -241,7 +242,10 @@ public final class Main extends Application {
                     mainWindow.show();
                     splashWindow.hide();
                     showMonitorWarning(monitorNumber);
-                    if(!VLC_OK) { //Couldn't find the VLC libraries.
+                    if(VLC_OK) {
+                        VLCWindow.INSTANCE.refreshPosition();
+                    }
+                    else { //Couldn't find the VLC libraries.
                         vlcWarningDialog = new Dialog.Builder()
                                 .create()
                                 .setTitle(LabelGrabber.INSTANCE.getLabel("vlc.warning.title"))
