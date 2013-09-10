@@ -305,6 +305,7 @@ public class VLCWindow {
             public void run() {
                 if(init) {
                     window.setOpacity((hideButton || !show) ? 0 : 1);
+                    window.toBack();
                 }
             }
         });
@@ -332,6 +333,7 @@ public class VLCWindow {
         });
     }
     private int tempX, tempY, tempWidth, tempHeight;
+    private boolean showing;
 
     public void refreshPosition() {
         runOnVLCThread(new Runnable() {
@@ -341,14 +343,23 @@ public class VLCWindow {
                     Utils.fxRunAndWait(new Runnable() {
                         @Override
                         public void run() {
-                            tempX = (int) QueleaApp.get().getProjectionWindow().getX();
-                            tempY = (int) QueleaApp.get().getProjectionWindow().getY();
-                            tempWidth = (int) QueleaApp.get().getProjectionWindow().getWidth();
-                            tempHeight = (int) QueleaApp.get().getProjectionWindow().getHeight();
+                            showing = QueleaApp.get().getProjectionWindow().isShowing();
+                            if(showing) {
+                                tempX = (int) QueleaApp.get().getProjectionWindow().getX();
+                                tempY = (int) QueleaApp.get().getProjectionWindow().getY();
+                                tempWidth = (int) QueleaApp.get().getProjectionWindow().getWidth();
+                                tempHeight = (int) QueleaApp.get().getProjectionWindow().getHeight();
+                            }
                         }
                     });
-                    setLocation(tempX, tempY);
-                    setSize(tempWidth, tempHeight);
+                    if(showing) {
+                        show();
+                        setLocation(tempX, tempY);
+                        setSize(tempWidth, tempHeight);
+                    }
+                    else {
+                        hide();
+                    }
                 }
             }
         });
