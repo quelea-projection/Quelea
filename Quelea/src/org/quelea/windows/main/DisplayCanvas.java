@@ -30,11 +30,15 @@ import javafx.scene.Node;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
+import org.quelea.data.VideoBackground;
 import org.quelea.data.displayable.Displayable;
+import org.quelea.data.displayable.SongDisplayable;
+import org.quelea.data.displayable.TextDisplayable;
 import org.quelea.services.notice.NoticeDrawer;
 import org.quelea.services.notice.NoticeOverlay;
 import org.quelea.services.utils.LoggerUtils;
 import org.quelea.services.utils.Utils;
+import org.quelea.windows.multimedia.VLCWindow;
 
 /**
  * The canvas where the lyrics / images / media are drawn.
@@ -281,10 +285,18 @@ public class DisplayCanvas extends StackPane {
             setCanvasBackground(BLACK_IMAGE);
         }
         else {
-            if(currentBackground != null) {
-                getChildren().add(currentBackground);
-            }
             setCanvasBackground(currentBackground);
+            Node imageView = null;
+            if(currentBackground == null) {
+                for(Node node : getChildren()) {
+                    if(node instanceof ImageView) {
+                        imageView = node;
+                    }
+                }
+                if(imageView != null) {
+                    getChildren().remove(imageView);
+                }
+            }
         }
         if(this.updater != null) {
             updateCanvas(this.updater);

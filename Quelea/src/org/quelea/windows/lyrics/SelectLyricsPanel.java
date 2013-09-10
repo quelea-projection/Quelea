@@ -157,7 +157,6 @@ public class SelectLyricsPanel extends AbstractPanel {
         int selectedIndex = lyricsList.selectionModelProperty().get().getSelectedIndex();
         for(DisplayCanvas canvas : getCanvases()) {
             drawer.setCanvas(canvas);
-            drawer.setPlayVideo(canvas.getPlayVideo());
             if(selectedIndex == -1 || selectedIndex >= lyricsList.itemsProperty().get().size()) {
                 drawer.setTheme(ThemeDTO.DEFAULT_THEME);
                 drawer.eraseText();
