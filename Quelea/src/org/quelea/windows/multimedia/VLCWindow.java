@@ -154,6 +154,7 @@ public class VLCWindow {
                 if(init) {
                     paused = false;
                     mediaPlayer.stop();
+                    window.toBack();
                 }
             }
         });
