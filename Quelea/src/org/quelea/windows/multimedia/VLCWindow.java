@@ -21,6 +21,7 @@ package org.quelea.windows.multimedia;
 import java.awt.Canvas;
 import java.awt.Color;
 import java.awt.Window;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.logging.Level;
@@ -162,7 +163,7 @@ public class VLCWindow {
     private boolean muteTemp;
 
     public boolean isMute() {
-        runOnVLCThread(new Runnable() {
+        runOnVLCThreadAndWait(new Runnable() {
             @Override
             public void run() {
                 if(init) {
@@ -189,7 +190,7 @@ public class VLCWindow {
     private double progressTemp;
 
     public double getProgressPercent() {
-        runOnVLCThread(new Runnable() {
+        runOnVLCThreadAndWait(new Runnable() {
             @Override
             public void run() {
                 if(init) {
@@ -216,7 +217,7 @@ public class VLCWindow {
     private boolean isPlayingTemp;
 
     public boolean isPlaying() {
-        runOnVLCThread(new Runnable() {
+        runOnVLCThreadAndWait(new Runnable() {
             @Override
             public void run() {
                 if(init) {
@@ -232,7 +233,7 @@ public class VLCWindow {
     private boolean isPausedTemp;
 
     public boolean isPaused() {
-        runOnVLCThread(new Runnable() {
+        runOnVLCThreadAndWait(new Runnable() {
             @Override
             public void run() {
                 if(init) {
@@ -367,11 +368,27 @@ public class VLCWindow {
 
     /**
      * Run the specified runnable on the VLC thread. All VLC actions should be
-     * executed this way to avoid threading issues.
+     * executed on this thread to avoid threading issues.
      * <p/>
      * @param r the runnable to run.
      */
     private void runOnVLCThread(Runnable r) {
         VLC_EXECUTOR.submit(r);
+    }
+
+    /**
+     * Run the specified runnable on the VLC thread and wait for it to complete.
+     * All VLC actions should be executed on this thread to avoid threading
+     * issues.
+     * <p/>
+     * @param r the runnable to run.
+     */
+    private void runOnVLCThreadAndWait(Runnable r) {
+        try {
+            VLC_EXECUTOR.submit(r).get();
+        }
+        catch(InterruptedException | ExecutionException ex) {
+            Logger.getLogger(VLCWindow.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 }
