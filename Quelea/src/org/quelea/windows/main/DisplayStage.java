@@ -56,7 +56,7 @@ public class DisplayStage extends Stage {
         Utils.addIconsToStage(this);
         setTitle(LabelGrabber.INSTANCE.getLabel("projection.window.title"));
         setArea(area);
-        canvas = new DisplayCanvas(true, stageView, true, null, stageView ? Priority.HIGH : Priority.MID);
+        canvas = new DisplayCanvas(true, stageView, !stageView, null, stageView ? Priority.HIGH : Priority.MID);
         canvas.setType(stageView ? DisplayCanvas.Type.STAGE : DisplayCanvas.Type.FULLSCREEN);
         canvas.setCursor(BLANK_CURSOR);
         Scene scene = new Scene(canvas);
