@@ -19,11 +19,14 @@ package org.quelea.data.bible;
 
 
 import java.util.Collection;
+import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.SelectionMode;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.text.Font;
@@ -49,10 +52,24 @@ public class BibleSearchTreeView extends TreeView<BibleInterface> {
         root.setExpanded(true);
         this.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
         textPane = chapterPane;
+        this.setOnKeyTyped(new EventHandler<KeyEvent>() {
+            @Override
+            public void handle(KeyEvent t) {
+                if(t.getCode() == KeyCode.RIGHT) {
+                    trigger(t);
+                }
+            }
+        });
         this.setOnMouseClicked(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent t) {
-                BibleSearchTreeView tv = (BibleSearchTreeView) t.getSource();
+                trigger(t);
+            }
+        });
+    }
+    
+    private void trigger(Event t) {
+        BibleSearchTreeView tv = (BibleSearchTreeView) t.getSource();
                 TreeItem<BibleInterface> ti = tv.getSelectionModel().getSelectedItem();
                 if (ti != null) {
                     if (ti.getValue() instanceof BibleVerse) {
@@ -83,13 +100,11 @@ public class BibleSearchTreeView extends TreeView<BibleInterface> {
                 else {
                     tv.selectionModelProperty().get().selectFirst();
                 }
-            }
-        });
     }
 
     public void reset() {
         this.setShowRoot(false);
-        root = getRoot();
+        resetRoot();
         root.setExpanded(true);
     }
 

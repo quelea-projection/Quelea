@@ -145,32 +145,34 @@ public class BibleSearchDialog extends Stage implements BibleChangeListener {
      * Update the results based on the entered text.
      */
     private void update() {
-        if (BibleManager.get().isIndexInit()) {
-            searchResults.reset();
-            overlay.show();
-            final String text = searchField.getText();
-            new Thread() {
-                public void run() {
-                    final BibleChapter[] results = BibleManager.get().getIndex().filter(text, null);
-                    Platform.runLater(new Runnable() {
-                        @Override
-                        public void run() {
-                            if (!text.trim().isEmpty()) {
-                                for (BibleChapter chapter : results) {
-                                    if (bibles.getSelectionModel().getSelectedIndex() == 0 || chapter.getBook().getBible().getName().equals(bibles.getSelectionModel().getSelectedItem())) {
-                                        for (BibleVerse verse : chapter.getVerses()) {
-                                            if (verse.getText().toLowerCase().contains(text.toLowerCase())) {
-                                                searchResults.add(verse);
+        final String text = searchField.getText();
+        if(text.length() > 3) {
+            if (BibleManager.get().isIndexInit()) {
+                searchResults.reset();
+                overlay.show();
+                new Thread() {
+                    public void run() {
+                        final BibleChapter[] results = BibleManager.get().getIndex().filter(text, null);
+                        Platform.runLater(new Runnable() {
+                            @Override
+                            public void run() {
+                                if (!text.trim().isEmpty()) {
+                                    for (BibleChapter chapter : results) {
+                                        if (bibles.getSelectionModel().getSelectedIndex() == 0 || chapter.getBook().getBible().getName().equals(bibles.getSelectionModel().getSelectedItem())) {
+                                            for (BibleVerse verse : chapter.getVerses()) {
+                                                if (verse.getText().toLowerCase().contains(text.toLowerCase())) {
+                                                    searchResults.add(verse);
+                                                }
                                             }
                                         }
                                     }
                                 }
+                                overlay.hide();
                             }
-                            overlay.hide();
-                        }
-                    });
-                }
-            }.start();
+                        });
+                    }
+                }.start();
+            }
         }
     }
 
