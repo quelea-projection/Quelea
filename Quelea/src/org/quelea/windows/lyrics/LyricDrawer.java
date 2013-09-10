@@ -181,7 +181,7 @@ public class LyricDrawer extends DisplayableDrawer {
                         && sectionThemeBackground instanceof VideoBackground) {
                     String newLocation = ((VideoBackground) theme.getBackground()).getVideoFile().toURI().toString();
                     String oldLocation = ((VideoBackground) sectionThemeBackground).getVideoFile().toURI().toString();
-                    if(newLocation.equals(oldLocation) && getCanvas().getCanvasBackground()==null) {
+                    if(newLocation.equals(oldLocation) && getCanvas().getCanvasBackground() == null) {
                         return;
                     }
                 }
@@ -223,6 +223,9 @@ public class LyricDrawer extends DisplayableDrawer {
             newBackground = null; //transparent
         }
         else {
+            if(playVideo && !(theme.getBackground() instanceof VideoBackground)) {
+                VLCWindow.INSTANCE.stop();
+            }
             final ImageView newImageView = getCanvas().getNewImageView();
             newImageView.setFitHeight(getCanvas().getHeight());
             newImageView.setFitWidth(getCanvas().getWidth());

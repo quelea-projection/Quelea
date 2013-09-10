@@ -34,8 +34,8 @@ import org.quelea.data.displayable.Displayable;
 import org.quelea.services.languages.LabelGrabber;
 
 /**
- * The panel displaying the preview lyrics selection - this is viewed before displaying the actual lyrics on the
- * projector.
+ * The panel displaying the preview lyrics selection - this is viewed before
+ * displaying the actual lyrics on the projector.
  */
 public class PreviewPanel extends LivePreviewPanel {
 
@@ -53,13 +53,12 @@ public class PreviewPanel extends LivePreviewPanel {
         HBox.setHgrow(spacer, Priority.ALWAYS);
         header.getItems().add(spacer);
         liveButton = new Button(LabelGrabber.INSTANCE.getLabel("go.live.text"), new ImageView(new Image("file:icons/golivearrow.png")));
-        liveButton.setTooltip(new Tooltip(LabelGrabber.INSTANCE.getLabel("go.live.text")+" (" + LabelGrabber.INSTANCE.getLabel("space.key") + ")"));
+        liveButton.setTooltip(new Tooltip(LabelGrabber.INSTANCE.getLabel("go.live.text") + " (" + LabelGrabber.INSTANCE.getLabel("space.key") + ")"));
         liveButton.setOnAction(new EventHandler<ActionEvent>() {
-
             @Override
             public void handle(ActionEvent t) {
                 QueleaApp.get().getMainWindow().getMainPanel().getLivePanel().clear();
-                QueleaApp.get().getMainWindow().getMainPanel().getLivePanel().setDisplayable(getDisplayable(), ((ContainedPanel)getCurrentPane()).getCurrentIndex());
+                QueleaApp.get().getMainWindow().getMainPanel().getLivePanel().setDisplayable(getDisplayable(), ((ContainedPanel) getCurrentPane()).getCurrentIndex());
                 QueleaApp.get().getMainWindow().getMainPanel().getLivePanel().getCurrentPane().requestFocus();
             }
         });
@@ -86,7 +85,7 @@ public class PreviewPanel extends LivePreviewPanel {
             }
         });
     }
-    
+
     /**
      * Transfer the current preview to live.
      */
@@ -96,13 +95,14 @@ public class PreviewPanel extends LivePreviewPanel {
 
     /**
      * Set the given displayable to be shown on the panel.
+     * <p/>
      * @param d the displayable to show.
      * @param index an index that may be used or ignored depending on the
      * displayable.
      */
     @Override
     public void setDisplayable(Displayable d, int index) {
-            super.setDisplayable(d, index);
+        super.setDisplayable(d, index);
         liveButton.setDisable(false);
     }
 
@@ -114,5 +114,4 @@ public class PreviewPanel extends LivePreviewPanel {
         super.clear();
         liveButton.setDisable(true);
     }
-
 }

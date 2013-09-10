@@ -7,6 +7,7 @@ import org.quelea.data.displayable.Displayable;
 import org.quelea.data.displayable.ImageDisplayable;
 import org.quelea.windows.main.DisplayableDrawer;
 import org.quelea.windows.main.QueleaApp;
+import org.quelea.windows.multimedia.VLCWindow;
 
 /**
  * Responsible for drawing an image onto the DisplayCanvas.
@@ -22,6 +23,9 @@ public class ImageDrawer extends DisplayableDrawer {
     @Override
     public void draw(Displayable displayable) {
         clear();
+        if(getCanvas().getPlayVideo()) {
+            VLCWindow.INSTANCE.stop();
+        }
         image = ((ImageDisplayable) displayable).getImage();
         imageView = getCanvas().getNewImageView();
         imageView.setFitWidth(getCanvas().getWidth());
