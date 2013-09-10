@@ -68,9 +68,9 @@ public class VLCWindow {
             public void run() {
                 try {
                     window = new Window(null);
-                    window.setBackground(Color.RED);
+                    window.setBackground(Color.BLACK);
                     canvas = new Canvas();
-                    canvas.setBackground(Color.RED);
+                    canvas.setBackground(Color.BLACK);
                     mediaPlayerFactory = new MediaPlayerFactory("--no-video-title-show");
                     mediaPlayer = mediaPlayerFactory.newEmbeddedMediaPlayer();
                     CanvasVideoSurface videoSurface = mediaPlayerFactory.newVideoSurface(canvas);
