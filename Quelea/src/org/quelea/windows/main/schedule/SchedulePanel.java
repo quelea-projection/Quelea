@@ -159,9 +159,9 @@ public class SchedulePanel extends BorderPane {
             }
         });
 
-        scheduleList.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<Displayable>() {
+        scheduleList.getSelectionModel().selectedIndexProperty().addListener(new ChangeListener<Number>() {
             @Override
-            public void changed(ObservableValue<? extends Displayable> ov, Displayable t, Displayable t1) {
+            public void changed(ObservableValue<? extends Number> ov, Number t, Number t1) {
                 if(scheduleList.getItems().isEmpty()) {
                     removeButton.setDisable(true);
                     upButton.setDisable(true);
