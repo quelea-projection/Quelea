@@ -26,7 +26,6 @@ import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
-import org.quelea.data.displayable.Displayable;
 import org.quelea.data.displayable.MultimediaDisplayable;
 import org.quelea.windows.main.AbstractPanel;
 import org.quelea.windows.main.DisplayCanvas;
