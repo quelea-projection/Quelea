@@ -33,7 +33,6 @@ import org.quelea.data.VideoBackground;
 import org.quelea.data.displayable.Displayable;
 import org.quelea.data.displayable.SongDisplayable;
 import org.quelea.data.displayable.TextDisplayable;
-import org.quelea.data.displayable.TextSection;
 import org.quelea.services.utils.LineTypeChecker;
 import org.quelea.services.utils.LoggerUtils;
 import org.quelea.services.utils.QueleaProperties;
@@ -53,13 +52,11 @@ public class LyricDrawer extends DisplayableDrawer {
     private ThemeDTO theme;
     private TextDisplayable curDisplayable;
     private boolean capitaliseFirst;
-    private boolean playVideo;
 
     public LyricDrawer() {
         text = new String[]{};
         theme = ThemeDTO.DEFAULT_THEME;
         textGroup = new Group();
-
     }
 
     private void drawText() {
@@ -160,7 +157,6 @@ public class LyricDrawer extends DisplayableDrawer {
         if(!paintTransition.getChildren().isEmpty()) {
             paintTransition.play();
         }
-
         textGroup = newTextGroup;
     }
 
@@ -173,6 +169,7 @@ public class LyricDrawer extends DisplayableDrawer {
         if(theme == null || getCanvas().isBlacked()) {
             theme = ThemeDTO.DEFAULT_THEME;
         }
+        boolean sameVid = false;
         if(this.getCanvas().getCurrentDisplayable() instanceof SongDisplayable) {
             final SongDisplayable song = (SongDisplayable) this.getCanvas().getCurrentDisplayable();
             if(song != null) {
@@ -182,7 +179,7 @@ public class LyricDrawer extends DisplayableDrawer {
                     String newLocation = ((VideoBackground) theme.getBackground()).getVideoFile().toURI().toString();
                     String oldLocation = ((VideoBackground) sectionThemeBackground).getVideoFile().toURI().toString();
                     if(newLocation.equals(oldLocation) && getCanvas().getCanvasBackground() == null) {
-                        return;
+                        sameVid = true;
                     }
                 }
             }
@@ -199,7 +196,7 @@ public class LyricDrawer extends DisplayableDrawer {
             Color color = ((ColourBackground) theme.getBackground()).getColour();
             image = Utils.getImageFromColour(color);
         }
-        else if(theme.getBackground() instanceof VideoBackground && playVideo) {
+        else if(theme.getBackground() instanceof VideoBackground && getCanvas().getPlayVideo()) {
             image = null;
         }
         else if(theme.getBackground() instanceof VideoBackground) {
@@ -215,15 +212,17 @@ public class LyricDrawer extends DisplayableDrawer {
 
         Node newBackground;
         if(image == null) {
-            final String location = ((VideoBackground) theme.getBackground()).getVideoFile().getAbsolutePath();
-            VLCWindow.INSTANCE.refreshPosition();
-            VLCWindow.INSTANCE.show();
-            VLCWindow.INSTANCE.setRepeat(true);
-            VLCWindow.INSTANCE.play(location);
+            if(!sameVid || !VLCWindow.INSTANCE.isPlaying()) {
+                final String location = ((VideoBackground) theme.getBackground()).getVideoFile().getAbsolutePath();
+                VLCWindow.INSTANCE.refreshPosition();
+                VLCWindow.INSTANCE.show();
+                VLCWindow.INSTANCE.setRepeat(true);
+                VLCWindow.INSTANCE.play(location);
+            }
             newBackground = null; //transparent
         }
         else {
-            if(playVideo && !(theme.getBackground() instanceof VideoBackground)) {
+            if(getCanvas().getPlayVideo() && !(theme.getBackground() instanceof VideoBackground)) {
                 VLCWindow.INSTANCE.stop();
             }
             final ImageView newImageView = getCanvas().getNewImageView();
@@ -243,7 +242,6 @@ public class LyricDrawer extends DisplayableDrawer {
         });
         getCanvas().setOpacity(1);
         getCanvas().setCanvasBackground(newBackground);
-
         fadeOut.play();
     }
 
@@ -258,10 +256,6 @@ public class LyricDrawer extends DisplayableDrawer {
 
     @Override
     public void requestFocus() {
-    }
-
-    public void setPlayVideo(boolean playVideo) {
-        this.playVideo = playVideo;
     }
 
     /**
@@ -489,18 +483,5 @@ public class LyricDrawer extends DisplayableDrawer {
         }
         setTheme(ThemeDTO.DEFAULT_THEME);
         eraseText();
-    }
-
-    public void updateCanvas(Displayable displayable, SelectLyricsList lyricsList, int selectedIndex) {
-        curDisplayable = (TextDisplayable) displayable;
-        TextSection currentSection = lyricsList.itemsProperty().get().get(selectedIndex);
-        if(currentSection.getTempTheme() != null) {
-            setTheme(currentSection.getTempTheme());
-        }
-        else {
-            setTheme(currentSection.getTheme());
-        }
-        setCapitaliseFirst(currentSection.shouldCapitaliseFirst());
-        setText(curDisplayable, selectedIndex);
     }
 }
