@@ -45,5 +45,6 @@ public class RemoveScheduleItemActionHandler implements EventHandler<ActionEvent
         if(selectedIndex >= 0) {
             scheduleList.getSelectionModel().select(selectedIndex);
         }
+        QueleaApp.get().getMainWindow().getMainPanel().getSchedulePanel().updateScheduleDisplay();
     }
 }

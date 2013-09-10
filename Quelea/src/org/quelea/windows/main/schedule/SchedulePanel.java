@@ -162,17 +162,14 @@ public class SchedulePanel extends BorderPane {
         scheduleList.getSelectionModel().selectedIndexProperty().addListener(new ChangeListener<Number>() {
             @Override
             public void changed(ObservableValue<? extends Number> ov, Number t, Number t1) {
-                if(scheduleList.getItems().isEmpty()) {
-                    removeButton.setDisable(true);
-                    upButton.setDisable(true);
-                    downButton.setDisable(true);
-                }
-                else {
-                    removeButton.setDisable(false);
-                    upButton.setDisable(false);
-                    downButton.setDisable(false);
-                    QueleaApp.get().getMainWindow().getMainPanel().getPreviewPanel().setDisplayable(scheduleList.selectionModelProperty().get().getSelectedItem(), 0);
-                }
+                updateScheduleDisplay();
+            }
+        });
+        scheduleList.itemsProperty().get().addListener(new ListChangeListener<Displayable>() {
+
+            @Override
+            public void onChanged(ListChangeListener.Change<? extends Displayable> change) {
+                updateScheduleDisplay();
             }
         });
 
@@ -192,6 +189,20 @@ public class SchedulePanel extends BorderPane {
         setTop(header);
         setLeft(toolbar);
         setCenter(scheduleList);
+    }
+    
+    public void updateScheduleDisplay() {
+        if(scheduleList.getItems().isEmpty()) {
+            removeButton.setDisable(true);
+            upButton.setDisable(true);
+            downButton.setDisable(true);
+        }
+        else {
+            removeButton.setDisable(false);
+            upButton.setDisable(false);
+            downButton.setDisable(false);
+            QueleaApp.get().getMainWindow().getMainPanel().getPreviewPanel().setDisplayable(scheduleList.selectionModelProperty().get().getSelectedItem(), 0);
+        }
     }
 
     /**
