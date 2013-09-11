@@ -26,6 +26,7 @@ import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
+import org.bouncycastle.asn1.crmf.Controls;
 import org.quelea.data.displayable.MultimediaDisplayable;
 import org.quelea.windows.main.AbstractPanel;
 import org.quelea.windows.main.DisplayCanvas;
@@ -51,7 +52,7 @@ public class MultimediaPanel extends AbstractPanel {
         drawer = new MultimediaDrawer(controlPanel);
         ImageView img = new ImageView(new Image("file:icons/vid preview.png"));
         BorderPane.setMargin(controlPanel, new Insets(30));
-        setTop(controlPanel);
+        setCenter(controlPanel);
         VBox centerBit = new VBox(5);
         centerBit.setAlignment(Pos.CENTER);
         previewText = new Text();
@@ -59,9 +60,12 @@ public class MultimediaPanel extends AbstractPanel {
         previewText.setFill(Color.WHITE);
         BorderPane.setMargin(centerBit, new Insets(10));
         centerBit.getChildren().add(previewText);
+        img.fitHeightProperty().bind(heightProperty().subtract(200));
+        img.fitWidthProperty().bind(widthProperty().subtract(20));
         centerBit.getChildren().add(img);
-        setCenter(centerBit);
+        setBottom(centerBit);
         setMinWidth(50);
+        setMinHeight(50);
         setStyle("-fx-background-color:grey;");
         DisplayCanvas dummyCanvas = new DisplayCanvas(false, false, false, new DisplayCanvas.CanvasUpdater() {
             @Override
@@ -76,11 +80,18 @@ public class MultimediaPanel extends AbstractPanel {
     public void updateCanvas() {
         MultimediaDisplayable displayable = (MultimediaDisplayable) getCurrentDisplayable();
         previewText.setText(displayable.getFile().getName());
+        boolean playVideo = false;
         for(DisplayCanvas canvas : getCanvases()) {
             drawer.setCanvas(canvas);
+            if(canvas.getPlayVideo()) {
+                playVideo = true;
+            }
             drawer.setPlayVideo(canvas.getPlayVideo());
             canvas.setCurrentDisplayable(displayable);
             drawer.draw(displayable);
+        }
+        if(playVideo) {
+            controlPanel.setDisableControls(!playVideo);
         }
     }
 
