@@ -1,22 +1,21 @@
 quelea (0.6) stable; urgency=normal
  
   * Rewritten interface in JavaFX
-  * Added text import
   * Rewritten video support without VLC
   * Added video background support
   * Changed to more efficient database format
-  * Added music support
   * Added more / better sample images
   * Added sample videos
   * Plain text import
   * Added Czech, German Swedish and US English translations
-  * Fix interface to display UTF-8 translations properly
-  * Theme selector window now behaves as a proper popup window
+  * Fix interface to display UTF-8 characters properly
+  * Rewriten bible search dialog
+  * Theme selector rewritten / bugs fixed
   * Add option within interface to change language
   * Window position now saved between runs
   * Easyslides import
-  * Fix Kingsway import
-  * Bundle JRE
+  * Kingsway import fixed
+  * Bundled JRE
   * Many bugfixes
 
- -- Michael Berry <michael@quelea.org>  Wednesday, 03 Jul 2013 00:00:00 +0000
+ -- Michael Berry <michael@quelea.org>  Wednesday, 11 Sept 2013 00:00:00 +0000
