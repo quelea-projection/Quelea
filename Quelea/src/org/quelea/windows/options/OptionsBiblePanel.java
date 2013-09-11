@@ -132,7 +132,9 @@ public class OptionsBiblePanel extends GridPane implements PropertyPanel, BibleC
     public void setProperties() {
         QueleaProperties props = QueleaProperties.get();
         Bible bible = getDefaultBibleBox().getSelectionModel().getSelectedItem();
-        props.setDefaultBible(bible);
+        if(bible != null) {
+            props.setDefaultBible(bible);
+        }
     }
 
     /**
