@@ -24,7 +24,6 @@ import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
@@ -33,8 +32,8 @@ import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableColumn.CellDataFeatures;
 import javafx.scene.control.TableView;
-import javafx.scene.control.ToolBar;
 import javafx.scene.control.Tooltip;
+import javafx.scene.control.cell.CheckBoxTableCell;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.Priority;
@@ -45,7 +44,6 @@ import javafx.stage.StageStyle;
 import javafx.util.Callback;
 import org.quelea.data.displayable.SongDisplayable;
 import org.quelea.services.languages.LabelGrabber;
-import org.quelea.windows.main.widgets.BooleanCell;
 
 /**
  * A dialog where given songs can be selected.
@@ -55,13 +53,12 @@ import org.quelea.windows.main.widgets.BooleanCell;
 public class SelectSongsDialog extends Stage {
 
     private final Button addButton;
-    private final TableView<SongDisplayable> table;
-    private List<SongDisplayable> songs;
-    private boolean[] checkList;
+    private final TableView<SongWrapper> table;
+    private List<SongWrapper> songs;
     private final String checkboxText;
-    private TableColumn<SongDisplayable, String> nameColumn;
-    private TableColumn<SongDisplayable, String> authorColumn;
-    private TableColumn<SongDisplayable, Boolean> checkedColumn;
+    private TableColumn<SongWrapper, String> nameColumn;
+    private TableColumn<SongWrapper, String> authorColumn;
+    private TableColumn<SongWrapper, Boolean> checkedColumn;
 
     /**
      * Create a new imported songs dialog.
@@ -90,12 +87,8 @@ public class SelectSongsDialog extends Stage {
         mainPanel.getChildren().add(table);
         addButton = new Button(acceptText, new ImageView(new Image("file:icons/tick.png")));
         mainPanel.getChildren().add(addButton);
-        
+
         setScene(new Scene(mainPanel));
-    }
-    
-    public TableColumn<SongDisplayable, Boolean> getCheckedColumn() {
-        return checkedColumn;
     }
 
     /**
@@ -109,25 +102,26 @@ public class SelectSongsDialog extends Stage {
         checkButton.setOnAction(new EventHandler<javafx.event.ActionEvent>() {
             @Override
             public void handle(javafx.event.ActionEvent t) {
-                if(getSongs().isEmpty()) {
+                if(songs.isEmpty()) {
                     return;
                 }
-                final boolean checked = checkedColumn.getCellData(0);
-                for(int i = 0; i < getSongs().size(); i++) {
-                    checkedColumn.setCellValueFactory(new Callback<CellDataFeatures<SongDisplayable, Boolean>, ObservableValue<Boolean>>() {
-                        @Override
-                        public ObservableValue<Boolean> call(CellDataFeatures<SongDisplayable, Boolean> p) {
-                            return new SimpleBooleanProperty(!checked);
-                        }
-                    });
+                boolean val = songs.get(0).selected.get();
+                for(SongWrapper wrapper : songs) {
+                    wrapper.selected.set(!val);
                 }
-                ObservableList<SongDisplayable> tmp = table.getItems();
-                table.setItems(null);
-                table.layout(); 
-                table.setItems(tmp);
             }
         });
         return checkButton;
+    }
+
+    private static class SongWrapper {
+
+        private SimpleBooleanProperty selected = new SimpleBooleanProperty(false);
+        private SongDisplayable song;
+
+        public SongWrapper(SongDisplayable song) {
+            this.song = song;
+        }
     }
 
     /**
@@ -139,11 +133,9 @@ public class SelectSongsDialog extends Stage {
      * @param defaultVal the default value to use for the checkbox if checkList
      * is null or smaller than the songs list.
      */
-    public void setSongs(final List<SongDisplayable> songs, final boolean[] checkLis, final boolean defaultVal) {
+    public void setSongs(final List<SongDisplayable> songs, final boolean[] checkList, final boolean defaultVal) {
         Collections.sort(songs);
-        this.songs = songs;
-        this.checkList = checkLis;
-
+        this.songs = toWrapper(songs);
         table.getColumns().clear();
         nameColumn = new TableColumn<>(LabelGrabber.INSTANCE.getLabel("name.label"));
         table.getColumns().add(nameColumn);
@@ -152,72 +144,54 @@ public class SelectSongsDialog extends Stage {
         checkedColumn = new TableColumn<>(checkboxText);
         table.getColumns().add(checkedColumn);
 
-        nameColumn.setCellValueFactory(new Callback<CellDataFeatures<SongDisplayable, String>, ObservableValue<String>>() {
+        nameColumn.setCellValueFactory(new Callback<CellDataFeatures<SongWrapper, String>, ObservableValue<String>>() {
             @Override
-            public ObservableValue<String> call(CellDataFeatures<SongDisplayable, String> p) {
-                return new SimpleStringProperty(p.getValue().getTitle());
+            public ObservableValue<String> call(CellDataFeatures<SongWrapper, String> p) {
+                return new SimpleStringProperty(p.getValue().song.getTitle());
             }
         });
 
-        authorColumn.setCellValueFactory(new Callback<CellDataFeatures<SongDisplayable, String>, ObservableValue<String>>() {
+        authorColumn.setCellValueFactory(new Callback<CellDataFeatures<SongWrapper, String>, ObservableValue<String>>() {
             @Override
-            public ObservableValue<String> call(CellDataFeatures<SongDisplayable, String> p) {
-                return new SimpleStringProperty(p.getValue().getAuthor());
+            public ObservableValue<String> call(CellDataFeatures<SongWrapper, String> p) {
+                return new SimpleStringProperty(p.getValue().song.getAuthor());
             }
         });
 
-        Callback<TableColumn<SongDisplayable, Boolean>, TableCell<SongDisplayable, Boolean>> booleanCellFactory =
-                new Callback<TableColumn<SongDisplayable, Boolean>, TableCell<SongDisplayable, Boolean>>() {
-                    @Override
-                    public TableCell<SongDisplayable, Boolean> call(TableColumn<SongDisplayable, Boolean> p) {
-                        return new BooleanCell<SongDisplayable>();
-                    }
-                };
-        checkedColumn.setCellFactory(booleanCellFactory);
-        checkedColumn.setCellValueFactory(new Callback<CellDataFeatures<SongDisplayable, Boolean>, ObservableValue<Boolean>>() {
+        checkedColumn.setCellValueFactory(new Callback<CellDataFeatures<SongWrapper, Boolean>, ObservableValue<Boolean>>() {
             @Override
-            public ObservableValue<Boolean> call(CellDataFeatures<SongDisplayable, Boolean> p) {
-                int position = songs.indexOf(p.getValue());
-                boolean bool;
-                if(checkList != null && position < checkList.length) {
-                    bool = !checkList[position]; //invert
-                }
-                else {
-                    bool = defaultVal;
-                }
-                return new SimpleBooleanProperty(bool);
+            public ObservableValue<Boolean> call(CellDataFeatures<SongWrapper, Boolean> p) {
+                return p.getValue().selected;
             }
         });
 
-        table.setItems(FXCollections.observableArrayList(songs));
+        checkedColumn.setCellFactory(new Callback<TableColumn<SongWrapper, Boolean>, TableCell<SongWrapper, Boolean>>() {
+            @Override
+            public TableCell<SongWrapper, Boolean> call(TableColumn<SongWrapper, Boolean> p) {
+                CheckBoxTableCell<SongWrapper, Boolean> cell = new CheckBoxTableCell<>();
+                cell.setEditable(true);
+                return cell;
+            }
+        });
+        checkedColumn.setEditable(true);
+        table.setEditable(true);
+
+        table.setItems(FXCollections.observableArrayList(this.songs));
     }
 
     /**
-     * Get the check list. This list corresponds with the list of songs to
-     * determine whether the checkbox by each song should be checked or not.
+     * Get the list of selected songs.
      * <p/>
-     * @return the check list.
+     * @return the list of selected songs.
      */
-    public boolean[] getCheckList() {
-        return checkList;
-    }
-
-    /**
-     * Get the song list.
-     * <p/>
-     * @return the list of songs.
-     */
-    public List<SongDisplayable> getSongs() {
-        return songs;
-    }
-
-    /**
-     * Get the table in this dialog.
-     * <p/>
-     * @return the table.
-     */
-    public TableView<SongDisplayable> getTable() {
-        return table;
+    public List<SongDisplayable> getSelectedSongs() {
+        List<SongDisplayable> ret = new ArrayList<>();
+        for(SongWrapper wrapper : songs) {
+            if(wrapper.selected.get()) {
+                ret.add(wrapper.song);
+            }
+        }
+        return ret;
     }
 
     /**
@@ -227,5 +201,21 @@ public class SelectSongsDialog extends Stage {
      */
     public Button getAddButton() {
         return addButton;
+    }
+
+    private List<SongWrapper> toWrapper(List<SongDisplayable> songs) {
+        List<SongWrapper> ret = new ArrayList<>();
+        for(SongDisplayable song : songs) {
+            ret.add(new SongWrapper(song));
+        }
+        return ret;
+    }
+
+    private List<SongDisplayable> fromWrapper(List<SongWrapper> wrapperList) {
+        List<SongDisplayable> ret = new ArrayList<>();
+        for(SongWrapper wrap : wrapperList) {
+            ret.add(wrap.song);
+        }
+        return ret;
     }
 }
