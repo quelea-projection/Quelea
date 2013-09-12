@@ -66,12 +66,7 @@ public class SelectImportedSongsDialog extends SelectSongsDialog {
                             }
                         });
                         List<SongDisplayable> songDisplayables = new ArrayList<>();
-                        for(int i = 0; i < getSongs().size(); i++) {
-                            SongDisplayable song = getSongs().get(i);
-                            if(getCheckedColumn().getCellData(i)) {
-                                songDisplayables.add(song);
-                            }
-                        }
+                        songDisplayables.addAll(getSelectedSongs());
                         SongManager.get().addSong(songDisplayables, false);
                         SongManager.get().fireUpdate();
                         if(statusPanel != null) {

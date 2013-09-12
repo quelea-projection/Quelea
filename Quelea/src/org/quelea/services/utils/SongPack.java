@@ -22,6 +22,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Enumeration;
 import java.util.List;
 import java.util.logging.Level;
@@ -57,7 +58,11 @@ public class SongPack {
     public void addSong(SongDisplayable song) {
         songs.add(song);
     }
-
+    
+    public void addSongs(Collection<SongDisplayable> songsToAdd) {
+        songs.addAll(songsToAdd);
+    }
+    
     /**
      * Create a new song pack from a file.
      *
