@@ -93,9 +93,11 @@ public class VLCWindow {
         runOnVLCThread(new Runnable() {
             @Override
             public void run() {
+//                System.out.println("setRepeat() start");
                 if(init) {
                     mediaPlayer.setRepeat(repeat);
                 }
+//                System.out.println("setRepeat() end");
             }
         });
     }
@@ -104,10 +106,12 @@ public class VLCWindow {
         runOnVLCThread(new Runnable() {
             @Override
             public void run() {
+//                System.out.println("load() start");
                 if(init) {
                     paused = false;
                     mediaPlayer.prepareMedia(path);
                 }
+//                System.out.println("load() end");
             }
         });
     }
@@ -116,10 +120,12 @@ public class VLCWindow {
         runOnVLCThread(new Runnable() {
             @Override
             public void run() {
+//                System.out.println("play() start");
                 if(init) {
                     paused = false;
                     mediaPlayer.play();
                 }
+//                System.out.println("play() end");
             }
         });
     }
@@ -128,10 +134,12 @@ public class VLCWindow {
         runOnVLCThread(new Runnable() {
             @Override
             public void run() {
+//                System.out.println("play(arg) start");
                 if(init) {
                     paused = false;
                     mediaPlayer.playMedia(vid);
                 }
+//                System.out.println("play(arg) end");
             }
         });
     }
@@ -140,10 +148,12 @@ public class VLCWindow {
         runOnVLCThread(new Runnable() {
             @Override
             public void run() {
+//                System.out.println("pause() start");
                 if(init) {
                     paused = true;
                     mediaPlayer.pause();
                 }
+//                System.out.println("pause() end");
             }
         });
     }
@@ -152,11 +162,13 @@ public class VLCWindow {
         runOnVLCThread(new Runnable() {
             @Override
             public void run() {
+//                System.out.println("stop() start");
                 if(init) {
                     paused = false;
                     mediaPlayer.stop();
                     window.toBack();
                 }
+//                System.out.println("stop() end");
             }
         });
     }
@@ -166,12 +178,14 @@ public class VLCWindow {
         runOnVLCThreadAndWait(new Runnable() {
             @Override
             public void run() {
+//                System.out.println("isMute() start");
                 if(init) {
                     muteTemp = mediaPlayer.isMute();
                 }
                 else {
                     muteTemp = false;
                 }
+//                System.out.println("isMute() end");
             }
         });
         return muteTemp;
@@ -181,9 +195,11 @@ public class VLCWindow {
         runOnVLCThread(new Runnable() {
             @Override
             public void run() {
+//                System.out.println("setMute() start");
                 if(init) {
                     mediaPlayer.mute(mute);
                 }
+//                System.out.println("setMute() end");
             }
         });
     }
@@ -193,12 +209,14 @@ public class VLCWindow {
         runOnVLCThreadAndWait(new Runnable() {
             @Override
             public void run() {
+//                System.out.println("getProgressPercent() start");
                 if(init) {
                     progressTemp = (double) mediaPlayer.getTime() / mediaPlayer.getLength();
                 }
                 else {
                     progressTemp = 0;
                 }
+//                System.out.println("getProgressPercent() end");
             }
         });
         return progressTemp;
@@ -208,9 +226,11 @@ public class VLCWindow {
         runOnVLCThread(new Runnable() {
             @Override
             public void run() {
+//                System.out.println("setProgressPercent() start");
                 if(init) {
                     mediaPlayer.setPosition((float) percent);
                 }
+//                System.out.println("setProgressPercent() end");
             }
         });
     }
@@ -220,12 +240,14 @@ public class VLCWindow {
         runOnVLCThreadAndWait(new Runnable() {
             @Override
             public void run() {
+//                System.out.println("isPlaying() start");
                 if(init) {
                     isPlayingTemp = mediaPlayer.isPlaying();
                 }
                 else {
                     isPlayingTemp = false;
                 }
+//                System.out.println("isPlaying() end");
             }
         });
         return isPlayingTemp;
@@ -236,12 +258,14 @@ public class VLCWindow {
         runOnVLCThreadAndWait(new Runnable() {
             @Override
             public void run() {
+//                System.out.println("isPaused() start");
                 if(init) {
                     isPausedTemp = paused;
                 }
                 else {
                     isPausedTemp = false;
                 }
+//                System.out.println("isPaused() end");
             }
         });
         return isPausedTemp;
@@ -251,6 +275,7 @@ public class VLCWindow {
         runOnVLCThread(new Runnable() {
             @Override
             public void run() {
+//                System.out.println("setOnFinished() start");
                 if(init) {
                     paused = false;
                     mediaPlayer.addMediaPlayerEventListener(new MediaPlayerEventAdapter() {
@@ -260,6 +285,7 @@ public class VLCWindow {
                         }
                     });
                 }
+//                System.out.println("setOnFinished() end");
             }
         });
     }
@@ -268,10 +294,12 @@ public class VLCWindow {
         runOnVLCThread(new Runnable() {
             @Override
             public void run() {
+//                System.out.println("show() start");
                 if(init) {
                     show = true;
                     updateState();
                 }
+//                System.out.println("show() end");
             }
         });
     }
@@ -280,10 +308,12 @@ public class VLCWindow {
         runOnVLCThread(new Runnable() {
             @Override
             public void run() {
+//                System.out.println("hide() start");
                 if(init) {
                     show = false;
                     updateState();
                 }
+//                System.out.println("hide() end");
             }
         });
     }
@@ -292,10 +322,12 @@ public class VLCWindow {
         runOnVLCThread(new Runnable() {
             @Override
             public void run() {
+//                System.out.println("setHideButton() start");
                 if(init) {
                     hideButton = hide;
                     updateState();
                 }
+//                System.out.println("setHideButton() end");
             }
         });
     }
@@ -304,10 +336,12 @@ public class VLCWindow {
         runOnVLCThread(new Runnable() {
             @Override
             public void run() {
+//                System.out.println("updateState() start");
                 if(init) {
                     window.setOpacity((hideButton || !show) ? 0 : 1);
                     window.toBack();
                 }
+//                System.out.println("updateState() end");
             }
         });
     }
@@ -316,9 +350,11 @@ public class VLCWindow {
         runOnVLCThread(new Runnable() {
             @Override
             public void run() {
+//                System.out.println("setLocation() start");
                 if(init) {
                     window.setLocation(x, y);
                 }
+//                System.out.println("setLocation() end");
             }
         });
     }
@@ -327,9 +363,11 @@ public class VLCWindow {
         runOnVLCThread(new Runnable() {
             @Override
             public void run() {
+//                System.out.println("setsize() start");
                 if(init) {
                     window.setSize(width, height);
                 }
+//                System.out.println("setsize() end");
             }
         });
     }
@@ -337,22 +375,23 @@ public class VLCWindow {
     private boolean showing;
 
     public void refreshPosition() {
+        Utils.fxRunAndWait(new Runnable() {
+            @Override
+            public void run() {
+                showing = QueleaApp.get().getProjectionWindow().isShowing();
+                if(showing) {
+                    tempX = (int) QueleaApp.get().getProjectionWindow().getX();
+                    tempY = (int) QueleaApp.get().getProjectionWindow().getY();
+                    tempWidth = (int) QueleaApp.get().getProjectionWindow().getWidth();
+                    tempHeight = (int) QueleaApp.get().getProjectionWindow().getHeight();
+                }
+            }
+        });
         runOnVLCThread(new Runnable() {
             @Override
             public void run() {
+//                System.out.println("refreshPosition() start");
                 if(init) {
-                    Utils.fxRunAndWait(new Runnable() {
-                        @Override
-                        public void run() {
-                            showing = QueleaApp.get().getProjectionWindow().isShowing();
-                            if(showing) {
-                                tempX = (int) QueleaApp.get().getProjectionWindow().getX();
-                                tempY = (int) QueleaApp.get().getProjectionWindow().getY();
-                                tempWidth = (int) QueleaApp.get().getProjectionWindow().getWidth();
-                                tempHeight = (int) QueleaApp.get().getProjectionWindow().getHeight();
-                            }
-                        }
-                    });
                     if(showing) {
                         show();
                         setLocation(tempX, tempY);
@@ -362,6 +401,7 @@ public class VLCWindow {
                         hide();
                     }
                 }
+//                System.out.println("refreshPosition() end");
             }
         });
     }
@@ -388,7 +428,7 @@ public class VLCWindow {
             VLC_EXECUTOR.submit(r).get();
         }
         catch(InterruptedException | ExecutionException ex) {
-            Logger.getLogger(VLCWindow.class.getName()).log(Level.SEVERE, null, ex);
+            LOGGER.log(Level.WARNING, "Interrupted or execution error", ex);
         }
     }
 }
