@@ -45,24 +45,24 @@ public class SelectExportedSongsDialog extends SelectSongsDialog {
      */
     public SelectExportedSongsDialog() {
         super(new String[]{
-                    LabelGrabber.INSTANCE.getLabel("select.export.songs.line1"),
-                    LabelGrabber.INSTANCE.getLabel("select.export.songs.line2")
-                }, LabelGrabber.INSTANCE.getLabel("add.text"), LabelGrabber.INSTANCE.getLabel("add.to.songpack.question"));
+            LabelGrabber.INSTANCE.getLabel("select.export.songs.line1"),
+            LabelGrabber.INSTANCE.getLabel("select.export.songs.line2")
+        }, LabelGrabber.INSTANCE.getLabel("add.text"), LabelGrabber.INSTANCE.getLabel("add.to.songpack.question"));
 
         setSongs(Arrays.asList(SongManager.get().getSongs()), null, false);
-        
-        
+
+
         getAddButton().setOnAction(new EventHandler<javafx.event.ActionEvent>() {
             @Override
             public void handle(javafx.event.ActionEvent t) {
                 final String extension = QueleaProperties.get().getSongPackExtension();
                 FileChooser chooser = getChooser();
                 File file = chooser.showSaveDialog(SelectExportedSongsDialog.this);
-                if (file != null) {
-                    if (!file.getName().endsWith("." + extension)) {
+                if(file != null) {
+                    if(!file.getName().endsWith("." + extension)) {
                         file = new File(file.getAbsoluteFile() + "." + extension);
                     }
-                    if (file.exists()) {
+                    if(file.exists()) {
                         final File theFile = file;
                         Dialog.buildConfirmation(LabelGrabber.INSTANCE.getLabel("overwrite.text"), file.getName() + " " + LabelGrabber.INSTANCE.getLabel("already.exists.overwrite.label")).addYesButton(new EventHandler<ActionEvent>() {
                             @Override
@@ -103,23 +103,14 @@ public class SelectExportedSongsDialog extends SelectSongsDialog {
     private void writeSongPack(final File file) {
         final SongPack pack = new SongPack();
         getAddButton().setDisable(true);
-        new Thread() {
+        pack.addSongs(getSelectedSongs());
+        pack.writeToFile(file);
+        Platform.runLater(new Runnable() {
             @Override
             public void run() {
-                for (int i = 0; i < getSongs().size(); i++) {
-                    if (getCheckedColumn().getCellData(i)) {
-                        pack.addSong(getSongs().get(i));
-                    }
-                }
-                pack.writeToFile(file);
-                Platform.runLater(new Runnable() {
-                    @Override
-                    public void run() {
-                        hide();
-                        getAddButton().setDisable(false);
-                    }
-                });
+                hide();
+                getAddButton().setDisable(false);
             }
-        }.start();
+        });
     }
 }
