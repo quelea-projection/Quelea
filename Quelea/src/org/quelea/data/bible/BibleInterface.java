@@ -25,12 +25,32 @@ package org.quelea.data.bible;
 
 public interface BibleInterface {
     
+    /**
+     * Returns the number associated - book/chapter/verse only
+     * <p/>
+     * @return book/chapter/verse number
+     */
     int getNum();
     
+    /**
+     * Returns Name of the bible section. Bible title, book name, chapter first verse.
+     * <p/>
+     * @return Name of the bible/book/chapter
+     */
     String getName();
     
+    /**
+     * Returns the text associated with the bible section
+     * <p/>
+     * @return Text of the whole bible section
+     */
     String getText();
     
+    /**
+     * Returns the bible section containing this item
+     * <p/>
+     * @return bible/book/chapter
+     */
     BibleInterface getParent();
     
 }

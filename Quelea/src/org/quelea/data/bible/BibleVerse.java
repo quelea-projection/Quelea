@@ -92,7 +92,7 @@ public final class BibleVerse implements BibleInterface  {
      */
     @Override
     public String toString() {
-        return verse;
+        return num + " " + verse;
     }
 
     /**

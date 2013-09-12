@@ -21,6 +21,7 @@ import java.util.Collection;
 import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.scene.control.ComboBox;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.control.SelectionMode;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
@@ -41,16 +42,24 @@ public class BibleSearchTreeView extends TreeView<BibleInterface> {
 
     private TreeItem<BibleInterface> root;
     private FlowPane textPane;
+    private ScrollPane sp;
     private ComboBox bibles;
     private boolean all = true;
 
-    public BibleSearchTreeView(FlowPane chapterPane, ComboBox bibles) {
+    /**
+     * Constructs a TreeView object with a blank root BibleInterface item.
+     * <p/>
+     * @param chapterPane the scroll pane that will display the verse selected
+     * @param bibles the combobox of bibles to filter with.
+     */
+    public BibleSearchTreeView(ScrollPane chapterPane, ComboBox bibles) {
         this.bibles = bibles;
         setRoot(new TreeItem<BibleInterface>());
         root = getRoot();
         root.setExpanded(true);
         this.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
-        textPane = chapterPane;
+        sp = chapterPane;
+        textPane = (FlowPane) sp.getContent();
         this.setOnKeyTyped(new EventHandler<KeyEvent>() {
             @Override
             public void handle(KeyEvent t) {
@@ -79,15 +88,14 @@ public class BibleSearchTreeView extends TreeView<BibleInterface> {
 
                 int x = selected.getNum() - 1;
                 for (int i = 0; i < verses.length; i++) {
+                    Text text = new Text(verses[i].toString() + " ");
                     if (i == x) {
-                        Text text = new Text(verses[i].getNum() + " " + verses[i] + " ");
                         text.setFont(Font.font("Sans", FontWeight.BOLD, 14));
-                        textPane.getChildren().add(text);
                     } else {
-                        Text text = new Text(verses[i].getNum() + " " + verses[i] + " ");
                         text.setFont(Font.font("Sans", 14));
-                        textPane.getChildren().add(text);
                     }
+                    textPane.getChildren().add(text);
+                    text.wrappingWidthProperty().bind(sp.widthProperty().subtract(20)); //-20 to account for scroll bar width
                 }
             } else {
                 ti.setExpanded(!ti.isExpanded());
@@ -97,12 +105,22 @@ public class BibleSearchTreeView extends TreeView<BibleInterface> {
         }
     }
 
+    /**
+     * Resets the root and expands it.
+     * <p/>
+     */
     public void reset() {
         this.setShowRoot(false);
         resetRoot();
         root.setExpanded(true);
     }
 
+    /**
+     * Adds the filtered results into the treeview. Sorts them from the verse's
+     * parents
+     * <p/>
+     * @param verse The bible verse to add into the tree.
+     */
     public void add(BibleVerse verse) {
         BibleChapter chapter = (BibleChapter) verse.getParent();
         BibleBook book = (BibleBook) chapter.getParent();
@@ -128,6 +146,9 @@ public class BibleSearchTreeView extends TreeView<BibleInterface> {
         cchapter.getChildren().add(cverse);
     }
 
+    /**
+     * Checks if the bible section is already listed in the current tree
+     */
     private TreeItem<BibleInterface> existsOrCreateInt(Collection<TreeItem<BibleInterface>> coll, BibleInterface toFind) {
         for (TreeItem<BibleInterface> i : coll) {
             if (i.getValue().getName().equals(toFind.getName())) {
@@ -139,6 +160,10 @@ public class BibleSearchTreeView extends TreeView<BibleInterface> {
         return temp;
     }
 
+    /**
+     * Resets the root based on the current selected index of the combobox. If
+     * all, a blank root is created, if a bible is selected it becomes the root
+     */
     public void resetRoot() {
         if (bibles.getSelectionModel().getSelectedIndex() != 0) {
             String bib = (String) bibles.getSelectionModel().getSelectedItem();

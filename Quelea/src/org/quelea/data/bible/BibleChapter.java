@@ -122,8 +122,8 @@ public final class BibleChapter implements BibleInterface {
     }
     
     /**
-     * Return the first verse as a string in this chapter.
-     * @return the first verse as a string.
+     * Return the chapter number as a string in this chapter.
+     * @return the chapter number as a string.
      */
     @Override
     public String toString() {
@@ -172,7 +172,7 @@ public final class BibleChapter implements BibleInterface {
         if(softRefText == null || softRefText.get() == null) {
             StringBuilder ret = new StringBuilder();
             for(BibleVerse verse : getVerses()) {
-                ret.append(verse.getText()).append(' ');
+                ret.append(verse.toString()).append(' ');
             }
             String hardText = ret.toString();
             this.softRefText = new SoftReference<>(hardText);

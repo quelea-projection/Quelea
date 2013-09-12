@@ -27,6 +27,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.ScrollPane;
+import javafx.scene.control.SplitPane;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -34,7 +35,6 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
-import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
@@ -54,7 +54,7 @@ public class BibleSearchDialog extends Stage implements BibleChangeListener {
     //private ListView<BibleChapter> searchResults;
     private BibleSearchTreeView searchResults;
     private ComboBox<String> bibles;
-    private BibleSearchPopupMenu popupMenu;
+    private ScrollPane scrollPane;
     private LoadingPane overlay;
     private FlowPane chapterPane;
     private final Button addToSchedule;
@@ -68,45 +68,44 @@ public class BibleSearchDialog extends Stage implements BibleChangeListener {
         BorderPane mainPane = new BorderPane();
         setTitle(LabelGrabber.INSTANCE.getLabel("bible.search.title"));
         getIcons().add(new Image("file:icons/search.png"));
+
         overlay = new LoadingPane();
         searchField = new TextField();
         bibles = new ComboBox<>();
         bibles.setEditable(false);
+        chapterPane = new FlowPane();
+        scrollPane = new ScrollPane();
+        scrollPane.setContent(chapterPane);
+        searchResults = new BibleSearchTreeView(scrollPane, bibles);
+        resultsField = new Text(" " + LabelGrabber.INSTANCE.getLabel("bible.search.keep.typing"));
+        resultsField.setFont(Font.font("Sans", 14));
+        addToSchedule = new Button(LabelGrabber.INSTANCE.getLabel("add.to.schedule.text"), new ImageView(new Image("file:icons/tick.png")));
+
         BibleManager.get().registerBibleChangeListener(this);
         updateBibles();
-        chapterPane = new FlowPane();
-        searchResults = new BibleSearchTreeView(chapterPane, bibles);
-        addToSchedule = new Button(LabelGrabber.INSTANCE.getLabel("add.to.schedule.text"), new ImageView(new Image("file:icons/tick.png")));
-        addToSchedule.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent t) {
-                BibleChapter chap = (BibleChapter) searchResults.getSelectionModel().getSelectedItem().getValue().getParent();
-                Bible bib = (Bible) chap.getParent().getParent();
-                BiblePassage passage = new BiblePassage(bib.getBibleName(), chap.getBook() + " " + chap.toString(), chap.getVerses());
-                QueleaApp.get().getMainWindow().getMainPanel().getSchedulePanel().getScheduleList().add(passage);
-            }
-        });
-        resultsField = new Text(LabelGrabber.INSTANCE.getLabel("bible.search.keep.typing"));
-        resultsField.setFont(Font.font("Sans", 12));
-        resultsField.autosize();
+
+        //top panel
         HBox northPanel = new HBox();
-        northPanel.getChildren().add(bibles);
-        northPanel.getChildren().add(searchField);
-        northPanel.getChildren().add(addToSchedule);
-        northPanel.getChildren().add(resultsField);
+        northPanel.setPadding(new Insets(5, 5, 5, 5));
+        northPanel.getChildren().addAll(bibles, searchField, addToSchedule, resultsField);
         mainPane.setTop(northPanel);
-        popupMenu = new BibleSearchPopupMenu();
-        ScrollPane scrollPane = new ScrollPane();
-        scrollPane.setContent(chapterPane);
-        scrollPane.setMinWidth(600);
-        VBox centrePanel = new VBox();
+
+        //center panel
         StackPane searchPane = new StackPane();
-        searchPane.getChildren().add(searchResults);
-        searchPane.getChildren().add(overlay);
-        centrePanel.getChildren().add(searchPane);
-        mainPane.setCenter(scrollPane);
-        centrePanel.setMinWidth(200);
-        mainPane.setLeft(centrePanel);
+        searchPane.getChildren().addAll(searchResults, overlay);
+
+        SplitPane centerPanel = new SplitPane();
+        centerPanel.setDividerPosition(0, 0.3);
+        centerPanel.getItems().addAll(searchPane, scrollPane);
+        mainPane.setCenter(centerPanel);
+
+        //Sizing
+        this.setHeight(600);
+        this.setWidth(800);
+        this.setMinHeight(300);
+        this.setMinWidth(500);
+
+        // Event handlers
         bibles.setOnAction(new EventHandler<javafx.event.ActionEvent>() {
             @Override
             public void handle(javafx.event.ActionEvent t) {
@@ -120,8 +119,19 @@ public class BibleSearchDialog extends Stage implements BibleChangeListener {
                 update();
             }
         });
-        reset();
+        addToSchedule.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent t) {
+                if (searchResults.getSelectionModel().getSelectedItem().getValue() instanceof BibleVerse) {
+                    BibleChapter chap = (BibleChapter) searchResults.getSelectionModel().getSelectedItem().getValue().getParent();
+                    Bible bib = (Bible) chap.getParent().getParent();
+                    BiblePassage passage = new BiblePassage(bib.getBibleName(), chap.getBook() + " " + chap.toString(), chap.getVerses());
+                    QueleaApp.get().getMainWindow().getMainPanel().getSchedulePanel().getScheduleList().add(passage);
+                }
+            }
+        });
 
+        reset();
         setScene(new Scene(mainPane));
     }
 
@@ -178,7 +188,7 @@ public class BibleSearchDialog extends Stage implements BibleChangeListener {
                                     }
                                 }
                                 overlay.hide();
-                                resultsField.setText("" + count + " " + LabelGrabber.INSTANCE.getLabel("bible.search.results.found"));
+                                resultsField.setText(" " + count + " " + LabelGrabber.INSTANCE.getLabel("bible.search.results.found"));
                             }
                         });
                     }
@@ -186,7 +196,7 @@ public class BibleSearchDialog extends Stage implements BibleChangeListener {
             }
         }
         searchResults.reset();
-        resultsField.setText(LabelGrabber.INSTANCE.getLabel("bible.search.keep.typing"));
+        resultsField.setText(" " + LabelGrabber.INSTANCE.getLabel("bible.search.keep.typing"));
         chapterPane.getChildren().clear();
     }
 

@@ -49,7 +49,10 @@ public class BibleSearchPopupMenu extends ContextMenu {
         getItems().add(viewVerseItem);
     }
 
-    public void trigger() {
+    /**
+     * Event trigger
+     */
+    private void trigger() {
         if (currentChapter != null) {
             BibleBrowseDialog dialog = QueleaApp.get().getMainWindow().getBibleBrowseDialog();
             dialog.setChapter(currentChapter);

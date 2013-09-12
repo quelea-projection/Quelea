@@ -121,11 +121,19 @@ public final class BibleManager {
         return index;
     }
     
+    /**
+     * Reload bibles and trigger listeners.
+     * <p/>
+     */
     public void refresh() {
         loadBibles(false);
         updateListeners();
     }
     
+    /**
+     * Reload bibles, update search index and trigger listeners
+     * <p/>
+     */
     public void refreshAndLoad() {
         loadBibles(true);
         updateListeners();
@@ -133,6 +141,8 @@ public final class BibleManager {
 
     /**
      * Reload all the bibles from the bibles directory into this bible manager.
+     * <p/>
+     * @param updateIndex update the search index with new bible structure
      */
     public void loadBibles(boolean updateIndex) {
         if(updateIndex) {
