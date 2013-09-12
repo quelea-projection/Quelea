@@ -17,7 +17,6 @@
  */
 package org.quelea.data.bible;
 
-
 import java.util.Collection;
 import javafx.event.Event;
 import javafx.event.EventHandler;
@@ -55,7 +54,7 @@ public class BibleSearchTreeView extends TreeView<BibleInterface> {
         this.setOnKeyTyped(new EventHandler<KeyEvent>() {
             @Override
             public void handle(KeyEvent t) {
-                if(t.getCode() == KeyCode.RIGHT) {
+                if (t.getCode() == KeyCode.RIGHT) {
                     trigger(t);
                 }
             }
@@ -67,39 +66,35 @@ public class BibleSearchTreeView extends TreeView<BibleInterface> {
             }
         });
     }
-    
+
     private void trigger(Event t) {
         BibleSearchTreeView tv = (BibleSearchTreeView) t.getSource();
-                TreeItem<BibleInterface> ti = tv.getSelectionModel().getSelectedItem();
-                if (ti != null) {
-                    if (ti.getValue() instanceof BibleVerse) {
-                        textPane.getChildren().clear();
-                        BibleChapter chapter = (BibleChapter) ti.getValue().getParent();
-                        BibleVerse[] verses = chapter.getVerses();
-                        BibleVerse selected = (BibleVerse) ti.getValue();
-                        
-                        int x = selected.getNum() -1;
-                        for(int i = 0; i<verses.length;i++) {
-                            if(i == x) {
-                                Text text = new Text(verses[i].getNum() + " " + verses[i] + " ");
-                                text.setFont(Font.font("Sans", FontWeight.BOLD, 14));
-                                textPane.getChildren().add(text);
-                            }
-                            else {
-                                Text text = new Text(verses[i].getNum() + " " + verses[i] + " ");
-                                text.setFont(Font.font("Sans", 14));
-                                textPane.getChildren().add(text);
-                            }
-                        }
-                    } else if (ti.isExpanded()) {
-                        ti.setExpanded(false);
+        TreeItem<BibleInterface> ti = tv.getSelectionModel().getSelectedItem();
+        if (ti != null) {
+            if (ti.getValue() instanceof BibleVerse) {
+                textPane.getChildren().clear();
+                BibleChapter chapter = (BibleChapter) ti.getValue().getParent();
+                BibleVerse[] verses = chapter.getVerses();
+                BibleVerse selected = (BibleVerse) ti.getValue();
+
+                int x = selected.getNum() - 1;
+                for (int i = 0; i < verses.length; i++) {
+                    if (i == x) {
+                        Text text = new Text(verses[i].getNum() + " " + verses[i] + " ");
+                        text.setFont(Font.font("Sans", FontWeight.BOLD, 14));
+                        textPane.getChildren().add(text);
                     } else {
-                        ti.setExpanded(true);
+                        Text text = new Text(verses[i].getNum() + " " + verses[i] + " ");
+                        text.setFont(Font.font("Sans", 14));
+                        textPane.getChildren().add(text);
                     }
                 }
-                else {
-                    tv.selectionModelProperty().get().selectFirst();
-                }
+            } else {
+                ti.setExpanded(!ti.isExpanded());
+            }
+        } else {
+            tv.selectionModelProperty().get().selectFirst();
+        }
     }
 
     public void reset() {
@@ -116,10 +111,9 @@ public class BibleSearchTreeView extends TreeView<BibleInterface> {
 
         // Get the current bible
         TreeItem<BibleInterface> cbible;
-        if(all) {
-            cbible = existsOrCreateInt(root.getChildren(), bible); 
-        }
-        else {
+        if (all) {
+            cbible = existsOrCreateInt(root.getChildren(), bible);
+        } else {
             cbible = root;
         }
 
@@ -146,16 +140,15 @@ public class BibleSearchTreeView extends TreeView<BibleInterface> {
     }
 
     public void resetRoot() {
-        if(bibles.getSelectionModel().getSelectedIndex() != 0) {
+        if (bibles.getSelectionModel().getSelectedIndex() != 0) {
             String bib = (String) bibles.getSelectionModel().getSelectedItem();
-            for(Bible b : BibleManager.get().getBibles()) {
-                if(b.getName().equals(bib)) {
+            for (Bible b : BibleManager.get().getBibles()) {
+                if (b.getName().equals(bib)) {
                     setRoot(new TreeItem<BibleInterface>(b));
                     all = false;
                 }
             }
-        }
-        else {
+        } else {
             setRoot(new TreeItem<BibleInterface>());
             all = true;
         }
