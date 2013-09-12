@@ -38,6 +38,7 @@ public class ImageDrawer extends DisplayableDrawer {
             imageBox.setStyle("-fx-background-color:#dddddd;");
         }
         getCanvas().getChildren().add(imageBox);
+        getCanvas().setOpacity(1);
     }
 
     @Override
