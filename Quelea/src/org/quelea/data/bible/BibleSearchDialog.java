@@ -22,7 +22,7 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
-import javafx.geometry.Bounds;
+import javafx.geometry.Insets;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
@@ -35,6 +35,8 @@ import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
+import javafx.scene.text.Font;
+import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import org.quelea.data.displayable.BiblePassage;
 import org.quelea.services.languages.LabelGrabber;
@@ -56,6 +58,8 @@ public class BibleSearchDialog extends Stage implements BibleChangeListener {
     private LoadingPane overlay;
     private FlowPane chapterPane;
     private final Button addToSchedule;
+    private final Text resultsField;
+    private int count;
 
     /**
      * Create a new bible searcher dialog.
@@ -82,10 +86,14 @@ public class BibleSearchDialog extends Stage implements BibleChangeListener {
                 QueleaApp.get().getMainWindow().getMainPanel().getSchedulePanel().getScheduleList().add(passage);
             }
         });
+        resultsField = new Text(LabelGrabber.INSTANCE.getLabel("bible.search.keep.typing"));
+        resultsField.setFont(Font.font("Sans", 12));
+        resultsField.autosize();
         HBox northPanel = new HBox();
         northPanel.getChildren().add(bibles);
         northPanel.getChildren().add(searchField);
         northPanel.getChildren().add(addToSchedule);
+        northPanel.getChildren().add(resultsField);
         mainPane.setTop(northPanel);
         popupMenu = new BibleSearchPopupMenu();
         ScrollPane scrollPane = new ScrollPane();
@@ -145,8 +153,9 @@ public class BibleSearchDialog extends Stage implements BibleChangeListener {
      * Update the results based on the entered text.
      */
     private void update() {
+        count = 0;
         final String text = searchField.getText();
-        if(text.length() > 3) {
+        if (text.length() > 3) {
             if (BibleManager.get().isIndexInit()) {
                 searchResults.reset();
                 overlay.show();
@@ -162,18 +171,23 @@ public class BibleSearchDialog extends Stage implements BibleChangeListener {
                                             for (BibleVerse verse : chapter.getVerses()) {
                                                 if (verse.getText().toLowerCase().contains(text.toLowerCase())) {
                                                     searchResults.add(verse);
+                                                    count++;
                                                 }
                                             }
                                         }
                                     }
                                 }
                                 overlay.hide();
+                                resultsField.setText("" + count + " " + LabelGrabber.INSTANCE.getLabel("bible.search.results.found"));
                             }
                         });
                     }
                 }.start();
             }
         }
+        searchResults.reset();
+        resultsField.setText(LabelGrabber.INSTANCE.getLabel("bible.search.keep.typing"));
+        chapterPane.getChildren().clear();
     }
 
     /**
