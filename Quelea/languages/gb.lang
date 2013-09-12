@@ -365,3 +365,5 @@ filefilters.description.audio.files=Audio files
 filefilters.description.quelea.schedules=Quelea Schedules
 filefilters.description.powerpoint.presentations=Powerpoint Presentations
 filefilters.description.plain.text.song=Plain text song
+bible.search.results.found=results found
+bible.search.keep.typing=Keep typing...
