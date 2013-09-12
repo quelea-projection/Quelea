@@ -54,6 +54,7 @@ public class MainPanel extends BorderPane {
 
         LOGGER.log(Level.INFO, "Creating split panels");
         SplitPane scheduleAndLibrary = new SplitPane();
+        scheduleAndLibrary.setMinWidth(160);
         scheduleAndLibrary.setOrientation(Orientation.VERTICAL);
         scheduleAndLibrary.getItems().add(schedulePanel);
         scheduleAndLibrary.getItems().add(libraryPanel);
