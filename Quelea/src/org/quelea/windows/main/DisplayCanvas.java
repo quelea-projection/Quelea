@@ -30,10 +30,7 @@ import javafx.scene.Node;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
-import org.quelea.data.VideoBackground;
 import org.quelea.data.displayable.Displayable;
-import org.quelea.data.displayable.SongDisplayable;
-import org.quelea.data.displayable.TextDisplayable;
 import org.quelea.services.notice.NoticeDrawer;
 import org.quelea.services.notice.NoticeOverlay;
 import org.quelea.services.utils.LoggerUtils;
@@ -124,7 +121,7 @@ public class DisplayCanvas extends StackPane {
                             noticeOverlay.toFront();
                         }
                         catch(Exception ex) {
-                            ex.printStackTrace();
+                            LOGGER.log(Level.WARNING, "Can't move notice overlay to front", ex);
                         }
                     }
                 }
@@ -150,7 +147,10 @@ public class DisplayCanvas extends StackPane {
         }
     }
 
-    public void clear() {
+    public void clearCurrentDisplayable() {
+        if(getPlayVideo()) {
+            VLCWindow.INSTANCE.stop();
+        }
         setCurrentDisplayable(null);
     }
 
@@ -222,7 +222,7 @@ public class DisplayCanvas extends StackPane {
         this.background = background;
     }
 
-    public ImageView getNewImageView() {
+    public final ImageView getNewImageView() {
         ImageView ret = new ImageView(Utils.getImageFromColour(Color.BLACK));
         ret.setFitHeight(getHeight());
         ret.setFitWidth(getWidth());
