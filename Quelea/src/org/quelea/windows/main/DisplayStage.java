@@ -19,6 +19,8 @@ package org.quelea.windows.main;
 import java.util.logging.Logger;
 import javafx.scene.Cursor;
 import javafx.application.Platform;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.geometry.Bounds;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
@@ -27,6 +29,7 @@ import org.quelea.services.languages.LabelGrabber;
 import org.quelea.services.utils.LoggerUtils;
 import org.quelea.services.utils.Utils;
 import org.quelea.windows.main.DisplayCanvas.Priority;
+import org.quelea.windows.multimedia.VLCWindow;
 
 /**
  * The full screen window used for displaying the projection.
@@ -52,16 +55,47 @@ public class DisplayStage extends Stage {
      * @param area the area in which the window should be drawn.
      */
     public DisplayStage(Bounds area, boolean stageView) {
+        final boolean playVideo = !stageView;
         initStyle(StageStyle.TRANSPARENT);
         Utils.addIconsToStage(this);
         setTitle(LabelGrabber.INSTANCE.getLabel("projection.window.title"));
         setArea(area);
-        canvas = new DisplayCanvas(true, stageView, !stageView, null, stageView ? Priority.HIGH : Priority.MID);
+        canvas = new DisplayCanvas(true, stageView, playVideo, null, stageView ? Priority.HIGH : Priority.MID);
         canvas.setType(stageView ? DisplayCanvas.Type.STAGE : DisplayCanvas.Type.FULLSCREEN);
         canvas.setCursor(BLANK_CURSOR);
         Scene scene = new Scene(canvas);
         scene.setFill(null);
         setScene(scene);
+        if(playVideo) {
+            addVLCListeners();
+        }
+    }
+
+    private void addVLCListeners() {
+        widthProperty().addListener(new ChangeListener<Number>() {
+            @Override
+            public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
+                VLCWindow.INSTANCE.refreshPosition();
+            }
+        });
+        heightProperty().addListener(new ChangeListener<Number>() {
+            @Override
+            public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
+                VLCWindow.INSTANCE.refreshPosition();
+            }
+        });
+        xProperty().addListener(new ChangeListener<Number>() {
+            @Override
+            public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
+                VLCWindow.INSTANCE.refreshPosition();
+            }
+        });
+        yProperty().addListener(new ChangeListener<Number>() {
+            @Override
+            public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
+                VLCWindow.INSTANCE.refreshPosition();
+            }
+        });
     }
 
     /**
