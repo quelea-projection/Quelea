@@ -156,7 +156,7 @@ public abstract class LivePreviewPanel extends BorderPane {
         }
         for(Node panel : cardPanel) {
             if(panel instanceof ContainedPanel) {
-                ((ContainedPanel) panel).clear();
+                ((ContainedPanel) panel).removeCurrentDisplayable();
             }
             else {
                 LOGGER.log(Level.WARNING, "Panel was {0} which isn't a ContainedPanel... can't clear it.", panel.getClass());
@@ -204,11 +204,11 @@ public abstract class LivePreviewPanel extends BorderPane {
             public void run() {
                 LivePreviewPanel.this.displayable = displayable;
                 presentationPanel.stopCurrent();
-                audioPanel.clear();
-                videoPanel.clear();
-                lyricsPanel.clear();
-                picturePanel.clear();
-                presentationPanel.clear();
+                audioPanel.removeCurrentDisplayable();
+                videoPanel.removeCurrentDisplayable();
+                lyricsPanel.removeCurrentDisplayable();
+                picturePanel.removeCurrentDisplayable();
+                presentationPanel.removeCurrentDisplayable();
                 if(PRESENTATION_LABEL.equals(currentLabel)) {
                     presentationPanel.showDisplayable(null, 0);
                 }

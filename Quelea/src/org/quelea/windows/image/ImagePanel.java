@@ -59,8 +59,8 @@ public class ImagePanel extends AbstractPanel {
      * Clear the panel and all canvases associated with it.
      */
     @Override
-    public void clear() {
-        super.clear();
+    public void removeCurrentDisplayable() {
+        super.removeCurrentDisplayable();
     }
 
     /**
