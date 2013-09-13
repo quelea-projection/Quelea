@@ -107,7 +107,7 @@ public class SelectLyricsPanel extends AbstractPanel {
      * @param index the index of the displayable to show.
      */
     public void showDisplayable(TextDisplayable displayable, int index) {
-        clear();
+        removeCurrentDisplayable();
         setCurrentDisplayable(displayable);
         for(TextSection section : displayable.getSections()) {
             lyricsList.itemsProperty().get().add(section);
@@ -138,8 +138,8 @@ public class SelectLyricsPanel extends AbstractPanel {
      * Clear the current panel.
      */
     @Override
-    public void clear() {
-        super.clear();
+    public void removeCurrentDisplayable() {
+        super.removeCurrentDisplayable();
         lyricsList.itemsProperty().get().clear();
         drawer.clear();
     }

@@ -166,7 +166,7 @@ public class PresentationPanel extends AbstractPanel {
      * a presentation.)
      */
     @Override
-    public void clear() {
+    public void removeCurrentDisplayable() {
         //Doesn't apply
     }
 
