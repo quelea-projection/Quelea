@@ -57,7 +57,7 @@ public class PreviewPanel extends LivePreviewPanel {
         liveButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent t) {
-                QueleaApp.get().getMainWindow().getMainPanel().getLivePanel().clear();
+//                QueleaApp.get().getMainWindow().getMainPanel().getLivePanel().removeDisplayable();
                 QueleaApp.get().getMainWindow().getMainPanel().getLivePanel().setDisplayable(getDisplayable(), ((ContainedPanel) getCurrentPane()).getCurrentIndex());
                 QueleaApp.get().getMainWindow().getMainPanel().getLivePanel().getCurrentPane().requestFocus();
             }
@@ -110,8 +110,8 @@ public class PreviewPanel extends LivePreviewPanel {
      * Clear the preview panel.
      */
     @Override
-    public void clear() {
-        super.clear();
+    public void removeDisplayable() {
+        super.removeDisplayable();
         liveButton.setDisable(true);
     }
 }
