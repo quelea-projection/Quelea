@@ -57,7 +57,7 @@ public class DisplayCanvas extends StackPane {
     private final CanvasUpdater updater;
     private Priority dravingPriority = Priority.LOW;
     private Type type = Type.PREVIEW;
-    private boolean playVideo;
+    private final boolean playVideo;
 
     public enum Type {
 
@@ -130,7 +130,7 @@ public class DisplayCanvas extends StackPane {
         getChildren().add(noticeOverlay);
     }
 
-    public boolean getPlayVideo() {
+    public final boolean getPlayVideo() {
         return playVideo;
     }
 
