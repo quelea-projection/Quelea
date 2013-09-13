@@ -107,7 +107,7 @@ public class SelectLyricsPanel extends AbstractPanel {
      * @param index the index of the displayable to show.
      */
     public void showDisplayable(TextDisplayable displayable, int index) {
-        removeCurrentDisplayable();
+//        removeCurrentDisplayable();
         setCurrentDisplayable(displayable);
         for(TextSection section : displayable.getSections()) {
             lyricsList.itemsProperty().get().add(section);

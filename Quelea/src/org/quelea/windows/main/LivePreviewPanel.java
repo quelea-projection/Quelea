@@ -149,7 +149,7 @@ public abstract class LivePreviewPanel extends BorderPane {
     /**
      * Clear all the contained panels to a null displayable.
      */
-    public void clear() {
+    public void removeDisplayable() {
         displayable = null;
         if(PRESENTATION_LABEL.equals(currentLabel)) {
             presentationPanel.showDisplayable(null, 0);

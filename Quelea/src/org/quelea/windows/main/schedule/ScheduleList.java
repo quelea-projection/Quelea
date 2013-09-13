@@ -215,11 +215,11 @@ public class ScheduleList extends ListView<Displayable> {
             Displayable d = selectionModelProperty().get().getSelectedItem();
             Displayable live = QueleaApp.get().getMainWindow().getMainPanel().getLivePanel().getDisplayable();
             if(d == live && QueleaProperties.get().getClearLiveOnRemove()) {
-                QueleaApp.get().getMainWindow().getMainPanel().getLivePanel().clear();
+                QueleaApp.get().getMainWindow().getMainPanel().getLivePanel().removeDisplayable();
             }
             Displayable preview = QueleaApp.get().getMainWindow().getMainPanel().getPreviewPanel().getDisplayable();
             if(d == preview) {
-                QueleaApp.get().getMainWindow().getMainPanel().getPreviewPanel().clear();
+                QueleaApp.get().getMainWindow().getMainPanel().getPreviewPanel().removeDisplayable();
             }
             if(d == null) {
                 LOGGER.log(Level.WARNING, "Tried to remove null from schedule?");
