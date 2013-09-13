@@ -178,7 +178,7 @@ public class LyricDrawer extends DisplayableDrawer {
                         && sectionThemeBackground instanceof VideoBackground) {
                     String newLocation = ((VideoBackground) theme.getBackground()).getVideoFile().toURI().toString();
                     String oldLocation = ((VideoBackground) sectionThemeBackground).getVideoFile().toURI().toString();
-                    if(newLocation.equals(oldLocation) && getCanvas().getCanvasBackground() == null) {
+                    if(newLocation.equals(oldLocation)) {
                         sameVid = true;
                     }
                 }
