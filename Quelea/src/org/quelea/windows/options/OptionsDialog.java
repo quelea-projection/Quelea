@@ -58,6 +58,7 @@ public class OptionsDialog extends Stage {
         setTitle(LabelGrabber.INSTANCE.getLabel("options.title"));
         initModality(Modality.APPLICATION_MODAL);
         initStyle(StageStyle.UTILITY);
+        initOwner(QueleaApp.get().getMainWindow());
         setResizable(false);
         
         getIcons().add(new Image("file:icons/options.png", 16, 16, false, true));
