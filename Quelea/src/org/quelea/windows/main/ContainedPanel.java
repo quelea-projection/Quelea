@@ -28,7 +28,7 @@ public interface ContainedPanel {
     /**
      * Clear the panel.
      */
-    void clear();
+    void removeCurrentDisplayable();
     
     /**
      * Get the current index of this contained panel.
