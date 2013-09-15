@@ -41,6 +41,9 @@ Name: "english"; MessagesFile: "compiler:Default.isl"
 Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{cm:AdditionalIcons}"
 Name: "quicklaunchicon"; Description: "{cm:CreateQuickLaunchIcon}"; GroupDescription: "{cm:AdditionalIcons}"; Flags: unchecked
 
+[Dirs]  
+Name: "{app}"; Permissions: everyone-modify;  
+
 [Files]
 Source: "Quelea.exe"; DestDir: "{app}"; Flags: ignoreversion
 Source: "Quelea.jar"; DestDir: "{app}"; Flags: ignoreversion
