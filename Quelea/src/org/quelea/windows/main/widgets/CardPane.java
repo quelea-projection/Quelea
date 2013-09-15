@@ -42,6 +42,8 @@ public class CardPane<T extends Node> extends StackPane implements Iterable<T> {
      */
     public void add(T node, String label) {
         items.put(label, node);
+        node.setVisible(false);
+        getChildren().add(node);
     }
 
     /**
@@ -50,6 +52,7 @@ public class CardPane<T extends Node> extends StackPane implements Iterable<T> {
      * @param label the label of the node to remove.
      */
     public void remove(String label) {
+        getChildren().remove(items.get(label));
         items.remove(label);
     }
 
@@ -69,13 +72,15 @@ public class CardPane<T extends Node> extends StackPane implements Iterable<T> {
      * @throws IllegalArgumentException if the label isn't valid.
      */
     public void show(String label) {
-        getChildren().clear();
+        if(currentPane!=null) {
+            currentPane.setVisible(false);
+        }
         currentPane = items.get(label);
         if(currentPane == null) {
             throw new IllegalArgumentException("Label " + label + " doesn't exist in this card pane!");
         }
         else {
-            getChildren().add(currentPane);
+            currentPane.setVisible(true);
         }
     }
 
