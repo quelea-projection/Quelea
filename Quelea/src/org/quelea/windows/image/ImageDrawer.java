@@ -53,6 +53,6 @@ public class ImageDrawer extends DisplayableDrawer {
 
     @Override
     public void requestFocus() {
-        imageView.requestFocus();;
+        imageView.requestFocus();
     }
 }
