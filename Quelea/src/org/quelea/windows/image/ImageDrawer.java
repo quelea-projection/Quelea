@@ -26,6 +26,9 @@ public class ImageDrawer extends DisplayableDrawer {
         if(getCanvas().getPlayVideo()) {
             VLCWindow.INSTANCE.stop();
         }
+        if(displayable == null) {
+            return;
+        }
         image = ((ImageDisplayable) displayable).getImage();
         imageView = getCanvas().getNewImageView();
         imageView.setFitWidth(getCanvas().getWidth());
