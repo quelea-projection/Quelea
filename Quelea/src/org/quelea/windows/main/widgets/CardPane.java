@@ -72,8 +72,8 @@ public class CardPane<T extends Node> extends StackPane implements Iterable<T> {
      * @throws IllegalArgumentException if the label isn't valid.
      */
     public void show(String label) {
-        if(currentPane!=null) {
-            currentPane.setVisible(false);
+        for(T node : items.values()) {
+            node.setVisible(false);
         }
         currentPane = items.get(label);
         if(currentPane == null) {
