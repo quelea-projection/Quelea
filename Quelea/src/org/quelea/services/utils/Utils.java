@@ -756,7 +756,7 @@ public final class Utils {
         writer.setColor(0, 0, color);
         return image;
     }
-    private static SoftHashMap<File, Image> videoPreviewCache = new SoftHashMap<>();
+    private static final SoftHashMap<File, Image> videoPreviewCache = new SoftHashMap<>();
 
     /**
      * Get an image to be shown as the background in place of a playing video.
@@ -764,19 +764,21 @@ public final class Utils {
      * @return the image to be shown in place of a playing video.
      */
     public static Image getVidBlankImage(File videoFile) {
-        Image ret = new Image("file:icons/vid preview.png");
-        try {
-            Image img = videoPreviewCache.get(videoFile);
-            if(img != null) {
-                return img;
+        synchronized(videoPreviewCache) {
+            Image ret = new Image("file:icons/vid preview.png");
+            try {
+                Image img = videoPreviewCache.get(videoFile);
+                if(img != null) {
+                    return img;
+                }
+                ret = SwingFXUtils.toFXImage(FrameGrab.getFrame(videoFile, 0), null);
+                videoPreviewCache.put(videoFile, ret);
             }
-            ret = SwingFXUtils.toFXImage(FrameGrab.getFrame(videoFile, 0), null);
-            videoPreviewCache.put(videoFile, ret);
+            catch(IOException | JCodecException ex) {
+                ex.printStackTrace();
+            }
+            return ret;
         }
-        catch(IOException | JCodecException ex) {
-            ex.printStackTrace();
-        }
-        return ret;
     }
 
     /**
