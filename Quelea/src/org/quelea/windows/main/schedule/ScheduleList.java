@@ -18,6 +18,7 @@
 package org.quelea.windows.main.schedule;
 
 import java.io.File;
+import java.util.Collections;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.application.Platform;
@@ -242,15 +243,11 @@ public class ScheduleList extends ListView<Displayable> {
             return;
         }
         if(direction == Direction.UP && selectedIndex > 0) {
-            Displayable temp = itemsProperty().get().get(selectedIndex - 1);
-            itemsProperty().get().set(selectedIndex - 1, itemsProperty().get().get(selectedIndex));
-            itemsProperty().get().set(selectedIndex, temp);
+            Collections.swap(itemsProperty().get(), selectedIndex, selectedIndex-1);
             selectionModelProperty().get().select(selectedIndex - 1);
         }
         if(direction == Direction.DOWN && selectedIndex < itemsProperty().get().size() - 1) {
-            Displayable temp = itemsProperty().get().get(selectedIndex + 1);
-            itemsProperty().get().set(selectedIndex + 1, itemsProperty().get().get(selectedIndex));
-            itemsProperty().get().set(selectedIndex, temp);
+            Collections.swap(itemsProperty().get(), selectedIndex, selectedIndex+1);
             selectionModelProperty().get().select(selectedIndex + 1);
         }
         requestFocus();
