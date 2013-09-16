@@ -253,5 +253,6 @@ public class ScheduleList extends ListView<Displayable> {
             itemsProperty().get().set(selectedIndex, temp);
             selectionModelProperty().get().select(selectedIndex + 1);
         }
+        requestFocus();
     }
 }
