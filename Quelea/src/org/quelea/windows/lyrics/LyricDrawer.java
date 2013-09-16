@@ -200,7 +200,7 @@ public class LyricDrawer extends DisplayableDrawer {
             image = null;
         }
         else if(theme.getBackground() instanceof VideoBackground) {
-            image = Utils.getVidBlankImage();
+            image = Utils.getVidBlankImage(((VideoBackground)theme.getBackground()).getVideoFile());
         }
         else {
             LOGGER.log(Level.SEVERE, "Bug: Unhandled theme background case, trying to use default background: " + theme.getBackground(), new RuntimeException("DEBUG EXCEPTION FOR STACK TRACE"));
