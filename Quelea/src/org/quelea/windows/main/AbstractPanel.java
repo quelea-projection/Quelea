@@ -9,6 +9,7 @@ import javafx.scene.layout.BorderPane;
 import org.quelea.data.displayable.Displayable;
 import org.quelea.data.displayable.MultimediaDisplayable;
 import org.quelea.services.utils.LoggerUtils;
+import org.quelea.services.utils.Utils;
 
 /**
  * Implements ContainedPanel with additional canvas registering
@@ -57,6 +58,7 @@ public abstract class AbstractPanel extends BorderPane implements ContainedPanel
     }
 
     public void updateCanvas() {
+        assert Utils.fxThread();
         for(DisplayCanvas canvas : getCanvases()) {
             canvas.setCurrentDisplayable(currentDisplayable);
             if(!canvas.isBlacked()) {
@@ -67,6 +69,7 @@ public abstract class AbstractPanel extends BorderPane implements ContainedPanel
 
     @Override
     public void removeCurrentDisplayable() {
+        assert Utils.fxThread();
         for(DisplayCanvas canvas : getCanvases()) {
             canvas.clearCurrentDisplayable();
             canvas.clearApartFromNotice();
