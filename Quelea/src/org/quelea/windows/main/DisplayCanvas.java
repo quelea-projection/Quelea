@@ -201,11 +201,26 @@ public class DisplayCanvas extends StackPane {
         Platform.runLater(new Runnable() {
             @Override
             public void run() {
-                if(updater != null) {
+                if(isVisibleInScene() && updater != null) {
                     updater.updateCallback();
                 }
             }
         });
+    }
+    
+    private boolean isVisibleInScene() {
+        Node parent = DisplayCanvas.this;
+        boolean visible = isVisible();
+        if(!visible) {
+            return visible;
+        }
+        while((parent = parent.getParent()) != null) {
+            if(!parent.isVisible()) {
+                visible = false;
+                break;
+            }
+        }
+        return visible;
     }
 
     /**

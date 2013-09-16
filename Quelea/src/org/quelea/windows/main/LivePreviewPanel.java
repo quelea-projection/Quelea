@@ -64,7 +64,7 @@ public abstract class LivePreviewPanel extends BorderPane {
     private static final String PRESENTATION_LABEL = "PPT";
     private String currentLabel;
     private SelectLyricsPanel lyricsPanel = new SelectLyricsPanel(this);
-    private ImagePanel picturePanel = new ImagePanel();
+    private ImagePanel imagePanel = new ImagePanel();
     private PresentationPanel presentationPanel = new PresentationPanel(this);
     private MultimediaPanel videoPanel = new MultimediaPanel();
     private MultimediaPanel audioPanel = new MultimediaPanel();
@@ -77,7 +77,7 @@ public abstract class LivePreviewPanel extends BorderPane {
     public LivePreviewPanel() {
         setCenter(cardPanel);
         cardPanel.add(lyricsPanel, LYRICS_LABEL);
-        cardPanel.add(picturePanel, IMAGE_LABEL);
+        cardPanel.add(imagePanel, IMAGE_LABEL);
         cardPanel.add(videoPanel, VIDEO_LABEL);
         cardPanel.add(audioPanel, AUDIO_LABEL);
         cardPanel.add(presentationPanel, PRESENTATION_LABEL);
@@ -207,7 +207,7 @@ public abstract class LivePreviewPanel extends BorderPane {
                 audioPanel.removeCurrentDisplayable();
                 videoPanel.removeCurrentDisplayable();
                 lyricsPanel.removeCurrentDisplayable();
-                picturePanel.removeCurrentDisplayable();
+                imagePanel.removeCurrentDisplayable();
                 presentationPanel.removeCurrentDisplayable();
                 if(PRESENTATION_LABEL.equals(currentLabel)) {
                     presentationPanel.showDisplayable(null, 0);
@@ -218,7 +218,7 @@ public abstract class LivePreviewPanel extends BorderPane {
                     currentLabel = LYRICS_LABEL;
                 }
                 else if(displayable instanceof ImageDisplayable) {
-                    picturePanel.showDisplayable((ImageDisplayable) displayable);
+                    imagePanel.showDisplayable((ImageDisplayable) displayable);
                     cardPanel.show(IMAGE_LABEL);
                     currentLabel = IMAGE_LABEL;
                 }
