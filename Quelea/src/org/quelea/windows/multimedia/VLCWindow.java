@@ -26,6 +26,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.SwingUtilities;
 import org.quelea.services.utils.LoggerUtils;
 import org.quelea.services.utils.Utils;
 import org.quelea.windows.main.QueleaApp;
@@ -166,7 +167,13 @@ public class VLCWindow {
                 if(init) {
                     paused = false;
                     mediaPlayer.stop();
-                    window.toBack();
+                    SwingUtilities.invokeLater(new Runnable() {
+
+                        @Override
+                        public void run() {
+                            window.toBack();
+                        }
+                    });
                 }
 //                System.out.println("stop() end");
             }
@@ -338,8 +345,13 @@ public class VLCWindow {
             public void run() {
 //                System.out.println("updateState() start");
                 if(init) {
-                    window.setOpacity((hideButton || !show) ? 0 : 1);
-                    window.toBack();
+                    SwingUtilities.invokeLater(new Runnable() {
+                        @Override
+                        public void run() {
+                            window.setOpacity((hideButton || !show) ? 0 : 1);
+                            window.toBack();
+                        }
+                    });
                 }
 //                System.out.println("updateState() end");
             }
@@ -352,7 +364,12 @@ public class VLCWindow {
             public void run() {
 //                System.out.println("setLocation() start");
                 if(init) {
-                    window.setLocation(x, y);
+                    SwingUtilities.invokeLater(new Runnable() {
+                        @Override
+                        public void run() {
+                            window.setLocation(x, y);
+                        }
+                    });
                 }
 //                System.out.println("setLocation() end");
             }
@@ -365,7 +382,13 @@ public class VLCWindow {
             public void run() {
 //                System.out.println("setsize() start");
                 if(init) {
-                    window.setSize(width, height);
+                    SwingUtilities.invokeLater(new Runnable() {
+
+                        @Override
+                        public void run() {
+                            window.setSize(width, height);
+                        }
+                    });
                 }
 //                System.out.println("setsize() end");
             }
