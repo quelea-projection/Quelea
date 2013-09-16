@@ -22,12 +22,12 @@ public class ImageDrawer extends DisplayableDrawer {
 
     @Override
     public void draw(Displayable displayable) {
+        if(displayable == null) {
+            return;
+        }
         clear();
         if(getCanvas().getPlayVideo()) {
             VLCWindow.INSTANCE.stop();
-        }
-        if(displayable == null) {
-            return;
         }
         image = ((ImageDisplayable) displayable).getImage();
         imageView = getCanvas().getNewImageView();
