@@ -51,6 +51,7 @@ import java.util.logging.Logger;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.embed.swing.SwingFXUtils;
 import javafx.event.EventHandler;
 import javafx.geometry.BoundingBox;
 import javafx.geometry.Bounds;
@@ -65,12 +66,15 @@ import javafx.scene.paint.Color;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
 import org.javafx.dialog.Dialog;
+import org.jcodec.api.FrameGrab;
+import org.jcodec.api.JCodecException;
 import org.quelea.data.ThemeDTO;
 import org.quelea.data.db.SongManager;
 import org.quelea.data.displayable.SongDisplayable;
 import org.quelea.services.languages.LabelGrabber;
 import org.quelea.windows.main.QueleaApp;
 import org.quelea.windows.main.StatusPanel;
+import uk.co.caprica.vlcj.runtime.windows.WindowsRuntimeUtil;
 
 /**
  * General utility class containing a bunch of static methods.
@@ -475,6 +479,10 @@ public final class Utils {
         }
     }
 
+    public static boolean fxThread() {
+        return Platform.isFxApplicationThread();
+    }
+
     /**
      * Remove duplicates in a list whilst maintaining the order.
      * <p/>
@@ -682,9 +690,10 @@ public final class Utils {
         ret.add("ogm");
         return ret;
     }
-    
+
     /**
      * Get file extensions (in *.ext format) from a list of normal extensions.
+     * <p/>
      * @param extensions the list of normal extensions.
      * @return a list of file extensions.
      */
@@ -747,14 +756,27 @@ public final class Utils {
         writer.setColor(0, 0, color);
         return image;
     }
+    private static SoftHashMap<File, Image> videoPreviewCache = new SoftHashMap<>();
 
     /**
      * Get an image to be shown as the background in place of a playing video.
      * <p/>
      * @return the image to be shown in place of a playing video.
      */
-    public static Image getVidBlankImage() {
-        return new Image("file:icons/vid preview.png");
+    public static Image getVidBlankImage(File videoFile) {
+        Image ret = new Image("file:icons/vid preview.png");
+        try {
+            Image img = videoPreviewCache.get(videoFile);
+            if(img != null) {
+                return img;
+            }
+            ret = SwingFXUtils.toFXImage(FrameGrab.getFrame(videoFile, 0), null);
+            videoPreviewCache.put(videoFile, ret);
+        }
+        catch(IOException | JCodecException ex) {
+            ex.printStackTrace();
+        }
+        return ret;
     }
 
     /**
