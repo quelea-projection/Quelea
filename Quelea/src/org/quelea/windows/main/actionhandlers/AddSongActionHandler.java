@@ -17,22 +17,27 @@
  */
 package org.quelea.windows.main.actionhandlers;
 
+import java.io.File;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
+import org.quelea.data.VideoBackground;
 import org.quelea.data.displayable.SongDisplayable;
+import org.quelea.services.utils.Utils;
 import org.quelea.windows.library.LibraryPanel;
 import org.quelea.windows.main.QueleaApp;
 import org.quelea.windows.main.schedule.SchedulePanel;
 
 /**
- * The action listener for adding a song, called when something fires off an 
+ * The action listener for adding a song, called when something fires off an
  * action that adds a song from the library to the schedule.
+ * <p/>
  * @author Michael
  */
 public class AddSongActionHandler implements EventHandler<ActionEvent> {
 
     /**
      * Get the current selected song from the library to the schedule.
+     * <p/>
      * @param e the event.
      */
     @Override
@@ -40,6 +45,19 @@ public class AddSongActionHandler implements EventHandler<ActionEvent> {
         LibraryPanel libraryPanel = QueleaApp.get().getMainWindow().getMainPanel().getLibraryPanel();
         SchedulePanel schedulePanel = QueleaApp.get().getMainWindow().getMainPanel().getSchedulePanel();
         SongDisplayable song = libraryPanel.getLibrarySongPanel().getSongList().getSelectedValue();
+        cacheVidPreview(song);
         schedulePanel.getScheduleList().add(song);
+    }
+
+    private void cacheVidPreview(SongDisplayable song) {
+        if(song.getSections().length > 0 && song.getSections()[0].getTheme() != null && song.getSections()[0].getTheme().getBackground() instanceof VideoBackground) {
+            final File file = ((VideoBackground) song.getSections()[0].getTheme().getBackground()).getVideoFile();
+            new Thread() {
+                @Override
+                public void run() {
+                    Utils.getVidBlankImage(file); //cache it
+                }
+            }.start();
+        }
     }
 }

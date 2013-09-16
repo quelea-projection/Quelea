@@ -47,6 +47,7 @@ import org.quelea.services.lucene.SongSearchIndex;
 import org.quelea.services.utils.DatabaseListener;
 import org.quelea.services.utils.LoggerUtils;
 import org.quelea.windows.main.QueleaApp;
+import org.quelea.windows.main.actionhandlers.AddSongActionHandler;
 import org.quelea.windows.main.widgets.LoadingPane;
 
 /**
@@ -109,7 +110,7 @@ public class LibrarySongList extends StackPane {
             @Override
             public void handle(MouseEvent t) {
                 if(t.getClickCount() == 2) {
-                    QueleaApp.get().getMainWindow().getMainPanel().getSchedulePanel().getScheduleList().add(getSelectedValue());
+                    new AddSongActionHandler().handle(null);
                 }
             }
         });
