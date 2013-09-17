@@ -32,8 +32,8 @@ import org.quelea.services.utils.QueleaProperties;
  * Responsible for phoning home at launch with a few pieces of anonymous
  * information about Quelea (at present just OS and version.) Just to collect a
  * bit of data to see how widely it's being used.
- * 
- * If you don't want phone home enabled, simply put phonehome=false in the 
+ *
+ * If you don't want phone home enabled, simply put phonehome=false in the
  * properties file.
  *
  * @author Michael
@@ -64,17 +64,26 @@ public class PhoneHome {
         urlStrBuilder.append(QueleaProperties.VERSION.getFullVersionString());
         urlStrBuilder.append("&language=");
         urlStrBuilder.append(Locale.getDefault().getDisplayLanguage(Locale.ENGLISH));
-        
+        urlStrBuilder.append("&totalmem=");
+        try {
+            long physicalMemorySize = ((com.sun.management.OperatingSystemMXBean) java.lang.management.ManagementFactory.getOperatingSystemMXBean()).getTotalPhysicalMemorySize();
+            urlStrBuilder.append(Long.toString(physicalMemorySize));
+        }
+        catch(Throwable ex) {
+            urlStrBuilder.append("Unknown");
+        }
+        urlStrBuilder.append("&osarch=");
+        urlStrBuilder.append(System.getProperty("os.arch"));
+
         final String urlStr = urlStrBuilder.toString().replace(" ", "%20");
 
         //Execute in the background...
         new Thread() {
-
             @Override
             public void run() {
                 LOGGER.log(Level.INFO, "Phoning home..");
                 final StringBuilder result = new StringBuilder();
-                try (BufferedReader reader = new BufferedReader(new InputStreamReader(new URL(urlStr).openStream()));) {
+                try(BufferedReader reader = new BufferedReader(new InputStreamReader(new URL(urlStr).openStream()));) {
 
                     String line;
                     while((line = reader.readLine()) != null) {
@@ -82,7 +91,7 @@ public class PhoneHome {
                     }
                     LOGGER.log(Level.INFO, "Phone home result: {0}", result);
                 }
-                catch (IOException ex) {
+                catch(IOException ex) {
                     LOGGER.log(Level.WARNING, "Phone home failed", ex);
                 }
 
