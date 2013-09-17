@@ -243,10 +243,12 @@ public class ScheduleList extends ListView<Displayable> {
             return;
         }
         if(direction == Direction.UP && selectedIndex > 0) {
+            selectionModelProperty().get().clearSelection();
             Collections.swap(itemsProperty().get(), selectedIndex, selectedIndex-1);
             selectionModelProperty().get().select(selectedIndex - 1);
         }
         if(direction == Direction.DOWN && selectedIndex < itemsProperty().get().size() - 1) {
+            selectionModelProperty().get().clearSelection();
             Collections.swap(itemsProperty().get(), selectedIndex, selectedIndex+1);
             selectionModelProperty().get().select(selectedIndex + 1);
         }
