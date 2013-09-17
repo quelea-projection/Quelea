@@ -67,13 +67,23 @@ public class PhoneHome {
         urlStrBuilder.append("&totalmem=");
         try {
             long physicalMemorySize = ((com.sun.management.OperatingSystemMXBean) java.lang.management.ManagementFactory.getOperatingSystemMXBean()).getTotalPhysicalMemorySize();
-            urlStrBuilder.append(Long.toString(physicalMemorySize));
+            urlStrBuilder.append(Long.toString(physicalMemorySize / 1048576)).append(" MB");
         }
         catch(Throwable ex) {
             urlStrBuilder.append("Unknown");
         }
         urlStrBuilder.append("&osarch=");
-        urlStrBuilder.append(System.getProperty("os.arch"));
+        if(System.getProperty("os.name").contains("Windows")) {
+            if((System.getenv("ProgramFiles(x86)") != null)) {
+                urlStrBuilder.append("amd64");
+            }
+            else {
+                urlStrBuilder.append("x86");
+            }
+        }
+        else {
+            urlStrBuilder.append("Unknown");
+        }
 
         final String urlStr = urlStrBuilder.toString().replace(" ", "%20");
 
