@@ -51,11 +51,11 @@
         <property name="FXClasspath" value="lib/jfxrt.jar"/>
         
         <!-- Check the images conform to spec -->
-        <java className="org.quelea.services.utils.ImageChecker" classpath="${FXClasspath};${basedir}/build/classes" failonerror="false"/>
+        <java className="org.quelea.services.utils.ImageChecker" classpath="${run.classpath};${FXClasspath};${basedir}/build/classes" failonerror="false"/>
         <!-- Check the language files -->
-        <java className="org.quelea.services.languages.LabelChecker" classpath="${FXClasspath};${basedir}/build/classes" failonerror="false"/>
+        <java className="org.quelea.services.languages.LabelChecker" classpath="${run.classpath};${FXClasspath};${basedir}/build/classes" failonerror="false"/>
         <!-- Generate the US language file -->
-        <java className="org.quelea.services.languages.USEnglishConverter" classpath="${FXClasspath};${basedir}/build/classes" failonerror="false"/>
+        <java className="org.quelea.services.languages.USEnglishConverter" classpath="${run.classpath};${FXClasspath};${basedir}/build/classes" failonerror="false"/>
         
         <echo message="Copying necessary files to ${dist.jar.dir}"/>
         <copy todir="${dist.jar.dir}/lib" quiet="yes">
