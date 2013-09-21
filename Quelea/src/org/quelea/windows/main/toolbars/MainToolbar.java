@@ -117,7 +117,7 @@ public class MainToolbar extends ToolBar {
         Utils.setToolbarButtonStyle(manageTagsButton);
         manageTagsButton.setTooltip(new Tooltip(LabelGrabber.INSTANCE.getLabel("manage.tags.tooltip")));
         manageTagsButton.setOnAction(new ViewTagsActionHandler());
-        getItems().add(manageTagsButton);
+//        getItems().add(manageTagsButton);
 
         manageNoticesButton = new Button("", new ImageView(new Image("file:icons/info.png", 24, 24, false, true)));
         Utils.setToolbarButtonStyle(manageNoticesButton);
