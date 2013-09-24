@@ -689,6 +689,7 @@ public final class Utils {
         ret.add("wmv");
         ret.add("ogm");
         ret.add("mrl");
+        ret.add("asx");
         return ret;
     }
 
