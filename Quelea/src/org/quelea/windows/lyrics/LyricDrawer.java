@@ -74,7 +74,7 @@ public class LyricDrawer extends DisplayableDrawer {
         }
         Font font = theme.getFont();
         if(stageView) {
-            font = new Font(QueleaProperties.get().getStageTextFont(), 72);
+            font = new Font(QueleaProperties.get().getStageTextFont(), ThemeDTO.DEFAULT_FONT_SIZE);
         }
         if(font == null) {
             font = ThemeDTO.DEFAULT_FONT.getFont();
