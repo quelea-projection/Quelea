@@ -124,7 +124,7 @@ public class SplashStage extends Stage {
         ObservableList<Screen> monitors = Screen.getScreens();
         Screen screen;
         int controlScreenProp = QueleaProperties.get().getControlScreen();
-        if(controlScreenProp < monitors.size()) {
+        if(controlScreenProp < monitors.size() && controlScreenProp >=0) {
             screen = monitors.get(controlScreenProp);
         }
         else {
