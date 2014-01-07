@@ -782,8 +782,8 @@ public class SongDisplayable implements TextDisplayable, Comparable<SongDisplaya
      * @return the song, or null if an error occurs.
      */
     public static SongDisplayable parseXML(String xml) {
-        InputStream inputStream = new ByteArrayInputStream(xml.getBytes());
         try {
+            InputStream inputStream = new ByteArrayInputStream(xml.getBytes("UTF8"));
             DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
             DocumentBuilder builder = factory.newDocumentBuilder();
             Document doc = builder.parse(inputStream);
