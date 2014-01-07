@@ -142,7 +142,7 @@ public class Schedule implements Iterable<Displayable>, Printable {
             byte data[] = new byte[BUFFER];
             try {
                 zos.putNextEntry(new ZipEntry("schedule.xml"));
-                zos.write(getXML().getBytes());
+                zos.write(getXML().getBytes("UTF8"));
                 zos.closeEntry();
                 Set<String> entries = new HashSet<>();
                 for(Displayable displayable : displayables) {
@@ -272,7 +272,7 @@ public class Schedule implements Iterable<Displayable>, Printable {
             String contents = contentsBuilder.toString();
             contents = contents.replace(new String(new byte[]{11}), "\n");
             contents = contents.replace(new String(new byte[]{-3}), " ");
-            InputStream strInputStream = new ByteArrayInputStream(contents.getBytes());
+            InputStream strInputStream = new ByteArrayInputStream(contents.getBytes("UTF-8"));
             /*
              * End bodge.
              */

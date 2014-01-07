@@ -111,7 +111,7 @@ public class TextSection implements Serializable {
             xml.append("<smalllines>");
             for (String line : smallLines) {
                 try {
-                    xml.append(new String(Utils.escapeXML(line).getBytes(), "UTF-8")).append('\n');
+                    xml.append(new String(Utils.escapeXML(line).getBytes("UTF8"), "UTF-8")).append('\n');
                 } catch (UnsupportedEncodingException ex) {
                     Logger.getLogger(TextSection.class.getName()).log(Level.SEVERE, null, ex);
                 }
@@ -121,7 +121,7 @@ public class TextSection implements Serializable {
         xml.append("<lyrics>");
         for (String line : getText(true, true)) {
             try {
-                xml.append(new String(Utils.escapeXML(line).getBytes(), "UTF-8")).append('\n');
+                xml.append(new String(Utils.escapeXML(line).getBytes("UTF8"), "UTF-8")).append('\n');
             } catch (UnsupportedEncodingException ex) {
                 Logger.getLogger(TextSection.class.getName()).log(Level.SEVERE, null, ex);
             }

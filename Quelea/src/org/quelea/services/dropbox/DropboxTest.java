@@ -63,7 +63,7 @@ public class DropboxTest {
         System.out.println();
         System.out.print("Uploading file...");
         String fileContents = "Hello World!";
-        ByteArrayInputStream inputStream = new ByteArrayInputStream(fileContents.getBytes());
+        ByteArrayInputStream inputStream = new ByteArrayInputStream(fileContents.getBytes("UTF8"));
         Entry newEntry = mDBApi.putFile("/testing.txt", inputStream, fileContents.length(), null, null);
         System.out.println("Done. \nRevision of file: " + newEntry.rev);
         
