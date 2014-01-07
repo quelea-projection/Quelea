@@ -99,7 +99,7 @@ public class SongPack {
             int count = 0;
             for (SongDisplayable song : songs) {
                 zos.putNextEntry(new ZipEntry("song" + count + ".xml"));
-                zos.write(song.getXML().getBytes());
+                zos.write(song.getXML().getBytes("UTF8"));
                 zos.closeEntry();
                 count++;
             }
