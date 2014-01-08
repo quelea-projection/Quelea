@@ -45,10 +45,8 @@ import org.quelea.windows.help.AboutDialog;
 public class HelpMenu extends Menu {
 
     private static final Logger LOGGER = LoggerUtils.getLogger();
-    private final MenuItem queleaSite;
     private final MenuItem queleaFacebook;
     private final MenuItem queleaDiscuss;
-    private final MenuItem queleaDownload;
     private final MenuItem updateCheck;
     private final MenuItem about;
     private AboutDialog aboutDialog;
@@ -67,20 +65,6 @@ public class HelpMenu extends Menu {
         });
 
         if(Desktop.isDesktopSupported()) {
-            queleaSite = new MenuItem(LabelGrabber.INSTANCE.getLabel("help.menu.website"), new ImageView(new Image("file:icons/website.png", 16, 16, false, true)));
-            queleaSite.setOnAction(new EventHandler<javafx.event.ActionEvent>() {
-                @Override
-                public void handle(javafx.event.ActionEvent t) {
-                    try {
-                        Desktop.getDesktop().browse(new URI(QueleaProperties.get().getWebsiteLocation()));
-                    }
-                    catch(URISyntaxException | IOException ex) {
-                        LOGGER.log(Level.WARNING, "Couldn't launch Quelea website", ex);
-                        showError();
-                    }
-                }
-            });
-            getItems().add(queleaSite);
             queleaFacebook = new MenuItem(LabelGrabber.INSTANCE.getLabel("help.menu.facebook"), new ImageView(new Image("file:icons/facebook.png", 16, 16, false, true)));
             queleaFacebook.setOnAction(new EventHandler<javafx.event.ActionEvent>() {
                 @Override
@@ -109,25 +93,9 @@ public class HelpMenu extends Menu {
                 }
             });
             getItems().add(queleaDiscuss);
-            queleaDownload = new MenuItem(LabelGrabber.INSTANCE.getLabel("help.menu.download"), new ImageView(new Image("file:icons/download.png", 16, 16, false, true)));
-            queleaDownload.setOnAction(new EventHandler<javafx.event.ActionEvent>() {
-                @Override
-                public void handle(javafx.event.ActionEvent t) {
-                    try {
-                        Desktop.getDesktop().browse(new URI(QueleaProperties.get().getDownloadLocation()));
-                    }
-                    catch(URISyntaxException | IOException ex) {
-                        LOGGER.log(Level.WARNING, "Couldn't launch Quelea download page", ex);
-                        showError();
-                    }
-                }
-            });
-            getItems().add(queleaDownload);
         }
         else {
-            queleaSite = null;
             queleaDiscuss = null;
-            queleaDownload = null;
             queleaFacebook = null;
         }
         updateCheck = new MenuItem(LabelGrabber.INSTANCE.getLabel("help.menu.update"), new ImageView(new Image("file:icons/update.png", 16, 16, false, true)));
