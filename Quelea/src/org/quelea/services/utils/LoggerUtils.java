@@ -18,16 +18,18 @@
 package org.quelea.services.utils;
 
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
-import java.util.logging.FileHandler;
 import java.util.logging.Handler;
 import java.util.logging.Level;
 import java.util.logging.LogRecord;
@@ -45,9 +47,8 @@ public final class LoggerUtils {
      * The default level for loggers.
      */
     public static final Level DEFAULT_LEVEL = Level.INFO;
-    private static volatile FileHandler FILE_HANDLER;
     private static final Map<String, Logger> loggers;
-    private static File handlerFile;
+    private static volatile File handlerFile;
 
     static {
         loggers = new HashMap<>();
@@ -57,18 +58,10 @@ public final class LoggerUtils {
      * Initialise the handlers.
      */
     private static void initialise() {
-        if(FILE_HANDLER == null) {
+        if(handlerFile == null) {
             synchronized(LoggerUtils.class) {
-                if(FILE_HANDLER == null) {
-                    try {
-                        handlerFile = Utils.getDebugLog();
-                        FILE_HANDLER = new FileHandler(handlerFile.getAbsolutePath());
-                        FILE_HANDLER.setFormatter(new SimpleFormatter());
-                    }
-                    catch(IOException ex) {
-//                        ex.printStackTrace();
-                        //Can't really do a lot here
-                    }
+                if(handlerFile == null) {
+                    handlerFile = Utils.getDebugLog();
                 }
             }
         }
@@ -106,6 +99,9 @@ public final class LoggerUtils {
             logger.addHandler(new Handler() {
                 @Override
                 public void publish(LogRecord record) {
+                    synchronized(this) {
+                        writeToLog(new SimpleFormatter().format(record));
+                    }
                     if(record.getLevel().intValue() >= Level.WARNING.intValue()) {
                         StringBuilder sendText = new StringBuilder();
                         sendText.append(record.getLevel().getName()).append("\n");
@@ -143,15 +139,17 @@ public final class LoggerUtils {
                 }
             });
             logger.setLevel(DEFAULT_LEVEL);
-            try {
-                logger.addHandler(FILE_HANDLER);
-            }
-            catch(Exception ex) {
-//                ex.printStackTrace();
-            }
             loggers.put(name, logger);
         }
         return logger;
+    }
+
+    private static void writeToLog(String message) {
+        try(PrintWriter out = new PrintWriter(new BufferedWriter(new FileWriter(handlerFile, true)))) {
+            out.println(message);
+        }
+        catch(IOException e) {
+        }
     }
 
     private static void phoneHomeError(String error) {
@@ -183,15 +181,5 @@ public final class LoggerUtils {
             //Oh well.
         }
 
-    }
-
-    /**
-     * Determine if we were able to write to the file handler or not. If not
-     * then the debug log won't be written.
-     * <p/>
-     * @return true if all is ok, false if there is a problem.
-     */
-    public boolean isFileHandlerOK() {
-        return FILE_HANDLER != null;
     }
 }
