@@ -4,7 +4,7 @@
     <jar>Quelea.jar</jar>
     <jre>
         <path>winjre</path>
-        <opt>-Xms1024m</opt>
+        <opt>-Xms1100m -Dfile.encoding=UTF-8 -XX:+UnlockExperimentalVMOptions -XX:+UseG1GC -XX:MaxGCPauseMillis=50 -XX:GCPauseIntervalMillis=200 -Dglass.disableThreadChecks=false -ea</opt>
     </jre>
     <outfile>..\dist\quelea.exe</outfile>
     <chdir>.</chdir>
