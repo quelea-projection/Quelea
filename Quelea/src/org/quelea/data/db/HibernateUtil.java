@@ -34,6 +34,7 @@ public class HibernateUtil {
             final Configuration cfg = new Configuration();
             cfg.setProperty("hibernate.connection.url", "jdbc:hsqldb:" + location);
             cfg.setProperty("hibernate.connection.dialect", "org.hibernate.dialect.HSQLDialect");
+            cfg.setProperty("hibernate.dialect", "org.hibernate.dialect.HSQLDialect");
             cfg.setProperty("hibernate.connection.driver_class", "org.hsqldb.jdbcDriver");
             cfg.setProperty("hibernate.show_sql", "false");
             cfg.setProperty("hibernate.hbm2ddl.auto", "update");
