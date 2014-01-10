@@ -58,7 +58,7 @@ public class LabelGrabber {
         catch(IOException ex) {
             LOGGER.log(Level.SEVERE, "Couldn't load languages file", ex);
         }
-        
+
         if(langFile.getName().equals("gb.lang")) {
             english = true;
         }
@@ -78,6 +78,17 @@ public class LabelGrabber {
                 }
             }
         }
+    }
+
+    /**
+     * Determine if a particular key has an entry in the currently selected
+     * language.
+     *
+     * @param key the label key to check.
+     * @return true if a definition exists, false otherwise.
+     */
+    public boolean isLocallyDefined(String key) {
+        return labels.getProperty(key) != null;
     }
 
     /**
