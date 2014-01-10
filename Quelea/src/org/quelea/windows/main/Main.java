@@ -176,8 +176,8 @@ public final class Main extends Application {
             Platform.runLater(new Runnable() {
                 @Override
                 public void run() {
-                    if(SongManager.get()==null) {
-                        Dialog.showAndWaitError(LabelGrabber.INSTANCE.getLabel("already.running.title"), LabelGrabber.INSTANCE.getLabel("already.running.error"));
+                    if(SongManager.get().errorOccurred()) {
+                        Dialog.showError(LabelGrabber.INSTANCE.getLabel("already.running.title"), LabelGrabber.INSTANCE.getLabel("already.running.error"));
                         System.exit(1);
                     }
                     Thread songInitThread = new Thread() {

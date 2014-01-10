@@ -63,7 +63,7 @@ public class VersionChecker {
                 return extractVersion(content.toString());
             }
         }
-        catch(IOException ex) {
+        catch(Exception ex) {
             LOGGER.log(Level.WARNING, "Couldn't get version", ex);
             return null;
         }
