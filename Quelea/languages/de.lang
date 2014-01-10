@@ -366,3 +366,5 @@ filefilters.description.plain.text.song=Lied als Textdatei
 filefilters.description.xml.easyslide=XML Easyslide Dateien
 confirm.entry.exit.text=Sollen die Änderungen in diesem Lied gespeichert werden?
 filefilters.description.audio.files=Audio Dateien
+bible.search.keep.typing=Weitertippen...
+bible.search.results.found=Ergebnisse gefunden
