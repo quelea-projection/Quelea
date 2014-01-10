@@ -365,3 +365,6 @@ startup.error.title=Fel vid uppstart
 filefilters.description.plain.text.song=Sånger från en vanlig textfil
 filefilters.description.xml.easyslide=XML-filer från Easyslides
 filefilters.description.audio.files=Ljudfiler
+bible.search.keep.typing=Fortsätt skriva...
+bible.search.results.found=träffar hittade
+bible.search.result.found=träff hittad
