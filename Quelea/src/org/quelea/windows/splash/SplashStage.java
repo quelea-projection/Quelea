@@ -78,7 +78,7 @@ public class SplashStage extends Stage {
         LinearGradient loadingGrad = new LinearGradient(0, 1, 0, 0, true, CycleMethod.REPEAT, new Stop(0, Color.web("#666666")), new Stop(1, Color.web("#000000")));
         loadingText.setFill(loadingGrad);
         loadingText.setFont(loadingFont);
-        loadingText.setLayoutX(splashImage.getWidth() - loadingMetrics.computeStringWidth(loadingText.getText() + "...") - 20);
+        loadingText.setLayoutX(splashImage.getWidth() - loadingMetrics.computeStringWidth(loadingText.getText() + "...")-20);
         loadingText.setLayoutY(325);
         Text versionText = new Text(QueleaProperties.VERSION.getVersionString());
         LinearGradient versionGrad = new LinearGradient(0, 1, 0, 0, true, CycleMethod.REPEAT, new Stop(0, Color.web("#000000")), new Stop(1, Color.web("#666666")));
@@ -109,7 +109,7 @@ public class SplashStage extends Stage {
             }
         }
         Pips pips = new Pips(loadingFont, loadingGrad);
-        pips.setLayoutX(loadingText.getLayoutX() + loadingMetrics.computeStringWidth(LabelGrabber.INSTANCE.getLabel("loading.text")));
+        pips.setLayoutX(loadingText.getLayoutX()+loadingMetrics.computeStringWidth(LabelGrabber.INSTANCE.getLabel("loading.text")));
         pips.setLayoutY(loadingText.getLayoutY());
         Group mainPane = new Group();
         mainPane.getChildren().add(imageView);
@@ -124,7 +124,7 @@ public class SplashStage extends Stage {
         ObservableList<Screen> monitors = Screen.getScreens();
         Screen screen;
         int controlScreenProp = QueleaProperties.get().getControlScreen();
-        if(controlScreenProp < monitors.size() && controlScreenProp >= 0) {
+        if(controlScreenProp < monitors.size()) {
             screen = monitors.get(controlScreenProp);
         }
         else {
@@ -132,7 +132,7 @@ public class SplashStage extends Stage {
         }
 
         Rectangle2D bounds = screen.getVisualBounds();
-        setX(bounds.getMinX() + ((bounds.getWidth() / 2) - splashImage.getWidth() / 2));
-        setY(bounds.getMinY() + ((bounds.getHeight() / 2) - splashImage.getHeight() / 2));
+        setX(bounds.getMinX()+((bounds.getWidth() / 2) - splashImage.getWidth() / 2));
+        setY(bounds.getMinY()+((bounds.getHeight() / 2) - splashImage.getHeight() / 2));
     }
 }

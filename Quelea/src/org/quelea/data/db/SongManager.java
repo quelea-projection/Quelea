@@ -27,6 +27,7 @@ import java.util.Set;
 import java.util.TreeSet;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javafx.application.Platform;
 import org.hibernate.ObjectNotFoundException;
 import org.hibernate.Session;
 import org.quelea.data.ThemeDTO;
@@ -47,9 +48,10 @@ import org.quelea.services.utils.LoggerUtils;
 public final class SongManager {
 
     private static final Logger LOGGER = LoggerUtils.getLogger();
-    private static volatile SongManager INSTANCE;
+    private static final SongManager INSTANCE = new SongManager();
     private SearchIndex<SongDisplayable> index;
     private boolean indexIsClear;
+    private boolean error;
     private SoftReference<SongDisplayable[]> cacheSongs = new SoftReference<>(null);
     private final Set<DatabaseListener> listeners;
 
@@ -60,23 +62,15 @@ public final class SongManager {
         listeners = new HashSet<>();
         indexIsClear = true;
         index = new SongSearchIndex();
+        error = false;
     }
 
     /**
-     * Get the singleton instance of this class. Return null if there was an
-     * error with the database.
+     * Get the singleton instance of this class.
      * <p/>
      * @return the singleton instance of this class.
      */
-    public static synchronized SongManager get() {
-        if(INSTANCE == null) {
-            if(HibernateUtil.init()) {
-                INSTANCE = new SongManager();
-            }
-            else {
-                return null;
-            }
-        }
+    public static SongManager get() {
         return INSTANCE;
     }
 
@@ -87,6 +81,15 @@ public final class SongManager {
      */
     public SearchIndex<SongDisplayable> getIndex() {
         return index;
+    }
+
+    /**
+     * Determine if an error occurred initialising the database.
+     * <p/>
+     * @return true if an error occurred, false if all is ok.
+     */
+    public boolean errorOccurred() {
+        return error;
     }
 
     /**

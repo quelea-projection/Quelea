@@ -19,9 +19,8 @@ import org.quelea.services.utils.QueleaProperties;
  */
 public class HibernateUtil {
 
-    private static SessionFactory sessionFactory;
-    private static ServiceRegistry serviceRegistry;
-    private static boolean init = false;
+    private static final SessionFactory sessionFactory;
+    private static final ServiceRegistry serviceRegistry;
     private static final Logger LOGGER = LoggerUtils.getLogger();
 
     public interface SessionCallback {
@@ -29,12 +28,13 @@ public class HibernateUtil {
         void execute(Session session);
     }
 
-    public static boolean init() {
+    static {
         try {
             final String location = new File(new File(QueleaProperties.getQueleaUserHome(), "database_new"), "database_new").getAbsolutePath();
             final Configuration cfg = new Configuration();
             cfg.setProperty("hibernate.connection.url", "jdbc:hsqldb:" + location);
             cfg.setProperty("hibernate.connection.dialect", "org.hibernate.dialect.HSQLDialect");
+            cfg.setProperty("hibernate.dialect", "org.hibernate.dialect.HSQLDialect");
             cfg.setProperty("hibernate.connection.driver_class", "org.hsqldb.jdbcDriver");
             cfg.setProperty("hibernate.show_sql", "false");
             cfg.setProperty("hibernate.hbm2ddl.auto", "update");
@@ -44,12 +44,10 @@ public class HibernateUtil {
             cfg.addAnnotatedClass(org.quelea.data.db.model.TextShadow.class);
             serviceRegistry = new ServiceRegistryBuilder().applySettings(cfg.getProperties()).buildServiceRegistry();
             sessionFactory = cfg.buildSessionFactory(serviceRegistry);
-            init = true;
-            return true;
         }
         catch(Throwable ex) {
-            LOGGER.log(Level.INFO, "Initial SessionFactory creation failed. Quelea is probably already running.", ex);
-            return false;
+            LOGGER.log(Level.SEVERE, "Initial SessionFactory creation failed.", ex);
+            throw new ExceptionInInitializerError(ex);
         }
     }
 
@@ -60,9 +58,6 @@ public class HibernateUtil {
      * @param callback
      */
     public static void execute(SessionCallback callback) {
-        if(!init) {
-            throw new IllegalStateException("Database must be initialised first");
-        }
         final Session session = sessionFactory.openSession();
         session.getTransaction().begin();
         callback.execute(session);
