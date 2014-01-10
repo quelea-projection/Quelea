@@ -19,8 +19,10 @@
 package org.quelea.extras;
 
 import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URL;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
@@ -39,7 +41,6 @@ import javafx.stage.Stage;
 import javafx.util.StringConverter;
 import javafx.util.converter.TimeStringConverter;
 
-
 /**
  * Displays a graph of Quelea invocations. Not tied to Quelea itself, just used
  * independently to visualise some phonehome data.
@@ -51,7 +52,7 @@ public class InvocationChart extends Application {
     private static final String RAW_DUMP_URL = "http://quelea.org/phonehome/dumpraw.php";
     private static final boolean JUST_SUNDAY = true;
     private static final boolean SHOW_ZERO = false;
-    private TreeMap<Date, TreeMap<String, Integer>> times = new TreeMap<>();
+    private final TreeMap<Date, TreeMap<String, Integer>> times = new TreeMap<>();
 
     /**
      * Fire it off.
@@ -139,7 +140,7 @@ public class InvocationChart extends Application {
             stage.setScene(scene);
             stage.show();
         }
-        catch(Exception ex) {
+        catch(IOException | ParseException ex) {
             ex.printStackTrace();
         }
     }
@@ -148,6 +149,7 @@ public class InvocationChart extends Application {
         launch(args);
     }
 }
+
 /**
  * Used to convert a timestamp (epoch millis) to a human readable date.
  * <p/>
