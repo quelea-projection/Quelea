@@ -188,7 +188,11 @@ public class BibleSearchDialog extends Stage implements BibleChangeListener {
                                     }
                                 }
                                 overlay.hide();
-                                resultsField.setText(" " + count + " " + LabelGrabber.INSTANCE.getLabel("bible.search.results.found"));
+                                String resultsfoundSuffix = LabelGrabber.INSTANCE.getLabel("bible.search.results.found");
+                                if(count==1 && LabelGrabber.INSTANCE.isLocallyDefined("bible.search.result.found")) {
+                                    resultsfoundSuffix = LabelGrabber.INSTANCE.getLabel("bible.search.result.found");
+                                }
+                                resultsField.setText(" " + count + " " + resultsfoundSuffix);
                             }
                         });
                     }
