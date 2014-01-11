@@ -64,7 +64,7 @@ public class VersionChecker {
             }
         }
         catch(Exception ex) {
-            LOGGER.log(Level.WARNING, "Couldn't get version", ex);
+            LOGGER.log(Level.INFO, "Couldn't get version", ex);
             return null;
         }
     }
