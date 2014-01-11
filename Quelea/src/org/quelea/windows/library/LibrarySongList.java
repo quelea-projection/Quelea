@@ -177,14 +177,18 @@ public class LibrarySongList extends StackPane {
                         song.setLastSearch(search);
                         m.add(song);
                     }
-                    songs.addAll(m);
-                    m.clear();
 
                     SongDisplayable[] lyricSongs = SongManager.get().getIndex().filter(search, SongSearchIndex.FilterType.BODY);
                     for(SongDisplayable song : lyricSongs) {
                         song.setLastSearch(null);
                         m.add(song);
                     }
+                    
+                    SongDisplayable[] authorSongs = SongManager.get().getIndex().filter(search, SongSearchIndex.FilterType.AUTHOR);
+                    for(SongDisplayable song : authorSongs) {
+                        m.add(song);
+                    }
+                    
                     songs.addAll(m);
                 }
 

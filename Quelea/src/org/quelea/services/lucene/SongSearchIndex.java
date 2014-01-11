@@ -90,6 +90,7 @@ public class SongSearchIndex implements SearchIndex<SongDisplayable> {
             for(SongDisplayable song : songList) {
                 Document doc = new Document();
                 doc.add(new Field("title", song.getTitle(), Field.Store.NO, Field.Index.ANALYZED));
+                doc.add(new Field("author", song.getAuthor(), Field.Store.NO, Field.Index.ANALYZED));
                 doc.add(new Field("lyrics", song.getLyrics(false, false), Field.Store.NO, Field.Index.ANALYZED));
                 doc.add(new Field("number", Long.toString(song.getID()), Field.Store.YES, Field.Index.ANALYZED));
                 writer.addDocument(doc);
@@ -148,6 +149,9 @@ public class SongSearchIndex implements SearchIndex<SongDisplayable> {
         }
         else if(type == FilterType.TITLE) {
             typeStr = "title";
+        }
+        else if(type == FilterType.AUTHOR) {
+            typeStr = "author";
         }
         else {
             LOGGER.log(Level.SEVERE, "Unknown type: {0}", type);
