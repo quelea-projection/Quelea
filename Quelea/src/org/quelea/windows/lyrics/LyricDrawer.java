@@ -172,11 +172,12 @@ public class LyricDrawer extends DisplayableDrawer {
         if(this.getCanvas().getCurrentDisplayable() instanceof SongDisplayable) {
             final SongDisplayable song = (SongDisplayable) this.getCanvas().getCurrentDisplayable();
             if(song != null) {
-                final Background sectionThemeBackground = song.getSections()[0].getTheme().getBackground();
                 if(theme.getBackground() instanceof VideoBackground
-                        && sectionThemeBackground instanceof VideoBackground) {
-                    String newLocation = ((VideoBackground) theme.getBackground()).getVideoFile().toURI().toString();
-                    String oldLocation = ((VideoBackground) sectionThemeBackground).getVideoFile().toURI().toString();
+                        && VLCWindow.INSTANCE.getLastLocation()!=null) {
+                    String newLocation = ((VideoBackground) theme.getBackground()).getVideoFile().getAbsolutePath();
+                    String oldLocation = VLCWindow.INSTANCE.getLastLocation();
+                    System.out.println(newLocation);
+                    System.out.println(oldLocation);
                     if(newLocation.equals(oldLocation)) {
                         sameVid = true;
                     }
