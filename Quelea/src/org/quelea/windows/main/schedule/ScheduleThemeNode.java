@@ -213,6 +213,9 @@ public class ScheduleThemeNode extends BorderPane {
         for(File file : themeDir.listFiles()) {
             if(file.getName().endsWith(".th")) {
                 String fileText = Utils.getTextFromFile(file.getAbsolutePath(), "");
+                if(fileText.trim().isEmpty()) {
+                    continue;
+                }
                 final ThemeDTO theme = ThemeDTO.fromString(fileText);
                 if(theme == ThemeDTO.DEFAULT_THEME) {
                     LOGGER.log(Level.WARNING, "Error parsing theme file: {0}", fileText);
