@@ -61,6 +61,10 @@ public final class Main extends Application {
     private DisplayStage fullScreenWindow;
     private DisplayStage stageWindow;
     private Dialog vlcWarningDialog;
+    
+    public static void main(String[] args) {
+        Application.launch(args);
+    }
 
     /**
      * Starts the program off, this is the first thing that is executed by

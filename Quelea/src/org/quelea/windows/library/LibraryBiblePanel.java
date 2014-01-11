@@ -28,7 +28,6 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
-import javafx.scene.control.SingleSelectionModel;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
@@ -84,7 +83,7 @@ public class LibraryBiblePanel extends VBox implements BibleChangeListener {
         }
         else {
             Bible bible = bibleSelector.selectionModelProperty().get().getSelectedItem();
-            if(bible==null) {
+            if(bible == null) {
                 bible = bibleSelector.getItems().get(0);
                 bibleSelector.setValue(bibleSelector.getItems().get(0));
             }
@@ -149,6 +148,18 @@ public class LibraryBiblePanel extends VBox implements BibleChangeListener {
             public void run() {
                 ObservableList<Bible> bibles = FXCollections.observableArrayList(BibleManager.get().getBibles());
                 bibleSelector.itemsProperty().set(bibles);
+                Bible selectedBible = null;
+                for(Bible bible : bibles) {
+                    if(bible.getBibleName().equals(QueleaProperties.get().getDefaultBible())) {
+                        selectedBible = bible;
+                    }
+                }
+                if(selectedBible == null) {
+                    bibleSelector.selectionModelProperty().get().selectFirst();
+                }
+                else {
+                    bibleSelector.selectionModelProperty().get().select(selectedBible);
+                }
             }
         });
     }
