@@ -682,6 +682,7 @@ public final class Utils {
         ret.add("m4v");
         ret.add("flv");
         ret.add("avi");
+        ret.add("mov");
         ret.add("rm");
         ret.add("mpg");
         ret.add("mpeg");
