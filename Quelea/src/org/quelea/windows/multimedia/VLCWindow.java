@@ -62,6 +62,7 @@ public class VLCWindow {
     private boolean show;
     private boolean paused;
     private boolean init;
+    private String location;
 
     private VLCWindow() {
         runOnVLCThread(new Runnable() {
@@ -132,6 +133,7 @@ public class VLCWindow {
     }
 
     public void play(final String vid) {
+        this.location = vid;
         runOnVLCThread(new Runnable() {
             @Override
             public void run() {
@@ -143,6 +145,10 @@ public class VLCWindow {
 //                System.out.println("play(arg) end");
             }
         });
+    }
+    
+    public String getLastLocation() {
+        return location;
     }
 
     public void pause() {
@@ -160,6 +166,7 @@ public class VLCWindow {
     }
 
     public void stop() {
+        location = null;
         runOnVLCThread(new Runnable() {
             @Override
             public void run() {
