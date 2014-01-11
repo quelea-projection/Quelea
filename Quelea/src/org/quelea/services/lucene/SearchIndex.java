@@ -31,7 +31,7 @@ public interface SearchIndex<T> {
      */
     public enum FilterType {
 
-        TITLE, BODY
+        TITLE, AUTHOR, BODY
     }
     
     /**
