@@ -83,9 +83,13 @@ public class SelectLyricsList extends ListView<TextSection> {
             public ListCell<TextSection> call(ListView<TextSection> p) {
                 ListCell<TextSection> cell = new ListCell<TextSection>() {
                     @Override
-                    protected void updateItem(TextSection t, boolean bln) {
-                        super.updateItem(t, bln);
-                        if(t != null) {
+                    protected void updateItem(TextSection t, boolean empty) {
+                        super.updateItem(t, empty);
+                        if(empty) {
+                            setText(null);
+                            setGraphic(null);
+                        }
+                        else {
                             String[] text = t.getText(false, false);
                             StringBuilder builder = new StringBuilder();
                             for(String str : text) {

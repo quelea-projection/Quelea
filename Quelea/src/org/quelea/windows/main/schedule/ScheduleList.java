@@ -73,7 +73,11 @@ public class ScheduleList extends ListView<Displayable> {
                     @Override
                     public void updateItem(Displayable item, boolean empty) {
                         super.updateItem(item, empty);
-                        if(item != null) {
+                        if(empty) {
+                            setText(null);
+                            setGraphic(null);
+                        }
+                        else {
                             setGraphic(item.getPreviewIcon());
                             setText(item.getPreviewText());
                         }
