@@ -112,9 +112,8 @@ public class LyricDrawer extends DisplayableDrawer {
             if(node instanceof Group) {
                 it.remove();
             }
-
         }
-
+        
         getCanvas().getChildren().add(newTextGroup);
 
         ParallelTransition paintTransition = new ParallelTransition();

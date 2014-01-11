@@ -76,7 +76,11 @@ public class BooleanCell<E> extends TableCell<E, Boolean> {
     @Override
     public void updateItem(Boolean item, boolean empty) {
         super.updateItem(item, empty);
-        if(!isEmpty()) {
+        if(empty) {
+            setText(null);
+            setGraphic(null);
+        }
+        else if(!isEmpty()) {
             checkBox.setSelected(item);
         }
     }
