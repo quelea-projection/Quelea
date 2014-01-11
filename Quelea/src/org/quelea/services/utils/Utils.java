@@ -74,7 +74,6 @@ import org.quelea.data.displayable.SongDisplayable;
 import org.quelea.services.languages.LabelGrabber;
 import org.quelea.windows.main.QueleaApp;
 import org.quelea.windows.main.StatusPanel;
-import uk.co.caprica.vlcj.runtime.windows.WindowsRuntimeUtil;
 
 /**
  * General utility class containing a bunch of static methods.
@@ -748,8 +747,6 @@ public final class Utils {
      * Get an image filled with the specified colour.
      * <p/>
      * @param color the colour of the image.
-     * @param width the width of the image.
-     * @param height the height of the image.
      * @return the image.
      */
     public static Image getImageFromColour(final Color color) {
@@ -763,21 +760,24 @@ public final class Utils {
     /**
      * Get an image to be shown as the background in place of a playing video.
      * <p/>
+     * @param videoFile the video file for which to get the preview image.
      * @return the image to be shown in place of a playing video.
      */
     public static Image getVidBlankImage(File videoFile) {
         synchronized(videoPreviewCache) {
             Image ret = new Image("file:icons/vid preview.png");
-            try {
-                Image img = videoPreviewCache.get(videoFile);
-                if(img != null) {
-                    return img;
+            if(videoFile.isFile()) {
+                try {
+                    Image img = videoPreviewCache.get(videoFile);
+                    if(img != null) {
+                        return img;
+                    }
+                    ret = SwingFXUtils.toFXImage(FrameGrab.getFrame(videoFile, 0), null);
+                    videoPreviewCache.put(videoFile, ret);
                 }
-                ret = SwingFXUtils.toFXImage(FrameGrab.getFrame(videoFile, 0), null);
-                videoPreviewCache.put(videoFile, ret);
-            }
-            catch(IOException | JCodecException ex) {
-                ex.printStackTrace();
+                catch(IOException | JCodecException ex) {
+                    LOGGER.log(Level.WARNING, "Couldn't get video preview image for " + videoFile.getAbsolutePath(), ex);
+                }
             }
             return ret;
         }
