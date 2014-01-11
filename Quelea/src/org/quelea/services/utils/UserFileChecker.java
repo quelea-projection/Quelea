@@ -23,11 +23,12 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * Checks to see whether the user has the theme / properties / etc. files in 
+ * Checks to see whether the user has the theme / properties / etc. files in
  * their home directory and if they don't, copies them across. This is useful
  * since the installer doesn't touch the user's directory, so if this is the
- * first time the user runs the program we want to copy across the default 
+ * first time the user runs the program we want to copy across the default
  * settings.
+ * <p>
  * @author Michael
  */
 public class UserFileChecker {
@@ -37,6 +38,7 @@ public class UserFileChecker {
 
     /**
      * Create a new user file checker.
+     * <p>
      * @param userDir the user directory to check.
      */
     public UserFileChecker(File userDir) {
@@ -51,6 +53,8 @@ public class UserFileChecker {
         LOGGER.log(Level.INFO, "Checking user files");
         checkPropertiesFile();
         checkThemeDir();
+        checkImageDir();
+        checkBibleDir();
     }
 
     /**
@@ -58,41 +62,61 @@ public class UserFileChecker {
      */
     private void checkPropertiesFile() {
         File file = new File(userDir, "quelea.properties");
-        if (file.exists() && Utils.getTextFromFile(file.getAbsolutePath(), "error").trim().isEmpty()) {
+        if(file.exists() && Utils.getTextFromFile(file.getAbsolutePath(), "error").trim().isEmpty()) {
             copyPropertiesFile();
         }
         else if(!file.exists()) {
             copyPropertiesFile();
         }
     }
-    
+
     /**
      * Check the theme directory to see if it needs to be copied.
      */
     private void checkThemeDir() {
         File file = new File(userDir, "themes");
         if(!file.exists()) {
-            copyThemeDir();
+            copyDir("themes");
+        }
+    }
+
+    /**
+     * Check the bibles directory to see if it needs to be copied.
+     */
+    private void checkBibleDir() {
+        File file = new File(userDir, "bibles");
+        if(!file.exists()) {
+            copyDir("bibles");
+        }
+    }
+
+    /**
+     * Check the image directory to see if it needs to be copied.
+     */
+    private void checkImageDir() {
+        File file = new File(userDir, "img");
+        if(!file.exists()) {
+            copyDir("img");
         }
     }
 
     /**
      * Copy the theme directory over to the user's Quelea home directory.
      */
-    private void copyThemeDir() {
-        LOGGER.log(Level.INFO, "Theme dir doesn't exist in user home, copying");
-        File masterThemes = new File("themes");
-        if (masterThemes.exists()) {
+    private void copyDir(String dirName) {
+        LOGGER.log(Level.INFO, "{0} dir doesn't exist in user home, copying", dirName);
+        File masterThemes = new File(dirName);
+        if(masterThemes.exists()) {
             try {
-                Utils.copyFile(masterThemes, new File(userDir, "themes"));
-                LOGGER.log(Level.INFO, "Themes copied successfully");
+                Utils.copyFile(masterThemes, new File(userDir, dirName));
+                LOGGER.log(Level.INFO, "{0} copied successfully", dirName);
             }
-            catch (IOException ex) {
-                LOGGER.log(Level.WARNING, "Couldn't copy themes", ex);
+            catch(IOException ex) {
+                LOGGER.log(Level.WARNING, "Couldn't copy " + dirName, ex);
             }
         }
         else {
-            LOGGER.log(Level.WARNING, "Themes dir {0} doesn't exist", masterThemes.getAbsolutePath());
+            LOGGER.log(Level.WARNING, "{0} dir {1} doesn't exist", new Object[]{dirName, masterThemes.getAbsolutePath()});
         }
     }
 
@@ -102,12 +126,12 @@ public class UserFileChecker {
     private void copyPropertiesFile() {
         LOGGER.log(Level.INFO, "Properties file doesn't exist in user home, copying");
         File masterProps = new File("quelea.properties");
-        if (masterProps.exists()) {
+        if(masterProps.exists()) {
             try {
                 Utils.copyFile(masterProps, new File(userDir, "quelea.properties"));
                 LOGGER.log(Level.INFO, "Properties file copied successfully");
             }
-            catch (IOException ex) {
+            catch(IOException ex) {
                 LOGGER.log(Level.WARNING, "Couldn't copy properties file", ex);
             }
         }
