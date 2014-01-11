@@ -106,6 +106,7 @@ public class OptionsBiblePanel extends GridPane implements PropertyPanel, BibleC
                 for(Bible bible : BibleManager.get().getBibles()) {
                     defaultBibleComboBox.itemsProperty().get().add(bible);
                 }
+                readProperties();
             }
         });
     }
@@ -119,7 +120,7 @@ public class OptionsBiblePanel extends GridPane implements PropertyPanel, BibleC
         String selectedBibleName = props.getDefaultBible();
         for(int i = 0; i < defaultBibleComboBox.itemsProperty().get().size(); i++) {
             Bible bible = defaultBibleComboBox.itemsProperty().get().get(i);
-            if(bible.getName().equals(selectedBibleName)) {
+            if(bible.getBibleName().equals(selectedBibleName)) {
                 defaultBibleComboBox.getSelectionModel().select(i);
             }
         }

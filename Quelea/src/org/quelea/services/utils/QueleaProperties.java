@@ -306,7 +306,7 @@ public final class QueleaProperties extends Properties {
      * @return the bibles directory.
      */
     public File getBibleDir() {
-        return new File(getProperty("bibles.dir", "bibles"));
+        return new File(getQueleaUserHome(), "bibles");
     }
 
     /**
@@ -315,7 +315,7 @@ public final class QueleaProperties extends Properties {
      * @return the img directory
      */
     public File getImageDir() {
-        return new File(getProperty("img.dir", "img"));
+        return new File(getQueleaUserHome(), "img");
     }
 
     /**
