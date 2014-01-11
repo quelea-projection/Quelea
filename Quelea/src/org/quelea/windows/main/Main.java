@@ -61,7 +61,7 @@ public final class Main extends Application {
     private DisplayStage fullScreenWindow;
     private DisplayStage stageWindow;
     private Dialog vlcWarningDialog;
-    
+
     public static void main(String[] args) {
         Application.launch(args);
     }
@@ -111,42 +111,37 @@ public final class Main extends Application {
                 stageHidden = false;
             }
 
-            Platform.runLater(new Runnable() {
-                @Override
-                public void run() {
-                    if(lyricsHidden) {
-                        LOGGER.log(Level.INFO, "Hiding projector display on monitor 0 (base 0!)");
-                        fullScreenWindow = new DisplayStage(Utils.getBoundsFromRect2D(monitors.get(0).getVisualBounds()), false);
-                        fullScreenWindow.hide();
-                    }
-                    else if(QueleaProperties.get().isProjectorModeCoords()) {
-                        LOGGER.log(Level.INFO, "Starting projector display: ", QueleaProperties.get().getProjectorCoords());
-                        fullScreenWindow = new DisplayStage(QueleaProperties.get().getProjectorCoords(), false);
-                    }
-                    else {
-                        LOGGER.log(Level.INFO, "Starting projector display on monitor {0} (base 0!)", projectorScreen);
-                        fullScreenWindow = new DisplayStage(Utils.getBoundsFromRect2D(monitors.get(projectorScreen).getVisualBounds()), false);
-                    }
-                    QueleaApp.get().setProjectionWindow(fullScreenWindow);
-                    //                fullScreenWindow.toFront();
+            if(lyricsHidden) {
+                LOGGER.log(Level.INFO, "Hiding projector display on monitor 0 (base 0!)");
+                fullScreenWindow = new DisplayStage(Utils.getBoundsFromRect2D(monitors.get(0).getVisualBounds()), false);
+                fullScreenWindow.hide();
+            }
+            else if(QueleaProperties.get().isProjectorModeCoords()) {
+                LOGGER.log(Level.INFO, "Starting projector display: ", QueleaProperties.get().getProjectorCoords());
+                fullScreenWindow = new DisplayStage(QueleaProperties.get().getProjectorCoords(), false);
+            }
+            else {
+                LOGGER.log(Level.INFO, "Starting projector display on monitor {0} (base 0!)", projectorScreen);
+                fullScreenWindow = new DisplayStage(Utils.getBoundsFromRect2D(monitors.get(projectorScreen).getVisualBounds()), false);
+            }
+            QueleaApp.get().setProjectionWindow(fullScreenWindow);
+            //fullScreenWindow.toFront();
 
-                    if(stageHidden) {
-                        LOGGER.log(Level.INFO, "Hiding stage display on monitor 0 (base 0!)");
-                        stageWindow = new DisplayStage(Utils.getBoundsFromRect2D(monitors.get(0).getVisualBounds()), true);
-                        stageWindow.hide();
-                    }
-                    else if(QueleaProperties.get().isStageModeCoords()) {
-                        LOGGER.log(Level.INFO, "Starting stage display: ", QueleaProperties.get().getStageCoords());
-                        stageWindow = new DisplayStage(QueleaProperties.get().getStageCoords(), true);
-                    }
-                    else {
-                        LOGGER.log(Level.INFO, "Starting stage display on monitor {0} (base 0!)", stageScreen);
-                        stageWindow = new DisplayStage(Utils.getBoundsFromRect2D(monitors.get(stageScreen).getVisualBounds()), true);
-                    }
-                    QueleaApp.get().setStageWindow(stageWindow);
-                    //                stageWindow.toFront();
-                }
-            });
+            if(stageHidden) {
+                LOGGER.log(Level.INFO, "Hiding stage display on monitor 0 (base 0!)");
+                stageWindow = new DisplayStage(Utils.getBoundsFromRect2D(monitors.get(0).getVisualBounds()), true);
+                stageWindow.hide();
+            }
+            else if(QueleaProperties.get().isStageModeCoords()) {
+                LOGGER.log(Level.INFO, "Starting stage display: ", QueleaProperties.get().getStageCoords());
+                stageWindow = new DisplayStage(QueleaProperties.get().getStageCoords(), true);
+            }
+            else {
+                LOGGER.log(Level.INFO, "Starting stage display on monitor {0} (base 0!)", stageScreen);
+                stageWindow = new DisplayStage(Utils.getBoundsFromRect2D(monitors.get(stageScreen).getVisualBounds()), true);
+            }
+            QueleaApp.get().setStageWindow(stageWindow);
+            //                stageWindow.toFront();
 
             LOGGER.log(Level.INFO, "Loading bibles");
             final Thread bibleLoader = new Thread() {
@@ -177,107 +172,102 @@ public final class Main extends Application {
             }
             BibleManager.get().buildIndex();
 
-            Platform.runLater(new Runnable() {
+            if(SongManager.get() == null) {
+                Dialog.showAndWaitError(LabelGrabber.INSTANCE.getLabel("already.running.title"), LabelGrabber.INSTANCE.getLabel("already.running.error"));
+                System.exit(1);
+            }
+            Thread songInitThread = new Thread() {
                 @Override
                 public void run() {
-                    if(SongManager.get()==null) {
-                        Dialog.showAndWaitError(LabelGrabber.INSTANCE.getLabel("already.running.title"), LabelGrabber.INSTANCE.getLabel("already.running.error"));
-                        System.exit(1);
-                    }
-                    Thread songInitThread = new Thread() {
-                        @Override
-                        public void run() {
-                            SongManager.get().getSongs(); //Add all the songs to the index
-                        }
-                    };
-                    songInitThread.start();
-                    OOUtils.attemptInit();
-                    try {
-                        bibleLoader.join(); //Make sure bibleloader has finished loading
-                    }
-                    catch(InterruptedException ex) {
-                    }
-                    mainWindow = new MainWindow(true);
-
-                    new UpdateChecker().checkUpdate(false, false, false); //Check updates
-                    PhoneHome.INSTANCE.phone(); //Phone home
-
-                    LOGGER.log(Level.INFO, "Registering canvases");
-                    mainWindow.getMainPanel().getLivePanel().registerDisplayCanvas(fullScreenWindow.getCanvas());
-                    mainWindow.getMainPanel().getLivePanel().registerDisplayWindow(fullScreenWindow);
-                    mainWindow.getNoticeDialog().registerCanvas(fullScreenWindow.getCanvas());
-                    if(lyricsHidden) {
-                        fullScreenWindow.hide();
-                    }
-                    else {
-                        fullScreenWindow.show();
-                    }
-                    mainWindow.getMainPanel().getLivePanel().registerDisplayCanvas(stageWindow.getCanvas());
-                    mainWindow.getMainPanel().getLivePanel().registerDisplayWindow(stageWindow);
-                    if(stageHidden) {
-                        stageWindow.hide();
-                    }
-                    else {
-                        stageWindow.show();
-                    }
-                    LOGGER.log(Level.INFO, "Registered canvases.");
-
-                    if(QueleaProperties.get().getDragAndDrop()) {
-                        Utils.enableDragAndDrop();
-                        LOGGER.log(Level.INFO, "Enabled drag and drop functionality.");
-                    }
-
-                    LOGGER.log(Level.INFO, "Final loading bits");
-                    //                Utils.centreOnMonitor(mainWindow, controlScreen);
-                    //                mainWindow.toFront();
-                    new ShortcutManager().addShortcuts(mainWindow);
-                    LOGGER.log(Level.INFO, "Loaded everything.");
-
-                    if(!getParameters().getRaw().isEmpty()) {
-                        String schedulePath = getParameters().getRaw().get(0);
-                        LOGGER.log(Level.INFO, "Opening schedule through argument: {0}", schedulePath);
-                        QueleaApp.get().openSchedule(new File(schedulePath));
-                    }
-                    try {
-                        songInitThread.join(); //Make sure bibleloader has finished loading
-                    }
-                    catch(InterruptedException ex) {
-                    }
-                    mainWindow.show();
-                    splashWindow.hide();
-                    showMonitorWarning(monitorNumber);
-                    if(VLC_OK) {
-                        VLCWindow.INSTANCE.refreshPosition();
-                    }
-                    else { //Couldn't find the VLC libraries.
-                        vlcWarningDialog = new Dialog.Builder()
-                                .create()
-                                .setTitle(LabelGrabber.INSTANCE.getLabel("vlc.warning.title"))
-                                .setMessage(LabelGrabber.INSTANCE.getLabel("vlc.warning.message"))
-                                .addLabelledButton(LabelGrabber.INSTANCE.getLabel("continue.without.video"), new EventHandler<ActionEvent>() {
-                                    @Override
-                                    public void handle(ActionEvent t) {
-                                        vlcWarningDialog.hide();
-                                    }
-                                })
-                                .addLabelledButton(LabelGrabber.INSTANCE.getLabel("download.vlc"), new EventHandler<ActionEvent>() {
-                                    @Override
-                                    public void handle(ActionEvent t) {
-                                        try {
-                                            java.awt.Desktop.getDesktop().browse(new URI("http://www.videolan.org/vlc/index.html"));
-                                        }
-                                        catch(URISyntaxException | IOException ex) {
-                                            LOGGER.log(Level.WARNING, "Couldn't open browser", ex);
-                                        }
-                                        vlcWarningDialog.hide();
-                                    }
-                                })
-                                .setWarningIcon()
-                                .build();
-                        vlcWarningDialog.showAndWait();
-                    }
+                    SongManager.get().getSongs(); //Add all the songs to the index
                 }
-            });
+            };
+            songInitThread.start();
+            OOUtils.attemptInit();
+            try {
+                bibleLoader.join(); //Make sure bibleloader has finished loading
+            }
+            catch(InterruptedException ex) {
+            }
+            mainWindow = new MainWindow(true);
+
+            new UpdateChecker().checkUpdate(false, false, false); //Check updates
+            PhoneHome.INSTANCE.phone(); //Phone home
+
+            LOGGER.log(Level.INFO, "Registering canvases");
+            mainWindow.getMainPanel().getLivePanel().registerDisplayCanvas(fullScreenWindow.getCanvas());
+            mainWindow.getMainPanel().getLivePanel().registerDisplayWindow(fullScreenWindow);
+            mainWindow.getNoticeDialog().registerCanvas(fullScreenWindow.getCanvas());
+            if(lyricsHidden) {
+                fullScreenWindow.hide();
+            }
+            else {
+                fullScreenWindow.show();
+            }
+            mainWindow.getMainPanel().getLivePanel().registerDisplayCanvas(stageWindow.getCanvas());
+            mainWindow.getMainPanel().getLivePanel().registerDisplayWindow(stageWindow);
+            if(stageHidden) {
+                stageWindow.hide();
+            }
+            else {
+                stageWindow.show();
+            }
+            LOGGER.log(Level.INFO, "Registered canvases.");
+
+            if(QueleaProperties.get().getDragAndDrop()) {
+                Utils.enableDragAndDrop();
+                LOGGER.log(Level.INFO, "Enabled drag and drop functionality.");
+            }
+
+            LOGGER.log(Level.INFO, "Final loading bits");
+                    //                Utils.centreOnMonitor(mainWindow, controlScreen);
+            //                mainWindow.toFront();
+            new ShortcutManager().addShortcuts(mainWindow);
+            LOGGER.log(Level.INFO, "Loaded everything.");
+
+            if(!getParameters().getRaw().isEmpty()) {
+                String schedulePath = getParameters().getRaw().get(0);
+                LOGGER.log(Level.INFO, "Opening schedule through argument: {0}", schedulePath);
+                QueleaApp.get().openSchedule(new File(schedulePath));
+            }
+            try {
+                songInitThread.join(); //Make sure bibleloader has finished loading
+            }
+            catch(InterruptedException ex) {
+            }
+            mainWindow.show();
+            splashWindow.hide();
+            showMonitorWarning(monitorNumber);
+            if(VLC_OK) {
+                VLCWindow.INSTANCE.refreshPosition();
+            }
+            else { //Couldn't find the VLC libraries.
+                vlcWarningDialog = new Dialog.Builder()
+                        .create()
+                        .setTitle(LabelGrabber.INSTANCE.getLabel("vlc.warning.title"))
+                        .setMessage(LabelGrabber.INSTANCE.getLabel("vlc.warning.message"))
+                        .addLabelledButton(LabelGrabber.INSTANCE.getLabel("continue.without.video"), new EventHandler<ActionEvent>() {
+                            @Override
+                            public void handle(ActionEvent t) {
+                                vlcWarningDialog.hide();
+                            }
+                        })
+                        .addLabelledButton(LabelGrabber.INSTANCE.getLabel("download.vlc"), new EventHandler<ActionEvent>() {
+                            @Override
+                            public void handle(ActionEvent t) {
+                                try {
+                                    java.awt.Desktop.getDesktop().browse(new URI("http://www.videolan.org/vlc/index.html"));
+                                }
+                                catch(URISyntaxException | IOException ex) {
+                                    LOGGER.log(Level.WARNING, "Couldn't open browser", ex);
+                                }
+                                vlcWarningDialog.hide();
+                            }
+                        })
+                        .setWarningIcon()
+                        .build();
+                vlcWarningDialog.showAndWait();
+            }
         }
         catch(Throwable ex) {
             LOGGER.log(Level.SEVERE, "Uncaught exception during application start-up", ex);
