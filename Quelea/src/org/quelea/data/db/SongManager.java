@@ -171,7 +171,7 @@ public final class SongManager {
     /**
      * Add a song to the database.
      * <p/>
-     * @param song the song to add.
+     * @param songs the songs to add.
      * @param fireUpdate true if the update should be fired to listeners when
      * adding this song, false otherwise.
      * @return true if the operation succeeded, false otherwise.
@@ -228,7 +228,7 @@ public final class SongManager {
         HibernateUtil.execute(new HibernateUtil.SessionCallback() {
             @Override
             public void execute(Session session) {
-                Song updatedSong = null;
+                Song updatedSong;
                 final boolean nullTheme = song.getSections()[0].getTheme() == null;
                 final boolean nullTags = song.getTags() == null;
                 try {
