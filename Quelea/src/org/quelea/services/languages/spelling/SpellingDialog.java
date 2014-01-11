@@ -34,7 +34,6 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
-import javafx.scene.layout.VBoxBuilder;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
 import javafx.stage.Modality;
@@ -184,9 +183,12 @@ public class SpellingDialog {
             });
             doneSpellingStage.initModality(Modality.WINDOW_MODAL);
             doneSpellingStage.initStyle(StageStyle.UTILITY);
-            doneSpellingStage.setScene(new Scene(VBoxBuilder.create().
-                    children(new Text(LabelGrabber.INSTANCE.getLabel("spelling.complete.text")), ok).
-                    alignment(Pos.CENTER).padding(new Insets(15)).build()));
+            VBox spellingBox = new VBox();
+            spellingBox.getChildren().add(new Text(LabelGrabber.INSTANCE.getLabel("spelling.complete.text")));
+            spellingBox.getChildren().add(ok);
+            spellingBox.setAlignment(Pos.CENTER);
+            spellingBox.setPadding(new Insets(15));
+            doneSpellingStage.setScene(new Scene(spellingBox));
             doneSpellingStage.show();
             return;
         }
