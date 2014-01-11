@@ -20,6 +20,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
@@ -27,6 +28,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Pattern;
 import javafx.application.Platform;
+import javafx.embed.swing.JFXPanel;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import org.javafx.dialog.Dialog;
@@ -108,6 +110,7 @@ public class KingswayWorshipParser implements SongParser {
                     errorCount = 0;
                 }
                 if(errorCount > CONSECUTIVE_ERROR_THRESHOLD) {
+                    LOGGER.log(Level.INFO, "Giving up importing at position {0}, reached {1} consecutive errors", new Object[]{i, CONSECUTIVE_ERROR_THRESHOLD});
                     break;
                 }
                 i++;
@@ -186,16 +189,16 @@ public class KingswayWorshipParser implements SongParser {
             public void run() {
                 Dialog.buildConfirmation(LabelGrabber.INSTANCE.getLabel("check.kingsway.start.title"), LabelGrabber.INSTANCE.getLabel("check.kingsway.start"))
                         .addYesButton(new EventHandler<ActionEvent>() {
-                    @Override
-                    public void handle(ActionEvent t) {
-                        returnVal = start;
-                    }
-                }).addNoButton(new EventHandler<ActionEvent>() {
-                    @Override
-                    public void handle(ActionEvent t) {
-                        returnVal = 0;
-                    }
-                }).build().showAndWait();
+                            @Override
+                            public void handle(ActionEvent t) {
+                                returnVal = start;
+                            }
+                        }).addNoButton(new EventHandler<ActionEvent>() {
+                            @Override
+                            public void handle(ActionEvent t) {
+                                returnVal = 0;
+                            }
+                        }).build().showAndWait();
 
             }
         });
@@ -212,123 +215,132 @@ public class KingswayWorshipParser implements SongParser {
      * @param num the number of the song (debugging use only)
      * @return the song from the given HTML
      */
-    private SongDisplayable parseSong(String html, int num) {
-        if(html == null) {
-            return null;
-        }
-        if(html.contains("Server error")) {
-            return null;
-        }
-        if(html.trim().isEmpty()) {
-            return null;
-        }
-        int startIndex = html.indexOf("<div class=\"span8\">") + "<div class=\"span8\">".length();
-        int endIndex = html.indexOf("<div class=\"sharer\">", startIndex);
-        if(endIndex == -1) {
-            endIndex = html.indexOf("</div>", startIndex);
-        }
-        String songHtml = html.substring(startIndex, endIndex).trim();
-        songHtml = songHtml.replace("&#39;", "'");
-        songHtml = songHtml.replace("&#039;", "'");
-        songHtml = songHtml.replace("&#160;", " ");
-        songHtml = songHtml.replace("&nbsp;", " ");
-        songHtml = songHtml.replace(Character.toString((char) 160), " ");
-        songHtml = songHtml.replace("&amp;", "&");
-        songHtml = songHtml.replace("&quot;", "\"");
-        songHtml = songHtml.replace("&lt;", "<");
-        songHtml = songHtml.replace("&gt;", ">");
-        songHtml = songHtml.replace("&lsquo;", "'");
-        songHtml = songHtml.replace("&rsquo;", "'");
-        songHtml = songHtml.replace("&copy;", "©");
+    private SongDisplayable parseSong(final String html, int num) {
+        try {
+            if(html == null) {
+                return null;
+            }
+            if(html.contains("Server error")) {
+                return null;
+            }
+            if(html.contains("<h1>Sorry...</h1>")) {
+                return null;
+            }
+            if(html.trim().isEmpty()) {
+                return null;
+            }
+            int startIndex = html.indexOf("<div class=\"span8\">") + "<div class=\"span8\">".length();
+            int endIndex = html.indexOf("<div class=\"sharer\">", startIndex);
+            if(endIndex == -1) {
+                endIndex = html.indexOf("</div>", startIndex);
+            }
+            String songHtml = html.substring(startIndex, endIndex).trim();
+            songHtml = songHtml.replace("&#39;", "'");
+            songHtml = songHtml.replace("&#039;", "'");
+            songHtml = songHtml.replace("&#160;", " ");
+            songHtml = songHtml.replace("&nbsp;", " ");
+            songHtml = songHtml.replace(Character.toString((char) 160), " ");
+            songHtml = songHtml.replace("&amp;", "&");
+            songHtml = songHtml.replace("&quot;", "\"");
+            songHtml = songHtml.replace("&lt;", "<");
+            songHtml = songHtml.replace("&gt;", ">");
+            songHtml = songHtml.replace("&lsquo;", "'");
+            songHtml = songHtml.replace("&rsquo;", "'");
+            songHtml = songHtml.replace("&copy;", "©");
 
-        String title = songHtml.substring(4, songHtml.indexOf("</h1>"));
-        songHtml = songHtml.substring(songHtml.indexOf("</h1>") + 5);
-        songHtml = songHtml.trim();
+            String title = songHtml.substring(4, songHtml.indexOf("</h1>"));
+            songHtml = songHtml.substring(songHtml.indexOf("</h1>") + 5);
+            songHtml = songHtml.trim();
 
-        String author = songHtml.substring(4, songHtml.indexOf("</h3>")).trim();
-        if(author.toLowerCase().startsWith("by")) {
-            author = author.substring(2).trim();
-        }
-        songHtml = songHtml.substring(songHtml.indexOf("</h3>") + 5);
-        songHtml = songHtml.trim();
+            String author = songHtml.substring(4, songHtml.indexOf("</h3>")).trim();
+            if(author.toLowerCase().startsWith("by")) {
+                author = author.substring(2).trim();
+            }
+            songHtml = songHtml.substring(songHtml.indexOf("</h3>") + "</h3>".length());
+            songHtml = songHtml.trim();
 
-        songHtml = songHtml.replace("<br />", "\n");
-        songHtml = songHtml.replace("<BR />", "\n");
-        songHtml = songHtml.replace("<br/>", "\n");
-        songHtml = songHtml.replace("<BR/>", "\n");
-        songHtml = songHtml.replace("<br>", "\n");
-        songHtml = songHtml.replace("<BR>", "\n");
-        songHtml = songHtml.replace("</p>", "\n");
-        songHtml = songHtml.replace("</P>", "\n");
-        songHtml = songHtml.replace("<p>", "");
-        songHtml = songHtml.replace("<P>", "");
-        songHtml = songHtml.replaceAll("\\<.*?>", "");
-        songHtml = songHtml.trim();
+            songHtml = songHtml.replace("<br />", "\n");
+            songHtml = songHtml.replace("<BR />", "\n");
+            songHtml = songHtml.replace("<br/>", "\n");
+            songHtml = songHtml.replace("<BR/>", "\n");
+            songHtml = songHtml.replace("<br>", "\n");
+            songHtml = songHtml.replace("<BR>", "\n");
+            songHtml = songHtml.replace("</p>", "\n");
+            songHtml = songHtml.replace("</P>", "\n");
+            songHtml = songHtml.replace("<p>", "");
+            songHtml = songHtml.replace("<P>", "");
+            songHtml = songHtml.replaceAll("\\<.*?>", "");
+            songHtml = songHtml.trim();
 
-        int i = songHtml.length() - 1;
-        for(int j = 0; j < 2; j++) {
-            while(i > 1) {
-                if(songHtml.charAt(i) == '\n') {
-                    while(songHtml.charAt(i) == ' ') {
-                        i--;
-                    }
+            int i = songHtml.length() - 1;
+            for(int j = 0; j < 2; j++) {
+                while(i > 1) {
                     if(songHtml.charAt(i) == '\n') {
-                        i--;
-                        break;
+                        while(songHtml.charAt(i) == ' ') {
+                            i--;
+                        }
+                        if(songHtml.charAt(i) == '\n') {
+                            i--;
+                            break;
+                        }
                     }
+                    i--;
                 }
-                i--;
+            }
+            i++;
+            songHtml = songHtml.substring(0, i);
+            songHtml = songHtml.trim();
+
+            StringBuilder lyrics = new StringBuilder();
+            String[] strx = songHtml.split("\n");
+
+            /*
+             * Code by Ben Goodwin
+             */
+            //Below uncapitalises the first line of the song.
+            String fl = strx[0];
+            fl = fl.toLowerCase();
+            fl = fl.replaceFirst(Pattern.quote(fl.substring(0, 1)), fl.substring(0, 1).toUpperCase()); //recapitalise first letter
+            String[] godWords = QueleaProperties.get().getGodWords();
+            for(int c = 0; c < godWords.length; c += 2) {
+                fl = fl.replaceAll("(?<=\\W)" + godWords[c] + "(?=\\W)", godWords[c + 1]); //recapitalise God words
+            }
+            char[] y = fl.toCharArray();
+            for(int i2 = 0; i2 < y.length - 2; i2++) {
+                if(y[i2] == '!' || y[i2] == '.' || y[i2] == '?') {
+                    i2 += 2;
+                    y[i2] = Character.toUpperCase(y[i2]); // recaptalise after punctuation
+                }
+            }
+            fl = new String(y);
+            lyrics.append(fl.trim()).append('\n'); //add first line
+        /*
+             * End of code by Ben Goodwin
+             */
+
+            for(int index = 1; index < strx.length; index++) {
+                lyrics.append(strx[index].trim()).append('\n');
+            }
+
+            if(title.trim().isEmpty()) {
+                title = lyrics.toString().split("\n")[0];
+            }
+
+            if(lyrics.toString().length() > 5) {
+                SongDisplayable ret = new SongDisplayable(title, author);
+                ret.setLyrics(lyrics.toString());
+                return ret;
+            }
+            else if(!title.trim().toLowerCase().equals("test hymn")) {
+                LOGGER.log(Level.WARNING, "Page {0} no lyrics found. Title: {1}", new Object[]{num, title});
+                return null;
+            }
+            else {
+                return null;
             }
         }
-        i++;
-        songHtml = songHtml.substring(0, i);
-        songHtml = songHtml.trim();
-
-        StringBuilder lyrics = new StringBuilder();
-        String[] strx = songHtml.split("\n");
-
-        /*
-         * Code by Ben Goodwin
-         */
-        //Below uncapitalises the first line of the song.
-        String fl = strx[0];
-        fl = fl.toLowerCase();
-        fl = fl.replaceFirst(Pattern.quote(fl.substring(0, 1)), fl.substring(0, 1).toUpperCase()); //recapitalise first letter
-        String[] godWords = QueleaProperties.get().getGodWords();
-        for(int c = 0; c < godWords.length; c += 2) {
-            fl = fl.replaceAll("(?<=\\W)" + godWords[c] + "(?=\\W)", godWords[c + 1]); //recapitalise God words
-        }
-        char[] y = fl.toCharArray();
-        for(int i2 = 0; i2 < y.length - 2; i2++) {
-            if(y[i2] == '!' || y[i2] == '.' || y[i2] == '?') {
-                i2 += 2;
-                y[i2] = Character.toUpperCase(y[i2]); // recaptalise after punctuation
-            }
-        }
-        fl = new String(y);
-        lyrics.append(fl.trim()).append('\n'); //add first line
-        /*
-         * End of code by Ben Goodwin
-         */
-
-        for(int index = 1; index < strx.length; index++) {
-            lyrics.append(strx[index].trim()).append('\n');
-        }
-
-        if(title.trim().isEmpty()) {
-            title = lyrics.toString().split("\n")[0];
-        }
-
-        if(lyrics.toString().length() > 5) {
-            SongDisplayable ret = new SongDisplayable(title, author);
-            ret.setLyrics(lyrics.toString());
-            return ret;
-        }
-        else if(!title.trim().toLowerCase().equals("test hymn")) {
-            LOGGER.log(Level.WARNING, "Page {0} no lyrics found. Title: {1}", new Object[]{num, title});
-            return null;
-        }
-        else {
+        catch(Exception ex) {
+            LOGGER.log(Level.WARNING, "Error importing song. HTML is:\n"+html, ex);
             return null;
         }
     }
@@ -344,7 +356,11 @@ public class KingswayWorshipParser implements SongParser {
         try {
             StringBuilder content = new StringBuilder();
             URL url = new URL("http://www.weareworship.com/songs/song-library/showsong/" + num);
-            try(BufferedReader in = new BufferedReader(new InputStreamReader(url.openStream(), "UTF-8"))) {
+            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+            if(conn.getResponseCode() == HttpURLConnection.HTTP_MOVED_PERM || conn.getResponseCode() == HttpURLConnection.HTTP_MOVED_TEMP) {
+                url = new URL(conn.getHeaderField("Location"));
+            }
+            try(BufferedReader in = new BufferedReader(new InputStreamReader(url.openConnection().getInputStream(), "UTF-8"))) {
                 String str;
                 while((str = in.readLine()) != null) {
                     content.append(str).append("\n");
@@ -370,6 +386,9 @@ public class KingswayWorshipParser implements SongParser {
      * @throws IOException
      */
     public static void main(String[] args) throws IOException {
-        new KingswayWorshipParser().getSongs(null, null);
+        new JFXPanel();
+        KingswayWorshipParser kwp = new KingswayWorshipParser();
+        kwp.all = true;
+        kwp.getSongs(null, null);
     }
 }
