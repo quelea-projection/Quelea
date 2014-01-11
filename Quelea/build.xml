@@ -41,6 +41,7 @@
     <property name="PortableNightly" value="${dist.jar.dir}/standalone/quelea-${quelea.version}-NIGHTLY-${touch.time}-portable.zip"/>
     
     <target name="-post-init">
+        <mkdir dir="${dist.jar.dir}"/>
         <copy todir="${dist.jar.dir}/languages">
             <fileset dir="${basedir}/languages"/>
         </copy>
