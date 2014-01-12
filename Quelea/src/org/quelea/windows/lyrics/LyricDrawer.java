@@ -58,7 +58,7 @@ public class LyricDrawer extends DisplayableDrawer {
         textGroup = new Group();
     }
 
-    private void drawText() {
+    private void drawText(double defaultFontSize) {
         boolean stageView = getCanvas().isStageView();
         if(getCanvas().getCanvasBackground() != null) {
             if(!getCanvas().getChildren().contains(getCanvas().getCanvasBackground())
@@ -89,8 +89,14 @@ public class LyricDrawer extends DisplayableDrawer {
         shadow.setHeight(5);
         shadow.setWidth(5);
 
-        List<String> newText = sanctifyText();
-        double fontSize = pickFontSize(font, newText, getCanvas().getWidth()*0.9, getCanvas().getHeight());
+        List<String> newText = sanctifyText(text);
+        double fontSize;
+        if(defaultFontSize > 0) {
+            fontSize = defaultFontSize;
+        }
+        else {
+            fontSize = pickFontSize(font, newText, getCanvas().getWidth() * 0.9, getCanvas().getHeight());
+        }
         if(!stageView) {
             font = Font.font(font.getName(),
                     theme.isBold() ? FontWeight.BOLD : FontWeight.NORMAL,
@@ -112,7 +118,7 @@ public class LyricDrawer extends DisplayableDrawer {
                 it.remove();
             }
         }
-        
+
         getCanvas().getChildren().add(newTextGroup);
 
         ParallelTransition paintTransition = new ParallelTransition();
@@ -172,7 +178,7 @@ public class LyricDrawer extends DisplayableDrawer {
             final SongDisplayable song = (SongDisplayable) this.getCanvas().getCurrentDisplayable();
             if(song != null) {
                 if(theme.getBackground() instanceof VideoBackground
-                        && VLCWindow.INSTANCE.getLastLocation()!=null) {
+                        && VLCWindow.INSTANCE.getLastLocation() != null) {
                     String newLocation = ((VideoBackground) theme.getBackground()).getVideoFile().getAbsolutePath();
                     String oldLocation = VLCWindow.INSTANCE.getLastLocation();
                     if(newLocation.equals(oldLocation)) {
@@ -197,7 +203,7 @@ public class LyricDrawer extends DisplayableDrawer {
             image = null;
         }
         else if(theme.getBackground() instanceof VideoBackground) {
-            image = Utils.getVidBlankImage(((VideoBackground)theme.getBackground()).getVideoFile());
+            image = Utils.getVidBlankImage(((VideoBackground) theme.getBackground()).getVideoFile());
         }
         else {
             LOGGER.log(Level.SEVERE, "Bug: Unhandled theme background case, trying to use default background: " + theme.getBackground(), new RuntimeException("DEBUG EXCEPTION FOR STACK TRACE"));
@@ -310,10 +316,10 @@ public class LyricDrawer extends DisplayableDrawer {
      * <p/>
      * @return processed, sanctified text that can be displayed nicely.
      */
-    private List<String> sanctifyText() {
+    private List<String> sanctifyText(String[] lines) {
         List<String> ret = new ArrayList<>();
         int maxLength = QueleaProperties.get().getMaxChars();
-        for(String line : text) {
+        for(String line : lines) {
             if(getCanvas().isStageView()) {
                 ret.add(line);
             }
@@ -403,6 +409,37 @@ public class LyricDrawer extends DisplayableDrawer {
         return new String[]{line.substring(0, nearestIndex + 1), line.substring(nearestIndex + 1, line.length())};
     }
 
+    /**
+     * Determine the largest font size we can safely use for every section of a
+     * text displayable.
+     * <p>
+     * @param displayable the displayable to check.
+     * @return the font size to use
+     */
+    private double getUniformFontSize(TextDisplayable displayable) {
+        if(!QueleaProperties.get().getUseUniformFontSize()) {
+            return -1;
+        }
+        double fontSize = Double.POSITIVE_INFINITY;
+        for(int i = 0; i < displayable.getSections().length; i++) {
+            String[] text;
+            if(getCanvas().isStageView()) {
+                text = displayable.getSections()[i].getText(true, false);
+            }
+            else {
+                text = displayable.getSections()[i].getText(false, false);
+            }
+            double newSize = pickFontSize(theme.getFont(), sanctifyText(text), getCanvas().getWidth() * 0.9, getCanvas().getHeight());
+            if(newSize < fontSize) {
+                fontSize = newSize;
+            }
+        }
+        if(fontSize==Double.POSITIVE_INFINITY) {
+            fontSize = -1;
+        }
+        return fontSize;
+    }
+
     public void setText(TextDisplayable displayable, int index) {
         boolean fade;
         if(curDisplayable == displayable) {
@@ -411,6 +448,7 @@ public class LyricDrawer extends DisplayableDrawer {
         else {
             fade = true;
         }
+        double uniformFontSize = getUniformFontSize(displayable);
         curDisplayable = displayable;
         String[] bigText;
         if(getCanvas().isStageView()) {
@@ -419,7 +457,7 @@ public class LyricDrawer extends DisplayableDrawer {
         else {
             bigText = displayable.getSections()[index].getText(false, false);
         }
-        setText(bigText, displayable.getSections()[index].getSmallText(), fade);
+        setText(bigText, displayable.getSections()[index].getSmallText(), fade, uniformFontSize);
     }
 
     /**
@@ -432,7 +470,7 @@ public class LyricDrawer extends DisplayableDrawer {
      * @param smallText an array of the small lines to be displayed on the
      * getCanvas().
      */
-    public void setText(String[] text, String[] smallText, boolean fade) {
+    public void setText(String[] text, String[] smallText, boolean fade, double fontSize) {
         if(text == null) {
             text = new String[0];
         }
@@ -440,14 +478,14 @@ public class LyricDrawer extends DisplayableDrawer {
             smallText = new String[0];
         }
         this.text = Arrays.copyOf(text, text.length);
-        draw(curDisplayable);
+        draw(curDisplayable, fontSize);
     }
 
     /**
      * Erase all the text on the getCanvas().
      */
     public void eraseText() {
-        setText(null, null, true);
+        setText(null, null, true, -1);
     }
 
     /**
@@ -462,7 +500,11 @@ public class LyricDrawer extends DisplayableDrawer {
 
     @Override
     public void draw(Displayable displayable) {
-        drawText();
+        draw(displayable, -1);
+    }
+
+    public void draw(Displayable displayable, double fontSize) {
+        drawText(fontSize);
         if(getCanvas().getCanvasBackground() instanceof ImageView) {
             ImageView imgBackground = (ImageView) getCanvas().getCanvasBackground();
             imgBackground.setFitHeight(getCanvas().getHeight());

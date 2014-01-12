@@ -111,7 +111,7 @@ public class ThemePanel extends BorderPane {
         setCenter(canvas);
         LyricDrawer drawer = new LyricDrawer();
         drawer.setCanvas(canvas);
-        drawer.setText(SAMPLE_LYRICS, null, false);
+        drawer.setText(SAMPLE_LYRICS, null, false, -1);
         VBox toolbarPanel = new VBox();
         setupFontToolbar();
         toolbarPanel.getChildren().add(fontToolbar);
@@ -367,7 +367,7 @@ public class ThemePanel extends BorderPane {
                 LyricDrawer drawer = new LyricDrawer();
                 drawer.setCanvas(canvas);
                 drawer.setTheme(theme);
-                drawer.setText(SAMPLE_LYRICS, null, false);
+                drawer.setText(SAMPLE_LYRICS, null, false, -1);
             }
         });
     }
