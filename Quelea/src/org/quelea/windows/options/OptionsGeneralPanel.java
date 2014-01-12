@@ -53,6 +53,7 @@ public class OptionsGeneralPanel extends GridPane implements PropertyPanel {
     private final CheckBox textShadowCheckBox;
     private final CheckBox clearLiveOnRemoveCheckBox;
     private final CheckBox useOOCheckBox;
+    private final CheckBox uniformFontSizeCheckBox;
     private final ComboBox<TextPosition> textPositionComboBox;
     private final ComboBox<LanguageFile> languageFileComboBox;
     private final TextField ooPathTextField;
@@ -152,6 +153,15 @@ public class OptionsGeneralPanel extends GridPane implements PropertyPanel {
         startupLabel.setLabelFor(displaySongInfoCheckBox);
         GridPane.setConstraints(displaySongInfoCheckBox, 2, rows);
         getChildren().add(displaySongInfoCheckBox);
+        rows++;
+
+        Label uniformFontSizeLabel = new Label(LabelGrabber.INSTANCE.getLabel("uniform.font.size.label"));
+        GridPane.setConstraints(uniformFontSizeLabel, 1, rows);
+        getChildren().add(uniformFontSizeLabel);
+        uniformFontSizeCheckBox = new CheckBox();
+        startupLabel.setLabelFor(uniformFontSizeCheckBox);
+        GridPane.setConstraints(uniformFontSizeCheckBox, 2, rows);
+        getChildren().add(uniformFontSizeCheckBox);
         rows++;
 
         Label oneLineModeLabel = new Label(LabelGrabber.INSTANCE.getLabel("one.line.mode.label"));
@@ -306,6 +316,7 @@ public class OptionsGeneralPanel extends GridPane implements PropertyPanel {
         capitalFirstCheckBox.setSelected(props.checkCapitalFirst());
         oneMonitorWarnCheckBox.setSelected(props.showSingleMonitorWarning());
         displaySongInfoCheckBox.setSelected(props.checkDisplaySongInfoText());
+        uniformFontSizeCheckBox.setSelected(props.getUseUniformFontSize());
         oneLineModeCheckBox.setSelected(props.getOneLineMode());
         textShadowCheckBox.setSelected(props.getTextShadow());
         clearLiveOnRemoveCheckBox.setSelected(props.getClearLiveOnRemove());
@@ -334,6 +345,8 @@ public class OptionsGeneralPanel extends GridPane implements PropertyPanel {
         props.setCapitalFirst(checkCapital);
         boolean checkDisplayInfo = getDisplaySongInfoCheckBox().isSelected();
         props.setDisplaySongInfoText(checkDisplayInfo);
+        boolean useUniformFontSize = uniformFontSizeCheckBox.isSelected();
+        props.setUseUniformFontSize(useUniformFontSize);
         boolean textShadow = getTextShadowCheckBox().isSelected();
         props.setTextShadow(textShadow);
         boolean clearLive = clearLiveOnRemoveCheckBox.isSelected();

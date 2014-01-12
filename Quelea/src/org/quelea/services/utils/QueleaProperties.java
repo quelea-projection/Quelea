@@ -170,6 +170,28 @@ public final class QueleaProperties extends Properties {
     }
 
     /**
+     * Determine if the same font size should be used for each section in a
+     * displayable - this can stop the sizes jumping all over the place
+     * depending on how much text there is per slide.
+     * <p>
+     * @return true if the uniform font size should be used, false otherwise.
+     */
+    public boolean getUseUniformFontSize() {
+        return Boolean.parseBoolean(getProperty("uniform.font.size", "true"));
+    }
+
+    /**
+     * Set if the same font size should be used for each section in a
+     * displayable - this can stop the sizes jumping all over the place
+     * depending on how much text there is per slide.
+     * <p>
+     * @param val true if the uniform font size should be used, false otherwise.
+     */
+    public void setUseUniformFontSize(boolean val) {
+        setProperty("uniform.font.size", Boolean.toString(val));
+    }
+
+    /**
      * Determine if, when an item is removed from the schedule and displayed on
      * the live view, whether it should be removed from the live view or kept
      * until something replaces it.
