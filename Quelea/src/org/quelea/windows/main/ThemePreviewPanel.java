@@ -40,6 +40,7 @@ import org.quelea.services.languages.LabelGrabber;
 import org.quelea.services.utils.LoggerUtils;
 import org.quelea.windows.lyrics.LyricDrawer;
 import org.quelea.windows.main.DisplayCanvas.Priority;
+import org.quelea.windows.main.schedule.ScheduleThemeNode;
 import org.quelea.windows.newsong.EditThemeDialog;
 import org.quelea.windows.newsong.ThemePanel;
 
@@ -50,7 +51,7 @@ import org.quelea.windows.newsong.ThemePanel;
  * @author Michael
  */
 public class ThemePreviewPanel extends VBox {
-    
+
     private static final Logger LOGGER = LoggerUtils.getLogger();
     private ThemeDTO theme;
     private DisplayCanvas canvas;
@@ -59,16 +60,18 @@ public class ThemePreviewPanel extends VBox {
     private Button editButton;
     private EditThemeDialog themeDialog;
     private Window popup;
+    private ScheduleThemeNode parent;
 
     /**
      * Create a new theme preview panel.
      * <p/>
      * @param theme the theme to preview.
      */
-    public ThemePreviewPanel(ThemeDTO theme, final Window popup) {
+    public ThemePreviewPanel(ThemeDTO theme, final Window popup, final ScheduleThemeNode parent) {
         this.popup = popup;
         this.theme = theme;
-        if (theme == null) {
+        this.parent = parent;
+        if(theme == null) {
             theme = ThemeDTO.DEFAULT_THEME;
         }
         final ThemeDTO updateTheme = theme;
@@ -81,15 +84,16 @@ public class ThemePreviewPanel extends VBox {
         canvas.setPrefSize(200, 200);
         updateThemePreviewCanvas(theme);
         String name;
-        if (theme == ThemeDTO.DEFAULT_THEME) {
+        if(theme == ThemeDTO.DEFAULT_THEME) {
             name = LabelGrabber.INSTANCE.getLabel("default.theme.text");
-        } else {
+        }
+        else {
             name = theme.getThemeName();
         }
         themeDialog = new EditThemeDialog();
         themeDialog.initModality(Modality.APPLICATION_MODAL);
         selectButton = new RadioButton(name);
-        if (theme != ThemeDTO.DEFAULT_THEME) {
+        if(theme != ThemeDTO.DEFAULT_THEME) {
             editButton = new Button("", new ImageView(new Image("file:icons/edit32.png", 16, 16, false, true)));
             editButton.setTooltip(new Tooltip(LabelGrabber.INSTANCE.getLabel("edit.theme.tooltip")));
             editButton.setOnAction(new EventHandler<javafx.event.ActionEvent>() {
@@ -99,16 +103,19 @@ public class ThemePreviewPanel extends VBox {
                     popup.hide();
                     themeDialog.showAndWait();
                     ThemeDTO ret = themeDialog.getTheme();
-                    if (ret != null) {
-                        try (PrintWriter pw = new PrintWriter(ret.getFile())) {
+                    if(ret != null) {
+                        try(PrintWriter pw = new PrintWriter(ret.getFile())) {
                             pw.println(ret.getTheme());
-                        } catch (IOException ex) {
+                            ThemePreviewPanel.this.theme = ret;
+                        }
+                        catch(IOException ex) {
                             LOGGER.log(Level.WARNING, "Couldn't edit theme", ex);
                         }
                     }
+                    parent.refresh();
                 }
             });
-            
+
             removeButton = new Button("", new ImageView(new Image("file:icons/delete.png", 16, 16, false, true)));
             removeButton.setTooltip(new Tooltip(LabelGrabber.INSTANCE.getLabel("remove.theme.tooltip")));
             removeButton.setOnAction(new EventHandler<javafx.event.ActionEvent>() {
@@ -130,7 +137,7 @@ public class ThemePreviewPanel extends VBox {
             });
         }
         HBox buttonPanel = new HBox();
-        if (canvas != null) {
+        if(canvas != null) {
             canvas.setOnMouseClicked(new EventHandler<MouseEvent>() {
                 @Override
                 public void handle(MouseEvent t) {
@@ -140,7 +147,7 @@ public class ThemePreviewPanel extends VBox {
             });
         }
         buttonPanel.getChildren().add(selectButton);
-        if (theme != ThemeDTO.DEFAULT_THEME) {
+        if(theme != ThemeDTO.DEFAULT_THEME) {
             Region spacer = new Region();
             HBox.setHgrow(spacer, javafx.scene.layout.Priority.ALWAYS);
             buttonPanel.getChildren().add(spacer);
