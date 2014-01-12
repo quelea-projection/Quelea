@@ -67,6 +67,11 @@ public class BibleSearchIndex implements SearchIndex<BibleChapter> {
         analyzer = new StandardAnalyzer(Version.LUCENE_35, new HashSet<String>());
         index = new RAMDirectory();
     }
+    
+    @Override
+    public int size() {
+        return chapters.size();
+    }
 
     /**
      * Add a bible chapter to the index.
