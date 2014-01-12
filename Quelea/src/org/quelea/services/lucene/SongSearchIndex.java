@@ -64,6 +64,11 @@ public class SongSearchIndex implements SearchIndex<SongDisplayable> {
         analyzer = new StandardAnalyzer(Version.LUCENE_35, new HashSet<String>());
         index = new RAMDirectory();
     }
+    
+    @Override
+    public int size() {
+        return songs.size();
+    }
 
     /**
      * Add a song to the index.
