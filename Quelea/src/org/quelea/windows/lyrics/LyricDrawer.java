@@ -25,7 +25,6 @@ import javafx.scene.text.FontPosture;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 import javafx.util.Duration;
-import org.quelea.data.Background;
 import org.quelea.data.ColourBackground;
 import org.quelea.data.ImageBackground;
 import org.quelea.data.ThemeDTO;
@@ -91,7 +90,7 @@ public class LyricDrawer extends DisplayableDrawer {
         shadow.setWidth(5);
 
         List<String> newText = sanctifyText();
-        double fontSize = pickFontSize(font, newText, getCanvas().getWidth(), getCanvas().getHeight());
+        double fontSize = pickFontSize(font, newText, getCanvas().getWidth()*0.9, getCanvas().getHeight());
         if(!stageView) {
             font = Font.font(font.getName(),
                     theme.isBold() ? FontWeight.BOLD : FontWeight.NORMAL,
