@@ -25,7 +25,6 @@ import java.net.URISyntaxException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.application.Application;
-import javafx.application.Platform;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -69,6 +68,7 @@ public final class Main extends Application {
     /**
      * Starts the program off, this is the first thing that is executed by
      * Quelea when the program starts.
+     * @param stage the stage JavaFX provides that we don't use (ignored)
      */
     @Override
     public void start(Stage stage) {

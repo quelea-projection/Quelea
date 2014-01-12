@@ -31,6 +31,7 @@ import org.quelea.data.VideoBackground;
 import org.quelea.services.languages.LabelGrabber;
 import org.quelea.services.utils.FileFilters;
 import org.quelea.services.utils.LoggerUtils;
+import org.quelea.services.utils.QueleaProperties;
 import org.quelea.services.utils.SerializableFont;
 import org.quelea.windows.main.DisplayCanvas;
 import org.quelea.windows.lyrics.LyricDrawer;
@@ -57,7 +58,7 @@ public class VideoButton extends Button {
     public VideoButton(final TextField videoLocationField, final DisplayCanvas canvas) {
         super(LabelGrabber.INSTANCE.getLabel("select.video.button"));
         fileChooser = new FileChooser();
-        final File vidDir = new File("vid");
+        final File vidDir = QueleaProperties.get().getVidDir();
         fileChooser.setInitialDirectory(vidDir);
         fileChooser.getExtensionFilters().add(FileFilters.VIDEOS);
         setOnAction(new EventHandler<javafx.event.ActionEvent>() {
