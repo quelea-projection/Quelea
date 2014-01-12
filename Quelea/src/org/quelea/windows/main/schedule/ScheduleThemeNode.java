@@ -147,10 +147,7 @@ public class ScheduleThemeNode extends BorderPane {
         themePreviews.setHgap(10);
         themePreviews.setVgap(10);
         for(final ThemeDTO theme : themes) {
-            ThemePreviewPanel panel = new ThemePreviewPanel(theme, popup);
-            if(selectedTheme != null && selectedTheme.equals(theme)) {
-                panel.getSelectButton().fire();
-            }
+            ThemePreviewPanel panel = new ThemePreviewPanel(theme, popup, this);
             panel.getSelectButton().setOnAction(new EventHandler<javafx.event.ActionEvent>() {
                 @Override
                 public void handle(javafx.event.ActionEvent t) {
@@ -161,6 +158,9 @@ public class ScheduleThemeNode extends BorderPane {
                     }
                 }
             });
+            if(selectedTheme != null && selectedTheme.equals(theme)) {
+                panel.getSelectButton().fire();
+            }
             group.getToggles().add(panel.getSelectButton());
             themePreviews.getChildren().add(panel);
         }
@@ -233,7 +233,7 @@ public class ScheduleThemeNode extends BorderPane {
      * <p/>
      * @param theme the theme to set.
      */
-    private void setTheme(ThemeDTO theme) {
+    public void setTheme(ThemeDTO theme) {
         callback.updateTheme(theme);
     }
 }
