@@ -150,6 +150,7 @@
                 <exclude name="Quelea.vbs"/>
                 <exclude name="Quelea.bat"/>
                 <exclude name="quelea.iss"/>
+                <exclude name="run*/**"/>
             </tarfileset>
             <tarfileset file="${dist.jar.dir}/launch.sh" filemode="755" prefix="/usr/share/quelea"/>
             <tarfileset dir="${dist.jar.dir}/queleadoc" group="root" prefix="/usr/share/doc/quelea" username="root"/>
