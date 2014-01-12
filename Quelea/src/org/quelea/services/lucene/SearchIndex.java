@@ -64,6 +64,12 @@ public interface SearchIndex<T> {
     void update(T t);
     
     /**
+     * Get the number of entries in this search index.
+     * @return the number of entries in this search index.
+     */
+    int size();
+    
+    /**
      * Get an array of results based on the given query string and filter type.
      * FilterType may be ignored where appropriate.
      * @param queryString the string on which the results should be queried.
