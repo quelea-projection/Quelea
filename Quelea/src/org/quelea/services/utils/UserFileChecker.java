@@ -52,9 +52,10 @@ public class UserFileChecker {
     public void checkUserFiles() {
         LOGGER.log(Level.INFO, "Checking user files");
         checkPropertiesFile();
-        checkThemeDir();
-        checkImageDir();
-        checkBibleDir();
+        checkDir("themes");
+        checkDir("vid");
+        checkDir("img");
+        checkDir("bibles");
     }
 
     /**
@@ -71,32 +72,14 @@ public class UserFileChecker {
     }
 
     /**
-     * Check the theme directory to see if it needs to be copied.
+     * Check a directory to see if it needs to be copied, copy it over if
+     * necessary.
+     * @param dirName the name of the directory to copy.
      */
-    private void checkThemeDir() {
-        File file = new File(userDir, "themes");
+    private void checkDir(String dirName) {
+        File file = new File(userDir, dirName);
         if(!file.exists()) {
-            copyDir("themes");
-        }
-    }
-
-    /**
-     * Check the bibles directory to see if it needs to be copied.
-     */
-    private void checkBibleDir() {
-        File file = new File(userDir, "bibles");
-        if(!file.exists()) {
-            copyDir("bibles");
-        }
-    }
-
-    /**
-     * Check the image directory to see if it needs to be copied.
-     */
-    private void checkImageDir() {
-        File file = new File(userDir, "img");
-        if(!file.exists()) {
-            copyDir("img");
+            copyDir(dirName);
         }
     }
 

@@ -319,6 +319,15 @@ public final class QueleaProperties extends Properties {
     }
 
     /**
+     * Get the directory used for storing videos.
+     * <p/>
+     * @return the vid directory
+     */
+    public File getVidDir() {
+        return new File(getQueleaUserHome(), "vid");
+    }
+
+    /**
      * Get the extension used for quelea schedules.
      * <p/>
      * @return the extension used for quelea schedules.
