@@ -138,6 +138,7 @@ public class SongEntryWindow extends Stage {
             }
         });
 
+        setMaxHeight(800);
         setScene(new Scene(mainPane));
     }
 
