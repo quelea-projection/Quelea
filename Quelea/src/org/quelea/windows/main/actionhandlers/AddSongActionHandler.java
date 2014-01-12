@@ -50,7 +50,7 @@ public class AddSongActionHandler implements EventHandler<ActionEvent> {
     }
 
     private void cacheVidPreview(SongDisplayable song) {
-        if(song.getSections().length > 0 && song.getSections()[0].getTheme() != null && song.getSections()[0].getTheme().getBackground() instanceof VideoBackground) {
+        if(song.getSections().length > 0 && song.getSections()[0] != null && song.getSections()[0].getTheme() != null && song.getSections()[0].getTheme().getBackground() instanceof VideoBackground) {
             final File file = ((VideoBackground) song.getSections()[0].getTheme().getBackground()).getVideoFile();
             new Thread() {
                 @Override
