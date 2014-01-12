@@ -120,7 +120,6 @@ public class SchedulePanel extends BorderPane {
                     themePopup.hide();
                 }
                 else {
-                    scheduleThemeNode.refresh();
                     themePopup.setX(themeButton.localToScene(0, 0).getX() + QueleaApp.get().getMainWindow().getX());
                     themePopup.setY(themeButton.localToScene(0, 0).getY() + 45 + QueleaApp.get().getMainWindow().getY());
                     themePopup.show();
