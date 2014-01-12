@@ -182,6 +182,6 @@ public class ThemePreviewPanel extends VBox {
         LyricDrawer drawer = new LyricDrawer();
         drawer.setCanvas(canvas);
         drawer.setTheme(theme);
-        drawer.setText(ThemePanel.SAMPLE_LYRICS, new String[0], false);
+        drawer.setText(ThemePanel.SAMPLE_LYRICS, new String[0], false, -1);
     }
 }
