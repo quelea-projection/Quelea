@@ -6,6 +6,7 @@ quelea (0.6) stable; urgency=normal
   * Added option to set the maximum font size manually
   * Added option to set spacing between lines
   * Added video background support
+  * Clear text option now fades
   * Changed to more efficient database format
   * Added more / better sample images
   * Added sample videos
