@@ -21,27 +21,41 @@ package org.quelea.services.utils;
 import java.io.Serializable;
 import java.util.Objects;
 import javafx.scene.text.Font;
+import javafx.scene.text.FontPosture;
+import javafx.scene.text.FontWeight;
 
 /**
  *
  * @author Michael
  */
 public class SerializableFont implements Serializable {
-    
+
     private String family;
     private String name;
     private double size;
     private String style;
-    
+
     public SerializableFont(Font font) {
         family = font.getFamily();
         name = font.getName();
         size = font.getSize();
         style = font.getStyle();
     }
-    
+
     public Font getFont() {
-        Font ret = Font.font(family, size);
+        Font ret;
+        if(style.toLowerCase().contains("bold") && style.toLowerCase().contains("italic")) {
+            ret = Font.font(family, FontWeight.BOLD, FontPosture.ITALIC, size);
+        }
+        else if(style.toLowerCase().contains("bold")) {
+            ret = Font.font(family, FontWeight.BOLD, FontPosture.REGULAR, size);
+        }
+        else if(style.toLowerCase().contains("italic")) {
+            ret = Font.font(family, FontWeight.NORMAL, FontPosture.ITALIC, size);
+        }
+        else {
+            ret = Font.font(family, size);
+        }
         return ret;
     }
 
@@ -70,5 +84,5 @@ public class SerializableFont implements Serializable {
         }
         return true;
     }
-    
+
 }
