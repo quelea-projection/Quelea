@@ -192,6 +192,41 @@ public final class QueleaProperties extends Properties {
     }
 
     /**
+     * Get the maximum font size used by text displayables.
+     * <p>
+     * @return the maximum font size used by text displayables.
+     */
+    public double getMaxFontSize() {
+        return Double.parseDouble(getProperty("max.font.size", "1000"));
+    }
+
+    /**
+     * Set the maximum font size used by text displayables.
+     * <p>
+     * @param fontSize the maximum font size used by text displayables.
+     */
+    public void setMaxFontSize(double fontSize) {
+        setProperty("max.font.size", Double.toString(fontSize));
+    }
+    
+    /**
+     * Get the additional line spacing (in pixels) to be used between each line.
+     * @return the additional line spacing.
+     */
+    public double getAdditionalLineSpacing() {
+        return Double.parseDouble(getProperty("additional.line.spacing", "10"));
+    }
+    
+    /**
+     * Set the additional line spacing (in pixels) to be used between each line.
+     * <p>
+     * @param spacing the additional line spacing.
+     */
+    public void setAdditionalLineSpacing(double spacing) {
+        setProperty("additional.line.spacing", Double.toString(spacing));
+    }
+
+    /**
      * Determine if, when an item is removed from the schedule and displayed on
      * the live view, whether it should be removed from the live view or kept
      * until something replaces it.

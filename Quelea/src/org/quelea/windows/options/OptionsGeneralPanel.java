@@ -60,6 +60,8 @@ public class OptionsGeneralPanel extends GridPane implements PropertyPanel {
     private final DirectoryChooser ooChooser;
     private final Button selectButton;
     private final Slider borderThicknessSlider;
+    private final Slider maximumFontSizeSlider;
+    private final Slider additionalLineSpacingSlider;
     private final Slider maxCharsSlider;
 //    private final Slider minLinesSlider;
     private LanguageFile currentLanguageFile;
@@ -214,7 +216,7 @@ public class OptionsGeneralPanel extends GridPane implements PropertyPanel {
         GridPane.setConstraints(languageFileComboBox, 2, rows);
         getChildren().add(languageFileComboBox);
         rows++;
-
+        
         Label borderThicknessLabel = new Label(LabelGrabber.INSTANCE.getLabel("text.border.thickness.label"));
         GridPane.setConstraints(borderThicknessLabel, 1, rows);
         getChildren().add(borderThicknessLabel);
@@ -230,6 +232,44 @@ public class OptionsGeneralPanel extends GridPane implements PropertyPanel {
             @Override
             public void changed(ObservableValue<? extends Number> ov, Number t, Number t1) {
                 borderThicknessValue.setText(Integer.toString((int) borderThicknessSlider.getValue()));
+            }
+        });
+        rows++;
+
+        Label maxFontSizeLabel = new Label(LabelGrabber.INSTANCE.getLabel("max.font.size.label"));
+        GridPane.setConstraints(maxFontSizeLabel, 1, rows);
+        getChildren().add(maxFontSizeLabel);
+        maximumFontSizeSlider = new Slider(12, 1000, 1000);
+        GridPane.setConstraints(maximumFontSizeSlider, 2, rows);
+        getChildren().add(maximumFontSizeSlider);
+        maxFontSizeLabel.setLabelFor(maximumFontSizeSlider);
+        final Label maxFontSizeValue = new Label(Integer.toString((int) maximumFontSizeSlider.getValue()));
+        GridPane.setConstraints(maxFontSizeValue, 3, rows);
+        getChildren().add(maxFontSizeValue);
+        maxFontSizeValue.setLabelFor(maximumFontSizeSlider);
+        maximumFontSizeSlider.valueProperty().addListener(new javafx.beans.value.ChangeListener<Number>() {
+            @Override
+            public void changed(ObservableValue<? extends Number> ov, Number t, Number t1) {
+                maxFontSizeValue.setText(Integer.toString((int) maximumFontSizeSlider.getValue()));
+            }
+        });
+        rows++;
+
+        Label additionalLineSpacingLabel = new Label(LabelGrabber.INSTANCE.getLabel("additional.line.spacing.label"));
+        GridPane.setConstraints(additionalLineSpacingLabel, 1, rows);
+        getChildren().add(additionalLineSpacingLabel);
+        additionalLineSpacingSlider = new Slider(0, 50, 10);
+        GridPane.setConstraints(additionalLineSpacingSlider, 2, rows);
+        getChildren().add(additionalLineSpacingSlider);
+        maxFontSizeLabel.setLabelFor(additionalLineSpacingSlider);
+        final Label additionalLineSpacingValue = new Label(Integer.toString((int) additionalLineSpacingSlider.getValue()));
+        GridPane.setConstraints(additionalLineSpacingValue, 3, rows);
+        getChildren().add(additionalLineSpacingValue);
+        additionalLineSpacingValue.setLabelFor(additionalLineSpacingSlider);
+        additionalLineSpacingSlider.valueProperty().addListener(new javafx.beans.value.ChangeListener<Number>() {
+            @Override
+            public void changed(ObservableValue<? extends Number> ov, Number t, Number t1) {
+                additionalLineSpacingValue.setText(Integer.toString((int) additionalLineSpacingSlider.getValue()));
             }
         });
         rows++;
@@ -324,6 +364,8 @@ public class OptionsGeneralPanel extends GridPane implements PropertyPanel {
 //        minLinesSlider.setValue(props.getMinLines());
         borderThicknessSlider.setValue(props.getOutlineThickness());
         textPositionComboBox.setValue(props.getTextPositionInternal());
+        additionalLineSpacingSlider.setValue(props.getAdditionalLineSpacing());
+        maximumFontSizeSlider.setValue(props.getMaxFontSize());
     }
 
     /**
@@ -363,6 +405,8 @@ public class OptionsGeneralPanel extends GridPane implements PropertyPanel {
         int borderThickness = (int) getBorderThicknessSlider().getValue();
         props.setOutlineThickness(borderThickness);
         props.setTextPositionInternal(textPositionComboBox.getValue());
+        props.setMaxFontSize(maximumFontSizeSlider.getValue());
+        props.setAdditionalLineSpacing(additionalLineSpacingSlider.getValue());
         //Initialise presentation
         if(!OOPresentation.isInit()) {
             OOUtils.attemptInit();
