@@ -55,6 +55,9 @@ public class LanguageFile implements Comparable<LanguageFile> {
             LOGGER.log(Level.WARNING, "Couldn't read in language file as property file: " + file.getAbsolutePath(), ex);
         }
         languageName = props.getProperty("LANGUAGENAME");
+        if(languageName == null || languageName.trim().isEmpty()) {
+            LOGGER.log(Level.WARNING, "{0} doesn''t have a language name!", file.getAbsolutePath());
+        }
     }
 
     /**
