@@ -35,7 +35,6 @@ import org.quelea.services.notice.NoticeDrawer;
 import org.quelea.services.notice.NoticeOverlay;
 import org.quelea.services.utils.LoggerUtils;
 import org.quelea.services.utils.Utils;
-import org.quelea.windows.multimedia.VLCWindow;
 
 /**
  * The canvas where the lyrics / images / media are drawn.
