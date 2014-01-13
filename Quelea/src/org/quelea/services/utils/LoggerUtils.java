@@ -62,6 +62,7 @@ public final class LoggerUtils {
             synchronized(LoggerUtils.class) {
                 if(handlerFile == null) {
                     handlerFile = Utils.getDebugLog();
+                    handlerFile.delete();
                 }
             }
         }
@@ -148,7 +149,8 @@ public final class LoggerUtils {
         try(PrintWriter out = new PrintWriter(new BufferedWriter(new FileWriter(handlerFile, true)))) {
             out.println(message);
         }
-        catch(IOException e) {
+        catch(IOException ex) {
+            ex.printStackTrace();
         }
     }
 
