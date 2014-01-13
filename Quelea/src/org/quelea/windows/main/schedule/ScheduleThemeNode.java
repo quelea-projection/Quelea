@@ -30,6 +30,7 @@ import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
+import javafx.scene.Parent;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ToggleGroup;
@@ -235,5 +236,9 @@ public class ScheduleThemeNode extends BorderPane {
      */
     public void setTheme(ThemeDTO theme) {
         callback.updateTheme(theme);
+    }
+    
+    public FlowPane getThemePreviews() {
+        return themePreviews;
     }
 }
