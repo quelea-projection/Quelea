@@ -23,6 +23,8 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
+import javafx.scene.text.FontPosture;
+import javafx.scene.text.FontWeight;
 import org.quelea.data.db.model.TextShadow;
 import org.quelea.data.db.model.Theme;
 import org.quelea.services.utils.LoggerUtils;
@@ -243,7 +245,7 @@ public class ThemeDTO implements Serializable {
      */
     public String asString() {
         StringBuilder ret = new StringBuilder();
-        ret.append("fontname:").append(font.getFont().getName());
+        ret.append("fontname:").append(font.getFont().getFamily());
         ret.append("$fontcolour:").append(fontColor.toString());
         if(!themeName.isEmpty()) {
             ret.append("$themename:").append(themeName);
@@ -325,7 +327,11 @@ public class ThemeDTO implements Serializable {
                 shadowOffsetY = defaultIfEmpty(parts[1], "0");
             }
         }
-        SerializableFont font = new SerializableFont(new Font(fontname, QueleaProperties.get().getMaxFontSize()));
+        Font sysFont = Font.font(fontname,
+                Boolean.parseBoolean(isFontBold) ? FontWeight.BOLD : FontWeight.NORMAL,
+                Boolean.parseBoolean(isFontItalic) ? FontPosture.ITALIC : FontPosture.REGULAR,
+                QueleaProperties.get().getMaxFontSize());
+        SerializableFont font = new SerializableFont(sysFont);
         Background background;
         if(!backgroundcolour.trim().isEmpty()) {
             background = new ColourBackground(Utils.parseColour(backgroundcolour));

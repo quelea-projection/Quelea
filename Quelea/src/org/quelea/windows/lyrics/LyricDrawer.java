@@ -71,13 +71,12 @@ public class LyricDrawer extends DisplayableDrawer {
             text = new String[0];
             this.text = Arrays.copyOf(text, text.length);
         }
-        Font font = theme.getFont();
-        font = Font.font(font.getName(),
+        Font font = Font.font(theme.getFont().getFamily(),
                     theme.isBold() ? FontWeight.BOLD : FontWeight.NORMAL,
                     theme.isItalic() ? FontPosture.ITALIC : FontPosture.REGULAR,
                     QueleaProperties.get().getMaxFontSize());
         if(stageView) {
-            font = new Font(QueleaProperties.get().getStageTextFont(), QueleaProperties.get().getMaxFontSize());
+            font = Font.font(QueleaProperties.get().getStageTextFont(), QueleaProperties.get().getMaxFontSize());
         }
         if(font == null) {
             font = ThemeDTO.DEFAULT_FONT.getFont();
@@ -102,13 +101,13 @@ public class LyricDrawer extends DisplayableDrawer {
             fontSize = pickFontSize(font, newText, getCanvas().getWidth() * 0.9, getCanvas().getHeight() * 0.9);
         }
         if(!stageView) {
-            font = Font.font(font.getName(),
+            font = Font.font(font.getFamily(),
                     theme.isBold() ? FontWeight.BOLD : FontWeight.NORMAL,
                     theme.isItalic() ? FontPosture.ITALIC : FontPosture.REGULAR,
                     fontSize);
         }
         else {
-            font = Font.font(font.getName(), FontWeight.NORMAL,
+            font = Font.font(font.getFamily(), FontWeight.NORMAL,
                     FontPosture.REGULAR, fontSize);
         }
         FontMetrics metrics = Toolkit.getToolkit().getFontLoader().getFontMetrics(font);
