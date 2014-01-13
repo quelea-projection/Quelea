@@ -118,7 +118,24 @@ public class DisplayCanvas extends StackPane {
                 while(change.next()) {
                     if(!change.wasRemoved()) {
                         try {
-                            noticeOverlay.toFront();
+                            /**
+                             * Platform.runLater() is necessary here to avoid
+                             * exceptions on some implementations, including
+                             * JFX8 at the time of writing. You can't modify a
+                             * list inside its listener, so the
+                             * Platform.runLater() delays it until after the
+                             * listener is complete (this is necessary even
+                             * though we're on the EDT.)
+                             * <p>
+                             * https://javafx-jira.kenai.com/browse/RT-35275
+                             */
+                            Platform.runLater(new Runnable() {
+
+                                @Override
+                                public void run() {
+                                    noticeOverlay.toFront();
+                                }
+                            });
                         }
                         catch(Exception ex) {
                             LOGGER.log(Level.WARNING, "Can't move notice overlay to front", ex);
@@ -207,7 +224,7 @@ public class DisplayCanvas extends StackPane {
             }
         });
     }
-    
+
     private boolean isVisibleInScene() {
         Node parent = DisplayCanvas.this;
         boolean visible = isVisible();
