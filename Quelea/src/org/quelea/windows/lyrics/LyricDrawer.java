@@ -5,8 +5,10 @@ import com.sun.javafx.tk.FontMetrics;
 import com.sun.javafx.tk.Toolkit;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.animation.FadeTransition;
@@ -30,12 +32,12 @@ import org.quelea.data.ImageBackground;
 import org.quelea.data.ThemeDTO;
 import org.quelea.data.VideoBackground;
 import org.quelea.data.displayable.Displayable;
-import org.quelea.data.displayable.SongDisplayable;
 import org.quelea.data.displayable.TextDisplayable;
 import org.quelea.services.utils.LineTypeChecker;
 import org.quelea.services.utils.LoggerUtils;
 import org.quelea.services.utils.QueleaProperties;
 import org.quelea.services.utils.Utils;
+import org.quelea.windows.main.DisplayCanvas;
 import org.quelea.windows.multimedia.VLCWindow;
 
 /**
@@ -51,11 +53,13 @@ public class LyricDrawer extends DisplayableDrawer {
     private ThemeDTO theme;
     private TextDisplayable curDisplayable;
     private boolean capitaliseFirst;
+    private Map<DisplayCanvas, Boolean> lastClearedState;
 
     public LyricDrawer() {
         text = new String[]{};
         theme = ThemeDTO.DEFAULT_THEME;
         textGroup = new Group();
+        lastClearedState = new HashMap<>();
     }
 
     private void drawText(double defaultFontSize) {
@@ -67,7 +71,7 @@ public class LyricDrawer extends DisplayableDrawer {
                 getCanvas().getChildren().add(textGroup);
             }
         }
-        if(getCanvas().isCleared() || getCanvas().isBlacked()) {
+        if(getCanvas().isBlacked()) {
             text = new String[0];
             this.text = Arrays.copyOf(text, text.length);
         }
@@ -165,6 +169,34 @@ public class LyricDrawer extends DisplayableDrawer {
             paintTransition.play();
         }
         textGroup = newTextGroup;
+        if(getCanvas().isCleared() && !getLastClearedState()) {
+            setLastClearedState(true);
+            FadeTransition t = new FadeTransition(Duration.seconds(0.5), textGroup);
+            t.setToValue(0);
+            t.play();
+        }
+        else if(getCanvas().isCleared()) {
+            textGroup.setOpacity(0);
+        }
+        else if(!getCanvas().isCleared() && getLastClearedState()) {
+            setLastClearedState(false);
+            FadeTransition t = new FadeTransition(Duration.seconds(0.5), textGroup);
+            t.setFromValue(0);
+            t.setToValue(1);
+            t.play();
+        }
+    }
+    
+    private boolean getLastClearedState() {
+        Boolean val = lastClearedState.get(getCanvas());
+        if(val==null) {
+            return false;
+        }
+        return val;
+    }
+    
+    private void setLastClearedState(boolean val) {
+        lastClearedState.put(getCanvas(), val);
     }
 
     /**
