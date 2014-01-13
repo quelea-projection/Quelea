@@ -22,12 +22,16 @@ import java.awt.FontFormatException;
 import java.awt.GraphicsEnvironment;
 import java.io.File;
 import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * Registers the Quelea bundled fonts with the JVM.
  * @author Michael
  */
 public class FontInstaller {
+    
+    private static final Logger LOGGER = LoggerUtils.getLogger();
 
     /**
      * Register the bundled fonts.
@@ -37,10 +41,11 @@ public class FontInstaller {
         for(File file : new File("icons/bundledfonts").listFiles()) {
             if(file.getName().toLowerCase().endsWith("otf") || file.getName().toLowerCase().endsWith("ttf")) {
                 try {
+                    javafx.scene.text.Font.loadFont(file.toURI().toString(), 72);
                     ge.registerFont(Font.createFont(Font.TRUETYPE_FONT, file));
                 }
                 catch(FontFormatException | IOException ex) {
-                    ex.printStackTrace();
+                    LOGGER.log(Level.WARNING, "Couldn't load font " + file.getAbsolutePath(), ex);
                 }
             }
         }
