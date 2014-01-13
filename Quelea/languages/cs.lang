@@ -370,3 +370,6 @@ filefilters.description.audio.files=Zvukové soubory
 bible.search.keep.typing=Pište...
 bible.search.results.found=výsledků nalezeno
 bible.search.result.found=výsledek nalezen
+uniform.font.size.label=Použít stále stejnou velikost písma
+max.font.size.label=Největší velikost písma
+additional.line.spacing.label=Dodatečný odstup řádků
