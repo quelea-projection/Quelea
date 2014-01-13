@@ -42,7 +42,7 @@ import org.quelea.services.utils.Utils;
 public class ThemeDTO implements Serializable {
 
     private static final Logger LOGGER = LoggerUtils.getLogger();
-    public static final SerializableFont DEFAULT_FONT = new SerializableFont(new Font("Arial", QueleaProperties.get().getMaxFontSize()));
+    public static final SerializableFont DEFAULT_FONT = new SerializableFont(Font.font("Noto Sans", FontWeight.BOLD, FontPosture.REGULAR, QueleaProperties.get().getMaxFontSize()));
     public static final Color DEFAULT_FONT_COLOR = Color.WHITE;
     public static final SerializableDropShadow DEFAULT_SHADOW = new SerializableDropShadow(DEFAULT_FONT_COLOR, 0, 0);
     public static final ColourBackground DEFAULT_BACKGROUND = new ColourBackground(Color.BLACK);
