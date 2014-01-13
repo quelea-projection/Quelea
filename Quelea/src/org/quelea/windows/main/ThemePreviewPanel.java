@@ -122,10 +122,12 @@ public class ThemePreviewPanel extends VBox {
                 @Override
                 public void handle(javafx.event.ActionEvent t) {
                     popup.hide();
+                    final boolean[] deleted = new boolean[1];
                     Dialog.buildConfirmation(LabelGrabber.INSTANCE.getLabel("delete.theme.confirm.title"), LabelGrabber.INSTANCE.getLabel("delete.theme.question"), null).addYesButton(new EventHandler<ActionEvent>() {
                         @Override
                         public void handle(ActionEvent t) {
                             ThemePreviewPanel.this.theme.getFile().delete();
+                            deleted[0]=true;
                         }
                     }).addNoButton(new EventHandler<ActionEvent>() {
                         @Override
@@ -133,6 +135,9 @@ public class ThemePreviewPanel extends VBox {
                             //Nothing needed here
                         }
                     }).build().showAndWait();
+                    if(deleted[0]) {
+                        parent.getThemePreviews().getChildren().remove(ThemePreviewPanel.this);
+                    }
                 }
             });
         }
