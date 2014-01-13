@@ -165,9 +165,6 @@ public class DisplayCanvas extends StackPane {
     }
 
     public void clearCurrentDisplayable() {
-        if(getPlayVideo()) {
-            VLCWindow.INSTANCE.stop();
-        }
         setCurrentDisplayable(null);
     }
 
