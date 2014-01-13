@@ -192,6 +192,24 @@ public final class QueleaProperties extends Properties {
     }
 
     /**
+     * Get the fade duration (in seconds) for the text clear transition.
+     * <p>
+     * @return the fade duration (in seconds) for the text clear transition.
+     */
+    public double getFadeDuration() {
+        return Double.parseDouble(getProperty("fade.duration", "1"));
+    }
+
+    /**
+     * Set the fade duration (in seconds) for the text clear transition.
+     * <p>
+     * @param val the fade duration (in seconds) for the text clear transition.
+     */
+    public void setFadeDuration(double val) {
+        setProperty("fade.duration", Double.toString(val));
+    }
+
+    /**
      * Get the maximum font size used by text displayables.
      * <p>
      * @return the maximum font size used by text displayables.
@@ -208,15 +226,16 @@ public final class QueleaProperties extends Properties {
     public void setMaxFontSize(double fontSize) {
         setProperty("max.font.size", Double.toString(fontSize));
     }
-    
+
     /**
      * Get the additional line spacing (in pixels) to be used between each line.
+     * <p>
      * @return the additional line spacing.
      */
     public double getAdditionalLineSpacing() {
         return Double.parseDouble(getProperty("additional.line.spacing", "10"));
     }
-    
+
     /**
      * Set the additional line spacing (in pixels) to be used between each line.
      * <p>
