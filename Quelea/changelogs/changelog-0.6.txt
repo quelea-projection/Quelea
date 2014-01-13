@@ -2,6 +2,9 @@ quelea (0.6) stable; urgency=normal
  
   * Rewritten interface in JavaFX
   * Rewritten video support
+  * Added option to keep the same size text for each part of a song
+  * Added option to set the maximum font size manually
+  * Added option to set spacing between lines
   * Added video background support
   * Changed to more efficient database format
   * Added more / better sample images
