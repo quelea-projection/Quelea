@@ -39,6 +39,7 @@ import org.quelea.data.displayable.SongDisplayable;
 import org.quelea.data.powerpoint.OOUtils;
 import org.quelea.services.languages.LabelGrabber;
 import org.quelea.services.phonehome.PhoneHome;
+import org.quelea.services.utils.FontInstaller;
 import org.quelea.services.utils.LoggerUtils;
 import org.quelea.services.utils.QueleaProperties;
 import org.quelea.services.utils.ShortcutManager;
@@ -79,9 +80,11 @@ public final class Main extends Application {
         splashWindow.show();
 
         new Thread() {
+            @Override
             public void run() {
                 try {
                     final boolean VLC_OK = new NativeDiscovery().discover();
+                    new FontInstaller().setupBundledFonts();
                     new UserFileChecker(QueleaProperties.getQueleaUserHome()).checkUserFiles();
 
                     if(!new File(QueleaProperties.getQueleaUserHome(), "database_new").exists()
