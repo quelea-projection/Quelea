@@ -18,16 +18,23 @@
  */
 package org.quelea.windows.help;
 
+import java.awt.Desktop;
+import java.io.File;
+import java.io.IOException;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.scene.Cursor;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontPosture;
 import javafx.scene.text.FontWeight;
@@ -71,7 +78,28 @@ public class AboutDialog extends Stage {
         subLayout.getChildren().add(new Text(LabelGrabber.INSTANCE.getLabel("help.about.line2")));
         subLayout.getChildren().add(new Text(" "));
         subLayout.getChildren().add(new Text("Java: " + System.getProperty("java.version")));
-        subLayout.getChildren().add(new Text(LabelGrabber.INSTANCE.getLabel("debug.location") + ": " + LoggerUtils.getHandlerFileLocation()));
+        HBox debugBox = new HBox(5);
+        debugBox.getChildren().add(new Text(LabelGrabber.INSTANCE.getLabel("debug.location") + ":"));
+        Text debugLogText = new Text(LoggerUtils.getHandlerFileLocation());
+        debugLogText.setCursor(Cursor.HAND);
+        if(Desktop.isDesktopSupported()) {
+            debugLogText.setFill(Color.BLUE);
+            debugLogText.setStyle("-fx-underline: true;");
+            debugLogText.setOnMouseClicked(new EventHandler<MouseEvent>() {
+
+                @Override
+                public void handle(MouseEvent t) {
+                    try {
+                        Desktop.getDesktop().open(new File(LoggerUtils.getHandlerFileLocation()));
+                    }
+                    catch(IOException ex) {
+                        //Never mind
+                    }
+                }
+            });
+        }
+        debugBox.getChildren().add(debugLogText);
+        subLayout.getChildren().add(debugBox);
         Button closeButton = new Button(LabelGrabber.INSTANCE.getLabel("help.about.close"));
         closeButton.setOnAction(new EventHandler<ActionEvent>() {
 
