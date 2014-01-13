@@ -72,9 +72,9 @@ public class LyricDrawer extends DisplayableDrawer {
             this.text = Arrays.copyOf(text, text.length);
         }
         Font font = Font.font(theme.getFont().getFamily(),
-                    theme.isBold() ? FontWeight.BOLD : FontWeight.NORMAL,
-                    theme.isItalic() ? FontPosture.ITALIC : FontPosture.REGULAR,
-                    QueleaProperties.get().getMaxFontSize());
+                theme.isBold() ? FontWeight.BOLD : FontWeight.NORMAL,
+                theme.isItalic() ? FontPosture.ITALIC : FontPosture.REGULAR,
+                QueleaProperties.get().getMaxFontSize());
         if(stageView) {
             font = Font.font(QueleaProperties.get().getStageTextFont(), QueleaProperties.get().getMaxFontSize());
         }
@@ -177,17 +177,12 @@ public class LyricDrawer extends DisplayableDrawer {
             theme = ThemeDTO.DEFAULT_THEME;
         }
         boolean sameVid = false;
-        if(this.getCanvas().getCurrentDisplayable() instanceof SongDisplayable) {
-            final SongDisplayable song = (SongDisplayable) this.getCanvas().getCurrentDisplayable();
-            if(song != null) {
-                if(theme.getBackground() instanceof VideoBackground
-                        && VLCWindow.INSTANCE.getLastLocation() != null) {
-                    String newLocation = ((VideoBackground) theme.getBackground()).getVideoFile().getAbsolutePath();
-                    String oldLocation = VLCWindow.INSTANCE.getLastLocation();
-                    if(newLocation.equals(oldLocation)) {
-                        sameVid = true;
-                    }
-                }
+        if(theme.getBackground() instanceof VideoBackground
+                && VLCWindow.INSTANCE.getLastLocation() != null) {
+            String newLocation = ((VideoBackground) theme.getBackground()).getVideoFile().getAbsolutePath();
+            String oldLocation = VLCWindow.INSTANCE.getLastLocation();
+            if(newLocation.equals(oldLocation)) {
+                sameVid = true;
             }
         }
         this.theme = theme;
@@ -298,11 +293,11 @@ public class LyricDrawer extends DisplayableDrawer {
 
         return font.getSize();
     }
-    
+
     private double getLineSpacing() {
         double space = QueleaProperties.get().getAdditionalLineSpacing();
-        double factor = getCanvas().getHeight()/1000.0;
-        return space*factor;
+        double factor = getCanvas().getHeight() / 1000.0;
+        return space * factor;
     }
 
     private String longestLine(Font font, List<String> text) {

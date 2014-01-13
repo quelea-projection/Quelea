@@ -143,7 +143,7 @@ public class SelectLyricsPanel extends AbstractPanel {
         lyricsList.itemsProperty().get().clear();
         drawer.clear();
     }
-
+    
     public DisplayCanvas getPreviewCanvas() {
         return previewCanvas;
     }
@@ -158,7 +158,7 @@ public class SelectLyricsPanel extends AbstractPanel {
         for(DisplayCanvas canvas : getCanvases()) {
             drawer.setCanvas(canvas);
             if(selectedIndex == -1 || selectedIndex >= lyricsList.itemsProperty().get().size()) {
-                drawer.setTheme(ThemeDTO.DEFAULT_THEME);
+//                drawer.setTheme(ThemeDTO.DEFAULT_THEME);
                 drawer.eraseText();
                 continue;
             }
