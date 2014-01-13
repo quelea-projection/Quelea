@@ -72,8 +72,12 @@ public class LyricDrawer extends DisplayableDrawer {
             this.text = Arrays.copyOf(text, text.length);
         }
         Font font = theme.getFont();
+        font = Font.font(font.getName(),
+                    theme.isBold() ? FontWeight.BOLD : FontWeight.NORMAL,
+                    theme.isItalic() ? FontPosture.ITALIC : FontPosture.REGULAR,
+                    QueleaProperties.get().getMaxFontSize());
         if(stageView) {
-            font = new Font(QueleaProperties.get().getStageTextFont(), ThemeDTO.DEFAULT_FONT_SIZE);
+            font = new Font(QueleaProperties.get().getStageTextFont(), QueleaProperties.get().getMaxFontSize());
         }
         if(font == null) {
             font = ThemeDTO.DEFAULT_FONT.getFont();
@@ -154,7 +158,7 @@ public class LyricDrawer extends DisplayableDrawer {
                 lineColor = ThemeDTO.DEFAULT_FONT_COLOR;
             }
             t.setFill(lineColor);
-            y += metrics.getLineHeight();
+            y += metrics.getLineHeight() + getLineSpacing();
 
             newTextGroup.getChildren().add(t);
         }
@@ -272,14 +276,14 @@ public class LyricDrawer extends DisplayableDrawer {
 
     private double pickFontSize(Font font, List<String> text, double width, double height) {
         FontMetrics metrics = Toolkit.getToolkit().getFontLoader().getFontMetrics(font);
-        double totalHeight = (metrics.getLineHeight() * text.size());
+        double totalHeight = ((metrics.getLineHeight() + getLineSpacing()) * text.size());
         while(totalHeight > height) {
             font = new Font(font.getName(), font.getSize() - 0.5);
             if(font.getSize() < 1) {
                 return 1;
             }
             metrics = Toolkit.getToolkit().getFontLoader().getFontMetrics(font);
-            totalHeight = (metrics.getLineHeight()) * text.size();
+            totalHeight = (metrics.getLineHeight() + getLineSpacing()) * text.size();
         }
 
         String longestLine = longestLine(font, text);
@@ -294,6 +298,12 @@ public class LyricDrawer extends DisplayableDrawer {
         }
 
         return font.getSize();
+    }
+    
+    private double getLineSpacing() {
+        double space = QueleaProperties.get().getAdditionalLineSpacing();
+        double factor = getCanvas().getHeight()/1000.0;
+        return space*factor;
     }
 
     private String longestLine(Font font, List<String> text) {
@@ -420,6 +430,11 @@ public class LyricDrawer extends DisplayableDrawer {
         if(!QueleaProperties.get().getUseUniformFontSize()) {
             return -1;
         }
+        Font font = theme.getFont();
+        font = Font.font(font.getName(),
+                theme.isBold() ? FontWeight.BOLD : FontWeight.NORMAL,
+                theme.isItalic() ? FontPosture.ITALIC : FontPosture.REGULAR,
+                QueleaProperties.get().getMaxFontSize());
         double fontSize = Double.POSITIVE_INFINITY;
         for(int i = 0; i < displayable.getSections().length; i++) {
             String[] text;
@@ -429,12 +444,12 @@ public class LyricDrawer extends DisplayableDrawer {
             else {
                 text = displayable.getSections()[i].getText(false, false);
             }
-            double newSize = pickFontSize(theme.getFont(), sanctifyText(text), getCanvas().getWidth() * 0.9, getCanvas().getHeight());
+            double newSize = pickFontSize(font, sanctifyText(text), getCanvas().getWidth() * 0.9, getCanvas().getHeight());
             if(newSize < fontSize) {
                 fontSize = newSize;
             }
         }
-        if(fontSize==Double.POSITIVE_INFINITY) {
+        if(fontSize == Double.POSITIVE_INFINITY) {
             fontSize = -1;
         }
         return fontSize;

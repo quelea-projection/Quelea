@@ -418,11 +418,11 @@ public class ThemePanel extends BorderPane {
      * @return the current theme.
      */
     public ThemeDTO getTheme() {
-        Font font = new Font(fontSelection.getSelectionModel().getSelectedItem(), ThemeDTO.DEFAULT_FONT_SIZE);
+        Font font = new Font(fontSelection.getSelectionModel().getSelectedItem(), QueleaProperties.get().getMaxFontSize());
         Font.font(font.getName(),
                 isFontBold ? FontWeight.BOLD : FontWeight.NORMAL,
                 isFontItalic ? FontPosture.ITALIC : FontPosture.REGULAR,
-                ThemeDTO.DEFAULT_FONT_SIZE);
+                QueleaProperties.get().getMaxFontSize());
 
         Background background;
         if(backgroundTypeSelect.getSelectionModel().getSelectedItem() == null) {

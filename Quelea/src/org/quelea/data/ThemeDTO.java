@@ -26,6 +26,7 @@ import javafx.scene.text.Font;
 import org.quelea.data.db.model.TextShadow;
 import org.quelea.data.db.model.Theme;
 import org.quelea.services.utils.LoggerUtils;
+import org.quelea.services.utils.QueleaProperties;
 import org.quelea.services.utils.SerializableColor;
 import org.quelea.services.utils.SerializableDropShadow;
 import org.quelea.services.utils.SerializableFont;
@@ -39,8 +40,7 @@ import org.quelea.services.utils.Utils;
 public class ThemeDTO implements Serializable {
 
     private static final Logger LOGGER = LoggerUtils.getLogger();
-    public static final int DEFAULT_FONT_SIZE = 72;
-    public static final SerializableFont DEFAULT_FONT = new SerializableFont(new Font("Arial", DEFAULT_FONT_SIZE));
+    public static final SerializableFont DEFAULT_FONT = new SerializableFont(new Font("Arial", QueleaProperties.get().getMaxFontSize()));
     public static final Color DEFAULT_FONT_COLOR = Color.WHITE;
     public static final SerializableDropShadow DEFAULT_SHADOW = new SerializableDropShadow(DEFAULT_FONT_COLOR, 0, 0);
     public static final ColourBackground DEFAULT_BACKGROUND = new ColourBackground(Color.BLACK);
@@ -208,7 +208,7 @@ public class ThemeDTO implements Serializable {
      * <p/>
      */
     public static ThemeDTO getDTO(Theme theme) {
-        SerializableFont font = new SerializableFont(new Font(theme.getFontname(), DEFAULT_FONT_SIZE));
+        SerializableFont font = new SerializableFont(new Font(theme.getFontname(), QueleaProperties.get().getMaxFontSize()));
         Background background;
         if(!theme.getBackgroundcolour().isEmpty()) {
             background = new ColourBackground(Utils.parseColour(theme.getBackgroundcolour()));
@@ -325,7 +325,7 @@ public class ThemeDTO implements Serializable {
                 shadowOffsetY = defaultIfEmpty(parts[1], "0");
             }
         }
-        SerializableFont font = new SerializableFont(new Font(fontname, DEFAULT_FONT_SIZE));
+        SerializableFont font = new SerializableFont(new Font(fontname, QueleaProperties.get().getMaxFontSize()));
         Background background;
         if(!backgroundcolour.trim().isEmpty()) {
             background = new ColourBackground(Utils.parseColour(backgroundcolour));
