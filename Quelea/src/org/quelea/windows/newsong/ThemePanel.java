@@ -21,6 +21,7 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.OutputStreamWriter;
+import java.util.Arrays;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -87,9 +88,7 @@ public class ThemePanel extends BorderPane {
     private TextField backgroundImgLocation;
     private TextField backgroundVidLocation;
     private ToggleButton boldButton;
-    private Boolean isFontBold = false;
     private ToggleButton italicButton;
-    private Boolean isFontItalic = false;
     private TextField themeNameField;
     private Button saveThemeButton;
     private Button selectThemeButton;
@@ -254,9 +253,7 @@ public class ThemePanel extends BorderPane {
         fontToolbar = new HBox();
         fontToolbar.getChildren().add(new Label(LabelGrabber.INSTANCE.getLabel("font.theme.label") + ":"));
         fontSelection = new ComboBox<>();
-        for(String font : Utils.getAllFonts()) {
-            fontSelection.itemsProperty().get().add(font);
-        }
+        fontSelection.itemsProperty().get().addAll(Arrays.asList(Utils.getAllFonts()));
         fontSelection.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
             @Override
             public void changed(ObservableValue<? extends String> ov, String t, String t1) {
@@ -268,7 +265,6 @@ public class ThemePanel extends BorderPane {
         boldButton.setOnAction(new EventHandler<javafx.event.ActionEvent>() {
             @Override
             public void handle(javafx.event.ActionEvent t) {
-                isFontBold = !isFontBold;
                 updateTheme(false, null);
             }
         });
@@ -277,7 +273,6 @@ public class ThemePanel extends BorderPane {
         italicButton.setOnAction(new EventHandler<javafx.event.ActionEvent>() {
             @Override
             public void handle(javafx.event.ActionEvent t) {
-                isFontItalic = !isFontItalic;
                 updateTheme(false, null);
             }
         });
@@ -356,7 +351,6 @@ public class ThemePanel extends BorderPane {
      * Update the canvas with the current theme.
      */
     private void updateTheme(boolean warning, ThemeDTO newTheme) {
-
         final ThemeDTO theme = (newTheme != null) ? newTheme : getTheme();
         if(warning && theme.getBackground() instanceof ColourBackground) {
             checkAccessibility(theme.getFontPaint(), ((ColourBackground) theme.getBackground()).getColour());
@@ -384,6 +378,8 @@ public class ThemePanel extends BorderPane {
         Font font = theme.getFont();
         fontSelection.getSelectionModel().select(font.getFamily());
         fontColorPicker.setValue(theme.getFontPaint());
+        boldButton.setSelected(font.getStyle().toLowerCase().contains("bold"));
+        italicButton.setSelected(font.getStyle().toLowerCase().contains("italic"));
         Background background = theme.getBackground();
         background.setThemeForm(backgroundColorPicker, backgroundTypeSelect, backgroundImgLocation, backgroundVidLocation);
         updateTheme(false, null);
@@ -418,10 +414,9 @@ public class ThemePanel extends BorderPane {
      * @return the current theme.
      */
     public ThemeDTO getTheme() {
-        Font font = new Font(fontSelection.getSelectionModel().getSelectedItem(), QueleaProperties.get().getMaxFontSize());
-        Font.font(font.getName(),
-                isFontBold ? FontWeight.BOLD : FontWeight.NORMAL,
-                isFontItalic ? FontPosture.ITALIC : FontPosture.REGULAR,
+        Font font = Font.font(fontSelection.getSelectionModel().getSelectedItem(),
+                italicButton.isSelected() ? FontWeight.BOLD : FontWeight.NORMAL,
+                boldButton.isSelected() ? FontPosture.ITALIC : FontPosture.REGULAR,
                 QueleaProperties.get().getMaxFontSize());
 
         Background background;
@@ -444,7 +439,7 @@ public class ThemePanel extends BorderPane {
                 Double.valueOf(shadowOffsetX.getText().isEmpty() ? "3" : shadowOffsetX.getText()),
                 Double.valueOf(shadowOffsetY.getText().isEmpty() ? "3" : shadowOffsetY.getText()));
         ThemeDTO resultTheme = new ThemeDTO(new SerializableFont(font), fontColorPicker.getValue(),
-                background, shadow, isFontBold, isFontItalic);
+                background, shadow, boldButton.isSelected(), italicButton.isSelected());
         return resultTheme;
     }
 
