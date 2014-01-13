@@ -99,7 +99,7 @@ public class LyricDrawer extends DisplayableDrawer {
             fontSize = defaultFontSize;
         }
         else {
-            fontSize = pickFontSize(font, newText, getCanvas().getWidth() * 0.9, getCanvas().getHeight());
+            fontSize = pickFontSize(font, newText, getCanvas().getWidth() * 0.9, getCanvas().getHeight() * 0.9);
         }
         if(!stageView) {
             font = Font.font(font.getName(),
@@ -444,7 +444,7 @@ public class LyricDrawer extends DisplayableDrawer {
             else {
                 text = displayable.getSections()[i].getText(false, false);
             }
-            double newSize = pickFontSize(font, sanctifyText(text), getCanvas().getWidth() * 0.9, getCanvas().getHeight());
+            double newSize = pickFontSize(font, sanctifyText(text), getCanvas().getWidth() * 0.9, getCanvas().getHeight() * 0.9);
             if(newSize < fontSize) {
                 fontSize = newSize;
             }
