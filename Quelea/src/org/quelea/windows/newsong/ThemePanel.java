@@ -415,8 +415,8 @@ public class ThemePanel extends BorderPane {
      */
     public ThemeDTO getTheme() {
         Font font = Font.font(fontSelection.getSelectionModel().getSelectedItem(),
-                italicButton.isSelected() ? FontWeight.BOLD : FontWeight.NORMAL,
-                boldButton.isSelected() ? FontPosture.ITALIC : FontPosture.REGULAR,
+                boldButton.isSelected() ? FontWeight.BOLD : FontWeight.NORMAL,
+                italicButton.isSelected() ? FontPosture.ITALIC : FontPosture.REGULAR,
                 QueleaProperties.get().getMaxFontSize());
 
         Background background;
