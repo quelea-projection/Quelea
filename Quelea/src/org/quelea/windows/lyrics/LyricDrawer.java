@@ -171,7 +171,7 @@ public class LyricDrawer extends DisplayableDrawer {
         textGroup = newTextGroup;
         if(getCanvas().isCleared() && !getLastClearedState()) {
             setLastClearedState(true);
-            FadeTransition t = new FadeTransition(Duration.seconds(0.5), textGroup);
+            FadeTransition t = new FadeTransition(Duration.seconds(QueleaProperties.get().getFadeDuration()), textGroup);
             t.setToValue(0);
             t.play();
         }
@@ -180,7 +180,7 @@ public class LyricDrawer extends DisplayableDrawer {
         }
         else if(!getCanvas().isCleared() && getLastClearedState()) {
             setLastClearedState(false);
-            FadeTransition t = new FadeTransition(Duration.seconds(0.5), textGroup);
+            FadeTransition t = new FadeTransition(Duration.seconds(QueleaProperties.get().getFadeDuration()), textGroup);
             t.setFromValue(0);
             t.setToValue(1);
             t.play();
