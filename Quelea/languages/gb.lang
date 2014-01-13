@@ -369,3 +369,5 @@ bible.search.results.found=results found
 bible.search.result.found=result found
 bible.search.keep.typing=Keep typing...
 uniform.font.size.label=Use uniform font size
+max.font.size.label=Maximum font size
+additional.line.spacing.label=Additional line spacing
