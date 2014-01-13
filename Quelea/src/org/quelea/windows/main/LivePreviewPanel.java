@@ -202,6 +202,10 @@ public abstract class LivePreviewPanel extends BorderPane {
         Platform.runLater(new Runnable() {
             @Override
             public void run() {
+                boolean sameDisplayable = false;
+                if(LivePreviewPanel.this.displayable != null && LivePreviewPanel.this.displayable.equals(displayable)) {
+                    sameDisplayable = true;
+                }
                 LivePreviewPanel.this.displayable = displayable;
                 presentationPanel.stopCurrent();
                 audioPanel.removeCurrentDisplayable();
