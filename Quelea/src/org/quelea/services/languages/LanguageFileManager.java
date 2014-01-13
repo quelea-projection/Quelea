@@ -25,34 +25,39 @@ import org.quelea.services.utils.QueleaProperties;
 
 /**
  * Knows about all language files currently available in Quelea.
+ * <p>
  * @author Michael
  */
 public class LanguageFileManager {
-    
+
     public static final LanguageFileManager INSTANCE = new LanguageFileManager();
     private Set<LanguageFile> languageFiles;
-    
+
     private LanguageFileManager() {
         languageFiles = new TreeSet<>();
         for(File file : new File("languages").listFiles()) {
-            languageFiles.add(new LanguageFile(file));
+            if(file.getName().endsWith(".lang")) {
+                languageFiles.add(new LanguageFile(file));
+            }
         }
     }
-    
+
     /**
      * Get the language file Quelea is currently using.
-     * @return 
+     * <p>
+     * @return
      */
     public LanguageFile getCurrentFile() {
         return new LanguageFile(QueleaProperties.get().getLanguageFile());
     }
-    
+
     /**
      * Get a set of all language files currently available to Quelea.
+     * <p>
      * @return the set of language files.
      */
     public Set<LanguageFile> languageFiles() {
         return new TreeSet<>(languageFiles);
     }
-    
+
 }
