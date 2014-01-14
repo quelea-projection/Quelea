@@ -53,6 +53,7 @@ public class DisplayCanvas extends StackPane {
     private boolean stageView;
     private Node background;
     private Node currentBackground;
+    private Node logoCurrentBackground;
     private Node noticeOverlay;
     private Displayable currentDisplayable;
     private final CanvasUpdater updater;
@@ -346,14 +347,16 @@ public class DisplayCanvas extends StackPane {
                 logoImage = QueleaProperties.get().getLogoImage();
                 logoChanged = false;
             }
-            currentBackground = getCanvasBackground();
+            if(!isBlacked()) {
+                logoCurrentBackground = getCanvasBackground();
+            }
             clearApartFromNotice();
             setCanvasBackground(logoImage);
         }
         else {
-            setCanvasBackground(currentBackground);
+            setCanvasBackground(logoCurrentBackground);
             Node imageView = null;
-            if(currentBackground == null) {
+            if(logoCurrentBackground == null) {
                 for(Node node : getChildren()) {
                     if(node instanceof ImageView) {
                         imageView = node;
