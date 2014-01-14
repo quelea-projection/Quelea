@@ -5,6 +5,8 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.StackPane;
 import org.quelea.data.displayable.Displayable;
 import org.quelea.data.displayable.ImageDisplayable;
+import org.quelea.services.utils.QueleaProperties;
+import org.quelea.services.utils.Utils;
 import org.quelea.windows.main.DisplayableDrawer;
 import org.quelea.windows.main.QueleaApp;
 import org.quelea.windows.multimedia.VLCWindow;
@@ -26,10 +28,18 @@ public class ImageDrawer extends DisplayableDrawer {
         if(getCanvas().getPlayVideo()) {
             VLCWindow.INSTANCE.stop();
         }
-        image = ((ImageDisplayable) displayable).getImage();
+        if(getCanvas().isStageView()) {
+            image = Utils.getImageFromColour(QueleaProperties.get().getStageBackgroundColor());
+        }
+        else if(getCanvas().isLogoShowing()) {
+            image = QueleaProperties.get().getLogoImage().getImage();
+        }
+        else {
+            image = ((ImageDisplayable) displayable).getImage();
+            imageView.setPreserveRatio(true);
+        }
         imageView = getCanvas().getNewImageView();
         imageView.setFitWidth(getCanvas().getWidth());
-        imageView.setPreserveRatio(true);
         imageView.setImage(image);
         StackPane imageBox = new StackPane();
         imageBox.getChildren().add(imageView);
