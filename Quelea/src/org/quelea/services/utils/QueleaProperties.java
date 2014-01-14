@@ -1081,6 +1081,6 @@ public final class QueleaProperties extends Properties {
      * @return File string for the location of the logo image
      */
     public ImageView getLogoImage() {
-        return new ImageView(new Image("file:" + getProperty("logo.image.location", "icons/splash-bare-nightly.png")));
+        return new ImageView(new Image("file:" + getProperty("logo.image.location", "icons/logo default.png")));
     }
 }
