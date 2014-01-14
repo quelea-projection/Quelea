@@ -61,6 +61,7 @@ public class DisplayCanvas extends StackPane {
     private final boolean playVideo;
     private boolean logoShowing;
     private static ImageView logoImage = QueleaProperties.get().getLogoImage();
+    private boolean logoChanged;
 
     public enum Type {
 
@@ -341,7 +342,10 @@ public class DisplayCanvas extends StackPane {
         }
         this.logoShowing = logoShowing;
         if(logoShowing) {
-            logoImage = QueleaProperties.get().getLogoImage();
+            if(logoChanged) {
+                logoImage = QueleaProperties.get().getLogoImage();
+                logoChanged = false;
+            }
             currentBackground = getCanvasBackground();
             clearApartFromNotice();
             setCanvasBackground(logoImage);
@@ -383,6 +387,14 @@ public class DisplayCanvas extends StackPane {
         return logoShowing;
     }
 
+    /**
+     * Sets if the logo has changed for performance reasons
+     * @param b 
+     */
+    public void setLogoChanged(boolean b) {
+        logoChanged = b;
+    }
+    
     /**
      * Get the notice drawer, used for drawing notices onto this lyrics canvas.
      * <p/>
