@@ -19,7 +19,6 @@ package org.quelea.windows.main;
 
 import java.io.File;
 import java.util.HashSet;
-import java.util.List;
 import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
 import javafx.scene.control.Label;
@@ -138,7 +137,7 @@ public class LivePanel extends LivePreviewPanel {
                 int projectorScreen = QueleaProperties.get().getProjectorScreen();
                 int stageScreen = QueleaProperties.get().getStageScreen();
                 final ObservableList<Screen> monitors = Screen.getScreens();
-                
+
                 DisplayStage appWindow = QueleaApp.get().getProjectionWindow();
                 DisplayStage stageWindow = QueleaApp.get().getStageWindow();
 
@@ -220,28 +219,32 @@ public class LivePanel extends LivePreviewPanel {
      * Toggle the "black" button.
      */
     public void toggleBlack() {
-        if(!black.isDisable())
-        black.fire();
+        if(!black.isDisable()) {
+            black.fire();
+        }
     }
 
     /**
      * Toggle the "clear" button.
      */
     public void toggleClear() {
-        if(!clear.isDisable())
-        clear.fire();
+        if(!clear.isDisable()) {
+            clear.fire();
+        }
     }
 
     /**
      * Toggle the "hide" button.
      */
     public void toggleHide() {
-        if(!hide.isDisable())
-        hide.fire();
+        if(!hide.isDisable()) {
+            hide.fire();
+        }
     }
-    
+
     /**
      * Get the hide button.
+     * <p>
      * @return the hide button.
      */
     public ToggleButton getHide() {
