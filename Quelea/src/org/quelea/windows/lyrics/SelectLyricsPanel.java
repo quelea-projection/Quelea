@@ -17,6 +17,8 @@
  */
 package org.quelea.windows.lyrics;
 
+import java.util.HashMap;
+import java.util.Map;
 import org.quelea.windows.main.DisplayCanvas;
 import org.quelea.windows.main.DisplayCanvas.Priority;
 import java.util.logging.Logger;
@@ -45,6 +47,7 @@ public class SelectLyricsPanel extends AbstractPanel {
     private final DisplayCanvas previewCanvas;
     private final SplitPane splitPane;
     private LyricDrawer drawer;
+    private Map<DisplayCanvas, Boolean> logoWasShowingMap;
 
     /**
      * Create a new lyrics panel.
@@ -52,6 +55,7 @@ public class SelectLyricsPanel extends AbstractPanel {
      * @param containerPanel the container panel this panel is contained within.
      */
     public SelectLyricsPanel(LivePreviewPanel containerPanel) {
+        logoWasShowingMap = new HashMap<>();
         drawer = new LyricDrawer();
         splitPane = new SplitPane();
         splitPane.setOrientation(Orientation.VERTICAL);
@@ -149,6 +153,18 @@ public class SelectLyricsPanel extends AbstractPanel {
         return previewCanvas;
     }
 
+    private boolean getLogoWasShowing(DisplayCanvas canvas) {
+        Boolean b = logoWasShowingMap.get(canvas);
+        if(b == null) {
+            return false;
+        }
+        return b;
+    }
+
+    private void setLogoWasShowing(DisplayCanvas canvas, boolean showing) {
+        logoWasShowingMap.put(canvas, showing);
+    }
+
     /**
      * Called to updateOnSizeChange the contents of the canvases when the list
      * selection changes.
@@ -157,9 +173,11 @@ public class SelectLyricsPanel extends AbstractPanel {
     public void updateCanvas() {
         int selectedIndex = lyricsList.selectionModelProperty().get().getSelectedIndex();
         for(DisplayCanvas canvas : getCanvases()) {
+            boolean logoPrevShowing = getLogoWasShowing(canvas);
+            setLogoWasShowing(canvas, canvas.isLogoShowing());
             drawer.setCanvas(canvas);
             if(selectedIndex == -1 || selectedIndex >= lyricsList.itemsProperty().get().size()) {
-                if(!canvas.getPlayVideo()) {
+                if(!canvas.getPlayVideo() || logoPrevShowing != canvas.isLogoShowing() || canvas.isLogoShowing()) {
                     drawer.setTheme(ThemeDTO.DEFAULT_THEME);
                 }
                 drawer.eraseText();
