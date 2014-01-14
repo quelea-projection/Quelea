@@ -38,8 +38,10 @@ import org.quelea.services.utils.LoggerUtils;
 import org.quelea.services.utils.QueleaProperties;
 import org.quelea.windows.library.Constraint;
 import org.quelea.windows.library.DisplayableListCell;
+import org.quelea.windows.main.DisplayCanvas;
 import org.quelea.windows.main.QueleaApp;
 import org.quelea.windows.main.actionhandlers.RemoveScheduleItemActionHandler;
+import org.quelea.windows.multimedia.VLCWindow;
 
 /**
  * The schedule list, all the items that are to be displayed in the service.
@@ -221,6 +223,7 @@ public class ScheduleList extends ListView<Displayable> {
             Displayable live = QueleaApp.get().getMainWindow().getMainPanel().getLivePanel().getDisplayable();
             if(d == live && QueleaProperties.get().getClearLiveOnRemove()) {
                 QueleaApp.get().getMainWindow().getMainPanel().getLivePanel().removeDisplayable();
+                VLCWindow.INSTANCE.stop();
             }
             Displayable preview = QueleaApp.get().getMainWindow().getMainPanel().getPreviewPanel().getDisplayable();
             if(d == preview) {
