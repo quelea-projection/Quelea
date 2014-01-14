@@ -17,9 +17,11 @@
  */
 package org.quelea.services.utils;
 
+import javafx.event.EventHandler;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyCodeCombination;
 import javafx.scene.input.KeyCombination;
+import javafx.scene.input.KeyEvent;
 import org.quelea.windows.main.MainPanel;
 import org.quelea.windows.main.MainWindow;
 import org.quelea.windows.main.QueleaApp;
@@ -36,13 +38,32 @@ public class ShortcutManager {
 
     /**
      * Add in the shortcuts.
+     * @param mainWindow the main window
      */
-    public void addShortcuts(MainWindow mainWindow) {
+    public void addShortcuts(final MainWindow mainWindow) {
         final MainPanel mainPanel = QueleaApp.get().getMainWindow().getMainPanel();
         mainPanel.getScene().getAccelerators().put(new KeyCodeCombination(KeyCode.L, KeyCombination.CONTROL_DOWN), new Runnable() {
             @Override
             public void run() {
                 mainPanel.getLibraryPanel().getLibrarySongPanel().getSearchBox().requestFocus();
+            }
+        });
+        mainPanel.getScene().getAccelerators().put(new KeyCodeCombination(KeyCode.F5), new Runnable() {
+            @Override
+            public void run() {
+                mainWindow.getMainPanel().getLivePanel().toggleBlack();
+            }
+        });
+        mainPanel.getScene().getAccelerators().put(new KeyCodeCombination(KeyCode.F6), new Runnable() {
+            @Override
+            public void run() {
+                mainWindow.getMainPanel().getLivePanel().toggleClear();
+            }
+        });
+        mainPanel.getScene().getAccelerators().put(new KeyCodeCombination(KeyCode.F7), new Runnable() {
+            @Override
+            public void run() {
+                mainWindow.getMainPanel().getLivePanel().toggleHide();
             }
         });
     }
