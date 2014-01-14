@@ -3,6 +3,8 @@ package org.quelea.windows.lyrics;
 import org.quelea.windows.main.DisplayableDrawer;
 import com.sun.javafx.tk.FontMetrics;
 import com.sun.javafx.tk.Toolkit;
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -13,6 +15,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.animation.FadeTransition;
 import javafx.animation.ParallelTransition;
+import javafx.embed.swing.SwingFXUtils;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.Group;
@@ -27,6 +30,7 @@ import javafx.scene.text.FontPosture;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 import javafx.util.Duration;
+import javax.imageio.ImageIO;
 import org.quelea.data.ColourBackground;
 import org.quelea.data.ImageBackground;
 import org.quelea.data.ThemeDTO;
@@ -186,15 +190,15 @@ public class LyricDrawer extends DisplayableDrawer {
             t.play();
         }
     }
-    
+
     private boolean getLastClearedState() {
         Boolean val = lastClearedState.get(getCanvas());
-        if(val==null) {
+        if(val == null) {
             return false;
         }
         return val;
     }
-    
+
     private void setLastClearedState(boolean val) {
         lastClearedState.put(getCanvas(), val);
     }

@@ -250,4 +250,12 @@ public class LivePanel extends LivePreviewPanel {
     public ToggleButton getHide() {
         return hide;
     }
+    
+    public void updateCanvases() {
+        HashSet<DisplayCanvas> canvases = new HashSet<>();
+        canvases.addAll(getCanvases());
+        for(DisplayCanvas canvas : canvases) {
+            canvas.update();
+        }
+    }
 }
