@@ -25,6 +25,8 @@ import java.util.Properties;
 import java.util.logging.Level;
 import javafx.geometry.BoundingBox;
 import javafx.geometry.Bounds;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.paint.Color;
 import org.quelea.data.bible.Bible;
 import org.quelea.data.displayable.TextAlignment;
@@ -1061,5 +1063,24 @@ public final class QueleaProperties extends Properties {
      */
     public boolean getDragAndDrop() {
         return Boolean.parseBoolean(getProperty("enable.drag.and.drop", "false"));
+    }
+    
+    /**
+     * Sets the logo image location for persistent use
+     * <p/>
+     * @param location File location
+     */
+    public void setLogoImage(String location) {
+        setProperty("logo.image.location", location);
+        write();
+    }
+    
+    /**
+     * Return the location of the logo image
+     * <p/>
+     * @return File string for the location of the logo image
+     */
+    public ImageView getLogoImage() {
+        return new ImageView(new Image("file:" + getProperty("logo.image.location", "icons/splash-bare-nightly.png")));
     }
 }

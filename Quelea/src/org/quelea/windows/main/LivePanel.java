@@ -27,6 +27,8 @@ import javafx.scene.control.Tooltip;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyEvent;
+import javafx.scene.input.MouseButton;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.Region;
@@ -45,6 +47,7 @@ import org.quelea.windows.multimedia.VLCWindow;
  */
 public class LivePanel extends LivePreviewPanel {
 
+    private final ToggleButton logo;
     private final ToggleButton black;
     private final ToggleButton clear;
     private final ToggleButton hide;
@@ -61,6 +64,28 @@ public class LivePanel extends LivePreviewPanel {
         Region spacer = new Region();
         HBox.setHgrow(spacer, Priority.ALWAYS);
         header.getItems().add(spacer);
+        logo = new ToggleButton("", new ImageView(new Image("file:icons/logo16.png")));
+        Utils.setToolbarButtonStyle(logo);
+        logo.setTooltip(new Tooltip(LabelGrabber.INSTANCE.getLabel("logo.screen.tooltip")));
+        logo.setOnMouseClicked(new EventHandler<javafx.scene.input.MouseEvent>() {
+            @Override
+            public void handle(MouseEvent t) {
+                if(t.getButton().equals(MouseButton.SECONDARY)) {
+                    //TODO
+                }
+            }
+        });
+        logo.setOnAction(new EventHandler<javafx.event.ActionEvent>() {
+            @Override
+            public void handle(javafx.event.ActionEvent t) {
+                HashSet<DisplayCanvas> canvases = new HashSet<>();
+                canvases.addAll(getCanvases());
+                for(DisplayCanvas canvas : canvases) {
+                    canvas.setLogo(logo.isSelected());
+                }
+            }
+        });
+        header.getItems().add(logo);
         black = new ToggleButton("", new ImageView(new Image("file:icons/black.png")));
         Utils.setToolbarButtonStyle(black);
         black.setTooltip(new Tooltip(LabelGrabber.INSTANCE.getLabel("black.screen.tooltip") + " (F1)"));

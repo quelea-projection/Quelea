@@ -27,6 +27,7 @@ import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
+import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
@@ -34,6 +35,7 @@ import org.quelea.data.displayable.Displayable;
 import org.quelea.services.notice.NoticeDrawer;
 import org.quelea.services.notice.NoticeOverlay;
 import org.quelea.services.utils.LoggerUtils;
+import org.quelea.services.utils.QueleaProperties;
 import org.quelea.services.utils.Utils;
 
 /**
@@ -57,6 +59,8 @@ public class DisplayCanvas extends StackPane {
     private Priority dravingPriority = Priority.LOW;
     private Type type = Type.PREVIEW;
     private final boolean playVideo;
+    private boolean logoShowing;
+    private static ImageView logoImage = QueleaProperties.get().getLogoImage();
 
     public enum Type {
 
@@ -307,10 +311,40 @@ public class DisplayCanvas extends StackPane {
             return;
         }
         this.blacked = blacked;
-        if(blacked) {
+        if(blacked && !isLogoShowing()) {
             currentBackground = getCanvasBackground();
             clearApartFromNotice();
             setCanvasBackground(BLACK_IMAGE);
+        }
+        else {
+            setCanvasBackground(currentBackground);
+            Node imageView = null;
+            if(currentBackground == null) {
+                for(Node node : getChildren()) {
+                    if(node instanceof ImageView) {
+                        imageView = node;
+                    }
+                }
+                if(imageView != null) {
+                    getChildren().remove(imageView);
+                }
+            }
+        }
+        if(this.updater != null) {
+            updateCanvas(this.updater);
+        }
+    }
+    
+     public void setLogo(boolean logoShowing) {
+        if(this.logoShowing == logoShowing) {
+            return;
+        }
+        this.logoShowing = logoShowing;
+        if(logoShowing) {
+            currentBackground = getCanvasBackground();
+            clearApartFromNotice();
+            logoImage = QueleaProperties.get().getLogoImage();
+            setCanvasBackground(logoImage);
         }
         else {
             setCanvasBackground(currentBackground);
@@ -338,6 +372,15 @@ public class DisplayCanvas extends StackPane {
      */
     public boolean isBlacked() {
         return blacked;
+    }
+    
+    /**
+     * Determine whether this canvas is showing the logo file
+     * <p/>
+     * @return true if a logo is currently displayed, false otherwise
+     */
+    public boolean isLogoShowing() {
+        return logoShowing;
     }
 
     /**

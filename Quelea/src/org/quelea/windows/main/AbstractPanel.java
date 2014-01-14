@@ -71,7 +71,9 @@ public abstract class AbstractPanel extends BorderPane implements ContainedPanel
     public void removeCurrentDisplayable() {
         assert Utils.fxThread();
         for(DisplayCanvas canvas : getCanvases()) {
-            canvas.clearCurrentDisplayable();
+            if(!canvas.isLogoShowing()) {
+                canvas.clearCurrentDisplayable();
+            }
             canvas.clearApartFromNotice();
         }
     }
