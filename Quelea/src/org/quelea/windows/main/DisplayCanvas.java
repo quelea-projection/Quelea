@@ -46,7 +46,7 @@ import org.quelea.services.utils.Utils;
 public class DisplayCanvas extends StackPane {
 
     private static final Logger LOGGER = LoggerUtils.getLogger();
-    private static final ImageView BLACK_IMAGE = new ImageView(Utils.getImageFromColour(Color.BLACK));
+    public static final ImageView BLACK_IMAGE = new ImageView(Utils.getImageFromColour(Color.BLACK));
     private boolean cleared;
     private boolean blacked;
     private NoticeDrawer noticeDrawer;
