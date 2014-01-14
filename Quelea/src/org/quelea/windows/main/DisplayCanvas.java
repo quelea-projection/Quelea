@@ -341,9 +341,9 @@ public class DisplayCanvas extends StackPane {
         }
         this.logoShowing = logoShowing;
         if(logoShowing) {
+            logoImage = QueleaProperties.get().getLogoImage();
             currentBackground = getCanvasBackground();
             clearApartFromNotice();
-            logoImage = QueleaProperties.get().getLogoImage();
             setCanvasBackground(logoImage);
         }
         else {
