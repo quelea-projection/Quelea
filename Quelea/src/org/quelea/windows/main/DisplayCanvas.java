@@ -27,7 +27,6 @@ import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
-import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
@@ -46,7 +45,7 @@ import org.quelea.services.utils.Utils;
 public class DisplayCanvas extends StackPane {
 
     private static final Logger LOGGER = LoggerUtils.getLogger();
-    public static final ImageView BLACK_IMAGE = new ImageView(Utils.getImageFromColour(Color.BLACK));
+    private static final ImageView BLACK_IMAGE = new ImageView(Utils.getImageFromColour(Color.BLACK));
     private boolean cleared;
     private boolean blacked;
     private NoticeDrawer noticeDrawer;
