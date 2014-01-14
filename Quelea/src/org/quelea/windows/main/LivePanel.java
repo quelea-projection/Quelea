@@ -98,7 +98,7 @@ public class LivePanel extends LivePreviewPanel {
         header.getItems().add(logo);
         black = new ToggleButton("", new ImageView(new Image("file:icons/black.png")));
         Utils.setToolbarButtonStyle(black);
-        black.setTooltip(new Tooltip(LabelGrabber.INSTANCE.getLabel("black.screen.tooltip") + " (F1)"));
+        black.setTooltip(new Tooltip(LabelGrabber.INSTANCE.getLabel("black.screen.tooltip") + " (F5)"));
         black.setOnAction(new EventHandler<javafx.event.ActionEvent>() {
             @Override
             public void handle(javafx.event.ActionEvent t) {
@@ -112,7 +112,7 @@ public class LivePanel extends LivePreviewPanel {
         header.getItems().add(black);
         clear = new ToggleButton("", new ImageView(new Image("file:icons/clear.png", 16, 16, false, true)));
         Utils.setToolbarButtonStyle(clear);
-        clear.setTooltip(new Tooltip(LabelGrabber.INSTANCE.getLabel("clear.text.tooltip") + " (F2)"));
+        clear.setTooltip(new Tooltip(LabelGrabber.INSTANCE.getLabel("clear.text.tooltip") + " (F6)"));
         clear.setOnAction(new EventHandler<javafx.event.ActionEvent>() {
             @Override
             public void handle(javafx.event.ActionEvent t) {
@@ -126,7 +126,7 @@ public class LivePanel extends LivePreviewPanel {
         header.getItems().add(clear);
         hide = new ToggleButton("", new ImageView(new Image("file:icons/cross.png")));
         Utils.setToolbarButtonStyle(hide);
-        hide.setTooltip(new Tooltip(LabelGrabber.INSTANCE.getLabel("hide.display.output.tooltip") + " (F3)"));
+        hide.setTooltip(new Tooltip(LabelGrabber.INSTANCE.getLabel("hide.display.output.tooltip") + " (F7)"));
         hide.setOnAction(new EventHandler<javafx.event.ActionEvent>() {
             @Override
             public void handle(javafx.event.ActionEvent t) {
@@ -212,27 +212,32 @@ public class LivePanel extends LivePreviewPanel {
     }
 
     /**
-     * Get the "black" toggle button.
-     * <p/>
-     * @return the "black" toggle button.
+     * Toggle the "black" button.
      */
-    public ToggleButton getBlack() {
-        return black;
+    public void toggleBlack() {
+        if(!black.isDisable())
+        black.fire();
     }
 
     /**
-     * Get the "clear" toggle button.
-     * <p/>
-     * @return the "clear" toggle button.
+     * Toggle the "clear" button.
      */
-    public ToggleButton getClear() {
-        return clear;
+    public void toggleClear() {
+        if(!clear.isDisable())
+        clear.fire();
     }
 
     /**
-     * Get the "hide" toggle button.
-     * <p/>
-     * @return the "hide" toggle button.
+     * Toggle the "hide" button.
+     */
+    public void toggleHide() {
+        if(!hide.isDisable())
+        hide.fire();
+    }
+    
+    /**
+     * Get the hide button.
+     * @return the hide button.
      */
     public ToggleButton getHide() {
         return hide;
