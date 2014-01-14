@@ -28,6 +28,8 @@ public class ImageDrawer extends DisplayableDrawer {
         if(getCanvas().getPlayVideo()) {
             VLCWindow.INSTANCE.stop();
         }
+        imageView = getCanvas().getNewImageView();
+        imageView.setFitWidth(getCanvas().getWidth());
         if(getCanvas().isStageView()) {
             image = Utils.getImageFromColour(QueleaProperties.get().getStageBackgroundColor());
         }
@@ -38,8 +40,6 @@ public class ImageDrawer extends DisplayableDrawer {
             image = ((ImageDisplayable) displayable).getImage();
             imageView.setPreserveRatio(true);
         }
-        imageView = getCanvas().getNewImageView();
-        imageView.setFitWidth(getCanvas().getWidth());
         imageView.setImage(image);
         StackPane imageBox = new StackPane();
         imageBox.getChildren().add(imageView);
