@@ -17,7 +17,9 @@
  */
 package org.quelea.windows.main;
 
+import java.io.File;
 import java.util.HashSet;
+import java.util.List;
 import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
 import javafx.scene.control.Label;
@@ -32,9 +34,11 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.Region;
+import javafx.stage.FileChooser;
 import javafx.stage.Screen;
 import org.quelea.data.displayable.Displayable;
 import org.quelea.services.languages.LabelGrabber;
+import org.quelea.services.utils.FileFilters;
 import org.quelea.services.utils.QueleaProperties;
 import org.quelea.services.utils.Utils;
 import org.quelea.windows.multimedia.VLCWindow;
@@ -71,7 +75,13 @@ public class LivePanel extends LivePreviewPanel {
             @Override
             public void handle(MouseEvent t) {
                 if(t.getButton().equals(MouseButton.SECONDARY)) {
-                    //TODO
+                    FileChooser chooser = new FileChooser();
+                    chooser.getExtensionFilters().add(FileFilters.IMAGES);
+                    chooser.setInitialDirectory(QueleaProperties.get().getImageDir().getAbsoluteFile());
+                    File file = chooser.showOpenDialog(QueleaApp.get().getMainWindow());
+                    if(file != null) {
+                        QueleaProperties.get().setLogoImage(file.getAbsolutePath());
+                    }
                 }
             }
         });
