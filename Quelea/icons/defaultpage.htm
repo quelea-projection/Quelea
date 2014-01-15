@@ -107,6 +107,10 @@ if(backcolor) {
 document.getElementById('dynamicDiv').style.background = backcolor;
 document.getElementById('back-color').value = backcolor;
 }
+var chords = getCookie("chords");
+if(chords) {
+document.getElementById('chords').checked=chords;
+}
 document.documentElement.requestFullScreen();
 }
 function shrink()
@@ -130,7 +134,12 @@ function shrink()
 window.onload = setup;
 function loadXMLDoc()
 {
+if(document.getElementById("chords").checked) {
+xmlhttp.open("GET","/chords",true);
+}
+else {
 xmlhttp.open("GET","/lyrics",true);
+}
 xmlhttp.timeout = 4000;
 xmlhttp.ontimeout = function () {document.getElementById("dynamicSpan").innerHTML="";}
 xmlhttp.send();
@@ -168,6 +177,8 @@ return "";
 <div><p>[font.colour.label]: <input id="font-color" type="color" value="#111111" onchange="javascript:document.getElementById('dynamicDiv').style.color = document.getElementById('font-color').value;setCookie('fontcolor',document.getElementById('font-color').value,100);"></p></div>
 
 <div><p>[background.colour.label]: <input id="back-color" type="color" value="#cccccc" onchange="javascript:document.getElementById('dynamicDiv').style.background = document.getElementById('back-color').value;setCookie('backcolor',document.getElementById('back-color').value,100);"></p></div>
+
+<div><p>[show.chords.label] <input type="checkbox" name="chords" id="chords" onchange="setCookie('chords',document.getElementById('chords').checked,100);"></p></div>
 
 	</div>
 </div>
