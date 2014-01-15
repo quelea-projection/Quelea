@@ -69,7 +69,7 @@ public class LivePanel extends LivePreviewPanel {
         header.getItems().add(spacer);
         logo = new ToggleButton("", new ImageView(new Image("file:icons/logo16.png")));
         Utils.setToolbarButtonStyle(logo);
-        logo.setTooltip(new Tooltip(LabelGrabber.INSTANCE.getLabel("logo.screen.tooltip")));
+        logo.setTooltip(new Tooltip(LabelGrabber.INSTANCE.getLabel("logo.screen.tooltip") + " (F5)"));
         logo.setOnMouseClicked(new EventHandler<javafx.scene.input.MouseEvent>() {
             @Override
             public void handle(MouseEvent t) {
@@ -100,7 +100,7 @@ public class LivePanel extends LivePreviewPanel {
         header.getItems().add(logo);
         black = new ToggleButton("", new ImageView(new Image("file:icons/black.png")));
         Utils.setToolbarButtonStyle(black);
-        black.setTooltip(new Tooltip(LabelGrabber.INSTANCE.getLabel("black.screen.tooltip") + " (F5)"));
+        black.setTooltip(new Tooltip(LabelGrabber.INSTANCE.getLabel("black.screen.tooltip") + " (F6)"));
         black.setOnAction(new EventHandler<javafx.event.ActionEvent>() {
             @Override
             public void handle(javafx.event.ActionEvent t) {
@@ -114,7 +114,7 @@ public class LivePanel extends LivePreviewPanel {
         header.getItems().add(black);
         clear = new ToggleButton("", new ImageView(new Image("file:icons/clear.png", 16, 16, false, true)));
         Utils.setToolbarButtonStyle(clear);
-        clear.setTooltip(new Tooltip(LabelGrabber.INSTANCE.getLabel("clear.text.tooltip") + " (F6)"));
+        clear.setTooltip(new Tooltip(LabelGrabber.INSTANCE.getLabel("clear.text.tooltip") + " (F7)"));
         clear.setOnAction(new EventHandler<javafx.event.ActionEvent>() {
             @Override
             public void handle(javafx.event.ActionEvent t) {
@@ -128,7 +128,7 @@ public class LivePanel extends LivePreviewPanel {
         header.getItems().add(clear);
         hide = new ToggleButton("", new ImageView(new Image("file:icons/cross.png")));
         Utils.setToolbarButtonStyle(hide);
-        hide.setTooltip(new Tooltip(LabelGrabber.INSTANCE.getLabel("hide.display.output.tooltip") + " (F7)"));
+        hide.setTooltip(new Tooltip(LabelGrabber.INSTANCE.getLabel("hide.display.output.tooltip") + " (F8)"));
         hide.setOnAction(new EventHandler<javafx.event.ActionEvent>() {
             @Override
             public void handle(javafx.event.ActionEvent t) {
@@ -237,6 +237,15 @@ public class LivePanel extends LivePreviewPanel {
     public void toggleHide() {
         if(!hide.isDisable()) {
             hide.fire();
+        }
+    }
+    
+    /**
+     * Toggle the "logo" button.
+     */
+    public void toggleLogo() {
+        if(!logo.isDisable()) {
+            logo.fire();
         }
     }
 
