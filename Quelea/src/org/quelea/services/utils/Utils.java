@@ -822,4 +822,18 @@ public final class Utils {
     public static void enableDragAndDrop() {
         DragAndDrop.enable();
     }
+    
+    public static String escapeHTML(String s) {
+        StringBuilder out = new StringBuilder();
+        for(int i = 0; i < s.length(); i++) {
+            char c = s.charAt(i);
+            if(c > 127 || c == '"' || c == '<' || c == '>') {
+                out.append("&#").append((int) c).append(";");
+            }
+            else {
+                out.append(c);
+            }
+        }
+        return out.toString();
+    }
 }
