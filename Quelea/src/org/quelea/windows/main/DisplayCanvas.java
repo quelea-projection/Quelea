@@ -325,7 +325,7 @@ public class DisplayCanvas extends StackPane {
             return;
         }
         this.blacked = blacked;
-        if(blacked /*&& !isLogoShowing()*/) {
+        if(blacked) {
             currentBackground = getCanvasBackground();
             clearApartFromNotice();
             setCanvasBackground(BLACK_IMAGE);
