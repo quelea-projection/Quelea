@@ -17,7 +17,6 @@ import javafx.scene.Cursor;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
-import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
@@ -28,14 +27,12 @@ import org.quelea.services.languages.LabelGrabber;
 import org.quelea.services.utils.LoggerUtils;
 import org.quelea.services.utils.PropertyPanel;
 import org.quelea.services.utils.QueleaProperties;
-import org.quelea.windows.main.QueleaApp;
 
 /**
  * The panel that shows the mobile lyrics options.
- * <p>
  * @author Michael
  */
-public class OptionsMobLyricsPanel extends GridPane implements PropertyPanel {
+public class MobLyricsPanel extends GridPane implements PropertyPanel {
 
     private static final Logger LOGGER = LoggerUtils.getLogger();
     private CheckBox useMobLyricsCheckBox;
@@ -44,11 +41,11 @@ public class OptionsMobLyricsPanel extends GridPane implements PropertyPanel {
     /**
      * Create the mobile lyrics panel.
      */
-    public OptionsMobLyricsPanel() {
+    public MobLyricsPanel() {
         setVgap(5);
         setPadding(new Insets(5));
 
-        Label useMobLydicsLabel = new Label(LabelGrabber.INSTANCE.getLabel("use.mobile.lyrics.label") + " ");
+        Label useMobLydicsLabel = new Label(LabelGrabber.INSTANCE.getLabel("use.mobile.lyrics.label")+ " ");
         GridPane.setConstraints(useMobLydicsLabel, 1, 1);
         getChildren().add(useMobLydicsLabel);
         useMobLyricsCheckBox = new CheckBox();
@@ -59,36 +56,27 @@ public class OptionsMobLyricsPanel extends GridPane implements PropertyPanel {
         GridPane.setConstraints(portNumberLabel, 1, 2);
         getChildren().add(portNumberLabel);
         portNumTextField = new TextField();
-        portNumTextField.addEventFilter(KeyEvent.KEY_TYPED, new EventHandler<KeyEvent>() {
-            @Override
-            public void handle(KeyEvent t) {
-                String text = t.getCharacter();
-                char arr[] = text.toCharArray();
-                char ch = arr[text.toCharArray().length - 1];
-                if(!(ch >= '0' && ch <= '9')) {
-                    t.consume();
-                }
-                try {
-                    String newText = portNumTextField.getText() + ch;
-                    int num = Integer.parseInt(newText);
-                    if(num > 65535 || num <= 0) {
-                        t.consume();
-                    }
-                }
-                catch(NumberFormatException ex) {
-                    t.consume();
-                }
-            }
-        });
+//        portNumTextField.addEventFilter(KeyEvent.KEY_TYPED, new EventHandler<KeyEvent>() {
+//            @Override
+//            public void handle(KeyEvent t) {
+//                String text = t.getCharacter();
+//                char arr[] = text.toCharArray();
+//                char ch = arr[text.toCharArray().length - 1];
+//                if(!(ch >= '0' && ch <= '9')) {
+//                    t.consume();
+//                }
+//            }
+//        });
         portNumTextField.setMaxWidth(Double.MAX_VALUE);
         GridPane.setHgrow(portNumTextField, Priority.ALWAYS);
+        portNumTextField.setEditable(false);
         portNumberLabel.setLabelFor(portNumTextField);
         GridPane.setConstraints(portNumTextField, 2, 2);
         getChildren().add(portNumTextField);
         HBox mobBox = new HBox(5);
         mobBox.getChildren().add(new Text(LabelGrabber.INSTANCE.getLabel("navigate.mob.url.label") + ": "));
         Text mobUrlLabel = new Text(getURL());
-        if(Desktop.isDesktopSupported() && getURL().startsWith("http")) {
+        if(Desktop.isDesktopSupported()) {
             mobUrlLabel.setCursor(Cursor.HAND);
             mobUrlLabel.setFill(Color.BLUE);
             mobUrlLabel.setStyle("-fx-underline: true;");
@@ -111,31 +99,21 @@ public class OptionsMobLyricsPanel extends GridPane implements PropertyPanel {
 
         readProperties();
     }
-
-    private String urlCache;
-
+    
     private String getURL() {
-        if(urlCache == null) {
-            if(QueleaProperties.get().getUseMobLyrics() && QueleaApp.get().getMobileLyricsServer() != null && QueleaApp.get().getMobileLyricsServer().isRunning()) {
-                try {
-                    StringBuilder ret = new StringBuilder("http://");
-                    ret.append(InetAddress.getLocalHost().getHostAddress());
-                    int port = QueleaProperties.get().getMobLyricsPort();
-                    if(port != 80) {
-                        ret.append(":");
-                        ret.append(port);
-                    }
-                    urlCache = ret.toString();
-                }
-                catch(UnknownHostException ex) {
-                    urlCache = "[Not started]";
-                }
+        try {
+            StringBuilder ret = new StringBuilder("http://");
+            ret.append(InetAddress.getLocalHost().getHostAddress());
+            int port = QueleaProperties.get().getMobLyricsPort();
+            if(port!=80) {
+                ret.append(":");
+                ret.append(port);
             }
-            else {
-                urlCache = "[Not started]";
-            }
+            return ret.toString();
         }
-        return urlCache;
+        catch(UnknownHostException ex) {
+            return "";
+        }
     }
 
     /**
