@@ -79,6 +79,7 @@ public class LivePanel extends LivePreviewPanel {
                     chooser.setInitialDirectory(QueleaProperties.get().getImageDir().getAbsoluteFile());
                     File file = chooser.showOpenDialog(QueleaApp.get().getMainWindow());
                     if(file != null) {
+                        QueleaProperties.get().setLogoImage(file.getAbsolutePath());
                         updateLogo();
                     }
                 }
@@ -248,6 +249,9 @@ public class LivePanel extends LivePreviewPanel {
         return hide;
     }
     
+    /**
+     * Calls updateLogo() on each canvas. A tidy method.
+     */
     private void updateLogo() {
         HashSet<DisplayCanvas> canvases = new HashSet<>();
         canvases.addAll(getCanvases());
