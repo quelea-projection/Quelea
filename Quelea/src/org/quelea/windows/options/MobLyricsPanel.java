@@ -17,6 +17,7 @@ import javafx.scene.Cursor;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
@@ -30,6 +31,7 @@ import org.quelea.services.utils.QueleaProperties;
 
 /**
  * The panel that shows the mobile lyrics options.
+ * <p>
  * @author Michael
  */
 public class MobLyricsPanel extends GridPane implements PropertyPanel {
@@ -45,7 +47,7 @@ public class MobLyricsPanel extends GridPane implements PropertyPanel {
         setVgap(5);
         setPadding(new Insets(5));
 
-        Label useMobLydicsLabel = new Label(LabelGrabber.INSTANCE.getLabel("use.mobile.lyrics.label")+ " ");
+        Label useMobLydicsLabel = new Label(LabelGrabber.INSTANCE.getLabel("use.mobile.lyrics.label") + " ");
         GridPane.setConstraints(useMobLydicsLabel, 1, 1);
         getChildren().add(useMobLydicsLabel);
         useMobLyricsCheckBox = new CheckBox();
@@ -56,20 +58,28 @@ public class MobLyricsPanel extends GridPane implements PropertyPanel {
         GridPane.setConstraints(portNumberLabel, 1, 2);
         getChildren().add(portNumberLabel);
         portNumTextField = new TextField();
-//        portNumTextField.addEventFilter(KeyEvent.KEY_TYPED, new EventHandler<KeyEvent>() {
-//            @Override
-//            public void handle(KeyEvent t) {
-//                String text = t.getCharacter();
-//                char arr[] = text.toCharArray();
-//                char ch = arr[text.toCharArray().length - 1];
-//                if(!(ch >= '0' && ch <= '9')) {
-//                    t.consume();
-//                }
-//            }
-//        });
+        portNumTextField.addEventFilter(KeyEvent.KEY_TYPED, new EventHandler<KeyEvent>() {
+            @Override
+            public void handle(KeyEvent t) {
+                String text = t.getCharacter();
+                char arr[] = text.toCharArray();
+                char ch = arr[text.toCharArray().length - 1];
+                if(!(ch >= '0' && ch <= '9')) {
+                    t.consume();
+                }
+                try {
+                    int num = Integer.parseInt(text);
+                    if(num > 65535 || num <= 0) {
+                        t.consume();
+                    }
+                }
+                catch(NumberFormatException ex) {
+                    t.consume();
+                }
+            }
+        });
         portNumTextField.setMaxWidth(Double.MAX_VALUE);
         GridPane.setHgrow(portNumTextField, Priority.ALWAYS);
-        portNumTextField.setEditable(false);
         portNumberLabel.setLabelFor(portNumTextField);
         GridPane.setConstraints(portNumTextField, 2, 2);
         getChildren().add(portNumTextField);
@@ -99,13 +109,13 @@ public class MobLyricsPanel extends GridPane implements PropertyPanel {
 
         readProperties();
     }
-    
+
     private String getURL() {
         try {
             StringBuilder ret = new StringBuilder("http://");
             ret.append(InetAddress.getLocalHost().getHostAddress());
             int port = QueleaProperties.get().getMobLyricsPort();
-            if(port!=80) {
+            if(port != 80) {
                 ret.append(":");
                 ret.append(port);
             }
