@@ -71,7 +71,7 @@ public class LyricDrawer extends DisplayableDrawer {
                 getCanvas().getChildren().add(textGroup);
             }
         }
-        if(getCanvas().isBlacked() /*|| getCanvas().isLogoShowing()*/) {
+        if(getCanvas().isBlacked()) {
             text = new String[0];
             this.text = Arrays.copyOf(text, text.length);
         }
@@ -222,9 +222,6 @@ public class LyricDrawer extends DisplayableDrawer {
         if(getCanvas().isStageView()) {
             image = Utils.getImageFromColour(QueleaProperties.get().getStageBackgroundColor());
         }
-        /*else if(getCanvas().isLogoShowing()) {
-            image = QueleaProperties.get().getLogoImage().getImage();
-        }*/
         else if(theme.getBackground() instanceof ImageBackground) {
             image = ((ImageBackground) theme.getBackground()).getImage();
         }
