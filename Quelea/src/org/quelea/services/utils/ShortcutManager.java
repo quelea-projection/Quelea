@@ -51,16 +51,22 @@ public class ShortcutManager {
         mainPanel.getScene().getAccelerators().put(new KeyCodeCombination(KeyCode.F5), new Runnable() {
             @Override
             public void run() {
-                mainWindow.getMainPanel().getLivePanel().toggleBlack();
+                mainWindow.getMainPanel().getLivePanel().toggleLogo();
             }
         });
         mainPanel.getScene().getAccelerators().put(new KeyCodeCombination(KeyCode.F6), new Runnable() {
             @Override
             public void run() {
-                mainWindow.getMainPanel().getLivePanel().toggleClear();
+                mainWindow.getMainPanel().getLivePanel().toggleBlack();
             }
         });
         mainPanel.getScene().getAccelerators().put(new KeyCodeCombination(KeyCode.F7), new Runnable() {
+            @Override
+            public void run() {
+                mainWindow.getMainPanel().getLivePanel().toggleClear();
+            }
+        });
+        mainPanel.getScene().getAccelerators().put(new KeyCodeCombination(KeyCode.F8), new Runnable() {
             @Override
             public void run() {
                 mainWindow.getMainPanel().getLivePanel().toggleHide();
