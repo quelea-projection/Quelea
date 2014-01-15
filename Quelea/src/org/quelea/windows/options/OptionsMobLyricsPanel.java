@@ -11,6 +11,9 @@ import java.net.URI;
 import java.net.UnknownHostException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
+import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.scene.Cursor;
@@ -40,6 +43,7 @@ public class OptionsMobLyricsPanel extends GridPane implements PropertyPanel {
     private static final Logger LOGGER = LoggerUtils.getLogger();
     private CheckBox useMobLyricsCheckBox;
     private final TextField portNumTextField;
+    private boolean changeMade;
 
     /**
      * Create the mobile lyrics panel.
@@ -52,6 +56,13 @@ public class OptionsMobLyricsPanel extends GridPane implements PropertyPanel {
         GridPane.setConstraints(useMobLydicsLabel, 1, 1);
         getChildren().add(useMobLydicsLabel);
         useMobLyricsCheckBox = new CheckBox();
+        useMobLyricsCheckBox.setOnAction(new EventHandler<ActionEvent>() {
+
+            @Override
+            public void handle(ActionEvent t) {
+                changeMade = true;
+            }
+        });
         GridPane.setConstraints(useMobLyricsCheckBox, 2, 1);
         getChildren().add(useMobLyricsCheckBox);
 
@@ -59,6 +70,13 @@ public class OptionsMobLyricsPanel extends GridPane implements PropertyPanel {
         GridPane.setConstraints(portNumberLabel, 1, 2);
         getChildren().add(portNumberLabel);
         portNumTextField = new TextField();
+        portNumTextField.textProperty().addListener(new ChangeListener<String>() {
+
+            @Override
+            public void changed(ObservableValue<? extends String> ov, String t, String t1) {
+                changeMade = true;
+            }
+        });
         portNumTextField.addEventFilter(KeyEvent.KEY_TYPED, new EventHandler<KeyEvent>() {
             @Override
             public void handle(KeyEvent t) {
@@ -136,6 +154,18 @@ public class OptionsMobLyricsPanel extends GridPane implements PropertyPanel {
             }
         }
         return urlCache;
+    }
+
+    public void resetChanged() {
+        changeMade = false;
+    }
+
+    /**
+     * Determine if the user has changed any settings since resetChanged() was
+     * called.
+     */
+    public boolean hasChanged() {
+        return changeMade;
     }
 
     /**
