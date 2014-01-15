@@ -27,6 +27,7 @@ import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.quelea.data.displayable.TextDisplayable;
 import org.quelea.data.displayable.TextSection;
@@ -129,16 +130,22 @@ public class MobileLyricsServer {
         }
 
         private String getLyrics() {
-            LivePanel lp = QueleaApp.get().getMainWindow().getMainPanel().getLivePanel();
-            if(running && lp.isContentShowing() && lp.getDisplayable() instanceof TextDisplayable) {
-                TextSection currentSection = lp.getLyricsPanel().getLyricsList().getSelectionModel().getSelectedItem();
-                StringBuilder ret = new StringBuilder();
-                for(String line : currentSection.getText(false, false)) {
-                    ret.append(Utils.escapeHTML(line)).append("<br/>");
+            try {
+                LivePanel lp = QueleaApp.get().getMainWindow().getMainPanel().getLivePanel();
+                if(running && lp.isContentShowing() && lp.getDisplayable() instanceof TextDisplayable) {
+                    TextSection currentSection = lp.getLyricsPanel().getLyricsList().getSelectionModel().getSelectedItem();
+                    StringBuilder ret = new StringBuilder();
+                    for(String line : currentSection.getText(false, false)) {
+                        ret.append(Utils.escapeHTML(line)).append("<br/>");
+                    }
+                    return ret.toString();
                 }
-                return ret.toString();
+                else {
+                    return "";
+                }
             }
-            else {
+            catch(Exception ex) {
+                LOGGER.log(Level.WARNING, "Error getting lyrics", ex);
                 return "";
             }
         }
