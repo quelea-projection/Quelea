@@ -111,7 +111,7 @@ public class MobileLyricsServer {
                 pageContent = sortLabels(pageContent);
             }
             t.sendResponseHeaders(200, pageContent.length());
-            try (OutputStream os = t.getResponseBody()) {
+            try(OutputStream os = t.getResponseBody()) {
                 os.write(pageContent.getBytes());
             }
         }
@@ -124,13 +124,16 @@ public class MobileLyricsServer {
         public void handle(HttpExchange t) throws IOException {
             String response = getLyrics();
             t.sendResponseHeaders(200, response.length());
-            try (OutputStream os = t.getResponseBody()) {
+            try(OutputStream os = t.getResponseBody()) {
                 os.write(response.getBytes("UTF-8"));
             }
         }
 
         private String getLyrics() {
             try {
+                if(!checkInitialised()) {
+                    return "";
+                }
                 LivePanel lp = QueleaApp.get().getMainWindow().getMainPanel().getLivePanel();
                 if(running && lp.isContentShowing() && lp.getDisplayable() instanceof TextDisplayable) {
                     TextSection currentSection = lp.getLyricsPanel().getLyricsList().getSelectionModel().getSelectedItem();
@@ -148,6 +151,45 @@ public class MobileLyricsServer {
                 LOGGER.log(Level.WARNING, "Error getting lyrics", ex);
                 return "";
             }
+        }
+
+        /**
+         * A bunch of checks to check whether the live panel that we grab the
+         * lyrics from has fully initialised. Rather hacky but works for now at
+         * least.
+         *
+         * @return true if we're initialised properly and ok to continue, false
+         * if not.
+         */
+        private boolean checkInitialised() {
+            if(QueleaApp.get() == null) {
+                return false;
+            }
+            if(QueleaApp.get().getMainWindow() == null) {
+                return false;
+            }
+            if(QueleaApp.get().getMainWindow().getMainPanel() == null) {
+                return false;
+            }
+            if(QueleaApp.get().getMainWindow().getMainPanel().getLivePanel() == null) {
+                return false;
+            }
+            if(QueleaApp.get().getMainWindow().getMainPanel().getLivePanel() == null) {
+                return false;
+            }
+            if(QueleaApp.get().getMainWindow().getMainPanel().getLivePanel().getLyricsPanel() == null) {
+                return false;
+            }
+            if(QueleaApp.get().getMainWindow().getMainPanel().getLivePanel().getLyricsPanel().getLyricsList() == null) {
+                return false;
+            }
+            if(QueleaApp.get().getMainWindow().getMainPanel().getLivePanel().getLyricsPanel().getLyricsList().getSelectionModel() == null) {
+                return false;
+            }
+            if(QueleaApp.get().getMainWindow().getMainPanel().getLivePanel().getLyricsPanel().getLyricsList().getSelectionModel().getSelectedItem() == null) {
+                return false;
+            }
+            return true;
         }
     }
 
