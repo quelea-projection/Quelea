@@ -111,14 +111,15 @@ public class DisplayCanvas extends StackPane {
             }
         });
         getChildren().add(background);
-        
+
         if(!stageView) {
             getChildren().add(logoImage);
         }
-        
+
         noticeDrawer = new NoticeDrawer(this);
         noticeOverlay = noticeDrawer.getOverlay();
-        getChildren().addListener(new ListChangeListener<Node>() {
+        final Runnable[] r = new Runnable[1];
+        final ListChangeListener<Node> listener = new ListChangeListener<Node>() {
             @Override
             public void onChanged(ListChangeListener.Change<? extends Node> change) {
                 while(change.next()) {
@@ -135,14 +136,9 @@ public class DisplayCanvas extends StackPane {
                              * <p>
                              * https://javafx-jira.kenai.com/browse/RT-35275
                              */
-                            Platform.runLater(new Runnable() {
-
-                                @Override
-                                public void run() {
-                                    logoImage.toFront();
-                                    noticeOverlay.toFront();
-                                }
-                            });
+                            if(r[0] != null) {
+                                Platform.runLater(r[0]);
+                            }
                         }
                         catch(Exception ex) {
                             LOGGER.log(Level.WARNING, "Can't move notice overlay to front", ex);
@@ -150,7 +146,18 @@ public class DisplayCanvas extends StackPane {
                     }
                 }
             }
-        });
+        };
+        getChildren().addListener(listener);
+        r[0] = new Runnable() {
+
+            @Override
+            public void run() {
+                getChildren().removeListener(listener);
+                logoImage.toFront();
+                noticeOverlay.toFront();
+                getChildren().addListener(listener);
+            }
+        };
         getChildren().add(noticeOverlay);
     }
 
@@ -315,7 +322,7 @@ public class DisplayCanvas extends StackPane {
             return;
         }
         this.blacked = blacked;
-        if(blacked /*&& !isLogoShowing()*/) { 
+        if(blacked) {
             currentBackground = getCanvasBackground();
             clearApartFromNotice();
             setCanvasBackground(BLACK_IMAGE);
@@ -338,41 +345,6 @@ public class DisplayCanvas extends StackPane {
             updateCanvas(this.updater);
         }
     }
-    
-//     public void setLogo(boolean logoShowing) {
-//        if(this.logoShowing == logoShowing) {
-//            return;
-//        }
-//        this.logoShowing = logoShowing;
-//        if(logoShowing) {
-//            if(logoChanged) {
-//                logoImage = QueleaProperties.get().getLogoImage();
-//                logoChanged = false;
-//            }
-//            if(!isBlacked()) {
-//                logoCurrentBackground = getCanvasBackground();
-//            }
-//            clearApartFromNotice();
-//            setCanvasBackground(logoImage);
-//        }
-//        else {
-//            setCanvasBackground(logoCurrentBackground);
-//            Node imageView = null;
-//            if(logoCurrentBackground == null) {
-//                for(Node node : getChildren()) {
-//                    if(node instanceof ImageView) {
-//                        imageView = node;
-//                    }
-//                }
-//                if(imageView != null) {
-//                    getChildren().remove(imageView);
-//                }
-//            }
-//        }
-//        if(this.updater != null) {
-//            updateCanvas(this.updater);
-//        }
-//    }
 
     /**
      * Determine whether this canvas is blacked.
@@ -382,24 +354,7 @@ public class DisplayCanvas extends StackPane {
     public boolean isBlacked() {
         return blacked;
     }
-    
-//    /**
-//     * Determine whether this canvas is showing the logo file
-//     * <p/>
-//     * @return true if a logo is currently displayed, false otherwise
-//     */
-//    public boolean isLogoShowing() {
-//        return logoShowing;
-//    }
 
-//    /**
-//     * Sets if the logo has changed for performance reasons
-//     * @param b 
-//     */
-//    public void setLogoChanged(boolean b) {
-//        logoChanged = b;
-//    }
-    
     /**
      * Get the notice drawer, used for drawing notices onto this lyrics canvas.
      * <p/>
@@ -408,7 +363,7 @@ public class DisplayCanvas extends StackPane {
     public NoticeDrawer getNoticeDrawer() {
         return noticeDrawer;
     }
-    
+
     public void setLogoDisplaying(boolean selected) {
         if(selected) {
             logoImage.setOpacity(1);
@@ -417,7 +372,7 @@ public class DisplayCanvas extends StackPane {
             logoImage.setOpacity(0);
         }
     }
-    
+
     public void updateLogo() {
         logoImage = QueleaProperties.get().getLogoImage();
     }
