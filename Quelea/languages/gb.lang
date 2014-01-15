@@ -381,3 +381,5 @@ mobile.lyrics.heading=Mobile Lyrics
 use.mobile.lyrics.label=Use Mobile Lyrics
 port.number.label=Port Number
 navigate.mob.url.label=Mobile Lyrics URL
+mob.changed.label=Mobile Lyrics Changed
+mob.changed.message=You will need to restart Quelea for the new Mobile Lyrics settings to take effect.
