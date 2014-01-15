@@ -28,6 +28,7 @@ import org.quelea.services.languages.LabelGrabber;
 import org.quelea.services.utils.LoggerUtils;
 import org.quelea.services.utils.PropertyPanel;
 import org.quelea.services.utils.QueleaProperties;
+import org.quelea.windows.main.QueleaApp;
 
 /**
  * The panel that shows the mobile lyrics options.
@@ -87,7 +88,7 @@ public class OptionsMobLyricsPanel extends GridPane implements PropertyPanel {
         HBox mobBox = new HBox(5);
         mobBox.getChildren().add(new Text(LabelGrabber.INSTANCE.getLabel("navigate.mob.url.label") + ": "));
         Text mobUrlLabel = new Text(getURL());
-        if(Desktop.isDesktopSupported()) {
+        if(Desktop.isDesktopSupported() && getURL().startsWith("http")) {
             mobUrlLabel.setCursor(Cursor.HAND);
             mobUrlLabel.setFill(Color.BLUE);
             mobUrlLabel.setStyle("-fx-underline: true;");
@@ -111,20 +112,30 @@ public class OptionsMobLyricsPanel extends GridPane implements PropertyPanel {
         readProperties();
     }
 
+    private String urlCache;
+
     private String getURL() {
-        try {
-            StringBuilder ret = new StringBuilder("http://");
-            ret.append(InetAddress.getLocalHost().getHostAddress());
-            int port = QueleaProperties.get().getMobLyricsPort();
-            if(port != 80) {
-                ret.append(":");
-                ret.append(port);
+        if(urlCache == null) {
+            if(QueleaProperties.get().getUseMobLyrics() && QueleaApp.get().getMobileLyricsServer() != null && QueleaApp.get().getMobileLyricsServer().isRunning()) {
+                try {
+                    StringBuilder ret = new StringBuilder("http://");
+                    ret.append(InetAddress.getLocalHost().getHostAddress());
+                    int port = QueleaProperties.get().getMobLyricsPort();
+                    if(port != 80) {
+                        ret.append(":");
+                        ret.append(port);
+                    }
+                    urlCache = ret.toString();
+                }
+                catch(UnknownHostException ex) {
+                    urlCache = "[Not started]";
+                }
             }
-            return ret.toString();
+            else {
+                urlCache = "[Not started]";
+            }
         }
-        catch(UnknownHostException ex) {
-            return "";
-        }
+        return urlCache;
     }
 
     /**
