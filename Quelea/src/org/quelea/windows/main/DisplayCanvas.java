@@ -369,6 +369,11 @@ public class DisplayCanvas extends StackPane {
         return noticeDrawer;
     }
 
+    /**
+     * This method fades the logo in and out of view when the logo display button
+     * is used.
+     * @param selected true to display the logo screen, false to remove it.
+     */
     public void setLogoDisplaying(boolean selected) {
         if(selected) {
             logoImage.toFront();
@@ -383,7 +388,17 @@ public class DisplayCanvas extends StackPane {
         }
     }
 
+    /**
+     * Update logo removes, reloads, and re-adds the logo image from the quelea
+     * properties file. This method is triggered when a successful right-click is
+     * completed on the lyric panel logo button.
+     */
     public void updateLogo() {
+        getChildren().remove(logoImage);
         logoImage = QueleaProperties.get().getLogoImage();
+        logoImage.fitWidthProperty().bind(widthProperty());
+        logoImage.fitHeightProperty().bind(heightProperty());
+        logoImage.setOpacity(0);
+        getChildren().add(logoImage);
     }
 }
