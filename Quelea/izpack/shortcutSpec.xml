@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+
+<shortcuts>
+    <skipIfNotSupported/>
+    <programGroup defaultName="Quelea"
+                  location="applications"/>
+    <shortcut
+            name="Quelea"
+            target="$INSTALL_PATH\Quelea.vbs"
+            description="Launch Quelea"
+            workingDirectory="$INSTALL_PATH"
+            iconFile="$INSTALL_PATH\icons\logo.ico"
+            initialState="normal"
+            programGroup="yes"
+            desktop="yes"
+            applications="no"
+            startMenu="no"
+            startup="no">
+
+        <createForPack name="base"/>
+    </shortcut>
+
+</shortcuts>
