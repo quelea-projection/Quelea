@@ -81,8 +81,8 @@ public class AboutDialog extends Stage {
         HBox debugBox = new HBox(5);
         debugBox.getChildren().add(new Text(LabelGrabber.INSTANCE.getLabel("debug.location") + ":"));
         Text debugLogText = new Text(LoggerUtils.getHandlerFileLocation());
-        debugLogText.setCursor(Cursor.HAND);
         if(Desktop.isDesktopSupported()) {
+            debugLogText.setCursor(Cursor.HAND);
             debugLogText.setFill(Color.BLUE);
             debugLogText.setStyle("-fx-underline: true;");
             debugLogText.setOnMouseClicked(new EventHandler<MouseEvent>() {
