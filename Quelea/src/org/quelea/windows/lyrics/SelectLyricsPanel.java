@@ -174,10 +174,10 @@ public class SelectLyricsPanel extends AbstractPanel {
         int selectedIndex = lyricsList.selectionModelProperty().get().getSelectedIndex();
         for(DisplayCanvas canvas : getCanvases()) {
             boolean logoPrevShowing = getLogoWasShowing(canvas);
-            setLogoWasShowing(canvas, canvas.isLogoShowing());
+            /*setLogoWasShowing(canvas, canvas.isLogoShowing());*/
             drawer.setCanvas(canvas);
             if(selectedIndex == -1 || selectedIndex >= lyricsList.itemsProperty().get().size()) {
-                if(!canvas.getPlayVideo() || logoPrevShowing != canvas.isLogoShowing() || canvas.isLogoShowing()) {
+                if(!canvas.getPlayVideo() /*|| logoPrevShowing != canvas.isLogoShowing() || canvas.isLogoShowing()*/) {
                     drawer.setTheme(ThemeDTO.DEFAULT_THEME);
                 }
                 drawer.eraseText();
