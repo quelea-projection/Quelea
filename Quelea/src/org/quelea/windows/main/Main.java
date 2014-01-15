@@ -37,6 +37,7 @@ import org.quelea.data.db.LegacyDB;
 import org.quelea.data.db.SongManager;
 import org.quelea.data.displayable.SongDisplayable;
 import org.quelea.data.powerpoint.OOUtils;
+import org.quelea.server.MobileLyricsServer;
 import org.quelea.services.languages.LabelGrabber;
 import org.quelea.services.phonehome.PhoneHome;
 import org.quelea.services.utils.FontInstaller;
@@ -231,7 +232,7 @@ public final class Main extends Application {
                             }
 
                             LOGGER.log(Level.INFO, "Final loading bits");
-                    //                Utils.centreOnMonitor(mainWindow, controlScreen);
+                            //                Utils.centreOnMonitor(mainWindow, controlScreen);
                             //                mainWindow.toFront();
                             new ShortcutManager().addShortcuts(mainWindow);
                             LOGGER.log(Level.INFO, "Loaded everything.");
@@ -278,6 +279,20 @@ public final class Main extends Application {
                                         .setWarningIcon()
                                         .build();
                                 vlcWarningDialog.showAndWait();
+                            }
+                            if(QueleaProperties.get().getUseMobLyrics()) {
+                                LOGGER.log(Level.INFO, "Starting lyric server on {0}", QueleaProperties.get().getMobLyricsPort());
+                                try {
+                                    MobileLyricsServer mls = new MobileLyricsServer(QueleaProperties.get().getMobLyricsPort());
+                                    mls.start();
+                                    QueleaApp.get().setMobileLyricsServer(mls);
+                                }
+                                catch(IOException ex) {
+                                    LOGGER.log(Level.SEVERE, "Couldn't create lyric server", ex);
+                                }
+                            }
+                            else {
+                                LOGGER.log(Level.INFO, "Mobile lyrics disabled");
                             }
                         }
                     });

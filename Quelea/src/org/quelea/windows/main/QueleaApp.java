@@ -20,6 +20,7 @@ package org.quelea.windows.main;
 import java.io.File;
 import org.javafx.dialog.Dialog;
 import org.quelea.data.Schedule;
+import org.quelea.server.MobileLyricsServer;
 import org.quelea.services.languages.LabelGrabber;
 
 /**
@@ -32,6 +33,7 @@ public class QueleaApp {
     private MainWindow mainWindow;
     private DisplayStage projectionWindow;
     private DisplayStage stageWindow;
+    private MobileLyricsServer mls;
 
     /**
      * Get the singleton instance.
@@ -87,6 +89,23 @@ public class QueleaApp {
     public StatusPanelGroup getStatusGroup() {
         return mainWindow.getMainPanel().getStatusPanelGroup();
     }
+    
+    /**
+     * Get the current mobile lyrics server in use. Null if none is in use.
+     * <p>
+     * @return the current mobile lyrics server in use.
+     */
+    public MobileLyricsServer getMobileLyricsServer() {
+        return mls;
+    }
+    
+    /**
+     * Set the mobile lyrics server currently in use.
+     * @param mls the mobile lyrics server.
+     */
+    public void setMobileLyricsServer(MobileLyricsServer mls) {
+        this.mls = mls;
+    }
 
     /**
      * Set the projection window.
@@ -98,7 +117,7 @@ public class QueleaApp {
 
     /**
      * Set the stage window.
-     * @param appWindow the stage window.
+     * @param lyricWindow the stage window.
      */
     public void setStageWindow(DisplayStage lyricWindow) {
         this.stageWindow = lyricWindow;
