@@ -94,6 +94,9 @@ public class LivePanel extends LivePreviewPanel {
                     if(!canvas.isStageView()) {
                         canvas.setLogoDisplaying(logo.isSelected());
                     }
+                    else {
+                        canvas.setBlacked(logo.isSelected());
+                    }
                 }
             }
         });
