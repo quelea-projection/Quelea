@@ -53,7 +53,6 @@ public class OptionsDialog extends Stage {
 
     /**
      * Create a new options dialog.
-     * @param owner the owner of the dialog - should be the main window.
      */
     public OptionsDialog() {
         setTitle(LabelGrabber.INSTANCE.getLabel("options.title"));
@@ -128,6 +127,7 @@ public class OptionsDialog extends Stage {
      */
     public void callBeforeShowing() {
         getGeneralPanel().resetLanguageChanged();
+        getMobLyricsPanel().resetChanged();
     }
     
     /**
@@ -136,6 +136,9 @@ public class OptionsDialog extends Stage {
     private void callBeforeHiding() {
         if(getGeneralPanel().hasLanguageChanged()) {
             Dialog.showInfo(LabelGrabber.INSTANCE.getLabel("language.changed"), LabelGrabber.INSTANCE.getLabel("language.changed.message"), QueleaApp.get().getMainWindow());
+        }
+        if(getMobLyricsPanel().hasChanged()) {
+            Dialog.showInfo(LabelGrabber.INSTANCE.getLabel("mob.changed.label"), LabelGrabber.INSTANCE.getLabel("mob.changed.message"), QueleaApp.get().getMainWindow());
         }
     }
 
