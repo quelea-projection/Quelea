@@ -116,7 +116,7 @@ public class OptionsMobLyricsPanel extends GridPane implements PropertyPanel {
 
     private String getURL() {
         if(urlCache == null) {
-            if(QueleaProperties.get().getUseMobLyrics() && QueleaApp.get().getMobileLyricsServer() != null && QueleaApp.get().getMobileLyricsServer().isRunning()) {
+            if(QueleaProperties.get().getUseMobLyrics() && QueleaApp.get().getMobileLyricsServer() != null) {
                 try {
                     StringBuilder ret = new StringBuilder("http://");
                     ret.append(InetAddress.getLocalHost().getHostAddress());
