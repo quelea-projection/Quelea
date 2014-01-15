@@ -80,7 +80,7 @@ public class MobileLyricsServer {
     public void stop() {
         if(server != null) {
             running = false;
-            server.stop(2);
+            server.stop(0);
         }
     }
 
