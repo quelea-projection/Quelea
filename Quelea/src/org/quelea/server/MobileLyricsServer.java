@@ -31,6 +31,7 @@ import java.util.logging.Logger;
 import org.quelea.data.displayable.TextDisplayable;
 import org.quelea.data.displayable.TextSection;
 import org.quelea.services.languages.LabelGrabber;
+import org.quelea.services.utils.LoggerUtils;
 import org.quelea.services.utils.Utils;
 import org.quelea.windows.main.LivePanel;
 import org.quelea.windows.main.QueleaApp;
@@ -43,8 +44,8 @@ import org.quelea.windows.main.QueleaApp;
  */
 public class MobileLyricsServer {
 
-    private static final Logger LOGGER = null;
-    private HttpServer server;
+    private static final Logger LOGGER = LoggerUtils.getLogger();
+    private final HttpServer server;
     private boolean running;
     private String pageContent;
 
