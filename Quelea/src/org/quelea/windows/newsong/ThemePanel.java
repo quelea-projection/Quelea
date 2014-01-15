@@ -120,7 +120,7 @@ public class ThemePanel extends BorderPane {
         //toolbarPanel.getChildren().add(themeActionsPanel);
         setTop(toolbarPanel);
         updateTheme(false, null);
-
+        setMaxSize(800, 600);
     }
 
     /**
