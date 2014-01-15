@@ -263,4 +263,14 @@ public class LivePanel extends LivePreviewPanel {
             canvas.update();
         }
     }
+
+    /**
+     * Determine if content is currently being shown on this panel, if not it
+     * may be showing the logo, cleared, blacked or hidden.
+     * <p>
+     * @return true if content is showing, false otherwise.
+     */
+    public boolean isContentShowing() {
+        return !(logo.isSelected() || clear.isSelected() || black.isSelected() || hide.isSelected());
+    }
 }
