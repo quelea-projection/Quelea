@@ -68,7 +68,8 @@ public class MobLyricsPanel extends GridPane implements PropertyPanel {
                     t.consume();
                 }
                 try {
-                    int num = Integer.parseInt(text);
+                    String newText = portNumTextField.getText() + ch;
+                    int num = Integer.parseInt(newText);
                     if(num > 65535 || num <= 0) {
                         t.consume();
                     }
