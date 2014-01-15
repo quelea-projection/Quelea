@@ -118,6 +118,21 @@ public final class Main extends Application {
                     else {
                         stageHidden = false;
                     }
+                    
+                    if(QueleaProperties.get().getUseMobLyrics()) {
+                        LOGGER.log(Level.INFO, "Starting lyric server on {0}", QueleaProperties.get().getMobLyricsPort());
+                        try {
+                            MobileLyricsServer mls = new MobileLyricsServer(QueleaProperties.get().getMobLyricsPort());
+                            mls.start();
+                            QueleaApp.get().setMobileLyricsServer(mls);
+                        }
+                        catch(IOException ex) {
+                            LOGGER.log(Level.SEVERE, "Couldn't create lyric server", ex);
+                        }
+                    }
+                    else {
+                        LOGGER.log(Level.INFO, "Mobile lyrics disabled");
+                    }
 
                     Platform.runLater(new Runnable() {
 
@@ -279,20 +294,6 @@ public final class Main extends Application {
                                         .setWarningIcon()
                                         .build();
                                 vlcWarningDialog.showAndWait();
-                            }
-                            if(QueleaProperties.get().getUseMobLyrics()) {
-                                LOGGER.log(Level.INFO, "Starting lyric server on {0}", QueleaProperties.get().getMobLyricsPort());
-                                try {
-                                    MobileLyricsServer mls = new MobileLyricsServer(QueleaProperties.get().getMobLyricsPort());
-                                    mls.start();
-                                    QueleaApp.get().setMobileLyricsServer(mls);
-                                }
-                                catch(IOException ex) {
-                                    LOGGER.log(Level.SEVERE, "Couldn't create lyric server", ex);
-                                }
-                            }
-                            else {
-                                LOGGER.log(Level.INFO, "Mobile lyrics disabled");
                             }
                         }
                     });
