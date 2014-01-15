@@ -127,6 +127,7 @@ public class LyricDrawer extends DisplayableDrawer {
         }
 
         getCanvas().getChildren().add(newTextGroup);
+        getCanvas().pushLogoNoticeToFront();
 
         ParallelTransition paintTransition = new ParallelTransition();
         for(String line : newText) {
