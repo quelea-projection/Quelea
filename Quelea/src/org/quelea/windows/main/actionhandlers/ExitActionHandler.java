@@ -98,8 +98,12 @@ public class ExitActionHandler implements EventHandler<ActionEvent> {
             d.dispose();
         }
 
-        LOGGER.log(Level.INFO, "Try close OOfice if opened");
+        LOGGER.log(Level.INFO, "Try to close OOfice if opened");
         OOUtils.closeOOApp();
+        if(QueleaApp.get().getMobileLyricsServer()!=null) {
+            LOGGER.log(Level.INFO, "Stopping mobile lyrics server");
+            QueleaApp.get().getMobileLyricsServer().stop();
+        }
         System.exit(0);
     }
 }

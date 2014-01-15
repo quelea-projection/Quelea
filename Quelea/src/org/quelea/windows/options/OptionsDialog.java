@@ -49,6 +49,7 @@ public class OptionsDialog extends Stage {
     private final OptionsGeneralPanel generalPanel;
     private OptionsBiblePanel biblePanel;
     private OptionsStageViewPanel stageViewPanel;
+    private MobLyricsPanel mobLyricsPanel;
 
     /**
      * Create a new options dialog.
@@ -85,13 +86,20 @@ public class OptionsDialog extends Stage {
         stageViewTab.setText(LabelGrabber.INSTANCE.getLabel("stage.options.heading"));
         stageViewTab.setContent(stageViewPanel);
         tabbedPane.getTabs().add(stageViewTab);
-//        
+        
         biblePanel = new OptionsBiblePanel();
         Tab bibleTab = new Tab();
         bibleTab.setClosable(false);
         bibleTab.setText(LabelGrabber.INSTANCE.getLabel("bible.options.heading"));
         bibleTab.setContent(biblePanel);
         tabbedPane.getTabs().add(bibleTab);
+        
+        mobLyricsPanel = new MobLyricsPanel();
+        Tab mobLyricsTab = new Tab();
+        mobLyricsTab.setClosable(false);
+        mobLyricsTab.setText(LabelGrabber.INSTANCE.getLabel("mobile.lyrics.heading"));
+        mobLyricsTab.setContent(mobLyricsPanel);
+        tabbedPane.getTabs().add(mobLyricsTab);
         
         mainPane.setCenter(tabbedPane);
         okButton = new Button(LabelGrabber.INSTANCE.getLabel("ok.button"), new ImageView(new Image("file:icons/tick.png")));
@@ -161,6 +169,14 @@ public class OptionsDialog extends Stage {
      */
     public OptionsStageViewPanel getStageViewPanel() {
         return stageViewPanel;
+    }
+    
+    /**
+     * Get the mobile lyrics panel.
+     * @return the mobile lyrics panel.
+     */
+    public MobLyricsPanel getMobLyricsPanel() {
+        return mobLyricsPanel;
     }
 
     /**
