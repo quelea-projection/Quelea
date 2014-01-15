@@ -31,6 +31,7 @@ import javafx.scene.Node;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
+import javafx.scene.shape.Rectangle;
 import javafx.util.Duration;
 import org.quelea.data.displayable.Displayable;
 import org.quelea.services.notice.NoticeDrawer;
@@ -55,6 +56,7 @@ public class DisplayCanvas extends StackPane {
     private Node background;
     private Node currentBackground;
     private ImageView logoImage = QueleaProperties.get().getLogoImage();
+    private Rectangle black = new Rectangle();
     private Node noticeOverlay;
     private Displayable currentDisplayable;
     private final CanvasUpdater updater;
@@ -114,11 +116,20 @@ public class DisplayCanvas extends StackPane {
         });
         getChildren().add(background);
 
-        if(!stageView) {
+        black.setFill(Color.BLACK);
+        black.widthProperty().bind(this.widthProperty());
+        black.heightProperty().bind(this.heightProperty());
+        black.setOpacity(0);
+        getChildren().add(black);
+
+        if (!stageView) {
             logoImage.fitWidthProperty().bind(widthProperty());
             logoImage.fitHeightProperty().bind(heightProperty());
             logoImage.setOpacity(0);
             getChildren().add(logoImage);
+        }
+        else {
+            black.setFill(QueleaProperties.get().getStageBackgroundColor());
         }
 
         noticeDrawer = new NoticeDrawer(this);
@@ -127,8 +138,8 @@ public class DisplayCanvas extends StackPane {
         final ListChangeListener<Node> listener = new ListChangeListener<Node>() {
             @Override
             public void onChanged(ListChangeListener.Change<? extends Node> change) {
-                while(change.next()) {
-                    if(!change.wasRemoved()) {
+                while (change.next()) {
+                    if (!change.wasRemoved()) {
                         try {
                             /**
                              * Platform.runLater() is necessary here to avoid
@@ -141,11 +152,10 @@ public class DisplayCanvas extends StackPane {
                              * <p>
                              * https://javafx-jira.kenai.com/browse/RT-35275
                              */
-                            if(r[0] != null) {
+                            if (r[0] != null) {
                                 Platform.runLater(r[0]);
                             }
-                        }
-                        catch(Exception ex) {
+                        } catch (Exception ex) {
                             LOGGER.log(Level.WARNING, "Can't move notice overlay to front", ex);
                         }
                     }
@@ -154,7 +164,6 @@ public class DisplayCanvas extends StackPane {
         };
         getChildren().addListener(listener);
         r[0] = new Runnable() {
-
             @Override
             public void run() {
                 getChildren().removeListener(listener);
@@ -176,7 +185,7 @@ public class DisplayCanvas extends StackPane {
      * work.
      */
     public void ensureNoticesVisible() {
-        if(!getChildren().contains(noticeOverlay)) {
+        if (!getChildren().contains(noticeOverlay)) {
             LOGGER.log(Level.WARNING, "Notice overlay was removed");
             getChildren().add(noticeOverlay);
         }
@@ -188,8 +197,8 @@ public class DisplayCanvas extends StackPane {
 
     public void clearApartFromNotice() {
         ObservableList<Node> list = FXCollections.observableArrayList(getChildren());
-        for(Node node : list) {
-            if(!(node instanceof NoticeOverlay) && node != logoImage) {
+        for (Node node : list) {
+            if (!(node instanceof NoticeOverlay) && node != logoImage && node != black) {
                 getChildren().remove(node);
             }
         }
@@ -233,7 +242,7 @@ public class DisplayCanvas extends StackPane {
         Platform.runLater(new Runnable() {
             @Override
             public void run() {
-                if(isVisibleInScene() && updater != null) {
+                if (isVisibleInScene() && updater != null) {
                     updater.updateCallback();
                 }
             }
@@ -243,11 +252,11 @@ public class DisplayCanvas extends StackPane {
     private boolean isVisibleInScene() {
         Node parent = DisplayCanvas.this;
         boolean visible = isVisible();
-        if(!visible) {
+        if (!visible) {
             return visible;
         }
-        while((parent = parent.getParent()) != null) {
-            if(!parent.isVisible()) {
+        while ((parent = parent.getParent()) != null) {
+            if (!parent.isVisible()) {
                 visible = false;
                 break;
             }
@@ -287,7 +296,7 @@ public class DisplayCanvas extends StackPane {
     }
 
     public void update() {
-        if(this.updater != null) {
+        if (this.updater != null) {
             updateCanvas(this.updater);
         }
     }
@@ -298,11 +307,11 @@ public class DisplayCanvas extends StackPane {
      * normal.
      */
     public void setCleared(boolean cleared) {
-        if(this.cleared == cleared) {
+        if (this.cleared == cleared) {
             return;
         }
         this.cleared = cleared;
-        if(this.updater != null) {
+        if (this.updater != null) {
             updateCanvas(this.updater);
         }
     }
@@ -322,31 +331,16 @@ public class DisplayCanvas extends StackPane {
      * display as normal.
      */
     public void setBlacked(boolean blacked) {
-        if(this.blacked == blacked) {
-            return;
-        }
         this.blacked = blacked;
-        if(blacked) {
-            currentBackground = getCanvasBackground();
-            clearApartFromNotice();
-            setCanvasBackground(BLACK_IMAGE);
-        }
-        else {
-            setCanvasBackground(currentBackground);
-            Node imageView = null;
-            if(currentBackground == null) {
-                for(Node node : getChildren()) {
-                    if(node instanceof ImageView) {
-                        imageView = node;
-                    }
-                }
-                if(imageView != null) {
-                    getChildren().remove(imageView);
-                }
-            }
-        }
-        if(this.updater != null) {
-            updateCanvas(this.updater);
+        if (blacked) {
+            black.toFront();
+            FadeTransition ft = new FadeTransition(Duration.seconds(0.5), black);
+            ft.setToValue(1);
+            ft.play();
+        } else {
+            FadeTransition ft = new FadeTransition(Duration.seconds(0.5), black);
+            ft.setToValue(0);
+            ft.play();
         }
     }
 
@@ -372,16 +366,16 @@ public class DisplayCanvas extends StackPane {
      * This method fades the logo in and out of view when the logo display
      * button is used.
      * <p>
+     *
      * @param selected true to display the logo screen, false to remove it.
      */
     public void setLogoDisplaying(boolean selected) {
-        if(selected) {
+        if (selected) {
             logoImage.toFront();
             FadeTransition ft = new FadeTransition(Duration.seconds(0.5), logoImage);
             ft.setToValue(1);
             ft.play();
-        }
-        else {
+        } else {
             FadeTransition ft = new FadeTransition(Duration.seconds(0.5), logoImage);
             ft.setToValue(0);
             ft.play();
@@ -389,6 +383,7 @@ public class DisplayCanvas extends StackPane {
     }
 
     public void pushLogoNoticeToFront() {
+        black.toFront();
         logoImage.toFront();
         noticeOverlay.toFront();
     }
