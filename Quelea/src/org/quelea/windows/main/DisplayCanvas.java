@@ -52,7 +52,7 @@ public class DisplayCanvas extends StackPane {
     private boolean stageView;
     private Node background;
     private Node currentBackground;
-    private Node logoImage = QueleaProperties.get().getLogoImage();
+    private ImageView logoImage = QueleaProperties.get().getLogoImage();
     private Node noticeOverlay;
     private Displayable currentDisplayable;
     private final CanvasUpdater updater;
@@ -113,6 +113,9 @@ public class DisplayCanvas extends StackPane {
         getChildren().add(background);
 
         if(!stageView) {
+            logoImage.fitWidthProperty().bind(widthProperty());
+            logoImage.fitHeightProperty().bind(heightProperty());
+            logoImage.setOpacity(0);
             getChildren().add(logoImage);
         }
 
@@ -185,7 +188,7 @@ public class DisplayCanvas extends StackPane {
     public void clearApartFromNotice() {
         ObservableList<Node> list = FXCollections.observableArrayList(getChildren());
         for(Node node : list) {
-            if(!(node instanceof NoticeOverlay)) {
+            if(!(node instanceof NoticeOverlay) && node != logoImage) {
                 getChildren().remove(node);
             }
         }
@@ -416,6 +419,7 @@ public class DisplayCanvas extends StackPane {
     public void setLogoDisplaying(boolean selected) {
         if(selected) {
             logoImage.setOpacity(1);
+            logoImage.toFront();
         }
         else {
             logoImage.setOpacity(0);
