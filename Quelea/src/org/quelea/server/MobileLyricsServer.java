@@ -111,9 +111,9 @@ public class MobileLyricsServer {
                 pageContent = sortLabels(pageContent);
             }
             t.sendResponseHeaders(200, pageContent.length());
-            OutputStream os = t.getResponseBody();
-            os.write(pageContent.getBytes());
-            os.close();
+            try (OutputStream os = t.getResponseBody()) {
+                os.write(pageContent.getBytes());
+            }
         }
 
     }
@@ -124,9 +124,9 @@ public class MobileLyricsServer {
         public void handle(HttpExchange t) throws IOException {
             String response = getLyrics();
             t.sendResponseHeaders(200, response.length());
-            OutputStream os = t.getResponseBody();
-            os.write(response.getBytes("UTF-8"));
-            os.close();
+            try (OutputStream os = t.getResponseBody()) {
+                os.write(response.getBytes("UTF-8"));
+            }
         }
 
         private String getLyrics() {
