@@ -34,7 +34,7 @@ import org.quelea.services.utils.QueleaProperties;
  * <p>
  * @author Michael
  */
-public class MobLyricsPanel extends GridPane implements PropertyPanel {
+public class OptionsMobLyricsPanel extends GridPane implements PropertyPanel {
 
     private static final Logger LOGGER = LoggerUtils.getLogger();
     private CheckBox useMobLyricsCheckBox;
@@ -43,7 +43,7 @@ public class MobLyricsPanel extends GridPane implements PropertyPanel {
     /**
      * Create the mobile lyrics panel.
      */
-    public MobLyricsPanel() {
+    public OptionsMobLyricsPanel() {
         setVgap(5);
         setPadding(new Insets(5));
 
