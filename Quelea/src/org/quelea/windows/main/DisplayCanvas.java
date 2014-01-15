@@ -19,6 +19,7 @@ package org.quelea.windows.main;
 
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javafx.animation.FadeTransition;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -30,6 +31,7 @@ import javafx.scene.Node;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
+import javafx.util.Duration;
 import org.quelea.data.displayable.Displayable;
 import org.quelea.services.notice.NoticeDrawer;
 import org.quelea.services.notice.NoticeOverlay;
@@ -369,11 +371,15 @@ public class DisplayCanvas extends StackPane {
 
     public void setLogoDisplaying(boolean selected) {
         if(selected) {
-            logoImage.setOpacity(1);
             logoImage.toFront();
+            FadeTransition ft = new FadeTransition(Duration.seconds(0.5), logoImage);
+            ft.setToValue(1);
+            ft.play();
         }
         else {
-            logoImage.setOpacity(0);
+            FadeTransition ft = new FadeTransition(Duration.seconds(0.5), logoImage);
+            ft.setToValue(0);
+            ft.play();
         }
     }
 
