@@ -105,10 +105,6 @@ public class ThemePanel extends BorderPane {
                 updateTheme(true, null);
             }
         }, Priority.LOW);
-        canvas.setMinWidth(getWidth());
-        canvas.setMinHeight(getHeight());
-        canvas.setMaxWidth(getWidth());
-        canvas.setMaxHeight(getHeight());
         setCenter(canvas);
         LyricDrawer drawer = new LyricDrawer();
         drawer.setCanvas(canvas);
