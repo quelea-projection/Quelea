@@ -76,21 +76,19 @@ public abstract class AbstractPanel extends BorderPane implements ContainedPanel
 
     public void updateCanvas() {
         assert Utils.fxThread();
-        for(DisplayCanvas canvas : getCanvases()) {
+        for (DisplayCanvas canvas : getCanvases()) {
             canvas.setCurrentDisplayable(currentDisplayable);
-            if(!canvas.isBlacked()) {
-                getDrawer(canvas).draw(currentDisplayable);
-            }
+            getDrawer(canvas).draw(currentDisplayable);
         }
     }
 
     @Override
     public void removeCurrentDisplayable() {
         assert Utils.fxThread();
-        for(DisplayCanvas canvas : getCanvases()) {
+        for (DisplayCanvas canvas : getCanvases()) {
             /*if(!canvas.isLogoShowing()) {
-                canvas.clearCurrentDisplayable();
-            }*/
+             canvas.clearCurrentDisplayable();
+             }*/
             canvas.clearApartFromNotice();
         }
     }
