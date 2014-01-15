@@ -49,6 +49,13 @@ public class MobileLyricsServer {
     private boolean running;
     private String pageContent;
 
+    /**
+     * Create a new mobile lyrics server on a specified port. The port must not
+     * be in use.
+     * <p>
+     * @param port the port to use
+     * @throws IOException if something goes wrong.
+     */
     public MobileLyricsServer(int port) throws IOException {
         server = HttpServer.create(new InetSocketAddress(port), 0);
         server.createContext("/", new RootHandler());
@@ -56,6 +63,9 @@ public class MobileLyricsServer {
         server.setExecutor(null);
     }
 
+    /**
+     * Start the server.
+     */
     public void start() {
         if(server != null) {
             server.start();
@@ -63,6 +73,10 @@ public class MobileLyricsServer {
         }
     }
 
+    /**
+     * Stop the server. If the server is stopped, it cannot be restarted - a new
+     * server must be created.
+     */
     public void stop() {
         if(server != null) {
             running = false;
@@ -70,6 +84,11 @@ public class MobileLyricsServer {
         }
     }
 
+    /**
+     * Determine if the server is running.
+     * <p>
+     * @return true if the server is running, false otherwise.
+     */
     public boolean isRunning() {
         return running;
     }
@@ -125,6 +144,13 @@ public class MobileLyricsServer {
         }
     }
 
+    /**
+     * Read a file and return it as a string.
+     * <p>
+     * @param path the path to read the file from.
+     * @return a string with the file contents.
+     * @throws IOException if something goes wrong.
+     */
     private static String readFile(String path) throws IOException {
         byte[] encoded = Files.readAllBytes(Paths.get(path));
         return Charset.forName("UTF-8").decode(ByteBuffer.wrap(encoded)).toString();
