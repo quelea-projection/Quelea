@@ -49,7 +49,7 @@ public class OptionsDialog extends Stage {
     private final OptionsGeneralPanel generalPanel;
     private OptionsBiblePanel biblePanel;
     private OptionsStageViewPanel stageViewPanel;
-    private OptionsMobLyricsPanel mobLyricsPanel;
+    private MobLyricsPanel mobLyricsPanel;
 
     /**
      * Create a new options dialog.
@@ -94,7 +94,7 @@ public class OptionsDialog extends Stage {
         bibleTab.setContent(biblePanel);
         tabbedPane.getTabs().add(bibleTab);
         
-        mobLyricsPanel = new OptionsMobLyricsPanel();
+        mobLyricsPanel = new MobLyricsPanel();
         Tab mobLyricsTab = new Tab();
         mobLyricsTab.setClosable(false);
         mobLyricsTab.setText(LabelGrabber.INSTANCE.getLabel("mobile.lyrics.heading"));
@@ -175,7 +175,7 @@ public class OptionsDialog extends Stage {
      * Get the mobile lyrics panel.
      * @return the mobile lyrics panel.
      */
-    public OptionsMobLyricsPanel getMobLyricsPanel() {
+    public MobLyricsPanel getMobLyricsPanel() {
         return mobLyricsPanel;
     }
 
