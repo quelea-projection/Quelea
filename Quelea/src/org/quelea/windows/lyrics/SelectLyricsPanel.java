@@ -153,18 +153,6 @@ public class SelectLyricsPanel extends AbstractPanel {
         return previewCanvas;
     }
 
-    private boolean getLogoWasShowing(DisplayCanvas canvas) {
-        Boolean b = logoWasShowingMap.get(canvas);
-        if(b == null) {
-            return false;
-        }
-        return b;
-    }
-
-    private void setLogoWasShowing(DisplayCanvas canvas, boolean showing) {
-        logoWasShowingMap.put(canvas, showing);
-    }
-
     /**
      * Called to updateOnSizeChange the contents of the canvases when the list
      * selection changes.
@@ -173,11 +161,9 @@ public class SelectLyricsPanel extends AbstractPanel {
     public void updateCanvas() {
         int selectedIndex = lyricsList.selectionModelProperty().get().getSelectedIndex();
         for(DisplayCanvas canvas : getCanvases()) {
-            boolean logoPrevShowing = getLogoWasShowing(canvas);
-            /*setLogoWasShowing(canvas, canvas.isLogoShowing());*/
             drawer.setCanvas(canvas);
             if(selectedIndex == -1 || selectedIndex >= lyricsList.itemsProperty().get().size()) {
-                if(!canvas.getPlayVideo() /*|| logoPrevShowing != canvas.isLogoShowing() || canvas.isLogoShowing()*/) {
+                if(!canvas.getPlayVideo()) {
                     drawer.setTheme(ThemeDTO.DEFAULT_THEME);
                 }
                 drawer.eraseText();
