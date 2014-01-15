@@ -50,9 +50,6 @@ public class ImageDrawer extends DisplayableDrawer {
         if(getCanvas().isStageView()) {
             image = Utils.getImageFromColour(QueleaProperties.get().getStageBackgroundColor());
         }
-        /*else if(getCanvas().isLogoShowing()) {
-            image = QueleaProperties.get().getLogoImage().getImage();
-        }*/
         else {
             image = ((ImageDisplayable) displayable).getImage();
             imageView.setPreserveRatio(true);
