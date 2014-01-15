@@ -1064,7 +1064,7 @@ public final class QueleaProperties extends Properties {
     public boolean getDragAndDrop() {
         return Boolean.parseBoolean(getProperty("enable.drag.and.drop", "false"));
     }
-    
+
     /**
      * Sets the logo image location for persistent use
      * <p/>
@@ -1074,7 +1074,7 @@ public final class QueleaProperties extends Properties {
         setProperty("logo.image.location", location);
         write();
     }
-    
+
     /**
      * Return the location of the logo image
      * <p/>
@@ -1082,5 +1082,42 @@ public final class QueleaProperties extends Properties {
      */
     public ImageView getLogoImage() {
         return new ImageView(new Image("file:" + getProperty("logo.image.location", "icons/logo default.png")));
+    }
+
+    /**
+     * Sets the port used for mobile lyrics display.
+     * <p/>
+     * @param port the port used for mobile lyrics display.
+     */
+    public void setMobLyricsPort(int port) {
+        setProperty("mob.lyrics.port", Integer.toString(port));
+        write();
+    }
+
+    /**
+     * Gets the port used for mobile lyrics display.
+     * <p/>
+     * @return the port used for mobile lyrics display.
+     */
+    public int getMobLyricsPort() {
+        return Integer.parseInt(getProperty("mob.lyrics.port", "1111"));
+    }
+
+    /**
+     * Determine if we should use mobile lyrics.
+     * <p>
+     * @return true if we should, false otherwise.
+     */
+    public boolean getUseMobLyrics() {
+        return Boolean.parseBoolean(getProperty("use.mob.lyrics", "false"));
+    }
+
+    /**
+     * Set if we should use mobile lyrics.
+     * <p>
+     * @param val true if we should, false otherwise.
+     */
+    public void setUseMobLyrics(boolean val) {
+        setProperty("use.mob.lyrics", Boolean.toString(val));
     }
 }
