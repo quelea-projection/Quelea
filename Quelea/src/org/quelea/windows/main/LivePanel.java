@@ -79,12 +79,7 @@ public class LivePanel extends LivePreviewPanel {
                     chooser.setInitialDirectory(QueleaProperties.get().getImageDir().getAbsoluteFile());
                     File file = chooser.showOpenDialog(QueleaApp.get().getMainWindow());
                     if(file != null) {
-                        QueleaProperties.get().setLogoImage(file.getAbsolutePath());
-                        HashSet<DisplayCanvas> canvases = new HashSet<>();
-                        canvases.addAll(getCanvases());
-                        for(DisplayCanvas canvas : canvases) {
-                            canvas.setLogoChanged(true);
-                        }
+                        updateLogo();
                     }
                 }
             }
@@ -95,7 +90,9 @@ public class LivePanel extends LivePreviewPanel {
                 HashSet<DisplayCanvas> canvases = new HashSet<>();
                 canvases.addAll(getCanvases());
                 for(DisplayCanvas canvas : canvases) {
-                    canvas.setLogo(logo.isSelected());
+                    if(!canvas.isStageView()) {
+                        canvas.setLogoDisplaying(logo.isSelected());
+                    }
                 }
             }
         });
@@ -249,6 +246,14 @@ public class LivePanel extends LivePreviewPanel {
      */
     public ToggleButton getHide() {
         return hide;
+    }
+    
+    private void updateLogo() {
+        HashSet<DisplayCanvas> canvases = new HashSet<>();
+        canvases.addAll(getCanvases());
+        for (DisplayCanvas canvas : canvases) {
+            canvas.updateLogo();
+        }
     }
     
     public void updateCanvases() {

@@ -52,16 +52,13 @@ public class DisplayCanvas extends StackPane {
     private boolean stageView;
     private Node background;
     private Node currentBackground;
-    private Node logoCurrentBackground;
+    private Node logoImage = QueleaProperties.get().getLogoImage();
     private Node noticeOverlay;
     private Displayable currentDisplayable;
     private final CanvasUpdater updater;
     private Priority dravingPriority = Priority.LOW;
     private Type type = Type.PREVIEW;
     private final boolean playVideo;
-    private boolean logoShowing;
-    private static ImageView logoImage = QueleaProperties.get().getLogoImage();
-    private boolean logoChanged;
 
     public enum Type {
 
@@ -114,6 +111,11 @@ public class DisplayCanvas extends StackPane {
             }
         });
         getChildren().add(background);
+        
+        if(!stageView) {
+            getChildren().add(logoImage);
+        }
+        
         noticeDrawer = new NoticeDrawer(this);
         noticeOverlay = noticeDrawer.getOverlay();
         getChildren().addListener(new ListChangeListener<Node>() {
@@ -137,6 +139,7 @@ public class DisplayCanvas extends StackPane {
 
                                 @Override
                                 public void run() {
+                                    logoImage.toFront();
                                     noticeOverlay.toFront();
                                 }
                             });
@@ -312,7 +315,7 @@ public class DisplayCanvas extends StackPane {
             return;
         }
         this.blacked = blacked;
-        if(blacked && !isLogoShowing()) {
+        if(blacked /*&& !isLogoShowing()*/) { 
             currentBackground = getCanvasBackground();
             clearApartFromNotice();
             setCanvasBackground(BLACK_IMAGE);
@@ -336,40 +339,40 @@ public class DisplayCanvas extends StackPane {
         }
     }
     
-     public void setLogo(boolean logoShowing) {
-        if(this.logoShowing == logoShowing) {
-            return;
-        }
-        this.logoShowing = logoShowing;
-        if(logoShowing) {
-            if(logoChanged) {
-                logoImage = QueleaProperties.get().getLogoImage();
-                logoChanged = false;
-            }
-            if(!isBlacked()) {
-                logoCurrentBackground = getCanvasBackground();
-            }
-            clearApartFromNotice();
-            setCanvasBackground(logoImage);
-        }
-        else {
-            setCanvasBackground(logoCurrentBackground);
-            Node imageView = null;
-            if(logoCurrentBackground == null) {
-                for(Node node : getChildren()) {
-                    if(node instanceof ImageView) {
-                        imageView = node;
-                    }
-                }
-                if(imageView != null) {
-                    getChildren().remove(imageView);
-                }
-            }
-        }
-        if(this.updater != null) {
-            updateCanvas(this.updater);
-        }
-    }
+//     public void setLogo(boolean logoShowing) {
+//        if(this.logoShowing == logoShowing) {
+//            return;
+//        }
+//        this.logoShowing = logoShowing;
+//        if(logoShowing) {
+//            if(logoChanged) {
+//                logoImage = QueleaProperties.get().getLogoImage();
+//                logoChanged = false;
+//            }
+//            if(!isBlacked()) {
+//                logoCurrentBackground = getCanvasBackground();
+//            }
+//            clearApartFromNotice();
+//            setCanvasBackground(logoImage);
+//        }
+//        else {
+//            setCanvasBackground(logoCurrentBackground);
+//            Node imageView = null;
+//            if(logoCurrentBackground == null) {
+//                for(Node node : getChildren()) {
+//                    if(node instanceof ImageView) {
+//                        imageView = node;
+//                    }
+//                }
+//                if(imageView != null) {
+//                    getChildren().remove(imageView);
+//                }
+//            }
+//        }
+//        if(this.updater != null) {
+//            updateCanvas(this.updater);
+//        }
+//    }
 
     /**
      * Determine whether this canvas is blacked.
@@ -380,22 +383,22 @@ public class DisplayCanvas extends StackPane {
         return blacked;
     }
     
-    /**
-     * Determine whether this canvas is showing the logo file
-     * <p/>
-     * @return true if a logo is currently displayed, false otherwise
-     */
-    public boolean isLogoShowing() {
-        return logoShowing;
-    }
+//    /**
+//     * Determine whether this canvas is showing the logo file
+//     * <p/>
+//     * @return true if a logo is currently displayed, false otherwise
+//     */
+//    public boolean isLogoShowing() {
+//        return logoShowing;
+//    }
 
-    /**
-     * Sets if the logo has changed for performance reasons
-     * @param b 
-     */
-    public void setLogoChanged(boolean b) {
-        logoChanged = b;
-    }
+//    /**
+//     * Sets if the logo has changed for performance reasons
+//     * @param b 
+//     */
+//    public void setLogoChanged(boolean b) {
+//        logoChanged = b;
+//    }
     
     /**
      * Get the notice drawer, used for drawing notices onto this lyrics canvas.
@@ -404,5 +407,18 @@ public class DisplayCanvas extends StackPane {
      */
     public NoticeDrawer getNoticeDrawer() {
         return noticeDrawer;
+    }
+    
+    public void setLogoDisplaying(boolean selected) {
+        if(selected) {
+            logoImage.setOpacity(1);
+        }
+        else {
+            logoImage.setOpacity(0);
+        }
+    }
+    
+    public void updateLogo() {
+        logoImage = QueleaProperties.get().getLogoImage();
     }
 }
