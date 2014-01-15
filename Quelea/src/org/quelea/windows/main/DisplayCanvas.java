@@ -349,40 +349,6 @@ public class DisplayCanvas extends StackPane {
         }
     }
 
-//     public void setLogo(boolean logoShowing) {
-//        if(this.logoShowing == logoShowing) {
-//            return;
-//        }
-//        this.logoShowing = logoShowing;
-//        if(logoShowing) {
-//            if(logoChanged) {
-//                logoImage = QueleaProperties.get().getLogoImage();
-//                logoChanged = false;
-//            }
-//            if(!isBlacked()) {
-//                logoCurrentBackground = getCanvasBackground();
-//            }
-//            clearApartFromNotice();
-//            setCanvasBackground(logoImage);
-//        }
-//        else {
-//            setCanvasBackground(logoCurrentBackground);
-//            Node imageView = null;
-//            if(logoCurrentBackground == null) {
-//                for(Node node : getChildren()) {
-//                    if(node instanceof ImageView) {
-//                        imageView = node;
-//                    }
-//                }
-//                if(imageView != null) {
-//                    getChildren().remove(imageView);
-//                }
-//            }
-//        }
-//        if(this.updater != null) {
-//            updateCanvas(this.updater);
-//        }
-//    }
     /**
      * Determine whether this canvas is blacked.
      * <p/>
@@ -392,21 +358,6 @@ public class DisplayCanvas extends StackPane {
         return blacked;
     }
 
-//    /**
-//     * Determine whether this canvas is showing the logo file
-//     * <p/>
-//     * @return true if a logo is currently displayed, false otherwise
-//     */
-//    public boolean isLogoShowing() {
-//        return logoShowing;
-//    }
-//    /**
-//     * Sets if the logo has changed for performance reasons
-//     * @param b 
-//     */
-//    public void setLogoChanged(boolean b) {
-//        logoChanged = b;
-//    }
     /**
      * Get the notice drawer, used for drawing notices onto this lyrics canvas.
      * <p/>
