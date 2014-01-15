@@ -71,10 +71,6 @@ public class LyricDrawer extends DisplayableDrawer {
                 getCanvas().getChildren().add(textGroup);
             }
         }
-        if(getCanvas().isBlacked()) {
-            text = new String[0];
-            this.text = Arrays.copyOf(text, text.length);
-        }
         Font font = Font.font(theme.getFont().getFamily(),
                 theme.isBold() ? FontWeight.BOLD : FontWeight.NORMAL,
                 theme.isItalic() ? FontPosture.ITALIC : FontPosture.REGULAR,
@@ -206,7 +202,7 @@ public class LyricDrawer extends DisplayableDrawer {
      * @param theme the theme to place on the getCanvas().
      */
     public void setTheme(ThemeDTO theme) {
-        if(theme == null || getCanvas().isBlacked()) {
+        if(theme == null) {
             theme = ThemeDTO.DEFAULT_THEME;
         }
         boolean sameVid = false;
