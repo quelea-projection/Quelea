@@ -22,13 +22,16 @@ import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.geometry.Bounds;
+import javafx.geometry.Pos;
 import javafx.scene.Scene;
+import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import org.quelea.services.languages.LabelGrabber;
 import org.quelea.services.utils.LoggerUtils;
 import org.quelea.services.utils.Utils;
 import org.quelea.windows.main.DisplayCanvas.Priority;
+import org.quelea.windows.main.widgets.Clock;
 import org.quelea.windows.multimedia.VLCWindow;
 
 /**
@@ -60,10 +63,18 @@ public class DisplayStage extends Stage {
         Utils.addIconsToStage(this);
         setTitle(LabelGrabber.INSTANCE.getLabel("projection.window.title"));
         setArea(area);
+        StackPane scenePane = new StackPane();
         canvas = new DisplayCanvas(true, stageView, playVideo, null, stageView ? Priority.HIGH : Priority.MID);
         canvas.setType(stageView ? DisplayCanvas.Type.STAGE : DisplayCanvas.Type.FULLSCREEN);
         canvas.setCursor(BLANK_CURSOR);
-        Scene scene = new Scene(canvas);
+        scenePane.getChildren().add(canvas);
+        if(stageView) {
+            Clock clock = new Clock();
+            StackPane.setAlignment(clock, Pos.BOTTOM_RIGHT);
+            scenePane.getChildren().add(clock);
+            clock.toFront();
+        }
+        Scene scene = new Scene(scenePane);
         scene.setFill(null);
         setScene(scene);
         if(playVideo) {
