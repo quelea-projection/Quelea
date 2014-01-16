@@ -16,10 +16,8 @@
  */
 package org.quelea.windows.main;
 
-import com.inet.jortho.SpellChecker;
 import java.io.File;
 import java.io.IOException;
-import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.logging.Level;
@@ -179,18 +177,6 @@ public final class Main extends Application {
                                 }
                             };
                             bibleLoader.start();
-
-                            LOGGER.log(Level.INFO, "Registering dictionary");
-                            try {
-                                SpellChecker.registerDictionaries(new File("dictionaries").toURI().toURL(), "en", "en");
-                                SpellChecker.getOptions().setLanguageDisableVisible(false);
-                                SpellChecker.getOptions().setCaseSensitive(false);
-                            }
-                            catch(MalformedURLException ex) {
-                                LOGGER.log(Level.SEVERE, "Couldn't load dictionaries", ex);
-                            }
-                            LOGGER.log(Level.INFO, "Registered dictionary");
-
                             try {
                                 bibleLoader.join();
                             }
