@@ -281,6 +281,7 @@ public final class Main extends Application {
                                         .build();
                                 vlcWarningDialog.showAndWait();
                             }
+                            QueleaApp.get().doneLoading();
                         }
                     });
                 }

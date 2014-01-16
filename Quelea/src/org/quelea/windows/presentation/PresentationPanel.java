@@ -17,9 +17,16 @@
  */
 package org.quelea.windows.presentation;
 
+import javafx.animation.Animation;
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.scene.image.Image;
 import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.HBox;
+import javafx.util.Duration;
 import org.quelea.data.displayable.ImageDisplayable;
 import org.quelea.data.displayable.PresentationDisplayable;
 import org.quelea.data.powerpoint.OOPresentation;
@@ -30,6 +37,7 @@ import org.quelea.windows.main.AbstractPanel;
 import org.quelea.windows.image.ImageDrawer;
 import org.quelea.windows.main.DisplayCanvas;
 import org.quelea.windows.main.DisplayableDrawer;
+import org.quelea.windows.main.LivePanel;
 import org.quelea.windows.main.LivePreviewPanel;
 import org.quelea.windows.main.QueleaApp;
 
@@ -46,6 +54,7 @@ public class PresentationPanel extends AbstractPanel {
     private DisplayableDrawer drawer = new ImageDrawer();
     private PresentationSlide currentSlide = null;
     private LivePreviewPanel containerPanel;
+    private Timeline loopTimeline;
 
     /**
      * Create a new presentation panel.
@@ -55,10 +64,6 @@ public class PresentationPanel extends AbstractPanel {
     public PresentationPanel(final LivePreviewPanel containerPanel) {
         this.containerPanel = containerPanel;
         BorderPane mainPanel = new BorderPane();
-        HBox buttons = new HBox(5);
-//        buttons.getChildren().add(new Button("Previous"));
-//        buttons.getChildren().add(new Button("Next"));
-        mainPanel.setTop(buttons);
         presentationPreview = new PresentationPreview();
         presentationPreview.addSlideChangedListener(new org.quelea.windows.presentation.SlideChangedListener() {
             @Override
@@ -89,6 +94,65 @@ public class PresentationPanel extends AbstractPanel {
 
         mainPanel.setCenter(presentationPreview);
         setCenter(mainPanel);
+    }
+    
+    public void buildLoopTimeline() {
+        loopTimeline = new Timeline(
+                new KeyFrame(Duration.seconds(0),
+                        new EventHandler<ActionEvent>() {
+                            @Override
+                            public void handle(ActionEvent actionEvent) {
+                                if(containerPanel instanceof LivePanel) {
+                                    LivePanel livePanel = ((LivePanel) containerPanel);
+                                    if(livePanel.isLoopSelected()) {
+                                        presentationPreview.advanceSlide();
+                                    }
+                                }
+                            }
+                        }
+                ),
+                new KeyFrame(Duration.seconds(10))
+        );
+        loopTimeline.setCycleCount(Animation.INDEFINITE);
+        loopTimeline.play();
+        QueleaApp.get().doOnLoad(new Runnable() {
+
+            @Override
+            public void run() {
+                QueleaApp.get().getMainWindow().getMainPanel().getLivePanel().getLoopDurationTextField().textProperty().addListener(new ChangeListener<String>() {
+
+                    @Override
+                    public void changed(ObservableValue<? extends String> ov, String t, String t1) {
+                        int newTime = 10;
+                        try {
+                            newTime = Integer.parseInt(t1);
+                        }
+                        catch(NumberFormatException ex) {
+                            return;
+                        }
+                        loopTimeline.stop();
+                        loopTimeline = new Timeline(
+                                new KeyFrame(Duration.seconds(0),
+                                        new EventHandler<ActionEvent>() {
+                                            @Override
+                                            public void handle(ActionEvent actionEvent) {
+                                                if(containerPanel instanceof LivePanel) {
+                                                    LivePanel livePanel = ((LivePanel) containerPanel);
+                                                    if(livePanel.isLoopSelected()) {
+                                                        presentationPreview.advanceSlide();
+                                                    }
+                                                }
+                                            }
+                                        }
+                                ),
+                                new KeyFrame(Duration.seconds(newTime))
+                        );
+                        loopTimeline.setCycleCount(Animation.INDEFINITE);
+                        loopTimeline.play();
+                    }
+                });
+            }
+        });
     }
 
     private void drawSlide(PresentationSlide newSlide, DisplayCanvas canvas) {

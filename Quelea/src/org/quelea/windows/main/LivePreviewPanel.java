@@ -99,7 +99,7 @@ public abstract class LivePreviewPanel extends BorderPane {
                 }
             }
         });
-
+        presentationPanel.buildLoopTimeline();
     }
 
     public void selectFirstLyric() {

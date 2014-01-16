@@ -386,3 +386,5 @@ navigate.mob.url.label=Mobile Lyrics URL
 mob.changed.label=Mobile Lyrics Changed
 mob.changed.message=You will need to restart Quelea for the new Mobile Lyrics settings to take effect.
 filefilters.description.zip.files=Zip Files
+loop.label=Loop
+seconds.label=seconds

@@ -21,7 +21,10 @@ import java.io.File;
 import java.util.HashSet;
 import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.control.Label;
+import javafx.scene.control.TextField;
 import javafx.scene.control.ToggleButton;
 import javafx.scene.control.ToolBar;
 import javafx.scene.control.Tooltip;
@@ -36,6 +39,7 @@ import javafx.scene.layout.Region;
 import javafx.stage.FileChooser;
 import javafx.stage.Screen;
 import org.quelea.data.displayable.Displayable;
+import org.quelea.data.displayable.PresentationDisplayable;
 import org.quelea.services.languages.LabelGrabber;
 import org.quelea.services.utils.FileFilters;
 import org.quelea.services.utils.QueleaProperties;
@@ -50,6 +54,10 @@ import org.quelea.windows.multimedia.VLCWindow;
  */
 public class LivePanel extends LivePreviewPanel {
 
+    private HBox loopBox;
+    private final ToggleButton loop;
+    private final TextField loopDuration;
+    
     private final ToggleButton logo;
     private final ToggleButton black;
     private final ToggleButton clear;
@@ -64,6 +72,38 @@ public class LivePanel extends LivePreviewPanel {
         Label headerLabel = new Label(LabelGrabber.INSTANCE.getLabel("live.heading"));
         headerLabel.setStyle("-fx-font-weight: bold;");
         header.getItems().add(headerLabel);
+        loop = new ToggleButton(LabelGrabber.INSTANCE.getLabel("loop.label") + ":");
+        loopDuration = new TextField("10");
+        loopDuration.setMaxWidth(25);
+        loopDuration.setMinWidth(25);
+        loopDuration.addEventFilter(KeyEvent.KEY_TYPED, new EventHandler<KeyEvent>() {
+            @Override
+            public void handle(KeyEvent t) {
+                String text = t.getCharacter();
+                char arr[] = text.toCharArray();
+                char ch = arr[text.toCharArray().length - 1];
+                if(!(ch >= '0' && ch <= '9')) {
+                    t.consume();
+                }
+                try {
+                    String newText = loopDuration.getText() + ch;
+                    int num = Integer.parseInt(newText);
+                    if(num > 100 || num <= 0) {
+                        t.consume();
+                    }
+                }
+                catch(NumberFormatException ex) {
+                    t.consume();
+                }
+            }
+        });
+        loopBox = new HBox(5);
+        loopBox.getChildren().add(loop);
+        loopBox.getChildren().add(loopDuration);
+        loopBox.getChildren().add(new Label(LabelGrabber.INSTANCE.getLabel("seconds.label")));
+        header.getItems().add(new Label("   ")); //Spacer
+        header.getItems().add(loopBox);
+        loopBox.setVisible(false);
         Region spacer = new Region();
         HBox.setHgrow(spacer, Priority.ALWAYS);
         header.getItems().add(spacer);
@@ -198,6 +238,13 @@ public class LivePanel extends LivePreviewPanel {
     @Override
     public void setDisplayable(Displayable d, int index) {
         super.setDisplayable(d, index);
+        loop.setSelected(false);
+        if(d instanceof PresentationDisplayable) {
+            loopBox.setVisible(true);
+        }
+        else {
+            loopBox.setVisible(false);
+        }
         if(d == null) {
             clear.setSelected(false);
             clear.setDisable(true);
@@ -251,7 +298,19 @@ public class LivePanel extends LivePreviewPanel {
             logo.fire();
         }
     }
+    
+    /**
+     * Determine if the loop button is selected.
+     * @return true if it's selected, false otherwise.
+     */
+    public boolean isLoopSelected() {
+        return loop.isSelected();
+    }
 
+    public TextField getLoopDurationTextField() {
+        return loopDuration;
+    }
+    
     /**
      * Get the hide button.
      * <p>
