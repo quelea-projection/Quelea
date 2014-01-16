@@ -395,6 +395,15 @@ public final class QueleaProperties extends Properties {
     public File getImageDir() {
         return new File(getQueleaUserHome(), "img");
     }
+    
+    /**
+     * Get the directory used for storing dictionaries.
+     * <p/>
+     * @return the dictionaries directory
+     */
+    public File getDictionaryDir() {
+        return new File(getQueleaUserHome(), "dictionaries");
+    }
 
     /**
      * Get the directory used for storing videos.

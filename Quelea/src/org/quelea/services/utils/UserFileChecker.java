@@ -56,6 +56,7 @@ public class UserFileChecker {
         checkDir("vid");
         checkDir("img");
         checkDir("bibles");
+        checkDir("dictionaries");
     }
 
     /**
