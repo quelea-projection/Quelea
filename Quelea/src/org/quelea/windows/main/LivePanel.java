@@ -131,12 +131,7 @@ public class LivePanel extends LivePreviewPanel {
                 HashSet<DisplayCanvas> canvases = new HashSet<>();
                 canvases.addAll(getCanvases());
                 for(DisplayCanvas canvas : canvases) {
-                    if(!canvas.isStageView()) {
-                        canvas.setLogoDisplaying(logo.isSelected());
-                    }
-                    else {
-                        canvas.setBlacked(logo.isSelected());
-                    }
+                    canvas.setLogoDisplaying(logo.isSelected());
                 }
             }
         });
