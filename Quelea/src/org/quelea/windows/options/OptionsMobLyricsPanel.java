@@ -220,7 +220,12 @@ public class OptionsMobLyricsPanel extends GridPane implements PropertyPanel {
     @Override
     public void setProperties() {
         QueleaProperties.get().setUseMobLyrics(useMobLyricsCheckBox.isSelected());
-        QueleaProperties.get().setMobLyricsPort(Integer.parseInt(portNumTextField.getText()));
+        if(portNumTextField.getText().trim().isEmpty()) {
+            portNumTextField.setText(Integer.toString(QueleaProperties.get().getMobLyricsPort()));
+        }
+        else {
+            QueleaProperties.get().setMobLyricsPort(Integer.parseInt(portNumTextField.getText()));
+        }
     }
 
     /**
