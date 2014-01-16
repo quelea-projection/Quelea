@@ -108,10 +108,10 @@ public class MobileLyricsServer {
 
         @Override
         public void handle(HttpExchange t) throws IOException {
-            if(pageContent == null) {
+//            if(pageContent == null) {
                 pageContent = readFile("icons/defaultpage.htm");
                 pageContent = sortLabels(pageContent);
-            }
+//            }
             t.sendResponseHeaders(200, pageContent.length());
             try(OutputStream os = t.getResponseBody()) {
                 os.write(pageContent.getBytes());
