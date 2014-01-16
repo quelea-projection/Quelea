@@ -109,8 +109,8 @@ public class MobileLyricsServer {
         @Override
         public void handle(HttpExchange t) throws IOException {
 //            if(pageContent == null) {
-                pageContent = readFile("icons/defaultpage.htm");
-                pageContent = sortLabels(pageContent);
+            pageContent = readFile("icons/defaultpage.htm");
+            pageContent = sortLabels(pageContent);
 //            }
             t.sendResponseHeaders(200, pageContent.length());
             try(OutputStream os = t.getResponseBody()) {
@@ -143,7 +143,7 @@ public class MobileLyricsServer {
             }
         }
     }
-    
+
     private String getLyrics(boolean chords) {
         try {
             if(!checkInitialised()) {
@@ -156,7 +156,10 @@ public class MobileLyricsServer {
                 for(String line : currentSection.getText(chords, false)) {
                     ret.append(Utils.escapeHTML(line)).append("<br/>");
                 }
-                return ret.toString().replace(" ", "&#160;");
+                if(chords) {
+                    return ret.toString().replace(" ", "&#160;");
+                }
+                return ret.toString();
             }
             else {
                 return "";
