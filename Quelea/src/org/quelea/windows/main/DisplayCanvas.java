@@ -121,6 +121,7 @@ public class DisplayCanvas extends StackPane {
         getChildren().add(black);
 
         if (!stageView) {
+            logoImage.setPreserveRatio(true);
             logoImage.fitWidthProperty().bind(widthProperty());
             logoImage.fitHeightProperty().bind(heightProperty());
             logoImage.setOpacity(0);
