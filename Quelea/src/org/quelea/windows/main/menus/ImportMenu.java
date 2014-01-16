@@ -28,6 +28,7 @@ import org.quelea.services.languages.LabelGrabber;
 import org.quelea.services.importexport.EasySlidesImportDialog;
 import org.quelea.services.importexport.ImportDialog;
 import org.quelea.services.importexport.KingswayImportDialog;
+import org.quelea.services.importexport.OpenLPImportDialog;
 import org.quelea.services.importexport.OpenSongImportDialog;
 import org.quelea.services.importexport.PlainTextSongsImportDialog;
 import org.quelea.services.importexport.QSPImportDialog;
@@ -44,12 +45,14 @@ public class ImportMenu extends Menu {
     private final ImportDialog sImportDialog;
     private final ImportDialog qspImportDialog;
     private final ImportDialog openSongImportDialog;
+    private final ImportDialog openLPImportDialog;
     private final ImportDialog sourceImportDialog;
     private final ImportDialog kingswayImportDialog;
     private final ImportDialog plainTextImportDialog;
     private final ImportDialog easySlidesImportDialog;
     private final MenuItem qspItem;
     private final MenuItem osItem;
+    private final MenuItem olpItem;
     private final MenuItem ssItem;
     private final MenuItem sourceItem;
     private final MenuItem plainTextItem;
@@ -64,6 +67,7 @@ public class ImportMenu extends Menu {
 
         qspImportDialog = new QSPImportDialog();
         openSongImportDialog = new OpenSongImportDialog();
+        openLPImportDialog = new OpenLPImportDialog();
         sImportDialog = new SurvivorImportDialog();
         sourceImportDialog = new SourceImportDialog();
         kingswayImportDialog = new KingswayImportDialog(null);
@@ -87,6 +91,15 @@ public class ImportMenu extends Menu {
             }
         });
         getItems().add(osItem);
+
+        olpItem = new MenuItem(LabelGrabber.INSTANCE.getLabel("olp.button"), new ImageView(new Image("file:icons/openlp.png", 16, 16, false, true)));
+        olpItem.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent t) {
+                openLPImportDialog.show();
+            }
+        });
+        getItems().add(olpItem);
 
         ssItem = new MenuItem(LabelGrabber.INSTANCE.getLabel("ss.button"), new ImageView(new Image("file:icons/survivor.jpg", 16, 16, false, true)));
         ssItem.setOnAction(new EventHandler<ActionEvent>() {
