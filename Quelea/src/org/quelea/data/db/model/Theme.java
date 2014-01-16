@@ -55,6 +55,8 @@ public class Theme {
         this.backgroundvid = theme.backgroundvid;
         this.backgroundimage = theme.backgroundimage;
         this.textShadow = theme.textShadow;
+        this.fontBold = theme.fontBold;
+        this.fontItalic = theme.fontItalic;
     }
 
     /**
