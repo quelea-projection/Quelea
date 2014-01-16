@@ -38,7 +38,7 @@ public class AddSongActionHandler implements EventHandler<ActionEvent> {
     /**
      * Get the current selected song from the library to the schedule.
      * <p/>
-     * @param e the event.
+     * @param t the event.
      */
     @Override
     public void handle(ActionEvent t) {
