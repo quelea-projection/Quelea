@@ -6,9 +6,14 @@
 package org.quelea.windows.options;
 
 import java.awt.Desktop;
+import java.io.IOException;
 import java.net.InetAddress;
+import java.net.NetworkInterface;
+import java.net.SocketException;
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.UnknownHostException;
+import java.util.Enumeration;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.beans.value.ChangeListener;
@@ -117,7 +122,7 @@ public class OptionsMobLyricsPanel extends GridPane implements PropertyPanel {
                     try {
                         Desktop.getDesktop().browse(new URI(getURL()));
                     }
-                    catch(Exception ex) {
+                    catch(IOException | URISyntaxException ex) {
                         LOGGER.log(Level.WARNING, "Couldn't browse to mobile lyrics URL: {0}", getURL());
                     }
                 }
@@ -135,9 +140,10 @@ public class OptionsMobLyricsPanel extends GridPane implements PropertyPanel {
     private String getURL() {
         if(urlCache == null) {
             if(QueleaProperties.get().getUseMobLyrics() && QueleaApp.get().getMobileLyricsServer() != null) {
-                try {
+                String ip = getIP();
+                if(ip!=null) {
                     StringBuilder ret = new StringBuilder("http://");
-                    ret.append(InetAddress.getLocalHost().getHostAddress());
+                    ret.append(ip);
                     int port = QueleaProperties.get().getMobLyricsPort();
                     if(port != 80) {
                         ret.append(":");
@@ -145,7 +151,7 @@ public class OptionsMobLyricsPanel extends GridPane implements PropertyPanel {
                     }
                     urlCache = ret.toString();
                 }
-                catch(UnknownHostException ex) {
+                else {
                     urlCache = "[Not started]";
                 }
             }
@@ -156,6 +162,46 @@ public class OptionsMobLyricsPanel extends GridPane implements PropertyPanel {
         return urlCache;
     }
 
+    private static String getIP() {
+        Enumeration<NetworkInterface> interfaces;
+        try {
+            interfaces = NetworkInterface.getNetworkInterfaces();
+        }
+        catch(SocketException ex) {
+            try {
+                return InetAddress.getLocalHost().getHostAddress();
+            }
+            catch(UnknownHostException ex2) {
+                return null;
+            }
+        }
+        while(interfaces.hasMoreElements()) {
+            NetworkInterface current = interfaces.nextElement();
+            try {
+                if(!current.isUp() || current.isLoopback() || current.isVirtual() || current.getDisplayName().toLowerCase().contains("virtual")) {
+                    continue;
+                }
+            }
+            catch(SocketException ex) {
+                continue;
+            }
+            Enumeration<InetAddress> addresses = current.getInetAddresses();
+            while(addresses.hasMoreElements()) {
+                InetAddress current_addr = addresses.nextElement();
+                if(current_addr.isLoopbackAddress()) {
+                    continue;
+                }
+                return current_addr.getHostAddress();
+            }
+        }
+        try {
+            return InetAddress.getLocalHost().getHostAddress();
+        }
+        catch(UnknownHostException ex) {
+            return null;
+        }
+    }
+    
     public void resetChanged() {
         changeMade = false;
     }
