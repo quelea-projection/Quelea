@@ -46,7 +46,7 @@ public class ThemeDTO implements Serializable {
     public static final Color DEFAULT_FONT_COLOR = Color.WHITE;
     public static final SerializableDropShadow DEFAULT_SHADOW = new SerializableDropShadow(DEFAULT_FONT_COLOR, 0, 0);
     public static final ColourBackground DEFAULT_BACKGROUND = new ColourBackground(Color.BLACK);
-    public static final ThemeDTO DEFAULT_THEME = new ThemeDTO(DEFAULT_FONT, DEFAULT_FONT_COLOR, DEFAULT_BACKGROUND, DEFAULT_SHADOW, false, false);
+    public static final ThemeDTO DEFAULT_THEME = new ThemeDTO(DEFAULT_FONT, DEFAULT_FONT_COLOR, DEFAULT_BACKGROUND, DEFAULT_SHADOW, DEFAULT_FONT.getFont().getStyle().toLowerCase().contains("bold"), DEFAULT_FONT.getFont().getStyle().toLowerCase().contains("italic"));
     private final SerializableFont font;
     private final SerializableColor fontColor;
     private final Background background;
