@@ -30,6 +30,7 @@ import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.quelea.services.utils.LoggerUtils;
+import org.quelea.services.utils.QueleaProperties;
 import org.quelea.services.utils.Utils;
 
 /**
@@ -44,7 +45,7 @@ public class DictionaryManager {
     private Properties props = new Properties();
 
     private DictionaryManager() {
-        try(StringReader reader = new StringReader(Utils.getTextFromFile(new File("languages", "dictionaries.properties").getAbsolutePath(), ""))) {
+        try(StringReader reader = new StringReader(Utils.getTextFromFile(new File(QueleaProperties.get().getDictionaryDir(), "dictionaries.properties").getAbsolutePath(), ""))) {
             props.load(reader);
         }
         catch(IOException ex) {
@@ -53,7 +54,7 @@ public class DictionaryManager {
         dictionaries = new HashMap<>();
         Speller init = new Speller(null);
         for(String propName : props.stringPropertyNames()) {
-            File file = new File("languages", propName);
+            File file = new File(QueleaProperties.get().getDictionaryDir(), propName);
             if(!file.exists()) {
                 continue;
             }
