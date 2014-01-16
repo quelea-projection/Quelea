@@ -22,19 +22,17 @@ import org.quelea.services.utils.FileFilters;
 
 /**
  * An import dialog for Quelea song packs.
- *
+ * <p>
  * @author Michael
  */
 public class QSPImportDialog extends ImportDialog {
 
     /**
      * Create a new QSP import dialog.
-     *
-     * @param owner the owner of the dialog.
      */
     public QSPImportDialog() {
         super(new String[]{
-                    LabelGrabber.INSTANCE.getLabel("qsp.import.line1")
-                }, FileFilters.SONG_PACK, new QSPParser(), false);
+            LabelGrabber.INSTANCE.getLabel("qsp.import.line1")
+        }, FileFilters.SONG_PACK, new QSPParser(), false);
     }
 }
