@@ -17,7 +17,6 @@
  */
 package org.quelea.windows.newsong;
 
-import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
@@ -38,8 +37,6 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import javafx.stage.WindowEvent;
-import javax.swing.event.DocumentEvent;
-import javax.swing.event.DocumentListener;
 import org.javafx.dialog.Dialog;
 import org.quelea.data.ThemeDTO;
 import org.quelea.data.displayable.SongDisplayable;
@@ -70,8 +67,6 @@ public class SongEntryWindow extends Stage {
 
     /**
      * Create and initialise the new song window.
-     * <p/>
-     * @param owner the owner of this window.
      */
     public SongEntryWindow() {
         initModality(Modality.APPLICATION_MODAL);
