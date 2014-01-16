@@ -194,7 +194,7 @@ public class DisplayCanvas extends StackPane {
         setCurrentDisplayable(null);
     }
 
-    public void clearApartFromNotice() {
+    public void clearNonPermanentChildren() {
         ObservableList<Node> list = FXCollections.observableArrayList(getChildren());
         for (Node node : list) {
             if (!(node instanceof NoticeOverlay) && node != logoImage && node != black) {
