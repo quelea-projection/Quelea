@@ -15,6 +15,7 @@ quelea (0.6) stable; urgency=normal
   * Added sample videos
   * Plain text import
   * Opensong import
+  * OpenLP import
   * Added Czech, German, Swedish and US English translations
   * Fix interface to display UTF-8 characters properly
   * Fix schedule files / imports to deal with UTF-8 characters properly
