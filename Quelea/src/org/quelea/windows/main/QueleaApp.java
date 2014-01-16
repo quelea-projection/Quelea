@@ -18,6 +18,8 @@
 package org.quelea.windows.main;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 import org.javafx.dialog.Dialog;
 import org.quelea.data.Schedule;
 import org.quelea.server.MobileLyricsServer;
@@ -34,6 +36,8 @@ public class QueleaApp {
     private DisplayStage projectionWindow;
     private DisplayStage stageWindow;
     private MobileLyricsServer mls;
+    private List<Runnable> runnables = new ArrayList<>();
+    private volatile boolean loaded;
 
     /**
      * Get the singleton instance.
@@ -41,6 +45,22 @@ public class QueleaApp {
      */
     public static QueleaApp get() {
         return INSTANCE;
+    }
+    
+    public synchronized void doOnLoad(Runnable r) {
+        if(loaded) {
+            r.run();
+        }
+        else {
+            runnables.add(r);
+        }
+    }
+    
+    public synchronized void doneLoading() {
+        loaded = true;
+        for(Runnable r : runnables) {
+            r.run();
+        }
     }
     
     /**

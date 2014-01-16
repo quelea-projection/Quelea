@@ -9,6 +9,7 @@ quelea (0.6) stable; urgency=normal
   * Clear text option now fades
   * Black option now fades
   * New logo option added, can easily fade live view to any given image
+  * Added loop button for presentations
   * Changed to more efficient database format
   * Added more / better sample images
   * Added sample videos
