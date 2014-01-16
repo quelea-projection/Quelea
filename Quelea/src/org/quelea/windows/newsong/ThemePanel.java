@@ -376,8 +376,8 @@ public class ThemePanel extends BorderPane {
         Font font = theme.getFont();
         fontSelection.getSelectionModel().select(font.getFamily());
         fontColorPicker.setValue(theme.getFontPaint());
-        boldButton.setSelected(font.getStyle().toLowerCase().contains("bold"));
-        italicButton.setSelected(font.getStyle().toLowerCase().contains("italic"));
+        boldButton.setSelected(theme.isBold());
+        italicButton.setSelected(theme.isItalic());
         Background background = theme.getBackground();
         background.setThemeForm(backgroundColorPicker, backgroundTypeSelect, backgroundImgLocation, backgroundVidLocation);
         updateTheme(false, null);
