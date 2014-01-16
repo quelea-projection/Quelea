@@ -72,6 +72,10 @@ public final class FileFilters {
      * The file filter used for plain text files.
      */
     public static final FileChooser.ExtensionFilter PLAIN_TEXT = new FileChooser.ExtensionFilter(LabelGrabber.INSTANCE.getLabel("filefilters.description.plain.text.song"), "*.txt");
+    /**
+     * The file filter used for plain text files.
+     */
+    public static final FileChooser.ExtensionFilter ZIP = new FileChooser.ExtensionFilter(LabelGrabber.INSTANCE.getLabel("filefilters.description.zip.files") + " (*.zip)", "*.zip");
 
     /**
      * No instantiation for me thanks.
