@@ -120,16 +120,16 @@ public class DisplayCanvas extends StackPane {
         black.setOpacity(0);
         getChildren().add(black);
 
-        if (!stageView) {
-            logoImage.setPreserveRatio(true);
-            logoImage.fitWidthProperty().bind(widthProperty());
-            logoImage.fitHeightProperty().bind(heightProperty());
-            logoImage.setOpacity(0);
-            getChildren().add(logoImage);
-        }
-        else {
+        if (stageView) {
             black.setFill(QueleaProperties.get().getStageBackgroundColor());
         }
+
+        logoImage.setPreserveRatio(true);
+        logoImage.fitWidthProperty().bind(widthProperty());
+        logoImage.fitHeightProperty().bind(heightProperty());
+        logoImage.setOpacity(0);
+        getChildren().add(logoImage);
+
 
         noticeDrawer = new NoticeDrawer(this);
         noticeOverlay = noticeDrawer.getOverlay();
