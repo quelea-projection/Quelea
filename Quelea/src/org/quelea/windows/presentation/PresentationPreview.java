@@ -126,7 +126,7 @@ public class PresentationPreview extends ScrollPane {
         thumbnails.clear();
         for(int i = 0; i < slides.length; i++) {
             SlideThumbnail thumbnail = new SlideThumbnail(slides[i], i + 1);
-            if(i==0) {
+            if(i == 0) {
                 thumbnail.setSelected(true);
             }
             thumbnails.add(thumbnail);
@@ -141,6 +141,21 @@ public class PresentationPreview extends ScrollPane {
 
     public PresentationSlide getSelectedSlide() {
         return selectedSlide;
+    }
+
+    public void advanceSlide() {
+        int nextSelection = getSelectedIndex() + 1;
+        if(nextSelection < 1) {
+            nextSelection = 1;
+        }
+        if(nextSelection > size()) {
+            nextSelection = 1;
+        }
+        select(nextSelection);
+    }
+
+    public int size() {
+        return thumbnails.size();
     }
 
     public void select(int index) {
