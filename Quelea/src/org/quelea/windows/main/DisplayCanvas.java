@@ -48,13 +48,11 @@ import org.quelea.services.utils.Utils;
 public class DisplayCanvas extends StackPane {
 
     private static final Logger LOGGER = LoggerUtils.getLogger();
-    private static final ImageView BLACK_IMAGE = new ImageView(Utils.getImageFromColour(Color.BLACK));
     private boolean cleared;
     private boolean blacked;
     private NoticeDrawer noticeDrawer;
     private boolean stageView;
     private Node background;
-    private Node currentBackground;
     private ImageView logoImage = QueleaProperties.get().getLogoImage();
     private Rectangle black = new Rectangle();
     private Node noticeOverlay;
