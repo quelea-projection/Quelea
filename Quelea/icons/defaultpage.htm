@@ -77,8 +77,8 @@
     {
 	background: #CCCCCC;
 	min-height: 100%; 
-        color: #111111;
 	overflow: hidden;
+        color: #111111;
         font-family:"Helvetica";
         font-weight:bold;
     }
@@ -93,7 +93,7 @@ xmlhttp.onreadystatechange=function()
   {
   if (xmlhttp.readyState==4 && xmlhttp.status==200)
     {
-    document.getElementById("dynamicSpan").innerHTML=xmlhttp.responseText;
+    document.getElementById("child").innerHTML=xmlhttp.responseText;
 	shrink();
     }
   }
@@ -116,7 +116,6 @@ document.documentElement.requestFullScreen();
 function shrink()
     {
 	window.scrollTo(0,1);
-    	var textSpan = document.getElementById("dynamicSpan");
     	var textDiv = document.getElementById("dynamicDiv");
 		
 		textDiv.style.fontSize = "200px";
@@ -126,6 +125,11 @@ function shrink()
         var fontSize = parseFloat(style); 
 		
     	while(document.body.clientHeight > window.innerHeight)
+    	{
+		    size = size-5;
+    		textDiv.style.fontSize = (size)+"px";
+    	}
+		while(dynamicDiv.scrollWidth > document.body.clientWidth)
     	{
 		    size = size-5;
     		textDiv.style.fontSize = (size)+"px";
@@ -141,7 +145,7 @@ else {
 xmlhttp.open("GET","/lyrics",true);
 }
 xmlhttp.timeout = 4000;
-xmlhttp.ontimeout = function () {document.getElementById("dynamicSpan").innerHTML="";}
+xmlhttp.ontimeout = function () {document.getElementById("child").innerHTML="";}
 xmlhttp.send();
 }
 function setCookie(cname,cvalue,exdays)
@@ -169,7 +173,7 @@ return "";
 <a style="" class="button" href="#openModal"></a>
 <a style="font-family: 'DejaVu Sans',sans-serif;position: absolute; top: -3px; right: 1px;font-size:30px;text-decoration:none;" href="#openModal">&#9881;</a>
     </div>
-<div id="dynamicDiv"><span id="dynamicSpan">[loading.text]...</span></div>
+<div id="dynamicDiv"><div id="child">[loading.text]...</div></div>
 <div id="openModal" class="modalDialog">
 	<div>
 		<a href="#close" title="Close" class="close">X</a>
