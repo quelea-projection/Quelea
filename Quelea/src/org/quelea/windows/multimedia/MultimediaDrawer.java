@@ -40,7 +40,7 @@ public class MultimediaDrawer extends DisplayableDrawer {
     public void setPlayVideo(boolean playVideo) {
         this.playVideo = playVideo;
         if (playVideo) {
-            getCanvas().clearApartFromNotice();
+            getCanvas().clearNonPermanentChildren();
         }
     }
 

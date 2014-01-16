@@ -556,7 +556,7 @@ public class LyricDrawer extends DisplayableDrawer {
     @Override
     public void clear() {
         if(getCanvas().getChildren() != null) {
-            getCanvas().clearApartFromNotice();
+            getCanvas().clearNonPermanentChildren();
         }
         setTheme(ThemeDTO.DEFAULT_THEME);
         eraseText();

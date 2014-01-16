@@ -89,7 +89,7 @@ public abstract class AbstractPanel extends BorderPane implements ContainedPanel
             /*if(!canvas.isLogoShowing()) {
              canvas.clearCurrentDisplayable();
              }*/
-            canvas.clearApartFromNotice();
+            canvas.clearNonPermanentChildren();
         }
     }
 
