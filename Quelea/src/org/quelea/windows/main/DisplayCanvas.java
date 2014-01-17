@@ -54,7 +54,7 @@ public class DisplayCanvas extends StackPane {
     private NoticeDrawer noticeDrawer;
     private boolean stageView;
     private Node background;
-    private LogoImage logoImage = new LogoImage();
+    private LogoImage logoImage;
     private Rectangle black = new Rectangle();
     private Node noticeOverlay;
     private Displayable currentDisplayable;
@@ -120,18 +120,18 @@ public class DisplayCanvas extends StackPane {
         black.heightProperty().bind(this.heightProperty());
         black.setOpacity(0);
         getChildren().add(black);
-        
+
+        logoImage = new LogoImage(stageView);
+
         logoImage.minWidthProperty().bind(widthProperty());
         logoImage.maxWidthProperty().bind(widthProperty());
         logoImage.minHeightProperty().bind(heightProperty());
         logoImage.maxHeightProperty().bind(heightProperty());
-        
+        logoImage.setOpacity(0);
+        getChildren().add(logoImage);
+
         if (stageView) {
             black.setFill(QueleaProperties.get().getStageBackgroundColor());
-        }
-        else {
-            logoImage.setOpacity(0);
-            getChildren().add(logoImage);
         }
 
         noticeDrawer = new NoticeDrawer(this);
@@ -372,7 +372,7 @@ public class DisplayCanvas extends StackPane {
      * @param selected true to display the logo screen, false to remove it.
      */
     public void setLogoDisplaying(boolean selected) {
-        if (!stageView & selected) {
+        if (selected) {
             logoImage.toFront();
             FadeTransition ft = new FadeTransition(Duration.seconds(0.5), logoImage);
             ft.setToValue(1);
