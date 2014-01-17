@@ -390,3 +390,5 @@ mobile.lyrics.heading=Mobile Liedtexte
 mob.changed.label=Einstellung für mobile Liedtextverwendung wurde geändert
 mob.changed.message=Das Programm muss neu gestartet werden, damit die Änderungen übernommen werden.
 navigate.mob.url.label=Mobile Liedtext - URL
+sundayplus.import.line1=Bitte den Speicherort der Sunday Plus Datenbank auswählen.
+sp.button=Sunday Plus
