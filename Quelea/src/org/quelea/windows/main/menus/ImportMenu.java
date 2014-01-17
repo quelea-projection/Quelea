@@ -33,6 +33,7 @@ import org.quelea.services.importexport.OpenSongImportDialog;
 import org.quelea.services.importexport.PlainTextSongsImportDialog;
 import org.quelea.services.importexport.QSPImportDialog;
 import org.quelea.services.importexport.SourceImportDialog;
+import org.quelea.services.importexport.SundayPlusImportDialog;
 import org.quelea.services.importexport.SurvivorImportDialog;
 
 /**
@@ -50,8 +51,10 @@ public class ImportMenu extends Menu {
     private final ImportDialog kingswayImportDialog;
     private final ImportDialog plainTextImportDialog;
     private final ImportDialog easySlidesImportDialog;
+    private final ImportDialog sundayPlusImportDialog;
     private final MenuItem qspItem;
     private final MenuItem osItem;
+    private final MenuItem spItem;
     private final MenuItem olpItem;
     private final MenuItem ssItem;
     private final MenuItem sourceItem;
@@ -73,6 +76,7 @@ public class ImportMenu extends Menu {
         kingswayImportDialog = new KingswayImportDialog(null);
         plainTextImportDialog = new PlainTextSongsImportDialog();
         easySlidesImportDialog = new EasySlidesImportDialog();
+        sundayPlusImportDialog = new SundayPlusImportDialog();
 
         qspItem = new MenuItem(LabelGrabber.INSTANCE.getLabel("qsp.button"), new ImageView(new Image("file:icons/logo16.png", 16, 16, false, true)));
         qspItem.setOnAction(new EventHandler<ActionEvent>() {
@@ -100,6 +104,15 @@ public class ImportMenu extends Menu {
             }
         });
         getItems().add(olpItem);
+
+        spItem = new MenuItem(LabelGrabber.INSTANCE.getLabel("sp.button"), new ImageView(new Image("file:icons/sundayplus.png", 16, 16, false, true)));
+        spItem.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent t) {
+                sundayPlusImportDialog.show();
+            }
+        });
+        getItems().add(spItem);
 
         ssItem = new MenuItem(LabelGrabber.INSTANCE.getLabel("ss.button"), new ImageView(new Image("file:icons/survivor.jpg", 16, 16, false, true)));
         ssItem.setOnAction(new EventHandler<ActionEvent>() {
