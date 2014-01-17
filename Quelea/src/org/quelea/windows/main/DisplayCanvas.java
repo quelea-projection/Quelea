@@ -39,6 +39,7 @@ import org.quelea.services.notice.NoticeOverlay;
 import org.quelea.services.utils.LoggerUtils;
 import org.quelea.services.utils.QueleaProperties;
 import org.quelea.services.utils.Utils;
+import org.quelea.windows.main.widgets.LogoImage;
 
 /**
  * The canvas where the lyrics / images / media are drawn.
@@ -53,7 +54,7 @@ public class DisplayCanvas extends StackPane {
     private NoticeDrawer noticeDrawer;
     private boolean stageView;
     private Node background;
-    private ImageView logoImage = QueleaProperties.get().getLogoImage();
+    private LogoImage logoImage = new LogoImage();
     private Rectangle black = new Rectangle();
     private Node noticeOverlay;
     private Displayable currentDisplayable;
@@ -119,14 +120,16 @@ public class DisplayCanvas extends StackPane {
         black.heightProperty().bind(this.heightProperty());
         black.setOpacity(0);
         getChildren().add(black);
-
+        
+        logoImage.minWidthProperty().bind(widthProperty());
+        logoImage.maxWidthProperty().bind(widthProperty());
+        logoImage.minHeightProperty().bind(heightProperty());
+        logoImage.maxHeightProperty().bind(heightProperty());
+        
         if (stageView) {
             black.setFill(QueleaProperties.get().getStageBackgroundColor());
         }
         else {
-            logoImage.setPreserveRatio(true);
-            logoImage.fitWidthProperty().bind(widthProperty());
-            logoImage.fitHeightProperty().bind(heightProperty());
             logoImage.setOpacity(0);
             getChildren().add(logoImage);
         }
@@ -369,7 +372,6 @@ public class DisplayCanvas extends StackPane {
      * @param selected true to display the logo screen, false to remove it.
      */
     public void setLogoDisplaying(boolean selected) {
-        setBlacked(selected);
         if (!stageView & selected) {
             logoImage.toFront();
             FadeTransition ft = new FadeTransition(Duration.seconds(0.5), logoImage);
@@ -394,11 +396,6 @@ public class DisplayCanvas extends StackPane {
      * is completed on the lyric panel logo button.
      */
     public void updateLogo() {
-        getChildren().remove(logoImage);
-        logoImage = QueleaProperties.get().getLogoImage();
-        logoImage.fitWidthProperty().bind(widthProperty());
-        logoImage.fitHeightProperty().bind(heightProperty());
-        logoImage.setOpacity(0);
-        getChildren().add(logoImage);
+        logoImage.refresh();
     }
 }
