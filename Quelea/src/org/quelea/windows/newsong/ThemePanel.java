@@ -84,7 +84,6 @@ public class ThemePanel extends BorderPane {
     private ColorPicker shadowColorPicker;
     private TextField shadowOffsetX;
     private TextField shadowOffsetY;
-    private TextField shadowWidth;
     private TextField backgroundImgLocation;
     private TextField backgroundVidLocation;
     private ToggleButton boldButton;
