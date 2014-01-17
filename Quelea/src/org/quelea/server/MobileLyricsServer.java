@@ -45,6 +45,7 @@ import org.quelea.windows.main.QueleaApp;
  */
 public class MobileLyricsServer {
 
+    private static final boolean CACHE = true;
     private static final Logger LOGGER = LoggerUtils.getLogger();
     private final HttpServer server;
     private boolean running;
@@ -108,7 +109,7 @@ public class MobileLyricsServer {
 
         @Override
         public void handle(HttpExchange t) throws IOException {
-            if(pageContent == null) {
+            if(pageContent == null || !CACHE) {
                 pageContent = readFile("icons/defaultpage.htm");
                 pageContent = sortLabels(pageContent);
             }
