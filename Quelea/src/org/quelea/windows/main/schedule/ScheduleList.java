@@ -30,15 +30,18 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.TransferMode;
 import javafx.util.Callback;
+import org.quelea.data.ImageBackground;
 import org.quelea.data.Schedule;
+import org.quelea.data.ThemeDTO;
 import org.quelea.data.displayable.Displayable;
 import org.quelea.data.displayable.ImageDisplayable;
 import org.quelea.data.displayable.SongDisplayable;
+import org.quelea.data.displayable.TextSection;
 import org.quelea.services.utils.LoggerUtils;
 import org.quelea.services.utils.QueleaProperties;
+import org.quelea.services.utils.Utils;
 import org.quelea.windows.library.Constraint;
 import org.quelea.windows.library.DisplayableListCell;
-import org.quelea.windows.main.DisplayCanvas;
 import org.quelea.windows.main.QueleaApp;
 import org.quelea.windows.main.actionhandlers.RemoveScheduleItemActionHandler;
 import org.quelea.windows.multimedia.VLCWindow;
@@ -71,7 +74,8 @@ public class ScheduleList extends ListView<Displayable> {
         Callback<ListView<Displayable>, ListCell<Displayable>> callback = new Callback<ListView<Displayable>, ListCell<Displayable>>() {
             @Override
             public ListCell<Displayable> call(ListView<Displayable> p) {
-                return new ListCell<Displayable>() {
+
+                final ListCell<Displayable> listCell = new ListCell<Displayable>() {
                     @Override
                     public void updateItem(Displayable item, boolean empty) {
                         super.updateItem(item, empty);
@@ -85,6 +89,51 @@ public class ScheduleList extends ListView<Displayable> {
                         }
                     }
                 };
+                listCell.setOnDragOver(new EventHandler<DragEvent>() {
+                    @Override
+                    public void handle(DragEvent t) {
+                        t.acceptTransferModes(TransferMode.ANY);
+                    }
+                });
+                listCell.setOnDragDropped(new EventHandler<DragEvent>() {
+                    @Override
+                    public void handle(DragEvent event) {
+                        String imageLocation = event.getDragboard().getString();
+                        if(imageLocation != null) {
+                            if(listCell.isEmpty()) {
+                                ImageDisplayable img = new ImageDisplayable(new File(imageLocation));
+                                add(img);
+                            }
+                            else {
+                                Displayable d = listCell.getItem();
+                                if(d instanceof SongDisplayable) {
+                                    SongDisplayable songDisplayable = (SongDisplayable) d;
+                                    ThemeDTO theme = songDisplayable.getTheme();
+                                    ThemeDTO newTheme = new ThemeDTO(theme.getSerializableFont(), theme.getFontPaint(), new ImageBackground(new File(imageLocation).getName()), theme.getShadow(), theme.getSerializableFont().isBold(), theme.getSerializableFont().isItalic());
+                                    for(TextSection section : songDisplayable.getSections()) {
+                                        section.setTempTheme(newTheme);
+                                        section.setTheme(newTheme);
+                                    }
+                                    songDisplayable.setTheme(newTheme);
+                                    Utils.updateSongInBackground(songDisplayable, true, false);
+                                    QueleaApp.get().getMainWindow().getMainPanel().getPreviewPanel().refresh();
+                                    QueleaApp.get().getMainWindow().getMainPanel().getLivePanel().refresh();
+                                }
+                            }
+                        }
+                        SongDisplayable displayable = (SongDisplayable) event.getDragboard().getContent(SongDisplayable.SONG_DISPLAYABLE_FORMAT);
+                        if(displayable != null) {
+                            if(listCell.isEmpty()) {
+                                add(displayable);
+                            }
+                            else {
+                                itemsProperty().get().add(listCell.getIndex(), displayable);
+                            }
+                        }
+                        event.consume();
+                    }
+                });
+                return listCell;
             }
         };
         setCellFactory(DisplayableListCell.<Displayable>forListView(popupMenu, callback, new Constraint<Displayable>() {
@@ -110,27 +159,6 @@ public class ScheduleList extends ListView<Displayable> {
                 if(t.getCode() == KeyCode.DELETE) {
                     new RemoveScheduleItemActionHandler().handle(null);
                 }
-            }
-        });
-        setOnDragOver(new EventHandler<DragEvent>() {
-            @Override
-            public void handle(DragEvent t) {
-                t.acceptTransferModes(TransferMode.ANY);
-            }
-        });
-        setOnDragDropped(new EventHandler<DragEvent>() {
-            @Override
-            public void handle(DragEvent event) {
-                String imageLocation = event.getDragboard().getString();
-                if(imageLocation != null) {
-                    ImageDisplayable img = new ImageDisplayable(new File(imageLocation));
-                    add(img);
-                }
-                SongDisplayable displayable = (SongDisplayable) event.getDragboard().getContent(SongDisplayable.SONG_DISPLAYABLE_FORMAT);
-                if(displayable != null) {
-                    add(displayable);
-                }
-                event.consume();
             }
         });
     }
@@ -251,12 +279,12 @@ public class ScheduleList extends ListView<Displayable> {
         }
         if(direction == Direction.UP && selectedIndex > 0) {
             selectionModelProperty().get().clearSelection();
-            Collections.swap(itemsProperty().get(), selectedIndex, selectedIndex-1);
+            Collections.swap(itemsProperty().get(), selectedIndex, selectedIndex - 1);
             selectionModelProperty().get().select(selectedIndex - 1);
         }
         if(direction == Direction.DOWN && selectedIndex < itemsProperty().get().size() - 1) {
             selectionModelProperty().get().clearSelection();
-            Collections.swap(itemsProperty().get(), selectedIndex, selectedIndex+1);
+            Collections.swap(itemsProperty().get(), selectedIndex, selectedIndex + 1);
             selectionModelProperty().get().select(selectedIndex + 1);
         }
         requestFocus();

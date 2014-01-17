@@ -41,16 +41,24 @@ public class SerializableFont implements Serializable {
         size = font.getSize();
         style = font.getStyle();
     }
+    
+    public boolean isBold() {
+        return style.toLowerCase().contains("bold");
+    }
+    
+    public boolean isItalic() {
+        return style.toLowerCase().contains("italic");
+    }
 
     public Font getFont() {
         Font ret;
-        if(style.toLowerCase().contains("bold") && style.toLowerCase().contains("italic")) {
+        if(isBold() && isItalic()) {
             ret = Font.font(family, FontWeight.BOLD, FontPosture.ITALIC, size);
         }
-        else if(style.toLowerCase().contains("bold")) {
+        else if(isBold()) {
             ret = Font.font(family, FontWeight.BOLD, FontPosture.REGULAR, size);
         }
-        else if(style.toLowerCase().contains("italic")) {
+        else if(isItalic()) {
             ret = Font.font(family, FontWeight.NORMAL, FontPosture.ITALIC, size);
         }
         else {

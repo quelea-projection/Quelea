@@ -127,6 +127,14 @@ public class ThemeDTO implements Serializable {
     public Font getFont() {
         return font.getFont();
     }
+    
+    /**
+     * Get the font in its raw serializable form.
+     * @return the serializable font.
+     */
+    public SerializableFont getSerializableFont() {
+        return font;
+    }
 
     /**
      * Get the paint of the font.
