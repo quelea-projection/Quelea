@@ -33,29 +33,29 @@ import org.quelea.services.languages.LabelGrabber;
 import org.quelea.services.utils.Utils;
 
 /**
- *
+ * An image background.
  * @author Michael
  */
 public class ImageBackground implements Background, Serializable {
 
-    private String imageLocation;
+    private String imageName;
     private transient Image originalImage;
     private transient boolean init = false;
 
     /**
      * Create a new background that's a certain image.
      * <p/>
-     * @param imageLocation the location of the background image.
+     * @param imageName the name of the background image in the img folder.
      */
-    public ImageBackground(String imageLocation) {
-        this.imageLocation = imageLocation;
+    public ImageBackground(String imageName) {
+        this.imageName = imageName;
         initImage();
     }
     
     private void initImage() {
         if(!init) {
             init=true;
-            File f = new File("img", imageLocation);
+            File f = new File("img", imageName);
             if(f.exists()) {
                 originalImage = new Image(f.toURI().toString());
             }
@@ -88,7 +88,7 @@ public class ImageBackground implements Background, Serializable {
      * @return the file representing the image background.
      */
     public File getImageFile() {
-        return new File(new File("img"), imageLocation.trim());
+        return new File(new File("img"), imageName.trim());
     }
 
     /**
@@ -98,7 +98,7 @@ public class ImageBackground implements Background, Serializable {
      * @return the current image location of the background.
      */
     public String getImageLocation() {
-        return imageLocation;
+        return imageName;
     }
 
     /**
@@ -132,7 +132,7 @@ public class ImageBackground implements Background, Serializable {
     @Override
     public int hashCode() {
         int hash = 5;
-        hash = 71 * hash + Objects.hashCode(this.imageLocation);
+        hash = 71 * hash + Objects.hashCode(this.imageName);
         hash = 71 * hash + Objects.hashCode(this.originalImage);
         return hash;
     }
@@ -146,7 +146,7 @@ public class ImageBackground implements Background, Serializable {
             return false;
         }
         final ImageBackground other = (ImageBackground) obj;
-        if(!Objects.equals(this.imageLocation, other.imageLocation)) {
+        if(!Objects.equals(this.imageName, other.imageName)) {
             return false;
         }
         if(!Objects.equals(this.originalImage, other.originalImage)) {
