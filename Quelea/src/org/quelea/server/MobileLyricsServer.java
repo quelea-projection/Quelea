@@ -27,6 +27,8 @@ import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.quelea.data.displayable.TextDisplayable;
@@ -45,11 +47,12 @@ import org.quelea.windows.main.QueleaApp;
  */
 public class MobileLyricsServer {
 
-    private static final boolean CACHE = true;
+    private static final boolean USE_CACHE = true;
     private static final Logger LOGGER = LoggerUtils.getLogger();
     private final HttpServer server;
     private boolean running;
     private String pageContent;
+    private final Map<String, byte[]> fileCache;
 
     /**
      * Create a new mobile lyrics server on a specified port. The port must not
@@ -59,10 +62,17 @@ public class MobileLyricsServer {
      * @throws IOException if something goes wrong.
      */
     public MobileLyricsServer(int port) throws IOException {
+        fileCache = new HashMap<>();
         server = HttpServer.create(new InetSocketAddress(port), 0);
         server.createContext("/", new RootHandler());
         server.createContext("/lyrics", new LyricsHandler());
         server.createContext("/chords", new ChordsHandler());
+        server.createContext("/jscolor.js", new FileHandler("icons/jscolor.js"));
+        server.createContext("/arrow.gif", new FileHandler("icons/arrow.gif"));
+        server.createContext("/gear.png", new FileHandler("icons/gear.png"));
+        server.createContext("/cross.gif", new FileHandler("icons/cross.gif"));
+        server.createContext("/hs.png", new FileHandler("icons/hs.png"));
+        server.createContext("/hv.png", new FileHandler("icons/hv.png"));
         server.setExecutor(null);
     }
 
@@ -109,13 +119,38 @@ public class MobileLyricsServer {
 
         @Override
         public void handle(HttpExchange t) throws IOException {
-            if(pageContent == null || !CACHE) {
+            if(pageContent == null || !USE_CACHE) {
                 pageContent = readFile("icons/defaultpage.htm");
                 pageContent = sortLabels(pageContent);
             }
             t.sendResponseHeaders(200, pageContent.length());
             try(OutputStream os = t.getResponseBody()) {
                 os.write(pageContent.getBytes());
+            }
+        }
+
+    }
+
+    private class FileHandler implements HttpHandler {
+
+        private String file;
+
+        public FileHandler(String file) {
+            this.file = file;
+        }
+
+        @Override
+        public void handle(HttpExchange t) throws IOException {
+            byte[] ret = fileCache.get(file);
+            if(ret == null) {
+                ret = Files.readAllBytes(Paths.get(file));
+                if(USE_CACHE) {
+                    fileCache.put(file, ret);
+                }
+            }
+            t.sendResponseHeaders(200, ret.length);
+            try(OutputStream os = t.getResponseBody()) {
+                os.write(ret);
             }
         }
 
