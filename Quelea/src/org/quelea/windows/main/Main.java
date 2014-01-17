@@ -125,7 +125,7 @@ public final class Main extends Application {
                             QueleaApp.get().setMobileLyricsServer(mls);
                         }
                         catch(IOException ex) {
-                            LOGGER.log(Level.SEVERE, "Couldn't create lyric server", ex);
+                            LOGGER.log(Level.INFO, "Couldn't create lyric server", ex);
                         }
                     }
                     else {
