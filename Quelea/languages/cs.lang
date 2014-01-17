@@ -391,3 +391,5 @@ mobile.lyrics.heading=Zobrazení textu písně
 mob.changed.label=Zobrazení textu písně v telefonu změněno
 mob.changed.message=Bude potřeba, abyste Queleu spustili znovu, aby se nové nastavení pro zobrazení textu písně v telefonu projevilo.
 navigate.mob.url.label=Adresa (URL) pro zobrazení textu písně v telefonu
+sundayplus.import.line1=Vyberte umístění databáze Sunday Plus níže.
+sp.button=Sunday Plus
