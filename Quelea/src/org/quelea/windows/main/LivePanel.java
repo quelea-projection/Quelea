@@ -212,7 +212,7 @@ public class LivePanel extends LivePreviewPanel {
                 VLCWindow.INSTANCE.setHideButton(hide.isSelected());
             }
         });
-        header.getItems().add(hide);
+//        header.getItems().add(hide);
         setTop(header);
         setOnKeyTyped(new EventHandler<KeyEvent>() {
             @Override
