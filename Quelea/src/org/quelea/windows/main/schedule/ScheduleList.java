@@ -27,13 +27,15 @@ import javafx.beans.property.ObjectProperty;
 import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
 import javafx.geometry.Pos;
-import javafx.scene.Node;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
 import javafx.scene.control.MultipleSelectionModel;
+import javafx.scene.input.ClipboardContent;
 import javafx.scene.input.DragEvent;
+import javafx.scene.input.Dragboard;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.input.TransferMode;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
@@ -68,6 +70,7 @@ public class ScheduleList extends StackPane {
     private Rectangle markerRect;
     private static final Logger LOGGER = LoggerUtils.getLogger();
     private ArrayList<ListCell<Displayable>> cells = new ArrayList<>();
+    private int localDragIndex = -1;
 
     /**
      * A direction; either up or down. Used for rearranging the order of items
@@ -109,6 +112,18 @@ public class ScheduleList extends StackPane {
                     }
                 };
                 cells.add(listCell);
+                listCell.setOnDragDetected(new EventHandler<MouseEvent>() {
+
+                    @Override
+                    public void handle(MouseEvent event) {
+                        localDragIndex = listCell.getIndex();
+                        Dragboard db = listCell.startDragAndDrop(TransferMode.ANY);
+                        ClipboardContent content = new ClipboardContent();
+                        content.put(SongDisplayable.SONG_DISPLAYABLE_FORMAT, listCell.getItem());
+                        db.setContent(content);
+                        event.consume();
+                    }
+                });
                 listCell.setOnDragEntered(new EventHandler<DragEvent>() {
 
                     @Override
@@ -184,11 +199,19 @@ public class ScheduleList extends StackPane {
                         }
                         SongDisplayable displayable = (SongDisplayable) event.getDragboard().getContent(SongDisplayable.SONG_DISPLAYABLE_FORMAT);
                         if(displayable != null) {
-                            if(listCell.isEmpty()) {
-                                add(displayable);
-                            }
-                            else {
-                                listView.itemsProperty().get().add(listCell.getIndex(), displayable);
+                            if(listCell.getIndex() != localDragIndex) {
+                                if(localDragIndex > -1) {
+                                    getItems().remove(localDragIndex);
+                                    localDragIndex = -1;
+                                }
+                                if(listCell.isEmpty()) {
+                                    add(displayable);
+                                    listView.getSelectionModel().selectLast();
+                                }
+                                else {
+                                    listView.itemsProperty().get().add(listCell.getIndex(), displayable);
+                                    listView.getSelectionModel().select(listCell.getIndex());
+                                }
                             }
                         }
                         event.consume();
