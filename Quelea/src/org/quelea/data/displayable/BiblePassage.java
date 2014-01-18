@@ -18,6 +18,7 @@
 package org.quelea.data.displayable;
 
 import java.io.File;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -34,7 +35,7 @@ import org.w3c.dom.NodeList;
  * A displayable passage from the bible.
  * @author Michael
  */
-public class BiblePassage implements TextDisplayable {
+public class BiblePassage implements TextDisplayable, Serializable {
 
     private String summary;
     private String[] smallText;

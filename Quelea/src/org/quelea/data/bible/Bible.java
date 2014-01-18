@@ -21,6 +21,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
@@ -42,7 +43,7 @@ import org.xml.sax.SAXException;
  * <p/>
  * @author Michael
  */
-public final class Bible implements BibleInterface  {
+public final class Bible implements BibleInterface, Serializable  {
 
     private static final Logger LOGGER = LoggerUtils.getLogger();
     private final String name;

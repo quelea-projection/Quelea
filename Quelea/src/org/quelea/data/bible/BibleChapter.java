@@ -17,6 +17,7 @@
  */
 package org.quelea.data.bible;
 
+import java.io.Serializable;
 import java.lang.ref.SoftReference;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -30,12 +31,12 @@ import org.quelea.services.utils.Utils;
  * <p/>
  * @author Michael
  */
-public final class BibleChapter implements BibleInterface {
+public final class BibleChapter implements BibleInterface, Serializable {
 
     private static int statId = 0;
     private final int num;
     private final List<BibleVerse> verses;
-    private SoftReference<String> softRefText;
+    private transient SoftReference<String> softRefText;
     private final int id = statId++;
     private BibleBook book;
 
