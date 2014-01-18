@@ -27,7 +27,6 @@ import javafx.beans.value.ObservableValue;
 import javafx.collections.ObservableList;
 import javafx.geometry.Orientation;
 import javafx.scene.control.SplitPane;
-import org.quelea.data.ImageBackground;
 import org.quelea.data.ThemeDTO;
 import org.quelea.data.displayable.TextDisplayable;
 import org.quelea.data.displayable.TextSection;
@@ -47,8 +46,8 @@ public class SelectLyricsPanel extends AbstractPanel {
     private final SelectLyricsList lyricsList;
     private final DisplayCanvas previewCanvas;
     private final SplitPane splitPane;
-    private LyricDrawer drawer;
-    private Map<DisplayCanvas, Boolean> logoWasShowingMap;
+    private final LyricDrawer drawer;
+    private final Map<DisplayCanvas, Boolean> logoWasShowingMap;
 
     /**
      * Create a new lyrics panel.
@@ -148,10 +147,6 @@ public class SelectLyricsPanel extends AbstractPanel {
         super.removeCurrentDisplayable();
         lyricsList.itemsProperty().get().clear();
         drawer.clear();
-    }
-
-    public DisplayCanvas getPreviewCanvas() {
-        return previewCanvas;
     }
 
     /**
