@@ -17,6 +17,7 @@
  */
 package org.quelea.data.bible;
 
+import java.io.Serializable;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
@@ -29,7 +30,7 @@ import org.quelea.services.utils.Utils;
  * General information about a specified bible.
  * @author Michael
  */
-public class BibleInfo {
+public class BibleInfo implements Serializable {
 
     private final Map<String, String> attributes;
 

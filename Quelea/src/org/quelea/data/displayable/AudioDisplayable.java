@@ -1,6 +1,7 @@
 package org.quelea.data.displayable;
 
 import java.io.File;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -13,7 +14,7 @@ import org.w3c.dom.Node;
  *
  * @author tomaszpio@gmail.com
  */
-public class AudioDisplayable implements MultimediaDisplayable {
+public class AudioDisplayable implements MultimediaDisplayable, Serializable {
 
     private final File file;
 

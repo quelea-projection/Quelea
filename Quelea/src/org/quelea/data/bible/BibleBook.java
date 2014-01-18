@@ -17,7 +17,7 @@
  */
 package org.quelea.data.bible;
 
-import java.lang.ref.SoftReference;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import org.quelea.services.utils.Utils;
@@ -28,7 +28,7 @@ import org.w3c.dom.NodeList;
  * A book in the bible.
  * @author Michael
  */
-public final class BibleBook implements BibleInterface  {
+public final class BibleBook implements BibleInterface, Serializable  {
 
     private int bookNumber;
     private String bookName;

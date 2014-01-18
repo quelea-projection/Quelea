@@ -17,6 +17,7 @@
  */
 package org.quelea.data.bible;
 
+import java.io.Serializable;
 import org.quelea.services.utils.Utils;
 import org.w3c.dom.Node;
 
@@ -24,7 +25,7 @@ import org.w3c.dom.Node;
  * A verse in the bible.
  * @author Michael
  */
-public final class BibleVerse implements BibleInterface  {
+public final class BibleVerse implements BibleInterface, Serializable  {
 
     private String verse;
     private int num;
