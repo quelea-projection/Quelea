@@ -91,8 +91,10 @@ public class ScheduleList extends ListView<Displayable> {
                 };
                 listCell.setOnDragOver(new EventHandler<DragEvent>() {
                     @Override
-                    public void handle(DragEvent t) {
-                        t.acceptTransferModes(TransferMode.ANY);
+                    public void handle(DragEvent event) {
+                        if(event.getDragboard().getString() != null || event.getDragboard().getContent(SongDisplayable.SONG_DISPLAYABLE_FORMAT) != null) {
+                            event.acceptTransferModes(TransferMode.ANY);
+                        }
                     }
                 });
                 listCell.setOnDragDropped(new EventHandler<DragEvent>() {
