@@ -23,6 +23,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.application.Platform;
 import javafx.event.EventHandler;
+import javafx.scene.Cursor;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
 import javafx.scene.input.DragEvent;
@@ -89,6 +90,24 @@ public class ScheduleList extends ListView<Displayable> {
                         }
                     }
                 };
+                listCell.setOnDragEntered(new EventHandler<DragEvent>() {
+
+                    @Override
+                    public void handle(DragEvent event) {
+                        if(!listCell.isEmpty()) {
+                            if(event.getDragboard().getString()!=null) {
+                                listCell.setStyle("-fx-background-color: #99cccc;");
+                            }
+                        }
+                    }
+                });
+                listCell.setOnDragExited(new EventHandler<DragEvent>() {
+
+                    @Override
+                    public void handle(DragEvent t) {
+                        listCell.setStyle("");
+                    }
+                });
                 listCell.setOnDragOver(new EventHandler<DragEvent>() {
                     @Override
                     public void handle(DragEvent event) {
@@ -100,6 +119,7 @@ public class ScheduleList extends ListView<Displayable> {
                 listCell.setOnDragDropped(new EventHandler<DragEvent>() {
                     @Override
                     public void handle(DragEvent event) {
+                        listCell.setStyle("-fx-border-color: rgb(0, 0, 0);-fx-border-width: 0,0,0,0;");
                         String imageLocation = event.getDragboard().getString();
                         if(imageLocation != null) {
                             if(listCell.isEmpty()) {
