@@ -18,18 +18,26 @@
 package org.quelea.windows.main.schedule;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.application.Platform;
+import javafx.beans.property.ObjectProperty;
+import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
-import javafx.scene.Cursor;
+import javafx.geometry.Pos;
+import javafx.scene.Node;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
+import javafx.scene.control.MultipleSelectionModel;
 import javafx.scene.input.DragEvent;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.TransferMode;
+import javafx.scene.layout.StackPane;
+import javafx.scene.paint.Color;
+import javafx.scene.shape.Rectangle;
 import javafx.util.Callback;
 import org.quelea.data.ImageBackground;
 import org.quelea.data.Schedule;
@@ -52,11 +60,14 @@ import org.quelea.windows.multimedia.VLCWindow;
  * <p/>
  * @author Michael
  */
-public class ScheduleList extends ListView<Displayable> {
+public class ScheduleList extends StackPane {
 
+    private ListView<Displayable> listView;
     private Schedule schedule;
     private final ScheduleSongPopupMenu popupMenu;
+    private Rectangle markerRect;
     private static final Logger LOGGER = LoggerUtils.getLogger();
+    private ArrayList<ListCell<Displayable>> cells = new ArrayList<>();
 
     /**
      * A direction; either up or down. Used for rearranging the order of items
@@ -71,6 +82,13 @@ public class ScheduleList extends ListView<Displayable> {
      * Create a new schedule list.
      */
     public ScheduleList() {
+        setAlignment(Pos.TOP_LEFT);
+        listView = new ListView<>();
+        getChildren().add(listView);
+        markerRect = new Rectangle(200, 3, Color.GRAY);
+        markerRect.setVisible(false);
+        getChildren().add(markerRect);
+        markerRect.toFront();
         popupMenu = new ScheduleSongPopupMenu();
         Callback<ListView<Displayable>, ListCell<Displayable>> callback = new Callback<ListView<Displayable>, ListCell<Displayable>>() {
             @Override
@@ -90,13 +108,34 @@ public class ScheduleList extends ListView<Displayable> {
                         }
                     }
                 };
+                cells.add(listCell);
                 listCell.setOnDragEntered(new EventHandler<DragEvent>() {
 
                     @Override
                     public void handle(DragEvent event) {
-                        if(!listCell.isEmpty()) {
-                            if(event.getDragboard().getString()!=null) {
-                                listCell.setStyle("-fx-background-color: #99cccc;");
+                        int size = listView.getItems().size();
+                        if(listCell.isEmpty()) {
+                            if(event.getDragboard().getContent(SongDisplayable.SONG_DISPLAYABLE_FORMAT) != null || event.getDragboard().getString() != null) {
+                                for(ListCell<Displayable> cell : cells) {
+                                    if(cell.isVisible() && cell.getIndex() == size) {
+                                        markerRect.setTranslateX(cell.getLayoutX() + cell.getTranslateX());
+                                        markerRect.setTranslateY(cell.getLayoutY() + cell.getTranslateY());
+                                        markerRect.setVisible(true);
+                                        break;
+                                    }
+                                }
+                            }
+                        }
+                        else {
+                            if(event.getDragboard().getString() != null) {
+                                if(listCell.getItem() instanceof SongDisplayable) {
+                                    listCell.setStyle("-fx-background-color: #99cccc;");
+                                }
+                            }
+                            else if(event.getDragboard().getContent(SongDisplayable.SONG_DISPLAYABLE_FORMAT) != null) {
+                                markerRect.setTranslateX(listCell.getLayoutX() + listCell.getTranslateX());
+                                markerRect.setTranslateY(listCell.getLayoutY() + listCell.getTranslateY());
+                                markerRect.setVisible(true);
                             }
                         }
                     }
@@ -106,6 +145,7 @@ public class ScheduleList extends ListView<Displayable> {
                     @Override
                     public void handle(DragEvent t) {
                         listCell.setStyle("");
+                        markerRect.setVisible(false);
                     }
                 });
                 listCell.setOnDragOver(new EventHandler<DragEvent>() {
@@ -148,7 +188,7 @@ public class ScheduleList extends ListView<Displayable> {
                                 add(displayable);
                             }
                             else {
-                                itemsProperty().get().add(listCell.getIndex(), displayable);
+                                listView.itemsProperty().get().add(listCell.getIndex(), displayable);
                             }
                         }
                         event.consume();
@@ -157,7 +197,7 @@ public class ScheduleList extends ListView<Displayable> {
                 return listCell;
             }
         };
-        setCellFactory(DisplayableListCell.<Displayable>forListView(popupMenu, callback, new Constraint<Displayable>() {
+        listView.setCellFactory(DisplayableListCell.<Displayable>forListView(popupMenu, callback, new Constraint<Displayable>() {
             @Override
             public boolean isTrue(Displayable d) {
                 return d instanceof SongDisplayable;
@@ -188,7 +228,7 @@ public class ScheduleList extends ListView<Displayable> {
         if(!Platform.isFxApplicationThread()) {
             LOGGER.log(Level.WARNING, "Not on the platform thread!", new RuntimeException("DEBUG EX"));
         }
-        itemsProperty().get().add(displayable);
+        listView.itemsProperty().get().add(displayable);
     }
 
     /**
@@ -198,9 +238,9 @@ public class ScheduleList extends ListView<Displayable> {
      */
     public Schedule getSchedule() {
         boolean equal = true;
-        if(itemsProperty().get().size() == schedule.getSize()) {
-            for(int i = 0; i < itemsProperty().get().size(); i++) {
-                Displayable displayable = itemsProperty().get().get(i);
+        if(listView.itemsProperty().get().size() == schedule.getSize()) {
+            for(int i = 0; i < listView.itemsProperty().get().size(); i++) {
+                Displayable displayable = listView.itemsProperty().get().get(i);
                 if(displayable != null && !displayable.equals(schedule.getDisplayable(i))) {
                     equal = false;
                 }
@@ -213,8 +253,8 @@ public class ScheduleList extends ListView<Displayable> {
             return schedule;
         }
         schedule.clear();
-        for(int i = 0; i < itemsProperty().get().size(); i++) {
-            schedule.add(itemsProperty().get().get(i));
+        for(int i = 0; i < listView.itemsProperty().get().size(); i++) {
+            schedule.add(listView.itemsProperty().get().get(i));
         }
         return schedule;
     }
@@ -231,7 +271,7 @@ public class ScheduleList extends ListView<Displayable> {
             if(displayable instanceof SongDisplayable) {
                 ((SongDisplayable) displayable).matchID();
             }
-            itemsProperty().get().add(displayable);
+            listView.itemsProperty().get().add(displayable);
         }
         this.schedule = schedule;
     }
@@ -240,7 +280,7 @@ public class ScheduleList extends ListView<Displayable> {
      * Clear the current schedule without warning.
      */
     public void clearSchedule() {
-        itemsProperty().get().clear();
+        listView.itemsProperty().get().clear();
     }
 
     /**
@@ -253,12 +293,39 @@ public class ScheduleList extends ListView<Displayable> {
     }
 
     /**
+     * Get the selection model of the underlying list.
+     * <p>
+     * @return the selection model of the listview.
+     */
+    public MultipleSelectionModel<Displayable> getSelectionModel() {
+        return listView.getSelectionModel();
+    }
+
+    /**
+     * Get the items property of the underlying list.
+     * <p>
+     * @return the items property of the underlying list.
+     */
+    public ObjectProperty<ObservableList<Displayable>> itemsProperty() {
+        return listView.itemsProperty();
+    }
+
+    /**
+     * Return the items of the underlying list.
+     * <p>
+     * @return the items of the underlying list.
+     */
+    public ObservableList<Displayable> getItems() {
+        return listView.getItems();
+    }
+
+    /**
      * Determine whether the schedule list is empty.
      * <p/>
      * @return true if it's empty, false otherwise.
      */
     public boolean isEmpty() {
-        return itemsProperty().get().isEmpty();
+        return listView.itemsProperty().get().isEmpty();
     }
 
     /**
@@ -266,9 +333,9 @@ public class ScheduleList extends ListView<Displayable> {
      * no selected item.
      */
     public void removeCurrentItem() {
-        int selectedIndex = selectionModelProperty().get().getSelectedIndex();
+        int selectedIndex = listView.selectionModelProperty().get().getSelectedIndex();
         if(selectedIndex != -1) {
-            Displayable d = selectionModelProperty().get().getSelectedItem();
+            Displayable d = listView.selectionModelProperty().get().getSelectedItem();
             Displayable live = QueleaApp.get().getMainWindow().getMainPanel().getLivePanel().getDisplayable();
             if(d == live && QueleaProperties.get().getClearLiveOnRemove()) {
                 QueleaApp.get().getMainWindow().getMainPanel().getLivePanel().removeDisplayable();
@@ -284,7 +351,7 @@ public class ScheduleList extends ListView<Displayable> {
             else {
                 d.dispose();
             }
-            itemsProperty().get().remove(selectedIndex);
+            listView.itemsProperty().get().remove(selectedIndex);
         }
     }
 
@@ -294,19 +361,19 @@ public class ScheduleList extends ListView<Displayable> {
      * @param direction the direction to move the selected item.
      */
     public void moveCurrentItem(Direction direction) {
-        int selectedIndex = selectionModelProperty().get().getSelectedIndex();
+        int selectedIndex = listView.selectionModelProperty().get().getSelectedIndex();
         if(selectedIndex == -1) { //Nothing selected
             return;
         }
         if(direction == Direction.UP && selectedIndex > 0) {
-            selectionModelProperty().get().clearSelection();
-            Collections.swap(itemsProperty().get(), selectedIndex, selectedIndex - 1);
-            selectionModelProperty().get().select(selectedIndex - 1);
+            listView.selectionModelProperty().get().clearSelection();
+            Collections.swap(listView.itemsProperty().get(), selectedIndex, selectedIndex - 1);
+            listView.selectionModelProperty().get().select(selectedIndex - 1);
         }
-        if(direction == Direction.DOWN && selectedIndex < itemsProperty().get().size() - 1) {
-            selectionModelProperty().get().clearSelection();
-            Collections.swap(itemsProperty().get(), selectedIndex, selectedIndex + 1);
-            selectionModelProperty().get().select(selectedIndex + 1);
+        if(direction == Direction.DOWN && selectedIndex < listView.itemsProperty().get().size() - 1) {
+            listView.selectionModelProperty().get().clearSelection();
+            Collections.swap(listView.itemsProperty().get(), selectedIndex, selectedIndex + 1);
+            listView.selectionModelProperty().get().select(selectedIndex + 1);
         }
         requestFocus();
     }
