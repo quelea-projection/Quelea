@@ -212,6 +212,9 @@ public class ScheduleList extends StackPane {
                                     listView.itemsProperty().get().add(listCell.getIndex(), displayable);
                                     listView.getSelectionModel().select(listCell.getIndex());
                                 }
+                                listView.requestFocus();
+                                QueleaApp.get().getMainWindow().getMainPanel().getPreviewPanel().setDisplayable(displayable, 0);
+                                QueleaApp.get().getMainWindow().getMainPanel().getPreviewPanel().refresh();
                             }
                         }
                         event.consume();
