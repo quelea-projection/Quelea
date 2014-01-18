@@ -111,7 +111,6 @@ public class ScheduleList extends ListView<Displayable> {
                                     ThemeDTO theme = songDisplayable.getTheme();
                                     ThemeDTO newTheme = new ThemeDTO(theme.getSerializableFont(), theme.getFontPaint(), new ImageBackground(new File(imageLocation).getName()), theme.getShadow(), theme.getSerializableFont().isBold(), theme.getSerializableFont().isItalic());
                                     for(TextSection section : songDisplayable.getSections()) {
-                                        section.setTempTheme(newTheme);
                                         section.setTheme(newTheme);
                                     }
                                     songDisplayable.setTheme(newTheme);
