@@ -200,7 +200,7 @@ public class SchedulePanel extends BorderPane {
             removeButton.setDisable(false);
             upButton.setDisable(false);
             downButton.setDisable(false);
-            QueleaApp.get().getMainWindow().getMainPanel().getPreviewPanel().setDisplayable(scheduleList.selectionModelProperty().get().getSelectedItem(), 0);
+            QueleaApp.get().getMainWindow().getMainPanel().getPreviewPanel().setDisplayable(scheduleList.getSelectionModel().getSelectedItem(), 0);
         }
     }
 
