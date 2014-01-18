@@ -197,7 +197,7 @@ public class ScheduleList extends StackPane {
                                 }
                             }
                         }
-                        SongDisplayable displayable = (SongDisplayable) event.getDragboard().getContent(SongDisplayable.SONG_DISPLAYABLE_FORMAT);
+                        final SongDisplayable displayable = (SongDisplayable) event.getDragboard().getContent(SongDisplayable.SONG_DISPLAYABLE_FORMAT);
                         if(displayable != null) {
                             if(listCell.getIndex() != localDragIndex) {
                                 if(localDragIndex > -1) {
@@ -213,8 +213,14 @@ public class ScheduleList extends StackPane {
                                     listView.getSelectionModel().select(listCell.getIndex());
                                 }
                                 listView.requestFocus();
-                                QueleaApp.get().getMainWindow().getMainPanel().getPreviewPanel().setDisplayable(displayable, 0);
-                                QueleaApp.get().getMainWindow().getMainPanel().getPreviewPanel().refresh();
+                                Platform.runLater(new Runnable() {
+
+                                    @Override
+                                    public void run() {
+                                        QueleaApp.get().getMainWindow().getMainPanel().getPreviewPanel().setDisplayable(displayable, 0);
+                                        QueleaApp.get().getMainWindow().getMainPanel().getPreviewPanel().refresh();
+                                    }
+                                });
                             }
                         }
                         event.consume();
