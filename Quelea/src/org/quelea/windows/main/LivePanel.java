@@ -21,8 +21,6 @@ import java.io.File;
 import java.util.HashSet;
 import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
-import javafx.geometry.Insets;
-import javafx.geometry.Pos;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.control.ToggleButton;
@@ -57,18 +55,20 @@ public class LivePanel extends LivePreviewPanel {
     private HBox loopBox;
     private final ToggleButton loop;
     private final TextField loopDuration;
-    
+
     private final ToggleButton logo;
     private final ToggleButton black;
     private final ToggleButton clear;
     private final ToggleButton hide;
+
+    private final ToolBar header;
 
     /**
      * Create a new live lyrics panel.
      */
     public LivePanel() {
         getPresentationPanel().setLive();
-        ToolBar header = new ToolBar();
+        header = new ToolBar();
         Label headerLabel = new Label(LabelGrabber.INSTANCE.getLabel("live.heading"));
         headerLabel.setStyle("-fx-font-weight: bold;");
         header.getItems().add(headerLabel);
@@ -98,12 +98,10 @@ public class LivePanel extends LivePreviewPanel {
             }
         });
         loopBox = new HBox(5);
+        loopBox.getChildren().add(new Label("   "));
         loopBox.getChildren().add(loop);
         loopBox.getChildren().add(loopDuration);
         loopBox.getChildren().add(new Label(LabelGrabber.INSTANCE.getLabel("seconds.label")));
-        header.getItems().add(new Label("   ")); //Spacer
-        header.getItems().add(loopBox);
-        loopBox.setVisible(false);
         Region spacer = new Region();
         HBox.setHgrow(spacer, Priority.ALWAYS);
         header.getItems().add(spacer);
@@ -235,10 +233,12 @@ public class LivePanel extends LivePreviewPanel {
         super.setDisplayable(d, index);
         loop.setSelected(false);
         if(d instanceof PresentationDisplayable) {
-            loopBox.setVisible(true);
+            if(!header.getItems().contains(loopBox)) {
+                header.getItems().add(1, loopBox);
+            }
         }
         else {
-            loopBox.setVisible(false);
+            header.getItems().remove(loopBox);
         }
         if(d == null) {
             clear.setSelected(false);
@@ -284,7 +284,7 @@ public class LivePanel extends LivePreviewPanel {
             hide.fire();
         }
     }
-    
+
     /**
      * Toggle the "logo" button.
      */
@@ -293,9 +293,10 @@ public class LivePanel extends LivePreviewPanel {
             logo.fire();
         }
     }
-    
+
     /**
      * Determine if the loop button is selected.
+     * <p>
      * @return true if it's selected, false otherwise.
      */
     public boolean isLoopSelected() {
@@ -305,7 +306,7 @@ public class LivePanel extends LivePreviewPanel {
     public TextField getLoopDurationTextField() {
         return loopDuration;
     }
-    
+
     /**
      * Get the hide button.
      * <p>
@@ -314,18 +315,18 @@ public class LivePanel extends LivePreviewPanel {
     public ToggleButton getHide() {
         return hide;
     }
-    
+
     /**
      * Calls updateLogo() on each canvas. A tidy method.
      */
     private void updateLogo() {
         HashSet<DisplayCanvas> canvases = new HashSet<>();
         canvases.addAll(getCanvases());
-        for (DisplayCanvas canvas : canvases) {
+        for(DisplayCanvas canvas : canvases) {
             canvas.updateLogo();
         }
     }
-    
+
     public void updateCanvases() {
         HashSet<DisplayCanvas> canvases = new HashSet<>();
         canvases.addAll(getCanvases());
