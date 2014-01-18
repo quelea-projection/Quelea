@@ -34,6 +34,7 @@ import org.quelea.services.utils.LoggerUtils;
 import org.quelea.windows.main.AbstractPanel;
 import org.quelea.windows.main.DisplayableDrawer;
 import org.quelea.windows.main.LivePreviewPanel;
+import org.quelea.windows.main.widgets.DisplayPreview;
 
 /**
  * The panel where the lyrics for different songs can be selected.
@@ -66,9 +67,10 @@ public class SelectLyricsPanel extends AbstractPanel {
                 updateCanvas();
             }
         }, Priority.LOW);
+        DisplayPreview preview = new DisplayPreview(previewCanvas);
         splitPane.setStyle("-fx-background-color: rgba(0, 0, 0);");
         splitPane.getItems().add(lyricsList);
-        splitPane.getItems().add(previewCanvas);
+        splitPane.getItems().add(preview);
         setCenter(splitPane);
         registerDisplayCanvas(previewCanvas);
         lyricsList.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<TextSection>() {
