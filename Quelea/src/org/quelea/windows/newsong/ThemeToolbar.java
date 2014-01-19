@@ -200,7 +200,7 @@ public class ThemeToolbar extends HBox {
                 themePanel.updateTheme(true, null);
             }
         });
-        Button backgroundVidSelectButton = new VideoButton(backgroundImageLocation, themePanel.getCanvas());
+        Button backgroundVidSelectButton = new VideoButton(backgroundVidLocation, themePanel.getCanvas());
         vidPanel.getChildren().add(backgroundVidLocation);
         vidPanel.getChildren().add(backgroundVidSelectButton);
         backCentre.add(vidPanel, "video");
