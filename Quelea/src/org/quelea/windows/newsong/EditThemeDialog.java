@@ -22,6 +22,7 @@ import java.io.File;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.EventHandler;
+import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
@@ -33,9 +34,11 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import javafx.stage.StageStyle;
 import org.quelea.data.ThemeDTO;
 import org.quelea.services.languages.LabelGrabber;
 import org.quelea.services.utils.QueleaProperties;
+import org.quelea.services.utils.Utils;
 
 /**
  * A modal dialog where a theme can be edited.
@@ -56,13 +59,20 @@ public class EditThemeDialog extends Stage {
      */
     public EditThemeDialog() {
         initModality(Modality.WINDOW_MODAL);
+        initStyle(StageStyle.UTILITY);
+        Utils.addIconsToStage(this);
         setTitle(LabelGrabber.INSTANCE.getLabel("edit.theme.heading"));
         setResizable(false);
         
         BorderPane mainPane = new BorderPane();
-        HBox northPanel = new HBox();
+        mainPane.setStyle("-fx-background-color:#dddddd;");
+        HBox northPanel = new HBox(5);
+        northPanel.setPadding(new Insets(5));
         mainPane.setTop(northPanel);
-        northPanel.getChildren().add(new Label(LabelGrabber.INSTANCE.getLabel("theme.name.label")));
+        Label themeNameLabel = new Label(LabelGrabber.INSTANCE.getLabel("theme.name.label") + ": ");
+        themeNameLabel.setMaxHeight(Integer.MAX_VALUE);
+        themeNameLabel.setAlignment(Pos.CENTER);
+        northPanel.getChildren().add(themeNameLabel);
         nameField = new TextField();
         nameField.textProperty().addListener(new ChangeListener<String>() {
 
@@ -96,7 +106,8 @@ public class EditThemeDialog extends Stage {
             }
         });
         
-        HBox southPanel = new HBox();
+        HBox southPanel = new HBox(10);
+        southPanel.setPadding(new Insets(10));
         southPanel.setAlignment(Pos.CENTER);
         southPanel.getChildren().add(confirmButton);
         southPanel.getChildren().add(cancelButton);
