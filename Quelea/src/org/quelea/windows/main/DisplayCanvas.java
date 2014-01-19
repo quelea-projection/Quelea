@@ -374,11 +374,11 @@ public class DisplayCanvas extends StackPane {
     public void setLogoDisplaying(boolean selected) {
         if (selected) {
             logoImage.toFront();
-            FadeTransition ft = new FadeTransition(Duration.seconds(0.5), logoImage);
+            FadeTransition ft = new FadeTransition(Duration.seconds(1.5), logoImage);
             ft.setToValue(1);
             ft.play();
         } else {
-            FadeTransition ft = new FadeTransition(Duration.seconds(0.5), logoImage);
+            FadeTransition ft = new FadeTransition(Duration.seconds(1.5), logoImage);
             ft.setToValue(0);
             ft.play();
         }
