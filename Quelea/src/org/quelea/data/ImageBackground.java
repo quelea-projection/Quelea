@@ -56,7 +56,7 @@ public class ImageBackground implements Background, Serializable {
         if(!init) {
             init=true;
             File f = new File("img", imageName);
-            if(f.exists()) {
+            if(f.exists() && !imageName.trim().isEmpty()) {
                 originalImage = new Image(f.toURI().toString());
             }
             else {
