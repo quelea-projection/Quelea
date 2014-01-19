@@ -21,7 +21,7 @@ public class ThemeDao {
     
     @SuppressWarnings("unchecked")
     public List<Theme> getThemes() {
-        Query getAllSongQuery = session.createQuery("from Theme");
-        return (List<Theme>)getAllSongQuery.list();
+        Query getAllTheme = session.createQuery("from Theme");
+        return (List<Theme>)getAllTheme.list();
     }
 }
