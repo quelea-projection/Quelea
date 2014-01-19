@@ -151,6 +151,7 @@ notes.label=Notes
 font.theme.label=Písmo
 choose.color.text=Vybrat barvu...
 background.theme.label=Podoba pozadí
+background.text=Pozadí
 color.theme.label=Barva
 image.theme.label=Obrázek
 select.color.title=Výběr barvy

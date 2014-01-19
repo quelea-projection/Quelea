@@ -21,12 +21,13 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.StringReader;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Properties;
 import java.util.logging.Level;
 import javafx.geometry.BoundingBox;
 import javafx.geometry.Bounds;
 import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
 import javafx.scene.paint.Color;
 import org.quelea.data.bible.Bible;
 import org.quelea.data.displayable.TextAlignment;
@@ -168,6 +169,37 @@ public final class QueleaProperties extends Properties {
      */
     public void setSceneInfo(SceneInfo info) {
         setProperty("scene.info", info.toString());
+        write();
+    }
+
+    /**
+     * Get a list of user chosen fonts to appear in the theme dialog.
+     * <p>
+     * @return a list of user chosen fonts to appear in the theme dialog.
+     */
+    public List<String> getChosenFonts() {
+        String fontStr = getProperty("chosen.fonts", "");
+        List<String> ret = new ArrayList<>();
+        for(String str : fontStr.split("\\|")) {
+            ret.add(str);
+        }
+        return ret;
+    }
+
+    /**
+     * Set a list of user chosen fonts to appear in the theme dialog.
+     * <p>
+     * @param fonts the list of user chosen fonts to appear in the theme dialog.
+     */
+    public void setChosenFonts(List<String> fonts) {
+        StringBuilder fontBuilder = new StringBuilder();
+        for(int i = 0; i < fonts.size(); i++) {
+            fontBuilder.append(fonts.get(i));
+            if(i < fonts.size() - 1) {
+                fontBuilder.append("|");
+            }
+        }
+        setProperty("chosen.fonts", fontBuilder.toString());
         write();
     }
 
@@ -395,7 +427,7 @@ public final class QueleaProperties extends Properties {
     public File getImageDir() {
         return new File(getQueleaUserHome(), "img");
     }
-    
+
     /**
      * Get the directory used for storing dictionaries.
      * <p/>

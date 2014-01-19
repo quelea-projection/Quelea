@@ -150,6 +150,7 @@ notes.label= Notizen
 font.theme.label= Schriftart
 choose.color.text= Farbe wählen...
 background.theme.label= Hintergrund-Vorlage
+background.text=Hintergrund
 color.theme.label= Farbe
 image.theme.label= Bild
 select.color.title= Farbauswahl
