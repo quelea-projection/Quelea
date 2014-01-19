@@ -17,51 +17,18 @@
  */
 package org.quelea.windows.newsong;
 
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.OutputStreamWriter;
-import java.util.Arrays;
 import javafx.application.Platform;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
-import javafx.geometry.Side;
-import javafx.scene.control.Button;
-import javafx.scene.control.ColorPicker;
-import javafx.scene.control.ComboBox;
-import javafx.scene.control.ContextMenu;
-import javafx.scene.control.Label;
-import javafx.scene.control.MenuItem;
-import javafx.scene.control.TextField;
-import javafx.scene.control.ToggleButton;
-import javafx.scene.control.Tooltip;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
-import javafx.scene.text.Font;
-import javafx.scene.text.FontPosture;
-import javafx.scene.text.FontWeight;
 import org.javafx.dialog.Dialog;
-import org.quelea.data.Background;
 import org.quelea.data.ColourBackground;
-import org.quelea.data.ImageBackground;
 import org.quelea.data.ThemeDTO;
-import org.quelea.data.VideoBackground;
 import org.quelea.services.languages.LabelGrabber;
-import org.quelea.services.utils.QueleaProperties;
-import org.quelea.services.utils.SerializableDropShadow;
-import org.quelea.services.utils.SerializableFont;
 import org.quelea.services.utils.Utils;
 import org.quelea.windows.main.DisplayCanvas;
 import org.quelea.windows.lyrics.LyricDrawer;
 import org.quelea.windows.main.DisplayCanvas.Priority;
-import org.quelea.windows.main.schedule.ScheduleThemeNode;
-import org.quelea.windows.main.widgets.CardPane;
+import org.quelea.windows.main.widgets.DisplayPreview;
 
 /**
  * The panel where the user chooses what visual theme a song should have.
@@ -72,282 +39,35 @@ public class ThemePanel extends BorderPane {
 
     private static final double THRESHOLD = 0.1;
     public static final String[] SAMPLE_LYRICS = {"Amazing Grace how sweet the sound", "That saved a wretch like me", "I once was lost but now am found", "Was blind, but now I see."};
-    private HBox fontToolbar;
-    private HBox backgroundPanel;
-    private ComboBox<String> fontSelection;
-    private ColorPicker fontColorPicker;
-    private ColorPicker backgroundColorPicker;
-    private ComboBox<String> backgroundTypeSelect;
-    //Text shadow options
-    private VBox shadowPanel;
-    private HBox themeActionsPanel;
-    private ColorPicker shadowColorPicker;
-    private TextField shadowOffsetX;
-    private TextField shadowOffsetY;
-    private TextField backgroundImgLocation;
-    private TextField backgroundVidLocation;
-    private ToggleButton boldButton;
-    private ToggleButton italicButton;
-    private TextField themeNameField;
-    private Button saveThemeButton;
-    private Button selectThemeButton;
-    private final DisplayCanvas canvas;
+    private final DisplayPreview preview;
+    private final ThemeToolbar themeToolbar;
     private ThemeDTO selectedTheme = null;
 
     /**
      * Create and initialise the theme panel.
      */
     public ThemePanel() {
-        canvas = new DisplayCanvas(false, false, false, new DisplayCanvas.CanvasUpdater() {
+        DisplayCanvas canvas = new DisplayCanvas(false, false, false, new DisplayCanvas.CanvasUpdater() {
             @Override
             public void updateCallback() {
                 updateTheme(true, null);
             }
         }, Priority.LOW);
-        setCenter(canvas);
+        preview = new DisplayPreview(canvas);
+        setCenter(preview);
         LyricDrawer drawer = new LyricDrawer();
         drawer.setCanvas(canvas);
         drawer.setText(SAMPLE_LYRICS, null, false, -1);
-        VBox toolbarPanel = new VBox();
-        setupFontToolbar();
-        toolbarPanel.getChildren().add(fontToolbar);
-        setupBackgroundToolbar();
-        toolbarPanel.getChildren().add(backgroundPanel);
-        setupShadowPanel();
-        toolbarPanel.getChildren().add(shadowPanel);
-        //setupThemeActionsToolbars(); //@todo to be finished
-        //toolbarPanel.getChildren().add(themeActionsPanel);
-        setTop(toolbarPanel);
+        themeToolbar = new ThemeToolbar(this);
+        setTop(themeToolbar);
         updateTheme(false, null);
         setMaxSize(800, 600);
     }
 
     /**
-     * Setup the background toolbar.
-     */
-    private void setupBackgroundToolbar() {
-        backgroundPanel = new HBox();
-        final CardPane<HBox> backgroundChooserPanel = new CardPane<>();
-
-        backgroundTypeSelect = new ComboBox<>();
-        backgroundTypeSelect.getItems().add(LabelGrabber.INSTANCE.getLabel("color.theme.label"));
-        backgroundTypeSelect.getItems().add(LabelGrabber.INSTANCE.getLabel("image.theme.label"));
-        backgroundTypeSelect.getItems().add(LabelGrabber.INSTANCE.getLabel("video.theme.label"));
-        backgroundTypeSelect.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
-            @Override
-            public void changed(ObservableValue<? extends String> ov, String t, String t1) {
-                updateTheme(false, null);
-            }
-        });
-        backgroundPanel.getChildren().add(new Label(LabelGrabber.INSTANCE.getLabel("background.theme.label") + ":"));
-        backgroundPanel.getChildren().add(backgroundTypeSelect);
-        backgroundPanel.getChildren().add(backgroundChooserPanel);
-
-        final HBox colourPanel = new HBox();
-
-        backgroundColorPicker = new ColorPicker(Color.BLACK);
-        colourPanel.getChildren().add(backgroundColorPicker);
-        backgroundColorPicker.valueProperty().addListener(new ChangeListener<Color>() {
-            @Override
-            public void changed(ObservableValue<? extends Color> ov, Color t, Color t1) {
-                updateTheme(true, null);
-            }
-        });
-
-        final HBox imagePanel = new HBox();
-        backgroundImgLocation = new TextField();
-        backgroundImgLocation.textProperty().addListener(new ChangeListener<String>() {
-            @Override
-            public void changed(ObservableValue<? extends String> ov, String t, String t1) {
-                updateTheme(true, null);
-            }
-        });
-        backgroundImgLocation.setEditable(false);
-        imagePanel.getChildren().add(backgroundImgLocation);
-        imagePanel.getChildren().add(new ImageButton(backgroundImgLocation, canvas));
-
-        final HBox videoPanel = new HBox();
-        backgroundVidLocation = new TextField();
-        backgroundVidLocation.textProperty().addListener(new ChangeListener<String>() {
-            @Override
-            public void changed(ObservableValue<? extends String> ov, String t, String t1) {
-                updateTheme(true, null);
-            }
-        });
-        backgroundVidLocation.setEditable(false);
-        videoPanel.getChildren().add(backgroundVidLocation);
-        videoPanel.getChildren().add(new VideoButton(backgroundVidLocation, canvas));
-
-        backgroundChooserPanel.add(colourPanel, "colour");
-        backgroundChooserPanel.add(imagePanel, "image");
-        backgroundChooserPanel.add(videoPanel, "video");
-
-        backgroundTypeSelect.setOnAction(new EventHandler<javafx.event.ActionEvent>() {
-            @Override
-            public void handle(javafx.event.ActionEvent t) {
-                if(backgroundTypeSelect.getSelectionModel().getSelectedItem().equals(LabelGrabber.INSTANCE.getLabel("color.theme.label"))) {
-                    backgroundChooserPanel.show("colour");
-                }
-                else if(backgroundTypeSelect.getSelectionModel().getSelectedItem().equals(LabelGrabber.INSTANCE.getLabel("image.theme.label"))) {
-                    backgroundChooserPanel.show("image");
-                }
-                else if(backgroundTypeSelect.getSelectionModel().getSelectedItem().equals(LabelGrabber.INSTANCE.getLabel("video.theme.label"))) {
-                    backgroundChooserPanel.show("video");
-                }
-                else {
-                    throw new AssertionError("Bug - " + backgroundTypeSelect.getSelectionModel().getSelectedItem() + " is an unknown selection value");
-                }
-            }
-        });
-    }
-
-    /**
-     *
-     */
-    private void setupShadowPanel() {
-        shadowPanel = new VBox();
-        final HBox confFirstLine = new HBox();
-
-        shadowColorPicker = new ColorPicker(Color.BLACK);
-        final HBox colourPanel = new HBox();
-        colourPanel.getChildren().add(new Label(LabelGrabber.INSTANCE.getLabel("shadow.color"))); //@todo add languages
-        colourPanel.getChildren().add(shadowColorPicker);
-        confFirstLine.getChildren().add(colourPanel);
-        shadowColorPicker.valueProperty().addListener(new ChangeListener<Color>() {
-            @Override
-            public void changed(ObservableValue<? extends Color> ov, Color t, Color t1) {
-                updateTheme(true, null);
-            }
-        });
-        shadowPanel.getChildren().add(confFirstLine);
-        final HBox confSecondLine = new HBox();
-        confSecondLine.getChildren().add(new Label(LabelGrabber.INSTANCE.getLabel("shadow.x")));
-        shadowOffsetX = new TextField();
-        confSecondLine.getChildren().add(shadowOffsetX);
-        shadowOffsetX.textProperty().addListener(new ChangeListener<String>() {
-            @Override
-            public void changed(ObservableValue<? extends String> ov, String t, String t1) {
-                updateTheme(true, null);
-            }
-        });
-
-        confSecondLine.getChildren().add(new Label(LabelGrabber.INSTANCE.getLabel("shadow.y")));
-        shadowOffsetY = new TextField();
-        confSecondLine.getChildren().add(shadowOffsetY);
-        shadowOffsetY.textProperty().addListener(new ChangeListener<String>() {
-            @Override
-            public void changed(ObservableValue<? extends String> ov, String t, String t1) {
-                updateTheme(true, null);
-            }
-        });
-        shadowPanel.getChildren().add(confSecondLine);
-    }
-
-    /**
-     * Setup the font toolbar.
-     */
-    private void setupFontToolbar() {
-        fontToolbar = new HBox();
-        fontToolbar.getChildren().add(new Label(LabelGrabber.INSTANCE.getLabel("font.theme.label") + ":"));
-        fontSelection = new ComboBox<>();
-        fontSelection.itemsProperty().get().addAll(Arrays.asList(Utils.getAllFonts()));
-        fontSelection.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
-            @Override
-            public void changed(ObservableValue<? extends String> ov, String t, String t1) {
-                updateTheme(false, null);
-            }
-        });
-        fontToolbar.getChildren().add(fontSelection);
-        boldButton = new ToggleButton("", new ImageView(new Image("file:icons/bold.png")));
-        boldButton.setOnAction(new EventHandler<javafx.event.ActionEvent>() {
-            @Override
-            public void handle(javafx.event.ActionEvent t) {
-                updateTheme(false, null);
-            }
-        });
-        fontToolbar.getChildren().add(boldButton);
-        italicButton = new ToggleButton("", new ImageView(new Image("file:icons/italic.png")));
-        italicButton.setOnAction(new EventHandler<javafx.event.ActionEvent>() {
-            @Override
-            public void handle(javafx.event.ActionEvent t) {
-                updateTheme(false, null);
-            }
-        });
-        fontToolbar.getChildren().add(italicButton);
-        fontColorPicker = new ColorPicker(Color.WHITE);
-        fontColorPicker.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent t) {
-                updateTheme(true, null);
-            }
-        });
-        fontToolbar.getChildren().add(fontColorPicker);
-
-    }
-
-    /**
-     * Setup the font toolbar.
-     */
-    private void setupThemeActionsToolbars() {
-        themeActionsPanel = new HBox();
-        themeActionsPanel.getChildren().add(new Label(LabelGrabber.INSTANCE.getLabel("theme.name.label")));
-        themeNameField = new TextField();
-        themeActionsPanel.getChildren().add(themeNameField);
-        themeNameField.textProperty().addListener(new ChangeListener<String>() {
-            @Override
-            public void changed(ObservableValue<? extends String> ov, String t, String t1) {
-                saveThemeButton.setDisable(themeNameField.getText().trim().isEmpty());
-            }
-        });
-        saveThemeButton = new Button(LabelGrabber.INSTANCE.getLabel("save"));
-        themeActionsPanel.getChildren().add(saveThemeButton);
-        saveThemeButton.setDisable(true);
-        saveThemeButton.setOnAction(new EventHandler<javafx.event.ActionEvent>() {
-            @Override
-            public void handle(javafx.event.ActionEvent t) {
-                ThemeDTO theme = getTheme();
-                File themeFile = new File(QueleaProperties.getQueleaUserHome()
-                        + "/themes/" + themeNameField.getText() + ".th");
-                theme.setFile(themeFile);
-                theme.setThemeName(themeNameField.getText());
-                try {
-                    try (BufferedWriter out = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(themeFile), "UTF-8"))) {
-                        out.write(theme.asString());
-                    }
-                }
-                catch(Exception e) {
-                    System.err.println("Error: " + e.getMessage());
-                }
-            }
-        });
-        selectThemeButton = new Button("", new ImageView(new Image("file:icons/settings.png", 16, 16, false, true)));
-        themeActionsPanel.getChildren().add(selectThemeButton);
-        final ThemePanel panel = this;
-        selectThemeButton.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent t) {
-                ContextMenu themeMenu = new ContextMenu();
-
-                MenuItem themeItem = new MenuItem("", new ScheduleThemeNode(new ScheduleThemeNode.UpdateThemeCallback() {
-                    @Override
-                    public void updateTheme(ThemeDTO theme) {
-                        panel.updateTheme(true, theme);
-                        selectedTheme = theme;
-                    }
-                }, null, null));
-                themeItem.setDisable(true);
-                themeItem.setStyle("-fx-background-color: #000000;");
-                themeMenu.getItems().add(themeItem);
-                themeMenu.show(selectThemeButton, Side.BOTTOM, 0, 0);
-            }
-        });
-        selectThemeButton.setTooltip(new Tooltip(LabelGrabber.INSTANCE.getLabel("adjust.theme.tooltip")));
-    }
-
-    /**
      * Update the canvas with the current theme.
      */
-    private void updateTheme(boolean warning, ThemeDTO newTheme) {
+    protected void updateTheme(boolean warning, ThemeDTO newTheme) {
         final ThemeDTO theme = (newTheme != null) ? newTheme : getTheme();
         if(warning && theme.getBackground() instanceof ColourBackground) {
             checkAccessibility(theme.getFontPaint(), ((ColourBackground) theme.getBackground()).getColour());
@@ -356,7 +76,7 @@ public class ThemePanel extends BorderPane {
             @Override
             public void run() {
                 LyricDrawer drawer = new LyricDrawer();
-                drawer.setCanvas(canvas);
+                drawer.setCanvas(preview.getCanvas());
                 drawer.setTheme(theme);
                 drawer.setText(SAMPLE_LYRICS, null, false, -1);
             }
@@ -369,16 +89,7 @@ public class ThemePanel extends BorderPane {
      * @param theme the theme to represent.
      */
     public void setTheme(ThemeDTO theme) {
-        if(theme == null) {
-            theme = ThemeDTO.DEFAULT_THEME;
-        }
-        Font font = theme.getFont();
-        fontSelection.getSelectionModel().select(font.getFamily());
-        fontColorPicker.setValue(theme.getFontPaint());
-        boldButton.setSelected(theme.isBold());
-        italicButton.setSelected(theme.isItalic());
-        Background background = theme.getBackground();
-        background.setThemeForm(backgroundColorPicker, backgroundTypeSelect, backgroundImgLocation, backgroundVidLocation);
+        themeToolbar.setTheme(theme);
         updateTheme(false, null);
     }
 
@@ -402,7 +113,7 @@ public class ThemePanel extends BorderPane {
      * @return the canvas on this theme panel.
      */
     public DisplayCanvas getCanvas() {
-        return canvas;
+        return preview.getCanvas();
     }
 
     /**
@@ -411,33 +122,7 @@ public class ThemePanel extends BorderPane {
      * @return the current theme.
      */
     public ThemeDTO getTheme() {
-        Font font = Font.font(fontSelection.getSelectionModel().getSelectedItem(),
-                boldButton.isSelected() ? FontWeight.BOLD : FontWeight.NORMAL,
-                italicButton.isSelected() ? FontPosture.ITALIC : FontPosture.REGULAR,
-                QueleaProperties.get().getMaxFontSize());
-
-        Background background;
-        if(backgroundTypeSelect.getSelectionModel().getSelectedItem() == null) {
-            return ThemeDTO.DEFAULT_THEME;
-        }
-        if(backgroundTypeSelect.getSelectionModel().getSelectedItem().equals(LabelGrabber.INSTANCE.getLabel("color.theme.label"))) {
-            background = new ColourBackground(backgroundColorPicker.getValue());
-        }
-        else if(backgroundTypeSelect.getSelectionModel().getSelectedItem().equals(LabelGrabber.INSTANCE.getLabel("image.theme.label"))) {
-            background = new ImageBackground(backgroundImgLocation.getText());
-        }
-        else if(backgroundTypeSelect.getSelectionModel().getSelectedItem().equals(LabelGrabber.INSTANCE.getLabel("video.theme.label"))) {
-            background = new VideoBackground(backgroundVidLocation.getText());
-        }
-        else {
-            throw new AssertionError("Bug - " + backgroundTypeSelect.getSelectionModel().getSelectedItem() + " is an unknown selection value");
-        }
-        final SerializableDropShadow shadow = new SerializableDropShadow(shadowColorPicker.getValue(),
-                Double.valueOf(shadowOffsetX.getText().isEmpty() ? "3" : shadowOffsetX.getText()),
-                Double.valueOf(shadowOffsetY.getText().isEmpty() ? "3" : shadowOffsetY.getText()));
-        ThemeDTO resultTheme = new ThemeDTO(new SerializableFont(font), fontColorPicker.getValue(),
-                background, shadow, boldButton.isSelected(), italicButton.isSelected());
-        return resultTheme;
+        return themeToolbar.getTheme();
     }
 
     /**
