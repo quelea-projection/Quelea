@@ -104,4 +104,8 @@ public class DisplayPreview extends StackPane {
         return width / height;
     }
 
+    public DisplayCanvas getCanvas() {
+        return canvas;
+    }
+
 }
