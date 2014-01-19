@@ -14,6 +14,7 @@ quelea (0.6) stable; urgency=normal
   * Added more / better sample images
   * Added sample videos
   * Plain text import
+  * Theme panel has had a major revamp, now much easier to use
   * Opensong import
   * OpenLP import
   * Added Czech, German, Swedish and US English translations
