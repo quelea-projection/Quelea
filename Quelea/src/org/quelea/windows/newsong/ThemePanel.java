@@ -64,8 +64,7 @@ public class ThemePanel extends BorderPane {
         }, Priority.LOW);
         preview = new DisplayPreview(canvas);
         VBox centrePane = new VBox();
-        centrePane.setPadding(new Insets(0, 0, 0, 30));
-        Label label = new Label(LabelGrabber.INSTANCE.getLabel("hover.for.position.label"));
+        Label label = new Label("      "+LabelGrabber.INSTANCE.getLabel("hover.for.position.label"));
         label.setStyle("-fx-background-color:#dddddd;");
         centrePane.getChildren().add(label);
         StackPane themePreviewPane = new StackPane();
