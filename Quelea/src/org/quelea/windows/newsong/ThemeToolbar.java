@@ -6,8 +6,8 @@
 package org.quelea.windows.newsong;
 
 import java.util.Collections;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
+import java.util.logging.Level;
+import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
@@ -22,6 +22,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.Slider;
 import javafx.scene.control.TextField;
 import javafx.scene.control.ToggleButton;
+import javafx.scene.control.ToggleGroup;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
@@ -58,6 +59,9 @@ public class ThemeToolbar extends HBox {
     private Button fontExpandButton;
     private ToggleButton boldButton;
     private ToggleButton italicButton;
+    private ToggleButton leftAlignButton;
+    private ToggleButton centreAlignButton;
+    private ToggleButton rightAlignButton;
     private ColorPicker fontColor;
     private ComboBox<String> backTypeSelection;
     private TextField backgroundImageLocation;
@@ -73,6 +77,7 @@ public class ThemeToolbar extends HBox {
      * @param themePanel the theme panel that this toolbar sits on.
      */
     public ThemeToolbar(final ThemePanel themePanel) {
+        Utils.checkFXThread();
         this.themePanel = themePanel;
         setPadding(new Insets(5));
         setStyle("-fx-background-color:#dddddd;");
@@ -113,8 +118,8 @@ public class ThemeToolbar extends HBox {
         fontTop.getChildren().add(fontExpandButton);
         topLevelFontBox.getChildren().add(fontTop);
 
-        HBox fontMid = new HBox(10);
-        boldButton = new ToggleButton("", new ImageView(new Image("file:icons/bold.png", 20, 20, false, true)));
+        HBox fontMid = new HBox();
+        boldButton = new ToggleButton("", new ImageView(new Image("file:icons/bold.png", 15, 15, false, true)));
         Utils.setToolbarButtonStyle(boldButton);
         boldButton.setOnAction(new EventHandler<javafx.event.ActionEvent>() {
             @Override
@@ -122,7 +127,7 @@ public class ThemeToolbar extends HBox {
                 themePanel.updateTheme(false, null);
             }
         });
-        italicButton = new ToggleButton("", new ImageView(new Image("file:icons/italic.png", 20, 20, false, true)));
+        italicButton = new ToggleButton("", new ImageView(new Image("file:icons/italic.png", 15, 15, false, true)));
         Utils.setToolbarButtonStyle(italicButton);
         italicButton.setOnAction(new EventHandler<javafx.event.ActionEvent>() {
             @Override
@@ -130,7 +135,37 @@ public class ThemeToolbar extends HBox {
                 themePanel.updateTheme(false, null);
             }
         });
+        ToggleGroup alignGroup = new ToggleGroup();
+        leftAlignButton = new ToggleButton("", new ImageView(new Image("file:icons/leftalign.png", 15, 15, false, true)));
+        Utils.setToolbarButtonStyle(leftAlignButton);
+        leftAlignButton.setToggleGroup(alignGroup);
+        leftAlignButton.setOnAction(new EventHandler<javafx.event.ActionEvent>() {
+            @Override
+            public void handle(javafx.event.ActionEvent t) {
+                themePanel.updateTheme(false, null);
+            }
+        });
+        centreAlignButton = new ToggleButton("", new ImageView(new Image("file:icons/centrealign.png", 15, 15, false, true)));
+        Utils.setToolbarButtonStyle(centreAlignButton);
+        centreAlignButton.setToggleGroup(alignGroup);
+        centreAlignButton.setOnAction(new EventHandler<javafx.event.ActionEvent>() {
+            @Override
+            public void handle(javafx.event.ActionEvent t) {
+                themePanel.updateTheme(false, null);
+            }
+        });
+        rightAlignButton = new ToggleButton("", new ImageView(new Image("file:icons/rightalign.png", 15, 15, false, true)));
+        Utils.setToolbarButtonStyle(rightAlignButton);
+        rightAlignButton.setToggleGroup(alignGroup);
+        rightAlignButton.setOnAction(new EventHandler<javafx.event.ActionEvent>() {
+            @Override
+            public void handle(javafx.event.ActionEvent t) {
+                themePanel.updateTheme(false, null);
+            }
+        });
+        centreAlignButton.setSelected(true);
         fontColor = new ColorPicker(Color.WHITE);
+        fontColor.setStyle("-fx-color-label-visible: false ;");
         fontColor.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent t) {
@@ -139,6 +174,9 @@ public class ThemeToolbar extends HBox {
         });
         fontMid.getChildren().add(boldButton);
         fontMid.getChildren().add(italicButton);
+        fontMid.getChildren().add(leftAlignButton);
+        fontMid.getChildren().add(centreAlignButton);
+        fontMid.getChildren().add(rightAlignButton);
         fontMid.getChildren().add(fontColor);
         topLevelFontBox.getChildren().add(fontMid);
 
@@ -221,7 +259,7 @@ public class ThemeToolbar extends HBox {
         vidHueLabel.setMaxHeight(Double.MAX_VALUE);
         vidHueLabel.setAlignment(Pos.CENTER);
         vidLocationPanel.getChildren().add(vidHueLabel);
-        vidHueSlider = new Slider(0,1,0);
+        vidHueSlider = new Slider(0, 1, 0);
         vidHueSlider.valueProperty().addListener(new ChangeListener<Number>() {
 
             @Override
@@ -266,9 +304,11 @@ public class ThemeToolbar extends HBox {
 
     /**
      * Set the theme represented by this toolbar.
+     * <p>
      * @param theme the theme to represent.
      */
     public void setTheme(ThemeDTO theme) {
+        Utils.checkFXThread();
         if(theme == null) {
             theme = ThemeDTO.DEFAULT_THEME;
         }
@@ -277,15 +317,38 @@ public class ThemeToolbar extends HBox {
         fontColor.setValue(theme.getFontPaint());
         boldButton.setSelected(theme.isBold());
         italicButton.setSelected(theme.isItalic());
+        int align = theme.getTextAlignment();
+        if(align==-1) {
+            leftAlignButton.setSelected(true);
+        }
+        else if(align==1) {
+            rightAlignButton.setSelected(true);
+        }
+        else {
+            centreAlignButton.setSelected(true);
+        }
         Background background = theme.getBackground();
         background.setThemeForm(backgroundColorPicker, backTypeSelection, backgroundImageLocation, backgroundVidLocation, vidHueSlider);
     }
 
+    private int getAlignmentVal() {
+        int alignment = 0;
+        if(leftAlignButton.isSelected()) {
+            alignment = -1;
+        }
+        else if(rightAlignButton.isSelected()) {
+            alignment = 1;
+        }
+        return alignment;
+    }
+
     /**
      * Get the theme represented by this toolbar.
+     * <p>
      * @return the theme.
      */
     public ThemeDTO getTheme() {
+        Utils.checkFXThread();
         Font font = Font.font(fontSelection.getSelectionModel().getSelectedItem(),
                 boldButton.isSelected() ? FontWeight.BOLD : FontWeight.NORMAL,
                 italicButton.isSelected() ? FontPosture.ITALIC : FontPosture.REGULAR,
@@ -309,8 +372,8 @@ public class ThemeToolbar extends HBox {
         }
         final SerializableDropShadow shadow = new SerializableDropShadow(Color.BLACK, 3, 3);
         ThemeDTO resultTheme = new ThemeDTO(new SerializableFont(font), fontColor.getValue(),
-                background, shadow, boldButton.isSelected(), italicButton.isSelected(), -1);
+                background, shadow, boldButton.isSelected(), italicButton.isSelected(), -1, getAlignmentVal());
         return resultTheme;
     }
-    
+
 }
