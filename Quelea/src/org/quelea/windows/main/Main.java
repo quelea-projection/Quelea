@@ -116,7 +116,7 @@ public final class Main extends Application {
                     else {
                         stageHidden = false;
                     }
-                    
+
                     if(QueleaProperties.get().getUseMobLyrics()) {
                         LOGGER.log(Level.INFO, "Starting lyric server on {0}", QueleaProperties.get().getMobLyricsPort());
                         try {
@@ -189,16 +189,11 @@ public final class Main extends Application {
                                 Dialog.showAndWaitError(LabelGrabber.INSTANCE.getLabel("already.running.title"), LabelGrabber.INSTANCE.getLabel("already.running.error"));
                                 System.exit(1);
                             }
-                            Thread songInitThread = new Thread() {
-                                @Override
-                                public void run() {
-                                    SongManager.get().getSongs(); //Add all the songs to the index
-                                }
-                            };
-                            songInitThread.start();
+                            SongManager.get().getSongs();
                             OOUtils.attemptInit();
                             try {
                                 bibleLoader.join(); //Make sure bibleloader has finished loading
+
                             }
                             catch(InterruptedException ex) {
                             }
@@ -242,11 +237,6 @@ public final class Main extends Application {
                                 String schedulePath = getParameters().getRaw().get(0);
                                 LOGGER.log(Level.INFO, "Opening schedule through argument: {0}", schedulePath);
                                 QueleaApp.get().openSchedule(new File(schedulePath));
-                            }
-                            try {
-                                songInitThread.join(); //Make sure bibleloader has finished loading
-                            }
-                            catch(InterruptedException ex) {
                             }
                             mainWindow.show();
                             splashWindow.hide();
