@@ -771,7 +771,10 @@ public final class Utils {
                 try {
                     WritableImage ret = videoPreviewCache.get(videoFile);
                     if(ret == null) {
-                        ret = SwingFXUtils.toFXImage(FrameGrab.getFrame(videoFile, 0), null);
+                        BufferedImage bi = FrameGrab.getFrame(videoFile, 0);
+                        if(bi != null) {
+                            ret = SwingFXUtils.toFXImage(bi, null);
+                        }
                     }
                     videoPreviewCache.put(videoFile, ret);
                     return ret;
