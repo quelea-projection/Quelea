@@ -30,6 +30,7 @@ public class Theme {
     private Boolean fontItalic;
     private Double videoHue;
     private Integer textPosition;
+    private Integer textAlignment;
     private TextShadow textShadow = new TextShadow();
 
     public Theme() {
@@ -37,7 +38,7 @@ public class Theme {
 
     public Theme(String name, String fontname, String fontcolour,
             String backgroundcolour, String backgroundvid, String backgroundimage,
-            TextShadow shadow, boolean isFontBold, boolean isFontitalic, double videoHue, int textPosition) {
+            TextShadow shadow, boolean isFontBold, boolean isFontitalic, double videoHue, int textPosition, int textAlignment) {
         this.name = name;
         this.fontname = fontname;
         this.fontcolour = fontcolour;
@@ -49,6 +50,7 @@ public class Theme {
         this.fontItalic = isFontitalic;
         this.videoHue = videoHue;
         this.textPosition = textPosition;
+        this.textAlignment = textAlignment;
     }
 
     public Theme(Theme theme) {
@@ -63,6 +65,7 @@ public class Theme {
         this.fontItalic = theme.fontItalic;
         this.videoHue = theme.videoHue;
         this.textPosition = theme.textPosition;
+        this.textAlignment = theme.textAlignment;
     }
 
     /**
@@ -119,6 +122,18 @@ public class Theme {
     
     public void setTextPosition(Integer textPosition) {
         this.textPosition = textPosition;
+    }
+    
+    @Column(name="textAlignment")
+    public Integer getTextAlignment() {
+        if(textAlignment==null) {
+            return 0;
+        }
+        return textAlignment;
+    }
+    
+    public void setTextAlignment(Integer textAlignment) {
+        this.textAlignment = textAlignment;
     }
 
     /**

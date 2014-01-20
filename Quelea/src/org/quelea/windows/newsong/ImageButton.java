@@ -38,7 +38,7 @@ import org.quelea.windows.main.QueleaApp;
 
 /**
  * The image button where the user selects a image.
- *
+ * <p>
  * @author Michael
  */
 public class ImageButton extends Button {
@@ -49,7 +49,7 @@ public class ImageButton extends Button {
 
     /**
      * Create and initialise the image button.
-     *
+     * <p>
      * @param imageLocationField the image location field that goes with this
      * button.
      * @param canvas the preview canvas to update.
@@ -65,13 +65,14 @@ public class ImageButton extends Button {
             @Override
             public void handle(javafx.event.ActionEvent t) {
                 File selectedFile = fileChooser.showOpenDialog(QueleaApp.get().getMainWindow());
-                if (selectedFile != null) {
+                if(selectedFile != null) {
                     File newFile = new File(imageDir, selectedFile.getName());
                     try {
-                        if (!selectedFile.getCanonicalPath().startsWith(imageDir.getCanonicalPath())) {
+                        if(!selectedFile.getCanonicalPath().startsWith(imageDir.getCanonicalPath())) {
                             FileUtils.copyFile(selectedFile, newFile);
                         }
-                    } catch (IOException ex) {
+                    }
+                    catch(IOException ex) {
                         LOGGER.log(Level.WARNING, "", ex);
                     }
 
@@ -81,9 +82,10 @@ public class ImageButton extends Button {
                     drawer.setCanvas(canvas);
                     ThemeDTO theme = new ThemeDTO(new SerializableFont(drawer.getTheme().getFont()),
                             drawer.getTheme().getFontPaint(), new ImageBackground(imageLocation),
-                            drawer.getTheme().getShadow(),drawer.getTheme().isBold(),
-                            drawer.getTheme().isBold(), drawer.getTheme().getTextPosition());
-                 
+                            drawer.getTheme().getShadow(), drawer.getTheme().isBold(),
+                            drawer.getTheme().isBold(), drawer.getTheme().getTextPosition(),
+                            drawer.getTheme().getTextAlignment());
+
                     drawer.setTheme(theme);
                 }
             }
@@ -92,7 +94,7 @@ public class ImageButton extends Button {
 
     /**
      * Get the location of the selected image.
-     *
+     * <p>
      * @return the selected image location.
      */
     public String getImageLocation() {

@@ -66,6 +66,7 @@ public class LyricDrawer extends DisplayableDrawer {
     }
 
     private void drawText(double defaultFontSize) {
+        Utils.checkFXThread();
         boolean stageView = getCanvas().isStageView();
         if(getCanvas().getCanvasBackground() != null) {
             if(!getCanvas().getChildren().contains(getCanvas().getCanvasBackground())
@@ -183,25 +184,26 @@ public class LyricDrawer extends DisplayableDrawer {
     }
 
     private void setPositionX(Text t, FontMetrics metrics, String line, boolean stageView) {
+        Utils.checkFXThread();
         double width = metrics.computeStringWidth(line);
         double leftOffset = 0;
         double centreOffset = (getCanvas().getWidth() - width) / 2;
         double rightOffset = (getCanvas().getWidth() - width);
-        if(theme.getTextPosition() == -1) {
-            if(stageView && QueleaProperties.get().getStageTextAlignment().equalsIgnoreCase("Left")) {
+        if(stageView) {
+            if(QueleaProperties.get().getStageTextAlignment().equalsIgnoreCase("Left")) {
                 t.setX(getCanvas().getWidth());
             }
             else {
                 t.setX(centreOffset);
             }
         }
-        else if(theme.getTextPosition()%3==0) {
+        else if(theme.getTextAlignment() == -1) {
             t.setX(leftOffset);
         }
-        else if(theme.getTextPosition()%3==1) {
+        else if(theme.getTextAlignment() == 0) {
             t.setX(centreOffset);
         }
-        else if(theme.getTextPosition()%3==2) {
+        else if(theme.getTextAlignment() == 1) {
             t.setX(rightOffset);
         }
     }
