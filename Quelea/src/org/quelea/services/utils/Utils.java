@@ -780,7 +780,7 @@ public final class Utils {
                     return ret;
                 }
                 catch(Exception ex) {
-                    LOGGER.log(Level.WARNING, "Couldn't get video preview image for " + videoFile.getAbsolutePath(), ex);
+                    LOGGER.log(Level.INFO, "Couldn't get video preview image for " + videoFile.getAbsolutePath(), ex);
                     return new Image("file:icons/vid preview.png");
                 }
             }
