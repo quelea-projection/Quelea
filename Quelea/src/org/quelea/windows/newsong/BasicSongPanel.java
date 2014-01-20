@@ -155,7 +155,6 @@ public class BasicSongPanel extends BorderPane {
 //        transposeButton.setDisable(true);
 //    }
 //    private final List<Object> highlights = new ArrayList<>();
-
     /**
      * Manage the highlighting.
      */
@@ -276,7 +275,7 @@ public class BasicSongPanel extends BorderPane {
             }
         }
 
-        if(key.isEmpty()) {
+        if(key == null || key.isEmpty()) {
             key = null;
         }
         return key;
