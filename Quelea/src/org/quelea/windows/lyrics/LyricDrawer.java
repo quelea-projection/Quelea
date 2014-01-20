@@ -182,7 +182,7 @@ public class LyricDrawer extends DisplayableDrawer {
 
     private void setPositionX(Text t, FontMetrics metrics, String line, boolean stageView) {
         double width = metrics.computeStringWidth(line);
-        double leftOffset = 0;
+        double leftOffset = 5;
         double centreOffset = (getCanvas().getWidth() - width) / 2;
         double rightOffset = (getCanvas().getWidth() - width);
         if(theme.getTextPosition() == -1) {
