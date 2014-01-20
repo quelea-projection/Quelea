@@ -397,3 +397,4 @@ ignored.fonts.label=Ignored fonts
 chosen.fonts.label=Chosen fonts
 font.selection.dialog.title=Font Selection
 video.hue.label=Hue
+hover.for.position.label=Hover over the canvas to set text position

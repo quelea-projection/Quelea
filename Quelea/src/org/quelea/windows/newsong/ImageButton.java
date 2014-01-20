@@ -82,7 +82,7 @@ public class ImageButton extends Button {
                     ThemeDTO theme = new ThemeDTO(new SerializableFont(drawer.getTheme().getFont()),
                             drawer.getTheme().getFontPaint(), new ImageBackground(imageLocation),
                             drawer.getTheme().getShadow(),drawer.getTheme().isBold(),
-                            drawer.getTheme().isBold());
+                            drawer.getTheme().isBold(), drawer.getTheme().getTextPosition());
                  
                     drawer.setTheme(theme);
                 }

@@ -18,7 +18,11 @@
 package org.quelea.windows.newsong;
 
 import javafx.application.Platform;
+import javafx.geometry.Insets;
+import javafx.scene.control.Label;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.StackPane;
+import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import org.javafx.dialog.Dialog;
 import org.quelea.data.ColourBackground;
@@ -28,6 +32,7 @@ import org.quelea.services.utils.Utils;
 import org.quelea.windows.main.DisplayCanvas;
 import org.quelea.windows.lyrics.LyricDrawer;
 import org.quelea.windows.main.DisplayCanvas.Priority;
+import org.quelea.windows.main.widgets.DisplayPositionSelector;
 import org.quelea.windows.main.widgets.DisplayPreview;
 
 /**
@@ -42,11 +47,15 @@ public class ThemePanel extends BorderPane {
     private final DisplayPreview preview;
     private final ThemeToolbar themeToolbar;
     private ThemeDTO selectedTheme = null;
+    private DisplayPositionSelector positionSelector;
 
     /**
      * Create and initialise the theme panel.
      */
     public ThemePanel() {
+        positionSelector = new DisplayPositionSelector(this);
+        positionSelector.prefWidthProperty().bind(widthProperty());
+        positionSelector.prefHeightProperty().bind(heightProperty());
         DisplayCanvas canvas = new DisplayCanvas(false, false, false, new DisplayCanvas.CanvasUpdater() {
             @Override
             public void updateCallback() {
@@ -54,7 +63,16 @@ public class ThemePanel extends BorderPane {
             }
         }, Priority.LOW);
         preview = new DisplayPreview(canvas);
-        setCenter(preview);
+        VBox centrePane = new VBox();
+        centrePane.setPadding(new Insets(0, 0, 0, 30));
+        Label label = new Label(LabelGrabber.INSTANCE.getLabel("hover.for.position.label"));
+        label.setStyle("-fx-background-color:#dddddd;");
+        centrePane.getChildren().add(label);
+        StackPane themePreviewPane = new StackPane();
+        themePreviewPane.getChildren().add(preview);
+        themePreviewPane.getChildren().add(positionSelector);
+        centrePane.getChildren().add(themePreviewPane);
+        setCenter(centrePane);
         LyricDrawer drawer = new LyricDrawer();
         drawer.setCanvas(canvas);
         drawer.setText(SAMPLE_LYRICS, null, false, -1);
@@ -67,7 +85,7 @@ public class ThemePanel extends BorderPane {
     /**
      * Update the canvas with the current theme.
      */
-    protected void updateTheme(boolean warning, ThemeDTO newTheme) {
+    public void updateTheme(boolean warning, ThemeDTO newTheme) {
         final ThemeDTO theme = (newTheme != null) ? newTheme : getTheme();
         if(warning && theme.getBackground() instanceof ColourBackground) {
             checkAccessibility(theme.getFontPaint(), ((ColourBackground) theme.getBackground()).getColour());
@@ -90,6 +108,7 @@ public class ThemePanel extends BorderPane {
      */
     public void setTheme(ThemeDTO theme) {
         themeToolbar.setTheme(theme);
+        positionSelector.setTheme(theme);
         updateTheme(false, null);
     }
 
@@ -122,7 +141,9 @@ public class ThemePanel extends BorderPane {
      * @return the current theme.
      */
     public ThemeDTO getTheme() {
-        return themeToolbar.getTheme();
+        ThemeDTO ret = themeToolbar.getTheme();
+        ret.setTextPosition(positionSelector.getSelectedButtonIndex());
+        return ret;
     }
 
     /**
