@@ -73,6 +73,7 @@ public class MultimediaControls extends StackPane {
                     if(playpause) {
                         playButton.setImage(PAUSE_IMAGE);
                         VLCWindow.INSTANCE.setRepeat(false);
+                        VLCWindow.INSTANCE.setHue(0);
                         VLCWindow.INSTANCE.play();
                         posSlider.setDisable(false);
                     }

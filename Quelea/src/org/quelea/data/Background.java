@@ -21,6 +21,7 @@ import java.io.File;
 import java.util.Collection;
 import javafx.scene.control.ColorPicker;
 import javafx.scene.control.ComboBox;
+import javafx.scene.control.Slider;
 import javafx.scene.control.TextField;
 
 /**
@@ -49,5 +50,5 @@ public interface Background {
      * @param backgroundTypeSelect the ComboBox to select the background type.
      * @param backgroundLocation the text field representing the background "location".
      */
-    void setThemeForm(ColorPicker backgroundColorPicker, ComboBox<String> backgroundTypeSelect, TextField backgroundImgLocation, TextField backgroundVidLocation);
+    void setThemeForm(ColorPicker backgroundColorPicker, ComboBox<String> backgroundTypeSelect, TextField backgroundImgLocation, TextField backgroundVidLocation, Slider vidHueSlider);
 }

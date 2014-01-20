@@ -59,6 +59,7 @@ import javafx.geometry.Rectangle2D;
 import javafx.scene.Node;
 import javafx.scene.control.ToggleButton;
 import javafx.scene.image.Image;
+import javafx.scene.image.PixelReader;
 import javafx.scene.image.PixelWriter;
 import javafx.scene.image.WritableImage;
 import javafx.scene.input.MouseEvent;
@@ -756,7 +757,7 @@ public final class Utils {
         writer.setColor(0, 0, color);
         return image;
     }
-    private static final SoftHashMap<File, Image> videoPreviewCache = new SoftHashMap<>();
+    private static final HashMap<File, WritableImage> videoPreviewCache = new HashMap<>();
 
     /**
      * Get an image to be shown as the background in place of a playing video.
@@ -766,22 +767,43 @@ public final class Utils {
      */
     public static Image getVidBlankImage(File videoFile) {
         synchronized(videoPreviewCache) {
-            Image ret = new Image("file:icons/vid preview.png");
             if(videoFile.isFile()) {
                 try {
-                    Image img = videoPreviewCache.get(videoFile);
-                    if(img != null) {
-                        return img;
+                    WritableImage ret = videoPreviewCache.get(videoFile);
+                    if(ret == null) {
+                        ret = SwingFXUtils.toFXImage(FrameGrab.getFrame(videoFile, 0), null);
                     }
-                    ret = SwingFXUtils.toFXImage(FrameGrab.getFrame(videoFile, 0), null);
                     videoPreviewCache.put(videoFile, ret);
+                    return ret;
                 }
                 catch(IOException | JCodecException ex) {
                     LOGGER.log(Level.WARNING, "Couldn't get video preview image for " + videoFile.getAbsolutePath(), ex);
+                    return new Image("file:icons/vid preview.png");
                 }
             }
-            return ret;
+            else {
+                return new Image("file:icons/vid preview.png");
+            }
         }
+    }
+
+    private static WritableImage adjustHue(WritableImage img, double hueAdjust) {
+        PixelWriter writer = img.getPixelWriter();
+        PixelReader reader = img.getPixelReader();
+//        for(int y = 0; y < img.getHeight(); y++) {
+//            for(int x = 0; x < img.getWidth(); x++) {
+//                Color colour = reader.getColor(x, y);
+//                writer.setColor(x, y, colour);
+//
+//                double hue = colour.getHue() + (hueAdjust * 360);
+//                if(hue > 360) {
+//                    hue -= 360;
+//                }
+//
+//                writer.setColor(x, y, Color.hsb(hue, colour.getSaturation(), colour.getBrightness(), colour.getOpacity()));
+//            }
+//        }
+        return img;
     }
 
     /**
@@ -822,7 +844,7 @@ public final class Utils {
     public static void enableDragAndDrop() {
         DragAndDrop.enable();
     }
-    
+
     public static String escapeHTML(String s) {
         StringBuilder out = new StringBuilder();
         for(int i = 0; i < s.length(); i++) {

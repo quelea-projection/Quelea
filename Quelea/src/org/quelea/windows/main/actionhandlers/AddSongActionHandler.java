@@ -17,7 +17,6 @@
  */
 package org.quelea.windows.main.actionhandlers;
 
-import java.io.File;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import org.quelea.data.VideoBackground;
@@ -51,11 +50,11 @@ public class AddSongActionHandler implements EventHandler<ActionEvent> {
 
     private void cacheVidPreview(SongDisplayable song) {
         if(song.getSections().length > 0 && song.getSections()[0] != null && song.getSections()[0].getTheme() != null && song.getSections()[0].getTheme().getBackground() instanceof VideoBackground) {
-            final File file = ((VideoBackground) song.getSections()[0].getTheme().getBackground()).getVideoFile();
+            final VideoBackground background = (VideoBackground) song.getSections()[0].getTheme().getBackground();
             new Thread() {
                 @Override
                 public void run() {
-                    Utils.getVidBlankImage(file); //cache it
+                    Utils.getVidBlankImage(background.getVideoFile()); //cache it
                 }
             }.start();
         }
