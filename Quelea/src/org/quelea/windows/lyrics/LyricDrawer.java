@@ -17,6 +17,7 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.Group;
 import javafx.scene.Node;
+import javafx.scene.effect.ColorAdjust;
 import javafx.scene.effect.DropShadow;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -206,8 +207,7 @@ public class LyricDrawer extends DisplayableDrawer {
             theme = ThemeDTO.DEFAULT_THEME;
         }
         boolean sameVid = false;
-        if(theme.getBackground() instanceof VideoBackground
-                && VLCWindow.INSTANCE.getLastLocation() != null) {
+        if(theme.getBackground() instanceof VideoBackground && VLCWindow.INSTANCE.getLastLocation() != null) {
             String newLocation = ((VideoBackground) theme.getBackground()).getVideoFile().getAbsolutePath();
             String oldLocation = VLCWindow.INSTANCE.getLastLocation();
             if(newLocation.equals(oldLocation)) {
@@ -216,6 +216,7 @@ public class LyricDrawer extends DisplayableDrawer {
         }
         this.theme = theme;
         Image image;
+        ColorAdjust colourAdjust = null;
         if(getCanvas().isStageView()) {
             image = Utils.getImageFromColour(QueleaProperties.get().getStageBackgroundColor());
         }
@@ -230,7 +231,15 @@ public class LyricDrawer extends DisplayableDrawer {
             image = null;
         }
         else if(theme.getBackground() instanceof VideoBackground) {
-            image = Utils.getVidBlankImage(((VideoBackground) theme.getBackground()).getVideoFile());
+            VideoBackground vidBack = (VideoBackground) theme.getBackground();
+            image = Utils.getVidBlankImage(vidBack.getVideoFile());
+            colourAdjust = new ColorAdjust();
+            double hue = vidBack.getHue()*2;
+            if(hue>1) {
+                hue-=2;
+            }
+            hue*=-1;
+            colourAdjust.setHue(hue);
         }
         else {
             LOGGER.log(Level.SEVERE, "Bug: Unhandled theme background case, trying to use default background: " + theme.getBackground(), new RuntimeException("DEBUG EXCEPTION FOR STACK TRACE"));
@@ -242,12 +251,17 @@ public class LyricDrawer extends DisplayableDrawer {
 
         Node newBackground;
         if(image == null) {
+            final VideoBackground vidBackground = (VideoBackground) theme.getBackground();
             if(!sameVid || !VLCWindow.INSTANCE.isPlaying()) {
-                final String location = ((VideoBackground) theme.getBackground()).getVideoFile().getAbsolutePath();
+                final String location = vidBackground.getVideoFile().getAbsolutePath();
                 VLCWindow.INSTANCE.refreshPosition();
                 VLCWindow.INSTANCE.show();
                 VLCWindow.INSTANCE.setRepeat(true);
                 VLCWindow.INSTANCE.play(location);
+                VLCWindow.INSTANCE.setHue(vidBackground.getHue());
+            }
+            if(sameVid && VLCWindow.INSTANCE.getHue()!=((VideoBackground) theme.getBackground()).getHue()) {
+                VLCWindow.INSTANCE.fadeHue(vidBackground.getHue());
             }
             newBackground = null; //transparent
         }
@@ -259,6 +273,9 @@ public class LyricDrawer extends DisplayableDrawer {
             newImageView.setFitHeight(getCanvas().getHeight());
             newImageView.setFitWidth(getCanvas().getWidth());
             newImageView.setImage(image);
+            if(colourAdjust!=null) {
+                newImageView.setEffect(colourAdjust);
+            }
             getCanvas().getChildren().add(newImageView);
             newBackground = newImageView;
         }

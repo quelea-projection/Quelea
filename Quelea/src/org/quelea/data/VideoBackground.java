@@ -26,6 +26,7 @@ import java.util.List;
 import java.util.Objects;
 import javafx.scene.control.ColorPicker;
 import javafx.scene.control.ComboBox;
+import javafx.scene.control.Slider;
 import javafx.scene.control.TextField;
 import org.quelea.services.languages.LabelGrabber;
 import org.quelea.services.utils.QueleaProperties;
@@ -38,11 +39,26 @@ import org.quelea.services.utils.QueleaProperties;
 public class VideoBackground implements Background, Serializable {
 
     private String vidLocation;
+    private double hue;
 
-    public VideoBackground(String vidLocation) {
+    /**
+     * Create a new video background.
+     * @param vidLocation the location of the video to use.
+     * @param hue the hue adjustment of the video.
+     */
+    public VideoBackground(String vidLocation, double hue) {
         this.vidLocation = vidLocation;
+        this.hue = hue;
     }
 
+    /**
+     * Get the hue adjustment, a double between 0-1.
+     * @return the hue adjustment.
+     */
+    public double getHue() {
+        return hue;
+    }
+    
     /**
      * Get the video background file.
      * <p/>
@@ -66,9 +82,10 @@ public class VideoBackground implements Background, Serializable {
     }
 
     @Override
-    public void setThemeForm(ColorPicker backgroundColorPicker, ComboBox<String> backgroundTypeSelect, TextField backgroundImgLocation, TextField backgroundVidLocation) {
+    public void setThemeForm(ColorPicker backgroundColorPicker, ComboBox<String> backgroundTypeSelect, TextField backgroundImgLocation, TextField backgroundVidLocation, Slider vidHueSlider) {
         backgroundTypeSelect.getSelectionModel().select(LabelGrabber.INSTANCE.getLabel("video.theme.label"));
         backgroundVidLocation.setText(getVideoFile().getName());
+        vidHueSlider.setValue(hue);
     }
 
     @Override

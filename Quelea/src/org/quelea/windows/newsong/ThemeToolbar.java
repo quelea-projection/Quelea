@@ -6,14 +6,20 @@
 package org.quelea.windows.newsong;
 
 import java.util.Collections;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
+import javafx.geometry.Pos;
+import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.ColorPicker;
 import javafx.scene.control.ComboBox;
+import javafx.scene.control.Label;
+import javafx.scene.control.Slider;
 import javafx.scene.control.TextField;
 import javafx.scene.control.ToggleButton;
 import javafx.scene.image.Image;
@@ -57,6 +63,7 @@ public class ThemeToolbar extends HBox {
     private TextField backgroundImageLocation;
     private TextField backgroundVidLocation;
     private ColorPicker backgroundColorPicker;
+    private Slider vidHueSlider;
     private ThemePanel themePanel;
     private static FontSelectionDialog fontSelectionDialog;
 
@@ -167,7 +174,7 @@ public class ThemeToolbar extends HBox {
         backTop.getChildren().add(backTypeSelection);
         topLevelBackBox.getChildren().add(backTop);
 
-        final CardPane<HBox> backCentre = new CardPane<>();
+        final CardPane<Node> backgroundCentre = new CardPane<>();
         final HBox colourPanel = new HBox();
         backgroundColorPicker = new ColorPicker(Color.BLACK);
         backgroundColorPicker.valueProperty().addListener(new ChangeListener<Color>() {
@@ -177,7 +184,7 @@ public class ThemeToolbar extends HBox {
             }
         });
         colourPanel.getChildren().add(backgroundColorPicker);
-        backCentre.add(colourPanel, "colour");
+        backgroundCentre.add(colourPanel, "colour");
         final HBox imagePanel = new HBox();
         backgroundImageLocation = new TextField();
         backgroundImageLocation.setEditable(false);
@@ -190,9 +197,11 @@ public class ThemeToolbar extends HBox {
         Button backgroundImageSelectButton = new ImageButton(backgroundImageLocation, themePanel.getCanvas());
         imagePanel.getChildren().add(backgroundImageLocation);
         imagePanel.getChildren().add(backgroundImageSelectButton);
-        backCentre.add(imagePanel, "image");
-        final HBox vidPanel = new HBox();
+        backgroundCentre.add(imagePanel, "image");
+        final VBox vidPanel = new VBox(5);
+        final HBox vidLocationPanel = new HBox();
         backgroundVidLocation = new TextField();
+        backgroundVidLocation.setMaxWidth(130);
         backgroundVidLocation.setEditable(false);
         backgroundVidLocation.textProperty().addListener(new ChangeListener<String>() {
             @Override
@@ -201,28 +210,51 @@ public class ThemeToolbar extends HBox {
             }
         });
         Button backgroundVidSelectButton = new VideoButton(backgroundVidLocation, themePanel.getCanvas());
-        vidPanel.getChildren().add(backgroundVidLocation);
-        vidPanel.getChildren().add(backgroundVidSelectButton);
-        backCentre.add(vidPanel, "video");
+        vidLocationPanel.getChildren().add(backgroundVidLocation);
+        vidLocationPanel.getChildren().add(backgroundVidSelectButton);
+        vidPanel.getChildren().add(vidLocationPanel);
+        Region spacer2 = new Region();
+        spacer2.setPrefWidth(15);
+        vidLocationPanel.getChildren().add(spacer2);
+        Label vidHueLabel = new Label(LabelGrabber.INSTANCE.getLabel("video.hue.label"));
+        vidHueLabel.setStyle("-fx-text-fill:#666666");
+        vidHueLabel.setMaxHeight(Double.MAX_VALUE);
+        vidHueLabel.setAlignment(Pos.CENTER);
+        vidLocationPanel.getChildren().add(vidHueLabel);
+        vidHueSlider = new Slider(0,1,0);
+        vidHueSlider.valueProperty().addListener(new ChangeListener<Number>() {
+
+            @Override
+            public void changed(ObservableValue<? extends Number> ov, Number t, Number t1) {
+                themePanel.updateTheme(true, null);
+            }
+        });
+        vidHueSlider.setPrefWidth(70);
+        StackPane sliderStack = new StackPane();
+        sliderStack.setAlignment(Pos.CENTER);
+        sliderStack.getChildren().add(vidHueSlider);
+        vidHueLabel.setLabelFor(vidHueSlider);
+        vidLocationPanel.getChildren().add(sliderStack);
+        backgroundCentre.add(vidPanel, "video");
 
         backTypeSelection.setOnAction(new EventHandler<javafx.event.ActionEvent>() {
             @Override
             public void handle(javafx.event.ActionEvent t) {
                 if(backTypeSelection.getSelectionModel().getSelectedItem().equalsIgnoreCase(LabelGrabber.INSTANCE.getLabel("color.theme.label"))) {
-                    backCentre.show("colour");
+                    backgroundCentre.show("colour");
                 }
                 else if(backTypeSelection.getSelectionModel().getSelectedItem().equalsIgnoreCase(LabelGrabber.INSTANCE.getLabel("image.theme.label"))) {
-                    backCentre.show("image");
+                    backgroundCentre.show("image");
                 }
                 else if(backTypeSelection.getSelectionModel().getSelectedItem().equalsIgnoreCase(LabelGrabber.INSTANCE.getLabel("video.theme.label"))) {
-                    backCentre.show("video");
+                    backgroundCentre.show("video");
                 }
                 else {
                     throw new AssertionError("Bug - " + backTypeSelection.getSelectionModel().getSelectedItem() + " is an unknown selection value");
                 }
             }
         });
-        topLevelBackBox.getChildren().add(backCentre);
+        topLevelBackBox.getChildren().add(backgroundCentre);
 
         StackPane backBottom = new StackPane();
         Text backText = new Text(LabelGrabber.INSTANCE.getLabel("background.text"));
@@ -246,7 +278,7 @@ public class ThemeToolbar extends HBox {
         boldButton.setSelected(theme.isBold());
         italicButton.setSelected(theme.isItalic());
         Background background = theme.getBackground();
-        background.setThemeForm(backgroundColorPicker, backTypeSelection, backgroundImageLocation, backgroundVidLocation);
+        background.setThemeForm(backgroundColorPicker, backTypeSelection, backgroundImageLocation, backgroundVidLocation, vidHueSlider);
     }
 
     /**
@@ -270,7 +302,7 @@ public class ThemeToolbar extends HBox {
             background = new ImageBackground(backgroundImageLocation.getText());
         }
         else if(backTypeSelection.getSelectionModel().getSelectedItem().equals(LabelGrabber.INSTANCE.getLabel("video.theme.label"))) {
-            background = new VideoBackground(backgroundVidLocation.getText());
+            background = new VideoBackground(backgroundVidLocation.getText(), vidHueSlider.getValue());
         }
         else {
             throw new AssertionError("Bug - " + backTypeSelection.getSelectionModel().getSelectedItem() + " is an unknown selection value");
@@ -280,5 +312,5 @@ public class ThemeToolbar extends HBox {
                 background, shadow, boldButton.isSelected(), italicButton.isSelected());
         return resultTheme;
     }
-
+    
 }
