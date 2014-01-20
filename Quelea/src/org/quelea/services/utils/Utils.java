@@ -779,7 +779,7 @@ public final class Utils {
                     videoPreviewCache.put(videoFile, ret);
                     return ret;
                 }
-                catch(IOException | JCodecException ex) {
+                catch(Exception ex) {
                     LOGGER.log(Level.WARNING, "Couldn't get video preview image for " + videoFile.getAbsolutePath(), ex);
                     return new Image("file:icons/vid preview.png");
                 }
