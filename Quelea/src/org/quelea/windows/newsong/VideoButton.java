@@ -86,7 +86,8 @@ public class VideoButton extends Button {
                             drawer.getTheme().getShadow(),
                             drawer.getTheme().isBold(),
                             drawer.getTheme().isBold(),
-                            drawer.getTheme().getTextPosition());
+                            drawer.getTheme().getTextPosition(),
+                            drawer.getTheme().getTextAlignment());
                     drawer.setTheme(theme);
                 }
             }

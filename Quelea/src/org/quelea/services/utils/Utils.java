@@ -482,6 +482,12 @@ public final class Utils {
     public static boolean fxThread() {
         return Platform.isFxApplicationThread();
     }
+    
+    public static void checkFXThread() {
+        if(!fxThread()) {
+            throw new AssertionError("Not on FX Thread!");
+        }
+    }
 
     /**
      * Remove duplicates in a list whilst maintaining the order.
