@@ -186,7 +186,7 @@ public class ScheduleList extends StackPane {
                                 if(d instanceof SongDisplayable) {
                                     SongDisplayable songDisplayable = (SongDisplayable) d;
                                     ThemeDTO theme = songDisplayable.getTheme();
-                                    ThemeDTO newTheme = new ThemeDTO(theme.getSerializableFont(), theme.getFontPaint(), new ImageBackground(new File(imageLocation).getName()), theme.getShadow(), theme.getSerializableFont().isBold(), theme.getSerializableFont().isItalic());
+                                    ThemeDTO newTheme = new ThemeDTO(theme.getSerializableFont(), theme.getFontPaint(), new ImageBackground(new File(imageLocation).getName()), theme.getShadow(), theme.getSerializableFont().isBold(), theme.getSerializableFont().isItalic(), theme.getTextPosition());
                                     for(TextSection section : songDisplayable.getSections()) {
                                         section.setTheme(newTheme);
                                     }

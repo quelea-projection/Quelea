@@ -46,7 +46,7 @@ public class ThemeDTO implements Serializable {
     public static final Color DEFAULT_FONT_COLOR = Color.WHITE;
     public static final SerializableDropShadow DEFAULT_SHADOW = new SerializableDropShadow(DEFAULT_FONT_COLOR, 0, 0);
     public static final ColourBackground DEFAULT_BACKGROUND = new ColourBackground(Color.BLACK);
-    public static final ThemeDTO DEFAULT_THEME = new ThemeDTO(DEFAULT_FONT, DEFAULT_FONT_COLOR, DEFAULT_BACKGROUND, DEFAULT_SHADOW, DEFAULT_FONT.getFont().getStyle().toLowerCase().contains("bold"), DEFAULT_FONT.getFont().getStyle().toLowerCase().contains("italic"));
+    public static final ThemeDTO DEFAULT_THEME = new ThemeDTO(DEFAULT_FONT, DEFAULT_FONT_COLOR, DEFAULT_BACKGROUND, DEFAULT_SHADOW, DEFAULT_FONT.getFont().getStyle().toLowerCase().contains("bold"), DEFAULT_FONT.getFont().getStyle().toLowerCase().contains("italic"), -1);
     private final SerializableFont font;
     private final SerializableColor fontColor;
     private final Background background;
@@ -55,6 +55,7 @@ public class ThemeDTO implements Serializable {
     private File file;
     private Boolean isFontBold = false;
     private Boolean isFontItalic = false;
+    private int textPosition = -1;
 
     /**
      * Create a new theme with a specified font, font colour and background.
@@ -64,7 +65,8 @@ public class ThemeDTO implements Serializable {
      * @param background the background to use for the page.
      */
     public ThemeDTO(SerializableFont font, Color fontPaint, Background background,
-            SerializableDropShadow shadow, Boolean isFontBold, Boolean isFontItalic) {
+            SerializableDropShadow shadow, Boolean isFontBold, Boolean isFontItalic,
+            Integer textPosition) {
         this.font = font;
         this.fontColor = new SerializableColor(fontPaint);
         this.background = background;
@@ -72,8 +74,17 @@ public class ThemeDTO implements Serializable {
         this.textShadow = shadow;
         this.isFontBold = isFontBold;
         this.isFontItalic = isFontItalic;
+        this.textPosition = textPosition;
     }
 
+    public int getTextPosition() {
+        return textPosition;
+    }
+
+    public void setTextPosition(int textPosition) {
+        this.textPosition = textPosition;
+    }
+    
     /**
      * Get the file associated with this theme.
      * <p/>
@@ -210,7 +221,7 @@ public class ThemeDTO implements Serializable {
         final TextShadow shadow = new TextShadow(textShadow.getColor().toString(),
                 textShadow.getOffsetX(), textShadow.getOffsetY());
         final Theme theme = new Theme(themeName, font.getFont().getName(), fontColor.toString(), backgroundColor,
-                backgroundVideo, backgroundImage, shadow, isFontBold, isFontItalic, vidHue);
+                backgroundVideo, backgroundImage, shadow, isFontBold, isFontItalic, vidHue, textPosition);
         return theme;
     }
 
@@ -237,7 +248,7 @@ public class ThemeDTO implements Serializable {
         SerializableDropShadow shadow = new SerializableDropShadow(Utils.parseColour(givenShadow.getShadowColor()),
                 givenShadow.getOffsetX(), givenShadow.getOffsetY());
         ThemeDTO ret = new ThemeDTO(font, Utils.parseColour(theme.getFontcolour()),
-                background, shadow, theme.isFontBold(), theme.isFontItalic());
+                background, shadow, theme.isFontBold(), theme.isFontItalic(), theme.getTextPosition());
         ret.themeName = theme.getName();
         return ret;
     }
@@ -274,6 +285,7 @@ public class ThemeDTO implements Serializable {
         ret.append("$shadowcolor:").append(textShadow.getColor().toString());
         ret.append("$shadowX:").append(textShadow.getOffsetX());
         ret.append("$shadowY:").append(textShadow.getOffsetY());
+        ret.append("$textposition:").append(textPosition);
         return ret.toString();
     }
 
@@ -299,6 +311,7 @@ public class ThemeDTO implements Serializable {
         String shadowOffsetX = "0";
         String shadowOffsetY = "0";
         String vidHue = "0";
+        String textPosition = "-1";
         for(String part : content.split("\\$")) {
             if(!part.contains(":")) {
                 continue;
@@ -334,6 +347,9 @@ public class ThemeDTO implements Serializable {
             else if(parts[0].equalsIgnoreCase("vidhue")) {
                 vidHue = parts[1];
             }
+            else if(parts[0].equalsIgnoreCase("textposition")) {
+                textPosition = parts[1];
+            }
             else if(parts[0].equalsIgnoreCase("shadowX")) {
                 shadowOffsetX = defaultIfEmpty(parts[1], "0");
             }
@@ -363,7 +379,7 @@ public class ThemeDTO implements Serializable {
         SerializableDropShadow shadow = new SerializableDropShadow(Utils.parseColour(shadowColor), Double.parseDouble(shadowOffsetX), Double.parseDouble(shadowOffsetY));
         ThemeDTO ret = new ThemeDTO(font, Utils.parseColour(fontcolour),
                 background, shadow, Boolean.valueOf(isFontBold),
-                Boolean.valueOf(isFontItalic));
+                Boolean.valueOf(isFontItalic), Integer.parseInt(textPosition));
         ret.themeName = themeName;
         return ret;
     }

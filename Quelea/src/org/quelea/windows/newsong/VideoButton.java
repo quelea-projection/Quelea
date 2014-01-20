@@ -66,13 +66,14 @@ public class VideoButton extends Button {
             @Override
             public void handle(javafx.event.ActionEvent t) {
                 File selectedFile = fileChooser.showOpenDialog(QueleaApp.get().getMainWindow());
-                if (selectedFile != null) {
+                if(selectedFile != null) {
                     File newFile = new File(vidDir, selectedFile.getName());
                     try {
-                        if (!selectedFile.getCanonicalPath().startsWith(vidDir.getCanonicalPath())) {
+                        if(!selectedFile.getCanonicalPath().startsWith(vidDir.getCanonicalPath())) {
                             FileUtils.copyFile(selectedFile, newFile);
                         }
-                    } catch (IOException ex) {
+                    }
+                    catch(IOException ex) {
                         LOGGER.log(Level.WARNING, "", ex);
                     }
 
@@ -81,10 +82,11 @@ public class VideoButton extends Button {
                     LyricDrawer drawer = new LyricDrawer();
                     drawer.setCanvas(canvas);
                     ThemeDTO theme = new ThemeDTO(new SerializableFont(drawer.getTheme().getFont()),
-                            drawer.getTheme().getFontPaint(), new VideoBackground(vidLocation,0),
+                            drawer.getTheme().getFontPaint(), new VideoBackground(vidLocation, 0),
                             drawer.getTheme().getShadow(),
                             drawer.getTheme().isBold(),
-                            drawer.getTheme().isBold());
+                            drawer.getTheme().isBold(),
+                            drawer.getTheme().getTextPosition());
                     drawer.setTheme(theme);
                 }
             }
