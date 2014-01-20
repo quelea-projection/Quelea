@@ -113,6 +113,7 @@ public class SongEntryWindow extends Stage {
         });
         addToSchedCBox = new CheckBox(LabelGrabber.INSTANCE.getLabel("add.to.schedule.text"));
         HBox checkBoxPanel = new HBox();
+        HBox.setMargin(addToSchedCBox, new Insets(0, 0, 0, 10));
         checkBoxPanel.getChildren().add(addToSchedCBox);
         VBox bottomPanel = new VBox();
         bottomPanel.setSpacing(5);
