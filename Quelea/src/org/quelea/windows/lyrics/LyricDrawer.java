@@ -15,6 +15,7 @@ import javafx.animation.FadeTransition;
 import javafx.animation.ParallelTransition;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
+import javafx.geometry.Insets;
 import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.effect.ColorAdjust;
@@ -161,6 +162,7 @@ public class LyricDrawer extends DisplayableDrawer {
             paintTransition.play();
         }
         textGroup = newTextGroup;
+        StackPane.setMargin(textGroup, new Insets(10));
         StackPane.setAlignment(textGroup, DisplayPositionSelector.getPosFromIndex(theme.getTextPosition()));
         if(getCanvas().isCleared() && !getLastClearedState()) {
             setLastClearedState(true);
@@ -182,7 +184,7 @@ public class LyricDrawer extends DisplayableDrawer {
 
     private void setPositionX(Text t, FontMetrics metrics, String line, boolean stageView) {
         double width = metrics.computeStringWidth(line);
-        double leftOffset = 5;
+        double leftOffset = 0;
         double centreOffset = (getCanvas().getWidth() - width) / 2;
         double rightOffset = (getCanvas().getWidth() - width);
         if(theme.getTextPosition() == -1) {
