@@ -55,7 +55,8 @@ public class ImageButton extends Button {
      * @param canvas the preview canvas to update.
      */
     public ImageButton(final TextField imageLocationField, final DisplayCanvas canvas) {
-        super(LabelGrabber.INSTANCE.getLabel("select.image.button"));
+        super("..");
+//        super(LabelGrabber.INSTANCE.getLabel("select.image.button"));
         fileChooser = new FileChooser();
         final File imageDir = new File("img");
         fileChooser.setInitialDirectory(imageDir);

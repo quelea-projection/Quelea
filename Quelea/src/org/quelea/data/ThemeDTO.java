@@ -127,9 +127,10 @@ public class ThemeDTO implements Serializable {
     public Font getFont() {
         return font.getFont();
     }
-    
+
     /**
      * Get the font in its raw serializable form.
+     * <p>
      * @return the serializable font.
      */
     public SerializableFont getSerializableFont() {
@@ -195,8 +196,10 @@ public class ThemeDTO implements Serializable {
         String backgroundColor = "";
         String backgroundVideo = "";
         String backgroundImage = "";
+        double vidHue = 0;
         if(background instanceof VideoBackground) {
             backgroundVideo = background.getString();
+            vidHue = ((VideoBackground) background).getHue();
         }
         else if(background instanceof ImageBackground) {
             backgroundImage = background.getString();
@@ -207,7 +210,7 @@ public class ThemeDTO implements Serializable {
         final TextShadow shadow = new TextShadow(textShadow.getColor().toString(),
                 textShadow.getOffsetX(), textShadow.getOffsetY());
         final Theme theme = new Theme(themeName, font.getFont().getName(), fontColor.toString(), backgroundColor,
-                backgroundVideo, backgroundImage, shadow, isFontBold, isFontItalic);
+                backgroundVideo, backgroundImage, shadow, isFontBold, isFontItalic, vidHue);
         return theme;
     }
 
@@ -225,7 +228,7 @@ public class ThemeDTO implements Serializable {
             background = new ImageBackground(theme.getBackgroundimage());
         }
         else if(!theme.getBackgroundvid().isEmpty()) {
-            background = new VideoBackground(theme.getBackgroundvid());
+            background = new VideoBackground(theme.getBackgroundvid(), theme.getVideoHue());
         }
         else {
             background = new ColourBackground(Color.BLACK);
@@ -260,6 +263,7 @@ public class ThemeDTO implements Serializable {
         ret.append("$isFontItalic:").append(isFontItalic);
         if(background instanceof VideoBackground) {
             ret.append("$backgroundvideo:").append(((VideoBackground) background).getString());
+            ret.append("$vidhue:").append(((VideoBackground) background).getHue());
         }
         else if(background instanceof ImageBackground) {
             ret.append("$backgroundimage:").append(((ImageBackground) background).getString());
@@ -294,6 +298,7 @@ public class ThemeDTO implements Serializable {
         String shadowColor = "";
         String shadowOffsetX = "0";
         String shadowOffsetY = "0";
+        String vidHue = "0";
         for(String part : content.split("\\$")) {
             if(!part.contains(":")) {
                 continue;
@@ -326,6 +331,9 @@ public class ThemeDTO implements Serializable {
             else if(parts[0].equalsIgnoreCase("shadowcolor")) {
                 shadowColor = parts[1];
             }
+            else if(parts[0].equalsIgnoreCase("vidhue")) {
+                vidHue = parts[1];
+            }
             else if(parts[0].equalsIgnoreCase("shadowX")) {
                 shadowOffsetX = defaultIfEmpty(parts[1], "0");
             }
@@ -346,7 +354,7 @@ public class ThemeDTO implements Serializable {
             background = new ImageBackground(backgroundimage);
         }
         else if(!backgroundvid.trim().isEmpty()) {
-            background = new VideoBackground(backgroundvid);
+            background = new VideoBackground(backgroundvid, Double.parseDouble(vidHue));
         }
         else {
             LOGGER.log(Level.WARNING, "WARNING: Unhandled or empty background, using default background. Raw content: " + content, new RuntimeException("DEBUG EXCEPTION FOR STACK TRACE"));

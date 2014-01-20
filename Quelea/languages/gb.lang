@@ -396,3 +396,4 @@ chosen.fonts.explanation=Quelea only shows a selection of fonts in the theme win
 ignored.fonts.label=Ignored fonts
 chosen.fonts.label=Chosen fonts
 font.selection.dialog.title=Font Selection
+video.hue.label=Hue

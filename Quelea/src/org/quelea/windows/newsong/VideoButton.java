@@ -56,7 +56,8 @@ public class VideoButton extends Button {
      * @param canvas the preview canvas to update.
      */
     public VideoButton(final TextField videoLocationField, final DisplayCanvas canvas) {
-        super(LabelGrabber.INSTANCE.getLabel("select.video.button"));
+        super("..");
+//        super(LabelGrabber.INSTANCE.getLabel("select.video.button"));
         fileChooser = new FileChooser();
         final File vidDir = QueleaProperties.get().getVidDir();
         fileChooser.setInitialDirectory(vidDir);
@@ -80,7 +81,7 @@ public class VideoButton extends Button {
                     LyricDrawer drawer = new LyricDrawer();
                     drawer.setCanvas(canvas);
                     ThemeDTO theme = new ThemeDTO(new SerializableFont(drawer.getTheme().getFont()),
-                            drawer.getTheme().getFontPaint(), new VideoBackground(vidLocation),
+                            drawer.getTheme().getFontPaint(), new VideoBackground(vidLocation,0),
                             drawer.getTheme().getShadow(),
                             drawer.getTheme().isBold(),
                             drawer.getTheme().isBold());

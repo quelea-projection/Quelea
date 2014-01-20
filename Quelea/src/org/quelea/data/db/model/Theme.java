@@ -11,7 +11,7 @@ import org.quelea.data.ThemeDTO;
 
 /**
  * theme table mapping
- *
+ * <p>
  * @author tomaszpio@gmail.com
  */
 @Entity
@@ -28,6 +28,7 @@ public class Theme {
     private String backgroundimage;
     private Boolean fontBold;
     private Boolean fontItalic;
+    private Double videoHue;
     private TextShadow textShadow = new TextShadow();
 
     public Theme() {
@@ -35,7 +36,7 @@ public class Theme {
 
     public Theme(String name, String fontname, String fontcolour,
             String backgroundcolour, String backgroundvid, String backgroundimage,
-            TextShadow shadow,boolean isFontBold, boolean isFontitalic) {
+            TextShadow shadow, boolean isFontBold, boolean isFontitalic, double videoHue) {
         this.name = name;
         this.fontname = fontname;
         this.fontcolour = fontcolour;
@@ -45,6 +46,7 @@ public class Theme {
         this.textShadow = shadow;
         this.fontBold = isFontBold;
         this.fontItalic = isFontitalic;
+        this.videoHue = videoHue;
     }
 
     public Theme(Theme theme) {
@@ -57,6 +59,7 @@ public class Theme {
         this.textShadow = theme.textShadow;
         this.fontBold = theme.fontBold;
         this.fontItalic = theme.fontItalic;
+        this.videoHue = theme.videoHue;
     }
 
     /**
@@ -89,6 +92,18 @@ public class Theme {
      */
     public void setName(String name) {
         this.name = name;
+    }
+
+    @Column(name = "videoHue")
+    public Double getVideoHue() {
+        if(videoHue == null) {
+            return 0.0;
+        }
+        return videoHue;
+    }
+
+    public void setVideoHue(Double videoHue) {
+        this.videoHue = videoHue;
     }
 
     /**
@@ -201,16 +216,16 @@ public class Theme {
      */
     @Column(name = "isfontitalic")
     public Boolean isFontItalic() {
-        return fontItalic  == null ? false : fontItalic;
+        return fontItalic == null ? false : fontItalic;
     }
 
     /**
      * @param isFontItalic the isFontItalic to set
-     */ 
-   public void setFontItalic(Boolean isFontItalic) {
+     */
+    public void setFontItalic(Boolean isFontItalic) {
         this.fontItalic = isFontItalic;
     }
-    
+
     @Override
     public String toString() {
         return ThemeDTO.getDTO(this).asString();
