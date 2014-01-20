@@ -24,6 +24,8 @@ import java.awt.Window;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.SwingUtilities;
@@ -63,6 +65,7 @@ public class VLCWindow {
     private boolean paused;
     private boolean init;
     private String location;
+    private volatile double hue = 0;
 
     private VLCWindow() {
         runOnVLCThread(new Runnable() {
@@ -89,6 +92,22 @@ public class VLCWindow {
                 }
             }
         });
+        ScheduledExecutorService exc = Executors.newSingleThreadScheduledExecutor();
+        exc.scheduleAtFixedRate(new Runnable() {
+
+            @Override
+            public void run() {
+                if(init) {
+                    runOnVLCThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            mediaPlayer.setAdjustVideo(true);
+                            mediaPlayer.setHue((int) (hue * 360));
+                        }
+                    });
+                }
+            }
+        }, 0, 30, TimeUnit.MILLISECONDS);
     }
 
     public void setRepeat(final boolean repeat) {
@@ -146,7 +165,7 @@ public class VLCWindow {
             }
         });
     }
-    
+
     public String getLastLocation() {
         return location;
     }
@@ -434,6 +453,69 @@ public class VLCWindow {
 //                System.out.println("refreshPosition() end");
             }
         });
+    }
+
+    private FadeThread fadeThread;
+
+    private class FadeThread extends Thread {
+
+        private static final double INCREMENT = 0.005;
+        private double toVal;
+        private volatile boolean go = true;
+
+        public FadeThread(double toVal) {
+            this.toVal = toVal;
+        }
+
+        public void run() {
+            double diff = toVal - getHue();
+            if(diff < 0) {
+                while(diff < 0 && go) {
+                    setHue(getHue() - INCREMENT);
+                    diff = toVal - getHue();
+                    try {
+                        Thread.sleep(10);
+                    }
+                    catch(InterruptedException ex) {
+                        //Meh
+                    }
+                }
+            }
+            else if(diff > 0) {
+                while(diff > 0 && go) {
+                    setHue(getHue() + INCREMENT);
+                    diff = toVal - getHue();
+                    try {
+                        Thread.sleep(10);
+                    }
+                    catch(InterruptedException ex) {
+                        //Meh
+                    }
+                }
+            }
+            setHue(toVal);
+        }
+
+        public void halt() {
+            go = false;
+        }
+
+    }
+
+    public synchronized void fadeHue(final double hue) {
+        if(fadeThread != null) {
+            fadeThread.halt();
+        }
+        fadeThread = new FadeThread(hue);
+        fadeThread.start();
+    }
+
+    public void setHue(final double hue) {
+        this.hue = hue;
+    }
+
+    public double getHue() {
+        return hue;
     }
 
     /**
