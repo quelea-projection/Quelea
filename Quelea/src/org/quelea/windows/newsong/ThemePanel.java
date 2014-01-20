@@ -64,7 +64,7 @@ public class ThemePanel extends BorderPane {
         }, Priority.LOW);
         preview = new DisplayPreview(canvas);
         VBox centrePane = new VBox();
-        Label label = new Label("      " + LabelGrabber.INSTANCE.getLabel("hover.for.position.label")+":");
+        Label label = new Label("      " + LabelGrabber.INSTANCE.getLabel("hover.for.position.label") + ":");
         label.setStyle("-fx-text-fill:#666666;");
         centrePane.setStyle("-fx-background-color:#dddddd;");
         centrePane.getChildren().add(label);
