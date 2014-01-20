@@ -39,6 +39,7 @@ import org.quelea.services.utils.LoggerUtils;
 import org.quelea.services.utils.QueleaProperties;
 import org.quelea.services.utils.Utils;
 import org.quelea.windows.main.DisplayCanvas;
+import org.quelea.windows.main.widgets.DisplayPositionSelector;
 import org.quelea.windows.multimedia.VLCWindow;
 
 /**
@@ -112,7 +113,6 @@ public class LyricDrawer extends DisplayableDrawer {
                     FontPosture.REGULAR, fontSize);
         }
         FontMetrics metrics = Toolkit.getToolkit().getFontLoader().getFontMetrics(font);
-        int y = 0;
         final Group newTextGroup = new Group();
         StackPane.setAlignment(newTextGroup, QueleaProperties.get().getTextPositionInternal().getLayoutPos());
 
@@ -126,22 +126,16 @@ public class LyricDrawer extends DisplayableDrawer {
         getCanvas().getChildren().add(newTextGroup);
         getCanvas().pushLogoNoticeToFront();
 
+        int y = 0;
         ParallelTransition paintTransition = new ParallelTransition();
         for(String line : newText) {
             Text t;
             t = new Text(line);
 
-            double width = metrics.computeStringWidth(line);
-            double centreOffset = (getCanvas().getWidth() - width) / 2;
-
             t.setFont(font);
             t.setEffect(shadow);
-            if(stageView && QueleaProperties.get().getStageTextAlignment().equalsIgnoreCase("Left")) {
-                t.setX(getCanvas().getWidth());
-            }
-            else {
-                t.setX(centreOffset);
-            }
+
+            setPositionX(t, metrics, line, stageView);
             t.setY(y);
 
             Color lineColor;
@@ -167,6 +161,7 @@ public class LyricDrawer extends DisplayableDrawer {
             paintTransition.play();
         }
         textGroup = newTextGroup;
+        StackPane.setAlignment(textGroup, DisplayPositionSelector.getPosFromIndex(theme.getTextPosition()));
         if(getCanvas().isCleared() && !getLastClearedState()) {
             setLastClearedState(true);
             FadeTransition t = new FadeTransition(Duration.seconds(QueleaProperties.get().getFadeDuration()), textGroup);
@@ -182,6 +177,30 @@ public class LyricDrawer extends DisplayableDrawer {
             t.setFromValue(0);
             t.setToValue(1);
             t.play();
+        }
+    }
+
+    private void setPositionX(Text t, FontMetrics metrics, String line, boolean stageView) {
+        double width = metrics.computeStringWidth(line);
+        double leftOffset = 0;
+        double centreOffset = (getCanvas().getWidth() - width) / 2;
+        double rightOffset = (getCanvas().getWidth() - width);
+        if(theme.getTextPosition() == -1) {
+            if(stageView && QueleaProperties.get().getStageTextAlignment().equalsIgnoreCase("Left")) {
+                t.setX(getCanvas().getWidth());
+            }
+            else {
+                t.setX(centreOffset);
+            }
+        }
+        else if(theme.getTextPosition()%3==0) {
+            t.setX(leftOffset);
+        }
+        else if(theme.getTextPosition()%3==1) {
+            t.setX(centreOffset);
+        }
+        else if(theme.getTextPosition()%3==2) {
+            t.setX(rightOffset);
         }
     }
 
@@ -234,11 +253,11 @@ public class LyricDrawer extends DisplayableDrawer {
             VideoBackground vidBack = (VideoBackground) theme.getBackground();
             image = Utils.getVidBlankImage(vidBack.getVideoFile());
             colourAdjust = new ColorAdjust();
-            double hue = vidBack.getHue()*2;
-            if(hue>1) {
-                hue-=2;
+            double hue = vidBack.getHue() * 2;
+            if(hue > 1) {
+                hue -= 2;
             }
-            hue*=-1;
+            hue *= -1;
             colourAdjust.setHue(hue);
         }
         else {
@@ -260,7 +279,7 @@ public class LyricDrawer extends DisplayableDrawer {
                 VLCWindow.INSTANCE.play(location);
                 VLCWindow.INSTANCE.setHue(vidBackground.getHue());
             }
-            if(sameVid && VLCWindow.INSTANCE.getHue()!=((VideoBackground) theme.getBackground()).getHue()) {
+            if(sameVid && VLCWindow.INSTANCE.getHue() != ((VideoBackground) theme.getBackground()).getHue()) {
                 VLCWindow.INSTANCE.fadeHue(vidBackground.getHue());
             }
             newBackground = null; //transparent
@@ -273,7 +292,7 @@ public class LyricDrawer extends DisplayableDrawer {
             newImageView.setFitHeight(getCanvas().getHeight());
             newImageView.setFitWidth(getCanvas().getWidth());
             newImageView.setImage(image);
-            if(colourAdjust!=null) {
+            if(colourAdjust != null) {
                 newImageView.setEffect(colourAdjust);
             }
             getCanvas().getChildren().add(newImageView);

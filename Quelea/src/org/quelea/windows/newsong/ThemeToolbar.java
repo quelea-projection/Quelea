@@ -309,7 +309,7 @@ public class ThemeToolbar extends HBox {
         }
         final SerializableDropShadow shadow = new SerializableDropShadow(Color.BLACK, 3, 3);
         ThemeDTO resultTheme = new ThemeDTO(new SerializableFont(font), fontColor.getValue(),
-                background, shadow, boldButton.isSelected(), italicButton.isSelected());
+                background, shadow, boldButton.isSelected(), italicButton.isSelected(), -1);
         return resultTheme;
     }
     
