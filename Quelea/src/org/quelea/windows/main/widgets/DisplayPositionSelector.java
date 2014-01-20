@@ -66,7 +66,7 @@ public class DisplayPositionSelector extends BorderPane {
 
             @Override
             public void handle(MouseEvent t) {
-                FadeTransition trans = new FadeTransition(Duration.seconds(0.1), DisplayPositionSelector.this);
+                FadeTransition trans = new FadeTransition(Duration.seconds(0.2), DisplayPositionSelector.this);
                 trans.setToValue(0.7);
                 trans.play();
             }
@@ -75,7 +75,7 @@ public class DisplayPositionSelector extends BorderPane {
 
             @Override
             public void handle(MouseEvent t) {
-                FadeTransition trans = new FadeTransition(Duration.seconds(0.1), DisplayPositionSelector.this);
+                FadeTransition trans = new FadeTransition(Duration.seconds(0.2), DisplayPositionSelector.this);
                 trans.setToValue(0);
                 trans.play();
             }
