@@ -61,7 +61,8 @@ public class OptionsMobLyricsPanel extends GridPane implements PropertyPanel {
     private static final Logger LOGGER = LoggerUtils.getLogger();
     private CheckBox useMobLyricsCheckBox;
     private final TextField portNumTextField;
-    private boolean changeMade;
+    private String prevPortNum;
+    private boolean prevChecked;
 
     /**
      * Create the mobile lyrics panel.
@@ -74,13 +75,6 @@ public class OptionsMobLyricsPanel extends GridPane implements PropertyPanel {
         GridPane.setConstraints(useMobLydicsLabel, 1, 1);
         getChildren().add(useMobLydicsLabel);
         useMobLyricsCheckBox = new CheckBox();
-        useMobLyricsCheckBox.setOnAction(new EventHandler<ActionEvent>() {
-
-            @Override
-            public void handle(ActionEvent t) {
-                changeMade = true;
-            }
-        });
         GridPane.setConstraints(useMobLyricsCheckBox, 2, 1);
         getChildren().add(useMobLyricsCheckBox);
 
@@ -88,13 +82,6 @@ public class OptionsMobLyricsPanel extends GridPane implements PropertyPanel {
         GridPane.setConstraints(portNumberLabel, 1, 2);
         getChildren().add(portNumberLabel);
         portNumTextField = new TextField();
-        portNumTextField.textProperty().addListener(new ChangeListener<String>() {
-
-            @Override
-            public void changed(ObservableValue<? extends String> ov, String t, String t1) {
-                changeMade = true;
-            }
-        });
         portNumTextField.addEventFilter(KeyEvent.KEY_TYPED, new EventHandler<KeyEvent>() {
             @Override
             public void handle(KeyEvent t) {
@@ -216,7 +203,8 @@ public class OptionsMobLyricsPanel extends GridPane implements PropertyPanel {
     }
     
     public void resetChanged() {
-        changeMade = false;
+        prevChecked = useMobLyricsCheckBox.isSelected();
+        prevPortNum = portNumTextField.getText();
     }
 
     /**
@@ -224,7 +212,7 @@ public class OptionsMobLyricsPanel extends GridPane implements PropertyPanel {
      * called.
      */
     public boolean hasChanged() {
-        return changeMade;
+        return prevChecked != useMobLyricsCheckBox.isSelected() || !(prevPortNum.equals(portNumTextField.getText()));
     }
 
     /**
