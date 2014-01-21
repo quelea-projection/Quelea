@@ -178,10 +178,12 @@ public final class QueleaProperties extends Properties {
      * @return a list of user chosen fonts to appear in the theme dialog.
      */
     public List<String> getChosenFonts() {
-        String fontStr = getProperty("chosen.fonts", "");
+        String fontStr = getProperty("chosen.fonts", "Arial|Liberation Sans|Noto Sans|Oxygen|Roboto|Vegur");
         List<String> ret = new ArrayList<>();
         for(String str : fontStr.split("\\|")) {
-            ret.add(str);
+            if(!str.trim().isEmpty()) {
+                ret.add(str);
+            }
         }
         return ret;
     }
