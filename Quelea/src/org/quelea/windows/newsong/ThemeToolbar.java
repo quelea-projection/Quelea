@@ -169,7 +169,7 @@ public class ThemeToolbar extends HBox {
         fontColor.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent t) {
-                themePanel.updateTheme(true, null);
+                themePanel.updateTheme(false, null);
             }
         });
         fontMid.getChildren().add(boldButton);
@@ -203,7 +203,7 @@ public class ThemeToolbar extends HBox {
         backTypeSelection.valueProperty().addListener(new ChangeListener<String>() {
             @Override
             public void changed(ObservableValue<? extends String> ov, String t, String t1) {
-                themePanel.updateTheme(true, null);
+                themePanel.updateTheme(false, null);
             }
         });
         backTypeSelection.getItems().add(LabelGrabber.INSTANCE.getLabel("color.theme.label"));
@@ -229,7 +229,7 @@ public class ThemeToolbar extends HBox {
         backgroundImageLocation.textProperty().addListener(new ChangeListener<String>() {
             @Override
             public void changed(ObservableValue<? extends String> ov, String t, String t1) {
-                themePanel.updateTheme(true, null);
+                themePanel.updateTheme(false, null);
             }
         });
         Button backgroundImageSelectButton = new ImageButton(backgroundImageLocation, themePanel.getCanvas());
@@ -244,7 +244,7 @@ public class ThemeToolbar extends HBox {
         backgroundVidLocation.textProperty().addListener(new ChangeListener<String>() {
             @Override
             public void changed(ObservableValue<? extends String> ov, String t, String t1) {
-                themePanel.updateTheme(true, null);
+                themePanel.updateTheme(false, null);
             }
         });
         Button backgroundVidSelectButton = new VideoButton(backgroundVidLocation, themePanel.getCanvas());
@@ -264,7 +264,7 @@ public class ThemeToolbar extends HBox {
 
             @Override
             public void changed(ObservableValue<? extends Number> ov, Number t, Number t1) {
-                themePanel.updateTheme(true, null);
+                themePanel.updateTheme(false, null);
             }
         });
         vidHueSlider.setPrefWidth(70);
