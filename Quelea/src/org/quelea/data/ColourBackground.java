@@ -24,6 +24,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
+import javafx.event.ActionEvent;
 import javafx.scene.control.ColorPicker;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Slider;
@@ -84,6 +85,7 @@ public class ColourBackground implements Background, Serializable {
     public void setThemeForm(ColorPicker backgroundColorPicker, ComboBox<String> backgroundTypeSelect, TextField backgroundLocation, TextField backgroundVidLocation, Slider vidHueSlider) {
         backgroundTypeSelect.getSelectionModel().select(LabelGrabber.INSTANCE.getLabel("color.theme.label"));
         backgroundColorPicker.setValue(getColour());
+        backgroundColorPicker.fireEvent(new ActionEvent());
         backgroundLocation.clear();
         backgroundVidLocation.clear();
         vidHueSlider.setValue(0);

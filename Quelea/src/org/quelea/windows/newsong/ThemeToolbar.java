@@ -314,6 +314,7 @@ public class ThemeToolbar extends HBox {
         Font font = theme.getFont();
         fontSelection.getSelectionModel().select(font.getFamily());
         fontColor.setValue(theme.getFontPaint());
+        fontColor.fireEvent(new ActionEvent());
         boldButton.setSelected(theme.isBold());
         italicButton.setSelected(theme.isItalic());
         int align = theme.getTextAlignment();
