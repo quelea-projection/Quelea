@@ -116,12 +116,14 @@ public class ScheduleList extends StackPane {
 
                     @Override
                     public void handle(MouseEvent event) {
-                        localDragIndex = listCell.getIndex();
-                        Dragboard db = listCell.startDragAndDrop(TransferMode.ANY);
-                        ClipboardContent content = new ClipboardContent();
-                        content.put(SongDisplayable.SONG_DISPLAYABLE_FORMAT, listCell.getItem());
-                        db.setContent(content);
-                        event.consume();
+                        if(listCell.getItem() != null) {
+                            localDragIndex = listCell.getIndex();
+                            Dragboard db = listCell.startDragAndDrop(TransferMode.ANY);
+                            ClipboardContent content = new ClipboardContent();
+                            content.put(SongDisplayable.SONG_DISPLAYABLE_FORMAT, listCell.getItem());
+                            db.setContent(content);
+                            event.consume();
+                        }
                     }
                 });
                 listCell.setOnDragEntered(new EventHandler<DragEvent>() {
