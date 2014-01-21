@@ -68,7 +68,6 @@ public class ThemeDTO implements Serializable {
     public ThemeDTO(SerializableFont font, Color fontPaint, Background background,
             SerializableDropShadow shadow, Boolean isFontBold, Boolean isFontItalic,
             Integer textPosition, Integer textAlignment) {
-        Utils.checkFXThread();
         this.font = font;
         this.fontColor = new SerializableColor(fontPaint);
         this.background = background;
