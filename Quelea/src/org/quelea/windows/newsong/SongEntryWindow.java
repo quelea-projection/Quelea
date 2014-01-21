@@ -183,7 +183,7 @@ public class SongEntryWindow extends Stage {
      * Called by the constructor to initialise the theme panel.
      */
     private void setupThemePanel() {
-        themePanel = new ThemePanel();
+        themePanel = new ThemePanel(basicSongPanel.getLyricsField());
     }
 
     /**

@@ -17,9 +17,12 @@
  */
 package org.quelea.windows.newsong;
 
+import java.util.Arrays;
 import javafx.application.Platform;
-import javafx.geometry.Insets;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.scene.control.Label;
+import javafx.scene.control.TextArea;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
@@ -27,6 +30,8 @@ import javafx.scene.paint.Color;
 import org.javafx.dialog.Dialog;
 import org.quelea.data.ColourBackground;
 import org.quelea.data.ThemeDTO;
+import org.quelea.data.displayable.SongDisplayable;
+import org.quelea.data.displayable.TextSection;
 import org.quelea.services.languages.LabelGrabber;
 import org.quelea.services.utils.Utils;
 import org.quelea.windows.main.DisplayCanvas;
@@ -44,15 +49,26 @@ public class ThemePanel extends BorderPane {
 
     private static final double THRESHOLD = 0.1;
     public static final String[] SAMPLE_LYRICS = {"Amazing Grace how sweet the sound", "That saved a wretch like me", "I once was lost but now am found", "Was blind, but now I see."};
+    private String[] text;
     private final DisplayPreview preview;
     private final ThemeToolbar themeToolbar;
     private ThemeDTO selectedTheme = null;
     private DisplayPositionSelector positionSelector;
 
     /**
-     * Create and initialise the theme panel.
+     * Create and initialise the theme panel
      */
     public ThemePanel() {
+        this(null);
+    }
+
+    /**
+     * Create and initialise the theme panel.
+     * <p>
+     * @param wordsArea the text area to use for words. If null, sample lyrics
+     * will be used.
+     */
+    public ThemePanel(TextArea wordsArea) {
         positionSelector = new DisplayPositionSelector(this);
         positionSelector.prefWidthProperty().bind(widthProperty());
         positionSelector.prefHeightProperty().bind(heightProperty());
@@ -73,9 +89,29 @@ public class ThemePanel extends BorderPane {
         themePreviewPane.getChildren().add(positionSelector);
         centrePane.getChildren().add(themePreviewPane);
         setCenter(centrePane);
-        LyricDrawer drawer = new LyricDrawer();
+        final LyricDrawer drawer = new LyricDrawer();
         drawer.setCanvas(canvas);
-        drawer.setText(SAMPLE_LYRICS, null, false, -1);
+        text = SAMPLE_LYRICS;
+        if(wordsArea != null) {
+            ChangeListener<String> cl = new ChangeListener<String>() {
+
+                @Override
+                public void changed(ObservableValue<? extends String> ov, String t, String newText) {
+                    SongDisplayable dummy = new SongDisplayable("", "");
+                    dummy.setLyrics(newText);
+                    TextSection[] sections = dummy.getSections();
+                    if(sections.length > 0 && sections[0].getText(false, false).length > 0) {
+                        text = sections[0].getText(false, false);
+                    }
+                    else {
+                        text = SAMPLE_LYRICS;
+                    }
+                    updateTheme(false, null);
+                }
+            };
+            wordsArea.textProperty().addListener(cl);
+            cl.changed(null, null, wordsArea.getText());
+        }
         themeToolbar = new ThemeToolbar(this);
         setTop(themeToolbar);
         updateTheme(false, null);
@@ -96,7 +132,7 @@ public class ThemePanel extends BorderPane {
                 LyricDrawer drawer = new LyricDrawer();
                 drawer.setCanvas(preview.getCanvas());
                 drawer.setTheme(theme);
-                drawer.setText(SAMPLE_LYRICS, null, false, -1);
+                drawer.setText(text, null, false, -1);
             }
         });
     }
@@ -141,6 +177,9 @@ public class ThemePanel extends BorderPane {
      * @return the current theme.
      */
     public ThemeDTO getTheme() {
+        if(themeToolbar==null) {
+            return ThemeDTO.DEFAULT_THEME;
+        }
         ThemeDTO ret = themeToolbar.getTheme();
         ret.setTextPosition(positionSelector.getSelectedButtonIndex());
         return ret;
