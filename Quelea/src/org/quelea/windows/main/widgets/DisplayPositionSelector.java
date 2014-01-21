@@ -102,20 +102,31 @@ public class DisplayPositionSelector extends BorderPane {
         }
         return -1;
     }
-    
+
     public static Pos getPosFromIndex(int index) {
         switch(index) {
-            case -1:return Pos.CENTER;
-            case 0:return Pos.TOP_LEFT;
-            case 1:return Pos.TOP_CENTER;
-            case 2:return Pos.TOP_RIGHT;
-            case 3:return Pos.CENTER_LEFT;
-            case 4:return Pos.CENTER;
-            case 5:return Pos.CENTER_RIGHT;
-            case 6:return Pos.BOTTOM_LEFT;
-            case 7:return Pos.BOTTOM_CENTER;
-            case 8:return Pos.BOTTOM_RIGHT;
-            default:return Pos.CENTER;
+            case -1:
+                return Pos.CENTER;
+            case 0:
+                return Pos.TOP_LEFT;
+            case 1:
+                return Pos.TOP_CENTER;
+            case 2:
+                return Pos.TOP_RIGHT;
+            case 3:
+                return Pos.CENTER_LEFT;
+            case 4:
+                return Pos.CENTER;
+            case 5:
+                return Pos.CENTER_RIGHT;
+            case 6:
+                return Pos.BOTTOM_LEFT;
+            case 7:
+                return Pos.BOTTOM_CENTER;
+            case 8:
+                return Pos.BOTTOM_RIGHT;
+            default:
+                return Pos.CENTER;
         }
     }
 
