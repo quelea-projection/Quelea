@@ -24,6 +24,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
+import javafx.event.ActionEvent;
 import javafx.scene.control.ColorPicker;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Slider;
@@ -129,6 +130,7 @@ public class ImageBackground implements Background, Serializable {
         backgroundTypeSelect.getSelectionModel().select(LabelGrabber.INSTANCE.getLabel("image.theme.label"));
         backgroundImgLocation.setText(new File(getImageLocation()).getName());
         backgroundColorPicker.setValue(Color.BLACK);
+        backgroundColorPicker.fireEvent(new ActionEvent());
         backgroundVidLocation.clear();
         vidHueSlider.setValue(0);
     }

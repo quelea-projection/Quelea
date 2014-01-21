@@ -17,6 +17,7 @@
  */
 package org.quelea.windows.options;
 
+import javafx.event.ActionEvent;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ColorPicker;
 import javafx.scene.control.ComboBox;
@@ -122,8 +123,11 @@ public class OptionsStageViewPanel extends GridPane implements PropertyPanel {
     public final void readProperties() {
         showChordsCheckBox.setSelected(QueleaProperties.get().getShowChords());
         lyricsColorPicker.setValue(QueleaProperties.get().getStageLyricsColor());
+        lyricsColorPicker.fireEvent(new ActionEvent());
         backgroundColorPicker.setValue(QueleaProperties.get().getStageBackgroundColor());
+        backgroundColorPicker.fireEvent(new ActionEvent());
         chordColorPicker.setValue(QueleaProperties.get().getStageChordColor());
+        chordColorPicker.fireEvent(new ActionEvent());
         fontSelection.getSelectionModel().select(QueleaProperties.get().getStageTextFont());
         lineAlignment.getSelectionModel().select(QueleaProperties.get().getStageTextAlignment());
     }
