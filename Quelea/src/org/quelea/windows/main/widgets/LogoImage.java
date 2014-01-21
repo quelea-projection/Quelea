@@ -21,7 +21,6 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.StackPane;
 import org.quelea.services.utils.QueleaProperties;
 import org.quelea.services.utils.Utils;
-import org.quelea.windows.main.QueleaApp;
 
 /**
  * The logo image - on a separate stack pane with its background colour set so
