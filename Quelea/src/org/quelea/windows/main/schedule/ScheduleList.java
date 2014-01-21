@@ -197,30 +197,32 @@ public class ScheduleList extends StackPane {
                                 }
                             }
                         }
-                        final SongDisplayable displayable = (SongDisplayable) event.getDragboard().getContent(SongDisplayable.SONG_DISPLAYABLE_FORMAT);
-                        if(displayable != null) {
-                            if(listCell.getIndex() != localDragIndex) {
-                                if(localDragIndex > -1) {
-                                    getItems().remove(localDragIndex);
-                                    localDragIndex = -1;
-                                }
-                                if(listCell.isEmpty()) {
-                                    add(displayable);
-                                    listView.getSelectionModel().selectLast();
-                                }
-                                else {
-                                    listView.itemsProperty().get().add(listCell.getIndex(), displayable);
-                                    listView.getSelectionModel().select(listCell.getIndex());
-                                }
-                                listView.requestFocus();
-                                Platform.runLater(new Runnable() {
-
-                                    @Override
-                                    public void run() {
-                                        QueleaApp.get().getMainWindow().getMainPanel().getPreviewPanel().setDisplayable(displayable, 0);
-                                        QueleaApp.get().getMainWindow().getMainPanel().getPreviewPanel().refresh();
+                        if(event.getDragboard().getContent(SongDisplayable.SONG_DISPLAYABLE_FORMAT) instanceof SongDisplayable) {
+                            final SongDisplayable displayable = (SongDisplayable) event.getDragboard().getContent(SongDisplayable.SONG_DISPLAYABLE_FORMAT);
+                            if(displayable != null) {
+                                if(listCell.getIndex() != localDragIndex) {
+                                    if(localDragIndex > -1) {
+                                        getItems().remove(localDragIndex);
+                                        localDragIndex = -1;
                                     }
-                                });
+                                    if(listCell.isEmpty()) {
+                                        add(displayable);
+                                        listView.getSelectionModel().selectLast();
+                                    }
+                                    else {
+                                        listView.itemsProperty().get().add(listCell.getIndex(), displayable);
+                                        listView.getSelectionModel().select(listCell.getIndex());
+                                    }
+                                    listView.requestFocus();
+                                    Platform.runLater(new Runnable() {
+
+                                        @Override
+                                        public void run() {
+                                            QueleaApp.get().getMainWindow().getMainPanel().getPreviewPanel().setDisplayable(displayable, 0);
+                                            QueleaApp.get().getMainWindow().getMainPanel().getPreviewPanel().refresh();
+                                        }
+                                    });
+                                }
                             }
                         }
                         event.consume();
