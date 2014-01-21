@@ -567,29 +567,6 @@ public final class QueleaProperties extends Properties {
     }
 
     /**
-     * Get the (internal name) text position to be used for positioning text on
-     * a lyrics canvas.
-     * <p/>
-     * @return the (internal name) text position to be used for positioning text
-     * on a lyrics canvas.
-     */
-    public TextPosition getTextPositionInternal() {
-        return TextPosition.parseTextPosition(getProperty("text.position.internal", "Middle"));
-    }
-
-    /**
-     * Set the (internal name) text position to be used for positioning text on
-     * a lyrics canvas.
-     * <p/>
-     * @param position the (internal name) text position to be used for
-     * positioning text on a lyrics canvas.
-     */
-    public void setTextPositionInternal(TextPosition position) {
-        setProperty("text.position.internal", position.getInternalName());
-        write();
-    }
-
-    /**
      * Get the custom projector co-ordinates.
      * <p/>
      * @return the co-ordinates.

@@ -54,7 +54,6 @@ public class OptionsGeneralPanel extends GridPane implements PropertyPanel {
     private final CheckBox clearLiveOnRemoveCheckBox;
     private final CheckBox useOOCheckBox;
     private final CheckBox uniformFontSizeCheckBox;
-    private final ComboBox<TextPosition> textPositionComboBox;
     private final ComboBox<LanguageFile> languageFileComboBox;
     private final TextField ooPathTextField;
     private final DirectoryChooser ooChooser;
@@ -191,18 +190,6 @@ public class OptionsGeneralPanel extends GridPane implements PropertyPanel {
         startupLabel.setLabelFor(clearLiveOnRemoveCheckBox);
         GridPane.setConstraints(clearLiveOnRemoveCheckBox, 2, rows);
         getChildren().add(clearLiveOnRemoveCheckBox);
-        rows++;
-        
-        Label textPositionLabel = new Label(LabelGrabber.INSTANCE.getLabel("text.position.label"));
-        GridPane.setConstraints(textPositionLabel, 1, rows);
-        getChildren().add(textPositionLabel);
-        textPositionComboBox = new ComboBox<>();
-        for(TextPosition position : TextPosition.values()) {
-            textPositionComboBox.getItems().add(position);
-        }
-        startupLabel.setLabelFor(textPositionComboBox);
-        GridPane.setConstraints(textPositionComboBox, 2, rows);
-        getChildren().add(textPositionComboBox);
         rows++;
 
         Label interfaceLanguageLabel = new Label(LabelGrabber.INSTANCE.getLabel("interface.language.label"));
@@ -363,7 +350,6 @@ public class OptionsGeneralPanel extends GridPane implements PropertyPanel {
         maxCharsSlider.setValue(props.getMaxChars());
 //        minLinesSlider.setValue(props.getMinLines());
         borderThicknessSlider.setValue(props.getOutlineThickness());
-        textPositionComboBox.setValue(props.getTextPositionInternal());
         additionalLineSpacingSlider.setValue(props.getAdditionalLineSpacing());
         maximumFontSizeSlider.setValue(props.getMaxFontSize());
     }
@@ -404,7 +390,6 @@ public class OptionsGeneralPanel extends GridPane implements PropertyPanel {
 //        props.setMinLines(minLines);
         int borderThickness = (int) getBorderThicknessSlider().getValue();
         props.setOutlineThickness(borderThickness);
-        props.setTextPositionInternal(textPositionComboBox.getValue());
         props.setMaxFontSize(maximumFontSizeSlider.getValue());
         props.setAdditionalLineSpacing(additionalLineSpacingSlider.getValue());
         //Initialise presentation
