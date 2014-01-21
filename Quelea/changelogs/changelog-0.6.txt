@@ -18,6 +18,8 @@ quelea (0.6) stable; urgency=normal
   * Text position and text alignment can be set separately per song
   * Opensong import
   * OpenLP import
+  * Easyslides import
+  * Kingsway import fixed
   * Added Czech, German, Swedish and US English translations
   * Previews now preserve aspect ratio of main display
   * Fix interface to display UTF-8 characters properly
@@ -26,8 +28,6 @@ quelea (0.6) stable; urgency=normal
   * Theme selector rewritten / bugs fixed
   * Add option within interface to change language
   * Window position now saved between runs
-  * Easyslides import
-  * Kingsway import fixed
   * Search by author as well as title and lyrics
   * Bundled JRE
   * Many more bugfixes
