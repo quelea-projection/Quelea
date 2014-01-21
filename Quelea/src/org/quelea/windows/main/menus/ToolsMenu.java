@@ -35,49 +35,47 @@ import org.quelea.windows.main.widgets.TestPaneDialog;
 
 /**
  * Quelea's tools menu.
+ * <p>
  * @author Michael
  */
 public class ToolsMenu extends Menu {
-    
+
     private MenuItem searchBibleItem;
     private MenuItem viewBibleItem;
     private MenuItem testItem;
     private MenuItem optionsItem;
-    
-    private TestPaneDialog testDialog;
-    
+
+    private TestPaneDialog testDialog = new TestPaneDialog();
+
     /**
      * Create the tools menu.
      */
     public ToolsMenu() {
         super(LabelGrabber.INSTANCE.getLabel("tools.menu"));
-        
+
         viewBibleItem = new MenuItem(LabelGrabber.INSTANCE.getLabel("view.bible.button"), new ImageView(new Image("file:icons/bible.png", 20, 20, false, true)));
         viewBibleItem.setOnAction(new ViewBibleActionHandler());
         getItems().add(viewBibleItem);
-        
+
         searchBibleItem = new MenuItem(LabelGrabber.INSTANCE.getLabel("search.bible.button"), new ImageView(new Image("file:icons/bible.png", 20, 20, false, true)));
         searchBibleItem.setOnAction(new SearchBibleActionHandler());
         getItems().add(searchBibleItem);
-        
+
         testItem = new MenuItem(LabelGrabber.INSTANCE.getLabel("test.patterns.text"), new ImageView(new Image("file:icons/testbars.png", 20, 20, false, true)));
         testItem.setOnAction(new EventHandler<ActionEvent>() {
 
             @Override
             public void handle(ActionEvent t) {
-                if(testDialog==null) { //Lazily load beacuse this is a feature that won't be used on most executions
-                    testDialog = new TestPaneDialog();
-                }
                 testDialog.show();
             }
         });
         getItems().add(testItem);
-        
+
         optionsItem = new MenuItem(LabelGrabber.INSTANCE.getLabel("options.button"), new ImageView(new Image("file:icons/options.png", 20, 20, false, true)));
         optionsItem.setAccelerator(new KeyCodeCombination(KeyCode.T, KeyCombination.CONTROL_DOWN));
         optionsItem.setOnAction(new ShowOptionsActionHandler());
-        
+
         getItems().add(optionsItem);
     }
-    
+
 }
