@@ -6,8 +6,6 @@
 package org.quelea.windows.newsong;
 
 import java.util.Collections;
-import java.util.logging.Level;
-import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
@@ -260,6 +258,7 @@ public class ThemeToolbar extends HBox {
         vidHueLabel.setAlignment(Pos.CENTER);
         vidLocationPanel.getChildren().add(vidHueLabel);
         vidHueSlider = new Slider(0, 1, 0);
+        vidHueSlider.setMajorTickUnit(0.001);
         vidHueSlider.valueProperty().addListener(new ChangeListener<Number>() {
 
             @Override

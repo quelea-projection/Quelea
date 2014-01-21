@@ -84,6 +84,9 @@ public class ColourBackground implements Background, Serializable {
     public void setThemeForm(ColorPicker backgroundColorPicker, ComboBox<String> backgroundTypeSelect, TextField backgroundLocation, TextField backgroundVidLocation, Slider vidHueSlider) {
         backgroundTypeSelect.getSelectionModel().select(LabelGrabber.INSTANCE.getLabel("color.theme.label"));
         backgroundColorPicker.setValue(getColour());
+        backgroundLocation.clear();
+        backgroundVidLocation.clear();
+        vidHueSlider.setValue(0);
     }
 
     @Override
