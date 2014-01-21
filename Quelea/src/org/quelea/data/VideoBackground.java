@@ -28,6 +28,7 @@ import javafx.scene.control.ColorPicker;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Slider;
 import javafx.scene.control.TextField;
+import javafx.scene.paint.Color;
 import org.quelea.services.languages.LabelGrabber;
 import org.quelea.services.utils.QueleaProperties;
 
@@ -86,6 +87,8 @@ public class VideoBackground implements Background, Serializable {
         backgroundTypeSelect.getSelectionModel().select(LabelGrabber.INSTANCE.getLabel("video.theme.label"));
         backgroundVidLocation.setText(getVideoFile().getName());
         vidHueSlider.setValue(hue);
+        backgroundColorPicker.setValue(Color.BLACK);
+        backgroundImgLocation.clear();
     }
 
     @Override

@@ -128,6 +128,9 @@ public class ImageBackground implements Background, Serializable {
     public void setThemeForm(ColorPicker backgroundColorPicker, ComboBox<String> backgroundTypeSelect, TextField backgroundImgLocation, TextField backgroundVidLocation, Slider vidHueSlider) {
         backgroundTypeSelect.getSelectionModel().select(LabelGrabber.INSTANCE.getLabel("image.theme.label"));
         backgroundImgLocation.setText(new File(getImageLocation()).getName());
+        backgroundColorPicker.setValue(Color.BLACK);
+        backgroundVidLocation.clear();
+        vidHueSlider.setValue(0);
     }
 
     @Override
