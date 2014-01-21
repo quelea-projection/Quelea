@@ -38,6 +38,7 @@ import org.quelea.services.lucene.SearchIndex;
 import org.quelea.services.lucene.SongSearchIndex;
 import org.quelea.services.utils.DatabaseListener;
 import org.quelea.services.utils.LoggerUtils;
+import org.quelea.services.utils.Utils;
 
 /**
  * Manage songs persistent operations.
@@ -123,30 +124,36 @@ public final class SongManager {
         HibernateUtil.execute(new HibernateUtil.SessionCallback() {
             @Override
             public void execute(Session session) {
-                for(Song song : new SongDao(session).getSongs()) {
+                for(final Song song : new SongDao(session).getSongs()) {
                     final String[] tags = new String[song.getTags().size()];
                     for(int i = 0; i < song.getTags().size(); i++) {
                         tags[i] = song.getTags().get(i);
                     }
-                    final SongDisplayable songDisplayable = new SongDisplayable.Builder(song.getTitle(),
-                            song.getAuthor())
-                            .lyrics(song.getLyrics())
-                            .ccli(song.getCcli())
-                            .year(song.getYear())
-                            .tags(tags)
-                            .publisher(song.getPublisher())
-                            .copyright(song.getCopyright())
-                            .key(song.getKey())
-                            .info(song.getInfo())
-                            .capo(song.getCapo())
-                            .id(song.getId()).get();
-                    final Theme theme = song.getTheme();
-                    final ThemeDTO themedto = ThemeDTO.getDTO(theme);
-                    for(TextSection section : songDisplayable.getSections()) {
-                        section.setTheme(themedto);
-                    }
-                    songDisplayable.setTheme(themedto);
-                    songs.add(songDisplayable);
+                    Utils.fxRunAndWait(new Runnable() {
+
+                        @Override
+                        public void run() {
+                            final SongDisplayable songDisplayable = new SongDisplayable.Builder(song.getTitle(),
+                                    song.getAuthor())
+                                    .lyrics(song.getLyrics())
+                                    .ccli(song.getCcli())
+                                    .year(song.getYear())
+                                    .tags(tags)
+                                    .publisher(song.getPublisher())
+                                    .copyright(song.getCopyright())
+                                    .key(song.getKey())
+                                    .info(song.getInfo())
+                                    .capo(song.getCapo())
+                                    .id(song.getId()).get();
+                            final Theme theme = song.getTheme();
+                            final ThemeDTO themedto = ThemeDTO.getDTO(theme);
+                            for(TextSection section : songDisplayable.getSections()) {
+                                section.setTheme(themedto);
+                            }
+                            songDisplayable.setTheme(themedto);
+                            songs.add(songDisplayable);
+                        }
+                    });
                 }
             }
         });
