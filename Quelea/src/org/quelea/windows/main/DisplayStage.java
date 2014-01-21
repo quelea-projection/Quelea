@@ -24,6 +24,7 @@ import javafx.beans.value.ObservableValue;
 import javafx.geometry.Bounds;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
+import javafx.scene.image.Image;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
@@ -32,6 +33,7 @@ import org.quelea.services.utils.LoggerUtils;
 import org.quelea.services.utils.Utils;
 import org.quelea.windows.main.DisplayCanvas.Priority;
 import org.quelea.windows.main.widgets.Clock;
+import org.quelea.windows.main.widgets.TestImage;
 import org.quelea.windows.multimedia.VLCWindow;
 
 /**
@@ -44,6 +46,7 @@ public class DisplayStage extends Stage {
     private static final Logger LOGGER = LoggerUtils.getLogger();
     private static final Cursor BLANK_CURSOR;
     private final DisplayCanvas canvas;
+    private final TestImage testImage;
 
     /**
      * Initialise cursor hiding.
@@ -56,6 +59,8 @@ public class DisplayStage extends Stage {
      * Create a new display window positioned to fill the given rectangle.
      * <p/>
      * @param area the area in which the window should be drawn.
+     * @param stageView true if the display stage is a stage view, false if it's
+     * a normal projection view.
      */
     public DisplayStage(Bounds area, boolean stageView) {
         final boolean playVideo = !stageView;
@@ -74,6 +79,13 @@ public class DisplayStage extends Stage {
             scenePane.getChildren().add(clock);
             clock.toFront();
         }
+        testImage = new TestImage();
+        testImage.getImageView().setPreserveRatio(true);
+        testImage.getImageView().fitWidthProperty().bind(widthProperty());
+        testImage.getImageView().fitHeightProperty().bind(heightProperty());
+        scenePane.getChildren().add(testImage);
+        testImage.setVisible(false);
+        testImage.toFront();
         Scene scene = new Scene(scenePane);
         scene.setFill(null);
         setScene(scene);
@@ -107,6 +119,17 @@ public class DisplayStage extends Stage {
                 VLCWindow.INSTANCE.refreshPosition();
             }
         });
+    }
+
+    /**
+     * Set a test image to appear on this stage.
+     * <p>
+     * @param img the test img, or null to clear.
+     */
+    public void setTestImage(Image img, boolean preserveAspect) {
+        testImage.getImageView().setPreserveRatio(preserveAspect);
+        testImage.setVisible(img != null);
+        testImage.setImage(img);
     }
 
     /**
