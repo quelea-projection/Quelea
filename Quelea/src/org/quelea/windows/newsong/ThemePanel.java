@@ -75,7 +75,7 @@ public class ThemePanel extends BorderPane {
         DisplayCanvas canvas = new DisplayCanvas(false, false, false, new DisplayCanvas.CanvasUpdater() {
             @Override
             public void updateCallback() {
-                updateTheme(true, null);
+                updateTheme(true);
             }
         }, Priority.LOW);
         preview = new DisplayPreview(canvas);
@@ -106,7 +106,7 @@ public class ThemePanel extends BorderPane {
                     else {
                         text = SAMPLE_LYRICS;
                     }
-                    updateTheme(false, null);
+                    updateTheme(false);
                 }
             };
             wordsArea.textProperty().addListener(cl);
@@ -114,15 +114,18 @@ public class ThemePanel extends BorderPane {
         }
         themeToolbar = new ThemeToolbar(this);
         setTop(themeToolbar);
-        updateTheme(false, null);
+        updateTheme(false);
         setMaxSize(800, 600);
     }
 
     /**
      * Update the canvas with the current theme.
+     * <p>
+     * @param warning true if a warning should be shown if the colours
+     * represented by the current theme are too similar.
      */
-    public void updateTheme(boolean warning, ThemeDTO newTheme) {
-        final ThemeDTO theme = (newTheme != null) ? newTheme : getTheme();
+    public void updateTheme(boolean warning) {
+        final ThemeDTO theme = getTheme();
         if(warning && theme.getBackground() instanceof ColourBackground) {
             checkAccessibility(theme.getFontPaint(), ((ColourBackground) theme.getBackground()).getColour());
         }
@@ -145,7 +148,7 @@ public class ThemePanel extends BorderPane {
     public void setTheme(ThemeDTO theme) {
         themeToolbar.setTheme(theme);
         positionSelector.setTheme(theme);
-        updateTheme(false, null);
+        updateTheme(false);
     }
 
     /**
@@ -177,7 +180,7 @@ public class ThemePanel extends BorderPane {
      * @return the current theme.
      */
     public ThemeDTO getTheme() {
-        if(themeToolbar==null) {
+        if(themeToolbar == null) {
             return ThemeDTO.DEFAULT_THEME;
         }
         ThemeDTO ret = themeToolbar.getTheme();

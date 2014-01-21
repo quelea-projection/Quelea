@@ -55,7 +55,7 @@ public class DisplayPositionSelector extends BorderPane {
 
                 @Override
                 public void handle(ActionEvent t) {
-                    panel.updateTheme(true, null);
+                    panel.updateTheme(true);
                 }
             });
             selectorPane.add(but, i % 3, i / 3);

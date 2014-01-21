@@ -98,7 +98,7 @@ public class ThemeToolbar extends HBox {
         fontSelection.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
             @Override
             public void changed(ObservableValue<? extends String> ov, String t, String t1) {
-                themePanel.updateTheme(false, null);
+                themePanel.updateTheme(false);
             }
         });
         fontExpandButton = new Button("...");
@@ -124,7 +124,7 @@ public class ThemeToolbar extends HBox {
         boldButton.setOnAction(new EventHandler<javafx.event.ActionEvent>() {
             @Override
             public void handle(javafx.event.ActionEvent t) {
-                themePanel.updateTheme(false, null);
+                themePanel.updateTheme(false);
             }
         });
         italicButton = new ToggleButton("", new ImageView(new Image("file:icons/italic.png", 15, 15, false, true)));
@@ -132,7 +132,7 @@ public class ThemeToolbar extends HBox {
         italicButton.setOnAction(new EventHandler<javafx.event.ActionEvent>() {
             @Override
             public void handle(javafx.event.ActionEvent t) {
-                themePanel.updateTheme(false, null);
+                themePanel.updateTheme(false);
             }
         });
         ToggleGroup alignGroup = new ToggleGroup();
@@ -142,7 +142,7 @@ public class ThemeToolbar extends HBox {
         leftAlignButton.setOnAction(new EventHandler<javafx.event.ActionEvent>() {
             @Override
             public void handle(javafx.event.ActionEvent t) {
-                themePanel.updateTheme(false, null);
+                themePanel.updateTheme(false);
             }
         });
         centreAlignButton = new ToggleButton("", new ImageView(new Image("file:icons/centrealign.png", 15, 15, false, true)));
@@ -151,7 +151,7 @@ public class ThemeToolbar extends HBox {
         centreAlignButton.setOnAction(new EventHandler<javafx.event.ActionEvent>() {
             @Override
             public void handle(javafx.event.ActionEvent t) {
-                themePanel.updateTheme(false, null);
+                themePanel.updateTheme(false);
             }
         });
         rightAlignButton = new ToggleButton("", new ImageView(new Image("file:icons/rightalign.png", 15, 15, false, true)));
@@ -160,7 +160,7 @@ public class ThemeToolbar extends HBox {
         rightAlignButton.setOnAction(new EventHandler<javafx.event.ActionEvent>() {
             @Override
             public void handle(javafx.event.ActionEvent t) {
-                themePanel.updateTheme(false, null);
+                themePanel.updateTheme(false);
             }
         });
         centreAlignButton.setSelected(true);
@@ -169,7 +169,7 @@ public class ThemeToolbar extends HBox {
         fontColor.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent t) {
-                themePanel.updateTheme(false, null);
+                themePanel.updateTheme(false);
             }
         });
         fontMid.getChildren().add(boldButton);
@@ -203,7 +203,7 @@ public class ThemeToolbar extends HBox {
         backTypeSelection.valueProperty().addListener(new ChangeListener<String>() {
             @Override
             public void changed(ObservableValue<? extends String> ov, String t, String t1) {
-                themePanel.updateTheme(false, null);
+                themePanel.updateTheme(false);
             }
         });
         backTypeSelection.getItems().add(LabelGrabber.INSTANCE.getLabel("color.theme.label"));
@@ -218,7 +218,7 @@ public class ThemeToolbar extends HBox {
         backgroundColorPicker.valueProperty().addListener(new ChangeListener<Color>() {
             @Override
             public void changed(ObservableValue<? extends Color> ov, Color t, Color t1) {
-                themePanel.updateTheme(true, null);
+                themePanel.updateTheme(true);
             }
         });
         colourPanel.getChildren().add(backgroundColorPicker);
@@ -229,7 +229,7 @@ public class ThemeToolbar extends HBox {
         backgroundImageLocation.textProperty().addListener(new ChangeListener<String>() {
             @Override
             public void changed(ObservableValue<? extends String> ov, String t, String t1) {
-                themePanel.updateTheme(false, null);
+                themePanel.updateTheme(false);
             }
         });
         Button backgroundImageSelectButton = new ImageButton(backgroundImageLocation, themePanel.getCanvas());
@@ -244,7 +244,7 @@ public class ThemeToolbar extends HBox {
         backgroundVidLocation.textProperty().addListener(new ChangeListener<String>() {
             @Override
             public void changed(ObservableValue<? extends String> ov, String t, String t1) {
-                themePanel.updateTheme(false, null);
+                themePanel.updateTheme(false);
             }
         });
         Button backgroundVidSelectButton = new VideoButton(backgroundVidLocation, themePanel.getCanvas());
@@ -264,7 +264,7 @@ public class ThemeToolbar extends HBox {
 
             @Override
             public void changed(ObservableValue<? extends Number> ov, Number t, Number t1) {
-                themePanel.updateTheme(false, null);
+                themePanel.updateTheme(false);
             }
         });
         vidHueSlider.setPrefWidth(70);
