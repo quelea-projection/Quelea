@@ -16,6 +16,7 @@ import javafx.animation.ParallelTransition;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.effect.ColorAdjust;
@@ -164,7 +165,12 @@ public class LyricDrawer extends DisplayableDrawer {
         }
         textGroup = newTextGroup;
         StackPane.setMargin(textGroup, new Insets(10));
-        StackPane.setAlignment(textGroup, DisplayPositionSelector.getPosFromIndex(theme.getTextPosition()));
+        if(stageView) {
+            StackPane.setAlignment(textGroup, Pos.CENTER);
+        }
+        else {
+            StackPane.setAlignment(textGroup, DisplayPositionSelector.getPosFromIndex(theme.getTextPosition()));
+        }
         if(getCanvas().isCleared() && !getLastClearedState()) {
             setLastClearedState(true);
             FadeTransition t = new FadeTransition(Duration.seconds(QueleaProperties.get().getFadeDuration()), textGroup);
