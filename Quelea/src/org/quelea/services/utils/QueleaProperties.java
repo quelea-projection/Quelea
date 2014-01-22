@@ -27,13 +27,11 @@ import java.util.Properties;
 import java.util.logging.Level;
 import javafx.geometry.BoundingBox;
 import javafx.geometry.Bounds;
-import javafx.scene.image.Image;
 import javafx.scene.paint.Color;
 import org.quelea.data.bible.Bible;
 import org.quelea.data.displayable.TextAlignment;
 import org.quelea.services.languages.spelling.Dictionary;
 import org.quelea.services.languages.spelling.DictionaryManager;
-import org.quelea.windows.options.TextPosition;
 
 /**
  * Manages the properties specific to Quelea.
