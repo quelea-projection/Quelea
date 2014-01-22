@@ -192,7 +192,7 @@ public class ThemeToolbar extends HBox {
         topLevelFontBox.getChildren().add(fontMid);
 
         StackPane fontBottom = new StackPane();
-        Text fontText = new Text("Font");
+        Text fontText = new Text(LabelGrabber.INSTANCE.getLabel("font.theme.label"));
         fontText.setFill(Color.GRAY);
         fontBottom.getChildren().add(fontText);
         topLevelFontBox.getChildren().add(fontBottom);
