@@ -507,7 +507,7 @@ public class LyricDrawer extends DisplayableDrawer {
         double fontSize = Double.POSITIVE_INFINITY;
         for(int i = 0; i < displayable.getSections().length; i++) {
             String[] text;
-            if(getCanvas().isStageView()) {
+            if(getCanvas().isStageView() && QueleaProperties.get().getShowChords()) {
                 text = displayable.getSections()[i].getText(true, false);
             }
             else {
@@ -535,7 +535,7 @@ public class LyricDrawer extends DisplayableDrawer {
         double uniformFontSize = getUniformFontSize(displayable);
         curDisplayable = displayable;
         String[] bigText;
-        if(getCanvas().isStageView()) {
+        if(getCanvas().isStageView() && QueleaProperties.get().getShowChords()) {
             bigText = displayable.getSections()[index].getText(true, false);
         }
         else {
