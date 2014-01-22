@@ -40,7 +40,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -59,7 +58,6 @@ import javafx.geometry.Rectangle2D;
 import javafx.scene.Node;
 import javafx.scene.control.ToggleButton;
 import javafx.scene.image.Image;
-import javafx.scene.image.PixelReader;
 import javafx.scene.image.PixelWriter;
 import javafx.scene.image.WritableImage;
 import javafx.scene.input.MouseEvent;
@@ -68,7 +66,6 @@ import javafx.stage.Screen;
 import javafx.stage.Stage;
 import org.javafx.dialog.Dialog;
 import org.jcodec.api.FrameGrab;
-import org.jcodec.api.JCodecException;
 import org.quelea.data.ThemeDTO;
 import org.quelea.data.db.SongManager;
 import org.quelea.data.displayable.SongDisplayable;
@@ -104,6 +101,7 @@ public final class Utils {
     /**
      * Get the debug log file, useful for debugging if something goes wrong (the
      * log is printed out to this location.)
+     * @return the debug log file.
      */
     public static File getDebugLog() {
         return new File(QueleaProperties.getQueleaUserHome(), "quelea-debuglog.txt");
@@ -498,8 +496,7 @@ public final class Utils {
     public static <T> void removeDuplicateWithOrder(List<T> list) {
         Set<T> set = new HashSet<>();
         List<T> newList = new ArrayList<>();
-        for(Iterator<T> iter = list.iterator(); iter.hasNext();) {
-            T element = iter.next();
+        for(T element : list) {
             if(set.add(element)) {
                 newList.add(element);
             }
@@ -740,8 +737,8 @@ public final class Utils {
     public static String[] getAllFonts() {
         Font[] fonts = GraphicsEnvironment.getLocalGraphicsEnvironment().getAllFonts();
         Set<String> names = new HashSet<>();
-        for(int i = 0; i < fonts.length; i++) {
-            names.add(fonts[i].getFamily());
+        for(Font font : fonts) {
+            names.add(font.getFamily());
         }
         List<String> namesList = new ArrayList<>(names.size());
         for(String name : names) {
@@ -794,25 +791,6 @@ public final class Utils {
                 return new Image("file:icons/vid preview.png");
             }
         }
-    }
-
-    private static WritableImage adjustHue(WritableImage img, double hueAdjust) {
-        PixelWriter writer = img.getPixelWriter();
-        PixelReader reader = img.getPixelReader();
-//        for(int y = 0; y < img.getHeight(); y++) {
-//            for(int x = 0; x < img.getWidth(); x++) {
-//                Color colour = reader.getColor(x, y);
-//                writer.setColor(x, y, colour);
-//
-//                double hue = colour.getHue() + (hueAdjust * 360);
-//                if(hue > 360) {
-//                    hue -= 360;
-//                }
-//
-//                writer.setColor(x, y, Color.hsb(hue, colour.getSaturation(), colour.getBrightness(), colour.getOpacity()));
-//            }
-//        }
-        return img;
     }
 
     /**
