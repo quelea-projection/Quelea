@@ -44,7 +44,7 @@ import org.quelea.services.utils.Utils;
  */
 public class ImageBackground implements Background, Serializable {
 
-    private String imageName;
+    private final String imageName;
     private transient SoftReference<Image> originalImage;
 
     /**
@@ -73,6 +73,7 @@ public class ImageBackground implements Background, Serializable {
 
     /**
      * Get the background image.
+     * @return the background image.
      */
     public Image getImage() {
         Image img = originalImage.get();
@@ -88,7 +89,7 @@ public class ImageBackground implements Background, Serializable {
      * @return the file representing the image background.
      */
     public File getImageFile() {
-        return new File(new File("img"), imageName.trim());
+        return new File(QueleaProperties.get().getImageDir(), imageName.trim());
     }
 
     /**
