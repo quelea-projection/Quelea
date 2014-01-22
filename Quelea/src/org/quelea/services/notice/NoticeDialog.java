@@ -54,8 +54,6 @@ public class NoticeDialog extends Stage implements NoticesChangedListener {
 
     /**
      * Create a new notice dialog.
-     * <p/>
-     * @param owner the owner of this dialog.
      */
     public NoticeDialog() {
         BorderPane mainPane = new BorderPane();

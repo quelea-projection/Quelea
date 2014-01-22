@@ -36,6 +36,7 @@ import javafx.scene.text.Font;
 import javafx.scene.text.FontPosture;
 import javafx.scene.text.Text;
 import javafx.util.Duration;
+import org.quelea.services.utils.QueleaProperties;
 import org.quelea.windows.main.DisplayCanvas;
 import org.quelea.windows.main.QueleaApp;
 
@@ -88,9 +89,10 @@ public class NoticeDrawer {
     private void playNotices() {
         canvas.ensureNoticesVisible(); //Shouldn't need this, but guards against any cases where the notice overlay may have been removed.
         if(!playing) {
+            double displayWidth = QueleaApp.get().getProjectionWindow().getWidth();
             FontMetrics metrics = Toolkit.getToolkit().getFontLoader().getFontMetrics(noticeFont);
             if(!overlay.getChildren().contains(backing)) {
-                backing = new Rectangle(canvas.getWidth(), metrics.getLineHeight(), Color.BROWN);
+                backing = new Rectangle(displayWidth, metrics.getLineHeight(), Color.BROWN);
                 backing.setOpacity(0);
                 overlay.getChildren().add(backing);
                 FadeTransition fadeTrans = new FadeTransition(Duration.seconds(BACKGROUND_FADE_DURATION), backing);
@@ -117,7 +119,7 @@ public class NoticeDrawer {
                 textGroup.getChildren().add(noticeText);
             }
             double width = metrics.computeStringWidth(builder.toString()) + textGroup.getSpacing() * (notices.size() - 1);
-            textGroup.setTranslateX(canvas.getWidth());
+            textGroup.setTranslateX(displayWidth);
             overlay.getChildren().add(textGroup);
             Timeline timeline = new Timeline();
             timeline.getKeyFrames().add(new KeyFrame(Duration.ZERO, new KeyValue(textGroup.translateXProperty(), textGroup.getTranslateX())));
