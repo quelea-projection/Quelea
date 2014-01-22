@@ -80,10 +80,10 @@ public class DisplayStage extends Stage {
                 @Override
                 public void changed(ObservableValue<? extends Number> ov, Number t, Number t1) {
                     double size = getWidth();
-                    if(getHeight()<size) {
+                    if(getHeight() < size) {
                         size = getHeight();
                     }
-                    clock.setFontSize(size/24);
+                    clock.setFontSize(size / 24);
                 }
             };
             widthProperty().addListener(cl);
@@ -138,6 +138,8 @@ public class DisplayStage extends Stage {
      * Set a test image to appear on this stage.
      * <p>
      * @param img the test img, or null to clear.
+     * @param preserveAspect true if the aspect ratio should be preserved, false
+     * if it should be stretched to fit.
      */
     public void setTestImage(Image img, boolean preserveAspect) {
         testImage.getImageView().setPreserveRatio(preserveAspect);

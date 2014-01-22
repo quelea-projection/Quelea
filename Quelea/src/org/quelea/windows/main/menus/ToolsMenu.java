@@ -18,6 +18,7 @@
  */
 package org.quelea.windows.main.menus;
 
+import java.lang.ref.SoftReference;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.control.Menu;
@@ -40,12 +41,11 @@ import org.quelea.windows.main.widgets.TestPaneDialog;
  */
 public class ToolsMenu extends Menu {
 
-    private MenuItem searchBibleItem;
-    private MenuItem viewBibleItem;
-    private MenuItem testItem;
-    private MenuItem optionsItem;
-
-    private TestPaneDialog testDialog = new TestPaneDialog();
+    private final MenuItem searchBibleItem;
+    private final MenuItem viewBibleItem;
+    private final MenuItem testItem;
+    private final MenuItem optionsItem;
+    private SoftReference<TestPaneDialog> testDialog = new SoftReference<>(null);
 
     /**
      * Create the tools menu.
@@ -66,7 +66,12 @@ public class ToolsMenu extends Menu {
 
             @Override
             public void handle(ActionEvent t) {
-                testDialog.show();
+                TestPaneDialog dialog = testDialog.get();
+                if(dialog==null) {
+                    dialog = new TestPaneDialog();
+                    testDialog = new SoftReference<>(dialog);
+                }
+                dialog.show();
             }
         });
         getItems().add(testItem);
