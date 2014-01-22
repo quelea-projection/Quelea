@@ -31,6 +31,7 @@ import org.quelea.data.ThemeDTO;
 import org.quelea.services.languages.LabelGrabber;
 import org.quelea.services.utils.FileFilters;
 import org.quelea.services.utils.LoggerUtils;
+import org.quelea.services.utils.QueleaProperties;
 import org.quelea.services.utils.SerializableFont;
 import org.quelea.windows.main.DisplayCanvas;
 import org.quelea.windows.lyrics.LyricDrawer;
@@ -57,8 +58,8 @@ public class ImageButton extends Button {
     public ImageButton(final TextField imageLocationField, final DisplayCanvas canvas) {
         super("..");
 //        super(LabelGrabber.INSTANCE.getLabel("select.image.button"));
+        final File imageDir = QueleaProperties.get().getImageDir();
         fileChooser = new FileChooser();
-        final File imageDir = new File("img");
         fileChooser.setInitialDirectory(imageDir);
         fileChooser.getExtensionFilters().add(FileFilters.IMAGES);
         setOnAction(new EventHandler<javafx.event.ActionEvent>() {
