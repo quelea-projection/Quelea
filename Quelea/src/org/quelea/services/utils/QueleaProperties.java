@@ -801,7 +801,7 @@ public final class QueleaProperties extends Properties {
      * @return true if it should be a capital, false otherwise.
      */
     public boolean checkCapitalFirst() {
-        return Boolean.parseBoolean(getProperty("capital.first", "true"));
+        return Boolean.parseBoolean(getProperty("capital.first", "false"));
     }
 
     /**
