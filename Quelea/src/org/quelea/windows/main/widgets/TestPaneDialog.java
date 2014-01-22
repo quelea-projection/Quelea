@@ -17,7 +17,6 @@
  */
 package org.quelea.windows.main.widgets;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import javafx.event.ActionEvent;
@@ -39,6 +38,7 @@ import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import javafx.stage.WindowEvent;
 import org.quelea.services.languages.LabelGrabber;
+import org.quelea.services.utils.ImageManager;
 import org.quelea.services.utils.Utils;
 import org.quelea.windows.main.QueleaApp;
 
@@ -89,10 +89,10 @@ public class TestPaneDialog extends Stage {
         centrePane.setHgap(30);
         centrePane.setVgap(30);
 
-        centrePane.add(getTestView("icons/SMPTE Bars.png", false), 0, 0);
-        centrePane.add(getTestView("icons/position calibrate.png", false), 0, 1);
-        centrePane.add(getTestView("icons/square wedges.png", true), 1, 0);
-        centrePane.add(getTestView("icons/colorbands.png", false), 1, 1);
+        centrePane.add(getTestView("file:icons/SMPTE Bars.png", false), 0, 0);
+        centrePane.add(getTestView("file:icons/position calibrate.png", false), 0, 1);
+        centrePane.add(getTestView("file:icons/square wedges.png", true), 1, 0);
+        centrePane.add(getTestView("file:icons/colorbands.png", false), 1, 1);
         root.setCenter(centrePane);
 
         StackPane bottomPane = new StackPane();
@@ -115,13 +115,14 @@ public class TestPaneDialog extends Stage {
         setTestImage(null, false);
     }
 
-    private void setTestImage(Image img, boolean preserveAspect) {
+    private void setTestImage(String uri, boolean preserveAspect) {
+        Image img = ImageManager.INSTANCE.getImage(uri);
         QueleaApp.get().getProjectionWindow().setTestImage(img, preserveAspect);
         QueleaApp.get().getStageWindow().setTestImage(img, preserveAspect);
     }
 
-    private ImageView getTestView(String path, final boolean preserveAspect) {
-        final ImageView iv = new ImageView(new File(path).toURI().toString());
+    private ImageView getTestView(final String uri, final boolean preserveAspect) {
+        final ImageView iv = new ImageView(ImageManager.INSTANCE.getImage(uri, 528, 300, false));
         iv.setOnMouseClicked(new EventHandler<MouseEvent>() {
 
             @Override
@@ -130,13 +131,13 @@ public class TestPaneDialog extends Stage {
                     iv.setEffect(null);
                 }
                 iv.setEffect(new DropShadow(20, Color.YELLOWGREEN));
-                setTestImage(iv.getImage(), preserveAspect);
+                setTestImage(uri, preserveAspect);
             }
         });
         iv.setSmooth(true);
         iv.setPreserveRatio(false);
-        iv.setFitHeight(300);
         iv.setFitWidth(528);
+        iv.setFitHeight(300);
         ivs.add(iv);
         return iv;
     }
