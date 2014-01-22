@@ -48,6 +48,7 @@ import javafx.scene.layout.TilePane;
 import org.javafx.dialog.Dialog;
 import org.quelea.data.displayable.ImageDisplayable;
 import org.quelea.services.languages.LabelGrabber;
+import org.quelea.services.utils.ImageManager;
 import org.quelea.services.utils.LoggerUtils;
 import org.quelea.services.utils.Utils;
 import org.quelea.windows.main.QueleaApp;
@@ -142,7 +143,7 @@ public class ImageListPanel extends BorderPane {
                 for(final File file : files) {
                     if(Utils.fileIsImage(file) && !file.isDirectory()) {
                         final HBox viewBox = new HBox();
-                        final ImageView view = new ImageView(new Image(file.toURI().toString()));
+                        final ImageView view = new ImageView(ImageManager.INSTANCE.getImage(file.toURI().toString(), 160, 160, true));
                         view.setPreserveRatio(true);
                         view.setFitWidth(160);
                         view.setOnMouseClicked(new EventHandler<MouseEvent>() {

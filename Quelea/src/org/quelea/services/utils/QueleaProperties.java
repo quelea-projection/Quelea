@@ -1100,8 +1100,8 @@ public final class QueleaProperties extends Properties {
      * <p/>
      * @return the logo image
      */
-    public Image getLogoImage() {
-        return new Image("file:" + getProperty("logo.image.location", "icons/logo default.png"));
+    public String getLogoImageURI() {
+        return "file:" + getProperty("logo.image.location", "icons/logo default.png");
     }
 
     /**

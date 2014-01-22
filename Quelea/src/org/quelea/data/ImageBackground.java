@@ -20,6 +20,7 @@ package org.quelea.data;
 
 import java.io.File;
 import java.io.Serializable;
+import java.lang.ref.SoftReference;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -32,56 +33,53 @@ import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.paint.Color;
 import org.quelea.services.languages.LabelGrabber;
+import org.quelea.services.utils.ImageManager;
+import org.quelea.services.utils.QueleaProperties;
 import org.quelea.services.utils.Utils;
 
 /**
  * An image background.
+ * <p>
  * @author Michael
  */
 public class ImageBackground implements Background, Serializable {
 
     private String imageName;
-    private transient Image originalImage;
-    private transient boolean init = false;
+    private transient SoftReference<Image> originalImage;
 
     /**
      * Create a new background that's a certain image.
      * <p/>
-     * @param imageName the name of the background image in the img folder.
+     * @param imageName the name of the background image in the user img folder.
      */
     public ImageBackground(String imageName) {
         this.imageName = imageName;
         initImage();
     }
-    
-    private void initImage() {
-        if(!init) {
-            init=true;
-            File f = new File("img", imageName);
-            if(f.exists() && !imageName.trim().isEmpty()) {
-                originalImage = new Image(f.toURI().toString());
-            }
-            else {
-                originalImage = Utils.getImageFromColour(Color.BLACK);
-            }
-        }
-    }
 
-    /**
-     * Create a new background that's a certain image.
-     * <p/>
-     * @param image the background image.
-     */
-    public ImageBackground(Image image) {
-        originalImage = image;
+    private Image initImage() {
+        File f = new File(QueleaProperties.get().getImageDir(), imageName);
+        Image img;
+        if(f.exists() && !imageName.trim().isEmpty()) {
+            img = ImageManager.INSTANCE.getImage(f.toURI().toString());
+            originalImage = new SoftReference<>(img);
+        }
+        else {
+            img = Utils.getImageFromColour(Color.BLACK);
+            originalImage = new SoftReference<>(img);
+        }
+        return img;
     }
 
     /**
      * Get the background image.
      */
     public Image getImage() {
-        initImage();
-        return originalImage;
+        Image img = originalImage.get();
+        if(img == null) {
+            img = initImage();
+        }
+        return img;
     }
 
     /**
@@ -94,23 +92,13 @@ public class ImageBackground implements Background, Serializable {
     }
 
     /**
-     * Get the current image location of this background, or null if the
-     * background is currently a colour.
-     * <p/>
-     * @return the current image location of the background.
-     */
-    public String getImageLocation() {
-        return imageName;
-    }
-
-    /**
      * Get the DB string of this background to store in the database.
      * <p/>
      * @return the background's DB string.
      */
     @Override
     public String getString() {
-        return getImageLocation();
+        return imageName;
     }
 
     /**
@@ -128,7 +116,7 @@ public class ImageBackground implements Background, Serializable {
     @Override
     public void setThemeForm(ColorPicker backgroundColorPicker, ComboBox<String> backgroundTypeSelect, TextField backgroundImgLocation, TextField backgroundVidLocation, Slider vidHueSlider) {
         backgroundTypeSelect.getSelectionModel().select(LabelGrabber.INSTANCE.getLabel("image.theme.label"));
-        backgroundImgLocation.setText(new File(getImageLocation()).getName());
+        backgroundImgLocation.setText(imageName);
         backgroundColorPicker.setValue(Color.BLACK);
         backgroundColorPicker.fireEvent(new ActionEvent());
         backgroundVidLocation.clear();

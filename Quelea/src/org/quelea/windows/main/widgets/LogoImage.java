@@ -19,6 +19,7 @@ package org.quelea.windows.main.widgets;
 
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.StackPane;
+import org.quelea.services.utils.ImageManager;
 import org.quelea.services.utils.QueleaProperties;
 import org.quelea.services.utils.Utils;
 
@@ -37,6 +38,9 @@ public class LogoImage extends StackPane {
 
     /**
      * Create a new logo image
+     * <p>
+     * @param stageView true if the logo image is being constructed on a stage
+     * view, else false.
      */
     public LogoImage(boolean stageView) {
         this.stageView = stageView;
@@ -50,11 +54,11 @@ public class LogoImage extends StackPane {
      * Update this logo image with the correct one from the properties file
      */
     public final void refresh() {
-        if (stageView) {
+        if(stageView) {
             logoImage.setImage(Utils.getImageFromColour(QueleaProperties.get().getStageBackgroundColor()));
         }
         else {
-            logoImage.setImage(QueleaProperties.get().getLogoImage());
+            logoImage.setImage(ImageManager.INSTANCE.getImage(QueleaProperties.get().getLogoImageURI()));
             logoImage.setPreserveRatio(true);
         }
         logoImage.fitWidthProperty().bind(widthProperty());
