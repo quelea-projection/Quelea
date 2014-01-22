@@ -31,14 +31,21 @@ import org.quelea.services.utils.QueleaProperties;
 
 /**
  * A simple JavaFX clock.
+ * <p>
  * @author Michael
  */
 public class Clock extends Text {
 
     public Clock() {
-        setFont(Font.font("Noto Sans", FontWeight.BOLD, FontPosture.REGULAR, 50));
+        setFontSize(50);
         setFill(QueleaProperties.get().getStageLyricsColor());
         bindToTime();
+        setOpacity(0.8);
+    }
+    
+    public void setFontSize(double fontSize) {
+        setFont(Font.font("Noto Sans", FontWeight.BOLD, FontPosture.REGULAR, fontSize));
+        setFill(QueleaProperties.get().getStageChordColor());
     }
 
     private void bindToTime() {
@@ -48,8 +55,8 @@ public class Clock extends Text {
                             @Override
                             public void handle(ActionEvent actionEvent) {
                                 Calendar time = Calendar.getInstance();
-                                String hourString = StringUtilities.pad(2, '0', time.get(Calendar.HOUR_OF_DAY) + "");
-                                String minuteString = StringUtilities.pad(2, '0', time.get(Calendar.MINUTE) + "");
+                                String hourString = pad(2, '0', time.get(Calendar.HOUR_OF_DAY) + "");
+                                String minuteString = pad(2, '0', time.get(Calendar.MINUTE) + "");
                                 setText(hourString + ":" + minuteString);
                             }
                         }
@@ -59,27 +66,24 @@ public class Clock extends Text {
         timeline.setCycleCount(Animation.INDEFINITE);
         timeline.play();
     }
-    
-    private static class StringUtilities {
 
-        /**
-         * Creates a string left padded to the specified width with the supplied
-         * padding character.
-         * <p>
-         * @param fieldWidth the length of the resultant padded string.
-         * @param padChar a character to use for padding the string.
-         * @param s the string to be padded.
-         * @return the padded string.
-         */
-        static String pad(int fieldWidth, char padChar, String s) {
-            StringBuilder sb = new StringBuilder();
-            for(int i = s.length(); i < fieldWidth; i++) {
-                sb.append(padChar);
-            }
-            sb.append(s);
-
-            return sb.toString();
+    /**
+     * Creates a string left padded to the specified width with the supplied
+     * padding character.
+     * <p>
+     * @param fieldWidth the length of the resultant padded string.
+     * @param padChar a character to use for padding the string.
+     * @param s the string to be padded.
+     * @return the padded string.
+     */
+    private static String pad(int fieldWidth, char padChar, String s) {
+        StringBuilder sb = new StringBuilder();
+        for(int i = s.length(); i < fieldWidth; i++) {
+            sb.append(padChar);
         }
+        sb.append(s);
+
+        return sb.toString();
     }
 
 }
