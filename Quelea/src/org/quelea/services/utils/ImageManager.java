@@ -18,7 +18,12 @@ import javafx.scene.paint.Color;
 public class ImageManager {
 
     public static final ImageManager INSTANCE = new ImageManager();
-    private WeakHashMap<String, Image> images;
+    /**
+     * Could possibly be a soft hashmap in future to aid with caching even when
+     * a reference isn't elsewhere? Not sure we need this for now though, so
+     * leaving as is.
+     */
+    private final WeakHashMap<String, Image> images;
 
     private ImageManager() {
         images = new WeakHashMap<>();
