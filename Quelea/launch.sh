@@ -1,2 +1,2 @@
 #!/bin/sh
-./nixjre/bin/java -Dfile.encoding=UTF-8 -Xms1024m -Xmx1024m -jar Quelea.jar
+./nixjre/bin/java -Xms1200m -Dfile.encoding=UTF-8 -XX:+UseG1GC -jar Quelea.jar
