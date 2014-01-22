@@ -74,7 +74,20 @@ public class DisplayStage extends Stage {
         canvas.setCursor(BLANK_CURSOR);
         scenePane.getChildren().add(canvas);
         if(stageView) {
-            Clock clock = new Clock();
+            final Clock clock = new Clock();
+            ChangeListener<Number> cl = new ChangeListener<Number>() {
+
+                @Override
+                public void changed(ObservableValue<? extends Number> ov, Number t, Number t1) {
+                    double size = getWidth();
+                    if(getHeight()<size) {
+                        size = getHeight();
+                    }
+                    clock.setFontSize(size/24);
+                }
+            };
+            widthProperty().addListener(cl);
+            heightProperty().addListener(cl);
             StackPane.setAlignment(clock, Pos.BOTTOM_RIGHT);
             scenePane.getChildren().add(clock);
             clock.toFront();
