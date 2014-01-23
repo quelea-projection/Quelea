@@ -626,7 +626,7 @@ public final class QueleaProperties extends Properties {
      * @return the stage screen number.
      */
     public int getStageScreen() {
-        return Integer.parseInt(getProperty("stage.screen", "1"));
+        return Integer.parseInt(getProperty("stage.screen", "-1"));
     }
 
     /**
