@@ -114,6 +114,9 @@ public class LibrarySongList extends StackPane {
                 if(t.getClickCount() == 2) {
                     new AddSongActionHandler().handle(null);
                 }
+                else if(t.getClickCount()==1 && t.isControlDown()) {
+                    QueleaApp.get().getMainWindow().getMainPanel().getPreviewPanel().setDisplayable(songList.getSelectionModel().getSelectedItem(), 0);
+                }
             }
         });
         songList.setOnKeyPressed(new EventHandler<KeyEvent>() {
