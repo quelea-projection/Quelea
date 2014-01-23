@@ -122,7 +122,7 @@ public class TestPaneDialog extends Stage {
     }
 
     private ImageView getTestView(final String uri, final boolean preserveAspect) {
-        final ImageView iv = new ImageView(ImageManager.INSTANCE.getImage(uri, 528, 300, false));
+        final ImageView iv = new ImageView(ImageManager.INSTANCE.getImage(uri, 385, 216, false));
         iv.setOnMouseClicked(new EventHandler<MouseEvent>() {
 
             @Override
@@ -136,8 +136,8 @@ public class TestPaneDialog extends Stage {
         });
         iv.setSmooth(true);
         iv.setPreserveRatio(false);
-        iv.setFitWidth(528);
-        iv.setFitHeight(300);
+        iv.setFitWidth(385);
+        iv.setFitHeight(216);
         ivs.add(iv);
         return iv;
     }
