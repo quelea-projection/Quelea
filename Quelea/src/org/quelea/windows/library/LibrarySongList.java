@@ -66,6 +66,8 @@ public class LibrarySongList extends StackPane {
     /**
      * Create a new library song list.
      * <p/>
+     * @param popup true if we want a popup menu to appear on items in this list
+     * when right clicked, false if not.
      * @popup true if this list should popup a context menu when right clicked,
      * false otherwise.
      */
@@ -183,12 +185,12 @@ public class LibrarySongList extends StackPane {
                         song.setLastSearch(null);
                         m.add(song);
                     }
-                    
+
                     SongDisplayable[] authorSongs = SongManager.get().getIndex().filter(search, SongSearchIndex.FilterType.AUTHOR);
                     for(SongDisplayable song : authorSongs) {
                         m.add(song);
                     }
-                    
+
                     songs.addAll(m);
                 }
 
@@ -279,12 +281,13 @@ public class LibrarySongList extends StackPane {
 
     /**
      * Get the actual list view in this song list.
+     * <p>
      * @return the list view object.
      */
     public ListView<SongDisplayable> getListView() {
         return songList;
     }
-    
+
     private void refresh() {
         Platform.runLater(new Runnable() {
             @Override
@@ -301,7 +304,7 @@ public class LibrarySongList extends StackPane {
             }
         });
     }
-    
+
     public void setLoading(boolean loading) {
         if(loading) {
             overlay.show();
