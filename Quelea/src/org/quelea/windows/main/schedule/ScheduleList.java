@@ -18,6 +18,7 @@
 package org.quelea.windows.main.schedule;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.logging.Level;
@@ -179,6 +180,14 @@ public class ScheduleList extends StackPane {
                         listCell.setStyle("-fx-border-color: rgb(0, 0, 0);-fx-border-width: 0,0,0,0;");
                         String imageLocation = event.getDragboard().getString();
                         if(imageLocation != null) {
+                            if(!isInImageDir(new File(imageLocation))) {
+                                try {
+                                    Utils.copyFile(new File(imageLocation), new File(QueleaProperties.get().getImageDir(), new File(imageLocation).getName()));
+                                }
+                                catch(IOException ex) {
+                                    LOGGER.log(Level.WARNING, "Couldn't copy image file", ex);
+                                }
+                            }
                             if(listCell.isEmpty()) {
                                 ImageDisplayable img = new ImageDisplayable(new File(imageLocation));
                                 add(img);
@@ -258,6 +267,16 @@ public class ScheduleList extends StackPane {
                 }
             }
         });
+    }
+    
+    private boolean isInImageDir(File file) {
+        File[] files = QueleaProperties.get().getImageDir().listFiles();
+        for(File listFile : files) {
+            if(file.equals(listFile)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     public void add(Displayable displayable) {
