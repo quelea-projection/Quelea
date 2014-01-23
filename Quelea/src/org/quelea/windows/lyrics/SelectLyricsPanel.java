@@ -17,8 +17,6 @@
  */
 package org.quelea.windows.lyrics;
 
-import java.util.HashMap;
-import java.util.Map;
 import org.quelea.windows.main.DisplayCanvas;
 import org.quelea.windows.main.DisplayCanvas.Priority;
 import java.util.logging.Logger;
