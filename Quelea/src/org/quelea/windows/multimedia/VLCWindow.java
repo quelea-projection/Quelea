@@ -63,7 +63,7 @@ public class VLCWindow {
     private boolean hideButton;
     private boolean show;
     private boolean paused;
-    private boolean init;
+    private volatile boolean init;
     private String location;
     private volatile double hue = 0;
 
@@ -110,6 +110,10 @@ public class VLCWindow {
         }, 0, 30, TimeUnit.MILLISECONDS);
     }
 
+    public boolean isInit() {
+        return init;
+    }
+    
     public void setRepeat(final boolean repeat) {
         runOnVLCThread(new Runnable() {
             @Override
