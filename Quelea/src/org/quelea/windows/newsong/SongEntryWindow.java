@@ -142,9 +142,6 @@ public class SongEntryWindow extends Stage {
     }
     
     private boolean isChangeMade() {
-        System.out.println(basicSongPanel.hashChanged());
-        System.out.println(detailedSongPanel.hashChanged());
-        System.out.println(themePanel.hashChanged());
         return basicSongPanel.hashChanged() || detailedSongPanel.hashChanged() || themePanel.hashChanged();
     }
     
