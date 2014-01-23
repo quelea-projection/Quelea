@@ -358,6 +358,7 @@ filefilters.description.quelea.schedules=Quelea Ablaufdateien
 filefilters.description.xml.files=XML Dateien
 filefilters.description.survivor.songbook=Survivor acetates Datei
 vlc.warning.message=Quelea kann VLC nicht finden. Ohne dieses kann Quelea keine Video/Audiodateien abspielen und keine Lieder mit Hintergrundvideos verwenden. VLC jetzt downloaden? Nach der Installation muss Quelea neu gestartet werden damit die Änderungen übernommen werden.
+vlc.version.message=Die VLC Version ist veraltet. Die aktuelle Version des VLC Players muss installiert werden, damit Videos und Musikdateien korrekt abgespielt werden. Soll VLC jetzt heruntergeladen und installiert werden? Nach der Installation muss Quelea neu gestartet werden damit die Änderungen übernommen werden.
 dont.save.text=Nicht speichern
 vlc.warning.title=VLC konnte nicht gefunden werden
 filefilters.description.xml.bibles=XML Bibeln
