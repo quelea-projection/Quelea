@@ -359,6 +359,7 @@ filefilters.description.quelea.schedules=Rozvrhy Quelea
 filefilters.description.xml.files=Soubory XML
 filefilters.description.survivor.songbook=Soubor Survivor acetates
 vlc.warning.message=Quelea nenašla VLC ve vašem systému. Bez něj nebude Quelea moci přehrávat obrazové a zvukové záznamy a ukazovat písně s videopozadím. Chcete je stáhnout nyní?  Po nainstalování VLC budete muset Queleu spustit znovu, aby se změny projevily.
+vlc.version.message=Vaše verze VLC je příliš stará. Abyste mohli přehrávat obrazové a zvukové záznamy a ukazovat pozadí videa, musíte stáhnout nejnovější verzi VLC. Chcete ji stáhnout nyní? Aby se změny projevily, je třeba Queleu po nainstalování VLC spustit znovu.
 dont.save.text=Neukládat
 vlc.warning.title=Nepodařilo se najít VLC
 filefilters.description.xml.bibles=Bible XML
