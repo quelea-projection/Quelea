@@ -50,6 +50,11 @@ public class SerializableDropShadow implements Serializable {
         return yOffset;
     }
     
+    @Override
+    public String toString() {
+        return getColor().toString() + " X: " + xOffset + " Y: " + yOffset;
+    }
+    
     public DropShadow getDropShadow() {
         DropShadow shadow = new DropShadow();
         shadow.setColor(getColor());
