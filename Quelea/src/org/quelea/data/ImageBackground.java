@@ -73,10 +73,14 @@ public class ImageBackground implements Background, Serializable {
 
     /**
      * Get the background image.
+     * <p>
      * @return the background image.
      */
     public Image getImage() {
-        Image img = originalImage.get();
+        Image img = null;
+        if(originalImage != null) {
+            img = originalImage.get();
+        }
         if(img == null) {
             img = initImage();
         }
