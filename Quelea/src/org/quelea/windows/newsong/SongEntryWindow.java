@@ -63,7 +63,6 @@ public class SongEntryWindow extends Stage {
     private final Button cancelButton;
     private final CheckBox addToSchedCBox;
     private SongDisplayable song;
-    private boolean checkEdit;
 
     /**
      * Create and initialise the new song window.
@@ -141,9 +140,22 @@ public class SongEntryWindow extends Stage {
         setResizable(false);
         setScene(new Scene(mainPane));
     }
+    
+    private boolean isChangeMade() {
+        System.out.println(basicSongPanel.hashChanged());
+        System.out.println(detailedSongPanel.hashChanged());
+        System.out.println(themePanel.hashChanged());
+        return basicSongPanel.hashChanged() || detailedSongPanel.hashChanged() || themePanel.hashChanged();
+    }
+    
+    private void resetChange() {
+        basicSongPanel.resetSaveHash();
+        detailedSongPanel.resetSaveHash();
+        themePanel.resetSaveHash();
+    }
 
     private void checkSave() {
-        if(checkEdit && attributesOk()) {
+        if(isChangeMade() && attributesOk()) {
             Dialog.buildConfirmation(LabelGrabber.INSTANCE.getLabel("confirm.entry.exit.title"),
                     LabelGrabber.INSTANCE.getLabel("confirm.entry.exit.text"), SongEntryWindow.this)
                     .addLabelledButton(LabelGrabber.INSTANCE.getLabel("save.text"), new EventHandler<ActionEvent>() {
@@ -158,7 +170,7 @@ public class SongEntryWindow extends Stage {
     }
 
     private void saveSong() {
-        checkEdit = false;
+        resetChange();
         hide();
         ThemeDTO selectedTheme = themePanel.getSelectedTheme();
         if(selectedTheme != null && getSong() instanceof TextDisplayable) {
@@ -262,7 +274,6 @@ public class SongEntryWindow extends Stage {
      * Set this window up ready to enter a new song.
      */
     public void resetNewSong() {
-        checkEdit = true;
         setTitle(LabelGrabber.INSTANCE.getLabel("new.song.title"));
         song = null;
         confirmButton.setText(LabelGrabber.INSTANCE.getLabel("new.song.button"));
@@ -274,13 +285,13 @@ public class SongEntryWindow extends Stage {
         addToSchedCBox.setSelected(false);
         addToSchedCBox.setDisable(false);
         updateDBOnHide = true;
+        resetChange();
     }
 
     /**
      * Set this window up ready to enter a new song.
      */
     public void resetQuickInsert() {
-        checkEdit = false;
         setTitle(LabelGrabber.INSTANCE.getLabel("quick.insert.text"));
         song = null;
         confirmButton.setText(LabelGrabber.INSTANCE.getLabel("library.add.to.schedule.text"));
@@ -292,6 +303,7 @@ public class SongEntryWindow extends Stage {
         addToSchedCBox.setSelected(false);
         addToSchedCBox.setDisable(true);
         updateDBOnHide = false;
+        resetChange();
     }
 
     /**
@@ -300,7 +312,6 @@ public class SongEntryWindow extends Stage {
      * @param song the song to edit.
      */
     public void resetEditSong(SongDisplayable song) {
-        checkEdit = true;
         setTitle(LabelGrabber.INSTANCE.getLabel("edit.song.title"));
         this.song = song;
         confirmButton.setText(LabelGrabber.INSTANCE.getLabel("edit.song.button"));
@@ -319,6 +330,7 @@ public class SongEntryWindow extends Stage {
             addToSchedCBox.setDisable(false);
         }
         updateDBOnHide = true;
+        resetChange();
     }
 
     /**
