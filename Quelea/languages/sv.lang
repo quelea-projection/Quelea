@@ -358,6 +358,7 @@ filefilters.description.quelea.schedules=Quelea-gudstjänstordningar
 filefilters.description.xml.files=XML-filer
 filefilters.description.survivor.songbook=Survivor acetates-fil
 vlc.warning.message=Quelea kunde inte hitta VLC på din dator. Utan det kommer Quelea inte kunna spela upp videor, ljudfiler och visa sånger med videobakgrunder. Vill du ladda hem det nu? Du måste starta om Quelea efter att du har installerat VLC för att ändringarna ska träda i kraft.
+vlc.version.message=Din version av VLC är gammal. Du behöver ladda hem den senaste versionen av VLC för att kunna spela upp filmer och ljud, samt visa videobakgrunder. Vill du ladda hem det nu? Du måste starta om Quelea efter att du har installerat VLC för att ändringarna ska träda i kraft.
 vlc.warning.title=Kunde inte hitta VLC
 filefilters.description.xml.bibles=XML-biblar
 startup.error.text=Tyvärr, Quelea kunde inte starta på din dator av någon anledning. Om du vill ha hjälp att få det fungera, var vänlig skicka ett mail till support@quelea.org och bifoga debug-loggfilen ($1).\n\nAnnars, känn dig fri att ställa en fråga i Queleas diskussionsgrupp (http://goo.gl/NXvIDG).
