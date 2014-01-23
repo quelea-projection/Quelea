@@ -54,14 +54,14 @@ import org.quelea.windows.main.QueleaApp;
 public class LibraryImagePanel extends BorderPane {
 
     private final ImageListPanel imagePanel;
-    private ToolBar toolbar;
+    private final ToolBar toolbar;
     private static final Logger LOGGER = LoggerUtils.getLogger();
 
     /**
      * Create a new library image panel.
      */
     public LibraryImagePanel() {
-        imagePanel = new ImageListPanel(QueleaProperties.get().getImageDir().getName());
+        imagePanel = new ImageListPanel(QueleaProperties.get().getImageDir().getAbsolutePath());
         setCenter(imagePanel);
         toolbar = new ToolBar();
 
