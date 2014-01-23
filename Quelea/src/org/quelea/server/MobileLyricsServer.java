@@ -123,9 +123,10 @@ public class MobileLyricsServer {
                 pageContent = readFile("icons/defaultpage.htm");
                 pageContent = sortLabels(pageContent);
             }
-            t.sendResponseHeaders(200, pageContent.length());
+            byte[] bytes = pageContent.getBytes(Charset.forName("UTF-8"));
+            t.sendResponseHeaders(200, bytes.length);
             try(OutputStream os = t.getResponseBody()) {
-                os.write(pageContent.getBytes());
+                os.write(bytes);
             }
         }
 
@@ -161,9 +162,10 @@ public class MobileLyricsServer {
         @Override
         public void handle(HttpExchange t) throws IOException {
             String response = getLyrics(false);
-            t.sendResponseHeaders(200, response.length());
+            byte[] bytes = response.getBytes("UTF-8");
+            t.sendResponseHeaders(200, bytes.length);
             try(OutputStream os = t.getResponseBody()) {
-                os.write(response.getBytes("UTF-8"));
+                os.write(bytes);
             }
         }
     }
@@ -173,9 +175,10 @@ public class MobileLyricsServer {
         @Override
         public void handle(HttpExchange t) throws IOException {
             String response = getLyrics(true);
-            t.sendResponseHeaders(200, response.length());
+            byte[] bytes = response.getBytes("UTF-8");
+            t.sendResponseHeaders(200, bytes.length);
             try(OutputStream os = t.getResponseBody()) {
-                os.write(response.getBytes("UTF-8"));
+                os.write(bytes);
             }
         }
     }
