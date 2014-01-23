@@ -51,6 +51,7 @@ import org.quelea.data.displayable.SongDisplayable;
 import org.quelea.data.displayable.TextSection;
 import org.quelea.services.utils.LoggerUtils;
 import org.quelea.services.utils.QueleaProperties;
+import org.quelea.services.utils.SerializableDropShadow;
 import org.quelea.services.utils.Utils;
 import org.quelea.windows.library.Constraint;
 import org.quelea.windows.library.DisplayableListCell;
@@ -198,7 +199,11 @@ public class ScheduleList extends StackPane {
                                 if(d instanceof SongDisplayable) {
                                     SongDisplayable songDisplayable = (SongDisplayable) d;
                                     ThemeDTO theme = songDisplayable.getTheme();
-                                    ThemeDTO newTheme = new ThemeDTO(theme.getSerializableFont(), theme.getFontPaint(), new ImageBackground(new File(imageLocation).getName()), theme.getShadow(), theme.getSerializableFont().isBold(), theme.getSerializableFont().isItalic(), theme.getTextPosition(), theme.getTextAlignment());
+                                    SerializableDropShadow dropShadow = theme.getShadow();
+                                    if(dropShadow == null || (dropShadow.getColor().equals(Color.WHITE) && dropShadow.getOffsetX() == 0 && dropShadow.getOffsetY() == 0)) {
+                                        dropShadow = new SerializableDropShadow(Color.BLACK, 3, 3);
+                                    }
+                                    ThemeDTO newTheme = new ThemeDTO(theme.getSerializableFont(), theme.getFontPaint(), new ImageBackground(new File(imageLocation).getName()), dropShadow, theme.getSerializableFont().isBold(), theme.getSerializableFont().isItalic(), theme.getTextPosition(), theme.getTextAlignment());
                                     for(TextSection section : songDisplayable.getSections()) {
                                         section.setTheme(newTheme);
                                     }
