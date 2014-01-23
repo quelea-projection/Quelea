@@ -83,6 +83,13 @@ public final class Main extends Application {
             public void run() {
                 try {
                     final boolean VLC_OK = new NativeDiscovery().discover();
+                    final boolean VLC_INIT;
+                    if(VLC_OK) {
+                        VLC_INIT = VLCWindow.INSTANCE.isInit();
+                    }
+                    else {
+                        VLC_INIT = false;
+                    }
                     new FontInstaller().setupBundledFonts();
                     new UserFileChecker(QueleaProperties.getQueleaUserHome()).checkUserFiles();
 
@@ -241,14 +248,21 @@ public final class Main extends Application {
                             mainWindow.show();
                             splashWindow.hide();
                             showMonitorWarning(monitorNumber);
-                            if(VLC_OK) {
+                            if(VLC_OK && VLC_INIT) {
                                 VLCWindow.INSTANCE.refreshPosition();
                             }
                             else { //Couldn't find the VLC libraries.
+                                String message;
+                                if(VLC_OK) {
+                                    message = LabelGrabber.INSTANCE.getLabel("vlc.version.message");
+                                }
+                                else {
+                                    message = LabelGrabber.INSTANCE.getLabel("vlc.warning.message");
+                                }
                                 vlcWarningDialog = new Dialog.Builder()
                                         .create()
                                         .setTitle(LabelGrabber.INSTANCE.getLabel("vlc.warning.title"))
-                                        .setMessage(LabelGrabber.INSTANCE.getLabel("vlc.warning.message"))
+                                        .setMessage(message)
                                         .addLabelledButton(LabelGrabber.INSTANCE.getLabel("continue.without.video"), new EventHandler<ActionEvent>() {
                                             @Override
                                             public void handle(ActionEvent t) {
