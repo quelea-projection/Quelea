@@ -111,10 +111,23 @@ public class VLCWindow {
         }, 0, 30, TimeUnit.MILLISECONDS);
     }
 
+    /**
+     * Determine if VLC has initialised correctly.
+     *
+     * @return true if it has, false if it hasn't because something went wrong
+     * (the most likely cause is an outdated version.)
+     */
     public boolean isInit() {
+        runOnVLCThreadAndWait(new Runnable() {
+
+            @Override
+            public void run() {
+                //Just to block until construction has finished!
+            }
+        });
         return init;
     }
-    
+
     public void setRepeat(final boolean repeat) {
         runOnVLCThread(new Runnable() {
             @Override
