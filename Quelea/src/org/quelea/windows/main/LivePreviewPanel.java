@@ -26,9 +26,11 @@ import java.util.logging.Logger;
 import javafx.application.Platform;
 import javafx.event.EventHandler;
 import javafx.scene.Node;
+import javafx.scene.input.DragEvent;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.input.TransferMode;
 import javafx.scene.layout.BorderPane;
 import org.quelea.data.displayable.AudioDisplayable;
 import org.quelea.data.displayable.Displayable;
@@ -56,7 +58,7 @@ public abstract class LivePreviewPanel extends BorderPane {
     private static final Logger LOGGER = LoggerUtils.getLogger();
     private final Set<DisplayStage> windows = new HashSet<>();
     private Displayable displayable;
-    private CardPane<AbstractPanel> cardPanel = new CardPane<>();
+    private final CardPane<AbstractPanel> cardPanel = new CardPane<>();
     private static final String LYRICS_LABEL = "LYRICS";
     private static final String IMAGE_LABEL = "IMAGE";
     private static final String VIDEO_LABEL = "VIDEO";
@@ -64,11 +66,11 @@ public abstract class LivePreviewPanel extends BorderPane {
     private static final String PRESENTATION_LABEL = "PPT";
     private String currentLabel;
     private SelectLyricsPanel lyricsPanel = new SelectLyricsPanel(this);
-    private ImagePanel imagePanel = new ImagePanel();
-    private PresentationPanel presentationPanel = new PresentationPanel(this);
-    private MultimediaPanel videoPanel = new MultimediaPanel();
-    private MultimediaPanel audioPanel = new MultimediaPanel();
-    private QuickEditDialog quickEditDialog = new QuickEditDialog();
+    private final ImagePanel imagePanel = new ImagePanel();
+    private final PresentationPanel presentationPanel = new PresentationPanel(this);
+    private final MultimediaPanel videoPanel = new MultimediaPanel();
+    private final MultimediaPanel audioPanel = new MultimediaPanel();
+    private final QuickEditDialog quickEditDialog = new QuickEditDialog();
 
     /**
      * Create the live preview panel, common superclass of live and preview
@@ -100,6 +102,27 @@ public abstract class LivePreviewPanel extends BorderPane {
             }
         });
         presentationPanel.buildLoopTimeline();
+        setOnDragOver(new EventHandler<DragEvent>() {
+            @Override
+            public void handle(DragEvent event) {
+                if(event.getDragboard().getContent(SongDisplayable.SONG_DISPLAYABLE_FORMAT) != null) {
+                    event.acceptTransferModes(TransferMode.ANY);
+                }
+            }
+        });
+        setOnDragDropped(new EventHandler<DragEvent>() {
+
+            @Override
+            public void handle(DragEvent event) {
+                if(event.getDragboard().getContent(SongDisplayable.SONG_DISPLAYABLE_FORMAT) instanceof SongDisplayable) {
+                    final SongDisplayable displayable = (SongDisplayable) event.getDragboard().getContent(SongDisplayable.SONG_DISPLAYABLE_FORMAT);
+                    if(displayable != null) {
+                        setDisplayable(displayable, 0);
+                    }
+                }
+                event.consume();
+            }
+        });
     }
 
     public void selectFirstLyric() {
