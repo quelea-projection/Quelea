@@ -143,9 +143,10 @@ public class ImageListPanel extends BorderPane {
                 for(final File file : files) {
                     if(Utils.fileIsImage(file) && !file.isDirectory()) {
                         final HBox viewBox = new HBox();
-                        final ImageView view = new ImageView(ImageManager.INSTANCE.getImage(file.toURI().toString(), 160, 160, true));
+                        final ImageView view = new ImageView(ImageManager.INSTANCE.getImage(file.toURI().toString(), 160, 160, false));
                         view.setPreserveRatio(true);
                         view.setFitWidth(160);
+                        view.setFitHeight(90);
                         view.setOnMouseClicked(new EventHandler<MouseEvent>() {
                             @Override
                             public void handle(MouseEvent t) {
