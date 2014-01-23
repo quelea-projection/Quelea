@@ -359,6 +359,7 @@ save.text=Save
 dont.save.text=Don't Save
 vlc.warning.title=Couldn't find VLC
 vlc.warning.message=Quelea couldn't find VLC on your system. Without it, Quelea won't be able to play videos, audio, and show songs with video backgrounds. Do you want to download it now? You'll need to restart Quelea after you've installed VLC for the changes to take effect.
+vlc.version.message=Your version of VLC is too old. You'll need to download the latest version of VLC in order to play videos, audio, and show video backgrounds. Do you want to download it now? You'll need to restart Quelea after you've installed VLC for the changes to take effect.
 continue.without.video=Continue without VLC
 download.vlc=Download VLC
 startup.error.title=Startup Error
