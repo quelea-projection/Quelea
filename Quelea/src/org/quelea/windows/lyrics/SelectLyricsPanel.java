@@ -48,7 +48,6 @@ public class SelectLyricsPanel extends AbstractPanel {
     private final DisplayCanvas previewCanvas;
     private final SplitPane splitPane;
     private final LyricDrawer drawer;
-    private final Map<DisplayCanvas, Boolean> logoWasShowingMap;
 
     /**
      * Create a new lyrics panel.
@@ -56,7 +55,6 @@ public class SelectLyricsPanel extends AbstractPanel {
      * @param containerPanel the container panel this panel is contained within.
      */
     public SelectLyricsPanel(LivePreviewPanel containerPanel) {
-        logoWasShowingMap = new HashMap<>();
         drawer = new LyricDrawer();
         splitPane = new SplitPane();
         splitPane.setOrientation(Orientation.VERTICAL);
