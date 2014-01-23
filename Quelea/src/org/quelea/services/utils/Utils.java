@@ -101,10 +101,30 @@ public final class Utils {
     /**
      * Get the debug log file, useful for debugging if something goes wrong (the
      * log is printed out to this location.)
+     * <p>
      * @return the debug log file.
      */
     public static File getDebugLog() {
         return new File(QueleaProperties.getQueleaUserHome(), "quelea-debuglog.txt");
+    }
+
+    /**
+     * Check if a given file is in a given directory. (Doesn't include
+     * subfolders.)
+     * <p>
+     * @param dir the directory to check.
+     * @param file the file to check.
+     * @return true if the given file is in the given directory, false
+     * otherwise.
+     */
+    public static boolean isInDir(File dir, File file) {
+        File[] files = QueleaProperties.get().getImageDir().listFiles();
+        for(File listFile : files) {
+            if(file.equals(listFile)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     /**
@@ -480,7 +500,7 @@ public final class Utils {
     public static boolean fxThread() {
         return Platform.isFxApplicationThread();
     }
-    
+
     public static void checkFXThread() {
         if(!fxThread()) {
             throw new AssertionError("Not on FX Thread!");

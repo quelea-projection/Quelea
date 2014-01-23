@@ -25,6 +25,7 @@ import java.util.logging.Logger;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import org.quelea.services.utils.LoggerUtils;
+import org.quelea.services.utils.QueleaProperties;
 import org.quelea.services.utils.Utils;
 import org.w3c.dom.Node;
 
@@ -82,7 +83,7 @@ public class ImageDisplayable implements Displayable {
      */
     public static ImageDisplayable parseXML(Node node) {
         File file = new File(node.getTextContent());
-        return new ImageDisplayable(new File("img/", file.getName()));
+        return new ImageDisplayable(new File(QueleaProperties.get().getImageDir(), file.getName()));
     }
 
     /**

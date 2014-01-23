@@ -180,7 +180,7 @@ public class ScheduleList extends StackPane {
                         listCell.setStyle("-fx-border-color: rgb(0, 0, 0);-fx-border-width: 0,0,0,0;");
                         String imageLocation = event.getDragboard().getString();
                         if(imageLocation != null) {
-                            if(!isInImageDir(new File(imageLocation))) {
+                            if(!Utils.isInDir(QueleaProperties.get().getImageDir(), new File(imageLocation))) {
                                 try {
                                     Utils.copyFile(new File(imageLocation), new File(QueleaProperties.get().getImageDir(), new File(imageLocation).getName()));
                                 }
@@ -267,16 +267,6 @@ public class ScheduleList extends StackPane {
                 }
             }
         });
-    }
-    
-    private boolean isInImageDir(File file) {
-        File[] files = QueleaProperties.get().getImageDir().listFiles();
-        for(File listFile : files) {
-            if(file.equals(listFile)) {
-                return true;
-            }
-        }
-        return false;
     }
 
     public void add(Displayable displayable) {

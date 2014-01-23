@@ -32,6 +32,7 @@ import org.quelea.services.utils.FileFilters;
 import org.quelea.services.utils.LoggerUtils;
 import org.quelea.services.utils.QueleaProperties;
 import org.quelea.services.utils.SerializableFont;
+import org.quelea.services.utils.Utils;
 import org.quelea.windows.main.DisplayCanvas;
 import org.quelea.windows.lyrics.LyricDrawer;
 import org.quelea.windows.main.QueleaApp;
@@ -68,7 +69,7 @@ public class ImageButton extends Button {
                 if(selectedFile != null) {
                     File newFile = new File(imageDir, selectedFile.getName());
                     try {
-                        if(!selectedFile.getCanonicalPath().startsWith(imageDir.getCanonicalPath())) {
+                        if(!Utils.isInDir(imageDir, selectedFile)) {
                             FileUtils.copyFile(selectedFile, newFile);
                         }
                     }
