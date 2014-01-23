@@ -211,7 +211,7 @@ public class BasicSongPanel extends BorderPane {
                     return;
                 }
                 transposeDialog.setKey(originalKey);
-                transposeDialog.show();
+                transposeDialog.showAndWait();
                 int semitones = transposeDialog.getSemitones();
 
                 TextField keyField = QueleaApp.get().getMainWindow().getSongEntryWindow().getDetailedSongPanel().getKeyField();
