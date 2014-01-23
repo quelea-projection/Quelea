@@ -54,6 +54,7 @@ public class ThemePanel extends BorderPane {
     private final ThemeToolbar themeToolbar;
     private ThemeDTO selectedTheme = null;
     private DisplayPositionSelector positionSelector;
+    private String saveHash = "";
 
     /**
      * Create and initialise the theme panel
@@ -116,6 +117,18 @@ public class ThemePanel extends BorderPane {
         setTop(themeToolbar);
         updateTheme(false);
         setMaxSize(800, 600);
+    }
+
+    public boolean hashChanged() {
+        return !getSaveHash().equals(saveHash);
+    }
+
+    public void resetSaveHash() {
+        saveHash = getSaveHash();
+    }
+
+    private String getSaveHash() {
+        return Integer.toString(getTheme().hashCode());
     }
 
     /**
