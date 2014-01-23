@@ -19,6 +19,7 @@ package org.quelea.services.notice;
 
 import com.sun.javafx.tk.FontMetrics;
 import com.sun.javafx.tk.Toolkit;
+import com.sun.scenario.ToolkitAccessor;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -36,7 +37,6 @@ import javafx.scene.text.Font;
 import javafx.scene.text.FontPosture;
 import javafx.scene.text.Text;
 import javafx.util.Duration;
-import org.quelea.services.utils.QueleaProperties;
 import org.quelea.windows.main.DisplayCanvas;
 import org.quelea.windows.main.QueleaApp;
 
@@ -121,7 +121,7 @@ public class NoticeDrawer {
             double width = metrics.computeStringWidth(builder.toString()) + textGroup.getSpacing() * (notices.size() - 1);
             textGroup.setTranslateX(displayWidth);
             overlay.getChildren().add(textGroup);
-            Timeline timeline = new Timeline();
+            Timeline timeline = new Timeline(25);
             timeline.getKeyFrames().add(new KeyFrame(Duration.ZERO, new KeyValue(textGroup.translateXProperty(), textGroup.getTranslateX())));
             timeline.getKeyFrames().add(new KeyFrame(Duration.seconds(TEXT_SCROLL_DURATION), new KeyValue(textGroup.translateXProperty(), -width)));
             timeline.play();
