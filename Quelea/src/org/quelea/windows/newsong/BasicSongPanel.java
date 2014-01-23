@@ -64,6 +64,7 @@ public class BasicSongPanel extends BorderPane {
     private final Button transposeButton;
     private final ComboBox<Dictionary> dictSelector;
     private final TransposeDialog transposeDialog;
+    private String saveHash = "";
 
     /**
      * Create and initialise the song panel.
@@ -124,6 +125,18 @@ public class BasicSongPanel extends BorderPane {
         mainPanel.getChildren().add(lyricsArea);
         centrePanel.getChildren().add(mainPanel);
         setCenter(centrePanel);
+    }
+
+    public void resetSaveHash() {
+        saveHash = getSaveHash();
+    }
+
+    public boolean hashChanged() {
+        return !getSaveHash().equals(saveHash);
+    }
+
+    private String getSaveHash() {
+        return "" + lyricsArea.getText().hashCode() + titleField.getText().hashCode() + authorField.getText().hashCode();
     }
 //    private String[] chordsLines;
 

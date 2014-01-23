@@ -30,18 +30,20 @@ import org.quelea.windows.main.widgets.IntegerTextField;
 
 /**
  * A panel where more detailed information about a song is entered.
+ * <p>
  * @author Michael
  */
 public class DetailedSongPanel extends BorderPane {
 
-    private TextField ccli;
-    private TextField year;
-    private TextField publisher;
-    private TextField copyright;
-    private TagEntryPanel tags;
-    private TextField key;
-    private TextField capo;
-    private TextArea info;
+    private final TextField ccli;
+    private final TextField year;
+    private final TextField publisher;
+    private final TextField copyright;
+    private final TagEntryPanel tags;
+    private final TextField key;
+    private final TextField capo;
+    private final TextArea info;
+    private String saveHash = "";
 
     /**
      * Create a new detailed song panel.
@@ -49,7 +51,7 @@ public class DetailedSongPanel extends BorderPane {
     public DetailedSongPanel() {
         GridPane formPanel = new GridPane();
         ccli = new IntegerTextField();
-        publisher = new IntegerTextField();
+        publisher = new TextField();
         year = new IntegerTextField();
         copyright = new TextField();
         tags = new TagEntryPanel(null, true, false);
@@ -73,6 +75,7 @@ public class DetailedSongPanel extends BorderPane {
 
     /**
      * Add a label / input block to a panel.
+     * <p>
      * @param panel the panel to add to.
      * @param labelText the label text to add to this block.
      * @param comp the component to add to this block.
@@ -102,6 +105,7 @@ public class DetailedSongPanel extends BorderPane {
 
     /**
      * Set this panel to edit a song.
+     * <p>
      * @param song the song to edit.
      */
     public void resetEditSong(SongDisplayable song) {
@@ -115,8 +119,21 @@ public class DetailedSongPanel extends BorderPane {
         info.setText(song.getInfo());
     }
 
+    public boolean hashChanged() {
+        return !getSaveHash().equals(saveHash);
+    }
+
+    public void resetSaveHash() {
+        saveHash = getSaveHash();
+    }
+
+    private String getSaveHash() {
+        return "" + ccli.getText().hashCode() + copyright.getText().hashCode() + tags.getTagsAsString().hashCode() + publisher.getText().hashCode() + year.getText().hashCode() + key.getText().hashCode() + capo.getText().hashCode() + info.getText().hashCode();
+    }
+
     /**
      * Get the CCLI field.
+     * <p>
      * @return the CCLI field.
      */
     public TextField getCcliField() {
@@ -125,6 +142,7 @@ public class DetailedSongPanel extends BorderPane {
 
     /**
      * Get the copyright field.
+     * <p>
      * @return the copyright field.
      */
     public TextField getCopyrightField() {
@@ -133,6 +151,7 @@ public class DetailedSongPanel extends BorderPane {
 
     /**
      * Get the publisher field.
+     * <p>
      * @return the publisher field.
      */
     public TextField getPublisherField() {
@@ -141,6 +160,7 @@ public class DetailedSongPanel extends BorderPane {
 
     /**
      * Get the tags panel.
+     * <p>
      * @return the tags panel.
      */
     public TagEntryPanel getTagsPanel() {
@@ -149,6 +169,7 @@ public class DetailedSongPanel extends BorderPane {
 
     /**
      * Get the year field.
+     * <p>
      * @return the year field.
      */
     public TextField getYearField() {
@@ -157,6 +178,7 @@ public class DetailedSongPanel extends BorderPane {
 
     /**
      * Get the info field.
+     * <p>
      * @return the info field.
      */
     public TextArea getInfoField() {
@@ -165,6 +187,7 @@ public class DetailedSongPanel extends BorderPane {
 
     /**
      * Get the key field.
+     * <p>
      * @return the key field.
      */
     public TextField getKeyField() {
@@ -173,10 +196,11 @@ public class DetailedSongPanel extends BorderPane {
 
     /**
      * Get the capo field.
+     * <p>
      * @return the capo field.
      */
     public TextField getCapoField() {
         return capo;
     }
-    
+
 }
