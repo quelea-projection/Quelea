@@ -80,6 +80,7 @@ public class VLCWindow {
                     mediaPlayer = mediaPlayerFactory.newEmbeddedMediaPlayer();
                     CanvasVideoSurface videoSurface = mediaPlayerFactory.newVideoSurface(canvas);
                     mediaPlayer.setVideoSurface(videoSurface);
+                    mediaPlayer.setPlaySubItems(true);
                     window.add(canvas);
                     show = true;
                     window.setVisible(true);
@@ -463,7 +464,7 @@ public class VLCWindow {
 
     private class FadeThread extends Thread {
 
-        private static final double INCREMENT = 0.005;
+        private static final double INCREMENT = 0.002;
         private double toVal;
         private volatile boolean go = true;
 
