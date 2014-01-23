@@ -51,12 +51,12 @@ public class DisplayCanvas extends StackPane {
     private static final Logger LOGGER = LoggerUtils.getLogger();
     private boolean cleared;
     private boolean blacked;
-    private NoticeDrawer noticeDrawer;
-    private boolean stageView;
+    private final NoticeDrawer noticeDrawer;
+    private final boolean stageView;
     private Node background;
-    private LogoImage logoImage;
-    private Rectangle black = new Rectangle();
-    private Node noticeOverlay;
+    private final LogoImage logoImage;
+    private final Rectangle black = new Rectangle();
+    private final Node noticeOverlay;
     private Displayable currentDisplayable;
     private final CanvasUpdater updater;
     private Priority dravingPriority = Priority.LOW;
@@ -75,7 +75,7 @@ public class DisplayCanvas extends StackPane {
         HIGH(0),
         MID(1),
         LOW(2);
-        private int priority;
+        private final int priority;
 
         private Priority(int priority) {
             this.priority = priority;
@@ -91,6 +91,13 @@ public class DisplayCanvas extends StackPane {
      * <p/>
      * @param showBorder true if the border should be shown around any text
      * (only if the options say so) false otherwise.
+     * @param stageView true if this canvas is on a stage view, false if it's on
+     * a main projection view.
+     * @param playVideo true if this canvas should play video. (At present, only
+     * one canvas can do this due to VLC limitations.)
+     * @param updater the updater that will update this canvas.
+     * @param dravingPriority the drawing priority of this canvas when it's
+     * updating.
      */
     public DisplayCanvas(boolean showBorder, boolean stageView, boolean playVideo, final CanvasUpdater updater, Priority dravingPriority) {
         setStyle("-fx-background-color: rgba(0, 0, 0, 0);");
@@ -130,7 +137,7 @@ public class DisplayCanvas extends StackPane {
         logoImage.setOpacity(0);
         getChildren().add(logoImage);
 
-        if (stageView) {
+        if(stageView) {
             black.setFill(QueleaProperties.get().getStageBackgroundColor());
         }
 
@@ -140,8 +147,8 @@ public class DisplayCanvas extends StackPane {
         final ListChangeListener<Node> listener = new ListChangeListener<Node>() {
             @Override
             public void onChanged(ListChangeListener.Change<? extends Node> change) {
-                while (change.next()) {
-                    if (!change.wasRemoved()) {
+                while(change.next()) {
+                    if(!change.wasRemoved()) {
                         try {
                             /**
                              * Platform.runLater() is necessary here to avoid
@@ -154,10 +161,11 @@ public class DisplayCanvas extends StackPane {
                              * <p>
                              * https://javafx-jira.kenai.com/browse/RT-35275
                              */
-                            if (r[0] != null) {
+                            if(r[0] != null) {
                                 Platform.runLater(r[0]);
                             }
-                        } catch (Exception ex) {
+                        }
+                        catch(Exception ex) {
                             LOGGER.log(Level.WARNING, "Can't move notice overlay to front", ex);
                         }
                     }
@@ -187,7 +195,7 @@ public class DisplayCanvas extends StackPane {
      * work.
      */
     public void ensureNoticesVisible() {
-        if (!getChildren().contains(noticeOverlay)) {
+        if(!getChildren().contains(noticeOverlay)) {
             LOGGER.log(Level.WARNING, "Notice overlay was removed");
             getChildren().add(noticeOverlay);
         }
@@ -199,8 +207,8 @@ public class DisplayCanvas extends StackPane {
 
     public void clearNonPermanentChildren() {
         ObservableList<Node> list = FXCollections.observableArrayList(getChildren());
-        for (Node node : list) {
-            if (!(node instanceof NoticeOverlay) && node != logoImage && node != black) {
+        for(Node node : list) {
+            if(!(node instanceof NoticeOverlay) && node != logoImage && node != black) {
                 getChildren().remove(node);
             }
         }
@@ -244,7 +252,7 @@ public class DisplayCanvas extends StackPane {
         Platform.runLater(new Runnable() {
             @Override
             public void run() {
-                if (isVisibleInScene() && updater != null) {
+                if(isVisibleInScene() && updater != null) {
                     updater.updateCallback();
                 }
             }
@@ -254,11 +262,11 @@ public class DisplayCanvas extends StackPane {
     private boolean isVisibleInScene() {
         Node parent = DisplayCanvas.this;
         boolean visible = isVisible();
-        if (!visible) {
+        if(!visible) {
             return visible;
         }
-        while ((parent = parent.getParent()) != null) {
-            if (!parent.isVisible()) {
+        while((parent = parent.getParent()) != null) {
+            if(!parent.isVisible()) {
                 visible = false;
                 break;
             }
@@ -298,7 +306,7 @@ public class DisplayCanvas extends StackPane {
     }
 
     public void update() {
-        if (this.updater != null) {
+        if(this.updater != null) {
             updateCanvas(this.updater);
         }
     }
@@ -307,13 +315,16 @@ public class DisplayCanvas extends StackPane {
      * Toggle the clearing of this canvas - if cleared, still leave the
      * background image in place but remove all the text. Otherwise display as
      * normal.
+     * <p>
+     * @param cleared cleared if the text on this canvas should be cleared,
+     * false otherwise.
      */
     public void setCleared(boolean cleared) {
-        if (this.cleared == cleared) {
+        if(this.cleared == cleared) {
             return;
         }
         this.cleared = cleared;
-        if (this.updater != null) {
+        if(this.updater != null) {
             updateCanvas(this.updater);
         }
     }
@@ -331,15 +342,19 @@ public class DisplayCanvas extends StackPane {
      * Toggle the blacking of this canvas - if blacked, remove the text and
      * background image (if any) just displaying a black screen. Otherwise
      * display as normal.
+     * <p>
+     * @param blacked true if this canvas should be set blacked, false
+     * otherwise.
      */
     public void setBlacked(boolean blacked) {
         this.blacked = blacked;
-        if (blacked) {
+        if(blacked) {
             black.toFront();
             FadeTransition ft = new FadeTransition(Duration.seconds(0.5), black);
             ft.setToValue(1);
             ft.play();
-        } else {
+        }
+        else {
             FadeTransition ft = new FadeTransition(Duration.seconds(0.5), black);
             ft.setToValue(0);
             ft.play();
@@ -372,12 +387,13 @@ public class DisplayCanvas extends StackPane {
      * @param selected true to display the logo screen, false to remove it.
      */
     public void setLogoDisplaying(boolean selected) {
-        if (selected) {
+        if(selected) {
             logoImage.toFront();
             FadeTransition ft = new FadeTransition(Duration.seconds(1.5), logoImage);
             ft.setToValue(1);
             ft.play();
-        } else {
+        }
+        else {
             FadeTransition ft = new FadeTransition(Duration.seconds(1.5), logoImage);
             ft.setToValue(0);
             ft.play();
