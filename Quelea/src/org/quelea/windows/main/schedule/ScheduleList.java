@@ -54,6 +54,7 @@ import org.quelea.services.utils.QueleaProperties;
 import org.quelea.services.utils.Utils;
 import org.quelea.windows.library.Constraint;
 import org.quelea.windows.library.DisplayableListCell;
+import org.quelea.windows.lyrics.LyricDrawer;
 import org.quelea.windows.main.QueleaApp;
 import org.quelea.windows.main.actionhandlers.RemoveScheduleItemActionHandler;
 import org.quelea.windows.multimedia.VLCWindow;
@@ -385,6 +386,9 @@ public class ScheduleList extends StackPane {
             if(d == live && QueleaProperties.get().getClearLiveOnRemove()) {
                 QueleaApp.get().getMainWindow().getMainPanel().getLivePanel().removeDisplayable();
                 VLCWindow.INSTANCE.stop();
+                LyricDrawer lyricDrawer = new LyricDrawer();
+                lyricDrawer.setCanvas(QueleaApp.get().getProjectionWindow().getCanvas());
+                lyricDrawer.setTheme(ThemeDTO.DEFAULT_THEME);
             }
             Displayable preview = QueleaApp.get().getMainWindow().getMainPanel().getPreviewPanel().getDisplayable();
             if(d == preview) {
