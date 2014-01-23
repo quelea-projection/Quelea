@@ -61,7 +61,10 @@ public class ImageDrawer extends DisplayableDrawer {
                 && getCanvas() != QueleaApp.get().getStageWindow().getCanvas()) {
             imageBox.setStyle("-fx-background-color:#dddddd;");
         }
+        imageBox.setVisible(false);
         getCanvas().getChildren().add(imageBox);
+        getCanvas().pushLogoNoticeToFront();
+        imageBox.setVisible(true);
         getCanvas().setOpacity(1);
     }
 
