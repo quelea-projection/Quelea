@@ -24,6 +24,7 @@ import java.util.Collection;
  * The top level interface for search indexes.
  *
  * @author Michael
+ * @param <T> the type of class we want to search.
  */
 public interface SearchIndex<T> {
     /**
