@@ -18,6 +18,7 @@
 package org.quelea.windows.main;
 
 import javafx.application.Platform;
+import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -50,14 +51,19 @@ public class StatusPanel extends HBox {
      */
     StatusPanel(StatusPanelGroup group, String labelText, int index) {
         setAlignment(Pos.CENTER);
+        setSpacing(5);
         this.group = group;
         this.index = index;
         label = new Label(labelText);
+        label.setAlignment(Pos.CENTER);
+        label.setMaxHeight(Double.MAX_VALUE);
+        HBox.setMargin(label, new Insets(5));
         progressBar = new ProgressBar();
         progressBar.setMaxWidth(Double.MAX_VALUE); //Allow progress bar to fill space.
         HBox.setHgrow(progressBar, Priority.ALWAYS);
         cancelButton = new Button("", new ImageView(new Image("file:icons/cross.png", 13, 13, false, true)));
-        cancelButton.setStyle("-fx-background-insets: 0;-fx-background-color: rgba(0, 0, 0, 0);");
+        Utils.setToolbarButtonStyle(cancelButton);
+        cancelButton.setAlignment(Pos.CENTER);
         getChildren().add(label);
         getChildren().add(progressBar);
         getChildren().add(cancelButton);
