@@ -70,7 +70,7 @@ public class SelectSongsDialog extends Stage {
         initModality(Modality.APPLICATION_MODAL);
         initStyle(StageStyle.UTILITY);
         setTitle(LabelGrabber.INSTANCE.getLabel("select.songs.title"));
-        
+
         checkBoxes = new ArrayList<>();
 
         VBox mainPanel = new VBox(5);
@@ -146,6 +146,13 @@ public class SelectSongsDialog extends Stage {
         for(int i = 0; i < songs.size(); i++) {
             SongDisplayable song = songs.get(i);
             CheckBox checkBox = new CheckBox();
+            checkBox.selectedProperty().addListener(new ChangeListener<Boolean>() {
+
+                @Override
+                public void changed(ObservableValue<? extends Boolean> ov, Boolean t, Boolean t1) {
+                    checkEnableButton();
+                }
+            });
             if(checkList != null && i < checkList.length) {
                 checkBox.setSelected(checkList[i]);
             }
@@ -169,7 +176,20 @@ public class SelectSongsDialog extends Stage {
             }
         }
         gridScroll.setVvalue(0);
+        checkEnableButton();
+    }
 
+    /**
+     * Disable / enable the add button depending on if anything is selected.
+     */
+    private void checkEnableButton() {
+        for(CheckBox checkBox : checkBoxes) {
+            if(checkBox.isSelected()) {
+                addButton.setDisable(false);
+                return;
+            }
+        }
+        addButton.setDisable(true);
     }
 
     /**
