@@ -18,13 +18,13 @@
 package org.quelea.services.importexport;
 
 import java.io.File;
-import java.util.Arrays;
+import java.util.List;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.stage.FileChooser;
 import org.javafx.dialog.Dialog;
-import org.quelea.data.db.SongManager;
+import org.quelea.data.displayable.SongDisplayable;
 import org.quelea.services.languages.LabelGrabber;
 import org.quelea.services.utils.FileFilters;
 import org.quelea.services.utils.QueleaProperties;
@@ -40,17 +40,15 @@ public class SelectExportedSongsDialog extends SelectSongsDialog {
 
     /**
      * Create a new exported songs dialog.
-     * <p/>
-     * @param owner the owner of the dialog.
+     * @param songs the songs to display in this dialog.
      */
-    public SelectExportedSongsDialog() {
+    public SelectExportedSongsDialog(List<SongDisplayable> songs) {
         super(new String[]{
             LabelGrabber.INSTANCE.getLabel("select.export.songs.line1"),
             LabelGrabber.INSTANCE.getLabel("select.export.songs.line2")
         }, LabelGrabber.INSTANCE.getLabel("add.text"), LabelGrabber.INSTANCE.getLabel("add.to.songpack.question"));
 
-        setSongs(Arrays.asList(SongManager.get().getSongs()), null, false);
-
+        setSongs(songs, null, false);
 
         getAddButton().setOnAction(new EventHandler<javafx.event.ActionEvent>() {
             @Override
@@ -81,7 +79,6 @@ public class SelectExportedSongsDialog extends SelectSongsDialog {
                 }
             }
         });
-        showAndWait();
     }
 
     /**
