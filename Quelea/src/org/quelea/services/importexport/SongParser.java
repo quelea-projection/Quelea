@@ -28,7 +28,7 @@ import org.quelea.windows.main.StatusPanel;
  * various sources.
  * @author Michael
  */
-interface SongParser {
+public interface SongParser {
 
     /**
      * Get all the songs from a particular location.
