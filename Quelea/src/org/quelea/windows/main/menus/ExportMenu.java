@@ -18,38 +18,46 @@
  */
 package org.quelea.windows.main.menus;
 
+import java.util.Arrays;
+import java.util.List;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import org.quelea.data.db.SongManager;
+import org.quelea.data.displayable.SongDisplayable;
 import org.quelea.services.languages.LabelGrabber;
 import org.quelea.services.importexport.SelectExportedSongsDialog;
 
 /**
  * Quelea's export menu.
+ * <p>
  * @author Michael
  */
 public class ExportMenu extends Menu {
-    
-    private MenuItem qspItem;
-    
+
+    private final MenuItem qspItem;
+
     /**
      * Create the export menu.
      */
     public ExportMenu() {
         super(LabelGrabber.INSTANCE.getLabel("export.heading"), new ImageView(new Image("file:icons/right.png", 16, 16, false, true)));
-        
-        qspItem = new MenuItem(LabelGrabber.INSTANCE.getLabel("qsp.button"),new ImageView(new Image("file:icons/logo16.png", 16, 16, false, true)));
+
+        qspItem = new MenuItem(LabelGrabber.INSTANCE.getLabel("qsp.button"), new ImageView(new Image("file:icons/logo16.png", 16, 16, false, true)));
         qspItem.setOnAction(new EventHandler<ActionEvent>() {
 
             @Override
             public void handle(ActionEvent t) {
-                SelectExportedSongsDialog dialog = new SelectExportedSongsDialog();
+                final List<SongDisplayable> songs = Arrays.asList(SongManager.get().getSongs());
+                //TODO: Determine if number of songs is above some threshold, then display warning that Quelea might be unresponsive while dialog is built.
+                SelectExportedSongsDialog dialog = new SelectExportedSongsDialog(songs);
+                dialog.showAndWait(); //This line is what takes the time for a large number of songs.
             }
         });
         getItems().add(qspItem);
     }
-    
+
 }

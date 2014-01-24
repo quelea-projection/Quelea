@@ -22,7 +22,6 @@ import java.util.List;
 import javafx.application.Platform;
 import javafx.event.EventHandler;
 import org.quelea.data.db.SongManager;
-import org.quelea.data.db.model.Song;
 import org.quelea.data.displayable.SongDisplayable;
 import org.quelea.services.languages.LabelGrabber;
 import org.quelea.windows.main.QueleaApp;
@@ -40,8 +39,6 @@ public class SelectImportedSongsDialog extends SelectSongsDialog {
 
     /**
      * Create a new imported songs dialog.
-     * <p/>
-     * @param owner the owner of the dialog.
      */
     public SelectImportedSongsDialog() {
         super(new String[]{
@@ -55,6 +52,7 @@ public class SelectImportedSongsDialog extends SelectSongsDialog {
             public void handle(javafx.event.ActionEvent t) {
                 getAddButton().setDisable(true);
                 new Thread() {
+                    @Override
                     public void run() {
                         Platform.runLater(new Runnable() {
                             @Override

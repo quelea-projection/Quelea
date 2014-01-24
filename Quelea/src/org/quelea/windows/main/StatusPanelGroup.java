@@ -22,13 +22,14 @@ import java.util.List;
 import javafx.scene.layout.VBox;
 
 /**
- * A group of status panels that shows all the background tasks Quelea is 
+ * A group of status panels that shows all the background tasks Quelea is
  * currently processing.
+ * <p>
  * @author Michael
  */
 public class StatusPanelGroup extends VBox {
 
-    private List<StatusPanel> panels;
+    private final List<StatusPanel> panels;
 
     /**
      * Create a new status panel group.
@@ -39,6 +40,7 @@ public class StatusPanelGroup extends VBox {
 
     /**
      * Add a status panel to the given group.
+     * <p>
      * @param label the label to put on the status panel.
      * @return the status panel.
      */
@@ -51,14 +53,24 @@ public class StatusPanelGroup extends VBox {
 
     /**
      * Remove a status panel at the given index.
+     * <p>
      * @param index the index of the panel to remove.
      */
     public void removePanel(int index) {
         StatusPanel panel = panels.get(index);
-        if (panel != null) {
+        if(panel != null) {
             getChildren().remove(panel);
             panels.set(index, null);
         }
+    }
+
+    /**
+     * Remove a status panel.
+     * <p>
+     * @param panel the panel to remove.
+     */
+    public void removePanel(StatusPanel panel) {
+        removePanel(panels.indexOf(panel));
     }
 
 }
