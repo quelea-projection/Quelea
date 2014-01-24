@@ -34,4 +34,4 @@ quelea (0.6) stable; urgency=normal
   * Bundled JRE
   * Many more bugfixes
 
- -- Michael Berry <michael@quelea.org>  Wednesday, 11 Jan 2014 00:00:00 +0000
+ -- Michael Berry <michael@quelea.org>  Wednesday, 24 Jan 2014 00:00:00 +0000
