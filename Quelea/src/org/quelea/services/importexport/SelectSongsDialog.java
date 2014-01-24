@@ -20,28 +20,28 @@ package org.quelea.services.importexport;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import javafx.beans.property.SimpleBooleanProperty;
-import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
-import javafx.collections.FXCollections;
-import javafx.event.EventHandler;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
+import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.CheckBox;
+import javafx.scene.control.Control;
 import javafx.scene.control.Label;
-import javafx.scene.control.TableCell;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableColumn.CellDataFeatures;
-import javafx.scene.control.TableView;
-import javafx.scene.control.Tooltip;
-import javafx.scene.control.cell.CheckBoxTableCell;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.ColumnConstraints;
+import javafx.scene.layout.GridPane;
+import javafx.scene.layout.Pane;
 import javafx.scene.layout.Priority;
+import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
-import javafx.util.Callback;
 import org.quelea.data.displayable.SongDisplayable;
 import org.quelea.services.languages.LabelGrabber;
 
@@ -53,75 +53,52 @@ import org.quelea.services.languages.LabelGrabber;
 public class SelectSongsDialog extends Stage {
 
     private final Button addButton;
-    private final TableView<SongWrapper> table;
-    private List<SongWrapper> songs;
-    private final String checkboxText;
-    private TableColumn<SongWrapper, String> nameColumn;
-    private TableColumn<SongWrapper, String> authorColumn;
-    private TableColumn<SongWrapper, Boolean> checkedColumn;
+    private final GridPane gridPane;
+    private List<SongDisplayable> songs;
+    private final List<CheckBox> checkBoxes;
+    private final ScrollPane gridScroll;
 
     /**
      * Create a new imported songs dialog.
      * <p/>
-     * @param owner the owner of the dialog.
      * @param text a list of lines to be shown in the dialog.
      * @param acceptText text to place on the accpet button.
      * @param checkboxText text to place in the column header for the
      * checkboxes.
      */
-    public SelectSongsDialog(String[] text, String acceptText,
-            String checkboxText) {
+    public SelectSongsDialog(String[] text, String acceptText, String checkboxText) {
         initModality(Modality.APPLICATION_MODAL);
         initStyle(StageStyle.UTILITY);
         setTitle(LabelGrabber.INSTANCE.getLabel("select.songs.title"));
-        this.checkboxText = checkboxText;
-        songs = new ArrayList<>();
+        
+        checkBoxes = new ArrayList<>();
 
-        VBox mainPanel = new VBox();
+        VBox mainPanel = new VBox(5);
+        VBox textBox = new VBox();
         for(String str : text) {
-            mainPanel.getChildren().add(new Label(str));
+            textBox.getChildren().add(new Label(str));
         }
-        mainPanel.getChildren().add(createCheckAllButton());
-        table = new TableView<>();
-        VBox.setVgrow(table, Priority.ALWAYS);
-        mainPanel.getChildren().add(table);
+        VBox.setMargin(textBox, new Insets(10));
+        mainPanel.getChildren().add(textBox);
+        gridPane = new GridPane();
+        gridPane.setHgap(5);
+        gridPane.setVgap(5);
+        gridScroll = new ScrollPane();
+        VBox.setVgrow(gridScroll, Priority.ALWAYS);
+        StackPane intermediatePane = new StackPane();
+        StackPane.setMargin(gridPane, new Insets(10));
+        intermediatePane.getChildren().add(gridPane);
+        gridScroll.setContent(intermediatePane);
+        gridScroll.setFitToWidth(true);
+        gridScroll.setFitToHeight(true);
+        mainPanel.getChildren().add(gridScroll);
         addButton = new Button(acceptText, new ImageView(new Image("file:icons/tick.png")));
-        mainPanel.getChildren().add(addButton);
+        StackPane stackAdd = new StackPane();
+        stackAdd.getChildren().add(addButton);
+        VBox.setMargin(stackAdd, new Insets(10));
+        mainPanel.getChildren().add(stackAdd);
 
-        setScene(new Scene(mainPanel));
-    }
-
-    /**
-     * Create the button that checks all the boxes.
-     * <p/>
-     * @return the newly created check all button.
-     */
-    private Button createCheckAllButton() {
-        Button checkButton = new Button("Select All", new ImageView(new Image("file:icons/checkbox.jpg")));
-        checkButton.setTooltip(new Tooltip(LabelGrabber.INSTANCE.getLabel("check.uncheck.all.text")));
-        checkButton.setOnAction(new EventHandler<javafx.event.ActionEvent>() {
-            @Override
-            public void handle(javafx.event.ActionEvent t) {
-                if(songs.isEmpty()) {
-                    return;
-                }
-                boolean val = songs.get(0).selected.get();
-                for(SongWrapper wrapper : songs) {
-                    wrapper.selected.set(!val);
-                }
-            }
-        });
-        return checkButton;
-    }
-
-    private static class SongWrapper {
-
-        private SimpleBooleanProperty selected = new SimpleBooleanProperty(false);
-        private SongDisplayable song;
-
-        public SongWrapper(SongDisplayable song) {
-            this.song = song;
-        }
+        setScene(new Scene(mainPanel, 800, 600));
     }
 
     /**
@@ -135,48 +112,64 @@ public class SelectSongsDialog extends Stage {
      */
     public void setSongs(final List<SongDisplayable> songs, final boolean[] checkList, final boolean defaultVal) {
         Collections.sort(songs);
-        this.songs = toWrapper(songs);
-        table.getColumns().clear();
-        nameColumn = new TableColumn<>(LabelGrabber.INSTANCE.getLabel("name.label"));
-        table.getColumns().add(nameColumn);
-        authorColumn = new TableColumn<>(LabelGrabber.INSTANCE.getLabel("author.label"));
-        table.getColumns().add(authorColumn);
-        checkedColumn = new TableColumn<>(checkboxText);
-        table.getColumns().add(checkedColumn);
+        this.songs = songs;
+        gridPane.getChildren().clear();
+        checkBoxes.clear();
+        gridPane.getColumnConstraints().add(new ColumnConstraints(20));
+        ColumnConstraints titleConstraints = new ColumnConstraints();
+        titleConstraints.setHgrow(Priority.ALWAYS);
+        titleConstraints.setPercentWidth(50);
+        gridPane.getColumnConstraints().add(titleConstraints);
+        ColumnConstraints authorConstraints = new ColumnConstraints();
+        authorConstraints.setHgrow(Priority.ALWAYS);
+        authorConstraints.setPercentWidth(45);
+        gridPane.getColumnConstraints().add(authorConstraints);
 
-        nameColumn.setCellValueFactory(new Callback<CellDataFeatures<SongWrapper, String>, ObservableValue<String>>() {
+        CheckBox selectAllCheckBox = new CheckBox();
+        selectAllCheckBox.selectedProperty().addListener(new ChangeListener<Boolean>() {
+
             @Override
-            public ObservableValue<String> call(CellDataFeatures<SongWrapper, String> p) {
-                return new SimpleStringProperty(p.getValue().song.getTitle());
+            public void changed(ObservableValue<? extends Boolean> ov, Boolean t, Boolean t1) {
+                for(CheckBox checkBox : checkBoxes) {
+                    checkBox.setSelected(t1);
+                }
             }
         });
+        Label titleHeader = new Label(LabelGrabber.INSTANCE.getLabel("title.label"));
+        titleHeader.setAlignment(Pos.CENTER);
+        Label authorHeader = new Label(LabelGrabber.INSTANCE.getLabel("author.label"));
+        authorHeader.setAlignment(Pos.CENTER);
+        gridPane.add(selectAllCheckBox, 0, 0);
+        gridPane.add(titleHeader, 1, 0);
+        gridPane.add(authorHeader, 2, 0);
 
-        authorColumn.setCellValueFactory(new Callback<CellDataFeatures<SongWrapper, String>, ObservableValue<String>>() {
-            @Override
-            public ObservableValue<String> call(CellDataFeatures<SongWrapper, String> p) {
-                return new SimpleStringProperty(p.getValue().song.getAuthor());
+        for(int i = 0; i < songs.size(); i++) {
+            SongDisplayable song = songs.get(i);
+            CheckBox checkBox = new CheckBox();
+            if(checkList != null && i < checkList.length) {
+                checkBox.setSelected(checkList[i]);
             }
-        });
+            checkBoxes.add(checkBox);
+            gridPane.add(checkBox, 0, i + 1);
+            gridPane.add(new Label(song.getTitle()), 1, i + 1);
+            gridPane.add(new Label(song.getAuthor()), 2, i + 1);
+        }
 
-        checkedColumn.setCellValueFactory(new Callback<CellDataFeatures<SongWrapper, Boolean>, ObservableValue<Boolean>>() {
-            @Override
-            public ObservableValue<Boolean> call(CellDataFeatures<SongWrapper, Boolean> p) {
-                return p.getValue().selected;
+        for(int i = 1; i < 3; i++) {
+            Node n = gridPane.getChildren().get(i);
+            if(n instanceof Control) {
+                Control control = (Control) n;
+                control.setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE);
+                control.setStyle("-fx-alignment: center;-fx-font-weight: bold;");
             }
-        });
-
-        checkedColumn.setCellFactory(new Callback<TableColumn<SongWrapper, Boolean>, TableCell<SongWrapper, Boolean>>() {
-            @Override
-            public TableCell<SongWrapper, Boolean> call(TableColumn<SongWrapper, Boolean> p) {
-                CheckBoxTableCell<SongWrapper, Boolean> cell = new CheckBoxTableCell<>();
-                cell.setEditable(true);
-                return cell;
+            if(n instanceof Pane) {
+                Pane pane = (Pane) n;
+                pane.setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE);
+                pane.setStyle("-fx-alignment: center;-fx-font-weight: bold;");
             }
-        });
-        checkedColumn.setEditable(true);
-        table.setEditable(true);
+        }
+        gridScroll.setVvalue(0);
 
-        table.setItems(FXCollections.observableArrayList(this.songs));
     }
 
     /**
@@ -186,9 +179,9 @@ public class SelectSongsDialog extends Stage {
      */
     public List<SongDisplayable> getSelectedSongs() {
         List<SongDisplayable> ret = new ArrayList<>();
-        for(SongWrapper wrapper : songs) {
-            if(wrapper.selected.get()) {
-                ret.add(wrapper.song);
+        for(int i = 0; i < songs.size(); i++) {
+            if(checkBoxes.get(i).isSelected()) {
+                ret.add(songs.get(i));
             }
         }
         return ret;
@@ -201,21 +194,5 @@ public class SelectSongsDialog extends Stage {
      */
     public Button getAddButton() {
         return addButton;
-    }
-
-    private List<SongWrapper> toWrapper(List<SongDisplayable> songs) {
-        List<SongWrapper> ret = new ArrayList<>();
-        for(SongDisplayable song : songs) {
-            ret.add(new SongWrapper(song));
-        }
-        return ret;
-    }
-
-    private List<SongDisplayable> fromWrapper(List<SongWrapper> wrapperList) {
-        List<SongDisplayable> ret = new ArrayList<>();
-        for(SongWrapper wrap : wrapperList) {
-            ret.add(wrap.song);
-        }
-        return ret;
     }
 }
