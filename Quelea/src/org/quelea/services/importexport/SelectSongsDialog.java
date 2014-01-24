@@ -85,9 +85,14 @@ public class SelectSongsDialog extends Stage {
         gridPane.setVgap(5);
         gridScroll = new ScrollPane();
         VBox.setVgrow(gridScroll, Priority.ALWAYS);
+        VBox scrollContent = new VBox();
+        Label checkAllLabel = new Label(LabelGrabber.INSTANCE.getLabel("check.uncheck.all.text"));
+        checkAllLabel.setStyle("-fx-font-weight: bold;");
+        scrollContent.getChildren().add(checkAllLabel);
+        scrollContent.getChildren().add(gridPane);
         StackPane intermediatePane = new StackPane();
-        StackPane.setMargin(gridPane, new Insets(10));
-        intermediatePane.getChildren().add(gridPane);
+        StackPane.setMargin(scrollContent, new Insets(10));
+        intermediatePane.getChildren().add(scrollContent);
         gridScroll.setContent(intermediatePane);
         gridScroll.setFitToWidth(true);
         gridScroll.setFitToHeight(true);
