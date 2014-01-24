@@ -40,7 +40,7 @@ public class RemoveSongDBActionHandler implements EventHandler<ActionEvent> {
     /**
      * Remove the selected song from the database.
      * <p/>
-     * @param e the action event.
+     * @param t the action event.
      */
     @Override
     public void handle(ActionEvent t) {
@@ -66,6 +66,7 @@ public class RemoveSongDBActionHandler implements EventHandler<ActionEvent> {
         if(yes) {
             songList.setLoading(true);
             new Thread() {
+                @Override
                 public void run() {
                     if(!SongManager.get().removeSong(song)) {
                         Platform.runLater(new Runnable() {

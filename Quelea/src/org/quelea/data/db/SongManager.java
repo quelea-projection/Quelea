@@ -27,6 +27,7 @@ import java.util.Set;
 import java.util.TreeSet;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javafx.application.Platform;
 import org.hibernate.ObjectNotFoundException;
 import org.hibernate.Session;
 import org.quelea.data.ThemeDTO;
@@ -49,7 +50,7 @@ public final class SongManager {
 
     private static final Logger LOGGER = LoggerUtils.getLogger();
     private static volatile SongManager INSTANCE;
-    private SearchIndex<SongDisplayable> index;
+    private final SearchIndex<SongDisplayable> index;
     private boolean indexIsClear;
     private SoftReference<SongDisplayable[]> cacheSongs = new SoftReference<>(null);
     private final Set<DatabaseListener> listeners;
@@ -281,6 +282,7 @@ public final class SongManager {
                 session.delete(deletedSong);
             }
         });
+        index.remove(song);
         fireUpdate();
         return true;
     }
