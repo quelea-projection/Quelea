@@ -28,8 +28,10 @@ import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.application.Platform;
+import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
@@ -37,6 +39,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.DirectoryChooser;
@@ -63,6 +66,7 @@ public abstract class ImportDialog extends Stage implements PropertyChangeListen
 
     private final TextField locationField;
     private final Button importButton;
+    private final Button closeButton;
     private final CheckBox checkDuplicates;
     private final SelectSongsDialog importedDialog;
     private StatusPanel statusPanel;
@@ -130,12 +134,23 @@ public abstract class ImportDialog extends Stage implements PropertyChangeListen
         }
 
         importButton = new Button(LabelGrabber.INSTANCE.getLabel("import.button"), new ImageView(new Image("file:icons/import.png", 16, 16, true, false)));
+        closeButton = new Button(LabelGrabber.INSTANCE.getLabel("cancel.button"), new ImageView(new Image("file:icons/cross.png")));
+        closeButton.setOnAction(new EventHandler<ActionEvent>() {
+
+            @Override
+            public void handle(ActionEvent t) {
+                hide();
+            }
+        });
         if(fileFilter != null) {
             importButton.setDisable(true);
         }
-        StackPane buttonPane = new StackPane();
+        HBox buttonPane = new HBox(10);
+        buttonPane.setAlignment(Pos.CENTER);
         StackPane.setMargin(importButton, new Insets(10));
         buttonPane.getChildren().add(importButton);
+        buttonPane.getChildren().add(closeButton);
+        VBox.setMargin(buttonPane, new Insets(10));
         mainPane.getChildren().add(buttonPane);
         importButton.setOnAction(new EventHandler<javafx.event.ActionEvent>() {
             @Override
