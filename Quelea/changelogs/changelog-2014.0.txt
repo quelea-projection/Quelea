@@ -16,6 +16,7 @@ quelea (0.6) stable; urgency=normal
   * Added test patterns dialog to calibrate display
   * Theme panel has had a major revamp, now much easier to use
   * Text position and text alignment can be set separately per song
+  * Rewritten import dialogs to look much nicer
   * Opensong import
   * OpenLP import
   * Easyslides import
