@@ -29,11 +29,15 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.application.Platform;
 import javafx.event.EventHandler;
+import javafx.geometry.Insets;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
@@ -87,28 +91,35 @@ public abstract class ImportDialog extends Stage implements PropertyChangeListen
         final FileChooser locationChooser = new FileChooser();
         locationChooser.getExtensionFilters().add(fileFilter);
         final DirectoryChooser dirChooser = new DirectoryChooser();
-        for (String str : dialogLabels) {
-            mainPane.getChildren().add(new Label(str));
+
+        VBox textPane = new VBox();
+        for(String str : dialogLabels) {
+            textPane.getChildren().add(new Label(str));
         }
+        VBox.setMargin(textPane, new Insets(10));
+        mainPane.getChildren().add(textPane);
 
         checkDuplicates = new CheckBox(LabelGrabber.INSTANCE.getLabel("check.duplicates.text"));
+        VBox.setMargin(checkDuplicates, new Insets(0, 0, 10, 12));
         mainPane.getChildren().add(checkDuplicates);
 
         locationField = new TextField();
-        if (fileFilter != null) {
+        VBox.setMargin(locationField, new Insets(0, 10, 0, 10));
+        if(fileFilter != null) {
             locationField.setEditable(false);
             locationField.setText(LabelGrabber.INSTANCE.getLabel("click.select.file.text"));
             locationField.setOnMouseClicked(new EventHandler<javafx.scene.input.MouseEvent>() {
                 @Override
                 public void handle(javafx.scene.input.MouseEvent t) {
-                    if (!locationField.isDisable()) {
+                    if(!locationField.isDisable()) {
                         File file;
-                        if (selectDirectory) {
+                        if(selectDirectory) {
                             file = dirChooser.showDialog(ImportDialog.this);
-                        } else {
+                        }
+                        else {
                             file = locationChooser.showOpenDialog(ImportDialog.this);
                         }
-                        if (file != null) {
+                        if(file != null) {
                             locationField.setText(file.getAbsolutePath());
                             importButton.setDisable(false);
                         }
@@ -118,11 +129,14 @@ public abstract class ImportDialog extends Stage implements PropertyChangeListen
             mainPane.getChildren().add(locationField);
         }
 
-        importButton = new Button(LabelGrabber.INSTANCE.getLabel("import.button"));
-        if (fileFilter != null) {
+        importButton = new Button(LabelGrabber.INSTANCE.getLabel("import.button"), new ImageView(new Image("file:icons/import.png", 16, 16, true, false)));
+        if(fileFilter != null) {
             importButton.setDisable(true);
         }
-        mainPane.getChildren().add(importButton);
+        StackPane buttonPane = new StackPane();
+        StackPane.setMargin(importButton, new Insets(10));
+        buttonPane.getChildren().add(importButton);
+        mainPane.getChildren().add(buttonPane);
         importButton.setOnAction(new EventHandler<javafx.event.ActionEvent>() {
             @Override
             public void handle(javafx.event.ActionEvent t) {
@@ -145,22 +159,22 @@ public abstract class ImportDialog extends Stage implements PropertyChangeListen
                     public void run() {
                         try {
                             localSongs = parser.getSongs(new File(location), statusPanel);
-                            if (halt) {
+                            if(halt) {
                                 localSongs = null;
                             }
                             statusPanel.setProgress(0);
-                            if (checkDuplicates.isSelected()) {
+                            if(checkDuplicates.isSelected()) {
 //                                localSongsDuplicate = new SongDuplicateChecker().checkSongs(localSongsArr);
-                                for (int i = 0; i < localSongs.size(); i++) {
+                                for(int i = 0; i < localSongs.size(); i++) {
                                     final int finali = i;
                                     checkerService.submit(Utils.wrapAsLowPriority(new Runnable() {
                                         @Override
                                         public void run() {
-                                            if (!halt) {
+                                            if(!halt) {
                                                 final boolean result = new SongDuplicateChecker().checkSong(localSongs.get(finali));
                                                 localSongsDuplicate[finali] = result;
                                                 final double progress = ((double) finali / localSongs.size());
-                                                if (statusPanel.getProgress() < progress) {
+                                                if(statusPanel.getProgress() < progress) {
                                                     statusPanel.setProgress(progress);
                                                 }
                                             }
@@ -170,16 +184,18 @@ public abstract class ImportDialog extends Stage implements PropertyChangeListen
                                 try {
                                     checkerService.shutdown();
                                     checkerService.awaitTermination(365, TimeUnit.DAYS); //Year eh? ;-)
-                                } catch (InterruptedException ex) {
+                                }
+                                catch(InterruptedException ex) {
                                     LOGGER.log(Level.WARNING, "Interrupted?!", ex);
                                 }
                             }
                             Platform.runLater(new Runnable() {
                                 @Override
                                 public void run() {
-                                    if ((localSongs == null || localSongs.isEmpty()) && !halt) {
+                                    if((localSongs == null || localSongs.isEmpty()) && !halt) {
                                         Dialog.showWarning(LabelGrabber.INSTANCE.getLabel("import.no.songs.title"), LabelGrabber.INSTANCE.getLabel("import.no.songs.text"));
-                                    } else if (!(localSongs == null || localSongs.isEmpty())) {
+                                    }
+                                    else if(!(localSongs == null || localSongs.isEmpty())) {
 
                                         getImportedDialog().setSongs(localSongs, localSongsDuplicate, true);
                                         getImportedDialog().show();
@@ -187,7 +203,8 @@ public abstract class ImportDialog extends Stage implements PropertyChangeListen
                                     setIdle();
                                 }
                             });
-                        } catch (IOException ex) {
+                        }
+                        catch(IOException ex) {
                             Dialog.showError(LabelGrabber.INSTANCE.getLabel("error.text"), LabelGrabber.INSTANCE.getLabel("import.error.message"));
                             LOGGER.log(Level.WARNING, "Error importing songs", ex);
                         }
@@ -263,7 +280,7 @@ public abstract class ImportDialog extends Stage implements PropertyChangeListen
     @Override
     public void propertyChange(PropertyChangeEvent evt) {
         String strPropertyName = evt.getPropertyName();
-        if ("progress".equals(strPropertyName) && statusPanel != null) {
+        if("progress".equals(strPropertyName) && statusPanel != null) {
             int progress = (Integer) evt.getNewValue();
             statusPanel.getProgressBar().setProgress(progress);
         }
