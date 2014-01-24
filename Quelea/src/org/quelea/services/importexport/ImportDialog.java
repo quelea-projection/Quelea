@@ -68,7 +68,6 @@ public abstract class ImportDialog extends Stage implements PropertyChangeListen
     /**
      * Create a new import dialog.
      * <p/>
-     * @param owner the owner of this dialog.
      * @param dialogLabels the labels to contain on the dialog as text to the
      * user before the file box.
      * @param fileFilter the filefilter to use in the file dialog, or null if
@@ -77,7 +76,7 @@ public abstract class ImportDialog extends Stage implements PropertyChangeListen
      * @param selectDirectory true if the user should only be allowed to select
      * directories, false otherwise.
      */
-    protected ImportDialog(String[] dialogLabels, ExtensionFilter fileFilter,
+    public ImportDialog(String[] dialogLabels, ExtensionFilter fileFilter,
             final SongParser parser, final boolean selectDirectory) {
         initModality(Modality.APPLICATION_MODAL);
         initStyle(StageStyle.UTILITY);
@@ -140,17 +139,12 @@ public abstract class ImportDialog extends Stage implements PropertyChangeListen
                 Thread worker = new Thread() {
                     private List<SongDisplayable> localSongs;
                     private boolean[] localSongsDuplicate;
-                    private ExecutorService checkerService = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
+                    private final ExecutorService checkerService = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
 
                     @Override
                     public void run() {
                         try {
                             localSongs = parser.getSongs(new File(location), statusPanel);
-//                            Song[] localSongsArr = new Song[localSongs.size()];
-//                            for(int i=0 ; i<localSongs.size() ; i++) {
-//                                localSongsArr[i] = localSongs.get(i);
-//                            }
-//                            localSongsDuplicate = new boolean[localSongs.size()];
                             if (halt) {
                                 localSongs = null;
                             }
