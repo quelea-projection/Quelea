@@ -52,9 +52,9 @@ import org.quelea.services.utils.LoggerUtils;
 public class SongSearchIndex implements SearchIndex<SongDisplayable> {
 
     private static final Logger LOGGER = LoggerUtils.getLogger();
-    private Analyzer analyzer;
-    private Directory index;
-    private Map<Long, SongDisplayable> songs;
+    private final Analyzer analyzer;
+    private final Directory index;
+    private final Map<Long, SongDisplayable> songs;
 
     /**
      * Create a new empty search index.
