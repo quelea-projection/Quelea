@@ -26,17 +26,18 @@ package org.quelea.services.utils;
 public class Version implements Comparable<Version> {
 
     private final String versionStr;
-    private final String minorVersionName;
+    private final String unstableName;
 
     /**
      * Create a new version.
      * <p/>
      * @param version the version number in the form x.x.x.x (all x's must be
      * positive integers.)
+     * @param unstableName
      */
-    public Version(String version, String minorName) {
+    public Version(String version, String unstableName) {
         this.versionStr = version;
-        this.minorVersionName = minorName;
+        this.unstableName = unstableName;
     }
 
     /**
@@ -49,12 +50,56 @@ public class Version implements Comparable<Version> {
     }
 
     /**
+     * Get the version string in friendly text format rather than decimal
+     * format.
+     * <p/>
+     * @return the text based version string.
+     */
+    public String getVersionTextString() {
+        String[] parts = versionStr.split("\\.");
+        if(parts.length > 1) {
+            StringBuilder ret = new StringBuilder(parts[0]);
+            ret.append(' ');
+            ret.append(getMinorName());
+            return ret.toString();
+        }
+        else {
+            return getVersionString();
+        }
+    }
+    
+    public String getMinorName() {
+        String[] parts = versionStr.split("\\.");
+        if(parts.length > 1) {
+            switch(parts[1]) {
+                case "0":
+                    return "Genesis";
+                case "1":
+                    return "Exodus";
+                default:
+                    return parts[1];
+            }
+        }
+        else {
+            return "";
+        }
+    }
+    
+    /**
+     * Get the major version number (eg. 2014.)
+     * @return the major version number.
+     */
+    public String getMajorVersionNumber() {
+        return versionStr.split("\\.")[0];
+    }
+
+    /**
      * Get the minor version string.
      * <p/>
      * @return the minor version string.
      */
-    public String getMinorVersionString() {
-        return minorVersionName;
+    public String getUnstableName() {
+        return unstableName;
     }
 
     /**
@@ -65,10 +110,13 @@ public class Version implements Comparable<Version> {
      */
     public String getFullVersionString() {
         StringBuilder ret = new StringBuilder();
-        ret.append(versionStr);
-        if(minorVersionName!=null&&!minorVersionName.trim().isEmpty()) {
-            ret.append(" (").append(minorVersionName).append(")");
+        ret.append(getMajorVersionNumber());
+        ret.append(" (");
+        ret.append(getMinorName());
+        if(unstableName != null && !unstableName.trim().isEmpty()) {
+            ret.append(" (").append(unstableName).append(")");
         }
+        ret.append(")");
         return ret.toString();
     }
 

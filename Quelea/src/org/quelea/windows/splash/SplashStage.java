@@ -60,7 +60,7 @@ public class SplashStage extends Stage {
         initStyle(StageStyle.UNDECORATED);
         Utils.addIconsToStage(this);
         setTitle("Quelea " + LabelGrabber.INSTANCE.getLabel("loading.text") + "...");
-        String minorVersion = QueleaProperties.VERSION.getMinorVersionString();
+        String minorVersion = QueleaProperties.VERSION.getUnstableName();
         Image splashImage = new Image("file:icons/splash-bare.png");
         version = Version.FINAL;
         if(minorVersion.toLowerCase().trim().startsWith("alpha")) {
@@ -80,20 +80,14 @@ public class SplashStage extends Stage {
         loadingText.setFont(loadingFont);
         loadingText.setLayoutX(splashImage.getWidth() - loadingMetrics.computeStringWidth(loadingText.getText() + "...") - 20);
         loadingText.setLayoutY(325);
-        Text versionText = new Text(QueleaProperties.VERSION.getVersionString());
+        Text versionText = new Text(QueleaProperties.VERSION.getMajorVersionNumber());
         LinearGradient versionGrad = new LinearGradient(0, 1, 0, 0, true, CycleMethod.REPEAT, new Stop(0, Color.web("#000000")), new Stop(1, Color.web("#666666")));
         versionText.setFill(versionGrad);
         versionText.setFont(Font.loadFont("file:icons/Ubuntu-RI.ttf", 35));
         versionText.setLayoutX(447);
         versionText.setLayoutY(183);
         Text minorText = null;
-        String minorNum = null;
-        if(version != Version.FINAL) {
-            String[] parts = minorVersion.split(" ");
-            if(parts.length > 1) {
-                minorNum = parts[1];
-            }
-        }
+        String minorNum = QueleaProperties.VERSION.getMinorName();
         if(minorNum != null) {
             minorText = new Text(minorNum);
             minorText.setFill(versionGrad);
@@ -106,6 +100,11 @@ public class SplashStage extends Stage {
                 minorText.setFont(Font.loadFont("file:icons/Ubuntu-RI.ttf", 26));
                 minorText.setLayoutX(70);
                 minorText.setLayoutY(305);
+            }
+            else {
+                minorText.setFont(Font.loadFont("file:icons/Ubuntu-RI.ttf", 30));
+                minorText.setLayoutX(10);
+                minorText.setLayoutY(325);
             }
         }
         Pips pips = new Pips(loadingFont, loadingGrad);
