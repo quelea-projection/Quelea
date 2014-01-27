@@ -35,6 +35,7 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.StackPane;
@@ -53,6 +54,7 @@ import org.quelea.services.languages.LabelGrabber;
 public class SelectSongsDialog extends Stage {
 
     private final Button addButton;
+    private final CheckBox selectAllCheckBox;
     private final GridPane gridPane;
     private List<SongDisplayable> songs;
     private final List<CheckBox> checkBoxes;
@@ -72,6 +74,16 @@ public class SelectSongsDialog extends Stage {
         setTitle(LabelGrabber.INSTANCE.getLabel("select.songs.title"));
 
         checkBoxes = new ArrayList<>();
+        selectAllCheckBox = new CheckBox();
+        selectAllCheckBox.selectedProperty().addListener(new ChangeListener<Boolean>() {
+
+            @Override
+            public void changed(ObservableValue<? extends Boolean> ov, Boolean t, Boolean t1) {
+                for(CheckBox checkBox : checkBoxes) {
+                    checkBox.setSelected(t1);
+                }
+            }
+        });
 
         VBox mainPanel = new VBox(5);
         VBox textBox = new VBox();
@@ -85,10 +97,13 @@ public class SelectSongsDialog extends Stage {
         gridPane.setVgap(5);
         gridScroll = new ScrollPane();
         VBox.setVgrow(gridScroll, Priority.ALWAYS);
-        VBox scrollContent = new VBox();
+        VBox scrollContent = new VBox(10);
+        HBox topBox = new HBox(5);
         Label checkAllLabel = new Label(LabelGrabber.INSTANCE.getLabel("check.uncheck.all.text"));
         checkAllLabel.setStyle("-fx-font-weight: bold;");
-        scrollContent.getChildren().add(checkAllLabel);
+        topBox.getChildren().add(selectAllCheckBox);
+        topBox.getChildren().add(checkAllLabel);
+        scrollContent.getChildren().add(topBox);
         scrollContent.getChildren().add(gridPane);
         StackPane intermediatePane = new StackPane();
         StackPane.setMargin(scrollContent, new Insets(10));
@@ -130,21 +145,10 @@ public class SelectSongsDialog extends Stage {
         authorConstraints.setPercentWidth(45);
         gridPane.getColumnConstraints().add(authorConstraints);
 
-        CheckBox selectAllCheckBox = new CheckBox();
-        selectAllCheckBox.selectedProperty().addListener(new ChangeListener<Boolean>() {
-
-            @Override
-            public void changed(ObservableValue<? extends Boolean> ov, Boolean t, Boolean t1) {
-                for(CheckBox checkBox : checkBoxes) {
-                    checkBox.setSelected(t1);
-                }
-            }
-        });
         Label titleHeader = new Label(LabelGrabber.INSTANCE.getLabel("title.label"));
         titleHeader.setAlignment(Pos.CENTER);
         Label authorHeader = new Label(LabelGrabber.INSTANCE.getLabel("author.label"));
         authorHeader.setAlignment(Pos.CENTER);
-        gridPane.add(selectAllCheckBox, 0, 0);
         gridPane.add(titleHeader, 1, 0);
         gridPane.add(authorHeader, 2, 0);
 
@@ -167,7 +171,7 @@ public class SelectSongsDialog extends Stage {
             gridPane.add(new Label(song.getAuthor()), 2, i + 1);
         }
 
-        for(int i = 1; i < 3; i++) {
+        for(int i = 0; i < 2; i++) {
             Node n = gridPane.getChildren().get(i);
             if(n instanceof Control) {
                 Control control = (Control) n;
