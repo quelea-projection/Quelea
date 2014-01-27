@@ -188,21 +188,23 @@ public class SongEntryWindow extends Stage {
     private void saveSong() {
         resetChange();
         hide();
+        SongDisplayable localSong = getSong();
+        boolean quickInsert = song != null && song.isQuickInSert();
         if(shouldSave) {
             ThemeDTO selectedTheme = themePanel.getSelectedTheme();
-            if(selectedTheme != null && getSong() instanceof TextDisplayable) {
-                TextDisplayable textDisplayable = (TextDisplayable) getSong();
+            if(selectedTheme != null && localSong instanceof TextDisplayable) {
+                TextDisplayable textDisplayable = (TextDisplayable) localSong;
                 for(TextSection section : textDisplayable.getSections()) {
                     section.setTempTheme(selectedTheme);
                 }
-                getSong().setTheme(selectedTheme);
+                localSong.setTheme(selectedTheme);
 
             }
-            if(updateDBOnHide) {
-                Utils.updateSongInBackground(getSong(), true, false);
+            if(updateDBOnHide && !quickInsert) {
+                Utils.updateSongInBackground(localSong, true, false);
             }
             if(addToSchedCBox.isSelected()) {
-                QueleaApp.get().getMainWindow().getMainPanel().getSchedulePanel().getScheduleList().add(getSong());
+                QueleaApp.get().getMainWindow().getMainPanel().getSchedulePanel().getScheduleList().add(localSong);
             }
             QueleaApp.get().getMainWindow().getMainPanel().getPreviewPanel().refresh();
             QueleaApp.get().getMainWindow().getMainPanel().getLivePanel().refresh();

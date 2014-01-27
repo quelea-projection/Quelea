@@ -258,6 +258,7 @@ public class SongDisplayable implements TextDisplayable, Comparable<SongDisplaya
     private String key = "";
     private String capo = "";
     private String info = "";
+    private boolean quickInsert;
     private String[] tags;
     private List<TextSection> sections = new ArrayList<>();
     private ThemeDTO theme;
@@ -312,6 +313,24 @@ public class SongDisplayable implements TextDisplayable, Comparable<SongDisplaya
         this.author = author;
         this.theme = theme;
         sections = new ArrayList<>();
+    }
+
+    /**
+     * Set that this song is a quick insert song, and should not be updated in
+     * the database.
+     */
+    public void setQuickInsert() {
+        quickInsert = true;
+    }
+
+    /**
+     * Determine if this song was entered via quick insert, and thus should not
+     * be updated in the database.
+     * <p>
+     * @return true if this is a "quick insert" song, false otherwise.
+     */
+    public boolean isQuickInSert() {
+        return quickInsert;
     }
 
     /**
@@ -844,7 +863,7 @@ public class SongDisplayable implements TextDisplayable, Comparable<SongDisplaya
         }
         SongDisplayable ret = new SongDisplayable(title, author,
                 new ThemeDTO(ThemeDTO.DEFAULT_FONT, ThemeDTO.DEFAULT_FONT_COLOR,
-                ThemeDTO.DEFAULT_BACKGROUND, ThemeDTO.DEFAULT_SHADOW, false, false, -1, 0));
+                        ThemeDTO.DEFAULT_BACKGROUND, ThemeDTO.DEFAULT_SHADOW, false, false, -1, 0));
         for(TextSection section : songSections) {
             ret.addSection(section);
         }
