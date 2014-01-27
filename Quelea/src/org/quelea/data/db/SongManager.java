@@ -233,6 +233,18 @@ public final class SongManager {
      * @return true if the operation succeeded, false otherwise.
      */
     public synchronized boolean updateSong(final SongDisplayable song) {
+        return updateSong(song, true);
+    }
+
+    /**
+     * Update a song in the database.
+     * <p/>
+     * @param song the song to update.
+     * @param addIfNotFound true if the song should be added if it's not found, false
+     * otherwise.
+     * @return true if the operation succeeded, false otherwise.
+     */
+    public synchronized boolean updateSong(final SongDisplayable song, boolean addIfNotFound) {
         index.remove(song);
         HibernateUtil.execute(new HibernateUtil.SessionCallback() {
             @Override
