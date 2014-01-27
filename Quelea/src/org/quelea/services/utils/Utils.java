@@ -503,7 +503,7 @@ public final class Utils {
 
     public static void checkFXThread() {
         if(!fxThread()) {
-            throw new AssertionError("Not on FX Thread!");
+            LOGGER.log(Level.WARNING, "Not on FX Thread!", new AssertionError());
         }
     }
 
