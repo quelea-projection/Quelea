@@ -62,6 +62,7 @@ public class SplashStage extends Stage {
         setTitle("Quelea " + LabelGrabber.INSTANCE.getLabel("loading.text") + "...");
         String minorVersion = QueleaProperties.VERSION.getUnstableName();
         Image splashImage = new Image("file:icons/splash-bare.png");
+        final boolean isNightly = splashImage.getPixelReader().getColor(0, 0).equals(Color.web("#8c8c8c"));
         version = Version.FINAL;
         if(minorVersion.toLowerCase().trim().startsWith("alpha")) {
             splashImage = new Image("file:icons/splash-alpha.png");
@@ -103,8 +104,15 @@ public class SplashStage extends Stage {
             }
             else {
                 minorText.setFont(Font.loadFont("file:icons/Ubuntu-RI.ttf", 30));
-                minorText.setLayoutX(10);
-                minorText.setLayoutY(325);
+                
+                if(isNightly) {
+                    minorText.setLayoutX(20);
+                    minorText.setLayoutY(285);
+                }
+                else {
+                    minorText.setLayoutX(10);
+                    minorText.setLayoutY(325);
+                }
             }
         }
         Pips pips = new Pips(loadingFont, loadingGrad);
