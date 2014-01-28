@@ -52,7 +52,6 @@ public class ThemePanel extends BorderPane {
     private String[] text;
     private final DisplayPreview preview;
     private final ThemeToolbar themeToolbar;
-    private final ThemeDTO selectedTheme = null;
     private DisplayPositionSelector positionSelector;
     private String saveHash = "";
     private final Button confirmButton;
@@ -223,12 +222,5 @@ public class ThemePanel extends BorderPane {
         ThemeDTO ret = themeToolbar.getTheme();
         ret.setTextPosition(positionSelector.getSelectedButtonIndex());
         return ret;
-    }
-
-    /**
-     * @return the selectedTheme
-     */
-    public ThemeDTO getSelectedTheme() {
-        return selectedTheme;
     }
 }
