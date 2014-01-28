@@ -192,15 +192,6 @@ public class SongEntryWindow extends Stage {
         SongDisplayable localSong = getSong();
         boolean quickInsert = song != null && song.isQuickInSert();
         if(shouldSave) {
-            ThemeDTO selectedTheme = themePanel.getSelectedTheme();
-            if(selectedTheme != null && localSong instanceof TextDisplayable) {
-                TextDisplayable textDisplayable = (TextDisplayable) localSong;
-                for(TextSection section : textDisplayable.getSections()) {
-                    section.setTempTheme(selectedTheme);
-                }
-                localSong.setTheme(selectedTheme);
-
-            }
             if(updateDBOnHide && !quickInsert) {
                 Utils.updateSongInBackground(localSong, true, false);
             }

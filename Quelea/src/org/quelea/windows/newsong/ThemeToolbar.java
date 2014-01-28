@@ -387,7 +387,7 @@ public class ThemeToolbar extends HBox {
                 italicButton.isSelected() ? FontPosture.ITALIC : FontPosture.REGULAR,
                 QueleaProperties.get().getMaxFontSize());
 
-        Background background;
+        Background background = new ColourBackground(Color.BLACK);
         if(backTypeSelection.getSelectionModel().getSelectedItem() == null) {
             return ThemeDTO.DEFAULT_THEME;
         }
@@ -395,10 +395,16 @@ public class ThemeToolbar extends HBox {
             background = new ColourBackground(backgroundColorPicker.getValue());
         }
         else if(backTypeSelection.getSelectionModel().getSelectedItem().equals(LabelGrabber.INSTANCE.getLabel("image.theme.label"))) {
-            background = new ImageBackground(backgroundImageLocation.getText());
+            String text = backgroundImageLocation.getText();
+            if(!text.isEmpty()) {
+                background = new ImageBackground(text);
+            }
         }
         else if(backTypeSelection.getSelectionModel().getSelectedItem().equals(LabelGrabber.INSTANCE.getLabel("video.theme.label"))) {
-            background = new VideoBackground(backgroundVidLocation.getText(), vidHueSlider.getValue());
+            String text = backgroundVidLocation.getText();
+            if(!text.isEmpty()) {
+                background = new VideoBackground(text, vidHueSlider.getValue());
+            }
         }
         else {
             throw new AssertionError("Bug - " + backTypeSelection.getSelectionModel().getSelectedItem() + " is an unknown selection value");
