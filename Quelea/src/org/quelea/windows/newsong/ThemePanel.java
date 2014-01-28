@@ -17,10 +17,10 @@
  */
 package org.quelea.windows.newsong;
 
-import java.util.Arrays;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
 import javafx.scene.layout.BorderPane;
@@ -52,15 +52,16 @@ public class ThemePanel extends BorderPane {
     private String[] text;
     private final DisplayPreview preview;
     private final ThemeToolbar themeToolbar;
-    private ThemeDTO selectedTheme = null;
+    private final ThemeDTO selectedTheme = null;
     private DisplayPositionSelector positionSelector;
     private String saveHash = "";
+    private final Button confirmButton;
 
     /**
      * Create and initialise the theme panel
      */
     public ThemePanel() {
-        this(null);
+        this(null, null);
     }
 
     /**
@@ -69,7 +70,8 @@ public class ThemePanel extends BorderPane {
      * @param wordsArea the text area to use for words. If null, sample lyrics
      * will be used.
      */
-    public ThemePanel(TextArea wordsArea) {
+    public ThemePanel(TextArea wordsArea, Button confirmButton) {
+        this.confirmButton = confirmButton;
         positionSelector = new DisplayPositionSelector(this);
         positionSelector.prefWidthProperty().bind(widthProperty());
         positionSelector.prefHeightProperty().bind(heightProperty());
@@ -119,16 +121,38 @@ public class ThemePanel extends BorderPane {
         setMaxSize(800, 600);
     }
 
+    /**
+     * Determine if the save hash has changed since resetSaveHash() was last
+     * called.
+     * <p>
+     * @return true if the hash has changed, false otherwise.
+     */
     public boolean hashChanged() {
         return !getSaveHash().equals(saveHash);
     }
 
+    /**
+     * Reset the save hash to the current state of the panel.
+     */
     public void resetSaveHash() {
         saveHash = getSaveHash();
     }
 
+    /**
+     * Get the current save hash.
+     * @return the current save hash.
+     */
     private String getSaveHash() {
         return Integer.toString(getTheme().hashCode());
+    }
+
+    /**
+     * Get the confirm button used on this theme panel.
+     * <p>
+     * @return the confirm button.
+     */
+    public Button getConfirmButton() {
+        return confirmButton;
     }
 
     /**

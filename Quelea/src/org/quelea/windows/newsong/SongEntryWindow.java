@@ -74,6 +74,8 @@ public class SongEntryWindow extends Stage {
         initStyle(StageStyle.UTILITY);
         updateDBOnHide = true;
         Utils.addIconsToStage(this);
+        
+        confirmButton = new Button(LabelGrabber.INSTANCE.getLabel("add.song.button"), new ImageView(new Image("file:icons/tick.png")));
 
         BorderPane mainPane = new BorderPane();
         tabPane = new TabPane();
@@ -98,7 +100,6 @@ public class SongEntryWindow extends Stage {
 
         mainPane.setCenter(tabPane);
 
-        confirmButton = new Button(LabelGrabber.INSTANCE.getLabel("add.song.button"), new ImageView(new Image("file:icons/tick.png")));
         confirmButton.setOnAction(new EventHandler<javafx.event.ActionEvent>() {
             @Override
             public void handle(javafx.event.ActionEvent t) {
@@ -215,7 +216,7 @@ public class SongEntryWindow extends Stage {
      * Called by the constructor to initialise the theme panel.
      */
     private void setupThemePanel() {
-        themePanel = new ThemePanel(basicSongPanel.getLyricsField());
+        themePanel = new ThemePanel(basicSongPanel.getLyricsField(), confirmButton);
     }
 
     /**
