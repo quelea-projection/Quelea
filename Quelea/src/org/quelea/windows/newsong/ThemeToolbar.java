@@ -66,20 +66,20 @@ import org.quelea.windows.main.widgets.CardPane;
  */
 public class ThemeToolbar extends HBox {
 
-    private ComboBox<String> fontSelection;
-    private Button fontExpandButton;
-    private ToggleButton boldButton;
-    private ToggleButton italicButton;
-    private ToggleButton leftAlignButton;
-    private ToggleButton centreAlignButton;
-    private ToggleButton rightAlignButton;
-    private ColorPicker fontColor;
-    private ComboBox<String> backTypeSelection;
-    private TextField backgroundImageLocation;
-    private TextField backgroundVidLocation;
-    private ColorPicker backgroundColorPicker;
-    private Slider vidHueSlider;
-    private ThemePanel themePanel;
+    private final ComboBox<String> fontSelection;
+    private final Button fontExpandButton;
+    private final ToggleButton boldButton;
+    private final ToggleButton italicButton;
+    private final ToggleButton leftAlignButton;
+    private final ToggleButton centreAlignButton;
+    private final ToggleButton rightAlignButton;
+    private final ColorPicker fontColor;
+    private final ComboBox<String> backTypeSelection;
+    private final TextField backgroundImageLocation;
+    private final TextField backgroundVidLocation;
+    private final ColorPicker backgroundColorPicker;
+    private final Slider vidHueSlider;
+    private final ThemePanel themePanel;
     private static FontSelectionDialog fontSelectionDialog;
 
     /**
@@ -215,6 +215,7 @@ public class ThemeToolbar extends HBox {
             @Override
             public void changed(ObservableValue<? extends String> ov, String t, String t1) {
                 themePanel.updateTheme(false);
+                checkConfirmButton();
             }
         });
         backTypeSelection.getItems().add(LabelGrabber.INSTANCE.getLabel("color.theme.label"));
@@ -241,6 +242,7 @@ public class ThemeToolbar extends HBox {
             @Override
             public void changed(ObservableValue<? extends String> ov, String t, String t1) {
                 themePanel.updateTheme(false);
+                checkConfirmButton();
             }
         });
         Button backgroundImageSelectButton = new ImageButton(backgroundImageLocation, themePanel.getCanvas());
@@ -256,6 +258,7 @@ public class ThemeToolbar extends HBox {
             @Override
             public void changed(ObservableValue<? extends String> ov, String t, String t1) {
                 themePanel.updateTheme(false);
+                checkConfirmButton();
             }
         });
         Button backgroundVidSelectButton = new VideoButton(backgroundVidLocation, themePanel.getCanvas());
@@ -311,7 +314,24 @@ public class ThemeToolbar extends HBox {
         backText.setFill(Color.GRAY);
         backBottom.getChildren().add(backText);
         topLevelBackBox.getChildren().add(backBottom);
+    }
 
+    /**
+     * Enable / disable the confirm button on the dialog based on the state of
+     * the background field.
+     */
+    private void checkConfirmButton() {
+        if(themePanel.getConfirmButton() != null) {
+            if(backTypeSelection.getSelectionModel().getSelectedItem().equalsIgnoreCase(LabelGrabber.INSTANCE.getLabel("color.theme.label"))) {
+                themePanel.getConfirmButton().setDisable(false);
+            }
+            else if(backTypeSelection.getSelectionModel().getSelectedItem().equalsIgnoreCase(LabelGrabber.INSTANCE.getLabel("image.theme.label"))) {
+                themePanel.getConfirmButton().setDisable(backgroundImageLocation.getText().trim().isEmpty());
+            }
+            else if(backTypeSelection.getSelectionModel().getSelectedItem().equalsIgnoreCase(LabelGrabber.INSTANCE.getLabel("video.theme.label"))) {
+                themePanel.getConfirmButton().setDisable(backgroundVidLocation.getText().trim().isEmpty());
+            }
+        }
     }
 
     /**
@@ -331,10 +351,10 @@ public class ThemeToolbar extends HBox {
         boldButton.setSelected(theme.isBold());
         italicButton.setSelected(theme.isItalic());
         int align = theme.getTextAlignment();
-        if(align==-1) {
+        if(align == -1) {
             leftAlignButton.setSelected(true);
         }
-        else if(align==1) {
+        else if(align == 1) {
             rightAlignButton.setSelected(true);
         }
         else {
