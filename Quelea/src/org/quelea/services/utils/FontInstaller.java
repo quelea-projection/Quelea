@@ -43,6 +43,7 @@ public class FontInstaller {
                 try {
                     javafx.scene.text.Font.loadFont(file.toURI().toString(), 72);
                     ge.registerFont(Font.createFont(Font.TRUETYPE_FONT, file));
+                    LOGGER.log(Level.WARNING, "Loaded bundled font {0}", file.getAbsolutePath());
                 }
                 catch(FontFormatException | IOException ex) {
                     LOGGER.log(Level.WARNING, "Couldn't load font " + file.getAbsolutePath(), ex);
