@@ -47,7 +47,7 @@ public class FontInstaller {
                         LOGGER.log(Level.WARNING, "Couldn''t load font {0}", file.getAbsolutePath());
                     }
                     ge.registerFont(Font.createFont(Font.TRUETYPE_FONT, file));
-                    LOGGER.log(Level.WARNING, "Loaded bundled font {0}", file.getAbsolutePath());
+                    LOGGER.log(Level.INFO, "Loaded bundled font {0}", file.getAbsolutePath());
                 }
                 catch(FontFormatException | IOException ex) {
                     LOGGER.log(Level.WARNING, "Couldn't load font " + file.getAbsolutePath(), ex);
