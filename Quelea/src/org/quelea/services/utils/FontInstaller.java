@@ -20,8 +20,11 @@ package org.quelea.services.utils;
 import java.awt.Font;
 import java.awt.FontFormatException;
 import java.awt.GraphicsEnvironment;
+import java.io.BufferedInputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -42,7 +45,10 @@ public class FontInstaller {
         for(File file : new File("icons/bundledfonts").listFiles()) {
             if(file.getName().toLowerCase().endsWith("otf") || file.getName().toLowerCase().endsWith("ttf")) {
                 try {
-                    javafx.scene.text.Font fxFont = javafx.scene.text.Font.loadFont(file.toURI().toString(), 72);
+                    javafx.scene.text.Font fxFont;
+                    try(FileInputStream fis = new FileInputStream(file)) {
+                        fxFont = javafx.scene.text.Font.loadFont(fis, 72);                        
+                    }
                     if(fxFont == null) {
                         LOGGER.log(Level.WARNING, "Couldn't load font {0}", file.getAbsolutePath());
                     }
