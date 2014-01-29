@@ -27,10 +27,11 @@ import java.util.logging.Logger;
 
 /**
  * Registers the Quelea bundled fonts with the JVM.
+ *
  * @author Michael
  */
 public class FontInstaller {
-    
+
     private static final Logger LOGGER = LoggerUtils.getLogger();
 
     /**
@@ -41,7 +42,10 @@ public class FontInstaller {
         for(File file : new File("icons/bundledfonts").listFiles()) {
             if(file.getName().toLowerCase().endsWith("otf") || file.getName().toLowerCase().endsWith("ttf")) {
                 try {
-                    javafx.scene.text.Font.loadFont(file.toURI().toString(), 72);
+                    javafx.scene.text.Font fxFont = javafx.scene.text.Font.loadFont(file.toURI().toString(), 72);
+                    if(fxFont==null) {
+                        LOGGER.log(Level.WARNING, "Couldn''t load font {0}", file.getAbsolutePath());
+                    }
                     ge.registerFont(Font.createFont(Font.TRUETYPE_FONT, file));
                     LOGGER.log(Level.WARNING, "Loaded bundled font {0}", file.getAbsolutePath());
                 }
