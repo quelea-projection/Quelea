@@ -99,7 +99,7 @@ public class PhoneHome {
                     while((line = reader.readLine()) != null) {
                         result.append(line).append('\n');
                     }
-                    LOGGER.log(Level.INFO, "Phone home result: {0}", result);
+                    LOGGER.log(Level.INFO, "Phone home result: {0}", result.toString().trim());
                 }
                 catch(IOException ex) {
                     LOGGER.log(Level.WARNING, "Phone home failed", ex);
