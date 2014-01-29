@@ -35,15 +35,16 @@ import org.quelea.services.utils.Utils;
 
 /**
  * A JavaFX simple input dialog - since one isn't provided for us.
+ *
  * @author Michael
  */
 public class InputDialog extends Stage {
-    
+
     private static InputDialog dialog;
     private TextField textField;
     private Label messageLabel;
     private Button okButton;
-    
+
     /**
      * Create our input dialog.
      */
@@ -71,9 +72,10 @@ public class InputDialog extends Stage {
         mainPane.setBottom(okButton);
         setScene(new Scene(mainPane));
     }
-    
+
     /**
      * Display a dialog grabbing the user's input.
+     *
      * @param message the message to display to the user on the dialog.
      * @param title the title of the dialog.
      * @return the user entered text.
@@ -90,7 +92,14 @@ public class InputDialog extends Stage {
                 dialog.showAndWait();
             }
         });
+        while(dialog.isShowing()) {
+            try {
+                Thread.sleep(10);
+            }
+            catch(InterruptedException ex) {
+            }
+        }
         return dialog.textField.getText();
     }
-    
+
 }
