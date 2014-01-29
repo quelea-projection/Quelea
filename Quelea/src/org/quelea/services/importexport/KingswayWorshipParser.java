@@ -58,7 +58,9 @@ public class KingswayWorshipParser implements SongParser {
     private boolean all;
 
     /**
-     *
+     * Set whether we're getting all songs, or just one.
+     * <p/>
+     * @param all true if all songs, false if one.
      */
     public void setAll(boolean all) {
         this.all = all;
@@ -68,7 +70,7 @@ public class KingswayWorshipParser implements SongParser {
      * Get the songs from the kingsway online library.
      * <p/>
      * @param location not used.
-     * @param the status panel. May be null.
+     * @param statusPanel the status panel. May be null.
      * @return a list of all the songs found.
      * @throws IOException if something went wrong.
      */
@@ -340,7 +342,7 @@ public class KingswayWorshipParser implements SongParser {
             }
         }
         catch(Exception ex) {
-            LOGGER.log(Level.WARNING, "Error importing song. HTML is:\n"+html, ex);
+            LOGGER.log(Level.WARNING, "Error importing song. HTML is:\n" + html, ex);
             return null;
         }
     }
