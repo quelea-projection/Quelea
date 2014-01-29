@@ -26,11 +26,11 @@ import org.quelea.services.languages.LabelGrabber;
  */
 public class KingswayImportDialog extends ImportDialog {
     
-    private KingswayWorshipParser kwp;
+    private final KingswayWorshipParser kwp;
     
     /**
      * Create a new kingsway import dialog.
-     * @param owner the owner of the dialog.
+     * @param kwp the parser used for this dialog.
      */
     public KingswayImportDialog(KingswayWorshipParser kwp) {
         super(new String[]{
