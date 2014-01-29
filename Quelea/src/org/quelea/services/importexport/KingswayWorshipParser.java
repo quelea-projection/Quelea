@@ -325,11 +325,11 @@ public class KingswayWorshipParser implements SongParser {
             }
 
             if(title.trim().isEmpty()) {
-                title = lyrics.toString().split("\n")[0];
+                title = lyrics.toString().split("\n")[0].trim();
             }
 
             if(lyrics.toString().length() > 5) {
-                SongDisplayable ret = new SongDisplayable(title, author);
+                SongDisplayable ret = new SongDisplayable(title.trim(), author);
                 ret.setLyrics(lyrics.toString());
                 return ret;
             }
