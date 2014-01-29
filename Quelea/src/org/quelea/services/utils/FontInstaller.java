@@ -43,11 +43,13 @@ public class FontInstaller {
             if(file.getName().toLowerCase().endsWith("otf") || file.getName().toLowerCase().endsWith("ttf")) {
                 try {
                     javafx.scene.text.Font fxFont = javafx.scene.text.Font.loadFont(file.toURI().toString(), 72);
-                    if(fxFont==null) {
-                        LOGGER.log(Level.WARNING, "Couldn''t load font {0}", file.getAbsolutePath());
+                    if(fxFont == null) {
+                        LOGGER.log(Level.WARNING, "Couldn't load font {0}", file.getAbsolutePath());
                     }
-                    ge.registerFont(Font.createFont(Font.TRUETYPE_FONT, file));
-                    LOGGER.log(Level.INFO, "Loaded bundled font {0}", file.getAbsolutePath());
+                    boolean geSuccess = ge.registerFont(Font.createFont(Font.TRUETYPE_FONT, file));
+                    if(geSuccess && fxFont != null) {
+                        LOGGER.log(Level.INFO, "Loaded bundled font {0}", file.getAbsolutePath());
+                    }
                 }
                 catch(FontFormatException | IOException ex) {
                     LOGGER.log(Level.WARNING, "Couldn't load font " + file.getAbsolutePath(), ex);
