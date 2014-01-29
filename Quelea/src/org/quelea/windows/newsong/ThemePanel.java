@@ -108,6 +108,9 @@ public class ThemePanel extends BorderPane {
                     else {
                         text = SAMPLE_LYRICS;
                     }
+                    if(isEmpty(text)) {
+                        text = SAMPLE_LYRICS;
+                    }
                     updateTheme(false);
                 }
             };
@@ -118,6 +121,15 @@ public class ThemePanel extends BorderPane {
         setTop(themeToolbar);
         updateTheme(false);
         setMaxSize(800, 600);
+    }
+
+    private boolean isEmpty(String[] text) {
+        for(String str : text) {
+            if(!str.trim().isEmpty()) {
+                return false;
+            }
+        }
+        return true;
     }
 
     /**
@@ -139,6 +151,7 @@ public class ThemePanel extends BorderPane {
 
     /**
      * Get the current save hash.
+     *
      * @return the current save hash.
      */
     private String getSaveHash() {
