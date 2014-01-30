@@ -29,36 +29,45 @@ import org.w3c.dom.Node;
 
 /**
  * A displayable that's a video.
- *
+ * <p>
  * @author Michael
  */
 public class VideoDisplayable implements MultimediaDisplayable, Serializable {
 
-    private final File file;
+    private final String location;
+
     /**
-     * Create a new image displayable.
-     *
+     * Create a new video displayable.
+     * <p>
      * @param file the file for the displayable.
-     * @param type the type of video.
      */
     public VideoDisplayable(File file) {
-        this.file = file;
+        this.location = file.getAbsolutePath();
     }
 
     /**
-     * Get the displayable file.
-     *
-     * @return the displayable file.
+     * Create a new video displayable.
+     * <p>
+     * @param location the location of the displayable.
+     */
+    public VideoDisplayable(String location) {
+        this.location = location;
+    }
+
+    /**
+     * Get the displayable location.
+     * <p>
+     * @return the displayable location.
      */
     @Override
-    public File getFile() {
-        return file;
+    public String getLocation() {
+        return location;
     }
 
     /**
      * Parse some XML representing this object and return the object it
      * represents.
-     *
+     * <p>
      * @param node the XML node representing this object.
      * @return the object as defined by the XML.
      */
@@ -68,21 +77,21 @@ public class VideoDisplayable implements MultimediaDisplayable, Serializable {
 
     /**
      * Get the XML that forms this image displayable.
-     *
+     * <p>
      * @return the XML.
      */
     @Override
     public String getXML() {
         StringBuilder ret = new StringBuilder();
         ret.append("<filevideo>");
-        ret.append(Utils.escapeXML(file.getAbsolutePath()));
+        ret.append(Utils.escapeXML(location));
         ret.append("</filevideo>");
         return ret.toString();
     }
 
     /**
      * Get the preview icon of this video.
-     *
+     * <p>
      * @return the video's preview icon.
      */
     @Override
@@ -92,39 +101,41 @@ public class VideoDisplayable implements MultimediaDisplayable, Serializable {
 
     /**
      * Get the preview text for the image.
-     *
+     * <p>
      * @return the file name.
      */
     @Override
     public String getPreviewText() {
-        return file.getName();
+        return new File(location).getName();
     }
 
     /**
      * Get any resources this displayable needs.
-     *
+     * <p>
      * @return the image backing this displayable.
      */
     @Override
     public Collection<File> getResources() {
         List<File> files = new ArrayList<>();
-        files.add(file);
+        if(!location.startsWith("http")) {
+            files.add(new File(location));
+        }
         return files;
     }
 
     /**
      * Get the text to print on the order of service.
-     *
+     * <p>
      * @return "Video file: " and the name of the video file.
      */
     @Override
     public String getPrintText() {
-        return "Video file: " + file.getName();
+        return "Video file: " + new File(location).getName();
     }
 
     /**
      * Determine whether videos support clearing, which they don't.
-     *
+     * <p>
      * @return false, always.
      */
     @Override
