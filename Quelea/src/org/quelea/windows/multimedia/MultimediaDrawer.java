@@ -13,7 +13,7 @@ import org.quelea.windows.main.DisplayableDrawer;
  */
 public class MultimediaDrawer extends DisplayableDrawer {
 
-    private MultimediaControls controlPanel;
+    private final MultimediaControls controlPanel;
     private boolean playVideo;
 
     public MultimediaDrawer(MultimediaControls controlPanel) {
@@ -30,7 +30,7 @@ public class MultimediaDrawer extends DisplayableDrawer {
         else {
             if (playVideo) {
                 controlPanel.reset();
-                controlPanel.loadMultimedia(((MultimediaDisplayable) displayable).getFile().getAbsolutePath());
+                controlPanel.loadMultimedia(((MultimediaDisplayable) displayable).getLocation());
                 VLCWindow.INSTANCE.refreshPosition();
                 VLCWindow.INSTANCE.show();
             }

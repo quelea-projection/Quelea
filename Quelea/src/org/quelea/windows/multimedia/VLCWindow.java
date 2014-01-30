@@ -80,7 +80,16 @@ public class VLCWindow {
                     mediaPlayer = mediaPlayerFactory.newEmbeddedMediaPlayer();
                     CanvasVideoSurface videoSurface = mediaPlayerFactory.newVideoSurface(canvas);
                     mediaPlayer.setVideoSurface(videoSurface);
-                    mediaPlayer.setPlaySubItems(true);
+                    mediaPlayer.addMediaPlayerEventListener(new MediaPlayerEventAdapter() {
+
+                        @Override
+                        public void finished(MediaPlayer mp) {
+                            if(mediaPlayer.subItemCount() > 0) {
+                                String mrl = mediaPlayer.subItems().remove(0);
+                                mediaPlayer.playMedia(mrl);
+                            }
+                        }
+                    });
                     window.add(canvas);
                     show = true;
                     window.setVisible(true);
@@ -113,7 +122,7 @@ public class VLCWindow {
 
     /**
      * Determine if VLC has initialised correctly.
-     *
+     * <p>
      * @return true if it has, false if it hasn't because something went wrong
      * (the most likely cause is an outdated version.)
      */
@@ -148,7 +157,12 @@ public class VLCWindow {
 //                System.out.println("load() start");
                 if(init) {
                     paused = false;
-                    mediaPlayer.prepareMedia(path);
+                    String sanitisedPath = path;
+                    sanitisedPath = sanitisedPath.trim();
+                    if(sanitisedPath.startsWith("www")) {
+                        sanitisedPath = "http://" + sanitisedPath;
+                    }
+                    mediaPlayer.prepareMedia(sanitisedPath);
                 }
 //                System.out.println("load() end");
             }
@@ -332,7 +346,9 @@ public class VLCWindow {
                     mediaPlayer.addMediaPlayerEventListener(new MediaPlayerEventAdapter() {
                         @Override
                         public void finished(MediaPlayer mediaPlayer) {
-                            onFinished.run();
+                            if(mediaPlayer.subItemCount() == 0) {
+                                onFinished.run();
+                            }
                         }
                     });
                 }
