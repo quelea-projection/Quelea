@@ -67,7 +67,13 @@ public class Version implements Comparable<Version> {
             return getVersionString();
         }
     }
-    
+
+    /**
+     * Get the minor "name" for this particular version - eg. Genesis, Exodus,
+     * etc.
+     * <p>
+     * @return the minor "name" for this particular version.
+     */
     public String getMinorName() {
         String[] parts = versionStr.split("\\.");
         if(parts.length > 1) {
@@ -84,9 +90,10 @@ public class Version implements Comparable<Version> {
             return "";
         }
     }
-    
+
     /**
      * Get the major version number (eg. 2014.)
+     * <p>
      * @return the major version number.
      */
     public String getMajorVersionNumber() {
