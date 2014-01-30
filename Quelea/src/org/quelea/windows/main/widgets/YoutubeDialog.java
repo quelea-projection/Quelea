@@ -91,7 +91,7 @@ public class YoutubeDialog extends Stage {
             }
         });
         root.getChildren().add(okPane);
-        setScene(new Scene(root, 400, 300));
+        setScene(new Scene(root, 400, 100));
         setResizable(false);
     }
 
