@@ -103,11 +103,14 @@ public class YoutubeDialog extends Stage {
     public String getLocation() {
         urlField.clear();
         showAndWait();
-        String text = urlField.getText();
-        if(text.trim().isEmpty()) {
+        String text = urlField.getText().trim();
+        if(!text.startsWith("http")) {
+            text = "http://" + text;
+        }
+        if(text.isEmpty()) {
             return null;
         }
-        return text.trim();
+        return text;
     }
 
 }
