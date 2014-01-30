@@ -7,6 +7,7 @@ When changing the version number, it needs to be changed in :
 5) Control file for debian based installs
 6) MyAppVersion in quelea.iss
 7) launch4j/config.xml
+8) (Potentially) update getMinorName() in Version.java
 
 This should probably all be automated at some point!
 
