@@ -17,6 +17,7 @@
  */
 package org.quelea.windows.multimedia;
 
+import java.io.File;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.image.Image;
@@ -78,7 +79,7 @@ public class MultimediaPanel extends AbstractPanel {
     @Override
     public void updateCanvas() {
         MultimediaDisplayable displayable = (MultimediaDisplayable) getCurrentDisplayable();
-        previewText.setText(displayable.getFile().getName());
+        previewText.setText(new File(displayable.getLocation()).getName());
         boolean playVideo = false;
         for(DisplayCanvas canvas : getCanvases()) {
             drawer.setCanvas(canvas);
