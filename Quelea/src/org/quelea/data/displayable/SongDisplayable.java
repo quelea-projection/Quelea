@@ -65,7 +65,7 @@ public class SongDisplayable implements TextDisplayable, Comparable<SongDisplaya
      */
     public static class Builder {
 
-        private SongDisplayable song;
+        private final SongDisplayable song;
 
         /**
          * Create a new builder with the required fields.
@@ -1007,7 +1007,7 @@ public class SongDisplayable implements TextDisplayable, Comparable<SongDisplaya
         return "Song: " + getTitle() + " (" + getAuthor() + ")";
     }
     //Field just used for the calculation of how to print the song
-    private List<Integer> nextSection = new ArrayList<>();
+    private final List<Integer> nextSection = new ArrayList<>();
 
     /**
      * Print out the song.
