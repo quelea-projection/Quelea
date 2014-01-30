@@ -1,0 +1,5 @@
+quelea (2014.1) stable; urgency=normal
+ 
+  * Added Youtube support
+
+ -- Michael Berry <michael@quelea.org>  Wednesday, 31 Jan 2014 00:00:00 +0000
