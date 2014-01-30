@@ -28,6 +28,7 @@ import org.quelea.services.languages.LabelGrabber;
 import org.quelea.services.utils.Utils;
 import org.quelea.windows.main.actionhandlers.AddPowerpointActionHandler;
 import org.quelea.windows.main.actionhandlers.AddVideoActionHandler;
+import org.quelea.windows.main.actionhandlers.AddYoutubeActionHandler;
 import org.quelea.windows.main.actionhandlers.NewScheduleActionHandler;
 import org.quelea.windows.main.actionhandlers.NewSongActionHandler;
 import org.quelea.windows.main.actionhandlers.OpenScheduleActionHandler;
@@ -51,6 +52,7 @@ public class MainToolbar extends ToolBar {
     private final Button newSongButton;
     private final Button quickInsertButton;
     private final Button addPresentationButton;
+    private final Button addYoutubeButton;
     private final Button addVideoButton;
     private final Button manageNoticesButton;
     private final Button manageTagsButton;
@@ -111,6 +113,12 @@ public class MainToolbar extends ToolBar {
         addVideoButton.setOnAction(new AddVideoActionHandler());
         getItems().add(addVideoButton);
 
+        addYoutubeButton = new Button("", new ImageView(new Image("file:icons/youtube.png", 24, 24, false, true)));
+        Utils.setToolbarButtonStyle(addYoutubeButton);
+        addYoutubeButton.setTooltip(new Tooltip(LabelGrabber.INSTANCE.getLabel("add.youtube.button")));
+        addYoutubeButton.setOnAction(new AddYoutubeActionHandler());
+        getItems().add(addYoutubeButton);
+
         getItems().add(new Separator());
 
         manageTagsButton = new Button("", new ImageView(new Image("file:icons/tag.png", 24, 24, false, true)));
@@ -125,5 +133,5 @@ public class MainToolbar extends ToolBar {
         manageNoticesButton.setOnAction(new ShowNoticesActionHandler());
         getItems().add(manageNoticesButton);
     }
-    
+
 }

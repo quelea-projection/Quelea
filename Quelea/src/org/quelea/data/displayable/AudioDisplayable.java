@@ -39,12 +39,13 @@ public class AudioDisplayable implements MultimediaDisplayable, Serializable {
     }
 
     /**
-     * Get the displayable file.
+     * Get the displayable file location.
      *
-     * @return the displayable file.
+     * @return the displayable file location.
      */
-    public File getFile() {
-        return file;
+    @Override
+    public String getLocation() {
+        return file.getAbsolutePath();
     }
 
     /**
