@@ -44,16 +44,16 @@ import org.quelea.windows.main.actionhandlers.ViewTagsActionHandler;
  */
 public class MainToolbar extends ToolBar {
 
-    private Button newScheduleButton;
-    private Button openScheduleButton;
-    private Button saveScheduleButton;
-    private Button printScheduleButton;
-    private Button newSongButton;
-    private Button quickInsertButton;
-    private Button addPresentationButton;
-    private Button addVideoButton;
-    private Button manageNoticesButton;
-    private Button manageTagsButton;
+    private final Button newScheduleButton;
+    private final Button openScheduleButton;
+    private final Button saveScheduleButton;
+    private final Button printScheduleButton;
+    private final Button newSongButton;
+    private final Button quickInsertButton;
+    private final Button addPresentationButton;
+    private final Button addVideoButton;
+    private final Button manageNoticesButton;
+    private final Button manageTagsButton;
 
     /**
      * Create the toolbar and any associated shortcuts.
