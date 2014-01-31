@@ -19,12 +19,19 @@
 package org.quelea.data.displayable;
 
 /**
- * A displayable that shows a DVD.
+ * A displayable that shows a DVD or Blu-ray.
+ * <p>
  * @author Michael
  */
-public class DVDDisplayable extends VideoDisplayable {
+public class DiskDisplayable extends VideoDisplayable {
 
-    public DVDDisplayable(String path) {
+    /**
+     * Construct a new disk displayable with the VLC based path to the disk -
+     * eg. simpledvd:///D:/
+     * <p>
+     * @param path the VLC path to the disk.
+     */
+    public DiskDisplayable(String path) {
         super(path);
     }
 
