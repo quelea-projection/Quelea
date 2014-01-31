@@ -39,7 +39,7 @@ import org.quelea.windows.main.QueleaApp;
  * @author Michael
  */
 public class AddDVDActionHandler implements EventHandler<ActionEvent> {
-    
+
     private Dialog warningDialog;
 
     @Override
@@ -81,6 +81,7 @@ public class AddDVDActionHandler implements EventHandler<ActionEvent> {
 
     /**
      * Get the location of the DVD, or null if no DVD can be found.
+     * <p>
      * @return the DVD location.
      */
     private String getLocation() {
@@ -89,7 +90,12 @@ public class AddDVDActionHandler implements EventHandler<ActionEvent> {
             try {
                 FileStore store = Files.getFileStore(rootPath);
                 if(store.type().toLowerCase().contains("udf")) {
-                    return rootPath.toString();
+                    if(store.getTotalSpace()>10000000000L) { //Blu-ray
+                        return "bluray:///" + rootPath.toString();
+                    }
+                    else {
+                        return "dvdsimple:///" + rootPath.toString(); //DVD
+                    }
                 }
             }
             catch(IOException ex) {
