@@ -26,6 +26,7 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import org.quelea.services.languages.LabelGrabber;
 import org.quelea.services.utils.Utils;
+import org.quelea.windows.main.actionhandlers.AddDVDActionHandler;
 import org.quelea.windows.main.actionhandlers.AddPowerpointActionHandler;
 import org.quelea.windows.main.actionhandlers.AddVideoActionHandler;
 import org.quelea.windows.main.actionhandlers.AddYoutubeActionHandler;
@@ -53,6 +54,7 @@ public class MainToolbar extends ToolBar {
     private final Button quickInsertButton;
     private final Button addPresentationButton;
     private final Button addYoutubeButton;
+    private final Button addDVDButton;
     private final Button addVideoButton;
     private final Button manageNoticesButton;
     private final Button manageTagsButton;
@@ -118,6 +120,12 @@ public class MainToolbar extends ToolBar {
         addYoutubeButton.setTooltip(new Tooltip(LabelGrabber.INSTANCE.getLabel("add.youtube.button")));
         addYoutubeButton.setOnAction(new AddYoutubeActionHandler());
         getItems().add(addYoutubeButton);
+
+        addDVDButton = new Button("", new ImageView(new Image("file:icons/dvd.png", 24, 24, false, true)));
+        Utils.setToolbarButtonStyle(addDVDButton);
+        addDVDButton.setTooltip(new Tooltip(LabelGrabber.INSTANCE.getLabel("add.dvd.button")));
+        addDVDButton.setOnAction(new AddDVDActionHandler());
+        getItems().add(addDVDButton);
 
         getItems().add(new Separator());
 
