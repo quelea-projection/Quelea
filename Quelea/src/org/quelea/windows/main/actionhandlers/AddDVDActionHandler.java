@@ -55,7 +55,9 @@ public class AddDVDActionHandler implements EventHandler<ActionEvent> {
                             warningDialog.hide();
                         }
                     })
+                    .setOwner(QueleaApp.get().getMainWindow())
                     .build();
+            warningDialog.centerOnScreen();
             warningDialog.showAndWait();
         }
         else {
