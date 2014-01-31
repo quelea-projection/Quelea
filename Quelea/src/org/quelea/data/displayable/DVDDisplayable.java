@@ -25,7 +25,7 @@ package org.quelea.data.displayable;
 public class DVDDisplayable extends VideoDisplayable {
 
     public DVDDisplayable(String path) {
-        super("dvdsimple:///" + path);
+        super(path);
     }
 
 }
