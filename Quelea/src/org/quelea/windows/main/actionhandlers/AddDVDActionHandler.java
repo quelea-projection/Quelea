@@ -28,7 +28,7 @@ import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import org.javafx.dialog.Dialog;
-import org.quelea.data.displayable.DVDDisplayable;
+import org.quelea.data.displayable.DiskDisplayable;
 import org.quelea.services.languages.LabelGrabber;
 import org.quelea.windows.main.QueleaApp;
 
@@ -69,7 +69,7 @@ public class AddDVDActionHandler implements EventHandler<ActionEvent> {
                             warningDialog.showAndWait();
                         }
                         else {
-                            DVDDisplayable displayable = new DVDDisplayable(dvdLocation);
+                            DiskDisplayable displayable = new DiskDisplayable(dvdLocation);
                             QueleaApp.get().getMainWindow().getMainPanel().getSchedulePanel().getScheduleList().add(displayable);
                         }
                         QueleaApp.get().getMainWindow().getMainToolbar().setDVDLoading(false);
