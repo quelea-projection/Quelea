@@ -24,6 +24,7 @@ import javafx.scene.control.ToolBar;
 import javafx.scene.control.Tooltip;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.StackPane;
 import org.quelea.services.languages.LabelGrabber;
 import org.quelea.services.utils.Utils;
 import org.quelea.windows.main.actionhandlers.AddDVDActionHandler;
@@ -58,6 +59,8 @@ public class MainToolbar extends ToolBar {
     private final Button addVideoButton;
     private final Button manageNoticesButton;
     private final Button manageTagsButton;
+    private final ImageView loadingView;
+    private final StackPane dvdImageStack;
 
     /**
      * Create the toolbar and any associated shortcuts.
@@ -121,7 +124,10 @@ public class MainToolbar extends ToolBar {
         addYoutubeButton.setOnAction(new AddYoutubeActionHandler());
         getItems().add(addYoutubeButton);
 
-        addDVDButton = new Button("", new ImageView(new Image("file:icons/dvd.png", 24, 24, false, true)));
+        loadingView = new ImageView(new Image("file:icons/loading.gif", 24, 24, false, true));
+        dvdImageStack = new StackPane();
+        dvdImageStack.getChildren().add(new ImageView(new Image("file:icons/dvd.png", 24, 24, false, true)));
+        addDVDButton = new Button("", dvdImageStack);
         Utils.setToolbarButtonStyle(addDVDButton);
         addDVDButton.setTooltip(new Tooltip(LabelGrabber.INSTANCE.getLabel("add.dvd.button")));
         addDVDButton.setOnAction(new AddDVDActionHandler());
@@ -140,6 +146,21 @@ public class MainToolbar extends ToolBar {
         manageNoticesButton.setTooltip(new Tooltip(LabelGrabber.INSTANCE.getLabel("manage.notices.tooltip")));
         manageNoticesButton.setOnAction(new ShowNoticesActionHandler());
         getItems().add(manageNoticesButton);
+    }
+
+    /**
+     * Set if the DVD is loading.
+     * <p>
+     * @param loading true if it's loading, false otherwise.
+     */
+    public void setDVDLoading(boolean loading) {
+        addDVDButton.setDisable(loading);
+        if(loading && !dvdImageStack.getChildren().contains(loadingView)) {
+            dvdImageStack.getChildren().add(loadingView);
+        }
+        else if(!loading) {
+            dvdImageStack.getChildren().remove(loadingView);
+        }
     }
 
 }

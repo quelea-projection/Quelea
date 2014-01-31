@@ -24,6 +24,7 @@ import java.nio.file.FileSystem;
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import org.javafx.dialog.Dialog;
@@ -43,27 +44,39 @@ public class AddDVDActionHandler implements EventHandler<ActionEvent> {
 
     @Override
     public void handle(ActionEvent t) {
-        String dvdLocation = getLocation();
-        if(dvdLocation == null) {
-            warningDialog = new Dialog.Builder().create()
-                    .setWarningIcon()
-                    .setMessage(LabelGrabber.INSTANCE.getLabel("no.dvd.error"))
-                    .setTitle(LabelGrabber.INSTANCE.getLabel("no.dvd.heading"))
-                    .addLabelledButton(LabelGrabber.INSTANCE.getLabel("ok.button"), new EventHandler<ActionEvent>() {
-                        @Override
-                        public void handle(ActionEvent t) {
-                            warningDialog.hide();
+        QueleaApp.get().getMainWindow().getMainToolbar().setDVDLoading(true);
+        new Thread() {
+            public void run() {
+                final String dvdLocation = getLocation();
+                Platform.runLater(new Runnable() {
+
+                    @Override
+                    public void run() {
+                        if(dvdLocation == null) {
+                            warningDialog = new Dialog.Builder().create()
+                                    .setWarningIcon()
+                                    .setMessage(LabelGrabber.INSTANCE.getLabel("no.dvd.error"))
+                                    .setTitle(LabelGrabber.INSTANCE.getLabel("no.dvd.heading"))
+                                    .addLabelledButton(LabelGrabber.INSTANCE.getLabel("ok.button"), new EventHandler<ActionEvent>() {
+                                        @Override
+                                        public void handle(ActionEvent t) {
+                                            warningDialog.hide();
+                                        }
+                                    })
+                                    .setOwner(QueleaApp.get().getMainWindow())
+                                    .build();
+                            warningDialog.centerOnScreen();
+                            warningDialog.showAndWait();
                         }
-                    })
-                    .setOwner(QueleaApp.get().getMainWindow())
-                    .build();
-            warningDialog.centerOnScreen();
-            warningDialog.showAndWait();
-        }
-        else {
-            DVDDisplayable displayable = new DVDDisplayable(dvdLocation);
-            QueleaApp.get().getMainWindow().getMainPanel().getSchedulePanel().getScheduleList().add(displayable);
-        }
+                        else {
+                            DVDDisplayable displayable = new DVDDisplayable(dvdLocation);
+                            QueleaApp.get().getMainWindow().getMainPanel().getSchedulePanel().getScheduleList().add(displayable);
+                        }
+                        QueleaApp.get().getMainWindow().getMainToolbar().setDVDLoading(false);
+                    }
+                });
+            }
+        }.start();
     }
 
     /**

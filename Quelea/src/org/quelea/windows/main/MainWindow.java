@@ -166,6 +166,15 @@ public class MainWindow extends Stage {
     }
 
     /**
+     * Get the toolbar.
+     * <p>
+     * @return the toolbar.
+     */
+    public MainToolbar getMainToolbar() {
+        return mainToolbar;
+    }
+
+    /**
      * Get the bible search dialog on this main window.
      * <p/>
      * @return the bible search dialog.
