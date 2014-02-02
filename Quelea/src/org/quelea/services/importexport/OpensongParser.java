@@ -19,6 +19,7 @@ package org.quelea.services.importexport;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
@@ -48,7 +49,7 @@ public class OpensongParser implements SongParser {
 
     @Override
     public List<SongDisplayable> getSongs(File location, StatusPanel statusPanel) throws IOException {
-        final ZipFile file = new ZipFile(location);
+        ZipFile file = new ZipFile(location, Charset.forName("UTF-8"));
         List<SongDisplayable> ret = new ArrayList<>();
         try {
             final Enumeration<? extends ZipEntry> entries = file.entries();
