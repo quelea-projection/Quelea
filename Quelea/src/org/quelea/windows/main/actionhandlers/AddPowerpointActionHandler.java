@@ -20,6 +20,7 @@ package org.quelea.windows.main.actionhandlers;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.application.Platform;
@@ -37,22 +38,24 @@ import org.quelea.windows.main.StatusPanel;
 
 /**
  * The action listener for adding a powerpoint presentation.
+ * <p>
  * @author Michael
  */
 public class AddPowerpointActionHandler implements EventHandler<ActionEvent> {
-    
+
     private static final Logger LOGGER = LoggerUtils.getLogger();
 
     /**
      * Add the presentation
+     * <p>
      * @param t the event.
      */
     @Override
     public void handle(ActionEvent t) {
         FileChooser chooser = new FileChooser();
         chooser.getExtensionFilters().add(FileFilters.POWERPOINT);
-        final File file = chooser.showOpenDialog(QueleaApp.get().getMainWindow());
-        if(file != null) {
+        final List<File> files = chooser.showOpenMultipleDialog(QueleaApp.get().getMainWindow());
+        if(files != null) {
             new Thread() {
 
                 private StatusPanel panel;
@@ -77,15 +80,17 @@ public class AddPowerpointActionHandler implements EventHandler<ActionEvent> {
                         }
                     });
                     try {
-                        final PresentationDisplayable displayable = new PresentationDisplayable(file);
-                        if(!halt) {
-                            Platform.runLater(new Runnable() {
+                        for(File file : files) {
+                            final PresentationDisplayable displayable = new PresentationDisplayable(file);
+                            if(!halt) {
+                                Platform.runLater(new Runnable() {
 
-                                @Override
-                                public void run() {
-                                    QueleaApp.get().getMainWindow().getMainPanel().getSchedulePanel().getScheduleList().add(displayable);
-                                }
-                            });
+                                    @Override
+                                    public void run() {
+                                        QueleaApp.get().getMainWindow().getMainPanel().getSchedulePanel().getScheduleList().add(displayable);
+                                    }
+                                });
+                            }
                         }
                     }
                     catch(IOException ex) {
@@ -99,7 +104,7 @@ public class AddPowerpointActionHandler implements EventHandler<ActionEvent> {
                             });
                         }
                     }
-                    catch (RuntimeException ex) {
+                    catch(RuntimeException ex) {
                         LOGGER.log(Level.WARNING, "Couldn't import presentation", ex);
                         Platform.runLater(new Runnable() {
 
