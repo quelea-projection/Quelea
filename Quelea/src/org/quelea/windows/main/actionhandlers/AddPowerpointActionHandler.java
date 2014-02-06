@@ -45,7 +45,7 @@ public class AddPowerpointActionHandler implements EventHandler<ActionEvent> {
 
     /**
      * Add the presentation
-     * @param e the event.
+     * @param t the event.
      */
     @Override
     public void handle(ActionEvent t) {
