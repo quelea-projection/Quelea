@@ -20,14 +20,13 @@ package org.quelea.services.importexport;
 import org.quelea.services.languages.LabelGrabber;
 
 /**
- * An import dialog for the survivor song books in PDF format.
+ * An import dialog for the source song books.
  * @author Michael
  */
 public class SourceImportDialog extends ImportDialog {
 
     /**
-     * Create a new survivor import dialog.
-     * @param owner the owner of the dialog.
+     * Create a new source import dialog.
      */
     public SourceImportDialog() {
         super(new String[]{
