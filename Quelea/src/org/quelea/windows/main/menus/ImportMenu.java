@@ -35,10 +35,13 @@ import org.quelea.services.importexport.QSPImportDialog;
 import org.quelea.services.importexport.SourceImportDialog;
 import org.quelea.services.importexport.SundayPlusImportDialog;
 import org.quelea.services.importexport.SurvivorImportDialog;
+import org.quelea.services.importexport.ZWTurboDBChecker;
+import org.quelea.services.importexport.ZionWorxImportDialog;
+import org.quelea.services.utils.Utils;
 
 /**
  * Quelea's import menu.
- *
+ * <p>
  * @author Michael
  */
 public class ImportMenu extends Menu {
@@ -47,6 +50,7 @@ public class ImportMenu extends Menu {
     private final ImportDialog qspImportDialog;
     private final ImportDialog openSongImportDialog;
     private final ImportDialog openLPImportDialog;
+    private final ImportDialog zionWorxImportDialog;
     private final ImportDialog sourceImportDialog;
     private final ImportDialog kingswayImportDialog;
     private final ImportDialog plainTextImportDialog;
@@ -56,6 +60,7 @@ public class ImportMenu extends Menu {
     private final MenuItem osItem;
     private final MenuItem spItem;
     private final MenuItem olpItem;
+    private final MenuItem zwItem;
     private final MenuItem ssItem;
     private final MenuItem sourceItem;
     private final MenuItem plainTextItem;
@@ -71,6 +76,7 @@ public class ImportMenu extends Menu {
         qspImportDialog = new QSPImportDialog();
         openSongImportDialog = new OpenSongImportDialog();
         openLPImportDialog = new OpenLPImportDialog();
+        zionWorxImportDialog = new ZionWorxImportDialog();
         sImportDialog = new SurvivorImportDialog();
         sourceImportDialog = new SourceImportDialog();
         kingswayImportDialog = new KingswayImportDialog(null);
@@ -104,6 +110,20 @@ public class ImportMenu extends Menu {
             }
         });
         getItems().add(olpItem);
+
+        zwItem = new MenuItem(LabelGrabber.INSTANCE.getLabel("zw.button"), new ImageView(new Image("file:icons/zionworx.png", 16, 16, false, true)));
+        zwItem.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent t) {
+                boolean ok = new ZWTurboDBChecker().runChecks();
+                if(ok) {
+                    zionWorxImportDialog.show();
+                }
+            }
+        });
+        if(Utils.isWindows()) {
+            getItems().add(zwItem);
+        }
 
         spItem = new MenuItem(LabelGrabber.INSTANCE.getLabel("sp.button"), new ImageView(new Image("file:icons/sundayplus.png", 16, 16, false, true)));
         spItem.setOnAction(new EventHandler<ActionEvent>() {

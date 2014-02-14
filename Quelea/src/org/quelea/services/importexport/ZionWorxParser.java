@@ -1,0 +1,91 @@
+/* 
+ * This file is part of Quelea, free projection software for churches.
+ * 
+ * 
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+package org.quelea.services.importexport;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import org.quelea.data.displayable.SongDisplayable;
+import org.quelea.services.utils.Utils;
+import org.quelea.windows.main.StatusPanel;
+
+/**
+ * A parser for parsing ZionWorx databases.
+ * <p>
+ * @author Michael
+ */
+public class ZionWorxParser implements SongParser {
+
+    /**
+     * Get a list of the songs contained in the given ZionWorx database.
+     * <p>
+     * @param location the location of the ZionWorx MainTable.dat file.
+     * @return a list of the songs found.
+     * @throws IOException if something goes wrong.
+     */
+    @Override
+    public List<SongDisplayable> getSongs(File location, StatusPanel statusPanel) throws IOException {
+        List<SongDisplayable> songs = new ArrayList<>();
+        File csvLocation = new ZWCsvConverter(location).getCSV();
+        String fileContent = Utils.getTextFromFile(csvLocation.getAbsolutePath(), null);
+        int inc = 1;
+        String rawText;
+        while((rawText = getRawText(fileContent, inc++)) != null) {
+            songs.add(getSong(rawText));
+        }
+        return songs;
+    }
+
+    /**
+     * Get a song displayable for one section of raw text.
+     * @param rawText the raw text for one particular song.
+     * @return the song obtained from this raw text.
+     */
+    private SongDisplayable getSong(String rawText) {
+        int endTitleIndex = rawText.indexOf("\\");
+        String title = rawText.substring(0, endTitleIndex);
+        SongDisplayable song = new SongDisplayable(title, "");
+        rawText = rawText.substring(endTitleIndex + 1);
+        rawText = rawText.substring(rawText.indexOf("\\") + 1);
+        rawText = rawText.substring(0, rawText.indexOf("\\,"));
+        rawText = rawText.trim(); //It should now be the lyrics
+        song.setLyrics(rawText);
+        return song;
+    }
+
+    /**
+     * Get the raw text for a particular number song (starting at 1.)
+     * @param fileContent the full CSV file content.
+     * @param num the number of the song to get.
+     * @return the raw CSV text just for one song.
+     */
+    private String getRawText(String fileContent, int num) {
+        int startIndex = fileContent.indexOf("\\" + num + "\\");
+        if(startIndex == -1) {
+            return null;
+        }
+        startIndex += Integer.toString(num).length() + 4; //Chop off index number / comma / backslashes
+        int endIndex = fileContent.indexOf("\\" + (num + 1) + "\\");
+        if(endIndex == -1) {
+            endIndex = fileContent.length();
+        }
+        return fileContent.substring(startIndex, endIndex);
+    }
+
+}

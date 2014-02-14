@@ -77,9 +77,13 @@ public final class FileFilters {
      */
     public static final FileChooser.ExtensionFilter ZIP = new FileChooser.ExtensionFilter(LabelGrabber.INSTANCE.getLabel("filefilters.description.zip.files") + " (*.zip)", "*.zip");
     /**
-     * The file filter used for zip files.
+     * The file filter used for SQLite files.
      */
     public static final FileChooser.ExtensionFilter SQLITE = new FileChooser.ExtensionFilter(LabelGrabber.INSTANCE.getLabel("filefilters.description.sqlite.files") + " (*.sqlite)", "*.sqlite");
+    /**
+     * The file filter used for MainTable.dat.
+     */
+    public static final FileChooser.ExtensionFilter MAINTABLE_DAT = new FileChooser.ExtensionFilter(LabelGrabber.INSTANCE.getLabel("filefilters.description.maintable.dat") + " (MainTable.dat)", "MainTable.dat");
 
     /**
      * No instantiation for me thanks.
