@@ -178,6 +178,7 @@ sundayplus.import.line1=Select the location of the Sunday Plus database below.
 source.import.line1=Select the location of the ymns directory on the source CD.
 survivor.import.line1=Select the location of the Survivor Songbook PDF below.
 survivor.import.line2=This must be the acetates.pdf file, not the guitar chords or the sheet music.
+import.error.message=Sorry, there was a problem with the import. Please feel free to ask for help on the Quelea discussion group: http://bit.ly/1mePoeh
 email.error.title=Email error
 email.error.text=There was an error opening your email client. Make sure you have an email client installed and registered to handle eml files, otherwise you'll have to send the email manually.
 email.text=Hi! Attached is a Quelea schedule you've been sent. Simply open it with Quelea and all the items should appear correctly.
