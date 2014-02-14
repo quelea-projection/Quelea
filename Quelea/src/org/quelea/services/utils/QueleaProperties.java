@@ -324,6 +324,15 @@ public final class QueleaProperties extends Properties {
     }
 
     /**
+     * Get the user's turbo db exe converter file.
+     * <p/>
+     * @return the user's turbo db exe converter.
+     */
+    public static File getTurboDBExe() {
+        return new File(QueleaProperties.getQueleaUserHome(), "TdbDataX.exe");
+    }
+
+    /**
      * Get the number of the next kingsway song that should be imported.
      * <p/>
      * @return the number of the next song.
