@@ -21,6 +21,8 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import org.quelea.data.displayable.SongDisplayable;
 import org.quelea.services.utils.Utils;
 import org.quelea.windows.main.StatusPanel;
@@ -44,22 +46,24 @@ public class ZionWorxParser implements SongParser {
         List<SongDisplayable> songs = new ArrayList<>();
         File csvLocation = new ZWCsvConverter(location).getCSV();
         String fileContent = Utils.getTextFromFile(csvLocation.getAbsolutePath(), null);
-        int inc = 1;
-        String rawText;
-        while((rawText = getRawText(fileContent, inc++)) != null) {
-            songs.add(getSong(rawText));
+        RawTextWrapper rawText;
+        while((rawText = getRawText(fileContent)) != null) {
+            songs.add(getSong(rawText.rawText));
+            fileContent = fileContent.substring(rawText.endIndex);
         }
         return songs;
     }
 
     /**
      * Get a song displayable for one section of raw text.
+     * <p>
      * @param rawText the raw text for one particular song.
      * @return the song obtained from this raw text.
      */
     private SongDisplayable getSong(String rawText) {
-        int endTitleIndex = rawText.indexOf("\\");
-        String title = rawText.substring(0, endTitleIndex);
+        int startTitleIndex = rawText.indexOf("\\");
+        int endTitleIndex = rawText.indexOf("\\", startTitleIndex+1);
+        String title = rawText.substring(startTitleIndex+1, endTitleIndex);
         SongDisplayable song = new SongDisplayable(title, "");
         rawText = rawText.substring(endTitleIndex + 1);
         rawText = rawText.substring(rawText.indexOf("\\") + 1);
@@ -71,21 +75,44 @@ public class ZionWorxParser implements SongParser {
 
     /**
      * Get the raw text for a particular number song (starting at 1.)
+     * <p>
      * @param fileContent the full CSV file content.
      * @param num the number of the song to get.
      * @return the raw CSV text just for one song.
      */
-    private String getRawText(String fileContent, int num) {
-        int startIndex = fileContent.indexOf("\\" + num + "\\");
-        if(startIndex == -1) {
-            return null;
+    private RawTextWrapper getRawText(String fileContent) {
+        Pattern patt = Pattern.compile("\\\\[0-9]+\\\\");
+        Matcher matcher = patt.matcher(fileContent);
+        if(matcher.find()) {
+            int startIndex = matcher.start();
+            if(startIndex == -1) {
+                return null;
+            }
+            startIndex += matcher.end(); //Chop off index number / comma / backslashes
+            int endIndex = fileContent.length();
+            if(matcher.find()) {
+                endIndex = matcher.start();
+            }
+            return new RawTextWrapper(fileContent.substring(startIndex, endIndex), endIndex);
         }
-        startIndex += Integer.toString(num).length() + 4; //Chop off index number / comma / backslashes
-        int endIndex = fileContent.indexOf("\\" + (num + 1) + "\\");
-        if(endIndex == -1) {
-            endIndex = fileContent.length();
+        return null;
+    }
+
+    /**
+     * Wraps the raw text retrieved from the CSV file for a particular song, as
+     * well as the end index (so the correct amount of the string can be cut off
+     * ready for the next song.)
+     */
+    static class RawTextWrapper {
+
+        private String rawText;
+        private int endIndex;
+
+        public RawTextWrapper(String str, int endIndex) {
+            this.rawText = str;
+            this.endIndex = endIndex;
         }
-        return fileContent.substring(startIndex, endIndex);
+
     }
 
 }
