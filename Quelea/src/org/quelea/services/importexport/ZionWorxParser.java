@@ -128,9 +128,4 @@ public class ZionWorxParser implements SongParser {
 
     }
 
-    public static void main(String[] args) throws Exception {
-        List<SongDisplayable> songs = new ZionWorxParser().getSongs(new File("C:\\Users\\Michael\\Desktop\\Data\\Data\\MainTable.dat"), null);
-        System.out.println(songs.get(400).getLyrics(false, false));
-    }
-
 }
