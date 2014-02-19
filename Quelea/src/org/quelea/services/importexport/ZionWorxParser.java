@@ -62,12 +62,25 @@ public class ZionWorxParser implements SongParser {
      */
     private SongDisplayable getSong(String rawText) {
         int startTitleIndex = rawText.indexOf("\\");
-        int endTitleIndex = rawText.indexOf("\\", startTitleIndex+1);
-        String title = rawText.substring(startTitleIndex+1, endTitleIndex);
+        int endTitleIndex = rawText.indexOf("\\", startTitleIndex + 1);
+        String title = rawText.substring(startTitleIndex + 1, endTitleIndex);
+        if(title.startsWith(",")) {
+            title = title.substring(1);
+        }
+        if(title.startsWith("\\")) {
+            title = title.substring(1);
+        }
         SongDisplayable song = new SongDisplayable(title, "");
-        rawText = rawText.substring(endTitleIndex + 1);
-        rawText = rawText.substring(rawText.indexOf("\\") + 1);
-        rawText = rawText.substring(0, rawText.indexOf("\\,"));
+        rawText = rawText.substring(endTitleIndex);
+        int lastIndex = rawText.lastIndexOf("\\,");
+        String sub = rawText.substring(0, lastIndex);
+        rawText = rawText.substring(sub.lastIndexOf("\\,")+2, lastIndex);
+        if(rawText.startsWith(",")) {
+            rawText = title.substring(1);
+        }
+        if(rawText.startsWith("\\")) {
+            rawText = rawText.substring(1);
+        }
         rawText = rawText.trim(); //It should now be the lyrics
         song.setLyrics(rawText);
         return song;
@@ -113,6 +126,11 @@ public class ZionWorxParser implements SongParser {
             this.endIndex = endIndex;
         }
 
+    }
+
+    public static void main(String[] args) throws Exception {
+        List<SongDisplayable> songs = new ZionWorxParser().getSongs(new File("C:\\Users\\Michael\\Desktop\\Data\\Data\\MainTable.dat"), null);
+        System.out.println(songs.get(400).getLyrics(false, false));
     }
 
 }
