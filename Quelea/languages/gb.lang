@@ -408,4 +408,4 @@ test.patterns.text=Test Patterns
 test.patterns.explanation=The test patterns available here should help you calibrate your display's focus and colour settings properly. Click on a test image to show it on both the main and stage views.
 youtube.url.label=Youtube video URL
 no.tdb.heading=TurboDB Data Exchange not found
-no.tdb.message=For technical reasons, you need to download TurboDB data exchange (http://bit.ly/1gwoPLX) before Quelea can import ZionWorx databases.\nWhen you've downloaded it, extract the contents of the zip file to $1 and restart Quelea.\n\nIf you have any issues, then please feel free to ask on the discussion group here: (http://bit.ly/1mePoeh)
+no.tdb.message=For technical reasons, you need to download TurboDB data exchange (http://bit.ly/1gwoPLX) before Quelea can import ZionWorx databases.\nWhen you've downloaded it, extract the contents of the zip file to $1.\n\nIf you have any issues, then please feel free to ask on the discussion group here: (http://bit.ly/1mePoeh)
