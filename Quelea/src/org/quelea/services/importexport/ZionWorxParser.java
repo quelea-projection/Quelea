@@ -64,10 +64,10 @@ public class ZionWorxParser implements SongParser {
         int startTitleIndex = rawText.indexOf("\\");
         int endTitleIndex = rawText.indexOf("\\", startTitleIndex + 1);
         String title = rawText.substring(startTitleIndex + 1, endTitleIndex);
-        if(title.startsWith(",")) {
+        if(title.startsWith("\\")) {
             title = title.substring(1);
         }
-        if(title.startsWith("\\")) {
+        if(title.startsWith(",")) {
             title = title.substring(1);
         }
         SongDisplayable song = new SongDisplayable(title, "");
@@ -76,7 +76,7 @@ public class ZionWorxParser implements SongParser {
         String sub = rawText.substring(0, lastIndex);
         rawText = rawText.substring(sub.lastIndexOf("\\,")+2, lastIndex);
         if(rawText.startsWith(",")) {
-            rawText = title.substring(1);
+            rawText = rawText.substring(1);
         }
         if(rawText.startsWith("\\")) {
             rawText = rawText.substring(1);
