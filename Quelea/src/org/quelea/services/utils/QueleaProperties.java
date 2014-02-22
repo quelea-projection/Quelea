@@ -226,6 +226,24 @@ public final class QueleaProperties extends Properties {
     }
 
     /**
+     * Determine if we should show verse numbers for bible passages.
+     * <p>
+     * @return true if we should show verse numbers, false otherwise.
+     */
+    public boolean getShowVerseNumbers() {
+        return Boolean.parseBoolean(getProperty("show.verse.numbers", "true"));
+    }
+
+    /**
+     * Set if we should show verse numbers for bible passages.
+     * <p>
+     * @param val true if we should show verse numbers, false otherwise.
+     */
+    public void setShowVerseNumbers(boolean val) {
+        setProperty("show.verse.numbers", Boolean.toString(val));
+    }
+
+    /**
      * Get the fade duration (in seconds) for the text clear transition.
      * <p>
      * @return the fade duration (in seconds) for the text clear transition.
