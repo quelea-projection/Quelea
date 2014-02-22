@@ -25,6 +25,7 @@ import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.event.EventHandler;
 import javafx.scene.control.Button;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
@@ -52,20 +53,22 @@ public class OptionsBiblePanel extends GridPane implements PropertyPanel, BibleC
 
     private static final Logger LOGGER = LoggerUtils.getLogger();
     private final ComboBox<Bible> defaultBibleComboBox;
+    private final CheckBox showVerseNumCheckbox;
 
     /**
      * Create the options bible panel.
      */
     public OptionsBiblePanel() {
         setVgap(5);
-
-        Label defaultLabel = new Label(LabelGrabber.INSTANCE.getLabel("default.bible.label"));
-        GridPane.setConstraints(defaultLabel, 1, 1);
-        getChildren().add(defaultLabel);
+        setHgap(5);
+        
+        Label defaultBibleLabel = new Label(LabelGrabber.INSTANCE.getLabel("default.bible.label"));
+        GridPane.setConstraints(defaultBibleLabel, 1, 1);
+        getChildren().add(defaultBibleLabel);
         BibleManager.get().registerBibleChangeListener(this);
         defaultBibleComboBox = new ComboBox<>();
         defaultBibleComboBox.itemsProperty().set(FXCollections.observableArrayList(BibleManager.get().getBibles()));
-        defaultLabel.setLabelFor(defaultBibleComboBox);
+        defaultBibleLabel.setLabelFor(defaultBibleComboBox);
         GridPane.setConstraints(defaultBibleComboBox, 2, 1);
         getChildren().add(defaultBibleComboBox);
 
@@ -88,8 +91,16 @@ public class OptionsBiblePanel extends GridPane implements PropertyPanel, BibleC
                 }
             }
         });
-        GridPane.setConstraints(addBibleButton, 1, 3);
+        GridPane.setConstraints(addBibleButton, 3, 1);
         getChildren().add(addBibleButton);
+        
+        Label showVerseNumLabel = new Label(LabelGrabber.INSTANCE.getLabel("show.verse.numbers"));
+        GridPane.setConstraints(showVerseNumLabel, 1, 2);
+        getChildren().add(showVerseNumLabel);
+        showVerseNumCheckbox = new CheckBox();
+        showVerseNumLabel.setLabelFor(showVerseNumCheckbox);
+        GridPane.setConstraints(showVerseNumCheckbox, 2, 2);
+        getChildren().add(showVerseNumCheckbox);
 
         readProperties();
     }
@@ -124,6 +135,7 @@ public class OptionsBiblePanel extends GridPane implements PropertyPanel, BibleC
                 defaultBibleComboBox.getSelectionModel().select(i);
             }
         }
+        showVerseNumCheckbox.setSelected(props.getShowVerseNumbers());
     }
 
     /**
@@ -136,6 +148,7 @@ public class OptionsBiblePanel extends GridPane implements PropertyPanel, BibleC
         if(bible != null) {
             props.setDefaultBible(bible);
         }
+        props.setShowVerseNumbers(showVerseNumCheckbox.isSelected());
     }
 
     /**

@@ -28,14 +28,15 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontPosture;
 import javafx.scene.text.FontWeight;
-import javafx.scene.text.Text;
 import javafx.util.Duration;
 import org.quelea.data.ColourBackground;
 import org.quelea.data.ImageBackground;
 import org.quelea.data.ThemeDTO;
 import org.quelea.data.VideoBackground;
+import org.quelea.data.displayable.BiblePassage;
 import org.quelea.data.displayable.Displayable;
 import org.quelea.data.displayable.TextDisplayable;
+import org.quelea.data.displayable.TextSection;
 import org.quelea.services.utils.LineTypeChecker;
 import org.quelea.services.utils.LoggerUtils;
 import org.quelea.services.utils.QueleaProperties;
@@ -66,7 +67,7 @@ public class LyricDrawer extends DisplayableDrawer {
         lastClearedState = new HashMap<>();
     }
 
-    private void drawText(double defaultFontSize) {
+    private void drawText(double defaultFontSize, boolean dumbWrap) {
         Utils.checkFXThread();
         boolean stageView = getCanvas().isStageView();
         if(getCanvas().getCanvasBackground() != null) {
@@ -97,7 +98,13 @@ public class LyricDrawer extends DisplayableDrawer {
         shadow.setHeight(5);
         shadow.setWidth(5);
 
-        List<String> newText = sanctifyText(text);
+        List<String> newText;
+        if(dumbWrap) {
+            newText = dumbWrapText(text);
+        }
+        else {
+            newText = sanctifyText(text);
+        }
         double fontSize;
         if(defaultFontSize > 0) {
             fontSize = defaultFontSize;
@@ -132,14 +139,14 @@ public class LyricDrawer extends DisplayableDrawer {
         int y = 0;
         ParallelTransition paintTransition = new ParallelTransition();
         for(String line : newText) {
-            Text t;
-            t = new Text(line);
+            FormattedText t;
+            t = new FormattedText(line);
 
             t.setFont(font);
             t.setEffect(shadow);
 
             setPositionX(t, metrics, line, stageView);
-            t.setY(y);
+            t.setLayoutY(y);
 
             Color lineColor;
             if(stageView && new LineTypeChecker(line).getLineType() == LineTypeChecker.Type.CHORDS) {
@@ -189,28 +196,29 @@ public class LyricDrawer extends DisplayableDrawer {
         }
     }
 
-    private void setPositionX(Text t, FontMetrics metrics, String line, boolean stageView) {
+    private void setPositionX(FormattedText t, FontMetrics metrics, String line, boolean stageView) {
         Utils.checkFXThread();
-        double width = metrics.computeStringWidth(line);
+        String strippedLine = line.replaceAll("\\<\\/?sup\\>", "");
+        double width = metrics.computeStringWidth(strippedLine);
         double leftOffset = 0;
         double centreOffset = (getCanvas().getWidth() - width) / 2;
         double rightOffset = (getCanvas().getWidth() - width);
         if(stageView) {
             if(QueleaProperties.get().getStageTextAlignment().equalsIgnoreCase("Left")) {
-                t.setX(getCanvas().getWidth());
+                t.setLayoutX(getCanvas().getWidth());
             }
             else {
-                t.setX(centreOffset);
+                t.setLayoutX(centreOffset);
             }
         }
         else if(theme.getTextAlignment() == -1) {
-            t.setX(leftOffset);
+            t.setLayoutX(leftOffset);
         }
         else if(theme.getTextAlignment() == 0) {
-            t.setX(centreOffset);
+            t.setLayoutX(centreOffset);
         }
         else if(theme.getTextAlignment() == 1) {
-            t.setX(rightOffset);
+            t.setLayoutX(rightOffset);
         }
     }
 
@@ -343,6 +351,17 @@ public class LyricDrawer extends DisplayableDrawer {
         this.capitaliseFirst = val;
     }
 
+    /**
+     * Pick a font size for the specified font that fits the given text into the
+     * width and height provided.
+     * <p>
+     * @param font the font to use for calculations.
+     * @param text the text to fit.
+     * @param width the fit width.
+     * @param height the fit height.
+     * @return a font size for the specified font that fits the text into the
+     * width and height provided.
+     */
     private double pickFontSize(Font font, List<String> text, double width, double height) {
         FontMetrics metrics = Toolkit.getToolkit().getFontLoader().getFontMetrics(font);
         double totalHeight = ((metrics.getLineHeight() + getLineSpacing()) * text.size());
@@ -380,6 +399,7 @@ public class LyricDrawer extends DisplayableDrawer {
         double longestWidth = -1;
         String longestStr = null;
         for(String line : text) {
+            line = FormattedText.stripFormatTags(line);
             double width = metrics.computeStringWidth(line);
             if(width > longestWidth) {
                 longestWidth = width;
@@ -387,6 +407,35 @@ public class LyricDrawer extends DisplayableDrawer {
             }
         }
         return longestStr;
+    }
+
+    /**
+     * Wrap the text in a "dumb" way, not worrying about dividing up lines
+     * nicely. This works better for bible passages.
+     * <p>
+     * @param lines the lines to divide up.
+     * @return the divided lines.
+     */
+    private List<String> dumbWrapText(String[] lines) {
+        List<String> ret = new ArrayList<>();
+        int maxLength = 60;
+        StringBuilder currentBuilder = new StringBuilder(maxLength);
+        for(String line : lines) {
+            for(String word : line.split(" ")) {
+                currentBuilder.append(' ');
+                if(currentBuilder.length() + word.length() < maxLength) {
+                    currentBuilder.append(word);
+                }
+                else {
+                    ret.add(currentBuilder.toString());
+                    currentBuilder = new StringBuilder(word);
+                }
+            }
+        }
+        if(currentBuilder.length() > 0) {
+            ret.add(currentBuilder.toString());
+        }
+        return ret;
     }
 
     /**
@@ -505,15 +554,22 @@ public class LyricDrawer extends DisplayableDrawer {
                 theme.isItalic() ? FontPosture.ITALIC : FontPosture.REGULAR,
                 QueleaProperties.get().getMaxFontSize());
         double fontSize = Double.POSITIVE_INFINITY;
-        for(int i = 0; i < displayable.getSections().length; i++) {
-            String[] text;
+        for(TextSection section : displayable.getSections()) {
+            String[] textArr;
             if(getCanvas().isStageView() && QueleaProperties.get().getShowChords()) {
-                text = displayable.getSections()[i].getText(true, false);
+                textArr = section.getText(true, false);
             }
             else {
-                text = displayable.getSections()[i].getText(false, false);
+                textArr = section.getText(false, false);
             }
-            double newSize = pickFontSize(font, sanctifyText(text), getCanvas().getWidth() * 0.9, getCanvas().getHeight() * 0.9);
+            List<String> processedText;
+            if(displayable instanceof BiblePassage) {
+                processedText = dumbWrapText(textArr);
+            }
+            else {
+                processedText = sanctifyText(textArr);
+            }
+            double newSize = pickFontSize(font, processedText, getCanvas().getWidth() * 0.9, getCanvas().getHeight() * 0.9);
             if(newSize < fontSize) {
                 fontSize = newSize;
             }
@@ -525,13 +581,7 @@ public class LyricDrawer extends DisplayableDrawer {
     }
 
     public void setText(TextDisplayable displayable, int index) {
-        boolean fade;
-        if(curDisplayable == displayable) {
-            fade = false;
-        }
-        else {
-            fade = true;
-        }
+        boolean fade = curDisplayable != displayable;
         double uniformFontSize = getUniformFontSize(displayable);
         curDisplayable = displayable;
         String[] bigText;
@@ -553,6 +603,8 @@ public class LyricDrawer extends DisplayableDrawer {
      * the array is one line.
      * @param smallText an array of the small lines to be displayed on the
      * getCanvas().
+     * @param fade true if the text should fade, false otherwise.
+     * @param fontSize the font size to use to draw this text.
      */
     public void setText(String[] text, String[] smallText, boolean fade, double fontSize) {
         if(text == null) {
@@ -588,7 +640,7 @@ public class LyricDrawer extends DisplayableDrawer {
     }
 
     public void draw(Displayable displayable, double fontSize) {
-        drawText(fontSize);
+        drawText(fontSize, displayable instanceof BiblePassage);
         if(getCanvas().getCanvasBackground() instanceof ImageView) {
             ImageView imgBackground = (ImageView) getCanvas().getCanvasBackground();
             imgBackground.setFitHeight(getCanvas().getHeight());
