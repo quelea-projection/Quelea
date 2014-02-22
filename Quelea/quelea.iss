@@ -14,6 +14,7 @@
 AppId={{5A8934E9-7C09-4BA1-82A8-A572960C2B4B}
 AppName={#MyAppName}
 AppVersion={#MyAppVersion}
+AppMutex=queleamutex
 ;AppVerName={#MyAppName} {#MyAppVersion}
 AppPublisher={#MyAppPublisher}
 AppPublisherURL={#MyAppURL}
