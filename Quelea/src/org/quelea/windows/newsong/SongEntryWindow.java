@@ -40,7 +40,6 @@ import javafx.stage.WindowEvent;
 import org.javafx.dialog.Dialog;
 import org.quelea.data.ThemeDTO;
 import org.quelea.data.displayable.SongDisplayable;
-import org.quelea.data.displayable.TextDisplayable;
 import org.quelea.data.displayable.TextSection;
 import org.quelea.services.languages.LabelGrabber;
 import org.quelea.services.utils.Utils;
