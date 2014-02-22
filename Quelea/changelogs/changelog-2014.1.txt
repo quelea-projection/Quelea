@@ -3,5 +3,8 @@ quelea (2014.1) stable; urgency=normal
   * Added Youtube support
   * Add ability to import more than one presentation at a time
   * Add ZionWorx import
+  * Improve text wrapping algorithm for bible text
+  * Add option for displaying verse numbers in bible text
+  * Various minor bug fixes
 
- -- Michael Berry <michael@quelea.org>  Wednesday, 14 Feb 2014 00:00:00 +0000
+ -- Michael Berry <michael@quelea.org>  Wednesday, 22 Feb 2014 00:00:00 +0000
