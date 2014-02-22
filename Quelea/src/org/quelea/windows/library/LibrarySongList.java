@@ -25,7 +25,10 @@ import java.util.concurrent.Future;
 import java.util.logging.Logger;
 import javafx.application.Platform;
 import javafx.beans.property.SimpleListProperty;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
+import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
 import javafx.geometry.Pos;
@@ -48,6 +51,7 @@ import org.quelea.services.utils.DatabaseListener;
 import org.quelea.services.utils.LoggerUtils;
 import org.quelea.windows.main.QueleaApp;
 import org.quelea.windows.main.actionhandlers.AddSongActionHandler;
+import org.quelea.windows.main.widgets.AddSongPromptOverlay;
 import org.quelea.windows.main.widgets.LoadingPane;
 
 /**
@@ -60,7 +64,8 @@ public class LibrarySongList extends StackPane {
     private static final Logger LOGGER = LoggerUtils.getLogger();
     private final LibraryPopupMenu popupMenu;
     private ListView<SongDisplayable> songList;
-    private LoadingPane overlay;
+    private LoadingPane loadingOverlay;
+    private AddSongPromptOverlay addSongOverlay;
     private final boolean popup;
 
     /**
@@ -73,10 +78,25 @@ public class LibrarySongList extends StackPane {
      */
     public LibrarySongList(boolean popup) {
         songList = new ListView<>();
-        overlay = new LoadingPane();
+        loadingOverlay = new LoadingPane();
+        addSongOverlay = new AddSongPromptOverlay();
         setAlignment(Pos.CENTER);
         getChildren().add(songList);
-        getChildren().add(overlay);
+        getChildren().add(addSongOverlay);
+        addSongOverlay.show();
+        songList.itemsProperty().addListener(new ChangeListener<ObservableList<SongDisplayable>>() {
+
+            @Override
+            public void changed(ObservableValue<? extends ObservableList<SongDisplayable>> ov, ObservableList<SongDisplayable> t, ObservableList<SongDisplayable> t1) {
+                if(songList.getItems().isEmpty()) {
+                    addSongOverlay.show();
+                }
+                else {
+                    addSongOverlay.hide();
+                }
+            }
+        });
+        getChildren().add(loadingOverlay);
         this.popup = popup;
         Callback<ListView<SongDisplayable>, ListCell<SongDisplayable>> callback = new Callback<ListView<SongDisplayable>, ListCell<SongDisplayable>>() {
             @Override
@@ -310,10 +330,10 @@ public class LibrarySongList extends StackPane {
 
     public void setLoading(boolean loading) {
         if(loading) {
-            overlay.show();
+            loadingOverlay.show();
         }
         else {
-            overlay.hide();
+            loadingOverlay.hide();
         }
     }
 }
