@@ -93,6 +93,7 @@ public class SelectLyricsList extends ListView<TextSection> {
                             String[] text = t.getText(false, false);
                             StringBuilder builder = new StringBuilder();
                             for(String str : text) {
+                                str = FormattedText.stripFormatTags(str);
                                 builder.append(str);
                                 if(oneLineMode) {
                                     builder.append(" ");
@@ -101,7 +102,12 @@ public class SelectLyricsList extends ListView<TextSection> {
                                     builder.append("\n");
                                 }
                             }
-                            setText(builder.toString().trim());
+                            String str = builder.toString().trim();
+                            //Uncomment to allow bible passages to display on multiple lines
+//                            if(!oneLineMode && !str.contains("\n")) {
+//                                str = str.replace(".", ".\n");
+//                            }
+                            setText(str);
                         }
                     }
                 };

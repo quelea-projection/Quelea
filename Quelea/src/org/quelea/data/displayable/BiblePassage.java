@@ -33,6 +33,7 @@ import org.w3c.dom.NodeList;
 
 /**
  * A displayable passage from the bible.
+ * <p>
  * @author Michael
  */
 public class BiblePassage implements TextDisplayable, Serializable {
@@ -44,6 +45,7 @@ public class BiblePassage implements TextDisplayable, Serializable {
 
     /**
      * Create a new bible passage.
+     * <p>
      * @param biblename the bible that the passage comes from.
      * @param location the location of the passage in the bible.
      * @param verses the verses, in order, that make up the passage.
@@ -54,13 +56,14 @@ public class BiblePassage implements TextDisplayable, Serializable {
 
     /**
      * Create a new bible passage from a summary and an array of verses.
+     * <p>
      * @param summary the summary to display in the schedule.
-     * @param verses  the verses in the passage.
+     * @param verses the verses in the passage.
      */
     private BiblePassage(String summary, BibleVerse[] verses) {
         this.summary = summary;
         this.smallText = summary.split("<br/>");
-        for (int i = 0; i < smallText.length; i++) {
+        for(int i = 0; i < smallText.length; i++) {
             smallText[i] = Utils.removeTags(smallText[i]);
         }
         this.verses = Arrays.copyOf(verses, verses.length);
@@ -72,37 +75,40 @@ public class BiblePassage implements TextDisplayable, Serializable {
      * Fill the text sections with the verses.
      */
     private void fillTextSections() {
-        final int LINES_PER_SLIDE = 8;
-        List<String> words = new ArrayList<>();
-        for (int i = 0; i < verses.length; i++) {
-            words.addAll(Arrays.asList(verses[i].getText().split(" ")));
-        }
+        final int MAX_WORDS_PER_SLIDE = 150;
 
-        List<String> lines = new ArrayList<>();
-        StringBuilder line = new StringBuilder();
-        for (int i = 0; i < words.size(); i++) {
-            line.append(words.get(i)).append(" ");
-            int length = line.length();
-            if (i < words.size() - 1) {
-                length += words.get(i + 1).length();
+        StringBuilder section = new StringBuilder();
+        int wordCount = 0;
+        for(BibleVerse verse : verses) {
+            wordCount += verse.getVerseText().split(" ").length + 1;
+            if(wordCount < MAX_WORDS_PER_SLIDE) {
+                if(QueleaProperties.get().getShowVerseNumbers()) {
+                    section.append("<sup>");
+                    section.append(verse.getNum());
+                    section.append("</sup>");
+                }
+                section.append(verse.getVerseText());
             }
-            if ((i != 0 && length >= QueleaProperties.get().getMaxChars()) || i == words.size() - 1) {
-                lines.add(line.toString());
-                line.setLength(0);
+            else {
+                textSections.add(new TextSection("", new String[]{section.toString()}, smallText, false));
+                section = new StringBuilder();
+                if(QueleaProperties.get().getShowVerseNumbers()) {
+                    section.append("<sup>");
+                    section.append(verse.getNum());
+                    section.append("</sup>");
+                }
+                section.append(verse.getVerseText());
+                wordCount = 0;
             }
         }
-        List<String> sections = new ArrayList<>();
-        for (int i = 0; i < lines.size(); i++) {
-            sections.add(lines.get(i));
-            if ((i != 0 && i % LINES_PER_SLIDE == 0) || i == lines.size() - 1) {
-                textSections.add(new TextSection("", sections.toArray(new String[sections.size()]), smallText, false));
-                sections.clear();
-            }
+        if(!section.toString().isEmpty()) {
+            textSections.add(new TextSection("", new String[]{section.toString()}, smallText, false));
         }
     }
 
     /**
      * Get the XML behind this bible passage.
+     * <p>
      * @return the XML.
      */
     @Override
@@ -111,15 +117,16 @@ public class BiblePassage implements TextDisplayable, Serializable {
         ret.append("<passage summary=\"");
         ret.append(Utils.escapeXML(summary));
         ret.append("\">");
-        for (BibleVerse verse : verses) {
+        for(BibleVerse verse : verses) {
             ret.append(verse.toXML());
         }
         ret.append("</passage>");
         return ret.toString();
     }
-    
+
     /**
      * Return the first verse in this passage as a "preview".
+     * <p>
      * @return the first verse in this passage as a "preview".
      */
     @Override
@@ -134,6 +141,7 @@ public class BiblePassage implements TextDisplayable, Serializable {
 
     /**
      * Parse the xml from a bible passage and return the passage.
+     * <p>
      * @param passage the passage to parse.
      * @return the passage object.
      */
@@ -141,9 +149,9 @@ public class BiblePassage implements TextDisplayable, Serializable {
         NodeList list = passage.getChildNodes();
         String summary = passage.getAttributes().getNamedItem("summary").getNodeValue();
         List<BibleVerse> verses = new ArrayList<>();
-        for (int i = 0; i < list.getLength(); i++) {
+        for(int i = 0; i < list.getLength(); i++) {
             Node node = list.item(i);
-            if (node.getNodeName().equals("vers")) {
+            if(node.getNodeName().equals("vers")) {
                 verses.add(BibleVerse.parseXML(node));
             }
         }
@@ -152,6 +160,7 @@ public class BiblePassage implements TextDisplayable, Serializable {
 
     /**
      * Get the bible preview icon.
+     * <p>
      * @return the bible preview icon.
      */
     @Override
@@ -161,6 +170,7 @@ public class BiblePassage implements TextDisplayable, Serializable {
 
     /**
      * Get the preview text.
+     * <p>
      * @return the preview text.
      */
     @Override
@@ -170,6 +180,7 @@ public class BiblePassage implements TextDisplayable, Serializable {
 
     /**
      * Get the text sections in this passage.
+     * <p>
      * @return the text sections in this passage.
      */
     @Override
@@ -179,6 +190,7 @@ public class BiblePassage implements TextDisplayable, Serializable {
 
     /**
      * Bible passages don't need any resources, return an empty collection.
+     * <p>
      * @return an empty list, always.
      */
     @Override
@@ -188,6 +200,7 @@ public class BiblePassage implements TextDisplayable, Serializable {
 
     /**
      * Return a summary to display when printed as part of the order of service.
+     * <p>
      * @return the summary as a string.
      */
     @Override
@@ -197,6 +210,7 @@ public class BiblePassage implements TextDisplayable, Serializable {
 
     /**
      * We support clear, so return true.
+     * <p>
      * @return true, always.
      */
     @Override
