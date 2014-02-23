@@ -180,7 +180,7 @@ public abstract class ImportDialog extends Stage implements PropertyChangeListen
                             statusPanel.setProgress(0);
                             if(checkDuplicates.isSelected()) {
 //                                localSongsDuplicate = new SongDuplicateChecker().checkSongs(localSongsArr);
-                                for(int i = 0; i < localSongs.size(); i++) {
+                                for(int i = 0; i < (localSongs == null ? 0 : localSongs.size()); i++) {
                                     final int finali = i;
                                     checkerService.submit(Utils.wrapAsLowPriority(new Runnable() {
                                         @Override
