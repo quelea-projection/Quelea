@@ -84,6 +84,10 @@ public final class FileFilters {
      * The file filter used for MainTable.dat.
      */
     public static final FileChooser.ExtensionFilter MAINTABLE_DAT = new FileChooser.ExtensionFilter(LabelGrabber.INSTANCE.getLabel("filefilters.description.maintable.dat") + " (MainTable.dat)", "MainTable.dat");
+    /**
+     * The file filter used for Songs.MB (the easyworship database.)
+     */
+    public static final FileChooser.ExtensionFilter SONGS_MB = new FileChooser.ExtensionFilter(LabelGrabber.INSTANCE.getLabel("filefilters.description.songs.mb") + " (Songs.MB)", "Songs.MB");
 
     /**
      * No instantiation for me thanks.
