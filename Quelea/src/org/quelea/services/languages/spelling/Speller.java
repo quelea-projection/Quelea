@@ -98,7 +98,7 @@ public class Speller {
      */
     public boolean checkWord(String word) {
         word = sanitiseWord(word);
-        if(ignoreWords == null || words == null) {
+        if(ignoreWords == null || words == null || word.length()==1) {
             return true;
         }
         return words.contains(word) || ignoreWords.contains(word);
