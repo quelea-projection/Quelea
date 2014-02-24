@@ -648,6 +648,7 @@ public class SongDisplayable implements TextDisplayable, Comparable<SongDisplaya
      */
     public void setLyrics(String lyrics) {
         sections.clear();
+        boolean foundTitle = !(title == null || title.isEmpty());
         lyrics = lyrics.replaceAll("\n\n+", "\n\n");
         for(String section : lyrics.split("\n\n")) {
             String[] sectionLines = section.split("\n");
@@ -660,6 +661,15 @@ public class SongDisplayable implements TextDisplayable, Comparable<SongDisplaya
                 sectionTitle = sectionLines[0];
                 newLyrics = new String[sectionLines.length - 1];
                 System.arraycopy(sectionLines, 1, newLyrics, 0, newLyrics.length);
+            }
+            if(!foundTitle) {
+                for(String line : sectionLines) {
+                    if(new LineTypeChecker(line).getLineType() == LineTypeChecker.Type.NORMAL) {
+                        title = line;
+                        foundTitle = true;
+                        break;
+                    }
+                }
             }
             String[] smallLines = new String[]{
                 title,
