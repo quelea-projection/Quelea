@@ -19,6 +19,9 @@
 package org.quelea.windows.main.widgets;
 
 import javafx.animation.FadeTransition;
+import javafx.application.Platform;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
@@ -31,6 +34,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
 import javafx.util.Duration;
 import org.quelea.services.languages.LabelGrabber;
+import org.quelea.windows.main.QueleaApp;
 
 /**
  * An overlay that should be put on the song database when no songs are present.
@@ -54,7 +58,25 @@ public class AddSongPromptOverlay extends StackPane {
         StackPane.setMargin(content, new Insets(10,0,0,15));
         ImageView iv = new ImageView(new Image("file:icons/whitearrow.png"));
         content.getChildren().add(iv);
-        Text text = new Text(LabelGrabber.INSTANCE.getLabel("add.song.hint.text"));
+        final Text text = new Text(LabelGrabber.INSTANCE.getLabel("add.song.hint.text"));
+        Platform.runLater(new Runnable() {
+
+            @Override
+            public void run() {
+                QueleaApp.get().getMainWindow().getMainPanel().getLibraryPanel().getLibrarySongPanel().getSearchBox().textProperty().addListener(new ChangeListener<String>() {
+
+                    @Override
+                    public void changed(ObservableValue<? extends String> ov, String t, String t1) {
+                        if(t1.isEmpty()) {
+                            text.setText(LabelGrabber.INSTANCE.getLabel("add.song.hint.text"));
+                        }
+                        else {
+                            text.setText(LabelGrabber.INSTANCE.getLabel("add.song.hint.search.text"));
+                        }
+                    }
+                });
+            }
+        });
         text.setFill(Color.WHITESMOKE);
         text.setStyle("-fx-font-size:20pt");
         content.getChildren().add(text);
