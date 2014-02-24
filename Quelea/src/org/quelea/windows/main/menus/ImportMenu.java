@@ -26,6 +26,7 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import org.quelea.services.languages.LabelGrabber;
 import org.quelea.services.importexport.EasySlidesImportDialog;
+import org.quelea.services.importexport.EasyWorshipImportDialog;
 import org.quelea.services.importexport.ImportDialog;
 import org.quelea.services.importexport.KingswayImportDialog;
 import org.quelea.services.importexport.OpenLPImportDialog;
@@ -55,6 +56,7 @@ public class ImportMenu extends Menu {
     private final ImportDialog kingswayImportDialog;
     private final ImportDialog plainTextImportDialog;
     private final ImportDialog easySlidesImportDialog;
+    private final ImportDialog easyWorshipImportDialog;
     private final ImportDialog sundayPlusImportDialog;
     private final MenuItem qspItem;
     private final MenuItem osItem;
@@ -65,6 +67,7 @@ public class ImportMenu extends Menu {
     private final MenuItem sourceItem;
     private final MenuItem plainTextItem;
     private final MenuItem easySlidesItem;
+    private final MenuItem easyWorshipItem;
     private final Menu kingswayItem;
 
     /**
@@ -82,6 +85,7 @@ public class ImportMenu extends Menu {
         kingswayImportDialog = new KingswayImportDialog(null);
         plainTextImportDialog = new PlainTextSongsImportDialog();
         easySlidesImportDialog = new EasySlidesImportDialog();
+        easyWorshipImportDialog = new EasyWorshipImportDialog();
         sundayPlusImportDialog = new SundayPlusImportDialog();
 
         qspItem = new MenuItem(LabelGrabber.INSTANCE.getLabel("qsp.button"), new ImageView(new Image("file:icons/logo16.png", 16, 16, false, true)));
@@ -160,6 +164,15 @@ public class ImportMenu extends Menu {
             }
         });
         getItems().add(easySlidesItem);
+
+        easyWorshipItem = new MenuItem(LabelGrabber.INSTANCE.getLabel("easyworship.button"), new ImageView(new Image("file:icons/easyworship.png", 16, 16, false, true)));
+        easyWorshipItem.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent t) {
+                easyWorshipImportDialog.show();
+            }
+        });
+        getItems().add(easyWorshipItem);
 
         MenuItem kingswayAll, kingswayOne;
 
