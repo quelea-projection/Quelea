@@ -484,7 +484,7 @@ public class LyricDrawer extends DisplayableDrawer {
                 }
             }
             else {
-                sections.addAll(splitLine(new StringBuilder(line).insert(line.length() / 2, "-").toString(), maxLength));
+                sections.addAll(splitLine(new StringBuilder(line).insert(line.length() / 2, " ").toString(), maxLength));
             }
         }
         else {
