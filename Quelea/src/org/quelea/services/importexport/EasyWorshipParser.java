@@ -18,14 +18,15 @@
  */
 package org.quelea.services.importexport;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
 import org.quelea.data.displayable.SongDisplayable;
 import org.quelea.services.utils.LoggerUtils;
-import org.quelea.services.utils.Utils;
 import org.quelea.windows.main.StatusPanel;
 
 /**
@@ -43,6 +44,7 @@ public class EasyWorshipParser implements SongParser {
 
     /**
      * Parse the file to get the songs.
+     * <p>
      * @param file the Songs.MB file.
      * @param statusPanel the status panel to update.
      * @return a list of the songs found in the Songs.MB file.
@@ -50,37 +52,55 @@ public class EasyWorshipParser implements SongParser {
      */
     @Override
     public List<SongDisplayable> getSongs(File file, StatusPanel statusPanel) throws IOException {
-        String fileContent = Utils.getTextFromFile(file.getAbsolutePath(), "");
         List<SongDisplayable> ret = new ArrayList<>();
-        double startLength = fileContent.length();
-        while(fileContent.contains(FNT)) {
-            statusPanel.setProgress(1-(fileContent.length()/startLength));
-            fileContent = fileContent.substring(fileContent.indexOf(FNT) + FNT.length());
-            String songContent = fileContent.substring(0, fileContent.indexOf("}"));
-            songContent = songContent.replace("\\line", "\n");
-            songContent = songContent.replaceAll("\\\\[a-z0-9]+", "");
-            if(songContent.contains("{{")) {
-                songContent = songContent.substring(0, songContent.indexOf("{{"));
+        String line;
+        BufferedReader reader = new BufferedReader(new FileReader(file));
+        StringBuilder songContent = new StringBuilder();
+        boolean inSong = false;
+        while((line = reader.readLine()) != null) {
+            if(!inSong && line.contains(FNT)) {
+                inSong = true;
             }
-            songContent = trimLines(songContent);
-            songContent = songContent.replaceAll("\n[\n]+", "\n\n");
-            songContent = songContent.replace("\\'85", "...");
-            songContent = songContent.replace("\\'91", "'");
-            songContent = songContent.replace("\\'92", "'");
-            songContent = songContent.replace("\\'93", "\"");
-            songContent = songContent.replace("\\'94", "\"");
-            songContent = songContent.replace("\\'96", "-");
-            songContent = songContent.replace("{", "");
-            songContent = songContent.replace("}", "");
-            songContent = trimLines(songContent);
-            SongDisplayable song = new SongDisplayable("", "");
-            song.setLyrics(songContent);
-            if(!song.getTitle().isEmpty()) {
-                ret.add(song);
+            if(inSong) {
+                songContent.append(line).append("\n");
             }
-            fileContent = fileContent.substring(fileContent.indexOf("}") + 1);
+            if(inSong && line.contains("}")) {
+                inSong = false;
+                SongDisplayable song = getSong(songContent.toString());
+                if(song != null) {
+                    ret.add(song);
+                }
+                songContent = new StringBuilder();
+            }
         }
         return ret;
+    }
+
+    private SongDisplayable getSong(String songContent) {
+        int fntInd = songContent.indexOf(FNT) + FNT.length();
+        songContent = songContent.substring(fntInd);
+        songContent = songContent.replace("\\line", "\n");
+        songContent = songContent.replaceAll("\\\\[a-z0-9]+", "");
+        if(songContent.contains("{{")) {
+            songContent = songContent.substring(0, songContent.indexOf("{{"));
+        }
+        songContent = trimLines(songContent);
+        songContent = songContent.replaceAll("\n[\n]+", "\n\n");
+        songContent = songContent.replace("\\'85", "...");
+        songContent = songContent.replace("\\'91", "'");
+        songContent = songContent.replace("\\'92", "'");
+        songContent = songContent.replace("\\'93", "\"");
+        songContent = songContent.replace("\\'94", "\"");
+        songContent = songContent.replace("\\'96", "-");
+        songContent = songContent.replace("{", "");
+        songContent = songContent.replace("}", "");
+        songContent = trimLines(songContent);
+        SongDisplayable song = new SongDisplayable("", "");
+        song.setLyrics(songContent);
+        if(song.getTitle() == null || song.getTitle().isEmpty()) { //Invalid song, so forget it
+            song = null;
+        }
+        return song;
     }
 
     private String trimLines(String oldContent) {
