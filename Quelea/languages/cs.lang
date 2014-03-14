@@ -403,3 +403,23 @@ chosen.fonts.label=Zvolená písma
 test.patterns.explanation=Zde dostupné zkušební vzory vám mají pomoci se správným vyvážením zaměření obrazovky a barev. Klepněte na zkušební obrázek pro jeho ukázání jak v hlavním tak v předváděcím pohledu.
 ignored.fonts.label=Přehlížená písma
 hover.for.position.label=Přejeďte nad plátnem pro stanovení polohy textu
+easyworship.button=EasyWorship
+filefilters.description.songs.mb=Databáze Easyworship Songs.MB
+zw.import.line2=Obvykle se nachází v "C:\ProgramData\ZionWorx\2.6\Data".
+zw.import.line1=Níže vyberte umístění souboru ZionWorx "MainTable.dat".
+add.song.hint.search.text=Nejsou zde žádné písně odpovídající
+tomuto hledání, ale neděste se!
+Pro přidání písně jednoduše klepněte na tlačítko
+"Nová píseň" vlevo.
+show.verse.numbers=Ukázat čísla veršů
+zw.button=ZionWorx
+no.tdb.heading=TurboDB Data Exchange nenalezeno
+no.tdb.message=Z technických důvodů je potřeba, abyste stáhl TurboDB data exchange (http://bit.ly/1gwoPLX), předtím než bude Quelea moci zavést databáze ZionWorx.\nAž to stáhnete, rozbalte obsah souboru zip do $1.\n\nPokud máte jakékoli potíže, potom se, prosím, klidně zeptejte v diskusní skupině zde: (http://bit.ly/1mePoeh)
+import.error.message=Promiňte, při zavádění se vyskytly potíže. Klidně požádejte o pomoc v diskusní skupině Quelea: http://bit.ly/1mePoeh
+filefilters.description.maintable.dat=Soubor databáze s hlavní tabulkou ZionWorx
+add.song.hint.text=Nejsou zde ještě žádné písně,
+ale neděste se!
+Pro přidání písně jednoduše klepněte na tlačítko
+"Nová píseň" vlevo.
+easyworship.import.line1=Tímto budou zavedeny písně Easyworship ze souboru Songs.MB.
+youtube.url.label=Adresa videa na Youtube (URL)
