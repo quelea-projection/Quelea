@@ -402,3 +402,17 @@ chosen.fonts.label=Ausgewählte Schriftarten
 test.patterns.explanation=Die verfügbaren Testmuster helfen beim Kalibrieren der Bildschirmschärfe und Farbeinstellung. Durch Klicken auf das Bild wird dieses in der Präsentations- und Bühnenansicht angezeigt.
 ignored.fonts.label=Ungenutzte Schriftarten
 hover.for.position.label=Textposition durch Verschieben am Leinwandbereich festlegen.
+easyworship.button=EasyWorship
+filefilters.description.songs.mb=Easyworship Liederdatenbank (Songs.MB)
+zw.import.line2=Der Ablageort der ZionWorx Datei ist gewöhnlich unter "C:\ProgramData\ZionWorx\2.6\Data" zu finden.
+zw.import.line1=Ablageort der ZionWorx Datei "MainTable.dat" auswählen.
+add.song.hint.search.text=Keine Suchergebnisse in der Liederdatenbank gefunden - kein Grund zur Panik! Zum Erstellen eines Liedes einfach das Steuerelement "Neues Lied" auf der Linken Seite anklicken.
+show.verse.numbers=Versnummerierung anzeigen
+zw.button=ZionWorx
+no.tdb.heading=TurboDB Data Exchange nicht gefunden
+no.tdb.message=Aus technischen Gründen muss das Programm "TurboDB data exchange" heruntergeladen werden bevor Quelea mit dem Import der ZionWorx Datenbank beginnen kann.\nNach dem Herunterladen (http://bit.ly/1gwoPLX) muss der Inhalt der Archivdatei (zip) an folgenden Ort entpackt werden: $1.\n\nSollten Fragen oder Probleme auftauchen, bitte einfach in der Diskussionsgruppe unter 
+(http://bit.ly/1mePoeh) um Rat fragen.
+import.error.message=Leider trat beim Importieren ein Problem auf. Sie können auf der Quelea - Diskussionsseite um Hilfe ansuchen http://bit.ly/1mePoeh
+filefilters.description.maintable.dat=ZionWorx MainTable Datenbank Datei
+easyworship.import.line1=Hiermit werden Lieder aus einer EasyWorshop Datenbank (Songs.MB) Datei importiert.
+youtube.url.label=YouTube Video - Adresse (URL)
