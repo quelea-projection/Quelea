@@ -44,6 +44,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
+import java.util.WeakHashMap;
 import java.util.concurrent.Semaphore;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -780,7 +781,7 @@ public final class Utils {
         writer.setColor(0, 0, color);
         return image;
     }
-    private static final HashMap<File, WritableImage> videoPreviewCache = new HashMap<>();
+    private static final Map<File, WritableImage> videoPreviewCache = new SoftHashMap<>();
 
     /**
      * Get an image to be shown as the background in place of a playing video.
@@ -796,6 +797,9 @@ public final class Utils {
                     if(ret == null) {
                         BufferedImage bi = FrameGrab.getFrame(videoFile, 0);
                         if(bi != null) {
+                            if(bi.getWidth()>720||bi.getHeight()>480) {
+                                bi = scaleImage(bi, 720);
+                            }
                             ret = SwingFXUtils.toFXImage(bi, null);
                         }
                     }
@@ -811,6 +815,17 @@ public final class Utils {
                 return new Image("file:icons/vid preview.png");
             }
         }
+    }
+    
+    private static BufferedImage scaleImage(BufferedImage orig, int width) {
+        double ratio = orig.getWidth()/orig.getHeight();
+        int height = (int)(width/ratio);
+        BufferedImage resized = new BufferedImage(width, height, orig.getType());
+        Graphics2D g = resized.createGraphics();
+        g.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
+        g.drawImage(orig, 0, 0, width, height, 0, 0, orig.getWidth(), orig.getHeight(), null);
+        g.dispose();
+        return resized;
     }
 
     /**
