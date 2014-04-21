@@ -19,7 +19,6 @@ package org.quelea.services.notice;
 
 import com.sun.javafx.tk.FontMetrics;
 import com.sun.javafx.tk.Toolkit;
-import com.sun.scenario.ToolkitAccessor;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
