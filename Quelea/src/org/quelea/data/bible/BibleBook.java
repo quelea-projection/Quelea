@@ -108,7 +108,7 @@ public final class BibleBook implements BibleInterface, Serializable  {
     public static BibleBook parseXML(Node node, int defaultBookNum) {
         BibleBook ret = new BibleBook();
         if (node.getAttributes().getNamedItem("bnumber") != null) {
-            ret.bookNumber = Integer.parseInt(node.getAttributes().getNamedItem("bnumber").getNodeValue());
+            ret.bookNumber = Integer.parseInt(node.getAttributes().getNamedItem("bnumber").getNodeValue().trim());
         }
         else {
             ret.bookNumber = defaultBookNum;
