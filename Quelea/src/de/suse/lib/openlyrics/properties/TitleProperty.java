@@ -70,7 +70,7 @@ public class TitleProperty {
      *
      * @return
      */
-    public String getDetaultTitle() {
+    public String getDefaultTitle() {
         return this.title.get(Locale.getDefault());
     }
 
@@ -82,7 +82,7 @@ public class TitleProperty {
      * @return
      */
     public String getTitle(Locale locale) {
-        return this.title.get(locale) != null ? this.title.get(locale) : this.getDetaultTitle();
+        return this.title.get(locale) != null ? this.title.get(locale) : this.getDefaultTitle();
     }
 
 
