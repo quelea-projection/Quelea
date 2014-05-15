@@ -259,7 +259,9 @@ public class OpenLyricsObject {
         if (lyricsNodes != null && lyricsNodes.getLength() > 0) {
             NodeList verseNodes = lyricsNodes.item(0).getChildNodes();
             for (int i = 0; i < verseNodes.getLength(); i++) {
-                this.parseVerse((Element) verseNodes.item(i));
+                if (verseNodes.item(i) instanceof Element) {
+                    this.parseVerse((Element) verseNodes.item(i));
+                }
             }
         }
     }
