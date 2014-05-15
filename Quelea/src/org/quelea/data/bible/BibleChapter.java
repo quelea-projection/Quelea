@@ -80,10 +80,10 @@ public final class BibleChapter implements BibleInterface, Serializable {
     public static BibleChapter parseXML(Node node, int defaultNum) {
         int num = -1;
         if(node.getAttributes().getNamedItem("cnumber") != null) {
-            num = Integer.parseInt(node.getAttributes().getNamedItem("cnumber").getNodeValue());
+            num = Integer.parseInt(node.getAttributes().getNamedItem("cnumber").getNodeValue().trim());
         }
         else if(node.getAttributes().getNamedItem("n") != null) {
-            num = Integer.parseInt(node.getAttributes().getNamedItem("n").getNodeValue());
+            num = Integer.parseInt(node.getAttributes().getNamedItem("n").getNodeValue().trim());
         }
         else {
             num = defaultNum;
