@@ -30,6 +30,7 @@ import org.quelea.services.importexport.EasyWorshipImportDialog;
 import org.quelea.services.importexport.ImportDialog;
 import org.quelea.services.importexport.KingswayImportDialog;
 import org.quelea.services.importexport.OpenLPImportDialog;
+import org.quelea.services.importexport.OpenLyricsImportDialog;
 import org.quelea.services.importexport.OpenSongImportDialog;
 import org.quelea.services.importexport.PlainTextSongsImportDialog;
 import org.quelea.services.importexport.QSPImportDialog;
@@ -51,6 +52,7 @@ public class ImportMenu extends Menu {
     private final ImportDialog qspImportDialog;
     private final ImportDialog openSongImportDialog;
     private final ImportDialog openLPImportDialog;
+    private final ImportDialog openLyricsImportDialog;
     private final ImportDialog zionWorxImportDialog;
     private final ImportDialog sourceImportDialog;
     private final ImportDialog kingswayImportDialog;
@@ -61,6 +63,7 @@ public class ImportMenu extends Menu {
     private final MenuItem qspItem;
     private final MenuItem osItem;
     private final MenuItem spItem;
+    private final MenuItem olItem;
     private final MenuItem olpItem;
     private final MenuItem zwItem;
     private final MenuItem ssItem;
@@ -79,6 +82,7 @@ public class ImportMenu extends Menu {
         qspImportDialog = new QSPImportDialog();
         openSongImportDialog = new OpenSongImportDialog();
         openLPImportDialog = new OpenLPImportDialog();
+        openLyricsImportDialog = new OpenLyricsImportDialog();
         zionWorxImportDialog = new ZionWorxImportDialog();
         sImportDialog = new SurvivorImportDialog();
         sourceImportDialog = new SourceImportDialog();
@@ -114,6 +118,15 @@ public class ImportMenu extends Menu {
             }
         });
         getItems().add(olpItem);
+
+        olItem = new MenuItem(LabelGrabber.INSTANCE.getLabel("olyrics.button"));
+        olItem.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent t) {
+                openLyricsImportDialog.show();
+            }
+        });
+        getItems().add(olItem);
 
         zwItem = new MenuItem(LabelGrabber.INSTANCE.getLabel("zw.button"), new ImageView(new Image("file:icons/zionworx.png", 16, 16, false, true)));
         zwItem.setOnAction(new EventHandler<ActionEvent>() {
