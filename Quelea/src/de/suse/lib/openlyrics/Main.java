@@ -70,7 +70,7 @@ public class Main {
             new OpenLyricsWriter(ol).writeToFile(new File("/tmp/foo.xml"), true);
             System.exit(1);
 
-            System.err.println("Lyrics for " + ol.getProperties().getTitleProperty().getDetaultTitle());
+            System.err.println("Lyrics for " + ol.getProperties().getTitleProperty().getDefaultTitle());
             System.err.println("Copyright (C) by " + ol.getProperties().getCopyright());
             System.err.println("Key: " + ol.getProperties().getKey());
             System.err.println("");
