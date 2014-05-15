@@ -64,10 +64,10 @@ public final class BibleVerse implements BibleInterface, Serializable  {
     public static BibleVerse parseXML(Node node) {
         BibleVerse ret = new BibleVerse();
         if(node.getAttributes().getNamedItem("vnumber") == null) {
-            ret.num = Integer.parseInt(node.getAttributes().getNamedItem("n").getNodeValue());
+            ret.num = Integer.parseInt(node.getAttributes().getNamedItem("n").getNodeValue().trim());
         }
         else {
-            ret.num = Integer.parseInt(node.getAttributes().getNamedItem("vnumber").getNodeValue());
+            ret.num = Integer.parseInt(node.getAttributes().getNamedItem("vnumber").getNodeValue().trim());
         }
         ret.verse = node.getTextContent();
         return ret;
