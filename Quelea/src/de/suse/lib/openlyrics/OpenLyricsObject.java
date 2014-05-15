@@ -42,6 +42,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -343,7 +344,17 @@ public class OpenLyricsObject {
      */
     public List<Verse> getVerses() {
         List<Verse> verses = this.getVerses(Locale.getDefault());
-        return verses != null ? verses : this.getVerses(new Locale("en", "US"));
+        if (verses == null) {
+            verses = this.getVerses(new Locale("en", "US"));
+        }
+        if (verses == null) {
+            Set<Locale> keySet = this.lyrics.keySet();
+            if (!keySet.isEmpty()) {
+                Locale firstLocale = keySet.iterator().next();
+                verses = this.getVerses(firstLocale);
+            }
+        }
+        return verses;
     }
 
 
