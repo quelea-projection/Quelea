@@ -48,7 +48,7 @@ public class QSPExporter implements Exporter {
      * @param file the file to write the song pack to.
      */
     @Override
-    public void writeSongPack(final File file, final List<SongDisplayable> songDisplayables) {
+    public void exportSongs(final File file, final List<SongDisplayable> songDisplayables) {
         final SongPack pack = new SongPack();
         pack.addSongs(songDisplayables);
         pack.writeToFile(file);
