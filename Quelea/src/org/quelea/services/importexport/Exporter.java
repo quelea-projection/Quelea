@@ -23,11 +23,18 @@ import javafx.stage.FileChooser;
 import org.quelea.data.displayable.SongDisplayable;
 
 /**
+ * A generic exporter interface whose implementations provide functionality to
+ * export to particular formats.
  *
  * @author Michael
  */
 public interface Exporter {
 
+    /**
+     * Get a file chooser to select the file to export to.
+     *
+     * @return a file chooser to select the file to export to.
+     */
     FileChooser getChooser();
 
     /**
@@ -37,5 +44,12 @@ public interface Exporter {
      * @param songDisplayables the songs to write to the file.
      */
     void exportSongs(final File file, final List<SongDisplayable> songDisplayables);
+
+    /**
+     * Get the file extension this exporter exports to.
+     *
+     * @return the file extension this exporter exports to.
+     */
+    String getStrExtension();
 
 }

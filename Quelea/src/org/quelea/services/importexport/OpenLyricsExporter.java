@@ -18,16 +18,40 @@
 package org.quelea.services.importexport;
 
 import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.StringWriter;
+import java.nio.charset.Charset;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
 import javafx.stage.FileChooser;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
 import org.quelea.data.displayable.SongDisplayable;
+import org.quelea.data.displayable.TextSection;
 import org.quelea.services.utils.FileFilters;
+import org.quelea.services.utils.LoggerUtils;
+import org.w3c.dom.DOMException;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 
 /**
  * An exporter for the openlyrics format.
+ *
  * @author Michael
  */
 public class OpenLyricsExporter implements Exporter {
+
+    public static final Logger LOGGER = LoggerUtils.getLogger();
 
     /**
      * Get the file chooser to be used.
@@ -41,10 +65,91 @@ public class OpenLyricsExporter implements Exporter {
         return chooser;
     }
 
+    /**
+     * Export the given songs to the given file.
+     * @param file the zip file to export to.
+     * @param songDisplayables the songs to export to the zip file.
+     */
     @Override
     public void exportSongs(File file, List<SongDisplayable> songDisplayables) {
-        //TODO: Implement
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        try {
+            try (ZipOutputStream out = new ZipOutputStream(new FileOutputStream(file))) {
+                for (SongDisplayable song : songDisplayables) {
+                    out.putNextEntry(new ZipEntry(song.getTitle() + ".xml"));
+                    out.write(getXML(song).getBytes(Charset.forName("UTF-8")));
+                }
+            }
+        } catch (IOException ex) {
+            LOGGER.log(Level.WARNING, "Couldn't export openlyrics songs", ex);
+        }
     }
-    
+
+    /**
+     * Convert a particular song to Openlyrics standard XML. Doesn't do chords
+     * or translations at present - that should be implemented at a later stage.
+     *
+     * @param song the song to convert to XML.
+     * @return the openlyrics XML for the given song.
+     */
+    private String getXML(SongDisplayable song) {
+        try {
+            DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
+            DocumentBuilder docBuilder = docFactory.newDocumentBuilder();
+
+            Document doc = docBuilder.newDocument();
+
+            Element rootElement = doc.createElement("song");
+            doc.appendChild(rootElement);
+
+            Element propertiesElement = doc.createElement("properties");
+            rootElement.appendChild(propertiesElement);
+
+            Element titlesElement = doc.createElement("titles");
+            propertiesElement.appendChild(titlesElement);
+            Element titleElement = doc.createElement("title");
+            titleElement.appendChild(doc.createTextNode(song.getTitle()));
+            titlesElement.appendChild(titleElement);
+
+            Element authorsElement = doc.createElement("authors");
+            propertiesElement.appendChild(authorsElement);
+            Element authorElement = doc.createElement("author");
+            authorElement.appendChild(doc.createTextNode(song.getAuthor()));
+            authorsElement.appendChild(authorElement);
+
+            Element ccliElement = doc.createElement("ccliNo");
+            propertiesElement.appendChild(ccliElement);
+            ccliElement.appendChild(doc.createTextNode(song.getCcli()));
+
+            Element lyricsElement = doc.createElement("lyrics");
+            rootElement.appendChild(lyricsElement);
+
+            for (TextSection section : song.getSections()) {
+                Element verseElement = doc.createElement("verse");
+                lyricsElement.appendChild(verseElement);
+                Element linesElement = doc.createElement("lines");
+                verseElement.appendChild(linesElement);
+
+                for (String line : section.getText(false, false)) {
+                    linesElement.appendChild(doc.createTextNode(line));
+                    linesElement.appendChild(doc.createElement("br"));
+                }
+            }
+
+            TransformerFactory tf = TransformerFactory.newInstance();
+            Transformer transformer = tf.newTransformer();
+            StringWriter writer = new StringWriter();
+            transformer.transform(new DOMSource(doc), new StreamResult(writer));
+            return writer.getBuffer().toString();
+
+        } catch (ParserConfigurationException | TransformerException | DOMException ex) {
+            LOGGER.log(Level.WARNING, "Couldn't export openlyrics songs", ex);
+            return null;
+        }
+    }
+
+    @Override
+    public String getStrExtension() {
+        return "zip";
+    }
+
 }
