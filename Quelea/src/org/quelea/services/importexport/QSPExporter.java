@@ -29,7 +29,7 @@ import org.quelea.services.utils.SongPack;
  * @author Michael
  */
 public class QSPExporter implements Exporter {
-
+    
     /**
      * Get the file chooser to be used.
      * <p/>
@@ -53,6 +53,11 @@ public class QSPExporter implements Exporter {
         pack.addSongs(songDisplayables);
         pack.writeToFile(file);
 
+    }
+
+    @Override
+    public String getStrExtension() {
+        return "qsp";
     }
 
 }
