@@ -42,7 +42,7 @@ public class OpenLyricsExporter implements Exporter {
     }
 
     @Override
-    public void writeSongPack(File file, List<SongDisplayable> songDisplayables) {
+    public void exportSongs(File file, List<SongDisplayable> songDisplayables) {
         //TODO: Implement
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }

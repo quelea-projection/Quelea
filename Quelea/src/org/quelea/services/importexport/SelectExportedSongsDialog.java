@@ -65,7 +65,7 @@ public class SelectExportedSongsDialog extends SelectSongsDialog {
                             @Override
                             public void handle(ActionEvent t) {
                                 getAddButton().setDisable(true);
-                                exporter.writeSongPack(theFile, getSelectedSongs());
+                                exporter.exportSongs(theFile, getSelectedSongs());
                                 Platform.runLater(new Runnable() {
                                     @Override
                                     public void run() {
@@ -82,7 +82,7 @@ public class SelectExportedSongsDialog extends SelectSongsDialog {
                     }
                     else {
                         getAddButton().setDisable(true);
-                        exporter.writeSongPack(file, getSelectedSongs());
+                        exporter.exportSongs(file, getSelectedSongs());
                         Platform.runLater(new Runnable() {
                             @Override
                             public void run() {
