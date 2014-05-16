@@ -52,7 +52,7 @@ public class SelectExportedSongsDialog extends SelectSongsDialog {
         getAddButton().setOnAction(new EventHandler<javafx.event.ActionEvent>() {
             @Override
             public void handle(javafx.event.ActionEvent t) {
-                final String extension = QueleaProperties.get().getSongPackExtension();
+                final String extension = exporter.getStrExtension();
                 FileChooser chooser = exporter.getChooser();
                 File file = chooser.showSaveDialog(SelectExportedSongsDialog.this);
                 if(file != null) {
