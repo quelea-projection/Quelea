@@ -36,6 +36,6 @@ public interface Exporter {
      * @param file the file to write the song pack to.
      * @param songDisplayables the songs to write to the file.
      */
-    void writeSongPack(final File file, final List<SongDisplayable> songDisplayables);
+    void exportSongs(final File file, final List<SongDisplayable> songDisplayables);
 
 }
