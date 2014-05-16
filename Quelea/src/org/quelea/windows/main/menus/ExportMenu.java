@@ -28,6 +28,8 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import org.quelea.data.db.SongManager;
 import org.quelea.data.displayable.SongDisplayable;
+import org.quelea.services.importexport.OpenLyricsExporter;
+import org.quelea.services.importexport.QSPExporter;
 import org.quelea.services.languages.LabelGrabber;
 import org.quelea.services.importexport.SelectExportedSongsDialog;
 
@@ -39,6 +41,7 @@ import org.quelea.services.importexport.SelectExportedSongsDialog;
 public class ExportMenu extends Menu {
 
     private final MenuItem qspItem;
+    private final MenuItem openLyricsItem;
 
     /**
      * Create the export menu.
@@ -53,11 +56,24 @@ public class ExportMenu extends Menu {
             public void handle(ActionEvent t) {
                 final List<SongDisplayable> songs = Arrays.asList(SongManager.get().getSongs());
                 //TODO: Determine if number of songs is above some threshold, then display warning that Quelea might be unresponsive while dialog is built.
-                SelectExportedSongsDialog dialog = new SelectExportedSongsDialog(songs);
+                SelectExportedSongsDialog dialog = new SelectExportedSongsDialog(songs, new QSPExporter());
                 dialog.showAndWait(); //This line is what takes the time for a large number of songs.
             }
         });
         getItems().add(qspItem);
+
+        openLyricsItem = new MenuItem(LabelGrabber.INSTANCE.getLabel("olyrics.button"));
+        openLyricsItem.setOnAction(new EventHandler<ActionEvent>() {
+
+            @Override
+            public void handle(ActionEvent t) {
+                final List<SongDisplayable> songs = Arrays.asList(SongManager.get().getSongs());
+                //TODO: Determine if number of songs is above some threshold, then display warning that Quelea might be unresponsive while dialog is built.
+                SelectExportedSongsDialog dialog = new SelectExportedSongsDialog(songs, new OpenLyricsExporter());
+                dialog.showAndWait(); //This line is what takes the time for a large number of songs.
+            }
+        });
+        getItems().add(openLyricsItem);
     }
 
 }

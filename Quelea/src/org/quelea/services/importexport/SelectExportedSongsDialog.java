@@ -26,9 +26,7 @@ import javafx.stage.FileChooser;
 import org.javafx.dialog.Dialog;
 import org.quelea.data.displayable.SongDisplayable;
 import org.quelea.services.languages.LabelGrabber;
-import org.quelea.services.utils.FileFilters;
 import org.quelea.services.utils.QueleaProperties;
-import org.quelea.services.utils.SongPack;
 
 /**
  * A dialog used for selecting the songs to be put in the song pack after
@@ -41,8 +39,9 @@ public class SelectExportedSongsDialog extends SelectSongsDialog {
     /**
      * Create a new exported songs dialog.
      * @param songs the songs to display in this dialog.
+     * @param exporter the exporter to use.
      */
-    public SelectExportedSongsDialog(List<SongDisplayable> songs) {
+    public SelectExportedSongsDialog(List<SongDisplayable> songs, final Exporter exporter) {
         super(new String[]{
             LabelGrabber.INSTANCE.getLabel("select.export.songs.line1"),
             LabelGrabber.INSTANCE.getLabel("select.export.songs.line2")
@@ -54,7 +53,7 @@ public class SelectExportedSongsDialog extends SelectSongsDialog {
             @Override
             public void handle(javafx.event.ActionEvent t) {
                 final String extension = QueleaProperties.get().getSongPackExtension();
-                FileChooser chooser = getChooser();
+                FileChooser chooser = exporter.getChooser();
                 File file = chooser.showSaveDialog(SelectExportedSongsDialog.this);
                 if(file != null) {
                     if(!file.getName().endsWith("." + extension)) {
@@ -65,7 +64,15 @@ public class SelectExportedSongsDialog extends SelectSongsDialog {
                         Dialog.buildConfirmation(LabelGrabber.INSTANCE.getLabel("overwrite.text"), file.getName() + " " + LabelGrabber.INSTANCE.getLabel("already.exists.overwrite.label")).addYesButton(new EventHandler<ActionEvent>() {
                             @Override
                             public void handle(ActionEvent t) {
-                                writeSongPack(theFile);
+                                getAddButton().setDisable(true);
+                                exporter.writeSongPack(theFile, getSelectedSongs());
+                                Platform.runLater(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        hide();
+                                        getAddButton().setDisable(false);
+                                    }
+                                });
                             }
                         }).addNoButton(new EventHandler<ActionEvent>() {
                             @Override
@@ -74,39 +81,17 @@ public class SelectExportedSongsDialog extends SelectSongsDialog {
                         }).build().showAndWait();
                     }
                     else {
-                        writeSongPack(file);
+                        getAddButton().setDisable(true);
+                        exporter.writeSongPack(file, getSelectedSongs());
+                        Platform.runLater(new Runnable() {
+                            @Override
+                            public void run() {
+                                hide();
+                                getAddButton().setDisable(false);
+                            }
+                        });
                     }
                 }
-            }
-        });
-    }
-
-    /**
-     * Get the JFileChooser to be used.
-     * <p/>
-     * @return the song pack JFileChooser.
-     */
-    private FileChooser getChooser() {
-        FileChooser chooser = new FileChooser();
-        chooser.getExtensionFilters().add(FileFilters.SONG_PACK);
-        return chooser;
-    }
-
-    /**
-     * Write the song pack to the specified file, closing the window when done.
-     * <p/>
-     * @param file the file to write the song pack to.
-     */
-    private void writeSongPack(final File file) {
-        final SongPack pack = new SongPack();
-        getAddButton().setDisable(true);
-        pack.addSongs(getSelectedSongs());
-        pack.writeToFile(file);
-        Platform.runLater(new Runnable() {
-            @Override
-            public void run() {
-                hide();
-                getAddButton().setDisable(false);
             }
         });
     }
