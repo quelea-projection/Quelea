@@ -75,6 +75,7 @@ public final class Main extends Application {
     @Override
     public void start(Stage stage) {
         setupExceptionHandling();
+        setupTranslator();
         final SplashStage splashWindow = new SplashStage();
         splashWindow.show();
 
@@ -84,20 +85,19 @@ public final class Main extends Application {
                 try {
                     final boolean VLC_OK = new NativeDiscovery().discover();
                     final boolean VLC_INIT;
-                    if(VLC_OK) {
+                    if (VLC_OK) {
                         VLC_INIT = VLCWindow.INSTANCE.isInit();
-                    }
-                    else {
+                    } else {
                         VLC_INIT = false;
                     }
                     new FontInstaller().setupBundledFonts();
                     new UserFileChecker(QueleaProperties.getQueleaUserHome()).checkUserFiles();
 
-                    if(!new File(QueleaProperties.getQueleaUserHome(), "database_new").exists()
+                    if (!new File(QueleaProperties.getQueleaUserHome(), "database_new").exists()
                             && new File(QueleaProperties.getQueleaUserHome(), "database").exists()) {
                         SongDisplayable[] songs = LegacyDB.get().getSongs();
                         LOGGER.log(Level.INFO, "Importing {0} songs from legacy DB", songs.length);
-                        for(SongDisplayable song : songs) {
+                        for (SongDisplayable song : songs) {
                             SongManager.get().addSong(song, false);
                         }
                     }
@@ -110,32 +110,28 @@ public final class Main extends Application {
                     final int monitorNumber = monitors.size();
 
                     final boolean lyricsHidden;
-                    if(!QueleaProperties.get().isProjectorModeCoords() && (projectorScreen >= monitorNumber || projectorScreen < 0)) {
+                    if (!QueleaProperties.get().isProjectorModeCoords() && (projectorScreen >= monitorNumber || projectorScreen < 0)) {
                         lyricsHidden = true;
-                    }
-                    else {
+                    } else {
                         lyricsHidden = false;
                     }
                     final boolean stageHidden;
-                    if(!QueleaProperties.get().isStageModeCoords() && (stageScreen >= monitorNumber || stageScreen < 0)) {
+                    if (!QueleaProperties.get().isStageModeCoords() && (stageScreen >= monitorNumber || stageScreen < 0)) {
                         stageHidden = true;
-                    }
-                    else {
+                    } else {
                         stageHidden = false;
                     }
 
-                    if(QueleaProperties.get().getUseMobLyrics()) {
+                    if (QueleaProperties.get().getUseMobLyrics()) {
                         LOGGER.log(Level.INFO, "Starting lyric server on {0}", QueleaProperties.get().getMobLyricsPort());
                         try {
                             MobileLyricsServer mls = new MobileLyricsServer(QueleaProperties.get().getMobLyricsPort());
                             mls.start();
                             QueleaApp.get().setMobileLyricsServer(mls);
-                        }
-                        catch(IOException ex) {
+                        } catch (IOException ex) {
                             LOGGER.log(Level.INFO, "Couldn't create lyric server", ex);
                         }
-                    }
-                    else {
+                    } else {
                         LOGGER.log(Level.INFO, "Mobile lyrics disabled");
                     }
 
@@ -143,32 +139,28 @@ public final class Main extends Application {
 
                         @Override
                         public void run() {
-                            if(lyricsHidden) {
+                            if (lyricsHidden) {
                                 LOGGER.log(Level.INFO, "Hiding projector display on monitor 0 (base 0!)");
                                 fullScreenWindow = new DisplayStage(Utils.getBoundsFromRect2D(monitors.get(0).getVisualBounds()), false);
                                 fullScreenWindow.hide();
-                            }
-                            else if(QueleaProperties.get().isProjectorModeCoords()) {
+                            } else if (QueleaProperties.get().isProjectorModeCoords()) {
                                 LOGGER.log(Level.INFO, "Starting projector display: ", QueleaProperties.get().getProjectorCoords());
                                 fullScreenWindow = new DisplayStage(QueleaProperties.get().getProjectorCoords(), false);
-                            }
-                            else {
+                            } else {
                                 LOGGER.log(Level.INFO, "Starting projector display on monitor {0} (base 0!)", projectorScreen);
                                 fullScreenWindow = new DisplayStage(Utils.getBoundsFromRect2D(monitors.get(projectorScreen).getVisualBounds()), false);
                             }
                             QueleaApp.get().setProjectionWindow(fullScreenWindow);
                             //fullScreenWindow.toFront();
 
-                            if(stageHidden) {
+                            if (stageHidden) {
                                 LOGGER.log(Level.INFO, "Hiding stage display on monitor 0 (base 0!)");
                                 stageWindow = new DisplayStage(Utils.getBoundsFromRect2D(monitors.get(0).getVisualBounds()), true);
                                 stageWindow.hide();
-                            }
-                            else if(QueleaProperties.get().isStageModeCoords()) {
+                            } else if (QueleaProperties.get().isStageModeCoords()) {
                                 LOGGER.log(Level.INFO, "Starting stage display: ", QueleaProperties.get().getStageCoords());
                                 stageWindow = new DisplayStage(QueleaProperties.get().getStageCoords(), true);
-                            }
-                            else {
+                            } else {
                                 LOGGER.log(Level.INFO, "Starting stage display on monitor {0} (base 0!)", stageScreen);
                                 stageWindow = new DisplayStage(Utils.getBoundsFromRect2D(monitors.get(stageScreen).getVisualBounds()), true);
                             }
@@ -186,13 +178,12 @@ public final class Main extends Application {
                             bibleLoader.start();
                             try {
                                 bibleLoader.join();
-                            }
-                            catch(InterruptedException ex) {
+                            } catch (InterruptedException ex) {
                                 ex.printStackTrace();
                             }
                             BibleManager.get().buildIndex();
 
-                            if(SongManager.get() == null) {
+                            if (SongManager.get() == null) {
                                 Dialog.showAndWaitError(LabelGrabber.INSTANCE.getLabel("already.running.title"), LabelGrabber.INSTANCE.getLabel("already.running.error"));
                                 System.exit(1);
                             }
@@ -201,8 +192,7 @@ public final class Main extends Application {
                             try {
                                 bibleLoader.join(); //Make sure bibleloader has finished loading
 
-                            }
-                            catch(InterruptedException ex) {
+                            } catch (InterruptedException ex) {
                             }
                             mainWindow = new MainWindow(true);
 
@@ -213,23 +203,21 @@ public final class Main extends Application {
                             mainWindow.getMainPanel().getLivePanel().registerDisplayCanvas(fullScreenWindow.getCanvas());
                             mainWindow.getMainPanel().getLivePanel().registerDisplayWindow(fullScreenWindow);
                             mainWindow.getNoticeDialog().registerCanvas(fullScreenWindow.getCanvas());
-                            if(lyricsHidden) {
+                            if (lyricsHidden) {
                                 fullScreenWindow.hide();
-                            }
-                            else {
+                            } else {
                                 fullScreenWindow.show();
                             }
                             mainWindow.getMainPanel().getLivePanel().registerDisplayCanvas(stageWindow.getCanvas());
                             mainWindow.getMainPanel().getLivePanel().registerDisplayWindow(stageWindow);
-                            if(stageHidden) {
+                            if (stageHidden) {
                                 stageWindow.hide();
-                            }
-                            else {
+                            } else {
                                 stageWindow.show();
                             }
                             LOGGER.log(Level.INFO, "Registered canvases.");
 
-                            if(QueleaProperties.get().getDragAndDrop()) {
+                            if (QueleaProperties.get().getDragAndDrop()) {
                                 Utils.enableDragAndDrop();
                                 LOGGER.log(Level.INFO, "Enabled drag and drop functionality.");
                             }
@@ -240,7 +228,7 @@ public final class Main extends Application {
                             new ShortcutManager().addShortcuts(mainWindow);
                             LOGGER.log(Level.INFO, "Loaded everything.");
 
-                            if(!getParameters().getRaw().isEmpty()) {
+                            if (!getParameters().getRaw().isEmpty()) {
                                 String schedulePath = getParameters().getRaw().get(0);
                                 LOGGER.log(Level.INFO, "Opening schedule through argument: {0}", schedulePath);
                                 QueleaApp.get().openSchedule(new File(schedulePath));
@@ -248,15 +236,13 @@ public final class Main extends Application {
                             mainWindow.show();
                             splashWindow.hide();
                             showMonitorWarning(monitorNumber);
-                            if(VLC_OK && VLC_INIT) {
+                            if (VLC_OK && VLC_INIT) {
                                 VLCWindow.INSTANCE.refreshPosition();
-                            }
-                            else { //Couldn't find the VLC libraries.
+                            } else { //Couldn't find the VLC libraries.
                                 String message;
-                                if(VLC_OK) {
+                                if (VLC_OK) {
                                     message = LabelGrabber.INSTANCE.getLabel("vlc.version.message");
-                                }
-                                else {
+                                } else {
                                     message = LabelGrabber.INSTANCE.getLabel("vlc.warning.message");
                                 }
                                 vlcWarningDialog = new Dialog.Builder()
@@ -274,8 +260,7 @@ public final class Main extends Application {
                                             public void handle(ActionEvent t) {
                                                 try {
                                                     java.awt.Desktop.getDesktop().browse(new URI("http://www.videolan.org/vlc/index.html"));
-                                                }
-                                                catch(URISyntaxException | IOException ex) {
+                                                } catch (URISyntaxException | IOException ex) {
                                                     LOGGER.log(Level.WARNING, "Couldn't open browser", ex);
                                                 }
                                                 vlcWarningDialog.hide();
@@ -288,8 +273,7 @@ public final class Main extends Application {
                             QueleaApp.get().doneLoading();
                         }
                     });
-                }
-                catch(Throwable ex) {
+                } catch (Throwable ex) {
                     LOGGER.log(Level.SEVERE, "Uncaught exception during application start-up", ex);
                     Dialog.showAndWaitError(LabelGrabber.INSTANCE.getLabel("startup.error.title"), LabelGrabber.INSTANCE.getLabel("startup.error.text").replace("$1", Utils.getDebugLog().getAbsolutePath()));
                     System.exit(1);
@@ -304,13 +288,18 @@ public final class Main extends Application {
      * @param numMonitors the number of monitors.
      */
     private void showMonitorWarning(int numMonitors) {
-        if(numMonitors <= 1 && QueleaProperties.get().showSingleMonitorWarning()) {
+        if (numMonitors <= 1 && QueleaProperties.get().showSingleMonitorWarning()) {
             Dialog.showWarning(LabelGrabber.INSTANCE.getLabel("one.monitor.title"), LabelGrabber.INSTANCE.getLabel("one.monitor.warning"));
         }
     }
 
     private void setupExceptionHandling() {
         Thread.setDefaultUncaughtExceptionHandler(new UncaughtExceptionHandler());
+    }
+
+    private void setupTranslator() {
+        com.memetix.mst.translate.Translate.setClientId("quelea-projection");
+        com.memetix.mst.translate.Translate.setClientSecret("wk4+wd9YJkjIHmz2qwD1oR7pP9/kuHOL6OsaOKEi80U=");
     }
 
     private class UncaughtExceptionHandler implements Thread.UncaughtExceptionHandler {

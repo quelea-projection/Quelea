@@ -59,4 +59,12 @@ public class TranslateTab extends Tab {
     public String getLyrics() {
         return lyricsArea.getText();
     }
+    
+    /**
+     * Set the lyrics.
+     * @param lyrics the lyrics to set on the lyrics area.
+     */
+    public void setLyrics(String lyrics) {
+        lyricsArea.setText(lyrics);
+    }
 }
