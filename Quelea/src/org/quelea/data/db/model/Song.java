@@ -1,6 +1,8 @@
 package org.quelea.data.db.model;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import javax.persistence.CascadeType;
 import javax.persistence.CollectionTable;
 import javax.persistence.Column;
@@ -8,11 +10,13 @@ import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 /**
- * Song table  mapping
+ * Song table mapping
+ *
  * @author tomaszpio@gmail.com
  */
 @Entity
@@ -33,12 +37,14 @@ public class Song {
     private String info;
     private Theme theme;
     private List<String> tags;
+    private HashMap<String, String> translations;
 
     public Song() {
     }
 
     public Song(String title, String author, String lyrics, String ccli, String copyright,
-            String year, String publisher, String key, String capo, String info, Theme theme, List<String> tags) {
+            String year, String publisher, String key, String capo, String info,
+            Theme theme, List<String> tags, HashMap<String, String> translations) {
         this.title = title;
         this.author = author;
         this.lyrics = lyrics;
@@ -51,6 +57,7 @@ public class Song {
         this.info = info;
         this.theme = theme;
         this.tags = tags;
+        this.translations = translations;
     }
 
     /**
@@ -118,7 +125,7 @@ public class Song {
     /**
      * @return the theme
      */
-    @ManyToOne(cascade = CascadeType.ALL) 
+    @ManyToOne(cascade = CascadeType.ALL)
     public Theme getTheme() {
         return theme;
     }
@@ -251,4 +258,15 @@ public class Song {
     public void setTags(List<String> tags) {
         this.tags = tags;
     }
+
+    @Lob
+    @Column(name="translations")
+    public HashMap<String, String> getTranslations() {
+        return translations;
+    }
+
+    public void setTranslations(HashMap<String, String> translations) {
+        this.translations = translations;
+    }
+    
 }
