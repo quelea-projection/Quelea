@@ -244,6 +244,24 @@ public final class QueleaProperties extends Properties {
     }
 
     /**
+     * Determine if we should attempt to fetch translations automatically.
+     * <p>
+     * @return true if we should translate automatically, false otherwise.
+     */
+    public boolean getAutoTranslate() {
+        return Boolean.parseBoolean(getProperty("auto.translate", "true"));
+    }
+
+    /**
+     * Set if we should attempt to fetch translations automatically.
+     * <p>
+     * @param val true if we should translate automatically, false otherwise.
+     */
+    public void setAutoTranslate(boolean val) {
+        setProperty("auto.translate", Boolean.toString(val));
+    }
+
+    /**
      * Get the fade duration (in seconds) for the text clear transition.
      * <p>
      * @return the fade duration (in seconds) for the text clear transition.
