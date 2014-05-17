@@ -51,6 +51,7 @@ import org.quelea.data.displayable.SongDisplayable;
 import org.quelea.services.languages.LabelGrabber;
 import org.quelea.services.utils.LanguageNameMap;
 import org.quelea.services.utils.LoggerUtils;
+import org.quelea.services.utils.QueleaProperties;
 import org.quelea.services.utils.Utils;
 
 /**
@@ -227,6 +228,9 @@ public class TranslateDialog extends Stage {
      * some reason.
      */
     private String getTranslatedLyrics(String langName) {
+        if(!QueleaProperties.get().getAutoTranslate()) {
+            return "";
+        }
         try {
             Language newLang = LanguageNameMap.INSTANCE.getLanguage(langName);
             if (newLang != null) {

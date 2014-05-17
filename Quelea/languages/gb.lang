@@ -427,3 +427,4 @@ confirm.remove.translation.text=Really delete this translation?
 default.translation.label=Default translation
 overwrite.lyrics.title=Overwrite existing lyrics?
 overwrite.lyrics.text=We've translated lyrics automatically for you - do you want to use them?\nYour current translation will be overwritten.
+auto.translate.label=Attempt to auto-translate songs
