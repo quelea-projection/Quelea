@@ -21,6 +21,7 @@ import com.memetix.mst.language.Language;
 import com.memetix.mst.translate.Translate;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map.Entry;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -86,7 +87,7 @@ public class TranslateDialog extends Stage {
 
             @Override
             public void handle(ActionEvent t) {
-                final String name = NewTranslationDialog.getTranslationName();
+                final String name = NewTranslationDialog.getTranslationName(getExistingNames());
                 if (name != null) {
                     final TranslateTab tab = new TranslateTab(name, "");
                     tabPane.getTabs().add(tab);
@@ -255,5 +256,17 @@ public class TranslateDialog extends Stage {
             LOGGER.log(Level.INFO, "Error translating", ex);
             return "";
         }
+    }
+    
+    /**
+     * Get a list of the existing names used for translations on tabs.
+     * @return a list of the existing names used for translations on tabs.
+     */
+    private List<String> getExistingNames() {
+        List<String> ret = new ArrayList<>();
+        for(Tab tab : tabPane.getTabs()) {
+            ret.add(((TranslateTab)tab).getName());
+        }
+        return ret;
     }
 }
