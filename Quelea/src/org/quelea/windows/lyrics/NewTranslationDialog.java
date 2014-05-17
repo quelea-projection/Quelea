@@ -16,6 +16,9 @@
  */
 package org.quelea.windows.lyrics;
 
+import java.util.List;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
@@ -46,7 +49,10 @@ public class NewTranslationDialog extends Stage {
     private final TextField nameField;
     private final Button okButton;
     private final Button cancelButton;
-    /** Field used to set if the ok button was pressed. */
+    private List<String> existingNames;
+    /**
+     * Field used to set if the ok button was pressed.
+     */
     private boolean ok;
 
     /**
@@ -64,13 +70,30 @@ public class NewTranslationDialog extends Stage {
         Label label = new Label(LabelGrabber.INSTANCE.getLabel("enter.translation.name.label"));
         rootVBox.getChildren().add(label);
         nameField = new TextField();
+        nameField.textProperty().addListener(new ChangeListener<String>() {
+
+            @Override
+            public void changed(ObservableValue<? extends String> ov, String t, String newStr) {
+                if (newStr.isEmpty()) {
+                    okButton.setDisable(true);
+                    return;
+                }
+                for (String str : existingNames) {
+                    if (newStr.trim().equalsIgnoreCase(str.trim())) {
+                        okButton.setDisable(true);
+                        return;
+                    }
+                }
+                okButton.setDisable(false);
+            }
+        });
         rootVBox.getChildren().add(nameField);
         StackPane buttonWrapperPane = new StackPane();
         HBox buttonPane = new HBox(5);
         buttonPane.setAlignment(Pos.CENTER);
         okButton = new Button(LabelGrabber.INSTANCE.getLabel("ok.button"), new ImageView(new Image("file:icons/tick.png", 16, 16, true, true)));
+        okButton.setDisable(true);
         okButton.setDefaultButton(true);
-        okButton.disableProperty().bind(nameField.textProperty().isNull());
         okButton.setOnAction(new EventHandler<ActionEvent>() {
 
             @Override
@@ -101,10 +124,13 @@ public class NewTranslationDialog extends Stage {
     /**
      * Pop up the dialog and get the name of the translation.
      *
+     * @param existingNames names of translations that already exist.
      * @return the name of the new translation.
      */
-    public static String getTranslationName() {
+    public static String getTranslationName(List<String> existingNames) {
+        dialog.existingNames = existingNames;
         dialog.nameField.clear();
+        dialog.okButton.setDisable(true);
         dialog.ok = false;
         dialog.showAndWait();
         if (dialog.ok) {
