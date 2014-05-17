@@ -16,10 +16,16 @@
  */
 package org.quelea.windows.lyrics;
 
+import com.memetix.mst.detect.Detect;
+import com.memetix.mst.language.Language;
+import com.memetix.mst.translate.Translate;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map.Entry;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.regex.Pattern;
+import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
@@ -39,8 +45,10 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import org.javafx.dialog.Dialog;
 import org.quelea.data.displayable.SongDisplayable;
 import org.quelea.services.languages.LabelGrabber;
+import org.quelea.services.utils.LanguageNameMap;
 import org.quelea.services.utils.LoggerUtils;
 import org.quelea.services.utils.Utils;
 
@@ -78,10 +86,41 @@ public class TranslateDialog extends Stage {
 
             @Override
             public void handle(ActionEvent t) {
-                String name = NewTranslationDialog.getTranslationName();
+                final String name = NewTranslationDialog.getTranslationName();
                 if (name != null) {
-                    TranslateTab tab = new TranslateTab(name, "");
+                    final TranslateTab tab = new TranslateTab(name, "");
                     tabPane.getTabs().add(tab);
+                    new Thread() {
+                        @Override
+                        public void run() {
+                            final String lyrics = getTranslatedLyrics(name);
+                            Platform.runLater(new Runnable() {
+                                @Override
+                                public void run() {
+                                    if (isShowing() && lyrics != null && !lyrics.isEmpty()) {
+                                        if (tab.getLyrics().length() < 10) {
+                                            tab.setLyrics(lyrics);
+                                        } else {
+                                            Dialog.buildConfirmation(LabelGrabber.INSTANCE.getLabel("overwrite.lyrics.title"), LabelGrabber.INSTANCE.getLabel("overwrite.lyrics.text"))
+                                                    .addYesButton(new EventHandler<ActionEvent>() {
+
+                                                        @Override
+                                                        public void handle(ActionEvent t) {
+                                                            tab.setLyrics(lyrics);
+                                                        }
+                                                    }).addNoButton(new EventHandler<ActionEvent>() {
+
+                                                        @Override
+                                                        public void handle(ActionEvent t) {
+                                                            //Nothing needed here.
+                                                        }
+                                                    }).build().showAndWait();
+                                        }
+                                    }
+                                }
+                            });
+                        }
+                    }.start();
                 }
             }
         });
@@ -174,5 +213,47 @@ public class TranslateDialog extends Stage {
             }
         }
         return ret;
+    }
+
+    /**
+     * Attempt to get automatically translated lyrics from the translation
+     * service. May fail for various reasons, in which case it will return an
+     * empty string. This method will take a while to execute so must not be
+     * called on the platform thread.
+     *
+     * @param langName the language name to translate to.
+     * @return the translated text, or an empty string if translation failed for
+     * some reason.
+     */
+    private String getTranslatedLyrics(String langName) {
+        try {
+            Language newLang = LanguageNameMap.INSTANCE.getLanguage(langName);
+            if (newLang != null) {
+                Language origLang = Detect.execute(defaultLyricsArea.getText());
+                if (origLang != null) {
+                    String[] origArr = defaultLyricsArea.getText().split("\n");
+                    ArrayList<String> translatedList = new ArrayList<>();
+                    for (String str : Translate.execute(origArr, origLang, newLang)) {
+                        translatedList.add(str);
+                    }
+                    for (int i = 0; i < origArr.length; i++) {
+                        if (origArr[i].trim().isEmpty()) {
+                            translatedList.add(i, "\n");
+                        }
+                    }
+                    StringBuilder ret = new StringBuilder();
+                    for (String translatedLine : translatedList) {
+                        ret.append(translatedLine).append("\n");
+                    }
+                    Pattern p = Pattern.compile("\n\n+");
+                    LOGGER.log(Level.INFO, "Translated successfully");
+                    return p.matcher(ret.toString().trim()).replaceAll("\n\n").trim();
+                }
+            }
+            return "";
+        } catch (Exception ex) {
+            LOGGER.log(Level.INFO, "Error translating", ex);
+            return "";
+        }
     }
 }
