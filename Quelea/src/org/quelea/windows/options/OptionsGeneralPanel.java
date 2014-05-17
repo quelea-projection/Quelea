@@ -50,6 +50,7 @@ public class OptionsGeneralPanel extends GridPane implements PropertyPanel {
     private final CheckBox oneMonitorWarnCheckBox;
     private final CheckBox displaySongInfoCheckBox;
     private final CheckBox oneLineModeCheckBox;
+    private final CheckBox autoTranslateCheckBox;
     private final CheckBox textShadowCheckBox;
     private final CheckBox clearLiveOnRemoveCheckBox;
     private final CheckBox useOOCheckBox;
@@ -172,6 +173,15 @@ public class OptionsGeneralPanel extends GridPane implements PropertyPanel {
         startupLabel.setLabelFor(oneLineModeCheckBox);
         GridPane.setConstraints(oneLineModeCheckBox, 2, rows);
         getChildren().add(oneLineModeCheckBox);
+        rows++;
+
+        Label autoTranslateLabel = new Label(LabelGrabber.INSTANCE.getLabel("auto.translate.label"));
+        GridPane.setConstraints(autoTranslateLabel, 1, rows);
+        getChildren().add(autoTranslateLabel);
+        autoTranslateCheckBox = new CheckBox();
+        startupLabel.setLabelFor(autoTranslateCheckBox);
+        GridPane.setConstraints(autoTranslateCheckBox, 2, rows);
+        getChildren().add(autoTranslateCheckBox);
         rows++;
 
         Label textShadowLabel = new Label(LabelGrabber.INSTANCE.getLabel("text.shadow.label"));
@@ -345,6 +355,7 @@ public class OptionsGeneralPanel extends GridPane implements PropertyPanel {
         displaySongInfoCheckBox.setSelected(props.checkDisplaySongInfoText());
         uniformFontSizeCheckBox.setSelected(props.getUseUniformFontSize());
         oneLineModeCheckBox.setSelected(props.getOneLineMode());
+        autoTranslateCheckBox.setSelected(props.getAutoTranslate());
         textShadowCheckBox.setSelected(props.getTextShadow());
         clearLiveOnRemoveCheckBox.setSelected(props.getClearLiveOnRemove());
         maxCharsSlider.setValue(props.getMaxChars());
@@ -381,6 +392,8 @@ public class OptionsGeneralPanel extends GridPane implements PropertyPanel {
         props.setClearLiveOnRemove(clearLive);
         boolean oneLineMode = getOneLineModeCheckBox().isSelected();
         props.setOneLineMode(oneLineMode);
+        boolean autoTranslate = getAutoTranslateCheckBox().isSelected();
+        props.setAutoTranslate(autoTranslate);
         //One line mode needs to be updated manually
         QueleaApp.get().getMainWindow().getMainPanel().getPreviewPanel().updateOneLineMode();
         QueleaApp.get().getMainWindow().getMainPanel().getLivePanel().updateOneLineMode();
@@ -459,6 +472,15 @@ public class OptionsGeneralPanel extends GridPane implements PropertyPanel {
      */
     public CheckBox getOneLineModeCheckBox() {
         return oneLineModeCheckBox;
+    }
+    
+    /**
+     * Get the "auto translate" checkbox.
+     * <p/>
+     * @return the "auto translate" checkbox.
+     */
+    public CheckBox getAutoTranslateCheckBox() {
+        return autoTranslateCheckBox;
     }
 
     /**
