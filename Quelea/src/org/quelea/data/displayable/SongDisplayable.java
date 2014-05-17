@@ -31,6 +31,7 @@ import java.io.Serializable;
 import java.text.Collator;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -95,7 +96,7 @@ public class SongDisplayable implements TextDisplayable, Comparable<SongDisplaya
          * @return this builder.
          */
         public Builder ccli(String ccli) {
-            if(ccli == null) {
+            if (ccli == null) {
                 ccli = "";
             }
             song.ccli = ccli;
@@ -109,7 +110,7 @@ public class SongDisplayable implements TextDisplayable, Comparable<SongDisplaya
          * @return this builder.
          */
         public Builder year(String year) {
-            if(year == null) {
+            if (year == null) {
                 year = "";
             }
             song.year = year;
@@ -123,7 +124,7 @@ public class SongDisplayable implements TextDisplayable, Comparable<SongDisplaya
          * @return this builder.
          */
         public Builder publisher(String publisher) {
-            if(publisher == null) {
+            if (publisher == null) {
                 publisher = "";
             }
             song.publisher = publisher;
@@ -137,10 +138,9 @@ public class SongDisplayable implements TextDisplayable, Comparable<SongDisplaya
          * @return this builder.
          */
         public Builder tags(String tags) {
-            if(tags == null) {
+            if (tags == null) {
                 song.tags = new String[0];
-            }
-            else {
+            } else {
                 song.tags = tags.split(";");
             }
             return this;
@@ -153,7 +153,7 @@ public class SongDisplayable implements TextDisplayable, Comparable<SongDisplaya
          * @return this builder.
          */
         public Builder tags(String[] tags) {
-            if(tags == null) {
+            if (tags == null) {
                 tags = new String[0];
             }
             song.tags = tags;
@@ -189,7 +189,7 @@ public class SongDisplayable implements TextDisplayable, Comparable<SongDisplaya
          * @return this builder.
          */
         public Builder copyright(String copyright) {
-            if(copyright == null) {
+            if (copyright == null) {
                 copyright = "";
             }
             song.copyright = copyright;
@@ -203,10 +203,15 @@ public class SongDisplayable implements TextDisplayable, Comparable<SongDisplaya
          * @return this builder.
          */
         public Builder key(String key) {
-            if(key == null) {
+            if (key == null) {
                 key = "";
             }
             song.key = key;
+            return this;
+        }
+
+        public Builder translations(HashMap<String, String> translations) {
+            song.translations = translations;
             return this;
         }
 
@@ -217,7 +222,7 @@ public class SongDisplayable implements TextDisplayable, Comparable<SongDisplaya
          * @return this builder.
          */
         public Builder capo(String capo) {
-            if(capo == null) {
+            if (capo == null) {
                 capo = "";
             }
             song.capo = capo;
@@ -231,7 +236,7 @@ public class SongDisplayable implements TextDisplayable, Comparable<SongDisplaya
          * @return this builder.
          */
         public Builder info(String info) {
-            if(info == null) {
+            if (info == null) {
                 info = "";
             }
             song.info = info;
@@ -261,6 +266,7 @@ public class SongDisplayable implements TextDisplayable, Comparable<SongDisplaya
     private boolean quickInsert;
     private String[] tags;
     private List<TextSection> sections = new ArrayList<>();
+    private HashMap<String, String> translations = new HashMap<>();
     private ThemeDTO theme;
     private long id = 0;
     private boolean printChords;
@@ -286,6 +292,7 @@ public class SongDisplayable implements TextDisplayable, Comparable<SongDisplaya
         this.tags = song.tags;
         this.capo = song.capo;
         this.lastSearch = song.lastSearch;
+        this.translations = song.translations;
     }
 
     /**
@@ -338,9 +345,9 @@ public class SongDisplayable implements TextDisplayable, Comparable<SongDisplaya
      * can't be done, leave it as -1.
      */
     public void matchID() {
-        if(id == -1) {
-            for(SongDisplayable song : SongManager.get().getSongs()) {
-                if(this.title.equals(song.title)) {
+        if (id == -1) {
+            for (SongDisplayable song : SongManager.get().getSongs()) {
+                if (this.title.equals(song.title)) {
                     id = song.getID();
                 }
             }
@@ -354,8 +361,8 @@ public class SongDisplayable implements TextDisplayable, Comparable<SongDisplaya
      */
     public boolean hasChords() {
         String[] lyrics = getLyrics(true, true).split("\n");
-        for(String line : lyrics) {
-            if(new LineTypeChecker(line).getLineType() == LineTypeChecker.Type.CHORDS) {
+        for (String line : lyrics) {
+            if (new LineTypeChecker(line).getLineType() == LineTypeChecker.Type.CHORDS) {
                 return true;
             }
         }
@@ -398,6 +405,10 @@ public class SongDisplayable implements TextDisplayable, Comparable<SongDisplaya
         this.title = title;
     }
 
+    public void setTranslations(HashMap<String, String> translations) {
+        this.translations = translations;
+    }
+    
     /**
      * Get the author of this song.
      * <p/>
@@ -459,13 +470,13 @@ public class SongDisplayable implements TextDisplayable, Comparable<SongDisplaya
      * @return the tags of this song.
      */
     public String getTagsAsString() {
-        if(tags == null) {
+        if (tags == null) {
             return "";
         }
         StringBuilder ret = new StringBuilder(tags.length * 5);
-        for(int i = 0; i < tags.length; i++) {
+        for (int i = 0; i < tags.length; i++) {
             ret.append(tags[i]);
-            if(i != tags.length - 1) {
+            if (i != tags.length - 1) {
                 ret.append("; ");
             }
         }
@@ -627,16 +638,24 @@ public class SongDisplayable implements TextDisplayable, Comparable<SongDisplaya
      */
     public String getLyrics(boolean chords, boolean comments) {
         StringBuilder ret = new StringBuilder();
-        for(TextSection section : sections) {
-            if(section.getTitle() != null && !section.getTitle().equals("")) {
+        for (TextSection section : sections) {
+            if (section.getTitle() != null && !section.getTitle().equals("")) {
                 ret.append(section.getTitle()).append("\n");
             }
-            for(String line : section.getText(chords, comments)) {
+            for (String line : section.getText(chords, comments)) {
                 ret.append(line).append("\n");
             }
             ret.append("\n");
         }
         return ret.toString().trim();
+    }
+
+    public void addTranslation(String translationName, String translationText) {
+        translations.put(translationName, translationText.trim());
+    }
+
+    public HashMap<String, String> getTranslations() {
+        return translations;
     }
 
     /**
@@ -650,21 +669,21 @@ public class SongDisplayable implements TextDisplayable, Comparable<SongDisplaya
         sections.clear();
         boolean foundTitle = !(title == null || title.isEmpty());
         lyrics = lyrics.replaceAll("\n\n+", "\n\n");
-        for(String section : lyrics.split("\n\n")) {
+        for (String section : lyrics.split("\n\n")) {
             String[] sectionLines = section.split("\n");
             String[] newLyrics = section.split("\n");
             String sectionTitle = "";
-            if(sectionLines.length == 0) {
+            if (sectionLines.length == 0) {
                 continue;
             }
-            if(new LineTypeChecker(sectionLines[0]).getLineType() == LineTypeChecker.Type.TITLE) {
+            if (new LineTypeChecker(sectionLines[0]).getLineType() == LineTypeChecker.Type.TITLE) {
                 sectionTitle = sectionLines[0];
                 newLyrics = new String[sectionLines.length - 1];
                 System.arraycopy(sectionLines, 1, newLyrics, 0, newLyrics.length);
             }
-            if(!foundTitle) {
-                for(String line : sectionLines) {
-                    if(new LineTypeChecker(line).getLineType() == LineTypeChecker.Type.NORMAL) {
+            if (!foundTitle) {
+                for (String line : sectionLines) {
+                    if (new LineTypeChecker(line).getLineType() == LineTypeChecker.Type.NORMAL) {
                         title = line;
                         foundTitle = true;
                         break;
@@ -685,7 +704,7 @@ public class SongDisplayable implements TextDisplayable, Comparable<SongDisplaya
      * @param section the section to add.
      */
     public void addSection(TextSection section) {
-        if(section.getTheme() == null) {
+        if (section.getTheme() == null) {
             section.setTheme(theme);
         }
         sections.add(section);
@@ -698,7 +717,7 @@ public class SongDisplayable implements TextDisplayable, Comparable<SongDisplaya
      * @param section the section to add.
      */
     public void addSection(int index, TextSection section) {
-        if(section.getTheme() == null) {
+        if (section.getTheme() == null) {
             section.setTheme(theme);
         }
         sections.add(index, section);
@@ -710,7 +729,7 @@ public class SongDisplayable implements TextDisplayable, Comparable<SongDisplaya
      * @param sections the sections to add.
      */
     public void addSections(TextSection[] sections) {
-        for(TextSection section : sections) {
+        for (TextSection section : sections) {
             addSection(section);
         }
     }
@@ -796,7 +815,7 @@ public class SongDisplayable implements TextDisplayable, Comparable<SongDisplaya
         xml.append(Utils.escapeXML(author));
         xml.append("</author>");
         xml.append("<lyrics>");
-        for(TextSection section : sections) {
+        for (TextSection section : sections) {
             xml.append(section.getXML());
         }
         xml.append("</lyrics>");
@@ -817,8 +836,7 @@ public class SongDisplayable implements TextDisplayable, Comparable<SongDisplaya
             DocumentBuilder builder = factory.newDocumentBuilder();
             Document doc = builder.parse(inputStream);
             return parseXML(doc.getFirstChild());
-        }
-        catch(ParserConfigurationException | SAXException | IOException ex) {
+        } catch (ParserConfigurationException | SAXException | IOException ex) {
             return null;
         }
     }
@@ -835,8 +853,7 @@ public class SongDisplayable implements TextDisplayable, Comparable<SongDisplaya
             DocumentBuilder builder = factory.newDocumentBuilder();
             Document doc = builder.parse(inputStream);
             return parseXML(doc.getChildNodes().item(0));
-        }
-        catch(ParserConfigurationException | SAXException | IOException ex) {
+        } catch (ParserConfigurationException | SAXException | IOException ex) {
             LOGGER.log(Level.INFO, "Couldn't parse the schedule", ex);
             return null;
         }
@@ -853,19 +870,19 @@ public class SongDisplayable implements TextDisplayable, Comparable<SongDisplaya
         String title = "";
         String author = "";
         List<TextSection> songSections = new ArrayList<>();
-        for(int i = 0; i < list.getLength(); i++) {
+        for (int i = 0; i < list.getLength(); i++) {
             Node node = list.item(i);
-            if(node.getNodeName().equals("title")) {
+            if (node.getNodeName().equals("title")) {
                 title = node.getTextContent();
             }
-            if(node.getNodeName().equals("author")) {
+            if (node.getNodeName().equals("author")) {
                 author = node.getTextContent();
             }
-            if(node.getNodeName().equals("lyrics")) {
+            if (node.getNodeName().equals("lyrics")) {
                 NodeList sections = node.getChildNodes();
-                for(int j = 0; j < sections.getLength(); j++) {
+                for (int j = 0; j < sections.getLength(); j++) {
                     Node sectionNode = sections.item(j);
-                    if(sectionNode.getNodeName().equals("section")) {
+                    if (sectionNode.getNodeName().equals("section")) {
                         songSections.add(TextSection.parseXML(sectionNode));
                     }
                 }
@@ -874,7 +891,7 @@ public class SongDisplayable implements TextDisplayable, Comparable<SongDisplaya
         SongDisplayable ret = new SongDisplayable(title, author,
                 new ThemeDTO(ThemeDTO.DEFAULT_FONT, ThemeDTO.DEFAULT_FONT_COLOR,
                         ThemeDTO.DEFAULT_BACKGROUND, ThemeDTO.DEFAULT_SHADOW, false, false, -1, 0));
-        for(TextSection section : songSections) {
+        for (TextSection section : songSections) {
             ret.addSection(section);
         }
         return ret;
@@ -903,23 +920,23 @@ public class SongDisplayable implements TextDisplayable, Comparable<SongDisplaya
      */
     @Override
     public boolean equals(Object obj) {
-        if(obj == null) {
+        if (obj == null) {
             return false;
         }
-        if(!(obj instanceof SongDisplayable)) {
+        if (!(obj instanceof SongDisplayable)) {
             return false;
         }
         final SongDisplayable other = (SongDisplayable) obj;
-        if((this.title == null) ? (other.title != null) : !this.title.equals(other.title)) {
+        if ((this.title == null) ? (other.title != null) : !this.title.equals(other.title)) {
             return false;
         }
-        if((this.author == null) ? (other.author != null) : !this.author.equals(other.author)) {
+        if ((this.author == null) ? (other.author != null) : !this.author.equals(other.author)) {
             return false;
         }
-        if(this.sections != other.sections && (this.sections == null || !this.sections.equals(other.sections))) {
+        if (this.sections != other.sections && (this.sections == null || !this.sections.equals(other.sections))) {
             return false;
         }
-        if(this.theme != other.theme && (this.theme == null || !this.theme.equals(other.theme))) {
+        if (this.theme != other.theme && (this.theme == null || !this.theme.equals(other.theme))) {
             return false;
         }
         return true;
@@ -936,11 +953,11 @@ public class SongDisplayable implements TextDisplayable, Comparable<SongDisplaya
     public int compareTo(SongDisplayable other) {
         Collator collator = Collator.getInstance();
         int result = collator.compare(getTitle(), other.getTitle());
-        if(result == 0) {
-            if(getAuthor() != null && other.getAuthor() != null) {
+        if (result == 0) {
+            if (getAuthor() != null && other.getAuthor() != null) {
                 result = collator.compare(getAuthor(), other.getAuthor());
             }
-            if(result == 0 && getLyrics(false, false) != null && other.getLyrics(false, false) != null) {
+            if (result == 0 && getLyrics(false, false) != null && other.getLyrics(false, false) != null) {
                 result = collator.compare(getLyrics(false, false), other.getLyrics(false, false));
             }
         }
@@ -964,10 +981,9 @@ public class SongDisplayable implements TextDisplayable, Comparable<SongDisplaya
      */
     @Override
     public ImageView getPreviewIcon() {
-        if(hasChords()) {
+        if (hasChords()) {
             return new ImageView(new Image("file:icons/lyricsandchords.png"));
-        }
-        else {
+        } else {
             return new ImageView(new Image("file:icons/lyrics.png"));
         }
     }
@@ -997,9 +1013,9 @@ public class SongDisplayable implements TextDisplayable, Comparable<SongDisplaya
     @Override
     public Collection<File> getResources() {
         Set<File> ret = new HashSet<>();
-        for(TextSection section : getSections()) {
+        for (TextSection section : getSections()) {
             ThemeDTO sectionTheme = section.getTheme();
-            if(sectionTheme != null) {
+            if (sectionTheme != null) {
                 Background background = sectionTheme.getBackground();
                 ret.addAll(background.getResources());
             }
@@ -1031,11 +1047,10 @@ public class SongDisplayable implements TextDisplayable, Comparable<SongDisplaya
     @Override
     public int print(Graphics graphics, PageFormat pageFormat, int pageIndex) throws PrinterException {
 
-        if(pageIndex == 0) {
+        if (pageIndex == 0) {
             nextSection.clear();
             nextSection.add(0);
-        }
-        else if(nextSection.get(pageIndex) >= getSections().length) {
+        } else if (nextSection.get(pageIndex) >= getSections().length) {
             return NO_SUCH_PAGE;
         }
 
@@ -1046,23 +1061,23 @@ public class SongDisplayable implements TextDisplayable, Comparable<SongDisplaya
 
         int pos = miny;
 
-        if(pageIndex == 0) {
+        if (pageIndex == 0) {
             int fontSize = 38;
             int width;
             do {
                 fontSize -= 2;
                 graphics.setFont(new Font("SansSerif", Font.BOLD, fontSize));
                 width = graphics.getFontMetrics().stringWidth(getTitle().toUpperCase());
-            } while(width > maxx - minx);
+            } while (width > maxx - minx);
 
             graphics.drawString(getTitle().toUpperCase(), minx, miny + graphics.getFontMetrics().getHeight());
             pos += graphics.getFontMetrics().getHeight() + graphics.getFontMetrics().getDescent();
 
-            if(!getAuthor().isEmpty() || (printChords && !getCapo().isEmpty())) {
+            if (!getAuthor().isEmpty() || (printChords && !getCapo().isEmpty())) {
                 graphics.setFont(new Font("SansSerif", Font.ITALIC, 20));
                 pos += graphics.getFontMetrics().getHeight();
                 graphics.drawString(getAuthor(), minx, pos);
-                if(printChords && !getCapo().isEmpty()) {
+                if (printChords && !getCapo().isEmpty()) {
                     String capoStr = "Capo " + getCapo();
                     int capoStrWidth = graphics.getFontMetrics().stringWidth(capoStr);
                     graphics.drawString(capoStr, maxx - capoStrWidth, pos);
@@ -1075,20 +1090,20 @@ public class SongDisplayable implements TextDisplayable, Comparable<SongDisplaya
 
         pos += 30;
 
-        for(int i = nextSection.get(pageIndex); i < getSections().length; i++) {
+        for (int i = nextSection.get(pageIndex); i < getSections().length; i++) {
             TextSection section = getSections()[i];
             int height = graphics.getFontMetrics().getHeight() * section.getText(printChords, false).length;
-            if(pos + height > maxy - miny) {
-                if(nextSection.size() <= pageIndex + 1) {
+            if (pos + height > maxy - miny) {
+                if (nextSection.size() <= pageIndex + 1) {
                     nextSection.add(0);
                 }
                 nextSection.set(pageIndex + 1, i);
                 return PAGE_EXISTS;
             }
-            for(String str : section.getText(true, false)) {
-                switch(new LineTypeChecker(str).getLineType()) {
+            for (String str : section.getText(true, false)) {
+                switch (new LineTypeChecker(str).getLineType()) {
                     case CHORDS:
-                        if(!printChords) {
+                        if (!printChords) {
                             continue;
                         }
                         graphics.setFont(new Font("SansSerif", Font.BOLD, 16));
@@ -1104,7 +1119,7 @@ public class SongDisplayable implements TextDisplayable, Comparable<SongDisplaya
             }
             pos += 30;
         }
-        if(nextSection.size() <= pageIndex + 1) {
+        if (nextSection.size() <= pageIndex + 1) {
             nextSection.add(0);
         }
         nextSection.set(pageIndex + 1, getSections().length);

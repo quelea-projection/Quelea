@@ -16,6 +16,7 @@
  */
 package org.quelea.windows.newsong;
 
+import java.util.HashMap;
 import java.util.logging.Logger;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -32,7 +33,9 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
+import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import org.javafx.dialog.Dialog;
 import org.quelea.data.chord.ChordLineTransposer;
@@ -47,6 +50,7 @@ import org.quelea.services.utils.LineTypeChecker;
 import org.quelea.services.utils.LoggerUtils;
 import org.quelea.services.utils.QueleaProperties;
 import org.quelea.services.utils.Utils;
+import org.quelea.windows.lyrics.TranslateDialog;
 import org.quelea.windows.main.QueleaApp;
 
 /**
@@ -64,6 +68,7 @@ public class BasicSongPanel extends BorderPane {
     private final Button transposeButton;
     private final ComboBox<Dictionary> dictSelector;
     private final TransposeDialog transposeDialog;
+    private final TranslateDialog translateDialog;
     private String saveHash = "";
 
     /**
@@ -72,6 +77,7 @@ public class BasicSongPanel extends BorderPane {
     public BasicSongPanel() {
         final VBox centrePanel = new VBox();
         transposeDialog = new TransposeDialog();
+        translateDialog = new TranslateDialog();
         GridPane topPanel = new GridPane();
 
         titleField = new TextField();
@@ -103,10 +109,13 @@ public class BasicSongPanel extends BorderPane {
         transposeButton = getTransposeButton();
         lyricsToolbar.getItems().add(transposeButton);
         lyricsToolbar.getItems().add(new Separator());
-        lyricsToolbar.getItems().add(getDictButton());
+        lyricsToolbar.getItems().add(getTranslationButton());
+        Region spacer = new Region();
+        HBox.setHgrow(spacer, Priority.ALWAYS);
+        lyricsToolbar.getItems().add(spacer);
         dictSelector = new ComboBox<>();
         Tooltip.install(dictSelector, new Tooltip(LabelGrabber.INSTANCE.getLabel("dictionary.language.text")));
-        for(Dictionary dict : DictionaryManager.INSTANCE.getDictionaries()) {
+        for (Dictionary dict : DictionaryManager.INSTANCE.getDictionaries()) {
             dictSelector.getItems().add(dict);
         }
         dictSelector.selectionModelProperty().get().selectedItemProperty().addListener(new ChangeListener<Dictionary>() {
@@ -119,6 +128,7 @@ public class BasicSongPanel extends BorderPane {
 
         dictSelector.getSelectionModel().select(QueleaProperties.get().getDictionary());
         lyricsToolbar.getItems().add(dictSelector);
+        lyricsToolbar.getItems().add(getDictButton());
         VBox.setVgrow(mainPanel, Priority.ALWAYS);
         mainPanel.getChildren().add(lyricsToolbar);
         VBox.setVgrow(lyricsArea, Priority.ALWAYS);
@@ -219,7 +229,7 @@ public class BasicSongPanel extends BorderPane {
             @Override
             public void handle(javafx.event.ActionEvent t) {
                 String originalKey = getKey(0);
-                if(originalKey == null) {
+                if (originalKey == null) {
                     Dialog.showInfo(LabelGrabber.INSTANCE.getLabel("no.chords.title"), LabelGrabber.INSTANCE.getLabel("no.chords.message"));
                     return;
                 }
@@ -228,18 +238,17 @@ public class BasicSongPanel extends BorderPane {
                 int semitones = transposeDialog.getSemitones();
 
                 TextField keyField = QueleaApp.get().getMainWindow().getSongEntryWindow().getDetailedSongPanel().getKeyField();
-                if(!keyField.getText().isEmpty()) {
+                if (!keyField.getText().isEmpty()) {
                     keyField.setText(new ChordTransposer(keyField.getText()).transpose(semitones, null));
                 }
 
                 String key = getKey(semitones);
 
                 StringBuilder newText = new StringBuilder(getLyricsField().getText().length());
-                for(String line : getLyricsField().getText().split("\n")) {
-                    if(new LineTypeChecker(line).getLineType() == LineTypeChecker.Type.CHORDS) {
+                for (String line : getLyricsField().getText().split("\n")) {
+                    if (new LineTypeChecker(line).getLineType() == LineTypeChecker.Type.CHORDS) {
                         newText.append(new ChordLineTransposer(line).transpose(semitones, key));
-                    }
-                    else {
+                    } else {
                         newText.append(line);
                     }
                     newText.append('\n');
@@ -263,23 +272,22 @@ public class BasicSongPanel extends BorderPane {
     private String getKey(int semitones) {
         TextField keyField = QueleaApp.get().getMainWindow().getSongEntryWindow().getDetailedSongPanel().getKeyField();
         String key = keyField.getText();
-        if(key == null || key.isEmpty()) {
-            for(String line : getLyricsField().getText().split("\n")) {
-                if(new LineTypeChecker(line).getLineType() == LineTypeChecker.Type.CHORDS) {
+        if (key == null || key.isEmpty()) {
+            for (String line : getLyricsField().getText().split("\n")) {
+                if (new LineTypeChecker(line).getLineType() == LineTypeChecker.Type.CHORDS) {
                     String first;
                     int i = 0;
                     do {
                         first = line.split("\\s+")[i++];
-                    } while(first.isEmpty());
+                    } while (first.isEmpty());
                     key = new ChordTransposer(first).transpose(semitones, null);
-                    if(key.length() > 2) {
+                    if (key.length() > 2) {
                         key = key.substring(0, 2);
                     }
-                    if(key.length() == 2) {
-                        if(key.charAt(1) == 'B') {
+                    if (key.length() == 2) {
+                        if (key.charAt(1) == 'B') {
                             key = Character.toString(key.charAt(0)) + "b";
-                        }
-                        else if(key.charAt(1) != 'b' && key.charAt(1) != '#') {
+                        } else if (key.charAt(1) != 'b' && key.charAt(1) != '#') {
                             key = Character.toString(key.charAt(0));
                         }
                     }
@@ -288,7 +296,7 @@ public class BasicSongPanel extends BorderPane {
             }
         }
 
-        if(key == null || key.isEmpty()) {
+        if (key == null || key.isEmpty()) {
             key = null;
         }
         return key;
@@ -354,6 +362,24 @@ public class BasicSongPanel extends BorderPane {
     }
 
     /**
+     * Get the translation button that shows the translation dialog.
+     * @return the translation button.
+     */
+    private Button getTranslationButton() {
+        Button button = new Button("", new ImageView(new Image("file:icons/translate.png", 24, 24, true, true)));
+        button.setTooltip(new Tooltip(LabelGrabber.INSTANCE.getLabel("translate.tooltip")));
+        button.setOnAction(new EventHandler<javafx.event.ActionEvent>() {
+            @Override
+            public void handle(javafx.event.ActionEvent t) {
+                translateDialog.setDefaultLyrics(getLyricsField().getText());
+                translateDialog.showAndWait();
+            }
+        });
+        Utils.setToolbarButtonStyle(button);
+        return button;
+    }
+
+    /**
      * Reset this panel so new song data can be entered.
      */
     public void resetNewSong() {
@@ -361,6 +387,7 @@ public class BasicSongPanel extends BorderPane {
         getAuthorField().clear();
         getLyricsField().setText("");
         getTitleField().requestFocus();
+        translateDialog.clearSong();
     }
 
     /**
@@ -373,6 +400,17 @@ public class BasicSongPanel extends BorderPane {
         getAuthorField().setText(song.getAuthor());
         getLyricsField().setText(song.getLyrics(true, true));
         getLyricsField().requestFocus();
+        translateDialog.setSong(song);
+    }
+
+    /**
+     * Get the translations from the translate dialog associated with this basic
+     * song panel.
+     *
+     * @return the translation map.
+     */
+    public HashMap<String, String> getTranslations() {
+        return translateDialog.getTranslations();
     }
 
     /**
