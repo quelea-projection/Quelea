@@ -428,3 +428,6 @@ default.translation.label=Default translation
 overwrite.lyrics.title=Overwrite existing lyrics?
 overwrite.lyrics.text=We've translated lyrics automatically for you - do you want to use them?\nYour current translation will be overwritten.
 auto.translate.label=Attempt to auto-translate songs
+choose.translations.text=Choose translations
+select.translation.label=Select the translation that you'd like to\nshow in addition to the default lyrics:
+none.text=None

@@ -184,7 +184,7 @@ public class ThemePanel extends BorderPane {
                 LyricDrawer drawer = new LyricDrawer();
                 drawer.setCanvas(preview.getCanvas());
                 drawer.setTheme(theme);
-                drawer.setText(text, null, false, -1);
+                drawer.setText(text, null, null, false, -1);
             }
         });
     }
