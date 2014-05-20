@@ -22,7 +22,6 @@ import java.io.UnsupportedEncodingException;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -34,6 +33,7 @@ import org.quelea.services.utils.Utils;
 
 /**
  * Represents a section of text in a song or passage.
+ *
  * @author Michael
  */
 public class TextSection implements Serializable {
@@ -47,39 +47,27 @@ public class TextSection implements Serializable {
 
     /**
      * Create a new text section with the specified title and lyrics.
+     *
      * @param title the title of the section.
      * @param lines the lines of the section, one line per array entry.
-     * @param smallLines the lines to be displayed in the bottom left of the 
+     * @param smallLines the lines to be displayed in the bottom left of the
      * canvas for this text section
-     * @param capitaliseFirst true if the first character of each line should 
-     * be a capital, false otherwise.
+     * @param capitaliseFirst true if the first character of each line should be
+     * a capital, false otherwise.
      */
     public TextSection(String title, String[] lines, String[] smallLines, boolean capitaliseFirst) {
-        this(title, lines, smallLines, capitaliseFirst, null);
-    }
-    
-    /**
-     * Create a new song section with the specified title and lyrics.
-     * @param title the title of the section.
-     * @param lines the lines of the section, one line per array entry.
-     * @param smallLines the lines to be displayed in the bottom left of the 
-     * canvas for this text section
-     * @param capitaliseFirst true if the first character of each line should 
-     * be a capital, false otherwise.
-     * @param theme the theme of this song section.
-     */
-    public TextSection(String title, String[] lines, String[] smallLines, boolean capitaliseFirst, ThemeDTO theme) {
-        this(title, lines, smallLines, capitaliseFirst, theme, null);
+        this(title, lines, smallLines, capitaliseFirst, null, null);
     }
 
     /**
      * Create a new song section with the specified title and lyrics.
+     *
      * @param title the title of the section.
      * @param lines the lines of the section, one line per array entry.
-     * @param smallLines the lines to be displayed in the bottom left of the 
+     * @param smallLines the lines to be displayed in the bottom left of the
      * canvas for this text section
-     * @param capitaliseFirst true if the first character of each line should 
-     * be a capital, false otherwise.
+     * @param capitaliseFirst true if the first character of each line should be
+     * a capital, false otherwise.
      * @param theme the theme of this song section.
      * @param tempTheme the tempTheme of this song section.
      */
@@ -87,7 +75,7 @@ public class TextSection implements Serializable {
         this.capitaliseFirst = capitaliseFirst;
         this.title = title;
         this.lines = Arrays.copyOf(lines, lines.length);
-        if(smallLines==null) { //Guard against NPE
+        if (smallLines == null) { //Guard against NPE
             smallLines = new String[0];
         }
         this.smallLines = Arrays.copyOf(smallLines, smallLines.length);
@@ -97,6 +85,7 @@ public class TextSection implements Serializable {
 
     /**
      * Get a representation of this section in XML format.
+     *
      * @return the section in XML format.
      */
     public String getXML() {
@@ -132,6 +121,7 @@ public class TextSection implements Serializable {
 
     /**
      * Parse the given node to create a new song section.
+     *
      * @param sectionNode the section node.
      * @return the song section.
      */
@@ -156,34 +146,34 @@ public class TextSection implements Serializable {
         NodeList nodelist = sectionNode.getChildNodes();
         for (int i = 0; i < nodelist.getLength(); i++) {
             //try {
-                Node node = nodelist.item(i);
-                switch (node.getNodeName()) {
-                    case "theme":
-                        theme = ThemeDTO.fromString(node.getTextContent());
-                        break;
-                    case "lyrics":
-                        //String[] rawLyrics = new String(node.getTextContent().getBytes(), "UTF-8").split("\n");
-                        String[] rawLyrics = node.getTextContent().split("\n");
-                        List<String> newLyrics = new ArrayList<>();
-                        for (String line : rawLyrics) {
-                            if (!line.isEmpty()) {
-                                newLyrics.add(line);
-                            }
+            Node node = nodelist.item(i);
+            switch (node.getNodeName()) {
+                case "theme":
+                    theme = ThemeDTO.fromString(node.getTextContent());
+                    break;
+                case "lyrics":
+                    //String[] rawLyrics = new String(node.getTextContent().getBytes(), "UTF-8").split("\n");
+                    String[] rawLyrics = node.getTextContent().split("\n");
+                    List<String> newLyrics = new ArrayList<>();
+                    for (String line : rawLyrics) {
+                        if (!line.isEmpty()) {
+                            newLyrics.add(line);
                         }
-                        lyrics = newLyrics.toArray(new String[newLyrics.size()]);
-                        break;
-                    case "smalllines":
-                        //String[] rawSmallLines = new String(node.getTextContent().getBytes(), "UTF-8").split("\n");
-                        String[] rawSmallLines = node.getTextContent().split("\n");
-                        List<String> newSmallLines = new ArrayList<>();
-                        for (String line : rawSmallLines) {
-                            if (!line.isEmpty()) {
-                                newSmallLines.add(line);
-                            }
+                    }
+                    lyrics = newLyrics.toArray(new String[newLyrics.size()]);
+                    break;
+                case "smalllines":
+                    //String[] rawSmallLines = new String(node.getTextContent().getBytes(), "UTF-8").split("\n");
+                    String[] rawSmallLines = node.getTextContent().split("\n");
+                    List<String> newSmallLines = new ArrayList<>();
+                    for (String line : rawSmallLines) {
+                        if (!line.isEmpty()) {
+                            newSmallLines.add(line);
                         }
-                        smallLines = newSmallLines.toArray(new String[newSmallLines.size()]);
-                        break;
-                }
+                    }
+                    smallLines = newSmallLines.toArray(new String[newSmallLines.size()]);
+                    break;
+            }
             //} catch (UnsupportedEncodingException ex) {
             //    Logger.getLogger(TextSection.class.getName()).log(Level.SEVERE, null, ex);
             //}
@@ -197,6 +187,7 @@ public class TextSection implements Serializable {
 
     /**
      * Get the title of the section.
+     *
      * @return the title of the section.
      */
     public String getTitle() {
@@ -205,7 +196,8 @@ public class TextSection implements Serializable {
 
     /**
      * Get the lyrics of the section.
-     * @param chords true if any chords should be included in the text (if 
+     *
+     * @param chords true if any chords should be included in the text (if
      * present), false otherwise.
      * @param comments true if any comments should be included, false otherwise.
      * @return the lyrics of the section.
@@ -216,17 +208,14 @@ public class TextSection implements Serializable {
             if (chords) {
                 if (comments) {
                     ret.add(str);
-                }
-                else {
+                } else {
                     ret.add(removeComments(str));
                 }
-            }
-            else {
+            } else {
                 if (new LineTypeChecker(str).getLineType() != LineTypeChecker.Type.CHORDS) {
                     if (comments) {
                         ret.add(str);
-                    }
-                    else {
+                    } else {
                         ret.add(removeComments(str));
                     }
                 }
@@ -237,6 +226,7 @@ public class TextSection implements Serializable {
 
     /**
      * Remove comments from a string.
+     *
      * @param line the line to remove comments from.
      * @return the string without comments.
      */
@@ -253,25 +243,27 @@ public class TextSection implements Serializable {
         }
         return line;
     }
-    
+
     /**
      * Trim whitespace from the end of the string (but not the start.)
+     *
      * @param str the string to trim.
      * @return the trimmed string.
      */
     private String trimFromEnd(String str) {
         int pos = 0;
-        for(int i=str.length()-1 ; i>=0 ; i--) {
-            if(str.charAt(i)!=' ') {
-                pos = i+1;
+        for (int i = str.length() - 1; i >= 0; i--) {
+            if (str.charAt(i) != ' ') {
+                pos = i + 1;
                 break;
             }
         }
-        return str.substring(0,pos);
+        return str.substring(0, pos);
     }
 
     /**
      * Get the small text of the section.
+     *
      * @return the small text of the section.
      */
     public String[] getSmallText() {
@@ -280,6 +272,7 @@ public class TextSection implements Serializable {
 
     /**
      * Get the theme of the section.
+     *
      * @return the theme of the section.
      */
     public ThemeDTO getTheme() {
@@ -288,8 +281,8 @@ public class TextSection implements Serializable {
 
     /**
      * Get the temporary theme of the section.
-     * @return the temporary theme of the section, or null if none has been
-     * set.
+     *
+     * @return the temporary theme of the section, or null if none has been set.
      */
     public ThemeDTO getTempTheme() {
         return tempTheme;
@@ -297,6 +290,7 @@ public class TextSection implements Serializable {
 
     /**
      * Set the temporary theme of the section.
+     *
      * @param tempTheme the temporary theme.
      */
     public void setTempTheme(ThemeDTO tempTheme) {
@@ -305,6 +299,7 @@ public class TextSection implements Serializable {
 
     /**
      * Set the theme of the section.
+     *
      * @param theme the new theme.
      */
     public void setTheme(ThemeDTO theme) {
@@ -313,6 +308,7 @@ public class TextSection implements Serializable {
 
     /**
      * Determine if this text section is equal to another object.
+     *
      * @param obj the other object
      * @return true if it's equal, false otherwise.
      */
@@ -333,6 +329,7 @@ public class TextSection implements Serializable {
 
     /**
      * Generate a hashcode of this text section.
+     *
      * @return the hashcode.
      */
     @Override
@@ -344,6 +341,7 @@ public class TextSection implements Serializable {
 
     /**
      * Get a string representation of this song section.
+     *
      * @return a string representation.
      */
     @Override
@@ -357,8 +355,11 @@ public class TextSection implements Serializable {
     }
 
     /**
-     * Determine whether the first word of each line should be a capital (if Quelea allows it.)
-     * @return whether this text section should capitalise the beginning of every line.
+     * Determine whether the first word of each line should be a capital (if
+     * Quelea allows it.)
+     *
+     * @return whether this text section should capitalise the beginning of
+     * every line.
      */
     public boolean shouldCapitaliseFirst() {
         return capitaliseFirst;
