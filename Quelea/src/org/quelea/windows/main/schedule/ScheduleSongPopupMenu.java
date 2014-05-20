@@ -25,26 +25,40 @@ import org.quelea.services.languages.LabelGrabber;
 
 /**
  * The popup menu that displays when a song in the schedule is right-clicked.
+ *
  * @author Michael
  */
 public class ScheduleSongPopupMenu extends ContextMenu {
 
     private final MenuItem editSong;
+    private final MenuItem translationChoice;
 
     /**
      * Create a new schedule popup menu
      */
     public ScheduleSongPopupMenu() {
         editSong = new MenuItem(LabelGrabber.INSTANCE.getLabel("edit.song.text"), new ImageView(new Image("file:icons/edit.png", 16, 16, false, true)));
+        translationChoice = new MenuItem(LabelGrabber.INSTANCE.getLabel("choose.translations.text"));
         getItems().add(editSong);
+        getItems().add(translationChoice);
     }
 
     /**
      * Get the edit song button.
+     *
      * @return the edit song button.
      */
     public MenuItem getEditSongButton() {
         return editSong;
+    }
+
+    /**
+     * Get the translation choice button.
+     *
+     * @return the translation choice button.
+     */
+    public MenuItem getTranslationChoice() {
+        return translationChoice;
     }
 
 }

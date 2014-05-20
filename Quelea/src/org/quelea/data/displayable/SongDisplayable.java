@@ -267,6 +267,7 @@ public class SongDisplayable implements TextDisplayable, Comparable<SongDisplaya
     private String[] tags;
     private List<TextSection> sections = new ArrayList<>();
     private HashMap<String, String> translations = new HashMap<>();
+    private String currentTranslation;
     private ThemeDTO theme;
     private long id = 0;
     private boolean printChords;
@@ -341,6 +342,71 @@ public class SongDisplayable implements TextDisplayable, Comparable<SongDisplaya
     }
 
     /**
+     * Get the current translation lyrics that should be displayed for this song
+     * and section, or null if none should be displayed.
+     *
+     * @param index the index of the section.
+     * @return the current translation that should be displayed for this song
+     * and section.
+     */
+    public String getCurrentTranslationSection(int index) {
+        if (translations == null) {
+            return null;
+        }
+        String val = translations.get(currentTranslation);
+        if (val == null) {
+            return null;
+        }
+        String[] parts = val.split("\n\n");
+        if (parts.length > index) {
+            return parts[index].trim();
+        }
+        return null;
+    }
+
+    /**
+     * Set the translation that should be displayed alongside the default
+     * lyrics. It should match a key in the translations map.
+     *
+     * @param currentTranslation the translation that should be displayed
+     * alongside the default lyrics.
+     */
+    public void setCurrentTranslationLyrics(String currentTranslation) {
+        this.currentTranslation = currentTranslation;
+    }
+
+    /**
+     * Get the full translation lyrics for this song, or null if no translation
+     * is selected.
+     *
+     * @return the full translation lyrics for this song, or null if no
+     * translation is selected.
+     */
+    public String getCurrentTranslationLyrics() {
+        if (translations == null) {
+            return null;
+        }
+        String val = translations.get(currentTranslation);
+        if (val == null) {
+            return null;
+        }
+        return val;
+    }
+
+    /**
+     * Get the name of the current translation in use, or null if none exists.
+     *
+     * @return the name of the current translation in use, or null if none
+     * exists.
+     */
+    public String getCurrentTranslationName() {
+        if (getCurrentTranslationLyrics() != null) {
+            return currentTranslation;
+        }
+        return null;
+    }
+
+    /**
      * Try and give this song an ID based on the ID in the database. If this
      * can't be done, leave it as -1.
      */
@@ -408,7 +474,7 @@ public class SongDisplayable implements TextDisplayable, Comparable<SongDisplaya
     public void setTranslations(HashMap<String, String> translations) {
         this.translations = translations;
     }
-    
+
     /**
      * Get the author of this song.
      * <p/>

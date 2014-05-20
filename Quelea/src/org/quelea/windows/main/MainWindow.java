@@ -23,7 +23,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.event.EventHandler;
 import javafx.scene.Scene;
-import javafx.scene.image.Image;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
@@ -37,6 +36,8 @@ import org.quelea.services.utils.LoggerUtils;
 import org.quelea.services.utils.QueleaProperties;
 import org.quelea.services.utils.SceneInfo;
 import org.quelea.services.utils.Utils;
+import org.quelea.windows.lyrics.TranslationChoiceDialog;
+import org.quelea.windows.main.actionhandlers.SelectTranslationsActionHandler;
 import org.quelea.windows.main.menus.MainMenuBar;
 import org.quelea.windows.main.toolbars.MainToolbar;
 import org.quelea.windows.newsong.SongEntryWindow;
@@ -52,6 +53,7 @@ public class MainWindow extends Stage {
     private static final Logger LOGGER = LoggerUtils.getLogger();
     private final MainPanel mainpanel;
     private SongEntryWindow songEntryWindow;
+    private TranslationChoiceDialog translationChoiceDialog;
     private NoticeDialog noticeDialog;
     private final MainMenuBar menuBar;
     private final MainToolbar mainToolbar;
@@ -75,7 +77,7 @@ public class MainWindow extends Stage {
         noticeDialog = new NoticeDialog();
 
         LOGGER.log(Level.INFO, "Creating main window");
-        if(setApplicationWindow) {
+        if (setApplicationWindow) {
             QueleaApp.get().setMainWindow(this);
         }
         setOnCloseRequest(new EventHandler<javafx.stage.WindowEvent>() {
@@ -98,7 +100,9 @@ public class MainWindow extends Stage {
 
         mainpanel = new MainPanel();
         songEntryWindow = new SongEntryWindow();
+        translationChoiceDialog = new TranslationChoiceDialog();
         mainpanel.getSchedulePanel().getScheduleList().getPopupMenu().getEditSongButton().setOnAction(new EditSongScheduleActionHandler());
+        mainpanel.getSchedulePanel().getScheduleList().getPopupMenu().getTranslationChoice().setOnAction(new SelectTranslationsActionHandler());
 
         menuBar = new MainMenuBar();
 
@@ -107,7 +111,7 @@ public class MainWindow extends Stage {
         HBox.setHgrow(mainToolbar, Priority.ALWAYS);
         toolbarPanel.getChildren().add(mainToolbar);
 
-        if(Utils.isMac()) {
+        if (Utils.isMac()) {
             menuBar.setUseSystemMenuBar(true);
         }
 
@@ -120,7 +124,7 @@ public class MainWindow extends Stage {
         mainPane.setCenter(mainpanel);
         setScene(new Scene(menuBox));
         SceneInfo sceneInfo = QueleaProperties.get().getSceneInfo();
-        if(sceneInfo != null && !Utils.isOffscreen(sceneInfo)) { //Shouldn't be null unless something goes wrong, but guard against it anyway
+        if (sceneInfo != null && !Utils.isOffscreen(sceneInfo)) { //Shouldn't be null unless something goes wrong, but guard against it anyway
             setWidth(sceneInfo.getWidth());
             setHeight(sceneInfo.getHeight());
             setX(sceneInfo.getX());
@@ -200,4 +204,14 @@ public class MainWindow extends Stage {
     public SongEntryWindow getSongEntryWindow() {
         return songEntryWindow;
     }
+
+    /**
+     * Get the translation choice dialog for this window.
+     *
+     * @return the translation choice dialog for this window.
+     */
+    public TranslationChoiceDialog getTranslationChoiceDialog() {
+        return translationChoiceDialog;
+    }
+
 }
