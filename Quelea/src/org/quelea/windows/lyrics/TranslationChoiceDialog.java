@@ -123,7 +123,7 @@ public class TranslationChoiceDialog extends Stage {
                         }
                     }
                 });
-                if (song.getCurrentTranslationLyrics() != null && song.getCurrentTranslationLyrics().equals(translationName)) {
+                if (song.getCurrentTranslationName() != null && song.getCurrentTranslationName().equals(translationName)) {
                     radBut.setSelected(true);
                 }
                 radBut.setToggleGroup(group);
