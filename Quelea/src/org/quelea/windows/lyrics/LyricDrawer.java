@@ -35,10 +35,12 @@ import org.quelea.data.ThemeDTO;
 import org.quelea.data.VideoBackground;
 import org.quelea.data.displayable.BiblePassage;
 import org.quelea.data.displayable.Displayable;
+import org.quelea.data.displayable.SongDisplayable;
 import org.quelea.data.displayable.TextDisplayable;
 import org.quelea.data.displayable.TextSection;
 import org.quelea.services.utils.LineTypeChecker;
 import org.quelea.services.utils.LoggerUtils;
+import org.quelea.services.utils.LyricLine;
 import org.quelea.services.utils.QueleaProperties;
 import org.quelea.services.utils.Utils;
 import org.quelea.windows.main.DisplayCanvas;
@@ -54,6 +56,7 @@ public class LyricDrawer extends DisplayableDrawer {
 
     private static final Logger LOGGER = LoggerUtils.getLogger();
     private String[] text;
+    private String[] translations;
     private Group textGroup;
     private ThemeDTO theme;
     private TextDisplayable curDisplayable;
@@ -70,8 +73,8 @@ public class LyricDrawer extends DisplayableDrawer {
     private void drawText(double defaultFontSize, boolean dumbWrap) {
         Utils.checkFXThread();
         boolean stageView = getCanvas().isStageView();
-        if(getCanvas().getCanvasBackground() != null) {
-            if(!getCanvas().getChildren().contains(getCanvas().getCanvasBackground())
+        if (getCanvas().getCanvasBackground() != null) {
+            if (!getCanvas().getChildren().contains(getCanvas().getCanvasBackground())
                     && !getCanvas().getChildren().contains(textGroup)) {
                 getCanvas().getChildren().add(0, getCanvas().getCanvasBackground());
                 getCanvas().getChildren().add(textGroup);
@@ -81,54 +84,56 @@ public class LyricDrawer extends DisplayableDrawer {
                 theme.isBold() ? FontWeight.BOLD : FontWeight.NORMAL,
                 theme.isItalic() ? FontPosture.ITALIC : FontPosture.REGULAR,
                 QueleaProperties.get().getMaxFontSize());
-        if(stageView) {
+        if (stageView) {
             font = Font.font(QueleaProperties.get().getStageTextFont(), QueleaProperties.get().getMaxFontSize());
         }
-        if(font == null) {
+        if (font == null) {
             font = ThemeDTO.DEFAULT_FONT.getFont();
         }
         DropShadow shadow = theme.getShadow().getDropShadow();
-        if(stageView) {
+        if (stageView) {
             shadow = new DropShadow();
         }
-        if(shadow == null) {
+        if (shadow == null) {
             shadow = ThemeDTO.DEFAULT_SHADOW.getDropShadow();
         }
 
         shadow.setHeight(5);
         shadow.setWidth(5);
 
-        List<String> newText;
-        if(dumbWrap) {
+        List<LyricLine> newText;
+        if (dumbWrap) {
             newText = dumbWrapText(text);
-        }
-        else {
-            newText = sanctifyText(text);
+        } else {
+            newText = sanctifyText(text, translations);
         }
         double fontSize;
-        if(defaultFontSize > 0) {
+        if (defaultFontSize > 0) {
             fontSize = defaultFontSize;
-        }
-        else {
+        } else {
             fontSize = pickFontSize(font, newText, getCanvas().getWidth() * 0.9, getCanvas().getHeight() * 0.9);
         }
-        if(!stageView) {
+        if (!stageView) {
             font = Font.font(font.getFamily(),
                     theme.isBold() ? FontWeight.BOLD : FontWeight.NORMAL,
                     theme.isItalic() ? FontPosture.ITALIC : FontPosture.REGULAR,
                     fontSize);
-        }
-        else {
+        } else {
             font = Font.font(font.getFamily(), FontWeight.NORMAL,
                     FontPosture.REGULAR, fontSize);
         }
+        Font translateFont = Font.font(font.getFamily(),
+                theme.isBold() ? FontWeight.BOLD : FontWeight.NORMAL,
+                FontPosture.ITALIC,
+                fontSize-2); //TODO: UI for selecting this font
         FontMetrics metrics = Toolkit.getToolkit().getFontLoader().getFontMetrics(font);
+        FontMetrics translateMetrics = Toolkit.getToolkit().getFontLoader().getFontMetrics(translateFont);
         final Group newTextGroup = new Group();
         StackPane.setAlignment(newTextGroup, Pos.CENTER);
 
-        for(Iterator< Node> it = getCanvas().getChildren().iterator(); it.hasNext();) {
+        for (Iterator< Node> it = getCanvas().getChildren().iterator(); it.hasNext();) {
             Node node = it.next();
-            if(node instanceof Group) {
+            if (node instanceof Group) {
                 it.remove();
             }
         }
@@ -138,56 +143,64 @@ public class LyricDrawer extends DisplayableDrawer {
 
         int y = 0;
         ParallelTransition paintTransition = new ParallelTransition();
-        for(String line : newText) {
+        for (LyricLine line : newText) {
+            FontMetrics loopMetrics;
+            if(line.isTranslateLine()) {
+                loopMetrics = translateMetrics;
+            }
+            else {
+                loopMetrics = metrics;
+            }
             FormattedText t;
-            t = new FormattedText(line);
+            t = new FormattedText(line.getLine());
 
-            t.setFont(font);
+            if (line.isTranslateLine()) {
+                t.setFont(translateFont);
+            } else {
+                t.setFont(font);
+            }
             t.setEffect(shadow);
 
-            setPositionX(t, metrics, line, stageView);
+            setPositionX(t, loopMetrics, line.getLine(), stageView);
             t.setLayoutY(y);
 
             Color lineColor;
-            if(stageView && new LineTypeChecker(line).getLineType() == LineTypeChecker.Type.CHORDS) {
+            if (stageView && new LineTypeChecker(line.getLine()).getLineType() == LineTypeChecker.Type.CHORDS) {
                 lineColor = QueleaProperties.get().getStageChordColor();
-            }
-            else if(stageView) {
+            } else if (stageView) {
                 lineColor = QueleaProperties.get().getStageLyricsColor();
-            }
-            else {
+            } else if(line.isTranslateLine()) { //TODO: UI for selecting this colour
+                lineColor = Color.BLANCHEDALMOND;
+            } else {
                 lineColor = theme.getFontPaint();
             }
-            if(lineColor == null) {
+            if (lineColor == null) {
                 LOGGER.log(Level.WARNING, "Warning: Font Color not initialised correctly. Using default font colour.");
                 lineColor = ThemeDTO.DEFAULT_FONT_COLOR;
             }
             t.setFill(lineColor);
-            y += metrics.getLineHeight() + getLineSpacing();
+            y += loopMetrics.getLineHeight() + getLineSpacing();
 
             newTextGroup.getChildren().add(t);
         }
-        if(!paintTransition.getChildren().isEmpty()) {
+        if (!paintTransition.getChildren().isEmpty()) {
             paintTransition.play();
         }
         textGroup = newTextGroup;
         StackPane.setMargin(textGroup, new Insets(10));
-        if(stageView) {
+        if (stageView) {
             StackPane.setAlignment(textGroup, Pos.CENTER);
-        }
-        else {
+        } else {
             StackPane.setAlignment(textGroup, DisplayPositionSelector.getPosFromIndex(theme.getTextPosition()));
         }
-        if(getCanvas().isCleared() && !getLastClearedState()) {
+        if (getCanvas().isCleared() && !getLastClearedState()) {
             setLastClearedState(true);
             FadeTransition t = new FadeTransition(Duration.seconds(QueleaProperties.get().getFadeDuration()), textGroup);
             t.setToValue(0);
             t.play();
-        }
-        else if(getCanvas().isCleared()) {
+        } else if (getCanvas().isCleared()) {
             textGroup.setOpacity(0);
-        }
-        else if(!getCanvas().isCleared() && getLastClearedState()) {
+        } else if (!getCanvas().isCleared() && getLastClearedState()) {
             setLastClearedState(false);
             FadeTransition t = new FadeTransition(Duration.seconds(QueleaProperties.get().getFadeDuration()), textGroup);
             t.setFromValue(0);
@@ -203,28 +216,24 @@ public class LyricDrawer extends DisplayableDrawer {
         double leftOffset = 0;
         double centreOffset = (getCanvas().getWidth() - width) / 2;
         double rightOffset = (getCanvas().getWidth() - width);
-        if(stageView) {
-            if(QueleaProperties.get().getStageTextAlignment().equalsIgnoreCase("Left")) {
+        if (stageView) {
+            if (QueleaProperties.get().getStageTextAlignment().equalsIgnoreCase("Left")) {
                 t.setLayoutX(getCanvas().getWidth());
-            }
-            else {
+            } else {
                 t.setLayoutX(centreOffset);
             }
-        }
-        else if(theme.getTextAlignment() == -1) {
+        } else if (theme.getTextAlignment() == -1) {
             t.setLayoutX(leftOffset);
-        }
-        else if(theme.getTextAlignment() == 0) {
+        } else if (theme.getTextAlignment() == 0) {
             t.setLayoutX(centreOffset);
-        }
-        else if(theme.getTextAlignment() == 1) {
+        } else if (theme.getTextAlignment() == 1) {
             t.setLayoutX(rightOffset);
         }
     }
 
     private boolean getLastClearedState() {
         Boolean val = lastClearedState.get(getCanvas());
-        if(val == null) {
+        if (val == null) {
             return false;
         }
         return val;
@@ -240,45 +249,40 @@ public class LyricDrawer extends DisplayableDrawer {
      * @param theme the theme to place on the getCanvas().
      */
     public void setTheme(ThemeDTO theme) {
-        if(theme == null) {
+        if (theme == null) {
             theme = ThemeDTO.DEFAULT_THEME;
         }
         boolean sameVid = false;
-        if(theme.getBackground() instanceof VideoBackground && VLCWindow.INSTANCE.getLastLocation() != null) {
+        if (theme.getBackground() instanceof VideoBackground && VLCWindow.INSTANCE.getLastLocation() != null) {
             String newLocation = ((VideoBackground) theme.getBackground()).getVideoFile().getAbsolutePath();
             String oldLocation = VLCWindow.INSTANCE.getLastLocation();
-            if(newLocation.equals(oldLocation)) {
+            if (newLocation.equals(oldLocation)) {
                 sameVid = true;
             }
         }
         this.theme = theme;
         Image image;
         ColorAdjust colourAdjust = null;
-        if(getCanvas().isStageView()) {
+        if (getCanvas().isStageView()) {
             image = Utils.getImageFromColour(QueleaProperties.get().getStageBackgroundColor());
-        }
-        else if(theme.getBackground() instanceof ImageBackground) {
+        } else if (theme.getBackground() instanceof ImageBackground) {
             image = ((ImageBackground) theme.getBackground()).getImage();
-        }
-        else if(theme.getBackground() instanceof ColourBackground) {
+        } else if (theme.getBackground() instanceof ColourBackground) {
             Color color = ((ColourBackground) theme.getBackground()).getColour();
             image = Utils.getImageFromColour(color);
-        }
-        else if(theme.getBackground() instanceof VideoBackground && getCanvas().getPlayVideo()) {
+        } else if (theme.getBackground() instanceof VideoBackground && getCanvas().getPlayVideo()) {
             image = null;
-        }
-        else if(theme.getBackground() instanceof VideoBackground) {
+        } else if (theme.getBackground() instanceof VideoBackground) {
             VideoBackground vidBack = (VideoBackground) theme.getBackground();
             image = Utils.getVidBlankImage(vidBack.getVideoFile());
             colourAdjust = new ColorAdjust();
             double hue = vidBack.getHue() * 2;
-            if(hue > 1) {
+            if (hue > 1) {
                 hue -= 2;
             }
             hue *= -1;
             colourAdjust.setHue(hue);
-        }
-        else {
+        } else {
             LOGGER.log(Level.SEVERE, "Bug: Unhandled theme background case, trying to use default background: " + theme.getBackground(), new RuntimeException("DEBUG EXCEPTION FOR STACK TRACE"));
             image = Utils.getImageFromColour(ThemeDTO.DEFAULT_BACKGROUND.getColour());
         }
@@ -287,9 +291,9 @@ public class LyricDrawer extends DisplayableDrawer {
         fadeOut.setToValue(0);
 
         Node newBackground;
-        if(image == null) {
+        if (image == null) {
             final VideoBackground vidBackground = (VideoBackground) theme.getBackground();
-            if(!sameVid || !VLCWindow.INSTANCE.isPlaying()) {
+            if (!sameVid || !VLCWindow.INSTANCE.isPlaying()) {
                 final String location = vidBackground.getVideoFile().getAbsolutePath();
                 VLCWindow.INSTANCE.refreshPosition();
                 VLCWindow.INSTANCE.show();
@@ -297,20 +301,19 @@ public class LyricDrawer extends DisplayableDrawer {
                 VLCWindow.INSTANCE.play(location);
                 VLCWindow.INSTANCE.setHue(vidBackground.getHue());
             }
-            if(sameVid && VLCWindow.INSTANCE.getHue() != ((VideoBackground) theme.getBackground()).getHue()) {
+            if (sameVid && VLCWindow.INSTANCE.getHue() != ((VideoBackground) theme.getBackground()).getHue()) {
                 VLCWindow.INSTANCE.fadeHue(vidBackground.getHue());
             }
             newBackground = null; //transparent
-        }
-        else {
-            if(getCanvas().getPlayVideo() && !(theme.getBackground() instanceof VideoBackground)) {
+        } else {
+            if (getCanvas().getPlayVideo() && !(theme.getBackground() instanceof VideoBackground)) {
                 VLCWindow.INSTANCE.stop();
             }
             final ImageView newImageView = getCanvas().getNewImageView();
             newImageView.setFitHeight(getCanvas().getHeight());
             newImageView.setFitWidth(getCanvas().getWidth());
             newImageView.setImage(image);
-            if(colourAdjust != null) {
+            if (colourAdjust != null) {
                 newImageView.setEffect(colourAdjust);
             }
             getCanvas().getChildren().add(newImageView);
@@ -362,12 +365,12 @@ public class LyricDrawer extends DisplayableDrawer {
      * @return a font size for the specified font that fits the text into the
      * width and height provided.
      */
-    private double pickFontSize(Font font, List<String> text, double width, double height) {
+    private double pickFontSize(Font font, List<LyricLine> text, double width, double height) {
         FontMetrics metrics = Toolkit.getToolkit().getFontLoader().getFontMetrics(font);
         double totalHeight = ((metrics.getLineHeight() + getLineSpacing()) * text.size());
-        while(totalHeight > height) {
+        while (totalHeight > height) {
             font = new Font(font.getName(), font.getSize() - 0.5);
-            if(font.getSize() < 1) {
+            if (font.getSize() < 1) {
                 return 1;
             }
             metrics = Toolkit.getToolkit().getFontLoader().getFontMetrics(font);
@@ -376,9 +379,9 @@ public class LyricDrawer extends DisplayableDrawer {
 
         String longestLine = longestLine(font, text);
         double totalWidth = metrics.computeStringWidth(longestLine);
-        while(totalWidth > width) {
+        while (totalWidth > width) {
             font = new Font(font.getName(), font.getSize() - 0.5);
-            if(font.getSize() < 1) {
+            if (font.getSize() < 1) {
                 return 1;
             }
             metrics = Toolkit.getToolkit().getFontLoader().getFontMetrics(font);
@@ -394,16 +397,16 @@ public class LyricDrawer extends DisplayableDrawer {
         return space * factor;
     }
 
-    private String longestLine(Font font, List<String> text) {
+    private String longestLine(Font font, List<LyricLine> text) {
         FontMetrics metrics = Toolkit.getToolkit().getFontLoader().getFontMetrics(font);
         double longestWidth = -1;
         String longestStr = null;
-        for(String line : text) {
-            line = FormattedText.stripFormatTags(line);
-            double width = metrics.computeStringWidth(line);
-            if(width > longestWidth) {
+        for (LyricLine line : text) {
+            line = new LyricLine(line.isTranslateLine(), FormattedText.stripFormatTags(line.getLine()));
+            double width = metrics.computeStringWidth(line.getLine());
+            if (width > longestWidth) {
                 longestWidth = width;
-                longestStr = line;
+                longestStr = line.getLine();
             }
         }
         return longestStr;
@@ -416,24 +419,23 @@ public class LyricDrawer extends DisplayableDrawer {
      * @param lines the lines to divide up.
      * @return the divided lines.
      */
-    private List<String> dumbWrapText(String[] lines) {
-        List<String> ret = new ArrayList<>();
+    private List<LyricLine> dumbWrapText(String[] lines) {
+        List<LyricLine> ret = new ArrayList<>();
         int maxLength = 60;
         StringBuilder currentBuilder = new StringBuilder(maxLength);
-        for(String line : lines) {
-            for(String word : line.split(" ")) {
+        for (String line : lines) {
+            for (String word : line.split(" ")) {
                 currentBuilder.append(' ');
-                if(currentBuilder.length() + word.length() < maxLength) {
+                if (currentBuilder.length() + word.length() < maxLength) {
                     currentBuilder.append(word);
-                }
-                else {
-                    ret.add(currentBuilder.toString());
+                } else {
+                    ret.add(new LyricLine(currentBuilder.toString()));
                     currentBuilder = new StringBuilder(word);
                 }
             }
         }
-        if(currentBuilder.length() > 0) {
-            ret.add(currentBuilder.toString());
+        if (currentBuilder.length() > 0) {
+            ret.add(new LyricLine(currentBuilder.toString()));
         }
         return ret;
     }
@@ -444,15 +446,25 @@ public class LyricDrawer extends DisplayableDrawer {
      * <p/>
      * @return processed, sanctified text that can be displayed nicely.
      */
-    private List<String> sanctifyText(String[] lines) {
-        List<String> ret = new ArrayList<>();
-        int maxLength = QueleaProperties.get().getMaxChars();
-        for(String line : lines) {
-            if(getCanvas().isStageView()) {
-                ret.add(line);
+    private List<LyricLine> sanctifyText(String[] linesArr, String[] translationArr) {
+        List<LyricLine> finalLines = new ArrayList<>();
+        for (int i = 0; i < linesArr.length; i++) {
+            finalLines.add(new LyricLine(linesArr[i]));
+            if (translationArr != null && i < translationArr.length) {
+                finalLines.add(new LyricLine(true, translationArr[i]));
             }
-            else {
-                ret.addAll(splitLine(line, maxLength));
+        }
+
+        List<LyricLine> ret = new ArrayList<>();
+        int maxLength = QueleaProperties.get().getMaxChars();
+        for (LyricLine line : finalLines) {
+            if (getCanvas().isStageView() || (translationArr != null && translationArr.length > 0)) {
+                ret.add(line);
+            } else {
+                List<String> splits = splitLine(line.getLine(), maxLength);
+                for (String split : splits) {
+                    ret.add(new LyricLine(split));
+                }
             }
         }
         return ret;
@@ -467,31 +479,27 @@ public class LyricDrawer extends DisplayableDrawer {
      */
     private List<String> splitLine(String line, int maxLength) {
         List<String> sections = new ArrayList<>();
-        if(line.length() > maxLength) {
-            if(containsNotAtEnd(line, ";")) {
-                for(String s : splitMiddle(line, ';')) {
+        if (line.length() > maxLength) {
+            if (containsNotAtEnd(line, ";")) {
+                for (String s : splitMiddle(line, ';')) {
                     sections.addAll(splitLine(s, maxLength));
                 }
-            }
-            else if(containsNotAtEnd(line, ",")) {
-                for(String s : splitMiddle(line, ',')) {
+            } else if (containsNotAtEnd(line, ",")) {
+                for (String s : splitMiddle(line, ',')) {
                     sections.addAll(splitLine(s, maxLength));
                 }
-            }
-            else if(containsNotAtEnd(line, " ")) {
-                for(String s : splitMiddle(line, ' ')) {
+            } else if (containsNotAtEnd(line, " ")) {
+                for (String s : splitMiddle(line, ' ')) {
                     sections.addAll(splitLine(s, maxLength));
                 }
-            }
-            else {
+            } else {
                 sections.addAll(splitLine(new StringBuilder(line).insert(line.length() / 2, " ").toString(), maxLength));
             }
-        }
-        else {
-            if(!getCanvas().isStageView()) {
+        } else {
+            if (!getCanvas().isStageView()) {
                 line = line.trim();
             }
-            if(capitaliseFirst && QueleaProperties.get().checkCapitalFirst()) {
+            if (capitaliseFirst && QueleaProperties.get().checkCapitalFirst()) {
                 line = Utils.capitaliseFirst(line);
             }
             sections.add(line);
@@ -525,11 +533,11 @@ public class LyricDrawer extends DisplayableDrawer {
     private static String[] splitMiddle(String line, char delimiter) {
         final int middle = (int) (((double) line.length() / 2) + 0.5);
         int nearestIndex = -1;
-        for(int i = 0; i < line.length(); i++) {
-            if(line.charAt(i) == delimiter) {
+        for (int i = 0; i < line.length(); i++) {
+            if (line.charAt(i) == delimiter) {
                 int curDistance = Math.abs(nearestIndex - middle);
                 int newDistance = Math.abs(i - middle);
-                if(newDistance < curDistance || nearestIndex < 0) {
+                if (newDistance < curDistance || nearestIndex < 0) {
                     nearestIndex = i;
                 }
             }
@@ -545,7 +553,7 @@ public class LyricDrawer extends DisplayableDrawer {
      * @return the font size to use
      */
     private double getUniformFontSize(TextDisplayable displayable) {
-        if(!QueleaProperties.get().getUseUniformFontSize()) {
+        if (!QueleaProperties.get().getUseUniformFontSize()) {
             return -1;
         }
         Font font = theme.getFont();
@@ -554,27 +562,33 @@ public class LyricDrawer extends DisplayableDrawer {
                 theme.isItalic() ? FontPosture.ITALIC : FontPosture.REGULAR,
                 QueleaProperties.get().getMaxFontSize());
         double fontSize = Double.POSITIVE_INFINITY;
-        for(TextSection section : displayable.getSections()) {
+        for (int i = 0; i < displayable.getSections().length; i++) {
+            TextSection section = displayable.getSections()[i];
             String[] textArr;
-            if(getCanvas().isStageView() && QueleaProperties.get().getShowChords()) {
+            if (getCanvas().isStageView() && QueleaProperties.get().getShowChords()) {
                 textArr = section.getText(true, false);
-            }
-            else {
+            } else {
                 textArr = section.getText(false, false);
             }
-            List<String> processedText;
-            if(displayable instanceof BiblePassage) {
+            List<LyricLine> processedText;
+            if (displayable instanceof BiblePassage) {
                 processedText = dumbWrapText(textArr);
-            }
-            else {
-                processedText = sanctifyText(textArr);
+            } else {
+                String[] translationArr = null;
+                if (displayable instanceof SongDisplayable) {
+                    String translationLyrics = ((SongDisplayable) displayable).getCurrentTranslationSection(i);
+                    if (translationLyrics != null) {
+                        translationArr = translationLyrics.split("\n");
+                    }
+                }
+                processedText = sanctifyText(textArr, translationArr);
             }
             double newSize = pickFontSize(font, processedText, getCanvas().getWidth() * 0.9, getCanvas().getHeight() * 0.9);
-            if(newSize < fontSize) {
+            if (newSize < fontSize) {
                 fontSize = newSize;
             }
         }
-        if(fontSize == Double.POSITIVE_INFINITY) {
+        if (fontSize == Double.POSITIVE_INFINITY) {
             fontSize = -1;
         }
         return fontSize;
@@ -585,13 +599,19 @@ public class LyricDrawer extends DisplayableDrawer {
         double uniformFontSize = getUniformFontSize(displayable);
         curDisplayable = displayable;
         String[] bigText;
-        if(getCanvas().isStageView() && QueleaProperties.get().getShowChords()) {
+        if (getCanvas().isStageView() && QueleaProperties.get().getShowChords()) {
             bigText = displayable.getSections()[index].getText(true, false);
-        }
-        else {
+        } else {
             bigText = displayable.getSections()[index].getText(false, false);
         }
-        setText(bigText, displayable.getSections()[index].getSmallText(), fade, uniformFontSize);
+        String[] translationArr = null;
+        if (displayable instanceof SongDisplayable) {
+            String translationText = ((SongDisplayable) displayable).getCurrentTranslationSection(index);
+            if (translationText != null) {
+                translationArr = translationText.split("\n");
+            }
+        }
+        setText(bigText, translationArr, displayable.getSections()[index].getSmallText(), fade, uniformFontSize);
     }
 
     /**
@@ -601,19 +621,25 @@ public class LyricDrawer extends DisplayableDrawer {
      * <p/>
      * @param text an array of the lines to display on the canvas, one entry in
      * the array is one line.
+     * @param translations the translation to use for the current section, or
+     * null if none should be used.
      * @param smallText an array of the small lines to be displayed on the
      * getCanvas().
      * @param fade true if the text should fade, false otherwise.
      * @param fontSize the font size to use to draw this text.
      */
-    public void setText(String[] text, String[] smallText, boolean fade, double fontSize) {
-        if(text == null) {
+    public void setText(String[] text, String[] translations, String[] smallText, boolean fade, double fontSize) {
+        if (text == null) {
             text = new String[0];
         }
-        if(smallText == null) {
+        if (smallText == null) {
             smallText = new String[0];
         }
+        if (translations == null) {
+            translations = new String[0];
+        }
         this.text = Arrays.copyOf(text, text.length);
+        this.translations = Arrays.copyOf(translations, translations.length);
         draw(curDisplayable, fontSize);
     }
 
@@ -621,7 +647,7 @@ public class LyricDrawer extends DisplayableDrawer {
      * Erase all the text on the getCanvas().
      */
     public void eraseText() {
-        setText(null, null, true, -1);
+        setText(null, null, null, true, -1);
     }
 
     /**
@@ -641,19 +667,18 @@ public class LyricDrawer extends DisplayableDrawer {
 
     public void draw(Displayable displayable, double fontSize) {
         drawText(fontSize, displayable instanceof BiblePassage);
-        if(getCanvas().getCanvasBackground() instanceof ImageView) {
+        if (getCanvas().getCanvasBackground() instanceof ImageView) {
             ImageView imgBackground = (ImageView) getCanvas().getCanvasBackground();
             imgBackground.setFitHeight(getCanvas().getHeight());
             imgBackground.setFitWidth(getCanvas().getWidth());
-        }
-        else if(getCanvas().getCanvasBackground() != null) {
+        } else if (getCanvas().getCanvasBackground() != null) {
             LOGGER.log(Level.WARNING, "BUG: Unrecognised image background - " + getCanvas().getCanvasBackground().getClass(), new RuntimeException("DEBUG EXCEPTION"));
         }
     }
 
     @Override
     public void clear() {
-        if(getCanvas().getChildren() != null) {
+        if (getCanvas().getChildren() != null) {
             getCanvas().clearNonPermanentChildren();
         }
         setTheme(ThemeDTO.DEFAULT_THEME);
