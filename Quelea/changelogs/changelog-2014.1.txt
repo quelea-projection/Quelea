@@ -4,6 +4,7 @@ quelea (2014.1) stable; urgency=normal
   * Add ability to import more than one presentation at a time
   * Add ZionWorx import
   * Add Easyworship import
+  * Add Openlyrics import / export
   * Add translation support
   * Improve text wrapping algorithm for bible text
   * Add option for displaying verse numbers in bible text
