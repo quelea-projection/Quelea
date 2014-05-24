@@ -39,6 +39,7 @@ import org.quelea.data.displayable.SongDisplayable;
 import org.quelea.data.displayable.TextDisplayable;
 import org.quelea.data.displayable.TextSection;
 import org.quelea.services.utils.LineTypeChecker;
+import org.quelea.services.utils.LineTypeChecker.Type;
 import org.quelea.services.utils.LoggerUtils;
 import org.quelea.services.utils.LyricLine;
 import org.quelea.services.utils.QueleaProperties;
@@ -450,7 +451,7 @@ public class LyricDrawer extends DisplayableDrawer {
         List<LyricLine> finalLines = new ArrayList<>();
         for (int i = 0; i < linesArr.length; i++) {
             finalLines.add(new LyricLine(linesArr[i]));
-            if (translationArr != null && i < translationArr.length) {
+            if (translationArr != null && i < translationArr.length && new LineTypeChecker(translationArr[i]).getLineType()==Type.NORMAL) {
                 finalLines.add(new LyricLine(true, translationArr[i]));
             }
         }
