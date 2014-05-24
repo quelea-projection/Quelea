@@ -38,6 +38,7 @@ import javafx.stage.StageStyle;
 import org.quelea.data.displayable.SongDisplayable;
 import org.quelea.services.languages.LabelGrabber;
 import org.quelea.services.utils.Utils;
+import org.quelea.windows.main.QueleaApp;
 
 /**
  * Dialog where users can select the translations to be displayed.
@@ -46,6 +47,7 @@ import org.quelea.services.utils.Utils;
  */
 public class TranslationChoiceDialog extends Stage {
 
+    private SongDisplayable currentSong;
     private final VBox content;
 
     /**
@@ -88,6 +90,7 @@ public class TranslationChoiceDialog extends Stage {
      * @param song a song for this dialog to show.
      */
     public void selectSong(final SongDisplayable song) {
+        this.currentSong = song;
         List<Node> removes = new ArrayList<>();
         for (Node node : content.getChildren()) {
             if (node instanceof RadioButton) {
@@ -104,6 +107,7 @@ public class TranslationChoiceDialog extends Stage {
             @Override
             public void handle(ActionEvent t) {
                 song.setCurrentTranslationLyrics(null);
+                QueleaApp.get().getMainWindow().getMainPanel().getSchedulePanel().getScheduleList().refreshSong(song);
             }
         });
         noneBut.setToggleGroup(group);
@@ -120,6 +124,7 @@ public class TranslationChoiceDialog extends Stage {
                     public void handle(ActionEvent t) {
                         if (!radBut.getText().equals(LabelGrabber.INSTANCE.getLabel("none.text"))) {
                             song.setCurrentTranslationLyrics(radBut.getText());
+                            QueleaApp.get().getMainWindow().getMainPanel().getSchedulePanel().getScheduleList().refreshSong(song);
                         }
                     }
                 });

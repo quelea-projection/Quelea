@@ -1058,7 +1058,12 @@ public class SongDisplayable implements TextDisplayable, Comparable<SongDisplaya
      */
     @Override
     public String getPreviewText() {
-        return getTitle() + "\n" + getAuthor();
+        String ret = getTitle();
+        if (getCurrentTranslationName() != null) {
+            ret += " (+ " + getCurrentTranslationName() + ")";
+        }
+        ret += "\n" + getAuthor();
+        return ret;
     }
 
     /**
