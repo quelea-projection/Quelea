@@ -350,10 +350,7 @@ public class SongDisplayable implements TextDisplayable, Comparable<SongDisplaya
      * and section.
      */
     public String getCurrentTranslationSection(int index) {
-        if (translations == null) {
-            return null;
-        }
-        String val = translations.get(currentTranslation);
+        String val = getCurrentTranslationLyrics();
         if (val == null) {
             return null;
         }
