@@ -60,25 +60,20 @@ import org.quelea.services.utils.Utils;
  *
  * @author Michael
  */
-public class TranslateDialog extends Stage {
+public class TranslatePanel extends BorderPane {
 
     private static final Logger LOGGER = LoggerUtils.getLogger();
     private final SplitPane splitPane;
     private final TabPane tabPane;
     private final TextArea defaultLyricsArea;
     private final Button addTranslationButton;
-    private final Button closeButton;
 
     /**
      * Create the translation dialog.
      */
-    public TranslateDialog() {
-        initModality(Modality.APPLICATION_MODAL);
-        Utils.addIconsToStage(this);
-        setTitle(LabelGrabber.INSTANCE.getLabel("translate.dialog.title"));
+    public TranslatePanel() {
         splitPane = new SplitPane();
         defaultLyricsArea = new TextArea();
-        defaultLyricsArea.setEditable(false);
         StackPane translationPane = new StackPane();
         tabPane = new TabPane();
         translationPane.getChildren().add(tabPane);
@@ -99,7 +94,7 @@ public class TranslateDialog extends Stage {
                             Platform.runLater(new Runnable() {
                                 @Override
                                 public void run() {
-                                    if (isShowing() && lyrics != null && !lyrics.isEmpty()) {
+                                    if (lyrics != null && !lyrics.isEmpty()) {
                                         if (tab.getLyrics().length() < 10) {
                                             tab.setLyrics(lyrics);
                                         } else {
@@ -145,33 +140,7 @@ public class TranslateDialog extends Stage {
         splitPane.getItems().add(leftArea);
         splitPane.getItems().add(translationPane);
 
-        BorderPane root = new BorderPane();
-        root.setCenter(splitPane);
-
-        StackPane bottomPane = new StackPane();
-        closeButton = new Button(LabelGrabber.INSTANCE.getLabel("close.button"));
-        StackPane.setMargin(closeButton, new Insets(10));
-        closeButton.setOnAction(new EventHandler<ActionEvent>() {
-
-            @Override
-            public void handle(ActionEvent t) {
-                hide();
-            }
-        });
-        bottomPane.getChildren().add(closeButton);
-        root.setBottom(bottomPane);
-        setScene(new Scene(root));
-        setWidth(800);
-        setHeight(600);
-    }
-
-    /**
-     * Set (update) the default lyrics on this dialog.
-     *
-     * @param lyrics the lyrics to show in the default panel.
-     */
-    public void setDefaultLyrics(String lyrics) {
-        defaultLyricsArea.setText(lyrics);
+        setCenter(splitPane);
     }
 
     /**
@@ -179,7 +148,6 @@ public class TranslateDialog extends Stage {
      */
     public void clearSong() {
         tabPane.getTabs().clear();
-        defaultLyricsArea.clear();
     }
 
     /**
@@ -190,7 +158,6 @@ public class TranslateDialog extends Stage {
      */
     public void setSong(SongDisplayable song) {
         tabPane.getTabs().clear();
-        defaultLyricsArea.setText(song.getLyrics(false, false));
         if (song.getTranslations() != null) {
             for (Entry<String, String> translation : song.getTranslations().entrySet()) {
                 tabPane.getTabs().add(new TranslateTab(translation.getKey(), translation.getValue()));
@@ -198,6 +165,14 @@ public class TranslateDialog extends Stage {
         }
     }
 
+    /**
+     * Get the text area where the deafult lyrics are displayed.
+     * @return the text area where the deafult lyrics are displayed.
+     */
+    public TextArea getDefaultLyricsArea() {
+        return defaultLyricsArea;
+    }
+    
     /**
      * Get the translations as a hashmap from this dialog.
      *

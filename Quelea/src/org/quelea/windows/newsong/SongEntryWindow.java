@@ -43,6 +43,7 @@ import org.quelea.data.displayable.SongDisplayable;
 import org.quelea.data.displayable.TextSection;
 import org.quelea.services.languages.LabelGrabber;
 import org.quelea.services.utils.Utils;
+import org.quelea.windows.lyrics.TranslatePanel;
 import org.quelea.windows.main.QueleaApp;
 
 /**
@@ -56,6 +57,7 @@ public class SongEntryWindow extends Stage {
     private BasicSongPanel basicSongPanel;
     private DetailedSongPanel detailedSongPanel;
     private ThemePanel themePanel;
+    private TranslatePanel translatePanel;
     private boolean updateDBOnHide;
     private boolean shouldSave;
     private boolean cancel;
@@ -73,7 +75,7 @@ public class SongEntryWindow extends Stage {
         initStyle(StageStyle.UTILITY);
         updateDBOnHide = true;
         Utils.addIconsToStage(this);
-        
+
         confirmButton = new Button(LabelGrabber.INSTANCE.getLabel("add.song.button"), new ImageView(new Image("file:icons/tick.png")));
 
         BorderPane mainPane = new BorderPane();
@@ -90,6 +92,14 @@ public class SongEntryWindow extends Stage {
         detailedTab.setContent(detailedSongPanel);
         detailedTab.setClosable(false);
         tabPane.getTabs().add(detailedTab);
+
+        setupTranslatePanel();
+        Tab translateTab = new Tab(LabelGrabber.INSTANCE.getLabel("translate.heading"));
+        translateTab.setContent(translatePanel);
+        translateTab.setClosable(false);
+        tabPane.getTabs().add(translateTab);
+
+        basicSongPanel.getLyricsField().textProperty().bindBidirectional(translatePanel.getDefaultLyricsArea().textProperty()); //Link text areas on translation and basic panel.
 
         setupThemePanel();
         Tab themeTab = new Tab(LabelGrabber.INSTANCE.getLabel("theme.heading"));
@@ -143,11 +153,11 @@ public class SongEntryWindow extends Stage {
             }
         });
 
-        setMaxWidth(525);
+//        setMaxWidth(525);
         setMaxHeight(600);
         setWidth(525);
         setHeight(600);
-        setResizable(false);
+//        setResizable(false);
         setScene(new Scene(mainPane));
     }
 
@@ -171,7 +181,7 @@ public class SongEntryWindow extends Stage {
     }
 
     private void checkSave() {
-        if(shouldSave && isChangeMade() && attributesOk()) {
+        if (shouldSave && isChangeMade() && attributesOk()) {
             Dialog.buildConfirmation(LabelGrabber.INSTANCE.getLabel("confirm.entry.exit.title"),
                     LabelGrabber.INSTANCE.getLabel("confirm.entry.exit.text"), SongEntryWindow.this)
                     .addLabelledButton(LabelGrabber.INSTANCE.getLabel("save.text"), new EventHandler<ActionEvent>() {
@@ -190,11 +200,11 @@ public class SongEntryWindow extends Stage {
         hide();
         SongDisplayable localSong = getSong();
         boolean quickInsert = song != null && song.isQuickInSert();
-        if(shouldSave) {
-            if(updateDBOnHide && !quickInsert) {
+        if (shouldSave) {
+            if (updateDBOnHide && !quickInsert) {
                 Utils.updateSongInBackground(localSong, true, false);
             }
-            if(addToSchedCBox.isSelected()) {
+            if (addToSchedCBox.isSelected()) {
                 QueleaApp.get().getMainWindow().getMainPanel().getSchedulePanel().getScheduleList().add(localSong);
             }
             QueleaApp.get().getMainWindow().getMainPanel().getPreviewPanel().refresh();
@@ -236,6 +246,10 @@ public class SongEntryWindow extends Stage {
         });
     }
 
+    private void setupTranslatePanel() {
+        translatePanel = new TranslatePanel();
+    }
+
     /**
      * Get the confirm button on the new song window.
      * <p/>
@@ -261,6 +275,15 @@ public class SongEntryWindow extends Stage {
      */
     public BasicSongPanel getBasicSongPanel() {
         return basicSongPanel;
+    }
+
+    /**
+     * Get the translation panel.
+     *
+     * @return the translation panel.
+     */
+    public TranslatePanel getTranslatePanel() {
+        return translatePanel;
     }
 
     /**
@@ -292,6 +315,7 @@ public class SongEntryWindow extends Stage {
         confirmButton.setDisable(true);
         basicSongPanel.resetNewSong();
         detailedSongPanel.resetNewSong();
+        translatePanel.clearSong();
         themePanel.setTheme(ThemeDTO.DEFAULT_THEME);
         tabPane.getSelectionModel().select(0);
         addToSchedCBox.setSelected(false);
@@ -332,15 +356,15 @@ public class SongEntryWindow extends Stage {
         confirmButton.setDisable(false);
         basicSongPanel.resetEditSong(song);
         detailedSongPanel.resetEditSong(song);
-        if(song.getSections().length > 0) {
+        translatePanel.setSong(song);
+        if (song.getSections().length > 0) {
             themePanel.setTheme(song.getSections()[0].getTheme());
         }
         tabPane.getSelectionModel().select(0);
         addToSchedCBox.setSelected(false);
-        if(QueleaApp.get().getMainWindow().getMainPanel().getSchedulePanel().getScheduleList().itemsProperty().get().contains(song)) {
+        if (QueleaApp.get().getMainWindow().getMainPanel().getSchedulePanel().getScheduleList().itemsProperty().get().contains(song)) {
             addToSchedCBox.setDisable(true);
-        }
-        else {
+        } else {
             addToSchedCBox.setDisable(false);
         }
         updateDBOnHide = true;
@@ -353,17 +377,17 @@ public class SongEntryWindow extends Stage {
      * @return the song.
      */
     public SongDisplayable getSong() {
-        if(song == null) {
+        if (song == null) {
             song = new SongDisplayable(getBasicSongPanel().getTitleField().getText(), getBasicSongPanel().getAuthorField().getText());
         }
         ThemeDTO tempTheme = null;
-        if(song.getSections().length > 0) {
+        if (song.getSections().length > 0) {
             tempTheme = song.getSections()[0].getTempTheme();
         }
         song.setLyrics(getBasicSongPanel().getLyricsField().getText());
         song.setTitle(getBasicSongPanel().getTitleField().getText());
         song.setAuthor(getBasicSongPanel().getAuthorField().getText());
-        song.setTranslations(getBasicSongPanel().getTranslations());
+        song.setTranslations(getTranslatePanel().getTranslations());
         song.setTags(getDetailedSongPanel().getTagsPanel().getTagsAsString());
         song.setCcli(getDetailedSongPanel().getCcliField().getText());
         song.setCopyright(getDetailedSongPanel().getCopyrightField().getText());
@@ -372,9 +396,9 @@ public class SongEntryWindow extends Stage {
         song.setKey(getDetailedSongPanel().getKeyField().getText());
         song.setCapo(getDetailedSongPanel().getCapoField().getText());
         song.setInfo(getDetailedSongPanel().getInfoField().getText());
-        for(TextSection section : song.getSections()) {
+        for (TextSection section : song.getSections()) {
             section.setTheme(themePanel.getTheme());
-            if(tempTheme != null) {
+            if (tempTheme != null) {
                 section.setTempTheme(tempTheme);
             }
         }

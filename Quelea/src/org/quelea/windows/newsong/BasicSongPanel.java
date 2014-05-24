@@ -50,7 +50,6 @@ import org.quelea.services.utils.LineTypeChecker;
 import org.quelea.services.utils.LoggerUtils;
 import org.quelea.services.utils.QueleaProperties;
 import org.quelea.services.utils.Utils;
-import org.quelea.windows.lyrics.TranslateDialog;
 import org.quelea.windows.main.QueleaApp;
 
 /**
@@ -68,7 +67,6 @@ public class BasicSongPanel extends BorderPane {
     private final Button transposeButton;
     private final ComboBox<Dictionary> dictSelector;
     private final TransposeDialog transposeDialog;
-    private final TranslateDialog translateDialog;
     private String saveHash = "";
 
     /**
@@ -77,7 +75,6 @@ public class BasicSongPanel extends BorderPane {
     public BasicSongPanel() {
         final VBox centrePanel = new VBox();
         transposeDialog = new TransposeDialog();
-        translateDialog = new TranslateDialog();
         GridPane topPanel = new GridPane();
 
         titleField = new TextField();
@@ -109,7 +106,6 @@ public class BasicSongPanel extends BorderPane {
         transposeButton = getTransposeButton();
         lyricsToolbar.getItems().add(transposeButton);
         lyricsToolbar.getItems().add(new Separator());
-        lyricsToolbar.getItems().add(getTranslationButton());
         Region spacer = new Region();
         HBox.setHgrow(spacer, Priority.ALWAYS);
         lyricsToolbar.getItems().add(spacer);
@@ -362,24 +358,6 @@ public class BasicSongPanel extends BorderPane {
     }
 
     /**
-     * Get the translation button that shows the translation dialog.
-     * @return the translation button.
-     */
-    private Button getTranslationButton() {
-        Button button = new Button("", new ImageView(new Image("file:icons/translate.png", 24, 24, true, true)));
-        button.setTooltip(new Tooltip(LabelGrabber.INSTANCE.getLabel("translate.tooltip")));
-        button.setOnAction(new EventHandler<javafx.event.ActionEvent>() {
-            @Override
-            public void handle(javafx.event.ActionEvent t) {
-                translateDialog.setDefaultLyrics(getLyricsField().getText());
-                translateDialog.showAndWait();
-            }
-        });
-        Utils.setToolbarButtonStyle(button);
-        return button;
-    }
-
-    /**
      * Reset this panel so new song data can be entered.
      */
     public void resetNewSong() {
@@ -387,7 +365,6 @@ public class BasicSongPanel extends BorderPane {
         getAuthorField().clear();
         getLyricsField().setText("");
         getTitleField().requestFocus();
-        translateDialog.clearSong();
     }
 
     /**
@@ -400,17 +377,6 @@ public class BasicSongPanel extends BorderPane {
         getAuthorField().setText(song.getAuthor());
         getLyricsField().setText(song.getLyrics(true, true));
         getLyricsField().requestFocus();
-        translateDialog.setSong(song);
-    }
-
-    /**
-     * Get the translations from the translate dialog associated with this basic
-     * song panel.
-     *
-     * @return the translation map.
-     */
-    public HashMap<String, String> getTranslations() {
-        return translateDialog.getTranslations();
     }
 
     /**
