@@ -24,16 +24,18 @@ import org.quelea.windows.lyrics.TranslationChoiceDialog;
 import org.quelea.windows.main.QueleaApp;
 
 /**
+ * The action handler for selecting what translation to display (if any) for a
+ * particular song.
  *
  * @author Michael
  */
-public class SelectTranslationsActionHandler implements EventHandler<ActionEvent>{
-    
+public class SelectTranslationsActionHandler implements EventHandler<ActionEvent> {
+
     @Override
     public void handle(ActionEvent t) {
-        TranslationChoiceDialog songEntryWindow = QueleaApp.get().getMainWindow().getTranslationChoiceDialog();
-        songEntryWindow.selectSong((SongDisplayable) QueleaApp.get().getMainWindow().getMainPanel().getSchedulePanel().getScheduleList().getSelectionModel().getSelectedItem());
-        songEntryWindow.show();
+        TranslationChoiceDialog translationDialog = QueleaApp.get().getMainWindow().getTranslationChoiceDialog();
+        translationDialog.selectSong((SongDisplayable) QueleaApp.get().getMainWindow().getMainPanel().getSchedulePanel().getScheduleList().getSelectionModel().getSelectedItem());
+        translationDialog.show();
     }
-    
+
 }
