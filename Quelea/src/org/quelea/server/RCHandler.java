@@ -18,6 +18,7 @@
 package org.quelea.server;
 
 import javafx.application.Platform;
+import org.quelea.windows.main.MainPanel;
 import org.quelea.windows.main.QueleaApp;
 
 /**
@@ -29,7 +30,6 @@ class RCHandler {
 
     static void logo() {
         Platform.runLater(new Runnable() {
-
             @Override
             public void run() {
                 QueleaApp.get().getMainWindow().getMainPanel().getLivePanel().toggleLogo();
@@ -39,7 +39,6 @@ class RCHandler {
 
     static void black() {
         Platform.runLater(new Runnable() {
-
             @Override
             public void run() {
                 QueleaApp.get().getMainWindow().getMainPanel().getLivePanel().toggleBlack();
@@ -49,7 +48,6 @@ class RCHandler {
 
     static void clear() {
         Platform.runLater(new Runnable() {
-
             @Override
             public void run() {
                 QueleaApp.get().getMainWindow().getMainPanel().getLivePanel().toggleClear();
@@ -60,7 +58,6 @@ class RCHandler {
 
     static void next() {
         Platform.runLater(new Runnable() {
-
             @Override
             public void run() {
                 QueleaApp.get().getMainWindow().getMainPanel().getLivePanel().advance();
@@ -70,7 +67,6 @@ class RCHandler {
 
     static void prev() {
         Platform.runLater(new Runnable() {
-
             @Override
             public void run() {
                 QueleaApp.get().getMainWindow().getMainPanel().getLivePanel().previous();
@@ -80,23 +76,38 @@ class RCHandler {
     }
 
     static void nextItem() {
+        final MainPanel p = QueleaApp.get().getMainWindow().getMainPanel();
+        int current = p.getSchedulePanel().getScheduleList().getItems().indexOf(p.getLivePanel().getDisplayable());
+        current++;
+        System.out.println("" + current);
+        if (current < p.getSchedulePanel().getScheduleList().getItems().size()) {
+            p.getPreviewPanel().setDisplayable(p.getSchedulePanel().getScheduleList().getItems().get(current), 0);
+        } else {
+            p.getPreviewPanel().setDisplayable(p.getSchedulePanel().getScheduleList().getItems().get(p.getSchedulePanel().getScheduleList().getItems().size() - 1), 0);
+        }
         Platform.runLater(new Runnable() {
-
             @Override
             public void run() {
-                System.out.println("Next schedule item");
+                p.getPreviewPanel().goLive();
             }
         });
     }
 
     static void prevItem() {
+        final MainPanel p = QueleaApp.get().getMainWindow().getMainPanel();
+        int current = p.getSchedulePanel().getScheduleList().getItems().indexOf(p.getLivePanel().getDisplayable());
+        current--;
+        System.out.println("" + current);
+        if (current > 0) {
+            p.getPreviewPanel().setDisplayable(p.getSchedulePanel().getScheduleList().getItems().get(current), 0);
+        } else {
+            p.getPreviewPanel().setDisplayable(p.getSchedulePanel().getScheduleList().getItems().get(0), 0);
+        }
         Platform.runLater(new Runnable() {
-
             @Override
             public void run() {
-                System.out.println("Previous schedule item");
+                p.getPreviewPanel().goLive();
             }
         });
     }
-
 }
