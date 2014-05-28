@@ -1,0 +1,17 @@
+When changing the version number, it needs to be changed in :
+
+1) pad.xml
+2) quelea.properties (ant task uses this so must be changed.)
+3) Version constant in QueleaProperties.java (remember the minor version constant as the second argument if this is an Alpha / Beta / another dev release.)
+4) quelea.desktop
+5) Control file for debian based installs
+6) MyAppVersion in quelea.iss
+7) launch4j/config.xml
+8) (Potentially) update getMinorName() in Version.java
+
+This should probably all be automated at some point!
+
+Remember changelogs need to go in changelogs/ folder as .gz files WITH MAXIMUM
+COMPRESSION ("gzip -9"). Otherwise deb package gets a lintian warning.
+
+When releasing, change links on http://quelea.org/download
