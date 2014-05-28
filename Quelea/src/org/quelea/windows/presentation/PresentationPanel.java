@@ -252,4 +252,12 @@ public class PresentationPanel extends AbstractPanel {
     public DisplayableDrawer getDrawer(DisplayCanvas canvas) {
         return drawer;
     }
+
+    public void advance() {
+        presentationPreview.advanceSlide();
+    }
+    
+    public void previous() {
+        presentationPreview.previousSlide();
+    }
 }

@@ -84,7 +84,7 @@ public class SelectLyricsPanel extends AbstractPanel {
     }
 
     public void selectFirst() {
-        if(lyricsList.getItems().size() > 0) {
+        if (lyricsList.getItems().size() > 0) {
             lyricsList.selectionModelProperty().get().clearAndSelect(0);
         }
     }
@@ -112,7 +112,7 @@ public class SelectLyricsPanel extends AbstractPanel {
     public void showDisplayable(TextDisplayable displayable, int index) {
 //        removeCurrentDisplayable();
         setCurrentDisplayable(displayable);
-        for(TextSection section : displayable.getSections()) {
+        for (TextSection section : displayable.getSections()) {
             lyricsList.itemsProperty().get().add(section);
         }
         lyricsList.selectionModelProperty().get().select(index);
@@ -126,6 +126,24 @@ public class SelectLyricsPanel extends AbstractPanel {
      */
     public int getIndex() {
         return lyricsList.selectionModelProperty().get().getSelectedIndex();
+    }
+
+    /**
+     * Advances the current slide.
+     * <p/>
+     */
+    public void advance() {
+        lyricsList.selectionModelProperty().get().selectNext();
+        updateCanvas();
+    }
+
+    /**
+     * Moves to the previous slide.
+     * <p/>
+     */
+    public void previous() {
+        lyricsList.selectionModelProperty().get().selectPrevious();
+        updateCanvas();
     }
 
     /**
@@ -154,20 +172,19 @@ public class SelectLyricsPanel extends AbstractPanel {
     @Override
     public void updateCanvas() {
         int selectedIndex = lyricsList.selectionModelProperty().get().getSelectedIndex();
-        for(DisplayCanvas canvas : getCanvases()) {
+        for (DisplayCanvas canvas : getCanvases()) {
             drawer.setCanvas(canvas);
-            if(selectedIndex == -1 || selectedIndex >= lyricsList.itemsProperty().get().size()) {
-                if(!canvas.getPlayVideo()) {
+            if (selectedIndex == -1 || selectedIndex >= lyricsList.itemsProperty().get().size()) {
+                if (!canvas.getPlayVideo()) {
                     drawer.setTheme(ThemeDTO.DEFAULT_THEME);
                 }
                 drawer.eraseText();
                 continue;
             }
             TextSection currentSection = lyricsList.itemsProperty().get().get(selectedIndex);
-            if(currentSection.getTempTheme() != null) {
+            if (currentSection.getTempTheme() != null) {
                 drawer.setTheme(currentSection.getTempTheme());
-            }
-            else {
+            } else {
                 ThemeDTO newTheme = currentSection.getTheme();
                 drawer.setTheme(newTheme);
             }

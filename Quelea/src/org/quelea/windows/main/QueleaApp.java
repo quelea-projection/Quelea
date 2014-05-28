@@ -131,9 +131,9 @@ public class QueleaApp {
     
     /**
      * Set the remote control server currently in use.
-     * @param mls the mobile lyrics server.
+     * @param rcs the mobile lyrics server.
      */
-    void setRemoteControlServer(RemoteControlServer rcs) {
+    public void setRemoteControlServer(RemoteControlServer rcs) {
         this.rcs = rcs;
     }
 
