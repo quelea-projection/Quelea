@@ -17,6 +17,7 @@
  */
 package org.quelea.server;
 
+import javafx.application.Platform;
 import org.quelea.windows.main.QueleaApp;
 
 /**
@@ -27,31 +28,75 @@ import org.quelea.windows.main.QueleaApp;
 class RCHandler {
 
     static void logo() {
-        QueleaApp.get().getMainWindow().getMainPanel().getLivePanel().toggleLogo();
+        Platform.runLater(new Runnable() {
+
+            @Override
+            public void run() {
+                QueleaApp.get().getMainWindow().getMainPanel().getLivePanel().toggleLogo();
+            }
+        });
     }
 
     static void black() {
-        QueleaApp.get().getMainWindow().getMainPanel().getLivePanel().toggleBlack();
+        Platform.runLater(new Runnable() {
+
+            @Override
+            public void run() {
+                QueleaApp.get().getMainWindow().getMainPanel().getLivePanel().toggleBlack();
+            }
+        });
     }
 
     static void clear() {
-        QueleaApp.get().getMainWindow().getMainPanel().getLivePanel().toggleClear();
+        Platform.runLater(new Runnable() {
+
+            @Override
+            public void run() {
+                QueleaApp.get().getMainWindow().getMainPanel().getLivePanel().toggleClear();
+            }
+        });
+
     }
 
     static void next() {
-        QueleaApp.get().getMainWindow().getMainPanel().getLivePanel().advance();
+        Platform.runLater(new Runnable() {
+
+            @Override
+            public void run() {
+                QueleaApp.get().getMainWindow().getMainPanel().getLivePanel().advance();
+            }
+        });
     }
 
     static void prev() {
-        QueleaApp.get().getMainWindow().getMainPanel().getLivePanel().previous();
+        Platform.runLater(new Runnable() {
+
+            @Override
+            public void run() {
+                QueleaApp.get().getMainWindow().getMainPanel().getLivePanel().previous();
+            }
+        });
+
     }
 
     static void nextItem() {
-        System.out.println("Next schedule item");
+        Platform.runLater(new Runnable() {
+
+            @Override
+            public void run() {
+                System.out.println("Next schedule item");
+            }
+        });
     }
 
     static void prevItem() {
-        System.out.println("Previous schedule item");
+        Platform.runLater(new Runnable() {
+
+            @Override
+            public void run() {
+                System.out.println("Previous schedule item");
+            }
+        });
     }
 
 }
