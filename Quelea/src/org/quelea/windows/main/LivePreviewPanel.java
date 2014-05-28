@@ -205,7 +205,36 @@ public abstract class LivePreviewPanel extends BorderPane {
             return lyricsPanel.getIndex();
         }
     }
-
+    
+    /**
+     * Advances currently selected displayable index. Only suitable for
+     * powerpoint / lyrics panels.
+     * <p/>
+     */
+    public void advance() {
+        if(PRESENTATION_LABEL.equals(currentLabel)) {
+            presentationPanel.advance();
+        }
+        else if(LYRICS_LABEL.equals(currentLabel)) {
+            lyricsPanel.advance();
+        }
+    }
+    
+    /**
+     * Moves to previous slide in currently selected displayable index.
+     * Only suitable for powerpoint / lyrics panels.
+     * <p/>
+     */
+    public void previous() {
+        if(PRESENTATION_LABEL.equals(currentLabel)) {
+            presentationPanel.previous();
+        }
+        else if(LYRICS_LABEL.equals(currentLabel)) {
+            lyricsPanel.previous();
+        }
+    }
+    
+    
     /**
      * Get the select lyrics panel on this panel.
      * <p/>

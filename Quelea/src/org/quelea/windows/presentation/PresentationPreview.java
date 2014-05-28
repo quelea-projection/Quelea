@@ -64,14 +64,14 @@ public class PresentationPreview extends ScrollPane {
             @Override
             public void handle(MouseEvent t) {
                 int selected = -1;
-                for(int i = 0; i < thumbnails.size(); i++) {
+                for (int i = 0; i < thumbnails.size(); i++) {
                     SlideThumbnail thumbnail = thumbnails.get(i);
                     Bounds bounds = new BoundingBox(thumbnail.getLayoutX(), thumbnail.getLayoutY() + getScrollOffset(), thumbnail.getWidth(), thumbnail.getHeight());
-                    if(bounds.contains(t.getX(), t.getY())) {
+                    if (bounds.contains(t.getX(), t.getY())) {
                         selected = i;
                     }
                 }
-                if(selected != -1) {
+                if (selected != -1) {
                     select(selected + 1, true);
                 }
             }
@@ -79,13 +79,13 @@ public class PresentationPreview extends ScrollPane {
         setOnKeyPressed(new EventHandler<KeyEvent>() {
             @Override
             public void handle(KeyEvent t) {
-                if(t.getCode() == KeyCode.DOWN || t.getCode() == KeyCode.RIGHT) {
-                    if(selectedIndex > 0 && selectedIndex <= slides.length - 1) {
+                if (t.getCode() == KeyCode.DOWN || t.getCode() == KeyCode.RIGHT) {
+                    if (selectedIndex > 0 && selectedIndex <= slides.length - 1) {
                         select(selectedIndex + 1);
                     }
                 }
-                if(t.getCode() == KeyCode.UP || t.getCode() == KeyCode.LEFT) {
-                    if(selectedIndex >= 2) {
+                if (t.getCode() == KeyCode.UP || t.getCode() == KeyCode.LEFT) {
+                    if (selectedIndex >= 2) {
                         select(selectedIndex - 1);
                     }
                 }
@@ -95,7 +95,7 @@ public class PresentationPreview extends ScrollPane {
 
             @Override
             public void changed(ObservableValue<? extends Boolean> ov, Boolean t, Boolean focused) {
-                for(SlideThumbnail slide : thumbnails) {
+                for (SlideThumbnail slide : thumbnails) {
                     slide.setActive(focused);
                 }
             }
@@ -107,7 +107,7 @@ public class PresentationPreview extends ScrollPane {
     }
 
     private void fireSlideChangedListeners() {
-        for(SlideChangedListener listener : listeners) {
+        for (SlideChangedListener listener : listeners) {
             listener.slideChanged(selectedSlide);
         }
     }
@@ -118,15 +118,15 @@ public class PresentationPreview extends ScrollPane {
      * @param slides the slides to put in the list.
      */
     public void setSlides(PresentationSlide[] slides) {
-        if(this.slides == slides) {
+        if (this.slides == slides) {
             return;
         }
         this.slides = slides;
         flow.getChildren().clear();
         thumbnails.clear();
-        for(int i = 0; i < slides.length; i++) {
+        for (int i = 0; i < slides.length; i++) {
             SlideThumbnail thumbnail = new SlideThumbnail(slides[i], i + 1);
-            if(i == 0) {
+            if (i == 0) {
                 thumbnail.setSelected(true);
             }
             thumbnails.add(thumbnail);
@@ -143,15 +143,24 @@ public class PresentationPreview extends ScrollPane {
         return selectedSlide;
     }
 
+    /**
+     * Advances the current slide.
+     * <p/>
+     */
     public void advanceSlide() {
-        int nextSelection = getSelectedIndex() + 1;
-        if(nextSelection < 1) {
-            nextSelection = 1;
+        if (selectedIndex > 0 && selectedIndex <= slides.length - 1) {
+            select(selectedIndex + 1);
         }
-        if(nextSelection > size()) {
-            nextSelection = 1;
+    }
+
+    /**
+     * Moves to the previous slide.
+     * <p/>
+     */
+    public void previousSlide() {
+        if (selectedIndex >= 2) {
+            select(selectedIndex - 1);
         }
-        select(nextSelection);
     }
 
     public int size() {
@@ -163,42 +172,41 @@ public class PresentationPreview extends ScrollPane {
     }
 
     public void select(int index, boolean fireUpdate) {
-        if(selectedIndex == index) {
+        if (selectedIndex == index) {
             return;
         }
-        for(int i = 0; i < thumbnails.size(); i++) {
+        for (int i = 0; i < thumbnails.size(); i++) {
             SlideThumbnail thumbnail = thumbnails.get(i);
             boolean selected = thumbnail.getNum() == index;
             thumbnail.setSelected(selected);
-            if(selected) {
+            if (selected) {
                 selectedIndex = index;
-                if(selectedIndex >= 1) {
+                if (selectedIndex >= 1) {
                     selectedSlide = slides[i];
-                }
-                else {
+                } else {
                     selectedSlide = null;
                 }
             }
             ensureVisible(selectedIndex);
         }
-        if(fireUpdate) {
+        if (fireUpdate) {
             fireSlideChangedListeners();
         }
     }
 
     private void ensureVisible(int index) {
-        if(index < 1) {
+        if (index < 1) {
             return;
         }
         Bounds slideBounds = thumbnails.get(index - 1).getBoundsInParent();
         Bounds scrollBounds = new BoundingBox(0, getScrollFraction() * (flow.getHeight() - getHeight()), getWidth(), getHeight());
-        if(!scrollBounds.contains(slideBounds)) {
-            while(slideBounds.getMinY() < scrollBounds.getMinY() && getVvalue() > getVmin()) {
+        if (!scrollBounds.contains(slideBounds)) {
+            while (slideBounds.getMinY() < scrollBounds.getMinY() && getVvalue() > getVmin()) {
                 slideBounds = thumbnails.get(index - 1).getBoundsInParent();
                 scrollBounds = new BoundingBox(0, getScrollFraction() * (flow.getHeight() - getHeight()), getWidth(), getHeight());
                 setVvalue(getVvalue() - 0.01);
             }
-            while(slideBounds.getMaxY() > scrollBounds.getMaxY() && getVvalue() < getVmax()) {
+            while (slideBounds.getMaxY() > scrollBounds.getMaxY() && getVvalue() < getVmax()) {
                 slideBounds = thumbnails.get(index - 1).getBoundsInParent();
                 scrollBounds = new BoundingBox(0, getScrollFraction() * (flow.getHeight() - getHeight()), getWidth(), getHeight());
                 setVvalue(getVvalue() + 0.01);
