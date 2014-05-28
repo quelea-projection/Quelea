@@ -245,7 +245,7 @@ public final class Main extends Application {
                                 } else {
                                     message = LabelGrabber.INSTANCE.getLabel("vlc.warning.message");
                                 }
-                                vlcWarningDialog = new Dialog.Builder()
+                                Dialog.Builder vlcWarningDialogBuilder = new Dialog.Builder()
                                         .create()
                                         .setTitle(LabelGrabber.INSTANCE.getLabel("vlc.warning.title"))
                                         .setMessage(message)
@@ -254,20 +254,21 @@ public final class Main extends Application {
                                             public void handle(ActionEvent t) {
                                                 vlcWarningDialog.hide();
                                             }
-                                        })
-                                        .addLabelledButton(LabelGrabber.INSTANCE.getLabel("download.vlc"), new EventHandler<ActionEvent>() {
-                                            @Override
-                                            public void handle(ActionEvent t) {
-                                                try {
-                                                    java.awt.Desktop.getDesktop().browse(new URI("http://www.videolan.org/vlc/index.html"));
-                                                } catch (URISyntaxException | IOException ex) {
-                                                    LOGGER.log(Level.WARNING, "Couldn't open browser", ex);
-                                                }
-                                                vlcWarningDialog.hide();
+                                        });
+                                if (java.awt.Desktop.isDesktopSupported()) {
+                                    vlcWarningDialogBuilder.addLabelledButton(LabelGrabber.INSTANCE.getLabel("download.vlc"), new EventHandler<ActionEvent>() {
+                                        @Override
+                                        public void handle(ActionEvent t) {
+                                            try {
+                                                java.awt.Desktop.getDesktop().browse(new URI("http://www.videolan.org/vlc/index.html"));
+                                            } catch (URISyntaxException | IOException ex) {
+                                                LOGGER.log(Level.WARNING, "Couldn't open browser", ex);
                                             }
-                                        })
-                                        .setWarningIcon()
-                                        .build();
+                                            vlcWarningDialog.hide();
+                                        }
+                                    });
+                                }
+                                vlcWarningDialog = vlcWarningDialogBuilder.setWarningIcon().build();
                                 vlcWarningDialog.showAndWait();
                             }
                             QueleaApp.get().doneLoading();
