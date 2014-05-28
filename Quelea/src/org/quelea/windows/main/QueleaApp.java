@@ -23,6 +23,7 @@ import java.util.List;
 import org.javafx.dialog.Dialog;
 import org.quelea.data.Schedule;
 import org.quelea.server.MobileLyricsServer;
+import org.quelea.server.RemoteControlServer;
 import org.quelea.services.languages.LabelGrabber;
 
 /**
@@ -36,6 +37,7 @@ public class QueleaApp {
     private DisplayStage projectionWindow;
     private DisplayStage stageWindow;
     private MobileLyricsServer mls;
+    private RemoteControlServer rcs;
     private List<Runnable> runnables = new ArrayList<>();
     private volatile boolean loaded;
 
@@ -125,6 +127,14 @@ public class QueleaApp {
      */
     public void setMobileLyricsServer(MobileLyricsServer mls) {
         this.mls = mls;
+    }
+    
+    /**
+     * Set the remote control server currently in use.
+     * @param mls the mobile lyrics server.
+     */
+    void setRemoteControlServer(RemoteControlServer rcs) {
+        this.rcs = rcs;
     }
 
     /**
