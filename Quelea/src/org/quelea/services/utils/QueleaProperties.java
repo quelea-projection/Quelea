@@ -1182,5 +1182,35 @@ public final class QueleaProperties extends Properties {
      */
     public void setUseMobLyrics(boolean val) {
         setProperty("use.mob.lyrics", Boolean.toString(val));
+        write();
     }
+    
+    public void setUseRemoteControl(boolean val) {
+        setProperty("use.remote.control", Boolean.toString(val));
+        write();
+    }
+    
+    /**
+     * Set if we should set up remote control server
+     * <p>
+     * @param val true if we should, false otherwise.
+     */
+    public boolean getUseRemoteControl() {
+        return Boolean.parseBoolean(getProperty("use.remote.control", "false"));
+    }
+
+    /**
+     * Gets the port used for remote control server.
+     * <p/>
+     * @return the port used for mobile lyrics display.
+     */
+    public int getRemoteControlPort() {
+        return Integer.parseInt(getProperty("remote.control.port", "1112"));
+    }
+    
+    public void setRemoteControlPort(int port) {
+        setProperty("remote.control.port", Integer.toString(port));
+        write();
+    }
+    
 }

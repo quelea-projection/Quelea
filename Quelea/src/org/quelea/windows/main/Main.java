@@ -36,6 +36,7 @@ import org.quelea.data.db.SongManager;
 import org.quelea.data.displayable.SongDisplayable;
 import org.quelea.data.powerpoint.OOUtils;
 import org.quelea.server.MobileLyricsServer;
+import org.quelea.server.RemoteControlServer;
 import org.quelea.services.languages.LabelGrabber;
 import org.quelea.services.phonehome.PhoneHome;
 import org.quelea.services.utils.FontInstaller;
@@ -133,6 +134,19 @@ public final class Main extends Application {
                         }
                     } else {
                         LOGGER.log(Level.INFO, "Mobile lyrics disabled");
+                    }
+                    
+                    if (QueleaProperties.get().getUseRemoteControl()) {
+                        LOGGER.log(Level.INFO, "Starting remote control server on {0}", QueleaProperties.get().getRemoteControlPort());
+                        try {
+                            RemoteControlServer rcs = new RemoteControlServer(QueleaProperties.get().getRemoteControlPort());
+                            rcs.start();
+                            QueleaApp.get().setRemoteControlServer(rcs);
+                        } catch (IOException ex) {
+                            LOGGER.log(Level.INFO, "Couldn't create remote control server", ex);
+                        }
+                    } else {
+                        LOGGER.log(Level.INFO, "Remote control disabled");
                     }
 
                     Platform.runLater(new Runnable() {
