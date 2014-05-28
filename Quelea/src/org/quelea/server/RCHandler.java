@@ -17,6 +17,8 @@
  */
 package org.quelea.server;
 
+import org.quelea.windows.main.QueleaApp;
+
 /**
  * Handles the RemoteControlServer commands.
  *
@@ -25,23 +27,23 @@ package org.quelea.server;
 class RCHandler {
 
     static void logo() {
-        System.out.println("Logo");
+        QueleaApp.get().getMainWindow().getMainPanel().getLivePanel().toggleLogo();
     }
 
     static void black() {
-        System.out.println("Black");
+        QueleaApp.get().getMainWindow().getMainPanel().getLivePanel().toggleBlack();
     }
 
     static void clear() {
-        System.out.println("Clear");
+        QueleaApp.get().getMainWindow().getMainPanel().getLivePanel().toggleClear();
     }
 
     static void next() {
-        System.out.println("Next");
+        QueleaApp.get().getMainWindow().getMainPanel().getLivePanel().advance();
     }
 
     static void prev() {
-        System.out.println("Previous");
+        QueleaApp.get().getMainWindow().getMainPanel().getLivePanel().previous();
     }
 
     static void nextItem() {
