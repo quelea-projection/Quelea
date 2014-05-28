@@ -20,6 +20,7 @@ package org.quelea.windows.presentation;
 import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
+import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
@@ -33,8 +34,8 @@ import org.quelea.data.powerpoint.OOPresentation;
 import org.quelea.data.powerpoint.PresentationSlide;
 import org.quelea.data.powerpoint.SlideChangedListener;
 import org.quelea.services.utils.QueleaProperties;
-import org.quelea.windows.main.AbstractPanel;
 import org.quelea.windows.image.ImageDrawer;
+import org.quelea.windows.main.AbstractPanel;
 import org.quelea.windows.main.DisplayCanvas;
 import org.quelea.windows.main.DisplayableDrawer;
 import org.quelea.windows.main.LivePanel;
@@ -91,6 +92,7 @@ public class PresentationPanel extends AbstractPanel {
                 }
             }
         });
+        presentationPreview.select(0);
 
         mainPanel.setCenter(presentationPreview);
         setCenter(mainPanel);
@@ -194,7 +196,7 @@ public class PresentationPanel extends AbstractPanel {
      * @param displayable the presentation displayable to display.
      * @param index the index to display.
      */
-    public void showDisplayable(final PresentationDisplayable displayable, int index) {
+    public void showDisplayable(final PresentationDisplayable displayable, final int index) {
         if(this.displayable == displayable) {
             return;
         }
@@ -205,7 +207,19 @@ public class PresentationPanel extends AbstractPanel {
         }
         PresentationSlide[] slides = displayable.getPresentation().getSlides();
         presentationPreview.setSlides(slides);
-        presentationPreview.select(index);
+        Platform.runLater(new Runnable() {
+            @Override
+            public void run() {
+                System.out.println("" + index);
+                if(index < 1) { 
+                    presentationPreview.select(1, true);
+                }
+                else { 
+                    presentationPreview.select(index, true);
+                }
+            }
+        });
+        
         /*
          * TODO
          * For some reason the following scroll to line causes a bug whereby 
