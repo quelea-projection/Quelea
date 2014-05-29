@@ -104,6 +104,10 @@ public class ExitActionHandler implements EventHandler<ActionEvent> {
             LOGGER.log(Level.INFO, "Stopping mobile lyrics server");
             QueleaApp.get().getMobileLyricsServer().stop();
         }
+        if(QueleaApp.get().getRemoteControlServer()!=null) {
+            LOGGER.log(Level.INFO, "Stopping remote control server");
+            QueleaApp.get().getRemoteControlServer().stop();
+        }
         System.exit(0);
     }
 }
