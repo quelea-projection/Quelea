@@ -27,11 +27,18 @@ import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.quelea.data.displayable.TextDisplayable;
+import org.quelea.data.displayable.TextSection;
 import org.quelea.services.languages.LabelGrabber;
 import org.quelea.services.utils.LoggerUtils;
+import org.quelea.services.utils.Utils;
+import org.quelea.windows.main.LivePanel;
 import org.quelea.windows.main.QueleaApp;
 
 /**
@@ -67,6 +74,8 @@ public class RemoteControlServer {
         server.createContext("/prev", new PreviousSlideHandler());
         server.createContext("/nextitem", new NextItemHandler());
         server.createContext("/previtem", new PreviousItemHandler());
+        server.createContext("/lyrics", new LyricsHandler());
+        server.createContext("/s", new SectionHandler());
         server.setExecutor(null);
     }
 
@@ -198,7 +207,81 @@ public class RemoteControlServer {
         }
 
     }
+    
+    private class SectionHandler implements HttpHandler {
 
+        @Override
+        public void handle(HttpExchange t) throws IOException {
+            t.sendResponseHeaders(204, -1);
+            RCHandler.setLyrics(t.getRequestURI().toString());
+        }
+    }
+
+    private class LyricsHandler implements HttpHandler {
+
+        @Override
+        public void handle(HttpExchange t) throws IOException {
+            String response = lyrics();
+            byte[] bytes = response.getBytes("UTF-8");
+            t.sendResponseHeaders(200, bytes.length);
+            try(OutputStream os = t.getResponseBody()) {
+                os.write(bytes);
+            }
+        }
+    }
+    
+    public String lyrics() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("<table>");
+        int i = 0;
+        for(String lyricBlock : getLyrics()) {
+            sb.append("<a href=\"/s" + i + "\" >");
+            if(i == RCHandler.currentLyricSection()) {
+                sb.append("<tr class=\"currentLyric\"><b>");
+            }
+            else {
+                sb.append("<tr>");
+            }
+            
+            sb.append(lyricBlock);
+            
+            if(i == RCHandler.currentLyricSection()) {
+                sb.append("</b>");
+            }
+            sb.append("</a></tr>");
+            i++;
+        }
+        sb.append("</table>");
+        return sb.toString();
+    }
+    
+    private List<String> getLyrics() {
+        try {
+            if(!checkInitialised()) {
+                return null;
+            }
+            LivePanel lp = QueleaApp.get().getMainWindow().getMainPanel().getLivePanel();
+            if(running && lp.isContentShowing() && lp.getDisplayable() instanceof TextDisplayable) {
+                ArrayList<String> als = new ArrayList<String>();
+                for(TextSection currentSection : lp.getLyricsPanel().getLyricsList().getItems()) {
+                    StringBuilder ret = new StringBuilder();
+                    for(String line : currentSection.getText(false, false)) {
+                        ret.append(Utils.escapeHTML(line)).append("<br/>");
+                    }
+                    als.add(ret.toString());
+                }
+                return als;
+            }
+            else {
+                return null;
+            }
+        }
+        catch(Exception ex) {
+            LOGGER.log(Level.WARNING, "Error getting lyrics", ex);
+            return null;
+        }
+    }
+    
     private class FileHandler implements HttpHandler {
 
         private String file;
