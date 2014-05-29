@@ -120,7 +120,14 @@ public class QueleaApp {
     public MobileLyricsServer getMobileLyricsServer() {
         return mls;
     }
-    
+    /**
+     * Get the current remote control server in use. Null if none is in use.
+     * <p>
+     * @return the current remote control server in use.
+     */
+    public RemoteControlServer getRemoteControlServer() {
+        return rcs;
+    }
     /**
      * Set the mobile lyrics server currently in use.
      * @param mls the mobile lyrics server.
