@@ -18,6 +18,8 @@
 package org.quelea.server;
 
 import javafx.application.Platform;
+import org.quelea.data.displayable.SongDisplayable;
+import org.quelea.windows.main.LivePanel;
 import org.quelea.windows.main.MainPanel;
 import org.quelea.windows.main.QueleaApp;
 
@@ -107,6 +109,19 @@ class RCHandler {
             @Override
             public void run() {
                 p.getPreviewPanel().goLive();
+            }
+        });
+    }
+
+    static int currentLyricSection() {
+        return QueleaApp.get().getMainWindow().getMainPanel().getLivePanel().getLyricsPanel().getCurrentIndex();
+    }
+
+    static void setLyrics(final String index) {
+        Platform.runLater(new Runnable() {
+            @Override
+            public void run() {
+                QueleaApp.get().getMainWindow().getMainPanel().getLivePanel().getLyricsPanel().select(Integer.parseInt(index.substring(2)));
             }
         });
     }
