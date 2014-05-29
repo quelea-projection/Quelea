@@ -1,35 +1,63 @@
 <!DOCTYPE html>
 <html>
-<head>
-<title>Quelea Remote Control</title>
-<meta charset="utf-8">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<style type="text/css">
-.button {
-  display: block;
-  width: 10px;
-  height: 10px;
-  background: #4E9CAF;
-  padding: 10px;
-  border-radius: 20px;
-  color: white;
-  font-weight: bold;
-  text-decoration:none;
-  font-size: 20px;
-  opacity:0.6;
-  font-family: 'DejaVu Sans',sans-serif;
-}
-</style>
-</head>
-<body>
-    <ul>
-        <li><a href="/logo">[logo.text]</a></li>
-        <li><a href="/black">[black.text]</a></li>
-        <li><a href="/clear">[clear.text]</a></li>
-        <li><a href="/next">[next.text]</a></li>
-        <li><a href="/prev">[prev.text]</a></li>
-        <li><a href="/nextitem">[nextitem.text]</a></li>
-        <li><a href="/previtem">[previtem.text]</a></li>
-    </ul>
-</body>
+    <head>
+        <title>Quelea Remote Control</title>
+        <meta charset="utf-8">
+        <meta name="apple-mobile-web-app-capable" content="yes">
+        <style type="text/css">
+            .button {
+                display: block;
+                width: 10px;
+                height: 10px;
+                background: #4E9CAF;
+                padding: 10px;
+                border-radius: 20px;
+                color: white;
+                font-weight: bold;
+                text-decoration:none;
+                font-size: 20px;
+                opacity:0.6;
+                font-family: 'DejaVu Sans',sans-serif;
+            }
+        </style>
+        <script>
+            var xmlhttp;
+            function setup()
+            {
+                setInterval(function() {
+                    loadXMLDoc();
+                }, 200);
+                xmlhttp = new XMLHttpRequest();
+                xmlhttp.onreadystatechange = function()
+                {
+                    if (xmlhttp.readyState == 4 && xmlhttp.status == 200)
+                    {
+                        document.getElementById("lyrics").innerHTML = xmlhttp.responseText;
+                    }
+                }
+            }
+            window.onload = setup;
+            function loadXMLDoc()
+            {
+                xmlhttp.open("GET", "/lyrics", true);
+                xmlhttp.timeout = 4000;
+                xmlhttp.ontimeout = function() {
+                    document.getElementById("lyrics").innerHTML = "";
+                }
+                xmlhttp.send();
+            }
+        </script>
+    </head>
+    <body>
+        <ul>
+            <li><a href="/logo">[logo.text]</a></li>
+            <li><a href="/black">[black.text]</a></li>
+            <li><a href="/clear">[clear.text]</a></li>
+            <li><a href="/next">[next.text]</a></li>
+            <li><a href="/prev">[prev.text]</a></li>
+            <li><a href="/nextitem">[nextitem.text]</a></li>
+            <li><a href="/previtem">[previtem.text]</a></li>
+        </ul>
+        <div id="lyrics"></div>
+    </body>
 </html>

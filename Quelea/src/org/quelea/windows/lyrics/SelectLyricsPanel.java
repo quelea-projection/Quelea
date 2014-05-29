@@ -88,6 +88,12 @@ public class SelectLyricsPanel extends AbstractPanel {
             lyricsList.selectionModelProperty().get().clearAndSelect(0);
         }
     }
+    
+    public void select(int index) {
+        if (index >= 0 && index < lyricsList.getItems().size()) {
+            lyricsList.selectionModelProperty().get().select(index);
+        }
+    }
 
     /**
      * Set one line mode on or off.
