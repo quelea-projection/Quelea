@@ -49,7 +49,7 @@ public class OptionsDialog extends Stage {
     private final OptionsGeneralPanel generalPanel;
     private OptionsBiblePanel biblePanel;
     private OptionsStageViewPanel stageViewPanel;
-    private OptionsMobLyricsPanel mobLyricsPanel;
+    private ServerSettingsPanel serverSettingsPanel;
 
     /**
      * Create a new options dialog.
@@ -93,12 +93,12 @@ public class OptionsDialog extends Stage {
         bibleTab.setContent(biblePanel);
         tabbedPane.getTabs().add(bibleTab);
         
-        mobLyricsPanel = new OptionsMobLyricsPanel();
-        Tab mobLyricsTab = new Tab();
-        mobLyricsTab.setClosable(false);
-        mobLyricsTab.setText(LabelGrabber.INSTANCE.getLabel("mobile.lyrics.heading"));
-        mobLyricsTab.setContent(mobLyricsPanel);
-        tabbedPane.getTabs().add(mobLyricsTab);
+        serverSettingsPanel = new ServerSettingsPanel();
+        Tab serverSettingsTab = new Tab();
+        serverSettingsTab.setClosable(false);
+        serverSettingsTab.setText(LabelGrabber.INSTANCE.getLabel("server.settings.heading"));
+        serverSettingsTab.setContent(serverSettingsPanel);
+        tabbedPane.getTabs().add(serverSettingsTab);
         
         mainPane.setCenter(tabbedPane);
         okButton = new Button(LabelGrabber.INSTANCE.getLabel("ok.button"), new ImageView(new Image("file:icons/tick.png")));
@@ -127,7 +127,7 @@ public class OptionsDialog extends Stage {
      */
     public void callBeforeShowing() {
         getGeneralPanel().resetLanguageChanged();
-        getMobLyricsPanel().resetChanged();
+        getServerSettingsPanel().resetChanged();
     }
     
     /**
@@ -137,8 +137,8 @@ public class OptionsDialog extends Stage {
         if(getGeneralPanel().hasLanguageChanged()) {
             Dialog.showInfo(LabelGrabber.INSTANCE.getLabel("language.changed"), LabelGrabber.INSTANCE.getLabel("language.changed.message"), QueleaApp.get().getMainWindow());
         }
-        if(getMobLyricsPanel().hasChanged()) {
-            Dialog.showInfo(LabelGrabber.INSTANCE.getLabel("mob.changed.label"), LabelGrabber.INSTANCE.getLabel("mob.changed.message"), QueleaApp.get().getMainWindow());
+        if(getServerSettingsPanel().hasChanged()) {
+            Dialog.showInfo(LabelGrabber.INSTANCE.getLabel("server.changed.label"), LabelGrabber.INSTANCE.getLabel("server.changed.message"), QueleaApp.get().getMainWindow());
         }
     }
 
@@ -178,8 +178,8 @@ public class OptionsDialog extends Stage {
      * Get the mobile lyrics panel.
      * @return the mobile lyrics panel.
      */
-    public OptionsMobLyricsPanel getMobLyricsPanel() {
-        return mobLyricsPanel;
+    public ServerSettingsPanel getServerSettingsPanel() {
+        return serverSettingsPanel;
     }
 
     /**
