@@ -20,30 +20,22 @@
                 margin: 10px;
                 margin-left:auto;
                 padding: 0px;
-                font-size: 1.4em;
+                font-size: 2em;
+                vertical-align: middle;
             }
 
             #center {
                 text-align: center;
                 display: block;
                 margin-top: 25px;
+                width: 90%;
+                margin-left:auto;
+                margin-right:auto;
             }
 
             #lyrics {
                 display: inline-block;
 
-            }
-
-            table {
-
-            }
-
-            tr {
-
-            }
-
-            td {
-                margin-bottom: 10px;
             }
 
             a {
@@ -65,6 +57,15 @@
 
             }
 
+            .outer {
+                
+            }
+            
+            .inner {
+                padding-top: 20px;
+                padding-bottom: 20px;
+            }
+            
             .current {
                 font-weight: bold;
                 background-color: #96D1FF;
@@ -74,6 +75,27 @@
             iframe {
                 display: none;
             }
+
+            #logout {
+                text-align: right;
+                position: relative;
+                margin-top: 20px;
+            }
+
+            #logout button {
+                text-align:center;
+                width:25%;
+                height:20%;
+                min-height: 100px;
+                min-width: 100px;
+                max-width: 200px;
+                margin-top: 25px;
+                margin: 10px;
+                margin-left:auto;
+                padding: 0px;
+                font-size: 2em;
+            }
+
         </style>
         <script>
             var xmlhttp;
@@ -81,14 +103,32 @@
             {
                 setInterval(function() {
                     loadXMLDoc();
-                }, 500);
+                    shrink();
+                }, 400);
                 xmlhttp = new XMLHttpRequest();
                 xmlhttp.onreadystatechange = function()
                 {
                     if (xmlhttp.readyState == 4 && xmlhttp.status == 200)
                     {
                         document.getElementById("lyrics").innerHTML = xmlhttp.responseText;
+                        shrink();
                     }
+                }
+            }
+            function shrink()
+            {
+                var textDiv = document.getElementById("center");
+
+                textDiv.style.fontSize = "40px";
+                var size = 40;
+
+                var style = window.getComputedStyle(textDiv, null).getPropertyValue('font-size');
+                var fontSize = parseFloat(style);
+                
+                while (center.scrollWidth > document.body.clientWidth *0.9)
+                {
+                    size = size - 5;
+                    textDiv.style.fontSize = (size) + "px";
                 }
             }
             window.onload = setup;
@@ -104,13 +144,13 @@
         </script>
     </head>
     <body>
-        <a href="/logo" target="empty"><button type="button">[logo.text]</button></a>
+        <a href="/tlogo" target="empty"><button type="button">[logo.text]</button></a>
         <a href="/black" target="empty"><button type="button">[black.text]</button></a>
         <a href="/clear" target="empty"><button type="button">[clear.text]</button></a><br/>
-        <a href="/next" target="empty"><button type="button">[next.text]</button></a>
-        <a href="/prev" target="empty"><button type="button">[prev.text]</button></a><br/>
-        <a href="/nextitem" target="empty"><button type="button">[nextitem.text]</button></a>
-        <a href="/previtem" target="empty"><button type="button" >[previtem.text]</button></a><br/>
+        <a href="/prev" target="empty"><button type="button">[prev.text]</button></a>
+        <a href="/next" target="empty"><button type="button">[next.text]</button></a><br/>
+        <a href="/previtem" target="empty"><button type="button" >[previtem.text]</button></a>
+        <a href="/nextitem" target="empty"><button type="button">[nextitem.text]</button></a><br/>
         <!-- Be warned. This is hacky. Because not all browsers correctly implement a 204 HTTP Header to not-refresh or reload content on a page,
              I have designed this beauty. Every link on this page should use target="empty" to send all GET requests to the iframe. The iframe
              then loads the page itself (which should *ALWAYS* be an empty bodied 200 header). This is highly efficient, and incredibly hacky.
@@ -125,5 +165,8 @@
             <div id="lyrics"></div>
         </div>
 
+        <div id="logout">
+            <a href="/logout"><button type="button">[logout.text]</button></a>
+        </div>
     </body>
 </html>
