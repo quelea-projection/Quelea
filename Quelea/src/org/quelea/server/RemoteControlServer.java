@@ -17,12 +17,19 @@
  */
 package org.quelea.server;
 
+import com.sun.net.httpserver.Filter;
+import com.sun.net.httpserver.HttpContext;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 import com.sun.net.httpserver.HttpServer;
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.OutputStream;
+import java.io.UnsupportedEncodingException;
 import java.net.InetSocketAddress;
+import java.net.URI;
+import java.net.URLDecoder;
 import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
@@ -68,8 +75,9 @@ public class RemoteControlServer {
     public RemoteControlServer(int port) throws IOException {
         fileCache = new HashMap<>();
         server = HttpServer.create(new InetSocketAddress(port), 0);
-        server.createContext("/", new RootHandler());
-        server.createContext("/logo", new LogoToggleHandler());
+        HttpContext rootcontext = server.createContext("/", new RootHandler());
+        server.createContext("/logout", new LogoutHandler());
+        server.createContext("/tlogo", new LogoToggleHandler());
         server.createContext("/black", new BlackToggleHandler());
         server.createContext("/clear", new ClearToggleHandler());
         server.createContext("/next", new NextSlideHandler());
@@ -78,6 +86,7 @@ public class RemoteControlServer {
         server.createContext("/previtem", new PreviousItemHandler());
         server.createContext("/lyrics", new LyricsHandler());
         server.createContext("/s", new SectionHandler());
+        rootcontext.getFilters().add(new ParameterFilter());
         server.setExecutor(null);
     }
 
@@ -104,20 +113,11 @@ public class RemoteControlServer {
 
     /**
      * Determine if the server is running.
-     * <p>
+     * <p/>
      * @return true if the server is running, false otherwise.
      */
     public boolean isRunning() {
         return running;
-    }
-
-    //Handles 
-    private class PasswordHandler implements HttpHandler {
-
-        @Override
-        public void handle(HttpExchange he) throws IOException {
-            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-        }
     }
 
     //Handles logo display
@@ -125,8 +125,12 @@ public class RemoteControlServer {
 
         @Override
         public void handle(HttpExchange he) throws IOException {
-            he.sendResponseHeaders(200, -1);
-            RCHandler.logo();
+            if (RCHandler.isLoggedOn(he.getRemoteAddress().getAddress().toString())) {
+                he.sendResponseHeaders(200, -1);
+                RCHandler.logo();
+            } else {
+                reload(he);
+            }
         }
     }
 
@@ -135,8 +139,12 @@ public class RemoteControlServer {
 
         @Override
         public void handle(HttpExchange he) throws IOException {
-            he.sendResponseHeaders(200, -1);
-            RCHandler.black();
+            if (RCHandler.isLoggedOn(he.getRemoteAddress().getAddress().toString())) {
+                he.sendResponseHeaders(200, -1);
+                RCHandler.black();
+            } else {
+                reload(he);
+            }
         }
     }
 
@@ -145,8 +153,12 @@ public class RemoteControlServer {
 
         @Override
         public void handle(HttpExchange he) throws IOException {
-            he.sendResponseHeaders(200, -1);
-            RCHandler.clear();
+            if (RCHandler.isLoggedOn(he.getRemoteAddress().getAddress().toString())) {
+                he.sendResponseHeaders(200, -1);
+                RCHandler.clear();
+            } else {
+                reload(he);
+            }
         }
     }
 
@@ -155,8 +167,12 @@ public class RemoteControlServer {
 
         @Override
         public void handle(HttpExchange he) throws IOException {
-            he.sendResponseHeaders(200, -1);
-            RCHandler.next();
+            if (RCHandler.isLoggedOn(he.getRemoteAddress().getAddress().toString())) {
+                he.sendResponseHeaders(200, -1);
+                RCHandler.next();
+            } else {
+                reload(he);
+            }
         }
     }
 
@@ -165,8 +181,12 @@ public class RemoteControlServer {
 
         @Override
         public void handle(HttpExchange he) throws IOException {
-            he.sendResponseHeaders(200, -1);
-            RCHandler.prev();
+            if (RCHandler.isLoggedOn(he.getRemoteAddress().getAddress().toString())) {
+                he.sendResponseHeaders(200, -1);
+                RCHandler.prev();
+            } else {
+                reload(he);
+            }
         }
     }
 
@@ -175,8 +195,12 @@ public class RemoteControlServer {
 
         @Override
         public void handle(HttpExchange he) throws IOException {
-            he.sendResponseHeaders(200, -1);
-            RCHandler.nextItem();
+            if (RCHandler.isLoggedOn(he.getRemoteAddress().getAddress().toString())) {
+                he.sendResponseHeaders(200, -1);
+                RCHandler.nextItem();
+            } else {
+                reload(he);
+            }
         }
     }
 
@@ -185,36 +209,12 @@ public class RemoteControlServer {
 
         @Override
         public void handle(HttpExchange he) throws IOException {
-            he.sendResponseHeaders(200, -1);
-            RCHandler.prevItem();
-        }
-    }
-
-    //Handles 
-    private class RootHandler implements HttpHandler {
-        @Override
-        public void handle(HttpExchange t) throws IOException {
-            if (pageContent == null || !USE_CACHE) {
-                pageContent = readFile("icons/defaultrcspage.htm");
-                pageContent = langStrings(pageContent);
+            if (RCHandler.isLoggedOn(he.getRemoteAddress().getAddress().toString())) {
+                he.sendResponseHeaders(200, -1);
+                RCHandler.prevItem();
+            } else {
+                reload(he);
             }
-            byte[] bytes = pageContent.getBytes(Charset.forName("UTF-8"));
-            t.sendResponseHeaders(200, bytes.length);
-            try (OutputStream os = t.getResponseBody()) {
-                os.write(bytes);
-            }
-        }
-
-        //Handles replacing of the language strings
-        private String langStrings(String pageContent) {
-            pageContent = pageContent.replace("[logo.text]", LabelGrabber.INSTANCE.getLabel("remote.logo.text"));
-            pageContent = pageContent.replace("[black.text]", LabelGrabber.INSTANCE.getLabel("remote.black.text"));
-            pageContent = pageContent.replace("[clear.text]", LabelGrabber.INSTANCE.getLabel("remote.clear.text"));
-            pageContent = pageContent.replace("[next.text]", LabelGrabber.INSTANCE.getLabel("remote.next.text"));
-            pageContent = pageContent.replace("[prev.text]", LabelGrabber.INSTANCE.getLabel("remote.prev.text"));
-            pageContent = pageContent.replace("[nextitem.text]", LabelGrabber.INSTANCE.getLabel("remote.nextitem.text"));
-            pageContent = pageContent.replace("[previtem.text]", LabelGrabber.INSTANCE.getLabel("remote.previtem.text"));
-            return pageContent;
         }
     }
 
@@ -222,9 +222,81 @@ public class RemoteControlServer {
     private class SectionHandler implements HttpHandler {
 
         @Override
-        public void handle(HttpExchange t) throws IOException {
-            t.sendResponseHeaders(200, -1);
-            RCHandler.setLyrics(t.getRequestURI().toString());
+        public void handle(HttpExchange he) throws IOException {
+            if (RCHandler.isLoggedOn(he.getRemoteAddress().getAddress().toString())) {
+                he.sendResponseHeaders(200, -1);
+                RCHandler.setLyrics(he.getRequestURI().toString());
+            } else {
+                reload(he);
+            }
+        }
+    }
+
+    //Handles logo display
+    private class LogoutHandler implements HttpHandler {
+
+        @Override
+        public void handle(HttpExchange he) throws IOException {
+            RCHandler.logout(he.getRemoteAddress().getAddress().toString());
+            passwordPage(he);
+        }
+    }
+
+    //Handles 
+    private class RootHandler implements HttpHandler {
+
+        @Override
+        public void handle(HttpExchange he) throws IOException {
+            if (RCHandler.isLoggedOn(he.getRemoteAddress().getAddress().toString())) {
+                if (pageContent == null || !USE_CACHE) {
+                    pageContent = readFile("icons/defaultrcspage.htm");
+                    pageContent = langStrings(pageContent);
+                }
+                byte[] bytes = pageContent.getBytes(Charset.forName("UTF-8"));
+                he.sendResponseHeaders(200, bytes.length);
+                try (OutputStream os = he.getResponseBody()) {
+                    os.write(bytes);
+                }
+            } else {
+                passwordPage(he);
+            }
+        }
+    }
+
+    private void passwordPage(HttpExchange he) throws IOException {
+        if (he.getRequestMethod().equals("POST")) {
+            Map<String, Object> params = (Map<String, Object>) he.getAttribute("parameters");
+            String password = (String) params.get("password");
+            if (password != null && RCHandler.authenticate(password)) {
+                RCHandler.addDevice(he.getRemoteAddress().getAddress().toString());
+                if (pageContent == null || !USE_CACHE) {
+                    pageContent = readFile("icons/defaultrcspage.htm");
+                    pageContent = langStrings(pageContent);
+                }
+                byte[] bytes = pageContent.getBytes(Charset.forName("UTF-8"));
+                he.sendResponseHeaders(200, bytes.length);
+                try (OutputStream os = he.getResponseBody()) {
+                    os.write(bytes);
+                }
+                return;
+            }
+
+        }
+        String content = readFile("icons/defaultpasswordpage.htm");
+        content = content.replace("[remote.login.text]", LabelGrabber.INSTANCE.getLabel("remote.login.text"));
+        content = content.replace("[submit.button.text]", LabelGrabber.INSTANCE.getLabel("remote.submit.text"));
+        byte[] bytes = content.getBytes(Charset.forName("UTF-8"));
+        he.sendResponseHeaders(200, bytes.length);
+        try (OutputStream os = he.getResponseBody()) {
+            os.write(bytes);
+        }
+    }
+
+    private void reload(HttpExchange he) throws IOException {
+        byte[] bytes = readFile("icons/reloadpage.htm").getBytes("UTF-8");
+        he.sendResponseHeaders(307, bytes.length);
+        try (OutputStream os = he.getResponseBody()) {
+            os.write(bytes);
         }
     }
 
@@ -255,20 +327,20 @@ public class RemoteControlServer {
      */
     public String lyrics() {
         StringBuilder sb = new StringBuilder();
-        sb.append("<table>");
+        sb.append("<div id=\"outer\">");
         int i = 0;
         for (String lyricBlock : getLyrics()) {
             if (i == RCHandler.currentLyricSection()) {
-                sb.append("<tr><td class=\"current\">");
+                sb.append("<div class=\"inner current\">");
             } else {
-                sb.append("<tr><td>");
+                sb.append("<div class=\"inner\">");
             }
             sb.append("<a href=\"/s" + i + "\" target=\"empty\">");
             sb.append(lyricBlock);
-            sb.append("</a></td></tr>");
+            sb.append("</a></div>");
             i++;
         }
-        sb.append("</table>");
+        sb.append("</div>");
         return sb.toString();
     }
 
@@ -298,6 +370,19 @@ public class RemoteControlServer {
             LOGGER.log(Level.WARNING, "Error getting lyrics", ex);
             return null;
         }
+    }
+
+    //Handles replacing of the language strings
+    private String langStrings(String pageContent) {
+        pageContent = pageContent.replace("[logo.text]", LabelGrabber.INSTANCE.getLabel("remote.logo.text"));
+        pageContent = pageContent.replace("[black.text]", LabelGrabber.INSTANCE.getLabel("remote.black.text"));
+        pageContent = pageContent.replace("[clear.text]", LabelGrabber.INSTANCE.getLabel("remote.clear.text"));
+        pageContent = pageContent.replace("[next.text]", LabelGrabber.INSTANCE.getLabel("remote.next.text"));
+        pageContent = pageContent.replace("[prev.text]", LabelGrabber.INSTANCE.getLabel("remote.prev.text"));
+        pageContent = pageContent.replace("[nextitem.text]", LabelGrabber.INSTANCE.getLabel("remote.nextitem.text"));
+        pageContent = pageContent.replace("[previtem.text]", LabelGrabber.INSTANCE.getLabel("remote.previtem.text"));
+        pageContent = pageContent.replace("[logout.text]", LabelGrabber.INSTANCE.getLabel("remote.logout.text"));
+        return pageContent;
     }
 
     /**
@@ -348,5 +433,86 @@ public class RemoteControlServer {
     private static String readFile(String path) throws IOException {
         byte[] encoded = Files.readAllBytes(Paths.get(path));
         return Charset.forName("UTF-8").decode(ByteBuffer.wrap(encoded)).toString();
+    }
+
+    private class ParameterFilter extends Filter {
+
+        @Override
+        public String description() {
+            return "Parses the requested URI for parameters";
+        }
+
+        @Override
+        public void doFilter(HttpExchange exchange, Chain chain)
+                throws IOException {
+            parseGetParameters(exchange);
+            parsePostParameters(exchange);
+            chain.doFilter(exchange);
+        }
+
+        private void parseGetParameters(HttpExchange exchange)
+                throws UnsupportedEncodingException {
+
+            Map<String, Object> parameters = new HashMap<String, Object>();
+            URI requestedUri = exchange.getRequestURI();
+            String query = requestedUri.getRawQuery();
+            parseQuery(query, parameters);
+            exchange.setAttribute("parameters", parameters);
+        }
+
+        private void parsePostParameters(HttpExchange exchange)
+                throws IOException {
+
+            if ("post".equalsIgnoreCase(exchange.getRequestMethod())) {
+                @SuppressWarnings("unchecked")
+                Map<String, Object> parameters
+                        = (Map<String, Object>) exchange.getAttribute("parameters");
+                InputStreamReader isr
+                        = new InputStreamReader(exchange.getRequestBody(), "utf-8");
+                BufferedReader br = new BufferedReader(isr);
+                String query = br.readLine();
+                parseQuery(query, parameters);
+            }
+        }
+
+        @SuppressWarnings("unchecked")
+        private void parseQuery(String query, Map<String, Object> parameters)
+                throws UnsupportedEncodingException {
+
+            if (query != null) {
+                String pairs[] = query.split("[&]");
+
+                for (String pair : pairs) {
+                    String param[] = pair.split("[=]");
+
+                    String key = null;
+                    String value = null;
+                    if (param.length > 0) {
+                        key = URLDecoder.decode(param[0],
+                                System.getProperty("file.encoding"));
+                    }
+
+                    if (param.length > 1) {
+                        value = URLDecoder.decode(param[1],
+                                System.getProperty("file.encoding"));
+                    }
+
+                    if (parameters.containsKey(key)) {
+                        Object obj = parameters.get(key);
+                        if (obj instanceof List<?>) {
+                            List<String> values = (List<String>) obj;
+                            values.add(value);
+                        } else if (obj instanceof String) {
+                            List<String> values = new ArrayList<String>();
+                            values.add((String) obj);
+                            values.add(value);
+                            parameters.put(key, values);
+                        }
+                    } else {
+                        parameters.put(key, value);
+                    }
+                }
+            }
+        }
     }
 }

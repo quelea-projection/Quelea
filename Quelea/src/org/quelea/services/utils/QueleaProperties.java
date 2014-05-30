@@ -1212,5 +1212,14 @@ public final class QueleaProperties extends Properties {
         setProperty("remote.control.port", Integer.toString(port));
         write();
     }
+
+    public void setRemoteControlPassword(String text) {
+        setProperty("remote.control.password", text);
+        write();
+    }
+
+    public String getRemoteControlPassword() {
+        return getProperty("remote.control.password", "quelea");
+    }
     
 }
