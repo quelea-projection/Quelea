@@ -17,9 +17,9 @@
  */
 package org.quelea.server;
 
+import java.util.ArrayList;
 import javafx.application.Platform;
-import org.quelea.data.displayable.SongDisplayable;
-import org.quelea.windows.main.LivePanel;
+import org.quelea.services.utils.QueleaProperties;
 import org.quelea.windows.main.MainPanel;
 import org.quelea.windows.main.QueleaApp;
 
@@ -28,9 +28,10 @@ import org.quelea.windows.main.QueleaApp;
  *
  * @author Ben Goodwin
  */
-class RCHandler {
+public class RCHandler {
+    private static ArrayList<String> devices = new ArrayList<String>();
 
-    static void logo() {
+    public static void logo() {
         Platform.runLater(new Runnable() {
             @Override
             public void run() {
@@ -39,7 +40,7 @@ class RCHandler {
         });
     }
 
-    static void black() {
+    public static void black() {
         Platform.runLater(new Runnable() {
             @Override
             public void run() {
@@ -48,7 +49,7 @@ class RCHandler {
         });
     }
 
-    static void clear() {
+    public static void clear() {
         Platform.runLater(new Runnable() {
             @Override
             public void run() {
@@ -58,7 +59,7 @@ class RCHandler {
 
     }
 
-    static void next() {
+    public static void next() {
         Platform.runLater(new Runnable() {
             @Override
             public void run() {
@@ -67,7 +68,7 @@ class RCHandler {
         });
     }
 
-    static void prev() {
+    public static void prev() {
         Platform.runLater(new Runnable() {
             @Override
             public void run() {
@@ -77,7 +78,7 @@ class RCHandler {
 
     }
 
-    static void nextItem() {
+    public static void nextItem() {
         final MainPanel p = QueleaApp.get().getMainWindow().getMainPanel();
         int current = p.getSchedulePanel().getScheduleList().getItems().indexOf(p.getLivePanel().getDisplayable());
         current++;
@@ -94,7 +95,7 @@ class RCHandler {
         });
     }
 
-    static void prevItem() {
+    public static void prevItem() {
         final MainPanel p = QueleaApp.get().getMainWindow().getMainPanel();
         int current = p.getSchedulePanel().getScheduleList().getItems().indexOf(p.getLivePanel().getDisplayable());
         current--;
@@ -111,16 +112,42 @@ class RCHandler {
         });
     }
 
-    static int currentLyricSection() {
+    public static int currentLyricSection() {
         return QueleaApp.get().getMainWindow().getMainPanel().getLivePanel().getLyricsPanel().getCurrentIndex();
     }
 
-    static void setLyrics(final String index) {
+    public static void setLyrics(final String index) {
         Platform.runLater(new Runnable() {
             @Override
             public void run() {
                 QueleaApp.get().getMainWindow().getMainPanel().getLivePanel().getLyricsPanel().select(Integer.parseInt(index.substring(2)));
             }
         });
+    }
+    
+    public static boolean authenticate(final String password) {
+        return password.equals(QueleaProperties.get().getRemoteControlPassword());
+    }
+    
+    public static void addDevice(String ip) {
+        devices.add(ip);
+    }
+    
+    public static boolean isLoggedOn(String ip) {
+        boolean found = false;
+        for(String s : devices) {
+            if(s.equals(ip)) {
+                found = true;
+            }
+        }
+        return found;
+    }
+
+    public static void logout(String ip) {
+        devices.remove(ip);
+    }
+    
+    public static void logAllOut() {
+        devices.clear();
     }
 }

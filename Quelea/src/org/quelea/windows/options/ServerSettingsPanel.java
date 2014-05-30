@@ -29,10 +29,11 @@ import java.net.UnknownHostException;
 import java.util.Enumeration;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.scene.Cursor;
-import javafx.scene.Node;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
@@ -43,6 +44,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
+import org.quelea.server.RCHandler;
 import org.quelea.services.languages.LabelGrabber;
 import org.quelea.services.utils.LoggerUtils;
 import org.quelea.services.utils.PropertyPanel;
@@ -65,6 +67,8 @@ public class ServerSettingsPanel extends GridPane implements PropertyPanel {
     private final TextField rcPortNumTextField;
     private String rcPrevPortNum;
     private boolean rcPrevChecked;
+    private final TextField rcPasswordTextField;
+    private String rcPrevPassword;
 
     /**
      * Create the server settings panel.
@@ -77,6 +81,7 @@ public class ServerSettingsPanel extends GridPane implements PropertyPanel {
         mlPortNumTextField = new TextField();
         useRemoteControlCheckBox = new CheckBox();
         rcPortNumTextField = new TextField();
+        rcPasswordTextField = new TextField();
 
         setupMobLyrics();
         Label blank = new Label("");
@@ -96,6 +101,12 @@ public class ServerSettingsPanel extends GridPane implements PropertyPanel {
         Label portNumberLabel = new Label(LabelGrabber.INSTANCE.getLabel("port.number.label") + " ");
         GridPane.setConstraints(portNumberLabel, 1, 2);
         getChildren().add(portNumberLabel);
+        mlPortNumTextField.textProperty().addListener(new ChangeListener() {
+            @Override
+            public void changed(ObservableValue ov, Object t, Object t1) {
+                checkDifferent();
+            }
+        });
         mlPortNumTextField.addEventFilter(KeyEvent.KEY_TYPED, new EventHandler<KeyEvent>() {
             @Override
             public void handle(KeyEvent t) {
@@ -156,6 +167,12 @@ public class ServerSettingsPanel extends GridPane implements PropertyPanel {
         Label portNumberLabel = new Label(LabelGrabber.INSTANCE.getLabel("port.number.label") + " ");
         GridPane.setConstraints(portNumberLabel, 1, 5);
         getChildren().add(portNumberLabel);
+        rcPortNumTextField.textProperty().addListener(new ChangeListener() {
+            @Override
+            public void changed(ObservableValue ov, Object t, Object t1) {
+                checkDifferent();
+            }
+        });
         rcPortNumTextField.addEventFilter(KeyEvent.KEY_TYPED, new EventHandler<KeyEvent>() {
             @Override
             public void handle(KeyEvent t) {
@@ -203,6 +220,15 @@ public class ServerSettingsPanel extends GridPane implements PropertyPanel {
         rcBox.getChildren().add(rcUrlLabel);
         GridPane.setConstraints(rcBox, 1, 6);
         getChildren().add(rcBox);
+        
+        Label passwordLabel = new Label(LabelGrabber.INSTANCE.getLabel("remote.control.password") + " ");
+        GridPane.setConstraints(passwordLabel, 1, 7);
+        getChildren().add(passwordLabel);
+        rcPasswordTextField.setMaxWidth(Double.MAX_VALUE);
+        GridPane.setHgrow(rcPasswordTextField, Priority.ALWAYS);
+        passwordLabel.setLabelFor(rcPasswordTextField);
+        GridPane.setConstraints(rcPasswordTextField, 2, 7);
+        getChildren().add(rcPasswordTextField);
     }
 
     private String urlMLCache;
@@ -295,6 +321,7 @@ public class ServerSettingsPanel extends GridPane implements PropertyPanel {
         mlPrevPortNum = mlPortNumTextField.getText();
         rcPrevChecked = useRemoteControlCheckBox.isSelected();
         rcPrevPortNum = rcPortNumTextField.getText();
+        rcPrevPassword = rcPasswordTextField.getText();
     }
 
     /**
@@ -329,6 +356,14 @@ public class ServerSettingsPanel extends GridPane implements PropertyPanel {
         } else {
             QueleaProperties.get().setRemoteControlPort(Integer.parseInt(rcPortNumTextField.getText()));
         }
+        if (rcPasswordTextField.getText().trim().isEmpty()) {
+            rcPasswordTextField.setText(QueleaProperties.get().getRemoteControlPassword());
+        } else {
+            QueleaProperties.get().setRemoteControlPassword(rcPasswordTextField.getText());
+            if(!rcPasswordTextField.getText().equals(rcPrevPassword)) {
+                RCHandler.logAllOut();
+            }
+        }
     }
 
     /**
@@ -340,6 +375,7 @@ public class ServerSettingsPanel extends GridPane implements PropertyPanel {
         mlPortNumTextField.setText(Integer.toString(QueleaProperties.get().getMobLyricsPort()));
         useRemoteControlCheckBox.setSelected(QueleaProperties.get().getUseRemoteControl());
         rcPortNumTextField.setText(Integer.toString(QueleaProperties.get().getRemoteControlPort()));
+        rcPasswordTextField.setText(QueleaProperties.get().getRemoteControlPassword());
     }
 
 }
