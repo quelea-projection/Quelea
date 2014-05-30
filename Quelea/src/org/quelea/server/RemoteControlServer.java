@@ -33,6 +33,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.quelea.data.displayable.BiblePassage;
+import org.quelea.data.displayable.SongDisplayable;
 import org.quelea.data.displayable.TextDisplayable;
 import org.quelea.data.displayable.TextSection;
 import org.quelea.services.languages.LabelGrabber;
@@ -109,6 +111,7 @@ public class RemoteControlServer {
         return running;
     }
 
+    //Handles 
     private class PasswordHandler implements HttpHandler {
 
         @Override
@@ -117,71 +120,78 @@ public class RemoteControlServer {
         }
     }
 
+    //Handles logo display
     private class LogoToggleHandler implements HttpHandler {
 
         @Override
         public void handle(HttpExchange he) throws IOException {
-            he.sendResponseHeaders(204, -1);
+            he.sendResponseHeaders(200, -1);
             RCHandler.logo();
         }
     }
 
+    //Handles black display
     private class BlackToggleHandler implements HttpHandler {
 
         @Override
         public void handle(HttpExchange he) throws IOException {
-            he.sendResponseHeaders(204, -1);
+            he.sendResponseHeaders(200, -1);
             RCHandler.black();
         }
     }
 
+    //Handles clear display
     private class ClearToggleHandler implements HttpHandler {
 
         @Override
         public void handle(HttpExchange he) throws IOException {
-            he.sendResponseHeaders(204, -1);
+            he.sendResponseHeaders(200, -1);
             RCHandler.clear();
         }
     }
 
+    //Handles next slide
     private class NextSlideHandler implements HttpHandler {
 
         @Override
         public void handle(HttpExchange he) throws IOException {
-            he.sendResponseHeaders(204, -1);
+            he.sendResponseHeaders(200, -1);
             RCHandler.next();
         }
     }
 
+    //Handles previous slide
     private class PreviousSlideHandler implements HttpHandler {
 
         @Override
         public void handle(HttpExchange he) throws IOException {
-            he.sendResponseHeaders(204, -1);
+            he.sendResponseHeaders(200, -1);
             RCHandler.prev();
         }
     }
 
+    //Handles next schedule item
     private class NextItemHandler implements HttpHandler {
 
         @Override
         public void handle(HttpExchange he) throws IOException {
-            he.sendResponseHeaders(204, -1);
+            he.sendResponseHeaders(200, -1);
             RCHandler.nextItem();
         }
     }
 
+    //Handles previous schedule item
     private class PreviousItemHandler implements HttpHandler {
 
         @Override
         public void handle(HttpExchange he) throws IOException {
-            he.sendResponseHeaders(204, -1);
+            he.sendResponseHeaders(200, -1);
             RCHandler.prevItem();
         }
     }
 
+    //Handles 
     private class RootHandler implements HttpHandler {
-
         @Override
         public void handle(HttpExchange t) throws IOException {
             if (pageContent == null || !USE_CACHE) {
@@ -195,6 +205,7 @@ public class RemoteControlServer {
             }
         }
 
+        //Handles replacing of the language strings
         private String langStrings(String pageContent) {
             pageContent = pageContent.replace("[logo.text]", LabelGrabber.INSTANCE.getLabel("remote.logo.text"));
             pageContent = pageContent.replace("[black.text]", LabelGrabber.INSTANCE.getLabel("remote.black.text"));
@@ -205,106 +216,88 @@ public class RemoteControlServer {
             pageContent = pageContent.replace("[previtem.text]", LabelGrabber.INSTANCE.getLabel("remote.previtem.text"));
             return pageContent;
         }
-
     }
-    
+
+    //Handles clicking on a section
     private class SectionHandler implements HttpHandler {
 
         @Override
         public void handle(HttpExchange t) throws IOException {
-            t.sendResponseHeaders(204, -1);
+            t.sendResponseHeaders(200, -1);
             RCHandler.setLyrics(t.getRequestURI().toString());
         }
     }
 
+    //Takes the lyrics (if they're a Song or Bible passage and inserts them into the page
     private class LyricsHandler implements HttpHandler {
 
         @Override
         public void handle(HttpExchange t) throws IOException {
-            String response = lyrics();
+            String response = LabelGrabber.INSTANCE.getLabel("remote.empty.lyrics");
+            if (QueleaApp.get().getMainWindow().getMainPanel().getLivePanel().getDisplayable() instanceof SongDisplayable
+                    || QueleaApp.get().getMainWindow().getMainPanel().getLivePanel().getDisplayable() instanceof BiblePassage) {
+                response = lyrics();
+            }
             byte[] bytes = response.getBytes("UTF-8");
             t.sendResponseHeaders(200, bytes.length);
-            try(OutputStream os = t.getResponseBody()) {
+            try (OutputStream os = t.getResponseBody()) {
                 os.write(bytes);
             }
         }
     }
-    
+
+    /**
+     * Get the HTML formatted Lyrics for display. Formatted as a table, with one
+     * row and one cell per lyric slide. The current slide has class current. To
+     * understand target="empty" see comment in defaultrcspage.htm
+     * <p/>
+     * @return All lyrics formatted in a HTML table
+     */
     public String lyrics() {
         StringBuilder sb = new StringBuilder();
         sb.append("<table>");
         int i = 0;
-        for(String lyricBlock : getLyrics()) {
-            sb.append("<a href=\"/s" + i + "\" >");
-            if(i == RCHandler.currentLyricSection()) {
-                sb.append("<tr class=\"currentLyric\"><b>");
+        for (String lyricBlock : getLyrics()) {
+            if (i == RCHandler.currentLyricSection()) {
+                sb.append("<tr><td class=\"current\">");
+            } else {
+                sb.append("<tr><td>");
             }
-            else {
-                sb.append("<tr>");
-            }
-            
+            sb.append("<a href=\"/s" + i + "\" target=\"empty\">");
             sb.append(lyricBlock);
-            
-            if(i == RCHandler.currentLyricSection()) {
-                sb.append("</b>");
-            }
-            sb.append("</a></tr>");
+            sb.append("</a></td></tr>");
             i++;
         }
         sb.append("</table>");
         return sb.toString();
     }
-    
+
+    //Method returns all lyrics as an ArrayList of slides
     private List<String> getLyrics() {
         try {
-            if(!checkInitialised()) {
-                return null;
+            if (!checkInitialised()) {
+                List<String> tmp = new ArrayList<String>();
+                tmp.add("");
+                return tmp;
             }
             LivePanel lp = QueleaApp.get().getMainWindow().getMainPanel().getLivePanel();
-            if(running && lp.isContentShowing() && lp.getDisplayable() instanceof TextDisplayable) {
+            if (running && lp.isContentShowing() && lp.getDisplayable() instanceof TextDisplayable) {
                 ArrayList<String> als = new ArrayList<String>();
-                for(TextSection currentSection : lp.getLyricsPanel().getLyricsList().getItems()) {
+                for (TextSection currentSection : lp.getLyricsPanel().getLyricsList().getItems()) {
                     StringBuilder ret = new StringBuilder();
-                    for(String line : currentSection.getText(false, false)) {
+                    for (String line : currentSection.getText(false, false)) {
                         ret.append(Utils.escapeHTML(line)).append("<br/>");
                     }
                     als.add(ret.toString());
                 }
                 return als;
-            }
-            else {
+            } else {
                 return null;
             }
-        }
-        catch(Exception ex) {
+        } catch (Exception ex) {
             LOGGER.log(Level.WARNING, "Error getting lyrics", ex);
             return null;
         }
-    }
-    
-    private class FileHandler implements HttpHandler {
-
-        private String file;
-
-        public FileHandler(String file) {
-            this.file = file;
-        }
-
-        @Override
-        public void handle(HttpExchange t) throws IOException {
-            byte[] ret = fileCache.get(file);
-            if (ret == null) {
-                ret = Files.readAllBytes(Paths.get(file));
-                if (USE_CACHE) {
-                    fileCache.put(file, ret);
-                }
-            }
-            t.sendResponseHeaders(200, ret.length);
-            try (OutputStream os = t.getResponseBody()) {
-                os.write(ret);
-            }
-        }
-
     }
 
     /**
@@ -356,5 +349,4 @@ public class RemoteControlServer {
         byte[] encoded = Files.readAllBytes(Paths.get(path));
         return Charset.forName("UTF-8").decode(ByteBuffer.wrap(encoded)).toString();
     }
-
 }
