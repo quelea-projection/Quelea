@@ -442,3 +442,4 @@ remote.previtem.text=Previous Schedule Item
 server.settings.heading=Server Settings
 use.remote.control.label=Use Remote Control
 navigate.remote.control.label=Remote Control URL
+remote.empty.lyrics=<i>Lyrics will be displayed here</i>

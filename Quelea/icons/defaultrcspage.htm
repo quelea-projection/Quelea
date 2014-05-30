@@ -5,19 +5,74 @@
         <meta charset="utf-8">
         <meta name="apple-mobile-web-app-capable" content="yes">
         <style type="text/css">
-            .button {
-                display: block;
-                width: 10px;
-                height: 10px;
-                background: #4E9CAF;
-                padding: 10px;
-                border-radius: 20px;
-                color: white;
-                font-weight: bold;
-                text-decoration:none;
-                font-size: 20px;
-                opacity:0.6;
+            body {
                 font-family: 'DejaVu Sans',sans-serif;
+                width: 100%;
+                text-align: center;
+            }
+
+            button {
+                width:30%;
+                height:30%;
+                min-height: 150px;
+                min-width: 150px;
+                max-width: 300px;
+                margin: 10px;
+                margin-left:auto;
+                padding: 0px;
+                font-size: 1.4em;
+            }
+
+            #center {
+                text-align: center;
+                display: block;
+                margin-top: 25px;
+            }
+
+            #lyrics {
+                display: inline-block;
+
+            }
+
+            table {
+
+            }
+
+            tr {
+
+            }
+
+            td {
+                margin-bottom: 10px;
+            }
+
+            a {
+                color: black;
+                text-decoration: none;
+            }
+
+            a:active {
+                color: black;
+            }
+
+            a:hover {
+                text-decoration: underline;
+
+            }
+
+            a:visited {
+                color: black;
+
+            }
+
+            .current {
+                font-weight: bold;
+                background-color: #96D1FF;
+
+            }
+
+            iframe {
+                display: none;
             }
         </style>
         <script>
@@ -26,7 +81,7 @@
             {
                 setInterval(function() {
                     loadXMLDoc();
-                }, 200);
+                }, 500);
                 xmlhttp = new XMLHttpRequest();
                 xmlhttp.onreadystatechange = function()
                 {
@@ -49,15 +104,26 @@
         </script>
     </head>
     <body>
-        <ul>
-            <li><a href="/logo">[logo.text]</a></li>
-            <li><a href="/black">[black.text]</a></li>
-            <li><a href="/clear">[clear.text]</a></li>
-            <li><a href="/next">[next.text]</a></li>
-            <li><a href="/prev">[prev.text]</a></li>
-            <li><a href="/nextitem">[nextitem.text]</a></li>
-            <li><a href="/previtem">[previtem.text]</a></li>
-        </ul>
-        <div id="lyrics"></div>
+        <a href="/logo" target="empty"><button type="button">[logo.text]</button></a>
+        <a href="/black" target="empty"><button type="button">[black.text]</button></a>
+        <a href="/clear" target="empty"><button type="button">[clear.text]</button></a><br/>
+        <a href="/next" target="empty"><button type="button">[next.text]</button></a>
+        <a href="/prev" target="empty"><button type="button">[prev.text]</button></a><br/>
+        <a href="/nextitem" target="empty"><button type="button">[nextitem.text]</button></a>
+        <a href="/previtem" target="empty"><button type="button" >[previtem.text]</button></a><br/>
+        <!-- Be warned. This is hacky. Because not all browsers correctly implement a 204 HTTP Header to not-refresh or reload content on a page,
+             I have designed this beauty. Every link on this page should use target="empty" to send all GET requests to the iframe. The iframe
+             then loads the page itself (which should *ALWAYS* be an empty bodied 200 header). This is highly efficient, and incredibly hacky.
+             The iframe should always utilise display:none;. 
+             The main page is never reloaded but the built in server will still accept the GET request and act accordingly.
+             
+             I'm not liable for this code...
+        -->
+        <iframe name="empty"></iframe>
+        &nbsp;
+        <div id="center">
+            <div id="lyrics"></div>
+        </div>
+
     </body>
 </html>
