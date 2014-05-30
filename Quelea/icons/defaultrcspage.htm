@@ -35,7 +35,7 @@
 
             #lyrics {
                 display: inline-block;
-
+                font-size: 30px;
             }
 
             a {
@@ -54,7 +54,6 @@
 
             a:visited {
                 color: black;
-
             }
 
             .outer {
@@ -103,7 +102,6 @@
             {
                 setInterval(function() {
                     loadXMLDoc();
-                    shrink();
                 }, 400);
                 xmlhttp = new XMLHttpRequest();
                 xmlhttp.onreadystatechange = function()
@@ -111,24 +109,7 @@
                     if (xmlhttp.readyState == 4 && xmlhttp.status == 200)
                     {
                         document.getElementById("lyrics").innerHTML = xmlhttp.responseText;
-                        shrink();
                     }
-                }
-            }
-            function shrink()
-            {
-                var textDiv = document.getElementById("center");
-
-                textDiv.style.fontSize = "40px";
-                var size = 40;
-
-                var style = window.getComputedStyle(textDiv, null).getPropertyValue('font-size');
-                var fontSize = parseFloat(style);
-                
-                while (center.scrollWidth > document.body.clientWidth *0.9)
-                {
-                    size = size - 5;
-                    textDiv.style.fontSize = (size) + "px";
                 }
             }
             window.onload = setup;
