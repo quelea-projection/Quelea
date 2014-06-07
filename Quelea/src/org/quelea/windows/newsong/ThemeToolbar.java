@@ -98,7 +98,7 @@ public class ThemeToolbar extends HBox {
         getChildren().add(topLevelFontBox);
 
         HBox fontTop = new HBox(3);
-        if(fontSelectionDialog == null) {
+        if (fontSelectionDialog == null) {
             fontSelectionDialog = new FontSelectionDialog();
         }
         fontSelection = new ComboBox<>();
@@ -293,16 +293,13 @@ public class ThemeToolbar extends HBox {
         backTypeSelection.setOnAction(new EventHandler<javafx.event.ActionEvent>() {
             @Override
             public void handle(javafx.event.ActionEvent t) {
-                if(backTypeSelection.getSelectionModel().getSelectedItem().equalsIgnoreCase(LabelGrabber.INSTANCE.getLabel("color.theme.label"))) {
+                if (backTypeSelection.getSelectionModel().getSelectedItem().equalsIgnoreCase(LabelGrabber.INSTANCE.getLabel("color.theme.label"))) {
                     backgroundCentre.show("colour");
-                }
-                else if(backTypeSelection.getSelectionModel().getSelectedItem().equalsIgnoreCase(LabelGrabber.INSTANCE.getLabel("image.theme.label"))) {
+                } else if (backTypeSelection.getSelectionModel().getSelectedItem().equalsIgnoreCase(LabelGrabber.INSTANCE.getLabel("image.theme.label"))) {
                     backgroundCentre.show("image");
-                }
-                else if(backTypeSelection.getSelectionModel().getSelectedItem().equalsIgnoreCase(LabelGrabber.INSTANCE.getLabel("video.theme.label"))) {
+                } else if (backTypeSelection.getSelectionModel().getSelectedItem().equalsIgnoreCase(LabelGrabber.INSTANCE.getLabel("video.theme.label"))) {
                     backgroundCentre.show("video");
-                }
-                else {
+                } else {
                     throw new AssertionError("Bug - " + backTypeSelection.getSelectionModel().getSelectedItem() + " is an unknown selection value");
                 }
             }
@@ -321,14 +318,12 @@ public class ThemeToolbar extends HBox {
      * the background field.
      */
     private void checkConfirmButton() {
-        if(themePanel.getConfirmButton() != null) {
-            if(backTypeSelection.getSelectionModel().getSelectedItem().equalsIgnoreCase(LabelGrabber.INSTANCE.getLabel("color.theme.label"))) {
+        if (themePanel.getConfirmButton() != null) {
+            if (backTypeSelection.getSelectionModel().getSelectedItem().equalsIgnoreCase(LabelGrabber.INSTANCE.getLabel("color.theme.label"))) {
                 themePanel.getConfirmButton().setDisable(false);
-            }
-            else if(backTypeSelection.getSelectionModel().getSelectedItem().equalsIgnoreCase(LabelGrabber.INSTANCE.getLabel("image.theme.label"))) {
+            } else if (backTypeSelection.getSelectionModel().getSelectedItem().equalsIgnoreCase(LabelGrabber.INSTANCE.getLabel("image.theme.label"))) {
                 themePanel.getConfirmButton().setDisable(backgroundImageLocation.getText().trim().isEmpty());
-            }
-            else if(backTypeSelection.getSelectionModel().getSelectedItem().equalsIgnoreCase(LabelGrabber.INSTANCE.getLabel("video.theme.label"))) {
+            } else if (backTypeSelection.getSelectionModel().getSelectedItem().equalsIgnoreCase(LabelGrabber.INSTANCE.getLabel("video.theme.label"))) {
                 themePanel.getConfirmButton().setDisable(backgroundVidLocation.getText().trim().isEmpty());
             }
         }
@@ -341,7 +336,7 @@ public class ThemeToolbar extends HBox {
      */
     public void setTheme(ThemeDTO theme) {
         Utils.checkFXThread();
-        if(theme == null) {
+        if (theme == null) {
             theme = ThemeDTO.DEFAULT_THEME;
         }
         Font font = theme.getFont();
@@ -351,13 +346,11 @@ public class ThemeToolbar extends HBox {
         boldButton.setSelected(theme.isBold());
         italicButton.setSelected(theme.isItalic());
         int align = theme.getTextAlignment();
-        if(align == -1) {
+        if (align == -1) {
             leftAlignButton.setSelected(true);
-        }
-        else if(align == 1) {
+        } else if (align == 1) {
             rightAlignButton.setSelected(true);
-        }
-        else {
+        } else {
             centreAlignButton.setSelected(true);
         }
         Background background = theme.getBackground();
@@ -366,10 +359,9 @@ public class ThemeToolbar extends HBox {
 
     private int getAlignmentVal() {
         int alignment = 0;
-        if(leftAlignButton.isSelected()) {
+        if (leftAlignButton.isSelected()) {
             alignment = -1;
-        }
-        else if(rightAlignButton.isSelected()) {
+        } else if (rightAlignButton.isSelected()) {
             alignment = 1;
         }
         return alignment;
@@ -388,30 +380,27 @@ public class ThemeToolbar extends HBox {
                 QueleaProperties.get().getMaxFontSize());
 
         Background background = new ColourBackground(Color.BLACK);
-        if(backTypeSelection.getSelectionModel().getSelectedItem() == null) {
+        if (backTypeSelection.getSelectionModel().getSelectedItem() == null) {
             return ThemeDTO.DEFAULT_THEME;
         }
-        if(backTypeSelection.getSelectionModel().getSelectedItem().equals(LabelGrabber.INSTANCE.getLabel("color.theme.label"))) {
+        if (backTypeSelection.getSelectionModel().getSelectedItem().equals(LabelGrabber.INSTANCE.getLabel("color.theme.label"))) {
             background = new ColourBackground(backgroundColorPicker.getValue());
-        }
-        else if(backTypeSelection.getSelectionModel().getSelectedItem().equals(LabelGrabber.INSTANCE.getLabel("image.theme.label"))) {
+        } else if (backTypeSelection.getSelectionModel().getSelectedItem().equals(LabelGrabber.INSTANCE.getLabel("image.theme.label"))) {
             String text = backgroundImageLocation.getText();
-            if(!text.isEmpty()) {
+            if (!text.isEmpty()) {
                 background = new ImageBackground(text);
             }
-        }
-        else if(backTypeSelection.getSelectionModel().getSelectedItem().equals(LabelGrabber.INSTANCE.getLabel("video.theme.label"))) {
+        } else if (backTypeSelection.getSelectionModel().getSelectedItem().equals(LabelGrabber.INSTANCE.getLabel("video.theme.label"))) {
             String text = backgroundVidLocation.getText();
-            if(!text.isEmpty()) {
+            if (!text.isEmpty()) {
                 background = new VideoBackground(text, vidHueSlider.getValue());
             }
-        }
-        else {
+        } else {
             throw new AssertionError("Bug - " + backTypeSelection.getSelectionModel().getSelectedItem() + " is an unknown selection value");
         }
         final SerializableDropShadow shadow = new SerializableDropShadow(Color.BLACK, 3, 3);
-        ThemeDTO resultTheme = new ThemeDTO(new SerializableFont(font), fontColor.getValue(),
-                background, shadow, boldButton.isSelected(), italicButton.isSelected(), -1, getAlignmentVal());
+        ThemeDTO resultTheme = new ThemeDTO(new SerializableFont(font), fontColor.getValue(), new SerializableFont(font), ThemeDTO.DEFAULT_TRANSLATE_FONT_COLOR,
+                background, shadow, boldButton.isSelected(), italicButton.isSelected(), false, true, -1, getAlignmentVal());
         return resultTheme;
     }
 

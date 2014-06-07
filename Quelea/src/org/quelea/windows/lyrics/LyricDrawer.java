@@ -62,7 +62,7 @@ public class LyricDrawer extends DisplayableDrawer {
     private ThemeDTO theme;
     private TextDisplayable curDisplayable;
     private boolean capitaliseFirst;
-    private Map<DisplayCanvas, Boolean> lastClearedState;
+    private final Map<DisplayCanvas, Boolean> lastClearedState;
 
     public LyricDrawer() {
         text = new String[]{};
@@ -84,6 +84,10 @@ public class LyricDrawer extends DisplayableDrawer {
         Font font = Font.font(theme.getFont().getFamily(),
                 theme.isBold() ? FontWeight.BOLD : FontWeight.NORMAL,
                 theme.isItalic() ? FontPosture.ITALIC : FontPosture.REGULAR,
+                QueleaProperties.get().getMaxFontSize());
+        Font translateFont = Font.font(theme.getTranslateFont().getFamily(),
+                theme.isTranslateBold() ? FontWeight.BOLD : FontWeight.NORMAL,
+                theme.isTranslateItalic() ? FontPosture.ITALIC : FontPosture.REGULAR,
                 QueleaProperties.get().getMaxFontSize());
         if (stageView) {
             font = Font.font(QueleaProperties.get().getStageTextFont(), QueleaProperties.get().getMaxFontSize());
@@ -114,19 +118,19 @@ public class LyricDrawer extends DisplayableDrawer {
         } else {
             fontSize = pickFontSize(font, newText, getCanvas().getWidth() * 0.9, getCanvas().getHeight() * 0.9);
         }
-        if (!stageView) {
+        if (stageView) {
+            font = Font.font(font.getFamily(), FontWeight.NORMAL,
+                    FontPosture.REGULAR, fontSize);
+        } else {
             font = Font.font(font.getFamily(),
                     theme.isBold() ? FontWeight.BOLD : FontWeight.NORMAL,
                     theme.isItalic() ? FontPosture.ITALIC : FontPosture.REGULAR,
                     fontSize);
-        } else {
-            font = Font.font(font.getFamily(), FontWeight.NORMAL,
-                    FontPosture.REGULAR, fontSize);
+            translateFont = Font.font(translateFont.getFamily(),
+                    theme.isTranslateBold() ? FontWeight.BOLD : FontWeight.NORMAL,
+                    theme.isTranslateItalic() ? FontPosture.ITALIC : FontPosture.REGULAR,
+                    fontSize-3);
         }
-        Font translateFont = Font.font(font.getFamily(),
-                theme.isBold() ? FontWeight.BOLD : FontWeight.NORMAL,
-                FontPosture.ITALIC,
-                fontSize-2); //TODO: UI for selecting this font
         FontMetrics metrics = Toolkit.getToolkit().getFontLoader().getFontMetrics(font);
         FontMetrics translateMetrics = Toolkit.getToolkit().getFontLoader().getFontMetrics(translateFont);
         final Group newTextGroup = new Group();

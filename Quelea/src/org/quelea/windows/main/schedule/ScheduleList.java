@@ -198,7 +198,7 @@ public class ScheduleList extends StackPane {
                                     if (dropShadow == null || (dropShadow.getColor().equals(Color.WHITE) && dropShadow.getOffsetX() == 0 && dropShadow.getOffsetY() == 0)) {
                                         dropShadow = new SerializableDropShadow(Color.BLACK, 3, 3);
                                     }
-                                    ThemeDTO newTheme = new ThemeDTO(theme.getSerializableFont(), theme.getFontPaint(), new ImageBackground(new File(imageLocation).getName()), dropShadow, theme.getSerializableFont().isBold(), theme.getSerializableFont().isItalic(), theme.getTextPosition(), theme.getTextAlignment());
+                                    ThemeDTO newTheme = new ThemeDTO(theme.getSerializableFont(), theme.getFontPaint(), theme.getTranslateSerializableFont(), theme.getTranslateFontPaint(), new ImageBackground(new File(imageLocation).getName()), dropShadow, theme.getSerializableFont().isBold(), theme.getSerializableFont().isItalic(),  theme.getTranslateSerializableFont().isBold(), theme.getTranslateSerializableFont().isItalic(),theme.getTextPosition(), theme.getTextAlignment());
                                     for (TextSection section : songDisplayable.getSections()) {
                                         section.setTheme(newTheme);
                                     }

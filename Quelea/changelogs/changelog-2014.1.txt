@@ -6,6 +6,7 @@ quelea (2014.1) stable; urgency=normal
   * Add Easyworship import
   * Add Openlyrics import / export
   * Add translation support
+  * Fix bug with italic font property not being saved when selecting an image or video background
   * Improve text wrapping algorithm for bible text
   * Add option for displaying verse numbers in bible text
   * Various minor bug fixes
