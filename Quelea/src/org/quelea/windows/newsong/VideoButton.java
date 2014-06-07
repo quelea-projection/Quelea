@@ -28,7 +28,6 @@ import javafx.stage.FileChooser;
 import org.apache.commons.io.FileUtils;
 import org.quelea.data.ThemeDTO;
 import org.quelea.data.VideoBackground;
-import org.quelea.services.languages.LabelGrabber;
 import org.quelea.services.utils.FileFilters;
 import org.quelea.services.utils.LoggerUtils;
 import org.quelea.services.utils.QueleaProperties;
@@ -82,10 +81,15 @@ public class VideoButton extends Button {
                     LyricDrawer drawer = new LyricDrawer();
                     drawer.setCanvas(canvas);
                     ThemeDTO theme = new ThemeDTO(new SerializableFont(drawer.getTheme().getFont()),
-                            drawer.getTheme().getFontPaint(), new VideoBackground(vidLocation, 0),
+                            drawer.getTheme().getFontPaint(),
+                            new SerializableFont(drawer.getTheme().getTranslateFont()),
+                            drawer.getTheme().getTranslateFontPaint(),
+                            new VideoBackground(vidLocation, 0),
                             drawer.getTheme().getShadow(),
                             drawer.getTheme().isBold(),
-                            drawer.getTheme().isBold(),
+                            drawer.getTheme().isItalic(),
+                            drawer.getTheme().isTranslateBold(),
+                            drawer.getTheme().isTranslateItalic(),
                             drawer.getTheme().getTextPosition(),
                             drawer.getTheme().getTextAlignment());
                     drawer.setTheme(theme);

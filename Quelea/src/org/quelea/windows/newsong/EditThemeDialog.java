@@ -63,7 +63,7 @@ public class EditThemeDialog extends Stage {
         Utils.addIconsToStage(this);
         setTitle(LabelGrabber.INSTANCE.getLabel("edit.theme.heading"));
         setResizable(false);
-        
+
         BorderPane mainPane = new BorderPane();
         mainPane.setStyle("-fx-background-color:#dddddd;");
         HBox northPanel = new HBox(5);
@@ -105,14 +105,14 @@ public class EditThemeDialog extends Stage {
                 hide();
             }
         });
-        
+
         HBox southPanel = new HBox(10);
         southPanel.setPadding(new Insets(10));
         southPanel.setAlignment(Pos.CENTER);
         southPanel.getChildren().add(confirmButton);
         southPanel.getChildren().add(cancelButton);
         mainPane.setBottom(southPanel);
-        
+
         setScene(new Scene(mainPane));
     }
 
@@ -131,16 +131,16 @@ public class EditThemeDialog extends Stage {
      * @param theme the theme.
      */
     public void setTheme(ThemeDTO theme) {
-        if(theme == null) {
-            theme = new ThemeDTO(ThemeDTO.DEFAULT_FONT, ThemeDTO.DEFAULT_FONT_COLOR,
-                    ThemeDTO.DEFAULT_BACKGROUND, ThemeDTO.DEFAULT_SHADOW, false, false, -1, 0);
+        if (theme == null) {
+            theme = new ThemeDTO(ThemeDTO.DEFAULT_FONT, ThemeDTO.DEFAULT_FONT_COLOR, ThemeDTO.DEFAULT_FONT, ThemeDTO.DEFAULT_TRANSLATE_FONT_COLOR,
+                    ThemeDTO.DEFAULT_BACKGROUND, ThemeDTO.DEFAULT_SHADOW, false, false, false, true, -1, 0);
             theme.setThemeName("");
             File file;
             int filenum = 1;
             do {
                 file = new File(new File(QueleaProperties.getQueleaUserHome(), "themes"), "theme" + filenum + ".th");
                 filenum++;
-            } while(file.exists());
+            } while (file.exists());
             theme.setFile(file);
         }
         themeFile = theme.getFile();
