@@ -23,11 +23,15 @@ public class Theme {
     private String name;
     private String fontname;
     private String fontcolour;
+    private String translateFontname;
+    private String translateFontcolour;
     private String backgroundcolour;
     private String backgroundvid;
     private String backgroundimage;
     private Boolean fontBold;
     private Boolean fontItalic;
+    private Boolean translateFontBold;
+    private Boolean translateFontItalic;
     private Double videoHue;
     private Integer textPosition;
     private Integer textAlignment;
@@ -36,18 +40,22 @@ public class Theme {
     public Theme() {
     }
 
-    public Theme(String name, String fontname, String fontcolour,
+    public Theme(String name, String fontname, String fontcolour, String translateFontname, String translateFontcolour,
             String backgroundcolour, String backgroundvid, String backgroundimage,
-            TextShadow shadow, boolean isFontBold, boolean isFontitalic, double videoHue, int textPosition, int textAlignment) {
+            TextShadow shadow, boolean isFontBold, boolean isFontitalic, boolean isTranslateFontBold, boolean isTranslateFontitalic, double videoHue, int textPosition, int textAlignment) {
         this.name = name;
         this.fontname = fontname;
         this.fontcolour = fontcolour;
+        this.translateFontname = translateFontname;
+        this.translateFontcolour = translateFontcolour;
         this.backgroundcolour = backgroundcolour;
         this.backgroundvid = backgroundvid;
         this.backgroundimage = backgroundimage;
         this.textShadow = shadow;
         this.fontBold = isFontBold;
         this.fontItalic = isFontitalic;
+        this.translateFontBold = isTranslateFontBold;
+        this.translateFontItalic = isTranslateFontitalic;
         this.videoHue = videoHue;
         this.textPosition = textPosition;
         this.textAlignment = textAlignment;
@@ -57,12 +65,16 @@ public class Theme {
         this.name = theme.name;
         this.fontname = theme.fontname;
         this.fontcolour = theme.fontcolour;
+        this.translateFontname = theme.translateFontname;
+        this.translateFontcolour = theme.translateFontcolour;
         this.backgroundcolour = theme.backgroundcolour;
         this.backgroundvid = theme.backgroundvid;
         this.backgroundimage = theme.backgroundimage;
         this.textShadow = theme.textShadow;
         this.fontBold = theme.fontBold;
         this.fontItalic = theme.fontItalic;
+        this.translateFontBold = theme.translateFontBold;
+        this.translateFontItalic = theme.translateFontItalic;
         this.videoHue = theme.videoHue;
         this.textPosition = theme.textPosition;
         this.textAlignment = theme.textAlignment;
@@ -167,6 +179,36 @@ public class Theme {
     }
 
     /**
+     * @return the translatefontname
+     */
+    @Column(name = "translatefontname", length = STRING_LENGTH)
+    public String getTranslateFontname() {
+        return translateFontname;
+    }
+
+    /**
+     * @param translateFontname the translatefontname to set
+     */
+    public void setTranslateFontname(String translateFontname) {
+        this.translateFontname = translateFontname;
+    }
+
+    /**
+     * @return the translatefontcolour
+     */
+    @Column(name = "translatefontcolour", length = STRING_LENGTH)
+    public String getTranslateFontcolour() {
+        return translateFontcolour;
+    }
+
+    /**
+     * @param translateFontcolour the fontcolour to set
+     */
+    public void setTranslateFontcolour(String translateFontcolour) {
+        this.translateFontcolour = translateFontcolour;
+    }
+
+    /**
      * @return the backgroundcolour
      */
     @Column(name = "backgroundcolor", length = STRING_LENGTH)
@@ -254,6 +296,36 @@ public class Theme {
      */
     public void setFontItalic(Boolean isFontItalic) {
         this.fontItalic = isFontItalic;
+    }
+
+    /**
+     * @return the isFontBold
+     */
+    @Column(name = "istranslatefontbold")
+    public Boolean isTranslateFontBold() {
+        return translateFontBold == null ? false : translateFontBold;
+    }
+
+    /**
+     * @param translateFontBold the isFontBold to set
+     */
+    public void setTranslateFontBold(Boolean translateFontBold) {
+        this.translateFontBold = translateFontBold;
+    }
+
+    /**
+     * @return the isFontItalic
+     */
+    @Column(name = "istranslatefontitalic")
+    public Boolean isTranslateFontItalic() {
+        return translateFontItalic == null ? false : translateFontItalic;
+    }
+
+    /**
+     * @param translateFontItalic the isFontItalic to set
+     */
+    public void setTranslateFontItalic(Boolean translateFontItalic) {
+        this.translateFontItalic = translateFontItalic;
     }
 
     @Override

@@ -44,17 +44,22 @@ public class ThemeDTO implements Serializable {
     private static final Logger LOGGER = LoggerUtils.getLogger();
     public static final SerializableFont DEFAULT_FONT = new SerializableFont(Font.font("Noto Sans", FontWeight.BOLD, FontPosture.REGULAR, QueleaProperties.get().getMaxFontSize()));
     public static final Color DEFAULT_FONT_COLOR = Color.WHITE;
+    public static final Color DEFAULT_TRANSLATE_FONT_COLOR = Color.WHITESMOKE;
     public static final SerializableDropShadow DEFAULT_SHADOW = new SerializableDropShadow(DEFAULT_FONT_COLOR, 0, 0);
     public static final ColourBackground DEFAULT_BACKGROUND = new ColourBackground(Color.BLACK);
-    public static final ThemeDTO DEFAULT_THEME = new ThemeDTO(DEFAULT_FONT, DEFAULT_FONT_COLOR, DEFAULT_BACKGROUND, DEFAULT_SHADOW, DEFAULT_FONT.getFont().getStyle().toLowerCase().contains("bold"), DEFAULT_FONT.getFont().getStyle().toLowerCase().contains("italic"), -1, 0);
+    public static final ThemeDTO DEFAULT_THEME = new ThemeDTO(DEFAULT_FONT, DEFAULT_FONT_COLOR, DEFAULT_FONT, DEFAULT_TRANSLATE_FONT_COLOR, DEFAULT_BACKGROUND, DEFAULT_SHADOW, DEFAULT_FONT.getFont().getStyle().toLowerCase().contains("bold"), DEFAULT_FONT.getFont().getStyle().toLowerCase().contains("italic"), DEFAULT_FONT.getFont().getStyle().toLowerCase().contains("bold"), true, -1, 0);
     private final SerializableFont font;
     private final SerializableColor fontColor;
+    private final SerializableFont translateFont;
+    private final SerializableColor translateFontColor;
     private final Background background;
     private final SerializableDropShadow textShadow;
     private String themeName;
     private File file;
     private Boolean isFontBold = false;
     private Boolean isFontItalic = false;
+    private Boolean isTranslateFontBold = false;
+    private Boolean isTranslateFontItalic = false;
     private int textPosition = -1;
     private int textAlignment = 0;
 
@@ -65,16 +70,20 @@ public class ThemeDTO implements Serializable {
      * @param fontPaint the font colour to use for the theme.
      * @param background the background to use for the page.
      */
-    public ThemeDTO(SerializableFont font, Color fontPaint, Background background,
-            SerializableDropShadow shadow, Boolean isFontBold, Boolean isFontItalic,
+    public ThemeDTO(SerializableFont font, Color fontPaint, SerializableFont translatefont, Color translatefontPaint, Background background,
+            SerializableDropShadow shadow, Boolean isFontBold, Boolean isFontItalic, Boolean isTranslateFontBold, Boolean isTranslateFontItalic,
             Integer textPosition, Integer textAlignment) {
         this.font = font;
+        this.translateFont = translatefont;
         this.fontColor = new SerializableColor(fontPaint);
+        this.translateFontColor = new SerializableColor(translatefontPaint);
         this.background = background;
         themeName = "";
         this.textShadow = shadow;
         this.isFontBold = isFontBold;
         this.isFontItalic = isFontItalic;
+        this.isTranslateFontBold = isTranslateFontBold;
+        this.isTranslateFontItalic = isTranslateFontItalic;
         this.textPosition = textPosition;
         this.textAlignment = textAlignment;
     }
@@ -94,7 +103,7 @@ public class ThemeDTO implements Serializable {
     public void setTextAlignment(int textAlignment) {
         this.textAlignment = textAlignment;
     }
-    
+
     /**
      * Get the file associated with this theme.
      * <p/>
@@ -150,12 +159,30 @@ public class ThemeDTO implements Serializable {
     }
 
     /**
+     * Get the translate font of the theme.
+     * <p/>
+     * @return the translate theme font.
+     */
+    public Font getTranslateFont() {
+        return translateFont.getFont();
+    }
+
+    /**
      * Get the font in its raw serializable form.
      * <p>
      * @return the serializable font.
      */
     public SerializableFont getSerializableFont() {
         return font;
+    }
+
+    /**
+     * Get the translate font in its raw serializable form.
+     * <p>
+     * @return the translate serializable font.
+     */
+    public SerializableFont getTranslateSerializableFont() {
+        return translateFont;
     }
 
     /**
@@ -168,6 +195,15 @@ public class ThemeDTO implements Serializable {
     }
 
     /**
+     * Get the paint of the translate font.
+     * <p/>
+     * @return the theme translate font paint.
+     */
+    public Color getTranslateFontPaint() {
+        return translateFontColor.getColor();
+    }
+
+    /**
      * Determine if this theme is equal to another object.
      * <p/>
      * @param obj the other object.
@@ -175,20 +211,20 @@ public class ThemeDTO implements Serializable {
      */
     @Override
     public boolean equals(Object obj) {
-        if(obj == null) {
+        if (obj == null) {
             return false;
         }
-        if(getClass() != obj.getClass()) {
+        if (getClass() != obj.getClass()) {
             return false;
         }
         final ThemeDTO other = (ThemeDTO) obj;
-        if(this.font != other.font && (this.font == null || !this.font.equals(other.font))) {
+        if (this.font != other.font && (this.font == null || !this.font.equals(other.font))) {
             return false;
         }
-        if(this.fontColor != other.fontColor && (this.fontColor == null || !this.fontColor.equals(other.fontColor))) {
+        if (this.fontColor != other.fontColor && (this.fontColor == null || !this.fontColor.equals(other.fontColor))) {
             return false;
         }
-        if(this.background != other.background && (this.background == null || !this.background.equals(other.background))) {
+        if (this.background != other.background && (this.background == null || !this.background.equals(other.background))) {
             return false;
         }
         return true;
@@ -218,20 +254,18 @@ public class ThemeDTO implements Serializable {
         String backgroundVideo = "";
         String backgroundImage = "";
         double vidHue = 0;
-        if(background instanceof VideoBackground) {
+        if (background instanceof VideoBackground) {
             backgroundVideo = background.getString();
             vidHue = ((VideoBackground) background).getHue();
-        }
-        else if(background instanceof ImageBackground) {
+        } else if (background instanceof ImageBackground) {
             backgroundImage = background.getString();
-        }
-        else if(background instanceof ColourBackground) {
+        } else if (background instanceof ColourBackground) {
             backgroundColor = background.getString();
         }
         final TextShadow shadow = new TextShadow(textShadow.getColor().toString(),
                 textShadow.getOffsetX(), textShadow.getOffsetY());
-        final Theme theme = new Theme(themeName, font.getFont().getName(), fontColor.toString(), backgroundColor,
-                backgroundVideo, backgroundImage, shadow, isFontBold, isFontItalic, vidHue, textPosition, textAlignment);
+        final Theme theme = new Theme(themeName, font.getFont().getName(), fontColor.toString(), translateFont.getFont().getName(), translateFontColor.toString(), backgroundColor,
+                backgroundVideo, backgroundImage, shadow, isFontBold, isFontItalic, isTranslateFontBold, isTranslateFontItalic, vidHue, textPosition, textAlignment);
         return theme;
     }
 
@@ -241,24 +275,22 @@ public class ThemeDTO implements Serializable {
      */
     public static ThemeDTO getDTO(Theme theme) {
         SerializableFont font = new SerializableFont(new Font(theme.getFontname(), QueleaProperties.get().getMaxFontSize()));
+        SerializableFont translateFont = new SerializableFont(new Font(theme.getTranslateFontname(), QueleaProperties.get().getMaxFontSize()));
         Background background;
-        if(!theme.getBackgroundcolour().isEmpty()) {
+        if (!theme.getBackgroundcolour().isEmpty()) {
             background = new ColourBackground(Utils.parseColour(theme.getBackgroundcolour()));
-        }
-        else if(!theme.getBackgroundimage().isEmpty()) {
+        } else if (!theme.getBackgroundimage().isEmpty()) {
             background = new ImageBackground(theme.getBackgroundimage());
-        }
-        else if(!theme.getBackgroundvid().isEmpty()) {
+        } else if (!theme.getBackgroundvid().isEmpty()) {
             background = new VideoBackground(theme.getBackgroundvid(), theme.getVideoHue());
-        }
-        else {
+        } else {
             background = new ColourBackground(Color.BLACK);
         }
         TextShadow givenShadow = theme.getTextShadow();
         SerializableDropShadow shadow = new SerializableDropShadow(Utils.parseColour(givenShadow.getShadowColor()),
                 givenShadow.getOffsetX(), givenShadow.getOffsetY());
-        ThemeDTO ret = new ThemeDTO(font, Utils.parseColour(theme.getFontcolour()),
-                background, shadow, theme.isFontBold(), theme.isFontItalic(), theme.getTextPosition(), theme.getTextAlignment());
+        ThemeDTO ret = new ThemeDTO(font, Utils.parseColour(theme.getFontcolour()), translateFont, Utils.parseColour(theme.getTranslateFontcolour()),
+                background, shadow, theme.isFontBold(), theme.isFontItalic(), theme.isTranslateFontBold(), theme.isTranslateFontItalic(), theme.getTextPosition(), theme.getTextAlignment());
         ret.themeName = theme.getName();
         return ret;
     }
@@ -276,20 +308,22 @@ public class ThemeDTO implements Serializable {
     public String asString() {
         StringBuilder ret = new StringBuilder();
         ret.append("fontname:").append(font.getFont().getFamily());
+        ret.append("$translatefontname:").append(translateFont.getFont().getFamily());
         ret.append("$fontcolour:").append(fontColor.toString());
-        if(!themeName.isEmpty()) {
+        ret.append("$translatefontcolour:").append(translateFontColor.toString());
+        if (!themeName.isEmpty()) {
             ret.append("$themename:").append(themeName);
         }
         ret.append("$isFontBold:").append(isFontBold);
         ret.append("$isFontItalic:").append(isFontItalic);
-        if(background instanceof VideoBackground) {
+        ret.append("$isTranslateFontBold:").append(isTranslateFontBold);
+        ret.append("$isTranslateFontItalic:").append(isTranslateFontItalic);
+        if (background instanceof VideoBackground) {
             ret.append("$backgroundvideo:").append(((VideoBackground) background).getString());
             ret.append("$vidhue:").append(((VideoBackground) background).getHue());
-        }
-        else if(background instanceof ImageBackground) {
+        } else if (background instanceof ImageBackground) {
             ret.append("$backgroundimage:").append(((ImageBackground) background).getString());
-        }
-        else if(background instanceof ColourBackground) {
+        } else if (background instanceof ColourBackground) {
             ret.append("$backgroundcolour:").append(((ColourBackground) background).getString());
         }
         ret.append("$shadowcolor:").append(textShadow.getColor().toString());
@@ -307,13 +341,17 @@ public class ThemeDTO implements Serializable {
      * @return theme DTO
      */
     public static ThemeDTO fromString(String content) {
-        if(content == null || content.isEmpty()) {
+        if (content == null || content.isEmpty()) {
             return ThemeDTO.DEFAULT_THEME;
         }
         String fontname = "";
         String fontcolour = "";
+        String translatefontname = "";
+        String translatefontcolour = "";
         String isFontBold = "";
         String isFontItalic = "";
+        String isTranslateFontBold = "";
+        String isTranslateFontItalic = "";
         String backgroundcolour = "";
         String backgroundvid = "";
         String backgroundimage = "";
@@ -324,51 +362,46 @@ public class ThemeDTO implements Serializable {
         String vidHue = "0";
         String textPosition = "-1";
         String textAlignment = "0";
-        for(String part : content.split("\\$")) {
-            if(!part.contains(":")) {
+        for (String part : content.split("\\$")) {
+            if (!part.contains(":")) {
                 continue;
             }
             String[] parts = part.split(":");
-            if(parts[0].equalsIgnoreCase("fontname")) {
+            if (parts[0].equalsIgnoreCase("fontname")) {
                 fontname = parts[1];
-            }
-            else if(parts[0].equalsIgnoreCase("fontcolour")) {
+            } else if (parts[0].equalsIgnoreCase("fontcolour")) {
                 fontcolour = parts[1];
-            }
-            else if(parts[0].equalsIgnoreCase("isFontBold")) {
+            } else if (parts[0].equalsIgnoreCase("translatefontname")) {
+                translatefontname = parts[1];
+            } else if (parts[0].equalsIgnoreCase("translatefontcolour")) {
+                translatefontcolour = parts[1];
+            } else if (parts[0].equalsIgnoreCase("isFontBold")) {
                 isFontBold = parts[1];
-            }
-            else if(parts[0].equalsIgnoreCase("isFontItalic")) {
+            } else if (parts[0].equalsIgnoreCase("isTranslateFontBold")) {
+                isTranslateFontBold = parts[1];
+            } else if (parts[0].equalsIgnoreCase("isTranslateFontItalic")) {
+                isTranslateFontItalic = parts[1];
+            } else if (parts[0].equalsIgnoreCase("isFontItalic")) {
                 isFontItalic = parts[1];
-            }
-            else if(parts[0].equalsIgnoreCase("backgroundcolour")) {
+            } else if (parts[0].equalsIgnoreCase("backgroundcolour")) {
                 backgroundcolour = parts[1];
-            }
-            else if(parts[0].equalsIgnoreCase("backgroundimage")) {
+            } else if (parts[0].equalsIgnoreCase("backgroundimage")) {
                 backgroundimage = parts[1];
-            }
-            else if(parts[0].equalsIgnoreCase("backgroundvideo")) {
+            } else if (parts[0].equalsIgnoreCase("backgroundvideo")) {
                 backgroundvid = parts[1];
-            }
-            else if(parts[0].equalsIgnoreCase("themename")) {
+            } else if (parts[0].equalsIgnoreCase("themename")) {
                 themeName = parts[1];
-            }
-            else if(parts[0].equalsIgnoreCase("shadowcolor")) {
+            } else if (parts[0].equalsIgnoreCase("shadowcolor")) {
                 shadowColor = parts[1];
-            }
-            else if(parts[0].equalsIgnoreCase("vidhue")) {
+            } else if (parts[0].equalsIgnoreCase("vidhue")) {
                 vidHue = parts[1];
-            }
-            else if(parts[0].equalsIgnoreCase("textposition")) {
+            } else if (parts[0].equalsIgnoreCase("textposition")) {
                 textPosition = parts[1];
-            }
-            else if(parts[0].equalsIgnoreCase("textalignment")) {
+            } else if (parts[0].equalsIgnoreCase("textalignment")) {
                 textAlignment = parts[1];
-            }
-            else if(parts[0].equalsIgnoreCase("shadowX")) {
+            } else if (parts[0].equalsIgnoreCase("shadowX")) {
                 shadowOffsetX = defaultIfEmpty(parts[1], "0");
-            }
-            else if(parts[0].equalsIgnoreCase("shadowY")) {
+            } else if (parts[0].equalsIgnoreCase("shadowY")) {
                 shadowOffsetY = defaultIfEmpty(parts[1], "0");
             }
         }
@@ -377,24 +410,26 @@ public class ThemeDTO implements Serializable {
                 Boolean.parseBoolean(isFontItalic) ? FontPosture.ITALIC : FontPosture.REGULAR,
                 QueleaProperties.get().getMaxFontSize());
         SerializableFont font = new SerializableFont(sysFont);
+        Font sysTranslateFont = Font.font(translatefontname,
+                Boolean.parseBoolean(isTranslateFontBold) ? FontWeight.BOLD : FontWeight.NORMAL,
+                Boolean.parseBoolean(isTranslateFontItalic) ? FontPosture.ITALIC : FontPosture.REGULAR,
+                QueleaProperties.get().getMaxFontSize());
+        SerializableFont translateFont = new SerializableFont(sysTranslateFont);
         Background background;
-        if(!backgroundcolour.trim().isEmpty()) {
+        if (!backgroundcolour.trim().isEmpty()) {
             background = new ColourBackground(Utils.parseColour(backgroundcolour));
-        }
-        else if(!backgroundimage.trim().isEmpty()) {
+        } else if (!backgroundimage.trim().isEmpty()) {
             background = new ImageBackground(backgroundimage);
-        }
-        else if(!backgroundvid.trim().isEmpty()) {
+        } else if (!backgroundvid.trim().isEmpty()) {
             background = new VideoBackground(backgroundvid, Double.parseDouble(vidHue));
-        }
-        else {
+        } else {
             LOGGER.log(Level.WARNING, "WARNING: Unhandled or empty background, using default background. Raw content: " + content, new RuntimeException("DEBUG EXCEPTION FOR STACK TRACE"));
             background = ThemeDTO.DEFAULT_BACKGROUND;
         }
         SerializableDropShadow shadow = new SerializableDropShadow(Utils.parseColour(shadowColor), Double.parseDouble(shadowOffsetX), Double.parseDouble(shadowOffsetY));
-        ThemeDTO ret = new ThemeDTO(font, Utils.parseColour(fontcolour),
-                background, shadow, Boolean.valueOf(isFontBold),
-                Boolean.valueOf(isFontItalic), Integer.parseInt(textPosition), Integer.parseInt(textAlignment.trim()));
+        ThemeDTO ret = new ThemeDTO(font, Utils.parseColour(fontcolour), translateFont, Utils.parseColour(translatefontcolour),
+                background, shadow, Boolean.valueOf(isFontBold), Boolean.valueOf(isFontItalic),
+                Boolean.valueOf(isTranslateFontBold), Boolean.valueOf(isTranslateFontItalic), Integer.parseInt(textPosition), Integer.parseInt(textAlignment.trim()));
         ret.themeName = themeName;
         return ret;
     }
@@ -407,10 +442,10 @@ public class ThemeDTO implements Serializable {
      * @return val, or defaultVal if the string is empty (or just whitespace.)
      */
     private static String defaultIfEmpty(String val, String defaultVal) {
-        if(val == null) {
+        if (val == null) {
             return defaultVal;
         }
-        if(val.trim().isEmpty()) {
+        if (val.trim().isEmpty()) {
             return defaultVal;
         }
         return val;
@@ -428,5 +463,19 @@ public class ThemeDTO implements Serializable {
      */
     public boolean isBold() {
         return isFontBold;
+    }
+
+    /**
+     * @return the italic
+     */
+    public boolean isTranslateItalic() {
+        return isTranslateFontItalic;
+    }
+
+    /**
+     * @return the bold
+     */
+    public boolean isTranslateBold() {
+        return isTranslateFontBold;
     }
 }
