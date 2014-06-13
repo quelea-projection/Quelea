@@ -66,9 +66,7 @@
             <fileset dir="${basedir}/themes"/>
         </copy>
         <unzip src="bundlejre/winjre.zip" dest="${dist.jar.dir}"/>
-        <unzip src="bundlejre/nixjre.zip" dest="${dist.jar.dir}"/>
         <unzip src="bundlejre/macjre.zip" dest="${dist.jar.dir}"/>
-        <chmod file="${dist.jar.dir}/nixjre" perm="777" type="both"/>
         <copy todir="${dist.jar.dir}/icons" quiet="yes">
             <fileset dir="${basedir}/icons"/>
         </copy>
