@@ -23,19 +23,22 @@ import javafx.scene.paint.Color;
 
 /**
  * A class that wraps the JavaFX colour so it can be serialized.
+ *
  * @author Michael
  */
 public class SerializableColor implements Serializable {
-    
-    private double r, g, b, a;
-    
+
+    private double r, g, b, a = 1;
+
     public SerializableColor(Color color) {
-        r = color.getRed();
-        g = color.getGreen();
-        b = color.getBlue();
-        a = color.getOpacity();
+        if (color != null) {
+            r = color.getRed();
+            g = color.getGreen();
+            b = color.getBlue();
+            a = color.getOpacity();
+        }
     }
-    
+
     public Color getColor() {
         return new Color(r, g, b, a);
     }
@@ -52,31 +55,31 @@ public class SerializableColor implements Serializable {
 
     @Override
     public boolean equals(Object obj) {
-        if(obj == null) {
+        if (obj == null) {
             return false;
         }
-        if(getClass() != obj.getClass()) {
+        if (getClass() != obj.getClass()) {
             return false;
         }
         final SerializableColor other = (SerializableColor) obj;
-        if(Double.doubleToLongBits(this.r) != Double.doubleToLongBits(other.r)) {
+        if (Double.doubleToLongBits(this.r) != Double.doubleToLongBits(other.r)) {
             return false;
         }
-        if(Double.doubleToLongBits(this.g) != Double.doubleToLongBits(other.g)) {
+        if (Double.doubleToLongBits(this.g) != Double.doubleToLongBits(other.g)) {
             return false;
         }
-        if(Double.doubleToLongBits(this.b) != Double.doubleToLongBits(other.b)) {
+        if (Double.doubleToLongBits(this.b) != Double.doubleToLongBits(other.b)) {
             return false;
         }
-        if(Double.doubleToLongBits(this.a) != Double.doubleToLongBits(other.a)) {
+        if (Double.doubleToLongBits(this.a) != Double.doubleToLongBits(other.a)) {
             return false;
         }
         return true;
     }
-    
+
     @Override
     public String toString() {
         return getColor().toString();
     }
-    
+
 }
