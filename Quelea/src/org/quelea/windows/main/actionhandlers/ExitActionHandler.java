@@ -24,6 +24,7 @@ import javafx.event.ActionEvent;
 import javafx.event.Event;
 import javafx.event.EventHandler;
 import org.javafx.dialog.Dialog;
+import org.quelea.data.SaveCallback;
 import org.quelea.data.Schedule;
 import org.quelea.data.ScheduleSaver;
 import org.quelea.data.displayable.Displayable;
@@ -54,21 +55,32 @@ public class ExitActionHandler implements EventHandler<ActionEvent> {
         exit(t);
     }
 
+    private boolean block = false;
+
     /**
      * Process the necessary logic to cleanly exit from Quelea.
+     * @param t the event that caused the exit.
      */
     public void exit(Event t) {
         LOGGER.log(Level.INFO, "exit() called");
+        block = false;
         MainWindow mainWindow = QueleaApp.get().getMainWindow();
         t.consume();
         Schedule schedule = mainWindow.getMainPanel().getSchedulePanel().getScheduleList().getSchedule();
-        if(!schedule.isEmpty() && schedule.isModified()) {
+        if (!schedule.isEmpty() && schedule.isModified()) {
             cancel = false;
             Dialog d = Dialog.buildConfirmation(LabelGrabber.INSTANCE.getLabel("save.before.exit.title"), LabelGrabber.INSTANCE.getLabel("save.before.exit.text")).addYesButton(new EventHandler<ActionEvent>() {
                 @Override
                 public void handle(ActionEvent t) {
                     //Save schedule
-                   cancel = !(new ScheduleSaver().saveSchedule(false));
+                    block = true;
+                    new ScheduleSaver().saveSchedule(false, new SaveCallback() {
+                        @Override
+                        public void saved(boolean success) {
+                            cancel = !success;
+                            block = false;
+                        }
+                    });
                 }
             }).addNoButton(new EventHandler<ActionEvent>() {
                 @Override
@@ -83,7 +95,14 @@ public class ExitActionHandler implements EventHandler<ActionEvent> {
                 }
             }).build();
             d.showAndWait();
-            if(cancel) {
+            while(block) {
+                try {
+                    Thread.sleep(5);
+                } catch (InterruptedException ex) {
+                    //Meh.
+                }
+            }
+            if (cancel) {
                 return; //Don't exit
             }
         }
@@ -92,7 +111,7 @@ public class ExitActionHandler implements EventHandler<ActionEvent> {
         LOGGER.log(Level.INFO, "Hiding main window...");
         mainWindow.hide();
         LOGGER.log(Level.INFO, "Cleaning up displayables before exiting..");
-        for(Object obj : mainWindow.getMainPanel().getSchedulePanel().getScheduleList().itemsProperty().get()) {
+        for (Object obj : mainWindow.getMainPanel().getSchedulePanel().getScheduleList().itemsProperty().get()) {
             Displayable d = (Displayable) obj;
             LOGGER.log(Level.INFO, "Cleaning up {0}", d.getClass());
             d.dispose();
@@ -100,11 +119,11 @@ public class ExitActionHandler implements EventHandler<ActionEvent> {
 
         LOGGER.log(Level.INFO, "Try to close OOfice if opened");
         OOUtils.closeOOApp();
-        if(QueleaApp.get().getMobileLyricsServer()!=null) {
+        if (QueleaApp.get().getMobileLyricsServer() != null) {
             LOGGER.log(Level.INFO, "Stopping mobile lyrics server");
             QueleaApp.get().getMobileLyricsServer().stop();
         }
-        if(QueleaApp.get().getRemoteControlServer()!=null) {
+        if (QueleaApp.get().getRemoteControlServer() != null) {
             LOGGER.log(Level.INFO, "Stopping remote control server");
             QueleaApp.get().getRemoteControlServer().stop();
         }

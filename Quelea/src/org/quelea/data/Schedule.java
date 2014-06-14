@@ -132,7 +132,7 @@ public class Schedule implements Iterable<Displayable>, Printable {
      *
      * @return true if the write was successful, false otherwise.
      */
-    public boolean writeToFile() {
+    public synchronized boolean writeToFile() {
         if(file == null) {
             return false;
         }
