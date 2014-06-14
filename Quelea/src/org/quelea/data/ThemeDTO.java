@@ -155,6 +155,9 @@ public class ThemeDTO implements Serializable {
      * @return the theme font.
      */
     public Font getFont() {
+        if (font == null) {
+            return null;
+        }
         return font.getFont();
     }
 
@@ -164,6 +167,9 @@ public class ThemeDTO implements Serializable {
      * @return the translate theme font.
      */
     public Font getTranslateFont() {
+        if(translateFont==null) {
+            return null;
+        }
         return translateFont.getFont();
     }
 
@@ -191,6 +197,9 @@ public class ThemeDTO implements Serializable {
      * @return the theme font paint.
      */
     public Color getFontPaint() {
+        if (fontColor == null) {
+            return null;
+        }
         return fontColor.getColor();
     }
 
@@ -200,6 +209,9 @@ public class ThemeDTO implements Serializable {
      * @return the theme translate font paint.
      */
     public Color getTranslateFontPaint() {
+        if (translateFontColor == null) {
+            return null;
+        }
         return translateFontColor.getColor();
     }
 

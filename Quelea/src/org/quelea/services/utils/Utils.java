@@ -82,8 +82,8 @@ import org.quelea.windows.main.StatusPanel;
 public final class Utils {
 
     private static final Logger LOGGER = LoggerUtils.getLogger();
-    public static final String TOOLBAR_BUTTON_STYLE = "-fx-background-insets: 0;-fx-background-color: rgba(0, 0, 0, 0);-fx-padding:3,6,3,6;";
-    public static final String HOVER_TOOLBAR_BUTTON_STYLE = "-fx-background-insets: 0;-fx-padding:3,6,3,6;";
+    public static final String TOOLBAR_BUTTON_STYLE = "-fx-background-insets: 0;-fx-background-color: rgba(0, 0, 0, 0);-fx-padding:3,6,3,6;-fx-text-fill: grey;";
+    public static final String HOVER_TOOLBAR_BUTTON_STYLE = "-fx-background-insets: 0;-fx-padding:3,6,3,6;-fx-text-fill: grey;";
 
     /**
      * Don't instantiate me. I bite.

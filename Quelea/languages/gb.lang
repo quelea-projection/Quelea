@@ -447,3 +447,7 @@ remote.control.password=Remote Control Password (Case sensitive)
 remote.logout.text=Logout
 remote.login.text=Please log in to continue
 remote.submit.text=Login
+more.font.options.label=More font options
+more.fonts.label=More fonts
+translation.font.text=Translation font
+shadow.text=Shadow
