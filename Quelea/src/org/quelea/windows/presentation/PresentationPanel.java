@@ -210,7 +210,6 @@ public class PresentationPanel extends AbstractPanel {
         Platform.runLater(new Runnable() {
             @Override
             public void run() {
-                System.out.println("" + index);
                 if(index < 1) { 
                     presentationPreview.select(1, true);
                 }
