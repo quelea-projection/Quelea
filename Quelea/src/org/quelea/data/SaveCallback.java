@@ -16,32 +16,18 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.quelea.windows.main.actionhandlers;
-
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
-import org.quelea.data.ScheduleSaver;
+package org.quelea.data;
 
 /**
- * The save schedule action listener.
+ * A callback to signal whether a save was successful.
  * @author Michael
  */
-public class SaveScheduleActionHandler implements EventHandler<ActionEvent> {
-    
-    private boolean saveas;
+public interface SaveCallback {
     
     /**
-     * Create a new save schedule action listener.
-     * @param saveas true if we're doing a "save as", false if it's just a
-     * save.
+     * Called when a save has completed.
+     * @param success true if the save was successful, false otherwise.
      */
-    public SaveScheduleActionHandler(boolean saveas) {
-        this.saveas = saveas;
-    }
-    
-    @Override
-    public void handle(ActionEvent t) {
-        new ScheduleSaver().saveSchedule(saveas, null);
-    }
+    void saved(boolean success);
     
 }

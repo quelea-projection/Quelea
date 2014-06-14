@@ -27,22 +27,28 @@ import org.quelea.services.utils.FileFilters;
 import org.quelea.services.utils.QueleaProperties;
 import org.quelea.windows.main.MainPanel;
 import org.quelea.windows.main.QueleaApp;
+import org.quelea.windows.main.StatusPanel;
 
 /**
  * Responsible for saving a schedule.
+ *
  * @author Michael
  */
 public class ScheduleSaver {
-    
+
     private boolean yes = false;
 
     /**
-     * Save the current schedule.
-     * @param saveAs true if the file location should be specified, false if the current one should be used.
+     * Save the current schedule. This will execute on a new thread.
+     *
+     * @param saveAs true if the file location should be specified, false if the
+     * current one should be used.
+     * @param callback the callback to use to signal if the save was successful.
+     * Can be null.
      */
-    public boolean saveSchedule(boolean saveAs) {
+    public void saveSchedule(boolean saveAs, final SaveCallback callback) {
         MainPanel mainpanel = QueleaApp.get().getMainWindow().getMainPanel();
-        Schedule schedule = mainpanel.getSchedulePanel().getScheduleList().getSchedule();
+        final Schedule schedule = mainpanel.getSchedulePanel().getScheduleList().getSchedule();
         File file = schedule.getFile();
         if (saveAs || file == null) {
             FileChooser chooser = new FileChooser();
@@ -75,19 +81,22 @@ public class ScheduleSaver {
                 schedule.setFile(selectedFile);
             }
         }
-        if (schedule.getFile() != null) {
-            boolean success = schedule.writeToFile();
-            if (!success) {
-                Dialog.showError(LabelGrabber.INSTANCE.getLabel("cant.save.schedule.title"), LabelGrabber.INSTANCE.getLabel("cant.save.schedule.text"));
-                return false;
+        final StatusPanel statusPanel = QueleaApp.get().getStatusGroup().addPanel(LabelGrabber.INSTANCE.getLabel("saving.schedule"));
+        new Thread() {
+            public void run() {
+                boolean success = false;
+                if (schedule.getFile() != null) {
+                    success = schedule.writeToFile();
+                    if (!success) {
+                        Dialog.showError(LabelGrabber.INSTANCE.getLabel("cant.save.schedule.title"), LabelGrabber.INSTANCE.getLabel("cant.save.schedule.text"));
+                    }
+                }
+                if (callback != null) {
+                    callback.saved(success);
+                }
+                statusPanel.done();
             }
-            else {
-                return true;
-            }
-        }
-        else {
-            return false;
-        } 
+        }.start();
     }
 
 }
