@@ -209,6 +209,7 @@ public class ThemeToolbar extends HBox {
             @Override
             public void handle(ActionEvent t) {
                 moreFontOptionsDialog.showAndWait();
+                themePanel.updateTheme(false);
             }
         });
         StackPane.setAlignment(moreOptionsButton, Pos.BOTTOM_RIGHT);
