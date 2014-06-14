@@ -34,6 +34,7 @@ import javafx.scene.control.Slider;
 import javafx.scene.control.TextField;
 import javafx.scene.control.ToggleButton;
 import javafx.scene.control.ToggleGroup;
+import javafx.scene.control.Tooltip;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
@@ -68,6 +69,8 @@ public class ThemeToolbar extends HBox {
 
     private final ComboBox<String> fontSelection;
     private final Button fontExpandButton;
+    private final Button moreOptionsButton;
+    private final FontOptionsDialog moreFontOptionsDialog;
     private final ToggleButton boldButton;
     private final ToggleButton italicButton;
     private final ToggleButton leftAlignButton;
@@ -90,6 +93,7 @@ public class ThemeToolbar extends HBox {
     public ThemeToolbar(final ThemePanel themePanel) {
         Utils.checkFXThread();
         this.themePanel = themePanel;
+        moreFontOptionsDialog = new FontOptionsDialog();
         setPadding(new Insets(5));
         setStyle("-fx-background-color:#dddddd;");
         VBox topLevelFontBox = new VBox(10);
@@ -113,6 +117,8 @@ public class ThemeToolbar extends HBox {
             }
         });
         fontExpandButton = new Button("...");
+        fontExpandButton.setTooltip(new Tooltip(LabelGrabber.INSTANCE.getLabel("more.fonts.label") + "..."));
+        Utils.setToolbarButtonStyle(fontExpandButton);
         fontExpandButton.setOnAction(new EventHandler<ActionEvent>() {
 
             @Override
@@ -195,6 +201,18 @@ public class ThemeToolbar extends HBox {
         Text fontText = new Text(LabelGrabber.INSTANCE.getLabel("font.theme.label"));
         fontText.setFill(Color.GRAY);
         fontBottom.getChildren().add(fontText);
+        moreOptionsButton = new Button("...");
+        Utils.setToolbarButtonStyle(moreOptionsButton);
+        moreOptionsButton.setTooltip(new Tooltip(LabelGrabber.INSTANCE.getLabel("more.font.options.label") + "..."));
+        moreOptionsButton.setOnAction(new EventHandler<ActionEvent>() {
+
+            @Override
+            public void handle(ActionEvent t) {
+                moreFontOptionsDialog.showAndWait();
+            }
+        });
+        StackPane.setAlignment(moreOptionsButton, Pos.BOTTOM_RIGHT);
+        fontBottom.getChildren().add(moreOptionsButton);
         topLevelFontBox.getChildren().add(fontBottom);
 
         //-------
@@ -353,6 +371,7 @@ public class ThemeToolbar extends HBox {
         } else {
             centreAlignButton.setSelected(true);
         }
+        moreFontOptionsDialog.setTheme(theme);
         Background background = theme.getBackground();
         background.setThemeForm(backgroundColorPicker, backTypeSelection, backgroundImageLocation, backgroundVidLocation, vidHueSlider);
     }
@@ -398,9 +417,9 @@ public class ThemeToolbar extends HBox {
         } else {
             throw new AssertionError("Bug - " + backTypeSelection.getSelectionModel().getSelectedItem() + " is an unknown selection value");
         }
-        final SerializableDropShadow shadow = new SerializableDropShadow(Color.BLACK, 3, 3);
-        ThemeDTO resultTheme = new ThemeDTO(new SerializableFont(font), fontColor.getValue(), new SerializableFont(font), ThemeDTO.DEFAULT_TRANSLATE_FONT_COLOR,
-                background, shadow, boldButton.isSelected(), italicButton.isSelected(), false, true, -1, getAlignmentVal());
+        final SerializableDropShadow shadow = moreFontOptionsDialog.getShadow();
+        ThemeDTO resultTheme = new ThemeDTO(new SerializableFont(font), fontColor.getValue(), moreFontOptionsDialog.getTranslateFont(), moreFontOptionsDialog.getTranslateColour(),
+                background, shadow, boldButton.isSelected(), italicButton.isSelected(), moreFontOptionsDialog.isTranslateBold(), moreFontOptionsDialog.isTranslateItalic(), -1, getAlignmentVal());
         return resultTheme;
     }
 

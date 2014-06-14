@@ -85,7 +85,11 @@ public class LyricDrawer extends DisplayableDrawer {
                 theme.isBold() ? FontWeight.BOLD : FontWeight.NORMAL,
                 theme.isItalic() ? FontPosture.ITALIC : FontPosture.REGULAR,
                 QueleaProperties.get().getMaxFontSize());
-        Font translateFont = Font.font(theme.getTranslateFont().getFamily(),
+        String translateFamily = theme.getFont().getFamily();
+        if(theme.getTranslateFont()!=null) {
+            translateFamily = theme.getTranslateFont().getFamily();
+        }
+        Font translateFont = Font.font(translateFamily,
                 theme.isTranslateBold() ? FontWeight.BOLD : FontWeight.NORMAL,
                 theme.isTranslateItalic() ? FontPosture.ITALIC : FontPosture.REGULAR,
                 QueleaProperties.get().getMaxFontSize());
@@ -95,7 +99,10 @@ public class LyricDrawer extends DisplayableDrawer {
         if (font == null) {
             font = ThemeDTO.DEFAULT_FONT.getFont();
         }
-        DropShadow shadow = theme.getShadow().getDropShadow();
+        DropShadow shadow = new DropShadow();
+        if(theme.getShadow()!=null) {
+            shadow = theme.getShadow().getDropShadow();
+        }
         if (stageView) {
             shadow = new DropShadow();
         }
@@ -174,8 +181,8 @@ public class LyricDrawer extends DisplayableDrawer {
                 lineColor = QueleaProperties.get().getStageChordColor();
             } else if (stageView) {
                 lineColor = QueleaProperties.get().getStageLyricsColor();
-            } else if(line.isTranslateLine()) { //TODO: UI for selecting this colour
-                lineColor = Color.BLANCHEDALMOND;
+            } else if(line.isTranslateLine()) {
+                lineColor = theme.getTranslateFontPaint();
             } else {
                 lineColor = theme.getFontPaint();
             }
