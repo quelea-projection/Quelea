@@ -35,7 +35,7 @@ public final class FileFilters {
     /**
      * Accept XML bbibles.
      */
-    public static final FileChooser.ExtensionFilter XML_BIBLE = new FileChooser.ExtensionFilter(LabelGrabber.INSTANCE.getLabel("filefilters.description.xml.bibles") + " (*.xml)", "*.xml");
+    public static final FileChooser.ExtensionFilter XML_BIBLE = new FileChooser.ExtensionFilter(LabelGrabber.INSTANCE.getLabel("filefilters.description.xml.bibles") + " (*.xml, *.xmm)", "*.xml", "*.xmm");
     /**
      * Accept XML easyslide files.
      */
