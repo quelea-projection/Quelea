@@ -755,7 +755,7 @@ public class SongDisplayable implements TextDisplayable, Comparable<SongDisplaya
             }
             String[] smallLines = new String[]{
                 title,
-                author
+                author + ((ccli.equals("")) ? "" : ("(" + ccli + ")"))
             };
             sections.add(new TextSection(sectionTitle, newLyrics, smallLines, true));
         }
