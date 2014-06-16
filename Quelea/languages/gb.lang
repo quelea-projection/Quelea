@@ -452,3 +452,5 @@ more.fonts.label=More fonts
 translation.font.text=Translation font
 shadow.text=Shadow
 saving.schedule=Saving the schedule...
+show.small.text.label=Show small song and bible information
+small.text.position.label=Song and bible information position

@@ -1,3 +1,20 @@
+/* 
+ * This file is part of Quelea, free projection software for churches.
+ * 
+ * 
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
 package org.quelea.windows.lyrics;
 
 import org.quelea.windows.main.DisplayableDrawer;
@@ -49,7 +66,7 @@ import org.quelea.windows.main.widgets.DisplayPositionSelector;
 import org.quelea.windows.multimedia.VLCWindow;
 
 /**
- * Responsible for drawing lyircs and their background.
+ * Responsible for drawing lyrics and their background.
  * <p/>
  * @author Ben Goodwin, tomaszpio@gmail.com, Michael
  */
@@ -59,15 +76,18 @@ public class LyricDrawer extends DisplayableDrawer {
     private String[] text;
     private String[] translations;
     private Group textGroup;
+    private Group smallTextGroup;
     private ThemeDTO theme;
     private TextDisplayable curDisplayable;
     private boolean capitaliseFirst;
     private final Map<DisplayCanvas, Boolean> lastClearedState;
+    private String[] smallText;
 
     public LyricDrawer() {
         text = new String[]{};
         theme = ThemeDTO.DEFAULT_THEME;
         textGroup = new Group();
+        smallTextGroup = new Group();
         lastClearedState = new HashMap<>();
     }
 
@@ -76,9 +96,10 @@ public class LyricDrawer extends DisplayableDrawer {
         boolean stageView = getCanvas().isStageView();
         if (getCanvas().getCanvasBackground() != null) {
             if (!getCanvas().getChildren().contains(getCanvas().getCanvasBackground())
-                    && !getCanvas().getChildren().contains(textGroup)) {
+                    && !getCanvas().getChildren().contains(textGroup) && !getCanvas().getChildren().contains(smallTextGroup)) {
                 getCanvas().getChildren().add(0, getCanvas().getCanvasBackground());
                 getCanvas().getChildren().add(textGroup);
+                getCanvas().getChildren().add(smallTextGroup);
             }
         }
         Font font = Font.font(theme.getFont().getFamily(),
@@ -86,13 +107,14 @@ public class LyricDrawer extends DisplayableDrawer {
                 theme.isItalic() ? FontPosture.ITALIC : FontPosture.REGULAR,
                 QueleaProperties.get().getMaxFontSize());
         String translateFamily = theme.getFont().getFamily();
-        if(theme.getTranslateFont()!=null) {
+        if (theme.getTranslateFont() != null) {
             translateFamily = theme.getTranslateFont().getFamily();
         }
         Font translateFont = Font.font(translateFamily,
                 theme.isTranslateBold() ? FontWeight.BOLD : FontWeight.NORMAL,
                 theme.isTranslateItalic() ? FontPosture.ITALIC : FontPosture.REGULAR,
                 QueleaProperties.get().getMaxFontSize());
+
         if (stageView) {
             font = Font.font(QueleaProperties.get().getStageTextFont(), QueleaProperties.get().getMaxFontSize());
         }
@@ -100,7 +122,7 @@ public class LyricDrawer extends DisplayableDrawer {
             font = ThemeDTO.DEFAULT_FONT.getFont();
         }
         DropShadow shadow = new DropShadow();
-        if(theme.getShadow()!=null) {
+        if (theme.getShadow() != null) {
             shadow = theme.getShadow().getDropShadow();
         }
         if (stageView) {
@@ -136,12 +158,24 @@ public class LyricDrawer extends DisplayableDrawer {
             translateFont = Font.font(translateFont.getFamily(),
                     theme.isTranslateBold() ? FontWeight.BOLD : FontWeight.NORMAL,
                     theme.isTranslateItalic() ? FontPosture.ITALIC : FontPosture.REGULAR,
-                    fontSize-3);
+                    fontSize - 3);
         }
+        double smallFontSize;
+        Font smallTextFont = Font.font("Arial", FontWeight.BOLD, FontPosture.REGULAR, 500);
+        smallFontSize = pickSmallFontSize(smallTextFont, smallText, getCanvas().getWidth() * 0.5, getCanvas().getHeight() * 0.07);
+        smallTextFont = Font.font("Arial", FontWeight.BOLD, FontPosture.REGULAR, smallFontSize);
+
         FontMetrics metrics = Toolkit.getToolkit().getFontLoader().getFontMetrics(font);
         FontMetrics translateMetrics = Toolkit.getToolkit().getFontLoader().getFontMetrics(translateFont);
+        FontMetrics smallTextMetrics = Toolkit.getToolkit().getFontLoader().getFontMetrics(smallTextFont);
         final Group newTextGroup = new Group();
         StackPane.setAlignment(newTextGroup, Pos.CENTER);
+        smallTextGroup = new Group();
+        if (QueleaProperties.get().getSmallTextPosition().toLowerCase().equals("left")) {
+            StackPane.setAlignment(smallTextGroup, Pos.BOTTOM_LEFT);
+        } else {
+            StackPane.setAlignment(smallTextGroup, Pos.BOTTOM_RIGHT);
+        }
 
         for (Iterator< Node> it = getCanvas().getChildren().iterator(); it.hasNext();) {
             Node node = it.next();
@@ -151,16 +185,18 @@ public class LyricDrawer extends DisplayableDrawer {
         }
 
         getCanvas().getChildren().add(newTextGroup);
+        if (QueleaProperties.get().getSmallTextShow()) {
+            getCanvas().getChildren().add(smallTextGroup);
+        }
         getCanvas().pushLogoNoticeToFront();
 
         int y = 0;
         ParallelTransition paintTransition = new ParallelTransition();
         for (LyricLine line : newText) {
             FontMetrics loopMetrics;
-            if(line.isTranslateLine()) {
+            if (line.isTranslateLine()) {
                 loopMetrics = translateMetrics;
-            }
-            else {
+            } else {
                 loopMetrics = metrics;
             }
             FormattedText t;
@@ -181,7 +217,7 @@ public class LyricDrawer extends DisplayableDrawer {
                 lineColor = QueleaProperties.get().getStageChordColor();
             } else if (stageView) {
                 lineColor = QueleaProperties.get().getStageLyricsColor();
-            } else if(line.isTranslateLine()) {
+            } else if (line.isTranslateLine()) {
                 lineColor = theme.getTranslateFontPaint();
             } else {
                 lineColor = theme.getFontPaint();
@@ -195,29 +231,49 @@ public class LyricDrawer extends DisplayableDrawer {
 
             newTextGroup.getChildren().add(t);
         }
+        int sy = 0;
+        for (String stext : smallText) {
+            FormattedText ft = new FormattedText(stext);
+            ft.setFont(smallTextFont);
+            ft.setFill(theme.getFontPaint());
+            ft.setLayoutY(sy);
+            smallTextGroup.getChildren().add(ft);
+            sy += smallTextMetrics.getLineHeight() + 2;
+        }
         if (!paintTransition.getChildren().isEmpty()) {
             paintTransition.play();
         }
         textGroup = newTextGroup;
-        StackPane.setMargin(textGroup, new Insets(10));
+        StackPane.setMargin(textGroup, new Insets(5));
         if (stageView) {
             StackPane.setAlignment(textGroup, Pos.CENTER);
         } else {
             StackPane.setAlignment(textGroup, DisplayPositionSelector.getPosFromIndex(theme.getTextPosition()));
         }
+
+        StackPane.setMargin(smallTextGroup, new Insets(10));
+        
         if (getCanvas().isCleared() && !getLastClearedState()) {
             setLastClearedState(true);
             FadeTransition t = new FadeTransition(Duration.seconds(QueleaProperties.get().getFadeDuration()), textGroup);
+            FadeTransition t2 = new FadeTransition(Duration.seconds(QueleaProperties.get().getFadeDuration()), smallTextGroup);
             t.setToValue(0);
             t.play();
+            t2.setToValue(0);
+            t2.play();
         } else if (getCanvas().isCleared()) {
             textGroup.setOpacity(0);
+            smallTextGroup.setOpacity(0);
         } else if (!getCanvas().isCleared() && getLastClearedState()) {
             setLastClearedState(false);
             FadeTransition t = new FadeTransition(Duration.seconds(QueleaProperties.get().getFadeDuration()), textGroup);
+            FadeTransition t2 = new FadeTransition(Duration.seconds(QueleaProperties.get().getFadeDuration()), smallTextGroup);
             t.setFromValue(0);
             t.setToValue(1);
             t.play();
+            t2.setFromValue(0);
+            t2.setToValue(1);
+            t2.play();
         }
     }
 
@@ -424,6 +480,20 @@ public class LyricDrawer extends DisplayableDrawer {
         return longestStr;
     }
 
+    private String longestLine(Font font, ArrayList<String> text) {
+        FontMetrics metrics = Toolkit.getToolkit().getFontLoader().getFontMetrics(font);
+        double longestWidth = -1;
+        String longestStr = null;
+        for (String line : text) {
+            double width = metrics.computeStringWidth(line);
+            if (width > longestWidth) {
+                longestWidth = width;
+                longestStr = line;
+            }
+        }
+        return longestStr;
+    }
+
     /**
      * Wrap the text in a "dumb" way, not worrying about dividing up lines
      * nicely. This works better for bible passages.
@@ -462,7 +532,7 @@ public class LyricDrawer extends DisplayableDrawer {
         List<LyricLine> finalLines = new ArrayList<>();
         for (int i = 0; i < linesArr.length; i++) {
             finalLines.add(new LyricLine(linesArr[i]));
-            if (translationArr != null && i < translationArr.length && new LineTypeChecker(translationArr[i]).getLineType()==Type.NORMAL) {
+            if (translationArr != null && i < translationArr.length && new LineTypeChecker(translationArr[i]).getLineType() == Type.NORMAL) {
                 finalLines.add(new LyricLine(true, translationArr[i]));
             }
         }
@@ -652,6 +722,7 @@ public class LyricDrawer extends DisplayableDrawer {
         }
         this.text = Arrays.copyOf(text, text.length);
         this.translations = Arrays.copyOf(translations, translations.length);
+        this.smallText = smallText;
         draw(curDisplayable, fontSize);
     }
 
@@ -695,5 +766,43 @@ public class LyricDrawer extends DisplayableDrawer {
         }
         setTheme(ThemeDTO.DEFAULT_THEME);
         eraseText();
+    }
+
+    private double pickSmallFontSize(Font font, String[] text, double width, double height) {
+        FontMetrics metrics = Toolkit.getToolkit().getFontLoader().getFontMetrics(font);
+        ArrayList<String> al = new ArrayList<String>();
+        for(String te : text) {
+            if(al.contains("\n")) {
+                String[] te2 = te.split("\n");
+                for(String te3 : te2) {
+                    al.add(te3);
+                }
+            }
+            else {
+                al.add(te);
+            }
+        }
+        double totalHeight = ((metrics.getLineHeight() + getLineSpacing()) * al.size());
+        while (totalHeight > height) {
+            font = new Font(font.getName(), font.getSize() - 0.5);
+            if (font.getSize() < 1) {
+                return 1;
+            }
+            metrics = Toolkit.getToolkit().getFontLoader().getFontMetrics(font);
+            totalHeight = (metrics.getLineHeight() + getLineSpacing()) * al.size();
+        }
+
+        String longestLine = longestLine(font, al);
+        double totalWidth = metrics.computeStringWidth(longestLine);
+        while (totalWidth > width) {
+            font = new Font(font.getName(), font.getSize() - 0.5);
+            if (font.getSize() < 1) {
+                return 1;
+            }
+            metrics = Toolkit.getToolkit().getFontLoader().getFontMetrics(font);
+            totalWidth = metrics.computeStringWidth(longestLine);
+        }
+
+        return font.getSize();
     }
 }
