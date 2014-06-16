@@ -344,4 +344,17 @@ public class LivePanel extends LivePreviewPanel {
     public boolean isContentShowing() {
         return !(logo.isSelected() || clear.isSelected() || black.isSelected() || hide.isSelected());
     }
+
+    public boolean getLogoed() {
+        return logo.isSelected();
+    }
+    
+    public boolean getBlacked() {
+        return black.isSelected();
+    }
+    
+    public boolean getCleared() {
+        return clear.isSelected();
+    }
+    
 }
