@@ -49,14 +49,13 @@ public final class QueleaProperties extends Properties {
      */
     private QueleaProperties() {
         try {
-            if(!getPropFile().exists()) {
+            if (!getPropFile().exists()) {
                 getPropFile().createNewFile();
             }
-            try(StringReader reader = new StringReader(Utils.getTextFromFile(getPropFile().getAbsolutePath(), ""))) {
+            try (StringReader reader = new StringReader(Utils.getTextFromFile(getPropFile().getAbsolutePath(), ""))) {
                 load(reader);
             }
-        }
-        catch(IOException ex) {
+        } catch (IOException ex) {
 //            LOGGER.log(Level.SEVERE, "Couldn't load properties", ex);
 //            ex.printStackTrace();
         }
@@ -75,10 +74,9 @@ public final class QueleaProperties extends Properties {
      * Save these properties to the file.
      */
     private void write() {
-        try(FileWriter writer = new FileWriter(getPropFile())) {
+        try (FileWriter writer = new FileWriter(getPropFile())) {
             store(writer, "Auto save");
-        }
-        catch(IOException ex) {
+        } catch (IOException ex) {
 //            LOGGER.log(Level.WARNING, "Couldn't store properties", ex);
         }
     }
@@ -112,7 +110,7 @@ public final class QueleaProperties extends Properties {
         String dict = getProperty("language.file", "gb.lang");
         String[] parts = dict.split("\\.");
         StringBuilder builder = new StringBuilder();
-        for(int i = 0; i < parts.length - 1; i++) {
+        for (int i = 0; i < parts.length - 1; i++) {
             builder.append(parts[i]);
             builder.append(".");
         }
@@ -151,8 +149,7 @@ public final class QueleaProperties extends Properties {
         try {
             String[] parts = getProperty("scene.info", "461,15,997,995").split(",");
             return new SceneInfo(Integer.parseInt(parts[0]), Integer.parseInt(parts[1]), Integer.parseInt(parts[2]), Integer.parseInt(parts[3]));
-        }
-        catch(Exception ex) {
+        } catch (Exception ex) {
             LoggerUtils.getLogger().log(Level.WARNING, "Invalid scene info: " + getProperty("scene.info"), ex);
             return null;
         }
@@ -178,8 +175,8 @@ public final class QueleaProperties extends Properties {
     public List<String> getChosenFonts() {
         String fontStr = getProperty("chosen.fonts", "Arial|Liberation Sans|Noto Sans|Oxygen|Roboto|Vegur");
         List<String> ret = new ArrayList<>();
-        for(String str : fontStr.split("\\|")) {
-            if(!str.trim().isEmpty()) {
+        for (String str : fontStr.split("\\|")) {
+            if (!str.trim().isEmpty()) {
                 ret.add(str);
             }
         }
@@ -193,9 +190,9 @@ public final class QueleaProperties extends Properties {
      */
     public void setChosenFonts(List<String> fonts) {
         StringBuilder fontBuilder = new StringBuilder();
-        for(int i = 0; i < fonts.size(); i++) {
+        for (int i = 0; i < fonts.size(); i++) {
             fontBuilder.append(fonts.get(i));
-            if(i < fonts.size() - 1) {
+            if (i < fonts.size() - 1) {
                 fontBuilder.append("|");
             }
         }
@@ -353,7 +350,7 @@ public final class QueleaProperties extends Properties {
      */
     public static File getQueleaUserHome() {
         File ret = new File(new File(System.getProperty("user.home")), ".quelea");
-        if(!ret.exists()) {
+        if (!ret.exists()) {
             ret.mkdir();
         }
         return ret;
@@ -960,7 +957,7 @@ public final class QueleaProperties extends Properties {
         double red = Double.parseDouble(color[0].trim());
         double green = Double.parseDouble(color[1].trim());
         double blue = Double.parseDouble(color[2].trim());
-        if(red > 1 || green > 1 || blue > 1) {
+        if (red > 1 || green > 1 || blue > 1) {
             red /= 255;
             green /= 255;
             blue /= 255;
@@ -1184,12 +1181,12 @@ public final class QueleaProperties extends Properties {
         setProperty("use.mob.lyrics", Boolean.toString(val));
         write();
     }
-    
+
     public void setUseRemoteControl(boolean val) {
         setProperty("use.remote.control", Boolean.toString(val));
         write();
     }
-    
+
     /**
      * Set if we should set up remote control server
      * <p>
@@ -1207,7 +1204,7 @@ public final class QueleaProperties extends Properties {
     public int getRemoteControlPort() {
         return Integer.parseInt(getProperty("remote.control.port", "1112"));
     }
-    
+
     public void setRemoteControlPort(int port) {
         setProperty("remote.control.port", Integer.toString(port));
         write();
@@ -1221,5 +1218,23 @@ public final class QueleaProperties extends Properties {
     public String getRemoteControlPassword() {
         return getProperty("remote.control.password", "quelea");
     }
-    
+
+    public String getSmallTextPosition() {
+        return getProperty("small.text.position", "right");
+    }
+
+    public void setSmallTextPosition(String position) {
+        setProperty("small.text.position", position);
+        write();
+    }
+
+    public boolean getSmallTextShow() {
+        return Boolean.parseBoolean(getProperty("show.small.text", "true"));
+    }
+
+    public void setSmallTextShow(boolean show) {
+        setProperty("show.small.text", Boolean.toString(show));
+        write();
+    }
+
 }

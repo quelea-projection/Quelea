@@ -65,6 +65,8 @@ public class OptionsGeneralPanel extends GridPane implements PropertyPanel {
     private final Slider maxCharsSlider;
 //    private final Slider minLinesSlider;
     private LanguageFile currentLanguageFile;
+    private final CheckBox showSmallTextBox;
+    private final ComboBox smallTextPositionCombo;
 
     /**
      * Create a new general panel.
@@ -214,6 +216,25 @@ public class OptionsGeneralPanel extends GridPane implements PropertyPanel {
         getChildren().add(languageFileComboBox);
         rows++;
         
+        Label showSmallTextLabel = new Label(LabelGrabber.INSTANCE.getLabel("show.small.text.label"));
+        GridPane.setConstraints(showSmallTextLabel, 1, rows);
+        getChildren().add(showSmallTextLabel);
+        showSmallTextBox = new CheckBox();
+        GridPane.setConstraints(showSmallTextBox, 2, rows);
+        getChildren().add(showSmallTextBox);
+        showSmallTextLabel.setLabelFor(showSmallTextBox);
+        rows++;
+        
+        Label smallTextPositionLabel = new Label(LabelGrabber.INSTANCE.getLabel("small.text.position.label"));
+        GridPane.setConstraints(smallTextPositionLabel, 1, rows);
+        getChildren().add(smallTextPositionLabel);
+        smallTextPositionCombo = new ComboBox();
+        smallTextPositionCombo.getItems().addAll(LabelGrabber.INSTANCE.getLabel("left"), LabelGrabber.INSTANCE.getLabel("right"));
+        GridPane.setConstraints(smallTextPositionCombo, 2, rows);
+        getChildren().add(smallTextPositionCombo);
+        showSmallTextLabel.setLabelFor(smallTextPositionCombo);
+        rows++;
+
         Label borderThicknessLabel = new Label(LabelGrabber.INSTANCE.getLabel("text.border.thickness.label"));
         GridPane.setConstraints(borderThicknessLabel, 1, rows);
         getChildren().add(borderThicknessLabel);
@@ -232,7 +253,7 @@ public class OptionsGeneralPanel extends GridPane implements PropertyPanel {
             }
         });
         rows++;
-
+        
         Label maxFontSizeLabel = new Label(LabelGrabber.INSTANCE.getLabel("max.font.size.label"));
         GridPane.setConstraints(maxFontSizeLabel, 1, rows);
         getChildren().add(maxFontSizeLabel);
@@ -360,6 +381,8 @@ public class OptionsGeneralPanel extends GridPane implements PropertyPanel {
         clearLiveOnRemoveCheckBox.setSelected(props.getClearLiveOnRemove());
         maxCharsSlider.setValue(props.getMaxChars());
 //        minLinesSlider.setValue(props.getMinLines());
+        showSmallTextBox.setSelected(props.getSmallTextShow());
+        smallTextPositionCombo.getSelectionModel().select(props.getSmallTextPosition().equals("left") ? 0 : 1);
         borderThicknessSlider.setValue(props.getOutlineThickness());
         additionalLineSpacingSlider.setValue(props.getAdditionalLineSpacing());
         maximumFontSizeSlider.setValue(props.getMaxFontSize());
@@ -401,6 +424,10 @@ public class OptionsGeneralPanel extends GridPane implements PropertyPanel {
         props.setMaxChars(maxCharsPerLine);
 //        int minLines = (int) getMinLinesSlider().getValue();
 //        props.setMinLines(minLines);
+        boolean showSmallText = showSmallTextBox.isSelected();
+        props.setSmallTextShow(showSmallText);
+        int smallTextPosition = smallTextPositionCombo.getSelectionModel().getSelectedIndex();
+        props.setSmallTextPosition(smallTextPosition == 0 ? "left" : "right");
         int borderThickness = (int) getBorderThicknessSlider().getValue();
         props.setOutlineThickness(borderThickness);
         props.setMaxFontSize(maximumFontSizeSlider.getValue());
@@ -517,5 +544,23 @@ public class OptionsGeneralPanel extends GridPane implements PropertyPanel {
      */
     public Slider getBorderThicknessSlider() {
         return borderThicknessSlider;
+    }
+    
+    /**
+     * Get the "use small text" checkbox.
+     * <p/>
+     * @return the "use small text" checkbox.
+     */
+    public CheckBox getShowSmallTextCheckBox() {
+        return showSmallTextBox;
+    }
+    
+    /**
+     * Get the "use small text" checkbox.
+     * <p/>
+     * @return the "use small text" checkbox.
+     */
+    public ComboBox getSmallTextPositionComboBox() {
+        return smallTextPositionCombo;
     }
 }
