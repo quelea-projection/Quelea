@@ -150,4 +150,16 @@ public class RCHandler {
     public static void logAllOut() {
         devices.clear();
     }
+    
+    public static boolean getLogo() {
+        return QueleaApp.get().getMainWindow().getMainPanel().getLivePanel().getLogoed();
+    }
+    
+    public static boolean getBlack() {
+        return QueleaApp.get().getMainWindow().getMainPanel().getLivePanel().getBlacked();
+    }
+    
+    public static boolean getClear() {
+        return QueleaApp.get().getMainWindow().getMainPanel().getLivePanel().getCleared();
+    }
 }

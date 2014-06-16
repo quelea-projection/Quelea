@@ -22,6 +22,15 @@
                 padding: 0px;
                 font-size: 2em;
                 vertical-align: middle;
+                color: black;
+            }
+
+            .selected {
+                color: red;
+            }
+
+            .unselected {
+                color: black;
             }
 
             #center {
@@ -57,14 +66,14 @@
             }
 
             .outer {
-                
+
             }
-            
+
             .inner {
                 padding-top: 20px;
                 padding-bottom: 20px;
             }
-            
+
             .current {
                 font-weight: bold;
                 background-color: #96D1FF;
@@ -98,17 +107,49 @@
         </style>
         <script>
             var xmlhttp;
+            var statushttp;
             function setup()
             {
                 setInterval(function() {
                     loadXMLDoc();
+                    stateCheck();
                 }, 400);
                 xmlhttp = new XMLHttpRequest();
+                statushttp = new XMLHttpRequest();
                 xmlhttp.onreadystatechange = function()
                 {
                     if (xmlhttp.readyState == 4 && xmlhttp.status == 200)
                     {
                         document.getElementById("lyrics").innerHTML = xmlhttp.responseText;
+                    }
+                }
+                statushttp.onreadystatechange = function()
+                {
+                    if (statushttp.readyState == 4 && statushttp.status == 200)
+                    {
+                        var st = statushttp.responseText.split(",");
+                        console.log(st[0]);
+                        console.log(st[1]);
+                        if (st[0] === "true") {
+                            console.log("triggertrue");
+                            document.getElementById("logobutton").className = "selected";
+                        }
+                        else {
+                            console.log("triggerfalse");
+                            document.getElementById("logobutton").className = "unselected";
+                        }
+                        if (st[1] === "true") {
+                            document.getElementById("blackbutton").className = "selected";
+                        }
+                        else {
+                            document.getElementById("blackbutton").className = "unselected";
+                        }
+                        if (st[2] === "true") {
+                            document.getElementById("clearbutton").className = "selected";
+                        }
+                        else {
+                            document.getElementById("clearbutton").className = "unselected";
+                        }
                     }
                 }
             }
@@ -122,12 +163,23 @@
                 }
                 xmlhttp.send();
             }
+            function stateCheck()
+            {
+                statushttp.open("GET", "/status", true);
+                statushttp.timeout = 4000;
+                statushttp.ontimeout = function() {
+                    document.getElementById("logobutton").className = "unselected";
+                    document.getElementById("blackbutton").className = "unselected";
+                    document.getElementById("clearbutton").className = "unselected";
+                }
+                statushttp.send();
+            }
         </script>
     </head>
     <body>
-        <a href="/tlogo" target="empty"><button type="button">[logo.text]</button></a>
-        <a href="/black" target="empty"><button type="button">[black.text]</button></a>
-        <a href="/clear" target="empty"><button type="button">[clear.text]</button></a><br/>
+        <a href="/tlogo" target="empty"><button type="button" id="logobutton" class="unselected">[logo.text]</button></a>
+        <a href="/black" target="empty"><button type="button" id="blackbutton" class="unselected">[black.text]</button></a>
+        <a href="/clear" target="empty"><button type="button" id="clearbutton" class="unselected">[clear.text]</button></a><br/>
         <a href="/prev" target="empty"><button type="button">[prev.text]</button></a>
         <a href="/next" target="empty"><button type="button">[next.text]</button></a><br/>
         <a href="/previtem" target="empty"><button type="button" >[previtem.text]</button></a>
