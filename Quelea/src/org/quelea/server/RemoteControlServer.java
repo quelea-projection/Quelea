@@ -305,7 +305,7 @@ public class RemoteControlServer {
 
         @Override
         public void handle(HttpExchange t) throws IOException {
-            String response = LabelGrabber.INSTANCE.getLabel("remote.empty.lyrics");
+            String response = "<i>" + LabelGrabber.INSTANCE.getLabel("remote.empty.lyrics") + "</i>";
             if (QueleaApp.get().getMainWindow().getMainPanel().getLivePanel().getDisplayable() instanceof SongDisplayable
                     || QueleaApp.get().getMainWindow().getMainPanel().getLivePanel().getDisplayable() instanceof BiblePassage) {
                 response = lyrics();
@@ -353,7 +353,7 @@ public class RemoteControlServer {
                 return tmp;
             }
             LivePanel lp = QueleaApp.get().getMainWindow().getMainPanel().getLivePanel();
-            if (running && lp.isContentShowing() && lp.getDisplayable() instanceof TextDisplayable) {
+            if (running && lp.getDisplayable() instanceof TextDisplayable) {
                 ArrayList<String> als = new ArrayList<String>();
                 for (TextSection currentSection : lp.getLyricsPanel().getLyricsList().getItems()) {
                     StringBuilder ret = new StringBuilder();
@@ -364,7 +364,10 @@ public class RemoteControlServer {
                 }
                 return als;
             } else {
-                return null;
+                String response = "<i>" + LabelGrabber.INSTANCE.getLabel("remote.empty.lyrics") + "</i>";
+                ArrayList<String> als = new ArrayList<String>();
+                als.add(response);
+                return als;
             }
         } catch (Exception ex) {
             LOGGER.log(Level.WARNING, "Error getting lyrics", ex);
