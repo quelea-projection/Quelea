@@ -38,7 +38,10 @@ public class LanguageNameMap {
         putNativeLanguages();
         putEnglishLanguages();
     }
-    
+
+    /**
+     * Put names of the languages (in english) into the map.
+     */
     private void putEnglishLanguages() {
         map.put("arabic", Language.ARABIC);
         map.put("bulgarian", Language.BULGARIAN);
@@ -80,7 +83,10 @@ public class LanguageNameMap {
         map.put("ukranian", Language.UKRAINIAN);
         map.put("vietnamese", Language.VIETNAMESE);
     }
-    
+
+    /**
+     * Put names of the languages (in their native language) into the map.
+     */
     private void putNativeLanguages() {
         map.put("العربية", Language.ARABIC);
         map.put("български", Language.BULGARIAN);
