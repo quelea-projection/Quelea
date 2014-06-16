@@ -85,6 +85,7 @@ public class RemoteControlServer {
         server.createContext("/nextitem", new NextItemHandler());
         server.createContext("/previtem", new PreviousItemHandler());
         server.createContext("/lyrics", new LyricsHandler());
+        server.createContext("/status", new StatusHandler());
         server.createContext("/s", new SectionHandler());
         rootcontext.getFilters().add(new ParameterFilter());
         server.setExecutor(null);
@@ -212,6 +213,24 @@ public class RemoteControlServer {
             if (RCHandler.isLoggedOn(he.getRemoteAddress().getAddress().toString())) {
                 he.sendResponseHeaders(200, -1);
                 RCHandler.prevItem();
+            } else {
+                reload(he);
+            }
+        }
+    }
+    
+    //Handles button status
+    private class StatusHandler implements HttpHandler {
+
+        @Override
+        public void handle(HttpExchange he) throws IOException {
+            if (RCHandler.isLoggedOn(he.getRemoteAddress().getAddress().toString())) {
+                String status = RCHandler.getLogo() + "," + RCHandler.getBlack() + "," + RCHandler.getClear();
+                byte[] bytes = status.getBytes(Charset.forName("UTF-8"));
+                he.sendResponseHeaders(200, bytes.length);
+                try (OutputStream os = he.getResponseBody()) {
+                    os.write(bytes);
+                }
             } else {
                 reload(he);
             }
@@ -387,6 +406,37 @@ public class RemoteControlServer {
         pageContent = pageContent.replace("[logout.text]", LabelGrabber.INSTANCE.getLabel("remote.logout.text"));
         return pageContent;
     }
+    
+    /**
+     * Set the look of the button to selected class to show visual feedback to
+     * the user on the status of the button
+     * <p/>
+     * @param selected 
+     */
+    public void updateButtons(boolean selected) {
+        
+    }
+    
+    /**
+     * Set the look of the button to selected class to show visual feedback to
+     * the user on the status of the button
+     * <p/>
+     * @param selected 
+     */
+    public void updateBlack(boolean selected) {
+        
+    }
+    
+    /**
+     * Set the look of the button to selected class to show visual feedback to
+     * the user on the status of the button
+     * <p/>
+     * @param selected 
+     */
+    public void updateClear(boolean selected) {
+        
+    }
+    
 
     /**
      * A bunch of checks to check whether the live panel that we grab the lyrics
