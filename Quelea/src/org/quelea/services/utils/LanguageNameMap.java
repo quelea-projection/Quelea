@@ -37,10 +37,58 @@ public class LanguageNameMap {
         map = new HashMap<>();
         putNativeLanguages();
         putEnglishLanguages();
+        putSwedishLanguages();
+    }
+    
+    /**
+     * Put names of the languages (in Swedish) into the map.
+     */
+    private void putSwedishLanguages() {
+        map.put("arabiska", Language.ARABIC);
+        map.put("bulgariska", Language.BULGARIAN);
+        map.put("katalanska", Language.CATALAN);
+        map.put("kinesiska", Language.CHINESE_SIMPLIFIED);
+        map.put("mandarin", Language.CHINESE_SIMPLIFIED);
+        map.put("standardkinesiska", Language.CHINESE_SIMPLIFIED);
+        map.put("tjeckiska", Language.CZECH);
+        map.put("danska", Language.DANISH);
+        map.put("nederlänska", Language.DUTCH);
+        map.put("hollänska", Language.DUTCH);
+        map.put("engelska", Language.ENGLISH);
+        map.put("estlänska", Language.ESTONIAN);
+        map.put("finska", Language.FINNISH);
+        map.put("franska", Language.FRENCH);
+        map.put("tyska", Language.GERMAN);
+        map.put("grekiska", Language.GREEK);
+        map.put("hebreiska", Language.HEBREW);
+        map.put("hindi", Language.HINDI);
+        map.put("ungerska", Language.HUNGARIAN);
+        map.put("indonesiska", Language.INDONESIAN);
+        map.put("italienska", Language.ITALIAN);
+        map.put("japanska", Language.JAPANESE);
+        map.put("koreanska", Language.KOREAN);
+        map.put("lettiska", Language.LATVIAN);
+        map.put("litauiska", Language.LITHUANIAN);
+        map.put("malajiska", Language.MALAY);
+        map.put("norska", Language.NORWEGIAN);
+        map.put("persiska", Language.PERSIAN);
+        map.put("polska", Language.POLISH);
+        map.put("portugisiska", Language.PORTUGUESE);
+        map.put("rumänska", Language.ROMANIAN);
+        map.put("slovakiska", Language.SLOVAK);
+        map.put("ryska", Language.RUSSIAN);
+        map.put("slovenska", Language.SLOVENIAN);
+        map.put("spanska", Language.SPANISH);
+        map.put("svenska", Language.SWEDISH);
+        map.put("thailändska", Language.THAI);
+        map.put("turkiska", Language.TURKISH);
+        map.put("urdu", Language.URDU);
+        map.put("ukrainska", Language.UKRAINIAN);
+        map.put("vietnamesiska", Language.VIETNAMESE);
     }
 
     /**
-     * Put names of the languages (in english) into the map.
+     * Put names of the languages (in English) into the map.
      */
     private void putEnglishLanguages() {
         map.put("arabic", Language.ARABIC);
