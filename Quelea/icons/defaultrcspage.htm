@@ -26,11 +26,13 @@
             }
 
             .selected {
-                color: red;
+                background-color: #d8d8d8;
+                box-shadow: inset 4px 4px 4px #999;
+                
             }
 
             .unselected {
-                color: black;
+                
             }
 
             #center {
@@ -177,7 +179,7 @@
         </script>
     </head>
     <body>
-        <a href="/tlogo" target="empty"><button type="button" id="logobutton" class="unselected">[logo.text]</button></a>
+        <a href="/tlogo" target="empty"><button type="button" id="logobutton" class="selected">[logo.text]</button></a>
         <a href="/black" target="empty"><button type="button" id="blackbutton" class="unselected">[black.text]</button></a>
         <a href="/clear" target="empty"><button type="button" id="clearbutton" class="unselected">[clear.text]</button></a><br/>
         <a href="/prev" target="empty"><button type="button">[prev.text]</button></a>
