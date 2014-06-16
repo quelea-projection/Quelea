@@ -408,37 +408,6 @@ public class RemoteControlServer {
     }
     
     /**
-     * Set the look of the button to selected class to show visual feedback to
-     * the user on the status of the button
-     * <p/>
-     * @param selected 
-     */
-    public void updateButtons(boolean selected) {
-        
-    }
-    
-    /**
-     * Set the look of the button to selected class to show visual feedback to
-     * the user on the status of the button
-     * <p/>
-     * @param selected 
-     */
-    public void updateBlack(boolean selected) {
-        
-    }
-    
-    /**
-     * Set the look of the button to selected class to show visual feedback to
-     * the user on the status of the button
-     * <p/>
-     * @param selected 
-     */
-    public void updateClear(boolean selected) {
-        
-    }
-    
-
-    /**
      * A bunch of checks to check whether the live panel that we grab the lyrics
      * from has fully initialised. Rather hacky but works for now at least.
      * <p>
