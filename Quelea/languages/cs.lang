@@ -18,7 +18,6 @@ one.line.mode.label=Zobrazit náhled jen jednoho řádku písně
 display.song.info.label=Zobrazit informace o písni
 text.border.thickness.label=Text border thickness
 max.chars.line.label=Největší počet znaků na řádek
-min.emulated.lines.label=Minimum emulated lines
 advanced.label=Pokročilé
 ok.button=OK
 output.text=Výstup
@@ -88,7 +87,6 @@ clear.text.tooltip=Uklidit obrazovku
 hide.display.output.tooltip=Skrýt výstup na obrazovku
 schedule.heading=Rozvrh
 add.song.button=Přidat píseň
-items.heading=Položky
 edit.song.button=Upravit píseň
 remove.item.button=Odstranit položku
 add.multimedia.heading=Přidat multimédia
@@ -169,7 +167,6 @@ email.error.text=Při otevírání poštovního klienta se vyskytla chyba. Ujist
 email.text=Ahoj! Vámi poslaný rozvrh Quelea je připojen. Jednoduše jej otevřete v programu Quelea a všechny položky by se měly objevit správně.
 select.image.button=Vybrat obrázek
 image.files.description=Obrázkové soubory
-song.entry.heading=Záznam písně
 tools.label=Nástroje
 select.songs.title=Vybrat písně
 check.uncheck.all.text=Označit/Odznačit vše
@@ -292,7 +289,6 @@ confirm.remove.text=Potvrdit odstranění
 confirm.remove.question=Opravdu odstranit $1 z databáze? Tento krok nelze vrátit.
 quick.edit.text=Rychlé úpravy
 library.preview.song.text=Náhled písně
-video.error.title=Chyba ve videu
 video.error.unsupported=Promiňte, ale vámi vybraný soubor s obrazovým záznamem není podporován.
 video.error.general=Promiňte, ale u vámi vybraného souboru s obrazovým záznamem se objevila chyba.
 video.theme.label=Obrazový záznam
@@ -390,8 +386,6 @@ background.colour.label=Barva pozadí
 logo.screen.tooltip=Klepnutí levým tlačítkem myši pro zobrazení - klepnutí pravým tlačítkem myši pro nastavení
 use.mobile.lyrics.label=Povolit zobrazení textu písně v telefonu
 mobile.lyrics.heading=Zobrazení textu písně
-mob.changed.label=Zobrazení textu písně v telefonu změněno
-mob.changed.message=Bude potřeba, abyste Queleu spustili znovu, aby se nové nastavení pro zobrazení textu písně v telefonu projevilo.
 navigate.mob.url.label=Adresa (URL) pro zobrazení textu písně v telefonu
 sundayplus.import.line1=Vyberte umístění databáze Sunday Plus níže.
 sp.button=Sunday Plus
@@ -407,20 +401,14 @@ easyworship.button=EasyWorship
 filefilters.description.songs.mb=Databáze Easyworship Songs.MB
 zw.import.line2=Obvykle se nachází v "C:\ProgramData\ZionWorx\2.6\Data".
 zw.import.line1=Níže vyberte umístění souboru ZionWorx "MainTable.dat".
-add.song.hint.search.text=Nejsou zde žádné písně odpovídající
-tomuto hledání, ale neděste se!
-Pro přidání písně jednoduše klepněte na tlačítko
-"Nová píseň" vlevo.
+add.song.hint.search.text=Nejsou zde žádné písně odpovídající\ntomuto hledání, ale neděste se!\nPro přidání písně jednoduše klepněte na tlačítko\n"Nová píseň" vlevo.
 show.verse.numbers=Ukázat čísla veršů
 zw.button=ZionWorx
 no.tdb.heading=TurboDB Data Exchange nenalezeno
-no.tdb.message=Z technických důvodů je potřeba, abyste stáhl TurboDB data exchange (http://bit.ly/1gwoPLX), předtím než bude Quelea moci zavést databáze ZionWorx.\nAž to stáhnete, rozbalte obsah souboru zip do $1.\n\nPokud máte jakékoli potíže, potom se, prosím, klidně zeptejte v diskusní skupině zde: (http://bit.ly/1mePoeh)
+no.tdb.message=Z technických důvodů je potřeba, abyste stáhl TurboDB data exchange (http://bit.ly/1gwoPLX), předtím než bude Quelea moci zavést databáze ZionWorx.\nAž to stáhnete, rozbalte obsah souboru zip do $1.\nPokud máte jakékoli potíže, potom se, prosím, klidně zeptejte v diskusní skupině zde: (http://bit.ly/1mePoeh)
 import.error.message=Promiňte, při zavádění se vyskytly potíže. Klidně požádejte o pomoc v diskusní skupině Quelea: http://bit.ly/1mePoeh
 filefilters.description.maintable.dat=Soubor databáze s hlavní tabulkou ZionWorx
-add.song.hint.text=Nejsou zde ještě žádné písně,
-ale neděste se!
-Pro přidání písně jednoduše klepněte na tlačítko
-"Nová píseň" vlevo.
+add.song.hint.text=Nejsou zde ještě žádné písně,\nale neděste se!\nPro přidání písně jednoduše klepněte na tlačítko\n"Nová píseň" vlevo.
 easyworship.import.line1=Tímto budou zavedeny písně Easyworship ze souboru Songs.MB.
 youtube.url.label=Adresa videa na Youtube (URL)
 openlyrics.import.line1=Vyberte umístění archivu zip písně openlyrics níže.
@@ -459,8 +447,8 @@ remote.empty.lyrics=Slova písně budou zobrazena zde
 server.changed.label=Nastavení serveru změněna
 translate.tooltip=Překlady písní
 add.translation.button=Přidat překlad...
-overwrite.lyrics.text=Texty písní byly pro vás přeloženy automaticky - chcete je použít?
-Váš nynější překlad bude přepsán.
+overwrite.lyrics.text=Texty písní byly pro vás přeloženy automaticky - chcete je použít?/nVáš nynější překlad bude přepsán.
 more.font.options.label=Více voleb pro písmo
 translate.heading=Překlady
 overwrite.lyrics.title=Přepsat stávající text písně?
+bible.passage.selector.prompt

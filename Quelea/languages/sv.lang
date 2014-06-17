@@ -293,7 +293,6 @@ confirm.remove.text=Bekräfta borttagning
 confirm.remove.question=Vill du verkligen ta bort $1 från databasen? Borttagningen går inte att ångra.
 quick.edit.text=Snabbredigera
 library.preview.song.text=Förhandsgranska sång
-video.error.title=Videofel
 video.error.unsupported=Tyvärr, videofilen du har valt stöds inte.
 video.error.general=Tyvärr, ett fel har inträffat med filen du valt.
 video.theme.label=Video
@@ -376,14 +375,12 @@ mobile.lyrics.heading=Fjärrtext
 use.mobile.lyrics.label=Använd fjärrtext
 port.number.label=Portnummer
 navigate.mob.url.label=Webbadress till fjärrtext
-mob.changed.message=Du måste starta om Quelea för att de nya fjärrtextinställningarna ska träda i kraft.
 filefilters.description.zip.files=Zip-filer
 os.button=Opensong
 loop.label=Loopa
 os.import.line1=Ange nedan var Opensong-databasen finns.
 change.graphics.label=Ändra utseende
 seconds.label=sekunder
-mob.changed.label=Fjärrskärm ändrad
 font.colour.label=Textfärg
 background.colour.label=Bakgrundsfärg
 logo.screen.tooltip=Vänsterklicka för att visa – Högerklicka för att ställa in
@@ -452,3 +449,7 @@ translate.heading=Översättningar
 overwrite.lyrics.title=Skriv över existerande text?
 translation.font.text=Typsnitt för översättning
 shadow.text=Skugga
+show.small.text.label
+small.text.position.label
+saving.schedule
+bible.passage.selector.prompt
