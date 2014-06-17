@@ -76,8 +76,10 @@ public class LibraryBiblePanel extends VBox implements BibleChangeListener {
                 break;
             }
         }
+        this.setSpacing(5.0);
         getChildren().add(bibleSelector);
         HBox chapterPanel = new HBox();
+        chapterPanel.setSpacing(5.0);
         if(bibleSelector.getItems().isEmpty()) {
             bookSelector = new ComboBox<>();
         }
@@ -92,6 +94,7 @@ public class LibraryBiblePanel extends VBox implements BibleChangeListener {
         }
         chapterPanel.getChildren().add(bookSelector);
         passageSelector = new TextField();
+        passageSelector.setPromptText(LabelGrabber.INSTANCE.getLabel("bible.passage.selector.prompt"));
         chapterPanel.getChildren().add(passageSelector);
         passageSelector.setOnAction(new EventHandler<javafx.event.ActionEvent>() {
             @Override
@@ -118,7 +121,8 @@ public class LibraryBiblePanel extends VBox implements BibleChangeListener {
             }
         });
         addToSchedule.setDisable(true);
-        bottomPane.setBottom(addToSchedule);
+        chapterPanel.getChildren().add(addToSchedule);
+        //bottomPane.setBottom(addToSchedule);
         getChildren().add(bottomPane);
 
         addUpdateListeners();
