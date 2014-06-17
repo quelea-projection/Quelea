@@ -147,6 +147,7 @@ public class ScheduleThemeNode extends BorderPane {
         themePreviews.setAlignment(Pos.CENTER);
         themePreviews.setHgap(10);
         themePreviews.setVgap(10);
+        ThemePreviewPanel selectedPanel = null;
         for(final ThemeDTO theme : themes) {
             ThemePreviewPanel panel = new ThemePreviewPanel(theme, popup, this);
             panel.getSelectButton().setOnAction(new EventHandler<javafx.event.ActionEvent>() {
@@ -160,20 +161,23 @@ public class ScheduleThemeNode extends BorderPane {
                 }
             });
             if(selectedTheme != null && selectedTheme.equals(theme)) {
+                selectedPanel = panel;
                 panel.getSelectButton().fire();
             }
             group.getToggles().add(panel.getSelectButton());
             themePreviews.getChildren().add(panel);
         }
-        if(group.getSelectedToggle() == null) {
-            for(Node node : themePreviews.getChildren()) {
-                if(node instanceof ThemePreviewPanel) {
-                    ThemePreviewPanel panel = (ThemePreviewPanel) node;
-                    if(panel.getTheme() == null) {
-                        panel.getSelectButton().fire();
-                    }
-                }
-            }
+        if(group.getSelectedToggle() == null && selectedPanel != null) {
+            selectedPanel.getSelectButton().selectedProperty().setValue(true);
+            //Not sure what this does below, but removed because of issue 189
+//            for(Node node : themePreviews.getChildren()) {
+//                if(node instanceof ThemePreviewPanel) {
+//                    ThemePreviewPanel panel = (ThemePreviewPanel) node;
+//                    if(panel.getTheme() != null) {
+//                        panel.getSelectButton().selectedProperty().setValue(true);
+//                    }
+//                }
+//            }
         }
         HBox buttonPanel = new HBox();
         Button newThemeButton = new Button(LabelGrabber.INSTANCE.getLabel("new.theme.text"), new ImageView(new Image("file:icons/add.png")));
