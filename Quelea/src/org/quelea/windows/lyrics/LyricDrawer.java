@@ -233,10 +233,14 @@ public class LyricDrawer extends DisplayableDrawer {
         }
         int sy = 0;
         for (String stext : smallText) {
+            stext = stext.trim();
             FormattedText ft = new FormattedText(stext);
             ft.setFont(smallTextFont);
             ft.setFill(theme.getFontPaint());
             ft.setLayoutY(sy);
+            if(QueleaProperties.get().getSmallTextPosition().equalsIgnoreCase("right")) {
+                ft.setLayoutX(getCanvas().getWidth() - smallTextMetrics.computeStringWidth(stext));
+            }
             smallTextGroup.getChildren().add(ft);
             sy += smallTextMetrics.getLineHeight() + 2;
         }
@@ -244,14 +248,14 @@ public class LyricDrawer extends DisplayableDrawer {
             paintTransition.play();
         }
         textGroup = newTextGroup;
-        StackPane.setMargin(textGroup, new Insets(5));
+        StackPane.setMargin(textGroup, new Insets(10));
         if (stageView) {
             StackPane.setAlignment(textGroup, Pos.CENTER);
         } else {
             StackPane.setAlignment(textGroup, DisplayPositionSelector.getPosFromIndex(theme.getTextPosition()));
         }
 
-        StackPane.setMargin(smallTextGroup, new Insets(10));
+        StackPane.setMargin(smallTextGroup, new Insets(5));
         
         if (getCanvas().isCleared() && !getLastClearedState()) {
             setLastClearedState(true);
