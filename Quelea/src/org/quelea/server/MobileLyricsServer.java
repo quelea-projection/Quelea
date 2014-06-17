@@ -193,7 +193,7 @@ public class MobileLyricsServer {
                 TextSection currentSection = lp.getLyricsPanel().getLyricsList().getSelectionModel().getSelectedItem();
                 StringBuilder ret = new StringBuilder();
                 for(String line : currentSection.getText(chords, false)) {
-                    ret.append(Utils.escapeHTML(line)).append("<br/>");
+                    ret.append(line).append("<br/>");
                 }
                 if(chords) {
                     return ret.toString().replace(" ", "&#160;");
@@ -209,7 +209,7 @@ public class MobileLyricsServer {
             return "";
         }
     }
-
+    
     /**
      * A bunch of checks to check whether the live panel that we grab the lyrics
      * from has fully initialised. Rather hacky but works for now at least.
