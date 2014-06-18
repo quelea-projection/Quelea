@@ -452,3 +452,4 @@ saving.schedule=Saving the schedule...
 show.small.text.label=Show small song and bible information
 small.text.position.label=Song and bible information position
 bible.passage.selector.prompt=[Chapter]:[Verse]-[Verse]
+theme.button.tooltip=Set a global theme for the schedule
