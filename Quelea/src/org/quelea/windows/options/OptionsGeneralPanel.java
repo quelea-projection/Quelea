@@ -65,7 +65,8 @@ public class OptionsGeneralPanel extends GridPane implements PropertyPanel {
     private final Slider maxCharsSlider;
 //    private final Slider minLinesSlider;
     private LanguageFile currentLanguageFile;
-    private final CheckBox showSmallTextBox;
+    private final CheckBox showSmallSongTextBox;
+    private final CheckBox showSmallBibleTextBox;
     private final ComboBox smallTextPositionCombo;
 
     /**
@@ -216,13 +217,22 @@ public class OptionsGeneralPanel extends GridPane implements PropertyPanel {
         getChildren().add(languageFileComboBox);
         rows++;
         
-        Label showSmallTextLabel = new Label(LabelGrabber.INSTANCE.getLabel("show.small.text.label"));
-        GridPane.setConstraints(showSmallTextLabel, 1, rows);
-        getChildren().add(showSmallTextLabel);
-        showSmallTextBox = new CheckBox();
-        GridPane.setConstraints(showSmallTextBox, 2, rows);
-        getChildren().add(showSmallTextBox);
-        showSmallTextLabel.setLabelFor(showSmallTextBox);
+        Label showSmallSongTextLabel = new Label(LabelGrabber.INSTANCE.getLabel("show.small.song.text.label"));
+        GridPane.setConstraints(showSmallSongTextLabel, 1, rows);
+        getChildren().add(showSmallSongTextLabel);
+        showSmallSongTextBox = new CheckBox();
+        GridPane.setConstraints(showSmallSongTextBox, 2, rows);
+        getChildren().add(showSmallSongTextBox);
+        showSmallSongTextLabel.setLabelFor(showSmallSongTextBox);
+        rows++;
+        
+        Label showSmallBibleTextLabel = new Label(LabelGrabber.INSTANCE.getLabel("show.small.bible.text.label"));
+        GridPane.setConstraints(showSmallBibleTextLabel, 1, rows);
+        getChildren().add(showSmallBibleTextLabel);
+        showSmallBibleTextBox = new CheckBox();
+        GridPane.setConstraints(showSmallBibleTextBox, 2, rows);
+        getChildren().add(showSmallBibleTextBox);
+        showSmallBibleTextLabel.setLabelFor(showSmallBibleTextBox);
         rows++;
         
         Label smallTextPositionLabel = new Label(LabelGrabber.INSTANCE.getLabel("small.text.position.label"));
@@ -232,7 +242,7 @@ public class OptionsGeneralPanel extends GridPane implements PropertyPanel {
         smallTextPositionCombo.getItems().addAll(LabelGrabber.INSTANCE.getLabel("left"), LabelGrabber.INSTANCE.getLabel("right"));
         GridPane.setConstraints(smallTextPositionCombo, 2, rows);
         getChildren().add(smallTextPositionCombo);
-        showSmallTextLabel.setLabelFor(smallTextPositionCombo);
+        smallTextPositionLabel.setLabelFor(smallTextPositionCombo);
         rows++;
 
         Label borderThicknessLabel = new Label(LabelGrabber.INSTANCE.getLabel("text.border.thickness.label"));
@@ -381,7 +391,8 @@ public class OptionsGeneralPanel extends GridPane implements PropertyPanel {
         clearLiveOnRemoveCheckBox.setSelected(props.getClearLiveOnRemove());
         maxCharsSlider.setValue(props.getMaxChars());
 //        minLinesSlider.setValue(props.getMinLines());
-        showSmallTextBox.setSelected(props.getSmallTextShow());
+        showSmallSongTextBox.setSelected(props.getSmallSongTextShow());
+        showSmallBibleTextBox.setSelected(props.getSmallBibleTextShow());
         smallTextPositionCombo.getSelectionModel().select(props.getSmallTextPosition().equals("left") ? 0 : 1);
         borderThicknessSlider.setValue(props.getOutlineThickness());
         additionalLineSpacingSlider.setValue(props.getAdditionalLineSpacing());
@@ -424,8 +435,10 @@ public class OptionsGeneralPanel extends GridPane implements PropertyPanel {
         props.setMaxChars(maxCharsPerLine);
 //        int minLines = (int) getMinLinesSlider().getValue();
 //        props.setMinLines(minLines);
-        boolean showSmallText = showSmallTextBox.isSelected();
-        props.setSmallTextShow(showSmallText);
+        boolean showSmallSongText = showSmallSongTextBox.isSelected();
+        props.setSmallSongTextShow(showSmallSongText);
+        boolean showSmallBibleText = showSmallBibleTextBox.isSelected();
+        props.setSmallBibleTextShow(showSmallBibleText);
         int smallTextPosition = smallTextPositionCombo.getSelectionModel().getSelectedIndex();
         props.setSmallTextPosition(smallTextPosition == 0 ? "left" : "right");
         int borderThickness = (int) getBorderThicknessSlider().getValue();
@@ -547,12 +560,21 @@ public class OptionsGeneralPanel extends GridPane implements PropertyPanel {
     }
     
     /**
-     * Get the "use small text" checkbox.
+     * Get the "use small song text" checkbox.
      * <p/>
-     * @return the "use small text" checkbox.
+     * @return the "use small song text" checkbox.
      */
-    public CheckBox getShowSmallTextCheckBox() {
-        return showSmallTextBox;
+    public CheckBox getShowSmallSongTextCheckBox() {
+        return showSmallSongTextBox;
+    }
+    
+    /**
+     * Get the "use small bible text" checkbox.
+     * <p/>
+     * @return the "use small bible text" checkbox.
+     */
+    public CheckBox getShowSmallBibleTextCheckBox() {
+        return showSmallBibleTextBox;
     }
     
     /**

@@ -1228,13 +1228,22 @@ public final class QueleaProperties extends Properties {
         write();
     }
 
-    public boolean getSmallTextShow() {
-        return Boolean.parseBoolean(getProperty("show.small.text", "true"));
+    public boolean getSmallSongTextShow() {
+        return Boolean.parseBoolean(getProperty("show.small.song.text", "true"));
     }
 
-    public void setSmallTextShow(boolean show) {
-        setProperty("show.small.text", Boolean.toString(show));
+    public void setSmallSongTextShow(boolean show) {
+        setProperty("show.small.song.text", Boolean.toString(show));
         write();
     }
 
+    
+    public boolean getSmallBibleTextShow() {
+        return Boolean.parseBoolean(getProperty("show.small.bible.text", "true"));
+    }
+
+    public void setSmallBibleTextShow(boolean show) {
+        setProperty("show.small.bible.text", Boolean.toString(show));
+        write();
+    }
 }
