@@ -41,6 +41,7 @@ import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.quelea.data.displayable.BiblePassage;
+import org.quelea.data.displayable.MultimediaDisplayable;
 import org.quelea.data.displayable.SongDisplayable;
 import org.quelea.data.displayable.TextDisplayable;
 import org.quelea.data.displayable.TextSection;
@@ -84,6 +85,7 @@ public class RemoteControlServer {
         server.createContext("/prev", new PreviousSlideHandler());
         server.createContext("/nextitem", new NextItemHandler());
         server.createContext("/previtem", new PreviousItemHandler());
+        server.createContext("/play", new PlayHandler());
         server.createContext("/lyrics", new LyricsHandler());
         server.createContext("/status", new StatusHandler());
         server.createContext("/s", new SectionHandler());
@@ -218,14 +220,15 @@ public class RemoteControlServer {
             }
         }
     }
-    
+
     //Handles button status
     private class StatusHandler implements HttpHandler {
 
         @Override
         public void handle(HttpExchange he) throws IOException {
             if (RCHandler.isLoggedOn(he.getRemoteAddress().getAddress().toString())) {
-                String status = RCHandler.getLogo() + "," + RCHandler.getBlack() + "," + RCHandler.getClear();
+                String status = RCHandler.getLogo() + "," + RCHandler.getBlack() + ","
+                        + RCHandler.getClear() + "," + RCHandler.videoStatus();
                 byte[] bytes = status.getBytes(Charset.forName("UTF-8"));
                 he.sendResponseHeaders(200, bytes.length);
                 try (OutputStream os = he.getResponseBody()) {
@@ -245,6 +248,20 @@ public class RemoteControlServer {
             if (RCHandler.isLoggedOn(he.getRemoteAddress().getAddress().toString())) {
                 he.sendResponseHeaders(200, -1);
                 RCHandler.setLyrics(he.getRequestURI().toString());
+            } else {
+                reload(he);
+            }
+        }
+    }
+
+    //Handles the play button for multimedia
+    private class PlayHandler implements HttpHandler {
+
+        @Override
+        public void handle(HttpExchange he) throws IOException {
+            if (RCHandler.isLoggedOn(he.getRemoteAddress().getAddress().toString())) {
+                he.sendResponseHeaders(200, -1);
+                RCHandler.play();
             } else {
                 reload(he);
             }
@@ -325,11 +342,20 @@ public class RemoteControlServer {
         @Override
         public void handle(HttpExchange t) throws IOException {
             String response = "<i>" + LabelGrabber.INSTANCE.getLabel("remote.empty.lyrics") + "</i>";
-            if (QueleaApp.get().getMainWindow().getMainPanel().getLivePanel().getDisplayable() instanceof SongDisplayable
-                    || QueleaApp.get().getMainWindow().getMainPanel().getLivePanel().getDisplayable() instanceof BiblePassage) {
-                response = lyrics();
+            LivePanel lp = QueleaApp.get().getMainWindow().getMainPanel().getLivePanel();
+            if (lp.getDisplayable() instanceof TextDisplayable) {
+                response = "<i>" + LabelGrabber.INSTANCE.getLabel("currently.displaying.text") + ": " + lp.getDisplayable().getPreviewText() + "<br/>" + "</i>";
+                response += lyrics();
+            } else if (lp.getDisplayable() instanceof MultimediaDisplayable) {
+                response = "<i>" + LabelGrabber.INSTANCE.getLabel("currently.displaying.text") + ": " + lp.getDisplayable().getPreviewText() + "<br/>" + "</i>";
+                response += "<a href=\"/play\" target=\"empty\"><button type=\"button\" id=\"playbutton\">" + LabelGrabber.INSTANCE.getLabel("play") + "</button></a><br/><br/>";
+                response += "<i>" + LabelGrabber.INSTANCE.getLabel("remote.empty.lyrics") + "</i>";
+            } else if (lp.getDisplayable() != null) {
+                response = "<i>" + LabelGrabber.INSTANCE.getLabel("currently.displaying.text") + ": " + lp.getDisplayable().getPreviewText() + "<br/><br/>" + "</i>";
+                response += "<i>" + LabelGrabber.INSTANCE.getLabel("remote.empty.lyrics") + "</i>";
             }
             byte[] bytes = response.getBytes("UTF-8");
+
             t.sendResponseHeaders(200, bytes.length);
             try (OutputStream os = t.getResponseBody()) {
                 os.write(bytes);
@@ -406,7 +432,7 @@ public class RemoteControlServer {
         pageContent = pageContent.replace("[logout.text]", LabelGrabber.INSTANCE.getLabel("remote.logout.text"));
         return pageContent;
     }
-    
+
     /**
      * A bunch of checks to check whether the live panel that we grab the lyrics
      * from has fully initialised. Rather hacky but works for now at least.
@@ -455,6 +481,7 @@ public class RemoteControlServer {
     private static String readFile(String path) throws IOException {
         byte[] encoded = Files.readAllBytes(Paths.get(path));
         return Charset.forName("UTF-8").decode(ByteBuffer.wrap(encoded)).toString();
+
     }
 
     private class ParameterFilter extends Filter {

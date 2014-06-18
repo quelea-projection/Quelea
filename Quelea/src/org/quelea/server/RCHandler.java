@@ -19,9 +19,11 @@ package org.quelea.server;
 
 import java.util.ArrayList;
 import javafx.application.Platform;
+import org.quelea.services.languages.LabelGrabber;
 import org.quelea.services.utils.QueleaProperties;
 import org.quelea.windows.main.MainPanel;
 import org.quelea.windows.main.QueleaApp;
+import org.quelea.windows.multimedia.VLCWindow;
 
 /**
  * Handles the RemoteControlServer commands.
@@ -29,6 +31,7 @@ import org.quelea.windows.main.QueleaApp;
  * @author Ben Goodwin
  */
 public class RCHandler {
+
     private static ArrayList<String> devices = new ArrayList<String>();
 
     public static void logo() {
@@ -124,19 +127,19 @@ public class RCHandler {
             }
         });
     }
-    
+
     public static boolean authenticate(final String password) {
         return password.equals(QueleaProperties.get().getRemoteControlPassword());
     }
-    
+
     public static void addDevice(String ip) {
         devices.add(ip);
     }
-    
+
     public static boolean isLoggedOn(String ip) {
         boolean found = false;
-        for(String s : devices) {
-            if(s.equals(ip)) {
+        for (String s : devices) {
+            if (s.equals(ip)) {
                 found = true;
             }
         }
@@ -146,20 +149,37 @@ public class RCHandler {
     public static void logout(String ip) {
         devices.remove(ip);
     }
-    
+
     public static void logAllOut() {
         devices.clear();
     }
-    
+
     public static boolean getLogo() {
         return QueleaApp.get().getMainWindow().getMainPanel().getLivePanel().getLogoed();
     }
-    
+
     public static boolean getBlack() {
         return QueleaApp.get().getMainWindow().getMainPanel().getLivePanel().getBlacked();
     }
-    
+
     public static boolean getClear() {
         return QueleaApp.get().getMainWindow().getMainPanel().getLivePanel().getCleared();
+    }
+
+    public static String videoStatus() {
+        if (VLCWindow.INSTANCE.isPlaying()) {
+            return LabelGrabber.INSTANCE.getLabel("pause");
+        } else {
+            return LabelGrabber.INSTANCE.getLabel("play");
+        }
+    }
+    
+    public static void play() {
+        if(VLCWindow.INSTANCE.isPlaying()) {
+            VLCWindow.INSTANCE.pause();
+        }
+        else {
+            VLCWindow.INSTANCE.play();
+        }
     }
 }
