@@ -57,7 +57,7 @@ public class OptionsDialog extends Stage {
     public OptionsDialog() {
         setTitle(LabelGrabber.INSTANCE.getLabel("options.title"));
         initModality(Modality.APPLICATION_MODAL);
-        initStyle(StageStyle.UTILITY);
+        //initStyle(StageStyle.UTILITY);
         initOwner(QueleaApp.get().getMainWindow());
         setResizable(false);
         
