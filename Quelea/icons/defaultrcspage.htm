@@ -18,16 +18,16 @@
                 background-image: -ms-linear-gradient(top, #E6E6E6, #CCC);
                 background-image: -o-linear-gradient(top, #E6E6E6, #CCC);
                 background-image: linear-gradient(to bottom, #E6E6E6, #CCC);
-                
+
                 border:1px solid #cacaca;
                 -webkit-border-radius: 10px;
                 -moz-border-radius: 10px;
                 border-radius: 10px;
-                
+
                 width:30%;
                 height:30%;
                 min-height: 150px;
-                min-width: 150px;
+                min-width: 250px;
                 max-width: 300px;
                 margin: 10px;
                 margin-left:auto;
@@ -49,7 +49,7 @@
             }
 
             .unselected {
-                
+
             }
 
             #center {
@@ -127,6 +127,8 @@
         <script>
             var xmlhttp;
             var statushttp;
+            var lyriccache;
+            var statuscache;
             function setup()
             {
                 setInterval(function() {
@@ -139,35 +141,42 @@
                 {
                     if (xmlhttp.readyState == 4 && xmlhttp.status == 200)
                     {
-                        document.getElementById("lyrics").innerHTML = xmlhttp.responseText;
+                        if (lyriccache !== xmlhttp.responseText) {
+                            document.getElementById("lyrics").innerHTML = xmlhttp.responseText;
+                            lyriccache = xmlhttp.responseText;
+                        }
+
                     }
                 }
                 statushttp.onreadystatechange = function()
                 {
                     if (statushttp.readyState == 4 && statushttp.status == 200)
                     {
-                        var st = statushttp.responseText.split(",");
-                        console.log(st[0]);
-                        console.log(st[1]);
-                        if (st[0] === "true") {
-                            console.log("triggertrue");
-                            document.getElementById("logobutton").className = "selected";
-                        }
-                        else {
-                            console.log("triggerfalse");
-                            document.getElementById("logobutton").className = "unselected";
-                        }
-                        if (st[1] === "true") {
-                            document.getElementById("blackbutton").className = "selected";
-                        }
-                        else {
-                            document.getElementById("blackbutton").className = "unselected";
-                        }
-                        if (st[2] === "true") {
-                            document.getElementById("clearbutton").className = "selected";
-                        }
-                        else {
-                            document.getElementById("clearbutton").className = "unselected";
+                        if (statuscache !== statushttp.responseText) {
+                            statuscache = statushttp.responseText;
+
+                            var st = statuscache.split(",");
+                            if (st[0] === "true") {
+                                document.getElementById("logobutton").className = "selected";
+                            }
+                            else {
+                                document.getElementById("logobutton").className = "unselected";
+                            }
+                            if (st[1] === "true") {
+                                document.getElementById("blackbutton").className = "selected";
+                            }
+                            else {
+                                document.getElementById("blackbutton").className = "unselected";
+                            }
+                            if (st[2] === "true") {
+                                document.getElementById("clearbutton").className = "selected";
+                            }
+                            else {
+                                document.getElementById("clearbutton").className = "unselected";
+                            }
+                            if (document.getElementById("playbutton") !== null) {
+                                document.getElementById("playbutton").innerHTML = st[3];
+                            }
                         }
                     }
                 }
