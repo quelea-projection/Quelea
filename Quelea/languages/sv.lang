@@ -449,7 +449,7 @@ translate.heading=Översättningar
 overwrite.lyrics.title=Skriv över existerande text?
 translation.font.text=Typsnitt för översättning
 shadow.text=Skugga
-show.small.text.label
-small.text.position.label
-saving.schedule
-bible.passage.selector.prompt
+saving.schedule=Sparar gudstjänstordning...
+show.small.text.label=Visa information om sången/bibeltexten i hörnet
+small.text.position.label=Sida för information om sång/bibeltext
+bible.passage.selector.prompt=[Kapitel]:[Vers]-[Vers]
