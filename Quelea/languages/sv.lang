@@ -450,6 +450,5 @@ overwrite.lyrics.title=Skriv över existerande text?
 translation.font.text=Typsnitt för översättning
 shadow.text=Skugga
 saving.schedule=Sparar gudstjänstordning...
-show.small.text.label=Visa information om sången/bibeltexten i hörnet
 small.text.position.label=Sida för information om sång/bibeltext
 bible.passage.selector.prompt=[Kapitel]:[Vers]-[Vers]
