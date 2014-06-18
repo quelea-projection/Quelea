@@ -427,7 +427,6 @@ olyrics.button=OpenLyrics
 choose.translations.text=Übersetzungsauswahl
 remote.control.password=Passwort für Fernsteuerung (Groß-/Kleinschreibung beachten)
 server.settings.heading=Server Einstellungen
-show.small.text.label=Kleine Lied- und Bibelinformation anzeigen
 remote.prev.text=Vorhergehende Folie
 shadow.text=Schatten
 remote.nextitem.text=Nächstes Objekt
