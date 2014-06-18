@@ -185,8 +185,11 @@ public class LyricDrawer extends DisplayableDrawer {
         }
 
         getCanvas().getChildren().add(newTextGroup);
-        if (QueleaProperties.get().getSmallTextShow()) {
-            getCanvas().getChildren().add(smallTextGroup);
+        if(curDisplayable instanceof BiblePassage && QueleaProperties.get().getSmallBibleTextShow()) {
+                getCanvas().getChildren().add(smallTextGroup);
+        }
+        if(curDisplayable instanceof SongDisplayable && QueleaProperties.get().getSmallSongTextShow()) {
+                getCanvas().getChildren().add(smallTextGroup);
         }
         getCanvas().pushLogoNoticeToFront();
 
