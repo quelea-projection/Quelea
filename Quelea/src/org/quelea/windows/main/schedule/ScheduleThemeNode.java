@@ -169,7 +169,7 @@ public class ScheduleThemeNode extends BorderPane {
             for(Node node : themePreviews.getChildren()) {
                 if(node instanceof ThemePreviewPanel) {
                     ThemePreviewPanel panel = (ThemePreviewPanel) node;
-                    if(panel.getTheme() != null) {
+                    if(panel.getTheme() != null && panel.getTheme().equals(tempTheme)) {
                         setTheme(panel.getTheme());
                         group.selectToggle(panel.getSelectButton());
                         QueleaApp.get().getMainWindow().getMainPanel().getPreviewPanel().refresh();
