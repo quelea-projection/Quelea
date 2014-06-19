@@ -65,6 +65,7 @@ public class BasicSongPanel extends BorderPane {
     private final TextField titleField;
     private final TextField authorField;
     private final Button transposeButton;
+    private final Button ccliImportButton;
     private final ComboBox<Dictionary> dictSelector;
     private final TransposeDialog transposeDialog;
     private String saveHash = "";
@@ -104,7 +105,10 @@ public class BasicSongPanel extends BorderPane {
         lyricsToolbar.getItems().add(getAposButton());
         lyricsToolbar.getItems().add(getTrimLinesButton());
         transposeButton = getTransposeButton();
+        ccliImportButton = getCCLIButton();
         lyricsToolbar.getItems().add(transposeButton);
+        lyricsToolbar.getItems().add(new Separator());
+        lyricsToolbar.getItems().add(ccliImportButton);
         lyricsToolbar.getItems().add(new Separator());
         Region spacer = new Region();
         HBox.setHgrow(spacer, Priority.ALWAYS);
@@ -252,6 +256,26 @@ public class BasicSongPanel extends BorderPane {
                 int pos = getLyricsField().getCaretPosition();
                 getLyricsField().setText(newText.toString());
                 getLyricsField().positionCaret(pos);
+            }
+        });
+        Utils.setToolbarButtonStyle(ret);
+        return ret;
+    }
+
+    //return CCLI button
+    private Button getCCLIButton() {
+        Button ret = new Button("SongSelect");
+        ret.setTooltip(new Tooltip(LabelGrabber.INSTANCE.getLabel("ccli.tooltip")));
+        ret.setOnAction(new EventHandler<javafx.event.ActionEvent>() {
+            @Override
+            public void handle(javafx.event.ActionEvent t) {
+                ccliSelect ccli = new ccliSelect();
+                ccli.showAndWait();
+                if (!ccli.isCanceled()) {
+                    getLyricsField().setText(ccli.getSongText());
+                    getTitleField().setText(ccli.getSongTitle());
+                }
+
             }
         });
         Utils.setToolbarButtonStyle(ret);

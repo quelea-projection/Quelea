@@ -457,3 +457,7 @@ play=Play
 pause=Pause
 show.small.song.text.label=Show small song information
 show.small.bible.text.label=Show small bible passage information
+vlc.advanced.label=Use advanced multimedia features
+ccli.tooltip=Import song from CCLI SongSelect online.
+ccli.navBack=Back
+ccli.navHome=Home
