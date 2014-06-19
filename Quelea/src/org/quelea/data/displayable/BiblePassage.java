@@ -62,7 +62,7 @@ public class BiblePassage implements TextDisplayable, Serializable {
      */
     private BiblePassage(String summary, BibleVerse[] verses) {
         this.summary = summary;
-        this.smallText = summary.split("<br/>");
+        this.smallText = summary.split("\n");
         for(int i = 0; i < smallText.length; i++) {
             smallText[i] = Utils.removeTags(smallText[i]);
         }
