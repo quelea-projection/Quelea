@@ -21,6 +21,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.application.Platform;
@@ -330,11 +331,7 @@ public class ScheduleList extends StackPane {
         int index = listView.itemsProperty().get().indexOf(song);
         int selectedIndex = listView.selectionModelProperty().get().getSelectedIndex();
         if (index != -1) {
-            listView.itemsProperty().get().remove(index);
-            listView.itemsProperty().get().add(song);
-            if(index==selectedIndex) {
-                listView.selectionModelProperty().get().select(song);
-            }
+            listView.itemsProperty().get().set(index, song);
         }
     }
 
