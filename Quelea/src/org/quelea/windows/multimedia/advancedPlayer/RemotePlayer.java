@@ -16,7 +16,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 package org.quelea.windows.multimedia.advancedPlayer;
 
 import java.io.BufferedReader;
@@ -44,7 +43,11 @@ public class RemotePlayer {
     private BufferedWriter out;
 
     /**
-     * Internal use only.
+     * Creates a new remote player. This will create an out of process player
+     * using the OOPPlayer class.
+     *
+     * @param logFileLocation The error log from the remote player will get
+     * output to this log file. It creates a new file each run.
      */
     public RemotePlayer(String logFileLocation) {
 
@@ -55,8 +58,9 @@ public class RemotePlayer {
         String pathToLib = new File("./lib/vlcj-3.0.1.jar").getPath();
 
         pb.command("java", "-cp", pathToLib + pathSeparator + pathToClassFiles, fullClassName, "myArg");
-
-        File log = new File(logFileLocation); //debug log for started process
+        //debug log for started process-- maybe it should be read and be added to.
+        //as of now, the file gets replaced each run.
+        File log = new File(logFileLocation);
         try {
 
             pb.redirectError(log);
@@ -73,6 +77,12 @@ public class RemotePlayer {
 
     }
 
+    /**
+     * Will write a command to the output stream, which will be passed to the
+     * out of process player.
+     *
+     * @param command The command to sent to the out of process player
+     */
     private void writeOut(String command) {
         if (!open) {
             throw new IllegalArgumentException("This remote player has been closed!");
@@ -86,6 +96,12 @@ public class RemotePlayer {
 
     }
 
+    /**
+     * Reads the latest line of the stream output from the out of process player
+     * and returns the value
+     *
+     * @return the latest input from the out of process player
+     */
     private String getInput() {
         try {
             return in.readLine();
@@ -94,16 +110,27 @@ public class RemotePlayer {
         }
     }
 
+    /**
+     * Loads a video in the out of process player.
+     *
+     * @param path The URL of the video to be loaded
+     */
     public void load(String path) {
         writeOut("open " + path);
     }
 
+    /**
+     * Play the already loaded video in the out of process player.
+     */
     public void play() {
         writeOut("play");
         playing = true;
         paused = false;
     }
 
+    /**
+     * Pause the video playing in the out of process player.
+     */
     public void pause() {
         if (!paused) {
             writeOut("pause");
@@ -112,48 +139,96 @@ public class RemotePlayer {
         }
     }
 
+    /**
+     * Stop the video playing in the out of process player.
+     */
     public void stop() {
         writeOut("stop");
         playing = false;
         paused = false;
     }
 
+    /**
+     * Set the hue of the video playing in the out of process player.
+     *
+     * @param hue The desired value of hue.
+     */
     public void setHue(int hue) {
         writeOut("setHue " + hue);
     }
 
+    /**
+     * Set the repeat of the current video in the out of process player;
+     *
+     * @param repeat True if repeat is desired, false otherwise.
+     */
     public void setRepeat(boolean repeat) {
         writeOut("setRepeat " + repeat);
     }
 
+    /**
+     * Set the position of the desired video by the percent of the video.
+     *
+     * @param percent The position in percent the video is to be set to.
+     */
     public void setPosition(float percent) {
         writeOut("setPosition " + percent);
     }
 
+    /**
+     * Returns whether the out of process player is playable.
+     *
+     * @return True if it is playable, False otherwise.
+     */
     public boolean isPlayable() {
         writeOut("playable?");
         return Boolean.parseBoolean(getInput());
     }
 
+    /**
+     * Gets the length of the video.
+     *
+     * @return The length of the video in milliseconds
+     */
     public long getLength() {
         writeOut("length?");
         return Long.parseLong(getInput());
     }
 
+    /**
+     * Gets the current time of the video.
+     *
+     * @return The current time of the video in number of milliseconds
+     */
     public long getTime() {
         writeOut("time?");
         return Long.parseLong(getInput());
     }
 
+    /**
+     * Set the current time of the video
+     *
+     * @param time The desired time in milliseconds elapsed.
+     */
     public void setTime(long time) {
         writeOut("setTime " + time);
     }
 
+    /**
+     * Determine whether the out of process player is muted.
+     *
+     * @return True if it is muted, False otherwise
+     */
     public boolean isMute() {
         writeOut("mute?");
         return Boolean.parseBoolean(getInput());
     }
 
+    /**
+     * Set the mute of the out of process player.
+     *
+     * @param mute True if the player is to be muted, False otherwise
+     */
     public void setMute(boolean mute) {
         writeOut("setMute " + mute);
     }
@@ -170,31 +245,58 @@ public class RemotePlayer {
         }
     }
 
+    /**
+     * Sets the video window to the back-most window
+     */
     public void toBack() {
         writeOut("toBack");
     }
 
+    /**
+     * Sets the opacity of the output window
+     *
+     * @param opacity The opacity (0-1) that the out of process player window
+     * should be.
+     */
     public void setOpacity(double opacity) {
         writeOut("setOpacity " + opacity);
     }
 
+    /**
+     * Sets the volume of the out of process player.
+     *
+     * @param volume The volume (0-100) that the out of process player should
+     * be.
+     */
     public void setVolume(int volume) {
         writeOut("setVolume " + volume);
     }
 
+    /**
+     * Sets the location of the out of process video playback window.
+     *
+     * @param x The desired x coordinate of the window.
+     * @param y The desired y coordinate of the window.
+     */
     public void setLocation(int x, int y) {
         writeOut("setXLocation " + x);
         writeOut("setYLocation " + y);
 
     }
 
+    /**
+     * Sets the size of the out of process video playback window.
+     *
+     * @param width
+     * @param height
+     */
     public void setSize(int width, int height) {
         writeOut("setWidthSize " + width);
         writeOut("setHeightSize " + height);
     }
 
     /**
-     * Determine whether the remote player is playing.
+     * Determine whether the out of process player is playing.
      *
      * @return true if its playing, false otherwise.
      */
@@ -203,7 +305,7 @@ public class RemotePlayer {
     }
 
     /**
-     * Determine whether the remote player is paused.
+     * Determine whether the out of process player player is paused.
      *
      * @return true if its paused, false otherwise.
      */

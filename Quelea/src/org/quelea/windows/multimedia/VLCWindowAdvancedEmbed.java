@@ -38,6 +38,7 @@ import org.quelea.services.utils.LoggerUtils;
 import org.quelea.services.utils.Utils;
 import org.quelea.windows.main.QueleaApp;
 import org.quelea.windows.multimedia.advancedPlayer.RemotePlayer;
+import uk.co.caprica.vlcj.player.MediaPlayerFactory;
 
 /**
  * A native VLC window which is responsible for moving where it's told, and
@@ -65,10 +66,24 @@ public class VLCWindowAdvancedEmbed extends VLCWindow {
     private Canvas canvas;
     private boolean isPlayer1 = false;
     private final static double FADE_SPEED = 1.0; //in seconds
+    private FadeThread fadeThread;
+    //temp variables
+    private boolean muteTemp;
+    private double progressTemp;
+    private boolean isPlayingTemp;
+    private boolean isPausedTemp;
+    private int tempX, tempY, tempWidth, tempHeight;
+    private boolean showing;
 
     public static final VLCWindowAdvancedEmbed INSTANCE = new VLCWindowAdvancedEmbed();
 
     //construct a black background, and two players to fade between
+    /**
+     * Create a new advanced embedded media player. This will create a black
+     * "background" which is actually an awt window/canvas. It also creates the
+     * two RemotePlayers to fade between. The RemotePlayers create out of
+     * process media players.
+     */
     private VLCWindowAdvancedEmbed() {
 
         show = true;
@@ -78,21 +93,20 @@ public class VLCWindowAdvancedEmbed extends VLCWindow {
         player2.setVolume(100);
         player.setOpacity(1);
         player.setVolume(100);
-      
-            SwingUtilities.invokeLater(new Runnable() {
-                
-                @Override
-                public void run() {
-                    window = new Window(null);
-                    window.setBackground(Color.BLACK);
-                    canvas = new Canvas();
-                    canvas.setBackground(Color.BLACK);
-                    window.add(canvas);
-                    window.setVisible(true);
-                    window.toBack();
-                }
-            });
-       
+
+        SwingUtilities.invokeLater(new Runnable() {
+
+            @Override
+            public void run() {
+                window = new Window(null);
+                window.setBackground(Color.BLACK);
+                canvas = new Canvas();
+                canvas.setBackground(Color.BLACK);
+                window.add(canvas);
+                window.setVisible(true);
+                window.toBack();
+            }
+        });
 
         Runtime.getRuntime().addShutdownHook(new Thread() {
             @Override
@@ -117,8 +131,20 @@ public class VLCWindowAdvancedEmbed extends VLCWindow {
                 }
             }
         }, 0, 30, TimeUnit.MILLISECONDS);
-        init = true;
-        updateState();
+        try {
+            /**
+             * this should not cause native crashes, but should be enough to
+             * determine whether VLCJ will work or not.
+             *
+             */
+
+            MediaPlayerFactory factory = new MediaPlayerFactory("--no-video-title-show");
+            init = true;
+        } catch (Exception ex) {
+            init = false;
+        }
+       
+        windowToBack();
     }
 
     /**
@@ -127,150 +153,184 @@ public class VLCWindowAdvancedEmbed extends VLCWindow {
      * @return true if it has, false if it hasn't because something went wrong
      * (the most likely cause is an outdated version.)
      */
+    @Override
     public boolean isInit() {
         return init;
     }
 
-    //transition between players
+    /**
+     * Transition between remote players. It also changes which player is
+     * active.
+     */
     public void transitionBetween() {
-        isPlayer1 = !isPlayer1;
+        if (init) {
+            isPlayer1 = !isPlayer1;
 
-        Platform.runLater(new Runnable() {
+            Platform.runLater(new Runnable() {
 
-            @Override
-            public void run() {
-                try {
-                    SwingUtilities.invokeAndWait(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        SwingUtilities.invokeAndWait(new Runnable() {
 
-                        @Override
-                        public void run() {
+                            @Override
+                            public void run() {
 
-                            window.toBack();
-                            window.toBack();
+                                window.toBack();
+                                window.toBack();
+
+                            }
+                        });
+                    } catch (InterruptedException | InvocationTargetException ex) {
+                        Logger.getLogger(VLCWindowAdvancedEmbed.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                    window.setOpacity(1);
+                    for (double i = 0; i < 100; i++) {
+
+                        if (isPlayer1) {
+                            player.setOpacity(i / 100);
+                            player.setVolume((int) i);
+                            player2.setOpacity(1.0 - (i / 100.0));
+                            player2.setVolume((int) (100 - i));
+                        } else {
+                            player2.setOpacity(i / 100);
+                            player2.setVolume((int) i);
+                            player.setOpacity(1.0 - (i / 100.0));
+                            player.setVolume((int) (100 - i));
 
                         }
-                    });
-                } catch (InterruptedException ex) {
-                    Logger.getLogger(VLCWindowAdvancedEmbed.class.getName()).log(Level.SEVERE, null, ex);
-                } catch (InvocationTargetException ex) {
-                    Logger.getLogger(VLCWindowAdvancedEmbed.class.getName()).log(Level.SEVERE, null, ex);
-                }
-                window.setOpacity(1);
-                for (double i = 0; i < 100; i++) {
+                        StopWatch s = new StopWatch();
+                        s.start();
+                        while (s.getTime() < ((FADE_SPEED * 1000) / 100)) {
+                            //do nothing 
+                        }
+
+                    }
 
                     if (isPlayer1) {
-                        player.setOpacity(i / 100);
-                        player.setVolume((int) i);
-                        player2.setOpacity(1.0 - (i / 100.0));
-                        player2.setVolume((int) (100 - i));
+                        player2.stop();
                     } else {
-                        player2.setOpacity(i / 100);
-                        player2.setVolume((int) i);
-                        player.setOpacity(1.0 - (i / 100.0));
-                        player.setVolume((int) (100 - i));
-
+                        player.stop();
                     }
-                    StopWatch s = new StopWatch();
-                    s.start();
-                    while (s.getTime() < ((FADE_SPEED * 1000) / 100)) {
-                        //do nothing 
-                    }
-
                 }
-
-                if (isPlayer1) {
-                    player2.stop();
-                } else {
-                    player.stop();
-                }
-            }
-        });
-
-    }
-
-    //fades out active player and pauses
-    public void fadeOutActive(final boolean active) {
-        Platform.runLater(new Runnable() {
-
-            @Override
-            public void run() {
-                for (double i = 0; i < 100; i++) {
-
-                    boolean logicBool = isPlayer1;
-                    if (!active) {
-                        logicBool = !logicBool;
-                    }
-                    if (logicBool) {
-
-                        player2.setOpacity(1.0 - (i / 100.0));
-                        player2.setVolume((int) (100 - i));
-                    } else {
-
-                        player.setOpacity(1.0 - (i / 100.0));
-                        player.setVolume((int) (100 - i));
-
-                    }
-                    StopWatch s = new StopWatch();
-                    s.start();
-                    while (s.getTime() < ((FADE_SPEED * 1000) / 100)) {
-                        //do nothing 
-                    }
-
-                }
-                if (isPlayer1) {
-                    player2.pause();
-                } else {
-                    player.pause();
-                }
-            }
-
-        });
-
-    }
-//fades up active player and resumes
-
-    public void fadeUpActive(boolean resumePlayback) {
-
-        for (double i = 0; i < 100; i++) {
-            if (isPlayer1) {
-                player.setOpacity(i / 100);
-                player.setVolume((int) i);
-
-            } else {
-                player2.setOpacity(i / 100);
-                player2.setVolume((int) i);
-
-            }
-            StopWatch s = new StopWatch();
-            s.start();
-            while (s.getTime() < ((FADE_SPEED * 1000) / 100)) {
-                //do nothing 
-            }
-
+            });
         }
-        if (resumePlayback) {
-            if (isPlayer1) {
-                player.play();
-            } else {
-                player2.play();
-            }
+
+    }
+
+    /**
+     * Fades out the active player and pauses the video of the active player.
+     *
+     * @param pause Determine whether the active video should be paused or not.
+     */
+    public void fadeOutActive(final boolean pause) {
+        if (init) {
+            Platform.runLater(new Runnable() {
+
+                @Override
+                public void run() {
+                    for (double i = 0; i < 100; i++) {
+
+                        if (isPlayer1) {
+
+                            player2.setOpacity(1.0 - (i / 100.0));
+                            player2.setVolume((int) (100 - i));
+                        } else {
+
+                            player.setOpacity(1.0 - (i / 100.0));
+                            player.setVolume((int) (100 - i));
+
+                        }
+                        StopWatch s = new StopWatch();
+                        s.start();
+                        while (s.getTime() < ((FADE_SPEED * 1000) / 100)) {
+                            //do nothing 
+                        }
+
+                    }
+                    if (pause) {
+                        if (isPlayer1) {
+                            player2.pause();
+                        } else {
+                            player.pause();
+                        }
+                    }
+                }
+
+            });
+        }
+
+    }
+
+    /**
+     * Fades up active player and resumes if resumePlayback is true.
+     *
+     * @param resumePlayback If True the active player will resume upon fading
+     * up, If false, the active player will only fade up.
+     */
+    public void fadeUpActive(final boolean resumePlayback) {
+        if (init) {
+            Platform.runLater(new Runnable() {
+
+                @Override
+                public void run() {
+                    if (resumePlayback) {
+                        if (isPlayer1) {
+                            player.play();
+                        } else {
+                            player2.play();
+                        }
+                    }
+                    for (double i = 0; i < 100; i++) {
+                        if (isPlayer1) {
+                            player.setOpacity(i / 100);
+                            player.setVolume((int) i);
+
+                        } else {
+                            player2.setOpacity(i / 100);
+                            player2.setVolume((int) i);
+
+                        }
+                        StopWatch s = new StopWatch();
+                        s.start();
+                        while (s.getTime() < ((FADE_SPEED * 1000) / 100)) {
+                            //do nothing 
+                        }
+
+                    }
+
+                }
+
+            });
         }
     }
 
-    //set repeat for the active player
-    //may be broken for some instances 
+    /**
+     * Set the repeat for the remote player
+     *
+     * @param repeat If true, the player will repeat (loop), If false, the
+     * player will not loop.
+     */
+    @Override
     public void setRepeat(final boolean repeat) {
-        if (isPlayer1) {
-            player.setRepeat(repeat);
-        } else {
-            player2.setRepeat(repeat);
+        //may be broken for some instances 
+        if (init) {
+            if (isPlayer1) {
+                player.setRepeat(repeat);
+            } else {
+                player2.setRepeat(repeat);
+            }
         }
 
     }
 
-    //load video
-    //other Quelea code calls stop before load usually, so this method loads a video in the other
-    //player, and upon play, the players get switched to show the active player.
+    /**
+     * Load the video specified in path into the inactive media player. Upon
+     * play, the players get transitioned
+     *
+     * @param path The path of the video desired to load.
+     */
+    @Override
     public void load(final String path) {
         if (init) {
 
@@ -293,8 +353,11 @@ public class VLCWindowAdvancedEmbed extends VLCWindow {
         }
 
     }
-//plays the loaded video and transitions to active video player
 
+    /**
+     * Plays the loaded video and transitions to the active video player.
+     */
+    @Override
     public void play() {
 
         if (init) {
@@ -309,8 +372,13 @@ public class VLCWindowAdvancedEmbed extends VLCWindow {
         }
 
     }
-//plays a video from a file, and transitions to active video player
 
+    /**
+     * Plays a video from a file, and transitions to the active video player.
+     *
+     * @param vid The path of the video desired to play.
+     */
+    @Override
     public void play(final String vid) {
         this.location = vid;
 
@@ -329,10 +397,20 @@ public class VLCWindowAdvancedEmbed extends VLCWindow {
 
     }
 
+    /**
+     * Get the last played video file.
+     *
+     * @return The path to the last video file that was played.
+     */
+    @Override
     public String getLastLocation() {
         return location;
     }
 
+    /**
+     * Pause the active video player
+     */
+    @Override
     public void pause() {
 
         if (init) {
@@ -347,8 +425,11 @@ public class VLCWindowAdvancedEmbed extends VLCWindow {
         }
 
     }
-//stop fades off, so it looks nice when loading a new video
 
+    /**
+     * Fades off the active player, and stops that video..
+     */
+    @Override
     public void stop() {
         location = null;
 
@@ -409,9 +490,14 @@ public class VLCWindowAdvancedEmbed extends VLCWindow {
         }
 
     }
-    private boolean muteTemp;
 
-    //gets boolean showing mute from main player
+    /**
+     * Determines whether the active video player is muted.
+     *
+     * @return Returns true if the active video is muted, or Returns false
+     * otherwise.
+     */
+    @Override
     public boolean isMute() {
 
         if (init) {
@@ -428,7 +514,12 @@ public class VLCWindowAdvancedEmbed extends VLCWindow {
         return muteTemp;
     }
 
-    //sets mute for active video player
+    /**
+     * Set the mute for the active video player.
+     *
+     * @param mute True if mute is desired, false otherwise.
+     */
+    @Override
     public void setMute(final boolean mute) {
 
         if (init) {
@@ -441,11 +532,15 @@ public class VLCWindowAdvancedEmbed extends VLCWindow {
         }
 
     }
-    private double progressTemp;
 
-    //gets progress in percent, may be broken in some instances
+    /**
+     * Get the progress of the currently playing active video player.
+     *
+     * @return Returns the percent progress (0-1)
+     */
+    @Override
     public double getProgressPercent() {
-
+        //may need fixing
         if (init) {
             if (isPlayer1) {
                 progressTemp = (double) player.getTime() / player.getLength();
@@ -460,7 +555,12 @@ public class VLCWindowAdvancedEmbed extends VLCWindow {
         return progressTemp;
     }
 
-    //set progress percent for active player
+    /**
+     * Set the progress of the currently playing active video player.
+     *
+     * @param percent The desired percentage elapsed.
+     */
+    @Override
     public void setProgressPercent(final double percent) {
 
         if (init) {
@@ -473,9 +573,13 @@ public class VLCWindowAdvancedEmbed extends VLCWindow {
         }
 
     }
-    private boolean isPlayingTemp;
 
-    //return is playing
+    /**
+     * Determine whether the active video is playing.
+     *
+     * @return True if the active video is playing, False otherwise.
+     */
+    @Override
     public boolean isPlaying() {
 
         if (init) {
@@ -491,8 +595,13 @@ public class VLCWindowAdvancedEmbed extends VLCWindow {
 
         return isPlayingTemp;
     }
-    private boolean isPausedTemp;
 
+    /**
+     * Determine whether the active video player is paused
+     *
+     * @return True if the active video player is paused, False otherwise.
+     */
+    @Override
     public boolean isPaused() {
 
         if (init) {
@@ -504,69 +613,94 @@ public class VLCWindowAdvancedEmbed extends VLCWindow {
         return isPausedTemp;
     }
 
-//needs to be adapted somehow to acommodate out of process playback (any ideas??????)
+    /**
+     * Sets a runnable to be executed upon completion of active video.
+     *
+     * @param onFinished The runnable to be executed.
+     */
+    @Override
     public void setOnFinished(final Runnable onFinished) {
 
-//        runOnVLCThread(new Runnable() {
-//            @Override
-//            public void run() {
-////                System.out.println("setOnFinished() start");
-//                if (init) {
-//                    paused = false;
-//                    mediaPlayer.addMediaPlayerEventListener(new MediaPlayerEventAdapter() {
-//                        @Override
-//                        public void finished(MediaPlayer mediaPlayer) {
-//                            if (mediaPlayer.subItemCount() == 0) {
-//                                onFinished.run();
-//                            }
-//                        }
-//                    });
-//                }
-////                System.out.println("setOnFinished() end");
-//            }
-//        });
+        //needs to be adapted somehow to acommodate out of process playback 
+        //possibly have something check progress of video and execute if progress is 1
+        //not a great way, though
+        //        runOnVLCThread(new Runnable() {
+        //            @Override
+        //            public void run() {
+        ////                System.out.println("setOnFinished() start");
+        //                if (init) {
+        //                    paused = false;
+        //                    mediaPlayer.addMediaPlayerEventListener(new MediaPlayerEventAdapter() {
+        //                        @Override
+        //                        public void finished(MediaPlayer mediaPlayer) {
+        //                            if (mediaPlayer.subItemCount() == 0) {
+        //                                onFinished.run();
+        //                            }
+        //                        }
+        //                    });
+        //                }
+        ////                System.out.println("setOnFinished() end");
+        //            }
+        //        });
     }
 
+    /**
+     * Show the active video player.
+     */
+    @Override
     public void show() {
 
         if (init) {
-            show = true;
-            updateState();
+            fadeUpActive(false);
+            windowToBack();
         }
 
     }
 
+    /**
+     * Hide the active video player
+     */
+    @Override
     public void hide() {
 
         if (init) {
-            show = false;
-            updateState();
+            fadeOutActive(false);
+            windowToBack();
         }
-//              
+
     }
 
+    /**
+     * Fades out player and pauses if hidden, otherwise fades back and resumes
+     * playback
+     *
+     * @param hide True if to be hidden, false otherwise
+     */
+    @Override
     public void setHideButton(final boolean hide) {
 
         if (init) {
             hideButton = hide;
-            updateState();
+            if (hideButton) {
+                fadeOutActive(true);
+            } else {
+                fadeUpActive(true);
+            }
+            windowToBack();
+
         }
 
     }
 
-    private void updateState() {
+    /**
+     * Updates the state of the black background, and pushes it to the back.
+     */
+    private void windowToBack() {
 
         if (init) {
             SwingUtilities.invokeLater(new Runnable() {
                 @Override
                 public void run() {
-//                    if (isPlayer1) {
-//                          player.setOpacity((hideButton || !show) ? 0 : 1);
-//
-//                    } else {
-//                         player2.setOpacity((hideButton || !show) ? 0 : 1);
-//
-//                    }
                     window.toBack();
 
                 }
@@ -575,6 +709,13 @@ public class VLCWindowAdvancedEmbed extends VLCWindow {
 
     }
 
+    /**
+     * Set the location of both video players.
+     *
+     * @param x The desired x coordinate of the players.
+     * @param y The desired y coordinate of the players.
+     */
+    @Override
     public void setLocation(final int x, final int y) {
 
         player.setLocation(x, y);
@@ -586,11 +727,19 @@ public class VLCWindowAdvancedEmbed extends VLCWindow {
             @Override
             public void run() {
                 window.setLocation(x, y);
+                windowToBack();
             }
         });
 
     }
 
+    /**
+     * Set the size of both video players
+     *
+     * @param width The desired width of the players.
+     * @param height The desired height of the players.
+     */
+    @Override
     public void setSize(final int width, final int height) {
 
         player.setSize(width, height);
@@ -603,13 +752,17 @@ public class VLCWindowAdvancedEmbed extends VLCWindow {
             public void run() {
                 window.setSize(width, height);
                 canvas.setSize(width, height);
+                windowToBack();
             }
         });
 
     }
-    private int tempX, tempY, tempWidth, tempHeight;
-    private boolean showing;
 
+    /**
+     * Refresh the position of the video players when the projection window
+     * changes location.
+     */
+    @Override
     public void refreshPosition() {
         Utils.fxRunAndWait(new Runnable() {
             @Override
@@ -634,21 +787,31 @@ public class VLCWindowAdvancedEmbed extends VLCWindow {
                 hide();
             }
         }
-//       
+
     }
 
-    private FadeThread fadeThread;
-
+    /**
+     * Thread that will fade the hue
+     */
     private class FadeThread extends Thread {
 
         private static final double INCREMENT = 0.002;
         private double toVal;
         private volatile boolean go = true;
 
+        /**
+         * Creates a new Fade thread.
+         *
+         * @param toVal To which value the Hue should be faded to.
+         */
         public FadeThread(double toVal) {
             this.toVal = toVal;
         }
 
+        /**
+         * Fade the hue at the given increment.
+         */
+        @Override
         public void run() {
             double diff = toVal - getHue();
             if (diff < 0) {
@@ -675,12 +838,21 @@ public class VLCWindowAdvancedEmbed extends VLCWindow {
             setHue(toVal);
         }
 
+        /**
+         * Stop fading
+         */
         public void halt() {
             go = false;
         }
 
     }
 
+    /**
+     * Fade the hue of the current video.
+     *
+     * @param hue The desired hue to fade to.
+     */
+    @Override
     public synchronized void fadeHue(final double hue) {
         if (fadeThread != null) {
             fadeThread.halt();
@@ -689,10 +861,22 @@ public class VLCWindowAdvancedEmbed extends VLCWindow {
         fadeThread.start();
     }
 
+    /**
+     * Set the hue of the current video.
+     *
+     * @param hue The desired hue to fade to.
+     */
+    @Override
     public void setHue(final double hue) {
         this.hue = hue;
     }
 
+    /**
+     * Get the current hue of the video playing back.
+     *
+     * @return The hue value.
+     */
+    @Override
     public double getHue() {
         return hue;
     }

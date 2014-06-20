@@ -33,6 +33,8 @@ import uk.co.caprica.vlcj.player.embedded.EmbeddedMediaPlayer;
 import uk.co.caprica.vlcj.player.embedded.videosurface.CanvasVideoSurface;
 
 /**
+ * Contains the class which is run out of process to enable the creation of
+ * multiple media players.
  *
  * @author Greg
  */
@@ -44,6 +46,11 @@ public class OOPPlayer {
     private static MediaPlayerFactory mediaPlayerFactory;
     private static EmbeddedMediaPlayer mediaPlayer;
 
+    /**
+     * Strictly a convenience method, called in the main method. This method is
+     * responsible for opening a scanner of the system.in stream, and processing
+     * the command, passing it along to the proper methods.
+     */
     private static void processInMessage() {
         System.err.println("Processing message...");
 
@@ -52,7 +59,10 @@ public class OOPPlayer {
             inputLine = scan.nextLine();
 
             if (inputLine != null) {
-
+                /**
+                 * this is a little ugly, but I'm not sure how to do it
+                 * differently.
+                 */
                 if (inputLine.startsWith("open ")) {
                     inputLine = inputLine.substring("open ".length());
                     mediaPlayer.prepareMedia(inputLine);
@@ -89,7 +99,7 @@ public class OOPPlayer {
                     window.setOpacity(Float.parseFloat(inputLine));
                 } else if (inputLine.startsWith("setVolume ")) {
                     inputLine = inputLine.substring("setVolume ".length());
-                   mediaPlayer.setVolume(Integer.parseInt(inputLine));
+                    mediaPlayer.setVolume(Integer.parseInt(inputLine));
                 } else if (inputLine.startsWith("setXLocation ")) {
                     inputLine = inputLine.substring("setXLocation ".length());
                     window.setLocation(Integer.parseInt(inputLine), window.getY());
@@ -121,12 +131,16 @@ public class OOPPlayer {
         scan.close();
 
     }
-
+    /** 
+     * main method
+     * @param args takes arguments that are not used in this case 
+     */
     public static void main(String[] args) {
         final boolean VLC_OK = new NativeDiscovery().discover();
-//        if(!VLC_OK){
-//            System.exit(0);
-//        }
+        //exit process if VLC is not on the system
+        if(!VLC_OK){
+            System.exit(0);
+        }
 
         window = new Window(null);
         window.setBackground(Color.BLACK);

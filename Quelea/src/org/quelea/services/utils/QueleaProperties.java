@@ -226,7 +226,7 @@ public final class QueleaProperties extends Properties {
      * Determine if the vlc advanced media player should be used (true), or rather
      * the embedded media player (false).
      * <p>
-     * @return true if the uniform font size should be used, false otherwise.
+     * @return true if the advanced media player should be used, false otherwise.
      */
     public boolean getVLCAdvanced() {
         return Boolean.parseBoolean(getProperty("vlc.advanced", "true"));
@@ -236,7 +236,7 @@ public final class QueleaProperties extends Properties {
      * set whether the vlc advanced media player should be used (true), or rather
      * the embedded media player (false).
      * <p>
-     * @param val true if the uniform font size should be used, false otherwise.
+     * @param val true if the advanced media player should be used, false otherwise.
      */
     public void setVLCAdvanced(boolean val) {
         setProperty("vlc.advanced", Boolean.toString(val));

@@ -461,3 +461,5 @@ vlc.advanced.label=Use advanced multimedia features
 ccli.tooltip=Import song from CCLI SongSelect online.
 ccli.navBack=Back
 ccli.navHome=Home
+ccli.warning=CCLI SongSelect Warning
+ccli.loadAnyways.message=CCLI SongSelect was unable to load. It could be because there was a problem trusting the SongSelect website.\nWould you like to proceed by not validating SongSelect?

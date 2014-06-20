@@ -18,14 +18,13 @@
  */
 package org.quelea.windows.newsong;
 
-
-
 import java.security.GeneralSecurityException;
 import java.util.Timer;
 import java.util.TimerTask;
 
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
+import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.geometry.HPos;
 import javafx.geometry.Insets;
@@ -51,6 +50,7 @@ import javax.net.ssl.HttpsURLConnection;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
+import org.javafx.dialog.Dialog;
 
 import org.jsoup.Jsoup;
 
@@ -58,24 +58,24 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import org.quelea.services.languages.LabelGrabber;
+import org.quelea.windows.main.QueleaApp;
 
 /**
+ * A panel that is essentially a web browser opens CCLI SongSelect and will
+ * return a string upon finding proper lyrics.
  *
- * @author Greg
- * Needs attention--- works, but is not too pretty (I'm not sure what it will do outside of the US)
+ * @author Greg Needs attention--- works, but is not too pretty (I'm not sure
+ * what it will do outside of the US)
  */
-public class ccliSelect extends Stage {
+public class CCLISelect extends Stage {
 
     private String title = "";
     private String text = "";
-
     private boolean canceled = true;
-
+    private boolean closeUponOpening = false;
     private WebView browser = new WebView();
     private WebEngine webEngine = browser.getEngine();
-
     private Timer timer = new Timer();
-
     private Scene scene;
     private BorderPane componentLayout;
     private BorderPane buttonLayout;
@@ -86,16 +86,19 @@ public class ccliSelect extends Stage {
     private Button navBack;
     private Button navHome;
     private String pageHTML = "";
-    private String ccliAddress = "https://us.songselect.com";
+    private static final String CCLI_ADDRESS = "https://us.songselect.com";
 
-    public ccliSelect() {
-//create gui
+    /**
+     * Creates a new CCLI Select panel
+     */
+    public CCLISelect() {
+
         componentLayout = new BorderPane();
-        componentLayout.setPadding(new Insets(15,15,15,15));
+        componentLayout.setPadding(new Insets(15, 15, 15, 15));
         buttonLayout = new BorderPane();
         buttonLayout1 = new HBox();
         buttonLayout2 = new HBox();
-        
+
         importButton = new Button(LabelGrabber.INSTANCE.getLabel("import.button"), new ImageView(new Image("file:icons/tick.png")));
         final Stage s = this;
         importButton.setOnAction(new EventHandler<ActionEvent>() {
@@ -103,7 +106,7 @@ public class ccliSelect extends Stage {
             public void handle(ActionEvent event) {
                 importString();
                 canceled = false;
-                s.hide();
+                s.close();
             }
         });
         cancelButton = new Button(LabelGrabber.INSTANCE.getLabel("cancel.text"), new ImageView(new Image("file:icons/cross.png")));
@@ -111,10 +114,10 @@ public class ccliSelect extends Stage {
             @Override
             public void handle(ActionEvent event) {
                 canceled = true;
-                s.hide();
+                s.close();
             }
         });
-        
+
         navBack = new Button();
         navBack.setText(LabelGrabber.INSTANCE.getLabel("ccli.navBack"));
         navBack.setOnAction(new EventHandler<ActionEvent>() {
@@ -123,51 +126,86 @@ public class ccliSelect extends Stage {
                 webEngine.getHistory().go(-1);
             }
         });
-        
-         navHome = new Button();
+
+        navHome = new Button();
         navHome.setText(LabelGrabber.INSTANCE.getLabel("ccli.navHome"));
         navHome.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-                webEngine.load(ccliAddress);
+                webEngine.load(CCLI_ADDRESS);
             }
         });
-        
-        
+
         buttonLayout1.getChildren().add(importButton);
         buttonLayout1.getChildren().add(cancelButton);
-        
+
         buttonLayout2.getChildren().add(navBack);
         buttonLayout2.getChildren().add(navHome);
         buttonLayout1.setAlignment(Pos.CENTER_LEFT);
         buttonLayout1.setSpacing(6);
-        buttonLayout1.setPadding(new Insets(9,9,9,9));
-         buttonLayout2.setAlignment(Pos.CENTER_RIGHT);
+        buttonLayout1.setPadding(new Insets(9, 9, 9, 9));
+        buttonLayout2.setAlignment(Pos.CENTER_RIGHT);
         buttonLayout2.setSpacing(6);
-        buttonLayout2.setPadding(new Insets(9,9,9,9));
+        buttonLayout2.setPadding(new Insets(9, 9, 9, 9));
         buttonLayout.setRight(buttonLayout2);
         buttonLayout.setLeft(buttonLayout1);
         componentLayout.setBottom(buttonLayout);
-        componentLayout.setCenter(new Browser());
+        final Browser browserNode = new Browser();
+        componentLayout.setCenter(browserNode);
         this.initStyle(StageStyle.UTILITY);
         scene = new Scene(componentLayout, 1200, 700);
         this.setScene(scene);
 
         browser.requestFocus();
+        //determine if page loads under normal security
+        browserNode.loadWebpage(false);
+        pageHTML = (String) webEngine.executeScript("document.documentElement.outerHTML");
+        //see if HTML is empty
+        if (pageHTML.equals("<html><head></head><body></body></html>")) {
+            //ask if want to continue, and continue or cancel the dialog
+            Dialog.buildConfirmation(LabelGrabber.INSTANCE.getLabel("ccli.warning"), LabelGrabber.INSTANCE.getLabel("ccli.loadAnyways.message"))
+                    .addYesButton(new EventHandler() {
+
+                        @Override
+                        public void handle(Event t) {
+                            browserNode.loadWebpage(true);
+                        }
+                    })
+                    .addNoButton(new EventHandler() {
+
+                        @Override
+                        public void handle(Event t) {
+                            closeUponOpening = true;
+                        }
+                    })
+                    .build()
+                    .showAndWait();
+
+        }
+
         //timer to check web page to see if it is valid
         timer.scheduleAtFixedRate(new TimerTask() {
 
             @Override
             public void run() {
+                Platform.runLater(new Runnable() {
+
+                    @Override
+                    public void run() {
+                        if (closeUponOpening) {
+                            canceled = true;
+                            s.close();
+                        }
+                    }
+                });
 
                 Platform.runLater(new Runnable() {
 
                     @Override
                     public void run() {
-                       pageHTML = (String) webEngine.executeScript("document.documentElement.outerHTML");
+                        pageHTML = (String) webEngine.executeScript("document.documentElement.outerHTML");
                     }
                 });
-
 
                 if (pageHTML.contains("CCLI License #")) {
 
@@ -180,12 +218,15 @@ public class ccliSelect extends Stage {
         }, 0, 500l);
 
     }
-    
-//uses JSoup to parse html into a string, then replace all html tags with the proper escape sequences, and sets the text as one massive string
+
+    /**
+     * uses JSoup to parse html into a string, then replace all html tags with
+     * the proper escape sequences, and sets the text as one massive string
+     *
+     * @return The imported String
+     */
     private String importString() {
         timer.cancel();
-        
-    
 
         Document doc = Jsoup.parse(pageHTML);
         Elements p = doc.select("p");
@@ -207,75 +248,98 @@ public class ccliSelect extends Stage {
         return this.text;
     }
 
-    private static String trim(String s, int width) {
-        if (s.length() > width) {
-            return s.substring(0, width - 1) + ".";
-        } else {
-            return s;
-        }
-    }
-
+    /**
+     * Get the Song Text.
+     *
+     * @return Song Text as imported from HTML. Will be an empty string until
+     * import has been called
+     */
     public String getSongText() {
         return text;
     }
 
+    /**
+     * Get the Song Title
+     *
+     * @return Song Title as imported from HTML. Will be an empty string until
+     * import has been called
+     */
     public String getSongTitle() {
         return title;
     }
 
+    /**
+     * Get whether the dialog was canceled before it was closed
+     *
+     * @return Will return false if the "import" button was pressed, otherwise
+     * will return true.
+     */
     public boolean isCanceled() {
         return canceled;
     }
 
-    //web browser class.. for song select
+    /**
+     * Private class that is only the web browser part of the song
+     * selection...used for songselect
+     */
     private class Browser extends Region {
 
+        /**
+         * Creates a new Browser, which implements a JavaFX WebView.
+         */
         public Browser() {
             browser = new WebView();
             webEngine = browser.getEngine();
             //apply the styles
             getStyleClass().add("browser");
-//NOT THE BEST WAY TO DO THIS>>> INSECURE   
-//song select has some security certificate problems, so:
 
-            // Create a trust manager that does not validate certificate chains
-            TrustManager[] trustAllCerts = new TrustManager[]{
-                new X509TrustManager() {
-                    public java.security.cert.X509Certificate[] getAcceptedIssuers() {
-                        return null;
-                    }
-
-                    public void checkClientTrusted(
-                            java.security.cert.X509Certificate[] certs, String authType) {
-                    }
-
-                    public void checkServerTrusted(
-                            java.security.cert.X509Certificate[] certs, String authType) {
-                    }
-                }
-            };
-
-            // Install the all-trusting trust manager
-            try {
-                SSLContext sc = SSLContext.getInstance("SSL");
-                sc.init(null, trustAllCerts, new java.security.SecureRandom());
-                HttpsURLConnection.setDefaultSSLSocketFactory(sc.getSocketFactory());
-            } catch (GeneralSecurityException e) {
-            }
-
-            // load the web page
-            webEngine.load(ccliAddress);
             //add the web view to the scene
             getChildren().add(browser);
 
         }
 
-        private Node createSpacer() {
-            Region spacer = new Region();
-            HBox.setHgrow(spacer, Priority.ALWAYS);
-            return spacer;
+        /**
+         * Loads the SongSelect website.
+         *
+         * @param notSecure determines whether to load regardless of potential
+         * certificate problems
+         */
+        public void loadWebpage(boolean notSecure) {
+            if (notSecure) {
+                //NOT THE BEST WAY TO DO THIS>>> INSECURE   
+                //song select has some security certificate problems, so:
+                // Create a trust manager that does not validate certificate chains
+                TrustManager[] trustAllCerts = new TrustManager[]{
+                    new X509TrustManager() {
+                        public java.security.cert.X509Certificate[] getAcceptedIssuers() {
+                            return null;
+                        }
+
+                        public void checkClientTrusted(
+                                java.security.cert.X509Certificate[] certs, String authType) {
+                        }
+
+                        public void checkServerTrusted(
+                                java.security.cert.X509Certificate[] certs, String authType) {
+                        }
+                    }
+                };
+
+                // Install the all-trusting trust manager
+                try {
+                    SSLContext sc = SSLContext.getInstance("SSL");
+                    sc.init(null, trustAllCerts, new java.security.SecureRandom());
+                    HttpsURLConnection.setDefaultSSLSocketFactory(sc.getSocketFactory());
+                } catch (GeneralSecurityException e) {
+                }
+            }
+            // load the web page
+            webEngine.load(CCLI_ADDRESS);
         }
 
+        /**
+         * Lays out the WebView with proper width and height
+         */
         @Override
         protected void layoutChildren() {
             double w = getWidth();
@@ -283,11 +347,25 @@ public class ccliSelect extends Stage {
             layoutInArea(browser, 0, 0, w, h, 0, HPos.CENTER, VPos.CENTER);
         }
 
+        /**
+         * Computes preferred height. Currently doesn't do anything but return
+         * its passed value
+         *
+         * @param height The preferred height of the browser
+         * @return The preferred height of the browser
+         */
         @Override
         protected double computePrefWidth(double height) {
             return height;
         }
 
+        /**
+         * Computes preferred width. Currently doesn't do anything but return
+         * its passed value
+         *
+         * @param width The preferred width of the browser
+         * @return The preferred width of the browser
+         */
         @Override
         protected double computePrefHeight(double width) {
             return width;

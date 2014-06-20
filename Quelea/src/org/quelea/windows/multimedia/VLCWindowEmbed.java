@@ -55,7 +55,7 @@ public class VLCWindowEmbed extends VLCWindow {
      */
     private static final ExecutorService VLC_EXECUTOR = Executors.newSingleThreadExecutor();
     private static final Logger LOGGER = LoggerUtils.getLogger();
-    public static final VLCWindowEmbed INSTANCE= new VLCWindowEmbed();
+    public static final VLCWindowEmbed INSTANCE = new VLCWindowEmbed();
     private Window window;
     private Canvas canvas;
     private MediaPlayerFactory mediaPlayerFactory;
@@ -66,10 +66,18 @@ public class VLCWindowEmbed extends VLCWindow {
     private volatile boolean init;
     private String location;
     private volatile double hue = 0;
+    private FadeThread fadeThread;
+    //temp variables
+    private boolean muteTemp;
+    private double progressTemp;
+    private boolean isPlayingTemp;
+    private boolean isPausedTemp;
+    private int tempX, tempY, tempWidth, tempHeight;
+    private boolean showing;
 
-    
-    
-    
+    /**
+     * Creates a new VLC in-process window to play multimedia.
+     */
     private VLCWindowEmbed() {
         runOnVLCThread(new Runnable() {
             @Override
@@ -87,7 +95,7 @@ public class VLCWindowEmbed extends VLCWindow {
 
                         @Override
                         public void finished(MediaPlayer mp) {
-                            if(mediaPlayer.subItemCount() > 0) {
+                            if (mediaPlayer.subItemCount() > 0) {
                                 String mrl = mediaPlayer.subItems().remove(0);
                                 mediaPlayer.playMedia(mrl);
                             }
@@ -99,8 +107,7 @@ public class VLCWindowEmbed extends VLCWindow {
                     window.toBack();
                     init = true;
                     LOGGER.log(Level.INFO, "Video initialised ok");
-                }
-                catch(Exception ex) {
+                } catch (Exception ex) {
                     LOGGER.log(Level.INFO, "Couldn't initialise video, almost definitely because VLC (or correct version of VLC) was not found.", ex);
                 }
             }
@@ -110,7 +117,7 @@ public class VLCWindowEmbed extends VLCWindow {
 
             @Override
             public void run() {
-                if(init) {
+                if (init) {
                     runOnVLCThread(new Runnable() {
                         @Override
                         public void run() {
@@ -129,6 +136,7 @@ public class VLCWindowEmbed extends VLCWindow {
      * @return true if it has, false if it hasn't because something went wrong
      * (the most likely cause is an outdated version.)
      */
+    @Override
     public boolean isInit() {
         runOnVLCThreadAndWait(new Runnable() {
 
@@ -140,92 +148,126 @@ public class VLCWindowEmbed extends VLCWindow {
         return init;
     }
 
+    /**
+     * Set the repeat of the current video playing.
+     *
+     * @param repeat True if repeat desired, false otherwise.
+     */
+    @Override
     public void setRepeat(final boolean repeat) {
         runOnVLCThread(new Runnable() {
             @Override
             public void run() {
-//                System.out.println("setRepeat() start");
-                if(init) {
+
+                if (init) {
                     mediaPlayer.setRepeat(repeat);
                 }
-//                System.out.println("setRepeat() end");
+
             }
         });
     }
 
+    /**
+     * Load the desired video into the video player
+     *
+     * @param path The path to the desired video
+     */
+    @Override
     public void load(final String path) {
         runOnVLCThread(new Runnable() {
             @Override
             public void run() {
-//                System.out.println("load() start");
-                if(init) {
+                if (init) {
                     paused = false;
                     String sanitisedPath = path;
                     sanitisedPath = sanitisedPath.trim();
-                    if(sanitisedPath.startsWith("www")) {
+                    if (sanitisedPath.startsWith("www")) {
                         sanitisedPath = "http://" + sanitisedPath;
                     }
                     mediaPlayer.prepareMedia(sanitisedPath);
                 }
-//                System.out.println("load() end");
             }
         });
     }
 
+    /**
+     * Play the already loaded video.
+     */
+    @Override
     public void play() {
         runOnVLCThread(new Runnable() {
             @Override
             public void run() {
-//                System.out.println("play() start");
-                if(init) {
+
+                if (init) {
                     paused = false;
                     mediaPlayer.play();
                 }
-//                System.out.println("play() end");
+
             }
         });
     }
 
+    /**
+     * Play the video passed into the method.
+     *
+     * @param vid The path to the desired video
+     */
+    @Override
     public void play(final String vid) {
         this.location = vid;
         runOnVLCThread(new Runnable() {
             @Override
             public void run() {
-//                System.out.println("play(arg) start");
-                if(init) {
+
+                if (init) {
                     paused = false;
                     mediaPlayer.playMedia(vid);
                 }
-//                System.out.println("play(arg) end");
+
             }
         });
     }
 
+    /**
+     * Get the last played or loaded video.
+     *
+     * @return The path to the last played or loaded video.
+     */
+    @Override
     public String getLastLocation() {
         return location;
     }
 
+    /**
+     * Pause the currently playing video
+     */
+    @Override
     public void pause() {
         runOnVLCThread(new Runnable() {
             @Override
             public void run() {
-//                System.out.println("pause() start");
-                if(init) {
+
+                if (init) {
                     paused = true;
                     mediaPlayer.pause();
                 }
-//                System.out.println("pause() end");
+
             }
         });
     }
 
+    /**
+     * Stop the currently playing video
+     */
+    @Override
     public void stop() {
         location = null;
         runOnVLCThread(new Runnable() {
             @Override
             public void run() {
-//                System.out.println("stop() start");
-                if(init) {
+
+                if (init) {
                     paused = false;
                     mediaPlayer.stop();
                     SwingUtilities.invokeLater(new Runnable() {
@@ -236,178 +278,234 @@ public class VLCWindowEmbed extends VLCWindow {
                         }
                     });
                 }
-//                System.out.println("stop() end");
+
             }
         });
     }
-    private boolean muteTemp;
 
+    /**
+     * Get whether the currently playing video is muted.
+     *
+     * @return True if muted, False otherwise
+     */
+    @Override
     public boolean isMute() {
         runOnVLCThreadAndWait(new Runnable() {
             @Override
             public void run() {
-//                System.out.println("isMute() start");
-                if(init) {
+
+                if (init) {
                     muteTemp = mediaPlayer.isMute();
-                }
-                else {
+                } else {
                     muteTemp = false;
                 }
-//                System.out.println("isMute() end");
+
             }
         });
         return muteTemp;
     }
 
+    /**
+     * Mute the currently playing video.
+     *
+     * @param mute True if mute desired, otherwise false
+     */
+    @Override
     public void setMute(final boolean mute) {
         runOnVLCThread(new Runnable() {
             @Override
             public void run() {
-//                System.out.println("setMute() start");
-                if(init) {
+
+                if (init) {
                     mediaPlayer.mute(mute);
                 }
-//                System.out.println("setMute() end");
+
             }
         });
     }
-    private double progressTemp;
 
+    /**
+     * Return the progress of the video as a percent.
+     *
+     * @return The percentage elapsed of the currently playing video.
+     */
+    @Override
     public double getProgressPercent() {
         runOnVLCThreadAndWait(new Runnable() {
             @Override
             public void run() {
-//                System.out.println("getProgressPercent() start");
-                if(init) {
+
+                if (init) {
                     progressTemp = (double) mediaPlayer.getTime() / mediaPlayer.getLength();
-                }
-                else {
+                } else {
                     progressTemp = 0;
                 }
-//                System.out.println("getProgressPercent() end");
+
             }
         });
         return progressTemp;
     }
 
+    /**
+     * Set the position of the current video. The position is in percent
+     * elapsed.
+     *
+     * @param percent The desired percentage elapsed.
+     */
+    @Override
     public void setProgressPercent(final double percent) {
         runOnVLCThread(new Runnable() {
             @Override
             public void run() {
-//                System.out.println("setProgressPercent() start");
-                if(init) {
+
+                if (init) {
                     mediaPlayer.setPosition((float) percent);
                 }
-//                System.out.println("setProgressPercent() end");
+
             }
         });
     }
-    private boolean isPlayingTemp;
 
+    /**
+     * Determine whether the video is currently playing
+     *
+     * @return True if playing, false otherwise
+     */
+    @Override
     public boolean isPlaying() {
         runOnVLCThreadAndWait(new Runnable() {
             @Override
             public void run() {
-//                System.out.println("isPlaying() start");
-                if(init) {
+
+                if (init) {
                     isPlayingTemp = mediaPlayer.isPlaying();
-                }
-                else {
+                } else {
                     isPlayingTemp = false;
                 }
-//                System.out.println("isPlaying() end");
+
             }
         });
         return isPlayingTemp;
     }
-    private boolean isPausedTemp;
 
+    /**
+     * Determine whether the video is currently paused
+     *
+     * @return True if paused, false otherwise
+     */
+    @Override
     public boolean isPaused() {
         runOnVLCThreadAndWait(new Runnable() {
             @Override
             public void run() {
-//                System.out.println("isPaused() start");
-                if(init) {
+
+                if (init) {
                     isPausedTemp = paused;
-                }
-                else {
+                } else {
                     isPausedTemp = false;
                 }
-//                System.out.println("isPaused() end");
+
             }
         });
         return isPausedTemp;
     }
 
+    /**
+     * Set a runnable to be executed upon the completion of the currently
+     * playing video
+     *
+     * @param onFinished The runnable that should be run upon completion of the
+     * currently playing video.
+     */
+    @Override
     public void setOnFinished(final Runnable onFinished) {
         runOnVLCThread(new Runnable() {
             @Override
             public void run() {
-//                System.out.println("setOnFinished() start");
-                if(init) {
+
+                if (init) {
                     paused = false;
                     mediaPlayer.addMediaPlayerEventListener(new MediaPlayerEventAdapter() {
                         @Override
                         public void finished(MediaPlayer mediaPlayer) {
-                            if(mediaPlayer.subItemCount() == 0) {
+                            if (mediaPlayer.subItemCount() == 0) {
                                 onFinished.run();
                             }
                         }
                     });
                 }
-//                System.out.println("setOnFinished() end");
+
             }
         });
     }
 
+    /**
+     * Show the video player
+     */
+    @Override
     public void show() {
         runOnVLCThread(new Runnable() {
             @Override
             public void run() {
-//                System.out.println("show() start");
-                if(init) {
+
+                if (init) {
                     show = true;
                     updateState();
                 }
-//                System.out.println("show() end");
+
             }
         });
     }
 
+    /**
+     * Hide the video player
+     */
+    @Override
     public void hide() {
         runOnVLCThread(new Runnable() {
             @Override
             public void run() {
-//                System.out.println("hide() start");
-                if(init) {
+
+                if (init) {
                     show = false;
                     updateState();
                 }
-//                System.out.println("hide() end");
+
             }
         });
     }
 
+    /**
+     * Determine what happens when the Hide button was clicked
+     *
+     * @param hide Boolean representing whether the player should be hidden, or
+     * shown
+     */
+    @Override
     public void setHideButton(final boolean hide) {
         runOnVLCThread(new Runnable() {
             @Override
             public void run() {
-//                System.out.println("setHideButton() start");
-                if(init) {
+
+                if (init) {
                     hideButton = hide;
                     updateState();
                 }
-//                System.out.println("setHideButton() end");
+
             }
         });
     }
 
+    /**
+     * Updates the state of the video playback window to reflect whether it
+     * should be hidden or shown, etc.
+     */
     private void updateState() {
         runOnVLCThread(new Runnable() {
             @Override
             public void run() {
-//                System.out.println("updateState() start");
-                if(init) {
+
+                if (init) {
                     SwingUtilities.invokeLater(new Runnable() {
                         @Override
                         public void run() {
@@ -416,17 +514,24 @@ public class VLCWindowEmbed extends VLCWindow {
                         }
                     });
                 }
-//                System.out.println("updateState() end");
+
             }
         });
     }
 
+    /**
+     * Set the location of the video playback window
+     *
+     * @param x The x coordinate of the video playback window.
+     * @param y The y coordinate of the video playback window.
+     */
+    @Override
     public void setLocation(final int x, final int y) {
         runOnVLCThread(new Runnable() {
             @Override
             public void run() {
-//                System.out.println("setLocation() start");
-                if(init) {
+
+                if (init) {
                     SwingUtilities.invokeLater(new Runnable() {
                         @Override
                         public void run() {
@@ -434,17 +539,24 @@ public class VLCWindowEmbed extends VLCWindow {
                         }
                     });
                 }
-//                System.out.println("setLocation() end");
+
             }
         });
     }
 
+    /**
+     * Set the size of the video playback window
+     *
+     * @param width The desired width of the video playback window.
+     * @param height The desired height of the video playback window.
+     */
+    @Override
     public void setSize(final int width, final int height) {
         runOnVLCThread(new Runnable() {
             @Override
             public void run() {
-//                System.out.println("setsize() start");
-                if(init) {
+
+                if (init) {
                     SwingUtilities.invokeLater(new Runnable() {
 
                         @Override
@@ -453,19 +565,22 @@ public class VLCWindowEmbed extends VLCWindow {
                         }
                     });
                 }
-//                System.out.println("setsize() end");
+
             }
         });
     }
-    private int tempX, tempY, tempWidth, tempHeight;
-    private boolean showing;
 
+    /**
+     * Refresh the position of the video playback window to be underneath the
+     * JavaFX Quelea projection window
+     */
+    @Override
     public void refreshPosition() {
         Utils.fxRunAndWait(new Runnable() {
             @Override
             public void run() {
                 showing = QueleaApp.get().getProjectionWindow().isShowing();
-                if(showing) {
+                if (showing) {
                     tempX = (int) QueleaApp.get().getProjectionWindow().getX();
                     tempY = (int) QueleaApp.get().getProjectionWindow().getY();
                     tempWidth = (int) QueleaApp.get().getProjectionWindow().getWidth();
@@ -476,56 +591,62 @@ public class VLCWindowEmbed extends VLCWindow {
         runOnVLCThread(new Runnable() {
             @Override
             public void run() {
-//                System.out.println("refreshPosition() start");
-                if(init) {
-                    if(showing) {
+
+                if (init) {
+                    if (showing) {
                         show();
                         setLocation(tempX, tempY);
                         setSize(tempWidth, tempHeight);
-                    }
-                    else {
+                    } else {
                         hide();
                     }
                 }
-//                System.out.println("refreshPosition() end");
+
             }
         });
     }
 
-    private FadeThread fadeThread;
-
+    /**
+     * Thread that will fade the hue
+     */
     private class FadeThread extends Thread {
 
         private static final double INCREMENT = 0.002;
         private double toVal;
         private volatile boolean go = true;
 
+        /**
+         * Creates a new Fade thread.
+         *
+         * @param toVal To which value the Hue should be faded to.
+         */
         public FadeThread(double toVal) {
             this.toVal = toVal;
         }
 
+        /**
+         * Fade the hue at the given increment.
+         */
+        @Override
         public void run() {
             double diff = toVal - getHue();
-            if(diff < 0) {
-                while(diff < 0 && go) {
+            if (diff < 0) {
+                while (diff < 0 && go) {
                     setHue(getHue() - INCREMENT);
                     diff = toVal - getHue();
                     try {
                         Thread.sleep(10);
-                    }
-                    catch(InterruptedException ex) {
+                    } catch (InterruptedException ex) {
                         //Meh
                     }
                 }
-            }
-            else if(diff > 0) {
-                while(diff > 0 && go) {
+            } else if (diff > 0) {
+                while (diff > 0 && go) {
                     setHue(getHue() + INCREMENT);
                     diff = toVal - getHue();
                     try {
                         Thread.sleep(10);
-                    }
-                    catch(InterruptedException ex) {
+                    } catch (InterruptedException ex) {
                         //Meh
                     }
                 }
@@ -533,24 +654,42 @@ public class VLCWindowEmbed extends VLCWindow {
             setHue(toVal);
         }
 
+        /**
+         * Stop fading
+         */
         public void halt() {
             go = false;
         }
 
     }
-
+     /**
+     * Fade the hue of the video currently playing back
+     *
+     * @param hue The desired hue to fade to.
+     */
+    @Override
     public synchronized void fadeHue(final double hue) {
-        if(fadeThread != null) {
+        if (fadeThread != null) {
             fadeThread.halt();
         }
         fadeThread = new FadeThread(hue);
         fadeThread.start();
     }
-
+/**
+     * Set the hue of the video currently playing back
+     *
+     * @param hue The desired hue to fade to.
+     */
+    @Override
     public void setHue(final double hue) {
         this.hue = hue;
     }
-
+     /**
+     * Get the current hue of the video playing back
+     *
+     * @return The hue of the video.
+     */
+    @Override
     public double getHue() {
         return hue;
     }
@@ -575,8 +714,7 @@ public class VLCWindowEmbed extends VLCWindow {
     private void runOnVLCThreadAndWait(Runnable r) {
         try {
             VLC_EXECUTOR.submit(r).get();
-        }
-        catch(InterruptedException | ExecutionException ex) {
+        } catch (InterruptedException | ExecutionException ex) {
             LOGGER.log(Level.WARNING, "Interrupted or execution error", ex);
         }
     }

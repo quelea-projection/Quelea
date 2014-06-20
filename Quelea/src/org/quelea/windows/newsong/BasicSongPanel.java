@@ -37,6 +37,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
 import org.javafx.dialog.Dialog;
 import org.quelea.data.chord.ChordLineTransposer;
 import org.quelea.data.chord.ChordTransposer;
@@ -262,14 +263,18 @@ public class BasicSongPanel extends BorderPane {
         return ret;
     }
 
-    //return CCLI button
+    /**
+     * Get the button used for the SongSelect dialog
+     * @return The button used for the CCLI songSelect dialog.
+     */
     private Button getCCLIButton() {
         Button ret = new Button("SongSelect");
+        
         ret.setTooltip(new Tooltip(LabelGrabber.INSTANCE.getLabel("ccli.tooltip")));
         ret.setOnAction(new EventHandler<javafx.event.ActionEvent>() {
             @Override
             public void handle(javafx.event.ActionEvent t) {
-                ccliSelect ccli = new ccliSelect();
+                CCLISelect ccli = new CCLISelect();
                 ccli.showAndWait();
                 if (!ccli.isCanceled()) {
                     getLyricsField().setText(ccli.getSongText());
@@ -279,6 +284,7 @@ public class BasicSongPanel extends BorderPane {
             }
         });
         Utils.setToolbarButtonStyle(ret);
+     
         return ret;
     }
 
