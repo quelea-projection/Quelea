@@ -212,7 +212,7 @@ public class LyricDrawer extends DisplayableDrawer {
             }
             t.setEffect(shadow);
 
-            setPositionX(t, loopMetrics, line.getLine(), stageView);
+            setPositionX(t, loopMetrics, line.getLine(), stageView, curDisplayable instanceof BiblePassage);
             t.setLayoutY(y);
 
             Color lineColor;
@@ -254,6 +254,8 @@ public class LyricDrawer extends DisplayableDrawer {
         StackPane.setMargin(textGroup, new Insets(10));
         if (stageView) {
             StackPane.setAlignment(textGroup, Pos.CENTER);
+        } else if (curDisplayable instanceof BiblePassage) {
+            StackPane.setAlignment(textGroup, Pos.CENTER_LEFT);
         } else {
             StackPane.setAlignment(textGroup, DisplayPositionSelector.getPosFromIndex(theme.getTextPosition()));
         }
@@ -284,7 +286,7 @@ public class LyricDrawer extends DisplayableDrawer {
         }
     }
 
-    private void setPositionX(FormattedText t, FontMetrics metrics, String line, boolean stageView) {
+    private void setPositionX(FormattedText t, FontMetrics metrics, String line, boolean stageView, boolean biblePassage) {
         Utils.checkFXThread();
         String strippedLine = line.replaceAll("\\<\\/?sup\\>", "");
         double width = metrics.computeStringWidth(strippedLine);
@@ -297,6 +299,8 @@ public class LyricDrawer extends DisplayableDrawer {
             } else {
                 t.setLayoutX(centreOffset);
             }
+        } else if(biblePassage) {
+            t.setLayoutX(leftOffset);
         } else if (theme.getTextAlignment() == -1) {
             t.setLayoutX(leftOffset);
         } else if (theme.getTextAlignment() == 0) {
