@@ -18,7 +18,6 @@
  */
 package org.quelea.windows.main;
 
-import java.awt.GraphicsDevice;
 import javafx.collections.ObservableList;
 
 /**

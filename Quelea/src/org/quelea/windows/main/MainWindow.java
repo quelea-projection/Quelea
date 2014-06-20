@@ -17,8 +17,6 @@
  */
 package org.quelea.windows.main;
 
-import org.quelea.windows.main.actionhandlers.ExitActionHandler;
-import org.quelea.windows.main.actionhandlers.EditSongScheduleActionHandler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.event.EventHandler;
@@ -37,6 +35,8 @@ import org.quelea.services.utils.QueleaProperties;
 import org.quelea.services.utils.SceneInfo;
 import org.quelea.services.utils.Utils;
 import org.quelea.windows.lyrics.TranslationChoiceDialog;
+import org.quelea.windows.main.actionhandlers.EditSongScheduleActionHandler;
+import org.quelea.windows.main.actionhandlers.ExitActionHandler;
 import org.quelea.windows.main.actionhandlers.SelectTranslationsActionHandler;
 import org.quelea.windows.main.menus.MainMenuBar;
 import org.quelea.windows.main.toolbars.MainToolbar;

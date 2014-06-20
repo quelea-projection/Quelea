@@ -24,7 +24,6 @@ import javafx.scene.control.Menu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import org.quelea.services.languages.LabelGrabber;
 import org.quelea.services.importexport.EasySlidesImportDialog;
 import org.quelea.services.importexport.EasyWorshipImportDialog;
 import org.quelea.services.importexport.ImportDialog;
@@ -39,6 +38,7 @@ import org.quelea.services.importexport.SundayPlusImportDialog;
 import org.quelea.services.importexport.SurvivorImportDialog;
 import org.quelea.services.importexport.ZWTurboDBChecker;
 import org.quelea.services.importexport.ZionWorxImportDialog;
+import org.quelea.services.languages.LabelGrabber;
 import org.quelea.services.utils.Utils;
 
 /**

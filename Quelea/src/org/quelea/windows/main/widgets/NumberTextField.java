@@ -18,7 +18,6 @@
  */
 package org.quelea.windows.main.widgets;
 
-import java.math.BigDecimal;
 import java.text.NumberFormat;
 import java.text.ParseException;
 import javafx.beans.property.ObjectProperty;
