@@ -75,13 +75,20 @@ public class BiblePassage implements TextDisplayable, Serializable {
      * Fill the text sections with the verses.
      */
     private void fillTextSections() {
-        final int MAX_WORDS_PER_SLIDE = 150;
+        final int MAX_ITEMS_PER_SLIDE = QueleaProperties.get().getMaxBibleItems();
+        final boolean ITEM_VERSES = QueleaProperties.get().getBibleSectionVerses();
 
         StringBuilder section = new StringBuilder();
-        int wordCount = 0;
+        int count = 0;
         for(BibleVerse verse : verses) {
-            wordCount += verse.getVerseText().split(" ").length + 1;
-            if(wordCount < MAX_WORDS_PER_SLIDE) {
+            if(ITEM_VERSES) {
+                count++;
+            }
+            else {
+                count += verse.getVerseText().split(" ").length + 1;
+            }
+            
+            if(count < MAX_ITEMS_PER_SLIDE) {
                 if(QueleaProperties.get().getShowVerseNumbers()) {
                     section.append("<sup>");
                     section.append(verse.getNum());
@@ -98,7 +105,7 @@ public class BiblePassage implements TextDisplayable, Serializable {
                     section.append("</sup>");
                 }
                 section.append(verse.getVerseText());
-                wordCount = 0;
+                count = 0;
             }
         }
         if(!section.toString().isEmpty()) {
