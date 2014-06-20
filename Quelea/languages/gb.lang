@@ -461,3 +461,5 @@ use.bible.verses=Split Bible passage slides by number of
 max.items.per.slide=Max number of % per slide
 verses=verses
 words=words
+theme.song.tab.text=Song
+theme.bible.tab.text=Bible

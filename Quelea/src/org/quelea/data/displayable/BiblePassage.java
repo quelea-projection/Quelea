@@ -25,6 +25,7 @@ import java.util.Collection;
 import java.util.List;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import org.quelea.data.ThemeDTO;
 import org.quelea.data.bible.BibleVerse;
 import org.quelea.services.utils.QueleaProperties;
 import org.quelea.services.utils.Utils;
@@ -42,6 +43,7 @@ public class BiblePassage implements TextDisplayable, Serializable {
     private String[] smallText;
     private List<TextSection> textSections;
     private BibleVerse[] verses;
+    private ThemeDTO theme;
 
     /**
      * Create a new bible passage.
@@ -228,5 +230,13 @@ public class BiblePassage implements TextDisplayable, Serializable {
     @Override
     public void dispose() {
         //Nothing needed here.
+    }
+    
+    public void setTheme(ThemeDTO theme) {
+        this.theme = theme;
+    }
+    
+    public ThemeDTO getTheme() {
+        return this.theme;
     }
 }

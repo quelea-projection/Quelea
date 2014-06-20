@@ -28,6 +28,7 @@ import javafx.stage.FileChooser;
 import org.apache.commons.io.FileUtils;
 import org.quelea.data.ImageBackground;
 import org.quelea.data.ThemeDTO;
+import org.quelea.data.displayable.BiblePassage;
 import org.quelea.services.utils.FileFilters;
 import org.quelea.services.utils.LoggerUtils;
 import org.quelea.services.utils.QueleaProperties;
@@ -80,15 +81,43 @@ public class ImageButton extends Button {
                     imageLocationField.setText(imageLocation);
                     LyricDrawer drawer = new LyricDrawer();
                     drawer.setCanvas(canvas);
-                    ThemeDTO theme = new ThemeDTO(new SerializableFont(drawer.getTheme().getFont()),
-                            drawer.getTheme().getFontPaint(), new SerializableFont(drawer.getTheme().getTranslateFont()),
+                    ThemeDTO theme;
+                    if(canvas.getCurrentDisplayable() instanceof BiblePassage) {
+                        theme = new ThemeDTO(new SerializableFont(drawer.getTheme().getFont()),
+                            drawer.getTheme().getFontPaint(), drawer.getTheme().getTranslateSerializableFont(),
+                            drawer.getTheme().getTranslateFontPaint(), drawer.getTheme().getBackground(),
+                            drawer.getTheme().getShadow(), drawer.getTheme().isBold(),
+                            drawer.getTheme().isItalic(), drawer.getTheme().isTranslateBold(),
+                            drawer.getTheme().isTranslateItalic(), drawer.getTheme().getTextPosition(),
+                            drawer.getTheme().getTextAlignment(),
+                            drawer.getTheme().getBibleSerializableFont(),
+                            drawer.getTheme().getBibleFontPaint(),
+                            new ImageBackground(imageLocation),
+                            drawer.getTheme().getBibleShadow(),
+                            drawer.getTheme().isBibleBold(),
+                            drawer.getTheme().isBibleItalic(),
+                            drawer.getTheme().getBibleTextPosition(),
+                            drawer.getTheme().getBibleTextAlignment());
+                    }
+                    else {
+                       theme = new ThemeDTO(new SerializableFont(drawer.getTheme().getFont()),
+                            drawer.getTheme().getFontPaint(), drawer.getTheme().getTranslateSerializableFont(),
                             drawer.getTheme().getTranslateFontPaint(), new ImageBackground(imageLocation),
                             drawer.getTheme().getShadow(), drawer.getTheme().isBold(),
                             drawer.getTheme().isItalic(), drawer.getTheme().isTranslateBold(),
                             drawer.getTheme().isTranslateItalic(), drawer.getTheme().getTextPosition(),
-                            drawer.getTheme().getTextAlignment());
+                            drawer.getTheme().getTextAlignment(),
+                            drawer.getTheme().getBibleSerializableFont(),
+                            drawer.getTheme().getBibleFontPaint(),
+                            drawer.getTheme().getBibleBackground(), 
+                            drawer.getTheme().getBibleShadow(),
+                            drawer.getTheme().isBibleBold(),
+                            drawer.getTheme().isBibleItalic(),
+                            drawer.getTheme().getBibleTextPosition(),
+                            drawer.getTheme().getBibleTextAlignment());
+                    }
 
-                    drawer.setTheme(theme);
+                    drawer.setTheme(theme, canvas.getCurrentDisplayable() instanceof BiblePassage);
                 }
             }
         });
