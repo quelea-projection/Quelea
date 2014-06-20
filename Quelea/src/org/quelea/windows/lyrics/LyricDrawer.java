@@ -17,7 +17,6 @@
  */
 package org.quelea.windows.lyrics;
 
-import org.quelea.windows.main.DisplayableDrawer;
 import com.sun.javafx.tk.FontMetrics;
 import com.sun.javafx.tk.Toolkit;
 import java.util.ArrayList;
@@ -62,6 +61,7 @@ import org.quelea.services.utils.LyricLine;
 import org.quelea.services.utils.QueleaProperties;
 import org.quelea.services.utils.Utils;
 import org.quelea.windows.main.DisplayCanvas;
+import org.quelea.windows.main.DisplayableDrawer;
 import org.quelea.windows.main.widgets.DisplayPositionSelector;
 import org.quelea.windows.multimedia.VLCWindow;
 

@@ -19,9 +19,6 @@ package org.quelea.data.displayable;
 
 import java.io.Serializable;
 import java.io.UnsupportedEncodingException;
-import org.w3c.dom.NamedNodeMap;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -30,6 +27,9 @@ import java.util.logging.Logger;
 import org.quelea.data.ThemeDTO;
 import org.quelea.services.utils.LineTypeChecker;
 import org.quelea.services.utils.Utils;
+import org.w3c.dom.NamedNodeMap;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 /**
  * Represents a section of text in a song or passage.

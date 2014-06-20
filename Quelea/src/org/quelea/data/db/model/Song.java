@@ -2,7 +2,6 @@ package org.quelea.data.db.model;
 
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import javax.persistence.CascadeType;
 import javax.persistence.CollectionTable;
 import javax.persistence.Column;

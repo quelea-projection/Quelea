@@ -30,8 +30,8 @@ import org.quelea.data.db.SongManager;
 import org.quelea.data.displayable.SongDisplayable;
 import org.quelea.services.importexport.OpenLyricsExporter;
 import org.quelea.services.importexport.QSPExporter;
-import org.quelea.services.languages.LabelGrabber;
 import org.quelea.services.importexport.SelectExportedSongsDialog;
+import org.quelea.services.languages.LabelGrabber;
 
 /**
  * Quelea's export menu.

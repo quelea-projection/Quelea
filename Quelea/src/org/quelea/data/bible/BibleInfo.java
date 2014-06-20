@@ -18,13 +18,12 @@
 package org.quelea.data.bible;
 
 import java.io.Serializable;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
-
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 import org.quelea.services.utils.Utils;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 /**
  * General information about a specified bible.

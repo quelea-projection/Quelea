@@ -19,12 +19,11 @@ package org.quelea.data.bible;
 
 import java.io.Serializable;
 import java.lang.ref.SoftReference;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
-
 import java.util.ArrayList;
 import java.util.List;
 import org.quelea.services.utils.Utils;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 /**
  * A chapter in the bible.
