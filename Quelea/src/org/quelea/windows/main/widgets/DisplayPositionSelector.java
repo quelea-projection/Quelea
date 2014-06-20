@@ -30,7 +30,7 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.util.Duration;
 import org.quelea.data.ThemeDTO;
-import org.quelea.windows.newsong.ThemeSettingsPane;
+import org.quelea.windows.newsong.ThemePanel;
 
 /**
  *
@@ -40,13 +40,13 @@ public class DisplayPositionSelector extends BorderPane {
 
     private List<ToggleButton> buttons;
 
-    public DisplayPositionSelector(final ThemeSettingsPane panel) {
+    public DisplayPositionSelector(final ThemePanel panel) {
         buttons = new ArrayList<>();
         ToggleGroup group = new ToggleGroup();
         GridPane selectorPane = new GridPane();
         selectorPane.prefWidthProperty().bind(widthProperty());
         selectorPane.prefHeightProperty().bind(heightProperty().subtract(50));
-        for (int i = 0; i < 9; i++) {
+        for(int i = 0; i < 9; i++) {
             ToggleButton but = new ToggleButton();
             but.prefWidthProperty().bind(widthProperty().divide(3));
             but.prefHeightProperty().bind(heightProperty().divide(3));
@@ -55,7 +55,7 @@ public class DisplayPositionSelector extends BorderPane {
 
                 @Override
                 public void handle(ActionEvent t) {
-                    panel.updateTheme(false);
+                    panel.updateTheme(true);
                 }
             });
             selectorPane.add(but, i % 3, i / 3);
@@ -83,29 +83,20 @@ public class DisplayPositionSelector extends BorderPane {
         setOpacity(0);
     }
 
-    public void setTheme(ThemeDTO theme, boolean bible) {
-        if (bible) {
-            if (theme.getBibleTextPosition() == -1) {
-                for (ToggleButton button : buttons) {
-                    button.setSelected(false);
-                }
-            } else {
-                buttons.get(theme.getBibleTextPosition()).setSelected(true);
+    public void setTheme(ThemeDTO theme) {
+        if(theme.getTextPosition() == -1) {
+            for(ToggleButton button : buttons) {
+                button.setSelected(false);
             }
-        } else {
-            if (theme.getTextPosition() == -1) {
-                for (ToggleButton button : buttons) {
-                    button.setSelected(false);
-                }
-            } else {
-                buttons.get(theme.getTextPosition()).setSelected(true);
-            }
+        }
+        else {
+            buttons.get(theme.getTextPosition()).setSelected(true);
         }
     }
 
     public int getSelectedButtonIndex() {
-        for (ToggleButton button : buttons) {
-            if (button.isSelected()) {
+        for(ToggleButton button : buttons) {
+            if(button.isSelected()) {
                 return buttons.indexOf(button);
             }
         }
@@ -113,7 +104,7 @@ public class DisplayPositionSelector extends BorderPane {
     }
 
     public static Pos getPosFromIndex(int index) {
-        switch (index) {
+        switch(index) {
             case -1:
                 return Pos.CENTER;
             case 0:
