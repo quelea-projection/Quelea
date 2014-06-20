@@ -67,6 +67,8 @@ public class VLCWindowAdvancedEmbed extends VLCWindow {
     private boolean isPlayer1 = false;
     private final static double FADE_SPEED = 1.0; //in seconds
     private FadeThread fadeThread;
+    private Runnable runOnFinished;
+    private ScheduledExecutorService onFinishedExc;
     //temp variables
     private boolean muteTemp;
     private double progressTemp;
@@ -315,11 +317,11 @@ public class VLCWindowAdvancedEmbed extends VLCWindow {
     public void setRepeat(final boolean repeat) {
         //may be broken for some instances 
         if (init) {
-            if (isPlayer1) {
+            
                 player.setRepeat(repeat);
-            } else {
+           
                 player2.setRepeat(repeat);
-            }
+            
         }
 
     }
@@ -355,6 +357,32 @@ public class VLCWindowAdvancedEmbed extends VLCWindow {
     }
 
     /**
+     * Starts a thread executer that polls the correct media player to see if it
+     * has finished.
+     */
+    private void startOnCompletionWatcher() {
+
+        onFinishedExc = Executors.newSingleThreadScheduledExecutor();
+        onFinishedExc.scheduleAtFixedRate(new Runnable() {
+
+            @Override
+            public void run() {
+               
+                if (init) {
+                    if (Math.abs(getProgressPercent() - 1.0) < 0.01) {
+                        if (!(runOnFinished == null)) {
+                            runOnFinished.run();
+
+                        }
+                        onFinishedExc.shutdownNow();
+                    }
+
+                }
+            }
+        }, 0, 30, TimeUnit.MILLISECONDS);
+    }
+
+    /**
      * Plays the loaded video and transitions to the active video player.
      */
     @Override
@@ -368,7 +396,7 @@ public class VLCWindowAdvancedEmbed extends VLCWindow {
             } else {
                 player2.play();
             }
-
+            startOnCompletionWatcher();
         }
 
     }
@@ -392,6 +420,7 @@ public class VLCWindowAdvancedEmbed extends VLCWindow {
                 player2.load(vid);
                 player2.play();
             }
+            startOnCompletionWatcher();
 
         }
 
@@ -523,11 +552,11 @@ public class VLCWindowAdvancedEmbed extends VLCWindow {
     public void setMute(final boolean mute) {
 
         if (init) {
-            if (isPlayer1) {
+          
                 player.setMute(mute);
-            } else {
+            
                 player2.setMute(mute);
-            }
+            
 
         }
 
@@ -612,57 +641,47 @@ public class VLCWindowAdvancedEmbed extends VLCWindow {
     }
 
     /**
-     * Sets a runnable to be executed upon completion of active video.
+     * Sets a runnable to be executed upon completion of active video. Note that
+     * Execution will happen only after the first completion for a video with
+     * repeat set to true.
      *
      * @param onFinished The runnable to be executed.
      */
     @Override
     public void setOnFinished(final Runnable onFinished) {
+        runOnFinished = onFinished;
 
-        //needs to be adapted somehow to acommodate out of process playback 
-        //possibly have something check progress of video and execute if progress is 1
-        //not a great way, though
-        //        runOnVLCThread(new Runnable() {
-        //            @Override
-        //            public void run() {
-        ////                System.out.println("setOnFinished() start");
-        //                if (init) {
-        //                    paused = false;
-        //                    mediaPlayer.addMediaPlayerEventListener(new MediaPlayerEventAdapter() {
-        //                        @Override
-        //                        public void finished(MediaPlayer mediaPlayer) {
-        //                            if (mediaPlayer.subItemCount() == 0) {
-        //                                onFinished.run();
-        //                            }
-        //                        }
-        //                    });
-        //                }
-        ////                System.out.println("setOnFinished() end");
-        //            }
-        //        });
     }
 
     /**
-     * Show the active video player.
+     * Show the active video player instantly.
      */
     @Override
     public void show() {
 
         if (init) {
-            fadeUpActive(false);
+            if(isPlayer1){
+                player.setOpacity(1);
+            }else{
+                player2.setOpacity(1);
+            }
             windowToBack();
         }
 
     }
 
     /**
-     * Hide the active video player
+     * Hide the active video player instantly.
      */
     @Override
     public void hide() {
 
         if (init) {
-            fadeOutActive(false);
+            if(isPlayer1){
+                player.setOpacity(0);
+            }else{
+                player2.setOpacity(0);
+            }
             windowToBack();
         }
 
