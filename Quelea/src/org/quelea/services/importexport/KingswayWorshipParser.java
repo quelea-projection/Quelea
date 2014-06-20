@@ -53,7 +53,7 @@ public class KingswayWorshipParser implements SongParser {
      * Rough number of songs in the library at present. This is used to update
      * the progress bar.
      */
-    private static final int ROUGH_NUM_SONGS = 100; //3600
+    private static final int ROUGH_NUM_SONGS = 3600;
     private int errorCount = 0;
     private boolean all;
 
@@ -110,9 +110,6 @@ public class KingswayWorshipParser implements SongParser {
                 }
                 else {
                     errorCount = 0;
-                }
-                if(i > 30) {
-                    break;
                 }
                 if(errorCount > CONSECUTIVE_ERROR_THRESHOLD) {
                     LOGGER.log(Level.INFO, "Giving up importing at position {0}, reached {1} consecutive errors", new Object[]{i, CONSECUTIVE_ERROR_THRESHOLD});
