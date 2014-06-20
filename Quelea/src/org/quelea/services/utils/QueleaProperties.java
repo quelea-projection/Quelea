@@ -1246,4 +1246,29 @@ public final class QueleaProperties extends Properties {
         setProperty("show.small.bible.text", Boolean.toString(show));
         write();
     }
+
+     /**
+     * Get how many words or verses to show per slide
+     * @return number of words or verses (depends on use.max.bible.verses)
+     */
+    public int getMaxBibleItems() {
+        return Integer.parseInt(getProperty("max.bible.items", "5"));
+    }
+    
+    public void setMaxBibleItems(int number) {
+        setProperty("max.bible.items", Integer.toString(number));
+    }
+    
+    /**
+     * Get whether the max items is verses or words
+     * @return true if using maximum verses per slide
+     */
+    public boolean getBibleSectionVerses() {
+        return Boolean.parseBoolean(getProperty("use.max.bible.verses", "true"));
+    }
+    
+    public void setBibleSectionVerses(boolean useVerses) {
+        setProperty("use.max.bible.verses", Boolean.toString(useVerses));
+    }
+
 }

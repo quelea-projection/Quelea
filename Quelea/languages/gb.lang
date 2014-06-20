@@ -457,3 +457,7 @@ play=Play
 pause=Pause
 show.small.song.text.label=Show small song information
 show.small.bible.text.label=Show small bible passage information
+use.bible.verses=Split Bible passage slides by number of
+max.items.per.slide=Max number of % per slide
+verses=verses
+words=words
