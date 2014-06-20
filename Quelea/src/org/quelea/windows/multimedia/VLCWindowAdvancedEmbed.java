@@ -143,7 +143,7 @@ public class VLCWindowAdvancedEmbed extends VLCWindow {
         } catch (Exception ex) {
             init = false;
         }
-       
+
         windowToBack();
     }
 
@@ -540,18 +540,16 @@ public class VLCWindowAdvancedEmbed extends VLCWindow {
      */
     @Override
     public double getProgressPercent() {
-        //may need fixing
         if (init) {
             if (isPlayer1) {
                 progressTemp = (double) player.getTime() / player.getLength();
             } else {
-                progressTemp = (double) player.getTime() / player.getLength();
+                progressTemp = (double) player2.getTime() / player2.getLength();
             }
 
         } else {
             progressTemp = 0;
         }
-
         return progressTemp;
     }
 
