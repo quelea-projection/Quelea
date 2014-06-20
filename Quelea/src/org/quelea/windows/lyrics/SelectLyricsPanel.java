@@ -24,7 +24,6 @@ import javafx.collections.ObservableList;
 import javafx.geometry.Orientation;
 import javafx.scene.control.SplitPane;
 import org.quelea.data.ThemeDTO;
-import org.quelea.data.displayable.BiblePassage;
 import org.quelea.data.displayable.TextDisplayable;
 import org.quelea.data.displayable.TextSection;
 import org.quelea.services.utils.LoggerUtils;
@@ -183,17 +182,17 @@ public class SelectLyricsPanel extends AbstractPanel {
             drawer.setCanvas(canvas);
             if (selectedIndex == -1 || selectedIndex >= lyricsList.itemsProperty().get().size()) {
                 if (!canvas.getPlayVideo()) {
-                    drawer.setTheme(ThemeDTO.DEFAULT_THEME, canvas.getCurrentDisplayable() instanceof BiblePassage);
+                    drawer.setTheme(ThemeDTO.DEFAULT_THEME);
                 }
                 drawer.eraseText();
                 continue;
             }
             TextSection currentSection = lyricsList.itemsProperty().get().get(selectedIndex);
             if (currentSection.getTempTheme() != null) {
-                drawer.setTheme(currentSection.getTempTheme(), canvas.getCurrentDisplayable() instanceof BiblePassage);
+                drawer.setTheme(currentSection.getTempTheme());
             } else {
                 ThemeDTO newTheme = currentSection.getTheme();
-                drawer.setTheme(newTheme, canvas.getCurrentDisplayable() instanceof BiblePassage);
+                drawer.setTheme(newTheme);
             }
             drawer.setCapitaliseFirst(currentSection.shouldCapitaliseFirst());
             drawer.setText((TextDisplayable) getCurrentDisplayable(), selectedIndex);

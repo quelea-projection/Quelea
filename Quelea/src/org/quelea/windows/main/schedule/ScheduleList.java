@@ -45,7 +45,6 @@ import javafx.util.Callback;
 import org.quelea.data.ImageBackground;
 import org.quelea.data.Schedule;
 import org.quelea.data.ThemeDTO;
-import org.quelea.data.displayable.BiblePassage;
 import org.quelea.data.displayable.Displayable;
 import org.quelea.data.displayable.ImageDisplayable;
 import org.quelea.data.displayable.SongDisplayable;
@@ -199,65 +198,15 @@ public class ScheduleList extends StackPane {
                                     if (dropShadow == null || (dropShadow.getColor().equals(Color.WHITE) && dropShadow.getOffsetX() == 0 && dropShadow.getOffsetY() == 0)) {
                                         dropShadow = new SerializableDropShadow(Color.BLACK, 3, 3);
                                     }
-                                    ThemeDTO newTheme = new ThemeDTO(theme.getSerializableFont(),
-                                            theme.getFontPaint(),
-                                            theme.getTranslateSerializableFont(),
-                                            theme.getTranslateFontPaint(),
-                                            new ImageBackground(new File(imageLocation).getName()),
-                                            dropShadow,
-                                            theme.getSerializableFont().isBold(),
-                                            theme.getSerializableFont().isItalic(),
-                                            theme.getTranslateSerializableFont().isBold(),
-                                            theme.getTranslateSerializableFont().isItalic(),
-                                            theme.getTextPosition(),
-                                            theme.getTextAlignment(),
-                                            theme.getBibleSerializableFont(),
-                                            theme.getBibleFontPaint(),
-                                            theme.getBibleBackground(),
-                                            theme.getBibleShadow(),
-                                            theme.isBibleBold(),
-                                            theme.isBibleItalic(),
-                                            theme.getBibleTextPosition(),
-                                            theme.getBibleTextAlignment());
+                                    ThemeDTO newTheme = new ThemeDTO(theme.getSerializableFont(), theme.getFontPaint(), theme.getTranslateSerializableFont(), theme.getTranslateFontPaint(), new ImageBackground(new File(imageLocation).getName()), dropShadow, theme.getSerializableFont().isBold(), theme.getSerializableFont().isItalic(),  theme.getTranslateSerializableFont().isBold(), theme.getTranslateSerializableFont().isItalic(),theme.getTextPosition(), theme.getTextAlignment());
                                     for (TextSection section : songDisplayable.getSections()) {
                                         section.setTheme(newTheme);
                                     }
                                     songDisplayable.setTheme(newTheme);
                                     Utils.updateSongInBackground(songDisplayable, true, false);
-                                } else if (d instanceof BiblePassage) {
-                                    BiblePassage bibleDisplayable = (BiblePassage) d;
-                                    ThemeDTO theme = bibleDisplayable.getTheme();
-                                    SerializableDropShadow dropShadow = theme.getBibleShadow();
-                                    if (dropShadow == null || (dropShadow.getColor().equals(Color.WHITE) && dropShadow.getOffsetX() == 0 && dropShadow.getOffsetY() == 0)) {
-                                        dropShadow = new SerializableDropShadow(Color.BLACK, 3, 3);
-                                    }
-                                    ThemeDTO newTheme = new ThemeDTO(theme.getSerializableFont(),
-                                            theme.getFontPaint(),
-                                            theme.getTranslateSerializableFont(),
-                                            theme.getTranslateFontPaint(),
-                                            theme.getBackground(),
-                                            theme.getShadow(),
-                                            theme.getSerializableFont().isBold(),
-                                            theme.getSerializableFont().isItalic(),
-                                            theme.getTranslateSerializableFont().isBold(),
-                                            theme.getTranslateSerializableFont().isItalic(),
-                                            theme.getTextPosition(),
-                                            theme.getTextAlignment(),
-                                            theme.getBibleSerializableFont(),
-                                            theme.getBibleFontPaint(),
-                                            new ImageBackground(new File(imageLocation).getName()),
-                                            dropShadow, 
-                                            theme.isBibleBold(),
-                                            theme.isBibleItalic(),
-                                            theme.getBibleTextPosition(),
-                                            theme.getBibleTextAlignment());
-                                    for (TextSection section : bibleDisplayable.getSections()) {
-                                        section.setTheme(newTheme);
-                                    }
-                                    bibleDisplayable.setTheme(newTheme);
+                                    QueleaApp.get().getMainWindow().getMainPanel().getPreviewPanel().refresh();
+                                    QueleaApp.get().getMainWindow().getMainPanel().getLivePanel().refresh();
                                 }
-                                QueleaApp.get().getMainWindow().getMainPanel().getPreviewPanel().refresh();
-                                QueleaApp.get().getMainWindow().getMainPanel().getLivePanel().refresh();
                             }
                         }
                         if (event.getDragboard().getContent(SongDisplayable.SONG_DISPLAYABLE_FORMAT) instanceof SongDisplayable) {
@@ -452,8 +401,7 @@ public class ScheduleList extends StackPane {
                 VLCWindow.INSTANCE.stop();
                 LyricDrawer lyricDrawer = new LyricDrawer();
                 lyricDrawer.setCanvas(QueleaApp.get().getProjectionWindow().getCanvas());
-                lyricDrawer.setTheme(ThemeDTO.DEFAULT_THEME, d instanceof BiblePassage);
-                QueleaApp.get().getMainWindow().getMainPanel().getPreviewPanel().refresh();
+                lyricDrawer.setTheme(ThemeDTO.DEFAULT_THEME);
             }
             Displayable preview = QueleaApp.get().getMainWindow().getMainPanel().getPreviewPanel().getDisplayable();
             if (d == preview) {

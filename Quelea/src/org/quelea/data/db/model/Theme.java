@@ -19,7 +19,6 @@ import org.quelea.data.ThemeDTO;
 public class Theme {
 
     private static final int STRING_LENGTH = DBConstants.STRING_LENGTH;
-    //Main song theme
     private long id;
     private String name;
     private String fontname;
@@ -27,8 +26,6 @@ public class Theme {
     private String translateFontname;
     private String translateFontcolour;
     private String backgroundcolour;
-    private String backgroundgrad1;
-    private String backgroundgrad2;
     private String backgroundvid;
     private String backgroundimage;
     private Boolean fontBold;
@@ -39,30 +36,13 @@ public class Theme {
     private Integer textPosition;
     private Integer textAlignment;
     private TextShadow textShadow = new TextShadow();
-    //Bible theme
-    private String biblefontname;
-    private String biblefontcolour;
-    private String biblebackgroundcolour;
-    //private String biblebackgroundgrad1;
-    //private String biblebackgroundgrad2;
-    private String biblebackgroundvid;
-    private String biblebackgroundimage;
-    private Boolean biblefontBold;
-    private Boolean biblefontItalic;
-    private Double biblevideoHue;
-    private Integer bibletextPosition;
-    private Integer bibletextAlignment;
-    private TextShadow bibletextShadow = new TextShadow();
 
     public Theme() {
     }
 
     public Theme(String name, String fontname, String fontcolour, String translateFontname, String translateFontcolour,
             String backgroundcolour, String backgroundvid, String backgroundimage,
-            TextShadow shadow, boolean isFontBold, boolean isFontitalic, boolean isTranslateFontBold, boolean isTranslateFontitalic, double videoHue, int textPosition, int textAlignment,
-            String biblefontname, String biblefontcolour, String biblebackgroundcolour, String biblebackgroundvid, String biblebackgroundimage,
-            TextShadow bibleshadow, boolean bibleisFontBold, boolean bibleisFontitalic, double biblevideoHue, int bibletextPosition, int bibletextAlignment) {
-        
+            TextShadow shadow, boolean isFontBold, boolean isFontitalic, boolean isTranslateFontBold, boolean isTranslateFontitalic, double videoHue, int textPosition, int textAlignment) {
         this.name = name;
         this.fontname = fontname;
         this.fontcolour = fontcolour;
@@ -79,18 +59,6 @@ public class Theme {
         this.videoHue = videoHue;
         this.textPosition = textPosition;
         this.textAlignment = textAlignment;
-        //Bible
-        this.biblefontname = biblefontname;
-        this.biblefontcolour = biblefontcolour;
-        this.biblebackgroundcolour = biblebackgroundcolour;
-        this.biblebackgroundvid = biblebackgroundvid;
-        this.biblebackgroundimage = biblebackgroundimage;
-        this.bibletextShadow = bibleshadow;
-        this.biblefontBold = bibleisFontBold;
-        this.biblefontItalic = bibleisFontitalic;
-        this.biblevideoHue = biblevideoHue;
-        this.bibletextPosition = bibletextPosition;
-        this.bibletextAlignment = bibletextAlignment;
     }
 
     public Theme(Theme theme) {
@@ -110,18 +78,6 @@ public class Theme {
         this.videoHue = theme.videoHue;
         this.textPosition = theme.textPosition;
         this.textAlignment = theme.textAlignment;
-        //Bible
-        this.biblefontname = theme.biblefontname;
-        this.biblefontcolour = theme.biblefontcolour;
-        this.biblebackgroundcolour = theme.biblebackgroundcolour;
-        this.biblebackgroundvid = theme.biblebackgroundvid;
-        this.biblebackgroundimage = theme.biblebackgroundimage;
-        this.bibletextShadow = theme.bibletextShadow;
-        this.biblefontBold = theme.biblefontBold;
-        this.biblefontItalic = theme.biblefontItalic;
-        this.biblevideoHue = theme.biblevideoHue;
-        this.bibletextPosition = theme.bibletextPosition;
-        this.bibletextAlignment = theme.bibletextAlignment;
     }
 
     /**
@@ -370,163 +326,6 @@ public class Theme {
      */
     public void setTranslateFontItalic(Boolean translateFontItalic) {
         this.translateFontItalic = translateFontItalic;
-    }
-    
-    //Bible
-    @Column(name = "biblevideoHue")
-    public Double getBibleVideoHue() {
-        if(biblevideoHue == null) {
-            return 0.0;
-        }
-        return biblevideoHue;
-    }
-
-    public void setBibleVideoHue(Double videoHue) {
-        this.biblevideoHue = videoHue;
-    }
-    
-    @Column(name="bibletextPosition")
-    public Integer getBibleTextPosition() {
-        if(bibletextPosition==null) {
-            return -1;
-        }
-        return bibletextPosition;
-    }
-    
-    public void setBibleTextPosition(Integer textPosition) {
-        this.bibletextPosition = textPosition;
-    }
-    
-    @Column(name="bibletextAlignment")
-    public Integer getBibleTextAlignment() {
-        if(bibletextAlignment==null) {
-            return 0;
-        }
-        return bibletextAlignment;
-    }
-    
-    public void setBibleTextAlignment(Integer textAlignment) {
-        this.bibletextAlignment = textAlignment;
-    }
-
-    /**
-     * @return the biblefontname
-     */
-    @Column(name = "biblefontname", length = STRING_LENGTH)
-    public String getBibleFontname() {
-        return biblefontname;
-    }
-
-    /**
-     * @param fontname the biblefontname to set
-     */
-    public void setBibleFontname(String fontname) {
-        this.biblefontname = fontname;
-    }
-
-    /**
-     * @return the biblefontcolour
-     */
-    @Column(name = "biblefontcolour", length = STRING_LENGTH)
-    public String getBibleFontcolour() {
-        return biblefontcolour;
-    }
-
-    /**
-     * @param fontcolour the biblefontcolour to set
-     */
-    public void setBibleFontcolour(String fontcolour) {
-        this.biblefontcolour = fontcolour;
-    }
-
-    /**
-     * @return the biblebackgroundcolour
-     */
-    @Column(name = "biblebackgroundcolor", length = STRING_LENGTH)
-    public String getBibleBackgroundcolour() {
-        return biblebackgroundcolour;
-    }
-
-    /**
-     * @param backgroundcolour the biblebackgroundcolour to set
-     */
-    public void setBibleBackgroundcolour(String backgroundcolour) {
-        this.biblebackgroundcolour = backgroundcolour;
-    }
-
-    /**
-     * @return the biblebackgroundvid
-     */
-    @Column(name = "biblebackgroundvid", length = STRING_LENGTH)
-    public String getBibleBackgroundvid() {
-        return biblebackgroundvid;
-    }
-
-    /**
-     * @param backgroundvid the biblebackgroundvid to set
-     */
-    public void setBibleBackgroundvid(String backgroundvid) {
-        this.biblebackgroundvid = backgroundvid;
-    }
-
-    /**
-     * @return the biblebackgroundimage
-     */
-    @Column(name = "biblebackgroundimage", length = STRING_LENGTH)
-    public String getBibleBackgroundimage() {
-        return biblebackgroundimage;
-    }
-
-    /**
-     * @param backgroundimage the biblebackgroundimage to set
-     */
-    public void setBibleBackgroundimage(String backgroundimage) {
-        this.biblebackgroundimage = backgroundimage;
-    }
-
-    /**
-     * @return the Bible shadow
-     */
-    @ManyToOne(cascade = CascadeType.ALL)
-    public TextShadow getBibleTextShadow() {
-        return bibletextShadow;
-    }
-
-    /**
-     * @param textShadow the Bible shadow to set
-     */
-    public void setBibleTextShadow(TextShadow textShadow) {
-        this.bibletextShadow = textShadow;
-    }
-
-    /**
-     * @return the isBibleFontBold
-     */
-    @Column(name = "isbiblefontbold")
-    public Boolean isBibleFontBold() {
-        return biblefontBold == null ? false : biblefontBold;
-    }
-
-    /**
-     * @param isFontBold the isBibleFontBold to set
-     */
-    public void setBibleFontBold(Boolean isFontBold) {
-        this.biblefontBold = isFontBold;
-    }
-
-    /**
-     * @return the isBibleFontItalic
-     */
-    @Column(name = "isbiblefontitalic")
-    public Boolean isBibleFontItalic() {
-        return biblefontItalic == null ? false : biblefontItalic;
-    }
-
-    /**
-     * @param isFontItalic the isBibleFontItalic to set
-     */
-    public void setBibleFontItalic(Boolean isFontItalic) {
-        this.biblefontItalic = isFontItalic;
     }
 
     @Override

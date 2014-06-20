@@ -82,20 +82,18 @@ public class ThemeToolbar extends HBox {
     private final TextField backgroundVidLocation;
     private final ColorPicker backgroundColorPicker;
     private final Slider vidHueSlider;
-    private final ThemeSettingsPane themePanel;
+    private final ThemePanel themePanel;
     private static FontSelectionDialog fontSelectionDialog;
-    private final boolean bible;
 
     /**
      * Create a new theme toolbar.
      * <p>
      * @param themePanel the theme panel that this toolbar sits on.
      */
-    public ThemeToolbar(final ThemeSettingsPane themePanel, boolean bible) {
+    public ThemeToolbar(final ThemePanel themePanel) {
         Utils.checkFXThread();
-        this.bible = bible;
         this.themePanel = themePanel;
-        moreFontOptionsDialog = new FontOptionsDialog(bible);
+        moreFontOptionsDialog = new FontOptionsDialog();
         setPadding(new Insets(5));
         setStyle("-fx-background-color:#dddddd;");
         VBox topLevelFontBox = new VBox(10);
@@ -251,7 +249,7 @@ public class ThemeToolbar extends HBox {
         backgroundColorPicker.valueProperty().addListener(new ChangeListener<Color>() {
             @Override
             public void changed(ObservableValue<? extends Color> ov, Color t, Color t1) {
-                themePanel.updateTheme(false);
+                themePanel.updateTheme(true);
             }
         });
         colourPanel.getChildren().add(backgroundColorPicker);
@@ -355,43 +353,28 @@ public class ThemeToolbar extends HBox {
      * <p>
      * @param theme the theme to represent.
      */
-    public void setTheme(ThemeDTO theme, boolean bible) {
+    public void setTheme(ThemeDTO theme) {
         Utils.checkFXThread();
-        if (bible) {
-            fontSelection.getSelectionModel().select(theme.getBibleFont().getFamily());
-            fontColor.setValue(theme.getBibleFontPaint());
-            fontColor.fireEvent(new ActionEvent());
-            boldButton.setSelected(theme.isBibleBold());
-            italicButton.setSelected(theme.isBibleItalic());
-            int align = theme.getBibleTextAlignment();
-            if (align == -1) {
-                leftAlignButton.setSelected(true);
-            } else if (align == 1) {
-                rightAlignButton.setSelected(true);
-            } else {
-                centreAlignButton.setSelected(true);
-            }
-            moreFontOptionsDialog.setTheme(theme, bible);
-            Background background = theme.getBibleBackground();
-            background.setThemeForm(backgroundColorPicker, backTypeSelection, backgroundImageLocation, backgroundVidLocation, vidHueSlider);
-        } else {
-            fontSelection.getSelectionModel().select(theme.getFont().getFamily());
-            fontColor.setValue(theme.getFontPaint());
-            fontColor.fireEvent(new ActionEvent());
-            boldButton.setSelected(theme.isBold());
-            italicButton.setSelected(theme.isItalic());
-            int align = theme.getTextAlignment();
-            if (align == -1) {
-                leftAlignButton.setSelected(true);
-            } else if (align == 1) {
-                rightAlignButton.setSelected(true);
-            } else {
-                centreAlignButton.setSelected(true);
-            }
-            moreFontOptionsDialog.setTheme(theme, bible);
-            Background background = theme.getBackground();
-            background.setThemeForm(backgroundColorPicker, backTypeSelection, backgroundImageLocation, backgroundVidLocation, vidHueSlider);
+        if (theme == null) {
+            theme = ThemeDTO.DEFAULT_THEME;
         }
+        Font font = theme.getFont();
+        fontSelection.getSelectionModel().select(font.getFamily());
+        fontColor.setValue(theme.getFontPaint());
+        fontColor.fireEvent(new ActionEvent());
+        boldButton.setSelected(theme.isBold());
+        italicButton.setSelected(theme.isItalic());
+        int align = theme.getTextAlignment();
+        if (align == -1) {
+            leftAlignButton.setSelected(true);
+        } else if (align == 1) {
+            rightAlignButton.setSelected(true);
+        } else {
+            centreAlignButton.setSelected(true);
+        }
+        moreFontOptionsDialog.setTheme(theme);
+        Background background = theme.getBackground();
+        background.setThemeForm(backgroundColorPicker, backTypeSelection, backgroundImageLocation, backgroundVidLocation, vidHueSlider);
     }
 
     private int getAlignmentVal() {
@@ -404,25 +387,21 @@ public class ThemeToolbar extends HBox {
         return alignment;
     }
 
-    public SerializableFont getThemeFont() {
-        return new SerializableFont(Font.font(fontSelection.getSelectionModel().getSelectedItem(),
+    /**
+     * Get the theme represented by this toolbar.
+     * <p>
+     * @return the theme.
+     */
+    public ThemeDTO getTheme() {
+        Utils.checkFXThread();
+        Font font = Font.font(fontSelection.getSelectionModel().getSelectedItem(),
                 boldButton.isSelected() ? FontWeight.BOLD : FontWeight.NORMAL,
                 italicButton.isSelected() ? FontPosture.ITALIC : FontPosture.REGULAR,
-                QueleaProperties.get().getMaxFontSize()));
-    }
+                QueleaProperties.get().getMaxFontSize());
 
-    public Color getThemeFontColor() {
-        return fontColor.getValue();
-    }
-
-    public Background getThemeBackground() {
         Background background = new ColourBackground(Color.BLACK);
         if (backTypeSelection.getSelectionModel().getSelectedItem() == null) {
-            if (bible) {
-                return ThemeDTO.BIBLE_DEFAULT_BACKGROUND;
-            } else {
-                return ThemeDTO.DEFAULT_BACKGROUND;
-            }
+            return ThemeDTO.DEFAULT_THEME;
         }
         if (backTypeSelection.getSelectionModel().getSelectedItem().equals(LabelGrabber.INSTANCE.getLabel("color.theme.label"))) {
             background = new ColourBackground(backgroundColorPicker.getValue());
@@ -439,34 +418,10 @@ public class ThemeToolbar extends HBox {
         } else {
             throw new AssertionError("Bug - " + backTypeSelection.getSelectionModel().getSelectedItem() + " is an unknown selection value");
         }
-        return background;
+        final SerializableDropShadow shadow = moreFontOptionsDialog.getShadow();
+        ThemeDTO resultTheme = new ThemeDTO(new SerializableFont(font), fontColor.getValue(), moreFontOptionsDialog.getTranslateFont(), moreFontOptionsDialog.getTranslateColour(),
+                background, shadow, boldButton.isSelected(), italicButton.isSelected(), moreFontOptionsDialog.isTranslateBold(), moreFontOptionsDialog.isTranslateItalic(), -1, getAlignmentVal());
+        return resultTheme;
     }
 
-    public SerializableDropShadow getThemeShadow() {
-        return moreFontOptionsDialog.getShadow();
-    }
-
-    public SerializableFont getTranslateFont() {
-        if (!bible) {
-            return moreFontOptionsDialog.getTranslateFont();
-        }
-        return null;
-    }
-
-    public Color getTranslateFontColor() {
-        if (!bible) {
-            return moreFontOptionsDialog.getTranslateColour();
-        }
-        return null;
-    }
-
-    public int getTextAlignment() {
-        if (leftAlignButton.isSelected()) {
-            return -1;
-        } else if (rightAlignButton.isSelected()) {
-            return 1;
-        } else {
-            return 0;
-        }
-    }
 }
