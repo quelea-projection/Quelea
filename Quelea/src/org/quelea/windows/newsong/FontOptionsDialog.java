@@ -69,11 +69,13 @@ public class FontOptionsDialog extends Stage {
     private final ToggleButton italicButton;
     private final Slider shadowOffsetSlider;
     private final Button okButton;
+    private final boolean bible;
 
     /**
      * Create the font options dialog.
      */
-    public FontOptionsDialog() {
+    public FontOptionsDialog(boolean bible) {
+        this.bible = bible;
         initStyle(StageStyle.UTILITY);
         initModality(Modality.APPLICATION_MODAL);
         Utils.addIconsToStage(this);
@@ -120,17 +122,19 @@ public class FontOptionsDialog extends Stage {
         Utils.setToolbarButtonStyle(italicButton);
 
         BorderPane root = new BorderPane();
-        VBox controlRoot = new VBox(5);
-        controlRoot.getChildren().add(new Label(LabelGrabber.INSTANCE.getLabel("translation.font.text") + ":"));
-        HBox fontBox = new HBox(5);
-        fontBox.getChildren().add(fontSelection);
-        fontBox.getChildren().add(fontExpandButton);
-        controlRoot.getChildren().add(fontBox);
-        HBox fontButtonBox = new HBox(5);
-        fontButtonBox.getChildren().add(boldButton);
-        fontButtonBox.getChildren().add(italicButton);
-        fontButtonBox.getChildren().add(fontColor);
-        controlRoot.getChildren().add(fontButtonBox);
+        VBox controlRoot = new VBox();
+        if (!bible) {
+            controlRoot.getChildren().add(new Label(LabelGrabber.INSTANCE.getLabel("translation.font.text") + ":"));
+            HBox fontBox = new HBox(5);
+            fontBox.getChildren().add(fontSelection);
+            fontBox.getChildren().add(fontExpandButton);
+            controlRoot.getChildren().add(fontBox);
+            HBox fontButtonBox = new HBox(5);
+            fontButtonBox.getChildren().add(boldButton);
+            fontButtonBox.getChildren().add(italicButton);
+            fontButtonBox.getChildren().add(fontColor);
+            controlRoot.getChildren().add(fontButtonBox);
+        }
         controlRoot.getChildren().add(new Label(LabelGrabber.INSTANCE.getLabel("shadow.text") + ":"));
         HBox shadowBox = new HBox(5);
         shadowBox.getChildren().add(shadowColor);
@@ -153,7 +157,7 @@ public class FontOptionsDialog extends Stage {
         buttonPane.getChildren().add(okButton);
         root.setCenter(controlRoot);
         root.setBottom(buttonPane);
-        setScene(new Scene(root, 230,180));
+        setScene(new Scene(root, 230, 180));
     }
 
     /**
@@ -161,15 +165,21 @@ public class FontOptionsDialog extends Stage {
      *
      * @param theme the theme to display.
      */
-    public void setTheme(ThemeDTO theme) {
-        fontSelection.getSelectionModel().select(theme.getTranslateFont().getFamily());
-        fontColor.setValue(theme.getTranslateFontPaint());
-        fontColor.fireEvent(new ActionEvent());
-        boldButton.setSelected(theme.isTranslateBold());
-        italicButton.setSelected(theme.isTranslateItalic());
-        shadowColor.setValue(theme.getShadow().getColor());
-        shadowColor.fireEvent(new ActionEvent());
-        shadowOffsetSlider.setValue(theme.getShadow().getOffsetX());
+    public void setTheme(ThemeDTO theme, boolean bible) {
+        if (bible) {
+            shadowColor.setValue(theme.getBibleShadow().getColor());
+            shadowColor.fireEvent(new ActionEvent());
+            shadowOffsetSlider.setValue(theme.getBibleShadow().getOffsetX());
+        } else {
+            fontSelection.getSelectionModel().select(theme.getTranslateFont().getFamily());
+            fontColor.setValue(theme.getTranslateFontPaint());
+            fontColor.fireEvent(new ActionEvent());
+            boldButton.setSelected(theme.isTranslateBold());
+            italicButton.setSelected(theme.isTranslateItalic());
+            shadowColor.setValue(theme.getShadow().getColor());
+            shadowColor.fireEvent(new ActionEvent());
+            shadowOffsetSlider.setValue(theme.getShadow().getOffsetX());
+        }
     }
 
     /**
