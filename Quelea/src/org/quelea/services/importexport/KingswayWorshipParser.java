@@ -53,7 +53,7 @@ public class KingswayWorshipParser implements SongParser {
      * Rough number of songs in the library at present. This is used to update
      * the progress bar.
      */
-    private static final int ROUGH_NUM_SONGS = 3600;
+    private static final int ROUGH_NUM_SONGS = 100; //3600
     private int errorCount = 0;
     private boolean all;
 
@@ -110,6 +110,9 @@ public class KingswayWorshipParser implements SongParser {
                 }
                 else {
                     errorCount = 0;
+                }
+                if(i > 30) {
+                    break;
                 }
                 if(errorCount > CONSECUTIVE_ERROR_THRESHOLD) {
                     LOGGER.log(Level.INFO, "Giving up importing at position {0}, reached {1} consecutive errors", new Object[]{i, CONSECUTIVE_ERROR_THRESHOLD});
@@ -209,7 +212,7 @@ public class KingswayWorshipParser implements SongParser {
         }
         return returnVal;
     }
-
+    
     /**
      * Parse the given HTML to produce a song object.
      * <p/>
@@ -231,7 +234,7 @@ public class KingswayWorshipParser implements SongParser {
             if(html.trim().isEmpty()) {
                 return null;
             }
-            int startIndex = html.indexOf("<div class=\"span8\">") + "<div class=\"span8\">".length();
+            int startIndex = html.indexOf("<h1>");
             int endIndex = html.indexOf("<div class=\"sharer\">", startIndex);
             if(endIndex == -1) {
                 endIndex = html.indexOf("</div>", startIndex);
@@ -251,7 +254,7 @@ public class KingswayWorshipParser implements SongParser {
             songHtml = songHtml.replace("&copy;", "©");
 
             String title = songHtml.substring(4, songHtml.indexOf("</h1>"));
-            songHtml = songHtml.substring(songHtml.indexOf("</h1>") + 5);
+            songHtml = songHtml.substring(songHtml.indexOf("</h1>") + "</h1>".length());
             songHtml = songHtml.trim();
 
             String author = songHtml.substring(4, songHtml.indexOf("</h3>")).trim();
@@ -260,6 +263,8 @@ public class KingswayWorshipParser implements SongParser {
             }
             songHtml = songHtml.substring(songHtml.indexOf("</h3>") + "</h3>".length());
             songHtml = songHtml.trim();
+            
+            songHtml = songHtml.substring(songHtml.indexOf("<p>") + "<p>".length());
 
             songHtml = songHtml.replace("<br />", "\n");
             songHtml = songHtml.replace("<BR />", "\n");
@@ -316,7 +321,7 @@ public class KingswayWorshipParser implements SongParser {
             }
             fl = new String(y);
             lyrics.append(fl.trim()).append('\n'); //add first line
-        /*
+            /*
              * End of code by Ben Goodwin
              */
 
@@ -357,7 +362,7 @@ public class KingswayWorshipParser implements SongParser {
         LOGGER.log(Level.INFO, "Doing page {0}", num);
         try {
             StringBuilder content = new StringBuilder();
-            URL url = new URL("http://www.weareworship.com/songs/song-library/showsong/" + num);
+            URL url = new URL("http://www.weareworship.com/uk/songs/song-library/showsong/" + num);
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
             if(conn.getResponseCode() == HttpURLConnection.HTTP_MOVED_PERM || conn.getResponseCode() == HttpURLConnection.HTTP_MOVED_TEMP) {
                 url = new URL(conn.getHeaderField("Location"));
