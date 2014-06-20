@@ -36,7 +36,6 @@ import javafx.stage.Modality;
 import javafx.stage.Window;
 import org.javafx.dialog.Dialog;
 import org.quelea.data.ThemeDTO;
-import org.quelea.data.displayable.BiblePassage;
 import org.quelea.services.languages.LabelGrabber;
 import org.quelea.services.utils.LoggerUtils;
 import org.quelea.windows.lyrics.LyricDrawer;
@@ -187,7 +186,7 @@ public class ThemePreviewPanel extends VBox {
     private void updateThemePreviewCanvas(ThemeDTO theme) {
         LyricDrawer drawer = new LyricDrawer();
         drawer.setCanvas(canvas);
-        drawer.setTheme(theme, canvas.getCurrentDisplayable() instanceof BiblePassage);
+        drawer.setTheme(theme);
         drawer.setText(ThemePanel.SAMPLE_LYRICS, new String[0], new String[0], false, -1);
     }
 }

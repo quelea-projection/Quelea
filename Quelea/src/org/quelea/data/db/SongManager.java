@@ -213,7 +213,7 @@ public final class SongManager {
                             song.getKey(),
                             song.getCapo(),
                             song.getInfo(),
-                            nullTheme ? ThemeDTO.DEFAULT_THEME.getTheme() : song.getTheme().getTheme(),
+                            nullTheme ? ThemeDTO.DEFAULT_THEME.getTheme() : new Theme(song.getSections()[0].getTheme().getTheme()),
                             nullTags ? new ArrayList<String>() : Arrays.asList(song.getTags()),
                             song.getTranslations());
                     session.save(newSong);
@@ -267,7 +267,7 @@ public final class SongManager {
                     updatedSong.setTags(nullTags ? new ArrayList<String>() : Arrays.asList(song.getTags()));
                     updatedSong.setTitle(song.getTitle());
                     updatedSong.setTranslations(song.getTranslations());
-                    updatedSong.setTheme(nullTheme ? ThemeDTO.DEFAULT_THEME.getTheme() : song.getTheme().getTheme());
+                    updatedSong.setTheme(nullTheme ? ThemeDTO.DEFAULT_THEME.getTheme() : new Theme(song.getSections()[0].getTheme().getTheme()));
                     session.update(updatedSong);
                     index.add(song);
                 }
