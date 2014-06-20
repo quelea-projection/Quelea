@@ -38,10 +38,10 @@ import org.quelea.services.mail.Mailer;
 import org.quelea.services.utils.LoggerUtils;
 import org.quelea.windows.main.MainPanel;
 import org.quelea.windows.main.QueleaApp;
-import org.quelea.windows.main.schedule.ScheduleList;
 import org.quelea.windows.main.actionhandlers.AddPowerpointActionHandler;
 import org.quelea.windows.main.actionhandlers.AddVideoActionHandler;
 import org.quelea.windows.main.actionhandlers.ShowNoticesActionHandler;
+import org.quelea.windows.main.schedule.ScheduleList;
 
 /**
  * Quelea's schedule menu.

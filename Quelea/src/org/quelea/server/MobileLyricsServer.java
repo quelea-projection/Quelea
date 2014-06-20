@@ -35,7 +35,6 @@ import org.quelea.data.displayable.TextDisplayable;
 import org.quelea.data.displayable.TextSection;
 import org.quelea.services.languages.LabelGrabber;
 import org.quelea.services.utils.LoggerUtils;
-import org.quelea.services.utils.Utils;
 import org.quelea.windows.main.LivePanel;
 import org.quelea.windows.main.QueleaApp;
 

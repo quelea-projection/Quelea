@@ -27,7 +27,6 @@ import java.util.Set;
 import java.util.TreeSet;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javafx.application.Platform;
 import org.hibernate.ObjectNotFoundException;
 import org.hibernate.Session;
 import org.quelea.data.ThemeDTO;

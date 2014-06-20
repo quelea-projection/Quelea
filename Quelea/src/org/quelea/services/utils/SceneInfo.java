@@ -18,7 +18,6 @@
  */
 package org.quelea.services.utils;
 
-import javafx.geometry.BoundingBox;
 import javafx.geometry.Rectangle2D;
 
 /**

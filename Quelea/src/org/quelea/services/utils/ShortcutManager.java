@@ -17,11 +17,9 @@
  */
 package org.quelea.services.utils;
 
-import javafx.event.EventHandler;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyCodeCombination;
 import javafx.scene.input.KeyCombination;
-import javafx.scene.input.KeyEvent;
 import org.quelea.windows.main.MainPanel;
 import org.quelea.windows.main.MainWindow;
 import org.quelea.windows.main.QueleaApp;
