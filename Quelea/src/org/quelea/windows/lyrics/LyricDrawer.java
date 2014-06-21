@@ -254,8 +254,6 @@ public class LyricDrawer extends DisplayableDrawer {
         StackPane.setMargin(textGroup, new Insets(10));
         if (stageView) {
             StackPane.setAlignment(textGroup, Pos.CENTER);
-        } else if (curDisplayable instanceof BiblePassage) {
-            StackPane.setAlignment(textGroup, Pos.CENTER_LEFT);
         } else {
             StackPane.setAlignment(textGroup, DisplayPositionSelector.getPosFromIndex(theme.getTextPosition()));
         }
@@ -299,8 +297,6 @@ public class LyricDrawer extends DisplayableDrawer {
             } else {
                 t.setLayoutX(centreOffset);
             }
-        } else if(biblePassage) {
-            t.setLayoutX(leftOffset);
         } else if (theme.getTextAlignment() == -1) {
             t.setLayoutX(leftOffset);
         } else if (theme.getTextAlignment() == 0) {

@@ -35,10 +35,12 @@ import org.quelea.services.utils.QueleaProperties;
 import org.quelea.services.utils.SceneInfo;
 import org.quelea.services.utils.Utils;
 import org.quelea.windows.lyrics.TranslationChoiceDialog;
+import org.quelea.windows.main.actionhandlers.EditBibleThemeScheduleActionHandler;
 import org.quelea.windows.main.actionhandlers.EditSongScheduleActionHandler;
 import org.quelea.windows.main.actionhandlers.ExitActionHandler;
 import org.quelea.windows.main.actionhandlers.SelectTranslationsActionHandler;
 import org.quelea.windows.main.menus.MainMenuBar;
+import org.quelea.windows.main.schedule.SchedulePopupMenu;
 import org.quelea.windows.main.toolbars.MainToolbar;
 import org.quelea.windows.newsong.SongEntryWindow;
 import org.quelea.windows.options.OptionsDialog;
@@ -101,8 +103,9 @@ public class MainWindow extends Stage {
         mainpanel = new MainPanel();
         songEntryWindow = new SongEntryWindow();
         translationChoiceDialog = new TranslationChoiceDialog();
-        mainpanel.getSchedulePanel().getScheduleList().getPopupMenu().getEditSongButton().setOnAction(new EditSongScheduleActionHandler());
-        mainpanel.getSchedulePanel().getScheduleList().getPopupMenu().getTranslationChoice().setOnAction(new SelectTranslationsActionHandler());
+        SchedulePopupMenu.getEditSongButton().setOnAction(new EditSongScheduleActionHandler());
+        SchedulePopupMenu.getEditBibleButton().setOnAction(new EditBibleThemeScheduleActionHandler());
+        SchedulePopupMenu.getTranslationChoice().setOnAction(new SelectTranslationsActionHandler());
 
         menuBar = new MainMenuBar();
 
