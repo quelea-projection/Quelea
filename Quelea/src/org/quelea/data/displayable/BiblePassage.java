@@ -148,6 +148,9 @@ public class BiblePassage implements TextDisplayable, Serializable {
         for (BibleVerse verse : verses) {
             ret.append(verse.toXML());
         }
+        ret.append("<theme>");
+        ret.append(theme.asString());
+        ret.append("</theme>");
         ret.append("</passage>");
         return ret.toString();
     }
@@ -193,14 +196,18 @@ public class BiblePassage implements TextDisplayable, Serializable {
     public static BiblePassage parseXML(Node passage) {
         NodeList list = passage.getChildNodes();
         String summary = passage.getAttributes().getNamedItem("summary").getNodeValue();
+        ThemeDTO tempTheme = ThemeDTO.DEFAULT_THEME;
         List<BibleVerse> verses = new ArrayList<>();
         for (int i = 0; i < list.getLength(); i++) {
             Node node = list.item(i);
             if (node.getNodeName().equals("vers")) {
                 verses.add(BibleVerse.parseXML(node));
             }
+            else if(node.getNodeName().equals("theme")) {
+                tempTheme = ThemeDTO.fromString(node.getTextContent());
+            }
         }
-        return new BiblePassage(summary, verses.toArray(new BibleVerse[verses.size()]));
+        return new BiblePassage(summary, verses.toArray(new BibleVerse[verses.size()]), tempTheme);
     }
 
     /**
