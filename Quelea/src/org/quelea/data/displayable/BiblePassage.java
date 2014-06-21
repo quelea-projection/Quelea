@@ -136,14 +136,28 @@ public class BiblePassage implements TextDisplayable, Serializable {
 
     /**
      * Get the XML behind this bible passage.
-     * <p>
+     * <p/>
      * @return the XML.
      */
     @Override
     public String getXML() {
         StringBuilder ret = new StringBuilder();
-        ret.append("<passage summary=\"");
-        ret.append(Utils.escapeXML(summary));
+        ret.append("<passage summary=\"" );
+        String summaryText = "";
+        String bible = "";
+        //Handle old schedules...
+        if(summary.split("\n").length == 1) {
+            summaryText = summary.split("(?<=\\d)\\s")[0];
+            bible = summary.split("(?<=\\d)\\s")[1];
+        }
+        else {
+            summaryText = summary.split("\n")[0];
+            bible = summary.split("\n")[0];
+        }
+        System.out.println(summaryText);
+        ret.append(Utils.escapeXML(summaryText));
+        ret.append("\" bible=\"");
+        ret.append(Utils.escapeXML(bible));
         ret.append("\">");
         for (BibleVerse verse : verses) {
             ret.append(verse.toXML());
@@ -195,7 +209,13 @@ public class BiblePassage implements TextDisplayable, Serializable {
      */
     public static BiblePassage parseXML(Node passage) {
         NodeList list = passage.getChildNodes();
-        String summary = passage.getAttributes().getNamedItem("summary").getNodeValue();
+        String passageSummary = passage.getAttributes().getNamedItem("summary").getTextContent();
+        String bibleSummary = "";
+        if(passage.getAttributes().getNamedItem("bible") != null) {
+            bibleSummary = passage.getAttributes().getNamedItem("bible").getTextContent();
+        }
+        String summary = passageSummary + "\n" + bibleSummary;
+        System.out.println(summary);
         ThemeDTO tempTheme = ThemeDTO.DEFAULT_THEME;
         List<BibleVerse> verses = new ArrayList<>();
         for (int i = 0; i < list.getLength(); i++) {
