@@ -17,6 +17,8 @@
  */
 package org.quelea.data.displayable;
 
+import org.quelea.data.ThemeDTO;
+
 /**
  * A displayable object that displays text such as liturgy, songs or bible passages.
  * @author Michael
@@ -28,5 +30,17 @@ public interface TextDisplayable extends Displayable {
      * @return the text sections.
      */
     TextSection[] getSections();
+    
+    /**
+     * Get the current theme
+     * @return the theme
+     */
+    ThemeDTO getTheme();
+    
+    /**
+     * Set the current theme
+     * @param theme the theme to set 
+     */
+    void setTheme(ThemeDTO theme);
 
 }
