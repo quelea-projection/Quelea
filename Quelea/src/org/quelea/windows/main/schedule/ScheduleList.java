@@ -45,9 +45,11 @@ import javafx.util.Callback;
 import org.quelea.data.ImageBackground;
 import org.quelea.data.Schedule;
 import org.quelea.data.ThemeDTO;
+import org.quelea.data.displayable.BiblePassage;
 import org.quelea.data.displayable.Displayable;
 import org.quelea.data.displayable.ImageDisplayable;
 import org.quelea.data.displayable.SongDisplayable;
+import org.quelea.data.displayable.TextDisplayable;
 import org.quelea.data.displayable.TextSection;
 import org.quelea.services.utils.LoggerUtils;
 import org.quelea.services.utils.QueleaProperties;
@@ -69,7 +71,6 @@ public class ScheduleList extends StackPane {
 
     private ListView<Displayable> listView;
     private Schedule schedule;
-    private final ScheduleSongPopupMenu popupMenu;
     private Rectangle markerRect;
     private static final Logger LOGGER = LoggerUtils.getLogger();
     private ArrayList<ListCell<Displayable>> cells = new ArrayList<>();
@@ -95,7 +96,6 @@ public class ScheduleList extends StackPane {
         markerRect.setVisible(false);
         getChildren().add(markerRect);
         markerRect.toFront();
-        popupMenu = new ScheduleSongPopupMenu();
         Callback<ListView<Displayable>, ListCell<Displayable>> callback = new Callback<ListView<Displayable>, ListCell<Displayable>>() {
             @Override
             public ListCell<Displayable> call(ListView<Displayable> p) {
@@ -110,6 +110,12 @@ public class ScheduleList extends StackPane {
                         } else {
                             setGraphic(item.getPreviewIcon());
                             setText(item.getPreviewText());
+                        }
+                        if(item instanceof SongDisplayable) {
+                            setContextMenu(SchedulePopupMenu.getSongPopup());
+                        }
+                        else if (item instanceof BiblePassage) {
+                            setContextMenu(SchedulePopupMenu.getBiblePopup());
                         }
                     }
                 };
@@ -191,19 +197,22 @@ public class ScheduleList extends StackPane {
                                 add(img);
                             } else {
                                 Displayable d = listCell.getItem();
-                                if (d instanceof SongDisplayable) {
-                                    SongDisplayable songDisplayable = (SongDisplayable) d;
-                                    ThemeDTO theme = songDisplayable.getTheme();
+                                if (d instanceof TextDisplayable) {
+                                    TextDisplayable textDisplayable = (TextDisplayable) d;
+                                    ThemeDTO theme = textDisplayable.getTheme();
                                     SerializableDropShadow dropShadow = theme.getShadow();
                                     if (dropShadow == null || (dropShadow.getColor().equals(Color.WHITE) && dropShadow.getOffsetX() == 0 && dropShadow.getOffsetY() == 0)) {
                                         dropShadow = new SerializableDropShadow(Color.BLACK, 3, 3);
                                     }
                                     ThemeDTO newTheme = new ThemeDTO(theme.getSerializableFont(), theme.getFontPaint(), theme.getTranslateSerializableFont(), theme.getTranslateFontPaint(), new ImageBackground(new File(imageLocation).getName()), dropShadow, theme.getSerializableFont().isBold(), theme.getSerializableFont().isItalic(),  theme.getTranslateSerializableFont().isBold(), theme.getTranslateSerializableFont().isItalic(),theme.getTextPosition(), theme.getTextAlignment());
-                                    for (TextSection section : songDisplayable.getSections()) {
+                                    for (TextSection section : textDisplayable.getSections()) {
                                         section.setTheme(newTheme);
                                     }
-                                    songDisplayable.setTheme(newTheme);
-                                    Utils.updateSongInBackground(songDisplayable, true, false);
+                                    textDisplayable.setTheme(newTheme);
+                                    if(d instanceof SongDisplayable) {
+                                        SongDisplayable sd = (SongDisplayable) d;
+                                        Utils.updateSongInBackground(sd, true, false);
+                                    }
                                     QueleaApp.get().getMainWindow().getMainPanel().getPreviewPanel().refresh();
                                     QueleaApp.get().getMainWindow().getMainPanel().getLivePanel().refresh();
                                 }
@@ -242,10 +251,10 @@ public class ScheduleList extends StackPane {
                 return listCell;
             }
         };
-        listView.setCellFactory(DisplayableListCell.<Displayable>forListView(popupMenu, callback, new Constraint<Displayable>() {
+        listView.setCellFactory(DisplayableListCell.<Displayable>forListView(null, callback, new Constraint<Displayable>() {
             @Override
             public boolean isTrue(Displayable d) {
-                return d instanceof SongDisplayable;
+                return d instanceof SongDisplayable || d instanceof BiblePassage;
             }
         }));
         schedule = new Schedule();
@@ -340,15 +349,6 @@ public class ScheduleList extends StackPane {
      */
     public void clearSchedule() {
         listView.itemsProperty().get().clear();
-    }
-
-    /**
-     * Get the popup menu on this schedule list.
-     * <p/>
-     * @return the popup menu.
-     */
-    public ScheduleSongPopupMenu getPopupMenu() {
-        return popupMenu;
     }
 
     /**

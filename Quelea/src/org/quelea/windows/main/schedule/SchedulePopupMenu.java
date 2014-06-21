@@ -28,28 +28,48 @@ import org.quelea.services.languages.LabelGrabber;
  *
  * @author Michael
  */
-public class ScheduleSongPopupMenu extends ContextMenu {
+public class SchedulePopupMenu extends ContextMenu {
 
-    private final MenuItem editSong;
-    private final MenuItem translationChoice;
+    private final static MenuItem editSong = new MenuItem(LabelGrabber.INSTANCE.getLabel("edit.song.text"), new ImageView(new Image("file:icons/edit.png", 16, 16, false, true)));
+    private final static MenuItem editBible = new MenuItem(LabelGrabber.INSTANCE.getLabel("edit.bible.passage.text"), new ImageView(new Image("file:icons/edit.png", 16, 16, false, true)));
+    private final static MenuItem translationChoice = new MenuItem(LabelGrabber.INSTANCE.getLabel("choose.translations.text"));
 
     /**
      * Create a new schedule popup menu
+     * 
      */
-    public ScheduleSongPopupMenu() {
-        editSong = new MenuItem(LabelGrabber.INSTANCE.getLabel("edit.song.text"), new ImageView(new Image("file:icons/edit.png", 16, 16, false, true)));
-        translationChoice = new MenuItem(LabelGrabber.INSTANCE.getLabel("choose.translations.text"));
-        getItems().add(editSong);
-        getItems().add(translationChoice);
+    public static SchedulePopupMenu getSongPopup() {
+        SchedulePopupMenu spm = new SchedulePopupMenu();
+        spm.getItems().addAll(editSong, translationChoice);
+        return spm;
     }
-
+    
+    /**
+     * Create a new schedule popup menu
+     * 
+     */
+    public static SchedulePopupMenu getBiblePopup() {
+        SchedulePopupMenu spm = new SchedulePopupMenu();
+        spm.getItems().add(editBible);
+        return spm;
+    }
+    
     /**
      * Get the edit song button.
      *
      * @return the edit song button.
      */
-    public MenuItem getEditSongButton() {
+    public static MenuItem getEditSongButton() {
         return editSong;
+    }
+    
+     /**
+     * Get the edit bible passage button.
+     *
+     * @return the edit bible button.
+     */
+    public static MenuItem getEditBibleButton() {
+        return editBible;
     }
 
     /**
@@ -57,7 +77,7 @@ public class ScheduleSongPopupMenu extends ContextMenu {
      *
      * @return the translation choice button.
      */
-    public MenuItem getTranslationChoice() {
+    public static MenuItem getTranslationChoice() {
         return translationChoice;
     }
 
