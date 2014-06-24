@@ -47,6 +47,7 @@ public class DisplayStage extends Stage {
     private static final Cursor BLANK_CURSOR;
     private final DisplayCanvas canvas;
     private final TestImage testImage;
+    private final DisplayType stageType;
 
     /**
      * Initialise cursor hiding.
@@ -59,28 +60,55 @@ public class DisplayStage extends Stage {
      * Create a new display window positioned to fill the given rectangle.
      * <p/>
      * @param area the area in which the window should be drawn.
-     * @param stageView true if the display stage is a stage view, false if it's
-     * a normal projection view.
+     * @param stageType Determines which type of display is being initialized.
      */
-    public DisplayStage(Bounds area, boolean stageView) {
-        final boolean playVideo = !stageView;
+    public DisplayStage(Bounds area, DisplayType stageType) {
+        final boolean playVideo;
+        final boolean stageView;
+        final boolean textOnlyView;
+        
+        if (stageType == DisplayType.PROJECTION) {
+            playVideo = true;
+        } else {
+            playVideo = false;
+        }
+        if (stageType == DisplayType.STAGE) {
+            stageView = true;
+        } else {
+            stageView = false;
+        }
+         if (stageType == DisplayType.TEXT_ONLY) {
+            textOnlyView = true;
+        } else {
+            textOnlyView = false;
+        }
+        this.stageType = stageType;
+
         initStyle(StageStyle.TRANSPARENT);
         Utils.addIconsToStage(this);
         setTitle(LabelGrabber.INSTANCE.getLabel("projection.window.title"));
         setArea(area);
         StackPane scenePane = new StackPane();
-        canvas = new DisplayCanvas(true, stageView, playVideo, null, stageView ? Priority.HIGH : Priority.MID);
+        Priority priority;
+        if(stageView){
+            priority = Priority.MID;
+        }else if(textOnlyView){
+            priority = Priority.HIGH_MID;
+        }else{
+            priority = Priority.HIGH;
+        }
+        canvas = new DisplayCanvas(true, stageType, playVideo, null, priority);
         canvas.setType(stageView ? DisplayCanvas.Type.STAGE : DisplayCanvas.Type.FULLSCREEN);
         canvas.setCursor(BLANK_CURSOR);
         scenePane.getChildren().add(canvas);
-        if(stageView) {
+        if (stageView) {
             final Clock clock = new Clock();
             ChangeListener<Number> cl = new ChangeListener<Number>() {
 
                 @Override
                 public void changed(ObservableValue<? extends Number> ov, Number t, Number t1) {
                     double size = getWidth();
-                    if(getHeight() < size) {
+                    if (getHeight() < size) {
                         size = getHeight();
                     }
                     clock.setFontSize(size / 24);
@@ -102,7 +130,7 @@ public class DisplayStage extends Stage {
         Scene scene = new Scene(scenePane);
         scene.setFill(null);
         setScene(scene);
-        if(playVideo) {
+        if (playVideo) {
             addVLCListeners();
         }
     }
@@ -145,6 +173,7 @@ public class DisplayStage extends Stage {
         testImage.getImageView().setPreserveRatio(preserveAspect);
         testImage.setVisible(img != null);
         testImage.setImage(img);
+        System.out.println("type: " + stageType.name() + "       Background: " + canvas.getCanvasBackground() );
     }
 
     /**

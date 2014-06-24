@@ -30,6 +30,7 @@ import javafx.scene.text.Text;
 import org.quelea.data.displayable.MultimediaDisplayable;
 import org.quelea.windows.main.AbstractPanel;
 import org.quelea.windows.main.DisplayCanvas;
+import org.quelea.windows.main.DisplayType;
 import org.quelea.windows.main.DisplayableDrawer;
 
 /**
@@ -67,7 +68,7 @@ public class MultimediaPanel extends AbstractPanel {
         setMinWidth(50);
         setMinHeight(50);
         setStyle("-fx-background-color:grey;");
-        DisplayCanvas dummyCanvas = new DisplayCanvas(false, false, false, new DisplayCanvas.CanvasUpdater() {
+        DisplayCanvas dummyCanvas = new DisplayCanvas(false, DisplayType.PREVIEW, false, new DisplayCanvas.CanvasUpdater() {
             @Override
             public void updateCallback() {
                 updateCanvas();

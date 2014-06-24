@@ -27,6 +27,11 @@ public class MultimediaDrawer extends DisplayableDrawer {
             imageView.setImage(Utils.getImageFromColour(QueleaProperties.get().getStageBackgroundColor()));
             getCanvas().getChildren().add(0, imageView);
         }
+        if(getCanvas().isTextOnlyView()) {
+            ImageView imageView = getCanvas().getNewImageView();
+            imageView.setImage(Utils.getImageFromColour(QueleaProperties.get().getTextOnlyBackgroundColor()));
+            getCanvas().getChildren().add(0, imageView);
+        }
         else {
             if (playVideo) {
                 controlPanel.reset();

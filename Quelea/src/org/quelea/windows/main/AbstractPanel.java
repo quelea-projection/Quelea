@@ -61,7 +61,7 @@ public abstract class AbstractPanel extends BorderPane implements ContainedPanel
 
     @Override
     public void registerDisplayCanvas(DisplayCanvas canvas) {
-        canvases.add(canvas);
+         canvases.add(canvas);
     }
 
     /**

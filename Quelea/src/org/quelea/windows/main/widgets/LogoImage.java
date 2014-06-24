@@ -22,6 +22,7 @@ import javafx.scene.layout.StackPane;
 import org.quelea.services.utils.ImageManager;
 import org.quelea.services.utils.QueleaProperties;
 import org.quelea.services.utils.Utils;
+import org.quelea.windows.main.DisplayType;
 
 /**
  * The logo image - on a separate stack pane with its background colour set so
@@ -35,15 +36,24 @@ public class LogoImage extends StackPane {
 
     private final ImageView logoImage;
     private boolean stageView;
-
+    private boolean textOnlyView;
     /**
      * Create a new logo image
      * <p>
-     * @param stageView true if the logo image is being constructed on a stage
-     * view, else false.
+     * @param typeOfDisplay Gets the type of display for this image. view, else
+     * false.
      */
-    public LogoImage(boolean stageView) {
-        this.stageView = stageView;
+    public LogoImage(DisplayType typeOfDisplay) {
+        if (typeOfDisplay == DisplayType.STAGE) {
+            this.stageView = true;
+        } else {
+            this.stageView = false;
+        }
+        if (typeOfDisplay == DisplayType.TEXT_ONLY) {
+            this.textOnlyView = true;
+        } else {
+            this.textOnlyView = false;
+        }
         logoImage = new ImageView();
         setStyle("-fx-background-color:#000000;");
         refresh();
@@ -54,10 +64,11 @@ public class LogoImage extends StackPane {
      * Update this logo image with the correct one from the properties file
      */
     public final void refresh() {
-        if(stageView) {
+        if (stageView) {
             logoImage.setImage(Utils.getImageFromColour(QueleaProperties.get().getStageBackgroundColor()));
-        }
-        else {
+        } else if (textOnlyView) {
+            logoImage.setImage(Utils.getImageFromColour(QueleaProperties.get().getTextOnlyBackgroundColor()));
+        } else {
             logoImage.setImage(ImageManager.INSTANCE.getImage(QueleaProperties.get().getLogoImageURI()));
             logoImage.setPreserveRatio(true);
         }

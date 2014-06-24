@@ -37,6 +37,7 @@ import org.quelea.services.utils.Utils;
 import org.quelea.windows.main.DisplayCanvas;
 import org.quelea.windows.lyrics.LyricDrawer;
 import org.quelea.windows.main.DisplayCanvas.Priority;
+import org.quelea.windows.main.DisplayType;
 import org.quelea.windows.main.widgets.DisplayPositionSelector;
 import org.quelea.windows.main.widgets.DisplayPreview;
 
@@ -74,7 +75,7 @@ public class ThemePanel extends BorderPane {
         positionSelector = new DisplayPositionSelector(this);
         positionSelector.prefWidthProperty().bind(widthProperty());
         positionSelector.prefHeightProperty().bind(heightProperty());
-        DisplayCanvas canvas = new DisplayCanvas(false, false, false, new DisplayCanvas.CanvasUpdater() {
+        DisplayCanvas canvas = new DisplayCanvas(false, DisplayType.PREVIEW, false, new DisplayCanvas.CanvasUpdater() {
             @Override
             public void updateCallback() {
                 updateTheme(true);

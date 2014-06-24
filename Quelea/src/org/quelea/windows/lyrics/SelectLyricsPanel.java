@@ -30,6 +30,7 @@ import org.quelea.data.displayable.TextDisplayable;
 import org.quelea.data.displayable.TextSection;
 import org.quelea.services.utils.LoggerUtils;
 import org.quelea.windows.main.AbstractPanel;
+import org.quelea.windows.main.DisplayType;
 import org.quelea.windows.main.DisplayableDrawer;
 import org.quelea.windows.main.LivePreviewPanel;
 import org.quelea.windows.main.widgets.DisplayPreview;
@@ -57,7 +58,7 @@ public class SelectLyricsPanel extends AbstractPanel {
         splitPane = new SplitPane();
         splitPane.setOrientation(Orientation.VERTICAL);
         lyricsList = new SelectLyricsList();
-        previewCanvas = new DisplayCanvas(false, false, false, new DisplayCanvas.CanvasUpdater() {
+        previewCanvas = new DisplayCanvas(false, DisplayType.PREVIEW, false, new DisplayCanvas.CanvasUpdater() {
             @Override
             public void updateCallback() {
                 updateCanvas();

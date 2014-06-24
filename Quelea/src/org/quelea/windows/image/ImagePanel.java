@@ -21,6 +21,7 @@ import org.quelea.windows.main.AbstractPanel;
 import org.quelea.windows.main.DisplayCanvas;
 import org.quelea.data.displayable.ImageDisplayable;
 import org.quelea.windows.main.DisplayCanvas.Priority;
+import org.quelea.windows.main.DisplayType;
 import org.quelea.windows.main.DisplayableDrawer;
 
 /**
@@ -40,7 +41,7 @@ public class ImagePanel extends AbstractPanel {
      */
     public ImagePanel() {
         setStyle("-fx-background-color: rgba(0, 0, 0);");
-        previewCanvas = new DisplayCanvas(false, false, false, new DisplayCanvas.CanvasUpdater() {
+        previewCanvas = new DisplayCanvas(false, DisplayType.PREVIEW, false, new DisplayCanvas.CanvasUpdater() {
             @Override
             public void updateCallback() {
                 updateCanvas();

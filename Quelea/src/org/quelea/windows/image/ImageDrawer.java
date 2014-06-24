@@ -50,7 +50,10 @@ public class ImageDrawer extends DisplayableDrawer {
         if(getCanvas().isStageView()) {
             image = Utils.getImageFromColour(QueleaProperties.get().getStageBackgroundColor());
         }
-        else {
+        else if(getCanvas().isTextOnlyView()) {
+            image = Utils.getImageFromColour(QueleaProperties.get().getTextOnlyBackgroundColor());
+        }
+        else{
             image = ((ImageDisplayable) displayable).getImage();
             imageView.setPreserveRatio(true);
         }
@@ -58,7 +61,8 @@ public class ImageDrawer extends DisplayableDrawer {
         StackPane imageBox = new StackPane();
         imageBox.getChildren().add(imageView);
         if(getCanvas() != QueleaApp.get().getProjectionWindow().getCanvas()
-                && getCanvas() != QueleaApp.get().getStageWindow().getCanvas()) {
+                && getCanvas() != QueleaApp.get().getStageWindow().getCanvas() 
+                && getCanvas() != QueleaApp.get().getTextOnlyWindow().getCanvas()) {
             imageBox.setStyle("-fx-background-color:#dddddd;");
         }
         imageBox.setVisible(false);

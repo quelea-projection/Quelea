@@ -82,17 +82,16 @@ public class LivePanel extends LivePreviewPanel {
                 String text = t.getCharacter();
                 char arr[] = text.toCharArray();
                 char ch = arr[text.toCharArray().length - 1];
-                if(!(ch >= '0' && ch <= '9')) {
+                if (!(ch >= '0' && ch <= '9')) {
                     t.consume();
                 }
                 try {
                     String newText = loopDuration.getText() + ch;
                     int num = Integer.parseInt(newText);
-                    if(num > 100 || num <= 0) {
+                    if (num > 100 || num <= 0) {
                         t.consume();
                     }
-                }
-                catch(NumberFormatException ex) {
+                } catch (NumberFormatException ex) {
                     t.consume();
                 }
             }
@@ -111,12 +110,12 @@ public class LivePanel extends LivePreviewPanel {
         logo.setOnMouseClicked(new EventHandler<javafx.scene.input.MouseEvent>() {
             @Override
             public void handle(MouseEvent t) {
-                if(t.getButton().equals(MouseButton.SECONDARY)) {
+                if (t.getButton().equals(MouseButton.SECONDARY)) {
                     FileChooser chooser = new FileChooser();
                     chooser.getExtensionFilters().add(FileFilters.IMAGES);
                     chooser.setInitialDirectory(QueleaProperties.get().getImageDir().getAbsoluteFile());
                     File file = chooser.showOpenDialog(QueleaApp.get().getMainWindow());
-                    if(file != null) {
+                    if (file != null) {
                         QueleaProperties.get().setLogoImage(file.getAbsolutePath());
                         updateLogo();
                     }
@@ -128,7 +127,7 @@ public class LivePanel extends LivePreviewPanel {
             public void handle(javafx.event.ActionEvent t) {
                 HashSet<DisplayCanvas> canvases = new HashSet<>();
                 canvases.addAll(getCanvases());
-                for(DisplayCanvas canvas : canvases) {
+                for (DisplayCanvas canvas : canvases) {
                     canvas.setLogoDisplaying(logo.isSelected());
                 }
             }
@@ -142,8 +141,9 @@ public class LivePanel extends LivePreviewPanel {
             public void handle(javafx.event.ActionEvent t) {
                 HashSet<DisplayCanvas> canvases = new HashSet<>();
                 canvases.addAll(getCanvases());
-                for(DisplayCanvas canvas : canvases) {
-                    canvas.setBlacked(black.isSelected());
+               
+                for (DisplayCanvas canvas : canvases) {
+                     canvas.setBlacked(black.isSelected());
                 }
             }
         });
@@ -156,7 +156,7 @@ public class LivePanel extends LivePreviewPanel {
             public void handle(javafx.event.ActionEvent t) {
                 HashSet<DisplayCanvas> canvases = new HashSet<>();
                 canvases.addAll(getCanvases());
-                for(DisplayCanvas canvas : canvases) {
+                for (DisplayCanvas canvas : canvases) {
                     canvas.setCleared(clear.isSelected());
                 }
             }
@@ -170,41 +170,53 @@ public class LivePanel extends LivePreviewPanel {
             public void handle(javafx.event.ActionEvent t) {
                 int projectorScreen = QueleaProperties.get().getProjectorScreen();
                 int stageScreen = QueleaProperties.get().getStageScreen();
+                int textOnlyScreen = QueleaProperties.get().getTextOnlyScreen();
                 final ObservableList<Screen> monitors = Screen.getScreens();
 
                 DisplayStage appWindow = QueleaApp.get().getProjectionWindow();
                 DisplayStage stageWindow = QueleaApp.get().getStageWindow();
+                DisplayStage textOnlyWindow = QueleaApp.get().getTextOnlyWindow();
 
                 final boolean lyricsHidden;
-                if(!QueleaProperties.get().isProjectorModeCoords() && (projectorScreen >= monitors.size() || projectorScreen < 0)) {
+                if (!QueleaProperties.get().isProjectorModeCoords() && (projectorScreen >= monitors.size() || projectorScreen < 0)) {
                     lyricsHidden = true;
-                }
-                else {
+                } else {
                     lyricsHidden = false;
                 }
 
                 final boolean stageHidden;
-                if(!QueleaProperties.get().isStageModeCoords() && (stageScreen >= monitors.size() || stageScreen < 0)) {
+                if (!QueleaProperties.get().isStageModeCoords() && (stageScreen >= monitors.size() || stageScreen < 0)) {
                     stageHidden = true;
-                }
-                else {
+                } else {
                     stageHidden = false;
                 }
 
-                if(!lyricsHidden) {
-                    if(hide.isSelected()) {
+                final boolean textOnlyHidden;
+                if (!QueleaProperties.get().isTextOnlyModeCoords() && (textOnlyScreen >= monitors.size() || textOnlyScreen < 0)) {
+                    textOnlyHidden = true;
+                } else {
+                    textOnlyHidden = false;
+                }
+
+                if (!lyricsHidden) {
+                    if (hide.isSelected()) {
                         appWindow.hide();
-                    }
-                    else {
+                    } else {
                         appWindow.show();
                     }
                 }
-                if(!stageHidden) {
-                    if(hide.isSelected()) {
+                if (!stageHidden) {
+                    if (hide.isSelected()) {
                         stageWindow.hide();
-                    }
-                    else {
+                    } else {
                         stageWindow.show();
+                    }
+                }
+                if (!textOnlyHidden) {
+                    if (hide.isSelected()) {
+                        textOnlyWindow.hide();
+                    } else {
+                        textOnlyWindow.show();
                     }
                 }
                 VLCWindow.INSTANCE.setHideButton(hide.isSelected());
@@ -215,7 +227,7 @@ public class LivePanel extends LivePreviewPanel {
         setOnKeyTyped(new EventHandler<KeyEvent>() {
             @Override
             public void handle(KeyEvent t) {
-                if(t.getCharacter().equals(" ")) {
+                if (t.getCharacter().equals(" ")) {
                     QueleaApp.get().getMainWindow().getMainPanel().getPreviewPanel().goLive();
                 }
             }
@@ -232,27 +244,25 @@ public class LivePanel extends LivePreviewPanel {
     public void setDisplayable(Displayable d, int index) {
         super.setDisplayable(d, index);
         loop.setSelected(false);
-        if(d instanceof PresentationDisplayable) {
-            if(!header.getItems().contains(loopBox)) {
+        if (d instanceof PresentationDisplayable) {
+            if (!header.getItems().contains(loopBox)) {
                 header.getItems().add(1, loopBox);
             }
-        }
-        else {
+        } else {
             header.getItems().remove(loopBox);
         }
-        if(d == null) {
+        if (d == null) {
             clear.setSelected(false);
             clear.setDisable(true);
-        }
-        else {
+        } else {
             clear.setDisable(!d.supportClear());
-            if(!d.supportClear()) {
+            if (!d.supportClear()) {
                 clear.setSelected(false);
             }
         }
         HashSet<DisplayCanvas> canvases = new HashSet<>();
         canvases.addAll(getCanvases());
-        for(DisplayCanvas canvas : canvases) {
+        for (DisplayCanvas canvas : canvases) {
             canvas.setBlacked(black.isSelected());
             canvas.setCleared(clear.isSelected());
         }
@@ -262,7 +272,7 @@ public class LivePanel extends LivePreviewPanel {
      * Toggle the "black" button.
      */
     public void toggleBlack() {
-        if(!black.isDisable()) {
+        if (!black.isDisable()) {
             black.fire();
         }
     }
@@ -271,7 +281,7 @@ public class LivePanel extends LivePreviewPanel {
      * Toggle the "clear" button.
      */
     public void toggleClear() {
-        if(!clear.isDisable()) {
+        if (!clear.isDisable()) {
             clear.fire();
         }
     }
@@ -280,7 +290,7 @@ public class LivePanel extends LivePreviewPanel {
      * Toggle the "hide" button.
      */
     public void toggleHide() {
-        if(!hide.isDisable()) {
+        if (!hide.isDisable()) {
             hide.fire();
         }
     }
@@ -289,7 +299,7 @@ public class LivePanel extends LivePreviewPanel {
      * Toggle the "logo" button.
      */
     public void toggleLogo() {
-        if(!logo.isDisable()) {
+        if (!logo.isDisable()) {
             logo.fire();
         }
     }
@@ -322,7 +332,7 @@ public class LivePanel extends LivePreviewPanel {
     private void updateLogo() {
         HashSet<DisplayCanvas> canvases = new HashSet<>();
         canvases.addAll(getCanvases());
-        for(DisplayCanvas canvas : canvases) {
+        for (DisplayCanvas canvas : canvases) {
             canvas.updateLogo();
         }
     }
@@ -330,8 +340,9 @@ public class LivePanel extends LivePreviewPanel {
     public void updateCanvases() {
         HashSet<DisplayCanvas> canvases = new HashSet<>();
         canvases.addAll(getCanvases());
-        for(DisplayCanvas canvas : canvases) {
+        for (DisplayCanvas canvas : canvases) {
             canvas.update();
+
         }
     }
 
@@ -348,13 +359,13 @@ public class LivePanel extends LivePreviewPanel {
     public boolean getLogoed() {
         return logo.isSelected();
     }
-    
+
     public boolean getBlacked() {
         return black.isSelected();
     }
-    
+
     public boolean getCleared() {
         return clear.isSelected();
     }
-    
+
 }

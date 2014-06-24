@@ -317,11 +317,11 @@ public class VLCWindowAdvancedEmbed extends VLCWindow {
     public void setRepeat(final boolean repeat) {
         //may be broken for some instances 
         if (init) {
-            
-                player.setRepeat(repeat);
-           
-                player2.setRepeat(repeat);
-            
+
+            player.setRepeat(repeat);
+
+            player2.setRepeat(repeat);
+
         }
 
     }
@@ -351,7 +351,7 @@ public class VLCWindowAdvancedEmbed extends VLCWindow {
                 player2.load(sanitisedPath);
 
             }
-
+            
         }
 
     }
@@ -367,7 +367,7 @@ public class VLCWindowAdvancedEmbed extends VLCWindow {
 
             @Override
             public void run() {
-               
+
                 if (init) {
                     if (Math.abs(getProgressPercent() - 1.0) < 0.01) {
                         if (!(runOnFinished == null)) {
@@ -421,7 +421,7 @@ public class VLCWindowAdvancedEmbed extends VLCWindow {
                 player2.play();
             }
             startOnCompletionWatcher();
-
+          
         }
 
     }
@@ -552,12 +552,12 @@ public class VLCWindowAdvancedEmbed extends VLCWindow {
     public void setMute(final boolean mute) {
 
         if (init) {
-          
-                player.setMute(mute);
-            
-                player2.setMute(mute);
-            
 
+            player.setMute(mute);
+
+            player2.setMute(mute);
+
+            
         }
 
     }
