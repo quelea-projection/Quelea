@@ -25,13 +25,16 @@ import org.quelea.services.languages.LabelGrabber;
  * @author Greg
  */
 public enum VerticalAlignment {
-     TOP(LabelGrabber.INSTANCE.getLabel("top")),
+
+    TOP(LabelGrabber.INSTANCE.getLabel("top")),
     CENTRE(LabelGrabber.INSTANCE.getLabel("centre")),
     BOTTOM(LabelGrabber.INSTANCE.getLabel("bottom"));
-  
-    
-    private String friendlyString;
 
+    private String friendlyString;
+    /**
+     * Creates the enumeration for holding vertical alignment settings.
+     * @param friendlyString The "friendly" string to show for this enum
+     */
     VerticalAlignment(String friendlyString) {
         this.friendlyString = friendlyString;
     }
@@ -52,16 +55,13 @@ public enum VerticalAlignment {
      * @return the text alignment object.
      */
     public static VerticalAlignment parse(String val) {
-        if(val.equals(LabelGrabber.INSTANCE.getLabel("top"))) {
+        if (val.equals(LabelGrabber.INSTANCE.getLabel("top"))) {
             return VerticalAlignment.TOP;
-        }
-        else if(val.equals(LabelGrabber.INSTANCE.getLabel("bottom"))) {
+        } else if (val.equals(LabelGrabber.INSTANCE.getLabel("bottom"))) {
             return VerticalAlignment.BOTTOM;
-        }
-        else if(val.equals(LabelGrabber.INSTANCE.getLabel("centre"))) {
+        } else if (val.equals(LabelGrabber.INSTANCE.getLabel("centre"))) {
             return VerticalAlignment.CENTRE;
-        }
-        else {
+        } else {
             return null;
         }
     }
