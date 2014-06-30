@@ -21,7 +21,6 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.geometry.Insets;
 import javafx.scene.effect.DropShadow;
-import static javafx.scene.layout.BorderPane.setMargin;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import org.quelea.windows.main.DisplayCanvas;

@@ -16,7 +16,6 @@
  */
 package org.quelea.windows.newsong;
 
-import java.util.HashMap;
 import java.util.logging.Logger;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;

@@ -22,6 +22,8 @@ import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.application.Platform;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.event.EventHandler;
 import javafx.scene.control.Button;
@@ -43,6 +45,7 @@ import org.quelea.services.utils.PropertyPanel;
 import org.quelea.services.utils.QueleaProperties;
 import org.quelea.services.utils.Utils;
 import org.quelea.windows.main.QueleaApp;
+import org.quelea.windows.main.widgets.NumberTextField;
 
 /**
  * The panel that shows the bible options
@@ -50,10 +53,12 @@ import org.quelea.windows.main.QueleaApp;
  * @author Michael
  */
 public class OptionsBiblePanel extends GridPane implements PropertyPanel, BibleChangeListener {
-
+    
     private static final Logger LOGGER = LoggerUtils.getLogger();
     private final ComboBox<Bible> defaultBibleComboBox;
     private final CheckBox showVerseNumCheckbox;
+    private final ComboBox useBibleVersesBox;
+    private final NumberTextField maxItemsPerSlideBox;
 
     /**
      * Create the options bible panel.
@@ -71,7 +76,7 @@ public class OptionsBiblePanel extends GridPane implements PropertyPanel, BibleC
         defaultBibleLabel.setLabelFor(defaultBibleComboBox);
         GridPane.setConstraints(defaultBibleComboBox, 2, 1);
         getChildren().add(defaultBibleComboBox);
-
+        
         final Button addBibleButton = new Button(LabelGrabber.INSTANCE.getLabel("add.bible.label"), new ImageView(new Image("file:icons/add.png")));
         addBibleButton.setOnAction(new EventHandler<javafx.event.ActionEvent>() {
             @Override
@@ -79,12 +84,11 @@ public class OptionsBiblePanel extends GridPane implements PropertyPanel, BibleC
                 FileChooser chooser = new FileChooser();
                 chooser.getExtensionFilters().add(FileFilters.XML_BIBLE);
                 File file = chooser.showOpenDialog(QueleaApp.get().getMainWindow());
-                if(file != null) {
+                if (file != null) {
                     try {
                         Utils.copyFile(file, new File(QueleaProperties.get().getBibleDir(), file.getName()));
                         BibleManager.get().refreshAndLoad();
-                    }
-                    catch(IOException ex) {
+                    } catch (IOException ex) {
                         LOGGER.log(Level.WARNING, "Errpr copying bible file", ex);
                         Dialog.showError(LabelGrabber.INSTANCE.getLabel("bible.copy.error.heading"), LabelGrabber.INSTANCE.getLabel("bible.copy.error.text"));
                     }
@@ -101,8 +105,35 @@ public class OptionsBiblePanel extends GridPane implements PropertyPanel, BibleC
         showVerseNumLabel.setLabelFor(showVerseNumCheckbox);
         GridPane.setConstraints(showVerseNumCheckbox, 2, 2);
         getChildren().add(showVerseNumCheckbox);
-
+        
+        Label useBibleVersesLabel = new Label(LabelGrabber.INSTANCE.getLabel("use.bible.verses"));
+        GridPane.setConstraints(useBibleVersesLabel, 1, 3);
+        getChildren().add(useBibleVersesLabel);
+        useBibleVersesBox = new ComboBox<>();
+        useBibleVersesBox.getItems().addAll(LabelGrabber.INSTANCE.getLabel("verses"), LabelGrabber.INSTANCE.getLabel("words"));
+        useBibleVersesLabel.setLabelFor(useBibleVersesBox);
+        GridPane.setConstraints(useBibleVersesBox, 2, 3);
+        getChildren().add(useBibleVersesBox);
+        
+        final String[] labels = LabelGrabber.INSTANCE.getLabel("max.items.per.slide").split("%");
+        final Label maxItemsPerSlideLabel = new Label("");
+        GridPane.setConstraints(maxItemsPerSlideLabel, 1, 4);
+        getChildren().add(maxItemsPerSlideLabel);
+        maxItemsPerSlideBox = new NumberTextField();
+        maxItemsPerSlideLabel.setLabelFor(maxItemsPerSlideBox);
+        GridPane.setConstraints(maxItemsPerSlideBox, 2, 4);
+        getChildren().add(maxItemsPerSlideBox);
+        
+        useBibleVersesBox.valueProperty().addListener(new ChangeListener<String>() {
+            @Override
+            public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
+               
+                maxItemsPerSlideLabel.setText(labels[0] + newValue + labels[1]);
+            }
+        });
+        
         readProperties();
+        
     }
 
     /**
@@ -114,7 +145,7 @@ public class OptionsBiblePanel extends GridPane implements PropertyPanel, BibleC
             @Override
             public void run() {
                 defaultBibleComboBox.itemsProperty().get().clear();
-                for(Bible bible : BibleManager.get().getBibles()) {
+                for (Bible bible : BibleManager.get().getBibles()) {
                     defaultBibleComboBox.itemsProperty().get().add(bible);
                 }
                 readProperties();
@@ -129,13 +160,16 @@ public class OptionsBiblePanel extends GridPane implements PropertyPanel, BibleC
     public final void readProperties() {
         QueleaProperties props = QueleaProperties.get();
         String selectedBibleName = props.getDefaultBible();
-        for(int i = 0; i < defaultBibleComboBox.itemsProperty().get().size(); i++) {
+        for (int i = 0; i < defaultBibleComboBox.itemsProperty().get().size(); i++) {
             Bible bible = defaultBibleComboBox.itemsProperty().get().get(i);
-            if(bible.getBibleName().equals(selectedBibleName)) {
+            if (bible.getBibleName().equals(selectedBibleName)) {
                 defaultBibleComboBox.getSelectionModel().select(i);
             }
         }
         showVerseNumCheckbox.setSelected(props.getShowVerseNumbers());
+        useBibleVersesBox.getSelectionModel().select((props.getBibleSectionVerses()) ? 0 : 1);
+        maxItemsPerSlideBox.setNumber(props.getMaxBibleItems());
+        
     }
 
     /**
@@ -145,10 +179,12 @@ public class OptionsBiblePanel extends GridPane implements PropertyPanel, BibleC
     public void setProperties() {
         QueleaProperties props = QueleaProperties.get();
         Bible bible = getDefaultBibleBox().getSelectionModel().getSelectedItem();
-        if(bible != null) {
+        if (bible != null) {
             props.setDefaultBible(bible);
         }
         props.setShowVerseNumbers(showVerseNumCheckbox.isSelected());
+        props.setBibleSectionVerses(useBibleVersesBox.getSelectionModel().getSelectedIndex() == 0);
+        props.setMaxBibleItems(maxItemsPerSlideBox.getNumber());
     }
 
     /**

@@ -17,8 +17,6 @@
  */
 package org.quelea.windows.lyrics;
 
-import org.quelea.windows.main.DisplayCanvas;
-import org.quelea.windows.main.DisplayCanvas.Priority;
 import java.util.logging.Logger;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -30,6 +28,8 @@ import org.quelea.data.displayable.TextDisplayable;
 import org.quelea.data.displayable.TextSection;
 import org.quelea.services.utils.LoggerUtils;
 import org.quelea.windows.main.AbstractPanel;
+import org.quelea.windows.main.DisplayCanvas;
+import org.quelea.windows.main.DisplayCanvas.Priority;
 import org.quelea.windows.main.DisplayableDrawer;
 import org.quelea.windows.main.LivePreviewPanel;
 import org.quelea.windows.main.widgets.DisplayPreview;

@@ -26,7 +26,6 @@ import javafx.stage.FileChooser;
 import org.javafx.dialog.Dialog;
 import org.quelea.data.displayable.SongDisplayable;
 import org.quelea.services.languages.LabelGrabber;
-import org.quelea.services.utils.QueleaProperties;
 
 /**
  * A dialog used for selecting the songs to be put in the song pack after

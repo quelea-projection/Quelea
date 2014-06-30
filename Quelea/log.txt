@@ -1,6 +1,3 @@
 Started main method
 Processing message...
-[000000000fe21c10] main vout display error: Failed to set on top
-[000000000fe21640] main vout display error: Failed to set on top
-[000000000fe21830] main vout display error: Failed to set on top
-[000000000fe21450] main vout display error: Failed to set on top
+[00000000114a1640] main vout display error: Failed to set on top

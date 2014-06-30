@@ -25,6 +25,8 @@ import java.util.Collection;
 import java.util.List;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import org.quelea.data.Background;
+import org.quelea.data.ThemeDTO;
 import org.quelea.data.bible.BibleVerse;
 import org.quelea.services.utils.QueleaProperties;
 import org.quelea.services.utils.Utils;
@@ -42,6 +44,7 @@ public class BiblePassage implements TextDisplayable, Serializable {
     private String[] smallText;
     private List<TextSection> textSections;
     private BibleVerse[] verses;
+    private ThemeDTO theme;
 
     /**
      * Create a new bible passage.
@@ -51,7 +54,9 @@ public class BiblePassage implements TextDisplayable, Serializable {
      * @param verses the verses, in order, that make up the passage.
      */
     public BiblePassage(String biblename, String location, BibleVerse[] verses) {
-        this(location + "\n" + biblename, verses);
+        this(location + "\n" + biblename, verses, new ThemeDTO(ThemeDTO.DEFAULT_FONT,
+                ThemeDTO.DEFAULT_FONT_COLOR, ThemeDTO.DEFAULT_FONT, ThemeDTO.DEFAULT_TRANSLATE_FONT_COLOR,
+                ThemeDTO.DEFAULT_BACKGROUND, ThemeDTO.DEFAULT_SHADOW, false, false, false, true, 3, -1));
     }
 
     /**
@@ -61,12 +66,26 @@ public class BiblePassage implements TextDisplayable, Serializable {
      * @param verses the verses in the passage.
      */
     private BiblePassage(String summary, BibleVerse[] verses) {
+        this(summary, verses, new ThemeDTO(ThemeDTO.DEFAULT_FONT,
+                ThemeDTO.DEFAULT_FONT_COLOR, ThemeDTO.DEFAULT_FONT, ThemeDTO.DEFAULT_TRANSLATE_FONT_COLOR,
+                ThemeDTO.DEFAULT_BACKGROUND, ThemeDTO.DEFAULT_SHADOW, false, false, false, true, 3, -1));
+    }
+
+    /**
+     * Create a new bible passage from a summary and an array of verses.
+     * <p>
+     * @param summary the summary to display in the schedule.
+     * @param verses the verses in the passage.
+     * @param theme the theme of the passage.
+     */
+    private BiblePassage(String summary, BibleVerse[] verses, ThemeDTO theme) {
         this.summary = summary;
         this.smallText = summary.split("\n");
-        for(int i = 0; i < smallText.length; i++) {
+        for (int i = 0; i < smallText.length; i++) {
             smallText[i] = Utils.removeTags(smallText[i]);
         }
         this.verses = Arrays.copyOf(verses, verses.length);
+        this.theme = theme;
         textSections = new ArrayList<>();
         fillTextSections();
     }
@@ -75,51 +94,77 @@ public class BiblePassage implements TextDisplayable, Serializable {
      * Fill the text sections with the verses.
      */
     private void fillTextSections() {
-        final int MAX_WORDS_PER_SLIDE = 150;
+        final int MAX_ITEMS_PER_SLIDE = QueleaProperties.get().getMaxBibleItems();
+        final boolean ITEM_VERSES = QueleaProperties.get().getBibleSectionVerses();
 
         StringBuilder section = new StringBuilder();
-        int wordCount = 0;
-        for(BibleVerse verse : verses) {
-            wordCount += verse.getVerseText().split(" ").length + 1;
-            if(wordCount < MAX_WORDS_PER_SLIDE) {
-                if(QueleaProperties.get().getShowVerseNumbers()) {
-                    section.append("<sup>");
-                    section.append(verse.getNum());
-                    section.append("</sup>");
-                }
-                section.append(verse.getVerseText());
+        int count = 0;
+        for (BibleVerse verse : verses) {
+            if (ITEM_VERSES) {
+                count++;
+            } else {
+                count += verse.getVerseText().split(" ").length + 1;
             }
-            else {
-                textSections.add(new TextSection("", new String[]{section.toString()}, smallText, false));
-                section = new StringBuilder();
-                if(QueleaProperties.get().getShowVerseNumbers()) {
+
+            if (count < MAX_ITEMS_PER_SLIDE) {
+                if (QueleaProperties.get().getShowVerseNumbers()) {
                     section.append("<sup>");
                     section.append(verse.getNum());
                     section.append("</sup>");
                 }
                 section.append(verse.getVerseText());
-                wordCount = 0;
+            } else {
+                TextSection ts = new TextSection("", new String[]{section.toString()}, smallText, false);
+                if (ts.getTheme() == null) {
+                    ts.setTheme(theme);
+                }
+                textSections.add(ts);
+                section = new StringBuilder();
+                if (QueleaProperties.get().getShowVerseNumbers()) {
+                    section.append("<sup>");
+                    section.append(verse.getNum());
+                    section.append("</sup>");
+                }
+                section.append(verse.getVerseText());
+                count = 0;
             }
         }
-        if(!section.toString().isEmpty()) {
+        if (!section.toString().isEmpty()) {
             textSections.add(new TextSection("", new String[]{section.toString()}, smallText, false));
         }
     }
 
     /**
      * Get the XML behind this bible passage.
-     * <p>
+     * <p/>
      * @return the XML.
      */
     @Override
     public String getXML() {
         StringBuilder ret = new StringBuilder();
-        ret.append("<passage summary=\"");
-        ret.append(Utils.escapeXML(summary));
+        ret.append("<passage summary=\"" );
+        String summaryText = "";
+        String bible = "";
+        //Handle old schedules...
+        if(summary.split("\n").length == 1) {
+            summaryText = summary.split("(?<=\\d)\\s")[0];
+            bible = summary.split("(?<=\\d)\\s")[1];
+        }
+        else {
+            summaryText = summary.split("\n")[0];
+            bible = summary.split("\n")[0];
+        }
+        System.out.println(summaryText);
+        ret.append(Utils.escapeXML(summaryText));
+        ret.append("\" bible=\"");
+        ret.append(Utils.escapeXML(bible));
         ret.append("\">");
-        for(BibleVerse verse : verses) {
+        for (BibleVerse verse : verses) {
             ret.append(verse.toXML());
         }
+        ret.append("<theme>");
+        ret.append(theme.asString());
+        ret.append("</theme>");
         ret.append("</passage>");
         return ret.toString();
     }
@@ -131,12 +176,29 @@ public class BiblePassage implements TextDisplayable, Serializable {
      */
     @Override
     public String toString() {
-        if(textSections.isEmpty()) {
+        if (textSections.isEmpty()) {
             return "";
-        }
-        else {
+        } else {
             return textSections.get(0).getText(false, false)[0];
         }
+    }
+
+    /**
+     * Retrieve assigned theme
+     * <p/>
+     * @return assigned theme
+     */
+    public ThemeDTO getTheme() {
+        return this.theme;
+    }
+
+    /**
+     * Set assigned theme
+     * <p/>
+     * @param theme new theme
+     */
+    public void setTheme(ThemeDTO theme) {
+        this.theme = theme;
     }
 
     /**
@@ -147,15 +209,25 @@ public class BiblePassage implements TextDisplayable, Serializable {
      */
     public static BiblePassage parseXML(Node passage) {
         NodeList list = passage.getChildNodes();
-        String summary = passage.getAttributes().getNamedItem("summary").getNodeValue();
+        String passageSummary = passage.getAttributes().getNamedItem("summary").getTextContent();
+        String bibleSummary = "";
+        if(passage.getAttributes().getNamedItem("bible") != null) {
+            bibleSummary = passage.getAttributes().getNamedItem("bible").getTextContent();
+        }
+        String summary = passageSummary + "\n" + bibleSummary;
+        System.out.println(summary);
+        ThemeDTO tempTheme = ThemeDTO.DEFAULT_THEME;
         List<BibleVerse> verses = new ArrayList<>();
-        for(int i = 0; i < list.getLength(); i++) {
+        for (int i = 0; i < list.getLength(); i++) {
             Node node = list.item(i);
-            if(node.getNodeName().equals("vers")) {
+            if (node.getNodeName().equals("vers")) {
                 verses.add(BibleVerse.parseXML(node));
             }
+            else if(node.getNodeName().equals("theme")) {
+                tempTheme = ThemeDTO.fromString(node.getTextContent());
+            }
         }
-        return new BiblePassage(summary, verses.toArray(new BibleVerse[verses.size()]));
+        return new BiblePassage(summary, verses.toArray(new BibleVerse[verses.size()]), tempTheme);
     }
 
     /**
@@ -195,7 +267,15 @@ public class BiblePassage implements TextDisplayable, Serializable {
      */
     @Override
     public Collection<File> getResources() {
-        return new ArrayList<>();
+        ArrayList<File> ret = new ArrayList<>();
+        for (TextSection section : getSections()) {
+            ThemeDTO sectionTheme = section.getTheme();
+            if (sectionTheme != null) {
+                Background background = sectionTheme.getBackground();
+                ret.addAll(background.getResources());
+            }
+        }
+        return ret;
     }
 
     /**

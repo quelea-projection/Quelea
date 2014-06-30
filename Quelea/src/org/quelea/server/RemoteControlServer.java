@@ -40,14 +40,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import org.quelea.data.displayable.BiblePassage;
 import org.quelea.data.displayable.MultimediaDisplayable;
-import org.quelea.data.displayable.SongDisplayable;
 import org.quelea.data.displayable.TextDisplayable;
 import org.quelea.data.displayable.TextSection;
 import org.quelea.services.languages.LabelGrabber;
 import org.quelea.services.utils.LoggerUtils;
-import org.quelea.services.utils.Utils;
 import org.quelea.windows.main.LivePanel;
 import org.quelea.windows.main.QueleaApp;
 

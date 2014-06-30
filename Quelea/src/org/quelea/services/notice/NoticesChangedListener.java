@@ -17,8 +17,6 @@
  */
 package org.quelea.services.notice;
 
-import java.util.List;
-
 /**
  * A listener that's activated when a notice is changed.
  * @author Michael

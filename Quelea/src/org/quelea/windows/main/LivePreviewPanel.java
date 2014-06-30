@@ -17,8 +17,6 @@
  */
 package org.quelea.windows.main;
 
-import org.quelea.windows.presentation.PresentationPanel;
-import org.quelea.windows.image.ImagePanel;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.logging.Level;
@@ -42,10 +40,12 @@ import org.quelea.data.displayable.TextDisplayable;
 import org.quelea.data.displayable.VideoDisplayable;
 import org.quelea.services.utils.LoggerUtils;
 import org.quelea.services.utils.QueleaProperties;
+import org.quelea.windows.image.ImagePanel;
 import org.quelea.windows.lyrics.SelectLyricsPanel;
 import org.quelea.windows.main.quickedit.QuickEditDialog;
 import org.quelea.windows.main.widgets.CardPane;
 import org.quelea.windows.multimedia.MultimediaPanel;
+import org.quelea.windows.presentation.PresentationPanel;
 
 /**
  * The common superclass of the live / preview panels used for selecting the

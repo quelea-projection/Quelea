@@ -17,7 +17,6 @@
  */
 package org.quelea.windows.main;
 
-import org.quelea.windows.main.schedule.SchedulePanel;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.geometry.Orientation;
@@ -25,6 +24,7 @@ import javafx.scene.control.SplitPane;
 import javafx.scene.layout.BorderPane;
 import org.quelea.services.utils.LoggerUtils;
 import org.quelea.windows.library.LibraryPanel;
+import org.quelea.windows.main.schedule.SchedulePanel;
 
 /**
  * The main body of the main window, containing the schedule, the media bank, the preview and the live panels.

@@ -30,7 +30,6 @@ import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
-import javafx.scene.Parent;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ToggleGroup;
@@ -82,7 +81,7 @@ public class ScheduleThemeNode extends BorderPane {
             public void changed(ObservableValue<? extends Number> ov, Number t, Number t1) {
                 MainWindow mainWindow = QueleaApp.get().getMainWindow();
                 double width = mainWindow.getWidth() - t1.doubleValue() - 100;
-                if(width < 50) {
+                if (width < 50) {
                     width = 50;
                 }
                 contentPanel.setPrefWidth(width);
@@ -119,8 +118,7 @@ public class ScheduleThemeNode extends BorderPane {
         List<ThemeDTO> themes;
         try {
             themes = getThemes();
-        }
-        catch(Exception ex) {
+        } catch (Exception ex) {
             LoggerUtils.getLogger().log(Level.SEVERE, "Couldn't get themes when refreshing.", ex);
             return;
         }
@@ -132,48 +130,52 @@ public class ScheduleThemeNode extends BorderPane {
         selectThemeLabel.setStyle("-fx-font-weight: bold;");
         northPanel.getChildren().add(selectThemeLabel);
         contentPanel.getChildren().add(northPanel);
+
         ThemeDTO selectedTheme = null;
-        if(themePreviews != null) {
-            for(Node node : themePreviews.getChildren()) {
-                if(node instanceof ThemePreviewPanel) {
+        if (themePreviews != null) {
+            for (Node node : themePreviews.getChildren()) {
+                if (node instanceof ThemePreviewPanel) {
                     ThemePreviewPanel panel = (ThemePreviewPanel) node;
-                    if(panel.getSelectButton().isSelected()) {
+                    if (panel.getSelectButton().isSelected()) {
                         selectedTheme = panel.getTheme();
+                        setTheme(selectedTheme);
                     }
                 }
             }
         }
+
         themePreviews = new FlowPane();
         themePreviews.setAlignment(Pos.CENTER);
         themePreviews.setHgap(10);
         themePreviews.setVgap(10);
-        for(final ThemeDTO theme : themes) {
+
+        for (final ThemeDTO theme : themes) {
             ThemePreviewPanel panel = new ThemePreviewPanel(theme, popup, this);
             panel.getSelectButton().setOnAction(new EventHandler<javafx.event.ActionEvent>() {
                 @Override
                 public void handle(javafx.event.ActionEvent t) {
                     tempTheme = theme;
                     setTheme(theme);
-                    if(QueleaApp.get().getMainWindow().getMainPanel() != null) {
+                    if (QueleaApp.get().getMainWindow().getMainPanel() != null) {
                         QueleaApp.get().getMainWindow().getMainPanel().getPreviewPanel().refresh();
                     }
                 }
             });
-            if(selectedTheme != null && selectedTheme.equals(theme)) {
+            if (selectedTheme != null && selectedTheme.equals(theme)) {
                 panel.getSelectButton().fire();
             }
-            group.getToggles().add(panel.getSelectButton());
+            panel.getSelectButton().setToggleGroup(group);
             themePreviews.getChildren().add(panel);
         }
-        if(QueleaApp.get().getMainWindow().getMainPanel() != null && group.getSelectedToggle() == null) {
-            for(Node node : themePreviews.getChildren()) {
-                if(node instanceof ThemePreviewPanel) {
+        if (QueleaApp.get().getMainWindow().getMainPanel() != null && group.getSelectedToggle() == null) {
+            for (Node node : themePreviews.getChildren()) {
+                if (node instanceof ThemePreviewPanel) {
                     ThemePreviewPanel panel = (ThemePreviewPanel) node;
-                    if(panel.getTheme() != null && panel.getTheme().equals(tempTheme)) {
-                        setTheme(panel.getTheme());
-                        group.selectToggle(panel.getSelectButton());
+                    if (panel.getTheme() != null && selectedTheme != null
+                            && panel.getTheme().getThemeName().equals(selectedTheme.getThemeName())) {
+                        setTheme(selectedTheme);
+                        panel.getSelectButton().fire();
                         QueleaApp.get().getMainWindow().getMainPanel().getPreviewPanel().refresh();
-                        panel.getSelectButton().selectedProperty().setValue(true);
                     }
                 }
             }
@@ -186,11 +188,10 @@ public class ScheduleThemeNode extends BorderPane {
                 themeDialog.setTheme(null);
                 themeDialog.showAndWait();
                 ThemeDTO ret = themeDialog.getTheme();
-                if(ret != null) {
-                    try(PrintWriter pw = new PrintWriter(ret.getFile())) {
+                if (ret != null) {
+                    try (PrintWriter pw = new PrintWriter(ret.getFile())) {
                         pw.println(ret.getTheme());
-                    }
-                    catch(IOException ex) {
+                    } catch (IOException ex) {
                         LOGGER.log(Level.WARNING, "Couldn't write new theme", ex);
                     }
                     refresh();
@@ -211,17 +212,17 @@ public class ScheduleThemeNode extends BorderPane {
     private List<ThemeDTO> getThemes() {
         List<ThemeDTO> themesList = new ArrayList<>();
         File themeDir = new File(QueleaProperties.getQueleaUserHome(), "themes");
-        if(!themeDir.exists()) {
+        if (!themeDir.exists()) {
             themeDir.mkdir();
         }
-        for(File file : themeDir.listFiles()) {
-            if(file.getName().endsWith(".th")) {
+        for (File file : themeDir.listFiles()) {
+            if (file.getName().endsWith(".th")) {
                 String fileText = Utils.getTextFromFile(file.getAbsolutePath(), "");
-                if(fileText.trim().isEmpty()) {
+                if (fileText.trim().isEmpty()) {
                     continue;
                 }
                 final ThemeDTO theme = ThemeDTO.fromString(fileText);
-                if(theme == ThemeDTO.DEFAULT_THEME) {
+                if (theme == ThemeDTO.DEFAULT_THEME) {
                     LOGGER.log(Level.WARNING, "Error parsing theme file: {0}", fileText);
                     continue;  //error
                 }
@@ -240,7 +241,7 @@ public class ScheduleThemeNode extends BorderPane {
     public void setTheme(ThemeDTO theme) {
         callback.updateTheme(theme);
     }
-    
+
     public FlowPane getThemePreviews() {
         return themePreviews;
     }
