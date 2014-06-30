@@ -218,7 +218,7 @@ public class LyricDrawer extends DisplayableDrawer {
             }
             t.setEffect(shadow);
 
-            setPositionX(t, loopMetrics, line.getLine(), stageView, textOnlyView);
+            setPositionX(t, loopMetrics, line.getLine(), stageView, textOnlyView, curDisplayable instanceof BiblePassage);
             t.setLayoutY(y);
 
             Color lineColor;
@@ -314,7 +314,7 @@ public class LyricDrawer extends DisplayableDrawer {
         }
     }
 
-    private void setPositionX(FormattedText t, FontMetrics metrics, String line, boolean stageView, boolean textOnlyView) {
+    private void setPositionX(FormattedText t, FontMetrics metrics, String line, boolean stageView, boolean textOnlyView, boolean biblePassage) {
         Utils.checkFXThread();
         String strippedLine = line.replaceAll("\\<\\/?sup\\>", "");
         double width = metrics.computeStringWidth(strippedLine);
