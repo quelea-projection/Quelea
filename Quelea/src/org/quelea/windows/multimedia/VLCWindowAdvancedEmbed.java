@@ -351,7 +351,7 @@ public class VLCWindowAdvancedEmbed extends VLCWindow {
                 player2.load(sanitisedPath);
 
             }
-            
+
         }
 
     }
@@ -421,7 +421,7 @@ public class VLCWindowAdvancedEmbed extends VLCWindow {
                 player2.play();
             }
             startOnCompletionWatcher();
-          
+
         }
 
     }
@@ -557,7 +557,7 @@ public class VLCWindowAdvancedEmbed extends VLCWindow {
 
             player2.setMute(mute);
 
-            
+
         }
 
     }
@@ -886,7 +886,7 @@ public class VLCWindowAdvancedEmbed extends VLCWindow {
     @Override
     public void setHue(final double hue) {
         this.hue = hue;
-    }
+        }
 
     /**
      * Get the current hue of the video playing back.

@@ -97,7 +97,7 @@ public class LyricDrawer extends DisplayableDrawer {
         Utils.checkFXThread();
         boolean stageView = getCanvas().isStageView();
         boolean textOnlyView = getCanvas().isTextOnlyView();
-          if (getCanvas().getCanvasBackground() != null) {
+        if (getCanvas().getCanvasBackground() != null) {
             if (!getCanvas().getChildren().contains(getCanvas().getCanvasBackground())
                     && !getCanvas().getChildren().contains(textGroup) && !getCanvas().getChildren().contains(smallTextGroup)) {
                 getCanvas().getChildren().add(0, getCanvas().getCanvasBackground());
@@ -134,9 +134,6 @@ public class LyricDrawer extends DisplayableDrawer {
         if (stageView) {
             shadow = new DropShadow();
         }
-        if(textOnlyView){
-            shadow = new DropShadow();
-        }
         if (shadow == null) {
             shadow = ThemeDTO.DEFAULT_SHADOW.getDropShadow();
         }
@@ -157,9 +154,6 @@ public class LyricDrawer extends DisplayableDrawer {
             fontSize = pickFontSize(font, newText, getCanvas().getWidth() * 0.9, getCanvas().getHeight() * 0.9);
         }
         if (stageView) {
-            font = Font.font(font.getFamily(), FontWeight.NORMAL,
-                    FontPosture.REGULAR, fontSize);
-        } else if (textOnlyView) {
             font = Font.font(font.getFamily(), FontWeight.NORMAL,
                     FontPosture.REGULAR, fontSize);
         } else {
@@ -232,10 +226,10 @@ public class LyricDrawer extends DisplayableDrawer {
                 lineColor = QueleaProperties.get().getStageChordColor();
             } else if (stageView) {
                 lineColor = QueleaProperties.get().getStageLyricsColor();
-            } else if (line.isTranslateLine()) {
-                lineColor = theme.getTranslateFontPaint();
             } else if (textOnlyView) {
                 lineColor = QueleaProperties.get().getTextOnlyLyricsColor();
+            } else if (line.isTranslateLine()) {
+                lineColor = theme.getTranslateFontPaint();
             } else {
                 lineColor = theme.getFontPaint();
             }
@@ -264,33 +258,33 @@ public class LyricDrawer extends DisplayableDrawer {
         if (!paintTransition.getChildren().isEmpty()) {
             paintTransition.play();
         }
+        textGroup = newTextGroup;
         Pos position = Pos.CENTER;
-        if(VerticalAlignment.parse(QueleaProperties.get().getTextOnlyVerticalAlignment()) == VerticalAlignment.TOP){
-            if(TextAlignment.parse(QueleaProperties.get().getTextOnlyTextAlignment()) == TextAlignment.LEFT){
+        if (VerticalAlignment.parse(QueleaProperties.get().getTextOnlyVerticalAlignment()) == VerticalAlignment.TOP) {
+            if (TextAlignment.parse(QueleaProperties.get().getTextOnlyTextAlignment()) == TextAlignment.LEFT) {
                 position = Pos.TOP_LEFT;
-            }else if(TextAlignment.parse(QueleaProperties.get().getTextOnlyTextAlignment()) == TextAlignment.CENTRE){
+            } else if (TextAlignment.parse(QueleaProperties.get().getTextOnlyTextAlignment()) == TextAlignment.CENTRE) {
                 position = Pos.TOP_CENTER;
             }
-        }else if(VerticalAlignment.parse(QueleaProperties.get().getTextOnlyVerticalAlignment()) == VerticalAlignment.CENTRE){
-            if(TextAlignment.parse(QueleaProperties.get().getTextOnlyTextAlignment()) == TextAlignment.LEFT){
+        } else if (VerticalAlignment.parse(QueleaProperties.get().getTextOnlyVerticalAlignment()) == VerticalAlignment.CENTRE) {
+            if (TextAlignment.parse(QueleaProperties.get().getTextOnlyTextAlignment()) == TextAlignment.LEFT) {
                 position = Pos.CENTER_LEFT;
-            }else if(TextAlignment.parse(QueleaProperties.get().getTextOnlyTextAlignment()) == TextAlignment.CENTRE){
+            } else if (TextAlignment.parse(QueleaProperties.get().getTextOnlyTextAlignment()) == TextAlignment.CENTRE) {
                 position = Pos.CENTER;
             }
-        }else if(VerticalAlignment.parse(QueleaProperties.get().getTextOnlyVerticalAlignment()) == VerticalAlignment.BOTTOM){
-            if(TextAlignment.parse(QueleaProperties.get().getTextOnlyTextAlignment()) == TextAlignment.LEFT){
+        } else if (VerticalAlignment.parse(QueleaProperties.get().getTextOnlyVerticalAlignment()) == VerticalAlignment.BOTTOM) {
+            if (TextAlignment.parse(QueleaProperties.get().getTextOnlyTextAlignment()) == TextAlignment.LEFT) {
                 position = Pos.BOTTOM_LEFT;
-            }else if(TextAlignment.parse(QueleaProperties.get().getTextOnlyTextAlignment()) == TextAlignment.CENTRE){
+            } else if (TextAlignment.parse(QueleaProperties.get().getTextOnlyTextAlignment()) == TextAlignment.CENTRE) {
                 position = Pos.BOTTOM_CENTER;
             }
         }
-        textGroup = newTextGroup;
         StackPane.setMargin(textGroup, new Insets(10));
         if (stageView) {
             StackPane.setAlignment(textGroup, Pos.CENTER);
         } else if (textOnlyView) {
             StackPane.setAlignment(textGroup, position);
-        }else {
+        } else {
             StackPane.setAlignment(textGroup, DisplayPositionSelector.getPosFromIndex(theme.getTextPosition()));
         }
 
@@ -334,7 +328,7 @@ public class LyricDrawer extends DisplayableDrawer {
                 t.setLayoutX(centreOffset);
             }
         } else if (textOnlyView) {
-            if (QueleaProperties.get().getTextOnlyTextAlignment().equalsIgnoreCase("Left")) {
+            if (QueleaProperties.get().getStageTextAlignment().equalsIgnoreCase("Left")) {
                 t.setLayoutX(getCanvas().getWidth());
             } else {
                 t.setLayoutX(centreOffset);
@@ -384,7 +378,7 @@ public class LyricDrawer extends DisplayableDrawer {
             image = Utils.getImageFromColour(QueleaProperties.get().getStageBackgroundColor());
         } else if (getCanvas().isTextOnlyView()) {
             image = Utils.getImageFromColour(QueleaProperties.get().getTextOnlyBackgroundColor());
-        } else if (theme.getBackground() instanceof ImageBackground) {
+        } else  if (theme.getBackground() instanceof ImageBackground) {
             image = ((ImageBackground) theme.getBackground()).getImage();
         } else if (theme.getBackground() instanceof ColourBackground) {
             Color color = ((ColourBackground) theme.getBackground()).getColour();

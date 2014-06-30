@@ -26,7 +26,6 @@ import org.quelea.services.utils.QueleaProperties;
 import org.quelea.windows.main.GraphicsDeviceListener;
 import org.quelea.windows.main.GraphicsDeviceWatcher;
 import org.quelea.windows.main.DisplayStage;
-import org.quelea.windows.main.DisplayType;
 import org.quelea.windows.main.QueleaApp;
 import org.quelea.windows.multimedia.VLCWindow;
 
@@ -129,7 +128,7 @@ public class OptionsDisplaySetupPanel extends GridPane implements PropertyPanel 
             }
         } else {
             if (appWindow == null) {
-                appWindow = new DisplayStage(projectorPanel.getOutputBounds(), DisplayType.PROJECTION);
+                appWindow = new DisplayStage(projectorPanel.getOutputBounds(), false);
             }
             final DisplayStage fiLyricWindow = appWindow; //Fudge for AIC
             Platform.runLater(new Runnable() {
@@ -148,7 +147,7 @@ public class OptionsDisplaySetupPanel extends GridPane implements PropertyPanel 
             }
         } else {
             if (stageWindow == null) {
-                stageWindow = new DisplayStage(projectorPanel.getOutputBounds(), DisplayType.STAGE);
+                stageWindow = new DisplayStage(projectorPanel.getOutputBounds(), true);
             }
             final DisplayStage fiStageWindow = stageWindow; //Fudge for AIC
             Platform.runLater(new Runnable() {
@@ -167,7 +166,7 @@ public class OptionsDisplaySetupPanel extends GridPane implements PropertyPanel 
             }
         } else {
             if (textOnlyWindow == null) {
-                textOnlyWindow = new DisplayStage(textOnlyPanel.getOutputBounds(), DisplayType.TEXT_ONLY);
+                textOnlyWindow = new DisplayStage(textOnlyPanel.getOutputBounds(), false);
             }
             final DisplayStage fiTextOnlyWindow = textOnlyWindow; //Fudge for AIC
             Platform.runLater(new Runnable() {

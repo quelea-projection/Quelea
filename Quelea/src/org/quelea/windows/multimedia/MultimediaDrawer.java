@@ -22,17 +22,15 @@ public class MultimediaDrawer extends DisplayableDrawer {
 
     @Override
     public void draw(Displayable displayable) {
-        if(getCanvas().isStageView()) {
+        if (getCanvas().isStageView()) {
             ImageView imageView = getCanvas().getNewImageView();
             imageView.setImage(Utils.getImageFromColour(QueleaProperties.get().getStageBackgroundColor()));
             getCanvas().getChildren().add(0, imageView);
-        }
-        if(getCanvas().isTextOnlyView()) {
+        } else if (getCanvas().isTextOnlyView()) {
             ImageView imageView = getCanvas().getNewImageView();
             imageView.setImage(Utils.getImageFromColour(QueleaProperties.get().getTextOnlyBackgroundColor()));
             getCanvas().getChildren().add(0, imageView);
-        }
-        else {
+        } else {
             if (playVideo) {
                 controlPanel.reset();
                 controlPanel.loadMultimedia(((MultimediaDisplayable) displayable).getLocation());

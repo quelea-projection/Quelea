@@ -141,9 +141,8 @@ public class LivePanel extends LivePreviewPanel {
             public void handle(javafx.event.ActionEvent t) {
                 HashSet<DisplayCanvas> canvases = new HashSet<>();
                 canvases.addAll(getCanvases());
-               
                 for (DisplayCanvas canvas : canvases) {
-                     canvas.setBlacked(black.isSelected());
+                    canvas.setBlacked(black.isSelected());
                 }
             }
         });
@@ -190,7 +189,6 @@ public class LivePanel extends LivePreviewPanel {
                 } else {
                     stageHidden = false;
                 }
-
                 final boolean textOnlyHidden;
                 if (!QueleaProperties.get().isTextOnlyModeCoords() && (textOnlyScreen >= monitors.size() || textOnlyScreen < 0)) {
                     textOnlyHidden = true;
@@ -342,7 +340,6 @@ public class LivePanel extends LivePreviewPanel {
         canvases.addAll(getCanvases());
         for (DisplayCanvas canvas : canvases) {
             canvas.update();
-
         }
     }
 

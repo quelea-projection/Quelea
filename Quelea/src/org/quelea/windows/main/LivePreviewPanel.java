@@ -87,7 +87,7 @@ public abstract class LivePreviewPanel extends BorderPane {
         lyricsPanel.getLyricsList().setOnMouseClicked(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent me) {
-                if (me.isControlDown() || me.isShiftDown()) {
+                if(me.isControlDown() || me.isShiftDown()) {
                     doQuickEdit(lyricsPanel.getCurrentIndex());
                 }
             }
@@ -96,7 +96,7 @@ public abstract class LivePreviewPanel extends BorderPane {
         lyricsPanel.getLyricsList().setOnKeyPressed(new EventHandler<KeyEvent>() {
             @Override
             public void handle(KeyEvent ke) {
-                if (ke.isControlDown() && ke.getCode() == KeyCode.Q) {
+                if(ke.isControlDown() && ke.getCode() == KeyCode.Q) {
                     doQuickEdit(lyricsPanel.getCurrentIndex());
                 }
             }
@@ -105,7 +105,7 @@ public abstract class LivePreviewPanel extends BorderPane {
         setOnDragOver(new EventHandler<DragEvent>() {
             @Override
             public void handle(DragEvent event) {
-                if (event.getDragboard().getContent(SongDisplayable.SONG_DISPLAYABLE_FORMAT) != null) {
+                if(event.getDragboard().getContent(SongDisplayable.SONG_DISPLAYABLE_FORMAT) != null) {
                     event.acceptTransferModes(TransferMode.ANY);
                 }
             }
@@ -114,9 +114,9 @@ public abstract class LivePreviewPanel extends BorderPane {
 
             @Override
             public void handle(DragEvent event) {
-                if (event.getDragboard().getContent(SongDisplayable.SONG_DISPLAYABLE_FORMAT) instanceof SongDisplayable) {
+                if(event.getDragboard().getContent(SongDisplayable.SONG_DISPLAYABLE_FORMAT) instanceof SongDisplayable) {
                     final SongDisplayable displayable = (SongDisplayable) event.getDragboard().getContent(SongDisplayable.SONG_DISPLAYABLE_FORMAT);
-                    if (displayable != null) {
+                    if(displayable != null) {
                         setDisplayable(displayable, 0);
                     }
                 }
@@ -144,7 +144,7 @@ public abstract class LivePreviewPanel extends BorderPane {
      * @param index the index on which to perform the quick edit.
      */
     public void doQuickEdit(int index) {
-        if (displayable instanceof SongDisplayable) {
+        if(displayable instanceof SongDisplayable) {
             SongDisplayable song = (SongDisplayable) displayable;
             quickEditDialog.setSongSection(song, index);
             quickEditDialog.show();
@@ -166,7 +166,6 @@ public abstract class LivePreviewPanel extends BorderPane {
      * @return the container panel.
      */
     public Node getCurrentPane() {
-        
         return cardPanel.getCurrentPane();
     }
 
@@ -175,17 +174,18 @@ public abstract class LivePreviewPanel extends BorderPane {
      */
     public void removeDisplayable() {
         displayable = null;
-        if (PRESENTATION_LABEL.equals(currentLabel)) {
+        if(PRESENTATION_LABEL.equals(currentLabel)) {
             presentationPanel.showDisplayable(null, 0);
         }
-        for (Node panel : cardPanel) {
-            if (panel instanceof ContainedPanel) {
+        for(Node panel : cardPanel) {
+            if(panel instanceof ContainedPanel) {
                 ((ContainedPanel) panel).removeCurrentDisplayable();
-            } else {
+            }
+            else {
                 LOGGER.log(Level.WARNING, "Panel was {0} which isn't a ContainedPanel... can't clear it.", panel.getClass());
             }
         }
-        if (currentLabel == null || !currentLabel.equals(LYRICS_LABEL)) {
+        if(currentLabel == null || !currentLabel.equals(LYRICS_LABEL)) {
             cardPanel.show(LYRICS_LABEL);
             currentLabel = LYRICS_LABEL;
         }
@@ -198,39 +198,43 @@ public abstract class LivePreviewPanel extends BorderPane {
      * @return the currently selected displayable index.
      */
     public int getIndex() {
-        if (PRESENTATION_LABEL.equals(currentLabel)) {
+        if(PRESENTATION_LABEL.equals(currentLabel)) {
             return presentationPanel.getIndex();
-        } else {
+        }
+        else {
             return lyricsPanel.getIndex();
         }
     }
-
+    
     /**
      * Advances currently selected displayable index. Only suitable for
      * powerpoint / lyrics panels.
      * <p/>
      */
     public void advance() {
-        if (PRESENTATION_LABEL.equals(currentLabel)) {
+        if(PRESENTATION_LABEL.equals(currentLabel)) {
             presentationPanel.advance();
-        } else if (LYRICS_LABEL.equals(currentLabel)) {
+        }
+        else if(LYRICS_LABEL.equals(currentLabel)) {
             lyricsPanel.advance();
         }
     }
-
+    
     /**
-     * Moves to previous slide in currently selected displayable index. Only
-     * suitable for powerpoint / lyrics panels.
+     * Moves to previous slide in currently selected displayable index.
+     * Only suitable for powerpoint / lyrics panels.
      * <p/>
      */
     public void previous() {
-        if (PRESENTATION_LABEL.equals(currentLabel)) {
+        if(PRESENTATION_LABEL.equals(currentLabel)) {
             presentationPanel.previous();
-        } else if (LYRICS_LABEL.equals(currentLabel)) {
+        }
+        else if(LYRICS_LABEL.equals(currentLabel)) {
             lyricsPanel.previous();
         }
     }
-
+    
+    
     /**
      * Get the select lyrics panel on this panel.
      * <p/>
@@ -257,33 +261,39 @@ public abstract class LivePreviewPanel extends BorderPane {
                 lyricsPanel.removeCurrentDisplayable();
                 imagePanel.removeCurrentDisplayable();
                 presentationPanel.removeCurrentDisplayable();
-                if (PRESENTATION_LABEL.equals(currentLabel)) {
+                if(PRESENTATION_LABEL.equals(currentLabel)) {
                     presentationPanel.showDisplayable(null, 0);
                 }
-                if (displayable instanceof TextDisplayable) {
+                if(displayable instanceof TextDisplayable) {
                     lyricsPanel.showDisplayable((TextDisplayable) displayable, index);
                     cardPanel.show(LYRICS_LABEL);
                     currentLabel = LYRICS_LABEL;
-                } else if (displayable instanceof ImageDisplayable) {
+                }
+                else if(displayable instanceof ImageDisplayable) {
                     imagePanel.showDisplayable((ImageDisplayable) displayable);
                     cardPanel.show(IMAGE_LABEL);
                     currentLabel = IMAGE_LABEL;
-                } else if (displayable instanceof VideoDisplayable) {
+                }
+                else if(displayable instanceof VideoDisplayable) {
                     videoPanel.showDisplayable((MultimediaDisplayable) displayable);
                     cardPanel.show(VIDEO_LABEL);
                     currentLabel = VIDEO_LABEL;
-                } else if (displayable instanceof AudioDisplayable) {
+                }
+                else if(displayable instanceof AudioDisplayable) {
                     audioPanel.showDisplayable((MultimediaDisplayable) displayable);
                     cardPanel.show(AUDIO_LABEL);
                     currentLabel = AUDIO_LABEL;
-                } else if (displayable instanceof PresentationDisplayable) {
+                }
+                else if(displayable instanceof PresentationDisplayable) {
                     presentationPanel.showDisplayable((PresentationDisplayable) displayable, index);
                     cardPanel.show(PRESENTATION_LABEL);
                     currentLabel = PRESENTATION_LABEL;
-                } else if (displayable == null) {
+                }
+                else if(displayable == null) {
 //            LOGGER.log(Level.WARNING, "BUG: Called showDisplayable(null), should probably call clear() instead.", 
 //                    new RuntimeException("BUG: Called showDisplayable(null), should probably call clear() instead.")); clear();
-                } else {
+                }
+                else {
                     throw new RuntimeException("Displayable type not implemented: " + displayable.getClass());
                 }
 
@@ -295,7 +305,7 @@ public abstract class LivePreviewPanel extends BorderPane {
      * Refresh the current content of this panel, if any exists.
      */
     public void refresh() {
-        if (getDisplayable() != null) {
+        if(getDisplayable() != null) {
             setDisplayable(getDisplayable(), getIndex());
         }
     }
@@ -316,14 +326,12 @@ public abstract class LivePreviewPanel extends BorderPane {
      * @param canvas the canvas to register.
      */
     public final void registerDisplayCanvas(final DisplayCanvas canvas) {
-        if (canvas == null) {
+        if(canvas == null) {
             return;
         }
-        
-        for (AbstractPanel panel : cardPanel.getPanels()) {
+        for(AbstractPanel panel : cardPanel.getPanels()) {
             panel.registerDisplayCanvas(canvas);
         }
-        System.out.println("Canvases size :" + ((AbstractPanel) cardPanel.getCurrentPane()).getCanvases().size() + "    Canvas type: " + canvas.getDisplayType().name());
     }
 
     /**
@@ -332,7 +340,7 @@ public abstract class LivePreviewPanel extends BorderPane {
      * @param window the window to register.
      */
     public final void registerDisplayWindow(final DisplayStage window) {
-        if (window == null) {
+        if(window == null) {
             return;
         }
         windows.add(window);

@@ -163,42 +163,42 @@ public final class Main extends Application {
                         public void run() {
                             if (lyricsHidden) {
                                 LOGGER.log(Level.INFO, "Hiding projector display on monitor 0 (base 0!)");
-                                fullScreenWindow = new DisplayStage(Utils.getBoundsFromRect2D(monitors.get(0).getVisualBounds()), DisplayType.PROJECTION);
+                                fullScreenWindow = new DisplayStage(Utils.getBoundsFromRect2D(monitors.get(0).getVisualBounds()), false);
                                 fullScreenWindow.hide();
                             } else if (QueleaProperties.get().isProjectorModeCoords()) {
                                 LOGGER.log(Level.INFO, "Starting projector display: ", QueleaProperties.get().getProjectorCoords());
-                                fullScreenWindow = new DisplayStage(QueleaProperties.get().getProjectorCoords(), DisplayType.PROJECTION);
+                                fullScreenWindow = new DisplayStage(QueleaProperties.get().getProjectorCoords(), false);
                             } else {
                                 LOGGER.log(Level.INFO, "Starting projector display on monitor {0} (base 0!)", projectorScreen);
-                                fullScreenWindow = new DisplayStage(Utils.getBoundsFromRect2D(monitors.get(projectorScreen).getVisualBounds()), DisplayType.PROJECTION);
+                                fullScreenWindow = new DisplayStage(Utils.getBoundsFromRect2D(monitors.get(projectorScreen).getVisualBounds()), false);
                             }
                             QueleaApp.get().setProjectionWindow(fullScreenWindow);
                             //fullScreenWindow.toFront();
 
                             if (stageHidden) {
                                 LOGGER.log(Level.INFO, "Hiding stage display on monitor 0 (base 0!)");
-                                stageWindow = new DisplayStage(Utils.getBoundsFromRect2D(monitors.get(0).getVisualBounds()), DisplayType.STAGE);
+                                stageWindow = new DisplayStage(Utils.getBoundsFromRect2D(monitors.get(0).getVisualBounds()), true);
                                 stageWindow.hide();
                             } else if (QueleaProperties.get().isStageModeCoords()) {
                                 LOGGER.log(Level.INFO, "Starting stage display: ", QueleaProperties.get().getStageCoords());
-                                stageWindow = new DisplayStage(QueleaProperties.get().getStageCoords(), DisplayType.STAGE);
+                                stageWindow = new DisplayStage(QueleaProperties.get().getStageCoords(), true);
                             } else {
                                 LOGGER.log(Level.INFO, "Starting stage display on monitor {0} (base 0!)", stageScreen);
-                                stageWindow = new DisplayStage(Utils.getBoundsFromRect2D(monitors.get(stageScreen).getVisualBounds()), DisplayType.STAGE);
+                                stageWindow = new DisplayStage(Utils.getBoundsFromRect2D(monitors.get(stageScreen).getVisualBounds()), true);
                             }
                             QueleaApp.get().setStageWindow(stageWindow);
                             //stageWindow.toFront();
 
                             if (textOnlyHidden) {
                                 LOGGER.log(Level.INFO, "Hiding text only display on monitor 0 (base 0!)");
-                                textOnlyWindow = new DisplayStage(Utils.getBoundsFromRect2D(monitors.get(0).getVisualBounds()), DisplayType.TEXT_ONLY);
+                                textOnlyWindow = new DisplayStage(Utils.getBoundsFromRect2D(monitors.get(0).getVisualBounds()), false);
                                 textOnlyWindow.hide();
                             } else if (QueleaProperties.get().isTextOnlyModeCoords()) {
                                 LOGGER.log(Level.INFO, "Starting text only display: ", QueleaProperties.get().getTextOnlyCoords());
-                                textOnlyWindow = new DisplayStage(QueleaProperties.get().getTextOnlyCoords(), DisplayType.TEXT_ONLY);
+                                textOnlyWindow = new DisplayStage(QueleaProperties.get().getTextOnlyCoords(), false);
                             } else {
                                 LOGGER.log(Level.INFO, "Starting text only display on monitor {0} (base 0!)", textOnlyScreen);
-                                textOnlyWindow = new DisplayStage(Utils.getBoundsFromRect2D(monitors.get(textOnlyScreen).getVisualBounds()), DisplayType.TEXT_ONLY);
+                                textOnlyWindow = new DisplayStage(Utils.getBoundsFromRect2D(monitors.get(textOnlyScreen).getVisualBounds()), false);
                             }
                             QueleaApp.get().setTextOnlyWindow(textOnlyWindow);
 
