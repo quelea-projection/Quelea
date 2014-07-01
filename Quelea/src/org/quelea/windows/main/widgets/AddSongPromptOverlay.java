@@ -26,6 +26,7 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.StackPane;
@@ -47,6 +48,7 @@ import org.quelea.windows.main.QueleaApp;
 public class AddSongPromptOverlay extends StackPane {
 
     private FadeTransition trans;
+    public final Label text;
 
     /**
      * Create the overlay.
@@ -58,7 +60,7 @@ public class AddSongPromptOverlay extends StackPane {
         StackPane.setMargin(content, new Insets(10,0,0,15));
         ImageView iv = new ImageView(new Image("file:icons/whitearrow.png"));
         content.getChildren().add(iv);
-        final Text text = new Text(LabelGrabber.INSTANCE.getLabel("add.song.hint.text"));
+        text = new Label(LabelGrabber.INSTANCE.getLabel("add.song.hint.text"));
         Platform.runLater(new Runnable() {
 
             @Override
@@ -77,7 +79,8 @@ public class AddSongPromptOverlay extends StackPane {
                 });
             }
         });
-        text.setFill(Color.WHITESMOKE);
+        text.setWrapText(true);
+        text.setTextFill(Color.WHITESMOKE);
         text.setStyle("-fx-font-size:20pt");
         content.getChildren().add(text);
         getChildren().add(content);
