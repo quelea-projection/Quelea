@@ -80,7 +80,7 @@ public class ThemePreviewPanel extends VBox {
             public void updateCallback() {
                 updateThemePreviewCanvas(updateTheme);
             }
-        }, Priority.LOW);
+        }, Priority.LOW, false);
         canvas.setPrefSize(200, 200);
         updateThemePreviewCanvas(theme);
         String name;

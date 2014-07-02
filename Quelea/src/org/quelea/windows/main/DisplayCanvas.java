@@ -62,6 +62,7 @@ public class DisplayCanvas extends StackPane {
     private Priority dravingPriority = Priority.LOW;
     private Type type = Type.PREVIEW;
     private final boolean playVideo;
+    private final boolean isTextOnly;
 
     public enum Type {
 
@@ -73,8 +74,9 @@ public class DisplayCanvas extends StackPane {
     public enum Priority {
 
         HIGH(0),
-        MID(1),
-        LOW(2);
+        HIGH_MID(1),
+        MID(2),
+        LOW(3);
         private final int priority;
 
         private Priority(int priority) {
@@ -98,11 +100,13 @@ public class DisplayCanvas extends StackPane {
      * @param updater the updater that will update this canvas.
      * @param dravingPriority the drawing priority of this canvas when it's
      * updating.
+     * @param textOnly whether this is to be a part of a text only view.
      */
-    public DisplayCanvas(boolean showBorder, boolean stageView, boolean playVideo, final CanvasUpdater updater, Priority dravingPriority) {
+    public DisplayCanvas(boolean showBorder, boolean stageView, boolean playVideo, final CanvasUpdater updater, Priority dravingPriority, final boolean textOnly) {
         setStyle("-fx-background-color: rgba(0, 0, 0, 0);");
         this.playVideo = playVideo;
         this.stageView = stageView;
+        this.isTextOnly = textOnly;
         this.dravingPriority = dravingPriority;
         setMinHeight(0);
         setMinWidth(0);
@@ -128,7 +132,7 @@ public class DisplayCanvas extends StackPane {
         black.setOpacity(0);
         getChildren().add(black);
 
-        logoImage = new LogoImage(stageView);
+        logoImage = new LogoImage(stageView, isTextOnly);
 
         logoImage.minWidthProperty().bind(widthProperty());
         logoImage.maxWidthProperty().bind(widthProperty());
@@ -140,7 +144,11 @@ public class DisplayCanvas extends StackPane {
         if(stageView) {
             black.setFill(QueleaProperties.get().getStageBackgroundColor());
         }
-
+        if(isTextOnly){
+            if(!QueleaProperties.get().getTextOnlyUseThemeBackground()){
+            black.setFill(QueleaProperties.get().getTextOnlyBackgroundColor());
+            }
+        }
         noticeDrawer = new NoticeDrawer(this);
         noticeOverlay = noticeDrawer.getOverlay();
         final Runnable[] r = new Runnable[1];
@@ -303,6 +311,15 @@ public class DisplayCanvas extends StackPane {
      */
     public boolean isStageView() {
         return stageView;
+    }
+    
+        /**
+     * Determine if this canvas is part of a text only view.
+     * <p/>
+     * @return true if its a text only view, false otherwise.
+     */
+    public boolean isTextOnlyView() {
+        return isTextOnly;
     }
 
     public void update() {

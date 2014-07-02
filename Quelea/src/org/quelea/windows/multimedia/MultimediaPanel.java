@@ -72,7 +72,7 @@ public class MultimediaPanel extends AbstractPanel {
             public void updateCallback() {
                 updateCanvas();
             }
-        }, DisplayCanvas.Priority.LOW);
+        }, DisplayCanvas.Priority.LOW, false);
         registerDisplayCanvas(dummyCanvas);
     }
 

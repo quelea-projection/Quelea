@@ -48,6 +48,7 @@ public class OptionsDialog extends Stage {
     private final OptionsGeneralPanel generalPanel;
     private OptionsBiblePanel biblePanel;
     private OptionsStageViewPanel stageViewPanel;
+    private OptionsTextOnlyViewPanel textOnlyViewPanel;
     private ServerSettingsPanel serverSettingsPanel;
 
     /**
@@ -84,6 +85,13 @@ public class OptionsDialog extends Stage {
         stageViewTab.setText(LabelGrabber.INSTANCE.getLabel("stage.options.heading"));
         stageViewTab.setContent(stageViewPanel);
         tabbedPane.getTabs().add(stageViewTab);
+        
+        textOnlyViewPanel = new OptionsTextOnlyViewPanel();
+        Tab textOnlyViewTab = new Tab();
+        textOnlyViewTab.setClosable(false);
+        textOnlyViewTab.setText(LabelGrabber.INSTANCE.getLabel("textOnly.options.heading"));
+       textOnlyViewTab.setContent(textOnlyViewPanel);
+        tabbedPane.getTabs().add(textOnlyViewTab);
         
         biblePanel = new OptionsBiblePanel();
         Tab bibleTab = new Tab();
@@ -171,6 +179,14 @@ public class OptionsDialog extends Stage {
      */
     public OptionsStageViewPanel getStageViewPanel() {
         return stageViewPanel;
+    }
+    
+    /**
+     * Get the text only view panel used in this options dialog.
+     * @return the text only view panel
+     */
+    public OptionsTextOnlyViewPanel getTextOnlyViewPanel(){
+        return textOnlyViewPanel;
     }
     
     /**

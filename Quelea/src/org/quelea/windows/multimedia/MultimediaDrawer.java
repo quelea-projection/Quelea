@@ -1,6 +1,7 @@
 package org.quelea.windows.multimedia;
 
 import javafx.scene.image.ImageView;
+import javafx.scene.paint.Color;
 import org.quelea.data.displayable.Displayable;
 import org.quelea.data.displayable.MultimediaDisplayable;
 import org.quelea.services.utils.QueleaProperties;
@@ -22,12 +23,15 @@ public class MultimediaDrawer extends DisplayableDrawer {
 
     @Override
     public void draw(Displayable displayable) {
-        if(getCanvas().isStageView()) {
+        if (getCanvas().isStageView()) {
             ImageView imageView = getCanvas().getNewImageView();
             imageView.setImage(Utils.getImageFromColour(QueleaProperties.get().getStageBackgroundColor()));
             getCanvas().getChildren().add(0, imageView);
-        }
-        else {
+        } else if (getCanvas().isTextOnlyView()) {
+            ImageView imageView = getCanvas().getNewImageView();
+            imageView.setImage(Utils.getImageFromColour(QueleaProperties.get().getTextOnlyUseThemeBackground() ? Color.BLACK : QueleaProperties.get().getTextOnlyBackgroundColor()  ));
+            getCanvas().getChildren().add(0, imageView);
+        } else {
             if (playVideo) {
                 controlPanel.reset();
                 controlPanel.loadMultimedia(((MultimediaDisplayable) displayable).getLocation());

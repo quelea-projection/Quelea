@@ -62,7 +62,7 @@ public class SelectLyricsPanel extends AbstractPanel {
             public void updateCallback() {
                 updateCanvas();
             }
-        }, Priority.LOW);
+        }, Priority.LOW, false);
         DisplayPreview preview = new DisplayPreview(previewCanvas);
         splitPane.setStyle("-fx-background-color: rgba(0, 0, 0);");
         splitPane.getItems().add(lyricsList);

@@ -63,13 +63,28 @@ public class DisplayStage extends Stage {
      * a normal projection view.
      */
     public DisplayStage(Bounds area, boolean stageView) {
-        final boolean playVideo = !stageView;
+        final boolean playVideo;
+        final boolean textOnly;
         initStyle(StageStyle.TRANSPARENT);
         Utils.addIconsToStage(this);
         setTitle(LabelGrabber.INSTANCE.getLabel("projection.window.title"));
         setArea(area);
         StackPane scenePane = new StackPane();
-        canvas = new DisplayCanvas(true, stageView, playVideo, null, stageView ? Priority.HIGH : Priority.MID);
+        Priority priority;
+        if(stageView){ 
+            priority = Priority.HIGH;
+            playVideo = false;
+            textOnly = false;
+        }else if(QueleaApp.get().getProjectionWindow() != null){
+            priority = Priority.MID;
+            playVideo = false;
+            textOnly = true;
+        }else{
+            priority = Priority.HIGH_MID;
+            playVideo = true;
+            textOnly = false;
+        }
+        canvas = new DisplayCanvas(true, stageView, playVideo, null, priority, textOnly);
         canvas.setType(stageView ? DisplayCanvas.Type.STAGE : DisplayCanvas.Type.FULLSCREEN);
         canvas.setCursor(BLANK_CURSOR);
         scenePane.getChildren().add(canvas);

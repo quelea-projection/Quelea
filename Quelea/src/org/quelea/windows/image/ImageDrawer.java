@@ -50,6 +50,9 @@ public class ImageDrawer extends DisplayableDrawer {
         if(getCanvas().isStageView()) {
             image = Utils.getImageFromColour(QueleaProperties.get().getStageBackgroundColor());
         }
+        else if(getCanvas().isTextOnlyView() && !QueleaProperties.get().getTextOnlyUseThemeBackground()){
+            image = Utils.getImageFromColour(QueleaProperties.get().getTextOnlyBackgroundColor());
+        }
         else {
             image = ((ImageDisplayable) displayable).getImage();
             imageView.setPreserveRatio(true);

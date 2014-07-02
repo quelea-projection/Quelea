@@ -17,6 +17,7 @@
  */
 package org.quelea.windows.lyrics;
 
+import org.quelea.windows.main.DisplayableDrawer;
 import com.sun.javafx.tk.FontMetrics;
 import com.sun.javafx.tk.Toolkit;
 import java.util.ArrayList;
@@ -52,8 +53,10 @@ import org.quelea.data.VideoBackground;
 import org.quelea.data.displayable.BiblePassage;
 import org.quelea.data.displayable.Displayable;
 import org.quelea.data.displayable.SongDisplayable;
+import org.quelea.data.displayable.TextAlignment;
 import org.quelea.data.displayable.TextDisplayable;
 import org.quelea.data.displayable.TextSection;
+import org.quelea.data.displayable.VerticalAlignment;
 import org.quelea.services.utils.LineTypeChecker;
 import org.quelea.services.utils.LineTypeChecker.Type;
 import org.quelea.services.utils.LoggerUtils;
@@ -61,7 +64,6 @@ import org.quelea.services.utils.LyricLine;
 import org.quelea.services.utils.QueleaProperties;
 import org.quelea.services.utils.Utils;
 import org.quelea.windows.main.DisplayCanvas;
-import org.quelea.windows.main.DisplayableDrawer;
 import org.quelea.windows.main.widgets.DisplayPositionSelector;
 import org.quelea.windows.multimedia.VLCWindow;
 
@@ -94,6 +96,7 @@ public class LyricDrawer extends DisplayableDrawer {
     private void drawText(double defaultFontSize, boolean dumbWrap) {
         Utils.checkFXThread();
         boolean stageView = getCanvas().isStageView();
+        boolean textOnlyView = getCanvas().isTextOnlyView();
         if (getCanvas().getCanvasBackground() != null) {
             if (!getCanvas().getChildren().contains(getCanvas().getCanvasBackground())
                     && !getCanvas().getChildren().contains(textGroup) && !getCanvas().getChildren().contains(smallTextGroup)) {
@@ -117,6 +120,9 @@ public class LyricDrawer extends DisplayableDrawer {
 
         if (stageView) {
             font = Font.font(QueleaProperties.get().getStageTextFont(), QueleaProperties.get().getMaxFontSize());
+        }
+        if (textOnlyView && !QueleaProperties.get().getTextOnlyUseThemeFont()) {
+            font = Font.font(QueleaProperties.get().getTextOnlyTextFont(), QueleaProperties.get().getMaxFontSize());
         }
         if (font == null) {
             font = ThemeDTO.DEFAULT_FONT.getFont();
@@ -162,7 +168,7 @@ public class LyricDrawer extends DisplayableDrawer {
         }
         double smallFontSize;
         Font smallTextFont = Font.font("Arial", FontWeight.BOLD, FontPosture.REGULAR, 500);
-        smallFontSize = pickSmallFontSize(smallTextFont, smallText, getCanvas().getWidth() * 0.5, (getCanvas().getHeight() * 0.07) -5); //-5 for insets
+        smallFontSize = pickSmallFontSize(smallTextFont, smallText, getCanvas().getWidth() * 0.5, (getCanvas().getHeight() * 0.07) - 5); //-5 for insets
         smallTextFont = Font.font("Arial", FontWeight.BOLD, FontPosture.REGULAR, smallFontSize);
 
         FontMetrics metrics = Toolkit.getToolkit().getFontLoader().getFontMetrics(font);
@@ -185,11 +191,11 @@ public class LyricDrawer extends DisplayableDrawer {
         }
 
         getCanvas().getChildren().add(newTextGroup);
-        if(curDisplayable instanceof BiblePassage && QueleaProperties.get().getSmallBibleTextShow()) {
-                getCanvas().getChildren().add(smallTextGroup);
+        if (curDisplayable instanceof BiblePassage && QueleaProperties.get().getSmallBibleTextShow()) {
+            getCanvas().getChildren().add(smallTextGroup);
         }
-        if(curDisplayable instanceof SongDisplayable && QueleaProperties.get().getSmallSongTextShow()) {
-                getCanvas().getChildren().add(smallTextGroup);
+        if (curDisplayable instanceof SongDisplayable && QueleaProperties.get().getSmallSongTextShow()) {
+            getCanvas().getChildren().add(smallTextGroup);
         }
         getCanvas().pushLogoNoticeToFront();
 
@@ -212,7 +218,7 @@ public class LyricDrawer extends DisplayableDrawer {
             }
             t.setEffect(shadow);
 
-            setPositionX(t, loopMetrics, line.getLine(), stageView, curDisplayable instanceof BiblePassage);
+            setPositionX(t, loopMetrics, line.getLine(), stageView, textOnlyView, curDisplayable instanceof BiblePassage);
             t.setLayoutY(y);
 
             Color lineColor;
@@ -220,6 +226,8 @@ public class LyricDrawer extends DisplayableDrawer {
                 lineColor = QueleaProperties.get().getStageChordColor();
             } else if (stageView) {
                 lineColor = QueleaProperties.get().getStageLyricsColor();
+            } else if (textOnlyView && !QueleaProperties.get().getTextOnlyUseThemeLyricColor()) {
+                lineColor = QueleaProperties.get().getTextOnlyLyricsColor();
             } else if (line.isTranslateLine()) {
                 lineColor = theme.getTranslateFontPaint();
             } else {
@@ -241,7 +249,7 @@ public class LyricDrawer extends DisplayableDrawer {
             ft.setFont(smallTextFont);
             ft.setFill(theme.getFontPaint());
             ft.setLayoutY(sy);
-            if(QueleaProperties.get().getSmallTextPosition().equalsIgnoreCase("right")) {
+            if (QueleaProperties.get().getSmallTextPosition().equalsIgnoreCase("right")) {
                 ft.setLayoutX(getCanvas().getWidth() - smallTextMetrics.computeStringWidth(stext));
             }
             smallTextGroup.getChildren().add(ft);
@@ -251,15 +259,55 @@ public class LyricDrawer extends DisplayableDrawer {
             paintTransition.play();
         }
         textGroup = newTextGroup;
+        int textPosition = 4;
+        int horizAlignNumber = 0;
+        int vertAlignNumber = 0;
+        if (theme.getTextPosition() <= -1) {
+            horizAlignNumber = 1;
+            vertAlignNumber = 3;
+        } else if (theme.getTextPosition() <= 3) {
+            horizAlignNumber = theme.getTextPosition();
+            vertAlignNumber = 0;
+        } else if (theme.getTextPosition() <= 6) {
+            horizAlignNumber = theme.getTextPosition() - 3;
+            vertAlignNumber = 3;
+        } else {
+            horizAlignNumber = theme.getTextPosition() - 6;
+            vertAlignNumber = 6;
+        }
+        if (!QueleaProperties.get().getTextOnlyUseThemeAlignment()) {
+            if (TextAlignment.parse(QueleaProperties.get().getTextOnlyTextAlignment()) == TextAlignment.LEFT) {
+                horizAlignNumber = 0;
+            } else if (TextAlignment.parse(QueleaProperties.get().getTextOnlyTextAlignment()) == TextAlignment.CENTRE) {
+                horizAlignNumber = 1;
+//            } else if (TextAlignment.parse(QueleaProperties.get().getTextOnlyTextAlignment()) == TextAlignment.RIGHT) {
+//                horizAlignNumber = 2;
+            } else {
+                horizAlignNumber = 1;
+            }
+        }
+        if (!QueleaProperties.get().getTextOnlyUseThemeVertAlignment()) {
+            if (VerticalAlignment.parse(QueleaProperties.get().getTextOnlyVerticalAlignment()) == VerticalAlignment.TOP) {
+                vertAlignNumber = 0;
+            } else if (VerticalAlignment.parse(QueleaProperties.get().getTextOnlyVerticalAlignment()) == VerticalAlignment.CENTRE) {
+                vertAlignNumber = 3;
+            } else if (VerticalAlignment.parse(QueleaProperties.get().getTextOnlyVerticalAlignment()) == VerticalAlignment.BOTTOM) {
+                vertAlignNumber = 6;
+            }
+        }
+        textPosition = horizAlignNumber + vertAlignNumber;
+
         StackPane.setMargin(textGroup, new Insets(10));
         if (stageView) {
             StackPane.setAlignment(textGroup, Pos.CENTER);
+        } else if (textOnlyView) {
+            StackPane.setAlignment(textGroup, DisplayPositionSelector.getPosFromIndex(textPosition));
         } else {
             StackPane.setAlignment(textGroup, DisplayPositionSelector.getPosFromIndex(theme.getTextPosition()));
         }
 
         StackPane.setMargin(smallTextGroup, new Insets(5));
-        
+
         if (getCanvas().isCleared() && !getLastClearedState()) {
             setLastClearedState(true);
             FadeTransition t = new FadeTransition(Duration.seconds(QueleaProperties.get().getFadeDuration()), textGroup);
@@ -284,7 +332,7 @@ public class LyricDrawer extends DisplayableDrawer {
         }
     }
 
-    private void setPositionX(FormattedText t, FontMetrics metrics, String line, boolean stageView, boolean biblePassage) {
+    private void setPositionX(FormattedText t, FontMetrics metrics, String line, boolean stageView, boolean textOnlyView, boolean biblePassage) {
         Utils.checkFXThread();
         String strippedLine = line.replaceAll("\\<\\/?sup\\>", "");
         double width = metrics.computeStringWidth(strippedLine);
@@ -292,6 +340,12 @@ public class LyricDrawer extends DisplayableDrawer {
         double centreOffset = (getCanvas().getWidth() - width) / 2;
         double rightOffset = (getCanvas().getWidth() - width);
         if (stageView) {
+            if (QueleaProperties.get().getStageTextAlignment().equalsIgnoreCase("Left")) {
+                t.setLayoutX(getCanvas().getWidth());
+            } else {
+                t.setLayoutX(centreOffset);
+            }
+        } else if (textOnlyView && !QueleaProperties.get().getTextOnlyUseThemeAlignment()) {
             if (QueleaProperties.get().getStageTextAlignment().equalsIgnoreCase("Left")) {
                 t.setLayoutX(getCanvas().getWidth());
             } else {
@@ -340,6 +394,8 @@ public class LyricDrawer extends DisplayableDrawer {
         ColorAdjust colourAdjust = null;
         if (getCanvas().isStageView()) {
             image = Utils.getImageFromColour(QueleaProperties.get().getStageBackgroundColor());
+        } else if (getCanvas().isTextOnlyView() && !QueleaProperties.get().getTextOnlyUseThemeBackground()) {
+            image = Utils.getImageFromColour(QueleaProperties.get().getTextOnlyBackgroundColor());
         } else if (theme.getBackground() instanceof ImageBackground) {
             image = ((ImageBackground) theme.getBackground()).getImage();
         } else if (theme.getBackground() instanceof ColourBackground) {
@@ -778,14 +834,13 @@ public class LyricDrawer extends DisplayableDrawer {
     private double pickSmallFontSize(Font font, String[] text, double width, double height) {
         FontMetrics metrics = Toolkit.getToolkit().getFontLoader().getFontMetrics(font);
         ArrayList<String> al = new ArrayList<String>();
-        for(String te : text) {
-            if(al.contains("\n")) {
+        for (String te : text) {
+            if (al.contains("\n")) {
                 String[] te2 = te.split("\n");
-                for(String te3 : te2) {
+                for (String te3 : te2) {
                     al.add(te3);
                 }
-            }
-            else {
+            } else {
                 al.add(te);
             }
         }
