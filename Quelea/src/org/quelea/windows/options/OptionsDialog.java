@@ -134,6 +134,7 @@ public class OptionsDialog extends Stage {
      */
     public void callBeforeShowing() {
         getGeneralPanel().resetLanguageChanged();
+        getGeneralPanel().resetMultimediaChanged();
         getServerSettingsPanel().resetChanged();
     }
     
@@ -143,6 +144,10 @@ public class OptionsDialog extends Stage {
     private void callBeforeHiding() {
         if(getGeneralPanel().hasLanguageChanged()) {
             Dialog.showInfo(LabelGrabber.INSTANCE.getLabel("language.changed"), LabelGrabber.INSTANCE.getLabel("language.changed.message"), QueleaApp.get().getMainWindow());
+        }
+        if(getGeneralPanel().hasAdvancedMultimediaChanged()){
+            Dialog.showInfo(LabelGrabber.INSTANCE.getLabel("multimedia.changed"), LabelGrabber.INSTANCE.getLabel("multimedia.changed.message"), QueleaApp.get().getMainWindow());
+
         }
         if(getServerSettingsPanel().hasChanged()) {
             Dialog.showInfo(LabelGrabber.INSTANCE.getLabel("server.changed.label"), LabelGrabber.INSTANCE.getLabel("server.changed.message"), QueleaApp.get().getMainWindow());

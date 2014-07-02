@@ -66,6 +66,7 @@ public class OptionsGeneralPanel extends GridPane implements PropertyPanel {
     private final Slider maxCharsSlider;
 //    private final Slider minLinesSlider;
     private LanguageFile currentLanguageFile;
+    private boolean currentAdvancedMultimediaOption;
     private final CheckBox showSmallSongTextBox;
     private final CheckBox showSmallBibleTextBox;
     private final ComboBox smallTextPositionCombo;
@@ -378,6 +379,22 @@ public class OptionsGeneralPanel extends GridPane implements PropertyPanel {
      */
     public boolean hasLanguageChanged() {
         return !languageFileComboBox.getValue().equals(currentLanguageFile);
+    }
+
+    /**
+     * Reset the mechanism for determining if the user has changed the advanced
+     * multimedia option. Call before showing the options dialog.
+     */
+    public void resetMultimediaChanged() {
+        currentAdvancedMultimediaOption = vlcAdvancedCheckBox.isSelected();
+    }
+
+    /**
+     * Determine if the user has changed the advanced multimedia option since
+     * the last call of resetMultimediaChanged().
+     */
+    public boolean hasAdvancedMultimediaChanged() {
+        return !(currentAdvancedMultimediaOption == vlcAdvancedCheckBox.isSelected());
     }
 
     /**
