@@ -465,6 +465,108 @@ public final class QueleaProperties extends Properties {
     }
 
     /**
+     * Set whether the text only display uses the theme horizontal alignment.
+     *
+     * @param useThemeAlignment true if text only should use the theme
+     * horizontal alignment, false otherwise.
+     */
+    public void setTextOnlyUseThemeAlignment(boolean useThemeAlignment) {
+        setProperty("textOnly.useTheme.alignment", Boolean.toString(useThemeAlignment));
+        write();
+    }
+
+    /**
+     * Get whether the theme alignment should be used on the text only display.
+     *
+     * @return true if the theme alignment should be used, false otherwise.
+     */
+    public boolean getTextOnlyUseThemeAlignment() {
+        return Boolean.parseBoolean(getProperty("textOnly.useTheme.alignment"));
+    }
+
+    /**
+     * Set whether the text only display uses the theme vertical alignment.
+     *
+     * @param useThemeVertAlignment true if text only should use the theme
+     * vertical alignment, false otherwise.
+     */
+    public void setTextOnlyUseThemeVertAlignment(boolean useThemeVertAlignment) {
+        setProperty("textOnly.useTheme.vertAlignment", Boolean.toString(useThemeVertAlignment));
+        write();
+    }
+
+    /**
+     * Get whether the theme vertical alignment should be used on the text only
+     * display.
+     *
+     * @return true if the theme vertical alignment should be used, false
+     * otherwise.
+     */
+    public boolean getTextOnlyUseThemeVertAlignment() {
+        return Boolean.parseBoolean(getProperty("textOnly.useTheme.vertAlignment"));
+    }
+
+    /**
+     * Set whether the text only display uses the theme font.
+     *
+     * @param useThemeFont true if text only should use the theme font, false
+     * otherwise.
+     */
+    public void setTextOnlyUseThemeFont(boolean useThemeFont) {
+        setProperty("textOnly.useTheme.font", Boolean.toString(useThemeFont));
+        write();
+    }
+
+    /**
+     * Get whether the theme font should be used on the text only display.
+     *
+     * @return true if the theme font should be used, false otherwise.
+     */
+    public boolean getTextOnlyUseThemeFont() {
+        return Boolean.parseBoolean(getProperty("textOnly.useTheme.font"));
+    }
+
+    /**
+     * Set whether the text only display uses the theme background. Note that video backgrounds will be shown as image thumbnails.
+     *
+     * @param useThemeBackgound true if text only should use the theme
+     * background, false otherwise.
+     */
+    public void setTextOnlyUseThemeBackground(boolean useThemeBackground) {
+        setProperty("textOnly.useTheme.background", Boolean.toString(useThemeBackground));
+        write();
+    }
+
+    /**
+     * Get whether the theme background should be used on the text only display.Note that video backgrounds will be shown as image thumbnails.
+     *
+     * @return true if the theme background should be used, false otherwise.
+     */
+    public boolean getTextOnlyUseThemeBackground() {
+        return Boolean.parseBoolean(getProperty("textOnly.useTheme.background"));
+    }
+
+    /**
+     * Set whether the text only display uses the theme lyric color.
+     *
+     * @param useThemeLyricColor true if text only should use the theme
+     * lyric color, false otherwise.
+     */
+    public void setTextOnlyUseThemeLyricColor(boolean useThemeLyricColor) {
+        setProperty("textOnly.useTheme.lyricColor", Boolean.toString(useThemeLyricColor));
+        write();
+    }
+
+    /**
+     * Get whether the theme lyric color should be used on the text only display.
+     *
+     * @return true if the theme lyric color should be used, false otherwise.
+     */
+    public boolean getTextOnlyUseThemeLyricColor() {
+        return Boolean.parseBoolean(getProperty("textOnly.useTheme.lyricColor"));
+    }
+    
+    /**
      * Get the font to use for Text Only output text.
      * <p/>
      * @return the font to use for stage text.
@@ -538,7 +640,7 @@ public final class QueleaProperties extends Properties {
     public void setTextOnlyBackgroundColor(Color color) {
         setProperty("textOnly.background.color", getStr(color));
     }
-   
+
     /**
      * Get the colour used for the background in Text Only view.
      * <p/>
@@ -548,7 +650,7 @@ public final class QueleaProperties extends Properties {
         return getColor(getProperty("textOnly.background.color", "0,0,0"));
     }
 
-     /**
+    /**
      * Get the colour used to display lyrics in Text Only view.
      * <p/>
      * @return the colour used to display lyrics in stage view.
@@ -556,8 +658,7 @@ public final class QueleaProperties extends Properties {
     public Color getTextOnlyLyricsColor() {
         return getColor(getProperty("textOnly.lyrics.color", "255,255,255"));
     }
-    
-    
+
     /**
      * Determine whether we should phone home at startup with anonymous
      * information. Simply put phonehome=false in the properties file to disable
@@ -852,10 +953,10 @@ public final class QueleaProperties extends Properties {
         setProperty("stage.mode", "screen");
         write();
     }
-      
-      /**
-     * Get the number of the text only screen. This is the screen that the projected
-     * output will be displayed on.
+
+    /**
+     * Get the number of the text only screen. This is the screen that the
+     * projected output will be displayed on.
      * <p/>
      * @return the text only screen number.
      */
@@ -927,8 +1028,6 @@ public final class QueleaProperties extends Properties {
         setProperty("textOnly.mode", "screen");
         write();
     }
-    
-    
 
     /**
      * Get the minimum number of lines that should be displayed on each page.
@@ -1440,26 +1539,28 @@ public final class QueleaProperties extends Properties {
         write();
     }
 
-     /**
+    /**
      * Get how many words or verses to show per slide
+     *
      * @return number of words or verses (depends on use.max.bible.verses)
      */
     public int getMaxBibleItems() {
         return Integer.parseInt(getProperty("max.bible.items", "5"));
     }
-    
+
     public void setMaxBibleItems(int number) {
         setProperty("max.bible.items", Integer.toString(number));
     }
-    
+
     /**
      * Get whether the max items is verses or words
+     *
      * @return true if using maximum verses per slide
      */
     public boolean getBibleSectionVerses() {
         return Boolean.parseBoolean(getProperty("use.max.bible.verses", "true"));
     }
-    
+
     public void setBibleSectionVerses(boolean useVerses) {
         setProperty("use.max.bible.verses", Boolean.toString(useVerses));
     }

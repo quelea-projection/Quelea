@@ -59,7 +59,7 @@ public class LogoImage extends StackPane {
     public final void refresh() {
         if (stageView) {
             logoImage.setImage(Utils.getImageFromColour(QueleaProperties.get().getStageBackgroundColor()));
-        } else if (textOnlyView) {
+        } else if (textOnlyView && !QueleaProperties.get().getTextOnlyUseThemeBackground()) {
             logoImage.setImage(Utils.getImageFromColour(QueleaProperties.get().getTextOnlyBackgroundColor()));
         } else {
             logoImage.setImage(ImageManager.INSTANCE.getImage(QueleaProperties.get().getLogoImageURI()));

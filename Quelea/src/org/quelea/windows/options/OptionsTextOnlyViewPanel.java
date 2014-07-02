@@ -44,6 +44,11 @@ public class OptionsTextOnlyViewPanel extends GridPane implements PropertyPanel 
     private ComboBox<String> fontSelection;
     private ColorPicker backgroundColorPicker;
     private ColorPicker lyricsColorPicker;
+    private CheckBox useThemeAlignment;
+    private CheckBox useThemeVertAlignment;
+    private CheckBox useThemeFont;
+    private CheckBox useThemeBackground;
+    private CheckBox useThemeLyricsColor;
 
     /**
      * Create the Text Only view options panel.
@@ -61,6 +66,9 @@ public class OptionsTextOnlyViewPanel extends GridPane implements PropertyPanel 
         }
         GridPane.setConstraints(lineAlignment, 2, 1);
         getChildren().add(lineAlignment);
+        useThemeAlignment = new CheckBox(LabelGrabber.INSTANCE.getLabel("use.theme.align.textOnly"));
+        GridPane.setConstraints(useThemeAlignment, 4, 1);
+        getChildren().add(useThemeAlignment);
 
         Label vertAlignmentLabel = new Label(LabelGrabber.INSTANCE.getLabel("stage.line.vertical.alignment"));
         GridPane.setConstraints(vertAlignmentLabel, 1, 2);
@@ -72,6 +80,9 @@ public class OptionsTextOnlyViewPanel extends GridPane implements PropertyPanel 
         }
         GridPane.setConstraints(vertAlignment, 2, 2);
         getChildren().add(vertAlignment);
+         useThemeVertAlignment = new CheckBox(LabelGrabber.INSTANCE.getLabel("use.theme.vertAlign.textOnly"));
+        GridPane.setConstraints(useThemeVertAlignment, 4, 2);
+        getChildren().add(useThemeVertAlignment);
 
         Label fontLabel = new Label(LabelGrabber.INSTANCE.getLabel("stage.font.selection"));
         GridPane.setConstraints(fontLabel, 1, 3);
@@ -83,6 +94,9 @@ public class OptionsTextOnlyViewPanel extends GridPane implements PropertyPanel 
         }
         GridPane.setConstraints(fontSelection, 2, 3);
         getChildren().add(fontSelection);
+          useThemeFont = new CheckBox(LabelGrabber.INSTANCE.getLabel("use.theme.font.textOnly"));
+        GridPane.setConstraints(useThemeFont, 4, 3);
+        getChildren().add(useThemeFont);
 
         Label backgroundLabel = new Label(LabelGrabber.INSTANCE.getLabel("stage.background.colour"));
         GridPane.setConstraints(backgroundLabel, 1, 4);
@@ -90,6 +104,9 @@ public class OptionsTextOnlyViewPanel extends GridPane implements PropertyPanel 
         backgroundColorPicker = new ColorPicker(Color.BLACK);
         GridPane.setConstraints(backgroundColorPicker, 2, 4);
         getChildren().add(backgroundColorPicker);
+          useThemeBackground = new CheckBox(LabelGrabber.INSTANCE.getLabel("use.theme.background.textOnly"));
+        GridPane.setConstraints(useThemeBackground, 4, 4);
+        getChildren().add(useThemeBackground);
 
         Label colourLabel = new Label(LabelGrabber.INSTANCE.getLabel("stage.lyrics.colour"));
         GridPane.setConstraints(colourLabel, 1, 5);
@@ -97,6 +114,9 @@ public class OptionsTextOnlyViewPanel extends GridPane implements PropertyPanel 
         lyricsColorPicker = new ColorPicker(Color.BLACK);
         GridPane.setConstraints(lyricsColorPicker, 2, 5);
         getChildren().add(lyricsColorPicker);
+           useThemeLyricsColor = new CheckBox(LabelGrabber.INSTANCE.getLabel("use.theme.lyricColor.textOnly"));
+        GridPane.setConstraints(useThemeLyricsColor, 4, 5);
+        getChildren().add(useThemeLyricsColor);
 
         readProperties();
     }
@@ -111,6 +131,11 @@ public class OptionsTextOnlyViewPanel extends GridPane implements PropertyPanel 
         QueleaProperties.get().setTextOnlyTextFont(fontSelection.itemsProperty().get().get(fontSelection.getSelectionModel().getSelectedIndex()));
         QueleaProperties.get().setTextOnlyBackgroundColor(backgroundColorPicker.getValue());
         QueleaProperties.get().setTextOnlyLyricsColor(lyricsColorPicker.getValue());
+        QueleaProperties.get().setTextOnlyUseThemeAlignment(useThemeAlignment.isSelected());
+        QueleaProperties.get().setTextOnlyUseThemeVertAlignment(useThemeVertAlignment.isSelected());
+        QueleaProperties.get().setTextOnlyUseThemeFont(useThemeFont.isSelected());
+        QueleaProperties.get().setTextOnlyUseThemeBackground(useThemeBackground.isSelected());
+        QueleaProperties.get().setTextOnlyUseThemeLyricColor(useThemeLyricsColor.isSelected());
     }
 
     /**
@@ -126,5 +151,10 @@ public class OptionsTextOnlyViewPanel extends GridPane implements PropertyPanel 
         fontSelection.getSelectionModel().select(QueleaProperties.get().getTextOnlyTextFont());
         lineAlignment.getSelectionModel().select(QueleaProperties.get().getTextOnlyTextAlignment());
         vertAlignment.getSelectionModel().select(QueleaProperties.get().getTextOnlyVerticalAlignment());
+        useThemeAlignment.setSelected(QueleaProperties.get().getTextOnlyUseThemeAlignment());
+        useThemeVertAlignment.setSelected(QueleaProperties.get().getTextOnlyUseThemeVertAlignment());
+        useThemeFont.setSelected(QueleaProperties.get().getTextOnlyUseThemeFont());
+        useThemeBackground.setSelected(QueleaProperties.get().getTextOnlyUseThemeBackground());
+        useThemeLyricsColor.setSelected(QueleaProperties.get().getTextOnlyUseThemeLyricColor());
     }
 }

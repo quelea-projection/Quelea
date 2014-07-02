@@ -145,7 +145,9 @@ public class DisplayCanvas extends StackPane {
             black.setFill(QueleaProperties.get().getStageBackgroundColor());
         }
         if(isTextOnly){
+            if(!QueleaProperties.get().getTextOnlyUseThemeBackground()){
             black.setFill(QueleaProperties.get().getTextOnlyBackgroundColor());
+            }
         }
         noticeDrawer = new NoticeDrawer(this);
         noticeOverlay = noticeDrawer.getOverlay();
