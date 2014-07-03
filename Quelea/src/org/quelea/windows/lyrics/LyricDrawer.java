@@ -84,6 +84,8 @@ public class LyricDrawer extends DisplayableDrawer {
     private boolean capitaliseFirst;
     private final Map<DisplayCanvas, Boolean> lastClearedState;
     private String[] smallText;
+    private boolean textOnlyView = false;
+    private boolean stageView = false;
 
     public LyricDrawer() {
         text = new String[]{};
@@ -91,12 +93,14 @@ public class LyricDrawer extends DisplayableDrawer {
         textGroup = new Group();
         smallTextGroup = new Group();
         lastClearedState = new HashMap<>();
+
     }
 
     private void drawText(double defaultFontSize, boolean dumbWrap) {
+        stageView = getCanvas().isStageView();
+        textOnlyView = getCanvas().isTextOnlyView();
         Utils.checkFXThread();
-        boolean stageView = getCanvas().isStageView();
-        boolean textOnlyView = getCanvas().isTextOnlyView();
+
         if (getCanvas().getCanvasBackground() != null) {
             if (!getCanvas().getChildren().contains(getCanvas().getCanvasBackground())
                     && !getCanvas().getChildren().contains(textGroup) && !getCanvas().getChildren().contains(smallTextGroup)) {
@@ -121,9 +125,13 @@ public class LyricDrawer extends DisplayableDrawer {
         if (stageView) {
             font = Font.font(QueleaProperties.get().getStageTextFont(), QueleaProperties.get().getMaxFontSize());
         }
-        if (textOnlyView && !QueleaProperties.get().getTextOnlyUseThemeFont()) {
-            font = Font.font(QueleaProperties.get().getTextOnlyTextFont(), QueleaProperties.get().getMaxFontSize());
+        if (textOnlyView) {
+            if (!QueleaProperties.get().getTextOnlyUseThemeFont()) {
+                font = Font.font(QueleaProperties.get().getTextOnlyTextFont(), QueleaProperties.get().getMaxFontSize());
+            }
+
         }
+
         if (font == null) {
             font = ThemeDTO.DEFAULT_FONT.getFont();
         }
@@ -156,6 +164,15 @@ public class LyricDrawer extends DisplayableDrawer {
         if (stageView) {
             font = Font.font(font.getFamily(), FontWeight.NORMAL,
                     FontPosture.REGULAR, fontSize);
+        } else if (textOnlyView && !QueleaProperties.get().getTextOnlyUseThemeStyling()) {
+            font = Font.font(font.getFamily(),
+                    QueleaProperties.get().getTextOnlyIsBold() ? FontWeight.BOLD : FontWeight.NORMAL,
+                    QueleaProperties.get().getTextOnlyIsItalic() ? FontPosture.ITALIC : FontPosture.REGULAR,
+                    fontSize);
+            translateFont = Font.font(translateFont.getFamily(),
+                    QueleaProperties.get().getTextOnlyIsBold() ? FontWeight.BOLD : FontWeight.NORMAL,
+                    QueleaProperties.get().getTextOnlyIsItalic() ? FontPosture.ITALIC : FontPosture.REGULAR,
+                    fontSize - 3);
         } else {
             font = Font.font(font.getFamily(),
                     theme.isBold() ? FontWeight.BOLD : FontWeight.NORMAL,
@@ -346,7 +363,7 @@ public class LyricDrawer extends DisplayableDrawer {
                 t.setLayoutX(centreOffset);
             }
         } else if (textOnlyView && !QueleaProperties.get().getTextOnlyUseThemeAlignment()) {
-            if (QueleaProperties.get().getStageTextAlignment().equalsIgnoreCase("Left")) {
+            if (QueleaProperties.get().getTextOnlyTextAlignment().equalsIgnoreCase("Left")) {
                 t.setLayoutX(getCanvas().getWidth());
             } else {
                 t.setLayoutX(centreOffset);
@@ -601,7 +618,12 @@ public class LyricDrawer extends DisplayableDrawer {
         }
 
         List<LyricLine> ret = new ArrayList<>();
-        int maxLength = QueleaProperties.get().getMaxChars();
+        int maxLength;
+        if (getCanvas().isTextOnlyView()) {
+            maxLength = QueleaProperties.get().getTextOnlyMaxCharNumber();
+        } else {
+            maxLength = QueleaProperties.get().getMaxChars();
+        }
         for (LyricLine line : finalLines) {
             if (getCanvas().isStageView() || (translationArr != null && translationArr.length > 0)) {
                 ret.add(line);
@@ -741,6 +763,8 @@ public class LyricDrawer extends DisplayableDrawer {
 
     public void setText(TextDisplayable displayable, int index) {
         boolean fade = curDisplayable != displayable;
+        stageView = getCanvas().isStageView();
+        textOnlyView = getCanvas().isTextOnlyView();
         double uniformFontSize = getUniformFontSize(displayable);
         curDisplayable = displayable;
         String[] bigText;

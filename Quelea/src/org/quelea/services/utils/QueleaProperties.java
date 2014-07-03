@@ -318,6 +318,28 @@ public final class QueleaProperties extends Properties {
     }
 
     /**
+     * Get the maximum number of characters per line used by text only
+     * displayables.
+     * <p>
+     * @return the maximum number of characters per line used by text only
+     * displayables.
+     */
+    public int getTextOnlyMaxCharNumber() {
+        return Integer.parseInt(getProperty("textOnly.max.char.number", "80"));
+    }
+
+    /**
+     * Set the maximum number of characters per line used by text only
+     * displayables.
+     * <p>
+     * @param charNumber the maximum number of characters per line used by text
+     * only displayables.
+     */
+    public void setTextOnlyMaxCharNumber(int charNumber) {
+        setProperty("textOnly.max.char.number", Integer.toString(charNumber));
+    }
+
+    /**
      * Get the additional line spacing (in pixels) to be used between each line.
      * <p>
      * @return the additional line spacing.
@@ -527,7 +549,8 @@ public final class QueleaProperties extends Properties {
     }
 
     /**
-     * Set whether the text only display uses the theme background. Note that video backgrounds will be shown as image thumbnails.
+     * Set whether the text only display uses the theme background. Note that
+     * video backgrounds will be shown as image thumbnails.
      *
      * @param useThemeBackgound true if text only should use the theme
      * background, false otherwise.
@@ -538,7 +561,8 @@ public final class QueleaProperties extends Properties {
     }
 
     /**
-     * Get whether the theme background should be used on the text only display.Note that video backgrounds will be shown as image thumbnails.
+     * Get whether the theme background should be used on the text only
+     * display.Note that video backgrounds will be shown as image thumbnails.
      *
      * @return true if the theme background should be used, false otherwise.
      */
@@ -549,8 +573,8 @@ public final class QueleaProperties extends Properties {
     /**
      * Set whether the text only display uses the theme lyric color.
      *
-     * @param useThemeLyricColor true if text only should use the theme
-     * lyric color, false otherwise.
+     * @param useThemeLyricColor true if text only should use the theme lyric
+     * color, false otherwise.
      */
     public void setTextOnlyUseThemeLyricColor(boolean useThemeLyricColor) {
         setProperty("textOnly.useTheme.lyricColor", Boolean.toString(useThemeLyricColor));
@@ -558,14 +582,73 @@ public final class QueleaProperties extends Properties {
     }
 
     /**
-     * Get whether the theme lyric color should be used on the text only display.
+     * Get whether the theme lyric color should be used on the text only
+     * display.
      *
      * @return true if the theme lyric color should be used, false otherwise.
      */
     public boolean getTextOnlyUseThemeLyricColor() {
         return Boolean.parseBoolean(getProperty("textOnly.useTheme.lyricColor"));
     }
-    
+
+    /**
+     * Get whether the theme styling should be used on the text only display.
+     *
+     * @return true if the theme styling should be used, false otherwise.
+     */
+    public boolean getTextOnlyUseThemeStyling() {
+        return Boolean.parseBoolean(getProperty("textOnly.useTheme.styling"));
+    }
+
+    /**
+     * Set whether the text only display uses the theme styling.
+     *
+     * @param useThemeStyling true if text only should use the theme styling,
+     * false otherwise.
+     */
+    public void setTextOnlyUseThemeStyling(boolean useThemeStyling) {
+        setProperty("textOnly.useTheme.styling", Boolean.toString(useThemeStyling));
+        write();
+    }
+
+    /**
+     * Get whether the text only font should be bold.
+     *
+     * @return true if bold, false otherwise.
+     */
+    public boolean getTextOnlyIsBold() {
+        return Boolean.parseBoolean(getProperty("textOnly.isBold"));
+    }
+
+    /**
+     * Set whether the text only font should be bold.
+     *
+     * @param isBold true if text only should use be bold, false otherwise.
+     */
+    public void setTextOnlyIsBold(boolean isBold) {
+        setProperty("textOnly.isBold", Boolean.toString(isBold));
+        write();
+    }
+
+    /**
+     * Get whether the text only font should be italic.
+     *
+     * @return true if italic, false otherwise.
+     */
+    public boolean getTextOnlyIsItalic() {
+        return Boolean.parseBoolean(getProperty("textOnly.isItalic"));
+    }
+
+    /**
+     * Set whether the text only font should be italic.
+     *
+     * @param isItalic true if text only should use be italic, false otherwise.
+     */
+    public void setTextOnlyIsItalic(boolean isItalic) {
+        setProperty("textOnly.isItalic", Boolean.toString(isItalic));
+        write();
+    }
+
     /**
      * Get the font to use for Text Only output text.
      * <p/>
