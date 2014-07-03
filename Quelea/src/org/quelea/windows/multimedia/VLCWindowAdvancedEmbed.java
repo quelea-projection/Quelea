@@ -557,7 +557,6 @@ public class VLCWindowAdvancedEmbed extends VLCWindow {
 
             player2.setMute(mute);
 
-
         }
 
     }
@@ -660,9 +659,9 @@ public class VLCWindowAdvancedEmbed extends VLCWindow {
     public void show() {
 
         if (init) {
-            if(isPlayer1){
+            if (isPlayer1) {
                 player.setOpacity(1);
-            }else{
+            } else {
                 player2.setOpacity(1);
             }
             windowToBack();
@@ -677,9 +676,9 @@ public class VLCWindowAdvancedEmbed extends VLCWindow {
     public void hide() {
 
         if (init) {
-            if(isPlayer1){
+            if (isPlayer1) {
                 player.setOpacity(0);
-            }else{
+            } else {
                 player2.setOpacity(0);
             }
             windowToBack();
@@ -784,7 +783,8 @@ public class VLCWindowAdvancedEmbed extends VLCWindow {
         Utils.fxRunAndWait(new Runnable() {
             @Override
             public void run() {
-                QueleaApp.get().getProjectionWindow().toFront();
+               QueleaApp.get().getProjectionWindow().toFront();
+               QueleaApp.get().getMainWindow().toFront();
                 showing = QueleaApp.get().getProjectionWindow().isShowing();
                 if (showing) {
                     tempX = (int) QueleaApp.get().getProjectionWindow().getX();
@@ -886,7 +886,7 @@ public class VLCWindowAdvancedEmbed extends VLCWindow {
     @Override
     public void setHue(final double hue) {
         this.hue = hue;
-        }
+    }
 
     /**
      * Get the current hue of the video playing back.
