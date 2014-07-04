@@ -133,19 +133,7 @@ public class VLCWindowAdvancedEmbed extends VLCWindow {
                 }
             }
         }, 0, 30, TimeUnit.MILLISECONDS);
-        try {
-            /**
-             * this should not cause native crashes, but should be enough to
-             * determine whether VLCJ will work or not.
-             *
-             */
-
-            MediaPlayerFactory factory = new MediaPlayerFactory("--no-video-title-show");
-            init = true;
-        } catch (Exception ex) {
-            init = false;
-        }
-
+        init = player.isInit()&&player2.isInit();
         windowToBack();
     }
 
@@ -157,6 +145,7 @@ public class VLCWindowAdvancedEmbed extends VLCWindow {
      */
     @Override
     public boolean isInit() {
+        init = player.isInit()&&player2.isInit();
         return init;
     }
 
@@ -783,8 +772,8 @@ public class VLCWindowAdvancedEmbed extends VLCWindow {
         Utils.fxRunAndWait(new Runnable() {
             @Override
             public void run() {
-               QueleaApp.get().getProjectionWindow().toFront();
-               QueleaApp.get().getMainWindow().toFront();
+                QueleaApp.get().getProjectionWindow().toFront();
+                QueleaApp.get().getMainWindow().toFront();
                 showing = QueleaApp.get().getProjectionWindow().isShowing();
                 if (showing) {
                     tempX = (int) QueleaApp.get().getProjectionWindow().getX();

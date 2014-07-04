@@ -45,6 +45,7 @@ public class OOPPlayer {
     private static Canvas canvas;
     private static MediaPlayerFactory mediaPlayerFactory;
     private static EmbeddedMediaPlayer mediaPlayer;
+    private static boolean init = false;
 
     /**
      * Strictly a convenience method, called in the main method. This method is
@@ -118,6 +119,8 @@ public class OOPPlayer {
                 } else if (inputLine.equalsIgnoreCase("length?")) {
                     long length = mediaPlayer.getLength();
                     System.out.println(length);
+                } else if (inputLine.equalsIgnoreCase("init?")) {
+                    System.out.println(init);
                 } else if (inputLine.equalsIgnoreCase("time?")) {
                     long time = mediaPlayer.getTime();
                     System.out.println(time);
@@ -131,42 +134,47 @@ public class OOPPlayer {
         scan.close();
 
     }
-    /** 
+
+    /**
      * main method
-     * @param args takes arguments that are not used in this case 
+     *
+     * @param args takes arguments that are not used in this case
      */
     public static void main(String[] args) {
         final boolean VLC_OK = new NativeDiscovery().discover();
         //exit process if VLC is not on the system
-        if(!VLC_OK){
+        if (!VLC_OK) {
             System.exit(0);
         }
+        try {
+            window = new Window(null);
+            window.setBackground(Color.BLACK);
+            canvas = new Canvas();
+            canvas.setBackground(Color.BLACK);
+            mediaPlayerFactory = new MediaPlayerFactory("--no-video-title-show");
+            mediaPlayer = mediaPlayerFactory.newEmbeddedMediaPlayer();
+            CanvasVideoSurface videoSurface = mediaPlayerFactory.newVideoSurface(canvas);
+            mediaPlayer.setVideoSurface(videoSurface);
 
-        window = new Window(null);
-        window.setBackground(Color.BLACK);
-        canvas = new Canvas();
-        canvas.setBackground(Color.BLACK);
-        mediaPlayerFactory = new MediaPlayerFactory("--no-video-title-show");
-        mediaPlayer = mediaPlayerFactory.newEmbeddedMediaPlayer();
-        CanvasVideoSurface videoSurface = mediaPlayerFactory.newVideoSurface(canvas);
-        mediaPlayer.setVideoSurface(videoSurface);
+            mediaPlayer.addMediaPlayerEventListener(new MediaPlayerEventAdapter() {
 
-        mediaPlayer.addMediaPlayerEventListener(new MediaPlayerEventAdapter() {
-
-            @Override
-            public void finished(MediaPlayer mp) {
-                if (mediaPlayer.subItemCount() > 0) {
-                    String mrl = mediaPlayer.subItems().remove(0);
-                    mediaPlayer.playMedia(mrl);
+                @Override
+                public void finished(MediaPlayer mp) {
+                    if (mediaPlayer.subItemCount() > 0) {
+                        String mrl = mediaPlayer.subItems().remove(0);
+                        mediaPlayer.playMedia(mrl);
+                    }
                 }
-            }
-        });
-        window.add(canvas);
-        window.setVisible(true);
-        window.toBack();
-        System.err.println("Started main method");
-
-        processInMessage();
+            });
+            window.add(canvas);
+            window.setVisible(true);
+            window.toBack();
+            init = true;
+        } catch (Exception ex) {
+            init = false;
+        } finally {
+            processInMessage();
+        }
 
     }
 }

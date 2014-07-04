@@ -68,7 +68,6 @@ public class RemotePlayer {
             Process p = pb.start();
             in = new BufferedReader(new InputStreamReader(p.getInputStream()));
             out = new BufferedWriter(new OutputStreamWriter(p.getOutputStream()));
-            System.out.println("Started");
             playing = false;
             open = true;
         } catch (IOException ex) {
@@ -195,6 +194,15 @@ public class RemotePlayer {
         return Long.parseLong(getInput());
     }
 
+    /**
+     * See if the remote player has initialized properly
+     * @return true if initialized, false otherwise
+     */
+    public boolean isInit(){
+        writeOut("init?");
+        return Boolean.parseBoolean(getInput());
+    }
+    
     /**
      * Gets the current time of the video.
      *
