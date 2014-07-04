@@ -1648,4 +1648,12 @@ public final class QueleaProperties extends Properties {
         setProperty("use.max.bible.verses", Boolean.toString(useVerses));
     }
 
+
+    public boolean getAdvanceScheduleOnGoLive() {
+        return Boolean.parseBoolean(getProperty("get.advance.schedule.on.go.live", "true"));
+    }
+
+    public void setAdvanceScheduleOnGoLive(boolean advanceOnGoLive) {
+        setProperty("get.advance.schedule.on.go.live", Boolean.toString(advanceOnGoLive));
+    }
 }

@@ -56,6 +56,7 @@ public class OptionsGeneralPanel extends GridPane implements PropertyPanel {
     private final CheckBox useOOCheckBox;
     private final CheckBox uniformFontSizeCheckBox;
     private final CheckBox vlcAdvancedCheckBox;
+    private final CheckBox advanceOnGoLiveCheckBox;
     private final ComboBox<LanguageFile> languageFileComboBox;
     private final TextField ooPathTextField;
     private final DirectoryChooser ooChooser;
@@ -177,6 +178,15 @@ public class OptionsGeneralPanel extends GridPane implements PropertyPanel {
         startupLabel.setLabelFor(vlcAdvancedCheckBox);
         GridPane.setConstraints(vlcAdvancedCheckBox, 2, rows);
         getChildren().add(vlcAdvancedCheckBox);
+        rows++;
+        
+        Label advanceOnGoLiveLabel = new Label(LabelGrabber.INSTANCE.getLabel("advance.schedule.onGoLive"));
+        GridPane.setConstraints(advanceOnGoLiveLabel, 1, rows);
+        getChildren().add(advanceOnGoLiveLabel);
+        advanceOnGoLiveCheckBox = new CheckBox();
+        startupLabel.setLabelFor(advanceOnGoLiveCheckBox);
+        GridPane.setConstraints(advanceOnGoLiveCheckBox, 2, rows);
+        getChildren().add(advanceOnGoLiveCheckBox);
         rows++;
 
         Label oneLineModeLabel = new Label(LabelGrabber.INSTANCE.getLabel("one.line.mode.label"));
@@ -412,6 +422,7 @@ public class OptionsGeneralPanel extends GridPane implements PropertyPanel {
         displaySongInfoCheckBox.setSelected(props.checkDisplaySongInfoText());
         uniformFontSizeCheckBox.setSelected(props.getUseUniformFontSize());
         vlcAdvancedCheckBox.setSelected(props.getVLCAdvanced());
+        advanceOnGoLiveCheckBox.setSelected(props.getAdvanceScheduleOnGoLive());
         oneLineModeCheckBox.setSelected(props.getOneLineMode());
         autoTranslateCheckBox.setSelected(props.getAutoTranslate());
         textShadowCheckBox.setSelected(props.getTextShadow());
@@ -449,6 +460,8 @@ public class OptionsGeneralPanel extends GridPane implements PropertyPanel {
         props.setUseUniformFontSize(useUniformFontSize);
         boolean useVLCAdvanced = vlcAdvancedCheckBox.isSelected();
         props.setVLCAdvanced(useVLCAdvanced);
+        boolean advanceScheduleOnGoLive = advanceOnGoLiveCheckBox.isSelected();
+        props.setAdvanceScheduleOnGoLive(advanceScheduleOnGoLive);
         boolean textShadow = getTextShadowCheckBox().isSelected();
         props.setTextShadow(textShadow);
         boolean clearLive = clearLiveOnRemoveCheckBox.isSelected();

@@ -483,3 +483,4 @@ use.theme.lyricColor.textOnly=Use theme lyric color
 use.theme.styling.textOnly=Use theme styling
 textOnly.font.bold=Bold?
 textOnly.font.italic=Italic?
+advance.schedule.onGoLive=Select next schedule item when Go Live is pressed.
