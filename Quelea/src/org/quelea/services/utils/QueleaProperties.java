@@ -1648,11 +1648,24 @@ public final class QueleaProperties extends Properties {
         setProperty("use.max.bible.verses", Boolean.toString(useVerses));
     }
 
-
+    /**
+     * \
+     * Get whether the schedule should advance to the next item when go live is
+     * pressed.
+     *
+     * @return true if schedule should advance, false otherwise.
+     */
     public boolean getAdvanceScheduleOnGoLive() {
         return Boolean.parseBoolean(getProperty("get.advance.schedule.on.go.live", "true"));
     }
 
+    /**
+     * Set whether the schedule should advance to the next item when go live is
+     * pressed.
+     *
+     * @param advanceOnGoLive true if the schedule should advance, false
+     * otherwise.
+     */
     public void setAdvanceScheduleOnGoLive(boolean advanceOnGoLive) {
         setProperty("get.advance.schedule.on.go.live", Boolean.toString(advanceOnGoLive));
     }
