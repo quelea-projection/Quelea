@@ -93,7 +93,6 @@ public class SelectLyricsList extends ListView<TextSection> {
                             setGraphic(null);
                         } else {
                             String[] text = t.getText(false, false);
-                            VBox vb = new VBox();
                             StringBuilder builder = new StringBuilder();
                             for (String str : text) {
                                 str = FormattedText.stripFormatTags(str);
@@ -111,20 +110,28 @@ public class SelectLyricsList extends ListView<TextSection> {
 //                                str = str.replace(".", ".\n");
 //                            }
 
-                            vb.setAlignment(Pos.TOP_LEFT);
-                            Label textToDisplay = new Label(str);
+                            boolean graphic = false;
                             if (!(t.getTitle() == null)) {
                                 if (!t.getTitle().isEmpty()) {
+                                    VBox vb = new VBox();
+                                    vb.setAlignment(Pos.TOP_LEFT);
+                                    Label textToDisplay = new Label(str);
                                     Label titleToDisplay = new Label("\n" + t.getTitle());
                                     Font titleFont = Font.font(Font.getDefault().getName(), Font.getDefault().getSize() + 5);
                                     titleToDisplay.setFont(titleFont);
                                     titleToDisplay.setStyle("-fx-font-weight: bold;");
                                     vb.getChildren().add(titleToDisplay);
+                                    vb.getChildren().add(textToDisplay);
+                                    setGraphic(vb);
+                                    setText("");
+                                    graphic = true;
                                 }
                             }
+                            if (!graphic) {
+                                setGraphic(null);
+                                setText(str);
+                            }
 
-                            vb.getChildren().add(textToDisplay);
-                            setGraphic(vb);
                         }
                     }
                 };

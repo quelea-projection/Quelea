@@ -231,20 +231,31 @@ public class CCLISelect extends Stage {
         Document doc = Jsoup.parse(pageHTML);
         Elements p = doc.select("p");
         Elements title = doc.select("title");
+        Elements h3 = doc.select("h3");
         this.title = title.text();
         String all = "";
+        int iterator = 0;
         for (Element x : p) {
+
             if (x.toString().contains("p class")) {
             } else {
+                iterator++;
+                if (!(h3.get(iterator).toString().equals("<h3>Please print this page using the print button</h3>"))) {
+                    all = all + "\n" + h3.get(iterator).toString();
+                }
                 all = all + x.toString() + "<br />";
             }
 
         }
         String replace = all.replace("<br />", "\n");
-        String replace2 = replace.replace("<p>", "\n");
-        String replace3 = replace2.replace("</p>", "");
-
-        this.text = replace3;
+        replace = replace.replace("<p>", "\n");
+        replace = replace.replace("</p>", "");
+        replace = replace.replace("<h3>", "");
+        replace = replace.replace("</h3>", "");
+        
+        
+        this.text = replace;
+        
         return this.text;
     }
 

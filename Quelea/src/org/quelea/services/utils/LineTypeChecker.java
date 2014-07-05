@@ -121,6 +121,7 @@ public class LineTypeChecker {
                 || processedLine.toLowerCase().startsWith("ending")
                 || processedLine.toLowerCase().startsWith("bridge")
                 || processedLine.toLowerCase().startsWith("intro")
-                || processedLine.toLowerCase().startsWith("outro");
+                || processedLine.toLowerCase().startsWith("outro")
+                || processedLine.toLowerCase().startsWith("misc");
     }
 }
