@@ -34,7 +34,7 @@ public class MultimediaDrawer extends DisplayableDrawer {
         } else {
             if (playVideo) {
                 controlPanel.reset();
-                controlPanel.loadMultimedia(((MultimediaDisplayable) displayable).getLocation());
+                controlPanel.loadMultimedia(((MultimediaDisplayable) displayable).getLocation(), true);
                 VLCWindow.INSTANCE.refreshPosition();
                 VLCWindow.INSTANCE.show();
             }

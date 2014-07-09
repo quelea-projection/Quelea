@@ -31,6 +31,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.Region;
 import org.quelea.data.displayable.Displayable;
+import org.quelea.data.displayable.MediaLoopDisplayable;
 import org.quelea.data.displayable.SongDisplayable;
 import org.quelea.services.languages.LabelGrabber;
 import org.quelea.services.utils.QueleaProperties;
@@ -60,7 +61,11 @@ public class PreviewPanel extends LivePreviewPanel {
             @Override
             public void handle(ActionEvent t) {
 //                QueleaApp.get().getMainWindow().getMainPanel().getLivePanel().removeDisplayable();
+                QueleaApp.get().getMainWindow().getMainPanel().getLivePanel().getMediaLoopPanel().stopLoop();
                 QueleaApp.get().getMainWindow().getMainPanel().getLivePanel().setDisplayable(getDisplayable(), ((ContainedPanel) getCurrentPane()).getCurrentIndex());
+                if (getDisplayable() instanceof MediaLoopDisplayable) {
+                    QueleaApp.get().getMainWindow().getMainPanel().getLivePanel().getMediaLoopPanel().startLoop();
+                }
                 QueleaApp.get().getMainWindow().getMainPanel().getLivePanel().getCurrentPane().requestFocus();
 
                 if (QueleaProperties.get().getAdvanceScheduleOnGoLive()) {

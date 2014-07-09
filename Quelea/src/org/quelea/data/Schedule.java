@@ -52,6 +52,7 @@ import org.quelea.data.displayable.AudioDisplayable;
 import org.quelea.data.displayable.BiblePassage;
 import org.quelea.data.displayable.Displayable;
 import org.quelea.data.displayable.ImageDisplayable;
+import org.quelea.data.displayable.MediaLoopDisplayable;
 import org.quelea.data.displayable.PresentationDisplayable;
 import org.quelea.data.displayable.SongDisplayable;
 import org.quelea.data.displayable.VideoDisplayable;
@@ -290,6 +291,9 @@ public class Schedule implements Iterable<Displayable>, Printable {
                 }
                 else if(name.equalsIgnoreCase("passage")) {
                     newSchedule.add(BiblePassage.parseXML(node));
+                }
+               else if(name.equalsIgnoreCase("mediaLoop")) {
+                    newSchedule.add(MediaLoopDisplayable.parseXML(node));
                 }
                 else if(name.equalsIgnoreCase("fileimage")) {
                     newSchedule.add(ImageDisplayable.parseXML(node));

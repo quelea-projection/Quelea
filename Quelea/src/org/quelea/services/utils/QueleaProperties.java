@@ -25,6 +25,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 import java.util.logging.Level;
+import java.util.logging.Logger;
 import javafx.geometry.BoundingBox;
 import javafx.geometry.Bounds;
 import javafx.scene.paint.Color;
@@ -769,6 +770,21 @@ public final class QueleaProperties extends Properties {
      */
     public File getImageDir() {
         return new File(getQueleaUserHome(), "img");
+    }
+    
+       /**
+     * Get the directory used for storing media loop media.
+     * <p/>
+     * @return the media loop directory
+     */
+    public File getMediaLoopDir() {
+       File ret = new File(getQueleaUserHome(), "mediaLoop");
+
+          ret.mkdirs(); 
+
+       
+        
+        return ret;
     }
 
     /**

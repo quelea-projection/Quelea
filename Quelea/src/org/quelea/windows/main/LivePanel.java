@@ -21,6 +21,7 @@ import java.io.File;
 import java.util.HashSet;
 import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
+import javafx.geometry.Pos;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.control.ToggleButton;
@@ -37,11 +38,13 @@ import javafx.scene.layout.Region;
 import javafx.stage.FileChooser;
 import javafx.stage.Screen;
 import org.quelea.data.displayable.Displayable;
+import org.quelea.data.displayable.MediaLoopDisplayable;
 import org.quelea.data.displayable.PresentationDisplayable;
 import org.quelea.services.languages.LabelGrabber;
 import org.quelea.services.utils.FileFilters;
 import org.quelea.services.utils.QueleaProperties;
 import org.quelea.services.utils.Utils;
+import org.quelea.windows.mediaLoop.MediaLoopPanel;
 import org.quelea.windows.multimedia.VLCWindow;
 
 /**
@@ -53,8 +56,10 @@ import org.quelea.windows.multimedia.VLCWindow;
 public class LivePanel extends LivePreviewPanel {
 
     private HBox loopBox;
+    private HBox labelBox;
     private final ToggleButton loop;
     private final TextField loopDuration;
+    private final Label secondsLeft;
 
     private final ToggleButton logo;
     private final ToggleButton black;
@@ -68,11 +73,13 @@ public class LivePanel extends LivePreviewPanel {
      */
     public LivePanel() {
         getPresentationPanel().setLive();
+        getMediaLoopPanel().setLive();
         header = new ToolBar();
         Label headerLabel = new Label(LabelGrabber.INSTANCE.getLabel("live.heading"));
         headerLabel.setStyle("-fx-font-weight: bold;");
         header.getItems().add(headerLabel);
         loop = new ToggleButton(LabelGrabber.INSTANCE.getLabel("loop.label") + ":");
+        secondsLeft = new Label();
         loopDuration = new TextField("10");
         loopDuration.setMaxWidth(25);
         loopDuration.setMinWidth(25);
@@ -101,6 +108,14 @@ public class LivePanel extends LivePreviewPanel {
         loopBox.getChildren().add(loop);
         loopBox.getChildren().add(loopDuration);
         loopBox.getChildren().add(new Label(LabelGrabber.INSTANCE.getLabel("seconds.label")));
+        labelBox = new HBox(5);
+        labelBox.setAlignment(Pos.CENTER);
+
+        secondsLeft.setAlignment(Pos.CENTER);
+        HBox.setHgrow(secondsLeft, Priority.ALWAYS);
+        labelBox.getChildren().add(new Label("    "));
+        labelBox.getChildren().add(secondsLeft);
+
         Region spacer = new Region();
         HBox.setHgrow(spacer, Priority.ALWAYS);
         header.getItems().add(spacer);
@@ -240,14 +255,23 @@ public class LivePanel extends LivePreviewPanel {
      */
     @Override
     public void setDisplayable(Displayable d, int index) {
+        getMediaLoopPanel().stopLoop();
         super.setDisplayable(d, index);
         loop.setSelected(false);
         if (d instanceof PresentationDisplayable) {
             if (!header.getItems().contains(loopBox)) {
                 header.getItems().add(1, loopBox);
             }
+            header.getItems().remove(labelBox);
+        } else if (d instanceof MediaLoopDisplayable) {
+            getMediaLoopPanel().setLive();
+            if (!header.getItems().contains(labelBox)) {
+                header.getItems().add(1, labelBox);
+            }
+            header.getItems().remove(loopBox);
         } else {
             header.getItems().remove(loopBox);
+            header.getItems().remove(labelBox);
         }
         if (d == null) {
             clear.setSelected(false);
@@ -264,6 +288,7 @@ public class LivePanel extends LivePreviewPanel {
             canvas.setBlacked(black.isSelected());
             canvas.setCleared(clear.isSelected());
         }
+
     }
 
     /**
@@ -353,6 +378,16 @@ public class LivePanel extends LivePreviewPanel {
         return !(logo.isSelected() || clear.isSelected() || black.isSelected() || hide.isSelected());
     }
 
+    /**
+     * Get label placed in header (designed for second updates for media loops
+     *
+     * @return The label in the header
+     */
+    public Label getSecondsLeftLabel() {
+        return secondsLeft;
+    }
+
+    
     public boolean getLogoed() {
         return logo.isSelected();
     }
