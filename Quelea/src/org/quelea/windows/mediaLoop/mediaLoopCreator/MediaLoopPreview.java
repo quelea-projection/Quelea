@@ -293,6 +293,19 @@ public class MediaLoopPreview extends ScrollPane {
     }
 
     /**
+     * Get the selected slide as a media file
+     *
+     * @return the media file of the currently selected slide
+     */
+    public MediaFile getNextSlide() {
+        MediaFile ret = null;
+        if (!(getSelectedIndex() + 1 >= slides.size())) {
+            ret = slides.get(getSelectedIndex() + 1);
+        }
+        return ret;
+    }
+
+    /**
      * Advances the current slide.
      * <p/>
      */

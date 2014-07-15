@@ -36,7 +36,6 @@ public class ImagePanel extends AbstractPanel {
     /**
      * Create a new image panel.
      * <p/>
-     * @param container the container this panel is contained within.
      */
     public ImagePanel() {
         setStyle("-fx-background-color: rgba(0, 0, 0);");
@@ -45,7 +44,7 @@ public class ImagePanel extends AbstractPanel {
             public void updateCallback() {
                 updateCanvas();
             }
-        }, Priority.LOW, false);
+        }, Priority.LOW, false, null);
         registerDisplayCanvas(previewCanvas);
         setCenter(previewCanvas);
     }
@@ -74,6 +73,7 @@ public class ImagePanel extends AbstractPanel {
         updateCanvas();
     }
 
+    
     @Override
     public int getCurrentIndex() {
         return 0;

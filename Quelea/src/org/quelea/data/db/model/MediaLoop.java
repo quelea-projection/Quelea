@@ -1,11 +1,13 @@
 package org.quelea.data.db.model;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import static org.hibernate.type.TypeFactory.serializable;
 import org.quelea.data.mediaLoop.MediaFile;
 
 /**
@@ -15,9 +17,10 @@ import org.quelea.data.mediaLoop.MediaFile;
  */
 @Entity
 @Table(name = "mediaLoops")
-public class MediaLoop {
+public class MediaLoop implements Serializable{
 
     private static final int STRING_LENGTH = DBConstants.STRING_LENGTH;
+    private static final long serialVersionUID = -1860438479077639195L;
     private long id;
     private String title;
     private ArrayList<MediaFile> media;

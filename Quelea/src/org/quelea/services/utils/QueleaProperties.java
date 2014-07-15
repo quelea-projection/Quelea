@@ -488,6 +488,63 @@ public final class QueleaProperties extends Properties {
     }
 
     /**
+     * Get whether we should show the preview for the next item
+     * <p/>
+     * @return true if there should be a preview, false otherwise.
+     */
+    public boolean getStageUsePreview() {
+        return Boolean.parseBoolean(getProperty("stage.use.preview", "true"));
+    }
+
+    /**
+     * Set whether we should show the preview for the next item
+     * <p/>
+     * @param showItem true if there should be a preview, false otherwise
+     */
+    public void setStageUsePreview(boolean showItem) {
+        setProperty("stage.use.preview", Boolean.toString(showItem));
+        write();
+    }
+    
+        /**
+     * Get whether we should show text as big as possible on stage display
+     * <p/>
+     * @return true if text should be shown as big as possible, false otherwise.
+     */
+    public boolean getStageUseUnuniformText() {
+        return Boolean.parseBoolean(getProperty("stage.use.ununiform.text", "true"));
+    }
+
+    /**
+     * Set whether we should show text as big as possible on stage display
+     * <p/>
+     * @param useUnuniformText true if text should be shown as big as possible, false otherwise.
+     */
+    public void setStageUseUnuniformText(boolean useUnuniformText) {
+        setProperty("stage.use.ununiform.text", Boolean.toString(useUnuniformText));
+        write();
+    }
+    
+            /**
+     * Get whether we should draw images on the stage display
+     * <p/>
+     * @return true if images should be drawn, false otherwise.
+     */
+    public boolean getStageDrawImages() {
+        return Boolean.parseBoolean(getProperty("stage.draw.images", "true"));
+    }
+
+    /**
+     * Set whether we should draw images on the stage display
+     * <p/>
+     * @param drawImages true if images should be drawn, false otherwise.
+     */
+    public void setStageDrawImages(boolean drawImages) {
+        setProperty("stage.draw.images", Boolean.toString(drawImages));
+        write();
+    }
+    
+    /**
      * Set whether the text only display uses the theme horizontal alignment.
      *
      * @param useThemeAlignment true if text only should use the theme

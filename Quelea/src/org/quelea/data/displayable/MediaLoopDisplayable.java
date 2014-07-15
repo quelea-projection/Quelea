@@ -42,11 +42,12 @@ import org.w3c.dom.NodeList;
  * @author Greg
  */
 public class MediaLoopDisplayable implements Displayable, Comparable<MediaLoopDisplayable>, Serializable {
+     private static final long serialVersionUID = -1860438479077639195L;
 
     /**
      * Comparable to compare different instances of media loop displayable
      *
-     * @param Displayable to compare against
+     * @param o to compare against
      * @return compare results
      */
     @Override
@@ -115,6 +116,7 @@ public class MediaLoopDisplayable implements Displayable, Comparable<MediaLoopDi
     private boolean quickInsert = false;
     private String title = "Media Loop";
     private long id = 0;
+
 
     /**
      * Create a new media loop displayable.
@@ -261,18 +263,7 @@ public class MediaLoopDisplayable implements Displayable, Comparable<MediaLoopDi
      */
     @Override
     public ImageView getPreviewIcon() {
-        Image image = null;
-
-        if (Utils.fileIsImage(media.get(0))) {
-            image = new Image("file:" + media.get(0).getAbsolutePath());
-        } else {
-
-            image = Utils.getVidBlankImage(media.get(0).getAbsoluteFile());
-        }
-
-        if (image == null) {
-            image = Utils.getImageFromColour(Color.BLACK);
-        }
+        Image image = media.get(0).getImage();
         ImageView small = new ImageView(image);
         small.setFitHeight(30);
         small.setFitWidth(30);
@@ -285,20 +276,8 @@ public class MediaLoopDisplayable implements Displayable, Comparable<MediaLoopDi
      * @return the image representing this media loop
      */
     public Image getImage() {
-        Image image = null;
 
-        if (Utils.fileIsImage(media.get(0))) {
-            image = new Image("file:" + media.get(0).getAbsolutePath());
-        } else {
-
-            image = Utils.getVidBlankImage(media.get(0).getAbsoluteFile());
-        }
-
-        if (image == null) {
-            image = Utils.getImageFromColour(Color.BLACK);
-        }
-
-        return image;
+        return media.get(0).getImage();
     }
 
     /**

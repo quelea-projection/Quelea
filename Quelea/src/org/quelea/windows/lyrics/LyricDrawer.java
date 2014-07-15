@@ -46,6 +46,7 @@ import javafx.scene.text.Font;
 import javafx.scene.text.FontPosture;
 import javafx.scene.text.FontWeight;
 import javafx.util.Duration;
+import org.apache.commons.lang.ArrayUtils;
 import org.quelea.data.ColourBackground;
 import org.quelea.data.ImageBackground;
 import org.quelea.data.ThemeDTO;
@@ -721,6 +722,10 @@ public class LyricDrawer extends DisplayableDrawer {
      */
     private double getUniformFontSize(TextDisplayable displayable) {
         if (!QueleaProperties.get().getUseUniformFontSize()) {
+   
+            return -1;
+        }
+        if(getCanvas().isStageView() && QueleaProperties.get().getStageUseUnuniformText()){
             return -1;
         }
         Font font = theme.getFont();
@@ -770,7 +775,7 @@ public class LyricDrawer extends DisplayableDrawer {
         String[] bigText;
         if (getCanvas().isStageView() && QueleaProperties.get().getShowChords()) {
             bigText = displayable.getSections()[index].getText(true, false);
-        } else {
+            } else {
             bigText = displayable.getSections()[index].getText(false, false);
         }
         String[] translationArr = null;

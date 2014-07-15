@@ -19,6 +19,7 @@ package org.quelea.windows.library;
 
 import java.io.File;
 import java.util.List;
+import java.util.logging.Level;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -48,6 +49,7 @@ import org.quelea.data.displayable.MediaLoopDisplayable;
 import org.quelea.data.mediaLoop.MediaLoopManager;
 import org.quelea.services.languages.LabelGrabber;
 import org.quelea.services.utils.DatabaseListener;
+import org.quelea.services.utils.LoggerUtils;
 import org.quelea.windows.main.PreviewPanel;
 import org.quelea.windows.main.QueleaApp;
 import org.quelea.windows.mediaLoop.mediaLoopCreator.MediaLoopCreatorWindow;
@@ -63,7 +65,7 @@ public class MediaLoopListPanel extends BorderPane {
     private static final String BORDER_STYLE_DESELECTED = "-fx-padding: 0.2em;-fx-border-color: rgb(0,0,0,0);-fx-border-radius: 5;-fx-border-width: 0.1em;";
     private final TilePane mediaLoopList;
     private Thread updateThread;
-    private ObservableList<MediaLoopDisplayable> allMediaLoops = FXCollections.observableArrayList(MediaLoopManager.get().getMediaLoops());
+    private ObservableList<MediaLoopDisplayable> allMediaLoops;
     private MediaLoopDisplayable currentDisplayable;
 
     /**
@@ -109,6 +111,7 @@ public class MediaLoopListPanel extends BorderPane {
                 refresh();
             }
         }.start();
+
         MediaLoopManager.get().registerDatabaseListener(new DatabaseListener() {
 
             @Override
@@ -116,6 +119,7 @@ public class MediaLoopListPanel extends BorderPane {
                 refresh();
             }
         });
+
     }
 
     /**
@@ -138,13 +142,18 @@ public class MediaLoopListPanel extends BorderPane {
      */
     private void updateMediaLoops() {
         mediaLoopList.getChildren().clear();
+ 
         allMediaLoops = FXCollections.observableArrayList(MediaLoopManager.get().getMediaLoops());
+       
         if (updateThread != null && updateThread.isAlive()) {
             return;
         }
         updateThread = new Thread() {
             @Override
             public void run() {
+                if (allMediaLoops == null) {
+                    return;
+                }
                 for (final MediaLoopDisplayable mediaLoop : allMediaLoops) {
                     final VBox viewBox = new VBox();
                     final ImageView view = new ImageView(mediaLoop.getImage());
@@ -192,7 +201,7 @@ public class MediaLoopListPanel extends BorderPane {
                                                 if (mediaLoop != null) {
                                                     mediaLoopEditWindow.resetEditMediaLoop(mediaLoop);
                                                     mediaLoopEditWindow.showAndWait();
-                                                    
+
                                                     mediaLoopEditWindow.toFront();
                                                     refresh();
                                                 }

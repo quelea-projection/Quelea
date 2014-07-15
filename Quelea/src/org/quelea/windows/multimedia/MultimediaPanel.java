@@ -72,7 +72,7 @@ public class MultimediaPanel extends AbstractPanel {
             public void updateCallback() {
                 updateCanvas();
             }
-        }, DisplayCanvas.Priority.LOW, false);
+        }, DisplayCanvas.Priority.LOW, false, null);
         registerDisplayCanvas(dummyCanvas);
     }
 
@@ -89,6 +89,7 @@ public class MultimediaPanel extends AbstractPanel {
             drawer.setPlayVideo(canvas.getPlayVideo());
             canvas.setCurrentDisplayable(displayable);
             drawer.draw(displayable);
+
         }
         if(playVideo) {
             controlPanel.setDisableControls(!playVideo);

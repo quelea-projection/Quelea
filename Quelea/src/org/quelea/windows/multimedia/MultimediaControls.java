@@ -21,9 +21,11 @@ package org.quelea.windows.multimedia;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
+import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.EventHandler;
+import javafx.scene.control.Label;
 import javafx.scene.control.Slider;
 import javafx.scene.effect.DropShadow;
 import javafx.scene.effect.Glow;
@@ -37,6 +39,7 @@ import javafx.scene.paint.CycleMethod;
 import javafx.scene.paint.LinearGradient;
 import javafx.scene.paint.Stop;
 import javafx.scene.shape.Rectangle;
+import org.quelea.services.languages.LabelGrabber;
 
 /**
  * The multimedia controls containing a play / pause button, stop button, and a
@@ -58,6 +61,10 @@ public class MultimediaControls extends StackPane {
     private ImageView stopButton;
     private Slider posSlider;
     private boolean disableControls;
+    private Slider stagePosSlider = new Slider(0, 1, 0);
+    private Label updateLabel = new Label("");
+    private String name = "";
+    private static final String COMPLETE_LABEL = LabelGrabber.INSTANCE.getLabel("stage.media.complete.label");
 
     public MultimediaControls() {
         Rectangle rect = new Rectangle(230, 100);
@@ -131,7 +138,17 @@ public class MultimediaControls extends StackPane {
             @Override
             public void run() {
                 if (!disableControls && VLCWindow.INSTANCE.isPlaying() && !posSlider.isValueChanging()) {
-                    posSlider.setValue(VLCWindow.INSTANCE.getProgressPercent());
+                    final double percent = VLCWindow.INSTANCE.getProgressPercent();
+                    posSlider.setValue(percent);
+                    stagePosSlider.setValue(percent);
+                    Platform.runLater(new Runnable() {
+
+                        @Override
+                        public void run() {
+                            updateLabel.setText(name + ":    " + ((int)(percent * 100)) + "% " + COMPLETE_LABEL);
+                        }
+                    });
+
                 }
             }
         }, 0, SLIDER_UPDATE_RATE, TimeUnit.MILLISECONDS);
@@ -169,6 +186,34 @@ public class MultimediaControls extends StackPane {
      */
     public void stop() {
         reset();
+    }
+
+    /**
+     * Set the slider that is used on the stage display
+     *
+     * @param slider the preview slider
+     */
+    public void setPreviewSlider(Slider slider) {
+        this.stagePosSlider = slider;
+    }
+
+    /**
+     * Set the label that is used to actively tell the percentage of the current
+     * video
+     *
+     * @param label the label that should be updated
+     */
+    public void setPreviewLabel(Label label) {
+        this.updateLabel = label;
+    }
+
+    /**
+     * Set the name of the currently playing video
+     *
+     * @param name
+     */
+    public void setVideoName(String name) {
+        this.name = name;
     }
 
     public void loadMultimedia(String path, boolean reset) {

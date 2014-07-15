@@ -116,9 +116,6 @@ public final class MediaLoopManager {
      * @return an array of all the mediaLoops in the database.
      */
     public synchronized MediaLoopDisplayable[] getMediaLoops() {
-//        if(Platform.isFxApplicationThread()) {
-//            LOGGER.log(Level.WARNING, "getMediaLoops() should not be called on platform thread!", new RuntimeException("Debug exception"));
-//        }
         if (cacheMediaLoops.get() != null) {
             return cacheMediaLoops.get();
         }

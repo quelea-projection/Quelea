@@ -24,12 +24,24 @@ import javafx.geometry.Bounds;
 import javafx.geometry.Pos;
 import javafx.scene.Cursor;
 import javafx.scene.Scene;
+import javafx.scene.control.Label;
 import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.FlowPane;
+import javafx.scene.layout.GridPane;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
+import javafx.scene.paint.Color;
+import javafx.scene.text.Font;
+import javafx.scene.text.FontPosture;
+import javafx.scene.text.FontWeight;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import org.quelea.services.languages.LabelGrabber;
 import org.quelea.services.utils.LoggerUtils;
+import org.quelea.services.utils.QueleaProperties;
 import org.quelea.services.utils.Utils;
 import org.quelea.windows.main.DisplayCanvas.Priority;
 import org.quelea.windows.main.widgets.Clock;
@@ -46,7 +58,10 @@ public class DisplayStage extends Stage {
     private static final Logger LOGGER = LoggerUtils.getLogger();
     private static final Cursor BLANK_CURSOR;
     private final DisplayCanvas canvas;
+    private final DisplayCanvas previewCanvas;
     private final TestImage testImage;
+    private Label titleLabel = null;
+    private AnchorPane screens = null;
 
     /**
      * Initialise cursor hiding.
@@ -71,42 +86,72 @@ public class DisplayStage extends Stage {
         setArea(area);
         StackPane scenePane = new StackPane();
         Priority priority;
-        if(stageView){ 
+        if (stageView) {
             priority = Priority.HIGH;
             playVideo = false;
             textOnly = false;
-        }else if(QueleaApp.get().getProjectionWindow() != null){
+        } else if (QueleaApp.get().getProjectionWindow() != null) {
             priority = Priority.MID;
             playVideo = false;
             textOnly = true;
-        }else{
+        } else {
             priority = Priority.HIGH_MID;
             playVideo = true;
             textOnly = false;
         }
-        canvas = new DisplayCanvas(true, stageView, playVideo, null, priority, textOnly);
+        if (stageView) {
+            previewCanvas = new DisplayCanvas(true, stageView, playVideo, null, priority, textOnly, null);
+        } else {
+            previewCanvas = null;
+        }
+        canvas = new DisplayCanvas(true, stageView, playVideo, null, priority, textOnly, previewCanvas);
+
         canvas.setType(stageView ? DisplayCanvas.Type.STAGE : DisplayCanvas.Type.FULLSCREEN);
         canvas.setCursor(BLANK_CURSOR);
-        scenePane.getChildren().add(canvas);
-        if(stageView) {
+
+        if (stageView) {
+            titleLabel = canvas.getTitleLabel();
+
+            screens = new AnchorPane();
+            AnchorPane.setTopAnchor(canvas, 0.0);
+            AnchorPane.setLeftAnchor(canvas, 0.0);
+            AnchorPane.setBottomAnchor(previewCanvas, 0.0);
+            AnchorPane.setLeftAnchor(previewCanvas, 0.0);
+
+            AnchorPane.setLeftAnchor(titleLabel, 5.0 * (getWidth() / 8.0));
+
+            screens.getChildren().add(canvas);
+            screens.getChildren().add(previewCanvas);
+            screens.getChildren().add(titleLabel);
+
+            screens.setStyle("-fx-background-color: " + Utils.getHexFromColor(QueleaProperties.get().getStageBackgroundColor()) + ";");
+            scenePane.getChildren().add(screens);
+
+            screens.toFront();
+
             final Clock clock = new Clock();
             ChangeListener<Number> cl = new ChangeListener<Number>() {
 
                 @Override
                 public void changed(ObservableValue<? extends Number> ov, Number t, Number t1) {
                     double size = getWidth();
-                    if(getHeight() < size) {
+                    if (getHeight() < size) {
                         size = getHeight();
                     }
                     clock.setFontSize(size / 24);
+                    updateStage();
                 }
             };
+
             widthProperty().addListener(cl);
             heightProperty().addListener(cl);
             StackPane.setAlignment(clock, Pos.BOTTOM_RIGHT);
             scenePane.getChildren().add(clock);
             clock.toFront();
+        } else {
+            scenePane.getChildren().add(canvas);
         }
+
         testImage = new TestImage();
         testImage.getImageView().setPreserveRatio(true);
         testImage.getImageView().fitWidthProperty().bind(widthProperty());
@@ -117,7 +162,7 @@ public class DisplayStage extends Stage {
         Scene scene = new Scene(scenePane);
         scene.setFill(null);
         setScene(scene);
-        if(playVideo) {
+        if (playVideo) {
             addVLCListeners();
         }
     }
@@ -187,4 +232,49 @@ public class DisplayStage extends Stage {
     public DisplayCanvas getCanvas() {
         return canvas;
     }
+
+    /**
+     * Gets the preview canvas object that shows the preview of the next item
+     *
+     * @return the preview canvas is stage view
+     */
+    public DisplayCanvas getStagePreviewCanvas() {
+        return previewCanvas;
+    }
+
+    /**
+     * Update Stage
+     */
+    public void updateStage() {
+        if (getCanvas().isStageView()) {
+            screens.setStyle("-fx-background-color: " + Utils.getHexFromColor(QueleaProperties.get().getStageBackgroundColor()) + ";");
+            double size = getWidth();
+            if (getHeight() < size) {
+                size = getHeight();
+            }
+            if (QueleaProperties.get().getStageUsePreview()) {
+                canvas.setMinSize(getWidth(), 2.0 * (getHeight() / 3.0));
+                previewCanvas.setMinSize(5.0 * (getWidth() / 8.0), 1.0 * (getHeight() / 3.0));
+                canvas.setMaxSize(getWidth(), 2.0 * (getHeight() / 3.0));
+                previewCanvas.setMaxSize(5.0 * (getWidth() / 8.0), 1.0 * (getHeight() / 3.0));
+                previewCanvas.toFront();
+                canvas.setPrefSize(getWidth(), 2.0 * (getHeight() / 3.0));
+                previewCanvas.setPrefSize(5.0 * (getWidth() / 8.0), 1.0 * (getHeight() / 3.0));
+                AnchorPane.setLeftAnchor(titleLabel, (5.0 * (getWidth() / 8.0)) + 10);
+                AnchorPane.setTopAnchor(titleLabel, (2.0 * (getHeight() / 3.0)) + ((getHeight() - (2.0 * (getHeight() / 3.0))) / 3));
+                titleLabel.setFont(Font.font("Noto Sans", FontWeight.BOLD, FontPosture.REGULAR, size / 32));
+                titleLabel.setTextFill(QueleaProperties.get().getStageChordColor());
+                titleLabel.toFront();
+            } else {
+                canvas.setMinSize(getWidth(), getHeight());
+                canvas.setPrefSize(getWidth(), getHeight());
+
+                previewCanvas.clearCurrentDisplayable();
+                previewCanvas.toBack();
+                titleLabel.toBack();
+
+            }
+        }
+    }
+
 }

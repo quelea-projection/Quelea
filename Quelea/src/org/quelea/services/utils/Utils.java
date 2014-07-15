@@ -99,7 +99,33 @@ public final class Utils {
     public static void beep() {
         Toolkit.getDefaultToolkit().beep();
     }
+    /**
+     * Get a hexadecimal string including the number sign from a java fx color
+     * 
+     * @param inputColor the color to convert
+     * @return string with hexadecimal (and pound sign) for the color
+     * 
+     */
+    public static String getHexFromColor(Color inputColor){
+            Color c = inputColor;
+            int green = (int) (c.getGreen() * 255);
+            String greenString = Integer.toHexString(green);
+            if (greenString.length() < 2) {
+                greenString = greenString + "0";
+            }
+            int red = (int) (c.getRed() * 255);
+            String redString = Integer.toHexString(red);
+            if (redString.length() < 2) {
+                redString = redString + "0";
+            }
+            int blue = (int) (c.getBlue() * 255);
 
+            String blueString = Integer.toHexString(blue);
+            if (blueString.length() < 2) {
+                blueString = blueString + "0";
+            }
+            return "#" + redString + greenString + blueString;
+    }
     /**
      * Get the debug log file, useful for debugging if something goes wrong (the
      * log is printed out to this location.)

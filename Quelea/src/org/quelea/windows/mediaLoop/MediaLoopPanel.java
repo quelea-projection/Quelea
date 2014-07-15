@@ -19,13 +19,17 @@ package org.quelea.windows.mediaLoop;
 
 import javafx.animation.Timeline;
 import javafx.application.Platform;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
 import org.quelea.data.displayable.MediaLoopDisplayable;
 import org.quelea.data.mediaLoop.MediaFile;
 import org.quelea.data.powerpoint.SlideChangedListener;
+import org.quelea.services.utils.QueleaProperties;
+import org.quelea.services.utils.Utils;
 import org.quelea.windows.main.AbstractPanel;
 import org.quelea.windows.main.DisplayCanvas;
 import org.quelea.windows.main.DisplayableDrawer;
+import org.quelea.windows.main.QueleaApp;
 import org.quelea.windows.mediaLoop.mediaLoopCreator.MediaLoopPreview;
 import org.quelea.windows.multimedia.MultimediaControls;
 import org.quelea.windows.multimedia.MultimediaDrawer;
@@ -79,13 +83,26 @@ public class MediaLoopPanel extends AbstractPanel {
     private void displaySlide(MediaFile slide) {
 
         for (DisplayCanvas canvas : getCanvases()) {
-        
             mediaLoopDrawer.setCanvas(canvas);
             mediaLoopDrawer.setPlayVideo(canvas.getPlayVideo());
             canvas.setCurrentDisplayable(displayable);
-
             mediaLoopDrawer.setSlideToShow(slide);
             mediaLoopDrawer.draw(displayable);
+            if (canvas.isStageView()) {
+                if (QueleaProperties.get().getStageUsePreview()) {
+                    int index = mediaLoopPreview.getSelectedIndex() + 1;
+                    if (index >= ((MediaLoopDisplayable) displayable).getMediaFiles().size()) {
+                        updatePreview(canvas.getPreviewCanvas());
+                    } else {
+                        mediaLoopDrawer.setCanvas(canvas.getPreviewCanvas());
+                        mediaLoopDrawer.setPlayVideo(canvas.getPreviewCanvas().getPlayVideo());
+                        canvas.setCurrentDisplayable(displayable);
+                        mediaLoopDrawer.setSlideToShow(mediaLoopPreview.getNextSlide());
+                        mediaLoopDrawer.draw(displayable);
+                    }
+
+                }
+            }
 
         }
 

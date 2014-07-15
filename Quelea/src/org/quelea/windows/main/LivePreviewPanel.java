@@ -257,6 +257,13 @@ public abstract class LivePreviewPanel extends BorderPane {
     public SelectLyricsPanel getLyricsPanel() {
         return lyricsPanel;
     }
+    /**
+     * Get the video panel on this panel
+     * @return the video panel.
+     */
+    public MultimediaPanel getVideoPanel(){
+        return videoPanel;
+    }
 
     /**
      * Set the displayable shown on this panel.

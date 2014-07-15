@@ -47,7 +47,7 @@ public class ImageDrawer extends DisplayableDrawer {
         }
         imageView = getCanvas().getNewImageView();
         imageView.setFitWidth(getCanvas().getWidth());
-        if(getCanvas().isStageView()) {
+        if(getCanvas().isStageView() && !QueleaProperties.get().getStageDrawImages()) {
             image = Utils.getImageFromColour(QueleaProperties.get().getStageBackgroundColor());
         }
         else if(getCanvas().isTextOnlyView() && !QueleaProperties.get().getTextOnlyUseThemeBackground()){

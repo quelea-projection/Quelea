@@ -1,13 +1,18 @@
 package org.quelea.windows.mediaLoop;
 
+import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.paint.Color;
 import org.quelea.data.displayable.Displayable;
+import org.quelea.data.displayable.ImageDisplayable;
+import org.quelea.data.displayable.MediaLoopDisplayable;
 import org.quelea.data.displayable.MultimediaDisplayable;
 import org.quelea.data.mediaLoop.MediaFile;
 import org.quelea.services.utils.QueleaProperties;
 import org.quelea.services.utils.Utils;
+import org.quelea.windows.image.ImageDrawer;
 import org.quelea.windows.main.DisplayableDrawer;
+import org.quelea.windows.main.QueleaApp;
 import org.quelea.windows.multimedia.MultimediaControls;
 import org.quelea.windows.multimedia.VLCWindow;
 
@@ -38,21 +43,42 @@ public class MediaLoopDrawer extends DisplayableDrawer {
      */
     @Override
     public void draw(Displayable displayable) {
-           if (getCanvas().isStageView()) {
-            ImageView imageView = getCanvas().getNewImageView();
-            imageView.setImage(Utils.getImageFromColour(QueleaProperties.get().getStageBackgroundColor()));
-            getCanvas().getChildren().add(0, imageView);
+        if (!(displayable instanceof MediaLoopDisplayable)) {
+            return;
+        }
+        if (getCanvas().isStageView()) {
+            Image image;
+            if (QueleaProperties.get().getStageDrawImages()) {
+                image = theSlide.getImage();
+            } else {
+                image = (Utils.getImageFromColour(QueleaProperties.get().getStageBackgroundColor()));
+            }
+            ImageDrawer idrawer = new ImageDrawer();
+            ImageDisplayable imageNextDisplayable = new ImageDisplayable(image);
+            idrawer.setCanvas(getCanvas());
+            idrawer.draw(imageNextDisplayable);
         } else if (getCanvas().isTextOnlyView()) {
-            ImageView imageView = getCanvas().getNewImageView();
-            imageView.setImage(Utils.getImageFromColour(QueleaProperties.get().getTextOnlyUseThemeBackground() ? Color.BLACK : QueleaProperties.get().getTextOnlyBackgroundColor()));
-            getCanvas().getChildren().add(0, imageView);
+            Image image;
+
+            image = (Utils.getImageFromColour(QueleaProperties.get().getTextOnlyBackgroundColor()));
+
+            ImageDrawer idrawer = new ImageDrawer();
+            ImageDisplayable imageNextDisplayable = new ImageDisplayable(image);
+            idrawer.setCanvas(getCanvas());
+            idrawer.draw(imageNextDisplayable);
         } else {
             if (playVideo) {
                 controlPanel.loadMultimedia(theSlide.getAbsolutePath(), false);
                 controlPanel.play();
                 VLCWindow.INSTANCE.setRepeat(true);
             } else {
+                Image image;
 
+                image = theSlide.getImage();
+                ImageDrawer idrawer = new ImageDrawer();
+                ImageDisplayable imageNextDisplayable = new ImageDisplayable(image);
+                idrawer.setCanvas(getCanvas());
+                idrawer.draw(imageNextDisplayable);
             }
         }
     }

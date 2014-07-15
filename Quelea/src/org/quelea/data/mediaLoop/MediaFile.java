@@ -19,6 +19,9 @@ package org.quelea.data.mediaLoop;
 
 import java.io.File;
 import java.net.URI;
+import javafx.scene.image.Image;
+import javafx.scene.paint.Color;
+import org.quelea.services.utils.Utils;
 
 /**
  * Creates a new media file, which stores the media file and the time it needs
@@ -29,6 +32,7 @@ import java.net.URI;
 public class MediaFile extends File {
 
     private int advanceTime = 7;
+    private static final long serialVersionUID = -1034547454307518214L;
 
     /**
      * Creates a new media file from a uri, including the time to advance.
@@ -101,5 +105,26 @@ public class MediaFile extends File {
      */
     public int getAdvanceTime() {
         return this.advanceTime;
+    }
+
+    /**
+     * Gets an image representing this media item
+     *
+     * @return an image from this media
+     */
+    public Image getImage() {
+        Image image = null;
+
+        if (Utils.fileIsImage(this)) {
+            image = new Image("file:" + this.getAbsolutePath());
+        } else {
+
+            image = Utils.getVidBlankImage(this.getAbsoluteFile());
+        }
+
+        if (image == null) {
+            image = Utils.getImageFromColour(Color.BLACK);
+        }
+        return image;
     }
 }

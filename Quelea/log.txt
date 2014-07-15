@@ -1,3 +1,2 @@
-Started main method
 Processing message...
-[00000000114a1640] main vout display error: Failed to set on top
+[00000000102810e0] main vout display error: Failed to set on top
