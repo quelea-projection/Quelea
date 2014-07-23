@@ -20,11 +20,14 @@ package org.quelea.services.importexport;
 
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileReader;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import org.quelea.data.displayable.SongDisplayable;
 import org.quelea.services.utils.LoggerUtils;
 import org.quelea.windows.main.StatusPanel;
@@ -54,7 +57,7 @@ public class EasyWorshipParser implements SongParser {
     public List<SongDisplayable> getSongs(File file, StatusPanel statusPanel) throws IOException {
         List<SongDisplayable> ret = new ArrayList<>();
         String line;
-        BufferedReader reader = new BufferedReader(new FileReader(file));
+        BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(file), "US-ASCII")); //Easyworhsip DB always in this encoding
         StringBuilder songContent = new StringBuilder();
         boolean inSong = false;
         while((line = reader.readLine()) != null) {
@@ -80,18 +83,18 @@ public class EasyWorshipParser implements SongParser {
         int fntInd = songContent.indexOf(FNT) + FNT.length();
         songContent = songContent.substring(fntInd);
         songContent = songContent.replace("\\line", "\n");
-        songContent = songContent.replaceAll("\\\\[a-z0-9]+", "");
+        songContent = songContent.replaceAll("\\\\[a-z0-9]+[ ]?", "");
         if(songContent.contains("{{")) {
             songContent = songContent.substring(0, songContent.indexOf("{{"));
         }
         songContent = trimLines(songContent);
         songContent = songContent.replaceAll("\n[\n]+", "\n\n");
-        songContent = songContent.replace("\\'85", "...");
-        songContent = songContent.replace("\\'91", "'");
-        songContent = songContent.replace("\\'92", "'");
-        songContent = songContent.replace("\\'93", "\"");
-        songContent = songContent.replace("\\'94", "\"");
-        songContent = songContent.replace("\\'96", "-");
+        Matcher matcher = Pattern.compile("(\\\\\\'([0-9a-f][0-9a-f]))").matcher(songContent);
+        while(matcher.find()) {
+            String num = matcher.group(2);
+            char val = (char)Integer.parseInt(num, 16);
+            songContent = songContent.replace(matcher.group(1), Character.toString(val));
+        }
         songContent = songContent.replace("{", "");
         songContent = songContent.replace("}", "");
         songContent = trimLines(songContent);
@@ -109,11 +112,6 @@ public class EasyWorshipParser implements SongParser {
             ret.append(line.trim()).append("\n");
         }
         return ret.toString().trim();
-    }
-
-    public static void main(String[] args) throws Exception {
-        EasyWorshipParser ewp = new EasyWorshipParser();
-        ewp.getSongs(new File("C:\\Users\\Michael\\Documents\\Church\\Databases\\Easyworship\\Softouch\\EasyWorship\\Default\\Databases\\Data\\Songs.MB"), null);
     }
 
 }
