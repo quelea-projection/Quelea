@@ -23,13 +23,26 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLClassLoader;
+import java.sql.Connection;
+import java.sql.Driver;
+import java.sql.DriverManager;
+import java.sql.DriverPropertyInfo;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.SQLFeatureNotSupportedException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Properties;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.quelea.data.displayable.SongDisplayable;
 import org.quelea.services.utils.LoggerUtils;
+import org.quelea.services.utils.QueleaProperties;
 import org.quelea.windows.main.StatusPanel;
 
 /**
@@ -56,32 +69,61 @@ public class EasyWorshipParser implements SongParser {
     @Override
     public List<SongDisplayable> getSongs(File file, StatusPanel statusPanel) throws IOException {
         List<SongDisplayable> ret = new ArrayList<>();
-        String line;
-        BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(file), "US-ASCII")); //Easyworhsip DB always in this encoding
-        StringBuilder songContent = new StringBuilder();
-        boolean inSong = false;
-        while((line = reader.readLine()) != null) {
-            if(!inSong && line.contains(FNT)) {
-                inSong = true;
-            }
-            if(inSong) {
-                songContent.append(line).append("\n");
-            }
-            if(inSong && line.contains("}")) {
-                inSong = false;
-                SongDisplayable song = getSong(songContent.toString());
-                if(song != null) {
-                    ret.add(song);
+        try {
+            File jarFile = new File(QueleaProperties.getQueleaUserHome().getAbsolutePath(), "Paradox_JDBC41.jar");
+            URL u = new URL("jar:file:" + jarFile.getAbsolutePath() + "!/");
+            String classname = "com.hxtt.sql.paradox.ParadoxDriver";
+            URLClassLoader ucl = new URLClassLoader(new URL[]{u});
+            Driver d = (Driver) Class.forName(classname, true, ucl).newInstance();
+            DriverManager.registerDriver(new DriverShim(d));
+            Connection conn = DriverManager.getConnection("jdbc:paradox:/" + file.getParent());
+            ResultSet rs = conn.createStatement().executeQuery("SELECT * FROM \"Songs.DB\"");
+            while(rs.next()) {
+                String title = rs.getString("Title");
+                if(title == null) {
+                    title = "";
                 }
-                songContent = new StringBuilder();
+                String author = rs.getString("Author");
+                if(author == null) {
+                    author = "";
+                }
+                String lyrics = rs.getString("Words");
+                ret.add(getSong(title, author, lyrics));
+            }
+
+        }
+        catch(ClassNotFoundException | IllegalAccessException | InstantiationException | MalformedURLException | SQLException ex) {
+            LOGGER.log(Level.INFO, "Couln't import using SQL", ex);
+            ret.clear();
+            String line;
+            BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(file), "US-ASCII")); //Easyworhsip DB always in this encoding
+            StringBuilder songContent = new StringBuilder();
+            boolean inSong = false;
+            while((line = reader.readLine()) != null) {
+                if(!inSong && line.contains(FNT)) {
+                    inSong = true;
+                }
+                if(inSong) {
+                    songContent.append(line).append("\n");
+                }
+                if(inSong && line.contains("}")) {
+                    inSong = false;
+                    SongDisplayable song = getSong("", "", songContent.toString());
+                    if(song != null) {
+                        ret.add(song);
+                    }
+                    songContent = new StringBuilder();
+                }
             }
         }
         return ret;
     }
 
-    private SongDisplayable getSong(String songContent) {
-        int fntInd = songContent.indexOf(FNT) + FNT.length();
-        songContent = songContent.substring(fntInd);
+    private SongDisplayable getSong(String title, String author, String songContent) {
+        if(songContent.contains(FNT)) {
+            int fntInd = songContent.indexOf(FNT) + FNT.length();
+            songContent = songContent.substring(fntInd);
+        }
         songContent = songContent.replace("\\line", "\n");
         songContent = songContent.replaceAll("\\\\[a-z0-9]+[ ]?", "");
         if(songContent.contains("{{")) {
@@ -92,13 +134,13 @@ public class EasyWorshipParser implements SongParser {
         Matcher matcher = Pattern.compile("(\\\\\\'([0-9a-f][0-9a-f]))").matcher(songContent);
         while(matcher.find()) {
             String num = matcher.group(2);
-            char val = (char)Integer.parseInt(num, 16);
+            char val = (char) Integer.parseInt(num, 16);
             songContent = songContent.replace(matcher.group(1), Character.toString(val));
         }
         songContent = songContent.replace("{", "");
         songContent = songContent.replace("}", "");
         songContent = trimLines(songContent);
-        SongDisplayable song = new SongDisplayable("", "");
+        SongDisplayable song = new SongDisplayable(title, author);
         song.setLyrics(songContent);
         if(song.getTitle() == null || song.getTitle().isEmpty()) { //Invalid song, so forget it
             song = null;
@@ -114,4 +156,49 @@ public class EasyWorshipParser implements SongParser {
         return ret.toString().trim();
     }
 
+    public static void main(String[] args) throws Exception {
+        EasyWorshipParser ew = new EasyWorshipParser();
+        List<SongDisplayable> songs = ew.getSongs(new File("C:\\Users\\mjrb5\\Desktop\\Data\\Songs.MB"), null);
+        System.out.println(songs.get(100).getTitle());
+        System.out.println(songs.get(100).getAuthor());
+        System.out.println(songs.get(100).getLyrics(false, false));
+    }
+
+}
+
+class DriverShim implements Driver {
+
+    private Driver driver;
+
+    DriverShim(Driver d) {
+        this.driver = d;
+    }
+
+    public boolean acceptsURL(String u) throws SQLException {
+        return this.driver.acceptsURL(u);
+    }
+
+    public Connection connect(String u, Properties p) throws SQLException {
+        return this.driver.connect(u, p);
+    }
+
+    public int getMajorVersion() {
+        return this.driver.getMajorVersion();
+    }
+
+    public int getMinorVersion() {
+        return this.driver.getMinorVersion();
+    }
+
+    public DriverPropertyInfo[] getPropertyInfo(String u, Properties p) throws SQLException {
+        return this.driver.getPropertyInfo(u, p);
+    }
+
+    public boolean jdbcCompliant() {
+        return this.driver.jdbcCompliant();
+    }
+
+    public Logger getParentLogger() throws SQLFeatureNotSupportedException {
+        return this.driver.getParentLogger();
+    }
 }
