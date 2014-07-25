@@ -34,6 +34,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.SQLFeatureNotSupportedException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Properties;
 import java.util.logging.Level;
@@ -76,13 +77,16 @@ public class EasyWorshipParser implements SongParser {
             URLClassLoader ucl = new URLClassLoader(new URL[]{u});
             Driver d = (Driver) Class.forName(classname, true, ucl).newInstance();
             DriverManager.registerDriver(new DriverShim(d));
-            Connection conn = DriverManager.getConnection("jdbc:paradox:/" + file.getParent());
+            Connection conn = DriverManager.getConnection("jdbc:paradox:/" + file.getParent() + "?useUnicode=true&characterEncoding=UTF-8");
             ResultSet rs = conn.createStatement().executeQuery("SELECT * FROM \"Songs.DB\"");
             while(rs.next()) {
-                String title = rs.getString("Title");
-                if(title == null) {
-                    title = "";
+                byte[] arr = rs.getBytes("Title");
+                StringBuilder titleBuilder = new StringBuilder();
+                for(byte b : arr) {
+                    char c = (char)(b&0xff);
+                    titleBuilder.append(c);
                 }
+                String title = titleBuilder.toString();
                 String author = rs.getString("Author");
                 if(author == null) {
                     author = "";
@@ -158,10 +162,7 @@ public class EasyWorshipParser implements SongParser {
 
     public static void main(String[] args) throws Exception {
         EasyWorshipParser ew = new EasyWorshipParser();
-        List<SongDisplayable> songs = ew.getSongs(new File("C:\\Users\\mjrb5\\Desktop\\Data\\Songs.MB"), null);
-        System.out.println(songs.get(100).getTitle());
-        System.out.println(songs.get(100).getAuthor());
-        System.out.println(songs.get(100).getLyrics(false, false));
+        List<SongDisplayable> songs = ew.getSongs(new File("C:\\Users\\Michael\\Documents\\Church\\Databases\\Easyworship (Hungarian)\\Data\\Songs.MB"), null);
     }
 
 }
