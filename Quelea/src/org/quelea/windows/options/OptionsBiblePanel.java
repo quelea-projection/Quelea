@@ -48,6 +48,7 @@ import org.quelea.services.utils.PropertyPanel;
 import org.quelea.services.utils.QueleaProperties;
 import org.quelea.services.utils.Utils;
 import org.quelea.windows.main.QueleaApp;
+import org.quelea.windows.main.schedule.ScheduleList;
 import org.quelea.windows.main.widgets.NumberTextField;
 
 /**
@@ -63,6 +64,7 @@ public class OptionsBiblePanel extends GridPane implements PropertyPanel, BibleC
     private final ComboBox useBibleVersesBox;
     private final NumberTextField maxItemsPerSlideBox;
     private final Slider maxCharsSlider;
+    private boolean changed;
 
     /**
      * Create the options bible panel.
@@ -132,52 +134,39 @@ public class OptionsBiblePanel extends GridPane implements PropertyPanel, BibleC
             @Override
             public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
                 maxItemsPerSlideLabel.setText(labels[0] + newValue + labels[1]);
-                if (QueleaApp.get().getMainWindow().getMainPanel() != null) {
-                    for (Displayable d : QueleaApp.get().getMainWindow().getMainPanel().getSchedulePanel().getScheduleList().getItems()) {
-                        if (d != null) {
-                            if (d instanceof BiblePassage) {
-                                ((BiblePassage) d).updateBibleLines();
-                            }
-                        }
-                    }
-                }
+                changed = true;
             }
         });
 
         maxItemsPerSlideBox.textProperty().addListener(new ChangeListener<String>() {
             @Override
             public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
-                if (QueleaApp.get().getMainWindow().getMainPanel() != null) {
-                    for (Displayable d : QueleaApp.get().getMainWindow().getMainPanel().getSchedulePanel().getScheduleList().getItems()) {
-                        if (d != null) {
-                            if (d instanceof BiblePassage) {
-                                ((BiblePassage) d).updateBibleLines();
-                            }
-                        }
-                    }
-                }
+                changed = true;
             }
         });
 
         Label maxCharsLabel = new Label(LabelGrabber.INSTANCE.getLabel("max.chars.line.label"));
+
         GridPane.setConstraints(maxCharsLabel, 1, 5);
         getChildren().add(maxCharsLabel);
         maxCharsSlider = new Slider(10, 160, 0);
+
         GridPane.setConstraints(maxCharsSlider, 2, 5);
         getChildren().add(maxCharsSlider);
         maxCharsLabel.setLabelFor(maxCharsSlider);
         final Label maxCharsValue = new Label(Integer.toString((int) maxCharsSlider.getValue()));
+
         GridPane.setConstraints(maxCharsValue, 3, 5);
         getChildren().add(maxCharsValue);
         maxCharsValue.setLabelFor(maxCharsSlider);
+
         maxCharsSlider.valueProperty().addListener(new javafx.beans.value.ChangeListener<Number>() {
             @Override
             public void changed(ObservableValue<? extends Number> ov, Number t, Number t1) {
                 maxCharsValue.setText(Integer.toString((int) maxCharsSlider.getValue()));
             }
         });
-        
-        
+
         readProperties();
 
     }
@@ -234,6 +223,25 @@ public class OptionsBiblePanel extends GridPane implements PropertyPanel, BibleC
         props.setMaxBibleItems(maxItemsPerSlideBox.getNumber());
         int maxCharsPerLine = (int) maxCharsSlider.getValue();
         props.setMaxBibleChars(maxCharsPerLine);
+        if (changed) {
+            if (QueleaApp.get().getMainWindow().getMainPanel() != null) {
+                ScheduleList list = QueleaApp.get().getMainWindow().getMainPanel().getSchedulePanel().getScheduleList();
+                for (Displayable d : list.getItems()) {
+                    if (d != null) {
+                        if (d instanceof BiblePassage) {
+                            ((BiblePassage) d).updateBibleLines();
+                            int index = list.listView.itemsProperty().get().indexOf(d);
+                            int selectedIndex = list.listView.selectionModelProperty().get().getSelectedIndex();
+                            if (index != -1) {
+                                list.listView.itemsProperty().get().set(index, d);
+                                list.listView.selectionModelProperty().get().select(index); //Needed for single item lists
+                            }
+                        }
+                    }
+                }
+            }
+            changed = false;
+        }
     }
 
     /**
