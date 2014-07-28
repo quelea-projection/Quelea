@@ -47,10 +47,13 @@ import java.util.Set;
 import java.util.concurrent.Semaphore;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javafx.animation.FadeTransition;
+import javafx.animation.Interpolator;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.embed.swing.SwingFXUtils;
+import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.geometry.BoundingBox;
 import javafx.geometry.Bounds;
@@ -64,6 +67,8 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
+import javafx.util.Duration;
+import org.apache.commons.lang.time.StopWatch;
 import org.javafx.dialog.Dialog;
 import org.jcodec.api.FrameGrab;
 import org.quelea.data.ThemeDTO;
@@ -99,33 +104,35 @@ public final class Utils {
     public static void beep() {
         Toolkit.getDefaultToolkit().beep();
     }
+
     /**
      * Get a hexadecimal string including the number sign from a java fx color
-     * 
+     *
      * @param inputColor the color to convert
      * @return string with hexadecimal (and pound sign) for the color
-     * 
+     *
      */
-    public static String getHexFromColor(Color inputColor){
-            Color c = inputColor;
-            int green = (int) (c.getGreen() * 255);
-            String greenString = Integer.toHexString(green);
-            if (greenString.length() < 2) {
-                greenString = greenString + "0";
-            }
-            int red = (int) (c.getRed() * 255);
-            String redString = Integer.toHexString(red);
-            if (redString.length() < 2) {
-                redString = redString + "0";
-            }
-            int blue = (int) (c.getBlue() * 255);
+    public static String getHexFromColor(Color inputColor) {
+        Color c = inputColor;
+        int green = (int) (c.getGreen() * 255);
+        String greenString = Integer.toHexString(green);
+        if (greenString.length() < 2) {
+            greenString = greenString + "0";
+        }
+        int red = (int) (c.getRed() * 255);
+        String redString = Integer.toHexString(red);
+        if (redString.length() < 2) {
+            redString = redString + "0";
+        }
+        int blue = (int) (c.getBlue() * 255);
 
-            String blueString = Integer.toHexString(blue);
-            if (blueString.length() < 2) {
-                blueString = blueString + "0";
-            }
-            return "#" + redString + greenString + blueString;
+        String blueString = Integer.toHexString(blue);
+        if (blueString.length() < 2) {
+            blueString = blueString + "0";
+        }
+        return "#" + redString + greenString + blueString;
     }
+
     /**
      * Get the debug log file, useful for debugging if something goes wrong (the
      * log is printed out to this location.)
@@ -203,6 +210,42 @@ public final class Utils {
         } catch (InterruptedException ex) {
             //Nothing
         }
+    }
+
+    /**
+     * Fade the opacity of a node. Non-Blocking. Note that an Illegal Argument
+     * Exception will be thrown if arguments are passed that could cause an
+     * infinite loop
+     *
+     * @param start the starting value of the fade (0.0-1.0)
+     * @param end the ending value of the fade (0.0-1.0)
+     * @param fstep the value that the opacity should incremented by ( positive
+     * if fading up, negative if fading out)
+     * @param nodeToFade the node to fade the opacity on
+     * @param secondDelay how many seconds to wait before fade is completed
+     * @param onFinished a runnable that should be run on the finish of the fade
+     */
+    public static void fadeNodeOpacity(final double start, final double end, final double fstep, final Node nodeToFade, final double secondDelay, final Runnable onFinished) {
+        if (nodeToFade == null) {
+            return;
+        }
+        final double FADE_DURATION = QueleaProperties.get().getFadeDuration();
+        FadeTransition trans = new FadeTransition(Duration.seconds(FADE_DURATION), nodeToFade);
+ 
+        trans.setFromValue(start);
+        trans.setToValue(end);
+        trans.setInterpolator(Interpolator.EASE_BOTH);
+        trans.play();
+        trans.setOnFinished(new EventHandler() {
+
+            @Override
+            public void handle(Event t) {
+                if (onFinished != null) {
+                    onFinished.run();
+                }
+            }
+        });
+
     }
 
     public static boolean isOffscreen(SceneInfo info) {
@@ -762,8 +805,8 @@ public final class Utils {
             return false;
         }
     }
-    
-       /**
+
+    /**
      * Determine whether a file is a powerpoint file.
      * <p/>
      * @param file the file to check.

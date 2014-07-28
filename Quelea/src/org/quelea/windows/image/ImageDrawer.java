@@ -17,6 +17,8 @@
  */
 package org.quelea.windows.image;
 
+import javafx.application.Platform;
+import javafx.scene.Node;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.StackPane;
@@ -24,6 +26,7 @@ import org.quelea.data.displayable.Displayable;
 import org.quelea.data.displayable.ImageDisplayable;
 import org.quelea.services.utils.QueleaProperties;
 import org.quelea.services.utils.Utils;
+import org.quelea.windows.main.DisplayCanvas;
 import org.quelea.windows.main.DisplayableDrawer;
 import org.quelea.windows.main.QueleaApp;
 import org.quelea.windows.multimedia.VLCWindow;
@@ -41,40 +44,72 @@ public class ImageDrawer extends DisplayableDrawer {
 
     @Override
     public void draw(Displayable displayable) {
-        clear();
-        if(getCanvas().getPlayVideo()) {
+        if (getCanvas().getPlayVideo()) {
             VLCWindow.INSTANCE.stop();
         }
         imageView = getCanvas().getNewImageView();
         imageView.setFitWidth(getCanvas().getWidth());
-        if(getCanvas().isStageView() && !QueleaProperties.get().getStageDrawImages()) {
+        if (getCanvas().isStageView() && !QueleaProperties.get().getStageDrawImages()) {
             image = Utils.getImageFromColour(QueleaProperties.get().getStageBackgroundColor());
-        }
-        else if(getCanvas().isTextOnlyView() && !QueleaProperties.get().getTextOnlyUseThemeBackground()){
+        } else if (getCanvas().isTextOnlyView() && !QueleaProperties.get().getTextOnlyUseThemeBackground()) {
             image = Utils.getImageFromColour(QueleaProperties.get().getTextOnlyBackgroundColor());
-        }
-        else {
+        } else {
             image = ((ImageDisplayable) displayable).getImage();
             imageView.setPreserveRatio(true);
         }
         imageView.setImage(image);
-        StackPane imageBox = new StackPane();
+        final StackPane imageBox = new StackPane();
         imageBox.getChildren().add(imageView);
-        if(getCanvas() != QueleaApp.get().getProjectionWindow().getCanvas()
+        if (getCanvas() != QueleaApp.get().getProjectionWindow().getCanvas()
                 && getCanvas() != QueleaApp.get().getStageWindow().getCanvas()) {
             imageBox.setStyle("-fx-background-color:#dddddd;");
         }
         imageBox.setVisible(false);
+        imageBox.setOpacity(0);
         getCanvas().getChildren().add(imageBox);
         getCanvas().pushLogoNoticeToFront();
         imageBox.setVisible(true);
         getCanvas().setOpacity(1);
+        final DisplayCanvas currentCanvas = getCanvas();
+        if (getCanvas() == QueleaApp.get().getProjectionWindow().getCanvas()) {
+            Utils.fadeNodeOpacity(imageBox.getOpacity(), 1, 0.01, imageBox, 0.0, new Runnable() {
+
+                @Override
+                public void run() {
+                    clear(currentCanvas, imageBox);
+
+                }
+            });
+        } else if ((getCanvas() == QueleaApp.get().getTextOnlyWindow().getCanvas())
+                && QueleaProperties.get().getTextOnlyUseThemeBackground()) {
+            Utils.fadeNodeOpacity(imageBox.getOpacity(), 1, 0.01, imageBox, 0.0, new Runnable() {
+
+                @Override
+                public void run() {
+                    clear(currentCanvas, imageBox);
+
+                }
+            });
+        } else {
+            imageBox.setOpacity(1);
+            clear(currentCanvas, imageBox);
+        }
     }
 
     @Override
     public void clear() {
-        if(getCanvas().getChildren() != null) {
-            getCanvas().clearNonPermanentChildren();
+        clear(getCanvas(), null);
+    }
+
+    /**
+     * Clears drawing except the passed node
+     *
+     * @param canvas the canvas to clear
+     * @param exception the node that should be kept
+     */
+    public void clear(DisplayCanvas canvas, Node exception) {
+        if (canvas.getChildren() != null) {
+            canvas.clearNonPermanentChildren(exception);
         }
     }
 

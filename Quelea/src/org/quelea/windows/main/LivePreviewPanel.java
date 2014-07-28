@@ -66,7 +66,7 @@ public abstract class LivePreviewPanel extends BorderPane {
     private static final String VIDEO_LABEL = "VIDEO";
     private static final String AUDIO_LABEL = "AUDIO";
     private static final String PRESENTATION_LABEL = "PPT";
-    private static final String MEDIA_LOOP_LABEL="MEDIA_LOOP";
+    private static final String MEDIA_LOOP_LABEL = "MEDIA_LOOP";
     private String currentLabel;
     private SelectLyricsPanel lyricsPanel = new SelectLyricsPanel(this);
     private final ImagePanel imagePanel = new ImagePanel();
@@ -145,12 +145,13 @@ public abstract class LivePreviewPanel extends BorderPane {
 
     /**
      * Get the media loop panel on this live/preview panel
+     *
      * @return the media loop panel.
      */
-        protected MediaLoopPanel getMediaLoopPanel() {
+    protected MediaLoopPanel getMediaLoopPanel() {
         return mediaLoopPanel;
     }
-        
+
     /**
      * Perform a quick edit on the given index.
      * <p/>
@@ -229,7 +230,7 @@ public abstract class LivePreviewPanel extends BorderPane {
             presentationPanel.advance();
         } else if (LYRICS_LABEL.equals(currentLabel)) {
             lyricsPanel.advance();
-        } else if(MEDIA_LOOP_LABEL.equals(currentLabel)){
+        } else if (MEDIA_LOOP_LABEL.equals(currentLabel)) {
             mediaLoopPanel.advance();
         }
     }
@@ -257,11 +258,13 @@ public abstract class LivePreviewPanel extends BorderPane {
     public SelectLyricsPanel getLyricsPanel() {
         return lyricsPanel;
     }
+
     /**
      * Get the video panel on this panel
+     *
      * @return the video panel.
      */
-    public MultimediaPanel getVideoPanel(){
+    public MultimediaPanel getVideoPanel() {
         return videoPanel;
     }
 
@@ -275,14 +278,32 @@ public abstract class LivePreviewPanel extends BorderPane {
         Platform.runLater(new Runnable() {
             @Override
             public void run() {
+                final Displayable oldDisplayable = LivePreviewPanel.this.displayable;
+                if (oldDisplayable != null) {
+                    if (oldDisplayable.equals(displayable)) {
+                        return;
+                    }
+                }
                 LivePreviewPanel.this.displayable = displayable;
-                presentationPanel.stopCurrent();
-                audioPanel.removeCurrentDisplayable();
-                videoPanel.removeCurrentDisplayable();
-                lyricsPanel.removeCurrentDisplayable();
-                imagePanel.removeCurrentDisplayable();
-                presentationPanel.removeCurrentDisplayable();
-                mediaLoopPanel.removeCurrentDisplayable();
+                if (oldDisplayable instanceof TextDisplayable) {
+                    lyricsPanel.removeCurrentDisplayable();
+                } else if (oldDisplayable instanceof ImageDisplayable) {
+                    imagePanel.removeCurrentDisplayable();
+                } else if (oldDisplayable instanceof VideoDisplayable) {
+                    videoPanel.removeCurrentDisplayable();
+                } else if (oldDisplayable instanceof AudioDisplayable) {
+                    audioPanel.removeCurrentDisplayable();
+                } else if (oldDisplayable instanceof PresentationDisplayable) {
+                    presentationPanel.stopCurrent();
+                    presentationPanel.removeCurrentDisplayable();
+                } else if (oldDisplayable instanceof MediaLoopDisplayable) {
+                    mediaLoopPanel.removeCurrentDisplayable();
+                } else if (oldDisplayable == null) {
+
+                } else {
+                    throw new RuntimeException("Displayable type not implemented: " + oldDisplayable.getClass());
+                }
+
                 if (PRESENTATION_LABEL.equals(currentLabel)) {
                     presentationPanel.showDisplayable(null, 0);
                 }

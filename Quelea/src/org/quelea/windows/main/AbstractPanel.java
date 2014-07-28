@@ -110,8 +110,9 @@ public abstract class AbstractPanel extends BorderPane implements ContainedPanel
      * @param previewCanvas The preview canvas that is to be updated
      */
     public void updatePreview(DisplayCanvas previewCanvas) {
+        previewCanvas.clearNonPermanentChildren();
         if (QueleaApp.get().getMainWindow().getMainPanel().getPreviewPanel().getDisplayable() instanceof TextDisplayable) {
-
+            
             LyricDrawer ldrawer = new LyricDrawer();
             int nextIndex = QueleaApp.get().getMainWindow()
                     .getMainPanel().getPreviewPanel().getLyricsPanel().

@@ -30,6 +30,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.animation.FadeTransition;
 import javafx.animation.ParallelTransition;
+import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
@@ -65,6 +66,7 @@ import org.quelea.services.utils.LyricLine;
 import org.quelea.services.utils.QueleaProperties;
 import org.quelea.services.utils.Utils;
 import org.quelea.windows.main.DisplayCanvas;
+import org.quelea.windows.main.QueleaApp;
 import org.quelea.windows.main.widgets.DisplayPositionSelector;
 import org.quelea.windows.multimedia.VLCWindow;
 
@@ -435,11 +437,9 @@ public class LyricDrawer extends DisplayableDrawer {
             LOGGER.log(Level.SEVERE, "Bug: Unhandled theme background case, trying to use default background: " + theme.getBackground(), new RuntimeException("DEBUG EXCEPTION FOR STACK TRACE"));
             image = Utils.getImageFromColour(ThemeDTO.DEFAULT_BACKGROUND.getColour());
         }
-        FadeTransition fadeOut = new FadeTransition(Duration.seconds(0.3), getCanvas().getCanvasBackground());
-        fadeOut.setFromValue(1);
-        fadeOut.setToValue(0);
 
-        Node newBackground;
+        final Node newBackground;
+        final Node oldBackground = getCanvas().getCanvasBackground();
         if (image == null) {
             final VideoBackground vidBackground = (VideoBackground) theme.getBackground();
             if (!sameVid || !VLCWindow.INSTANCE.isPlaying()) {
@@ -454,6 +454,7 @@ public class LyricDrawer extends DisplayableDrawer {
                 VLCWindow.INSTANCE.fadeHue(vidBackground.getHue());
             }
             newBackground = null; //transparent
+
         } else {
             if (getCanvas().getPlayVideo() && !(theme.getBackground() instanceof VideoBackground)) {
                 VLCWindow.INSTANCE.stop();
@@ -468,17 +469,74 @@ public class LyricDrawer extends DisplayableDrawer {
             getCanvas().getChildren().add(newImageView);
             newBackground = newImageView;
         }
-        final Node oldBackground = getCanvas().getCanvasBackground();
 
-        fadeOut.setOnFinished(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent t) {
-                getCanvas().getChildren().remove(oldBackground);
-            }
-        });
         getCanvas().setOpacity(1);
+        if (newBackground != null) {
+            newBackground.setOpacity(0);
+        }
         getCanvas().setCanvasBackground(newBackground);
-        fadeOut.play();
+        if (getCanvas() != QueleaApp.get().getProjectionWindow().getCanvas()
+                && (getCanvas() != QueleaApp.get().getTextOnlyWindow().getCanvas())) {
+            if (newBackground != null) {
+                newBackground.setOpacity(1);
+            }
+         
+            if (oldBackground != null) {
+                oldBackground.setOpacity(0);
+            }
+
+        } else if ((getCanvas() == QueleaApp.get().getTextOnlyWindow().getCanvas())
+                && !QueleaProperties.get().getTextOnlyUseThemeBackground()) {
+            if (newBackground != null) {
+                newBackground.setOpacity(1);
+            }
+  
+            if (oldBackground != null) {
+                oldBackground.setOpacity(0);
+            }
+        } else {
+
+            if (newBackground == null) {
+                if (newBackground == oldBackground) {
+                    return;
+                }
+                Utils.fadeNodeOpacity(oldBackground.getOpacity(), 0.0, -0.01, oldBackground, 0.0, new Runnable() {
+
+                    @Override
+                    public void run() {
+                        Platform.runLater(new Runnable() {
+
+                            @Override
+                            public void run() {
+                     
+
+                            }
+                        });
+
+                    }
+                });
+            } else {
+                if (newBackground instanceof ImageView) {
+                    if(oldBackground instanceof ImageView){
+                        ImageView newIV = ((ImageView)newBackground);
+                        ImageView oldIV = ((ImageView)oldBackground);
+                        if(newIV.getImage().equals(oldIV.getImage())){
+                            return;
+                        }
+                    }
+                }
+                Utils.fadeNodeOpacity(newBackground.getOpacity(), 1, 0.01, newBackground, 0.0, new Runnable() {
+
+                    @Override
+                    public void run() {
+
+                  
+
+                    }
+                });
+            }
+        }
+
     }
 
     /**
@@ -722,10 +780,10 @@ public class LyricDrawer extends DisplayableDrawer {
      */
     private double getUniformFontSize(TextDisplayable displayable) {
         if (!QueleaProperties.get().getUseUniformFontSize()) {
-   
+
             return -1;
         }
-        if(getCanvas().isStageView() && QueleaProperties.get().getStageUseUnuniformText()){
+        if (getCanvas().isStageView() && QueleaProperties.get().getStageUseUnuniformText()) {
             return -1;
         }
         Font font = theme.getFont();
@@ -775,7 +833,7 @@ public class LyricDrawer extends DisplayableDrawer {
         String[] bigText;
         if (getCanvas().isStageView() && QueleaProperties.get().getShowChords()) {
             bigText = displayable.getSections()[index].getText(true, false);
-            } else {
+        } else {
             bigText = displayable.getSections()[index].getText(false, false);
         }
         String[] translationArr = null;
@@ -856,7 +914,7 @@ public class LyricDrawer extends DisplayableDrawer {
         if (getCanvas().getChildren() != null) {
             getCanvas().clearNonPermanentChildren();
         }
-        setTheme(ThemeDTO.DEFAULT_THEME);
+        setTheme(ThemeDTO.DEFAULT_THEME); 
         eraseText();
     }
 

@@ -20,25 +20,20 @@ package org.quelea.windows.multimedia;
 
 import java.awt.Canvas;
 import java.awt.Color;
-import static java.awt.SystemColor.window;
 import java.awt.Window;
 import java.lang.reflect.InvocationTargetException;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.application.Platform;
-import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 import org.apache.commons.lang.time.StopWatch;
-import org.quelea.services.utils.LoggerUtils;
+import org.quelea.services.utils.QueleaProperties;
 import org.quelea.services.utils.Utils;
 import org.quelea.windows.main.QueleaApp;
 import org.quelea.windows.multimedia.advancedPlayer.RemotePlayer;
-import uk.co.caprica.vlcj.player.MediaPlayerFactory;
 
 /**
  * A native VLC window which is responsible for moving where it's told, and
@@ -65,7 +60,7 @@ public class VLCWindowAdvancedEmbed extends VLCWindow {
     private Window window;
     private Canvas canvas;
     private boolean isPlayer1 = false;
-    private final static double FADE_SPEED = 1.0; //in seconds
+    private final static double FADE_SPEED = QueleaProperties.get().getFadeDuration(); //in seconds
     private FadeThread fadeThread;
     private Runnable runOnFinished;
     private ScheduledExecutorService onFinishedExc;

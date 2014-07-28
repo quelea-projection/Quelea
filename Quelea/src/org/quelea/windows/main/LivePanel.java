@@ -143,7 +143,9 @@ public class LivePanel extends LivePreviewPanel {
                 HashSet<DisplayCanvas> canvases = new HashSet<>();
                 canvases.addAll(getCanvases());
                 for (DisplayCanvas canvas : canvases) {
+                    if(!canvas.isStageView()){
                     canvas.setLogoDisplaying(logo.isSelected());
+                    }
                 }
             }
         });
@@ -157,7 +159,9 @@ public class LivePanel extends LivePreviewPanel {
                 HashSet<DisplayCanvas> canvases = new HashSet<>();
                 canvases.addAll(getCanvases());
                 for (DisplayCanvas canvas : canvases) {
-                    canvas.setBlacked(black.isSelected());
+                    if (!canvas.isStageView()) {
+                        canvas.setBlacked(black.isSelected());
+                    }
                 }
             }
         });
@@ -171,7 +175,9 @@ public class LivePanel extends LivePreviewPanel {
                 HashSet<DisplayCanvas> canvases = new HashSet<>();
                 canvases.addAll(getCanvases());
                 for (DisplayCanvas canvas : canvases) {
-                    canvas.setCleared(clear.isSelected());
+                    if (!canvas.isStageView()) {
+                        canvas.setCleared(clear.isSelected());
+                    }
                 }
             }
         });
@@ -387,7 +393,6 @@ public class LivePanel extends LivePreviewPanel {
         return secondsLeft;
     }
 
-    
     public boolean getLogoed() {
         return logo.isSelected();
     }

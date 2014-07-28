@@ -17,9 +17,11 @@
  */
 package org.quelea.windows.main;
 
+import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.animation.FadeTransition;
+import javafx.animation.Interpolator;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -27,6 +29,7 @@ import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.geometry.Pos;
+import javafx.scene.CacheHint;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.image.ImageView;
@@ -67,6 +70,7 @@ public class DisplayCanvas extends StackPane {
     private final boolean isTextOnly;
     private DisplayCanvas previewCanvas;
     private Label titleLabel = new Label("");
+    private ArrayList<Node> blackList = new ArrayList(); //Do not touch list, so that items fading out do not get faded out while fading out...
 
     public enum Type {
 
@@ -219,10 +223,48 @@ public class DisplayCanvas extends StackPane {
     }
 
     public void clearNonPermanentChildren() {
+        clearNonPermanentChildren(null);
+    }
+
+    /**
+     * Clears non permanent children except the passed node
+     *
+     * @param exception the node that should be kept
+     */
+    public void clearNonPermanentChildren(Node exception) {
+
         ObservableList<Node> list = FXCollections.observableArrayList(getChildren());
-        for (Node node : list) {
-            if (!(node instanceof NoticeOverlay) && node != logoImage && node != black) {
-                getChildren().remove(node);
+        for (final Node node : list) {
+            if (!(node instanceof NoticeOverlay) && node != logoImage && node != black && node != exception && !blackList.contains(node)) {
+                blackList.add(node);
+                if (this != QueleaApp.get().getProjectionWindow().getCanvas()
+                        && (this != QueleaApp.get().getTextOnlyWindow().getCanvas())) {
+                    getChildren().remove(node);
+                    blackList.remove(node);
+                } else if ((this == QueleaApp.get().getTextOnlyWindow().getCanvas())
+                        && !QueleaProperties.get().getTextOnlyUseThemeBackground()) {
+                    getChildren().remove(node);
+                    blackList.remove(node);
+                } else {
+
+                    Utils.fadeNodeOpacity(node.getOpacity(), 0.0, -0.01, node, 2.0, new Runnable() {
+
+                        @Override
+                        public void run() {
+
+                            Platform.runLater(new Runnable() {
+
+                                @Override
+                                public void run() {
+                                    getChildren().remove(node);
+                                    blackList.remove(node);
+                                }
+                            });
+
+                        }
+                    });
+                }
+
             }
         }
     }
@@ -247,16 +289,17 @@ public class DisplayCanvas extends StackPane {
      */
     public void setCurrentDisplayable(Displayable currentDisplayable) {
         this.currentDisplayable = currentDisplayable;
-        if(currentDisplayable == null){
-           titleLabel.setText(""); 
-        }else{
-           titleLabel.setText(LabelGrabber.INSTANCE.getLabel("stageView.displayable.title") + ":\n    " + currentDisplayable.getPreviewText()); 
+        if (currentDisplayable == null) {
+            titleLabel.setText("");
+        } else {
+            titleLabel.setText(LabelGrabber.INSTANCE.getLabel("stageView.displayable.title") + ":\n    " + currentDisplayable.getPreviewText());
         }
-        
+
     }
 
     /**
      * Get a label that represents the title of this displayable
+     *
      * @return The label representing the title
      */
     public Label getTitleLabel() {
@@ -398,10 +441,12 @@ public class DisplayCanvas extends StackPane {
             black.toFront();
             FadeTransition ft = new FadeTransition(Duration.seconds(0.5), black);
             ft.setToValue(1);
+            ft.setInterpolator(Interpolator.EASE_BOTH);
             ft.play();
         } else {
             FadeTransition ft = new FadeTransition(Duration.seconds(0.5), black);
             ft.setToValue(0);
+            ft.setInterpolator(Interpolator.EASE_BOTH);
             ft.play();
         }
     }
@@ -434,12 +479,15 @@ public class DisplayCanvas extends StackPane {
     public void setLogoDisplaying(boolean selected) {
         if (selected) {
             logoImage.toFront();
-            FadeTransition ft = new FadeTransition(Duration.seconds(1.5), logoImage);
-            ft.setToValue(1);
+            FadeTransition ft = new FadeTransition(Duration.millis(1500), logoImage);
+            ft.setToValue(1.000);
+            
+            ft.setInterpolator(Interpolator.EASE_BOTH);
             ft.play();
         } else {
-            FadeTransition ft = new FadeTransition(Duration.seconds(1.5), logoImage);
-            ft.setToValue(0);
+            FadeTransition ft = new FadeTransition(Duration.millis(1500), logoImage);
+            ft.setToValue(0.000);
+            ft.setInterpolator(Interpolator.EASE_BOTH);
             ft.play();
         }
     }
