@@ -47,10 +47,13 @@ import java.util.Set;
 import java.util.concurrent.Semaphore;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javafx.animation.FadeTransition;
+import javafx.animation.Interpolator;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.embed.swing.SwingFXUtils;
+import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.geometry.BoundingBox;
 import javafx.geometry.Bounds;
@@ -64,11 +67,15 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
+import javafx.util.Duration;
+import org.apache.commons.lang.time.StopWatch;
 import org.javafx.dialog.Dialog;
 import org.jcodec.api.FrameGrab;
 import org.quelea.data.ThemeDTO;
 import org.quelea.data.db.SongManager;
+import org.quelea.data.displayable.MediaLoopDisplayable;
 import org.quelea.data.displayable.SongDisplayable;
+import org.quelea.data.mediaLoop.MediaLoopManager;
 import org.quelea.services.languages.LabelGrabber;
 import org.quelea.windows.main.QueleaApp;
 import org.quelea.windows.main.StatusPanel;
@@ -99,6 +106,34 @@ public final class Utils {
     }
 
     /**
+     * Get a hexadecimal string including the number sign from a java fx color
+     *
+     * @param inputColor the color to convert
+     * @return string with hexadecimal (and pound sign) for the color
+     *
+     */
+    public static String getHexFromColor(Color inputColor) {
+        Color c = inputColor;
+        int green = (int) (c.getGreen() * 255);
+        String greenString = Integer.toHexString(green);
+        if (greenString.length() < 2) {
+            greenString = greenString + "0";
+        }
+        int red = (int) (c.getRed() * 255);
+        String redString = Integer.toHexString(red);
+        if (redString.length() < 2) {
+            redString = redString + "0";
+        }
+        int blue = (int) (c.getBlue() * 255);
+
+        String blueString = Integer.toHexString(blue);
+        if (blueString.length() < 2) {
+            blueString = blueString + "0";
+        }
+        return "#" + redString + greenString + blueString;
+    }
+
+    /**
      * Get the debug log file, useful for debugging if something goes wrong (the
      * log is printed out to this location.)
      * <p>
@@ -119,8 +154,8 @@ public final class Utils {
      */
     public static boolean isInDir(File dir, File file) {
         File[] files = QueleaProperties.get().getImageDir().listFiles();
-        for(File listFile : files) {
-            if(file.equals(listFile)) {
+        for (File listFile : files) {
+            if (file.equals(listFile)) {
                 return true;
             }
         }
@@ -135,15 +170,14 @@ public final class Utils {
      */
     public static void setToolbarButtonStyle(final Node button) {
         button.setStyle(Utils.TOOLBAR_BUTTON_STYLE);
-        if(button instanceof ToggleButton) {
+        if (button instanceof ToggleButton) {
             ToggleButton toggle = (ToggleButton) button;
             toggle.selectedProperty().addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue<? extends Boolean> ov, Boolean t, Boolean t1) {
-                    if(t1) {
+                    if (t1) {
                         button.setStyle(Utils.HOVER_TOOLBAR_BUTTON_STYLE);
-                    }
-                    else {
+                    } else {
                         button.setStyle(Utils.TOOLBAR_BUTTON_STYLE);
                     }
                 }
@@ -158,7 +192,7 @@ public final class Utils {
         button.setOnMouseExited(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent mouseEvent) {
-                if(!(button instanceof ToggleButton && ((ToggleButton) button).isSelected())) {
+                if (!(button instanceof ToggleButton && ((ToggleButton) button).isSelected())) {
                     button.setStyle(Utils.TOOLBAR_BUTTON_STYLE);
                 }
             }
@@ -173,15 +207,50 @@ public final class Utils {
     public static void sleep(long millis) {
         try {
             Thread.sleep(millis);
-        }
-        catch(InterruptedException ex) {
+        } catch (InterruptedException ex) {
             //Nothing
         }
     }
 
+    /**
+     * Fade the opacity of a node. Non-Blocking. Note that an Illegal Argument
+     * Exception will be thrown if arguments are passed that could cause an
+     * infinite loop
+     *
+     * @param start the starting value of the fade (0.0-1.0)
+     * @param end the ending value of the fade (0.0-1.0)
+     * @param fstep the value that the opacity should incremented by ( positive
+     * if fading up, negative if fading out)
+     * @param nodeToFade the node to fade the opacity on
+     * @param secondDelay how many seconds to wait before fade is completed
+     * @param onFinished a runnable that should be run on the finish of the fade
+     */
+    public static void fadeNodeOpacity(final double start, final double end, final double fstep, final Node nodeToFade, final double secondDelay, final Runnable onFinished) {
+        if (nodeToFade == null) {
+            return;
+        }
+        final double FADE_DURATION = QueleaProperties.get().getFadeDuration();
+        FadeTransition trans = new FadeTransition(Duration.seconds(FADE_DURATION), nodeToFade);
+ 
+        trans.setFromValue(start);
+        trans.setToValue(end);
+        trans.setInterpolator(Interpolator.EASE_BOTH);
+        trans.play();
+        trans.setOnFinished(new EventHandler() {
+
+            @Override
+            public void handle(Event t) {
+                if (onFinished != null) {
+                    onFinished.run();
+                }
+            }
+        });
+
+    }
+
     public static boolean isOffscreen(SceneInfo info) {
-        for(Screen screen : Screen.getScreens()) {
-            if(screen.getBounds().intersects(info.getBounds())) {
+        for (Screen screen : Screen.getScreens()) {
+            if (screen.getBounds().intersects(info.getBounds())) {
                 return false;
             }
         }
@@ -194,15 +263,14 @@ public final class Utils {
      * @param runnable the runnable to run.
      */
     public static void fxRunAndWait(Runnable runnable) {
-        if(Platform.isFxApplicationThread()) {
+        if (Platform.isFxApplicationThread()) {
             runnable.run();
             return;
         }
         final Semaphore sem = new Semaphore(1);
         try {
             sem.acquire();
-        }
-        catch(InterruptedException ex) {
+        } catch (InterruptedException ex) {
             LOGGER.log(Level.SEVERE, "Interrupted!", ex);
         }
         Platform.runLater(runnable);
@@ -214,8 +282,7 @@ public final class Utils {
         });
         try {
             sem.acquire();
-        }
-        catch(InterruptedException ex) {
+        } catch (InterruptedException ex) {
             LOGGER.log(Level.SEVERE, "Interrupted!", ex);
         }
     }
@@ -297,14 +364,14 @@ public final class Utils {
      * @return the file name without the extension.
      */
     public static String getFileNameWithoutExtension(String nameWithExtension) {
-        if(!nameWithExtension.contains(".")) {
+        if (!nameWithExtension.contains(".")) {
             return nameWithExtension;
         }
         String[] parts = nameWithExtension.split("\\.");
         StringBuilder ret = new StringBuilder();
-        for(int i = 0; i < parts.length - 1; i++) {
+        for (int i = 0; i < parts.length - 1; i++) {
             ret.append(parts[i]);
-            if(i != parts.length - 2) {
+            if (i != parts.length - 2) {
                 ret.append(".");
             }
         }
@@ -325,20 +392,19 @@ public final class Utils {
             @Override
             public void run() {
                 boolean result = SongManager.get().updateSong(song);
-                if(!result && showError) {
+                if (!result && showError) {
                     Platform.runLater(new Runnable() {
                         @Override
                         public void run() {
-                            Dialog.showError(LabelGrabber.INSTANCE.getLabel("error.text"), LabelGrabber.INSTANCE.getLabel("error.udpating.song.text"));
+                            Dialog.showError(LabelGrabber.INSTANCE.getLabel("error.text"), LabelGrabber.INSTANCE.getLabel("error.updating.song.text"));
                         }
                     });
                 }
             }
         };
-        if(silent) {
+        if (silent) {
             new Thread(updateRunner).start();
-        }
-        else {
+        } else {
             Utils.fxRunAndWait(new Runnable() {
                 @Override
                 public void run() {
@@ -348,6 +414,55 @@ public final class Utils {
                         @Override
                         public void run() {
                             updateRunner.run();
+                            Platform.runLater(new Runnable() {
+                                @Override
+                                public void run() {
+                                    statusPanel.done();
+                                }
+                            });
+                        }
+                    }.start();
+                }
+            });
+        }
+    }
+
+    /**
+     * Update a media loop in the background.
+     * <p/>
+     * @param mediaLoop the mediaLoop to update.
+     * @param showError true if an error should be shown if there's a problem
+     * updating the mediaLoop, false otherwise.
+     * @param silent true if we should update the mediaLoop without showing a
+     * bar on the status panel.
+     */
+    public static void updateMediaLoopInBackground(final MediaLoopDisplayable mediaLoop, final boolean showError, final boolean silent) {
+        final Runnable updateRunner = new Runnable() {
+            @Override
+            public void run() {
+                boolean result = MediaLoopManager.get().updateMediaLoop(mediaLoop);
+                if (!result && showError) {
+                    Platform.runLater(new Runnable() {
+                        @Override
+                        public void run() {
+                            Dialog.showError(LabelGrabber.INSTANCE.getLabel("error.text"), LabelGrabber.INSTANCE.getLabel("error.updating.mediaLoop.text"));
+                        }
+                    });
+                }
+            }
+        };
+        if (silent) {
+            new Thread(updateRunner).start();
+        } else {
+            Utils.fxRunAndWait(new Runnable() {
+                @Override
+                public void run() {
+                    final StatusPanel statusPanel = QueleaApp.get().getStatusGroup().addPanel(LabelGrabber.INSTANCE.getLabel("updating.db"));
+                    statusPanel.removeCancelButton();
+                    new Thread() {
+                        @Override
+                        public void run() {
+                            new Thread(updateRunner).start();
                             Platform.runLater(new Runnable() {
                                 @Override
                                 public void run() {
@@ -391,10 +506,10 @@ public final class Utils {
      */
     public static Font getDifferentSizeFont(Font font, float size) {
         Map<TextAttribute, Object> attributes = new HashMap<>();
-        for(Entry<TextAttribute, ?> entry : font.getAttributes().entrySet()) {
+        for (Entry<TextAttribute, ?> entry : font.getAttributes().entrySet()) {
             attributes.put(entry.getKey(), entry.getValue());
         }
-        if(attributes.get(TextAttribute.SIZE) != null) {
+        if (attributes.get(TextAttribute.SIZE) != null) {
             attributes.put(TextAttribute.SIZE, size);
         }
         return new Font(attributes);
@@ -416,16 +531,15 @@ public final class Utils {
         int maxSize = 288;
         int curSize = font.getSize();
 
-        while(maxSize - minSize > 2) {
+        while (maxSize - minSize > 2) {
             FontMetrics fm = g.getFontMetrics(new Font(font.getName(), font.getStyle(), curSize));
             int fontWidth = fm.stringWidth(string);
             int fontHeight = fm.getLeading() + fm.getMaxAscent() + fm.getMaxDescent();
 
-            if((fontWidth > width) || (fontHeight > height)) {
+            if ((fontWidth > width) || (fontHeight > height)) {
                 maxSize = curSize;
                 curSize = (maxSize + minSize) / 2;
-            }
-            else {
+            } else {
                 minSize = curSize;
                 curSize = (minSize + maxSize) / 2;
             }
@@ -489,10 +603,9 @@ public final class Utils {
                 stage.setY(centreY - stage.getHeight() / 2);
             }
         };
-        if(Platform.isFxApplicationThread()) {
+        if (Platform.isFxApplicationThread()) {
             locationSetter.run();
-        }
-        else {
+        } else {
             Platform.runLater(locationSetter);
         }
     }
@@ -502,7 +615,7 @@ public final class Utils {
     }
 
     public static void checkFXThread() {
-        if(!fxThread()) {
+        if (!fxThread()) {
             LOGGER.log(Level.WARNING, "Not on FX Thread!", new AssertionError());
         }
     }
@@ -516,8 +629,8 @@ public final class Utils {
     public static <T> void removeDuplicateWithOrder(List<T> list) {
         Set<T> set = new HashSet<>();
         List<T> newList = new ArrayList<>();
-        for(T element : list) {
-            if(set.add(element)) {
+        for (T element : list) {
+            if (set.add(element)) {
                 newList.add(element);
             }
         }
@@ -533,17 +646,17 @@ public final class Utils {
      * @throws IOException if something goes wrong.
      */
     public static void copyFile(File sourceFile, File destFile) throws IOException {
-        if(sourceFile.isDirectory()) {
-            if(sourceFile.getName().equals(".svn")) {
+        if (sourceFile.isDirectory()) {
+            if (sourceFile.getName().equals(".svn")) {
                 return;
             }
             Files.copy(sourceFile.toPath(), destFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
-            for(File file : sourceFile.listFiles()) {
+            for (File file : sourceFile.listFiles()) {
                 copyFile(file, new File(destFile, file.getName()));
             }
             return;
         }
-        if(!destFile.exists()) {
+        if (!destFile.exists()) {
             destFile.createNewFile();
         }
 
@@ -553,12 +666,11 @@ public final class Utils {
             source = new FileInputStream(sourceFile).getChannel();
             destination = new FileOutputStream(destFile).getChannel();
             destination.transferFrom(source, 0, source.size());
-        }
-        finally {
-            if(source != null) {
+        } finally {
+            if (source != null) {
                 source.close();
             }
-            if(destination != null) {
+            if (destination != null) {
                 destination.close();
             }
         }
@@ -571,7 +683,7 @@ public final class Utils {
      * @return the the string with the first letter capitalised.
      */
     public static String capitaliseFirst(String line) {
-        if(line.isEmpty()) {
+        if (line.isEmpty()) {
             return line;
         }
         StringBuilder ret = new StringBuilder(line);
@@ -589,8 +701,8 @@ public final class Utils {
     public static String getAbbreviation(String name) {
         StringBuilder ret = new StringBuilder();
         String[] parts = name.split(" ");
-        for(String str : parts) {
-            if(!str.isEmpty()) {
+        for (String str : parts) {
+            if (!str.isEmpty()) {
                 ret.append(Character.toUpperCase(str.charAt(0)));
             }
         }
@@ -622,15 +734,14 @@ public final class Utils {
      * if we can't get the text content for some reason.
      */
     public static synchronized String getTextFromFile(String fileName, String errorText) {
-        try(BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(fileName), "UTF-8"))) {
+        try (BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(fileName), "UTF-8"))) {
             StringBuilder content = new StringBuilder();
             String line;
-            while((line = reader.readLine()) != null) {
+            while ((line = reader.readLine()) != null) {
                 content.append(line).append('\n');
             }
             return content.toString();
-        }
-        catch(IOException ex) {
+        } catch (IOException ex) {
             LOGGER.log(Level.WARNING, "Couldn't get the contents of " + fileName, ex);
             return errorText;
         }
@@ -645,15 +756,14 @@ public final class Utils {
      * @return the resized image.
      */
     public static BufferedImage resizeImage(BufferedImage image, int width, int height) {
-        if(width > 0 && height > 0 && (image.getWidth() != width || image.getHeight() != height)) {
+        if (width > 0 && height > 0 && (image.getWidth() != width || image.getHeight() != height)) {
             BufferedImage bdest = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
             Graphics2D g = bdest.createGraphics();
             g.setRenderingHint(RenderingHints.KEY_ALPHA_INTERPOLATION, RenderingHints.VALUE_ALPHA_INTERPOLATION_QUALITY);
             g.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BICUBIC);
             g.drawImage(image, 0, 0, width, height, null);
             return bdest;
-        }
-        else {
+        } else {
             return image;
         }
     }
@@ -665,12 +775,49 @@ public final class Utils {
      * @return true if the file is an image, false otherwise.
      */
     public static boolean fileIsImage(File file) {
-        if(file.isDirectory() && !file.isHidden()) {
+        if (file.isDirectory() && !file.isHidden()) {
             return true;
+        } else {
+            for (String ext : getImageExtensions()) {
+                if (hasExtension(file, ext)) {
+                    return true;
+                }
+            }
+            return false;
         }
-        else {
-            for(String ext : getImageExtensions()) {
-                if(hasExtension(file, ext)) {
+    }
+
+    /**
+     * Determine whether a file is a Video file.
+     * <p/>
+     * @param file the file to check.
+     * @return true if the file is a Video, false otherwise.
+     */
+    public static boolean fileIsVideo(File file) {
+        if (file.isDirectory() && !file.isHidden()) {
+            return true;
+        } else {
+            for (String ext : getVideoExtensions()) {
+                if (hasExtension(file, ext)) {
+                    return true;
+                }
+            }
+            return false;
+        }
+    }
+
+    /**
+     * Determine whether a file is a powerpoint file.
+     * <p/>
+     * @param file the file to check.
+     * @return true if the file is a powerpoint, false otherwise.
+     */
+    public static boolean fileIsPowerpoint(File file) {
+        if (file.isDirectory() && !file.isHidden()) {
+            return true;
+        } else {
+            for (String ext : FileFilters.POWERPOINT.getExtensions()) {
+                if (hasExtension(file, ext)) {
                     return true;
                 }
             }
@@ -718,6 +865,18 @@ public final class Utils {
     }
 
     /**
+     * Get a list of all supported video and image extensions.
+     * <p/>
+     * @return a list of all supported video and image extensions.
+     */
+    public static List<String> getVideoImageExtensions() {
+        List<String> ret = new ArrayList<>();
+        ret.addAll(getVideoExtensions());
+        ret.addAll(getImageExtensions());
+        return ret;
+    }
+
+    /**
      * Get file extensions (in *.ext format) from a list of normal extensions.
      * <p/>
      * @param extensions the list of normal extensions.
@@ -725,7 +884,7 @@ public final class Utils {
      */
     public static List<String> getFileExtensions(List<String> extensions) {
         List<String> ret = new ArrayList<>();
-        for(String str : extensions) {
+        for (String str : extensions) {
             ret.add("*." + str);
         }
         return ret;
@@ -741,7 +900,7 @@ public final class Utils {
      */
     public static boolean hasExtension(File file, String ext) {
         String name = file.getName().toLowerCase();
-        if(!name.contains(".")) {
+        if (!name.contains(".")) {
             return false;
         }
         String[] parts = name.split("\\.");
@@ -757,11 +916,11 @@ public final class Utils {
     public static String[] getAllFonts() {
         Font[] fonts = GraphicsEnvironment.getLocalGraphicsEnvironment().getAllFonts();
         Set<String> names = new HashSet<>();
-        for(Font font : fonts) {
+        for (Font font : fonts) {
             names.add(font.getFamily());
         }
         List<String> namesList = new ArrayList<>(names.size());
-        for(String name : names) {
+        for (String name : names) {
             namesList.add(name);
         }
         Collections.sort(namesList);
@@ -789,14 +948,14 @@ public final class Utils {
      * @return the image to be shown in place of a playing video.
      */
     public static Image getVidBlankImage(File videoFile) {
-        synchronized(videoPreviewCache) {
-            if(videoFile.isFile()) {
+        synchronized (videoPreviewCache) {
+            if (videoFile.isFile()) {
                 try {
                     WritableImage ret = videoPreviewCache.get(videoFile);
-                    if(ret == null) {
+                    if (ret == null) {
                         BufferedImage bi = FrameGrab.getFrame(videoFile, 0);
-                        if(bi != null) {
-                            if(bi.getWidth()>720||bi.getHeight()>480) {
+                        if (bi != null) {
+                            if (bi.getWidth() > 720 || bi.getHeight() > 480) {
                                 bi = scaleImage(bi, 720);
                             }
                             ret = SwingFXUtils.toFXImage(bi, null);
@@ -804,21 +963,19 @@ public final class Utils {
                     }
                     videoPreviewCache.put(videoFile, ret);
                     return ret;
-                }
-                catch(Exception ex) {
+                } catch (Exception ex) {
                     LOGGER.log(Level.INFO, "Couldn't get video preview image for " + videoFile.getAbsolutePath(), ex);
                     return new Image("file:icons/vid preview.png");
                 }
-            }
-            else {
+            } else {
                 return new Image("file:icons/vid preview.png");
             }
         }
     }
-    
+
     private static BufferedImage scaleImage(BufferedImage orig, int width) {
-        double ratio = orig.getWidth()/orig.getHeight();
-        int height = (int)(width/ratio);
+        double ratio = orig.getWidth() / orig.getHeight();
+        int height = (int) (width / ratio);
         BufferedImage resized = new BufferedImage(width, height, orig.getType());
         Graphics2D g = resized.createGraphics();
         g.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
@@ -834,14 +991,13 @@ public final class Utils {
      * @return the colour.
      */
     public static Color parseColour(String colour) {
-        if(colour == null || colour.trim().isEmpty()) {
+        if (colour == null || colour.trim().isEmpty()) {
             return ThemeDTO.DEFAULT_FONT_COLOR;
         }
-        if(!colour.contains("[")) {
+        if (!colour.contains("[")) {
             try {
                 return Color.web(colour);
-            }
-            catch(IllegalArgumentException ex) {
+            } catch (IllegalArgumentException ex) {
                 return ThemeDTO.DEFAULT_FONT_COLOR;
             }
         }
@@ -850,13 +1006,13 @@ public final class Utils {
         double red = Double.parseDouble(parts[0].split("=")[1]);
         double green = Double.parseDouble(parts[1].split("=")[1]);
         double blue = Double.parseDouble(parts[2].split("=")[1]);
-        if(red > 1.0) {
+        if (red > 1.0) {
             red /= 255;
         }
-        if(green > 1.0) {
+        if (green > 1.0) {
             green /= 255;
         }
-        if(blue > 1.0) {
+        if (blue > 1.0) {
             blue /= 255;
         }
         return new Color(red, green, blue, 1);
@@ -868,12 +1024,11 @@ public final class Utils {
 
     public static String escapeHTML(String s) {
         StringBuilder out = new StringBuilder();
-        for(int i = 0; i < s.length(); i++) {
+        for (int i = 0; i < s.length(); i++) {
             char c = s.charAt(i);
-            if(c > 127 || c == '"' || c == '<' || c == '>') {
+            if (c > 127 || c == '"' || c == '<' || c == '>') {
                 out.append("&#").append((int) c).append(";");
-            }
-            else {
+            } else {
                 out.append(c);
             }
         }

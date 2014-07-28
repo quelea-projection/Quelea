@@ -36,6 +36,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
 import org.javafx.dialog.Dialog;
 import org.quelea.data.chord.ChordLineTransposer;
 import org.quelea.data.chord.ChordTransposer;
@@ -64,6 +65,7 @@ public class BasicSongPanel extends BorderPane {
     private final TextField titleField;
     private final TextField authorField;
     private final Button transposeButton;
+    private final Button ccliImportButton;
     private final ComboBox<Dictionary> dictSelector;
     private final TransposeDialog transposeDialog;
     private String saveHash = "";
@@ -103,7 +105,10 @@ public class BasicSongPanel extends BorderPane {
         lyricsToolbar.getItems().add(getAposButton());
         lyricsToolbar.getItems().add(getTrimLinesButton());
         transposeButton = getTransposeButton();
+        ccliImportButton = getCCLIButton();
         lyricsToolbar.getItems().add(transposeButton);
+        lyricsToolbar.getItems().add(new Separator());
+        lyricsToolbar.getItems().add(ccliImportButton);
         lyricsToolbar.getItems().add(new Separator());
         Region spacer = new Region();
         HBox.setHgrow(spacer, Priority.ALWAYS);
@@ -254,6 +259,31 @@ public class BasicSongPanel extends BorderPane {
             }
         });
         Utils.setToolbarButtonStyle(ret);
+        return ret;
+    }
+
+    /**
+     * Get the button used for the SongSelect dialog
+     * @return The button used for the CCLI songSelect dialog.
+     */
+    private Button getCCLIButton() {
+        Button ret = new Button("SongSelect");
+        
+        ret.setTooltip(new Tooltip(LabelGrabber.INSTANCE.getLabel("ccli.tooltip")));
+        ret.setOnAction(new EventHandler<javafx.event.ActionEvent>() {
+            @Override
+            public void handle(javafx.event.ActionEvent t) {
+                CCLISelect ccli = new CCLISelect();
+                ccli.showAndWait();
+                if (!ccli.isCanceled()) {
+                    getLyricsField().setText(ccli.getSongText());
+                    getTitleField().setText(ccli.getSongTitle());
+                }
+
+            }
+        });
+        Utils.setToolbarButtonStyle(ret);
+     
         return ret;
     }
 

@@ -79,7 +79,7 @@ public class ThemePanel extends BorderPane {
             public void updateCallback() {
                 updateTheme(true);
             }
-        }, Priority.LOW);
+        }, Priority.LOW, false, null);
         preview = new DisplayPreview(canvas);
         VBox centrePane = new VBox();
         Label label = new Label("      " + LabelGrabber.INSTANCE.getLabel("hover.for.position.label") + ":");

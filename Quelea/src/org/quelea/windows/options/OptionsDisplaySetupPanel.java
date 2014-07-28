@@ -36,7 +36,7 @@ import org.quelea.windows.multimedia.VLCWindow;
  */
 public class OptionsDisplaySetupPanel extends GridPane implements PropertyPanel {
 
-    private final SingleDisplayPanel monitorPanel, projectorPanel, stagePanel;
+    private final SingleDisplayPanel monitorPanel, projectorPanel, stagePanel, textOnlyPanel;
 
     /**
      * Create a new display setup panel.
@@ -52,6 +52,9 @@ public class OptionsDisplaySetupPanel extends GridPane implements PropertyPanel 
         stagePanel = new SingleDisplayPanel(LabelGrabber.INSTANCE.getLabel("stage.screen.label") + ":", "icons/stage.png", true, true);
         GridPane.setConstraints(stagePanel, 3, 1);
         getChildren().add(stagePanel);
+        textOnlyPanel = new SingleDisplayPanel(LabelGrabber.INSTANCE.getLabel("textOnly.screen.label") + ":", "icons/textscreen.png", true, true);
+        GridPane.setConstraints(textOnlyPanel, 4, 1);
+        getChildren().add(textOnlyPanel);
         readProperties();
 
         GraphicsDeviceWatcher.INSTANCE.addGraphicsDeviceListener(new GraphicsDeviceListener() {
@@ -69,6 +72,7 @@ public class OptionsDisplaySetupPanel extends GridPane implements PropertyPanel 
 //                });
 //             
 //            }
+
             @Override
             public void devicesChanged(ObservableList<Screen> devices) {
                 Platform.runLater(new Runnable() {
@@ -77,6 +81,7 @@ public class OptionsDisplaySetupPanel extends GridPane implements PropertyPanel 
                         monitorPanel.update();
                         projectorPanel.update();
                         stagePanel.update();
+                        textOnlyPanel.update();
                         updatePos();
                     }
                 });
@@ -92,14 +97,19 @@ public class OptionsDisplaySetupPanel extends GridPane implements PropertyPanel 
         monitorPanel.update();
         projectorPanel.update();
         stagePanel.update();
+        textOnlyPanel.update();
         monitorPanel.setScreen(QueleaProperties.get().getControlScreen());
         projectorPanel.setCoords(QueleaProperties.get().getProjectorCoords());
-        if(!QueleaProperties.get().isProjectorModeCoords()) {
+        if (!QueleaProperties.get().isProjectorModeCoords()) {
             projectorPanel.setScreen(QueleaProperties.get().getProjectorScreen());
         }
         stagePanel.setCoords(QueleaProperties.get().getStageCoords());
-        if(!QueleaProperties.get().isStageModeCoords()) {
+        if (!QueleaProperties.get().isStageModeCoords()) {
             stagePanel.setScreen(QueleaProperties.get().getStageScreen());
+        }
+        textOnlyPanel.setCoords(QueleaProperties.get().getTextOnlyCoords());
+        if (!QueleaProperties.get().isTextOnlyModeCoords()) {
+            textOnlyPanel.setScreen(QueleaProperties.get().getTextOnlyScreen());
         }
     }
 
@@ -111,13 +121,13 @@ public class OptionsDisplaySetupPanel extends GridPane implements PropertyPanel 
 //        MainWindow mainWindow = Application.get().getMainWindow();
         DisplayStage appWindow = QueleaApp.get().getProjectionWindow();
         DisplayStage stageWindow = QueleaApp.get().getStageWindow();
-        if(projectorPanel.getOutputBounds() == null) {
-            if(appWindow != null) {
+        DisplayStage textOnlyWindow = QueleaApp.get().getTextOnlyWindow();
+        if (projectorPanel.getOutputBounds() == null) {
+            if (appWindow != null) {
                 appWindow.hide();
             }
-        }
-        else {
-            if(appWindow == null) {
+        } else {
+            if (appWindow == null) {
                 appWindow = new DisplayStage(projectorPanel.getOutputBounds(), false);
             }
             final DisplayStage fiLyricWindow = appWindow; //Fudge for AIC
@@ -125,19 +135,18 @@ public class OptionsDisplaySetupPanel extends GridPane implements PropertyPanel 
                 @Override
                 public void run() {
                     fiLyricWindow.setArea(projectorPanel.getOutputBounds());
-                    if(!QueleaApp.get().getMainWindow().getMainPanel().getLivePanel().getHide().isSelected()) {
+                    if (!QueleaApp.get().getMainWindow().getMainPanel().getLivePanel().getHide().isSelected()) {
                         fiLyricWindow.show();
                     }
                 }
             });
         }
-        if(stagePanel.getOutputBounds() == null) {
-            if(stageWindow != null) {
+        if (stagePanel.getOutputBounds() == null) {
+            if (stageWindow != null) {
                 stageWindow.hide();
             }
-        }
-        else {
-            if(stageWindow == null) {
+        } else {
+            if (stageWindow == null) {
                 stageWindow = new DisplayStage(projectorPanel.getOutputBounds(), true);
             }
             final DisplayStage fiStageWindow = stageWindow; //Fudge for AIC
@@ -145,8 +154,27 @@ public class OptionsDisplaySetupPanel extends GridPane implements PropertyPanel 
                 @Override
                 public void run() {
                     fiStageWindow.setArea(stagePanel.getOutputBounds());
-                    if(!QueleaApp.get().getMainWindow().getMainPanel().getLivePanel().getHide().isSelected()) {
+                    if (!QueleaApp.get().getMainWindow().getMainPanel().getLivePanel().getHide().isSelected()) {
                         fiStageWindow.show();
+                    }
+                }
+            });
+        }
+        if (textOnlyPanel.getOutputBounds() == null) {
+            if (textOnlyWindow != null) {
+                textOnlyWindow.hide();
+            }
+        } else {
+            if (textOnlyWindow == null) {
+                textOnlyWindow = new DisplayStage(textOnlyPanel.getOutputBounds(), false);
+            }
+            final DisplayStage fiTextOnlyWindow = textOnlyWindow; //Fudge for AIC
+            Platform.runLater(new Runnable() {
+                @Override
+                public void run() {
+                    fiTextOnlyWindow.setArea(textOnlyPanel.getOutputBounds());
+                    if (!QueleaApp.get().getMainWindow().getMainPanel().getLivePanel().getHide().isSelected()) {
+                        fiTextOnlyWindow.show();
                     }
                 }
             });
@@ -169,19 +197,24 @@ public class OptionsDisplaySetupPanel extends GridPane implements PropertyPanel 
         props.setControlScreen(monitorPanel.getOutputScreen());
         props.setProjectorCoords(projectorPanel.getCoords());
         props.setStageCoords(stagePanel.getCoords());
-        if(projectorPanel.customPosition()) {
+        props.setTextOnlyCoords(textOnlyPanel.getCoords());
+        if (projectorPanel.customPosition()) {
             props.setProjectorModeCoords();
-        }
-        else {
+        } else {
             props.setProjectorModeScreen();
             props.setProjectorScreen(projectorPanel.getOutputScreen());
         }
-        if(stagePanel.customPosition()) {
+        if (stagePanel.customPosition()) {
             props.setStageModeCoords();
-        }
-        else {
+        } else {
             props.setStageModeScreen();
             props.setStageScreen(stagePanel.getOutputScreen());
+        }
+        if (textOnlyPanel.customPosition()) {
+            props.setTextOnlyModeCoords();
+        } else {
+            props.setTextOnlyModeScreen();
+            props.setTextOnlyScreen(textOnlyPanel.getOutputScreen());
         }
         updatePos();
     }

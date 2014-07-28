@@ -125,6 +125,7 @@ public class TestPaneDialog extends Stage {
         }
         QueleaApp.get().getProjectionWindow().setTestImage(img, preserveAspect);
         QueleaApp.get().getStageWindow().setTestImage(img, preserveAspect);
+        QueleaApp.get().getTextOnlyWindow().setTestImage(img, preserveAspect);
     }
 
     private ImageView getTestView(final String uri, final boolean preserveAspect) {

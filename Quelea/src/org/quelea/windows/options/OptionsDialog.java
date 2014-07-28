@@ -48,6 +48,7 @@ public class OptionsDialog extends Stage {
     private final OptionsGeneralPanel generalPanel;
     private OptionsBiblePanel biblePanel;
     private OptionsStageViewPanel stageViewPanel;
+    private OptionsTextOnlyViewPanel textOnlyViewPanel;
     private ServerSettingsPanel serverSettingsPanel;
 
     /**
@@ -84,6 +85,13 @@ public class OptionsDialog extends Stage {
         stageViewTab.setText(LabelGrabber.INSTANCE.getLabel("stage.options.heading"));
         stageViewTab.setContent(stageViewPanel);
         tabbedPane.getTabs().add(stageViewTab);
+        
+        textOnlyViewPanel = new OptionsTextOnlyViewPanel();
+        Tab textOnlyViewTab = new Tab();
+        textOnlyViewTab.setClosable(false);
+        textOnlyViewTab.setText(LabelGrabber.INSTANCE.getLabel("textOnly.options.heading"));
+       textOnlyViewTab.setContent(textOnlyViewPanel);
+        tabbedPane.getTabs().add(textOnlyViewTab);
         
         biblePanel = new OptionsBiblePanel();
         Tab bibleTab = new Tab();
@@ -126,6 +134,7 @@ public class OptionsDialog extends Stage {
      */
     public void callBeforeShowing() {
         getGeneralPanel().resetLanguageChanged();
+        getGeneralPanel().resetMultimediaChanged();
         getServerSettingsPanel().resetChanged();
     }
     
@@ -135,6 +144,10 @@ public class OptionsDialog extends Stage {
     private void callBeforeHiding() {
         if(getGeneralPanel().hasLanguageChanged()) {
             Dialog.showInfo(LabelGrabber.INSTANCE.getLabel("language.changed"), LabelGrabber.INSTANCE.getLabel("language.changed.message"), QueleaApp.get().getMainWindow());
+        }
+        if(getGeneralPanel().hasAdvancedMultimediaChanged()){
+            Dialog.showInfo(LabelGrabber.INSTANCE.getLabel("multimedia.changed"), LabelGrabber.INSTANCE.getLabel("multimedia.changed.message"), QueleaApp.get().getMainWindow());
+
         }
         if(getServerSettingsPanel().hasChanged()) {
             Dialog.showInfo(LabelGrabber.INSTANCE.getLabel("server.changed.label"), LabelGrabber.INSTANCE.getLabel("server.changed.message"), QueleaApp.get().getMainWindow());
@@ -171,6 +184,14 @@ public class OptionsDialog extends Stage {
      */
     public OptionsStageViewPanel getStageViewPanel() {
         return stageViewPanel;
+    }
+    
+    /**
+     * Get the text only view panel used in this options dialog.
+     * @return the text only view panel
+     */
+    public OptionsTextOnlyViewPanel getTextOnlyViewPanel(){
+        return textOnlyViewPanel;
     }
     
     /**
