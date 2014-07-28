@@ -451,3 +451,14 @@ more.font.options.label=Více voleb pro písmo
 translate.heading=Překlady
 overwrite.lyrics.title=Přepsat stávající text písně?
 bible.passage.selector.prompt
+max.items.per.slide=Největší počet % na snímek
+currently.displaying.text=Nyní se zobrazuje
+pause=Pozastavit
+verses=veršů
+edit.bible.passage.text=Upravit téma pasáže
+theme.button.tooltip=Nastavit celkové téma pro rozvrh
+words=slov
+play=Přehrát
+use.bible.verses=Rozdělit snímky pasáží Bible podle čísla
+show.small.song.text.label=Ukázat malé informace o písni
+show.small.bible.text.label=Ukázat malé informace o pasáži Bible
