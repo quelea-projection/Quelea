@@ -319,7 +319,7 @@ public class OptionsGeneralPanel extends GridPane implements PropertyPanel {
         Label maxCharsLabel = new Label(LabelGrabber.INSTANCE.getLabel("max.chars.line.label"));
         GridPane.setConstraints(maxCharsLabel, 1, rows);
         getChildren().add(maxCharsLabel);
-        maxCharsSlider = new Slider(10, 80, 0);
+        maxCharsSlider = new Slider(10, 160, 0);
         GridPane.setConstraints(maxCharsSlider, 2, rows);
         getChildren().add(maxCharsSlider);
         maxCharsLabel.setLabelFor(maxCharsSlider);

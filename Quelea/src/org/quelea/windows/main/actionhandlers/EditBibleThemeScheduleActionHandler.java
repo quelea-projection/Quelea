@@ -38,7 +38,7 @@ import org.quelea.windows.newsong.ThemePanel;
 /**
  * Called when the current song in the schedule should be edited.
  *
- * @author Michael
+ * @author Ben
  */
 public class EditBibleThemeScheduleActionHandler implements EventHandler<ActionEvent> {
 

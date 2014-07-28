@@ -88,6 +88,9 @@ public class BiblePassage implements TextDisplayable, Serializable {
         this.theme = theme;
         textSections = new ArrayList<>();
         fillTextSections();
+        for (TextSection ts : getSections()) {
+            ts.setTheme(theme);
+        }
     }
 
     /**
@@ -115,9 +118,8 @@ public class BiblePassage implements TextDisplayable, Serializable {
                 section.append(verse.getVerseText());
             } else {
                 TextSection ts = new TextSection("", new String[]{section.toString()}, smallText, false);
-                if (ts.getTheme() == null) {
-                    ts.setTheme(theme);
-                }
+                ts.setTheme(theme);
+
                 textSections.add(ts);
                 section = new StringBuilder();
                 if (QueleaProperties.get().getShowVerseNumbers()) {
@@ -142,15 +144,14 @@ public class BiblePassage implements TextDisplayable, Serializable {
     @Override
     public String getXML() {
         StringBuilder ret = new StringBuilder();
-        ret.append("<passage summary=\"" );
+        ret.append("<passage summary=\"");
         String summaryText = "";
         String bible = "";
         //Handle old schedules...
-        if(summary.split("\n").length == 1) {
+        if (summary.split("\n").length == 1) {
             summaryText = summary.split("(?<=\\d)\\s")[0];
             bible = summary.split("(?<=\\d)\\s")[1];
-        }
-        else {
+        } else {
             summaryText = summary.split("\n")[0];
             bible = summary.split("\n")[0];
         }
@@ -211,7 +212,7 @@ public class BiblePassage implements TextDisplayable, Serializable {
         NodeList list = passage.getChildNodes();
         String passageSummary = passage.getAttributes().getNamedItem("summary").getTextContent();
         String bibleSummary = "";
-        if(passage.getAttributes().getNamedItem("bible") != null) {
+        if (passage.getAttributes().getNamedItem("bible") != null) {
             bibleSummary = passage.getAttributes().getNamedItem("bible").getTextContent();
         }
         String summary = passageSummary + "\n" + bibleSummary;
@@ -222,8 +223,7 @@ public class BiblePassage implements TextDisplayable, Serializable {
             Node node = list.item(i);
             if (node.getNodeName().equals("vers")) {
                 verses.add(BibleVerse.parseXML(node));
-            }
-            else if(node.getNodeName().equals("theme")) {
+            } else if (node.getNodeName().equals("theme")) {
                 tempTheme = ThemeDTO.fromString(node.getTextContent());
             }
         }
@@ -301,5 +301,9 @@ public class BiblePassage implements TextDisplayable, Serializable {
     @Override
     public void dispose() {
         //Nothing needed here.
+    }
+
+    public void updateBibleLines() {
+        fillTextSections();
     }
 }
