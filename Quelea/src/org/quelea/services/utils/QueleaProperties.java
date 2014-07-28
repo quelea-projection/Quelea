@@ -1257,6 +1257,7 @@ public final class QueleaProperties extends Properties {
     
     public void setMaxBibleItems(int number) {
         setProperty("max.bible.items", Integer.toString(number));
+        write();
     }
     
     /**
@@ -1269,6 +1270,29 @@ public final class QueleaProperties extends Properties {
     
     public void setBibleSectionVerses(boolean useVerses) {
         setProperty("use.max.bible.verses", Boolean.toString(useVerses));
+        write();
+    }
+
+    /**
+     * Get the maximum number of characters allowed on any one line of bible
+     * text. 
+     * <p/>
+     * @return the maximum number of characters allowed on any one line of
+     * bible text.
+     */
+    public int getMaxBibleChars() {
+        return Integer.parseInt(getProperty("max.bible.chars", "80"));
+    }
+    
+    /**
+     * Set the max bible chars value.
+     * <p/>
+     * @param maxChars the maximum number of characters allowed on any one line
+     * of bible text.
+     */
+    public void setMaxBibleChars(int maxChars) {
+        setProperty("max.bible.chars", Integer.toString(maxChars));
+        write();
     }
 
 }

@@ -145,7 +145,7 @@ public class LyricDrawer extends DisplayableDrawer {
         if (defaultFontSize > 0) {
             fontSize = defaultFontSize;
         } else {
-            fontSize = pickFontSize(font, newText, getCanvas().getWidth() * 0.9, getCanvas().getHeight() * 0.9);
+            fontSize = pickFontSize(font, newText, getCanvas().getWidth() * 0.92, getCanvas().getHeight() * 0.9);
         }
         if (stageView) {
             font = Font.font(font.getFamily(), FontWeight.NORMAL,
@@ -162,7 +162,7 @@ public class LyricDrawer extends DisplayableDrawer {
         }
         double smallFontSize;
         Font smallTextFont = Font.font("Arial", FontWeight.BOLD, FontPosture.REGULAR, 500);
-        smallFontSize = pickSmallFontSize(smallTextFont, smallText, getCanvas().getWidth() * 0.5, (getCanvas().getHeight() * 0.07) -5); //-5 for insets
+        smallFontSize = pickSmallFontSize(smallTextFont, smallText, getCanvas().getWidth() * 0.5, (getCanvas().getHeight() * 0.07) - 5); //-5 for insets
         smallTextFont = Font.font("Arial", FontWeight.BOLD, FontPosture.REGULAR, smallFontSize);
 
         FontMetrics metrics = Toolkit.getToolkit().getFontLoader().getFontMetrics(font);
@@ -185,11 +185,11 @@ public class LyricDrawer extends DisplayableDrawer {
         }
 
         getCanvas().getChildren().add(newTextGroup);
-        if(curDisplayable instanceof BiblePassage && QueleaProperties.get().getSmallBibleTextShow()) {
-                getCanvas().getChildren().add(smallTextGroup);
+        if (curDisplayable instanceof BiblePassage && QueleaProperties.get().getSmallBibleTextShow()) {
+            getCanvas().getChildren().add(smallTextGroup);
         }
-        if(curDisplayable instanceof SongDisplayable && QueleaProperties.get().getSmallSongTextShow()) {
-                getCanvas().getChildren().add(smallTextGroup);
+        if (curDisplayable instanceof SongDisplayable && QueleaProperties.get().getSmallSongTextShow()) {
+            getCanvas().getChildren().add(smallTextGroup);
         }
         getCanvas().pushLogoNoticeToFront();
 
@@ -241,7 +241,7 @@ public class LyricDrawer extends DisplayableDrawer {
             ft.setFont(smallTextFont);
             ft.setFill(theme.getFontPaint());
             ft.setLayoutY(sy);
-            if(QueleaProperties.get().getSmallTextPosition().equalsIgnoreCase("right")) {
+            if (QueleaProperties.get().getSmallTextPosition().equalsIgnoreCase("right")) {
                 ft.setLayoutX(getCanvas().getWidth() - smallTextMetrics.computeStringWidth(stext));
             }
             smallTextGroup.getChildren().add(ft);
@@ -259,7 +259,7 @@ public class LyricDrawer extends DisplayableDrawer {
         }
 
         StackPane.setMargin(smallTextGroup, new Insets(5));
-        
+
         if (getCanvas().isCleared() && !getLastClearedState()) {
             setLastClearedState(true);
             FadeTransition t = new FadeTransition(Duration.seconds(QueleaProperties.get().getFadeDuration()), textGroup);
@@ -510,7 +510,7 @@ public class LyricDrawer extends DisplayableDrawer {
      */
     private List<LyricLine> dumbWrapText(String[] lines) {
         List<LyricLine> ret = new ArrayList<>();
-        int maxLength = 60;
+        int maxLength = QueleaProperties.get().getMaxBibleChars();
         StringBuilder currentBuilder = new StringBuilder(maxLength);
         for (String line : lines) {
             for (String word : line.split(" ")) {
@@ -660,8 +660,10 @@ public class LyricDrawer extends DisplayableDrawer {
                 textArr = section.getText(false, false);
             }
             List<LyricLine> processedText;
+            double newSize;
             if (displayable instanceof BiblePassage) {
                 processedText = dumbWrapText(textArr);
+                newSize = pickFontSize(font, processedText, getCanvas().getWidth() * 0.92, getCanvas().getHeight() * 0.9);
             } else {
                 String[] translationArr = null;
                 if (displayable instanceof SongDisplayable) {
@@ -671,8 +673,8 @@ public class LyricDrawer extends DisplayableDrawer {
                     }
                 }
                 processedText = sanctifyText(textArr, translationArr);
+                newSize = pickFontSize(font, processedText, getCanvas().getWidth() * 0.92, getCanvas().getHeight() * 0.9);
             }
-            double newSize = pickFontSize(font, processedText, getCanvas().getWidth() * 0.9, getCanvas().getHeight() * 0.9);
             if (newSize < fontSize) {
                 fontSize = newSize;
             }
@@ -778,14 +780,13 @@ public class LyricDrawer extends DisplayableDrawer {
     private double pickSmallFontSize(Font font, String[] text, double width, double height) {
         FontMetrics metrics = Toolkit.getToolkit().getFontLoader().getFontMetrics(font);
         ArrayList<String> al = new ArrayList<String>();
-        for(String te : text) {
-            if(al.contains("\n")) {
+        for (String te : text) {
+            if (al.contains("\n")) {
                 String[] te2 = te.split("\n");
-                for(String te3 : te2) {
+                for (String te3 : te2) {
                     al.add(te3);
                 }
-            }
-            else {
+            } else {
                 al.add(te);
             }
         }
