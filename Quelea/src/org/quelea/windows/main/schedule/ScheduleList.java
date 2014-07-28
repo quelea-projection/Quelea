@@ -69,7 +69,7 @@ import org.quelea.windows.multimedia.VLCWindow;
  */
 public class ScheduleList extends StackPane {
 
-    private ListView<Displayable> listView;
+    public ListView<Displayable> listView;
     private Schedule schedule;
     private Rectangle markerRect;
     private static final Logger LOGGER = LoggerUtils.getLogger();
