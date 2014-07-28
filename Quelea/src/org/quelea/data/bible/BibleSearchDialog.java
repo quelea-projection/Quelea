@@ -17,6 +17,9 @@
  */
 package org.quelea.data.bible;
 
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -158,6 +161,9 @@ public class BibleSearchDialog extends Stage implements BibleChangeListener {
             }
         });
     }
+    
+    private ExecutorService updateExecutor = Executors.newSingleThreadExecutor();
+    private Future<?> updatorFuture;
 
     /**
      * Update the results based on the entered text.
@@ -168,8 +174,11 @@ public class BibleSearchDialog extends Stage implements BibleChangeListener {
         if (text.length() > 3) {
             if (BibleManager.get().isIndexInit()) {
                 searchResults.reset();
-                overlay.show();
-                new Thread() {
+                if(updatorFuture!=null) {
+                    updatorFuture.cancel(true);
+                }
+                Runnable updatorRunnable = new Runnable() {
+                    @Override
                     public void run() {
                         final BibleChapter[] results = BibleManager.get().getIndex().filter(text, null);
                         Platform.runLater(new Runnable() {
@@ -196,7 +205,8 @@ public class BibleSearchDialog extends Stage implements BibleChangeListener {
                             }
                         });
                     }
-                }.start();
+                };
+                updatorFuture = updateExecutor.submit(updatorRunnable);
             }
         }
         searchResults.reset();
