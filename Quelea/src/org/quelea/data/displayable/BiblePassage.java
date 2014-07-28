@@ -304,6 +304,7 @@ public class BiblePassage implements TextDisplayable, Serializable {
     }
 
     public void updateBibleLines() {
+        textSections.clear();
         fillTextSections();
     }
 }
