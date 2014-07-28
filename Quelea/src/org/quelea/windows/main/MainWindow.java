@@ -42,6 +42,7 @@ import org.quelea.windows.main.actionhandlers.SelectTranslationsActionHandler;
 import org.quelea.windows.main.menus.MainMenuBar;
 import org.quelea.windows.main.schedule.SchedulePopupMenu;
 import org.quelea.windows.main.toolbars.MainToolbar;
+import org.quelea.windows.mediaLoop.mediaLoopCreator.MediaLoopCreatorWindow;
 import org.quelea.windows.newsong.SongEntryWindow;
 import org.quelea.windows.options.OptionsDialog;
 
@@ -55,6 +56,7 @@ public class MainWindow extends Stage {
     private static final Logger LOGGER = LoggerUtils.getLogger();
     private final MainPanel mainpanel;
     private SongEntryWindow songEntryWindow;
+    private MediaLoopCreatorWindow mediaLoopCreatorWindow;
     private TranslationChoiceDialog translationChoiceDialog;
     private NoticeDialog noticeDialog;
     private final MainMenuBar menuBar;
@@ -102,6 +104,7 @@ public class MainWindow extends Stage {
 
         mainpanel = new MainPanel();
         songEntryWindow = new SongEntryWindow();
+        mediaLoopCreatorWindow = new MediaLoopCreatorWindow();
         translationChoiceDialog = new TranslationChoiceDialog();
         SchedulePopupMenu.getEditSongButton().setOnAction(new EditSongScheduleActionHandler());
         SchedulePopupMenu.getEditBibleButton().setOnAction(new EditBibleThemeScheduleActionHandler());
@@ -208,6 +211,14 @@ public class MainWindow extends Stage {
         return songEntryWindow;
     }
 
+        /**
+     * Get the media loop creator window used for this window.
+     * <p/>
+     * @return the media loop creator window.
+     */
+    public MediaLoopCreatorWindow getMediaLoopCreatorWindow() {
+        return mediaLoopCreatorWindow;
+    }
     /**
      * Get the translation choice dialog for this window.
      *
