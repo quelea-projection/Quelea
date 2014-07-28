@@ -30,6 +30,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
+import javafx.scene.control.Slider;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.GridPane;
@@ -38,6 +39,8 @@ import org.javafx.dialog.Dialog;
 import org.quelea.data.bible.Bible;
 import org.quelea.data.bible.BibleChangeListener;
 import org.quelea.data.bible.BibleManager;
+import org.quelea.data.displayable.BiblePassage;
+import org.quelea.data.displayable.Displayable;
 import org.quelea.services.languages.LabelGrabber;
 import org.quelea.services.utils.FileFilters;
 import org.quelea.services.utils.LoggerUtils;
@@ -53,12 +56,13 @@ import org.quelea.windows.main.widgets.NumberTextField;
  * @author Michael
  */
 public class OptionsBiblePanel extends GridPane implements PropertyPanel, BibleChangeListener {
-    
+
     private static final Logger LOGGER = LoggerUtils.getLogger();
     private final ComboBox<Bible> defaultBibleComboBox;
     private final CheckBox showVerseNumCheckbox;
     private final ComboBox useBibleVersesBox;
     private final NumberTextField maxItemsPerSlideBox;
+    private final Slider maxCharsSlider;
 
     /**
      * Create the options bible panel.
@@ -66,7 +70,7 @@ public class OptionsBiblePanel extends GridPane implements PropertyPanel, BibleC
     public OptionsBiblePanel() {
         setVgap(5);
         setHgap(5);
-        
+
         Label defaultBibleLabel = new Label(LabelGrabber.INSTANCE.getLabel("default.bible.label"));
         GridPane.setConstraints(defaultBibleLabel, 1, 1);
         getChildren().add(defaultBibleLabel);
@@ -76,7 +80,7 @@ public class OptionsBiblePanel extends GridPane implements PropertyPanel, BibleC
         defaultBibleLabel.setLabelFor(defaultBibleComboBox);
         GridPane.setConstraints(defaultBibleComboBox, 2, 1);
         getChildren().add(defaultBibleComboBox);
-        
+
         final Button addBibleButton = new Button(LabelGrabber.INSTANCE.getLabel("add.bible.label"), new ImageView(new Image("file:icons/add.png")));
         addBibleButton.setOnAction(new EventHandler<javafx.event.ActionEvent>() {
             @Override
@@ -97,7 +101,7 @@ public class OptionsBiblePanel extends GridPane implements PropertyPanel, BibleC
         });
         GridPane.setConstraints(addBibleButton, 3, 1);
         getChildren().add(addBibleButton);
-        
+
         Label showVerseNumLabel = new Label(LabelGrabber.INSTANCE.getLabel("show.verse.numbers"));
         GridPane.setConstraints(showVerseNumLabel, 1, 2);
         getChildren().add(showVerseNumLabel);
@@ -105,7 +109,7 @@ public class OptionsBiblePanel extends GridPane implements PropertyPanel, BibleC
         showVerseNumLabel.setLabelFor(showVerseNumCheckbox);
         GridPane.setConstraints(showVerseNumCheckbox, 2, 2);
         getChildren().add(showVerseNumCheckbox);
-        
+
         Label useBibleVersesLabel = new Label(LabelGrabber.INSTANCE.getLabel("use.bible.verses"));
         GridPane.setConstraints(useBibleVersesLabel, 1, 3);
         getChildren().add(useBibleVersesLabel);
@@ -114,7 +118,7 @@ public class OptionsBiblePanel extends GridPane implements PropertyPanel, BibleC
         useBibleVersesLabel.setLabelFor(useBibleVersesBox);
         GridPane.setConstraints(useBibleVersesBox, 2, 3);
         getChildren().add(useBibleVersesBox);
-        
+
         final String[] labels = LabelGrabber.INSTANCE.getLabel("max.items.per.slide").split("%");
         final Label maxItemsPerSlideLabel = new Label("");
         GridPane.setConstraints(maxItemsPerSlideLabel, 1, 4);
@@ -123,16 +127,59 @@ public class OptionsBiblePanel extends GridPane implements PropertyPanel, BibleC
         maxItemsPerSlideLabel.setLabelFor(maxItemsPerSlideBox);
         GridPane.setConstraints(maxItemsPerSlideBox, 2, 4);
         getChildren().add(maxItemsPerSlideBox);
-        
+
         useBibleVersesBox.valueProperty().addListener(new ChangeListener<String>() {
             @Override
             public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
                 maxItemsPerSlideLabel.setText(labels[0] + newValue + labels[1]);
+                if (QueleaApp.get().getMainWindow().getMainPanel() != null) {
+                    for (Displayable d : QueleaApp.get().getMainWindow().getMainPanel().getSchedulePanel().getScheduleList().getItems()) {
+                        if (d != null) {
+                            if (d instanceof BiblePassage) {
+                                ((BiblePassage) d).updateBibleLines();
+                            }
+                        }
+                    }
+                }
+            }
+        });
+
+        maxItemsPerSlideBox.textProperty().addListener(new ChangeListener<String>() {
+            @Override
+            public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
+                if (QueleaApp.get().getMainWindow().getMainPanel() != null) {
+                    for (Displayable d : QueleaApp.get().getMainWindow().getMainPanel().getSchedulePanel().getScheduleList().getItems()) {
+                        if (d != null) {
+                            if (d instanceof BiblePassage) {
+                                ((BiblePassage) d).updateBibleLines();
+                            }
+                        }
+                    }
+                }
+            }
+        });
+
+        Label maxCharsLabel = new Label(LabelGrabber.INSTANCE.getLabel("max.chars.line.label"));
+        GridPane.setConstraints(maxCharsLabel, 1, 5);
+        getChildren().add(maxCharsLabel);
+        maxCharsSlider = new Slider(10, 160, 0);
+        GridPane.setConstraints(maxCharsSlider, 2, 5);
+        getChildren().add(maxCharsSlider);
+        maxCharsLabel.setLabelFor(maxCharsSlider);
+        final Label maxCharsValue = new Label(Integer.toString((int) maxCharsSlider.getValue()));
+        GridPane.setConstraints(maxCharsValue, 3, 5);
+        getChildren().add(maxCharsValue);
+        maxCharsValue.setLabelFor(maxCharsSlider);
+        maxCharsSlider.valueProperty().addListener(new javafx.beans.value.ChangeListener<Number>() {
+            @Override
+            public void changed(ObservableValue<? extends Number> ov, Number t, Number t1) {
+                maxCharsValue.setText(Integer.toString((int) maxCharsSlider.getValue()));
             }
         });
         
-        readProperties();
         
+        readProperties();
+
     }
 
     /**
@@ -168,7 +215,8 @@ public class OptionsBiblePanel extends GridPane implements PropertyPanel, BibleC
         showVerseNumCheckbox.setSelected(props.getShowVerseNumbers());
         useBibleVersesBox.getSelectionModel().select((props.getBibleSectionVerses()) ? 0 : 1);
         maxItemsPerSlideBox.setNumber(props.getMaxBibleItems());
-        
+        maxCharsSlider.setValue(props.getMaxBibleChars());
+
     }
 
     /**
@@ -184,6 +232,8 @@ public class OptionsBiblePanel extends GridPane implements PropertyPanel, BibleC
         props.setShowVerseNumbers(showVerseNumCheckbox.isSelected());
         props.setBibleSectionVerses(useBibleVersesBox.getSelectionModel().getSelectedIndex() == 0);
         props.setMaxBibleItems(maxItemsPerSlideBox.getNumber());
+        int maxCharsPerLine = (int) maxCharsSlider.getValue();
+        props.setMaxBibleChars(maxCharsPerLine);
     }
 
     /**
