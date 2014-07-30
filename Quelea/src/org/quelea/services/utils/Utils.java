@@ -16,6 +16,7 @@
  */
 package org.quelea.services.utils;
 
+import java.awt.AWTException;
 import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.Graphics;
@@ -24,6 +25,7 @@ import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
 import java.awt.Rectangle;
 import java.awt.RenderingHints;
+import java.awt.Robot;
 import java.awt.Toolkit;
 import java.awt.font.TextAttribute;
 import java.awt.image.BufferedImage;
@@ -59,6 +61,7 @@ import javafx.geometry.BoundingBox;
 import javafx.geometry.Bounds;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.Node;
+import javafx.scene.SnapshotParameters;
 import javafx.scene.control.ToggleButton;
 import javafx.scene.image.Image;
 import javafx.scene.image.PixelWriter;
@@ -77,6 +80,7 @@ import org.quelea.data.displayable.MediaLoopDisplayable;
 import org.quelea.data.displayable.SongDisplayable;
 import org.quelea.data.mediaLoop.MediaLoopManager;
 import org.quelea.services.languages.LabelGrabber;
+import org.quelea.windows.main.DisplayStage;
 import org.quelea.windows.main.QueleaApp;
 import org.quelea.windows.main.StatusPanel;
 
@@ -231,7 +235,7 @@ public final class Utils {
         }
         final double FADE_DURATION = QueleaProperties.get().getFadeDuration();
         FadeTransition trans = new FadeTransition(Duration.seconds(FADE_DURATION), nodeToFade);
- 
+
         trans.setFromValue(start);
         trans.setToValue(end);
         trans.setInterpolator(Interpolator.EASE_BOTH);
@@ -245,6 +249,28 @@ public final class Utils {
                 }
             }
         });
+
+    }
+
+    /**
+     * Gets a screenshot of the live projection display. This is used at the
+     * moment for showing video frames on the stage display.
+     *
+     * @return Image of the screen
+     */
+    public static Image getScreenshotOfProjectionWindow() {
+        try {
+            Robot ro = new Robot();
+            DisplayStage projWindow = QueleaApp.get().getProjectionWindow();
+            java.awt.Rectangle rect = new java.awt.Rectangle((int) projWindow.getX(), (int) projWindow.getY(), (int) projWindow.getWidth(), (int) projWindow.getHeight());
+            BufferedImage im = ro.createScreenCapture(rect);
+            WritableImage image = new WritableImage(rect.width, rect.height);
+            SwingFXUtils.toFXImage(im, image);
+            return image;
+        } catch (AWTException ex) {
+            Logger.getLogger(Utils.class.getName()).log(Level.SEVERE, null, ex);
+            return Utils.getImageFromColour(QueleaProperties.get().getStageBackgroundColor());
+        }
 
     }
 

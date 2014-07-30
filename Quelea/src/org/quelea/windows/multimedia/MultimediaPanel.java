@@ -106,4 +106,13 @@ public class MultimediaPanel extends AbstractPanel {
         drawer.setCanvas(canvas);
         return drawer;
     }
+    
+      /**
+     * Gets the multimedia controls used by this drawer
+     *
+     * @return the controls for this drawer
+     */
+    public MultimediaControls getMultimediaControls() {
+        return controlPanel;
+    }
 }

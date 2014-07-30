@@ -120,6 +120,16 @@ public class ScheduleList extends StackPane {
                     }
                 };
                 cells.add(listCell);
+                listCell.setOnMouseClicked(new EventHandler<MouseEvent>() {
+
+                    @Override
+                    public void handle(MouseEvent t) {
+                        if (t.getClickCount() > 1) {
+                            QueleaApp.get().getMainWindow().getMainPanel().getPreviewPanel().goLive();
+                        }
+                    }
+
+                });
                 listCell.setOnDragDetected(new EventHandler<MouseEvent>() {
 
                     @Override

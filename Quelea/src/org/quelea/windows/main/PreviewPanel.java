@@ -17,6 +17,7 @@
  */
 package org.quelea.windows.main;
 
+import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.control.Button;
@@ -32,9 +33,11 @@ import javafx.scene.layout.Priority;
 import javafx.scene.layout.Region;
 import org.quelea.data.displayable.Displayable;
 import org.quelea.data.displayable.MediaLoopDisplayable;
+import org.quelea.data.displayable.MultimediaDisplayable;
 import org.quelea.data.displayable.SongDisplayable;
 import org.quelea.services.languages.LabelGrabber;
 import org.quelea.services.utils.QueleaProperties;
+import org.quelea.windows.multimedia.MultimediaDrawer;
 
 /**
  * The panel displaying the preview lyrics selection - this is viewed before
@@ -43,6 +46,7 @@ import org.quelea.services.utils.QueleaProperties;
 public class PreviewPanel extends LivePreviewPanel {
 
     private final Button liveButton;
+    private final Button livePlayButton;
 
     /**
      * Create a new preview lyrics panel.
@@ -74,8 +78,30 @@ public class PreviewPanel extends LivePreviewPanel {
 
             }
         });
+        livePlayButton = new Button(LabelGrabber.INSTANCE.getLabel("go.live.play.text"), new ImageView(new Image("file:icons/golivearrow.png")));
+        livePlayButton.setTooltip(new Tooltip(LabelGrabber.INSTANCE.getLabel("go.live.play.text")));
+        livePlayButton.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent t) {
+
+                goLive();
+                Platform.runLater(new Runnable() {
+
+                    @Override
+                    public void run() {
+                        if (QueleaApp.get().getMainWindow().getMainPanel().getLivePanel().getDisplayable() instanceof MultimediaDisplayable) {
+                            QueleaApp.get().getMainWindow().getMainPanel().getLivePanel().getVideoPanel().getMultimediaControls().play();
+
+                        }
+                    }
+                });
+
+            }
+        });
+        header.getItems().add(livePlayButton);
         header.getItems().add(liveButton);
         liveButton.setDisable(true);
+        livePlayButton.setDisable(true);
         setTop(header);
         setOnKeyTyped(new EventHandler<KeyEvent>() {
             @Override
@@ -115,6 +141,11 @@ public class PreviewPanel extends LivePreviewPanel {
     public void setDisplayable(Displayable d, int index) {
         super.setDisplayable(d, index);
         liveButton.setDisable(false);
+        if (d instanceof MultimediaDisplayable) {
+            livePlayButton.setDisable(false);
+        } else {
+            livePlayButton.setDisable(true);
+        }
     }
 
     /**

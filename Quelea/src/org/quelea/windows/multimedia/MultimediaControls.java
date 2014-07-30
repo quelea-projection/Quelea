@@ -40,6 +40,7 @@ import javafx.scene.paint.LinearGradient;
 import javafx.scene.paint.Stop;
 import javafx.scene.shape.Rectangle;
 import org.quelea.services.languages.LabelGrabber;
+import org.quelea.services.utils.Utils;
 
 /**
  * The multimedia controls containing a play / pause button, stop button, and a
@@ -50,6 +51,7 @@ import org.quelea.services.languages.LabelGrabber;
 public class MultimediaControls extends StackPane {
 
     private static final int SLIDER_UPDATE_RATE = 100;
+    private static final int STAGE_IMAGE_UPDATE_RATE = 400;
     private static final Image PLAY_IMAGE = new Image("file:icons/play.png");
     private static final Image PAUSE_IMAGE = new Image("file:icons/pause.png");
     private static final Image STOP_IMAGE = new Image("file:icons/stop.png");
@@ -65,6 +67,7 @@ public class MultimediaControls extends StackPane {
     private Label updateLabel = new Label("");
     private String name = "";
     private static final String COMPLETE_LABEL = LabelGrabber.INSTANCE.getLabel("stage.media.complete.label");
+    private ImageView updateImageView;
 
     public MultimediaControls() {
         Rectangle rect = new Rectangle(230, 100);
@@ -145,13 +148,27 @@ public class MultimediaControls extends StackPane {
 
                         @Override
                         public void run() {
-                            updateLabel.setText(name + ":    " + ((int)(percent * 100)) + "% " + COMPLETE_LABEL);
+                            updateLabel.setText(name + ":    " + ((int) (percent * 100)) + "% " + COMPLETE_LABEL);
                         }
                     });
 
                 }
             }
         }, 0, SLIDER_UPDATE_RATE, TimeUnit.MILLISECONDS);
+        ScheduledExecutorService serviceImage = Executors.newSingleThreadScheduledExecutor();
+        serviceImage.scheduleAtFixedRate(new Runnable() {
+
+            @Override
+            public void run() {
+                if (VLCWindow.INSTANCE.isPlaying()) {
+                    if (updateImageView != null) {
+                        Image imageToSet = Utils.getScreenshotOfProjectionWindow();
+                          updateImageView.setImage(imageToSet);
+                    }
+                }
+            }
+        }, 0, STAGE_IMAGE_UPDATE_RATE, TimeUnit.MILLISECONDS);
+
         VLCWindow.INSTANCE.setOnFinished(new Runnable() {
             @Override
             public void run() {
@@ -171,6 +188,7 @@ public class MultimediaControls extends StackPane {
         VLCWindow.INSTANCE.setHue(0);
         VLCWindow.INSTANCE.play();
         posSlider.setDisable(false);
+
     }
 
     /**
@@ -195,6 +213,15 @@ public class MultimediaControls extends StackPane {
      */
     public void setPreviewSlider(Slider slider) {
         this.stagePosSlider = slider;
+    }
+
+    /**
+     * Set the image view to show the video frames on the stage display
+     *
+     * @param stageImages the image view in which the images will be shown
+     */
+    public void setPreviewImageView(ImageView stageImages) {
+        this.updateImageView = stageImages;
     }
 
     /**

@@ -18,6 +18,7 @@
 package org.quelea.windows.options;
 
 import java.io.File;
+import java.text.DecimalFormat;
 import javafx.beans.value.ObservableValue;
 import javafx.event.EventHandler;
 import javafx.scene.control.Button;
@@ -71,6 +72,7 @@ public class OptionsGeneralPanel extends GridPane implements PropertyPanel {
     private final CheckBox showSmallSongTextBox;
     private final CheckBox showSmallBibleTextBox;
     private final ComboBox smallTextPositionCombo;
+    private final Slider fadeSpeedSlider;
 
     /**
      * Create a new general panel.
@@ -179,7 +181,7 @@ public class OptionsGeneralPanel extends GridPane implements PropertyPanel {
         GridPane.setConstraints(vlcAdvancedCheckBox, 2, rows);
         getChildren().add(vlcAdvancedCheckBox);
         rows++;
-        
+
         Label advanceOnGoLiveLabel = new Label(LabelGrabber.INSTANCE.getLabel("advance.schedule.onGoLive"));
         GridPane.setConstraints(advanceOnGoLiveLabel, 1, rows);
         getChildren().add(advanceOnGoLiveLabel);
@@ -354,6 +356,25 @@ public class OptionsGeneralPanel extends GridPane implements PropertyPanel {
         });
         rows++;
 
+        Label fadeSpeedLabel = new Label(LabelGrabber.INSTANCE.getLabel("options.fade.speed.label"));
+        GridPane.setConstraints(fadeSpeedLabel, 1, rows);
+        getChildren().add(fadeSpeedLabel);
+        fadeSpeedSlider = new Slider(0.01, 10, 1);
+        GridPane.setConstraints(fadeSpeedSlider, 2, rows);
+        getChildren().add(fadeSpeedSlider);
+        fadeSpeedLabel.setLabelFor(fadeSpeedSlider);
+        final Label fadeValue = new Label(new DecimalFormat("#.##").format(fadeSpeedSlider.getValue()));
+        GridPane.setConstraints(fadeValue, 3, rows);
+        getChildren().add(fadeValue);
+        fadeValue.setLabelFor(fadeSpeedSlider);
+        fadeSpeedSlider.valueProperty().addListener(new javafx.beans.value.ChangeListener<Number>() {
+            @Override
+            public void changed(ObservableValue<? extends Number> ov, Number t, Number t1) {
+                fadeValue.setText(new DecimalFormat("#.##").format(fadeSpeedSlider.getValue()));
+            }
+        });
+        rows++;
+
 //        Label minLinesLabel = new Label(LabelGrabber.INSTANCE.getLabel("min.emulated.lines.label") + " (" + LabelGrabber.INSTANCE.getLabel("advanced.label") + ")");
 //        GridPane.setConstraints(minLinesLabel, 1, rows);
 //        getChildren().add(minLinesLabel);
@@ -435,6 +456,7 @@ public class OptionsGeneralPanel extends GridPane implements PropertyPanel {
         borderThicknessSlider.setValue(props.getOutlineThickness());
         additionalLineSpacingSlider.setValue(props.getAdditionalLineSpacing());
         maximumFontSizeSlider.setValue(props.getMaxFontSize());
+        fadeSpeedSlider.setValue(props.getFadeDuration());
     }
 
     /**
@@ -487,6 +509,8 @@ public class OptionsGeneralPanel extends GridPane implements PropertyPanel {
         props.setOutlineThickness(borderThickness);
         props.setMaxFontSize(maximumFontSizeSlider.getValue());
         props.setAdditionalLineSpacing(additionalLineSpacingSlider.getValue());
+        double fadeDuration = fadeSpeedSlider.getValue();
+        props.setFadeDuration(fadeDuration);
         //Initialise presentation
         if (!OOPresentation.isInit()) {
             OOUtils.attemptInit();

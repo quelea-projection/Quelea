@@ -31,6 +31,7 @@ public class MultimediaDrawer extends DisplayableDrawer {
 
     private final MultimediaControls controlPanel;
     private boolean playVideo;
+    private ImageView imageViewToUpdate;
 
     public MultimediaDrawer(MultimediaControls controlPanel) {
         this.controlPanel = controlPanel;
@@ -47,17 +48,19 @@ public class MultimediaDrawer extends DisplayableDrawer {
 
                 @Override
                 public void run() {
-                    
-                        QueleaApp.get().getMainWindow().getMainPanel().getLivePanel().getVideoPanel().updatePreview(getCanvas().getPreviewCanvas());
-                  
+
+                    QueleaApp.get().getMainWindow().getMainPanel().getLivePanel().getVideoPanel().updatePreview(getCanvas().getPreviewCanvas());
 
                 }
             });
 
             if (QueleaProperties.get().getStageDrawImages()) {
                 Slider updateSlider = new Slider(0, 1, 0);
+                imageViewToUpdate = new ImageView();
+                imageViewToUpdate.setImage(Utils.getImageFromColour(QueleaProperties.get().getStageBackgroundColor()));
                 final Label updateLabel = new Label("");
                 controlPanel.setPreviewSlider(updateSlider);
+                controlPanel.setPreviewImageView(imageViewToUpdate);
                 controlPanel.setPreviewLabel(updateLabel);
                 controlPanel.setVideoName(displayable.getPreviewText());
                 updateLabel.setTextFill(QueleaProperties.get().getStageLyricsColor());
@@ -75,8 +78,12 @@ public class MultimediaDrawer extends DisplayableDrawer {
                 children.setSpacing(20);
                 children.getChildren().add(updateLabel);
                 children.getChildren().add(updateSlider);
+                imageViewToUpdate.setFitHeight((getCanvas().getHeight() * 2) / 3);
+                imageViewToUpdate.setPreserveRatio(true);
+                children.getChildren().add(imageViewToUpdate);
 
                 getCanvas().getChildren().add(1, children);
+                children.toFront();
             }
 
         } else if (getCanvas().isTextOnlyView()) {
@@ -99,6 +106,8 @@ public class MultimediaDrawer extends DisplayableDrawer {
             getCanvas().clearNonPermanentChildren();
         }
     }
+
+  
 
     @Override
     public void clear() {
