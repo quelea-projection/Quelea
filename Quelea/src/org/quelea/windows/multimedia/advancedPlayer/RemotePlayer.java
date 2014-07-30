@@ -195,14 +195,24 @@ public class RemotePlayer {
     }
 
     /**
+     * Gets the opacity of the video window
+     * @return the opacity of the remote player
+     */
+    public float getOpacity() {
+        writeOut("opacity?");
+        return Float.parseFloat(getInput());
+    }
+
+    /**
      * See if the remote player has initialized properly
+     *
      * @return true if initialized, false otherwise
      */
-    public boolean isInit(){
+    public boolean isInit() {
         writeOut("init?");
         return Boolean.parseBoolean(getInput());
     }
-    
+
     /**
      * Gets the current time of the video.
      *
@@ -258,6 +268,13 @@ public class RemotePlayer {
      */
     public void toBack() {
         writeOut("toBack");
+    }
+    
+    /**
+     * Sets the video window to the front-most window
+     */
+    public void toFront(){
+        writeOut("toFront");
     }
 
     /**

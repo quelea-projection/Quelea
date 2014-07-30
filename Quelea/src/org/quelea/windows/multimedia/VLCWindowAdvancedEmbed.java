@@ -51,7 +51,7 @@ public class VLCWindowAdvancedEmbed extends VLCWindow {
 
     private boolean hideButton;
     private boolean show;
-    private boolean paused;
+    private boolean paused = false;
     private volatile boolean init;
     private String location;
     private volatile double hue = 0;
@@ -86,10 +86,10 @@ public class VLCWindowAdvancedEmbed extends VLCWindow {
         show = true;
         player = new RemotePlayer("log.txt");
         player2 = new RemotePlayer("log2.txt");
-        player2.setOpacity(1);
-        player2.setVolume(100);
-        player.setOpacity(1);
-        player.setVolume(100);
+        player2.setOpacity(0);
+        player2.setVolume(0);
+        player.setOpacity(0);
+        player.setVolume(0);
 
         SwingUtilities.invokeLater(new Runnable() {
 
@@ -128,7 +128,7 @@ public class VLCWindowAdvancedEmbed extends VLCWindow {
                 }
             }
         }, 0, 30, TimeUnit.MILLISECONDS);
-        init = player.isInit()&&player2.isInit();
+        init = player.isInit() && player2.isInit();
         windowToBack();
     }
 
@@ -140,7 +140,7 @@ public class VLCWindowAdvancedEmbed extends VLCWindow {
      */
     @Override
     public boolean isInit() {
-        init = player.isInit()&&player2.isInit();
+        init = player.isInit() && player2.isInit();
         return init;
     }
 
@@ -152,7 +152,7 @@ public class VLCWindowAdvancedEmbed extends VLCWindow {
         if (init) {
             isPlayer1 = !isPlayer1;
 
-            Platform.runLater(new Runnable() {
+            Thread thread = new Thread(new Runnable() {
 
                 @Override
                 public void run() {
@@ -171,7 +171,17 @@ public class VLCWindowAdvancedEmbed extends VLCWindow {
                         Logger.getLogger(VLCWindowAdvancedEmbed.class.getName()).log(Level.SEVERE, null, ex);
                     }
                     window.setOpacity(1);
-                    for (double i = 0; i < 100; i++) {
+                    double fromOpacity;
+                    if (isPlayer1) {
+                        fromOpacity = player.getOpacity();
+                    } else {
+                        fromOpacity = player2.getOpacity();
+                    }
+                    fromOpacity = fromOpacity * 100;
+                    if (fromOpacity > 100) {
+                        fromOpacity = 0;
+                    }
+                    for (double i = fromOpacity; i < 100; i++) {
 
                         if (isPlayer1) {
                             player.setOpacity(i / 100);
@@ -194,12 +204,18 @@ public class VLCWindowAdvancedEmbed extends VLCWindow {
                     }
 
                     if (isPlayer1) {
+                        player.toFront();
+
                         player2.stop();
                     } else {
+                        player2.toFront();
+
                         player.stop();
                     }
+
                 }
             });
+            thread.start();
         }
 
     }
@@ -321,7 +337,7 @@ public class VLCWindowAdvancedEmbed extends VLCWindow {
         if (init) {
 
             this.location = path;
-            isPlayer1 = !isPlayer1;
+
             paused = false;
             String sanitisedPath = path;
             sanitisedPath = sanitisedPath.trim();
@@ -329,10 +345,10 @@ public class VLCWindowAdvancedEmbed extends VLCWindow {
                 sanitisedPath = "http://" + sanitisedPath;
             }
             if (isPlayer1) {
-                player.load(sanitisedPath);
+                player2.load(sanitisedPath);
 
             } else {
-                player2.load(sanitisedPath);
+                player.load(sanitisedPath);
 
             }
 
@@ -373,8 +389,10 @@ public class VLCWindowAdvancedEmbed extends VLCWindow {
     public void play() {
 
         if (init) {
-            isPlayer1 = !isPlayer1;
-            transitionBetween();
+            if (paused == false) {
+                transitionBetween();
+            }
+            paused = false;
             if (isPlayer1) {
                 player.play();
             } else {
@@ -429,11 +447,10 @@ public class VLCWindowAdvancedEmbed extends VLCWindow {
         if (init) {
 
             paused = true;
-            if (isPlayer1) {
-                player.pause();
-            } else {
-                player2.pause();
-            }
+
+            player.pause();
+
+            player2.pause();
 
         }
 
@@ -442,6 +459,9 @@ public class VLCWindowAdvancedEmbed extends VLCWindow {
     /**
      * Fades off the active player, and stops that video..
      */
+    private Thread stopThread1;
+    private Thread stopThread2;
+
     @Override
     public void stop() {
         location = null;
@@ -449,59 +469,59 @@ public class VLCWindowAdvancedEmbed extends VLCWindow {
         if (init) {
 
             paused = false;
+            if (stopThread1 != null) {
+                if (stopThread1.isAlive() || stopThread2.isAlive()) {
+                    return;
+                }
+            }
+            stopThread1 = new Thread(new Runnable() {
+
+                @Override
+                public void run() {
+                    for (double i = player.getOpacity() * 100.0; i >= 0; i--) {
+
+                        player.setOpacity((i / 100.0));
+                        player.setVolume((int) (i));
+
+                        StopWatch s = new StopWatch();
+                        s.start();
+                        while (s.getTime() < ((FADE_SPEED * 1000) / 100)) {
+                            //do nothing 
+                        }
+
+                    }
+
+                    player.stop();
+                }
+            });
+
+            stopThread2 = new Thread(new Runnable() {
+
+                @Override
+                public void run() {
+                    for (double i = player2.getOpacity() * 100.0; i >= 0; i--) {
+
+                        player2.setOpacity((i / 100.0));
+                        player2.setVolume((int) (i));
+
+                        StopWatch s = new StopWatch();
+                        s.start();
+                        while (s.getTime() < ((FADE_SPEED * 1000) / 100)) {
+                            //do nothing 
+                        }
+
+                    }
+
+                    player2.stop();
+                }
+            });
             if (isPlayer1) {
-                if (player.isPlaying()) {
-                    Platform.runLater(new Runnable() {
-
-                        @Override
-                        public void run() {
-                            for (double i = 0; i < 100; i++) {
-
-                                player.setOpacity(1.0 - (i / 100.0));
-                                player.setVolume((int) (100 - i));
-
-                                StopWatch s = new StopWatch();
-                                s.start();
-                                while (s.getTime() < ((FADE_SPEED * 1000) / 100)) {
-                                    //do nothing 
-                                }
-
-                            }
-
-                            player.stop();
-                        }
-                    });
-
-                }
-
+                stopThread1.start();
             } else {
-                if (player2.isPlaying()) {
-                    Platform.runLater(new Runnable() {
-
-                        @Override
-                        public void run() {
-                            for (double i = 0; i < 100; i++) {
-
-                                player2.setOpacity(1.0 - (i / 100.0));
-                                player2.setVolume((int) (100 - i));
-
-                                StopWatch s = new StopWatch();
-                                s.start();
-                                while (s.getTime() < ((FADE_SPEED * 1000) / 100)) {
-                                    //do nothing 
-                                }
-
-                            }
-
-                            player2.stop();
-                        }
-                    });
-
-                }
+                stopThread2.start();
             }
 
         }
-
     }
 
     /**

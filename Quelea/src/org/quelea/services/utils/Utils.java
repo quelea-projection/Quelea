@@ -35,6 +35,7 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.lang.reflect.InvocationTargetException;
 import java.nio.channels.FileChannel;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
@@ -71,6 +72,7 @@ import javafx.scene.paint.Color;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
 import javafx.util.Duration;
+import javax.swing.SwingUtilities;
 import org.apache.commons.lang.time.StopWatch;
 import org.javafx.dialog.Dialog;
 import org.jcodec.api.FrameGrab;
@@ -252,6 +254,8 @@ public final class Utils {
 
     }
 
+    private static Image ret;
+
     /**
      * Gets a screenshot of the live projection display. This is used at the
      * moment for showing video frames on the stage display.
@@ -260,16 +264,33 @@ public final class Utils {
      */
     public static Image getScreenshotOfProjectionWindow() {
         try {
-            Robot ro = new Robot();
-            DisplayStage projWindow = QueleaApp.get().getProjectionWindow();
-            java.awt.Rectangle rect = new java.awt.Rectangle((int) projWindow.getX(), (int) projWindow.getY(), (int) projWindow.getWidth(), (int) projWindow.getHeight());
-            BufferedImage im = ro.createScreenCapture(rect);
-            WritableImage image = new WritableImage(rect.width, rect.height);
-            SwingFXUtils.toFXImage(im, image);
-            return image;
-        } catch (AWTException ex) {
+            SwingUtilities.invokeAndWait(new Runnable() {
+
+                @Override
+                public void run() {
+                    try {
+                        Robot ro = new Robot();
+                        DisplayStage projWindow = QueleaApp.get().getProjectionWindow();
+                        java.awt.Rectangle rect = new java.awt.Rectangle((int) projWindow.getX(), (int) projWindow.getY(), (int) projWindow.getWidth(), (int) projWindow.getHeight());
+                        BufferedImage im = ro.createScreenCapture(rect);
+                        WritableImage image = new WritableImage(rect.width, rect.height);
+                        SwingFXUtils.toFXImage(im, image);
+                        ret = image;
+                    } catch (AWTException ex) {
+                        Logger.getLogger(Utils.class.getName()).log(Level.SEVERE, null, ex);
+                        ret = Utils.getImageFromColour(QueleaProperties.get().getStageBackgroundColor());
+                    }
+                }
+            });
+
+        } catch (InterruptedException ex) {
             Logger.getLogger(Utils.class.getName()).log(Level.SEVERE, null, ex);
-            return Utils.getImageFromColour(QueleaProperties.get().getStageBackgroundColor());
+            ret = Utils.getImageFromColour(QueleaProperties.get().getStageBackgroundColor());
+        } catch (InvocationTargetException ex) {
+            Logger.getLogger(Utils.class.getName()).log(Level.SEVERE, null, ex);
+            ret = Utils.getImageFromColour(QueleaProperties.get().getStageBackgroundColor());
+        } finally {
+            return ret;
         }
 
     }

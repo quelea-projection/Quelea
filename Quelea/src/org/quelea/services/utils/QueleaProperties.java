@@ -610,7 +610,7 @@ public final class QueleaProperties extends Properties {
      * Set whether the text only display uses the theme background. Note that
      * video backgrounds will be shown as image thumbnails.
      *
-     * @param useThemeBackgound true if text only should use the theme
+     * @param useThemeBackground true if text only should use the theme
      * background, false otherwise.
      */
     public void setTextOnlyUseThemeBackground(boolean useThemeBackground) {
@@ -979,6 +979,7 @@ public final class QueleaProperties extends Properties {
         setProperty("max.chars", Integer.toString(maxChars));
         write();
     }
+
 
     /**
      * Get the custom projector co-ordinates.

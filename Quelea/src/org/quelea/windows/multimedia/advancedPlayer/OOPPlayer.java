@@ -22,9 +22,6 @@ import java.awt.Canvas;
 import java.awt.Color;
 import java.awt.Window;
 import java.util.Scanner;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
 import uk.co.caprica.vlcj.discovery.NativeDiscovery;
 import uk.co.caprica.vlcj.player.MediaPlayer;
 import uk.co.caprica.vlcj.player.MediaPlayerEventAdapter;
@@ -75,6 +72,8 @@ public class OOPPlayer {
                     mediaPlayer.stop();
                 } else if (inputLine.equalsIgnoreCase("toBack")) {
                     window.toBack();
+                } else if (inputLine.equalsIgnoreCase("toFront")) {
+                    window.toFront();
 
                 } else if (inputLine.equalsIgnoreCase("playable?")) {
                     System.out.println(mediaPlayer.isPlayable());
@@ -124,6 +123,9 @@ public class OOPPlayer {
                 } else if (inputLine.equalsIgnoreCase("time?")) {
                     long time = mediaPlayer.getTime();
                     System.out.println(time);
+                } else if (inputLine.equalsIgnoreCase("opacity?")) {
+                    float opacity = window.getOpacity();
+                    System.out.println(opacity);
                 } else if (inputLine.equalsIgnoreCase("close")) {
                     System.exit(0);
                 } else {
@@ -132,6 +134,7 @@ public class OOPPlayer {
             }
         }
         scan.close();
+        System.exit(0);
 
     }
 

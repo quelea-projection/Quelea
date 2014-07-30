@@ -40,6 +40,7 @@ import javafx.scene.paint.LinearGradient;
 import javafx.scene.paint.Stop;
 import javafx.scene.shape.Rectangle;
 import org.quelea.services.languages.LabelGrabber;
+import org.quelea.services.utils.QueleaProperties;
 import org.quelea.services.utils.Utils;
 
 /**
@@ -68,6 +69,7 @@ public class MultimediaControls extends StackPane {
     private String name = "";
     private static final String COMPLETE_LABEL = LabelGrabber.INSTANCE.getLabel("stage.media.complete.label");
     private ImageView updateImageView;
+    private boolean noStop = false;
 
     public MultimediaControls() {
         Rectangle rect = new Rectangle(230, 100);
@@ -163,7 +165,7 @@ public class MultimediaControls extends StackPane {
                 if (VLCWindow.INSTANCE.isPlaying()) {
                     if (updateImageView != null) {
                         Image imageToSet = Utils.getScreenshotOfProjectionWindow();
-                          updateImageView.setImage(imageToSet);
+                        updateImageView.setImage(imageToSet);
                     }
                 }
             }
@@ -188,6 +190,7 @@ public class MultimediaControls extends StackPane {
         VLCWindow.INSTANCE.setHue(0);
         VLCWindow.INSTANCE.play();
         posSlider.setDisable(false);
+        playpause = true;
 
     }
 
@@ -196,6 +199,7 @@ public class MultimediaControls extends StackPane {
      */
     public void pause() {
         playButton.setImage(PLAY_IMAGE);
+        playpause = false;
         VLCWindow.INSTANCE.pause();
     }
 
@@ -269,8 +273,28 @@ public class MultimediaControls extends StackPane {
         }
     }
 
+    /**
+     * Sets whether there should be a stop when going live
+     *
+     * @param noStop whether the stop command should be executed
+     */
+    public void setNoStop(boolean noStop) {
+        this.noStop = noStop;
+    }
+
+    /**
+     * Gets whether there should be a stop when going live
+     *
+     * @return whether the stop command should be executed
+     */
+    public boolean getNoStop() {
+        return this.noStop;
+    }
+
     public void reset() {
-        VLCWindow.INSTANCE.stop();
+        if (!this.noStop) {
+            VLCWindow.INSTANCE.stop();
+        }
         if (disableControls) {
             playButton.setImage(PLAY_IMAGE_DISABLE);
         } else {

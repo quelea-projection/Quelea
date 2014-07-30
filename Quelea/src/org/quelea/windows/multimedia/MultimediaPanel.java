@@ -43,6 +43,7 @@ public class MultimediaPanel extends AbstractPanel {
     private MultimediaControls controlPanel;
     private Text previewText;
 
+
     /**
      * Create a new image panel.
      */
@@ -115,4 +116,6 @@ public class MultimediaPanel extends AbstractPanel {
     public MultimediaControls getMultimediaControls() {
         return controlPanel;
     }
+    
+ 
 }

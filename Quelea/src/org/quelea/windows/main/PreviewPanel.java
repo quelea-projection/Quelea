@@ -37,7 +37,9 @@ import org.quelea.data.displayable.MultimediaDisplayable;
 import org.quelea.data.displayable.SongDisplayable;
 import org.quelea.services.languages.LabelGrabber;
 import org.quelea.services.utils.QueleaProperties;
+import org.quelea.services.utils.Utils;
 import org.quelea.windows.multimedia.MultimediaDrawer;
+import org.quelea.windows.multimedia.VLCWindow;
 
 /**
  * The panel displaying the preview lyrics selection - this is viewed before
@@ -83,18 +85,27 @@ public class PreviewPanel extends LivePreviewPanel {
         livePlayButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent t) {
-
+                QueleaApp.get().getMainWindow().getMainPanel().getLivePanel().getVideoPanel().getMultimediaControls().setNoStop(true);
                 goLive();
-                Platform.runLater(new Runnable() {
+                Thread thread = new Thread(new Runnable() {
 
                     @Override
                     public void run() {
-                        if (QueleaApp.get().getMainWindow().getMainPanel().getLivePanel().getDisplayable() instanceof MultimediaDisplayable) {
-                            QueleaApp.get().getMainWindow().getMainPanel().getLivePanel().getVideoPanel().getMultimediaControls().play();
-
+                        while (!(QueleaApp.get().getMainWindow().getMainPanel().getLivePanel().getDisplayable() instanceof MultimediaDisplayable)) {
+                            //do nothing 
                         }
+                        Utils.fxRunAndWait(new Runnable() {
+
+                            @Override
+                            public void run() {
+                                QueleaApp.get().getMainWindow().getMainPanel().getLivePanel().getVideoPanel().getMultimediaControls().play();
+                                QueleaApp.get().getMainWindow().getMainPanel().getLivePanel().getVideoPanel().getMultimediaControls().setNoStop(false);
+                            }
+                        });
+
                     }
                 });
+                thread.start();
 
             }
         });
