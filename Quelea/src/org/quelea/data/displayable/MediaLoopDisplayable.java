@@ -245,7 +245,7 @@ public class MediaLoopDisplayable implements Displayable, Comparable<MediaLoopDi
         for (MediaFile f : media) {
             ret.append("<mediaLoopMedia>");
             ret.append("<file>");
-            ret.append(Utils.escapeXML(f.getName()));
+            ret.append(Utils.escapeXML(f.getAbsolutePath()));
             ret.append("</file>");
             ret.append("<advanceTime>");
             ret.append(f.getAdvanceTime());
