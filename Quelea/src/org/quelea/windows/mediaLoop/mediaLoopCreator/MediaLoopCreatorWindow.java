@@ -39,6 +39,7 @@ import javafx.stage.WindowEvent;
 import org.javafx.dialog.Dialog;
 import org.quelea.data.displayable.MediaLoopDisplayable;
 import org.quelea.data.mediaLoop.MediaFile;
+import org.quelea.data.mediaLoop.MediaLoopManager;
 import org.quelea.services.languages.LabelGrabber;
 import org.quelea.services.utils.Utils;
 import org.quelea.windows.main.QueleaApp;
@@ -60,6 +61,7 @@ public class MediaLoopCreatorWindow extends Stage {
     private final Button confirmButton;
     private final Button cancelButton;
     private final CheckBox addToSchedCBox;
+    private MediaLoopDisplayable oldMediaLoop = null;
     private MediaLoopDisplayable mediaLoop;
 
     /**
@@ -169,13 +171,14 @@ public class MediaLoopCreatorWindow extends Stage {
         editorPanel.resetSaveHash();
 
     }
-    
+
     /**
      * The File to add to the media loop
+     *
      * @param inputFile the file to be added
      */
-    public void addFile(File inputFile){
-        
+    public void addFile(File inputFile) {
+
     }
 
     /**
@@ -210,6 +213,9 @@ public class MediaLoopCreatorWindow extends Stage {
             }
             if (addToSchedCBox.isSelected()) {
                 QueleaApp.get().getMainWindow().getMainPanel().getSchedulePanel().getScheduleList().add(localMediaLoop);
+            }
+            if (this.oldMediaLoop != null) {
+                MediaLoopManager.get().removeMediaLoop(oldMediaLoop);
             }
             QueleaApp.get().getMainWindow().getMainPanel().getPreviewPanel().refresh();
             QueleaApp.get().getMainWindow().getMainPanel().getLivePanel().refresh();
@@ -293,6 +299,7 @@ public class MediaLoopCreatorWindow extends Stage {
     public void resetEditMediaLoop(MediaLoopDisplayable mediaLoop) {
         setTitle(LabelGrabber.INSTANCE.getLabel("edit.mediaLoop"));
         this.mediaLoop = mediaLoop;
+        this.oldMediaLoop = mediaLoop;
         shouldSave = true;
         confirmButton.setText(LabelGrabber.INSTANCE.getLabel("edit.mediaLoop"));
         confirmButton.setDisable(false);
@@ -305,6 +312,7 @@ public class MediaLoopCreatorWindow extends Stage {
             addToSchedCBox.setDisable(false);
         }
         updateDBOnHide = true;
+        mediaLoop = null;
         resetChange();
     }
 
@@ -317,6 +325,7 @@ public class MediaLoopCreatorWindow extends Stage {
 
         mediaLoop = new MediaLoopDisplayable();
 
+        mediaLoop.getMediaFiles().clear();
         mediaLoop.setTitle(getMediaLoopEditorPanel().getTitleField().getText().trim());
         for (MediaFile file : getMediaLoopEditorPanel().getMediaFiles()) {
             mediaLoop.add(file);

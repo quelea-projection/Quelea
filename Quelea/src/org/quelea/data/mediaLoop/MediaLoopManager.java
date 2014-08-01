@@ -19,7 +19,6 @@ package org.quelea.data.mediaLoop;
 
 import java.lang.ref.SoftReference;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
@@ -29,19 +28,13 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.hibernate.ObjectNotFoundException;
 import org.hibernate.Session;
-import org.quelea.data.ThemeDTO;
 import org.quelea.data.db.HibernateUtil;
 import org.quelea.data.db.model.MediaLoop;
-import org.quelea.data.db.model.Theme;
 import org.quelea.data.displayable.MediaLoopDisplayable;
-import org.quelea.data.displayable.MediaLoopDisplayable;
-import org.quelea.data.displayable.TextSection;
-import org.quelea.services.lucene.MediaLoopSearchIndex;
 import org.quelea.services.lucene.SearchIndex;
 import org.quelea.services.lucene.MediaLoopSearchIndex;
 import org.quelea.services.utils.DatabaseListener;
 import org.quelea.services.utils.LoggerUtils;
-import org.quelea.services.utils.Utils;
 
 /**
  * Manage media loops persistent operations.
@@ -116,29 +109,23 @@ public final class MediaLoopManager {
      * @return an array of all the mediaLoops in the database.
      */
     public synchronized MediaLoopDisplayable[] getMediaLoops() {
+        
         if (cacheMediaLoops.get() != null) {
             return cacheMediaLoops.get();
         }
         final Set<MediaLoopDisplayable> mediaLoops = new TreeSet<>();
+       
         HibernateUtil.execute(new HibernateUtil.SessionCallback() {
             @Override
             public void execute(Session session) {
                 for (final MediaLoop mediaLoop : new MediaLoopDao(session).getMediaLoops()) {
-                    Utils.fxRunAndWait(new Runnable() {
-
-                        @Override
-                        public void run() {
-
-                            final MediaLoopDisplayable mediaLoopDisplayable = new MediaLoopDisplayable.Builder(mediaLoop.getTitle(),
+                   final MediaLoopDisplayable mediaLoopDisplayable = new MediaLoopDisplayable.Builder(mediaLoop.getTitle(),
                                     mediaLoop.getMedia())
                                     .id(mediaLoop.getId()).get();
                             mediaLoops.add(mediaLoopDisplayable);
-                        }
-                    });
-                }
+                 }
             }
         });
-
         if (indexIsClear) {
             indexIsClear = false;
             LOGGER.log(Level.INFO, "Adding {0} mediaLoops to index", mediaLoops.size());

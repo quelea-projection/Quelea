@@ -80,7 +80,7 @@ public class MediaLoopDisplayable implements Displayable, Comparable<MediaLoopDi
         /**
          * Set the id of the media loop.
          * <p/>
-         * @param id the song's id.
+         * @param id the mediaLoop's id.
          * @return this builder.
          */
         public Builder id(long id) {
