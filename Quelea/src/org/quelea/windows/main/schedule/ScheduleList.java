@@ -138,10 +138,12 @@ public class ScheduleList extends StackPane {
                             localDragIndex = listCell.getIndex();
                             Dragboard db = listCell.startDragAndDrop(TransferMode.ANY);
                             ClipboardContent content = new ClipboardContent();
-                            if (listCell.getItem() instanceof SongDisplayable) {
+                             if(listCell.getItem() instanceof MediaLoopDisplayable){
+                                 content.put(MediaLoopDisplayable.MEDIA_LOOP_DISPLAYABLE_FORMAT, listCell.getItem());
+                            } else if (listCell.getItem() instanceof SongDisplayable) {
                                 content.put(SongDisplayable.SONG_DISPLAYABLE_FORMAT, listCell.getItem());
-                            } else {
-                                content.put(MediaLoopDisplayable.MEDIA_LOOP_DISPLAYABLE_FORMAT, listCell.getItem());
+                            } else{
+                                LOGGER.log(Level.INFO, "Tried to drag and drop an unsupported displayable type");
                             }
                             db.setContent(content);
                             event.consume();
