@@ -67,11 +67,22 @@ public class PreviewPanel extends LivePreviewPanel {
             @Override
             public void handle(ActionEvent t) {
 //                QueleaApp.get().getMainWindow().getMainPanel().getLivePanel().removeDisplayable();
+
                 QueleaApp.get().getMainWindow().getMainPanel().getLivePanel().getMediaLoopPanel().stopLoop();
+
                 QueleaApp.get().getMainWindow().getMainPanel().getLivePanel().setDisplayable(getDisplayable(), ((ContainedPanel) getCurrentPane()).getCurrentIndex());
-                if (getDisplayable() instanceof MediaLoopDisplayable) {
-                    QueleaApp.get().getMainWindow().getMainPanel().getLivePanel().getMediaLoopPanel().startLoop();
-                }
+
+                Platform.runLater(new Runnable() {
+
+                    @Override
+                    public void run() {
+                        if (getDisplayable() instanceof MediaLoopDisplayable) {
+                            QueleaApp.get().getMainWindow().getMainPanel().getLivePanel().getMediaLoopPanel().startLoop();
+                        }
+                    }
+
+                });
+
                 QueleaApp.get().getMainWindow().getMainPanel().getLivePanel().getCurrentPane().requestFocus();
 
                 if (QueleaProperties.get().getAdvanceScheduleOnGoLive()) {

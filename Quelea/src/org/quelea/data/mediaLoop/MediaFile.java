@@ -120,6 +120,7 @@ public class MediaFile extends File {
         } else {
 
             image = Utils.getVidBlankImage(this.getAbsoluteFile());
+            image = Utils.stretchImageToAspect(image);
         }
 
         if (image == null) {

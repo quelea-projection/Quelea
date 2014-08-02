@@ -18,22 +18,16 @@
 package org.quelea.windows.mediaLoop;
 
 import javafx.animation.Timeline;
-import javafx.application.Platform;
-import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
 import org.quelea.data.displayable.MediaLoopDisplayable;
 import org.quelea.data.mediaLoop.MediaFile;
 import org.quelea.data.powerpoint.SlideChangedListener;
 import org.quelea.services.utils.QueleaProperties;
-import org.quelea.services.utils.Utils;
 import org.quelea.windows.main.AbstractPanel;
 import org.quelea.windows.main.DisplayCanvas;
 import org.quelea.windows.main.DisplayableDrawer;
-import org.quelea.windows.main.QueleaApp;
 import org.quelea.windows.mediaLoop.mediaLoopCreator.MediaLoopPreview;
 import org.quelea.windows.multimedia.MultimediaControls;
-import org.quelea.windows.multimedia.MultimediaDrawer;
-import org.quelea.windows.multimedia.VLCWindow;
 
 /**
  * The panel for displaying mediaLoop slides in the live / preview panels.
@@ -207,7 +201,7 @@ public class MediaLoopPanel extends AbstractPanel {
      */
     @Override
     public void updateCanvas() {
-
+        
 //        if (mediaLoopPreview.getSelectedSlide() != null) {
 //            displaySlide(mediaLoopPreview.getSelectedSlide());
 //        }

@@ -1000,11 +1000,15 @@ public final class Utils {
                 try {
                     WritableImage ret = videoPreviewCache.get(videoFile);
                     if (ret == null) {
-                        BufferedImage bi = FrameGrab.getFrame(videoFile, 0);
+                        BufferedImage bi = FrameGrab.getFrame(videoFile, 400);
+                        if (bi == null) {
+                            bi = FrameGrab.getFrame(videoFile, 0);
+                        }
                         if (bi != null) {
                             if (bi.getWidth() > 720 || bi.getHeight() > 480) {
                                 bi = scaleImage(bi, 720);
                             }
+
                             ret = SwingFXUtils.toFXImage(bi, null);
                         }
                     }
@@ -1029,6 +1033,27 @@ public final class Utils {
         g.drawImage(orig, 0, 0, width, height, 0, 0, orig.getWidth(), orig.getHeight(), null);
         g.dispose();
         return resized;
+    }
+
+    /**
+     * Stretch an image to the aspect ration of the main display
+     *
+     * @param orig the original image
+     * @return the return Image
+     */
+    public static Image stretchImageToAspect(Image orig) {
+        Image returnImage;
+        double ratio = QueleaApp.get().getProjectionWindow().getWidth() / QueleaApp.get().getProjectionWindow().getHeight();
+        int height = (int) orig.getHeight();
+        int width = (int) (height * ratio);
+        BufferedImage origBI = SwingFXUtils.fromFXImage(orig, null);
+        BufferedImage resized = new BufferedImage(width, height, origBI.getType());
+        Graphics2D g = resized.createGraphics();
+        g.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
+        g.drawImage(origBI, 0, 0, width, height, null);
+        g.dispose();
+        returnImage = SwingFXUtils.toFXImage(resized, null);
+        return returnImage;
     }
 
     /**
