@@ -165,8 +165,8 @@ public class MediaLoopListPanel extends BorderPane {
                         @Override
                         public void handle(MouseEvent t) {
                             currentDisplayable = mediaLoop;
-                            if (t.getButton() == MouseButton.PRIMARY) {
-
+                            if (t.getButton() == MouseButton.PRIMARY && (t.getClickCount() > 1)) {
+                                 QueleaApp.get().getMainWindow().getMainPanel().getSchedulePanel().getScheduleList().add(mediaLoop);
                             } else if (t.getButton() == MouseButton.SECONDARY) {
 
                                 ContextMenu removeMenu = new ContextMenu();

@@ -55,6 +55,7 @@ public abstract class AbstractPanel extends BorderPane implements ContainedPanel
     private static final Logger LOGGER = LoggerUtils.getLogger();
     private SortedSet<DisplayCanvas> canvases = new TreeSet<>(new PriorityComparator());
     private Displayable currentDisplayable = null;
+    private static boolean isNextPreviewed = false;
 
     public void setCurrentDisplayable(Displayable currentDisplayable) {
         this.currentDisplayable = currentDisplayable;
@@ -110,9 +111,11 @@ public abstract class AbstractPanel extends BorderPane implements ContainedPanel
      * @param previewCanvas The preview canvas that is to be updated
      */
     public void updatePreview(DisplayCanvas previewCanvas) {
+
         previewCanvas.clearNonPermanentChildren();
+        setIsNextPreviewed(true);
         if (QueleaApp.get().getMainWindow().getMainPanel().getPreviewPanel().getDisplayable() instanceof TextDisplayable) {
-            
+
             LyricDrawer ldrawer = new LyricDrawer();
             int nextIndex = QueleaApp.get().getMainWindow()
                     .getMainPanel().getPreviewPanel().getLyricsPanel().
@@ -148,7 +151,7 @@ public abstract class AbstractPanel extends BorderPane implements ContainedPanel
             }
             int index = QueleaApp.get().getMainWindow().getMainPanel().getPreviewPanel().getIndex();
 
-            if (index >= d.getPresentation().getSlides().length) {
+            if (index >= d.getPresentation().getSlides().length || index < 0) {
                 index = 0;
             }
             ImageDrawer idrawer = new ImageDrawer();
@@ -157,7 +160,7 @@ public abstract class AbstractPanel extends BorderPane implements ContainedPanel
             idrawer.setCanvas(previewCanvas);
             idrawer.draw(imageNextDisplayable);
 
-        }else if (QueleaApp.get().getMainWindow().getMainPanel().getPreviewPanel().getDisplayable() instanceof MediaLoopDisplayable) {
+        } else if (QueleaApp.get().getMainWindow().getMainPanel().getPreviewPanel().getDisplayable() instanceof MediaLoopDisplayable) {
 
             MediaLoopDisplayable d = (MediaLoopDisplayable) QueleaApp.get().getMainWindow().getMainPanel().getPreviewPanel().getDisplayable();
             if (d == null) {
@@ -185,6 +188,25 @@ public abstract class AbstractPanel extends BorderPane implements ContainedPanel
             idrawer.setCanvas(previewCanvas);
             idrawer.draw(imageNextDisplayable);
         }
+        this.resize(this.getWidth(), this.getHeight());
+    }
+
+    /**
+     * Gets whether the next displayable is previewed on the stage display
+     *
+     * @return True if previewed, false otherwise
+     */
+    public static boolean isIsNextPreviewed() {
+        return isNextPreviewed;
+    }
+
+    /**
+     * Sets whether the next displayable is previewed on the stage display
+     *
+     * @param isNextPreviewed True if previewed, false otherwise
+     */
+    public static void setIsNextPreviewed(boolean isNextPreviewed) {
+        AbstractPanel.isNextPreviewed = isNextPreviewed;
     }
 
     @Override

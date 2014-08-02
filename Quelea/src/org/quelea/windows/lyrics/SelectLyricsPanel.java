@@ -192,7 +192,7 @@ public class SelectLyricsPanel extends AbstractPanel {
                     if ((nextIndex >= lyricsList.itemsProperty().get().size())) {
                         updatePreview(canvas.getPreviewCanvas());
                     } else {
-
+                        AbstractPanel.setIsNextPreviewed(false);
                         TextSection nextSection = lyricsList.itemsProperty().get().get(nextIndex);
                         if (nextSection.getTempTheme() != null) {
                             drawer.setTheme(nextSection.getTempTheme());

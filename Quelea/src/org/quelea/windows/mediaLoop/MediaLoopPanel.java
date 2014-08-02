@@ -84,16 +84,13 @@ public class MediaLoopPanel extends AbstractPanel {
             mediaLoopDrawer.draw(displayable);
             if (canvas.isStageView()) {
                 if (QueleaProperties.get().getStageUsePreview()) {
-                    int index = mediaLoopPreview.getSelectedIndex() + 1;
-                    if (index >= ((MediaLoopDisplayable) displayable).getMediaFiles().size()) {
-                        updatePreview(canvas.getPreviewCanvas());
-                    } else {
-                        mediaLoopDrawer.setCanvas(canvas.getPreviewCanvas());
-                        mediaLoopDrawer.setPlayVideo(canvas.getPreviewCanvas().getPlayVideo());
-                        canvas.setCurrentDisplayable(displayable);
-                        mediaLoopDrawer.setSlideToShow(mediaLoopPreview.getNextSlide());
-                        mediaLoopDrawer.draw(displayable);
-                    }
+
+                    AbstractPanel.setIsNextPreviewed(false);
+                    mediaLoopDrawer.setCanvas(canvas.getPreviewCanvas());
+                    mediaLoopDrawer.setPlayVideo(canvas.getPreviewCanvas().getPlayVideo());
+                    canvas.setCurrentDisplayable(displayable);
+                    mediaLoopDrawer.setSlideToShow(mediaLoopPreview.getNextSlide());
+                    mediaLoopDrawer.draw(displayable);
 
                 }
             }
@@ -201,7 +198,7 @@ public class MediaLoopPanel extends AbstractPanel {
      */
     @Override
     public void updateCanvas() {
-        
+
 //        if (mediaLoopPreview.getSelectedSlide() != null) {
 //            displaySlide(mediaLoopPreview.getSelectedSlide());
 //        }

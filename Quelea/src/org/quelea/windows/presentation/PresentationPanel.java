@@ -171,13 +171,18 @@ public class PresentationPanel extends AbstractPanel {
 
         if (canvas.isStageView()) {
             PresentationSlide nextSlide = presentationPreview.getNextSlide();
-            if (nextSlide == null) {
-                updatePreview(canvas.getPreviewCanvas());
+            if (QueleaProperties.get().getStageUsePreview()) {
+                if (nextSlide == null) {
+                    updatePreview(canvas.getPreviewCanvas());
+                } else {
+                    AbstractPanel.setIsNextPreviewed(false);
+                    Image displayNextImage = nextSlide.getImage();
+                    ImageDisplayable imageNextDisplayable = new ImageDisplayable(displayNextImage);
+                    drawer.setCanvas(canvas.getPreviewCanvas());
+                    drawer.draw(imageNextDisplayable);
+                }
             } else {
-                Image displayNextImage = nextSlide.getImage();
-                ImageDisplayable imageNextDisplayable = new ImageDisplayable(displayNextImage);
-                drawer.setCanvas(canvas.getPreviewCanvas());
-                drawer.draw(imageNextDisplayable);
+
             }
         }
     }
@@ -241,7 +246,6 @@ public class PresentationPanel extends AbstractPanel {
          * leave commented out until we can get to the bottom of it.
          */
 //        presentationList.scrollTo(getIndex());
-        updateCanvas();
     }
 
     /**

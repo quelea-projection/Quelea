@@ -294,6 +294,8 @@ public class MediaLoopPreview extends ScrollPane {
         MediaFile ret = null;
         if (!(getSelectedIndex() + 1 >= slides.size())) {
             ret = slides.get(getSelectedIndex() + 1);
+        }else{
+            ret = slides.get(0);
         }
         return ret;
     }

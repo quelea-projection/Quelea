@@ -162,12 +162,24 @@ public class PreviewPanel extends LivePreviewPanel {
     @Override
     public void setDisplayable(Displayable d, int index) {
         super.setDisplayable(d, index);
+        Platform.runLater(new Runnable() {
+
+            @Override
+            public void run() {
+                if (AbstractPanel.isIsNextPreviewed()) {
+                    QueleaApp.get().getMainWindow().getMainPanel().getLivePanel().getLyricsPanel().updatePreview(
+                            QueleaApp.get().getStageWindow().getStagePreviewCanvas());
+                }
+            }
+        });
+
         liveButton.setDisable(false);
         if (d instanceof MultimediaDisplayable) {
             livePlayButton.setDisable(false);
         } else {
             livePlayButton.setDisable(true);
         }
+
     }
 
     /**
