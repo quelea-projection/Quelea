@@ -144,15 +144,24 @@ public class MultimediaControls extends StackPane {
             public void run() {
                 if (!disableControls && VLCWindow.INSTANCE.isPlaying() && !posSlider.isValueChanging()) {
                     final double percent = VLCWindow.INSTANCE.getProgressPercent();
-                    posSlider.setValue(percent);
-                    stagePosSlider.setValue(percent);
-                    Platform.runLater(new Runnable() {
+                    Utils.fxRunAndWait(new Runnable() {
 
                         @Override
                         public void run() {
-                            updateLabel.setText(name + ":    " + ((int) (percent * 100)) + "% " + COMPLETE_LABEL);
+                            posSlider.setValue(percent);
+                            stagePosSlider.setValue(percent);
+                            Platform.runLater(new Runnable() {
+
+                                @Override
+                                public void run() {
+                                    updateLabel.setText(name + ":    " + ((int) (percent * 100)) + "% " + COMPLETE_LABEL);
+                                }
+                            });
                         }
                     });
+                    {
+
+                    }
 
                 }
             }
