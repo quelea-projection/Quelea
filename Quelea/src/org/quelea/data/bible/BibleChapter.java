@@ -21,6 +21,7 @@ import java.io.Serializable;
 import java.lang.ref.SoftReference;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import org.quelea.services.utils.Utils;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -47,6 +48,36 @@ public final class BibleChapter implements BibleInterface, Serializable {
     private BibleChapter(int num) {
         this.num = num;
         verses = new ArrayList<>();
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 67 * hash + this.num;
+        hash = 67 * hash + Objects.hashCode(this.verses);
+        hash = 67 * hash + Objects.hashCode(this.book);
+        return hash;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final BibleChapter other = (BibleChapter) obj;
+        if (this.num != other.num) {
+            return false;
+        }
+        if (!Objects.equals(this.verses, other.verses)) {
+            return false;
+        }
+        if (!Objects.equals(this.book, other.book)) {
+            return false;
+        }
+        return true;
     }
 
     /**
@@ -78,19 +109,17 @@ public final class BibleChapter implements BibleInterface, Serializable {
      */
     public static BibleChapter parseXML(Node node, int defaultNum) {
         int num = -1;
-        if(node.getAttributes().getNamedItem("cnumber") != null) {
+        if (node.getAttributes().getNamedItem("cnumber") != null) {
             num = Integer.parseInt(node.getAttributes().getNamedItem("cnumber").getNodeValue().trim());
-        }
-        else if(node.getAttributes().getNamedItem("n") != null) {
+        } else if (node.getAttributes().getNamedItem("n") != null) {
             num = Integer.parseInt(node.getAttributes().getNamedItem("n").getNodeValue().trim());
-        }
-        else {
+        } else {
             num = defaultNum;
         }
         BibleChapter ret = new BibleChapter(num);
         NodeList list = node.getChildNodes();
-        for(int i = 0; i < list.getLength(); i++) {
-            if(list.item(i).getNodeName().equalsIgnoreCase("vers")
+        for (int i = 0; i < list.getLength(); i++) {
+            if (list.item(i).getNodeName().equalsIgnoreCase("vers")
                     || list.item(i).getNodeName().equalsIgnoreCase("v")) {
                 BibleVerse verse = BibleVerse.parseXML(list.item(i));
                 verse.setChapter(ret);
@@ -108,21 +137,22 @@ public final class BibleChapter implements BibleInterface, Serializable {
     public String toXML() {
         StringBuilder ret = new StringBuilder();
         ret.append("<chapter");
-        if(num != -1) {
+        if (num != -1) {
             ret.append(" cnumber=\"");
             ret.append(num);
             ret.append('\"');
         }
         ret.append(">");
-        for(BibleVerse verse : verses) {
+        for (BibleVerse verse : verses) {
             ret.append(Utils.escapeXML(verse.toXML()));
         }
         ret.append("</chapter>");
         return ret.toString();
     }
-    
+
     /**
      * Return the chapter number as a string in this chapter.
+     *
      * @return the chapter number as a string.
      */
     @Override
@@ -155,10 +185,9 @@ public final class BibleChapter implements BibleInterface, Serializable {
      * @return the verse at the specified number, or null if it doesn't exist.
      */
     public BibleVerse getVerse(int i) {
-        if(i < verses.size() && i >= 0) {
+        if (i < verses.size() && i >= 0) {
             return verses.get(i);
-        }
-        else {
+        } else {
             return null;
         }
     }
@@ -169,9 +198,9 @@ public final class BibleChapter implements BibleInterface, Serializable {
      * @return all the text in this chapter as a string.
      */
     public String getFullText() {
-        if(softRefText == null || softRefText.get() == null) {
+        if (softRefText == null || softRefText.get() == null) {
             StringBuilder ret = new StringBuilder();
-            for(BibleVerse verse : getVerses()) {
+            for (BibleVerse verse : getVerses()) {
                 ret.append(verse.toString()).append(' ');
             }
             String hardText = ret.toString();
@@ -203,7 +232,7 @@ public final class BibleChapter implements BibleInterface, Serializable {
     public String getName() {
         return toString();
     }
-    
+
     @Override
     public String getText() {
         return getFullText();
