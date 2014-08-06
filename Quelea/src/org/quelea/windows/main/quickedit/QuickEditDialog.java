@@ -126,16 +126,6 @@ public class QuickEditDialog extends Stage {
     }
 
     /**
-     * Get the new text as an array of strings from the entered text. One array
-     * item per line.
-     *
-     * @return the new text for the section.
-     */
-    private String[] getNewText() {
-        return sectionArea.getText().split("\n");
-    }
-
-    /**
      * Set the song and section of this dialog.
      *
      * @param song the song to set the dialog to.
