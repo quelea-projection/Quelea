@@ -31,6 +31,7 @@ import org.quelea.services.importexport.KingswayImportDialog;
 import org.quelea.services.importexport.OpenLPImportDialog;
 import org.quelea.services.importexport.OpenLyricsImportDialog;
 import org.quelea.services.importexport.OpenSongImportDialog;
+import org.quelea.services.importexport.ParadoxJDBCChecker;
 import org.quelea.services.importexport.PlainTextSongsImportDialog;
 import org.quelea.services.importexport.QSPImportDialog;
 import org.quelea.services.importexport.SourceImportDialog;
@@ -133,12 +134,12 @@ public class ImportMenu extends Menu {
             @Override
             public void handle(ActionEvent t) {
                 boolean ok = new ZWTurboDBChecker().runChecks();
-                if(ok) {
+                if (ok) {
                     zionWorxImportDialog.show();
                 }
             }
         });
-        if(Utils.isWindows()) {
+        if (Utils.isWindows()) {
             getItems().add(zwItem);
         }
 
@@ -182,6 +183,7 @@ public class ImportMenu extends Menu {
         easyWorshipItem.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent t) {
+                new ParadoxJDBCChecker().runChecks();
                 easyWorshipImportDialog.show();
             }
         });
