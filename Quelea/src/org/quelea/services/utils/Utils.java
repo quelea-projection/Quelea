@@ -52,6 +52,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.animation.FadeTransition;
 import javafx.animation.Interpolator;
+import javafx.animation.ParallelTransition;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -225,24 +226,24 @@ public final class Utils {
      *
      * @param start the starting value of the fade (0.0-1.0)
      * @param end the ending value of the fade (0.0-1.0)
-     * @param fstep the value that the opacity should incremented by ( positive
-     * if fading up, negative if fading out)
+     * @param duration in seconds
      * @param nodeToFade the node to fade the opacity on
      * @param secondDelay how many seconds to wait before fade is completed
      * @param onFinished a runnable that should be run on the finish of the fade
      */
-    public static void fadeNodeOpacity(final double start, final double end, final double fstep, final Node nodeToFade, final double secondDelay, final Runnable onFinished) {
+    public static void fadeNodeOpacity(final double start, final double end, final double duration, final Node nodeToFade, final double secondDelay, final Runnable onFinished) {
         if (nodeToFade == null) {
             return;
         }
-        final double FADE_DURATION = QueleaProperties.get().getFadeDuration();
-        FadeTransition trans = new FadeTransition(Duration.seconds(FADE_DURATION), nodeToFade);
-
-        trans.setFromValue(start);
-        trans.setToValue(end);
-        trans.setInterpolator(Interpolator.EASE_BOTH);
-        trans.play();
-        trans.setOnFinished(new EventHandler() {
+        final int TRANSNUMBER = 20;
+        FadeTransition[] fades = new FadeTransition[TRANSNUMBER];
+        for (int i = 0; i < TRANSNUMBER; i++) {
+            fades[i] = new FadeTransition(Duration.seconds(duration), nodeToFade);
+            fades[i].setFromValue(start);
+            fades[i].setToValue(end);
+            fades[i].setInterpolator(Interpolator.EASE_BOTH);
+        }
+        fades[0].setOnFinished(new EventHandler() {
 
             @Override
             public void handle(Event t) {
@@ -251,6 +252,10 @@ public final class Utils {
                 }
             }
         });
+        ParallelTransition parallelTransition = new ParallelTransition();
+        parallelTransition.getChildren().addAll(fades);
+        parallelTransition.setInterpolator(Interpolator.EASE_BOTH);
+        parallelTransition.play();
 
     }
 

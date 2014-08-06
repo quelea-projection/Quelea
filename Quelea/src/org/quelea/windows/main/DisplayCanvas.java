@@ -247,7 +247,7 @@ public class DisplayCanvas extends StackPane {
                     blackList.remove(node);
                 } else {
 
-                    Utils.fadeNodeOpacity(node.getOpacity(), 0.0, -0.01, node, 2.0, new Runnable() {
+                    Utils.fadeNodeOpacity(node.getOpacity(), 0.0, QueleaProperties.get().getFadeDuration(), node, 2.0, new Runnable() {
 
                         @Override
                         public void run() {
@@ -438,16 +438,28 @@ public class DisplayCanvas extends StackPane {
     public void setBlacked(boolean blacked) {
         this.blacked = blacked;
         if (blacked) {
+
             black.toFront();
-            FadeTransition ft = new FadeTransition(Duration.seconds(0.5), black);
-            ft.setToValue(1);
-            ft.setInterpolator(Interpolator.EASE_BOTH);
-            ft.play();
+            if (this.dravingPriority == Priority.LOW) {
+                black.setOpacity(1);
+            } else {
+                Utils.fadeNodeOpacity(black.getOpacity(), 1, 0.5, black, 0, null);
+            }
+
+//            FadeTransition ft = new FadeTransition(Duration.seconds(0.5), black);
+//            ft.setToValue(1);
+//            ft.setInterpolator(Interpolator.EASE_BOTH);
+//            ft.play();
         } else {
-            FadeTransition ft = new FadeTransition(Duration.seconds(0.5), black);
-            ft.setToValue(0);
-            ft.setInterpolator(Interpolator.EASE_BOTH);
-            ft.play();
+            if (this.dravingPriority == Priority.LOW) {
+                black.setOpacity(0);
+            } else {
+                Utils.fadeNodeOpacity(black.getOpacity(), 0, 0.5, black, 0, null);
+            }
+//            FadeTransition ft = new FadeTransition(Duration.seconds(0.5), black);
+//            ft.setToValue(0);
+//            ft.setInterpolator(Interpolator.EASE_BOTH);
+//            ft.play();
         }
     }
 
@@ -479,16 +491,26 @@ public class DisplayCanvas extends StackPane {
     public void setLogoDisplaying(boolean selected) {
         if (selected) {
             logoImage.toFront();
-            FadeTransition ft = new FadeTransition(Duration.millis(1500), logoImage);
-            ft.setToValue(1.000);
-            
-            ft.setInterpolator(Interpolator.EASE_BOTH);
-            ft.play();
+            if (this.dravingPriority == Priority.LOW) {
+                logoImage.setOpacity(1);
+            } else {
+                Utils.fadeNodeOpacity(logoImage.getOpacity(), 1, 1.5, logoImage, 0, null);
+            }
+//            FadeTransition ft = new FadeTransition(Duration.millis(1500), logoImage);
+//            ft.setToValue(1.000);
+//            
+//            ft.setInterpolator(Interpolator.EASE_BOTH);
+//            ft.play();
         } else {
-            FadeTransition ft = new FadeTransition(Duration.millis(1500), logoImage);
-            ft.setToValue(0.000);
-            ft.setInterpolator(Interpolator.EASE_BOTH);
-            ft.play();
+            if (this.dravingPriority == Priority.LOW) {
+                logoImage.setOpacity(0);
+            } else {
+                Utils.fadeNodeOpacity(logoImage.getOpacity(), 0, 1.5, logoImage, 0, null);
+            }
+//            FadeTransition ft = new FadeTransition(Duration.millis(1500), logoImage);
+//            ft.setToValue(0.000);
+//            ft.setInterpolator(Interpolator.EASE_BOTH);
+//            ft.play();
         }
     }
 

@@ -72,7 +72,7 @@ public class ImageDrawer extends DisplayableDrawer {
         getCanvas().setOpacity(1);
         final DisplayCanvas currentCanvas = getCanvas();
         if (getCanvas() == QueleaApp.get().getProjectionWindow().getCanvas()) {
-            Utils.fadeNodeOpacity(imageBox.getOpacity(), 1, 0.01, imageBox, 0.0, new Runnable() {
+            Utils.fadeNodeOpacity(imageBox.getOpacity(), 1, QueleaProperties.get().getFadeDuration(), imageBox, 0.0, new Runnable() {
 
                 @Override
                 public void run() {
@@ -82,7 +82,7 @@ public class ImageDrawer extends DisplayableDrawer {
             });
         } else if ((getCanvas() == QueleaApp.get().getTextOnlyWindow().getCanvas())
                 && QueleaProperties.get().getTextOnlyUseThemeBackground()) {
-            Utils.fadeNodeOpacity(imageBox.getOpacity(), 1, 0.01, imageBox, 0.0, new Runnable() {
+            Utils.fadeNodeOpacity(imageBox.getOpacity(), 1, QueleaProperties.get().getFadeDuration(), imageBox, 0.0, new Runnable() {
 
                 @Override
                 public void run() {

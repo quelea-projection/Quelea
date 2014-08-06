@@ -500,7 +500,7 @@ public class LyricDrawer extends DisplayableDrawer {
                 if (newBackground == oldBackground) {
                     return;
                 }
-                Utils.fadeNodeOpacity(oldBackground.getOpacity(), 0.0, -0.01, oldBackground, 0.0, new Runnable() {
+                Utils.fadeNodeOpacity(oldBackground.getOpacity(), 0.0, QueleaProperties.get().getFadeDuration(), oldBackground, 0.0, new Runnable() {
 
                     @Override
                     public void run() {
@@ -525,7 +525,7 @@ public class LyricDrawer extends DisplayableDrawer {
                         }
                     }
                 }
-                Utils.fadeNodeOpacity(newBackground.getOpacity(), 1, 0.01, newBackground, 0.0, new Runnable() {
+                Utils.fadeNodeOpacity(newBackground.getOpacity(), 1, QueleaProperties.get().getFadeDuration(), newBackground, 0.0, new Runnable() {
 
                     @Override
                     public void run() {
