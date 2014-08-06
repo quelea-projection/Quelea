@@ -28,17 +28,15 @@ import javafx.scene.input.KeyCodeCombination;
 import javafx.scene.input.KeyCombination;
 import org.quelea.services.languages.LabelGrabber;
 import org.quelea.windows.main.actionhandlers.NewSongActionHandler;
-import org.quelea.windows.main.actionhandlers.ViewTagsActionHandler;
 
 /**
  * Quelea's database menu.
+ *
  * @author Michael
  */
 public class DatabaseMenu extends Menu {
 
     private final MenuItem newSongItem;
-    private final MenuItem tagsItem;
-    
     private final ImportMenu importMenu;
     private final ExportMenu exportMenu;
 
@@ -52,10 +50,6 @@ public class DatabaseMenu extends Menu {
         newSongItem.setOnAction(new NewSongActionHandler());
         newSongItem.setAccelerator(new KeyCodeCombination(KeyCode.N, KeyCombination.CONTROL_DOWN, KeyCombination.SHIFT_DOWN));
         getItems().add(newSongItem);
-
-        tagsItem = new MenuItem(LabelGrabber.INSTANCE.getLabel("tags.button"), new ImageView(new Image("file:icons/tag.png", 16, 16, false, true)));
-        tagsItem.setOnAction(new ViewTagsActionHandler());
-        getItems().add(tagsItem);
 
         getItems().add(new SeparatorMenuItem());
         importMenu = new ImportMenu();
