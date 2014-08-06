@@ -24,6 +24,7 @@ import javafx.collections.ObservableList;
 import javafx.geometry.Orientation;
 import javafx.scene.control.SplitPane;
 import org.quelea.data.ThemeDTO;
+import org.quelea.data.displayable.SongDisplayable;
 import org.quelea.data.displayable.TextDisplayable;
 import org.quelea.data.displayable.TextSection;
 import org.quelea.services.utils.LoggerUtils;
@@ -88,7 +89,7 @@ public class SelectLyricsPanel extends AbstractPanel {
             lyricsList.selectionModelProperty().get().clearAndSelect(0);
         }
     }
-    
+
     public void select(int index) {
         if (index >= 0 && index < lyricsList.getItems().size()) {
             lyricsList.selectionModelProperty().get().select(index);
@@ -118,6 +119,7 @@ public class SelectLyricsPanel extends AbstractPanel {
     public void showDisplayable(TextDisplayable displayable, int index) {
 //        removeCurrentDisplayable();
         setCurrentDisplayable(displayable);
+        lyricsList.setShowQuickEdit(displayable instanceof SongDisplayable);
         for (TextSection section : displayable.getSections()) {
             lyricsList.itemsProperty().get().add(section);
         }
