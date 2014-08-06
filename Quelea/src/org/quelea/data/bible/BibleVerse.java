@@ -18,14 +18,16 @@
 package org.quelea.data.bible;
 
 import java.io.Serializable;
+import java.util.Objects;
 import org.quelea.services.utils.Utils;
 import org.w3c.dom.Node;
 
 /**
  * A verse in the bible.
+ *
  * @author Michael
  */
-public final class BibleVerse implements BibleInterface, Serializable  {
+public final class BibleVerse implements BibleInterface, Serializable {
 
     private String verse;
     private int num;
@@ -37,7 +39,37 @@ public final class BibleVerse implements BibleInterface, Serializable  {
     private BibleVerse() {
         //For internal use
     }
-    
+
+    @Override
+    public int hashCode() {
+        int hash = 3;
+        hash = 53 * hash + Objects.hashCode(this.verse);
+        hash = 53 * hash + this.num;
+        hash = 53 * hash + Objects.hashCode(this.chapter);
+        return hash;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final BibleVerse other = (BibleVerse) obj;
+        if (!Objects.equals(this.verse, other.verse)) {
+            return false;
+        }
+        if (this.num != other.num) {
+            return false;
+        }
+        if (!Objects.equals(this.chapter, other.chapter)) {
+            return false;
+        }
+        return true;
+    }
+
     /**
      * Set the chapter this verse is part of.
      *
@@ -57,16 +89,17 @@ public final class BibleVerse implements BibleInterface, Serializable  {
     }
 
     /**
-     * Parse some XML representing this object and return the object it represents.
+     * Parse some XML representing this object and return the object it
+     * represents.
+     *
      * @param node the XML node representing this object.
      * @return the object as defined by the XML.
      */
     public static BibleVerse parseXML(Node node) {
         BibleVerse ret = new BibleVerse();
-        if(node.getAttributes().getNamedItem("vnumber") == null) {
+        if (node.getAttributes().getNamedItem("vnumber") == null) {
             ret.num = Integer.parseInt(node.getAttributes().getNamedItem("n").getNodeValue().trim());
-        }
-        else {
+        } else {
             ret.num = Integer.parseInt(node.getAttributes().getNamedItem("vnumber").getNodeValue().trim());
         }
         ret.verse = node.getTextContent();
@@ -75,6 +108,7 @@ public final class BibleVerse implements BibleInterface, Serializable  {
 
     /**
      * Generate an XML representation of this verse.
+     *
      * @return an XML representation of this verse.
      */
     public String toXML() {
@@ -86,9 +120,10 @@ public final class BibleVerse implements BibleInterface, Serializable  {
         ret.append("</vers>");
         return ret.toString();
     }
-    
+
     /**
      * Get this verse as a string.
+     *
      * @return this verse as a string.
      */
     @Override
@@ -98,6 +133,7 @@ public final class BibleVerse implements BibleInterface, Serializable  {
 
     /**
      * Get the number of this verse.
+     *
      * @return the verse number.
      */
     public int getVerseNum() {
@@ -106,6 +142,7 @@ public final class BibleVerse implements BibleInterface, Serializable  {
 
     /**
      * Get the textual content of the verse.
+     *
      * @return the textual content of the verse.
      */
     public String getVerseText() {
@@ -116,9 +153,9 @@ public final class BibleVerse implements BibleInterface, Serializable  {
     public String getName() {
         return getNum() + " " + getText();
     }
-    
-    @Override 
-    public String getText(){
+
+    @Override
+    public String getText() {
         return getVerseText();
     }
 

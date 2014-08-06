@@ -99,10 +99,10 @@ public class LibraryBiblePanel extends VBox implements BibleChangeListener {
         passageSelector.setOnAction(new EventHandler<javafx.event.ActionEvent>() {
             @Override
             public void handle(javafx.event.ActionEvent t) {
-                if(!passageSelector.getText().trim().isEmpty()) {
+                if(!addToSchedule.isDisable()) {
                     addToSchedule.fire();
+                    passageSelector.setText("");
                 }
-                passageSelector.setText("");
             }
         });
         getChildren().add(chapterPanel);
