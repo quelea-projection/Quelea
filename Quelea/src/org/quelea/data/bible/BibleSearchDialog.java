@@ -17,6 +17,8 @@
  */
 package org.quelea.data.bible;
 
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -59,7 +61,6 @@ public class BibleSearchDialog extends Stage implements BibleChangeListener {
     private FlowPane chapterPane;
     private final Button addToSchedule;
     private final Text resultsField;
-    private int count;
 
     /**
      * Create a new bible searcher dialog.
@@ -159,29 +160,45 @@ public class BibleSearchDialog extends Stage implements BibleChangeListener {
         });
     }
 
+    private ExecutorService updateExecutor = Executors.newSingleThreadExecutor();
+    private ExecRunnable lastUpdateRunnable = null;
+
+    private interface ExecRunnable extends Runnable {
+
+        void cancel();
+    }
+
     /**
      * Update the results based on the entered text.
      */
     private void update() {
-        count = 0;
         final String text = searchField.getText();
         if (text.length() > 3) {
             if (BibleManager.get().isIndexInit()) {
                 searchResults.reset();
                 overlay.show();
-                new Thread() {
+                ExecRunnable execRunnable = new ExecRunnable() {
+                    private volatile boolean cancel = false;
+
+                    public void cancel() {
+                        cancel = true;
+                    }
+
                     public void run() {
+                        if (cancel) {
+                            return;
+                        }
                         final BibleChapter[] results = BibleManager.get().getIndex().filter(text, null);
                         Platform.runLater(new Runnable() {
                             @Override
                             public void run() {
+                                searchResults.reset();
                                 if (!text.trim().isEmpty()) {
                                     for (BibleChapter chapter : results) {
                                         if (bibles.getSelectionModel().getSelectedIndex() == 0 || chapter.getBook().getBible().getName().equals(bibles.getSelectionModel().getSelectedItem())) {
                                             for (BibleVerse verse : chapter.getVerses()) {
                                                 if (verse.getText().toLowerCase().contains(text.toLowerCase())) {
                                                     searchResults.add(verse);
-                                                    count++;
                                                 }
                                             }
                                         }
@@ -189,14 +206,19 @@ public class BibleSearchDialog extends Stage implements BibleChangeListener {
                                 }
                                 overlay.hide();
                                 String resultsfoundSuffix = LabelGrabber.INSTANCE.getLabel("bible.search.results.found");
-                                if(count==1 && LabelGrabber.INSTANCE.isLocallyDefined("bible.search.result.found")) {
+                                if (searchResults.size() == 1 && LabelGrabber.INSTANCE.isLocallyDefined("bible.search.result.found")) {
                                     resultsfoundSuffix = LabelGrabber.INSTANCE.getLabel("bible.search.result.found");
                                 }
-                                resultsField.setText(" " + count + " " + resultsfoundSuffix);
+                                resultsField.setText(" " + searchResults.size() + " " + resultsfoundSuffix);
                             }
                         });
                     }
-                }.start();
+                };
+                if (lastUpdateRunnable != null) {
+                    lastUpdateRunnable.cancel();
+                }
+                lastUpdateRunnable = execRunnable;
+                updateExecutor.submit(execRunnable);
             }
         }
         searchResults.reset();
