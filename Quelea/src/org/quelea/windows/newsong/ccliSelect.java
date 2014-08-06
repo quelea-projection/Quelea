@@ -58,6 +58,7 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import org.quelea.services.languages.LabelGrabber;
+import org.quelea.services.utils.Utils;
 import org.quelea.windows.main.QueleaApp;
 
 /**
@@ -237,13 +238,28 @@ public class CCLISelect extends Stage {
         int iterator = 0;
         for (Element x : p) {
 
-            if (x.toString().contains("p class")) {
-            } else {
-                iterator++;
-                if (!(h3.get(iterator).toString().equals("<h3>Please print this page using the print button</h3>"))) {
+            if (!(x.toString().contains("p class"))) {
+
+                if (Utils.containsSongSectionTitle(h3.get(iterator).toString().replace("<h3>", ""))) {
                     all = all + "\n" + h3.get(iterator).toString();
+                    iterator++;
+                } else if (h3.get(iterator).toString().replace("<h3>", "").replace("<h3>", "").replace("</h3>", "").trim().equals("")) {
+                    iterator++;
+                } else {
+                    while (!Utils.containsSongSectionTitle(h3.get(iterator).toString().replace("<h3>", ""))) {
+                        iterator++;
+                        if (iterator >= h3.size()) {
+                            break;
+                        }
+                    }
+                    if (iterator < h3.size()) {
+                        all = all + "\n" + h3.get(iterator).toString();
+                        iterator++;
+                    }
+
                 }
                 all = all + x.toString() + "<br />";
+
             }
 
         }
@@ -252,10 +268,9 @@ public class CCLISelect extends Stage {
         replace = replace.replace("</p>", "");
         replace = replace.replace("<h3>", "");
         replace = replace.replace("</h3>", "");
-        
-        
+
         this.text = replace;
-        
+
         return this.text;
     }
 

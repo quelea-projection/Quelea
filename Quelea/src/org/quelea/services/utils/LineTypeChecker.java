@@ -108,20 +108,6 @@ public class LineTypeChecker {
      * @return true if it's the title of a section, false otherwise.
      */
     private boolean checkTitle() {
-        String processedLine = line.toLowerCase().trim().replace("(", "").replace(")", "");
-        if (processedLine.endsWith("//title")) {
-            return true;
-        }
-        return processedLine.toLowerCase().startsWith("verse")
-                || processedLine.toLowerCase().startsWith("chorus")
-                || processedLine.toLowerCase().startsWith("tag")
-                || processedLine.toLowerCase().startsWith("pre-chorus")
-                || processedLine.toLowerCase().startsWith("pre chorus")
-                || processedLine.toLowerCase().startsWith("coda")
-                || processedLine.toLowerCase().startsWith("ending")
-                || processedLine.toLowerCase().startsWith("bridge")
-                || processedLine.toLowerCase().startsWith("intro")
-                || processedLine.toLowerCase().startsWith("outro")
-                || processedLine.toLowerCase().startsWith("misc");
+       return Utils.containsSongSectionTitle(line);
     }
 }

@@ -371,7 +371,28 @@ public final class Utils {
     public static Bounds getBoundsFromRect2D(Rectangle2D rect) {
         return new BoundingBox(rect.getMinX(), rect.getMinY(), rect.getWidth(), rect.getHeight());
     }
-
+/**
+ * Check to see if a passed string contains a section title.
+ * @param line the string that is checked 
+ * @return true if contains title, false otherwise
+ */
+    public static boolean containsSongSectionTitle(String line){
+        String processedLine = line.toLowerCase().trim().replace("(", "").replace(")", "");
+        if (processedLine.endsWith("//title")) {
+            return true;
+        }
+        return processedLine.toLowerCase().startsWith("verse")
+                || processedLine.toLowerCase().startsWith("chorus")
+                || processedLine.toLowerCase().startsWith("tag")
+                || processedLine.toLowerCase().startsWith("pre-chorus")
+                || processedLine.toLowerCase().startsWith("pre chorus")
+                || processedLine.toLowerCase().startsWith("coda")
+                || processedLine.toLowerCase().startsWith("ending")
+                || processedLine.toLowerCase().startsWith("bridge")
+                || processedLine.toLowerCase().startsWith("intro")
+                || processedLine.toLowerCase().startsWith("outro")
+                || processedLine.toLowerCase().startsWith("misc");
+    }
     /**
      * Determine if we're running in a 64 bit JVM.
      * <p/>
