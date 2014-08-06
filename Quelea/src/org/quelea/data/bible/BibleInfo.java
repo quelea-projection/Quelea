@@ -20,6 +20,7 @@ package org.quelea.data.bible;
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import org.quelea.services.utils.Utils;
 import org.w3c.dom.Node;
@@ -27,6 +28,7 @@ import org.w3c.dom.NodeList;
 
 /**
  * General information about a specified bible.
+ *
  * @author Michael
  */
 public class BibleInfo implements Serializable {
@@ -35,6 +37,7 @@ public class BibleInfo implements Serializable {
 
     /**
      * Create a new bible info object.
+     *
      * @param title the title of the bible, eg. "King James Version"
      */
     public BibleInfo(String title) {
@@ -52,6 +55,7 @@ public class BibleInfo implements Serializable {
 
     /**
      * Put an attribute into the bible info object.
+     *
      * @param attribute
      * @param value
      */
@@ -61,23 +65,48 @@ public class BibleInfo implements Serializable {
 
     /**
      * Get all the attributes as name and value pairs.
+     *
      * @return all the attributes as name and value pairs.
      */
     public Set<Map.Entry<String, String>> getAtributes() {
         return attributes.entrySet();
     }
 
+    @Override
+    public int hashCode() {
+        int hash = 3;
+        hash = 37 * hash + Objects.hashCode(this.attributes);
+        return hash;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final BibleInfo other = (BibleInfo) obj;
+        if (!Objects.equals(this.attributes, other.attributes)) {
+            return false;
+        }
+        return true;
+    }
+
     /**
-     * Parse some XML representing this object and return the object it represents.
+     * Parse some XML representing this object and return the object it
+     * represents.
+     *
      * @param info the XML node representing this object.
      * @return the object as defined by the XML.
      */
     public static BibleInfo parseXML(Node info) {
         NodeList list = info.getChildNodes();
         BibleInfo ret = new BibleInfo();
-        for(int i = 0; i < list.getLength(); i++) {
+        for (int i = 0; i < list.getLength(); i++) {
             Node node = list.item(i);
-            if(!node.getNodeName().contains("#")) {
+            if (!node.getNodeName().contains("#")) {
                 ret.putAttribute(node.getNodeName(), node.getTextContent());
             }
         }
@@ -86,12 +115,13 @@ public class BibleInfo implements Serializable {
 
     /**
      * Generate an XML representation of this bible info object.
+     *
      * @return an XML representation of this bible info object.
      */
     public String toXML() {
         StringBuilder ret = new StringBuilder();
         ret.append("<information>");
-        for(Map.Entry<String, String> attrib : getAtributes()) {
+        for (Map.Entry<String, String> attrib : getAtributes()) {
             ret.append('<');
             ret.append(Utils.escapeXML(attrib.getKey()));
             ret.append('>');
