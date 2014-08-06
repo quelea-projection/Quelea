@@ -5,10 +5,14 @@ quelea (2014.1) stable; urgency=normal
   * Add ZionWorx import
   * Add Easyworship import
   * Add Openlyrics import / export
-  * Add translation support
-  * Fix bug with italic font property not being saved when selecting an image or video background
+  * Add song translation support
   * Improve text wrapping algorithm for bible text
   * Add option for displaying verse numbers in bible text
-  * Various minor bug fixes
+  * Add Hungarian translation
+  * Bugfix - italic font property now saved when selecting an image or video background
+  * Bugfix - no longer possible to add empty bible passages
+  * Bugfix - quick edit cursor doesn't show on bible passages anymore
+  * Bugfix - bible search now filters out duplicate results correctly
+  * Various other minor bug fixes
 
  -- Michael Berry <michael@quelea.org>  Wednesday, 22 Feb 2014 00:00:00 +0000
