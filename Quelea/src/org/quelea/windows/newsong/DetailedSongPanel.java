@@ -39,7 +39,6 @@ public class DetailedSongPanel extends BorderPane {
     private final TextField year;
     private final TextField publisher;
     private final TextField copyright;
-    private final TagEntryPanel tags;
     private final TextField key;
     private final TextField capo;
     private final TextArea info;
@@ -54,7 +53,6 @@ public class DetailedSongPanel extends BorderPane {
         publisher = new TextField();
         year = new IntegerTextField();
         copyright = new TextField();
-        tags = new TagEntryPanel(null, true, false);
         key = new TextField();
         capo = new IntegerTextField();
         info = new TextArea();
@@ -64,10 +62,9 @@ public class DetailedSongPanel extends BorderPane {
         addBlock(formPanel, LabelGrabber.INSTANCE.getLabel("copyright.label"), copyright, 2);
         addBlock(formPanel, LabelGrabber.INSTANCE.getLabel("year.label"), year, 3);
         addBlock(formPanel, LabelGrabber.INSTANCE.getLabel("publisher.label"), publisher, 4);
-        addBlock(formPanel, LabelGrabber.INSTANCE.getLabel("tags.label"), tags, 5);
-        addBlock(formPanel, LabelGrabber.INSTANCE.getLabel("key.label"), key, 6);
-        addBlock(formPanel, LabelGrabber.INSTANCE.getLabel("capo.label"), capo, 7);
-        addBlock(formPanel, LabelGrabber.INSTANCE.getLabel("notes.label"), info, 8);
+        addBlock(formPanel, LabelGrabber.INSTANCE.getLabel("key.label"), key, 5);
+        addBlock(formPanel, LabelGrabber.INSTANCE.getLabel("capo.label"), capo, 6);
+        addBlock(formPanel, LabelGrabber.INSTANCE.getLabel("notes.label"), info, 7);
 
         setTop(formPanel);
 
@@ -96,7 +93,6 @@ public class DetailedSongPanel extends BorderPane {
         ccli.setText("");
         year.setText("");
         publisher.setText("");
-        tags.removeTags();
         copyright.setText("");
         key.setText("");
         capo.setText("");
@@ -111,7 +107,6 @@ public class DetailedSongPanel extends BorderPane {
     public void resetEditSong(SongDisplayable song) {
         ccli.setText(song.getCcli());
         copyright.setText(song.getCopyright());
-        tags.setTags(song.getTagsAsString());
         publisher.setText(song.getPublisher());
         year.setText(song.getYear());
         key.setText(song.getKey());
@@ -128,7 +123,7 @@ public class DetailedSongPanel extends BorderPane {
     }
 
     private String getSaveHash() {
-        return "" + ccli.getText().hashCode() + copyright.getText().hashCode() + tags.getTagsAsString().hashCode() + publisher.getText().hashCode() + year.getText().hashCode() + key.getText().hashCode() + capo.getText().hashCode() + info.getText().hashCode();
+        return "" + ccli.getText().hashCode() + copyright.getText().hashCode() + publisher.getText().hashCode() + year.getText().hashCode() + key.getText().hashCode() + capo.getText().hashCode() + info.getText().hashCode();
     }
 
     /**
@@ -156,15 +151,6 @@ public class DetailedSongPanel extends BorderPane {
      */
     public TextField getPublisherField() {
         return publisher;
-    }
-
-    /**
-     * Get the tags panel.
-     * <p>
-     * @return the tags panel.
-     */
-    public TagEntryPanel getTagsPanel() {
-        return tags;
     }
 
     /**
