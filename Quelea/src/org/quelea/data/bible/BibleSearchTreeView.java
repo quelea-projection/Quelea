@@ -18,6 +18,7 @@
 package org.quelea.data.bible;
 
 import java.util.Collection;
+import javafx.application.Platform;
 import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.scene.control.ComboBox;
@@ -45,6 +46,7 @@ public class BibleSearchTreeView extends TreeView<BibleInterface> {
     private ScrollPane sp;
     private ComboBox bibles;
     private boolean all = true;
+    private int size;
 
     /**
      * Constructs a TreeView object with a blank root BibleInterface item.
@@ -126,7 +128,6 @@ public class BibleSearchTreeView extends TreeView<BibleInterface> {
         BibleBook book = (BibleBook) chapter.getParent();
         Bible bible = (Bible) book.getParent();
 
-
         // Get the current bible
         TreeItem<BibleInterface> cbible;
         if (all) {
@@ -143,9 +144,15 @@ public class BibleSearchTreeView extends TreeView<BibleInterface> {
 
         //See if verse is in results, or add it.
         TreeItem<BibleInterface> cverse = new TreeItem<BibleInterface>(verse);
-        cchapter.getChildren().add(cverse);
+        if (!cchapter.getChildren().contains(cverse)) {
+            cchapter.getChildren().add(cverse);
+            size++;
+        }
     }
 
+    public int size() {
+        return size;
+    }
     /**
      * Checks if the bible section is already listed in the current tree
      */
@@ -178,6 +185,7 @@ public class BibleSearchTreeView extends TreeView<BibleInterface> {
             all = true;
         }
         root = getRoot();
+        size = 0;
         this.setShowRoot(false);
     }
 }
