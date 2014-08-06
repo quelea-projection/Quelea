@@ -53,7 +53,6 @@ import org.quelea.windows.main.widgets.LoadingPane;
 public class BibleSearchDialog extends Stage implements BibleChangeListener {
 
     private TextField searchField;
-    //private ListView<BibleChapter> searchResults;
     private BibleSearchTreeView searchResults;
     private ComboBox<String> bibles;
     private ScrollPane scrollPane;
