@@ -24,6 +24,7 @@ import java.io.InputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.application.Platform;
@@ -43,7 +44,7 @@ import org.xml.sax.SAXException;
  * <p/>
  * @author Michael
  */
-public final class Bible implements BibleInterface, Serializable  {
+public final class Bible implements BibleInterface, Serializable {
 
     private static final Logger LOGGER = LoggerUtils.getLogger();
     private final String name;
@@ -60,6 +61,36 @@ public final class Bible implements BibleInterface, Serializable  {
         this.name = name;
     }
 
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 59 * hash + Objects.hashCode(this.name);
+        hash = 59 * hash + Objects.hashCode(this.information);
+        hash = 59 * hash + Objects.hashCode(this.books);
+        return hash;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final Bible other = (Bible) obj;
+        if (!Objects.equals(this.name, other.name)) {
+            return false;
+        }
+        if (!Objects.equals(this.information, other.information)) {
+            return false;
+        }
+        if (!Objects.equals(this.books, other.books)) {
+            return false;
+        }
+        return true;
+    }
+
     /**
      * Parse a bible from a specified bible and return it as an object.
      * <p/>
@@ -68,27 +99,25 @@ public final class Bible implements BibleInterface, Serializable  {
      */
     public static Bible parseBible(final File file) {
         try {
-            if(file.exists()) {
+            if (file.exists()) {
                 InputStream fis = new FileInputStream(file);
                 DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
                 DocumentBuilder builder = factory.newDocumentBuilder();
                 Document doc = builder.parse(fis);
                 NodeList list = doc.getChildNodes();
-                for(int i = 0; i < list.getLength(); i++) {
-                    if(list.item(i).getNodeName().equalsIgnoreCase("xmlbible")
+                for (int i = 0; i < list.getLength(); i++) {
+                    if (list.item(i).getNodeName().equalsIgnoreCase("xmlbible")
                             || list.item(i).getNodeName().equalsIgnoreCase("bible")) {
                         return parseXML(list.item(i), Utils.getFileNameWithoutExtension(file.getName()));
                     }
                 }
                 LOGGER.log(Level.WARNING, "Couldn''t parse the bible {0} because I couldn''t find any <bible> or <xmlbible> root tags :-(", file);
                 return null;
-            }
-            else {
+            } else {
                 LOGGER.log(Level.WARNING, "Couldn''t parse the bible {0} because the file doesn''t exist!", file);
                 return null;
             }
-        }
-        catch(ParserConfigurationException | SAXException | IOException ex) {
+        } catch (ParserConfigurationException | SAXException | IOException ex) {
             LOGGER.log(Level.WARNING, "Couldn't parse the bible " + file, ex);
             Platform.runLater(new Runnable() {
                 @Override
@@ -115,19 +144,17 @@ public final class Bible implements BibleInterface, Serializable  {
      */
     public static Bible parseXML(Node node, String defaultName) {
         String name = "";
-        if(node.getAttributes().getNamedItem("biblename") != null) {
+        if (node.getAttributes().getNamedItem("biblename") != null) {
             name = node.getAttributes().getNamedItem("biblename").getNodeValue();
-        }
-        else {
+        } else {
             name = defaultName;
         }
         Bible ret = new Bible(name);
         NodeList list = node.getChildNodes();
-        for(int i = 0; i < list.getLength(); i++) {
-            if(list.item(i).getNodeName().equalsIgnoreCase("information")) {
+        for (int i = 0; i < list.getLength(); i++) {
+            if (list.item(i).getNodeName().equalsIgnoreCase("information")) {
                 ret.information = BibleInfo.parseXML(list.item(i));
-            }
-            else if(list.item(i).getNodeName().equalsIgnoreCase("biblebook")
+            } else if (list.item(i).getNodeName().equalsIgnoreCase("biblebook")
                     || list.item(i).getNodeName().equalsIgnoreCase("b")) {
                 BibleBook book = BibleBook.parseXML(list.item(i), i);
                 book.setBible(ret);
@@ -148,10 +175,10 @@ public final class Bible implements BibleInterface, Serializable  {
         ret.append("<xmlbible xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:noNamespaceSchemaLocation=\"zef2005.xsd\" version=\"2.0.1.18\" status=\"v\" biblename=\"");
         ret.append(Utils.escapeXML(name));
         ret.append("\" type=\"x-bible\" revision=\"0\">");
-        if(information != null) {
+        if (information != null) {
             ret.append(information.toXML());
         }
-        for(BibleBook book : books) {
+        for (BibleBook book : books) {
             ret.append(book.toXML());
         }
         ret.append("</xmlbible>");
@@ -186,7 +213,7 @@ public final class Bible implements BibleInterface, Serializable  {
     public String toString() {
         String abbrev = Utils.getAbbreviation(getName());
         StringBuilder ret = new StringBuilder(getName());
-        if(abbrev.length() > 1) {
+        if (abbrev.length() > 1) {
             ret.append(" (").append(abbrev).append(")");
         }
         return ret.toString();
@@ -219,7 +246,7 @@ public final class Bible implements BibleInterface, Serializable  {
     public String getText() {
         return toString();
     }
-    
+
     @Override
     public String getName() {
         return getBibleName();
