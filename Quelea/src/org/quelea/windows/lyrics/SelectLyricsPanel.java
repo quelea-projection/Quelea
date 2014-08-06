@@ -23,21 +23,17 @@ import javafx.beans.value.ObservableValue;
 import javafx.collections.ObservableList;
 import javafx.geometry.Orientation;
 import javafx.scene.control.SplitPane;
-import javafx.scene.image.Image;
 import org.quelea.data.ThemeDTO;
-import org.quelea.data.displayable.Displayable;
-import org.quelea.data.displayable.ImageDisplayable;
+import org.quelea.data.displayable.SongDisplayable;
 import org.quelea.data.displayable.TextDisplayable;
 import org.quelea.data.displayable.TextSection;
 import org.quelea.services.utils.LoggerUtils;
 import org.quelea.services.utils.QueleaProperties;
-import org.quelea.windows.image.ImageDrawer;
 import org.quelea.windows.main.AbstractPanel;
 import org.quelea.windows.main.DisplayCanvas;
 import org.quelea.windows.main.DisplayCanvas.Priority;
 import org.quelea.windows.main.DisplayableDrawer;
 import org.quelea.windows.main.LivePreviewPanel;
-import org.quelea.windows.main.QueleaApp;
 import org.quelea.windows.main.widgets.DisplayPreview;
 
 /**
@@ -124,6 +120,7 @@ public class SelectLyricsPanel extends AbstractPanel {
     public void showDisplayable(TextDisplayable displayable, int index) {
 //        removeCurrentDisplayable();
         setCurrentDisplayable(displayable);
+        lyricsList.setShowQuickEdit(displayable instanceof  SongDisplayable);
         for (TextSection section : displayable.getSections()) {
             lyricsList.itemsProperty().get().add(section);
         }
