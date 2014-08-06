@@ -72,7 +72,7 @@ public class LabelChecker {
                     System.err.println();
                     System.err.println("MISSING LABELS:");
                 }
-                System.err.println(key + "=" + engLabels.getProperty(key));
+                System.err.println(key + "=" + engLabels.getProperty(key).replace("\n", "\\n"));
             }
         }
         if(ok) {
