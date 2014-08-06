@@ -39,6 +39,7 @@ public class SelectLyricsList extends ListView<TextSection> {
 
     private static final Cursor Q_CURSOR = new ImageCursor(new Image("file:icons/edit32.png"), 6, 27);
     private boolean oneLineMode;
+    private boolean showQuickEdit;
 
     /**
      * Create a new schedule list.
@@ -48,7 +49,7 @@ public class SelectLyricsList extends ListView<TextSection> {
         setOnMouseMoved(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent t) {
-                if((t.isShiftDown() || t.isControlDown()) && !itemsProperty().get().isEmpty()) {
+                if(showQuickEdit && (t.isShiftDown() || t.isControlDown()) && !itemsProperty().get().isEmpty()) {
                     setCursor(Q_CURSOR);
                 }
                 else {
@@ -57,7 +58,7 @@ public class SelectLyricsList extends ListView<TextSection> {
                 getScene().setOnKeyPressed(new EventHandler<KeyEvent>() {
                     @Override
                     public void handle(KeyEvent t) {
-                        if((t.isShiftDown() || t.isControlDown()) && !itemsProperty().get().isEmpty()) {
+                        if(showQuickEdit && (t.isShiftDown() || t.isControlDown()) && !itemsProperty().get().isEmpty()) {
                             setCursor(Q_CURSOR);
                         }
                         else {
@@ -68,7 +69,7 @@ public class SelectLyricsList extends ListView<TextSection> {
                 getScene().setOnKeyReleased(new EventHandler<KeyEvent>() {
                     @Override
                     public void handle(KeyEvent t) {
-                        if((t.isShiftDown() || t.isControlDown()) && !itemsProperty().get().isEmpty()) {
+                        if(showQuickEdit && (t.isShiftDown() || t.isControlDown()) && !itemsProperty().get().isEmpty()) {
                             setCursor(Q_CURSOR);
                         }
                         else {
@@ -115,6 +116,10 @@ public class SelectLyricsList extends ListView<TextSection> {
                 return cell;
             }
         });
+    }
+    
+    public void setShowQuickEdit(boolean showQuickEdit) {
+        this.showQuickEdit = showQuickEdit;
     }
 
     /**
