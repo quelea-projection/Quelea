@@ -41,6 +41,7 @@ public class HibernateUtil {
             cfg.setProperty("hibernate.connection.characterEncoding", "utf8");
             cfg.addAnnotatedClass(org.quelea.data.db.model.Song.class);//@todo add reflection code which retrieve all classes from package
             cfg.addAnnotatedClass(org.quelea.data.db.model.Theme.class);
+            cfg.addAnnotatedClass(org.quelea.data.db.model.MediaLoop.class);
             cfg.addAnnotatedClass(org.quelea.data.db.model.TextShadow.class);
             serviceRegistry = new ServiceRegistryBuilder().applySettings(cfg.getProperties()).buildServiceRegistry();
             sessionFactory = cfg.buildSessionFactory(serviceRegistry);

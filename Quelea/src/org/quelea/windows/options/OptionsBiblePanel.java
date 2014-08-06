@@ -133,6 +133,7 @@ public class OptionsBiblePanel extends GridPane implements PropertyPanel, BibleC
         useBibleVersesBox.valueProperty().addListener(new ChangeListener<String>() {
             @Override
             public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
+               
                 maxItemsPerSlideLabel.setText(labels[0] + newValue + labels[1]);
                 changed = true;
             }

@@ -14,6 +14,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
+import javafx.scene.control.TextField;
 import javafx.scene.control.ToggleButton;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -35,6 +36,7 @@ import org.quelea.services.languages.LabelGrabber;
 public class Dialog extends Stage {
 
     protected String stacktrace;
+    protected static TextField inputField;
     protected double originalWidth, originalHeight;
     protected Scene scene;
     protected BorderPane borderPanel;
@@ -49,6 +51,7 @@ public class Dialog extends Stage {
     protected Label stackTraceLabel;
     protected HBox buttonsPanel;
     protected Button okButton;
+    protected String returnString;
 
     /**
      * Extracts stack trace from Throwable
@@ -74,6 +77,7 @@ public class Dialog extends Stage {
         protected static final int BUTTON_WIDTH = 60;
         protected static final double MARGIN = 10;
         protected static final String ICON_PATH = "/org/javafx/dialog/";
+
         protected Dialog stage;
 
         public Builder create() {
@@ -123,7 +127,7 @@ public class Dialog extends Stage {
         }
 
         public Builder setOwner(Window owner) {
-            if(owner != null) {
+            if (owner != null) {
                 stage.initOwner(owner);
                 stage.borderPanel.setMaxWidth(owner.getWidth());
                 stage.borderPanel.setMaxHeight(owner.getHeight());
@@ -131,8 +135,38 @@ public class Dialog extends Stage {
             return this;
         }
 
+        /**
+         * Get the string input to the input text field
+         *
+         * @return The text input
+         */
+        public static String getInput() {
+            return inputField.getText();
+        }
+        
+
         public Builder setTitle(String title) {
             stage.setTitle(title);
+            return this;
+        }
+
+        /**
+         * Removes label message and replaces with text field
+         *
+         * @param initialText the text displayed in the text field upon showing
+         * @return this builder
+         */
+        public Builder setDeclareInputDialog(String initialText) {
+            stage.messageBox.getChildren().clear();
+            inputField = new TextField();
+            if (initialText == null) {
+                initialText = "";
+            }
+            inputField.setText(initialText);
+            stage.messageBox.getChildren().add(inputField);
+            stage.borderPanel.setCenter(stage.messageBox);
+            BorderPane.setAlignment(stage.messageBox, Pos.CENTER);
+            BorderPane.setMargin(stage.messageBox, new Insets(MARGIN, MARGIN, MARGIN, 2 * MARGIN));
             return this;
         }
 
@@ -145,27 +179,27 @@ public class Dialog extends Stage {
             stage.setWidth(
                     stage.icon.getImage().getWidth()
                     + Math.max(
-                    stage.messageLabel.getWidth(),
-                    (stage.stacktraceVisible
-                    ? Math.max(
-                    stage.stacktraceButtonsPanel.getWidth(),
-                    stage.stackTraceLabel.getWidth())
-                    : stage.stacktraceButtonsPanel.getWidth()))
+                            stage.messageLabel.getWidth(),
+                            (stage.stacktraceVisible
+                            ? Math.max(
+                                    stage.stacktraceButtonsPanel.getWidth(),
+                                    stage.stackTraceLabel.getWidth())
+                            : stage.stacktraceButtonsPanel.getWidth()))
                     + 5 * MARGIN);
 
             stage.setHeight(
                     Math.max(
-                    stage.icon.getImage().getHeight(),
-                    stage.messageLabel.getHeight()
-                    + stage.stacktraceButtonsPanel.getHeight()
-                    + (stage.stacktraceVisible
-                    ? Math.min(
-                    stage.stackTraceLabel.getHeight(),
-                    STACKTRACE_LABEL_MAXHEIGHT)
-                    : 0))
+                            stage.icon.getImage().getHeight(),
+                            stage.messageLabel.getHeight()
+                            + stage.stacktraceButtonsPanel.getHeight()
+                            + (stage.stacktraceVisible
+                            ? Math.min(
+                                    stage.stackTraceLabel.getHeight(),
+                                    STACKTRACE_LABEL_MAXHEIGHT)
+                            : 0))
                     + stage.buttonsPanel.getHeight()
                     + 3 * MARGIN);
-            if(stage.stacktraceVisible) {
+            if (stage.stacktraceVisible) {
                 stage.scrollPane.setPrefHeight(
                         stage.getHeight()
                         - stage.messageLabel.getHeight()
@@ -217,13 +251,12 @@ public class Dialog extends Stage {
                 @Override
                 public void handle(ActionEvent t) {
                     stage.stacktraceVisible = !stage.stacktraceVisible;
-                    if(stage.stacktraceVisible) {
+                    if (stage.stacktraceVisible) {
                         stage.messageBox.getChildren().add(stage.scrollPane);
                         stage.stackTraceLabel.setText(stage.stacktrace);
 
                         alignScrollPane();
-                    }
-                    else {
+                    } else {
                         stage.messageBox.getChildren().remove(stage.scrollPane);
 
                         //alignScrollPane();
@@ -249,7 +282,7 @@ public class Dialog extends Stage {
             stage.showingProperty().addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue<? extends Boolean> ov, Boolean oldValue, Boolean newValue) {
-                    if(newValue) {
+                    if (newValue) {
                         stage.originalWidth = stage.getWidth();
                         stage.originalHeight = stage.getHeight();
                     }
@@ -309,7 +342,7 @@ public class Dialog extends Stage {
                 @Override
                 public void handle(ActionEvent t) {
                     stage.close();
-                    if(actionHandler != null) {
+                    if (actionHandler != null) {
                         actionHandler.handle(t);
                     }
                 }
@@ -348,7 +381,7 @@ public class Dialog extends Stage {
         public Builder addCancelButton(EventHandler<ActionEvent> actionHandler) {
             return addConfirmationButton(LabelGrabber.INSTANCE.getLabel("cancel.text"), actionHandler);
         }
-        
+
         public Builder addLabelledButton(String label, EventHandler<ActionEvent> actionHandler) {
             return addConfirmationButton(label, actionHandler);
         }
@@ -359,7 +392,7 @@ public class Dialog extends Stage {
          * @return dialog instance
          */
         public Dialog build() {
-            if(stage.buttonsPanel.getChildren().size() == 0) {
+            if (stage.buttonsPanel.getChildren().size() == 0) {
                 throw new RuntimeException("Add one dialog button at least");
             }
 
@@ -531,6 +564,23 @@ public class Dialog extends Stage {
                 .setTitle(title)
                 .setConfirmationIcon()
                 .setMessage(message);
+    }
+
+    /**
+     * Build input dialog builder
+     *
+     * @param title dialog title
+     * @param initText initial text in input text field
+     * @param owner parent window
+     * @return new builder
+     */
+    public static Builder buildInputDialog(String title, String initText, Window owner) {
+        return new Builder()
+                .create()
+                .setOwner(owner)
+                .setTitle(title)
+                .setConfirmationIcon()
+                .setDeclareInputDialog(initText);
     }
 
     /**

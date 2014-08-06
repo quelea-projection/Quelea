@@ -48,6 +48,7 @@ import org.quelea.data.ThemeDTO;
 import org.quelea.data.displayable.BiblePassage;
 import org.quelea.data.displayable.Displayable;
 import org.quelea.data.displayable.ImageDisplayable;
+import org.quelea.data.displayable.MediaLoopDisplayable;
 import org.quelea.data.displayable.SongDisplayable;
 import org.quelea.data.displayable.TextDisplayable;
 import org.quelea.data.displayable.TextSection;
@@ -111,15 +112,24 @@ public class ScheduleList extends StackPane {
                             setGraphic(item.getPreviewIcon());
                             setText(item.getPreviewText());
                         }
-                        if(item instanceof SongDisplayable) {
+                        if (item instanceof SongDisplayable) {
                             setContextMenu(SchedulePopupMenu.getSongPopup());
-                        }
-                        else if (item instanceof BiblePassage) {
+                        } else if (item instanceof BiblePassage) {
                             setContextMenu(SchedulePopupMenu.getBiblePopup());
                         }
                     }
                 };
                 cells.add(listCell);
+                listCell.setOnMouseClicked(new EventHandler<MouseEvent>() {
+
+                    @Override
+                    public void handle(MouseEvent t) {
+                        if (t.getClickCount() > 1) {
+                            QueleaApp.get().getMainWindow().getMainPanel().getPreviewPanel().goLive();
+                        }
+                    }
+
+                });
                 listCell.setOnDragDetected(new EventHandler<MouseEvent>() {
 
                     @Override
@@ -128,7 +138,13 @@ public class ScheduleList extends StackPane {
                             localDragIndex = listCell.getIndex();
                             Dragboard db = listCell.startDragAndDrop(TransferMode.ANY);
                             ClipboardContent content = new ClipboardContent();
-                            content.put(SongDisplayable.SONG_DISPLAYABLE_FORMAT, listCell.getItem());
+                             if(listCell.getItem() instanceof MediaLoopDisplayable){
+                                 content.put(MediaLoopDisplayable.MEDIA_LOOP_DISPLAYABLE_FORMAT, listCell.getItem());
+                            } else if (listCell.getItem() instanceof SongDisplayable) {
+                                content.put(SongDisplayable.SONG_DISPLAYABLE_FORMAT, listCell.getItem());
+                            } else{
+                                LOGGER.log(Level.INFO, "Tried to drag and drop an unsupported displayable type");
+                            }
                             db.setContent(content);
                             event.consume();
                         }
@@ -140,7 +156,7 @@ public class ScheduleList extends StackPane {
                     public void handle(DragEvent event) {
                         int size = listView.getItems().size();
                         if (listCell.isEmpty()) {
-                            if (event.getDragboard().getContent(SongDisplayable.SONG_DISPLAYABLE_FORMAT) != null || event.getDragboard().getString() != null) {
+                            if (event.getDragboard().getContent(SongDisplayable.SONG_DISPLAYABLE_FORMAT) != null || event.getDragboard().getContent(MediaLoopDisplayable.MEDIA_LOOP_DISPLAYABLE_FORMAT) != null || event.getDragboard().getString() != null) {
                                 for (ListCell<Displayable> cell : cells) {
                                     if (cell.isVisible() && cell.getIndex() == size) {
                                         markerRect.setTranslateX(cell.getLayoutX() + cell.getTranslateX());
@@ -159,6 +175,10 @@ public class ScheduleList extends StackPane {
                                 markerRect.setTranslateX(listCell.getLayoutX() + listCell.getTranslateX());
                                 markerRect.setTranslateY(listCell.getLayoutY() + listCell.getTranslateY());
                                 markerRect.setVisible(true);
+                            } else if (event.getDragboard().getContent(MediaLoopDisplayable.MEDIA_LOOP_DISPLAYABLE_FORMAT) != null) {
+                                markerRect.setTranslateX(listCell.getLayoutX() + listCell.getTranslateX());
+                                markerRect.setTranslateY(listCell.getLayoutY() + listCell.getTranslateY());
+                                markerRect.setVisible(true);
                             }
                         }
                     }
@@ -174,7 +194,7 @@ public class ScheduleList extends StackPane {
                 listCell.setOnDragOver(new EventHandler<DragEvent>() {
                     @Override
                     public void handle(DragEvent event) {
-                        if (event.getDragboard().getString() != null || event.getDragboard().getContent(SongDisplayable.SONG_DISPLAYABLE_FORMAT) != null) {
+                        if (event.getDragboard().getString() != null || event.getDragboard().getContent(SongDisplayable.SONG_DISPLAYABLE_FORMAT) != null || event.getDragboard().getContent(MediaLoopDisplayable.MEDIA_LOOP_DISPLAYABLE_FORMAT) != null) {
                             event.acceptTransferModes(TransferMode.ANY);
                         }
                     }
@@ -204,12 +224,12 @@ public class ScheduleList extends StackPane {
                                     if (dropShadow == null || (dropShadow.getColor().equals(Color.WHITE) && dropShadow.getOffsetX() == 0 && dropShadow.getOffsetY() == 0)) {
                                         dropShadow = new SerializableDropShadow(Color.BLACK, 3, 3);
                                     }
-                                    ThemeDTO newTheme = new ThemeDTO(theme.getSerializableFont(), theme.getFontPaint(), theme.getTranslateSerializableFont(), theme.getTranslateFontPaint(), new ImageBackground(new File(imageLocation).getName()), dropShadow, theme.getSerializableFont().isBold(), theme.getSerializableFont().isItalic(),  theme.getTranslateSerializableFont().isBold(), theme.getTranslateSerializableFont().isItalic(),theme.getTextPosition(), theme.getTextAlignment());
+                                    ThemeDTO newTheme = new ThemeDTO(theme.getSerializableFont(), theme.getFontPaint(), theme.getTranslateSerializableFont(), theme.getTranslateFontPaint(), new ImageBackground(new File(imageLocation).getName()), dropShadow, theme.getSerializableFont().isBold(), theme.getSerializableFont().isItalic(), theme.getTranslateSerializableFont().isBold(), theme.getTranslateSerializableFont().isItalic(), theme.getTextPosition(), theme.getTextAlignment());
                                     for (TextSection section : textDisplayable.getSections()) {
                                         section.setTheme(newTheme);
                                     }
                                     textDisplayable.setTheme(newTheme);
-                                    if(d instanceof SongDisplayable) {
+                                    if (d instanceof SongDisplayable) {
                                         SongDisplayable sd = (SongDisplayable) d;
                                         Utils.updateSongInBackground(sd, true, false);
                                     }
@@ -220,6 +240,33 @@ public class ScheduleList extends StackPane {
                         }
                         if (event.getDragboard().getContent(SongDisplayable.SONG_DISPLAYABLE_FORMAT) instanceof SongDisplayable) {
                             final SongDisplayable displayable = (SongDisplayable) event.getDragboard().getContent(SongDisplayable.SONG_DISPLAYABLE_FORMAT);
+                            if (displayable != null) {
+                                if (listCell.getIndex() != localDragIndex) {
+                                    if (localDragIndex > -1) {
+                                        getItems().remove(localDragIndex);
+                                        localDragIndex = -1;
+                                    }
+                                    if (listCell.isEmpty()) {
+                                        add(displayable);
+                                        listView.getSelectionModel().selectLast();
+                                    } else {
+                                        listView.itemsProperty().get().add(listCell.getIndex(), displayable);
+                                        listView.getSelectionModel().select(listCell.getIndex());
+                                    }
+                                    listView.requestFocus();
+                                    Platform.runLater(new Runnable() {
+
+                                        @Override
+                                        public void run() {
+                                            QueleaApp.get().getMainWindow().getMainPanel().getPreviewPanel().setDisplayable(displayable, 0);
+                                            QueleaApp.get().getMainWindow().getMainPanel().getPreviewPanel().refresh();
+                                        }
+                                    });
+                                }
+                            }
+                        }
+                        if (event.getDragboard().getContent(MediaLoopDisplayable.MEDIA_LOOP_DISPLAYABLE_FORMAT) instanceof MediaLoopDisplayable) {
+                            final MediaLoopDisplayable displayable = (MediaLoopDisplayable) event.getDragboard().getContent(MediaLoopDisplayable.MEDIA_LOOP_DISPLAYABLE_FORMAT);
                             if (displayable != null) {
                                 if (listCell.getIndex() != localDragIndex) {
                                     if (localDragIndex > -1) {

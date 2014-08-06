@@ -21,9 +21,11 @@ package org.quelea.windows.multimedia;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
+import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.EventHandler;
+import javafx.scene.control.Label;
 import javafx.scene.control.Slider;
 import javafx.scene.effect.DropShadow;
 import javafx.scene.effect.Glow;
@@ -37,6 +39,9 @@ import javafx.scene.paint.CycleMethod;
 import javafx.scene.paint.LinearGradient;
 import javafx.scene.paint.Stop;
 import javafx.scene.shape.Rectangle;
+import org.quelea.services.languages.LabelGrabber;
+import org.quelea.services.utils.QueleaProperties;
+import org.quelea.services.utils.Utils;
 
 /**
  * The multimedia controls containing a play / pause button, stop button, and a
@@ -47,6 +52,7 @@ import javafx.scene.shape.Rectangle;
 public class MultimediaControls extends StackPane {
 
     private static final int SLIDER_UPDATE_RATE = 100;
+    private static final int STAGE_IMAGE_UPDATE_RATE = 400;
     private static final Image PLAY_IMAGE = new Image("file:icons/play.png");
     private static final Image PAUSE_IMAGE = new Image("file:icons/pause.png");
     private static final Image STOP_IMAGE = new Image("file:icons/stop.png");
@@ -58,6 +64,12 @@ public class MultimediaControls extends StackPane {
     private ImageView stopButton;
     private Slider posSlider;
     private boolean disableControls;
+    private Slider stagePosSlider = new Slider(0, 1, 0);
+    private Label updateLabel = new Label("");
+    private String name = "";
+    private static final String COMPLETE_LABEL = LabelGrabber.INSTANCE.getLabel("stage.media.complete.label");
+    private ImageView updateImageView;
+    private boolean noStop = false;
 
     public MultimediaControls() {
         Rectangle rect = new Rectangle(230, 100);
@@ -82,16 +94,15 @@ public class MultimediaControls extends StackPane {
         playButton.setOnMouseClicked(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent t) {
-                if(!disableControls) {
+                if (!disableControls) {
                     playpause = !playpause;
-                    if(playpause) {
+                    if (playpause) {
                         playButton.setImage(PAUSE_IMAGE);
                         VLCWindow.INSTANCE.setRepeat(false);
                         VLCWindow.INSTANCE.setHue(0);
                         VLCWindow.INSTANCE.play();
                         posSlider.setDisable(false);
-                    }
-                    else {
+                    } else {
                         playButton.setImage(PLAY_IMAGE);
                         VLCWindow.INSTANCE.pause();
                     }
@@ -103,7 +114,7 @@ public class MultimediaControls extends StackPane {
         stopButton.setOnMouseClicked(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent t) {
-                if(!disableControls) {
+                if (!disableControls) {
                     reset();
                 }
             }
@@ -117,7 +128,7 @@ public class MultimediaControls extends StackPane {
         posSlider.valueProperty().addListener(new ChangeListener<Number>() {
             @Override
             public void changed(ObservableValue<? extends Number> ov, Number t, Number t1) {
-                if(!disableControls && (VLCWindow.INSTANCE.isPlaying() || VLCWindow.INSTANCE.isPaused()) && posSlider.isValueChanging()) {
+                if (!disableControls && (VLCWindow.INSTANCE.isPlaying() || VLCWindow.INSTANCE.isPaused()) && posSlider.isValueChanging()) {
                     VLCWindow.INSTANCE.setProgressPercent(posSlider.getValue());
                 }
             }
@@ -131,54 +142,171 @@ public class MultimediaControls extends StackPane {
         service.scheduleAtFixedRate(new Runnable() {
             @Override
             public void run() {
-                if(!disableControls && VLCWindow.INSTANCE.isPlaying() && !posSlider.isValueChanging()) {
-                    posSlider.setValue(VLCWindow.INSTANCE.getProgressPercent());
+                if (!disableControls && VLCWindow.INSTANCE.isPlaying() && !posSlider.isValueChanging()) {
+                    final double percent = VLCWindow.INSTANCE.getProgressPercent();
+                    Utils.fxRunAndWait(new Runnable() {
+
+                        @Override
+                        public void run() {
+                            posSlider.setValue(percent);
+                            stagePosSlider.setValue(percent);
+                            Platform.runLater(new Runnable() {
+
+                                @Override
+                                public void run() {
+                                    updateLabel.setText(name + ":    " + ((int) (percent * 100)) + "% " + COMPLETE_LABEL);
+                                }
+                            });
+                        }
+                    });
+                    {
+
+                    }
+
                 }
             }
         }, 0, SLIDER_UPDATE_RATE, TimeUnit.MILLISECONDS);
+        ScheduledExecutorService serviceImage = Executors.newSingleThreadScheduledExecutor();
+        serviceImage.scheduleAtFixedRate(new Runnable() {
+
+            @Override
+            public void run() {
+                if (VLCWindow.INSTANCE.isPlaying()) {
+                    if (updateImageView != null) {
+                        Image imageToSet = Utils.getScreenshotOfProjectionWindow();
+                        updateImageView.setImage(imageToSet);
+                    }
+                }
+            }
+        }, 0, STAGE_IMAGE_UPDATE_RATE, TimeUnit.MILLISECONDS);
+
         VLCWindow.INSTANCE.setOnFinished(new Runnable() {
             @Override
             public void run() {
-                if(getScene() != null && !disableControls) {
+                if (getScene() != null && !disableControls) {
                     reset();
                 }
             }
         });
     }
 
-    public void loadMultimedia(String path) {
+    /**
+     * Play loaded media
+     */
+    public void play() {
+        playButton.setImage(PAUSE_IMAGE);
+        VLCWindow.INSTANCE.setRepeat(false);
+        VLCWindow.INSTANCE.setHue(0);
+        VLCWindow.INSTANCE.play();
+        posSlider.setDisable(false);
+        playpause = true;
+
+    }
+
+    /**
+     * Pause loaded media
+     */
+    public void pause() {
+        playButton.setImage(PLAY_IMAGE);
+        playpause = false;
+        VLCWindow.INSTANCE.pause();
+    }
+
+    /**
+     * Stop loaded media
+     */
+    public void stop() {
         reset();
+    }
+
+    /**
+     * Set the slider that is used on the stage display
+     *
+     * @param slider the preview slider
+     */
+    public void setPreviewSlider(Slider slider) {
+        this.stagePosSlider = slider;
+    }
+
+    /**
+     * Set the image view to show the video frames on the stage display
+     *
+     * @param stageImages the image view in which the images will be shown
+     */
+    public void setPreviewImageView(ImageView stageImages) {
+        this.updateImageView = stageImages;
+    }
+
+    /**
+     * Set the label that is used to actively tell the percentage of the current
+     * video
+     *
+     * @param label the label that should be updated
+     */
+    public void setPreviewLabel(Label label) {
+        this.updateLabel = label;
+    }
+
+    /**
+     * Set the name of the currently playing video
+     *
+     * @param name
+     */
+    public void setVideoName(String name) {
+        this.name = name;
+    }
+
+    public void loadMultimedia(String path, boolean reset) {
+        if (reset) {
+            reset();
+        }
         VLCWindow.INSTANCE.load(path);
     }
 
     public void setDisableControls(boolean disable) {
         this.disableControls = disable;
-        if(disable) {
-            if(!playpause) {
+        if (disable) {
+            if (!playpause) {
                 playButton.setImage(PLAY_IMAGE_DISABLE);
-            }
-            else {
+            } else {
                 playButton.setImage(PAUSE_IMAGE_DISABLE);
             }
             stopButton.setImage(STOP_IMAGE_DISABLE);
-        }
-        else {
-            if(!playpause) {
+        } else {
+            if (!playpause) {
                 playButton.setImage(PLAY_IMAGE);
-            }
-            else {
+            } else {
                 playButton.setImage(PAUSE_IMAGE);
             }
             stopButton.setImage(STOP_IMAGE);
         }
     }
 
+    /**
+     * Sets whether there should be a stop when going live
+     *
+     * @param noStop whether the stop command should be executed
+     */
+    public void setNoStop(boolean noStop) {
+        this.noStop = noStop;
+    }
+
+    /**
+     * Gets whether there should be a stop when going live
+     *
+     * @return whether the stop command should be executed
+     */
+    public boolean getNoStop() {
+        return this.noStop;
+    }
+
     public void reset() {
-        VLCWindow.INSTANCE.stop();
-        if(disableControls) {
-            playButton.setImage(PLAY_IMAGE_DISABLE);
+        if (!this.noStop) {
+            VLCWindow.INSTANCE.stop();
         }
-        else {
+        if (disableControls) {
+            playButton.setImage(PLAY_IMAGE_DISABLE);
+        } else {
             playButton.setImage(PLAY_IMAGE);
         }
         playpause = false;
@@ -190,7 +318,7 @@ public class MultimediaControls extends StackPane {
         button.setOnMouseEntered(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent t) {
-                if(!disableControls) {
+                if (!disableControls) {
                     button.setEffect(new Glow(0.5));
                 }
             }
