@@ -57,6 +57,7 @@ import org.quelea.data.displayable.PresentationDisplayable;
 import org.quelea.data.displayable.SongDisplayable;
 import org.quelea.data.displayable.VideoDisplayable;
 import org.quelea.services.utils.LoggerUtils;
+import org.quelea.services.utils.QueleaProperties;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -134,7 +135,7 @@ public class Schedule implements Iterable<Displayable>, Printable {
      * @return true if the write was successful, false otherwise.
      */
     public synchronized boolean writeToFile() {
-        if(file == null) {
+        if (file == null) {
             return false;
         }
         try {
@@ -145,36 +146,36 @@ public class Schedule implements Iterable<Displayable>, Printable {
                 zos.putNextEntry(new ZipEntry("schedule.xml"));
                 zos.write(getXML().getBytes("UTF8"));
                 zos.closeEntry();
-                Set<String> entries = new HashSet<>();
-                for(Displayable displayable : displayables) {
-                    for(File displayableFile : displayable.getResources()) {
-                        String base = ".";
-                        String path = displayableFile.getAbsolutePath();
-                        String relative = new File(base).toURI().relativize(new File(path).toURI()).getPath();
-                        String zipPath = "resources/" + relative;
-                        if(!entries.contains(zipPath)) {
-                            entries.add(zipPath);
-                            ZipEntry entry = new ZipEntry(zipPath);
-                            zos.putNextEntry(entry);
-                            FileInputStream fi = new FileInputStream(displayableFile);
-                            try (BufferedInputStream origin = new BufferedInputStream(fi, BUFFER)) {
-                                int count;
-                                while((count = origin.read(data, 0, BUFFER)) != -1) {
-                                    zos.write(data, 0, count);
+                if (QueleaProperties.get().getEmbedMediaInScheduleFile()) {
+                    Set<String> entries = new HashSet<>();
+                    for (Displayable displayable : displayables) {
+                        for (File displayableFile : displayable.getResources()) {
+                            String base = ".";
+                            String path = displayableFile.getAbsolutePath();
+                            String relative = new File(base).toURI().relativize(new File(path).toURI()).getPath();
+                            String zipPath = "resources/" + relative;
+                            if (!entries.contains(zipPath)) {
+                                entries.add(zipPath);
+                                ZipEntry entry = new ZipEntry(zipPath);
+                                zos.putNextEntry(entry);
+                                FileInputStream fi = new FileInputStream(displayableFile);
+                                try (BufferedInputStream origin = new BufferedInputStream(fi, BUFFER)) {
+                                    int count;
+                                    while ((count = origin.read(data, 0, BUFFER)) != -1) {
+                                        zos.write(data, 0, count);
+                                    }
+                                    zos.closeEntry();
                                 }
-                                zos.closeEntry();
                             }
                         }
                     }
                 }
                 modified = false;
                 return true;
-            }
-            finally {
+            } finally {
                 zos.close();
             }
-        }
-        catch (IOException ex) {
+        } catch (IOException ex) {
             LOGGER.log(Level.WARNING, "Couldn't write the schedule to file", ex);
             return false;
         }
@@ -192,26 +193,26 @@ public class Schedule implements Iterable<Displayable>, Printable {
             final int BUFFER = 2048;
             try {
                 Schedule ret = parseXML(zipFile.getInputStream(zipFile.getEntry("schedule.xml")));
-                if(ret==null) {
+                if (ret == null) {
                     return null;
                 }
                 ret.setFile(file);
                 Enumeration<? extends ZipEntry> enumeration = zipFile.entries();
-                while(enumeration.hasMoreElements()) {
+                while (enumeration.hasMoreElements()) {
                     ZipEntry entry = enumeration.nextElement();
-                    if(!entry.getName().startsWith("resources/")) {
+                    if (!entry.getName().startsWith("resources/")) {
                         continue;
                     }
                     try (BufferedInputStream is = new BufferedInputStream(zipFile.getInputStream(entry))) {
                         int count;
                         byte data[] = new byte[BUFFER];
                         File writeFile = new File(entry.getName().substring("resources/".length()));
-                        if(writeFile.exists()) {
+                        if (writeFile.exists()) {
                             continue;
                         }
                         FileOutputStream fos = new FileOutputStream(writeFile);
                         try (BufferedOutputStream dest = new BufferedOutputStream(fos, BUFFER)) {
-                            while((count = is.read(data, 0, BUFFER))
+                            while ((count = is.read(data, 0, BUFFER))
                                     != -1) {
                                 dest.write(data, 0, count);
                             }
@@ -221,12 +222,10 @@ public class Schedule implements Iterable<Displayable>, Printable {
                 }
                 ret.modified = false;
                 return ret;
-            }
-            finally {
+            } finally {
                 zipFile.close();
             }
-        }
-        catch (IOException ex) {
+        } catch (IOException ex) {
             LOGGER.log(Level.WARNING, "Couldn't read the schedule from file", ex);
             return null;
         }
@@ -240,7 +239,7 @@ public class Schedule implements Iterable<Displayable>, Printable {
     private String getXML() {
         StringBuilder xml = new StringBuilder();
         xml.append("<schedule>");
-        for(Displayable displayable : displayables) {
+        for (Displayable displayable : displayables) {
             xml.append(displayable.getXML());
         }
         xml.append("</schedule>");
@@ -267,7 +266,7 @@ public class Schedule implements Iterable<Displayable>, Printable {
             BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
             StringBuilder contentsBuilder = new StringBuilder();
             String line;
-            while((line=reader.readLine())!=null) {
+            while ((line = reader.readLine()) != null) {
                 contentsBuilder.append(line).append('\n');
             }
             String contents = contentsBuilder.toString();
@@ -277,41 +276,34 @@ public class Schedule implements Iterable<Displayable>, Printable {
             /*
              * End bodge.
              */
-            
+
             DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
             DocumentBuilder builder = factory.newDocumentBuilder();
             Document doc = builder.parse(strInputStream); //Read from our "bodged" stream.
             NodeList nodes = doc.getFirstChild().getChildNodes();
             Schedule newSchedule = new Schedule();
-            for(int i = 0; i < nodes.getLength(); i++) {
+            for (int i = 0; i < nodes.getLength(); i++) {
                 Node node = nodes.item(i);
                 String name = node.getNodeName();
-                if(name.equalsIgnoreCase("song")) {
+                if (name.equalsIgnoreCase("song")) {
                     newSchedule.add(SongDisplayable.parseXML(node));
-                }
-                else if(name.equalsIgnoreCase("passage")) {
+                } else if (name.equalsIgnoreCase("passage")) {
                     newSchedule.add(BiblePassage.parseXML(node));
-                }
-               else if(name.equalsIgnoreCase("mediaLoop")) {
+                } else if (name.equalsIgnoreCase("mediaLoop")) {
                     newSchedule.add(MediaLoopDisplayable.parseXML(node));
-                }
-                else if(name.equalsIgnoreCase("fileimage")) {
+                } else if (name.equalsIgnoreCase("fileimage")) {
                     newSchedule.add(ImageDisplayable.parseXML(node));
-                }
-                else if(name.equalsIgnoreCase("filevideo")) {
+                } else if (name.equalsIgnoreCase("filevideo")) {
                     newSchedule.add(VideoDisplayable.parseXML(node));
-                }
-                else if(name.equalsIgnoreCase("fileaudio")) {
+                } else if (name.equalsIgnoreCase("fileaudio")) {
                     newSchedule.add(AudioDisplayable.parseXML(node));
-                }
-                else if(name.equalsIgnoreCase("filepresentation")) {
+                } else if (name.equalsIgnoreCase("filepresentation")) {
                     newSchedule.add(PresentationDisplayable.parseXML(node));
                 }
             }
             newSchedule.modified = false;
             return newSchedule;
-        }
-        catch (ParserConfigurationException | SAXException | IOException ex) {
+        } catch (ParserConfigurationException | SAXException | IOException ex) {
             LOGGER.log(Level.WARNING, "Couldn't parse the schedule", ex);
             return null;
         }
@@ -326,30 +318,33 @@ public class Schedule implements Iterable<Displayable>, Printable {
     public Iterator<Displayable> iterator() {
         return displayables.iterator();
     }
-    
+
     /**
      * Get the displayable at the given index.
+     *
      * @param index the index to get the displayable at.
      * @return the displayable at the given index.
      */
     public Displayable getDisplayable(int index) {
         return displayables.get(index);
     }
-    
+
     /**
      * Get the size of this schedule.
+     *
      * @return the schedule size.
      */
     public int getSize() {
         return displayables.size();
     }
-    
+
     /**
      * Determine whether this schedule is empty.
+     *
      * @return true if it's empty, false otherwise.
      */
     public boolean isEmpty() {
-        return getSize()==0;
+        return getSize() == 0;
     }
 
     /**
@@ -363,7 +358,7 @@ public class Schedule implements Iterable<Displayable>, Printable {
      */
     @Override
     public int print(Graphics graphics, PageFormat pageFormat, int pageIndex) throws PrinterException {
-        if(pageIndex > 0) {
+        if (pageIndex > 0) {
             return NO_SUCH_PAGE;
         }
         Graphics2D g2d = (Graphics2D) graphics;
@@ -373,7 +368,7 @@ public class Schedule implements Iterable<Displayable>, Printable {
         g2d.setFont(new Font("Arial", 0, 14));
         g2d.setColor(Color.BLACK);
         int offset = 130;
-        for(Displayable displayable : displayables) {
+        for (Displayable displayable : displayables) {
             g2d.drawString(displayable.getPrintText(), 20, offset);
             offset += 50;
         }

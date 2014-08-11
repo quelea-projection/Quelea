@@ -73,6 +73,7 @@ public class OptionsGeneralPanel extends GridPane implements PropertyPanel {
     private final CheckBox showSmallBibleTextBox;
     private final ComboBox smallTextPositionCombo;
     private final Slider fadeSpeedSlider;
+    private final CheckBox embedMediaInScheduleCheckBox;
 
     /**
      * Create a new general panel.
@@ -88,6 +89,15 @@ public class OptionsGeneralPanel extends GridPane implements PropertyPanel {
         startupLabel.setLabelFor(startupUpdateCheckBox);
         GridPane.setConstraints(startupUpdateCheckBox, 2, rows);
         getChildren().add(startupUpdateCheckBox);
+        rows++;
+
+        Label embedLabel = new Label(LabelGrabber.INSTANCE.getLabel("schedule.embed.media"));
+        GridPane.setConstraints(embedLabel, 1, rows);
+        getChildren().add(embedLabel);
+        embedMediaInScheduleCheckBox = new CheckBox();
+        startupLabel.setLabelFor(embedMediaInScheduleCheckBox);
+        GridPane.setConstraints(embedMediaInScheduleCheckBox, 2, rows);
+        getChildren().add(embedMediaInScheduleCheckBox);
         rows++;
 
         Label useOOLabel = new Label(LabelGrabber.INSTANCE.getLabel("use.oo.label"));
@@ -457,6 +467,7 @@ public class OptionsGeneralPanel extends GridPane implements PropertyPanel {
         additionalLineSpacingSlider.setValue(props.getAdditionalLineSpacing());
         maximumFontSizeSlider.setValue(props.getMaxFontSize());
         fadeSpeedSlider.setValue(props.getFadeDuration());
+        embedMediaInScheduleCheckBox.setSelected(props.getEmbedMediaInScheduleFile());
     }
 
     /**
@@ -511,6 +522,7 @@ public class OptionsGeneralPanel extends GridPane implements PropertyPanel {
         props.setAdditionalLineSpacing(additionalLineSpacingSlider.getValue());
         double fadeDuration = fadeSpeedSlider.getValue();
         props.setFadeDuration(fadeDuration);
+        props.setEmbredMediaInScheduleFile(embedMediaInScheduleCheckBox.isSelected());
         //Initialise presentation
         if (!OOPresentation.isInit()) {
             OOUtils.attemptInit();

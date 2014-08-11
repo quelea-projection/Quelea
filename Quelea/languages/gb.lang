@@ -524,3 +524,4 @@ stage.use.ununiform.text=Show Lyrics as Large as Possible
 stage.draw.images=Show Media
 stage.media.complete.label=Complete
 options.fade.speed.label=Fade Duration (Seconds)
+schedule.embed.media=Embed media in schedule file when saving.\n    May take longer to save.
