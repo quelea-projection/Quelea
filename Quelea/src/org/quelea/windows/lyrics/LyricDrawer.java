@@ -516,16 +516,17 @@ public class LyricDrawer extends DisplayableDrawer {
                     }
                 });
             } else {
+                double d = QueleaProperties.get().getFadeDuration();
                 if (newBackground instanceof ImageView) {
                     if(oldBackground instanceof ImageView){
                         ImageView newIV = ((ImageView)newBackground);
                         ImageView oldIV = ((ImageView)oldBackground);
                         if(newIV.getImage().equals(oldIV.getImage())){
-                            return;
+                        newBackground.setOpacity(1);
                         }
                     }
                 }
-                Utils.fadeNodeOpacity(newBackground.getOpacity(), 1, QueleaProperties.get().getFadeDuration(), newBackground, 0.0, new Runnable() {
+                Utils.fadeNodeOpacity(newBackground.getOpacity(), 1, d, newBackground, 0.0, new Runnable() {
 
                     @Override
                     public void run() {

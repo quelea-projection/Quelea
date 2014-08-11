@@ -246,6 +246,16 @@ public final class QueleaProperties extends Properties {
         setProperty("vlc.advanced", Boolean.toString(val));
     }
 
+    
+    public boolean getEmbedMediaInScheduleFile() {
+        return Boolean.parseBoolean(getProperty("schedule.embed", "false"));
+    }
+
+ 
+    public void setEmbredMediaInScheduleFile(boolean val) {
+        setProperty("schedule.embed", Boolean.toString(val));
+    }
+
     /**
      * Determine if we should show verse numbers for bible passages.
      * <p>
