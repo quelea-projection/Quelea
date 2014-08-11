@@ -45,13 +45,16 @@ import javafx.util.Callback;
 import org.quelea.data.ImageBackground;
 import org.quelea.data.Schedule;
 import org.quelea.data.ThemeDTO;
+import org.quelea.data.displayable.AudioDisplayable;
 import org.quelea.data.displayable.BiblePassage;
 import org.quelea.data.displayable.Displayable;
 import org.quelea.data.displayable.ImageDisplayable;
 import org.quelea.data.displayable.MediaLoopDisplayable;
+import org.quelea.data.displayable.PresentationDisplayable;
 import org.quelea.data.displayable.SongDisplayable;
 import org.quelea.data.displayable.TextDisplayable;
 import org.quelea.data.displayable.TextSection;
+import org.quelea.data.displayable.VideoDisplayable;
 import org.quelea.services.utils.LoggerUtils;
 import org.quelea.services.utils.QueleaProperties;
 import org.quelea.services.utils.SerializableDropShadow;
@@ -76,6 +79,7 @@ public class ScheduleList extends StackPane {
     private static final Logger LOGGER = LoggerUtils.getLogger();
     private ArrayList<ListCell<Displayable>> cells = new ArrayList<>();
     private int localDragIndex = -1;
+    private Displayable tempDisp = null;
 
     /**
      * A direction; either up or down. Used for rearranging the order of items
@@ -138,12 +142,13 @@ public class ScheduleList extends StackPane {
                             localDragIndex = listCell.getIndex();
                             Dragboard db = listCell.startDragAndDrop(TransferMode.ANY);
                             ClipboardContent content = new ClipboardContent();
-                             if(listCell.getItem() instanceof MediaLoopDisplayable){
-                                 content.put(MediaLoopDisplayable.MEDIA_LOOP_DISPLAYABLE_FORMAT, listCell.getItem());
+                            if (listCell.getItem() instanceof MediaLoopDisplayable) {
+                                content.put(MediaLoopDisplayable.MEDIA_LOOP_DISPLAYABLE_FORMAT, listCell.getItem());
                             } else if (listCell.getItem() instanceof SongDisplayable) {
                                 content.put(SongDisplayable.SONG_DISPLAYABLE_FORMAT, listCell.getItem());
-                            } else{
-                                LOGGER.log(Level.INFO, "Tried to drag and drop an unsupported displayable type");
+                            } else {
+                                content.putString(listCell.getItem().getPreviewText());
+                                tempDisp = listCell.getItem();
                             }
                             db.setContent(content);
                             event.consume();
@@ -156,7 +161,9 @@ public class ScheduleList extends StackPane {
                     public void handle(DragEvent event) {
                         int size = listView.getItems().size();
                         if (listCell.isEmpty()) {
-                            if (event.getDragboard().getContent(SongDisplayable.SONG_DISPLAYABLE_FORMAT) != null || event.getDragboard().getContent(MediaLoopDisplayable.MEDIA_LOOP_DISPLAYABLE_FORMAT) != null || event.getDragboard().getString() != null) {
+                            if (event.getDragboard().getContent(SongDisplayable.SONG_DISPLAYABLE_FORMAT) != null
+                                    || event.getDragboard().getContent(MediaLoopDisplayable.MEDIA_LOOP_DISPLAYABLE_FORMAT) != null
+                                    || event.getDragboard().getString() != null) {
                                 for (ListCell<Displayable> cell : cells) {
                                     if (cell.isVisible() && cell.getIndex() == size) {
                                         markerRect.setTranslateX(cell.getLayoutX() + cell.getTranslateX());
@@ -168,9 +175,9 @@ public class ScheduleList extends StackPane {
                             }
                         } else {
                             if (event.getDragboard().getString() != null) {
-                                if (listCell.getItem() instanceof SongDisplayable) {
-                                    listCell.setStyle("-fx-background-color: #99cccc;");
-                                }
+                                markerRect.setTranslateX(listCell.getLayoutX() + listCell.getTranslateX());
+                                markerRect.setTranslateY(listCell.getLayoutY() + listCell.getTranslateY());
+                                markerRect.setVisible(true);
                             } else if (event.getDragboard().getContent(SongDisplayable.SONG_DISPLAYABLE_FORMAT) != null) {
                                 markerRect.setTranslateX(listCell.getLayoutX() + listCell.getTranslateX());
                                 markerRect.setTranslateY(listCell.getLayoutY() + listCell.getTranslateY());
@@ -204,7 +211,12 @@ public class ScheduleList extends StackPane {
                     public void handle(DragEvent event) {
                         listCell.setStyle("-fx-border-color: rgb(0, 0, 0);-fx-border-width: 0,0,0,0;");
                         String imageLocation = event.getDragboard().getString();
+                         File imageFile = new File("");
                         if (imageLocation != null) {
+                           imageFile= new File(imageLocation);
+                        }
+
+                        if (imageFile.exists()) {
                             if (!Utils.isInDir(QueleaProperties.get().getImageDir(), new File(imageLocation))) {
                                 try {
                                     Utils.copyFile(new File(imageLocation), new File(QueleaProperties.get().getImageDir(), new File(imageLocation).getName()));
@@ -264,9 +276,34 @@ public class ScheduleList extends StackPane {
                                     });
                                 }
                             }
-                        }
-                        if (event.getDragboard().getContent(MediaLoopDisplayable.MEDIA_LOOP_DISPLAYABLE_FORMAT) instanceof MediaLoopDisplayable) {
+                        } else if (event.getDragboard().getContent(MediaLoopDisplayable.MEDIA_LOOP_DISPLAYABLE_FORMAT) instanceof MediaLoopDisplayable) {
                             final MediaLoopDisplayable displayable = (MediaLoopDisplayable) event.getDragboard().getContent(MediaLoopDisplayable.MEDIA_LOOP_DISPLAYABLE_FORMAT);
+                            if (displayable != null) {
+                                if (listCell.getIndex() != localDragIndex) {
+                                    if (localDragIndex > -1) {
+                                        getItems().remove(localDragIndex);
+                                        localDragIndex = -1;
+                                    }
+                                    if (listCell.isEmpty()) {
+                                        add(displayable);
+                                        listView.getSelectionModel().selectLast();
+                                    } else {
+                                        listView.itemsProperty().get().add(listCell.getIndex(), displayable);
+                                        listView.getSelectionModel().select(listCell.getIndex());
+                                    }
+                                    listView.requestFocus();
+                                    Platform.runLater(new Runnable() {
+
+                                        @Override
+                                        public void run() {
+                                            QueleaApp.get().getMainWindow().getMainPanel().getPreviewPanel().setDisplayable(displayable, 0);
+                                            QueleaApp.get().getMainWindow().getMainPanel().getPreviewPanel().refresh();
+                                        }
+                                    });
+                                }
+                            }
+                        } else {
+                            final Displayable displayable = tempDisp;
                             if (displayable != null) {
                                 if (listCell.getIndex() != localDragIndex) {
                                     if (localDragIndex > -1) {
