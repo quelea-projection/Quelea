@@ -388,7 +388,6 @@ public class SongEntryWindow extends Stage {
         song.setTitle(getBasicSongPanel().getTitleField().getText());
         song.setAuthor(getBasicSongPanel().getAuthorField().getText());
         song.setTranslations(getTranslatePanel().getTranslations());
-        song.setTags(getDetailedSongPanel().getTagsPanel().getTagsAsString());
         song.setCcli(getDetailedSongPanel().getCcliField().getText());
         song.setCopyright(getDetailedSongPanel().getCopyrightField().getText());
         song.setPublisher(getDetailedSongPanel().getPublisherField().getText());

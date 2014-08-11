@@ -463,3 +463,5 @@ verses=verser
 edit.bible.passage.text=Redigera tema för bibeltext
 words=ord
 use.bible.verses=Dela upp bibeltexter efter antalet
+no.pdb.heading=Paradox JDBC-drivrutiner inte hittade
+no.pdb.message=Av tekniska skäl behöver du ladda hem Paradox JDBC-drivrutiner innan Quelea på ett pålitligt sätt kan importera databaser från Easyworship:\n\n1. Gå till http://www.hxtt.com/download.jsp och registrera dig för ett gratis konto för att fortsätta.\n2. Ladda hem filen "Paradox JDBC 4.1 Package for JDK1.7.X and JDK1.8.X". Den bör heta Paradox_JDBC41.jar.\n3. Kopiera Paradox_JDBC41.jar till $1.\n\nOm du stöter på några problem, känn dig fri att ställa en fråga i diskussionsgruppen (http://bit.ly/1mePoeh). Quelea kommer ändå att försöka importera Easyworship-databasen utan filen på plats, men det kan ge ett opålitligt resultat.
