@@ -62,6 +62,7 @@ public class ThemeDTO implements Serializable {
     private Boolean isTranslateFontItalic = false;
     private int textPosition = -1;
     private int textAlignment = 0;
+    private boolean overRideTheme = false;
 
     /**
      * Create a new theme with a specified font, font colour and background.
@@ -150,6 +151,22 @@ public class ThemeDTO implements Serializable {
     }
 
     /**
+     * Set whether this theme should override a global theme
+     *
+     * @param override True if this theme should over-ride, false otherwise
+     */
+    public void setOverrideTheme(boolean override) {
+        this.overRideTheme = override;
+    }
+
+    /**
+     * Get whether this theme should override a global theme
+     * @return True if this theme should override, false otherwise
+     */
+    public boolean getOverrideTheme(){
+        return this.overRideTheme;
+    }
+    /**
      * Get the font of the theme.
      * <p/>
      * @return the theme font.
@@ -167,7 +184,7 @@ public class ThemeDTO implements Serializable {
      * @return the translate theme font.
      */
     public Font getTranslateFont() {
-        if(translateFont==null) {
+        if (translateFont == null) {
             return null;
         }
         return translateFont.getFont();
@@ -277,7 +294,7 @@ public class ThemeDTO implements Serializable {
         final TextShadow shadow = new TextShadow(textShadow.getColor().toString(),
                 textShadow.getOffsetX(), textShadow.getOffsetY());
         final Theme theme = new Theme(themeName, font.getFont().getName(), fontColor.toString(), translateFont.getFont().getName(), translateFontColor.toString(), backgroundColor,
-                backgroundVideo, backgroundImage, shadow, isFontBold, isFontItalic, isTranslateFontBold, isTranslateFontItalic, vidHue, textPosition, textAlignment);
+                backgroundVideo, backgroundImage, shadow, isFontBold, isFontItalic, isTranslateFontBold, isTranslateFontItalic, vidHue, textPosition, textAlignment, getOverrideTheme());
         return theme;
     }
 
@@ -343,6 +360,7 @@ public class ThemeDTO implements Serializable {
         ret.append("$shadowY:").append(textShadow.getOffsetY());
         ret.append("$textposition:").append(textPosition);
         ret.append("$textalignment:").append(textAlignment);
+        ret.append("$override:").append(overRideTheme);
         return ret.toString();
     }
 
@@ -374,6 +392,7 @@ public class ThemeDTO implements Serializable {
         String vidHue = "0";
         String textPosition = "-1";
         String textAlignment = "0";
+        String overrideGlobal = "";
         for (String part : content.split("\\$")) {
             if (!part.contains(":")) {
                 continue;
@@ -415,7 +434,8 @@ public class ThemeDTO implements Serializable {
                 shadowOffsetX = defaultIfEmpty(parts[1], "0");
             } else if (parts[0].equalsIgnoreCase("shadowY")) {
                 shadowOffsetY = defaultIfEmpty(parts[1], "0");
-            }
+            }else if (parts[0].equalsIgnoreCase("override")) {
+                           }
         }
         Font sysFont = Font.font(fontname,
                 Boolean.parseBoolean(isFontBold) ? FontWeight.BOLD : FontWeight.NORMAL,

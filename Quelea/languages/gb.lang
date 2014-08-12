@@ -525,3 +525,4 @@ stage.draw.images=Show Media
 stage.media.complete.label=Complete
 options.fade.speed.label=Fade Duration (Seconds)
 schedule.embed.media=Embed media in schedule file when saving.\n    May take longer to save.
+override.global.theme=Over-ride the global theme with this theme

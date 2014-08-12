@@ -120,7 +120,7 @@ public class SelectLyricsPanel extends AbstractPanel {
     public void showDisplayable(TextDisplayable displayable, int index) {
 //        removeCurrentDisplayable();
         setCurrentDisplayable(displayable);
-        lyricsList.setShowQuickEdit(displayable instanceof  SongDisplayable);
+        lyricsList.setShowQuickEdit(displayable instanceof SongDisplayable);
         for (TextSection section : displayable.getSections()) {
             lyricsList.itemsProperty().get().add(section);
         }
@@ -216,10 +216,15 @@ public class SelectLyricsPanel extends AbstractPanel {
             }
             TextSection currentSection = lyricsList.itemsProperty().get().get(selectedIndex);
             if (currentSection.getTempTheme() != null) {
-                drawer.setTheme(currentSection.getTempTheme());
+                if (currentSection.getTheme().getOverrideTheme()) {
+                    drawer.setTheme(currentSection.getTheme());
+                } else {
+                    drawer.setTheme(currentSection.getTempTheme());
+                }
             } else {
                 ThemeDTO newTheme = currentSection.getTheme();
                 drawer.setTheme(newTheme);
+
             }
             drawer.setCapitaliseFirst(currentSection.shouldCapitaliseFirst());
             drawer.setText((TextDisplayable) getCurrentDisplayable(), selectedIndex);
