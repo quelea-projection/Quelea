@@ -21,6 +21,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.control.Button;
@@ -81,8 +82,15 @@ public class ThemePreviewPanel extends VBox {
                 updateThemePreviewCanvas(updateTheme);
             }
         }, Priority.LOW, false, null);
-        canvas.setPrefSize(200, 200);
-        updateThemePreviewCanvas(theme);
+        canvas.setPrefSize(200, 200); 
+        Platform.runLater(new Runnable() {
+
+            @Override
+            public void run() {
+              canvas.setPrefSize(200, (200 * QueleaApp.get().getProjectionWindow().getHeight()) / QueleaApp.get().getProjectionWindow().getWidth()); 
+            }
+        });
+        
         String name;
         if(theme == ThemeDTO.DEFAULT_THEME) {
             name = LabelGrabber.INSTANCE.getLabel("default.theme.text");

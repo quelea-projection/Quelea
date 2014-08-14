@@ -38,6 +38,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.TilePane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
@@ -155,7 +156,7 @@ public class ScheduleThemeNode extends BorderPane {
                 @Override
                 public void handle(javafx.event.ActionEvent t) {
                     tempTheme = theme;
-                    setTheme(theme);
+                                   setTheme(theme);
                     if (QueleaApp.get().getMainWindow().getMainPanel() != null) {
                         QueleaApp.get().getMainWindow().getMainPanel().getPreviewPanel().refresh();
                     }
@@ -199,6 +200,15 @@ public class ScheduleThemeNode extends BorderPane {
                 popup.show();
             }
         });
+        Button closeButton = new Button(LabelGrabber.INSTANCE.getLabel("close.button"), new ImageView(new Image("file:icons/cross.png")));
+        closeButton.setOnAction(new EventHandler<javafx.event.ActionEvent>(){
+             @Override
+            public void handle(javafx.event.ActionEvent t) {
+                popup.hide();
+            }
+        });
+        buttonPanel.getChildren().add(closeButton);
+        buttonPanel.getChildren().add(new Label("     "));
         buttonPanel.getChildren().add(newThemeButton);
         contentPanel.getChildren().add(themePreviews);
         contentPanel.getChildren().add(buttonPanel);
