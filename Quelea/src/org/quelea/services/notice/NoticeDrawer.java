@@ -48,7 +48,7 @@ public class NoticeDrawer {
 
     private static final double BACKGROUND_OPACITY = 0.6;
     private static final double BACKGROUND_FADE_DURATION = 0.5;
-    private static final double TEXT_SCROLL_DURATION = 10;
+    private static final double TEXT_SCROLL_BASE_DURATION = 10;
     private NoticeOverlay overlay;
     private DisplayCanvas canvas;
     private List<Notice> notices;
@@ -87,10 +87,31 @@ public class NoticeDrawer {
 
     private void playNotices() {
         canvas.ensureNoticesVisible(); //Shouldn't need this, but guards against any cases where the notice overlay may have been removed.
-        if(!playing) {
-            double displayWidth = QueleaApp.get().getProjectionWindow().getWidth();
+        if (!playing) {
+            playing = true;
+            final List<Notice> oldNotices = new ArrayList<>();
+            if(!notices.isEmpty()) {
+                oldNotices.add(notices.get(0));
+            }
+            final HBox textGroup = new HBox(noticeFont.getSize() * 2);
+            final StringBuilder builder = new StringBuilder();
+            textGroup.setAlignment(Pos.BOTTOM_LEFT);
+            for (int i = 0; i < oldNotices.size(); i++) {
+                Notice notice = oldNotices.get(i);
+                builder.append(notice.getText());
+                Text noticeText = new Text(notice.getText());
+                if (i % 2 == 0) {
+                    noticeText.setFill(Color.WHITE);
+                } else {
+                    noticeText.setFill(Color.BLANCHEDALMOND);
+                }
+                noticeText.setFont(noticeFont);
+                textGroup.getChildren().add(noticeText);
+            }
             FontMetrics metrics = Toolkit.getToolkit().getFontLoader().getFontMetrics(noticeFont);
-            if(!overlay.getChildren().contains(backing)) {
+            double displayWidth = QueleaApp.get().getProjectionWindow().getWidth();
+            double width = metrics.computeStringWidth(builder.toString()) + textGroup.getSpacing() * (notices.size() - 1);
+            if (!overlay.getChildren().contains(backing)) {
                 backing = new Rectangle(displayWidth, metrics.getLineHeight(), Color.BROWN);
                 backing.setOpacity(0);
                 overlay.getChildren().add(backing);
@@ -99,50 +120,43 @@ public class NoticeDrawer {
                 fadeTrans.setToValue(BACKGROUND_OPACITY);
                 fadeTrans.play();
             }
-            playing = true;
-            final List<Notice> oldNotices = new ArrayList<>(notices);
-            final HBox textGroup = new HBox(noticeFont.getSize() * 2);
-            final StringBuilder builder = new StringBuilder();
-            textGroup.setAlignment(Pos.BOTTOM_LEFT);
-            for(int i = 0; i < notices.size(); i++) {
-                Notice notice = notices.get(i);
-                builder.append(notice.getText());
-                Text noticeText = new Text(notice.getText());
-                if(i % 2 == 0) {
-                    noticeText.setFill(Color.WHITE);
-                }
-                else {
-                    noticeText.setFill(Color.BLANCHEDALMOND);
-                }
-                noticeText.setFont(noticeFont);
-                textGroup.getChildren().add(noticeText);
+            double excessWidth = width - displayWidth;
+            double stopPoint = -width;
+            if (excessWidth <= 0) {
+                textGroup.setTranslateX(displayWidth);
+            } else {
+                stopPoint += excessWidth / 2;
+                textGroup.setTranslateX(displayWidth + excessWidth / 2);
             }
-            double width = metrics.computeStringWidth(builder.toString()) + textGroup.getSpacing() * (notices.size() - 1);
-            textGroup.setTranslateX(displayWidth);
             overlay.getChildren().add(textGroup);
             Timeline timeline = new Timeline(25);
             timeline.getKeyFrames().add(new KeyFrame(Duration.ZERO, new KeyValue(textGroup.translateXProperty(), textGroup.getTranslateX())));
-            timeline.getKeyFrames().add(new KeyFrame(Duration.seconds(TEXT_SCROLL_DURATION), new KeyValue(textGroup.translateXProperty(), -width)));
+            if (excessWidth <= 0) {
+                timeline.getKeyFrames().add(new KeyFrame(Duration.seconds(TEXT_SCROLL_BASE_DURATION), new KeyValue(textGroup.translateXProperty(), 0)));
+                timeline.getKeyFrames().add(new KeyFrame(Duration.seconds(TEXT_SCROLL_BASE_DURATION + TEXT_SCROLL_BASE_DURATION / (displayWidth/width)), new KeyValue(textGroup.translateXProperty(), stopPoint)));
+            } else {
+                timeline.getKeyFrames().add(new KeyFrame(Duration.seconds(TEXT_SCROLL_BASE_DURATION), new KeyValue(textGroup.translateXProperty(), excessWidth/2)));
+                timeline.getKeyFrames().add(new KeyFrame(Duration.seconds(TEXT_SCROLL_BASE_DURATION + TEXT_SCROLL_BASE_DURATION * (displayWidth / (excessWidth / 2))), new KeyValue(textGroup.translateXProperty(), stopPoint)));
+            }
             timeline.play();
             timeline.setOnFinished(new EventHandler<ActionEvent>() {
                 @Override
                 public void handle(ActionEvent t) {
                     playing = false;
                     overlay.getChildren().remove(textGroup);
-                    for(int i = notices.size() - 1; i >= 0; i--) {
+                    for (int i = notices.size() - 1; i >= 0; i--) {
                         Notice notice = notices.get(i);
-                        if(oldNotices.contains(notice)) {
+                        if (oldNotices.contains(notice)) {
                             notice.decrementTimes();
                         }
-                        if(notice.getTimes() == 0) {
+                        if (notice.getTimes() == 0) {
                             notices.remove(notice);
                         }
                     }
                     QueleaApp.get().getMainWindow().getNoticeDialog().noticesUpdated();
-                    if(!notices.isEmpty()) {
+                    if (!notices.isEmpty()) {
                         playNotices();
-                    }
-                    else {
+                    } else {
                         FadeTransition fadeTrans = new FadeTransition(Duration.seconds(BACKGROUND_FADE_DURATION), backing);
                         fadeTrans.setFromValue(BACKGROUND_OPACITY);
                         fadeTrans.setToValue(0);
