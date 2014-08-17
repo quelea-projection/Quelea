@@ -30,6 +30,6 @@ import javafx.scene.layout.StackPane;
 public class NoticeOverlay extends StackPane {
 
     public NoticeOverlay() {
-        setAlignment(Pos.BOTTOM_LEFT);
+        setAlignment(Pos.BOTTOM_CENTER);
     }
 }
