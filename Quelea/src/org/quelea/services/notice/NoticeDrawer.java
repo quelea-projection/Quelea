@@ -136,7 +136,7 @@ public class NoticeDrawer {
                 timeline.getKeyFrames().add(new KeyFrame(Duration.seconds(TEXT_SCROLL_BASE_DURATION + TEXT_SCROLL_BASE_DURATION / (displayWidth/width)), new KeyValue(textGroup.translateXProperty(), stopPoint)));
             } else {
                 timeline.getKeyFrames().add(new KeyFrame(Duration.seconds(TEXT_SCROLL_BASE_DURATION), new KeyValue(textGroup.translateXProperty(), excessWidth/2)));
-                timeline.getKeyFrames().add(new KeyFrame(Duration.seconds(TEXT_SCROLL_BASE_DURATION + TEXT_SCROLL_BASE_DURATION * (displayWidth / (excessWidth / 2))), new KeyValue(textGroup.translateXProperty(), stopPoint)));
+                timeline.getKeyFrames().add(new KeyFrame(Duration.seconds(TEXT_SCROLL_BASE_DURATION + TEXT_SCROLL_BASE_DURATION / (displayWidth/width)), new KeyValue(textGroup.translateXProperty(), stopPoint)));
             }
             timeline.play();
             timeline.setOnFinished(new EventHandler<ActionEvent>() {
