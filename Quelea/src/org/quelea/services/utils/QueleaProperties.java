@@ -168,7 +168,7 @@ public final class QueleaProperties extends Properties {
         setProperty("scene.info", info.toString());
         write();
     }
-
+    
     /**
      * Get a list of user chosen fonts to appear in the theme dialog.
      * <p>

@@ -300,8 +300,10 @@ public class LivePanel extends LivePreviewPanel {
         HashSet<DisplayCanvas> canvases = new HashSet<>();
         canvases.addAll(getCanvases());
         for (DisplayCanvas canvas : canvases) {
-            canvas.setBlacked(black.isSelected());
-            canvas.setCleared(clear.isSelected());
+            if (!canvas.isStageView()) {
+                canvas.setBlacked(black.isSelected());
+                canvas.setCleared(clear.isSelected());
+            }
         }
 
     }
