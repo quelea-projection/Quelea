@@ -279,11 +279,11 @@ public abstract class LivePreviewPanel extends BorderPane {
             @Override
             public void run() {
                 final Displayable oldDisplayable = LivePreviewPanel.this.displayable;
-                if (oldDisplayable != null) {
-                    if (oldDisplayable.equals(displayable)) {
-                        return;
-                    }
-                }
+//                if (oldDisplayable != null) {
+//                    if (oldDisplayable.equals(displayable)) {
+//                        return;
+//                    }
+//                }
                 LivePreviewPanel.this.displayable = displayable;
                 if (oldDisplayable instanceof TextDisplayable) {
                     lyricsPanel.removeCurrentDisplayable();

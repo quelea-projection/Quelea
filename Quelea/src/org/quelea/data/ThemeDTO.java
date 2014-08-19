@@ -161,11 +161,13 @@ public class ThemeDTO implements Serializable {
 
     /**
      * Get whether this theme should override a global theme
+     *
      * @return True if this theme should override, false otherwise
      */
-    public boolean getOverrideTheme(){
+    public boolean getOverrideTheme() {
         return this.overRideTheme;
     }
+
     /**
      * Get the font of the theme.
      * <p/>
@@ -434,8 +436,9 @@ public class ThemeDTO implements Serializable {
                 shadowOffsetX = defaultIfEmpty(parts[1], "0");
             } else if (parts[0].equalsIgnoreCase("shadowY")) {
                 shadowOffsetY = defaultIfEmpty(parts[1], "0");
-            }else if (parts[0].equalsIgnoreCase("override")) {
-                           }
+            } else if (parts[0].equalsIgnoreCase("override")) {
+               overrideGlobal = parts[1];
+            }
         }
         Font sysFont = Font.font(fontname,
                 Boolean.parseBoolean(isFontBold) ? FontWeight.BOLD : FontWeight.NORMAL,
@@ -463,6 +466,7 @@ public class ThemeDTO implements Serializable {
                 background, shadow, Boolean.valueOf(isFontBold), Boolean.valueOf(isFontItalic),
                 Boolean.valueOf(isTranslateFontBold), Boolean.valueOf(isTranslateFontItalic), Integer.parseInt(textPosition), Integer.parseInt(textAlignment.trim()));
         ret.themeName = themeName;
+        ret.setOverrideTheme(Boolean.parseBoolean(overrideGlobal));
         return ret;
     }
 

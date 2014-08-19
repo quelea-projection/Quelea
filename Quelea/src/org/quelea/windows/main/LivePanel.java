@@ -40,6 +40,7 @@ import javafx.stage.Screen;
 import org.quelea.data.displayable.Displayable;
 import org.quelea.data.displayable.MediaLoopDisplayable;
 import org.quelea.data.displayable.PresentationDisplayable;
+import org.quelea.data.displayable.TextDisplayable;
 import org.quelea.services.languages.LabelGrabber;
 import org.quelea.services.utils.FileFilters;
 import org.quelea.services.utils.QueleaProperties;
@@ -127,10 +128,15 @@ public class LivePanel extends LivePreviewPanel {
             public void handle(MouseEvent t) {
                 if (t.getButton().equals(MouseButton.SECONDARY)) {
                     FileChooser chooser = new FileChooser();
+                    File dirFile = new File(QueleaProperties.get().getLastUsedMediaDir());
+                    if (dirFile.isDirectory()) {
+                        chooser.setInitialDirectory(dirFile);
+                    }
                     chooser.getExtensionFilters().add(FileFilters.IMAGES);
                     chooser.setInitialDirectory(QueleaProperties.get().getImageDir().getAbsoluteFile());
                     File file = chooser.showOpenDialog(QueleaApp.get().getMainWindow());
                     if (file != null) {
+                        QueleaProperties.get().setLastUsedMediaDir(file.getParent());
                         QueleaProperties.get().setLogoImage(file.getAbsolutePath());
                         updateLogo();
                     }
@@ -143,8 +149,8 @@ public class LivePanel extends LivePreviewPanel {
                 HashSet<DisplayCanvas> canvases = new HashSet<>();
                 canvases.addAll(getCanvases());
                 for (DisplayCanvas canvas : canvases) {
-                    if(!canvas.isStageView()){
-                    canvas.setLogoDisplaying(logo.isSelected());
+                    if (!canvas.isStageView()) {
+                        canvas.setLogoDisplaying(logo.isSelected());
                     }
                 }
             }
@@ -278,6 +284,9 @@ public class LivePanel extends LivePreviewPanel {
         } else {
             header.getItems().remove(loopBox);
             header.getItems().remove(labelBox);
+        }
+        if (!(d instanceof TextDisplayable)) {
+            QueleaApp.get().getProjectionWindow().getCanvas().setCanvasBackground(null);
         }
         if (d == null) {
             clear.setSelected(false);

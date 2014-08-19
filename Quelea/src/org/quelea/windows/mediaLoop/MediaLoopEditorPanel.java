@@ -178,12 +178,17 @@ public class MediaLoopEditorPanel extends BorderPane implements SlideChangedList
             @Override
             public void handle(javafx.event.ActionEvent t) {
                 FileChooser chooser = new FileChooser();
+                File dirFile = new File(QueleaProperties.get().getLastUsedMediaDir());
+                if (dirFile.isDirectory()) {
+                    chooser.setInitialDirectory(dirFile);
+                }
                 chooser.getExtensionFilters().add(FileFilters.VIDEO_IMAGE);
                 List<File> files = chooser.showOpenMultipleDialog(QueleaApp.get().getMainWindow());
 
                 if (files == null) {
                     return;
                 }
+                QueleaProperties.get().setLastUsedMediaDir(files.get(0).getParent());
                 int oldSize = slides.size();
                 for (File f : files) {
                     handleMediaFile(f);
@@ -207,14 +212,14 @@ public class MediaLoopEditorPanel extends BorderPane implements SlideChangedList
         ret.setOnAction(new EventHandler<javafx.event.ActionEvent>() {
             @Override
             public void handle(javafx.event.ActionEvent t) {
-                
+
                 int selectedIndex = slidePane.getSelectedIndex();
-                slides.remove(selectedIndex);                
+                slides.remove(selectedIndex);
 
                 slidePane.setSlides(slides);
                 if (selectedIndex < slides.size()) {
                     slidePane.select(selectedIndex);
-                } 
+                }
 
             }
         });
@@ -342,6 +347,10 @@ public class MediaLoopEditorPanel extends BorderPane implements SlideChangedList
             @Override
             public void handle(javafx.event.ActionEvent t) {
                 FileChooser chooser = new FileChooser();
+                File dirFile = new File(QueleaProperties.get().getLastUsedMediaDir());
+                if (dirFile.isDirectory()) {
+                    chooser.setInitialDirectory(dirFile);
+                }
                 chooser.getExtensionFilters().add(FileFilters.POWERPOINT);
                 int oldSize = slides.size();
                 List<File> files = chooser.showOpenMultipleDialog(QueleaApp.get().getMainWindow());
@@ -349,6 +358,7 @@ public class MediaLoopEditorPanel extends BorderPane implements SlideChangedList
                 if (files == null) {
                     return;
                 }
+                QueleaProperties.get().setLastUsedMediaDir(files.get(0).getParent());
                 PresentationFactory presentationFactory = new PresentationFactory();
                 for (File file : files) {
                     handlePowerpoint(file, presentationFactory);
@@ -439,7 +449,7 @@ public class MediaLoopEditorPanel extends BorderPane implements SlideChangedList
      */
     @Override
     public void slideChanged(int newSlideIndex) {
-        if(newSlideIndex > slides.size() - 1){
+        if (newSlideIndex > slides.size() - 1) {
             return;
         }
         if (advanceTimeField.getText().isEmpty()) {

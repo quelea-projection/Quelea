@@ -1777,4 +1777,33 @@ public final class QueleaProperties extends Properties {
     public void setAdvanceScheduleOnGoLive(boolean advanceOnGoLive) {
         setProperty("get.advance.schedule.on.go.live", Boolean.toString(advanceOnGoLive));
     }
+    /**
+     * Sets the last used directory that opened or saved a schedule
+     * @param lastDir the path to the directory
+     */
+    public void setLastUsedScheduleDir(String lastDir){
+        setProperty("last.used.schedule.directory", lastDir);
+        }
+    /**
+     * Gets the last used directory that opened or saved a schedule
+     * @return the path to the directory, empty string if not found
+     */
+    public String getLastUsedScheduleDir(){
+        return getProperty("last.used.schedule.directory", System.getProperty("user.home"));
+    }
+    
+        /**
+     * Sets the last used directory that opened or saved media
+     * @param lastDir the path to the directory
+     */
+    public void setLastUsedMediaDir(String lastDir){
+        setProperty("last.used.media.directory", lastDir);
+        }
+    /**
+     * Gets the last used directory that opened or saved media
+     * @return the path to the directory, empty string if not found
+     */
+    public String getLastUsedMediaDir(){
+        return getProperty("last.used.media.directory", System.getProperty("user.home"));
+    }
 }

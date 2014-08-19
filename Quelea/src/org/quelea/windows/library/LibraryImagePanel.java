@@ -70,16 +70,21 @@ public class LibraryImagePanel extends BorderPane {
             @Override
             public void handle(ActionEvent t) {
                 FileChooser chooser = new FileChooser();
+                File dirFile = new File(QueleaProperties.get().getLastUsedMediaDir());
+                if (dirFile.isDirectory()) {
+                    chooser.setInitialDirectory(dirFile);
+                }
                 chooser.getExtensionFilters().add(FileFilters.IMAGES);
                 chooser.setInitialDirectory(QueleaProperties.get().getImageDir().getAbsoluteFile());
                 List<File> files = chooser.showOpenMultipleDialog(QueleaApp.get().getMainWindow());
-                if(files != null) {
+                if (files != null) {
+                       QueleaProperties.get().setLastUsedMediaDir(files.get(0).getParent());
                     final boolean[] refresh = new boolean[]{false};
-                    for(final File f : files) {
+                    for (final File f : files) {
                         try {
                             final Path sourceFile = f.getAbsoluteFile().toPath();
 
-                            if(new File(imagePanel.getDir(), f.getName()).exists()) {
+                            if (new File(imagePanel.getDir(), f.getName()).exists()) {
                                 Dialog d = Dialog.buildConfirmation(LabelGrabber.INSTANCE.getLabel("confirm.overwrite.title"), f.getName() + "\n" + LabelGrabber.INSTANCE.getLabel("confirm.overwrite.text"))
                                         .addLabelledButton(LabelGrabber.INSTANCE.getLabel("file.replace.button"), new EventHandler<ActionEvent>() {
                                             @Override
@@ -88,8 +93,7 @@ public class LibraryImagePanel extends BorderPane {
                                                     Files.delete(Paths.get(imagePanel.getDir(), f.getName()));
                                                     Files.copy(sourceFile, Paths.get(imagePanel.getDir(), f.getName()), StandardCopyOption.COPY_ATTRIBUTES);
                                                     refresh[0] = true;
-                                                }
-                                                catch(IOException e) {
+                                                } catch (IOException e) {
                                                     LOGGER.log(Level.WARNING, "Could not delete or copy file back into directory.", e);
                                                 }
                                             }
@@ -100,17 +104,15 @@ public class LibraryImagePanel extends BorderPane {
                                             }
                                         }).build();
                                 d.showAndWait();
-                            }
-                            else {
+                            } else {
                                 Files.copy(sourceFile, Paths.get(imagePanel.getDir(), f.getName()), StandardCopyOption.COPY_ATTRIBUTES);
                                 refresh[0] = true;
                             }
-                        }
-                        catch(IOException ex) {
+                        } catch (IOException ex) {
                             LOGGER.log(Level.WARNING, "Could not copy file into ImagePanel from FileChooser selection", ex);
                         }
                     }
-                    if(refresh[0]) {
+                    if (refresh[0]) {
                         imagePanel.refresh();
                     }
                 }
