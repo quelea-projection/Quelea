@@ -17,6 +17,7 @@
  */
 package org.quelea.windows.main;
 
+import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.control.Button;
@@ -31,7 +32,14 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.Region;
 import org.quelea.data.displayable.Displayable;
+import org.quelea.data.displayable.MediaLoopDisplayable;
+import org.quelea.data.displayable.MultimediaDisplayable;
+import org.quelea.data.displayable.SongDisplayable;
 import org.quelea.services.languages.LabelGrabber;
+import org.quelea.services.utils.QueleaProperties;
+import org.quelea.services.utils.Utils;
+import org.quelea.windows.multimedia.MultimediaDrawer;
+import org.quelea.windows.multimedia.VLCWindow;
 
 /**
  * The panel displaying the preview lyrics selection - this is viewed before
@@ -40,6 +48,7 @@ import org.quelea.services.languages.LabelGrabber;
 public class PreviewPanel extends LivePreviewPanel {
 
     private final Button liveButton;
+    private final Button livePlayButton;
 
     /**
      * Create a new preview lyrics panel.
@@ -58,17 +67,68 @@ public class PreviewPanel extends LivePreviewPanel {
             @Override
             public void handle(ActionEvent t) {
 //                QueleaApp.get().getMainWindow().getMainPanel().getLivePanel().removeDisplayable();
+
+                QueleaApp.get().getMainWindow().getMainPanel().getLivePanel().getMediaLoopPanel().stopLoop();
+
                 QueleaApp.get().getMainWindow().getMainPanel().getLivePanel().setDisplayable(getDisplayable(), ((ContainedPanel) getCurrentPane()).getCurrentIndex());
+
+                Platform.runLater(new Runnable() {
+
+                    @Override
+                    public void run() {
+                        if (getDisplayable() instanceof MediaLoopDisplayable) {
+                            QueleaApp.get().getMainWindow().getMainPanel().getLivePanel().getMediaLoopPanel().startLoop();
+                        }
+                    }
+
+                });
+
                 QueleaApp.get().getMainWindow().getMainPanel().getLivePanel().getCurrentPane().requestFocus();
+
+                if (QueleaProperties.get().getAdvanceScheduleOnGoLive()) {
+                    QueleaApp.get().getMainWindow().getMainPanel().getSchedulePanel().getScheduleList().getSelectionModel().selectNext();
+                }
+
             }
         });
+        livePlayButton = new Button(LabelGrabber.INSTANCE.getLabel("go.live.play.text"), new ImageView(new Image("file:icons/golivearrow.png")));
+        livePlayButton.setTooltip(new Tooltip(LabelGrabber.INSTANCE.getLabel("go.live.play.text")));
+        livePlayButton.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent t) {
+                QueleaApp.get().getMainWindow().getMainPanel().getLivePanel().getVideoPanel().getMultimediaControls().setNoStop(true);
+                goLive();
+                Thread thread = new Thread(new Runnable() {
+
+                    @Override
+                    public void run() {
+                        while (!(QueleaApp.get().getMainWindow().getMainPanel().getLivePanel().getDisplayable() instanceof MultimediaDisplayable)) {
+                            //do nothing 
+                        }
+                        Utils.fxRunAndWait(new Runnable() {
+
+                            @Override
+                            public void run() {
+                                QueleaApp.get().getMainWindow().getMainPanel().getLivePanel().getVideoPanel().getMultimediaControls().play();
+                                QueleaApp.get().getMainWindow().getMainPanel().getLivePanel().getVideoPanel().getMultimediaControls().setNoStop(false);
+                            }
+                        });
+
+                    }
+                });
+                thread.start();
+
+            }
+        });
+        header.getItems().add(livePlayButton);
         header.getItems().add(liveButton);
         liveButton.setDisable(true);
+        livePlayButton.setDisable(true);
         setTop(header);
         setOnKeyTyped(new EventHandler<KeyEvent>() {
             @Override
             public void handle(KeyEvent t) {
-                if(t.getCharacter().equals(" ")) {
+                if (t.getCharacter().equals(" ")) {
                     QueleaApp.get().getMainWindow().getMainPanel().getPreviewPanel().goLive();
                 }
             }
@@ -76,10 +136,9 @@ public class PreviewPanel extends LivePreviewPanel {
         setOnKeyPressed(new EventHandler<KeyEvent>() {
             @Override
             public void handle(KeyEvent t) {
-                if(t.getCode() == KeyCode.RIGHT) {
+                if (t.getCode() == KeyCode.RIGHT) {
                     QueleaApp.get().getMainWindow().getMainPanel().getLivePanel().requestFocus();
-                }
-                else if(t.getCode() == KeyCode.LEFT) {
+                } else if (t.getCode() == KeyCode.LEFT) {
                     QueleaApp.get().getMainWindow().getMainPanel().getSchedulePanel().requestFocus();
                 }
             }
@@ -103,7 +162,24 @@ public class PreviewPanel extends LivePreviewPanel {
     @Override
     public void setDisplayable(Displayable d, int index) {
         super.setDisplayable(d, index);
+        Platform.runLater(new Runnable() {
+
+            @Override
+            public void run() {
+                if (AbstractPanel.isIsNextPreviewed()) {
+                    QueleaApp.get().getMainWindow().getMainPanel().getLivePanel().getLyricsPanel().updatePreview(
+                            QueleaApp.get().getStageWindow().getStagePreviewCanvas());
+                }
+            }
+        });
+
         liveButton.setDisable(false);
+        if (d instanceof MultimediaDisplayable) {
+            livePlayButton.setDisable(false);
+        } else {
+            livePlayButton.setDisable(true);
+        }
+
     }
 
     /**

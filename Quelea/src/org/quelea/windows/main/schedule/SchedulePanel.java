@@ -127,6 +127,7 @@ public class SchedulePanel extends BorderPane {
                 }
             }
         });
+        
 //        themeButton.setTooltip(new Tooltip(LabelGrabber.INSTANCE.getLabel("adjust.theme.tooltip")));
 
         ToolBar toolbar = new ToolBar();

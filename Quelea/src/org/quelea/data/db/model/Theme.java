@@ -36,13 +36,14 @@ public class Theme {
     private Integer textPosition;
     private Integer textAlignment;
     private TextShadow textShadow = new TextShadow();
+    private Boolean override;
 
     public Theme() {
     }
 
     public Theme(String name, String fontname, String fontcolour, String translateFontname, String translateFontcolour,
             String backgroundcolour, String backgroundvid, String backgroundimage,
-            TextShadow shadow, boolean isFontBold, boolean isFontitalic, boolean isTranslateFontBold, boolean isTranslateFontitalic, double videoHue, int textPosition, int textAlignment) {
+            TextShadow shadow, boolean isFontBold, boolean isFontitalic, boolean isTranslateFontBold, boolean isTranslateFontitalic, double videoHue, int textPosition, int textAlignment, boolean override) {
         this.name = name;
         this.fontname = fontname;
         this.fontcolour = fontcolour;
@@ -59,6 +60,7 @@ public class Theme {
         this.videoHue = videoHue;
         this.textPosition = textPosition;
         this.textAlignment = textAlignment;
+        this.override = override;
     }
 
     public Theme(Theme theme) {
@@ -78,6 +80,7 @@ public class Theme {
         this.videoHue = theme.videoHue;
         this.textPosition = theme.textPosition;
         this.textAlignment = theme.textAlignment;
+        this.override = theme.override;
     }
 
     /**
@@ -281,6 +284,20 @@ public class Theme {
      */
     public void setFontBold(Boolean isFontBold) {
         this.fontBold = isFontBold;
+    }
+    /**
+     * @return if is supposed to override global theme
+     */
+    @Column(name = "isoverride")
+    public Boolean isOverride() {
+        return override == null ? false : override;
+    }
+
+    /**
+     * @param isOverride whether the theme should override global theme
+     */
+    public void setOverride(Boolean isOverride) {
+        this.override = isOverride;
     }
 
     /**

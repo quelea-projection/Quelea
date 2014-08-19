@@ -25,11 +25,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 import java.util.logging.Level;
+import java.util.logging.Logger;
 import javafx.geometry.BoundingBox;
 import javafx.geometry.Bounds;
 import javafx.scene.paint.Color;
 import org.quelea.data.bible.Bible;
 import org.quelea.data.displayable.TextAlignment;
+import org.quelea.data.displayable.VerticalAlignment;
 import org.quelea.services.languages.spelling.Dictionary;
 import org.quelea.services.languages.spelling.DictionaryManager;
 
@@ -166,7 +168,7 @@ public final class QueleaProperties extends Properties {
         setProperty("scene.info", info.toString());
         write();
     }
-
+    
     /**
      * Get a list of user chosen fonts to appear in the theme dialog.
      * <p>
@@ -220,6 +222,38 @@ public final class QueleaProperties extends Properties {
      */
     public void setUseUniformFontSize(boolean val) {
         setProperty("uniform.font.size", Boolean.toString(val));
+    }
+
+    /**
+     * Determine if the vlc advanced media player should be used (true), or
+     * rather the embedded media player (false).
+     * <p>
+     * @return true if the advanced media player should be used, false
+     * otherwise.
+     */
+    public boolean getVLCAdvanced() {
+        return Boolean.parseBoolean(getProperty("vlc.advanced", "true"));
+    }
+
+    /**
+     * set whether the vlc advanced media player should be used (true), or
+     * rather the embedded media player (false).
+     * <p>
+     * @param val true if the advanced media player should be used, false
+     * otherwise.
+     */
+    public void setVLCAdvanced(boolean val) {
+        setProperty("vlc.advanced", Boolean.toString(val));
+    }
+
+    
+    public boolean getEmbedMediaInScheduleFile() {
+        return Boolean.parseBoolean(getProperty("schedule.embed", "false"));
+    }
+
+ 
+    public void setEmbredMediaInScheduleFile(boolean val) {
+        setProperty("schedule.embed", Boolean.toString(val));
     }
 
     /**
@@ -292,6 +326,28 @@ public final class QueleaProperties extends Properties {
      */
     public void setMaxFontSize(double fontSize) {
         setProperty("max.font.size", Double.toString(fontSize));
+    }
+
+    /**
+     * Get the maximum number of characters per line used by text only
+     * displayables.
+     * <p>
+     * @return the maximum number of characters per line used by text only
+     * displayables.
+     */
+    public int getTextOnlyMaxCharNumber() {
+        return Integer.parseInt(getProperty("textOnly.max.char.number", "80"));
+    }
+
+    /**
+     * Set the maximum number of characters per line used by text only
+     * displayables.
+     * <p>
+     * @param charNumber the maximum number of characters per line used by text
+     * only displayables.
+     */
+    public void setTextOnlyMaxCharNumber(int charNumber) {
+        setProperty("textOnly.max.char.number", Integer.toString(charNumber));
     }
 
     /**
@@ -442,6 +498,319 @@ public final class QueleaProperties extends Properties {
     }
 
     /**
+     * Get whether we should show the preview for the next item
+     * <p/>
+     * @return true if there should be a preview, false otherwise.
+     */
+    public boolean getStageUsePreview() {
+        return Boolean.parseBoolean(getProperty("stage.use.preview", "true"));
+    }
+
+    /**
+     * Set whether we should show the preview for the next item
+     * <p/>
+     * @param showItem true if there should be a preview, false otherwise
+     */
+    public void setStageUsePreview(boolean showItem) {
+        setProperty("stage.use.preview", Boolean.toString(showItem));
+        write();
+    }
+    
+        /**
+     * Get whether we should show text as big as possible on stage display
+     * <p/>
+     * @return true if text should be shown as big as possible, false otherwise.
+     */
+    public boolean getStageUseUnuniformText() {
+        return Boolean.parseBoolean(getProperty("stage.use.ununiform.text", "true"));
+    }
+
+    /**
+     * Set whether we should show text as big as possible on stage display
+     * <p/>
+     * @param useUnuniformText true if text should be shown as big as possible, false otherwise.
+     */
+    public void setStageUseUnuniformText(boolean useUnuniformText) {
+        setProperty("stage.use.ununiform.text", Boolean.toString(useUnuniformText));
+        write();
+    }
+    
+            /**
+     * Get whether we should draw images on the stage display
+     * <p/>
+     * @return true if images should be drawn, false otherwise.
+     */
+    public boolean getStageDrawImages() {
+        return Boolean.parseBoolean(getProperty("stage.draw.images", "true"));
+    }
+
+    /**
+     * Set whether we should draw images on the stage display
+     * <p/>
+     * @param drawImages true if images should be drawn, false otherwise.
+     */
+    public void setStageDrawImages(boolean drawImages) {
+        setProperty("stage.draw.images", Boolean.toString(drawImages));
+        write();
+    }
+    
+    /**
+     * Set whether the text only display uses the theme horizontal alignment.
+     *
+     * @param useThemeAlignment true if text only should use the theme
+     * horizontal alignment, false otherwise.
+     */
+    public void setTextOnlyUseThemeAlignment(boolean useThemeAlignment) {
+        setProperty("textOnly.useTheme.alignment", Boolean.toString(useThemeAlignment));
+        write();
+    }
+
+    /**
+     * Get whether the theme alignment should be used on the text only display.
+     *
+     * @return true if the theme alignment should be used, false otherwise.
+     */
+    public boolean getTextOnlyUseThemeAlignment() {
+        return Boolean.parseBoolean(getProperty("textOnly.useTheme.alignment"));
+    }
+
+    /**
+     * Set whether the text only display uses the theme vertical alignment.
+     *
+     * @param useThemeVertAlignment true if text only should use the theme
+     * vertical alignment, false otherwise.
+     */
+    public void setTextOnlyUseThemeVertAlignment(boolean useThemeVertAlignment) {
+        setProperty("textOnly.useTheme.vertAlignment", Boolean.toString(useThemeVertAlignment));
+        write();
+    }
+
+    /**
+     * Get whether the theme vertical alignment should be used on the text only
+     * display.
+     *
+     * @return true if the theme vertical alignment should be used, false
+     * otherwise.
+     */
+    public boolean getTextOnlyUseThemeVertAlignment() {
+        return Boolean.parseBoolean(getProperty("textOnly.useTheme.vertAlignment"));
+    }
+
+    /**
+     * Set whether the text only display uses the theme font.
+     *
+     * @param useThemeFont true if text only should use the theme font, false
+     * otherwise.
+     */
+    public void setTextOnlyUseThemeFont(boolean useThemeFont) {
+        setProperty("textOnly.useTheme.font", Boolean.toString(useThemeFont));
+        write();
+    }
+
+    /**
+     * Get whether the theme font should be used on the text only display.
+     *
+     * @return true if the theme font should be used, false otherwise.
+     */
+    public boolean getTextOnlyUseThemeFont() {
+        return Boolean.parseBoolean(getProperty("textOnly.useTheme.font"));
+    }
+
+    /**
+     * Set whether the text only display uses the theme background. Note that
+     * video backgrounds will be shown as image thumbnails.
+     *
+     * @param useThemeBackground true if text only should use the theme
+     * background, false otherwise.
+     */
+    public void setTextOnlyUseThemeBackground(boolean useThemeBackground) {
+        setProperty("textOnly.useTheme.background", Boolean.toString(useThemeBackground));
+        write();
+    }
+
+    /**
+     * Get whether the theme background should be used on the text only
+     * display.Note that video backgrounds will be shown as image thumbnails.
+     *
+     * @return true if the theme background should be used, false otherwise.
+     */
+    public boolean getTextOnlyUseThemeBackground() {
+        return Boolean.parseBoolean(getProperty("textOnly.useTheme.background"));
+    }
+
+    /**
+     * Set whether the text only display uses the theme lyric color.
+     *
+     * @param useThemeLyricColor true if text only should use the theme lyric
+     * color, false otherwise.
+     */
+    public void setTextOnlyUseThemeLyricColor(boolean useThemeLyricColor) {
+        setProperty("textOnly.useTheme.lyricColor", Boolean.toString(useThemeLyricColor));
+        write();
+    }
+
+    /**
+     * Get whether the theme lyric color should be used on the text only
+     * display.
+     *
+     * @return true if the theme lyric color should be used, false otherwise.
+     */
+    public boolean getTextOnlyUseThemeLyricColor() {
+        return Boolean.parseBoolean(getProperty("textOnly.useTheme.lyricColor"));
+    }
+
+    /**
+     * Get whether the theme styling should be used on the text only display.
+     *
+     * @return true if the theme styling should be used, false otherwise.
+     */
+    public boolean getTextOnlyUseThemeStyling() {
+        return Boolean.parseBoolean(getProperty("textOnly.useTheme.styling"));
+    }
+
+    /**
+     * Set whether the text only display uses the theme styling.
+     *
+     * @param useThemeStyling true if text only should use the theme styling,
+     * false otherwise.
+     */
+    public void setTextOnlyUseThemeStyling(boolean useThemeStyling) {
+        setProperty("textOnly.useTheme.styling", Boolean.toString(useThemeStyling));
+        write();
+    }
+
+    /**
+     * Get whether the text only font should be bold.
+     *
+     * @return true if bold, false otherwise.
+     */
+    public boolean getTextOnlyIsBold() {
+        return Boolean.parseBoolean(getProperty("textOnly.isBold"));
+    }
+
+    /**
+     * Set whether the text only font should be bold.
+     *
+     * @param isBold true if text only should use be bold, false otherwise.
+     */
+    public void setTextOnlyIsBold(boolean isBold) {
+        setProperty("textOnly.isBold", Boolean.toString(isBold));
+        write();
+    }
+
+    /**
+     * Get whether the text only font should be italic.
+     *
+     * @return true if italic, false otherwise.
+     */
+    public boolean getTextOnlyIsItalic() {
+        return Boolean.parseBoolean(getProperty("textOnly.isItalic"));
+    }
+
+    /**
+     * Set whether the text only font should be italic.
+     *
+     * @param isItalic true if text only should use be italic, false otherwise.
+     */
+    public void setTextOnlyIsItalic(boolean isItalic) {
+        setProperty("textOnly.isItalic", Boolean.toString(isItalic));
+        write();
+    }
+
+    /**
+     * Get the font to use for Text Only output text.
+     * <p/>
+     * @return the font to use for stage text.
+     */
+    public String getTextOnlyTextFont() {
+        return getProperty("textOnly.font", "SansSerif");
+    }
+
+    /**
+     * Set the font to use for Text Only output text.
+     * <p/>
+     * @param font the font to use for stage text.
+     */
+    public void setTextOnlyTextFont(String font) {
+        setProperty("textOnly.font", font);
+        write();
+    }
+
+    /**
+     * Get the alignment of the text on Text Only view.
+     * <p/>
+     * @return the alignment of the text on stage view.
+     */
+    public String getTextOnlyTextAlignment() {
+        return TextAlignment.valueOf(getProperty("textOnly.text.alignment", "LEFT")).toFriendlyString();
+    }
+
+    /**
+     * Set the alignment of the text on Text Only view.
+     * <p/>
+     * @param alignment the alignment of the text on stage view.
+     */
+    public void setTextOnlyTextAlignment(TextAlignment alignment) {
+        setProperty("textOnly.text.alignment", alignment.toString());
+        write();
+    }
+
+    /**
+     * Get the vertical alignment of the text on Text Only view.
+     * <p/>
+     * @return the alignment of the text on stage view.
+     */
+    public String getTextOnlyVerticalAlignment() {
+        return VerticalAlignment.valueOf(getProperty("textOnly.vertical.alignment", "CENTRE")).toFriendlyString();
+    }
+
+    /**
+     * Set the vertical alignment of the text on Text Only view.
+     * <p/>
+     * @param alignment the alignment of the text on stage view.
+     */
+    public void setTextOnlyVerticalAlignment(VerticalAlignment alignment) {
+        setProperty("textOnly.vertical.alignment", alignment.toString());
+        write();
+    }
+
+    /**
+     * Set the colour used to display lyrics in Text Only view.
+     * <p/>
+     * @param color the colour used to display lyrics in Text Only view.
+     */
+    public void setTextOnlyLyricsColor(Color color) {
+        setProperty("textOnly.lyrics.color", getStr(color));
+    }
+
+    /**
+     * Set the colour used for the background in text only view.
+     * <p/>
+     * @param color the colour used for the background in stage view.
+     */
+    public void setTextOnlyBackgroundColor(Color color) {
+        setProperty("textOnly.background.color", getStr(color));
+    }
+
+    /**
+     * Get the colour used for the background in Text Only view.
+     * <p/>
+     * @return the colour used for the background in stage view.
+     */
+    public Color getTextOnlyBackgroundColor() {
+        return getColor(getProperty("textOnly.background.color", "0,0,0"));
+    }
+
+    /**
+     * Get the colour used to display lyrics in Text Only view.
+     * <p/>
+     * @return the colour used to display lyrics in stage view.
+     */
+    public Color getTextOnlyLyricsColor() {
+        return getColor(getProperty("textOnly.lyrics.color", "255,255,255"));
+    }
+
+    /**
      * Determine whether we should phone home at startup with anonymous
      * information. Simply put phonehome=false in the properties file to disable
      * phonehome.
@@ -468,6 +837,21 @@ public final class QueleaProperties extends Properties {
      */
     public File getImageDir() {
         return new File(getQueleaUserHome(), "img");
+    }
+    
+       /**
+     * Get the directory used for storing media loop media.
+     * <p/>
+     * @return the media loop directory
+     */
+    public File getMediaLoopDir() {
+       File ret = new File(getQueleaUserHome(), "mediaLoop");
+
+          ret.mkdirs(); 
+
+       
+        
+        return ret;
     }
 
     /**
@@ -606,6 +990,7 @@ public final class QueleaProperties extends Properties {
         write();
     }
 
+
     /**
      * Get the custom projector co-ordinates.
      * <p/>
@@ -733,6 +1118,81 @@ public final class QueleaProperties extends Properties {
      */
     public void setStageModeScreen() {
         setProperty("stage.mode", "screen");
+        write();
+    }
+
+    /**
+     * Get the number of the text only screen. This is the screen that the
+     * projected output will be displayed on.
+     * <p/>
+     * @return the text only screen number.
+     */
+    public int getTextOnlyScreen() {
+        return Integer.parseInt(getProperty("textOnly.screen", "-1"));
+    }
+
+    /**
+     * Set the text only screen output.
+     * <p/>
+     * @param screen the number of the screen to use for the output.
+     */
+    public void setTextOnlyScreen(int screen) {
+        setProperty("textOnly.screen", Integer.toString(screen));
+        write();
+    }
+
+    /**
+     * Get the custom text only screen co-ordinates.
+     * <p/>
+     * @return the co-ordinates.
+     */
+    public Bounds getTextOnlyCoords() {
+        String[] prop = getProperty("textOnly.coords", "0,0,0,0").trim().split(",");
+        return new BoundingBox(Integer.parseInt(prop[0]),
+                Integer.parseInt(prop[1]),
+                Integer.parseInt(prop[2]),
+                Integer.parseInt(prop[3]));
+    }
+
+    /**
+     * Set the custom text only screen co-ordinates.
+     * <p/>
+     * @param coords the co-ordinates to set.
+     */
+    public void setTextOnlyCoords(Bounds coords) {
+        String rectStr = Integer.toString((int) coords.getMinX())
+                + "," + Integer.toString((int) coords.getMinY())
+                + "," + Integer.toString((int) coords.getWidth())
+                + "," + Integer.toString((int) coords.getHeight());
+
+        setProperty("textOnly.coords", rectStr);
+        write();
+    }
+
+    /**
+     * Determine if the stage mode is set to manual co-ordinates or a screen
+     * number.
+     * <p/>
+     * @return true if it's set to manual co-ordinates, false if it's a screen
+     * number.
+     */
+    public boolean isTextOnlyModeCoords() {
+        return "coords".equals(getProperty("textOnly.mode"));
+    }
+
+    /**
+     * Set the stage mode to be manual co-ordinates.
+     */
+    public void setTextOnlyModeCoords() {
+        setProperty("textOnly.mode", "coords");
+        write();
+    }
+
+    /**
+     * Set the stage mode to be a screen number.
+     */
+    public void setTextOnlyModeScreen() {
+        setProperty("textOnly.mode", "screen");
         write();
     }
 
@@ -1237,7 +1697,6 @@ public final class QueleaProperties extends Properties {
         write();
     }
 
-    
     public boolean getSmallBibleTextShow() {
         return Boolean.parseBoolean(getProperty("show.small.bible.text", "true"));
     }
@@ -1247,27 +1706,29 @@ public final class QueleaProperties extends Properties {
         write();
     }
 
-     /**
+    /**
      * Get how many words or verses to show per slide
+     *
      * @return number of words or verses (depends on use.max.bible.verses)
      */
     public int getMaxBibleItems() {
         return Integer.parseInt(getProperty("max.bible.items", "5"));
     }
-    
+
     public void setMaxBibleItems(int number) {
         setProperty("max.bible.items", Integer.toString(number));
         write();
     }
-    
+
     /**
      * Get whether the max items is verses or words
+     *
      * @return true if using maximum verses per slide
      */
     public boolean getBibleSectionVerses() {
         return Boolean.parseBoolean(getProperty("use.max.bible.verses", "true"));
     }
-    
+
     public void setBibleSectionVerses(boolean useVerses) {
         setProperty("use.max.bible.verses", Boolean.toString(useVerses));
         write();
@@ -1295,4 +1756,54 @@ public final class QueleaProperties extends Properties {
         write();
     }
 
+    /**
+     * \
+     * Get whether the schedule should advance to the next item when go live is
+     * pressed.
+     *
+     * @return true if schedule should advance, false otherwise.
+     */
+    public boolean getAdvanceScheduleOnGoLive() {
+        return Boolean.parseBoolean(getProperty("get.advance.schedule.on.go.live", "true"));
+    }
+
+    /**
+     * Set whether the schedule should advance to the next item when go live is
+     * pressed.
+     *
+     * @param advanceOnGoLive true if the schedule should advance, false
+     * otherwise.
+     */
+    public void setAdvanceScheduleOnGoLive(boolean advanceOnGoLive) {
+        setProperty("get.advance.schedule.on.go.live", Boolean.toString(advanceOnGoLive));
+    }
+    /**
+     * Sets the last used directory that opened or saved a schedule
+     * @param lastDir the path to the directory
+     */
+    public void setLastUsedScheduleDir(String lastDir){
+        setProperty("last.used.schedule.directory", lastDir);
+        }
+    /**
+     * Gets the last used directory that opened or saved a schedule
+     * @return the path to the directory, empty string if not found
+     */
+    public String getLastUsedScheduleDir(){
+        return getProperty("last.used.schedule.directory", System.getProperty("user.home"));
+    }
+    
+        /**
+     * Sets the last used directory that opened or saved media
+     * @param lastDir the path to the directory
+     */
+    public void setLastUsedMediaDir(String lastDir){
+        setProperty("last.used.media.directory", lastDir);
+        }
+    /**
+     * Gets the last used directory that opened or saved media
+     * @return the path to the directory, empty string if not found
+     */
+    public String getLastUsedMediaDir(){
+        return getProperty("last.used.media.directory", System.getProperty("user.home"));
+    }
 }

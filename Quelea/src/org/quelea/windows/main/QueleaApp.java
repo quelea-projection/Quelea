@@ -36,6 +36,7 @@ public class QueleaApp {
     private MainWindow mainWindow;
     private DisplayStage projectionWindow;
     private DisplayStage stageWindow;
+    private DisplayStage textOnlyWindow;
     private MobileLyricsServer mls;
     private RemoteControlServer rcs;
     private List<Runnable> runnables = new ArrayList<>();
@@ -93,6 +94,14 @@ public class QueleaApp {
      */
     public DisplayStage getStageWindow() {
         return stageWindow;
+    }
+    
+     /**
+     * Get the text only window.
+     * @return the text only window.
+     */
+    public DisplayStage getTextOnlyWindow() {
+        return textOnlyWindow;
     }
 
     /**
@@ -158,6 +167,14 @@ public class QueleaApp {
      */
     public void setStageWindow(DisplayStage lyricWindow) {
         this.stageWindow = lyricWindow;
+    }
+    
+    /**
+     * Set the text only window.
+     * @param lyricWindow the text only window.
+     */
+    public void setTextOnlyWindow(DisplayStage lyricWindow) {
+        this.textOnlyWindow = lyricWindow;
     }
 
     /**

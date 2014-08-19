@@ -348,7 +348,7 @@ public class SongEntryWindow extends Stage {
      * <p/>
      * @param song the song to edit.
      */
-    public void resetEditSong(SongDisplayable song) {
+    public void resetEditSong(SongDisplayable song, boolean updateDB) {
         setTitle(LabelGrabber.INSTANCE.getLabel("edit.song.title"));
         this.song = song;
         shouldSave = true;
@@ -367,7 +367,7 @@ public class SongEntryWindow extends Stage {
         } else {
             addToSchedCBox.setDisable(false);
         }
-        updateDBOnHide = true;
+        updateDBOnHide = updateDB;
         resetChange();
     }
 

@@ -43,6 +43,7 @@ public class MultimediaPanel extends AbstractPanel {
     private MultimediaControls controlPanel;
     private Text previewText;
 
+
     /**
      * Create a new image panel.
      */
@@ -72,7 +73,7 @@ public class MultimediaPanel extends AbstractPanel {
             public void updateCallback() {
                 updateCanvas();
             }
-        }, DisplayCanvas.Priority.LOW);
+        }, DisplayCanvas.Priority.LOW, false, null);
         registerDisplayCanvas(dummyCanvas);
     }
 
@@ -89,6 +90,7 @@ public class MultimediaPanel extends AbstractPanel {
             drawer.setPlayVideo(canvas.getPlayVideo());
             canvas.setCurrentDisplayable(displayable);
             drawer.draw(displayable);
+
         }
         if(playVideo) {
             controlPanel.setDisableControls(!playVideo);
@@ -105,4 +107,15 @@ public class MultimediaPanel extends AbstractPanel {
         drawer.setCanvas(canvas);
         return drawer;
     }
+    
+      /**
+     * Gets the multimedia controls used by this drawer
+     *
+     * @return the controls for this drawer
+     */
+    public MultimediaControls getMultimediaControls() {
+        return controlPanel;
+    }
+    
+ 
 }

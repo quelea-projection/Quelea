@@ -18,6 +18,7 @@
 package org.quelea.windows.options;
 
 import java.io.File;
+import java.text.DecimalFormat;
 import javafx.beans.value.ObservableValue;
 import javafx.event.EventHandler;
 import javafx.scene.control.Button;
@@ -55,6 +56,8 @@ public class OptionsGeneralPanel extends GridPane implements PropertyPanel {
     private final CheckBox clearLiveOnRemoveCheckBox;
     private final CheckBox useOOCheckBox;
     private final CheckBox uniformFontSizeCheckBox;
+    private final CheckBox vlcAdvancedCheckBox;
+    private final CheckBox advanceOnGoLiveCheckBox;
     private final ComboBox<LanguageFile> languageFileComboBox;
     private final TextField ooPathTextField;
     private final DirectoryChooser ooChooser;
@@ -65,9 +68,12 @@ public class OptionsGeneralPanel extends GridPane implements PropertyPanel {
     private final Slider maxCharsSlider;
 //    private final Slider minLinesSlider;
     private LanguageFile currentLanguageFile;
+    private boolean currentAdvancedMultimediaOption;
     private final CheckBox showSmallSongTextBox;
     private final CheckBox showSmallBibleTextBox;
     private final ComboBox smallTextPositionCombo;
+    private final Slider fadeSpeedSlider;
+    private final CheckBox embedMediaInScheduleCheckBox;
 
     /**
      * Create a new general panel.
@@ -85,6 +91,15 @@ public class OptionsGeneralPanel extends GridPane implements PropertyPanel {
         getChildren().add(startupUpdateCheckBox);
         rows++;
 
+        Label embedLabel = new Label(LabelGrabber.INSTANCE.getLabel("schedule.embed.media"));
+        GridPane.setConstraints(embedLabel, 1, rows);
+        getChildren().add(embedLabel);
+        embedMediaInScheduleCheckBox = new CheckBox();
+        startupLabel.setLabelFor(embedMediaInScheduleCheckBox);
+        GridPane.setConstraints(embedMediaInScheduleCheckBox, 2, rows);
+        getChildren().add(embedMediaInScheduleCheckBox);
+        rows++;
+
         Label useOOLabel = new Label(LabelGrabber.INSTANCE.getLabel("use.oo.label"));
         GridPane.setConstraints(useOOLabel, 1, rows);
         getChildren().add(useOOLabel);
@@ -92,11 +107,10 @@ public class OptionsGeneralPanel extends GridPane implements PropertyPanel {
         useOOCheckBox.selectedProperty().addListener(new javafx.beans.value.ChangeListener<Boolean>() {
             @Override
             public void changed(ObservableValue<? extends Boolean> ov, Boolean t, Boolean t1) {
-                if(useOOCheckBox.isSelected()) {
+                if (useOOCheckBox.isSelected()) {
                     ooPathTextField.setDisable(true);
                     selectButton.setDisable(false);
-                }
-                else {
+                } else {
                     ooPathTextField.setDisable(true);
                     selectButton.setDisable(true);
                 }
@@ -124,7 +138,7 @@ public class OptionsGeneralPanel extends GridPane implements PropertyPanel {
             @Override
             public void handle(javafx.event.ActionEvent t) {
                 File dir = ooChooser.showDialog(QueleaApp.get().getMainWindow());
-                if(dir != null) {
+                if (dir != null) {
                     ooPathTextField.setText(dir.getAbsolutePath());
                 }
             }
@@ -169,6 +183,24 @@ public class OptionsGeneralPanel extends GridPane implements PropertyPanel {
         getChildren().add(uniformFontSizeCheckBox);
         rows++;
 
+        Label vlcAdvancedLabel = new Label(LabelGrabber.INSTANCE.getLabel("vlc.advanced.label"));
+        GridPane.setConstraints(vlcAdvancedLabel, 1, rows);
+        getChildren().add(vlcAdvancedLabel);
+        vlcAdvancedCheckBox = new CheckBox();
+        startupLabel.setLabelFor(vlcAdvancedCheckBox);
+        GridPane.setConstraints(vlcAdvancedCheckBox, 2, rows);
+        getChildren().add(vlcAdvancedCheckBox);
+        rows++;
+
+        Label advanceOnGoLiveLabel = new Label(LabelGrabber.INSTANCE.getLabel("advance.schedule.onGoLive"));
+        GridPane.setConstraints(advanceOnGoLiveLabel, 1, rows);
+        getChildren().add(advanceOnGoLiveLabel);
+        advanceOnGoLiveCheckBox = new CheckBox();
+        startupLabel.setLabelFor(advanceOnGoLiveCheckBox);
+        GridPane.setConstraints(advanceOnGoLiveCheckBox, 2, rows);
+        getChildren().add(advanceOnGoLiveCheckBox);
+        rows++;
+
         Label oneLineModeLabel = new Label(LabelGrabber.INSTANCE.getLabel("one.line.mode.label"));
         GridPane.setConstraints(oneLineModeLabel, 1, rows);
         getChildren().add(oneLineModeLabel);
@@ -209,14 +241,14 @@ public class OptionsGeneralPanel extends GridPane implements PropertyPanel {
         GridPane.setConstraints(interfaceLanguageLabel, 1, rows);
         getChildren().add(interfaceLanguageLabel);
         languageFileComboBox = new ComboBox<>();
-        for(LanguageFile file : LanguageFileManager.INSTANCE.languageFiles()) {
+        for (LanguageFile file : LanguageFileManager.INSTANCE.languageFiles()) {
             languageFileComboBox.getItems().add(file);
         }
         interfaceLanguageLabel.setLabelFor(languageFileComboBox);
         GridPane.setConstraints(languageFileComboBox, 2, rows);
         getChildren().add(languageFileComboBox);
         rows++;
-        
+
         Label showSmallSongTextLabel = new Label(LabelGrabber.INSTANCE.getLabel("show.small.song.text.label"));
         GridPane.setConstraints(showSmallSongTextLabel, 1, rows);
         getChildren().add(showSmallSongTextLabel);
@@ -225,7 +257,7 @@ public class OptionsGeneralPanel extends GridPane implements PropertyPanel {
         getChildren().add(showSmallSongTextBox);
         showSmallSongTextLabel.setLabelFor(showSmallSongTextBox);
         rows++;
-        
+
         Label showSmallBibleTextLabel = new Label(LabelGrabber.INSTANCE.getLabel("show.small.bible.text.label"));
         GridPane.setConstraints(showSmallBibleTextLabel, 1, rows);
         getChildren().add(showSmallBibleTextLabel);
@@ -234,7 +266,7 @@ public class OptionsGeneralPanel extends GridPane implements PropertyPanel {
         getChildren().add(showSmallBibleTextBox);
         showSmallBibleTextLabel.setLabelFor(showSmallBibleTextBox);
         rows++;
-        
+
         Label smallTextPositionLabel = new Label(LabelGrabber.INSTANCE.getLabel("small.text.position.label"));
         GridPane.setConstraints(smallTextPositionLabel, 1, rows);
         getChildren().add(smallTextPositionLabel);
@@ -263,7 +295,7 @@ public class OptionsGeneralPanel extends GridPane implements PropertyPanel {
             }
         });
         rows++;
-        
+
         Label maxFontSizeLabel = new Label(LabelGrabber.INSTANCE.getLabel("max.font.size.label"));
         GridPane.setConstraints(maxFontSizeLabel, 1, rows);
         getChildren().add(maxFontSizeLabel);
@@ -305,11 +337,10 @@ public class OptionsGeneralPanel extends GridPane implements PropertyPanel {
         textShadowCheckBox.selectedProperty().addListener(new javafx.beans.value.ChangeListener<Boolean>() {
             @Override
             public void changed(ObservableValue<? extends Boolean> ov, Boolean t, Boolean t1) {
-                if(textShadowCheckBox.isSelected()) {
+                if (textShadowCheckBox.isSelected()) {
                     borderThicknessValue.setDisable(true);
                     borderThicknessSlider.setDisable(true);
-                }
-                else {
+                } else {
                     borderThicknessValue.setDisable(false);
                     borderThicknessSlider.setDisable(false);
                 }
@@ -335,6 +366,25 @@ public class OptionsGeneralPanel extends GridPane implements PropertyPanel {
         });
         rows++;
 
+        Label fadeSpeedLabel = new Label(LabelGrabber.INSTANCE.getLabel("options.fade.speed.label"));
+        GridPane.setConstraints(fadeSpeedLabel, 1, rows);
+        getChildren().add(fadeSpeedLabel);
+        fadeSpeedSlider = new Slider(0.01, 10, 1);
+        GridPane.setConstraints(fadeSpeedSlider, 2, rows);
+        getChildren().add(fadeSpeedSlider);
+        fadeSpeedLabel.setLabelFor(fadeSpeedSlider);
+        final Label fadeValue = new Label(new DecimalFormat("#.##").format(fadeSpeedSlider.getValue()));
+        GridPane.setConstraints(fadeValue, 3, rows);
+        getChildren().add(fadeValue);
+        fadeValue.setLabelFor(fadeSpeedSlider);
+        fadeSpeedSlider.valueProperty().addListener(new javafx.beans.value.ChangeListener<Number>() {
+            @Override
+            public void changed(ObservableValue<? extends Number> ov, Number t, Number t1) {
+                fadeValue.setText(new DecimalFormat("#.##").format(fadeSpeedSlider.getValue()));
+            }
+        });
+        rows++;
+
 //        Label minLinesLabel = new Label(LabelGrabber.INSTANCE.getLabel("min.emulated.lines.label") + " (" + LabelGrabber.INSTANCE.getLabel("advanced.label") + ")");
 //        GridPane.setConstraints(minLinesLabel, 1, rows);
 //        getChildren().add(minLinesLabel);
@@ -353,22 +403,39 @@ public class OptionsGeneralPanel extends GridPane implements PropertyPanel {
 //            }
 //        });
 //        rows++;
-
         readProperties();
     }
-    
+
     /**
-     * Reset the mechanism for determining if the user has changed the interface language. Call before showing the options dialog.
+     * Reset the mechanism for determining if the user has changed the interface
+     * language. Call before showing the options dialog.
      */
     public void resetLanguageChanged() {
         currentLanguageFile = languageFileComboBox.getValue();
     }
-    
+
     /**
-     * Determine if the user has changed the interface language since the last call of resetLanguageChanged().
+     * Determine if the user has changed the interface language since the last
+     * call of resetLanguageChanged().
      */
     public boolean hasLanguageChanged() {
         return !languageFileComboBox.getValue().equals(currentLanguageFile);
+    }
+
+    /**
+     * Reset the mechanism for determining if the user has changed the advanced
+     * multimedia option. Call before showing the options dialog.
+     */
+    public void resetMultimediaChanged() {
+        currentAdvancedMultimediaOption = vlcAdvancedCheckBox.isSelected();
+    }
+
+    /**
+     * Determine if the user has changed the advanced multimedia option since
+     * the last call of resetMultimediaChanged().
+     */
+    public boolean hasAdvancedMultimediaChanged() {
+        return !(currentAdvancedMultimediaOption == vlcAdvancedCheckBox.isSelected());
     }
 
     /**
@@ -385,6 +452,8 @@ public class OptionsGeneralPanel extends GridPane implements PropertyPanel {
         oneMonitorWarnCheckBox.setSelected(props.showSingleMonitorWarning());
         displaySongInfoCheckBox.setSelected(props.checkDisplaySongInfoText());
         uniformFontSizeCheckBox.setSelected(props.getUseUniformFontSize());
+        vlcAdvancedCheckBox.setSelected(props.getVLCAdvanced());
+        advanceOnGoLiveCheckBox.setSelected(props.getAdvanceScheduleOnGoLive());
         oneLineModeCheckBox.setSelected(props.getOneLineMode());
         autoTranslateCheckBox.setSelected(props.getAutoTranslate());
         textShadowCheckBox.setSelected(props.getTextShadow());
@@ -397,6 +466,8 @@ public class OptionsGeneralPanel extends GridPane implements PropertyPanel {
         borderThicknessSlider.setValue(props.getOutlineThickness());
         additionalLineSpacingSlider.setValue(props.getAdditionalLineSpacing());
         maximumFontSizeSlider.setValue(props.getMaxFontSize());
+        fadeSpeedSlider.setValue(props.getFadeDuration());
+        embedMediaInScheduleCheckBox.setSelected(props.getEmbedMediaInScheduleFile());
     }
 
     /**
@@ -420,6 +491,10 @@ public class OptionsGeneralPanel extends GridPane implements PropertyPanel {
         props.setDisplaySongInfoText(checkDisplayInfo);
         boolean useUniformFontSize = uniformFontSizeCheckBox.isSelected();
         props.setUseUniformFontSize(useUniformFontSize);
+        boolean useVLCAdvanced = vlcAdvancedCheckBox.isSelected();
+        props.setVLCAdvanced(useVLCAdvanced);
+        boolean advanceScheduleOnGoLive = advanceOnGoLiveCheckBox.isSelected();
+        props.setAdvanceScheduleOnGoLive(advanceScheduleOnGoLive);
         boolean textShadow = getTextShadowCheckBox().isSelected();
         props.setTextShadow(textShadow);
         boolean clearLive = clearLiveOnRemoveCheckBox.isSelected();
@@ -445,8 +520,11 @@ public class OptionsGeneralPanel extends GridPane implements PropertyPanel {
         props.setOutlineThickness(borderThickness);
         props.setMaxFontSize(maximumFontSizeSlider.getValue());
         props.setAdditionalLineSpacing(additionalLineSpacingSlider.getValue());
+        double fadeDuration = fadeSpeedSlider.getValue();
+        props.setFadeDuration(fadeDuration);
+        props.setEmbredMediaInScheduleFile(embedMediaInScheduleCheckBox.isSelected());
         //Initialise presentation
-        if(!OOPresentation.isInit()) {
+        if (!OOPresentation.isInit()) {
             OOUtils.attemptInit();
         }
     }
@@ -468,7 +546,6 @@ public class OptionsGeneralPanel extends GridPane implements PropertyPanel {
 //    public Slider getMinLinesSlider() {
 //        return minLinesSlider;
 //    }
-
     /**
      * Get the startup readProperties checkbox.
      * <p/>
@@ -513,7 +590,7 @@ public class OptionsGeneralPanel extends GridPane implements PropertyPanel {
     public CheckBox getOneLineModeCheckBox() {
         return oneLineModeCheckBox;
     }
-    
+
     /**
      * Get the "auto translate" checkbox.
      * <p/>
@@ -558,7 +635,7 @@ public class OptionsGeneralPanel extends GridPane implements PropertyPanel {
     public Slider getBorderThicknessSlider() {
         return borderThicknessSlider;
     }
-    
+
     /**
      * Get the "use small song text" checkbox.
      * <p/>
@@ -567,7 +644,7 @@ public class OptionsGeneralPanel extends GridPane implements PropertyPanel {
     public CheckBox getShowSmallSongTextCheckBox() {
         return showSmallSongTextBox;
     }
-    
+
     /**
      * Get the "use small bible text" checkbox.
      * <p/>
@@ -576,7 +653,7 @@ public class OptionsGeneralPanel extends GridPane implements PropertyPanel {
     public CheckBox getShowSmallBibleTextCheckBox() {
         return showSmallBibleTextBox;
     }
-    
+
     /**
      * Get the "use small text" checkbox.
      * <p/>

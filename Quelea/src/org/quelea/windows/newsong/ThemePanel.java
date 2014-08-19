@@ -20,10 +20,13 @@ package org.quelea.windows.newsong;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.geometry.Pos;
 import javafx.scene.control.Button;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.Region;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
@@ -55,6 +58,7 @@ public class ThemePanel extends BorderPane {
     private DisplayPositionSelector positionSelector;
     private String saveHash = "";
     private final Button confirmButton;
+    private final CheckBox overrideGlobalThemeCheckbox;
 
     /**
      * Create and initialise the theme panel
@@ -79,13 +83,19 @@ public class ThemePanel extends BorderPane {
             public void updateCallback() {
                 updateTheme(true);
             }
-        }, Priority.LOW);
+        }, Priority.LOW, false, null);
         preview = new DisplayPreview(canvas);
         VBox centrePane = new VBox();
         Label label = new Label("      " + LabelGrabber.INSTANCE.getLabel("hover.for.position.label") + ":");
+        overrideGlobalThemeCheckbox = new CheckBox(LabelGrabber.INSTANCE.getLabel("override.global.theme"));
         label.setStyle("-fx-text-fill:#666666;");
         centrePane.setStyle("-fx-background-color:#dddddd;");
+        StackPane.setAlignment(label, Pos.BOTTOM_LEFT);
+        StackPane.setAlignment(overrideGlobalThemeCheckbox, Pos.TOP_RIGHT);
+        centrePane.getChildren().add(overrideGlobalThemeCheckbox);
+        centrePane.getChildren().add(new Label("\n"));
         centrePane.getChildren().add(label);
+
         StackPane themePreviewPane = new StackPane();
         themePreviewPane.getChildren().add(preview);
         themePreviewPane.getChildren().add(positionSelector);
@@ -94,7 +104,7 @@ public class ThemePanel extends BorderPane {
         final LyricDrawer drawer = new LyricDrawer();
         drawer.setCanvas(canvas);
         text = SAMPLE_LYRICS;
-        if(wordsArea != null) {
+        if (wordsArea != null) {
             ChangeListener<String> cl = new ChangeListener<String>() {
 
                 @Override
@@ -102,13 +112,12 @@ public class ThemePanel extends BorderPane {
                     SongDisplayable dummy = new SongDisplayable("", "");
                     dummy.setLyrics(newText);
                     TextSection[] sections = dummy.getSections();
-                    if(sections.length > 0 && sections[0].getText(false, false).length > 0) {
+                    if (sections.length > 0 && sections[0].getText(false, false).length > 0) {
                         text = sections[0].getText(false, false);
-                    }
-                    else {
+                    } else {
                         text = SAMPLE_LYRICS;
                     }
-                    if(isEmpty(text)) {
+                    if (isEmpty(text)) {
                         text = SAMPLE_LYRICS;
                     }
                     updateTheme(false);
@@ -124,8 +133,8 @@ public class ThemePanel extends BorderPane {
     }
 
     private boolean isEmpty(String[] text) {
-        for(String str : text) {
-            if(!str.trim().isEmpty()) {
+        for (String str : text) {
+            if (!str.trim().isEmpty()) {
                 return false;
             }
         }
@@ -175,12 +184,13 @@ public class ThemePanel extends BorderPane {
      */
     public void updateTheme(boolean warning) {
         final ThemeDTO theme = getTheme();
-        if(warning && theme.getBackground() instanceof ColourBackground) {
+        if (warning && theme.getBackground() instanceof ColourBackground) {
             checkAccessibility(theme.getFontPaint(), ((ColourBackground) theme.getBackground()).getColour());
         }
         Platform.runLater(new Runnable() {
             @Override
             public void run() {
+
                 LyricDrawer drawer = new LyricDrawer();
                 drawer.setCanvas(preview.getCanvas());
                 drawer.setTheme(theme);
@@ -197,6 +207,7 @@ public class ThemePanel extends BorderPane {
     public void setTheme(ThemeDTO theme) {
         themeToolbar.setTheme(theme);
         positionSelector.setTheme(theme);
+        overrideGlobalThemeCheckbox.setSelected(theme.getOverrideTheme());
         updateTheme(false);
     }
 
@@ -209,7 +220,7 @@ public class ThemePanel extends BorderPane {
      */
     private void checkAccessibility(Color col1, Color col2) {
         double diff = Utils.getColorDifference(col1, col2);
-        if(diff < THRESHOLD) {
+        if (diff < THRESHOLD) {
             Dialog.showInfo(LabelGrabber.INSTANCE.getLabel("warning.label"), LabelGrabber.INSTANCE.getLabel("similar.colors.text"));
         }
     }
@@ -229,11 +240,12 @@ public class ThemePanel extends BorderPane {
      * @return the current theme.
      */
     public ThemeDTO getTheme() {
-        if(themeToolbar == null) {
+        if (themeToolbar == null) {
             return ThemeDTO.DEFAULT_THEME;
         }
         ThemeDTO ret = themeToolbar.getTheme();
         ret.setTextPosition(positionSelector.getSelectedButtonIndex());
+        ret.setOverrideTheme(overrideGlobalThemeCheckbox.isSelected());
         return ret;
     }
 }
