@@ -61,8 +61,10 @@ public class USEnglishConverter {
      */
     private static String translateToUS(final String gb) {
         String us = gb;
-        us = Pattern.compile("colour", Pattern.CASE_INSENSITIVE).matcher(us).replaceAll("color");
-        us = Pattern.compile("sanitise", Pattern.CASE_INSENSITIVE).matcher(us).replaceAll("sanitize");
+        us = Pattern.compile("colour").matcher(us).replaceAll("color");
+        us = Pattern.compile("Colour").matcher(us).replaceAll("Color");
+        us = Pattern.compile("sanitise").matcher(us).replaceAll("sanitize");
+        us = Pattern.compile("Sanitise").matcher(us).replaceAll("Sanitize");
         if(!us.equals(gb)) {
             System.out.println("Translated \"" + gb + "\" ==> \"" + us + "\"");
         }
