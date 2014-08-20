@@ -9,10 +9,12 @@ quelea (2014.1) stable; urgency=normal
   * Improve text wrapping algorithm for bible text
   * Add option for displaying verse numbers in bible text
   * Add Hungarian translation
+  * Additional options for specifying the notice colour, speed, font, size and position
   * Bugfix - italic font property now saved when selecting an image or video background
   * Bugfix - no longer possible to add empty bible passages
   * Bugfix - quick edit cursor doesn't show on bible passages anymore
   * Bugfix - bible search now filters out duplicate results correctly
+  * Bugfix - long notices now behave correctly
   * Various other minor bug fixes
 
- -- Michael Berry <michael@quelea.org>  Wednesday, 06 Aug 2014 00:00:00 +0000
+ -- Michael Berry <michael@quelea.org>  Wednesday, 20 Aug 2014 00:00:00 +0000
