@@ -241,6 +241,78 @@ public final class QueleaProperties extends Properties {
     }
 
     /**
+     * Get the colour to use for notice backgrounds.
+     *
+     * @return the colour to use for notice backgrounds.
+     */
+    public Color getNoticeBackgroundColour() {
+        return getColor(getProperty("notice.background.colour", getStr(Color.BROWN)));
+    }
+
+    /**
+     * Set the colour to use for notice backgrounds.
+     *
+     * @param colour the colour to use for notice backgrounds.
+     */
+    public void setNoticeBackgroundColour(Color colour) {
+        setProperty("notice.background.colour", getStr(colour));
+    }
+
+    /**
+     * Get the position at which to display the notices.
+     *
+     * @return the position at which to display the notices.
+     */
+    public String getNoticePosition() {
+        return getProperty("notice.position", "Bottom");
+    }
+
+    /**
+     * Set the position at which to display the notices.
+     *
+     * @param position the position at which to display the notices.
+     */
+    public void setNoticePosition(String position) {
+        setProperty("notice.position", position);
+    }
+
+    /**
+     * Get the speed at which to display the notices.
+     *
+     * @return the speed at which to display the notices.
+     */
+    public double getNoticeSpeed() {
+        return Double.parseDouble(getProperty("notice.speed", "10"));
+    }
+
+    /**
+     * Set the speed at which to display the notices.
+     *
+     * @param speed the speed at which to display the notices.
+     */
+    public void setNoticeSpeed(double speed) {
+        setProperty("notice.speed", Double.toString(speed));
+    }
+
+    /**
+     * Get the font size at which to display the notices.
+     *
+     * @return the font size at which to display the notices.
+     */
+    public double getNoticeFontSize() {
+        return Double.parseDouble(getProperty("notice.font.size", "50"));
+    }
+
+    /**
+     * Set the font size at which to display the notices.
+     *
+     * @param fontSize the font size at which to display the notices.
+     */
+    public void setNoticeFontSize(double fontSize) {
+        setProperty("notice.font.size", Double.toString(fontSize));
+    }
+
+    /**
      * Determine if we should attempt to fetch translations automatically.
      * <p>
      * @return true if we should translate automatically, false otherwise.
@@ -1237,7 +1309,6 @@ public final class QueleaProperties extends Properties {
         write();
     }
 
-    
     public boolean getSmallBibleTextShow() {
         return Boolean.parseBoolean(getProperty("show.small.bible.text", "true"));
     }
@@ -1247,27 +1318,29 @@ public final class QueleaProperties extends Properties {
         write();
     }
 
-     /**
+    /**
      * Get how many words or verses to show per slide
+     *
      * @return number of words or verses (depends on use.max.bible.verses)
      */
     public int getMaxBibleItems() {
         return Integer.parseInt(getProperty("max.bible.items", "5"));
     }
-    
+
     public void setMaxBibleItems(int number) {
         setProperty("max.bible.items", Integer.toString(number));
         write();
     }
-    
+
     /**
      * Get whether the max items is verses or words
+     *
      * @return true if using maximum verses per slide
      */
     public boolean getBibleSectionVerses() {
         return Boolean.parseBoolean(getProperty("use.max.bible.verses", "true"));
     }
-    
+
     public void setBibleSectionVerses(boolean useVerses) {
         setProperty("use.max.bible.verses", Boolean.toString(useVerses));
         write();
@@ -1275,15 +1348,15 @@ public final class QueleaProperties extends Properties {
 
     /**
      * Get the maximum number of characters allowed on any one line of bible
-     * text. 
+     * text.
      * <p/>
-     * @return the maximum number of characters allowed on any one line of
-     * bible text.
+     * @return the maximum number of characters allowed on any one line of bible
+     * text.
      */
     public int getMaxBibleChars() {
         return Integer.parseInt(getProperty("max.bible.chars", "80"));
     }
-    
+
     /**
      * Set the max bible chars value.
      * <p/>
