@@ -47,6 +47,7 @@ import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import org.javafx.dialog.Dialog;
 import org.quelea.services.languages.LabelGrabber;
+import org.quelea.services.utils.QueleaProperties;
 import org.quelea.services.utils.SerializableColor;
 import org.quelea.services.utils.SerializableFont;
 import org.quelea.services.utils.Utils;
@@ -180,12 +181,12 @@ public class NoticeEntryDialog extends Stage {
                 boolean edit = true;
                 if (notice == null) {
                     edit = false;
-                    notice = new Notice(text.getText(), numberTimes, new SerializableColor(colourPicker.getValue()), new SerializableFont(Font.font(fontSelection.getValue(), FontWeight.NORMAL, FontPosture.REGULAR, 50)));
+                    notice = new Notice(text.getText(), numberTimes, new SerializableColor(colourPicker.getValue()), new SerializableFont(Font.font(fontSelection.getValue(), FontWeight.NORMAL, FontPosture.REGULAR, QueleaProperties.get().getNoticeFontSize())));
                 } else {
                     notice.setText(text.getText());
                     notice.setTimes(numberTimes);
                     notice.setColor(new SerializableColor(colourPicker.getValue()));
-                    notice.setFont(new SerializableFont(Font.font(fontSelection.getValue(), FontWeight.NORMAL, FontPosture.REGULAR, 50)));
+                    notice.setFont(new SerializableFont(Font.font(fontSelection.getValue(), FontWeight.NORMAL, FontPosture.REGULAR, QueleaProperties.get().getNoticeFontSize())));
                 }
                 if (edit && noticeRemoved) {
                     Dialog.buildConfirmation(LabelGrabber.INSTANCE.getLabel("notice.expired.title"), LabelGrabber.INSTANCE.getLabel("notice.expired.text")).addYesButton(new EventHandler<ActionEvent>() {
