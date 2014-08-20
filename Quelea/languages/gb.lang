@@ -464,3 +464,5 @@ max.items.per.slide=Max number of % per slide
 verses=verses
 words=words
 edit.bible.passage.text=Edit Passage Theme
+notice.colour.text=Notice Colour
+notice.font.text=Notice Font
