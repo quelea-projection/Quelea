@@ -20,6 +20,8 @@ package org.quelea.services.notice;
 
 import javafx.geometry.Pos;
 import javafx.scene.layout.StackPane;
+import org.quelea.services.languages.LabelGrabber;
+import org.quelea.services.utils.QueleaProperties;
 
 /**
  * The notice overlay, just used for displaying any notice text that might
@@ -30,6 +32,12 @@ import javafx.scene.layout.StackPane;
 public class NoticeOverlay extends StackPane {
 
     public NoticeOverlay() {
-        setAlignment(Pos.BOTTOM_CENTER);
+        if (QueleaProperties.get().getNoticePosition().equals(LabelGrabber.INSTANCE.getLabel("top.text.position"))) {
+            StackPane.setAlignment(this, Pos.TOP_CENTER);
+            setAlignment(Pos.TOP_CENTER);
+        } else {
+            StackPane.setAlignment(this, Pos.BOTTOM_CENTER);
+            setAlignment(Pos.BOTTOM_CENTER);
+        }
     }
 }
