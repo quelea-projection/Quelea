@@ -46,6 +46,7 @@ public class OptionsDialog extends Stage {
     private final TabPane tabbedPane;
     private final OptionsDisplaySetupPanel displayPanel;
     private final OptionsGeneralPanel generalPanel;
+    private final OptionsNoticePanel noticePanel;
     private final OptionsBiblePanel biblePanel;
     private final OptionsStageViewPanel stageViewPanel;
     private final ServerSettingsPanel serverSettingsPanel;
@@ -84,6 +85,13 @@ public class OptionsDialog extends Stage {
         stageViewTab.setText(LabelGrabber.INSTANCE.getLabel("stage.options.heading"));
         stageViewTab.setContent(stageViewPanel);
         tabbedPane.getTabs().add(stageViewTab);
+        
+        noticePanel = new OptionsNoticePanel();
+        Tab noticeTab = new Tab();
+        noticeTab.setClosable(false);
+        noticeTab.setText(LabelGrabber.INSTANCE.getLabel("notice.options.heading"));
+        noticeTab.setContent(noticePanel);
+        tabbedPane.getTabs().add(noticeTab);
         
         biblePanel = new OptionsBiblePanel();
         Tab bibleTab = new Tab();
@@ -125,60 +133,20 @@ public class OptionsDialog extends Stage {
      * Call this method before showing this dialog to set it up properly.
      */
     public void callBeforeShowing() {
-        getGeneralPanel().resetLanguageChanged();
-        getServerSettingsPanel().resetChanged();
+        generalPanel.resetLanguageChanged();
+        serverSettingsPanel.resetChanged();
     }
     
     /**
      * Call this method before hiding this dialog to tear it down properly.
      */
     private void callBeforeHiding() {
-        if(getGeneralPanel().hasLanguageChanged()) {
+        if(generalPanel.hasLanguageChanged()) {
             Dialog.showInfo(LabelGrabber.INSTANCE.getLabel("language.changed"), LabelGrabber.INSTANCE.getLabel("language.changed.message"), QueleaApp.get().getMainWindow());
         }
-        if(getServerSettingsPanel().hasChanged()) {
+        if(serverSettingsPanel.hasChanged()) {
             Dialog.showInfo(LabelGrabber.INSTANCE.getLabel("server.changed.label"), LabelGrabber.INSTANCE.getLabel("server.changed.message"), QueleaApp.get().getMainWindow());
         }
-    }
-
-    /**
-     * Get the general panel used in this options dialog.
-     * @return the general panel.
-     */
-    public OptionsGeneralPanel getGeneralPanel() {
-        return generalPanel;
-    }
-
-    /**
-     * Get the display panel used in this options dialog.
-     * @return the display panel.
-     */
-    public OptionsDisplaySetupPanel getDisplayPanel() {
-        return displayPanel;
-    }
-
-    /**
-     * Get the bible panel used in this options dialog.
-     * @return the bible panel.
-     */
-    public OptionsBiblePanel getBiblePanel() {
-        return biblePanel;
-    }
-
-    /**
-     * Get the stage view panel used in this options dialog.
-     * @return the stage view panel.
-     */
-    public OptionsStageViewPanel getStageViewPanel() {
-        return stageViewPanel;
-    }
-    
-    /**
-     * Get the mobile lyrics panel.
-     * @return the mobile lyrics panel.
-     */
-    public ServerSettingsPanel getServerSettingsPanel() {
-        return serverSettingsPanel;
     }
 
     /**
