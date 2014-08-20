@@ -46,9 +46,9 @@ public class OptionsDialog extends Stage {
     private final TabPane tabbedPane;
     private final OptionsDisplaySetupPanel displayPanel;
     private final OptionsGeneralPanel generalPanel;
-    private OptionsBiblePanel biblePanel;
-    private OptionsStageViewPanel stageViewPanel;
-    private ServerSettingsPanel serverSettingsPanel;
+    private final OptionsBiblePanel biblePanel;
+    private final OptionsStageViewPanel stageViewPanel;
+    private final ServerSettingsPanel serverSettingsPanel;
 
     /**
      * Create a new options dialog.
