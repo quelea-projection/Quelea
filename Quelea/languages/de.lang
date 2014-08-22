@@ -471,3 +471,6 @@ no.pdb.message=Für einen zuverlässigen Import von Easyworshop Datenbanken, mus
 show.small.bible.text.label=Kleine Bibelinformation anzeigen
 notice.font.size=Schriftgröße der Mitteilung
 notice.options.heading=Mitteilungen
+export.schedule.pdf.button=Ablauf als PDF exportieren
+filefilters.description.pdf.files=PDF Dateien
+export.pdf.button=Als PDF exportieren
