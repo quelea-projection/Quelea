@@ -27,6 +27,7 @@ import javafx.scene.input.KeyCodeCombination;
 import javafx.scene.input.KeyCombination;
 import org.quelea.services.languages.LabelGrabber;
 import org.quelea.windows.main.actionhandlers.ExitActionHandler;
+import org.quelea.windows.main.actionhandlers.ExportPDFScheduleActionHandler;
 import org.quelea.windows.main.actionhandlers.NewScheduleActionHandler;
 import org.quelea.windows.main.actionhandlers.OpenScheduleActionHandler;
 import org.quelea.windows.main.actionhandlers.PrintScheduleActionHandler;
@@ -43,6 +44,7 @@ public class FileMenu extends Menu {
     private MenuItem openItem;
     private MenuItem saveItem;
     private MenuItem saveAsItem;
+    private MenuItem exportToPDFItem;
     private MenuItem printItem;
     private MenuItem exitItem;
 
@@ -70,6 +72,10 @@ public class FileMenu extends Menu {
         saveAsItem = new MenuItem(LabelGrabber.INSTANCE.getLabel("save.as.schedule.button"), new ImageView(new Image("file:icons/filesaveas.png", 20, 20, true, false)));
         saveAsItem.setOnAction(new SaveScheduleActionHandler(true));
         getItems().add(saveAsItem);
+
+        exportToPDFItem = new MenuItem(LabelGrabber.INSTANCE.getLabel("export.schedule.pdf.button"), new ImageView(new Image("file:icons/fileexport.png", 20, 20, true, false)));
+        exportToPDFItem.setOnAction(new ExportPDFScheduleActionHandler());
+        getItems().add(exportToPDFItem);
 
         printItem = new MenuItem(LabelGrabber.INSTANCE.getLabel("print.schedule.button"), new ImageView(new Image("file:icons/fileprint.png", 20, 20, true, false)));
         printItem.setOnAction(new PrintScheduleActionHandler());
