@@ -471,3 +471,6 @@ notice.position.text=Poloha upozornění
 notice.background.colour.text=Barva pozadí upozornění
 no.pdb.heading=Ovladač JDBC Paradox nenalezen
 no.pdb.message=Z technických důvodů je potřeba, abyste stáhnul ovladač JDBC Paradox, předtím než bude Quelea moci spolehlivě zavést databáze Easyworship:\n\n1. Zamiřte na stránku http://www.hxtt.com/download.jsp, zaregistrujte účet zdarma a pokračujte.\n2. Stáhněte soubor s balíčkem "Paradox JDBC 4.1 pro JDK1.7.X a JDK1.8.X". Měl by být pojmenován Paradox_JDBC41.jar.\n3. Zkopírujte Paradox_JDBC41.jar do $1.\n\nPokud máte jakékoli potíže, zeptejte se, prosím, v diskuzní skupině (http://bit.ly/1mePoeh). Quelea se vždy pokusí zavést databázi Easyworship, aniž by byl tento soubor na místě, ale tento postup může vést k nespolehlivým výsledkům.
+export.schedule.pdf.button=Vyvést rozvrh do PDF
+filefilters.description.pdf.files=Soubory PDF
+export.pdf.button=Vyvést do PDF
