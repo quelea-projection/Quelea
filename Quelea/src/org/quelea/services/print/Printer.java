@@ -17,14 +17,17 @@
  */
 package org.quelea.services.print;
 
-import java.awt.print.Printable;
-import java.awt.print.PrinterJob;
+import java.awt.Desktop;
+import java.io.File;
+import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.quelea.data.Schedule;
+import org.quelea.data.displayable.SongDisplayable;
 import org.quelea.services.utils.LoggerUtils;
-//@todo never used
+
 /**
- * Used for printing schedules.
+ * Used for printing.
  * @author Michael
  */
 public class Printer {
@@ -53,27 +56,27 @@ public class Printer {
         }
         return instance;
     }
-
-    /**
-     * Print the given printable object.
-     * @param printable the object to print.
-     */
-    public void print(Printable printable) {
-        PrinterJob printJob = PrinterJob.getPrinterJob();
-//        PageFormat pf = printJob.defaultPage();
-//        Paper paper = new Paper();
-//        double margin = 36; // half inch
-//        paper.setImageableArea(margin, margin, paper.getWidth() - margin * 2,
-//                paper.getHeight() - margin * 2);
-//        pf.setPaper(paper);
-        
-        printJob.setPrintable(printable);
-        if (printJob.printDialog()) {
-            try {
-                printJob.print();
-            } catch (Exception ex) {
-                LOGGER.log(Level.WARNING, "Couldn't print", ex);
-            }
+    
+    public void print(SongDisplayable song) {
+        try {
+            File temp = File.createTempFile(song.getTitle(), ".pdf");
+            temp.deleteOnExit();
+            new SongPDFPrinter().print(song, temp);
+            Desktop.getDesktop().print(temp);
+        } catch (IOException ex) {
+            LOGGER.log(Level.SEVERE, "Couldn't print song", ex);
         }
     }
+    
+    public void print(Schedule schedule) {
+        try {
+            File temp = File.createTempFile("schedule", ".pdf");
+            temp.deleteOnExit();
+            new SchedulePDFPrinter().print(schedule, temp);
+            Desktop.getDesktop().print(temp);
+        } catch (IOException ex) {
+            LOGGER.log(Level.SEVERE, "Couldn't print song", ex);
+        }
+    }
+
 }

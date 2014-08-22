@@ -16,13 +16,6 @@
  */
 package org.quelea.data;
 
-import java.awt.Color;
-import java.awt.Font;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
-import java.awt.print.PageFormat;
-import java.awt.print.Printable;
-import java.awt.print.PrinterException;
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
@@ -67,7 +60,7 @@ import org.xml.sax.SAXException;
  *
  * @author Michael
  */
-public class Schedule implements Iterable<Displayable>, Printable {
+public class Schedule implements Iterable<Displayable> {
 
     private static final Logger LOGGER = LoggerUtils.getLogger();
     private final List<Displayable> displayables;
@@ -236,7 +229,7 @@ public class Schedule implements Iterable<Displayable>, Printable {
      *
      * @return XML describing this schedule.
      */
-    private String getXML() {
+    public String getXML() {
         StringBuilder xml = new StringBuilder();
         xml.append("<schedule>");
         for(Displayable displayable : displayables) {
@@ -348,31 +341,4 @@ public class Schedule implements Iterable<Displayable>, Printable {
         return getSize()==0;
     }
 
-    /**
-     * Print the schedule.
-     *
-     * @param graphics graphics to paint on.
-     * @param pageFormat page format.
-     * @param pageIndex starting index.
-     * @return PAGE_EXISTS if the page exists, NO_SUCH_PAGE otherwise.
-     * @throws PrinterException if something went wrong
-     */
-    @Override
-    public int print(Graphics graphics, PageFormat pageFormat, int pageIndex) throws PrinterException {
-        if(pageIndex > 0) {
-            return NO_SUCH_PAGE;
-        }
-        Graphics2D g2d = (Graphics2D) graphics;
-        g2d.setFont(new Font("Verdana", 0, 36));
-        g2d.setColor(Color.BLUE);
-        g2d.drawString("Order of service", 20, 60);
-        g2d.setFont(new Font("Arial", 0, 14));
-        g2d.setColor(Color.BLACK);
-        int offset = 130;
-        for(Displayable displayable : displayables) {
-            g2d.drawString(displayable.getPrintText(), 20, offset);
-            offset += 50;
-        }
-        return PAGE_EXISTS;
-    }
 }
