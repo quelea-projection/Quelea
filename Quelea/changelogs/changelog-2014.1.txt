@@ -2,6 +2,7 @@ quelea (2014.1) stable; urgency=normal
  
   * Added remote control functionality
   * Added Youtube support
+  * Added PDF export option for songs / schedule
   * Added DVD / Bluray support
   * Added ability to import more than one presentation at a time
   * Added ZionWorx import
