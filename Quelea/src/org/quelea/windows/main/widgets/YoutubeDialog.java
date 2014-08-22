@@ -69,6 +69,7 @@ public class YoutubeDialog extends Stage {
                 hide();
             }
         });
+        okButton.setDefaultButton(true);
         final Button cancelButton = new Button(LabelGrabber.INSTANCE.getLabel("cancel.button"), new ImageView(new Image("file:icons/cross.png")));
         cancelButton.setOnAction(new EventHandler<ActionEvent>() {
 
