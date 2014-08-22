@@ -1,15 +1,17 @@
 quelea (2014.1) stable; urgency=normal
  
+  * Added remote control functionality
   * Added Youtube support
-  * Add ability to import more than one presentation at a time
-  * Add ZionWorx import
-  * Add Easyworship import
-  * Add Openlyrics import / export
-  * Add song translation support
-  * Improve text wrapping algorithm for bible text
-  * Add option for displaying verse numbers in bible text
-  * Add Hungarian translation
-  * Additional options for specifying the notice colour, speed, font, size and position
+  * Added DVD / Bluray support
+  * Added ability to import more than one presentation at a time
+  * Added ZionWorx import
+  * Added Easyworship import
+  * Added Openlyrics import / export
+  * Added song translation support
+  * Improved text wrapping algorithm for bible text
+  * Added option for displaying verse numbers in bible text
+  * Added Hungarian translation
+  * Added additional options for specifying the notice colour, speed, font, size and position
   * Bugfix - italic font property now saved when selecting an image or video background
   * Bugfix - no longer possible to add empty bible passages
   * Bugfix - quick edit cursor doesn't show on bible passages anymore
