@@ -30,6 +30,7 @@ import org.quelea.services.print.Printer;
 import org.quelea.windows.main.QueleaApp;
 import org.quelea.windows.main.actionhandlers.AddSongActionHandler;
 import org.quelea.windows.main.actionhandlers.EditSongDBActionHandler;
+import org.quelea.windows.main.actionhandlers.ExportPDFSongActionHandler;
 import org.quelea.windows.main.actionhandlers.PreviewSongActionHandler;
 import org.quelea.windows.main.actionhandlers.RemoveSongDBActionHandler;
 
@@ -43,6 +44,7 @@ public class LibraryPopupMenu extends ContextMenu {
     private final MenuItem preview;
     private final MenuItem editDB;
     private final MenuItem removeFromDB;
+    private final MenuItem exportToPDF;
     private final MenuItem print;
 
     /**
@@ -57,6 +59,8 @@ public class LibraryPopupMenu extends ContextMenu {
         editDB.setOnAction(new EditSongDBActionHandler());
         removeFromDB = new MenuItem(LabelGrabber.INSTANCE.getLabel("library.remove.song.text"), new ImageView(new Image("file:icons/removedb.png", 16, 16, false, true)));
         removeFromDB.setOnAction(new RemoveSongDBActionHandler());
+        exportToPDF = new MenuItem(LabelGrabber.INSTANCE.getLabel("export.pdf.button"), new ImageView(new Image("file:icons/fileexport.png", 16, 16, false, true)));
+        exportToPDF.setOnAction(new ExportPDFSongActionHandler());
         print = new MenuItem(LabelGrabber.INSTANCE.getLabel("library.print.song.text"), new ImageView(new Image("file:icons/fileprint.png", 16, 16, false, true)));
         print.setOnAction(new EventHandler<ActionEvent>() {
 
@@ -86,6 +90,7 @@ public class LibraryPopupMenu extends ContextMenu {
         getItems().add(preview);
         getItems().add(editDB);
         getItems().add(removeFromDB);
+        getItems().add(exportToPDF);
         getItems().add(print);
     }
 }

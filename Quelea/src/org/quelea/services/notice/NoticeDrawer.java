@@ -30,12 +30,13 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Pos;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
-import javafx.scene.text.Font;
-import javafx.scene.text.FontPosture;
 import javafx.scene.text.Text;
 import javafx.util.Duration;
+import org.quelea.services.languages.LabelGrabber;
+import org.quelea.services.utils.QueleaProperties;
 import org.quelea.windows.main.DisplayCanvas;
 import org.quelea.windows.main.QueleaApp;
 
@@ -48,14 +49,12 @@ public class NoticeDrawer {
 
     private static final double BACKGROUND_OPACITY = 0.6;
     private static final double BACKGROUND_FADE_DURATION = 0.5;
-    private static final double TEXT_SCROLL_BASE_DURATION = 10;
     private NoticeOverlay overlay;
     private DisplayCanvas canvas;
     private List<Notice> notices;
     private List<NoticesChangedListener> listeners;
     private boolean playing;
     private Rectangle backing;
-    private Font noticeFont;
 
     /**
      * Create a new notice drawer.
@@ -67,7 +66,6 @@ public class NoticeDrawer {
         notices = Collections.synchronizedList(new ArrayList<Notice>());
         listeners = new ArrayList<>();
         overlay = new NoticeOverlay();
-        noticeFont = Font.font("Arial", FontPosture.ITALIC, 50);
         playing = false;
     }
 
@@ -90,29 +88,34 @@ public class NoticeDrawer {
         if (!playing) {
             playing = true;
             final List<Notice> oldNotices = new ArrayList<>();
-            if(!notices.isEmpty()) {
-                oldNotices.add(notices.get(0));
+            if (notices.isEmpty()) {
+                return;
             }
-            final HBox textGroup = new HBox(noticeFont.getSize() * 2);
+            oldNotices.add(notices.get(0));
+            final HBox textGroup = new HBox(notices.get(0).getFont().getFont().getSize() * 2);
             final StringBuilder builder = new StringBuilder();
-            textGroup.setAlignment(Pos.BOTTOM_LEFT);
             for (int i = 0; i < oldNotices.size(); i++) {
                 Notice notice = oldNotices.get(i);
                 builder.append(notice.getText());
                 Text noticeText = new Text(notice.getText());
-                if (i % 2 == 0) {
-                    noticeText.setFill(Color.WHITE);
-                } else {
-                    noticeText.setFill(Color.BLANCHEDALMOND);
-                }
-                noticeText.setFont(noticeFont);
+                noticeText.setFill(notice.getColor().getColor());
+                noticeText.setFont(notice.getFont().getFont());
                 textGroup.getChildren().add(noticeText);
             }
-            FontMetrics metrics = Toolkit.getToolkit().getFontLoader().getFontMetrics(noticeFont);
+            FontMetrics metrics = Toolkit.getToolkit().getFontLoader().getFontMetrics(oldNotices.get(0).getFont().getFont());
             double displayWidth = QueleaApp.get().getProjectionWindow().getWidth();
             double width = metrics.computeStringWidth(builder.toString()) + textGroup.getSpacing() * (notices.size() - 1);
+            if (QueleaProperties.get().getNoticePosition().equalsIgnoreCase(LabelGrabber.INSTANCE.getLabel("top.text.position"))) {
+                StackPane.setAlignment(overlay, Pos.TOP_CENTER);
+                overlay.setAlignment(Pos.TOP_CENTER);
+                textGroup.setAlignment(Pos.TOP_LEFT);
+            } else {
+                StackPane.setAlignment(overlay, Pos.BOTTOM_CENTER);
+                overlay.setAlignment(Pos.BOTTOM_CENTER);
+                textGroup.setAlignment(Pos.BOTTOM_LEFT);
+            }
             if (!overlay.getChildren().contains(backing)) {
-                backing = new Rectangle(displayWidth, metrics.getLineHeight(), Color.BROWN);
+                backing = new Rectangle(displayWidth, metrics.getLineHeight()+5, QueleaProperties.get().getNoticeBackgroundColour());
                 backing.setOpacity(0);
                 overlay.getChildren().add(backing);
                 FadeTransition fadeTrans = new FadeTransition(Duration.seconds(BACKGROUND_FADE_DURATION), backing);
@@ -131,12 +134,13 @@ public class NoticeDrawer {
             overlay.getChildren().add(textGroup);
             Timeline timeline = new Timeline(25);
             timeline.getKeyFrames().add(new KeyFrame(Duration.ZERO, new KeyValue(textGroup.translateXProperty(), textGroup.getTranslateX())));
+            double baseDuration = QueleaProperties.get().getNoticeSpeed();
             if (excessWidth <= 0) {
-                timeline.getKeyFrames().add(new KeyFrame(Duration.seconds(TEXT_SCROLL_BASE_DURATION), new KeyValue(textGroup.translateXProperty(), 0)));
-                timeline.getKeyFrames().add(new KeyFrame(Duration.seconds(TEXT_SCROLL_BASE_DURATION + TEXT_SCROLL_BASE_DURATION / (displayWidth/width)), new KeyValue(textGroup.translateXProperty(), stopPoint)));
+                timeline.getKeyFrames().add(new KeyFrame(Duration.seconds(baseDuration), new KeyValue(textGroup.translateXProperty(), 0)));
+                timeline.getKeyFrames().add(new KeyFrame(Duration.seconds(baseDuration + baseDuration / (displayWidth / width)), new KeyValue(textGroup.translateXProperty(), stopPoint)));
             } else {
-                timeline.getKeyFrames().add(new KeyFrame(Duration.seconds(TEXT_SCROLL_BASE_DURATION), new KeyValue(textGroup.translateXProperty(), excessWidth/2)));
-                timeline.getKeyFrames().add(new KeyFrame(Duration.seconds(TEXT_SCROLL_BASE_DURATION + TEXT_SCROLL_BASE_DURATION / (displayWidth/width)), new KeyValue(textGroup.translateXProperty(), stopPoint)));
+                timeline.getKeyFrames().add(new KeyFrame(Duration.seconds(baseDuration), new KeyValue(textGroup.translateXProperty(), excessWidth / 2)));
+                timeline.getKeyFrames().add(new KeyFrame(Duration.seconds(baseDuration + baseDuration / (displayWidth / width)), new KeyValue(textGroup.translateXProperty(), stopPoint)));
             }
             timeline.play();
             timeline.setOnFinished(new EventHandler<ActionEvent>() {
@@ -200,11 +204,4 @@ public class NoticeDrawer {
         listeners.add(listener);
     }
 
-    public Font getNoticeFont() {
-        return noticeFont;
-    }
-
-    public void setNoticeFont(Font noticeFont) {
-        this.noticeFont = noticeFont;
-    }
 }

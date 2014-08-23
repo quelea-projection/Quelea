@@ -42,7 +42,7 @@ import org.quelea.services.languages.spelling.DictionaryManager;
  */
 public final class QueleaProperties extends Properties {
 
-    public static final Version VERSION = new Version("2014.1", "");
+    public static final Version VERSION = new Version("2014.1", "beta");
     private static final QueleaProperties INSTANCE = new QueleaProperties();
 //    private static final Logger LOGGER = LoggerUtils.getLogger();
 
@@ -295,6 +295,78 @@ public final class QueleaProperties extends Properties {
      */
     public void setShowVerseNumbers(boolean val) {
         setProperty("show.verse.numbers", Boolean.toString(val));
+    }
+
+    /**
+     * Get the colour to use for notice backgrounds.
+     *
+     * @return the colour to use for notice backgrounds.
+     */
+    public Color getNoticeBackgroundColour() {
+        return getColor(getProperty("notice.background.colour", getStr(Color.BROWN)));
+    }
+
+    /**
+     * Set the colour to use for notice backgrounds.
+     *
+     * @param colour the colour to use for notice backgrounds.
+     */
+    public void setNoticeBackgroundColour(Color colour) {
+        setProperty("notice.background.colour", getStr(colour));
+    }
+
+    /**
+     * Get the position at which to display the notices.
+     *
+     * @return the position at which to display the notices.
+     */
+    public String getNoticePosition() {
+        return getProperty("notice.position", "Bottom");
+    }
+
+    /**
+     * Set the position at which to display the notices.
+     *
+     * @param position the position at which to display the notices.
+     */
+    public void setNoticePosition(String position) {
+        setProperty("notice.position", position);
+    }
+
+    /**
+     * Get the speed at which to display the notices.
+     *
+     * @return the speed at which to display the notices.
+     */
+    public double getNoticeSpeed() {
+        return Double.parseDouble(getProperty("notice.speed", "10"));
+    }
+
+    /**
+     * Set the speed at which to display the notices.
+     *
+     * @param speed the speed at which to display the notices.
+     */
+    public void setNoticeSpeed(double speed) {
+        setProperty("notice.speed", Double.toString(speed));
+    }
+
+    /**
+     * Get the font size at which to display the notices.
+     *
+     * @return the font size at which to display the notices.
+     */
+    public double getNoticeFontSize() {
+        return Double.parseDouble(getProperty("notice.font.size", "50"));
+    }
+
+    /**
+     * Set the font size at which to display the notices.
+     *
+     * @param fontSize the font size at which to display the notices.
+     */
+    public void setNoticeFontSize(double fontSize) {
+        setProperty("notice.font.size", Double.toString(fontSize));
     }
 
     /**

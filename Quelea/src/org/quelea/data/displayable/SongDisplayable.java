@@ -17,12 +17,6 @@
  */
 package org.quelea.data.displayable;
 
-import java.awt.Color;
-import java.awt.Font;
-import java.awt.Graphics;
-import java.awt.print.PageFormat;
-import java.awt.print.Printable;
-import java.awt.print.PrinterException;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
@@ -60,7 +54,7 @@ import org.xml.sax.SAXException;
  * <p/>
  * @author Michael
  */
-public class SongDisplayable implements TextDisplayable, Comparable<SongDisplayable>, Printable, Serializable {
+public class SongDisplayable implements TextDisplayable, Comparable<SongDisplayable>, Serializable {
 
     /**
      * The builder responsible for building this song.
@@ -886,6 +880,31 @@ public class SongDisplayable implements TextDisplayable, Comparable<SongDisplaya
         xml.append("</song>");
         return xml.toString();
     }
+    
+    /**
+     * Get the XML used to print the song (will be transferred via XSLT.)
+     * @return the XML used to print the song.
+     */
+    public String getPrintXML() {
+        StringBuilder xml = new StringBuilder();
+        xml.append("<song>");
+        xml.append("<title>");
+        xml.append(Utils.escapeXML(title));
+        xml.append("</title>");
+        xml.append("<author>");
+        xml.append(Utils.escapeXML(author));
+        xml.append("</author>");
+        xml.append("<lyrics>");
+        for (TextSection section : sections) {
+            for(String line : section.getText(true, false)) {
+                xml.append(Utils.escapeXML(line)).append("\n");
+            }
+            xml.append("\n");
+        }
+        xml.append("</lyrics>");
+        xml.append("</song>");
+        return xml.toString();
+    }
 
     /**
      * Parse a song in XML format and return the song object.
@@ -1100,99 +1119,6 @@ public class SongDisplayable implements TextDisplayable, Comparable<SongDisplaya
     @Override
     public String getPrintText() {
         return "Song: " + getTitle() + " (" + getAuthor() + ")";
-    }
-    //Field just used for the calculation of how to print the song
-    private final List<Integer> nextSection = new ArrayList<>();
-
-    /**
-     * Print out the song.
-     * <p/>
-     * @param graphics the graphics to print onto.
-     * @param pageFormat the page format to print.
-     * @param pageIndex the page index to be printed.
-     * @return PAGE_EXISTS or NO_SUCH_PAGE
-     * @throws PrinterException if something went wrong.
-     */
-    @Override
-    public int print(Graphics graphics, PageFormat pageFormat, int pageIndex) throws PrinterException {
-
-        if (pageIndex == 0) {
-            nextSection.clear();
-            nextSection.add(0);
-        } else if (nextSection.get(pageIndex) >= getSections().length) {
-            return NO_SUCH_PAGE;
-        }
-
-        final int minx = (int) pageFormat.getImageableX();
-        final int miny = (int) pageFormat.getImageableY();
-        final int maxx = minx + (int) pageFormat.getImageableWidth();
-        final int maxy = miny + (int) pageFormat.getImageableHeight();
-
-        int pos = miny;
-
-        if (pageIndex == 0) {
-            int fontSize = 38;
-            int width;
-            do {
-                fontSize -= 2;
-                graphics.setFont(new Font("SansSerif", Font.BOLD, fontSize));
-                width = graphics.getFontMetrics().stringWidth(getTitle().toUpperCase());
-            } while (width > maxx - minx);
-
-            graphics.drawString(getTitle().toUpperCase(), minx, miny + graphics.getFontMetrics().getHeight());
-            pos += graphics.getFontMetrics().getHeight() + graphics.getFontMetrics().getDescent();
-
-            if (!getAuthor().isEmpty() || (printChords && !getCapo().isEmpty())) {
-                graphics.setFont(new Font("SansSerif", Font.ITALIC, 20));
-                pos += graphics.getFontMetrics().getHeight();
-                graphics.drawString(getAuthor(), minx, pos);
-                if (printChords && !getCapo().isEmpty()) {
-                    String capoStr = "Capo " + getCapo();
-                    int capoStrWidth = graphics.getFontMetrics().stringWidth(capoStr);
-                    graphics.drawString(capoStr, maxx - capoStrWidth, pos);
-                }
-                pos += 10;
-            }
-            graphics.fillRect(minx, pos, maxx - minx, 3);
-
-        }
-
-        pos += 30;
-
-        for (int i = nextSection.get(pageIndex); i < getSections().length; i++) {
-            TextSection section = getSections()[i];
-            int height = graphics.getFontMetrics().getHeight() * section.getText(printChords, false).length;
-            if (pos + height > maxy - miny) {
-                if (nextSection.size() <= pageIndex + 1) {
-                    nextSection.add(0);
-                }
-                nextSection.set(pageIndex + 1, i);
-                return PAGE_EXISTS;
-            }
-            for (String str : section.getText(true, false)) {
-                switch (new LineTypeChecker(str).getLineType()) {
-                    case CHORDS:
-                        if (!printChords) {
-                            continue;
-                        }
-                        graphics.setFont(new Font("SansSerif", Font.BOLD, 16));
-                        graphics.setColor(Color.BLACK);
-                        break;
-                    default:
-                        graphics.setFont(new Font("SansSerif", 0, 16));
-                        graphics.setColor(Color.BLACK);
-                        break;
-                }
-                graphics.drawString(str, minx, pos);
-                pos += graphics.getFontMetrics().getHeight();
-            }
-            pos += 30;
-        }
-        if (nextSection.size() <= pageIndex + 1) {
-            nextSection.add(0);
-        }
-        nextSection.set(pageIndex + 1, getSections().length);
-        return PAGE_EXISTS;
     }
 
     public void setTheme(ThemeDTO theme) {

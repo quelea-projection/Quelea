@@ -49,6 +49,16 @@ public class AudioDisplayable implements MultimediaDisplayable, Serializable {
     }
 
     /**
+     * Get the displayable name.
+     * <p>
+     * @return the displayable name.
+     */
+    @Override
+    public String getName() {
+        return file.getName();
+    }
+
+    /**
      * Determine whether videos support clearing, which they don't.
      *
      * @return false, always.

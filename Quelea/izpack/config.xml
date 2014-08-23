@@ -58,6 +58,9 @@
             <file src="Quelea.jar" targetdir="$INSTALL_PATH"/>
             <file src="Quelea.vbs" targetdir="$INSTALL_PATH"/>
             <file src="Quelea.bat" targetdir="$INSTALL_PATH"/>
+            <file src="Quelea.bat" targetdir="$INSTALL_PATH"/>
+            <file src="scheduleformat.xsl" targetdir="$INSTALL_PATH"/>
+            <file src="songformat.xsl" targetdir="$INSTALL_PATH"/>
             <!--<file src="Quelea.exe" targetdir="$INSTALL_PATH"/>-->
             <file src="README.TXT" targetdir="$INSTALL_PATH"/>
             <file src="../licenses/gplv3.txt" targetdir="$INSTALL_PATH"/>

@@ -17,6 +17,7 @@
  */
 package org.quelea.services.notice;
 
+import java.util.Collections;
 import java.util.Set;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
@@ -26,19 +27,32 @@ import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
+import javafx.scene.control.ColorPicker;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
+import javafx.scene.control.Tooltip;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
+import javafx.scene.paint.Color;
+import javafx.scene.text.Font;
+import javafx.scene.text.FontPosture;
+import javafx.scene.text.FontWeight;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import org.javafx.dialog.Dialog;
 import org.quelea.services.languages.LabelGrabber;
+import org.quelea.services.utils.QueleaProperties;
+import org.quelea.services.utils.SerializableColor;
+import org.quelea.services.utils.SerializableFont;
+import org.quelea.services.utils.Utils;
 import org.quelea.windows.main.widgets.NumberSpinner;
+import org.quelea.windows.newsong.FontSelectionDialog;
 
 /**
  * The entry dialog for creating a notice.
@@ -47,9 +61,13 @@ import org.quelea.windows.main.widgets.NumberSpinner;
  */
 public class NoticeEntryDialog extends Stage {
 
+    private static FontSelectionDialog fontSelectionDialog;
+    private final ComboBox<String> fontSelection;
+    private final Button fontExpandButton;
     private static NoticeEntryDialog dialog;
     private TextField text;
     private NumberSpinner times;
+    private ColorPicker colourPicker;
     private CheckBox infinite;
     private Button addButton;
     private Button cancelButton;
@@ -58,8 +76,6 @@ public class NoticeEntryDialog extends Stage {
 
     /**
      * Create a new notice entry dialog.
-     * <p/>
-     * @param owner the owner of this dialog.
      */
     public NoticeEntryDialog() {
         setTitle(LabelGrabber.INSTANCE.getLabel("new.notice.heading"));
@@ -67,6 +83,35 @@ public class NoticeEntryDialog extends Stage {
         initStyle(StageStyle.UTILITY);
         setResizable(false);
         getIcons().add(new Image("file:icons/info.png"));
+        colourPicker = new ColorPicker(Color.WHITE);
+        colourPicker.setStyle("-fx-color-label-visible: false ;");
+        if (fontSelectionDialog == null) {
+            fontSelectionDialog = new FontSelectionDialog();
+        }
+        fontSelection = new ComboBox<>();
+        fontSelection.setMaxWidth(Integer.MAX_VALUE);
+        fontSelection.getItems().addAll(fontSelectionDialog.getChosenFonts());
+        Collections.sort(fontSelection.getItems());
+        HBox.setHgrow(fontSelection, Priority.ALWAYS);
+        fontExpandButton = new Button("...");
+        fontExpandButton.setTooltip(new Tooltip(LabelGrabber.INSTANCE.getLabel("more.fonts.label") + "..."));
+        Utils.setToolbarButtonStyle(fontExpandButton);
+        fontExpandButton.setOnAction(new EventHandler<ActionEvent>() {
+
+            @Override
+            public void handle(ActionEvent t) {
+                fontSelectionDialog.showAndWait();
+                String selected = fontSelection.getSelectionModel().getSelectedItem();
+                fontSelection.getItems().clear();
+                fontSelection.getItems().addAll(fontSelectionDialog.getChosenFonts());
+                Collections.sort(fontSelection.getItems());
+                fontSelection.getSelectionModel().select(selected);
+            }
+        });
+        HBox fontBox = new HBox(5);
+        fontBox.getChildren().add(fontSelection);
+        fontBox.getChildren().add(fontExpandButton);
+
         text = new TextField();
         text.textProperty().addListener(new javafx.beans.value.ChangeListener<String>() {
             @Override
@@ -79,10 +124,9 @@ public class NoticeEntryDialog extends Stage {
         infinite.selectedProperty().addListener(new javafx.beans.value.ChangeListener<Boolean>() {
             @Override
             public void changed(ObservableValue<? extends Boolean> ov, Boolean t, Boolean t1) {
-                if(infinite.isSelected()) {
+                if (infinite.isSelected()) {
                     times.setDisable(true);
-                }
-                else {
+                } else {
                     times.setDisable(false);
                 }
             }
@@ -110,6 +154,18 @@ public class NoticeEntryDialog extends Stage {
         GridPane.setConstraints(infinite, 1, 2);
         mainPanel.getChildren().add(infinite);
 
+        Label noticeColorText = new Label(LabelGrabber.INSTANCE.getLabel("notice.colour.text"));
+        GridPane.setConstraints(noticeColorText, 0, 3);
+        mainPanel.getChildren().add(noticeColorText);
+        GridPane.setConstraints(colourPicker, 1, 3);
+        mainPanel.getChildren().add(colourPicker);
+
+        Label noticeFontText = new Label(LabelGrabber.INSTANCE.getLabel("notice.font.text"));
+        GridPane.setConstraints(noticeFontText, 0, 4);
+        mainPanel.getChildren().add(noticeFontText);
+        GridPane.setConstraints(fontBox, 1, 4);
+        mainPanel.getChildren().add(fontBox);
+
         HBox southPanel = new HBox();
         addButton = new Button(LabelGrabber.INSTANCE.getLabel("add.notice.button"), new ImageView(new Image("file:icons/tick.png")));
         addButton.setDefaultButton(true);
@@ -117,22 +173,22 @@ public class NoticeEntryDialog extends Stage {
             @Override
             public void handle(javafx.event.ActionEvent t) {
                 int numberTimes;
-                if(infinite.isSelected()) {
+                if (infinite.isSelected()) {
                     numberTimes = Integer.MAX_VALUE;
-                }
-                else {
+                } else {
                     numberTimes = times.getNumber();
                 }
                 boolean edit = true;
-                if(notice == null) {
+                if (notice == null) {
                     edit = false;
-                    notice = new Notice(text.getText(), numberTimes);
-                }
-                else {
+                    notice = new Notice(text.getText(), numberTimes, new SerializableColor(colourPicker.getValue()), new SerializableFont(Font.font(fontSelection.getValue(), FontWeight.NORMAL, FontPosture.REGULAR, QueleaProperties.get().getNoticeFontSize())));
+                } else {
                     notice.setText(text.getText());
                     notice.setTimes(numberTimes);
+                    notice.setColor(new SerializableColor(colourPicker.getValue()));
+                    notice.setFont(new SerializableFont(Font.font(fontSelection.getValue(), FontWeight.NORMAL, FontPosture.REGULAR, QueleaProperties.get().getNoticeFontSize())));
                 }
-                if(edit && noticeRemoved) {
+                if (edit && noticeRemoved) {
                     Dialog.buildConfirmation(LabelGrabber.INSTANCE.getLabel("notice.expired.title"), LabelGrabber.INSTANCE.getLabel("notice.expired.text")).addYesButton(new EventHandler<ActionEvent>() {
                         @Override
                         public void handle(ActionEvent t) {
@@ -143,8 +199,7 @@ public class NoticeEntryDialog extends Stage {
                             notice = null;
                         }
                     }).build().showAndWait();
-                }
-                else if(edit) {
+                } else if (edit) {
                     notice = null;
                 }
                 hide();
@@ -190,7 +245,7 @@ public class NoticeEntryDialog extends Stage {
      * @return the number of times remaining (Integer.MAX_VALUE) if infinite.
      */
     public int getTimes() {
-        if(infinite.isSelected()) {
+        if (infinite.isSelected()) {
             return Integer.MAX_VALUE;
         }
         return (int) times.getNumber();
@@ -203,19 +258,24 @@ public class NoticeEntryDialog extends Stage {
      */
     private void setNotice(Notice notice) {
         this.notice = notice;
-        if(notice == null) {
+        if (notice == null) {
             infinite.setSelected(false);
             times.setNumber(1);
             text.setText("");
+            colourPicker.setValue(Color.WHITE);
+            colourPicker.fireEvent(new ActionEvent());
+            fontSelection.setValue("Arial");
             addButton.setText(LabelGrabber.INSTANCE.getLabel("add.notice.button"));
             addButton.setDisable(true);
-        }
-        else {
+        } else {
             infinite.setSelected(notice.getTimes() == Integer.MAX_VALUE);
-            if(!infinite.isSelected()) {
+            if (!infinite.isSelected()) {
                 times.setNumber(notice.getTimes());
             }
             text.setText(notice.getText());
+            colourPicker.setValue(notice.getColor().getColor());
+            colourPicker.fireEvent(new ActionEvent());
+            fontSelection.setValue(notice.getFont().getFont().getFamily());
             addButton.setText(LabelGrabber.INSTANCE.getLabel("edit.notice.button"));
         }
     }
@@ -227,7 +287,7 @@ public class NoticeEntryDialog extends Stage {
      * @return the user-entered notice.
      */
     public static Notice getNotice(Notice existing) {
-        if(dialog == null) {
+        if (dialog == null) {
             dialog = new NoticeEntryDialog();
         }
         dialog.noticeRemoved = false;
@@ -238,7 +298,7 @@ public class NoticeEntryDialog extends Stage {
     }
 
     public static void noticesUpdated(Set<Notice> noticeSet) {
-        if(dialog.notice != null && !noticeSet.contains(dialog.notice)) {
+        if (dialog.notice != null && !noticeSet.contains(dialog.notice)) {
             dialog.setNoticeRemoved();
         }
     }

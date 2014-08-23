@@ -18,6 +18,14 @@
  */
 package org.quelea.windows.main.widgets;
 
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
@@ -35,6 +43,7 @@ import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
+import org.quelea.data.YoutubeInfo;
 import org.quelea.services.languages.LabelGrabber;
 import org.quelea.services.utils.Utils;
 
@@ -46,6 +55,11 @@ import org.quelea.services.utils.Utils;
 public class YoutubeDialog extends Stage {
 
     private TextField urlField;
+    private ImageView previewImg;
+    private Label title;
+    private ExecutorService previewExecutor = Executors.newSingleThreadExecutor();
+    private Future<YoutubeInfo> previewFuture;
+    private volatile YoutubeInfo curInfo;
 
     /**
      * Create a new youtube dialog for the user to select a youtube video url.
@@ -59,6 +73,35 @@ public class YoutubeDialog extends Stage {
         root.setPadding(new Insets(10));
         Label label = new Label(LabelGrabber.INSTANCE.getLabel("youtube.url.label") + ":");
         urlField = new TextField();
+        urlField.textProperty().addListener(new ChangeListener<String>() {
+
+            @Override
+            public void changed(ObservableValue<? extends String> ov, String t, final String t1) {
+                previewImg.setImage(null);
+                title.setText("");
+                if (previewFuture != null) {
+                    previewFuture.cancel(true);
+                }
+                previewFuture = previewExecutor.submit(new Callable<YoutubeInfo>() {
+
+                    @Override
+                    public YoutubeInfo call() throws Exception {
+                        curInfo = new YoutubeInfo(t1);
+                        curInfo.getTitle();
+                        curInfo.getPreviewImage();
+                        Platform.runLater(new Runnable() {
+
+                            @Override
+                            public void run() {
+                                previewImg.setImage(curInfo.getPreviewImage());
+                                title.setText(curInfo.getTitle());
+                            }
+                        });
+                        return curInfo;
+                    }
+                });
+            }
+        });
         root.getChildren().add(label);
         root.getChildren().add(urlField);
         final Button okButton = new Button(LabelGrabber.INSTANCE.getLabel("add.video.button"), new ImageView(new Image("file:icons/tick.png")));
@@ -69,15 +112,27 @@ public class YoutubeDialog extends Stage {
                 hide();
             }
         });
+        okButton.setDefaultButton(true);
         final Button cancelButton = new Button(LabelGrabber.INSTANCE.getLabel("cancel.button"), new ImageView(new Image("file:icons/cross.png")));
         cancelButton.setOnAction(new EventHandler<ActionEvent>() {
 
             @Override
             public void handle(ActionEvent t) {
                 urlField.clear();
+                curInfo = null;
                 hide();
             }
         });
+        HBox previewPane = new HBox(10);
+        previewImg = new ImageView();
+        previewImg.setFitWidth(240);
+        previewImg.setFitHeight(180);
+        previewImg.setPreserveRatio(false);
+        title = new Label();
+        title.setWrapText(true);
+        previewPane.getChildren().add(previewImg);
+        previewPane.getChildren().add(title);
+        root.getChildren().add(previewPane);
         HBox okPane = new HBox(10);
         okPane.setAlignment(Pos.CENTER);
         okPane.getChildren().add(okButton);
@@ -91,8 +146,8 @@ public class YoutubeDialog extends Stage {
             }
         });
         root.getChildren().add(okPane);
-        setScene(new Scene(root, 400, 100));
-        setResizable(false);
+        setScene(new Scene(root, 480, 300));
+//        setResizable(false);
     }
 
     /**
@@ -100,17 +155,15 @@ public class YoutubeDialog extends Stage {
      * <p>
      * @return the location the user entered in the dialog.
      */
-    public String getLocation() {
+    public YoutubeInfo getLocation() {
         urlField.clear();
         showAndWait();
-        String text = urlField.getText().trim();
-        if(text.isEmpty()) {
-            return null;
+        try {
+            previewFuture.get();
+        } catch (InterruptedException | ExecutionException ex) {
+            //Never mind
         }
-        if(!text.startsWith("http")) {
-            text = "http://" + text;
-        }
-        return text;
+        return curInfo;
     }
 
 }

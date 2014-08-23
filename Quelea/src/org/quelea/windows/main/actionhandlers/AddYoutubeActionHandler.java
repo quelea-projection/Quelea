@@ -20,6 +20,7 @@ package org.quelea.windows.main.actionhandlers;
 
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
+import org.quelea.data.YoutubeInfo;
 import org.quelea.data.displayable.VideoDisplayable;
 import org.quelea.windows.main.QueleaApp;
 import org.quelea.windows.main.widgets.YoutubeDialog;
@@ -34,9 +35,9 @@ public class AddYoutubeActionHandler implements EventHandler<ActionEvent> {
 
     @Override
     public void handle(ActionEvent t) {
-        String youtubeLocation = new YoutubeDialog().getLocation();
-        if(youtubeLocation != null) {
-            VideoDisplayable displayable = new VideoDisplayable(youtubeLocation);
+        YoutubeInfo youtubeInfo = new YoutubeDialog().getLocation();
+        if(youtubeInfo != null) {
+            VideoDisplayable displayable = new VideoDisplayable(youtubeInfo.getLocation(), youtubeInfo);
             QueleaApp.get().getMainWindow().getMainPanel().getSchedulePanel().getScheduleList().add(displayable);
         }
     }

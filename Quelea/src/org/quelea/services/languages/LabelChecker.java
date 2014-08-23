@@ -97,7 +97,7 @@ public class LabelChecker {
         if(!ok) {
             System.err.println("\nWARNING: Some language files have missing labels. "
                     + "This is normal for intermediate builds and development releases, "
-                    + "but for final releases this should be fixed if possible ."
+                    + "but for final releases this should be fixed if possible. "
                     + "Ideally find the original person who contributed the file "
                     + "and ask them to translate the missing labels, "
                     + "or if this isn't possible use Google Translate "

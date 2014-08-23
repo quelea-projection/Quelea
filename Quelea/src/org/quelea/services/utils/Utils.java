@@ -166,7 +166,7 @@ public final class Utils {
         }
         return false;
     }
-
+    
     /**
      * Set the button style for any buttons that are to be placed on a toolbar.
      * Change the padding and remove the default border.

@@ -80,7 +80,7 @@ public class MultimediaPanel extends AbstractPanel {
     @Override
     public void updateCanvas() {
         MultimediaDisplayable displayable = (MultimediaDisplayable) getCurrentDisplayable();
-        previewText.setText(new File(displayable.getLocation()).getName());
+        previewText.setText(displayable.getName());
         boolean playVideo = false;
         for(DisplayCanvas canvas : getCanvases()) {
             drawer.setCanvas(canvas);
