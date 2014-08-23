@@ -32,7 +32,7 @@ public class DiskDisplayable extends VideoDisplayable {
      * @param path the VLC path to the disk.
      */
     public DiskDisplayable(String path) {
-        super(path);
+        super(path, null);
     }
 
 }
