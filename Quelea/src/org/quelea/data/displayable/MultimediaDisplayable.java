@@ -7,4 +7,6 @@ package org.quelea.data.displayable;
 public interface MultimediaDisplayable extends Displayable {
 
     String getLocation();
+    
+    String getName();
 }
