@@ -101,13 +101,8 @@ public class OptionsDialog extends Stage {
         noticeTab.setContent(noticePanel);
         tabbedPane.getTabs().add(noticeTab);
 
-        
-        biblePanel = new OptionsBiblePanel(); noticePanel = new OptionsNoticePanel();
-        Tab noticeTab = new Tab();
-        noticeTab.setClosable(false);
-        noticeTab.setText(LabelGrabber.INSTANCE.getLabel("notice.options.heading"));
-        noticeTab.setContent(noticePanel);
-
+         
+biblePanel = new OptionsBiblePanel();
         Tab bibleTab = new Tab();
         bibleTab.setClosable(false);
         bibleTab.setText(LabelGrabber.INSTANCE.getLabel("bible.options.heading"));
@@ -148,7 +143,6 @@ public class OptionsDialog extends Stage {
      */
     public void callBeforeShowing() {
         generalPanel.resetLanguageChanged();
-        getGeneralPanel().resetMultimediaChanged();
         serverSettingsPanel.resetChanged();
     }
     
@@ -159,7 +153,7 @@ public class OptionsDialog extends Stage {
         if(generalPanel.hasLanguageChanged()) {
             Dialog.showInfo(LabelGrabber.INSTANCE.getLabel("language.changed"), LabelGrabber.INSTANCE.getLabel("language.changed.message"), QueleaApp.get().getMainWindow());
         }
-        if(getGeneralPanel().hasAdvancedMultimediaChanged()){
+        if(generalPanel.hasAdvancedMultimediaChanged()){
                  Dialog.showInfo(LabelGrabber.INSTANCE.getLabel("multimedia.changed"), LabelGrabber.INSTANCE.getLabel("multimedia.changed.message"), QueleaApp.get().getMainWindow());
 
         }
@@ -178,6 +172,8 @@ public class OptionsDialog extends Stage {
      */
     public OptionsTextOnlyViewPanel getTextOnlyViewPanel(){
         return textOnlyViewPanel;
+    }
+    /** 
      * Get the OK button used to affirm the change in options.
      * @return the OK button.
      */

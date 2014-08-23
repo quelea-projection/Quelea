@@ -1039,7 +1039,7 @@ public final class Utils {
                     videoPreviewCache.put(videoFile, ret);
                     return ret;
                 } catch (Exception ex) {
-                    LOGGER.log(Level.INFO, "Couldn't get video preview image for " + videoFile.getAbsolutePath(), ex);
+                    LOGGER.log(Level.INFO, "Couldn't get video preview image for " + videoFile.getAbsolutePath(), "Codec issues?");
                     return new Image("file:icons/vid preview.png");
                 }
             } else {
