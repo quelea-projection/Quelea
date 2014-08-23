@@ -19,9 +19,12 @@
 package org.quelea.windows.main.widgets;
 
 import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -76,7 +79,7 @@ public class YoutubeDialog extends Stage {
             public void changed(ObservableValue<? extends String> ov, String t, final String t1) {
                 previewImg.setImage(null);
                 title.setText("");
-                if(previewFuture!=null) {
+                if (previewFuture != null) {
                     previewFuture.cancel(true);
                 }
                 previewFuture = previewExecutor.submit(new Callable<YoutubeInfo>() {
@@ -116,6 +119,7 @@ public class YoutubeDialog extends Stage {
             @Override
             public void handle(ActionEvent t) {
                 urlField.clear();
+                curInfo = null;
                 hide();
             }
         });
@@ -154,13 +158,11 @@ public class YoutubeDialog extends Stage {
     public YoutubeInfo getLocation() {
         urlField.clear();
         showAndWait();
-//        String text = urlField.getText().trim();
-//        if(text.isEmpty()) {
-//            return null;
-//        }
-//        if(!text.startsWith("http")) {
-//            text = "http://" + text;
-//        }
+        try {
+            previewFuture.get();
+        } catch (InterruptedException | ExecutionException ex) {
+            //Never mind
+        }
         return curInfo;
     }
 
