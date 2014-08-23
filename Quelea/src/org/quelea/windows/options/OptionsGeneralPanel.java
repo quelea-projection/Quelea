@@ -74,6 +74,7 @@ public class OptionsGeneralPanel extends GridPane implements PropertyPanel {
     private final ComboBox smallTextPositionCombo;
     private final Slider fadeSpeedSlider;
     private final CheckBox embedMediaInScheduleCheckBox;
+    private final CheckBox copyMediaLoopResources;
 
     /**
      * Create a new general panel.
@@ -98,6 +99,15 @@ public class OptionsGeneralPanel extends GridPane implements PropertyPanel {
         startupLabel.setLabelFor(embedMediaInScheduleCheckBox);
         GridPane.setConstraints(embedMediaInScheduleCheckBox, 2, rows);
         getChildren().add(embedMediaInScheduleCheckBox);
+        rows++;
+        
+         Label mediaLoopResourceLabel = new Label(LabelGrabber.INSTANCE.getLabel("mediaLoop.copyResources"));
+        GridPane.setConstraints(mediaLoopResourceLabel, 1, rows);
+        getChildren().add(mediaLoopResourceLabel);
+        copyMediaLoopResources = new CheckBox();
+        startupLabel.setLabelFor(copyMediaLoopResources);
+        GridPane.setConstraints(copyMediaLoopResources, 2, rows);
+        getChildren().add(copyMediaLoopResources);
         rows++;
 
         Label useOOLabel = new Label(LabelGrabber.INSTANCE.getLabel("use.oo.label"));
@@ -468,6 +478,7 @@ public class OptionsGeneralPanel extends GridPane implements PropertyPanel {
         maximumFontSizeSlider.setValue(props.getMaxFontSize());
         fadeSpeedSlider.setValue(props.getFadeDuration());
         embedMediaInScheduleCheckBox.setSelected(props.getEmbedMediaInScheduleFile());
+        copyMediaLoopResources.setSelected(props.getCopyMediaLoopResources());
     }
 
     /**
@@ -523,6 +534,7 @@ public class OptionsGeneralPanel extends GridPane implements PropertyPanel {
         double fadeDuration = fadeSpeedSlider.getValue();
         props.setFadeDuration(fadeDuration);
         props.setEmbredMediaInScheduleFile(embedMediaInScheduleCheckBox.isSelected());
+        props.setCopyMediaLoopResources(copyMediaLoopResources.isSelected());
         //Initialise presentation
         if (!OOPresentation.isInit()) {
             OOUtils.attemptInit();

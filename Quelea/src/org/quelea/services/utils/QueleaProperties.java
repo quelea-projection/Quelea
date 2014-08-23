@@ -168,7 +168,7 @@ public final class QueleaProperties extends Properties {
         setProperty("scene.info", info.toString());
         write();
     }
-    
+
     /**
      * Get a list of user chosen fonts to appear in the theme dialog.
      * <p>
@@ -246,16 +246,39 @@ public final class QueleaProperties extends Properties {
         setProperty("vlc.advanced", Boolean.toString(val));
     }
 
-    
+    /**
+     * Gets a boolean that determines whether embedding media in schedule should
+     * happen
+     *
+     * @return true if should embed, false otherwise
+     */
     public boolean getEmbedMediaInScheduleFile() {
         return Boolean.parseBoolean(getProperty("schedule.embed", "false"));
     }
 
- 
+    /**
+     * Sets a boolean that determines whether embedding media in schedule should
+     * happen
+     *
+     * @param val true if should embed, false otherwise
+     */
     public void setEmbredMediaInScheduleFile(boolean val) {
         setProperty("schedule.embed", Boolean.toString(val));
     }
-
+    /**
+     * Gets whether media loops should copy media to .quelea folder.
+     * @return true if it should, false otherwise
+     */
+    public boolean getCopyMediaLoopResources(){
+        return Boolean.parseBoolean(getProperty("mediaLoop.copy.media", "false"));
+    }
+    /**
+     * Sets whether media loops should copy media to .quelea folder.
+     * @param val true if it should, false otherwise
+     */
+    public void setCopyMediaLoopResources(boolean val){
+        setProperty("mediaLoop.copy.media", Boolean.toString(val));
+    }
     /**
      * Determine if we should show verse numbers for bible passages.
      * <p>
@@ -515,8 +538,8 @@ public final class QueleaProperties extends Properties {
         setProperty("stage.use.preview", Boolean.toString(showItem));
         write();
     }
-    
-        /**
+
+    /**
      * Get whether we should show text as big as possible on stage display
      * <p/>
      * @return true if text should be shown as big as possible, false otherwise.
@@ -528,14 +551,15 @@ public final class QueleaProperties extends Properties {
     /**
      * Set whether we should show text as big as possible on stage display
      * <p/>
-     * @param useUnuniformText true if text should be shown as big as possible, false otherwise.
+     * @param useUnuniformText true if text should be shown as big as possible,
+     * false otherwise.
      */
     public void setStageUseUnuniformText(boolean useUnuniformText) {
         setProperty("stage.use.ununiform.text", Boolean.toString(useUnuniformText));
         write();
     }
-    
-            /**
+
+    /**
      * Get whether we should draw images on the stage display
      * <p/>
      * @return true if images should be drawn, false otherwise.
@@ -553,7 +577,7 @@ public final class QueleaProperties extends Properties {
         setProperty("stage.draw.images", Boolean.toString(drawImages));
         write();
     }
-    
+
     /**
      * Set whether the text only display uses the theme horizontal alignment.
      *
@@ -838,19 +862,17 @@ public final class QueleaProperties extends Properties {
     public File getImageDir() {
         return new File(getQueleaUserHome(), "img");
     }
-    
-       /**
+
+    /**
      * Get the directory used for storing media loop media.
      * <p/>
      * @return the media loop directory
      */
     public File getMediaLoopDir() {
-       File ret = new File(getQueleaUserHome(), "mediaLoop");
+        File ret = new File(getQueleaUserHome(), "mediaLoop");
 
-          ret.mkdirs(); 
+        ret.mkdirs();
 
-       
-        
         return ret;
     }
 
@@ -989,7 +1011,6 @@ public final class QueleaProperties extends Properties {
         setProperty("max.chars", Integer.toString(maxChars));
         write();
     }
-
 
     /**
      * Get the custom projector co-ordinates.
@@ -1736,15 +1757,15 @@ public final class QueleaProperties extends Properties {
 
     /**
      * Get the maximum number of characters allowed on any one line of bible
-     * text. 
+     * text.
      * <p/>
-     * @return the maximum number of characters allowed on any one line of
-     * bible text.
+     * @return the maximum number of characters allowed on any one line of bible
+     * text.
      */
     public int getMaxBibleChars() {
         return Integer.parseInt(getProperty("max.bible.chars", "80"));
     }
-    
+
     /**
      * Set the max bible chars value.
      * <p/>
@@ -1777,33 +1798,40 @@ public final class QueleaProperties extends Properties {
     public void setAdvanceScheduleOnGoLive(boolean advanceOnGoLive) {
         setProperty("get.advance.schedule.on.go.live", Boolean.toString(advanceOnGoLive));
     }
+
     /**
      * Sets the last used directory that opened or saved a schedule
+     *
      * @param lastDir the path to the directory
      */
-    public void setLastUsedScheduleDir(String lastDir){
+    public void setLastUsedScheduleDir(String lastDir) {
         setProperty("last.used.schedule.directory", lastDir);
-        }
+    }
+
     /**
      * Gets the last used directory that opened or saved a schedule
+     *
      * @return the path to the directory, empty string if not found
      */
-    public String getLastUsedScheduleDir(){
+    public String getLastUsedScheduleDir() {
         return getProperty("last.used.schedule.directory", System.getProperty("user.home"));
     }
-    
-        /**
+
+    /**
      * Sets the last used directory that opened or saved media
+     *
      * @param lastDir the path to the directory
      */
-    public void setLastUsedMediaDir(String lastDir){
+    public void setLastUsedMediaDir(String lastDir) {
         setProperty("last.used.media.directory", lastDir);
-        }
+    }
+
     /**
      * Gets the last used directory that opened or saved media
+     *
      * @return the path to the directory, empty string if not found
      */
-    public String getLastUsedMediaDir(){
+    public String getLastUsedMediaDir() {
         return getProperty("last.used.media.directory", System.getProperty("user.home"));
     }
 }

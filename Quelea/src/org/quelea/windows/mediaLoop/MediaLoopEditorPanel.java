@@ -84,6 +84,7 @@ public class MediaLoopEditorPanel extends BorderPane implements SlideChangedList
     private int currentSlide = 0;
     private String newName = "";
     private File fExists;
+    private boolean useExisting = false;
 
     /**
      * Create and initialise the mediaLoop panel.
@@ -253,47 +254,54 @@ public class MediaLoopEditorPanel extends BorderPane implements SlideChangedList
      */
     private void handleMediaFile(File file) {
         final Path sourceFile = file.getAbsoluteFile().toPath();
-        File finalPath = null;
+        File finalPath = sourceFile.toFile();
         int time = 10;
-        final File directory = new File(QueleaProperties.get().getMediaLoopDir() + "/");
-        directory.mkdirs();
-        try {
-            fExists = new File(directory.getPath(), file.getName());
+        if (QueleaProperties.get().getCopyMediaLoopResources()) {
 
-            newName = file.getName();
-            while (fExists.exists()) {
-                Dialog.buildConfirmation(LabelGrabber.INSTANCE.getLabel("mediaLoop.fileExists.title"),
-                        LabelGrabber.INSTANCE.getLabel("mediaLoop.fileExists.text"), QueleaApp.get().getMainWindow().getMediaLoopCreatorWindow())
-                        .addLabelledButton(LabelGrabber.INSTANCE.getLabel("mediaLoop.fileExists.specifyNewName"), new EventHandler<ActionEvent>() {
-                            @Override
-                            public void handle(ActionEvent t) {
-                                final Builder dialog = Dialog.buildInputDialog(LabelGrabber.INSTANCE.getLabel("mediaLoop.rename.title"),
-                                        Utils.getFileNameWithoutExtension(newName),
-                                        QueleaApp.get().getMainWindow().getMediaLoopCreatorWindow());
-                                dialog.addLabelledButton(LabelGrabber.INSTANCE.getLabel("ok.button"), new EventHandler<ActionEvent>() {
-                                    @Override
-                                    public void handle(ActionEvent t) {
-                                        newName = dialog.getInput() + newName.substring(Utils.getFileNameWithoutExtension(newName).length());
-                                        fExists = new File(directory.getPath(), newName);
-                                    }
-                                });
-                                dialog.build().showAndWait();
+            final File directory = new File(QueleaProperties.get().getMediaLoopDir() + "/");
+            directory.mkdirs();
+            try {
+                fExists = new File(directory.getPath(), file.getName());
+                useExisting = false;
+                newName = file.getName();
+                while (fExists.exists() && !useExisting) {
+                    Dialog.buildConfirmation(LabelGrabber.INSTANCE.getLabel("mediaLoop.fileExists.title"),
+                            LabelGrabber.INSTANCE.getLabel("mediaLoop.fileExists.text"), QueleaApp.get().getMainWindow().getMediaLoopCreatorWindow())
+                            .addLabelledButton(LabelGrabber.INSTANCE.getLabel("mediaLoop.fileExists.specifyNewName"), new EventHandler<ActionEvent>() {
+                                @Override
+                                public void handle(ActionEvent t) {
+                                    final Builder dialog = Dialog.buildInputDialog(LabelGrabber.INSTANCE.getLabel("mediaLoop.rename.title"),
+                                            Utils.getFileNameWithoutExtension(newName),
+                                            QueleaApp.get().getMainWindow().getMediaLoopCreatorWindow());
+                                    dialog.addLabelledButton(LabelGrabber.INSTANCE.getLabel("ok.button"), new EventHandler<ActionEvent>() {
+                                        @Override
+                                        public void handle(ActionEvent t) {
+                                            newName = dialog.getInput() + newName.substring(Utils.getFileNameWithoutExtension(newName).length());
+                                            fExists = new File(directory.getPath(), newName);
+                                            useExisting = false;
+                                        }
+                                    });
+                                    dialog.build().showAndWait();
 
-                            }
-                        }).addLabelledButton(LabelGrabber.INSTANCE.getLabel("mediaLoop.fileExists.overwrite"), new EventHandler<ActionEvent>() {
-                            @Override
-                            public void handle(ActionEvent t) {
-                                fExists.delete();
-                            }
-                        })
-                        .build()
-                        .showAndWait();
+                                }
+                            }).addLabelledButton(LabelGrabber.INSTANCE.getLabel("mediaLoop.fileExists.useExisting"), new EventHandler<ActionEvent>() {
+                                @Override
+                                public void handle(ActionEvent t) {
+                                    useExisting = true;
+                                }
+                            })
+                            .build()
+                            .showAndWait();
 
+                }
+                if (!useExisting) {
+                    Files.copy(sourceFile, Paths.get(directory.getPath(), newName), StandardCopyOption.COPY_ATTRIBUTES);
+                }
+                finalPath = new File(directory.getPath(), newName);
+
+            } catch (Exception ex) {
+                Logger.getLogger(MediaLoopEditorPanel.class.getName()).log(Level.SEVERE, null, ex);
             }
-            Files.copy(sourceFile, Paths.get(directory.getPath(), newName), StandardCopyOption.COPY_ATTRIBUTES);
-            finalPath = new File(directory.getPath(), newName);
-        } catch (Exception ex) {
-            Logger.getLogger(MediaLoopEditorPanel.class.getName()).log(Level.SEVERE, null, ex);
         }
         try {
             time = defaultAdvanceTimeField.getText().trim().isEmpty() ? 10 : Integer.parseInt(defaultAdvanceTimeField.getText());
