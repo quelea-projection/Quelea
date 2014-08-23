@@ -24,6 +24,7 @@ import java.util.Collection;
 import java.util.List;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import org.quelea.data.YoutubeInfo;
 import org.quelea.services.utils.Utils;
 import org.w3c.dom.Node;
 
@@ -35,6 +36,7 @@ import org.w3c.dom.Node;
 public class VideoDisplayable implements MultimediaDisplayable, Serializable {
 
     private final String location;
+    private YoutubeInfo youtubeinfo;
 
     /**
      * Create a new video displayable.
@@ -50,8 +52,12 @@ public class VideoDisplayable implements MultimediaDisplayable, Serializable {
      * <p>
      * @param location the location of the displayable.
      */
-    public VideoDisplayable(String location) {
+    public VideoDisplayable(String location, YoutubeInfo youtubeinfo) {
         this.location = location;
+        this.youtubeinfo = youtubeinfo;
+        if (location.toLowerCase().startsWith("http") && youtubeinfo == null) {
+            this.youtubeinfo = new YoutubeInfo(location);
+        }
     }
 
     /**
@@ -62,6 +68,24 @@ public class VideoDisplayable implements MultimediaDisplayable, Serializable {
     @Override
     public String getLocation() {
         return location;
+    }
+
+    /**
+     * Get the displayable name.
+     * <p>
+     * @return the displayable name.
+     */
+    @Override
+    public String getName() {
+        if (youtubeinfo != null && youtubeinfo.getTitle() != null && !youtubeinfo.getTitle().isEmpty()) {
+            return youtubeinfo.getTitle();
+        } else {
+            return new File(location).getName();
+        }
+    }
+
+    public YoutubeInfo getYoutubeInfo() {
+        return youtubeinfo;
     }
 
     /**
@@ -106,7 +130,7 @@ public class VideoDisplayable implements MultimediaDisplayable, Serializable {
      */
     @Override
     public String getPreviewText() {
-        return new File(location).getName();
+        return getName();
     }
 
     /**
@@ -117,7 +141,7 @@ public class VideoDisplayable implements MultimediaDisplayable, Serializable {
     @Override
     public Collection<File> getResources() {
         List<File> files = new ArrayList<>();
-        if(!location.startsWith("http")) {
+        if (!location.startsWith("http")) {
             files.add(new File(location));
         }
         return files;
