@@ -9,7 +9,7 @@
   </fo:layout-master-set>
   <fo:page-sequence master-reference="my-page">
     <fo:flow flow-name="xsl-region-body">
-      <fo:block font-size="18pt" font-weight="bold" space-after="12pt">Order of service</fo:block>
+      <fo:block font-size="18pt" font-weight="bold" space-after="12pt"><xsl:value-of select="title"/></fo:block>
       <xsl:for-each select="song">
 	      <fo:block space-after="6pt"><xsl:value-of select="position()"/>. <xsl:value-of select="title"/> - <xsl:value-of select="author"/></fo:block>
       </xsl:for-each>
