@@ -84,8 +84,8 @@ public class VLCWindowAdvancedEmbed extends VLCWindow {
     private VLCWindowAdvancedEmbed() {
 
         show = true;
-        player = new RemotePlayer("log.txt");
-        player2 = new RemotePlayer("log2.txt");
+        player = new RemotePlayer();
+        player2 = new RemotePlayer();
         player2.setOpacity(0);
         player2.setVolume(0);
         player.setOpacity(0);

@@ -26,6 +26,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
+import java.util.Scanner;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -49,7 +50,7 @@ public class RemotePlayer {
      * @param logFileLocation The error log from the remote player will get
      * output to this log file. It creates a new file each run.
      */
-    public RemotePlayer(String logFileLocation) {
+    public RemotePlayer() {
 
         ProcessBuilder pb = new ProcessBuilder();
         String fullClassName = OOPPlayer.class.getName();
@@ -60,12 +61,21 @@ public class RemotePlayer {
         pb.command("java", "-cp", pathToLib + pathSeparator + pathToClassFiles, fullClassName, "myArg");
         //debug log for started process-- maybe it should be read and be added to.
         //as of now, the file gets replaced each run.
-        File log = new File(logFileLocation);
         try {
 
-            pb.redirectError(log);
+            
+            final Process p = pb.start();
+            Thread t = new Thread(new Runnable() {
 
-            Process p = pb.start();
+                @Override
+                public void run() {
+                    Scanner s = new Scanner(p.getErrorStream());
+                    while (s.hasNext()){
+                        System.err.println(s.nextLine());
+                    }
+                }
+            });
+            t.start();
             in = new BufferedReader(new InputStreamReader(p.getInputStream()));
             out = new BufferedWriter(new OutputStreamWriter(p.getOutputStream()));
             playing = false;
@@ -196,6 +206,7 @@ public class RemotePlayer {
 
     /**
      * Gets the opacity of the video window
+     *
      * @return the opacity of the remote player
      */
     public float getOpacity() {
@@ -269,11 +280,11 @@ public class RemotePlayer {
     public void toBack() {
         writeOut("toBack");
     }
-    
+
     /**
      * Sets the video window to the front-most window
      */
-    public void toFront(){
+    public void toFront() {
         writeOut("toFront");
     }
 
