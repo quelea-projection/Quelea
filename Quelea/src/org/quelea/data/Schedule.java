@@ -49,6 +49,7 @@ import org.quelea.data.displayable.MediaLoopDisplayable;
 import org.quelea.data.displayable.PresentationDisplayable;
 import org.quelea.data.displayable.SongDisplayable;
 import org.quelea.data.displayable.VideoDisplayable;
+import org.quelea.services.languages.LabelGrabber;
 import org.quelea.services.utils.LoggerUtils;
 import org.quelea.services.utils.QueleaProperties;
 import org.w3c.dom.Document;
@@ -233,6 +234,24 @@ public class Schedule implements Iterable<Displayable> {
         StringBuilder xml = new StringBuilder();
         xml.append("<schedule>");
         for (Displayable displayable : displayables) {
+            xml.append(displayable.getXML());
+        }
+        xml.append("</schedule>");
+        return xml.toString();
+    }
+
+    /**
+     * Get this schedule as XML.
+     *
+     * @return XML describing this schedule.
+     */
+    public String getPrintXML() {
+        StringBuilder xml = new StringBuilder();
+        xml.append("<schedule>");
+        xml.append("<title>");
+        xml.append(LabelGrabber.INSTANCE.getLabel("order.service.heading"));
+        xml.append("</title>");
+        for(Displayable displayable : displayables) {
             xml.append(displayable.getXML());
         }
         xml.append("</schedule>");

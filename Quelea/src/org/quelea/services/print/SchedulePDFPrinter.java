@@ -29,7 +29,7 @@ import org.quelea.data.Schedule;
 public class SchedulePDFPrinter extends PDFPrinter {
     
     public void print(Schedule schedule, File pdfFile) throws IOException {
-        print(schedule.getXML(), new File("scheduleformat.xsl"), pdfFile);
+        print(schedule.getPrintXML(), new File("scheduleformat.xsl"), pdfFile);
     }
 
 }
