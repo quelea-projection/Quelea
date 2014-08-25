@@ -45,6 +45,9 @@ public abstract class ClearingEventHandler implements EventHandler<ActionEvent> 
         if(mainpanel.getSchedulePanel().getScheduleList().isEmpty()) {
             return true;
         }
+        if(!mainpanel.getSchedulePanel().getScheduleList().getSchedule().isModified()){
+            return true;
+        }
         yes = false;
         final Dialog dialog = Dialog.buildConfirmation(LabelGrabber.INSTANCE.getLabel("confirm.label"), LabelGrabber.INSTANCE.getLabel("schedule.clear.text")).addYesButton(new EventHandler<ActionEvent>() {
 
