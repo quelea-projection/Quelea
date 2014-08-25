@@ -170,6 +170,78 @@ public final class QueleaProperties extends Properties {
     }
 
     /**
+     * Sets the ratio information to determine the schedule/library split panel
+     * so it can be stored for the next run
+     *
+     * @param ratio the ratio between the dividers.
+     */
+    public void setSchedLibSplit(double ratio) {
+        setProperty("schedLibSplit.info", ratio + "");
+        write();
+    }
+
+    /**
+     * Sets the ratio information to determine the preview/live split panel so
+     * it can be stored for the next run
+     *
+     * @param ratio the ratio between the dividers.
+     */
+    public void setPrevLiveSplit(double ratio) {
+        setProperty("prevLiveSplit.info", ratio + "");
+        write();
+    }
+
+    /**
+     * Sets the ratio information to determine the main split panel so it can be
+     * stored for the next run
+     *
+     * @param ratio the ratio between the dividers.
+     */
+    public void setMainSplit(double ratio) {
+        setProperty("mainSplit.info", ratio + "");
+        write();
+    }
+    
+   /**
+     * Sets the ratio information to determine the song panel split position
+     * @param ratio the ratio between the dividers
+     */
+    public void setSongPanelSplit(double ratio){
+        setProperty("songPanelSplit.info", ratio + "");
+        write();
+    }
+
+
+    /**
+     * Gets the ratio information to determine the schedule/library split panel.
+     * @return the ratio between the dividers
+     */
+    public double getSchedLibSplit() {
+        return Double.parseDouble(getProperty("schedLibSplit.info", ".5"));
+    }
+    /**
+     * Gets the ratio information to determine the preview/live split panel.
+     * @return the ratio between the dividers
+     */
+    public double getPrevLiveSplit() {
+       return Double.parseDouble(getProperty("prevLiveSplit.info", ".5"));
+    }
+    /**
+     * Gets the ratio information to determine the main split panel.
+     * @return the ratio between the dividers
+     */
+    public double getMainSplit() {
+         return Double.parseDouble(getProperty("mainSplit.info", ".5"));
+    }
+    /**
+     * Gets the ratio information to determine the song panel split position
+     * @return the ratio between the dividers
+     */
+    public double getSongPanelSplit(){
+        return Double.parseDouble(getProperty("songPanelSplit.info", ".5"));
+    }
+
+    /**
      * Get a list of user chosen fonts to appear in the theme dialog.
      * <p>
      * @return a list of user chosen fonts to appear in the theme dialog.
@@ -265,20 +337,25 @@ public final class QueleaProperties extends Properties {
     public void setEmbredMediaInScheduleFile(boolean val) {
         setProperty("schedule.embed", Boolean.toString(val));
     }
+
     /**
      * Gets whether media loops should copy media to .quelea folder.
+     *
      * @return true if it should, false otherwise
      */
-    public boolean getCopyMediaLoopResources(){
+    public boolean getCopyMediaLoopResources() {
         return Boolean.parseBoolean(getProperty("mediaLoop.copy.media", "false"));
     }
+
     /**
      * Sets whether media loops should copy media to .quelea folder.
+     *
      * @param val true if it should, false otherwise
      */
-    public void setCopyMediaLoopResources(boolean val){
+    public void setCopyMediaLoopResources(boolean val) {
         setProperty("mediaLoop.copy.media", Boolean.toString(val));
     }
+
     /**
      * Determine if we should show verse numbers for bible passages.
      * <p>
