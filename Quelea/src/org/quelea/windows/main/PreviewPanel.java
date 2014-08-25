@@ -69,8 +69,12 @@ public class PreviewPanel extends LivePreviewPanel {
 //                QueleaApp.get().getMainWindow().getMainPanel().getLivePanel().removeDisplayable();
 
                 QueleaApp.get().getMainWindow().getMainPanel().getLivePanel().getMediaLoopPanel().stopLoop();
-
-                QueleaApp.get().getMainWindow().getMainPanel().getLivePanel().setDisplayable(getDisplayable(), ((ContainedPanel) getCurrentPane()).getCurrentIndex());
+                Displayable d = getDisplayable();
+                int index = ((ContainedPanel) getCurrentPane()).getCurrentIndex();
+                if (QueleaProperties.get().getAdvanceScheduleOnGoLive()) {
+                    QueleaApp.get().getMainWindow().getMainPanel().getSchedulePanel().getScheduleList().getSelectionModel().selectNext();
+                }
+                QueleaApp.get().getMainWindow().getMainPanel().getLivePanel().setDisplayable(d, index);
 
                 Platform.runLater(new Runnable() {
 
@@ -84,10 +88,6 @@ public class PreviewPanel extends LivePreviewPanel {
                 });
 
                 QueleaApp.get().getMainWindow().getMainPanel().getLivePanel().getCurrentPane().requestFocus();
-
-                if (QueleaProperties.get().getAdvanceScheduleOnGoLive()) {
-                    QueleaApp.get().getMainWindow().getMainPanel().getSchedulePanel().getScheduleList().getSelectionModel().selectNext();
-                }
 
             }
         });
