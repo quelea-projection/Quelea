@@ -36,6 +36,7 @@ import javafx.scene.input.TransferMode;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
+import org.quelea.data.displayable.MediaLoopDisplayable;
 import org.quelea.data.mediaLoop.MediaFile;
 import org.quelea.data.powerpoint.SlideChangedListener;
 import org.quelea.services.languages.LabelGrabber;
@@ -294,7 +295,7 @@ public class MediaLoopPreview extends ScrollPane {
         MediaFile ret = null;
         if (!(getSelectedIndex() + 1 >= slides.size())) {
             ret = slides.get(getSelectedIndex() + 1);
-        }else{
+        } else {
             ret = slides.get(0);
         }
         return ret;
@@ -495,17 +496,20 @@ public class MediaLoopPreview extends ScrollPane {
 
                         }
                         if (!(loopThread.isInterrupted())) {
+                            if (!(QueleaApp.get().getMainWindow().getMainPanel().getLivePanel().getDisplayable() instanceof MediaLoopDisplayable)) {
+                                stopLoop();
+                            } else {
+                                Utils.fxRunAndWait(new Runnable() {
 
-                            Utils.fxRunAndWait(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        QueleaApp.get().getMainWindow().getMainPanel().getLivePanel().getSecondsLeftLabel().setText(
+                                                LabelGrabber.INSTANCE.getLabel("mediaLoop.changing.text"));
+                                        advanceSlide();
 
-                                @Override
-                                public void run() {
-                                    QueleaApp.get().getMainWindow().getMainPanel().getLivePanel().getSecondsLeftLabel().setText(
-                                            LabelGrabber.INSTANCE.getLabel("mediaLoop.changing.text"));
-                                    advanceSlide();
-
-                                }
-                            });
+                                    }
+                                });
+                            }
                         }
 
                     }
