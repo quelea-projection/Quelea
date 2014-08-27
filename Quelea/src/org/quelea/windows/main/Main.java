@@ -47,6 +47,7 @@ import org.quelea.services.utils.UpdateChecker;
 import org.quelea.services.utils.UserFileChecker;
 import org.quelea.services.utils.Utils;
 import org.quelea.windows.multimedia.VLCWindow;
+import org.quelea.windows.splash.SplashOOP;
 import org.quelea.windows.splash.SplashStage;
 import uk.co.caprica.vlcj.discovery.NativeDiscovery;
 
@@ -78,8 +79,7 @@ public final class Main extends Application {
     public void start(Stage stage) {
         setupExceptionHandling();
         setupTranslator();
-        final SplashStage splashWindow = new SplashStage();
-        splashWindow.show();
+        SplashOOP.showStage();
 
         new Thread() {
             @Override
@@ -157,7 +157,7 @@ public final class Main extends Application {
                         LOGGER.log(Level.INFO, "Remote control disabled");
                     }
 
-                    Platform.runLater(new Runnable() {
+                    Utils.fxRunAndWait(new Runnable() {
 
                         @Override
                         public void run() {
@@ -279,7 +279,7 @@ public final class Main extends Application {
                                 QueleaApp.get().openSchedule(new File(schedulePath));
                             }
                             mainWindow.show();
-                            splashWindow.hide();
+                           SplashOOP.hideStage();
                             showMonitorWarning(monitorNumber);
                             if (VLC_OK && VLC_INIT) {
                                 VLCWindow.INSTANCE.refreshPosition();
