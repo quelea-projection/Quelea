@@ -233,19 +233,19 @@ public class PresentationPreview extends ScrollPane {
     }
 
     private void ensureVisible(int index) {
-        if (index < 1) {
+        if (index < 0) {
             return;
         }
-        Bounds slideBounds = thumbnails.get(index - 1).getBoundsInParent();
+        Bounds slideBounds = thumbnails.get(index).getBoundsInParent();
         Bounds scrollBounds = new BoundingBox(0, getScrollFraction() * (flow.getHeight() - getHeight()), getWidth(), getHeight());
         if (!scrollBounds.contains(slideBounds)) {
             while (slideBounds.getMinY() < scrollBounds.getMinY() && getVvalue() > getVmin()) {
-                slideBounds = thumbnails.get(index - 1).getBoundsInParent();
+                slideBounds = thumbnails.get(index).getBoundsInParent();
                 scrollBounds = new BoundingBox(0, getScrollFraction() * (flow.getHeight() - getHeight()), getWidth(), getHeight());
                 setVvalue(getVvalue() - 0.01);
             }
             while (slideBounds.getMaxY() > scrollBounds.getMaxY() && getVvalue() < getVmax()) {
-                slideBounds = thumbnails.get(index - 1).getBoundsInParent();
+                slideBounds = thumbnails.get(index).getBoundsInParent();
                 scrollBounds = new BoundingBox(0, getScrollFraction() * (flow.getHeight() - getHeight()), getWidth(), getHeight());
                 setVvalue(getVvalue() + 0.01);
             }

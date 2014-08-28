@@ -29,6 +29,7 @@ import java.io.OutputStreamWriter;
 import java.util.Scanner;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.quelea.services.utils.Utils;
 
 /**
  * Controls an OutOfProcessPlayer via input / output process streams.
@@ -42,13 +43,11 @@ public class RemotePlayer {
     private boolean paused;
     private BufferedReader in;
     private BufferedWriter out;
+    private long tempLength = 0;
 
     /**
      * Creates a new remote player. This will create an out of process player
      * using the OOPPlayer class.
-     *
-     * @param logFileLocation The error log from the remote player will get
-     * output to this log file. It creates a new file each run.
      */
     public RemotePlayer() {
 
@@ -63,7 +62,6 @@ public class RemotePlayer {
         //as of now, the file gets replaced each run.
         try {
 
-            
             final Process p = pb.start();
             Thread t = new Thread(new Runnable() {
 
@@ -97,8 +95,14 @@ public class RemotePlayer {
             throw new IllegalArgumentException("This remote player has been closed!");
         }
         try {
+            if (command.contains("?")) {
+
+            }
             out.write(command + "\n");
             out.flush();
+            if (command.contains("?")) {
+
+            }
         } catch (IOException ex) {
             throw new RuntimeException("Couldn't perform operation", ex);
         }
@@ -113,7 +117,8 @@ public class RemotePlayer {
      */
     private String getInput() {
         try {
-            return in.readLine();
+            String input = in.readLine();
+            return input;
         } catch (IOException ex) {
             throw new RuntimeException("Couldn't perform operation", ex);
         }
@@ -132,9 +137,25 @@ public class RemotePlayer {
      * Play the already loaded video in the out of process player.
      */
     public void play() {
+        tempLength = 0;
         writeOut("play");
         playing = true;
         paused = false;
+        Thread t = new Thread(new Runnable() {
+
+            @Override
+            public void run() {
+                while (tempLength == 0) {
+                    writeOut("length?");
+                    tempLength = (long)Double.parseDouble(getInput());
+                    if(tempLength == 0){
+                        Utils.sleep(10);
+                    }
+                }
+            }
+        });
+        t.start();
+
     }
 
     /**
@@ -200,8 +221,17 @@ public class RemotePlayer {
      * @return The length of the video in milliseconds
      */
     public long getLength() {
-        writeOut("length?");
-        return Long.parseLong(getInput());
+        return tempLength;
+    }
+
+    /**
+     * Gets the hue of the playing video
+     *
+     * @return the hue of the video
+     */
+    public double getHue() {
+        writeOut("hue?");
+        return Double.parseDouble(getInput());
     }
 
     /**

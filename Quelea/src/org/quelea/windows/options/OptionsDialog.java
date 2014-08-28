@@ -143,6 +143,7 @@ biblePanel = new OptionsBiblePanel();
      */
     public void callBeforeShowing() {
         generalPanel.resetLanguageChanged();
+        generalPanel.resetMultimediaChanged();
         serverSettingsPanel.resetChanged();
     }
     

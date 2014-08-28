@@ -130,7 +130,12 @@ public class LyricDrawer extends DisplayableDrawer {
         }
         if (textOnlyView) {
             if (!QueleaProperties.get().getTextOnlyUseThemeFont()) {
-                font = Font.font(QueleaProperties.get().getTextOnlyTextFont(), QueleaProperties.get().getMaxFontSize());
+                font = Font.font(QueleaProperties.get().getTextOnlyTextFont(), QueleaProperties.get().getTextOnlyMaxFontSize());
+            }else{
+               font = Font.font(theme.getFont().getFamily(),
+                theme.isBold() ? FontWeight.BOLD : FontWeight.NORMAL,
+                theme.isItalic() ? FontPosture.ITALIC : FontPosture.REGULAR,
+                QueleaProperties.get().getTextOnlyMaxFontSize()); 
             }
 
         }
@@ -792,6 +797,17 @@ public class LyricDrawer extends DisplayableDrawer {
                 theme.isBold() ? FontWeight.BOLD : FontWeight.NORMAL,
                 theme.isItalic() ? FontPosture.ITALIC : FontPosture.REGULAR,
                 QueleaProperties.get().getMaxFontSize());
+        if (textOnlyView) {
+            if (!QueleaProperties.get().getTextOnlyUseThemeFont()) {
+                font = Font.font(QueleaProperties.get().getTextOnlyTextFont(), QueleaProperties.get().getTextOnlyMaxFontSize());
+            }else{
+               font = Font.font(theme.getFont().getFamily(),
+                theme.isBold() ? FontWeight.BOLD : FontWeight.NORMAL,
+                theme.isItalic() ? FontPosture.ITALIC : FontPosture.REGULAR,
+                QueleaProperties.get().getTextOnlyMaxFontSize()); 
+            }
+
+        }
         double fontSize = Double.POSITIVE_INFINITY;
         for (int i = 0; i < displayable.getSections().length; i++) {
             TextSection section = displayable.getSections()[i];

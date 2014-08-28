@@ -69,7 +69,7 @@ public class PreviewPanel extends LivePreviewPanel {
 //                QueleaApp.get().getMainWindow().getMainPanel().getLivePanel().removeDisplayable();
 
                 QueleaApp.get().getMainWindow().getMainPanel().getLivePanel().getMediaLoopPanel().stopLoop();
-                Displayable d = getDisplayable();
+                final Displayable d = getDisplayable();
                 int index = ((ContainedPanel) getCurrentPane()).getCurrentIndex();
                 if (QueleaProperties.get().getAdvanceScheduleOnGoLive()) {
                     QueleaApp.get().getMainWindow().getMainPanel().getSchedulePanel().getScheduleList().getSelectionModel().selectNext();
@@ -80,7 +80,7 @@ public class PreviewPanel extends LivePreviewPanel {
 
                     @Override
                     public void run() {
-                        if (getDisplayable() instanceof MediaLoopDisplayable) {
+                        if (d instanceof MediaLoopDisplayable) {
                             QueleaApp.get().getMainWindow().getMainPanel().getLivePanel().getMediaLoopPanel().startLoop();
                         }
                     }
@@ -102,10 +102,7 @@ public class PreviewPanel extends LivePreviewPanel {
 
                     @Override
                     public void run() {
-                        while (!(QueleaApp.get().getMainWindow().getMainPanel().getLivePanel().getDisplayable() instanceof MultimediaDisplayable)) {
-                            //do nothing 
-                        }
-                        Utils.fxRunAndWait(new Runnable() {
+                        Platform.runLater(new Runnable() {
 
                             @Override
                             public void run() {

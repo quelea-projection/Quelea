@@ -499,6 +499,24 @@ public final class QueleaProperties extends Properties {
     public void setMaxFontSize(double fontSize) {
         setProperty("max.font.size", Double.toString(fontSize));
     }
+    
+     /**
+     * Get the maximum font size used by text only display.
+     * <p>
+     * @return the maximum font size used by text only display..
+     */
+    public double getTextOnlyMaxFontSize() {
+        return Double.parseDouble(getProperty("textOnly.max.font.size", "1000"));
+    }
+
+    /**
+     * Set the maximum font size used by text only display..
+     * <p>
+     * @param fontSize the maximum font size used by text only display..
+     */
+    public void setTextOnlyMaxFontSize(double fontSize) {
+        setProperty("textOnly.max.font.size", Double.toString(fontSize));
+    }
 
     /**
      * Get the maximum number of characters per line used by text only

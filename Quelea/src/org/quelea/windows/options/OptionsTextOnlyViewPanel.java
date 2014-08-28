@@ -55,6 +55,7 @@ public class OptionsTextOnlyViewPanel extends GridPane implements PropertyPanel 
     private CheckBox useThemeLyricsColor;
     private CheckBox useThemeStyling;
     private final Slider maxCharsSlider;
+    private final Slider maxFontSizeSlider;
 
     /**
      * Create the Text Only view options panel.
@@ -155,6 +156,24 @@ public class OptionsTextOnlyViewPanel extends GridPane implements PropertyPanel 
             }
         });
         
+                Label maxFontSizeLabel = new Label(LabelGrabber.INSTANCE.getLabel("max.font.size.label"));
+        GridPane.setConstraints(maxFontSizeLabel, 1, 8);
+        getChildren().add(maxFontSizeLabel);
+        maxFontSizeSlider = new Slider(10, 1000, 0);
+        GridPane.setConstraints(maxFontSizeSlider, 2,8);
+        getChildren().add(maxFontSizeSlider);
+        maxCharsLabel.setLabelFor(maxFontSizeSlider);
+        final Label maxFontSizeValue = new Label(Integer.toString((int) maxFontSizeSlider.getValue()));
+        GridPane.setConstraints(maxFontSizeValue, 3, 8);
+        getChildren().add(maxFontSizeValue);
+        maxFontSizeValue.setLabelFor(maxCharsSlider);
+        maxFontSizeSlider.valueProperty().addListener(new javafx.beans.value.ChangeListener<Number>() {
+            @Override
+            public void changed(ObservableValue<? extends Number> ov, Number t, Number t1) {
+                maxFontSizeValue.setText(Integer.toString((int) maxFontSizeSlider.getValue()));
+            }
+        });
+        
         readProperties();
     }
 
@@ -177,6 +196,7 @@ public class OptionsTextOnlyViewPanel extends GridPane implements PropertyPanel 
         QueleaProperties.get().setTextOnlyIsBold(isBold.isSelected());
         QueleaProperties.get().setTextOnlyIsItalic(isItalic.isSelected());
         QueleaProperties.get().setTextOnlyMaxCharNumber((int) maxCharsSlider.getValue());
+        QueleaProperties.get().setTextOnlyMaxFontSize(maxFontSizeSlider.getValue());
     }
 
     /**
@@ -201,5 +221,6 @@ public class OptionsTextOnlyViewPanel extends GridPane implements PropertyPanel 
         isBold.setSelected(QueleaProperties.get().getTextOnlyIsBold());
         isItalic.setSelected(QueleaProperties.get().getTextOnlyIsItalic());
         maxCharsSlider.setValue(QueleaProperties.get().getTextOnlyMaxCharNumber());
+        maxFontSizeSlider.setValue(QueleaProperties.get().getTextOnlyMaxFontSize());
     }
 }

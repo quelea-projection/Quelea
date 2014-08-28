@@ -509,7 +509,7 @@ public class MediaLoopPreview extends ScrollPane {
 
                                     }
                                 });
-                            }
+                        }
                         }
 
                     }

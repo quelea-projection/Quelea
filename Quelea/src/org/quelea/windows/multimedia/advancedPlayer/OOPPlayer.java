@@ -55,82 +55,104 @@ public class OOPPlayer {
         Scanner scan = new Scanner(System.in);
         while (scan.hasNext()) {
             inputLine = scan.nextLine();
+            try {
+                if (inputLine != null) {
+                    /**
+                     * this is a little ugly, but I'm not sure how to do it
+                     * differently.
+                     */
+                    if (inputLine.startsWith("open ")) {
+                        inputLine = inputLine.substring("open ".length());
+                        mediaPlayer.prepareMedia(inputLine);
+//                    System.out.println("void");
+                    } else if (inputLine.equalsIgnoreCase("play")) {
+                        mediaPlayer.play();
+//                    System.out.println("void");
+                    } else if (inputLine.equalsIgnoreCase("pause")) {
+                        mediaPlayer.pause();
+//                    System.out.println("void");
+                    } else if (inputLine.equalsIgnoreCase("stop")) {
+                        mediaPlayer.stop();
+//                    System.out.println("void");
+                    } else if (inputLine.equalsIgnoreCase("toBack")) {
+                        window.toBack();
+//                    System.out.println("void");
+                    } else if (inputLine.equalsIgnoreCase("toFront")) {
+                        window.toFront();
+//                    System.out.println("void");
+                    } else if (inputLine.equalsIgnoreCase("hue?")) {
+                        System.out.println(mediaPlayer.getHue());
+                    } else if (inputLine.equalsIgnoreCase("playable?")) {
+                        System.out.println(mediaPlayer.isPlayable());
+                    } else if (inputLine.startsWith("setTime ")) {
+                        inputLine = inputLine.substring("setTime ".length());
+                        mediaPlayer.setTime(Long.parseLong(inputLine));
+//                    System.out.println("void");
+                    } else if (inputLine.startsWith("setHue ")) {
+                        inputLine = inputLine.substring("setHue ".length());
+                        mediaPlayer.setAdjustVideo(true);
+                        mediaPlayer.setHue(Integer.parseInt(inputLine));
+//                    System.out.println("void");
+                    } else if (inputLine.startsWith("setRepeat ")) {
+                        inputLine = inputLine.substring("setRepeat ".length());
+                        mediaPlayer.setRepeat(Boolean.parseBoolean(inputLine));
+//                    System.out.println("void");
+                    } else if (inputLine.startsWith("setPosition ")) {
+                        inputLine = inputLine.substring("setPosition ".length());
+                        mediaPlayer.setPosition(Float.parseFloat(inputLine));
+//                    System.out.println("void");
+                    } else if (inputLine.startsWith("setMute ")) {
+                        inputLine = inputLine.substring("setMute ".length());
+                        mediaPlayer.mute(Boolean.parseBoolean(inputLine));
+//                    System.out.println("void");
+                    } else if (inputLine.startsWith("setOpacity ")) {
+                        inputLine = inputLine.substring("setOpacity ".length());
+                        window.setOpacity(Float.parseFloat(inputLine));
+//                    System.out.println("void");
+                    } else if (inputLine.startsWith("setVolume ")) {
+                        inputLine = inputLine.substring("setVolume ".length());
+                        mediaPlayer.setVolume(Integer.parseInt(inputLine));
+//                    System.out.println("void");
+                    } else if (inputLine.startsWith("setXLocation ")) {
+                        inputLine = inputLine.substring("setXLocation ".length());
+                        window.setLocation(Integer.parseInt(inputLine), window.getY());
+//                    System.out.println("void");
+                    } else if (inputLine.startsWith("setYLocation ")) {
+                        inputLine = inputLine.substring("setYLocation ".length());
+                        window.setLocation(window.getX(), Integer.parseInt(inputLine));
+//                    System.out.println("void");
+                    } else if (inputLine.startsWith("setWidthSize ")) {
+                        inputLine = inputLine.substring("setWidthSize ".length());
+                        window.setSize(Integer.parseInt(inputLine), window.getHeight());
+//                    System.out.println("void");
+                    } else if (inputLine.startsWith("setHeightSize ")) {
+                        inputLine = inputLine.substring("setHeightSize ".length());
+                        window.setSize(window.getWidth(), Integer.parseInt(inputLine));
+//                    System.out.println("void");
+                    } else if (inputLine.equalsIgnoreCase("mute?")) {
+                        boolean mute = mediaPlayer.isMute();
+                        System.out.println(mute);
+                    } else if (inputLine.equalsIgnoreCase("length?")) {
+                        long length = mediaPlayer.getLength();
+                        System.out.println(length);
+                    } else if (inputLine.equalsIgnoreCase("init?")) {
+                        System.out.println(init);
+                    } else if (inputLine.equalsIgnoreCase("time?")) {
+                        long time = mediaPlayer.getTime();
+                        System.out.println(time);
+                    } else if (inputLine.equalsIgnoreCase("opacity?")) {
+                        float opacity = window.getOpacity();
+                        System.out.println(opacity);
+                    } else if (inputLine.equalsIgnoreCase("close")) {
+                        System.exit(0);
+                    } else {
+                        System.err.println("unknown command: ." + inputLine + ".");
+                    }
 
-            if (inputLine != null) {
-                /**
-                 * this is a little ugly, but I'm not sure how to do it
-                 * differently.
-                 */
-                if (inputLine.startsWith("open ")) {
-                    inputLine = inputLine.substring("open ".length());
-                    mediaPlayer.prepareMedia(inputLine);
-                } else if (inputLine.equalsIgnoreCase("play")) {
-                    mediaPlayer.play();
-                } else if (inputLine.equalsIgnoreCase("pause")) {
-                    mediaPlayer.pause();
-                } else if (inputLine.equalsIgnoreCase("stop")) {
-                    mediaPlayer.stop();
-                } else if (inputLine.equalsIgnoreCase("toBack")) {
-                    window.toBack();
-                } else if (inputLine.equalsIgnoreCase("toFront")) {
-                    window.toFront();
-
-                } else if (inputLine.equalsIgnoreCase("playable?")) {
-                    System.out.println(mediaPlayer.isPlayable());
-                } else if (inputLine.startsWith("setTime ")) {
-                    inputLine = inputLine.substring("setTime ".length());
-                    mediaPlayer.setTime(Long.parseLong(inputLine));
-                } else if (inputLine.startsWith("setHue ")) {
-                    inputLine = inputLine.substring("setHue ".length());
-                    mediaPlayer.setAdjustVideo(true);
-                    mediaPlayer.setHue(Integer.parseInt(inputLine));
-                } else if (inputLine.startsWith("setRepeat ")) {
-                    inputLine = inputLine.substring("setRepeat ".length());
-                    mediaPlayer.setRepeat(Boolean.parseBoolean(inputLine));
-                } else if (inputLine.startsWith("setPosition ")) {
-                    inputLine = inputLine.substring("setPosition ".length());
-                    mediaPlayer.setPosition(Float.parseFloat(inputLine));
-
-                } else if (inputLine.startsWith("setMute ")) {
-                    inputLine = inputLine.substring("setMute ".length());
-                    mediaPlayer.mute(Boolean.parseBoolean(inputLine));
-                } else if (inputLine.startsWith("setOpacity ")) {
-                    inputLine = inputLine.substring("setOpacity ".length());
-                    window.setOpacity(Float.parseFloat(inputLine));
-                } else if (inputLine.startsWith("setVolume ")) {
-                    inputLine = inputLine.substring("setVolume ".length());
-                    mediaPlayer.setVolume(Integer.parseInt(inputLine));
-                } else if (inputLine.startsWith("setXLocation ")) {
-                    inputLine = inputLine.substring("setXLocation ".length());
-                    window.setLocation(Integer.parseInt(inputLine), window.getY());
-                } else if (inputLine.startsWith("setYLocation ")) {
-                    inputLine = inputLine.substring("setYLocation ".length());
-                    window.setLocation(window.getX(), Integer.parseInt(inputLine));
-                } else if (inputLine.startsWith("setWidthSize ")) {
-                    inputLine = inputLine.substring("setWidthSize ".length());
-                    window.setSize(Integer.parseInt(inputLine), window.getHeight());
-                } else if (inputLine.startsWith("setHeightSize ")) {
-                    inputLine = inputLine.substring("setHeightSize ".length());
-                    window.setSize(window.getWidth(), Integer.parseInt(inputLine));
-                } else if (inputLine.equalsIgnoreCase("mute?")) {
-                    boolean mute = mediaPlayer.isMute();
-                    System.out.println(mute);
-                } else if (inputLine.equalsIgnoreCase("length?")) {
-                    long length = mediaPlayer.getLength();
-                    System.out.println(length);
-                } else if (inputLine.equalsIgnoreCase("init?")) {
-                    System.out.println(init);
-                } else if (inputLine.equalsIgnoreCase("time?")) {
-                    long time = mediaPlayer.getTime();
-                    System.out.println(time);
-                } else if (inputLine.equalsIgnoreCase("opacity?")) {
-                    float opacity = window.getOpacity();
-                    System.out.println(opacity);
-                } else if (inputLine.equalsIgnoreCase("close")) {
-                    System.exit(0);
-                } else {
-                    System.err.println("unknown command: ." + inputLine + ".");
                 }
+            } catch (Exception ex) {
+                System.err.printf("Error Processing Message");
+                ex.printStackTrace(System.err);
             }
         }
         scan.close();

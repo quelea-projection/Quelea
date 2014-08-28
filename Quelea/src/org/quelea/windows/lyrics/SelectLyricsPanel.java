@@ -18,6 +18,7 @@
 package org.quelea.windows.lyrics;
 
 import java.util.logging.Logger;
+import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.ObservableList;
@@ -118,7 +119,7 @@ public class SelectLyricsPanel extends AbstractPanel {
      * @param displayable the displayable to show.
      * @param index the index of the displayable to show.
      */
-    public void showDisplayable(TextDisplayable displayable, int index) {
+    public void showDisplayable(TextDisplayable displayable, final int index) {
 //        removeCurrentDisplayable();
         setCurrentDisplayable(displayable);
         lyricsList.setShowQuickEdit(displayable instanceof SongDisplayable);
@@ -126,7 +127,14 @@ public class SelectLyricsPanel extends AbstractPanel {
             lyricsList.itemsProperty().get().add(section);
         }
         lyricsList.selectionModelProperty().get().select(index);
-        lyricsList.scrollTo(index);
+        Platform.runLater(new Runnable() {
+
+            @Override
+            public void run() {
+                lyricsList.scrollTo(index);
+            }
+        });
+
     }
 
     /**
