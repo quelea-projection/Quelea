@@ -482,7 +482,7 @@ public class ScheduleList extends StackPane {
             Displayable live = QueleaApp.get().getMainWindow().getMainPanel().getLivePanel().getDisplayable();
             if ((d == live || listView.getItems().size() == 1) && QueleaProperties.get().getClearLiveOnRemove()) {
                 QueleaApp.get().getMainWindow().getMainPanel().getLivePanel().removeDisplayable();
-                VLCWindow.INSTANCE.stop();
+                VLCWindow.INSTANCE.stop(false);
                 LyricDrawer lyricDrawer = new LyricDrawer();
                 lyricDrawer.setCanvas(QueleaApp.get().getProjectionWindow().getCanvas());
                 lyricDrawer.setTheme(ThemeDTO.DEFAULT_THEME);

@@ -73,6 +73,7 @@ import javafx.stage.Screen;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 import javax.swing.SwingUtilities;
+import javax.swing.filechooser.FileSystemView;
 import org.javafx.dialog.Dialog;
 import org.jcodec.api.FrameGrab;
 import org.quelea.data.ThemeDTO;
@@ -84,6 +85,7 @@ import org.quelea.services.languages.LabelGrabber;
 import org.quelea.windows.main.DisplayStage;
 import org.quelea.windows.main.QueleaApp;
 import org.quelea.windows.main.StatusPanel;
+import org.quelea.windows.multimedia.ThumbnailFetcher;
 
 /**
  * General utility class containing a bunch of static methods.
@@ -166,7 +168,7 @@ public final class Utils {
         }
         return false;
     }
-    
+
     /**
      * Set the button style for any buttons that are to be placed on a toolbar.
      * Change the padding and remove the default border.
@@ -369,12 +371,14 @@ public final class Utils {
     public static Bounds getBoundsFromRect2D(Rectangle2D rect) {
         return new BoundingBox(rect.getMinX(), rect.getMinY(), rect.getWidth(), rect.getHeight());
     }
-/**
- * Check to see if a passed string contains a section title.
- * @param line the string that is checked 
- * @return true if contains title, false otherwise
- */
-    public static boolean containsSongSectionTitle(String line){
+
+    /**
+     * Check to see if a passed string contains a section title.
+     *
+     * @param line the string that is checked
+     * @return true if contains title, false otherwise
+     */
+    public static boolean containsSongSectionTitle(String line) {
         String processedLine = line.toLowerCase().trim().replace("(", "").replace(")", "");
         if (processedLine.endsWith("//title")) {
             return true;
@@ -391,6 +395,7 @@ public final class Utils {
                 || processedLine.toLowerCase().startsWith("outro")
                 || processedLine.toLowerCase().startsWith("misc");
     }
+
     /**
      * Determine if we're running in a 64 bit JVM.
      * <p/>
@@ -1039,8 +1044,21 @@ public final class Utils {
                     videoPreviewCache.put(videoFile, ret);
                     return ret;
                 } catch (Exception ex) {
-                    LOGGER.log(Level.INFO, "Couldn't get video preview image for " + videoFile.getAbsolutePath(), "Codec issues?");
-                    return new Image("file:icons/vid preview.png");
+                    try {
+                        BufferedImage buffI = null;
+                        if(ThumbnailFetcher.INSTANCE != null){
+                            buffI = ThumbnailFetcher.INSTANCE.getSnapshot(1.0f / 3.0f, videoFile.getAbsolutePath());
+                        }
+                        
+                        if (buffI != null) {
+                            return SwingFXUtils.toFXImage(buffI, null);
+                        }else{
+                            return new Image("file:icons/vid preview.png");
+                        }
+                    } catch (Exception exception) {
+                        LOGGER.log(Level.INFO, "Couldn't get video preview image for " + videoFile.getAbsolutePath(), "Codec issues?");
+                        return new Image("file:icons/vid preview.png");
+                    }
                 }
             } else {
                 return new Image("file:icons/vid preview.png");

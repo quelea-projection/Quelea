@@ -45,7 +45,7 @@ public class ImageDrawer extends DisplayableDrawer {
     @Override
     public void draw(Displayable displayable) {
         if (getCanvas().getPlayVideo()) {
-            VLCWindow.INSTANCE.stop();
+            VLCWindow.INSTANCE.stop(false);
         }
         imageView = getCanvas().getNewImageView();
         imageView.setFitWidth(getCanvas().getWidth());

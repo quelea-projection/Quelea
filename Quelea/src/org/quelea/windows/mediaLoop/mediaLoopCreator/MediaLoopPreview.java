@@ -471,14 +471,19 @@ public class MediaLoopPreview extends ScrollPane {
                         boolean advance = false;
                         while (!advance) {
                             if (!(loopThread.isInterrupted())) {
-                                Utils.fxRunAndWait(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        QueleaApp.get().getMainWindow().getMainPanel().getLivePanel().getSecondsLeftLabel().setText(
-                                                (getSelectedSlide().getAdvanceTime() - elapsedTimeCurrentItem) + " "
-                                                + LabelGrabber.INSTANCE.getLabel("mediaLoop.secondsRemaining.text"));
-                                    }
-                                });
+                                try {
+                                    Utils.fxRunAndWait(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            QueleaApp.get().getMainWindow().getMainPanel().getLivePanel().getSecondsLeftLabel().setText(
+                                                    (getSelectedSlide().getAdvanceTime() - elapsedTimeCurrentItem) + " "
+                                                    + LabelGrabber.INSTANCE.getLabel("mediaLoop.secondsRemaining.text"));
+                                        }
+                                    });
+                                } catch (Exception ex) {
+                                    runLoop = false;
+                                    return;
+                                }
                             }
 
                             try {
@@ -509,7 +514,7 @@ public class MediaLoopPreview extends ScrollPane {
 
                                     }
                                 });
-                        }
+                            }
                         }
 
                     }

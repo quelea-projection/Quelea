@@ -86,48 +86,124 @@ public class OOPPlayer {
                         System.out.println(mediaPlayer.isPlayable());
                     } else if (inputLine.startsWith("setTime ")) {
                         inputLine = inputLine.substring("setTime ".length());
-                        mediaPlayer.setTime(Long.parseLong(inputLine));
+                        long l;
+                        try {
+                            l = Long.parseLong(inputLine);
+                        } catch (NumberFormatException ex) {
+                            l = 0;
+                        }
+                        mediaPlayer.setTime(l);
 //                    System.out.println("void");
                     } else if (inputLine.startsWith("setHue ")) {
                         inputLine = inputLine.substring("setHue ".length());
                         mediaPlayer.setAdjustVideo(true);
-                        mediaPlayer.setHue(Integer.parseInt(inputLine));
+                        int i;
+                        try {
+                            i = Integer.parseInt(inputLine);
+                        } catch (NumberFormatException ex) {
+                            i = 0;
+                        }
+                        mediaPlayer.setHue(i);
 //                    System.out.println("void");
                     } else if (inputLine.startsWith("setRepeat ")) {
                         inputLine = inputLine.substring("setRepeat ".length());
-                        mediaPlayer.setRepeat(Boolean.parseBoolean(inputLine));
+                        boolean b;
+                        try {
+                            b = Boolean.parseBoolean(inputLine);
+                        } catch (Exception ex) {
+                            b = true;
+                        }
+                        mediaPlayer.setRepeat(b);
 //                    System.out.println("void");
                     } else if (inputLine.startsWith("setPosition ")) {
                         inputLine = inputLine.substring("setPosition ".length());
-                        mediaPlayer.setPosition(Float.parseFloat(inputLine));
+                        float f;
+                        try {
+                            f = Float.parseFloat(inputLine);
+                        } catch (NumberFormatException ex) {
+                            f = 0;
+                        }
+                        if (f > 1) {
+                            f = 1;
+                        } else if (f < 0) {
+                            f = 0;
+                        }
+                        mediaPlayer.setPosition(f);
 //                    System.out.println("void");
                     } else if (inputLine.startsWith("setMute ")) {
                         inputLine = inputLine.substring("setMute ".length());
-                        mediaPlayer.mute(Boolean.parseBoolean(inputLine));
+                        boolean b;
+                        try {
+                            b = Boolean.parseBoolean(inputLine);
+                        } catch (Exception ex) {
+                            b = false;
+                        }
+                        mediaPlayer.mute(b);
 //                    System.out.println("void");
                     } else if (inputLine.startsWith("setOpacity ")) {
                         inputLine = inputLine.substring("setOpacity ".length());
-                        window.setOpacity(Float.parseFloat(inputLine));
+                        float f;
+                        try {
+                            f = Float.parseFloat(inputLine);
+                        } catch (NumberFormatException ex) {
+                            f = 0;
+                        }
+                        if (f > 1) {
+                            f = 1;
+                        } else if (f < 0) {
+                            f = 0;
+                        }
+                        window.setOpacity(f);
 //                    System.out.println("void");
                     } else if (inputLine.startsWith("setVolume ")) {
                         inputLine = inputLine.substring("setVolume ".length());
-                        mediaPlayer.setVolume(Integer.parseInt(inputLine));
+                        int i;
+                        try {
+                            i = Integer.parseInt(inputLine);
+                        } catch (NumberFormatException ex) {
+                            i = 100;
+                        }
+                        mediaPlayer.setVolume(i);
 //                    System.out.println("void");
                     } else if (inputLine.startsWith("setXLocation ")) {
                         inputLine = inputLine.substring("setXLocation ".length());
-                        window.setLocation(Integer.parseInt(inputLine), window.getY());
+                        int i;
+                        try {
+                            i = Integer.parseInt(inputLine);
+                        } catch (NumberFormatException ex) {
+                            i = 0;
+                        }
+                        window.setLocation(i, window.getY());
 //                    System.out.println("void");
                     } else if (inputLine.startsWith("setYLocation ")) {
                         inputLine = inputLine.substring("setYLocation ".length());
-                        window.setLocation(window.getX(), Integer.parseInt(inputLine));
+                        int i;
+                        try {
+                            i = Integer.parseInt(inputLine);
+                        } catch (NumberFormatException ex) {
+                            i = 0;
+                        }
+                        window.setLocation(window.getX(), i);
 //                    System.out.println("void");
                     } else if (inputLine.startsWith("setWidthSize ")) {
                         inputLine = inputLine.substring("setWidthSize ".length());
-                        window.setSize(Integer.parseInt(inputLine), window.getHeight());
+                        int i;
+                        try {
+                            i = Integer.parseInt(inputLine);
+                        } catch (NumberFormatException ex) {
+                            i = 0;
+                        }
+                        window.setSize(i, window.getHeight());
 //                    System.out.println("void");
                     } else if (inputLine.startsWith("setHeightSize ")) {
                         inputLine = inputLine.substring("setHeightSize ".length());
-                        window.setSize(window.getWidth(), Integer.parseInt(inputLine));
+                        int i;
+                        try {
+                            i = Integer.parseInt(inputLine);
+                        } catch (NumberFormatException ex) {
+                            i = 0;
+                        }
+                        window.setSize(window.getWidth(), i);
 //                    System.out.println("void");
                     } else if (inputLine.equalsIgnoreCase("mute?")) {
                         boolean mute = mediaPlayer.isMute();

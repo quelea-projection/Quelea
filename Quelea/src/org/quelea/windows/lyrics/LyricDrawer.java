@@ -462,7 +462,7 @@ public class LyricDrawer extends DisplayableDrawer {
 
         } else {
             if (getCanvas().getPlayVideo() && !(theme.getBackground() instanceof VideoBackground)) {
-                VLCWindow.INSTANCE.stop();
+                VLCWindow.INSTANCE.stop(false);
             }
             final ImageView newImageView = getCanvas().getNewImageView();
             newImageView.setFitHeight(getCanvas().getHeight());

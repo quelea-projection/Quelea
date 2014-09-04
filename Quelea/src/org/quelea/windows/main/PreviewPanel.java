@@ -69,6 +69,7 @@ public class PreviewPanel extends LivePreviewPanel {
 //                QueleaApp.get().getMainWindow().getMainPanel().getLivePanel().removeDisplayable();
 
                 QueleaApp.get().getMainWindow().getMainPanel().getLivePanel().getMediaLoopPanel().stopLoop();
+                QueleaApp.get().getMainWindow().getMainPanel().getLivePanel().getVideoPanel().getMultimediaControls().setNoStop(false);
                 final Displayable d = getDisplayable();
                 int index = ((ContainedPanel) getCurrentPane()).getCurrentIndex();
                 if (QueleaProperties.get().getAdvanceScheduleOnGoLive()) {

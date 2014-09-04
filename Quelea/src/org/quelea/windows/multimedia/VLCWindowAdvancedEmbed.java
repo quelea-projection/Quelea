@@ -455,15 +455,14 @@ public class VLCWindowAdvancedEmbed extends VLCWindow {
         }
 
     }
+    private Thread stopThread1;
+    private Thread stopThread2;
 
     /**
      * Fades off the active player, and stops that video..
      */
-    private Thread stopThread1;
-    private Thread stopThread2;
-
     @Override
-    public void stop() {
+    public void stop(final boolean stopButton) {
         location = null;
 
         if (init) {
@@ -492,6 +491,9 @@ public class VLCWindowAdvancedEmbed extends VLCWindow {
                     }
 
                     player.stop();
+                    if (stopButton) {
+                        isPlayer1 = !isPlayer1;
+                    }
                 }
             });
 
@@ -513,6 +515,9 @@ public class VLCWindowAdvancedEmbed extends VLCWindow {
                     }
 
                     player2.stop();
+                    if (stopButton) {
+                        isPlayer1 = !isPlayer1;
+                    }
                 }
             });
             if (isPlayer1) {

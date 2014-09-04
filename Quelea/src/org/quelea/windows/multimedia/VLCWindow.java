@@ -93,8 +93,9 @@ public abstract class VLCWindow {
 
     /**
      * Stop the currently playing video
+     * @param stopButton denotes whether stop was pressed on the button or otherwise.
      */
-    public abstract void stop();
+    public abstract void stop(boolean stopButton);
 
     /**
      * Get whether the currently playing video is muted.

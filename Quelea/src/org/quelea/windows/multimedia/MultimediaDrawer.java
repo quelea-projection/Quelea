@@ -40,6 +40,7 @@ public class MultimediaDrawer extends DisplayableDrawer {
     @Override
     public void draw(Displayable displayable) {
         if (getCanvas().isStageView()) {
+            getCanvas().clearNonPermanentChildren(getCanvas().getPreviewCanvas());
             ImageView imageView = getCanvas().getNewImageView();
             imageView.setImage(Utils.getImageFromColour(QueleaProperties.get().getStageBackgroundColor()));
             getCanvas().getChildren().add(0, imageView);
@@ -92,7 +93,7 @@ public class MultimediaDrawer extends DisplayableDrawer {
             getCanvas().getChildren().add(0, imageView);
         } else {
             if (playVideo) {
-                controlPanel.reset();
+                controlPanel.reset(false);
                 controlPanel.loadMultimedia(((MultimediaDisplayable) displayable).getLocation(), true);
                 VLCWindow.INSTANCE.refreshPosition();
                 VLCWindow.INSTANCE.show();

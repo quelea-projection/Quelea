@@ -30,6 +30,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.SwingUtilities;
 import org.quelea.services.utils.LoggerUtils;
+import org.quelea.services.utils.QueleaProperties;
 import org.quelea.services.utils.Utils;
 import org.quelea.windows.main.QueleaApp;
 import uk.co.caprica.vlcj.player.MediaPlayer;
@@ -55,7 +56,7 @@ public class VLCWindowEmbed extends VLCWindow {
      */
     private static final ExecutorService VLC_EXECUTOR = Executors.newSingleThreadExecutor();
     private static final Logger LOGGER = LoggerUtils.getLogger();
-    public static final VLCWindowEmbed INSTANCE = new VLCWindowEmbed();
+    public static final VLCWindowEmbed INSTANCE = QueleaProperties.get().getVLCAdvanced()?null:new VLCWindowEmbed();
     private Window window;
     private Canvas canvas;
     private MediaPlayerFactory mediaPlayerFactory;
@@ -259,9 +260,10 @@ public class VLCWindowEmbed extends VLCWindow {
 
     /**
      * Stop the currently playing video
+     * @param stopButton the value of stopButton
      */
     @Override
-    public void stop() {
+    public void stop(boolean stopButton) {
         location = null;
         runOnVLCThread(new Runnable() {
             @Override
