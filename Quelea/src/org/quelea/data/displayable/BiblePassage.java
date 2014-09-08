@@ -200,6 +200,9 @@ public class BiblePassage implements TextDisplayable, Serializable {
      */
     public void setTheme(ThemeDTO theme) {
         this.theme = theme;
+        for (TextSection ts : getSections()) {
+            ts.setTheme(theme);
+        }
     }
 
     /**
