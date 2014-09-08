@@ -55,6 +55,9 @@ public class VideoDisplayable implements MultimediaDisplayable, Serializable {
     public VideoDisplayable(String location, YoutubeInfo youtubeinfo) {
         this.location = location;
         this.youtubeinfo = youtubeinfo;
+        if (location.toLowerCase().startsWith("https")) {
+            location = location.replaceFirst("https", "http");
+        }
         if (location.toLowerCase().startsWith("http") && youtubeinfo == null) {
             this.youtubeinfo = new YoutubeInfo(location);
         }
