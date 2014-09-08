@@ -86,7 +86,11 @@ public class YoutubeDialog extends Stage {
 
                     @Override
                     public YoutubeInfo call() throws Exception {
-                        curInfo = new YoutubeInfo(t1);
+                        String t2 = t1;
+                        if (t1.toLowerCase().startsWith("https")) {
+                            t2 = t1.replaceFirst("https", "http");
+                        }
+                        curInfo = new YoutubeInfo(t2);
                         curInfo.getTitle();
                         curInfo.getPreviewImage();
                         Platform.runLater(new Runnable() {
