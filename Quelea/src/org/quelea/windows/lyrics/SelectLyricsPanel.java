@@ -21,8 +21,11 @@ import java.util.logging.Logger;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.ObservableList;
+import javafx.event.EventHandler;
 import javafx.geometry.Orientation;
 import javafx.scene.control.SplitPane;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import org.quelea.data.ThemeDTO;
 import org.quelea.data.displayable.SongDisplayable;
 import org.quelea.data.displayable.TextDisplayable;
@@ -33,6 +36,7 @@ import org.quelea.windows.main.DisplayCanvas;
 import org.quelea.windows.main.DisplayCanvas.Priority;
 import org.quelea.windows.main.DisplayableDrawer;
 import org.quelea.windows.main.LivePreviewPanel;
+import org.quelea.windows.main.QueleaApp;
 import org.quelea.windows.main.widgets.DisplayPreview;
 
 /**
@@ -80,6 +84,19 @@ public class SelectLyricsPanel extends AbstractPanel {
             @Override
             public void changed(ObservableValue<? extends ObservableList<TextSection>> ov, ObservableList<TextSection> t, ObservableList<TextSection> t1) {
                 updateCanvas();
+            }
+        });
+        lyricsList.addEventHandler(KeyEvent.KEY_PRESSED, new EventHandler<KeyEvent>() {
+            @Override
+            public void handle(KeyEvent t) {
+                if(t.getCode().equals(KeyCode.PAGE_DOWN)) {
+                    t.consume();
+                    QueleaApp.get().getMainWindow().getMainPanel().getLivePanel().advance();
+                }
+                else if(t.getCode().equals(KeyCode.PAGE_UP)) {
+                    t.consume();
+                    QueleaApp.get().getMainWindow().getMainPanel().getLivePanel().previous();
+                }
             }
         });
     }

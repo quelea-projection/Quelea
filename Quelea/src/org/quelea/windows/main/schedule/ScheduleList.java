@@ -276,6 +276,20 @@ public class ScheduleList extends StackPane {
                 }
             }
         });
+        
+        listView.addEventHandler(KeyEvent.KEY_PRESSED, new EventHandler<KeyEvent>() {
+            @Override
+            public void handle(KeyEvent t) {
+                if(t.getCode().equals(KeyCode.PAGE_DOWN)) {
+                    t.consume();
+                    QueleaApp.get().getMainWindow().getMainPanel().getLivePanel().advance();
+                }
+                else if(t.getCode().equals(KeyCode.PAGE_UP)) {
+                    t.consume();
+                    QueleaApp.get().getMainWindow().getMainPanel().getLivePanel().previous();
+                }
+            }
+        });
     }
 
     public void add(Displayable displayable) {
