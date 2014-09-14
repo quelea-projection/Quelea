@@ -70,5 +70,17 @@ public class ShortcutManager {
                 mainWindow.getMainPanel().getLivePanel().toggleHide();
             }
         });
+        mainPanel.getScene().getAccelerators().put(new KeyCodeCombination(KeyCode.PAGE_DOWN), new Runnable() {
+            @Override
+            public void run() {
+                mainWindow.getMainPanel().getLivePanel().advance();
+            }
+        });
+        mainPanel.getScene().getAccelerators().put(new KeyCodeCombination(KeyCode.PAGE_UP), new Runnable() {
+            @Override
+            public void run() {
+                mainWindow.getMainPanel().getLivePanel().previous();
+            }
+        });
     }
 }
