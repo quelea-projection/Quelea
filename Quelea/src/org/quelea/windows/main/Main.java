@@ -47,6 +47,7 @@ import org.quelea.services.utils.UpdateChecker;
 import org.quelea.services.utils.UserFileChecker;
 import org.quelea.services.utils.Utils;
 import org.quelea.windows.multimedia.VLCWindow;
+import org.quelea.windows.splash.SplashOOP;
 import org.quelea.windows.splash.SplashStage;
 import uk.co.caprica.vlcj.discovery.NativeDiscovery;
 
@@ -61,6 +62,7 @@ public final class Main extends Application {
     private MainWindow mainWindow;
     private DisplayStage fullScreenWindow;
     private DisplayStage stageWindow;
+    private DisplayStage textOnlyWindow;
     private Dialog vlcWarningDialog;
 
     public static void main(String[] args) {
@@ -77,8 +79,7 @@ public final class Main extends Application {
     public void start(Stage stage) {
         setupExceptionHandling();
         setupTranslator();
-        final SplashStage splashWindow = new SplashStage();
-        splashWindow.show();
+        SplashOOP.showStage();
 
         new Thread() {
             @Override
@@ -108,6 +109,7 @@ public final class Main extends Application {
 
                     final int projectorScreen = QueleaProperties.get().getProjectorScreen();
                     final int stageScreen = QueleaProperties.get().getStageScreen();
+                    final int textOnlyScreen = QueleaProperties.get().getTextOnlyScreen();
                     final int monitorNumber = monitors.size();
 
                     final boolean lyricsHidden;
@@ -122,6 +124,12 @@ public final class Main extends Application {
                     } else {
                         stageHidden = false;
                     }
+                    final boolean textOnlyHidden;
+                    if (!QueleaProperties.get().isTextOnlyModeCoords() && (textOnlyScreen >= monitorNumber || textOnlyScreen < 0)) {
+                        textOnlyHidden = true;
+                    } else {
+                        textOnlyHidden = false;
+                    }
 
                     if (QueleaProperties.get().getUseMobLyrics()) {
                         LOGGER.log(Level.INFO, "Starting lyric server on {0}", QueleaProperties.get().getMobLyricsPort());
@@ -135,7 +143,7 @@ public final class Main extends Application {
                     } else {
                         LOGGER.log(Level.INFO, "Mobile lyrics disabled");
                     }
-                    
+
                     if (QueleaProperties.get().getUseRemoteControl()) {
                         LOGGER.log(Level.INFO, "Starting remote control server on {0}", QueleaProperties.get().getRemoteControlPort());
                         try {
@@ -149,7 +157,7 @@ public final class Main extends Application {
                         LOGGER.log(Level.INFO, "Remote control disabled");
                     }
 
-                    Platform.runLater(new Runnable() {
+                    Utils.fxRunAndWait(new Runnable() {
 
                         @Override
                         public void run() {
@@ -181,6 +189,19 @@ public final class Main extends Application {
                             QueleaApp.get().setStageWindow(stageWindow);
                             //stageWindow.toFront();
 
+                            if (textOnlyHidden) {
+                                LOGGER.log(Level.INFO, "Hiding text only display on monitor 0 (base 0!)");
+                                textOnlyWindow = new DisplayStage(Utils.getBoundsFromRect2D(monitors.get(0).getVisualBounds()), false);
+                                textOnlyWindow.hide();
+                            } else if (QueleaProperties.get().isTextOnlyModeCoords()) {
+                                LOGGER.log(Level.INFO, "Starting text only display: ", QueleaProperties.get().getTextOnlyCoords());
+                                textOnlyWindow = new DisplayStage(QueleaProperties.get().getTextOnlyCoords(), false);
+                            } else {
+                                LOGGER.log(Level.INFO, "Starting text only display on monitor {0} (base 0!)", textOnlyScreen);
+                                textOnlyWindow = new DisplayStage(Utils.getBoundsFromRect2D(monitors.get(textOnlyScreen).getVisualBounds()), false);
+                            }
+                            QueleaApp.get().setTextOnlyWindow(textOnlyWindow);
+
                             LOGGER.log(Level.INFO, "Loading bibles");
                             final Thread bibleLoader = new Thread() {
                                 @Override
@@ -199,6 +220,7 @@ public final class Main extends Application {
 
                             if (SongManager.get() == null) {
                                 Dialog.showAndWaitError(LabelGrabber.INSTANCE.getLabel("already.running.title"), LabelGrabber.INSTANCE.getLabel("already.running.error"));
+                                SplashOOP.hideStage();
                                 System.exit(1);
                             }
                             SongManager.get().getSongs();
@@ -222,6 +244,15 @@ public final class Main extends Application {
                             } else {
                                 fullScreenWindow.show();
                             }
+
+                            mainWindow.getMainPanel().getLivePanel().registerDisplayCanvas(textOnlyWindow.getCanvas());
+                            mainWindow.getMainPanel().getLivePanel().registerDisplayWindow(textOnlyWindow);
+                            mainWindow.getNoticeDialog().registerCanvas(textOnlyWindow.getCanvas());
+                            if (textOnlyHidden) {
+                                textOnlyWindow.hide();
+                            } else {
+                                textOnlyWindow.show();
+                            }
                             mainWindow.getMainPanel().getLivePanel().registerDisplayCanvas(stageWindow.getCanvas());
                             mainWindow.getMainPanel().getLivePanel().registerDisplayWindow(stageWindow);
                             if (stageHidden) {
@@ -229,6 +260,7 @@ public final class Main extends Application {
                             } else {
                                 stageWindow.show();
                             }
+
                             LOGGER.log(Level.INFO, "Registered canvases.");
 
                             if (QueleaProperties.get().getDragAndDrop()) {
@@ -248,7 +280,7 @@ public final class Main extends Application {
                                 QueleaApp.get().openSchedule(new File(schedulePath));
                             }
                             mainWindow.show();
-                            splashWindow.hide();
+                            SplashOOP.hideStage();
                             showMonitorWarning(monitorNumber);
                             if (VLC_OK && VLC_INIT) {
                                 VLCWindow.INSTANCE.refreshPosition();
@@ -286,11 +318,20 @@ public final class Main extends Application {
                                 vlcWarningDialog.showAndWait();
                             }
                             QueleaApp.get().doneLoading();
+                            Platform.runLater(new Runnable() {
+
+                                @Override
+                                public void run() {
+                                    mainWindow.getMainPanel().setSplitPanelPositions();
+                                }
+                            });
+
                         }
                     });
                 } catch (Throwable ex) {
                     LOGGER.log(Level.SEVERE, "Uncaught exception during application start-up", ex);
                     Dialog.showAndWaitError(LabelGrabber.INSTANCE.getLabel("startup.error.title"), LabelGrabber.INSTANCE.getLabel("startup.error.text").replace("$1", Utils.getDebugLog().getAbsolutePath()));
+                    SplashOOP.hideStage();
                     System.exit(1);
                 }
             }
@@ -298,6 +339,7 @@ public final class Main extends Application {
     }
 
     /**
+     * +
      * If it's appropriate, show the warning about only having 1 monitor.
      * <p/>
      * @param numMonitors the number of monitors.

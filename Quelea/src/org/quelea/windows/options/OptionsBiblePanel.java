@@ -88,9 +88,14 @@ public class OptionsBiblePanel extends GridPane implements PropertyPanel, BibleC
             @Override
             public void handle(javafx.event.ActionEvent t) {
                 FileChooser chooser = new FileChooser();
+                   File dirFile = new File(QueleaProperties.get().getLastUsedMediaDir());
+                if (dirFile.isDirectory()) {
+                    chooser.setInitialDirectory(dirFile);
+                }
                 chooser.getExtensionFilters().add(FileFilters.XML_BIBLE);
                 File file = chooser.showOpenDialog(QueleaApp.get().getMainWindow());
                 if (file != null) {
+                      QueleaProperties.get().setLastUsedMediaDir(file.getParent());
                     try {
                         Utils.copyFile(file, new File(QueleaProperties.get().getBibleDir(), file.getName()));
                         BibleManager.get().refreshAndLoad();
@@ -133,6 +138,7 @@ public class OptionsBiblePanel extends GridPane implements PropertyPanel, BibleC
         useBibleVersesBox.valueProperty().addListener(new ChangeListener<String>() {
             @Override
             public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
+               
                 maxItemsPerSlideLabel.setText(labels[0] + newValue + labels[1]);
                 changed = true;
             }

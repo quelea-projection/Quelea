@@ -29,6 +29,7 @@ import org.quelea.services.languages.LabelGrabber;
 import org.quelea.services.utils.PropertyPanel;
 import org.quelea.services.utils.QueleaProperties;
 import org.quelea.services.utils.Utils;
+import org.quelea.windows.main.QueleaApp;
 
 /**
  * The panel that shows the stage view options.
@@ -43,13 +44,16 @@ public class OptionsStageViewPanel extends GridPane implements PropertyPanel {
     private ColorPicker backgroundColorPicker;
     private ColorPicker chordColorPicker;
     private ColorPicker lyricsColorPicker;
+    private CheckBox usePreview;
+    private CheckBox useUnuniformText;
+    private CheckBox drawImages;
 
     /**
      * Create the stage view options panel.
      */
     public OptionsStageViewPanel() {
         setVgap(5);
-        
+
         Label chordsLabel = new Label(LabelGrabber.INSTANCE.getLabel("stage.show.chords"));
         GridPane.setConstraints(chordsLabel, 1, 1);
         getChildren().add(chordsLabel);
@@ -62,7 +66,7 @@ public class OptionsStageViewPanel extends GridPane implements PropertyPanel {
         getChildren().add(alignmentLabel);
         lineAlignment = new ComboBox<>();
         lineAlignment.setEditable(false);
-        for(TextAlignment alignment : TextAlignment.values()) {
+        for (TextAlignment alignment : TextAlignment.values()) {
             lineAlignment.itemsProperty().get().add(alignment.toFriendlyString());
         }
         GridPane.setConstraints(lineAlignment, 2, 2);
@@ -73,7 +77,7 @@ public class OptionsStageViewPanel extends GridPane implements PropertyPanel {
         getChildren().add(fontLabel);
         fontSelection = new ComboBox<>();
         fontSelection.setEditable(false);
-        for(String font : Utils.getAllFonts()) {
+        for (String font : Utils.getAllFonts()) {
             fontSelection.itemsProperty().get().add(font);
         }
         GridPane.setConstraints(fontSelection, 2, 3);
@@ -100,6 +104,26 @@ public class OptionsStageViewPanel extends GridPane implements PropertyPanel {
         GridPane.setConstraints(chordColorPicker, 2, 6);
         getChildren().add(chordColorPicker);
 
+        Label usePreviewLabel = new Label(LabelGrabber.INSTANCE.getLabel("stage.use.preview"));
+        GridPane.setConstraints(usePreviewLabel, 1, 7);
+        getChildren().add(usePreviewLabel);
+        usePreview = new CheckBox();
+        GridPane.setConstraints(usePreview, 2, 7);
+        getChildren().add(usePreview);
+
+        Label useUnuniformTextLabel = new Label(LabelGrabber.INSTANCE.getLabel("stage.use.ununiform.text"));
+        GridPane.setConstraints(useUnuniformTextLabel, 1, 8);
+        getChildren().add(useUnuniformTextLabel);
+        useUnuniformText = new CheckBox();
+        GridPane.setConstraints(useUnuniformText, 2, 8);
+        getChildren().add(useUnuniformText);
+
+        Label drawImagesLabel = new Label(LabelGrabber.INSTANCE.getLabel("stage.draw.images"));
+        GridPane.setConstraints(drawImagesLabel, 1, 9);
+        getChildren().add(drawImagesLabel);
+        drawImages = new CheckBox();
+        GridPane.setConstraints(drawImages, 2, 9);
+        getChildren().add(drawImages);
         readProperties();
     }
 
@@ -114,6 +138,10 @@ public class OptionsStageViewPanel extends GridPane implements PropertyPanel {
         QueleaProperties.get().setStageBackgroundColor(backgroundColorPicker.getValue());
         QueleaProperties.get().setStageChordColor(chordColorPicker.getValue());
         QueleaProperties.get().setStageLyricsColor(lyricsColorPicker.getValue());
+        QueleaProperties.get().setStageUsePreview(usePreview.isSelected());
+        QueleaProperties.get().setStageUseUnuniformText(useUnuniformText.isSelected());
+        QueleaProperties.get().setStageDrawImages(drawImages.isSelected());
+        QueleaApp.get().getStageWindow().updateStage();
     }
 
     /**
@@ -130,5 +158,8 @@ public class OptionsStageViewPanel extends GridPane implements PropertyPanel {
         chordColorPicker.fireEvent(new ActionEvent());
         fontSelection.getSelectionModel().select(QueleaProperties.get().getStageTextFont());
         lineAlignment.getSelectionModel().select(QueleaProperties.get().getStageTextAlignment());
+        usePreview.setSelected(QueleaProperties.get().getStageUsePreview());
+        useUnuniformText.setSelected(QueleaProperties.get().getStageUseUnuniformText());
+        drawImages.setSelected(QueleaProperties.get().getStageDrawImages());
     }
 }

@@ -59,20 +59,23 @@ public class VideoButton extends Button {
 //        super(LabelGrabber.INSTANCE.getLabel("select.video.button"));
         fileChooser = new FileChooser();
         final File vidDir = QueleaProperties.get().getVidDir();
-        fileChooser.setInitialDirectory(vidDir);
         fileChooser.getExtensionFilters().add(FileFilters.VIDEOS);
         setOnAction(new EventHandler<javafx.event.ActionEvent>() {
             @Override
             public void handle(javafx.event.ActionEvent t) {
+                File dirFile = new File(QueleaProperties.get().getLastUsedMediaDir());
+                if (dirFile.isDirectory()) {
+                    fileChooser.setInitialDirectory(dirFile);
+                }
                 File selectedFile = fileChooser.showOpenDialog(QueleaApp.get().getMainWindow());
-                if(selectedFile != null) {
+                if (selectedFile != null) {
+                    QueleaProperties.get().setLastUsedMediaDir(selectedFile.getParent());
                     File newFile = new File(vidDir, selectedFile.getName());
                     try {
-                        if(!selectedFile.getCanonicalPath().startsWith(vidDir.getCanonicalPath())) {
+                        if (!selectedFile.getCanonicalPath().startsWith(vidDir.getCanonicalPath())) {
                             FileUtils.copyFile(selectedFile, newFile);
                         }
-                    }
-                    catch(IOException ex) {
+                    } catch (IOException ex) {
                         LOGGER.log(Level.WARNING, "", ex);
                     }
 

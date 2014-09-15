@@ -21,6 +21,7 @@ import java.io.File;
 import java.util.HashSet;
 import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
+import javafx.geometry.Pos;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.control.ToggleButton;
@@ -38,11 +39,14 @@ import javafx.scene.layout.Region;
 import javafx.stage.FileChooser;
 import javafx.stage.Screen;
 import org.quelea.data.displayable.Displayable;
+import org.quelea.data.displayable.MediaLoopDisplayable;
 import org.quelea.data.displayable.PresentationDisplayable;
+import org.quelea.data.displayable.TextDisplayable;
 import org.quelea.services.languages.LabelGrabber;
 import org.quelea.services.utils.FileFilters;
 import org.quelea.services.utils.QueleaProperties;
 import org.quelea.services.utils.Utils;
+import org.quelea.windows.mediaLoop.MediaLoopPanel;
 import org.quelea.windows.multimedia.VLCWindow;
 
 /**
@@ -54,8 +58,10 @@ import org.quelea.windows.multimedia.VLCWindow;
 public class LivePanel extends LivePreviewPanel {
 
     private HBox loopBox;
+    private HBox labelBox;
     private final ToggleButton loop;
     private final TextField loopDuration;
+    private final Label secondsLeft;
 
     private final ToggleButton logo;
     private final ToggleButton black;
@@ -69,11 +75,13 @@ public class LivePanel extends LivePreviewPanel {
      */
     public LivePanel() {
         getPresentationPanel().setLive();
+        getMediaLoopPanel().setLive();
         header = new ToolBar();
         Label headerLabel = new Label(LabelGrabber.INSTANCE.getLabel("live.heading"));
         headerLabel.setStyle("-fx-font-weight: bold;");
         header.getItems().add(headerLabel);
         loop = new ToggleButton(LabelGrabber.INSTANCE.getLabel("loop.label") + ":");
+        secondsLeft = new Label();
         loopDuration = new TextField("10");
         loopDuration.setMaxWidth(25);
         loopDuration.setMinWidth(25);
@@ -83,17 +91,16 @@ public class LivePanel extends LivePreviewPanel {
                 String text = t.getCharacter();
                 char arr[] = text.toCharArray();
                 char ch = arr[text.toCharArray().length - 1];
-                if(!(ch >= '0' && ch <= '9')) {
+                if (!(ch >= '0' && ch <= '9')) {
                     t.consume();
                 }
                 try {
                     String newText = loopDuration.getText() + ch;
                     int num = Integer.parseInt(newText);
-                    if(num > 100 || num <= 0) {
+                    if (num > 100 || num <= 0) {
                         t.consume();
                     }
-                }
-                catch(NumberFormatException ex) {
+                } catch (NumberFormatException ex) {
                     t.consume();
                 }
             }
@@ -103,6 +110,14 @@ public class LivePanel extends LivePreviewPanel {
         loopBox.getChildren().add(loop);
         loopBox.getChildren().add(loopDuration);
         loopBox.getChildren().add(new Label(LabelGrabber.INSTANCE.getLabel("seconds.label")));
+        labelBox = new HBox(5);
+        labelBox.setAlignment(Pos.CENTER);
+
+        secondsLeft.setAlignment(Pos.CENTER);
+        HBox.setHgrow(secondsLeft, Priority.ALWAYS);
+        labelBox.getChildren().add(new Label("    "));
+        labelBox.getChildren().add(secondsLeft);
+
         Region spacer = new Region();
         HBox.setHgrow(spacer, Priority.ALWAYS);
         header.getItems().add(spacer);
@@ -112,12 +127,17 @@ public class LivePanel extends LivePreviewPanel {
         logo.setOnMouseClicked(new EventHandler<javafx.scene.input.MouseEvent>() {
             @Override
             public void handle(MouseEvent t) {
-                if(t.getButton().equals(MouseButton.SECONDARY)) {
+                if (t.getButton().equals(MouseButton.SECONDARY)) {
                     FileChooser chooser = new FileChooser();
+                    File dirFile = new File(QueleaProperties.get().getLastUsedMediaDir());
+                    if (dirFile.isDirectory()) {
+                        chooser.setInitialDirectory(dirFile);
+                    }
                     chooser.getExtensionFilters().add(FileFilters.IMAGES);
                     chooser.setInitialDirectory(QueleaProperties.get().getImageDir().getAbsoluteFile());
                     File file = chooser.showOpenDialog(QueleaApp.get().getMainWindow());
-                    if(file != null) {
+                    if (file != null) {
+                        QueleaProperties.get().setLastUsedMediaDir(file.getParent());
                         QueleaProperties.get().setLogoImage(file.getAbsolutePath());
                         updateLogo();
                     }
@@ -129,8 +149,10 @@ public class LivePanel extends LivePreviewPanel {
             public void handle(javafx.event.ActionEvent t) {
                 HashSet<DisplayCanvas> canvases = new HashSet<>();
                 canvases.addAll(getCanvases());
-                for(DisplayCanvas canvas : canvases) {
-                    canvas.setLogoDisplaying(logo.isSelected());
+                for (DisplayCanvas canvas : canvases) {
+                    if (!canvas.isStageView()) {
+                        canvas.setLogoDisplaying(logo.isSelected());
+                    }
                 }
             }
         });
@@ -143,8 +165,10 @@ public class LivePanel extends LivePreviewPanel {
             public void handle(javafx.event.ActionEvent t) {
                 HashSet<DisplayCanvas> canvases = new HashSet<>();
                 canvases.addAll(getCanvases());
-                for(DisplayCanvas canvas : canvases) {
-                    canvas.setBlacked(black.isSelected());
+                for (DisplayCanvas canvas : canvases) {
+                    if (!canvas.isStageView()) {
+                        canvas.setBlacked(black.isSelected());
+                    }
                 }
             }
         });
@@ -157,8 +181,10 @@ public class LivePanel extends LivePreviewPanel {
             public void handle(javafx.event.ActionEvent t) {
                 HashSet<DisplayCanvas> canvases = new HashSet<>();
                 canvases.addAll(getCanvases());
-                for(DisplayCanvas canvas : canvases) {
-                    canvas.setCleared(clear.isSelected());
+                for (DisplayCanvas canvas : canvases) {
+                    if (!canvas.isStageView()) {
+                        canvas.setCleared(clear.isSelected());
+                    }
                 }
             }
         });
@@ -171,41 +197,52 @@ public class LivePanel extends LivePreviewPanel {
             public void handle(javafx.event.ActionEvent t) {
                 int projectorScreen = QueleaProperties.get().getProjectorScreen();
                 int stageScreen = QueleaProperties.get().getStageScreen();
+                int textOnlyScreen = QueleaProperties.get().getTextOnlyScreen();
                 final ObservableList<Screen> monitors = Screen.getScreens();
 
                 DisplayStage appWindow = QueleaApp.get().getProjectionWindow();
                 DisplayStage stageWindow = QueleaApp.get().getStageWindow();
+                DisplayStage textOnlyWindow = QueleaApp.get().getTextOnlyWindow();
 
                 final boolean lyricsHidden;
-                if(!QueleaProperties.get().isProjectorModeCoords() && (projectorScreen >= monitors.size() || projectorScreen < 0)) {
+                if (!QueleaProperties.get().isProjectorModeCoords() && (projectorScreen >= monitors.size() || projectorScreen < 0)) {
                     lyricsHidden = true;
-                }
-                else {
+                } else {
                     lyricsHidden = false;
                 }
 
                 final boolean stageHidden;
-                if(!QueleaProperties.get().isStageModeCoords() && (stageScreen >= monitors.size() || stageScreen < 0)) {
+                if (!QueleaProperties.get().isStageModeCoords() && (stageScreen >= monitors.size() || stageScreen < 0)) {
                     stageHidden = true;
-                }
-                else {
+                } else {
                     stageHidden = false;
                 }
+                final boolean textOnlyHidden;
+                if (!QueleaProperties.get().isTextOnlyModeCoords() && (textOnlyScreen >= monitors.size() || textOnlyScreen < 0)) {
+                    textOnlyHidden = true;
+                } else {
+                    textOnlyHidden = false;
+                }
 
-                if(!lyricsHidden) {
-                    if(hide.isSelected()) {
+                if (!lyricsHidden) {
+                    if (hide.isSelected()) {
                         appWindow.hide();
-                    }
-                    else {
+                    } else {
                         appWindow.show();
                     }
                 }
-                if(!stageHidden) {
-                    if(hide.isSelected()) {
+                if (!stageHidden) {
+                    if (hide.isSelected()) {
                         stageWindow.hide();
-                    }
-                    else {
+                    } else {
                         stageWindow.show();
+                    }
+                }
+                if (!textOnlyHidden) {
+                    if (hide.isSelected()) {
+                        textOnlyWindow.hide();
+                    } else {
+                        textOnlyWindow.show();
                     }
                 }
                 VLCWindow.INSTANCE.setHideButton(hide.isSelected());
@@ -216,7 +253,7 @@ public class LivePanel extends LivePreviewPanel {
         setOnKeyTyped(new EventHandler<KeyEvent>() {
             @Override
             public void handle(KeyEvent t) {
-                if(t.getCharacter().equals(" ")) {
+                if (t.getCharacter().equals(" ")) {
                     QueleaApp.get().getMainWindow().getMainPanel().getPreviewPanel().goLive();
                 }
             }
@@ -231,39 +268,52 @@ public class LivePanel extends LivePreviewPanel {
      */
     @Override
     public void setDisplayable(Displayable d, int index) {
+        getMediaLoopPanel().stopLoop();
         super.setDisplayable(d, index);
         loop.setSelected(false);
-        if(d instanceof PresentationDisplayable) {
-            if(!header.getItems().contains(loopBox)) {
+        if (d instanceof PresentationDisplayable) {
+            if (!header.getItems().contains(loopBox)) {
                 header.getItems().add(1, loopBox);
             }
-        }
-        else {
+            header.getItems().remove(labelBox);
+        } else if (d instanceof MediaLoopDisplayable) {
+            getMediaLoopPanel().setLive();
+            if (!header.getItems().contains(labelBox)) {
+                header.getItems().add(1, labelBox);
+            }
             header.getItems().remove(loopBox);
+        } else {
+            header.getItems().remove(loopBox);
+            header.getItems().remove(labelBox);
         }
-        if(d == null) {
+        if (!(d instanceof TextDisplayable)) {
+            QueleaApp.get().getProjectionWindow().getCanvas().setCanvasBackground(null);
+        }
+        if (d == null) {
             clear.setSelected(false);
             clear.setDisable(true);
-        }
-        else {
+        } else {
             clear.setDisable(!d.supportClear());
-            if(!d.supportClear()) {
+            if (!d.supportClear()) {
                 clear.setSelected(false);
             }
         }
         HashSet<DisplayCanvas> canvases = new HashSet<>();
         canvases.addAll(getCanvases());
-        for(DisplayCanvas canvas : canvases) {
-            canvas.setBlacked(black.isSelected());
-            canvas.setCleared(clear.isSelected());
+        for (DisplayCanvas canvas : canvases) {
+            if (!canvas.isStageView()) {
+                canvas.setBlacked(black.isSelected());
+                canvas.setCleared(clear.isSelected());
+            }
         }
+
     }
 
     /**
      * Toggle the "black" button.
      */
     public void toggleBlack() {
-        if(!black.isDisable()) {
+        if (!black.isDisable()) {
             black.fire();
         }
     }
@@ -272,7 +322,7 @@ public class LivePanel extends LivePreviewPanel {
      * Toggle the "clear" button.
      */
     public void toggleClear() {
-        if(!clear.isDisable()) {
+        if (!clear.isDisable()) {
             clear.fire();
         }
     }
@@ -281,7 +331,7 @@ public class LivePanel extends LivePreviewPanel {
      * Toggle the "hide" button.
      */
     public void toggleHide() {
-        if(!hide.isDisable()) {
+        if (!hide.isDisable()) {
             hide.fire();
         }
     }
@@ -290,7 +340,7 @@ public class LivePanel extends LivePreviewPanel {
      * Toggle the "logo" button.
      */
     public void toggleLogo() {
-        if(!logo.isDisable()) {
+        if (!logo.isDisable()) {
             logo.fire();
         }
     }
@@ -323,7 +373,7 @@ public class LivePanel extends LivePreviewPanel {
     private void updateLogo() {
         HashSet<DisplayCanvas> canvases = new HashSet<>();
         canvases.addAll(getCanvases());
-        for(DisplayCanvas canvas : canvases) {
+        for (DisplayCanvas canvas : canvases) {
             canvas.updateLogo();
         }
     }
@@ -331,7 +381,7 @@ public class LivePanel extends LivePreviewPanel {
     public void updateCanvases() {
         HashSet<DisplayCanvas> canvases = new HashSet<>();
         canvases.addAll(getCanvases());
-        for(DisplayCanvas canvas : canvases) {
+        for (DisplayCanvas canvas : canvases) {
             canvas.update();
         }
     }
@@ -346,16 +396,25 @@ public class LivePanel extends LivePreviewPanel {
         return !(logo.isSelected() || clear.isSelected() || black.isSelected() || hide.isSelected());
     }
 
+    /**
+     * Get label placed in header (designed for second updates for media loops
+     *
+     * @return The label in the header
+     */
+    public Label getSecondsLeftLabel() {
+        return secondsLeft;
+    }
+
     public boolean getLogoed() {
         return logo.isSelected();
     }
-    
+
     public boolean getBlacked() {
         return black.isSelected();
     }
-    
+
     public boolean getCleared() {
         return clear.isSelected();
     }
-    
+
 }

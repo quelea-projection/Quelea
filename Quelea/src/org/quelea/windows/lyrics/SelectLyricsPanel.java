@@ -18,6 +18,7 @@
 package org.quelea.windows.lyrics;
 
 import java.util.logging.Logger;
+import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.ObservableList;
@@ -31,6 +32,7 @@ import org.quelea.data.displayable.SongDisplayable;
 import org.quelea.data.displayable.TextDisplayable;
 import org.quelea.data.displayable.TextSection;
 import org.quelea.services.utils.LoggerUtils;
+import org.quelea.services.utils.QueleaProperties;
 import org.quelea.windows.main.AbstractPanel;
 import org.quelea.windows.main.DisplayCanvas;
 import org.quelea.windows.main.DisplayCanvas.Priority;
@@ -67,11 +69,12 @@ public class SelectLyricsPanel extends AbstractPanel {
             public void updateCallback() {
                 updateCanvas();
             }
-        }, Priority.LOW);
+        }, Priority.LOW, false, null);
         DisplayPreview preview = new DisplayPreview(previewCanvas);
         splitPane.setStyle("-fx-background-color: rgba(0, 0, 0);");
         splitPane.getItems().add(lyricsList);
         splitPane.getItems().add(preview);
+
         setCenter(splitPane);
         registerDisplayCanvas(previewCanvas);
         lyricsList.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<TextSection>() {
@@ -133,7 +136,7 @@ public class SelectLyricsPanel extends AbstractPanel {
      * @param displayable the displayable to show.
      * @param index the index of the displayable to show.
      */
-    public void showDisplayable(TextDisplayable displayable, int index) {
+    public void showDisplayable(TextDisplayable displayable, final int index) {
 //        removeCurrentDisplayable();
         setCurrentDisplayable(displayable);
         lyricsList.setShowQuickEdit(displayable instanceof SongDisplayable);
@@ -141,7 +144,14 @@ public class SelectLyricsPanel extends AbstractPanel {
             lyricsList.itemsProperty().get().add(section);
         }
         lyricsList.selectionModelProperty().get().select(index);
-        lyricsList.scrollTo(index);
+        Platform.runLater(new Runnable() {
+
+            @Override
+            public void run() {
+                lyricsList.scrollTo(index);
+            }
+        });
+
     }
 
     /**
@@ -197,7 +207,31 @@ public class SelectLyricsPanel extends AbstractPanel {
     @Override
     public void updateCanvas() {
         int selectedIndex = lyricsList.selectionModelProperty().get().getSelectedIndex();
+        int nextIndex = selectedIndex + 1;
         for (DisplayCanvas canvas : getCanvases()) {
+            if (canvas.isStageView()) {
+                if (QueleaProperties.get().getStageUsePreview()) {
+                    drawer.setCanvas(canvas.getPreviewCanvas());
+                    if ((nextIndex >= lyricsList.itemsProperty().get().size())) {
+                        updatePreview(canvas.getPreviewCanvas());
+                    } else {
+                        AbstractPanel.setIsNextPreviewed(false);
+                        TextSection nextSection = lyricsList.itemsProperty().get().get(nextIndex);
+                        if (nextSection.getTempTheme() != null) {
+                            drawer.setTheme(nextSection.getTempTheme());
+                        } else {
+                            ThemeDTO newTheme = nextSection.getTheme();
+                            drawer.setTheme(newTheme);
+                        }
+                        drawer.setCapitaliseFirst(nextSection.shouldCapitaliseFirst());
+                        drawer.setText((TextDisplayable) getCurrentDisplayable(), nextIndex);
+                        canvas.setCurrentDisplayable(getCurrentDisplayable());
+                    }
+                } else {
+                    canvas.getPreviewCanvas().clearCurrentDisplayable();
+                }
+
+            }
             drawer.setCanvas(canvas);
             if (selectedIndex == -1 || selectedIndex >= lyricsList.itemsProperty().get().size()) {
                 if (!canvas.getPlayVideo()) {
@@ -208,10 +242,15 @@ public class SelectLyricsPanel extends AbstractPanel {
             }
             TextSection currentSection = lyricsList.itemsProperty().get().get(selectedIndex);
             if (currentSection.getTempTheme() != null) {
-                drawer.setTheme(currentSection.getTempTheme());
+                if (currentSection.getTheme().getOverrideTheme()) {
+                    drawer.setTheme(currentSection.getTheme());
+                } else {
+                    drawer.setTheme(currentSection.getTempTheme());
+                }
             } else {
                 ThemeDTO newTheme = currentSection.getTheme();
                 drawer.setTheme(newTheme);
+
             }
             drawer.setCapitaliseFirst(currentSection.shouldCapitaliseFirst());
             drawer.setText((TextDisplayable) getCurrentDisplayable(), selectedIndex);

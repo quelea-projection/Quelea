@@ -20,23 +20,41 @@ package org.quelea.windows.main.actionhandlers;
 
 import java.io.File;
 import javafx.stage.FileChooser;
+import org.javafx.dialog.Dialog;
+import org.quelea.services.languages.LabelGrabber;
 import org.quelea.services.utils.FileFilters;
+import org.quelea.services.utils.QueleaProperties;
 import org.quelea.windows.main.QueleaApp;
+import org.quelea.windows.main.StatusPanel;
 
 /**
  * The open schedule action listener.
+ *
  * @author Michael
  */
 public class OpenScheduleActionHandler extends ClearingEventHandler {
 
     @Override
     public void handle(javafx.event.ActionEvent t) {
-        if(confirmClear()) {
+        if (confirmClear()) {
             FileChooser chooser = new FileChooser();
             chooser.getExtensionFilters().add(FileFilters.SCHEDULE);
-            File file = chooser.showOpenDialog(QueleaApp.get().getMainWindow());
-            if(file!=null) {
-                QueleaApp.get().openSchedule(file);
+            File dirFile = new File(QueleaProperties.get().getLastUsedScheduleDir());
+            if (dirFile.isDirectory()) {
+                chooser.setInitialDirectory(dirFile);
+            }
+
+            final File file = chooser.showOpenDialog(QueleaApp.get().getMainWindow());
+            if (file != null) {
+                final StatusPanel statusPanel = QueleaApp.get().getStatusGroup().addPanel(LabelGrabber.INSTANCE.getLabel("opening.schedule"));
+                new Thread() {
+                    public void run() {
+                        QueleaProperties.get().setLastUsedScheduleDir(file.getParent());
+                        QueleaApp.get().openSchedule(file);
+                        statusPanel.done();
+                    }
+                }.start();
+
             }
         }
     }

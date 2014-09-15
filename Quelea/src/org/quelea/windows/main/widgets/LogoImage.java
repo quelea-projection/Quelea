@@ -35,15 +35,18 @@ public class LogoImage extends StackPane {
 
     private final ImageView logoImage;
     private boolean stageView;
+    private boolean textOnlyView;
 
     /**
      * Create a new logo image
      * <p>
      * @param stageView true if the logo image is being constructed on a stage
-     * view, else false.
+     * @param textOnlyView true if the logo image is being constructed on the
+     * text only view. view, else false.
      */
-    public LogoImage(boolean stageView) {
+    public LogoImage(boolean stageView, boolean textOnlyView) {
         this.stageView = stageView;
+        this.textOnlyView = textOnlyView;
         logoImage = new ImageView();
         setStyle("-fx-background-color:#000000;");
         refresh();
@@ -54,10 +57,11 @@ public class LogoImage extends StackPane {
      * Update this logo image with the correct one from the properties file
      */
     public final void refresh() {
-        if(stageView) {
+        if (stageView) {
             logoImage.setImage(Utils.getImageFromColour(QueleaProperties.get().getStageBackgroundColor()));
-        }
-        else {
+        } else if (textOnlyView && !QueleaProperties.get().getTextOnlyUseThemeBackground()) {
+            logoImage.setImage(Utils.getImageFromColour(QueleaProperties.get().getTextOnlyBackgroundColor()));
+        } else {
             logoImage.setImage(ImageManager.INSTANCE.getImage(QueleaProperties.get().getLogoImageURI()));
             logoImage.setPreserveRatio(true);
         }

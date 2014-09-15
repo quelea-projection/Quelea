@@ -27,8 +27,9 @@ import org.quelea.services.languages.LabelGrabber;
 import org.quelea.services.utils.LoggerUtils;
 
 /**
- * The panel that's used to display the library of media (pictures, video) and songs. Items can be selected from here
- * and added to the order of service.
+ * The panel that's used to display the library of media (pictures, video) and
+ * songs. Items can be selected from here and added to the order of service.
+ *
  * @author Michael
  */
 public class LibraryPanel extends VBox {
@@ -37,6 +38,7 @@ public class LibraryPanel extends VBox {
     private final LibrarySongPanel songPanel;
     private final LibraryBiblePanel biblePanel;
     private final LibraryImagePanel imagePanel;
+    private final LibraryMediaLoopPanel mediaLoopPanel;
 
     /**
      * Create a new library panel.
@@ -44,7 +46,7 @@ public class LibraryPanel extends VBox {
     public LibraryPanel() {
         LOGGER.log(Level.INFO, "Creating library panel");
         TabPane tabPane = new TabPane();
-        
+
         LOGGER.log(Level.INFO, "Creating library song panel");
         songPanel = new LibrarySongPanel();
         Tab songTab = new Tab();
@@ -52,7 +54,7 @@ public class LibraryPanel extends VBox {
         songTab.setText(LabelGrabber.INSTANCE.getLabel("library.songs.heading"));
         songTab.setContent(songPanel);
         tabPane.getTabs().add(songTab);
-        
+
         LOGGER.log(Level.INFO, "Creating library bible panel");
         biblePanel = new LibraryBiblePanel();
         Tab bibleTab = new Tab();
@@ -60,7 +62,7 @@ public class LibraryPanel extends VBox {
         bibleTab.setText(LabelGrabber.INSTANCE.getLabel("library.bible.heading"));
         bibleTab.setContent(biblePanel);
         tabPane.getTabs().add(bibleTab);
-        
+
         LOGGER.log(Level.INFO, "Creating library image panel");
         imagePanel = new LibraryImagePanel();
         Tab imageTab = new Tab();
@@ -68,13 +70,22 @@ public class LibraryPanel extends VBox {
         imageTab.setText(LabelGrabber.INSTANCE.getLabel("library.image.heading"));
         imageTab.setContent(imagePanel);
         tabPane.getTabs().add(imageTab);
-        
+
+        LOGGER.log(Level.INFO, "Creating media loop panel");
+        mediaLoopPanel = new LibraryMediaLoopPanel();
+        Tab mediaLoopTab = new Tab();
+        mediaLoopTab.setClosable(false);
+        mediaLoopTab.setText(LabelGrabber.INSTANCE.getLabel("library.mediaLoop.heading"));
+        mediaLoopTab.setContent(mediaLoopPanel);
+        tabPane.getTabs().add(mediaLoopTab);
+
         VBox.setVgrow(tabPane, Priority.ALWAYS);
         getChildren().add(tabPane);
     }
 
     /**
      * Get the library song panel.
+     *
      * @return the library song panel.
      */
     public LibrarySongPanel getLibrarySongPanel() {
@@ -83,6 +94,7 @@ public class LibraryPanel extends VBox {
 
     /**
      * Get the library bible panel.
+     *
      * @return the library bible panel.
      */
     public LibraryBiblePanel getBiblePanel() {
@@ -91,9 +103,19 @@ public class LibraryPanel extends VBox {
 
     /**
      * Get the library image panel.
+     *
      * @return the library image panel.
      */
     public LibraryImagePanel getImagePanel() {
         return imagePanel;
+    }
+
+    /**
+     * Get the library media loop panel.
+     *
+     * @return the library media loop panel.
+     */
+    public LibraryMediaLoopPanel getMediaLoopPanel() {
+        return mediaLoopPanel;
     }
 }

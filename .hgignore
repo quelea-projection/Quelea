@@ -7,3 +7,6 @@ Quelea/dist/*
 \.chg\..*$
 \.rej$
 \.conflict\~$
+syntax: glob
+Quelea/icons/Thumbs.db
+Quelea/img/Thumbs.db

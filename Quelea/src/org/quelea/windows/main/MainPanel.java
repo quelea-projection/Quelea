@@ -19,15 +19,21 @@ package org.quelea.windows.main;
 
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javafx.application.Platform;
+import javafx.collections.ObservableList;
 import javafx.geometry.Orientation;
 import javafx.scene.control.SplitPane;
 import javafx.scene.layout.BorderPane;
 import org.quelea.services.utils.LoggerUtils;
+import org.quelea.services.utils.QueleaProperties;
+import org.quelea.services.utils.Utils;
 import org.quelea.windows.library.LibraryPanel;
 import org.quelea.windows.main.schedule.SchedulePanel;
 
 /**
- * The main body of the main window, containing the schedule, the media bank, the preview and the live panels.
+ * The main body of the main window, containing the schedule, the media bank,
+ * the preview and the live panels.
+ *
  * @author Michael
  */
 public class MainPanel extends BorderPane {
@@ -38,6 +44,8 @@ public class MainPanel extends BorderPane {
     private final PreviewPanel previewPanel;
     private final LivePanel livePanel;
     private final StatusPanelGroup statusPanelGroup;
+    private final SplitPane scheduleAndLibrary;
+    private final SplitPane mainSplit;
 
     /**
      * Create the new main panel.
@@ -53,29 +61,59 @@ public class MainPanel extends BorderPane {
         livePanel = new LivePanel();
 
         LOGGER.log(Level.INFO, "Creating split panels");
-        SplitPane scheduleAndLibrary = new SplitPane();
+        scheduleAndLibrary = new SplitPane();
         scheduleAndLibrary.setMinWidth(160);
         scheduleAndLibrary.setOrientation(Orientation.VERTICAL);
         scheduleAndLibrary.getItems().add(schedulePanel);
         scheduleAndLibrary.getItems().add(libraryPanel);
-        SplitPane previewAndLive = new SplitPane();
-        previewAndLive.setOrientation(Orientation.HORIZONTAL);
-        previewAndLive.getItems().add(previewPanel);
-        previewAndLive.getItems().add(livePanel);
         previewPanel.getLyricsPanel().getSplitPane().
                 getDividers().get(0).positionProperty().
                 bindBidirectional(livePanel.getLyricsPanel().getSplitPane().getDividers().get(0).positionProperty());
-        SplitPane mainSplit = new SplitPane();
+        mainSplit = new SplitPane();
         mainSplit.setOrientation(Orientation.HORIZONTAL);
         mainSplit.getItems().add(scheduleAndLibrary);
-        mainSplit.getItems().add(previewAndLive);
+        mainSplit.getItems().add(previewPanel);
+        mainSplit.getItems().add(livePanel);
+
         setCenter(mainSplit);
         statusPanelGroup = new StatusPanelGroup();
         setBottom(statusPanelGroup);
+
+    }
+
+    /**
+     * Saves the split panel positions to Quelea Properties
+     */
+    public void saveSplitPanelPositions() {
+        if (scheduleAndLibrary != null) {
+            QueleaProperties.get().setSchedLibSplit(scheduleAndLibrary.getDividers().get(0).getPosition());
+        }
+        if (mainSplit != null) {
+            QueleaProperties.get().setMainSplit(mainSplit.getDividers().get(0).getPosition());
+
+            
+            QueleaProperties.get().setPrevLiveSplit(mainSplit.getDividers().get(1).getPosition());
+
+        }
+        if (livePanel != null) {
+            QueleaProperties.get().setSongPanelSplit(livePanel.getLyricsPanel().getSplitPane().getDividers().get(0).getPosition());
+
+        }
+    }
+
+    /**
+     * Sets the split panel positions from Quelea Properties
+     */
+    public void setSplitPanelPositions() {
+        scheduleAndLibrary.getDividers().get(0).setPosition(QueleaProperties.get().getSchedLibSplit());
+        mainSplit.getDividers().get(0).setPosition(QueleaProperties.get().getMainSplit());
+        mainSplit.getDividers().get(1).setPosition(QueleaProperties.get().getPrevLiveSplit());
+        livePanel.getLyricsPanel().getSplitPane().getDividers().get(0).setPosition(QueleaProperties.get().getSongPanelSplit());
     }
 
     /**
      * Get the panel displaying the selection of the preview lyrics.
+     *
      * @return the panel displaying the selection of the preview lyrics.
      */
     public PreviewPanel getPreviewPanel() {
@@ -84,6 +122,7 @@ public class MainPanel extends BorderPane {
 
     /**
      * Get the panel displaying the selection of the live lyrics.
+     *
      * @return the panel displaying the selection of the live lyrics.
      */
     public LivePanel getLivePanel() {
@@ -92,6 +131,7 @@ public class MainPanel extends BorderPane {
 
     /**
      * Get the panel displaying the order of service.
+     *
      * @return the panel displaying the order of service.
      */
     public SchedulePanel getSchedulePanel() {
@@ -100,6 +140,7 @@ public class MainPanel extends BorderPane {
 
     /**
      * Get the panel displaying the library of media.
+     *
      * @return the library panel.
      */
     public LibraryPanel getLibraryPanel() {
@@ -108,6 +149,7 @@ public class MainPanel extends BorderPane {
 
     /**
      * Get the status panel.
+     *
      * @return the status panel.
      */
     public StatusPanelGroup getStatusPanelGroup() {

@@ -57,6 +57,10 @@ public final class FileFilters {
      */
     public static final FileChooser.ExtensionFilter AUDIOS = new FileChooser.ExtensionFilter(LabelGrabber.INSTANCE.getLabel("filefilters.description.audio.files") + " (*.mp3)", "*.mp3");
     /**
+     * Accept video and image files
+     */
+    public static final FileChooser.ExtensionFilter VIDEO_IMAGE = new FileChooser.ExtensionFilter(LabelGrabber.INSTANCE.getLabel("filefilters.description.videoImage.files"), Utils.getFileExtensions(Utils.getVideoImageExtensions()));
+    /**
      * Accept powerpoint files.
      */
     public static final FileChooser.ExtensionFilter POWERPOINT = new FileChooser.ExtensionFilter(LabelGrabber.INSTANCE.getLabel("filefilters.description.powerpoint.presentations") + " (*.ppt, *.pptx)", "*.ppt", "*.pptx");

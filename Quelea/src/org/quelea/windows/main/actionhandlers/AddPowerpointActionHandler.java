@@ -32,6 +32,7 @@ import org.quelea.data.displayable.PresentationDisplayable;
 import org.quelea.services.languages.LabelGrabber;
 import org.quelea.services.utils.FileFilters;
 import org.quelea.services.utils.LoggerUtils;
+import org.quelea.services.utils.QueleaProperties;
 import org.quelea.services.utils.Utils;
 import org.quelea.windows.main.QueleaApp;
 import org.quelea.windows.main.StatusPanel;
@@ -53,9 +54,14 @@ public class AddPowerpointActionHandler implements EventHandler<ActionEvent> {
     @Override
     public void handle(ActionEvent t) {
         FileChooser chooser = new FileChooser();
+        File dirFile = new File(QueleaProperties.get().getLastUsedMediaDir());
+        if (dirFile.isDirectory()) {
+            chooser.setInitialDirectory(dirFile);
+        }
         chooser.getExtensionFilters().add(FileFilters.POWERPOINT);
         final List<File> files = chooser.showOpenMultipleDialog(QueleaApp.get().getMainWindow());
-        if(files != null) {
+        if (files != null) {
+            QueleaProperties.get().setLastUsedMediaDir(files.get(0).getParent());
             new Thread() {
 
                 private StatusPanel panel;
@@ -80,9 +86,9 @@ public class AddPowerpointActionHandler implements EventHandler<ActionEvent> {
                         }
                     });
                     try {
-                        for(File file : files) {
+                        for (File file : files) {
                             final PresentationDisplayable displayable = new PresentationDisplayable(file);
-                            if(!halt) {
+                            if (!halt) {
                                 Platform.runLater(new Runnable() {
 
                                     @Override
@@ -92,9 +98,8 @@ public class AddPowerpointActionHandler implements EventHandler<ActionEvent> {
                                 });
                             }
                         }
-                    }
-                    catch(IOException ex) {
-                        if(!halt) {
+                    } catch (IOException ex) {
+                        if (!halt) {
                             Platform.runLater(new Runnable() {
 
                                 @Override
@@ -103,8 +108,7 @@ public class AddPowerpointActionHandler implements EventHandler<ActionEvent> {
                                 }
                             });
                         }
-                    }
-                    catch(RuntimeException ex) {
+                    } catch (RuntimeException ex) {
                         LOGGER.log(Level.WARNING, "Couldn't import presentation", ex);
                         Platform.runLater(new Runnable() {
 
@@ -114,7 +118,7 @@ public class AddPowerpointActionHandler implements EventHandler<ActionEvent> {
                             }
                         });
                     }
-                    while(panel == null) {
+                    while (panel == null) {
                         Utils.sleep(1000); //Quick bodge but hey, it works
                     }
                     panel.done();

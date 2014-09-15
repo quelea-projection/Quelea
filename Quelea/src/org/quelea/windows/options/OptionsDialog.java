@@ -49,6 +49,7 @@ public class OptionsDialog extends Stage {
     private final OptionsNoticePanel noticePanel;
     private final OptionsBiblePanel biblePanel;
     private final OptionsStageViewPanel stageViewPanel;
+    private final OptionsTextOnlyViewPanel textOnlyViewPanel;
     private final ServerSettingsPanel serverSettingsPanel;
 
     /**
@@ -86,14 +87,22 @@ public class OptionsDialog extends Stage {
         stageViewTab.setContent(stageViewPanel);
         tabbedPane.getTabs().add(stageViewTab);
         
-        noticePanel = new OptionsNoticePanel();
+        textOnlyViewPanel = new OptionsTextOnlyViewPanel();
+        Tab textOnlyViewTab = new Tab();
+        textOnlyViewTab.setClosable(false);
+        textOnlyViewTab.setText(LabelGrabber.INSTANCE.getLabel("textOnly.options.heading"));
+       textOnlyViewTab.setContent(textOnlyViewPanel);
+        tabbedPane.getTabs().add(textOnlyViewTab);
+        
+         noticePanel = new OptionsNoticePanel();
         Tab noticeTab = new Tab();
         noticeTab.setClosable(false);
         noticeTab.setText(LabelGrabber.INSTANCE.getLabel("notice.options.heading"));
         noticeTab.setContent(noticePanel);
         tabbedPane.getTabs().add(noticeTab);
-        
-        biblePanel = new OptionsBiblePanel();
+
+         
+biblePanel = new OptionsBiblePanel();
         Tab bibleTab = new Tab();
         bibleTab.setClosable(false);
         bibleTab.setText(LabelGrabber.INSTANCE.getLabel("bible.options.heading"));
@@ -134,6 +143,7 @@ public class OptionsDialog extends Stage {
      */
     public void callBeforeShowing() {
         generalPanel.resetLanguageChanged();
+        generalPanel.resetMultimediaChanged();
         serverSettingsPanel.resetChanged();
     }
     
@@ -144,12 +154,27 @@ public class OptionsDialog extends Stage {
         if(generalPanel.hasLanguageChanged()) {
             Dialog.showInfo(LabelGrabber.INSTANCE.getLabel("language.changed"), LabelGrabber.INSTANCE.getLabel("language.changed.message"), QueleaApp.get().getMainWindow());
         }
+        if(generalPanel.hasAdvancedMultimediaChanged()){
+                 Dialog.showInfo(LabelGrabber.INSTANCE.getLabel("multimedia.changed"), LabelGrabber.INSTANCE.getLabel("multimedia.changed.message"), QueleaApp.get().getMainWindow());
+
+        }
         if(serverSettingsPanel.hasChanged()) {
+
             Dialog.showInfo(LabelGrabber.INSTANCE.getLabel("server.changed.label"), LabelGrabber.INSTANCE.getLabel("server.changed.message"), QueleaApp.get().getMainWindow());
         }
     }
 
     /**
+    }
+    
+    /**
+     * Get the text only view panel used in this options dialog.
+     * @return the text only view panel
+     */
+    public OptionsTextOnlyViewPanel getTextOnlyViewPanel(){
+        return textOnlyViewPanel;
+    }
+    /** 
      * Get the OK button used to affirm the change in options.
      * @return the OK button.
      */

@@ -17,9 +17,11 @@
  */
 package org.quelea.windows.main;
 
+import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.animation.FadeTransition;
+import javafx.animation.Interpolator;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -27,13 +29,16 @@ import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.geometry.Pos;
+import javafx.scene.CacheHint;
 import javafx.scene.Node;
+import javafx.scene.control.Label;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.util.Duration;
 import org.quelea.data.displayable.Displayable;
+import org.quelea.services.languages.LabelGrabber;
 import org.quelea.services.notice.NoticeDrawer;
 import org.quelea.services.notice.NoticeOverlay;
 import org.quelea.services.utils.LoggerUtils;
@@ -62,6 +67,10 @@ public class DisplayCanvas extends StackPane {
     private Priority dravingPriority = Priority.LOW;
     private Type type = Type.PREVIEW;
     private final boolean playVideo;
+    private final boolean isTextOnly;
+    private DisplayCanvas previewCanvas;
+    private Label titleLabel = new Label("");
+    private ArrayList<Node> blackList = new ArrayList(); //Do not touch list, so that items fading out do not get faded out while fading out...
 
     public enum Type {
 
@@ -73,8 +82,9 @@ public class DisplayCanvas extends StackPane {
     public enum Priority {
 
         HIGH(0),
-        MID(1),
-        LOW(2);
+        HIGH_MID(1),
+        MID(2),
+        LOW(3);
         private final int priority;
 
         private Priority(int priority) {
@@ -98,11 +108,15 @@ public class DisplayCanvas extends StackPane {
      * @param updater the updater that will update this canvas.
      * @param dravingPriority the drawing priority of this canvas when it's
      * updating.
+     * @param textOnly whether this is to be a part of a text only view.
+     * @param previewCanvas the preview display for the stage view
      */
-    public DisplayCanvas(boolean showBorder, boolean stageView, boolean playVideo, final CanvasUpdater updater, Priority dravingPriority) {
+    public DisplayCanvas(boolean showBorder, boolean stageView, boolean playVideo, final CanvasUpdater updater, Priority dravingPriority, final boolean textOnly, DisplayCanvas previewCanvas) {
         setStyle("-fx-background-color: rgba(0, 0, 0, 0);");
         this.playVideo = playVideo;
         this.stageView = stageView;
+        this.isTextOnly = textOnly;
+        this.previewCanvas = previewCanvas;
         this.dravingPriority = dravingPriority;
         setMinHeight(0);
         setMinWidth(0);
@@ -128,7 +142,7 @@ public class DisplayCanvas extends StackPane {
         black.setOpacity(0);
         getChildren().add(black);
 
-        logoImage = new LogoImage(stageView);
+        logoImage = new LogoImage(stageView, isTextOnly);
 
         logoImage.minWidthProperty().bind(widthProperty());
         logoImage.maxWidthProperty().bind(widthProperty());
@@ -137,18 +151,22 @@ public class DisplayCanvas extends StackPane {
         logoImage.setOpacity(0);
         getChildren().add(logoImage);
 
-        if(stageView) {
+        if (stageView) {
             black.setFill(QueleaProperties.get().getStageBackgroundColor());
         }
-
+        if (isTextOnly) {
+            if (!QueleaProperties.get().getTextOnlyUseThemeBackground()) {
+                black.setFill(QueleaProperties.get().getTextOnlyBackgroundColor());
+            }
+        }
         noticeDrawer = new NoticeDrawer(this);
         noticeOverlay = noticeDrawer.getOverlay();
         final Runnable[] r = new Runnable[1];
         final ListChangeListener<Node> listener = new ListChangeListener<Node>() {
             @Override
             public void onChanged(ListChangeListener.Change<? extends Node> change) {
-                while(change.next()) {
-                    if(!change.wasRemoved()) {
+                while (change.next()) {
+                    if (!change.wasRemoved()) {
                         try {
                             /**
                              * Platform.runLater() is necessary here to avoid
@@ -161,11 +179,10 @@ public class DisplayCanvas extends StackPane {
                              * <p>
                              * https://javafx-jira.kenai.com/browse/RT-35275
                              */
-                            if(r[0] != null) {
+                            if (r[0] != null) {
                                 Platform.runLater(r[0]);
                             }
-                        }
-                        catch(Exception ex) {
+                        } catch (Exception ex) {
                             LOGGER.log(Level.WARNING, "Can't move notice overlay to front", ex);
                         }
                     }
@@ -195,7 +212,7 @@ public class DisplayCanvas extends StackPane {
      * work.
      */
     public void ensureNoticesVisible() {
-        if(!getChildren().contains(noticeOverlay)) {
+        if (!getChildren().contains(noticeOverlay)) {
             LOGGER.log(Level.WARNING, "Notice overlay was removed");
             getChildren().add(noticeOverlay);
         }
@@ -206,10 +223,48 @@ public class DisplayCanvas extends StackPane {
     }
 
     public void clearNonPermanentChildren() {
+        clearNonPermanentChildren(null);
+    }
+
+    /**
+     * Clears non permanent children except the passed node
+     *
+     * @param exception the node that should be kept
+     */
+    public void clearNonPermanentChildren(Node exception) {
+
         ObservableList<Node> list = FXCollections.observableArrayList(getChildren());
-        for(Node node : list) {
-            if(!(node instanceof NoticeOverlay) && node != logoImage && node != black) {
-                getChildren().remove(node);
+        for (final Node node : list) {
+            if (!(node instanceof NoticeOverlay) && node != logoImage && node != black && node != exception && !blackList.contains(node)) {
+                blackList.add(node);
+                if (this != QueleaApp.get().getProjectionWindow().getCanvas()
+                        && (this != QueleaApp.get().getTextOnlyWindow().getCanvas())) {
+                    getChildren().remove(node);
+                    blackList.remove(node);
+                } else if ((this == QueleaApp.get().getTextOnlyWindow().getCanvas())
+                        && !QueleaProperties.get().getTextOnlyUseThemeBackground()) {
+                    getChildren().remove(node);
+                    blackList.remove(node);
+                } else {
+
+                    Utils.fadeNodeOpacity(node.getOpacity(), 0.0, QueleaProperties.get().getFadeDuration(), node, 2.0, new Runnable() {
+
+                        @Override
+                        public void run() {
+
+                            Platform.runLater(new Runnable() {
+
+                                @Override
+                                public void run() {
+                                    getChildren().remove(node);
+                                    blackList.remove(node);
+                                }
+                            });
+
+                        }
+                    });
+                }
+
             }
         }
     }
@@ -234,6 +289,21 @@ public class DisplayCanvas extends StackPane {
      */
     public void setCurrentDisplayable(Displayable currentDisplayable) {
         this.currentDisplayable = currentDisplayable;
+        if (currentDisplayable == null) {
+            titleLabel.setText("");
+        } else {
+            titleLabel.setText(LabelGrabber.INSTANCE.getLabel("stageView.displayable.title") + ":\n    " + currentDisplayable.getPreviewText());
+        }
+
+    }
+
+    /**
+     * Get a label that represents the title of this displayable
+     *
+     * @return The label representing the title
+     */
+    public Label getTitleLabel() {
+        return titleLabel;
     }
 
     /**
@@ -252,7 +322,7 @@ public class DisplayCanvas extends StackPane {
         Platform.runLater(new Runnable() {
             @Override
             public void run() {
-                if(isVisibleInScene() && updater != null) {
+                if (isVisibleInScene() && updater != null) {
                     updater.updateCallback();
                 }
             }
@@ -262,11 +332,11 @@ public class DisplayCanvas extends StackPane {
     private boolean isVisibleInScene() {
         Node parent = DisplayCanvas.this;
         boolean visible = isVisible();
-        if(!visible) {
+        if (!visible) {
             return visible;
         }
-        while((parent = parent.getParent()) != null) {
-            if(!parent.isVisible()) {
+        while ((parent = parent.getParent()) != null) {
+            if (!parent.isVisible()) {
                 visible = false;
                 break;
             }
@@ -305,8 +375,17 @@ public class DisplayCanvas extends StackPane {
         return stageView;
     }
 
+    /**
+     * Determine if this canvas is part of a text only view.
+     * <p/>
+     * @return true if its a text only view, false otherwise.
+     */
+    public boolean isTextOnlyView() {
+        return isTextOnly;
+    }
+
     public void update() {
-        if(this.updater != null) {
+        if (this.updater != null) {
             updateCanvas(this.updater);
         }
     }
@@ -320,11 +399,11 @@ public class DisplayCanvas extends StackPane {
      * false otherwise.
      */
     public void setCleared(boolean cleared) {
-        if(this.cleared == cleared) {
+        if (this.cleared == cleared) {
             return;
         }
         this.cleared = cleared;
-        if(this.updater != null) {
+        if (this.updater != null) {
             updateCanvas(this.updater);
         }
     }
@@ -339,6 +418,16 @@ public class DisplayCanvas extends StackPane {
     }
 
     /**
+     * Get the preview canvas that is used for next line type stuff for stage
+     * view
+     *
+     * @return the preview canvas
+     */
+    public DisplayCanvas getPreviewCanvas() {
+        return this.previewCanvas;
+    }
+
+    /**
      * Toggle the blacking of this canvas - if blacked, remove the text and
      * background image (if any) just displaying a black screen. Otherwise
      * display as normal.
@@ -348,16 +437,29 @@ public class DisplayCanvas extends StackPane {
      */
     public void setBlacked(boolean blacked) {
         this.blacked = blacked;
-        if(blacked) {
+        if (blacked) {
+
             black.toFront();
-            FadeTransition ft = new FadeTransition(Duration.seconds(0.5), black);
-            ft.setToValue(1);
-            ft.play();
-        }
-        else {
-            FadeTransition ft = new FadeTransition(Duration.seconds(0.5), black);
-            ft.setToValue(0);
-            ft.play();
+            if (this.dravingPriority == Priority.LOW) {
+                black.setOpacity(1);
+            } else {
+                Utils.fadeNodeOpacity(black.getOpacity(), 1, 0.5, black, 0, null);
+            }
+
+//            FadeTransition ft = new FadeTransition(Duration.seconds(0.5), black);
+//            ft.setToValue(1);
+//            ft.setInterpolator(Interpolator.EASE_BOTH);
+//            ft.play();
+        } else {
+            if (this.dravingPriority == Priority.LOW) {
+                black.setOpacity(0);
+            } else {
+                Utils.fadeNodeOpacity(black.getOpacity(), 0, 0.5, black, 0, null);
+            }
+//            FadeTransition ft = new FadeTransition(Duration.seconds(0.5), black);
+//            ft.setToValue(0);
+//            ft.setInterpolator(Interpolator.EASE_BOTH);
+//            ft.play();
         }
     }
 
@@ -387,16 +489,28 @@ public class DisplayCanvas extends StackPane {
      * @param selected true to display the logo screen, false to remove it.
      */
     public void setLogoDisplaying(boolean selected) {
-        if(selected) {
+        if (selected) {
             logoImage.toFront();
-            FadeTransition ft = new FadeTransition(Duration.seconds(1.5), logoImage);
-            ft.setToValue(1);
-            ft.play();
-        }
-        else {
-            FadeTransition ft = new FadeTransition(Duration.seconds(1.5), logoImage);
-            ft.setToValue(0);
-            ft.play();
+            if (this.dravingPriority == Priority.LOW) {
+                logoImage.setOpacity(1);
+            } else {
+                Utils.fadeNodeOpacity(logoImage.getOpacity(), 1, 1.5, logoImage, 0, null);
+            }
+//            FadeTransition ft = new FadeTransition(Duration.millis(1500), logoImage);
+//            ft.setToValue(1.000);
+//            
+//            ft.setInterpolator(Interpolator.EASE_BOTH);
+//            ft.play();
+        } else {
+            if (this.dravingPriority == Priority.LOW) {
+                logoImage.setOpacity(0);
+            } else {
+                Utils.fadeNodeOpacity(logoImage.getOpacity(), 0, 1.5, logoImage, 0, null);
+            }
+//            FadeTransition ft = new FadeTransition(Duration.millis(1500), logoImage);
+//            ft.setToValue(0.000);
+//            ft.setInterpolator(Interpolator.EASE_BOTH);
+//            ft.play();
         }
     }
 

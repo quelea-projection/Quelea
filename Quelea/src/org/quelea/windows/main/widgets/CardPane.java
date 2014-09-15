@@ -20,6 +20,7 @@ package org.quelea.windows.main.widgets;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
+import javafx.application.Platform;
 import javafx.scene.Node;
 import javafx.scene.layout.StackPane;
 
@@ -80,7 +81,17 @@ public class CardPane<T extends Node> extends StackPane implements Iterable<T> {
             throw new IllegalArgumentException("Label " + label + " doesn't exist in this card pane!");
         }
         else {
-            currentPane.setVisible(true);
+         
+            currentPane.setVisible(true);   
+            Platform.runLater(new Runnable() {
+
+                @Override
+                public void run() {
+                 currentPane.toFront();
+                 currentPane.requestFocus();
+                }
+            });
+          
         }
     }
 

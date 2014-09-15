@@ -33,6 +33,7 @@ import javafx.scene.layout.BorderPane;
 import org.quelea.data.displayable.AudioDisplayable;
 import org.quelea.data.displayable.Displayable;
 import org.quelea.data.displayable.ImageDisplayable;
+import org.quelea.data.displayable.MediaLoopDisplayable;
 import org.quelea.data.displayable.MultimediaDisplayable;
 import org.quelea.data.displayable.PresentationDisplayable;
 import org.quelea.data.displayable.SongDisplayable;
@@ -44,6 +45,7 @@ import org.quelea.windows.image.ImagePanel;
 import org.quelea.windows.lyrics.SelectLyricsPanel;
 import org.quelea.windows.main.quickedit.QuickEditDialog;
 import org.quelea.windows.main.widgets.CardPane;
+import org.quelea.windows.mediaLoop.MediaLoopPanel;
 import org.quelea.windows.multimedia.MultimediaPanel;
 import org.quelea.windows.presentation.PresentationPanel;
 
@@ -64,12 +66,14 @@ public abstract class LivePreviewPanel extends BorderPane {
     private static final String VIDEO_LABEL = "VIDEO";
     private static final String AUDIO_LABEL = "AUDIO";
     private static final String PRESENTATION_LABEL = "PPT";
+    private static final String MEDIA_LOOP_LABEL = "MEDIA_LOOP";
     private String currentLabel;
     private SelectLyricsPanel lyricsPanel = new SelectLyricsPanel(this);
     private final ImagePanel imagePanel = new ImagePanel();
     private final PresentationPanel presentationPanel = new PresentationPanel(this);
     private final MultimediaPanel videoPanel = new MultimediaPanel();
     private final MultimediaPanel audioPanel = new MultimediaPanel();
+    private final MediaLoopPanel mediaLoopPanel = new MediaLoopPanel();
     private final QuickEditDialog quickEditDialog = new QuickEditDialog();
 
     /**
@@ -83,11 +87,12 @@ public abstract class LivePreviewPanel extends BorderPane {
         cardPanel.add(videoPanel, VIDEO_LABEL);
         cardPanel.add(audioPanel, AUDIO_LABEL);
         cardPanel.add(presentationPanel, PRESENTATION_LABEL);
+        cardPanel.add(mediaLoopPanel, MEDIA_LOOP_LABEL);
         cardPanel.show(LYRICS_LABEL);
         lyricsPanel.getLyricsList().setOnMouseClicked(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent me) {
-                if(me.isControlDown() || me.isShiftDown()) {
+                if (me.isControlDown() || me.isShiftDown()) {
                     doQuickEdit(lyricsPanel.getCurrentIndex());
                 }
             }
@@ -96,7 +101,7 @@ public abstract class LivePreviewPanel extends BorderPane {
         lyricsPanel.getLyricsList().setOnKeyPressed(new EventHandler<KeyEvent>() {
             @Override
             public void handle(KeyEvent ke) {
-                if(ke.isControlDown() && ke.getCode() == KeyCode.Q) {
+                if (ke.isControlDown() && ke.getCode() == KeyCode.Q) {
                     doQuickEdit(lyricsPanel.getCurrentIndex());
                 }
             }
@@ -105,7 +110,7 @@ public abstract class LivePreviewPanel extends BorderPane {
         setOnDragOver(new EventHandler<DragEvent>() {
             @Override
             public void handle(DragEvent event) {
-                if(event.getDragboard().getContent(SongDisplayable.SONG_DISPLAYABLE_FORMAT) != null) {
+                if (event.getDragboard().getContent(SongDisplayable.SONG_DISPLAYABLE_FORMAT) != null) {
                     event.acceptTransferModes(TransferMode.ANY);
                 }
             }
@@ -114,9 +119,9 @@ public abstract class LivePreviewPanel extends BorderPane {
 
             @Override
             public void handle(DragEvent event) {
-                if(event.getDragboard().getContent(SongDisplayable.SONG_DISPLAYABLE_FORMAT) instanceof SongDisplayable) {
+                if (event.getDragboard().getContent(SongDisplayable.SONG_DISPLAYABLE_FORMAT) instanceof SongDisplayable) {
                     final SongDisplayable displayable = (SongDisplayable) event.getDragboard().getContent(SongDisplayable.SONG_DISPLAYABLE_FORMAT);
-                    if(displayable != null) {
+                    if (displayable != null) {
                         setDisplayable(displayable, 0);
                     }
                 }
@@ -139,12 +144,21 @@ public abstract class LivePreviewPanel extends BorderPane {
     }
 
     /**
+     * Get the media loop panel on this live/preview panel
+     *
+     * @return the media loop panel.
+     */
+    protected MediaLoopPanel getMediaLoopPanel() {
+        return mediaLoopPanel;
+    }
+
+    /**
      * Perform a quick edit on the given index.
      * <p/>
      * @param index the index on which to perform the quick edit.
      */
     public void doQuickEdit(int index) {
-        if(displayable instanceof SongDisplayable) {
+        if (displayable instanceof SongDisplayable) {
             SongDisplayable song = (SongDisplayable) displayable;
             quickEditDialog.setSongSection(song, index);
             quickEditDialog.show();
@@ -174,18 +188,17 @@ public abstract class LivePreviewPanel extends BorderPane {
      */
     public void removeDisplayable() {
         displayable = null;
-        if(PRESENTATION_LABEL.equals(currentLabel)) {
+        if (PRESENTATION_LABEL.equals(currentLabel)) {
             presentationPanel.showDisplayable(null, 0);
         }
-        for(Node panel : cardPanel) {
-            if(panel instanceof ContainedPanel) {
+        for (Node panel : cardPanel) {
+            if (panel instanceof ContainedPanel) {
                 ((ContainedPanel) panel).removeCurrentDisplayable();
-            }
-            else {
+            } else {
                 LOGGER.log(Level.WARNING, "Panel was {0} which isn't a ContainedPanel... can't clear it.", panel.getClass());
             }
         }
-        if(currentLabel == null || !currentLabel.equals(LYRICS_LABEL)) {
+        if (currentLabel == null || !currentLabel.equals(LYRICS_LABEL)) {
             cardPanel.show(LYRICS_LABEL);
             currentLabel = LYRICS_LABEL;
         }
@@ -198,43 +211,45 @@ public abstract class LivePreviewPanel extends BorderPane {
      * @return the currently selected displayable index.
      */
     public int getIndex() {
-        if(PRESENTATION_LABEL.equals(currentLabel)) {
+        if (PRESENTATION_LABEL.equals(currentLabel)) {
             return presentationPanel.getIndex();
-        }
-        else {
+        } else if (MEDIA_LOOP_LABEL.equals(currentLabel)) {
+            return mediaLoopPanel.getIndex();
+        } else {
             return lyricsPanel.getIndex();
         }
     }
-    
+
     /**
      * Advances currently selected displayable index. Only suitable for
-     * powerpoint / lyrics panels.
+     * powerpoint / lyrics / media loop panels.
      * <p/>
      */
     public void advance() {
-        if(PRESENTATION_LABEL.equals(currentLabel)) {
+        if (PRESENTATION_LABEL.equals(currentLabel)) {
             presentationPanel.advance();
-        }
-        else if(LYRICS_LABEL.equals(currentLabel)) {
+        } else if (LYRICS_LABEL.equals(currentLabel)) {
             lyricsPanel.advance();
+        } else if (MEDIA_LOOP_LABEL.equals(currentLabel)) {
+            mediaLoopPanel.advance();
         }
     }
-    
+
     /**
-     * Moves to previous slide in currently selected displayable index.
-     * Only suitable for powerpoint / lyrics panels.
+     * Moves to previous slide in currently selected displayable index. Only
+     * suitable for powerpoint / lyrics / media loop panels.
      * <p/>
      */
     public void previous() {
-        if(PRESENTATION_LABEL.equals(currentLabel)) {
+        if (PRESENTATION_LABEL.equals(currentLabel)) {
             presentationPanel.previous();
-        }
-        else if(LYRICS_LABEL.equals(currentLabel)) {
+        } else if (LYRICS_LABEL.equals(currentLabel)) {
             lyricsPanel.previous();
+        } else if (MEDIA_LOOP_LABEL.equals(currentLabel)) {
+            mediaLoopPanel.previous();
         }
     }
-    
-    
+
     /**
      * Get the select lyrics panel on this panel.
      * <p/>
@@ -245,67 +260,94 @@ public abstract class LivePreviewPanel extends BorderPane {
     }
 
     /**
+     * Get the video panel on this panel
+     *
+     * @return the video panel.
+     */
+    public MultimediaPanel getVideoPanel() {
+        return videoPanel;
+    }
+
+    /**
      * Set the displayable shown on this panel.
      * <p/>
      * @param displayable the displayable to show.
      * @param index the index of the displayable to show, if relevant.
      */
     public void setDisplayable(final Displayable displayable, final int index) {
-        Platform.runLater(new Runnable() {
-            @Override
-            public void run() {
+//        Thread t = new Thread(new Runnable() {
+//            @Override
+//            public void run() {
+                final Displayable oldDisplayable = LivePreviewPanel.this.displayable;
+//                if (oldDisplayable != null) {
+//                    if (oldDisplayable.equals(displayable)) {
+//                        return;
+//                    }
+//                }
                 LivePreviewPanel.this.displayable = displayable;
-                presentationPanel.stopCurrent();
-                audioPanel.removeCurrentDisplayable();
-                videoPanel.removeCurrentDisplayable();
-                lyricsPanel.removeCurrentDisplayable();
-                imagePanel.removeCurrentDisplayable();
-                presentationPanel.removeCurrentDisplayable();
-                if(PRESENTATION_LABEL.equals(currentLabel)) {
+                if (oldDisplayable instanceof TextDisplayable) {
+                    lyricsPanel.removeCurrentDisplayable();
+                } else if (oldDisplayable instanceof ImageDisplayable) {
+                    imagePanel.removeCurrentDisplayable();
+                } else if (oldDisplayable instanceof VideoDisplayable) {
+                    videoPanel.removeCurrentDisplayable();
+                } else if (oldDisplayable instanceof AudioDisplayable) {
+                    audioPanel.removeCurrentDisplayable();
+                } else if (oldDisplayable instanceof PresentationDisplayable) {
+                    presentationPanel.stopCurrent();
+                    presentationPanel.removeCurrentDisplayable();
+                } else if (oldDisplayable instanceof MediaLoopDisplayable) {
+                    mediaLoopPanel.removeCurrentDisplayable();
+                } else if (oldDisplayable == null) {
+
+                } else {
+                    throw new RuntimeException("Displayable type not implemented: " + oldDisplayable.getClass());
+                }
+
+                if (PRESENTATION_LABEL.equals(currentLabel)) {
                     presentationPanel.showDisplayable(null, 0);
                 }
-                if(displayable instanceof TextDisplayable) {
+                if (displayable instanceof TextDisplayable) {
                     lyricsPanel.showDisplayable((TextDisplayable) displayable, index);
                     cardPanel.show(LYRICS_LABEL);
                     currentLabel = LYRICS_LABEL;
-                }
-                else if(displayable instanceof ImageDisplayable) {
+                } else if (displayable instanceof ImageDisplayable) {
                     imagePanel.showDisplayable((ImageDisplayable) displayable);
                     cardPanel.show(IMAGE_LABEL);
                     currentLabel = IMAGE_LABEL;
-                }
-                else if(displayable instanceof VideoDisplayable) {
+                } else if (displayable instanceof VideoDisplayable) {
                     videoPanel.showDisplayable((MultimediaDisplayable) displayable);
                     cardPanel.show(VIDEO_LABEL);
                     currentLabel = VIDEO_LABEL;
-                }
-                else if(displayable instanceof AudioDisplayable) {
+                } else if (displayable instanceof AudioDisplayable) {
                     audioPanel.showDisplayable((MultimediaDisplayable) displayable);
                     cardPanel.show(AUDIO_LABEL);
                     currentLabel = AUDIO_LABEL;
-                }
-                else if(displayable instanceof PresentationDisplayable) {
+                } else if (displayable instanceof PresentationDisplayable) {
                     presentationPanel.showDisplayable((PresentationDisplayable) displayable, index);
                     cardPanel.show(PRESENTATION_LABEL);
                     currentLabel = PRESENTATION_LABEL;
-                }
-                else if(displayable == null) {
+                } else if (displayable instanceof MediaLoopDisplayable) {
+                    mediaLoopPanel.showDisplayable((MediaLoopDisplayable) displayable, index);
+                    cardPanel.show(MEDIA_LOOP_LABEL);
+                    currentLabel = MEDIA_LOOP_LABEL;
+                } else if (displayable == null) {
 //            LOGGER.log(Level.WARNING, "BUG: Called showDisplayable(null), should probably call clear() instead.", 
 //                    new RuntimeException("BUG: Called showDisplayable(null), should probably call clear() instead.")); clear();
-                }
-                else {
+                } else {
                     throw new RuntimeException("Displayable type not implemented: " + displayable.getClass());
                 }
 
-            }
-        });
+//            }
+//        });
+//        t.start();
     }
 
     /**
      * Refresh the current content of this panel, if any exists.
      */
     public void refresh() {
-        if(getDisplayable() != null) {
+        if (getDisplayable() != null) {
             setDisplayable(getDisplayable(), getIndex());
         }
     }
@@ -326,10 +368,10 @@ public abstract class LivePreviewPanel extends BorderPane {
      * @param canvas the canvas to register.
      */
     public final void registerDisplayCanvas(final DisplayCanvas canvas) {
-        if(canvas == null) {
+        if (canvas == null) {
             return;
         }
-        for(AbstractPanel panel : cardPanel.getPanels()) {
+        for (AbstractPanel panel : cardPanel.getPanels()) {
             panel.registerDisplayCanvas(canvas);
         }
     }
@@ -340,7 +382,7 @@ public abstract class LivePreviewPanel extends BorderPane {
      * @param window the window to register.
      */
     public final void registerDisplayWindow(final DisplayStage window) {
-        if(window == null) {
+        if (window == null) {
             return;
         }
         windows.add(window);
