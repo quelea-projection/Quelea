@@ -29,6 +29,8 @@ import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
@@ -142,8 +144,16 @@ public class MediaLoopCreatorWindow extends Stage {
 
         setWidth(1250);
         setHeight(700);
-
-        setScene(new Scene(mainPane));
+        Scene s = new Scene(mainPane);
+        s.setOnKeyPressed(new EventHandler<KeyEvent>() {
+            @Override
+            public void handle(KeyEvent t) {
+                if (t.getCode() == KeyCode.DELETE) {
+                    editorPanel.delete();
+                }
+            }
+        });
+        setScene(s);
     }
 
     /**

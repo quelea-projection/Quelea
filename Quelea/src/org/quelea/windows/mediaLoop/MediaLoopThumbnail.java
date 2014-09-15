@@ -19,6 +19,7 @@
 package org.quelea.windows.mediaLoop;
 
 import java.io.Serializable;
+import javafx.application.Platform;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -36,7 +37,7 @@ import org.quelea.windows.main.QueleaApp;
  * @author Greg
  */
 public class MediaLoopThumbnail extends BorderPane implements Serializable {
-
+    
     private static final String BORDER_STYLE_SELECTED_ACTIVE = "-fx-padding: 0.2em;-fx-border-color: #0093ff;-fx-border-radius: 5;-fx-border-width: 0.1em;";
     private static final String BORDER_STYLE_SELECTED_INACTIVE = "-fx-padding: 0.2em;-fx-border-color: #999999;-fx-border-radius: 5;-fx-border-width: 0.1em;";
     private static final String BORDER_STYLE_DESELECTED = "-fx-padding: 0.2em;-fx-border-color: rgb(0,0,0,0);-fx-border-radius: 5;-fx-border-width: 0.1em;";
@@ -45,31 +46,31 @@ public class MediaLoopThumbnail extends BorderPane implements Serializable {
     private boolean active;
     private MediaFile slide;
     private int index = -1;
+    private ImageView imageView;
+    private Image slideImage;
 
     /**
      * Creates a new media loop thumbnail
      *
      * @param slide the data slide that needs to be shown
      */
-    public MediaLoopThumbnail(MediaFile slide) {
+    public MediaLoopThumbnail(final MediaFile slide, final Image slideImage) {
         this.slide = slide;
-        Image image = null;
-        if (Utils.fileIsImage(slide)) {
-            image = new Image("file:" + slide.getAbsolutePath());
-        } else {
+        this.slideImage = slideImage;
+        imageView = new ImageView();
+    }
 
-            image = Utils.getVidBlankImage(slide.getAbsoluteFile());
-        }
+    /**
+     * Method that constructs the image view and assigns it to the thumbnail.
+     */
+    public void createGraphic() {
+        
+        imageView.setImage(slideImage);
 
-        if (image == null) {
-            image = Utils.getImageFromColour(Color.BLACK);
-        }
-        ImageView imageView = new ImageView(image);
-        imageView.setFitWidth(200);
-        imageView.setFitHeight(QueleaApp.get().getProjectionWindow().getCanvas().getHeight()
-                / (QueleaApp.get().getProjectionWindow().getCanvas().getWidth() / 200));
-        imageView.setPreserveRatio(true);
-
+            imageView.setPreserveRatio(true);
+            imageView.setFitHeight(100);
+        
+        
         setTop(imageView);
         setCenter(new Label(slide.getName()));
     }
@@ -144,5 +145,5 @@ public class MediaLoopThumbnail extends BorderPane implements Serializable {
     public void setIndex(int desiredIndex) {
         this.index = desiredIndex;
     }
-
+    
 }

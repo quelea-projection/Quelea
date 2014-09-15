@@ -80,7 +80,11 @@ public class SplashOOP extends Application {
      * Close the splash screen
      */
     public static void hideStage() {
+        try{
         p.destroy();
+        }catch(Exception ex){
+             Logger.getLogger(OOPPlayer.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 
     /**

@@ -211,9 +211,9 @@ public class ScheduleList extends StackPane {
                     public void handle(DragEvent event) {
                         listCell.setStyle("-fx-border-color: rgb(0, 0, 0);-fx-border-width: 0,0,0,0;");
                         String imageLocation = event.getDragboard().getString();
-                         File imageFile = new File("");
+                        File imageFile = new File("");
                         if (imageLocation != null) {
-                           imageFile= new File(imageLocation);
+                            imageFile = new File(imageLocation);
                         }
 
                         if (imageFile.exists()) {
@@ -404,11 +404,18 @@ public class ScheduleList extends StackPane {
      */
     public void setSchedule(Schedule schedule) {
         clearSchedule();
-        for (Displayable displayable : schedule) {
+        for (final Displayable displayable : schedule) {
             if (displayable instanceof SongDisplayable) {
                 ((SongDisplayable) displayable).matchID();
             }
-            listView.itemsProperty().get().add(displayable);
+            Utils.fxRunAndWait(new Runnable() {
+
+                @Override
+                public void run() {
+                    listView.itemsProperty().get().add(displayable);
+                }
+            });
+
         }
         this.schedule = schedule;
     }
@@ -432,7 +439,14 @@ public class ScheduleList extends StackPane {
      * Clear the current schedule without warning.
      */
     public void clearSchedule() {
-        listView.itemsProperty().get().clear();
+         Utils.fxRunAndWait(new Runnable() {
+
+                @Override
+                public void run() {
+                   listView.itemsProperty().get().clear();
+                }
+            });
+       
     }
 
     /**

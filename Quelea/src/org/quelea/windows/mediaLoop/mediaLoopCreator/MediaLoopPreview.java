@@ -19,6 +19,7 @@ package org.quelea.windows.mediaLoop.mediaLoopCreator;
 
 import java.util.ArrayList;
 import java.util.List;
+import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.EventHandler;
@@ -26,6 +27,7 @@ import javafx.geometry.BoundingBox;
 import javafx.geometry.Bounds;
 import javafx.geometry.Pos;
 import javafx.scene.control.ScrollPane;
+import javafx.scene.image.Image;
 import javafx.scene.input.ClipboardContent;
 import javafx.scene.input.DragEvent;
 import javafx.scene.input.Dragboard;
@@ -42,6 +44,7 @@ import org.quelea.data.powerpoint.SlideChangedListener;
 import org.quelea.services.languages.LabelGrabber;
 import org.quelea.services.utils.Utils;
 import org.quelea.windows.main.QueleaApp;
+import org.quelea.windows.mediaLoop.MediaLoopEditorPanel;
 import org.quelea.windows.mediaLoop.MediaLoopThumbnail;
 
 /**
@@ -63,12 +66,15 @@ public class MediaLoopPreview extends ScrollPane {
     private int localDragIndex = -1;
     private Rectangle markerRect;
     private Thread loopThread;
+    private MediaLoopThumbnail transThumb = null;
+    private MediaLoopEditorPanel parent = null;
 
     /**
      * Create a new mediaLoop list.
      */
-    public MediaLoopPreview(boolean isMediaLoopCreator) {
+    public MediaLoopPreview(boolean isMediaLoopCreator, final MediaLoopEditorPanel parent) {
         this.isMediaLoopCreator = isMediaLoopCreator;
+        this.parent = parent;
         setStyle("-fx-focus-color: transparent;-fx-background-color:linear-gradient(to bottom right, #c0c0c0, #e8e8e8);");
         flow = new FlowPane(20, 20);
         flow.setAlignment(Pos.CENTER);
@@ -154,9 +160,16 @@ public class MediaLoopPreview extends ScrollPane {
         this.slides = slides;
         flow.getChildren().clear();
         thumbnails.clear();
+        MediaFile slide;
+        Image slideImage;
 
+        MediaLoopThumbnail thumbnail;
         for (int i = 0; i < slides.size(); i++) {
-            final MediaLoopThumbnail thumbnail = new MediaLoopThumbnail(slides.get(i));
+            slide = slides.get(i);
+            slideImage = slide.getImage();
+
+            thumbnail = new MediaLoopThumbnail(slide, slideImage);
+
             thumbnail.setIndex(i);
             if (i == 0) {
                 thumbnail.setSelected(true);
@@ -164,15 +177,18 @@ public class MediaLoopPreview extends ScrollPane {
             thumbnail.setActive(true);
 
             thumbnails.add(thumbnail);
-            flow.getChildren().add(thumbnail);
+
             thumbnail.setActive(focusedProperty().get());
+            final int indexNum = i;
             thumbnail.setOnDragDetected(new EventHandler<MouseEvent>() {
                 @Override
                 public void handle(MouseEvent t) {
-                    localDragIndex = thumbnail.getIndex();
+                    localDragIndex = thumbnails.get(indexNum).getIndex();
+                    transThumb = thumbnails.get(indexNum);
                     Dragboard db = startDragAndDrop(TransferMode.ANY);
+
                     ClipboardContent content = new ClipboardContent();
-                    content.put(MediaLoopThumbnail.MEDIA_LOOP_THUMBNAIL_FORMAT, thumbnail);
+                    content.putString(localDragIndex + "");
                     db.setContent(content);
                     t.consume();
                 }
@@ -195,8 +211,8 @@ public class MediaLoopPreview extends ScrollPane {
                         }
                     } else {
                         if (event.getDragboard().getString() != null) {
-                            if (thumbnail instanceof MediaLoopThumbnail) {
-                                thumbnail.setStyle("-fx-background-color: #99cccc;");
+                            if (thumbnails.get(indexNum) instanceof MediaLoopThumbnail) {
+                                thumbnails.get(indexNum).setStyle("-fx-background-color: #99cccc;");
                             }
                         }
                     }
@@ -207,50 +223,79 @@ public class MediaLoopPreview extends ScrollPane {
                 @Override
                 public void handle(DragEvent t) {
 
-                    markerRect.setVisible(false);
+                    if (t.getDragboard().getString() != null) {
+                        if (thumbnails.get(indexNum) instanceof MediaLoopThumbnail) {
+                            thumbnails.get(indexNum).setStyle("-fx-background-color: #00000000;");
+                        }
+                    }
                 }
             });
             thumbnail.setOnDragOver(new EventHandler<DragEvent>() {
                 @Override
                 public void handle(DragEvent event) {
-                    if (event.getDragboard().getContent(MediaLoopThumbnail.MEDIA_LOOP_THUMBNAIL_FORMAT) != null) {
-                        event.acceptTransferModes(TransferMode.ANY);
-                    }
+
+                    event.acceptTransferModes(TransferMode.ANY);
+
                 }
             });
             thumbnail.setOnDragDropped(new EventHandler<DragEvent>() {
 
                 @Override
                 public void handle(DragEvent event) {
-                    if (event.getDragboard().getContent(MediaLoopThumbnail.MEDIA_LOOP_THUMBNAIL_FORMAT) instanceof MediaLoopThumbnail) {
-                        final MediaLoopThumbnail finalThumbnail = (MediaLoopThumbnail) event.getDragboard().getContent(MediaLoopThumbnail.MEDIA_LOOP_THUMBNAIL_FORMAT);
-                        if (finalThumbnail != null) {
-                            if (thumbnail.getIndex() != localDragIndex) {
-                                if (localDragIndex > -1) {
-                                    slides.remove(localDragIndex);
-                                    localDragIndex = -1;
-                                }
-                                slides.add(thumbnail.getIndex(), finalThumbnail.getMediaFile());
-                                int selected = -1;
-                                for (int i = 0; i < thumbnails.size(); i++) {
-                                    MediaLoopThumbnail thumbnail = thumbnails.get(i);
-                                    Bounds bounds = new BoundingBox(thumbnail.getLayoutX(), thumbnail.getLayoutY() + getScrollOffset(), thumbnail.getWidth(), thumbnail.getHeight());
-                                    if (bounds.contains(event.getX(), event.getY())) {
-                                        selected = i;
-                                    }
-                                }
-                                setSlides(slides);
-                                if (selected != -1) {
-                                    select(selected, true);
-                                }
 
+                    final MediaLoopThumbnail finalThumbnail = transThumb;
+                    if (finalThumbnail != null) {
+                        if (thumbnails.get(indexNum).getIndex() != localDragIndex) {
+                            if (localDragIndex > -1) {
+                                slides.remove(localDragIndex);
+                                localDragIndex = -1;
                             }
+                            slides.add(thumbnails.get(indexNum).getIndex(), finalThumbnail.getMediaFile());
+                            int selected = -1;
+                            for (int i = 0; i < thumbnails.size(); i++) {
+                                MediaLoopThumbnail thumbnail = thumbnails.get(i);
+                                Bounds bounds = new BoundingBox(thumbnail.getLayoutX(), thumbnail.getLayoutY() + getScrollOffset(), thumbnail.getWidth(), thumbnail.getHeight());
+                                if (bounds.contains(event.getX(), event.getY())) {
+                                    selected = i;
+                                }
+                            }
+                            setSlides(slides);
+                            createGraphics();
+                            if (selected != -1) {
+                                select(selected, true);
+                            }
+
                         }
                     }
                 }
+
             });
         }
+        
+        flow.getChildren().addAll(thumbnails);
+        this.requestLayout();
+        this.requestFocus();
+        flow.requestFocus();
+        flow.requestLayout();
 
+    }
+
+    /**
+     * Creates graphics for each thumbnail
+     */
+    public void createGraphics() {
+        for (final MediaLoopThumbnail t : thumbnails) {
+            Platform.runLater(new Runnable() {
+
+                @Override
+                public void run() {
+
+                    t.createGraphic();
+
+                }
+            });
+
+        }
     }
 
     /**
@@ -261,7 +306,13 @@ public class MediaLoopPreview extends ScrollPane {
     public int getSelectedIndex() {
         return selectedIndex;
     }
-
+    /**
+     * Gets the pane which the thumbnails are in 
+     * @return the flow pane that the slides are in
+     */
+    public FlowPane getFlowPane(){
+        return flow;
+    }
     /**
      * Get all media files as array list
      *
@@ -365,12 +416,16 @@ public class MediaLoopPreview extends ScrollPane {
                     }
                 }
                 ensureVisible(selectedIndex);
+                 flow.requestFocus();
             }
         }
+        
+        
         if (fireUpdate) {
             fireSlideChangedListeners();
         }
         elapsedTimeCurrentItem = 0;
+        flow.requestFocus();
     }
 
     /**

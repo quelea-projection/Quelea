@@ -23,6 +23,7 @@ import org.quelea.data.displayable.MediaLoopDisplayable;
 import org.quelea.data.mediaLoop.MediaFile;
 import org.quelea.data.powerpoint.SlideChangedListener;
 import org.quelea.services.utils.QueleaProperties;
+import org.quelea.services.utils.Utils;
 import org.quelea.windows.main.AbstractPanel;
 import org.quelea.windows.main.DisplayCanvas;
 import org.quelea.windows.main.DisplayableDrawer;
@@ -49,7 +50,7 @@ public class MediaLoopPanel extends AbstractPanel {
      */
     public MediaLoopPanel() {
         BorderPane mainPanel = new BorderPane();
-        mediaLoopPreview = new MediaLoopPreview(false);
+        mediaLoopPreview = new MediaLoopPreview(false, null);
         mediaLoopPreview.addSlideChangedListener(new SlideChangedListener() {
             @Override
             public void slideChanged(int newSlide) {
@@ -142,11 +143,15 @@ public class MediaLoopPanel extends AbstractPanel {
     public void showDisplayable(final MediaLoopDisplayable displayable, final int index) {
 
         this.displayable = displayable;
+
         if (displayable == null) {
             mediaLoopPreview.clear();
             return;
         }
+
         mediaLoopPreview.setSlides(displayable.getMediaFiles());
+
+        mediaLoopPreview.createGraphics();
 
         if (index < 0) {
             mediaLoopPreview.select(0, true);

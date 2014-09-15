@@ -70,7 +70,7 @@ public class SelectLyricsPanel extends AbstractPanel {
         splitPane.setStyle("-fx-background-color: rgba(0, 0, 0);");
         splitPane.getItems().add(lyricsList);
         splitPane.getItems().add(preview);
-        splitPane.setDividerPosition(0, QueleaProperties.get().getSongPanelSplit());
+
         setCenter(splitPane);
         registerDisplayCanvas(previewCanvas);
         lyricsList.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<TextSection>() {

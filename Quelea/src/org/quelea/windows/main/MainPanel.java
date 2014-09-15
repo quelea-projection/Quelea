@@ -19,11 +19,14 @@ package org.quelea.windows.main;
 
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javafx.application.Platform;
+import javafx.collections.ObservableList;
 import javafx.geometry.Orientation;
 import javafx.scene.control.SplitPane;
 import javafx.scene.layout.BorderPane;
 import org.quelea.services.utils.LoggerUtils;
 import org.quelea.services.utils.QueleaProperties;
+import org.quelea.services.utils.Utils;
 import org.quelea.windows.library.LibraryPanel;
 import org.quelea.windows.main.schedule.SchedulePanel;
 
@@ -42,7 +45,6 @@ public class MainPanel extends BorderPane {
     private final LivePanel livePanel;
     private final StatusPanelGroup statusPanelGroup;
     private final SplitPane scheduleAndLibrary;
-    private final SplitPane previewAndLive;
     private final SplitPane mainSplit;
 
     /**
@@ -64,23 +66,19 @@ public class MainPanel extends BorderPane {
         scheduleAndLibrary.setOrientation(Orientation.VERTICAL);
         scheduleAndLibrary.getItems().add(schedulePanel);
         scheduleAndLibrary.getItems().add(libraryPanel);
-        previewAndLive = new SplitPane();
-        previewAndLive.setOrientation(Orientation.HORIZONTAL);
-        previewAndLive.getItems().add(previewPanel);
-        previewAndLive.getItems().add(livePanel);
         previewPanel.getLyricsPanel().getSplitPane().
                 getDividers().get(0).positionProperty().
                 bindBidirectional(livePanel.getLyricsPanel().getSplitPane().getDividers().get(0).positionProperty());
         mainSplit = new SplitPane();
         mainSplit.setOrientation(Orientation.HORIZONTAL);
         mainSplit.getItems().add(scheduleAndLibrary);
-        mainSplit.getItems().add(previewAndLive);
-        scheduleAndLibrary.setDividerPosition(0, QueleaProperties.get().getSchedLibSplit());
-        previewAndLive.setDividerPosition(0, QueleaProperties.get().getPrevLiveSplit());
-        mainSplit.setDividerPosition(0, QueleaProperties.get().getMainSplit());
+        mainSplit.getItems().add(previewPanel);
+        mainSplit.getItems().add(livePanel);
+
         setCenter(mainSplit);
         statusPanelGroup = new StatusPanelGroup();
         setBottom(statusPanelGroup);
+
     }
 
     /**
@@ -88,17 +86,29 @@ public class MainPanel extends BorderPane {
      */
     public void saveSplitPanelPositions() {
         if (scheduleAndLibrary != null) {
-            QueleaProperties.get().setSchedLibSplit(scheduleAndLibrary.getDividerPositions()[0]);
-        }
-        if (previewAndLive != null) {
-            QueleaProperties.get().setPrevLiveSplit(previewAndLive.getDividerPositions()[0]);
+            QueleaProperties.get().setSchedLibSplit(scheduleAndLibrary.getDividers().get(0).getPosition());
         }
         if (mainSplit != null) {
-            QueleaProperties.get().setMainSplit(mainSplit.getDividerPositions()[0]);
+            QueleaProperties.get().setMainSplit(mainSplit.getDividers().get(0).getPosition());
+
+            
+            QueleaProperties.get().setPrevLiveSplit(mainSplit.getDividers().get(1).getPosition());
+
         }
         if (livePanel != null) {
-            QueleaProperties.get().setSongPanelSplit(livePanel.getLyricsPanel().getSplitPane().getDividerPositions()[0]);
+            QueleaProperties.get().setSongPanelSplit(livePanel.getLyricsPanel().getSplitPane().getDividers().get(0).getPosition());
+
         }
+    }
+
+    /**
+     * Sets the split panel positions from Quelea Properties
+     */
+    public void setSplitPanelPositions() {
+        scheduleAndLibrary.getDividers().get(0).setPosition(QueleaProperties.get().getSchedLibSplit());
+        mainSplit.getDividers().get(0).setPosition(QueleaProperties.get().getMainSplit());
+        mainSplit.getDividers().get(1).setPosition(QueleaProperties.get().getPrevLiveSplit());
+        livePanel.getLyricsPanel().getSplitPane().getDividers().get(0).setPosition(QueleaProperties.get().getSongPanelSplit());
     }
 
     /**

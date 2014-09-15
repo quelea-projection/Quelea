@@ -38,6 +38,8 @@ import javafx.scene.input.Clipboard;
 import javafx.scene.input.ClipboardContent;
 import javafx.scene.input.DragEvent;
 import javafx.scene.input.Dragboard;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.TransferMode;
@@ -64,6 +66,8 @@ public class ImageListPanel extends BorderPane {
     private final TilePane imageList;
     private String dir;
     private Thread updateThread;
+    private File fileToDelete;
+    private Node nodeToDelete;
 
     /**
      * Create a new image list panel.
@@ -77,6 +81,39 @@ public class ImageListPanel extends BorderPane {
         imageList.setHgap(15);
         imageList.setVgap(15);
         imageList.setOrientation(Orientation.HORIZONTAL);
+
+        setOnKeyPressed(new EventHandler<KeyEvent>() {
+            @Override
+            public void handle(KeyEvent t) {
+                if (t.getCode() == KeyCode.DELETE) {
+                    if (!(nodeToDelete == null) && !(fileToDelete == null)) {
+                        final boolean[] reallyDelete = new boolean[]{false};
+                        final File file = fileToDelete;
+                        final Node node = nodeToDelete;
+                        Dialog.buildConfirmation(LabelGrabber.INSTANCE.getLabel("delete.image.title"),
+                                LabelGrabber.INSTANCE.getLabel("delete.image.confirmation"))
+                                .addYesButton(new EventHandler<ActionEvent>() {
+                                    @Override
+                                    public void handle(ActionEvent t) {
+                                        reallyDelete[0] = true;
+                                    }
+                                })
+                                .addNoButton(new EventHandler<ActionEvent>() {
+                                    @Override
+                                    public void handle(ActionEvent t) {
+                                    }
+                                }).build().showAndWait();
+                        if (reallyDelete[0]) {
+                            file.delete();
+                            imageList.getChildren().remove(node);
+                            fileToDelete = null;
+                            nodeToDelete = null;
+                        }
+
+                    }
+                }
+            }
+        });
         imageList.setOnDragOver(new EventHandler<DragEvent>() {
             @Override
             public void handle(DragEvent t) {
@@ -86,16 +123,15 @@ public class ImageListPanel extends BorderPane {
         imageList.setOnDragDropped(new EventHandler<DragEvent>() {
             @Override
             public void handle(DragEvent t) {
-                if(t.getGestureSource() == null) {
+                if (t.getGestureSource() == null) {
                     Clipboard cb = t.getDragboard();
-                    if(cb.hasFiles()) {
+                    if (cb.hasFiles()) {
                         List<File> files = cb.getFiles();
-                        for(File f : files) {
-                            if(Utils.fileIsImage(f) && !f.isDirectory()) {
+                        for (File f : files) {
+                            if (Utils.fileIsImage(f) && !f.isDirectory()) {
                                 try {
                                     Files.copy(f.getAbsoluteFile().toPath(), Paths.get(getDir(), f.getName()), StandardCopyOption.COPY_ATTRIBUTES);
-                                }
-                                catch(IOException ex) {
+                                } catch (IOException ex) {
                                     LoggerUtils.getLogger().log(Level.WARNING, "Could not copy file into ImagePanel through system drag and drop.", ex);
                                 }
                             }
@@ -133,14 +169,14 @@ public class ImageListPanel extends BorderPane {
     private void updateImages() {
         imageList.getChildren().clear();
         final File[] files = new File(dir).listFiles();
-        if(updateThread != null && updateThread.isAlive()) {
+        if (updateThread != null && updateThread.isAlive()) {
             return;
         }
         updateThread = new Thread() {
             @Override
             public void run() {
-                for(final File file : files) {
-                    if(Utils.fileIsImage(file) && !file.isDirectory()) {
+                for (final File file : files) {
+                    if (Utils.fileIsImage(file) && !file.isDirectory()) {
                         final HBox viewBox = new HBox();
                         final ImageView view = new ImageView(ImageManager.INSTANCE.getImage(file.toURI().toString(), 160, 90, false));
                         view.setPreserveRatio(true);
@@ -149,10 +185,9 @@ public class ImageListPanel extends BorderPane {
                         view.setOnMouseClicked(new EventHandler<MouseEvent>() {
                             @Override
                             public void handle(MouseEvent t) {
-                                if(t.getButton() == MouseButton.PRIMARY) {
+                                if (t.getButton() == MouseButton.PRIMARY) {
                                     QueleaApp.get().getMainWindow().getMainPanel().getSchedulePanel().getScheduleList().add(new ImageDisplayable(file));
-                                }
-                                else if(t.getButton() == MouseButton.SECONDARY) {
+                                } else if (t.getButton() == MouseButton.SECONDARY) {
                                     ContextMenu removeMenu = new ContextMenu();
                                     MenuItem removeItem = new MenuItem(LabelGrabber.INSTANCE.getLabel("remove.image.text"));
                                     removeItem.setOnAction(new EventHandler<ActionEvent>() {
@@ -172,7 +207,7 @@ public class ImageListPanel extends BorderPane {
                                                         public void handle(ActionEvent t) {
                                                         }
                                                     }).build().showAndWait();
-                                            if(reallyDelete[0]) {
+                                            if (reallyDelete[0]) {
                                                 file.delete();
                                                 imageList.getChildren().remove(viewBox);
                                             }
@@ -194,7 +229,7 @@ public class ImageListPanel extends BorderPane {
                             }
                         });
                         viewBox.getChildren().add(view);
-                        setupHover(viewBox);
+                        setupHover(viewBox, file);
                         Platform.runLater(new Runnable() {
                             @Override
                             public void run() {
@@ -208,18 +243,23 @@ public class ImageListPanel extends BorderPane {
         updateThread.start();
     }
 
-    private void setupHover(final Node view) {
+    private void setupHover(final Node view, final File file) {
         view.setStyle(BORDER_STYLE_DESELECTED);
         view.setOnMouseEntered(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent t) {
                 view.setStyle(BORDER_STYLE_SELECTED);
+                fileToDelete = file;
+                nodeToDelete = view;
+                view.requestFocus();
             }
         });
         view.setOnMouseExited(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent t) {
                 view.setStyle(BORDER_STYLE_DESELECTED);
+                fileToDelete = null;
+                nodeToDelete = null;
             }
         });
     }

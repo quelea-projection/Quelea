@@ -65,6 +65,7 @@ import javafx.geometry.Rectangle2D;
 import javafx.scene.Node;
 import javafx.scene.control.ToggleButton;
 import javafx.scene.image.Image;
+import javafx.scene.image.PixelReader;
 import javafx.scene.image.PixelWriter;
 import javafx.scene.image.WritableImage;
 import javafx.scene.input.MouseEvent;
@@ -1016,6 +1017,40 @@ public final class Utils {
         return image;
     }
     private static final Map<File, WritableImage> videoPreviewCache = new SoftHashMap<>();
+    private static final Map<File, Image> mediaLoopImageCache = new SoftHashMap<>();
+    private static final WritableImage blankVidImage = getBlankVideoImage();
+
+    /**
+     * Gets the video blank image as a WritableImage;
+     *
+     * @return the video blank image
+     */
+    private static WritableImage getBlankVideoImage() {
+        {
+            Image src = new Image("file:icons/vid preview.png");
+            PixelReader reader = src.getPixelReader();
+
+            int width = (int) src.getWidth();
+            int height = (int) src.getHeight();
+
+            WritableImage dest = new WritableImage(width, height);
+            PixelWriter writer = dest.getPixelWriter();
+
+            for (int x = 0; x < width; x++) {
+                for (int y = 0; y < height; y++) {
+                    // reading a pixel from src image,
+                    // then writing a pixel to dest image
+                    Color color = reader.getColor(x, y);
+                    writer.setColor(x, y, color);
+
+                    // this way is also OK
+//            int argb = reader.getArgb(x, y);
+//            writer.setArgb(x, y, argb);
+                }
+            }
+            return dest;
+        }
+    }
 
     /**
      * Get an image to be shown as the background in place of a playing video.
@@ -1023,52 +1058,91 @@ public final class Utils {
      * @param videoFile the video file for which to get the preview image.
      * @return the image to be shown in place of a playing video.
      */
-    public static Image getVidBlankImage(File videoFile) {
+    public static Image getVidBlankImage(final File videoFile) {
         synchronized (videoPreviewCache) {
             if (videoFile.isFile()) {
-                try {
-                    WritableImage ret = videoPreviewCache.get(videoFile);
-                    if (ret == null) {
-                        BufferedImage bi = FrameGrab.getFrame(videoFile, 400);
-                        if (bi == null) {
-                            bi = FrameGrab.getFrame(videoFile, 0);
-                        }
-                        if (bi != null) {
-                            if (bi.getWidth() > 720 || bi.getHeight() > 480) {
-                                bi = scaleImage(bi, 720);
-                            }
+                if (videoPreviewCache.get(videoFile) == null) {
+                    Utils.fxRunAndWait(new Runnable() {
 
-                            ret = SwingFXUtils.toFXImage(bi, null);
+                        @Override
+                        public void run() {
+                            final StatusPanel statusPanel = QueleaApp.get().getStatusGroup().addPanel(LabelGrabber.INSTANCE.getLabel("video.thumbnails.creation"));
+                            Thread t = new Thread(new Runnable() {
+
+                                @Override
+                                public void run() {
+                                    try {
+
+                                        BufferedImage bi = FrameGrab.getFrame(videoFile, 400);
+                                        if (bi == null) {
+                                            bi = FrameGrab.getFrame(videoFile, 0);
+                                        }
+                                        if (bi != null) {
+                                            if (bi.getWidth() > 720 || bi.getHeight() > 480) {
+                                                bi = scaleImage(bi, 720, 480, true);
+                                            }
+                                            double width = ((QueleaApp.get().getProjectionWindow().getCanvas().getWidth() * bi.getHeight()) / QueleaApp.get().getProjectionWindow().getCanvas().getHeight());
+                                            double height = bi.getHeight();
+
+                                            videoPreviewCache.put(videoFile, SwingFXUtils.toFXImage(scaleImage(bi, (int) width, (int) height, false), null));
+                                        }
+
+                                    } catch (Exception ex) {
+                                        try {
+
+                                            BufferedImage buffI = null;
+                                            if (ThumbnailFetcher.INSTANCE != null) {
+                                                buffI = ThumbnailFetcher.INSTANCE.getSnapshot(1.0f / 3.0f, videoFile.getAbsolutePath());
+                                            }
+
+                                            if (buffI != null) {
+
+                                                videoPreviewCache.put(videoFile, SwingFXUtils.toFXImage(buffI, null));
+                                            } else {
+                                                Image newImage = new Image("file:icons/vid preview.png");
+
+                                                videoPreviewCache.put(videoFile, blankVidImage);
+                                            }
+
+                                        } catch (Exception exception) {
+                                            LOGGER.log(Level.INFO, "Couldn't get video preview image for " + videoFile.getAbsolutePath(), "Codec issues?");
+                                            videoPreviewCache.put(videoFile, blankVidImage);
+                                        }
+                                    }
+
+                                    statusPanel.done();
+                                }
+                            });
+                            t.start();
                         }
+                    });
+                    while (videoPreviewCache.get(videoFile) == null) {
+
                     }
-                    videoPreviewCache.put(videoFile, ret);
-                    return ret;
-                } catch (Exception ex) {
-                    try {
-                        BufferedImage buffI = null;
-                        if(ThumbnailFetcher.INSTANCE != null){
-                            buffI = ThumbnailFetcher.INSTANCE.getSnapshot(1.0f / 3.0f, videoFile.getAbsolutePath());
-                        }
-                        
-                        if (buffI != null) {
-                            return SwingFXUtils.toFXImage(buffI, null);
-                        }else{
-                            return new Image("file:icons/vid preview.png");
-                        }
-                    } catch (Exception exception) {
-                        LOGGER.log(Level.INFO, "Couldn't get video preview image for " + videoFile.getAbsolutePath(), "Codec issues?");
-                        return new Image("file:icons/vid preview.png");
-                    }
+                  
+
                 }
+                return videoPreviewCache.get(videoFile);
             } else {
                 return new Image("file:icons/vid preview.png");
             }
         }
     }
 
-    private static BufferedImage scaleImage(BufferedImage orig, int width) {
+    /**
+     * Stores an image cache for media loop images. Helps reduce memory problems
+     *
+     * @return the hash map for the media loop
+     */
+    public static Map<File, Image> getMediaLoopImageCache() {
+        return mediaLoopImageCache;
+    }
+
+    private static BufferedImage scaleImage(BufferedImage orig, int width, int height, boolean preserveRatio) {
         double ratio = orig.getWidth() / orig.getHeight();
-        int height = (int) (width / ratio);
+        if (preserveRatio) {
+            height = (int) (width / ratio);
+        }
         BufferedImage resized = new BufferedImage(width, height, orig.getType());
         Graphics2D g = resized.createGraphics();
         g.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);

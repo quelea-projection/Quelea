@@ -113,19 +113,21 @@ public class MediaFile extends File {
      * @return an image from this media
      */
     public Image getImage() {
-        Image image = null;
 
-        if (Utils.fileIsImage(this)) {
-            image = new Image("file:" + this.getAbsolutePath());
-        } else {
+        if (Utils.getMediaLoopImageCache().get(this) == null) {
+            String s = this.getAbsolutePath();
+            if (Utils.fileIsImage(this)) {
 
-            image = Utils.getVidBlankImage(this.getAbsoluteFile());
-            image = Utils.stretchImageToAspect(image);
+                Utils.getMediaLoopImageCache().put(this, new Image("file:" + s));
+            } else if (Utils.fileIsVideo(this)) {
+
+                Utils.getMediaLoopImageCache().put(this, Utils.getVidBlankImage(this));
+
+            } else {
+                Utils.getMediaLoopImageCache().put(this, Utils.getImageFromColour(Color.BLACK));
+            }
+
         }
-
-        if (image == null) {
-            image = Utils.getImageFromColour(Color.BLACK);
-        }
-        return image;
+        return Utils.getMediaLoopImageCache().get(this);
     }
 }

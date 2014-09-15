@@ -171,11 +171,14 @@ public abstract class AbstractPanel extends BorderPane implements ContainedPanel
             if (index >= d.getMediaFiles().size()) {
                 index = 0;
             }
+            Image displayNextImage;
             ImageDrawer idrawer = new ImageDrawer();
-            Image displayNextImage = d.getMediaFiles().get(index).getImage();
-            ImageDisplayable imageNextDisplayable = new ImageDisplayable(displayNextImage);
-            idrawer.setCanvas(previewCanvas);
-            idrawer.draw(imageNextDisplayable);
+            if (index < d.getMediaFiles().size() - 1) {
+                displayNextImage = d.getMediaFiles().get(index).getImage();
+                ImageDisplayable imageNextDisplayable = new ImageDisplayable(displayNextImage);
+                idrawer.setCanvas(previewCanvas);
+                idrawer.draw(imageNextDisplayable);
+            }
 
         } else {
             Displayable d = QueleaApp.get().getMainWindow().getMainPanel().getPreviewPanel().getDisplayable();

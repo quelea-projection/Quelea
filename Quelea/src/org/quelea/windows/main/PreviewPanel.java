@@ -76,7 +76,7 @@ public class PreviewPanel extends LivePreviewPanel {
                     QueleaApp.get().getMainWindow().getMainPanel().getSchedulePanel().getScheduleList().getSelectionModel().selectNext();
                 }
                 QueleaApp.get().getMainWindow().getMainPanel().getLivePanel().setDisplayable(d, index);
-
+              
                 Platform.runLater(new Runnable() {
 
                     @Override

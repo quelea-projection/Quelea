@@ -21,6 +21,8 @@ import java.io.File;
 import java.util.List;
 import java.util.logging.Level;
 import javafx.application.Platform;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -38,6 +40,8 @@ import javafx.scene.input.Clipboard;
 import javafx.scene.input.ClipboardContent;
 import javafx.scene.input.DragEvent;
 import javafx.scene.input.Dragboard;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.TransferMode;
@@ -50,6 +54,7 @@ import org.quelea.data.mediaLoop.MediaLoopManager;
 import org.quelea.services.languages.LabelGrabber;
 import org.quelea.services.utils.DatabaseListener;
 import org.quelea.services.utils.LoggerUtils;
+import org.quelea.services.utils.Utils;
 import org.quelea.windows.main.PreviewPanel;
 import org.quelea.windows.main.QueleaApp;
 import org.quelea.windows.mediaLoop.mediaLoopCreator.MediaLoopCreatorWindow;
@@ -67,6 +72,8 @@ public class MediaLoopListPanel extends BorderPane {
     private Thread updateThread;
     private ObservableList<MediaLoopDisplayable> allMediaLoops;
     private MediaLoopDisplayable currentDisplayable;
+    private Node viewToDelete = null;
+    private MediaLoopDisplayable dispToDelete = null;
 
     /**
      * Create a new media loop list panel.
@@ -82,6 +89,37 @@ public class MediaLoopListPanel extends BorderPane {
             @Override
             public void handle(DragEvent t) {
                 t.acceptTransferModes(TransferMode.COPY_OR_MOVE);
+            }
+        });
+        setOnKeyPressed(new EventHandler<KeyEvent>() {
+            @Override
+            public void handle(KeyEvent t) {
+                if (t.getCode() == KeyCode.DELETE) {
+                    if (!(viewToDelete == null) && !(dispToDelete == null)) {
+                        final boolean[] reallyDelete = new boolean[]{false};
+                        final MediaLoopDisplayable disp= dispToDelete;
+                        final Node node = viewToDelete;
+                        Dialog.buildConfirmation(LabelGrabber.INSTANCE.getLabel("delete.mediaLoop.title"),
+                                LabelGrabber.INSTANCE.getLabel("delete.mediaLoop.confirmation"))
+                                .addYesButton(new EventHandler<ActionEvent>() {
+                                    @Override
+                                    public void handle(ActionEvent t) {
+                                        reallyDelete[0] = true;
+                                    }
+                                })
+                                .addNoButton(new EventHandler<ActionEvent>() {
+                                    @Override
+                                    public void handle(ActionEvent t) {
+                                    }
+                                }).build().showAndWait();
+                        if (reallyDelete[0]) {
+                            MediaLoopManager.get().removeMediaLoop(disp);
+                            mediaLoopList.getChildren().remove(node);
+                            dispToDelete = null;
+                            viewToDelete = null;
+                        }
+                    }
+                }
             }
         });
         mediaLoopList.setOnDragDropped(new EventHandler<DragEvent>() {
@@ -142,9 +180,9 @@ public class MediaLoopListPanel extends BorderPane {
      */
     private void updateMediaLoops() {
         mediaLoopList.getChildren().clear();
- 
+
         allMediaLoops = FXCollections.observableArrayList(MediaLoopManager.get().getMediaLoops());
-       
+
         if (updateThread != null && updateThread.isAlive()) {
             return;
         }
@@ -160,13 +198,16 @@ public class MediaLoopListPanel extends BorderPane {
                     view.setPreserveRatio(true);
                     view.setFitWidth(160);
                     view.setFitHeight(90);
-
                     viewBox.setOnMouseClicked(new EventHandler<MouseEvent>() {
                         @Override
                         public void handle(MouseEvent t) {
                             currentDisplayable = mediaLoop;
-                            if (t.getButton() == MouseButton.PRIMARY && (t.getClickCount() > 1)) {
-                                 QueleaApp.get().getMainWindow().getMainPanel().getSchedulePanel().getScheduleList().add(mediaLoop);
+                            if (t.getButton() == MouseButton.PRIMARY) {
+                                if (t.getClickCount() > 1) {
+                                    QueleaApp.get().getMainWindow().getMainPanel().getSchedulePanel().getScheduleList().add(mediaLoop);
+                                } else {
+                                    //single click
+                                }
                             } else if (t.getButton() == MouseButton.SECONDARY) {
 
                                 ContextMenu removeMenu = new ContextMenu();
@@ -203,7 +244,6 @@ public class MediaLoopListPanel extends BorderPane {
                                                     mediaLoopEditWindow.showAndWait();
 
                                                     mediaLoopEditWindow.toFront();
-                                                    refresh();
                                                 }
                                             }
                                         });
@@ -257,8 +297,8 @@ public class MediaLoopListPanel extends BorderPane {
                     viewBox.getChildren().add(new Label(mediaLoop.getPreviewText()));
                     viewBox.setAlignment(Pos.CENTER);
                     viewBox.setFillWidth(true);
-                    setupHover(viewBox);
-                    Platform.runLater(new Runnable() {
+                    setupHover(viewBox, mediaLoop);
+                    Utils.fxRunAndWait(new Runnable() {
                         @Override
                         public void run() {
                             mediaLoopList.getChildren().add(viewBox);
@@ -276,18 +316,23 @@ public class MediaLoopListPanel extends BorderPane {
      *
      * @param view the node which the mouse would be hovering over
      */
-    private void setupHover(final Node view) {
+    private void setupHover(final Node view, final MediaLoopDisplayable disp) {
         view.setStyle(BORDER_STYLE_DESELECTED);
         view.setOnMouseEntered(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent t) {
                 view.setStyle(BORDER_STYLE_SELECTED);
+                viewToDelete = view;
+                dispToDelete = disp;
+                view.requestFocus();
             }
         });
         view.setOnMouseExited(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent t) {
                 view.setStyle(BORDER_STYLE_DESELECTED);
+                viewToDelete = null;
+                dispToDelete = null;
             }
         });
     }

@@ -275,9 +275,9 @@ public abstract class LivePreviewPanel extends BorderPane {
      * @param index the index of the displayable to show, if relevant.
      */
     public void setDisplayable(final Displayable displayable, final int index) {
-        Platform.runLater(new Runnable() {
-            @Override
-            public void run() {
+//        Thread t = new Thread(new Runnable() {
+//            @Override
+//            public void run() {
                 final Displayable oldDisplayable = LivePreviewPanel.this.displayable;
 //                if (oldDisplayable != null) {
 //                    if (oldDisplayable.equals(displayable)) {
@@ -338,8 +338,9 @@ public abstract class LivePreviewPanel extends BorderPane {
                     throw new RuntimeException("Displayable type not implemented: " + displayable.getClass());
                 }
 
-            }
-        });
+//            }
+//        });
+//        t.start();
     }
 
     /**

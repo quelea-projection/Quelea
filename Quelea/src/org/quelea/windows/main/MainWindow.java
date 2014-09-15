@@ -17,6 +17,11 @@
  */
 package org.quelea.windows.main;
 
+import java.awt.GraphicsDevice;
+import java.awt.GraphicsEnvironment;
+import java.awt.Insets;
+import java.awt.Rectangle;
+import java.awt.Toolkit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.event.EventHandler;
@@ -65,6 +70,7 @@ public class MainWindow extends Stage {
     private OptionsDialog optionsDialog;
     private final BibleSearchDialog bibleSearchDialog;
     private final BibleBrowseDialog bibleBrowseDialog;
+    private static final int BORDER_SIZE = 10;
 
     /**
      * Create a new main window.
@@ -74,6 +80,34 @@ public class MainWindow extends Stage {
      */
     public MainWindow(boolean setApplicationWindow) {
         setTitle("Quelea " + QueleaProperties.VERSION.getFullVersionString());
+        SceneInfo sceneInfo = QueleaProperties.get().getSceneInfo();
+        GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
+        final GraphicsDevice[] gds = ge.getScreenDevices();
+        Rectangle maxBounds = gds[QueleaProperties.get().getControlScreen()].getDefaultConfiguration().getBounds();
+        Insets i = Toolkit.getDefaultToolkit().getScreenInsets(gds[QueleaProperties.get().getControlScreen()].getDefaultConfiguration());
+        Rectangle b = new Rectangle(i.left, i.top,maxBounds.width-i.right - i.left, maxBounds.height - i.top -i.bottom);
+
+        if (sceneInfo != null && !Utils.isOffscreen(sceneInfo)) { //Shouldn't be null unless something goes wrong, but guard against it anyway
+             if (sceneInfo.getWidth() > b.width || sceneInfo.getHeight() > b.height) {
+                //this is so that the border doesn't show up on live view when opened from a previously maximized state
+                if (sceneInfo.getWidth() > b.width) {
+                    setWidth(b.width);
+                    setX(0);
+                }
+                if (sceneInfo.getHeight() >b.height) {
+                    setHeight(b.height);
+                    setY(0);
+                }
+
+            } else {
+                setWidth(sceneInfo.getWidth());
+                setHeight(sceneInfo.getHeight());
+                setX(sceneInfo.getX());
+                setY(sceneInfo.getY());
+            }
+
+        }
+
         Utils.addIconsToStage(this);
 
         BorderPane mainPane = new BorderPane();
@@ -129,13 +163,8 @@ public class MainWindow extends Stage {
 
         mainPane.setCenter(mainpanel);
         setScene(new Scene(menuBox));
-        SceneInfo sceneInfo = QueleaProperties.get().getSceneInfo();
-        if (sceneInfo != null && !Utils.isOffscreen(sceneInfo)) { //Shouldn't be null unless something goes wrong, but guard against it anyway
-            setWidth(sceneInfo.getWidth());
-            setHeight(sceneInfo.getHeight());
-            setX(sceneInfo.getX());
-            setY(sceneInfo.getY());
-        }
+        mainpanel.setSplitPanelPositions();
+
         LOGGER.log(Level.INFO, "Created main window.");
     }
 
@@ -211,7 +240,7 @@ public class MainWindow extends Stage {
         return songEntryWindow;
     }
 
-        /**
+    /**
      * Get the media loop creator window used for this window.
      * <p/>
      * @return the media loop creator window.
@@ -219,6 +248,7 @@ public class MainWindow extends Stage {
     public MediaLoopCreatorWindow getMediaLoopCreatorWindow() {
         return mediaLoopCreatorWindow;
     }
+
     /**
      * Get the translation choice dialog for this window.
      *

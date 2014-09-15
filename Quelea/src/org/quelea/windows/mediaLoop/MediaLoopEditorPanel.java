@@ -39,6 +39,8 @@ import javafx.scene.control.ToolBar;
 import javafx.scene.control.Tooltip;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
@@ -61,6 +63,7 @@ import org.quelea.services.utils.LoggerUtils;
 import org.quelea.services.utils.QueleaProperties;
 import org.quelea.services.utils.Utils;
 import org.quelea.windows.main.QueleaApp;
+import org.quelea.windows.main.actionhandlers.RemoveScheduleItemActionHandler;
 import org.quelea.windows.mediaLoop.mediaLoopCreator.MediaLoopCreatorWindow;
 import org.quelea.windows.mediaLoop.mediaLoopCreator.MediaLoopPreview;
 
@@ -85,6 +88,8 @@ public class MediaLoopEditorPanel extends BorderPane implements SlideChangedList
     private String newName = "";
     private File fExists;
     private boolean useExisting = false;
+    private final Button deleteButton;
+    
 
     /**
      * Create and initialise the mediaLoop panel.
@@ -112,13 +117,13 @@ public class MediaLoopEditorPanel extends BorderPane implements SlideChangedList
         topPanel.getChildren().add(defaultAdvanceTimeField);
 
         centrePanel.getChildren().add(topPanel);
-        slidePane = new MediaLoopPreview(true);
+        slidePane = new MediaLoopPreview(true, this);
 
         final VBox mainPanel = new VBox();
         ToolBar addToolbar = new ToolBar();
         addVideoImageButton = getVideoImageButton();
         addPowerpointAsImagesButton = getAddPowerpointButton();
-        Button deleteButton = getDeleteButton();
+         deleteButton = getDeleteButton();
         Label advanceLabel = new Label(LabelGrabber.INSTANCE.getLabel("advanceTime.label"));
         advanceTimeField = new TextField(10 + "");
 
@@ -138,8 +143,8 @@ public class MediaLoopEditorPanel extends BorderPane implements SlideChangedList
         mainPanel.getChildren().add(slidePane);
         centrePanel.getChildren().add(mainPanel);
         setCenter(centrePanel);
-
         slidePane.addSlideChangedListener(this);
+  
     }
 
     /**
@@ -158,6 +163,9 @@ public class MediaLoopEditorPanel extends BorderPane implements SlideChangedList
         return !getSaveHash().equals(saveHash);
     }
 
+    public void delete(){
+        deleteButton.fire();
+    }
     /**
      * Get the hash to be saved
      *
@@ -196,6 +204,7 @@ public class MediaLoopEditorPanel extends BorderPane implements SlideChangedList
                 }
 
                 slidePane.setSlides(slides);
+                slidePane.createGraphics();
                 slidePane.select(oldSize, true);
             }
         });
@@ -218,6 +227,9 @@ public class MediaLoopEditorPanel extends BorderPane implements SlideChangedList
                 slides.remove(selectedIndex);
 
                 slidePane.setSlides(slides);
+                slidePane.createGraphics();
+                selectedIndex = selectedIndex - 1;
+                
                 if (selectedIndex < slides.size()) {
                     slidePane.select(selectedIndex);
                 }
@@ -244,7 +256,13 @@ public class MediaLoopEditorPanel extends BorderPane implements SlideChangedList
             }
         }
         slidePane.setSlides(slides);
-
+        
+        slidePane.createGraphics();
+        slidePane.requestFocus();
+        slidePane.requestLayout();
+        slidePane.select(0);
+             
+       
     }
 
     /**
@@ -372,6 +390,7 @@ public class MediaLoopEditorPanel extends BorderPane implements SlideChangedList
                     handlePowerpoint(file, presentationFactory);
                 }
                 slidePane.setSlides(slides);
+                slidePane.createGraphics();
                 slidePane.select(oldSize, true);
 
             }
@@ -437,6 +456,7 @@ public class MediaLoopEditorPanel extends BorderPane implements SlideChangedList
             slides.add(f);
         }
         slidePane.setSlides(slides);
+        slidePane.createGraphics();
 
         this.titleField.setText(display.getPreviewText());
     }
@@ -460,8 +480,9 @@ public class MediaLoopEditorPanel extends BorderPane implements SlideChangedList
         if (newSlideIndex > slides.size() - 1) {
             return;
         }
+        currentSlide = newSlideIndex;
         if (advanceTimeField.getText().isEmpty()) {
-            currentSlide = newSlideIndex;
+            
             advanceTimeField.setText(slides.get(currentSlide).getAdvanceTime() + "");
             return;
         }

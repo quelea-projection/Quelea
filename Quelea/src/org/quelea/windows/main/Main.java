@@ -220,6 +220,7 @@ public final class Main extends Application {
 
                             if (SongManager.get() == null) {
                                 Dialog.showAndWaitError(LabelGrabber.INSTANCE.getLabel("already.running.title"), LabelGrabber.INSTANCE.getLabel("already.running.error"));
+                                SplashOOP.hideStage();
                                 System.exit(1);
                             }
                             SongManager.get().getSongs();
@@ -245,7 +246,7 @@ public final class Main extends Application {
                             }
 
                             mainWindow.getMainPanel().getLivePanel().registerDisplayCanvas(textOnlyWindow.getCanvas());
-                              mainWindow.getMainPanel().getLivePanel().registerDisplayWindow(textOnlyWindow);
+                            mainWindow.getMainPanel().getLivePanel().registerDisplayWindow(textOnlyWindow);
                             mainWindow.getNoticeDialog().registerCanvas(textOnlyWindow.getCanvas());
                             if (textOnlyHidden) {
                                 textOnlyWindow.hide();
@@ -279,7 +280,7 @@ public final class Main extends Application {
                                 QueleaApp.get().openSchedule(new File(schedulePath));
                             }
                             mainWindow.show();
-                           SplashOOP.hideStage();
+                            SplashOOP.hideStage();
                             showMonitorWarning(monitorNumber);
                             if (VLC_OK && VLC_INIT) {
                                 VLCWindow.INSTANCE.refreshPosition();
@@ -317,11 +318,20 @@ public final class Main extends Application {
                                 vlcWarningDialog.showAndWait();
                             }
                             QueleaApp.get().doneLoading();
+                            Platform.runLater(new Runnable() {
+
+                                @Override
+                                public void run() {
+                                    mainWindow.getMainPanel().setSplitPanelPositions();
+                                }
+                            });
+
                         }
                     });
                 } catch (Throwable ex) {
                     LOGGER.log(Level.SEVERE, "Uncaught exception during application start-up", ex);
                     Dialog.showAndWaitError(LabelGrabber.INSTANCE.getLabel("startup.error.title"), LabelGrabber.INSTANCE.getLabel("startup.error.text").replace("$1", Utils.getDebugLog().getAbsolutePath()));
+                    SplashOOP.hideStage();
                     System.exit(1);
                 }
             }
