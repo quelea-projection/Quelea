@@ -358,7 +358,16 @@ public class SongEntryWindow extends Stage {
         detailedSongPanel.resetEditSong(song);
         translatePanel.setSong(song);
         if (song.getSections().length > 0) {
-            themePanel.setTheme(song.getSections()[0].getTheme());
+            if ((song.getSections()[0].getTempTheme() != null) 
+                    && (!updateDB) 
+                    && (!song.getSections()[0].getTheme().getOverrideTheme())) {
+
+                themePanel.setTheme(song.getSections()[0].getTempTheme());
+
+            } else {
+                themePanel.setTheme(song.getSections()[0].getTheme());
+            }
+
         }
         tabPane.getSelectionModel().select(0);
         addToSchedCBox.setSelected(false);

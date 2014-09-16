@@ -271,8 +271,9 @@ public class MediaLoopPreview extends ScrollPane {
 
             });
         }
-        
+
         flow.getChildren().addAll(thumbnails);
+        select(0);
         this.requestLayout();
         this.requestFocus();
         flow.requestFocus();
@@ -306,13 +307,16 @@ public class MediaLoopPreview extends ScrollPane {
     public int getSelectedIndex() {
         return selectedIndex;
     }
+
     /**
-     * Gets the pane which the thumbnails are in 
+     * Gets the pane which the thumbnails are in
+     *
      * @return the flow pane that the slides are in
      */
-    public FlowPane getFlowPane(){
+    public FlowPane getFlowPane() {
         return flow;
     }
+
     /**
      * Get all media files as array list
      *
@@ -416,11 +420,10 @@ public class MediaLoopPreview extends ScrollPane {
                     }
                 }
                 ensureVisible(selectedIndex);
-                 flow.requestFocus();
+                flow.requestFocus();
             }
         }
-        
-        
+
         if (fireUpdate) {
             fireSlideChangedListeners();
         }
@@ -480,7 +483,6 @@ public class MediaLoopPreview extends ScrollPane {
     public void clear() {
         thumbnails.clear();
         flow.getChildren().clear();
-        slides.clear();
         selectedIndex = -1;
         selectedSlide = null;
     }
@@ -515,8 +517,11 @@ public class MediaLoopPreview extends ScrollPane {
     /**
      * Run the loop
      */
-    public void runLoop() {
+    public void runLoop(final boolean live) {
         runLoop = true;
+        if(!live){
+            return;
+        }
         loopThread = new Thread(new Runnable() {
 
             @Override
@@ -527,14 +532,16 @@ public class MediaLoopPreview extends ScrollPane {
                         while (!advance) {
                             if (!(loopThread.isInterrupted())) {
                                 try {
-                                    Utils.fxRunAndWait(new Runnable() {
-                                        @Override
-                                        public void run() {
-                                            QueleaApp.get().getMainWindow().getMainPanel().getLivePanel().getSecondsLeftLabel().setText(
-                                                    (getSelectedSlide().getAdvanceTime() - elapsedTimeCurrentItem) + " "
-                                                    + LabelGrabber.INSTANCE.getLabel("mediaLoop.secondsRemaining.text"));
-                                        }
-                                    });
+                                    if (live) {
+                                        Platform.runLater(new Runnable() {
+                                            @Override
+                                            public void run() {
+                                                QueleaApp.get().getMainWindow().getMainPanel().getLivePanel().getSecondsLeftLabel().setText(
+                                                        (getSelectedSlide().getAdvanceTime() - elapsedTimeCurrentItem) + " "
+                                                        + LabelGrabber.INSTANCE.getLabel("mediaLoop.secondsRemaining.text"));
+                                            }
+                                        });
+                                    }
                                 } catch (Exception ex) {
                                     runLoop = false;
                                     return;
@@ -556,20 +563,30 @@ public class MediaLoopPreview extends ScrollPane {
 
                         }
                         if (!(loopThread.isInterrupted())) {
-                            if (!(QueleaApp.get().getMainWindow().getMainPanel().getLivePanel().getDisplayable() instanceof MediaLoopDisplayable)) {
-                                stopLoop();
-                            } else {
-                                Utils.fxRunAndWait(new Runnable() {
+                            if (live) {
+                                if (!(QueleaApp.get().getMainWindow().getMainPanel().getLivePanel().getDisplayable() instanceof MediaLoopDisplayable)) {
 
-                                    @Override
-                                    public void run() {
+                                    stopLoop();
+                                }
+                            }else{
+                               if (!(QueleaApp.get().getMainWindow().getMainPanel().getPreviewPanel().getDisplayable() instanceof MediaLoopDisplayable)) {
+
+                                    stopLoop();
+                                } 
+                            }
+                            Platform.runLater(new Runnable() {
+
+                                @Override
+                                public void run() {
+                                    if (live) {
                                         QueleaApp.get().getMainWindow().getMainPanel().getLivePanel().getSecondsLeftLabel().setText(
                                                 LabelGrabber.INSTANCE.getLabel("mediaLoop.changing.text"));
-                                        advanceSlide();
-
                                     }
-                                });
-                            }
+                                    advanceSlide();
+
+                                }
+                            });
+
                         }
 
                     }

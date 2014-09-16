@@ -39,8 +39,10 @@ import org.quelea.data.displayable.PresentationDisplayable;
 import org.quelea.data.displayable.SongDisplayable;
 import org.quelea.data.displayable.TextDisplayable;
 import org.quelea.data.displayable.VideoDisplayable;
+import org.quelea.data.mediaLoop.MediaFile;
 import org.quelea.services.utils.LoggerUtils;
 import org.quelea.services.utils.QueleaProperties;
+import org.quelea.services.utils.Utils;
 import org.quelea.windows.image.ImagePanel;
 import org.quelea.windows.lyrics.SelectLyricsPanel;
 import org.quelea.windows.main.quickedit.QuickEditDialog;
@@ -67,6 +69,7 @@ public abstract class LivePreviewPanel extends BorderPane {
     private static final String AUDIO_LABEL = "AUDIO";
     private static final String PRESENTATION_LABEL = "PPT";
     private static final String MEDIA_LOOP_LABEL = "MEDIA_LOOP";
+    private static final String LOADING_LABEL = "LOADING";
     private String currentLabel;
     private SelectLyricsPanel lyricsPanel = new SelectLyricsPanel(this);
     private final ImagePanel imagePanel = new ImagePanel();
@@ -74,6 +77,7 @@ public abstract class LivePreviewPanel extends BorderPane {
     private final MultimediaPanel videoPanel = new MultimediaPanel();
     private final MultimediaPanel audioPanel = new MultimediaPanel();
     private final MediaLoopPanel mediaLoopPanel = new MediaLoopPanel();
+    private final LoadingPanel loadingPanel = new LoadingPanel();
     private final QuickEditDialog quickEditDialog = new QuickEditDialog();
 
     /**
@@ -88,6 +92,7 @@ public abstract class LivePreviewPanel extends BorderPane {
         cardPanel.add(audioPanel, AUDIO_LABEL);
         cardPanel.add(presentationPanel, PRESENTATION_LABEL);
         cardPanel.add(mediaLoopPanel, MEDIA_LOOP_LABEL);
+        cardPanel.add(loadingPanel, LOADING_LABEL);
         cardPanel.show(LYRICS_LABEL);
         lyricsPanel.getLyricsList().setOnMouseClicked(new EventHandler<MouseEvent>() {
             @Override
@@ -278,65 +283,97 @@ public abstract class LivePreviewPanel extends BorderPane {
 //        Thread t = new Thread(new Runnable() {
 //            @Override
 //            public void run() {
-                final Displayable oldDisplayable = LivePreviewPanel.this.displayable;
+        final Displayable oldDisplayable = LivePreviewPanel.this.displayable;
 //                if (oldDisplayable != null) {
 //                    if (oldDisplayable.equals(displayable)) {
 //                        return;
 //                    }
 //                }
-                LivePreviewPanel.this.displayable = displayable;
-                if (oldDisplayable instanceof TextDisplayable) {
-                    lyricsPanel.removeCurrentDisplayable();
-                } else if (oldDisplayable instanceof ImageDisplayable) {
-                    imagePanel.removeCurrentDisplayable();
-                } else if (oldDisplayable instanceof VideoDisplayable) {
-                    videoPanel.removeCurrentDisplayable();
-                } else if (oldDisplayable instanceof AudioDisplayable) {
-                    audioPanel.removeCurrentDisplayable();
-                } else if (oldDisplayable instanceof PresentationDisplayable) {
-                    presentationPanel.stopCurrent();
-                    presentationPanel.removeCurrentDisplayable();
-                } else if (oldDisplayable instanceof MediaLoopDisplayable) {
-                    mediaLoopPanel.removeCurrentDisplayable();
-                } else if (oldDisplayable == null) {
+        LivePreviewPanel.this.displayable = displayable;
+        if (oldDisplayable instanceof TextDisplayable) {
+            lyricsPanel.removeCurrentDisplayable();
+        } else if (oldDisplayable instanceof ImageDisplayable) {
+            imagePanel.removeCurrentDisplayable();
+        } else if (oldDisplayable instanceof VideoDisplayable) {
+            videoPanel.removeCurrentDisplayable();
+        } else if (oldDisplayable instanceof AudioDisplayable) {
+            audioPanel.removeCurrentDisplayable();
+        } else if (oldDisplayable instanceof PresentationDisplayable) {
+            presentationPanel.stopCurrent();
+            presentationPanel.removeCurrentDisplayable();
+        } else if (oldDisplayable instanceof MediaLoopDisplayable) {
+            mediaLoopPanel.removeCurrentDisplayable();
+        } else if (oldDisplayable == null) {
 
-                } else {
-                    throw new RuntimeException("Displayable type not implemented: " + oldDisplayable.getClass());
-                }
+        } else {
+            throw new RuntimeException("Displayable type not implemented: " + oldDisplayable.getClass());
+        }
 
-                if (PRESENTATION_LABEL.equals(currentLabel)) {
-                    presentationPanel.showDisplayable(null, 0);
+        if (PRESENTATION_LABEL.equals(currentLabel)) {
+            presentationPanel.showDisplayable(null, 0);
+        }
+        if (displayable instanceof TextDisplayable) {
+            lyricsPanel.showDisplayable((TextDisplayable) displayable, index);
+            cardPanel.show(LYRICS_LABEL);
+            currentLabel = LYRICS_LABEL;
+        } else if (displayable instanceof ImageDisplayable) {
+            imagePanel.showDisplayable((ImageDisplayable) displayable);
+            cardPanel.show(IMAGE_LABEL);
+            currentLabel = IMAGE_LABEL;
+        } else if (displayable instanceof VideoDisplayable) {
+            videoPanel.showDisplayable((MultimediaDisplayable) displayable);
+            cardPanel.show(VIDEO_LABEL);
+            currentLabel = VIDEO_LABEL;
+        } else if (displayable instanceof AudioDisplayable) {
+            audioPanel.showDisplayable((MultimediaDisplayable) displayable);
+            cardPanel.show(AUDIO_LABEL);
+            currentLabel = AUDIO_LABEL;
+        } else if (displayable instanceof PresentationDisplayable) {
+            presentationPanel.showDisplayable((PresentationDisplayable) displayable, index);
+            cardPanel.show(PRESENTATION_LABEL);
+            currentLabel = PRESENTATION_LABEL;
+        } else if (displayable instanceof MediaLoopDisplayable) {
+            Thread t = new Thread(new Runnable() {
+
+                @Override
+                public void run() {
+                    Utils.fxRunAndWait(new Runnable() {
+
+                        @Override
+                        public void run() {
+                            mediaLoopPanel.showDisplayable(null);
+                            loadingPanel.startLoading();
+                            cardPanel.show(LOADING_LABEL);
+                            currentLabel = LOADING_LABEL;
+                         
+                        }
+                    });
+                    MediaLoopDisplayable disp = (MediaLoopDisplayable) displayable;
+                    for (MediaFile f : disp.getMediaFiles()) {
+                        f.getImage();
+                    }
+                    Utils.fxRunAndWait(new Runnable() {
+
+                        @Override
+                        public void run() {
+                            mediaLoopPanel.showDisplayable((MediaLoopDisplayable) displayable, index);
+                            cardPanel.show(MEDIA_LOOP_LABEL);
+                            currentLabel = MEDIA_LOOP_LABEL;
+                            loadingPanel.stopLoading();
+                            mediaLoopPanel.startLoop(getMediaLoopPanel().isLive());
+                        }
+                    });
+
                 }
-                if (displayable instanceof TextDisplayable) {
-                    lyricsPanel.showDisplayable((TextDisplayable) displayable, index);
-                    cardPanel.show(LYRICS_LABEL);
-                    currentLabel = LYRICS_LABEL;
-                } else if (displayable instanceof ImageDisplayable) {
-                    imagePanel.showDisplayable((ImageDisplayable) displayable);
-                    cardPanel.show(IMAGE_LABEL);
-                    currentLabel = IMAGE_LABEL;
-                } else if (displayable instanceof VideoDisplayable) {
-                    videoPanel.showDisplayable((MultimediaDisplayable) displayable);
-                    cardPanel.show(VIDEO_LABEL);
-                    currentLabel = VIDEO_LABEL;
-                } else if (displayable instanceof AudioDisplayable) {
-                    audioPanel.showDisplayable((MultimediaDisplayable) displayable);
-                    cardPanel.show(AUDIO_LABEL);
-                    currentLabel = AUDIO_LABEL;
-                } else if (displayable instanceof PresentationDisplayable) {
-                    presentationPanel.showDisplayable((PresentationDisplayable) displayable, index);
-                    cardPanel.show(PRESENTATION_LABEL);
-                    currentLabel = PRESENTATION_LABEL;
-                } else if (displayable instanceof MediaLoopDisplayable) {
-                    mediaLoopPanel.showDisplayable((MediaLoopDisplayable) displayable, index);
-                    cardPanel.show(MEDIA_LOOP_LABEL);
-                    currentLabel = MEDIA_LOOP_LABEL;
-                } else if (displayable == null) {
+            });
+            t.start();
+
+        } else if (displayable == null) {
 //            LOGGER.log(Level.WARNING, "BUG: Called showDisplayable(null), should probably call clear() instead.", 
 //                    new RuntimeException("BUG: Called showDisplayable(null), should probably call clear() instead.")); clear();
-                } else {
-                    throw new RuntimeException("Displayable type not implemented: " + displayable.getClass());
-                }
+        } else {
+            throw new RuntimeException("Displayable type not implemented: " + displayable.getClass());
+        }
 
 //            }
 //        });

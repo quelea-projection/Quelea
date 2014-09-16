@@ -173,7 +173,7 @@ public abstract class AbstractPanel extends BorderPane implements ContainedPanel
             }
             Image displayNextImage;
             ImageDrawer idrawer = new ImageDrawer();
-            if (index < d.getMediaFiles().size() - 1) {
+            if (index < d.getMediaFiles().size() - 1 && index > -1) {
                 displayNextImage = d.getMediaFiles().get(index).getImage();
                 ImageDisplayable imageNextDisplayable = new ImageDisplayable(displayNextImage);
                 idrawer.setCanvas(previewCanvas);

@@ -42,32 +42,13 @@ public class MediaLoopPanel extends AbstractPanel {
     private boolean live;
     private MultimediaControls dummyControls = new MultimediaControls();
     private MediaLoopDrawer mediaLoopDrawer = new MediaLoopDrawer(dummyControls);
-    private Timeline loopTimeline;
 
     /**
      * Create a new mediaLoop panel.
      * <p/>
      */
     public MediaLoopPanel() {
-        BorderPane mainPanel = new BorderPane();
-        mediaLoopPreview = new MediaLoopPreview(false, null);
-        mediaLoopPreview.addSlideChangedListener(new SlideChangedListener() {
-            @Override
-            public void slideChanged(int newSlide) {
-                if (live) {
-                    if (newSlide >= 0 && displayable != null) {
-                        if (live) {
-                            displaySlide(mediaLoopPreview.getSelectedSlide());
-                        }
-                    } else {
-                        dummyControls.stop();
-                    }
-                }
-            }
-        });
 
-        mainPanel.setCenter(mediaLoopPreview);
-        setCenter(mainPanel);
     }
 
     /**
@@ -76,7 +57,9 @@ public class MediaLoopPanel extends AbstractPanel {
      * @param newSlide the media file to be displayed
      */
     private void displaySlide(MediaFile slide) {
-
+        if (mediaLoopPreview == null) {
+            return;
+        }
         for (DisplayCanvas canvas : getCanvases()) {
             mediaLoopDrawer.setCanvas(canvas);
             mediaLoopDrawer.setPlayVideo(canvas.getPlayVideo());
@@ -106,7 +89,9 @@ public class MediaLoopPanel extends AbstractPanel {
     public void stopCurrent() {
         if (live && displayable != null) {
             stopLoop();
-            mediaLoopPreview.select(-1);
+            if (mediaLoopPreview != null) {
+                mediaLoopPreview.select(-1);
+            }
             displayable = null;
 
         }
@@ -121,17 +106,30 @@ public class MediaLoopPanel extends AbstractPanel {
     }
 
     /**
+     * Returns whether the panel is live or not
+     *
+     * @return true if live, false otherwise
+     */
+    public boolean isLive() {
+        return live;
+    }
+
+    /**
      * Start media loop
      */
-    public void startLoop() {
-        mediaLoopPreview.runLoop();
+    public void startLoop(boolean live) {
+        if (mediaLoopPreview != null) {
+            mediaLoopPreview.runLoop(live);
+        }
     }
 
     /**
      * Stop loop
      */
     public void stopLoop() {
-        mediaLoopPreview.stopLoop();
+        if (mediaLoopPreview != null) {
+            mediaLoopPreview.stopLoop();
+        }
     }
 
     /**
@@ -141,11 +139,27 @@ public class MediaLoopPanel extends AbstractPanel {
      * @param index the index to display.
      */
     public void showDisplayable(final MediaLoopDisplayable displayable, final int index) {
+        mediaLoopPreview = new MediaLoopPreview(false, null);
+        mediaLoopPreview.addSlideChangedListener(new SlideChangedListener() {
+            @Override
+            public void slideChanged(int newSlide) {
+                if (live) {
+                    if (newSlide >= 0 && displayable != null) {
+                        if (live) {
+                            displaySlide(mediaLoopPreview.getSelectedSlide());
+                        }
+                    } else {
+                        dummyControls.stop();
+                    }
+                }
+            }
+        });
 
+        mediaLoopPreview.clear();
         this.displayable = displayable;
 
         if (displayable == null) {
-            mediaLoopPreview.clear();
+
             return;
         }
 
@@ -158,16 +172,7 @@ public class MediaLoopPanel extends AbstractPanel {
         } else {
             mediaLoopPreview.select(index, true);
         }
-
-
-        /*
-         * TODO
-         * For some reason the following scroll to line causes a bug whereby 
-         * the contents are only registered the second time of viewing? So 
-         * leave commented out until we can get to the bottom of it.
-         */
-//        mediaLoopList.scrollTo(getIndex());
-        updateCanvas();
+        setCenter(mediaLoopPreview);
     }
 
     /**
@@ -204,9 +209,6 @@ public class MediaLoopPanel extends AbstractPanel {
     @Override
     public void updateCanvas() {
 
-//        if (mediaLoopPreview.getSelectedSlide() != null) {
-//            displaySlide(mediaLoopPreview.getSelectedSlide());
-//        }
     }
 
     /**

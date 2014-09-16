@@ -44,6 +44,7 @@ import org.quelea.data.mediaLoop.MediaFile;
 import org.quelea.data.mediaLoop.MediaLoopManager;
 import org.quelea.services.languages.LabelGrabber;
 import org.quelea.services.utils.Utils;
+import org.quelea.windows.main.LoadingPanel;
 import org.quelea.windows.main.QueleaApp;
 import org.quelea.windows.mediaLoop.MediaLoopEditorPanel;
 
@@ -65,6 +66,7 @@ public class MediaLoopCreatorWindow extends Stage {
     private final CheckBox addToSchedCBox;
     private MediaLoopDisplayable oldMediaLoop = null;
     private MediaLoopDisplayable mediaLoop;
+    private BorderPane mainPane = new BorderPane();
 
     /**
      * Create and initialise the media loop creator window.
@@ -77,7 +79,7 @@ public class MediaLoopCreatorWindow extends Stage {
 
         confirmButton = new Button(LabelGrabber.INSTANCE.getLabel("add.mediaLoop.button"), new ImageView(new Image("file:icons/tick.png")));
 
-        BorderPane mainPane = new BorderPane();
+        
         tabPane = new TabPane();
 
         setupMediaLoopCreatorPanel();
@@ -86,7 +88,7 @@ public class MediaLoopCreatorWindow extends Stage {
         basicTab.setClosable(false);
         tabPane.getTabs().add(basicTab);
 
-        mainPane.setCenter(tabPane);
+        
 
         confirmButton.setOnAction(new EventHandler<javafx.event.ActionEvent>() {
             @Override
@@ -281,6 +283,7 @@ public class MediaLoopCreatorWindow extends Stage {
         addToSchedCBox.setSelected(false);
         addToSchedCBox.setDisable(false);
         updateDBOnHide = true;
+        mainPane.setCenter(tabPane);
         resetChange();
     }
 
@@ -298,6 +301,7 @@ public class MediaLoopCreatorWindow extends Stage {
         addToSchedCBox.setSelected(false);
         addToSchedCBox.setDisable(true);
         updateDBOnHide = false;
+        mainPane.setCenter(tabPane);
         resetChange();
     }
 
@@ -306,24 +310,48 @@ public class MediaLoopCreatorWindow extends Stage {
      * <p/>
      * @param mediaLoop the media loop to edit.
      */
-    public void resetEditMediaLoop(MediaLoopDisplayable mediaLoop) {
-        setTitle(LabelGrabber.INSTANCE.getLabel("edit.mediaLoop"));
-        this.mediaLoop = mediaLoop;
-        this.oldMediaLoop = mediaLoop;
-        shouldSave = true;
-        confirmButton.setText(LabelGrabber.INSTANCE.getLabel("edit.mediaLoop"));
-        confirmButton.setDisable(false);
-        editorPanel.resetEditMediaLoop(mediaLoop);
-        tabPane.getSelectionModel().select(0);
-        addToSchedCBox.setSelected(false);
-        if (QueleaApp.get().getMainWindow().getMainPanel().getSchedulePanel().getScheduleList().itemsProperty().get().contains(mediaLoop)) {
-            addToSchedCBox.setDisable(true);
-        } else {
-            addToSchedCBox.setDisable(false);
-        }
-        updateDBOnHide = true;
-        mediaLoop = null;
-        resetChange();
+    public void resetEditMediaLoop(final MediaLoopDisplayable mediaLoop) {
+        Thread t = new Thread(new Runnable() {
+
+            @Override
+            public void run() {
+                Utils.fxRunAndWait(new Runnable() {
+
+                    @Override
+                    public void run() {
+                       LoadingPanel l = new LoadingPanel();
+                       l.startLoading();
+                       mainPane.setCenter(l);
+                  
+                    }
+                });
+                editorPanel.resetEditMediaLoop(mediaLoop);
+                Utils.fxRunAndWait(new Runnable() {
+
+                    @Override
+                    public void run() {
+                        setTitle(LabelGrabber.INSTANCE.getLabel("edit.mediaLoop"));
+                        MediaLoopCreatorWindow.this.mediaLoop = mediaLoop;
+                        MediaLoopCreatorWindow.this.oldMediaLoop = mediaLoop;
+                        shouldSave = true;
+                        confirmButton.setText(LabelGrabber.INSTANCE.getLabel("edit.mediaLoop"));
+                        confirmButton.setDisable(false);
+                        tabPane.getSelectionModel().select(0);
+                        addToSchedCBox.setSelected(false);
+                        if (QueleaApp.get().getMainWindow().getMainPanel().getSchedulePanel().getScheduleList().itemsProperty().get().contains(mediaLoop)) {
+                            addToSchedCBox.setDisable(true);
+                        } else {
+                            addToSchedCBox.setDisable(false);
+                        }
+                        updateDBOnHide = true;
+                        mainPane.setCenter(tabPane);
+                        resetChange();
+                    }
+                });
+            }
+        });
+        t.start();
+
     }
 
     /**

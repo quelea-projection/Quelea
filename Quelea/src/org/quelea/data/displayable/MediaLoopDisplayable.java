@@ -42,7 +42,8 @@ import org.w3c.dom.NodeList;
  * @author Greg
  */
 public class MediaLoopDisplayable implements Displayable, Comparable<MediaLoopDisplayable>, Serializable {
-     private static final long serialVersionUID = -1860438479077639195L;
+
+    private static final long serialVersionUID = -1860438479077639195L;
 
     /**
      * Comparable to compare different instances of media loop displayable
@@ -63,7 +64,7 @@ public class MediaLoopDisplayable implements Displayable, Comparable<MediaLoopDi
      * The builder responsible for building this media loop.
      */
     public static class Builder {
-
+        
         private final MediaLoopDisplayable mediaLoop;
 
         /**
@@ -117,7 +118,6 @@ public class MediaLoopDisplayable implements Displayable, Comparable<MediaLoopDi
     private String title = "Media Loop";
     private long id = 0;
 
-
     /**
      * Create a new media loop displayable.
      *
@@ -132,7 +132,7 @@ public class MediaLoopDisplayable implements Displayable, Comparable<MediaLoopDi
      *
      */
     public MediaLoopDisplayable() {
-
+        
     }
 
     /**
@@ -206,7 +206,7 @@ public class MediaLoopDisplayable implements Displayable, Comparable<MediaLoopDi
      * @return the object as defined by the XML.
      */
     public static MediaLoopDisplayable parseXML(Node node) {
-
+        
         MediaLoopDisplayable ret = new MediaLoopDisplayable();
         NodeList nodeList = node.getChildNodes();
         try {
@@ -218,7 +218,7 @@ public class MediaLoopDisplayable implements Displayable, Comparable<MediaLoopDi
         for (int iterator = 1; iterator < nodeList.getLength(); iterator++) {
             try {
                 Node currentNode = nodeList.item(iterator);
-
+                
                 MediaFile file = new MediaFile(currentNode.getChildNodes().item(0).getTextContent(),
                         Integer.parseInt(currentNode.getChildNodes().item(1).getTextContent()));
                 ret.add(file);
@@ -226,7 +226,7 @@ public class MediaLoopDisplayable implements Displayable, Comparable<MediaLoopDi
                 LoggerUtils.getLogger().log(Level.WARNING, "Was not able to parse Media Loop XML", ex);
             }
         }
-
+        
         return ret;
     }
 
@@ -263,11 +263,16 @@ public class MediaLoopDisplayable implements Displayable, Comparable<MediaLoopDi
      */
     @Override
     public ImageView getPreviewIcon() {
-        Image image = media.get(0).getImage();
-        ImageView small = new ImageView(image);
-        small.setFitHeight(30);
-        small.setFitWidth(30);
-        return small;
+        try {
+            Image image = media.get(0).getImage();
+            ImageView small = new ImageView(image);
+            small.setFitHeight(30);
+            small.setFitWidth(30);
+            return small;
+        } catch (Exception ex) {
+            LoggerUtils.getLogger().log(Level.SEVERE, "Preview icon not available for media loop. Media loop has probably been cleared.", ex);
+            return null;
+        }
     }
 
     /**
@@ -276,7 +281,7 @@ public class MediaLoopDisplayable implements Displayable, Comparable<MediaLoopDi
      * @return the image representing this media loop
      */
     public Image getImage() {
-
+        
         return media.get(0).getImage();
     }
 
@@ -326,7 +331,7 @@ public class MediaLoopDisplayable implements Displayable, Comparable<MediaLoopDi
     public boolean supportClear() {
         return false;
     }
-
+    
     @Override
     public void dispose() {
         //Nothing needed here.

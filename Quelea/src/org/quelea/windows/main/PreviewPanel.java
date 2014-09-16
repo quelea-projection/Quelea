@@ -81,14 +81,13 @@ public class PreviewPanel extends LivePreviewPanel {
 
                     @Override
                     public void run() {
-                        if (d instanceof MediaLoopDisplayable) {
-                            QueleaApp.get().getMainWindow().getMainPanel().getLivePanel().getMediaLoopPanel().startLoop();
-                        }
+                        
+                        QueleaApp.get().getMainWindow().getMainPanel().getLivePanel().getCurrentPane().requestFocus();
                     }
 
                 });
 
-                QueleaApp.get().getMainWindow().getMainPanel().getLivePanel().getCurrentPane().requestFocus();
+               
 
             }
         });
@@ -177,6 +176,7 @@ public class PreviewPanel extends LivePreviewPanel {
         } else {
             livePlayButton.setDisable(true);
         }
+        
 
     }
 

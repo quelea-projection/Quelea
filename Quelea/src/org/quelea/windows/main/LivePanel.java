@@ -269,7 +269,6 @@ public class LivePanel extends LivePreviewPanel {
     @Override
     public void setDisplayable(Displayable d, int index) {
         getMediaLoopPanel().stopLoop();
-        super.setDisplayable(d, index);
         loop.setSelected(false);
         if (d instanceof PresentationDisplayable) {
             if (!header.getItems().contains(loopBox)) {
@@ -278,10 +277,13 @@ public class LivePanel extends LivePreviewPanel {
             header.getItems().remove(labelBox);
         } else if (d instanceof MediaLoopDisplayable) {
             getMediaLoopPanel().setLive();
+            index = 0;
             if (!header.getItems().contains(labelBox)) {
                 header.getItems().add(1, labelBox);
             }
             header.getItems().remove(loopBox);
+
+
         } else {
             header.getItems().remove(loopBox);
             header.getItems().remove(labelBox);
@@ -306,6 +308,8 @@ public class LivePanel extends LivePreviewPanel {
                 canvas.setCleared(clear.isSelected());
             }
         }
+        super.setDisplayable(d, index);
+       
 
     }
 
