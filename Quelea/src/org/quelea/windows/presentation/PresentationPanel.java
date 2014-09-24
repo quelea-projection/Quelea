@@ -26,6 +26,8 @@ import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.image.Image;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.util.Duration;
 import org.quelea.data.displayable.ImageDisplayable;
@@ -94,6 +96,18 @@ public class PresentationPanel extends AbstractPanel {
         });
         presentationPreview.select(0);
 
+        presentationPreview.addEventHandler(KeyEvent.KEY_PRESSED, new EventHandler<KeyEvent>() {
+            @Override
+            public void handle(KeyEvent t) {
+                if (t.getCode().equals(KeyCode.PAGE_DOWN)) {
+                    t.consume();
+                    QueleaApp.get().getMainWindow().getMainPanel().getLivePanel().advance();
+                } else if (t.getCode().equals(KeyCode.PAGE_UP)) {
+                    t.consume();
+                    QueleaApp.get().getMainWindow().getMainPanel().getLivePanel().previous();
+                }
+            }
+        });
         mainPanel.setCenter(presentationPreview);
         setCenter(mainPanel);
     }
