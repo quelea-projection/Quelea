@@ -474,3 +474,5 @@ notice.options.heading=Notices
 export.pdf.button=Export to PDF
 export.schedule.pdf.button=Export Schedule to PDF
 filefilters.description.pdf.files=PDF Files
+not.started.label=Not started
+quelea.schedule.text=Quelea Schedule
