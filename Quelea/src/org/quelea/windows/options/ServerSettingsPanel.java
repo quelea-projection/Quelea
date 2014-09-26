@@ -248,10 +248,10 @@ public class ServerSettingsPanel extends GridPane implements PropertyPanel {
                     }
                     urlMLCache = ret.toString();
                 } else {
-                    urlMLCache = "[Not started]";
+                    urlMLCache = "[" + LabelGrabber.INSTANCE.getLabel("not.started.label") + "]";
                 }
             } else {
-                urlMLCache = "[Not started]";
+                urlMLCache = "[" + LabelGrabber.INSTANCE.getLabel("not.started.label") + "]";
             }
         }
         return urlMLCache;
@@ -271,10 +271,10 @@ public class ServerSettingsPanel extends GridPane implements PropertyPanel {
                     }
                     urlRCCache = ret.toString();
                 } else {
-                    urlRCCache = "[Not started]";
+                    urlRCCache = "[" + LabelGrabber.INSTANCE.getLabel("not.started.label") + "]";
                 }
             } else {
-                urlRCCache = "[Not started]";
+                urlRCCache = "[" + LabelGrabber.INSTANCE.getLabel("not.started.label") + "]";
             }
         }
         return urlRCCache;
