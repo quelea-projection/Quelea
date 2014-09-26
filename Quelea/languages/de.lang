@@ -474,3 +474,5 @@ notice.options.heading=Mitteilungen
 export.schedule.pdf.button=Ablauf als PDF exportieren
 filefilters.description.pdf.files=PDF Dateien
 export.pdf.button=Als PDF exportieren
+quelea.schedule.text=Quelea Ablauf
+not.started.label=Nicht gestartet
