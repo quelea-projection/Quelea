@@ -474,3 +474,5 @@ no.pdb.message=Z technických důvodů je potřeba, abyste stáhnul ovladač JDB
 export.schedule.pdf.button=Vyvést rozvrh do PDF
 filefilters.description.pdf.files=Soubory PDF
 export.pdf.button=Vyvést do PDF
+quelea.schedule.text=Rozvrh Quelea
+not.started.label=Nespuštěno
