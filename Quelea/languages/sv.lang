@@ -475,3 +475,5 @@ notice.position.text=Position på meddelanden
 filefilters.description.pdf.files=PDF-filer
 notice.background.colour.text=Bakgrundsfärg för meddelanden
 export.pdf.button=Exportera till PDF
+quelea.schedule.text=Gudstjänstordning från Quelea
+not.started.label=Inte startad
