@@ -82,7 +82,7 @@ public class Mailer {
 
         try {
             MimeMessage msg = new MimeMessage(Session.getInstance(System.getProperties()));
-            msg.setSubject("Quelea schedule");
+            msg.setSubject(LabelGrabber.INSTANCE.getLabel("quelea.schedule.text"));
 
             // create and fill the first message part
             MimeBodyPart mbp1 = new MimeBodyPart();
