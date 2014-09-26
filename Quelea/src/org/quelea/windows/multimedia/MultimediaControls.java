@@ -18,6 +18,7 @@
  */
 package org.quelea.windows.multimedia;
 
+import java.io.File;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -37,6 +38,7 @@ import javafx.scene.paint.CycleMethod;
 import javafx.scene.paint.LinearGradient;
 import javafx.scene.paint.Stop;
 import javafx.scene.shape.Rectangle;
+import org.quelea.services.utils.Utils;
 
 /**
  * The multimedia controls containing a play / pause button, stop button, and a
@@ -148,7 +150,13 @@ public class MultimediaControls extends StackPane {
 
     public void loadMultimedia(String path) {
         reset();
-        VLCWindow.INSTANCE.load(path);
+        path = Utils.getVLCStringFromFile(new File(path));
+        String[] locationParts = path.split("[\\r\\n]+");
+        if (locationParts.length == 1) {
+            VLCWindow.INSTANCE.load(locationParts[0], null);
+        } else {
+            VLCWindow.INSTANCE.load(locationParts[0], locationParts[1]);
+        }
     }
 
     public void setDisableControls(boolean disable) {
