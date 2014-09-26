@@ -150,7 +150,7 @@ public class VLCWindow {
         });
     }
 
-    public void load(final String path) {
+    public void load(final String path, final String options) {
         runOnVLCThread(new Runnable() {
             @Override
             public void run() {
@@ -162,7 +162,7 @@ public class VLCWindow {
                     if(sanitisedPath.startsWith("www")) {
                         sanitisedPath = "http://" + sanitisedPath;
                     }
-                    mediaPlayer.prepareMedia(sanitisedPath);
+                    mediaPlayer.prepareMedia(sanitisedPath, Utils.splitVLCOpts(options));
                 }
 //                System.out.println("load() end");
             }
@@ -183,15 +183,19 @@ public class VLCWindow {
         });
     }
 
-    public void play(final String vid) {
+    public void play(final String vid, final String options) {
         this.location = vid;
         runOnVLCThread(new Runnable() {
             @Override
             public void run() {
 //                System.out.println("play(arg) start");
-                if(init) {
+                if (init) {
                     paused = false;
-                    mediaPlayer.playMedia(vid);
+                    if (options == null) {
+                        mediaPlayer.playMedia(vid);
+                    } else {
+                        mediaPlayer.playMedia(vid, Utils.splitVLCOpts(options));
+                    }
                 }
 //                System.out.println("play(arg) end");
             }
