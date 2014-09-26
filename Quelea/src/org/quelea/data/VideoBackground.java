@@ -32,6 +32,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.paint.Color;
 import org.quelea.services.languages.LabelGrabber;
 import org.quelea.services.utils.QueleaProperties;
+import org.quelea.services.utils.Utils;
 
 /**
  * A background comprising of a video.
@@ -68,6 +69,10 @@ public class VideoBackground implements Background, Serializable {
      */
     public File getVideoFile() {
         return new File(QueleaProperties.get().getVidDir(), vidLocation.trim());
+    }
+    
+    public String getVLCVidString() {
+        return Utils.getVLCStringFromFile(getVideoFile());
     }
 
     @Override

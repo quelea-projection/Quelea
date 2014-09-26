@@ -31,10 +31,12 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.channels.FileChannel;
 import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -230,6 +232,43 @@ public final class Utils {
 //        stage.getIcons().add(new Image("file:icons/logo48.png"));
         stage.getIcons().add(new Image("file:icons/logo32.png"));
 //        stage.getIcons().add(new Image("file:icons/logo16.png"));
+    }
+    
+    /**
+     * Split the options from a single string into an array recognised by VLC.
+     * @param options the input options.
+     * @return the options split as an array.
+     */
+    public static String[] splitVLCOpts(String options) {
+        String[] parts = options.split("\\:");
+        String[] ret = new String[parts.length];
+        for (int i = 0; i < parts.length; i++) {
+            ret[i] = ":" + parts[i].trim();
+        }
+        return ret;
+    }
+    
+    /**
+     * Get the string to pass VLC from the given video file. In many cases this
+     * is just the path, in the case of vlcarg files it is the contents of the 
+     * file to pass VLC.
+     * @param file the file to grab the VLC path from.
+     * @return the VLC path.
+     */
+    public static String getVLCStringFromFile(File file) {
+        String path = file.getAbsolutePath();
+        String[] parts = path.split("\\.");
+        if (parts[parts.length - 1].trim().toLowerCase().equals("vlcarg")) {
+            try {
+                byte[] encoded = Files.readAllBytes(Paths.get(path));
+                return new String(encoded, "UTF-8");
+            } catch (IOException ex) {
+                LOGGER.log(Level.WARNING, "Couldn't get VLC string from file", ex);
+                return path;
+            }
+        } else {
+            return path;
+        }
     }
 
     /**
@@ -714,6 +753,7 @@ public final class Utils {
         ret.add("ogm");
         ret.add("mrl");
         ret.add("asx");
+        ret.add("vlcarg");
         return ret;
     }
 
@@ -806,7 +846,7 @@ public final class Utils {
                     return ret;
                 }
                 catch(Exception ex) {
-                    LOGGER.log(Level.INFO, "Couldn't get video preview image for " + videoFile.getAbsolutePath(), ex);
+                    LOGGER.log(Level.INFO, "Couldn''t get video preview image for {0}", videoFile.getAbsolutePath());
                     return new Image("file:icons/vid preview.png");
                 }
             }
