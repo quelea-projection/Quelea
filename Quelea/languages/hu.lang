@@ -474,3 +474,5 @@ no.pdb.message=Technikai okok miatt, töltsd le a Paradox JDBC driver-t Easywors
 export.schedule.pdf.button=Vetítéslista exportálása PDF-be
 export.pdf.button=Exportálás PDF-be
 filefilters.description.pdf.files=PDF fájlok
+quelea.schedule.text=Quelea Vetítéslista
+not.started.label=Nem elindított
