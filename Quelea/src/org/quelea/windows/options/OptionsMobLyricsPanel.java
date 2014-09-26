@@ -149,11 +149,11 @@ public class OptionsMobLyricsPanel extends GridPane implements PropertyPanel {
                     urlCache = ret.toString();
                 }
                 else {
-                    urlCache = "[Not started]";
+                    urlCache = "[" + LabelGrabber.INSTANCE.getLabel("not.started.label") + "]";
                 }
             }
             else {
-                urlCache = "[Not started]";
+                urlCache = "[" + LabelGrabber.INSTANCE.getLabel("not.started.label") + "]";
             }
         }
         return urlCache;
