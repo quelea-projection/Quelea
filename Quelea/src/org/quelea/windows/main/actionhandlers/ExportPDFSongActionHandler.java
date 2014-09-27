@@ -66,7 +66,7 @@ public class ExportPDFSongActionHandler implements EventHandler<ActionEvent> {
 
                         @Override
                         public void handle(ActionEvent t) {
-                            song.setPrintChords(true);
+                            song.setPrintChords(false);
                         }
                     }).build().showAndWait();
                 }
