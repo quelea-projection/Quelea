@@ -56,7 +56,7 @@ public class OpenLyricsExporter implements Exporter {
     /**
      * Get the file chooser to be used.
      * <p/>
-     * @return the xip file chooser..
+     * @return the zip file chooser..
      */
     @Override
     public FileChooser getChooser() {
