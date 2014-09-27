@@ -35,7 +35,9 @@ import org.quelea.windows.main.actionhandlers.PreviewSongActionHandler;
 import org.quelea.windows.main.actionhandlers.RemoveSongDBActionHandler;
 
 /**
- * The popup menu that displays when someone right clicks on a song in the library.
+ * The popup menu that displays when someone right clicks on a song in the
+ * library.
+ *
  * @author Michael
  */
 public class LibraryPopupMenu extends ContextMenu {
@@ -67,20 +69,22 @@ public class LibraryPopupMenu extends ContextMenu {
             @Override
             public void handle(ActionEvent t) {
                 final SongDisplayable song = QueleaApp.get().getMainWindow().getMainPanel().getLibraryPanel().getLibrarySongPanel().getSongList().getSelectedValue();
-                if(song != null) {
-                    Dialog.buildConfirmation(LabelGrabber.INSTANCE.getLabel("printing.options.text"), LabelGrabber.INSTANCE.getLabel("print.chords.question")).addYesButton(new EventHandler<ActionEvent>() {
+                if (song != null) {
+                    if (song.hasChords()) {
+                        Dialog.buildConfirmation(LabelGrabber.INSTANCE.getLabel("printing.options.text"), LabelGrabber.INSTANCE.getLabel("print.chords.question")).addYesButton(new EventHandler<ActionEvent>() {
 
-                        @Override
-                        public void handle(ActionEvent t) {
-                            song.setPrintChords(true);
-                        }
-                    }).addNoButton(new EventHandler<ActionEvent>() {
+                            @Override
+                            public void handle(ActionEvent t) {
+                                song.setPrintChords(true);
+                            }
+                        }).addNoButton(new EventHandler<ActionEvent>() {
 
-                        @Override
-                        public void handle(ActionEvent t) {
-                            song.setPrintChords(true);
-                        }
-                    }).build().showAndWait();
+                            @Override
+                            public void handle(ActionEvent t) {
+                                song.setPrintChords(true);
+                            }
+                        }).build().showAndWait();
+                    }
                     Printer.getInstance().print(song);
                 }
             }
