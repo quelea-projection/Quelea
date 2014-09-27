@@ -895,7 +895,7 @@ public class SongDisplayable implements TextDisplayable, Comparable<SongDisplaya
         xml.append("</author>");
         xml.append("<lyrics>");
         for (TextSection section : sections) {
-            for(String line : section.getText(true, false)) {
+            for(String line : section.getText(printChords, false)) {
                 xml.append(Utils.escapeXML(line)).append("\n");
             }
             xml.append("\n");
