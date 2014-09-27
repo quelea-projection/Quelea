@@ -154,7 +154,7 @@ public class VLCWindow {
         runOnVLCThread(new Runnable() {
             @Override
             public void run() {
-//                System.out.println("load() start");
+//                System.out.println("load("+path+") start");
                 if(init) {
                     paused = false;
                     String sanitisedPath = path;
@@ -162,7 +162,11 @@ public class VLCWindow {
                     if(sanitisedPath.startsWith("www")) {
                         sanitisedPath = "http://" + sanitisedPath;
                     }
-                    mediaPlayer.prepareMedia(sanitisedPath, Utils.splitVLCOpts(options));
+                    if (options == null) {
+                        mediaPlayer.playMedia(sanitisedPath);
+                    } else {
+                        mediaPlayer.playMedia(sanitisedPath, Utils.splitVLCOpts(options));
+                    }
                 }
 //                System.out.println("load() end");
             }
@@ -173,7 +177,7 @@ public class VLCWindow {
         runOnVLCThread(new Runnable() {
             @Override
             public void run() {
-//                System.out.println("play() start");
+                System.out.println("play() start");
                 if(init) {
                     paused = false;
                     mediaPlayer.play();
@@ -188,7 +192,7 @@ public class VLCWindow {
         runOnVLCThread(new Runnable() {
             @Override
             public void run() {
-//                System.out.println("play(arg) start");
+//                System.out.println("play("+vid+") start");
                 if (init) {
                     paused = false;
                     if (options == null) {
