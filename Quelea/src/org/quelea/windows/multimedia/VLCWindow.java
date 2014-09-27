@@ -177,7 +177,7 @@ public class VLCWindow {
         runOnVLCThread(new Runnable() {
             @Override
             public void run() {
-                System.out.println("play() start");
+//                System.out.println("play() start");
                 if(init) {
                     paused = false;
                     mediaPlayer.play();
