@@ -121,7 +121,7 @@ public class SpellingDialog {
             }
         });
         dialogStage = new Stage();
-        dialogStage.setResizable(false);
+//        dialogStage.setResizable(false);
         dialogStage.initModality(Modality.APPLICATION_MODAL);
 //        dialogStage.initStyle(StageStyle.UTILITY);
         dialogStage.setTitle(LabelGrabber.INSTANCE.getLabel("spelling.check.title"));
