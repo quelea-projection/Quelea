@@ -25,8 +25,10 @@ import java.util.logging.Level;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.stage.FileChooser;
+import org.javafx.dialog.Dialog;
 import org.quelea.data.displayable.SongDisplayable;
 import static org.quelea.services.importexport.OpenLyricsExporter.LOGGER;
+import org.quelea.services.languages.LabelGrabber;
 import org.quelea.services.print.SongPDFPrinter;
 import org.quelea.services.utils.FileFilters;
 import org.quelea.windows.library.LibrarySongList;
@@ -53,6 +55,21 @@ public class ExportPDFSongActionHandler implements EventHandler<ActionEvent> {
             fileChooser.getExtensionFilters().add(FileFilters.PDF_GENERIC);
             File file = fileChooser.showSaveDialog(QueleaApp.get().getMainWindow());
             if (file != null) {
+                if (song.hasChords()) {
+                    Dialog.buildConfirmation(LabelGrabber.INSTANCE.getLabel("printing.options.text"), LabelGrabber.INSTANCE.getLabel("print.chords.question")).addYesButton(new EventHandler<ActionEvent>() {
+
+                        @Override
+                        public void handle(ActionEvent t) {
+                            song.setPrintChords(true);
+                        }
+                    }).addNoButton(new EventHandler<ActionEvent>() {
+
+                        @Override
+                        public void handle(ActionEvent t) {
+                            song.setPrintChords(true);
+                        }
+                    }).build().showAndWait();
+                }
                 if (!file.getName().toLowerCase().endsWith(".pdf")) {
                     file = new File(file.getAbsolutePath() + ".pdf");
                 }
