@@ -81,7 +81,7 @@ public class LibraryPopupMenu extends ContextMenu {
 
                             @Override
                             public void handle(ActionEvent t) {
-                                song.setPrintChords(true);
+                                song.setPrintChords(false);
                             }
                         }).build().showAndWait();
                     }
