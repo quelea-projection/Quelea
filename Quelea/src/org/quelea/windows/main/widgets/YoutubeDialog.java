@@ -163,7 +163,9 @@ public class YoutubeDialog extends Stage {
         urlField.clear();
         showAndWait();
         try {
-            previewFuture.get();
+            if (previewFuture != null) {
+                previewFuture.get();
+            }
         } catch (InterruptedException | ExecutionException ex) {
             //Never mind
         }
