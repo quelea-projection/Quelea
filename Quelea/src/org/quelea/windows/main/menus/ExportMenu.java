@@ -29,6 +29,7 @@ import javafx.scene.image.ImageView;
 import org.quelea.data.db.SongManager;
 import org.quelea.data.displayable.SongDisplayable;
 import org.quelea.services.importexport.OpenLyricsExporter;
+import org.quelea.services.importexport.PDFExporter;
 import org.quelea.services.importexport.QSPExporter;
 import org.quelea.services.importexport.SelectExportedSongsDialog;
 import org.quelea.services.languages.LabelGrabber;
@@ -41,6 +42,7 @@ import org.quelea.services.languages.LabelGrabber;
 public class ExportMenu extends Menu {
 
     private final MenuItem qspItem;
+    private final MenuItem pdfItem;
     private final MenuItem openLyricsItem;
 
     /**
@@ -74,6 +76,19 @@ public class ExportMenu extends Menu {
             }
         });
         getItems().add(openLyricsItem);
+
+        pdfItem = new MenuItem(LabelGrabber.INSTANCE.getLabel("pdf.button"), new ImageView(new Image("file:icons/pdf.png", 16, 16, false, true)));
+        pdfItem.setOnAction(new EventHandler<ActionEvent>() {
+
+            @Override
+            public void handle(ActionEvent t) {
+                final List<SongDisplayable> songs = Arrays.asList(SongManager.get().getSongs());
+                //TODO: Determine if number of songs is above some threshold, then display warning that Quelea might be unresponsive while dialog is built.
+                SelectExportedSongsDialog dialog = new SelectExportedSongsDialog(songs, new PDFExporter());
+                dialog.showAndWait(); //This line is what takes the time for a large number of songs.
+            }
+        });
+        getItems().add(pdfItem);
     }
 
 }
