@@ -153,7 +153,7 @@ public class BiblePassage implements TextDisplayable, Serializable {
             bible = summary.split("(?<=\\d)\\s")[1];
         } else {
             summaryText = summary.split("\n")[0];
-            bible = summary.split("\n")[0];
+            bible = summary.split("\n")[1];
         }
         System.out.println(summaryText);
         ret.append(Utils.escapeXML(summaryText));
