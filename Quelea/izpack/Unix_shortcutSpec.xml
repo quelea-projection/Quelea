@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+
+<shortcuts>
+    <skipIfNotSupported/>
+    <programGroup defaultName="Quelea"
+                  location="applications"/>
+    <shortcut
+            name="Quelea"
+            target="/usr/bin/java"
+            commandLine="-Xms1024m -Xmx1024m -jar $INSTALL_PATH/Quelea.jar"
+            description="Launch MyApp"
+            iconFile="$INSTALL_PATH/images/MyApp.png"
+            workingDirectory="$INSTALL_PATH"
+            initialState="normal"
+            programGroup="yes"
+            desktop="yes"
+            applications="no"
+            startMenu="no"
+            startup="no"
+            type="Application"
+            terminal="true"
+            encoding="UTF-8">
+
+        <createForPack name="base"/>
+    </shortcut>
+
+</shortcuts>
