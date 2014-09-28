@@ -73,7 +73,7 @@ public class ExportPDFSongActionHandler implements EventHandler<ActionEvent> {
                 if (!file.getName().toLowerCase().endsWith(".pdf")) {
                     file = new File(file.getAbsolutePath() + ".pdf");
                 }
-                new SongPDFPrinter().print(song, file);
+                SongPDFPrinter.INSTANCE.print(song, file);
                 if (Desktop.isDesktopSupported()) {
                     Desktop.getDesktop().open(file);
                 }
