@@ -84,7 +84,7 @@ public class VideoButton extends Button {
                             drawer.getTheme().getFontPaint(),
                             new SerializableFont(drawer.getTheme().getTranslateFont()),
                             drawer.getTheme().getTranslateFontPaint(),
-                            new VideoBackground(vidLocation, 0),
+                            new VideoBackground(vidLocation, 0, false),
                             drawer.getTheme().getShadow(),
                             drawer.getTheme().isBold(),
                             drawer.getTheme().isItalic(),

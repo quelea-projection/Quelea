@@ -84,7 +84,7 @@ public class VLCWindow {
 
                         @Override
                         public void finished(MediaPlayer mp) {
-                            if(mediaPlayer.subItemCount() > 0) {
+                            if (mediaPlayer.subItemCount() > 0) {
                                 String mrl = mediaPlayer.subItems().remove(0);
                                 mediaPlayer.playMedia(mrl);
                             }
@@ -96,8 +96,7 @@ public class VLCWindow {
                     window.toBack();
                     init = true;
                     LOGGER.log(Level.INFO, "Video initialised ok");
-                }
-                catch(Exception ex) {
+                } catch (Exception ex) {
                     LOGGER.log(Level.INFO, "Couldn't initialise video, almost definitely because VLC (or correct version of VLC) was not found.", ex);
                 }
             }
@@ -107,7 +106,7 @@ public class VLCWindow {
 
             @Override
             public void run() {
-                if(init) {
+                if (init) {
                     runOnVLCThread(new Runnable() {
                         @Override
                         public void run() {
@@ -142,7 +141,7 @@ public class VLCWindow {
             @Override
             public void run() {
 //                System.out.println("setRepeat() start");
-                if(init) {
+                if (init) {
                     mediaPlayer.setRepeat(repeat);
                 }
 //                System.out.println("setRepeat() end");
@@ -155,11 +154,11 @@ public class VLCWindow {
             @Override
             public void run() {
 //                System.out.println("load("+path+") start");
-                if(init) {
+                if (init) {
                     paused = false;
                     String sanitisedPath = path;
                     sanitisedPath = sanitisedPath.trim();
-                    if(sanitisedPath.startsWith("www")) {
+                    if (sanitisedPath.startsWith("www")) {
                         sanitisedPath = "http://" + sanitisedPath;
                     }
                     if (options == null) {
@@ -178,7 +177,7 @@ public class VLCWindow {
             @Override
             public void run() {
 //                System.out.println("play() start");
-                if(init) {
+                if (init) {
                     paused = false;
                     mediaPlayer.play();
                 }
@@ -187,7 +186,7 @@ public class VLCWindow {
         });
     }
 
-    public void play(final String vid, final String options) {
+    public void play(final String vid, final String options, final boolean stretch) {
         this.location = vid;
         runOnVLCThread(new Runnable() {
             @Override
@@ -195,6 +194,11 @@ public class VLCWindow {
 //                System.out.println("play("+vid+") start");
                 if (init) {
                     paused = false;
+                    if (stretch) {
+                        mediaPlayer.setAspectRatio(canvas.getWidth()+":"+canvas.getHeight());
+                    } else {
+                        mediaPlayer.setAspectRatio(null);
+                    }
                     if (options == null) {
                         mediaPlayer.playMedia(vid);
                     } else {
@@ -215,7 +219,7 @@ public class VLCWindow {
             @Override
             public void run() {
 //                System.out.println("pause() start");
-                if(init) {
+                if (init) {
                     paused = true;
                     mediaPlayer.pause();
                 }
@@ -230,7 +234,7 @@ public class VLCWindow {
             @Override
             public void run() {
 //                System.out.println("stop() start");
-                if(init) {
+                if (init) {
                     paused = false;
                     mediaPlayer.stop();
                     SwingUtilities.invokeLater(new Runnable() {
@@ -252,10 +256,9 @@ public class VLCWindow {
             @Override
             public void run() {
 //                System.out.println("isMute() start");
-                if(init) {
+                if (init) {
                     muteTemp = mediaPlayer.isMute();
-                }
-                else {
+                } else {
                     muteTemp = false;
                 }
 //                System.out.println("isMute() end");
@@ -269,7 +272,7 @@ public class VLCWindow {
             @Override
             public void run() {
 //                System.out.println("setMute() start");
-                if(init) {
+                if (init) {
                     mediaPlayer.mute(mute);
                 }
 //                System.out.println("setMute() end");
@@ -283,10 +286,9 @@ public class VLCWindow {
             @Override
             public void run() {
 //                System.out.println("getProgressPercent() start");
-                if(init) {
+                if (init) {
                     progressTemp = (double) mediaPlayer.getTime() / mediaPlayer.getLength();
-                }
-                else {
+                } else {
                     progressTemp = 0;
                 }
 //                System.out.println("getProgressPercent() end");
@@ -300,7 +302,7 @@ public class VLCWindow {
             @Override
             public void run() {
 //                System.out.println("setProgressPercent() start");
-                if(init) {
+                if (init) {
                     mediaPlayer.setPosition((float) percent);
                 }
 //                System.out.println("setProgressPercent() end");
@@ -314,10 +316,9 @@ public class VLCWindow {
             @Override
             public void run() {
 //                System.out.println("isPlaying() start");
-                if(init) {
+                if (init) {
                     isPlayingTemp = mediaPlayer.isPlaying();
-                }
-                else {
+                } else {
                     isPlayingTemp = false;
                 }
 //                System.out.println("isPlaying() end");
@@ -332,10 +333,9 @@ public class VLCWindow {
             @Override
             public void run() {
 //                System.out.println("isPaused() start");
-                if(init) {
+                if (init) {
                     isPausedTemp = paused;
-                }
-                else {
+                } else {
                     isPausedTemp = false;
                 }
 //                System.out.println("isPaused() end");
@@ -349,12 +349,12 @@ public class VLCWindow {
             @Override
             public void run() {
 //                System.out.println("setOnFinished() start");
-                if(init) {
+                if (init) {
                     paused = false;
                     mediaPlayer.addMediaPlayerEventListener(new MediaPlayerEventAdapter() {
                         @Override
                         public void finished(MediaPlayer mediaPlayer) {
-                            if(mediaPlayer.subItemCount() == 0) {
+                            if (mediaPlayer.subItemCount() == 0) {
                                 onFinished.run();
                             }
                         }
@@ -370,7 +370,7 @@ public class VLCWindow {
             @Override
             public void run() {
 //                System.out.println("show() start");
-                if(init) {
+                if (init) {
                     show = true;
                     updateState();
                 }
@@ -384,7 +384,7 @@ public class VLCWindow {
             @Override
             public void run() {
 //                System.out.println("hide() start");
-                if(init) {
+                if (init) {
                     show = false;
                     updateState();
                 }
@@ -398,7 +398,7 @@ public class VLCWindow {
             @Override
             public void run() {
 //                System.out.println("setHideButton() start");
-                if(init) {
+                if (init) {
                     hideButton = hide;
                     updateState();
                 }
@@ -412,7 +412,7 @@ public class VLCWindow {
             @Override
             public void run() {
 //                System.out.println("updateState() start");
-                if(init) {
+                if (init) {
                     SwingUtilities.invokeLater(new Runnable() {
                         @Override
                         public void run() {
@@ -431,7 +431,7 @@ public class VLCWindow {
             @Override
             public void run() {
 //                System.out.println("setLocation() start");
-                if(init) {
+                if (init) {
                     SwingUtilities.invokeLater(new Runnable() {
                         @Override
                         public void run() {
@@ -449,7 +449,7 @@ public class VLCWindow {
             @Override
             public void run() {
 //                System.out.println("setsize() start");
-                if(init) {
+                if (init) {
                     SwingUtilities.invokeLater(new Runnable() {
 
                         @Override
@@ -470,7 +470,7 @@ public class VLCWindow {
             @Override
             public void run() {
                 showing = QueleaApp.get().getProjectionWindow().isShowing();
-                if(showing) {
+                if (showing) {
                     tempX = (int) QueleaApp.get().getProjectionWindow().getX();
                     tempY = (int) QueleaApp.get().getProjectionWindow().getY();
                     tempWidth = (int) QueleaApp.get().getProjectionWindow().getWidth();
@@ -482,13 +482,12 @@ public class VLCWindow {
             @Override
             public void run() {
 //                System.out.println("refreshPosition() start");
-                if(init) {
-                    if(showing) {
+                if (init) {
+                    if (showing) {
                         show();
                         setLocation(tempX, tempY);
                         setSize(tempWidth, tempHeight);
-                    }
-                    else {
+                    } else {
                         hide();
                     }
                 }
@@ -511,26 +510,23 @@ public class VLCWindow {
 
         public void run() {
             double diff = toVal - getHue();
-            if(diff < 0) {
-                while(diff < 0 && go) {
+            if (diff < 0) {
+                while (diff < 0 && go) {
                     setHue(getHue() - INCREMENT);
                     diff = toVal - getHue();
                     try {
                         Thread.sleep(10);
-                    }
-                    catch(InterruptedException ex) {
+                    } catch (InterruptedException ex) {
                         //Meh
                     }
                 }
-            }
-            else if(diff > 0) {
-                while(diff > 0 && go) {
+            } else if (diff > 0) {
+                while (diff > 0 && go) {
                     setHue(getHue() + INCREMENT);
                     diff = toVal - getHue();
                     try {
                         Thread.sleep(10);
-                    }
-                    catch(InterruptedException ex) {
+                    } catch (InterruptedException ex) {
                         //Meh
                     }
                 }
@@ -545,7 +541,7 @@ public class VLCWindow {
     }
 
     public synchronized void fadeHue(final double hue) {
-        if(fadeThread != null) {
+        if (fadeThread != null) {
             fadeThread.halt();
         }
         fadeThread = new FadeThread(hue);
@@ -580,8 +576,7 @@ public class VLCWindow {
     private void runOnVLCThreadAndWait(Runnable r) {
         try {
             VLC_EXECUTOR.submit(r).get();
-        }
-        catch(InterruptedException | ExecutionException ex) {
+        } catch (InterruptedException | ExecutionException ex) {
             LOGGER.log(Level.WARNING, "Interrupted or execution error", ex);
         }
     }
