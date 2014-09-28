@@ -477,3 +477,7 @@ notice.background.colour.text=Bakgrundsfärg för meddelanden
 export.pdf.button=Exportera till PDF
 quelea.schedule.text=Gudstjänstordning från Quelea
 not.started.label=Inte startad
+user.options.options=Användaralternativ
+text.options.options=Textalternativ
+stretch.video.label=Sträck ut video
+export.schedule.songs.pdf.button=Exportera sånger till PDF
