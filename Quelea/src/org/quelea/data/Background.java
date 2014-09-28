@@ -19,6 +19,7 @@ package org.quelea.data;
 
 import java.io.File;
 import java.util.Collection;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.ColorPicker;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Slider;
@@ -50,5 +51,5 @@ public interface Background {
      * @param backgroundTypeSelect the ComboBox to select the background type.
      * @param backgroundLocation the text field representing the background "location".
      */
-    void setThemeForm(ColorPicker backgroundColorPicker, ComboBox<String> backgroundTypeSelect, TextField backgroundImgLocation, TextField backgroundVidLocation, Slider vidHueSlider);
+    void setThemeForm(ColorPicker backgroundColorPicker, ComboBox<String> backgroundTypeSelect, TextField backgroundImgLocation, TextField backgroundVidLocation, Slider vidHueSlider, CheckBox vidStretchCheckbox);
 }
