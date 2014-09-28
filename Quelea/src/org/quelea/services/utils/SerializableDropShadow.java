@@ -19,23 +19,31 @@
 package org.quelea.services.utils;
 
 import java.io.Serializable;
+import javafx.scene.effect.BlurType;
 import javafx.scene.effect.DropShadow;
 import javafx.scene.paint.Color;
 
 /**
  * A class that wraps DropShadow to make it serializable.
+ *
  * @author Michael
  */
 public class SerializableDropShadow implements Serializable {
-    
-    private SerializableColor color;
-    private double xOffset;
-    private double yOffset;
-    
-    public SerializableDropShadow(Color color, double xOffset, double yOffset) {
+
+    private final SerializableColor color;
+    private final double xOffset;
+    private final double yOffset;
+    private final double radius;
+    private final double spread;
+    private final boolean use;
+
+    public SerializableDropShadow(Color color, double xOffset, double yOffset, double radius, double spread, boolean use) {
         this.color = new SerializableColor(color);
         this.xOffset = xOffset;
         this.yOffset = yOffset;
+        this.radius = radius;
+        this.spread = spread;
+        this.use = use;
     }
 
     public Color getColor() {
@@ -49,18 +57,37 @@ public class SerializableDropShadow implements Serializable {
     public double getOffsetY() {
         return yOffset;
     }
-    
+
+    public double getRadius() {
+        return radius;
+    }
+
+    public double getSpread() {
+        return spread;
+    }
+
+    public boolean getUse() {
+        return use;
+    }
+
     @Override
     public String toString() {
-        return getColor().toString() + " X: " + xOffset + " Y: " + yOffset;
+        return getColor().toString() + " X: " + xOffset + " Y: " + yOffset + " Radius: " + radius + " Spread: " + spread + " Use: " + use;
     }
-    
+
     public DropShadow getDropShadow() {
         DropShadow shadow = new DropShadow();
-        shadow.setColor(getColor());
+        if (use) {
+            shadow.setColor(getColor());
+        } else {
+            shadow.setColor(Color.TRANSPARENT);
+        }
         shadow.setOffsetX(getOffsetX());
         shadow.setOffsetY(getOffsetY());
+        shadow.setSpread(getSpread());
+        shadow.setRadius(getRadius());
+        shadow.setBlurType(BlurType.GAUSSIAN);
         return shadow;
     }
-    
+
 }

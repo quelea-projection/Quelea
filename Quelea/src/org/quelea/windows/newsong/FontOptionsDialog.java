@@ -25,6 +25,7 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.ColorPicker;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
@@ -34,6 +35,7 @@ import javafx.scene.control.Tooltip;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.StackPane;
@@ -67,7 +69,10 @@ public class FontOptionsDialog extends Stage {
     private final ColorPicker shadowColor;
     private final ToggleButton boldButton;
     private final ToggleButton italicButton;
+    private final CheckBox useShadowCheckbox;
     private final Slider shadowOffsetSlider;
+    private final Slider shadowRadiusSlider;
+    private final Slider shadowSpreadSlider;
     private final Button okButton;
 
     /**
@@ -109,10 +114,14 @@ public class FontOptionsDialog extends Stage {
         shadowColor = new ColorPicker(Color.GRAY);
         shadowColor.setStyle("-fx-color-label-visible: false ;");
 
-        shadowOffsetSlider = new Slider(0, 20, 2);
+        shadowOffsetSlider = new Slider(0, 20, 0);
         shadowOffsetSlider.setShowTickMarks(false);
-        shadowOffsetSlider.setBlockIncrement(1);
-        shadowOffsetSlider.setMajorTickUnit(1);
+        
+        shadowRadiusSlider = new Slider(0, 1000, 0);
+        shadowRadiusSlider.setShowTickMarks(false);
+
+        shadowSpreadSlider = new Slider(0, 1, 0);
+        shadowSpreadSlider.setShowTickMarks(false);
 
         boldButton = new ToggleButton("", new ImageView(new Image("file:icons/bold.png", 15, 15, false, true)));
         Utils.setToolbarButtonStyle(boldButton);
@@ -120,22 +129,60 @@ public class FontOptionsDialog extends Stage {
         Utils.setToolbarButtonStyle(italicButton);
 
         BorderPane root = new BorderPane();
-        VBox controlRoot = new VBox(5);
+        VBox controlRoot = new VBox(10);
         controlRoot.getChildren().add(new Label(LabelGrabber.INSTANCE.getLabel("translation.font.text") + ":"));
-        HBox fontBox = new HBox(5);
+        HBox fontBox = new HBox(10);
         fontBox.getChildren().add(fontSelection);
         fontBox.getChildren().add(fontExpandButton);
         controlRoot.getChildren().add(fontBox);
-        HBox fontButtonBox = new HBox(5);
+        HBox fontButtonBox = new HBox(10);
         fontButtonBox.getChildren().add(boldButton);
         fontButtonBox.getChildren().add(italicButton);
         fontButtonBox.getChildren().add(fontColor);
         controlRoot.getChildren().add(fontButtonBox);
         controlRoot.getChildren().add(new Label(LabelGrabber.INSTANCE.getLabel("shadow.text") + ":"));
-        HBox shadowBox = new HBox(5);
-        shadowBox.getChildren().add(shadowColor);
-        shadowBox.getChildren().add(shadowOffsetSlider);
-        controlRoot.getChildren().add(shadowBox);
+        GridPane shadowPane = new GridPane();
+        shadowPane.setHgap(10);
+        shadowPane.setVgap(10);
+        
+        Label useShadowLabel = new Label(LabelGrabber.INSTANCE.getLabel("use.shadow.label"));
+        GridPane.setConstraints(useShadowLabel, 1, 1);
+        shadowPane.getChildren().add(useShadowLabel);
+        useShadowCheckbox = new CheckBox();
+        GridPane.setConstraints(useShadowCheckbox, 2, 1);
+        shadowPane.getChildren().add(useShadowCheckbox);
+        useShadowLabel.setLabelFor(useShadowCheckbox);
+        useShadowCheckbox.setSelected(true);
+        
+        Label shadowColorLabel = new Label(LabelGrabber.INSTANCE.getLabel("shadow.color.label"));
+        GridPane.setConstraints(shadowColorLabel, 1, 2);
+        shadowPane.getChildren().add(shadowColorLabel);
+        shadowColorLabel.setLabelFor(shadowColor);
+        GridPane.setConstraints(shadowColor, 2, 2);
+        shadowPane.getChildren().add(shadowColor);
+        
+        Label shadowOffsetLabel = new Label(LabelGrabber.INSTANCE.getLabel("shadow.offset.label"));
+        GridPane.setConstraints(shadowOffsetLabel, 1, 3);
+        shadowPane.getChildren().add(shadowOffsetLabel);
+        shadowOffsetLabel.setLabelFor(shadowOffsetSlider);
+        GridPane.setConstraints(shadowOffsetSlider, 2, 3);
+        shadowPane.getChildren().add(shadowOffsetSlider);
+        
+        Label shadowRadiusLabel = new Label(LabelGrabber.INSTANCE.getLabel("shadow.radius.label"));
+        GridPane.setConstraints(shadowRadiusLabel, 1, 4);
+        shadowPane.getChildren().add(shadowRadiusLabel);
+        shadowRadiusLabel.setLabelFor(shadowRadiusSlider);
+        GridPane.setConstraints(shadowRadiusSlider, 2, 4);
+        shadowPane.getChildren().add(shadowRadiusSlider);
+        
+        Label shadowSpreadLabel = new Label(LabelGrabber.INSTANCE.getLabel("shadow.spread.label"));
+        GridPane.setConstraints(shadowSpreadLabel, 1, 5);
+        shadowPane.getChildren().add(shadowSpreadLabel);
+        shadowSpreadLabel.setLabelFor(shadowSpreadSlider);
+        GridPane.setConstraints(shadowSpreadSlider, 2, 5);
+        shadowPane.getChildren().add(shadowSpreadSlider);
+        
+        controlRoot.getChildren().add(shadowPane);
 
         BorderPane.setMargin(controlRoot, new Insets(10));
         StackPane buttonPane = new StackPane();
@@ -153,7 +200,7 @@ public class FontOptionsDialog extends Stage {
         buttonPane.getChildren().add(okButton);
         root.setCenter(controlRoot);
         root.setBottom(buttonPane);
-        setScene(new Scene(root, 230,180));
+        setScene(new Scene(root, 300,320));
     }
 
     /**
@@ -170,6 +217,9 @@ public class FontOptionsDialog extends Stage {
         shadowColor.setValue(theme.getShadow().getColor());
         shadowColor.fireEvent(new ActionEvent());
         shadowOffsetSlider.setValue(theme.getShadow().getOffsetX());
+        useShadowCheckbox.setSelected(theme.getShadow().getUse());
+        shadowRadiusSlider.setValue(theme.getShadow().getRadius());
+        shadowSpreadSlider.setValue(theme.getShadow().getSpread());
     }
 
     /**
@@ -178,7 +228,7 @@ public class FontOptionsDialog extends Stage {
      * @return the shadow options.
      */
     public SerializableDropShadow getShadow() {
-        return new SerializableDropShadow(shadowColor.getValue(), shadowOffsetSlider.getValue(), shadowOffsetSlider.getValue());
+        return new SerializableDropShadow(shadowColor.getValue(), shadowOffsetSlider.getValue(), shadowOffsetSlider.getValue(), shadowRadiusSlider.getValue(), shadowSpreadSlider.getValue(), useShadowCheckbox.isSelected());
     }
 
     /**
