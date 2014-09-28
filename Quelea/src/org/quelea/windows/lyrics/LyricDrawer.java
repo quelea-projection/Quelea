@@ -35,7 +35,6 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Group;
 import javafx.scene.Node;
-import javafx.scene.effect.BlurType;
 import javafx.scene.effect.ColorAdjust;
 import javafx.scene.effect.DropShadow;
 import javafx.scene.image.Image;
@@ -170,6 +169,9 @@ public class LyricDrawer extends DisplayableDrawer {
         FontMetrics translateMetrics = Toolkit.getToolkit().getFontLoader().getFontMetrics(translateFont);
         FontMetrics smallTextMetrics = Toolkit.getToolkit().getFontLoader().getFontMetrics(smallTextFont);
         final Group newTextGroup = new Group();
+        shadow.setOffsetX(metrics.getLineHeight()*shadow.getOffsetX()*0.003);
+        shadow.setOffsetY(metrics.getLineHeight()*shadow.getOffsetY()*0.003);
+        shadow.setRadius(0.06*metrics.getLineHeight());
         newTextGroup.setEffect(shadow);
         StackPane.setAlignment(newTextGroup, Pos.CENTER);
         smallTextGroup = new Group();
@@ -787,13 +789,11 @@ public class LyricDrawer extends DisplayableDrawer {
 
     private double pickSmallFontSize(Font font, String[] text, double width, double height) {
         FontMetrics metrics = Toolkit.getToolkit().getFontLoader().getFontMetrics(font);
-        ArrayList<String> al = new ArrayList<String>();
+        ArrayList<String> al = new ArrayList<>();
         for (String te : text) {
             if (al.contains("\n")) {
                 String[] te2 = te.split("\n");
-                for (String te3 : te2) {
-                    al.add(te3);
-                }
+                al.addAll(Arrays.asList(te2));
             } else {
                 al.add(te);
             }
