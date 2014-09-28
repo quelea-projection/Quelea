@@ -33,6 +33,7 @@ public class Theme {
     private Boolean translateFontBold;
     private Boolean translateFontItalic;
     private Double videoHue;
+    private Boolean videoStretch;
     private Integer textPosition;
     private Integer textAlignment;
     private TextShadow textShadow = new TextShadow();
@@ -42,7 +43,7 @@ public class Theme {
 
     public Theme(String name, String fontname, String fontcolour, String translateFontname, String translateFontcolour,
             String backgroundcolour, String backgroundvid, String backgroundimage,
-            TextShadow shadow, boolean isFontBold, boolean isFontitalic, boolean isTranslateFontBold, boolean isTranslateFontitalic, double videoHue, int textPosition, int textAlignment) {
+            TextShadow shadow, boolean isFontBold, boolean isFontitalic, boolean isTranslateFontBold, boolean isTranslateFontitalic, double videoHue, boolean videoStretch, int textPosition, int textAlignment) {
         this.name = name;
         this.fontname = fontname;
         this.fontcolour = fontcolour;
@@ -57,6 +58,7 @@ public class Theme {
         this.translateFontBold = isTranslateFontBold;
         this.translateFontItalic = isTranslateFontitalic;
         this.videoHue = videoHue;
+        this.videoStretch = videoStretch;
         this.textPosition = textPosition;
         this.textAlignment = textAlignment;
     }
@@ -76,6 +78,7 @@ public class Theme {
         this.translateFontBold = theme.translateFontBold;
         this.translateFontItalic = theme.translateFontItalic;
         this.videoHue = theme.videoHue;
+        this.videoStretch = theme.videoStretch;
         this.textPosition = theme.textPosition;
         this.textAlignment = theme.textAlignment;
     }
@@ -122,6 +125,18 @@ public class Theme {
 
     public void setVideoHue(Double videoHue) {
         this.videoHue = videoHue;
+    }
+
+    @Column(name = "videoStretch")
+    public Boolean getVideoStretch() {
+        if(videoStretch == null) {
+            return false;
+        }
+        return videoStretch;
+    }
+    
+    public void setVideoStretch(Boolean videoStretch) {
+        this.videoStretch = videoStretch;
     }
     
     @Column(name="textPosition")

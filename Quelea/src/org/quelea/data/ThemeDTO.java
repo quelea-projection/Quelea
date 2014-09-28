@@ -266,9 +266,11 @@ public class ThemeDTO implements Serializable {
         String backgroundVideo = "";
         String backgroundImage = "";
         double vidHue = 0;
+        boolean vidStretch = false;
         if (background instanceof VideoBackground) {
             backgroundVideo = background.getString();
             vidHue = ((VideoBackground) background).getHue();
+            vidStretch = ((VideoBackground) background).getStretch();
         } else if (background instanceof ImageBackground) {
             backgroundImage = background.getString();
         } else if (background instanceof ColourBackground) {
@@ -277,7 +279,7 @@ public class ThemeDTO implements Serializable {
         final TextShadow shadow = new TextShadow(textShadow.getColor().toString(),
                 textShadow.getOffsetX(), textShadow.getOffsetY());
         final Theme theme = new Theme(themeName, font.getFont().getName(), fontColor.toString(), translateFont.getFont().getName(), translateFontColor.toString(), backgroundColor,
-                backgroundVideo, backgroundImage, shadow, isFontBold, isFontItalic, isTranslateFontBold, isTranslateFontItalic, vidHue, textPosition, textAlignment);
+                backgroundVideo, backgroundImage, shadow, isFontBold, isFontItalic, isTranslateFontBold, isTranslateFontItalic, vidHue, vidStretch, textPosition, textAlignment);
         return theme;
     }
 
@@ -294,7 +296,7 @@ public class ThemeDTO implements Serializable {
         } else if (!theme.getBackgroundimage().isEmpty()) {
             background = new ImageBackground(theme.getBackgroundimage());
         } else if (!theme.getBackgroundvid().isEmpty()) {
-            background = new VideoBackground(theme.getBackgroundvid(), theme.getVideoHue());
+            background = new VideoBackground(theme.getBackgroundvid(), theme.getVideoHue(), theme.getVideoStretch());
         } else {
             background = new ColourBackground(Color.BLACK);
         }
@@ -333,6 +335,7 @@ public class ThemeDTO implements Serializable {
         if (background instanceof VideoBackground) {
             ret.append("$backgroundvideo:").append(((VideoBackground) background).getString());
             ret.append("$vidhue:").append(((VideoBackground) background).getHue());
+            ret.append("$vidstretch:").append(((VideoBackground) background).getStretch());
         } else if (background instanceof ImageBackground) {
             ret.append("$backgroundimage:").append(((ImageBackground) background).getString());
         } else if (background instanceof ColourBackground) {
@@ -372,6 +375,7 @@ public class ThemeDTO implements Serializable {
         String shadowOffsetX = "0";
         String shadowOffsetY = "0";
         String vidHue = "0";
+        String vidStretch = "false";
         String textPosition = "-1";
         String textAlignment = "0";
         for (String part : content.split("\\$")) {
@@ -407,6 +411,8 @@ public class ThemeDTO implements Serializable {
                 shadowColor = parts[1];
             } else if (parts[0].equalsIgnoreCase("vidhue")) {
                 vidHue = parts[1];
+            } else if (parts[0].equalsIgnoreCase("vidstretch")) {
+                vidStretch = parts[1];
             } else if (parts[0].equalsIgnoreCase("textposition")) {
                 textPosition = parts[1];
             } else if (parts[0].equalsIgnoreCase("textalignment")) {
@@ -433,7 +439,7 @@ public class ThemeDTO implements Serializable {
         } else if (!backgroundimage.trim().isEmpty()) {
             background = new ImageBackground(backgroundimage);
         } else if (!backgroundvid.trim().isEmpty()) {
-            background = new VideoBackground(backgroundvid, Double.parseDouble(vidHue));
+            background = new VideoBackground(backgroundvid, Double.parseDouble(vidHue), Boolean.parseBoolean(vidStretch));
         } else {
             LOGGER.log(Level.WARNING, "WARNING: Unhandled or empty background, using default background. Raw content: " + content, new RuntimeException("DEBUG EXCEPTION FOR STACK TRACE"));
             background = ThemeDTO.DEFAULT_BACKGROUND;

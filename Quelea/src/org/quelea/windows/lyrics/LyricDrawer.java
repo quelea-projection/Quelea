@@ -370,14 +370,15 @@ public class LyricDrawer extends DisplayableDrawer {
             final VideoBackground vidBackground = (VideoBackground) theme.getBackground();
             if (!sameVid || !VLCWindow.INSTANCE.isPlaying()) {
                 final String location = vidBackground.getVLCVidString();
+                final boolean stretch = vidBackground.getStretch();
                 String[] locationParts = location.split("[\\r\\n]+");
                 VLCWindow.INSTANCE.refreshPosition();
                 VLCWindow.INSTANCE.show();
                 VLCWindow.INSTANCE.setRepeat(true);
                 if (locationParts.length == 1) {
-                    VLCWindow.INSTANCE.play(locationParts[0], null);
+                    VLCWindow.INSTANCE.play(locationParts[0], null, stretch);
                 } else {
-                    VLCWindow.INSTANCE.play(locationParts[0], locationParts[1]);
+                    VLCWindow.INSTANCE.play(locationParts[0], locationParts[1], stretch);
                 }
                 VLCWindow.INSTANCE.setHue(vidBackground.getHue());
             }
