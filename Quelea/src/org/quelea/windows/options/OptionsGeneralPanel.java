@@ -75,6 +75,7 @@ public class OptionsGeneralPanel extends GridPane implements PropertyPanel {
     public OptionsGeneralPanel() {
         int rows = 0;
         setVgap(5);
+        setHgap(10);
         setPadding(new Insets(5));
 
 //        Label spacer = new Label("");
