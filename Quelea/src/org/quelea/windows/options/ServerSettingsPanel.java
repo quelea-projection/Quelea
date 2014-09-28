@@ -75,6 +75,7 @@ public class ServerSettingsPanel extends GridPane implements PropertyPanel {
      */
     public ServerSettingsPanel() {
         setVgap(5);
+        setHgap(10);
         setPadding(new Insets(5));
 
         useMobLyricsCheckBox = new CheckBox();
