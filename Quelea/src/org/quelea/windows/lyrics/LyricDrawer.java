@@ -132,9 +132,6 @@ public class LyricDrawer extends DisplayableDrawer {
             shadow = ThemeDTO.DEFAULT_SHADOW.getDropShadow();
         }
 
-        shadow.setHeight(5);
-        shadow.setWidth(5);
-
         List<LyricLine> newText;
         if (dumbWrap) {
             newText = dumbWrapText(text);
@@ -171,7 +168,7 @@ public class LyricDrawer extends DisplayableDrawer {
         final Group newTextGroup = new Group();
         shadow.setOffsetX(metrics.getLineHeight()*shadow.getOffsetX()*0.003);
         shadow.setOffsetY(metrics.getLineHeight()*shadow.getOffsetY()*0.003);
-        shadow.setRadius(0.06*metrics.getLineHeight());
+        shadow.setRadius(shadow.getRadius()*metrics.getLineHeight()*0.0015);
         newTextGroup.setEffect(shadow);
         StackPane.setAlignment(newTextGroup, Pos.CENTER);
         smallTextGroup = new Group();

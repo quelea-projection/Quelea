@@ -202,7 +202,7 @@ public class ScheduleList extends StackPane {
                                     ThemeDTO theme = textDisplayable.getTheme();
                                     SerializableDropShadow dropShadow = theme.getShadow();
                                     if (dropShadow == null || (dropShadow.getColor().equals(Color.WHITE) && dropShadow.getOffsetX() == 0 && dropShadow.getOffsetY() == 0)) {
-                                        dropShadow = new SerializableDropShadow(Color.BLACK, 3, 3);
+                                        dropShadow = new SerializableDropShadow(Color.BLACK, 3, 3, 2, 0, true);
                                     }
                                     ThemeDTO newTheme = new ThemeDTO(theme.getSerializableFont(), theme.getFontPaint(), theme.getTranslateSerializableFont(), theme.getTranslateFontPaint(), new ImageBackground(new File(imageLocation).getName()), dropShadow, theme.getSerializableFont().isBold(), theme.getSerializableFont().isItalic(),  theme.getTranslateSerializableFont().isBold(), theme.getTranslateSerializableFont().isItalic(),theme.getTextPosition(), theme.getTextAlignment());
                                     for (TextSection section : textDisplayable.getSections()) {
