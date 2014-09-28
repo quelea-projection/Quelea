@@ -478,3 +478,5 @@ export.schedule.pdf.button=Export Schedule to PDF
 filefilters.description.pdf.files=PDF Files
 not.started.label=Not started
 quelea.schedule.text=Quelea Schedule
+user.options.options=User Options
+text.options.options=Text Options
