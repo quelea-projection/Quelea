@@ -44,7 +44,8 @@ public class OptionsDisplaySetupPanel extends GridPane implements PropertyPanel 
      */
     public OptionsDisplaySetupPanel() {
         setHgap(30);
-        setPadding(new Insets(5));
+        setVgap(10);
+        setPadding(new Insets(30));
         monitorPanel = new SingleDisplayPanel(LabelGrabber.INSTANCE.getLabel("control.screen.label") + ":", "icons/monitor.png", false, false);
         GridPane.setConstraints(monitorPanel, 1, 1);
         getChildren().add(monitorPanel);

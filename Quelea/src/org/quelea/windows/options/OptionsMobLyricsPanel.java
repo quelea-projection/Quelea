@@ -66,6 +66,7 @@ public class OptionsMobLyricsPanel extends GridPane implements PropertyPanel {
      */
     public OptionsMobLyricsPanel() {
         setVgap(5);
+        setHgap(10);
         setPadding(new Insets(5));
 
         Label useMobLydicsLabel = new Label(LabelGrabber.INSTANCE.getLabel("use.mobile.lyrics.label") + " ");
