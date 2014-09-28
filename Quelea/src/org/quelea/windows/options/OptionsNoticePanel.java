@@ -19,6 +19,7 @@ package org.quelea.windows.options;
 
 import java.util.logging.Logger;
 import javafx.event.ActionEvent;
+import javafx.geometry.Insets;
 import javafx.scene.control.ColorPicker;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
@@ -47,7 +48,7 @@ public class OptionsNoticePanel extends GridPane implements PropertyPanel {
      */
     public OptionsNoticePanel() {
         setVgap(5);
-        setHgap(5);
+        setPadding(new Insets(5));
 
         Label positionLabel = new Label(LabelGrabber.INSTANCE.getLabel("notice.position.text"));
         GridPane.setConstraints(positionLabel, 1, 1);

@@ -18,6 +18,7 @@
 package org.quelea.windows.options;
 
 import javafx.event.ActionEvent;
+import javafx.geometry.Insets;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ColorPicker;
 import javafx.scene.control.ComboBox;
@@ -47,8 +48,9 @@ public class OptionsStageViewPanel extends GridPane implements PropertyPanel {
     /**
      * Create the stage view options panel.
      */
-    public OptionsStageViewPanel() {
+    public OptionsStageViewPanel() {  
         setVgap(5);
+        setPadding(new Insets(5));
         
         Label chordsLabel = new Label(LabelGrabber.INSTANCE.getLabel("stage.show.chords"));
         GridPane.setConstraints(chordsLabel, 1, 1);

@@ -18,6 +18,7 @@ package org.quelea.windows.options;
 
 import javafx.application.Platform;
 import javafx.collections.ObservableList;
+import javafx.geometry.Insets;
 import javafx.scene.layout.GridPane;
 import javafx.stage.Screen;
 import org.quelea.services.languages.LabelGrabber;
@@ -43,6 +44,7 @@ public class OptionsDisplaySetupPanel extends GridPane implements PropertyPanel 
      */
     public OptionsDisplaySetupPanel() {
         setHgap(30);
+        setPadding(new Insets(5));
         monitorPanel = new SingleDisplayPanel(LabelGrabber.INSTANCE.getLabel("control.screen.label") + ":", "icons/monitor.png", false, false);
         GridPane.setConstraints(monitorPanel, 1, 1);
         getChildren().add(monitorPanel);
