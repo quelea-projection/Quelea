@@ -149,13 +149,18 @@ public class VLCWindow {
         });
     }
 
-    public void load(final String path, final String options) {
+    public void load(final String path, final String options, final boolean stretch) {
         runOnVLCThread(new Runnable() {
             @Override
             public void run() {
 //                System.out.println("load("+path+") start");
                 if (init) {
                     paused = false;
+                    if (stretch) {
+                        mediaPlayer.setAspectRatio(canvas.getWidth() + ":" + canvas.getHeight());
+                    } else {
+                        mediaPlayer.setAspectRatio(null);
+                    }
                     String sanitisedPath = path;
                     sanitisedPath = sanitisedPath.trim();
                     if (sanitisedPath.startsWith("www")) {

@@ -153,9 +153,9 @@ public class MultimediaControls extends StackPane {
         path = Utils.getVLCStringFromFile(new File(path));
         String[] locationParts = path.split("[\\r\\n]+");
         if (locationParts.length == 1) {
-            VLCWindow.INSTANCE.load(locationParts[0], null);
+            VLCWindow.INSTANCE.load(locationParts[0], null, false);
         } else {
-            VLCWindow.INSTANCE.load(locationParts[0], locationParts[1]);
+            VLCWindow.INSTANCE.load(locationParts[0], locationParts[1], false);
         }
     }
 
