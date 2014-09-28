@@ -199,6 +199,9 @@ public class VLCWindow {
 //                System.out.println("play("+vid+") start");
                 if (init) {
                     paused = false;
+                    if(mediaPlayer.isPlaying()) {
+                        mediaPlayer.stop();
+                    }
                     if (options == null) {
                         mediaPlayer.playMedia(vid);
                     } else {
