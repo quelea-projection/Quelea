@@ -77,24 +77,29 @@ public class OptionsGeneralPanel extends GridPane implements PropertyPanel {
         setVgap(5);
         setPadding(new Insets(5));
 
+//        Label spacer = new Label("");
+//        GridPane.setConstraints(spacer, 1, rows);
+//        getChildren().add(spacer);
+//        rows++;
+
         Label userOptions = new Label(LabelGrabber.INSTANCE.getLabel("user.options.options"));
         userOptions.setFont(Font.font(userOptions.getFont().getFamily(), FontWeight.BOLD, userOptions.getFont().getSize()));
         GridPane.setConstraints(userOptions, 1, rows);
         getChildren().add(userOptions);
         rows++;
-        
+
         Label interfaceLanguageLabel = new Label(LabelGrabber.INSTANCE.getLabel("interface.language.label"));
         GridPane.setConstraints(interfaceLanguageLabel, 1, rows);
         getChildren().add(interfaceLanguageLabel);
         languageFileComboBox = new ComboBox<>();
-        for(LanguageFile file : LanguageFileManager.INSTANCE.languageFiles()) {
+        for (LanguageFile file : LanguageFileManager.INSTANCE.languageFiles()) {
             languageFileComboBox.getItems().add(file);
         }
         interfaceLanguageLabel.setLabelFor(languageFileComboBox);
         GridPane.setConstraints(languageFileComboBox, 2, rows);
         getChildren().add(languageFileComboBox);
         rows++;
-        
+
         Label startupLabel = new Label(LabelGrabber.INSTANCE.getLabel("check.for.update.label"));
         GridPane.setConstraints(startupLabel, 1, rows);
         getChildren().add(startupLabel);
@@ -103,7 +108,7 @@ public class OptionsGeneralPanel extends GridPane implements PropertyPanel {
         GridPane.setConstraints(startupUpdateCheckBox, 2, rows);
         getChildren().add(startupUpdateCheckBox);
         rows++;
-        
+
         Label warnLabel = new Label(LabelGrabber.INSTANCE.getLabel("1.monitor.warn.label"));
         GridPane.setConstraints(warnLabel, 1, rows);
         getChildren().add(warnLabel);
@@ -120,11 +125,10 @@ public class OptionsGeneralPanel extends GridPane implements PropertyPanel {
         useOOCheckBox.selectedProperty().addListener(new javafx.beans.value.ChangeListener<Boolean>() {
             @Override
             public void changed(ObservableValue<? extends Boolean> ov, Boolean t, Boolean t1) {
-                if(useOOCheckBox.isSelected()) {
+                if (useOOCheckBox.isSelected()) {
                     ooPathTextField.setDisable(true);
                     selectButton.setDisable(false);
-                }
-                else {
+                } else {
                     ooPathTextField.setDisable(true);
                     selectButton.setDisable(true);
                 }
@@ -152,7 +156,7 @@ public class OptionsGeneralPanel extends GridPane implements PropertyPanel {
             @Override
             public void handle(javafx.event.ActionEvent t) {
                 File dir = ooChooser.showDialog(QueleaApp.get().getMainWindow());
-                if(dir != null) {
+                if (dir != null) {
                     ooPathTextField.setText(dir.getAbsolutePath());
                 }
             }
@@ -196,7 +200,7 @@ public class OptionsGeneralPanel extends GridPane implements PropertyPanel {
         getChildren().add(showSmallSongTextBox);
         showSmallSongTextLabel.setLabelFor(showSmallSongTextBox);
         rows++;
-        
+
         Label showSmallBibleTextLabel = new Label(LabelGrabber.INSTANCE.getLabel("show.small.bible.text.label"));
         GridPane.setConstraints(showSmallBibleTextLabel, 1, rows);
         getChildren().add(showSmallBibleTextLabel);
@@ -205,7 +209,7 @@ public class OptionsGeneralPanel extends GridPane implements PropertyPanel {
         getChildren().add(showSmallBibleTextBox);
         showSmallBibleTextLabel.setLabelFor(showSmallBibleTextBox);
         rows++;
-        
+
         Label smallTextPositionLabel = new Label(LabelGrabber.INSTANCE.getLabel("small.text.position.label"));
         GridPane.setConstraints(smallTextPositionLabel, 1, rows);
         getChildren().add(smallTextPositionLabel);
@@ -215,13 +219,18 @@ public class OptionsGeneralPanel extends GridPane implements PropertyPanel {
         getChildren().add(smallTextPositionCombo);
         smallTextPositionLabel.setLabelFor(smallTextPositionCombo);
         rows++;
-        
+
+        Label spacer1 = new Label("");
+        GridPane.setConstraints(spacer1, 1, rows);
+        getChildren().add(spacer1);
+        rows++;
+
         Label textOptions = new Label(LabelGrabber.INSTANCE.getLabel("text.options.options"));
         textOptions.setFont(Font.font(textOptions.getFont().getFamily(), FontWeight.BOLD, textOptions.getFont().getSize()));
         GridPane.setConstraints(textOptions, 1, rows);
         getChildren().add(textOptions);
         rows++;
-        
+
         Label capitalFirstLabel = new Label(LabelGrabber.INSTANCE.getLabel("capitalise.start.line.label"));
         GridPane.setConstraints(capitalFirstLabel, 1, rows);
         getChildren().add(capitalFirstLabel);
@@ -315,19 +324,20 @@ public class OptionsGeneralPanel extends GridPane implements PropertyPanel {
 //            }
 //        });
 //        rows++;
-
         readProperties();
     }
-    
+
     /**
-     * Reset the mechanism for determining if the user has changed the interface language. Call before showing the options dialog.
+     * Reset the mechanism for determining if the user has changed the interface
+     * language. Call before showing the options dialog.
      */
     public void resetLanguageChanged() {
         currentLanguageFile = languageFileComboBox.getValue();
     }
-    
+
     /**
-     * Determine if the user has changed the interface language since the last call of resetLanguageChanged().
+     * Determine if the user has changed the interface language since the last
+     * call of resetLanguageChanged().
      */
     public boolean hasLanguageChanged() {
         return !languageFileComboBox.getValue().equals(currentLanguageFile);
@@ -399,7 +409,7 @@ public class OptionsGeneralPanel extends GridPane implements PropertyPanel {
         props.setMaxFontSize(maximumFontSizeSlider.getValue());
         props.setAdditionalLineSpacing(additionalLineSpacingSlider.getValue());
         //Initialise presentation
-        if(!OOPresentation.isInit()) {
+        if (!OOPresentation.isInit()) {
             OOUtils.attemptInit();
         }
     }
@@ -421,7 +431,6 @@ public class OptionsGeneralPanel extends GridPane implements PropertyPanel {
 //    public Slider getMinLinesSlider() {
 //        return minLinesSlider;
 //    }
-
     /**
      * Get the startup readProperties checkbox.
      * <p/>
@@ -457,7 +466,7 @@ public class OptionsGeneralPanel extends GridPane implements PropertyPanel {
     public CheckBox getOneLineModeCheckBox() {
         return oneLineModeCheckBox;
     }
-    
+
     /**
      * Get the "auto translate" checkbox.
      * <p/>
@@ -493,7 +502,7 @@ public class OptionsGeneralPanel extends GridPane implements PropertyPanel {
     public CheckBox getShowSmallSongTextCheckBox() {
         return showSmallSongTextBox;
     }
-    
+
     /**
      * Get the "use small bible text" checkbox.
      * <p/>
@@ -502,7 +511,7 @@ public class OptionsGeneralPanel extends GridPane implements PropertyPanel {
     public CheckBox getShowSmallBibleTextCheckBox() {
         return showSmallBibleTextBox;
     }
-    
+
     /**
      * Get the "use small text" checkbox.
      * <p/>
