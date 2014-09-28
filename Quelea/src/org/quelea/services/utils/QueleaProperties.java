@@ -331,24 +331,6 @@ public final class QueleaProperties extends Properties {
     }
 
     /**
-     * Get the fade duration (in seconds) for the text clear transition.
-     * <p>
-     * @return the fade duration (in seconds) for the text clear transition.
-     */
-    public double getFadeDuration() {
-        return Double.parseDouble(getProperty("fade.duration", "1"));
-    }
-
-    /**
-     * Set the fade duration (in seconds) for the text clear transition.
-     * <p>
-     * @param val the fade duration (in seconds) for the text clear transition.
-     */
-    public void setFadeDuration(double val) {
-        setProperty("fade.duration", Double.toString(val));
-    }
-
-    /**
      * Get the maximum font size used by text displayables.
      * <p>
      * @return the maximum font size used by text displayables.
@@ -1366,6 +1348,39 @@ public final class QueleaProperties extends Properties {
     public void setMaxBibleChars(int maxChars) {
         setProperty("max.bible.chars", Integer.toString(maxChars));
         write();
+    }
+    
+    /**
+     * Get the fade duration of the logo button
+     * text.
+     * <p/>
+     * @return the duration of the fade in milliseconds
+     * text.
+     */
+    public int getLogoFadeDuration() {
+        return Integer.parseInt(getProperty("logo.fade.duration", "1000"));
+    }
+    
+    /**
+     * Get the fade duration of the black button
+     * text.
+     * <p/>
+     * @return the duration of the fade in milliseconds
+     * text.
+     */
+    public int getBlackFadeDuration() {
+        return Integer.parseInt(getProperty("black.fade.duration", "1000"));
+    }
+    
+    /**
+     * Get the fade duration of the clear button
+     * text.
+     * <p/>
+     * @return the duration of the fade in milliseconds
+     * text.
+     */
+    public int getClearFadeDuration() {
+        return Integer.parseInt(getProperty("clear.fade.duration", "1000"));
     }
 
 }
