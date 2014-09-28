@@ -25,6 +25,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
 import javafx.event.ActionEvent;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.ColorPicker;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Slider;
@@ -42,24 +43,38 @@ import org.quelea.services.utils.Utils;
 public class VideoBackground implements Background, Serializable {
 
     private String vidLocation;
-    private double hue;
+    private final double hue;
+    private final boolean stretch;
 
     /**
      * Create a new video background.
+     *
      * @param vidLocation the location of the video to use.
      * @param hue the hue adjustment of the video.
+     * @param stretch true if the video should be stretched to fill the screen,
+     * false otherwise.
      */
-    public VideoBackground(String vidLocation, double hue) {
+    public VideoBackground(String vidLocation, double hue, boolean stretch) {
         this.vidLocation = vidLocation;
         this.hue = hue;
+        this.stretch = stretch;
     }
 
     /**
      * Get the hue adjustment, a double between 0-1.
+     *
      * @return the hue adjustment.
      */
     public double getHue() {
         return hue;
+    }
+
+    /**
+     * Determine if the video background should be stretched.
+     * @return true if it should be stretched, false otherwise.
+     */
+    public boolean getStretch() {
+        return stretch;
     }
     
     /**
@@ -70,7 +85,7 @@ public class VideoBackground implements Background, Serializable {
     public File getVideoFile() {
         return new File(QueleaProperties.get().getVidDir(), vidLocation.trim());
     }
-    
+
     public String getVLCVidString() {
         return Utils.getVLCStringFromFile(getVideoFile());
     }
@@ -89,10 +104,11 @@ public class VideoBackground implements Background, Serializable {
     }
 
     @Override
-    public void setThemeForm(ColorPicker backgroundColorPicker, ComboBox<String> backgroundTypeSelect, TextField backgroundImgLocation, TextField backgroundVidLocation, Slider vidHueSlider) {
+    public void setThemeForm(ColorPicker backgroundColorPicker, ComboBox<String> backgroundTypeSelect, TextField backgroundImgLocation, TextField backgroundVidLocation, Slider vidHueSlider, CheckBox vidStretchCheckbox) {
         backgroundTypeSelect.getSelectionModel().select(LabelGrabber.INSTANCE.getLabel("video.theme.label"));
         backgroundVidLocation.setText(getVideoFile().getName());
         vidHueSlider.setValue(hue);
+        vidStretchCheckbox.setSelected(stretch);
         backgroundColorPicker.setValue(Color.BLACK);
         backgroundColorPicker.fireEvent(new ActionEvent());
         backgroundImgLocation.clear();
@@ -107,17 +123,17 @@ public class VideoBackground implements Background, Serializable {
 
     @Override
     public boolean equals(Object obj) {
-        if(obj == null) {
+        if (obj == null) {
             return false;
         }
-        if(getClass() != obj.getClass()) {
+        if (getClass() != obj.getClass()) {
             return false;
         }
         final VideoBackground other = (VideoBackground) obj;
-        if(!Objects.equals(this.vidLocation, other.vidLocation)) {
+        if (!Objects.equals(this.vidLocation, other.vidLocation)) {
             return false;
         }
         return true;
     }
-    
+
 }
