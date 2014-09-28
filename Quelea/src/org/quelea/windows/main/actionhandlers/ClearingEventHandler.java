@@ -27,12 +27,13 @@ import org.quelea.windows.main.QueleaApp;
 
 /**
  * An action listener that needs to check whether to clear the schedule before
- * doing so. Common examples include creating a new schedule or opening a 
+ * doing so. Common examples include creating a new schedule or opening a
  * schedule - anything that clears the current content.
+ *
  * @author Michael
  */
 public abstract class ClearingEventHandler implements EventHandler<ActionEvent> {
-    
+
     private boolean yes = false;
 
     /**
@@ -42,23 +43,25 @@ public abstract class ClearingEventHandler implements EventHandler<ActionEvent> 
      */
     public boolean confirmClear() {
         MainPanel mainpanel = QueleaApp.get().getMainWindow().getMainPanel();
-        if(mainpanel.getSchedulePanel().getScheduleList().isEmpty()) {
+        if (mainpanel.getSchedulePanel().getScheduleList().isEmpty()) {
             return true;
         }
-        yes = false;
-        final Dialog dialog = Dialog.buildConfirmation(LabelGrabber.INSTANCE.getLabel("confirm.label"), LabelGrabber.INSTANCE.getLabel("schedule.clear.text")).addYesButton(new EventHandler<ActionEvent>() {
+        yes = true;
+        if(mainpanel.getSchedulePanel().getScheduleList().getSchedule().isModified()) {
+            final Dialog dialog = Dialog.buildConfirmation(LabelGrabber.INSTANCE.getLabel("confirm.label"), LabelGrabber.INSTANCE.getLabel("schedule.clear.text")).addYesButton(new EventHandler<ActionEvent>() {
 
-            @Override
-            public void handle(ActionEvent t) {
-                yes = true;
-            }
-        }).addNoButton(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent t) {
+                }
+            }).addNoButton(new EventHandler<ActionEvent>() {
 
-            @Override
-            public void handle(ActionEvent t) {
-            }
-        }).build();
-        dialog.showAndWait();
+                @Override
+                public void handle(ActionEvent t) {
+                    yes = false;
+                }
+            }).build();
+            dialog.showAndWait();
+        }
         return yes;
     }
 }

@@ -61,7 +61,7 @@ public class ScheduleSaver {
                 }
                 if (selectedFile.exists()) {
                     yes = false;
-                    Dialog confirm = Dialog.buildConfirmation(LabelGrabber.INSTANCE.getLabel("overwrite.text"), LabelGrabber.INSTANCE.getLabel("already.exists.overwrite.label")).addYesButton(new EventHandler<ActionEvent>() {
+                    Dialog confirm = Dialog.buildConfirmation(LabelGrabber.INSTANCE.getLabel("overwrite.text"), selectedFile.getName() + " " + LabelGrabber.INSTANCE.getLabel("already.exists.overwrite.label")).addYesButton(new EventHandler<ActionEvent>() {
 
                         @Override
                         public void handle(ActionEvent t) {

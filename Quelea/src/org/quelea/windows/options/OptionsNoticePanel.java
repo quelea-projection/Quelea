@@ -48,6 +48,7 @@ public class OptionsNoticePanel extends GridPane implements PropertyPanel {
      */
     public OptionsNoticePanel() {
         setVgap(5);
+        setHgap(10);
         setPadding(new Insets(5));
 
         Label positionLabel = new Label(LabelGrabber.INSTANCE.getLabel("notice.position.text"));
