@@ -95,7 +95,7 @@ public class ThemeToolbar extends HBox {
     public ThemeToolbar(final ThemePanel themePanel) {
         Utils.checkFXThread();
         this.themePanel = themePanel;
-        moreFontOptionsDialog = new FontOptionsDialog();
+        moreFontOptionsDialog = new FontOptionsDialog(themePanel);
         setPadding(new Insets(5));
         setStyle("-fx-background-color:#dddddd;");
         VBox topLevelFontBox = new VBox(10);
@@ -230,7 +230,7 @@ public class ThemeToolbar extends HBox {
         topLevelBackBox.setPadding(new Insets(10));
         getChildren().add(topLevelBackBox);
 
-        HBox backTop = new HBox(5);
+        HBox backTop = new HBox(15);
         backTypeSelection = new ComboBox<>();
         backTypeSelection.valueProperty().addListener(new ChangeListener<String>() {
             @Override
@@ -245,7 +245,14 @@ public class ThemeToolbar extends HBox {
         backTop.getChildren().add(backTypeSelection);
         
         vidStretchCheckbox = new CheckBox(LabelGrabber.INSTANCE.getLabel("stretch.video.label"));
+        vidStretchCheckbox.setStyle("-fx-text-fill:#666666");
+        HBox.setMargin(vidStretchCheckbox, new Insets(2,0,0,0));
+        vidStretchCheckbox.setAlignment(Pos.CENTER_RIGHT);
         vidStretchCheckbox.setVisible(false);
+        Region stretchSpacer = new Region();
+        stretchSpacer.setMaxWidth(Double.MAX_VALUE);
+        HBox.setHgrow(stretchSpacer, Priority.ALWAYS);
+        backTop.getChildren().add(stretchSpacer);
         backTop.getChildren().add(vidStretchCheckbox);
         topLevelBackBox.getChildren().add(backTop);
 
@@ -275,7 +282,7 @@ public class ThemeToolbar extends HBox {
         imagePanel.getChildren().add(backgroundImageSelectButton);
         backgroundCentre.add(imagePanel, "image");
         final VBox vidPanel = new VBox(5);
-        final HBox vidLocationPanel = new HBox();
+        final HBox vidLocationPanel = new HBox(5);
         backgroundVidLocation = new TextField();
         backgroundVidLocation.setMaxWidth(130);
         backgroundVidLocation.setEditable(false);
@@ -291,7 +298,7 @@ public class ThemeToolbar extends HBox {
         vidLocationPanel.getChildren().add(backgroundVidSelectButton);
         vidPanel.getChildren().add(vidLocationPanel);
         Region spacer2 = new Region();
-        spacer2.setPrefWidth(15);
+        spacer2.setPrefWidth(5);
         vidLocationPanel.getChildren().add(spacer2);
         Label vidHueLabel = new Label(LabelGrabber.INSTANCE.getLabel("video.hue.label"));
         vidHueLabel.setStyle("-fx-text-fill:#666666");
