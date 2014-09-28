@@ -1360,7 +1360,8 @@ public final class QueleaProperties extends Properties {
     public int getLogoFadeDuration() {
         String t = getProperty("logo.fade.duration", "");
         if(t.equals("")) {
-            setProperty("logo.fade.duration", "1000");
+            t = "1000";
+            setProperty("logo.fade.duration", t);
             write();
         }
         return Integer.parseInt(t);
@@ -1376,7 +1377,8 @@ public final class QueleaProperties extends Properties {
     public int getBlackFadeDuration() {
         String t = getProperty("black.fade.duration", "");
         if(t.equals("")) {
-            setProperty("black.fade.duration", "1000");
+            t = "1000";
+            setProperty("black.fade.duration", t);
             write();
         }
         return Integer.parseInt(t);
@@ -1392,7 +1394,8 @@ public final class QueleaProperties extends Properties {
     public int getClearFadeDuration() {
         String t = getProperty("clear.fade.duration", "");
         if(t.equals("")) {
-            setProperty("clear.fade.duration", "1000");
+            t = "1000";
+            setProperty("clear.fade.duration", t);
             write();
         }
         return Integer.parseInt(t);
