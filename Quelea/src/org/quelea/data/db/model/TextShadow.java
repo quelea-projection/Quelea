@@ -86,7 +86,7 @@ public class TextShadow {
     /**
      * @return whether to use a shadow
      */
-    @Column(name = "use", nullable = false)
+    @Column(name = "use")
     public Boolean getUse() {
         if(use==null) {
             return true;
@@ -119,7 +119,7 @@ public class TextShadow {
     /**
      * @return the radius
      */
-    @Column(name = "radius", nullable = false)
+    @Column(name = "radius")
     public Double getRadius() {
         if (radius == null) {
             return 2.0;
@@ -137,7 +137,7 @@ public class TextShadow {
     /**
      * @return the spread
      */
-    @Column(name = "spread", nullable = false)
+    @Column(name = "spread")
     public Double getSpread() {
         if (spread == null) {
             return 0.0;
