@@ -21,7 +21,9 @@ package org.quelea.windows.main.actionhandlers;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
@@ -37,6 +39,7 @@ import static org.quelea.services.importexport.PDFExporter.LOGGER;
 import org.quelea.services.languages.LabelGrabber;
 import org.quelea.services.utils.FileFilters;
 import org.quelea.windows.main.QueleaApp;
+import org.quelea.windows.main.StatusPanel;
 
 /**
  * An event handler that exports the current schedule to a PDF file.
@@ -72,27 +75,45 @@ public class ExportPDFScheduleSongsActionHandler implements EventHandler<ActionE
                 }
             }).build().showAndWait();
             names.clear();
-            try {
-                try (ZipOutputStream out = new ZipOutputStream(new FileOutputStream(file))) {
-                    for (int i = 0; i < schedule.getSize(); i++) {
-                        Displayable d = schedule.getDisplayable(i);
-                        if (!(d instanceof SongDisplayable)) {
-                            continue;
+            final StatusPanel panel = QueleaApp.get().getMainWindow().getMainPanel().getStatusPanelGroup().addPanel(LabelGrabber.INSTANCE.getLabel("exporting.label") + "...");
+            final List<SongDisplayable> songDisplayablesThreadSafe = getSongs(schedule);
+            final File threadSafeFile = new File(file.getAbsolutePath());
+            new Thread() {
+                public void run() {
+                    final HashSet<String> names = new HashSet<>();
+                    try (ZipOutputStream out = new ZipOutputStream(new FileOutputStream(threadSafeFile))) {
+                        for (int i = 0; i < songDisplayablesThreadSafe.size(); i++) {
+                            Displayable d = songDisplayablesThreadSafe.get(i);
+                            if (!(d instanceof SongDisplayable)) {
+                                continue;
+                            }
+                            SongDisplayable song = (SongDisplayable) d;
+                            String name = song.getTitle() + ".pdf";
+                            while (names.contains(name)) {
+                                name = PDFExporter.incrementExtension(name);
+                            }
+                            names.add(name);
+                            out.putNextEntry(new ZipEntry(name));
+                            out.write(PDFExporter.getPDF(song, printChords));
+                            panel.setProgress((double) i / songDisplayablesThreadSafe.size());
                         }
-                        SongDisplayable song = (SongDisplayable) d;
-                        String name = song.getTitle() + ".pdf";
-                        while (names.contains(name)) {
-                            name = PDFExporter.incrementExtension(name);
-                        }
-                        names.add(name);
-                        out.putNextEntry(new ZipEntry(name));
-                        out.write(PDFExporter.getPDF(song, printChords));
+                        panel.done();
+                    } catch (IOException ex) {
+                        LOGGER.log(Level.WARNING, "Couldn't export PDF songs", ex);
                     }
                 }
-            } catch (IOException ex) {
-                LOGGER.log(Level.WARNING, "Couldn't export PDF songs", ex);
+            }.start();
+        }
+    }
+
+    private List<SongDisplayable> getSongs(Schedule schedule) {
+        List<SongDisplayable> ret = new ArrayList<>();
+        for (int i = 0; i < schedule.getSize(); i++) {
+            if (schedule.getDisplayable(i) instanceof SongDisplayable) {
+                ret.add((SongDisplayable) schedule.getDisplayable(i));
             }
         }
+        return ret;
     }
 
 }

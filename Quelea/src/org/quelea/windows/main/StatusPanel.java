@@ -78,7 +78,7 @@ public class StatusPanel extends HBox {
     
     /**
      * Convenience method to set the progress of the progress bar. Thread safe.
-     * @param progress the progress to set the bar to.
+     * @param progress the progress to set the bar to, between 0-1.
      */
     public void setProgress(final double progress) {
         Platform.runLater(new Runnable() {

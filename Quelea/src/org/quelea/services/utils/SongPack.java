@@ -24,6 +24,7 @@ import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Enumeration;
+import java.util.HashSet;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -31,6 +32,10 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 import java.util.zip.ZipOutputStream;
 import org.quelea.data.displayable.SongDisplayable;
+import org.quelea.services.importexport.PDFExporter;
+import org.quelea.services.languages.LabelGrabber;
+import org.quelea.windows.main.QueleaApp;
+import org.quelea.windows.main.StatusPanel;
 
 /**
  * A song pack that contains a number of songs and can be written to a
@@ -89,25 +94,37 @@ public class SongPack {
      * Write this song pack to a file.
      *
      * @param file the file to write to.
-     * @return true if the write was successful, false otherwise.
      */
-    public boolean writeToFile(File file) {
+    public void writeToFile(final File file) {
         if (file == null) {
-            return false;
+            return;
         }
-        try (ZipOutputStream zos = new ZipOutputStream(new FileOutputStream(file), Charset.forName("UTF-8"))) {
-            int count = 0;
-            for (SongDisplayable song : songs) {
-                zos.putNextEntry(new ZipEntry("song" + count + ".xml"));
-                zos.write(song.getXML().getBytes("UTF8"));
-                zos.closeEntry();
-                count++;
+        
+        final StatusPanel panel = QueleaApp.get().getMainWindow().getMainPanel().getStatusPanelGroup().addPanel(LabelGrabber.INSTANCE.getLabel("exporting.label") + "...");
+        final List<SongDisplayable> songDisplayablesThreadSafe = new ArrayList<>(songs);
+        new Thread() {
+            public void run() {
+                final HashSet<String> names = new HashSet<>();
+                try (ZipOutputStream zos = new ZipOutputStream(new FileOutputStream(file), Charset.forName("UTF-8"))) {
+                    for(int i=0 ; i<songDisplayablesThreadSafe.size() ; i++) {
+                        SongDisplayable song = songDisplayablesThreadSafe.get(i);
+                        String name = song.getTitle() + ".xml";
+                        while (names.contains(name)) {
+                            name = PDFExporter.incrementExtension(name);
+                        }
+                        names.add(name);
+                        zos.putNextEntry(new ZipEntry(name));
+                        zos.write(song.getXML().getBytes("UTF8"));
+                        zos.closeEntry();
+                        panel.setProgress((double) i / songDisplayablesThreadSafe.size());
+                    }
+                    panel.done();
+                } catch (IOException ex) {
+                    LOGGER.log(Level.WARNING, "Couldn't write the song pack to file", ex);
+                }
             }
-            return true;
-        } catch (IOException ex) {
-            LOGGER.log(Level.WARNING, "Couldn't write the song pack to file", ex);
-            return false;
-        }
+        }.start();
+        
     }
 
     /**

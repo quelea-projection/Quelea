@@ -22,6 +22,8 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.StringWriter;
 import java.nio.charset.Charset;
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -36,10 +38,14 @@ import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
+import org.quelea.data.displayable.Displayable;
 import org.quelea.data.displayable.SongDisplayable;
 import org.quelea.data.displayable.TextSection;
+import org.quelea.services.languages.LabelGrabber;
 import org.quelea.services.utils.FileFilters;
 import org.quelea.services.utils.LoggerUtils;
+import org.quelea.windows.main.QueleaApp;
+import org.quelea.windows.main.StatusPanel;
 import org.w3c.dom.DOMException;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -67,21 +73,38 @@ public class OpenLyricsExporter implements Exporter {
 
     /**
      * Export the given songs to the given file.
+     *
      * @param file the zip file to export to.
      * @param songDisplayables the songs to export to the zip file.
      */
     @Override
-    public void exportSongs(File file, List<SongDisplayable> songDisplayables) {
-        try {
-            try (ZipOutputStream out = new ZipOutputStream(new FileOutputStream(file))) {
-                for (SongDisplayable song : songDisplayables) {
-                    out.putNextEntry(new ZipEntry(song.getTitle() + ".xml"));
-                    out.write(getXML(song).getBytes(Charset.forName("UTF-8")));
+    public void exportSongs(final File file, List<SongDisplayable> songDisplayables) {
+        final List<SongDisplayable> songDisplayablesThreadSafe = new ArrayList<>(songDisplayables);
+        final StatusPanel panel = QueleaApp.get().getMainWindow().getMainPanel().getStatusPanelGroup().addPanel(LabelGrabber.INSTANCE.getLabel("exporting.label") + "...");
+        new Thread() {
+            public void run() {
+                try {
+                    final HashSet<String> names = new HashSet<>();
+                    try (ZipOutputStream out = new ZipOutputStream(new FileOutputStream(file))) {
+                        for (int i = 0; i < songDisplayablesThreadSafe.size(); i++) {
+                            SongDisplayable song = songDisplayablesThreadSafe.get(i);
+                            String name = song.getTitle() + ".xml";
+                            while (names.contains(name)) {
+                                name = PDFExporter.incrementExtension(name);
+                            }
+                            names.add(name);
+                            out.putNextEntry(new ZipEntry(name));
+                            out.write(getXML(song).getBytes(Charset.forName("UTF-8")));
+                            panel.setProgress((double) i / songDisplayablesThreadSafe.size());
+                        }
+                        panel.done();
+                    }
+                } catch (IOException ex) {
+                    LOGGER.log(Level.WARNING, "Couldn't export openlyrics songs", ex);
                 }
             }
-        } catch (IOException ex) {
-            LOGGER.log(Level.WARNING, "Couldn't export openlyrics songs", ex);
-        }
+        }.start();
+
     }
 
     /**
@@ -91,7 +114,7 @@ public class OpenLyricsExporter implements Exporter {
      * @param song the song to convert to XML.
      * @return the openlyrics XML for the given song.
      */
-    private String getXML(SongDisplayable song) {
+    private static String getXML(SongDisplayable song) {
         try {
             DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
             DocumentBuilder docBuilder = docFactory.newDocumentBuilder();
