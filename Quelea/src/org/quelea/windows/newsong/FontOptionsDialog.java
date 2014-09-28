@@ -19,6 +19,8 @@
 package org.quelea.windows.newsong;
 
 import java.util.Collections;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
@@ -74,13 +76,18 @@ public class FontOptionsDialog extends Stage {
     private final Slider shadowRadiusSlider;
     private final Slider shadowSpreadSlider;
     private final Button okButton;
+    private final ThemePanel themePanel;
 
     /**
      * Create the font options dialog.
+     *
+     * @param themePanel the ThemePanel to update as the values in this dialog
+     * change.
      */
-    public FontOptionsDialog() {
+    public FontOptionsDialog(final ThemePanel themePanel) {
         initStyle(StageStyle.UTILITY);
         initModality(Modality.APPLICATION_MODAL);
+        this.themePanel = themePanel;
         Utils.addIconsToStage(this);
 
         if (fontSelectionDialog == null) {
@@ -116,7 +123,7 @@ public class FontOptionsDialog extends Stage {
 
         shadowOffsetSlider = new Slider(0, 20, 0);
         shadowOffsetSlider.setShowTickMarks(false);
-        
+
         shadowRadiusSlider = new Slider(0, 1000, 0);
         shadowRadiusSlider.setShowTickMarks(false);
 
@@ -144,44 +151,79 @@ public class FontOptionsDialog extends Stage {
         GridPane shadowPane = new GridPane();
         shadowPane.setHgap(10);
         shadowPane.setVgap(10);
-        
+
         Label useShadowLabel = new Label(LabelGrabber.INSTANCE.getLabel("use.shadow.label"));
         GridPane.setConstraints(useShadowLabel, 1, 1);
         shadowPane.getChildren().add(useShadowLabel);
         useShadowCheckbox = new CheckBox();
+        useShadowCheckbox.selectedProperty().addListener(new ChangeListener<Boolean>() {
+
+            @Override
+            public void changed(ObservableValue<? extends Boolean> ov, Boolean t, Boolean t1) {
+                themePanel.updateTheme(false);
+            }
+        });
         GridPane.setConstraints(useShadowCheckbox, 2, 1);
         shadowPane.getChildren().add(useShadowCheckbox);
         useShadowLabel.setLabelFor(useShadowCheckbox);
         useShadowCheckbox.setSelected(true);
-        
+
         Label shadowColorLabel = new Label(LabelGrabber.INSTANCE.getLabel("shadow.color.label"));
         GridPane.setConstraints(shadowColorLabel, 1, 2);
         shadowPane.getChildren().add(shadowColorLabel);
+        shadowColor.valueProperty().addListener(new ChangeListener<Color>() {
+
+            @Override
+            public void changed(ObservableValue<? extends Color> ov, Color t, Color t1) {
+                themePanel.updateTheme(false);
+            }
+        });
         shadowColorLabel.setLabelFor(shadowColor);
         GridPane.setConstraints(shadowColor, 2, 2);
         shadowPane.getChildren().add(shadowColor);
-        
+
         Label shadowOffsetLabel = new Label(LabelGrabber.INSTANCE.getLabel("shadow.offset.label"));
         GridPane.setConstraints(shadowOffsetLabel, 1, 3);
         shadowPane.getChildren().add(shadowOffsetLabel);
+        shadowOffsetSlider.valueProperty().addListener(new ChangeListener<Number>() {
+
+            @Override
+            public void changed(ObservableValue<? extends Number> ov, Number t, Number t1) {
+                themePanel.updateTheme(false);
+            }
+        });
         shadowOffsetLabel.setLabelFor(shadowOffsetSlider);
         GridPane.setConstraints(shadowOffsetSlider, 2, 3);
         shadowPane.getChildren().add(shadowOffsetSlider);
-        
+
         Label shadowRadiusLabel = new Label(LabelGrabber.INSTANCE.getLabel("shadow.radius.label"));
         GridPane.setConstraints(shadowRadiusLabel, 1, 4);
         shadowPane.getChildren().add(shadowRadiusLabel);
+        shadowRadiusSlider.valueProperty().addListener(new ChangeListener<Number>() {
+
+            @Override
+            public void changed(ObservableValue<? extends Number> ov, Number t, Number t1) {
+                themePanel.updateTheme(false);
+            }
+        });
         shadowRadiusLabel.setLabelFor(shadowRadiusSlider);
         GridPane.setConstraints(shadowRadiusSlider, 2, 4);
         shadowPane.getChildren().add(shadowRadiusSlider);
-        
+
         Label shadowSpreadLabel = new Label(LabelGrabber.INSTANCE.getLabel("shadow.spread.label"));
         GridPane.setConstraints(shadowSpreadLabel, 1, 5);
         shadowPane.getChildren().add(shadowSpreadLabel);
+        shadowSpreadSlider.valueProperty().addListener(new ChangeListener<Number>() {
+
+            @Override
+            public void changed(ObservableValue<? extends Number> ov, Number t, Number t1) {
+                themePanel.updateTheme(false);
+            }
+        });
         shadowSpreadLabel.setLabelFor(shadowSpreadSlider);
         GridPane.setConstraints(shadowSpreadSlider, 2, 5);
         shadowPane.getChildren().add(shadowSpreadSlider);
-        
+
         controlRoot.getChildren().add(shadowPane);
 
         BorderPane.setMargin(controlRoot, new Insets(10));
@@ -200,7 +242,7 @@ public class FontOptionsDialog extends Stage {
         buttonPane.getChildren().add(okButton);
         root.setCenter(controlRoot);
         root.setBottom(buttonPane);
-        setScene(new Scene(root, 300,320));
+        setScene(new Scene(root, 300, 320));
     }
 
     /**
