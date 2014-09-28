@@ -213,8 +213,10 @@ public class OpenLyricsObject {
             NodeList authorsList = ((Element) authors.item(0)).getElementsByTagName("author");
             if (authorsList != null) {
                 for (int i = 0; i < authorsList.getLength(); i++) {
-                    this.properties.addAuthor(((Element) authorsList.item(i))
-                            .getChildNodes().item(0).getTextContent());
+                    if((authorsList.item(i)).getChildNodes().item(0)!=null) {
+                        this.properties.addAuthor(((Element) authorsList.item(i))
+                                .getChildNodes().item(0).getTextContent());
+                    }
                 }
             }
         } else {
