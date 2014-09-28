@@ -21,6 +21,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.logging.Level;
@@ -35,10 +36,11 @@ import javafx.stage.FileChooser;
 import org.javafx.dialog.Dialog;
 import org.quelea.data.displayable.SongDisplayable;
 import org.quelea.services.languages.LabelGrabber;
-import org.quelea.services.print.PDFPrinter;
 import org.quelea.services.print.SongPDFPrinter;
 import org.quelea.services.utils.FileFilters;
 import org.quelea.services.utils.LoggerUtils;
+import org.quelea.windows.main.QueleaApp;
+import org.quelea.windows.main.StatusPanel;
 
 /**
  * An exporter for the PDF format.
@@ -49,7 +51,6 @@ public class PDFExporter implements Exporter {
 
     public static final Logger LOGGER = LoggerUtils.getLogger();
     private boolean printChords;
-    private final HashSet<String> names = new HashSet<>();
 
     /**
      * Get the file chooser to be used.
@@ -70,7 +71,7 @@ public class PDFExporter implements Exporter {
      * @param songDisplayables the songs to export to the zip file.
      */
     @Override
-    public void exportSongs(File file, List<SongDisplayable> songDisplayables) {
+    public void exportSongs(final File file, final List<SongDisplayable> songDisplayables) {
         Dialog.buildConfirmation(LabelGrabber.INSTANCE.getLabel("printing.options.text"), LabelGrabber.INSTANCE.getLabel("print.chords.export.question")).addYesButton(new EventHandler<ActionEvent>() {
 
             @Override
@@ -84,22 +85,29 @@ public class PDFExporter implements Exporter {
                 printChords = false;
             }
         }).build().showAndWait();
-        names.clear();
-        try {
-            try (ZipOutputStream out = new ZipOutputStream(new FileOutputStream(file))) {
-                for (SongDisplayable song : songDisplayables) {
-                    String name = song.getTitle() + ".pdf";
-                    while (names.contains(name)) {
-                        name = incrementExtension(name);
+        final StatusPanel panel = QueleaApp.get().getMainWindow().getMainPanel().getStatusPanelGroup().addPanel(LabelGrabber.INSTANCE.getLabel("exporting.label") + "...");
+        final List<SongDisplayable> songDisplayablesThreadSafe = new ArrayList<>(songDisplayables);
+        new Thread() {
+            public void run() {
+                final HashSet<String> names = new HashSet<>();
+                try (ZipOutputStream out = new ZipOutputStream(new FileOutputStream(file))) {
+                    for (int i = 0; i < songDisplayablesThreadSafe.size(); i++) {
+                        SongDisplayable song = songDisplayablesThreadSafe.get(i);
+                        String name = song.getTitle() + ".pdf";
+                        while (names.contains(name)) {
+                            name = incrementExtension(name);
+                        }
+                        names.add(name);
+                        out.putNextEntry(new ZipEntry(name));
+                        out.write(getPDF(song, printChords));
+                        panel.setProgress((double) i / songDisplayablesThreadSafe.size());
                     }
-                    names.add(name);
-                    out.putNextEntry(new ZipEntry(name));
-                    out.write(getPDF(song, printChords));
+                    panel.done();
+                } catch (IOException ex) {
+                    LOGGER.log(Level.WARNING, "Couldn't export PDF songs", ex);
                 }
             }
-        } catch (IOException ex) {
-            LOGGER.log(Level.WARNING, "Couldn't export PDF songs", ex);
-        }
+        }.start();
     }
 
     public static String incrementExtension(String name) {
@@ -119,7 +127,7 @@ public class PDFExporter implements Exporter {
      * Get the bytes that make up a PDF file for each song.
      *
      * @param song the song to get the PDF bytes for.
-     * @param printChords 
+     * @param printChords
      * @return the bytes that make up a PDF file for each song.
      */
     public static byte[] getPDF(SongDisplayable song, boolean printChords) {
