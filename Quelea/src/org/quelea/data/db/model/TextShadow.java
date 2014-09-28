@@ -20,13 +20,17 @@ public class TextShadow {
     private Double offsetY;
     private Double radius;
     private Double width;
+    private Double spread;
+    private Boolean use;
 
-    public TextShadow(String shadowColor, Double offsetX, Double offsetY) {
+    public TextShadow(String shadowColor, Double offsetX, Double offsetY, Double radius, Double spread, Boolean use) {
         this.shadowColor = shadowColor;
         this.offsetX = offsetX;
         this.offsetY = offsetY;
-        this.radius = 4.0;
-        this.width = 4.0;
+        this.radius = radius;
+        this.width = 2.0;
+        this.spread = spread;
+        this.use = use;
     }
 
     public TextShadow() {
@@ -80,6 +84,24 @@ public class TextShadow {
     }
 
     /**
+     * @return whether to use a shadow
+     */
+    @Column(name = "use", nullable = false)
+    public Boolean getUse() {
+        if(use==null) {
+            return true;
+        }
+        return use;
+    }
+
+    /**
+     * @param use whether to use this shadow
+     */
+    public void setUse(Boolean use) {
+        this.use = use;
+    }
+
+    /**
      * @return the offsetY
      */
     @Column(name = "offsety", nullable = false)
@@ -99,6 +121,9 @@ public class TextShadow {
      */
     @Column(name = "radius", nullable = false)
     public Double getRadius() {
+        if (radius == null) {
+            return 2.0;
+        }
         return radius;
     }
 
@@ -107,6 +132,24 @@ public class TextShadow {
      */
     public void setRadius(Double radius) {
         this.radius = radius;
+    }
+
+    /**
+     * @return the spread
+     */
+    @Column(name = "spread", nullable = false)
+    public Double getSpread() {
+        if (spread == null) {
+            return 0.0;
+        }
+        return spread;
+    }
+
+    /**
+     * @param spread the spread to set
+     */
+    public void setSpread(Double spread) {
+        this.spread = spread;
     }
 
     /**

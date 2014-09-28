@@ -45,7 +45,7 @@ public class ThemeDTO implements Serializable {
     public static final SerializableFont DEFAULT_FONT = new SerializableFont(Font.font("Noto Sans", FontWeight.BOLD, FontPosture.REGULAR, QueleaProperties.get().getMaxFontSize()));
     public static final Color DEFAULT_FONT_COLOR = Color.WHITE;
     public static final Color DEFAULT_TRANSLATE_FONT_COLOR = Color.WHITESMOKE;
-    public static final SerializableDropShadow DEFAULT_SHADOW = new SerializableDropShadow(DEFAULT_FONT_COLOR, 0, 0);
+    public static final SerializableDropShadow DEFAULT_SHADOW = new SerializableDropShadow(Color.BLACK, 0, 0, 2, 0, true);
     public static final ColourBackground DEFAULT_BACKGROUND = new ColourBackground(Color.BLACK);
     public static final ThemeDTO DEFAULT_THEME = new ThemeDTO(DEFAULT_FONT, DEFAULT_FONT_COLOR, DEFAULT_FONT, DEFAULT_TRANSLATE_FONT_COLOR, DEFAULT_BACKGROUND, DEFAULT_SHADOW, DEFAULT_FONT.getFont().getStyle().toLowerCase().contains("bold"), DEFAULT_FONT.getFont().getStyle().toLowerCase().contains("italic"), DEFAULT_FONT.getFont().getStyle().toLowerCase().contains("bold"), true, -1, 0);
     private final SerializableFont font;
@@ -277,7 +277,7 @@ public class ThemeDTO implements Serializable {
             backgroundColor = background.getString();
         }
         final TextShadow shadow = new TextShadow(textShadow.getColor().toString(),
-                textShadow.getOffsetX(), textShadow.getOffsetY());
+                textShadow.getOffsetX(), textShadow.getOffsetY(), textShadow.getRadius(), textShadow.getSpread(), textShadow.getUse());
         final Theme theme = new Theme(themeName, font.getFont().getName(), fontColor.toString(), translateFont.getFont().getName(), translateFontColor.toString(), backgroundColor,
                 backgroundVideo, backgroundImage, shadow, isFontBold, isFontItalic, isTranslateFontBold, isTranslateFontItalic, vidHue, vidStretch, textPosition, textAlignment);
         return theme;
@@ -302,7 +302,7 @@ public class ThemeDTO implements Serializable {
         }
         TextShadow givenShadow = theme.getTextShadow();
         SerializableDropShadow shadow = new SerializableDropShadow(Utils.parseColour(givenShadow.getShadowColor()),
-                givenShadow.getOffsetX(), givenShadow.getOffsetY());
+                givenShadow.getOffsetX(), givenShadow.getOffsetY(), givenShadow.getRadius(), givenShadow.getSpread(), givenShadow.getUse());
         ThemeDTO ret = new ThemeDTO(font, Utils.parseColour(theme.getFontcolour()), translateFont, Utils.parseColour(theme.getTranslateFontcolour()),
                 background, shadow, theme.isFontBold(), theme.isFontItalic(), theme.isTranslateFontBold(), theme.isTranslateFontItalic(), theme.getTextPosition(), theme.getTextAlignment());
         ret.themeName = theme.getName();
@@ -344,6 +344,9 @@ public class ThemeDTO implements Serializable {
         ret.append("$shadowcolor:").append(textShadow.getColor().toString());
         ret.append("$shadowX:").append(textShadow.getOffsetX());
         ret.append("$shadowY:").append(textShadow.getOffsetY());
+        ret.append("$shadowradius:").append(textShadow.getRadius());
+        ret.append("$shadowspread:").append(textShadow.getSpread());
+        ret.append("$shadowuse:").append(textShadow.getUse());
         ret.append("$textposition:").append(textPosition);
         ret.append("$textalignment:").append(textAlignment);
         return ret.toString();
@@ -372,6 +375,9 @@ public class ThemeDTO implements Serializable {
         String backgroundimage = "";
         String themeName = "";
         String shadowColor = "";
+        String shadowRadius = "2";
+        String shadowSpread = "0";
+        String shadowUse = "true";
         String shadowOffsetX = "0";
         String shadowOffsetY = "0";
         String vidHue = "0";
@@ -409,6 +415,12 @@ public class ThemeDTO implements Serializable {
                 themeName = parts[1];
             } else if (parts[0].equalsIgnoreCase("shadowcolor")) {
                 shadowColor = parts[1];
+            } else if (parts[0].equalsIgnoreCase("shadowradius")) {
+                shadowRadius = parts[1];
+            } else if (parts[0].equalsIgnoreCase("shadowspread")) {
+                shadowSpread = parts[1];
+            } else if (parts[0].equalsIgnoreCase("shadowuse")) {
+                shadowUse = parts[1];
             } else if (parts[0].equalsIgnoreCase("vidhue")) {
                 vidHue = parts[1];
             } else if (parts[0].equalsIgnoreCase("vidstretch")) {
@@ -444,7 +456,7 @@ public class ThemeDTO implements Serializable {
             LOGGER.log(Level.WARNING, "WARNING: Unhandled or empty background, using default background. Raw content: " + content, new RuntimeException("DEBUG EXCEPTION FOR STACK TRACE"));
             background = ThemeDTO.DEFAULT_BACKGROUND;
         }
-        SerializableDropShadow shadow = new SerializableDropShadow(Utils.parseColour(shadowColor), Double.parseDouble(shadowOffsetX), Double.parseDouble(shadowOffsetY));
+        SerializableDropShadow shadow = new SerializableDropShadow(Utils.parseColour(shadowColor), Double.parseDouble(shadowOffsetX), Double.parseDouble(shadowOffsetY), Double.parseDouble(shadowRadius), Double.parseDouble(shadowSpread), Boolean.parseBoolean(shadowUse));
         ThemeDTO ret = new ThemeDTO(font, Utils.parseColour(fontcolour), translateFont, Utils.parseColour(translatefontcolour),
                 background, shadow, Boolean.valueOf(isFontBold), Boolean.valueOf(isFontItalic),
                 Boolean.valueOf(isTranslateFontBold), Boolean.valueOf(isTranslateFontItalic), Integer.parseInt(textPosition), Integer.parseInt(textAlignment.trim()));
