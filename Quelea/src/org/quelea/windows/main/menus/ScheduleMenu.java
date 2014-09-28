@@ -40,6 +40,7 @@ import org.quelea.windows.main.MainPanel;
 import org.quelea.windows.main.QueleaApp;
 import org.quelea.windows.main.actionhandlers.AddPowerpointActionHandler;
 import org.quelea.windows.main.actionhandlers.AddVideoActionHandler;
+import org.quelea.windows.main.actionhandlers.ExportPDFScheduleSongsActionHandler;
 import org.quelea.windows.main.actionhandlers.ShowNoticesActionHandler;
 import org.quelea.windows.main.schedule.ScheduleList;
 
@@ -55,6 +56,7 @@ public class ScheduleMenu extends Menu {
     private MenuItem addVideoItem;
     private MenuItem manageNoticesItem;
     private MenuItem shareScheduleItem;
+    private MenuItem exportScheduleItem;
 
     /**
      * Create the scheudle menu
@@ -101,6 +103,10 @@ public class ScheduleMenu extends Menu {
             }
         });
         getItems().add(shareScheduleItem);
+        
+        exportScheduleItem = new MenuItem(LabelGrabber.INSTANCE.getLabel("export.schedule.songs.pdf.button"), new ImageView(new Image("file:icons/pdf.png", 16, 16, false, true)));
+        exportScheduleItem.setOnAction(new ExportPDFScheduleSongsActionHandler());
+        getItems().add(exportScheduleItem);
 
     }
 }

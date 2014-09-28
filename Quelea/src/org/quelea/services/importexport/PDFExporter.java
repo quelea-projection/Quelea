@@ -35,6 +35,7 @@ import javafx.stage.FileChooser;
 import org.javafx.dialog.Dialog;
 import org.quelea.data.displayable.SongDisplayable;
 import org.quelea.services.languages.LabelGrabber;
+import org.quelea.services.print.PDFPrinter;
 import org.quelea.services.print.SongPDFPrinter;
 import org.quelea.services.utils.FileFilters;
 import org.quelea.services.utils.LoggerUtils;
@@ -47,7 +48,6 @@ import org.quelea.services.utils.LoggerUtils;
 public class PDFExporter implements Exporter {
 
     public static final Logger LOGGER = LoggerUtils.getLogger();
-    private final SongPDFPrinter pdfPrinter = new SongPDFPrinter();
     private boolean printChords;
     private final HashSet<String> names = new HashSet<>();
 
@@ -94,7 +94,7 @@ public class PDFExporter implements Exporter {
                     }
                     names.add(name);
                     out.putNextEntry(new ZipEntry(name));
-                    out.write(getPDF(song));
+                    out.write(getPDF(song, printChords));
                 }
             }
         } catch (IOException ex) {
@@ -102,7 +102,7 @@ public class PDFExporter implements Exporter {
         }
     }
 
-    private String incrementExtension(String name) {
+    public static String incrementExtension(String name) {
         name = name.substring(0, name.length() - 4).trim();
         Pattern p = Pattern.compile(".*\\(([0-9]+)\\)");
         Matcher matcher = p.matcher(name);
@@ -119,9 +119,10 @@ public class PDFExporter implements Exporter {
      * Get the bytes that make up a PDF file for each song.
      *
      * @param song the song to get the PDF bytes for.
+     * @param printChords 
      * @return the bytes that make up a PDF file for each song.
      */
-    public byte[] getPDF(SongDisplayable song) {
+    public static byte[] getPDF(SongDisplayable song, boolean printChords) {
         song.setPrintChords(printChords);
         File temp = null;
         try {
@@ -129,7 +130,7 @@ public class PDFExporter implements Exporter {
             if (temp == null) {
                 return new byte[0];
             } else {
-                pdfPrinter.print(song, temp);
+                SongPDFPrinter.INSTANCE.print(song, temp);
                 return Files.readAllBytes(temp.toPath());
             }
         } catch (IOException ex) {
