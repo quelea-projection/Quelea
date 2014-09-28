@@ -84,16 +84,15 @@ public class MultimediaControls extends StackPane {
         playButton.setOnMouseClicked(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent t) {
-                if(!disableControls) {
+                if (!disableControls) {
                     playpause = !playpause;
-                    if(playpause) {
+                    if (playpause) {
                         playButton.setImage(PAUSE_IMAGE);
                         VLCWindow.INSTANCE.setRepeat(false);
                         VLCWindow.INSTANCE.setHue(0);
                         VLCWindow.INSTANCE.play();
                         posSlider.setDisable(false);
-                    }
-                    else {
+                    } else {
                         playButton.setImage(PLAY_IMAGE);
                         VLCWindow.INSTANCE.pause();
                     }
@@ -105,7 +104,7 @@ public class MultimediaControls extends StackPane {
         stopButton.setOnMouseClicked(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent t) {
-                if(!disableControls) {
+                if (!disableControls) {
                     reset();
                 }
             }
@@ -119,7 +118,7 @@ public class MultimediaControls extends StackPane {
         posSlider.valueProperty().addListener(new ChangeListener<Number>() {
             @Override
             public void changed(ObservableValue<? extends Number> ov, Number t, Number t1) {
-                if(!disableControls && (VLCWindow.INSTANCE.isPlaying() || VLCWindow.INSTANCE.isPaused()) && posSlider.isValueChanging()) {
+                if (!disableControls && (VLCWindow.INSTANCE.isPlaying() || VLCWindow.INSTANCE.isPaused()) && posSlider.isValueChanging()) {
                     VLCWindow.INSTANCE.setProgressPercent(posSlider.getValue());
                 }
             }
@@ -133,7 +132,7 @@ public class MultimediaControls extends StackPane {
         service.scheduleAtFixedRate(new Runnable() {
             @Override
             public void run() {
-                if(!disableControls && VLCWindow.INSTANCE.isPlaying() && !posSlider.isValueChanging()) {
+                if (!disableControls && VLCWindow.INSTANCE.isPlaying() && !posSlider.isValueChanging()) {
                     posSlider.setValue(VLCWindow.INSTANCE.getProgressPercent());
                 }
             }
@@ -141,7 +140,7 @@ public class MultimediaControls extends StackPane {
         VLCWindow.INSTANCE.setOnFinished(new Runnable() {
             @Override
             public void run() {
-                if(getScene() != null && !disableControls) {
+                if (getScene() != null && !disableControls) {
                     reset();
                 }
             }
@@ -150,7 +149,9 @@ public class MultimediaControls extends StackPane {
 
     public void loadMultimedia(String path) {
         reset();
-        path = Utils.getVLCStringFromFile(new File(path));
+        if (!path.trim().startsWith("http")) {
+            path = Utils.getVLCStringFromFile(new File(path));
+        }
         String[] locationParts = path.split("[\\r\\n]+");
         if (locationParts.length == 1) {
             VLCWindow.INSTANCE.load(locationParts[0], null, false);
@@ -161,20 +162,17 @@ public class MultimediaControls extends StackPane {
 
     public void setDisableControls(boolean disable) {
         this.disableControls = disable;
-        if(disable) {
-            if(!playpause) {
+        if (disable) {
+            if (!playpause) {
                 playButton.setImage(PLAY_IMAGE_DISABLE);
-            }
-            else {
+            } else {
                 playButton.setImage(PAUSE_IMAGE_DISABLE);
             }
             stopButton.setImage(STOP_IMAGE_DISABLE);
-        }
-        else {
-            if(!playpause) {
+        } else {
+            if (!playpause) {
                 playButton.setImage(PLAY_IMAGE);
-            }
-            else {
+            } else {
                 playButton.setImage(PAUSE_IMAGE);
             }
             stopButton.setImage(STOP_IMAGE);
@@ -183,10 +181,9 @@ public class MultimediaControls extends StackPane {
 
     public void reset() {
         VLCWindow.INSTANCE.stop();
-        if(disableControls) {
+        if (disableControls) {
             playButton.setImage(PLAY_IMAGE_DISABLE);
-        }
-        else {
+        } else {
             playButton.setImage(PLAY_IMAGE);
         }
         playpause = false;
@@ -198,7 +195,7 @@ public class MultimediaControls extends StackPane {
         button.setOnMouseEntered(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent t) {
-                if(!disableControls) {
+                if (!disableControls) {
                     button.setEffect(new Glow(0.5));
                 }
             }
