@@ -20,6 +20,7 @@ package org.quelea.windows.options;
 import java.io.File;
 import javafx.beans.value.ObservableValue;
 import javafx.event.EventHandler;
+import javafx.geometry.Insets;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
@@ -28,6 +29,8 @@ import javafx.scene.control.Slider;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Priority;
+import javafx.scene.text.Font;
+import javafx.scene.text.FontWeight;
 import javafx.stage.DirectoryChooser;
 import org.quelea.data.powerpoint.OOPresentation;
 import org.quelea.data.powerpoint.OOUtils;
@@ -48,10 +51,8 @@ public class OptionsGeneralPanel extends GridPane implements PropertyPanel {
     private final CheckBox startupUpdateCheckBox;
     private final CheckBox capitalFirstCheckBox;
     private final CheckBox oneMonitorWarnCheckBox;
-    private final CheckBox displaySongInfoCheckBox;
     private final CheckBox oneLineModeCheckBox;
     private final CheckBox autoTranslateCheckBox;
-    private final CheckBox textShadowCheckBox;
     private final CheckBox clearLiveOnRemoveCheckBox;
     private final CheckBox useOOCheckBox;
     private final CheckBox uniformFontSizeCheckBox;
@@ -59,7 +60,6 @@ public class OptionsGeneralPanel extends GridPane implements PropertyPanel {
     private final TextField ooPathTextField;
     private final DirectoryChooser ooChooser;
     private final Button selectButton;
-    private final Slider borderThicknessSlider;
     private final Slider maximumFontSizeSlider;
     private final Slider additionalLineSpacingSlider;
     private final Slider maxCharsSlider;
@@ -75,7 +75,26 @@ public class OptionsGeneralPanel extends GridPane implements PropertyPanel {
     public OptionsGeneralPanel() {
         int rows = 0;
         setVgap(5);
+        setPadding(new Insets(5));
 
+        Label userOptions = new Label(LabelGrabber.INSTANCE.getLabel("user.options.options"));
+        userOptions.setFont(Font.font(userOptions.getFont().getFamily(), FontWeight.BOLD, userOptions.getFont().getSize()));
+        GridPane.setConstraints(userOptions, 1, rows);
+        getChildren().add(userOptions);
+        rows++;
+        
+        Label interfaceLanguageLabel = new Label(LabelGrabber.INSTANCE.getLabel("interface.language.label"));
+        GridPane.setConstraints(interfaceLanguageLabel, 1, rows);
+        getChildren().add(interfaceLanguageLabel);
+        languageFileComboBox = new ComboBox<>();
+        for(LanguageFile file : LanguageFileManager.INSTANCE.languageFiles()) {
+            languageFileComboBox.getItems().add(file);
+        }
+        interfaceLanguageLabel.setLabelFor(languageFileComboBox);
+        GridPane.setConstraints(languageFileComboBox, 2, rows);
+        getChildren().add(languageFileComboBox);
+        rows++;
+        
         Label startupLabel = new Label(LabelGrabber.INSTANCE.getLabel("check.for.update.label"));
         GridPane.setConstraints(startupLabel, 1, rows);
         getChildren().add(startupLabel);
@@ -83,6 +102,15 @@ public class OptionsGeneralPanel extends GridPane implements PropertyPanel {
         startupLabel.setLabelFor(startupUpdateCheckBox);
         GridPane.setConstraints(startupUpdateCheckBox, 2, rows);
         getChildren().add(startupUpdateCheckBox);
+        rows++;
+        
+        Label warnLabel = new Label(LabelGrabber.INSTANCE.getLabel("1.monitor.warn.label"));
+        GridPane.setConstraints(warnLabel, 1, rows);
+        getChildren().add(warnLabel);
+        oneMonitorWarnCheckBox = new CheckBox();
+        warnLabel.setLabelFor(oneMonitorWarnCheckBox);
+        GridPane.setConstraints(oneMonitorWarnCheckBox, 2, rows);
+        getChildren().add(oneMonitorWarnCheckBox);
         rows++;
 
         Label useOOLabel = new Label(LabelGrabber.INSTANCE.getLabel("use.oo.label"));
@@ -133,42 +161,6 @@ public class OptionsGeneralPanel extends GridPane implements PropertyPanel {
         getChildren().add(selectButton);
         rows++;
 
-        Label warnLabel = new Label(LabelGrabber.INSTANCE.getLabel("1.monitor.warn.label"));
-        GridPane.setConstraints(warnLabel, 1, rows);
-        getChildren().add(warnLabel);
-        oneMonitorWarnCheckBox = new CheckBox();
-        warnLabel.setLabelFor(oneMonitorWarnCheckBox);
-        GridPane.setConstraints(oneMonitorWarnCheckBox, 2, rows);
-        getChildren().add(oneMonitorWarnCheckBox);
-        rows++;
-
-        Label capitalFirstLabel = new Label(LabelGrabber.INSTANCE.getLabel("capitalise.start.line.label"));
-        GridPane.setConstraints(capitalFirstLabel, 1, rows);
-        getChildren().add(capitalFirstLabel);
-        capitalFirstCheckBox = new CheckBox();
-        startupLabel.setLabelFor(capitalFirstCheckBox);
-        GridPane.setConstraints(capitalFirstCheckBox, 2, rows);
-        getChildren().add(capitalFirstCheckBox);
-        rows++;
-
-        Label displaySongInfoLabel = new Label(LabelGrabber.INSTANCE.getLabel("display.song.info.label"));
-        GridPane.setConstraints(displaySongInfoLabel, 1, rows);
-        getChildren().add(displaySongInfoLabel);
-        displaySongInfoCheckBox = new CheckBox();
-        startupLabel.setLabelFor(displaySongInfoCheckBox);
-        GridPane.setConstraints(displaySongInfoCheckBox, 2, rows);
-        getChildren().add(displaySongInfoCheckBox);
-        rows++;
-
-        Label uniformFontSizeLabel = new Label(LabelGrabber.INSTANCE.getLabel("uniform.font.size.label"));
-        GridPane.setConstraints(uniformFontSizeLabel, 1, rows);
-        getChildren().add(uniformFontSizeLabel);
-        uniformFontSizeCheckBox = new CheckBox();
-        startupLabel.setLabelFor(uniformFontSizeCheckBox);
-        GridPane.setConstraints(uniformFontSizeCheckBox, 2, rows);
-        getChildren().add(uniformFontSizeCheckBox);
-        rows++;
-
         Label oneLineModeLabel = new Label(LabelGrabber.INSTANCE.getLabel("one.line.mode.label"));
         GridPane.setConstraints(oneLineModeLabel, 1, rows);
         getChildren().add(oneLineModeLabel);
@@ -187,15 +179,6 @@ public class OptionsGeneralPanel extends GridPane implements PropertyPanel {
         getChildren().add(autoTranslateCheckBox);
         rows++;
 
-        Label textShadowLabel = new Label(LabelGrabber.INSTANCE.getLabel("text.shadow.label"));
-        GridPane.setConstraints(textShadowLabel, 1, rows);
-        getChildren().add(textShadowLabel);
-        textShadowCheckBox = new CheckBox();
-        startupLabel.setLabelFor(textShadowCheckBox);
-        GridPane.setConstraints(textShadowCheckBox, 2, rows);
-        getChildren().add(textShadowCheckBox);
-        rows++;
-
         Label clearLiveOnRemoveLabel = new Label(LabelGrabber.INSTANCE.getLabel("clear.live.on.remove.schedule") + " ");
         GridPane.setConstraints(clearLiveOnRemoveLabel, 1, rows);
         getChildren().add(clearLiveOnRemoveLabel);
@@ -205,18 +188,6 @@ public class OptionsGeneralPanel extends GridPane implements PropertyPanel {
         getChildren().add(clearLiveOnRemoveCheckBox);
         rows++;
 
-        Label interfaceLanguageLabel = new Label(LabelGrabber.INSTANCE.getLabel("interface.language.label"));
-        GridPane.setConstraints(interfaceLanguageLabel, 1, rows);
-        getChildren().add(interfaceLanguageLabel);
-        languageFileComboBox = new ComboBox<>();
-        for(LanguageFile file : LanguageFileManager.INSTANCE.languageFiles()) {
-            languageFileComboBox.getItems().add(file);
-        }
-        interfaceLanguageLabel.setLabelFor(languageFileComboBox);
-        GridPane.setConstraints(languageFileComboBox, 2, rows);
-        getChildren().add(languageFileComboBox);
-        rows++;
-        
         Label showSmallSongTextLabel = new Label(LabelGrabber.INSTANCE.getLabel("show.small.song.text.label"));
         GridPane.setConstraints(showSmallSongTextLabel, 1, rows);
         getChildren().add(showSmallSongTextLabel);
@@ -244,26 +215,31 @@ public class OptionsGeneralPanel extends GridPane implements PropertyPanel {
         getChildren().add(smallTextPositionCombo);
         smallTextPositionLabel.setLabelFor(smallTextPositionCombo);
         rows++;
-
-        Label borderThicknessLabel = new Label(LabelGrabber.INSTANCE.getLabel("text.border.thickness.label"));
-        GridPane.setConstraints(borderThicknessLabel, 1, rows);
-        getChildren().add(borderThicknessLabel);
-        borderThicknessSlider = new Slider(0, 5, 0);
-        GridPane.setConstraints(borderThicknessSlider, 2, rows);
-        getChildren().add(borderThicknessSlider);
-        borderThicknessLabel.setLabelFor(borderThicknessSlider);
-        final Label borderThicknessValue = new Label(Integer.toString((int) borderThicknessSlider.getValue()));
-        GridPane.setConstraints(borderThicknessValue, 3, rows);
-        getChildren().add(borderThicknessValue);
-        borderThicknessValue.setLabelFor(borderThicknessSlider);
-        borderThicknessSlider.valueProperty().addListener(new javafx.beans.value.ChangeListener<Number>() {
-            @Override
-            public void changed(ObservableValue<? extends Number> ov, Number t, Number t1) {
-                borderThicknessValue.setText(Integer.toString((int) borderThicknessSlider.getValue()));
-            }
-        });
+        
+        Label textOptions = new Label(LabelGrabber.INSTANCE.getLabel("text.options.options"));
+        textOptions.setFont(Font.font(textOptions.getFont().getFamily(), FontWeight.BOLD, textOptions.getFont().getSize()));
+        GridPane.setConstraints(textOptions, 1, rows);
+        getChildren().add(textOptions);
         rows++;
         
+        Label capitalFirstLabel = new Label(LabelGrabber.INSTANCE.getLabel("capitalise.start.line.label"));
+        GridPane.setConstraints(capitalFirstLabel, 1, rows);
+        getChildren().add(capitalFirstLabel);
+        capitalFirstCheckBox = new CheckBox();
+        startupLabel.setLabelFor(capitalFirstCheckBox);
+        GridPane.setConstraints(capitalFirstCheckBox, 2, rows);
+        getChildren().add(capitalFirstCheckBox);
+        rows++;
+
+        Label uniformFontSizeLabel = new Label(LabelGrabber.INSTANCE.getLabel("uniform.font.size.label"));
+        GridPane.setConstraints(uniformFontSizeLabel, 1, rows);
+        getChildren().add(uniformFontSizeLabel);
+        uniformFontSizeCheckBox = new CheckBox();
+        startupLabel.setLabelFor(uniformFontSizeCheckBox);
+        GridPane.setConstraints(uniformFontSizeCheckBox, 2, rows);
+        getChildren().add(uniformFontSizeCheckBox);
+        rows++;
+
         Label maxFontSizeLabel = new Label(LabelGrabber.INSTANCE.getLabel("max.font.size.label"));
         GridPane.setConstraints(maxFontSizeLabel, 1, rows);
         getChildren().add(maxFontSizeLabel);
@@ -301,20 +277,6 @@ public class OptionsGeneralPanel extends GridPane implements PropertyPanel {
             }
         });
         rows++;
-
-        textShadowCheckBox.selectedProperty().addListener(new javafx.beans.value.ChangeListener<Boolean>() {
-            @Override
-            public void changed(ObservableValue<? extends Boolean> ov, Boolean t, Boolean t1) {
-                if(textShadowCheckBox.isSelected()) {
-                    borderThicknessValue.setDisable(true);
-                    borderThicknessSlider.setDisable(true);
-                }
-                else {
-                    borderThicknessValue.setDisable(false);
-                    borderThicknessSlider.setDisable(false);
-                }
-            }
-        });
 
         Label maxCharsLabel = new Label(LabelGrabber.INSTANCE.getLabel("max.chars.line.label"));
         GridPane.setConstraints(maxCharsLabel, 1, rows);
@@ -383,18 +345,15 @@ public class OptionsGeneralPanel extends GridPane implements PropertyPanel {
         ooPathTextField.setText(props.getOOPath());
         capitalFirstCheckBox.setSelected(props.checkCapitalFirst());
         oneMonitorWarnCheckBox.setSelected(props.showSingleMonitorWarning());
-        displaySongInfoCheckBox.setSelected(props.checkDisplaySongInfoText());
         uniformFontSizeCheckBox.setSelected(props.getUseUniformFontSize());
         oneLineModeCheckBox.setSelected(props.getOneLineMode());
         autoTranslateCheckBox.setSelected(props.getAutoTranslate());
-        textShadowCheckBox.setSelected(props.getTextShadow());
         clearLiveOnRemoveCheckBox.setSelected(props.getClearLiveOnRemove());
         maxCharsSlider.setValue(props.getMaxChars());
 //        minLinesSlider.setValue(props.getMinLines());
         showSmallSongTextBox.setSelected(props.getSmallSongTextShow());
         showSmallBibleTextBox.setSelected(props.getSmallBibleTextShow());
         smallTextPositionCombo.getSelectionModel().select(props.getSmallTextPosition().equals("left") ? 0 : 1);
-        borderThicknessSlider.setValue(props.getOutlineThickness());
         additionalLineSpacingSlider.setValue(props.getAdditionalLineSpacing());
         maximumFontSizeSlider.setValue(props.getMaxFontSize());
     }
@@ -416,12 +375,8 @@ public class OptionsGeneralPanel extends GridPane implements PropertyPanel {
         props.setSingleMonitorWarning(showWarning);
         boolean checkCapital = getCapitalFirstCheckBox().isSelected();
         props.setCapitalFirst(checkCapital);
-        boolean checkDisplayInfo = getDisplaySongInfoCheckBox().isSelected();
-        props.setDisplaySongInfoText(checkDisplayInfo);
         boolean useUniformFontSize = uniformFontSizeCheckBox.isSelected();
         props.setUseUniformFontSize(useUniformFontSize);
-        boolean textShadow = getTextShadowCheckBox().isSelected();
-        props.setTextShadow(textShadow);
         boolean clearLive = clearLiveOnRemoveCheckBox.isSelected();
         props.setClearLiveOnRemove(clearLive);
         boolean oneLineMode = getOneLineModeCheckBox().isSelected();
@@ -441,8 +396,6 @@ public class OptionsGeneralPanel extends GridPane implements PropertyPanel {
         props.setSmallBibleTextShow(showSmallBibleText);
         int smallTextPosition = smallTextPositionCombo.getSelectionModel().getSelectedIndex();
         props.setSmallTextPosition(smallTextPosition == 0 ? "left" : "right");
-        int borderThickness = (int) getBorderThicknessSlider().getValue();
-        props.setOutlineThickness(borderThickness);
         props.setMaxFontSize(maximumFontSizeSlider.getValue());
         props.setAdditionalLineSpacing(additionalLineSpacingSlider.getValue());
         //Initialise presentation
@@ -485,15 +438,6 @@ public class OptionsGeneralPanel extends GridPane implements PropertyPanel {
      */
     public CheckBox getCapitalFirstCheckBox() {
         return capitalFirstCheckBox;
-    }
-
-    /**
-     * Get the display song info checkbox.
-     * <p/>
-     * @return the display song info checkbox.
-     */
-    public CheckBox getDisplaySongInfoCheckBox() {
-        return displaySongInfoCheckBox;
     }
 
     /**
@@ -541,24 +485,6 @@ public class OptionsGeneralPanel extends GridPane implements PropertyPanel {
         return ooPathTextField;
     }
 
-    /**
-     * Get the "text shadow" checkbox.
-     * <p/>
-     * @return the "text.shadow" checkbox.
-     */
-    public CheckBox getTextShadowCheckBox() {
-        return textShadowCheckBox;
-    }
-
-    /**
-     * Get the border thickness slider.
-     * <p/>
-     * @return the border thickness slider.
-     */
-    public Slider getBorderThicknessSlider() {
-        return borderThicknessSlider;
-    }
-    
     /**
      * Get the "use small song text" checkbox.
      * <p/>

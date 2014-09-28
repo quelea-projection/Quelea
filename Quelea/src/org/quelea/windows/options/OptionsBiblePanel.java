@@ -26,6 +26,7 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.event.EventHandler;
+import javafx.geometry.Insets;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
@@ -71,7 +72,7 @@ public class OptionsBiblePanel extends GridPane implements PropertyPanel, BibleC
      */
     public OptionsBiblePanel() {
         setVgap(5);
-        setHgap(5);
+        setPadding(new Insets(5));
 
         Label defaultBibleLabel = new Label(LabelGrabber.INSTANCE.getLabel("default.bible.label"));
         GridPane.setConstraints(defaultBibleLabel, 1, 1);
