@@ -156,11 +156,6 @@ public class VLCWindow {
 //                System.out.println("load("+path+") start");
                 if (init) {
                     paused = false;
-                    if (stretch) {
-                        mediaPlayer.setAspectRatio(canvas.getWidth() + ":" + canvas.getHeight());
-                    } else {
-                        mediaPlayer.setAspectRatio(null);
-                    }
                     String sanitisedPath = path;
                     sanitisedPath = sanitisedPath.trim();
                     if (sanitisedPath.startsWith("www")) {
@@ -170,6 +165,11 @@ public class VLCWindow {
                         mediaPlayer.prepareMedia(sanitisedPath);
                     } else {
                         mediaPlayer.prepareMedia(sanitisedPath, Utils.splitVLCOpts(options));
+                    }
+                    if (stretch) {
+                        mediaPlayer.setAspectRatio(canvas.getWidth() + ":" + canvas.getHeight());
+                    } else {
+                        mediaPlayer.setAspectRatio(null);
                     }
                 }
 //                System.out.println("load() end");
