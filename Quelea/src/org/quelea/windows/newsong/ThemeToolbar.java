@@ -27,6 +27,7 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.ColorPicker;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
@@ -82,6 +83,7 @@ public class ThemeToolbar extends HBox {
     private final TextField backgroundVidLocation;
     private final ColorPicker backgroundColorPicker;
     private final Slider vidHueSlider;
+    private final CheckBox vidStretchCheckbox;
     private final ThemePanel themePanel;
     private static FontSelectionDialog fontSelectionDialog;
 
@@ -241,6 +243,10 @@ public class ThemeToolbar extends HBox {
         backTypeSelection.getItems().add(LabelGrabber.INSTANCE.getLabel("image.theme.label"));
         backTypeSelection.getItems().add(LabelGrabber.INSTANCE.getLabel("video.theme.label"));
         backTop.getChildren().add(backTypeSelection);
+        
+        vidStretchCheckbox = new CheckBox(LabelGrabber.INSTANCE.getLabel("stretch.video.label"));
+        vidStretchCheckbox.setVisible(false);
+        backTop.getChildren().add(vidStretchCheckbox);
         topLevelBackBox.getChildren().add(backTop);
 
         final CardPane<Node> backgroundCentre = new CardPane<>();
@@ -314,10 +320,13 @@ public class ThemeToolbar extends HBox {
             public void handle(javafx.event.ActionEvent t) {
                 if (backTypeSelection.getSelectionModel().getSelectedItem().equalsIgnoreCase(LabelGrabber.INSTANCE.getLabel("color.theme.label"))) {
                     backgroundCentre.show("colour");
+                    vidStretchCheckbox.setVisible(false);
                 } else if (backTypeSelection.getSelectionModel().getSelectedItem().equalsIgnoreCase(LabelGrabber.INSTANCE.getLabel("image.theme.label"))) {
                     backgroundCentre.show("image");
+                    vidStretchCheckbox.setVisible(false);
                 } else if (backTypeSelection.getSelectionModel().getSelectedItem().equalsIgnoreCase(LabelGrabber.INSTANCE.getLabel("video.theme.label"))) {
                     backgroundCentre.show("video");
+                    vidStretchCheckbox.setVisible(true);
                 } else {
                     throw new AssertionError("Bug - " + backTypeSelection.getSelectionModel().getSelectedItem() + " is an unknown selection value");
                 }
@@ -374,7 +383,7 @@ public class ThemeToolbar extends HBox {
         }
         moreFontOptionsDialog.setTheme(theme);
         Background background = theme.getBackground();
-        background.setThemeForm(backgroundColorPicker, backTypeSelection, backgroundImageLocation, backgroundVidLocation, vidHueSlider);
+        background.setThemeForm(backgroundColorPicker, backTypeSelection, backgroundImageLocation, backgroundVidLocation, vidHueSlider, vidStretchCheckbox);
     }
 
     private int getAlignmentVal() {
@@ -413,7 +422,7 @@ public class ThemeToolbar extends HBox {
         } else if (backTypeSelection.getSelectionModel().getSelectedItem().equals(LabelGrabber.INSTANCE.getLabel("video.theme.label"))) {
             String text = backgroundVidLocation.getText();
             if (!text.isEmpty()) {
-                background = new VideoBackground(text, vidHueSlider.getValue());
+                background = new VideoBackground(text, vidHueSlider.getValue(), vidStretchCheckbox.isSelected());
             }
         } else {
             throw new AssertionError("Bug - " + backTypeSelection.getSelectionModel().getSelectedItem() + " is an unknown selection value");
