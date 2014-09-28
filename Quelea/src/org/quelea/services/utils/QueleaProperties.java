@@ -1358,7 +1358,12 @@ public final class QueleaProperties extends Properties {
      * text.
      */
     public int getLogoFadeDuration() {
-        return Integer.parseInt(getProperty("logo.fade.duration", "1000"));
+        String t = getProperty("logo.fade.duration", "");
+        if(t.equals("")) {
+            setProperty("logo.fade.duration", "1000");
+            write();
+        }
+        return Integer.parseInt(t);
     }
     
     /**
@@ -1369,7 +1374,12 @@ public final class QueleaProperties extends Properties {
      * text.
      */
     public int getBlackFadeDuration() {
-        return Integer.parseInt(getProperty("black.fade.duration", "1000"));
+        String t = getProperty("black.fade.duration", "");
+        if(t.equals("")) {
+            setProperty("black.fade.duration", "1000");
+            write();
+        }
+        return Integer.parseInt(t);
     }
     
     /**
@@ -1380,7 +1390,12 @@ public final class QueleaProperties extends Properties {
      * text.
      */
     public int getClearFadeDuration() {
-        return Integer.parseInt(getProperty("clear.fade.duration", "1000"));
+        String t = getProperty("clear.fade.duration", "");
+        if(t.equals("")) {
+            setProperty("clear.fade.duration", "1000");
+            write();
+        }
+        return Integer.parseInt(t);
     }
 
 }
