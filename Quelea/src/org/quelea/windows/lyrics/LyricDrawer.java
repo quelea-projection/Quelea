@@ -185,10 +185,10 @@ public class LyricDrawer extends DisplayableDrawer {
         }
 
         getCanvas().getChildren().add(newTextGroup);
-        if (curDisplayable instanceof BiblePassage && QueleaProperties.get().getSmallBibleTextShow()) {
+        if (curDisplayable instanceof BiblePassage && QueleaProperties.get().getSmallBibleTextShow() && !stageView) {
             getCanvas().getChildren().add(smallTextGroup);
         }
-        if (curDisplayable instanceof SongDisplayable && QueleaProperties.get().getSmallSongTextShow()) {
+        if (curDisplayable instanceof SongDisplayable && QueleaProperties.get().getSmallSongTextShow() && !stageView) {
             getCanvas().getChildren().add(smallTextGroup);
         }
         getCanvas().pushLogoNoticeToFront();
