@@ -35,6 +35,7 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Group;
 import javafx.scene.Node;
+import javafx.scene.effect.BlurType;
 import javafx.scene.effect.ColorAdjust;
 import javafx.scene.effect.DropShadow;
 import javafx.scene.image.Image;
@@ -169,6 +170,7 @@ public class LyricDrawer extends DisplayableDrawer {
         FontMetrics translateMetrics = Toolkit.getToolkit().getFontLoader().getFontMetrics(translateFont);
         FontMetrics smallTextMetrics = Toolkit.getToolkit().getFontLoader().getFontMetrics(smallTextFont);
         final Group newTextGroup = new Group();
+        newTextGroup.setEffect(shadow);
         StackPane.setAlignment(newTextGroup, Pos.CENTER);
         smallTextGroup = new Group();
         if (QueleaProperties.get().getSmallTextPosition().toLowerCase().equals("left")) {
@@ -210,7 +212,6 @@ public class LyricDrawer extends DisplayableDrawer {
             } else {
                 t.setFont(font);
             }
-            t.setEffect(shadow);
 
             setPositionX(t, loopMetrics, line.getLine(), stageView, curDisplayable instanceof BiblePassage);
             t.setLayoutY(y);
@@ -234,6 +235,7 @@ public class LyricDrawer extends DisplayableDrawer {
 
             newTextGroup.getChildren().add(t);
         }
+        
         int sy = 0;
         for (String stext : smallText) {
             stext = stext.trim();
