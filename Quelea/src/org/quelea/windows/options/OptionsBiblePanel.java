@@ -72,6 +72,7 @@ public class OptionsBiblePanel extends GridPane implements PropertyPanel, BibleC
      */
     public OptionsBiblePanel() {
         setVgap(5);
+        setHgap(10);
         setPadding(new Insets(5));
 
         Label defaultBibleLabel = new Label(LabelGrabber.INSTANCE.getLabel("default.bible.label"));
@@ -232,7 +233,6 @@ public class OptionsBiblePanel extends GridPane implements PropertyPanel, BibleC
                         if (d instanceof BiblePassage) {
                             ((BiblePassage) d).updateBibleLines();
                             int index = list.listView.itemsProperty().get().indexOf(d);
-                            int selectedIndex = list.listView.selectionModelProperty().get().getSelectedIndex();
                             if (index != -1) {
                                 list.listView.itemsProperty().get().set(index, d);
                                 list.listView.selectionModelProperty().get().select(index); //Needed for single item lists
