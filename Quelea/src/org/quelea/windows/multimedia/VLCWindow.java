@@ -199,15 +199,15 @@ public class VLCWindow {
 //                System.out.println("play("+vid+") start");
                 if (init) {
                     paused = false;
-                    if (stretch) {
-                        mediaPlayer.setAspectRatio(canvas.getWidth()+":"+canvas.getHeight());
-                    } else {
-                        mediaPlayer.setAspectRatio(null);
-                    }
                     if (options == null) {
                         mediaPlayer.playMedia(vid);
                     } else {
                         mediaPlayer.playMedia(vid, Utils.splitVLCOpts(options));
+                    }
+                    if (stretch) {
+                        mediaPlayer.setAspectRatio(canvas.getWidth() + ":" + canvas.getHeight());
+                    } else {
+                        mediaPlayer.setAspectRatio(null);
                     }
                 }
 //                System.out.println("play(arg) end");
