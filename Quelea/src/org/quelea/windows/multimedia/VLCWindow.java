@@ -167,9 +167,9 @@ public class VLCWindow {
                         sanitisedPath = "http://" + sanitisedPath;
                     }
                     if (options == null) {
-                        mediaPlayer.playMedia(sanitisedPath);
+                        mediaPlayer.prepareMedia(sanitisedPath);
                     } else {
-                        mediaPlayer.playMedia(sanitisedPath, Utils.splitVLCOpts(options));
+                        mediaPlayer.prepareMedia(sanitisedPath, Utils.splitVLCOpts(options));
                     }
                 }
 //                System.out.println("load() end");
