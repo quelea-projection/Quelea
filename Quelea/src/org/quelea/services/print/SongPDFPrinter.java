@@ -28,6 +28,11 @@ import org.quelea.data.displayable.SongDisplayable;
  */
 public class SongPDFPrinter extends PDFPrinter {
 
+    public static SongPDFPrinter INSTANCE = new SongPDFPrinter();
+
+    private SongPDFPrinter() {
+    }
+
     public void print(SongDisplayable song, File pdfFile) throws IOException {
         print(song.getPrintXML(), new File("songformat.xsl"), pdfFile);
     }
