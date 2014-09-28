@@ -135,7 +135,8 @@ public class PDFExporter implements Exporter {
         File temp = null;
         try {
             temp = File.createTempFile("queleasong", ".pdf");
-            if (temp == null) {
+            temp.deleteOnExit();
+            if (song == null) {
                 return new byte[0];
             } else {
                 SongPDFPrinter.INSTANCE.print(song, temp);
