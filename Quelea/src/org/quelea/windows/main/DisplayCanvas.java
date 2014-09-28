@@ -350,12 +350,12 @@ public class DisplayCanvas extends StackPane {
         this.blacked = blacked;
         if(blacked) {
             black.toFront();
-            FadeTransition ft = new FadeTransition(Duration.seconds(0.5), black);
+            FadeTransition ft = new FadeTransition(Duration.millis(QueleaProperties.get().getBlackFadeDuration()), black);
             ft.setToValue(1);
             ft.play();
         }
         else {
-            FadeTransition ft = new FadeTransition(Duration.seconds(0.5), black);
+            FadeTransition ft = new FadeTransition(Duration.millis(QueleaProperties.get().getBlackFadeDuration()), black);
             ft.setToValue(0);
             ft.play();
         }
@@ -389,12 +389,12 @@ public class DisplayCanvas extends StackPane {
     public void setLogoDisplaying(boolean selected) {
         if(selected) {
             logoImage.toFront();
-            FadeTransition ft = new FadeTransition(Duration.seconds(1.5), logoImage);
+            FadeTransition ft = new FadeTransition(Duration.millis(QueleaProperties.get().getLogoFadeDuration()), logoImage);
             ft.setToValue(1);
             ft.play();
         }
         else {
-            FadeTransition ft = new FadeTransition(Duration.seconds(1.5), logoImage);
+            FadeTransition ft = new FadeTransition(Duration.millis(QueleaProperties.get().getLogoFadeDuration()), logoImage);
             ft.setToValue(0);
             ft.play();
         }

@@ -262,8 +262,8 @@ public class LyricDrawer extends DisplayableDrawer {
 
         if (getCanvas().isCleared() && !getLastClearedState()) {
             setLastClearedState(true);
-            FadeTransition t = new FadeTransition(Duration.seconds(QueleaProperties.get().getFadeDuration()), textGroup);
-            FadeTransition t2 = new FadeTransition(Duration.seconds(QueleaProperties.get().getFadeDuration()), smallTextGroup);
+            FadeTransition t = new FadeTransition(Duration.millis(QueleaProperties.get().getClearFadeDuration()), textGroup);
+            FadeTransition t2 = new FadeTransition(Duration.millis(QueleaProperties.get().getClearFadeDuration()), smallTextGroup);
             t.setToValue(0);
             t.play();
             t2.setToValue(0);
@@ -273,8 +273,8 @@ public class LyricDrawer extends DisplayableDrawer {
             smallTextGroup.setOpacity(0);
         } else if (!getCanvas().isCleared() && getLastClearedState()) {
             setLastClearedState(false);
-            FadeTransition t = new FadeTransition(Duration.seconds(QueleaProperties.get().getFadeDuration()), textGroup);
-            FadeTransition t2 = new FadeTransition(Duration.seconds(QueleaProperties.get().getFadeDuration()), smallTextGroup);
+            FadeTransition t = new FadeTransition(Duration.millis(QueleaProperties.get().getClearFadeDuration()), textGroup);
+            FadeTransition t2 = new FadeTransition(Duration.millis(QueleaProperties.get().getClearFadeDuration()), smallTextGroup);
             t.setFromValue(0);
             t.setToValue(1);
             t.play();
