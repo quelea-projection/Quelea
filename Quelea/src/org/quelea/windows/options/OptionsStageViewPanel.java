@@ -50,6 +50,7 @@ public class OptionsStageViewPanel extends GridPane implements PropertyPanel {
      */
     public OptionsStageViewPanel() {  
         setVgap(5);
+        setHgap(10);
         setPadding(new Insets(5));
         
         Label chordsLabel = new Label(LabelGrabber.INSTANCE.getLabel("stage.show.chords"));
