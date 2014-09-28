@@ -68,7 +68,7 @@ public class ExitActionHandler implements EventHandler<ActionEvent> {
         t.consume();
         Schedule schedule = mainWindow.getMainPanel().getSchedulePanel().getScheduleList().getSchedule();
         if (!schedule.isEmpty() && schedule.isModified()) {
-            cancel = false;
+            cancel = true;
             Dialog d = Dialog.buildConfirmation(LabelGrabber.INSTANCE.getLabel("save.before.exit.title"), LabelGrabber.INSTANCE.getLabel("save.before.exit.text")).addYesButton(new EventHandler<ActionEvent>() {
                 @Override
                 public void handle(ActionEvent t) {
@@ -85,13 +85,12 @@ public class ExitActionHandler implements EventHandler<ActionEvent> {
             }).addNoButton(new EventHandler<ActionEvent>() {
                 @Override
                 public void handle(ActionEvent t) {
-                    //Don't do anything
+                    cancel = false;
                 }
             }).addCancelButton(new EventHandler<ActionEvent>() {
                 @Override
                 public void handle(ActionEvent t) {
-                    //Don't exit
-                    cancel = true;
+                    //No need to do anything
                 }
             }).build();
             d.showAndWait();
