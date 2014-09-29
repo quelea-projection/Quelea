@@ -37,10 +37,11 @@ import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
+import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
-import javafx.stage.StageStyle;
 import org.quelea.data.YoutubeInfo;
 import org.quelea.services.languages.LabelGrabber;
 import org.quelea.services.utils.Utils;
@@ -63,7 +64,6 @@ public class YoutubeDialog extends Stage {
      * Create a new youtube dialog for the user to select a youtube video url.
      */
     public YoutubeDialog() {
-        initStyle(StageStyle.UTILITY);
         initModality(Modality.APPLICATION_MODAL);
         setTitle(LabelGrabber.INSTANCE.getLabel("add.youtube.button"));
         Utils.addIconsToStage(this);
@@ -71,7 +71,7 @@ public class YoutubeDialog extends Stage {
         root.setPadding(new Insets(10));
         Label label = new Label(LabelGrabber.INSTANCE.getLabel("youtube.url.label") + ":");
         urlField = new TextField();
-        urlField.setMinHeight(30);
+        VBox.setMargin(urlField, new Insets(5));
         urlField.textProperty().addListener(new ChangeListener<String>() {
 
             @Override
@@ -133,10 +133,12 @@ public class YoutubeDialog extends Stage {
         previewImg.setPreserveRatio(false);
         title = new Label();
         title.setWrapText(true);
+        title.setMinWidth(200);
         previewPane.getChildren().add(previewImg);
         previewPane.getChildren().add(title);
         root.getChildren().add(previewPane);
         HBox okPane = new HBox(10);
+        VBox.setMargin(okPane, new Insets(10));
         okPane.setAlignment(Pos.CENTER);
         okPane.getChildren().add(okButton);
         okPane.getChildren().add(cancelButton);
@@ -148,9 +150,12 @@ public class YoutubeDialog extends Stage {
                 okButton.setDisable(t1.trim().isEmpty());
             }
         });
+        Region spacer = new Region();
+        VBox.setVgrow(spacer, Priority.ALWAYS);
+        root.getChildren().add(spacer);
         root.getChildren().add(okPane);
-        setScene(new Scene(root, 480, 330));
-//        setResizable(false);
+        setScene(new Scene(root));
+        setResizable(false);
     }
 
     /**
