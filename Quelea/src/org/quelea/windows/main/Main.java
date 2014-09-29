@@ -313,8 +313,8 @@ public final class Main extends Application {
     }
 
     private void setupTranslator() {
-        com.memetix.mst.translate.Translate.setClientId("quelea-projection");
-        com.memetix.mst.translate.Translate.setClientSecret("wk4+wd9YJkjIHmz2qwD1oR7pP9/kuHOL6OsaOKEi80U=");
+        com.memetix.mst.translate.Translate.setClientId(QueleaProperties.get().getTranslateClientID());
+        com.memetix.mst.translate.Translate.setClientSecret(QueleaProperties.get().getTranslateClientSecret());
     }
 
     private class UncaughtExceptionHandler implements Thread.UncaughtExceptionHandler {

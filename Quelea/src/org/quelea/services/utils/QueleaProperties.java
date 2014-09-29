@@ -1349,56 +1349,80 @@ public final class QueleaProperties extends Properties {
         setProperty("max.bible.chars", Integer.toString(maxChars));
         write();
     }
-    
+
     /**
-     * Get the fade duration of the logo button
-     * text.
+     * Get the fade duration of the logo button text.
      * <p/>
-     * @return the duration of the fade in milliseconds
-     * text.
+     * @return the duration of the fade in milliseconds text.
      */
     public int getLogoFadeDuration() {
         String t = getProperty("logo.fade.duration", "");
-        if(t.equals("")) {
+        if (t.equals("")) {
             t = "1000";
             setProperty("logo.fade.duration", t);
             write();
         }
         return Integer.parseInt(t);
     }
-    
+
     /**
-     * Get the fade duration of the black button
-     * text.
+     * Get the fade duration of the black button text.
      * <p/>
-     * @return the duration of the fade in milliseconds
-     * text.
+     * @return the duration of the fade in milliseconds text.
      */
     public int getBlackFadeDuration() {
         String t = getProperty("black.fade.duration", "");
-        if(t.equals("")) {
+        if (t.equals("")) {
             t = "1000";
             setProperty("black.fade.duration", t);
             write();
         }
         return Integer.parseInt(t);
     }
-    
+
     /**
-     * Get the fade duration of the clear button
-     * text.
+     * Get the fade duration of the clear button text.
      * <p/>
-     * @return the duration of the fade in milliseconds
-     * text.
+     * @return the duration of the fade in milliseconds text.
      */
     public int getClearFadeDuration() {
         String t = getProperty("clear.fade.duration", "");
-        if(t.equals("")) {
+        if (t.equals("")) {
             t = "1000";
             setProperty("clear.fade.duration", t);
             write();
         }
         return Integer.parseInt(t);
+    }
+
+    /**
+     * Get the Translate ID from the properties file
+     * <p/>
+     * @return the translate ID
+     */
+    public String getTranslateClientID() {
+        String t = getProperty("translate.client.id", "");
+        if (t.equals("")) {
+            t = "quelea-projection";
+            setProperty("translate.client.id", t);
+            write();
+        }
+        return t;
+    }
+
+    /**
+     * Get the Translate secret key from the properties file
+     * <p/>
+     * @return the translate secret key
+     */
+    public String getTranslateClientSecret() {
+        String t = getProperty("translate.client.secret", "");
+        if (t.equals("")) {
+            t = "wk4+wd9YJkjIHmz2qwD1oR7pP9/kuHOL6OsaOKEi80U=";
+            setProperty("translate.client.secret", t);
+            write();
+        }
+        return t;
     }
 
 }
