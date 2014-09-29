@@ -41,9 +41,9 @@ import org.quelea.services.utils.Utils;
 public class InputDialog extends Stage {
 
     private static InputDialog dialog;
-    private TextField textField;
-    private Label messageLabel;
-    private Button okButton;
+    private final TextField textField;
+    private final Label messageLabel;
+    private final Button okButton;
 
     /**
      * Create our input dialog.
