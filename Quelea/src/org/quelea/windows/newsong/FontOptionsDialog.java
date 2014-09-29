@@ -76,7 +76,6 @@ public class FontOptionsDialog extends Stage {
     private final Slider shadowRadiusSlider;
     private final Slider shadowSpreadSlider;
     private final Button okButton;
-    private final ThemePanel themePanel;
 
     /**
      * Create the font options dialog.
@@ -87,7 +86,6 @@ public class FontOptionsDialog extends Stage {
     public FontOptionsDialog(final ThemePanel themePanel) {
         initStyle(StageStyle.UTILITY);
         initModality(Modality.APPLICATION_MODAL);
-        this.themePanel = themePanel;
         Utils.addIconsToStage(this);
 
         if (fontSelectionDialog == null) {
@@ -121,7 +119,7 @@ public class FontOptionsDialog extends Stage {
         shadowColor = new ColorPicker(Color.GRAY);
         shadowColor.setStyle("-fx-color-label-visible: false ;");
 
-        shadowOffsetSlider = new Slider(0, 20, 0);
+        shadowOffsetSlider = new Slider(0, 60, 0);
         shadowOffsetSlider.setShowTickMarks(false);
 
         shadowRadiusSlider = new Slider(0, 1000, 0);
