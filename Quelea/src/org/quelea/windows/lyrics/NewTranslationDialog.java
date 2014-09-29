@@ -70,6 +70,7 @@ public class NewTranslationDialog extends Stage {
         Label label = new Label(LabelGrabber.INSTANCE.getLabel("enter.translation.name.label"));
         rootVBox.getChildren().add(label);
         nameField = new TextField();
+        nameField.setMinHeight(30);
         nameField.textProperty().addListener(new ChangeListener<String>() {
 
             @Override
@@ -116,8 +117,8 @@ public class NewTranslationDialog extends Stage {
         buttonWrapperPane.getChildren().add(buttonPane);
         rootVBox.getChildren().add(buttonWrapperPane);
         setScene(new Scene(root));
-        setWidth(300);
-        setHeight(120);
+        setWidth(400);
+        setHeight(150);
         setResizable(false);
     }
 
