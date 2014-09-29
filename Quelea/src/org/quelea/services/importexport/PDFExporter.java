@@ -93,7 +93,7 @@ public class PDFExporter implements Exporter {
                 try (ZipOutputStream out = new ZipOutputStream(new FileOutputStream(file))) {
                     for (int i = 0; i < songDisplayablesThreadSafe.size(); i++) {
                         SongDisplayable song = songDisplayablesThreadSafe.get(i);
-                        String name = song.getTitle() + ".pdf";
+                        String name = sanitise(song.getTitle()) + ".pdf";
                         while (names.contains(name)) {
                             name = incrementExtension(name);
                         }
@@ -121,6 +121,13 @@ public class PDFExporter implements Exporter {
         } else {
             return name + "(2).pdf";
         }
+    }
+    
+    public static String sanitise(String name) {
+        name = name.replace(":", "");
+        name = name.replace("/", "");
+        name = name.replace("\\", "");
+        return name;
     }
 
     /**
