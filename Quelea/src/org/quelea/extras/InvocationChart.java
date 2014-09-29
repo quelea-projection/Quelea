@@ -40,6 +40,7 @@ import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import javafx.util.StringConverter;
 import javafx.util.converter.TimeStringConverter;
+import org.javafx.dialog.InputDialog;
 
 /**
  * Displays a graph of Quelea invocations. Not tied to Quelea itself, just used
@@ -77,13 +78,18 @@ public class InvocationChart extends Application {
             final LineChart<Number, Number> lineChart = new LineChart<>(xAxis, yAxis);
             lineChart.setLegendVisible(false);
             XYChart.Series<Number, Number> series = new XYChart.Series<>();
-            URL url = new URL(RAW_DUMP_URL);
+            String password = InputDialog.getUserInput("Data password?", "");
+            URL url = new URL(RAW_DUMP_URL + "?pass=" + password);
             BufferedReader reader = new BufferedReader(new InputStreamReader(url.openStream()));
             String line;
             Date minDate = new Date(Long.MAX_VALUE);
             Date maxDate = new Date(0);
             SimpleDateFormat formatter = new SimpleDateFormat("dd.MM.yy");
             while((line = reader.readLine()) != null) {
+                if(line.equalsIgnoreCase("Unable to select database")) {
+                    System.err.println("Auth error.");
+                    System.exit(0);
+                }
                 String[] parts = line.split(",");
                 Date date = formatter.parse(parts[0]);
                 if(date.after(maxDate)) {
