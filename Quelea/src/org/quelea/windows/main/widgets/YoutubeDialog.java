@@ -71,6 +71,7 @@ public class YoutubeDialog extends Stage {
         root.setPadding(new Insets(10));
         Label label = new Label(LabelGrabber.INSTANCE.getLabel("youtube.url.label") + ":");
         urlField = new TextField();
+        urlField.setMinHeight(30);
         urlField.textProperty().addListener(new ChangeListener<String>() {
 
             @Override
@@ -148,7 +149,7 @@ public class YoutubeDialog extends Stage {
             }
         });
         root.getChildren().add(okPane);
-        setScene(new Scene(root, 480, 300));
+        setScene(new Scene(root, 480, 330));
 //        setResizable(false);
     }
 
