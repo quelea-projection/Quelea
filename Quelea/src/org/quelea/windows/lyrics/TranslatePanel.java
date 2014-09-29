@@ -47,6 +47,8 @@ import org.javafx.dialog.Dialog;
 import org.quelea.data.displayable.SongDisplayable;
 import org.quelea.services.languages.LabelGrabber;
 import org.quelea.services.utils.LanguageNameMap;
+import org.quelea.services.utils.LineTypeChecker;
+import org.quelea.services.utils.LineTypeChecker.Type;
 import org.quelea.services.utils.LoggerUtils;
 import org.quelea.services.utils.QueleaProperties;
 import org.quelea.services.utils.Utils;
@@ -208,9 +210,9 @@ public class TranslatePanel extends BorderPane {
             if (newLang != null) {
                 Language origLang = Detect.execute(defaultLyricsArea.getText());
                 if (origLang != null) {
-                    String[] origArr = defaultLyricsArea.getText().split("\n");
+                    String[] origArr = LineTypeChecker.encodeTitles(defaultLyricsArea.getText().split("\n"));
                     ArrayList<String> translatedList = new ArrayList<>();
-                    for (String str : Translate.execute(origArr, origLang, newLang)) {
+                    for (String str : LineTypeChecker.decodeTitles(Translate.execute(origArr, origLang, newLang))) {
                         translatedList.add(str);
                     }
                     for (int i = 0; i < origArr.length; i++) {
