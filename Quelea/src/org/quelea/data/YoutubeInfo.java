@@ -142,7 +142,7 @@ public class YoutubeInfo {
             }
             return preview;
         } catch (IOException ex) {
-            LOGGER.log(Level.INFO, "Couldn't get youtube preview image", ex);
+            LOGGER.log(Level.INFO, "Couldn't get youtube preview image");
             return null;
         }
     }
