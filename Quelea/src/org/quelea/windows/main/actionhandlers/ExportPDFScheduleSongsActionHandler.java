@@ -88,7 +88,7 @@ public class ExportPDFScheduleSongsActionHandler implements EventHandler<ActionE
                                 continue;
                             }
                             SongDisplayable song = (SongDisplayable) d;
-                            String name = song.getTitle() + ".pdf";
+                            String name = PDFExporter.sanitise(song.getTitle()) + ".pdf";
                             while (names.contains(name)) {
                                 name = PDFExporter.incrementExtension(name);
                             }
