@@ -30,11 +30,12 @@ import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
+import javafx.scene.layout.Region;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
-import javafx.stage.StageStyle;
 import org.quelea.services.languages.LabelGrabber;
 import org.quelea.services.utils.Utils;
 
@@ -60,7 +61,6 @@ public class NewTranslationDialog extends Stage {
      */
     private NewTranslationDialog() {
         initModality(Modality.APPLICATION_MODAL);
-        initStyle(StageStyle.UTILITY);
         Utils.addIconsToStage(this);
         StackPane root = new StackPane();
         VBox rootVBox = new VBox();
@@ -70,7 +70,6 @@ public class NewTranslationDialog extends Stage {
         Label label = new Label(LabelGrabber.INSTANCE.getLabel("enter.translation.name.label"));
         rootVBox.getChildren().add(label);
         nameField = new TextField();
-        nameField.setMinHeight(30);
         nameField.textProperty().addListener(new ChangeListener<String>() {
 
             @Override
@@ -115,10 +114,11 @@ public class NewTranslationDialog extends Stage {
         });
         buttonPane.getChildren().add(cancelButton);
         buttonWrapperPane.getChildren().add(buttonPane);
+        Region spacer = new Region();
+        VBox.setVgrow(buttonWrapperPane, Priority.ALWAYS);
+        rootVBox.getChildren().add(spacer);
         rootVBox.getChildren().add(buttonWrapperPane);
         setScene(new Scene(root));
-        setWidth(400);
-        setHeight(150);
         setResizable(false);
     }
 
