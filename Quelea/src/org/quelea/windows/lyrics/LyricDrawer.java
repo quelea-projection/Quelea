@@ -135,6 +135,8 @@ public class LyricDrawer extends DisplayableDrawer {
         List<LyricLine> newText;
         if (dumbWrap) {
             newText = dumbWrapText(text);
+        } else if (stageView) {
+            newText = sanctifyText(text, null);
         } else {
             newText = sanctifyText(text, translations);
         }
@@ -166,9 +168,9 @@ public class LyricDrawer extends DisplayableDrawer {
         FontMetrics translateMetrics = Toolkit.getToolkit().getFontLoader().getFontMetrics(translateFont);
         FontMetrics smallTextMetrics = Toolkit.getToolkit().getFontLoader().getFontMetrics(smallTextFont);
         final Group newTextGroup = new Group();
-        shadow.setOffsetX(metrics.getLineHeight()*shadow.getOffsetX()*0.003);
-        shadow.setOffsetY(metrics.getLineHeight()*shadow.getOffsetY()*0.003);
-        shadow.setRadius(shadow.getRadius()*metrics.getLineHeight()*0.0015);
+        shadow.setOffsetX(metrics.getLineHeight() * shadow.getOffsetX() * 0.003);
+        shadow.setOffsetY(metrics.getLineHeight() * shadow.getOffsetY() * 0.003);
+        shadow.setRadius(shadow.getRadius() * metrics.getLineHeight() * 0.0015);
         newTextGroup.setEffect(shadow);
         StackPane.setAlignment(newTextGroup, Pos.CENTER);
         smallTextGroup = new Group();
@@ -234,7 +236,7 @@ public class LyricDrawer extends DisplayableDrawer {
 
             newTextGroup.getChildren().add(t);
         }
-        
+
         int sy = 0;
         for (String stext : smallText) {
             stext = stext.trim();
