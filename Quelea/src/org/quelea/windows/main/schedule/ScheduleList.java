@@ -111,10 +111,9 @@ public class ScheduleList extends StackPane {
                             setGraphic(item.getPreviewIcon());
                             setText(item.getPreviewText());
                         }
-                        if(item instanceof SongDisplayable) {
+                        if (item instanceof SongDisplayable) {
                             setContextMenu(SchedulePopupMenu.getSongPopup());
-                        }
-                        else if (item instanceof BiblePassage) {
+                        } else if (item instanceof BiblePassage) {
                             setContextMenu(SchedulePopupMenu.getBiblePopup());
                         }
                     }
@@ -204,12 +203,12 @@ public class ScheduleList extends StackPane {
                                     if (dropShadow == null || (dropShadow.getColor().equals(Color.WHITE) && dropShadow.getOffsetX() == 0 && dropShadow.getOffsetY() == 0)) {
                                         dropShadow = new SerializableDropShadow(Color.BLACK, 3, 3, 2, 0, true);
                                     }
-                                    ThemeDTO newTheme = new ThemeDTO(theme.getSerializableFont(), theme.getFontPaint(), theme.getTranslateSerializableFont(), theme.getTranslateFontPaint(), new ImageBackground(new File(imageLocation).getName()), dropShadow, theme.getSerializableFont().isBold(), theme.getSerializableFont().isItalic(),  theme.getTranslateSerializableFont().isBold(), theme.getTranslateSerializableFont().isItalic(),theme.getTextPosition(), theme.getTextAlignment());
+                                    ThemeDTO newTheme = new ThemeDTO(theme.getSerializableFont(), theme.getFontPaint(), theme.getTranslateSerializableFont(), theme.getTranslateFontPaint(), new ImageBackground(new File(imageLocation).getName()), dropShadow, theme.getSerializableFont().isBold(), theme.getSerializableFont().isItalic(), theme.getTranslateSerializableFont().isBold(), theme.getTranslateSerializableFont().isItalic(), theme.getTextPosition(), theme.getTextAlignment());
                                     for (TextSection section : textDisplayable.getSections()) {
                                         section.setTheme(newTheme);
                                     }
                                     textDisplayable.setTheme(newTheme);
-                                    if(d instanceof SongDisplayable) {
+                                    if (d instanceof SongDisplayable) {
                                         SongDisplayable sd = (SongDisplayable) d;
                                         Utils.updateSongInBackground(sd, true, false);
                                     }
@@ -276,15 +275,14 @@ public class ScheduleList extends StackPane {
                 }
             }
         });
-        
+
         listView.addEventHandler(KeyEvent.KEY_PRESSED, new EventHandler<KeyEvent>() {
             @Override
             public void handle(KeyEvent t) {
-                if(t.getCode().equals(KeyCode.PAGE_DOWN)) {
+                if (t.getCode().equals(KeyCode.PAGE_DOWN)) {
                     t.consume();
                     QueleaApp.get().getMainWindow().getMainPanel().getLivePanel().advance();
-                }
-                else if(t.getCode().equals(KeyCode.PAGE_UP)) {
+                } else if (t.getCode().equals(KeyCode.PAGE_UP)) {
                     t.consume();
                     QueleaApp.get().getMainWindow().getMainPanel().getLivePanel().previous();
                 }
@@ -350,12 +348,14 @@ public class ScheduleList extends StackPane {
      * listview.
      */
     public void refreshSong(SongDisplayable song) {
-        int index = listView.itemsProperty().get().indexOf(song);
+        ObservableList<Displayable> itemp = listView.itemsProperty().get();
         int selectedIndex = listView.selectionModelProperty().get().getSelectedIndex();
+        int index = itemp.indexOf(song);
         if (index != -1) {
-            listView.itemsProperty().get().set(index, song);
-            listView.selectionModelProperty().get().select(index); //Needed for single item lists
+            itemp.set(index, new SongDisplayable("",""));
+            itemp.set(index, song);
         }
+        listView.selectionModelProperty().get().select(selectedIndex);
     }
 
     /**
