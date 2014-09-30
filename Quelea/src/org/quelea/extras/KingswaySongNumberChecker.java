@@ -1,7 +1,18 @@
 /*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
+ * This file is part of Quelea, free projection software for churches.
+ * 
+ *
+ * This program is free software: you can redistribute it and/or modify it under
+ * the terms of the GNU General Public License as published by the Free Software
+ * Foundation, either version 3 of the License, or (at your option) any later
+ * version.
+ *
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License along with
+ * this program. If not, see <http://www.gnu.org/licenses/>.
  */
 package org.quelea.extras;
 
@@ -12,8 +23,10 @@ import java.net.URL;
 import java.util.ArrayList;
 
 /**
- *
- * @author Ben
+ * This file checks the number of songs currently available on the weareworship/ Kingsway website and calculates the biggest gap. <br/>
+ * Be warned, this file takes about 3 hours to fully complete.
+ * <p/>
+ * @author Ben Goodwin bengoodwin13@gmail.com
  */
 public class KingswaySongNumberChecker {
 
