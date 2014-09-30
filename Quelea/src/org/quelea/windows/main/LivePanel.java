@@ -75,8 +75,8 @@ public class LivePanel extends LivePreviewPanel {
         header.getItems().add(headerLabel);
         loop = new ToggleButton(LabelGrabber.INSTANCE.getLabel("loop.label") + ":");
         loopDuration = new TextField("10");
-        loopDuration.setMaxWidth(25);
-        loopDuration.setMinWidth(25);
+        loopDuration.setMaxWidth(40);
+        loopDuration.setMinWidth(40);
         loopDuration.addEventFilter(KeyEvent.KEY_TYPED, new EventHandler<KeyEvent>() {
             @Override
             public void handle(KeyEvent t) {
