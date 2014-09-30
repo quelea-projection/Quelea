@@ -276,7 +276,7 @@ public class ScheduleList extends StackPane {
             }
         });
 
-        listView.addEventHandler(KeyEvent.KEY_PRESSED, new EventHandler<KeyEvent>() {
+        listView.addEventFilter(KeyEvent.KEY_PRESSED, new EventHandler<KeyEvent>() {
             @Override
             public void handle(KeyEvent t) {
                 if (t.getCode().equals(KeyCode.PAGE_DOWN)) {
