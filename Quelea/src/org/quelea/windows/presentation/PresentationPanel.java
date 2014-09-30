@@ -121,7 +121,7 @@ public class PresentationPanel extends AbstractPanel {
                                 if(containerPanel instanceof LivePanel) {
                                     LivePanel livePanel = ((LivePanel) containerPanel);
                                     if(livePanel.isLoopSelected()) {
-                                        presentationPreview.advanceSlide();
+                                        presentationPreview.advanceSlide(true);
                                     }
                                 }
                             }
@@ -139,7 +139,7 @@ public class PresentationPanel extends AbstractPanel {
 
                     @Override
                     public void changed(ObservableValue<? extends String> ov, String t, String t1) {
-                        int newTime = 10;
+                        int newTime;
                         try {
                             newTime = Integer.parseInt(t1);
                         }
@@ -155,7 +155,7 @@ public class PresentationPanel extends AbstractPanel {
                                                 if(containerPanel instanceof LivePanel) {
                                                     LivePanel livePanel = ((LivePanel) containerPanel);
                                                     if(livePanel.isLoopSelected()) {
-                                                        presentationPreview.advanceSlide();
+                                                        presentationPreview.advanceSlide(true);
                                                     }
                                                 }
                                             }
@@ -281,7 +281,7 @@ public class PresentationPanel extends AbstractPanel {
     }
 
     public void advance() {
-        presentationPreview.advanceSlide();
+        presentationPreview.advanceSlide(false);
     }
     
     public void previous() {

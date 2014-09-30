@@ -146,9 +146,15 @@ public class PresentationPreview extends ScrollPane {
     /**
      * Advances the current slide.
      * <p/>
+     * @param loopback true if the presentation should loop to the beginning if
+     * at the last slide.
      */
-    public void advanceSlide() {
-        if (selectedIndex > 0 && selectedIndex <= slides.length - 1) {
+    public void advanceSlide(boolean loopback) {
+        if (loopback) {
+            if (selectedIndex > 0) {
+                select(((selectedIndex) % slides.length) + 1);
+            }
+        } else if (!loopback && selectedIndex > 0 && selectedIndex <= slides.length - 1) {
             select(selectedIndex + 1);
         }
     }
