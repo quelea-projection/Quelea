@@ -47,16 +47,15 @@ import org.quelea.windows.main.StatusPanel;
  */
 public class KingswayWorshipParser implements SongParser {
 
-    private static final int CONSECUTIVE_ERROR_THRESHOLD = 50;
+    private static final int CONSECUTIVE_ERROR_THRESHOLD = 20;
     private static final Logger LOGGER = LoggerUtils.getLogger();
-    private static final String USA = "http://www.weareworship.com/us/songs/song-library/showsong/";
     private static final String UK = "http://www.weareworship.com/uk/songs/song-library/showsong/";
 
     /**
      * Rough number of songs in the library at present. This is used to update
      * the progress bar.
      */
-    private static final int ROUGH_NUM_SONGS = 3600;
+    private static final int ROUGH_NUM_SONGS = 3620;
     private int errorCount = 0;
     private boolean all;
 
@@ -92,7 +91,7 @@ public class KingswayWorshipParser implements SongParser {
                     }
                 });
             }
-            while ((pageText = getPageText(USA, i)) != null) {
+            while ((pageText = getPageText(UK, i)) != null) {
                 int percentage = (int) (((double) i / (double) ROUGH_NUM_SONGS) * 100);
                 LOGGER.log(Level.INFO, "Kingsway import percent complete: {0}", percentage);
                 if (statusPanel != null) {
@@ -154,7 +153,7 @@ public class KingswayWorshipParser implements SongParser {
      */
     public List<SongDisplayable> getSong(int songID) {
         SongDisplayable song;
-        String html = getPageText(USA, songID);
+        String html = getPageText(UK, songID);
         try {
             if (html == null || html.equals("")) {
                 return null;
@@ -216,16 +215,7 @@ public class KingswayWorshipParser implements SongParser {
      */
     private SongDisplayable parseSong(String html, int num) {
         try {
-            if (html == null || html.contains("<h1>Sorry...</h1>")) {
-                html = getPageText(UK, num);
-                if (html == null || html.contains("<h1>Sorry...</h1>")) {
-                    return null;
-                }
-            }
-            if (html.contains("Server error")) {
-                return null;
-            }
-            if (html.trim().isEmpty()) {
+            if (html == null || html.contains("<h1>Sorry...</h1>") || html.contains("Server error") || html.trim().isEmpty()) {
                 return null;
             }
             int startIndex = html.indexOf("<h1>");
@@ -271,10 +261,15 @@ public class KingswayWorshipParser implements SongParser {
             songHtml = songHtml.replace(author, "");
             songHtml = songHtml.trim();
 
-            System.out.println(songHtml);
-            String copyright = songHtml.substring(songHtml.indexOf("Copyright"), songHtml.indexOf("CCLI")).trim();
-            String ccli = songHtml.substring(songHtml.indexOf("CCLI")).trim().substring(13);
-            System.out.println("CCLI" + ccli);
+            String copyright = "";
+            String ccli = "";
+            try {
+                copyright = songHtml.substring(songHtml.indexOf("Copyright"), songHtml.indexOf("CCLI")).trim();
+                ccli = songHtml.substring(songHtml.indexOf("CCLI")).trim().substring(13);
+            } catch(StringIndexOutOfBoundsException e) {
+                //Don't print all that crap in the terminal
+            }
+            
             songHtml = songHtml.replace(copyright, "");
             songHtml = songHtml.replace(ccli, "");
 
