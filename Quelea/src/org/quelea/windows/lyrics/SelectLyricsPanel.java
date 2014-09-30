@@ -86,7 +86,7 @@ public class SelectLyricsPanel extends AbstractPanel {
                 updateCanvas();
             }
         });
-        lyricsList.addEventHandler(KeyEvent.KEY_PRESSED, new EventHandler<KeyEvent>() {
+        lyricsList.addEventFilter(KeyEvent.KEY_PRESSED, new EventHandler<KeyEvent>() {
             @Override
             public void handle(KeyEvent t) {
                 if(t.getCode().equals(KeyCode.PAGE_DOWN)) {
