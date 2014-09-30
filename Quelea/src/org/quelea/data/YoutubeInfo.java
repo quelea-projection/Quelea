@@ -124,6 +124,9 @@ public class YoutubeInfo {
 
     private String getParam(String paramName) {
         initParams();
+        if(params==null) {
+            return null;
+        }
         for (NameValuePair param : params) {
             if (param.getName().equals(paramName)) {
                 return param.getValue();
