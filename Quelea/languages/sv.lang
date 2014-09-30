@@ -486,6 +486,6 @@ shadow.spread.label=Skuggspridning
 pdf.button=PDF
 shadow.color.label=Skuggfärg
 use.shadow.label=Använd skuggor?
-shadow.offset.label=Skuggvinkel
+shadow.offset.label=Skuggavstånd
 exporting.label=Exporterar
 print.chords.export.question=Inkludera ackorden när sångerna exporteras?
