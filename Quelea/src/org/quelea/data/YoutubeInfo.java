@@ -44,6 +44,7 @@ public class YoutubeInfo {
     private final String urlStr;
     private final String vidId;
     private List<NameValuePair> params;
+    private boolean initParams;
     private WritableImage preview;
     private String scrapedTitle;
     private Logger LOGGER = LoggerUtils.getLogger();
@@ -51,17 +52,23 @@ public class YoutubeInfo {
     public YoutubeInfo(String url) {
         this.urlStr = url;
         int startInx = urlStr.indexOf("v=") + 2;
-        vidId = urlStr.substring(startInx, startInx + 11);
+        if (urlStr.contains("v=") && urlStr.length() >= startInx + 11) {
+            vidId = urlStr.substring(startInx, startInx + 11);
+        }
+        else {
+            vidId = null;
+        }
     }
 
     public String getLocation() {
         return urlStr;
     }
-    
-    private void initParams() {
-        if (params != null) {
+
+    public void initParams() {
+        if (initParams||vidId==null) {
             return;
         }
+        initParams = true;
         try {
             String detailsStr = "https://youtube.com/get_video_info?video_id=" + vidId;
             URL url = new URL(detailsStr);
@@ -84,6 +91,9 @@ public class YoutubeInfo {
     private String getScrapedTitle() {
         if (scrapedTitle != null) {
             return scrapedTitle;
+        }
+        if(vidId==null) {
+            return null;
         }
         try {
             URL scrapeurl = new URL("https://www.youtube.com/watch?v=" + vidId);
@@ -112,7 +122,6 @@ public class YoutubeInfo {
      * @return the title of the Youtube video
      */
     public String getTitle() {
-        getPreviewImage();
         String title = getParam("title");
         if (title != null && !title.isEmpty()) {
             return title;
@@ -123,8 +132,7 @@ public class YoutubeInfo {
     }
 
     private String getParam(String paramName) {
-        initParams();
-        if(params==null) {
+        if (params == null) {
             return null;
         }
         for (NameValuePair param : params) {
@@ -136,6 +144,9 @@ public class YoutubeInfo {
     }
 
     public Image getPreviewImage() {
+        if (vidId == null) {
+            return null;
+        }
         try {
             if (preview == null) {
                 URL imgURL = new URL("http://img.youtube.com/vi/" + vidId + "/0.jpg");
