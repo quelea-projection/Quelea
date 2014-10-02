@@ -19,10 +19,10 @@
 package org.quelea.windows.main.widgets;
 
 import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -81,17 +81,16 @@ public class YoutubeDialog extends Stage {
                 if (previewFuture != null) {
                     previewFuture.cancel(true);
                 }
+                String t2 = t1;
+                if (t1.toLowerCase().startsWith("https")) {
+                    t2 = t1.replaceFirst("https", "http");
+                }
+                curInfo = new YoutubeInfo(t2);
                 previewFuture = previewExecutor.submit(new Callable<YoutubeInfo>() {
 
                     @Override
                     public YoutubeInfo call() throws Exception {
-                        String t2 = t1;
-                        if (t1.toLowerCase().startsWith("https")) {
-                            t2 = t1.replaceFirst("https", "http");
-                        }
-                        curInfo = new YoutubeInfo(t2);
-                        curInfo.getTitle();
-                        curInfo.getPreviewImage();
+                        curInfo.initParams();
                         Platform.runLater(new Runnable() {
 
                             @Override
@@ -167,13 +166,18 @@ public class YoutubeDialog extends Stage {
         urlField.clear();
         showAndWait();
         try {
-            if (previewFuture != null) {
-                previewFuture.get();
-            }
-        } catch (InterruptedException | ExecutionException ex) {
-            //Never mind
+            previewFuture.get(3, TimeUnit.SECONDS);
+        } catch (Exception ex) {
+            //Never mind, timeout
         }
-        return curInfo;
+        if(urlField.getText().trim().isEmpty()) {
+            return null;
+        }
+        if (curInfo == null) {
+            return new YoutubeInfo(urlField.getText());
+        } else {
+            return curInfo;
+        }
     }
 
 }
