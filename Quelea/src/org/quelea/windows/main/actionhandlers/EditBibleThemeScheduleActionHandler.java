@@ -58,7 +58,6 @@ public class EditBibleThemeScheduleActionHandler implements EventHandler<ActionE
         Button cancelButton = new Button(LabelGrabber.INSTANCE.getLabel("cancel.button"), new ImageView(new Image("file:icons/cross.png")));
         final Stage s = new Stage();
         s.initModality(Modality.APPLICATION_MODAL);
-        s.initStyle(StageStyle.UTILITY);
         
         final BorderPane bp = new BorderPane();
         final ThemePanel tp = new ThemePanel(wordsArea, confirmButton);
