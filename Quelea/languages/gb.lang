@@ -488,3 +488,4 @@ shadow.color.label=Shadow Colour
 shadow.offset.label=Shadow Offset
 shadow.radius.label=Shadow Radius
 shadow.spread.label=Shadow Spread
+help.menu.manual=Manual
