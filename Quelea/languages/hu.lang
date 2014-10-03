@@ -488,3 +488,4 @@ export.schedule.songs.pdf.button=Dalok exportálása PDF-be
 user.options.options=Felhasználói beállítások
 exporting.label=Exportálás
 print.chords.export.question=Tartalmazzák ezek a dalok az akkordokat exportálás során?
+help.menu.manual=Kézikönyv
