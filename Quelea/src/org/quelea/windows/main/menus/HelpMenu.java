@@ -45,6 +45,7 @@ import org.quelea.windows.help.AboutDialog;
 public class HelpMenu extends Menu {
 
     private static final Logger LOGGER = LoggerUtils.getLogger();
+    private final MenuItem queleaManual;
     private final MenuItem queleaFacebook;
     private final MenuItem queleaDiscuss;
     private final MenuItem updateCheck;
@@ -65,6 +66,20 @@ public class HelpMenu extends Menu {
         });
 
         if(Desktop.isDesktopSupported()) {
+            queleaManual = new MenuItem(LabelGrabber.INSTANCE.getLabel("help.menu.manual"), new ImageView(new Image("file:icons/manual.png", 16, 16, false, true)));
+            queleaManual.setOnAction(new EventHandler<javafx.event.ActionEvent>() {
+                @Override
+                public void handle(javafx.event.ActionEvent t) {
+                    try {
+                        Desktop.getDesktop().browse(new URI("http://quelea.org/manuals/get.php?lang="+QueleaProperties.get().getLanguageFile().getName()));
+                    }
+                    catch(URISyntaxException | IOException ex) {
+                        LOGGER.log(Level.WARNING, "Couldn't open Quelea manual page", ex);
+                        showError();
+                    }
+                }
+            });
+            getItems().add(queleaManual);
             queleaFacebook = new MenuItem(LabelGrabber.INSTANCE.getLabel("help.menu.facebook"), new ImageView(new Image("file:icons/facebook.png", 16, 16, false, true)));
             queleaFacebook.setOnAction(new EventHandler<javafx.event.ActionEvent>() {
                 @Override
@@ -97,6 +112,7 @@ public class HelpMenu extends Menu {
         else {
             queleaDiscuss = null;
             queleaFacebook = null;
+            queleaManual = null;
         }
         updateCheck = new MenuItem(LabelGrabber.INSTANCE.getLabel("help.menu.update"), new ImageView(new Image("file:icons/update.png", 16, 16, false, true)));
         updateCheck.setOnAction(new EventHandler<javafx.event.ActionEvent>() {
