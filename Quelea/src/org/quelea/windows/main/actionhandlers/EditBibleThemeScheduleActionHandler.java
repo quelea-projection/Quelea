@@ -28,7 +28,9 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
+import javafx.stage.StageStyle;
 import org.quelea.data.displayable.BiblePassage;
 import org.quelea.data.displayable.TextSection;
 import org.quelea.services.languages.LabelGrabber;
@@ -55,8 +57,11 @@ public class EditBibleThemeScheduleActionHandler implements EventHandler<ActionE
         Button confirmButton = new Button(LabelGrabber.INSTANCE.getLabel("ok.button"), new ImageView(new Image("file:icons/tick.png")));
         Button cancelButton = new Button(LabelGrabber.INSTANCE.getLabel("cancel.button"), new ImageView(new Image("file:icons/cross.png")));
         final Stage s = new Stage();
+        s.initModality(Modality.APPLICATION_MODAL);
+        s.initStyle(StageStyle.UTILITY);
+        
         final BorderPane bp = new BorderPane();
-        final ThemePanel tp = new ThemePanel(wordsArea, null);
+        final ThemePanel tp = new ThemePanel(wordsArea, confirmButton);
         tp.setTheme(selected.getTheme());
         confirmButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override
