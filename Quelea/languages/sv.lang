@@ -489,3 +489,4 @@ use.shadow.label=Använd skuggor?
 shadow.offset.label=Skuggavstånd
 exporting.label=Exporterar
 print.chords.export.question=Inkludera ackorden när sångerna exporteras?
+help.menu.manual=Manual
