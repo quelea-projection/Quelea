@@ -1,5 +1,5 @@
 #THIS IS AN AUTO GENERATED FILE, AND WILL BE OVERWRITTEN EACH TIME QUELEA IS REBUILT. DO NOT EDIT MANUALLY!
-#Tue Sep 30 08:40:43 BST 2014
+#Fri Oct 03 23:38:54 BST 2014
 email.error.text=There was an error opening your email client. Make sure you have an email client installed and registered to handle eml files, otherwise you'll have to send the email manually.
 ccli.number.label=CCLI number
 easyworship.button=EasyWorship
@@ -14,6 +14,7 @@ title.label=Title
 error.checking.updates.title=Couldn't check for updates
 open.existing.schedule.text=Open an existing schedule
 tags.colon.label=Tags\:
+help.menu.manual=Manual
 filefilters.description.zip.files=Zip Files
 source.import.line1=Select the location of the ymns directory on the source CD.
 filefilters.description.songs.mb=Easyworship Songs.MB database
@@ -283,10 +284,10 @@ spelling.errors.in.doc.label=There are spelling errors in the document. Hit "F7"
 help.about.line2=It is, and always will be, free and open source software.
 help.about.line1=Quelea is licensed under the GPL (Version 3.)
 stretch.video.label=Stretch Video
+move.down.schedule.tooltip=Move down in schedule
 key.label=Key
 no.dvd.heading=No disc found
 display.options.text=Display the options dialog
-move.down.schedule.tooltip=Move down in schedule
 adding.presentation.error.title=Error importing presentation
 filefilters.description.pdf.files=PDF Files
 not.started.label=Not started
