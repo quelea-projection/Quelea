@@ -488,3 +488,4 @@ export.schedule.songs.pdf.button=Vyvést písně do PDF
 user.options.options=Uživatelské volby
 exporting.label=Vyvádí se
 print.chords.export.question=Zahrnout při vyvádění těchto písní akordy?
+help.menu.manual=Příručka
