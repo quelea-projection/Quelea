@@ -12,6 +12,7 @@ quelea (2014.1) stable; urgency=normal
   * Improved text wrapping algorithm for bible text
   * Added option for displaying verse numbers in bible text
   * Added Hungarian translation
+  * Added Norwegian translation
   * Added additional options for specifying the notice colour, speed, font, size and position
   * Added VLCARG file support - ability to create video "files" that pass arguments directly to VLC
   * Added ability to stretch videos
