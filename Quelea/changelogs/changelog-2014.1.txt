@@ -16,6 +16,7 @@ quelea (2014.1) stable; urgency=normal
   * Added VLCARG file support - ability to create video "files" that pass arguments directly to VLC
   * Added ability to stretch videos
   * Added more shadow options
+  * Added manual entry to help menu
   * Bugfix - italic font property now saved when selecting an image or video background
   * Bugfix - no longer possible to add empty bible passages
   * Bugfix - quick edit cursor doesn't show on bible passages anymore
@@ -26,4 +27,4 @@ quelea (2014.1) stable; urgency=normal
   * Bugfix - Cancelling the confirm exit dialog by pressing "x" no longer exits Quelea without saving
   * Various other minor bug fixes
 
- -- Michael Berry <michael@quelea.org>  Wednesday, 29 Sep 2014 00:00:00 +0000
+ -- Michael Berry <michael@quelea.org>  Wednesday, 04 Oct 2014 00:00:00 +0000
