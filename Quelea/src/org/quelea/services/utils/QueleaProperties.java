@@ -40,7 +40,7 @@ import org.quelea.services.languages.spelling.DictionaryManager;
  */
 public final class QueleaProperties extends Properties {
 
-    public static final Version VERSION = new Version("2014.1", "beta");
+    public static final Version VERSION = new Version("2014.1", "");
     private static final QueleaProperties INSTANCE = new QueleaProperties();
 //    private static final Logger LOGGER = LoggerUtils.getLogger();
 
