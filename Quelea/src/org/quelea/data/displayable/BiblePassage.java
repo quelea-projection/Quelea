@@ -189,6 +189,7 @@ public class BiblePassage implements TextDisplayable, Serializable {
      * <p/>
      * @return assigned theme
      */
+    @Override
     public ThemeDTO getTheme() {
         return this.theme;
     }
@@ -198,6 +199,7 @@ public class BiblePassage implements TextDisplayable, Serializable {
      * <p/>
      * @param theme new theme
      */
+    @Override
     public void setTheme(ThemeDTO theme) {
         this.theme = theme;
         for (TextSection ts : getSections()) {
@@ -309,5 +311,8 @@ public class BiblePassage implements TextDisplayable, Serializable {
     public void updateBibleLines() {
         textSections.clear();
         fillTextSections();
+        for (TextSection ts : getSections()) {
+            ts.setTheme(theme);
+        }
     }
 }
