@@ -488,3 +488,4 @@ export.schedule.songs.pdf.button=Lieder als PDF exportieren
 user.options.options=Benutzeroptionen
 exporting.label=Exportieren
 print.chords.export.question=Akkorde beim Export miteinbeziehen?
+help.menu.manual=Anleitung
