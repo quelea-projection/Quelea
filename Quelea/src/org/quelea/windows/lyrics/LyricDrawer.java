@@ -364,9 +364,6 @@ public class LyricDrawer extends DisplayableDrawer {
             LOGGER.log(Level.SEVERE, "Bug: Unhandled theme background case, trying to use default background: " + theme.getBackground(), new RuntimeException("DEBUG EXCEPTION FOR STACK TRACE"));
             image = Utils.getImageFromColour(ThemeDTO.DEFAULT_BACKGROUND.getColour());
         }
-        FadeTransition fadeOut = new FadeTransition(Duration.seconds(0.3), getCanvas().getCanvasBackground());
-        fadeOut.setFromValue(1);
-        fadeOut.setToValue(0);
 
         Node newBackground;
         if (image == null) {
@@ -403,17 +400,9 @@ public class LyricDrawer extends DisplayableDrawer {
             getCanvas().getChildren().add(newImageView);
             newBackground = newImageView;
         }
-        final Node oldBackground = getCanvas().getCanvasBackground();
-
-        fadeOut.setOnFinished(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent t) {
-                getCanvas().getChildren().remove(oldBackground);
-            }
-        });
+        getCanvas().getChildren().remove(getCanvas().getCanvasBackground());
         getCanvas().setOpacity(1);
         getCanvas().setCanvasBackground(newBackground);
-        fadeOut.play();
     }
 
     /**
