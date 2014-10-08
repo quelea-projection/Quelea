@@ -112,9 +112,9 @@ public class ScheduleList extends StackPane {
                             setText(item.getPreviewText());
                         }
                         if (item instanceof SongDisplayable) {
-                            setContextMenu(SchedulePopupMenu.getSongPopup());
+                            setContextMenu(new ScheduleSongPopupMenu());
                         } else if (item instanceof BiblePassage) {
-                            setContextMenu(SchedulePopupMenu.getBiblePopup());
+                            setContextMenu(new ScheduleBiblePopupMenu());
                         }
                     }
                 };

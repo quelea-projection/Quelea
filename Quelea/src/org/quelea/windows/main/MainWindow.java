@@ -40,7 +40,7 @@ import org.quelea.windows.main.actionhandlers.EditSongScheduleActionHandler;
 import org.quelea.windows.main.actionhandlers.ExitActionHandler;
 import org.quelea.windows.main.actionhandlers.SelectTranslationsActionHandler;
 import org.quelea.windows.main.menus.MainMenuBar;
-import org.quelea.windows.main.schedule.SchedulePopupMenu;
+import org.quelea.windows.main.schedule.ScheduleSongPopupMenu;
 import org.quelea.windows.main.toolbars.MainToolbar;
 import org.quelea.windows.newsong.SongEntryWindow;
 import org.quelea.windows.options.OptionsDialog;
@@ -103,9 +103,6 @@ public class MainWindow extends Stage {
         mainpanel = new MainPanel();
         songEntryWindow = new SongEntryWindow();
         translationChoiceDialog = new TranslationChoiceDialog();
-        SchedulePopupMenu.getEditSongButton().setOnAction(new EditSongScheduleActionHandler());
-        SchedulePopupMenu.getEditBibleButton().setOnAction(new EditBibleThemeScheduleActionHandler());
-        SchedulePopupMenu.getTranslationChoice().setOnAction(new SelectTranslationsActionHandler());
 
         menuBar = new MainMenuBar();
 
