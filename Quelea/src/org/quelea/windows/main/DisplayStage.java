@@ -69,6 +69,7 @@ public class DisplayStage extends Stage {
         setTitle(LabelGrabber.INSTANCE.getLabel("projection.window.title"));
         setArea(area);
         StackPane scenePane = new StackPane();
+        scenePane.setStyle("-fx-background-color: transparent;");
         canvas = new DisplayCanvas(true, stageView, playVideo, null, stageView ? Priority.HIGH : Priority.MID);
         canvas.setType(stageView ? DisplayCanvas.Type.STAGE : DisplayCanvas.Type.FULLSCREEN);
         canvas.setCursor(BLANK_CURSOR);
