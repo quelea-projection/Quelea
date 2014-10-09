@@ -28,7 +28,6 @@ import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import org.quelea.data.bible.BibleBrowseDialog;
 import org.quelea.data.bible.BibleSearchDialog;
-import org.quelea.data.tags.TagDialog;
 import org.quelea.services.notice.NoticeDialog;
 import org.quelea.services.utils.LoggerUtils;
 import org.quelea.services.utils.QueleaProperties;
@@ -59,7 +58,6 @@ public class MainWindow extends Stage {
     private NoticeDialog noticeDialog;
     private final MainMenuBar menuBar;
     private final MainToolbar mainToolbar;
-    private final TagDialog tagDialog;
     private OptionsDialog optionsDialog;
     private final BibleSearchDialog bibleSearchDialog;
     private final BibleBrowseDialog bibleBrowseDialog;
@@ -88,9 +86,6 @@ public class MainWindow extends Stage {
                 new ExitActionHandler().exit(t);
             }
         });
-
-        LOGGER.log(Level.INFO, "Creating tag dialog");
-        tagDialog = new TagDialog();
 
         LOGGER.log(Level.INFO, "Creating options dialog");
         optionsDialog = new OptionsDialog();
@@ -149,15 +144,6 @@ public class MainWindow extends Stage {
      */
     public NoticeDialog getNoticeDialog() {
         return noticeDialog;
-    }
-
-    /**
-     * Get the tag dialog on this main window.
-     * <p/>
-     * @return the tag dialog.
-     */
-    public TagDialog getTagDialog() {
-        return tagDialog;
     }
 
     /**
