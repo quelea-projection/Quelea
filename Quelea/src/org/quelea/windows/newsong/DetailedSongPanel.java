@@ -24,7 +24,6 @@ import javafx.scene.control.TextField;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import org.quelea.data.displayable.SongDisplayable;
-import org.quelea.data.tags.TagEntryPanel;
 import org.quelea.services.languages.LabelGrabber;
 import org.quelea.windows.main.widgets.IntegerTextField;
 

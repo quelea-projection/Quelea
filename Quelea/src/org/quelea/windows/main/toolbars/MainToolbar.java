@@ -38,7 +38,6 @@ import org.quelea.windows.main.actionhandlers.PrintScheduleActionHandler;
 import org.quelea.windows.main.actionhandlers.QuickInsertActionHandler;
 import org.quelea.windows.main.actionhandlers.SaveScheduleActionHandler;
 import org.quelea.windows.main.actionhandlers.ShowNoticesActionHandler;
-import org.quelea.windows.main.actionhandlers.ViewTagsActionHandler;
 
 /**
  * Quelea's main toolbar.
@@ -58,7 +57,6 @@ public class MainToolbar extends ToolBar {
     private final Button addDVDButton;
     private final Button addVideoButton;
     private final Button manageNoticesButton;
-    private final Button manageTagsButton;
     private final ImageView loadingView;
     private final StackPane dvdImageStack;
 
@@ -134,12 +132,6 @@ public class MainToolbar extends ToolBar {
         getItems().add(addDVDButton);
 
         getItems().add(new Separator());
-
-        manageTagsButton = new Button("", new ImageView(new Image("file:icons/tag.png", 24, 24, false, true)));
-        Utils.setToolbarButtonStyle(manageTagsButton);
-        manageTagsButton.setTooltip(new Tooltip(LabelGrabber.INSTANCE.getLabel("manage.tags.tooltip")));
-        manageTagsButton.setOnAction(new ViewTagsActionHandler());
-//        getItems().add(manageTagsButton);
 
         manageNoticesButton = new Button("", new ImageView(new Image("file:icons/info.png", 24, 24, false, true)));
         Utils.setToolbarButtonStyle(manageNoticesButton);
