@@ -64,9 +64,7 @@ public class DisplayStage extends Stage {
      */
     public DisplayStage(Bounds area, boolean stageView) {
         final boolean playVideo = !stageView;
-        if (!stageView) {
-            initStyle(StageStyle.TRANSPARENT);
-        }
+        initStyle(StageStyle.TRANSPARENT);
         Utils.addIconsToStage(this);
         setTitle(LabelGrabber.INSTANCE.getLabel("projection.window.title"));
         setArea(area);
@@ -103,7 +101,9 @@ public class DisplayStage extends Stage {
         testImage.setVisible(false);
         testImage.toFront();
         Scene scene = new Scene(scenePane);
-        scene.setFill(null);
+        if (!stageView) {
+            scene.setFill(null);
+        }
         setScene(scene);
         if (playVideo) {
             addVLCListeners();
