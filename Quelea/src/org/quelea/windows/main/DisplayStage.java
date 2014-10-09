@@ -64,7 +64,9 @@ public class DisplayStage extends Stage {
      */
     public DisplayStage(Bounds area, boolean stageView) {
         final boolean playVideo = !stageView;
-        initStyle(StageStyle.TRANSPARENT);
+        if (!stageView) {
+            initStyle(StageStyle.TRANSPARENT);
+        }
         Utils.addIconsToStage(this);
         setTitle(LabelGrabber.INSTANCE.getLabel("projection.window.title"));
         setArea(area);
@@ -74,14 +76,14 @@ public class DisplayStage extends Stage {
         canvas.setType(stageView ? DisplayCanvas.Type.STAGE : DisplayCanvas.Type.FULLSCREEN);
         canvas.setCursor(BLANK_CURSOR);
         scenePane.getChildren().add(canvas);
-        if(stageView) {
+        if (stageView) {
             final Clock clock = new Clock();
             ChangeListener<Number> cl = new ChangeListener<Number>() {
 
                 @Override
                 public void changed(ObservableValue<? extends Number> ov, Number t, Number t1) {
                     double size = getWidth();
-                    if(getHeight() < size) {
+                    if (getHeight() < size) {
                         size = getHeight();
                     }
                     clock.setFontSize(size / 24);
@@ -103,7 +105,7 @@ public class DisplayStage extends Stage {
         Scene scene = new Scene(scenePane);
         scene.setFill(null);
         setScene(scene);
-        if(playVideo) {
+        if (playVideo) {
             addVLCListeners();
         }
     }
