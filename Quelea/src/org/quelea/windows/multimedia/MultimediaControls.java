@@ -22,6 +22,7 @@ import java.io.File;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
+import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.EventHandler;
@@ -133,7 +134,13 @@ public class MultimediaControls extends StackPane {
             @Override
             public void run() {
                 if (!disableControls && VLCWindow.INSTANCE.isPlaying() && !posSlider.isValueChanging()) {
-                    posSlider.setValue(VLCWindow.INSTANCE.getProgressPercent());
+                    Platform.runLater(new Runnable() {
+
+                        @Override
+                        public void run() {
+                            posSlider.setValue(VLCWindow.INSTANCE.getProgressPercent());
+                        }
+                    });
                 }
             }
         }, 0, SLIDER_UPDATE_RATE, TimeUnit.MILLISECONDS);
