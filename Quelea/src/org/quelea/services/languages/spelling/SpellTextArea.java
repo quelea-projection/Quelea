@@ -26,17 +26,18 @@ import javafx.beans.value.ObservableValue;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
-import javafx.scene.control.TextArea;
 import javafx.scene.control.Tooltip;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.StackPane;
 import javafx.util.Duration;
+import org.fxmisc.richtext.StyleClassedTextArea;
 import org.quelea.services.languages.LabelGrabber;
 import org.quelea.services.utils.LineTypeChecker;
 import org.quelea.services.utils.LineTypeChecker.Type;
 import org.quelea.services.utils.QueleaProperties;
+import org.quelea.windows.lyrics.LyricsTextArea;
 
 /**
  * The spell text area component - wraps a text area to provide spell check
@@ -49,7 +50,7 @@ public class SpellTextArea extends StackPane {
     private static final int CHECK_FREQ = 1000;
     private static final double WARNING_OPACITY = 0.5;
     private SpellingDialog dialog;
-    private TextArea area;
+    private LyricsTextArea area;
     private KeyCode runSpellKey;
     private Speller speller;
     private ImageView warning;
@@ -62,7 +63,7 @@ public class SpellTextArea extends StackPane {
     public SpellTextArea() {
         runSpellKey = KeyCode.F7;
         speller = new Speller(QueleaProperties.get().getDictionary());
-        area = new TextArea();
+        area = new LyricsTextArea();
         spellingOkProperty = new SimpleBooleanProperty(speller.checkText(area.getText(), true));
         getChildren().add(area);
         warning = new ImageView("file:icons/warning.png");
@@ -155,7 +156,7 @@ public class SpellTextArea extends StackPane {
      * <p/>
      * @return the text area object.
      */
-    public TextArea getArea() {
+    public LyricsTextArea getArea() {
         return area;
     }
 
