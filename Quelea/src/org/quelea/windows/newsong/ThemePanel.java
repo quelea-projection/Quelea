@@ -22,11 +22,11 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
-import javafx.scene.control.TextArea;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
+import org.fxmisc.richtext.InlineCssTextArea;
 import org.javafx.dialog.Dialog;
 import org.quelea.data.ColourBackground;
 import org.quelea.data.ThemeDTO;
@@ -69,7 +69,7 @@ public class ThemePanel extends BorderPane {
      * @param wordsArea the text area to use for words. If null, sample lyrics
      * will be used.
      */
-    public ThemePanel(TextArea wordsArea, Button confirmButton) {
+    public ThemePanel(InlineCssTextArea wordsArea, Button confirmButton) {
         this.confirmButton = confirmButton;
         positionSelector = new DisplayPositionSelector(this);
         positionSelector.prefWidthProperty().bind(widthProperty());
