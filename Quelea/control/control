@@ -1,5 +1,5 @@
 Package: quelea
-Version: 2014.1
+Version: 2015.0
 Section: misc
 Priority: optional
 Depends: oracle-java8-installer | openjdk-8-jre
