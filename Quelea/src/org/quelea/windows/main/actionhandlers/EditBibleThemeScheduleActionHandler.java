@@ -23,14 +23,13 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
-import javafx.scene.control.TextArea;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
-import javafx.stage.StageStyle;
+import org.fxmisc.richtext.InlineCssTextArea;
 import org.quelea.data.displayable.BiblePassage;
 import org.quelea.data.displayable.TextSection;
 import org.quelea.services.languages.LabelGrabber;
@@ -52,8 +51,8 @@ public class EditBibleThemeScheduleActionHandler implements EventHandler<ActionE
     @Override
     public void handle(ActionEvent t) {
         final BiblePassage selected = (BiblePassage) QueleaApp.get().getMainWindow().getMainPanel().getSchedulePanel().getScheduleList().getSelectionModel().getSelectedItem();
-        TextArea wordsArea = new TextArea();
-        wordsArea.setText(selected.getSections()[0].toString());
+        InlineCssTextArea wordsArea = new InlineCssTextArea();
+        wordsArea.replaceText(selected.getSections()[0].toString());
         Button confirmButton = new Button(LabelGrabber.INSTANCE.getLabel("ok.button"), new ImageView(new Image("file:icons/tick.png")));
         Button cancelButton = new Button(LabelGrabber.INSTANCE.getLabel("cancel.button"), new ImageView(new Image("file:icons/cross.png")));
         final Stage s = new Stage();

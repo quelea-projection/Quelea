@@ -35,7 +35,6 @@ import javafx.scene.control.Button;
 import javafx.scene.control.SplitPane;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
-import javafx.scene.control.TextArea;
 import javafx.scene.control.Tooltip;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -43,12 +42,12 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
+import org.fxmisc.richtext.StyleClassedTextArea;
 import org.javafx.dialog.Dialog;
 import org.quelea.data.displayable.SongDisplayable;
 import org.quelea.services.languages.LabelGrabber;
 import org.quelea.services.utils.LanguageNameMap;
 import org.quelea.services.utils.LineTypeChecker;
-import org.quelea.services.utils.LineTypeChecker.Type;
 import org.quelea.services.utils.LoggerUtils;
 import org.quelea.services.utils.QueleaProperties;
 import org.quelea.services.utils.Utils;
@@ -64,7 +63,7 @@ public class TranslatePanel extends BorderPane {
     private static final Logger LOGGER = LoggerUtils.getLogger();
     private final SplitPane splitPane;
     private final TabPane tabPane;
-    private final TextArea defaultLyricsArea;
+    private final LyricsTextArea defaultLyricsArea;
     private final Button addTranslationButton;
 
     /**
@@ -72,7 +71,7 @@ public class TranslatePanel extends BorderPane {
      */
     public TranslatePanel() {
         splitPane = new SplitPane();
-        defaultLyricsArea = new TextArea();
+        defaultLyricsArea = new LyricsTextArea();
         StackPane translationPane = new StackPane();
         tabPane = new TabPane();
         translationPane.getChildren().add(tabPane);
@@ -168,7 +167,7 @@ public class TranslatePanel extends BorderPane {
      * Get the text area where the deafult lyrics are displayed.
      * @return the text area where the deafult lyrics are displayed.
      */
-    public TextArea getDefaultLyricsArea() {
+    public LyricsTextArea getDefaultLyricsArea() {
         return defaultLyricsArea;
     }
     

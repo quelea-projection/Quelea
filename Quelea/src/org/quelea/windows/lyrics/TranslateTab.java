@@ -28,7 +28,7 @@ import javafx.scene.control.TextArea;
 public class TranslateTab extends Tab {
 
     private final String name;
-    private final TextArea lyricsArea;
+    private final LyricsTextArea lyricsArea;
 
     /**
      * Create a new translate tab.
@@ -39,8 +39,8 @@ public class TranslateTab extends Tab {
         super(name);
         this.name = name;
         setClosable(true);
-        lyricsArea = new TextArea();
-        lyricsArea.setText(lyrics);
+        lyricsArea = new LyricsTextArea();
+        lyricsArea.replaceText(lyrics);
         setContent(lyricsArea);
     }
 
@@ -65,6 +65,6 @@ public class TranslateTab extends Tab {
      * @param lyrics the lyrics to set on the lyrics area.
      */
     public void setLyrics(String lyrics) {
-        lyricsArea.setText(lyrics);
+        lyricsArea.replaceText(lyrics);
     }
 }
