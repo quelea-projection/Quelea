@@ -66,6 +66,7 @@ public class SongEntryWindow extends Stage {
     private final Button cancelButton;
     private final CheckBox addToSchedCBox;
     private SongDisplayable song;
+    private boolean disableTextAreaListeners;
 
     /**
      * Create and initialise the new song window.
@@ -99,7 +100,28 @@ public class SongEntryWindow extends Stage {
         translateTab.setClosable(false);
         tabPane.getTabs().add(translateTab);
 
-        basicSongPanel.getLyricsField().textProperty().bindBidirectional(translatePanel.getDefaultLyricsArea().textProperty()); //Link text areas on translation and basic panel.
+        basicSongPanel.getLyricsField().textProperty().addListener(new ChangeListener<String>() {
+
+            @Override
+            public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
+                if(!disableTextAreaListeners) {
+                    disableTextAreaListeners = true;
+                    translatePanel.getDefaultLyricsArea().replaceText(newValue);
+                    disableTextAreaListeners = false;
+                }
+            }
+        });
+        translatePanel.getDefaultLyricsArea().textProperty().addListener(new ChangeListener<String>() {
+
+            @Override
+            public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
+                if(!disableTextAreaListeners) {
+                    disableTextAreaListeners = true;
+                    basicSongPanel.getLyricsField().replaceText(newValue);
+                    disableTextAreaListeners = false;
+                }
+            }
+        });
 
         setupThemePanel();
         Tab themeTab = new Tab(LabelGrabber.INSTANCE.getLabel("theme.heading"));

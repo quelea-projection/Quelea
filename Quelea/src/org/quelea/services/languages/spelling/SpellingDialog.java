@@ -107,7 +107,7 @@ public class SpellingDialog {
                     }
                     replaceText.append(line).append("\n");
                 }
-                area.getArea().setText(replaceText.toString().trim());
+                area.getArea().replaceText(replaceText.toString().trim());
                 wordsToCorrect.remove(replaceWord);
                 nextWord();
             }
