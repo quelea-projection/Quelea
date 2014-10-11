@@ -66,7 +66,6 @@
             <fileset dir="${basedir}/themes"/>
         </copy>
         <unzip src="bundlejre/winjre.zip" dest="${dist.jar.dir}"/>
-        <unzip src="bundlejre/macjre.zip" dest="${dist.jar.dir}"/>
         <copy todir="${dist.jar.dir}/icons" quiet="yes">
             <fileset dir="${basedir}/icons"/>
         </copy>
@@ -121,21 +120,6 @@
             <arg value="${basedir}/changelogs/changelog-${quelea.version}.txt"/>
             <arg value="${dist.jar.dir}/queleadoc/changelog.gz"/>
         </java>
-        
-        <!--        <echo message="Building Mac package"/>
-        <mkdir dir="${dist.jar.dir}/standalone"/>
-        <bundleapp outputdirectory="${dist.jar.dir}/standalone"
-                   name="Quelea"
-                   displayname="Quelea"
-                   identifier="org.quelea.windows.main.Main"
-                   mainclassname="org.quelea.windows.main.Main">
-            <runtime dir="${dist.jar.dir}/macjre/Home" />
-            <classpath dir="${dist.jar.dir}">
-                <include name="Quelea.jar"/>
-                <include name="lib/**"/>
-            </classpath>
-        </bundleapp>-->
-        <delete dir="${dist.jar.dir}/macjre"/>
         
         <echo message="Building deb package for Ubuntu / Debian installs"/>
         <deb control="control" destfile="${dist.jar.dir}/Quelea-temp.deb" verbose="false">
