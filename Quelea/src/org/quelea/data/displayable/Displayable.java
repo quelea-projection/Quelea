@@ -18,6 +18,7 @@
 package org.quelea.data.displayable;
 
 import java.io.File;
+import java.io.Serializable;
 import java.util.Collection;
 import javafx.scene.image.ImageView;
 
@@ -26,7 +27,7 @@ import javafx.scene.image.ImageView;
  *
  * @author Michael
  */
-public interface Displayable {
+public interface Displayable extends Serializable {
 
     /**
      * Determine if this displayable can be "cleared" in some way.
