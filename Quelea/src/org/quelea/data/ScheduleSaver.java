@@ -18,6 +18,7 @@
 package org.quelea.data;
 
 import java.io.File;
+import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.stage.FileChooser;
@@ -88,7 +89,13 @@ public class ScheduleSaver {
                 if (schedule.getFile() != null) {
                     success = schedule.writeToFile();
                     if (!success) {
-                        Dialog.showError(LabelGrabber.INSTANCE.getLabel("cant.save.schedule.title"), LabelGrabber.INSTANCE.getLabel("cant.save.schedule.text"));
+                        Platform.runLater(new Runnable() {
+
+                            @Override
+                            public void run() {
+                                Dialog.showError(LabelGrabber.INSTANCE.getLabel("cant.save.schedule.title"), LabelGrabber.INSTANCE.getLabel("cant.save.schedule.text"));
+                            }
+                        });
                     }
                 }
                 if (callback != null) {
