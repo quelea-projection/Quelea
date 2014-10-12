@@ -30,29 +30,33 @@ import javafx.scene.layout.HBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import org.fxmisc.richtext.InlineCssTextArea;
-import org.quelea.data.displayable.BiblePassage;
+import org.quelea.data.displayable.Displayable;
+import org.quelea.data.displayable.SongDisplayable;
+import org.quelea.data.displayable.TextDisplayable;
 import org.quelea.data.displayable.TextSection;
 import org.quelea.services.languages.LabelGrabber;
+import org.quelea.services.utils.Utils;
 import org.quelea.windows.main.QueleaApp;
+import org.quelea.windows.main.schedule.ScheduleList;
 import org.quelea.windows.newsong.ThemePanel;
 
 /**
- * Called when the current song in the schedule should be edited.
+ * Called when the theme of the current item in the schedule should be edited.
  *
  * @author Ben
  */
-public class EditBibleThemeScheduleActionHandler implements EventHandler<ActionEvent> {
+public class EditThemeScheduleActionHandler implements EventHandler<ActionEvent> {
 
     /**
-     * Edit the currently selected song in the library.
+     * Edit the theme of the currently selected item in the schedule.
      *
      * @param t the action event.
      */
     @Override
     public void handle(ActionEvent t) {
-        final BiblePassage selected = (BiblePassage) QueleaApp.get().getMainWindow().getMainPanel().getSchedulePanel().getScheduleList().getSelectionModel().getSelectedItem();
+        final TextDisplayable firstSelected = (TextDisplayable) QueleaApp.get().getMainWindow().getMainPanel().getSchedulePanel().getScheduleList().getSelectionModel().getSelectedItem();
         InlineCssTextArea wordsArea = new InlineCssTextArea();
-        wordsArea.replaceText(selected.getSections()[0].toString());
+        wordsArea.replaceText(firstSelected.getSections()[0].toString());
         Button confirmButton = new Button(LabelGrabber.INSTANCE.getLabel("ok.button"), new ImageView(new Image("file:icons/tick.png")));
         Button cancelButton = new Button(LabelGrabber.INSTANCE.getLabel("cancel.button"), new ImageView(new Image("file:icons/cross.png")));
         final Stage s = new Stage();
@@ -62,15 +66,23 @@ public class EditBibleThemeScheduleActionHandler implements EventHandler<ActionE
         final BorderPane bp = new BorderPane();
         final ThemePanel tp = new ThemePanel(wordsArea, confirmButton);
         tp.setPrefSize(500, 500);
-        tp.setTheme(selected.getTheme());
+        tp.setTheme(firstSelected.getTheme());
         confirmButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
                 if (tp.getTheme() != null) {
-                    selected.setTheme(tp.getTheme());
+                    ScheduleList sl = QueleaApp.get().getMainWindow().getMainPanel().getSchedulePanel().getScheduleList();
                     tp.updateTheme(false);
-                    for (TextSection ts : selected.getSections()) {
-                        ts.setTheme(tp.getTheme());
+                    for (Displayable selectedDisplayable : sl.getSelectionModel().getSelectedItems()) {
+                        if (selectedDisplayable instanceof TextDisplayable) {
+                            ((TextDisplayable)selectedDisplayable).setTheme(tp.getTheme());
+                            for (TextSection ts : ((TextDisplayable)selectedDisplayable).getSections()) {
+                                ts.setTheme(tp.getTheme());
+                            }
+                            if (selectedDisplayable instanceof SongDisplayable) {
+                                Utils.updateSongInBackground((SongDisplayable) selectedDisplayable, true, false);
+                            }
+                        }
                     }
                     QueleaApp.get().getMainWindow().getMainPanel().getPreviewPanel().refresh();
                 }
@@ -96,7 +108,6 @@ public class EditBibleThemeScheduleActionHandler implements EventHandler<ActionE
         s.setMinHeight(600);
         s.setMinWidth(250);
         s.showAndWait();
-
     }
 
 }
