@@ -24,6 +24,7 @@ import java.util.logging.Logger;
 import javafx.application.Platform;
 import javafx.event.EventHandler;
 import javafx.scene.Node;
+import javafx.scene.control.SelectionMode;
 import javafx.scene.input.DragEvent;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
