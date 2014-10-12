@@ -31,6 +31,7 @@ import javafx.geometry.Pos;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
 import javafx.scene.control.MultipleSelectionModel;
+import javafx.scene.control.SelectionMode;
 import javafx.scene.input.ClipboardContent;
 import javafx.scene.input.DragEvent;
 import javafx.scene.input.Dragboard;
@@ -69,7 +70,7 @@ import org.quelea.windows.multimedia.VLCWindow;
  */
 public class ScheduleList extends StackPane {
 
-    public ListView<Displayable> listView;
+    private ListView<Displayable> listView;
     private Schedule schedule;
     private Rectangle markerRect;
     private static final Logger LOGGER = LoggerUtils.getLogger();
@@ -91,6 +92,7 @@ public class ScheduleList extends StackPane {
     public ScheduleList() {
         setAlignment(Pos.TOP_LEFT);
         listView = new ListView<>();
+        listView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
         getChildren().add(listView);
         markerRect = new Rectangle(200, 3, Color.GRAY);
         markerRect.setVisible(false);
@@ -111,10 +113,8 @@ public class ScheduleList extends StackPane {
                             setGraphic(item.getPreviewIcon());
                             setText(item.getPreviewText());
                         }
-                        if (item instanceof SongDisplayable) {
-                            setContextMenu(new ScheduleSongPopupMenu());
-                        } else if (item instanceof BiblePassage) {
-                            setContextMenu(new ScheduleBiblePopupMenu());
+                        if (item instanceof SongDisplayable || item instanceof BiblePassage) {
+                            setContextMenu(new SchedulePopupMenu());
                         }
                     }
                 };
@@ -227,9 +227,11 @@ public class ScheduleList extends StackPane {
                                     }
                                     if (listCell.isEmpty()) {
                                         add(displayable);
+                                        listView.getSelectionModel().clearSelection();
                                         listView.getSelectionModel().selectLast();
                                     } else {
                                         listView.itemsProperty().get().add(listCell.getIndex(), displayable);
+                                        listView.getSelectionModel().clearSelection();
                                         listView.getSelectionModel().select(listCell.getIndex());
                                     }
                                     listView.requestFocus();
@@ -325,6 +327,14 @@ public class ScheduleList extends StackPane {
     }
 
     /**
+     * Get the list view on this schedule list.
+     * @return the list view on this schedule list.
+     */
+    public ListView<Displayable> getListView() {
+        return listView;
+    }
+
+    /**
      * Erase everything in the current schedule and set the contents of this
      * list to the current schedule.
      * <p/>
@@ -355,6 +365,7 @@ public class ScheduleList extends StackPane {
             itemp.set(index, new SongDisplayable("",""));
             itemp.set(index, song);
         }
+        listView.getSelectionModel().clearSelection();
         listView.selectionModelProperty().get().select(selectedIndex);
     }
 
@@ -441,13 +452,13 @@ public class ScheduleList extends StackPane {
             return;
         }
         if (direction == Direction.UP && selectedIndex > 0) {
-            listView.selectionModelProperty().get().clearSelection();
             Collections.swap(listView.itemsProperty().get(), selectedIndex, selectedIndex - 1);
+            listView.getSelectionModel().clearSelection();
             listView.selectionModelProperty().get().select(selectedIndex - 1);
         }
         if (direction == Direction.DOWN && selectedIndex < listView.itemsProperty().get().size() - 1) {
-            listView.selectionModelProperty().get().clearSelection();
             Collections.swap(listView.itemsProperty().get(), selectedIndex, selectedIndex + 1);
+            listView.getSelectionModel().clearSelection();
             listView.selectionModelProperty().get().select(selectedIndex + 1);
         }
         requestFocus();
