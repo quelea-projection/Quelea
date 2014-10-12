@@ -18,6 +18,8 @@ package org.quelea.windows.lyrics;
 
 import java.util.ArrayList;
 import java.util.List;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.event.EventHandler;
 import javafx.scene.Cursor;
 import javafx.scene.ImageCursor;
@@ -49,19 +51,17 @@ public class SelectLyricsList extends ListView<TextSection> {
         setOnMouseMoved(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent t) {
-                if(showQuickEdit && (t.isShiftDown() || t.isControlDown()) && !itemsProperty().get().isEmpty()) {
+                if (showQuickEdit && (t.isShiftDown() || t.isControlDown()) && !itemsProperty().get().isEmpty()) {
                     setCursor(Q_CURSOR);
-                }
-                else {
+                } else {
                     setCursor(Cursor.DEFAULT);
                 }
                 getScene().setOnKeyPressed(new EventHandler<KeyEvent>() {
                     @Override
                     public void handle(KeyEvent t) {
-                        if(showQuickEdit && (t.isShiftDown() || t.isControlDown()) && !itemsProperty().get().isEmpty()) {
+                        if (showQuickEdit && (t.isShiftDown() || t.isControlDown()) && !itemsProperty().get().isEmpty()) {
                             setCursor(Q_CURSOR);
-                        }
-                        else {
+                        } else {
                             setCursor(Cursor.DEFAULT);
                         }
                     }
@@ -69,10 +69,9 @@ public class SelectLyricsList extends ListView<TextSection> {
                 getScene().setOnKeyReleased(new EventHandler<KeyEvent>() {
                     @Override
                     public void handle(KeyEvent t) {
-                        if(showQuickEdit && (t.isShiftDown() || t.isControlDown()) && !itemsProperty().get().isEmpty()) {
+                        if (showQuickEdit && (t.isShiftDown() || t.isControlDown()) && !itemsProperty().get().isEmpty()) {
                             setCursor(Q_CURSOR);
-                        }
-                        else {
+                        } else {
                             setCursor(Cursor.DEFAULT);
                         }
                     }
@@ -86,20 +85,18 @@ public class SelectLyricsList extends ListView<TextSection> {
                     @Override
                     protected void updateItem(TextSection t, boolean empty) {
                         super.updateItem(t, empty);
-                        if(empty) {
+                        if (empty) {
                             setText(null);
                             setGraphic(null);
-                        }
-                        else {
+                        } else {
                             String[] text = t.getText(false, false);
                             StringBuilder builder = new StringBuilder();
-                            for(String str : text) {
+                            for (String str : text) {
                                 str = FormattedText.stripFormatTags(str);
                                 builder.append(str);
-                                if(oneLineMode) {
+                                if (oneLineMode) {
                                     builder.append(" ");
-                                }
-                                else {
+                                } else {
                                     builder.append("\n");
                                 }
                             }
@@ -112,12 +109,23 @@ public class SelectLyricsList extends ListView<TextSection> {
                         }
                     }
                 };
-
+                cell.addEventFilter(MouseEvent.MOUSE_PRESSED, event -> {
+                    if (event.isControlDown()) {
+                        requestFocus();
+                        if (!cell.isEmpty()) {
+                            int index = cell.getIndex();
+                            if (!getSelectionModel().getSelectedIndices().contains(index)) {
+                                getSelectionModel().select(index);
+                            }
+                            event.consume();
+                        }
+                    }
+                });
                 return cell;
             }
         });
     }
-    
+
     public void setShowQuickEdit(boolean showQuickEdit) {
         this.showQuickEdit = showQuickEdit;
     }
@@ -128,17 +136,17 @@ public class SelectLyricsList extends ListView<TextSection> {
      * @param val true if it should be in one line mode, false otherwise.
      */
     public void setOneLineMode(boolean val) {
-        if(this.oneLineMode == val) {
+        if (this.oneLineMode == val) {
             return;
         }
         this.oneLineMode = val;
         int selectedIndex = selectionModelProperty().get().getSelectedIndex();
         List<TextSection> elements = new ArrayList<>(itemsProperty().get().size());
-        for(int i = 0; i < itemsProperty().get().size(); i++) {
+        for (int i = 0; i < itemsProperty().get().size(); i++) {
             elements.add(itemsProperty().get().get(i));
         }
         itemsProperty().get().clear();
-        for(TextSection section : elements) {
+        for (TextSection section : elements) {
             itemsProperty().get().add(section);
         }
         selectionModelProperty().get().select(selectedIndex);
