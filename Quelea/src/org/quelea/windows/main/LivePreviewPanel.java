@@ -89,7 +89,7 @@ public abstract class LivePreviewPanel extends BorderPane {
             @Override
             public void handle(MouseEvent me) {
                 if(me.isControlDown() || me.isShiftDown()) {
-                    doQuickEdit(lyricsPanel.getCurrentIndex());
+                    doQuickEdit(lyricsPanel.getLyricsList().getQuickEditIndex());
                 }
             }
         });
