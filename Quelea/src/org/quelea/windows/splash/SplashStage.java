@@ -46,12 +46,6 @@ import org.quelea.services.utils.Utils;
  */
 public class SplashStage extends Stage {
 
-    private enum Version {
-
-        ALPHA, BETA, FINAL
-    }
-    private Version version;
-
     /**
      * Create a new splash window.
      */
@@ -60,72 +54,19 @@ public class SplashStage extends Stage {
         initStyle(StageStyle.UNDECORATED);
         Utils.addIconsToStage(this);
         setTitle("Quelea " + LabelGrabber.INSTANCE.getLabel("loading.text") + "...");
-        String minorVersion = QueleaProperties.VERSION.getUnstableName();
         Image splashImage = new Image("file:icons/splash-bare.png");
-        final boolean isNightly = splashImage.getPixelReader().getColor(0, 0).equals(Color.web("#8c8c8c"));
-        version = Version.FINAL;
-        if(minorVersion.toLowerCase().trim().startsWith("alpha")) {
-            splashImage = new Image("file:icons/splash-alpha.png");
-            version = Version.ALPHA;
-        }
-        else if(minorVersion.toLowerCase().trim().startsWith("beta")) {
-            splashImage = new Image("file:icons/splash-beta.png");
-            version = Version.BETA;
-        }
         ImageView imageView = new ImageView(splashImage);
         Text loadingText = new Text(LabelGrabber.INSTANCE.getLabel("loading.text"));
-        Font loadingFont = Font.loadFont("file:icons/Ubuntu-RI.ttf", 33);
+        Font loadingFont = Font.loadFont("file:icons/OpenSans-Bold.ttf", 25);
         FontMetrics loadingMetrics = Toolkit.getToolkit().getFontLoader().getFontMetrics(loadingFont);
         LinearGradient loadingGrad = new LinearGradient(0, 1, 0, 0, true, CycleMethod.REPEAT, new Stop(0, Color.web("#666666")), new Stop(1, Color.web("#000000")));
         loadingText.setFill(loadingGrad);
         loadingText.setFont(loadingFont);
-        loadingText.setLayoutX(splashImage.getWidth() - loadingMetrics.computeStringWidth(loadingText.getText() + "...") - 20);
-        loadingText.setLayoutY(325);
-        Text versionText = new Text(QueleaProperties.VERSION.getMajorVersionNumber());
-        LinearGradient versionGrad = new LinearGradient(0, 1, 0, 0, true, CycleMethod.REPEAT, new Stop(0, Color.web("#000000")), new Stop(1, Color.web("#666666")));
-        versionText.setFill(versionGrad);
-        versionText.setFont(Font.loadFont("file:icons/Ubuntu-RI.ttf", 35));
-        versionText.setLayoutX(447);
-        versionText.setLayoutY(183);
-        Text minorText = null;
-        String minorNum = QueleaProperties.VERSION.getMinorName();
-        if(minorNum != null) {
-            minorText = new Text(minorNum);
-            minorText.setFill(versionGrad);
-            if(version == Version.ALPHA) {
-                minorText.setFont(Font.loadFont("file:icons/Ubuntu-RI.ttf", 30));
-                minorText.setLayoutX(30);
-                minorText.setLayoutY(305);
-            }
-            else if(version == Version.BETA) {
-                minorText.setFont(Font.loadFont("file:icons/Ubuntu-RI.ttf", 26));
-                minorText.setLayoutX(70);
-                minorText.setLayoutY(305);
-            }
-            else {
-                minorText.setFont(Font.loadFont("file:icons/Ubuntu-RI.ttf", 30));
-                
-                if(isNightly) {
-                    minorText.setLayoutX(20);
-                    minorText.setLayoutY(285);
-                }
-                else {
-                    minorText.setLayoutX(10);
-                    minorText.setLayoutY(325);
-                }
-            }
-        }
-        Pips pips = new Pips(loadingFont, loadingGrad);
-        pips.setLayoutX(loadingText.getLayoutX() + loadingMetrics.computeStringWidth(LabelGrabber.INSTANCE.getLabel("loading.text")));
-        pips.setLayoutY(loadingText.getLayoutY());
+        loadingText.setLayoutX(splashImage.getWidth()/2 - loadingMetrics.computeStringWidth(loadingText.getText())/2);
+        loadingText.setLayoutY(200);
         Group mainPane = new Group();
         mainPane.getChildren().add(imageView);
         mainPane.getChildren().add(loadingText);
-        mainPane.getChildren().add(versionText);
-        mainPane.getChildren().add(pips);
-        if(minorText != null) {
-            mainPane.getChildren().add(minorText);
-        }
         setScene(new Scene(mainPane));
 
         ObservableList<Screen> monitors = Screen.getScreens();
