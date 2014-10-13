@@ -22,6 +22,7 @@ import javafx.scene.control.MenuItem;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.stage.WindowEvent;
+import org.quelea.data.bible.BibleManager;
 import org.quelea.data.displayable.BiblePassage;
 import org.quelea.data.displayable.Displayable;
 import org.quelea.data.displayable.SongDisplayable;
@@ -30,6 +31,7 @@ import org.quelea.windows.main.QueleaApp;
 import org.quelea.windows.main.actionhandlers.EditSongScheduleActionHandler;
 import org.quelea.windows.main.actionhandlers.EditThemeScheduleActionHandler;
 import org.quelea.windows.main.actionhandlers.SelectTranslationsActionHandler;
+import org.quelea.windows.main.actionhandlers.SwitchBibleVersionActionHandler;
 
 /**
  * The popup menu that displays when an item in the schedule is right-clicked.
@@ -40,6 +42,7 @@ public class SchedulePopupMenu extends ContextMenu {
 
     private final MenuItem editSong = new MenuItem(LabelGrabber.INSTANCE.getLabel("edit.song.text"), new ImageView(new Image("file:icons/edit.png", 16, 16, false, true)));
     private final MenuItem editTheme = new MenuItem(LabelGrabber.INSTANCE.getLabel("edit.theme.text"), new ImageView(new Image("file:icons/edit.png", 16, 16, false, true)));
+    private final MenuItem changeBibleVersion = new MenuItem(LabelGrabber.INSTANCE.getLabel("change.bible.version.text"), new ImageView(new Image("file:icons/bible.png", 16, 16, false, true)));
     private final MenuItem translationChoice = new MenuItem(LabelGrabber.INSTANCE.getLabel("choose.translations.text"));
 
     public SchedulePopupMenu() {
@@ -48,38 +51,50 @@ public class SchedulePopupMenu extends ContextMenu {
             ScheduleList sl = QueleaApp.get().getMainWindow().getMainPanel().getSchedulePanel().getScheduleList();
             boolean singleSelect = sl.getSelectionModel().getSelectedItems().size() == 1;
             boolean allSongs = true;
+            boolean allBibles = true;
             for (Displayable d : sl.getSelectionModel().getSelectedItems()) {
-                if(!(d instanceof SongDisplayable)) {
+                if (!(d instanceof SongDisplayable)) {
                     allSongs = false;
-                    break;
+                }
+                if (!(d instanceof BiblePassage)) {
+                    allBibles = false;
                 }
             }
             getItems().clear();
-            
+
             if (singleSelect) {
                 if (sl.getSelectionModel().getSelectedItem() instanceof BiblePassage) {
                     getItems().addAll(editTheme);
+                    if (BibleManager.get().getBibles().length > 1) {
+                        getItems().addAll(changeBibleVersion);
+                    }
                 } else if (sl.getSelectionModel().getSelectedItem() instanceof SongDisplayable) {
                     getItems().addAll(editSong, translationChoice);
+                } else {
+                    getItems().addAll(editTheme);
                 }
-            }
-            else {
-                if(allSongs) {
+            } else {
+                if (allSongs) {
                     getItems().addAll(editTheme);
 //                    getItems().addAll(editTheme, translationChoice); //TODO: Do we want to add multiple-translation option as well?
-                }
-                else {
+                } else if (allBibles) {
+                    getItems().addAll(editTheme);
+                    if (BibleManager.get().getBibles().length > 1) {
+                        getItems().addAll(changeBibleVersion);
+                    }
+                } else {
                     getItems().addAll(editTheme);
                 }
             }
-            if(getItems().isEmpty()) {
+            if (getItems().isEmpty()) {
                 event.consume();
             }
         });
-        
+
         editSong.setOnAction(new EditSongScheduleActionHandler());
         translationChoice.setOnAction(new SelectTranslationsActionHandler());
         editTheme.setOnAction(new EditThemeScheduleActionHandler());
+        changeBibleVersion.setOnAction(new SwitchBibleVersionActionHandler());
     }
 
 }

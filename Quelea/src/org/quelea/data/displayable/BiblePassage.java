@@ -78,7 +78,7 @@ public class BiblePassage implements TextDisplayable, Serializable {
      * @param verses the verses in the passage.
      * @param theme the theme of the passage.
      */
-    private BiblePassage(String summary, BibleVerse[] verses, ThemeDTO theme) {
+    public BiblePassage(String summary, BibleVerse[] verses, ThemeDTO theme) {
         this.summary = summary;
         this.smallText = summary.split("\n");
         for (int i = 0; i < smallText.length; i++) {
@@ -136,6 +136,14 @@ public class BiblePassage implements TextDisplayable, Serializable {
         }
     }
 
+    /**
+     * Get (a copy of) the verses shown in this passage.
+     * @return A copy of the verses shown in this passage.
+     */
+    public BibleVerse[] getVerses() {
+        return Arrays.copyOf(verses, verses.length);
+    }
+    
     /**
      * Get the XML behind this bible passage.
      * <p/>
