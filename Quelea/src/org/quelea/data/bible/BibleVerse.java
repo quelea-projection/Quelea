@@ -42,10 +42,9 @@ public final class BibleVerse implements BibleInterface, Serializable {
 
     @Override
     public int hashCode() {
-        int hash = 3;
-        hash = 53 * hash + Objects.hashCode(this.verse);
-        hash = 53 * hash + this.num;
-        hash = 53 * hash + Objects.hashCode(this.chapter);
+        int hash = 5;
+        hash = 97 * hash + Objects.hashCode(this.verse);
+        hash = 97 * hash + this.num;
         return hash;
     }
 
@@ -62,9 +61,6 @@ public final class BibleVerse implements BibleInterface, Serializable {
             return false;
         }
         if (this.num != other.num) {
-            return false;
-        }
-        if (!Objects.equals(this.chapter, other.chapter)) {
             return false;
         }
         return true;
