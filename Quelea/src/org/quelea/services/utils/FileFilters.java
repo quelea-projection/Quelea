@@ -65,6 +65,10 @@ public final class FileFilters {
      */
     public static final FileChooser.ExtensionFilter IMAGES = new FileChooser.ExtensionFilter(LabelGrabber.INSTANCE.getLabel("image.files.description"), Utils.getFileExtensions(Utils.getImageExtensions()));
     /**
+     * Only accept png files.
+     */
+    public static final FileChooser.ExtensionFilter PNG = new FileChooser.ExtensionFilter(LabelGrabber.INSTANCE.getLabel("png.files.description"), "*.png");
+    /**
      * The file filter used for Quelea song packs.
      */
     public static final FileChooser.ExtensionFilter SONG_PACK = new FileChooser.ExtensionFilter(LabelGrabber.INSTANCE.getLabel("qsp.button") + " (*.qsp)", "*.qsp");
