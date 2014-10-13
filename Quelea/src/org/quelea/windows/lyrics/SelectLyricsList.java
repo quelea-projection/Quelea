@@ -18,8 +18,6 @@ package org.quelea.windows.lyrics;
 
 import java.util.ArrayList;
 import java.util.List;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.event.EventHandler;
 import javafx.scene.Cursor;
 import javafx.scene.ImageCursor;
@@ -42,6 +40,7 @@ public class SelectLyricsList extends ListView<TextSection> {
     private static final Cursor Q_CURSOR = new ImageCursor(new Image("file:icons/edit32.png"), 6, 27);
     private boolean oneLineMode;
     private boolean showQuickEdit;
+    private int quickEditIndex;
 
     /**
      * Create a new schedule list.
@@ -111,12 +110,8 @@ public class SelectLyricsList extends ListView<TextSection> {
                 };
                 cell.addEventFilter(MouseEvent.MOUSE_PRESSED, event -> {
                     if (event.isControlDown()) {
-                        requestFocus();
                         if (!cell.isEmpty()) {
-                            int index = cell.getIndex();
-                            if (!getSelectionModel().getSelectedIndices().contains(index)) {
-                                getSelectionModel().select(index);
-                            }
+                            quickEditIndex = getItems().indexOf(cell.getItem());
                             event.consume();
                         }
                     }
@@ -124,6 +119,10 @@ public class SelectLyricsList extends ListView<TextSection> {
                 return cell;
             }
         });
+    }
+
+    public int getQuickEditIndex() {
+        return quickEditIndex;
     }
 
     public void setShowQuickEdit(boolean showQuickEdit) {
