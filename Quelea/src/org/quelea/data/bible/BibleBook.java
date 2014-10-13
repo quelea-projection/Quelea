@@ -50,10 +50,9 @@ public final class BibleBook implements BibleInterface, Serializable {
     @Override
     public int hashCode() {
         int hash = 7;
-        hash = 37 * hash + this.bookNumber;
-        hash = 37 * hash + Objects.hashCode(this.bookName);
-        hash = 37 * hash + Objects.hashCode(this.chapters);
-        hash = 37 * hash + Objects.hashCode(this.bible);
+        hash = 43 * hash + this.bookNumber;
+        hash = 43 * hash + Objects.hashCode(this.bookName);
+        hash = 43 * hash + Objects.hashCode(this.chapters);
         return hash;
     }
 
@@ -73,9 +72,6 @@ public final class BibleBook implements BibleInterface, Serializable {
             return false;
         }
         if (!Objects.equals(this.chapters, other.chapters)) {
-            return false;
-        }
-        if (!Objects.equals(this.bible, other.bible)) {
             return false;
         }
         return true;

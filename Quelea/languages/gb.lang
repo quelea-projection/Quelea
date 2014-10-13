@@ -489,3 +489,6 @@ shadow.offset.label=Shadow Offset
 shadow.radius.label=Shadow Radius
 shadow.spread.label=Shadow Spread
 help.menu.manual=Manual
+edit.theme.text=Edit Theme
+change.bible.version.text=Switch Version
+switch.to.text=Switch to
