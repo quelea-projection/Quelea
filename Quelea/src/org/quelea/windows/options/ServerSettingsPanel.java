@@ -18,7 +18,14 @@
  */
 package org.quelea.windows.options;
 
+import com.google.zxing.BarcodeFormat;
+import com.google.zxing.WriterException;
+import com.google.zxing.client.j2se.MatrixToImageWriter;
+import com.google.zxing.common.BitMatrix;
+import com.google.zxing.qrcode.QRCodeWriter;
 import java.awt.Desktop;
+import java.awt.image.BufferedImage;
+import java.io.File;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.NetworkInterface;
@@ -31,21 +38,31 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.embed.swing.SwingFXUtils;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.Cursor;
+import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.scene.image.WritableImage;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
+import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
+import javafx.stage.FileChooser;
+import javax.imageio.ImageIO;
 import org.quelea.server.RCHandler;
 import org.quelea.services.languages.LabelGrabber;
+import org.quelea.services.utils.FileFilters;
 import org.quelea.services.utils.LoggerUtils;
 import org.quelea.services.utils.PropertyPanel;
 import org.quelea.services.utils.QueleaProperties;
@@ -69,6 +86,7 @@ public class ServerSettingsPanel extends GridPane implements PropertyPanel {
     private boolean rcPrevChecked;
     private final TextField rcPasswordTextField;
     private String rcPrevPassword;
+    private BufferedImage qrImage;
 
     /**
      * Create the server settings panel.
@@ -156,6 +174,60 @@ public class ServerSettingsPanel extends GridPane implements PropertyPanel {
         mobBox.getChildren().add(mobUrlLabel);
         GridPane.setConstraints(mobBox, 1, 3);
         getChildren().add(mobBox);
+
+        StackPane qrStack = new StackPane();
+        qrStack.setAlignment(Pos.CENTER_LEFT);
+
+        if (!getMLURL().contains(LabelGrabber.INSTANCE.getLabel("not.started.label"))) {
+            ImageView qrView = new ImageView(getQRImage());
+            StackPane.setAlignment(qrView, Pos.CENTER_LEFT);
+            qrView.setFitHeight(100);
+            qrView.setFitWidth(100);
+            qrStack.getChildren().add(qrView);
+            Button saveButton = new Button(LabelGrabber.INSTANCE.getLabel("save.qr.code.text"));
+            StackPane.setAlignment(saveButton, Pos.CENTER_LEFT);
+            saveButton.setOnAction((event) -> {
+                FileChooser fileChooser = new FileChooser();
+                fileChooser.getExtensionFilters().add(FileFilters.PNG);
+                fileChooser.setTitle(LabelGrabber.INSTANCE.getLabel("save.qr.code.text"));
+                File file = fileChooser.showSaveDialog(QueleaApp.get().getMainWindow());
+                if (file != null) {
+                    try {
+                        ImageIO.write(qrImage, "png", file);
+                    } catch (IOException ex) {
+                        LOGGER.log(Level.WARNING, "Error saving QR file", ex);
+                    }
+                }
+            });
+            saveButton.setOpacity(0);
+            qrStack.setOnMouseEntered((event) -> {
+                saveButton.setOpacity(0.8);
+            });
+            qrStack.setOnMouseExited((event) -> {
+                saveButton.setOpacity(0);
+            });
+            qrStack.getChildren().add(saveButton);
+            GridPane.setConstraints(qrStack, 2, 3);
+            getChildren().add(qrStack);
+        }
+    }
+
+    private Image getQRImage() {
+        if (qrImage == null) {
+            QRCodeWriter qrCodeWriter = new QRCodeWriter();
+            int qrWidth = 500;
+            int qrHeight = 500;
+            BitMatrix byteMatrix = null;
+            try {
+                byteMatrix = qrCodeWriter.encode(getMLURL(), BarcodeFormat.QR_CODE, qrWidth, qrHeight);
+            } catch (WriterException ex) {
+                LOGGER.log(Level.WARNING, "Error writing QR code", ex);
+            }
+            qrImage = MatrixToImageWriter.toBufferedImage(byteMatrix);
+        }
+        WritableImage fxImg = new WritableImage(500, 500);
+        SwingFXUtils.toFXImage(qrImage, fxImg);
+        return fxImg;
     }
 
     private void setupRemoteControl() {
@@ -221,7 +293,7 @@ public class ServerSettingsPanel extends GridPane implements PropertyPanel {
         rcBox.getChildren().add(rcUrlLabel);
         GridPane.setConstraints(rcBox, 1, 6);
         getChildren().add(rcBox);
-        
+
         Label passwordLabel = new Label(LabelGrabber.INSTANCE.getLabel("remote.control.password") + " ");
         GridPane.setConstraints(passwordLabel, 1, 7);
         getChildren().add(passwordLabel);
@@ -257,10 +329,10 @@ public class ServerSettingsPanel extends GridPane implements PropertyPanel {
         }
         return urlMLCache;
     }
-    
+
     private String getRCURL() {
         if (urlRCCache == null) {
-            if (QueleaProperties.get().getUseRemoteControl() && QueleaApp.get().getRemoteControlServer()!= null) {
+            if (QueleaProperties.get().getUseRemoteControl() && QueleaApp.get().getRemoteControlServer() != null) {
                 String ip = getIP();
                 if (ip != null) {
                     StringBuilder ret = new StringBuilder("http://");
@@ -335,7 +407,7 @@ public class ServerSettingsPanel extends GridPane implements PropertyPanel {
 
     // If they have the same port, uncheck the remote control checkbox
     private void checkDifferent() {
-        if(mlPortNumTextField.getText().equals(rcPortNumTextField.getText())) {
+        if (mlPortNumTextField.getText().equals(rcPortNumTextField.getText())) {
             useRemoteControlCheckBox.setSelected(false);
         }
     }
@@ -361,7 +433,7 @@ public class ServerSettingsPanel extends GridPane implements PropertyPanel {
             rcPasswordTextField.setText(QueleaProperties.get().getRemoteControlPassword());
         } else {
             QueleaProperties.get().setRemoteControlPassword(rcPasswordTextField.getText());
-            if(!rcPasswordTextField.getText().equals(rcPrevPassword)) {
+            if (!rcPasswordTextField.getText().equals(rcPrevPassword)) {
                 RCHandler.logAllOut();
             }
         }
