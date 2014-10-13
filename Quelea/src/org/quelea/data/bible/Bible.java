@@ -63,10 +63,10 @@ public final class Bible implements BibleInterface, Serializable {
 
     @Override
     public int hashCode() {
-        int hash = 7;
-        hash = 59 * hash + Objects.hashCode(this.name);
-        hash = 59 * hash + Objects.hashCode(this.information);
-        hash = 59 * hash + Objects.hashCode(this.books);
+        int hash = 5;
+        hash = 19 * hash + Objects.hashCode(this.name);
+        hash = 19 * hash + Objects.hashCode(this.information);
+        hash = 19 * hash + Objects.hashCode(this.books);
         return hash;
     }
 
