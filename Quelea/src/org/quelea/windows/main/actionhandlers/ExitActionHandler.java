@@ -106,7 +106,7 @@ public class ExitActionHandler implements EventHandler<ActionEvent> {
             }
         }
         LOGGER.log(Level.INFO, "Saving window position...");
-        QueleaProperties.get().setSceneInfo(new SceneInfo(mainWindow.getX(), mainWindow.getY(), mainWindow.getWidth(), mainWindow.getHeight()));
+        QueleaProperties.get().setSceneInfo(new SceneInfo(mainWindow.getX(), mainWindow.getY(), mainWindow.getWidth(), mainWindow.getHeight(), mainWindow.isMaximized()));
         LOGGER.log(Level.INFO, "Hiding main window...");
         mainWindow.hide();
         LOGGER.log(Level.INFO, "Cleaning up displayables before exiting..");

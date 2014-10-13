@@ -147,8 +147,16 @@ public final class QueleaProperties extends Properties {
      */
     public SceneInfo getSceneInfo() {
         try {
-            String[] parts = getProperty("scene.info", "461,15,997,995").split(",");
-            return new SceneInfo(Integer.parseInt(parts[0]), Integer.parseInt(parts[1]), Integer.parseInt(parts[2]), Integer.parseInt(parts[3]));
+            String[] parts = getProperty("scene.info", "461,15,997,995,false").split(",");
+            if (parts.length == 4) {
+                return new SceneInfo(Integer.parseInt(parts[0]), Integer.parseInt(parts[1]), Integer.parseInt(parts[2]), Integer.parseInt(parts[3]), false);
+            }
+            else if (parts.length == 5) {
+                return new SceneInfo(Integer.parseInt(parts[0]), Integer.parseInt(parts[1]), Integer.parseInt(parts[2]), Integer.parseInt(parts[3]), Boolean.parseBoolean(parts[4]));
+            }
+            else {
+                return null;
+            }
         } catch (Exception ex) {
             LoggerUtils.getLogger().log(Level.WARNING, "Invalid scene info: " + getProperty("scene.info"), ex);
             return null;

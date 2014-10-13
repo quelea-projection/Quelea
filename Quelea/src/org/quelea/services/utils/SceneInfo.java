@@ -33,12 +33,14 @@ public class SceneInfo {
     private int y;
     private int w;
     private int h;
+    private boolean max;
 
-    public SceneInfo(double x, double y, double w, double h) {
+    public SceneInfo(double x, double y, double w, double h, boolean max) {
         this.x = (int) x;
         this.y = (int) y;
         this.w = (int) w;
         this.h = (int) h;
+        this.max = max;
     }
 
     public int getX() {
@@ -60,9 +62,13 @@ public class SceneInfo {
     public Rectangle2D getBounds() {
         return new Rectangle2D(x, y, w, h);
     }
+    
+    public boolean isMaximised() {
+        return max;
+    }
 
     @Override
     public String toString() {
-        return x + "," + y + "," + w + "," + h;
+        return x + "," + y + "," + w + "," + h + "," + max;
     }
 }
