@@ -17,6 +17,7 @@
  */
 package org.quelea.windows.lyrics;
 
+import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import org.fxmisc.richtext.InlineCssTextArea;
@@ -34,10 +35,20 @@ public class LyricsTextArea extends InlineCssTextArea {
 
             @Override
             public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
-                clearStyle(0,getLength());
-                setStyles(newValue);
+                Platform.runLater(new Runnable() {
+
+                    @Override
+                    public void run() {
+                        refreshStyle();
+                    }
+                });
             }
         });
+    }
+    
+    public void refreshStyle() {
+        clearStyle(0, getLength());
+        setStyles(getText());
     }
     
     private void setStyles(String text) {
@@ -52,7 +63,7 @@ public class LyricsTextArea extends InlineCssTextArea {
                 setStyle(charPos, charPos+line.length(), "-fx-fill: grey; -fx-font-style: italic;");
             }
             else if(new LineTypeChecker(line).getLineType()==Type.NONBREAK) {
-                setStyle(charPos, charPos+line.length(), "-fx-background-color:red;");
+                setStyle(charPos, charPos+line.length(), "-fx-fill: red; -fx-font-weight: bold;");
             }
             charPos += line.length()+1;
         }

@@ -17,6 +17,7 @@
 package org.quelea.windows.newsong;
 
 import java.util.logging.Logger;
+import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
@@ -105,7 +106,7 @@ public class BasicSongPanel extends BorderPane {
         transposeButton = getTransposeButton();
         nonBreakingLineButton = getNonBreakingLineButton();
         lyricsToolbar.getItems().add(transposeButton);
-//        lyricsToolbar.getItems().add(nonBreakingLineButton);
+        lyricsToolbar.getItems().add(nonBreakingLineButton);
         lyricsToolbar.getItems().add(new Separator());
         Region spacer = new Region();
         HBox.setHgrow(spacer, Priority.ALWAYS);
@@ -145,32 +146,68 @@ public class BasicSongPanel extends BorderPane {
     private String getSaveHash() {
         return "" + lyricsArea.getText().hashCode() + titleField.getText().hashCode() + authorField.getText().hashCode();
     }
-    
+
     private Button getNonBreakingLineButton() {
         Button ret = new Button("", new ImageView(new Image("file:icons/nonbreakline.png", 24, 24, false, true)));
+        Utils.setToolbarButtonStyle(ret);
         ret.setTooltip(new Tooltip(LabelGrabber.INSTANCE.getLabel("nonbreak.tooltip")));
         ret.setOnAction((event) -> {
-            int caretPos =lyricsArea.getArea().getCaretPosition();
+            int caretPos = lyricsArea.getArea().getCaretPosition();
             String[] parts = lyricsArea.getText().split("\n");
             int lineIndex = lineFromPos(lyricsArea.getText(), caretPos);
             String line = parts[lineIndex];
-            if(line.trim().isEmpty()) {
-                lyricsArea.getArea().replaceText(caretPos, caretPos, "         ");
-            }
-            else {
-//                parts[lineIndex+1];
+            if (line.trim().isEmpty()) {
+                Platform.runLater(new Runnable() {
+
+                    @Override
+                    public void run() {
+                        lyricsArea.getArea().replaceText(caretPos, caretPos, "<>");
+                        lyricsArea.getArea().refreshStyle();
+                    }
+                });
+            } else {
+                int nextLinePos = nextLinePos(lyricsArea.getText(), caretPos);
+                if (nextLinePos >= lyricsArea.getText().length()) {
+                    Platform.runLater(new Runnable() {
+
+                        @Override
+                        public void run() {
+                            lyricsArea.getArea().replaceText(nextLinePos, nextLinePos, "\n<>\n");
+                            lyricsArea.getArea().refreshStyle();
+                        }
+                    });
+                } else {
+                    Platform.runLater(new Runnable() {
+
+                        @Override
+                        public void run() {
+                            lyricsArea.getArea().replaceText(nextLinePos, nextLinePos, "<>\n");
+                            lyricsArea.getArea().refreshStyle();
+                        }
+                    });
+                }
             }
         });
         return ret;
     }
-    
-    private int lineFromPos(String s, int pos) { 
-        int ret = 0;
-        for (int i = 0; i <= pos - 1; i++)
-            if (s.charAt(i) == '\n') ret++;
-        return ret;                
+
+    private int nextLinePos(String s, int pos) {
+        while (s.charAt(pos) != '\n' && pos <= s.length()) {
+            pos++;
+        }
+        return pos + 1;
     }
-    
+
+    private int lineFromPos(String s, int pos) {
+        int ret = 0;
+        for (int i = 0; i <= pos - 1; i++) {
+            if (s.charAt(i) == '\n') {
+                ret++;
+            }
+        }
+        return ret;
+    }
+
     /**
      * Get the button used for transposing the chords.
      * <p/>
@@ -294,6 +331,7 @@ public class BasicSongPanel extends BorderPane {
         getTitleField().setText(song.getTitle());
         getAuthorField().setText(song.getAuthor());
         getLyricsField().replaceText(song.getLyrics(true, true));
+        getLyricsField().refreshStyle();
         getLyricsField().requestFocus();
     }
 
