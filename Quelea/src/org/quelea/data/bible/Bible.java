@@ -28,10 +28,13 @@ import java.util.Objects;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.application.Platform;
+import javafx.event.ActionEvent;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import org.javafx.dialog.Dialog;
+import org.quelea.services.languages.LabelGrabber;
+import org.quelea.services.utils.BibleUploader;
 import org.quelea.services.utils.LoggerUtils;
 import org.quelea.services.utils.Utils;
 import org.w3c.dom.Document;
@@ -122,11 +125,15 @@ public final class Bible implements BibleInterface, Serializable {
             Platform.runLater(new Runnable() {
                 @Override
                 public void run() {
-                    Dialog.showWarning("Error loading bible", "Quelea couldn't load the bible contained in " + file.getName() + " beacuse it "
-                            + "appears to be corrupt. Please check the format of the bible "
-                            + "to make sure it's valid.\nIf not, or you're not sure, feel "
-                            + "free to email the discussion list at quelea-discuss@googlegroups.com "
-                            + "where we'll try to help.");
+                    Dialog d;
+                    d = Dialog.buildConfirmation(LabelGrabber.INSTANCE.getLabel("bible.load.error.title"), LabelGrabber.INSTANCE.getLabel("bible.load.error.question"))
+                            .addYesButton((ActionEvent event) -> {
+                                BibleUploader.INSTANCE.upload(file);
+                            })
+                            .addNoButton((ActionEvent event) -> {
+                                //Nothing needed
+                            }).build();
+                    d.showAndWait();
                 }
             });
             return null;
