@@ -176,7 +176,7 @@ public class SongEntryWindow extends Stage {
         });
 
 //        setMaxWidth(525);
-        setMaxHeight(600);
+//        setMaxHeight(600);
         setWidth(525);
         setHeight(600);
 //        setResizable(false);
