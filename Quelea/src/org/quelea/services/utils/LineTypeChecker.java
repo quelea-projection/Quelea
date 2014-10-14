@@ -17,7 +17,6 @@
  */
 package org.quelea.services.utils;
 
-import java.awt.Color;
 import java.util.HashMap;
 import java.util.Set;
 
@@ -33,21 +32,8 @@ public class LineTypeChecker {
      */
     public enum Type {
 
-        NORMAL(null), TITLE(Color.YELLOW), CHORDS(new Color(238, 213, 183));
-        private final Color color;
+        NORMAL, TITLE, CHORDS, NONBREAK
 
-        private Type(Color color) {
-            this.color = color;
-        }
-
-        /**
-         * Get the highlight colour to use for this type.
-         *
-         * @return the highlight colour to use for this type.
-         */
-        public Color getHighlightColor() {
-            return color;
-        }
     }
 
     private final String line;
@@ -71,9 +57,20 @@ public class LineTypeChecker {
             return Type.TITLE;
         } else if (checkChords()) {
             return Type.CHORDS;
+        } else if (checkNonBreak()) {
+            return Type.NONBREAK;
         } else {
-            return Type.NORMAL;
+            return Type.NONBREAK;
         }
+    }
+
+    private boolean checkNonBreak() {
+        for (int i = 0; i < line.length(); i++) {
+            if (line.charAt(i) != ' ') {
+                return false;
+            }
+        }
+        return true;
     }
 
     /**
@@ -132,15 +129,15 @@ public class LineTypeChecker {
     private static final HashMap<String, String> titleMap = new HashMap<>();
 
     static {
-        titleMap.put("Verse",       " ##### ");
-        titleMap.put("Chorus",      " ###### ");
-        titleMap.put("Tag",         " ####### ");
-        titleMap.put("Pre-chorus",  " ######## ");
-        titleMap.put("Pre chorus",  " ######### ");
-        titleMap.put("Coda",        " ########## ");
-        titleMap.put("Bridge",      " ########### ");
-        titleMap.put("Intro",       " ############ ");
-        titleMap.put("Outro",       " ############# ");
+        titleMap.put("Verse", " ##### ");
+        titleMap.put("Chorus", " ###### ");
+        titleMap.put("Tag", " ####### ");
+        titleMap.put("Pre-chorus", " ######## ");
+        titleMap.put("Pre chorus", " ######### ");
+        titleMap.put("Coda", " ########## ");
+        titleMap.put("Bridge", " ########### ");
+        titleMap.put("Intro", " ############ ");
+        titleMap.put("Outro", " ############# ");
     }
 
     public static String[] encodeTitles(String[] toEncode) {
@@ -162,7 +159,7 @@ public class LineTypeChecker {
         for (int i = 0; i < ret.length; i++) {
             String line = toDecode[i];
             for (String entry : titleMap.values()) {
-                line = line.replaceAll("(?i)"+entry, getKeyFromEntry(entry));
+                line = line.replaceAll("(?i)" + entry, getKeyFromEntry(entry));
             }
             ret[i] = line;
         }
