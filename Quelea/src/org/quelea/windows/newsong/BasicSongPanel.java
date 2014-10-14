@@ -100,8 +100,6 @@ public class BasicSongPanel extends BorderPane {
 
         final VBox mainPanel = new VBox();
         ToolBar lyricsToolbar = new ToolBar();
-        lyricsToolbar.getItems().add(getAposButton());
-        lyricsToolbar.getItems().add(getTrimLinesButton());
         transposeButton = getTransposeButton();
         lyricsToolbar.getItems().add(transposeButton);
         lyricsToolbar.getItems().add(new Separator());
@@ -143,75 +141,7 @@ public class BasicSongPanel extends BorderPane {
     private String getSaveHash() {
         return "" + lyricsArea.getText().hashCode() + titleField.getText().hashCode() + authorField.getText().hashCode();
     }
-//    private String[] chordsLines;
-
-//    /**
-//     * Check whether any chords are present and enable / disable the transpose
-//     * button appropriately.
-//     */
-//    private void checkChords() {
-//        try {
-//            SwingUtilities.invokeAndWait(new Runnable() {
-//                @Override
-//                public void run() {
-//                    chordsLines = lyricsArea.getText().split("\n");
-//                }
-//            });
-//        }
-//        catch(InterruptedException ex) {
-//            Logger.getLogger(BasicSongPanel.class.getName()).log(Level.SEVERE, null, ex);
-//        }
-//        catch(InvocationTargetException ex) {
-//            Logger.getLogger(BasicSongPanel.class.getName()).log(Level.SEVERE, null, ex);
-//        }
-//        for(String line : chordsLines) {
-//            if(new LineTypeChecker(line).getLineType() == Type.CHORDS) {
-//                transposeButton.setDisable(false);
-//                return;
-//            }
-//        }
-//        transposeButton.setDisable(true);
-//    }
-//    private final List<Object> highlights = new ArrayList<>();
-    /**
-     * Manage the highlighting.
-     */
-//    private void doHighlight() {
-//        for(Object highlight : highlights) {
-//            lyricsArea.getHighlighter().removeHighlight(highlight);
-//        }
-//        highlights.clear();
-//        try {
-//            Highlighter hilite = lyricsArea.getHighlighter();
-//            String text = lyricsArea.getText();
-//            String[] lines = text.split("\n");
-//            List<HighlightIndex> indexes = new ArrayList<>();
-//            int offset = 0;
-//            for(int i = 0; i < lines.length; i++) {
-//                String line = lines[i];
-//                LineTypeChecker.Type type = new LineTypeChecker(line).getLineType();
-//                if(type == LineTypeChecker.Type.TITLE && i > 0 && !lines[i - 1].trim().isEmpty()) {
-//                    type = LineTypeChecker.Type.NORMAL;
-//                }
-//                if(type != LineTypeChecker.Type.NORMAL) {
-//                    int startIndex = offset;
-//                    int endIndex = startIndex + line.length();
-//                    Color highlightColor = type.getHighlightColor();
-//                    if(highlightColor != null) {
-//                        indexes.add(new HighlightIndex(startIndex, endIndex, highlightColor));
-//                    }
-//                }
-//                offset += line.length() + 1;
-//            }
-//
-//            for(HighlightIndex index : indexes) {
-//                highlights.add(hilite.addHighlight(index.getStartIndex(), index.getEndIndex(), new DefaultHighlightPainter(index.getHighlightColor())));
-//            }
-//        }
-//        catch(BadLocationException ex) {
-//            LOGGER.log(Level.SEVERE, "Bug in highlighting", ex);
-//        }
-//    }
+    
     /**
      * Get the button used for transposing the chords.
      * <p/>
@@ -298,28 +228,6 @@ public class BasicSongPanel extends BorderPane {
     }
 
     /**
-     * Get the remove chords button.
-     * <p/>
-     * @return the remove chords button.
-     */
-    private Button getTrimLinesButton() {
-        Button button = new Button("", new ImageView(new Image("file:icons/trimLines.png", 24, 24, false, true)));
-        button.setTooltip(new Tooltip(LabelGrabber.INSTANCE.getLabel("trim.lines.tooltip")));
-        button.setOnAction(new EventHandler<javafx.event.ActionEvent>() {
-            @Override
-            public void handle(javafx.event.ActionEvent t) {
-//                StringBuilder newText = new StringBuilder();
-//                for(String line : lyricsArea.getText().split("\n")) {
-//                    newText.append(line.trim()).append("\n");
-//                }
-//                lyricsArea.setText(newText.toString());
-            }
-        });
-        Utils.setToolbarButtonStyle(button);
-        return button;
-    }
-
-    /**
      * Get the spell checker button.
      * <p/>
      * @return the spell checker button.
@@ -334,24 +242,6 @@ public class BasicSongPanel extends BorderPane {
             }
         });
         button.disableProperty().bind(lyricsArea.spellingOkProperty());
-        Utils.setToolbarButtonStyle(button);
-        return button;
-    }
-
-    /**
-     * Get the button to fix apostrophes.
-     * <p/>
-     * @return the button to fix apostrophes.
-     */
-    private Button getAposButton() {
-        Button button = new Button("", new ImageView(new Image("file:icons/apos.png", 24, 24, false, true)));
-        button.setTooltip(new Tooltip(LabelGrabber.INSTANCE.getLabel("fix.apos.label")));
-        button.setOnAction(new EventHandler<javafx.event.ActionEvent>() {
-            @Override
-            public void handle(javafx.event.ActionEvent t) {
-//                lyricsArea.setText(lyricsArea.getText().replace("`", "'").replace("’", "'"));
-            }
-        });
         Utils.setToolbarButtonStyle(button);
         return button;
     }
