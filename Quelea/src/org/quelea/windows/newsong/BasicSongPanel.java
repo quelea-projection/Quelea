@@ -19,6 +19,7 @@ package org.quelea.windows.newsong;
 import java.util.logging.Logger;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
@@ -64,6 +65,7 @@ public class BasicSongPanel extends BorderPane {
     private final TextField titleField;
     private final TextField authorField;
     private final Button transposeButton;
+    private final Button nonBreakingLineButton;
     private final ComboBox<Dictionary> dictSelector;
     private final TransposeDialog transposeDialog;
     private String saveHash = "";
@@ -101,7 +103,9 @@ public class BasicSongPanel extends BorderPane {
         final VBox mainPanel = new VBox();
         ToolBar lyricsToolbar = new ToolBar();
         transposeButton = getTransposeButton();
+        nonBreakingLineButton = getNonBreakingLineButton();
         lyricsToolbar.getItems().add(transposeButton);
+//        lyricsToolbar.getItems().add(nonBreakingLineButton);
         lyricsToolbar.getItems().add(new Separator());
         Region spacer = new Region();
         HBox.setHgrow(spacer, Priority.ALWAYS);
@@ -142,6 +146,31 @@ public class BasicSongPanel extends BorderPane {
         return "" + lyricsArea.getText().hashCode() + titleField.getText().hashCode() + authorField.getText().hashCode();
     }
     
+    private Button getNonBreakingLineButton() {
+        Button ret = new Button("", new ImageView(new Image("file:icons/nonbreakline.png", 24, 24, false, true)));
+        ret.setTooltip(new Tooltip(LabelGrabber.INSTANCE.getLabel("nonbreak.tooltip")));
+        ret.setOnAction((event) -> {
+            int caretPos =lyricsArea.getArea().getCaretPosition();
+            String[] parts = lyricsArea.getText().split("\n");
+            int lineIndex = lineFromPos(lyricsArea.getText(), caretPos);
+            String line = parts[lineIndex];
+            if(line.trim().isEmpty()) {
+                lyricsArea.getArea().replaceText(caretPos, caretPos, "         ");
+            }
+            else {
+//                parts[lineIndex+1];
+            }
+        });
+        return ret;
+    }
+    
+    private int lineFromPos(String s, int pos) { 
+        int ret = 0;
+        for (int i = 0; i <= pos - 1; i++)
+            if (s.charAt(i) == '\n') ret++;
+        return ret;                
+    }
+    
     /**
      * Get the button used for transposing the chords.
      * <p/>
@@ -150,7 +179,7 @@ public class BasicSongPanel extends BorderPane {
     private Button getTransposeButton() {
         Button ret = new Button("", new ImageView(new Image("file:icons/transpose.png", 24, 24, false, true)));
         ret.setTooltip(new Tooltip(LabelGrabber.INSTANCE.getLabel("transpose.tooltip")));
-        ret.setOnAction(new EventHandler<javafx.event.ActionEvent>() {
+        ret.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(javafx.event.ActionEvent t) {
                 String originalKey = getKey(0);
