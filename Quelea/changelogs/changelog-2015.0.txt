@@ -1,7 +1,7 @@
 quelea (2015.0) stable; urgency=normal
  
   * Moved to Java 8
-  * Changed to new skin (Modena)
+  * Changed to new skin (Modena) and updated splash screen
   * New feature - Quickly change bible translations via right clicking on schedule list
   * New feature - Broken bibles can be sent to devs for analysis
   * New feature - QR code generator added for mobile lyrics URL
