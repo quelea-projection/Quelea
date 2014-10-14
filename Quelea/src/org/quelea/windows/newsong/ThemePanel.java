@@ -184,6 +184,7 @@ public class ThemePanel extends BorderPane {
                 LyricDrawer drawer = new LyricDrawer();
                 drawer.setCanvas(preview.getCanvas());
                 drawer.setTheme(theme);
+                System.out.println("Temp log, text[0] is: " + text[0]);
                 drawer.setText(text, null, null, false, -1);
             }
         });
