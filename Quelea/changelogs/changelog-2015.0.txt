@@ -5,8 +5,10 @@ quelea (2015.0) stable; urgency=normal
   * New feature - Quickly change bible translations via right clicking on schedule list
   * New feature - Broken bibles can be sent to devs for analysis
   * New feature - QR code generator added for mobile lyrics URL
+  * New feature - Allow non-breaking lines in song lyrics
   * Bugfix - Quick Edit now works properly
   * Bugfix - window now remembers maximised state
   * Bugfix - memory leaks fixed
+  * Various other minor bugfixes
 
- -- Michael Berry <michael@quelea.org>  Wednesday, 13 Oct 2014 00:00:00 +0000
+ -- Michael Berry <michael@quelea.org>  Wednesday, 15 Oct 2014 00:00:00 +0000
