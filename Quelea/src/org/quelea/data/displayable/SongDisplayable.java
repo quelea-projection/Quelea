@@ -704,7 +704,7 @@ public class SongDisplayable implements TextDisplayable, Comparable<SongDisplaya
             }
             ret.append("\n");
         }
-        return ret.toString().trim();
+        return ret.toString().trim().replace(" ", "<>");
     }
 
     public void addTranslation(String translationName, String translationText) {
@@ -726,6 +726,7 @@ public class SongDisplayable implements TextDisplayable, Comparable<SongDisplaya
         sections.clear();
         boolean foundTitle = !(title == null || title.isEmpty());
         lyrics = lyrics.replaceAll("\n\n+", "\n\n");
+        lyrics = lyrics.replace("<>", " ");
         for (String section : lyrics.split("\n\n")) {
             String[] sectionLines = section.split("\n");
             String[] newLyrics = section.split("\n");
