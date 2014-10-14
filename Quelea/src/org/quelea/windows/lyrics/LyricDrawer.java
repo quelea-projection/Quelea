@@ -332,7 +332,11 @@ public class LyricDrawer extends DisplayableDrawer {
         }
         boolean sameVid = false;
         if (theme.getBackground() instanceof VideoBackground && VLCWindow.INSTANCE.getLastLocation() != null) {
-            String newLocation = ((VideoBackground) theme.getBackground()).getVideoFile().getAbsolutePath();
+            String newLocation = ((VideoBackground) theme.getBackground()).getVLCVidString();
+            String[] locationParts = newLocation.split("[\\r\\n]+");
+            if (locationParts.length > 1) {
+                newLocation = locationParts[0];
+            }
             String oldLocation = VLCWindow.INSTANCE.getLastLocation();
             if (newLocation.equals(oldLocation)) {
                 sameVid = true;
