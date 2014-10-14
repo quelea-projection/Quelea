@@ -496,3 +496,4 @@ switch.to.text=Switch to
 save.qr.code.text=Save QR Code
 bible.load.error.title=Error loading bible
 bible.load.error.question=There appears to be a problem with your bible file, Quelea can't load it.\nDo you want to send it to the developers (anonymously) to check compatibility?\n(You can also post to the discuss group at "quelea-discuss@googlegroups.com" and ask for help there.)
+nonbreak.tooltip=Add non-breaking line

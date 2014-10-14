@@ -51,6 +51,9 @@ public class LyricsTextArea extends InlineCssTextArea {
             else if(new LineTypeChecker(line).getLineType()==Type.CHORDS) {
                 setStyle(charPos, charPos+line.length(), "-fx-fill: grey; -fx-font-style: italic;");
             }
+            else if(new LineTypeChecker(line).getLineType()==Type.NONBREAK) {
+                setStyle(charPos, charPos+line.length(), "-fx-background-color:red;");
+            }
             charPos += line.length()+1;
         }
     }
