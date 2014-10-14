@@ -80,13 +80,15 @@ public class SwitchBibleVersionActionHandler implements EventHandler<ActionEvent
         sl.getSelectionModel().clearSelection();
         for (BiblePassage key : replaceMap.keySet()) {
             int index = sl.getItems().indexOf(key);
-            sl.getItems().remove(index);
-            sl.getItems().add(index, replaceMap.get(key));
+            if (index != -1) {
+                sl.getItems().remove(index);
+                sl.getItems().add(index, replaceMap.get(key));
+            }
         }
         if (selected.size() > 0) {
-            int[] selectRange = new int[selected.size()-1];
-            for(int i=1 ; i<selected.size() ; i++) {
-                selectRange[i-1] = selected.get(i);
+            int[] selectRange = new int[selected.size() - 1];
+            for (int i = 1; i < selected.size(); i++) {
+                selectRange[i - 1] = selected.get(i);
             }
             sl.getSelectionModel().selectIndices(selected.get(0), selectRange);
         }
