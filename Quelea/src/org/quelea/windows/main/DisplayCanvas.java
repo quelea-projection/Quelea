@@ -60,7 +60,6 @@ public class DisplayCanvas extends StackPane {
     private Displayable currentDisplayable;
     private final CanvasUpdater updater;
     private Priority dravingPriority = Priority.LOW;
-    private Type type = Type.PREVIEW;
     private final boolean playVideo;
 
     public enum Type {
@@ -212,14 +211,6 @@ public class DisplayCanvas extends StackPane {
                 getChildren().remove(node);
             }
         }
-    }
-
-    public void setType(Type type) {
-        this.type = type;
-    }
-
-    public Type getType() {
-        return this.type;
     }
 
     /**
