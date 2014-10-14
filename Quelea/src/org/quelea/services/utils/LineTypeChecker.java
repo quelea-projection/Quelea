@@ -60,17 +60,12 @@ public class LineTypeChecker {
         } else if (checkNonBreak()) {
             return Type.NONBREAK;
         } else {
-            return Type.NONBREAK;
+            return Type.NORMAL;
         }
     }
 
     private boolean checkNonBreak() {
-        for (int i = 0; i < line.length(); i++) {
-            if (line.charAt(i) != ' ') {
-                return false;
-            }
-        }
-        return true;
+        return line.trim().equals("<>");
     }
 
     /**
