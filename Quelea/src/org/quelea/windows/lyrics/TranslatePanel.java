@@ -42,15 +42,16 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
-import org.fxmisc.richtext.StyleClassedTextArea;
 import org.javafx.dialog.Dialog;
 import org.quelea.data.displayable.SongDisplayable;
 import org.quelea.services.languages.LabelGrabber;
+import org.quelea.services.utils.Cancellable;
 import org.quelea.services.utils.LanguageNameMap;
 import org.quelea.services.utils.LineTypeChecker;
 import org.quelea.services.utils.LoggerUtils;
 import org.quelea.services.utils.QueleaProperties;
 import org.quelea.services.utils.Utils;
+import org.quelea.windows.main.ModalCancellableStage;
 
 /**
  * The translation dialog that manages all the translations - translations can
@@ -58,13 +59,16 @@ import org.quelea.services.utils.Utils;
  *
  * @author Michael
  */
-public class TranslatePanel extends BorderPane {
+public class TranslatePanel extends BorderPane implements Cancellable {
 
     private static final Logger LOGGER = LoggerUtils.getLogger();
     private final SplitPane splitPane;
     private final TabPane tabPane;
     private final LyricsTextArea defaultLyricsArea;
     private final Button addTranslationButton;
+    private Thread translateThread;
+    private final ModalCancellableStage copyStage = new ModalCancellableStage(LabelGrabber.INSTANCE.getLabel("translating.text.please.wait.text"));
+    private boolean interrupted = false;
 
     /**
      * Create the translation dialog.
@@ -85,37 +89,34 @@ public class TranslatePanel extends BorderPane {
                 if (name != null) {
                     final TranslateTab tab = new TranslateTab(name, "");
                     tabPane.getTabs().add(tab);
-                    new Thread() {
+                    copyStage.showAndAssociate(TranslatePanel.this);
+                    translateThread = new Thread() {
                         @Override
                         public void run() {
-                            final String lyrics = getTranslatedLyrics(name);
-                            Platform.runLater(new Runnable() {
-                                @Override
-                                public void run() {
-                                    if (lyrics != null && !lyrics.isEmpty()) {
-                                        if (tab.getLyrics().length() < 10) {
-                                            tab.setLyrics(lyrics);
-                                        } else {
-                                            Dialog.buildConfirmation(LabelGrabber.INSTANCE.getLabel("overwrite.lyrics.title"), LabelGrabber.INSTANCE.getLabel("overwrite.lyrics.text"))
-                                                    .addYesButton(new EventHandler<ActionEvent>() {
+                            interrupted = false;
+                            String lyrics = null;
+                            try {
+                                lyrics = getTranslatedLyrics(name);
+                            } catch (Exception ex) {
+                                LOGGER.log(Level.INFO, "Interrupted translating", ex);
+                                interrupted = true;
+                            }
 
-                                                        @Override
-                                                        public void handle(ActionEvent t) {
-                                                            tab.setLyrics(lyrics);
-                                                        }
-                                                    }).addNoButton(new EventHandler<ActionEvent>() {
-
-                                                        @Override
-                                                        public void handle(ActionEvent t) {
-                                                            //Nothing needed here.
-                                                        }
-                                                    }).build().showAndWait();
+                            if (!interrupted) {
+                                copyStage.hide();
+                                final String fiLyrics = lyrics;
+                                Platform.runLater(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        if (fiLyrics != null && !fiLyrics.isEmpty()) {
+                                            tab.setLyrics(fiLyrics);
                                         }
                                     }
-                                }
-                            });
+                                });
+                            }
                         }
-                    }.start();
+                    };
+                    translateThread.start();
                 }
             }
         });
@@ -142,6 +143,15 @@ public class TranslatePanel extends BorderPane {
     }
 
     /**
+     * Cancel the copying.
+     */
+    @Override
+    public void cancelOp() {
+        interrupted = true;
+        translateThread.interrupt();
+    }
+
+    /**
      * Clear any lyrics from this dialog (default and translations.)
      */
     public void clearSong() {
@@ -165,12 +175,13 @@ public class TranslatePanel extends BorderPane {
 
     /**
      * Get the text area where the deafult lyrics are displayed.
+     *
      * @return the text area where the deafult lyrics are displayed.
      */
     public LyricsTextArea getDefaultLyricsArea() {
         return defaultLyricsArea;
     }
-    
+
     /**
      * Get the translations as a hashmap from this dialog.
      *
@@ -201,7 +212,7 @@ public class TranslatePanel extends BorderPane {
      * some reason.
      */
     private String getTranslatedLyrics(String langName) {
-        if(!QueleaProperties.get().getAutoTranslate()) {
+        if (!QueleaProperties.get().getAutoTranslate()) {
             return "";
         }
         try {
@@ -234,15 +245,16 @@ public class TranslatePanel extends BorderPane {
             return "";
         }
     }
-    
+
     /**
      * Get a list of the existing names used for translations on tabs.
+     *
      * @return a list of the existing names used for translations on tabs.
      */
     private List<String> getExistingNames() {
         List<String> ret = new ArrayList<>();
-        for(Tab tab : tabPane.getTabs()) {
-            ret.add(((TranslateTab)tab).getName());
+        for (Tab tab : tabPane.getTabs()) {
+            ret.add(((TranslateTab) tab).getName());
         }
         return ret;
     }
