@@ -18,16 +18,30 @@
 package org.quelea.windows.newsong;
 
 import java.io.File;
-import java.io.IOException;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.nio.ByteBuffer;
+import java.nio.channels.FileChannel;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javafx.application.Platform;
 import javafx.event.EventHandler;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
+import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.control.ProgressBar;
 import javafx.scene.control.TextField;
+import javafx.scene.layout.StackPane;
+import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
-import org.apache.commons.io.FileUtils;
+import javafx.stage.Modality;
+import javafx.stage.Stage;
+import javafx.stage.StageStyle;
 import org.quelea.data.ThemeDTO;
 import org.quelea.data.VideoBackground;
+import org.quelea.services.languages.LabelGrabber;
 import org.quelea.services.utils.FileFilters;
 import org.quelea.services.utils.LoggerUtils;
 import org.quelea.services.utils.QueleaProperties;
@@ -46,6 +60,8 @@ public class VideoButton extends Button {
     private static final Logger LOGGER = LoggerUtils.getLogger();
     private String vidLocation;
     private final FileChooser fileChooser;
+    private final CopyingStage copyStage = new CopyingStage();
+    private Thread copyThread;
 
     /**
      * Create and initialise the video button.
@@ -56,7 +72,6 @@ public class VideoButton extends Button {
      */
     public VideoButton(final TextField videoLocationField, final DisplayCanvas canvas) {
         super("..");
-//        super(LabelGrabber.INSTANCE.getLabel("select.video.button"));
         fileChooser = new FileChooser();
         final File vidDir = QueleaProperties.get().getVidDir();
         fileChooser.setInitialDirectory(vidDir);
@@ -65,37 +80,67 @@ public class VideoButton extends Button {
             @Override
             public void handle(javafx.event.ActionEvent t) {
                 File selectedFile = fileChooser.showOpenDialog(QueleaApp.get().getMainWindow());
-                if(selectedFile != null) {
-                    File newFile = new File(vidDir, selectedFile.getName());
-                    try {
-                        if(!selectedFile.getCanonicalPath().startsWith(vidDir.getCanonicalPath())) {
-                            FileUtils.copyFile(selectedFile, newFile);
-                        }
-                    }
-                    catch(IOException ex) {
-                        LOGGER.log(Level.WARNING, "", ex);
-                    }
+                if (selectedFile != null) {
+                    copyStage.showAndAssociate(VideoButton.this);
+                    copyThread = new Thread() {
+                        public void run() {
+                            boolean interrupt = false;
+                            File newFile = new File(vidDir, selectedFile.getName());
+                            try {
+                                if (!selectedFile.getCanonicalPath().startsWith(vidDir.getCanonicalPath())) {
+                                    VideoButton.copyFile(selectedFile.getAbsolutePath(), newFile.getAbsolutePath());
+                                }
+                            } catch (Exception ex) {
+                                LOGGER.log(Level.INFO, "Interrupted copying vid file", ex);
+                                newFile.delete();
+                                interrupt = true;
+                            }
 
-                    vidLocation = vidDir.toURI().relativize(newFile.toURI()).getPath();
-                    videoLocationField.setText(vidLocation);
-                    LyricDrawer drawer = new LyricDrawer();
-                    drawer.setCanvas(canvas);
-                    ThemeDTO theme = new ThemeDTO(new SerializableFont(drawer.getTheme().getFont()),
-                            drawer.getTheme().getFontPaint(),
-                            new SerializableFont(drawer.getTheme().getTranslateFont()),
-                            drawer.getTheme().getTranslateFontPaint(),
-                            new VideoBackground(vidLocation, 0, false),
-                            drawer.getTheme().getShadow(),
-                            drawer.getTheme().isBold(),
-                            drawer.getTheme().isItalic(),
-                            drawer.getTheme().isTranslateBold(),
-                            drawer.getTheme().isTranslateItalic(),
-                            drawer.getTheme().getTextPosition(),
-                            drawer.getTheme().getTextAlignment());
-                    drawer.setTheme(theme);
+                            if (!interrupt) {
+                                Platform.runLater(() -> {
+                                    copyStage.hide();
+                                    vidLocation = vidDir.toURI().relativize(newFile.toURI()).getPath();
+                                    videoLocationField.setText(vidLocation);
+                                    LyricDrawer drawer = new LyricDrawer();
+                                    drawer.setCanvas(canvas);
+                                    ThemeDTO theme = new ThemeDTO(new SerializableFont(drawer.getTheme().getFont()),
+                                            drawer.getTheme().getFontPaint(),
+                                            new SerializableFont(drawer.getTheme().getTranslateFont()),
+                                            drawer.getTheme().getTranslateFontPaint(),
+                                            new VideoBackground(vidLocation, 0, false),
+                                            drawer.getTheme().getShadow(),
+                                            drawer.getTheme().isBold(),
+                                            drawer.getTheme().isItalic(),
+                                            drawer.getTheme().isTranslateBold(),
+                                            drawer.getTheme().isTranslateItalic(),
+                                            drawer.getTheme().getTextPosition(),
+                                            drawer.getTheme().getTextAlignment());
+                                    drawer.setTheme(theme);
+                                });
+                            }
+                        }
+                    };
+                    copyThread.start();
                 }
             }
         });
+    }
+
+    public Thread getCopyThread() {
+        return copyThread;
+    }
+
+    private static void copyFile(String in, String out) throws Exception {
+        try (FileChannel fin = new FileInputStream(in).getChannel();
+                FileChannel fout = new FileOutputStream(out).getChannel();) {
+
+            ByteBuffer buff = ByteBuffer.allocate(4096);
+            while (fin.read(buff) != -1 || buff.position() > 0) {
+                buff.flip();
+                fout.write(buff);
+                buff.compact();
+            }
+        }
     }
 
     /**
@@ -105,5 +150,57 @@ public class VideoButton extends Button {
      */
     public String getVideoLocation() {
         return vidLocation;
+    }
+
+    private static class CopyingStage extends Stage {
+
+        private boolean cancel = false;
+        private VideoButton button;
+
+        public CopyingStage() {
+            initModality(Modality.APPLICATION_MODAL);
+            initStyle(StageStyle.UNDECORATED);
+            setOnShowing((event) -> {
+                centerOnScreen();
+                cancel = false;
+            });
+            StackPane root = new StackPane();
+            VBox items = new VBox(10);
+            Label label = new Label(LabelGrabber.INSTANCE.getLabel("copying.please.wait.text"));
+            label.setAlignment(Pos.CENTER);
+            items.getChildren().add(label);
+            StackPane barPane = new StackPane();
+            ProgressBar bar = new ProgressBar();
+            bar.setMaxWidth(Double.MAX_VALUE);
+            bar.prefWidthProperty().bind(widthProperty().subtract(50));
+            StackPane.setAlignment(bar, Pos.CENTER);
+            barPane.getChildren().add(bar);
+            barPane.setAlignment(Pos.CENTER);
+            items.getChildren().add(barPane);
+            StackPane buttonPane = new StackPane();
+            Button cancelButton = new Button(LabelGrabber.INSTANCE.getLabel("cancel.text"));
+            StackPane.setAlignment(buttonPane, Pos.CENTER);
+            buttonPane.setAlignment(Pos.CENTER);
+            buttonPane.getChildren().add(cancelButton);
+            cancelButton.setAlignment(Pos.CENTER);
+            cancelButton.setOnAction((event) -> {
+                cancel = true;
+                hide();
+                button.getCopyThread().interrupt();
+            });
+            items.getChildren().add(buttonPane);
+            StackPane.setMargin(items, new Insets(10));
+            root.getChildren().add(items);
+            setScene(new Scene(root));
+        }
+
+        public void showAndAssociate(VideoButton button) {
+            this.button = button;
+            show();
+        }
+
+        public boolean isCancel() {
+            return cancel;
+        }
     }
 }
