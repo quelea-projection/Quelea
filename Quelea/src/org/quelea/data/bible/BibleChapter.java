@@ -106,10 +106,17 @@ public final class BibleChapter implements BibleInterface, Serializable {
     public static BibleChapter parseXML(Node node, int defaultNum) {
         int num = -1;
         if (node.getAttributes().getNamedItem("cnumber") != null) {
-            num = Integer.parseInt(node.getAttributes().getNamedItem("cnumber").getNodeValue().trim());
+            try {
+                num = Integer.parseInt(node.getAttributes().getNamedItem("cnumber").getNodeValue().trim());
+            } catch (NumberFormatException ex) {
+            }
         } else if (node.getAttributes().getNamedItem("n") != null) {
-            num = Integer.parseInt(node.getAttributes().getNamedItem("n").getNodeValue().trim());
-        } else {
+            try {
+                num = Integer.parseInt(node.getAttributes().getNamedItem("n").getNodeValue().trim());
+            } catch (NumberFormatException ex) {
+            }
+        }
+        if (num == -1) {
             num = defaultNum;
         }
         BibleChapter ret = new BibleChapter(num);
