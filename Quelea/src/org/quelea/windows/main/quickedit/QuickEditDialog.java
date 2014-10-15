@@ -92,7 +92,7 @@ public class QuickEditDialog extends Stage {
             @Override
             public void handle(javafx.event.ActionEvent t) {
                 TextSection oldSection = currentSong.getSections()[currentIndex];
-                String[] sectionLyrics = sectionArea.getText().split("\n\n");
+                String[] sectionLyrics = sectionArea.getText().replace("<>", " ").split("\n\n");
                 currentSong.replaceSection(new TextSection(oldSection.getTitle(), sectionLyrics[0].split("\n"), oldSection.getSmallText(), oldSection.shouldCapitaliseFirst(), oldSection.getTheme(), oldSection.getTempTheme()), currentIndex);
                 for(int i = 1; i < sectionLyrics.length; i++) {
                     String[] lyrics = sectionLyrics[i].split("\n");
