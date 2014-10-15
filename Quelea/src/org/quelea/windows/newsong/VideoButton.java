@@ -26,27 +26,19 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.application.Platform;
 import javafx.event.EventHandler;
-import javafx.geometry.Insets;
-import javafx.geometry.Pos;
-import javafx.scene.Scene;
 import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.ProgressBar;
 import javafx.scene.control.TextField;
-import javafx.scene.layout.StackPane;
-import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
-import javafx.stage.Modality;
-import javafx.stage.Stage;
-import javafx.stage.StageStyle;
 import org.quelea.data.ThemeDTO;
 import org.quelea.data.VideoBackground;
 import org.quelea.services.languages.LabelGrabber;
+import org.quelea.services.utils.Cancellable;
 import org.quelea.services.utils.FileFilters;
 import org.quelea.services.utils.LoggerUtils;
 import org.quelea.services.utils.QueleaProperties;
 import org.quelea.services.utils.SerializableFont;
 import org.quelea.windows.lyrics.LyricDrawer;
+import org.quelea.windows.main.ModalCancellableStage;
 import org.quelea.windows.main.DisplayCanvas;
 import org.quelea.windows.main.QueleaApp;
 
@@ -55,12 +47,12 @@ import org.quelea.windows.main.QueleaApp;
  * <p/>
  * @author Michael
  */
-public class VideoButton extends Button {
+public class VideoButton extends Button implements Cancellable {
 
     private static final Logger LOGGER = LoggerUtils.getLogger();
     private String vidLocation;
     private final FileChooser fileChooser;
-    private final CopyingStage copyStage = new CopyingStage();
+    private final ModalCancellableStage copyStage = new ModalCancellableStage(LabelGrabber.INSTANCE.getLabel("copying.video.please.wait.text"));
     private Thread copyThread;
 
     /**
@@ -129,6 +121,14 @@ public class VideoButton extends Button {
     public Thread getCopyThread() {
         return copyThread;
     }
+    
+    /**
+     * Cancel the copying.
+     */
+    @Override
+    public void cancelOp() {
+        getCopyThread().interrupt();
+    }
 
     private static void copyFile(String in, String out) throws Exception {
         try (FileChannel fin = new FileInputStream(in).getChannel();
@@ -152,55 +152,4 @@ public class VideoButton extends Button {
         return vidLocation;
     }
 
-    private static class CopyingStage extends Stage {
-
-        private boolean cancel = false;
-        private VideoButton button;
-
-        public CopyingStage() {
-            initModality(Modality.APPLICATION_MODAL);
-            initStyle(StageStyle.UNDECORATED);
-            setOnShowing((event) -> {
-                centerOnScreen();
-                cancel = false;
-            });
-            StackPane root = new StackPane();
-            VBox items = new VBox(10);
-            Label label = new Label(LabelGrabber.INSTANCE.getLabel("copying.please.wait.text"));
-            label.setAlignment(Pos.CENTER);
-            items.getChildren().add(label);
-            StackPane barPane = new StackPane();
-            ProgressBar bar = new ProgressBar();
-            bar.setMaxWidth(Double.MAX_VALUE);
-            bar.prefWidthProperty().bind(widthProperty().subtract(50));
-            StackPane.setAlignment(bar, Pos.CENTER);
-            barPane.getChildren().add(bar);
-            barPane.setAlignment(Pos.CENTER);
-            items.getChildren().add(barPane);
-            StackPane buttonPane = new StackPane();
-            Button cancelButton = new Button(LabelGrabber.INSTANCE.getLabel("cancel.text"));
-            StackPane.setAlignment(buttonPane, Pos.CENTER);
-            buttonPane.setAlignment(Pos.CENTER);
-            buttonPane.getChildren().add(cancelButton);
-            cancelButton.setAlignment(Pos.CENTER);
-            cancelButton.setOnAction((event) -> {
-                cancel = true;
-                hide();
-                button.getCopyThread().interrupt();
-            });
-            items.getChildren().add(buttonPane);
-            StackPane.setMargin(items, new Insets(10));
-            root.getChildren().add(items);
-            setScene(new Scene(root));
-        }
-
-        public void showAndAssociate(VideoButton button) {
-            this.button = button;
-            show();
-        }
-
-        public boolean isCancel() {
-            return cancel;
-        }
-    }
 }
