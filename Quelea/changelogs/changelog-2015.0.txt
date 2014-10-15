@@ -7,6 +7,7 @@ quelea (2015.0) stable; urgency=normal
   * New feature - QR code generator added for mobile lyrics URL
   * New feature - Allow non-breaking lines in song lyrics
   * Bugfix - Quick Edit now works properly
+  * Bugfix - Quelea no longer locks up when copying a video background
   * Bugfix - window now remembers maximised state
   * Bugfix - memory leaks fixed
   * Various other minor bugfixes
