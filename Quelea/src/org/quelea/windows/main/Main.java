@@ -237,8 +237,6 @@ public final class Main extends Application {
                             }
 
                             LOGGER.log(Level.INFO, "Final loading bits");
-                            //                Utils.centreOnMonitor(mainWindow, controlScreen);
-                            //                mainWindow.toFront();
                             new ShortcutManager().addShortcuts(mainWindow);
                             LOGGER.log(Level.INFO, "Loaded everything.");
 
