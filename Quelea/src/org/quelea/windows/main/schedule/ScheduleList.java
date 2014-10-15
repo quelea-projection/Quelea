@@ -106,10 +106,7 @@ public class ScheduleList extends StackPane {
                     @Override
                     public void updateItem(Displayable item, boolean empty) {
                         super.updateItem(item, empty);
-                        if(item==null) {
-                            return;
-                        }
-                        if (empty) {
+                        if (empty || item == null) {
                             setText(null);
                             setGraphic(null);
                         } else {
@@ -331,6 +328,7 @@ public class ScheduleList extends StackPane {
 
     /**
      * Get the list view on this schedule list.
+     *
      * @return the list view on this schedule list.
      */
     public ListView<Displayable> getListView() {
@@ -365,7 +363,7 @@ public class ScheduleList extends StackPane {
         int selectedIndex = listView.selectionModelProperty().get().getSelectedIndex();
         int index = itemp.indexOf(song);
         if (index != -1) {
-            itemp.set(index, new SongDisplayable("",""));
+            itemp.set(index, new SongDisplayable("", ""));
             itemp.set(index, song);
         }
         listView.getSelectionModel().clearSelection();
