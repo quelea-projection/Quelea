@@ -32,6 +32,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
+import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.util.Duration;
 import org.quelea.services.languages.LabelGrabber;
@@ -81,7 +82,7 @@ public class AddSongPromptOverlay extends StackPane {
         });
         text.setWrapText(true);
         text.setTextFill(Color.WHITESMOKE);
-        text.setStyle("-fx-font-size:20pt");
+        text.setStyle("-fx-font-size:16pt; -fx-font-family:Calibri;");
         content.getChildren().add(text);
         getChildren().add(content);
         setOpacity(0);
