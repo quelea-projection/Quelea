@@ -539,10 +539,16 @@ public class LyricDrawer extends DisplayableDrawer {
      */
     private List<LyricLine> sanctifyText(String[] linesArr, String[] translationArr) {
         List<LyricLine> finalLines = new ArrayList<>();
+        int translationOffset = 0;
         for (int i = 0; i < linesArr.length; i++) {
             finalLines.add(new LyricLine(linesArr[i]));
-            if (translationArr != null && i < translationArr.length && new LineTypeChecker(translationArr[i]).getLineType() == Type.NORMAL) {
-                finalLines.add(new LyricLine(true, translationArr[i]));
+            if (translationArr != null && i < translationArr.length) {
+                while (i + translationOffset < translationArr.length && new LineTypeChecker(translationArr[i + translationOffset]).getLineType() != Type.NORMAL) {
+                    translationOffset++;
+                }
+                if (new LineTypeChecker(translationArr[i + translationOffset]).getLineType() == Type.NORMAL) {
+                    finalLines.add(new LyricLine(true, translationArr[i + translationOffset]));
+                }
             }
         }
 
