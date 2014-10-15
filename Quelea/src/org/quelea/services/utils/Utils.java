@@ -521,32 +521,6 @@ public final class Utils {
         return gds[monitorNum].getDefaultConfiguration().getBounds().contains(stage.getX(), stage.getY(), stage.getWidth(), stage.getHeight());
     }
 
-    /**
-     * Centre the given stage on the given monitor.
-     * <p/>
-     * @param stage the stage to centre.
-     * @param monitorNum the monitor number to centre the frame on.
-     */
-    public static void centreOnMonitor(final Stage stage, int monitorNum) {
-        GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
-        final GraphicsDevice[] gds = ge.getScreenDevices();
-        Rectangle bounds = gds[monitorNum].getDefaultConfiguration().getBounds();
-        final int centreX = (int) (((int) (bounds.getMaxX() - bounds.getMinX()) / 2) + bounds.getMinX());
-        final int centreY = (int) (((int) (bounds.getMaxY() - bounds.getMinY()) / 2) + bounds.getMinY());
-        Runnable locationSetter = new Runnable() {
-            @Override
-            public void run() {
-                stage.setX(centreX - stage.getWidth() / 2);
-                stage.setY(centreY - stage.getHeight() / 2);
-            }
-        };
-        if (Platform.isFxApplicationThread()) {
-            locationSetter.run();
-        } else {
-            Platform.runLater(locationSetter);
-        }
-    }
-
     public static boolean fxThread() {
         return Platform.isFxApplicationThread();
     }
