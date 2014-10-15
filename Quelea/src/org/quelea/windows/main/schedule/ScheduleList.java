@@ -106,6 +106,9 @@ public class ScheduleList extends StackPane {
                     @Override
                     public void updateItem(Displayable item, boolean empty) {
                         super.updateItem(item, empty);
+                        if(item==null) {
+                            return;
+                        }
                         if (empty) {
                             setText(null);
                             setGraphic(null);
