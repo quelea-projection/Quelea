@@ -103,11 +103,11 @@ public class TranslatePanel extends BorderPane implements Cancellable {
                             }
 
                             if (!interrupted) {
-                                copyStage.hide();
                                 final String fiLyrics = lyrics;
                                 Platform.runLater(new Runnable() {
                                     @Override
                                     public void run() {
+                                        copyStage.hide();
                                         if (fiLyrics != null && !fiLyrics.isEmpty()) {
                                             tab.setLyrics(fiLyrics);
                                         }
