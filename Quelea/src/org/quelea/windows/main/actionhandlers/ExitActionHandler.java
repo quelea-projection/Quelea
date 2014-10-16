@@ -59,6 +59,7 @@ public class ExitActionHandler implements EventHandler<ActionEvent> {
 
     /**
      * Process the necessary logic to cleanly exit from Quelea.
+     *
      * @param t the event that caused the exit.
      */
     public void exit(Event t) {
@@ -94,7 +95,7 @@ public class ExitActionHandler implements EventHandler<ActionEvent> {
                 }
             }).build();
             d.showAndWait();
-            while(block) {
+            while (block) {
                 try {
                     Thread.sleep(5);
                 } catch (InterruptedException ex) {
@@ -107,6 +108,10 @@ public class ExitActionHandler implements EventHandler<ActionEvent> {
         }
         LOGGER.log(Level.INFO, "Saving window position...");
         QueleaProperties.get().setSceneInfo(new SceneInfo(mainWindow.getX(), mainWindow.getY(), mainWindow.getWidth(), mainWindow.getHeight(), mainWindow.isMaximized()));
+        QueleaProperties.get().setMainDivPos(mainWindow.getMainPanel().getMainDivPos());
+        QueleaProperties.get().setPrevLiveDivPos(mainWindow.getMainPanel().getPrevLiveDivPos());
+        QueleaProperties.get().setCanvasDivPos(mainWindow.getMainPanel().getLivePanel().getLyricsPanel().getSplitPane().getDividerPositions()[0]);
+        QueleaProperties.get().setLibraryDivPos(mainWindow.getMainPanel().getLibraryDivPos());
         LOGGER.log(Level.INFO, "Hiding main window...");
         mainWindow.hide();
         LOGGER.log(Level.INFO, "Cleaning up displayables before exiting..");

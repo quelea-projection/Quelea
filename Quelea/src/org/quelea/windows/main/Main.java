@@ -135,7 +135,7 @@ public final class Main extends Application {
                     } else {
                         LOGGER.log(Level.INFO, "Mobile lyrics disabled");
                     }
-                    
+
                     if (QueleaProperties.get().getUseRemoteControl()) {
                         LOGGER.log(Level.INFO, "Starting remote control server on {0}", QueleaProperties.get().getRemoteControlPort());
                         try {
@@ -283,6 +283,7 @@ public final class Main extends Application {
                                 vlcWarningDialog = vlcWarningDialogBuilder.setWarningIcon().build();
                                 vlcWarningDialog.showAndWait();
                             }
+                            mainWindow.getMainPanel().setSliderPos();
                             QueleaApp.get().doneLoading();
                         }
                     });
