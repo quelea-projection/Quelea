@@ -21,6 +21,7 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -71,6 +72,7 @@ public abstract class ImportDialog extends Stage implements PropertyChangeListen
     private final SelectSongsDialog importedDialog;
     private StatusPanel statusPanel;
     private boolean halt;
+    private List<File> files;
     private static final Logger LOGGER = LoggerUtils.getLogger();
 
     /**
@@ -85,10 +87,11 @@ public abstract class ImportDialog extends Stage implements PropertyChangeListen
      * directories, false otherwise.
      */
     public ImportDialog(String[] dialogLabels, ExtensionFilter fileFilter,
-            final SongParser parser, final boolean selectDirectory) {
+            final SongParser parser, final boolean selectDirectory, final boolean selectMultiple) {
         initModality(Modality.APPLICATION_MODAL);
         initStyle(StageStyle.UTILITY);
         setTitle(LabelGrabber.INSTANCE.getLabel("import.heading"));
+        files = new ArrayList<>();
         halt = false;
         importedDialog = new SelectImportedSongsDialog();
         VBox mainPane = new VBox();
@@ -97,7 +100,7 @@ public abstract class ImportDialog extends Stage implements PropertyChangeListen
         final DirectoryChooser dirChooser = new DirectoryChooser();
 
         VBox textPane = new VBox();
-        for(String str : dialogLabels) {
+        for (String str : dialogLabels) {
             textPane.getChildren().add(new Label(str));
         }
         VBox.setMargin(textPane, new Insets(10));
@@ -109,22 +112,41 @@ public abstract class ImportDialog extends Stage implements PropertyChangeListen
 
         locationField = new TextField();
         VBox.setMargin(locationField, new Insets(0, 10, 0, 10));
-        if(fileFilter != null) {
+        if (fileFilter != null) {
             locationField.setEditable(false);
             locationField.setText(LabelGrabber.INSTANCE.getLabel("click.select.file.text"));
             locationField.setOnMouseClicked(new EventHandler<javafx.scene.input.MouseEvent>() {
                 @Override
                 public void handle(javafx.scene.input.MouseEvent t) {
-                    if(!locationField.isDisable()) {
-                        File file;
-                        if(selectDirectory) {
-                            file = dirChooser.showDialog(ImportDialog.this);
+                    if (!locationField.isDisable()) {
+                        files.clear();
+                        if (selectDirectory) {
+                            File f = dirChooser.showDialog(ImportDialog.this);
+                            if (f != null) {
+                                files.add(f);
+                            }
+                        } else {
+                            if (selectMultiple) {
+                                List<File> f = locationChooser.showOpenMultipleDialog(ImportDialog.this);
+                                if (f != null) {
+                                    files.addAll(f);
+                                }
+                            } else {
+                                File f = locationChooser.showOpenDialog(ImportDialog.this);
+                                if (f != null) {
+                                    files.add(f);
+                                }
+                            }
                         }
-                        else {
-                            file = locationChooser.showOpenDialog(ImportDialog.this);
-                        }
-                        if(file != null) {
-                            locationField.setText(file.getAbsolutePath());
+                        if (!files.isEmpty()) {
+                            StringBuilder locationContent = new StringBuilder();
+                            for (int i = 0; i < files.size(); i++) {
+                                locationContent.append(files.get(0).getAbsolutePath());
+                                if (i < files.size() - 1) {
+                                    locationContent.append("; ");
+                                }
+                            }
+                            locationField.setText(locationContent.toString());
                             importButton.setDisable(false);
                         }
                     }
@@ -142,7 +164,7 @@ public abstract class ImportDialog extends Stage implements PropertyChangeListen
                 hide();
             }
         });
-        if(fileFilter != null) {
+        if (fileFilter != null) {
             importButton.setDisable(true);
         }
         HBox buttonPane = new HBox(10);
@@ -163,7 +185,6 @@ public abstract class ImportDialog extends Stage implements PropertyChangeListen
                         halt = true;
                     }
                 });
-                final String location = locationField.getText();
                 setActive();
                 Thread worker = new Thread() {
                     private List<SongDisplayable> localSongs;
@@ -173,23 +194,29 @@ public abstract class ImportDialog extends Stage implements PropertyChangeListen
                     @Override
                     public void run() {
                         try {
-                            localSongs = parser.getSongs(new File(location), statusPanel);
-                            if(halt) {
+                            if (files == null || files.isEmpty()) {
+                                return;
+                            }
+                            localSongs = new ArrayList<>();
+                            for (File file : files) {
+                                localSongs.addAll(parser.getSongs(file, statusPanel));
+                            }
+                            if (halt) {
                                 localSongs = null;
                             }
                             statusPanel.setProgress(0);
-                            if(checkDuplicates.isSelected()) {
+                            if (checkDuplicates.isSelected()) {
 //                                localSongsDuplicate = new SongDuplicateChecker().checkSongs(localSongsArr);
-                                for(int i = 0; i < (localSongs == null ? 0 : localSongs.size()); i++) {
+                                for (int i = 0; i < (localSongs == null ? 0 : localSongs.size()); i++) {
                                     final int finali = i;
                                     checkerService.submit(Utils.wrapAsLowPriority(new Runnable() {
                                         @Override
                                         public void run() {
-                                            if(!halt) {
+                                            if (!halt) {
                                                 final boolean result = new SongDuplicateChecker().checkSong(localSongs.get(finali));
                                                 localSongsDuplicate[finali] = result;
                                                 final double progress = ((double) finali / localSongs.size());
-                                                if(statusPanel.getProgress() < progress) {
+                                                if (statusPanel.getProgress() < progress) {
                                                     statusPanel.setProgress(progress);
                                                 }
                                             }
@@ -199,18 +226,16 @@ public abstract class ImportDialog extends Stage implements PropertyChangeListen
                                 try {
                                     checkerService.shutdown();
                                     checkerService.awaitTermination(365, TimeUnit.DAYS); //Year eh? ;-)
-                                }
-                                catch(InterruptedException ex) {
+                                } catch (InterruptedException ex) {
                                     LOGGER.log(Level.WARNING, "Interrupted?!", ex);
                                 }
                             }
                             Platform.runLater(new Runnable() {
                                 @Override
                                 public void run() {
-                                    if((localSongs == null || localSongs.isEmpty()) && !halt) {
+                                    if ((localSongs == null || localSongs.isEmpty()) && !halt) {
                                         Dialog.showWarning(LabelGrabber.INSTANCE.getLabel("import.no.songs.title"), LabelGrabber.INSTANCE.getLabel("import.no.songs.text"));
-                                    }
-                                    else if(!(localSongs == null || localSongs.isEmpty())) {
+                                    } else if (!(localSongs == null || localSongs.isEmpty())) {
 
                                         getImportedDialog().setSongs(localSongs, localSongsDuplicate, true);
                                         getImportedDialog().show();
@@ -218,8 +243,7 @@ public abstract class ImportDialog extends Stage implements PropertyChangeListen
                                     setIdle();
                                 }
                             });
-                        }
-                        catch(IOException ex) {
+                        } catch (IOException ex) {
                             Dialog.showError(LabelGrabber.INSTANCE.getLabel("error.text"), LabelGrabber.INSTANCE.getLabel("import.error.message"));
                             LOGGER.log(Level.WARNING, "Error importing songs", ex);
                         }
@@ -240,15 +264,6 @@ public abstract class ImportDialog extends Stage implements PropertyChangeListen
      */
     public Button getImportButton() {
         return importButton;
-    }
-
-    /**
-     * Get the location field.
-     * <p/>
-     * @return the location field.
-     */
-    public TextField getLocationField() {
-        return locationField;
     }
 
     /**
@@ -281,8 +296,8 @@ public abstract class ImportDialog extends Stage implements PropertyChangeListen
     }
 
     private void resetDialog() {
-        getLocationField().setText(LabelGrabber.INSTANCE.getLabel("click.select.file.text"));
-        getLocationField().setDisable(false);
+        locationField.setText(LabelGrabber.INSTANCE.getLabel("click.select.file.text"));
+        locationField.setDisable(false);
         getImportButton().setText(LabelGrabber.INSTANCE.getLabel("import.button"));
         hide();
     }
@@ -295,7 +310,7 @@ public abstract class ImportDialog extends Stage implements PropertyChangeListen
     @Override
     public void propertyChange(PropertyChangeEvent evt) {
         String strPropertyName = evt.getPropertyName();
-        if("progress".equals(strPropertyName) && statusPanel != null) {
+        if ("progress".equals(strPropertyName) && statusPanel != null) {
             int progress = (Integer) evt.getNewValue();
             statusPanel.getProgressBar().setProgress(progress);
         }

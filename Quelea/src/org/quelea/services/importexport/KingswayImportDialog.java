@@ -36,7 +36,7 @@ public class KingswayImportDialog extends ImportDialog {
         super(new String[]{
                     LabelGrabber.INSTANCE.getLabel("kingsway.import.line1"),
                     LabelGrabber.INSTANCE.getLabel("kingsway.import.line2")
-                }, null, (kwp = new KingswayWorshipParser()), false);
+                }, null, (kwp = new KingswayWorshipParser()), false, false);
         this.kwp = kwp;
         //TODO Messy fix...
     }
