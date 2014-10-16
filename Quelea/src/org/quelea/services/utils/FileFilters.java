@@ -49,6 +49,10 @@ public final class FileFilters {
      */
     public static final FileChooser.ExtensionFilter PDF_GENERIC = new FileChooser.ExtensionFilter(LabelGrabber.INSTANCE.getLabel("filefilters.description.pdf.files") + " (*.pdf)", "*.pdf");
     /**
+     * Accept USR (songselect) files.
+     */
+    public static final FileChooser.ExtensionFilter USR_SS = new FileChooser.ExtensionFilter(LabelGrabber.INSTANCE.getLabel("filefilters.description.usr.files") + " (*.usr)", "*.usr");
+    /**
      * Accept video files.
      */
     public static final FileChooser.ExtensionFilter VIDEOS = new FileChooser.ExtensionFilter(LabelGrabber.INSTANCE.getLabel("filefilters.description.video.files"), Utils.getFileExtensions(Utils.getVideoExtensions()));

@@ -499,3 +499,6 @@ bible.load.error.question=There appears to be a problem with your bible file, Qu
 nonbreak.tooltip=Add non-breaking line
 copying.video.please.wait.text=Hang on a moment - just copying the video file...
 translating.text.please.wait.text=Hang on a moment - grabbing a translation...
+filefilters.description.usr.files=USR (SongSelect) files
+songselect.import.line1=Select the SongSelect files below.
+songselect.button=SongSelect
