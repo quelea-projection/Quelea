@@ -20,6 +20,7 @@ package org.quelea.data.powerpoint;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.util.ArrayList;
 import org.apache.poi.xslf.usermodel.XMLSlideShow;
 import org.apache.poi.xslf.usermodel.XSLFSlide;
 
@@ -41,11 +42,9 @@ public class PPTXPresentation implements Presentation {
     public PPTXPresentation(String file) {
         try {
             slideshow = new XMLSlideShow(new FileInputStream(new File(file)));
-        }
-        catch(IOException ex) {
+        } catch (IOException ex) {
             throw new RuntimeException("Couldn't find " + file, ex);
-        }
-        catch(Exception ex) {
+        } catch (Exception ex) {
             throw new RuntimeException("Error creating presentation");
         }
         slides = makeSlides();
@@ -80,10 +79,12 @@ public class PPTXPresentation implements Presentation {
      */
     private PresentationSlide[] makeSlides() {
         XSLFSlide[] lSlides = slideshow.getSlides();
-        PresentationSlide[] ret = new PresentationSlide[lSlides.length];
-        for(int i = 0; i < lSlides.length; i++) {
-            ret[i] = new PresentationSlide(lSlides[i]);
+        ArrayList<PresentationSlide> ret = new ArrayList<>();
+        for (int i = 0; i < lSlides.length; i++) {
+            if (lSlides[i] != null) {
+                ret.add(new PresentationSlide(lSlides[i]));
+            }
         }
-        return ret;
+        return ret.toArray(new PresentationSlide[ret.size()]);
     }
 }
