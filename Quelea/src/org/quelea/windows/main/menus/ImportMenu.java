@@ -34,6 +34,7 @@ import org.quelea.services.importexport.OpenSongImportDialog;
 import org.quelea.services.importexport.ParadoxJDBCChecker;
 import org.quelea.services.importexport.PlainTextSongsImportDialog;
 import org.quelea.services.importexport.QSPImportDialog;
+import org.quelea.services.importexport.SongSelectImportDialog;
 import org.quelea.services.importexport.SourceImportDialog;
 import org.quelea.services.importexport.SundayPlusImportDialog;
 import org.quelea.services.importexport.SurvivorImportDialog;
@@ -61,6 +62,7 @@ public class ImportMenu extends Menu {
     private final ImportDialog easySlidesImportDialog;
     private final ImportDialog easyWorshipImportDialog;
     private final ImportDialog sundayPlusImportDialog;
+    private final ImportDialog songSelectImportDialog;
     private final MenuItem qspItem;
     private final MenuItem osItem;
     private final MenuItem spItem;
@@ -72,6 +74,7 @@ public class ImportMenu extends Menu {
     private final MenuItem plainTextItem;
     private final MenuItem easySlidesItem;
     private final MenuItem easyWorshipItem;
+    private final MenuItem songSelectItem;
     private final Menu kingswayItem;
 
     /**
@@ -92,6 +95,7 @@ public class ImportMenu extends Menu {
         easySlidesImportDialog = new EasySlidesImportDialog();
         easyWorshipImportDialog = new EasyWorshipImportDialog();
         sundayPlusImportDialog = new SundayPlusImportDialog();
+        songSelectImportDialog = new SongSelectImportDialog();
 
         qspItem = new MenuItem(LabelGrabber.INSTANCE.getLabel("qsp.button"), new ImageView(new Image("file:icons/logo16.png", 16, 16, false, true)));
         qspItem.setOnAction(new EventHandler<ActionEvent>() {
@@ -160,6 +164,15 @@ public class ImportMenu extends Menu {
             }
         });
         getItems().add(ssItem);
+
+        songSelectItem = new MenuItem(LabelGrabber.INSTANCE.getLabel("songselect.button"), new ImageView(new Image("file:icons/songselect.png", 16, 16, false, true)));
+        songSelectItem.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent t) {
+                songSelectImportDialog.show();
+            }
+        });
+        getItems().add(songSelectItem);
 
         sourceItem = new MenuItem(LabelGrabber.INSTANCE.getLabel("source.button"), new ImageView(new Image("file:icons/source.jpg", 16, 16, false, true)));
         sourceItem.setOnAction(new EventHandler<ActionEvent>() {
