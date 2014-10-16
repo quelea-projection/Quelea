@@ -220,6 +220,9 @@ public class LibrarySongList extends StackPane {
                     @Override
                     public void run() {
                         songList.setItems(songs);
+                        if (!songs.isEmpty()) {
+                            songList.getSelectionModel().select(0);
+                        }
                         setLoading(false);
                     }
                 });
