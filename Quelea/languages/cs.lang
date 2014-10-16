@@ -1,4 +1,5 @@
-LANGUAGENAME=Čeština
+LANGUAGENAME=Čeština (CZ)
+LOCALE=cz
 database.heading=Databáze
 import.heading=Zavedení
 qsp.button=Balíček písní Quelea
