@@ -1,5 +1,6 @@
 ﻿
 LANGUAGENAME=Svenska (SV)
+LOCALE=sv
 database.heading=Databas
 import.heading=Importera
 qsp.button=Quelea-sångbok

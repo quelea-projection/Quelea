@@ -1,5 +1,6 @@
 ﻿
 LANGUAGENAME=Norsk (NO)
+LOCALE=no
 database.heading=Database
 import.heading=Importer
 qsp.button=Quelea-sangbok
