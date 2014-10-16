@@ -150,11 +150,9 @@ public final class QueleaProperties extends Properties {
             String[] parts = getProperty("scene.info", "461,15,997,995,false").split(",");
             if (parts.length == 4) {
                 return new SceneInfo(Integer.parseInt(parts[0]), Integer.parseInt(parts[1]), Integer.parseInt(parts[2]), Integer.parseInt(parts[3]), false);
-            }
-            else if (parts.length == 5) {
+            } else if (parts.length == 5) {
                 return new SceneInfo(Integer.parseInt(parts[0]), Integer.parseInt(parts[1]), Integer.parseInt(parts[2]), Integer.parseInt(parts[3]), Boolean.parseBoolean(parts[4]));
-            }
-            else {
+            } else {
                 return null;
             }
         } catch (Exception ex) {
@@ -172,6 +170,85 @@ public final class QueleaProperties extends Properties {
      */
     public void setSceneInfo(SceneInfo info) {
         setProperty("scene.info", info.toString());
+        write();
+    }
+
+    /**
+     * Get the main splitpane divider position property.
+     *
+     * @return the main splitpane divider position property, or -1 if none is
+     * set.
+     */
+    public double getMainDivPos() {
+        return Double.parseDouble(getProperty("main.divpos", "-1"));
+    }
+
+    /**
+     * Get the library / schedule splitpane divider position property.
+     *
+     * @return the library / schedule splitpane divider position property, or -1
+     * if none is set.
+     */
+    public double getLibraryDivPos() {
+        return Double.parseDouble(getProperty("library.divpos", "-1"));
+    }
+
+    /**
+     * Get the preview / live splitpane divider position property.
+     *
+     * @return the preview / live splitpane divider position property, or -1 if
+     * none is set.
+     */
+    public double getPrevLiveDivPos() {
+        return Double.parseDouble(getProperty("prelive.divpos", "-1"));
+    }
+
+    /**
+     * Get the canvas divider position property.
+     *
+     * @return the canvas divider position property, or -1 if none is set.
+     */
+    public double getCanvasDivPos() {
+        return Double.parseDouble(getProperty("canvas.divpos", "-1"));
+    }
+
+    /**
+     * Set the main divider position property.
+     *
+     * @param val the position of the divider 0-1.
+     */
+    public void setMainDivPos(double val) {
+        setProperty("main.divpos", Double.toString(val));
+        write();
+    }
+
+    /**
+     * Set the preview / live divider position property.
+     *
+     * @param val the position of the divider 0-1.
+     */
+    public void setPrevLiveDivPos(double val) {
+        setProperty("prelive.divpos", Double.toString(val));
+        write();
+    }
+
+    /**
+     * Set the canvas divider position property.
+     *
+     * @param val the position of the divider 0-1.
+     */
+    public void setCanvasDivPos(double val) {
+        setProperty("canvas.divpos", Double.toString(val));
+        write();
+    }
+
+    /**
+     * Set the library divider position property.
+     *
+     * @param val the position of the divider 0-1.
+     */
+    public void setLibraryDivPos(double val) {
+        setProperty("library.divpos", Double.toString(val));
         write();
     }
 
