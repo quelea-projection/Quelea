@@ -1,4 +1,5 @@
-LANGUAGENAME=Deutsch
+LANGUAGENAME=Deutsch (DE)
+LOCALE=de
 database.heading=Datenbank
 import.heading=Importieren
 qsp.button=Quelea Song Pack
