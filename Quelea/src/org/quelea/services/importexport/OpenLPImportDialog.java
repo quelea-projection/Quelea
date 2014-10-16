@@ -34,7 +34,7 @@ public class OpenLPImportDialog extends ImportDialog {
      */
     public OpenLPImportDialog() {
         super(new String[]{LabelGrabber.INSTANCE.getLabel("olp.import.line1")
-        }, FileFilters.SQLITE, new OpenLPParser(), false);
+        }, FileFilters.SQLITE, new OpenLPParser(), false, false);
     }
 
 }

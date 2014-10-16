@@ -31,6 +31,6 @@ public class SourceImportDialog extends ImportDialog {
     public SourceImportDialog() {
         super(new String[]{
                 LabelGrabber.INSTANCE.getLabel("source.import.line1")
-        }, null, new SourceParser(), true);
+        }, null, new SourceParser(), true, false);
     }
 }

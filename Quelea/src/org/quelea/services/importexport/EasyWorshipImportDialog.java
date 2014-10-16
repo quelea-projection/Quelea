@@ -29,7 +29,7 @@ public class EasyWorshipImportDialog extends ImportDialog {
     public EasyWorshipImportDialog() {
         super(new String[]{
                     LabelGrabber.INSTANCE.getLabel("easyworship.import.line1")
-                }, FileFilters.SONGS_MB, new EasyWorshipParser(), false);
+                }, FileFilters.SONGS_MB, new EasyWorshipParser(), false, false);
     }
     
 }

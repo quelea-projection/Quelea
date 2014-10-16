@@ -29,7 +29,7 @@ public class EasySlidesImportDialog extends ImportDialog {
     public EasySlidesImportDialog() {
         super(new String[]{
                     LabelGrabber.INSTANCE.getLabel("easyslides.import.line1")
-                }, FileFilters.XML_EASYSLIDES, new EasySlidesParser(), false);
+                }, FileFilters.XML_EASYSLIDES, new EasySlidesParser(), false, false);
     }
     
 }
