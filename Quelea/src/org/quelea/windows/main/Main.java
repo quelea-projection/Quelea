@@ -284,13 +284,7 @@ public final class Main extends Application {
                                 vlcWarningDialog = vlcWarningDialogBuilder.setWarningIcon().build();
                                 vlcWarningDialog.showAndWait();
                             }
-                            Platform.runLater(new Runnable() {
-
-                                @Override
-                                public void run() {
-                                    mainWindow.getMainPanel().setSliderPos();
-                                }
-                            });
+                            mainWindow.getMainPanel().setSliderPos();
                             QueleaApp.get().doneLoading();
                         }
                     });
