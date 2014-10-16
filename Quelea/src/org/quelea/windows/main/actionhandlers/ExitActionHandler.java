@@ -117,8 +117,10 @@ public class ExitActionHandler implements EventHandler<ActionEvent> {
         LOGGER.log(Level.INFO, "Cleaning up displayables before exiting..");
         for (Object obj : mainWindow.getMainPanel().getSchedulePanel().getScheduleList().itemsProperty().get()) {
             Displayable d = (Displayable) obj;
-            LOGGER.log(Level.INFO, "Cleaning up {0}", d.getClass());
-            d.dispose();
+            if (d != null) {
+                LOGGER.log(Level.INFO, "Cleaning up {0}", d.getClass());
+                d.dispose();
+            }
         }
 
         LOGGER.log(Level.INFO, "Try to close OOfice if opened");
