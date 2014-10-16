@@ -1,4 +1,5 @@
 LANGUAGENAME=Hungarian (HU)
+LOCALE=hu
 database.heading=Adatbázis
 import.heading=Importálás
 qsp.button=Quelea Song Pack

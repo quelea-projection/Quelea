@@ -19,6 +19,7 @@ package org.quelea.services.languages;
 import java.io.File;
 import java.io.IOException;
 import java.io.StringReader;
+import java.util.Locale;
 import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -47,33 +48,36 @@ public class LabelGrabber {
         labels = new Properties();
         engLabels = new Properties();
         File langFile = QueleaProperties.get().getLanguageFile();
-        if(langFile == null) {
+        if (langFile == null) {
             LOGGER.log(Level.SEVERE, "Couldn't load languages file, file was null");
             return;
         }
         LOGGER.log(Level.INFO, "Using languages file {0}", langFile.getAbsolutePath());
-        try(StringReader reader = new StringReader(Utils.getTextFromFile(langFile.getAbsolutePath(), ""))) {
+        try (StringReader reader = new StringReader(Utils.getTextFromFile(langFile.getAbsolutePath(), ""))) {
             labels.load(reader);
-        }
-        catch(IOException ex) {
+        } catch (IOException ex) {
             LOGGER.log(Level.SEVERE, "Couldn't load languages file", ex);
         }
-
-        if(langFile.getName().equals("gb.lang")) {
-            english = true;
+        if (langFile.getName().equals("gb.lang")) {
+            LOGGER.log(Level.INFO, "Setting en-uk locale");
+            Locale.setDefault(Locale.UK);
+        } else {
+            LOGGER.log(Level.INFO, "Setting {0} locale", labels.getProperty("LOCALE", "en"));
+            Locale.setDefault(new Locale(labels.getProperty("LOCALE", "en")));
         }
-        else {
+
+        if (langFile.getName().equals("gb.lang")) {
+            english = true;
+        } else {
             english = false;
             File englangFile = QueleaProperties.get().getEnglishLanguageFile();
-            if(englangFile == null) {
+            if (englangFile == null) {
                 LOGGER.log(Level.SEVERE, "No english language file!");
-            }
-            else {
-                try(StringReader reader = new StringReader(Utils.getTextFromFile(englangFile.getAbsolutePath(), ""))) {
+            } else {
+                try (StringReader reader = new StringReader(Utils.getTextFromFile(englangFile.getAbsolutePath(), ""))) {
                     engLabels.load(reader);
                     LOGGER.log(Level.INFO, "Using english language file as backup");
-                }
-                catch(IOException ex) {
+                } catch (IOException ex) {
                     LOGGER.log(Level.SEVERE, "Couldn't load english language file", ex);
                 }
             }
@@ -99,12 +103,12 @@ public class LabelGrabber {
      */
     public String getLabel(String key) {
         String ret = labels.getProperty(key);
-        if(ret == null) {
+        if (ret == null) {
             ret = engLabels.getProperty(key);
-            if(english) { //Only a warning for the default english lang file - others will probably have stuff missing.
+            if (english) { //Only a warning for the default english lang file - others will probably have stuff missing.
                 LOGGER.log(Level.WARNING, "Missing label in language file: {0}", key);
             }
-            if(ret == null) {
+            if (ret == null) {
                 return key;
             }
         }
