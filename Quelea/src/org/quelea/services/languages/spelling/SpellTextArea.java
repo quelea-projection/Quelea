@@ -73,12 +73,13 @@ public class SpellTextArea extends StackPane {
         warning.setOpacity(0);
         getChildren().add(warning);
         dialog = new SpellingDialog(speller);
-        area.setOnKeyPressed(new EventHandler<KeyEvent>() {
-            @Override
-            public void handle(KeyEvent t) {
-                if(t.getCode() == runSpellKey) {
-                    runSpellCheck();
-                }
+        area.setOnKeyPressed((KeyEvent t) -> {
+            if(t.getCode() == runSpellKey) {
+                runSpellCheck();
+            }
+            if(t.getCode() == KeyCode.ENTER && t.isShiftDown()) {
+                area.replaceText(area.getCaretPosition(), area.getCaretPosition(), "\n<>");
+                area.refreshStyle();
             }
         });
         area.textProperty().addListener(new ChangeListener<String>() {
