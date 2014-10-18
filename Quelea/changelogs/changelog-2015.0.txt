@@ -7,6 +7,7 @@ quelea (2015.0) stable; urgency=normal
   * New feature - QR code generator added for mobile lyrics URL
   * New feature - Allow non-breaking lines in song lyrics
   * New feature - Position of UI elements persists across invocations
+  * New feature - Song translations can now be exported to PDF
   * Bugfix - Quick Edit now works properly
   * Bugfix - FX UI element labels are now translated (such as colours)
   * Bugfix - Translations now show properly when section headings are used
@@ -15,4 +16,4 @@ quelea (2015.0) stable; urgency=normal
   * Bugfix - memory leaks fixed
   * Various other minor bugfixes
 
- -- Michael Berry <michael@quelea.org>  Wednesday, 16 Oct 2014 00:00:00 +0000
+ -- Michael Berry <michael@quelea.org>  Saturday, 18 Oct 2014 00:00:00 +0000
