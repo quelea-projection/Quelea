@@ -33,8 +33,8 @@ public class SongPDFPrinter extends PDFPrinter {
     private SongPDFPrinter() {
     }
 
-    public void print(SongDisplayable song, File pdfFile) throws IOException {
-        print(song.getPrintXML(), new File("songformat.xsl"), pdfFile);
+    public void print(SongDisplayable song, File pdfFile, boolean includeTranslations) throws IOException {
+        print(song.getPrintXML(includeTranslations), new File("songformat.xsl"), pdfFile);
     }
 
 }
