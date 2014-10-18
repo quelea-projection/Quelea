@@ -82,7 +82,7 @@ public class PPTXPresentation implements Presentation {
         ArrayList<PresentationSlide> ret = new ArrayList<>();
         for (int i = 0; i < lSlides.length; i++) {
             if (lSlides[i] != null) {
-                ret.add(new PresentationSlide(lSlides[i]));
+                ret.add(new PresentationSlide(lSlides[i], i+1));
             }
         }
         return ret.toArray(new PresentationSlide[ret.size()]);
