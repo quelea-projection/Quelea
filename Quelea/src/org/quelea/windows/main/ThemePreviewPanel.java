@@ -43,6 +43,7 @@ import org.quelea.windows.main.DisplayCanvas.Priority;
 import org.quelea.windows.main.schedule.ScheduleThemeNode;
 import org.quelea.windows.newsong.EditThemeDialog;
 import org.quelea.windows.newsong.ThemePanel;
+import org.quelea.windows.stage.StageDrawer;
 
 /**
  * Panel that displays a preview of a particular theme. This is part of the
@@ -71,7 +72,7 @@ public class ThemePreviewPanel extends VBox {
         this.popup = popup;
         this.theme = theme;
         this.parent = parent;
-        if(theme == null) {
+        if (theme == null) {
             theme = ThemeDTO.DEFAULT_THEME;
         }
         final ThemeDTO updateTheme = theme;
@@ -84,16 +85,15 @@ public class ThemePreviewPanel extends VBox {
         canvas.setPrefSize(200, 200);
         updateThemePreviewCanvas(theme);
         String name;
-        if(theme == ThemeDTO.DEFAULT_THEME) {
+        if (theme == ThemeDTO.DEFAULT_THEME) {
             name = LabelGrabber.INSTANCE.getLabel("default.theme.text");
-        }
-        else {
+        } else {
             name = theme.getThemeName();
         }
         themeDialog = new EditThemeDialog();
         themeDialog.initModality(Modality.APPLICATION_MODAL);
         selectButton = new RadioButton(name);
-        if(theme != ThemeDTO.DEFAULT_THEME) {
+        if (theme != ThemeDTO.DEFAULT_THEME) {
             editButton = new Button("", new ImageView(new Image("file:icons/edit32.png", 16, 16, false, true)));
             editButton.setTooltip(new Tooltip(LabelGrabber.INSTANCE.getLabel("edit.theme.tooltip")));
             editButton.setOnAction(new EventHandler<javafx.event.ActionEvent>() {
@@ -103,12 +103,11 @@ public class ThemePreviewPanel extends VBox {
                     popup.hide();
                     themeDialog.showAndWait();
                     ThemeDTO ret = themeDialog.getTheme();
-                    if(ret != null) {
-                        try(PrintWriter pw = new PrintWriter(ret.getFile())) {
+                    if (ret != null) {
+                        try (PrintWriter pw = new PrintWriter(ret.getFile())) {
                             pw.println(ret.getTheme());
                             ThemePreviewPanel.this.theme = ret;
-                        }
-                        catch(IOException ex) {
+                        } catch (IOException ex) {
                             LOGGER.log(Level.WARNING, "Couldn't edit theme", ex);
                         }
                     }
@@ -127,7 +126,7 @@ public class ThemePreviewPanel extends VBox {
                         @Override
                         public void handle(ActionEvent t) {
                             ThemePreviewPanel.this.theme.getFile().delete();
-                            deleted[0]=true;
+                            deleted[0] = true;
                         }
                     }).addNoButton(new EventHandler<ActionEvent>() {
                         @Override
@@ -135,14 +134,14 @@ public class ThemePreviewPanel extends VBox {
                             //Nothing needed here
                         }
                     }).build().showAndWait();
-                    if(deleted[0]) {
+                    if (deleted[0]) {
                         parent.getThemePreviews().getChildren().remove(ThemePreviewPanel.this);
                     }
                 }
             });
         }
         HBox buttonPanel = new HBox();
-        if(canvas != null) {
+        if (canvas != null) {
             canvas.setOnMouseClicked(new EventHandler<MouseEvent>() {
                 @Override
                 public void handle(MouseEvent t) {
@@ -152,7 +151,7 @@ public class ThemePreviewPanel extends VBox {
             });
         }
         buttonPanel.getChildren().add(selectButton);
-        if(theme != ThemeDTO.DEFAULT_THEME) {
+        if (theme != ThemeDTO.DEFAULT_THEME) {
             Region spacer = new Region();
             HBox.setHgrow(spacer, javafx.scene.layout.Priority.ALWAYS);
             buttonPanel.getChildren().add(spacer);
@@ -184,7 +183,12 @@ public class ThemePreviewPanel extends VBox {
     }
 
     private void updateThemePreviewCanvas(ThemeDTO theme) {
-        LyricDrawer drawer = new LyricDrawer();
+        WordDrawer drawer;
+        if (canvas.isStageView()) {
+            drawer = new StageDrawer();
+        } else {
+            drawer = new LyricDrawer();
+        }
         drawer.setCanvas(canvas);
         drawer.setTheme(theme);
         drawer.setText(ThemePanel.SAMPLE_LYRICS, new String[0], new String[0], false, -1);
