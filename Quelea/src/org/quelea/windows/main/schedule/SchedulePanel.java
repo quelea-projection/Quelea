@@ -165,13 +165,6 @@ public class SchedulePanel extends BorderPane {
                 updateScheduleDisplay();
             }
         });
-        scheduleList.itemsProperty().get().addListener(new ListChangeListener<Displayable>() {
-
-            @Override
-            public void onChanged(ListChangeListener.Change<? extends Displayable> change) {
-                updateScheduleDisplay();
-            }
-        });
 
         ToolBar header = new ToolBar();
         Label headerLabel = new Label(LabelGrabber.INSTANCE.getLabel("order.service.heading"));
