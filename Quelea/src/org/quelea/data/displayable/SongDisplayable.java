@@ -25,10 +25,14 @@ import java.io.Serializable;
 import java.text.Collator;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
+import java.util.TreeMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.scene.image.Image;
@@ -880,29 +884,54 @@ public class SongDisplayable implements TextDisplayable, Comparable<SongDisplaya
         xml.append("</song>");
         return xml.toString();
     }
-    
+
     /**
      * Get the XML used to print the song (will be transferred via XSLT.)
+     *
+     * @param includeTranslations true if translations should be included in the
+     * export, false otherwise.
      * @return the XML used to print the song.
      */
-    public String getPrintXML() {
+    public String getPrintXML(boolean includeTranslations) {
         StringBuilder xml = new StringBuilder();
-        xml.append("<song>");
-        xml.append("<title>");
-        xml.append(Utils.escapeXML(title));
-        xml.append("</title>");
-        xml.append("<author>");
-        xml.append(Utils.escapeXML(author));
-        xml.append("</author>");
-        xml.append("<lyrics>");
-        for (TextSection section : sections) {
-            for(String line : section.getText(printChords, false)) {
-                xml.append(Utils.escapeXML(line)).append("\n");
+        Map<String, String> lyricsMap = new TreeMap<>((String o1, String o2) -> { //Ensure "Default" translation is first
+            if(o1.equals("Default")) {
+                return -1;
             }
-            xml.append("\n");
+            if(o2.equals("Default")) {
+                return 1;
+            }
+            return o1.compareTo(o2);
+        });
+        StringBuilder mainLyrics = new StringBuilder();
+        for (TextSection section : sections) {
+            for (String line : section.getText(printChords, false)) {
+                mainLyrics.append(Utils.escapeXML(line)).append("\n");
+            }
+            mainLyrics.append("\n");
         }
-        xml.append("</lyrics>");
-        xml.append("</song>");
+        lyricsMap.put("Default", mainLyrics.toString().trim());
+        if (includeTranslations) {
+            lyricsMap.putAll(getTranslations());
+        }
+        xml.append("<songs>");
+        for (Entry<String, String> lyricsEntry : lyricsMap.entrySet()) {
+            xml.append("<song>");
+            xml.append("<title>");
+            xml.append(Utils.escapeXML(title));
+            if (!lyricsEntry.getKey().equals("Default")) {
+                xml.append(" (").append(lyricsEntry.getKey()).append(")");
+            }
+            xml.append("</title>");
+            xml.append("<author>");
+            xml.append(Utils.escapeXML(author));
+            xml.append("</author>");
+            xml.append("<lyrics>");
+            xml.append(lyricsEntry.getValue());
+            xml.append("</lyrics>");
+            xml.append("</song>");
+        }
+        xml.append("</songs>");
         return xml.toString();
     }
 
