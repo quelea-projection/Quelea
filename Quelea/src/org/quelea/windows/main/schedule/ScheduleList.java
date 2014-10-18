@@ -60,8 +60,10 @@ import org.quelea.windows.library.Constraint;
 import org.quelea.windows.library.DisplayableListCell;
 import org.quelea.windows.lyrics.LyricDrawer;
 import org.quelea.windows.main.QueleaApp;
+import org.quelea.windows.main.WordDrawer;
 import org.quelea.windows.main.actionhandlers.RemoveScheduleItemActionHandler;
 import org.quelea.windows.multimedia.VLCWindow;
+import org.quelea.windows.stage.StageDrawer;
 
 /**
  * The schedule list, all the items that are to be displayed in the service.
@@ -425,9 +427,14 @@ public class ScheduleList extends StackPane {
             if ((d == live || listView.getItems().size() == 1) && QueleaProperties.get().getClearLiveOnRemove()) {
                 QueleaApp.get().getMainWindow().getMainPanel().getLivePanel().removeDisplayable();
                 VLCWindow.INSTANCE.stop();
-                LyricDrawer lyricDrawer = new LyricDrawer();
-                lyricDrawer.setCanvas(QueleaApp.get().getProjectionWindow().getCanvas());
-                lyricDrawer.setTheme(ThemeDTO.DEFAULT_THEME);
+                WordDrawer drawer;
+                    if (QueleaApp.get().getProjectionWindow().getCanvas().isStageView()) {
+                        drawer = new StageDrawer();
+                    } else {
+                        drawer = new LyricDrawer();
+                    }
+                drawer.setCanvas(QueleaApp.get().getProjectionWindow().getCanvas());
+                drawer.setTheme(ThemeDTO.DEFAULT_THEME);
             }
             Displayable preview = QueleaApp.get().getMainWindow().getMainPanel().getPreviewPanel().getDisplayable();
             if (d == preview) {

@@ -36,6 +36,8 @@ import org.quelea.services.utils.Utils;
 import org.quelea.windows.lyrics.LyricDrawer;
 import org.quelea.windows.main.DisplayCanvas;
 import org.quelea.windows.main.QueleaApp;
+import org.quelea.windows.main.WordDrawer;
+import org.quelea.windows.stage.StageDrawer;
 
 /**
  * The image button where the user selects a image.
@@ -78,7 +80,12 @@ public class ImageButton extends Button {
 
                     imageLocation = imageDir.toURI().relativize(newFile.toURI()).getPath();
                     imageLocationField.setText(imageLocation);
-                    LyricDrawer drawer = new LyricDrawer();
+                    WordDrawer drawer;
+                    if (canvas.isStageView()) {
+                        drawer = new StageDrawer();
+                    } else {
+                        drawer = new LyricDrawer();
+                    }
                     drawer.setCanvas(canvas);
                     ThemeDTO theme = new ThemeDTO(new SerializableFont(drawer.getTheme().getFont()),
                             drawer.getTheme().getFontPaint(), new SerializableFont(drawer.getTheme().getTranslateFont()),
