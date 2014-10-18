@@ -79,7 +79,7 @@ public class PPTPresentation implements Presentation {
         Slide[] lSlides = slideshow.getSlides();
         PresentationSlide[] ret = new PresentationSlide[lSlides.length];
         for(int i = 0; i < lSlides.length; i++) {
-            ret[i] = new PresentationSlide(lSlides[i]);
+            ret[i] = new PresentationSlide(lSlides[i], i+1);
         }
         return ret;
     }
