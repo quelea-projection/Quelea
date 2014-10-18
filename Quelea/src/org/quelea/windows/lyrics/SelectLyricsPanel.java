@@ -37,7 +37,9 @@ import org.quelea.windows.main.DisplayCanvas.Priority;
 import org.quelea.windows.main.DisplayableDrawer;
 import org.quelea.windows.main.LivePreviewPanel;
 import org.quelea.windows.main.QueleaApp;
+import org.quelea.windows.main.WordDrawer;
 import org.quelea.windows.main.widgets.DisplayPreview;
+import org.quelea.windows.stage.StageDrawer;
 
 /**
  * The panel where the lyrics for different songs can be selected.
@@ -50,7 +52,8 @@ public class SelectLyricsPanel extends AbstractPanel {
     private final SelectLyricsList lyricsList;
     private final DisplayCanvas previewCanvas;
     private final SplitPane splitPane;
-    private final LyricDrawer drawer;
+    private final LyricDrawer lyricDrawer;
+    private final StageDrawer stageDrawer;
 
     /**
      * Create a new lyrics panel.
@@ -58,7 +61,8 @@ public class SelectLyricsPanel extends AbstractPanel {
      * @param containerPanel the container panel this panel is contained within.
      */
     public SelectLyricsPanel(LivePreviewPanel containerPanel) {
-        drawer = new LyricDrawer();
+        lyricDrawer = new LyricDrawer();
+        stageDrawer = new StageDrawer();
         splitPane = new SplitPane();
         splitPane.setOrientation(Orientation.VERTICAL);
         lyricsList = new SelectLyricsList();
@@ -187,7 +191,7 @@ public class SelectLyricsPanel extends AbstractPanel {
     public void removeCurrentDisplayable() {
         super.removeCurrentDisplayable();
         lyricsList.itemsProperty().get().clear();
-        drawer.clear();
+        lyricDrawer.clear(); 
     }
 
     /**
@@ -198,6 +202,13 @@ public class SelectLyricsPanel extends AbstractPanel {
     public void updateCanvas() {
         int selectedIndex = lyricsList.selectionModelProperty().get().getSelectedIndex();
         for (DisplayCanvas canvas : getCanvases()) {
+            WordDrawer drawer;
+            if(canvas.isStageView()) {
+                drawer = stageDrawer;
+            }
+            else {
+                drawer = lyricDrawer;
+            }
             drawer.setCanvas(canvas);
             if (selectedIndex == -1 || selectedIndex >= lyricsList.itemsProperty().get().size()) {
                 if (!canvas.getPlayVideo()) {
@@ -230,6 +241,11 @@ public class SelectLyricsPanel extends AbstractPanel {
 
     @Override
     public DisplayableDrawer getDrawer(DisplayCanvas canvas) {
-        return drawer;
+        if(canvas.isStageView()) {
+            return stageDrawer;
+        }
+        else {
+            return lyricDrawer;
+        }
     }
 }

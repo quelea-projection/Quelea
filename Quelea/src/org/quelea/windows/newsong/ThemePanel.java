@@ -37,8 +37,11 @@ import org.quelea.services.utils.Utils;
 import org.quelea.windows.lyrics.LyricDrawer;
 import org.quelea.windows.main.DisplayCanvas;
 import org.quelea.windows.main.DisplayCanvas.Priority;
+import org.quelea.windows.main.DisplayableDrawer;
+import org.quelea.windows.main.WordDrawer;
 import org.quelea.windows.main.widgets.DisplayPositionSelector;
 import org.quelea.windows.main.widgets.DisplayPreview;
+import org.quelea.windows.stage.StageDrawer;
 
 /**
  * The panel where the user chooses what visual theme a song should have.
@@ -91,10 +94,15 @@ public class ThemePanel extends BorderPane {
         themePreviewPane.getChildren().add(positionSelector);
         centrePane.getChildren().add(themePreviewPane);
         setCenter(centrePane);
-        final LyricDrawer drawer = new LyricDrawer();
+        final WordDrawer drawer;
+        if (canvas.isStageView()) {
+            drawer = new StageDrawer();
+        } else {
+            drawer = new LyricDrawer();
+        }
         drawer.setCanvas(canvas);
         text = SAMPLE_LYRICS;
-        if(wordsArea != null) {
+        if (wordsArea != null) {
             ChangeListener<String> cl = new ChangeListener<String>() {
 
                 @Override
@@ -102,13 +110,12 @@ public class ThemePanel extends BorderPane {
                     SongDisplayable dummy = new SongDisplayable("", "");
                     dummy.setLyrics(newText);
                     TextSection[] sections = dummy.getSections();
-                    if(sections.length > 0 && sections[0].getText(false, false).length > 0) {
+                    if (sections.length > 0 && sections[0].getText(false, false).length > 0) {
                         text = sections[0].getText(false, false);
-                    }
-                    else {
+                    } else {
                         text = SAMPLE_LYRICS;
                     }
-                    if(isEmpty(text)) {
+                    if (isEmpty(text)) {
                         text = SAMPLE_LYRICS;
                     }
                     updateTheme(false);
@@ -124,8 +131,8 @@ public class ThemePanel extends BorderPane {
     }
 
     private boolean isEmpty(String[] text) {
-        for(String str : text) {
-            if(!str.trim().isEmpty()) {
+        for (String str : text) {
+            if (!str.trim().isEmpty()) {
                 return false;
             }
         }
@@ -175,16 +182,22 @@ public class ThemePanel extends BorderPane {
      */
     public void updateTheme(boolean warning) {
         final ThemeDTO theme = getTheme();
-        if(warning && theme.getBackground() instanceof ColourBackground) {
+        if (warning && theme.getBackground() instanceof ColourBackground) {
             checkAccessibility(theme.getFontPaint(), ((ColourBackground) theme.getBackground()).getColour());
         }
         Platform.runLater(new Runnable() {
             @Override
             public void run() {
-                LyricDrawer drawer = new LyricDrawer();
+                WordDrawer drawer;
+                if (preview.getCanvas().isStageView()) {
+                    drawer = new StageDrawer();
+                } else {
+                    drawer = new LyricDrawer();
+                }
                 drawer.setCanvas(preview.getCanvas());
                 drawer.setTheme(theme);
                 drawer.setText(text, null, null, false, -1);
+
             }
         });
     }
@@ -209,7 +222,7 @@ public class ThemePanel extends BorderPane {
      */
     private void checkAccessibility(Color col1, Color col2) {
         double diff = Utils.getColorDifference(col1, col2);
-        if(diff < THRESHOLD) {
+        if (diff < THRESHOLD) {
             Dialog.showInfo(LabelGrabber.INSTANCE.getLabel("warning.label"), LabelGrabber.INSTANCE.getLabel("similar.colors.text"));
         }
     }
@@ -229,7 +242,7 @@ public class ThemePanel extends BorderPane {
      * @return the current theme.
      */
     public ThemeDTO getTheme() {
-        if(themeToolbar == null) {
+        if (themeToolbar == null) {
             return ThemeDTO.DEFAULT_THEME;
         }
         ThemeDTO ret = themeToolbar.getTheme();
