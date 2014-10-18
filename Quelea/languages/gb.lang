@@ -502,3 +502,5 @@ translating.text.please.wait.text=Hang on a moment - grabbing a translation...
 filefilters.description.usr.files=USR (SongSelect) files
 songselect.import.line1=Select the SongSelect files below.
 songselect.button=SongSelect
+translation.export.heading=Translation export
+include.translations.question=Include the translations in the PDF file?
