@@ -146,7 +146,7 @@ public class PDFExporter implements Exporter {
             if (song == null) {
                 return new byte[0];
             } else {
-                SongPDFPrinter.INSTANCE.print(song, temp);
+                SongPDFPrinter.INSTANCE.print(song, temp, false);
                 return Files.readAllBytes(temp.toPath());
             }
         } catch (IOException ex) {

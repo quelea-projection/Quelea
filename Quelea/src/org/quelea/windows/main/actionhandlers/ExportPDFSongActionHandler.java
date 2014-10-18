@@ -41,6 +41,8 @@ import org.quelea.windows.main.QueleaApp;
  * @author Michael
  */
 public class ExportPDFSongActionHandler implements EventHandler<ActionEvent> {
+    
+    private boolean exportTranslations;
 
     @Override
     public void handle(ActionEvent t) {
@@ -70,10 +72,26 @@ public class ExportPDFSongActionHandler implements EventHandler<ActionEvent> {
                         }
                     }).build().showAndWait();
                 }
+                exportTranslations = false;
+                if (!song.getTranslations().isEmpty()) {
+                    Dialog.buildConfirmation(LabelGrabber.INSTANCE.getLabel("translation.export.heading"), LabelGrabber.INSTANCE.getLabel("include.translations.question")).addYesButton(new EventHandler<ActionEvent>() {
+
+                        @Override
+                        public void handle(ActionEvent t) {
+                            exportTranslations = true;
+                        }
+                    }).addNoButton(new EventHandler<ActionEvent>() {
+
+                        @Override
+                        public void handle(ActionEvent t) {
+                            exportTranslations = true;
+                        }
+                    }).build().showAndWait();
+                }
                 if (!file.getName().toLowerCase().endsWith(".pdf")) {
                     file = new File(file.getAbsolutePath() + ".pdf");
                 }
-                SongPDFPrinter.INSTANCE.print(song, file);
+                SongPDFPrinter.INSTANCE.print(song, file, exportTranslations);
                 if (Desktop.isDesktopSupported()) {
                     Desktop.getDesktop().open(file);
                 }

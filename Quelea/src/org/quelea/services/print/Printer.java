@@ -61,7 +61,7 @@ public class Printer {
         try {
             File temp = File.createTempFile(song.getTitle(), ".pdf");
             temp.deleteOnExit();
-            SongPDFPrinter.INSTANCE.print(song, temp);
+            SongPDFPrinter.INSTANCE.print(song, temp, false);
             Desktop.getDesktop().print(temp);
         } catch (IOException ex) {
             LOGGER.log(Level.SEVERE, "Couldn't print song", ex);
