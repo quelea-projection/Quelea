@@ -26,6 +26,7 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import org.quelea.data.YoutubeInfo;
 import org.quelea.services.utils.Utils;
+import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
 /**
@@ -99,6 +100,12 @@ public class VideoDisplayable implements MultimediaDisplayable, Serializable {
      * @return the object as defined by the XML.
      */
     public static VideoDisplayable parseXML(Node node) {
+        if (node instanceof Element) {
+            String youtubeTitle = ((Element) node).getAttribute("youtubetitle");
+            if (youtubeTitle != null) {
+                return new VideoDisplayable(node.getTextContent(), YoutubeInfo.fromTitle(youtubeTitle));
+            }
+        }
         return new VideoDisplayable(node.getTextContent());
     }
 
@@ -110,7 +117,11 @@ public class VideoDisplayable implements MultimediaDisplayable, Serializable {
     @Override
     public String getXML() {
         StringBuilder ret = new StringBuilder();
-        ret.append("<filevideo>");
+        if (youtubeinfo != null && youtubeinfo.getLocation() != null) {
+            ret.append("<filevideo youtubetitle=\"" + Utils.escapeXML(youtubeinfo.getTitle()) + "\">");
+        } else {
+            ret.append("<filevideo>");
+        }
         ret.append(Utils.escapeXML(location));
         ret.append("</filevideo>");
         return ret.toString();

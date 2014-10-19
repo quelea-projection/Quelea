@@ -23,6 +23,7 @@ import java.io.InputStreamReader;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -41,8 +42,8 @@ import org.quelea.services.utils.LoggerUtils;
  */
 public class YoutubeInfo {
 
-    private final String urlStr;
-    private final String vidId;
+    private String urlStr;
+    private String vidId;
     private List<NameValuePair> params;
     private boolean initParams;
     private WritableImage preview;
@@ -54,10 +55,31 @@ public class YoutubeInfo {
         int startInx = urlStr.indexOf("v=") + 2;
         if (urlStr.contains("v=") && urlStr.length() >= startInx + 11) {
             vidId = urlStr.substring(startInx, startInx + 11);
-        }
-        else {
+        } else {
             vidId = null;
         }
+    }
+
+    private YoutubeInfo() {
+    }
+
+    public static YoutubeInfo fromTitle(final String title) {
+        YoutubeInfo info = new YoutubeInfo();
+        info.params = new ArrayList<>();
+        info.params.add(new NameValuePair() {
+
+            @Override
+            public String getName() {
+                return "title";
+            }
+
+            @Override
+            public String getValue() {
+                return title;
+            }
+        });
+        info.initParams = true;
+        return info;
     }
 
     public String getLocation() {
@@ -65,7 +87,7 @@ public class YoutubeInfo {
     }
 
     public void initParams() {
-        if (initParams||vidId==null) {
+        if (initParams || vidId == null) {
             return;
         }
         initParams = true;
@@ -92,7 +114,7 @@ public class YoutubeInfo {
         if (scrapedTitle != null) {
             return scrapedTitle;
         }
-        if(vidId==null) {
+        if (vidId == null) {
             return null;
         }
         try {
