@@ -14,6 +14,7 @@ quelea (2015.0) stable; urgency=normal
   * Bugfix - Quelea no longer locks up when copying a video background
   * Bugfix - window now remembers maximised state
   * Bugfix - memory leaks fixed
+  * Bugfix - DVDs and Blurays now work
   * Various other minor bugfixes
 
  -- Michael Berry <michael@quelea.org>  Saturday, 18 Oct 2014 00:00:00 +0000
