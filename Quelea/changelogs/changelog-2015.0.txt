@@ -15,6 +15,7 @@ quelea (2015.0) stable; urgency=normal
   * Bugfix - window now remembers maximised state
   * Bugfix - memory leaks fixed
   * Bugfix - DVDs and Blurays now work
+  * Bugfix - Fixed issue with small text not having a shadow
   * Various other minor bugfixes
 
  -- Michael Berry <michael@quelea.org>  Saturday, 18 Oct 2014 00:00:00 +0000
