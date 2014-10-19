@@ -38,7 +38,7 @@ public class AddVideoActionHandler implements EventHandler<ActionEvent> {
         fileChooser.getExtensionFilters().add(FileFilters.VIDEOS);
         File file = fileChooser.showOpenDialog(QueleaApp.get().getMainWindow());
         if(file != null) {
-            VideoDisplayable displayable = new VideoDisplayable(file);
+            VideoDisplayable displayable = new VideoDisplayable(file.getAbsolutePath());
             QueleaApp.get().getMainWindow().getMainPanel().getSchedulePanel().getScheduleList().add(displayable);
         }
     }

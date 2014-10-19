@@ -41,10 +41,10 @@ public class VideoDisplayable implements MultimediaDisplayable, Serializable {
     /**
      * Create a new video displayable.
      * <p>
-     * @param file the file for the displayable.
+     * @param location the location of the displayable.
      */
-    public VideoDisplayable(File file) {
-        this.location = file.getAbsolutePath();
+    public VideoDisplayable(String location) {
+        this.location = location;
     }
 
     /**
@@ -99,7 +99,7 @@ public class VideoDisplayable implements MultimediaDisplayable, Serializable {
      * @return the object as defined by the XML.
      */
     public static VideoDisplayable parseXML(Node node) {
-        return new VideoDisplayable(new File(node.getTextContent()));
+        return new VideoDisplayable(node.getTextContent());
     }
 
     /**
