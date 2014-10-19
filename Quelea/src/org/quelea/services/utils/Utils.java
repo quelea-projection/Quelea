@@ -68,6 +68,7 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
+import org.apache.commons.lang.StringEscapeUtils;
 import org.javafx.dialog.Dialog;
 import org.jcodec.api.FrameGrab;
 import org.quelea.data.ThemeDTO;
@@ -627,12 +628,7 @@ public final class Utils {
      * @return the escaped string.
      */
     public static String escapeXML(String s) {
-        return s.replace("&", "&amp;")
-                .replace("<", "&lt;")
-                .replace(">", "&gt;")
-                .replace("\"", "&quot;")
-                .replace("'", "&apos;")
-                .replace("’", "&apos;");
+        return StringEscapeUtils.escapeXml(s);
     }
 
     /**
