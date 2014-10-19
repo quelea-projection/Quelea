@@ -160,6 +160,14 @@ public class LyricDrawer extends WordDrawer {
         newTextGroup.setEffect(shadow);
         StackPane.setAlignment(newTextGroup, Pos.CENTER);
         smallTextGroup = new Group();
+        DropShadow smallshadow = theme.getShadow().getDropShadow();
+        if(smallshadow == null) {
+            smallshadow = new DropShadow();
+        }
+        smallshadow.setOffsetX(smallTextMetrics.getLineHeight() * shadow.getOffsetX() * 0.03);
+        smallshadow.setOffsetY(smallTextMetrics.getLineHeight() * shadow.getOffsetY() * 0.03);
+        smallshadow.setRadius(shadow.getRadius() * smallTextMetrics.getLineHeight() * 0.015);
+        smallTextGroup.setEffect(smallshadow);
         if (QueleaProperties.get().getSmallTextPosition().toLowerCase().equals("left")) {
             StackPane.setAlignment(smallTextGroup, Pos.BOTTOM_LEFT);
         } else {
@@ -700,7 +708,7 @@ public class LyricDrawer extends WordDrawer {
         }
         this.text = Arrays.copyOf(text, text.length);
         this.translations = Arrays.copyOf(translations, translations.length);
-        this.smallText = smallText;
+        this.smallText = Arrays.copyOf(smallText, smallText.length);
         draw(curDisplayable, fontSize);
     }
 
