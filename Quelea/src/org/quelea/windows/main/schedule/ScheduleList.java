@@ -377,6 +377,7 @@ public class ScheduleList extends StackPane {
      */
     public void clearSchedule() {
         listView.itemsProperty().get().clear();
+        schedule.setFile(null);
     }
 
     /**
