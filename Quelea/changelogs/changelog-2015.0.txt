@@ -17,6 +17,7 @@ quelea (2015.0) stable; urgency=normal
   * Bugfix - DVDs and Blurays now work
   * Bugfix = Youtube videos are now saved in schedules properly
   * Bugfix - Fixed issue with small text not having a shadow
+  * Bugfix - Creating a new schedule clears the file (so that "save" will then not save over the previously open schedule.)
   * Various other minor bugfixes
 
  -- Michael Berry <michael@quelea.org>  Sunday, 19 Oct 2014 00:00:00 +0000
