@@ -70,7 +70,7 @@ public class SchedulePanel extends BorderPane {
      * Create and initialise the schedule panel.
      */
     public SchedulePanel() {
-        themeButton = new Button("", new ImageView(new Image("file:icons/settings.png", 16, 16, false, true)));
+        themeButton = new Button("", new ImageView(new Image("file:icons/theme.png", 16, 16, false, true)));
         themeButton.setTooltip(new Tooltip(LabelGrabber.INSTANCE.getLabel("theme.button.tooltip")));
         scheduleList = new ScheduleList();
         scheduleList.itemsProperty().get().addListener(new ListChangeListener<Displayable>() {
