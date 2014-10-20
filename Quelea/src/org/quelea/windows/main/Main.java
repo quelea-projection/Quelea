@@ -290,8 +290,12 @@ public final class Main extends Application {
                     });
                 } catch (Throwable ex) {
                     LOGGER.log(Level.SEVERE, "Uncaught exception during application start-up", ex);
-                    Dialog.showAndWaitError(LabelGrabber.INSTANCE.getLabel("startup.error.title"), LabelGrabber.INSTANCE.getLabel("startup.error.text").replace("$1", Utils.getDebugLog().getAbsolutePath()));
-                    System.exit(1);
+                    Platform.runLater(new Runnable() {
+                        public void run() {
+                            Dialog.showAndWaitError(LabelGrabber.INSTANCE.getLabel("startup.error.title"), LabelGrabber.INSTANCE.getLabel("startup.error.text").replace("$1", Utils.getDebugLog().getAbsolutePath()));
+                            System.exit(1);                            
+                        }
+                    });
                 }
             }
         }.start();
