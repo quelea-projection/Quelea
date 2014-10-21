@@ -94,6 +94,10 @@ public class MultimediaPanel extends AbstractPanel {
             controlPanel.setDisableControls(!playVideo);
         }
     }
+    
+    public void play() {
+        controlPanel.play();
+    }
 
     @Override
     public int getCurrentIndex() {
