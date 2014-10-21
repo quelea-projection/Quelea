@@ -525,7 +525,7 @@ public class LyricDrawer extends WordDrawer {
                 while (i + translationOffset < translationArr.length && new LineTypeChecker(translationArr[i + translationOffset]).getLineType() != Type.NORMAL) {
                     translationOffset++;
                 }
-                if (new LineTypeChecker(translationArr[i + translationOffset]).getLineType() == Type.NORMAL) {
+                if (i + translationOffset < translationArr.length && new LineTypeChecker(translationArr[i + translationOffset]).getLineType() == Type.NORMAL) {
                     finalLines.add(new LyricLine(true, translationArr[i + translationOffset]));
                 }
             }
