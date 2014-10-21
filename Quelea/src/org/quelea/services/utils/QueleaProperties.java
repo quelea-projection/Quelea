@@ -380,6 +380,25 @@ public final class QueleaProperties extends Properties {
     }
 
     /**
+     * Determine whether to auto-play videos after they have been set in live view.
+     *
+     * @return true if auto play is enabled, false otherwise.
+     */
+    public boolean getAutoPlayVideo() {
+        return Boolean.parseBoolean(getProperty("autoplay.vid", "false"));
+    }
+
+    /**
+     * Set whether to auto-play videos after they have been set in live
+     * view.
+     *
+     * @param val true to enable auto play, false otherwise.
+     */
+    public void setAutoPlayVideo(boolean val) {
+        setProperty("autoplay.vid", Boolean.toString(val));
+    }
+
+    /**
      * Get the font size at which to display the notices.
      *
      * @return the font size at which to display the notices.

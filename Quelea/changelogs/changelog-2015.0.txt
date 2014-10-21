@@ -8,6 +8,7 @@ quelea (2015.0) stable; urgency=normal
   * New feature - Allow non-breaking lines in song lyrics
   * New feature - Position of UI elements persists across invocations
   * New feature - Song translations can now be exported to PDF
+  * New feature - Videos can now auto-play on being set live
   * Bugfix - Quick Edit now works properly
   * Bugfix - FX UI element labels are now translated (such as colours)
   * Bugfix - Translations now show properly when section headings are used
