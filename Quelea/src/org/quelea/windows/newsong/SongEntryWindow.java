@@ -73,7 +73,6 @@ public class SongEntryWindow extends Stage {
      */
     public SongEntryWindow() {
         initModality(Modality.APPLICATION_MODAL);
-        initStyle(StageStyle.UTILITY);
         updateDBOnHide = true;
         Utils.addIconsToStage(this);
 
@@ -177,8 +176,8 @@ public class SongEntryWindow extends Stage {
 
 //        setMaxWidth(525);
 //        setMaxHeight(600);
-        setWidth(525);
-        setHeight(600);
+//        setWidth(525);
+//        setHeight(600);
 //        setResizable(false);
         setScene(new Scene(mainPane));
     }
