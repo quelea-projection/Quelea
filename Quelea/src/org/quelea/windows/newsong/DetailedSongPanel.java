@@ -48,6 +48,7 @@ public class DetailedSongPanel extends BorderPane {
      */
     public DetailedSongPanel() {
         GridPane formPanel = new GridPane();
+        formPanel.setHgap(10);
         ccli = new IntegerTextField();
         publisher = new TextField();
         year = new IntegerTextField();
