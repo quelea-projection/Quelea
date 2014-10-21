@@ -86,17 +86,7 @@ public class MultimediaControls extends StackPane {
             @Override
             public void handle(MouseEvent t) {
                 if (!disableControls) {
-                    playpause = !playpause;
-                    if (playpause) {
-                        playButton.setImage(PAUSE_IMAGE);
-                        VLCWindow.INSTANCE.setRepeat(false);
-                        VLCWindow.INSTANCE.setHue(0);
-                        VLCWindow.INSTANCE.play();
-                        posSlider.setDisable(false);
-                    } else {
-                        playButton.setImage(PLAY_IMAGE);
-                        VLCWindow.INSTANCE.pause();
-                    }
+                    play();
                 }
             }
         });
@@ -183,6 +173,20 @@ public class MultimediaControls extends StackPane {
                 playButton.setImage(PAUSE_IMAGE);
             }
             stopButton.setImage(STOP_IMAGE);
+        }
+    }
+    
+    public void play() {
+        playpause = !playpause;
+        if (playpause) {
+            playButton.setImage(PAUSE_IMAGE);
+            VLCWindow.INSTANCE.setRepeat(false);
+            VLCWindow.INSTANCE.setHue(0);
+            VLCWindow.INSTANCE.play();
+            posSlider.setDisable(false);
+        } else {
+            playButton.setImage(PLAY_IMAGE);
+            VLCWindow.INSTANCE.pause();
         }
     }
 
