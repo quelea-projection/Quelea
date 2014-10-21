@@ -279,6 +279,9 @@ public abstract class LivePreviewPanel extends BorderPane {
                     videoPanel.showDisplayable((MultimediaDisplayable) displayable);
                     cardPanel.show(VIDEO_LABEL);
                     currentLabel = VIDEO_LABEL;
+                    if (QueleaProperties.get().getAutoPlayVideo() && LivePreviewPanel.this instanceof LivePanel) {
+                        videoPanel.play();
+                    }
                 }
                 else if(displayable instanceof AudioDisplayable) {
                     audioPanel.showDisplayable((MultimediaDisplayable) displayable);
