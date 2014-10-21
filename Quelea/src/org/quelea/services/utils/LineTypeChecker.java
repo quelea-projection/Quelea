@@ -17,8 +17,8 @@
  */
 package org.quelea.services.utils;
 
-import java.util.HashMap;
-import java.util.Set;
+import java.util.Comparator;
+import java.util.TreeMap;
 
 /**
  * Checks the type of the line.
@@ -121,52 +121,61 @@ public class LineTypeChecker {
                 || processedLine.toLowerCase().startsWith("outro");
     }
 
-    private static final HashMap<String, String> titleMap = new HashMap<>();
+    private static final TreeMap<String, String> titleMap = new TreeMap<>();
+    private static final TreeMap<String, String> titleMapRev = new TreeMap<>(new Comparator<String>() {
 
-    static {
-        titleMap.put("Verse", " ##### ");
-        titleMap.put("Chorus", " ###### ");
-        titleMap.put("Tag", " ####### ");
-        titleMap.put("Pre-chorus", " ######## ");
-        titleMap.put("Pre chorus", " ######### ");
-        titleMap.put("Coda", " ########## ");
-        titleMap.put("Bridge", " ########### ");
-        titleMap.put("Intro", " ############ ");
-        titleMap.put("Outro", " ############# ");
+        @Override
+        public int compare(String o1, String o2) {
+            if (o1.length() > o2.length()) {
+                return -1;
+            }
+            if (o1.length() == o2.length()) {
+                return 0;
+            }
+            return 1;
+        }
+    });
+
+    private static int hashLength = 3;
+
+    private static String nextHash() {
+        StringBuilder ret = new StringBuilder(hashLength);
+        for (int i = 0; i < hashLength; i++) {
+            ret.append("#");
+        }
+        hashLength++;
+        return ret.toString();
     }
 
-    public static String[] encodeTitles(String[] toEncode) {
+    public synchronized static String[] encodeSpecials(String[] toEncode) {
+        titleMap.clear();
+        titleMapRev.clear();
+        hashLength = 3;
         String[] ret = new String[toEncode.length];
         for (int i = 0; i < ret.length; i++) {
             String line = toEncode[i];
-            if (new LineTypeChecker(line).getLineType() == Type.TITLE) {
-                for (String key : titleMap.keySet()) {
-                    line = line.replaceAll("(?i)" + key, titleMap.get(key));
+            if (new LineTypeChecker(line).getLineType() != Type.NORMAL) {
+                if (!titleMap.containsKey(line)) {
+                    String hash = nextHash();
+                    titleMap.put(line, hash);
+                    titleMapRev.put(hash, line);
+                }
+                line = titleMap.get(line);
+            }
+            ret[i] = line;
+        }
+        return ret;
+    }
+
+    public synchronized static String[] decodeSpecials(String[] toDecode) {
+        for (String key : titleMapRev.keySet()) {
+            for (int i = 0; i < toDecode.length; i++) {
+                String line = toDecode[i];
+                if (line.trim().equalsIgnoreCase(key.trim())) {
+                    toDecode[i] = titleMapRev.get(key);
                 }
             }
-            ret[i] = line;
         }
-        return ret;
-    }
-
-    public static String[] decodeTitles(String[] toDecode) {
-        String[] ret = new String[toDecode.length];
-        for (int i = 0; i < ret.length; i++) {
-            String line = toDecode[i];
-            for (String entry : titleMap.values()) {
-                line = line.replaceAll("(?i)" + entry, getKeyFromEntry(entry));
-            }
-            ret[i] = line;
-        }
-        return ret;
-    }
-
-    private static String getKeyFromEntry(String entry) {
-        for (String key : titleMap.keySet()) {
-            if (titleMap.get(key).equals(entry)) {
-                return key;
-            }
-        }
-        return "verse";
+        return toDecode;
     }
 }
