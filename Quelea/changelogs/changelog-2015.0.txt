@@ -9,6 +9,7 @@ quelea (2015.0) stable; urgency=normal
   * New feature - Position of UI elements persists across invocations
   * New feature - Song translations can now be exported to PDF
   * New feature - Videos can now auto-play on being set live
+  * New feature - Schedule can now auto-advance when an item is sent live
   * Bugfix - Quick Edit now works properly
   * Bugfix - FX UI element labels are now translated (such as colours)
   * Bugfix - Translations now show properly when section headings are used
@@ -23,4 +24,4 @@ quelea (2015.0) stable; urgency=normal
   * Bugfix - Partial translations now display properly
   * Various other minor bugfixes
 
- -- Michael Berry <michael@quelea.org>  Wednesday, 22 Oct 2014 00:00:00 +0000
+ -- Michael Berry <michael@quelea.org>  Thursday, 23 Oct 2014 00:00:00 +0000
