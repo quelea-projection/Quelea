@@ -53,7 +53,7 @@ import org.quelea.windows.multimedia.VLCWindow;
  */
 public class LivePanel extends LivePreviewPanel {
 
-    private HBox loopBox;
+    private final HBox loopBox;
     private final ToggleButton loop;
     private final TextField loopDuration;
 
