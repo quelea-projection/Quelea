@@ -56,6 +56,7 @@ public class OptionsGeneralPanel extends GridPane implements PropertyPanel {
     private final CheckBox clearLiveOnRemoveCheckBox;
     private final CheckBox useOOCheckBox;
     private final CheckBox autoPlayVidCheckBox;
+    private final CheckBox advanceOnLiveCheckBox;
     private final CheckBox uniformFontSizeCheckBox;
     private final ComboBox<LanguageFile> languageFileComboBox;
     private final TextField ooPathTextField;
@@ -183,6 +184,15 @@ public class OptionsGeneralPanel extends GridPane implements PropertyPanel {
         startupLabel.setLabelFor(autoPlayVidCheckBox);
         GridPane.setConstraints(autoPlayVidCheckBox, 2, rows);
         getChildren().add(autoPlayVidCheckBox);
+        rows++;
+
+        Label advanceOnLiveLabel = new Label(LabelGrabber.INSTANCE.getLabel("advance.on.live.label"));
+        GridPane.setConstraints(advanceOnLiveLabel, 1, rows);
+        getChildren().add(advanceOnLiveLabel);
+        advanceOnLiveCheckBox = new CheckBox();
+        startupLabel.setLabelFor(advanceOnLiveCheckBox);
+        GridPane.setConstraints(advanceOnLiveCheckBox, 2, rows);
+        getChildren().add(advanceOnLiveCheckBox);
         rows++;
 
         Label autoTranslateLabel = new Label(LabelGrabber.INSTANCE.getLabel("auto.translate.label"));
@@ -370,6 +380,7 @@ public class OptionsGeneralPanel extends GridPane implements PropertyPanel {
         oneLineModeCheckBox.setSelected(props.getOneLineMode());
         autoTranslateCheckBox.setSelected(props.getAutoTranslate());
         autoPlayVidCheckBox.setSelected(props.getAutoPlayVideo());
+        advanceOnLiveCheckBox.setSelected(props.getAdvanceOnLive());
         clearLiveOnRemoveCheckBox.setSelected(props.getClearLiveOnRemove());
         maxCharsSlider.setValue(props.getMaxChars());
 //        minLinesSlider.setValue(props.getMinLines());
@@ -407,6 +418,8 @@ public class OptionsGeneralPanel extends GridPane implements PropertyPanel {
         props.setAutoTranslate(autoTranslate);
         boolean autoPlayVid = autoPlayVidCheckBox.isSelected();
         props.setAutoPlayVideo(autoPlayVid);
+        boolean autoAdvance = advanceOnLiveCheckBox.isSelected();
+        props.setAdvanceOnLive(autoAdvance);
         //One line mode needs to be updated manually
         QueleaApp.get().getMainWindow().getMainPanel().getPreviewPanel().updateOneLineMode();
         QueleaApp.get().getMainWindow().getMainPanel().getLivePanel().updateOneLineMode();

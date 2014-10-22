@@ -1222,6 +1222,26 @@ public final class QueleaProperties extends Properties {
                 + "saviour,Saviour,savior,Savior,majesty,Majesty,alpha,Alpha,omega,Omega") //Yeah.. default testing properties.
                 .trim().split(",");
     }
+    
+    /**
+     * Determine whether to advance the scheudle item when the current item is sent live.
+     * <p/>
+     * @return true if we should auto-advance, false otherwise.
+     */
+    public boolean getAdvanceOnLive() {
+        return Boolean.parseBoolean(getProperty("advance.on.live", "false"));
+    }
+
+    /**
+     * Set whether to advance the scheudle item when the current item is
+     * sent live.
+     * <p/>
+     * @param val true if we should auto-advance, false otherwise.
+     */
+    public void setAdvanceOnLive(boolean val) {
+        setProperty("advance.on.live", Boolean.toString(val));
+        write();
+    }
 
     /**
      * Get whether to use openoffice for presentations.
