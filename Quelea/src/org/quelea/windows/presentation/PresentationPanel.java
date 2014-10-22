@@ -112,6 +112,11 @@ public class PresentationPanel extends AbstractPanel {
         setCenter(mainPanel);
     }
     
+    @Override
+    public void requestFocus() {
+        presentationPreview.requestFocus();
+    }
+    
     public void buildLoopTimeline() {
         loopTimeline = new Timeline(
                 new KeyFrame(Duration.seconds(0),

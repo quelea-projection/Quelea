@@ -101,6 +101,11 @@ public class PresentationPreview extends ScrollPane {
             }
         });
     }
+    
+    @Override
+    public void requestFocus() {
+        super.requestFocus();
+    }
 
     public void addSlideChangedListener(SlideChangedListener listener) {
         listeners.add(listener);
