@@ -21,6 +21,7 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.ListView;
 import javafx.scene.control.ToolBar;
 import javafx.scene.control.Tooltip;
 import javafx.scene.image.Image;
@@ -32,6 +33,7 @@ import javafx.scene.layout.Priority;
 import javafx.scene.layout.Region;
 import org.quelea.data.displayable.Displayable;
 import org.quelea.services.languages.LabelGrabber;
+import org.quelea.services.utils.QueleaProperties;
 
 /**
  * The panel displaying the preview lyrics selection - this is viewed before
@@ -59,6 +61,10 @@ public class PreviewPanel extends LivePreviewPanel {
             public void handle(ActionEvent t) {
                 QueleaApp.get().getMainWindow().getMainPanel().getLivePanel().setDisplayable(getDisplayable(), ((ContainedPanel) getCurrentPane()).getCurrentIndex());
                 QueleaApp.get().getMainWindow().getMainPanel().getLivePanel().getCurrentPane().requestFocus();
+                ListView<Displayable> list = QueleaApp.get().getMainWindow().getMainPanel().getSchedulePanel().getScheduleList().getListView();
+                if (list.getSelectionModel().getSelectedIndex() < list.getItems().size()-1 && QueleaProperties.get().getAdvanceOnLive()) {
+                    list.getSelectionModel().clearAndSelect(list.getSelectionModel().getSelectedIndex() + 1);
+                }
             }
         });
         header.getItems().add(liveButton);
@@ -67,18 +73,17 @@ public class PreviewPanel extends LivePreviewPanel {
         setOnKeyTyped(new EventHandler<KeyEvent>() {
             @Override
             public void handle(KeyEvent t) {
-                if(t.getCharacter().equals(" ")) {
-                    QueleaApp.get().getMainWindow().getMainPanel().getPreviewPanel().goLive();
+                if (t.getCharacter().equals(" ")) {
+                    goLive();
                 }
             }
         });
         setOnKeyPressed(new EventHandler<KeyEvent>() {
             @Override
             public void handle(KeyEvent t) {
-                if(t.getCode() == KeyCode.RIGHT) {
+                if (t.getCode() == KeyCode.RIGHT) {
                     QueleaApp.get().getMainWindow().getMainPanel().getLivePanel().requestFocus();
-                }
-                else if(t.getCode() == KeyCode.LEFT) {
+                } else if (t.getCode() == KeyCode.LEFT) {
                     QueleaApp.get().getMainWindow().getMainPanel().getSchedulePanel().requestFocus();
                 }
             }
