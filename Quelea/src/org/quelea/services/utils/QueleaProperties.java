@@ -1275,15 +1275,6 @@ public final class QueleaProperties extends Properties {
     }
 
     /**
-     * Determine if drag and drop is enabled
-     * <p/>
-     * @return true if we can use drag and drop functions
-     */
-    public boolean getDragAndDrop() {
-        return Boolean.parseBoolean(getProperty("enable.drag.and.drop", "false"));
-    }
-
-    /**
      * Sets the logo image location for persistent use
      * <p/>
      * @param location File location

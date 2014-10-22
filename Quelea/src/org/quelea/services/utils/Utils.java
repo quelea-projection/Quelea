@@ -876,10 +876,6 @@ public final class Utils {
         return new Color(red, green, blue, 1);
     }
 
-    public static void enableDragAndDrop() {
-        DragAndDrop.enable();
-    }
-
     public static String escapeHTML(String s) {
         StringBuilder out = new StringBuilder();
         for (int i = 0; i < s.length(); i++) {
