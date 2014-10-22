@@ -185,72 +185,7 @@ public class ScheduleList extends StackPane {
                 listCell.setOnDragDropped(new EventHandler<DragEvent>() {
                     @Override
                     public void handle(DragEvent event) {
-                        listCell.setStyle("-fx-border-color: rgb(0, 0, 0);-fx-border-width: 0,0,0,0;");
-                        String imageLocation = event.getDragboard().getString();
-                        if (imageLocation != null) {
-                            if (!Utils.isInDir(QueleaProperties.get().getImageDir(), new File(imageLocation))) {
-                                try {
-                                    Utils.copyFile(new File(imageLocation), new File(QueleaProperties.get().getImageDir(), new File(imageLocation).getName()));
-                                } catch (IOException ex) {
-                                    LOGGER.log(Level.WARNING, "Couldn't copy image file", ex);
-                                }
-                            }
-                            if (listCell.isEmpty()) {
-                                ImageDisplayable img = new ImageDisplayable(new File(imageLocation));
-                                add(img);
-                            } else {
-                                Displayable d = listCell.getItem();
-                                if (d instanceof TextDisplayable) {
-                                    TextDisplayable textDisplayable = (TextDisplayable) d;
-                                    ThemeDTO theme = textDisplayable.getTheme();
-                                    SerializableDropShadow dropShadow = theme.getShadow();
-                                    if (dropShadow == null || (dropShadow.getColor().equals(Color.WHITE) && dropShadow.getOffsetX() == 0 && dropShadow.getOffsetY() == 0)) {
-                                        dropShadow = new SerializableDropShadow(Color.BLACK, 3, 3, 2, 0, true);
-                                    }
-                                    ThemeDTO newTheme = new ThemeDTO(theme.getSerializableFont(), theme.getFontPaint(), theme.getTranslateSerializableFont(), theme.getTranslateFontPaint(), new ImageBackground(new File(imageLocation).getName()), dropShadow, theme.getSerializableFont().isBold(), theme.getSerializableFont().isItalic(), theme.getTranslateSerializableFont().isBold(), theme.getTranslateSerializableFont().isItalic(), theme.getTextPosition(), theme.getTextAlignment());
-                                    for (TextSection section : textDisplayable.getSections()) {
-                                        section.setTheme(newTheme);
-                                    }
-                                    textDisplayable.setTheme(newTheme);
-                                    if (d instanceof SongDisplayable) {
-                                        SongDisplayable sd = (SongDisplayable) d;
-                                        Utils.updateSongInBackground(sd, true, false);
-                                    }
-                                    QueleaApp.get().getMainWindow().getMainPanel().getPreviewPanel().refresh();
-                                    QueleaApp.get().getMainWindow().getMainPanel().getLivePanel().refresh();
-                                }
-                            }
-                        }
-                        if (event.getDragboard().getContent(SongDisplayable.SONG_DISPLAYABLE_FORMAT) instanceof SongDisplayable) {
-                            final SongDisplayable displayable = (SongDisplayable) event.getDragboard().getContent(SongDisplayable.SONG_DISPLAYABLE_FORMAT);
-                            if (displayable != null) {
-                                if (listCell.getIndex() != localDragIndex) {
-                                    if (localDragIndex > -1) {
-                                        getItems().remove(localDragIndex);
-                                        localDragIndex = -1;
-                                    }
-                                    if (listCell.isEmpty()) {
-                                        add(displayable);
-                                        listView.getSelectionModel().clearSelection();
-                                        listView.getSelectionModel().selectLast();
-                                    } else {
-                                        listView.itemsProperty().get().add(listCell.getIndex(), displayable);
-                                        listView.getSelectionModel().clearSelection();
-                                        listView.getSelectionModel().select(listCell.getIndex());
-                                    }
-                                    listView.requestFocus();
-                                    Platform.runLater(new Runnable() {
-
-                                        @Override
-                                        public void run() {
-                                            QueleaApp.get().getMainWindow().getMainPanel().getPreviewPanel().setDisplayable(displayable, 0);
-                                            QueleaApp.get().getMainWindow().getMainPanel().getPreviewPanel().refresh();
-                                        }
-                                    });
-                                }
-                            }
-                        }
-                        event.consume();
+                        dragDropped(event, listCell);
                     }
                 });
                 return listCell;
@@ -262,6 +197,21 @@ public class ScheduleList extends StackPane {
                 return d instanceof SongDisplayable || d instanceof BiblePassage;
             }
         }));
+        listView.setOnDragOver(new EventHandler<DragEvent>() {
+            @Override
+            public void handle(DragEvent event) {
+                if (event.getDragboard().getString() != null || event.getDragboard().getContent(SongDisplayable.SONG_DISPLAYABLE_FORMAT) != null) {
+                    event.acceptTransferModes(TransferMode.ANY);
+                }
+            }
+        });
+        listView.setOnDragDropped(new EventHandler<DragEvent>() {
+
+            @Override
+            public void handle(DragEvent event) {
+                dragDropped(event, null);
+            }
+        });
         schedule = new Schedule();
         setOnKeyTyped(new EventHandler<KeyEvent>() {
             @Override
@@ -301,6 +251,77 @@ public class ScheduleList extends StackPane {
             LOGGER.log(Level.WARNING, "Not on the platform thread!", new RuntimeException("DEBUG EX"));
         }
         listView.itemsProperty().get().add(displayable);
+    }
+    
+    private void dragDropped(DragEvent event, ListCell<Displayable> listCell) {
+        if (listCell != null) {
+            listCell.setStyle("-fx-border-color: rgb(0, 0, 0);-fx-border-width: 0,0,0,0;");
+        }
+        String imageLocation = event.getDragboard().getString();
+        if (imageLocation != null) {
+            if (!Utils.isInDir(QueleaProperties.get().getImageDir(), new File(imageLocation))) {
+                try {
+                    Utils.copyFile(new File(imageLocation), new File(QueleaProperties.get().getImageDir(), new File(imageLocation).getName()));
+                } catch (IOException ex) {
+                    LOGGER.log(Level.WARNING, "Couldn't copy image file", ex);
+                }
+            }
+            if (listCell==null || listCell.isEmpty()) {
+                ImageDisplayable img = new ImageDisplayable(new File(imageLocation));
+                add(img);
+            } else {
+                Displayable d = listCell.getItem();
+                if (d instanceof TextDisplayable) {
+                    TextDisplayable textDisplayable = (TextDisplayable) d;
+                    ThemeDTO theme = textDisplayable.getTheme();
+                    SerializableDropShadow dropShadow = theme.getShadow();
+                    if (dropShadow == null || (dropShadow.getColor().equals(Color.WHITE) && dropShadow.getOffsetX() == 0 && dropShadow.getOffsetY() == 0)) {
+                        dropShadow = new SerializableDropShadow(Color.BLACK, 3, 3, 2, 0, true);
+                    }
+                    ThemeDTO newTheme = new ThemeDTO(theme.getSerializableFont(), theme.getFontPaint(), theme.getTranslateSerializableFont(), theme.getTranslateFontPaint(), new ImageBackground(new File(imageLocation).getName()), dropShadow, theme.getSerializableFont().isBold(), theme.getSerializableFont().isItalic(), theme.getTranslateSerializableFont().isBold(), theme.getTranslateSerializableFont().isItalic(), theme.getTextPosition(), theme.getTextAlignment());
+                    for (TextSection section : textDisplayable.getSections()) {
+                        section.setTheme(newTheme);
+                    }
+                    textDisplayable.setTheme(newTheme);
+                    if (d instanceof SongDisplayable) {
+                        SongDisplayable sd = (SongDisplayable) d;
+                        Utils.updateSongInBackground(sd, true, false);
+                    }
+                    QueleaApp.get().getMainWindow().getMainPanel().getPreviewPanel().refresh();
+                    QueleaApp.get().getMainWindow().getMainPanel().getLivePanel().refresh();
+                }
+            }
+        }
+        if (event.getDragboard().getContent(SongDisplayable.SONG_DISPLAYABLE_FORMAT) instanceof SongDisplayable) {
+            final SongDisplayable displayable = (SongDisplayable) event.getDragboard().getContent(SongDisplayable.SONG_DISPLAYABLE_FORMAT);
+            if (displayable != null) {
+                if (listCell==null || listCell.getIndex() != localDragIndex) {
+                    if (localDragIndex > -1) {
+                        getItems().remove(localDragIndex);
+                        localDragIndex = -1;
+                    }
+                    if (listCell==null || listCell.isEmpty()) {
+                        add(displayable);
+                        listView.getSelectionModel().clearSelection();
+                        listView.getSelectionModel().selectLast();
+                    } else {
+                        listView.itemsProperty().get().add(listCell.getIndex(), displayable);
+                        listView.getSelectionModel().clearSelection();
+                        listView.getSelectionModel().select(listCell.getIndex());
+                    }
+                    listView.requestFocus();
+                    Platform.runLater(new Runnable() {
+
+                        @Override
+                        public void run() {
+                            QueleaApp.get().getMainWindow().getMainPanel().getPreviewPanel().setDisplayable(displayable, 0);
+                            QueleaApp.get().getMainWindow().getMainPanel().getPreviewPanel().refresh();
+                        }
+                    });
+                }
+            }
+        }
+        event.consume();
     }
 
     /**
