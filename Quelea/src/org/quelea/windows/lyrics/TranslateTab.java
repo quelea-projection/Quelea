@@ -16,8 +16,12 @@
  */
 package org.quelea.windows.lyrics;
 
+import javafx.event.ActionEvent;
+import javafx.event.Event;
+import javafx.event.EventHandler;
 import javafx.scene.control.Tab;
-import javafx.scene.control.TextArea;
+import org.javafx.dialog.Dialog;
+import org.quelea.services.languages.LabelGrabber;
 
 /**
  * A tab specifically designed for a translation for a song - holds the
@@ -37,6 +41,14 @@ public class TranslateTab extends Tab {
      */
     public TranslateTab(String name, String lyrics) {
         super(name);
+        setOnCloseRequest(new EventHandler<Event>() {
+
+            @Override
+            public void handle(Event event) {
+                Dialog.buildConfirmation(LabelGrabber.INSTANCE.getLabel("delete.translation.title"), LabelGrabber.INSTANCE.getLabel("delete.translation.text").replace("$1", name))
+                        .addNoButton(Event::consume).addYesButton((event1) -> {}).build().showAndWait();
+            }
+        });
         this.name = name;
         setClosable(true);
         lyricsArea = new LyricsTextArea();
