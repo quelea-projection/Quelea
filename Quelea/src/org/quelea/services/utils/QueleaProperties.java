@@ -1251,6 +1251,26 @@ public final class QueleaProperties extends Properties {
         setProperty("advance.on.live", Boolean.toString(val));
         write();
     }
+    
+    /**
+     * Determine whether to preview the scheudle item when the background image has been updated.
+     * <p/>
+     * @return true if we should preview, false otherwise.
+     */
+    public boolean getPreviewOnImageUpdate() {
+        return Boolean.parseBoolean(getProperty("preview.on.image.change", "false"));
+    }
+
+    /**
+     * Determine whether to preview the scheudle item when the background image
+     * has been updated.
+     * <p/>
+     * @param val true if we should preview, false otherwise.
+     */
+    public void setPreviewOnImageUpdate(boolean val) {
+        setProperty("preview.on.image.change", Boolean.toString(val));
+        write();
+    }
 
     /**
      * Get whether to use openoffice for presentations.

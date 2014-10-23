@@ -510,3 +510,4 @@ advance.on.live.label=Advance schedule on live display
 delete.translation.title=Delete translation
 delete.translation.text=Delete the $1 translation?
 help.menu.wiki=Wiki
+preview.on.image.change.label=Preview item on image change
