@@ -17,12 +17,20 @@
  */
 package org.quelea.windows.lyrics;
 
+import java.util.Optional;
+import java.util.function.BiFunction;
+import java.util.function.Consumer;
 import javafx.application.Platform;
+import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableBooleanValue;
 import javafx.beans.value.ObservableValue;
 import org.fxmisc.richtext.InlineCssTextArea;
+import org.fxmisc.undo.UndoManager;
+import org.fxmisc.undo.UndoManagerFactory;
 import org.quelea.services.utils.LineTypeChecker;
 import org.quelea.services.utils.LineTypeChecker.Type;
+import org.reactfx.EventStream;
 
 /**
  *
@@ -42,6 +50,87 @@ public class LyricsTextArea extends InlineCssTextArea {
                         refreshStyle();
                     }
                 });
+            }
+        });
+        UndoManager blankManager = new UndoManager() {
+
+            @Override
+            public boolean undo() {
+                return false;
+            }
+
+            @Override
+            public boolean redo() {
+                return false;
+            }
+
+            @Override
+            public ObservableBooleanValue undoAvailableProperty() {
+                return new SimpleBooleanProperty(false);
+            }
+
+            @Override
+            public boolean isUndoAvailable() {
+                return false;
+            }
+
+            @Override
+            public ObservableBooleanValue redoAvailableProperty() {
+                return new SimpleBooleanProperty(false);
+            }
+
+            @Override
+            public boolean isRedoAvailable() {
+                return false;
+            }
+
+            @Override
+            public ObservableBooleanValue performingActionProperty() {
+                return new SimpleBooleanProperty(false);
+            }
+
+            @Override
+            public boolean isPerformingAction() {
+                return false;
+            }
+
+            @Override
+            public void preventMerge() {
+            }
+
+            @Override
+            public void forgetHistory() {
+            }
+
+            @Override
+            public UndoManager.UndoPosition getCurrentPosition() {
+                return null;
+            }
+
+            @Override
+            public ObservableBooleanValue atMarkedPositionProperty() {
+                return null;
+            }
+
+            @Override
+            public boolean isAtMarkedPosition() {
+                return true;
+            }
+
+            @Override
+            public void close() {
+            }
+        };
+        setUndoManager(new UndoManagerFactory() {
+
+            @Override
+            public <C> UndoManager create(EventStream<C> stream, Consumer<C> cnsmr, Consumer<C> cnsmr1) {
+                return blankManager;
+            }
+
+            @Override
+            public <C> UndoManager create(EventStream<C> stream, Consumer<C> cnsmr, Consumer<C> cnsmr1, BiFunction<C, C, Optional<C>> bf) {
+                return blankManager;
             }
         });
     }
