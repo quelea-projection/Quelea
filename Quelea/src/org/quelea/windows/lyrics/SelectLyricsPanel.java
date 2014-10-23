@@ -140,6 +140,7 @@ public class SelectLyricsPanel extends AbstractPanel {
     public void showDisplayable(TextDisplayable displayable, int index) {
 //        removeCurrentDisplayable();
         setCurrentDisplayable(displayable);
+        lyricsList.itemsProperty().get().clear();
         lyricsList.setShowQuickEdit(displayable instanceof SongDisplayable);
         for (TextSection section : displayable.getSections()) {
             lyricsList.itemsProperty().get().add(section);
