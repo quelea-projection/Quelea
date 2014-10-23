@@ -48,6 +48,7 @@ public class HelpMenu extends Menu {
     private final MenuItem queleaManual;
     private final MenuItem queleaFacebook;
     private final MenuItem queleaDiscuss;
+    private final MenuItem queleaWiki;
     private final MenuItem updateCheck;
     private final MenuItem about;
     private AboutDialog aboutDialog;
@@ -108,10 +109,25 @@ public class HelpMenu extends Menu {
                 }
             });
             getItems().add(queleaDiscuss);
+            queleaWiki = new MenuItem(LabelGrabber.INSTANCE.getLabel("help.menu.wiki"), new ImageView(new Image("file:icons/wiki.png", 16, 16, false, true)));
+            queleaWiki.setOnAction(new EventHandler<javafx.event.ActionEvent>() {
+                @Override
+                public void handle(javafx.event.ActionEvent t) {
+                    try {
+                        Desktop.getDesktop().browse(new URI(QueleaProperties.get().getWikiPageLocation()));
+                    }
+                    catch(URISyntaxException | IOException ex) {
+                        LOGGER.log(Level.WARNING, "Couldn't launch Quelea Wiki", ex);
+                        showError();
+                    }
+                }
+            });
+            getItems().add(queleaWiki);
         }
         else {
             queleaDiscuss = null;
             queleaFacebook = null;
+            queleaWiki = null;
             queleaManual = null;
         }
         updateCheck = new MenuItem(LabelGrabber.INSTANCE.getLabel("help.menu.update"), new ImageView(new Image("file:icons/update.png", 16, 16, false, true)));

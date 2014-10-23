@@ -500,6 +500,15 @@ public final class QueleaProperties extends Properties {
     public String getFacebookPageLocation() {
         return getProperty("facebook.page", "http://www.facebook.com/quelea.projection");
     }
+    
+    /**
+     * Get the location of Quelea's Facebook page.
+     * <p/>
+     * @return the location of the facebook page.
+     */
+    public String getWikiPageLocation() {
+        return getProperty("wiki.page", "http://quelea.org/wiki/index.php/Main_Page");
+    }
 
     /**
      * Get the Quelea home directory in the user's directory.
