@@ -247,11 +247,13 @@ public abstract class LivePreviewPanel extends BorderPane {
      */
     public void setDisplayable(final Displayable displayable, final int index) {
         Utils.checkFXThread();
-        LivePreviewPanel.this.displayable = displayable;
+        if(!(this.displayable instanceof TextDisplayable && displayable instanceof TextDisplayable)) {
+            lyricsPanel.removeCurrentDisplayable();
+        }
+        this.displayable = displayable;
         presentationPanel.stopCurrent();
         audioPanel.removeCurrentDisplayable();
         videoPanel.removeCurrentDisplayable();
-        lyricsPanel.removeCurrentDisplayable();
         imagePanel.removeCurrentDisplayable();
         presentationPanel.removeCurrentDisplayable();
         if (PRESENTATION_LABEL.equals(currentLabel)) {

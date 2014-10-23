@@ -307,6 +307,7 @@ public class LyricDrawer extends WordDrawer {
      * <p/>
      * @param theme the theme to place on the getCanvas().
      */
+    @Override
     public void setTheme(ThemeDTO theme) {
         if (theme == null) {
             theme = ThemeDTO.DEFAULT_THEME;
