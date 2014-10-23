@@ -287,6 +287,10 @@ public class ScheduleList extends StackPane {
                         SongDisplayable sd = (SongDisplayable) d;
                         Utils.updateSongInBackground(sd, true, false);
                     }
+                    if(QueleaProperties.get().getPreviewOnImageUpdate()) {
+                        QueleaApp.get().getMainWindow().getMainPanel().getSchedulePanel().getScheduleList().getListView().getSelectionModel().clearSelection();
+                        QueleaApp.get().getMainWindow().getMainPanel().getSchedulePanel().getScheduleList().getListView().getSelectionModel().select(d);
+                    }
                     QueleaApp.get().getMainWindow().getMainPanel().getPreviewPanel().refresh();
                     QueleaApp.get().getMainWindow().getMainPanel().getLivePanel().refresh();
                 }
