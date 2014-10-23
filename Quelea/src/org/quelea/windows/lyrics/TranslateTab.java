@@ -44,9 +44,11 @@ public class TranslateTab extends Tab {
         setOnCloseRequest(new EventHandler<Event>() {
 
             @Override
-            public void handle(Event event) {
+            public void handle(Event tabEvent) {
                 Dialog.buildConfirmation(LabelGrabber.INSTANCE.getLabel("delete.translation.title"), LabelGrabber.INSTANCE.getLabel("delete.translation.text").replace("$1", name))
-                        .addNoButton(Event::consume).addYesButton((event1) -> {}).build().showAndWait();
+                        .addYesButton((event1) -> {}).addNoButton((ActionEvent buttonEvent) -> {
+                            tabEvent.consume();
+                }).build().showAndWait();
             }
         });
         this.name = name;
