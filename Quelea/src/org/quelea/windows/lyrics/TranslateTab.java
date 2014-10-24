@@ -47,7 +47,7 @@ public class TranslateTab extends Tab {
             @Override
             public void handle(Event tabEvent) {
                 String nameReplace = name;
-                if(QueleaProperties.get().getLanguageFile().getName().equalsIgnoreCase("sv.lang")) {
+                if(QueleaProperties.get().getLanguageFile().getName().equalsIgnoreCase("sv.lang")) { //Language names should be in lower case for Swedish
                     nameReplace = nameReplace.toLowerCase();
                 }
                 Dialog.buildConfirmation(LabelGrabber.INSTANCE.getLabel("delete.translation.title"), LabelGrabber.INSTANCE.getLabel("delete.translation.text").replace("$1", nameReplace))
