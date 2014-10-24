@@ -55,7 +55,6 @@ public class TranslationChoiceDialog extends Stage {
      */
     public TranslationChoiceDialog() {
         initModality(Modality.APPLICATION_MODAL);
-        initStyle(StageStyle.UTILITY);
         Utils.addIconsToStage(this);
         BorderPane root = new BorderPane();
         content = new VBox(5);

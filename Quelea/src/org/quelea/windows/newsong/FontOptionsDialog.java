@@ -84,7 +84,6 @@ public class FontOptionsDialog extends Stage {
      * change.
      */
     public FontOptionsDialog(final ThemePanel themePanel) {
-        initStyle(StageStyle.UTILITY);
         initModality(Modality.APPLICATION_MODAL);
         Utils.addIconsToStage(this);
 

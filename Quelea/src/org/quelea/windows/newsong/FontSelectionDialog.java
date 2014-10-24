@@ -49,7 +49,6 @@ public class FontSelectionDialog extends Stage {
      */
     public FontSelectionDialog() {
         initModality(Modality.APPLICATION_MODAL);
-        initStyle(StageStyle.UTILITY);
         setResizable(false);
         setTitle(LabelGrabber.INSTANCE.getLabel("font.selection.dialog.title"));
         Utils.addIconsToStage(this);
