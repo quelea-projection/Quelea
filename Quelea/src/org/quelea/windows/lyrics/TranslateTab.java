@@ -22,6 +22,7 @@ import javafx.event.EventHandler;
 import javafx.scene.control.Tab;
 import org.javafx.dialog.Dialog;
 import org.quelea.services.languages.LabelGrabber;
+import org.quelea.services.utils.QueleaProperties;
 
 /**
  * A tab specifically designed for a translation for a song - holds the
@@ -45,7 +46,11 @@ public class TranslateTab extends Tab {
 
             @Override
             public void handle(Event tabEvent) {
-                Dialog.buildConfirmation(LabelGrabber.INSTANCE.getLabel("delete.translation.title"), LabelGrabber.INSTANCE.getLabel("delete.translation.text").replace("$1", name))
+                String nameReplace = name;
+                if(QueleaProperties.get().getLanguageFile().getName().equalsIgnoreCase("sv.lang")) {
+                    nameReplace = nameReplace.toLowerCase();
+                }
+                Dialog.buildConfirmation(LabelGrabber.INSTANCE.getLabel("delete.translation.title"), LabelGrabber.INSTANCE.getLabel("delete.translation.text").replace("$1", nameReplace))
                         .addYesButton((event1) -> {}).addNoButton((ActionEvent buttonEvent) -> {
                             tabEvent.consume();
                 }).build().showAndWait();
