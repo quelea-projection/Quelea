@@ -182,7 +182,6 @@ public class SpellingDialog {
                 }
             });
             doneSpellingStage.initModality(Modality.WINDOW_MODAL);
-            doneSpellingStage.initStyle(StageStyle.UTILITY);
             VBox spellingBox = new VBox();
             spellingBox.getChildren().add(new Text(LabelGrabber.INSTANCE.getLabel("spelling.complete.text")));
             spellingBox.getChildren().add(ok);

@@ -56,7 +56,6 @@ public class TestPaneDialog extends Stage {
      * Create a new test pane dialog.
      */
     public TestPaneDialog() {
-        initStyle(StageStyle.UTILITY);
         initModality(Modality.APPLICATION_MODAL);
         setTitle(LabelGrabber.INSTANCE.getLabel("test.patterns.text"));
         Utils.addIconsToStage(this);
