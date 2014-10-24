@@ -70,7 +70,6 @@ public class SelectSongsDialog extends Stage {
      */
     public SelectSongsDialog(String[] text, String acceptText, String checkboxText) {
         initModality(Modality.APPLICATION_MODAL);
-        initStyle(StageStyle.UTILITY);
         setTitle(LabelGrabber.INSTANCE.getLabel("select.songs.title"));
 
         checkBoxes = new ArrayList<>();

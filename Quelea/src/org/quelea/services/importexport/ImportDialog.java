@@ -89,7 +89,6 @@ public abstract class ImportDialog extends Stage implements PropertyChangeListen
     public ImportDialog(String[] dialogLabels, ExtensionFilter fileFilter,
             final SongParser parser, final boolean selectDirectory, final boolean selectMultiple) {
         initModality(Modality.APPLICATION_MODAL);
-        initStyle(StageStyle.UTILITY);
         setTitle(LabelGrabber.INSTANCE.getLabel("import.heading"));
         files = new ArrayList<>();
         halt = false;

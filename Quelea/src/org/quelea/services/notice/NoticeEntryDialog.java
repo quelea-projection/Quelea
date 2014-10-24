@@ -80,7 +80,6 @@ public class NoticeEntryDialog extends Stage {
     public NoticeEntryDialog() {
         setTitle(LabelGrabber.INSTANCE.getLabel("new.notice.heading"));
         initModality(Modality.APPLICATION_MODAL);
-        initStyle(StageStyle.UTILITY);
         setResizable(false);
         getIcons().add(new Image("file:icons/info.png"));
         colourPicker = new ColorPicker(Color.WHITE);
