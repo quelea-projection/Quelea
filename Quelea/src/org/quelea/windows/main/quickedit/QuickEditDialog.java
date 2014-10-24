@@ -57,8 +57,6 @@ public class QuickEditDialog extends Stage {
      * Construct a quick edit dialog.
      */
     public QuickEditDialog() {
-        initStyle(StageStyle.UTILITY);
-        initModality(Modality.APPLICATION_MODAL);
         setTitle(LabelGrabber.INSTANCE.getLabel("quick.edit.text"));
         currentIndex = -1;
         BorderPane mainPane = new BorderPane();

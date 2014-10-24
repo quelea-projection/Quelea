@@ -60,7 +60,6 @@ public class AboutDialog extends Stage {
      */
     public AboutDialog() {
         initModality(Modality.APPLICATION_MODAL);
-        initStyle(StageStyle.UTILITY);
         setResizable(false);
         setTitle(LabelGrabber.INSTANCE.getLabel("help.about.title"));
 

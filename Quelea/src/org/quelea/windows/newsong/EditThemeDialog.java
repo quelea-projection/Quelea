@@ -59,7 +59,6 @@ public class EditThemeDialog extends Stage {
      */
     public EditThemeDialog() {
         initModality(Modality.WINDOW_MODAL);
-        initStyle(StageStyle.UTILITY);
         Utils.addIconsToStage(this);
         setTitle(LabelGrabber.INSTANCE.getLabel("edit.theme.heading"));
         setResizable(false);

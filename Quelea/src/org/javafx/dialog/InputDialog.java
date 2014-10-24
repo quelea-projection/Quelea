@@ -49,7 +49,6 @@ public class InputDialog extends Stage {
      * Create our input dialog.
      */
     private InputDialog() {
-        initStyle(StageStyle.UTILITY);
         initModality(Modality.APPLICATION_MODAL);
         setResizable(false);
         BorderPane mainPane = new BorderPane();
