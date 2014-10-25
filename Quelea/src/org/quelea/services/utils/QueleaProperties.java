@@ -32,6 +32,7 @@ import org.quelea.data.bible.Bible;
 import org.quelea.data.displayable.TextAlignment;
 import org.quelea.services.languages.spelling.Dictionary;
 import org.quelea.services.languages.spelling.DictionaryManager;
+import org.quelea.services.notice.NoticeDrawer.NoticePosition;
 
 /**
  * Manages the properties specific to Quelea.
@@ -348,8 +349,13 @@ public final class QueleaProperties extends Properties {
      *
      * @return the position at which to display the notices.
      */
-    public String getNoticePosition() {
-        return getProperty("notice.position", "Bottom");
+    public NoticePosition getNoticePosition() {
+        if(getProperty("notice.position", "Bottom").equalsIgnoreCase("top")) {
+            return NoticePosition.TOP;
+        }
+        else {
+            return NoticePosition.BOTTOM;
+        }
     }
 
     /**
@@ -357,8 +363,8 @@ public final class QueleaProperties extends Properties {
      *
      * @param position the position at which to display the notices.
      */
-    public void setNoticePosition(String position) {
-        setProperty("notice.position", position);
+    public void setNoticePosition(NoticePosition position) {
+        setProperty("notice.position", position.getText());
     }
 
     /**
