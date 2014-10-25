@@ -17,6 +17,8 @@
  */
 package org.quelea.windows.main.actionhandlers;
 
+import java.util.ArrayList;
+import java.util.List;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
@@ -47,6 +49,16 @@ import org.quelea.windows.newsong.ThemePanel;
  */
 public class EditThemeScheduleActionHandler implements EventHandler<ActionEvent> {
 
+    private TextDisplayable selectedDisplayable;
+
+    public EditThemeScheduleActionHandler() {
+        this(null);
+    }
+
+    public EditThemeScheduleActionHandler(TextDisplayable selectedDisplayable) {
+        this.selectedDisplayable = selectedDisplayable;
+    }
+
     /**
      * Edit the theme of the currently selected item in the schedule.
      *
@@ -54,9 +66,12 @@ public class EditThemeScheduleActionHandler implements EventHandler<ActionEvent>
      */
     @Override
     public void handle(ActionEvent t) {
-        final TextDisplayable firstSelected = (TextDisplayable) QueleaApp.get().getMainWindow().getMainPanel().getSchedulePanel().getScheduleList().getSelectionModel().getSelectedItem();
+        TextDisplayable firstSelected = (TextDisplayable) QueleaApp.get().getMainWindow().getMainPanel().getSchedulePanel().getScheduleList().getSelectionModel().getSelectedItem();
+        if (selectedDisplayable != null) {
+            firstSelected = selectedDisplayable;
+        }
         InlineCssTextArea wordsArea = new InlineCssTextArea();
-        wordsArea.replaceText(firstSelected.getSections()[0].toString());
+        wordsArea.replaceText(firstSelected.getSections()[0].toString().trim());
         Button confirmButton = new Button(LabelGrabber.INSTANCE.getLabel("ok.button"), new ImageView(new Image("file:icons/tick.png")));
         Button cancelButton = new Button(LabelGrabber.INSTANCE.getLabel("cancel.button"), new ImageView(new Image("file:icons/cross.png")));
         final Stage s = new Stage();
@@ -73,17 +88,25 @@ public class EditThemeScheduleActionHandler implements EventHandler<ActionEvent>
                 if (tp.getTheme() != null) {
                     ScheduleList sl = QueleaApp.get().getMainWindow().getMainPanel().getSchedulePanel().getScheduleList();
                     tp.updateTheme(false);
-                    for (Displayable selectedDisplayable : sl.getSelectionModel().getSelectedItems()) {
-                        if (selectedDisplayable instanceof TextDisplayable) {
-                            ((TextDisplayable)selectedDisplayable).setTheme(tp.getTheme());
-                            for (TextSection ts : ((TextDisplayable)selectedDisplayable).getSections()) {
-                                ts.setTheme(tp.getTheme());
-                            }
-                            if (selectedDisplayable instanceof SongDisplayable) {
-                                Utils.updateSongInBackground((SongDisplayable) selectedDisplayable, true, false);
+                    List<Displayable> displayableList;
+                    if (selectedDisplayable == null) {
+                        displayableList = sl.getSelectionModel().getSelectedItems();
+                    }
+                    else {
+                        displayableList = new ArrayList<>();
+                        displayableList.add(selectedDisplayable);
+                    }
+                        for (Displayable eachDisplayable : displayableList) {
+                            if (eachDisplayable instanceof TextDisplayable) {
+                                ((TextDisplayable) eachDisplayable).setTheme(tp.getTheme());
+                                for (TextSection ts : ((TextDisplayable) eachDisplayable).getSections()) {
+                                    ts.setTheme(tp.getTheme());
+                                }
+                                if (eachDisplayable instanceof SongDisplayable) {
+                                    Utils.updateSongInBackground((SongDisplayable) eachDisplayable, true, false);
+                                }
                             }
                         }
-                    }
                     QueleaApp.get().getMainWindow().getMainPanel().getPreviewPanel().refresh();
                 }
                 s.hide();
