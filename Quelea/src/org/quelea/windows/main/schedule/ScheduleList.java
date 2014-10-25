@@ -25,8 +25,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.application.Platform;
 import javafx.beans.property.ObjectProperty;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
 import javafx.geometry.Pos;
@@ -114,8 +112,8 @@ public class ScheduleList extends StackPane {
                             setText(null);
                             setGraphic(null);
                         } else {
-                            setGraphic(item.getPreviewIcon());
-                            setText(item.getPreviewText());
+                            setGraphic(new ScheduleListNode(item));
+                            setText(null);
                         }
                         if (item instanceof SongDisplayable || item instanceof BiblePassage) {
                             setContextMenu(new SchedulePopupMenu());
@@ -252,7 +250,7 @@ public class ScheduleList extends StackPane {
         }
         listView.itemsProperty().get().add(displayable);
     }
-    
+
     private void dragDropped(DragEvent event, ListCell<Displayable> listCell) {
         if (listCell != null) {
             listCell.setStyle("-fx-border-color: rgb(0, 0, 0);-fx-border-width: 0,0,0,0;");
@@ -266,7 +264,7 @@ public class ScheduleList extends StackPane {
                     LOGGER.log(Level.WARNING, "Couldn't copy image file", ex);
                 }
             }
-            if (listCell==null || listCell.isEmpty()) {
+            if (listCell == null || listCell.isEmpty()) {
                 ImageDisplayable img = new ImageDisplayable(new File(imageLocation));
                 add(img);
             } else {
@@ -287,7 +285,7 @@ public class ScheduleList extends StackPane {
                         SongDisplayable sd = (SongDisplayable) d;
                         Utils.updateSongInBackground(sd, true, false);
                     }
-                    if(QueleaProperties.get().getPreviewOnImageUpdate()) {
+                    if (QueleaProperties.get().getPreviewOnImageUpdate()) {
                         QueleaApp.get().getMainWindow().getMainPanel().getSchedulePanel().getScheduleList().getListView().getSelectionModel().clearSelection();
                         QueleaApp.get().getMainWindow().getMainPanel().getSchedulePanel().getScheduleList().getListView().getSelectionModel().select(d);
                     }
@@ -299,12 +297,12 @@ public class ScheduleList extends StackPane {
         if (event.getDragboard().getContent(SongDisplayable.SONG_DISPLAYABLE_FORMAT) instanceof SongDisplayable) {
             final SongDisplayable displayable = (SongDisplayable) event.getDragboard().getContent(SongDisplayable.SONG_DISPLAYABLE_FORMAT);
             if (displayable != null) {
-                if (listCell==null || listCell.getIndex() != localDragIndex) {
+                if (listCell == null || listCell.getIndex() != localDragIndex) {
                     if (localDragIndex > -1) {
                         getItems().remove(localDragIndex);
                         localDragIndex = -1;
                     }
-                    if (listCell==null || listCell.isEmpty()) {
+                    if (listCell == null || listCell.isEmpty()) {
                         add(displayable);
                         listView.getSelectionModel().clearSelection();
                         listView.getSelectionModel().selectLast();
@@ -456,11 +454,11 @@ public class ScheduleList extends StackPane {
                 QueleaApp.get().getMainWindow().getMainPanel().getLivePanel().removeDisplayable();
                 VLCWindow.INSTANCE.stop();
                 WordDrawer drawer;
-                    if (QueleaApp.get().getProjectionWindow().getCanvas().isStageView()) {
-                        drawer = new StageDrawer();
-                    } else {
-                        drawer = new LyricDrawer();
-                    }
+                if (QueleaApp.get().getProjectionWindow().getCanvas().isStageView()) {
+                    drawer = new StageDrawer();
+                } else {
+                    drawer = new LyricDrawer();
+                }
                 drawer.setCanvas(QueleaApp.get().getProjectionWindow().getCanvas());
                 drawer.setTheme(ThemeDTO.DEFAULT_THEME);
             }
