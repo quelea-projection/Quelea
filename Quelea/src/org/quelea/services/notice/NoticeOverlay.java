@@ -20,7 +20,7 @@ package org.quelea.services.notice;
 
 import javafx.geometry.Pos;
 import javafx.scene.layout.StackPane;
-import org.quelea.services.languages.LabelGrabber;
+import org.quelea.services.notice.NoticeDrawer.NoticePosition;
 import org.quelea.services.utils.QueleaProperties;
 
 /**
@@ -32,7 +32,7 @@ import org.quelea.services.utils.QueleaProperties;
 public class NoticeOverlay extends StackPane {
 
     public NoticeOverlay() {
-        if (QueleaProperties.get().getNoticePosition().equals(LabelGrabber.INSTANCE.getLabel("top.text.position"))) {
+        if (QueleaProperties.get().getNoticePosition()==NoticePosition.TOP) {
             StackPane.setAlignment(this, Pos.TOP_CENTER);
             setAlignment(Pos.TOP_CENTER);
         } else {
