@@ -46,6 +46,21 @@ import org.quelea.windows.main.QueleaApp;
  * @author Michael
  */
 public class NoticeDrawer {
+    
+    public enum NoticePosition {
+        
+        TOP("top"), BOTTOM("bottom");
+    
+        private String text;
+        
+        private NoticePosition(String text) {
+            this.text = text;
+        }
+        
+        public String getText() {
+            return text;
+        }
+    }
 
     private static final double BACKGROUND_OPACITY = 0.6;
     private static final double BACKGROUND_FADE_DURATION = 0.5;
@@ -105,7 +120,7 @@ public class NoticeDrawer {
             FontMetrics metrics = Toolkit.getToolkit().getFontLoader().getFontMetrics(oldNotices.get(0).getFont().getFont());
             double displayWidth = QueleaApp.get().getProjectionWindow().getWidth();
             double width = metrics.computeStringWidth(builder.toString()) + textGroup.getSpacing() * (notices.size() - 1);
-            if (QueleaProperties.get().getNoticePosition().equalsIgnoreCase(LabelGrabber.INSTANCE.getLabel("top.text.position"))) {
+            if (QueleaProperties.get().getNoticePosition()==NoticePosition.TOP) {
                 StackPane.setAlignment(overlay, Pos.TOP_CENTER);
                 overlay.setAlignment(Pos.TOP_CENTER);
                 textGroup.setAlignment(Pos.TOP_LEFT);

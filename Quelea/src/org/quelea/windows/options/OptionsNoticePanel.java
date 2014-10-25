@@ -26,6 +26,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.Slider;
 import javafx.scene.layout.GridPane;
 import org.quelea.services.languages.LabelGrabber;
+import org.quelea.services.notice.NoticeDrawer.NoticePosition;
 import org.quelea.services.utils.LoggerUtils;
 import org.quelea.services.utils.PropertyPanel;
 import org.quelea.services.utils.QueleaProperties;
@@ -86,7 +87,7 @@ public class OptionsNoticePanel extends GridPane implements PropertyPanel {
         fontSize.setLabelFor(noticeSizeSlider);
         GridPane.setConstraints(noticeSizeSlider, 2, 4);
         getChildren().add(noticeSizeSlider);
-        
+
         readProperties();
     }
 
@@ -96,10 +97,14 @@ public class OptionsNoticePanel extends GridPane implements PropertyPanel {
     @Override
     public final void readProperties() {
         QueleaProperties props = QueleaProperties.get();
-        noticePositionComboBox.setValue(props.getNoticePosition());
+        if (props.getNoticePosition() == NoticePosition.BOTTOM) {
+            noticePositionComboBox.getSelectionModel().select(0);
+        } else {
+            noticePositionComboBox.getSelectionModel().select(1);
+        }
         noticeBackgroundColourPicker.setValue(props.getNoticeBackgroundColour());
         noticeBackgroundColourPicker.fireEvent(new ActionEvent());
-        noticeSpeedSlider.setValue(noticeSpeedSlider.getMax()-noticeSpeedSlider.getMin()-props.getNoticeSpeed());
+        noticeSpeedSlider.setValue(noticeSpeedSlider.getMax() - noticeSpeedSlider.getMin() - props.getNoticeSpeed());
         noticeSizeSlider.setValue(props.getNoticeFontSize());
     }
 
@@ -109,9 +114,13 @@ public class OptionsNoticePanel extends GridPane implements PropertyPanel {
     @Override
     public void setProperties() {
         QueleaProperties props = QueleaProperties.get();
-        props.setNoticePosition(noticePositionComboBox.getValue());
+        if (noticePositionComboBox.getSelectionModel().getSelectedIndex() == 0) {
+            props.setNoticePosition(NoticePosition.BOTTOM);
+        } else {
+            props.setNoticePosition(NoticePosition.TOP);
+        }
         props.setNoticeBackgroundColour(noticeBackgroundColourPicker.getValue());
-        props.setNoticeSpeed(noticeSpeedSlider.getMax()-(noticeSpeedSlider.getValue()+noticeSpeedSlider.getMin()));
+        props.setNoticeSpeed(noticeSpeedSlider.getMax() - (noticeSpeedSlider.getValue() + noticeSpeedSlider.getMin()));
         props.setNoticeFontSize(noticeSizeSlider.getValue());
     }
 
