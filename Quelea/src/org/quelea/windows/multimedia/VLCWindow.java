@@ -424,7 +424,7 @@ public class VLCWindow {
                     SwingUtilities.invokeLater(new Runnable() {
                         @Override
                         public void run() {
-                            window.setOpacity((hideButton || !show) ? 0 : 1);
+                            window.setVisible((hideButton || !show) ? false : true);
                             window.toBack();
                         }
                     });
