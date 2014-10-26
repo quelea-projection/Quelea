@@ -89,6 +89,7 @@ public class RCHandler {
                 final MainPanel p = QueleaApp.get().getMainWindow().getMainPanel();
                 int current = p.getSchedulePanel().getScheduleList().getItems().indexOf(p.getLivePanel().getDisplayable());
                 current++;
+                p.getSchedulePanel().getScheduleList().getSelectionModel().clearSelection();
                 if (current < p.getSchedulePanel().getScheduleList().getItems().size()) {
                     p.getSchedulePanel().getScheduleList().getSelectionModel().select(current);
                 } else {
@@ -106,6 +107,7 @@ public class RCHandler {
                 final MainPanel p = QueleaApp.get().getMainWindow().getMainPanel();
                 int current = p.getSchedulePanel().getScheduleList().getItems().indexOf(p.getLivePanel().getDisplayable());
                 current--;
+                p.getSchedulePanel().getScheduleList().getSelectionModel().clearSelection();
                 if (current > 0) {
                     p.getSchedulePanel().getScheduleList().getSelectionModel().select(current);
                 } else {
