@@ -19,6 +19,7 @@ package org.quelea.server;
 
 import java.util.ArrayList;
 import javafx.application.Platform;
+import javafx.scene.layout.Background;
 import org.quelea.services.languages.LabelGrabber;
 import org.quelea.services.utils.QueleaProperties;
 import org.quelea.windows.main.MainPanel;
@@ -82,34 +83,34 @@ public class RCHandler {
     }
 
     public static void nextItem() {
-        final MainPanel p = QueleaApp.get().getMainWindow().getMainPanel();
-        int current = p.getSchedulePanel().getScheduleList().getItems().indexOf(p.getLivePanel().getDisplayable());
-        current++;
-        if (current < p.getSchedulePanel().getScheduleList().getItems().size()) {
-            p.getPreviewPanel().setDisplayable(p.getSchedulePanel().getScheduleList().getItems().get(current), 0);
-        } else {
-            p.getPreviewPanel().setDisplayable(p.getSchedulePanel().getScheduleList().getItems().get(p.getSchedulePanel().getScheduleList().getItems().size() - 1), 0);
-        }
         Platform.runLater(new Runnable() {
             @Override
             public void run() {
+                final MainPanel p = QueleaApp.get().getMainWindow().getMainPanel();
+                int current = p.getSchedulePanel().getScheduleList().getItems().indexOf(p.getLivePanel().getDisplayable());
+                current++;
+                if (current < p.getSchedulePanel().getScheduleList().getItems().size()) {
+                    p.getSchedulePanel().getScheduleList().getSelectionModel().select(current);
+                } else {
+                    p.getSchedulePanel().getScheduleList().getSelectionModel().select(p.getSchedulePanel().getScheduleList().getItems().size() - 1);
+                }
                 p.getPreviewPanel().goLive();
             }
         });
     }
 
     public static void prevItem() {
-        final MainPanel p = QueleaApp.get().getMainWindow().getMainPanel();
-        int current = p.getSchedulePanel().getScheduleList().getItems().indexOf(p.getLivePanel().getDisplayable());
-        current--;
-        if (current > 0) {
-            p.getPreviewPanel().setDisplayable(p.getSchedulePanel().getScheduleList().getItems().get(current), 0);
-        } else {
-            p.getPreviewPanel().setDisplayable(p.getSchedulePanel().getScheduleList().getItems().get(0), 0);
-        }
         Platform.runLater(new Runnable() {
             @Override
             public void run() {
+                final MainPanel p = QueleaApp.get().getMainWindow().getMainPanel();
+                int current = p.getSchedulePanel().getScheduleList().getItems().indexOf(p.getLivePanel().getDisplayable());
+                current--;
+                if (current > 0) {
+                    p.getSchedulePanel().getScheduleList().getSelectionModel().select(current);
+                } else {
+                    p.getSchedulePanel().getScheduleList().getSelectionModel().select(0);
+                }
                 p.getPreviewPanel().goLive();
             }
         });
@@ -173,12 +174,11 @@ public class RCHandler {
             return LabelGrabber.INSTANCE.getLabel("play");
         }
     }
-    
+
     public static void play() {
-        if(VLCWindow.INSTANCE.isPlaying()) {
+        if (VLCWindow.INSTANCE.isPlaying()) {
             VLCWindow.INSTANCE.pause();
-        }
-        else {
+        } else {
             VLCWindow.INSTANCE.play();
         }
     }
