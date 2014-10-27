@@ -134,17 +134,6 @@ public class ImageDisplayable implements Displayable {
     }
 
     /**
-     * Get the summary to print in an order of service.
-     *
-     * @return the summary as a string. Just the image and the file name at
-     * present.
-     */
-    @Override
-    public String getPrintText() {
-        return "Image: " + file.getName();
-    }
-
-    /**
      * Images don't support clearing of text (they contain no text) so false,
      * always.
      *

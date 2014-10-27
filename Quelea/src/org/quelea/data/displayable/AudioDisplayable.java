@@ -103,16 +103,6 @@ public class AudioDisplayable implements MultimediaDisplayable, Serializable {
     }
 
     /**
-     * Get the text to print on the order of service.
-     *
-     * @return "Video file: " and the name of the video file.
-     */
-    @Override
-    public String getPrintText() {
-        return "Audio file: " + file.getName();
-    }
-
-    /**
      * Get any resources this displayable needs.
      *
      * @return the image backing this displayable.

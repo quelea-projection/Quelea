@@ -292,16 +292,6 @@ public class BiblePassage implements TextDisplayable, Serializable {
     }
 
     /**
-     * Return a summary to display when printed as part of the order of service.
-     * <p>
-     * @return the summary as a string.
-     */
-    @Override
-    public String getPrintText() {
-        return "Bible passage: " + summary;
-    }
-
-    /**
      * We support clear, so return true.
      * <p>
      * @return true, always.
