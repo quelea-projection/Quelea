@@ -162,16 +162,6 @@ public class VideoDisplayable implements MultimediaDisplayable, Serializable {
     }
 
     /**
-     * Get the text to print on the order of service.
-     * <p>
-     * @return "Video file: " and the name of the video file.
-     */
-    @Override
-    public String getPrintText() {
-        return "Video file: " + new File(location).getName();
-    }
-
-    /**
      * Determine whether videos support clearing, which they don't.
      * <p>
      * @return false, always.

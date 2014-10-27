@@ -1140,16 +1140,6 @@ public class SongDisplayable implements TextDisplayable, Comparable<SongDisplaya
         return ret;
     }
 
-    /**
-     * Get the summary text to print in the order of service.
-     * <p/>
-     * @return the summary text to print in the order of service.
-     */
-    @Override
-    public String getPrintText() {
-        return "Song: " + getTitle() + " (" + getAuthor() + ")";
-    }
-
     public void setTheme(ThemeDTO theme) {
         this.theme = theme;
     }
