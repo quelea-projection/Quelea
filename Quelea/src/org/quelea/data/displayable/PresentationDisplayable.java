@@ -138,16 +138,6 @@ public class PresentationDisplayable implements Displayable {
     }
 
     /**
-     * Get the text to display when printing the order of service.
-     * <p/>
-     * @return the text to display when printing.
-     */
-    @Override
-    public String getPrintText() {
-        return "Presentation: " + file.getName();
-    }
-
-    /**
      * Give a blank list (no resources.) TODO: Include powerpoint as resource
      * <p/>
      * @return blank list since presentations at the moment contain no resources
