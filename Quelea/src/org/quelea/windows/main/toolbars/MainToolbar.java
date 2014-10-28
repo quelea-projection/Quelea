@@ -124,7 +124,7 @@ public class MainToolbar extends ToolBar {
         addYoutubeButton.setOnAction(new AddYoutubeActionHandler());
         getItems().add(addYoutubeButton);
 
-        addTimerButton = new Button("", new ImageView(new Image("file:icons/timer.png", 24, 24, false, true)));
+        addTimerButton = new Button("", new ImageView(new Image("file:icons/timer-dark.png", 24, 24, false, true)));
         Utils.setToolbarButtonStyle(addTimerButton);
         addTimerButton.setTooltip(new Tooltip(LabelGrabber.INSTANCE.getLabel("add.timer.tooltip")));
         addTimerButton.setOnAction(new AddTimerActionHandler());
