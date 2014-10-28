@@ -46,7 +46,7 @@ public class DisplayPositionSelector extends BorderPane {
         GridPane selectorPane = new GridPane();
         selectorPane.prefWidthProperty().bind(widthProperty());
         selectorPane.prefHeightProperty().bind(heightProperty().subtract(50));
-        for(int i = 0; i < 9; i++) {
+        for (int i = 0; i < 9; i++) {
             ToggleButton but = new ToggleButton();
             but.prefWidthProperty().bind(widthProperty().divide(3));
             but.prefHeightProperty().bind(heightProperty().divide(3));
@@ -55,7 +55,9 @@ public class DisplayPositionSelector extends BorderPane {
 
                 @Override
                 public void handle(ActionEvent t) {
-                    panel.updateTheme(true);
+                    if (panel != null) {
+                        panel.updateTheme(true);
+                    }
                 }
             });
             selectorPane.add(but, i % 3, i / 3);
@@ -84,19 +86,18 @@ public class DisplayPositionSelector extends BorderPane {
     }
 
     public void setTheme(ThemeDTO theme) {
-        if(theme.getTextPosition() == -1) {
-            for(ToggleButton button : buttons) {
+        if (theme.getTextPosition() == -1) {
+            for (ToggleButton button : buttons) {
                 button.setSelected(false);
             }
-        }
-        else {
+        } else {
             buttons.get(theme.getTextPosition()).setSelected(true);
         }
     }
 
     public int getSelectedButtonIndex() {
-        for(ToggleButton button : buttons) {
-            if(button.isSelected()) {
+        for (ToggleButton button : buttons) {
+            if (button.isSelected()) {
                 return buttons.indexOf(button);
             }
         }
@@ -104,7 +105,7 @@ public class DisplayPositionSelector extends BorderPane {
     }
 
     public static Pos getPosFromIndex(int index) {
-        switch(index) {
+        switch (index) {
             case -1:
                 return Pos.CENTER;
             case 0:

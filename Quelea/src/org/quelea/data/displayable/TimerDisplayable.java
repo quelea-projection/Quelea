@@ -22,29 +22,33 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import javafx.geometry.Pos;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import org.quelea.data.YoutubeInfo;
 import org.quelea.services.utils.Utils;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
 /**
- * A displayable that's a video.
+ * A displayable that's a countdown timer.
  * <p>
- * @author Michael
+ * @author Ben Goodwin
  */
 public class TimerDisplayable implements MultimediaDisplayable, Serializable {
 
     private final String location;
+    private final int seconds;
+    private Pos pos = Pos.CENTER;
 
     /**
-     * Create a new video displayable.
+     * Create a new timer displayable.
      * <p>
      * @param location the location of the displayable.
+     * @param seconds the duration of the countdown timer
      */
-    public TimerDisplayable(String location) {
+    public TimerDisplayable(String location, int seconds) {
         this.location = location;
+        this.seconds = seconds;
     }
 
     /**
@@ -64,7 +68,7 @@ public class TimerDisplayable implements MultimediaDisplayable, Serializable {
      */
     @Override
     public String getName() {
-       return new File(location).getName();
+        return secondsToTime(seconds) + " (" + new File(location).getName() + ")";
     }
 
     /**
@@ -74,14 +78,12 @@ public class TimerDisplayable implements MultimediaDisplayable, Serializable {
      * @param node the XML node representing this object.
      * @return the object as defined by the XML.
      */
-    public static VideoDisplayable parseXML(Node node) {
+    public static TimerDisplayable parseXML(Node node) {
         if (node instanceof Element) {
-            String youtubeTitle = ((Element) node).getAttribute("youtubetitle");
-            if (youtubeTitle != null) {
-                return new VideoDisplayable(node.getTextContent(), YoutubeInfo.fromTitle(youtubeTitle));
-            }
+            return new TimerDisplayable(((Element) node).getAttribute("file"), Integer.parseInt(((Element) node).getAttribute("duration")));
+        } else {
+            return null;
         }
-        return new VideoDisplayable(node.getTextContent());
     }
 
     /**
@@ -92,20 +94,25 @@ public class TimerDisplayable implements MultimediaDisplayable, Serializable {
     @Override
     public String getXML() {
         StringBuilder ret = new StringBuilder();
-        ret.append("<filevideo>");
+        ret.append("<timer>");
+        ret.append("<file>");
         ret.append(Utils.escapeXML(location));
-        ret.append("</filevideo>");
+        ret.append("</file>");
+        ret.append("<duration>");
+        ret.append(seconds);
+        ret.append("</duration>");
+        ret.append("</timer>");
         return ret.toString();
     }
 
     /**
      * Get the preview icon of this video.
      * <p>
-     * @return the video's preview icon.
+     * @return the timer's preview icon.
      */
     @Override
     public ImageView getPreviewIcon() {
-        return new ImageView(new Image("file:icons/video.png"));
+        return new ImageView(new Image("file:icons/timer.png", 32, 32, false, true));
     }
 
     /**
@@ -126,9 +133,7 @@ public class TimerDisplayable implements MultimediaDisplayable, Serializable {
     @Override
     public Collection<File> getResources() {
         List<File> files = new ArrayList<>();
-        if (!location.startsWith("http")) {
-            files.add(new File(location));
-        }
+        files.add(new File(location));
         return files;
     }
 
@@ -145,5 +150,21 @@ public class TimerDisplayable implements MultimediaDisplayable, Serializable {
     @Override
     public void dispose() {
         //Nothing needed here.
+    }
+
+    private String secondsToTime(int seconds) {
+        return (int) Math.floor(seconds / 60) + ":" + ((seconds % 60) > 9 ? "" : "0") + seconds % 60;
+    }
+
+    public int getSeconds() {
+        return seconds;
+    }
+
+    public void setTextPosition(Pos posFromIndex) {
+        this.pos = pos;
+    }
+    
+    public Pos getTextPosition() {
+        return pos;
     }
 }
