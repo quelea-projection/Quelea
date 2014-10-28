@@ -112,7 +112,7 @@ public class TimerDisplayable implements MultimediaDisplayable, Serializable {
      */
     @Override
     public ImageView getPreviewIcon() {
-        return new ImageView(new Image("file:icons/timer.png", 32, 32, false, true));
+        return new ImageView(new Image("file:icons/timer-light.png", 30, 30, false, true));
     }
 
     /**
