@@ -31,20 +31,28 @@ import org.quelea.services.utils.QueleaProperties;
 /**
  * A simple JavaFX countdown timer.
  * <p>
- * @author Michael
+ * @author Ben
  */
 public class Timer extends Text {
 
     private final int minutes;
     private final int seconds;
+    private boolean paused;
+    private boolean reset;
+    private Timeline timeline;
 
     public Timer(int minutes, int seconds) {
         this.minutes = minutes;
         this.seconds = seconds;
-        setFontSize(50);
+        setFontSize(150);
         setFill(QueleaProperties.get().getStageLyricsColor());
         bindToTime();
         setOpacity(1);
+        paused = false;
+    }
+
+    public Timer(int seconds) {
+        this((int) Math.floor(seconds / 60), seconds % 60);
     }
 
     public void setFontSize(double fontSize) {
@@ -53,17 +61,25 @@ public class Timer extends Text {
     }
 
     private void bindToTime() {
-        int starttime = minutes*60+seconds;
-        Timeline timeline = new Timeline(
+        int starttime = minutes * 60 + seconds;
+        setText((minutes > 9 ? "" : "0") + minutes + ":" + (seconds > 9 ? "" : "0") + seconds);
+        timeline = new Timeline(
                 new KeyFrame(Duration.seconds(1),
                         new EventHandler<ActionEvent>() {
-                            private int count = 0;
+                            private int count = 1;
+
                             @Override
                             public void handle(ActionEvent actionEvent) {
-                                count++;
+                                if (!paused) {
+                                    count++;
+                                }
+                                if (reset) {
+                                    count = 1;
+                                    reset = false;
+                                }
                                 int remaining = starttime - count;
-                                if(remaining >= 0) {
-                                setText(((remaining/60)>9?"":"0") + (int) Math.floor(remaining / 60) + ":" + ((remaining%60)>9?"":"0") + remaining % 60);
+                                if (remaining >= 0) {
+                                    setText(((remaining / 60) > 9 ? "" : "0") + (int) Math.floor(remaining / 60) + ":" + ((remaining % 60) > 9 ? "" : "0") + remaining % 60);
                                 }
                             }
                         }
@@ -92,4 +108,25 @@ public class Timer extends Text {
         return sb.toString();
     }
 
+    public void pause() {
+        paused = true;
+    }
+
+    public void play() {
+        if (timeline.getStatus() != Timeline.Status.RUNNING) {
+            setText((minutes > 9 ? "" : "0") + minutes + ":" + (seconds > 9 ? "" : "0") + seconds);
+            timeline.play();
+        }
+        paused = false;
+    }
+
+    public void reset() {
+        reset = true;
+    }
+
+    public void stop() {
+        reset = true;
+        timeline.stop();
+        setText("");
+    }
 }

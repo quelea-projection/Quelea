@@ -81,7 +81,7 @@ import org.quelea.windows.main.StatusPanel;
 /**
  * General utility class containing a bunch of static methods.
  * <p/>
- * @author Michael
+ * @author Michael, Ben
  */
 public final class Utils {
 
@@ -731,6 +731,13 @@ public final class Utils {
         ret.add("mrl");
         ret.add("asx");
         ret.add("vlcarg");
+        return ret;
+    }
+    
+    public static List<String> getImageAndVideoExtensions() {
+        List<String> ret = new ArrayList<>();
+        ret.addAll(getVideoExtensions());
+        ret.addAll(getImageExtensions());
         return ret;
     }
 

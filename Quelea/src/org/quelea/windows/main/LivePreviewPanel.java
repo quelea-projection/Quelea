@@ -36,6 +36,7 @@ import org.quelea.data.displayable.MultimediaDisplayable;
 import org.quelea.data.displayable.PresentationDisplayable;
 import org.quelea.data.displayable.SongDisplayable;
 import org.quelea.data.displayable.TextDisplayable;
+import org.quelea.data.displayable.TimerDisplayable;
 import org.quelea.data.displayable.VideoDisplayable;
 import org.quelea.services.utils.LoggerUtils;
 import org.quelea.services.utils.QueleaProperties;
@@ -45,6 +46,7 @@ import org.quelea.windows.lyrics.SelectLyricsPanel;
 import org.quelea.windows.main.quickedit.QuickEditDialog;
 import org.quelea.windows.main.widgets.CardPane;
 import org.quelea.windows.multimedia.MultimediaPanel;
+import org.quelea.windows.timer.TimerPanel;
 import org.quelea.windows.presentation.PresentationPanel;
 
 /**
@@ -62,6 +64,7 @@ public abstract class LivePreviewPanel extends BorderPane {
     private static final String LYRICS_LABEL = "LYRICS";
     private static final String IMAGE_LABEL = "IMAGE";
     private static final String VIDEO_LABEL = "VIDEO";
+    private static final String TIMER_LABEL = "TIMER";
     private static final String AUDIO_LABEL = "AUDIO";
     private static final String PRESENTATION_LABEL = "PPT";
     private String currentLabel;
@@ -70,6 +73,7 @@ public abstract class LivePreviewPanel extends BorderPane {
     private final PresentationPanel presentationPanel = new PresentationPanel(this);
     private final MultimediaPanel videoPanel = new MultimediaPanel();
     private final MultimediaPanel audioPanel = new MultimediaPanel();
+    private final TimerPanel timerPanel = new TimerPanel();
     private final QuickEditDialog quickEditDialog = new QuickEditDialog();
 
     /**
@@ -81,6 +85,7 @@ public abstract class LivePreviewPanel extends BorderPane {
         cardPanel.add(lyricsPanel, LYRICS_LABEL);
         cardPanel.add(imagePanel, IMAGE_LABEL);
         cardPanel.add(videoPanel, VIDEO_LABEL);
+        cardPanel.add(timerPanel, TIMER_LABEL);
         cardPanel.add(audioPanel, AUDIO_LABEL);
         cardPanel.add(presentationPanel, PRESENTATION_LABEL);
         cardPanel.show(LYRICS_LABEL);
@@ -247,13 +252,14 @@ public abstract class LivePreviewPanel extends BorderPane {
      */
     public void setDisplayable(final Displayable displayable, final int index) {
         Utils.checkFXThread();
-        if(!(this.displayable instanceof TextDisplayable && displayable instanceof TextDisplayable)) {
+        if (!(this.displayable instanceof TextDisplayable && displayable instanceof TextDisplayable)) {
             lyricsPanel.removeCurrentDisplayable();
         }
         this.displayable = displayable;
         presentationPanel.stopCurrent();
         audioPanel.removeCurrentDisplayable();
         videoPanel.removeCurrentDisplayable();
+        timerPanel.removeCurrentDisplayable();
         imagePanel.removeCurrentDisplayable();
         presentationPanel.removeCurrentDisplayable();
         if (PRESENTATION_LABEL.equals(currentLabel)) {
@@ -273,6 +279,13 @@ public abstract class LivePreviewPanel extends BorderPane {
             currentLabel = VIDEO_LABEL;
             if (QueleaProperties.get().getAutoPlayVideo() && LivePreviewPanel.this instanceof LivePanel) {
                 videoPanel.play();
+            }
+        } else if (displayable instanceof TimerDisplayable) {
+            timerPanel.showDisplayable((MultimediaDisplayable) displayable);
+            cardPanel.show(TIMER_LABEL);
+            currentLabel = TIMER_LABEL;
+            if (LivePreviewPanel.this instanceof LivePanel) {
+                timerPanel.play();
             }
         } else if (displayable instanceof AudioDisplayable) {
             audioPanel.showDisplayable((MultimediaDisplayable) displayable);
