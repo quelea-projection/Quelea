@@ -31,6 +31,7 @@ import org.quelea.windows.main.actionhandlers.AddDVDActionHandler;
 import org.quelea.windows.main.actionhandlers.AddPowerpointActionHandler;
 import org.quelea.windows.main.actionhandlers.AddVideoActionHandler;
 import org.quelea.windows.main.actionhandlers.AddYoutubeActionHandler;
+import org.quelea.windows.main.actionhandlers.AddTimerActionHandler;
 import org.quelea.windows.main.actionhandlers.NewScheduleActionHandler;
 import org.quelea.windows.main.actionhandlers.NewSongActionHandler;
 import org.quelea.windows.main.actionhandlers.OpenScheduleActionHandler;
@@ -54,6 +55,7 @@ public class MainToolbar extends ToolBar {
     private final Button quickInsertButton;
     private final Button addPresentationButton;
     private final Button addYoutubeButton;
+    private final Button addTimerButton;
     private final Button addDVDButton;
     private final Button addVideoButton;
     private final Button manageNoticesButton;
@@ -121,6 +123,12 @@ public class MainToolbar extends ToolBar {
         addYoutubeButton.setTooltip(new Tooltip(LabelGrabber.INSTANCE.getLabel("add.youtube.button")));
         addYoutubeButton.setOnAction(new AddYoutubeActionHandler());
         getItems().add(addYoutubeButton);
+
+        addTimerButton = new Button("", new ImageView(new Image("file:icons/timer.png", 24, 24, false, true)));
+        Utils.setToolbarButtonStyle(addTimerButton);
+        addTimerButton.setTooltip(new Tooltip(LabelGrabber.INSTANCE.getLabel("add.timer.tooltip")));
+        addTimerButton.setOnAction(new AddTimerActionHandler());
+        getItems().add(addTimerButton);
 
         loadingView = new ImageView(new Image("file:icons/loading.gif", 24, 24, false, true));
         dvdImageStack = new StackPane();
