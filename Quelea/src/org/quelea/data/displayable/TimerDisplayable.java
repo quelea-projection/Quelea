@@ -25,6 +25,9 @@ import java.util.List;
 import javafx.geometry.Pos;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import org.quelea.data.Background;
+import org.quelea.data.ThemeDTO;
+import org.quelea.services.languages.LabelGrabber;
 import org.quelea.services.utils.Utils;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -36,19 +39,48 @@ import org.w3c.dom.Node;
  */
 public class TimerDisplayable implements MultimediaDisplayable, Serializable {
 
-    private final String location;
+    private final Background background;
     private final int seconds;
     private Pos pos = Pos.CENTER;
+    private final String pretext;
+    private final String posttext;
+    private final ThemeDTO theme;
+    private String location;
 
+    /**
+     * Create a new timer displayable.
+     * <p>
+     * @param background The background of the timer
+     * @param seconds the duration of the countdown timer
+     * @param pretext any text to go before the timer
+     * @param posttext and text to go after the timer
+     * @param theme the theme to use for this displayable when displayed
+     */
+    public TimerDisplayable(Background background, int seconds, String pretext, String posttext, ThemeDTO theme) {
+        this.location = "";
+        this.background = background;
+        this.seconds = seconds;
+        this.pretext = pretext;
+        this.posttext = posttext;
+        this.theme = theme;
+    }
+    
     /**
      * Create a new timer displayable.
      * <p>
      * @param location the location of the displayable.
      * @param seconds the duration of the countdown timer
+     * @param pretext any text to go before the timer
+     * @param posttext and text to go after the timer
+     * @param theme the theme to use for this displayable when displayed
      */
-    public TimerDisplayable(String location, int seconds) {
+    public TimerDisplayable(String location, int seconds, String pretext, String posttext, ThemeDTO theme) {
         this.location = location;
+        this.background = theme.getBackground();
         this.seconds = seconds;
+        this.pretext = pretext;
+        this.posttext = posttext;
+        this.theme = theme;
     }
 
     /**
@@ -68,7 +100,7 @@ public class TimerDisplayable implements MultimediaDisplayable, Serializable {
      */
     @Override
     public String getName() {
-        return secondsToTime(seconds) + " (" + new File(location).getName() + ")";
+        return secondsToTime(seconds) + " " + LabelGrabber.INSTANCE.getLabel("countdown.label");
     }
 
     /**
@@ -80,7 +112,9 @@ public class TimerDisplayable implements MultimediaDisplayable, Serializable {
      */
     public static TimerDisplayable parseXML(Node node) {
         if (node instanceof Element) {
-            return new TimerDisplayable(((Element) node).getAttribute("file"), Integer.parseInt(((Element) node).getAttribute("duration")));
+            return new TimerDisplayable(((Element) node).getAttribute("file"), Integer.parseInt(((Element) node).getAttribute("duration")), 
+                    ((Element) node).getAttribute("pretext"), ((Element) node).getAttribute("posttext"),
+                    ThemeDTO.fromString(((Element) node).getAttribute("theme")));
         } else {
             return null;
         }
@@ -101,6 +135,15 @@ public class TimerDisplayable implements MultimediaDisplayable, Serializable {
         ret.append("<duration>");
         ret.append(seconds);
         ret.append("</duration>");
+        ret.append("<pretext>");
+        ret.append(Utils.escapeXML(pretext));
+        ret.append("</pretext>");
+        ret.append("<posttext>");
+        ret.append(Utils.escapeXML(posttext));
+        ret.append("</posttext>");
+        ret.append("<theme>");
+        ret.append(theme.asString());
+        ret.append("</theme>");
         ret.append("</timer>");
         return ret.toString();
     }
@@ -166,5 +209,21 @@ public class TimerDisplayable implements MultimediaDisplayable, Serializable {
     
     public Pos getTextPosition() {
         return pos;
+    }
+    
+    public String getPretext() {
+        return pretext;
+    }
+    
+    public String getPosttext() {
+        return posttext;
+    }
+    
+    public ThemeDTO getTheme() {
+        return theme;
+    }
+    
+    public Background getBackground() {
+        return background;
     }
 }
