@@ -23,11 +23,9 @@ import javafx.collections.ListChangeListener;
 import javafx.collections.ListChangeListener.Change;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
-import javafx.scene.control.Button;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.SeparatorMenuItem;
-import javafx.scene.control.Tooltip;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
@@ -39,7 +37,6 @@ import org.quelea.data.displayable.Displayable;
 import org.quelea.services.languages.LabelGrabber;
 import org.quelea.services.mail.Mailer;
 import org.quelea.services.utils.LoggerUtils;
-import org.quelea.services.utils.Utils;
 import org.quelea.windows.main.MainPanel;
 import org.quelea.windows.main.QueleaApp;
 import org.quelea.windows.main.actionhandlers.AddDVDActionHandler;
@@ -59,15 +56,15 @@ import org.quelea.windows.main.schedule.ScheduleList;
 public class ScheduleMenu extends Menu {
 
     private static final Logger LOGGER = LoggerUtils.getLogger();
-    private MenuItem addPowerpointItem;
-    private MenuItem addVideoItem;
-    private MenuItem addYoutubeItem;
-    private MenuItem addTimerItem;
-    private MenuItem addDVDItem;
-    private StackPane dvdImageStack;
-    private MenuItem manageNoticesItem;
-    private MenuItem shareScheduleItem;
-    private MenuItem exportScheduleItem;
+    private final MenuItem addPowerpointItem;
+    private final MenuItem addVideoItem;
+    private final MenuItem addYoutubeItem;
+    private final MenuItem addTimerItem;
+    private final MenuItem addDVDItem;
+    private final StackPane dvdImageStack;
+    private final MenuItem manageNoticesItem;
+    private final MenuItem shareScheduleItem;
+    private final MenuItem exportScheduleItem;
 
     /**
      * Create the scheudle menu
