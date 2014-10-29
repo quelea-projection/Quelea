@@ -55,6 +55,7 @@ public class TranslationChoiceDialog extends Stage {
      */
     public TranslationChoiceDialog() {
         initModality(Modality.APPLICATION_MODAL);
+        setTitle(LabelGrabber.INSTANCE.getLabel("translation.choice.title"));
         Utils.addIconsToStage(this);
         BorderPane root = new BorderPane();
         content = new VBox(5);

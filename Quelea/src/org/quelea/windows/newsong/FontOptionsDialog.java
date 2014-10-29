@@ -48,7 +48,6 @@ import javafx.scene.text.FontPosture;
 import javafx.scene.text.FontWeight;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
-import javafx.stage.StageStyle;
 import org.quelea.data.ThemeDTO;
 import org.quelea.services.languages.LabelGrabber;
 import org.quelea.services.utils.QueleaProperties;
@@ -85,6 +84,7 @@ public class FontOptionsDialog extends Stage {
      */
     public FontOptionsDialog(final ThemePanel themePanel) {
         initModality(Modality.APPLICATION_MODAL);
+        setTitle(LabelGrabber.INSTANCE.getLabel("font.options.title"));
         Utils.addIconsToStage(this);
 
         if (fontSelectionDialog == null) {
