@@ -23,23 +23,30 @@ import javafx.collections.ListChangeListener;
 import javafx.collections.ListChangeListener.Change;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
+import javafx.scene.control.Button;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.SeparatorMenuItem;
+import javafx.scene.control.Tooltip;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyCodeCombination;
 import javafx.scene.input.KeyCombination;
+import javafx.scene.layout.StackPane;
 import org.quelea.data.Schedule;
 import org.quelea.data.displayable.Displayable;
 import org.quelea.services.languages.LabelGrabber;
 import org.quelea.services.mail.Mailer;
 import org.quelea.services.utils.LoggerUtils;
+import org.quelea.services.utils.Utils;
 import org.quelea.windows.main.MainPanel;
 import org.quelea.windows.main.QueleaApp;
+import org.quelea.windows.main.actionhandlers.AddDVDActionHandler;
 import org.quelea.windows.main.actionhandlers.AddPowerpointActionHandler;
+import org.quelea.windows.main.actionhandlers.AddTimerActionHandler;
 import org.quelea.windows.main.actionhandlers.AddVideoActionHandler;
+import org.quelea.windows.main.actionhandlers.AddYoutubeActionHandler;
 import org.quelea.windows.main.actionhandlers.ExportPDFScheduleSongsActionHandler;
 import org.quelea.windows.main.actionhandlers.ShowNoticesActionHandler;
 import org.quelea.windows.main.schedule.ScheduleList;
@@ -54,6 +61,10 @@ public class ScheduleMenu extends Menu {
     private static final Logger LOGGER = LoggerUtils.getLogger();
     private MenuItem addPowerpointItem;
     private MenuItem addVideoItem;
+    private MenuItem addYoutubeItem;
+    private MenuItem addTimerItem;
+    private MenuItem addDVDItem;
+    private StackPane dvdImageStack;
     private MenuItem manageNoticesItem;
     private MenuItem shareScheduleItem;
     private MenuItem exportScheduleItem;
@@ -74,7 +85,21 @@ public class ScheduleMenu extends Menu {
         addVideoItem = new MenuItem(LabelGrabber.INSTANCE.getLabel("add.video.button"), new ImageView(new Image("file:icons/video file.png", 16, 16, false, true)));
         addVideoItem.setOnAction(new AddVideoActionHandler());
         getItems().add(addVideoItem);
+        
+        addYoutubeItem = new MenuItem(LabelGrabber.INSTANCE.getLabel("add.youtube.button"), new ImageView(new Image("file:icons/youtube.png", 16, 16, false, true)));
+        addYoutubeItem.setOnAction(new AddYoutubeActionHandler());
+        getItems().add(addYoutubeItem);
 
+        addTimerItem = new MenuItem(LabelGrabber.INSTANCE.getLabel("add.timer.tooltip"), new ImageView(new Image("file:icons/timer-dark.png", 16, 16, false, true)));
+        addTimerItem.setOnAction(new AddTimerActionHandler());
+        getItems().add(addTimerItem);
+        
+        dvdImageStack = new StackPane();
+        dvdImageStack.getChildren().add(new ImageView(new Image("file:icons/dvd.png", 16, 16, false, true)));
+        addDVDItem = new MenuItem(LabelGrabber.INSTANCE.getLabel("add.dvd.button"), dvdImageStack);
+        addDVDItem.setOnAction(new AddDVDActionHandler());
+        getItems().add(addDVDItem);
+        
         getItems().add(new SeparatorMenuItem());
 
         manageNoticesItem = new MenuItem(LabelGrabber.INSTANCE.getLabel("manage.notices.button"), new ImageView(new Image("file:icons/info.png", 16, 16, false, true)));
