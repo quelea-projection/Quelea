@@ -1,7 +1,13 @@
 package org.quelea.windows.timer;
 
+import com.sun.javafx.tk.FontMetrics;
+import com.sun.javafx.tk.Toolkit;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.StackPane;
+import javafx.scene.text.Font;
+import org.quelea.data.ImageBackground;
+import org.quelea.data.ColourBackground;
+import org.quelea.data.VideoBackground;
 import org.quelea.data.displayable.Displayable;
 import org.quelea.data.displayable.MultimediaDisplayable;
 import org.quelea.data.displayable.TimerDisplayable;
@@ -34,28 +40,37 @@ public class TimerDrawer extends DisplayableDrawer {
             getCanvas().getChildren().add(0, imageView);
         } else {
             TimerDisplayable td = (TimerDisplayable) displayable;
-            timer = new Timer(td.getSeconds());
+            timer = new Timer(td.getSeconds(), td.getPretext(), td.getPosttext());
+            timer.setTheme(td.getTheme());
+            controlPanel.setTimer(timer, td.getBackground() instanceof VideoBackground);
             stack = new StackPane();
-            stack.getChildren().add(timer);
-            StackPane.setAlignment(timer, td.getTextPosition());
-            getCanvas().getChildren().add(stack);
-            timer.toFront();
-            controlPanel.setTimer(timer);
-            if (playVideo) {
-                controlPanel.reset();
-                controlPanel.loadMultimedia(((MultimediaDisplayable) displayable).getLocation());
+            StackPane.setAlignment(timer, timer.getTextPosition());
+            controlPanel.reset();
+
+            if (td.getBackground() instanceof VideoBackground) {
+                controlPanel.loadMultimedia(((VideoBackground)td.getBackground()).getVLCVidString());
                 VLCWindow.INSTANCE.refreshPosition();
                 VLCWindow.INSTANCE.show();
-                timer.play();
+            } else if (td.getBackground() instanceof ImageBackground) {
+                ImageView imageView = getCanvas().getNewImageView();
+                imageView.setImage(((ImageBackground) td.getBackground()).getImage());
+                getCanvas().getChildren().add(0, imageView);
+            } else if (td.getBackground() instanceof ColourBackground) {
+                ImageView imageView = getCanvas().getNewImageView();
+                imageView.setImage(Utils.getImageFromColour(((ColourBackground) td.getBackground()).getColour()));
+                getCanvas().getChildren().add(0, imageView);
+            } else {
+                // New background type?
             }
-        }
-    }
 
-    public void setPlayVideo(boolean playVideo) {
-        this.playVideo = playVideo;
-        if (playVideo) {
-            getCanvas().clearNonPermanentChildren();
+            timer.setFontSize(pickFontSize(td.getTheme().getFont()));
+            timer.toFront();
+
+            stack.getChildren().add(timer);
+            getCanvas().getChildren().add(stack);
+            timer.play();
         }
+
     }
 
     @Override
@@ -64,5 +79,49 @@ public class TimerDrawer extends DisplayableDrawer {
 
     @Override
     public void requestFocus() {
+    }
+
+    private double pickFontSize(Font font) {
+        FontMetrics metrics = Toolkit.getToolkit().getFontLoader().getFontMetrics(font);
+        String text = timer.toString();
+        String[] splitText = text.split("\n");
+        double lineSpacing = QueleaProperties.get().getAdditionalLineSpacing() * getCanvas().getHeight() / 1000.0;
+
+        double totalHeight = (metrics.getLineHeight() + lineSpacing * splitText.length);
+        while (totalHeight > getCanvas().getHeight() * 0.8) {
+            font = new Font(font.getName(), font.getSize() - 0.5);
+            if (font.getSize() < 1) {
+                return 1;
+            }
+            metrics = Toolkit.getToolkit().getFontLoader().getFontMetrics(font);
+            totalHeight = (metrics.getLineHeight() + lineSpacing * splitText.length);
+        }
+
+        String longestLine = longestLine(font, splitText);
+        double totalWidth = metrics.computeStringWidth(longestLine);
+        while (totalWidth > getCanvas().getWidth() * 0.8) {
+            font = new Font(font.getName(), font.getSize() - 0.5);
+            if (font.getSize() < 1) {
+                return 1;
+            }
+            metrics = Toolkit.getToolkit().getFontLoader().getFontMetrics(font);
+            totalWidth = metrics.computeStringWidth(longestLine);
+        }
+
+        return font.getSize();
+    }
+
+    private String longestLine(Font font, String[] text) {
+        FontMetrics metrics = Toolkit.getToolkit().getFontLoader().getFontMetrics(font);
+        double longestWidth = -1;
+        String longestStr = null;
+        for (String line : text) {
+            double width = metrics.computeStringWidth(line);
+            if (width > longestWidth) {
+                longestWidth = width;
+                longestStr = line;
+            }
+        }
+        return longestStr;
     }
 }
