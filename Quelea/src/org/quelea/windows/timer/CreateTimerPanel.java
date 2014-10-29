@@ -32,7 +32,6 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
-import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import org.fxmisc.richtext.InlineCssTextArea;
@@ -50,7 +49,7 @@ import org.quelea.windows.newsong.ThemePanel;
 public class CreateTimerPanel extends Stage {
     private ThemeDTO timerTheme = ThemeDTO.DEFAULT_THEME;
 
-    public CreateTimerPanel(Button confirmButton) {
+    public CreateTimerPanel() {
 
         setTitle(LabelGrabber.INSTANCE.getLabel("add.timer.title"));
         initModality(Modality.APPLICATION_MODAL);
@@ -121,6 +120,7 @@ public class CreateTimerPanel extends Stage {
         grid.getChildren().add(themeButton);
         rows++;
 
+        Button confirmButton = new Button(LabelGrabber.INSTANCE.getLabel("ok.button"), new ImageView(new Image("file:icons/tick.png")));
         GridPane.setConstraints(confirmButton, 0, rows, 2, 1);
         GridPane.setHalignment(confirmButton, HPos.CENTER);
         grid.getChildren().add(confirmButton);

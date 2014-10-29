@@ -42,7 +42,7 @@ import org.quelea.windows.newsong.ThemePanel;
  */
 public class EditTimerScheduleActionHandler implements EventHandler<ActionEvent> {
 
-    private final TimerDisplayable selectedDisplayable;
+    private TimerDisplayable selectedDisplayable;
 
     public EditTimerScheduleActionHandler() {
         this(null);
@@ -60,6 +60,9 @@ public class EditTimerScheduleActionHandler implements EventHandler<ActionEvent>
     @Override
     public void handle(ActionEvent t) {
         InlineCssTextArea wordsArea = new InlineCssTextArea();
+        if(selectedDisplayable == null) {
+            selectedDisplayable = (TimerDisplayable) QueleaApp.get().getMainWindow().getMainPanel().getSchedulePanel().getScheduleList().getSelectionModel().getSelectedItem();
+        }
         wordsArea.replaceText(selectedDisplayable.getPretext() + selectedDisplayable.secondsToTime(selectedDisplayable.getSeconds()) + selectedDisplayable.getPosttext());
         Button confirmButton = new Button(LabelGrabber.INSTANCE.getLabel("ok.button"), new ImageView(new Image("file:icons/tick.png")));
         Button cancelButton = new Button(LabelGrabber.INSTANCE.getLabel("cancel.button"), new ImageView(new Image("file:icons/cross.png")));

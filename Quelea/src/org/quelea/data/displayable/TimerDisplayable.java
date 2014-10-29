@@ -29,6 +29,7 @@ import org.quelea.data.Background;
 import org.quelea.data.ThemeDTO;
 import org.quelea.services.languages.LabelGrabber;
 import org.quelea.services.utils.Utils;
+import org.quelea.windows.timer.TimerDrawer;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
@@ -45,7 +46,9 @@ public class TimerDisplayable implements MultimediaDisplayable, Serializable {
     private final String pretext;
     private final String posttext;
     private ThemeDTO theme;
-    private String location;
+    private final String location = "";
+    private TimerDrawer drawer;
+    private TimerDrawer stageDrawer;
 
     /**
      * Create a new timer displayable.
@@ -57,7 +60,6 @@ public class TimerDisplayable implements MultimediaDisplayable, Serializable {
      * @param theme the theme to use for this displayable when displayed
      */
     public TimerDisplayable(Background background, int seconds, String pretext, String posttext, ThemeDTO theme) {
-        this.location = "";
         this.background = background;
         this.seconds = seconds;
         this.pretext = pretext;
@@ -67,15 +69,13 @@ public class TimerDisplayable implements MultimediaDisplayable, Serializable {
     
     /**
      * Create a new timer displayable.
-     * <p>
-     * @param location the location of the displayable.
+     * <p/>
      * @param seconds the duration of the countdown timer
      * @param pretext any text to go before the timer
      * @param posttext and text to go after the timer
      * @param theme the theme to use for this displayable when displayed
      */
-    public TimerDisplayable(String location, int seconds, String pretext, String posttext, ThemeDTO theme) {
-        this.location = location;
+    public TimerDisplayable(int seconds, String pretext, String posttext, ThemeDTO theme) {
         this.background = theme.getBackground();
         this.seconds = seconds;
         this.pretext = pretext;
@@ -112,7 +112,7 @@ public class TimerDisplayable implements MultimediaDisplayable, Serializable {
      */
     public static TimerDisplayable parseXML(Node node) {
         if (node instanceof Element) {
-            return new TimerDisplayable(((Element) node).getAttribute("file"), Integer.parseInt(((Element) node).getAttribute("duration")), 
+            return new TimerDisplayable(Integer.parseInt(((Element) node).getAttribute("duration")), 
                     ((Element) node).getAttribute("pretext"), ((Element) node).getAttribute("posttext"),
                     ThemeDTO.fromString(((Element) node).getAttribute("theme")));
         } else {
@@ -129,9 +129,6 @@ public class TimerDisplayable implements MultimediaDisplayable, Serializable {
     public String getXML() {
         StringBuilder ret = new StringBuilder();
         ret.append("<timer>");
-        ret.append("<file>");
-        ret.append(Utils.escapeXML(location));
-        ret.append("</file>");
         ret.append("<duration>");
         ret.append(seconds);
         ret.append("</duration>");
@@ -229,5 +226,19 @@ public class TimerDisplayable implements MultimediaDisplayable, Serializable {
 
     public void setTheme(ThemeDTO theme) {
         this.theme = theme;
+        if(stageDrawer != null) {
+            stageDrawer.setTheme(theme);
+        }
+        if(drawer != null) {
+            drawer.setTheme(theme);
+        }
+    }
+
+    public void addDrawer(TimerDrawer drawer) {
+        this.drawer = drawer;
+    }
+
+    public void addStageDrawer(TimerDrawer drawer) {
+        this.stageDrawer = drawer;
     }
 }
