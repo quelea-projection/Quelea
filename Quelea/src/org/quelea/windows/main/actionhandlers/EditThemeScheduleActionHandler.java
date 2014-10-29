@@ -66,9 +66,9 @@ public class EditThemeScheduleActionHandler implements EventHandler<ActionEvent>
      */
     @Override
     public void handle(ActionEvent t) {
-        TextDisplayable firstSelected = (TextDisplayable) QueleaApp.get().getMainWindow().getMainPanel().getSchedulePanel().getScheduleList().getSelectionModel().getSelectedItem();
-        if (selectedDisplayable != null) {
-            firstSelected = selectedDisplayable;
+        TextDisplayable firstSelected = selectedDisplayable;
+        if (selectedDisplayable == null) {
+            firstSelected = (TextDisplayable) QueleaApp.get().getMainWindow().getMainPanel().getSchedulePanel().getScheduleList().getSelectionModel().getSelectedItem();
         }
         InlineCssTextArea wordsArea = new InlineCssTextArea();
         wordsArea.replaceText(firstSelected.getSections()[0].toString().trim());
@@ -82,41 +82,34 @@ public class EditThemeScheduleActionHandler implements EventHandler<ActionEvent>
         final ThemePanel tp = new ThemePanel(wordsArea, confirmButton);
         tp.setPrefSize(500, 500);
         tp.setTheme(firstSelected.getTheme());
-        confirmButton.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent event) {
-                if (tp.getTheme() != null) {
-                    ScheduleList sl = QueleaApp.get().getMainWindow().getMainPanel().getSchedulePanel().getScheduleList();
-                    tp.updateTheme(false);
-                    List<Displayable> displayableList;
-                    if (selectedDisplayable == null) {
-                        displayableList = sl.getSelectionModel().getSelectedItems();
-                    }
-                    else {
-                        displayableList = new ArrayList<>();
-                        displayableList.add(selectedDisplayable);
-                    }
-                        for (Displayable eachDisplayable : displayableList) {
-                            if (eachDisplayable instanceof TextDisplayable) {
-                                ((TextDisplayable) eachDisplayable).setTheme(tp.getTheme());
-                                for (TextSection ts : ((TextDisplayable) eachDisplayable).getSections()) {
-                                    ts.setTheme(tp.getTheme());
-                                }
-                                if (eachDisplayable instanceof SongDisplayable) {
-                                    Utils.updateSongInBackground((SongDisplayable) eachDisplayable, true, false);
-                                }
-                            }
-                        }
-                    QueleaApp.get().getMainWindow().getMainPanel().getPreviewPanel().refresh();
+        confirmButton.setOnAction((ActionEvent event) -> {
+            if (tp.getTheme() != null) {
+                ScheduleList sl = QueleaApp.get().getMainWindow().getMainPanel().getSchedulePanel().getScheduleList();
+                tp.updateTheme(false);
+                List<Displayable> displayableList;
+                if (selectedDisplayable == null) {
+                    displayableList = sl.getSelectionModel().getSelectedItems();
+                } else {
+                    displayableList = new ArrayList<>();
+                    displayableList.add(selectedDisplayable);
                 }
-                s.hide();
+                for (Displayable eachDisplayable : displayableList) {
+                    if (eachDisplayable instanceof TextDisplayable) {
+                        ((TextDisplayable) eachDisplayable).setTheme(tp.getTheme());
+                        for (TextSection ts : ((TextDisplayable) eachDisplayable).getSections()) {
+                            ts.setTheme(tp.getTheme());
+                        }
+                        if (eachDisplayable instanceof SongDisplayable) {
+                            Utils.updateSongInBackground((SongDisplayable) eachDisplayable, true, false);
+                        }
+                    }
+                }
+                QueleaApp.get().getMainWindow().getMainPanel().getPreviewPanel().refresh();
             }
+            s.hide();
         });
-        cancelButton.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent event) {
-                s.hide();
-            }
+        cancelButton.setOnAction((ActionEvent event) -> {
+            s.hide();
         });
         bp.setCenter(tp);
 

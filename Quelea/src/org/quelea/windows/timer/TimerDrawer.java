@@ -7,12 +7,15 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.text.Font;
 import org.quelea.data.ImageBackground;
 import org.quelea.data.ColourBackground;
+import org.quelea.data.ThemeDTO;
 import org.quelea.data.VideoBackground;
 import org.quelea.data.displayable.Displayable;
 import org.quelea.data.displayable.TimerDisplayable;
 import org.quelea.services.utils.QueleaProperties;
 import org.quelea.services.utils.Utils;
 import org.quelea.windows.main.DisplayableDrawer;
+import org.quelea.windows.main.LivePreviewPanel;
+import org.quelea.windows.main.QueleaApp;
 import org.quelea.windows.main.widgets.Timer;
 import org.quelea.windows.multimedia.VLCWindow;
 
@@ -37,6 +40,7 @@ public class TimerDrawer extends DisplayableDrawer {
         timer = new Timer(td.getSeconds(), td.getPretext(), td.getPosttext());
         timer.setTheme(td.getTheme());
         if (getCanvas().isStageView()) {
+            td.addStageDrawer(this);
             controlPanel.setStageTimer(timer);
             timer.setFill(QueleaProperties.get().getStageLyricsColor());
             timer.setEffect(null);
@@ -45,16 +49,19 @@ public class TimerDrawer extends DisplayableDrawer {
             getCanvas().getChildren().add(0, imageView);
             getCanvas().getChildren().add(timer);
         } else {
+            td.addDrawer(this);
             controlPanel.setTimer(timer, td.getBackground() instanceof VideoBackground);
             stack = new StackPane();
             StackPane.setAlignment(timer, timer.getTextPosition());
-            controlPanel.reset();
 
             if (td.getBackground() instanceof VideoBackground) {
-                controlPanel.loadMultimedia(((VideoBackground) td.getBackground()).getVLCVidString(),
-                        ((VideoBackground)td.getTheme().getBackground()).getStretch());
-                VLCWindow.INSTANCE.refreshPosition();
-                VLCWindow.INSTANCE.show();
+                if (playVideo) {
+                    controlPanel.reset();
+                    controlPanel.loadMultimedia(((VideoBackground) td.getBackground()).getVLCVidString(),
+                            ((VideoBackground) td.getTheme().getBackground()).getStretch());
+                    VLCWindow.INSTANCE.refreshPosition();
+                    VLCWindow.INSTANCE.show();
+                }
             } else if (td.getBackground() instanceof ImageBackground) {
                 ImageView imageView = getCanvas().getNewImageView();
                 imageView.setImage(((ImageBackground) td.getBackground()).getImage());
@@ -66,6 +73,7 @@ public class TimerDrawer extends DisplayableDrawer {
             } else {
                 // New background type?
             }
+            controlPanel.reset();
 
             stack.getChildren().add(timer);
             getCanvas().getChildren().add(stack);
@@ -73,7 +81,6 @@ public class TimerDrawer extends DisplayableDrawer {
         timer.setFontSize(pickFontSize(td.getTheme().getFont()));
         timer.toFront();
         timer.play();
-        controlPanel.reset();
     }
 
     @Override
@@ -126,5 +133,21 @@ public class TimerDrawer extends DisplayableDrawer {
             }
         }
         return longestStr;
+    }
+
+    public void setTheme(ThemeDTO theme) {
+        timer.setTheme(theme);
+        if (getCanvas().isStageView()) {
+            timer.setFill(QueleaProperties.get().getStageLyricsColor());
+            timer.setEffect(null);
+        }
+        timer.setFontSize(pickFontSize(theme.getFont()));
+    }
+
+    public void setPlayVideo(boolean playVideo) {
+        this.playVideo = playVideo;
+        if (playVideo) {
+            getCanvas().clearNonPermanentChildren();
+        }
     }
 }

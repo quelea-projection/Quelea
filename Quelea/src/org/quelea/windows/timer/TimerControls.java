@@ -153,18 +153,19 @@ public class TimerControls extends StackPane {
     }
 
     public void reset() {
-        if (vlc) {
-            VLCWindow.INSTANCE.stop();
-        }
-        timer.stop();
-        if (stageTimer != null) {
-            stageTimer.stop();
-        }
 
         if (disableControls) {
             playButton.setImage(PLAY_IMAGE_DISABLE);
         } else {
             playButton.setImage(PLAY_IMAGE);
+            if (vlc) {
+                VLCWindow.INSTANCE.stop();
+            }
+            timer.stop();
+            if (stageTimer != null) {
+                stageTimer.stop();
+            }
+
         }
         playpause = false;
     }
