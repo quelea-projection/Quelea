@@ -36,10 +36,12 @@ import org.javafx.dialog.Dialog;
 import org.quelea.services.languages.LabelGrabber;
 import org.quelea.services.utils.BibleUploader;
 import org.quelea.services.utils.LoggerUtils;
+import org.quelea.services.utils.UnicodeReader;
 import org.quelea.services.utils.Utils;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
+import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
 /**
@@ -103,10 +105,9 @@ public final class Bible implements BibleInterface, Serializable {
     public static Bible parseBible(final File file) {
         try {
             if (file.exists()) {
-                InputStream fis = new FileInputStream(file);
                 DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
                 DocumentBuilder builder = factory.newDocumentBuilder();
-                Document doc = builder.parse(fis);
+                Document doc = builder.parse(new InputSource(new UnicodeReader(new FileInputStream(file), "UTF-8")));
                 NodeList list = doc.getChildNodes();
                 for (int i = 0; i < list.getLength(); i++) {
                     if (list.item(i).getNodeName().equalsIgnoreCase("xmlbible")
