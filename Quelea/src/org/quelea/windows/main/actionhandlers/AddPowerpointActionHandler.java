@@ -53,6 +53,9 @@ public class AddPowerpointActionHandler implements EventHandler<ActionEvent> {
     @Override
     public void handle(ActionEvent t) {
         FileChooser chooser = new FileChooser();
+        if (QueleaApp.get().getLastDirectory() != null) {
+            chooser.setInitialDirectory(QueleaApp.get().getLastDirectory());
+        }
         chooser.getExtensionFilters().add(FileFilters.POWERPOINT);
         final List<File> files = chooser.showOpenMultipleDialog(QueleaApp.get().getMainWindow());
         if(files != null) {
@@ -87,6 +90,7 @@ public class AddPowerpointActionHandler implements EventHandler<ActionEvent> {
 
                                     @Override
                                     public void run() {
+                                        QueleaApp.get().setLastDirectory(file.getParentFile());
                                         QueleaApp.get().getMainWindow().getMainPanel().getSchedulePanel().getScheduleList().add(displayable);
                                     }
                                 });

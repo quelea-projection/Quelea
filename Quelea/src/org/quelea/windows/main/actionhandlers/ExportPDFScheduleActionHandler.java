@@ -43,9 +43,13 @@ public class ExportPDFScheduleActionHandler implements EventHandler<ActionEvent>
         Schedule schedule = QueleaApp.get().getMainWindow().getMainPanel().getSchedulePanel().getScheduleList().getSchedule();
         try {
             FileChooser fileChooser = new FileChooser();
+            if (QueleaApp.get().getLastDirectory() != null) {
+                fileChooser.setInitialDirectory(QueleaApp.get().getLastDirectory());
+            }
             fileChooser.getExtensionFilters().add(FileFilters.PDF_GENERIC);
             File file = fileChooser.showSaveDialog(QueleaApp.get().getMainWindow());
             if (file != null) {
+                QueleaApp.get().setLastDirectory(file.getParentFile());
                 if (!file.getName().toLowerCase().endsWith(".pdf")) {
                     file = new File(file.getAbsolutePath() + ".pdf");
                 }

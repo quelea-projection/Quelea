@@ -54,9 +54,13 @@ public class ExportPDFSongActionHandler implements EventHandler<ActionEvent> {
         }
         try {
             FileChooser fileChooser = new FileChooser();
+            if (QueleaApp.get().getLastDirectory() != null) {
+                fileChooser.setInitialDirectory(QueleaApp.get().getLastDirectory());
+            }
             fileChooser.getExtensionFilters().add(FileFilters.PDF_GENERIC);
             File file = fileChooser.showSaveDialog(QueleaApp.get().getMainWindow());
             if (file != null) {
+                QueleaApp.get().setLastDirectory(file.getParentFile());
                 if (song.hasChords()) {
                     Dialog.buildConfirmation(LabelGrabber.INSTANCE.getLabel("printing.options.text"), LabelGrabber.INSTANCE.getLabel("print.chords.question")).addYesButton(new EventHandler<ActionEvent>() {
 
