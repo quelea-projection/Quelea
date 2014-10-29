@@ -38,6 +38,7 @@ public class QueleaApp {
     private DisplayStage stageWindow;
     private MobileLyricsServer mls;
     private RemoteControlServer rcs;
+    private File lastDirectory;
     private List<Runnable> runnables = new ArrayList<>();
     private volatile boolean loaded;
 
@@ -56,6 +57,14 @@ public class QueleaApp {
         else {
             runnables.add(r);
         }
+    }
+    
+    public File getLastDirectory() {
+        return lastDirectory;
+    }
+    
+    public void setLastDirectory(File directory) {
+        this.lastDirectory = directory;
     }
     
     public synchronized void doneLoading() {
