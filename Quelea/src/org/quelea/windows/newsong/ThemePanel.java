@@ -182,9 +182,9 @@ public class ThemePanel extends BorderPane {
      */
     public void updateTheme(boolean warning) {
         final ThemeDTO theme = getTheme();
-        if (warning && theme.getBackground() instanceof ColourBackground) {
-            checkAccessibility(theme.getFontPaint(), ((ColourBackground) theme.getBackground()).getColour());
-        }
+//        if (warning && theme.getBackground() instanceof ColourBackground) {
+//            checkAccessibility(theme.getFontPaint(), ((ColourBackground) theme.getBackground()).getColour());
+//        }
         Platform.runLater(new Runnable() {
             @Override
             public void run() {
@@ -220,12 +220,12 @@ public class ThemePanel extends BorderPane {
      * @param col1 first colour.
      * @param col2 second colour.
      */
-    private void checkAccessibility(Color col1, Color col2) {
-        double diff = Utils.getColorDifference(col1, col2);
-        if (diff < THRESHOLD) {
-            Dialog.showInfo(LabelGrabber.INSTANCE.getLabel("warning.label"), LabelGrabber.INSTANCE.getLabel("similar.colors.text"));
-        }
-    }
+//    private void checkAccessibility(Color col1, Color col2) {
+//        double diff = Utils.getColorDifference(col1, col2);
+//        if (diff < THRESHOLD) {
+//            Dialog.showInfo(LabelGrabber.INSTANCE.getLabel("warning.label"), LabelGrabber.INSTANCE.getLabel("similar.colors.text"));
+//        }
+//    }
 
     /**
      * Get the canvas on this theme panel.
