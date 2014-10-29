@@ -26,10 +26,12 @@ import org.quelea.data.bible.BibleManager;
 import org.quelea.data.displayable.BiblePassage;
 import org.quelea.data.displayable.Displayable;
 import org.quelea.data.displayable.SongDisplayable;
+import org.quelea.data.displayable.TimerDisplayable;
 import org.quelea.services.languages.LabelGrabber;
 import org.quelea.windows.main.QueleaApp;
 import org.quelea.windows.main.actionhandlers.EditSongScheduleActionHandler;
 import org.quelea.windows.main.actionhandlers.EditThemeScheduleActionHandler;
+import org.quelea.windows.main.actionhandlers.EditTimerScheduleActionHandler;
 import org.quelea.windows.main.actionhandlers.SelectTranslationsActionHandler;
 import org.quelea.windows.main.actionhandlers.SwitchBibleVersionActionHandler;
 
@@ -44,6 +46,8 @@ public class SchedulePopupMenu extends ContextMenu {
     private final MenuItem editTheme = new MenuItem(LabelGrabber.INSTANCE.getLabel("edit.theme.text"), new ImageView(new Image("file:icons/edit.png", 16, 16, false, true)));
     private final MenuItem changeBibleVersion = new MenuItem(LabelGrabber.INSTANCE.getLabel("change.bible.version.text"), new ImageView(new Image("file:icons/bible.png", 16, 16, false, true)));
     private final MenuItem translationChoice = new MenuItem(LabelGrabber.INSTANCE.getLabel("choose.translations.text"));
+    private final MenuItem editTimer = new MenuItem(LabelGrabber.INSTANCE.getLabel("edit.theme.text"), new ImageView(new Image("file:icons/theme.png", 16, 16, false, true)));
+    
 
     public SchedulePopupMenu() {
         getItems().add(new MenuItem("placeholder")); //TODO: Investigate why this is required
@@ -70,6 +74,8 @@ public class SchedulePopupMenu extends ContextMenu {
                     }
                 } else if (sl.getSelectionModel().getSelectedItem() instanceof SongDisplayable) {
                     getItems().addAll(editSong, translationChoice);
+                } else if (sl.getSelectionModel().getSelectedItem() instanceof TimerDisplayable) {
+                    getItems().addAll(editTimer);
                 } else {
                     getItems().addAll(editTheme);
                 }
@@ -94,6 +100,7 @@ public class SchedulePopupMenu extends ContextMenu {
         editSong.setOnAction(new EditSongScheduleActionHandler());
         translationChoice.setOnAction(new SelectTranslationsActionHandler());
         editTheme.setOnAction(new EditThemeScheduleActionHandler());
+        editTimer.setOnAction(new EditTimerScheduleActionHandler());
         changeBibleVersion.setOnAction(new SwitchBibleVersionActionHandler());
     }
 
