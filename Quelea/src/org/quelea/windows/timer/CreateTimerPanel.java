@@ -47,9 +47,11 @@ import org.quelea.windows.newsong.ThemePanel;
  * @author Ben
  */
 public class CreateTimerPanel extends Stage {
+
     private ThemeDTO timerTheme = ThemeDTO.DEFAULT_THEME;
 
     public CreateTimerPanel() {
+        Button confirmButton = new Button(LabelGrabber.INSTANCE.getLabel("ok.button"), new ImageView(new Image("file:icons/tick.png")));
 
         setTitle(LabelGrabber.INSTANCE.getLabel("add.timer.title"));
         initModality(Modality.APPLICATION_MODAL);
@@ -69,8 +71,10 @@ public class CreateTimerPanel extends Stage {
         durationTextField.textProperty().addListener((ObservableValue<? extends String> observable, String oldValue, String newValue) -> {
             if (parsable(newValue)) {
                 durationTextField.setStyle("-fx-text-fill: black;");
+                confirmButton.setDisable(false);
             } else {
                 durationTextField.setStyle("-fx-text-fill: red;");
+                confirmButton.setDisable(true);
             }
         });
         durationLabel.setLabelFor(durationTextField);
@@ -111,7 +115,7 @@ public class CreateTimerPanel extends Stage {
         themeButton.setOnAction((ActionEvent Event) -> {
             tpStage.showAndWait();
         });
-        tpConfirm.setOnAction((ActionEvent Event) -> { 
+        tpConfirm.setOnAction((ActionEvent Event) -> {
             setTimerTheme(tp.getTheme());
             tpStage.hide();
         });
@@ -120,7 +124,6 @@ public class CreateTimerPanel extends Stage {
         grid.getChildren().add(themeButton);
         rows++;
 
-        Button confirmButton = new Button(LabelGrabber.INSTANCE.getLabel("ok.button"), new ImageView(new Image("file:icons/tick.png")));
         GridPane.setConstraints(confirmButton, 0, rows, 2, 1);
         GridPane.setHalignment(confirmButton, HPos.CENTER);
         grid.getChildren().add(confirmButton);
@@ -154,6 +157,12 @@ public class CreateTimerPanel extends Stage {
         String[] ss;
         if (newValue.contains(":")) {
             ss = newValue.split(":");
+        } else if (newValue.contains(".")) {
+            ss = newValue.split(".");
+        } else if (newValue.contains(";")) {
+            ss = newValue.split(";");
+        } else if (newValue.contains(",")) {
+            ss = newValue.split(",");
         } else {
             ss = newValue.split("m");
             try {

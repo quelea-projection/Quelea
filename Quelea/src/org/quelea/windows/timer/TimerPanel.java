@@ -67,11 +67,8 @@ public class TimerPanel extends AbstractPanel {
         setMinWidth(50);
         setMinHeight(50);
         setStyle("-fx-background-color:grey;");
-        DisplayCanvas dummyCanvas = new DisplayCanvas(false, false, false, new DisplayCanvas.CanvasUpdater() {
-            @Override
-            public void updateCallback() {
-                updateCanvas();
-            }
+        DisplayCanvas dummyCanvas = new DisplayCanvas(false, false, false, () -> {
+            updateCanvas();
         }, DisplayCanvas.Priority.LOW);
         registerDisplayCanvas(dummyCanvas);
     }
@@ -96,7 +93,7 @@ public class TimerPanel extends AbstractPanel {
     }
     
     public void play() {
-        controlPanel.play();
+        controlPanel.play(false);
     }
 
     @Override

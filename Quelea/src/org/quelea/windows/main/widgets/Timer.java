@@ -29,7 +29,6 @@ import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
 import javafx.util.Duration;
 import org.quelea.data.ThemeDTO;
-import org.quelea.services.utils.QueleaProperties;
 
 /**
  * A simple JavaFX countdown timer.
@@ -48,28 +47,26 @@ public class Timer extends Text {
     private Pos textPosition;
     private ThemeDTO theme;
 
-    public Timer(int minutes, int seconds) {
+    public Timer(int minutes, int seconds, String pretext, String posttext) {
         this.minutes = minutes;
         this.seconds = seconds;
-        bindToTime();
-        setOpacity(1);
-        paused = false;
-    }
-
-    public Timer(int minutes, int seconds, String pretext, String posttext) {
-        this(minutes, seconds);
         this.pretext = pretext;
         this.posttext = posttext;
-    }
-
-    public Timer(int seconds) {
-        this((int) Math.floor(seconds / 60), seconds % 60);
+        setText(pretext + (minutes > 9 ? "" : "0") + minutes + ":" + (seconds > 9 ? "" : "0") + seconds + posttext);
+        bindToTime();
+        setOpacity(1);
+        paused = true;
     }
 
     public Timer(int seconds, String pretext, String posttext) {
-        this(seconds);
+        this.minutes = (int) Math.floor(seconds/60);
+        this.seconds = seconds%60;
         this.pretext = pretext;
         this.posttext = posttext;
+        setText(pretext + (minutes > 9 ? "" : "0") + minutes + ":" + (seconds > 9 ? "" : "0") + seconds + posttext);
+        bindToTime();
+        setOpacity(1);
+        paused = true;
     }
 
     private void bindToTime() {
@@ -78,7 +75,7 @@ public class Timer extends Text {
         timeline = new Timeline(
                 new KeyFrame(Duration.seconds(1),
                         new EventHandler<ActionEvent>() {
-                            private int count = 1;
+                            private int count = 0;
 
                             @Override
                             public void handle(ActionEvent actionEvent) {
@@ -86,7 +83,7 @@ public class Timer extends Text {
                                     count++;
                                 }
                                 if (reset) {
-                                    count = 1;
+                                    count = 0;
                                     reset = false;
                                 }
                                 int remaining = starttime - count;

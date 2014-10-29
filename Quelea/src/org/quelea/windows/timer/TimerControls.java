@@ -78,7 +78,7 @@ public class TimerControls extends StackPane {
         getChildren().add(playButton);
         playButton.setOnMouseClicked((MouseEvent t) -> {
             if (!disableControls) {
-                play();
+                play(playButton.getImage().equals(PAUSE_IMAGE));
             }
         });
 
@@ -96,7 +96,9 @@ public class TimerControls extends StackPane {
     }
 
     public void loadMultimedia(String path, boolean stretch) {
+        vlc = true;
         reset();
+        assert VLCWindow.INSTANCE.isInit();
         if (!path.trim().startsWith("http") && !path.trim().startsWith("dvdsimple") && !path.trim().startsWith("bluray")) {
             path = Utils.getVLCStringFromFile(new File(path));
         }
@@ -127,10 +129,27 @@ public class TimerControls extends StackPane {
         }
     }
 
-    public void play() {
+    public void play(boolean pause) {
         playpause = !playpause;
-        if (playpause) {
-            playButton.setImage(PAUSE_IMAGE);
+        if (pause) {
+            if (!disableControls) {
+                playButton.setImage(PLAY_IMAGE);
+            } else {
+                playButton.setImage(PLAY_IMAGE_DISABLE);
+            }
+            if (vlc) {
+                VLCWindow.INSTANCE.pause();
+            }
+            timer.pause();
+            if (stageTimer != null) {
+                stageTimer.pause();
+            }
+        } else {
+            if (!disableControls) {
+                playButton.setImage(PAUSE_IMAGE);
+            } else {
+                playButton.setImage(PAUSE_IMAGE_DISABLE);
+            }
             if (vlc) {
                 VLCWindow.INSTANCE.setRepeat(true);
                 VLCWindow.INSTANCE.setHue(0);
@@ -139,15 +158,6 @@ public class TimerControls extends StackPane {
             timer.play();
             if (stageTimer != null) {
                 stageTimer.play();
-            }
-        } else { //paused
-            playButton.setImage(PLAY_IMAGE);
-            if (vlc) {
-                VLCWindow.INSTANCE.pause();
-            }
-            timer.pause();
-            if (stageTimer != null) {
-                stageTimer.pause();
             }
         }
     }
@@ -184,12 +194,12 @@ public class TimerControls extends StackPane {
         button.setTranslateY(-10);
     }
 
-    void setTimer(Timer timer, boolean vlc) {
+    public void setTimer(Timer timer, boolean vlc) {
         this.timer = timer;
         this.vlc = vlc;
     }
 
-    void setStageTimer(Timer timer) {
+    public void setStageTimer(Timer timer) {
         stageTimer = timer;
     }
 }
