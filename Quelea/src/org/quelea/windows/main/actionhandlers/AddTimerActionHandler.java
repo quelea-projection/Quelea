@@ -22,6 +22,7 @@ import java.io.File;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
+import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.geometry.HPos;
 import javafx.scene.Scene;
@@ -31,7 +32,6 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.Tooltip;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
@@ -49,15 +49,14 @@ import org.quelea.windows.main.QueleaApp;
 import org.quelea.windows.main.widgets.DisplayPositionSelector;
 
 /**
- * The action handler for adding a video.
+ * The action handler for adding a timer.
  *
- * @author Michael
+ * @author Ben
  */
 public class AddTimerActionHandler implements EventHandler<ActionEvent> {
 
     @Override
     public void handle(ActionEvent t) {
-
         Button confirmButton = new Button(LabelGrabber.INSTANCE.getLabel("ok.button"), new ImageView(new Image("file:icons/tick.png")));
         InlineCssTextArea wordsArea = new InlineCssTextArea();
         wordsArea.replaceText("5:00");
@@ -67,8 +66,6 @@ public class AddTimerActionHandler implements EventHandler<ActionEvent> {
         s.initModality(Modality.APPLICATION_MODAL);
         s.initOwner(QueleaApp.get().getMainWindow());
         s.resizableProperty().setValue(true);
-
-        final BorderPane bp = new BorderPane();
 
         GridPane grid = new GridPane();
         int rows = 0;
@@ -157,10 +154,7 @@ public class AddTimerActionHandler implements EventHandler<ActionEvent> {
     }
 
     private boolean parsable(String newValue) {
-        if (parse(newValue) == -1) {
-            return false;
-        }
-        return true;
+        return parse(newValue) != -1;
     }
 
     private int parse(String newValue) {
