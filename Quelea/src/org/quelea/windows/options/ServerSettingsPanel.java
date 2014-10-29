@@ -188,10 +188,14 @@ public class ServerSettingsPanel extends GridPane implements PropertyPanel {
             StackPane.setAlignment(saveButton, Pos.CENTER_LEFT);
             saveButton.setOnAction((event) -> {
                 FileChooser fileChooser = new FileChooser();
+                if (QueleaApp.get().getLastDirectory() != null) {
+                    fileChooser.setInitialDirectory(QueleaApp.get().getLastDirectory());
+                }
                 fileChooser.getExtensionFilters().add(FileFilters.PNG);
                 fileChooser.setTitle(LabelGrabber.INSTANCE.getLabel("save.qr.code.text"));
                 File file = fileChooser.showSaveDialog(QueleaApp.get().getMainWindow());
                 if (file != null) {
+                    QueleaApp.get().setLastDirectory(file.getParentFile());
                     try {
                         ImageIO.write(qrImage, "png", file);
                     } catch (IOException ex) {

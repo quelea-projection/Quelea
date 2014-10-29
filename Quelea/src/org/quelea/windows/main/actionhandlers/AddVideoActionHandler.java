@@ -35,9 +35,13 @@ public class AddVideoActionHandler implements EventHandler<ActionEvent> {
     @Override
     public void handle(ActionEvent t) {
         FileChooser fileChooser = new FileChooser();
+        if (QueleaApp.get().getLastDirectory() != null) {
+            fileChooser.setInitialDirectory(QueleaApp.get().getLastDirectory());
+        }
         fileChooser.getExtensionFilters().add(FileFilters.VIDEOS);
         File file = fileChooser.showOpenDialog(QueleaApp.get().getMainWindow());
         if(file != null) {
+            QueleaApp.get().setLastDirectory(file.getParentFile());
             VideoDisplayable displayable = new VideoDisplayable(file.getAbsolutePath());
             QueleaApp.get().getMainWindow().getMainPanel().getSchedulePanel().getScheduleList().add(displayable);
         }

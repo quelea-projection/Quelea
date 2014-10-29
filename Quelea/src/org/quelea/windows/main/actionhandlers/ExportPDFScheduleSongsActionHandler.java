@@ -56,9 +56,13 @@ public class ExportPDFScheduleSongsActionHandler implements EventHandler<ActionE
     public void handle(ActionEvent t) {
         Schedule schedule = QueleaApp.get().getMainWindow().getMainPanel().getSchedulePanel().getScheduleList().getSchedule();
         FileChooser fileChooser = new FileChooser();
+        if (QueleaApp.get().getLastDirectory() != null) {
+            fileChooser.setInitialDirectory(QueleaApp.get().getLastDirectory());
+        }
         fileChooser.getExtensionFilters().add(FileFilters.ZIP);
         File file = fileChooser.showSaveDialog(QueleaApp.get().getMainWindow());
         if (file != null) {
+            QueleaApp.get().setLastDirectory(file.getParentFile());
             if (!file.getName().toLowerCase().endsWith(".zip")) {
                 file = new File(file.getAbsolutePath() + ".zip");
             }

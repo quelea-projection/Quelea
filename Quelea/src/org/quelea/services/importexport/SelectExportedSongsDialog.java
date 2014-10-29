@@ -26,6 +26,7 @@ import javafx.stage.FileChooser;
 import org.javafx.dialog.Dialog;
 import org.quelea.data.displayable.SongDisplayable;
 import org.quelea.services.languages.LabelGrabber;
+import org.quelea.windows.main.QueleaApp;
 
 /**
  * A dialog used for selecting the songs to be put in the song pack after
@@ -53,8 +54,13 @@ public class SelectExportedSongsDialog extends SelectSongsDialog {
             public void handle(javafx.event.ActionEvent t) {
                 final String extension = exporter.getStrExtension();
                 FileChooser chooser = exporter.getChooser();
+                if (QueleaApp.get().getLastDirectory() != null) {
+                    chooser.setInitialDirectory(QueleaApp.get().getLastDirectory());
+                }
                 File file = chooser.showSaveDialog(SelectExportedSongsDialog.this);
                 if(file != null) {
+                    QueleaApp.get().setLastDirectory(file.getParentFile());
+                    QueleaApp.get().setLastDirectory(file.getParentFile());
                     if(!file.getName().endsWith("." + extension)) {
                         file = new File(file.getAbsoluteFile() + "." + extension);
                     }

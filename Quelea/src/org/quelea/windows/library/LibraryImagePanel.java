@@ -70,12 +70,16 @@ public class LibraryImagePanel extends BorderPane {
             @Override
             public void handle(ActionEvent t) {
                 FileChooser chooser = new FileChooser();
+                if (QueleaApp.get().getLastDirectory() != null) {
+                    chooser.setInitialDirectory(QueleaApp.get().getLastDirectory());
+                }
                 chooser.getExtensionFilters().add(FileFilters.IMAGES);
                 chooser.setInitialDirectory(QueleaProperties.get().getImageDir().getAbsoluteFile());
                 List<File> files = chooser.showOpenMultipleDialog(QueleaApp.get().getMainWindow());
                 if(files != null) {
                     final boolean[] refresh = new boolean[]{false};
                     for(final File f : files) {
+                        QueleaApp.get().setLastDirectory(f.getParentFile());
                         try {
                             final Path sourceFile = f.getAbsoluteFile().toPath();
 

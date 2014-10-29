@@ -62,6 +62,9 @@ public class ImageButton extends Button {
 //        super(LabelGrabber.INSTANCE.getLabel("select.image.button"));
         final File imageDir = QueleaProperties.get().getImageDir();
         fileChooser = new FileChooser();
+        if (QueleaApp.get().getLastDirectory() != null) {
+            fileChooser.setInitialDirectory(QueleaApp.get().getLastDirectory());
+        }
         fileChooser.setInitialDirectory(imageDir);
         fileChooser.getExtensionFilters().add(FileFilters.IMAGES);
         setOnAction(new EventHandler<javafx.event.ActionEvent>() {
@@ -69,6 +72,7 @@ public class ImageButton extends Button {
             public void handle(javafx.event.ActionEvent t) {
                 File selectedFile = fileChooser.showOpenDialog(QueleaApp.get().getMainWindow());
                 if (selectedFile != null) {
+                    QueleaApp.get().setLastDirectory(selectedFile.getParentFile());
                     File newFile = new File(imageDir, selectedFile.getName());
                     try {
                         if (!Utils.isInDir(imageDir, selectedFile)) {
