@@ -61,6 +61,7 @@ public class NewTranslationDialog extends Stage {
      */
     private NewTranslationDialog() {
         initModality(Modality.APPLICATION_MODAL);
+        setTitle(LabelGrabber.INSTANCE.getLabel("new.translation.title"));
         Utils.addIconsToStage(this);
         StackPane root = new StackPane();
         VBox rootVBox = new VBox();
