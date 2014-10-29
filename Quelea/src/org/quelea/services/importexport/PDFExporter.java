@@ -20,6 +20,7 @@ package org.quelea.services.importexport;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -90,7 +91,7 @@ public class PDFExporter implements Exporter {
         new Thread() {
             public void run() {
                 final HashSet<String> names = new HashSet<>();
-                try (ZipOutputStream out = new ZipOutputStream(new FileOutputStream(file))) {
+                try (ZipOutputStream out = new ZipOutputStream(new FileOutputStream(file), Charset.forName("UTF-8"))) {
                     for (int i = 0; i < songDisplayablesThreadSafe.size(); i++) {
                         SongDisplayable song = songDisplayablesThreadSafe.get(i);
                         String name = sanitise(song.getTitle()) + ".pdf";

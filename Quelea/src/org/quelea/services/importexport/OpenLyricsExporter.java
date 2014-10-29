@@ -85,7 +85,7 @@ public class OpenLyricsExporter implements Exporter {
             public void run() {
                 try {
                     final HashSet<String> names = new HashSet<>();
-                    try (ZipOutputStream out = new ZipOutputStream(new FileOutputStream(file))) {
+                    try (ZipOutputStream out = new ZipOutputStream(new FileOutputStream(file), Charset.forName("UTF-8"))) {
                         for (int i = 0; i < songDisplayablesThreadSafe.size(); i++) {
                             SongDisplayable song = songDisplayablesThreadSafe.get(i);
                             String name = song.getTitle() + ".xml";
