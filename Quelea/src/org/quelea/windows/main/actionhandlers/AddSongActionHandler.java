@@ -46,6 +46,7 @@ public class AddSongActionHandler implements EventHandler<ActionEvent> {
         SongDisplayable song = libraryPanel.getLibrarySongPanel().getSongList().getSelectedValue();
         cacheVidPreview(song);
         schedulePanel.getScheduleList().add(song);
+        libraryPanel.getLibrarySongPanel().getSearchBox().clear();
     }
 
     private void cacheVidPreview(SongDisplayable song) {
