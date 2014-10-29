@@ -34,21 +34,26 @@ public class TimerDrawer extends DisplayableDrawer {
 
     @Override
     public void draw(Displayable displayable) {
+        TimerDisplayable td = (TimerDisplayable) displayable;
+        timer = new Timer(td.getSeconds(), td.getPretext(), td.getPosttext());
+        timer.setTheme(td.getTheme());
         if (getCanvas().isStageView()) {
+            controlPanel.setStageTimer(timer);
+            timer.setFill(QueleaProperties.get().getStageLyricsColor());
+            timer.setEffect(null);
             ImageView imageView = getCanvas().getNewImageView();
             imageView.setImage(Utils.getImageFromColour(QueleaProperties.get().getStageBackgroundColor()));
             getCanvas().getChildren().add(0, imageView);
+            getCanvas().getChildren().add(timer);
         } else {
-            TimerDisplayable td = (TimerDisplayable) displayable;
-            timer = new Timer(td.getSeconds(), td.getPretext(), td.getPosttext());
-            timer.setTheme(td.getTheme());
             controlPanel.setTimer(timer, td.getBackground() instanceof VideoBackground);
             stack = new StackPane();
             StackPane.setAlignment(timer, timer.getTextPosition());
             controlPanel.reset();
 
             if (td.getBackground() instanceof VideoBackground) {
-                controlPanel.loadMultimedia(((VideoBackground)td.getBackground()).getVLCVidString());
+                controlPanel.loadMultimedia(((VideoBackground) td.getBackground()).getVLCVidString(),
+                        ((VideoBackground)td.getTheme().getBackground()).getStretch());
                 VLCWindow.INSTANCE.refreshPosition();
                 VLCWindow.INSTANCE.show();
             } else if (td.getBackground() instanceof ImageBackground) {
@@ -63,14 +68,13 @@ public class TimerDrawer extends DisplayableDrawer {
                 // New background type?
             }
 
-            timer.setFontSize(pickFontSize(td.getTheme().getFont()));
-            timer.toFront();
-
             stack.getChildren().add(timer);
             getCanvas().getChildren().add(stack);
-            timer.play();
         }
-
+        timer.setFontSize(pickFontSize(td.getTheme().getFont()));
+        timer.toFront();
+        timer.play();
+        controlPanel.reset();
     }
 
     @Override
