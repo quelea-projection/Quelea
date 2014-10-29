@@ -48,7 +48,6 @@ public class TimerDisplayable implements MultimediaDisplayable, Serializable {
     private ThemeDTO theme;
     private final String location = "";
     private TimerDrawer drawer;
-    private TimerDrawer stageDrawer;
 
     /**
      * Create a new timer displayable.
@@ -220,15 +219,8 @@ public class TimerDisplayable implements MultimediaDisplayable, Serializable {
         return theme;
     }
     
-    public Background getBackground() {
-        return background;
-    }
-
     public void setTheme(ThemeDTO theme) {
         this.theme = theme;
-        if(stageDrawer != null) {
-            stageDrawer.setTheme(theme);
-        }
         if(drawer != null) {
             drawer.setTheme(theme);
         }
@@ -236,9 +228,5 @@ public class TimerDisplayable implements MultimediaDisplayable, Serializable {
 
     public void addDrawer(TimerDrawer drawer) {
         this.drawer = drawer;
-    }
-
-    public void addStageDrawer(TimerDrawer drawer) {
-        this.stageDrawer = drawer;
     }
 }
