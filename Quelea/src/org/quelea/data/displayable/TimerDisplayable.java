@@ -44,7 +44,7 @@ public class TimerDisplayable implements MultimediaDisplayable, Serializable {
     private Pos pos = Pos.CENTER;
     private final String pretext;
     private final String posttext;
-    private final ThemeDTO theme;
+    private ThemeDTO theme;
     private String location;
 
     /**
@@ -195,7 +195,7 @@ public class TimerDisplayable implements MultimediaDisplayable, Serializable {
         //Nothing needed here.
     }
 
-    private String secondsToTime(int seconds) {
+    public String secondsToTime(int seconds) {
         return (int) Math.floor(seconds / 60) + ":" + ((seconds % 60) > 9 ? "" : "0") + seconds % 60;
     }
 
@@ -204,7 +204,7 @@ public class TimerDisplayable implements MultimediaDisplayable, Serializable {
     }
 
     public void setTextPosition(Pos posFromIndex) {
-        this.pos = pos;
+        this.pos = posFromIndex;
     }
     
     public Pos getTextPosition() {
@@ -225,5 +225,9 @@ public class TimerDisplayable implements MultimediaDisplayable, Serializable {
     
     public Background getBackground() {
         return background;
+    }
+
+    public void setTheme(ThemeDTO theme) {
+        this.theme = theme;
     }
 }

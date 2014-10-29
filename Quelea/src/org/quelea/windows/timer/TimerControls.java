@@ -54,6 +54,7 @@ public class TimerControls extends StackPane {
     private boolean disableControls;
     private Timer timer;
     private boolean vlc;
+    private Timer stageTimer;
 
     public TimerControls() {
         Rectangle rect = new Rectangle(230, 80);
@@ -94,16 +95,16 @@ public class TimerControls extends StackPane {
         VLCWindow.INSTANCE.setRepeat(true);
     }
 
-    public void loadMultimedia(String path) {
+    public void loadMultimedia(String path, boolean stretch) {
         reset();
         if (!path.trim().startsWith("http") && !path.trim().startsWith("dvdsimple") && !path.trim().startsWith("bluray")) {
             path = Utils.getVLCStringFromFile(new File(path));
         }
         String[] locationParts = path.split("[\\r\\n]+");
         if (locationParts.length == 1) {
-            VLCWindow.INSTANCE.load(locationParts[0], null, false);
+            VLCWindow.INSTANCE.load(locationParts[0], null, stretch);
         } else {
-            VLCWindow.INSTANCE.load(locationParts[0], locationParts[1], false);
+            VLCWindow.INSTANCE.load(locationParts[0], locationParts[1], stretch);
         }
     }
 
@@ -136,13 +137,18 @@ public class TimerControls extends StackPane {
                 VLCWindow.INSTANCE.play();
             }
             timer.play();
-
+            if (stageTimer != null) {
+                stageTimer.play();
+            }
         } else { //paused
             playButton.setImage(PLAY_IMAGE);
             if (vlc) {
                 VLCWindow.INSTANCE.pause();
             }
             timer.pause();
+            if (stageTimer != null) {
+                stageTimer.pause();
+            }
         }
     }
 
@@ -151,6 +157,9 @@ public class TimerControls extends StackPane {
             VLCWindow.INSTANCE.stop();
         }
         timer.stop();
+        if (stageTimer != null) {
+            stageTimer.stop();
+        }
 
         if (disableControls) {
             playButton.setImage(PLAY_IMAGE_DISABLE);
@@ -177,5 +186,9 @@ public class TimerControls extends StackPane {
     void setTimer(Timer timer, boolean vlc) {
         this.timer = timer;
         this.vlc = vlc;
+    }
+
+    void setStageTimer(Timer timer) {
+        stageTimer = timer;
     }
 }
