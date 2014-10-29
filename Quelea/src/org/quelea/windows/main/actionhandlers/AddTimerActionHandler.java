@@ -20,11 +20,7 @@ package org.quelea.windows.main.actionhandlers;
 
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
-import javafx.scene.control.Button;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
 import javafx.stage.Stage;
-import org.quelea.services.languages.LabelGrabber;
 import org.quelea.windows.timer.CreateTimerPanel;
 
 /**
@@ -36,8 +32,7 @@ public class AddTimerActionHandler implements EventHandler<ActionEvent> {
 
     @Override
     public void handle(ActionEvent t) {
-        Button confirmButton = new Button(LabelGrabber.INSTANCE.getLabel("ok.button"), new ImageView(new Image("file:icons/tick.png")));
-        Stage s = new CreateTimerPanel(confirmButton);
+        Stage s = new CreateTimerPanel();
         s.showAndWait();
     }
 }
