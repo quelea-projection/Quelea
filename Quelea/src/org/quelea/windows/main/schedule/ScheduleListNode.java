@@ -29,8 +29,10 @@ import javafx.scene.layout.Region;
 import javafx.util.Duration;
 import org.quelea.data.displayable.Displayable;
 import org.quelea.data.displayable.TextDisplayable;
+import org.quelea.data.displayable.TimerDisplayable;
 import org.quelea.services.utils.Utils;
 import org.quelea.windows.main.actionhandlers.EditThemeScheduleActionHandler;
+import org.quelea.windows.main.actionhandlers.EditTimerScheduleActionHandler;
 
 /**
  *
@@ -48,9 +50,14 @@ public class ScheduleListNode extends HBox {
         getChildren().add(icon);
         getChildren().add(new Label(displayable.getPreviewText()));
 
-        if (displayable instanceof TextDisplayable) {
+        if (displayable instanceof TextDisplayable || displayable instanceof TimerDisplayable) {
             themeButton = new Button("", new ImageView(new Image("file:icons/theme.png", 16, 16, false, true)));
-            themeButton.setOnAction(new EditThemeScheduleActionHandler((TextDisplayable)displayable));
+            if(displayable instanceof TextDisplayable) {
+                themeButton.setOnAction(new EditThemeScheduleActionHandler((TextDisplayable)displayable));
+            }
+            else {
+                themeButton.setOnAction(new EditTimerScheduleActionHandler((TimerDisplayable)displayable));
+            }
             Utils.setToolbarButtonStyle(themeButton);
             Region spacer = new Region();
             HBox.setHgrow(spacer, Priority.ALWAYS);

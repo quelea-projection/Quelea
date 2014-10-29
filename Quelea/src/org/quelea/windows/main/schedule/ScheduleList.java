@@ -52,6 +52,7 @@ import org.quelea.data.displayable.ImageDisplayable;
 import org.quelea.data.displayable.SongDisplayable;
 import org.quelea.data.displayable.TextDisplayable;
 import org.quelea.data.displayable.TextSection;
+import org.quelea.data.displayable.TimerDisplayable;
 import org.quelea.services.utils.LoggerUtils;
 import org.quelea.services.utils.QueleaProperties;
 import org.quelea.services.utils.SerializableDropShadow;
@@ -115,7 +116,7 @@ public class ScheduleList extends StackPane {
                             setGraphic(new ScheduleListNode(item));
                             setText(null);
                         }
-                        if (item instanceof SongDisplayable || item instanceof BiblePassage) {
+                        if (item instanceof SongDisplayable || item instanceof BiblePassage || item instanceof TimerDisplayable) {
                             setContextMenu(new SchedulePopupMenu());
                         }
                     }
@@ -192,7 +193,7 @@ public class ScheduleList extends StackPane {
         listView.setCellFactory(DisplayableListCell.<Displayable>forListView(null, callback, new Constraint<Displayable>() {
             @Override
             public boolean isTrue(Displayable d) {
-                return d instanceof SongDisplayable || d instanceof BiblePassage;
+                return d instanceof SongDisplayable || d instanceof BiblePassage || d instanceof TimerDisplayable;
             }
         }));
         listView.setOnDragOver(new EventHandler<DragEvent>() {

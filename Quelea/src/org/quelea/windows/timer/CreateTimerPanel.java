@@ -20,6 +20,7 @@ package org.quelea.windows.timer;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.geometry.HPos;
+import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
@@ -29,6 +30,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.Tooltip;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
@@ -56,10 +58,11 @@ public class CreateTimerPanel extends Stage {
         resizableProperty().setValue(false);
 
         GridPane grid = new GridPane();
+        grid.setPadding(new Insets(5));
         int rows = 0;
 
         Label durationLabel = new Label(LabelGrabber.INSTANCE.getLabel("timer.duration.label"));
-        GridPane.setConstraints(durationLabel, 1, rows);
+        GridPane.setConstraints(durationLabel, 0, rows);
         grid.getChildren().add(durationLabel);
         TextField durationTextField = new TextField();
         durationTextField.setTooltip(new Tooltip(LabelGrabber.INSTANCE.getLabel("duration.tooltip.label")));
@@ -72,24 +75,24 @@ public class CreateTimerPanel extends Stage {
             }
         });
         durationLabel.setLabelFor(durationTextField);
-        GridPane.setConstraints(durationTextField, 2, rows);
+        GridPane.setConstraints(durationTextField, 1, rows);
         grid.getChildren().add(durationTextField);
         rows++;
 
         Label textLabel = new Label(LabelGrabber.INSTANCE.getLabel("timer.text.label"));
-        GridPane.setConstraints(textLabel, 1, rows);
+        GridPane.setConstraints(textLabel, 0, rows);
         grid.getChildren().add(textLabel);
         TextArea textTextArea = new TextArea();
         textTextArea.setPrefRowCount(4);
         textTextArea.setPrefColumnCount(30);
         textTextArea.setPromptText(LabelGrabber.INSTANCE.getLabel("timer.text.prompt"));
         textLabel.setLabelFor(textTextArea);
-        GridPane.setConstraints(textTextArea, 2, rows);
+        GridPane.setConstraints(textTextArea, 1, rows);
         grid.getChildren().add(textTextArea);
         rows++;
 
         Label themeLabel = new Label(LabelGrabber.INSTANCE.getLabel("timer.theme.label"));
-        GridPane.setConstraints(themeLabel, 1, rows);
+        GridPane.setConstraints(themeLabel, 0, rows);
         grid.getChildren().add(themeLabel);
         Button themeButton = new Button(LabelGrabber.INSTANCE.getLabel("timer.theme.button"), new ImageView(new Image("file:icons/theme.png", 16, 16, false, true)));
         Button tpConfirm = new Button(LabelGrabber.INSTANCE.getLabel("ok.button"), new ImageView(new Image("file:icons/tick.png")));
@@ -98,10 +101,13 @@ public class CreateTimerPanel extends Stage {
         wordsArea.replaceText(durationTextField.getText());
         ThemePanel tp = new ThemePanel(wordsArea, tpConfirm);
         tp.setPrefSize(500, 500);
-        
         tp.setTheme(timerTheme);
         Stage tpStage = new Stage();
-        Scene sc = new Scene(new VBox(tp, tpConfirm));
+        BorderPane bp = new BorderPane();
+        bp.setCenter(tp);
+        bp.setBottom(tpConfirm);
+        BorderPane.setAlignment(tpConfirm, Pos.CENTER);
+        Scene sc = new Scene(bp);
         tpStage.setScene(sc);
         themeButton.setOnAction((ActionEvent Event) -> {
             tpStage.showAndWait();
@@ -111,11 +117,11 @@ public class CreateTimerPanel extends Stage {
             tpStage.hide();
         });
         themeLabel.setLabelFor(themeButton);
-        GridPane.setConstraints(themeButton, 2, rows);
+        GridPane.setConstraints(themeButton, 1, rows);
         grid.getChildren().add(themeButton);
         rows++;
 
-        GridPane.setConstraints(confirmButton, 1, rows, 3, 1);
+        GridPane.setConstraints(confirmButton, 0, rows, 2, 1);
         GridPane.setHalignment(confirmButton, HPos.CENTER);
         grid.getChildren().add(confirmButton);
 
