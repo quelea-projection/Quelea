@@ -19,8 +19,6 @@
 package org.quelea.windows.newsong;
 
 import java.io.File;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -34,7 +32,6 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
-import javafx.stage.StageStyle;
 import org.quelea.data.ThemeDTO;
 import org.quelea.services.languages.LabelGrabber;
 import org.quelea.services.utils.QueleaProperties;
@@ -73,13 +70,6 @@ public class EditThemeDialog extends Stage {
         themeNameLabel.setAlignment(Pos.CENTER);
         northPanel.getChildren().add(themeNameLabel);
         nameField = new TextField();
-        nameField.textProperty().addListener(new ChangeListener<String>() {
-
-            @Override
-            public void changed(ObservableValue<? extends String> ov, String t, String t1) {
-                confirmButton.setDisable(nameField.getText().trim().isEmpty());
-            }
-        });
         northPanel.getChildren().add(nameField);
         panel = new ThemePanel();
         panel.setPrefSize(500, 500);
@@ -89,9 +79,16 @@ public class EditThemeDialog extends Stage {
 
             @Override
             public void handle(javafx.event.ActionEvent t) {
+                String themeName;
+                if(nameField.getText().trim().isEmpty()) {
+                    themeName = LabelGrabber.INSTANCE.getLabel("untitled.theme.text");
+                }
+                else {
+                    themeName = nameField.getText();
+                }
                 theme = panel.getTheme();
                 theme.setFile(themeFile);
-                theme.setThemeName(nameField.getText());
+                theme.setThemeName(themeName);
                 hide();
             }
         });
@@ -144,7 +141,6 @@ public class EditThemeDialog extends Stage {
         }
         themeFile = theme.getFile();
         nameField.setText(theme.getThemeName());
-        confirmButton.setDisable(nameField.getText().isEmpty());
         panel.setTheme(theme);
     }
 }
