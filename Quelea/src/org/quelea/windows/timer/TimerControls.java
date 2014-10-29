@@ -19,7 +19,6 @@
 package org.quelea.windows.timer;
 
 import java.io.File;
-import javafx.event.EventHandler;
 import javafx.scene.effect.DropShadow;
 import javafx.scene.effect.Glow;
 import javafx.scene.effect.Reflection;
@@ -41,7 +40,7 @@ import org.quelea.windows.multimedia.VLCWindow;
  * <p/>
  * @author Michael and Ben
  */
- public class TimerControls extends StackPane {
+public class TimerControls extends StackPane {
 
     private static final Image PLAY_IMAGE = new Image("file:icons/play.png");
     private static final Image PAUSE_IMAGE = new Image("file:icons/pause.png");
@@ -50,12 +49,11 @@ import org.quelea.windows.multimedia.VLCWindow;
     private static final Image PAUSE_IMAGE_DISABLE = new Image("file:icons/pausedisable.png");
     private static final Image STOP_IMAGE_DISABLE = new Image("file:icons/stopdisable.png");
     private boolean playpause;
-    private ImageView playButton;
-    private ImageView stopButton;
+    private final ImageView playButton;
+    private final ImageView stopButton;
     private boolean disableControls;
     private Timer timer;
-    private TimerDrawer drawer;
-    private boolean hiddenTimer = false;
+    private boolean vlc;
 
     public TimerControls() {
         Rectangle rect = new Rectangle(230, 80);
@@ -77,28 +75,22 @@ import org.quelea.windows.multimedia.VLCWindow;
         setButtonParams(playButton);
         playButton.setTranslateX(-30);
         getChildren().add(playButton);
-        playButton.setOnMouseClicked(new EventHandler<MouseEvent>() {
-            @Override
-            public void handle(MouseEvent t) {
-                if (!disableControls) {
-                    play();
-                }
+        playButton.setOnMouseClicked((MouseEvent t) -> {
+            if (!disableControls) {
+                play();
             }
         });
 
         stopButton = new ImageView(STOP_IMAGE);
-        stopButton.setOnMouseClicked(new EventHandler<MouseEvent>() {
-            @Override
-            public void handle(MouseEvent t) {
-                if (!disableControls) {
-                    reset();
-                }
+        stopButton.setOnMouseClicked((MouseEvent t) -> {
+            if (!disableControls) {
+                reset();
             }
         });
         setButtonParams(stopButton);
         stopButton.setTranslateX(30);
         getChildren().add(stopButton);
-        
+
         VLCWindow.INSTANCE.setRepeat(true);
     }
 
@@ -133,25 +125,33 @@ import org.quelea.windows.multimedia.VLCWindow;
             stopButton.setImage(STOP_IMAGE);
         }
     }
-    
+
     public void play() {
         playpause = !playpause;
         if (playpause) {
             playButton.setImage(PAUSE_IMAGE);
-            VLCWindow.INSTANCE.setRepeat(true);
-            VLCWindow.INSTANCE.setHue(0);
-            VLCWindow.INSTANCE.play();
+            if (vlc) {
+                VLCWindow.INSTANCE.setRepeat(true);
+                VLCWindow.INSTANCE.setHue(0);
+                VLCWindow.INSTANCE.play();
+            }
             timer.play();
+
         } else { //paused
             playButton.setImage(PLAY_IMAGE);
-            VLCWindow.INSTANCE.pause();
+            if (vlc) {
+                VLCWindow.INSTANCE.pause();
+            }
             timer.pause();
         }
     }
 
     public void reset() {
-        VLCWindow.INSTANCE.stop();
+        if (vlc) {
+            VLCWindow.INSTANCE.stop();
+        }
         timer.stop();
+
         if (disableControls) {
             playButton.setImage(PLAY_IMAGE_DISABLE);
         } else {
@@ -161,26 +161,21 @@ import org.quelea.windows.multimedia.VLCWindow;
     }
 
     private void setButtonParams(final ImageView button) {
-        button.setOnMouseEntered(new EventHandler<MouseEvent>() {
-            @Override
-            public void handle(MouseEvent t) {
-                if (!disableControls) {
-                    button.setEffect(new Glow(0.5));
-                }
+        button.setOnMouseEntered((MouseEvent t) -> {
+            if (!disableControls) {
+                button.setEffect(new Glow(0.5));
             }
         });
-        button.setOnMouseExited(new EventHandler<MouseEvent>() {
-            @Override
-            public void handle(MouseEvent t) {
-                button.setEffect(null);
-            }
+        button.setOnMouseExited((MouseEvent t) -> {
+            button.setEffect(null);
         });
         button.setFitWidth(50);
         button.setPreserveRatio(true);
         button.setTranslateY(-10);
     }
 
-    void setTimer(Timer timer) {
+    void setTimer(Timer timer, boolean vlc) {
         this.timer = timer;
+        this.vlc = vlc;
     }
 }
