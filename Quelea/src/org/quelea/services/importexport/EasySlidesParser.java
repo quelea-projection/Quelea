@@ -21,7 +21,6 @@ package org.quelea.services.importexport;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
@@ -32,6 +31,7 @@ import javax.xml.parsers.ParserConfigurationException;
 import org.quelea.data.displayable.SongDisplayable;
 import org.quelea.data.displayable.TextSection;
 import org.quelea.services.utils.LoggerUtils;
+import org.quelea.services.utils.UnicodeReader;
 import org.quelea.windows.main.StatusPanel;
 import org.w3c.dom.DOMException;
 import org.w3c.dom.Document;
@@ -54,7 +54,7 @@ public class EasySlidesParser implements SongParser {
             ArrayList<SongDisplayable> ret = new ArrayList<>();
             DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
             DocumentBuilder builder = factory.newDocumentBuilder();
-            Document doc = builder.parse(new InputSource(new InputStreamReader(new FileInputStream(file), "UTF-8")));
+            Document doc = builder.parse(new InputSource(new UnicodeReader(new FileInputStream(file), "UTF-8")));
             NodeList songs = doc.getChildNodes().item(0).getChildNodes();
             for(int i = 0; i < songs.getLength(); i++) {
                 NodeList attribNodes = songs.item(i).getChildNodes();
