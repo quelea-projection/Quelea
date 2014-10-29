@@ -95,6 +95,9 @@ public abstract class ImportDialog extends Stage implements PropertyChangeListen
         importedDialog = new SelectImportedSongsDialog();
         VBox mainPane = new VBox();
         final FileChooser locationChooser = new FileChooser();
+        if (QueleaApp.get().getLastDirectory() != null) {
+            locationChooser.setInitialDirectory(QueleaApp.get().getLastDirectory());
+        }
         locationChooser.getExtensionFilters().add(fileFilter);
         final DirectoryChooser dirChooser = new DirectoryChooser();
 
@@ -138,6 +141,7 @@ public abstract class ImportDialog extends Stage implements PropertyChangeListen
                             }
                         }
                         if (!files.isEmpty()) {
+                            QueleaApp.get().setLastDirectory(files.get(0).getParentFile());
                             StringBuilder locationContent = new StringBuilder();
                             for (int i = 0; i < files.size(); i++) {
                                 locationContent.append(files.get(0).getAbsolutePath());
