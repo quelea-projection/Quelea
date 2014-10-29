@@ -9,7 +9,6 @@ import org.quelea.data.ImageBackground;
 import org.quelea.data.ColourBackground;
 import org.quelea.data.VideoBackground;
 import org.quelea.data.displayable.Displayable;
-import org.quelea.data.displayable.MultimediaDisplayable;
 import org.quelea.data.displayable.TimerDisplayable;
 import org.quelea.services.utils.QueleaProperties;
 import org.quelea.services.utils.Utils;
