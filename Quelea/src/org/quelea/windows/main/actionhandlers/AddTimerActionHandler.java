@@ -63,6 +63,7 @@ public class AddTimerActionHandler implements EventHandler<ActionEvent> {
         wordsArea.replaceText("5:00");
 
         final Stage s = new Stage();
+        s.setTitle(LabelGrabber.INSTANCE.getLabel("add.timer.title"));
         s.initModality(Modality.APPLICATION_MODAL);
         s.initOwner(QueleaApp.get().getMainWindow());
         s.resizableProperty().setValue(true);
