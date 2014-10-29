@@ -21,6 +21,7 @@ package org.quelea.windows.main.actionhandlers;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -81,7 +82,7 @@ public class ExportPDFScheduleSongsActionHandler implements EventHandler<ActionE
             new Thread() {
                 public void run() {
                     final HashSet<String> names = new HashSet<>();
-                    try (ZipOutputStream out = new ZipOutputStream(new FileOutputStream(threadSafeFile))) {
+                    try (ZipOutputStream out = new ZipOutputStream(new FileOutputStream(threadSafeFile), Charset.forName("UTF-8"))) {
                         for (int i = 0; i < songDisplayablesThreadSafe.size(); i++) {
                             Displayable d = songDisplayablesThreadSafe.get(i);
                             if (!(d instanceof SongDisplayable)) {
