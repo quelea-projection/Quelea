@@ -18,6 +18,7 @@
 package org.quelea.services.importexport;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
@@ -32,10 +33,12 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import org.quelea.data.displayable.SongDisplayable;
 import org.quelea.services.utils.LoggerUtils;
+import org.quelea.services.utils.UnicodeReader;
 import org.quelea.windows.main.StatusPanel;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
+import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
 /**
@@ -57,7 +60,7 @@ public class OpensongParser implements SongParser {
                 final ZipEntry entry = entries.nextElement();
                 DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
                 DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
-                Document doc = dBuilder.parse(file.getInputStream(entry));
+                Document doc = dBuilder.parse(new InputSource(new UnicodeReader(file.getInputStream(entry), "UTF-8")));
                 NodeList list = doc.getChildNodes();
                 for(int i = 0; i < list.getLength(); i++) {
                     if(list.item(i).getNodeName().equalsIgnoreCase("song")) {
