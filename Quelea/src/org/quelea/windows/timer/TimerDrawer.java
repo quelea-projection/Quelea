@@ -146,7 +146,6 @@ public class TimerDrawer extends DisplayableDrawer {
 
     public void setTheme(ThemeDTO theme) {
         if (timer != null) {
-            timer.stop();
             timer.setTheme(theme);
             timer.setFontSize(pickFontSize(theme.getFont(), timer, main));
             main.clearNonPermanentChildren();
@@ -167,14 +166,15 @@ public class TimerDrawer extends DisplayableDrawer {
             } else {
                 // New background type?
             }
+            timer.toFront();
         }
         if (stageTimer != null) {
-            stageTimer.stop();
             stageTimer.setTheme(theme);
             stageTimer.setFill(QueleaProperties.get().getStageLyricsColor());
             stageTimer.setEffect(null);
             stageTimer.setFontSize(pickFontSize(theme.getFont(), stageTimer, stage));
             stageTimer.synchronise(timer);
+            stageTimer.toFront();
         }
     }
 
