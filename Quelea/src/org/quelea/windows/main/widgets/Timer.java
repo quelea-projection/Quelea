@@ -147,12 +147,13 @@ public class Timer extends Text {
     }
 
     private TextAlignment alignmentFromIndex(int index) {
+        System.out.println(index);
         switch (index) {
-            case 0:
+            case -1:
                 return TextAlignment.LEFT;
-            case 1:
+            case 0:
                 return TextAlignment.CENTER;
-            case 2:
+            case 1:
                 return TextAlignment.RIGHT;
         }
         return TextAlignment.CENTER;
