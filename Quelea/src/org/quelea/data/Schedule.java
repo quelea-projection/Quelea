@@ -47,6 +47,7 @@ import org.quelea.data.displayable.Displayable;
 import org.quelea.data.displayable.ImageDisplayable;
 import org.quelea.data.displayable.PresentationDisplayable;
 import org.quelea.data.displayable.SongDisplayable;
+import org.quelea.data.displayable.TimerDisplayable;
 import org.quelea.data.displayable.VideoDisplayable;
 import org.quelea.services.languages.LabelGrabber;
 import org.quelea.services.utils.LoggerUtils;
@@ -307,6 +308,8 @@ public class Schedule implements Iterable<Displayable> {
                     newSchedule.add(AudioDisplayable.parseXML(node));
                 } else if (name.equalsIgnoreCase("filepresentation")) {
                     newSchedule.add(PresentationDisplayable.parseXML(node));
+                }else if (name.equalsIgnoreCase("timer")) {
+                    newSchedule.add(TimerDisplayable.parseXML(node));
                 }
             }
             newSchedule.modified = false;
