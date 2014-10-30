@@ -19,6 +19,8 @@
 package org.quelea.windows.timer;
 
 import java.io.File;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javafx.scene.effect.DropShadow;
 import javafx.scene.effect.Glow;
 import javafx.scene.effect.Reflection;
@@ -97,8 +99,7 @@ public class TimerControls extends StackPane {
 
     public void loadMultimedia(String path, boolean stretch) {
         vlc = true;
-        reset();
-        assert VLCWindow.INSTANCE.isInit();
+        //reset();
         if (!path.trim().startsWith("http") && !path.trim().startsWith("dvdsimple") && !path.trim().startsWith("bluray")) {
             path = Utils.getVLCStringFromFile(new File(path));
         }
@@ -154,10 +155,11 @@ public class TimerControls extends StackPane {
                 VLCWindow.INSTANCE.setRepeat(true);
                 VLCWindow.INSTANCE.setHue(0);
                 VLCWindow.INSTANCE.play();
+                stageTimer.synchronise(timer);
+
             }
-            timer.play();
-            if (stageTimer != null) {
-                stageTimer.play();
+            if (stageTimer == null) {
+                timer.play();
             }
         }
     }

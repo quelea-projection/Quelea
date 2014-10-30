@@ -93,6 +93,7 @@ public class TimerDrawer extends DisplayableDrawer {
 
     @Override
     public void clear() {
+        getCanvas().clearCurrentDisplayable();
     }
 
     @Override
@@ -151,10 +152,10 @@ public class TimerDrawer extends DisplayableDrawer {
             main.clearNonPermanentChildren();
             if (theme.getBackground() instanceof VideoBackground) {
                 setPlayVideo(main.getPlayVideo());
-                controlPanel.setTimer(timer, true);
                 controlPanel.loadMultimedia(((VideoBackground) theme.getBackground()).getVLCVidString(),
                         ((VideoBackground) theme.getBackground()).getStretch());
                 VLCWindow.INSTANCE.show();
+                controlPanel.setTimer(timer, true);
             } else if (theme.getBackground() instanceof ImageBackground) {
                 ImageView imageView = main.getNewImageView();
                 imageView.setImage(((ImageBackground) theme.getBackground()).getImage());
@@ -173,10 +174,7 @@ public class TimerDrawer extends DisplayableDrawer {
             stageTimer.setFill(QueleaProperties.get().getStageLyricsColor());
             stageTimer.setEffect(null);
             stageTimer.setFontSize(pickFontSize(theme.getFont(), stageTimer, stage));
-        }
-        if(stageTimer != null && timer != null) {
-            timer.play();
-            stageTimer.play();
+            stageTimer.synchronise(timer);
         }
     }
 
