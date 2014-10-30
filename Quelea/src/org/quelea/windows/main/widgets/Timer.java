@@ -147,7 +147,6 @@ public class Timer extends Text {
     }
 
     private TextAlignment alignmentFromIndex(int index) {
-        System.out.println(index);
         switch (index) {
             case -1:
                 return TextAlignment.LEFT;
