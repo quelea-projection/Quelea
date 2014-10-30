@@ -157,4 +157,13 @@ public class Timer extends Text {
         }
         return TextAlignment.CENTER;
     }
+
+    public void synchronise(Timer timer) {
+        timer.pause();
+        this.pause();
+        timer.reset();
+        this.reset();
+        timer.play();
+        this.play();
+    }
 }
