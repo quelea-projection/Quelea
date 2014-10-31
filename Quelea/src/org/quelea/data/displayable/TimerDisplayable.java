@@ -22,16 +22,20 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.logging.Level;
 import javafx.geometry.Pos;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import org.quelea.data.Background;
 import org.quelea.data.ThemeDTO;
+import org.quelea.data.bible.BibleVerse;
 import org.quelea.services.languages.LabelGrabber;
+import org.quelea.services.utils.LoggerUtils;
 import org.quelea.services.utils.Utils;
 import org.quelea.windows.timer.TimerDrawer;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 /**
  * A displayable that's a countdown timer.
@@ -110,13 +114,14 @@ public class TimerDisplayable implements MultimediaDisplayable, Serializable {
      * @return the object as defined by the XML.
      */
     public static TimerDisplayable parseXML(Node node) {
-        if (node instanceof Element) {
-            return new TimerDisplayable(Integer.parseInt(((Element) node).getAttribute("duration")), 
-                    ((Element) node).getAttribute("pretext"), ((Element) node).getAttribute("posttext"),
-                    ThemeDTO.fromString(((Element) node).getAttribute("theme")));
-        } else {
-            return null;
-        }
+        NodeList list = node.getChildNodes();
+        
+        int duration = Integer.parseInt(list.item(0).getTextContent());
+        String pretext = list.item(1).getTextContent();
+        String posttext = list.item(2).getTextContent();
+        String theme = list.item(3).getTextContent();
+        ThemeDTO tempTheme = ThemeDTO.fromString(theme);
+        return new TimerDisplayable(duration, pretext, posttext, tempTheme);
     }
 
     /**
@@ -172,7 +177,10 @@ public class TimerDisplayable implements MultimediaDisplayable, Serializable {
     @Override
     public Collection<File> getResources() {
         List<File> files = new ArrayList<>();
-        files.add(new File(location));
+        files.addAll(theme.getBackground().getResources());
+        if(theme.getFile() != null) {
+            files.add(theme.getFile());
+        }
         return files;
     }
 
