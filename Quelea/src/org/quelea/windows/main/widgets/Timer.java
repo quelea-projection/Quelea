@@ -59,8 +59,8 @@ public class Timer extends Text {
     }
 
     public Timer(int seconds, String pretext, String posttext) {
-        this.minutes = (int) Math.floor(seconds/60);
-        this.seconds = seconds%60;
+        this.minutes = (int) Math.floor(seconds / 60);
+        this.seconds = seconds % 60;
         this.pretext = pretext;
         this.posttext = posttext;
         setText(pretext + (minutes > 9 ? "" : "0") + minutes + ":" + (seconds > 9 ? "" : "0") + seconds + posttext);
@@ -113,7 +113,7 @@ public class Timer extends Text {
     public void reset() {
         reset = true;
     }
-
+    
     public void stop() {
         reset = true;
         timeline.stop();
@@ -159,8 +159,6 @@ public class Timer extends Text {
     }
 
     public void synchronise(Timer timer) {
-        timer.pause();
-        this.pause();
         timer.reset();
         this.reset();
         timer.play();
