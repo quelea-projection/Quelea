@@ -19,6 +19,8 @@
 package org.quelea.windows.timer;
 
 import java.io.File;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javafx.scene.effect.DropShadow;
 import javafx.scene.effect.Glow;
 import javafx.scene.effect.Reflection;
@@ -55,6 +57,7 @@ public class TimerControls extends StackPane {
     private Timer timer;
     private boolean vlc;
     private Timer stageTimer;
+    private boolean sync = false;
 
     public TimerControls() {
         Rectangle rect = new Rectangle(230, 80);
@@ -97,8 +100,7 @@ public class TimerControls extends StackPane {
 
     public void loadMultimedia(String path, boolean stretch) {
         vlc = true;
-        reset();
-        assert VLCWindow.INSTANCE.isInit();
+        //reset();
         if (!path.trim().startsWith("http") && !path.trim().startsWith("dvdsimple") && !path.trim().startsWith("bluray")) {
             path = Utils.getVLCStringFromFile(new File(path));
         }
@@ -108,6 +110,7 @@ public class TimerControls extends StackPane {
         } else {
             VLCWindow.INSTANCE.load(locationParts[0], locationParts[1], stretch);
         }
+        this.sync = true;
     }
 
     public void setDisableControls(boolean disable) {
@@ -140,7 +143,9 @@ public class TimerControls extends StackPane {
             if (vlc) {
                 VLCWindow.INSTANCE.pause();
             }
-            timer.pause();
+            if (timer != null) {
+                timer.pause();
+            }
             if (stageTimer != null) {
                 stageTimer.pause();
             }
@@ -154,10 +159,16 @@ public class TimerControls extends StackPane {
                 VLCWindow.INSTANCE.setRepeat(true);
                 VLCWindow.INSTANCE.setHue(0);
                 VLCWindow.INSTANCE.play();
+                if (stageTimer != null && timer != null && sync) {
+                    timer.synchronise(stageTimer);
+                    sync = false;
+                }
             }
-            timer.play();
             if (stageTimer != null) {
                 stageTimer.play();
+            }
+            if (timer != null) {
+                timer.play();
             }
         }
     }
