@@ -39,6 +39,8 @@ public class QueleaApp {
     private MobileLyricsServer mls;
     private RemoteControlServer rcs;
     private File lastDirectory;
+    private File lastScheduleFileDirectory;
+    private File lastVideoDirectory;
     private List<Runnable> runnables = new ArrayList<>();
     private volatile boolean loaded;
 
@@ -57,6 +59,22 @@ public class QueleaApp {
         else {
             runnables.add(r);
         }
+    }
+    
+    public File getLastVideoDirectory() {
+        return lastVideoDirectory;
+    }
+    
+    public void setLastVideoDirectory(File directory) {
+        this.lastVideoDirectory = directory;
+    }
+    
+    public File getLastScheduleFileDirectory() {
+        return lastScheduleFileDirectory;
+    }
+    
+    public void setLastScheduleFileDirectory(File directory) {
+        this.lastScheduleFileDirectory = directory;
     }
     
     public File getLastDirectory() {

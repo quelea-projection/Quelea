@@ -33,13 +33,13 @@ public class OpenScheduleActionHandler extends ClearingEventHandler {
     public void handle(javafx.event.ActionEvent t) {
         if(confirmClear()) {
             FileChooser chooser = new FileChooser();
-            if (QueleaApp.get().getLastDirectory() != null) {
-                chooser.setInitialDirectory(QueleaApp.get().getLastDirectory());
+            if (QueleaApp.get().getLastScheduleFileDirectory() != null) {
+                chooser.setInitialDirectory(QueleaApp.get().getLastScheduleFileDirectory());
             }
             chooser.getExtensionFilters().add(FileFilters.SCHEDULE);
             File file = chooser.showOpenDialog(QueleaApp.get().getMainWindow());
             if(file!=null) {
-                QueleaApp.get().setLastDirectory(file.getParentFile());
+                QueleaApp.get().setLastScheduleFileDirectory(file.getParentFile());
                 QueleaApp.get().openSchedule(file);
             }
         }

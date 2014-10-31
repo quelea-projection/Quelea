@@ -53,13 +53,13 @@ public class ScheduleSaver {
         File file = schedule.getFile();
         if (saveAs || file == null) {
             FileChooser chooser = new FileChooser();
-            if (QueleaApp.get().getLastDirectory() != null) {
-                chooser.setInitialDirectory(QueleaApp.get().getLastDirectory());
+            if (QueleaApp.get().getLastScheduleFileDirectory() != null) {
+                chooser.setInitialDirectory(QueleaApp.get().getLastScheduleFileDirectory());
             }
             chooser.getExtensionFilters().add(FileFilters.SCHEDULE);
             File selectedFile = chooser.showSaveDialog(QueleaApp.get().getMainWindow());
             if (selectedFile != null) {
-                QueleaApp.get().setLastDirectory(selectedFile.getParentFile());
+                QueleaApp.get().setLastScheduleFileDirectory(selectedFile.getParentFile());
                 String extension = QueleaProperties.get().getScheduleExtension();
                 if (!selectedFile.getName().endsWith("." + extension)) {
                     selectedFile = new File(selectedFile.getAbsoluteFile() + "." + extension);
