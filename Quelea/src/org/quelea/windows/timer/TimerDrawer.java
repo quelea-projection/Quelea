@@ -5,6 +5,7 @@ import com.sun.javafx.tk.Toolkit;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.StackPane;
 import javafx.scene.text.Font;
+import org.quelea.data.Background;
 import org.quelea.data.ImageBackground;
 import org.quelea.data.ColourBackground;
 import org.quelea.data.ThemeDTO;
@@ -85,10 +86,6 @@ public class TimerDrawer extends DisplayableDrawer {
             timer.setFontSize(pickFontSize(td.getTheme().getFont(), timer, main));
             timer.toFront();
         }
-        if(stageTimer != null && timer != null) {
-            timer.play();
-            stageTimer.play();
-        }
     }
 
     @Override
@@ -145,36 +142,43 @@ public class TimerDrawer extends DisplayableDrawer {
     }
 
     public void setTheme(ThemeDTO theme) {
+        boolean sync = false;
+        if (stageTimer != null) {
+            stageTimer.setTheme(theme);
+            stageTimer.setFill(QueleaProperties.get().getStageLyricsColor());
+            stageTimer.setEffect(null);
+            stageTimer.setFontSize(pickFontSize(theme.getFont(), stageTimer, stage));
+            stageTimer.toFront();
+        }
         if (timer != null) {
             timer.setTheme(theme);
             timer.setFontSize(pickFontSize(theme.getFont(), timer, main));
             main.clearNonPermanentChildren();
-            if (theme.getBackground() instanceof VideoBackground) {
+            Background back = theme.getBackground();
+            if (back instanceof VideoBackground) {
                 setPlayVideo(main.getPlayVideo());
-                controlPanel.loadMultimedia(((VideoBackground) theme.getBackground()).getVLCVidString(),
-                        ((VideoBackground) theme.getBackground()).getStretch());
+                controlPanel.loadMultimedia(((VideoBackground) back).getVLCVidString(),
+                        ((VideoBackground) back).getStretch());
                 VLCWindow.INSTANCE.show();
                 controlPanel.setTimer(timer, true);
-            } else if (theme.getBackground() instanceof ImageBackground) {
+                if (stageTimer != null) {
+                    sync = true;
+                }
+            } else if (back instanceof ImageBackground) {
                 ImageView imageView = main.getNewImageView();
-                imageView.setImage(((ImageBackground) theme.getBackground()).getImage());
+                imageView.setImage(((ImageBackground) back).getImage());
                 main.getChildren().add(0, imageView);
-            } else if (theme.getBackground() instanceof ColourBackground) {
+            } else if (back instanceof ColourBackground) {
                 ImageView imageView = main.getNewImageView();
-                imageView.setImage(Utils.getImageFromColour(((ColourBackground) theme.getBackground()).getColour()));
+                imageView.setImage(Utils.getImageFromColour(((ColourBackground) back).getColour()));
                 main.getChildren().add(0, imageView);
             } else {
                 // New background type?
             }
             timer.toFront();
         }
-        if (stageTimer != null) {
-            stageTimer.setTheme(theme);
-            stageTimer.setFill(QueleaProperties.get().getStageLyricsColor());
-            stageTimer.setEffect(null);
-            stageTimer.setFontSize(pickFontSize(theme.getFont(), stageTimer, stage));
-            stageTimer.synchronise(timer);
-            stageTimer.toFront();
+        if (sync) {
+            timer.synchronise(stageTimer);
         }
     }
 
