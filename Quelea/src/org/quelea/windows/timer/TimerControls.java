@@ -57,6 +57,7 @@ public class TimerControls extends StackPane {
     private Timer timer;
     private boolean vlc;
     private Timer stageTimer;
+    private boolean sync = false;
 
     public TimerControls() {
         Rectangle rect = new Rectangle(230, 80);
@@ -109,6 +110,7 @@ public class TimerControls extends StackPane {
         } else {
             VLCWindow.INSTANCE.load(locationParts[0], locationParts[1], stretch);
         }
+        this.sync = true;
     }
 
     public void setDisableControls(boolean disable) {
@@ -141,7 +143,9 @@ public class TimerControls extends StackPane {
             if (vlc) {
                 VLCWindow.INSTANCE.pause();
             }
-            timer.pause();
+            if (timer != null) {
+                timer.pause();
+            }
             if (stageTimer != null) {
                 stageTimer.pause();
             }
@@ -155,10 +159,15 @@ public class TimerControls extends StackPane {
                 VLCWindow.INSTANCE.setRepeat(true);
                 VLCWindow.INSTANCE.setHue(0);
                 VLCWindow.INSTANCE.play();
-                stageTimer.synchronise(timer);
-
+                if (stageTimer != null && timer != null && sync) {
+                    timer.synchronise(stageTimer);
+                    sync = false;
+                }
             }
-            if (stageTimer == null) {
+            if (stageTimer != null) {
+                stageTimer.play();
+            }
+            if (timer != null) {
                 timer.play();
             }
         }
