@@ -101,7 +101,7 @@ public class ChapterVerseParser {
             str = str.substring(0, str.length() - 1);
         }
         else if (str.endsWith("-")) {
-            str = str.substring(0, str.length() - 1);
+            str += "1000";
         }
         if (str.charAt(str.length() - 1) != '-' && str.contains("-")) {
             String toStr = str.substring(str.indexOf('-') + 1);
