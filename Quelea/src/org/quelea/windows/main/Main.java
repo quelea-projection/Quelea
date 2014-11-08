@@ -88,7 +88,7 @@ public final class Main extends Application {
                     boolean vlcOk = false;
                     try {
                         vlcOk = new NativeDiscovery().discover();
-                    } catch (Exception ex) {
+                    } catch (Throwable ex) {
                         LOGGER.log(Level.WARNING, "Exception during VLC initialisation", ex);
                     }
                     final boolean VLC_OK = vlcOk;
