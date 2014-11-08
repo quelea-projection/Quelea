@@ -85,7 +85,13 @@ public final class Main extends Application {
             @Override
             public void run() {
                 try {
-                    final boolean VLC_OK = new NativeDiscovery().discover();
+                    boolean vlcOk = false;
+                    try {
+                        vlcOk = new NativeDiscovery().discover();
+                    } catch (Exception ex) {
+                        LOGGER.log(Level.WARNING, "Exception during VLC initialisation", ex);
+                    }
+                    final boolean VLC_OK = vlcOk;
                     final boolean VLC_INIT;
                     if (VLC_OK) {
                         VLC_INIT = VLCWindow.INSTANCE.isInit();
@@ -287,7 +293,7 @@ public final class Main extends Application {
                     Platform.runLater(new Runnable() {
                         public void run() {
                             Dialog.showAndWaitError(LabelGrabber.INSTANCE.getLabel("startup.error.title"), LabelGrabber.INSTANCE.getLabel("startup.error.text").replace("$1", Utils.getDebugLog().getAbsolutePath()));
-                            System.exit(1);                            
+                            System.exit(1);
                         }
                     });
                 }
