@@ -68,17 +68,26 @@ public class VLCWindow {
     private volatile double hue = 0;
 
     private VLCWindow() {
+        
         runOnVLCThread(new Runnable() {
             @Override
             public void run() {
                 try {
-                    window = new Window(null);
-                    window.setBackground(Color.BLACK);
-                    canvas = new Canvas();
-                    canvas.setBackground(Color.BLACK);
+                    SwingUtilities.invokeAndWait(new Runnable() {
+
+                        @Override
+                        public void run() {
+                            window = new Window(null);
+                            window.setBackground(Color.BLACK);
+                            canvas = new Canvas();
+                            canvas.setBackground(Color.BLACK);
+                        }
+                    });
+
                     mediaPlayerFactory = new MediaPlayerFactory("--no-video-title-show");
                     mediaPlayer = mediaPlayerFactory.newEmbeddedMediaPlayer();
                     CanvasVideoSurface videoSurface = mediaPlayerFactory.newVideoSurface(canvas);
+
                     mediaPlayer.setVideoSurface(videoSurface);
                     mediaPlayer.addMediaPlayerEventListener(new MediaPlayerEventAdapter() {
 
@@ -90,11 +99,19 @@ public class VLCWindow {
                             }
                         }
                     });
-                    window.add(canvas);
-                    show = true;
-                    window.setVisible(true);
-                    window.toBack();
-                    init = true;
+                    SwingUtilities.invokeAndWait(new Runnable() {
+
+                        @Override
+                        public void run() {
+                            window.add(canvas);
+                            show = true;
+
+                            window.setVisible(true);
+                            window.toBack();
+                            init = true;
+                        }
+                    });
+
                     LOGGER.log(Level.INFO, "Video initialised ok");
                 } catch (Exception ex) {
                     LOGGER.log(Level.INFO, "Couldn't initialise video, almost definitely because VLC (or correct version of VLC) was not found.", ex);
