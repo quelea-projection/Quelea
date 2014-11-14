@@ -333,7 +333,6 @@ public class SongEntryWindow extends Stage {
         shouldSave = true;
         song = null;
         confirmButton.setText(LabelGrabber.INSTANCE.getLabel("new.song.button"));
-        confirmButton.setDisable(true);
         basicSongPanel.resetNewSong();
         detailedSongPanel.resetNewSong();
         translatePanel.clearSong();
@@ -342,6 +341,7 @@ public class SongEntryWindow extends Stage {
         addToSchedCBox.setSelected(false);
         addToSchedCBox.setDisable(false);
         updateDBOnHide = true;
+        confirmButton.setDisable(true);
         resetChange();
     }
 
