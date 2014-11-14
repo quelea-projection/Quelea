@@ -271,24 +271,6 @@ public class SongEntryWindow extends Stage {
     }
 
     /**
-     * Get the confirm button on the new song window.
-     * <p/>
-     * @return the confirm button.
-     */
-    public Button getConfirmButton() {
-        return confirmButton;
-    }
-
-    /**
-     * Get the cancel button on the new song window.
-     * <p/>
-     * @return the cancel button.
-     */
-    public Button getCancelButton() {
-        return cancelButton;
-    }
-
-    /**
      * Get the panel where the user enters the basic song information.
      * <p/>
      * @return the basic song panel.
