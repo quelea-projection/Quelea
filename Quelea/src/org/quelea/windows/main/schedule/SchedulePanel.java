@@ -19,6 +19,7 @@ package org.quelea.windows.main.schedule;
 
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.ListChangeListener;
@@ -87,8 +88,19 @@ public class SchedulePanel extends BorderPane {
         themePopup.focusedProperty().addListener(new ChangeListener<Boolean>() {
             @Override
             public void changed(ObservableValue<? extends Boolean> ov, Boolean t, Boolean t1) {
-                if(t && !t1) {
-                    themePopup.hide();
+                if (t && !t1) {
+                    if (Utils.isMac()) {
+                        Platform.runLater(new Runnable() {
+
+                            @Override
+                            public void run() {
+                                themePopup.hide();
+                            }
+                        });
+                        
+                    } else {
+                        themePopup.hide();
+                    }
                 }
             }
         });
@@ -96,15 +108,15 @@ public class SchedulePanel extends BorderPane {
         scheduleThemeNode = new ScheduleThemeNode(new ScheduleThemeNode.UpdateThemeCallback() {
             @Override
             public void updateTheme(ThemeDTO theme) {
-                if(scheduleList == null) {
+                if (scheduleList == null) {
                     LOGGER.log(Level.WARNING, "Null schedule, not setting theme");
                     return;
                 }
-                for(int i = 0; i < scheduleList.itemsProperty().get().size(); i++) {
+                for (int i = 0; i < scheduleList.itemsProperty().get().size(); i++) {
                     Displayable displayable = scheduleList.itemsProperty().get().get(i);
-                    if(displayable instanceof TextDisplayable) {
+                    if (displayable instanceof TextDisplayable) {
                         TextDisplayable textDisplayable = (TextDisplayable) displayable;
-                        for(TextSection section : textDisplayable.getSections()) {
+                        for (TextSection section : textDisplayable.getSections()) {
                             section.setTempTheme(theme);
                         }
                     }
@@ -117,10 +129,21 @@ public class SchedulePanel extends BorderPane {
         themeButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent t) {
-                if(themePopup.isShowing()) {
-                    themePopup.hide();
-                }
-                else {
+                if (themePopup.isShowing()) {
+                    //fixes a JVM crash
+                    if (Utils.isMac()) {
+                        Platform.runLater(new Runnable() {
+
+                            @Override
+                            public void run() {
+                                themePopup.hide();
+                            }
+                        });
+                    } else {
+                        themePopup.hide();
+                    }
+
+                } else {
                     themePopup.setX(themeButton.localToScene(0, 0).getX() + QueleaApp.get().getMainWindow().getX());
                     themePopup.setY(themeButton.localToScene(0, 0).getY() + 45 + QueleaApp.get().getMainWindow().getY());
                     themePopup.show();
@@ -183,14 +206,13 @@ public class SchedulePanel extends BorderPane {
         setLeft(toolbar);
         setCenter(scheduleList);
     }
-    
+
     public void updateScheduleDisplay() {
-        if(scheduleList.getItems().isEmpty()) {
+        if (scheduleList.getItems().isEmpty()) {
             removeButton.setDisable(true);
             upButton.setDisable(true);
             downButton.setDisable(true);
-        }
-        else {
+        } else {
             removeButton.setDisable(false);
             upButton.setDisable(false);
             downButton.setDisable(false);
@@ -210,5 +232,5 @@ public class SchedulePanel extends BorderPane {
     public Button getThemeButton() {
         return themeButton;
     }
-    
+
 }
