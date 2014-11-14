@@ -422,7 +422,8 @@ public class SongEntryWindow extends Stage {
      * otherwise.
      */
     private boolean attributesOk() {
-        return !(getBasicSongPanel().getLyricsField().getText().trim().isEmpty()
-                || getBasicSongPanel().getTitleField().getText().trim().isEmpty());
+        return !getBasicSongPanel().getTitleField().getText().trim().isEmpty(); //Allow empty lyrics for now
+//        return !(getBasicSongPanel().getLyricsField().getText().trim().isEmpty()
+//                || getBasicSongPanel().getTitleField().getText().trim().isEmpty());
     }
 }
