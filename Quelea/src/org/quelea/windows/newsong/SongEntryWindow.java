@@ -35,7 +35,6 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
-import javafx.stage.StageStyle;
 import javafx.stage.WindowEvent;
 import org.javafx.dialog.Dialog;
 import org.quelea.data.ThemeDTO;
@@ -272,24 +271,6 @@ public class SongEntryWindow extends Stage {
     }
 
     /**
-     * Get the confirm button on the new song window.
-     * <p/>
-     * @return the confirm button.
-     */
-    public Button getConfirmButton() {
-        return confirmButton;
-    }
-
-    /**
-     * Get the cancel button on the new song window.
-     * <p/>
-     * @return the cancel button.
-     */
-    public Button getCancelButton() {
-        return cancelButton;
-    }
-
-    /**
      * Get the panel where the user enters the basic song information.
      * <p/>
      * @return the basic song panel.
@@ -333,7 +314,6 @@ public class SongEntryWindow extends Stage {
         shouldSave = true;
         song = null;
         confirmButton.setText(LabelGrabber.INSTANCE.getLabel("new.song.button"));
-        confirmButton.setDisable(true);
         basicSongPanel.resetNewSong();
         detailedSongPanel.resetNewSong();
         translatePanel.clearSong();
@@ -342,6 +322,7 @@ public class SongEntryWindow extends Stage {
         addToSchedCBox.setSelected(false);
         addToSchedCBox.setDisable(false);
         updateDBOnHide = true;
+        confirmButton.setDisable(true);
         resetChange();
     }
 
@@ -441,7 +422,8 @@ public class SongEntryWindow extends Stage {
      * otherwise.
      */
     private boolean attributesOk() {
-        return !(getBasicSongPanel().getLyricsField().getText().trim().isEmpty()
-                || getBasicSongPanel().getTitleField().getText().trim().isEmpty());
+        return !getBasicSongPanel().getTitleField().getText().trim().isEmpty(); //Allow empty lyrics for now
+//        return !(getBasicSongPanel().getLyricsField().getText().trim().isEmpty()
+//                || getBasicSongPanel().getTitleField().getText().trim().isEmpty());
     }
 }
