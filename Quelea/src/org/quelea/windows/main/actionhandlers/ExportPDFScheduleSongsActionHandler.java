@@ -39,6 +39,7 @@ import org.quelea.services.importexport.PDFExporter;
 import static org.quelea.services.importexport.PDFExporter.LOGGER;
 import org.quelea.services.languages.LabelGrabber;
 import org.quelea.services.utils.FileFilters;
+import org.quelea.services.utils.QueleaProperties;
 import org.quelea.windows.main.QueleaApp;
 import org.quelea.windows.main.StatusPanel;
 
@@ -56,13 +57,13 @@ public class ExportPDFScheduleSongsActionHandler implements EventHandler<ActionE
     public void handle(ActionEvent t) {
         Schedule schedule = QueleaApp.get().getMainWindow().getMainPanel().getSchedulePanel().getScheduleList().getSchedule();
         FileChooser fileChooser = new FileChooser();
-        if (QueleaApp.get().getLastDirectory() != null) {
-            fileChooser.setInitialDirectory(QueleaApp.get().getLastDirectory());
+        if (QueleaProperties.get().getLastDirectory() != null) {
+            fileChooser.setInitialDirectory(QueleaProperties.get().getLastDirectory());
         }
         fileChooser.getExtensionFilters().add(FileFilters.ZIP);
         File file = fileChooser.showSaveDialog(QueleaApp.get().getMainWindow());
         if (file != null) {
-            QueleaApp.get().setLastDirectory(file.getParentFile());
+            QueleaProperties.get().setLastDirectory(file.getParentFile());
             if (!file.getName().toLowerCase().endsWith(".zip")) {
                 file = new File(file.getAbsolutePath() + ".zip");
             }
