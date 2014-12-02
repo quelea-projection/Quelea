@@ -90,13 +90,13 @@ public class OptionsBiblePanel extends GridPane implements PropertyPanel, BibleC
             @Override
             public void handle(javafx.event.ActionEvent t) {
                 FileChooser chooser = new FileChooser();
-                if (QueleaApp.get().getLastDirectory() != null) {
-                    chooser.setInitialDirectory(QueleaApp.get().getLastDirectory());
+                if (QueleaProperties.get().getLastDirectory() != null) {
+                    chooser.setInitialDirectory(QueleaProperties.get().getLastDirectory());
                 }
                 chooser.getExtensionFilters().add(FileFilters.XML_BIBLE);
                 File file = chooser.showOpenDialog(QueleaApp.get().getMainWindow());
                 if (file != null) {
-                    QueleaApp.get().setLastDirectory(file.getParentFile());
+                    QueleaProperties.get().setLastDirectory(file.getParentFile());
                     try {
                         Utils.copyFile(file, new File(QueleaProperties.get().getBibleDir(), file.getName()));
                         BibleManager.get().refreshAndLoad();

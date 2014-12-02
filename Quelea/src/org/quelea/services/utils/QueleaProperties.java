@@ -386,7 +386,74 @@ public final class QueleaProperties extends Properties {
     }
 
     /**
-     * Determine whether to auto-play videos after they have been set in live view.
+     * Get the last directory used in the general file chooser.
+     *
+     * @return the last directory used in the general file chooser.
+     */
+    public File getLastDirectory() {
+        String path = getProperty("last.directory");
+        if (path == null) {
+            return null;
+        }
+        return new File(path);
+    }
+
+    /**
+     * Set the last directory used in the general file chooser.
+     *
+     * @param directory the last directory used in the general file chooser.
+     */
+    public void setLastDirectory(File directory) {
+        setProperty("last.directory", directory.getAbsolutePath());
+    }
+
+    /**
+     * Get the last directory used in the schedule file chooser.
+     *
+     * @return the last directory used in the schedule file chooser.
+     */
+    public File getLastScheduleFileDirectory() {
+        String path = getProperty("last.schedulefile.directory");
+        if (path == null) {
+            return null;
+        }
+        return new File(path);
+    }
+
+    /**
+     * Set the last directory used in the schedule file chooser.
+     *
+     * @param directory the last directory used in the schedule file chooser.
+     */
+    public void setLastScheduleFileDirectory(File directory) {
+        setProperty("last.schedulefile.directory", directory.getAbsolutePath());
+    }
+
+    /**
+     * Get the last directory used in the video file chooser.
+     *
+     * @return the last directory used in the video file chooser.
+     */
+    public File getLastVideoDirectory() {
+        String path = getProperty("last.video.directory");
+        if (path == null) {
+            return null;
+        }
+        return new File(path);
+    }
+
+    /**
+     * Set the last directory used in the video file chooser.
+     *
+     * @param directory the last directory used in the video file chooser.
+     */
+    public void setLastVideoDirectory(File directory) {
+        setProperty("last.video.directory", directory.getAbsolutePath());
+    }
+
+    /**
+     * Determine whether to auto-play videos after they have been set in live
+     * view.
      *
      * @return true if auto play is enabled, false otherwise.
      */

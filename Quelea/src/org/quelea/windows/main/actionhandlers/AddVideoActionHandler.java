@@ -24,6 +24,7 @@ import javafx.event.EventHandler;
 import javafx.stage.FileChooser;
 import org.quelea.data.displayable.VideoDisplayable;
 import org.quelea.services.utils.FileFilters;
+import org.quelea.services.utils.QueleaProperties;
 import org.quelea.windows.main.QueleaApp;
 
 /**
@@ -35,13 +36,13 @@ public class AddVideoActionHandler implements EventHandler<ActionEvent> {
     @Override
     public void handle(ActionEvent t) {
         FileChooser fileChooser = new FileChooser();
-        if (QueleaApp.get().getLastVideoDirectory() != null) {
-            fileChooser.setInitialDirectory(QueleaApp.get().getLastVideoDirectory());
+        if (QueleaProperties.get().getLastVideoDirectory() != null) {
+            fileChooser.setInitialDirectory(QueleaProperties.get().getLastVideoDirectory());
         }
         fileChooser.getExtensionFilters().add(FileFilters.VIDEOS);
         File file = fileChooser.showOpenDialog(QueleaApp.get().getMainWindow());
         if(file != null) {
-            QueleaApp.get().setLastVideoDirectory(file.getParentFile());
+            QueleaProperties.get().setLastVideoDirectory(file.getParentFile());
             VideoDisplayable displayable = new VideoDisplayable(file.getAbsolutePath());
             QueleaApp.get().getMainWindow().getMainPanel().getSchedulePanel().getScheduleList().add(displayable);
         }
