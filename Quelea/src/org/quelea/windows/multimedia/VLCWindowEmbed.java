@@ -84,7 +84,7 @@ public class VLCWindowEmbed extends VLCWindow {
                         }
                     });
 
-                    mediaPlayerFactory = new MediaPlayerFactory("--no-video-title-show", "--vout=macosx");
+                    mediaPlayerFactory = new MediaPlayerFactory("--no-video-title-show");
                     mediaPlayer = mediaPlayerFactory.newEmbeddedMediaPlayer();
                     CanvasVideoSurface videoSurface = mediaPlayerFactory.newVideoSurface(canvas);
 
