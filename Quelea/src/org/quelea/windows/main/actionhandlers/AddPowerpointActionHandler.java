@@ -32,6 +32,7 @@ import org.quelea.data.displayable.PresentationDisplayable;
 import org.quelea.services.languages.LabelGrabber;
 import org.quelea.services.utils.FileFilters;
 import org.quelea.services.utils.LoggerUtils;
+import org.quelea.services.utils.QueleaProperties;
 import org.quelea.services.utils.Utils;
 import org.quelea.windows.main.QueleaApp;
 import org.quelea.windows.main.StatusPanel;
@@ -53,8 +54,8 @@ public class AddPowerpointActionHandler implements EventHandler<ActionEvent> {
     @Override
     public void handle(ActionEvent t) {
         FileChooser chooser = new FileChooser();
-        if (QueleaApp.get().getLastDirectory() != null) {
-            chooser.setInitialDirectory(QueleaApp.get().getLastDirectory());
+        if (QueleaProperties.get().getLastDirectory() != null) {
+            chooser.setInitialDirectory(QueleaProperties.get().getLastDirectory());
         }
         chooser.getExtensionFilters().add(FileFilters.POWERPOINT);
         final List<File> files = chooser.showOpenMultipleDialog(QueleaApp.get().getMainWindow());
@@ -90,7 +91,7 @@ public class AddPowerpointActionHandler implements EventHandler<ActionEvent> {
 
                                     @Override
                                     public void run() {
-                                        QueleaApp.get().setLastDirectory(file.getParentFile());
+                                        QueleaProperties.get().setLastDirectory(file.getParentFile());
                                         QueleaApp.get().getMainWindow().getMainPanel().getSchedulePanel().getScheduleList().add(displayable);
                                     }
                                 });
