@@ -38,6 +38,7 @@ public class VideoDisplayable implements MultimediaDisplayable, Serializable {
 
     private final String location;
     private YoutubeInfo youtubeinfo;
+    private boolean youtubeFlag;
 
     /**
      * Create a new video displayable.
@@ -46,6 +47,7 @@ public class VideoDisplayable implements MultimediaDisplayable, Serializable {
      */
     public VideoDisplayable(String location) {
         this.location = location;
+        youtubeFlag = false;
     }
 
     /**
@@ -56,6 +58,7 @@ public class VideoDisplayable implements MultimediaDisplayable, Serializable {
     public VideoDisplayable(String location, YoutubeInfo youtubeinfo) {
         this.location = location;
         this.youtubeinfo = youtubeinfo;
+        youtubeFlag = true;
         if (location.toLowerCase().startsWith("https")) {
             location = location.replaceFirst("https", "http");
         }
@@ -64,6 +67,10 @@ public class VideoDisplayable implements MultimediaDisplayable, Serializable {
         }
     }
 
+    public boolean isYoutubeFlag() {
+        return youtubeFlag;
+    }
+    
     /**
      * Get the displayable location.
      * <p>
@@ -155,7 +162,7 @@ public class VideoDisplayable implements MultimediaDisplayable, Serializable {
     @Override
     public Collection<File> getResources() {
         List<File> files = new ArrayList<>();
-        if (!location.startsWith("http")) {
+        if (!youtubeFlag) {
             files.add(new File(location));
         }
         return files;

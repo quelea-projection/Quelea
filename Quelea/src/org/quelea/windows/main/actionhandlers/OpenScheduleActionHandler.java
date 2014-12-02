@@ -21,6 +21,7 @@ package org.quelea.windows.main.actionhandlers;
 import java.io.File;
 import javafx.stage.FileChooser;
 import org.quelea.services.utils.FileFilters;
+import org.quelea.services.utils.QueleaProperties;
 import org.quelea.windows.main.QueleaApp;
 
 /**
@@ -33,13 +34,13 @@ public class OpenScheduleActionHandler extends ClearingEventHandler {
     public void handle(javafx.event.ActionEvent t) {
         if(confirmClear()) {
             FileChooser chooser = new FileChooser();
-            if (QueleaApp.get().getLastScheduleFileDirectory() != null) {
-                chooser.setInitialDirectory(QueleaApp.get().getLastScheduleFileDirectory());
+            if (QueleaProperties.get().getLastScheduleFileDirectory() != null) {
+                chooser.setInitialDirectory(QueleaProperties.get().getLastScheduleFileDirectory());
             }
             chooser.getExtensionFilters().add(FileFilters.SCHEDULE);
             File file = chooser.showOpenDialog(QueleaApp.get().getMainWindow());
             if(file!=null) {
-                QueleaApp.get().setLastScheduleFileDirectory(file.getParentFile());
+                QueleaProperties.get().setLastScheduleFileDirectory(file.getParentFile());
                 QueleaApp.get().openSchedule(file);
             }
         }

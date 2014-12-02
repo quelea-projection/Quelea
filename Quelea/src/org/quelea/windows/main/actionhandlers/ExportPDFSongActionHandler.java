@@ -31,6 +31,7 @@ import static org.quelea.services.importexport.OpenLyricsExporter.LOGGER;
 import org.quelea.services.languages.LabelGrabber;
 import org.quelea.services.print.SongPDFPrinter;
 import org.quelea.services.utils.FileFilters;
+import org.quelea.services.utils.QueleaProperties;
 import org.quelea.windows.library.LibrarySongList;
 import org.quelea.windows.main.MainWindow;
 import org.quelea.windows.main.QueleaApp;
@@ -54,13 +55,13 @@ public class ExportPDFSongActionHandler implements EventHandler<ActionEvent> {
         }
         try {
             FileChooser fileChooser = new FileChooser();
-            if (QueleaApp.get().getLastDirectory() != null) {
-                fileChooser.setInitialDirectory(QueleaApp.get().getLastDirectory());
+            if (QueleaProperties.get().getLastDirectory() != null) {
+                fileChooser.setInitialDirectory(QueleaProperties.get().getLastDirectory());
             }
             fileChooser.getExtensionFilters().add(FileFilters.PDF_GENERIC);
             File file = fileChooser.showSaveDialog(QueleaApp.get().getMainWindow());
             if (file != null) {
-                QueleaApp.get().setLastDirectory(file.getParentFile());
+                QueleaProperties.get().setLastDirectory(file.getParentFile());
                 if (song.hasChords()) {
                     Dialog.buildConfirmation(LabelGrabber.INSTANCE.getLabel("printing.options.text"), LabelGrabber.INSTANCE.getLabel("print.chords.question")).addYesButton(new EventHandler<ActionEvent>() {
 
