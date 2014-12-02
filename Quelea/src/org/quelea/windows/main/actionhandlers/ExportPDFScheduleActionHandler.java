@@ -29,6 +29,7 @@ import org.quelea.data.Schedule;
 import static org.quelea.services.importexport.OpenLyricsExporter.LOGGER;
 import org.quelea.services.print.SchedulePDFPrinter;
 import org.quelea.services.utils.FileFilters;
+import org.quelea.services.utils.QueleaProperties;
 import org.quelea.windows.main.QueleaApp;
 
 /**
@@ -43,13 +44,13 @@ public class ExportPDFScheduleActionHandler implements EventHandler<ActionEvent>
         Schedule schedule = QueleaApp.get().getMainWindow().getMainPanel().getSchedulePanel().getScheduleList().getSchedule();
         try {
             FileChooser fileChooser = new FileChooser();
-            if (QueleaApp.get().getLastDirectory() != null) {
-                fileChooser.setInitialDirectory(QueleaApp.get().getLastDirectory());
+            if (QueleaProperties.get().getLastDirectory() != null) {
+                fileChooser.setInitialDirectory(QueleaProperties.get().getLastDirectory());
             }
             fileChooser.getExtensionFilters().add(FileFilters.PDF_GENERIC);
             File file = fileChooser.showSaveDialog(QueleaApp.get().getMainWindow());
             if (file != null) {
-                QueleaApp.get().setLastDirectory(file.getParentFile());
+                QueleaProperties.get().setLastDirectory(file.getParentFile());
                 if (!file.getName().toLowerCase().endsWith(".pdf")) {
                     file = new File(file.getAbsolutePath() + ".pdf");
                 }

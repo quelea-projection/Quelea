@@ -65,8 +65,8 @@ public class VideoButton extends Button implements Cancellable {
     public VideoButton(final TextField videoLocationField, final DisplayCanvas canvas) {
         super("..");
         fileChooser = new FileChooser();
-        if (QueleaApp.get().getLastDirectory() != null) {
-            fileChooser.setInitialDirectory(QueleaApp.get().getLastDirectory());
+        if (QueleaProperties.get().getLastDirectory() != null) {
+            fileChooser.setInitialDirectory(QueleaProperties.get().getLastDirectory());
         }
         final File vidDir = QueleaProperties.get().getVidDir();
         fileChooser.setInitialDirectory(vidDir);
@@ -76,7 +76,7 @@ public class VideoButton extends Button implements Cancellable {
             public void handle(javafx.event.ActionEvent t) {
                 File selectedFile = fileChooser.showOpenDialog(QueleaApp.get().getMainWindow());
                 if (selectedFile != null) {
-                    QueleaApp.get().setLastDirectory(selectedFile.getParentFile());
+                    QueleaProperties.get().setLastDirectory(selectedFile.getParentFile());
                     copyStage.showAndAssociate(VideoButton.this);
                     copyThread = new Thread() {
                         public void run() {

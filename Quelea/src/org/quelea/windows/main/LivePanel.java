@@ -114,14 +114,14 @@ public class LivePanel extends LivePreviewPanel {
             public void handle(MouseEvent t) {
                 if(t.getButton().equals(MouseButton.SECONDARY)) {
                     FileChooser chooser = new FileChooser();
-                    if (QueleaApp.get().getLastDirectory() != null) {
-                        chooser.setInitialDirectory(QueleaApp.get().getLastDirectory());
+                    if (QueleaProperties.get().getLastDirectory() != null) {
+                        chooser.setInitialDirectory(QueleaProperties.get().getLastDirectory());
                     }
                     chooser.getExtensionFilters().add(FileFilters.IMAGES);
                     chooser.setInitialDirectory(QueleaProperties.get().getImageDir().getAbsoluteFile());
                     File file = chooser.showOpenDialog(QueleaApp.get().getMainWindow());
                     if(file != null) {
-                        QueleaApp.get().setLastDirectory(file.getParentFile());
+                        QueleaProperties.get().setLastDirectory(file.getParentFile());
                         QueleaProperties.get().setLogoImage(file.getAbsolutePath());
                         updateLogo();
                     }

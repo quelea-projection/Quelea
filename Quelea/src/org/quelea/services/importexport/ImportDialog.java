@@ -53,6 +53,7 @@ import org.javafx.dialog.Dialog;
 import org.quelea.data.displayable.SongDisplayable;
 import org.quelea.services.languages.LabelGrabber;
 import org.quelea.services.utils.LoggerUtils;
+import org.quelea.services.utils.QueleaProperties;
 import org.quelea.services.utils.SongDuplicateChecker;
 import org.quelea.services.utils.Utils;
 import org.quelea.windows.main.QueleaApp;
@@ -95,8 +96,8 @@ public abstract class ImportDialog extends Stage implements PropertyChangeListen
         importedDialog = new SelectImportedSongsDialog();
         VBox mainPane = new VBox();
         final FileChooser locationChooser = new FileChooser();
-        if (QueleaApp.get().getLastDirectory() != null) {
-            locationChooser.setInitialDirectory(QueleaApp.get().getLastDirectory());
+        if (QueleaProperties.get().getLastDirectory() != null) {
+            locationChooser.setInitialDirectory(QueleaProperties.get().getLastDirectory());
         }
         locationChooser.getExtensionFilters().add(fileFilter);
         final DirectoryChooser dirChooser = new DirectoryChooser();
@@ -141,7 +142,7 @@ public abstract class ImportDialog extends Stage implements PropertyChangeListen
                             }
                         }
                         if (!files.isEmpty()) {
-                            QueleaApp.get().setLastDirectory(files.get(0).getParentFile());
+                            QueleaProperties.get().setLastDirectory(files.get(0).getParentFile());
                             StringBuilder locationContent = new StringBuilder();
                             for (int i = 0; i < files.size(); i++) {
                                 locationContent.append(files.get(0).getAbsolutePath());

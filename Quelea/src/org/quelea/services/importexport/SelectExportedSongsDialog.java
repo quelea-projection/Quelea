@@ -26,6 +26,7 @@ import javafx.stage.FileChooser;
 import org.javafx.dialog.Dialog;
 import org.quelea.data.displayable.SongDisplayable;
 import org.quelea.services.languages.LabelGrabber;
+import org.quelea.services.utils.QueleaProperties;
 import org.quelea.windows.main.QueleaApp;
 
 /**
@@ -54,13 +55,13 @@ public class SelectExportedSongsDialog extends SelectSongsDialog {
             public void handle(javafx.event.ActionEvent t) {
                 final String extension = exporter.getStrExtension();
                 FileChooser chooser = exporter.getChooser();
-                if (QueleaApp.get().getLastDirectory() != null) {
-                    chooser.setInitialDirectory(QueleaApp.get().getLastDirectory());
+                if (QueleaProperties.get().getLastDirectory() != null) {
+                    chooser.setInitialDirectory(QueleaProperties.get().getLastDirectory());
                 }
                 File file = chooser.showSaveDialog(SelectExportedSongsDialog.this);
                 if(file != null) {
-                    QueleaApp.get().setLastDirectory(file.getParentFile());
-                    QueleaApp.get().setLastDirectory(file.getParentFile());
+                    QueleaProperties.get().setLastDirectory(file.getParentFile());
+                    QueleaProperties.get().setLastDirectory(file.getParentFile());
                     if(!file.getName().endsWith("." + extension)) {
                         file = new File(file.getAbsoluteFile() + "." + extension);
                     }
