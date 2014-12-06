@@ -281,8 +281,11 @@ public class VLCWindowDirect extends VLCWindow {
                 if (!canvasScaled) {
                     canvasScaled = scaleCanvas();
                 }
+                try{
                 pixelWriter.setPixels(0, 0, bufferFormat.getWidth(), bufferFormat.getHeight(), pixelFormat, intBuffer, bufferFormat.getWidth() * 4, WIDTH);
-
+                }catch(Exception ex){
+                    LOGGER.log(Level.WARNING, "Pixel Writer Problem", ex);
+                }
             }
         };
 
