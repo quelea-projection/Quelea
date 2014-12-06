@@ -51,6 +51,7 @@ import org.quelea.data.displayable.TimerDisplayable;
 import org.quelea.data.displayable.VideoDisplayable;
 import org.quelea.services.languages.LabelGrabber;
 import org.quelea.services.utils.LoggerUtils;
+import org.quelea.services.utils.QueleaProperties;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -139,24 +140,26 @@ public class Schedule implements Iterable<Displayable> {
                 zos.putNextEntry(new ZipEntry("schedule.xml"));
                 zos.write(getXML().getBytes("UTF8"));
                 zos.closeEntry();
-                Set<String> entries = new HashSet<>();
-                for (Displayable displayable : displayables) {
-                    for (File displayableFile : displayable.getResources()) {
-                        String base = ".";
-                        String path = displayableFile.getAbsolutePath();
-                        String relative = new File(base).toURI().relativize(new File(path).toURI()).getPath();
-                        String zipPath = "resources/" + relative;
-                        if (!entries.contains(zipPath)) {
-                            entries.add(zipPath);
-                            ZipEntry entry = new ZipEntry(zipPath);
-                            zos.putNextEntry(entry);
-                            FileInputStream fi = new FileInputStream(displayableFile);
-                            try (BufferedInputStream origin = new BufferedInputStream(fi, BUFFER)) {
-                                int count;
-                                while ((count = origin.read(data, 0, BUFFER)) != -1) {
-                                    zos.write(data, 0, count);
+                if (QueleaProperties.get().getEmbedMediaInScheduleFile()) {
+                    Set<String> entries = new HashSet<>();
+                    for (Displayable displayable : displayables) {
+                        for (File displayableFile : displayable.getResources()) {
+                            String base = ".";
+                            String path = displayableFile.getAbsolutePath();
+                            String relative = new File(base).toURI().relativize(new File(path).toURI()).getPath();
+                            String zipPath = "resources/" + relative;
+                            if (!entries.contains(zipPath)) {
+                                entries.add(zipPath);
+                                ZipEntry entry = new ZipEntry(zipPath);
+                                zos.putNextEntry(entry);
+                                FileInputStream fi = new FileInputStream(displayableFile);
+                                try (BufferedInputStream origin = new BufferedInputStream(fi, BUFFER)) {
+                                    int count;
+                                    while ((count = origin.read(data, 0, BUFFER)) != -1) {
+                                        zos.write(data, 0, count);
+                                    }
+                                    zos.closeEntry();
                                 }
-                                zos.closeEntry();
                             }
                         }
                     }
@@ -308,7 +311,7 @@ public class Schedule implements Iterable<Displayable> {
                     newSchedule.add(AudioDisplayable.parseXML(node));
                 } else if (name.equalsIgnoreCase("filepresentation")) {
                     newSchedule.add(PresentationDisplayable.parseXML(node));
-                }else if (name.equalsIgnoreCase("timer")) {
+                } else if (name.equalsIgnoreCase("timer")) {
                     newSchedule.add(TimerDisplayable.parseXML(node));
                 }
             }
