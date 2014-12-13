@@ -20,6 +20,7 @@ package org.quelea.server;
 import java.util.ArrayList;
 import javafx.application.Platform;
 import javafx.scene.layout.Background;
+import org.quelea.data.displayable.Displayable;
 import org.quelea.services.languages.LabelGrabber;
 import org.quelea.services.utils.QueleaProperties;
 import org.quelea.windows.main.MainPanel;
@@ -183,5 +184,28 @@ public class RCHandler {
         } else {
             VLCWindow.INSTANCE.play();
         }
+    }
+
+    public static String schedule() {
+        Displayable preview = QueleaApp.get().getMainWindow().getMainPanel().getPreviewPanel().getDisplayable();
+        Displayable live = QueleaApp.get().getMainWindow().getMainPanel().getLivePanel().getDisplayable();
+
+        String display = "";
+        for (int i = 0; i < QueleaApp.get().getMainWindow().getMainPanel().getSchedulePanel().getScheduleList().getItems().size(); i++) {
+            Displayable d = ((Displayable) QueleaApp.get().getMainWindow().getMainPanel().getSchedulePanel().getScheduleList().getItems().get(i));
+            if (d.equals(preview)) {
+                display += "<i>";
+            } else if (d.equals(live)) {
+                display += "<b>";
+            }
+            display += d.getPreviewText().replace("\n", " - ");
+            if (d.equals(preview)) {
+                display += "</i>";
+            } else if (d.equals(live)) {
+                display += "</b>";
+            }
+            display += "<br/>";
+        }
+        return display;
     }
 }

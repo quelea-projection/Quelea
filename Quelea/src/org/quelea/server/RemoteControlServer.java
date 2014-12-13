@@ -85,6 +85,7 @@ public class RemoteControlServer {
         server.createContext("/play", new PlayHandler());
         server.createContext("/lyrics", new LyricsHandler());
         server.createContext("/status", new StatusHandler());
+        server.createContext("/schedule", new ScheduleHandler());
         server.createContext("/s", new SectionHandler());
         rootcontext.getFilters().add(new ParameterFilter());
         server.setExecutor(null);
@@ -118,6 +119,22 @@ public class RemoteControlServer {
      */
     public boolean isRunning() {
         return running;
+    }
+
+    /**
+     * Return a basically formatted schedule list with bold and italics
+     * <p/>
+     */
+    private class ScheduleHandler implements HttpHandler {
+
+        @Override
+        public void handle(HttpExchange he) throws IOException {
+            byte[] bytes = RCHandler.schedule().getBytes(Charset.forName("UTF-8"));
+            he.sendResponseHeaders(200, bytes.length);
+            try (OutputStream os = he.getResponseBody()) {
+                os.write(bytes);
+            }
+        }
     }
 
     //Handles logo display
