@@ -526,3 +526,4 @@ timer.text.prompt=Use # to position timer, e.g. "Service begins in #" will displ
 countdown.label=Countdown Timer
 timer.theme.label=Theme settings
 timer.theme.button=Change Theme
+embed.media.in.schedule=Embed media in schedule file

@@ -350,10 +350,9 @@ public final class QueleaProperties extends Properties {
      * @return the position at which to display the notices.
      */
     public NoticePosition getNoticePosition() {
-        if(getProperty("notice.position", "Bottom").equalsIgnoreCase("top")) {
+        if (getProperty("notice.position", "Bottom").equalsIgnoreCase("top")) {
             return NoticePosition.TOP;
-        }
-        else {
+        } else {
             return NoticePosition.BOTTOM;
         }
     }
@@ -421,6 +420,25 @@ public final class QueleaProperties extends Properties {
     }
 
     /**
+     * Sets whether the schedule should embed videos when saving
+     *
+     * @param embed true if should embed, false otherwise
+     */
+    public void setEmbedMediaInScheduleFile(boolean embed) {
+        setProperty("schedule.embed.media", embed + "");
+    }
+
+    /**
+     * Gets whether the schedule should embed videos when saving
+     *
+     * @return true if should embed, false otherwise
+     */
+    public boolean getEmbedMediaInScheduleFile() {
+        boolean ret = Boolean.parseBoolean(getProperty("schedule.embed.media", "true"));
+        return ret;
+    }
+
+    /**
      * Set the last directory used in the schedule file chooser.
      *
      * @param directory the last directory used in the schedule file chooser.
@@ -462,8 +480,7 @@ public final class QueleaProperties extends Properties {
     }
 
     /**
-     * Set whether to auto-play videos after they have been set in live
-     * view.
+     * Set whether to auto-play videos after they have been set in live view.
      *
      * @param val true to enable auto play, false otherwise.
      */
@@ -573,7 +590,7 @@ public final class QueleaProperties extends Properties {
     public String getFacebookPageLocation() {
         return getProperty("facebook.page", "http://www.facebook.com/quelea.projection");
     }
-    
+
     /**
      * Get the location of Quelea's Facebook page.
      * <p/>
@@ -1304,9 +1321,10 @@ public final class QueleaProperties extends Properties {
                 + "saviour,Saviour,savior,Savior,majesty,Majesty,alpha,Alpha,omega,Omega") //Yeah.. default testing properties.
                 .trim().split(",");
     }
-    
+
     /**
-     * Determine whether to advance the scheudle item when the current item is sent live.
+     * Determine whether to advance the scheudle item when the current item is
+     * sent live.
      * <p/>
      * @return true if we should auto-advance, false otherwise.
      */
@@ -1315,8 +1333,8 @@ public final class QueleaProperties extends Properties {
     }
 
     /**
-     * Set whether to advance the scheudle item when the current item is
-     * sent live.
+     * Set whether to advance the scheudle item when the current item is sent
+     * live.
      * <p/>
      * @param val true if we should auto-advance, false otherwise.
      */
@@ -1324,9 +1342,10 @@ public final class QueleaProperties extends Properties {
         setProperty("advance.on.live", Boolean.toString(val));
         write();
     }
-    
+
     /**
-     * Determine whether to preview the scheudle item when the background image has been updated.
+     * Determine whether to preview the scheudle item when the background image
+     * has been updated.
      * <p/>
      * @return true if we should preview, false otherwise.
      */
