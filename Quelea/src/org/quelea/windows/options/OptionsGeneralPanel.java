@@ -54,6 +54,7 @@ public class OptionsGeneralPanel extends GridPane implements PropertyPanel {
     private final CheckBox oneLineModeCheckBox;
     private final CheckBox autoTranslateCheckBox;
     private final CheckBox clearLiveOnRemoveCheckBox;
+    private final CheckBox embedMediaInScheduleCheckBox;
     private final CheckBox useOOCheckBox;
     private final CheckBox autoPlayVidCheckBox;
     private final CheckBox advanceOnLiveCheckBox;
@@ -223,6 +224,15 @@ public class OptionsGeneralPanel extends GridPane implements PropertyPanel {
         getChildren().add(clearLiveOnRemoveCheckBox);
         rows++;
 
+        Label embedMediaLabel = new Label(LabelGrabber.INSTANCE.getLabel("embed.media.in.schedule") + " ");
+        GridPane.setConstraints(embedMediaLabel, 1, rows);
+        getChildren().add(embedMediaLabel);
+        embedMediaInScheduleCheckBox = new CheckBox();
+        startupLabel.setLabelFor(embedMediaInScheduleCheckBox);
+        GridPane.setConstraints(embedMediaInScheduleCheckBox, 2, rows);
+        getChildren().add(embedMediaInScheduleCheckBox);
+        rows++;
+        
         Label showSmallSongTextLabel = new Label(LabelGrabber.INSTANCE.getLabel("show.small.song.text.label"));
         GridPane.setConstraints(showSmallSongTextLabel, 1, rows);
         getChildren().add(showSmallSongTextLabel);
@@ -393,6 +403,7 @@ public class OptionsGeneralPanel extends GridPane implements PropertyPanel {
         advanceOnLiveCheckBox.setSelected(props.getAdvanceOnLive());
         previewOnImageChangeCheckBox.setSelected(props.getPreviewOnImageUpdate());
         clearLiveOnRemoveCheckBox.setSelected(props.getClearLiveOnRemove());
+        embedMediaInScheduleCheckBox.setSelected(props.getEmbedMediaInScheduleFile());
         maxCharsSlider.setValue(props.getMaxChars());
 //        minLinesSlider.setValue(props.getMinLines());
         showSmallSongTextBox.setSelected(props.getSmallSongTextShow());
@@ -423,6 +434,8 @@ public class OptionsGeneralPanel extends GridPane implements PropertyPanel {
         props.setUseUniformFontSize(useUniformFontSize);
         boolean clearLive = clearLiveOnRemoveCheckBox.isSelected();
         props.setClearLiveOnRemove(clearLive);
+        boolean embedMedia = embedMediaInScheduleCheckBox.isSelected();
+        props.setEmbedMediaInScheduleFile(embedMedia);
         boolean oneLineMode = getOneLineModeCheckBox().isSelected();
         props.setOneLineMode(oneLineMode);
         boolean autoTranslate = getAutoTranslateCheckBox().isSelected();
