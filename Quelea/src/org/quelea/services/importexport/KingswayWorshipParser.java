@@ -338,7 +338,7 @@ public class KingswayWorshipParser implements SongParser {
                 }
                 return ret;
             } else if (!title.trim().toLowerCase().equals("test hymn")) {
-                LOGGER.log(Level.WARNING, "Page {0} no lyrics found. Title: {1}", new Object[]{num, title});
+                LOGGER.log(Level.INFO, "Page {0} no lyrics found. Title: {1}", new Object[]{num, title});
                 return null;
             } else {
                 return null;
