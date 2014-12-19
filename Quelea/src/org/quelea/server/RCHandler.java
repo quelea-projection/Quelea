@@ -19,7 +19,6 @@ package org.quelea.server;
 
 import java.util.ArrayList;
 import javafx.application.Platform;
-import javafx.scene.layout.Background;
 import org.quelea.data.displayable.Displayable;
 import org.quelea.services.languages.LabelGrabber;
 import org.quelea.services.utils.QueleaProperties;
@@ -127,7 +126,11 @@ public class RCHandler {
         Platform.runLater(new Runnable() {
             @Override
             public void run() {
-                QueleaApp.get().getMainWindow().getMainPanel().getLivePanel().getLyricsPanel().select(Integer.parseInt(index.substring(2)));
+                try {
+                    int num = Integer.parseInt(index.substring(2));
+                    QueleaApp.get().getMainWindow().getMainPanel().getLivePanel().getLyricsPanel().select(num);
+                }
+                catch(Exception ex) {}
             }
         });
     }
