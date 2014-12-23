@@ -106,7 +106,10 @@ public class LivePanel extends LivePreviewPanel {
         Region spacer = new Region();
         HBox.setHgrow(spacer, Priority.ALWAYS);
         header.getItems().add(spacer);
-        logo = new ToggleButton("", new ImageView(new Image("file:icons/logo16.png")));
+        ImageView logoIV = new ImageView(new Image("file:icons/logo48.png"));
+        logoIV.setFitHeight(16);
+        logoIV.setFitWidth(16);
+        logo = new ToggleButton("", logoIV);
         Utils.setToolbarButtonStyle(logo);
         logo.setTooltip(new Tooltip(LabelGrabber.INSTANCE.getLabel("logo.screen.tooltip") + " (F5)"));
         logo.setOnMouseClicked(new EventHandler<javafx.scene.input.MouseEvent>() {
@@ -153,7 +156,10 @@ public class LivePanel extends LivePreviewPanel {
             }
         });
         header.getItems().add(black);
-        clear = new ToggleButton("", new ImageView(new Image("file:icons/clear.png", 16, 16, false, true)));
+        ImageView clearIV = new ImageView(new Image("file:icons/clear.png"));
+        clearIV.setFitWidth(16);
+        clearIV.setFitHeight(16);
+        clear = new ToggleButton("", clearIV);
         Utils.setToolbarButtonStyle(clear);
         clear.setTooltip(new Tooltip(LabelGrabber.INSTANCE.getLabel("clear.text.tooltip") + " (F7)"));
         clear.setOnAction(new EventHandler<javafx.event.ActionEvent>() {
@@ -167,7 +173,10 @@ public class LivePanel extends LivePreviewPanel {
             }
         });
         header.getItems().add(clear);
-        hide = new ToggleButton("", new ImageView(new Image("file:icons/cross.png")));
+        ImageView hideIV = new ImageView(new Image("file:icons/cross.png"));
+        hideIV.setFitWidth(16);
+        hideIV.setFitHeight(16);
+        hide = new ToggleButton("", hideIV);
         Utils.setToolbarButtonStyle(hide);
         hide.setTooltip(new Tooltip(LabelGrabber.INSTANCE.getLabel("hide.display.output.tooltip") + " (F8)"));
         hide.setOnAction(new EventHandler<javafx.event.ActionEvent>() {
