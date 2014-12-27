@@ -62,7 +62,7 @@ public class OptionsBiblePanel extends GridPane implements PropertyPanel, BibleC
     private static final Logger LOGGER = LoggerUtils.getLogger();
     private final ComboBox<Bible> defaultBibleComboBox;
     private final CheckBox showVerseNumCheckbox;
-    private final ComboBox useBibleVersesBox;
+    private final ComboBox<String> useBibleVersesBox;
     private final NumberTextField maxItemsPerSlideBox;
     private final Slider maxCharsSlider;
     private boolean changed;
