@@ -26,6 +26,7 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyCodeCombination;
 import javafx.scene.input.KeyCombination;
 import org.quelea.services.languages.LabelGrabber;
+import org.quelea.services.utils.Utils;
 import org.quelea.windows.main.actionhandlers.ExitActionHandler;
 import org.quelea.windows.main.actionhandlers.ExportPDFScheduleActionHandler;
 import org.quelea.windows.main.actionhandlers.NewScheduleActionHandler;
@@ -56,17 +57,17 @@ public class FileMenu extends Menu {
 
         newItem = new MenuItem(LabelGrabber.INSTANCE.getLabel("new.schedule.button"), new ImageView(new Image("file:icons/filenew.png", 20, 20, true, false)));
         newItem.setOnAction(new NewScheduleActionHandler());
-        newItem.setAccelerator(new KeyCodeCombination(KeyCode.N, KeyCombination.CONTROL_DOWN));
+        newItem.setAccelerator(new KeyCodeCombination(KeyCode.N, KeyCombination.SHORTCUT_DOWN));
         getItems().add(newItem);
 
         openItem = new MenuItem(LabelGrabber.INSTANCE.getLabel("open.schedule.button"), new ImageView(new Image("file:icons/fileopen.png", 20, 20, true, false)));
         openItem.setOnAction(new OpenScheduleActionHandler());
-        openItem.setAccelerator(new KeyCodeCombination(KeyCode.O, KeyCombination.CONTROL_DOWN));
+        openItem.setAccelerator(new KeyCodeCombination(KeyCode.O, KeyCombination.SHORTCUT_DOWN));
         getItems().add(openItem);
 
         saveItem = new MenuItem(LabelGrabber.INSTANCE.getLabel("save.schedule.button"), new ImageView(new Image("file:icons/filesave.png", 20, 20, true, false)));
         saveItem.setOnAction(new SaveScheduleActionHandler(false));
-        saveItem.setAccelerator(new KeyCodeCombination(KeyCode.S, KeyCombination.CONTROL_DOWN));
+        saveItem.setAccelerator(new KeyCodeCombination(KeyCode.S, KeyCombination.SHORTCUT_DOWN));
         getItems().add(saveItem);
 
         saveAsItem = new MenuItem(LabelGrabber.INSTANCE.getLabel("save.as.schedule.button"), new ImageView(new Image("file:icons/filesaveas.png", 20, 20, true, false)));
@@ -79,7 +80,7 @@ public class FileMenu extends Menu {
 
         printItem = new MenuItem(LabelGrabber.INSTANCE.getLabel("print.schedule.button"), new ImageView(new Image("file:icons/fileprint.png", 20, 20, true, false)));
         printItem.setOnAction(new PrintScheduleActionHandler());
-        printItem.setAccelerator(new KeyCodeCombination(KeyCode.P, KeyCombination.CONTROL_DOWN));
+        printItem.setAccelerator(new KeyCodeCombination(KeyCode.P, KeyCombination.SHORTCUT_DOWN));
         getItems().add(printItem);
 
         exitItem = new MenuItem(LabelGrabber.INSTANCE.getLabel("exit.button"), new ImageView(new Image("file:icons/exit.png", 20, 20, true, false)));

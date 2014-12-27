@@ -16,6 +16,7 @@
  */
 package org.quelea.windows.main;
 
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.net.URI;
@@ -29,6 +30,7 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
+import javax.imageio.ImageIO;
 import org.javafx.dialog.Dialog;
 import org.quelea.data.bible.BibleManager;
 import org.quelea.data.db.LegacyDB;
@@ -75,6 +77,16 @@ public final class Main extends Application {
      */
     @Override
     public void start(Stage stage) {
+        if(Utils.isMac()) {
+            BufferedImage img = null;
+            try {
+                img = ImageIO.read(new File("icons/logo64.png"));
+            }
+            catch(Exception ex) {
+                ex.printStackTrace();
+            }
+            com.apple.eawt.Application.getApplication().setDockIconImage(img);
+        }
         setupExceptionHandling();
         setupTranslator();
         final SplashStage splashWindow = new SplashStage();
