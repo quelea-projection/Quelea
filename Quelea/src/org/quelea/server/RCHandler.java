@@ -19,7 +19,6 @@ package org.quelea.server;
 
 import java.util.ArrayList;
 import javafx.application.Platform;
-import javafx.scene.layout.Background;
 import org.quelea.data.displayable.Displayable;
 import org.quelea.services.languages.LabelGrabber;
 import org.quelea.services.utils.QueleaProperties;
@@ -195,14 +194,16 @@ public class RCHandler {
             Displayable d = ((Displayable) QueleaApp.get().getMainWindow().getMainPanel().getSchedulePanel().getScheduleList().getItems().get(i));
             if (d.equals(preview)) {
                 display += "<i>";
-            } else if (d.equals(live)) {
+            }
+            if (d.equals(live)) {
                 display += "<b>";
             }
             display += d.getPreviewText().replace("\n", " - ");
+            if (d.equals(live)) {
+                display += "</b>";
+            }
             if (d.equals(preview)) {
                 display += "</i>";
-            } else if (d.equals(live)) {
-                display += "</b>";
             }
             display += "<br/>";
         }
