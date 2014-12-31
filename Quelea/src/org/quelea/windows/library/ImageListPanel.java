@@ -149,7 +149,7 @@ public class ImageListPanel extends BorderPane {
                         view.setOnMouseClicked(new EventHandler<MouseEvent>() {
                             @Override
                             public void handle(MouseEvent t) {
-                                if(t.getButton() == MouseButton.PRIMARY) {
+                                if(t.getButton() == MouseButton.PRIMARY && t.getClickCount() > 1) {
                                     QueleaApp.get().getMainWindow().getMainPanel().getSchedulePanel().getScheduleList().add(new ImageDisplayable(file));
                                 }
                                 else if(t.getButton() == MouseButton.SECONDARY) {
