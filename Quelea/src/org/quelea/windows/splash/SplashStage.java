@@ -54,7 +54,12 @@ public class SplashStage extends Stage {
         initStyle(StageStyle.UNDECORATED);
         Utils.addIconsToStage(this);
         setTitle("Quelea " + LabelGrabber.INSTANCE.getLabel("loading.text") + "...");
-        Image splashImage = new Image("file:icons/splash-bare.png");
+        Image splashImage;
+        if (QueleaProperties.VERSION.getUnstableName().equalsIgnoreCase("beta")) {
+            splashImage = new Image("file:icons/splash-beta.png");
+        } else {
+            splashImage = new Image("file:icons/splash-bare.png");
+        }
         ImageView imageView = new ImageView(splashImage);
         Text loadingText = new Text(LabelGrabber.INSTANCE.getLabel("loading.text"));
         Font loadingFont = Font.loadFont("file:icons/OpenSans-Bold.ttf", 25);
@@ -62,7 +67,7 @@ public class SplashStage extends Stage {
         LinearGradient loadingGrad = new LinearGradient(0, 1, 0, 0, true, CycleMethod.REPEAT, new Stop(0, Color.web("#666666")), new Stop(1, Color.web("#000000")));
         loadingText.setFill(loadingGrad);
         loadingText.setFont(loadingFont);
-        loadingText.setLayoutX(splashImage.getWidth()/2 - loadingMetrics.computeStringWidth(loadingText.getText())/2);
+        loadingText.setLayoutX(splashImage.getWidth() / 2 - loadingMetrics.computeStringWidth(loadingText.getText()) / 2);
         loadingText.setLayoutY(200);
         Group mainPane = new Group();
         mainPane.getChildren().add(imageView);
@@ -72,10 +77,9 @@ public class SplashStage extends Stage {
         ObservableList<Screen> monitors = Screen.getScreens();
         Screen screen;
         int controlScreenProp = QueleaProperties.get().getControlScreen();
-        if(controlScreenProp < monitors.size() && controlScreenProp >= 0) {
+        if (controlScreenProp < monitors.size() && controlScreenProp >= 0) {
             screen = monitors.get(controlScreenProp);
-        }
-        else {
+        } else {
             screen = Screen.getPrimary();
         }
 
