@@ -28,4 +28,4 @@ quelea (2015.0) stable; urgency=normal
   * Bugfix - Video playback now works properly on OSX
   * Various other minor bugfixes
 
- -- Michael Berry <michael@quelea.org>  Wednesday, 29 Oct 2014 00:00:00 +0000
+ -- Michael Berry <michael@quelea.org>  Wednesday, 05 Jan 2015 00:00:00 +0000
