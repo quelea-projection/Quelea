@@ -25,6 +25,7 @@ quelea (2015.0) stable; urgency=normal
   * Bugfix - Creating a new schedule clears the file (so that "save" will then not save over the previously open schedule.)
   * Bugfix - Chord lines are no longer affected by the auto-translator
   * Bugfix - Partial translations now display properly
+  * Bugfix - Video playback now works properly on OSX
   * Various other minor bugfixes
 
  -- Michael Berry <michael@quelea.org>  Wednesday, 29 Oct 2014 00:00:00 +0000
