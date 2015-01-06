@@ -28,7 +28,6 @@ public class SurvivorImportDialog extends ImportDialog {
 
     /**
      * Create a new survivor import dialog.
-     * @param owner the owner of the dialog.
      */
     public SurvivorImportDialog() {
         super(new String[]{

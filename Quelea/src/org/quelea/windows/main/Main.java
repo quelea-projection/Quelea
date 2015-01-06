@@ -16,11 +16,12 @@
  */
 package org.quelea.windows.main;
 
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.Locale;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.application.Application;
@@ -30,6 +31,7 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
+import javax.imageio.ImageIO;
 import org.javafx.dialog.Dialog;
 import org.quelea.data.bible.BibleManager;
 import org.quelea.data.db.LegacyDB;
@@ -76,6 +78,16 @@ public final class Main extends Application {
      */
     @Override
     public void start(Stage stage) {
+        if(Utils.isMac()) {
+            BufferedImage img = null;
+            try {
+                img = ImageIO.read(new File("icons/logo64.png"));
+            }
+            catch(Exception ex) {
+                ex.printStackTrace();
+            }
+            com.apple.eawt.Application.getApplication().setDockIconImage(img);
+        }
         setupExceptionHandling();
         setupTranslator();
         final SplashStage splashWindow = new SplashStage();
@@ -245,6 +257,14 @@ public final class Main extends Application {
                                 String schedulePath = getParameters().getRaw().get(0);
                                 LOGGER.log(Level.INFO, "Opening schedule through argument: {0}", schedulePath);
                                 QueleaApp.get().openSchedule(new File(schedulePath));
+                            }
+                            if(Utils.isMac()) {
+                                com.apple.eawt.Application.getApplication().setOpenFileHandler((com.apple.eawt.AppEvent.OpenFilesEvent ofe) -> {
+                                    List<File> files = ofe.getFiles();
+                                    if (files != null && files.size() > 0) {
+                                        QueleaApp.get().openSchedule(files.get(0));
+                                    }
+                                });
                             }
                             mainWindow.show();
                             splashWindow.hide();

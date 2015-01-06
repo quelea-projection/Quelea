@@ -37,6 +37,7 @@ import org.quelea.data.displayable.Displayable;
 import org.quelea.services.languages.LabelGrabber;
 import org.quelea.services.mail.Mailer;
 import org.quelea.services.utils.LoggerUtils;
+import org.quelea.services.utils.Utils;
 import org.quelea.windows.main.MainPanel;
 import org.quelea.windows.main.QueleaApp;
 import org.quelea.windows.main.actionhandlers.AddDVDActionHandler;
@@ -75,11 +76,17 @@ public class ScheduleMenu extends Menu {
         final MainPanel mainPanel = QueleaApp.get().getMainWindow().getMainPanel();
         final ScheduleList scheduleList = mainPanel.getSchedulePanel().getScheduleList();
 
-        addPowerpointItem = new MenuItem(LabelGrabber.INSTANCE.getLabel("add.presentation.button"), new ImageView(new Image("file:icons/powerpoint.png", 16, 16, false, true)));
+        addPowerpointItem = new MenuItem(LabelGrabber.INSTANCE.getLabel("add.presentation.button"));
+        if(!Utils.isMac()) {
+            addPowerpointItem.setGraphic(new ImageView(new Image("file:icons/powerpoint.png", 20, 20, true, false)));
+        }
         addPowerpointItem.setOnAction(new AddPowerpointActionHandler());
         getItems().add(addPowerpointItem);
 
-        addVideoItem = new MenuItem(LabelGrabber.INSTANCE.getLabel("add.video.button"), new ImageView(new Image("file:icons/video file.png", 16, 16, false, true)));
+        addVideoItem = new MenuItem(LabelGrabber.INSTANCE.getLabel("add.video.button"));
+        if(!Utils.isMac()) {
+            addVideoItem.setGraphic(new ImageView(new Image("file:icons/video file.png", 20, 20, true, false)));
+        }
         addVideoItem.setOnAction(new AddVideoActionHandler());
         getItems().add(addVideoItem);
         
@@ -101,7 +108,7 @@ public class ScheduleMenu extends Menu {
 
         manageNoticesItem = new MenuItem(LabelGrabber.INSTANCE.getLabel("manage.notices.button"), new ImageView(new Image("file:icons/info.png", 16, 16, false, true)));
         manageNoticesItem.setOnAction(new ShowNoticesActionHandler());
-        manageNoticesItem.setAccelerator(new KeyCodeCombination(KeyCode.M, KeyCombination.CONTROL_DOWN));
+        manageNoticesItem.setAccelerator(new KeyCodeCombination(KeyCode.M, KeyCombination.SHORTCUT_DOWN));
         getItems().add(manageNoticesItem);
 
         shareScheduleItem = new MenuItem(LabelGrabber.INSTANCE.getLabel("email.button"), new ImageView(new Image("file:icons/email.png", 16, 16, false, true)));
