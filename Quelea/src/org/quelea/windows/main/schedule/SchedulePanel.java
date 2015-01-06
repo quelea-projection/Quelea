@@ -71,7 +71,10 @@ public class SchedulePanel extends BorderPane {
      * Create and initialise the schedule panel.
      */
     public SchedulePanel() {
-        themeButton = new Button("", new ImageView(new Image("file:icons/theme.png", 16, 16, false, true)));
+        ImageView themeButtonIcon = new ImageView(new Image("file:icons/theme.png"));
+        themeButtonIcon.setFitWidth(16);
+        themeButtonIcon.setFitHeight(16);
+        themeButton = new Button("", themeButtonIcon);
         themeButton.setTooltip(new Tooltip(LabelGrabber.INSTANCE.getLabel("theme.button.tooltip")));
         scheduleList = new ScheduleList();
         scheduleList.itemsProperty().get().addListener(new ListChangeListener<Displayable>() {
@@ -154,13 +157,19 @@ public class SchedulePanel extends BorderPane {
 
         ToolBar toolbar = new ToolBar();
         toolbar.setOrientation(Orientation.VERTICAL);
-        removeButton = new Button("", new ImageView(new Image("file:icons/cross.png")));
+        ImageView removeIV = new ImageView(new Image("file:icons/cross.png"));
+        removeIV.setFitWidth(16);
+        removeIV.setFitHeight(16);
+        removeButton = new Button("", removeIV);
         Utils.setToolbarButtonStyle(removeButton);
         removeButton.setTooltip(new Tooltip(LabelGrabber.INSTANCE.getLabel("remove.song.schedule.tooltip")));
         removeButton.setDisable(true);
         removeButton.setOnAction(new RemoveScheduleItemActionHandler());
 
-        upButton = new Button("", new ImageView(new Image("file:icons/up.png")));
+        ImageView upIV = new ImageView(new Image("file:icons/up.png"));
+        upIV.setFitWidth(16);
+        upIV.setFitHeight(16);
+        upButton = new Button("", upIV);
         Utils.setToolbarButtonStyle(upButton);
         upButton.setTooltip(new Tooltip(LabelGrabber.INSTANCE.getLabel("move.up.schedule.tooltip")));
         upButton.setDisable(true);
@@ -171,7 +180,10 @@ public class SchedulePanel extends BorderPane {
             }
         });
 
-        downButton = new Button("", new ImageView(new Image("file:icons/down.png")));
+        ImageView downIV = new ImageView(new Image("file:icons/down.png"));
+        downIV.setFitWidth(16);
+        downIV.setFitHeight(16);
+        downButton = new Button("", downIV);
         Utils.setToolbarButtonStyle(downButton);
         downButton.setTooltip(new Tooltip(LabelGrabber.INSTANCE.getLabel("move.down.schedule.tooltip")));
         downButton.setDisable(true);
