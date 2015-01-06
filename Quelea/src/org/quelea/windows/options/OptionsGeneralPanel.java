@@ -71,7 +71,7 @@ public class OptionsGeneralPanel extends GridPane implements PropertyPanel {
     private LanguageFile currentLanguageFile;
     private final CheckBox showSmallSongTextBox;
     private final CheckBox showSmallBibleTextBox;
-    private final ComboBox smallTextPositionCombo;
+    private final ComboBox<String> smallTextPositionCombo;
 
     /**
      * Create a new general panel.
@@ -254,7 +254,7 @@ public class OptionsGeneralPanel extends GridPane implements PropertyPanel {
         Label smallTextPositionLabel = new Label(LabelGrabber.INSTANCE.getLabel("small.text.position.label"));
         GridPane.setConstraints(smallTextPositionLabel, 1, rows);
         getChildren().add(smallTextPositionLabel);
-        smallTextPositionCombo = new ComboBox();
+        smallTextPositionCombo = new ComboBox<>();
         smallTextPositionCombo.getItems().addAll(LabelGrabber.INSTANCE.getLabel("left"), LabelGrabber.INSTANCE.getLabel("right"));
         GridPane.setConstraints(smallTextPositionCombo, 2, rows);
         getChildren().add(smallTextPositionCombo);

@@ -66,25 +66,25 @@ public class MainToolbar extends ToolBar {
      * Create the toolbar and any associated shortcuts.
      */
     public MainToolbar() {
-        newScheduleButton = new Button("", new ImageView(new Image("file:icons/filenew.png", 24, 24, false, true)));
+        newScheduleButton = getButtonFromImage("file:icons/filenew.png");
         Utils.setToolbarButtonStyle(newScheduleButton);
         newScheduleButton.setTooltip(new Tooltip(LabelGrabber.INSTANCE.getLabel("new.schedule.tooltip")));
         newScheduleButton.setOnAction(new NewScheduleActionHandler());
         getItems().add(newScheduleButton);
 
-        openScheduleButton = new Button("", new ImageView(new Image("file:icons/fileopen.png", 24, 24, false, true)));
+        openScheduleButton = getButtonFromImage("file:icons/fileopen.png");
         Utils.setToolbarButtonStyle(openScheduleButton);
         openScheduleButton.setTooltip(new Tooltip(LabelGrabber.INSTANCE.getLabel("open.schedule.tooltip")));
         openScheduleButton.setOnAction(new OpenScheduleActionHandler());
         getItems().add(openScheduleButton);
 
-        saveScheduleButton = new Button("", new ImageView(new Image("file:icons/filesave.png", 24, 24, false, true)));
+        saveScheduleButton = getButtonFromImage("file:icons/filesave.png");
         Utils.setToolbarButtonStyle(saveScheduleButton);
         saveScheduleButton.setTooltip(new Tooltip(LabelGrabber.INSTANCE.getLabel("save.schedule.tooltip")));
         saveScheduleButton.setOnAction(new SaveScheduleActionHandler(false));
         getItems().add(saveScheduleButton);
 
-        printScheduleButton = new Button("", new ImageView(new Image("file:icons/fileprint.png", 24, 24, false, true)));
+        printScheduleButton = getButtonFromImage("file:icons/fileprint.png");
         Utils.setToolbarButtonStyle(printScheduleButton);
         printScheduleButton.setTooltip(new Tooltip(LabelGrabber.INSTANCE.getLabel("print.schedule.tooltip")));
         printScheduleButton.setOnAction(new PrintScheduleActionHandler());
@@ -92,7 +92,7 @@ public class MainToolbar extends ToolBar {
 
         getItems().add(new Separator());
 
-        newSongButton = new Button("", new ImageView(new Image("file:icons/newsong.png", 24, 24, false, true)));
+        newSongButton = getButtonFromImage("file:icons/newsong.png");
         Utils.setToolbarButtonStyle(newSongButton);
         newSongButton.setTooltip(new Tooltip(LabelGrabber.INSTANCE.getLabel("new.song.tooltip")));
         newSongButton.setOnAction(new NewSongActionHandler());
@@ -100,39 +100,44 @@ public class MainToolbar extends ToolBar {
 
         getItems().add(new Separator());
 
-        quickInsertButton = new Button("", new ImageView(new Image("file:icons/lightning.png", 24, 24, false, true)));
+        quickInsertButton = getButtonFromImage("file:icons/lightning.png");
         Utils.setToolbarButtonStyle(quickInsertButton);
         quickInsertButton.setTooltip(new Tooltip(LabelGrabber.INSTANCE.getLabel("quick.insert.text")));
         quickInsertButton.setOnAction(new QuickInsertActionHandler());
         getItems().add(quickInsertButton);
 
-        addPresentationButton = new Button("", new ImageView(new Image("file:icons/powerpoint.png", 24, 24, false, true)));
+        addPresentationButton = getButtonFromImage("file:icons/powerpoint.png");
         Utils.setToolbarButtonStyle(addPresentationButton);
         addPresentationButton.setTooltip(new Tooltip(LabelGrabber.INSTANCE.getLabel("add.presentation.tooltip")));
         addPresentationButton.setOnAction(new AddPowerpointActionHandler());
         getItems().add(addPresentationButton);
 
-        addVideoButton = new Button("", new ImageView(new Image("file:icons/video file.png", 24, 24, false, true)));
+        addVideoButton = getButtonFromImage("file:icons/video file.png");
         Utils.setToolbarButtonStyle(addVideoButton);
         addVideoButton.setTooltip(new Tooltip(LabelGrabber.INSTANCE.getLabel("add.video.tooltip")));
         addVideoButton.setOnAction(new AddVideoActionHandler());
         getItems().add(addVideoButton);
 
-        addYoutubeButton = new Button("", new ImageView(new Image("file:icons/youtube.png", 24, 24, false, true)));
+        addYoutubeButton = getButtonFromImage("file:icons/youtube.png");
         Utils.setToolbarButtonStyle(addYoutubeButton);
         addYoutubeButton.setTooltip(new Tooltip(LabelGrabber.INSTANCE.getLabel("add.youtube.button")));
         addYoutubeButton.setOnAction(new AddYoutubeActionHandler());
         getItems().add(addYoutubeButton);
 
-        addTimerButton = new Button("", new ImageView(new Image("file:icons/timer-dark.png", 24, 24, false, true)));
+        addTimerButton = getButtonFromImage("file:icons/timer-dark.png");
         Utils.setToolbarButtonStyle(addTimerButton);
         addTimerButton.setTooltip(new Tooltip(LabelGrabber.INSTANCE.getLabel("add.timer.tooltip")));
         addTimerButton.setOnAction(new AddTimerActionHandler());
         getItems().add(addTimerButton);
 
-        loadingView = new ImageView(new Image("file:icons/loading.gif", 24, 24, false, true));
+        loadingView = new ImageView(new Image("file:icons/loading.gif"));
+        loadingView.setFitHeight(24);
+        loadingView.setFitWidth(24);
         dvdImageStack = new StackPane();
-        dvdImageStack.getChildren().add(new ImageView(new Image("file:icons/dvd.png", 24, 24, false, true)));
+        ImageView dvdIV = new ImageView(new Image("file:icons/dvd.png"));
+        dvdIV.setFitWidth(24);
+        dvdIV.setFitHeight(24);
+        dvdImageStack.getChildren().add(dvdIV);
         addDVDButton = new Button("", dvdImageStack);
         Utils.setToolbarButtonStyle(addDVDButton);
         addDVDButton.setTooltip(new Tooltip(LabelGrabber.INSTANCE.getLabel("add.dvd.button")));
@@ -141,11 +146,18 @@ public class MainToolbar extends ToolBar {
 
         getItems().add(new Separator());
 
-        manageNoticesButton = new Button("", new ImageView(new Image("file:icons/info.png", 24, 24, false, true)));
+        manageNoticesButton = getButtonFromImage("file:icons/info.png");
         Utils.setToolbarButtonStyle(manageNoticesButton);
         manageNoticesButton.setTooltip(new Tooltip(LabelGrabber.INSTANCE.getLabel("manage.notices.tooltip")));
         manageNoticesButton.setOnAction(new ShowNoticesActionHandler());
         getItems().add(manageNoticesButton);
+    }
+    
+    private Button getButtonFromImage(String uri) {
+        ImageView iv = new ImageView(new Image(uri));
+        iv.setFitWidth(24);
+        iv.setFitHeight(24);
+        return new Button("", iv);
     }
 
     /**
