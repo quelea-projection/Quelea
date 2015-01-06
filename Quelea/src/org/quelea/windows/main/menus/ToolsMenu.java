@@ -77,7 +77,7 @@ public class ToolsMenu extends Menu {
         getItems().add(testItem);
 
         optionsItem = new MenuItem(LabelGrabber.INSTANCE.getLabel("options.button"), new ImageView(new Image("file:icons/options.png", 20, 20, false, true)));
-        optionsItem.setAccelerator(new KeyCodeCombination(KeyCode.T, KeyCombination.CONTROL_DOWN));
+        optionsItem.setAccelerator(new KeyCodeCombination(KeyCode.T, KeyCombination.SHORTCUT_DOWN));
         optionsItem.setOnAction(new ShowOptionsActionHandler());
 
         getItems().add(optionsItem);

@@ -118,12 +118,9 @@ public class Version implements Comparable<Version> {
     public String getFullVersionString() {
         StringBuilder ret = new StringBuilder();
         ret.append(getMajorVersionNumber());
-        ret.append(" (");
-        ret.append(getMinorName());
         if(unstableName != null && !unstableName.trim().isEmpty()) {
             ret.append(" (").append(unstableName).append(")");
         }
-        ret.append(")");
         return ret.toString();
     }
 

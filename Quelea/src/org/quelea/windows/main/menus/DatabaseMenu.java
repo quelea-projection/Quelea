@@ -48,7 +48,7 @@ public class DatabaseMenu extends Menu {
 
         newSongItem = new MenuItem(LabelGrabber.INSTANCE.getLabel("new.song.button"), new ImageView(new Image("file:icons/newsong.png", 16, 16, false, true)));
         newSongItem.setOnAction(new NewSongActionHandler());
-        newSongItem.setAccelerator(new KeyCodeCombination(KeyCode.N, KeyCombination.CONTROL_DOWN, KeyCombination.SHIFT_DOWN));
+        newSongItem.setAccelerator(new KeyCodeCombination(KeyCode.N, KeyCombination.SHORTCUT_DOWN, KeyCombination.SHIFT_DOWN));
         getItems().add(newSongItem);
 
         getItems().add(new SeparatorMenuItem());
