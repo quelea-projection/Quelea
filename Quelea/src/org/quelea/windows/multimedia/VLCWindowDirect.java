@@ -271,6 +271,7 @@ public class VLCWindowDirect extends VLCWindow {
      */
     private class RenderCallback extends RenderCallbackAdapter {
 
+        public Object lock = new Object();
         /**
          * Created this runnable as a convenience, so it is really clean to call
          * it later.
@@ -281,9 +282,11 @@ public class VLCWindowDirect extends VLCWindow {
                 if (!canvasScaled) {
                     canvasScaled = scaleCanvas();
                 }
-                try{
-                pixelWriter.setPixels(0, 0, bufferFormat.getWidth(), bufferFormat.getHeight(), pixelFormat, intBuffer, bufferFormat.getWidth() * 4, WIDTH);
-                }catch(Exception ex){
+                try {
+                    synchronized (lock) {
+                        pixelWriter.setPixels(0, 0, bufferFormat.getWidth(), bufferFormat.getHeight(), pixelFormat, intBuffer, bufferFormat.getWidth() * 4, WIDTH);
+                    }
+                } catch (Exception ex) {
                     LOGGER.log(Level.WARNING, "Pixel Writer Problem", ex);
                 }
             }
@@ -304,9 +307,11 @@ public class VLCWindowDirect extends VLCWindow {
          */
         @Override
         public void onDisplay(DirectMediaPlayer mediaPlayer, int[] rgbBuffer) {
-            bufferFormat = ((DefaultDirectMediaPlayer) mediaPlayer).getBufferFormat();
-            intBuffer = new int[rgbBuffer.length];
-            System.arraycopy(rgbBuffer, 0, intBuffer, 0, rgbBuffer.length);
+            synchronized (lock) {
+                bufferFormat = ((DefaultDirectMediaPlayer) mediaPlayer).getBufferFormat();
+                intBuffer = new int[rgbBuffer.length];
+                System.arraycopy(rgbBuffer, 0, intBuffer, 0, rgbBuffer.length);
+            }
             Platform.runLater(render);
 
         }
