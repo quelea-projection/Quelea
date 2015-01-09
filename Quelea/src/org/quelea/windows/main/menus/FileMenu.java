@@ -26,6 +26,7 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyCodeCombination;
 import javafx.scene.input.KeyCombination;
 import org.quelea.services.languages.LabelGrabber;
+import org.quelea.services.utils.Utils;
 import org.quelea.windows.main.actionhandlers.ExitActionHandler;
 import org.quelea.windows.main.actionhandlers.ExportPDFScheduleActionHandler;
 import org.quelea.windows.main.actionhandlers.NewScheduleActionHandler;
@@ -54,35 +55,56 @@ public class FileMenu extends Menu {
     public FileMenu() {
         super(LabelGrabber.INSTANCE.getLabel("file.menu"));
 
-        newItem = new MenuItem(LabelGrabber.INSTANCE.getLabel("new.schedule.button"), new ImageView(new Image("file:icons/filenew.png", 20, 20, true, false)));
+        newItem = new MenuItem(LabelGrabber.INSTANCE.getLabel("new.schedule.button"));
+        if (!Utils.isMac()) {
+            newItem.setGraphic(new ImageView(new Image("file:icons/filenew.png", 20, 20, true, false)));
+        }
         newItem.setOnAction(new NewScheduleActionHandler());
-        newItem.setAccelerator(new KeyCodeCombination(KeyCode.N, KeyCombination.CONTROL_DOWN));
+        newItem.setAccelerator(new KeyCodeCombination(KeyCode.N, KeyCombination.SHORTCUT_DOWN));
         getItems().add(newItem);
 
-        openItem = new MenuItem(LabelGrabber.INSTANCE.getLabel("open.schedule.button"), new ImageView(new Image("file:icons/fileopen.png", 20, 20, true, false)));
+        openItem = new MenuItem(LabelGrabber.INSTANCE.getLabel("open.schedule.button"));
+        if(!Utils.isMac()) {
+            openItem.setGraphic(new ImageView(new Image("file:icons/fileopen.png", 20, 20, true, false)));
+        }
         openItem.setOnAction(new OpenScheduleActionHandler());
-        openItem.setAccelerator(new KeyCodeCombination(KeyCode.O, KeyCombination.CONTROL_DOWN));
+        openItem.setAccelerator(new KeyCodeCombination(KeyCode.O, KeyCombination.SHORTCUT_DOWN));
         getItems().add(openItem);
 
-        saveItem = new MenuItem(LabelGrabber.INSTANCE.getLabel("save.schedule.button"), new ImageView(new Image("file:icons/filesave.png", 20, 20, true, false)));
+        saveItem = new MenuItem(LabelGrabber.INSTANCE.getLabel("save.schedule.button"));
+        if(!Utils.isMac()) {
+            saveItem.setGraphic(new ImageView(new Image("file:icons/filesave.png", 20, 20, true, false)));
+        }
         saveItem.setOnAction(new SaveScheduleActionHandler(false));
-        saveItem.setAccelerator(new KeyCodeCombination(KeyCode.S, KeyCombination.CONTROL_DOWN));
+        saveItem.setAccelerator(new KeyCodeCombination(KeyCode.S, KeyCombination.SHORTCUT_DOWN));
         getItems().add(saveItem);
 
-        saveAsItem = new MenuItem(LabelGrabber.INSTANCE.getLabel("save.as.schedule.button"), new ImageView(new Image("file:icons/filesaveas.png", 20, 20, true, false)));
+        saveAsItem = new MenuItem(LabelGrabber.INSTANCE.getLabel("save.as.schedule.button"));
+        if(!Utils.isMac()) {
+            saveAsItem.setGraphic(new ImageView(new Image("file:icons/filesaveas.png", 20, 20, true, false)));
+        }
         saveAsItem.setOnAction(new SaveScheduleActionHandler(true));
         getItems().add(saveAsItem);
 
-        exportToPDFItem = new MenuItem(LabelGrabber.INSTANCE.getLabel("export.schedule.pdf.button"), new ImageView(new Image("file:icons/fileexport.png", 20, 20, true, false)));
+        exportToPDFItem = new MenuItem(LabelGrabber.INSTANCE.getLabel("export.schedule.pdf.button"));
+        if(!Utils.isMac()) {
+            exportToPDFItem.setGraphic(new ImageView(new Image("file:icons/fileexport.png", 20, 20, true, false)));
+        }
         exportToPDFItem.setOnAction(new ExportPDFScheduleActionHandler());
         getItems().add(exportToPDFItem);
 
-        printItem = new MenuItem(LabelGrabber.INSTANCE.getLabel("print.schedule.button"), new ImageView(new Image("file:icons/fileprint.png", 20, 20, true, false)));
+        printItem = new MenuItem(LabelGrabber.INSTANCE.getLabel("print.schedule.button"));
+        if(!Utils.isMac()) {
+            printItem.setGraphic(new ImageView(new Image("file:icons/fileprint.png", 20, 20, true, false)));
+        }
         printItem.setOnAction(new PrintScheduleActionHandler());
-        printItem.setAccelerator(new KeyCodeCombination(KeyCode.P, KeyCombination.CONTROL_DOWN));
+        printItem.setAccelerator(new KeyCodeCombination(KeyCode.P, KeyCombination.SHORTCUT_DOWN));
         getItems().add(printItem);
 
-        exitItem = new MenuItem(LabelGrabber.INSTANCE.getLabel("exit.button"), new ImageView(new Image("file:icons/exit.png", 20, 20, true, false)));
+        exitItem = new MenuItem(LabelGrabber.INSTANCE.getLabel("exit.button"));
+        if(!Utils.isMac()) {
+            exitItem.setGraphic(new ImageView(new Image("file:icons/exit.png", 20, 20, true, false)));
+        }
         exitItem.setOnAction(new ExitActionHandler());
         getItems().add(exitItem);
     }
