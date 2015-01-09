@@ -119,12 +119,18 @@ public class LibrarySongPanel extends BorderPane {
         ToolBar toolbar = new ToolBar();
         toolbar.setOrientation(Orientation.VERTICAL);
 
-        addButton = new Button("", new ImageView(new Image("file:icons/newsongdb.png", 16, 16, false, true)));
+        ImageView addIV = new ImageView(new Image("file:icons/newsongdb.png"));
+        addIV.setFitWidth(16);
+        addIV.setFitHeight(16);
+        addButton = new Button("", addIV);
         Utils.setToolbarButtonStyle(addButton);
         addButton.setTooltip(new Tooltip(LabelGrabber.INSTANCE.getLabel("add.song.text")));
         addButton.setOnAction(new NewSongActionHandler());
         toolbar.getItems().add(addButton);
-        removeButton = new Button("", new ImageView(new Image("file:icons/removedb.png", 16, 16, false, true)));
+        ImageView removeIV = new ImageView(new Image("file:icons/removedb.png"));
+        removeIV.setFitWidth(16);
+        removeIV.setFitHeight(16);
+        removeButton = new Button("", removeIV);
         Utils.setToolbarButtonStyle(removeButton);
         removeButton.setTooltip(new Tooltip(LabelGrabber.INSTANCE.getLabel("remove.song.text")));
         removeButton.setDisable(true);
