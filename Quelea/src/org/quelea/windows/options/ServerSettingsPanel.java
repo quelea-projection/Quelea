@@ -120,9 +120,9 @@ public class ServerSettingsPanel extends GridPane implements PropertyPanel {
         Label portNumberLabel = new Label(LabelGrabber.INSTANCE.getLabel("port.number.label") + " ");
         GridPane.setConstraints(portNumberLabel, 1, 2);
         getChildren().add(portNumberLabel);
-        mlPortNumTextField.textProperty().addListener(new ChangeListener() {
+        mlPortNumTextField.textProperty().addListener(new ChangeListener<String>() {
             @Override
-            public void changed(ObservableValue ov, Object t, Object t1) {
+            public void changed(ObservableValue ov, String t, String t1) {
                 checkDifferent();
             }
         });
@@ -244,9 +244,9 @@ public class ServerSettingsPanel extends GridPane implements PropertyPanel {
         Label portNumberLabel = new Label(LabelGrabber.INSTANCE.getLabel("port.number.label") + " ");
         GridPane.setConstraints(portNumberLabel, 1, 5);
         getChildren().add(portNumberLabel);
-        rcPortNumTextField.textProperty().addListener(new ChangeListener() {
+        rcPortNumTextField.textProperty().addListener(new ChangeListener<String>() {
             @Override
-            public void changed(ObservableValue ov, Object t, Object t1) {
+            public void changed(ObservableValue ov, String t, String t1) {
                 checkDifferent();
             }
         });

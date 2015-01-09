@@ -63,8 +63,7 @@ public class TranslationChoiceDialog extends Stage {
         root.setCenter(content);
 
         Label selectTranslationLabel = new Label(LabelGrabber.INSTANCE.getLabel("select.translation.label"));
-        selectTranslationLabel.wrapTextProperty().setValue(true);
-        selectTranslationLabel.setPrefSize(230, 50);
+        selectTranslationLabel.setWrapText(true);
         content.getChildren().add(selectTranslationLabel);
 
         Button okButton = new Button(LabelGrabber.INSTANCE.getLabel("close.button"));

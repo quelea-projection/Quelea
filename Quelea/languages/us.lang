@@ -1,5 +1,5 @@
 #THIS IS AN AUTO GENERATED FILE, AND WILL BE OVERWRITTEN EACH TIME QUELEA IS REBUILT. DO NOT EDIT MANUALLY!
-#Thu Nov 20 22:16:12 GMT 2014
+#Fri Dec 19 01:13:01 GMT 2014
 email.error.text=There was an error opening your email client. Make sure you have an email client installed and registered to handle eml files, otherwise you'll have to send the email manually.
 ccli.number.label=CCLI number
 easyworship.button=EasyWorship
@@ -388,6 +388,7 @@ tags.label=Tags
 confirm.overwrite.text=This file already exists. Would you like to replace it or continue without copying?
 help.about.close=Close
 more.fonts.label=More fonts
+embed.media.in.schedule=Embed media in schedule file
 schedule.menu=Schedule
 output.text=Output
 server.changed.message=You will need to restart Quelea for the new Server Settings to take effect.
