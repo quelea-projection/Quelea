@@ -128,15 +128,6 @@ public final class BibleVerse implements BibleInterface, Serializable {
     }
 
     /**
-     * Get the number of this verse.
-     *
-     * @return the verse number.
-     */
-    public int getVerseNum() {
-        return num;
-    }
-
-    /**
      * Get the textual content of the verse.
      *
      * @return the textual content of the verse.
@@ -157,7 +148,7 @@ public final class BibleVerse implements BibleInterface, Serializable {
 
     @Override
     public int getNum() {
-        return getVerseNum();
+        return num;
     }
 
     @Override
