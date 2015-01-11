@@ -19,8 +19,8 @@ package org.quelea.data.bible;
 
 import java.io.Serializable;
 import java.lang.ref.SoftReference;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
 import org.quelea.services.utils.Utils;
 import org.w3c.dom.Node;
@@ -35,7 +35,7 @@ public final class BibleChapter implements BibleInterface, Serializable {
 
     private static int statId = 0;
     private final int num;
-    private final List<BibleVerse> verses;
+    private final Map<Integer, BibleVerse> verses;
     private transient SoftReference<String> softRefText;
     private final int id = statId++;
     private BibleBook book;
@@ -47,7 +47,7 @@ public final class BibleChapter implements BibleInterface, Serializable {
      */
     private BibleChapter(int num) {
         this.num = num;
-        verses = new ArrayList<>();
+        verses = new HashMap<>();
     }
 
     @Override
@@ -146,7 +146,7 @@ public final class BibleChapter implements BibleInterface, Serializable {
             ret.append('\"');
         }
         ret.append(">");
-        for (BibleVerse verse : verses) {
+        for (BibleVerse verse : verses.values()) {
             ret.append(Utils.escapeXML(verse.toXML()));
         }
         ret.append("</chapter>");
@@ -169,7 +169,7 @@ public final class BibleChapter implements BibleInterface, Serializable {
      * @param verse the verse to add.
      */
     private void addVerse(BibleVerse verse) {
-        verses.add(verse);
+        verses.put(verse.getNum(), verse);
     }
 
     /**
@@ -178,7 +178,7 @@ public final class BibleChapter implements BibleInterface, Serializable {
      * @return all the verses in the chapter.
      */
     public BibleVerse[] getVerses() {
-        return verses.toArray(new BibleVerse[verses.size()]);
+        return verses.values().toArray(new BibleVerse[verses.size()]);
     }
 
     /**
@@ -188,11 +188,7 @@ public final class BibleChapter implements BibleInterface, Serializable {
      * @return the verse at the specified number, or null if it doesn't exist.
      */
     public BibleVerse getVerse(int i) {
-        if (i < verses.size() && i >= 0) {
-            return verses.get(i);
-        } else {
-            return null;
-        }
+        return verses.get(i);
     }
 
     /**

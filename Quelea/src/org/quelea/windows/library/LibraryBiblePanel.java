@@ -69,9 +69,9 @@ public class LibraryBiblePanel extends VBox implements BibleChangeListener {
         BibleManager.get().registerBibleChangeListener(this);
         bibleSelector = new ComboBox<>(FXCollections.observableArrayList(BibleManager.get().getBibles()));
         String selectedBibleName = QueleaProperties.get().getDefaultBible();
-        for(int i = 0; i < bibleSelector.itemsProperty().get().size(); i++) {
+        for (int i = 0; i < bibleSelector.itemsProperty().get().size(); i++) {
             Bible bible = bibleSelector.itemsProperty().get().get(i);
-            if(bible.getName().equals(selectedBibleName)) {
+            if (bible.getName().equals(selectedBibleName)) {
                 bibleSelector.selectionModelProperty().get().select(i);
                 break;
             }
@@ -80,12 +80,11 @@ public class LibraryBiblePanel extends VBox implements BibleChangeListener {
         getChildren().add(bibleSelector);
         HBox chapterPanel = new HBox();
         chapterPanel.setSpacing(5.0);
-        if(bibleSelector.getItems().isEmpty()) {
+        if (bibleSelector.getItems().isEmpty()) {
             bookSelector = new ComboBox<>();
-        }
-        else {
+        } else {
             Bible bible = bibleSelector.selectionModelProperty().get().getSelectedItem();
-            if(bible == null) {
+            if (bible == null) {
                 bible = bibleSelector.getItems().get(0);
                 bibleSelector.setValue(bibleSelector.getItems().get(0));
             }
@@ -99,7 +98,7 @@ public class LibraryBiblePanel extends VBox implements BibleChangeListener {
         passageSelector.setOnAction(new EventHandler<javafx.event.ActionEvent>() {
             @Override
             public void handle(javafx.event.ActionEvent t) {
-                if(!addToSchedule.isDisable()) {
+                if (!addToSchedule.isDisable()) {
                     addToSchedule.fire();
                     passageSelector.setText("");
                 }
@@ -129,13 +128,13 @@ public class LibraryBiblePanel extends VBox implements BibleChangeListener {
         bibleSelector.valueProperty().addListener(new ChangeListener<Bible>() {
             @Override
             public void changed(ObservableValue<? extends Bible> ov, Bible t, Bible t1) {
-                if(bibleSelector.selectionModelProperty().get().isEmpty()) { //Nothing selected
+                if (bibleSelector.selectionModelProperty().get().isEmpty()) { //Nothing selected
                     return;
                 }
                 ObservableList<BibleBook> books = FXCollections.observableArrayList(bibleSelector.getSelectionModel().getSelectedItem().getBooks());
                 int selectedIndex = bookSelector.getSelectionModel().getSelectedIndex();
                 bookSelector.itemsProperty().set(books);
-                if(bookSelector.getItems().size() > selectedIndex) {
+                if (bookSelector.getItems().size() > selectedIndex) {
                     bookSelector.getSelectionModel().select(selectedIndex);
                 }
                 update();
@@ -155,15 +154,14 @@ public class LibraryBiblePanel extends VBox implements BibleChangeListener {
                 ObservableList<Bible> bibles = FXCollections.observableArrayList(BibleManager.get().getBibles());
                 bibleSelector.itemsProperty().set(bibles);
                 Bible selectedBible = null;
-                for(Bible bible : bibles) {
-                    if(bible.getBibleName().equals(QueleaProperties.get().getDefaultBible())) {
+                for (Bible bible : bibles) {
+                    if (bible.getBibleName().equals(QueleaProperties.get().getDefaultBible())) {
                         selectedBible = bible;
                     }
                 }
-                if(selectedBible == null) {
+                if (selectedBible == null) {
                     bibleSelector.selectionModelProperty().get().selectFirst();
-                }
-                else {
+                } else {
                     bibleSelector.selectionModelProperty().get().select(selectedBible);
                 }
             }
@@ -195,7 +193,7 @@ public class LibraryBiblePanel extends VBox implements BibleChangeListener {
         verses.clear();
         ChapterVerseParser cvp = new ChapterVerseParser(passageSelector.getText());
         BibleBook book = bookSelector.selectionModelProperty().get().getSelectedItem();
-        if(book == null || book.getChapter(cvp.getFromChapter()) == null
+        if (book == null || book.getChapter(cvp.getFromChapter()) == null
                 || book.getChapter(cvp.getToChapter()) == null
                 || passageSelector.getText().isEmpty()) {
             getAddToSchedule().setDisable(true);
@@ -205,25 +203,27 @@ public class LibraryBiblePanel extends VBox implements BibleChangeListener {
         getAddToSchedule().setDisable(false);
         StringBuilder ret = new StringBuilder();
         int toVerse = book.getChapter(cvp.getFromChapter()).getVerses().length - 1;
-        if((cvp.getFromChapter() == cvp.getToChapter()) && cvp.getToVerse() >= 0 && cvp.getToVerse() < book.getChapter(cvp.getFromChapter()).getVerses().length) {
+        if ((cvp.getFromChapter() == cvp.getToChapter()) && cvp.getToVerse() >= 0 && cvp.getToVerse() < book.getChapter(cvp.getFromChapter()).getVerses().length) {
             toVerse = cvp.getToVerse();
         }
 
-        for(int v = cvp.getFromVerse(); v <= toVerse; v++) {
+        for (int v = cvp.getFromVerse(); v <= toVerse; v++) {
             BibleVerse verse = book.getChapter(cvp.getFromChapter()).getVerse(v);
-            ret.append(verse.getText()).append(' ');
-            verses.add(verse);
-        }
-        for(int c = cvp.getFromChapter() + 1; c < cvp.getToChapter(); c++) {
-            for(BibleVerse verse : book.getChapter(c).getVerses()) {
+            if (verse != null) {
                 ret.append(verse.getText()).append(' ');
                 verses.add(verse);
             }
         }
-        if(cvp.getFromChapter() != cvp.getToChapter()) {
-            for(int v = 0; v <= cvp.getToVerse(); v++) {
+        for (int c = cvp.getFromChapter() + 1; c < cvp.getToChapter(); c++) {
+            for (BibleVerse verse : book.getChapter(c).getVerses()) {
+                ret.append(verse.getText()).append(' ');
+                verses.add(verse);
+            }
+        }
+        if (cvp.getFromChapter() != cvp.getToChapter()) {
+            for (int v = 0; v <= cvp.getToVerse(); v++) {
                 BibleVerse verse = book.getChapter(cvp.getToChapter()).getVerse(v);
-                if(verse != null) {
+                if (verse != null) {
                     ret.append(verse.getText()).append(' ');
                     verses.add(verse);
                 }
