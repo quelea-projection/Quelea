@@ -18,7 +18,8 @@ quelea (2015.0) stable; urgency=normal
   * Bugfix - Translations now show properly when section headings are used
   * Bugfix - Quelea no longer locks up when copying a video background
   * Bugfix - window now remembers maximised state
-  * Bugfix - memory leaks fixed
+  * Bugfix - Memory leaks fixed
+  * Bugfix - Fix handling of bibles with missing verses
   * Bugfix - DVDs and Blurays now work
   * Bugfix = Youtube videos are now saved in schedules properly
   * Bugfix - Fixed issue with small text not having a shadow
@@ -28,4 +29,4 @@ quelea (2015.0) stable; urgency=normal
   * Bugfix - Video playback now works properly on OSX
   * Various other minor bugfixes
 
- -- Michael Berry <michael@quelea.org>  Wednesday, 05 Jan 2015 00:00:00 +0000
+ -- Michael Berry <michael@quelea.org>  Wednesday, 11 Jan 2015 00:00:00 +0000

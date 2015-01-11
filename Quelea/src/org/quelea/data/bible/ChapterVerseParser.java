@@ -62,7 +62,7 @@ public class ChapterVerseParser {
             return 0;
         }
         else {
-            return fromVerse - 1;
+            return fromVerse;
         }
     }
 
@@ -85,10 +85,10 @@ public class ChapterVerseParser {
      */
     public int getToVerse() {
         if (toVerse == -1) {
-            return fromVerse - 1;
+            return fromVerse;
         }
         else {
-            return toVerse - 1;
+            return toVerse;
         }
     }
 
