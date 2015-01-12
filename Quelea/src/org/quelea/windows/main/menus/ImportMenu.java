@@ -28,6 +28,7 @@ import org.quelea.services.importexport.EasySlidesImportDialog;
 import org.quelea.services.importexport.EasyWorshipImportDialog;
 import org.quelea.services.importexport.ImportDialog;
 import org.quelea.services.importexport.KingswayImportDialog;
+import org.quelea.services.importexport.MediaShoutImportDialog;
 import org.quelea.services.importexport.OpenLPImportDialog;
 import org.quelea.services.importexport.OpenLyricsImportDialog;
 import org.quelea.services.importexport.OpenSongImportDialog;
@@ -63,6 +64,7 @@ public class ImportMenu extends Menu {
     private final ImportDialog easyWorshipImportDialog;
     private final ImportDialog sundayPlusImportDialog;
     private final ImportDialog songSelectImportDialog;
+    private final ImportDialog mediaShoutImportDialog;
     private final MenuItem qspItem;
     private final MenuItem osItem;
     private final MenuItem spItem;
@@ -71,6 +73,7 @@ public class ImportMenu extends Menu {
     private final MenuItem zwItem;
     private final MenuItem ssItem;
     private final MenuItem sourceItem;
+    private final MenuItem mediaShoutItem;
     private final MenuItem plainTextItem;
     private final MenuItem easySlidesItem;
     private final MenuItem easyWorshipItem;
@@ -96,6 +99,7 @@ public class ImportMenu extends Menu {
         easyWorshipImportDialog = new EasyWorshipImportDialog();
         sundayPlusImportDialog = new SundayPlusImportDialog();
         songSelectImportDialog = new SongSelectImportDialog();
+        mediaShoutImportDialog = new MediaShoutImportDialog();
 
         qspItem = new MenuItem(LabelGrabber.INSTANCE.getLabel("qsp.button"), new ImageView(new Image("file:icons/logo16.png", 16, 16, false, true)));
         qspItem.setOnAction(new EventHandler<ActionEvent>() {
@@ -173,6 +177,15 @@ public class ImportMenu extends Menu {
             }
         });
         getItems().add(songSelectItem);
+
+        mediaShoutItem = new MenuItem(LabelGrabber.INSTANCE.getLabel("mediashout.button"), new ImageView(new Image("file:icons/mediashout.png", 16, 16, false, true)));
+        mediaShoutItem.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent t) {
+                mediaShoutImportDialog.show();
+            }
+        });
+        getItems().add(mediaShoutItem);
 
         sourceItem = new MenuItem(LabelGrabber.INSTANCE.getLabel("source.button"), new ImageView(new Image("file:icons/source.jpg", 16, 16, false, true)));
         sourceItem.setOnAction(new EventHandler<ActionEvent>() {
