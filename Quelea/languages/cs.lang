@@ -527,3 +527,7 @@ timer.text.label=Dodatečný text
 font.options.title=Volby pro písmo
 delete.translation.title=Smazat překlad
 change.bible.version.text=Přepnout verzi
+mediashout.button=MediaShout
+filefilters.description.txt.files=Soubory .txt
+embed.media.in.schedule=Vložit media do souboru s rozvrhem
+mediashout.import.line1=Vybrat umístění databáze MediaShout (exported to txt format) below:
