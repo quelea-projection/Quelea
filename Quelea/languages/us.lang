@@ -1,5 +1,5 @@
 #THIS IS AN AUTO GENERATED FILE, AND WILL BE OVERWRITTEN EACH TIME QUELEA IS REBUILT. DO NOT EDIT MANUALLY!
-#Fri Dec 19 01:13:01 GMT 2014
+#Mon Jan 12 01:15:24 GMT 2015
 email.error.text=There was an error opening your email client. Make sure you have an email client installed and registered to handle eml files, otherwise you'll have to send the email manually.
 ccli.number.label=CCLI number
 easyworship.button=EasyWorship
@@ -141,7 +141,7 @@ shadow.color.label=Shadow Color
 image.theme.label=Image
 add.theme.label=Add Theme
 new.theme.title=New Theme
-select.translation.label=Select the translation that you'd like to\nshow in addition to the default lyrics\:
+select.translation.label=Select the translation that you'd like to show in addition to the default lyrics\:
 max.items.per.slide=Max number of % per slide
 add.to.songpack.question=Export song?
 fix.apos.label=Sanitize apostrophes
@@ -365,6 +365,7 @@ save.qr.code.text=Save QR Code
 close.button=Close
 select.image.button=Select Image
 startup.error.text=Sorry, Quelea couldn't start for some reason on your system. If you'd like help trying to get it to run, please shoot off an email to support@quelea.org and attach the debug log file ($1).\n\nAlternatively, feel free to ask on the Quelea discuss group (http\://goo.gl/NXvIDG).
+mediashout.button=MediaShout
 add.presentation.tooltip=Add Presentation
 LANGUAGENAME=English (US)
 add.presentation.button=Add Presentation
@@ -377,6 +378,7 @@ notice.background.colour.text=Notice background color
 help.menu=Help
 easyworship.import.line1=This will import songs from an Easyworship Songs.MB file.
 options.title=Options
+filefilters.description.txt.files=.txt files
 check.kingsway.start=You've already imported some items from the Kingsway library. Do you want to start importing from where you left off?
 remove.image.text=Remove Image
 font.colour.label=Font Color
@@ -389,6 +391,7 @@ confirm.overwrite.text=This file already exists. Would you like to replace it or
 help.about.close=Close
 more.fonts.label=More fonts
 embed.media.in.schedule=Embed media in schedule file
+mediashout.import.line1=Select the location of the MediaShout db (exported to txt format) below\:
 schedule.menu=Schedule
 output.text=Output
 server.changed.message=You will need to restart Quelea for the new Server Settings to take effect.
