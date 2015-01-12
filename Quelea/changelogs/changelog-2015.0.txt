@@ -13,6 +13,7 @@ quelea (2015.0) stable; urgency=normal
   * New feature - Item can be automatically previewed on image change
   * New feature - Edit theme button now appears on each schedule item
   * New feature - Countdown timers
+  * New feature - MediaShout importer
   * Bugfix - Quick Edit now works properly
   * Bugfix - FX UI element labels are now translated (such as colours)
   * Bugfix - Translations now show properly when section headings are used
@@ -29,4 +30,4 @@ quelea (2015.0) stable; urgency=normal
   * Bugfix - Video playback now works properly on OSX
   * Various other minor bugfixes
 
- -- Michael Berry <michael@quelea.org>  Wednesday, 11 Jan 2015 00:00:00 +0000
+ -- Michael Berry <michael@quelea.org>  Wednesday, 12 Jan 2015 00:00:00 +0000

@@ -527,3 +527,6 @@ countdown.label=Countdown Timer
 timer.theme.label=Theme settings
 timer.theme.button=Change Theme
 embed.media.in.schedule=Embed media in schedule file
+mediashout.import.line1=Select the location of the MediaShout db (exported to txt format) below:
+filefilters.description.txt.files=.txt files
+mediashout.button=MediaShout
