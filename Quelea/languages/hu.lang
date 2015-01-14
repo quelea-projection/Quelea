@@ -527,3 +527,7 @@ timer.text.label=Kiegészítő szöveg
 font.options.title=Betűtípus beállítások
 delete.translation.title=Fordítás törlése
 change.bible.version.text=Váltás másik fordításra
+mediashout.button=MediaShout
+filefilters.description.txt.files=.txt fájlok
+embed.media.in.schedule=Média beágyazása a vetítéslistába
+mediashout.import.line1=Válaszd ki a MediaShout (txt formátumba exportált) adatbázis helyét alább:

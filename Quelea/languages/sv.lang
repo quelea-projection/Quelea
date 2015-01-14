@@ -528,3 +528,7 @@ timer.text.prompt=Använd # för att ange timerns position. T.ex. kommer "Gudstj
 countdown.label=Nedräkningstimer
 timer.theme.label=Temainställningar
 timer.theme.button=Byt tema
+mediashout.button=MediaShout
+filefilters.description.txt.files=.txt-filer
+embed.media.in.schedule=Bädda in mediafiler i sparade gudstjänstordningar
+mediashout.import.line1=Ange nedan var MediaShout db-filen finns (exporterad till txt-format):
