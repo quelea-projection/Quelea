@@ -74,7 +74,7 @@ public class HelpMenu extends Menu {
                     try {
                         Desktop.getDesktop().browse(new URI("http://quelea.org/manuals/get.php?lang="+QueleaProperties.get().getLanguageFile().getName()));
                     }
-                    catch(URISyntaxException | IOException ex) {
+                    catch(Exception ex) {
                         LOGGER.log(Level.WARNING, "Couldn't open Quelea manual page", ex);
                         showError();
                     }
@@ -88,7 +88,7 @@ public class HelpMenu extends Menu {
                     try {
                         Desktop.getDesktop().browse(new URI(QueleaProperties.get().getFacebookPageLocation()));
                     }
-                    catch(URISyntaxException | IOException ex) {
+                    catch(Exception ex) {
                         LOGGER.log(Level.WARNING, "Couldn't launch Quelea Facebook page", ex);
                         showError();
                     }
@@ -102,7 +102,7 @@ public class HelpMenu extends Menu {
                     try {
                         Desktop.getDesktop().browse(new URI(QueleaProperties.get().getDiscussLocation()));
                     }
-                    catch(URISyntaxException | IOException ex) {
+                    catch(Exception ex) {
                         LOGGER.log(Level.WARNING, "Couldn't launch Quelea discuss", ex);
                         showError();
                     }
@@ -116,7 +116,7 @@ public class HelpMenu extends Menu {
                     try {
                         Desktop.getDesktop().browse(new URI(QueleaProperties.get().getWikiPageLocation()));
                     }
-                    catch(URISyntaxException | IOException ex) {
+                    catch(Exception ex) {
                         LOGGER.log(Level.WARNING, "Couldn't launch Quelea Wiki", ex);
                         showError();
                     }
