@@ -528,3 +528,7 @@ timer.text.label=Tilleggstekst
 font.options.title=Fontvalg
 delete.translation.title=Slett oversettelse
 change.bible.version.text=Bytt versjon
+mediashout.button=MediaShout
+filefilters.description.txt.files=.txt filer
+embed.media.in.schedule=Implementer media i kjøreplanfilen
+mediashout.import.line1=Velg filbanen til MediaShout db (eksportert til txt-format) nedenfor:
