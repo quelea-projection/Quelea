@@ -38,7 +38,7 @@ public class VideoDisplayable implements MultimediaDisplayable, Serializable {
 
     private final String location;
     private YoutubeInfo youtubeinfo;
-    private boolean youtubeFlag;
+    private final boolean youtubeFlag;
 
     /**
      * Create a new video displayable.
@@ -54,6 +54,7 @@ public class VideoDisplayable implements MultimediaDisplayable, Serializable {
      * Create a new video displayable.
      * <p>
      * @param location the location of the displayable.
+     * @param youtubeinfo youtube information about the video clip
      */
     public VideoDisplayable(String location, YoutubeInfo youtubeinfo) {
         this.location = location;
@@ -125,7 +126,7 @@ public class VideoDisplayable implements MultimediaDisplayable, Serializable {
     public String getXML() {
         StringBuilder ret = new StringBuilder();
         if (youtubeinfo != null && youtubeinfo.getLocation() != null) {
-            ret.append("<filevideo youtubetitle=\"" + Utils.escapeXML(youtubeinfo.getTitle()) + "\">");
+            ret.append("<filevideo youtubetitle=\"").append(Utils.escapeXML(youtubeinfo.getTitle())).append("\">");
         } else {
             ret.append("<filevideo>");
         }
