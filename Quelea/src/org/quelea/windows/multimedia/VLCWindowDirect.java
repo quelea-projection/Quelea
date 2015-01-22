@@ -701,7 +701,7 @@ public class VLCWindowDirect extends VLCWindow {
             public void run() {
 //                System.out.println("updateState() start");
                 if (init) {
-                    SwingUtilities.invokeLater(new Runnable() {
+                    Platform.runLater(new Runnable() {
                         @Override
                         public void run() {
                             if ((!hideButton && show)) {
