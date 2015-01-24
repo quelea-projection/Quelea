@@ -22,25 +22,20 @@ import javafx.geometry.Insets;
 import javafx.geometry.Orientation;
 import javafx.geometry.Pos;
 import javafx.scene.control.SplitPane;
-import javafx.scene.effect.ColorAdjust;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.layout.BorderPane;
-import static javafx.scene.layout.StackPane.setMargin;
+import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
-import org.quelea.data.VideoBackground;
 import org.quelea.data.displayable.MultimediaDisplayable;
 import org.quelea.data.displayable.VideoDisplayable;
 import org.quelea.services.utils.Utils;
-import org.quelea.windows.lyrics.SelectLyricsList;
 import org.quelea.windows.main.AbstractPanel;
 import org.quelea.windows.main.DisplayCanvas;
 import org.quelea.windows.main.DisplayableDrawer;
 import org.quelea.windows.main.QueleaApp;
-import org.quelea.windows.main.widgets.DisplayPreview;
 
 /**
  * A panel used in the live / preview panels for playing audio.
@@ -64,6 +59,7 @@ public class MultimediaPanel extends AbstractPanel {
         controlPanel.setDisableControls(true);
         drawer = new MultimediaDrawer(controlPanel);
         img = new ImageView(new Image("file:icons/vid preview.png"));
+        img.setPreserveRatio(true);
         if (getCurrentDisplayable() != null && getCurrentDisplayable() instanceof VideoDisplayable) {
             img.setImage(Utils.getVidBlankImage(new File(((VideoDisplayable) getCurrentDisplayable()).getLocation())));
         }
@@ -71,8 +67,6 @@ public class MultimediaPanel extends AbstractPanel {
         splitPane.setOrientation(Orientation.VERTICAL);
         splitPane.setStyle("-fx-background-color: rgba(0, 0, 0);");
         setCenter(splitPane);
-        img.fitHeightProperty().bind(heightProperty().subtract(200));
-        img.fitWidthProperty().bind(widthProperty().subtract(20));
         previewText = new Text();
         previewText.setFont(Font.font("Verdana", 20));
         previewText.setFill(Color.WHITE);
@@ -86,8 +80,20 @@ public class MultimediaPanel extends AbstractPanel {
             }
         }, DisplayCanvas.Priority.LOW);
         registerDisplayCanvas(dummyCanvas);
-        splitPane.getItems().add(new VBox(10, controlPanel, previewText));
-        splitPane.getItems().add(img);
+        StackPane topBox = new StackPane();
+        VBox innerTopBox = new VBox(10, controlPanel, previewText);
+        innerTopBox.setAlignment(Pos.CENTER);
+        topBox.setAlignment(Pos.CENTER);
+        StackPane.setMargin(innerTopBox, new Insets(10));
+        topBox.getChildren().add(innerTopBox);
+        splitPane.getItems().add(topBox);
+        StackPane previewPane = new StackPane();
+        img.fitWidthProperty().bind(previewPane.widthProperty().subtract(10));
+        img.fitHeightProperty().bind(previewPane.heightProperty().subtract(10));
+        previewPane.setAlignment(Pos.CENTER);
+        StackPane.setMargin(img, new Insets(10));
+        previewPane.getChildren().add(img);
+        splitPane.getItems().add(previewPane);
         updateSize();
     }
 
