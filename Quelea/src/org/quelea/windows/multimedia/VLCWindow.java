@@ -60,8 +60,10 @@ public  abstract class VLCWindow {
 
     private static VLCWindow getInstance(){
         
-        if(Utils.isMac() || USE_JAVA_FX_FOR_VLC){
+        if(USE_JAVA_FX_FOR_VLC){
             return VLCWindowDirect.DIRECT_INSTANCE;
+        }else if(Utils.isMac()){
+            return MacVideo.MAC_INSTANCE;
         }else{
             return VLCWindowEmbed.EMBED_INSTANCE;
         }
