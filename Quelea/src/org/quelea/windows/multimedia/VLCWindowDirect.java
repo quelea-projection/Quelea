@@ -271,7 +271,7 @@ public class VLCWindowDirect extends VLCWindow {
      */
     private class RenderCallback extends RenderCallbackAdapter {
 
-        public Object lock = new Object();
+        public final Object lock = new Object();
         /**
          * Created this runnable as a convenience, so it is really clean to call
          * it later.
