@@ -24,6 +24,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.logging.Logger;
 import org.quelea.services.utils.LoggerUtils;
+import org.quelea.services.utils.QueleaProperties;
 import org.quelea.services.utils.Utils;
 import uk.co.caprica.vlcj.player.MediaPlayerFactory;
 import uk.co.caprica.vlcj.player.embedded.EmbeddedMediaPlayer;
@@ -56,7 +57,7 @@ public  abstract class VLCWindow {
     private volatile boolean init;
     private String location;
     private volatile double hue = 0;
-    private static final boolean USE_JAVA_FX_FOR_VLC = false;
+    private static final boolean USE_JAVA_FX_FOR_VLC = QueleaProperties.get().getUseJavaFXforVLCRendering();
 
     private static VLCWindow getInstance(){
         
