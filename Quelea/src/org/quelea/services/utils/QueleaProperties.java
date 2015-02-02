@@ -489,6 +489,26 @@ public final class QueleaProperties extends Properties {
     }
 
     /**
+     * Determine whether to use Java FX rendering for video playback with VLC.
+     * This approach is totally cross-platform capable.
+     *
+     * @return true if should use java fx for VLC Rendering, false otherwise
+     */
+    public boolean getUseJavaFXforVLCRendering() {
+        return Boolean.parseBoolean(getProperty("use.vlc.javafx.rendering", "false"));
+    }
+
+    /**
+     * Set whether to use Java FX rendering for video playback with VLC. This
+     * approach is totally cross-platform capable.
+     *
+     * @param val true if should use java fx for VLC Rendering, false otherwise.
+     */
+    public void setUseJavaFXforVLCRendering(boolean val) {
+        setProperty("use.vlc.javafx.rendering", Boolean.toString(val));
+    }
+
+    /**
      * Get the font size at which to display the notices.
      *
      * @return the font size at which to display the notices.
