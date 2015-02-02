@@ -155,6 +155,7 @@ public class MainToolbar extends ToolBar {
     
     private Button getButtonFromImage(String uri) {
         ImageView iv = new ImageView(new Image(uri));
+        iv.setSmooth(true);
         iv.setFitWidth(24);
         iv.setFitHeight(24);
         return new Button("", iv);

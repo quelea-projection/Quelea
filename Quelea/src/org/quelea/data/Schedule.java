@@ -144,21 +144,23 @@ public class Schedule implements Iterable<Displayable> {
                     Set<String> entries = new HashSet<>();
                     for (Displayable displayable : displayables) {
                         for (File displayableFile : displayable.getResources()) {
-                            String base = ".";
-                            String path = displayableFile.getAbsolutePath();
-                            String relative = new File(base).toURI().relativize(new File(path).toURI()).getPath();
-                            String zipPath = "resources/" + relative;
-                            if (!entries.contains(zipPath)) {
-                                entries.add(zipPath);
-                                ZipEntry entry = new ZipEntry(zipPath);
-                                zos.putNextEntry(entry);
-                                FileInputStream fi = new FileInputStream(displayableFile);
-                                try (BufferedInputStream origin = new BufferedInputStream(fi, BUFFER)) {
-                                    int count;
-                                    while ((count = origin.read(data, 0, BUFFER)) != -1) {
-                                        zos.write(data, 0, count);
+                            if (displayableFile.exists()) {
+                                String base = ".";
+                                String path = displayableFile.getAbsolutePath();
+                                String relative = new File(base).toURI().relativize(new File(path).toURI()).getPath();
+                                String zipPath = "resources/" + relative;
+                                if (!entries.contains(zipPath)) {
+                                    entries.add(zipPath);
+                                    ZipEntry entry = new ZipEntry(zipPath);
+                                    zos.putNextEntry(entry);
+                                    FileInputStream fi = new FileInputStream(displayableFile);
+                                    try (BufferedInputStream origin = new BufferedInputStream(fi, BUFFER)) {
+                                        int count;
+                                        while ((count = origin.read(data, 0, BUFFER)) != -1) {
+                                            zos.write(data, 0, count);
+                                        }
+                                        zos.closeEntry();
                                     }
-                                    zos.closeEntry();
                                 }
                             }
                         }
