@@ -55,10 +55,9 @@ public class MacVideo extends VLCWindow {
     }
 
     /**
-     * Determine if VLC has initialised correctly.
+     * Determine if AVPlayer has initialised correctly.
      * <p>
      * @return true if it has, false if it hasn't because something went wrong
-     * (the most likely cause is an outdated version.)
      */
     @Override
     public boolean isInit() {
