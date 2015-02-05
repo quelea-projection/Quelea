@@ -34,6 +34,7 @@ import java.util.logging.Logger;
 import org.quelea.data.displayable.TextDisplayable;
 import org.quelea.data.displayable.TextSection;
 import org.quelea.services.languages.LabelGrabber;
+import org.quelea.services.utils.LineTypeChecker;
 import org.quelea.services.utils.LoggerUtils;
 import org.quelea.windows.main.LivePanel;
 import org.quelea.windows.main.QueleaApp;
@@ -192,7 +193,16 @@ public class MobileLyricsServer {
                 TextSection currentSection = lp.getLyricsPanel().getLyricsList().getSelectionModel().getSelectedItem();
                 StringBuilder ret = new StringBuilder();
                 for(String line : currentSection.getText(chords, false)) {
-                    ret.append(line).append("<br/>");
+                    if(new LineTypeChecker(line).getLineType() != LineTypeChecker.Type.CHORDS) {
+                        ret.append("<span class=\"chord\">").append(line.replace(" ", "&#160;"));
+                    }
+                    else if(new LineTypeChecker(line).getLineType() != LineTypeChecker.Type.TITLE) {
+                        ret.append("<span class=\"title\">").append(line);
+                    }
+                    else {
+                        ret.append("<span class=\"lyric\">").append(line);
+                    }
+                    ret.append("</span>").append("<br/>");
                 }
                 if(chords) {
                     return ret.toString().replace(" ", "&#160;");
