@@ -417,7 +417,7 @@ public class RemoteControlServer {
                 for (TextSection currentSection : lp.getLyricsPanel().getLyricsList().getItems()) {
                     StringBuilder ret = new StringBuilder();
                     for (String line : currentSection.getText(false, false)) {
-                        ret.append(line).append("<br/>");
+                        ret.append("<span class=\"lyric\">").append(line).append("</span>").append("<br/>");
                     }
                     als.add(ret.toString());
                 }
