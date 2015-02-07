@@ -66,25 +66,41 @@ public class MainToolbar extends ToolBar {
      * Create the toolbar and any associated shortcuts.
      */
     public MainToolbar() {
-        newScheduleButton = getButtonFromImage("file:icons/filenew.png");
+        if (Utils.isMac()) {
+            newScheduleButton = getButtonFromImage("file:icons/filenewbig.png");
+        } else {
+            newScheduleButton = getButtonFromImage("file:icons/filenew.png");
+        }
         Utils.setToolbarButtonStyle(newScheduleButton);
         newScheduleButton.setTooltip(new Tooltip(LabelGrabber.INSTANCE.getLabel("new.schedule.tooltip")));
         newScheduleButton.setOnAction(new NewScheduleActionHandler());
         getItems().add(newScheduleButton);
 
-        openScheduleButton = getButtonFromImage("file:icons/fileopen.png");
+        if (Utils.isMac()) {
+            openScheduleButton = getButtonFromImage("file:icons/fileopenbig.png");
+        } else {
+            openScheduleButton = getButtonFromImage("file:icons/fileopen.png");
+        }
         Utils.setToolbarButtonStyle(openScheduleButton);
         openScheduleButton.setTooltip(new Tooltip(LabelGrabber.INSTANCE.getLabel("open.schedule.tooltip")));
         openScheduleButton.setOnAction(new OpenScheduleActionHandler());
         getItems().add(openScheduleButton);
 
-        saveScheduleButton = getButtonFromImage("file:icons/filesave.png");
+        if (Utils.isMac()) {
+            saveScheduleButton = getButtonFromImage("file:icons/filesavebig.png");
+        } else {
+            saveScheduleButton = getButtonFromImage("file:icons/filesave.png");
+        }
         Utils.setToolbarButtonStyle(saveScheduleButton);
         saveScheduleButton.setTooltip(new Tooltip(LabelGrabber.INSTANCE.getLabel("save.schedule.tooltip")));
         saveScheduleButton.setOnAction(new SaveScheduleActionHandler(false));
         getItems().add(saveScheduleButton);
 
-        printScheduleButton = getButtonFromImage("file:icons/fileprint.png");
+        if (Utils.isMac()) {
+            printScheduleButton = getButtonFromImage("file:icons/fileprintbig.png");
+        } else {
+            printScheduleButton = getButtonFromImage("file:icons/fileprint.png");
+        }
         Utils.setToolbarButtonStyle(printScheduleButton);
         printScheduleButton.setTooltip(new Tooltip(LabelGrabber.INSTANCE.getLabel("print.schedule.tooltip")));
         printScheduleButton.setOnAction(new PrintScheduleActionHandler());
@@ -92,7 +108,11 @@ public class MainToolbar extends ToolBar {
 
         getItems().add(new Separator());
 
-        newSongButton = getButtonFromImage("file:icons/newsong.png");
+        if (Utils.isMac()) {
+            newSongButton = getButtonFromImage("file:icons/newsongbig.png");
+        } else {
+            newSongButton = getButtonFromImage("file:icons/newsong.png");
+        }
         Utils.setToolbarButtonStyle(newSongButton);
         newSongButton.setTooltip(new Tooltip(LabelGrabber.INSTANCE.getLabel("new.song.tooltip")));
         newSongButton.setOnAction(new NewSongActionHandler());
@@ -100,41 +120,70 @@ public class MainToolbar extends ToolBar {
 
         getItems().add(new Separator());
 
-        quickInsertButton = getButtonFromImage("file:icons/lightning.png");
+        if (Utils.isMac()) {
+            quickInsertButton = getButtonFromImage("file:icons/lightningbig.png");
+        } else {
+            quickInsertButton = getButtonFromImage("file:icons/lightning.png");
+        }
         Utils.setToolbarButtonStyle(quickInsertButton);
         quickInsertButton.setTooltip(new Tooltip(LabelGrabber.INSTANCE.getLabel("quick.insert.text")));
         quickInsertButton.setOnAction(new QuickInsertActionHandler());
         getItems().add(quickInsertButton);
 
-        addPresentationButton = getButtonFromImage("file:icons/powerpoint.png");
+        if (Utils.isMac()) {
+            addPresentationButton = getButtonFromImage("file:icons/powerpointbig.png");
+        } else {
+            addPresentationButton = getButtonFromImage("file:icons/powerpoint.png");
+        }
         Utils.setToolbarButtonStyle(addPresentationButton);
         addPresentationButton.setTooltip(new Tooltip(LabelGrabber.INSTANCE.getLabel("add.presentation.tooltip")));
         addPresentationButton.setOnAction(new AddPowerpointActionHandler());
         getItems().add(addPresentationButton);
 
-        addVideoButton = getButtonFromImage("file:icons/video file.png");
+        if (Utils.isMac()) {
+            addVideoButton = getButtonFromImage("file:icons/video file big.png");
+        } else {
+            addVideoButton = getButtonFromImage("file:icons/video file.png");
+        }
         Utils.setToolbarButtonStyle(addVideoButton);
         addVideoButton.setTooltip(new Tooltip(LabelGrabber.INSTANCE.getLabel("add.video.tooltip")));
         addVideoButton.setOnAction(new AddVideoActionHandler());
         getItems().add(addVideoButton);
 
+        if (Utils.isMac()) {
+            addYoutubeButton = getButtonFromImage("file:icons/youtube.png", 24, 24, false, true);
+        } else {
         addYoutubeButton = getButtonFromImage("file:icons/youtube.png");
+        }
         Utils.setToolbarButtonStyle(addYoutubeButton);
         addYoutubeButton.setTooltip(new Tooltip(LabelGrabber.INSTANCE.getLabel("add.youtube.button")));
         addYoutubeButton.setOnAction(new AddYoutubeActionHandler());
         getItems().add(addYoutubeButton);
 
-        addTimerButton = getButtonFromImage("file:icons/timer-dark.png");
+        if (Utils.isMac()) {
+            addTimerButton = getButtonFromImage("file:icons/timer-dark.png");
+        } else {
+            addTimerButton = getButtonFromImage("file:icons/timer-dark.png", 24, 24, false, true);
+        }
         Utils.setToolbarButtonStyle(addTimerButton);
         addTimerButton.setTooltip(new Tooltip(LabelGrabber.INSTANCE.getLabel("add.timer.tooltip")));
         addTimerButton.setOnAction(new AddTimerActionHandler());
         getItems().add(addTimerButton);
 
-        loadingView = new ImageView(new Image("file:icons/loading.gif"));
+        if (Utils.isMac()) {
+            loadingView = new ImageView(new Image("file:icons/loading.gif"));
+        } else {
+            loadingView = new ImageView(new Image("file:icons/loading.gif", 24, 24, false, true));
+        }
         loadingView.setFitHeight(24);
         loadingView.setFitWidth(24);
         dvdImageStack = new StackPane();
-        ImageView dvdIV = new ImageView(new Image("file:icons/dvd.png"));
+        ImageView dvdIV;
+        if (Utils.isMac()) {
+            dvdIV = new ImageView(new Image("file:icons/dvd.png"));
+        } else {
+            dvdIV = new ImageView(new Image("file:icons/dvd.png", 24, 24, false, true));
+        }
         dvdIV.setFitWidth(24);
         dvdIV.setFitHeight(24);
         dvdImageStack.getChildren().add(dvdIV);
@@ -146,15 +195,27 @@ public class MainToolbar extends ToolBar {
 
         getItems().add(new Separator());
 
-        manageNoticesButton = getButtonFromImage("file:icons/info.png");
+        if (Utils.isMac()) {
+            manageNoticesButton = getButtonFromImage("file:icons/infobig.png");
+        } else {
+            manageNoticesButton = getButtonFromImage("file:icons/info.png");
+        }
         Utils.setToolbarButtonStyle(manageNoticesButton);
         manageNoticesButton.setTooltip(new Tooltip(LabelGrabber.INSTANCE.getLabel("manage.notices.tooltip")));
         manageNoticesButton.setOnAction(new ShowNoticesActionHandler());
         getItems().add(manageNoticesButton);
     }
-    
+
     private Button getButtonFromImage(String uri) {
         ImageView iv = new ImageView(new Image(uri));
+        iv.setSmooth(true);
+        iv.setFitWidth(24);
+        iv.setFitHeight(24);
+        return new Button("", iv);
+    }
+
+    private Button getButtonFromImage(String uri, int width, int height, boolean preserveRatio, boolean smooth) {
+        ImageView iv = new ImageView(new Image(uri, width, height, preserveRatio, smooth));
         iv.setSmooth(true);
         iv.setFitWidth(24);
         iv.setFitHeight(24);
@@ -168,10 +229,9 @@ public class MainToolbar extends ToolBar {
      */
     public void setDVDLoading(boolean loading) {
         addDVDButton.setDisable(loading);
-        if(loading && !dvdImageStack.getChildren().contains(loadingView)) {
+        if (loading && !dvdImageStack.getChildren().contains(loadingView)) {
             dvdImageStack.getChildren().add(loadingView);
-        }
-        else if(!loading) {
+        } else if (!loading) {
             dvdImageStack.getChildren().remove(loadingView);
         }
     }
