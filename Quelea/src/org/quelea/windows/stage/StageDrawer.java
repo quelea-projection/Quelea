@@ -112,7 +112,11 @@ public class StageDrawer extends WordDrawer {
         }
 
         List<LyricLine> newText;
-        newText = sanctifyText(text);
+        if (dumbWrap) {
+            newText = dumbWrapText(text);
+        } else {
+            newText = sanctifyText(text);
+        }
         double fontSize;
         if (defaultFontSize > 0) {
             fontSize = defaultFontSize;
@@ -562,11 +566,10 @@ public class StageDrawer extends WordDrawer {
             double newSize;
             if (displayable instanceof BiblePassage) {
                 processedText = dumbWrapText(textArr);
-                newSize = pickFontSize(font, processedText, getCanvas().getWidth() * 0.92, getCanvas().getHeight() * 0.9);
             } else {
                 processedText = sanctifyText(textArr);
-                newSize = pickFontSize(font, processedText, getCanvas().getWidth() * 0.92, getCanvas().getHeight() * 0.9);
             }
+            newSize = pickFontSize(font, processedText, getCanvas().getWidth() * 0.92, getCanvas().getHeight() * 0.9);
             if (newSize < fontSize) {
                 fontSize = newSize;
             }
