@@ -645,7 +645,6 @@ public class LyricDrawer extends WordDrawer {
             double newSize;
             if (displayable instanceof BiblePassage) {
                 processedText = dumbWrapText(textArr);
-                newSize = pickFontSize(font, processedText, getCanvas().getWidth() * 0.92, getCanvas().getHeight() * 0.9);
             } else {
                 String[] translationArr = null;
                 if (displayable instanceof SongDisplayable) {
@@ -655,8 +654,8 @@ public class LyricDrawer extends WordDrawer {
                     }
                 }
                 processedText = sanctifyText(textArr, translationArr);
-                newSize = pickFontSize(font, processedText, getCanvas().getWidth() * 0.92, getCanvas().getHeight() * 0.9);
             }
+            newSize = pickFontSize(font, processedText, getCanvas().getWidth() * 0.92, getCanvas().getHeight() * 0.9);
             if (newSize < fontSize) {
                 fontSize = newSize;
             }
