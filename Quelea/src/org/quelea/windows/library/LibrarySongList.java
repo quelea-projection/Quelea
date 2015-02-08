@@ -116,10 +116,13 @@ public class LibrarySongList extends StackPane {
 
                     @Override
                     public void handle(MouseEvent event) {
-                        Dragboard db = cell.startDragAndDrop(TransferMode.ANY);
-                        ClipboardContent content = new ClipboardContent();
-                        content.put(SongDisplayable.SONG_DISPLAYABLE_FORMAT, cell.getItem());
-                        db.setContent(content);
+                        SongDisplayable displayable = cell.getItem();
+                        if (displayable != null) {
+                            Dragboard db = cell.startDragAndDrop(TransferMode.ANY);
+                            ClipboardContent content = new ClipboardContent();
+                            content.put(SongDisplayable.SONG_DISPLAYABLE_FORMAT, displayable);
+                            db.setContent(content);
+                        }
                         event.consume();
                     }
                 });
