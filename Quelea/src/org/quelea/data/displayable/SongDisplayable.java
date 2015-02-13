@@ -927,7 +927,7 @@ public class SongDisplayable implements TextDisplayable, Comparable<SongDisplaya
             xml.append(Utils.escapeXML(author));
             xml.append("</author>");
             xml.append("<lyrics>");
-            xml.append(lyricsEntry.getValue());
+            xml.append(lyricsEntry.getValue().replace(" ", Character.toString((char)160)));
             xml.append("</lyrics>");
             xml.append("</song>");
         }
