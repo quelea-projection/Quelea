@@ -202,7 +202,7 @@ public class LibraryBiblePanel extends VBox implements BibleChangeListener {
         }
         getAddToSchedule().setDisable(false);
         StringBuilder ret = new StringBuilder();
-        int toVerse = book.getChapter(cvp.getFromChapter()).getVerses().length - 1;
+        int toVerse = book.getChapter(cvp.getFromChapter()).getVerses().length;
         if ((cvp.getFromChapter() == cvp.getToChapter()) && cvp.getToVerse() >= 0 && cvp.getToVerse() < book.getChapter(cvp.getFromChapter()).getVerses().length) {
             toVerse = cvp.getToVerse();
         }
