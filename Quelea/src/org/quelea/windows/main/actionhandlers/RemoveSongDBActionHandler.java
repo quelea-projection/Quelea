@@ -46,7 +46,11 @@ public class RemoveSongDBActionHandler implements EventHandler<ActionEvent> {
     public void handle(ActionEvent t) {
         MainWindow mainWindow = QueleaApp.get().getMainWindow();
         final LibrarySongList songList = mainWindow.getMainPanel().getLibraryPanel().getLibrarySongPanel().getSongList();
-        final SongDisplayable song = songList.getListView().itemsProperty().get().get(songList.getListView().getSelectionModel().getSelectedIndex());
+        int index = songList.getListView().getSelectionModel().getSelectedIndex();
+        if(index == -1) {
+            return;
+        }
+        final SongDisplayable song = songList.getListView().itemsProperty().get().get(index);
         if(song == null) {
             return;
         }
