@@ -394,7 +394,13 @@ public final class QueleaProperties extends Properties {
         if (path == null) {
             return null;
         }
-        return new File(path);
+        File f = new File(path);
+        if (f.isDirectory()) {
+            return f;
+        } else {
+            LoggerUtils.getLogger().log(Level.INFO, "Cannot find last directory, reverting to default location");
+            return null;
+        }
     }
 
     /**
@@ -416,7 +422,13 @@ public final class QueleaProperties extends Properties {
         if (path == null) {
             return null;
         }
-        return new File(path);
+        File f = new File(path);
+        if (f.isDirectory()) {
+            return f;
+        } else {
+            LoggerUtils.getLogger().log(Level.INFO, "Cannot find last schedule directory, reverting to default location");
+            return null;
+        }
     }
 
     /**
@@ -457,7 +469,13 @@ public final class QueleaProperties extends Properties {
         if (path == null) {
             return null;
         }
-        return new File(path);
+        File f = new File(path);
+        if (f.isDirectory()) {
+            return f;
+        } else {
+            LoggerUtils.getLogger().log(Level.INFO, "Cannot find last video directory, reverting to default location");
+            return null;
+        }
     }
 
     /**

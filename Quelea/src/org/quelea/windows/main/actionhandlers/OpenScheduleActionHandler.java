@@ -36,11 +36,8 @@ public class OpenScheduleActionHandler extends ClearingEventHandler {
     public void handle(javafx.event.ActionEvent t) {
         if(confirmClear()) {
             FileChooser chooser = new FileChooser();
-            if (QueleaProperties.get().getLastScheduleFileDirectory() != null && QueleaProperties.get().getLastScheduleFileDirectory().isDirectory()) {
+            if (QueleaProperties.get().getLastScheduleFileDirectory() != null) {
                 chooser.setInitialDirectory(QueleaProperties.get().getLastScheduleFileDirectory());
-            }
-            else {
-                LoggerUtils.getLogger().log(Level.INFO, "Cannot find last save directory, reverting to default save location");
             }
             chooser.getExtensionFilters().add(FileFilters.SCHEDULE);
             File file = chooser.showOpenDialog(QueleaApp.get().getMainWindow());
