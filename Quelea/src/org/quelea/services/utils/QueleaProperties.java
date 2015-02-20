@@ -1699,4 +1699,13 @@ public final class QueleaProperties extends Properties {
         return t;
     }
 
+    public boolean getClearStageWithMain() {
+        return Boolean.parseBoolean(getProperty("clear.stageview.with.main", "true"));
+    }
+    
+    public void setClearStageWithMain(boolean clear) {
+        setProperty("clear.stageview.with.main", Boolean.toString(clear));
+        write();
+    }
+
 }
