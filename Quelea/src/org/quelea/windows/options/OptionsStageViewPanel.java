@@ -44,6 +44,7 @@ public class OptionsStageViewPanel extends GridPane implements PropertyPanel {
     private ColorPicker backgroundColorPicker;
     private ColorPicker chordColorPicker;
     private ColorPicker lyricsColorPicker;
+    private final CheckBox clearWithMainBox;
 
     /**
      * Create the stage view options panel.
@@ -103,6 +104,13 @@ public class OptionsStageViewPanel extends GridPane implements PropertyPanel {
         GridPane.setConstraints(chordColorPicker, 2, 6);
         getChildren().add(chordColorPicker);
 
+        Label clearWithMain = new Label(LabelGrabber.INSTANCE.getLabel("clear.stage.view"));
+        GridPane.setConstraints(clearWithMain, 1, 7);
+        getChildren().add(clearWithMain);
+        clearWithMainBox = new CheckBox();
+        GridPane.setConstraints(clearWithMainBox, 2, 7);
+        getChildren().add(clearWithMainBox);
+        
         readProperties();
     }
 
@@ -117,6 +125,7 @@ public class OptionsStageViewPanel extends GridPane implements PropertyPanel {
         QueleaProperties.get().setStageBackgroundColor(backgroundColorPicker.getValue());
         QueleaProperties.get().setStageChordColor(chordColorPicker.getValue());
         QueleaProperties.get().setStageLyricsColor(lyricsColorPicker.getValue());
+        QueleaProperties.get().setClearStageWithMain(clearWithMainBox.isSelected());
     }
 
     /**
@@ -133,5 +142,6 @@ public class OptionsStageViewPanel extends GridPane implements PropertyPanel {
         chordColorPicker.fireEvent(new ActionEvent());
         fontSelection.getSelectionModel().select(QueleaProperties.get().getStageTextFont());
         lineAlignment.getSelectionModel().select(QueleaProperties.get().getStageTextAlignment());
+        clearWithMainBox.setSelected(QueleaProperties.get().getClearStageWithMain());
     }
 }
