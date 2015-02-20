@@ -530,3 +530,4 @@ embed.media.in.schedule=Embed media in schedule file
 mediashout.import.line1=Select the location of the MediaShout db (exported to txt format) below:
 filefilters.description.txt.files=.txt files
 mediashout.button=MediaShout
+clear.stage.view=Clear Stage View with Main Display
