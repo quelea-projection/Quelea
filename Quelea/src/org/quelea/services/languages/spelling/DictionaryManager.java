@@ -33,6 +33,7 @@ import org.quelea.services.utils.QueleaProperties;
 import org.quelea.services.utils.Utils;
 
 /**
+ * Responsible for managing and loading the spelling dictionaries.
  *
  * @author Michael
  */
@@ -43,18 +44,21 @@ public class DictionaryManager {
     private Map<String, Dictionary> dictionaries;
     private Properties props = new Properties();
 
+    /**
+     * Singleton constructor.
+     */
     private DictionaryManager() {
-        try(StringReader reader = new StringReader(Utils.getTextFromFile(new File(QueleaProperties.get().getDictionaryDir(), "dictionaries.properties").getAbsolutePath(), ""))) {
+        try (StringReader reader = new StringReader(Utils.getTextFromFile(new File(QueleaProperties.get().getDictionaryDir(), "dictionaries.properties").getAbsolutePath(), ""))) {
             props.load(reader);
-        }
-        catch(IOException ex) {
+        } catch (IOException ex) {
             LOGGER.log(Level.WARNING, "Couldn't load dictionaries", ex);
         }
         dictionaries = new HashMap<>();
         Speller init = new Speller(null);
-        for(String propName : props.stringPropertyNames()) {
+        for (String propName : props.stringPropertyNames()) {
             File file = new File(QueleaProperties.get().getDictionaryDir(), propName);
-            if(!file.exists()) {
+            if (!file.exists()) {
+                LOGGER.log(Level.WARNING, "Dictionary {0} doesn't exist.", propName);
                 continue;
             }
             Dictionary dict = new Dictionary(props.getProperty(propName), file);
@@ -63,10 +67,23 @@ public class DictionaryManager {
         }
     }
 
+    /**
+     * Get a set of all the dictionaries loaded byt he manager.
+     *
+     * @return a set of all the dictionaries loaded byt he manager.
+     */
     public Set<Dictionary> getDictionaries() {
         return new HashSet<>(dictionaries.values());
     }
 
+    /**
+     * Get a dictionary from a particular file name (not full path!) located in
+     * the dictionaries folder.
+     *
+     * @param name the file name of the dictionary.
+     * @return the dictionary (if the filename existed when this manager was
+     * initialised), null otherwise.
+     */
     public Dictionary getFromFilename(String name) {
         return dictionaries.get(name);
     }
