@@ -159,11 +159,6 @@ public class EasyWorshipParser implements SongParser {
         return ret.toString().trim();
     }
 
-    public static void main(String[] args) throws Exception {
-        EasyWorshipParser ew = new EasyWorshipParser();
-        List<SongDisplayable> songs = ew.getSongs(new File("C:\\Users\\Michael\\Documents\\Church\\Databases\\Easyworship (Hungarian)\\Data\\Songs.MB"), null);
-    }
-
 }
 
 class DriverShim implements Driver {
