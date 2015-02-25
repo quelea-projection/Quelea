@@ -17,25 +17,19 @@
  */
 package org.quelea.windows.multimedia;
 
-import java.io.File;
 import javafx.geometry.Insets;
-import javafx.geometry.Orientation;
 import javafx.geometry.Pos;
-import javafx.scene.control.SplitPane;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.layout.StackPane;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import org.quelea.data.displayable.MultimediaDisplayable;
-import org.quelea.data.displayable.VideoDisplayable;
-import org.quelea.services.utils.Utils;
 import org.quelea.windows.main.AbstractPanel;
 import org.quelea.windows.main.DisplayCanvas;
 import org.quelea.windows.main.DisplayableDrawer;
-import org.quelea.windows.main.QueleaApp;
 
 /**
  * A panel used in the live / preview panels for playing audio.
@@ -44,12 +38,9 @@ import org.quelea.windows.main.QueleaApp;
  */
 public class MultimediaPanel extends AbstractPanel {
 
-    private MultimediaDrawer drawer;
-    private MultimediaControls controlPanel;
-    private Text previewText;
-    private ImageView img;
-    private final SplitPane splitPane;
-    private static final double DEFAULT_RATIO = 4.0 / 3;
+    private final MultimediaDrawer drawer;
+    private final MultimediaControls controlPanel;
+    private final Text previewText;
 
     /**
      * Create a new image panel.
@@ -58,51 +49,30 @@ public class MultimediaPanel extends AbstractPanel {
         this.controlPanel = new MultimediaControls();
         controlPanel.setDisableControls(true);
         drawer = new MultimediaDrawer(controlPanel);
-        img = new ImageView(new Image("file:icons/vid preview.png"));
-        img.setPreserveRatio(true);
-        if (getCurrentDisplayable() != null && getCurrentDisplayable() instanceof VideoDisplayable) {
-            img.setImage(Utils.getVidBlankImage(new File(((VideoDisplayable) getCurrentDisplayable()).getLocation())));
-        }
-        splitPane = new SplitPane();
-        splitPane.setOrientation(Orientation.VERTICAL);
-        splitPane.setStyle("-fx-background-color: rgba(0, 0, 0);");
-        setCenter(splitPane);
+        ImageView img = new ImageView(new Image("file:icons/vid preview.png"));
+        BorderPane.setMargin(controlPanel, new Insets(30));
+        setCenter(controlPanel);
+        VBox centerBit = new VBox(5);
+        centerBit.setAlignment(Pos.CENTER);
         previewText = new Text();
         previewText.setFont(Font.font("Verdana", 20));
         previewText.setFill(Color.WHITE);
+        BorderPane.setMargin(centerBit, new Insets(10));
+        centerBit.getChildren().add(previewText);
+        img.fitHeightProperty().bind(heightProperty().subtract(200));
+        img.fitWidthProperty().bind(widthProperty().subtract(20));
+        centerBit.getChildren().add(img);
+        setBottom(centerBit);
         setMinWidth(50);
         setMinHeight(50);
         setStyle("-fx-background-color:grey;");
-        DisplayCanvas dummyCanvas = new DisplayCanvas(false, false, false, new DisplayCanvas.CanvasUpdater() {
-            @Override
-            public void updateCallback() {
-                updateCanvas();
-            }
-        }, DisplayCanvas.Priority.LOW);
+        DisplayCanvas dummyCanvas = new DisplayCanvas(false, false, false, this::updateCanvas, DisplayCanvas.Priority.LOW);
         registerDisplayCanvas(dummyCanvas);
-        StackPane topBox = new StackPane();
-        VBox innerTopBox = new VBox(10, controlPanel, previewText);
-        innerTopBox.setAlignment(Pos.CENTER);
-        topBox.setAlignment(Pos.CENTER);
-        StackPane.setMargin(innerTopBox, new Insets(10));
-        topBox.getChildren().add(innerTopBox);
-        splitPane.getItems().add(topBox);
-        StackPane previewPane = new StackPane();
-        img.fitWidthProperty().bind(previewPane.widthProperty().subtract(10));
-        img.fitHeightProperty().bind(previewPane.heightProperty().subtract(10));
-        previewPane.setAlignment(Pos.CENTER);
-        StackPane.setMargin(img, new Insets(10));
-        previewPane.getChildren().add(img);
-        splitPane.getItems().add(previewPane);
-        updateSize();
     }
 
     @Override
     public void updateCanvas() {
         MultimediaDisplayable displayable = (MultimediaDisplayable) getCurrentDisplayable();
-        if (displayable instanceof VideoDisplayable) {
-            img.setImage(Utils.getVidBlankImage(new File(((VideoDisplayable) displayable).getLocation())));
-        }
         previewText.setText(displayable.getName());
         boolean playVideo = false;
         for (DisplayCanvas canvas : getCanvases()) {
@@ -110,14 +80,13 @@ public class MultimediaPanel extends AbstractPanel {
             if (canvas.getPlayVideo()) {
                 playVideo = true;
             }
-            drawer.setPlayVideo(canvas.getPlayVideo());
             canvas.setCurrentDisplayable(displayable);
+            drawer.setPlayVideo(canvas.getPlayVideo());
             drawer.draw(displayable);
         }
         if (playVideo) {
             controlPanel.setDisableControls(!playVideo);
         }
-        updateSize();
     }
 
     public void play() {
@@ -133,40 +102,5 @@ public class MultimediaPanel extends AbstractPanel {
     public DisplayableDrawer getDrawer(DisplayCanvas canvas) {
         drawer.setCanvas(canvas);
         return drawer;
-    }
-
-    /**
-     * Calculate and update the new size of the image.
-     */
-    private void updateSize() {
-        double width = getWidth();
-        double height = getHeight();
-        double currentRatio = width / height;
-        double ratio = getRatio();
-        if (currentRatio < ratio) { //height too big
-            double hDiff = (getHeight() - (width / ratio)) / 2;
-            if (hDiff < 10) {
-                hDiff = 10;
-            }
-            setMargin(img, new Insets(hDiff, 10, hDiff, 10));
-        } else { //width too big
-            double vDiff = (getWidth() - (ratio * height)) / 2;
-            if (vDiff < 10) {
-                vDiff = 10;
-            }
-            setMargin(img, new Insets(10, vDiff, 10, vDiff));
-        }
-    }
-
-    private double getRatio() {
-        if (QueleaApp.get().getProjectionWindow() == null || QueleaApp.get().getProjectionWindow().isShowing()) {
-            return DEFAULT_RATIO;
-        }
-        double width = QueleaApp.get().getProjectionWindow().getWidth();
-        double height = QueleaApp.get().getProjectionWindow().getHeight();
-        if (height == 0) {
-            return DEFAULT_RATIO;
-        }
-        return width / height;
     }
 }
