@@ -313,10 +313,15 @@ public class RemoteControlServer {
         }
     }
 
+    @SuppressWarnings("unchecked")
+    private String passParams(HttpExchange he) {
+        Map<String, Object> params = (Map<String, Object>) he.getAttribute("parameters");
+        return (String) params.get("password");
+    }
+
     private void passwordPage(HttpExchange he) throws IOException {
         if (he.getRequestMethod().equals("POST")) {
-            Map<String, Object> params = (Map<String, Object>) he.getAttribute("parameters");
-            String password = (String) params.get("password");
+            String password = passParams(he);
             if (password != null && RCHandler.authenticate(password)) {
                 RCHandler.addDevice(he.getRemoteAddress().getAddress().toString());
                 if (pageContent == null || !USE_CACHE) {
