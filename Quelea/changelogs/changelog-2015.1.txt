@@ -7,6 +7,7 @@ quelea (2015.1) stable; urgency=normal
   * Fix occasional NullPointerException when dragging
   * Fix issue with reset video not being called on correct thread
   * Fix issue with deleting a saved location folder causing a crash
+  * Fix issue with visual glitches in lyrics area
   * Add option to disable fading of lyrics on stage view
 
  -- Michael Berry <michael@quelea.org>  Wednesday, 25 Feb 2015 00:00:00 +0000
