@@ -118,7 +118,7 @@ public class ScheduleList extends StackPane {
                             setText(null);
                         }
                         if (item instanceof SongDisplayable || item instanceof BiblePassage || item instanceof TimerDisplayable) {
-                            setContextMenu(new SchedulePopupMenu());
+                            setContextMenu(new SchedulePopupMenu(item));
                         }
                     }
                 };
