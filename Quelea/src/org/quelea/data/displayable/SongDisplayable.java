@@ -841,7 +841,7 @@ public class SongDisplayable implements TextDisplayable, Comparable<SongDisplaya
      * <p/>
      * @return the appropriate HTML to display the song in the list.
      */
-    public String getListHTML() {//@todo wring method name
+    public String getListHTML() {//@todo wrong method name
         return getTitle();
 //        if(lastSearch == null) {
 //            return getTitle();
