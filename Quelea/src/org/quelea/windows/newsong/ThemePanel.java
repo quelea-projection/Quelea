@@ -176,9 +176,6 @@ public class ThemePanel extends BorderPane {
      */
     public void updateTheme(boolean warning) {
         final ThemeDTO theme = getTheme();
-//        if (warning && theme.getBackground() instanceof ColourBackground) {
-//            checkAccessibility(theme.getFontPaint(), ((ColourBackground) theme.getBackground()).getColour());
-//        }
         Platform.runLater(new Runnable() {
             @Override
             public void run() {
