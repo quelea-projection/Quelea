@@ -322,9 +322,10 @@ public class ThemeToolbar extends HBox {
         vidLocationPanel.getChildren().add(sliderStack);
         backgroundCentre.add(vidPanel, "video");
 
-        backTypeSelection.setOnAction(new EventHandler<javafx.event.ActionEvent>() {
+        backTypeSelection.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
+
             @Override
-            public void handle(javafx.event.ActionEvent t) {
+            public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
                 if (backTypeSelection.getSelectionModel().getSelectedItem().equalsIgnoreCase(LabelGrabber.INSTANCE.getLabel("color.theme.label"))) {
                     backgroundCentre.show("colour");
                     vidStretchCheckbox.setVisible(false);
