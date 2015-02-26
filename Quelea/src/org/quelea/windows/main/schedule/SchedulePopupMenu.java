@@ -47,9 +47,8 @@ public class SchedulePopupMenu extends ContextMenu {
     private final MenuItem changeBibleVersion = new MenuItem(LabelGrabber.INSTANCE.getLabel("change.bible.version.text"), new ImageView(new Image("file:icons/bible.png", 16, 16, false, true)));
     private final MenuItem translationChoice = new MenuItem(LabelGrabber.INSTANCE.getLabel("choose.translations.text"));
     private final MenuItem editTimer = new MenuItem(LabelGrabber.INSTANCE.getLabel("edit.theme.text"), new ImageView(new Image("file:icons/theme.png", 16, 16, false, true)));
-    
 
-    public SchedulePopupMenu() {
+    public SchedulePopupMenu(Displayable item) {
         getItems().add(new MenuItem("placeholder")); //TODO: Investigate why this is required
         setOnShowing((WindowEvent event) -> {
             ScheduleList sl = QueleaApp.get().getMainWindow().getMainPanel().getSchedulePanel().getScheduleList();
@@ -64,17 +63,23 @@ public class SchedulePopupMenu extends ContextMenu {
                     allBibles = false;
                 }
             }
+            if (!singleSelect && allSongs && !(item instanceof SongDisplayable)) {
+                singleSelect = true;
+            }
+            if (!singleSelect && allBibles && !(item instanceof BiblePassage)) {
+                singleSelect = true;
+            }
             getItems().clear();
 
             if (singleSelect) {
-                if (sl.getSelectionModel().getSelectedItem() instanceof BiblePassage) {
+                if (item instanceof BiblePassage) {
                     getItems().addAll(editTheme);
                     if (BibleManager.get().getBibles().length > 1) {
                         getItems().addAll(changeBibleVersion);
                     }
-                } else if (sl.getSelectionModel().getSelectedItem() instanceof SongDisplayable) {
+                } else if (item instanceof SongDisplayable) {
                     getItems().addAll(editSong, translationChoice);
-                } else if (sl.getSelectionModel().getSelectedItem() instanceof TimerDisplayable) {
+                } else if (item instanceof TimerDisplayable) {
                     getItems().addAll(editTimer);
                 } else {
                     getItems().addAll(editTheme);
