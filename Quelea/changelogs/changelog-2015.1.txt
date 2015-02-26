@@ -8,6 +8,7 @@ quelea (2015.1) stable; urgency=normal
   * Fix issue with reset video not being called on correct thread
   * Fix issue with deleting a saved location folder causing a crash
   * Fix issue with visual glitches in lyrics area
+  * Fix issue where right clicking on the schedule didn't always display the correct context menu
   * Add option to disable fading of lyrics on stage view
 
  -- Michael Berry <michael@quelea.org>  Wednesday, 25 Feb 2015 00:00:00 +0000
