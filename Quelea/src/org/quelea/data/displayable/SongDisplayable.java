@@ -731,7 +731,7 @@ public class SongDisplayable implements TextDisplayable, Comparable<SongDisplaya
         boolean foundTitle = !(title == null || title.isEmpty());
         lyrics = lyrics.replaceAll("\n\n+", "\n\n");
         lyrics = lyrics.replace("<>", " ");
-        for (String section : lyrics.split("\n\n")) {
+        for (String section : lyrics.split("(\n\n)|(\r\r)|(\r\n\r\n)")) {
             String[] sectionLines = section.split("\n");
             String[] newLyrics = section.split("\n");
             String sectionTitle = "";
