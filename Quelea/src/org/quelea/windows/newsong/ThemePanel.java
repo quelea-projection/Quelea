@@ -25,19 +25,14 @@ import javafx.scene.control.Label;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
-import javafx.scene.paint.Color;
 import org.fxmisc.richtext.InlineCssTextArea;
-import org.javafx.dialog.Dialog;
-import org.quelea.data.ColourBackground;
 import org.quelea.data.ThemeDTO;
 import org.quelea.data.displayable.SongDisplayable;
 import org.quelea.data.displayable.TextSection;
 import org.quelea.services.languages.LabelGrabber;
-import org.quelea.services.utils.Utils;
 import org.quelea.windows.lyrics.LyricDrawer;
 import org.quelea.windows.main.DisplayCanvas;
 import org.quelea.windows.main.DisplayCanvas.Priority;
-import org.quelea.windows.main.DisplayableDrawer;
 import org.quelea.windows.main.WordDrawer;
 import org.quelea.windows.main.widgets.DisplayPositionSelector;
 import org.quelea.windows.main.widgets.DisplayPreview;
@@ -50,7 +45,6 @@ import org.quelea.windows.stage.StageDrawer;
  */
 public class ThemePanel extends BorderPane {
 
-    private static final double THRESHOLD = 0.1;
     public static final String[] SAMPLE_LYRICS = {"Amazing Grace how sweet the sound", "That saved a wretch like me", "I once was lost but now am found", "Was blind, but now I see."};
     private String[] text;
     private final DisplayPreview preview;
@@ -212,20 +206,6 @@ public class ThemePanel extends BorderPane {
         positionSelector.setTheme(theme);
         updateTheme(false);
     }
-
-    /**
-     * Check whether the two colours are too closely matched to read clearly. If
-     * they are, display a warning message.
-     * <p/>
-     * @param col1 first colour.
-     * @param col2 second colour.
-     */
-//    private void checkAccessibility(Color col1, Color col2) {
-//        double diff = Utils.getColorDifference(col1, col2);
-//        if (diff < THRESHOLD) {
-//            Dialog.showInfo(LabelGrabber.INSTANCE.getLabel("warning.label"), LabelGrabber.INSTANCE.getLabel("similar.colors.text"));
-//        }
-//    }
 
     /**
      * Get the canvas on this theme panel.
