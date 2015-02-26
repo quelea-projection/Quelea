@@ -74,7 +74,7 @@ public class LineTypeChecker {
      * @return true if it's a chord line, false otherwise.
      */
     private boolean checkChords() {
-        if (line.isEmpty()) {
+        if (line.trim().isEmpty()) {
             return false;
         }
         if (line.toLowerCase().endsWith("//chords")) {
@@ -106,7 +106,11 @@ public class LineTypeChecker {
      * @return true if it's the title of a section, false otherwise.
      */
     private boolean checkTitle() {
-        String processedLine = line.toLowerCase().trim().replace("(", "").replace(")", "");
+        String processedLine = line.toLowerCase().trim()
+                .replace("{", "").replace("}", "")
+                .replace("[", "").replace("]", "")
+                .replace("<", "").replace(">", "")
+                .replace("(", "").replace(")", "");
         if (processedLine.endsWith("//title")) {
             return true;
         }
