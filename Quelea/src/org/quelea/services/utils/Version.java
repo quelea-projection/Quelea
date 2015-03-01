@@ -50,25 +50,6 @@ public class Version implements Comparable<Version> {
     }
 
     /**
-     * Get the version string in friendly text format rather than decimal
-     * format.
-     * <p/>
-     * @return the text based version string.
-     */
-    public String getVersionTextString() {
-        String[] parts = versionStr.split("\\.");
-        if(parts.length > 1) {
-            StringBuilder ret = new StringBuilder(parts[0]);
-            ret.append(' ');
-            ret.append(getMinorName());
-            return ret.toString();
-        }
-        else {
-            return getVersionString();
-        }
-    }
-
-    /**
      * Get the minor "name" for this particular version - eg. Genesis, Exodus,
      * etc.
      * <p>
@@ -107,21 +88,6 @@ public class Version implements Comparable<Version> {
      */
     public String getUnstableName() {
         return unstableName;
-    }
-
-    /**
-     * Get the version string including the minor name.
-     * <p/>
-     * @return the version string with the minor name attached. Useful for error
-     * reporting.
-     */
-    public String getFullVersionString() {
-        StringBuilder ret = new StringBuilder();
-        ret.append(getMajorVersionNumber());
-        if(unstableName != null && !unstableName.trim().isEmpty()) {
-            ret.append(" (").append(unstableName).append(")");
-        }
-        return ret.toString();
     }
 
     /**
