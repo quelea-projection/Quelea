@@ -92,7 +92,7 @@ public final class Main extends Application {
         setupTranslator();
         final SplashStage splashWindow = new SplashStage();
         splashWindow.show();
-        LOGGER.log(Level.INFO, "Started, version {0}", QueleaProperties.VERSION.getFullVersionString());
+        LOGGER.log(Level.INFO, "Started, version {0}", QueleaProperties.VERSION.getVersionString());
 
         new Thread() {
             @Override

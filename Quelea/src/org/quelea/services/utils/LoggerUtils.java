@@ -164,7 +164,7 @@ public final class LoggerUtils {
         final StringBuilder urlStrBuilder = new StringBuilder("http://quelea.org/errorreport/store.php?os=");
         urlStrBuilder.append(os);
         urlStrBuilder.append("&version=");
-        urlStrBuilder.append(QueleaProperties.VERSION.getFullVersionString());
+        urlStrBuilder.append(QueleaProperties.VERSION.getVersionString());
         urlStrBuilder.append("&language=");
         urlStrBuilder.append(Locale.getDefault().getDisplayLanguage(Locale.ENGLISH));
 
