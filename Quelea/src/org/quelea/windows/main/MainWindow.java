@@ -65,7 +65,7 @@ public class MainWindow extends Stage {
      * application-wide main window, false otherwise.
      */
     public MainWindow(boolean setApplicationWindow) {
-        setTitle("Quelea " + QueleaProperties.VERSION.getFullVersionString());
+        setTitle("Quelea " + QueleaProperties.VERSION.getVersionString());
         Utils.addIconsToStage(this);
 
         BorderPane mainPane = new BorderPane();

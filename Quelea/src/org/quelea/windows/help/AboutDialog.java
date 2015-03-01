@@ -69,7 +69,7 @@ public class AboutDialog extends Stage {
         newLayout.setTop(logo);
 
         VBox subLayout = new VBox();
-        Text headingText = new Text(LabelGrabber.INSTANCE.getLabel("help.about.version") + " " + QueleaProperties.VERSION.getFullVersionString());
+        Text headingText = new Text(LabelGrabber.INSTANCE.getLabel("help.about.version") + " " + QueleaProperties.VERSION.getVersionString());
         headingText.setFont(Font.font("Arial", FontWeight.BOLD, FontPosture.REGULAR, 20));
         subLayout.getChildren().add(headingText);
         subLayout.getChildren().add(new Text(" "));
