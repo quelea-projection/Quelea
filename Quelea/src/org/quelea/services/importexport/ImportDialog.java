@@ -86,6 +86,8 @@ public abstract class ImportDialog extends Stage implements PropertyChangeListen
      * @param parser the parser to use for this import dialog.
      * @param selectDirectory true if the user should only be allowed to select
      * directories, false otherwise.
+     * @param selectMultiple true if multiple files are allowed to be selected,
+     * false otherwise.
      */
     public ImportDialog(String[] dialogLabels, ExtensionFilter fileFilter,
             final SongParser parser, final boolean selectDirectory, final boolean selectMultiple) {
