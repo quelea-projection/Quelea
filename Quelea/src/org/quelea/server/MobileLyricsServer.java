@@ -31,6 +31,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.quelea.data.displayable.BiblePassage;
 import org.quelea.data.displayable.TextDisplayable;
 import org.quelea.data.displayable.TextSection;
 import org.quelea.services.languages.LabelGrabber;
@@ -193,7 +194,10 @@ public class MobileLyricsServer {
                 TextSection currentSection = lp.getLyricsPanel().getLyricsList().getSelectionModel().getSelectedItem();
                 StringBuilder ret = new StringBuilder();
                 for(String line : currentSection.getText(chords, false)) {
-                    if(new LineTypeChecker(line).getLineType() != LineTypeChecker.Type.CHORDS) {
+                    if(lp.getDisplayable() instanceof BiblePassage) {
+                        ret.append(line).append("<br/>");
+                    }
+                    else if(new LineTypeChecker(line).getLineType() != LineTypeChecker.Type.CHORDS) {
                         ret.append("<span class=\"chord\">").append(line.replace(" ", "&#160;"));
                     }
                     else if(new LineTypeChecker(line).getLineType() != LineTypeChecker.Type.TITLE) {
