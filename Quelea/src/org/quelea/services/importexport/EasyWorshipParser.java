@@ -96,7 +96,7 @@ public class EasyWorshipParser implements SongParser {
 
         }
         catch(ClassNotFoundException | IllegalAccessException | InstantiationException | MalformedURLException | SQLException ex) {
-            LOGGER.log(Level.INFO, "Couln't import using SQL", ex);
+            LOGGER.log(Level.INFO, "Couldn't import using SQL", ex);
             ret.clear();
             String line;
             BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(file), "US-ASCII")); //Easyworhsip DB always in this encoding
