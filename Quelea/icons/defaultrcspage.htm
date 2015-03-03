@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Quelea Remote Control</title>
+        <meta charset="utf-8">
+        <meta name="apple-mobile-web-app-capable" content="yes">
+        <meta name="mobile-web-app-capable" content="yes">
+        <style type="text/css">
+            body {
+                font-family: 'DejaVu Sans',sans-serif;
+                width: 100%;
+                text-align: center;
+            }
+
+            button {
+                background-color: #E6E6E6; background-image: -webkit-gradient(linear, left top, left bottom, from(#E6E6E6), to(#CCCCCC));
+                background-image: -webkit-linear-gradient(top, #E6E6E6, #CCC);
+                background-image: -moz-linear-gradient(top, #E6E6E6, #CCC);
+                background-image: -ms-linear-gradient(top, #E6E6E6, #CCC);
+                background-image: -o-linear-gradient(top, #E6E6E6, #CCC);
+                background-image: linear-gradient(to bottom, #E6E6E6, #CCC);
+
+                border:1px solid #cacaca;
+                -webkit-border-radius: 10px;
+                -moz-border-radius: 10px;
+                border-radius: 10px;
+
+                width:30%;
+                height:30%;
+                min-height: 150px;
+                min-width: 250px;
+                max-width: 300px;
+                margin: 10px;
+                margin-left:auto;
+                padding: 0px;
+                font-size: 2em;
+                vertical-align: middle;
+                color: black;
+            }
+
+            .selected {
+                border:1px solid #b3b3b3;
+                background-color: #cdcdcd; 
+                background-image: -webkit-gradient(linear, left top, left bottom, from(#cdcdcd), to(#b3b3b3));
+                background-image: -webkit-linear-gradient(top, #cdcdcd, #b3b3b3);
+                background-image: -moz-linear-gradient(top, #cdcdcd, #b3b3b3);
+                background-image: -ms-linear-gradient(top, #cdcdcd, #b3b3b3);
+                background-image: -o-linear-gradient(top, #cdcdcd, #b3b3b3);
+                background-image: linear-gradient(to bottom, #cdcdcd, #b3b3b3);
+            }
+
+            .unselected {
+
+            }
+
+            #center {
+                text-align: center;
+                display: block;
+                margin-top: 25px;
+                width: 90%;
+                margin-left:auto;
+                margin-right:auto;
+            }
+
+            #lyrics {
+                display: inline-block;
+                font-size: 30px;
+            }
+
+            a {
+                color: black;
+                text-decoration: none;
+            }
+
+            a:active {
+                color: black;
+            }
+
+            a:hover {
+                text-decoration: underline;
+
+            }
+
+            a:visited {
+                color: black;
+            }
+
+            .outer {
+
+            }
+
+            .inner {
+                padding-top: 20px;
+                padding-bottom: 20px;
+            }
+
+            .current {
+                font-weight: bold;
+                background-color: #96D1FF;
+
+            }
+
+            iframe {
+                display: none;
+            }
+
+            #logout {
+                text-align: right;
+                position: relative;
+                margin-top: 20px;
+            }
+
+            #logout button {
+                text-align:center;
+                width:25%;
+                height:20%;
+                min-height: 100px;
+                min-width: 100px;
+                max-width: 200px;
+                margin-top: 25px;
+                margin: 10px;
+                margin-left:auto;
+                padding: 0px;
+                font-size: 2em;
+            }
+
+        </style>
+        <script>
+            var xmlhttp;
+            var statushttp;
+            var lyriccache;
+            var statuscache;
+            function setup()
+            {
+                setInterval(function() {
+                    loadXMLDoc();
+                    stateCheck();
+                }, 400);
+                xmlhttp = new XMLHttpRequest();
+                statushttp = new XMLHttpRequest();
+                xmlhttp.onreadystatechange = function()
+                {
+                    if (xmlhttp.readyState == 4 && xmlhttp.status == 200)
+                    {
+                        if (lyriccache !== xmlhttp.responseText) {
+                            document.getElementById("lyrics").innerHTML = xmlhttp.responseText;
+                            lyriccache = xmlhttp.responseText;
+                        }
+
+                    }
+                }
+                statushttp.onreadystatechange = function()
+                {
+                    if (statushttp.readyState == 4 && statushttp.status == 200)
+                    {
+                        if (statuscache !== statushttp.responseText) {
+                            statuscache = statushttp.responseText;
+
+                            var st = statuscache.split(",");
+                            if (st[0] === "true") {
+                                document.getElementById("logobutton").className = "selected";
+                            }
+                            else {
+                                document.getElementById("logobutton").className = "unselected";
+                            }
+                            if (st[1] === "true") {
+                                document.getElementById("blackbutton").className = "selected";
+                            }
+                            else {
+                                document.getElementById("blackbutton").className = "unselected";
+                            }
+                            if (st[2] === "true") {
+                                document.getElementById("clearbutton").className = "selected";
+                            }
+                            else {
+                                document.getElementById("clearbutton").className = "unselected";
+                            }
+                            if (document.getElementById("playbutton") !== null) {
+                                document.getElementById("playbutton").innerHTML = st[3];
+                            }
+                        }
+                    }
+                }
+            }
+            window.onload = setup;
+            function loadXMLDoc()
+            {
+                xmlhttp.open("GET", "/lyrics", true);
+                xmlhttp.timeout = 4000;
+                xmlhttp.ontimeout = function() {
+                    document.getElementById("lyrics").innerHTML = "";
+                }
+                xmlhttp.send();
+            }
+            function stateCheck()
+            {
+                statushttp.open("GET", "/status", true);
+                statushttp.timeout = 4000;
+                statushttp.ontimeout = function() {
+                    document.getElementById("logobutton").className = "unselected";
+                    document.getElementById("blackbutton").className = "unselected";
+                    document.getElementById("clearbutton").className = "unselected";
+                }
+                statushttp.send();
+            }
+        </script>
+    </head>
+    <body>
+        <a href="/tlogo" target="empty"><button type="button" id="logobutton" class="unselected">[logo.text]</button></a>
+        <a href="/black" target="empty"><button type="button" id="blackbutton" class="unselected">[black.text]</button></a>
+        <a href="/clear" target="empty"><button type="button" id="clearbutton" class="unselected">[clear.text]</button></a><br/>
+        <a href="/prev" target="empty"><button type="button">[prev.text]</button></a>
+        <a href="/next" target="empty"><button type="button">[next.text]</button></a><br/>
+        <a href="/previtem" target="empty"><button type="button" >[previtem.text]</button></a>
+        <a href="/nextitem" target="empty"><button type="button">[nextitem.text]</button></a><br/>
+        <!-- Be warned. This is hacky. Because not all browsers correctly implement a 204 HTTP Header to not-refresh or reload content on a page,
+             I have designed this beauty. Every link on this page should use target="empty" to send all GET requests to the iframe. The iframe
+             then loads the page itself (which should *ALWAYS* be an empty bodied 200 header). This is highly efficient, and incredibly hacky.
+             The iframe should always utilise display:none;. 
+             The main page is never reloaded but the built in server will still accept the GET request and act accordingly.
+             
+             I'm not liable for this code...
+        -->
+        <iframe name="empty"></iframe>
+        &nbsp;
+        <div id="center">
+            <div id="lyrics"></div>
+        </div>
+
+        <div id="logout">
+            <a href="/logout"><button type="button">[logout.text]</button></a>
+        </div>
+    </body>
+</html>
