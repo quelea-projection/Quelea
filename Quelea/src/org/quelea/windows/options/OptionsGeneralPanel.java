@@ -293,7 +293,7 @@ public class OptionsGeneralPanel extends GridPane implements PropertyPanel {
         Label maxFontSizeLabel = new Label(LabelGrabber.INSTANCE.getLabel("max.font.size.label"));
         GridPane.setConstraints(maxFontSizeLabel, 1, rows);
         getChildren().add(maxFontSizeLabel);
-        maximumFontSizeSlider = new Slider(12, 1000, 1000);
+        maximumFontSizeSlider = new Slider(12, 300, 100);
         GridPane.setConstraints(maximumFontSizeSlider, 2, rows);
         getChildren().add(maximumFontSizeSlider);
         maxFontSizeLabel.setLabelFor(maximumFontSizeSlider);
@@ -331,7 +331,7 @@ public class OptionsGeneralPanel extends GridPane implements PropertyPanel {
         Label maxCharsLabel = new Label(LabelGrabber.INSTANCE.getLabel("max.chars.line.label"));
         GridPane.setConstraints(maxCharsLabel, 1, rows);
         getChildren().add(maxCharsLabel);
-        maxCharsSlider = new Slider(10, 160, 0);
+        maxCharsSlider = new Slider(10, 160, 45);
         GridPane.setConstraints(maxCharsSlider, 2, rows);
         getChildren().add(maxCharsSlider);
         maxCharsLabel.setLabelFor(maxCharsSlider);

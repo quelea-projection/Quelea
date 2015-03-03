@@ -195,7 +195,7 @@ public class MobileLyricsServer {
                 StringBuilder ret = new StringBuilder();
                 for(String line : currentSection.getText(chords, false)) {
                     if(lp.getDisplayable() instanceof BiblePassage) {
-                        ret.append(line).append("<br/>");
+                        ret.append("<span class=\"bible\">").append(line);
                     }
                     else if(new LineTypeChecker(line).getLineType() != LineTypeChecker.Type.CHORDS) {
                         ret.append("<span class=\"chord\">").append(line.replace(" ", "&#160;"));
