@@ -17,6 +17,7 @@
  */
 package org.quelea.windows.multimedia;
 
+import javafx.application.Platform;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.image.Image;
@@ -26,7 +27,10 @@ import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
+import org.apache.fop.tools.anttasks.RunTest;
 import org.quelea.data.displayable.MultimediaDisplayable;
+import org.quelea.data.displayable.VideoDisplayable;
+import org.quelea.services.utils.Utils;
 import org.quelea.windows.main.AbstractPanel;
 import org.quelea.windows.main.DisplayCanvas;
 import org.quelea.windows.main.DisplayableDrawer;
@@ -41,6 +45,7 @@ public class MultimediaPanel extends AbstractPanel {
     private final MultimediaDrawer drawer;
     private final MultimediaControls controlPanel;
     private final Text previewText;
+    private final ImageView imgView;
 
     /**
      * Create a new image panel.
@@ -49,7 +54,7 @@ public class MultimediaPanel extends AbstractPanel {
         this.controlPanel = new MultimediaControls();
         controlPanel.setDisableControls(true);
         drawer = new MultimediaDrawer(controlPanel);
-        ImageView img = new ImageView(new Image("file:icons/vid preview.png"));
+        imgView = new ImageView(new Image("file:icons/vid preview.png"));
         BorderPane.setMargin(controlPanel, new Insets(30));
         setCenter(controlPanel);
         VBox centerBit = new VBox(5);
@@ -59,9 +64,9 @@ public class MultimediaPanel extends AbstractPanel {
         previewText.setFill(Color.WHITE);
         BorderPane.setMargin(centerBit, new Insets(10));
         centerBit.getChildren().add(previewText);
-        img.fitHeightProperty().bind(heightProperty().subtract(200));
-        img.fitWidthProperty().bind(widthProperty().subtract(20));
-        centerBit.getChildren().add(img);
+        imgView.fitHeightProperty().bind(heightProperty().subtract(200));
+        imgView.fitWidthProperty().bind(widthProperty().subtract(20));
+        centerBit.getChildren().add(imgView);
         setBottom(centerBit);
         setMinWidth(50);
         setMinHeight(50);
@@ -73,6 +78,17 @@ public class MultimediaPanel extends AbstractPanel {
     @Override
     public void updateCanvas() {
         MultimediaDisplayable displayable = (MultimediaDisplayable) getCurrentDisplayable();
+        if (displayable instanceof VideoDisplayable) {
+            new Thread() {
+                @Override
+                public void run() {
+                    Image img = Utils.getVidBlankImage(((VideoDisplayable)displayable).getLocationAsFile());
+                    Platform.runLater(() -> {
+                        imgView.setImage(img);
+                    });
+                }
+            }.start();
+        }
         previewText.setText(displayable.getName());
         boolean playVideo = false;
         for (DisplayCanvas canvas : getCanvases()) {
