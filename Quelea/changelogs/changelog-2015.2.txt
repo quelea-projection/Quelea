@@ -3,5 +3,7 @@ quelea (2015.2) stable; urgency=normal
   * Update bundled JRE to final released copy (not EA)
   * Fix versioning issue (only the major version number was reported in some places
   * Fix bug with bible passages appearing on just one line in mobile lyrics view
+  * Update Easy Worship importer to preserve CCLI / copyright info
+  * Enable static video previews in live / preview panel
 
- -- Michael Berry <michael@quelea.org>  Wednesday, 03 Mar 2015 00:00:00 +0000
+ -- Michael Berry <michael@quelea.org>  Wednesday, 04 Mar 2015 00:00:00 +0000
