@@ -531,3 +531,4 @@ mediashout.button=MediaShout
 filefilters.description.txt.files=Soubory .txt
 embed.media.in.schedule=Vložit media do souboru s rozvrhem
 mediashout.import.line1=Vybrat umístění databáze MediaShout (exported to txt format) below:
+clear.stage.view=Vyprázdnit pohled na scénu s hlavní obrazovkou
