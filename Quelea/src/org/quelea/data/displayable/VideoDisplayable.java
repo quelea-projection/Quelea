@@ -81,6 +81,15 @@ public class VideoDisplayable implements MultimediaDisplayable, Serializable {
     public String getLocation() {
         return location;
     }
+    
+    /**
+     * Get the displayable location (as a file.)
+     * <p>
+     * @return the displayable location (as a file.)
+     */
+    public File getLocationAsFile() {
+        return new File(location);
+    }
 
     /**
      * Get the displayable name.
