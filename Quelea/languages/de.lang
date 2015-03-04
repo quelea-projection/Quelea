@@ -531,3 +531,4 @@ mediashout.button=MediaShout
 filefilters.description.txt.files=.txt Dateien
 embed.media.in.schedule=Mediendateien in Ablaufdatei speichern
 mediashout.import.line1=Speicherort der als txt exportierten MediaShout Datenbank auswählen:
+clear.stage.view=Bühnenansicht gemeinsam mit Präsentationsansicht löschen
