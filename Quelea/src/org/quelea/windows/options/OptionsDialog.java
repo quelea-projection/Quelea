@@ -18,7 +18,7 @@
 package org.quelea.windows.options;
 
 import java.util.List;
-import javafx.event.EventHandler;
+import javafx.event.ActionEvent;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
@@ -109,19 +109,13 @@ public class OptionsDialog extends Stage {
         mainPane.setCenter(tabbedPane);
         okButton = new Button(LabelGrabber.INSTANCE.getLabel("ok.button"), new ImageView(new Image("file:icons/tick.png")));
         BorderPane.setMargin(okButton, new Insets(5));
-        okButton.setOnAction(new EventHandler<javafx.event.ActionEvent>() {
-
-            @Override
-            public void handle(javafx.event.ActionEvent t) {
-                List<Tab> tabs = tabbedPane.getTabs();
-                for(int i = 0; i < tabs.size(); i++) {
-                    if(tabs.get(i).getContent() instanceof PropertyPanel) {
-                        ((PropertyPanel) tabs.get(i).getContent()).setProperties();
-                    }
-                }
-                callBeforeHiding();
-                hide();
-            }
+        okButton.setOnAction((ActionEvent t) -> {
+            List<Tab> tabs = tabbedPane.getTabs();
+            tabs.stream().filter((tab) -> (tab.getContent() instanceof PropertyPanel)).forEach((tab) -> {
+                ((PropertyPanel) tab.getContent()).setProperties();
+            });
+            callBeforeHiding();
+            hide();
         });
         BorderPane.setAlignment(okButton, Pos.CENTER);
         mainPane.setBottom(okButton);
