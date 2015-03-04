@@ -20,12 +20,15 @@ package org.quelea.windows.main.actionhandlers;
 
 import java.io.File;
 import java.util.List;
+import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
+import javafx.scene.image.Image;
 import javafx.stage.FileChooser;
 import org.quelea.data.displayable.VideoDisplayable;
 import org.quelea.services.utils.FileFilters;
 import org.quelea.services.utils.QueleaProperties;
+import org.quelea.services.utils.Utils;
 import org.quelea.windows.main.QueleaApp;
 
 /**
@@ -49,6 +52,12 @@ public class AddVideoActionHandler implements EventHandler<ActionEvent> {
                 QueleaProperties.get().setLastVideoDirectory(file.getParentFile());
                 VideoDisplayable displayable = new VideoDisplayable(file.getAbsolutePath());
                 QueleaApp.get().getMainWindow().getMainPanel().getSchedulePanel().getScheduleList().add(displayable);
+                new Thread() {
+                    @Override
+                    public void run() {
+                        Utils.getVidBlankImage(file); //Cache preview image
+                    }
+                }.start();
             }
         }
     }
