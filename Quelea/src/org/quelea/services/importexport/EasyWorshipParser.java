@@ -27,6 +27,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.sql.Connection;
+import java.sql.DatabaseMetaData;
 import java.sql.Driver;
 import java.sql.DriverManager;
 import java.sql.DriverPropertyInfo;
@@ -91,7 +92,9 @@ public class EasyWorshipParser implements SongParser {
                     author = "";
                 }
                 String lyrics = rs.getString("Words");
-                ret.add(getSong(title, author, lyrics));
+                String copyright = rs.getString("Copyright");
+                String num = rs.getString("Song Number");
+                ret.add(getSong(title, author, lyrics, copyright, num));
             }
 
         }
@@ -111,7 +114,7 @@ public class EasyWorshipParser implements SongParser {
                 }
                 if(inSong && line.contains("}")) {
                     inSong = false;
-                    SongDisplayable song = getSong("", "", songContent.toString());
+                    SongDisplayable song = getSong("", "", songContent.toString(), "", "");
                     if(song != null) {
                         ret.add(song);
                     }
@@ -122,7 +125,7 @@ public class EasyWorshipParser implements SongParser {
         return ret;
     }
 
-    private SongDisplayable getSong(String title, String author, String songContent) {
+    private SongDisplayable getSong(String title, String author, String songContent, String copyright, String ccli) {
         if(songContent.contains(FNT)) {
             int fntInd = songContent.indexOf(FNT) + FNT.length();
             songContent = songContent.substring(fntInd);
@@ -145,6 +148,8 @@ public class EasyWorshipParser implements SongParser {
         songContent = trimLines(songContent);
         SongDisplayable song = new SongDisplayable(title, author);
         song.setLyrics(songContent);
+        song.setCopyright(copyright);
+        song.setCcli(ccli);
         if(song.getTitle() == null || song.getTitle().isEmpty()) { //Invalid song, so forget it
             song = null;
         }
