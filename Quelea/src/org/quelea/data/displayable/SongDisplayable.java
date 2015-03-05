@@ -875,6 +875,27 @@ public class SongDisplayable implements TextDisplayable, Comparable<SongDisplaya
         xml.append("<author>");
         xml.append(Utils.escapeXML(author));
         xml.append("</author>");
+        xml.append("<ccli>");
+        xml.append(Utils.escapeXML(ccli));
+        xml.append("</ccli>");
+        xml.append("<copyright>");
+        xml.append(Utils.escapeXML(copyright));
+        xml.append("</copyright>");
+        xml.append("<year>");
+        xml.append(Utils.escapeXML(year));
+        xml.append("</year>");
+        xml.append("<publisher>");
+        xml.append(Utils.escapeXML(publisher));
+        xml.append("</publisher>");
+        xml.append("<key>");
+        xml.append(Utils.escapeXML(key));
+        xml.append("</key>");
+        xml.append("<capo>");
+        xml.append(Utils.escapeXML(capo));
+        xml.append("</capo>");
+        xml.append("<notes>");
+        xml.append(Utils.escapeXML(info));
+        xml.append("</notes>");
         xml.append("<lyrics>");
         for (TextSection section : sections) {
             xml.append(section.getXML());
@@ -980,11 +1001,39 @@ public class SongDisplayable implements TextDisplayable, Comparable<SongDisplaya
         NodeList list = song.getChildNodes();
         String title = "";
         String author = "";
+        String ccli = "";
+        String copyright = "";
+        String year = "";
+        String publisher = "";
+        String key = "";
+        String capo = "";
+        String notes = "";
         List<TextSection> songSections = new ArrayList<>();
         for (int i = 0; i < list.getLength(); i++) {
             Node node = list.item(i);
             if (node.getNodeName().equals("title")) {
                 title = node.getTextContent();
+            }
+            if (node.getNodeName().equals("ccli")) {
+                ccli = node.getTextContent();
+            }
+            if (node.getNodeName().equals("copyright")) {
+                copyright = node.getTextContent();
+            }
+            if (node.getNodeName().equals("year")) {
+                year = node.getTextContent();
+            }
+            if (node.getNodeName().equals("publisher")) {
+                publisher = node.getTextContent();
+            }
+            if (node.getNodeName().equals("key")) {
+                key = node.getTextContent();
+            }
+            if (node.getNodeName().equals("capo")) {
+                capo = node.getTextContent();
+            }
+            if (node.getNodeName().equals("notes")) {
+                notes = node.getTextContent();
             }
             if (node.getNodeName().equals("author")) {
                 author = node.getTextContent();
@@ -1005,6 +1054,13 @@ public class SongDisplayable implements TextDisplayable, Comparable<SongDisplaya
         for (TextSection section : songSections) {
             ret.addSection(section);
         }
+        ret.setCcli(ccli);
+        ret.setCopyright(copyright);
+        ret.setYear(year);
+        ret.setPublisher(publisher);
+        ret.setKey(key);
+        ret.setCapo(capo);
+        ret.setInfo(notes);
         return ret;
     }
 
