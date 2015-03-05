@@ -1079,7 +1079,7 @@ public final class QueleaProperties extends Properties {
      * @return the URL to download Quelea.
      */
     public String getDownloadLocation() {
-        return getProperty("download.location", "http://code.google.com/p/quelea-projection/downloads/list");
+        return "https://sourceforge.net/projects/quelea/files/";
     }
 
     /**
