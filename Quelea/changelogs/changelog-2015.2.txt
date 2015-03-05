@@ -5,5 +5,6 @@ quelea (2015.2) stable; urgency=normal
   * Fix bug with bible passages appearing on just one line in mobile lyrics view
   * Update Easy Worship importer to preserve CCLI / copyright info
   * Enable static video previews in live / preview panel
+  * Fix QSP / save files to now contain full song information (was missing some fields such as CCLI / Copyright / Key / Notes)
 
  -- Michael Berry <michael@quelea.org>  Wednesday, 04 Mar 2015 00:00:00 +0000
