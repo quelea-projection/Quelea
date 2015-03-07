@@ -34,6 +34,7 @@ import javafx.stage.Screen;
 import org.quelea.services.languages.LabelGrabber;
 import org.quelea.services.utils.Utils;
 import org.quelea.windows.main.widgets.NumberSpinner;
+import org.quelea.windows.main.widgets.NumberTextField;
 
 /**
  * A panel used to represent a single type of display that the user can then
@@ -46,10 +47,10 @@ public class SingleDisplayPanel extends VBox {
     private final boolean none;
     private final ComboBox<String> outputSelect;
     private CheckBox custom;
-    private NumberSpinner customX;
-    private NumberSpinner customY;
-    private NumberSpinner customWidth;
-    private NumberSpinner customHeight;
+    private NumberTextField customX;
+    private NumberTextField customY;
+    private NumberTextField customWidth;
+    private NumberTextField customHeight;
 
     /**
      * Create a new single display panel.
@@ -100,17 +101,17 @@ public class SingleDisplayPanel extends VBox {
 
             GridPane posPanel = new GridPane();
             posPanel.setVgap(5);
-            customX = new NumberSpinner(0, 1);
-            customY = new NumberSpinner(0, 1);
-            customWidth = new NumberSpinner(0, 1);
-            customHeight = new NumberSpinner(0, 1);
+            customX = new NumberTextField(0);
+            customY = new NumberTextField(0);
+            customWidth = new NumberTextField(0);
+            customHeight = new NumberTextField(0);
             
             Label xLabel = new Label("X:");
             GridPane.setConstraints(xLabel, 1, 1);
             posPanel.getChildren().add(xLabel);
             GridPane.setConstraints(customX, 2, 1);
             posPanel.getChildren().add(customX);
-            Label yLabel = new Label("Y:");
+            Label yLabel = new Label(" Y:");
             GridPane.setConstraints(yLabel, 3, 1);
             posPanel.getChildren().add(yLabel);
             GridPane.setConstraints(customY, 4, 1);
@@ -120,7 +121,7 @@ public class SingleDisplayPanel extends VBox {
             posPanel.getChildren().add(wLabel);
             GridPane.setConstraints(customWidth, 2, 2);
             posPanel.getChildren().add(customWidth);
-            Label hLabel = new Label("H:");
+            Label hLabel = new Label(" H:");
             GridPane.setConstraints(hLabel, 3, 2);
             posPanel.getChildren().add(hLabel);
             GridPane.setConstraints(customHeight, 4, 2);

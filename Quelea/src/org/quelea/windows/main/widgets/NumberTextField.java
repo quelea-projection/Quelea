@@ -26,6 +26,7 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
+import javafx.geometry.Insets;
 import javafx.scene.control.TextField;
 
 /**
@@ -65,7 +66,7 @@ public class NumberTextField extends TextField {
         this.nf = nf;
         initHandlers();
         setNumber(value);
-        setPrefWidth(30);
+        setPrefWidth(45);
     }
 
     private void initHandlers() {
