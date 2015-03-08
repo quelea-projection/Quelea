@@ -70,9 +70,10 @@ public class EasyWorshipParser implements SongParser {
     @Override
     public List<SongDisplayable> getSongs(File file, StatusPanel statusPanel) throws IOException {
         List<SongDisplayable> ret = new ArrayList<>();
+        URL u = null;
         try {
             File jarFile = new File(QueleaProperties.getQueleaUserHome().getAbsolutePath(), "Paradox_JDBC41.jar");
-            URL u = new URL("jar:file:" + jarFile.getAbsolutePath() + "!/");
+            u = new URL("jar:file:" + jarFile.getAbsolutePath() + "!/");
             String classname = "com.hxtt.sql.paradox.ParadoxDriver";
             URLClassLoader ucl = new URLClassLoader(new URL[]{u});
             Driver d = (Driver) Class.forName(classname, true, ucl).newInstance();
@@ -99,7 +100,7 @@ public class EasyWorshipParser implements SongParser {
 
         }
         catch(ClassNotFoundException | IllegalAccessException | InstantiationException | MalformedURLException | SQLException ex) {
-            LOGGER.log(Level.INFO, "Couldn't import using SQL", ex);
+            LOGGER.log(Level.INFO, "Couldn't import using SQL from " + u, ex);
             ret.clear();
             String line;
             BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(file), "US-ASCII")); //Easyworhsip DB always in this encoding
