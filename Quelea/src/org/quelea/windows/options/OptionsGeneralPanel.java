@@ -18,9 +18,11 @@
 package org.quelea.windows.options;
 
 import java.io.File;
+import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
@@ -28,6 +30,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.Slider;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
@@ -71,7 +74,10 @@ public class OptionsGeneralPanel extends GridPane implements PropertyPanel {
     private LanguageFile currentLanguageFile;
     private final CheckBox showSmallSongTextBox;
     private final CheckBox showSmallBibleTextBox;
-    private final ComboBox<String> smallTextPositionCombo;
+    private final ComboBox<String> smallBibleTextVPositionCombo;
+    private final ComboBox<String> smallBibleTextHPositionCombo;
+    private final ComboBox<String> smallSongTextVPositionCombo;
+    private final ComboBox<String> smallSongTextHPositionCombo;
 
     /**
      * Create a new general panel.
@@ -237,29 +243,55 @@ public class OptionsGeneralPanel extends GridPane implements PropertyPanel {
         GridPane.setConstraints(showSmallSongTextLabel, 1, rows);
         getChildren().add(showSmallSongTextLabel);
         showSmallSongTextBox = new CheckBox();
-        GridPane.setConstraints(showSmallSongTextBox, 2, rows);
-        getChildren().add(showSmallSongTextBox);
-        showSmallSongTextLabel.setLabelFor(showSmallSongTextBox);
+        smallSongTextVPositionCombo = new ComboBox<>();
+        smallSongTextHPositionCombo = new ComboBox<>();
+        HBox hboxSmallSong = new HBox();
+        hboxSmallSong.alignmentProperty().setValue(Pos.CENTER_LEFT);
+        smallSongTextVPositionCombo.getItems().addAll(LabelGrabber.INSTANCE.getLabel("top"), LabelGrabber.INSTANCE.getLabel("bottom"));
+        smallSongTextHPositionCombo.getItems().addAll(LabelGrabber.INSTANCE.getLabel("left"), LabelGrabber.INSTANCE.getLabel("right"));
+        hboxSmallSong.getChildren().addAll(showSmallSongTextBox, smallSongTextVPositionCombo, smallSongTextHPositionCombo);
+        GridPane.setConstraints(hboxSmallSong, 2, rows);
+        getChildren().add(hboxSmallSong);
+        showSmallSongTextLabel.setLabelFor(hboxSmallSong);
         rows++;
 
         Label showSmallBibleTextLabel = new Label(LabelGrabber.INSTANCE.getLabel("show.small.bible.text.label"));
         GridPane.setConstraints(showSmallBibleTextLabel, 1, rows);
         getChildren().add(showSmallBibleTextLabel);
         showSmallBibleTextBox = new CheckBox();
-        GridPane.setConstraints(showSmallBibleTextBox, 2, rows);
-        getChildren().add(showSmallBibleTextBox);
-        showSmallBibleTextLabel.setLabelFor(showSmallBibleTextBox);
+        smallBibleTextVPositionCombo = new ComboBox<>();
+        smallBibleTextHPositionCombo = new ComboBox<>();
+        HBox hboxSmallBible = new HBox();
+        hboxSmallBible.alignmentProperty().setValue(Pos.CENTER_LEFT);
+        smallBibleTextVPositionCombo.getItems().addAll(LabelGrabber.INSTANCE.getLabel("top"), LabelGrabber.INSTANCE.getLabel("bottom"));
+        smallBibleTextHPositionCombo.getItems().addAll(LabelGrabber.INSTANCE.getLabel("left"), LabelGrabber.INSTANCE.getLabel("right"));
+        hboxSmallBible.getChildren().addAll(showSmallBibleTextBox, smallBibleTextVPositionCombo, smallBibleTextHPositionCombo);
+        GridPane.setConstraints(hboxSmallBible, 2, rows);
+        getChildren().add(hboxSmallBible);
+        showSmallSongTextLabel.setLabelFor(hboxSmallBible);
         rows++;
-
-        Label smallTextPositionLabel = new Label(LabelGrabber.INSTANCE.getLabel("small.text.position.label"));
-        GridPane.setConstraints(smallTextPositionLabel, 1, rows);
-        getChildren().add(smallTextPositionLabel);
-        smallTextPositionCombo = new ComboBox<>();
-        smallTextPositionCombo.getItems().addAll(LabelGrabber.INSTANCE.getLabel("left"), LabelGrabber.INSTANCE.getLabel("right"));
-        GridPane.setConstraints(smallTextPositionCombo, 2, rows);
-        getChildren().add(smallTextPositionCombo);
-        smallTextPositionLabel.setLabelFor(smallTextPositionCombo);
-        rows++;
+        
+        showSmallBibleTextBox.selectedProperty().addListener((ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) -> {
+            if(newValue) {
+                smallBibleTextHPositionCombo.setDisable(false);
+                smallBibleTextVPositionCombo.setDisable(false);
+            }
+            else {
+                smallBibleTextHPositionCombo.setDisable(true);
+                smallBibleTextVPositionCombo.setDisable(true);
+            }
+        });
+        
+        showSmallSongTextBox.selectedProperty().addListener((ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) -> {
+            if(newValue) {
+                smallSongTextHPositionCombo.setDisable(false);
+                smallSongTextVPositionCombo.setDisable(false);
+            }
+            else {
+                smallSongTextHPositionCombo.setDisable(true);
+                smallSongTextVPositionCombo.setDisable(true);
+            }
+        });
 
         Label spacer1 = new Label("");
         GridPane.setConstraints(spacer1, 1, rows);
@@ -408,7 +440,10 @@ public class OptionsGeneralPanel extends GridPane implements PropertyPanel {
 //        minLinesSlider.setValue(props.getMinLines());
         showSmallSongTextBox.setSelected(props.getSmallSongTextShow());
         showSmallBibleTextBox.setSelected(props.getSmallBibleTextShow());
-        smallTextPositionCombo.getSelectionModel().select(props.getSmallTextPosition().equals("left") ? 0 : 1);
+        smallBibleTextVPositionCombo.getSelectionModel().select(props.getSmallBibleTextPositionV().equals("top") ? 0 : 1);
+        smallBibleTextHPositionCombo.getSelectionModel().select(props.getSmallBibleTextPositionH().equals("left") ? 0 : 1);
+        smallSongTextVPositionCombo.getSelectionModel().select(props.getSmallSongTextPositionV().equals("top") ? 0 : 1);
+        smallSongTextHPositionCombo.getSelectionModel().select(props.getSmallSongTextPositionH().equals("left") ? 0 : 1);
         additionalLineSpacingSlider.setValue(props.getAdditionalLineSpacing());
         maximumFontSizeSlider.setValue(props.getMaxFontSize());
     }
@@ -457,8 +492,14 @@ public class OptionsGeneralPanel extends GridPane implements PropertyPanel {
         props.setSmallSongTextShow(showSmallSongText);
         boolean showSmallBibleText = showSmallBibleTextBox.isSelected();
         props.setSmallBibleTextShow(showSmallBibleText);
-        int smallTextPosition = smallTextPositionCombo.getSelectionModel().getSelectedIndex();
-        props.setSmallTextPosition(smallTextPosition == 0 ? "left" : "right");
+        int smallBibleTextVPosition = smallBibleTextVPositionCombo.getSelectionModel().getSelectedIndex();
+        props.setSmallBibleTextPositionV(smallBibleTextVPosition == 0 ? "top" : "bottom");
+        int smallBibleTextHPosition = smallBibleTextHPositionCombo.getSelectionModel().getSelectedIndex();
+        props.setSmallBibleTextPositionH(smallBibleTextHPosition == 0 ? "left" : "right");
+        int smallSongTextVPosition = smallSongTextVPositionCombo.getSelectionModel().getSelectedIndex();
+        props.setSmallSongTextPositionV(smallSongTextVPosition == 0 ? "top" : "bottom");
+        int smallSongTextHPosition = smallSongTextHPositionCombo.getSelectionModel().getSelectedIndex();
+        props.setSmallSongTextPositionH(smallSongTextHPosition == 0 ? "left" : "right");
         props.setMaxFontSize(maximumFontSizeSlider.getValue());
         props.setAdditionalLineSpacing(additionalLineSpacingSlider.getValue());
         //Initialise presentation
@@ -566,11 +607,38 @@ public class OptionsGeneralPanel extends GridPane implements PropertyPanel {
     }
 
     /**
-     * Get the "use small text" checkbox.
+     * Get the "use small Bible text" checkbox.
      * <p/>
-     * @return the "use small text" checkbox.
+     * @return the "use small Bible text" checkbox.
      */
-    public ComboBox getSmallTextPositionComboBox() {
-        return smallTextPositionCombo;
+    public ComboBox getSmallBibleTextVPositionComboBox() {
+        return smallBibleTextVPositionCombo;
+    }
+    
+    /**
+     * Get the "use small Bible text" checkbox.
+     * <p/>
+     * @return the "use small Bible text" checkbox.
+     */
+    public ComboBox getSmallBibleTextHPositionComboBox() {
+        return smallBibleTextHPositionCombo;
+    }
+    
+        /**
+     * Get the "use small Song text" checkbox.
+     * <p/>
+     * @return the "use small Song text" checkbox.
+     */
+    public ComboBox getSmallSongTextVPositionComboBox() {
+        return smallSongTextVPositionCombo;
+    }
+    
+    /**
+     * Get the "use small Song text" checkbox.
+     * <p/>
+     * @return the "use small Song text" checkbox.
+     */
+    public ComboBox getSmallSongTextHPositionComboBox() {
+        return smallSongTextHPositionCombo;
     }
 }
