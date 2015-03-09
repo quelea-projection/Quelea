@@ -140,12 +140,8 @@ public class StageDrawer extends WordDrawer {
         newTextGroup.setEffect(shadow);
         StackPane.setAlignment(newTextGroup, Pos.CENTER);
         smallTextGroup = new Group();
-        if (QueleaProperties.get().getSmallTextPosition().toLowerCase().equals("left")) {
-            StackPane.setAlignment(smallTextGroup, Pos.BOTTOM_LEFT);
-        } else {
-            StackPane.setAlignment(smallTextGroup, Pos.BOTTOM_RIGHT);
-        }
-
+        StackPane.setAlignment(smallTextGroup, Pos.BOTTOM_LEFT);
+        
         for (Iterator< Node> it = getCanvas().getChildren().iterator(); it.hasNext();) {
             Node node = it.next();
             if (node instanceof Group) {
@@ -192,9 +188,6 @@ public class StageDrawer extends WordDrawer {
             ft.setFont(smallTextFont);
             ft.setFill(theme.getFontPaint());
             ft.setLayoutY(sy);
-            if (QueleaProperties.get().getSmallTextPosition().equalsIgnoreCase("right")) {
-                ft.setLayoutX(getCanvas().getWidth() - smallTextMetrics.computeStringWidth(stext));
-            }
             smallTextGroup.getChildren().add(ft);
             sy += smallTextMetrics.getLineHeight() + 2;
         }
