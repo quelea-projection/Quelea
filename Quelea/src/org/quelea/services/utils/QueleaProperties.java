@@ -1547,12 +1547,58 @@ public final class QueleaProperties extends Properties {
         return getProperty("remote.control.password", "quelea");
     }
 
-    public String getSmallTextPosition() {
-        return getProperty("small.text.position", "right");
+    public String getSmallSongTextPositionH() {
+        return getProperty("small.song.text.h.position", "right");
     }
 
-    public void setSmallTextPosition(String position) {
-        setProperty("small.text.position", position);
+    public void setSmallSongTextPositionH(String position) {
+        setProperty("small.song.text.h.position", position);
+        write();
+    }
+
+    public String getSmallSongTextPositionV() {
+        return getProperty("small.song.text.v.position", "bottom");
+    }
+
+    public void setSmallSongTextPositionV(String position) {
+        setProperty("small.song.text.v.position", position);
+        write();
+    }
+
+    public Double getSmallSongTextSize() {
+        return Double.parseDouble(getProperty("small.song.text.size", "0.1"));
+    }
+
+    public void setSmallSongTextSize(int size) {
+        setProperty("small.song.text.size", Double.toString(size));
+        write();
+    }
+    
+    
+    public String getSmallBibleTextPositionH() {
+        return getProperty("small.bible.text.h.position", "right");
+    }
+
+    public void setSmallBibleTextPositionH(String position) {
+        setProperty("small.bible.text.h.position", position);
+        write();
+    }
+
+    public String getSmallBibleTextPositionV() {
+        return getProperty("small.bible.text.v.position", "bottom");
+    }
+
+    public void setSmallBibleTextPositionV(String position) {
+        setProperty("small.bible.text.v.position", position);
+        write();
+    }
+
+    public Double getSmallBibleTextSize() {
+        return Double.parseDouble(getProperty("small.bible.text.size", "0.1"));
+    }
+
+    public void setSmallBibleTextSize(int size) {
+        setProperty("small.bible.text.size", Double.toString(size));
         write();
     }
 
@@ -1702,7 +1748,7 @@ public final class QueleaProperties extends Properties {
     public boolean getClearStageWithMain() {
         return Boolean.parseBoolean(getProperty("clear.stageview.with.main", "true"));
     }
-    
+
     public void setClearStageWithMain(boolean clear) {
         setProperty("clear.stageview.with.main", Boolean.toString(clear));
         write();
