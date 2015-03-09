@@ -531,3 +531,5 @@ mediashout.import.line1=Select the location of the MediaShout db (exported to tx
 filefilters.description.txt.files=.txt files
 mediashout.button=MediaShout
 clear.stage.view=Clear Stage View with Main Display
+top=Top
+bottom=Bottom

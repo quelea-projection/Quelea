@@ -138,16 +138,23 @@ public class LyricDrawer extends WordDrawer {
             fontSize = pickFontSize(font, newText, getCanvas().getWidth() * 0.92, getCanvas().getHeight() * 0.9);
         }
         font = Font.font(font.getFamily(),
-                    theme.isBold() ? FontWeight.BOLD : FontWeight.NORMAL,
-                    theme.isItalic() ? FontPosture.ITALIC : FontPosture.REGULAR,
-                    fontSize);
-            translateFont = Font.font(translateFont.getFamily(),
-                    theme.isTranslateBold() ? FontWeight.BOLD : FontWeight.NORMAL,
-                    theme.isTranslateItalic() ? FontPosture.ITALIC : FontPosture.REGULAR,
-                    fontSize - 3);
+                theme.isBold() ? FontWeight.BOLD : FontWeight.NORMAL,
+                theme.isItalic() ? FontPosture.ITALIC : FontPosture.REGULAR,
+                fontSize);
+        translateFont = Font.font(translateFont.getFamily(),
+                theme.isTranslateBold() ? FontWeight.BOLD : FontWeight.NORMAL,
+                theme.isTranslateItalic() ? FontPosture.ITALIC : FontPosture.REGULAR,
+                fontSize - 3);
         double smallFontSize;
         Font smallTextFont = Font.font("Arial", FontWeight.BOLD, FontPosture.REGULAR, 500);
-        smallFontSize = pickSmallFontSize(smallTextFont, smallText, getCanvas().getWidth() * 0.5, (getCanvas().getHeight() * 0.07) - 5); //-5 for insets
+
+        if (curDisplayable instanceof BiblePassage) {
+            smallFontSize = pickSmallFontSize(smallTextFont, smallText, getCanvas().getWidth() * 0.8,
+                    (getCanvas().getHeight() * (QueleaProperties.get().getSmallBibleTextSize())) - 5); //-5 for insets
+        } else {
+            smallFontSize = pickSmallFontSize(smallTextFont, smallText, getCanvas().getWidth() * 0.8,
+                    (getCanvas().getHeight() * (QueleaProperties.get().getSmallSongTextSize())) - 5); //-5 for insets
+        }
         smallTextFont = Font.font("Arial", FontWeight.BOLD, FontPosture.REGULAR, smallFontSize);
 
         FontMetrics metrics = Toolkit.getToolkit().getFontLoader().getFontMetrics(font);
@@ -161,17 +168,42 @@ public class LyricDrawer extends WordDrawer {
         StackPane.setAlignment(newTextGroup, Pos.CENTER);
         smallTextGroup = new Group();
         DropShadow smallshadow = theme.getShadow().getDropShadow();
-        if(smallshadow == null) {
+        if (smallshadow == null) {
             smallshadow = new DropShadow();
         }
         smallshadow.setOffsetX(smallTextMetrics.getLineHeight() * shadow.getOffsetX() * 0.03);
         smallshadow.setOffsetY(smallTextMetrics.getLineHeight() * shadow.getOffsetY() * 0.03);
         smallshadow.setRadius(shadow.getRadius() * smallTextMetrics.getLineHeight() * 0.015);
         smallTextGroup.setEffect(smallshadow);
-        if (QueleaProperties.get().getSmallTextPosition().toLowerCase().equals("left")) {
-            StackPane.setAlignment(smallTextGroup, Pos.BOTTOM_LEFT);
+
+        if (curDisplayable instanceof BiblePassage) {
+            if (QueleaProperties.get().getSmallBibleTextPositionV().toLowerCase().equals("top")) {
+                if (QueleaProperties.get().getSmallBibleTextPositionH().toLowerCase().equals("left")) {
+                    StackPane.setAlignment(smallTextGroup, Pos.TOP_LEFT);
+                } else {
+                    StackPane.setAlignment(smallTextGroup, Pos.TOP_RIGHT);
+                }
+            } else {
+                if (QueleaProperties.get().getSmallBibleTextPositionH().toLowerCase().equals("left")) {
+                    StackPane.setAlignment(smallTextGroup, Pos.BOTTOM_LEFT);
+                } else {
+                    StackPane.setAlignment(smallTextGroup, Pos.BOTTOM_RIGHT);
+                }
+            }
         } else {
-            StackPane.setAlignment(smallTextGroup, Pos.BOTTOM_RIGHT);
+            if (QueleaProperties.get().getSmallSongTextPositionV().toLowerCase().equals("top")) {
+                if (QueleaProperties.get().getSmallSongTextPositionH().toLowerCase().equals("left")) {
+                    StackPane.setAlignment(smallTextGroup, Pos.TOP_LEFT);
+                } else {
+                    StackPane.setAlignment(smallTextGroup, Pos.TOP_RIGHT);
+                }
+            } else {
+                if (QueleaProperties.get().getSmallSongTextPositionH().toLowerCase().equals("left")) {
+                    StackPane.setAlignment(smallTextGroup, Pos.BOTTOM_LEFT);
+                } else {
+                    StackPane.setAlignment(smallTextGroup, Pos.BOTTOM_RIGHT);
+                }
+            }
         }
 
         for (Iterator< Node> it = getCanvas().getChildren().iterator(); it.hasNext();) {
@@ -184,8 +216,7 @@ public class LyricDrawer extends WordDrawer {
         getCanvas().getChildren().add(newTextGroup);
         if (curDisplayable instanceof BiblePassage && QueleaProperties.get().getSmallBibleTextShow()) {
             getCanvas().getChildren().add(smallTextGroup);
-        }
-        if (curDisplayable instanceof SongDisplayable && QueleaProperties.get().getSmallSongTextShow()) {
+        } else if (curDisplayable instanceof SongDisplayable && QueleaProperties.get().getSmallSongTextShow()) {
             getCanvas().getChildren().add(smallTextGroup);
         }
         getCanvas().pushLogoNoticeToFront();
@@ -233,9 +264,25 @@ public class LyricDrawer extends WordDrawer {
             FormattedText ft = new FormattedText(stext);
             ft.setFont(smallTextFont);
             ft.setFill(theme.getFontPaint());
-            ft.setLayoutY(sy);
-            if (QueleaProperties.get().getSmallTextPosition().equalsIgnoreCase("right")) {
-                ft.setLayoutX(getCanvas().getWidth() - smallTextMetrics.computeStringWidth(stext));
+            if (curDisplayable instanceof BiblePassage) {
+                if (QueleaProperties.get().getSmallBibleTextPositionH().equalsIgnoreCase("right")) {
+                    ft.setLayoutX(getCanvas().getWidth() - smallTextMetrics.computeStringWidth(stext));
+                }
+                if (QueleaProperties.get().getSmallBibleTextPositionV().equalsIgnoreCase("top")) {
+                    ft.setLayoutY(getCanvas().getHeight() - sy);
+                } else {
+                    ft.setLayoutY(sy);
+                }
+            }
+            else {
+                if (QueleaProperties.get().getSmallSongTextPositionH().equalsIgnoreCase("right")) {
+                    ft.setLayoutX(getCanvas().getWidth() - smallTextMetrics.computeStringWidth(stext));
+                }
+                if (QueleaProperties.get().getSmallSongTextPositionV().equalsIgnoreCase("top")) {
+                    ft.setLayoutY(getCanvas().getHeight() - sy);
+                } else {
+                    ft.setLayoutY(sy);
+                }
             }
             smallTextGroup.getChildren().add(ft);
             sy += smallTextMetrics.getLineHeight() + 2;
@@ -246,7 +293,6 @@ public class LyricDrawer extends WordDrawer {
         textGroup = newTextGroup;
         StackPane.setMargin(textGroup, new Insets(10));
         StackPane.setAlignment(textGroup, DisplayPositionSelector.getPosFromIndex(theme.getTextPosition()));
-        
 
         StackPane.setMargin(smallTextGroup, new Insets(5));
 
