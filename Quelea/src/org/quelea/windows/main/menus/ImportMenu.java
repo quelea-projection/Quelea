@@ -26,6 +26,7 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import org.quelea.services.importexport.EasySlidesImportDialog;
 import org.quelea.services.importexport.EasyWorshipImportDialog;
+import org.quelea.services.importexport.EpicWorshipImportDialog;
 import org.quelea.services.importexport.ImportDialog;
 import org.quelea.services.importexport.KingswayImportDialog;
 import org.quelea.services.importexport.MediaShoutImportDialog;
@@ -65,6 +66,7 @@ public class ImportMenu extends Menu {
     private final ImportDialog sundayPlusImportDialog;
     private final ImportDialog songSelectImportDialog;
     private final ImportDialog mediaShoutImportDialog;
+    private final ImportDialog epicWorshipImportDialog;
     private final MenuItem qspItem;
     private final MenuItem osItem;
     private final MenuItem spItem;
@@ -78,6 +80,7 @@ public class ImportMenu extends Menu {
     private final MenuItem easySlidesItem;
     private final MenuItem easyWorshipItem;
     private final MenuItem songSelectItem;
+    private final MenuItem epicWorshipItem;
     private final Menu kingswayItem;
 
     /**
@@ -100,51 +103,37 @@ public class ImportMenu extends Menu {
         sundayPlusImportDialog = new SundayPlusImportDialog();
         songSelectImportDialog = new SongSelectImportDialog();
         mediaShoutImportDialog = new MediaShoutImportDialog();
+        epicWorshipImportDialog = new EpicWorshipImportDialog();
 
         qspItem = new MenuItem(LabelGrabber.INSTANCE.getLabel("qsp.button"), new ImageView(new Image("file:icons/logo16.png", 16, 16, false, true)));
-        qspItem.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent t) {
-                qspImportDialog.show();
-            }
+        qspItem.setOnAction((ActionEvent t) -> {
+            qspImportDialog.show();
         });
         getItems().add(qspItem);
 
         osItem = new MenuItem(LabelGrabber.INSTANCE.getLabel("os.button"), new ImageView(new Image("file:icons/opensong.png", 16, 16, false, true)));
-        osItem.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent t) {
-                openSongImportDialog.show();
-            }
+        osItem.setOnAction((ActionEvent t) -> {
+            openSongImportDialog.show();
         });
         getItems().add(osItem);
 
         olpItem = new MenuItem(LabelGrabber.INSTANCE.getLabel("olp.button"), new ImageView(new Image("file:icons/openlp.png", 16, 16, false, true)));
-        olpItem.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent t) {
-                openLPImportDialog.show();
-            }
+        olpItem.setOnAction((ActionEvent t) -> {
+            openLPImportDialog.show();
         });
         getItems().add(olpItem);
 
         olItem = new MenuItem(LabelGrabber.INSTANCE.getLabel("olyrics.button"));
-        olItem.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent t) {
-                openLyricsImportDialog.show();
-            }
+        olItem.setOnAction((ActionEvent t) -> {
+            openLyricsImportDialog.show();
         });
         getItems().add(olItem);
 
         zwItem = new MenuItem(LabelGrabber.INSTANCE.getLabel("zw.button"), new ImageView(new Image("file:icons/zionworx.png", 16, 16, false, true)));
-        zwItem.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent t) {
-                boolean ok = new ZWTurboDBChecker().runChecks();
-                if (ok) {
-                    zionWorxImportDialog.show();
-                }
+        zwItem.setOnAction((ActionEvent t) -> {
+            boolean ok = new ZWTurboDBChecker().runChecks();
+            if (ok) {
+                zionWorxImportDialog.show();
             }
         });
         if (Utils.isWindows()) {
@@ -152,79 +141,61 @@ public class ImportMenu extends Menu {
         }
 
         spItem = new MenuItem(LabelGrabber.INSTANCE.getLabel("sp.button"), new ImageView(new Image("file:icons/sundayplus.png", 16, 16, false, true)));
-        spItem.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent t) {
-                sundayPlusImportDialog.show();
-            }
+        spItem.setOnAction((ActionEvent t) -> {
+            sundayPlusImportDialog.show();
         });
         getItems().add(spItem);
 
         ssItem = new MenuItem(LabelGrabber.INSTANCE.getLabel("ss.button"), new ImageView(new Image("file:icons/survivor.jpg", 16, 16, false, true)));
-        ssItem.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent t) {
-                sImportDialog.show();
-            }
+        ssItem.setOnAction((ActionEvent t) -> {
+            sImportDialog.show();
         });
         getItems().add(ssItem);
 
         songSelectItem = new MenuItem(LabelGrabber.INSTANCE.getLabel("songselect.button"), new ImageView(new Image("file:icons/songselect.png", 16, 16, false, true)));
-        songSelectItem.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent t) {
-                songSelectImportDialog.show();
-            }
+        songSelectItem.setOnAction((ActionEvent t) -> {
+            songSelectImportDialog.show();
         });
         getItems().add(songSelectItem);
 
         mediaShoutItem = new MenuItem(LabelGrabber.INSTANCE.getLabel("mediashout.button"), new ImageView(new Image("file:icons/mediashout.png", 16, 16, false, true)));
-        mediaShoutItem.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent t) {
-                mediaShoutImportDialog.show();
-            }
+        mediaShoutItem.setOnAction((ActionEvent t) -> {
+            mediaShoutImportDialog.show();
         });
         getItems().add(mediaShoutItem);
 
         sourceItem = new MenuItem(LabelGrabber.INSTANCE.getLabel("source.button"), new ImageView(new Image("file:icons/source.jpg", 16, 16, false, true)));
-        sourceItem.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent t) {
-                sourceImportDialog.show();
-            }
+        sourceItem.setOnAction((ActionEvent t) -> {
+            sourceImportDialog.show();
         });
         getItems().add(sourceItem);
 
         easySlidesItem = new MenuItem(LabelGrabber.INSTANCE.getLabel("easyslides.button"), new ImageView(new Image("file:icons/easyslides.png", 16, 16, false, true)));
-        easySlidesItem.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent t) {
-                easySlidesImportDialog.show();
-            }
+        easySlidesItem.setOnAction((ActionEvent t) -> {
+            easySlidesImportDialog.show();
         });
         getItems().add(easySlidesItem);
 
         easyWorshipItem = new MenuItem(LabelGrabber.INSTANCE.getLabel("easyworship.button"), new ImageView(new Image("file:icons/easyworship.png", 16, 16, false, true)));
-        easyWorshipItem.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent t) {
-                new ParadoxJDBCChecker().runChecks();
-                easyWorshipImportDialog.show();
-            }
+        easyWorshipItem.setOnAction((ActionEvent t) -> {
+            new ParadoxJDBCChecker().runChecks();
+            easyWorshipImportDialog.show();
         });
         getItems().add(easyWorshipItem);
+        
+        epicWorshipItem = new MenuItem(LabelGrabber.INSTANCE.getLabel("epicworship.button"), new ImageView(new Image("file:icons/epicworship.png", 16, 16, false, true)));
+        epicWorshipItem.setOnAction((ActionEvent t) -> {
+            epicWorshipImportDialog.show();
+        });
+        getItems().add(epicWorshipItem);
 
         MenuItem kingswayAll, kingswayOne;
 
         kingswayItem = new Menu(LabelGrabber.INSTANCE.getLabel("kingsway.button"), new ImageView(new Image("file:icons/kingsway.png", 16, 16, false, true)));
         kingswayAll = new MenuItem(LabelGrabber.INSTANCE.getLabel("kingsway.button.all"), new ImageView(new Image("file:icons/kingsway.png", 16, 16, false, true)));
-        kingswayAll.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent t) {
-                kingswayImportDialog.setAll(true);
-                kingswayImportDialog.show();
-            }
+        kingswayAll.setOnAction((ActionEvent t) -> {
+            kingswayImportDialog.setAll(true);
+            kingswayImportDialog.show();
         });
 
         kingswayOne = new MenuItem(LabelGrabber.INSTANCE.getLabel("kingsway.button.one"), new ImageView(new Image("file:icons/kingsway.png", 16, 16, false, true)));
