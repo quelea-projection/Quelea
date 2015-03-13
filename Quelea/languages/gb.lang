@@ -533,3 +533,6 @@ mediashout.button=MediaShout
 clear.stage.view=Clear Stage View with Main Display
 top=Top
 bottom=Bottom
+epicworship.import.line1=This will import songs from an EpicWorship Song Pack (.epc) file.
+filefilters.description.epc=EpicWorship .epc songpack
+epicworship.button=EpicWorship
