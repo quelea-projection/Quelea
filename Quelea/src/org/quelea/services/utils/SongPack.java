@@ -21,6 +21,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Enumeration;
@@ -114,7 +115,7 @@ public class SongPack {
                         }
                         names.add(name);
                         zos.putNextEntry(new ZipEntry(name));
-                        zos.write(song.getXML().getBytes("UTF-8"));
+                        zos.write(song.getXML().getBytes(StandardCharsets.UTF_8));
                         zos.closeEntry();
                         panel.setProgress((double) i / songDisplayablesThreadSafe.size());
                     }
