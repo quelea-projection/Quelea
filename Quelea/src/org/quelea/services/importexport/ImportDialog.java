@@ -250,7 +250,12 @@ public abstract class ImportDialog extends Stage implements PropertyChangeListen
                                 }
                             });
                         } catch (IOException ex) {
-                            Dialog.showError(LabelGrabber.INSTANCE.getLabel("error.text"), LabelGrabber.INSTANCE.getLabel("import.error.message"));
+                            Platform.runLater(new Runnable() {
+                                @Override
+                                public void run() {
+                                    Dialog.showError(LabelGrabber.INSTANCE.getLabel("error.text"), LabelGrabber.INSTANCE.getLabel("import.error.message"));
+                                }
+                            });
                             LOGGER.log(Level.WARNING, "Error importing songs", ex);
                         }
                     }

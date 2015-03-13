@@ -114,7 +114,7 @@ public class SongPack {
                         }
                         names.add(name);
                         zos.putNextEntry(new ZipEntry(name));
-                        zos.write(song.getXML().getBytes("UTF8"));
+                        zos.write(song.getXML().getBytes("UTF-8"));
                         zos.closeEntry();
                         panel.setProgress((double) i / songDisplayablesThreadSafe.size());
                     }
