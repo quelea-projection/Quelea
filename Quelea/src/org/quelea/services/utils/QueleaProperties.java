@@ -1106,7 +1106,7 @@ public final class QueleaProperties extends Properties {
      * @return the URL used for checking the latest version.
      */
     public String getUpdateURL() {
-        return getProperty("update.url", "http://code.google.com/p/quelea-projection/");
+        return "http://quelea.org/update/index.html";
     }
 
     /**
