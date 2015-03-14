@@ -43,7 +43,6 @@ public final class QueleaProperties extends Properties {
 
     public static final Version VERSION = new Version("2015.2", "");
     private static final QueleaProperties INSTANCE = new QueleaProperties();
-//    private static final Logger LOGGER = LoggerUtils.getLogger();
 
     /**
      * Load the properties from the properties file.
@@ -56,9 +55,7 @@ public final class QueleaProperties extends Properties {
             try (StringReader reader = new StringReader(Utils.getTextFromFile(getPropFile().getAbsolutePath(), ""))) {
                 load(reader);
             }
-        } catch (IOException ex) {
-//            LOGGER.log(Level.SEVERE, "Couldn't load properties", ex);
-//            ex.printStackTrace();
+        } catch (IOException ex) { //Never mind.
         }
     }
 
@@ -1516,9 +1513,9 @@ public final class QueleaProperties extends Properties {
     }
 
     /**
-     * Set if we should set up remote control server
+     * Determine if we should set up remote control server.
      * <p>
-     * @param val true if we should, false otherwise.
+     * @return true if we should, false otherwise.
      */
     public boolean getUseRemoteControl() {
         return Boolean.parseBoolean(getProperty("use.remote.control", "false"));
