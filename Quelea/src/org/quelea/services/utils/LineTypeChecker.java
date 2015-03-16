@@ -92,7 +92,7 @@ public class LineTypeChecker {
             if (s.trim().isEmpty()) {
                 continue;
             }
-            if (!s.matches("([a-hA-H](#|♯|b|♭)?[0-9]*((sus|dim|maj|dom|min|m|aug|add)?[0-9]*){3}(#|♯|b|♭)?[0-9]*)(/([a-hA-H](#|♯|b|♭)?[0-9]*((sus|dim|maj|dom|min|m|aug|add)?[0-9]*){3}(#|♯|b|♭)?[0-9]*))?")) {
+            if (!s.matches("([a-hA-H](#|♯|b|♭|(is))?[0-9]*((sus|dim|maj|dom|min|m|aug|add)?[0-9]*){3}(#|♯|b|♭|(is))?[0-9]*)(/([a-hA-H](#|♯|b|♭|(is))?[0-9]*((sus|dim|maj|dom|min|m|aug|add)?[0-9]*){3}(#|♯|b|♭|(is))?[0-9]*))?")) {
                 return false;
             }
         }
