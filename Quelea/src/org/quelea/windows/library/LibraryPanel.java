@@ -37,6 +37,7 @@ public class LibraryPanel extends VBox {
     private final LibrarySongPanel songPanel;
     private final LibraryBiblePanel biblePanel;
     private final LibraryImagePanel imagePanel;
+    private final LibraryVideoPanel videoPanel;
 
     /**
      * Create a new library panel.
@@ -69,6 +70,14 @@ public class LibraryPanel extends VBox {
         imageTab.setContent(imagePanel);
         tabPane.getTabs().add(imageTab);
         
+        LOGGER.log(Level.INFO, "Creating library video panel");
+        videoPanel = new LibraryVideoPanel();
+        Tab videoTab = new Tab();
+        videoTab.setClosable(false);
+        videoTab.setText(LabelGrabber.INSTANCE.getLabel("library.video.heading"));
+        videoTab.setContent(videoPanel);
+        tabPane.getTabs().add(videoTab);
+        
         VBox.setVgrow(tabPane, Priority.ALWAYS);
         getChildren().add(tabPane);
     }
@@ -95,5 +104,13 @@ public class LibraryPanel extends VBox {
      */
     public LibraryImagePanel getImagePanel() {
         return imagePanel;
+    }
+    
+    /**
+     * Get the library video panel.
+     * @return the library video panel.
+     */
+    public LibraryVideoPanel getVideoPanel() {
+        return videoPanel;
     }
 }
