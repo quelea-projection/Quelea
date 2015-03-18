@@ -146,41 +146,38 @@ public class ImageListPanel extends BorderPane {
                         view.setPreserveRatio(true);
                         view.setFitWidth(160);
                         view.setFitHeight(90);
-                        view.setOnMouseClicked(new EventHandler<MouseEvent>() {
-                            @Override
-                            public void handle(MouseEvent t) {
-                                if(t.getButton() == MouseButton.PRIMARY && t.getClickCount() > 1) {
-                                    QueleaApp.get().getMainWindow().getMainPanel().getSchedulePanel().getScheduleList().add(new ImageDisplayable(file));
-                                }
-                                else if(t.getButton() == MouseButton.SECONDARY) {
-                                    ContextMenu removeMenu = new ContextMenu();
-                                    MenuItem removeItem = new MenuItem(LabelGrabber.INSTANCE.getLabel("remove.image.text"));
-                                    removeItem.setOnAction(new EventHandler<ActionEvent>() {
-                                        @Override
-                                        public void handle(ActionEvent t) {
-                                            final boolean[] reallyDelete = new boolean[]{false};
-                                            Dialog.buildConfirmation(LabelGrabber.INSTANCE.getLabel("delete.image.title"),
-                                                    LabelGrabber.INSTANCE.getLabel("delete.image.confirmation"))
-                                                    .addYesButton(new EventHandler<ActionEvent>() {
-                                                        @Override
-                                                        public void handle(ActionEvent t) {
-                                                            reallyDelete[0] = true;
-                                                        }
-                                                    })
-                                                    .addNoButton(new EventHandler<ActionEvent>() {
-                                                        @Override
-                                                        public void handle(ActionEvent t) {
-                                                        }
-                                                    }).build().showAndWait();
-                                            if(reallyDelete[0]) {
-                                                file.delete();
-                                                imageList.getChildren().remove(viewBox);
-                                            }
+                        view.setOnMouseClicked((MouseEvent t) -> {
+                            if(t.getButton() == MouseButton.PRIMARY && t.getClickCount() > 1) {
+                                QueleaApp.get().getMainWindow().getMainPanel().getSchedulePanel().getScheduleList().add(new ImageDisplayable(file));
+                            }
+                            else if(t.getButton() == MouseButton.SECONDARY) {
+                                ContextMenu removeMenu = new ContextMenu();
+                                MenuItem removeItem = new MenuItem(LabelGrabber.INSTANCE.getLabel("remove.image.text"));
+                                removeItem.setOnAction(new EventHandler<ActionEvent>() {
+                                    @Override
+                                    public void handle(ActionEvent t) {
+                                        final boolean[] reallyDelete = new boolean[]{false};
+                                        Dialog.buildConfirmation(LabelGrabber.INSTANCE.getLabel("delete.image.title"),
+                                                LabelGrabber.INSTANCE.getLabel("delete.image.confirmation"))
+                                                .addYesButton(new EventHandler<ActionEvent>() {
+                                                    @Override
+                                                    public void handle(ActionEvent t) {
+                                                        reallyDelete[0] = true;
+                                                    }
+                                                })
+                                                .addNoButton(new EventHandler<ActionEvent>() {
+                                                    @Override
+                                                    public void handle(ActionEvent t) {
+                                                    }
+                                                }).build().showAndWait();
+                                        if(reallyDelete[0]) {
+                                            file.delete();
+                                            imageList.getChildren().remove(viewBox);
                                         }
-                                    });
-                                    removeMenu.getItems().add(removeItem);
-                                    removeMenu.show(view, t.getScreenX(), t.getScreenY());
-                                }
+                                    }
+                                });
+                                removeMenu.getItems().add(removeItem);
+                                removeMenu.show(view, t.getScreenX(), t.getScreenY());
                             }
                         });
                         view.setOnDragDetected(new EventHandler<MouseEvent>() {

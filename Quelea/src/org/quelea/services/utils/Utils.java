@@ -695,6 +695,25 @@ public final class Utils {
     }
 
     /**
+     * Determine whether a file is an video file.
+     * <p/>
+     * @param file the file to check.
+     * @return true if the file is an video, false otherwise.
+     */
+    public static boolean fileIsVideo(File file) {
+        if (file.isDirectory() && !file.isHidden()) {
+            return true;
+        } else {
+            for (String ext : getVideoExtensions()) {
+                if (hasExtension(file, ext)) {
+                    return true;
+                }
+            }
+            return false;
+        }
+    }
+
+    /**
      * Get a list of all supported image extensions.
      * <p/>
      * @return a list of all supported image extensions.
@@ -733,7 +752,7 @@ public final class Utils {
         ret.add("vlcarg");
         return ret;
     }
-    
+
     public static List<String> getImageAndVideoExtensions() {
         List<String> ret = new ArrayList<>();
         ret.addAll(getVideoExtensions());
