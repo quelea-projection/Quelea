@@ -39,9 +39,7 @@ import javafx.scene.control.ScrollPane;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.Clipboard;
-import javafx.scene.input.ClipboardContent;
 import javafx.scene.input.DragEvent;
-import javafx.scene.input.Dragboard;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.TransferMode;
@@ -59,7 +57,7 @@ import org.quelea.windows.main.QueleaApp;
 /**
  * The panel displayed on the library to select the list of videos..
  * <p/>
- * @author Michael
+ * @author Ben
  */
 public class VideoListPanel extends BorderPane {
 
@@ -139,21 +137,23 @@ public class VideoListPanel extends BorderPane {
             public void run() {
                 for (final File file : files) {
                     if (Utils.fileIsVideo(file) && !file.isDirectory()) {
+
+                        Image im = Utils.getVidBlankImage(file);
+                        try {
+                            BufferedImage bi = FrameGrab.getFrame(file, 0);
+                            BufferedImage resized = new BufferedImage(160, 90, bi.getType());
+                            Graphics2D g = resized.createGraphics();
+                            g.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
+                            g.drawImage(bi, 0, 0, 160, 90, 0, 0, bi.getWidth(), bi.getHeight(), null);
+                            g.dispose();
+                            im = SwingFXUtils.toFXImage(resized, null);
+                        } catch (Exception e) {
+                            LoggerUtils.getLogger().log(Level.INFO, "Could not resize library video image");
+                        }
+                        final Image im2 = im;
                         Platform.runLater(() -> {
                             final HBox viewBox = new HBox();
-                            Image im = Utils.getVidBlankImage(file);
-                            try {
-                                BufferedImage bi = FrameGrab.getFrame(file, 0);
-                                BufferedImage resized = new BufferedImage(160, 90, bi.getType());
-                                Graphics2D g = resized.createGraphics();
-                                g.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
-                                g.drawImage(bi, 0, 0, 160, 90, 0, 0, bi.getWidth(), bi.getHeight(), null);
-                                g.dispose();
-                                im = SwingFXUtils.toFXImage(resized, null);
-                            } catch (Exception e) {
-                                LoggerUtils.getLogger().log(Level.INFO, "Could not resize library video image");
-                            }
-                            final ImageView view = new ImageView(im);
+                            final ImageView view = new ImageView(im2);
                             view.setPreserveRatio(true);
                             view.setFitWidth(160);
                             view.setFitHeight(90);
@@ -189,7 +189,7 @@ public class VideoListPanel extends BorderPane {
                             viewBox.getChildren().add(view);
                             setupHover(viewBox);
                             videoList.getChildren().add(viewBox);
-                            });
+                        });
                     }
                 }
             }
