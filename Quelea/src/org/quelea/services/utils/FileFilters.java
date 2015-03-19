@@ -73,6 +73,10 @@ public final class FileFilters {
      */
     public static final FileChooser.ExtensionFilter IMAGES = new FileChooser.ExtensionFilter(LabelGrabber.INSTANCE.getLabel("image.files.description"), Utils.getFileExtensions(Utils.getImageExtensions()));
     /**
+     * Only accept timers.
+     */
+    public static final FileChooser.ExtensionFilter TIMERS = new FileChooser.ExtensionFilter(LabelGrabber.INSTANCE.getLabel("timer.files.description") +  "(*.cdt)", "*.cdt");
+    /**
      * Only accept png files.
      */
     public static final FileChooser.ExtensionFilter PNG = new FileChooser.ExtensionFilter(LabelGrabber.INSTANCE.getLabel("png.files.description"), "*.png");

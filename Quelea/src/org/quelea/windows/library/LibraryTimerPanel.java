@@ -45,33 +45,33 @@ import org.quelea.services.utils.Utils;
 import org.quelea.windows.main.QueleaApp;
 
 /**
- * The video panel in the library.
+ * The timer panel in the library.
  * <p/>
  * @author Ben
  */
-public class LibraryVideoPanel extends BorderPane {
+public class LibraryTimerPanel extends BorderPane {
 
-    private final VideoListPanel videoPanel;
+    private final TimerListPanel timerPanel;
     private final ToolBar toolbar;
     private static final Logger LOGGER = LoggerUtils.getLogger();
 
     /**
-     * Create a new library video panel.
+     * Create a new library timer panel.
      */
-    public LibraryVideoPanel() {
-        videoPanel = new VideoListPanel(QueleaProperties.get().getVidDir().getAbsolutePath());
-        setCenter(videoPanel);
+    public LibraryTimerPanel() {
+        timerPanel = new TimerListPanel(QueleaProperties.get().getTimerDir().getAbsolutePath());
+        setCenter(timerPanel);
         toolbar = new ToolBar();
 
         Button addButton = new Button("", new ImageView(new Image("file:icons/add.png")));
-        addButton.setTooltip(new Tooltip(LabelGrabber.INSTANCE.getLabel("add.videos.panel")));
+        addButton.setTooltip(new Tooltip(LabelGrabber.INSTANCE.getLabel("add.timers.panel")));
         addButton.setOnAction((ActionEvent t) -> {
             FileChooser chooser = new FileChooser();
             if (QueleaProperties.get().getLastDirectory() != null) {
                 chooser.setInitialDirectory(QueleaProperties.get().getLastDirectory());
             }
-            chooser.getExtensionFilters().add(FileFilters.VIDEOS);
-            chooser.setInitialDirectory(QueleaProperties.get().getVidDir().getAbsoluteFile());
+            chooser.getExtensionFilters().add(FileFilters.TIMERS);
+            chooser.setInitialDirectory(QueleaProperties.get().getTimerDir().getAbsoluteFile());
             List<File> files = chooser.showOpenMultipleDialog(QueleaApp.get().getMainWindow());
             if(files != null) {
                 final boolean[] refresh = new boolean[]{false};
@@ -80,12 +80,12 @@ public class LibraryVideoPanel extends BorderPane {
                     try {
                         final Path sourceFile = f.getAbsoluteFile().toPath();
                         
-                        if(new File(videoPanel.getDir(), f.getName()).exists()) {
+                        if(new File(timerPanel.getDir(), f.getName()).exists()) {
                             Dialog d = Dialog.buildConfirmation(LabelGrabber.INSTANCE.getLabel("confirm.overwrite.title"), f.getName() + "\n" + LabelGrabber.INSTANCE.getLabel("confirm.overwrite.text"))
                                     .addLabelledButton(LabelGrabber.INSTANCE.getLabel("file.replace.button"), (ActionEvent t1) -> {
                                         try {
-                                            Files.delete(Paths.get(videoPanel.getDir(), f.getName()));
-                                            Files.copy(sourceFile, Paths.get(videoPanel.getDir(), f.getName()), StandardCopyOption.COPY_ATTRIBUTES);
+                                            Files.delete(Paths.get(timerPanel.getDir(), f.getName()));
+                                            Files.copy(sourceFile, Paths.get(timerPanel.getDir(), f.getName()), StandardCopyOption.COPY_ATTRIBUTES);
                                             refresh[0] = true;
                                         }
                                         catch(IOException e) {
@@ -97,16 +97,16 @@ public class LibraryVideoPanel extends BorderPane {
                             d.showAndWait();
                         }
                         else {
-                            Files.copy(sourceFile, Paths.get(videoPanel.getDir(), f.getName()), StandardCopyOption.COPY_ATTRIBUTES);
+                            Files.copy(sourceFile, Paths.get(timerPanel.getDir(), f.getName()), StandardCopyOption.COPY_ATTRIBUTES);
                             refresh[0] = true;
                         }
                     }
                     catch(IOException ex) {
-                        LOGGER.log(Level.WARNING, "Could not copy file into VideoPanel from FileChooser selection", ex);
+                        LOGGER.log(Level.WARNING, "Could not copy file into TimerPanel from FileChooser selection", ex);
                     }
                 }
                 if(refresh[0]) {
-                    videoPanel.refresh();
+                    timerPanel.refresh();
                 }
             }
         });
@@ -119,11 +119,11 @@ public class LibraryVideoPanel extends BorderPane {
     }
 
     /**
-     * Get the video list panel.
+     * Get the timer list panel.
      * <p/>
-     * @return the video list panel.
+     * @return the timer list panel.
      */
-    public VideoListPanel getVideoPanel() {
-        return videoPanel;
+    public TimerListPanel getTimerPanel() {
+        return timerPanel;
     }
 }

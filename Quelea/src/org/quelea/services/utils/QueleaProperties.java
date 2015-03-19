@@ -1751,4 +1751,13 @@ public final class QueleaProperties extends Properties {
         write();
     }
 
+    /**
+     * Get the directory used for storing countdown timers.
+     * <p/>
+     * @return the timer directory
+     */
+    public File getTimerDir() {
+        return new File(getQueleaUserHome(), "timer");
+    }
+
 }
