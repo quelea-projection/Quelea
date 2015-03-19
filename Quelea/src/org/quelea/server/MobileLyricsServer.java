@@ -197,10 +197,10 @@ public class MobileLyricsServer {
                     if(lp.getDisplayable() instanceof BiblePassage) {
                         ret.append("<span class=\"bible\">").append(line);
                     }
-                    else if(new LineTypeChecker(line).getLineType() != LineTypeChecker.Type.CHORDS) {
+                    else if(new LineTypeChecker(line).getLineType() == LineTypeChecker.Type.CHORDS) {
                         ret.append("<span class=\"chord\">").append(line.replace(" ", "&#160;"));
                     }
-                    else if(new LineTypeChecker(line).getLineType() != LineTypeChecker.Type.TITLE) {
+                    else if(new LineTypeChecker(line).getLineType() == LineTypeChecker.Type.TITLE) {
                         ret.append("<span class=\"title\">").append(line);
                     }
                     else {
@@ -208,9 +208,9 @@ public class MobileLyricsServer {
                     }
                     ret.append("</span>").append("<br/>");
                 }
-                if(chords) {
-                    return ret.toString().replace(" ", "&#160;");
-                }
+//                if(chords) {
+//                    return ret.toString().replace(" ", "&#160;");
+//                }
                 return ret.toString();
             }
             else {
