@@ -66,6 +66,7 @@ public class VideoListPanel extends BorderPane {
     private final TilePane videoList;
     private String dir;
     private Thread updateThread;
+    private Image BLANK = new Image("file:icons/vid preview.png");
 
     /**
      * Create a new video list panel.
@@ -137,23 +138,31 @@ public class VideoListPanel extends BorderPane {
             public void run() {
                 for (final File file : files) {
                     if (Utils.fileIsVideo(file) && !file.isDirectory()) {
-
-                        Image im = Utils.getVidBlankImage(file);
-                        try {
-                            BufferedImage bi = FrameGrab.getFrame(file, 0);
-                            BufferedImage resized = new BufferedImage(160, 90, bi.getType());
-                            Graphics2D g = resized.createGraphics();
-                            g.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
-                            g.drawImage(bi, 0, 0, 160, 90, 0, 0, bi.getWidth(), bi.getHeight(), null);
-                            g.dispose();
-                            im = SwingFXUtils.toFXImage(resized, null);
-                        } catch (Exception e) {
-                            LoggerUtils.getLogger().log(Level.INFO, "Could not resize library video image");
-                        }
-                        final Image im2 = im;
+                        final ImageView view;
+                        view = new ImageView();
+                        new Thread() {
+                            @Override
+                            public void run() {
+                                try {
+                                    BufferedImage bi = FrameGrab.getFrame(file, 0);
+                                    BufferedImage resized = new BufferedImage(160, 90, bi.getType());
+                                    Graphics2D g = resized.createGraphics();
+                                    g.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
+                                    g.drawImage(bi, 0, 0, 160, 90, 0, 0, bi.getWidth(), bi.getHeight(), null);
+                                    g.dispose();
+                                    Platform.runLater(() -> {
+                                        view.setImage(SwingFXUtils.toFXImage(resized, null));
+                                    });
+                                } catch (Exception e) {
+                                    LoggerUtils.getLogger().log(Level.INFO, "Could not resize library video image");
+                                    Platform.runLater(() -> {
+                                        view.setImage(BLANK);
+                                    });
+                                }
+                            }
+                        }.start();
                         Platform.runLater(() -> {
                             final HBox viewBox = new HBox();
-                            final ImageView view = new ImageView(im2);
                             view.setPreserveRatio(true);
                             view.setFitWidth(160);
                             view.setFitHeight(90);
