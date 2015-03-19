@@ -170,10 +170,7 @@ public class CreateTimerPanel extends Stage {
                     pretext = (s.length > 0) ? s[0] : "";
                     posttext = (s.length > 1) ? s[1] : "";
                 }
-
                 TimerDisplayable displayable = new TimerDisplayable(nameTextField.getText(), timerTheme.getBackground(), parse(durationTextField.getText()), pretext, posttext, timerTheme);
-
-                QueleaApp.get().getMainWindow().getMainPanel().getSchedulePanel().getScheduleList().add(displayable);
 
                 if (saveBox.isSelected()) {
                     FileChooser fc = new FileChooser();
@@ -181,18 +178,22 @@ public class CreateTimerPanel extends Stage {
                     fc.getExtensionFilters().add(FileFilters.TIMERS);
                     File f = fc.showSaveDialog(null);
                     if (f != null) {
-                        if(!f.getName().endsWith(".cdt")) {
+                        if (!f.getName().endsWith(".cdt")) {
                             f = new File(f.getAbsolutePath() + ".cdt");
                         }
-                        try { 
+                        try {
                             TimerIO.timerToFile(displayable, f);
                             QueleaApp.get().getMainWindow().getMainPanel().getLibraryPanel().forceTimer();
+                            QueleaApp.get().getMainWindow().getMainPanel().getSchedulePanel().getScheduleList().add(displayable);
+                            hide();
                         } catch (IOException ex) {
                             Logger.getLogger(CreateTimerPanel.class.getName()).log(Level.WARNING, "Could not save timer to file");
                         }
                     }
+                } else {
+                    QueleaApp.get().getMainWindow().getMainPanel().getSchedulePanel().getScheduleList().add(displayable);
+                    hide();
                 }
-                hide();
             }
         });
 
