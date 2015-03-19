@@ -99,6 +99,9 @@
         <copy todir="${dist.jar.dir}/vid" quiet="yes">
             <fileset dir="${basedir}/vid"/>
         </copy>
+        <copy todir="${dist.jar.dir}/timer" quiet="yes">
+            <fileset dir="${basedir}/timer"/>
+        </copy>
         <copy todir="${dist.jar.dir}/src" quiet="yes">
             <fileset dir="${basedir}/src"/>
         </copy>

@@ -17,6 +17,10 @@
  */
 package org.quelea.windows.timer;
 
+import java.io.File;
+import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.geometry.HPos;
@@ -24,6 +28,7 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
@@ -32,12 +37,15 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
+import javafx.stage.FileChooser;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import org.fxmisc.richtext.InlineCssTextArea;
 import org.quelea.data.ThemeDTO;
 import org.quelea.data.displayable.TimerDisplayable;
 import org.quelea.services.languages.LabelGrabber;
+import org.quelea.services.utils.FileFilters;
+import org.quelea.services.utils.QueleaProperties;
 import org.quelea.windows.main.QueleaApp;
 import org.quelea.windows.newsong.ThemePanel;
 
@@ -61,6 +69,22 @@ public class CreateTimerPanel extends Stage {
         GridPane grid = new GridPane();
         grid.setPadding(new Insets(5));
         int rows = 0;
+
+        Label nameLabel = new Label(LabelGrabber.INSTANCE.getLabel("timer.name.label"));
+        GridPane.setConstraints(nameLabel, 0, rows);
+        grid.getChildren().add(nameLabel);
+        TextField nameTextField = new TextField();
+        nameTextField.textProperty().addListener((ObservableValue<? extends String> observable, String oldValue, String newValue) -> {
+            if (newValue.equals("")) {
+                confirmButton.setDisable(true);
+            } else {
+                confirmButton.setDisable(false);
+            }
+        });
+        nameLabel.setLabelFor(nameTextField);
+        GridPane.setConstraints(nameTextField, 1, rows);
+        grid.getChildren().add(nameTextField);
+        rows++;
 
         Label durationLabel = new Label(LabelGrabber.INSTANCE.getLabel("timer.duration.label"));
         GridPane.setConstraints(durationLabel, 0, rows);
@@ -124,6 +148,15 @@ public class CreateTimerPanel extends Stage {
         grid.getChildren().add(themeButton);
         rows++;
 
+        Label saveLabel = new Label(LabelGrabber.INSTANCE.getLabel("timer.save.label"));
+        GridPane.setConstraints(saveLabel, 0, rows);
+        grid.getChildren().add(saveLabel);
+        CheckBox saveBox = new CheckBox();
+        saveLabel.setLabelFor(saveBox);
+        GridPane.setConstraints(saveBox, 1, rows);
+        grid.getChildren().add(saveBox);
+        rows++;
+
         GridPane.setConstraints(confirmButton, 0, rows, 2, 1);
         GridPane.setHalignment(confirmButton, HPos.CENTER);
         grid.getChildren().add(confirmButton);
@@ -138,9 +171,27 @@ public class CreateTimerPanel extends Stage {
                     posttext = (s.length > 1) ? s[1] : "";
                 }
 
-                TimerDisplayable displayable = new TimerDisplayable(timerTheme.getBackground(), parse(durationTextField.getText()), pretext, posttext, timerTheme);
+                TimerDisplayable displayable = new TimerDisplayable(nameTextField.getText(), timerTheme.getBackground(), parse(durationTextField.getText()), pretext, posttext, timerTheme);
 
                 QueleaApp.get().getMainWindow().getMainPanel().getSchedulePanel().getScheduleList().add(displayable);
+
+                if (saveBox.isSelected()) {
+                    FileChooser fc = new FileChooser();
+                    fc.setInitialDirectory(QueleaProperties.get().getTimerDir());
+                    fc.getExtensionFilters().add(FileFilters.TIMERS);
+                    File f = fc.showSaveDialog(null);
+                    if (f != null) {
+                        if(!f.getName().endsWith(".cdt")) {
+                            f = new File(f.getAbsolutePath() + ".cdt");
+                        }
+                        try { 
+                            TimerIO.timerToFile(displayable, f);
+                            QueleaApp.get().getMainWindow().getMainPanel().getLibraryPanel().forceTimer();
+                        } catch (IOException ex) {
+                            Logger.getLogger(CreateTimerPanel.class.getName()).log(Level.WARNING, "Could not save timer to file");
+                        }
+                    }
+                }
                 hide();
             }
         });
