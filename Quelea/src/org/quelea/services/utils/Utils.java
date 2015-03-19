@@ -714,6 +714,23 @@ public final class Utils {
     }
 
     /**
+     * Determine whether a file is a timer file.
+     * <p/>
+     * @param file the file to check.
+     * @return true if the file is an timer, false otherwise.
+     */
+    public static boolean fileIsTimer(File file) {
+        if (file.isDirectory() && !file.isHidden()) {
+            return true;
+        } else {
+            if (hasExtension(file, "*.cdt")) {
+                return true;
+            }
+            return false;
+        }
+    }
+
+    /**
      * Get a list of all supported image extensions.
      * <p/>
      * @return a list of all supported image extensions.
