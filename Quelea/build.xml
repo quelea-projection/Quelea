@@ -93,7 +93,7 @@
         <copy todir="${dist.jar.dir}/img" quiet="yes">
             <fileset dir="${basedir}/img"/>
         </copy>
-        <copy todir="${dist.jar.dir}/timer" quiet="yes">
+        <copy todir="${dist.jar.dir}/timer" quiet="yes" failonerror="false">
             <fileset dir="${basedir}/timer"/>
         </copy>
         <copy todir="${dist.jar.dir}/src" quiet="yes">
