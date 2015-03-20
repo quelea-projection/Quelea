@@ -106,6 +106,7 @@ public class UserFileChecker {
         }
         else {
             LOGGER.log(Level.WARNING, "{0} dir {1} doesn't exist", new Object[]{dirName, masterThemes.getAbsolutePath()});
+            new File(userDir, dirName).mkdir();
         }
     }
 

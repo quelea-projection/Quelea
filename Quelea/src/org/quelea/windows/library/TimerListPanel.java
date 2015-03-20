@@ -156,12 +156,13 @@ public class TimerListPanel extends BorderPane {
         updateThread = new Thread() {
             @Override
             public void run() {
-                for (final File file : files) {
-                    Platform.runLater(() -> {
-                        TimerDisplayable td = TimerIO.timerFromFile(file);
-                        td.setName(file.getName().substring(0,file.getName().length()-4) + " (" + td.secondsToTime(td.getSeconds()) + ")");
-                        timerList.getItems().add(td);
-                    });
+                if (files != null) {
+                    for (final File file : files) {
+                        Platform.runLater(() -> {
+                            TimerDisplayable td = TimerIO.timerFromFile(file);
+                            td.setName(file.getName().substring(0, file.getName().length() - 4) + " (" + td.secondsToTime(td.getSeconds()) + ")");
+                            timerList.getItems().add(td);
+                        });
 
 //                    if (Utils.fileIsTimer(file) && !file.isDirectory()) {
 //                        Platform.runLater(() -> {
@@ -219,10 +220,9 @@ public class TimerListPanel extends BorderPane {
                     }
                 }
             }
-
-            ;
-            updateThread.start ();
-        }
+        };
+        updateThread.start();
+    }
 //
 //    private void setupHover(final Node view) {
 //        view.setStyle(BORDER_STYLE_DESELECTED);
