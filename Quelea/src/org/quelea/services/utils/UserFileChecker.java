@@ -97,7 +97,11 @@ public class UserFileChecker {
                 LOGGER.log(Level.INFO, "{0} copied successfully", dirName);
             }
             catch(IOException ex) {
-                LOGGER.log(Level.WARNING, "Couldn't copy " + dirName, ex);
+                LOGGER.log(Level.INFO, "Couldn't copy " + dirName + ", creating instead", ex);
+                boolean created = new File(userDir, dirName).mkdir();
+                if(!created) {
+                    LOGGER.log(Level.WARNING, "Can't copy, can't create.", ex);
+                }
             }
         }
         else {
