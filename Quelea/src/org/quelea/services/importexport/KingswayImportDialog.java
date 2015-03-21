@@ -46,4 +46,9 @@ public class KingswayImportDialog extends ImportDialog {
         kwp.setAll(all);
     }
     
+    @Override
+    public void setRange(boolean range) {
+        kwp.setRange(range);
+    }
+    
 }

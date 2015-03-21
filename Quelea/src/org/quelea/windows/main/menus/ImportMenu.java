@@ -189,7 +189,7 @@ public class ImportMenu extends Menu {
         });
         getItems().add(epicWorshipItem);
 
-        MenuItem kingswayAll, kingswayOne;
+        MenuItem kingswayAll, kingswayRange, kingswayOne;
 
         kingswayItem = new Menu(LabelGrabber.INSTANCE.getLabel("kingsway.button"), new ImageView(new Image("file:icons/kingsway.png", 16, 16, false, true)));
         kingswayAll = new MenuItem(LabelGrabber.INSTANCE.getLabel("kingsway.button.all"), new ImageView(new Image("file:icons/kingsway.png", 16, 16, false, true)));
@@ -197,26 +197,26 @@ public class ImportMenu extends Menu {
             kingswayImportDialog.setAll(true);
             kingswayImportDialog.show();
         });
-
+        
+        kingswayRange = new MenuItem(LabelGrabber.INSTANCE.getLabel("kingsway.button.range"), new ImageView(new Image("file:icons/kingsway.png", 16, 16, false, true)));
+        kingswayRange.setOnAction((ActionEvent t) -> {
+            kingswayImportDialog.setRange(true);
+            kingswayImportDialog.show();
+        });
+      
         kingswayOne = new MenuItem(LabelGrabber.INSTANCE.getLabel("kingsway.button.one"), new ImageView(new Image("file:icons/kingsway.png", 16, 16, false, true)));
-        kingswayOne.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent t) {
-                kingswayImportDialog.setAll(false);
-                kingswayImportDialog.show();
-            }
+        kingswayOne.setOnAction((ActionEvent t) -> {
+            kingswayImportDialog.setAll(false);
+            kingswayImportDialog.setRange(false);
+            kingswayImportDialog.show();
         });
 
         getItems().add(kingswayItem);
-        kingswayItem.getItems().add(kingswayAll);
-        kingswayItem.getItems().add(kingswayOne);
+        kingswayItem.getItems().addAll(kingswayAll, kingswayRange, kingswayOne);
 
         plainTextItem = new MenuItem(LabelGrabber.INSTANCE.getLabel("plainText.button"), new ImageView(new Image("file:icons/text.png", 16, 16, false, true)));
-        plainTextItem.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent t) {
-                plainTextImportDialog.show();
-            }
+        plainTextItem.setOnAction((ActionEvent t) -> {
+            plainTextImportDialog.show();
         });
         getItems().add(plainTextItem);
     }
