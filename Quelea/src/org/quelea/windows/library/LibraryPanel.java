@@ -134,6 +134,15 @@ public class LibraryPanel extends VBox {
     public LibraryVideoPanel getVideoPanel() {
         return videoPanel;
     }
+    
+    /**
+     * Get the library timer panel.
+     *
+     * @return the library timer panel.
+     */
+    public LibraryTimerPanel getTimerPanel() {
+        return timerPanel;
+    }
 
     /**
      * Method to force the display of timers folder

@@ -45,6 +45,7 @@ import org.quelea.data.ThemeDTO;
 import org.quelea.data.displayable.TimerDisplayable;
 import org.quelea.services.languages.LabelGrabber;
 import org.quelea.services.utils.FileFilters;
+import org.quelea.services.utils.LoggerUtils;
 import org.quelea.services.utils.QueleaProperties;
 import org.quelea.windows.main.QueleaApp;
 import org.quelea.windows.main.schedule.ScheduleList;
@@ -186,39 +187,34 @@ public class CreateTimerPanel extends Stage {
                 TimerDisplayable displayable = new TimerDisplayable(nameTextField.getText(), timerTheme.getBackground(), parse(durationTextField.getText()), pretext, posttext, tp.getTheme());
 
                 if (saveBox.isSelected()) {
-                    FileChooser fc = new FileChooser();
-                    fc.setInitialDirectory(QueleaProperties.get().getTimerDir());
-                    fc.getExtensionFilters().add(FileFilters.TIMERS);
-                    File f = fc.showSaveDialog(null);
-                    if (f != null) {
-                        if (!f.getName().endsWith(".cdt")) {
-                            f = new File(f.getAbsolutePath() + ".cdt");
-                        }
-                        try {
-                            TimerIO.timerToFile(displayable, f);
-                            QueleaApp.get().getMainWindow().getMainPanel().getLibraryPanel().forceTimer();
-                            ScheduleList sl = QueleaApp.get().getMainWindow().getMainPanel().getSchedulePanel().getScheduleList();
-                            if (td != null) {
-                                sl.getItems().set(sl.getItems().indexOf(td), displayable);
-                                sl.getSelectionModel().select(displayable);
-                            } else {
-                                sl.add(displayable);
+                    String fileName = QueleaProperties.get().getTimerDir().getAbsolutePath() + "/" + nameTextField.getText().replace(" ", "_") + ".cdt";
+                    File f = new File(fileName);
+                    while(f.exists()) {
+                        FileChooser fc = new FileChooser();
+                        fc.setInitialDirectory(QueleaProperties.get().getTimerDir());
+                        fc.getExtensionFilters().add(FileFilters.TIMERS);
+                        f = fc.showSaveDialog(null);
+                        if (f != null) {
+                            if (!f.getName().endsWith(".cdt")) {
+                                f = new File(f.getAbsolutePath() + ".cdt");
                             }
-                            hide();
-                        } catch (IOException ex) {
-                            Logger.getLogger(CreateTimerPanel.class.getName()).log(Level.WARNING, "Could not save timer to file");
                         }
                     }
-                } else {
-                    ScheduleList sl = QueleaApp.get().getMainWindow().getMainPanel().getSchedulePanel().getScheduleList();
-                    if (td != null) {
-                        sl.getItems().set(sl.getItems().indexOf(td), displayable);
-                        sl.getSelectionModel().select(displayable);
-                    } else {
-                        sl.add(displayable);
+                    try {
+                        TimerIO.timerToFile(displayable, f);
+                        QueleaApp.get().getMainWindow().getMainPanel().getLibraryPanel().forceTimer();
+                    } catch (IOException ex) {
+                        LoggerUtils.getLogger().log(Level.WARNING, "Could not save timer to file");
                     }
-                    hide();
                 }
+                ScheduleList sl = QueleaApp.get().getMainWindow().getMainPanel().getSchedulePanel().getScheduleList();
+                if (td != null) {
+                    sl.getItems().set(sl.getItems().indexOf(td), displayable);
+                    sl.getSelectionModel().select(displayable);
+                } else {
+                    sl.add(displayable);
+                }
+                hide();
             }
         });
         if (td != null) {
