@@ -21,18 +21,20 @@ package org.quelea.windows.main.actionhandlers;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.stage.Stage;
+import org.quelea.data.displayable.TimerDisplayable;
+import org.quelea.windows.main.QueleaApp;
 import org.quelea.windows.timer.CreateTimerPanel;
 
 /**
- * The action handler for adding a timer.
+ * The action handler for editing a timer.
  *
  * @author Ben
  */
-public class AddTimerActionHandler implements EventHandler<ActionEvent> {
+public class EditTimerActionHandler implements EventHandler<ActionEvent> {
 
     @Override
     public void handle(ActionEvent t) {
-        Stage s = new CreateTimerPanel(null);
+        Stage s = new CreateTimerPanel((TimerDisplayable)QueleaApp.get().getMainWindow().getMainPanel().getSchedulePanel().getScheduleList().getSelectionModel().getSelectedItem());
         s.showAndWait();
     }
 }
