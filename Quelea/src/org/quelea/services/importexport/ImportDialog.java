@@ -200,12 +200,14 @@ public abstract class ImportDialog extends Stage implements PropertyChangeListen
                     @Override
                     public void run() {
                         try {
-                            if (files == null || files.isEmpty()) {
-                                return;
-                            }
                             localSongs = new ArrayList<>();
-                            for (File file : files) {
-                                localSongs.addAll(parser.getSongs(file, statusPanel));
+                            if (files == null || files.isEmpty()) {
+                                //Assume Kingsway Import!
+                                localSongs.addAll(parser.getSongs(null, statusPanel));
+                            } else {
+                                for (File file : files) {
+                                    localSongs.addAll(parser.getSongs(file, statusPanel));
+                                }
                             }
                             if (halt) {
                                 localSongs = null;
@@ -328,6 +330,10 @@ public abstract class ImportDialog extends Stage implements PropertyChangeListen
     }
 
     public void setAll(boolean all) {
+        //to be overwritten
+    }
+
+    public void setRange(boolean range) {
         //to be overwritten
     }
 }
