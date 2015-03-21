@@ -218,8 +218,10 @@ public class KingswayWorshipParser implements SongParser {
             if (html == null || html.contains("<h1>Sorry...</h1>") || html.contains("Server error") || html.trim().isEmpty()) {
                 return null;
             }
-            int startIndex = html.indexOf("<h1>");
-            int endIndex = html.indexOf("<div class=\"span3\">", startIndex);
+            int startIndex = html.indexOf("<h1 class=\"no-border\" id=\"song-title\">");
+            int endIndex = html.indexOf("<div class=\"span3\">");
+            
+            System.out.println(startIndex + " " + endIndex);
 
             String songHtml = html.substring(startIndex, endIndex).trim();
             songHtml = songHtml.replace("&#39;", "'");
@@ -235,7 +237,7 @@ public class KingswayWorshipParser implements SongParser {
             songHtml = songHtml.replace("&rsquo;", "'");
             songHtml = songHtml.replace("&copy;", "©");
 
-            String title = songHtml.substring(4, songHtml.indexOf("</h1>"));
+            String title = songHtml.substring("<h1 class=\"no-border\" id=\"song-title\">".length(), songHtml.indexOf("</h1>"));
 
             int sindex = songHtml.indexOf("<h3>");
             songHtml = songHtml.substring(sindex).trim();
@@ -344,7 +346,7 @@ public class KingswayWorshipParser implements SongParser {
                 return null;
             }
         } catch (Exception ex) {
-            LOGGER.log(Level.WARNING, "Error importing song. HTML is:\n" + html, ex);
+            LOGGER.log(Level.WARNING, "Error importing song.", ex);
             return null;
         }
     }
