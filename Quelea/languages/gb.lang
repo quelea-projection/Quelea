@@ -549,3 +549,6 @@ timer.name.label=Name
 edit.timer.text=Edit Timer
 remove.timer.text=Delete Timer
 confirm.remove.timer=Really remove $1 from the timer list? This action cannot be undone.
+kingsway.button.range=Range
+kingsway.range.import.text=Enter the range of song pages to download from Kingsway's website.\nThe current maximum number of pages is around 3600.
+kingsway.range.import.heading=Import range of Kingsway songs
