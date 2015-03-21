@@ -32,7 +32,7 @@ import org.quelea.data.displayable.TextDisplayable;
 import org.quelea.data.displayable.TimerDisplayable;
 import org.quelea.services.utils.Utils;
 import org.quelea.windows.main.actionhandlers.EditThemeScheduleActionHandler;
-import org.quelea.windows.main.actionhandlers.EditTimerScheduleActionHandler;
+import org.quelea.windows.main.actionhandlers.EditTimerThemeActionHandler;
 
 /**
  *
@@ -56,7 +56,7 @@ public class ScheduleListNode extends HBox {
                 themeButton.setOnAction(new EditThemeScheduleActionHandler((TextDisplayable)displayable));
             }
             else {
-                themeButton.setOnAction(new EditTimerScheduleActionHandler((TimerDisplayable)displayable));
+                themeButton.setOnAction(new EditTimerThemeActionHandler((TimerDisplayable)displayable));
             }
             Utils.setToolbarButtonStyle(themeButton);
             Region spacer = new Region();

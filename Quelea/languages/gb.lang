@@ -546,3 +546,4 @@ add.timers.panel=Add Timers
 library.timer.heading=Timers
 timer.save.label=Save timer?
 timer.name.label=Name
+edit.timer.text=Edit Timer
