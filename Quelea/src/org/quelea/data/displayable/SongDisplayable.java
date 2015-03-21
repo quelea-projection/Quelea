@@ -901,6 +901,19 @@ public class SongDisplayable implements TextDisplayable, Comparable<SongDisplaya
             xml.append(section.getXML());
         }
         xml.append("</lyrics>");
+
+        xml.append("<translation>");
+        if (getCurrentTranslationLyrics() != null) {
+            xml.append("<name>");
+            xml.append(currentTranslation);
+            xml.append("</name>");
+            xml.append("<tlyrics>");
+            xml.append(Utils.escapeXML(translations.get(currentTranslation)));
+            xml.append("</tlyrics>");
+        } else {
+            xml.append("");
+        }
+        xml.append("</translation>");
         xml.append("</song>");
         return xml.toString();
     }
@@ -915,10 +928,10 @@ public class SongDisplayable implements TextDisplayable, Comparable<SongDisplaya
     public String getPrintXML(boolean includeTranslations) {
         StringBuilder xml = new StringBuilder();
         Map<String, String> lyricsMap = new TreeMap<>((String o1, String o2) -> { //Ensure "Default" translation is first
-            if(o1.equals("Default")) {
+            if (o1.equals("Default")) {
                 return -1;
             }
-            if(o2.equals("Default")) {
+            if (o2.equals("Default")) {
                 return 1;
             }
             return o1.compareTo(o2);
@@ -947,7 +960,7 @@ public class SongDisplayable implements TextDisplayable, Comparable<SongDisplaya
             xml.append(Utils.escapeXML(author));
             xml.append("</author>");
             xml.append("<lyrics>");
-            xml.append(lyricsEntry.getValue().replace(" ", Character.toString((char)160)));
+            xml.append(lyricsEntry.getValue().replace(" ", Character.toString((char) 160)));
             xml.append("</lyrics>");
             xml.append("</song>");
         }
@@ -1008,6 +1021,8 @@ public class SongDisplayable implements TextDisplayable, Comparable<SongDisplaya
         String key = "";
         String capo = "";
         String notes = "";
+        String currentTranslation = "";
+        String translationLyrics = "";
         List<TextSection> songSections = new ArrayList<>();
         for (int i = 0; i < list.getLength(); i++) {
             Node node = list.item(i);
@@ -1047,6 +1062,13 @@ public class SongDisplayable implements TextDisplayable, Comparable<SongDisplaya
                     }
                 }
             }
+            if (node.getNodeName().equals("translation")) {
+                if (node.hasChildNodes()) {
+                    NodeList nl = node.getChildNodes();
+                    currentTranslation = nl.item(0).getTextContent();
+                    translationLyrics = nl.item(1).getTextContent();
+                }
+            }
         }
         SongDisplayable ret = new SongDisplayable(title, author,
                 new ThemeDTO(ThemeDTO.DEFAULT_FONT, ThemeDTO.DEFAULT_FONT_COLOR, ThemeDTO.DEFAULT_FONT, ThemeDTO.DEFAULT_TRANSLATE_FONT_COLOR,
@@ -1061,6 +1083,10 @@ public class SongDisplayable implements TextDisplayable, Comparable<SongDisplaya
         ret.setKey(key);
         ret.setCapo(capo);
         ret.setInfo(notes);
+        if (!currentTranslation.equals("")) {
+            ret.setCurrentTranslationLyrics(currentTranslation);
+            ret.addTranslation(currentTranslation, translationLyrics);
+        }
         return ret;
     }
 
