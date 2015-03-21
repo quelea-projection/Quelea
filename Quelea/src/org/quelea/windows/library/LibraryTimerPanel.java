@@ -26,6 +26,8 @@ import java.nio.file.StandardCopyOption;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javafx.beans.value.ObservableValue;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.geometry.Orientation;
 import javafx.scene.control.Button;
@@ -37,12 +39,14 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.stage.FileChooser;
 import org.javafx.dialog.Dialog;
+import org.quelea.data.displayable.TimerDisplayable;
 import org.quelea.services.languages.LabelGrabber;
 import org.quelea.services.utils.FileFilters;
 import org.quelea.services.utils.LoggerUtils;
 import org.quelea.services.utils.QueleaProperties;
 import org.quelea.services.utils.Utils;
 import org.quelea.windows.main.QueleaApp;
+import org.quelea.windows.main.actionhandlers.RemoveTimerActionHandler;
 
 /**
  * The timer panel in the library.
@@ -54,6 +58,7 @@ public class LibraryTimerPanel extends BorderPane {
     private final TimerListPanel timerPanel;
     private final ToolBar toolbar;
     private static final Logger LOGGER = LoggerUtils.getLogger();
+    private final Button removeButton;
 
     /**
      * Create a new library timer panel.
@@ -62,6 +67,13 @@ public class LibraryTimerPanel extends BorderPane {
         timerPanel = new TimerListPanel(QueleaProperties.get().getTimerDir().getAbsolutePath());
         setCenter(timerPanel);
         toolbar = new ToolBar();
+
+        timerPanel.getListView().getSelectionModel().selectedIndexProperty().addListener((ObservableValue<? extends Number> observable, Number oldValue, Number newValue) -> {
+            checkRemoveButton();
+        });
+        timerPanel.getListView().itemsProperty().addListener((ObservableValue<? extends ObservableList<TimerDisplayable>> observable, ObservableList<TimerDisplayable> oldValue, ObservableList<TimerDisplayable> newValue) -> {
+            checkRemoveButton();
+        });
 
         Button addButton = new Button("", new ImageView(new Image("file:icons/add.png")));
         addButton.setTooltip(new Tooltip(LabelGrabber.INSTANCE.getLabel("add.timers.panel")));
@@ -73,48 +85,51 @@ public class LibraryTimerPanel extends BorderPane {
             chooser.getExtensionFilters().add(FileFilters.TIMERS);
             chooser.setInitialDirectory(QueleaProperties.get().getTimerDir().getAbsoluteFile());
             List<File> files = chooser.showOpenMultipleDialog(QueleaApp.get().getMainWindow());
-            if(files != null) {
+            if (files != null) {
                 final boolean[] refresh = new boolean[]{false};
-                for(final File f : files) {
+                for (final File f : files) {
                     QueleaProperties.get().setLastDirectory(f.getParentFile());
                     try {
                         final Path sourceFile = f.getAbsoluteFile().toPath();
-                        
-                        if(new File(timerPanel.getDir(), f.getName()).exists()) {
+
+                        if (new File(timerPanel.getDir(), f.getName()).exists()) {
                             Dialog d = Dialog.buildConfirmation(LabelGrabber.INSTANCE.getLabel("confirm.overwrite.title"), f.getName() + "\n" + LabelGrabber.INSTANCE.getLabel("confirm.overwrite.text"))
                                     .addLabelledButton(LabelGrabber.INSTANCE.getLabel("file.replace.button"), (ActionEvent t1) -> {
                                         try {
                                             Files.delete(Paths.get(timerPanel.getDir(), f.getName()));
                                             Files.copy(sourceFile, Paths.get(timerPanel.getDir(), f.getName()), StandardCopyOption.COPY_ATTRIBUTES);
                                             refresh[0] = true;
-                                        }
-                                        catch(IOException e) {
+                                        } catch (IOException e) {
                                             LOGGER.log(Level.WARNING, "Could not delete or copy file back into directory.", e);
                                         }
-                            }).addLabelledButton(LabelGrabber.INSTANCE.getLabel("file.continue.button"), (ActionEvent t1) -> {
-                                // DO NOTHING
-                            }).build();
+                                    }).addLabelledButton(LabelGrabber.INSTANCE.getLabel("file.continue.button"), (ActionEvent t1) -> {
+                                        // DO NOTHING
+                                    }).build();
                             d.showAndWait();
-                        }
-                        else {
+                        } else {
                             Files.copy(sourceFile, Paths.get(timerPanel.getDir(), f.getName()), StandardCopyOption.COPY_ATTRIBUTES);
                             refresh[0] = true;
                         }
-                    }
-                    catch(IOException ex) {
+                    } catch (IOException ex) {
                         LOGGER.log(Level.WARNING, "Could not copy file into TimerPanel from FileChooser selection", ex);
                     }
                 }
-                if(refresh[0]) {
+                if (refresh[0]) {
                     timerPanel.refresh();
                 }
             }
         });
+        ImageView removeIV = new ImageView(new Image("file:icons/removedb.png"));
+        removeButton = new Button("", removeIV);
+        Utils.setToolbarButtonStyle(removeButton);
+        removeButton.setTooltip(new Tooltip(LabelGrabber.INSTANCE.getLabel("remove.timer.text")));
+        removeButton.setDisable(true);
+        removeButton.setOnAction(new RemoveTimerActionHandler());
         HBox toolbarBox = new HBox();
         toolbar.setOrientation(Orientation.VERTICAL);
         toolbarBox.getChildren().add(toolbar);
         Utils.setToolbarButtonStyle(addButton);
-        toolbar.getItems().add(addButton);
+        toolbar.getItems().addAll(addButton, removeButton);
         setLeft(toolbarBox);
     }
 
@@ -125,5 +140,17 @@ public class LibraryTimerPanel extends BorderPane {
      */
     public TimerListPanel getTimerPanel() {
         return timerPanel;
+    }
+
+    /**
+     * Check whether the remove button should be enabled or disabled and set it
+     * accordingly.
+     */
+    private void checkRemoveButton() {
+        if (timerPanel.getListView().getSelectionModel().selectedIndexProperty().getValue() == -1 || timerPanel.getListView().itemsProperty().get().size() == 0) {
+            removeButton.setDisable(true);
+        } else {
+            removeButton.setDisable(false);
+        }
     }
 }

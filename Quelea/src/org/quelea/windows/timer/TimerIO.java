@@ -57,27 +57,28 @@ public class TimerIO {
     public static TimerDisplayable timerFromFile(File f) {
         if (f.isFile()) {
             try {
-                BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(f)));
-            StringBuilder contentsBuilder = new StringBuilder();
-            String line;
-            while ((line = br.readLine()) != null) {
-                contentsBuilder.append(line).append('\n');
-            }
-            String contents = contentsBuilder.toString();
-            contents = contents.replace(new String(new byte[]{11}), "\n");
-            contents = contents.replace(new String(new byte[]{-3}), " ");
-            InputStream strInputStream = new ByteArrayInputStream(contents.getBytes("UTF-8"));
-            
-            DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-            DocumentBuilder builder = factory.newDocumentBuilder();
-            Document doc = builder.parse(strInputStream); //Read from our "bodged" stream.
-            Node node = doc.getFirstChild();
-            return TimerDisplayable.parseXML(node);
-            }
-            catch(IOException | ParserConfigurationException | SAXException e) {
+                StringBuilder contentsBuilder;
+                try (BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(f)))) {
+                    contentsBuilder = new StringBuilder();
+                    String line;
+                    while ((line = br.readLine()) != null) {
+                        contentsBuilder.append(line).append('\n');
+                    }
+                }
+                String contents = contentsBuilder.toString();
+                contents = contents.replace(new String(new byte[]{11}), "\n");
+                contents = contents.replace(new String(new byte[]{-3}), " ");
+                InputStream strInputStream = new ByteArrayInputStream(contents.getBytes("UTF-8"));
+
+                DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+                DocumentBuilder builder = factory.newDocumentBuilder();
+                Document doc = builder.parse(strInputStream); //Read from our "bodged" stream.
+                Node node = doc.getFirstChild();
+                return TimerDisplayable.parseXML(node);
+            } catch (IOException | ParserConfigurationException | SAXException e) {
                 return null;
             }
-            
+
         } else {
             return null;
         }
