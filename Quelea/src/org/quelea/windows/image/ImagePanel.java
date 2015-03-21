@@ -35,16 +35,11 @@ public class ImagePanel extends AbstractPanel {
 
     /**
      * Create a new image panel.
-     * <p/>
-     * @param container the container this panel is contained within.
      */
     public ImagePanel() {
         setStyle("-fx-background-color: rgba(0, 0, 0);");
-        previewCanvas = new DisplayCanvas(false, false, false, new DisplayCanvas.CanvasUpdater() {
-            @Override
-            public void updateCallback() {
-                updateCanvas();
-            }
+        previewCanvas = new DisplayCanvas(false, false, false, () -> {
+            updateCanvas();
         }, Priority.LOW);
         registerDisplayCanvas(previewCanvas);
         setCenter(previewCanvas);
