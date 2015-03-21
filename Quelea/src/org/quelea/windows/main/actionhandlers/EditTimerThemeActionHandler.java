@@ -36,19 +36,19 @@ import org.quelea.windows.main.QueleaApp;
 import org.quelea.windows.newsong.ThemePanel;
 
 /**
- * Called when the theme of the current item in the schedule should be edited.
+ * Called when the theme of the current timer in the schedule should be edited.
  *
  * @author Ben
  */
-public class EditTimerScheduleActionHandler implements EventHandler<ActionEvent> {
+public class EditTimerThemeActionHandler implements EventHandler<ActionEvent> {
 
     private TimerDisplayable selectedDisplayable;
 
-    public EditTimerScheduleActionHandler() {
+    public EditTimerThemeActionHandler() {
         this(null);
     }
 
-    public EditTimerScheduleActionHandler(TimerDisplayable selectedDisplayable) {
+    public EditTimerThemeActionHandler(TimerDisplayable selectedDisplayable) {
         this.selectedDisplayable = selectedDisplayable;
     }
 

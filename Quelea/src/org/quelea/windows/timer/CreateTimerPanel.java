@@ -47,6 +47,7 @@ import org.quelea.services.languages.LabelGrabber;
 import org.quelea.services.utils.FileFilters;
 import org.quelea.services.utils.QueleaProperties;
 import org.quelea.windows.main.QueleaApp;
+import org.quelea.windows.main.schedule.ScheduleList;
 import org.quelea.windows.newsong.ThemePanel;
 
 /**
@@ -57,23 +58,31 @@ import org.quelea.windows.newsong.ThemePanel;
 public class CreateTimerPanel extends Stage {
 
     private ThemeDTO timerTheme = ThemeDTO.DEFAULT_THEME;
+    private final CheckBox saveBox;
+    private final Button tpConfirm;
+    private final TextField durationTextField;
+    private final TextArea textTextArea;
+    private final TextField nameTextField;
+    private final Button confirmButton;
+    private final GridPane grid;
+    private final ThemePanel tp;
 
-    public CreateTimerPanel() {
-        Button confirmButton = new Button(LabelGrabber.INSTANCE.getLabel("ok.button"), new ImageView(new Image("file:icons/tick.png")));
+    public CreateTimerPanel(TimerDisplayable td) {
+        confirmButton = new Button(LabelGrabber.INSTANCE.getLabel("ok.button"), new ImageView(new Image("file:icons/tick.png")));
 
         setTitle(LabelGrabber.INSTANCE.getLabel("add.timer.title"));
         initModality(Modality.APPLICATION_MODAL);
         initOwner(QueleaApp.get().getMainWindow());
         resizableProperty().setValue(false);
 
-        GridPane grid = new GridPane();
+        grid = new GridPane();
         grid.setPadding(new Insets(5));
         int rows = 0;
 
         Label nameLabel = new Label(LabelGrabber.INSTANCE.getLabel("timer.name.label"));
         GridPane.setConstraints(nameLabel, 0, rows);
         grid.getChildren().add(nameLabel);
-        TextField nameTextField = new TextField();
+        nameTextField = new TextField();
         nameTextField.textProperty().addListener((ObservableValue<? extends String> observable, String oldValue, String newValue) -> {
             if (newValue.equals("")) {
                 confirmButton.setDisable(true);
@@ -89,7 +98,7 @@ public class CreateTimerPanel extends Stage {
         Label durationLabel = new Label(LabelGrabber.INSTANCE.getLabel("timer.duration.label"));
         GridPane.setConstraints(durationLabel, 0, rows);
         grid.getChildren().add(durationLabel);
-        TextField durationTextField = new TextField();
+        durationTextField = new TextField();
         durationTextField.setTooltip(new Tooltip(LabelGrabber.INSTANCE.getLabel("duration.tooltip.label")));
         durationTextField.setPromptText("5:00");
         durationTextField.textProperty().addListener((ObservableValue<? extends String> observable, String oldValue, String newValue) -> {
@@ -109,7 +118,7 @@ public class CreateTimerPanel extends Stage {
         Label textLabel = new Label(LabelGrabber.INSTANCE.getLabel("timer.text.label"));
         GridPane.setConstraints(textLabel, 0, rows);
         grid.getChildren().add(textLabel);
-        TextArea textTextArea = new TextArea();
+        textTextArea = new TextArea();
         textTextArea.setPrefRowCount(4);
         textTextArea.setPrefColumnCount(30);
         textTextArea.setPromptText(LabelGrabber.INSTANCE.getLabel("timer.text.prompt"));
@@ -122,13 +131,17 @@ public class CreateTimerPanel extends Stage {
         GridPane.setConstraints(themeLabel, 0, rows);
         grid.getChildren().add(themeLabel);
         Button themeButton = new Button(LabelGrabber.INSTANCE.getLabel("timer.theme.button"), new ImageView(new Image("file:icons/theme.png", 16, 16, false, true)));
-        Button tpConfirm = new Button(LabelGrabber.INSTANCE.getLabel("ok.button"), new ImageView(new Image("file:icons/tick.png")));
+        tpConfirm = new Button(LabelGrabber.INSTANCE.getLabel("ok.button"), new ImageView(new Image("file:icons/tick.png")));
         tpConfirm.setAlignment(Pos.CENTER);
         InlineCssTextArea wordsArea = new InlineCssTextArea();
         wordsArea.replaceText(durationTextField.getText());
-        ThemePanel tp = new ThemePanel(wordsArea, tpConfirm);
+        tp = new ThemePanel(wordsArea, tpConfirm);
         tp.setPrefSize(500, 500);
-        tp.setTheme(timerTheme);
+        if (td == null) {
+            tp.setTheme(timerTheme);
+        } else {
+            tp.setTheme(td.getTheme());
+        }
         Stage tpStage = new Stage();
         BorderPane bp = new BorderPane();
         bp.setCenter(tp);
@@ -151,7 +164,7 @@ public class CreateTimerPanel extends Stage {
         Label saveLabel = new Label(LabelGrabber.INSTANCE.getLabel("timer.save.label"));
         GridPane.setConstraints(saveLabel, 0, rows);
         grid.getChildren().add(saveLabel);
-        CheckBox saveBox = new CheckBox();
+        saveBox = new CheckBox();
         saveLabel.setLabelFor(saveBox);
         GridPane.setConstraints(saveBox, 1, rows);
         grid.getChildren().add(saveBox);
@@ -170,7 +183,7 @@ public class CreateTimerPanel extends Stage {
                     pretext = (s.length > 0) ? s[0] : "";
                     posttext = (s.length > 1) ? s[1] : "";
                 }
-                TimerDisplayable displayable = new TimerDisplayable(nameTextField.getText(), timerTheme.getBackground(), parse(durationTextField.getText()), pretext, posttext, timerTheme);
+                TimerDisplayable displayable = new TimerDisplayable(nameTextField.getText(), timerTheme.getBackground(), parse(durationTextField.getText()), pretext, posttext, tp.getTheme());
 
                 if (saveBox.isSelected()) {
                     FileChooser fc = new FileChooser();
@@ -184,19 +197,33 @@ public class CreateTimerPanel extends Stage {
                         try {
                             TimerIO.timerToFile(displayable, f);
                             QueleaApp.get().getMainWindow().getMainPanel().getLibraryPanel().forceTimer();
-                            QueleaApp.get().getMainWindow().getMainPanel().getSchedulePanel().getScheduleList().add(displayable);
+                            ScheduleList sl = QueleaApp.get().getMainWindow().getMainPanel().getSchedulePanel().getScheduleList();
+                            if (td != null) {
+                                sl.getItems().set(sl.getItems().indexOf(td), displayable);
+                                sl.getSelectionModel().select(displayable);
+                            } else {
+                                sl.add(displayable);
+                            }
                             hide();
                         } catch (IOException ex) {
                             Logger.getLogger(CreateTimerPanel.class.getName()).log(Level.WARNING, "Could not save timer to file");
                         }
                     }
                 } else {
-                    QueleaApp.get().getMainWindow().getMainPanel().getSchedulePanel().getScheduleList().add(displayable);
+                    ScheduleList sl = QueleaApp.get().getMainWindow().getMainPanel().getSchedulePanel().getScheduleList();
+                    if (td != null) {
+                        sl.getItems().set(sl.getItems().indexOf(td), displayable);
+                        sl.getSelectionModel().select(displayable);
+                    } else {
+                        sl.add(displayable);
+                    }
                     hide();
                 }
             }
         });
-
+        if (td != null) {
+            createEdit(td);
+        }
         setScene(new Scene(grid));
     }
 
@@ -245,5 +272,11 @@ public class CreateTimerPanel extends Stage {
 
     private void setTimerTheme(ThemeDTO theme) {
         timerTheme = theme;
+    }
+
+    private void createEdit(TimerDisplayable td) {
+        durationTextField.setText(td.secondsToTime(td.getSeconds()));
+        textTextArea.setText(td.getPretext() + "#" + td.getPosttext());
+        nameTextField.setText(td.getName());
     }
 }
