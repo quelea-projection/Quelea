@@ -25,21 +25,30 @@ import java.nio.file.StandardCopyOption;
 import java.util.List;
 import java.util.logging.Level;
 import javafx.application.Platform;
+import javafx.event.ActionEvent;
+import javafx.scene.control.ContextMenu;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
+import javafx.scene.control.MenuItem;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.cell.TextFieldListCell;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.input.Clipboard;
 import javafx.scene.input.DragEvent;
+import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.TransferMode;
 import javafx.scene.layout.BorderPane;
 import javafx.util.Callback;
 import javafx.util.StringConverter;
+import org.javafx.dialog.Dialog;
 import org.quelea.data.displayable.TimerDisplayable;
+import org.quelea.services.languages.LabelGrabber;
 import org.quelea.services.utils.LoggerUtils;
 import org.quelea.services.utils.Utils;
 import org.quelea.windows.main.QueleaApp;
+import org.quelea.windows.main.actionhandlers.RemoveTimerActionHandler;
 import org.quelea.windows.timer.TimerIO;
 
 /**
@@ -88,7 +97,7 @@ public class TimerListPanel extends BorderPane {
             final TextFieldListCell<TimerDisplayable> cell = new TextFieldListCell<>(new StringConverter<TimerDisplayable>() {
                 @Override
                 public String toString(TimerDisplayable timer) {
-                    return timer.getName();
+                    return timer.getName() + " (" + timer.secondsToTime(timer.getSeconds()) + ")";
                 }
 
                 @Override
@@ -97,26 +106,19 @@ public class TimerListPanel extends BorderPane {
                     return null;
                 }
             });
-//                cell.setOnDragDetected(new EventHandler<MouseEvent>() {
-//
-//                    @Override
-//                    public void handle(MouseEvent event) {
-//                        TimerDisplayable displayable = cell.getItem();
-//                        if (displayable != null) {
-//                            Dragboard db = cell.startDragAndDrop(TransferMode.ANY);
-//                            ClipboardContent content = new ClipboardContent();
-//                            content.put(SongDisplayable.SONG_DISPLAYABLE_FORMAT, displayable);
-//                            db.setContent(content);
-//                        }
-//                        event.consume();
-//                    }
-//                });
             return cell;
         };
 
         timerList.setOnMouseClicked((MouseEvent t) -> {
             if (t.getClickCount() == 2) {
                 QueleaApp.get().getMainWindow().getMainPanel().getSchedulePanel().getScheduleList().add(getSelectedValue());
+            }
+            if (t.getButton() == MouseButton.SECONDARY) {
+                ContextMenu removeMenu = new ContextMenu();
+                MenuItem removeItem = new MenuItem(LabelGrabber.INSTANCE.getLabel("remove.timer.text"), new ImageView(new Image("file:icons/removedb.png", 16, 16, false, false)));
+                removeItem.setOnAction(new RemoveTimerActionHandler());
+                removeMenu.getItems().add(removeItem);
+                removeMenu.show(timerList, t.getScreenX(), t.getScreenY());
             }
         });
 
@@ -131,6 +133,7 @@ public class TimerListPanel extends BorderPane {
     /**
      * Returns the absolute path of the currently selected directory
      * <p/>
+     * @return Returns the directory path
      */
     public String getDir() {
         return dir;
@@ -160,79 +163,14 @@ public class TimerListPanel extends BorderPane {
                     for (final File file : files) {
                         Platform.runLater(() -> {
                             TimerDisplayable td = TimerIO.timerFromFile(file);
-                            td.setName(file.getName().substring(0, file.getName().length() - 4) + " (" + td.secondsToTime(td.getSeconds()) + ")");
                             timerList.getItems().add(td);
                         });
-
-//                    if (Utils.fileIsTimer(file) && !file.isDirectory()) {
-//                        Platform.runLater(() -> {
-//                            final HBox viewBox = new HBox();
-//                            Image im = Utils.getVidBlankImage(file);
-//                            try {
-//                                BufferedImage bi = FrameGrab.getFrame(file, 0);
-//                                BufferedImage resized = new BufferedImage(160, 90, bi.getType());
-//                                Graphics2D g = resized.createGraphics();
-//                                g.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
-//                                g.drawImage(bi, 0, 0, 160, 90, 0, 0, bi.getWidth(), bi.getHeight(), null);
-//                                g.dispose();
-//                                im = SwingFXUtils.toFXImage(resized, null);
-//                            } catch (Exception e) {
-//                                LoggerUtils.getLogger().log(Level.INFO, "Could not resize library video image");
-//                            }
-//                            final ImageView view = new ImageView(im);
-//                            view.setPreserveRatio(true);
-//                            view.setFitWidth(160);
-//                            view.setFitHeight(90);
-//                            view.setOnMouseClicked((MouseEvent t) -> {
-//                                if (t.getButton() == MouseButton.PRIMARY && t.getClickCount() > 1) {
-//                                    QueleaApp.get().getMainWindow().getMainPanel().getSchedulePanel().getScheduleList().add(new VideoDisplayable(file.getAbsolutePath()));
-//                                } else if (t.getButton() == MouseButton.SECONDARY) {
-//                                    ContextMenu removeMenu = new ContextMenu();
-//                                    MenuItem removeItem = new MenuItem(LabelGrabber.INSTANCE.getLabel("remove.video.text"));
-//                                    removeItem.setOnAction((ActionEvent t1) -> {
-//                                        final boolean[] reallyDelete = new boolean[]{false};
-//                                        Dialog.buildConfirmation(LabelGrabber.INSTANCE.getLabel("delete.video.title"),
-//                                                LabelGrabber.INSTANCE.getLabel("delete.video.confirmation")).addYesButton((ActionEvent t2) -> {
-//                                                    reallyDelete[0] = true;
-//                                                }).addNoButton((ActionEvent t3) -> {
-//                                                }).build().showAndWait();
-//                                        if (reallyDelete[0]) {
-//                                            file.delete();
-//                                            timerList.getChildren().remove(viewBox);
-//                                        }
-//                                    });
-//                                    removeMenu.getItems().add(removeItem);
-//                                    removeMenu.show(view, t.getScreenX(), t.getScreenY());
-//                                }
-//                            });
-////                            view.setOnDragDetected((MouseEvent t) -> {
-////                                Dragboard db = startDragAndDrop(TransferMode.ANY);
-////                                ClipboardContent content = new ClipboardContent();
-////                                content.putString(file.getAbsolutePath());
-////                                db.setContent(content);
-////                                t.consume();
-////                            });
-//                            viewBox.getChildren().add(view);
-//                            setupHover(viewBox);
-//                            timerList.getChildren().add(viewBox);
-//                            });
-//                    }
                     }
                 }
             }
         };
         updateThread.start();
     }
-//
-//    private void setupHover(final Node view) {
-//        view.setStyle(BORDER_STYLE_DESELECTED);
-//        view.setOnMouseEntered((MouseEvent t) -> {
-//            view.setStyle(BORDER_STYLE_SELECTED);
-//        });
-//        view.setOnMouseExited((MouseEvent t) -> {
-//            view.setStyle(BORDER_STYLE_DESELECTED);
-//        });
-//    }
 
     public void changeDir(File absoluteFile) {
         dir = absoluteFile.getAbsolutePath();
@@ -240,5 +178,9 @@ public class TimerListPanel extends BorderPane {
 
     private TimerDisplayable getSelectedValue() {
         return timerList.selectionModelProperty().get().getSelectedItem();
+    }
+
+    public ListView<TimerDisplayable> getListView() {
+        return timerList;
     }
 }
