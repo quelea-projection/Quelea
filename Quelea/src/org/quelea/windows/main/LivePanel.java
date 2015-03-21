@@ -108,7 +108,12 @@ public class LivePanel extends LivePreviewPanel {
         Region spacer = new Region();
         HBox.setHgrow(spacer, Priority.ALWAYS);
         header.getItems().add(spacer);
-        ImageView logoIV = new ImageView(new Image("file:icons/logo48.png"));
+        ImageView logoIV;
+        if (Utils.isMac()) {
+            logoIV = new ImageView(new Image("file:icons/logo48.png"));
+        } else {
+            logoIV = new ImageView(new Image("file:icons/logo16.png"));
+        }
         logoIV.setFitHeight(16);
         logoIV.setFitWidth(16);
         logo = new ToggleButton("", logoIV);
