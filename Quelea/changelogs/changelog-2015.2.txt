@@ -3,6 +3,7 @@ quelea (2015.2) stable; urgency=normal
   * Update bundled JRE to final released copy (not EA)
   * Added video library tab
   * Added timer save functionality, and timer library tab
+  * Fix issue with some badly designed fonts not clearing properly
   * EpicWorship songpack importer added
   * Greater customisation options added for 'Small Text' (information) display
   * Fix versioning issue (only the major version number was reported in some places)
