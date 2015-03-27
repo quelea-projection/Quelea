@@ -126,26 +126,23 @@ public class ServerSettingsPanel extends GridPane implements PropertyPanel {
                 checkDifferent();
             }
         });
-        mlPortNumTextField.addEventFilter(KeyEvent.KEY_TYPED, new EventHandler<KeyEvent>() {
-            @Override
-            public void handle(KeyEvent t) {
-                String text = t.getCharacter();
-                char arr[] = text.toCharArray();
-                char ch = arr[text.toCharArray().length - 1];
-                if (!(ch >= '0' && ch <= '9')) {
-                    t.consume();
-                }
-                try {
-                    String newText = mlPortNumTextField.getText() + ch;
-                    int num = Integer.parseInt(newText);
-                    if (num > 65535 || num <= 0) {
-                        t.consume();
-                    }
-                } catch (NumberFormatException ex) {
-                    t.consume();
-                }
-                checkDifferent();
+        mlPortNumTextField.addEventFilter(KeyEvent.KEY_TYPED, (KeyEvent t) -> {
+            String text = t.getCharacter();
+            char arr[] = text.toCharArray();
+            char ch = arr[text.toCharArray().length - 1];
+            if (!(ch >= '0' && ch <= '9')) {
+                t.consume();
             }
+            try {
+                String newText = mlPortNumTextField.getText() + ch;
+                int num = Integer.parseInt(newText);
+                if (num > 65535 || num <= 0) {
+                    t.consume();
+                }
+            } catch (NumberFormatException ex) {
+                t.consume();
+            }
+            checkDifferent();
         });
         mlPortNumTextField.setMaxWidth(Double.MAX_VALUE);
         GridPane.setHgrow(mlPortNumTextField, Priority.ALWAYS);
@@ -159,15 +156,11 @@ public class ServerSettingsPanel extends GridPane implements PropertyPanel {
             mobUrlLabel.setCursor(Cursor.HAND);
             mobUrlLabel.setFill(Color.BLUE);
             mobUrlLabel.setStyle("-fx-underline: true;");
-            mobUrlLabel.setOnMouseClicked(new EventHandler<MouseEvent>() {
-
-                @Override
-                public void handle(MouseEvent t) {
-                    try {
-                        Desktop.getDesktop().browse(new URI(getMLURL()));
-                    } catch (IOException | URISyntaxException ex) {
-                        LOGGER.log(Level.WARNING, "Couldn't browse to mobile lyrics URL: {0}", getMLURL());
-                    }
+            mobUrlLabel.setOnMouseClicked((MouseEvent t) -> {
+                try {
+                    Desktop.getDesktop().browse(new URI(getMLURL()));
+                } catch (IOException | URISyntaxException ex) {
+                    LOGGER.log(Level.WARNING, "Couldn't browse to mobile lyrics URL: {0}", getMLURL());
                 }
             });
         }
@@ -250,26 +243,23 @@ public class ServerSettingsPanel extends GridPane implements PropertyPanel {
                 checkDifferent();
             }
         });
-        rcPortNumTextField.addEventFilter(KeyEvent.KEY_TYPED, new EventHandler<KeyEvent>() {
-            @Override
-            public void handle(KeyEvent t) {
-                String text = t.getCharacter();
-                char arr[] = text.toCharArray();
-                char ch = arr[text.toCharArray().length - 1];
-                if (!(ch >= '0' && ch <= '9')) {
-                    t.consume();
-                }
-                try {
-                    String newText = rcPortNumTextField.getText() + ch;
-                    int num = Integer.parseInt(newText);
-                    if (num > 65535 || num <= 0) {
-                        t.consume();
-                    }
-                } catch (NumberFormatException ex) {
-                    t.consume();
-                }
-                checkDifferent();
+        rcPortNumTextField.addEventFilter(KeyEvent.KEY_TYPED, (KeyEvent t) -> {
+            String text = t.getCharacter();
+            char arr[] = text.toCharArray();
+            char ch = arr[text.toCharArray().length - 1];
+            if (!(ch >= '0' && ch <= '9')) {
+                t.consume();
             }
+            try {
+                String newText = rcPortNumTextField.getText() + ch;
+                int num = Integer.parseInt(newText);
+                if (num > 65535 || num <= 0) {
+                    t.consume();
+                }
+            } catch (NumberFormatException ex) {
+                t.consume();
+            }
+            checkDifferent();
         });
         rcPortNumTextField.setMaxWidth(Double.MAX_VALUE);
         GridPane.setHgrow(rcPortNumTextField, Priority.ALWAYS);
@@ -283,14 +273,11 @@ public class ServerSettingsPanel extends GridPane implements PropertyPanel {
             rcUrlLabel.setCursor(Cursor.HAND);
             rcUrlLabel.setFill(Color.BLUE);
             rcUrlLabel.setStyle("-fx-underline: true;");
-            rcUrlLabel.setOnMouseClicked(new EventHandler<MouseEvent>() {
-                @Override
-                public void handle(MouseEvent t) {
-                    try {
-                        Desktop.getDesktop().browse(new URI(getRCURL()));
-                    } catch (IOException | URISyntaxException ex) {
-                        LOGGER.log(Level.WARNING, "Couldn't browse to remote control URL: {0}", getRCURL());
-                    }
+            rcUrlLabel.setOnMouseClicked((MouseEvent t) -> {
+                try {
+                    Desktop.getDesktop().browse(new URI(getRCURL()));
+                } catch (IOException | URISyntaxException ex) {
+                    LOGGER.log(Level.WARNING, "Couldn't browse to remote control URL: {0}", getRCURL());
                 }
             });
         }
@@ -362,6 +349,7 @@ public class ServerSettingsPanel extends GridPane implements PropertyPanel {
         try {
             interfaces = NetworkInterface.getNetworkInterfaces();
         } catch (SocketException ex) {
+            LOGGER.log(Level.WARNING, "Socket exception getting ip", ex);
             try {
                 return InetAddress.getLocalHost().getHostAddress();
             } catch (UnknownHostException ex2) {
@@ -389,6 +377,7 @@ public class ServerSettingsPanel extends GridPane implements PropertyPanel {
         try {
             return InetAddress.getLocalHost().getHostAddress();
         } catch (UnknownHostException ex) {
+            LOGGER.log(Level.WARNING, "Unknwon host ip", ex);
             return null;
         }
     }
@@ -404,6 +393,8 @@ public class ServerSettingsPanel extends GridPane implements PropertyPanel {
     /**
      * Determine if the user has changed any settings since resetChanged() was
      * called.
+     * @return true if the user has changed any settings since resetChanged() was
+     * called, false otherwise.
      */
     public boolean hasChanged() {
         return mlPrevChecked != useMobLyricsCheckBox.isSelected() || !(mlPrevPortNum.equals(mlPortNumTextField.getText())) || rcPrevChecked != useRemoteControlCheckBox.isSelected() || !(rcPrevPortNum.equals(rcPortNumTextField.getText()));
