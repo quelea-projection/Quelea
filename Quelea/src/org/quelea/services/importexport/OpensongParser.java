@@ -52,7 +52,7 @@ public class OpensongParser implements SongParser {
 
     @Override
     public List<SongDisplayable> getSongs(File location, StatusPanel statusPanel) throws IOException {
-        ZipFile file = new ZipFile(location, Charset.forName("UTF-8"));
+        ZipFile file = new ZipFile(location, Charset.forName("Cp437"));
         List<SongDisplayable> ret = new ArrayList<>();
         try {
             final Enumeration<? extends ZipEntry> entries = file.entries();
