@@ -20,7 +20,6 @@ package org.quelea.data.bible;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
@@ -126,15 +125,14 @@ public final class Bible implements BibleInterface, Serializable {
             Platform.runLater(new Runnable() {
                 @Override
                 public void run() {
-                    Dialog d;
-                    d = Dialog.buildConfirmation(LabelGrabber.INSTANCE.getLabel("bible.load.error.title"), LabelGrabber.INSTANCE.getLabel("bible.load.error.question"))
+                    Dialog brokenBibleDialog = Dialog.buildConfirmation(LabelGrabber.INSTANCE.getLabel("bible.load.error.title"), LabelGrabber.INSTANCE.getLabel("bible.load.error.question"))
                             .addYesButton((ActionEvent event) -> {
                                 BibleUploader.INSTANCE.upload(file);
                             })
                             .addNoButton((ActionEvent event) -> {
                                 //Nothing needed
                             }).build();
-                    d.showAndWait();
+                    brokenBibleDialog.showAndWait();
                 }
             });
             return null;
