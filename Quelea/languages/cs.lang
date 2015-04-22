@@ -450,7 +450,7 @@ overwrite.lyrics.text=Texty písní byly pro vás přeloženy automaticky - chce
 more.font.options.label=Více voleb pro písmo
 translate.heading=Překlady
 overwrite.lyrics.title=Přepsat stávající text písně?
-bible.passage.selector.prompt
+bible.passage.selector.prompt=[Kaitola]\:[Od verše]-[Do verše]
 max.items.per.slide=Největší počet % na snímek
 currently.displaying.text=Nyní se zobrazuje
 pause=Pozastavit
@@ -545,7 +545,7 @@ add.timers.panel=Přidat časomíry
 remove.timer.text=Smazat časomíru
 kingsway.range.import.heading=Zavést rozsah písní Kingsway
 confirm.remove.timer=Opravdu odstranit $1 ze seznamu časomír? Tento krok nelze vrátit zpět.
-clear.stage.view=Smazat pohled na scénu s hlavním zobrazením
+clear.stage.view=Vymazat obrazovku na jevišti spolu s hlavní obrazovkou
 epicworship.import.line1=Tímto budou zavedeny písně ze souboru EpicWorship Song Pack (.epc).
 startup.error.title=Chyba při spouštění
 timer.name.label=Název
