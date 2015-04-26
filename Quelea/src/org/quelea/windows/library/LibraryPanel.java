@@ -76,13 +76,18 @@ public class LibraryPanel extends VBox {
         imageTab.setContent(imagePanel);
         tabPane.getTabs().add(imageTab);
 
-        LOGGER.log(Level.INFO, "Creating library video panel");
-        videoPanel = new LibraryVideoPanel();
-        Tab videoTab = new Tab();
-        videoTab.setClosable(false);
-        videoTab.setText(LabelGrabber.INSTANCE.getLabel("library.video.heading"));
-        videoTab.setContent(videoPanel);
-        tabPane.getTabs().add(videoTab);
+        if (QueleaProperties.get().getDisplayVideoTab()) {
+            LOGGER.log(Level.INFO, "Creating library video panel");
+            videoPanel = new LibraryVideoPanel();
+            Tab videoTab = new Tab();
+            videoTab.setClosable(false);
+            videoTab.setText(LabelGrabber.INSTANCE.getLabel("library.video.heading"));
+            videoTab.setContent(videoPanel);
+            tabPane.getTabs().add(videoTab);
+        }
+        else {
+            videoPanel = null;
+        }
 
         LOGGER.log(Level.INFO, "Creating library timer panel");
         timerPanel = new LibraryTimerPanel();
@@ -134,7 +139,7 @@ public class LibraryPanel extends VBox {
     public LibraryVideoPanel getVideoPanel() {
         return videoPanel;
     }
-    
+
     /**
      * Get the library timer panel.
      *
