@@ -136,6 +136,19 @@ public final class QueleaProperties extends Properties {
     public File getEnglishLanguageFile() {
         return new File("languages", "gb.lang");
     }
+    
+    /**
+     * Determine whether or not to display the video tab.
+     * @return true if the video tab should be displayed, false otherwise.
+     */
+    public boolean getDisplayVideoTab() {
+        try {
+            return Boolean.parseBoolean(getProperty("video.tab", "true"));
+        }
+        catch(Exception ex) {
+            return true;
+        }
+    }
 
     /**
      * Get the scene info as stored from the last exit of Quelea (or some
