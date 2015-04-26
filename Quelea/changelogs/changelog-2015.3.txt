@@ -1,0 +1,5 @@
+quelea (2015.3) stable; urgency=normal
+ 
+  * 
+
+ -- Michael Berry <michael@quelea.org>  Wednesday, 26 April 2015 00:00:00 +0000
