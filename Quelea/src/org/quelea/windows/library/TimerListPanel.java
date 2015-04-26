@@ -25,7 +25,6 @@ import java.nio.file.StandardCopyOption;
 import java.util.List;
 import java.util.logging.Level;
 import javafx.application.Platform;
-import javafx.event.ActionEvent;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
@@ -42,7 +41,6 @@ import javafx.scene.input.TransferMode;
 import javafx.scene.layout.BorderPane;
 import javafx.util.Callback;
 import javafx.util.StringConverter;
-import org.javafx.dialog.Dialog;
 import org.quelea.data.displayable.TimerDisplayable;
 import org.quelea.services.languages.LabelGrabber;
 import org.quelea.services.utils.LoggerUtils;
@@ -113,16 +111,14 @@ public class TimerListPanel extends BorderPane {
             if (t.getClickCount() == 2) {
                 QueleaApp.get().getMainWindow().getMainPanel().getSchedulePanel().getScheduleList().add(getSelectedValue());
             }
-            if (t.getButton() == MouseButton.SECONDARY) {
-                ContextMenu removeMenu = new ContextMenu();
-                MenuItem removeItem = new MenuItem(LabelGrabber.INSTANCE.getLabel("remove.timer.text"), new ImageView(new Image("file:icons/removedb.png", 16, 16, false, false)));
-                removeItem.setOnAction(new RemoveTimerActionHandler());
-                removeMenu.getItems().add(removeItem);
-                removeMenu.show(timerList, t.getScreenX(), t.getScreenY());
-            }
         });
+        
+        ContextMenu removeMenu = new ContextMenu();
+        MenuItem removeItem = new MenuItem(LabelGrabber.INSTANCE.getLabel("remove.timer.text"), new ImageView(new Image("file:icons/removedb.png", 16, 16, false, false)));
+        removeItem.setOnAction(new RemoveTimerActionHandler());
+        removeMenu.getItems().add(removeItem);
+        timerList.setCellFactory(DisplayableListCell.forListView(removeMenu, callback, null));
 
-        timerList.setCellFactory(callback);
         updateTimers();
         ScrollPane scroll = new ScrollPane();
         scroll.setFitToWidth(true);
