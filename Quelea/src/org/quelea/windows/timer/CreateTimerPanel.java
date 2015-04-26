@@ -189,7 +189,7 @@ public class CreateTimerPanel extends Stage {
                 if (saveBox.isSelected()) {
                     String fileName = QueleaProperties.get().getTimerDir().getAbsolutePath() + "/" + nameTextField.getText().replace(" ", "_") + ".cdt";
                     File f = new File(fileName);
-                    while(f.exists()) {
+                    if(f.exists()) {
                         FileChooser fc = new FileChooser();
                         fc.setInitialDirectory(QueleaProperties.get().getTimerDir());
                         fc.getExtensionFilters().add(FileFilters.TIMERS);
