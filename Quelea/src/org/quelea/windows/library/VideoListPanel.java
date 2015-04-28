@@ -154,6 +154,7 @@ public class VideoListPanel extends BorderPane {
                                     Platform.runLater(() -> {
                                         view.setImage(SwingFXUtils.toFXImage(resized, null));
                                     });
+                                    resized.flush();
                                 } catch (Exception e) {
                                     LoggerUtils.getLogger().log(Level.INFO, "Could not resize library video image", e);
                                     Platform.runLater(() -> {
