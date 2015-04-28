@@ -150,6 +150,7 @@ public class VideoListPanel extends BorderPane {
                                     g.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
                                     g.drawImage(bi, 0, 0, 160, 90, 0, 0, bi.getWidth(), bi.getHeight(), null);
                                     g.dispose();
+                                    bi.flush();
                                     Platform.runLater(() -> {
                                         view.setImage(SwingFXUtils.toFXImage(resized, null));
                                     });
