@@ -27,6 +27,7 @@ import java.awt.Desktop;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.net.Inet6Address;
 import java.net.InetAddress;
 import java.net.NetworkInterface;
 import java.net.SocketException;
@@ -39,7 +40,6 @@ import java.util.logging.Logger;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.embed.swing.SwingFXUtils;
-import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Cursor;
@@ -345,18 +345,23 @@ public class ServerSettingsPanel extends GridPane implements PropertyPanel {
     }
 
     private static String getIP() {
-        Enumeration<NetworkInterface> interfaces;
+        String v6address = null;
+        Enumeration<NetworkInterface> interfaces = null;
         try {
             interfaces = NetworkInterface.getNetworkInterfaces();
         } catch (SocketException ex) {
             LOGGER.log(Level.WARNING, "Socket exception getting ip", ex);
             try {
-                return InetAddress.getLocalHost().getHostAddress();
+                if (InetAddress.getLocalHost() instanceof Inet6Address) {
+                    v6address = InetAddress.getLocalHost().getHostAddress();
+                } else {
+                    return InetAddress.getLocalHost().getHostAddress();
+                }
             } catch (UnknownHostException ex2) {
                 return null;
             }
         }
-        while (interfaces.hasMoreElements()) {
+        while (interfaces != null && interfaces.hasMoreElements()) {
             NetworkInterface current = interfaces.nextElement();
             try {
                 if (!current.isUp() || current.isLoopback() || current.isVirtual() || current.getDisplayName().toLowerCase().contains("virtual")) {
@@ -371,15 +376,21 @@ public class ServerSettingsPanel extends GridPane implements PropertyPanel {
                 if (current_addr.isLoopbackAddress()) {
                     continue;
                 }
-                return current_addr.getHostAddress();
+                if (current_addr instanceof Inet6Address && v6address != null) {
+                    v6address = current_addr.getHostAddress();
+                } else if (current_addr instanceof InetAddress) {
+                    return current_addr.getHostAddress();
+                }
             }
         }
+        //Fallback
         try {
             return InetAddress.getLocalHost().getHostAddress();
         } catch (UnknownHostException ex) {
             LOGGER.log(Level.WARNING, "Unknwon host ip", ex);
-            return null;
         }
+        //Worst fallback, return ipv6 address
+        return v6address;
     }
 
     public void resetChanged() {
@@ -393,8 +404,9 @@ public class ServerSettingsPanel extends GridPane implements PropertyPanel {
     /**
      * Determine if the user has changed any settings since resetChanged() was
      * called.
-     * @return true if the user has changed any settings since resetChanged() was
-     * called, false otherwise.
+     *
+     * @return true if the user has changed any settings since resetChanged()
+     * was called, false otherwise.
      */
     public boolean hasChanged() {
         return mlPrevChecked != useMobLyricsCheckBox.isSelected() || !(mlPrevPortNum.equals(mlPortNumTextField.getText())) || rcPrevChecked != useRemoteControlCheckBox.isSelected() || !(rcPrevPortNum.equals(rcPortNumTextField.getText()));
