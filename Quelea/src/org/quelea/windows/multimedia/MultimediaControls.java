@@ -145,7 +145,7 @@ public class MultimediaControls extends StackPane {
     }
 
     public void loadMultimedia(String path) {
-        Platform.runLater(this::reset);
+        reset();
         if (!path.trim().startsWith("http") && !path.trim().startsWith("dvdsimple") && !path.trim().startsWith("bluray")) {
             path = Utils.getVLCStringFromFile(new File(path));
         }
