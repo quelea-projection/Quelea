@@ -33,11 +33,11 @@ public class NoticeOverlay extends StackPane {
 
     public NoticeOverlay() {
         if (QueleaProperties.get().getNoticePosition()==NoticePosition.TOP) {
-            StackPane.setAlignment(this, Pos.TOP_CENTER);
-            setAlignment(Pos.TOP_CENTER);
-        } else {
             StackPane.setAlignment(this, Pos.BOTTOM_CENTER);
             setAlignment(Pos.BOTTOM_CENTER);
+        } else {
+            StackPane.setAlignment(this, Pos.TOP_CENTER);
+            setAlignment(Pos.TOP_CENTER);
         }
     }
 }
