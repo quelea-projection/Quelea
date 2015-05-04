@@ -27,7 +27,6 @@ import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
-import org.apache.fop.tools.anttasks.RunTest;
 import org.quelea.data.displayable.MultimediaDisplayable;
 import org.quelea.data.displayable.VideoDisplayable;
 import org.quelea.services.utils.Utils;
