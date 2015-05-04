@@ -121,41 +121,34 @@ public final class SongManager {
             return cacheSongs.get();
         }
         final Set<SongDisplayable> songs = new TreeSet<>();
-        HibernateUtil.execute(new HibernateUtil.SessionCallback() {
-            @Override
-            public void execute(Session session) {
-                for(final Song song : new SongDao(session).getSongs()) {
-                    final String[] tags = new String[song.getTags().size()];
-                    for(int i = 0; i < song.getTags().size(); i++) {
-                        tags[i] = song.getTags().get(i);
-                    }
-                    Utils.fxRunAndWait(new Runnable() {
-
-                        @Override
-                        public void run() {
-                            final SongDisplayable songDisplayable = new SongDisplayable.Builder(song.getTitle(),
-                                    song.getAuthor())
-                                    .lyrics(song.getLyrics())
-                                    .ccli(song.getCcli())
-                                    .year(song.getYear())
-                                    .tags(tags)
-                                    .publisher(song.getPublisher())
-                                    .copyright(song.getCopyright())
-                                    .key(song.getKey())
-                                    .info(song.getInfo())
-                                    .capo(song.getCapo())
-                                    .translations(song.getTranslations())
-                                    .id(song.getId()).get();
-                            final Theme theme = song.getTheme();
-                            final ThemeDTO themedto = ThemeDTO.getDTO(theme);
-                            for(TextSection section : songDisplayable.getSections()) {
-                                section.setTheme(themedto);
-                            }
-                            songDisplayable.setTheme(themedto);
-                            songs.add(songDisplayable);
-                        }
-                    });
+        HibernateUtil.execute((Session session) -> {
+            for(final Song song : new SongDao(session).getSongs()) {
+                final String[] tags = new String[song.getTags().size()];
+                for(int i = 0; i < song.getTags().size(); i++) {
+                    tags[i] = song.getTags().get(i);
                 }
+                Utils.fxRunAndWait(() -> {
+                    final SongDisplayable songDisplayable = new SongDisplayable.Builder(song.getTitle(),
+                            song.getAuthor())
+                            .lyrics(song.getLyrics())
+                            .ccli(song.getCcli())
+                            .year(song.getYear())
+                            .tags(tags)
+                            .publisher(song.getPublisher())
+                            .copyright(song.getCopyright())
+                            .key(song.getKey())
+                            .info(song.getInfo())
+                            .capo(song.getCapo())
+                            .translations(song.getTranslations())
+                            .id(song.getId()).get();
+                    final Theme theme = song.getTheme();
+                    final ThemeDTO themedto = ThemeDTO.getDTO(theme);
+                    for(TextSection section : songDisplayable.getSections()) {
+                        section.setTheme(themedto);
+                    }
+                    songDisplayable.setTheme(themedto);
+                    songs.add(songDisplayable);
+                });
             }
         });
 
@@ -197,27 +190,24 @@ public final class SongManager {
         if(adjustedSongs.isEmpty()) {
             return false;
         }
-        HibernateUtil.execute(new HibernateUtil.SessionCallback() {
-            @Override
-            public void execute(Session session) {
-                for(SongDisplayable song : adjustedSongs) {
-                    final boolean nullTheme = song.getSections()[0].getTheme() == null;
-                    final boolean nullTags = song.getTags() == null;
-                    Song newSong = new Song(song.getTitle(),
-                            song.getAuthor(),
-                            song.getLyrics(true, true),
-                            song.getCcli(),
-                            song.getCopyright(),
-                            song.getYear(),
-                            song.getPublisher(),
-                            song.getKey(),
-                            song.getCapo(),
-                            song.getInfo(),
-                            nullTheme ? ThemeDTO.DEFAULT_THEME.getTheme() : new Theme(song.getSections()[0].getTheme().getTheme()),
-                            nullTags ? new ArrayList<String>() : Arrays.asList(song.getTags()),
-                            song.getTranslations());
-                    session.save(newSong);
-                }
+        HibernateUtil.execute((Session session) -> {
+            for(SongDisplayable song : adjustedSongs) {
+                final boolean nullTheme = song.getSections()[0].getTheme() == null;
+                final boolean nullTags = song.getTags() == null;
+                Song newSong = new Song(song.getTitle(),
+                        song.getAuthor(),
+                        song.getLyrics(true, true),
+                        song.getCcli(),
+                        song.getCopyright(),
+                        song.getYear(),
+                        song.getPublisher(),
+                        song.getKey(),
+                        song.getCapo(),
+                        song.getInfo(),
+                        nullTheme ? ThemeDTO.DEFAULT_THEME.getTheme() : new Theme(song.getSections()[0].getTheme().getTheme()),
+                        nullTags ? new ArrayList<>() : Arrays.asList(song.getTags()),
+                        song.getTranslations());
+                session.save(newSong);
             }
         });
         getSongs();
@@ -247,34 +237,31 @@ public final class SongManager {
      */
     public synchronized boolean updateSong(final SongDisplayable song, boolean addIfNotFound) {
         index.remove(song);
-        HibernateUtil.execute(new HibernateUtil.SessionCallback() {
-            @Override
-            public void execute(Session session) {
-                Song updatedSong;
-                final boolean nullTheme = song.getSections()[0].getTheme() == null;
-                final boolean nullTags = song.getTags() == null;
-                try {
-                    updatedSong = new SongDao(session).getSongById(song.getID());
-                    updatedSong.setAuthor(song.getAuthor());
-                    updatedSong.setYear(song.getYear());
-                    updatedSong.setCapo(song.getCapo());
-                    updatedSong.setCcli(song.getCcli());
-                    updatedSong.setCopyright(song.getCopyright());
-                    updatedSong.setInfo(song.getInfo());
-                    updatedSong.setLyrics(song.getLyrics(true, true));
-                    updatedSong.setKey(song.getKey());
-                    updatedSong.setPublisher(song.getPublisher());
-                    updatedSong.setTags(nullTags ? new ArrayList<String>() : Arrays.asList(song.getTags()));
-                    updatedSong.setTitle(song.getTitle());
-                    updatedSong.setTranslations(song.getTranslations());
-                    updatedSong.setTheme(nullTheme ? ThemeDTO.DEFAULT_THEME.getTheme() : new Theme(song.getSections()[0].getTheme().getTheme()));
-                    session.update(updatedSong);
-                    index.add(song);
-                }
-                catch(ObjectNotFoundException e) {
-                    LOGGER.log(Level.INFO, "Updating song that doesn't exist, adding instead");
-                    addSong(song, true);
-                }
+        HibernateUtil.execute((Session session) -> {
+            Song updatedSong;
+            final boolean nullTheme = song.getSections()[0].getTheme() == null;
+            final boolean nullTags = song.getTags() == null;
+            try {
+                updatedSong = new SongDao(session).getSongById(song.getID());
+                updatedSong.setAuthor(song.getAuthor());
+                updatedSong.setYear(song.getYear());
+                updatedSong.setCapo(song.getCapo());
+                updatedSong.setCcli(song.getCcli());
+                updatedSong.setCopyright(song.getCopyright());
+                updatedSong.setInfo(song.getInfo());
+                updatedSong.setLyrics(song.getLyrics(true, true));
+                updatedSong.setKey(song.getKey());
+                updatedSong.setPublisher(song.getPublisher());
+                updatedSong.setTags(nullTags ? new ArrayList<String>() : Arrays.asList(song.getTags()));
+                updatedSong.setTitle(song.getTitle());
+                updatedSong.setTranslations(song.getTranslations());
+                updatedSong.setTheme(nullTheme ? ThemeDTO.DEFAULT_THEME.getTheme() : new Theme(song.getSections()[0].getTheme().getTheme()));
+                session.update(updatedSong);
+                index.add(song);
+            }
+            catch(ObjectNotFoundException e) {
+                LOGGER.log(Level.INFO, "Updating song that doesn't exist, adding instead");
+                addSong(song, true);
             }
         });
 
@@ -289,12 +276,9 @@ public final class SongManager {
      */
     public synchronized boolean removeSong(final SongDisplayable song) {
         cacheSongs.clear();
-        HibernateUtil.execute(new HibernateUtil.SessionCallback() {
-            @Override
-            public void execute(Session session) {
-                Song deletedSong = new SongDao(session).getSongById(song.getID());
-                session.delete(deletedSong);
-            }
+        HibernateUtil.execute((Session session) -> {
+            Song deletedSong = new SongDao(session).getSongById(song.getID());
+            session.delete(deletedSong);
         });
         index.remove(song);
         fireUpdate();
