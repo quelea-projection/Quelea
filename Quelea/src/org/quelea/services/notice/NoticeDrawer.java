@@ -121,13 +121,13 @@ public class NoticeDrawer {
             double displayWidth = QueleaApp.get().getProjectionWindow().getWidth();
             double width = metrics.computeStringWidth(builder.toString()) + textGroup.getSpacing() * (notices.size() - 1);
             if (QueleaProperties.get().getNoticePosition()==NoticePosition.TOP) {
-                StackPane.setAlignment(overlay, Pos.TOP_CENTER);
-                overlay.setAlignment(Pos.TOP_CENTER);
-                textGroup.setAlignment(Pos.TOP_LEFT);
-            } else {
                 StackPane.setAlignment(overlay, Pos.BOTTOM_CENTER);
                 overlay.setAlignment(Pos.BOTTOM_CENTER);
                 textGroup.setAlignment(Pos.BOTTOM_LEFT);
+            } else {
+                StackPane.setAlignment(overlay, Pos.TOP_CENTER);
+                overlay.setAlignment(Pos.TOP_CENTER);
+                textGroup.setAlignment(Pos.TOP_LEFT);
             }
             if (!overlay.getChildren().contains(backing)) {
                 backing = new Rectangle(displayWidth, metrics.getLineHeight()+5, QueleaProperties.get().getNoticeBackgroundColour());
