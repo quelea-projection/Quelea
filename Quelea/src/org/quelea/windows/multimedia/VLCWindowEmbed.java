@@ -346,7 +346,7 @@ public class VLCWindowEmbed extends VLCWindow {
             }
         });
     }
-    private boolean isPlayingTemp;
+    private volatile boolean isPlayingTemp;
 
     @Override
     public boolean isPlaying() {
@@ -364,7 +364,7 @@ public class VLCWindowEmbed extends VLCWindow {
         });
         return isPlayingTemp;
     }
-    private boolean isPausedTemp;
+    private volatile boolean isPausedTemp;
 
     @Override
     public boolean isPaused() {
