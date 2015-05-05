@@ -478,16 +478,6 @@ public class LyricDrawer extends WordDrawer {
      */
     private double pickFontSize(Font font, List<LyricLine> text, double width, double height) {
         FontMetrics metrics = Toolkit.getToolkit().getFontLoader().getFontMetrics(font);
-        for(LyricLine line : text) {
-            if(line.getLine().contains("\n")) {
-                new AssertionError().printStackTrace();
-                System.exit(0);
-            }
-        }
-        System.out.println("---");
-        System.out.println("L: " + text.size());
-        System.out.println("L: " + text.size());
-        System.out.println(font.getSize());
         double totalHeight = ((metrics.getLineHeight() + getLineSpacing()) * text.size());
         while (totalHeight > height) {
             font = new Font(font.getName(), font.getSize() - 0.5);
@@ -497,9 +487,7 @@ public class LyricDrawer extends WordDrawer {
             metrics = Toolkit.getToolkit().getFontLoader().getFontMetrics(font);
             totalHeight = (metrics.getLineHeight() + getLineSpacing()) * text.size();
         }
-        System.out.println(font.getSize());
         String longestLine = longestLine(font, text);
-        System.out.println(longestLine);
         double totalWidth = metrics.computeStringWidth(longestLine);
         while (totalWidth > width) {
             font = new Font(font.getName(), font.getSize() - 0.5);
@@ -509,8 +497,6 @@ public class LyricDrawer extends WordDrawer {
             metrics = Toolkit.getToolkit().getFontLoader().getFontMetrics(font);
             totalWidth = metrics.computeStringWidth(longestLine);
         }
-        System.out.println(font.getSize());
-
         return font.getSize();
     }
 
