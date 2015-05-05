@@ -26,6 +26,7 @@ import java.util.regex.Pattern;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.index.IndexWriterConfig;
+import org.apache.lucene.queryParser.standard.QueryParserUtil;
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.util.Version;
 import org.quelea.services.utils.LoggerUtils;
@@ -70,6 +71,7 @@ public class SearchIndexUtils {
      */
     public static String makeLuceneQuery(String query) {
         query = Pattern.compile("[^\\w ]", Pattern.UNICODE_CHARACTER_CLASS).matcher(query).replaceAll("");
+//        query = QueryParserUtil.escape(query);
         query = query.trim();
         if(query.isEmpty()) {
             return query;
