@@ -93,6 +93,9 @@ public class LyricDrawer extends WordDrawer {
 
     private void drawText(double defaultFontSize, boolean dumbWrap) {
         Utils.checkFXThread();
+        if(defaultFontSize<0) {
+            defaultFontSize = QueleaProperties.get().getMaxFontSize();
+        }
         if (getCanvas().getCanvasBackground() != null) {
             if (!getCanvas().getChildren().contains(getCanvas().getCanvasBackground())
                     && !getCanvas().getChildren().contains(textGroup) && !getCanvas().getChildren().contains(smallTextGroup)) {
@@ -104,7 +107,7 @@ public class LyricDrawer extends WordDrawer {
         Font font = Font.font(theme.getFont().getFamily(),
                 theme.isBold() ? FontWeight.BOLD : FontWeight.NORMAL,
                 theme.isItalic() ? FontPosture.ITALIC : FontPosture.REGULAR,
-                QueleaProperties.get().getMaxFontSize());
+                defaultFontSize);
         String translateFamily = theme.getFont().getFamily();
         if (theme.getTranslateFont() != null) {
             translateFamily = theme.getTranslateFont().getFamily();
@@ -112,7 +115,7 @@ public class LyricDrawer extends WordDrawer {
         Font translateFont = Font.font(translateFamily,
                 theme.isTranslateBold() ? FontWeight.BOLD : FontWeight.NORMAL,
                 theme.isTranslateItalic() ? FontPosture.ITALIC : FontPosture.REGULAR,
-                QueleaProperties.get().getMaxFontSize());
+                defaultFontSize);
 
         if (font == null) {
             font = ThemeDTO.DEFAULT_FONT.getFont();
