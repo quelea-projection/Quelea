@@ -81,6 +81,10 @@ public final class FileFilters {
      */
     public static final FileChooser.ExtensionFilter PNG = new FileChooser.ExtensionFilter(LabelGrabber.INSTANCE.getLabel("png.files.description"), "*.png");
     /**
+     * Only accept SDB (songpro database) files.
+     */
+    public static final FileChooser.ExtensionFilter SDB = new FileChooser.ExtensionFilter(LabelGrabber.INSTANCE.getLabel("sdb.files.description"), "*.sdb");
+    /**
      * The file filter used for Quelea song packs.
      */
     public static final FileChooser.ExtensionFilter SONG_PACK = new FileChooser.ExtensionFilter(LabelGrabber.INSTANCE.getLabel("qsp.button") + " (*.qsp)", "*.qsp");
