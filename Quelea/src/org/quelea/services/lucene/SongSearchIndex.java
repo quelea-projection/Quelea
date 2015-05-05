@@ -64,7 +64,7 @@ public class SongSearchIndex implements SearchIndex<SongDisplayable> {
      */
     public SongSearchIndex() {
         songs = new HashMap<>();
-        analyzer = new StandardAnalyzer(Version.LUCENE_35, new HashSet<String>());
+        analyzer = new StandardAnalyzer(Version.LUCENE_35, new HashSet<>());
         index = new RAMDirectory();
     }
     
@@ -97,10 +97,10 @@ public class SongSearchIndex implements SearchIndex<SongDisplayable> {
         try (IndexWriter writer = new IndexWriter(index, new IndexWriterConfig(Version.LUCENE_35, analyzer))) {
             for(SongDisplayable song : songList) {
                 Document doc = new Document();
-                doc.add(new Field("title", song.getTitle(), Field.Store.NO, Field.Index.ANALYZED));
-                doc.add(new Field("author", song.getAuthor(), Field.Store.NO, Field.Index.ANALYZED));
-                doc.add(new Field("lyrics", song.getLyrics(false, false), Field.Store.NO, Field.Index.ANALYZED));
-                doc.add(new Field("number", Long.toString(song.getID()), Field.Store.YES, Field.Index.ANALYZED));
+                doc.add(new Field("title", song.getTitle().replaceAll("[^\\w\\s]", ""), Field.Store.NO, Field.Index.ANALYZED));
+                doc.add(new Field("author", song.getAuthor().replaceAll("[^\\w\\s]", ""), Field.Store.NO, Field.Index.ANALYZED));
+                doc.add(new Field("lyrics", song.getLyrics(false, false).replaceAll("[^\\w\\s]", ""), Field.Store.NO, Field.Index.ANALYZED));
+                doc.add(new Field("number", Long.toString(song.getID()).replaceAll("[^\\w\\s]", ""), Field.Store.YES, Field.Index.ANALYZED));
                 writer.addDocument(doc);
                 songs.put(song.getID(), song);
                 LOGGER.log(Level.FINE, "Added song to index: {0}", song.getTitle());
@@ -148,7 +148,7 @@ public class SongSearchIndex implements SearchIndex<SongDisplayable> {
     @Override
     public synchronized SongDisplayable[] filter(String queryString, FilterType type) {
         String sanctifyQueryString = SearchIndexUtils.makeLuceneQuery(queryString);
-        if(songs.isEmpty() || sanctifyQueryString.isEmpty()) {
+        if(songs.isEmpty() || sanctifyQueryString.trim().isEmpty()) {
             return songs.values().toArray(new SongDisplayable[songs.size()]);
         }
         String typeStr;

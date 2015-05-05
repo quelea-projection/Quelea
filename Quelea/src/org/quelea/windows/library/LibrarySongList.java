@@ -23,6 +23,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.logging.Logger;
+import java.util.regex.Pattern;
 import javafx.application.Platform;
 import javafx.beans.property.SimpleListProperty;
 import javafx.beans.value.ChangeListener;
@@ -183,53 +184,50 @@ public class LibrarySongList extends StackPane {
                 setLoading(true);
             }
         });
-        filterFuture = filterService.submit(new Runnable() {
-            @Override
-            public void run() {
-                final ObservableList<SongDisplayable> songs = FXCollections.observableArrayList();
-
-                // empty or null search strings do not need to be filtered - lest they get added twice
-                if(search == null || search.trim().isEmpty()) {
-                    TreeSet<SongDisplayable> m = new TreeSet<>();
-                    for(SongDisplayable song : SongManager.get().getSongs()) {
-                        song.setLastSearch(null);
-                        m.add(song);
-                    }
-                    songs.addAll(m);
+        filterFuture = filterService.submit(() -> {
+            final ObservableList<SongDisplayable> songs = FXCollections.observableArrayList();
+            
+            // empty or null search strings do not need to be filtered - lest they get added twice
+            if(search == null || search.trim().isEmpty() || Pattern.compile("[^\\w ]", Pattern.UNICODE_CHARACTER_CLASS).matcher(search).replaceAll("").isEmpty()) {
+                TreeSet<SongDisplayable> m = new TreeSet<>();
+                for(SongDisplayable song : SongManager.get().getSongs()) {
+                    song.setLastSearch(null);
+                    m.add(song);
                 }
-                else {
-                    TreeSet<SongDisplayable> m = new TreeSet<>();
-                    SongDisplayable[] titleSongs = SongManager.get().getIndex().filter(search, SongSearchIndex.FilterType.TITLE);
-                    for(SongDisplayable song : titleSongs) {
-                        song.setLastSearch(search);
-                        m.add(song);
-                    }
-
-                    SongDisplayable[] lyricSongs = SongManager.get().getIndex().filter(search, SongSearchIndex.FilterType.BODY);
-                    for(SongDisplayable song : lyricSongs) {
-                        song.setLastSearch(null);
-                        m.add(song);
-                    }
-
-                    SongDisplayable[] authorSongs = SongManager.get().getIndex().filter(search, SongSearchIndex.FilterType.AUTHOR);
-                    for(SongDisplayable song : authorSongs) {
-                        m.add(song);
-                    }
-
-                    songs.addAll(m);
-                }
-
-                Platform.runLater(new Runnable() {
-                    @Override
-                    public void run() {
-                        songList.setItems(songs);
-                        if (!songs.isEmpty()) {
-                            songList.getSelectionModel().select(0);
-                        }
-                        setLoading(false);
-                    }
-                });
+                songs.addAll(m);
             }
+            else {
+                TreeSet<SongDisplayable> m = new TreeSet<>();
+                SongDisplayable[] titleSongs = SongManager.get().getIndex().filter(search, SongSearchIndex.FilterType.TITLE);
+                for(SongDisplayable song : titleSongs) {
+                    song.setLastSearch(search);
+                    m.add(song);
+                }
+                
+                SongDisplayable[] lyricSongs = SongManager.get().getIndex().filter(search, SongSearchIndex.FilterType.BODY);
+                for(SongDisplayable song : lyricSongs) {
+                    song.setLastSearch(null);
+                    m.add(song);
+                }
+                
+                SongDisplayable[] authorSongs = SongManager.get().getIndex().filter(search, SongSearchIndex.FilterType.AUTHOR);
+                for(SongDisplayable song : authorSongs) {
+                    m.add(song);
+                }
+                
+                songs.addAll(m);
+            }
+            
+            Platform.runLater(new Runnable() {
+                @Override
+                public void run() {
+                    songList.setItems(songs);
+                    if (!songs.isEmpty()) {
+                        songList.getSelectionModel().select(0);
+                    }
+                    setLoading(false);
+                }
+            });
         });
 
     }
