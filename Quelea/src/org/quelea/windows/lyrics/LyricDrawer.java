@@ -93,7 +93,7 @@ public class LyricDrawer extends WordDrawer {
 
     private void drawText(double defaultFontSize, boolean dumbWrap) {
         Utils.checkFXThread();
-        if(defaultFontSize<0) {
+        if (defaultFontSize < 0) {
             defaultFontSize = QueleaProperties.get().getMaxFontSize();
         }
         if (getCanvas().getCanvasBackground() != null) {
@@ -478,6 +478,16 @@ public class LyricDrawer extends WordDrawer {
      */
     private double pickFontSize(Font font, List<LyricLine> text, double width, double height) {
         FontMetrics metrics = Toolkit.getToolkit().getFontLoader().getFontMetrics(font);
+        for(LyricLine line : text) {
+            if(line.getLine().contains("\n")) {
+                new AssertionError().printStackTrace();
+                System.exit(0);
+            }
+        }
+        System.out.println("---");
+        System.out.println("L: " + text.size());
+        System.out.println("L: " + text.size());
+        System.out.println(font.getSize());
         double totalHeight = ((metrics.getLineHeight() + getLineSpacing()) * text.size());
         while (totalHeight > height) {
             font = new Font(font.getName(), font.getSize() - 0.5);
@@ -487,8 +497,9 @@ public class LyricDrawer extends WordDrawer {
             metrics = Toolkit.getToolkit().getFontLoader().getFontMetrics(font);
             totalHeight = (metrics.getLineHeight() + getLineSpacing()) * text.size();
         }
-
+        System.out.println(font.getSize());
         String longestLine = longestLine(font, text);
+        System.out.println(longestLine);
         double totalWidth = metrics.computeStringWidth(longestLine);
         while (totalWidth > width) {
             font = new Font(font.getName(), font.getSize() - 0.5);
@@ -498,6 +509,7 @@ public class LyricDrawer extends WordDrawer {
             metrics = Toolkit.getToolkit().getFontLoader().getFontMetrics(font);
             totalWidth = metrics.computeStringWidth(longestLine);
         }
+        System.out.println(font.getSize());
 
         return font.getSize();
     }
@@ -537,33 +549,33 @@ public class LyricDrawer extends WordDrawer {
         return longestStr;
     }
 
-    /**
-     * Wrap the text in a "dumb" way, not worrying about dividing up lines
-     * nicely. This works better for bible passages.
-     * <p>
-     * @param lines the lines to divide up.
-     * @return the divided lines.
-     */
-    private List<LyricLine> dumbWrapText(String[] lines) {
-        List<LyricLine> ret = new ArrayList<>();
-        int maxLength = QueleaProperties.get().getMaxBibleChars();
-        StringBuilder currentBuilder = new StringBuilder(maxLength);
-        for (String line : lines) {
-            for (String word : line.split(" ")) {
-                currentBuilder.append(' ');
-                if (currentBuilder.length() + word.length() < maxLength) {
-                    currentBuilder.append(word);
-                } else {
-                    ret.add(new LyricLine(currentBuilder.toString()));
-                    currentBuilder = new StringBuilder(word);
-                }
-            }
-        }
-        if (currentBuilder.length() > 0) {
-            ret.add(new LyricLine(currentBuilder.toString()));
-        }
-        return ret;
-    }
+//    /**
+//     * Wrap the text in a "dumb" way, not worrying about dividing up lines
+//     * nicely. This works better for bible passages.
+//     * <p>
+//     * @param lines the lines to divide up.
+//     * @return the divided lines.
+//     */
+//    private List<LyricLine> dumbWrapText(String[] lines) {
+//        List<LyricLine> ret = new ArrayList<>();
+//        int maxLength = QueleaProperties.get().getMaxBibleChars();
+//        StringBuilder currentBuilder = new StringBuilder(maxLength);
+//        for (String line : lines) {
+//            for (String word : line.split(" ")) {
+//                currentBuilder.append(' ');
+//                if (currentBuilder.length() + word.length() < maxLength) {
+//                    currentBuilder.append(word);
+//                } else {
+//                    ret.add(new LyricLine(currentBuilder.toString()));
+//                    currentBuilder = new StringBuilder(word);
+//                }
+//            }
+//        }
+//        if (currentBuilder.length() > 0) {
+//            ret.add(new LyricLine(currentBuilder.toString()));
+//        }
+//        return ret;
+//    }
 
     /**
      * Take the raw text and format it into a number of lines nicely, where the
@@ -698,7 +710,13 @@ public class LyricDrawer extends WordDrawer {
             List<LyricLine> processedText;
             double newSize;
             if (displayable instanceof BiblePassage) {
-                processedText = dumbWrapText(textArr);
+                processedText = new ArrayList<>();
+                for (String str : text) {
+                    for (String line : str.split("\n")) {
+                        processedText.add(new LyricLine(line));
+                    }
+                }
+//                processedText = dumbWrapText(textArr);
             } else {
                 String[] translationArr = null;
                 if (displayable instanceof SongDisplayable) {
