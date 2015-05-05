@@ -1,5 +1,5 @@
 #THIS IS AN AUTO GENERATED FILE, AND WILL BE OVERWRITTEN EACH TIME QUELEA IS REBUILT. DO NOT EDIT MANUALLY!
-#Mon May 04 14:42:35 BST 2015
+#Tue May 05 02:27:42 BST 2015
 email.error.text=There was an error opening your email client. Make sure you have an email client installed and registered to handle eml files, otherwise you'll have to send the email manually.
 ccli.number.label=CCLI number
 easyworship.button=EasyWorship
@@ -129,6 +129,7 @@ test.patterns.text=Test Patterns
 filefilters.description.powerpoint.presentations=Powerpoint Presentations
 loop.label=Loop
 no.dvd.error=Please insert a valid DVD or Blu-ray.
+sdb.files.description=Songpro database files
 confirm.remove.translation.title=Remove translation?
 no.newer.version.available=You are running the latest version of Quelea
 correct.text=Correct
@@ -288,6 +289,7 @@ edit.song.title=Edit song
 delete.theme.confirm.title=Confirm delete
 ok.button=OK
 no.tdb.heading=TurboDB Data Exchange not found
+songpro.button=SongPro
 new.schedule.button=New Schedule
 kingsway.range.import.heading=Import range of Kingsway songs
 add.notice.button=Add notice
@@ -431,6 +433,7 @@ ignored.fonts.label=Ignored fonts
 spelling.check.title=Spelling check
 bible.search.results.found=results found
 new.notice.heading=New Notice
+songpro.import.line1=This will import songs from a SongPro SDB database.
 open.schedule.text=Open Schedule
 file.rename.dialog.text=Please enter the new file name\:
 no.pdb.heading=Paradox JDBC driver not found
