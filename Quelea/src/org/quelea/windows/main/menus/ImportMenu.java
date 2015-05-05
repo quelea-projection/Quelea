@@ -19,7 +19,6 @@
 package org.quelea.windows.main.menus;
 
 import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.image.Image;
@@ -36,6 +35,7 @@ import org.quelea.services.importexport.OpenSongImportDialog;
 import org.quelea.services.importexport.ParadoxJDBCChecker;
 import org.quelea.services.importexport.PlainTextSongsImportDialog;
 import org.quelea.services.importexport.QSPImportDialog;
+import org.quelea.services.importexport.SongProImportDialog;
 import org.quelea.services.importexport.SongSelectImportDialog;
 import org.quelea.services.importexport.SourceImportDialog;
 import org.quelea.services.importexport.SundayPlusImportDialog;
@@ -65,6 +65,7 @@ public class ImportMenu extends Menu {
     private final ImportDialog easyWorshipImportDialog;
     private final ImportDialog sundayPlusImportDialog;
     private final ImportDialog songSelectImportDialog;
+    private final ImportDialog songproImportDialog;
     private final ImportDialog mediaShoutImportDialog;
     private final ImportDialog epicWorshipImportDialog;
     private final MenuItem qspItem;
@@ -79,6 +80,7 @@ public class ImportMenu extends Menu {
     private final MenuItem plainTextItem;
     private final MenuItem easySlidesItem;
     private final MenuItem easyWorshipItem;
+    private final MenuItem songproItem;
     private final MenuItem songSelectItem;
     private final MenuItem epicWorshipItem;
     private final Menu kingswayItem;
@@ -100,6 +102,7 @@ public class ImportMenu extends Menu {
         plainTextImportDialog = new PlainTextSongsImportDialog();
         easySlidesImportDialog = new EasySlidesImportDialog();
         easyWorshipImportDialog = new EasyWorshipImportDialog();
+        songproImportDialog = new SongProImportDialog();
         sundayPlusImportDialog = new SundayPlusImportDialog();
         songSelectImportDialog = new SongSelectImportDialog();
         mediaShoutImportDialog = new MediaShoutImportDialog();
@@ -182,6 +185,12 @@ public class ImportMenu extends Menu {
             easyWorshipImportDialog.show();
         });
         getItems().add(easyWorshipItem);
+
+        songproItem = new MenuItem(LabelGrabber.INSTANCE.getLabel("songpro.button"), new ImageView(new Image("file:icons/songpro.png", 16, 16, false, true)));
+        songproItem.setOnAction((ActionEvent t) -> {
+            songproImportDialog.show();
+        });
+        getItems().add(songproItem);
         
         epicWorshipItem = new MenuItem(LabelGrabber.INSTANCE.getLabel("epicworship.button"), new ImageView(new Image("file:icons/epicworship.png", 16, 16, false, true)));
         epicWorshipItem.setOnAction((ActionEvent t) -> {
