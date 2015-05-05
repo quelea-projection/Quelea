@@ -88,10 +88,9 @@ public class LibrarySongList extends StackPane {
 
             @Override
             public void changed(ObservableValue<? extends ObservableList<SongDisplayable>> ov, ObservableList<SongDisplayable> t, ObservableList<SongDisplayable> t1) {
-                if(songList.getItems().isEmpty()) {
+                if (songList.getItems().isEmpty()) {
                     addSongOverlay.show();
-                }
-                else {
+                } else {
                     addSongOverlay.hide();
                 }
             }
@@ -131,26 +130,19 @@ public class LibrarySongList extends StackPane {
             }
         };
         popupMenu = new LibraryPopupMenu();
-        songList.setOnMouseClicked(new EventHandler<MouseEvent>() {
-            @Override
-            public void handle(MouseEvent t) {
-                if(t.getClickCount() == 2) {
-                    new AddSongActionHandler().handle(null);
-                }
-                else if(t.getClickCount()==1 && t.isControlDown()) {
-                    QueleaApp.get().getMainWindow().getMainPanel().getPreviewPanel().setDisplayable(songList.getSelectionModel().getSelectedItem(), 0);
-                }
+        songList.setOnMouseClicked((MouseEvent t) -> {
+            if (t.getClickCount() == 2 && songList.getSelectionModel().getSelectedItem() != null) {
+                new AddSongActionHandler().handle(null);
+            } else if (t.getClickCount() == 1 && t.isControlDown()) {
+                QueleaApp.get().getMainWindow().getMainPanel().getPreviewPanel().setDisplayable(songList.getSelectionModel().getSelectedItem(), 0);
             }
         });
-        songList.setOnKeyPressed(new EventHandler<KeyEvent>() {
-            @Override
-            public void handle(KeyEvent t) {
-                if(t.getCode() == KeyCode.ENTER) {
-                    QueleaApp.get().getMainWindow().getMainPanel().getSchedulePanel().getScheduleList().add(getSelectedValue());
-                }
+        songList.setOnKeyPressed((KeyEvent t) -> {
+            if (t.getCode() == KeyCode.ENTER) {
+                QueleaApp.get().getMainWindow().getMainPanel().getSchedulePanel().getScheduleList().add(getSelectedValue());
             }
         });
-        if(popup) {
+        if (popup) {
             songList.setCellFactory(DisplayableListCell.<SongDisplayable>forListView(popupMenu, callback, null));
         }
         new Thread() {
@@ -158,12 +150,8 @@ public class LibrarySongList extends StackPane {
                 refresh();
             }
         }.start();
-        SongManager.get().registerDatabaseListener(new DatabaseListener() {
-
-            @Override
-            public void databaseChanged() {
-                refresh();
-            }
+        SongManager.get().registerDatabaseListener(() -> {
+            refresh();
         });
     }
     private ExecutorService filterService = Executors.newSingleThreadExecutor();
@@ -175,7 +163,7 @@ public class LibrarySongList extends StackPane {
      * @param search the search term to use.
      */
     public void filter(final String search) {
-        if(filterFuture != null) {
+        if (filterFuture != null) {
             filterFuture.cancel(true);
         }
         Platform.runLater(new Runnable() {
@@ -186,42 +174,41 @@ public class LibrarySongList extends StackPane {
         });
         filterFuture = filterService.submit(() -> {
             final ObservableList<SongDisplayable> songs = FXCollections.observableArrayList();
-            
+
             // empty or null search strings do not need to be filtered - lest they get added twice
-            if(search == null || search.trim().isEmpty() || Pattern.compile("[^\\w ]", Pattern.UNICODE_CHARACTER_CLASS).matcher(search).replaceAll("").isEmpty()) {
+            if (search == null || search.trim().isEmpty() || Pattern.compile("[^\\w ]", Pattern.UNICODE_CHARACTER_CLASS).matcher(search).replaceAll("").isEmpty()) {
                 TreeSet<SongDisplayable> m = new TreeSet<>();
-                for(SongDisplayable song : SongManager.get().getSongs()) {
+                for (SongDisplayable song : SongManager.get().getSongs()) {
                     song.setLastSearch(null);
                     m.add(song);
                 }
                 songs.addAll(m);
-            }
-            else {
+            } else {
                 TreeSet<SongDisplayable> m = new TreeSet<>();
                 SongDisplayable[] titleSongs = SongManager.get().getIndex().filter(search, SongSearchIndex.FilterType.TITLE);
-                for(SongDisplayable song : titleSongs) {
+                for (SongDisplayable song : titleSongs) {
                     song.setLastSearch(search);
                     m.add(song);
                 }
                 songs.addAll(m);
                 m.clear();
-                
+
                 SongDisplayable[] lyricSongs = SongManager.get().getIndex().filter(search, SongSearchIndex.FilterType.BODY);
-                for(SongDisplayable song : lyricSongs) {
+                for (SongDisplayable song : lyricSongs) {
                     song.setLastSearch(null);
                     m.add(song);
                 }
                 songs.addAll(m);
                 m.clear();
-                
+
                 SongDisplayable[] authorSongs = SongManager.get().getIndex().filter(search, SongSearchIndex.FilterType.AUTHOR);
-                for(SongDisplayable song : authorSongs) {
+                for (SongDisplayable song : authorSongs) {
                     m.add(song);
                 }
                 songs.addAll(m);
                 m.clear();
             }
-            
+
             Platform.runLater(new Runnable() {
                 @Override
                 public void run() {
@@ -243,7 +230,7 @@ public class LibrarySongList extends StackPane {
      * @param filterTags the tags to filter on.
      */
     public void filterByTag(final List<String> filterTags) {
-        if(filterFuture != null) {
+        if (filterFuture != null) {
             filterFuture.cancel(true);
         }
         Platform.runLater(new Runnable() {
@@ -257,25 +244,25 @@ public class LibrarySongList extends StackPane {
             public void run() {
                 final ObservableList<SongDisplayable> allSongs = FXCollections.observableArrayList(SongManager.get().getSongs());
                 final ObservableList<SongDisplayable> songs = new SimpleListProperty<>();
-                for(int i = 0; i < allSongs.size(); i++) {
+                for (int i = 0; i < allSongs.size(); i++) {
                     boolean add = true;
                     SongDisplayable s = allSongs.get(i);
                     String[] songTags = s.getTags();
-                    for(String filterTag : filterTags) {
-                        if(filterTag.trim().isEmpty()) {
+                    for (String filterTag : filterTags) {
+                        if (filterTag.trim().isEmpty()) {
                             continue;
                         }
                         boolean inPlace = false;
-                        for(String songtag : songTags) {
-                            if(filterTag.trim().equalsIgnoreCase(songtag.trim())) {
+                        for (String songtag : songTags) {
+                            if (filterTag.trim().equalsIgnoreCase(songtag.trim())) {
                                 inPlace = true;
                             }
                         }
-                        if(!inPlace) {
+                        if (!inPlace) {
                             add = false;
                         }
                     }
-                    if(add) {
+                    if (add) {
                         songs.add(s);
                     }
                 }
@@ -336,10 +323,9 @@ public class LibrarySongList extends StackPane {
     }
 
     public void setLoading(boolean loading) {
-        if(loading) {
+        if (loading) {
             loadingOverlay.show();
-        }
-        else {
+        } else {
             loadingOverlay.hide();
         }
     }
