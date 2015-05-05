@@ -127,16 +127,22 @@ public class LyricDrawer extends WordDrawer {
 
         List<LyricLine> newText;
         if (dumbWrap) {
-            newText = dumbWrapText(text);
+            newText = new ArrayList<>();
+            for (String str : text) {
+                for (String line : str.split("\n")) {
+                    newText.add(new LyricLine(line));
+                }
+            }
+//            newText = dumbWrapText(text);
         } else {
             newText = sanctifyText(text, translations);
         }
         double fontSize;
-        if (defaultFontSize > 0) {
-            fontSize = defaultFontSize;
-        } else {
-            fontSize = pickFontSize(font, newText, getCanvas().getWidth() * 0.92, getCanvas().getHeight() * 0.9);
-        }
+//        if (defaultFontSize > 0) {
+//            fontSize = defaultFontSize;
+//        } else {
+        fontSize = pickFontSize(font, newText, getCanvas().getWidth() * 0.92, getCanvas().getHeight() * 0.9);
+//        }
         font = Font.font(font.getFamily(),
                 theme.isBold() ? FontWeight.BOLD : FontWeight.NORMAL,
                 theme.isItalic() ? FontPosture.ITALIC : FontPosture.REGULAR,
@@ -273,8 +279,7 @@ public class LyricDrawer extends WordDrawer {
                 } else {
                     ft.setLayoutY(sy);
                 }
-            }
-            else {
+            } else {
                 if (QueleaProperties.get().getSmallSongTextPositionH().equalsIgnoreCase("right")) {
                     ft.setLayoutX(getCanvas().getWidth() - smallTextMetrics.computeStringWidth(stext));
                 }

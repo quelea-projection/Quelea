@@ -97,39 +97,38 @@ public class BiblePassage implements TextDisplayable, Serializable {
      * Fill the text sections with the verses.
      */
     private void fillTextSections() {
-        final int MAX_ITEMS_PER_SLIDE = QueleaProperties.get().getMaxBibleItems();
-        final boolean ITEM_VERSES = QueleaProperties.get().getBibleSectionVerses();
+        final int MAX_CHARS = QueleaProperties.get().getMaxChars();
 
         StringBuilder section = new StringBuilder();
-        int count = 0;
+        StringBuilder line = new StringBuilder();
+        int lines = 1;
         for (BibleVerse verse : verses) {
-            if (ITEM_VERSES) {
-                count++;
-            } else {
-                count += verse.getVerseText().split(" ").length + 1;
+            if (QueleaProperties.get().getShowVerseNumbers()) {
+                line.append("<sup>");
+                line.append(verse.getNum());
+                line.append("</sup>");
             }
-
-            if (count < MAX_ITEMS_PER_SLIDE) {
-                if (QueleaProperties.get().getShowVerseNumbers()) {
-                    section.append("<sup>");
-                    section.append(verse.getNum());
-                    section.append("</sup>");
+            String verseText = verse.getText();
+            String[] verseWords = verseText.split(" ");
+            for (int i = 0; i < verseWords.length; i++) {
+                String verseWord = verseWords[i];
+                line.append(verseWord).append(" ");
+                if (line.length() > MAX_CHARS) {
+                    line.append("\n");
+                    section.append(line);
+                    line.setLength(0); //Empty
+                    lines++;
+                    if (lines >= MAX_CHARS/4) {
+                        lines = 0;
+                        textSections.add(new TextSection("", new String[]{section.toString()}, smallText, false));
+                        section.setLength(0);
+                    }
                 }
-                section.append(verse.getVerseText());
-            } else {
-                TextSection ts = new TextSection("", new String[]{section.toString()}, smallText, false);
-                ts.setTheme(theme);
-
-                textSections.add(ts);
-                section = new StringBuilder();
-                if (QueleaProperties.get().getShowVerseNumbers()) {
-                    section.append("<sup>");
-                    section.append(verse.getNum());
-                    section.append("</sup>");
-                }
-                section.append(verse.getVerseText());
-                count = 0;
             }
+        }
+        if (!line.toString().isEmpty()) {
+            line.append("\n");
+            section.append(line);
         }
         if (!section.toString().isEmpty()) {
             textSections.add(new TextSection("", new String[]{section.toString()}, smallText, false));
@@ -138,12 +137,13 @@ public class BiblePassage implements TextDisplayable, Serializable {
 
     /**
      * Get (a copy of) the verses shown in this passage.
+     *
      * @return A copy of the verses shown in this passage.
      */
     public BibleVerse[] getVerses() {
         return Arrays.copyOf(verses, verses.length);
     }
-    
+
     /**
      * Get the XML behind this bible passage.
      * <p/>
