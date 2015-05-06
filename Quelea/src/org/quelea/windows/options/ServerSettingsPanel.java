@@ -353,8 +353,10 @@ public class ServerSettingsPanel extends GridPane implements PropertyPanel {
             LOGGER.log(Level.WARNING, "Socket exception getting ip", ex);
             try {
                 if (InetAddress.getLocalHost() instanceof Inet6Address) {
+                    LOGGER.log(Level.WARNING, "Socket exception, but using v6 address as fallback: {0}", InetAddress.getLocalHost().getHostAddress());
                     v6address = InetAddress.getLocalHost().getHostAddress();
                 } else {
+                    LOGGER.log(Level.WARNING, "Socket exception, but found v4 address: {0}", InetAddress.getLocalHost().getHostAddress());
                     return InetAddress.getLocalHost().getHostAddress();
                 }
             } catch (UnknownHostException ex2) {
@@ -374,22 +376,28 @@ public class ServerSettingsPanel extends GridPane implements PropertyPanel {
             while (addresses.hasMoreElements()) {
                 InetAddress current_addr = addresses.nextElement();
                 if (current_addr.isLoopbackAddress()) {
+                    LOGGER.log(Level.INFO, "Ignoring loopback address");
                     continue;
                 }
                 if (current_addr instanceof Inet6Address && v6address != null) {
+                    LOGGER.log(Level.INFO, "Storing v6 address, no v4 found yet: {0}", v6address);
                     v6address = current_addr.getHostAddress();
                 } else if (current_addr instanceof InetAddress) {
+                    LOGGER.log(Level.INFO, "Found v4: {0}", current_addr.getHostAddress());
                     return current_addr.getHostAddress();
                 }
             }
         }
         //Fallback
         try {
-            return InetAddress.getLocalHost().getHostAddress();
+            String fallback = InetAddress.getLocalHost().getHostAddress();
+            LOGGER.log(Level.INFO, "Using fallback: {0}", fallback);
+            return fallback;
         } catch (UnknownHostException ex) {
             LOGGER.log(Level.WARNING, "Unknwon host ip", ex);
         }
         //Worst fallback, return ipv6 address
+        LOGGER.log(Level.INFO, "Falling back to v6 address: {0}", v6address);
         return v6address;
     }
 
