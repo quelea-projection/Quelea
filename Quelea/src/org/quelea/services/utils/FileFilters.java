@@ -81,6 +81,10 @@ public final class FileFilters {
      */
     public static final FileChooser.ExtensionFilter PNG = new FileChooser.ExtensionFilter(LabelGrabber.INSTANCE.getLabel("png.files.description"), "*.png");
     /**
+     * Only accept png files.
+     */
+    public static final FileChooser.ExtensionFilter RTF = new FileChooser.ExtensionFilter(LabelGrabber.INSTANCE.getLabel("rtf.files.description"), "*.rtf");
+    /**
      * Only accept SDB (songpro database) files.
      */
     public static final FileChooser.ExtensionFilter SDB = new FileChooser.ExtensionFilter(LabelGrabber.INSTANCE.getLabel("sdb.files.description"), "*.sdb");
