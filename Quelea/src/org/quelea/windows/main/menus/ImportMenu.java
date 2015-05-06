@@ -35,6 +35,7 @@ import org.quelea.services.importexport.OpenSongImportDialog;
 import org.quelea.services.importexport.ParadoxJDBCChecker;
 import org.quelea.services.importexport.PlainTextSongsImportDialog;
 import org.quelea.services.importexport.QSPImportDialog;
+import org.quelea.services.importexport.SoFImportDialog;
 import org.quelea.services.importexport.SongProImportDialog;
 import org.quelea.services.importexport.SongSelectImportDialog;
 import org.quelea.services.importexport.SourceImportDialog;
@@ -68,6 +69,7 @@ public class ImportMenu extends Menu {
     private final ImportDialog songproImportDialog;
     private final ImportDialog mediaShoutImportDialog;
     private final ImportDialog epicWorshipImportDialog;
+    private final ImportDialog sofImportDialog;
     private final MenuItem qspItem;
     private final MenuItem osItem;
     private final MenuItem spItem;
@@ -75,6 +77,7 @@ public class ImportMenu extends Menu {
     private final MenuItem olpItem;
     private final MenuItem zwItem;
     private final MenuItem ssItem;
+    private final MenuItem sofItem;
     private final MenuItem sourceItem;
     private final MenuItem mediaShoutItem;
     private final MenuItem plainTextItem;
@@ -107,6 +110,7 @@ public class ImportMenu extends Menu {
         songSelectImportDialog = new SongSelectImportDialog();
         mediaShoutImportDialog = new MediaShoutImportDialog();
         epicWorshipImportDialog = new EpicWorshipImportDialog();
+        sofImportDialog = new SoFImportDialog();
 
         qspItem = new MenuItem(LabelGrabber.INSTANCE.getLabel("qsp.button"), new ImageView(new Image("file:icons/logo16.png", 16, 16, false, true)));
         qspItem.setOnAction((ActionEvent t) -> {
@@ -197,6 +201,12 @@ public class ImportMenu extends Menu {
             epicWorshipImportDialog.show();
         });
         getItems().add(epicWorshipItem);
+        
+        sofItem = new MenuItem(LabelGrabber.INSTANCE.getLabel("sof.button"), new ImageView(new Image("file:icons/sof.png", 16, 16, false, true)));
+        sofItem.setOnAction((ActionEvent t) -> {
+            sofImportDialog.show();
+        });
+        getItems().add(sofItem);
 
         MenuItem kingswayAll, kingswayRange, kingswayOne;
 

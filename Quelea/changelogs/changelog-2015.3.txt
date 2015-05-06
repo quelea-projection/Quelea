@@ -5,6 +5,7 @@ quelea (2015.3) stable; urgency=normal
   * Auto-play now works
   * Improve bible passage text layout
   * Add songpro importer
+  * Add SoF importer
   * Fix search behaviour to ignore non-alphanumeric characters in index and search string
   * Fix long search time when searching for a non-indexed (non-alphanumeric) character
   * Songs matching search in titles now appear before other results
