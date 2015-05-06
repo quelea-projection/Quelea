@@ -1,5 +1,5 @@
 #THIS IS AN AUTO GENERATED FILE, AND WILL BE OVERWRITTEN EACH TIME QUELEA IS REBUILT. DO NOT EDIT MANUALLY!
-#Tue May 05 02:27:42 BST 2015
+#Wed May 06 23:35:32 BST 2015
 email.error.text=There was an error opening your email client. Make sure you have an email client installed and registered to handle eml files, otherwise you'll have to send the email manually.
 ccli.number.label=CCLI number
 easyworship.button=EasyWorship
@@ -339,6 +339,7 @@ vlc.warning.title=Couldn't find VLC
 file.menu=File
 filefilters.description.maintable.dat=ZionWorx MainTable database file
 custom.position.text=Custom Position
+rtf.files.description=RTF files
 remote.black.text=Black
 nonbreak.tooltip=Add non-breaking line
 filefilters.description.xml.bibles=XML Bibles
@@ -391,8 +392,8 @@ add.presentation.button=Add Presentation
 author.label=Author
 remote.previtem.text=Previous Item
 startup.error.title=Startup Error
-oo.path=OpenOffice path
 database.heading=Database
+oo.path=OpenOffice path
 notice.background.colour.text=Notice background color
 help.menu=Help
 easyworship.import.line1=This will import songs from an Easyworship Songs.MB file.
@@ -440,6 +441,7 @@ no.pdb.heading=Paradox JDBC driver not found
 duration.tooltip.label=\#\:\#\# or \#\#m\#\#s
 year.label=Year
 song.id.selector=Please select the song ID
+sof.import.line1=This will import the SoF library from an RTF file.
 schedule.clear.text=The schedule has been modified. Continue without saving?
 detailed.info.heading=Detailed information
 add.video.tooltip=Add Video
