@@ -557,3 +557,5 @@ edit.timer.text = Editar temporizador
 library.timer.heading = Temporizadores
 delete.video.title = Excluir Vídeo 
 remove.video.text = Remover vídeo
+rtf.files.description = Ficheiros RTF
+sof.import.line1 = Irá importar a biblioteca SoF de um arquivo RTF
