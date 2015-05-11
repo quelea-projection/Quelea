@@ -141,7 +141,7 @@ public class LyricDrawer extends WordDrawer {
             newText = sanctifyText(text, translations);
         }
         double fontSize;
-//        if (defaultFontSize > 0) {
+//        if (QueleaProperties.get().getUseUniformFontSize()) {
 //            fontSize = defaultFontSize;
 //        } else {
         fontSize = pickFontSize(font, newText, getCanvas().getWidth() * 0.92, getCanvas().getHeight() * 0.9);
@@ -697,7 +697,7 @@ public class LyricDrawer extends WordDrawer {
             double newSize;
             if (displayable instanceof BiblePassage) {
                 processedText = new ArrayList<>();
-                for (String str : text) {
+                for (String str : displayable.getSections()[i].getText(false, false)) {
                     for (String line : str.split("\n")) {
                         processedText.add(new LyricLine(line));
                     }

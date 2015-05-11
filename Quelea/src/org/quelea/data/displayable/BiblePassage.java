@@ -58,7 +58,7 @@ public class BiblePassage implements TextDisplayable, Serializable {
                 ThemeDTO.DEFAULT_FONT_COLOR, ThemeDTO.DEFAULT_FONT, ThemeDTO.DEFAULT_TRANSLATE_FONT_COLOR,
                 ThemeDTO.DEFAULT_BACKGROUND, ThemeDTO.DEFAULT_SHADOW, false, false, false, true, 3, -1));
     }
-    
+
     /**
      * Create a new bible passage from a summary and an array of verses.
      * <p>
@@ -86,6 +86,7 @@ public class BiblePassage implements TextDisplayable, Serializable {
      */
     private void fillTextSections() {
         final int MAX_CHARS = QueleaProperties.get().getMaxChars();
+        final boolean SPLIT_VERSES = QueleaProperties.get().getBibleSectionVerses();
 
         StringBuilder section = new StringBuilder();
         StringBuilder line = new StringBuilder();
@@ -98,19 +99,36 @@ public class BiblePassage implements TextDisplayable, Serializable {
             }
             String verseText = verse.getText();
             String[] verseWords = verseText.split(" ");
-            for (int i = 0; i < verseWords.length; i++) {
-                String verseWord = verseWords[i];
+            for (String verseWord : verseWords) {
                 line.append(verseWord).append(" ");
-                if (line.length() > MAX_CHARS) {
+                if (line.toString().replaceAll("\\<sup\\>[0-9]+\\<\\/sup\\>", "").length() > MAX_CHARS) {
                     line.append("\n");
                     section.append(line);
                     line.setLength(0); //Empty
                     lines++;
-                    if (lines >= MAX_CHARS/4) {
-                        lines = 0;
-                        textSections.add(new TextSection("", new String[]{section.toString()}, smallText, false));
-                        section.setLength(0);
+                    if (!SPLIT_VERSES) {
+                        if (lines >= MAX_CHARS / 4) {
+                            lines = 0;
+                            textSections.add(new TextSection("", new String[]{section.toString().trim()}, smallText, false));
+                            section.setLength(0);
+                        }
                     }
+                }
+            }
+            if (SPLIT_VERSES) {
+                if (!line.toString().trim().isEmpty()) {
+                    lines++;
+                }
+                if (lines >= MAX_CHARS / 4) {
+                    if (!line.toString().isEmpty()) {
+                        line.append("\n");
+                        section.append(line);
+                        line.setLength(0);
+                        lines++;
+                    }
+                    lines = 0;
+                    textSections.add(new TextSection("", new String[]{section.toString().trim()}, smallText, false));
+                    section.setLength(0);
                 }
             }
         }
@@ -119,7 +137,7 @@ public class BiblePassage implements TextDisplayable, Serializable {
             section.append(line);
         }
         if (!section.toString().isEmpty()) {
-            textSections.add(new TextSection("", new String[]{section.toString()}, smallText, false));
+            textSections.add(new TextSection("", new String[]{section.toString().trim()}, smallText, false));
         }
     }
 
