@@ -58,19 +58,7 @@ public class BiblePassage implements TextDisplayable, Serializable {
                 ThemeDTO.DEFAULT_FONT_COLOR, ThemeDTO.DEFAULT_FONT, ThemeDTO.DEFAULT_TRANSLATE_FONT_COLOR,
                 ThemeDTO.DEFAULT_BACKGROUND, ThemeDTO.DEFAULT_SHADOW, false, false, false, true, 3, -1));
     }
-
-    /**
-     * Create a new bible passage from a summary and an array of verses.
-     * <p>
-     * @param summary the summary to display in the schedule.
-     * @param verses the verses in the passage.
-     */
-    private BiblePassage(String summary, BibleVerse[] verses) {
-        this(summary, verses, new ThemeDTO(ThemeDTO.DEFAULT_FONT,
-                ThemeDTO.DEFAULT_FONT_COLOR, ThemeDTO.DEFAULT_FONT, ThemeDTO.DEFAULT_TRANSLATE_FONT_COLOR,
-                ThemeDTO.DEFAULT_BACKGROUND, ThemeDTO.DEFAULT_SHADOW, false, false, false, true, 3, -1));
-    }
-
+    
     /**
      * Create a new bible passage from a summary and an array of verses.
      * <p>
