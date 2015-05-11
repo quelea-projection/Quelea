@@ -60,7 +60,7 @@ public class VLCWindowEmbed extends VLCWindow {
     private Canvas canvas;
     private MediaPlayerFactory mediaPlayerFactory;
     private EmbeddedMediaPlayer mediaPlayer;
-    private boolean hideButton;
+    private volatile boolean hideButton;
     private boolean show;
     private boolean paused;
     private volatile boolean init;

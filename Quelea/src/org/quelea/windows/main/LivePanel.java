@@ -225,7 +225,8 @@ public class LivePanel extends LivePreviewPanel {
                         stageWindow.show();
                     }
                 }
-                VLCWindow.INSTANCE.setHideButton(hide.isSelected());
+                VLCWindow.INSTANCE.refreshPosition();
+//                VLCWindow.INSTANCE.setHideButton(hide.isSelected());
             }
         });
 //        header.getItems().add(hide);
