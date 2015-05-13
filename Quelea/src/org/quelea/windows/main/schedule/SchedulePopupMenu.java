@@ -76,6 +76,7 @@ public class SchedulePopupMenu extends ContextMenu {
 
             if (singleSelect) {
                 if (item instanceof BiblePassage) {
+                    editTheme.setOnAction(new EditThemeScheduleActionHandler((BiblePassage) item));
                     getItems().addAll(editTheme);
                     if (BibleManager.get().getBibles().length > 1) {
                         getItems().addAll(changeBibleVersion);
