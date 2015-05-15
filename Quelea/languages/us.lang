@@ -1,5 +1,5 @@
 #THIS IS AN AUTO GENERATED FILE, AND WILL BE OVERWRITTEN EACH TIME QUELEA IS REBUILT. DO NOT EDIT MANUALLY!
-#Wed May 06 23:35:32 BST 2015
+#Thu May 14 23:07:32 BST 2015
 email.error.text=There was an error opening your email client. Make sure you have an email client installed and registered to handle eml files, otherwise you'll have to send the email manually.
 ccli.number.label=CCLI number
 easyworship.button=EasyWorship
@@ -268,7 +268,7 @@ search.bible.button=Search bibles...
 open.schedule.button=Open Schedule
 open.schedule.tooltip=Open Schedule
 kingsway.button.all=All Songs
-use.bible.verses=Split Bible passage slides by number of
+use.bible.verses=Split Bible passage slides by
 show.verse.numbers=Show verse numbers
 import.no.songs.title=No songs found
 add.song.button=Add song
