@@ -228,7 +228,7 @@ public class SongEntryWindow extends Stage {
                 QueleaApp.get().getMainWindow().getMainPanel().getSchedulePanel().getScheduleList().add(localSong);
             }
             QueleaApp.get().getMainWindow().getMainPanel().getPreviewPanel().refresh();
-            QueleaApp.get().getMainWindow().getMainPanel().getLivePanel().refresh();
+//            QueleaApp.get().getMainWindow().getMainPanel().getLivePanel().refresh();
         }
     }
 
