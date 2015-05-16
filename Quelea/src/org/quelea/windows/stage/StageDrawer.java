@@ -113,7 +113,12 @@ public class StageDrawer extends WordDrawer {
 
         List<LyricLine> newText;
         if (dumbWrap) {
-            newText = dumbWrapText(text);
+            newText = new ArrayList<>();
+            for (String str : text) {
+                for (String line : str.split("\n")) {
+                    newText.add(new LyricLine(line));
+                }
+            }
         } else {
             newText = sanctifyText(text);
         }
@@ -159,7 +164,7 @@ public class StageDrawer extends WordDrawer {
             loopMetrics = metrics;
             FormattedText t;
             t = new FormattedText(line.getLine());
-
+            
             t.setFont(font);
 
             setPositionX(t, loopMetrics, line.getLine(), curDisplayable instanceof BiblePassage);
@@ -555,14 +560,20 @@ public class StageDrawer extends WordDrawer {
             } else {
                 textArr = section.getText(false, false);
             }
-            List<LyricLine> processedText;
             double newSize;
+            
+            List<LyricLine> newText;
             if (displayable instanceof BiblePassage) {
-                processedText = dumbWrapText(textArr);
+                newText = new ArrayList<>();
+                for (String str : text) {
+                    for (String line : str.split("\n")) {
+                        newText.add(new LyricLine(line));
+                    }
+                }
             } else {
-                processedText = sanctifyText(textArr);
+                newText = sanctifyText(textArr);
             }
-            newSize = pickFontSize(font, processedText, getCanvas().getWidth() * 0.92, getCanvas().getHeight() * 0.9);
+            newSize = pickFontSize(font, newText, getCanvas().getWidth() * 0.92, getCanvas().getHeight() * 0.9);
             if (newSize < fontSize) {
                 fontSize = newSize;
             }
