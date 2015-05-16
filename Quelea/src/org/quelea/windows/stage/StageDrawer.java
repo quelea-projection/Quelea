@@ -376,7 +376,7 @@ public class StageDrawer extends WordDrawer {
             metrics = Toolkit.getToolkit().getFontLoader().getFontMetrics(font);
             totalWidth = metrics.computeStringWidth(longestLine);
         }
-
+        System.out.println(font.getSize());
         return font.getSize();
     }
 
