@@ -367,7 +367,6 @@ public class StageDrawer extends WordDrawer {
         }
 
         String longestLine = longestLine(font, text);
-        System.out.println("LL: " + longestLine);
         double totalWidth = metrics.computeStringWidth(longestLine);
         while (totalWidth > width) {
             font = new Font(font.getName(), font.getSize() - 0.5);
@@ -377,7 +376,6 @@ public class StageDrawer extends WordDrawer {
             metrics = Toolkit.getToolkit().getFontLoader().getFontMetrics(font);
             totalWidth = metrics.computeStringWidth(longestLine);
         }
-        System.out.println(width + " x " + height + ": fs="+font.getSize());
         return font.getSize();
     }
 
@@ -553,8 +551,7 @@ public class StageDrawer extends WordDrawer {
                 theme.isItalic() ? FontPosture.ITALIC : FontPosture.REGULAR,
                 QueleaProperties.get().getMaxFontSize());
         double fontSize = Double.POSITIVE_INFINITY;
-        for (int i = 0; i < displayable.getSections().length; i++) {
-            TextSection section = displayable.getSections()[i];
+        for (TextSection section : displayable.getSections()) {
             String[] textArr;
             if (QueleaProperties.get().getShowChords()) {
                 textArr = section.getText(true, false);
@@ -562,11 +559,10 @@ public class StageDrawer extends WordDrawer {
                 textArr = section.getText(false, false);
             }
             double newSize;
-            
             List<LyricLine> newText;
             if (displayable instanceof BiblePassage) {
                 newText = new ArrayList<>();
-                for (String str : text) {
+                for (String str : section.getText(false, false)) {
                     for (String line : str.split("\n")) {
                         newText.add(new LyricLine(line));
                     }
