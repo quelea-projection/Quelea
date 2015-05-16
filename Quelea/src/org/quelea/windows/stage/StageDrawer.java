@@ -367,6 +367,7 @@ public class StageDrawer extends WordDrawer {
         }
 
         String longestLine = longestLine(font, text);
+        System.out.println("LL: " + longestLine);
         double totalWidth = metrics.computeStringWidth(longestLine);
         while (totalWidth > width) {
             font = new Font(font.getName(), font.getSize() - 0.5);
@@ -376,7 +377,7 @@ public class StageDrawer extends WordDrawer {
             metrics = Toolkit.getToolkit().getFontLoader().getFontMetrics(font);
             totalWidth = metrics.computeStringWidth(longestLine);
         }
-        System.out.println(font.getSize());
+        System.out.println(width + " x " + height + ": fs="+font.getSize());
         return font.getSize();
     }
 
