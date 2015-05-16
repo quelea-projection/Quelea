@@ -17,7 +17,9 @@
  */
 package org.quelea.windows.options;
 
+import java.text.NumberFormat;
 import java.io.File;
+import java.math.BigDecimal;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.EventHandler;
@@ -28,13 +30,18 @@ import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.Slider;
+import javafx.scene.control.Spinner;
+import javafx.scene.control.SpinnerValueFactory;
 import javafx.scene.control.TextField;
+import javafx.scene.control.TextFormatter;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.stage.DirectoryChooser;
+import javafx.util.converter.NumberStringConverter;
+import javafx.util.converter.PercentageStringConverter;
 import org.quelea.data.powerpoint.OOPresentation;
 import org.quelea.data.powerpoint.OOUtils;
 import org.quelea.services.languages.LabelGrabber;
@@ -43,6 +50,7 @@ import org.quelea.services.languages.LanguageFileManager;
 import org.quelea.services.utils.PropertyPanel;
 import org.quelea.services.utils.QueleaProperties;
 import org.quelea.windows.main.QueleaApp;
+import utils.BigDecimalSpinner;
 
 /**
  * A panel where the general options in the program are set.
@@ -51,6 +59,7 @@ import org.quelea.windows.main.QueleaApp;
  */
 public class OptionsGeneralPanel extends GridPane implements PropertyPanel {
 
+    QueleaProperties props = QueleaProperties.get();
     private final CheckBox startupUpdateCheckBox;
     private final CheckBox capitalFirstCheckBox;
     private final CheckBox oneMonitorWarnCheckBox;
@@ -78,6 +87,8 @@ public class OptionsGeneralPanel extends GridPane implements PropertyPanel {
     private final ComboBox<String> smallBibleTextHPositionCombo;
     private final ComboBox<String> smallSongTextVPositionCombo;
     private final ComboBox<String> smallSongTextHPositionCombo;
+    private final BigDecimalSpinner smallSongSizeSpinner;
+    private final BigDecimalSpinner smallBibleSizeSpinner;
 
     /**
      * Create a new general panel.
@@ -245,11 +256,12 @@ public class OptionsGeneralPanel extends GridPane implements PropertyPanel {
         showSmallSongTextBox = new CheckBox();
         smallSongTextVPositionCombo = new ComboBox<>();
         smallSongTextHPositionCombo = new ComboBox<>();
+        smallSongSizeSpinner = new BigDecimalSpinner(new BigDecimal("0.01"), new BigDecimal("0.5"), new BigDecimal("0.01"), NumberFormat.getPercentInstance());
         HBox hboxSmallSong = new HBox();
         hboxSmallSong.alignmentProperty().setValue(Pos.CENTER_LEFT);
         smallSongTextVPositionCombo.getItems().addAll(LabelGrabber.INSTANCE.getLabel("top"), LabelGrabber.INSTANCE.getLabel("bottom"));
         smallSongTextHPositionCombo.getItems().addAll(LabelGrabber.INSTANCE.getLabel("left"), LabelGrabber.INSTANCE.getLabel("right"));
-        hboxSmallSong.getChildren().addAll(showSmallSongTextBox, smallSongTextVPositionCombo, smallSongTextHPositionCombo);
+        hboxSmallSong.getChildren().addAll(showSmallSongTextBox, smallSongTextVPositionCombo, smallSongTextHPositionCombo, smallSongSizeSpinner);
         GridPane.setConstraints(hboxSmallSong, 2, rows);
         getChildren().add(hboxSmallSong);
         showSmallSongTextLabel.setLabelFor(hboxSmallSong);
@@ -261,11 +273,12 @@ public class OptionsGeneralPanel extends GridPane implements PropertyPanel {
         showSmallBibleTextBox = new CheckBox();
         smallBibleTextVPositionCombo = new ComboBox<>();
         smallBibleTextHPositionCombo = new ComboBox<>();
+        smallBibleSizeSpinner = new BigDecimalSpinner(new BigDecimal("0.01"), new BigDecimal("0.5"), new BigDecimal("0.01"), NumberFormat.getPercentInstance());
         HBox hboxSmallBible = new HBox();
         hboxSmallBible.alignmentProperty().setValue(Pos.CENTER_LEFT);
         smallBibleTextVPositionCombo.getItems().addAll(LabelGrabber.INSTANCE.getLabel("top"), LabelGrabber.INSTANCE.getLabel("bottom"));
         smallBibleTextHPositionCombo.getItems().addAll(LabelGrabber.INSTANCE.getLabel("left"), LabelGrabber.INSTANCE.getLabel("right"));
-        hboxSmallBible.getChildren().addAll(showSmallBibleTextBox, smallBibleTextVPositionCombo, smallBibleTextHPositionCombo);
+        hboxSmallBible.getChildren().addAll(showSmallBibleTextBox, smallBibleTextVPositionCombo, smallBibleTextHPositionCombo, smallBibleSizeSpinner);
         GridPane.setConstraints(hboxSmallBible, 2, rows);
         getChildren().add(hboxSmallBible);
         showSmallSongTextLabel.setLabelFor(hboxSmallBible);
@@ -421,7 +434,6 @@ public class OptionsGeneralPanel extends GridPane implements PropertyPanel {
      */
     @Override
     public final void readProperties() {
-        QueleaProperties props = QueleaProperties.get();
         languageFileComboBox.setValue(LanguageFileManager.INSTANCE.getCurrentFile());
         startupUpdateCheckBox.setSelected(props.checkUpdate());
         useOOCheckBox.setSelected(props.getUseOO());
@@ -442,8 +454,10 @@ public class OptionsGeneralPanel extends GridPane implements PropertyPanel {
         showSmallBibleTextBox.setSelected(props.getSmallBibleTextShow());
         smallBibleTextVPositionCombo.getSelectionModel().select(props.getSmallBibleTextPositionV().equals("top") ? 0 : 1);
         smallBibleTextHPositionCombo.getSelectionModel().select(props.getSmallBibleTextPositionH().equals("left") ? 0 : 1);
+        smallBibleSizeSpinner.setNumber(new BigDecimal(props.getSmallBibleTextSize()));
         smallSongTextVPositionCombo.getSelectionModel().select(props.getSmallSongTextPositionV().equals("top") ? 0 : 1);
         smallSongTextHPositionCombo.getSelectionModel().select(props.getSmallSongTextPositionH().equals("left") ? 0 : 1);
+        smallSongSizeSpinner.setNumber(new BigDecimal(props.getSmallSongTextSize()));
         additionalLineSpacingSlider.setValue(props.getAdditionalLineSpacing());
         maximumFontSizeSlider.setValue(props.getMaxFontSize());
     }
@@ -496,10 +510,14 @@ public class OptionsGeneralPanel extends GridPane implements PropertyPanel {
         props.setSmallBibleTextPositionV(smallBibleTextVPosition == 0 ? "top" : "bottom");
         int smallBibleTextHPosition = smallBibleTextHPositionCombo.getSelectionModel().getSelectedIndex();
         props.setSmallBibleTextPositionH(smallBibleTextHPosition == 0 ? "left" : "right");
+        double smallBibleSize = (smallBibleSizeSpinner.getNumber().doubleValue());
+        props.setSmallBibleTextSize(smallBibleSize);
         int smallSongTextVPosition = smallSongTextVPositionCombo.getSelectionModel().getSelectedIndex();
         props.setSmallSongTextPositionV(smallSongTextVPosition == 0 ? "top" : "bottom");
         int smallSongTextHPosition = smallSongTextHPositionCombo.getSelectionModel().getSelectedIndex();
         props.setSmallSongTextPositionH(smallSongTextHPosition == 0 ? "left" : "right");
+        double smallSongSize = (smallSongSizeSpinner.getNumber().doubleValue());
+        props.setSmallSongTextSize(smallSongSize);
         props.setMaxFontSize(maximumFontSizeSlider.getValue());
         props.setAdditionalLineSpacing(additionalLineSpacingSlider.getValue());
         //Initialise presentation
