@@ -1579,7 +1579,7 @@ public final class QueleaProperties extends Properties {
         return Double.parseDouble(getProperty("small.song.text.size", "0.1"));
     }
 
-    public void setSmallSongTextSize(int size) {
+    public void setSmallSongTextSize(double size) {
         setProperty("small.song.text.size", Double.toString(size));
         write();
     }
@@ -1607,7 +1607,7 @@ public final class QueleaProperties extends Properties {
         return Double.parseDouble(getProperty("small.bible.text.size", "0.1"));
     }
 
-    public void setSmallBibleTextSize(int size) {
+    public void setSmallBibleTextSize(double size) {
         setProperty("small.bible.text.size", Double.toString(size));
         write();
     }
