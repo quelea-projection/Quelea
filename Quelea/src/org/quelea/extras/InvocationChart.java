@@ -26,6 +26,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Map.Entry;
 import java.util.TreeMap;
 import javafx.application.Application;
 import javafx.scene.Scene;
@@ -33,7 +34,6 @@ import javafx.scene.chart.LineChart;
 import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.XYChart;
 import javafx.scene.control.Label;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
@@ -51,8 +51,7 @@ public class InvocationChart extends Application {
 
     private static final String RAW_DUMP_URL = "http://quelea.org/phonehome/dumpraw.php";
     private static final boolean JUST_SUNDAY = true;
-    private static final boolean SHOW_ZERO = false;
-    private final TreeMap<Date, TreeMap<String, Integer>> times = new TreeMap<>();
+    private final TreeMap<Date, Integer> times = new TreeMap<>();
 
     /**
      * Fire it off.
@@ -82,7 +81,7 @@ public class InvocationChart extends Application {
             String line;
             Date minDate = new Date(Long.MAX_VALUE);
             Date maxDate = new Date(0);
-            SimpleDateFormat formatter = new SimpleDateFormat("dd.MM.yy");
+            SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
             while ((line = reader.readLine()) != null) {
                 if (line.equalsIgnoreCase("Unable to select database")) {
                     System.err.println("Auth error.");
@@ -96,44 +95,22 @@ public class InvocationChart extends Application {
                 if (date.before(minDate)) {
                     minDate = date;
                 }
-                String ip = parts[1];
-                if (times.get(date) == null) {
-                    times.put(date, new TreeMap<String, Integer>());
-                }
-                if (times.get(date).get(ip) == null) {
-                    times.get(date).put(ip, 0);
-                }
-                times.get(date).put(ip, times.get(date).get(ip) + 1);
+                String num = parts[1];
+                times.put(date, Integer.parseInt(num));
             }
 
-            Calendar incDate = Calendar.getInstance();
-            incDate.setTime(minDate);
-            if (JUST_SUNDAY) {
-                while (incDate.get(Calendar.DAY_OF_WEEK) != Calendar.SUNDAY) {
-                    incDate.set(Calendar.DAY_OF_YEAR, incDate.get(Calendar.DAY_OF_YEAR) + 1);
+            for (Entry<Date, Integer> entry : times.entrySet()) {
+                Date date = entry.getKey();
+                Calendar cal = Calendar.getInstance();
+                cal.setTime(date);
+                if(JUST_SUNDAY && cal.get(Calendar.DAY_OF_WEEK)!=Calendar.SUNDAY) {
+                    continue;
                 }
-            }
-            int addDays = 1;
-            if (JUST_SUNDAY) {
-                addDays = 7;
-            }
-            for (; incDate.getTimeInMillis() <= maxDate.getTime(); incDate.add(Calendar.DAY_OF_YEAR, addDays)) {
-                TreeMap<String, Integer> map = times.get(incDate.getTime());
-                int val;
-                if (map == null) {
-                    if (!SHOW_ZERO) {
-                        continue;
-                    }
-                    val = 0;
-                } else {
-                    val = map.size();
-                }
-                if (JUST_SUNDAY && incDate.get(Calendar.DAY_OF_WEEK) != Calendar.SUNDAY) {
-                    throw new AssertionError("Oops... Sunday's got out of sync!");
-                }
-                XYChart.Data<Number, Number> data = new XYChart.Data<Number, Number>(incDate.getTimeInMillis(), val);
+                Integer num = entry.getValue();
+                
+                XYChart.Data<Number, Number> data = new XYChart.Data<>(date.getTime(), num);
                 series.getData().add(data);
-                data.setNode(new HoveredThresholdNode(formatter.format(incDate.getTime()) + "\n" + val + " invocations"));
+                data.setNode(new HoveredThresholdNode(formatter.format(date.getTime()) + "\n" + num + " invocations"));
 
             }
 
@@ -182,11 +159,11 @@ class HoveredThresholdNode extends StackPane {
     HoveredThresholdNode(String text) {
         final Label label = createDataThresholdLabel(text);
 
-        setOnMouseEntered((MouseEvent mouseEvent) -> {
+        setOnMouseEntered(mouseEvent -> {
             getChildren().setAll(label);
             toFront();
         });
-        setOnMouseExited((MouseEvent mouseEvent) -> {
+        setOnMouseExited(mouseEvent -> {
             getChildren().clear();
         });
     }
