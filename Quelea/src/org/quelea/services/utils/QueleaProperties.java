@@ -1773,4 +1773,13 @@ public final class QueleaProperties extends Properties {
         return new File(getQueleaUserHome(), "timer");
     }
 
+    public boolean getSongOverflow() {
+        return Boolean.parseBoolean(getProperty("song.overflow", "false"));
+    }
+    
+    public void setSongOverflow(boolean overflow) {
+        setProperty("song.overflow", Boolean.toString(overflow));
+        write();
+    }
+
 }

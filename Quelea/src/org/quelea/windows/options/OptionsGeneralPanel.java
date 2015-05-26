@@ -20,6 +20,7 @@ package org.quelea.windows.options;
 import java.text.NumberFormat;
 import java.io.File;
 import java.math.BigDecimal;
+import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
@@ -83,6 +84,7 @@ public class OptionsGeneralPanel extends GridPane implements PropertyPanel {
     private final ComboBox<String> smallSongTextHPositionCombo;
     private final BigDecimalSpinner smallSongSizeSpinner;
     private final BigDecimalSpinner smallBibleSizeSpinner;
+    private final CheckBox overflowSongCheckBox;
 
     /**
      * Create a new general panel.
@@ -185,7 +187,7 @@ public class OptionsGeneralPanel extends GridPane implements PropertyPanel {
         GridPane.setConstraints(oneLineModeLabel, 1, rows);
         getChildren().add(oneLineModeLabel);
         oneLineModeCheckBox = new CheckBox();
-        startupLabel.setLabelFor(oneLineModeCheckBox);
+        oneLineModeLabel.setLabelFor(oneLineModeCheckBox);
         GridPane.setConstraints(oneLineModeCheckBox, 2, rows);
         getChildren().add(oneLineModeCheckBox);
         rows++;
@@ -194,7 +196,7 @@ public class OptionsGeneralPanel extends GridPane implements PropertyPanel {
         GridPane.setConstraints(autoPlayVidLabel, 1, rows);
         getChildren().add(autoPlayVidLabel);
         autoPlayVidCheckBox = new CheckBox();
-        startupLabel.setLabelFor(autoPlayVidCheckBox);
+        autoPlayVidLabel.setLabelFor(autoPlayVidCheckBox);
         GridPane.setConstraints(autoPlayVidCheckBox, 2, rows);
         getChildren().add(autoPlayVidCheckBox);
         rows++;
@@ -203,11 +205,30 @@ public class OptionsGeneralPanel extends GridPane implements PropertyPanel {
         GridPane.setConstraints(advanceOnLiveLabel, 1, rows);
         getChildren().add(advanceOnLiveLabel);
         advanceOnLiveCheckBox = new CheckBox();
-        startupLabel.setLabelFor(advanceOnLiveCheckBox);
+        advanceOnLiveLabel.setLabelFor(advanceOnLiveCheckBox);
         GridPane.setConstraints(advanceOnLiveCheckBox, 2, rows);
         getChildren().add(advanceOnLiveCheckBox);
         rows++;
+        
+        Label overflowSongLabel = new Label(LabelGrabber.INSTANCE.getLabel("overflow.song.label"));
+        GridPane.setConstraints(overflowSongLabel, 1, rows);
+        getChildren().add(overflowSongLabel);
+        overflowSongCheckBox = new CheckBox();
+        overflowSongLabel.setLabelFor(overflowSongCheckBox);
+        GridPane.setConstraints(overflowSongCheckBox, 2, rows);
+        getChildren().add(overflowSongCheckBox);
+        rows++;
 
+        advanceOnLiveCheckBox.selectedProperty().addListener((ObservableValue<? extends Boolean> a, Boolean b, Boolean c) -> {
+            if(advanceOnLiveCheckBox.isSelected()) {
+                overflowSongCheckBox.setDisable(false);
+            }
+            else {
+                overflowSongCheckBox.setDisable(true);
+            }
+        });
+        
+        
         Label previewOnImageChangeLabel = new Label(LabelGrabber.INSTANCE.getLabel("preview.on.image.change.label"));
         GridPane.setConstraints(previewOnImageChangeLabel, 1, rows);
         getChildren().add(previewOnImageChangeLabel);
@@ -441,6 +462,7 @@ public class OptionsGeneralPanel extends GridPane implements PropertyPanel {
         autoTranslateCheckBox.setSelected(props.getAutoTranslate());
         autoPlayVidCheckBox.setSelected(props.getAutoPlayVideo());
         advanceOnLiveCheckBox.setSelected(props.getAdvanceOnLive());
+        overflowSongCheckBox.setSelected(props.getSongOverflow());
         previewOnImageChangeCheckBox.setSelected(props.getPreviewOnImageUpdate());
         clearLiveOnRemoveCheckBox.setSelected(props.getClearLiveOnRemove());
         embedMediaInScheduleCheckBox.setSelected(props.getEmbedMediaInScheduleFile());
@@ -489,6 +511,8 @@ public class OptionsGeneralPanel extends GridPane implements PropertyPanel {
         props.setAutoPlayVideo(autoPlayVid);
         boolean autoAdvance = advanceOnLiveCheckBox.isSelected();
         props.setAdvanceOnLive(autoAdvance);
+        boolean overflow = overflowSongCheckBox.isSelected();
+        props.setSongOverflow(overflow);
         boolean previewChange = previewOnImageChangeCheckBox.isSelected();
         props.setPreviewOnImageUpdate(previewChange);
         //One line mode needs to be updated manually

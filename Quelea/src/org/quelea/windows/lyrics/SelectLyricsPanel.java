@@ -31,11 +31,13 @@ import org.quelea.data.displayable.SongDisplayable;
 import org.quelea.data.displayable.TextDisplayable;
 import org.quelea.data.displayable.TextSection;
 import org.quelea.services.utils.LoggerUtils;
+import org.quelea.services.utils.QueleaProperties;
 import org.quelea.windows.main.AbstractPanel;
 import org.quelea.windows.main.DisplayCanvas;
 import org.quelea.windows.main.DisplayCanvas.Priority;
 import org.quelea.windows.main.DisplayableDrawer;
 import org.quelea.windows.main.LivePreviewPanel;
+import org.quelea.windows.main.MainPanel;
 import org.quelea.windows.main.QueleaApp;
 import org.quelea.windows.main.WordDrawer;
 import org.quelea.windows.main.widgets.DisplayPreview;
@@ -88,11 +90,10 @@ public class SelectLyricsPanel extends AbstractPanel {
         lyricsList.addEventFilter(KeyEvent.KEY_PRESSED, new EventHandler<KeyEvent>() {
             @Override
             public void handle(KeyEvent t) {
-                if(t.getCode().equals(KeyCode.PAGE_DOWN)) {
+                if (t.getCode().equals(KeyCode.PAGE_DOWN) || t.getCode().equals(KeyCode.DOWN)) {
                     t.consume();
                     QueleaApp.get().getMainWindow().getMainPanel().getLivePanel().advance();
-                }
-                else if(t.getCode().equals(KeyCode.PAGE_UP)) {
+                } else if (t.getCode().equals(KeyCode.PAGE_UP) || t.getCode().equals(KeyCode.UP)) {
                     t.consume();
                     QueleaApp.get().getMainWindow().getMainPanel().getLivePanel().previous();
                 }
@@ -103,6 +104,13 @@ public class SelectLyricsPanel extends AbstractPanel {
     public void selectFirst() {
         if (lyricsList.getItems().size() > 0) {
             lyricsList.selectionModelProperty().get().clearAndSelect(0);
+        }
+    }
+
+    public void selectLast() {
+        if (lyricsList.getItems().size() > 0) {
+            lyricsList.selectionModelProperty().get().clearSelection();
+            lyricsList.selectionModelProperty().get().selectLast();
         }
     }
 
@@ -158,7 +166,17 @@ public class SelectLyricsPanel extends AbstractPanel {
      * <p/>
      */
     public void advance() {
+        int start = getIndex();
         lyricsList.selectionModelProperty().get().selectNext();
+        int end = getIndex();
+        System.out.println(start + " " + end);
+        MainPanel qmp = QueleaApp.get().getMainWindow().getMainPanel();
+        boolean lastSongTest = qmp.getLivePanel().getDisplayable().equals(qmp.getSchedulePanel().getScheduleList().getItems().get(qmp.getSchedulePanel().getScheduleList().getItems().size() - 1));
+        System.out.println("LST: " + lastSongTest);
+        if (start == end && QueleaProperties.get().getAdvanceOnLive() && QueleaProperties.get().getSongOverflow() && !lastSongTest) {
+            System.out.println("advance trigger");
+            qmp.getPreviewPanel().goLive();
+        }
         updateCanvas();
     }
 
@@ -167,7 +185,27 @@ public class SelectLyricsPanel extends AbstractPanel {
      * <p/>
      */
     public void previous() {
+        int start = getIndex();
         lyricsList.selectionModelProperty().get().selectPrevious();
+        int end = getIndex();
+        System.out.println(start + " " + end);
+        MainPanel qmp = QueleaApp.get().getMainWindow().getMainPanel();
+        //Check to see if first song first verse
+        boolean fsfv = qmp.getSchedulePanel().getScheduleList().getItems().get(0).equals(qmp.getLivePanel().getDisplayable()) && (qmp.getLivePanel().getLyricsPanel().getLyricsList().getSelectionModel().getSelectedIndex() == 0);
+        if (start == end && QueleaProperties.get().getAdvanceOnLive() && QueleaProperties.get().getSongOverflow() && !fsfv) {
+            System.out.println("previous trigger");
+            //Assuming preview panel is one ahead, and should be one behind
+            int index = qmp.getSchedulePanel().getScheduleList().getSelectionModel().getSelectedIndex();
+            index--;
+            if (index >= 0) {
+                qmp.getSchedulePanel().getScheduleList().getSelectionModel().clearAndSelect(index);
+                qmp.getPreviewPanel().selectLastLyric();
+                qmp.getPreviewPanel().goLive();
+                if(index != 0) {
+                    qmp.getSchedulePanel().getScheduleList().getSelectionModel().clearAndSelect(index);
+                }
+            }
+        }
         updateCanvas();
     }
 
@@ -187,7 +225,7 @@ public class SelectLyricsPanel extends AbstractPanel {
     public void removeCurrentDisplayable() {
         super.removeCurrentDisplayable();
         lyricsList.itemsProperty().get().clear();
-        lyricDrawer.clear(); 
+        lyricDrawer.clear();
     }
 
     /**
@@ -199,10 +237,9 @@ public class SelectLyricsPanel extends AbstractPanel {
         int selectedIndex = lyricsList.selectionModelProperty().get().getSelectedIndex();
         for (DisplayCanvas canvas : getCanvases()) {
             WordDrawer drawer;
-            if(canvas.isStageView()) {
+            if (canvas.isStageView()) {
                 drawer = stageDrawer;
-            }
-            else {
+            } else {
                 drawer = lyricDrawer;
             }
             drawer.setCanvas(canvas);
@@ -237,10 +274,9 @@ public class SelectLyricsPanel extends AbstractPanel {
 
     @Override
     public DisplayableDrawer getDrawer(DisplayCanvas canvas) {
-        if(canvas.isStageView()) {
+        if (canvas.isStageView()) {
             return stageDrawer;
-        }
-        else {
+        } else {
             return lyricDrawer;
         }
     }
