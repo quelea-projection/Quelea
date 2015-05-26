@@ -251,6 +251,7 @@ public class OptionsGeneralPanel extends GridPane implements PropertyPanel {
         smallSongTextVPositionCombo = new ComboBox<>();
         smallSongTextHPositionCombo = new ComboBox<>();
         smallSongSizeSpinner = new BigDecimalSpinner(new BigDecimal("0.01"), new BigDecimal("0.5"), new BigDecimal("0.01"), NumberFormat.getPercentInstance());
+        smallSongSizeSpinner.setMaxWidth(70);
         HBox hboxSmallSong = new HBox();
         hboxSmallSong.alignmentProperty().setValue(Pos.CENTER_LEFT);
         smallSongTextVPositionCombo.getItems().addAll(LabelGrabber.INSTANCE.getLabel("top"), LabelGrabber.INSTANCE.getLabel("bottom"));
@@ -268,6 +269,7 @@ public class OptionsGeneralPanel extends GridPane implements PropertyPanel {
         smallBibleTextVPositionCombo = new ComboBox<>();
         smallBibleTextHPositionCombo = new ComboBox<>();
         smallBibleSizeSpinner = new BigDecimalSpinner(new BigDecimal("0.01"), new BigDecimal("0.5"), new BigDecimal("0.01"), NumberFormat.getPercentInstance());
+        smallBibleSizeSpinner.setMaxWidth(70);
         HBox hboxSmallBible = new HBox();
         hboxSmallBible.alignmentProperty().setValue(Pos.CENTER_LEFT);
         smallBibleTextVPositionCombo.getItems().addAll(LabelGrabber.INSTANCE.getLabel("top"), LabelGrabber.INSTANCE.getLabel("bottom"));
