@@ -125,7 +125,7 @@ public final class Bible implements BibleInterface, Serializable {
             Platform.runLater(new Runnable() {
                 @Override
                 public void run() {
-                    Dialog brokenBibleDialog = Dialog.buildConfirmation(LabelGrabber.INSTANCE.getLabel("bible.load.error.title"), LabelGrabber.INSTANCE.getLabel("bible.load.error.question"))
+                    Dialog brokenBibleDialog = Dialog.buildConfirmation(LabelGrabber.INSTANCE.getLabel("bible.load.error.title"), LabelGrabber.INSTANCE.getLabel("bible.load.error.question").replace("$1", file.getName()))
                             .addYesButton((ActionEvent event) -> {
                                 BibleUploader.INSTANCE.upload(file);
                             })
