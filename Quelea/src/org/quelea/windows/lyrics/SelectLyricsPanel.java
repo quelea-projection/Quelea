@@ -172,7 +172,7 @@ public class SelectLyricsPanel extends AbstractPanel {
         
         int end = getIndex();
         MainPanel qmp = QueleaApp.get().getMainWindow().getMainPanel();
-        boolean lastSongTest = qmp.getLivePanel().getDisplayable().equals(qmp.getSchedulePanel().getScheduleList().getItems().get(qmp.getSchedulePanel().getScheduleList().getItems().size() - 1));
+        boolean lastSongTest = qmp.getLivePanel().getDisplayable() == qmp.getSchedulePanel().getScheduleList().getItems().get(qmp.getSchedulePanel().getScheduleList().getItems().size() - 1);
         if (start == end && QueleaProperties.get().getAdvanceOnLive() && QueleaProperties.get().getSongOverflow() && !lastSongTest) {
             qmp.getPreviewPanel().goLive();
         }
@@ -190,18 +190,24 @@ public class SelectLyricsPanel extends AbstractPanel {
         int end = getIndex();
         MainPanel qmp = QueleaApp.get().getMainWindow().getMainPanel();
         //Check to see if first song first verse
-        boolean fsfv = qmp.getSchedulePanel().getScheduleList().getItems().get(0).equals(qmp.getLivePanel().getDisplayable()) && (qmp.getLivePanel().getLyricsPanel().getLyricsList().getSelectionModel().getSelectedIndex() == 0);
-        if (start == end && QueleaProperties.get().getAdvanceOnLive() && QueleaProperties.get().getSongOverflow() && !fsfv) {
+        boolean fsfv = qmp.getSchedulePanel().getScheduleList().getItems().get(0) == qmp.getLivePanel().getDisplayable() &&
+                (qmp.getLivePanel().getLyricsPanel().getLyricsList().getSelectionModel().getSelectedIndex() == 0);
+        if ((start == end || qmp.getLivePanel().getLyricsPanel().getLyricsList().getItems().size() == 1) && 
+                QueleaProperties.get().getAdvanceOnLive() && QueleaProperties.get().getSongOverflow() && !fsfv) {
             //Assuming preview panel is one ahead, and should be one behind
             int index = qmp.getSchedulePanel().getScheduleList().getSelectionModel().getSelectedIndex();
-            index--;
+            if(qmp.getLivePanel().getDisplayable() == qmp.getSchedulePanel().getScheduleList().getItems().get(qmp.getSchedulePanel().getScheduleList().getItems().size() - 1)) {
+                index -= 1;
+            }
+            else{
+                index -= 2;
+            }
             if (index >= 0) {
                 qmp.getSchedulePanel().getScheduleList().getSelectionModel().clearAndSelect(index);
                 qmp.getPreviewPanel().selectLastLyric();
                 qmp.getPreviewPanel().goLive();
-                if(index != 0) {
-                    qmp.getSchedulePanel().getScheduleList().getSelectionModel().clearAndSelect(index);
-                }
+                //qmp.getSchedulePanel().getScheduleList().getSelectionModel().clearAndSelect(index);
+                
             }
         }
     }
