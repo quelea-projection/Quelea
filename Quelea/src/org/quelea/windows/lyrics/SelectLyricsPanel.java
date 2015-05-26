@@ -169,12 +169,9 @@ public class SelectLyricsPanel extends AbstractPanel {
         int start = getIndex();
         lyricsList.selectionModelProperty().get().selectNext();
         int end = getIndex();
-        System.out.println(start + " " + end);
         MainPanel qmp = QueleaApp.get().getMainWindow().getMainPanel();
         boolean lastSongTest = qmp.getLivePanel().getDisplayable().equals(qmp.getSchedulePanel().getScheduleList().getItems().get(qmp.getSchedulePanel().getScheduleList().getItems().size() - 1));
-        System.out.println("LST: " + lastSongTest);
         if (start == end && QueleaProperties.get().getAdvanceOnLive() && QueleaProperties.get().getSongOverflow() && !lastSongTest) {
-            System.out.println("advance trigger");
             qmp.getPreviewPanel().goLive();
         }
         updateCanvas();
@@ -188,12 +185,10 @@ public class SelectLyricsPanel extends AbstractPanel {
         int start = getIndex();
         lyricsList.selectionModelProperty().get().selectPrevious();
         int end = getIndex();
-        System.out.println(start + " " + end);
         MainPanel qmp = QueleaApp.get().getMainWindow().getMainPanel();
         //Check to see if first song first verse
         boolean fsfv = qmp.getSchedulePanel().getScheduleList().getItems().get(0).equals(qmp.getLivePanel().getDisplayable()) && (qmp.getLivePanel().getLyricsPanel().getLyricsList().getSelectionModel().getSelectedIndex() == 0);
         if (start == end && QueleaProperties.get().getAdvanceOnLive() && QueleaProperties.get().getSongOverflow() && !fsfv) {
-            System.out.println("previous trigger");
             //Assuming preview panel is one ahead, and should be one behind
             int index = qmp.getSchedulePanel().getScheduleList().getSelectionModel().getSelectedIndex();
             index--;
