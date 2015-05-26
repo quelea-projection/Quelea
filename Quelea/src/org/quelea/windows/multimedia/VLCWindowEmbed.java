@@ -84,7 +84,7 @@ public class VLCWindowEmbed extends VLCWindow {
                         }
                     });
 
-                    mediaPlayerFactory = new MediaPlayerFactory("--no-video-title-show");
+                    mediaPlayerFactory = new MediaPlayerFactory("--no-video-title-show", "--mouse-hide-timeout=0");
                     mediaPlayer = mediaPlayerFactory.newEmbeddedMediaPlayer();
                     CanvasVideoSurface videoSurface = mediaPlayerFactory.newVideoSurface(canvas);
 
