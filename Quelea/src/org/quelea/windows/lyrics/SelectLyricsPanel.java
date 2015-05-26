@@ -168,13 +168,14 @@ public class SelectLyricsPanel extends AbstractPanel {
     public void advance() {
         int start = getIndex();
         lyricsList.selectionModelProperty().get().selectNext();
+        updateCanvas();
+        
         int end = getIndex();
         MainPanel qmp = QueleaApp.get().getMainWindow().getMainPanel();
         boolean lastSongTest = qmp.getLivePanel().getDisplayable().equals(qmp.getSchedulePanel().getScheduleList().getItems().get(qmp.getSchedulePanel().getScheduleList().getItems().size() - 1));
         if (start == end && QueleaProperties.get().getAdvanceOnLive() && QueleaProperties.get().getSongOverflow() && !lastSongTest) {
             qmp.getPreviewPanel().goLive();
         }
-        updateCanvas();
     }
 
     /**
@@ -184,6 +185,8 @@ public class SelectLyricsPanel extends AbstractPanel {
     public void previous() {
         int start = getIndex();
         lyricsList.selectionModelProperty().get().selectPrevious();
+        updateCanvas();
+        
         int end = getIndex();
         MainPanel qmp = QueleaApp.get().getMainWindow().getMainPanel();
         //Check to see if first song first verse
@@ -201,7 +204,6 @@ public class SelectLyricsPanel extends AbstractPanel {
                 }
             }
         }
-        updateCanvas();
     }
 
     /**
