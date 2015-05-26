@@ -18,16 +18,8 @@
  */
 package org.quelea.windows.multimedia;
 
-import java.awt.Canvas;
-import java.awt.Window;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.logging.Logger;
-import org.quelea.services.utils.LoggerUtils;
 import org.quelea.services.utils.QueleaProperties;
 import org.quelea.services.utils.Utils;
-import uk.co.caprica.vlcj.player.MediaPlayerFactory;
-import uk.co.caprica.vlcj.player.embedded.EmbeddedMediaPlayer;
 
 /**
  * A native VLC window which is responsible for moving where it's told, and
@@ -44,19 +36,7 @@ public  abstract class VLCWindow {
      * Use this thread for all VLC media player stuff to keep this class thread
      * safe.
      */
-    private static final ExecutorService VLC_EXECUTOR = Executors.newSingleThreadExecutor();
-    private static final Logger LOGGER = LoggerUtils.getLogger();
     public  static final VLCWindow INSTANCE = getInstance();
-    private Window window;
-    private Canvas canvas;
-    private MediaPlayerFactory mediaPlayerFactory;
-    private EmbeddedMediaPlayer mediaPlayer;
-    private boolean hideButton;
-    private boolean show;
-    private boolean paused;
-    private volatile boolean init;
-    private String location;
-    private volatile double hue = 0;
     private static final boolean USE_JAVA_FX_FOR_VLC = QueleaProperties.get().getUseJavaFXforVLCRendering();
 
     private static VLCWindow getInstance(){
