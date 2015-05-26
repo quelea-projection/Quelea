@@ -225,6 +225,7 @@ public class OptionsGeneralPanel extends GridPane implements PropertyPanel {
             }
             else {
                 overflowSongCheckBox.setDisable(true);
+                overflowSongCheckBox.setSelected(false);
             }
         });
         
