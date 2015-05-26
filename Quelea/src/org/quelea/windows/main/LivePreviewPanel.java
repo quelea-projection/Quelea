@@ -133,6 +133,10 @@ public abstract class LivePreviewPanel extends BorderPane {
     public void selectFirstLyric() {
         lyricsPanel.selectFirst();
     }
+    
+    public void selectLastLyric() {
+        lyricsPanel.selectLast();
+    }
 
     /**
      * Get the presentation panel on this live / preview panel.
