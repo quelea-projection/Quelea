@@ -558,3 +558,4 @@ kingsway.range.import.text=Enter the range of song pages to download from Kingsw
 kingsway.range.import.heading=Import range of Kingsway songs
 sdb.files.description=Songpro database files
 songpro.button=SongPro
+overflow.song.label=Overflow current song into next song
