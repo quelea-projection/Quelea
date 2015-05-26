@@ -30,26 +30,26 @@ import org.quelea.services.utils.Utils;
  * <p/>
  * @author Michael
  */
-public  abstract class VLCWindow {
+public abstract class VLCWindow {
 
     /**
      * Use this thread for all VLC media player stuff to keep this class thread
      * safe.
      */
-    public  static final VLCWindow INSTANCE = getInstance();
+    public static final VLCWindow INSTANCE = getInstance();
     private static final boolean USE_JAVA_FX_FOR_VLC = QueleaProperties.get().getUseJavaFXforVLCRendering();
 
-    private static VLCWindow getInstance(){
-        
-        if(USE_JAVA_FX_FOR_VLC){
+    private static VLCWindow getInstance() {
+
+        if (USE_JAVA_FX_FOR_VLC) {
             return VLCWindowDirect.DIRECT_INSTANCE;
-        }else if(Utils.isMac()){
+        } else if (Utils.isMac()) {
             return MacVideo.MAC_INSTANCE;
-        }else{
+        } else {
             return VLCWindowEmbed.EMBED_INSTANCE;
         }
     }
-    
+
     /**
      * Determine if VLC has initialised correctly.
      * <p>
@@ -71,17 +71,14 @@ public  abstract class VLCWindow {
     public abstract void pause();
 
     public abstract void stop();
-    
 
     public abstract boolean isMute();
 
     public abstract void setMute(final boolean mute);
-  
 
     public abstract double getProgressPercent();
 
     public abstract void setProgressPercent(final double percent);
-   
 
     public abstract boolean isPlaying();
 
@@ -95,16 +92,11 @@ public  abstract class VLCWindow {
 
     public abstract void setHideButton(final boolean hide);
 
-    
-
     public abstract void setLocation(final int x, final int y);
 
     public abstract void setSize(final int width, final int height);
-  
-    public abstract void refreshPosition();
 
-  
-  
+    public abstract void refreshPosition();
 
     public abstract void fadeHue(final double hue);
 
