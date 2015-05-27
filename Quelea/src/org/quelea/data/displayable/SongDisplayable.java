@@ -57,6 +57,7 @@ import org.xml.sax.SAXException;
  * @author Michael
  */
 public class SongDisplayable implements TextDisplayable, Comparable<SongDisplayable>, Serializable {
+    public int count = 0;
 
     /**
      * The builder responsible for building this song.
@@ -291,6 +292,7 @@ public class SongDisplayable implements TextDisplayable, Comparable<SongDisplaya
         this.capo = song.capo;
         this.lastSearch = song.lastSearch;
         this.translations = song.translations;
+        this.count = song.count++;
     }
 
     /**
@@ -1102,6 +1104,7 @@ public class SongDisplayable implements TextDisplayable, Comparable<SongDisplaya
         hash = 29 * hash + (this.author != null ? this.author.hashCode() : 0);
         hash = 29 * hash + (this.sections != null ? this.sections.hashCode() : 0);
         hash = 29 * hash + (this.theme != null ? this.theme.hashCode() : 0);
+        hash = hash + count;
         return hash;
     }
 

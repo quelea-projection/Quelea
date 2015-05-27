@@ -21,6 +21,7 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import org.quelea.data.VideoBackground;
 import org.quelea.data.displayable.SongDisplayable;
+import org.quelea.services.utils.QueleaProperties;
 import org.quelea.services.utils.Utils;
 import org.quelea.windows.library.LibraryPanel;
 import org.quelea.windows.main.QueleaApp;
@@ -44,6 +45,9 @@ public class AddSongActionHandler implements EventHandler<ActionEvent> {
         LibraryPanel libraryPanel = QueleaApp.get().getMainWindow().getMainPanel().getLibraryPanel();
         SchedulePanel schedulePanel = QueleaApp.get().getMainWindow().getMainPanel().getSchedulePanel();
         SongDisplayable song = libraryPanel.getLibrarySongPanel().getSongList().getSelectedValue();
+        if(QueleaProperties.get().getSongOverflow()) {
+            song = new SongDisplayable(song);
+        }
         cacheVidPreview(song);
         schedulePanel.getScheduleList().add(song);
         libraryPanel.getLibrarySongPanel().getSearchBox().clear();
