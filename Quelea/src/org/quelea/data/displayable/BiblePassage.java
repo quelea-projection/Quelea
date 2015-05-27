@@ -169,7 +169,6 @@ public class BiblePassage implements TextDisplayable, Serializable {
             summaryText = summary.split("\n")[0];
             bible = summary.split("\n")[1];
         }
-        System.out.println(summaryText);
         ret.append(Utils.escapeXML(summaryText));
         ret.append("\" bible=\"");
         ret.append(Utils.escapeXML(bible));
@@ -235,7 +234,6 @@ public class BiblePassage implements TextDisplayable, Serializable {
             bibleSummary = passage.getAttributes().getNamedItem("bible").getTextContent();
         }
         String summary = passageSummary + "\n" + bibleSummary;
-        System.out.println(summary);
         ThemeDTO tempTheme = ThemeDTO.DEFAULT_THEME;
         List<BibleVerse> verses = new ArrayList<>();
         for (int i = 0; i < list.getLength(); i++) {
