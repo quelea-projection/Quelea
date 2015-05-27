@@ -133,9 +133,13 @@ public abstract class LivePreviewPanel extends BorderPane {
     public void selectFirstLyric() {
         lyricsPanel.selectFirst();
     }
-    
+
     public void selectLastLyric() {
-        lyricsPanel.selectLast();
+        if (PRESENTATION_LABEL.equals(currentLabel)) {
+            presentationPanel.selectLast();
+        } else if (LYRICS_LABEL.equals(currentLabel)) {
+            lyricsPanel.selectLast();
+        }
     }
 
     /**
@@ -223,6 +227,12 @@ public abstract class LivePreviewPanel extends BorderPane {
             presentationPanel.advance();
         } else if (LYRICS_LABEL.equals(currentLabel)) {
             lyricsPanel.advance();
+        } else if (IMAGE_LABEL.equals(currentLabel)) {
+            imagePanel.advance();
+        } else if (VIDEO_LABEL.equals(currentLabel)) {
+            videoPanel.advance();
+        } else if (TIMER_LABEL.equals(currentLabel)) {
+            timerPanel.advance();
         }
     }
 
@@ -236,6 +246,12 @@ public abstract class LivePreviewPanel extends BorderPane {
             presentationPanel.previous();
         } else if (LYRICS_LABEL.equals(currentLabel)) {
             lyricsPanel.previous();
+        } else if (IMAGE_LABEL.equals(currentLabel)) {
+            imagePanel.previous();
+        } else if (VIDEO_LABEL.equals(currentLabel)) {
+            videoPanel.previous();
+        } else if (TIMER_LABEL.equals(currentLabel)) {
+            timerPanel.previous();
         }
     }
 
