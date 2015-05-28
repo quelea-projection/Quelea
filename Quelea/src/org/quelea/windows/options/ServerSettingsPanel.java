@@ -298,7 +298,7 @@ public class ServerSettingsPanel extends GridPane implements PropertyPanel {
     private String urlMLCache;
     private String urlRCCache;
 
-    private String getMLURL() {
+    public String getMLURL() {
         if (urlMLCache == null) {
             if (QueleaProperties.get().getUseMobLyrics() && QueleaApp.get().getMobileLyricsServer() != null) {
                 String ip = getIP();
@@ -321,7 +321,7 @@ public class ServerSettingsPanel extends GridPane implements PropertyPanel {
         return urlMLCache;
     }
 
-    private String getRCURL() {
+    public String getRCURL() {
         if (urlRCCache == null) {
             if (QueleaProperties.get().getUseRemoteControl() && QueleaApp.get().getRemoteControlServer() != null) {
                 String ip = getIP();

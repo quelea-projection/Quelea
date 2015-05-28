@@ -38,6 +38,7 @@ import org.quelea.data.db.LegacyDB;
 import org.quelea.data.db.SongManager;
 import org.quelea.data.displayable.SongDisplayable;
 import org.quelea.data.powerpoint.OOUtils;
+import org.quelea.server.AutoDetectServer;
 import org.quelea.server.MobileLyricsServer;
 import org.quelea.server.RemoteControlServer;
 import org.quelea.services.languages.LabelGrabber;
@@ -167,6 +168,19 @@ public final class Main extends Application {
                         }
                     } else {
                         LOGGER.log(Level.INFO, "Remote control disabled");
+                    }
+                    
+                    if (QueleaProperties.get().getUseAutoDetectServers()) {
+                        LOGGER.log(Level.INFO, "Starting auto-detection server on {0}", QueleaProperties.get().getAutoDetectPort());
+                        try {
+                            AutoDetectServer ads = new AutoDetectServer(QueleaProperties.get().getAutoDetectPort());
+                            ads.start();
+                            QueleaApp.get().setAutoDetectServer(ads);
+                        } catch (IOException ex) {
+                            LOGGER.log(Level.INFO, "Couldn't create auto-detect server", ex);
+                        }
+                    } else {
+                        LOGGER.log(Level.INFO, "Auto-detect servers disabled");
                     }
 
                     Platform.runLater(new Runnable() {
