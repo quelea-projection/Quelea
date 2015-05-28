@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import java.util.List;
 import org.javafx.dialog.Dialog;
 import org.quelea.data.Schedule;
+import org.quelea.server.AutoDetectServer;
 import org.quelea.server.MobileLyricsServer;
 import org.quelea.server.RemoteControlServer;
 import org.quelea.services.languages.LabelGrabber;
@@ -38,6 +39,7 @@ public class QueleaApp {
     private DisplayStage stageWindow;
     private MobileLyricsServer mls;
     private RemoteControlServer rcs;
+    private AutoDetectServer ads;
     private List<Runnable> runnables = new ArrayList<>();
     private volatile boolean loaded;
 
@@ -166,5 +168,9 @@ public class QueleaApp {
      */
     public void setMainWindow(MainWindow mainWindow) {
         this.mainWindow = mainWindow;
+    }
+
+    public void setAutoDetectServer(AutoDetectServer ads) {
+        this.ads = ads;
     }
 }
