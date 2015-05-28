@@ -367,7 +367,7 @@ public class RemoteControlServer {
                 response += lyrics();
             } else if (lp.getDisplayable() instanceof MultimediaDisplayable) {
                 response = "<i>" + LabelGrabber.INSTANCE.getLabel("currently.displaying.text") + ": " + lp.getDisplayable().getPreviewText() + "<br/>" + "</i>";
-                response += "<a href=\"/play\" target=\"empty\"><button type=\"button\" id=\"playbutton\">" + LabelGrabber.INSTANCE.getLabel("play") + "</button></a><br/><br/>";
+                response += "<button type=\"button\" onclick=\"play();\" id=\"playbutton\">" + LabelGrabber.INSTANCE.getLabel("play") + "</button><br/><br/>";
                 response += "<i>" + LabelGrabber.INSTANCE.getLabel("remote.empty.lyrics") + "</i>";
             } else if (lp.getDisplayable() != null) {
                 response = "<i>" + LabelGrabber.INSTANCE.getLabel("currently.displaying.text") + ": " + lp.getDisplayable().getPreviewText() + "<br/><br/>" + "</i>";
@@ -399,9 +399,9 @@ public class RemoteControlServer {
             } else {
                 sb.append("<div class=\"inner\">");
             }
-            sb.append("<a href=\"/s" + i + "\" target=\"empty\">");
+            sb.append("<p class=\"empty\" onclick=\"section(").append(i).append(");\">");
             sb.append(lyricBlock);
-            sb.append("</a></div>");
+            sb.append("</p></div>");
             i++;
         }
         sb.append("</div>");
