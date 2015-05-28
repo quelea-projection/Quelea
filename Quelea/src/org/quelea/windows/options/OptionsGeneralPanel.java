@@ -138,7 +138,7 @@ public class OptionsGeneralPanel extends GridPane implements PropertyPanel {
 
         Label useOOLabel = new Label(LabelGrabber.INSTANCE.getLabel("use.oo.label"));
         GridPane.setConstraints(useOOLabel, 1, rows);
-//        getChildren().add(useOOLabel);
+        getChildren().add(useOOLabel);
         useOOCheckBox = new CheckBox();
         useOOCheckBox.selectedProperty().addListener(new javafx.beans.value.ChangeListener<Boolean>() {
             @Override
@@ -154,19 +154,19 @@ public class OptionsGeneralPanel extends GridPane implements PropertyPanel {
         });
         useOOLabel.setLabelFor(useOOCheckBox);
         GridPane.setConstraints(useOOCheckBox, 2, rows);
-//        getChildren().add(useOOCheckBox);
-//        rows++;
+        getChildren().add(useOOCheckBox);
+        rows++;
 
         Label ooPathLabel = new Label(LabelGrabber.INSTANCE.getLabel("oo.path"));
         GridPane.setConstraints(ooPathLabel, 1, rows);
-//        getChildren().add(ooPathLabel);
+        getChildren().add(ooPathLabel);
         ooPathTextField = new TextField();
         ooPathTextField.setMaxWidth(Double.MAX_VALUE);
         GridPane.setHgrow(ooPathTextField, Priority.ALWAYS);
         ooPathTextField.setEditable(false);
         ooPathLabel.setLabelFor(ooPathTextField);
         GridPane.setConstraints(ooPathTextField, 2, rows);
-//        getChildren().add(ooPathTextField);
+        getChildren().add(ooPathTextField);
         ooChooser = new DirectoryChooser();
         selectButton = new Button(LabelGrabber.INSTANCE.getLabel("browse"));
         selectButton.setDisable(true);
@@ -180,8 +180,8 @@ public class OptionsGeneralPanel extends GridPane implements PropertyPanel {
             }
         });
         GridPane.setConstraints(selectButton, 3, rows);
-//        getChildren().add(selectButton);
-//        rows++;
+        getChildren().add(selectButton);
+        rows++;
 
         Label oneLineModeLabel = new Label(LabelGrabber.INSTANCE.getLabel("one.line.mode.label"));
         GridPane.setConstraints(oneLineModeLabel, 1, rows);
