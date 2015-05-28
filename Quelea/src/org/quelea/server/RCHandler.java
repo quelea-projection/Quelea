@@ -132,15 +132,9 @@ public class RCHandler {
     }
 
     public static void setLyrics(final String index) {
-        Platform.runLater(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    int num = Integer.parseInt(index.substring(2));
-                    QueleaApp.get().getMainWindow().getMainPanel().getLivePanel().getLyricsPanel().select(num);
-                } catch (Exception ex) {
-                }
-            }
+        Platform.runLater(() -> {
+            int num = Integer.parseInt(index.split("section")[1]);
+            QueleaApp.get().getMainWindow().getMainPanel().getLivePanel().getLyricsPanel().select(num);
         });
     }
 
