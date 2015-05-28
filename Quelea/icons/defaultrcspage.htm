@@ -4,7 +4,6 @@
         <title>Quelea Remote Control</title>
         <meta charset="utf-8">
         <meta name="apple-mobile-web-app-capable" content="yes">
-        <meta name="mobile-web-app-capable" content="yes">
         <style type="text/css">
             body {
                 font-family: 'DejaVu Sans',sans-serif;
@@ -13,13 +12,6 @@
             }
 
             button {
-                background-color: #E6E6E6; background-image: -webkit-gradient(linear, left top, left bottom, from(#E6E6E6), to(#CCCCCC));
-                background-image: -webkit-linear-gradient(top, #E6E6E6, #CCC);
-                background-image: -moz-linear-gradient(top, #E6E6E6, #CCC);
-                background-image: -ms-linear-gradient(top, #E6E6E6, #CCC);
-                background-image: -o-linear-gradient(top, #E6E6E6, #CCC);
-                background-image: linear-gradient(to bottom, #E6E6E6, #CCC);
-
                 border:1px solid #cacaca;
                 -webkit-border-radius: 10px;
                 -moz-border-radius: 10px;
@@ -37,6 +29,15 @@
                 vertical-align: middle;
                 color: black;
             }
+            
+            .unselected {
+                background-color: #E6E6E6; background-image: -webkit-gradient(linear, left top, left bottom, from(#E6E6E6), to(#CCCCCC));
+                background-image: -webkit-linear-gradient(top, #E6E6E6, #CCC);
+                background-image: -moz-linear-gradient(top, #E6E6E6, #CCC);
+                background-image: -ms-linear-gradient(top, #E6E6E6, #CCC);
+                background-image: -o-linear-gradient(top, #E6E6E6, #CCC);
+                background-image: linear-gradient(to bottom, #E6E6E6, #CCC);
+            }
 
             .selected {
                 border:1px solid #b3b3b3;
@@ -47,10 +48,6 @@
                 background-image: -ms-linear-gradient(top, #cdcdcd, #b3b3b3);
                 background-image: -o-linear-gradient(top, #cdcdcd, #b3b3b3);
                 background-image: linear-gradient(to bottom, #cdcdcd, #b3b3b3);
-            }
-
-            .unselected {
-
             }
 
             #center {
@@ -123,6 +120,11 @@
                 padding: 0px;
                 font-size: 2em;
             }
+            .empty { 
+                font-size: 100%;
+                cursor: pointer;
+                margin: 0px; 
+            }
 
         </style>
         <script>
@@ -132,13 +134,13 @@
             var statuscache;
             function setup()
             {
-                setInterval(function() {
+                setInterval(function () {
                     loadXMLDoc();
                     stateCheck();
                 }, 400);
                 xmlhttp = new XMLHttpRequest();
                 statushttp = new XMLHttpRequest();
-                xmlhttp.onreadystatechange = function()
+                xmlhttp.onreadystatechange = function ()
                 {
                     if (xmlhttp.readyState == 4 && xmlhttp.status == 200)
                     {
@@ -149,7 +151,7 @@
 
                     }
                 }
-                statushttp.onreadystatechange = function()
+                statushttp.onreadystatechange = function ()
                 {
                     if (statushttp.readyState == 4 && statushttp.status == 200)
                     {
@@ -187,7 +189,7 @@
             {
                 xmlhttp.open("GET", "/lyrics", true);
                 xmlhttp.timeout = 4000;
-                xmlhttp.ontimeout = function() {
+                xmlhttp.ontimeout = function () {
                     document.getElementById("lyrics").innerHTML = "";
                 }
                 xmlhttp.send();
@@ -196,39 +198,84 @@
             {
                 statushttp.open("GET", "/status", true);
                 statushttp.timeout = 4000;
-                statushttp.ontimeout = function() {
+                statushttp.ontimeout = function () {
                     document.getElementById("logobutton").className = "unselected";
                     document.getElementById("blackbutton").className = "unselected";
                     document.getElementById("clearbutton").className = "unselected";
                 }
                 statushttp.send();
             }
+            function nextSlide() {
+                var request = new XMLHttpRequest();
+                request.open('GET', '/next', true);
+                request.send();
+                request = null;
+            }
+            function previousSlide() {
+                var request = new XMLHttpRequest();
+                request.open('GET', '/prev', true);
+                request.send();
+                request = null;
+            }
+            function nextItem() {
+                var request = new XMLHttpRequest();
+                request.open('GET', '/nextitem', true);
+                request.send();
+                request = null;
+            }
+            function previousItem() {
+                var request = new XMLHttpRequest();
+                request.open('GET', '/previtem', true);
+                request.send();
+                request = null;
+            }
+            function logo() {
+                var request = new XMLHttpRequest();
+                request.open('GET', '/tlogo', true);
+                request.send();
+                request = null;
+            }
+            function black() {
+                var request = new XMLHttpRequest();
+                request.open('GET', '/black', true);
+                request.send();
+                request = null;
+            }
+            function clears() {
+                var request = new XMLHttpRequest();
+                request.open('GET', '/clear', true);
+                request.send();
+                request = null;
+            }
+            function play() {
+                var request = new XMLHttpRequest();
+                request.open('GET', '/play', true);
+                request.send();
+                request = null;
+            }
+            function section(i) {
+                var request = new XMLHttpRequest();
+                request.open('GET', '/s' + i, true);
+                request.send();
+                request = null;
+            }
         </script>
     </head>
     <body>
-        <a href="/tlogo" target="empty"><button type="button" id="logobutton" class="unselected">[logo.text]</button></a>
-        <a href="/black" target="empty"><button type="button" id="blackbutton" class="unselected">[black.text]</button></a>
-        <a href="/clear" target="empty"><button type="button" id="clearbutton" class="unselected">[clear.text]</button></a><br/>
-        <a href="/prev" target="empty"><button type="button">[prev.text]</button></a>
-        <a href="/next" target="empty"><button type="button">[next.text]</button></a><br/>
-        <a href="/previtem" target="empty"><button type="button" >[previtem.text]</button></a>
-        <a href="/nextitem" target="empty"><button type="button">[nextitem.text]</button></a><br/>
-        <!-- Be warned. This is hacky. Because not all browsers correctly implement a 204 HTTP Header to not-refresh or reload content on a page,
-             I have designed this beauty. Every link on this page should use target="empty" to send all GET requests to the iframe. The iframe
-             then loads the page itself (which should *ALWAYS* be an empty bodied 200 header). This is highly efficient, and incredibly hacky.
-             The iframe should always utilise display:none;. 
-             The main page is never reloaded but the built in server will still accept the GET request and act accordingly.
-             
-             I'm not liable for this code...
-        -->
-        <iframe name="empty"></iframe>
+        <button type="button" onclick="logo();" id="logobutton" class="unselected">[logo.text]</button>
+        <button type="button" onclick="black();" id="blackbutton" class="unselected">[black.text]</button>
+        <button type="button" onclick="clears();" id="clearbutton" class="unselected">[clear.text]</button><br/>
+        <button type="button" onclick="previousSlide();" class="unselected">[prev.text]</button>
+        <button type="button" onclick="nextSlide();" class="unselected">[next.text]</button><br/>
+        <button type="button" onclick="previousItem();" class="unselected">[previtem.text]</button>
+        <button type="button" onclick="nextItem();" class="unselected">[nextitem.text]</button><br/>
         &nbsp;
         <div id="center">
             <div id="lyrics"></div>
         </div>
 
         <div id="logout">
-            <a href="/logout"><button type="button">[logout.text]</button></a>
+            <a href="/logout"><button type="button" class="button">[logout.text]</button></a>
         </div>
     </body>
 </html>

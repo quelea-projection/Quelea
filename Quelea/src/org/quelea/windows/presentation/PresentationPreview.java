@@ -31,6 +31,9 @@ import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.FlowPane;
 import org.quelea.data.powerpoint.PresentationSlide;
+import org.quelea.services.utils.QueleaProperties;
+import org.quelea.windows.main.MainPanel;
+import org.quelea.windows.main.QueleaApp;
 
 /**
  * A JList for specifically displaying presentation slides.
@@ -79,12 +82,14 @@ public class PresentationPreview extends ScrollPane {
         setOnKeyPressed(new EventHandler<KeyEvent>() {
             @Override
             public void handle(KeyEvent t) {
-                if (t.getCode() == KeyCode.DOWN || t.getCode() == KeyCode.RIGHT) {
+                if (t.getCode() == KeyCode.RIGHT) {
+                    t.consume();
                     if (selectedIndex > 0 && selectedIndex <= slides.length - 1) {
                         select(selectedIndex + 1);
                     }
                 }
-                if (t.getCode() == KeyCode.UP || t.getCode() == KeyCode.LEFT) {
+                if (t.getCode() == KeyCode.LEFT) {
+                    t.consume();
                     if (selectedIndex >= 2) {
                         select(selectedIndex - 1);
                     }
@@ -101,7 +106,7 @@ public class PresentationPreview extends ScrollPane {
             }
         });
     }
-    
+
     @Override
     public void requestFocus() {
         super.requestFocus();
@@ -161,6 +166,12 @@ public class PresentationPreview extends ScrollPane {
             }
         } else if (!loopback && selectedIndex > 0 && selectedIndex <= slides.length - 1) {
             select(selectedIndex + 1);
+        } else if (selectedIndex == slides.length && QueleaProperties.get().getSongOverflow()) {
+            MainPanel qmp = QueleaApp.get().getMainWindow().getMainPanel();
+            boolean lastItemTest = qmp.getLivePanel().getDisplayable() == qmp.getSchedulePanel().getScheduleList().getItems().get(qmp.getSchedulePanel().getScheduleList().getItems().size() - 1);
+            if (QueleaProperties.get().getAdvanceOnLive() && QueleaProperties.get().getSongOverflow() && !lastItemTest) {
+                qmp.getPreviewPanel().goLive();
+            }
         }
     }
 
@@ -171,6 +182,23 @@ public class PresentationPreview extends ScrollPane {
     public void previousSlide() {
         if (selectedIndex >= 2) {
             select(selectedIndex - 1);
+        } else {
+            MainPanel qmp = QueleaApp.get().getMainWindow().getMainPanel();
+            boolean firstItemTest = qmp.getSchedulePanel().getScheduleList().getItems().get(0) == qmp.getLivePanel().getDisplayable();
+            if (QueleaProperties.get().getAdvanceOnLive() && QueleaProperties.get().getSongOverflow() && !firstItemTest) {
+                //Assuming preview panel is one ahead, and should be one behind
+                int index = qmp.getSchedulePanel().getScheduleList().getSelectionModel().getSelectedIndex();
+                if (qmp.getLivePanel().getDisplayable() == qmp.getSchedulePanel().getScheduleList().getItems().get(qmp.getSchedulePanel().getScheduleList().getItems().size() - 1)) {
+                    index -= 1;
+                } else {
+                    index -= 2;
+                }
+                if (index >= 0) {
+                    qmp.getSchedulePanel().getScheduleList().getSelectionModel().clearAndSelect(index);
+                    qmp.getPreviewPanel().selectLastLyric();
+                    qmp.getPreviewPanel().goLive();
+                }
+            }
         }
     }
 
@@ -242,5 +270,10 @@ public class PresentationPreview extends ScrollPane {
         this.slides = null;
         selectedIndex = -1;
         selectedSlide = null;
+    }
+
+    public void selectLast() {
+        selectedIndex = slides.length;
+        select(selectedIndex);
     }
 }

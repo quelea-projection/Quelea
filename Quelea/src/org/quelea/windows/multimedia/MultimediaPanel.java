@@ -22,6 +22,8 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
@@ -29,10 +31,13 @@ import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import org.quelea.data.displayable.MultimediaDisplayable;
 import org.quelea.data.displayable.VideoDisplayable;
+import org.quelea.services.utils.QueleaProperties;
 import org.quelea.services.utils.Utils;
 import org.quelea.windows.main.AbstractPanel;
 import org.quelea.windows.main.DisplayCanvas;
 import org.quelea.windows.main.DisplayableDrawer;
+import org.quelea.windows.main.MainPanel;
+import org.quelea.windows.main.QueleaApp;
 
 /**
  * A panel used in the live / preview panels for playing audio.
@@ -70,6 +75,17 @@ public class MultimediaPanel extends AbstractPanel {
         setMinWidth(50);
         setMinHeight(50);
         setStyle("-fx-background-color:grey;");
+        
+        addEventFilter(KeyEvent.KEY_PRESSED, (KeyEvent t) -> {
+            if (t.getCode().equals(KeyCode.PAGE_DOWN) || t.getCode().equals(KeyCode.DOWN)) {
+                t.consume();
+                QueleaApp.get().getMainWindow().getMainPanel().getLivePanel().advance();
+            } else if (t.getCode().equals(KeyCode.PAGE_UP) || t.getCode().equals(KeyCode.UP)) {
+                t.consume();
+                QueleaApp.get().getMainWindow().getMainPanel().getLivePanel().previous();
+            }
+        });
+        
         DisplayCanvas dummyCanvas = new DisplayCanvas(false, false, false, this::updateCanvas, DisplayCanvas.Priority.LOW);
         registerDisplayCanvas(dummyCanvas);
     }
@@ -81,7 +97,7 @@ public class MultimediaPanel extends AbstractPanel {
             new Thread() {
                 @Override
                 public void run() {
-                    Image img = Utils.getVidBlankImage(((VideoDisplayable)displayable).getLocationAsFile());
+                    Image img = Utils.getVidBlankImage(((VideoDisplayable) displayable).getLocationAsFile());
                     Platform.runLater(() -> {
                         imgView.setImage(img);
                     });
@@ -117,5 +133,40 @@ public class MultimediaPanel extends AbstractPanel {
     public DisplayableDrawer getDrawer(DisplayCanvas canvas) {
         drawer.setCanvas(canvas);
         return drawer;
+    }
+
+    /**
+     * Advances the current slide.
+     * <p/>
+     */
+    public void advance() {
+        MainPanel qmp = QueleaApp.get().getMainWindow().getMainPanel();
+        boolean lastItemTest = qmp.getLivePanel().getDisplayable() == qmp.getSchedulePanel().getScheduleList().getItems().get(qmp.getSchedulePanel().getScheduleList().getItems().size() - 1);
+        if (QueleaProperties.get().getAdvanceOnLive() && QueleaProperties.get().getSongOverflow() && !lastItemTest) {
+            qmp.getPreviewPanel().goLive();
+        }
+    }
+
+    /**
+     * Moves to the previous slide.
+     * <p/>
+     */
+    public void previous() {
+        MainPanel qmp = QueleaApp.get().getMainWindow().getMainPanel();
+        boolean firstItemTest = qmp.getSchedulePanel().getScheduleList().getItems().get(0) == qmp.getLivePanel().getDisplayable();
+        if (QueleaProperties.get().getAdvanceOnLive() && QueleaProperties.get().getSongOverflow() && !firstItemTest) {
+            //Assuming preview panel is one ahead, and should be one behind
+            int index = qmp.getSchedulePanel().getScheduleList().getSelectionModel().getSelectedIndex();
+            if (qmp.getLivePanel().getDisplayable() == qmp.getSchedulePanel().getScheduleList().getItems().get(qmp.getSchedulePanel().getScheduleList().getItems().size() - 1)) {
+                index -= 1;
+            } else {
+                index -= 2;
+            }
+            if (index >= 0) {
+                qmp.getSchedulePanel().getScheduleList().getSelectionModel().clearAndSelect(index);
+                qmp.getPreviewPanel().selectLastLyric();
+                qmp.getPreviewPanel().goLive();
+            }
+        }
     }
 }

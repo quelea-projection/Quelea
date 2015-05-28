@@ -150,4 +150,8 @@ public class OptionsDialog extends Stage {
         return okButton;
     }
 
+    public ServerSettingsPanel getServerSettingsPanel() {
+        return serverSettingsPanel;
+    }
+    
 }
