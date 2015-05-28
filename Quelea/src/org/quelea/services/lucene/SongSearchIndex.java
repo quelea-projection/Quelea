@@ -136,6 +136,15 @@ public class SongSearchIndex implements SearchIndex<SongDisplayable> {
         remove(song);
         add(song);
     }
+    
+    /**
+     * Get a song by its ID.
+     * @param id the id of the song.
+     * @return the song with the given id.
+     */
+    public synchronized SongDisplayable getByID(long id) {
+        return songs.get(id);
+    }
 
     /**
      * Search for songs that match the given filter.
