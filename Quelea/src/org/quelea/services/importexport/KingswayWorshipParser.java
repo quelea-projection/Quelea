@@ -103,12 +103,12 @@ public class KingswayWorshipParser implements SongParser {
         if (all) {
             startNum = getStart();
             endNum = ROUGH_NUM_SONGS + 20;
-            System.out.println("all");
+//            System.out.println("all");
         } else if (range) {
             String results = KingswayRangeInputDialog.getUserInput();
             startNum = Integer.parseInt(results.split(",")[0]);
             endNum = Integer.parseInt(results.split(",")[1]);
-            System.out.println("range");
+//            System.out.println("range");
         } else {
             String entry = InputDialog.getUserInput(LabelGrabber.INSTANCE.getLabel("song.id.selector"), LabelGrabber.INSTANCE.getLabel("song.id.selector"));
             try {
@@ -117,12 +117,12 @@ public class KingswayWorshipParser implements SongParser {
             } catch (NumberFormatException nfe) {
                 return null;
             }
-            System.out.println("single");
+//            System.out.println("single");
         }
 
         int index = startNum;
         while ((pageText = getPageText(UK, index)) != null && index < endNum) {
-            System.out.println("Starting");
+//            System.out.println("Starting");
             int percentage = (int) (((double) index / (double) ((all) ? ROUGH_NUM_SONGS : endNum) * 100));
             LOGGER.log(Level.INFO, "Kingsway import percent complete: {0}", percentage);
             if (statusPanel != null) {
