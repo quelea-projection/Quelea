@@ -252,7 +252,7 @@ public final class SongManager {
                 updatedSong.setLyrics(song.getLyrics(true, true));
                 updatedSong.setKey(song.getKey());
                 updatedSong.setPublisher(song.getPublisher());
-                updatedSong.setTags(nullTags ? new ArrayList<String>() : Arrays.asList(song.getTags()));
+                updatedSong.setTags(nullTags ? new ArrayList<>() : Arrays.asList(song.getTags()));
                 updatedSong.setTitle(song.getTitle());
                 updatedSong.setTranslations(song.getTranslations());
                 updatedSong.setTheme(nullTheme ? ThemeDTO.DEFAULT_THEME.getTheme() : new Theme(song.getSections()[0].getTheme().getTheme()));
