@@ -17,10 +17,19 @@
  */
 package org.quelea.server;
 
+import com.sun.net.httpserver.HttpExchange;
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
 import java.util.ArrayList;
+import java.util.TreeSet;
+import java.util.regex.Pattern;
 import javafx.application.Platform;
+import org.quelea.data.db.SongManager;
 import org.quelea.data.displayable.Displayable;
+import org.quelea.data.displayable.SongDisplayable;
 import org.quelea.services.languages.LabelGrabber;
+import org.quelea.services.lucene.SongSearchIndex;
 import org.quelea.services.utils.QueleaProperties;
 import org.quelea.windows.main.MainPanel;
 import org.quelea.windows.main.QueleaApp;
@@ -129,8 +138,8 @@ public class RCHandler {
                 try {
                     int num = Integer.parseInt(index.substring(2));
                     QueleaApp.get().getMainWindow().getMainPanel().getLivePanel().getLyricsPanel().select(num);
+                } catch (Exception ex) {
                 }
-                catch(Exception ex) {}
             }
         });
     }
@@ -193,7 +202,7 @@ public class RCHandler {
         Displayable preview = QueleaApp.get().getMainWindow().getMainPanel().getPreviewPanel().getDisplayable();
         Displayable live = QueleaApp.get().getMainWindow().getMainPanel().getLivePanel().getDisplayable();
 
-        String display = "";
+        String display = "<html>";
         for (int i = 0; i < QueleaApp.get().getMainWindow().getMainPanel().getSchedulePanel().getScheduleList().getItems().size(); i++) {
             Displayable d = ((Displayable) QueleaApp.get().getMainWindow().getMainPanel().getSchedulePanel().getScheduleList().getItems().get(i));
             if (d.equals(preview)) {
@@ -211,6 +220,90 @@ public class RCHandler {
             }
             display += "<br/>";
         }
+        display += "</html>";
         return display;
+    }
+
+    public static String databaseSearch(HttpExchange he) throws UnsupportedEncodingException, IOException {
+        String searchString;
+        if (he.getRequestURI().toString().contains("/search/")) {
+            String uri = URLDecoder.decode(he.getRequestURI().toString(), "UTF-8");
+            searchString = uri.split("/search/", 2)[1];
+            TreeSet<SongDisplayable> songs = new TreeSet<>();
+            if (searchString == null || searchString.trim().isEmpty() || Pattern.compile("[^\\w ]", Pattern.UNICODE_CHARACTER_CLASS).matcher(searchString).replaceAll("").isEmpty()) {
+                return LabelGrabber.INSTANCE.getLabel("invalid.search");
+            } else {
+                SongDisplayable[] titleSongs = SongManager.get().getIndex().filter(searchString, SongSearchIndex.FilterType.TITLE);
+                for (SongDisplayable song : titleSongs) {
+                    song.setLastSearch(searchString);
+                    songs.add(song);
+                }
+
+                SongDisplayable[] lyricSongs = SongManager.get().getIndex().filter(searchString, SongSearchIndex.FilterType.BODY);
+                for (SongDisplayable song : lyricSongs) {
+                    song.setLastSearch(null);
+                    songs.add(song);
+                }
+
+                SongDisplayable[] authorSongs = SongManager.get().getIndex().filter(searchString, SongSearchIndex.FilterType.AUTHOR);
+                for (SongDisplayable song : authorSongs) {
+                    songs.add(song);
+                }
+            }
+
+            StringBuilder response = new StringBuilder();
+            response.append("<html>");
+            for (SongDisplayable sd : songs) {
+                response.append("<a href=\"/song/").append(sd.getID()).append("\">");
+                response.append(sd.getTitle()).append(" - ").append(sd.getAuthor());
+                response.append("</a>").append("<br/>");
+            }
+            response.append("</html>");
+            return response.toString();
+        } else {
+            return "";
+        }
+    }
+
+    public static String addSongToSchedule(HttpExchange he) {
+        String songIDString;
+        long songID;
+        if (he.getRequestURI().toString().contains("/add/")) {
+            songIDString = he.getRequestURI().toString().split("/add/", 2)[1];
+            songID = Long.parseLong(songIDString);
+            SongDisplayable sd = SongManager.get().getIndex().getByID(songID);
+
+            Platform.runLater(new Runnable() {
+
+                @Override
+                public void run() {
+                    QueleaApp.get().getMainWindow().getMainPanel().getSchedulePanel().getScheduleList().add(sd);
+                }
+            });
+
+            return LabelGrabber.INSTANCE.getLabel("rcs.add.success");
+        }
+        return LabelGrabber.INSTANCE.getLabel("rcs.add.failed");
+    }
+
+    public static String songDisplay(HttpExchange he) {
+        String songIDString;
+        long songID;
+        if (he.getRequestURI().toString().contains("/song/")) {
+            songIDString = he.getRequestURI().toString().split("/song/")[1];
+            songID = Long.parseLong(songIDString);
+            if (SongManager.get().getIndex().getByID(songID) != null) {
+                SongDisplayable sd = SongManager.get().getIndex().getByID(songID);
+                StringBuilder response = new StringBuilder();
+                response.append("<html>");
+                response.append(sd.getTitle()).append("<br/>");
+                response.append(sd.getAuthor()).append("<br/><br/>");
+                response.append(sd.getLyrics(false, false).replaceAll("\n", "<br/>")).append("<br/><br/>");
+                response.append("<a href=\"/add/").append(songID).append("\">").append(LabelGrabber.INSTANCE.getLabel("rcs.add.song")).append("</a>");
+                response.append("</html>");
+                return response.toString();
+            }
+        }
+        return "";
     }
 }

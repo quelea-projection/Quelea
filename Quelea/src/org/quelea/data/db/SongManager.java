@@ -49,7 +49,7 @@ public final class SongManager {
 
     private static final Logger LOGGER = LoggerUtils.getLogger();
     private static volatile SongManager INSTANCE;
-    private final SearchIndex<SongDisplayable> index;
+    private final SongSearchIndex index;
     private boolean indexIsClear;
     private SoftReference<SongDisplayable[]> cacheSongs = new SoftReference<>(null);
     private final Set<DatabaseListener> listeners;
@@ -86,7 +86,7 @@ public final class SongManager {
      * <p/>
      * @return the search index.
      */
-    public SearchIndex<SongDisplayable> getIndex() {
+    public SongSearchIndex getIndex() {
         return index;
     }
 

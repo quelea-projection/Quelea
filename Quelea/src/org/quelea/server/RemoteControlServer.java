@@ -38,12 +38,17 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.TreeSet;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.regex.Pattern;
+import org.quelea.data.db.SongManager;
 import org.quelea.data.displayable.MultimediaDisplayable;
+import org.quelea.data.displayable.SongDisplayable;
 import org.quelea.data.displayable.TextDisplayable;
 import org.quelea.data.displayable.TextSection;
 import org.quelea.services.languages.LabelGrabber;
+import org.quelea.services.lucene.SongSearchIndex;
 import org.quelea.services.utils.LoggerUtils;
 import org.quelea.windows.main.LivePanel;
 import org.quelea.windows.main.QueleaApp;
@@ -86,7 +91,10 @@ public class RemoteControlServer {
         server.createContext("/lyrics", new LyricsHandler());
         server.createContext("/status", new StatusHandler());
         server.createContext("/schedule", new ScheduleHandler());
-        server.createContext("/s", new SectionHandler());
+        server.createContext("/search", new DatabaseSearchHandler());
+        server.createContext("/song", new SongDisplayHandler());
+        server.createContext("/add", new AddSongHandler());
+        server.createContext("/section", new SectionHandler());
         rootcontext.getFilters().add(new ParameterFilter());
         server.setExecutor(null);
     }
@@ -119,6 +127,49 @@ public class RemoteControlServer {
      */
     public boolean isRunning() {
         return running;
+    }
+
+    private class SongDisplayHandler implements HttpHandler {
+
+        @Override
+        public void handle(HttpExchange he) throws IOException {
+            final String response;
+            response = RCHandler.songDisplay(he);
+            he.sendResponseHeaders(200, response.getBytes().length);
+            OutputStream os = he.getResponseBody();
+            os.write(response.getBytes());
+            os.close();
+        }
+
+        
+    }
+
+    private class AddSongHandler implements HttpHandler {
+
+        @Override
+        public void handle(HttpExchange he) throws IOException {
+            final String response;
+            response = RCHandler.addSongToSchedule(he);
+            he.sendResponseHeaders(200, response.getBytes().length);
+            OutputStream os = he.getResponseBody();
+            os.write(response.getBytes());
+            os.close();
+        }
+
+        
+    }
+
+    private class DatabaseSearchHandler implements HttpHandler {
+
+        @Override
+        public void handle(HttpExchange he) throws IOException {
+            final String response;
+            response = RCHandler.databaseSearch(he);
+            he.sendResponseHeaders(200, response.getBytes().length);
+            OutputStream os = he.getResponseBody();
+            os.write(response.getBytes());
+            os.close();
+        }
     }
 
     /**
@@ -497,7 +548,7 @@ public class RemoteControlServer {
      * @return a string with the file contents.
      * @throws IOException if something goes wrong.
      */
-    private static String readFile(String path) throws IOException {
+    public static String readFile(String path) throws IOException {
         byte[] encoded = Files.readAllBytes(Paths.get(path));
         return Charset.forName("UTF-8").decode(ByteBuffer.wrap(encoded)).toString();
 
