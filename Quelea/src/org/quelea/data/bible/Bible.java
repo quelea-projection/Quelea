@@ -219,7 +219,7 @@ public final class Bible implements BibleInterface, Serializable {
     public String toString() {
         String abbrev = Utils.getAbbreviation(getName());
         StringBuilder ret = new StringBuilder(getName());
-        if (abbrev.length() > 1) {
+        if (!(getName().contains("(") || getName().contains(")")) && abbrev.length() > 1) {
             ret.append(" (").append(abbrev).append(")");
         }
         return ret.toString();
