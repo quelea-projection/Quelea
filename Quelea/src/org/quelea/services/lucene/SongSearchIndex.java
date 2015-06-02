@@ -27,6 +27,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.regex.Pattern;
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.document.Document;
@@ -94,13 +95,14 @@ public class SongSearchIndex implements SearchIndex<SongDisplayable> {
      */
     @Override
     public synchronized void addAll(Collection<? extends SongDisplayable> songList) {
+        Pattern p = Pattern.compile("[^\\w\\s]", Pattern.UNICODE_CHARACTER_CLASS);
         try (IndexWriter writer = new IndexWriter(index, new IndexWriterConfig(Version.LUCENE_35, analyzer))) {
             for(SongDisplayable song : songList) {
                 Document doc = new Document();
-                doc.add(new Field("title", song.getTitle().replaceAll("[^\\w\\s]", ""), Field.Store.NO, Field.Index.ANALYZED));
-                doc.add(new Field("author", song.getAuthor().replaceAll("[^\\w\\s]", ""), Field.Store.NO, Field.Index.ANALYZED));
-                doc.add(new Field("lyrics", song.getLyrics(false, false).replaceAll("[^\\w\\s]", ""), Field.Store.NO, Field.Index.ANALYZED));
-                doc.add(new Field("number", Long.toString(song.getID()).replaceAll("[^\\w\\s]", ""), Field.Store.YES, Field.Index.ANALYZED));
+                doc.add(new Field("title", p.matcher(song.getTitle()).replaceAll(""), Field.Store.NO, Field.Index.ANALYZED));
+                doc.add(new Field("author", p.matcher(song.getAuthor()).replaceAll(""), Field.Store.NO, Field.Index.ANALYZED));
+                doc.add(new Field("lyrics", p.matcher(song.getLyrics(false, false)).replaceAll(""), Field.Store.NO, Field.Index.ANALYZED));
+                doc.add(new Field("number", p.matcher(Long.toString(song.getID())).replaceAll(""), Field.Store.YES, Field.Index.ANALYZED));
                 writer.addDocument(doc);
                 songs.put(song.getID(), song);
                 LOGGER.log(Level.FINE, "Added song to index: {0}", song.getTitle());
