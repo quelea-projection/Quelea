@@ -1,0 +1,19 @@
+quelea (2015.3) stable; urgency=normal
+ 
+  * Add ability to change the percentage size of the small bible/song text 
+  * Add ability to select overflow traversal through whole schedule using up/down keys
+  * IPv6 addresses only show as a last resort
+  * Top / Bottom for notices now the correct way around
+  * Auto-play now works
+  * Improve bible passage text layout
+  * Add songpro importer
+  * Add SoF importer
+  * Additional Remote Control features for use in Quelea Android App
+  * Fix search behaviour to ignore non-alphanumeric characters in index and search string
+  * Fix long search time when searching for a non-indexed (non-alphanumeric) character
+  * Songs matching search in titles now appear before other results
+  * Fix changing the bible passage theme by right clicking
+  * Fix "switch versions" functionality on bible passages
+  * Fix live videos restarting when song in schedule is edited
+
+ -- Michael Berry <michael@quelea.org>  Wednesday, 16 May 2015 00:00:00 +0000
