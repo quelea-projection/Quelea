@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Quelea Remote Control</title>
+        <meta charset="utf-8">
+        <meta name="apple-mobile-web-app-capable" content="yes">
+        <style type="text/css">
+            body {
+                font-family: 'DejaVu Sans',sans-serif;
+                width: 100%;
+                text-align: center;
+            }
+
+            button {
+                border:1px solid #cacaca;
+                -webkit-border-radius: 10px;
+                -moz-border-radius: 10px;
+                border-radius: 10px;
+
+                width:30%;
+                height:30%;
+                min-height: 150px;
+                min-width: 250px;
+                max-width: 300px;
+                margin: 10px;
+                margin-left:auto;
+                padding: 0px;
+                font-size: 2em;
+                vertical-align: middle;
+                color: black;
+            }
+            
+            .unselected {
+                background-color: #E6E6E6; background-image: -webkit-gradient(linear, left top, left bottom, from(#E6E6E6), to(#CCCCCC));
+                background-image: -webkit-linear-gradient(top, #E6E6E6, #CCC);
+                background-image: -moz-linear-gradient(top, #E6E6E6, #CCC);
+                background-image: -ms-linear-gradient(top, #E6E6E6, #CCC);
+                background-image: -o-linear-gradient(top, #E6E6E6, #CCC);
+                background-image: linear-gradient(to bottom, #E6E6E6, #CCC);
+            }
+
+            .selected {
+                border:1px solid #b3b3b3;
+                background-color: #cdcdcd; 
+                background-image: -webkit-gradient(linear, left top, left bottom, from(#cdcdcd), to(#b3b3b3));
+                background-image: -webkit-linear-gradient(top, #cdcdcd, #b3b3b3);
+                background-image: -moz-linear-gradient(top, #cdcdcd, #b3b3b3);
+                background-image: -ms-linear-gradient(top, #cdcdcd, #b3b3b3);
+                background-image: -o-linear-gradient(top, #cdcdcd, #b3b3b3);
+                background-image: linear-gradient(to bottom, #cdcdcd, #b3b3b3);
+            }
+
+            #center {
+                text-align: center;
+                display: block;
+                margin-top: 25px;
+                width: 90%;
+                margin-left:auto;
+                margin-right:auto;
+            }
+
+            #lyrics {
+                display: inline-block;
+                font-size: 30px;
+            }
+
+            a {
+                color: black;
+                text-decoration: none;
+            }
+
+            a:active {
+                color: black;
+            }
+
+            a:hover {
+                text-decoration: underline;
+
+            }
+
+            a:visited {
+                color: black;
+            }
+
+            .outer {
+
+            }
+
+            .inner {
+                padding-top: 20px;
+                padding-bottom: 20px;
+            }
+
+            .current {
+                font-weight: bold;
+                background-color: #96D1FF;
+
+            }
+
+            iframe {
+                display: none;
+            }
+
+            #logout {
+                text-align: right;
+                position: relative;
+                margin-top: 20px;
+            }
+
+            #logout button {
+                text-align:center;
+                width:25%;
+                height:20%;
+                min-height: 100px;
+                min-width: 100px;
+                max-width: 200px;
+                margin-top: 25px;
+                margin: 10px;
+                margin-left:auto;
+                padding: 0px;
+                font-size: 2em;
+            }
+            .empty { 
+                font-size: 100%;
+                cursor: pointer;
+                margin: 0px; 
+            }
+
+        </style>
+        <script>
+            var xmlhttp;
+            var statushttp;
+            var lyriccache;
+            var statuscache;
+            function setup()
+            {
+                setInterval(function () {
+                    loadXMLDoc();
+                    stateCheck();
+                }, 400);
+                xmlhttp = new XMLHttpRequest();
+                statushttp = new XMLHttpRequest();
+                xmlhttp.onreadystatechange = function ()
+                {
+                    if (xmlhttp.readyState == 4 && xmlhttp.status == 200)
+                    {
+                        if (lyriccache !== xmlhttp.responseText) {
+                            document.getElementById("lyrics").innerHTML = xmlhttp.responseText;
+                            lyriccache = xmlhttp.responseText;
+                        }
+
+                    }
+                }
+                statushttp.onreadystatechange = function ()
+                {
+                    if (statushttp.readyState == 4 && statushttp.status == 200)
+                    {
+                        if (statuscache !== statushttp.responseText) {
+                            statuscache = statushttp.responseText;
+
+                            var st = statuscache.split(",");
+                            if (st[0] === "true") {
+                                document.getElementById("logobutton").className = "selected";
+                            }
+                            else {
+                                document.getElementById("logobutton").className = "unselected";
+                            }
+                            if (st[1] === "true") {
+                                document.getElementById("blackbutton").className = "selected";
+                            }
+                            else {
+                                document.getElementById("blackbutton").className = "unselected";
+                            }
+                            if (st[2] === "true") {
+                                document.getElementById("clearbutton").className = "selected";
+                            }
+                            else {
+                                document.getElementById("clearbutton").className = "unselected";
+                            }
+                            if (document.getElementById("playbutton") !== null) {
+                                document.getElementById("playbutton").innerHTML = st[3];
+                            }
+                        }
+                    }
+                }
+            }
+            window.onload = setup;
+            function loadXMLDoc()
+            {
+                xmlhttp.open("GET", "/lyrics", true);
+                xmlhttp.timeout = 4000;
+                xmlhttp.ontimeout = function () {
+                    document.getElementById("lyrics").innerHTML = "";
+                }
+                xmlhttp.send();
+            }
+            function stateCheck()
+            {
+                statushttp.open("GET", "/status", true);
+                statushttp.timeout = 4000;
+                statushttp.ontimeout = function () {
+                    document.getElementById("logobutton").className = "unselected";
+                    document.getElementById("blackbutton").className = "unselected";
+                    document.getElementById("clearbutton").className = "unselected";
+                }
+                statushttp.send();
+            }
+            function nextSlide() {
+                var request = new XMLHttpRequest();
+                request.open('GET', '/next', true);
+                request.send();
+                request = null;
+            }
+            function previousSlide() {
+                var request = new XMLHttpRequest();
+                request.open('GET', '/prev', true);
+                request.send();
+                request = null;
+            }
+            function nextItem() {
+                var request = new XMLHttpRequest();
+                request.open('GET', '/nextitem', true);
+                request.send();
+                request = null;
+            }
+            function previousItem() {
+                var request = new XMLHttpRequest();
+                request.open('GET', '/previtem', true);
+                request.send();
+                request = null;
+            }
+            function logo() {
+                var request = new XMLHttpRequest();
+                request.open('GET', '/tlogo', true);
+                request.send();
+                request = null;
+            }
+            function black() {
+                var request = new XMLHttpRequest();
+                request.open('GET', '/black', true);
+                request.send();
+                request = null;
+            }
+            function clears() {
+                var request = new XMLHttpRequest();
+                request.open('GET', '/clear', true);
+                request.send();
+                request = null;
+            }
+            function play() {
+                var request = new XMLHttpRequest();
+                request.open('GET', '/play', true);
+                request.send();
+                request = null;
+            }
+            function section(i) {
+                var request = new XMLHttpRequest();
+                request.open('GET', '/section' + i, true);
+                request.send();
+                request = null;
+            }
+        </script>
+    </head>
+    <body>
+        <button type="button" onclick="logo();" id="logobutton" class="unselected">[logo.text]</button>
+        <button type="button" onclick="black();" id="blackbutton" class="unselected">[black.text]</button>
+        <button type="button" onclick="clears();" id="clearbutton" class="unselected">[clear.text]</button><br/>
+        <button type="button" onclick="previousSlide();" class="unselected">[prev.text]</button>
+        <button type="button" onclick="nextSlide();" class="unselected">[next.text]</button><br/>
+        <button type="button" onclick="previousItem();" class="unselected">[previtem.text]</button>
+        <button type="button" onclick="nextItem();" class="unselected">[nextitem.text]</button><br/>
+        &nbsp;
+        <div id="center">
+            <div id="lyrics"></div>
+        </div>
+
+        <div id="logout">
+            <a href="/logout"><button type="button" class="button">[logout.text]</button></a>
+        </div>
+    </body>
+</html>
