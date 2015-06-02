@@ -22,6 +22,7 @@ import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.TreeSet;
 import java.util.regex.Pattern;
 import javafx.application.Platform;
@@ -42,88 +43,57 @@ import org.quelea.windows.multimedia.VLCWindow;
  */
 public class RCHandler {
 
-    private static ArrayList<String> devices = new ArrayList<String>();
+    private static final ArrayList<String> devices = new ArrayList<>();
 
     public static void logo() {
-        Platform.runLater(new Runnable() {
-            @Override
-            public void run() {
-                QueleaApp.get().getMainWindow().getMainPanel().getLivePanel().toggleLogo();
-            }
-        });
+        Platform.runLater(QueleaApp.get().getMainWindow().getMainPanel().getLivePanel()::toggleLogo);
     }
 
     public static void black() {
-        Platform.runLater(new Runnable() {
-            @Override
-            public void run() {
-                QueleaApp.get().getMainWindow().getMainPanel().getLivePanel().toggleBlack();
-            }
-        });
+        Platform.runLater(QueleaApp.get().getMainWindow().getMainPanel().getLivePanel()::toggleBlack);
     }
 
     public static void clear() {
-        Platform.runLater(new Runnable() {
-            @Override
-            public void run() {
-                QueleaApp.get().getMainWindow().getMainPanel().getLivePanel().toggleClear();
-            }
-        });
+        Platform.runLater(QueleaApp.get().getMainWindow().getMainPanel().getLivePanel()::toggleClear);
 
     }
 
     public static void next() {
-        Platform.runLater(new Runnable() {
-            @Override
-            public void run() {
-                QueleaApp.get().getMainWindow().getMainPanel().getLivePanel().advance();
-            }
-        });
+        Platform.runLater(QueleaApp.get().getMainWindow().getMainPanel().getLivePanel()::advance);
     }
 
     public static void prev() {
-        Platform.runLater(new Runnable() {
-            @Override
-            public void run() {
-                QueleaApp.get().getMainWindow().getMainPanel().getLivePanel().previous();
-            }
-        });
+        Platform.runLater(QueleaApp.get().getMainWindow().getMainPanel().getLivePanel()::previous);
 
     }
 
     public static void nextItem() {
-        Platform.runLater(new Runnable() {
-            @Override
-            public void run() {
-                final MainPanel p = QueleaApp.get().getMainWindow().getMainPanel();
-                int current = p.getSchedulePanel().getScheduleList().getItems().indexOf(p.getLivePanel().getDisplayable());
-                current++;
-                p.getSchedulePanel().getScheduleList().getSelectionModel().clearSelection();
-                if (current < p.getSchedulePanel().getScheduleList().getItems().size()) {
-                    p.getSchedulePanel().getScheduleList().getSelectionModel().select(current);
-                } else {
-                    p.getSchedulePanel().getScheduleList().getSelectionModel().select(p.getSchedulePanel().getScheduleList().getItems().size() - 1);
-                }
-                p.getPreviewPanel().goLive();
+        Platform.runLater(() -> {
+            final MainPanel p = QueleaApp.get().getMainWindow().getMainPanel();
+            int current = p.getSchedulePanel().getScheduleList().getItems().indexOf(p.getLivePanel().getDisplayable());
+            current++;
+            p.getSchedulePanel().getScheduleList().getSelectionModel().clearSelection();
+            if (current < p.getSchedulePanel().getScheduleList().getItems().size()) {
+                p.getSchedulePanel().getScheduleList().getSelectionModel().select(current);
+            } else {
+                p.getSchedulePanel().getScheduleList().getSelectionModel().select(p.getSchedulePanel().getScheduleList().getItems().size() - 1);
             }
+            p.getPreviewPanel().goLive();
         });
     }
 
     public static void prevItem() {
-        Platform.runLater(new Runnable() {
-            @Override
-            public void run() {
-                final MainPanel p = QueleaApp.get().getMainWindow().getMainPanel();
-                int current = p.getSchedulePanel().getScheduleList().getItems().indexOf(p.getLivePanel().getDisplayable());
-                current--;
-                p.getSchedulePanel().getScheduleList().getSelectionModel().clearSelection();
-                if (current > 0) {
-                    p.getSchedulePanel().getScheduleList().getSelectionModel().select(current);
-                } else {
-                    p.getSchedulePanel().getScheduleList().getSelectionModel().select(0);
-                }
-                p.getPreviewPanel().goLive();
+        Platform.runLater(() -> {
+            final MainPanel p = QueleaApp.get().getMainWindow().getMainPanel();
+            int current = p.getSchedulePanel().getScheduleList().getItems().indexOf(p.getLivePanel().getDisplayable());
+            current--;
+            p.getSchedulePanel().getScheduleList().getSelectionModel().clearSelection();
+            if (current > 0) {
+                p.getSchedulePanel().getScheduleList().getSelectionModel().select(current);
+            } else {
+                p.getSchedulePanel().getScheduleList().getSelectionModel().select(0);
             }
+            p.getPreviewPanel().goLive();
         });
     }
 
@@ -196,7 +166,7 @@ public class RCHandler {
         Displayable preview = QueleaApp.get().getMainWindow().getMainPanel().getPreviewPanel().getDisplayable();
         Displayable live = QueleaApp.get().getMainWindow().getMainPanel().getLivePanel().getDisplayable();
 
-        String display = "<html>";
+        String display = "<!DOCTYPE html>\n<html>\n<head>\n<meta charset=\"UTF-8\">\n</head>\n";
         for (int i = 0; i < QueleaApp.get().getMainWindow().getMainPanel().getSchedulePanel().getScheduleList().getItems().size(); i++) {
             Displayable d = ((Displayable) QueleaApp.get().getMainWindow().getMainPanel().getSchedulePanel().getScheduleList().getItems().get(i));
             if (d.equals(preview)) {
@@ -223,6 +193,7 @@ public class RCHandler {
         if (he.getRequestURI().toString().contains("/search/")) {
             String uri = URLDecoder.decode(he.getRequestURI().toString(), "UTF-8");
             searchString = uri.split("/search/", 2)[1];
+            System.out.println(searchString);
             TreeSet<SongDisplayable> songs = new TreeSet<>();
             if (searchString == null || searchString.trim().isEmpty() || Pattern.compile("[^\\w ]", Pattern.UNICODE_CHARACTER_CLASS).matcher(searchString).replaceAll("").isEmpty()) {
                 return LabelGrabber.INSTANCE.getLabel("invalid.search");
@@ -240,13 +211,12 @@ public class RCHandler {
                 }
 
                 SongDisplayable[] authorSongs = SongManager.get().getIndex().filter(searchString, SongSearchIndex.FilterType.AUTHOR);
-                for (SongDisplayable song : authorSongs) {
-                    songs.add(song);
-                }
+                songs.addAll(Arrays.asList(authorSongs));
             }
 
             StringBuilder response = new StringBuilder();
-            response.append("<html>");
+            response.append("<!DOCTYPE html><html>");
+            response.append("<head><meta charset=\"UTF-8\"></head>");
             for (SongDisplayable sd : songs) {
                 response.append("<a href=\"/song/").append(sd.getID()).append("\">");
                 response.append(sd.getTitle()).append(" - ").append(sd.getAuthor());
@@ -267,12 +237,8 @@ public class RCHandler {
             songID = Long.parseLong(songIDString);
             SongDisplayable sd = SongManager.get().getIndex().getByID(songID);
 
-            Platform.runLater(new Runnable() {
-
-                @Override
-                public void run() {
-                    QueleaApp.get().getMainWindow().getMainPanel().getSchedulePanel().getScheduleList().add(sd);
-                }
+            Platform.runLater(() -> {
+                QueleaApp.get().getMainWindow().getMainPanel().getSchedulePanel().getScheduleList().add(sd);
             });
 
             return LabelGrabber.INSTANCE.getLabel("rcs.add.success");
@@ -289,7 +255,8 @@ public class RCHandler {
             if (SongManager.get().getIndex().getByID(songID) != null) {
                 SongDisplayable sd = SongManager.get().getIndex().getByID(songID);
                 StringBuilder response = new StringBuilder();
-                response.append("<html>");
+                response.append("<!DOCTYPE html><html>");
+                response.append("<head><meta charset=\"UTF-8\"></head>");
                 response.append(sd.getTitle()).append("<br/>");
                 response.append(sd.getAuthor()).append("<br/><br/>");
                 response.append(sd.getLyrics(false, false).replaceAll("\n", "<br/>")).append("<br/><br/>");

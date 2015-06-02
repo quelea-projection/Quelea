@@ -38,17 +38,12 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.TreeSet;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import java.util.regex.Pattern;
-import org.quelea.data.db.SongManager;
 import org.quelea.data.displayable.MultimediaDisplayable;
-import org.quelea.data.displayable.SongDisplayable;
 import org.quelea.data.displayable.TextDisplayable;
 import org.quelea.data.displayable.TextSection;
 import org.quelea.services.languages.LabelGrabber;
-import org.quelea.services.lucene.SongSearchIndex;
 import org.quelea.services.utils.LoggerUtils;
 import org.quelea.windows.main.LivePanel;
 import org.quelea.windows.main.QueleaApp;
@@ -135,9 +130,9 @@ public class RemoteControlServer {
         public void handle(HttpExchange he) throws IOException {
             final String response;
             response = RCHandler.songDisplay(he);
-            he.sendResponseHeaders(200, response.getBytes().length);
+            he.sendResponseHeaders(200, response.getBytes(Charset.forName("UTF-8")).length);
             OutputStream os = he.getResponseBody();
-            os.write(response.getBytes());
+            os.write(response.getBytes(Charset.forName("UTF-8")));
             os.close();
         }
 
@@ -150,9 +145,9 @@ public class RemoteControlServer {
         public void handle(HttpExchange he) throws IOException {
             final String response;
             response = RCHandler.addSongToSchedule(he);
-            he.sendResponseHeaders(200, response.getBytes().length);
+            he.sendResponseHeaders(200, response.getBytes(Charset.forName("UTF-8")).length);
             OutputStream os = he.getResponseBody();
-            os.write(response.getBytes());
+            os.write(response.getBytes(Charset.forName("UTF-8")));
             os.close();
         }
 
@@ -165,9 +160,9 @@ public class RemoteControlServer {
         public void handle(HttpExchange he) throws IOException {
             final String response;
             response = RCHandler.databaseSearch(he);
-            he.sendResponseHeaders(200, response.getBytes().length);
+            he.sendResponseHeaders(200, response.getBytes(Charset.forName("UTF-8")).length);
             OutputStream os = he.getResponseBody();
-            os.write(response.getBytes());
+            os.write(response.getBytes(Charset.forName("UTF-8")));
             os.close();
         }
     }
