@@ -172,6 +172,7 @@ public class LibrarySongList extends StackPane {
                 setLoading(true);
             }
         });
+        LOGGER.log(Level.INFO, "Performing search for {0}", search);
         filterFuture = filterService.submit(() -> {
             final ObservableList<SongDisplayable> songs = FXCollections.observableArrayList();
 
