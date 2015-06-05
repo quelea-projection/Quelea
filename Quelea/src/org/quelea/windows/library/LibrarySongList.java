@@ -166,11 +166,8 @@ public class LibrarySongList extends StackPane {
         if (filterFuture != null) {
             filterFuture.cancel(true);
         }
-        Platform.runLater(new Runnable() {
-            @Override
-            public void run() {
-                setLoading(true);
-            }
+        Platform.runLater(() -> {
+            setLoading(true);
         });
         LOGGER.log(Level.INFO, "Performing search for {0}", search);
         filterFuture = filterService.submit(() -> {
@@ -221,19 +218,16 @@ public class LibrarySongList extends StackPane {
                 LOGGER.log(Level.INFO, "{0} songs in list", songs.size());
             }
 
-            Platform.runLater(new Runnable() {
-                @Override
-                public void run() {
-                    LOGGER.log(Level.INFO, "Setting song list");
-                    songList.setItems(songs);
-                    if (!songs.isEmpty()) {
-                        LOGGER.log(Level.INFO, "Selecting first song");
-                        songList.getSelectionModel().select(0);
-                    }
-                    LOGGER.log(Level.INFO, "Setting no longer loading");
-                    setLoading(false);
-                    LOGGER.log(Level.INFO, "Song search done");
+            Platform.runLater(() -> {
+                LOGGER.log(Level.INFO, "Setting song list");
+                songList.setItems(songs);
+                if (!songs.isEmpty()) {
+                    LOGGER.log(Level.INFO, "Selecting first song");
+                    songList.getSelectionModel().select(0);
                 }
+                LOGGER.log(Level.INFO, "Setting no longer loading");
+                setLoading(false);
+                LOGGER.log(Level.INFO, "Song search done");
             });
         });
 
