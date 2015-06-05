@@ -22,6 +22,7 @@ import java.util.TreeSet;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Pattern;
 import javafx.application.Platform;
@@ -47,7 +48,6 @@ import javafx.util.StringConverter;
 import org.quelea.data.db.SongManager;
 import org.quelea.data.displayable.SongDisplayable;
 import org.quelea.services.lucene.SongSearchIndex;
-import org.quelea.services.utils.DatabaseListener;
 import org.quelea.services.utils.LoggerUtils;
 import org.quelea.windows.main.QueleaApp;
 import org.quelea.windows.main.actionhandlers.AddSongActionHandler;
@@ -178,45 +178,60 @@ public class LibrarySongList extends StackPane {
             // empty or null search strings do not need to be filtered - lest they get added twice
             if (search == null || search.trim().isEmpty() || Pattern.compile("[^\\w ]", Pattern.UNICODE_CHARACTER_CLASS).matcher(search).replaceAll("").isEmpty()) {
                 TreeSet<SongDisplayable> m = new TreeSet<>();
+                LOGGER.log(Level.INFO, "Empty song search performed");
                 for (SongDisplayable song : SongManager.get().getSongs()) {
                     song.setLastSearch(null);
                     m.add(song);
                 }
                 songs.addAll(m);
+                LOGGER.log(Level.INFO, "{0} songs in list", songs.size());
             } else {
                 TreeSet<SongDisplayable> m = new TreeSet<>();
+                LOGGER.log(Level.INFO, "Filtering songs by title");
                 SongDisplayable[] titleSongs = SongManager.get().getIndex().filter(search, SongSearchIndex.FilterType.TITLE);
+                LOGGER.log(Level.INFO, "Filtered songs by title");
                 for (SongDisplayable song : titleSongs) {
                     song.setLastSearch(search);
                     m.add(song);
                 }
                 songs.addAll(m);
                 m.clear();
+                LOGGER.log(Level.INFO, "{0} songs in list", songs.size());
 
+                LOGGER.log(Level.INFO, "Filtering songs by lyrics");
                 SongDisplayable[] lyricSongs = SongManager.get().getIndex().filter(search, SongSearchIndex.FilterType.BODY);
+                LOGGER.log(Level.INFO, "Filtered songs by lyrics");
                 for (SongDisplayable song : lyricSongs) {
                     song.setLastSearch(null);
                     m.add(song);
                 }
                 songs.addAll(m);
                 m.clear();
+                LOGGER.log(Level.INFO, "{0} songs in list", songs.size());
 
+                LOGGER.log(Level.INFO, "Filtering songs by author");
                 SongDisplayable[] authorSongs = SongManager.get().getIndex().filter(search, SongSearchIndex.FilterType.AUTHOR);
+                LOGGER.log(Level.INFO, "Filtered songs by author");
                 for (SongDisplayable song : authorSongs) {
                     m.add(song);
                 }
                 songs.addAll(m);
                 m.clear();
+                LOGGER.log(Level.INFO, "{0} songs in list", songs.size());
             }
 
             Platform.runLater(new Runnable() {
                 @Override
                 public void run() {
+                    LOGGER.log(Level.INFO, "Setting song list");
                     songList.setItems(songs);
                     if (!songs.isEmpty()) {
+                        LOGGER.log(Level.INFO, "Selecting first song");
                         songList.getSelectionModel().select(0);
                     }
+                    LOGGER.log(Level.INFO, "Setting no longer loading");
                     setLoading(false);
+                    LOGGER.log(Level.INFO, "Song search done");
                 }
             });
         });
