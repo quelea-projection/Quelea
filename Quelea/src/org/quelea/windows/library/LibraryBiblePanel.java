@@ -200,8 +200,7 @@ public class LibraryBiblePanel extends VBox implements BibleChangeListener {
             preview.setText("");
             return;
         }
-        getAddToSchedule().setDisable(false);
-        StringBuilder ret = new StringBuilder();
+        StringBuilder previewText = new StringBuilder();
         int toVerse = book.getChapter(cvp.getFromChapter()).getVerses().length;
         if ((cvp.getFromChapter() == cvp.getToChapter()) && cvp.getToVerse() >= 0 && cvp.getToVerse() < book.getChapter(cvp.getFromChapter()).getVerses().length) {
             toVerse = cvp.getToVerse();
@@ -210,13 +209,13 @@ public class LibraryBiblePanel extends VBox implements BibleChangeListener {
         for (int v = cvp.getFromVerse(); v <= toVerse; v++) {
             BibleVerse verse = book.getChapter(cvp.getFromChapter()).getVerse(v);
             if (verse != null) {
-                ret.append(verse.getText()).append(' ');
+                previewText.append(verse.getText()).append(' ');
                 verses.add(verse);
             }
         }
         for (int c = cvp.getFromChapter() + 1; c < cvp.getToChapter(); c++) {
             for (BibleVerse verse : book.getChapter(c).getVerses()) {
-                ret.append(verse.getText()).append(' ');
+                previewText.append(verse.getText()).append(' ');
                 verses.add(verse);
             }
         }
@@ -224,12 +223,18 @@ public class LibraryBiblePanel extends VBox implements BibleChangeListener {
             for (int v = 0; v <= cvp.getToVerse(); v++) {
                 BibleVerse verse = book.getChapter(cvp.getToChapter()).getVerse(v);
                 if (verse != null) {
-                    ret.append(verse.getText()).append(' ');
+                    previewText.append(verse.getText()).append(' ');
                     verses.add(verse);
                 }
             }
         }
-        preview.setText(ret.toString());
+        preview.setText(previewText.toString());
+        if(previewText.toString().trim().isEmpty()) {
+            getAddToSchedule().setDisable(true);
+        }
+        else {
+            getAddToSchedule().setDisable(false);
+        }
     }
 
     /**

@@ -16,5 +16,6 @@ quelea (2015.3) stable; urgency=normal
   * Fix "switch versions" functionality on bible passages
   * Fix live videos restarting when song in schedule is edited
   * Fix search index not working with non=ascii characters
+  * Fix behaviour where empty bible passages could be added to schedule
 
  -- Michael Berry <michael@quelea.org>  Wednesday, 16 May 2015 00:00:00 +0000
