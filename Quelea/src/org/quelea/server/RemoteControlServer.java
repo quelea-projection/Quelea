@@ -89,6 +89,7 @@ public class RemoteControlServer {
         server.createContext("/search", new DatabaseSearchHandler());
         server.createContext("/song", new SongDisplayHandler());
         server.createContext("/add", new AddSongHandler());
+        server.createContext("/bible", new AddBibleHandler());
         server.createContext("/section", new SectionHandler());
         rootcontext.getFilters().add(new ParameterFilter());
         server.setExecutor(null);
@@ -124,6 +125,19 @@ public class RemoteControlServer {
         return running;
     }
 
+    private static class AddBibleHandler implements HttpHandler {
+
+        @Override
+        public void handle(HttpExchange he) throws IOException {
+            final String response;
+            response = RCHandler.addBiblePassage(he);
+            he.sendResponseHeaders(200, response.getBytes(Charset.forName("UTF-8")).length);
+            OutputStream os = he.getResponseBody();
+            os.write(response.getBytes(Charset.forName("UTF-8")));
+            os.close();
+        }
+    }
+
     private class SongDisplayHandler implements HttpHandler {
 
         @Override
@@ -136,7 +150,6 @@ public class RemoteControlServer {
             os.close();
         }
 
-        
     }
 
     private class AddSongHandler implements HttpHandler {
@@ -151,7 +164,6 @@ public class RemoteControlServer {
             os.close();
         }
 
-        
     }
 
     private class DatabaseSearchHandler implements HttpHandler {
