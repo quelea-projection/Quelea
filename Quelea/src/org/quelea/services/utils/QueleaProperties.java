@@ -688,6 +688,10 @@ public final class QueleaProperties extends Properties {
         setProperty("next.kingsway.song", Integer.toString(num));
         write();
     }
+    
+    public int getTranslationFontSizeOffset() {
+        return Integer.parseInt(getProperty("translation.font.size.offset", "3"));
+    }
 
     /**
      * Get the font to use for stage text.
