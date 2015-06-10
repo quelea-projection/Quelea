@@ -565,3 +565,4 @@ rcs.add.success=Add Successful
 rcs.add.song=Add Song to Schedule
 rcs.search=Search Database
 rcs.add.bible.error=There was an error adding $1 to the schedule
+rcs.submit=Submit
