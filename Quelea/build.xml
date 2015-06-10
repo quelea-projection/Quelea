@@ -69,6 +69,9 @@
         <copy todir="${dist.jar.dir}/icons" quiet="yes">
             <fileset dir="${basedir}/icons"/>
         </copy>
+        <copy todir="${dist.jar.dir}/server" quiet="yes">
+            <fileset dir="${basedir}/server"/>
+        </copy>
         <copy todir="${dist.jar.dir}/bibles" quiet="yes">
             <fileset dir="${basedir}/bibles"/>
         </copy>
