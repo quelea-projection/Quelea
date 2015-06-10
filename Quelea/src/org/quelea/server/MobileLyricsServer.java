@@ -121,7 +121,7 @@ public class MobileLyricsServer {
         @Override
         public void handle(HttpExchange t) throws IOException {
             if(pageContent == null || !USE_CACHE) {
-                pageContent = readFile("icons/defaultpage.htm");
+                pageContent = readFile("server/defaultpage.htm");
                 pageContent = sortLabels(pageContent);
             }
             byte[] bytes = pageContent.getBytes(Charset.forName("UTF-8"));
