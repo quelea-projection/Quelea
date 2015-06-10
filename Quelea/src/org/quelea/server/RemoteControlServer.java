@@ -89,7 +89,10 @@ public class RemoteControlServer {
         server.createContext("/search", new DatabaseSearchHandler());
         server.createContext("/song", new SongDisplayHandler());
         server.createContext("/add", new AddSongHandler());
-        server.createContext("/bible", new AddBibleHandler());
+        server.createContext("/addbible", new AddBibleHandler());
+        server.createContext("/translations", new ListBibleTranslationsHandler());
+        server.createContext("/books", new ListBibleBooksHandler());
+        server.createContext("/passage", new PassageSelecterHandler());
         server.createContext("/section", new SectionHandler());
         rootcontext.getFilters().add(new ParameterFilter());
         server.setExecutor(null);
@@ -125,16 +128,73 @@ public class RemoteControlServer {
         return running;
     }
 
-    private static class AddBibleHandler implements HttpHandler {
+    private class AddBibleHandler implements HttpHandler {
 
         @Override
         public void handle(HttpExchange he) throws IOException {
-            final String response;
-            response = RCHandler.addBiblePassage(he);
-            he.sendResponseHeaders(200, response.getBytes(Charset.forName("UTF-8")).length);
-            OutputStream os = he.getResponseBody();
-            os.write(response.getBytes(Charset.forName("UTF-8")));
-            os.close();
+            if (RCHandler.isLoggedOn(he.getRemoteAddress().getAddress().toString())) {
+                final String response;
+                response = RCHandler.addBiblePassage(he);
+                he.sendResponseHeaders(200, response.getBytes(Charset.forName("UTF-8")).length);
+                OutputStream os = he.getResponseBody();
+                os.write(response.getBytes(Charset.forName("UTF-8")));
+                os.close();
+            } else {
+                passwordPage(he);
+            }
+        }
+    }
+
+    private class ListBibleTranslationsHandler implements HttpHandler {
+
+        @Override
+        public void handle(HttpExchange he) throws IOException {
+            if (RCHandler.isLoggedOn(he.getRemoteAddress().getAddress().toString())) {
+                final String response;
+                response = RCHandler.listBibleTranslations(he);
+                he.sendResponseHeaders(200, response.getBytes(Charset.forName("UTF-8")).length);
+                OutputStream os = he.getResponseBody();
+                os.write(response.getBytes(Charset.forName("UTF-8")));
+                os.close();
+            } else {
+                passwordPage(he);
+            }
+        }
+    }
+
+    private class ListBibleBooksHandler implements HttpHandler {
+
+        @Override
+        public void handle(HttpExchange he) throws IOException {
+            if (RCHandler.isLoggedOn(he.getRemoteAddress().getAddress().toString())) {
+                final String response;
+                response = RCHandler.listBibleBooks(he);
+                he.sendResponseHeaders(200, response.getBytes(Charset.forName("UTF-8")).length);
+                OutputStream os = he.getResponseBody();
+                os.write(response.getBytes(Charset.forName("UTF-8")));
+                os.close();
+            } else {
+                passwordPage(he);
+            }
+        }
+    }
+
+    private class PassageSelecterHandler implements HttpHandler {
+
+        @Override
+        public void handle(HttpExchange he) throws IOException {
+            if (RCHandler.isLoggedOn(he.getRemoteAddress().getAddress().toString())) {
+                String pageContent = readFile("server/addpassagercspage.htm");
+                pageContent = pageContent.replace("$1", LabelGrabber.INSTANCE.getLabel("rcs.submit"));
+                pageContent = pageContent.replace("$2", LabelGrabber.INSTANCE.getLabel("bible.passage.selector.prompt"));
+                byte[] bytes = pageContent.getBytes(Charset.forName("UTF-8"));
+                he.sendResponseHeaders(200, bytes.length);
+                try (OutputStream os = he.getResponseBody()) {
+                    os.write(bytes);
+                }
+            } else {
+                passwordPage(he);
+            }
         }
     }
 
@@ -142,12 +202,16 @@ public class RemoteControlServer {
 
         @Override
         public void handle(HttpExchange he) throws IOException {
-            final String response;
-            response = RCHandler.songDisplay(he);
-            he.sendResponseHeaders(200, response.getBytes(Charset.forName("UTF-8")).length);
-            OutputStream os = he.getResponseBody();
-            os.write(response.getBytes(Charset.forName("UTF-8")));
-            os.close();
+            if (RCHandler.isLoggedOn(he.getRemoteAddress().getAddress().toString())) {
+                final String response;
+                response = RCHandler.songDisplay(he);
+                he.sendResponseHeaders(200, response.getBytes(Charset.forName("UTF-8")).length);
+                OutputStream os = he.getResponseBody();
+                os.write(response.getBytes(Charset.forName("UTF-8")));
+                os.close();
+            } else {
+                passwordPage(he);
+            }
         }
 
     }
@@ -156,12 +220,16 @@ public class RemoteControlServer {
 
         @Override
         public void handle(HttpExchange he) throws IOException {
-            final String response;
-            response = RCHandler.addSongToSchedule(he);
-            he.sendResponseHeaders(200, response.getBytes(Charset.forName("UTF-8")).length);
-            OutputStream os = he.getResponseBody();
-            os.write(response.getBytes(Charset.forName("UTF-8")));
-            os.close();
+            if (RCHandler.isLoggedOn(he.getRemoteAddress().getAddress().toString())) {
+                final String response;
+                response = RCHandler.addSongToSchedule(he);
+                he.sendResponseHeaders(200, response.getBytes(Charset.forName("UTF-8")).length);
+                OutputStream os = he.getResponseBody();
+                os.write(response.getBytes(Charset.forName("UTF-8")));
+                os.close();
+            } else {
+                passwordPage(he);
+            }
         }
 
     }
@@ -170,12 +238,16 @@ public class RemoteControlServer {
 
         @Override
         public void handle(HttpExchange he) throws IOException {
-            final String response;
-            response = RCHandler.databaseSearch(he);
-            he.sendResponseHeaders(200, response.getBytes(Charset.forName("UTF-8")).length);
-            OutputStream os = he.getResponseBody();
-            os.write(response.getBytes(Charset.forName("UTF-8")));
-            os.close();
+            if (RCHandler.isLoggedOn(he.getRemoteAddress().getAddress().toString())) {
+                final String response;
+                response = RCHandler.databaseSearch(he);
+                he.sendResponseHeaders(200, response.getBytes(Charset.forName("UTF-8")).length);
+                OutputStream os = he.getResponseBody();
+                os.write(response.getBytes(Charset.forName("UTF-8")));
+                os.close();
+            } else {
+                passwordPage(he);
+            }
         }
     }
 
@@ -357,7 +429,7 @@ public class RemoteControlServer {
         public void handle(HttpExchange he) throws IOException {
             if (RCHandler.isLoggedOn(he.getRemoteAddress().getAddress().toString())) {
                 if (pageContent == null || !USE_CACHE) {
-                    pageContent = readFile("icons/defaultrcspage.htm");
+                    pageContent = readFile("server/defaultrcspage.htm");
                     pageContent = langStrings(pageContent);
                 }
                 byte[] bytes = pageContent.getBytes(Charset.forName("UTF-8"));
@@ -383,7 +455,7 @@ public class RemoteControlServer {
             if (password != null && RCHandler.authenticate(password)) {
                 RCHandler.addDevice(he.getRemoteAddress().getAddress().toString());
                 if (pageContent == null || !USE_CACHE) {
-                    pageContent = readFile("icons/defaultrcspage.htm");
+                    pageContent = readFile("server/defaultrcspage.htm");
                     pageContent = langStrings(pageContent);
                 }
                 byte[] bytes = pageContent.getBytes(Charset.forName("UTF-8"));
@@ -395,7 +467,7 @@ public class RemoteControlServer {
             }
 
         }
-        String content = readFile("icons/defaultpasswordpage.htm");
+        String content = readFile("server/defaultpasswordpage.htm");
         content = content.replace("[remote.login.text]", LabelGrabber.INSTANCE.getLabel("remote.login.text"));
         content = content.replace("[submit.button.text]", LabelGrabber.INSTANCE.getLabel("remote.submit.text"));
         byte[] bytes = content.getBytes(Charset.forName("UTF-8"));
