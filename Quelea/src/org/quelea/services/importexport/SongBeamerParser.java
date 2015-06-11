@@ -108,6 +108,10 @@ public class SongBeamerParser implements SongParser {
                         translationNum = (translationNum + 1) % numTranslations;
                     }
                 }
+                while (translationNum != 0) {
+                    translations.get(translationNum).add("");
+                    translationNum = (translationNum + 1) % numTranslations;
+                }
                 for (int i = 0; i < numTranslations; i++) {
                     translations.get(i).add("");
                 }
