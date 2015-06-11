@@ -36,6 +36,7 @@ import org.quelea.services.importexport.ParadoxJDBCChecker;
 import org.quelea.services.importexport.PlainTextSongsImportDialog;
 import org.quelea.services.importexport.QSPImportDialog;
 import org.quelea.services.importexport.SoFImportDialog;
+import org.quelea.services.importexport.SongBeamerImportDialog;
 import org.quelea.services.importexport.SongProImportDialog;
 import org.quelea.services.importexport.SongSelectImportDialog;
 import org.quelea.services.importexport.SourceImportDialog;
@@ -68,6 +69,7 @@ public class ImportMenu extends Menu {
     private final ImportDialog songSelectImportDialog;
     private final ImportDialog songproImportDialog;
     private final ImportDialog mediaShoutImportDialog;
+    private final ImportDialog songBeamerImportDialog;
     private final ImportDialog epicWorshipImportDialog;
     private final ImportDialog sofImportDialog;
     private final MenuItem qspItem;
@@ -77,6 +79,7 @@ public class ImportMenu extends Menu {
     private final MenuItem olpItem;
     private final MenuItem zwItem;
     private final MenuItem ssItem;
+    private final MenuItem sbItem;
     private final MenuItem sofItem;
     private final MenuItem sourceItem;
     private final MenuItem mediaShoutItem;
@@ -109,6 +112,7 @@ public class ImportMenu extends Menu {
         sundayPlusImportDialog = new SundayPlusImportDialog();
         songSelectImportDialog = new SongSelectImportDialog();
         mediaShoutImportDialog = new MediaShoutImportDialog();
+        songBeamerImportDialog = new SongBeamerImportDialog();
         epicWorshipImportDialog = new EpicWorshipImportDialog();
         sofImportDialog = new SoFImportDialog();
 
@@ -170,6 +174,12 @@ public class ImportMenu extends Menu {
             mediaShoutImportDialog.show();
         });
         getItems().add(mediaShoutItem);
+
+        sbItem = new MenuItem(LabelGrabber.INSTANCE.getLabel("songbeamer.button"), new ImageView(new Image("file:icons/songbeamer.png", 16, 16, false, true)));
+        sbItem.setOnAction((ActionEvent t) -> {
+            songBeamerImportDialog.show();
+        });
+        getItems().add(sbItem);
 
         sourceItem = new MenuItem(LabelGrabber.INSTANCE.getLabel("source.button"), new ImageView(new Image("file:icons/source.jpg", 16, 16, false, true)));
         sourceItem.setOnAction((ActionEvent t) -> {

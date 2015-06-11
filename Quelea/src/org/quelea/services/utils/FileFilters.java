@@ -93,6 +93,10 @@ public final class FileFilters {
      */
     public static final FileChooser.ExtensionFilter SONG_PACK = new FileChooser.ExtensionFilter(LabelGrabber.INSTANCE.getLabel("qsp.button") + " (*.qsp)", "*.qsp");
     /**
+     * The file filter used for SongBeamer songs.
+     */
+    public static final FileChooser.ExtensionFilter SNG = new FileChooser.ExtensionFilter(LabelGrabber.INSTANCE.getLabel("sng.files.description") + " (*.sng)", "*.sng");
+    /**
      * The file filter used for Quelea schedules.
      */
     public static final FileChooser.ExtensionFilter SCHEDULE = new FileChooser.ExtensionFilter(LabelGrabber.INSTANCE.getLabel("filefilters.description.quelea.schedules"), "*." + QueleaProperties.get().getScheduleExtension());
