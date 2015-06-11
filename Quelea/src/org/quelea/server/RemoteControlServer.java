@@ -86,6 +86,7 @@ public class RemoteControlServer {
         server.createContext("/lyrics", new LyricsHandler());
         server.createContext("/status", new StatusHandler());
         server.createContext("/schedule", new ScheduleHandler());
+        server.createContext("/songsearch", new SongSearchHandler());
         server.createContext("/search", new DatabaseSearchHandler());
         server.createContext("/song", new SongDisplayHandler());
         server.createContext("/add", new AddSongHandler());
@@ -93,6 +94,7 @@ public class RemoteControlServer {
         server.createContext("/translations", new ListBibleTranslationsHandler());
         server.createContext("/books", new ListBibleBooksHandler());
         server.createContext("/passage", new PassageSelecterHandler());
+        server.createContext("/sidebar.png", new FileHandler("icons/sidebar.png"));
         server.createContext("/section", new SectionHandler());
         rootcontext.getFilters().add(new ParameterFilter());
         server.setExecutor(null);
@@ -126,6 +128,24 @@ public class RemoteControlServer {
      */
     public boolean isRunning() {
         return running;
+    }
+
+    private class SongSearchHandler implements HttpHandler {
+
+        @Override
+        public void handle(HttpExchange he) throws IOException {
+            if (RCHandler.isLoggedOn(he.getRemoteAddress().getAddress().toString())) {
+                String pageContent = readFile("server/addsongrcspage.htm");
+                pageContent = pageContent.replace("$1", LabelGrabber.INSTANCE.getLabel("rcs.submit"));
+                byte[] bytes = pageContent.getBytes(Charset.forName("UTF-8"));
+                he.sendResponseHeaders(200, bytes.length);
+                try (OutputStream os = he.getResponseBody()) {
+                    os.write(bytes);
+                }
+            } else {
+                passwordPage(he);
+            }
+        }
     }
 
     private class AddBibleHandler implements HttpHandler {
@@ -579,6 +599,10 @@ public class RemoteControlServer {
         pageContent = pageContent.replace("[nextitem.text]", LabelGrabber.INSTANCE.getLabel("remote.nextitem.text"));
         pageContent = pageContent.replace("[previtem.text]", LabelGrabber.INSTANCE.getLabel("remote.previtem.text"));
         pageContent = pageContent.replace("[logout.text]", LabelGrabber.INSTANCE.getLabel("remote.logout.text"));
+        pageContent = pageContent.replace("[schedule]", LabelGrabber.INSTANCE.getLabel("schedule.heading"));
+        pageContent = pageContent.replace("[search]", LabelGrabber.INSTANCE.getLabel("rcs.search"));
+        pageContent = pageContent.replace("[songsearch]", LabelGrabber.INSTANCE.getLabel("rcs.song.search"));
+        pageContent = pageContent.replace("[biblesearch]", LabelGrabber.INSTANCE.getLabel("rcs.bible.search"));
         return pageContent;
     }
 
@@ -712,5 +736,30 @@ public class RemoteControlServer {
                 }
             }
         }
+    }
+
+    private class FileHandler implements HttpHandler {
+
+        private String file;
+
+        public FileHandler(String file) {
+            this.file = file;
+        }
+
+        @Override
+        public void handle(HttpExchange t) throws IOException {
+            byte[] ret = fileCache.get(file);
+            if (ret == null) {
+                ret = Files.readAllBytes(Paths.get(file));
+                if (USE_CACHE) {
+                    fileCache.put(file, ret);
+                }
+            }
+            t.sendResponseHeaders(200, ret.length);
+            try (OutputStream os = t.getResponseBody()) {
+                os.write(ret);
+            }
+        }
+
     }
 }
