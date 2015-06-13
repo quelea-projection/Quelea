@@ -17,15 +17,11 @@
  */
 package org.quelea.windows.library;
 
-import com.sun.javafx.scene.control.skin.ComboBoxListViewSkin;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
-import java.util.function.Predicate;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -35,7 +31,6 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
-import javafx.scene.control.ListView;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
@@ -124,12 +119,9 @@ public class LibraryBiblePanel extends VBox implements BibleChangeListener {
         VBox.setVgrow(bottomPane, Priority.SOMETIMES);
         bottomPane.setCenter(preview);
         addToSchedule = new Button(LabelGrabber.INSTANCE.getLabel("add.to.schedule.text"), new ImageView(new Image("file:icons/tick.png")));
-        addToSchedule.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent t) {
-                BiblePassage passage = new BiblePassage(bibleSelector.getSelectionModel().getSelectedItem().getName(), getBibleLocation(), getVerses(), multi);
-                QueleaApp.get().getMainWindow().getMainPanel().getSchedulePanel().getScheduleList().add(passage);
-            }
+        addToSchedule.setOnAction((ActionEvent t) -> {
+            BiblePassage passage = new BiblePassage(bibleSelector.getSelectionModel().getSelectedItem().getName(), getBibleLocation(), getVerses(), multi);
+            QueleaApp.get().getMainWindow().getMainPanel().getSchedulePanel().getScheduleList().add(passage);
         });
         addToSchedule.setDisable(true);
         chapterPanel.getChildren().add(addToSchedule);
@@ -137,20 +129,17 @@ public class LibraryBiblePanel extends VBox implements BibleChangeListener {
         getChildren().add(bottomPane);
 
         addUpdateListeners();
-        bibleSelector.valueProperty().addListener(new ChangeListener<Bible>() {
-            @Override
-            public void changed(ObservableValue<? extends Bible> ov, Bible t, Bible t1) {
-                if (bibleSelector.selectionModelProperty().get().isEmpty()) { //Nothing selected
-                    return;
-                }
-                ObservableList<BibleBook> books = FXCollections.observableArrayList(bibleSelector.getSelectionModel().getSelectedItem().getBooks());
-                int selectedIndex = bookSelector.getSelectionModel().getSelectedIndex();
-                bookSelector.itemsProperty().set(books);
-                if (bookSelector.getItems().size() > selectedIndex) {
-                    bookSelector.getSelectionModel().select(selectedIndex);
-                }
-                update();
+        bibleSelector.valueProperty().addListener((ObservableValue<? extends Bible> ov, Bible t, Bible t1) -> {
+            if (bibleSelector.selectionModelProperty().get().isEmpty()) { //Nothing selected
+                return;
             }
+            ObservableList<BibleBook> books = FXCollections.observableArrayList(bibleSelector.getSelectionModel().getSelectedItem().getBooks());
+            int selectedIndex = bookSelector.getSelectionModel().getSelectedIndex();
+            bookSelector.itemsProperty().set(books);
+            if (bookSelector.getItems().size() > selectedIndex) {
+                bookSelector.getSelectionModel().select(selectedIndex);
+            }
+            update();
         });
 
         bookSelector.setOnKeyReleased(new EventHandler<KeyEvent>() {
@@ -215,22 +204,19 @@ public class LibraryBiblePanel extends VBox implements BibleChangeListener {
      */
     @Override
     public void updateBibles() {
-        Platform.runLater(new Runnable() {
-            @Override
-            public void run() {
-                ObservableList<Bible> bibles = FXCollections.observableArrayList(BibleManager.get().getBibles());
-                bibleSelector.itemsProperty().set(bibles);
-                Bible selectedBible = null;
-                for (Bible bible : bibles) {
-                    if (bible.getBibleName().equals(QueleaProperties.get().getDefaultBible())) {
-                        selectedBible = bible;
-                    }
+        Platform.runLater(() -> {
+            ObservableList<Bible> bibles = FXCollections.observableArrayList(BibleManager.get().getBibles());
+            bibleSelector.itemsProperty().set(bibles);
+            Bible selectedBible = null;
+            for (Bible bible : bibles) {
+                if (bible.getBibleName().equals(QueleaProperties.get().getDefaultBible())) {
+                    selectedBible = bible;
                 }
-                if (selectedBible == null) {
-                    bibleSelector.selectionModelProperty().get().selectFirst();
-                } else {
-                    bibleSelector.selectionModelProperty().get().select(selectedBible);
-                }
+            }
+            if (selectedBible == null) {
+                bibleSelector.selectionModelProperty().get().selectFirst();
+            } else {
+                bibleSelector.selectionModelProperty().get().select(selectedBible);
             }
         });
     }
@@ -239,17 +225,11 @@ public class LibraryBiblePanel extends VBox implements BibleChangeListener {
      * Add the listeners that should call the update() method.
      */
     private void addUpdateListeners() {
-        passageSelector.textProperty().addListener(new ChangeListener<String>() {
-            @Override
-            public void changed(ObservableValue<? extends String> ov, String t, String t1) {
-                update();
-            }
+        passageSelector.textProperty().addListener((ObservableValue<? extends String> ov, String t, String t1) -> {
+            update();
         });
-        bookSelector.valueProperty().addListener(new ChangeListener<BibleBook>() {
-            @Override
-            public void changed(ObservableValue<? extends BibleBook> ov, BibleBook t, BibleBook t1) {
-                update();
-            }
+        bookSelector.valueProperty().addListener((ObservableValue<? extends BibleBook> ov, BibleBook t, BibleBook t1) -> {
+            update();
         });
     }
 
