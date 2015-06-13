@@ -17,8 +17,15 @@
  */
 package org.quelea.windows.library;
 
+import com.sun.javafx.scene.control.skin.ComboBoxListViewSkin;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
+import java.util.function.Predicate;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -28,10 +35,13 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
+import javafx.scene.control.ListView;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
@@ -61,6 +71,7 @@ public class LibraryBiblePanel extends VBox implements BibleChangeListener {
     private final Button addToSchedule;
     private final List<BibleVerse> verses;
     private boolean multi;
+    private ObservableList<BibleBook> master;
 
     /**
      * Create and populate a new library bible panel.
@@ -141,6 +152,61 @@ public class LibraryBiblePanel extends VBox implements BibleChangeListener {
                 update();
             }
         });
+
+        bookSelector.setOnKeyReleased(new EventHandler<KeyEvent>() {
+
+            String search = "";
+            ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor();
+            Runnable task = this::clear;
+
+            @Override
+            public void handle(KeyEvent event) {
+                if (event.getCode().isLetterKey() || event.getCode().isDigitKey() || event.getCode() == KeyCode.BACK_SPACE || event.getCode() == KeyCode.SPACE) {
+
+                    if (!executor.isShutdown()) {
+                        executor.shutdownNow();
+                    }
+                    executor = Executors.newSingleThreadScheduledExecutor();
+                    executor.schedule(task, 5, TimeUnit.SECONDS);
+
+                    if (event.getCode() == KeyCode.BACK_SPACE) {
+                        if (search.length() > 0) {
+                            search = search.substring(0, search.length() - 1);
+                        }
+                    } else {
+                        search += event.getText();
+                    }
+
+                    Platform.runLater(() -> {
+                        refreshMaster();
+                        bookSelector.setItems(master.filtered((BibleBook b) -> b.getBookName().toLowerCase().startsWith(search.toLowerCase())));
+                        bookSelector.getSelectionModel().selectFirst();
+                    });
+
+                }
+            }
+
+            private void clear() {
+                search = "";
+                executor.shutdown();
+                Platform.runLater(() -> {
+                    bookSelector.setItems(master);
+                });
+            }
+        });
+        bookSelector.focusedProperty().addListener((ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) -> {
+            if (!newValue) {
+                Platform.runLater(() -> {
+                    refreshMaster();
+                    bookSelector.setItems(master);
+                });
+            }
+        });
+    }
+
+    // Should be on FX thread at all times
+    private void refreshMaster() {
+        master = FXCollections.observableArrayList(bibleSelector.getSelectionModel().getSelectedItem().getBooks());
     }
 
     /**
