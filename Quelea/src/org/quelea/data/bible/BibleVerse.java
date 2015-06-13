@@ -32,6 +32,7 @@ public final class BibleVerse implements BibleInterface, Serializable {
     private String verse;
     private int num;
     private BibleChapter chapter;
+    private int chapterNum;
 
     /**
      * For internal use only.
@@ -73,6 +74,7 @@ public final class BibleVerse implements BibleInterface, Serializable {
      */
     void setChapter(BibleChapter chapter) {
         this.chapter = chapter;
+        this.chapterNum = chapter.getNum();
     }
 
     /**
@@ -93,6 +95,9 @@ public final class BibleVerse implements BibleInterface, Serializable {
      */
     public static BibleVerse parseXML(Node node) {
         BibleVerse ret = new BibleVerse();
+        if (node.getAttributes().getNamedItem("cnumber") != null) {
+            ret.setChapterNum(Integer.parseInt(node.getAttributes().getNamedItem("cnumber").getTextContent()));
+        } 
         if (node.getAttributes().getNamedItem("vnumber") == null) {
             ret.num = Integer.parseInt(node.getAttributes().getNamedItem("n").getNodeValue().trim());
         } else {
@@ -109,7 +114,9 @@ public final class BibleVerse implements BibleInterface, Serializable {
      */
     public String toXML() {
         StringBuilder ret = new StringBuilder();
-        ret.append("<vers vnumber=\"");
+        ret.append("<vers cnumber=\"");
+        ret.append(chapterNum);
+        ret.append("\" vnumber=\"");
         ret.append(num);
         ret.append("\">");
         ret.append(Utils.escapeXML(verse));
@@ -154,5 +161,13 @@ public final class BibleVerse implements BibleInterface, Serializable {
     @Override
     public BibleInterface getParent() {
         return getChapter();
+    }
+
+    private void setChapterNum(int num) {
+        chapterNum = num;
+    }
+
+    public int getChapterNum() {
+        return chapterNum;
     }
 }

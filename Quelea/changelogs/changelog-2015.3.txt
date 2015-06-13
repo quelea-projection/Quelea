@@ -3,6 +3,7 @@ quelea (2015.3) stable; urgency=normal
   * Add ability to change the percentage size of the small bible/song text 
   * Add ability to select overflow traversal through whole schedule using up/down keys
   * Add more features to Remote Control, include schedule list and add bible or song
+  * Add ability to display multiple chapter/verses from the same bible book on a single slide using a comma
   * IPv6 addresses only show as a last resort
   * Top / Bottom for notices now the correct way around
   * Auto-play now works

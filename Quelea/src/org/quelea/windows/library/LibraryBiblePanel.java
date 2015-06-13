@@ -60,6 +60,7 @@ public class LibraryBiblePanel extends VBox implements BibleChangeListener {
     private final TextArea preview;
     private final Button addToSchedule;
     private final List<BibleVerse> verses;
+    private boolean multi;
 
     /**
      * Create and populate a new library bible panel.
@@ -115,7 +116,7 @@ public class LibraryBiblePanel extends VBox implements BibleChangeListener {
         addToSchedule.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent t) {
-                BiblePassage passage = new BiblePassage(bibleSelector.getSelectionModel().getSelectedItem().getName(), getBibleLocation(), getVerses());
+                BiblePassage passage = new BiblePassage(bibleSelector.getSelectionModel().getSelectedItem().getName(), getBibleLocation(), getVerses(), multi);
                 QueleaApp.get().getMainWindow().getMainPanel().getSchedulePanel().getScheduleList().add(passage);
             }
         });
@@ -191,48 +192,59 @@ public class LibraryBiblePanel extends VBox implements BibleChangeListener {
      */
     private void update() {
         verses.clear();
-        ChapterVerseParser cvp = new ChapterVerseParser(passageSelector.getText());
-        BibleBook book = bookSelector.selectionModelProperty().get().getSelectedItem();
-        if (book == null || book.getChapter(cvp.getFromChapter()) == null
-                || book.getChapter(cvp.getToChapter()) == null
-                || passageSelector.getText().isEmpty()) {
+        String[] sections = passageSelector.getText().split("(;|,)");
+        ArrayList<BiblePassage> passages = new ArrayList<>();
+        if (passageSelector.getText().isEmpty()) {
             getAddToSchedule().setDisable(true);
-            preview.setText("");
-            return;
         }
         StringBuilder previewText = new StringBuilder();
-        int toVerse = book.getChapter(cvp.getFromChapter()).getVerses().length;
-        if ((cvp.getFromChapter() == cvp.getToChapter()) && cvp.getToVerse() >= 0 && cvp.getToVerse() < book.getChapter(cvp.getFromChapter()).getVerses().length) {
-            toVerse = cvp.getToVerse();
-        }
+        multi = (sections.length > 1);
+        for (String s : sections) {
+            ChapterVerseParser cvp = new ChapterVerseParser(s);
+            BibleBook book = bookSelector.selectionModelProperty().get().getSelectedItem();
+            if (book != null
+                    && book.getChapter(cvp.getFromChapter()) != null
+                    && book.getChapter(cvp.getToChapter()) != null
+                    && book.getChapter(cvp.getFromChapter()).getVerses() != null) {
 
-        for (int v = cvp.getFromVerse(); v <= toVerse; v++) {
-            BibleVerse verse = book.getChapter(cvp.getFromChapter()).getVerse(v);
-            if (verse != null) {
-                previewText.append(verse.getText()).append(' ');
-                verses.add(verse);
-            }
-        }
-        for (int c = cvp.getFromChapter() + 1; c < cvp.getToChapter(); c++) {
-            for (BibleVerse verse : book.getChapter(c).getVerses()) {
-                previewText.append(verse.getText()).append(' ');
-                verses.add(verse);
-            }
-        }
-        if (cvp.getFromChapter() != cvp.getToChapter()) {
-            for (int v = 0; v <= cvp.getToVerse(); v++) {
-                BibleVerse verse = book.getChapter(cvp.getToChapter()).getVerse(v);
-                if (verse != null) {
-                    previewText.append(verse.getText()).append(' ');
-                    verses.add(verse);
+                getAddToSchedule().setDisable(false);
+                int toVerse = book.getChapter(cvp.getFromChapter()).getVerses().length;
+                if ((cvp.getFromChapter() == cvp.getToChapter()) && cvp.getToVerse() >= 0 && cvp.getToVerse() < book.getChapter(cvp.getFromChapter()).getVerses().length) {
+                    toVerse = cvp.getToVerse();
                 }
+
+                for (int v = cvp.getFromVerse(); v <= toVerse; v++) {
+                    BibleVerse verse = book.getChapter(cvp.getFromChapter()).getVerse(v);
+                    if (verse != null) {
+                        previewText.append(verse.getText()).append(' ');
+                        verses.add(verse);
+                    }
+                }
+                for (int c = cvp.getFromChapter() + 1; c < cvp.getToChapter(); c++) {
+                    for (BibleVerse verse : book.getChapter(c).getVerses()) {
+                        previewText.append(verse.getText()).append(' ');
+                        verses.add(verse);
+                    }
+                }
+                if (cvp.getFromChapter() != cvp.getToChapter()) {
+                    for (int v = 0; v <= cvp.getToVerse(); v++) {
+                        BibleVerse verse = book.getChapter(cvp.getToChapter()).getVerse(v);
+                        if (verse != null) {
+                            previewText.append(verse.getText()).append(' ');
+                            verses.add(verse);
+                        }
+                    }
+                }
+
+            } else {
+                getAddToSchedule().setDisable(true);
+                return;
             }
         }
         preview.setText(previewText.toString());
-        if(previewText.toString().trim().isEmpty()) {
+        if (previewText.toString().trim().isEmpty()) {
             getAddToSchedule().setDisable(true);
-        }
-        else {
+        } else {
             getAddToSchedule().setDisable(false);
         }
     }
