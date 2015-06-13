@@ -45,6 +45,7 @@ public class BiblePassage implements TextDisplayable, Serializable {
     private List<TextSection> textSections;
     private BibleVerse[] verses;
     private ThemeDTO theme;
+    private final boolean multi;
 
     /**
      * Create a new bible passage.
@@ -53,10 +54,10 @@ public class BiblePassage implements TextDisplayable, Serializable {
      * @param location the location of the passage in the bible.
      * @param verses the verses, in order, that make up the passage.
      */
-    public BiblePassage(String biblename, String location, BibleVerse[] verses) {
+    public BiblePassage(String biblename, String location, BibleVerse[] verses, boolean multi) {
         this(location + "\n" + biblename, verses, new ThemeDTO(ThemeDTO.DEFAULT_FONT,
                 ThemeDTO.DEFAULT_FONT_COLOR, ThemeDTO.DEFAULT_FONT, ThemeDTO.DEFAULT_TRANSLATE_FONT_COLOR,
-                ThemeDTO.DEFAULT_BACKGROUND, ThemeDTO.DEFAULT_SHADOW, false, false, false, true, 3, -1));
+                ThemeDTO.DEFAULT_BACKGROUND, ThemeDTO.DEFAULT_SHADOW, false, false, false, true, 3, -1), multi);
     }
 
     /**
@@ -66,8 +67,9 @@ public class BiblePassage implements TextDisplayable, Serializable {
      * @param verses the verses in the passage.
      * @param theme the theme of the passage.
      */
-    public BiblePassage(String summary, BibleVerse[] verses, ThemeDTO theme) {
+    public BiblePassage(String summary, BibleVerse[] verses, ThemeDTO theme, boolean multi) {
         this.summary = summary;
+        this.multi = multi;
         this.smallText = summary.split("\n");
         for (int i = 0; i < smallText.length; i++) {
             smallText[i] = Utils.removeTags(smallText[i]);
@@ -94,6 +96,9 @@ public class BiblePassage implements TextDisplayable, Serializable {
         for (BibleVerse verse : verses) {
             if (QueleaProperties.get().getShowVerseNumbers()) {
                 line.append("<sup>");
+                if(multi) {
+                    line.append(verse.getChapterNum()).append(":");
+                }
                 line.append(verse.getNum());
                 line.append("</sup>");
             }
@@ -170,6 +175,7 @@ public class BiblePassage implements TextDisplayable, Serializable {
             bible = summary.split("\n")[1];
         }
         ret.append(Utils.escapeXML(summaryText));
+        ret.append("\" multi=\"").append(multi);
         ret.append("\" bible=\"");
         ret.append(Utils.escapeXML(bible));
         ret.append("\">");
@@ -233,6 +239,10 @@ public class BiblePassage implements TextDisplayable, Serializable {
         if (passage.getAttributes().getNamedItem("bible") != null) {
             bibleSummary = passage.getAttributes().getNamedItem("bible").getTextContent();
         }
+        boolean multi = false;
+        if(passage.getAttributes().getNamedItem("multi") != null) {
+            multi = Boolean.parseBoolean(passage.getAttributes().getNamedItem("multi").getTextContent());
+        }
         String summary = passageSummary + "\n" + bibleSummary;
         ThemeDTO tempTheme = ThemeDTO.DEFAULT_THEME;
         List<BibleVerse> verses = new ArrayList<>();
@@ -244,7 +254,7 @@ public class BiblePassage implements TextDisplayable, Serializable {
                 tempTheme = ThemeDTO.fromString(node.getTextContent());
             }
         }
-        return new BiblePassage(summary, verses.toArray(new BibleVerse[verses.size()]), tempTheme);
+        return new BiblePassage(summary, verses.toArray(new BibleVerse[verses.size()]), tempTheme, multi);
     }
 
     /**
@@ -316,5 +326,9 @@ public class BiblePassage implements TextDisplayable, Serializable {
         for (TextSection ts : getSections()) {
             ts.setTheme(theme);
         }
+    }
+
+    public boolean getMulti() {
+        return multi;
     }
 }
