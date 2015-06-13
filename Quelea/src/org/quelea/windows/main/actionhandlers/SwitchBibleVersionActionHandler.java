@@ -73,7 +73,7 @@ public class SwitchBibleVersionActionHandler implements EventHandler<ActionEvent
                     newVerses.add(b.getBooks()[bookNum - 1].getChapter(chapterNum - 1).getVerse(verseNum));
                 }
                 BibleVerse firstVerse = newVerses.get(0);
-                String summary = firstVerse.getChapter().getBook() + " " + firstVerse.getChapter().toString() + "\n" + b.getBibleName();
+                String summary = firstVerse.getChapter().getBook() + " " + passage.getLocation().split(" (?=\\d)")[1] + "\n" + b.getBibleName();
                 replaceMap.put(passage, new BiblePassage(summary, newVerses.toArray(new BibleVerse[newVerses.size()]), theme, passage.getMulti()));
             }
         }
