@@ -331,4 +331,8 @@ public class BiblePassage implements TextDisplayable, Serializable {
     public boolean getMulti() {
         return multi;
     }
+
+    public String getLocation() {
+        return summary.split("\n")[0];
+    }
 }
