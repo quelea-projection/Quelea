@@ -125,7 +125,7 @@ public class BibleSearchDialog extends Stage implements BibleChangeListener {
                 if (searchResults.getSelectionModel().getSelectedItem().getValue() instanceof BibleVerse) {
                     BibleChapter chap = (BibleChapter) searchResults.getSelectionModel().getSelectedItem().getValue().getParent();
                     Bible bib = (Bible) chap.getParent().getParent();
-                    BiblePassage passage = new BiblePassage(bib.getBibleName(), chap.getBook() + " " + chap.toString(), chap.getVerses());
+                    BiblePassage passage = new BiblePassage(bib.getBibleName(), chap.getBook() + " " + chap.toString(), chap.getVerses(), false);
                     QueleaApp.get().getMainWindow().getMainPanel().getSchedulePanel().getScheduleList().add(passage);
                 }
             }
