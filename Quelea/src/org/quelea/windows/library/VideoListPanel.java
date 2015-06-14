@@ -30,12 +30,14 @@ import java.util.logging.Level;
 import javafx.application.Platform;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.event.ActionEvent;
+import javafx.geometry.Bounds;
 import javafx.geometry.Orientation;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.ScrollPane;
+import javafx.scene.control.Tooltip;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.Clipboard;
@@ -198,7 +200,7 @@ public class VideoListPanel extends BorderPane {
 //                                t.consume();
 //                            });
                             viewBox.getChildren().add(view);
-                            setupHover(viewBox);
+                            setupHover(viewBox, file.getName());
                             videoList.getChildren().add(viewBox);
                         });
                     }
@@ -208,13 +210,17 @@ public class VideoListPanel extends BorderPane {
         updateThread.start();
     }
 
-    private void setupHover(final Node view) {
+    private void setupHover(final Node view, String fileName) {
+        Tooltip tt = new Tooltip(fileName);
         view.setStyle(BORDER_STYLE_DESELECTED);
         view.setOnMouseEntered((MouseEvent t) -> {
             view.setStyle(BORDER_STYLE_SELECTED);
+            Bounds b = view.localToScreen(view.getLayoutBounds());
+            tt.show(view, b.getMaxX(), b.getMinY());
         });
         view.setOnMouseExited((MouseEvent t) -> {
             view.setStyle(BORDER_STYLE_DESELECTED);
+            tt.hide();
         });
     }
 
