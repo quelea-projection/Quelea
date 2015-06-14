@@ -85,6 +85,7 @@ public class OptionsGeneralPanel extends GridPane implements PropertyPanel {
     private final BigDecimalSpinner smallSongSizeSpinner;
     private final BigDecimalSpinner smallBibleSizeSpinner;
     private final CheckBox overflowSongCheckBox;
+    private final CheckBox showVideoPanelCheckBox;
 
     /**
      * Create a new general panel.
@@ -234,16 +235,25 @@ public class OptionsGeneralPanel extends GridPane implements PropertyPanel {
         GridPane.setConstraints(previewOnImageChangeLabel, 1, rows);
         getChildren().add(previewOnImageChangeLabel);
         previewOnImageChangeCheckBox = new CheckBox();
-        startupLabel.setLabelFor(previewOnImageChangeCheckBox);
+        previewOnImageChangeLabel.setLabelFor(previewOnImageChangeCheckBox);
         GridPane.setConstraints(previewOnImageChangeCheckBox, 2, rows);
         getChildren().add(previewOnImageChangeCheckBox);
+        rows++;
+        
+        Label showVideoPanelLabel = new Label(LabelGrabber.INSTANCE.getLabel("show.video.library.panel"));
+        GridPane.setConstraints(showVideoPanelLabel, 1, rows);
+        getChildren().add(showVideoPanelLabel);
+        showVideoPanelCheckBox = new CheckBox();
+        showVideoPanelLabel.setLabelFor(showVideoPanelCheckBox);
+        GridPane.setConstraints(showVideoPanelCheckBox, 2, rows);
+        getChildren().add(showVideoPanelCheckBox);
         rows++;
         
         Label autoTranslateLabel = new Label(LabelGrabber.INSTANCE.getLabel("auto.translate.label"));
         GridPane.setConstraints(autoTranslateLabel, 1, rows);
         getChildren().add(autoTranslateLabel);
         autoTranslateCheckBox = new CheckBox();
-        startupLabel.setLabelFor(autoTranslateCheckBox);
+        autoTranslateLabel.setLabelFor(autoTranslateCheckBox);
         GridPane.setConstraints(autoTranslateCheckBox, 2, rows);
         getChildren().add(autoTranslateCheckBox);
         rows++;
@@ -252,7 +262,7 @@ public class OptionsGeneralPanel extends GridPane implements PropertyPanel {
         GridPane.setConstraints(clearLiveOnRemoveLabel, 1, rows);
         getChildren().add(clearLiveOnRemoveLabel);
         clearLiveOnRemoveCheckBox = new CheckBox();
-        startupLabel.setLabelFor(clearLiveOnRemoveCheckBox);
+        clearLiveOnRemoveLabel.setLabelFor(clearLiveOnRemoveCheckBox);
         GridPane.setConstraints(clearLiveOnRemoveCheckBox, 2, rows);
         getChildren().add(clearLiveOnRemoveCheckBox);
         rows++;
@@ -261,7 +271,7 @@ public class OptionsGeneralPanel extends GridPane implements PropertyPanel {
         GridPane.setConstraints(embedMediaLabel, 1, rows);
         getChildren().add(embedMediaLabel);
         embedMediaInScheduleCheckBox = new CheckBox();
-        startupLabel.setLabelFor(embedMediaInScheduleCheckBox);
+        embedMediaLabel.setLabelFor(embedMediaInScheduleCheckBox);
         GridPane.setConstraints(embedMediaInScheduleCheckBox, 2, rows);
         getChildren().add(embedMediaInScheduleCheckBox);
         rows++;
@@ -464,6 +474,7 @@ public class OptionsGeneralPanel extends GridPane implements PropertyPanel {
         autoPlayVidCheckBox.setSelected(props.getAutoPlayVideo());
         advanceOnLiveCheckBox.setSelected(props.getAdvanceOnLive());
         overflowSongCheckBox.setSelected(props.getSongOverflow());
+        showVideoPanelCheckBox.setSelected(props.getDisplayVideoTab());
         previewOnImageChangeCheckBox.setSelected(props.getPreviewOnImageUpdate());
         clearLiveOnRemoveCheckBox.setSelected(props.getClearLiveOnRemove());
         embedMediaInScheduleCheckBox.setSelected(props.getEmbedMediaInScheduleFile());
@@ -514,6 +525,8 @@ public class OptionsGeneralPanel extends GridPane implements PropertyPanel {
         props.setAdvanceOnLive(autoAdvance);
         boolean overflow = overflowSongCheckBox.isSelected();
         props.setSongOverflow(overflow);
+        boolean videoTab = showVideoPanelCheckBox.isSelected();
+        props.setDisplayVideoTab(videoTab);
         boolean previewChange = previewOnImageChangeCheckBox.isSelected();
         props.setPreviewOnImageUpdate(previewChange);
         //One line mode needs to be updated manually

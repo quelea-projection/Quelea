@@ -143,11 +143,17 @@ public final class QueleaProperties extends Properties {
      */
     public boolean getDisplayVideoTab() {
         try {
-            return Boolean.parseBoolean(getProperty("video.tab", "true"));
+            return Boolean.parseBoolean(getProperty("video.tab", "false"));
         }
         catch(Exception ex) {
             return true;
         }
+    }
+    
+    
+    public void setDisplayVideoTab(boolean videoTab) {
+        setProperty("video.tab", Boolean.toString(videoTab));
+        write();
     }
 
     /**
