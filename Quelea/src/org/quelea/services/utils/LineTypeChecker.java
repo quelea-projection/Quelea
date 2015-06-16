@@ -65,7 +65,9 @@ public class LineTypeChecker {
     }
 
     private boolean checkNonBreak() {
-        return line.trim().equals("<>");
+        return line.trim().equals("<>")
+                || line.trim().equals("\\u00A0")
+                || (line.length() == 1 && line.charAt(0) == 160);
     }
 
     /**
