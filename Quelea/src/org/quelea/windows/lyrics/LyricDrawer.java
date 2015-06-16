@@ -562,7 +562,6 @@ public class LyricDrawer extends WordDrawer {
 //        }
 //        return ret;
 //    }
-
     /**
      * Take the raw text and format it into a number of lines nicely, where the
      * lines aren't more than the maximum length.
@@ -574,6 +573,9 @@ public class LyricDrawer extends WordDrawer {
         int translationOffset = 0;
         for (int i = 0; i < linesArr.length; i++) {
             finalLines.add(new LyricLine(linesArr[i]));
+            if(new LineTypeChecker(linesArr[i]).getLineType() == Type.NONBREAK) {
+                continue;
+            }
             if (translationArr != null && i < translationArr.length) {
                 while (i + translationOffset < translationArr.length && new LineTypeChecker(translationArr[i + translationOffset]).getLineType() != Type.NORMAL) {
                     translationOffset++;
