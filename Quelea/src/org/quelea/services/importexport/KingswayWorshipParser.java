@@ -367,9 +367,12 @@ public class KingswayWorshipParser implements SongParser {
             lyricSB.append(line.trim()).append("\n");
         }
         group = lyricSB.toString();
+        if(group.substring(0,1).equals("\n")) {
+            group = group.substring(1);
+        }
         group = group.substring(0, group.indexOf("\n")).toLowerCase() + group.substring(group.indexOf("\n"));
         group = group.substring(0, 1).toUpperCase() + group.substring(1);
-        group = group.trim();
+
         int i = group.length() - 1;
         for (int j = 0; j < 2; j++) {
             while (i > 1) {
@@ -399,6 +402,6 @@ public class KingswayWorshipParser implements SongParser {
         KingswayWorshipParser kwp = new KingswayWorshipParser();
 //        kwp.range = true;
 //        kwp.getSongs(null, null);
-        List<SongDisplayable> song = kwp.getSong(2370);
+        List<SongDisplayable> song = kwp.getSong(100);
     }
 }
