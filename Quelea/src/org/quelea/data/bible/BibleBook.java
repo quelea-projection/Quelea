@@ -38,6 +38,7 @@ public final class BibleBook implements BibleInterface, Serializable {
     private String htmlText;
     private List<Integer> caretPosList;
     private Bible bible;
+    private String bsname;
 
     /**
      * Create a new book.
@@ -158,6 +159,11 @@ public final class BibleBook implements BibleInterface, Serializable {
                 ret.bookName = "Book " + ret.bookNumber;
             }
         }
+        if (node.getAttributes().getNamedItem("bsname") != null) {
+            ret.bsname = node.getAttributes().getNamedItem("bsname").getNodeValue();
+        } else {
+            ret.bsname = ret.bookName;
+        }
         NodeList list = node.getChildNodes();
         for (int i = 0; i < list.getLength(); i++) {
             if (list.item(i).getNodeName().equalsIgnoreCase("chapter")
@@ -257,6 +263,10 @@ public final class BibleBook implements BibleInterface, Serializable {
     @Override
     public String getName() {
         return getBookName();
+    }
+
+    public String getBSName() {
+        return bsname;
     }
 
     @Override
