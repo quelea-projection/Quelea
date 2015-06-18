@@ -49,7 +49,7 @@ public class KingswayWorshipParser implements SongParser {
 
     private static final int CONSECUTIVE_ERROR_THRESHOLD = 20;
     private static final Logger LOGGER = LoggerUtils.getLogger();
-    private static final String UK = "http://www.weareworship.com/uk/songs/song-library/showsong/";
+    private static final String UK = "https://www.weareworship.com/uk/songs/song-library/showsong/";
 
     /**
      * Rough number of songs in the library at present. This is used to update
@@ -122,7 +122,7 @@ public class KingswayWorshipParser implements SongParser {
         int index = startNum;
         while (index <= endNum && (pageText = getPageText(UK, index)) != null) {
 //            System.out.println("Starting");
-            int percentage = (int) (((double) index / (double) ((all) ? ROUGH_NUM_SONGS : endNum) * 100));
+            int percentage = (int) (((double) (index - startNum) / (double) (endNum - startNum)) * 100);
             LOGGER.log(Level.INFO, "Kingsway import percent complete: {0}", percentage);
             if (statusPanel != null) {
                 statusPanel.getProgressBar().setProgress((double) percentage / 100);
@@ -130,11 +130,13 @@ public class KingswayWorshipParser implements SongParser {
             SongDisplayable song = null;
             try {
                 song = parseSong(pageText, index);
+//            System.out.println("Parse successful");
             } catch (Exception ex) {
                 LOGGER.log(Level.WARNING, "Error importing song", ex);
             }
             if (song != null) {
                 ret.add(song);
+//            System.out.println("Song added to return list - yey!");
             }
             if (song == null) {
                 errorCount++;
@@ -220,6 +222,7 @@ public class KingswayWorshipParser implements SongParser {
      */
     private SongDisplayable parseSong(String html, int num) {
         try {
+//            System.out.println("Parsing song");
             if (html == null || html.contains("<h1>Sorry...</h1>") || html.contains("Server error") || html.trim().isEmpty()) {
                 return null;
             }
@@ -242,12 +245,14 @@ public class KingswayWorshipParser implements SongParser {
 
             String title = songHtml.substring("<h1 class=\"no-border\" id=\"song-title\">".length(), songHtml.indexOf("</h1>"));
 
+//            System.out.println("Done title");
             int sindex = songHtml.indexOf("<h3>");
             songHtml = songHtml.substring(sindex).trim();
             String author = songHtml.substring(4, songHtml.indexOf("</h3>")).trim();
             if (author.toLowerCase().startsWith("by")) {
                 author = author.substring(3).trim();
             }
+//            System.out.println("Done author");
 
             String copyright = "";
             String ccli = "";
@@ -257,6 +262,7 @@ public class KingswayWorshipParser implements SongParser {
             if (mc.find() && mc.group(1) != null) {
                 copyright = mc.group(1);
             }
+//            System.out.println("Done copyright");
 
             patternString = "<p>CCLI Number: (\\d*?)</p>";
             pc = Pattern.compile(patternString, Pattern.DOTALL);
@@ -264,6 +270,7 @@ public class KingswayWorshipParser implements SongParser {
             if (mc.find() && mc.group(1) != null) {
                 ccli = mc.group(1);
             }
+//            System.out.println("Done ccli");
 
             patternString = "Lyrics_(.._..)\">(.*?)</div>";
             Pattern p = Pattern.compile(patternString, Pattern.DOTALL);
@@ -271,11 +278,13 @@ public class KingswayWorshipParser implements SongParser {
 
             if (m.find()) {
                 String lyrics = sanitize(m.group(2));
+//                System.out.println("sanitized lyrics");
                 lyrics = lyrics.replace(author + "( & .*)?", "");
                 lyrics = lyrics.replace(copyright, "");
                 lyrics = lyrics.replace(ccli, "");
 
                 if (lyrics.length() > 5) {
+//                    System.out.println("Has lyrics");
                     if (title.trim().isEmpty()) {
                         title = lyrics.substring(0, lyrics.indexOf("\n")).trim();
                     }
@@ -298,6 +307,7 @@ public class KingswayWorshipParser implements SongParser {
                         } else {
                             languageName = m.group(1);
                         }
+//                        System.out.println("Adding translation " + languageName);
                         ret.addTranslation(languageName, translationLyrics);
                     }
 
@@ -306,6 +316,8 @@ public class KingswayWorshipParser implements SongParser {
                     LOGGER.log(Level.INFO, "Page {0} no lyrics found. Title: {1}", new Object[]{num, title});
                     return null;
                 } else {
+
+//                    System.out.println("No lyrics?");
                     return null;
                 }
             }
@@ -327,19 +339,43 @@ public class KingswayWorshipParser implements SongParser {
         try {
             StringBuilder content = new StringBuilder();
             URL url = new URL(location + num);
-            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-            if (conn.getResponseCode() == HttpURLConnection.HTTP_MOVED_PERM || conn.getResponseCode() == HttpURLConnection.HTTP_MOVED_TEMP) {
-                url = new URL(conn.getHeaderField("Location"));
-            }
-            try (BufferedReader in = new BufferedReader(new InputStreamReader(url.openConnection().getInputStream(), "UTF-8"))) {
-                String str;
-                while ((str = in.readLine()) != null) {
-                    content.append(str).append("\n");
+//            System.out.println("URL Formed");
+            for (int i = 0; i < 5; i++) {
+                try {
+                    HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+//                    System.out.println("Connection opened time number: " + i);
+                    conn.setConnectTimeout(5000);
+                    conn.setReadTimeout(10000);
+                    if (conn.getResponseCode() == HttpURLConnection.HTTP_MOVED_PERM || conn.getResponseCode() == HttpURLConnection.HTTP_MOVED_TEMP) {
+                        url = new URL(conn.getHeaderField("Location"));
+                        conn = (HttpURLConnection) url.openConnection();
+//                        System.out.println("URL reformed because moved");
+                    }
+                    try (BufferedReader in = new BufferedReader(new InputStreamReader(conn.getInputStream(), "UTF-8"))) {
+                        System.out.println("Try with resources open connection");
+                        String str;
+                        while ((str = in.readLine()) != null) {
+                            content.append(str).append("\n");
+                        }
+                    } catch (Exception e) {
+//                        System.out.println("Try with resource threw an error");
+                        LOGGER.log(Level.INFO, "Retrying connection to page {0}", num);
+                        continue;
+                    }
+                } catch (Exception e) {
+//                    System.out.println("Socket / Connection error");
+                    LOGGER.log(Level.INFO, "Retrying connection to page {0}", num);
+                    continue;
                 }
+
+//                System.out.println("return song");
+                return content.toString();
             }
-            return content.toString();
+            LOGGER.log(Level.WARNING, "Failed to retrieve page {0} after 3 tries", num);
+            return "";
         } catch (Exception ex) {
             if (ex.getMessage().contains("500")) {
+//            System.out.println("code 500");
                 return "";
             } else {
                 LOGGER.log(Level.WARNING, ex.getMessage());
@@ -349,6 +385,8 @@ public class KingswayWorshipParser implements SongParser {
     }
 
     private String sanitize(String group) {
+        
+//            System.out.println("sanitizing lyrics");
         group = group.replace("\n", "");
         group = group.replace("<br />", "\n");
         group = group.replace("<BR />", "\n");
@@ -365,10 +403,12 @@ public class KingswayWorshipParser implements SongParser {
         StringBuilder lyricSB = new StringBuilder();
         for (String line : lines) {
             lyricSB.append(line.trim()).append("\n");
+//            System.out.println("trim lines");
         }
         group = lyricSB.toString();
-        if(group.substring(0,1).equals("\n")) {
+        while (group.substring(0, 1).equals("\n")) {
             group = group.substring(1);
+//            System.out.println("Removing rogue blank lines");
         }
         group = group.substring(0, group.indexOf("\n")).toLowerCase() + group.substring(group.indexOf("\n"));
         group = group.substring(0, 1).toUpperCase() + group.substring(1);
