@@ -39,14 +39,8 @@ public class PPTXPresentation implements Presentation {
      *
      * @param file the file containing the presentation.
      */
-    public PPTXPresentation(String file) {
-        try {
-            slideshow = new XMLSlideShow(new FileInputStream(new File(file)));
-        } catch (IOException ex) {
-            throw new RuntimeException("Couldn't find " + file, ex);
-        } catch (Exception ex) {
-            throw new RuntimeException("Error creating presentation");
-        }
+    public PPTXPresentation(String file) throws IOException {
+        slideshow = new XMLSlideShow(new FileInputStream(new File(file)));
         slides = makeSlides();
     }
 
@@ -82,7 +76,7 @@ public class PPTXPresentation implements Presentation {
         ArrayList<PresentationSlide> ret = new ArrayList<>();
         for (int i = 0; i < lSlides.length; i++) {
             if (lSlides[i] != null) {
-                ret.add(new PresentationSlide(lSlides[i], i+1));
+                ret.add(new PresentationSlide(lSlides[i], i + 1));
             }
         }
         return ret.toArray(new PresentationSlide[ret.size()]);

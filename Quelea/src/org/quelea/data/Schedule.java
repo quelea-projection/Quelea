@@ -27,11 +27,18 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.Charset;
+import java.nio.file.CopyOption;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.Enumeration;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -188,12 +195,8 @@ public class Schedule implements Iterable<Displayable> {
             ZipFile zipFile = new ZipFile(file, Charset.forName("UTF-8"));
             final int BUFFER = 2048;
             try {
-                Schedule ret = parseXML(zipFile.getInputStream(zipFile.getEntry("schedule.xml")));
-                if (ret == null) {
-                    return null;
-                }
-                ret.setFile(file);
                 Enumeration<? extends ZipEntry> enumeration = zipFile.entries();
+                Map<String, String> fileChanges = new HashMap<>();
                 while (enumeration.hasMoreElements()) {
                     ZipEntry entry = enumeration.nextElement();
                     if (!entry.getName().startsWith("resources/")) {
@@ -206,16 +209,29 @@ public class Schedule implements Iterable<Displayable> {
                         if (writeFile.exists()) {
                             continue;
                         }
+                        if (!writeFile.canWrite()) {
+                            String[] parts = writeFile.getAbsolutePath().split("\\.");
+                            String extension = parts[parts.length - 1];
+                            File tempWriteFile = File.createTempFile("resource", "." + extension);
+                            tempWriteFile = Files.move(tempWriteFile.toPath(), Paths.get(tempWriteFile.getParentFile().getAbsolutePath(), writeFile.getName()), StandardCopyOption.REPLACE_EXISTING).toFile();
+                            tempWriteFile.deleteOnExit();
+                            fileChanges.put(writeFile.getAbsolutePath(), tempWriteFile.getAbsolutePath());
+                            writeFile = tempWriteFile;
+                        }
                         FileOutputStream fos = new FileOutputStream(writeFile);
                         try (BufferedOutputStream dest = new BufferedOutputStream(fos, BUFFER)) {
-                            while ((count = is.read(data, 0, BUFFER))
-                                    != -1) {
+                            while ((count = is.read(data, 0, BUFFER)) != -1) {
                                 dest.write(data, 0, count);
                             }
                             dest.flush();
                         }
                     }
                 }
+                Schedule ret = parseXML(zipFile.getInputStream(zipFile.getEntry("schedule.xml")), fileChanges);
+                if (ret == null) {
+                    return null;
+                }
+                ret.setFile(file);
                 ret.modified = false;
                 return ret;
             } finally {
@@ -268,7 +284,7 @@ public class Schedule implements Iterable<Displayable> {
      * @param inputStream the inputstream where the xml is being read from.
      * @return the schedule.
      */
-    private static Schedule parseXML(InputStream inputStream) {
+    private static Schedule parseXML(InputStream inputStream, Map<String, String> fileChanges) {
         try {
             /*
              * TODO: This should solve a problem some people were having with 
@@ -312,7 +328,10 @@ public class Schedule implements Iterable<Displayable> {
                 } else if (name.equalsIgnoreCase("fileaudio")) {
                     newSchedule.add(AudioDisplayable.parseXML(node));
                 } else if (name.equalsIgnoreCase("filepresentation")) {
-                    newSchedule.add(PresentationDisplayable.parseXML(node));
+                    PresentationDisplayable disp = PresentationDisplayable.parseXML(node, fileChanges);
+                    if (disp != null) {
+                        newSchedule.add(disp);
+                    }
                 } else if (name.equalsIgnoreCase("timer")) {
                     newSchedule.add(TimerDisplayable.parseXML(node));
                 }

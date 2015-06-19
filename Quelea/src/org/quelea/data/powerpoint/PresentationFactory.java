@@ -18,6 +18,7 @@
 package org.quelea.data.powerpoint;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.apache.poi.poifs.filesystem.OfficeXmlFileException;
@@ -39,7 +40,7 @@ public class PresentationFactory {
      * @param file the file to generate the presentation from.
      * @return the presentation object, or null if a problem occurs.
      */
-    public Presentation getPresentation(File file) {
+    public Presentation getPresentation(File file) throws IOException {
         Presentation ret = null;
         if(Utils.hasExtension(file, "ppt") || Utils.hasExtension(file, "pptx")) {
             try {

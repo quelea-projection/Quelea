@@ -22,6 +22,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.scene.image.Image;
@@ -91,11 +92,17 @@ public class PresentationDisplayable implements Displayable {
      * represents.
      * <p/>
      * @param node the XML node representing this object.
+     * @param fileChanges a map of any file changes that may have occurred.
      * @return the object as defined by the XML.
      */
-    public static PresentationDisplayable parseXML(Node node) {
+    public static PresentationDisplayable parseXML(Node node, Map<String, String> fileChanges) {
         try {
-            return new PresentationDisplayable(new File(node.getTextContent()));
+            File file = new File(node.getTextContent());
+            String changedFile = fileChanges.get(file.getAbsolutePath());
+            if(!file.exists() && changedFile != null) {
+                file = new File(changedFile);
+            }
+            return new PresentationDisplayable(file);
         }
         catch(IOException ex) {
             LOGGER.log(Level.INFO, "Couldn't create presentation for schedule", ex);

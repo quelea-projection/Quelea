@@ -38,14 +38,9 @@ public class PPTPresentation implements Presentation {
      *
      * @param file the file containing the presentation.
      */
-    public PPTPresentation(String file) {
-        try {
-            slideshow = new SlideShow(new HSLFSlideShow(file));
-            slides = makeSlides();
-        }
-        catch(IOException ex) {
-            throw new RuntimeException("Couldn't find " + file, ex);
-        }
+    public PPTPresentation(String file) throws IOException {
+        slideshow = new SlideShow(new HSLFSlideShow(file));
+        slides = makeSlides();
     }
 
     /**
@@ -78,8 +73,8 @@ public class PPTPresentation implements Presentation {
     private PresentationSlide[] makeSlides() {
         Slide[] lSlides = slideshow.getSlides();
         PresentationSlide[] ret = new PresentationSlide[lSlides.length];
-        for(int i = 0; i < lSlides.length; i++) {
-            ret[i] = new PresentationSlide(lSlides[i], i+1);
+        for (int i = 0; i < lSlides.length; i++) {
+            ret[i] = new PresentationSlide(lSlides[i], i + 1);
         }
         return ret;
     }
