@@ -168,7 +168,8 @@ public class LibraryBiblePanel extends VBox implements BibleChangeListener {
 
                     Platform.runLater(() -> {
                         refreshMaster();
-                        bookSelector.setItems(master.filtered((BibleBook b) -> b.getBookName().toLowerCase().startsWith(search.toLowerCase())));
+                        bookSelector.setItems(master.filtered((BibleBook b) -> b.getBookName().toLowerCase().startsWith(search.toLowerCase()) ||
+                                b.getBSName().toLowerCase().startsWith(search.toLowerCase())));
                         bookSelector.getSelectionModel().selectFirst();
                     });
 
