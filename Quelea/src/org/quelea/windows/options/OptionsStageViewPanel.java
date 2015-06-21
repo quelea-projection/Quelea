@@ -113,10 +113,10 @@ public class OptionsStageViewPanel extends GridPane implements PropertyPanel {
         getChildren().add(clearWithMainBox);
         
         Label use24HClock = new Label(LabelGrabber.INSTANCE.getLabel("use.24h.clock"));
-        GridPane.setConstraints(use24HClock, 1, 7);
+        GridPane.setConstraints(use24HClock, 1, 8);
         getChildren().add(use24HClock);
         use24HCheckBox = new CheckBox();
-        GridPane.setConstraints(use24HCheckBox, 2, 7);
+        GridPane.setConstraints(use24HCheckBox, 2, 8);
         getChildren().add(use24HCheckBox);
         
         
