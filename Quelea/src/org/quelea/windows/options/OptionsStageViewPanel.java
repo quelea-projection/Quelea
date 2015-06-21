@@ -45,6 +45,7 @@ public class OptionsStageViewPanel extends GridPane implements PropertyPanel {
     private ColorPicker chordColorPicker;
     private ColorPicker lyricsColorPicker;
     private final CheckBox clearWithMainBox;
+    private final CheckBox use24HCheckBox;
 
     /**
      * Create the stage view options panel.
@@ -111,6 +112,15 @@ public class OptionsStageViewPanel extends GridPane implements PropertyPanel {
         GridPane.setConstraints(clearWithMainBox, 2, 7);
         getChildren().add(clearWithMainBox);
         
+        Label use24HClock = new Label(LabelGrabber.INSTANCE.getLabel("use.24h.clock"));
+        GridPane.setConstraints(use24HClock, 1, 7);
+        getChildren().add(use24HClock);
+        use24HCheckBox = new CheckBox();
+        GridPane.setConstraints(use24HCheckBox, 2, 7);
+        getChildren().add(use24HCheckBox);
+        
+        
+        
         readProperties();
     }
 
@@ -126,6 +136,7 @@ public class OptionsStageViewPanel extends GridPane implements PropertyPanel {
         QueleaProperties.get().setStageChordColor(chordColorPicker.getValue());
         QueleaProperties.get().setStageLyricsColor(lyricsColorPicker.getValue());
         QueleaProperties.get().setClearStageWithMain(clearWithMainBox.isSelected());
+        QueleaProperties.get().setUse24HourClock(use24HCheckBox.isSelected());
     }
 
     /**
@@ -143,5 +154,6 @@ public class OptionsStageViewPanel extends GridPane implements PropertyPanel {
         fontSelection.getSelectionModel().select(QueleaProperties.get().getStageTextFont());
         lineAlignment.getSelectionModel().select(QueleaProperties.get().getStageTextAlignment());
         clearWithMainBox.setSelected(QueleaProperties.get().getClearStageWithMain());
+        use24HCheckBox.setSelected(QueleaProperties.get().getUse24HourClock());
     }
 }

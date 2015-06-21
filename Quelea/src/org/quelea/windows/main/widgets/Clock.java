@@ -42,7 +42,7 @@ public class Clock extends Text {
         bindToTime();
         setOpacity(0.8);
     }
-    
+
     public void setFontSize(double fontSize) {
         setFont(Font.font("Noto Sans", FontWeight.BOLD, FontPosture.REGULAR, fontSize));
         setFill(QueleaProperties.get().getStageChordColor());
@@ -50,17 +50,22 @@ public class Clock extends Text {
 
     private void bindToTime() {
         Timeline timeline = new Timeline(
-                new KeyFrame(Duration.seconds(0),
-                        new EventHandler<ActionEvent>() {
-                            @Override
-                            public void handle(ActionEvent actionEvent) {
-                                Calendar time = Calendar.getInstance();
-                                String hourString = pad(2, '0', time.get(Calendar.HOUR_OF_DAY) + "");
-                                String minuteString = pad(2, '0', time.get(Calendar.MINUTE) + "");
-                                setText(hourString + ":" + minuteString);
-                            }
-                        }
-                ),
+                new KeyFrame(Duration.seconds(0), (ActionEvent actionEvent) -> {
+                    Calendar time = Calendar.getInstance();
+                    String hourString;
+                    boolean s24h = QueleaProperties.get().getUse24HourClock();
+                    if (s24h) {
+                        hourString = pad(2, '0', time.get(Calendar.HOUR_OF_DAY) + "");
+                    } else {
+                        hourString = pad(2, '0', time.get(Calendar.HOUR) + "");
+                    }
+                    String minuteString = pad(2, '0', time.get(Calendar.MINUTE) + "");
+                    String text1 = hourString + ":" + minuteString;
+            if (!s24h) {
+                text1 += (time.get(Calendar.AM_PM) == time.get(Calendar.AM)) ? "AM" : "PM";
+            }
+            setText(text1);
+        }),
                 new KeyFrame(Duration.seconds(1))
         );
         timeline.setCycleCount(Animation.INDEFINITE);
@@ -78,12 +83,11 @@ public class Clock extends Text {
      */
     private static String pad(int fieldWidth, char padChar, String s) {
         StringBuilder sb = new StringBuilder();
-        for(int i = s.length(); i < fieldWidth; i++) {
+        for (int i = s.length(); i < fieldWidth; i++) {
             sb.append(padChar);
         }
         sb.append(s);
 
         return sb.toString();
     }
-
 }
