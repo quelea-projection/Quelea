@@ -24,13 +24,9 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 import javafx.animation.FadeTransition;
 import javafx.animation.ParallelTransition;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Group;
@@ -56,11 +52,9 @@ import org.quelea.data.displayable.TextDisplayable;
 import org.quelea.data.displayable.TextSection;
 import org.quelea.services.utils.LineTypeChecker;
 import org.quelea.services.utils.LineTypeChecker.Type;
-import org.quelea.services.utils.LoggerUtils;
 import org.quelea.services.utils.LyricLine;
 import org.quelea.services.utils.QueleaProperties;
 import org.quelea.services.utils.Utils;
-import org.quelea.windows.main.DisplayCanvas;
 import org.quelea.windows.main.WordDrawer;
 import org.quelea.windows.main.widgets.DisplayPositionSelector;
 import org.quelea.windows.multimedia.VLCWindow;
@@ -72,7 +66,7 @@ import org.quelea.windows.multimedia.VLCWindow;
  */
 public class LyricDrawer extends WordDrawer {
 
-    private static final Logger LOGGER = LoggerUtils.getLogger();
+    
     private String[] text;
     private String[] translations;
     private Group textGroup;
@@ -80,7 +74,6 @@ public class LyricDrawer extends WordDrawer {
     private ThemeDTO theme;
     private TextDisplayable curDisplayable;
     private boolean capitaliseFirst;
-    private final Map<DisplayCanvas, Boolean> lastClearedState;
     private String[] smallText;
 
     public LyricDrawer() {
@@ -91,7 +84,7 @@ public class LyricDrawer extends WordDrawer {
         lastClearedState = new HashMap<>();
     }
 
-    private void drawText(double defaultFontSize, boolean dumbWrap) {
+    protected void drawText(double defaultFontSize, boolean dumbWrap) {
         Utils.checkFXThread();
         if (defaultFontSize < 0) {
             defaultFontSize = QueleaProperties.get().getMaxFontSize();
@@ -344,18 +337,6 @@ public class LyricDrawer extends WordDrawer {
         }
     }
 
-    private boolean getLastClearedState() {
-        Boolean val = lastClearedState.get(getCanvas());
-        if (val == null) {
-            return false;
-        }
-        return val;
-    }
-
-    private void setLastClearedState(boolean val) {
-        lastClearedState.put(getCanvas(), val);
-    }
-
     /**
      * Set the theme of this getCanvas().
      * <p/>
@@ -448,6 +429,7 @@ public class LyricDrawer extends WordDrawer {
      * <p/>
      * @return the current theme
      */
+    @Override
     public ThemeDTO getTheme() {
         return theme;
     }
@@ -461,107 +443,11 @@ public class LyricDrawer extends WordDrawer {
      * <p/>
      * @param val true if the first character should be, false otherwise.
      */
+    @Override
     public void setCapitaliseFirst(boolean val) {
         this.capitaliseFirst = val;
     }
 
-    /**
-     * Pick a font size for the specified font that fits the given text into the
-     * width and height provided.
-     * <p>
-     * @param font the font to use for calculations.
-     * @param text the text to fit.
-     * @param width the fit width.
-     * @param height the fit height.
-     * @return a font size for the specified font that fits the text into the
-     * width and height provided.
-     */
-    private double pickFontSize(Font font, List<LyricLine> text, double width, double height) {
-        FontMetrics metrics = Toolkit.getToolkit().getFontLoader().getFontMetrics(font);
-        double totalHeight = ((metrics.getLineHeight() + getLineSpacing()) * text.size());
-        while (totalHeight > height) {
-            font = new Font(font.getName(), font.getSize() - 0.5);
-            if (font.getSize() < 1) {
-                return 1;
-            }
-            metrics = Toolkit.getToolkit().getFontLoader().getFontMetrics(font);
-            totalHeight = (metrics.getLineHeight() + getLineSpacing()) * text.size();
-        }
-        String longestLine = longestLine(font, text);
-        double totalWidth = metrics.computeStringWidth(longestLine);
-        while (totalWidth > width) {
-            font = new Font(font.getName(), font.getSize() - 0.5);
-            if (font.getSize() < 1) {
-                return 1;
-            }
-            metrics = Toolkit.getToolkit().getFontLoader().getFontMetrics(font);
-            totalWidth = metrics.computeStringWidth(longestLine);
-        }
-        return font.getSize();
-    }
-
-    private double getLineSpacing() {
-        double space = QueleaProperties.get().getAdditionalLineSpacing();
-        double factor = getCanvas().getHeight() / 1000.0;
-        return space * factor;
-    }
-
-    private String longestLine(Font font, List<LyricLine> text) {
-        FontMetrics metrics = Toolkit.getToolkit().getFontLoader().getFontMetrics(font);
-        double longestWidth = -1;
-        String longestStr = null;
-        for (LyricLine line : text) {
-            line = new LyricLine(line.isTranslateLine(), FormattedText.stripFormatTags(line.getLine()));
-            double width = metrics.computeStringWidth(line.getLine());
-            if (width > longestWidth) {
-                longestWidth = width;
-                longestStr = line.getLine();
-            }
-        }
-        return longestStr;
-    }
-
-    private String longestLine(Font font, ArrayList<String> text) {
-        FontMetrics metrics = Toolkit.getToolkit().getFontLoader().getFontMetrics(font);
-        double longestWidth = -1;
-        String longestStr = null;
-        for (String line : text) {
-            double width = metrics.computeStringWidth(line);
-            if (width > longestWidth) {
-                longestWidth = width;
-                longestStr = line;
-            }
-        }
-        return longestStr;
-    }
-
-//    /**
-//     * Wrap the text in a "dumb" way, not worrying about dividing up lines
-//     * nicely. This works better for bible passages.
-//     * <p>
-//     * @param lines the lines to divide up.
-//     * @return the divided lines.
-//     */
-//    private List<LyricLine> dumbWrapText(String[] lines) {
-//        List<LyricLine> ret = new ArrayList<>();
-//        int maxLength = QueleaProperties.get().getMaxBibleChars();
-//        StringBuilder currentBuilder = new StringBuilder(maxLength);
-//        for (String line : lines) {
-//            for (String word : line.split(" ")) {
-//                currentBuilder.append(' ');
-//                if (currentBuilder.length() + word.length() < maxLength) {
-//                    currentBuilder.append(word);
-//                } else {
-//                    ret.add(new LyricLine(currentBuilder.toString()));
-//                    currentBuilder = new StringBuilder(word);
-//                }
-//            }
-//        }
-//        if (currentBuilder.length() > 0) {
-//            ret.add(new LyricLine(currentBuilder.toString()));
-//        }
-//        return ret;
-//    }
     /**
      * Take the raw text and format it into a number of lines nicely, where the
      * lines aren't more than the maximum length.
@@ -637,44 +523,6 @@ public class LyricDrawer extends WordDrawer {
     }
 
     /**
-     * Determine if the given line contains the given string in the middle 80%
-     * of the line.
-     * <p/>
-     * @param line the line to check.
-     * @param str the string to use.
-     * @return true if the line contains the delimiter, false otherwise.
-     */
-    private static boolean containsNotAtEnd(String line, String str) {
-        final int percentage = 80;
-        int removeChars = (int) ((double) line.length() * ((double) (100 - percentage) / 100));
-        return line.substring(removeChars, line.length() - removeChars).contains(str);
-    }
-
-    /**
-     * Split a string with the given delimiter into two parts, using the
-     * delimiter closest to the middle of the string.
-     * <p/>
-     * @param line the line to split.
-     * @param delimiter the delimiter.
-     * @return an array containing two strings split in the middle by the
-     * delimiter.
-     */
-    private static String[] splitMiddle(String line, char delimiter) {
-        final int middle = (int) (((double) line.length() / 2) + 0.5);
-        int nearestIndex = -1;
-        for (int i = 0; i < line.length(); i++) {
-            if (line.charAt(i) == delimiter) {
-                int curDistance = Math.abs(nearestIndex - middle);
-                int newDistance = Math.abs(i - middle);
-                if (newDistance < curDistance || nearestIndex < 0) {
-                    nearestIndex = i;
-                }
-            }
-        }
-        return new String[]{line.substring(0, nearestIndex + 1), line.substring(nearestIndex + 1, line.length())};
-    }
-
-    /**
      * Determine the largest font size we can safely use for every section of a
      * text displayable.
      * <p>
@@ -726,6 +574,7 @@ public class LyricDrawer extends WordDrawer {
         return fontSize;
     }
 
+    @Override
     public void setText(TextDisplayable displayable, int index) {
         boolean fade = curDisplayable != displayable;
         double uniformFontSize = getUniformFontSize(displayable);
@@ -756,6 +605,7 @@ public class LyricDrawer extends WordDrawer {
      * @param fade true if the text should fade, false otherwise.
      * @param fontSize the font size to use to draw this text.
      */
+    @Override
     public void setText(String[] text, String[] translations, String[] smallText, boolean fade, double fontSize) {
         if (text == null) {
             text = new String[0];
@@ -805,40 +655,5 @@ public class LyricDrawer extends WordDrawer {
         }
         setTheme(ThemeDTO.DEFAULT_THEME);
         eraseText();
-    }
-
-    private double pickSmallFontSize(Font font, String[] text, double width, double height) {
-        FontMetrics metrics = Toolkit.getToolkit().getFontLoader().getFontMetrics(font);
-        ArrayList<String> al = new ArrayList<>();
-        for (String te : text) {
-            if (al.contains("\n")) {
-                String[] te2 = te.split("\n");
-                al.addAll(Arrays.asList(te2));
-            } else {
-                al.add(te);
-            }
-        }
-        double totalHeight = ((metrics.getLineHeight() + getLineSpacing()) * al.size());
-        while (totalHeight > height) {
-            font = new Font(font.getName(), font.getSize() - 0.5);
-            if (font.getSize() < 1) {
-                return 1;
-            }
-            metrics = Toolkit.getToolkit().getFontLoader().getFontMetrics(font);
-            totalHeight = (metrics.getLineHeight() + getLineSpacing()) * al.size();
-        }
-
-        String longestLine = longestLine(font, al);
-        double totalWidth = metrics.computeStringWidth(longestLine);
-        while (totalWidth > width) {
-            font = new Font(font.getName(), font.getSize() - 0.5);
-            if (font.getSize() < 1) {
-                return 1;
-            }
-            metrics = Toolkit.getToolkit().getFontLoader().getFontMetrics(font);
-            totalWidth = metrics.computeStringWidth(longestLine);
-        }
-
-        return font.getSize();
     }
 }
