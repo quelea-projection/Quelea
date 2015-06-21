@@ -136,21 +136,20 @@ public final class QueleaProperties extends Properties {
     public File getEnglishLanguageFile() {
         return new File("languages", "gb.lang");
     }
-    
+
     /**
      * Determine whether or not to display the video tab.
+     *
      * @return true if the video tab should be displayed, false otherwise.
      */
     public boolean getDisplayVideoTab() {
         try {
             return Boolean.parseBoolean(getProperty("video.tab", "false"));
-        }
-        catch(Exception ex) {
+        } catch (Exception ex) {
             return true;
         }
     }
-    
-    
+
     public void setDisplayVideoTab(boolean videoTab) {
         setProperty("video.tab", Boolean.toString(videoTab));
         write();
@@ -694,7 +693,7 @@ public final class QueleaProperties extends Properties {
         setProperty("next.kingsway.song", Integer.toString(num));
         write();
     }
-    
+
     public int getTranslationFontSizeOffset() {
         return Integer.parseInt(getProperty("translation.font.size.offset", "3"));
     }
@@ -1593,8 +1592,7 @@ public final class QueleaProperties extends Properties {
         setProperty("small.song.text.size", Double.toString(size));
         write();
     }
-    
-    
+
     public String getSmallBibleTextPositionH() {
         return getProperty("small.bible.text.h.position", "right");
     }
@@ -1786,7 +1784,7 @@ public final class QueleaProperties extends Properties {
     public boolean getSongOverflow() {
         return Boolean.parseBoolean(getProperty("song.overflow", "false"));
     }
-    
+
     public void setSongOverflow(boolean overflow) {
         setProperty("song.overflow", Boolean.toString(overflow));
         write();
@@ -1798,5 +1796,14 @@ public final class QueleaProperties extends Properties {
 
     public int getAutoDetectPort() {
         return Integer.parseInt(getProperty("auto.detect.port", "50015"));
+    }
+
+    public boolean getUse24HourClock() {
+        return Boolean.parseBoolean(getProperty("use.24h.clock", "true"));
+    }
+
+    public void setUse24HourClock(boolean s24h) {
+        setProperty("use.24h.clock", Boolean.toString(s24h));
+        write();
     }
 }
