@@ -572,3 +572,5 @@ rcs.submit=Skicka
 songpro.import.line1=Detta kommer att importera sånger från en SongPro SDB-databas.
 sof.import.line1=Detta kommer importera SoF-biblioteket från en RTF-fil.
 invalid.search=Ogiltig sökning
+overflow.song.label=Fortsätt automatiskt till första textdelen i nästa punkt
+use.24h.clock=Använd 24-timmarsklocka
