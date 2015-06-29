@@ -65,6 +65,10 @@ public class USEnglishConverter {
         us = Pattern.compile("Colour").matcher(us).replaceAll("Color");
         us = Pattern.compile("sanitise").matcher(us).replaceAll("sanitize");
         us = Pattern.compile("Sanitise").matcher(us).replaceAll("Sanitize");
+        us = Pattern.compile("initialise").matcher(us).replaceAll("initialize");
+        us = Pattern.compile("Initialise").matcher(us).replaceAll("Initialize");
+        us = Pattern.compile("capitalise").matcher(us).replaceAll("capitalize");
+        us = Pattern.compile("Capitalise").matcher(us).replaceAll("Capitalize");
         if(!us.equals(gb)) {
             System.out.println("Translated \"" + gb + "\" ==> \"" + us + "\"");
         }
