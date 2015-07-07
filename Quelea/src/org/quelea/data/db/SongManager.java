@@ -28,13 +28,13 @@ import java.util.TreeSet;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.hibernate.ObjectNotFoundException;
+import org.hibernate.Query;
 import org.hibernate.Session;
 import org.quelea.data.ThemeDTO;
 import org.quelea.data.db.model.Song;
 import org.quelea.data.db.model.Theme;
 import org.quelea.data.displayable.SongDisplayable;
 import org.quelea.data.displayable.TextSection;
-import org.quelea.services.lucene.SearchIndex;
 import org.quelea.services.lucene.SongSearchIndex;
 import org.quelea.services.utils.DatabaseListener;
 import org.quelea.services.utils.LoggerUtils;
@@ -123,6 +123,18 @@ public final class SongManager {
         final Set<SongDisplayable> songs = new TreeSet<>();
         HibernateUtil.execute((Session session) -> {
             for(final Song song : new SongDao(session).getSongs()) {
+                try {
+                    song.getTitle();
+                }
+                catch(Exception ex) {
+                    /*
+                     * Sometimes (rarely) a song can become corrupt - not entirely 
+                     * sure why, but this allows us to load the database ok whilst
+                     * still skipping over the corrupt entries.
+                     */
+                    LOGGER.log(Level.WARNING, "Song with id " + song.getId() + " is corrupt, skipping...", ex);
+                    continue;
+                }
                 final String[] tags = new String[song.getTags().size()];
                 for(int i = 0; i < song.getTags().size(); i++) {
                     tags[i] = song.getTags().get(i);
