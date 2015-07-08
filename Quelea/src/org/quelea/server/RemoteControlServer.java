@@ -62,6 +62,7 @@ public class RemoteControlServer {
     private boolean running;
     private String pageContent;
     private final Map<String, byte[]> fileCache;
+    public int count = 0;
 
     /**
      * Create a new mobile lyrics server on a specified port. The port must not
@@ -138,6 +139,7 @@ public class RemoteControlServer {
                 String pageContent = readFile("server/addsongrcspage.htm");
                 pageContent = pageContent.replace("$1", LabelGrabber.INSTANCE.getLabel("rcs.submit"));
                 byte[] bytes = pageContent.getBytes(Charset.forName("UTF-8"));
+                he.getResponseHeaders().add("Cache-Control", "no-cache, no-store, must-revalidate");
                 he.sendResponseHeaders(200, bytes.length);
                 try (OutputStream os = he.getResponseBody()) {
                     os.write(bytes);
@@ -155,6 +157,7 @@ public class RemoteControlServer {
             if (RCHandler.isLoggedOn(he.getRemoteAddress().getAddress().toString())) {
                 final String response;
                 response = RCHandler.addBiblePassage(he);
+                he.getResponseHeaders().add("Cache-Control", "no-cache, no-store, must-revalidate");
                 he.sendResponseHeaders(200, response.getBytes(Charset.forName("UTF-8")).length);
                 OutputStream os = he.getResponseBody();
                 os.write(response.getBytes(Charset.forName("UTF-8")));
@@ -172,6 +175,7 @@ public class RemoteControlServer {
             if (RCHandler.isLoggedOn(he.getRemoteAddress().getAddress().toString())) {
                 final String response;
                 response = RCHandler.listBibleTranslations(he);
+                he.getResponseHeaders().add("Cache-Control", "no-cache, no-store, must-revalidate");
                 he.sendResponseHeaders(200, response.getBytes(Charset.forName("UTF-8")).length);
                 OutputStream os = he.getResponseBody();
                 os.write(response.getBytes(Charset.forName("UTF-8")));
@@ -189,6 +193,7 @@ public class RemoteControlServer {
             if (RCHandler.isLoggedOn(he.getRemoteAddress().getAddress().toString())) {
                 final String response;
                 response = RCHandler.listBibleBooks(he);
+                he.getResponseHeaders().add("Cache-Control", "no-cache, no-store, must-revalidate");
                 he.sendResponseHeaders(200, response.getBytes(Charset.forName("UTF-8")).length);
                 OutputStream os = he.getResponseBody();
                 os.write(response.getBytes(Charset.forName("UTF-8")));
@@ -208,6 +213,7 @@ public class RemoteControlServer {
                 pageContent = pageContent.replace("$1", LabelGrabber.INSTANCE.getLabel("rcs.submit"));
                 pageContent = pageContent.replace("$2", LabelGrabber.INSTANCE.getLabel("bible.passage.selector.prompt"));
                 byte[] bytes = pageContent.getBytes(Charset.forName("UTF-8"));
+                he.getResponseHeaders().add("Cache-Control", "no-cache, no-store, must-revalidate");
                 he.sendResponseHeaders(200, bytes.length);
                 try (OutputStream os = he.getResponseBody()) {
                     os.write(bytes);
@@ -225,6 +231,7 @@ public class RemoteControlServer {
             if (RCHandler.isLoggedOn(he.getRemoteAddress().getAddress().toString())) {
                 final String response;
                 response = RCHandler.songDisplay(he);
+                he.getResponseHeaders().add("Cache-Control", "no-cache, no-store, must-revalidate");
                 he.sendResponseHeaders(200, response.getBytes(Charset.forName("UTF-8")).length);
                 OutputStream os = he.getResponseBody();
                 os.write(response.getBytes(Charset.forName("UTF-8")));
@@ -243,6 +250,7 @@ public class RemoteControlServer {
             if (RCHandler.isLoggedOn(he.getRemoteAddress().getAddress().toString())) {
                 final String response;
                 response = RCHandler.addSongToSchedule(he);
+                he.getResponseHeaders().add("Cache-Control", "no-cache, no-store, must-revalidate");
                 he.sendResponseHeaders(200, response.getBytes(Charset.forName("UTF-8")).length);
                 OutputStream os = he.getResponseBody();
                 os.write(response.getBytes(Charset.forName("UTF-8")));
@@ -261,6 +269,7 @@ public class RemoteControlServer {
             if (RCHandler.isLoggedOn(he.getRemoteAddress().getAddress().toString())) {
                 final String response;
                 response = RCHandler.databaseSearch(he);
+                he.getResponseHeaders().add("Cache-Control", "no-cache, no-store, must-revalidate");
                 he.sendResponseHeaders(200, response.getBytes(Charset.forName("UTF-8")).length);
                 OutputStream os = he.getResponseBody();
                 os.write(response.getBytes(Charset.forName("UTF-8")));
@@ -280,6 +289,7 @@ public class RemoteControlServer {
         @Override
         public void handle(HttpExchange he) throws IOException {
             byte[] bytes = RCHandler.schedule().getBytes(Charset.forName("UTF-8"));
+            he.getResponseHeaders().set("Cache-Control", "no-cache, no-store, must-revalidate");
             he.sendResponseHeaders(200, bytes.length);
             try (OutputStream os = he.getResponseBody()) {
                 os.write(bytes);
@@ -293,7 +303,9 @@ public class RemoteControlServer {
         @Override
         public void handle(HttpExchange he) throws IOException {
             if (RCHandler.isLoggedOn(he.getRemoteAddress().getAddress().toString())) {
-                he.sendResponseHeaders(200, -1);
+                he.getResponseHeaders().add("Cache-Control", "no-cache, no-store, must-revalidate");
+                he.sendResponseHeaders(200, 1);
+                he.getResponseBody().write(count++);
                 RCHandler.logo();
             } else {
                 reload(he);
@@ -307,7 +319,9 @@ public class RemoteControlServer {
         @Override
         public void handle(HttpExchange he) throws IOException {
             if (RCHandler.isLoggedOn(he.getRemoteAddress().getAddress().toString())) {
-                he.sendResponseHeaders(200, -1);
+                he.getResponseHeaders().add("Cache-Control", "no-cache, no-store, must-revalidate");
+                he.sendResponseHeaders(200, 1);
+                he.getResponseBody().write(count++);
                 RCHandler.black();
             } else {
                 reload(he);
@@ -321,7 +335,9 @@ public class RemoteControlServer {
         @Override
         public void handle(HttpExchange he) throws IOException {
             if (RCHandler.isLoggedOn(he.getRemoteAddress().getAddress().toString())) {
-                he.sendResponseHeaders(200, -1);
+                he.getResponseHeaders().add("Cache-Control", "no-cache, no-store, must-revalidate");
+                he.sendResponseHeaders(200, 1);
+                he.getResponseBody().write(count++);
                 RCHandler.clear();
             } else {
                 reload(he);
@@ -335,7 +351,9 @@ public class RemoteControlServer {
         @Override
         public void handle(HttpExchange he) throws IOException {
             if (RCHandler.isLoggedOn(he.getRemoteAddress().getAddress().toString())) {
-                he.sendResponseHeaders(200, -1);
+                he.getResponseHeaders().add("Cache-Control", "no-cache, no-store, must-revalidate");
+                he.sendResponseHeaders(200, 1);
+                he.getResponseBody().write(count++);
                 RCHandler.next();
             } else {
                 reload(he);
@@ -349,7 +367,9 @@ public class RemoteControlServer {
         @Override
         public void handle(HttpExchange he) throws IOException {
             if (RCHandler.isLoggedOn(he.getRemoteAddress().getAddress().toString())) {
-                he.sendResponseHeaders(200, -1);
+                he.getResponseHeaders().add("Cache-Control", "no-cache, no-store, must-revalidate");
+                he.sendResponseHeaders(200, 1);
+                he.getResponseBody().write(count++);
                 RCHandler.prev();
             } else {
                 reload(he);
@@ -363,7 +383,9 @@ public class RemoteControlServer {
         @Override
         public void handle(HttpExchange he) throws IOException {
             if (RCHandler.isLoggedOn(he.getRemoteAddress().getAddress().toString())) {
-                he.sendResponseHeaders(200, -1);
+                he.getResponseHeaders().add("Cache-Control", "no-cache, no-store, must-revalidate");
+                he.sendResponseHeaders(200, 1);
+                he.getResponseBody().write(count++);
                 RCHandler.nextItem();
             } else {
                 reload(he);
@@ -377,7 +399,9 @@ public class RemoteControlServer {
         @Override
         public void handle(HttpExchange he) throws IOException {
             if (RCHandler.isLoggedOn(he.getRemoteAddress().getAddress().toString())) {
-                he.sendResponseHeaders(200, -1);
+                he.getResponseHeaders().add("Cache-Control", "no-cache, no-store, must-revalidate");
+                he.sendResponseHeaders(200, 1);
+                he.getResponseBody().write(count++);
                 RCHandler.prevItem();
             } else {
                 reload(he);
@@ -394,6 +418,7 @@ public class RemoteControlServer {
                 String status = RCHandler.getLogo() + "," + RCHandler.getBlack() + ","
                         + RCHandler.getClear() + "," + RCHandler.videoStatus();
                 byte[] bytes = status.getBytes(Charset.forName("UTF-8"));
+                he.getResponseHeaders().add("Cache-Control", "no-cache, no-store, must-revalidate");
                 he.sendResponseHeaders(200, bytes.length);
                 try (OutputStream os = he.getResponseBody()) {
                     os.write(bytes);
@@ -410,6 +435,7 @@ public class RemoteControlServer {
         @Override
         public void handle(HttpExchange he) throws IOException {
             if (RCHandler.isLoggedOn(he.getRemoteAddress().getAddress().toString())) {
+                he.getResponseHeaders().add("Cache-Control", "no-cache, no-store, must-revalidate");
                 he.sendResponseHeaders(200, -1);
                 RCHandler.setLyrics(he.getRequestURI().toString());
             } else {
@@ -424,6 +450,7 @@ public class RemoteControlServer {
         @Override
         public void handle(HttpExchange he) throws IOException {
             if (RCHandler.isLoggedOn(he.getRemoteAddress().getAddress().toString())) {
+                he.getResponseHeaders().add("Cache-Control", "no-cache, no-store, must-revalidate");
                 he.sendResponseHeaders(200, -1);
                 RCHandler.play();
             } else {
@@ -491,6 +518,7 @@ public class RemoteControlServer {
         content = content.replace("[remote.login.text]", LabelGrabber.INSTANCE.getLabel("remote.login.text"));
         content = content.replace("[submit.button.text]", LabelGrabber.INSTANCE.getLabel("remote.submit.text"));
         byte[] bytes = content.getBytes(Charset.forName("UTF-8"));
+        he.getResponseHeaders().add("Cache-Control", "no-cache, no-store, must-revalidate");
         he.sendResponseHeaders(200, bytes.length);
         try (OutputStream os = he.getResponseBody()) {
             os.write(bytes);
@@ -499,6 +527,7 @@ public class RemoteControlServer {
 
     private void reload(HttpExchange he) throws IOException {
         byte[] bytes = readFile("icons/reloadpage.htm").getBytes("UTF-8");
+        he.getResponseHeaders().add("Cache-Control", "no-cache, no-store, must-revalidate");
         he.sendResponseHeaders(307, bytes.length);
         try (OutputStream os = he.getResponseBody()) {
             os.write(bytes);
@@ -525,6 +554,7 @@ public class RemoteControlServer {
             }
             byte[] bytes = response.getBytes("UTF-8");
 
+            t.getResponseHeaders().add("Cache-Control", "no-cache, no-store, must-revalidate");
             t.sendResponseHeaders(200, bytes.length);
             try (OutputStream os = t.getResponseBody()) {
                 os.write(bytes);
