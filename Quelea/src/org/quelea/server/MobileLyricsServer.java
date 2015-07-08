@@ -125,6 +125,7 @@ public class MobileLyricsServer {
                 pageContent = sortLabels(pageContent);
             }
             byte[] bytes = pageContent.getBytes(Charset.forName("UTF-8"));
+            t.getResponseHeaders().add("Cache-Control", "no-cache, no-store, must-revalidate");
             t.sendResponseHeaders(200, bytes.length);
             try(OutputStream os = t.getResponseBody()) {
                 os.write(bytes);
@@ -164,6 +165,7 @@ public class MobileLyricsServer {
         public void handle(HttpExchange t) throws IOException {
             String response = getLyrics(false);
             byte[] bytes = response.getBytes("UTF-8");
+            t.getResponseHeaders().add("Cache-Control", "no-cache, no-store, must-revalidate");
             t.sendResponseHeaders(200, bytes.length);
             try(OutputStream os = t.getResponseBody()) {
                 os.write(bytes);
@@ -177,6 +179,7 @@ public class MobileLyricsServer {
         public void handle(HttpExchange t) throws IOException {
             String response = getLyrics(true);
             byte[] bytes = response.getBytes("UTF-8");
+            t.getResponseHeaders().add("Cache-Control", "no-cache, no-store, must-revalidate");
             t.sendResponseHeaders(200, bytes.length);
             try(OutputStream os = t.getResponseBody()) {
                 os.write(bytes);
