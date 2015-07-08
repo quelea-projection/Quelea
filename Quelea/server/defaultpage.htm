@@ -88,12 +88,12 @@
             var xmlhttp;
             function setup()
             {
-                setInterval(function() {
+                setInterval(function () {
                     loadXMLDoc();
                     shrink();
                 }, 500);
                 xmlhttp = new XMLHttpRequest();
-                xmlhttp.onreadystatechange = function()
+                xmlhttp.onreadystatechange = function ()
                 {
                     if (xmlhttp.readyState == 4 && xmlhttp.status == 200)
                     {
@@ -117,7 +117,6 @@
                 if (chords) {
                     document.getElementById('chords').checked = chords;
                 }
-                document.documentElement.requestFullScreen();
             }
             function shrink()
             {
@@ -150,7 +149,7 @@
                     xmlhttp.open("GET", "/lyrics", true);
                 }
                 xmlhttp.timeout = 4000;
-                xmlhttp.ontimeout = function() {
+                xmlhttp.ontimeout = function () {
                     document.getElementById("child").innerHTML = "";
                 }
                 xmlhttp.send();
@@ -186,14 +185,14 @@
             <div>
                 <a href="#close" title="Close" class="close">X</a>
                 <h2>[change.graphics.label]</h2>
-                <div><p>[font.colour.label]: <input id="font-color" type="text" readonly="true" class="color" onchange="javascript:document.getElementById('dynamicDiv').style.color = '#' + document.getElementById('font-color').value;
-        setCookie('fontcolor', '#' + document.getElementById('font-color').value, 100);"></p></div>
+                <div><p>[font.colour.label]: <input id="font-color" type="text" readonly class="color" onchange="javascript:document.getElementById('dynamicDiv').style.color = '#' + document.getElementById('font-color').value;
+                        setCookie('fontcolor', '#' + document.getElementById('font-color').value, 100);"></p></div>
 
-                <div><p>[background.colour.label]: <input id="back-color" type="text" readonly="true" class="color" onchange="javascript:document.getElementById('dynamicDiv').style.background = '#' + document.getElementById('back-color').value;
-        setCookie('backcolor', '#' + document.getElementById('back-color').value, 100);"></p></div>
+                <div><p>[background.colour.label]: <input id="back-color" type="text" readonly class="color" onchange="javascript:document.getElementById('dynamicDiv').style.background = '#' + document.getElementById('back-color').value;
+                        setCookie('backcolor', '#' + document.getElementById('back-color').value, 100);"></p></div>
 
                 <div><p>[show.chords.label] <input type="checkbox" name="chords" id="chords" onchange="setCookie('chords', document.getElementById('chords').checked, 100);
-        shrink();"></p></div>
+                        shrink();"></p></div>
 
             </div>
         </div>
