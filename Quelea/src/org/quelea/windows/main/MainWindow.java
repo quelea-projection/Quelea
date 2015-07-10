@@ -19,6 +19,7 @@ package org.quelea.windows.main;
 
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javafx.application.Platform;
 import javafx.event.EventHandler;
 import javafx.scene.Scene;
 import javafx.scene.layout.BorderPane;
@@ -116,11 +117,16 @@ public class MainWindow extends Stage {
         setScene(new Scene(menuBox));
         SceneInfo sceneInfo = QueleaProperties.get().getSceneInfo();
         if (sceneInfo != null && !Utils.isOffscreen(sceneInfo)) { //Shouldn't be null unless something goes wrong, but guard against it anyway
-            setWidth(sceneInfo.getWidth());
-            setHeight(sceneInfo.getHeight());
-            setX(sceneInfo.getX());
-            setY(sceneInfo.getY());
-            setMaximized(sceneInfo.isMaximised());
+            Platform.runLater(new Runnable() {
+                public void run() {
+                    setWidth(sceneInfo.getWidth());
+                    setHeight(sceneInfo.getHeight());
+                    setX(sceneInfo.getX());
+                    setY(sceneInfo.getY());
+                    setMaximized(sceneInfo.isMaximised());
+                }
+            });
+
         }
         LOGGER.log(Level.INFO, "Created main window.");
     }
