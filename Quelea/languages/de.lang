@@ -571,3 +571,4 @@ rcs.add.success=Erfolgreich hinzugefügt
 songpro.import.line1=Hiermit werden Lieder aus einer SongPro SDB Datenbank importiert.
 sof.import.line1=Hiermit wird die SoF Lieddatenbank aus einer RTF Datei importiert.
 invalid.search=Ungültige Suchanfrage
+rcs.submit=Einsenden
