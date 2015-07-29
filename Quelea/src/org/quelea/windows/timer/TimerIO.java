@@ -27,13 +27,15 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import org.quelea.data.displayable.TimerDisplayable;
+import org.quelea.services.utils.LoggerUtils;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
 /**
@@ -42,6 +44,8 @@ import org.xml.sax.SAXException;
  * @author Ben
  */
 public class TimerIO {
+    
+    private static final Logger LOGGER = LoggerUtils.getLogger();
 
     /**
      * Method to save the countdown timer as a file
@@ -88,10 +92,12 @@ public class TimerIO {
                 Node node = doc.getFirstChild();
                 return TimerDisplayable.parseXML(node);
             } catch (IOException | ParserConfigurationException | SAXException e) {
+                LOGGER.log(Level.WARNING, "Error grabbing timer from file", e);
                 return null;
             }
 
         } else {
+            LOGGER.log(Level.WARNING, "Can't get timer from folder: {0}", f.getAbsolutePath());
             return null;
         }
     }

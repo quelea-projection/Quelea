@@ -112,7 +112,7 @@ public class TimerListPanel extends BorderPane {
                 QueleaApp.get().getMainWindow().getMainPanel().getSchedulePanel().getScheduleList().add(getSelectedValue());
             }
         });
-        
+
         ContextMenu removeMenu = new ContextMenu();
         MenuItem removeItem = new MenuItem(LabelGrabber.INSTANCE.getLabel("remove.timer.text"), new ImageView(new Image("file:icons/removedb.png", 16, 16, false, false)));
         removeItem.setOnAction(new RemoveTimerActionHandler());
@@ -159,7 +159,9 @@ public class TimerListPanel extends BorderPane {
                     for (final File file : files) {
                         Platform.runLater(() -> {
                             TimerDisplayable td = TimerIO.timerFromFile(file);
-                            timerList.getItems().add(td);
+                            if (td != null) {
+                                timerList.getItems().add(td);
+                            }
                         });
                     }
                 }

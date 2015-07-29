@@ -351,6 +351,10 @@ public class ThemeDTO implements Serializable {
         ret.append("$textalignment:").append(textAlignment);
         return ret.toString();
     }
+    
+    public String asXMLString() {
+        return Utils.escapeXML(asString());
+    }
 
     /**
      * Create Theme DTO form its String representation

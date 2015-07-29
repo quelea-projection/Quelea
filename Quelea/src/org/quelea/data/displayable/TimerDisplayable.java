@@ -140,7 +140,7 @@ public class TimerDisplayable implements MultimediaDisplayable, Serializable {
         StringBuilder ret = new StringBuilder();
         ret.append("<timer>");
         ret.append("<name>");
-        ret.append(name);
+        ret.append(Utils.escapeXML(name));
         ret.append("</name>");
         ret.append("<duration>");
         ret.append(seconds);
@@ -152,7 +152,7 @@ public class TimerDisplayable implements MultimediaDisplayable, Serializable {
         ret.append(Utils.escapeXML(posttext));
         ret.append("</posttext>");
         ret.append("<theme>");
-        ret.append(theme.asString());
+        ret.append(theme.asXMLString());
         ret.append("</theme>");
         ret.append("</timer>");
         return ret.toString();

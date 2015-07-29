@@ -72,7 +72,7 @@ public class RemoveTimerActionHandler implements EventHandler<ActionEvent> {
                     for (int i = 0; i < f.listFiles().length; i++) {
                         File file = f.listFiles()[i];
                         TimerDisplayable t = TimerIO.timerFromFile(file);
-                        if (t.getName().equals(td.getName())) {
+                        if (t!=null && t.getName().equals(td.getName())) {
                             file.delete();
                             Platform.runLater(() -> {
                                 QueleaApp.get().getMainWindow().getMainPanel().getLibraryPanel().getTimerPanel().getTimerPanel().refresh();
