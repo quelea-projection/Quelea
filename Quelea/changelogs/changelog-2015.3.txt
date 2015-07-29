@@ -28,5 +28,6 @@ quelea (2015.3) stable; urgency=normal
   * Fix issue with schedule not opening when a presentation it refers to is missing.
   * Fix issue with Quelea not loading if some songs in database are corrupted
   * Fix Remote Control to work more reliably on Internet Explorer.
+  * Fix issue with using special XML characters in timer file names
 
  -- Michael Berry <michael@quelea.org>  Wednesday, 16 May 2015 00:00:00 +0000
