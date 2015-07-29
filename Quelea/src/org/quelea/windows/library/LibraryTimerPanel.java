@@ -46,6 +46,7 @@ import org.quelea.services.utils.LoggerUtils;
 import org.quelea.services.utils.QueleaProperties;
 import org.quelea.services.utils.Utils;
 import org.quelea.windows.main.QueleaApp;
+import org.quelea.windows.main.actionhandlers.AddTimerActionHandler;
 import org.quelea.windows.main.actionhandlers.RemoveTimerActionHandler;
 
 /**
@@ -77,7 +78,11 @@ public class LibraryTimerPanel extends BorderPane {
 
         Button addButton = new Button("", new ImageView(new Image("file:icons/add.png")));
         addButton.setTooltip(new Tooltip(LabelGrabber.INSTANCE.getLabel("add.timers.panel")));
-        addButton.setOnAction((ActionEvent t) -> {
+        addButton.setOnAction(new AddTimerActionHandler());
+        
+        Button importButton = new Button("", new ImageView(new Image("file:icons/importbw.png")));
+        importButton.setTooltip(new Tooltip(LabelGrabber.INSTANCE.getLabel("import.heading")));
+        importButton.setOnAction((ActionEvent t) -> {
             FileChooser chooser = new FileChooser();
             if (QueleaProperties.get().getLastDirectory() != null) {
                 chooser.setInitialDirectory(QueleaProperties.get().getLastDirectory());
@@ -129,7 +134,8 @@ public class LibraryTimerPanel extends BorderPane {
         toolbar.setOrientation(Orientation.VERTICAL);
         toolbarBox.getChildren().add(toolbar);
         Utils.setToolbarButtonStyle(addButton);
-        toolbar.getItems().addAll(addButton, removeButton);
+        Utils.setToolbarButtonStyle(importButton);
+        toolbar.getItems().addAll(addButton, importButton, removeButton);
         setLeft(toolbarBox);
     }
 
