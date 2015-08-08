@@ -17,8 +17,11 @@
  */
 package org.quelea.windows.main;
 
+import com.sun.media.jfxmedia.logging.Logger;
 import java.io.File;
 import java.util.HashSet;
+import java.util.logging.Level;
+import javafx.application.Platform;
 import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
 import javafx.scene.control.Label;
@@ -41,8 +44,11 @@ import org.quelea.data.displayable.Displayable;
 import org.quelea.data.displayable.PresentationDisplayable;
 import org.quelea.services.languages.LabelGrabber;
 import org.quelea.services.utils.FileFilters;
+import org.quelea.services.utils.LoggerUtils;
 import org.quelea.services.utils.QueleaProperties;
 import org.quelea.services.utils.Utils;
+import org.quelea.windows.lyrics.SelectLyricsList;
+import org.quelea.windows.lyrics.SelectLyricsPanel;
 import org.quelea.windows.multimedia.VLCWindow;
 
 /**
@@ -81,7 +87,7 @@ public class LivePanel extends LivePreviewPanel {
             @Override
             public void handle(KeyEvent t) {
                 String text = t.getCharacter();
-                if(text.isEmpty()) {
+                if (text.isEmpty()) {
                     return;
                 }
                 char arr[] = text.toCharArray();
@@ -237,8 +243,21 @@ public class LivePanel extends LivePreviewPanel {
                 if (t.getCharacter().equals(" ")) {
                     QueleaApp.get().getMainWindow().getMainPanel().getPreviewPanel().goLive();
                 }
+                if (t.getCharacter().matches("\\d")) {
+                    try {
+                        int i = Integer.parseInt(t.getCharacter());
+                        final int index = (i > 0) ? i-- : 10;
+                        Platform.runLater(() -> {
+                            QueleaApp.get().getMainWindow().getMainPanel().getLivePanel().getLyricsPanel().select(index);
+                        });
+                    } catch (Exception ex) {
+                        LoggerUtils.getLogger().log(Level.INFO, "Could not cast keycode into integer for slide selection.", ex);
+                    }
+
+                }
             }
-        });
+        }
+        );
     }
 
     /**
