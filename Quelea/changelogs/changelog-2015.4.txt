@@ -1,0 +1,6 @@
+quelea (2015.4) stable; urgency=normal
+ 
+  * Re-enabled option to select maximum number of bible verses per slide
+  * Use of numbered keys to traverse live panel
+
+ -- Michael Berry <michael@quelea.org>  Wednesday, 08 August 2015 00:00:00 +0000
