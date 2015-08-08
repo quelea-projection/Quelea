@@ -34,6 +34,7 @@ import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.HBox;
 import javafx.stage.FileChooser;
 import org.javafx.dialog.Dialog;
 import org.quelea.data.bible.Bible;
@@ -49,6 +50,8 @@ import org.quelea.services.utils.QueleaProperties;
 import org.quelea.services.utils.Utils;
 import org.quelea.windows.main.QueleaApp;
 import org.quelea.windows.main.schedule.ScheduleList;
+import org.quelea.windows.main.widgets.NumberSpinner;
+import org.quelea.windows.main.widgets.NumberTextField;
 
 /**
  * The panel that shows the bible options
@@ -60,8 +63,9 @@ public class OptionsBiblePanel extends GridPane implements PropertyPanel, BibleC
     private static final Logger LOGGER = LoggerUtils.getLogger();
     private final ComboBox<Bible> defaultBibleComboBox;
     private final CheckBox showVerseNumCheckbox;
-    private final ComboBox<String> useBibleVersesBox;
-//    private final NumberTextField maxItemsPerSlideBox;
+    private final CheckBox splitBibleVersesBox;
+    private final NumberSpinner maxVersesPerSlideBox;
+    private final CheckBox maxVersesEnable;
 //    private final Slider maxCharsSlider;
     private boolean changed;
 
@@ -116,36 +120,39 @@ public class OptionsBiblePanel extends GridPane implements PropertyPanel, BibleC
         GridPane.setConstraints(showVerseNumCheckbox, 2, 2);
         getChildren().add(showVerseNumCheckbox);
 
-        Label useBibleVersesLabel = new Label(LabelGrabber.INSTANCE.getLabel("use.bible.verses"));
-        GridPane.setConstraints(useBibleVersesLabel, 1, 3);
-        getChildren().add(useBibleVersesLabel);
-        useBibleVersesBox = new ComboBox<>();
-        useBibleVersesBox.getItems().addAll(LabelGrabber.INSTANCE.getLabel("verses"), LabelGrabber.INSTANCE.getLabel("words"));
-        useBibleVersesLabel.setLabelFor(useBibleVersesBox);
-        GridPane.setConstraints(useBibleVersesBox, 2, 3);
-        getChildren().add(useBibleVersesBox);
+        Label splitBibleVersesLabel = new Label(LabelGrabber.INSTANCE.getLabel("split.bible.verses"));
+        GridPane.setConstraints(splitBibleVersesLabel, 1, 3);
+        getChildren().add(splitBibleVersesLabel);
+        splitBibleVersesBox = new CheckBox();
+        splitBibleVersesLabel.setLabelFor(splitBibleVersesBox);
+        GridPane.setConstraints(splitBibleVersesBox, 2, 3);
+        getChildren().add(splitBibleVersesBox);
 
-//        final String[] labels = LabelGrabber.INSTANCE.getLabel("max.items.per.slide").split("%");
-//        final Label maxItemsPerSlideLabel = new Label("");
-//        GridPane.setConstraints(maxItemsPerSlideLabel, 1, 4);
-//        getChildren().add(maxItemsPerSlideLabel);
-//        maxItemsPerSlideBox = new NumberTextField();
-//        maxItemsPerSlideLabel.setLabelFor(maxItemsPerSlideBox);
-//        GridPane.setConstraints(maxItemsPerSlideBox, 2, 4);
-////        getChildren().add(maxItemsPerSlideBox);
-//
-        useBibleVersesBox.valueProperty().addListener((ObservableValue<? extends String> observable, String oldValue, String newValue) -> {
-            //maxItemsPerSlideLabel.setText(labels[0] + newValue + labels[1]);
+        final Label maxVersesPerSlideLabel = new Label(LabelGrabber.INSTANCE.getLabel("max.items.per.slide").replace("%", LabelGrabber.INSTANCE.getLabel("verses")));
+        GridPane.setConstraints(maxVersesPerSlideLabel, 1, 4);
+        getChildren().add(maxVersesPerSlideLabel);
+        HBox hbox = new HBox();
+        maxVersesEnable = new CheckBox();
+        hbox.getChildren().add(maxVersesEnable);
+        maxVersesPerSlideBox = new NumberSpinner();
+        maxVersesPerSlideBox.setMaxWidth(70);
+        maxVersesPerSlideBox.setMinWidth(70);
+        maxVersesPerSlideLabel.setLabelFor(maxVersesPerSlideBox);
+        hbox.getChildren().add(maxVersesPerSlideBox);
+        GridPane.setConstraints(hbox, 2, 4);
+        getChildren().add(hbox);
+        maxVersesEnable.selectedProperty().addListener((ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) -> {
+            maxVersesPerSlideBox.setDisable(!newValue);
+            splitBibleVersesBox.setDisable(newValue);
             changed = true;
         });
-//
-//        maxItemsPerSlideBox.textProperty().addListener(new ChangeListener<String>() {
-//            @Override
-//            public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
-//                changed = true;
-//            }
-//        });
 
+        maxVersesPerSlideBox.numberProperty().addListener(new ChangeListener<Number>() {
+            @Override
+            public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
+                changed = true;
+            }
+        });
 //        Label maxCharsLabel = new Label(LabelGrabber.INSTANCE.getLabel("max.chars.line.label"));
 //
 //        GridPane.setConstraints(maxCharsLabel, 1, 5);
@@ -167,7 +174,6 @@ public class OptionsBiblePanel extends GridPane implements PropertyPanel, BibleC
 //                maxCharsValue.setText(Integer.toString((int) maxCharsSlider.getValue()));
 //            }
 //        });
-
         readProperties();
 
     }
@@ -203,8 +209,9 @@ public class OptionsBiblePanel extends GridPane implements PropertyPanel, BibleC
             }
         }
         showVerseNumCheckbox.setSelected(props.getShowVerseNumbers());
-        useBibleVersesBox.getSelectionModel().select((props.getBibleSectionVerses()) ? 0 : 1);
-//        maxItemsPerSlideBox.setNumber(props.getMaxBibleItems());
+        splitBibleVersesBox.setSelected(props.getBibleSplitVerses());
+        maxVersesPerSlideBox.setNumber(props.getMaxBibleVerses());
+        maxVersesEnable.setSelected(!props.getBibleUsingMaxChars());
 //        maxCharsSlider.setValue(props.getMaxBibleChars());
 
     }
@@ -220,8 +227,9 @@ public class OptionsBiblePanel extends GridPane implements PropertyPanel, BibleC
             props.setDefaultBible(bible);
         }
         props.setShowVerseNumbers(showVerseNumCheckbox.isSelected());
-        props.setBibleSectionVerses(useBibleVersesBox.getSelectionModel().getSelectedIndex() == 0);
-//        props.setMaxBibleItems(maxItemsPerSlideBox.getNumber());
+        props.setBibleSplitVerses(splitBibleVersesBox.isSelected());
+        props.setMaxBibleVerses(maxVersesPerSlideBox.getNumber());
+        props.setBibleUsingMaxChars(!maxVersesEnable.isSelected());
 //        int maxCharsPerLine = (int) maxCharsSlider.getValue();
 //        props.setMaxBibleChars(maxCharsPerLine);
         if (changed) {

@@ -25,11 +25,14 @@ import java.util.Collection;
 import java.util.List;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import org.javafx.dialog.Dialog;
 import org.quelea.data.Background;
 import org.quelea.data.ThemeDTO;
 import org.quelea.data.bible.BibleVerse;
+import org.quelea.services.languages.LabelGrabber;
 import org.quelea.services.utils.QueleaProperties;
 import org.quelea.services.utils.Utils;
+import org.quelea.windows.main.QueleaApp;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
@@ -88,29 +91,42 @@ public class BiblePassage implements TextDisplayable, Serializable {
      */
     private void fillTextSections() {
         final int MAX_CHARS = QueleaProperties.get().getMaxChars();
-        final boolean SPLIT_VERSES = QueleaProperties.get().getBibleSectionVerses();
+        final int MAX_VERSES = QueleaProperties.get().getMaxBibleVerses();
+        final boolean SPLIT_VERSES = QueleaProperties.get().getBibleSplitVerses();
+        final boolean USE_CHARS = QueleaProperties.get().getBibleUsingMaxChars();
 
         StringBuilder section = new StringBuilder();
         StringBuilder line = new StringBuilder();
-        int lines = 1;
+        int lines = 0;
+        int count = 0;
+        boolean verseError = false;
         for (BibleVerse verse : verses) {
-            if (QueleaProperties.get().getShowVerseNumbers()) {
-                line.append("<sup>");
-                if(multi) {
-                    line.append(verse.getChapterNum()).append(":");
+            if (verse == null) {
+                verseError = true;
+            } else {
+                if (QueleaProperties.get().getShowVerseNumbers()) {
+                    line.append("<sup>");
+                    if (multi) {
+                        line.append(verse.getChapterNum()).append(":");
+                    }
+                    line.append(verse.getNum());
+                    line.append("</sup>");
                 }
-                line.append(verse.getNum());
-                line.append("</sup>");
-            }
-            String verseText = verse.getText();
-            String[] verseWords = verseText.split(" ");
-            for (String verseWord : verseWords) {
-                line.append(verseWord).append(" ");
-                if (line.toString().replaceAll("\\<sup\\>[0-9]+\\<\\/sup\\>", "").length() > MAX_CHARS) {
-                    line.append("\n");
-                    section.append(line);
-                    line.setLength(0); //Empty
-                    lines++;
+                String verseText = verse.getText();
+                String[] verseWords = verseText.split(" ");
+                for (String verseWord : verseWords) {
+                    line.append(verseWord).append(" ");
+                    if (line.toString().replaceAll("\\<sup\\>[0-9]+\\<\\/sup\\>", "").length() > MAX_CHARS) {
+                        line.append("\n");
+                        section.append(line);
+                        lines++;
+                        line.setLength(0);
+                    }
+                }
+//            section.append(line);
+//            line.setLength(0); //Empty
+                count++;
+                if (USE_CHARS) {
                     if (!SPLIT_VERSES) {
                         if (lines >= MAX_CHARS / 4) {
                             lines = 0;
@@ -118,31 +134,50 @@ public class BiblePassage implements TextDisplayable, Serializable {
                             section.setLength(0);
                         }
                     }
-                }
-            }
-            if (SPLIT_VERSES) {
-                if (!line.toString().trim().isEmpty()) {
-                    lines++;
-                }
-                if (lines >= MAX_CHARS / 4) {
-                    if (!line.toString().isEmpty()) {
-                        line.append("\n");
-                        section.append(line);
-                        line.setLength(0);
-                        lines++;
+                    if (SPLIT_VERSES) {
+                        if (!line.toString().trim().isEmpty()) {
+                            lines++;
+                        }
+                        if (lines >= MAX_CHARS / 4) {
+                            if (!line.toString().isEmpty()) {
+                                line.append("\n");
+                                section.append(line);
+                                line.setLength(0);
+                                lines++;
+                            }
+                            lines = 0;
+                            textSections.add(new TextSection("", new String[]{section.toString().trim()}, smallText, false));
+                            section.setLength(0);
+                        }
                     }
-                    lines = 0;
-                    textSections.add(new TextSection("", new String[]{section.toString().trim()}, smallText, false));
-                    section.setLength(0);
+
+                } else { // using verses
+                    if (count >= MAX_VERSES && count > 0) {
+                        if (!line.toString().isEmpty()) {
+                            line.append("\n");
+                            section.append(line);
+                            line.setLength(0);
+                        }
+                        textSections.add(new TextSection("", new String[]{section.toString().trim()}, smallText, false));
+                        section = new StringBuilder();
+                        count = 0;
+                    }
                 }
             }
         }
+
+        // Clean up anything left by the for loop (possible extra verses)
         if (!line.toString().isEmpty()) {
             line.append("\n");
             section.append(line);
         }
+
         if (!section.toString().isEmpty()) {
             textSections.add(new TextSection("", new String[]{section.toString().trim()}, smallText, false));
+        }
+        
+        if (verseError) {
+            Dialog.showInfo(LabelGrabber.INSTANCE.getLabel("no.verse.title"), LabelGrabber.INSTANCE.getLabel("no.verse.message"), QueleaApp.get().getMainWindow());
         }
     }
 
@@ -240,7 +275,7 @@ public class BiblePassage implements TextDisplayable, Serializable {
             bibleSummary = passage.getAttributes().getNamedItem("bible").getTextContent();
         }
         boolean multi = false;
-        if(passage.getAttributes().getNamedItem("multi") != null) {
+        if (passage.getAttributes().getNamedItem("multi") != null) {
             multi = Boolean.parseBoolean(passage.getAttributes().getNamedItem("multi").getTextContent());
         }
         String summary = passageSummary + "\n" + bibleSummary;

@@ -1643,12 +1643,12 @@ public final class QueleaProperties extends Properties {
      *
      * @return number of words or verses (depends on use.max.bible.verses)
      */
-    public int getMaxBibleItems() {
-        return Integer.parseInt(getProperty("max.bible.items", "5"));
+    public int getMaxBibleVerses() {
+        return Integer.parseInt(getProperty("max.bible.verses", "5"));
     }
 
-    public void setMaxBibleItems(int number) {
-        setProperty("max.bible.items", Integer.toString(number));
+    public void setMaxBibleVerses(int number) {
+        setProperty("max.bible.verses", Integer.toString(number));
         write();
     }
 
@@ -1657,12 +1657,12 @@ public final class QueleaProperties extends Properties {
      *
      * @return true if using maximum verses per slide
      */
-    public boolean getBibleSectionVerses() {
-        return Boolean.parseBoolean(getProperty("use.max.bible.verses", "true"));
+    public boolean getBibleUsingMaxChars() {
+        return Boolean.parseBoolean(getProperty("use.max.bible.chars", "true"));
     }
 
-    public void setBibleSectionVerses(boolean useVerses) {
-        setProperty("use.max.bible.verses", Boolean.toString(useVerses));
+    public void setBibleUsingMaxChars(boolean useChars) {
+        setProperty("use.max.bible.chars", Boolean.toString(useChars));
         write();
     }
 
@@ -1804,6 +1804,15 @@ public final class QueleaProperties extends Properties {
 
     public void setUse24HourClock(boolean s24h) {
         setProperty("use.24h.clock", Boolean.toString(s24h));
+        write();
+    }
+
+    public boolean getBibleSplitVerses() {
+        return Boolean.parseBoolean(getProperty("split.bible.verses", "false"));
+    }
+
+    public void setBibleSplitVerses(boolean selected) {
+        setProperty("split.bible.verses", Boolean.toString(selected));
         write();
     }
 }
