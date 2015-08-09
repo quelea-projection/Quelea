@@ -246,7 +246,7 @@ public class LivePanel extends LivePreviewPanel {
                 if (t.getCharacter().matches("\\d")) {
                     try {
                         int i = Integer.parseInt(t.getCharacter());
-                        final int index = (i > 0) ? i-- : 10;
+                        final int index = (i > 0) ? (i-1) : 10;
                         Platform.runLater(() -> {
                             QueleaApp.get().getMainWindow().getMainPanel().getLivePanel().getLyricsPanel().select(index);
                         });
