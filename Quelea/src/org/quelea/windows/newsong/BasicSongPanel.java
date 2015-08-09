@@ -31,6 +31,7 @@ import javafx.scene.control.ToolBar;
 import javafx.scene.control.Tooltip;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
@@ -112,6 +113,10 @@ public class BasicSongPanel extends BorderPane {
         HBox.setHgrow(spacer, Priority.ALWAYS);
         lyricsToolbar.getItems().add(spacer);
         dictSelector = new ComboBox<>();
+        dictSelector.addEventFilter(MouseEvent.MOUSE_ENTERED, (MouseEvent e) -> {
+            dictSelector.requestFocus();
+            //To be deleted when fixed in java #comboboxbug
+        });
         Tooltip.install(dictSelector, new Tooltip(LabelGrabber.INSTANCE.getLabel("dictionary.language.text")));
         for (Dictionary dict : DictionaryManager.INSTANCE.getDictionaries()) {
             dictSelector.getItems().add(dict);
