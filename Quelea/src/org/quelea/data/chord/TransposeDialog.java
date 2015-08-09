@@ -23,6 +23,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
@@ -50,6 +51,10 @@ public class TransposeDialog extends Stage {
         contentPane.setSpacing(5);
         
         keySelection = new ComboBox<>();
+        keySelection.addEventFilter(MouseEvent.MOUSE_ENTERED, (MouseEvent e) -> {
+            keySelection.requestFocus();
+            //To be deleted when fixed in java #comboboxbug
+        });
         Label label = new Label(LabelGrabber.INSTANCE.getLabel("select.key.label"));
         label.setAlignment(Pos.BASELINE_LEFT);
         contentPane.getChildren().add(label);

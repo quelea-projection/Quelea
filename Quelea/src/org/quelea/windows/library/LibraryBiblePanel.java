@@ -37,6 +37,7 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
@@ -75,6 +76,10 @@ public class LibraryBiblePanel extends VBox implements BibleChangeListener {
         verses = new ArrayList<>();
         BibleManager.get().registerBibleChangeListener(this);
         bibleSelector = new ComboBox<>(FXCollections.observableArrayList(BibleManager.get().getBibles()));
+        bibleSelector.addEventFilter(MouseEvent.MOUSE_ENTERED, (MouseEvent e) -> {
+            bibleSelector.requestFocus();
+            //To be deleted when fixed in java #comboboxbug
+        });
         String selectedBibleName = QueleaProperties.get().getDefaultBible();
         for (int i = 0; i < bibleSelector.itemsProperty().get().size(); i++) {
             Bible bible = bibleSelector.itemsProperty().get().get(i);
@@ -89,6 +94,10 @@ public class LibraryBiblePanel extends VBox implements BibleChangeListener {
         chapterPanel.setSpacing(5.0);
         if (bibleSelector.getItems().isEmpty()) {
             bookSelector = new ComboBox<>();
+            bookSelector.addEventFilter(MouseEvent.MOUSE_ENTERED, (MouseEvent e) -> {
+                bookSelector.requestFocus();
+                //To be deleted when fixed in java #comboboxbug
+            });
         } else {
             Bible bible = bibleSelector.selectionModelProperty().get().getSelectedItem();
             if (bible == null) {
@@ -96,6 +105,10 @@ public class LibraryBiblePanel extends VBox implements BibleChangeListener {
                 bibleSelector.setValue(bibleSelector.getItems().get(0));
             }
             bookSelector = new ComboBox<>(FXCollections.observableArrayList(bible.getBooks()));
+            bookSelector.addEventFilter(MouseEvent.MOUSE_ENTERED, (MouseEvent e) -> {
+                bookSelector.requestFocus();
+                //To be deleted when fixed in java #comboboxbug
+            });
             bookSelector.selectionModelProperty().get().select(0);
         }
         chapterPanel.getChildren().add(bookSelector);
@@ -168,8 +181,8 @@ public class LibraryBiblePanel extends VBox implements BibleChangeListener {
 
                     Platform.runLater(() -> {
                         refreshMaster();
-                        bookSelector.setItems(master.filtered((BibleBook b) -> b.getBookName().toLowerCase().startsWith(search.toLowerCase()) ||
-                                b.getBSName().toLowerCase().startsWith(search.toLowerCase())));
+                        bookSelector.setItems(master.filtered((BibleBook b) -> b.getBookName().toLowerCase().startsWith(search.toLowerCase())
+                                || b.getBSName().toLowerCase().startsWith(search.toLowerCase())));
                         bookSelector.getSelectionModel().selectFirst();
                     });
 
