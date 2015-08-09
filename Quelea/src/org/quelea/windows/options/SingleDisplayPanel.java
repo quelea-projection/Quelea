@@ -28,6 +28,7 @@ import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Screen;
@@ -72,6 +73,10 @@ public class SingleDisplayPanel extends VBox {
         Label iconLabel = new Label("",new ImageView(new Image("file:"+iconLocation, 80, 80, false, true)));
         getChildren().add(iconLabel);
         outputSelect = new ComboBox<>(getAvailableScreens(none));
+        outputSelect.addEventFilter(MouseEvent.MOUSE_ENTERED, (MouseEvent e) -> {
+            outputSelect.requestFocus();
+            //To be deleted when fixed in java #comboboxbug
+        });
         getChildren().add(outputSelect);
         if(customPos) {
             outputSelect.setDisable(true);

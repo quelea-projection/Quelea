@@ -33,6 +33,7 @@ import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.stage.FileChooser;
@@ -82,6 +83,10 @@ public class OptionsBiblePanel extends GridPane implements PropertyPanel, BibleC
         getChildren().add(defaultBibleLabel);
         BibleManager.get().registerBibleChangeListener(this);
         defaultBibleComboBox = new ComboBox<>();
+        defaultBibleComboBox.addEventFilter(MouseEvent.MOUSE_ENTERED, (MouseEvent e) -> {
+            defaultBibleComboBox.requestFocus();
+            //To be deleted when fixed in java #comboboxbug
+        });
         defaultBibleComboBox.itemsProperty().set(FXCollections.observableArrayList(BibleManager.get().getBibles()));
         defaultBibleLabel.setLabelFor(defaultBibleComboBox);
         GridPane.setConstraints(defaultBibleComboBox, 2, 1);

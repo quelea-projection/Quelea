@@ -33,6 +33,7 @@ import javafx.scene.control.SplitPane;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.HBox;
@@ -72,6 +73,10 @@ public class BibleSearchDialog extends Stage implements BibleChangeListener {
         overlay = new LoadingPane();
         searchField = new TextField();
         bibles = new ComboBox<>();
+        bibles.addEventFilter(MouseEvent.MOUSE_ENTERED, (MouseEvent e) -> {
+            bibles.requestFocus();
+            //To be deleted when fixed in java #comboboxbug
+        });
         bibles.setEditable(false);
         chapterPane = new FlowPane();
         scrollPane = new ScrollPane();

@@ -23,6 +23,7 @@ import javafx.scene.control.CheckBox;
 import javafx.scene.control.ColorPicker;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.GridPane;
 import javafx.scene.paint.Color;
 import org.quelea.data.displayable.TextAlignment;
@@ -66,6 +67,10 @@ public class OptionsStageViewPanel extends GridPane implements PropertyPanel {
         GridPane.setConstraints(alignmentLabel, 1, 2);
         getChildren().add(alignmentLabel);
         lineAlignment = new ComboBox<>();
+        lineAlignment.addEventFilter(MouseEvent.MOUSE_ENTERED, (MouseEvent e) -> {
+            lineAlignment.requestFocus();
+            //To be deleted when fixed in java #comboboxbug
+        });
         lineAlignment.setEditable(false);
         for(TextAlignment alignment : TextAlignment.values()) {
             lineAlignment.itemsProperty().get().add(alignment.toFriendlyString());
@@ -77,6 +82,10 @@ public class OptionsStageViewPanel extends GridPane implements PropertyPanel {
         GridPane.setConstraints(fontLabel, 1, 3);
         getChildren().add(fontLabel);
         fontSelection = new ComboBox<>();
+        fontSelection.addEventFilter(MouseEvent.MOUSE_ENTERED, (MouseEvent e) -> {
+            fontSelection.requestFocus();
+            //To be deleted when fixed in java #comboboxbug
+        });
         fontSelection.setEditable(false);
         for(String font : Utils.getAllFonts()) {
             fontSelection.itemsProperty().get().add(font);
