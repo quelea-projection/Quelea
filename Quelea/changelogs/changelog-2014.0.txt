@@ -1,0 +1,37 @@
+quelea (0.6) stable; urgency=normal
+ 
+  * Rewritten interface in JavaFX
+  * Rewritten video support
+  * Added option to keep the same size text for each part of a song
+  * Added option to set the maximum font size manually
+  * Added option to set spacing between lines
+  * Added video background support
+  * Clear text option now fades
+  * Black option now fades
+  * New logo option added, can easily fade live view to any given image
+  * Added loop button for presentations
+  * Changed to more efficient database format
+  * Added more / better sample images
+  * Added sample videos
+  * Added test patterns dialog to calibrate display
+  * Theme panel has had a major revamp, now much easier to use
+  * Text position and text alignment can be set separately per song
+  * Rewritten import dialogs to look much nicer
+  * Opensong import
+  * OpenLP import
+  * Easyslides import
+  * Plain text import
+  * Kingsway import fixed
+  * Added Czech, German, Swedish and US English translations
+  * Previews now preserve aspect ratio of main display
+  * Fix interface to display UTF-8 characters properly
+  * Fix schedule files / imports to deal with UTF-8 characters properly
+  * Rewritten bible search dialog
+  * Theme selector rewritten / bugs fixed
+  * Add option within interface to change language
+  * Window position now saved between runs
+  * Search by author as well as title and lyrics
+  * Bundled JRE
+  * Many more bugfixes
+
+ -- Michael Berry <michael@quelea.org>  Wednesday, 24 Jan 2014 00:00:00 +0000
