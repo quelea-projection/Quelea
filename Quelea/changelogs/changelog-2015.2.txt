@@ -1,0 +1,18 @@
+quelea (2015.2) stable; urgency=normal
+ 
+  * Update bundled JRE to final released copy (not EA)
+  * Added video library tab
+  * Added timer save functionality, and timer library tab
+  * Fix issue with some badly designed fonts not clearing properly
+  * EpicWorship songpack importer added
+  * Greater customisation options added for 'Small Text' (information) display
+  * Fix versioning issue (only the major version number was reported in some places)
+  * Fix bug with bible passages appearing on just one line in mobile lyrics view
+  * Update Easy Worship importer to preserve CCLI / copyright info
+  * Enable static video previews in live / preview panel
+  * Fix QSP / save files to now contain full song information (was missing some fields such as CCLI / Copyright / Key / Notes)
+  * Chord notation now accepts H, unicode sharp / flat signs and (is) in place of "#" (Josef's suggestion, conventionally used in some European countries)
+  * Translation now saved with song in schedule
+  * Fix Opensong importer (some databases with foreign characters did not work)
+
+ -- Michael Berry <michael@quelea.org>  Wednesday, 25 April 2015 00:00:00 +0000
