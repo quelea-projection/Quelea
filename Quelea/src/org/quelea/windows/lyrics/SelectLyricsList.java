@@ -18,7 +18,6 @@ package org.quelea.windows.lyrics;
 
 import java.util.ArrayList;
 import java.util.List;
-import javafx.event.EventHandler;
 import javafx.scene.Cursor;
 import javafx.scene.ImageCursor;
 import javafx.scene.control.ListCell;
@@ -26,7 +25,6 @@ import javafx.scene.control.ListView;
 import javafx.scene.image.Image;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
-import javafx.util.Callback;
 import org.quelea.data.displayable.TextSection;
 import org.quelea.services.utils.QueleaProperties;
 
@@ -47,77 +45,38 @@ public class SelectLyricsList extends ListView<TextSection> {
      */
     public SelectLyricsList() {
         oneLineMode = QueleaProperties.get().getOneLineMode();
-        setOnMouseMoved(new EventHandler<MouseEvent>() {
-            @Override
-            public void handle(MouseEvent t) {
-                if (showQuickEdit && (t.isShiftDown() || t.isControlDown()) && !itemsProperty().get().isEmpty()) {
+        setOnMouseMoved((MouseEvent t) -> {
+            if (showQuickEdit && (t.isShiftDown() || t.isControlDown()) && !itemsProperty().get().isEmpty()) {
+                setCursor(Q_CURSOR);
+            } else {
+                setCursor(Cursor.DEFAULT);
+            }
+            getScene().setOnKeyPressed((KeyEvent t1) -> {
+                if (showQuickEdit && (t1.isShiftDown() || t1.isControlDown()) && !itemsProperty().get().isEmpty()) {
                     setCursor(Q_CURSOR);
                 } else {
                     setCursor(Cursor.DEFAULT);
                 }
-                getScene().setOnKeyPressed(new EventHandler<KeyEvent>() {
-                    @Override
-                    public void handle(KeyEvent t) {
-                        if (showQuickEdit && (t.isShiftDown() || t.isControlDown()) && !itemsProperty().get().isEmpty()) {
-                            setCursor(Q_CURSOR);
-                        } else {
-                            setCursor(Cursor.DEFAULT);
-                        }
-                    }
-                });
-                getScene().setOnKeyReleased(new EventHandler<KeyEvent>() {
-                    @Override
-                    public void handle(KeyEvent t) {
-                        if (showQuickEdit && (t.isShiftDown() || t.isControlDown()) && !itemsProperty().get().isEmpty()) {
-                            setCursor(Q_CURSOR);
-                        } else {
-                            setCursor(Cursor.DEFAULT);
-                        }
-                    }
-                });
-            }
+            });
+            getScene().setOnKeyReleased((KeyEvent t1) -> {
+                if (showQuickEdit && (t1.isShiftDown() || t1.isControlDown()) && !itemsProperty().get().isEmpty()) {
+                    setCursor(Q_CURSOR);
+                } else {
+                    setCursor(Cursor.DEFAULT);
+                }
+            });
         });
-        setCellFactory(new Callback<ListView<TextSection>, ListCell<TextSection>>() {
-            @Override
-            public ListCell<TextSection> call(ListView<TextSection> p) {
-                ListCell<TextSection> cell = new ListCell<TextSection>() {
-                    @Override
-                    protected void updateItem(TextSection t, boolean empty) {
-                        super.updateItem(t, empty);
-                        if (empty) {
-                            setText(null);
-                            setGraphic(null);
-                        } else {
-                            String[] text = t.getText(false, false);
-                            StringBuilder builder = new StringBuilder();
-                            for (String str : text) {
-                                str = FormattedText.stripFormatTags(str);
-                                builder.append(str);
-                                if (oneLineMode) {
-                                    builder.append(" ");
-                                } else {
-                                    builder.append("\n");
-                                }
-                            }
-                            String str = builder.toString().trim();
-                            //Uncomment to allow bible passages to display on multiple lines
-//                            if(!oneLineMode && !str.contains("\n")) {
-//                                str = str.replace(".", ".\n");
-//                            }
-                            setText(str);
-                        }
+        setCellFactory((ListView<TextSection> p) -> {
+            ListCell<TextSection> cell = new LyricListCell();
+            cell.addEventFilter(MouseEvent.MOUSE_PRESSED, event -> {
+                if (event.isControlDown()) {
+                    if (!cell.isEmpty()) {
+                        quickEditIndex = getItems().indexOf(cell.getItem());
+                        event.consume();
                     }
-                };
-                cell.addEventFilter(MouseEvent.MOUSE_PRESSED, event -> {
-                    if (event.isControlDown()) {
-                        if (!cell.isEmpty()) {
-                            quickEditIndex = getItems().indexOf(cell.getItem());
-                            event.consume();
-                        }
-                    }
-                });
-                return cell;
-            }
+                }
+            });
+            return cell;
         });
     }
 
