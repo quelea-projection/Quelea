@@ -37,6 +37,7 @@ import org.quelea.data.displayable.TextSection;
 import org.quelea.services.languages.LabelGrabber;
 import org.quelea.services.utils.LineTypeChecker;
 import org.quelea.services.utils.LoggerUtils;
+import org.quelea.windows.library.LibraryBiblePanel;
 import org.quelea.windows.main.LivePanel;
 import org.quelea.windows.main.QueleaApp;
 
@@ -68,6 +69,7 @@ public class MobileLyricsServer {
         server.createContext("/", new RootHandler());
         server.createContext("/lyrics", new LyricsHandler());
         server.createContext("/chords", new ChordsHandler());
+        server.createContext("/title", new TitleHandler());
         server.createContext("/jscolor.js", new FileHandler("icons/jscolor.js"));
         server.createContext("/arrow.gif", new FileHandler("icons/arrow.gif"));
         server.createContext("/gear.png", new FileHandler("icons/gear.png"));
@@ -81,7 +83,7 @@ public class MobileLyricsServer {
      * Start the server.
      */
     public void start() {
-        if(server != null) {
+        if (server != null) {
             server.start();
             running = true;
         }
@@ -92,7 +94,7 @@ public class MobileLyricsServer {
      * server must be created.
      */
     public void stop() {
-        if(server != null) {
+        if (server != null) {
             running = false;
             server.stop(0);
         }
@@ -120,14 +122,14 @@ public class MobileLyricsServer {
 
         @Override
         public void handle(HttpExchange t) throws IOException {
-            if(pageContent == null || !USE_CACHE) {
+            if (pageContent == null || !USE_CACHE) {
                 pageContent = readFile("server/defaultpage.htm");
                 pageContent = sortLabels(pageContent);
             }
             byte[] bytes = pageContent.getBytes(Charset.forName("UTF-8"));
             t.getResponseHeaders().add("Cache-Control", "no-cache, no-store, must-revalidate");
             t.sendResponseHeaders(200, bytes.length);
-            try(OutputStream os = t.getResponseBody()) {
+            try (OutputStream os = t.getResponseBody()) {
                 os.write(bytes);
             }
         }
@@ -145,14 +147,14 @@ public class MobileLyricsServer {
         @Override
         public void handle(HttpExchange t) throws IOException {
             byte[] ret = fileCache.get(file);
-            if(ret == null) {
+            if (ret == null) {
                 ret = Files.readAllBytes(Paths.get(file));
-                if(USE_CACHE) {
+                if (USE_CACHE) {
                     fileCache.put(file, ret);
                 }
             }
             t.sendResponseHeaders(200, ret.length);
-            try(OutputStream os = t.getResponseBody()) {
+            try (OutputStream os = t.getResponseBody()) {
                 os.write(ret);
             }
         }
@@ -167,7 +169,7 @@ public class MobileLyricsServer {
             byte[] bytes = response.getBytes("UTF-8");
             t.getResponseHeaders().add("Cache-Control", "no-cache, no-store, must-revalidate");
             t.sendResponseHeaders(200, bytes.length);
-            try(OutputStream os = t.getResponseBody()) {
+            try (OutputStream os = t.getResponseBody()) {
                 os.write(bytes);
             }
         }
@@ -181,7 +183,21 @@ public class MobileLyricsServer {
             byte[] bytes = response.getBytes("UTF-8");
             t.getResponseHeaders().add("Cache-Control", "no-cache, no-store, must-revalidate");
             t.sendResponseHeaders(200, bytes.length);
-            try(OutputStream os = t.getResponseBody()) {
+            try (OutputStream os = t.getResponseBody()) {
+                os.write(bytes);
+            }
+        }
+    }
+
+    private class TitleHandler implements HttpHandler {
+
+        @Override
+        public void handle(HttpExchange t) throws IOException {
+            String response = getTitle();
+            byte[] bytes = response.getBytes("UTF-8");
+            t.getResponseHeaders().add("Cache-Control", "no-cache, no-store, must-revalidate");
+            t.sendResponseHeaders(200, bytes.length);
+            try (OutputStream os = t.getResponseBody()) {
                 os.write(bytes);
             }
         }
@@ -189,24 +205,21 @@ public class MobileLyricsServer {
 
     private String getLyrics(boolean chords) {
         try {
-            if(!checkInitialised()) {
+            if (!checkInitialised()) {
                 return "";
             }
             LivePanel lp = QueleaApp.get().getMainWindow().getMainPanel().getLivePanel();
-            if(running && lp.isContentShowing() && lp.getDisplayable() instanceof TextDisplayable) {
+            if (running && lp.isContentShowing() && lp.getDisplayable() instanceof TextDisplayable) {
                 TextSection currentSection = lp.getLyricsPanel().getLyricsList().getSelectionModel().getSelectedItem();
                 StringBuilder ret = new StringBuilder();
-                for(String line : currentSection.getText(chords, false)) {
-                    if(lp.getDisplayable() instanceof BiblePassage) {
+                for (String line : currentSection.getText(chords, false)) {
+                    if (lp.getDisplayable() instanceof BiblePassage) {
                         ret.append("<span class=\"bible\">").append(line);
-                    }
-                    else if(new LineTypeChecker(line).getLineType() == LineTypeChecker.Type.CHORDS) {
+                    } else if (new LineTypeChecker(line).getLineType() == LineTypeChecker.Type.CHORDS) {
                         ret.append("<span class=\"chord\">").append(line.replace(" ", "&#160;"));
-                    }
-                    else if(new LineTypeChecker(line).getLineType() == LineTypeChecker.Type.TITLE) {
+                    } else if (new LineTypeChecker(line).getLineType() == LineTypeChecker.Type.TITLE) {
                         ret.append("<span class=\"title\">").append(line);
-                    }
-                    else {
+                    } else {
                         ret.append("<span class=\"lyric\">").append(line);
                     }
                     ret.append("</span>").append("<br/>");
@@ -215,17 +228,54 @@ public class MobileLyricsServer {
 //                    return ret.toString().replace(" ", "&#160;");
 //                }
                 return ret.toString();
-            }
-            else {
+            } else {
                 return "";
             }
-        }
-        catch(Exception ex) {
+        } catch (Exception ex) {
             LOGGER.log(Level.WARNING, "Error getting lyrics", ex);
             return "";
         }
     }
-    
+
+    private String getTitle() {
+        try {
+            if (!checkInitialised()) {
+                return "";
+            }
+            LivePanel lp = QueleaApp.get().getMainWindow().getMainPanel().getLivePanel();
+            if (running && lp.isContentShowing() && lp.getDisplayable() instanceof TextDisplayable) {
+                String response = lp.getDisplayable().getPreviewText();
+                if (lp.getDisplayable() instanceof BiblePassage) {
+                    final LibraryBiblePanel lbp = QueleaApp.get().getMainWindow().getMainPanel().getLibraryPanel().getBiblePanel();
+                    int chapterPos = 0;
+
+                    for (int i = 1; i < response.length(); i++) {
+                        char c = response.charAt(i);
+                        if (Character.isDigit(c)) {
+                            chapterPos = i - 1;
+                            break;
+                        }
+                    }
+                    String book = response.substring(0, chapterPos);
+                    int bookNumber = 0;
+
+                    for (int i = 0; i < lbp.getBookSelector().getItems().size(); i++) {
+                        if (lbp.getBookSelector().getItems().get(i).getBookName().equalsIgnoreCase(book)) {
+                            bookNumber = lbp.getBookSelector().getItems().get(i).getBookNumber();
+                        }
+                    }
+                    response = bookNumber + "<br/>" + response;
+                }
+                return response;
+            } else {
+                return "";
+            }
+        } catch (Exception ex) {
+            LOGGER.log(Level.WARNING, "Error getting title", ex);
+            return "";
+        }
+    }
+
     /**
      * A bunch of checks to check whether the live panel that we grab the lyrics
      * from has fully initialised. Rather hacky but works for now at least.
@@ -234,31 +284,31 @@ public class MobileLyricsServer {
      * not.
      */
     private boolean checkInitialised() {
-        if(QueleaApp.get() == null) {
+        if (QueleaApp.get() == null) {
             return false;
         }
-        if(QueleaApp.get().getMainWindow() == null) {
+        if (QueleaApp.get().getMainWindow() == null) {
             return false;
         }
-        if(QueleaApp.get().getMainWindow().getMainPanel() == null) {
+        if (QueleaApp.get().getMainWindow().getMainPanel() == null) {
             return false;
         }
-        if(QueleaApp.get().getMainWindow().getMainPanel().getLivePanel() == null) {
+        if (QueleaApp.get().getMainWindow().getMainPanel().getLivePanel() == null) {
             return false;
         }
-        if(QueleaApp.get().getMainWindow().getMainPanel().getLivePanel() == null) {
+        if (QueleaApp.get().getMainWindow().getMainPanel().getLivePanel() == null) {
             return false;
         }
-        if(QueleaApp.get().getMainWindow().getMainPanel().getLivePanel().getLyricsPanel() == null) {
+        if (QueleaApp.get().getMainWindow().getMainPanel().getLivePanel().getLyricsPanel() == null) {
             return false;
         }
-        if(QueleaApp.get().getMainWindow().getMainPanel().getLivePanel().getLyricsPanel().getLyricsList() == null) {
+        if (QueleaApp.get().getMainWindow().getMainPanel().getLivePanel().getLyricsPanel().getLyricsList() == null) {
             return false;
         }
-        if(QueleaApp.get().getMainWindow().getMainPanel().getLivePanel().getLyricsPanel().getLyricsList().getSelectionModel() == null) {
+        if (QueleaApp.get().getMainWindow().getMainPanel().getLivePanel().getLyricsPanel().getLyricsList().getSelectionModel() == null) {
             return false;
         }
-        if(QueleaApp.get().getMainWindow().getMainPanel().getLivePanel().getLyricsPanel().getLyricsList().getSelectionModel().getSelectedItem() == null) {
+        if (QueleaApp.get().getMainWindow().getMainPanel().getLivePanel().getLyricsPanel().getLyricsList().getSelectionModel().getSelectedItem() == null) {
             return false;
         }
         return true;
