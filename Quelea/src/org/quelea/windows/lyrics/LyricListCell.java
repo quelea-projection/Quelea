@@ -16,7 +16,10 @@
  */
 package org.quelea.windows.lyrics;
 
+import javafx.beans.property.ReadOnlyBooleanProperty;
+import javafx.beans.value.ObservableValue;
 import javafx.scene.control.ListCell;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
@@ -35,13 +38,30 @@ public class LyricListCell extends ListCell<TextSection> {
     private final VBox layout;
     private final Text header;
     private final Text lyrics;
+    boolean selected, focused;
 
-    public LyricListCell() {
+    public LyricListCell(SelectLyricsList sll) {
         layout = new VBox(3);
         header = new Text();
-        header.setFont(Font.font("Verdana", FontWeight.BOLD, 11));
+        header.setFont(Font.font("Verdana", FontWeight.BOLD, 11.5));
         lyrics = new Text();
         layout.getChildren().addAll(header, lyrics);
+        lyrics.setFill(Color.BLACK);
+        selectedProperty().addListener((ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) -> {
+            selected = newValue;
+            updateState();
+        });
+        setOnMouseEntered((MouseEvent t) -> {
+            updateState();
+        });
+        setOnMouseExited((MouseEvent t) -> {
+            updateState();
+        });
+        focused = sll.focusedProperty().get();
+        sll.focusedProperty().addListener((ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) -> {
+            focused = newValue;
+            updateState();
+        });
     }
 
     @Override
@@ -93,4 +113,17 @@ public class LyricListCell extends ListCell<TextSection> {
         setGraphic(layout);
     }
 
+    private void updateState() {
+        if (selected && focused) {
+            lyrics.setFill(Color.WHITE);
+            setStyle("-fx-background-color:#0093ff;");
+        } else if (selected) {
+            lyrics.setFill(Color.BLACK);
+            setStyle("-fx-background-color:#D3D3D3;");
+        } else {
+            lyrics.setFill(Color.BLACK);
+            setStyle("-fx-background-color:none;");
+        }
+
+    }
 }
