@@ -18,8 +18,10 @@ package org.quelea.windows.lyrics;
 
 import java.util.ArrayList;
 import java.util.List;
+import javafx.beans.value.ObservableValue;
 import javafx.scene.Cursor;
 import javafx.scene.ImageCursor;
+import javafx.scene.Node;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
 import javafx.scene.image.Image;
@@ -67,7 +69,7 @@ public class SelectLyricsList extends ListView<TextSection> {
             });
         });
         setCellFactory((ListView<TextSection> p) -> {
-            ListCell<TextSection> cell = new LyricListCell();
+            ListCell<TextSection> cell = new LyricListCell(this);
             cell.addEventFilter(MouseEvent.MOUSE_PRESSED, event -> {
                 if (event.isControlDown()) {
                     if (!cell.isEmpty()) {
