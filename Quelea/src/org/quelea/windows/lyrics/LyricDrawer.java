@@ -137,7 +137,7 @@ public class LyricDrawer extends WordDrawer {
 //        if (QueleaProperties.get().getUseUniformFontSize()) {
 //            fontSize = defaultFontSize;
 //        } else {
-        fontSize = pickFontSize(font, newText, getCanvas().getWidth() * 0.92, getCanvas().getHeight() * 0.9);
+        fontSize = pickFontSize(font, newText, getCanvas().getWidth() * QueleaProperties.get().getLyricWidthBounds(), getCanvas().getHeight() * QueleaProperties.get().getLyricHeightBounds());
 //        }
         font = Font.font(font.getFamily(),
                 theme.isBold() ? FontWeight.BOLD : FontWeight.NORMAL,
@@ -563,7 +563,7 @@ public class LyricDrawer extends WordDrawer {
                 }
                 processedText = sanctifyText(textArr, translationArr);
             }
-            newSize = pickFontSize(font, processedText, getCanvas().getWidth() * 0.92, getCanvas().getHeight() * 0.9);
+            newSize = pickFontSize(font, processedText, getCanvas().getWidth() * QueleaProperties.get().getLyricWidthBounds(), getCanvas().getHeight() * QueleaProperties.get().getLyricHeightBounds());
             if (newSize < fontSize) {
                 fontSize = newSize;
             }
