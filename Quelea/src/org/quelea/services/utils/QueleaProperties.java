@@ -1815,4 +1815,12 @@ public final class QueleaProperties extends Properties {
         setProperty("split.bible.verses", Boolean.toString(selected));
         write();
     }
+
+    public double getLyricWidthBounds() {
+        return Double.parseDouble(getProperty("lyric.width.bound", "0.92"));
+    }
+
+    public double getLyricHeightBounds() {
+        return Double.parseDouble(getProperty("lyric.height.bound", "0.9"));
+    }
 }
