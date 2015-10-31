@@ -19,6 +19,7 @@ package org.quelea.windows.main;
 
 import com.sun.media.jfxmedia.logging.Logger;
 import java.io.File;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.logging.Level;
 import javafx.application.Platform;
@@ -243,18 +244,42 @@ public class LivePanel extends LivePreviewPanel {
                 if (t.getCharacter().equals(" ")) {
                     QueleaApp.get().getMainWindow().getMainPanel().getPreviewPanel().goLive();
                 }
-                if (t.getCharacter().matches("\\d")) {
-                    try {
-                        int i = Integer.parseInt(t.getCharacter());
-                        final int index = (i > 0) ? (i-1) : 10;
-                        Platform.runLater(() -> {
-                            QueleaApp.get().getMainWindow().getMainPanel().getLivePanel().getLyricsPanel().select(index);
-                        });
-                    } catch (Exception ex) {
-                        LoggerUtils.getLogger().log(Level.INFO, "Could not cast keycode into integer for slide selection.", ex);
+                if (t.getCharacter().matches("c") || t.getCharacter().matches("b") || t.getCharacter().matches("p") || t.getCharacter().matches("t") || t.getCharacter().matches("\\d")) {
+                    final int slideIndex = getSlideIndex(t.getCharacter());
+                    if (slideIndex > -1) {
+                            Platform.runLater(() -> {
+                                QueleaApp.get().getMainWindow().getMainPanel().getLivePanel().getLyricsPanel().select(slideIndex);
+                            });
+                    } else {
+                        if (t.getCharacter().matches("\\d")) {
+                            try {
+                                int i = Integer.parseInt(t.getCharacter());
+                                final int index = (i > 0) ? (i - 1) : 10;
+                                Platform.runLater(() -> {
+                                    QueleaApp.get().getMainWindow().getMainPanel().getLivePanel().getLyricsPanel().select(index);
+                                });
+                            } catch (Exception ex) {
+                                LoggerUtils.getLogger().log(Level.INFO, "Could not cast keycode into integer for slide selection.", ex);
+                            }
+
+                        }
                     }
 
                 }
+            }
+
+            private int getSlideIndex(String t) {
+                String[] slides = QueleaApp.get().getMainWindow().getMainPanel().getLivePanel().getDisplayable().getXML().split("</smalllines>");
+                    int slideIndex = -1;
+                    int i = 0;
+                    for (String slide : slides) {
+                        if ((slide.toLowerCase().contains("\"chorus") && t.matches("c")) || (slide.toLowerCase().contains("\"pre-chorus") && t.matches("p")) || (slide.toLowerCase().contains("\"bridge") && t.matches("b")) || (slide.toLowerCase().contains("\"tag") && t.matches("t")) || (slide.toLowerCase().contains("verse " + t) && t.matches("\\d"))) {
+                            slideIndex = i;
+                            break;
+                        }
+                        i++;
+                    }
+                    return slideIndex;
             }
         }
         );
