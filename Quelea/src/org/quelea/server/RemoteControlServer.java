@@ -44,6 +44,7 @@ import org.quelea.data.displayable.MultimediaDisplayable;
 import org.quelea.data.displayable.TextDisplayable;
 import org.quelea.data.displayable.TextSection;
 import org.quelea.services.languages.LabelGrabber;
+import org.quelea.services.utils.LineTypeChecker;
 import org.quelea.services.utils.LoggerUtils;
 import org.quelea.windows.main.LivePanel;
 import org.quelea.windows.main.QueleaApp;
@@ -85,6 +86,7 @@ public class RemoteControlServer {
         server.createContext("/previtem", new PreviousItemHandler());
         server.createContext("/play", new PlayHandler());
         server.createContext("/lyrics", new LyricsHandler());
+        server.createContext("/chords", new ChordsHandler());
         server.createContext("/status", new StatusHandler());
         server.createContext("/schedule", new ScheduleHandler());
         server.createContext("/songsearch", new SongSearchHandler());
@@ -97,6 +99,8 @@ public class RemoteControlServer {
         server.createContext("/passage", new PassageSelecterHandler());
         server.createContext("/sidebar.png", new FileHandler("icons/sidebar.png"));
         server.createContext("/section", new SectionHandler());
+        server.createContext("/songtranslations", new SongTranslationsHandler());
+        server.createContext("/gettranslation", new SongTranslationsHandler());
         rootcontext.getFilters().add(new ParameterFilter());
         server.setExecutor(null);
     }
@@ -201,6 +205,32 @@ public class RemoteControlServer {
             } else {
                 passwordPage(he);
             }
+        }
+    }
+
+    private class SongTranslationsHandler implements HttpHandler {
+
+        @Override
+        public void handle(HttpExchange he) throws IOException {
+            String response = "";
+            LivePanel lp = QueleaApp.get().getMainWindow().getMainPanel().getLivePanel();
+            if (running && lp.getDisplayable() instanceof TextDisplayable) {
+                if (RCHandler.isLoggedOn(he.getRemoteAddress().getAddress().toString())) {
+
+                    if (he.getRequestURI().toString().contains("/songtranslations")) {
+                        response = RCHandler.listSongTranslations(he);
+                    } else {
+                        response = RCHandler.getSongTranslation(he);
+                    }
+                } else {
+                    passwordPage(he);
+                }
+            }
+            he.getResponseHeaders().add("Cache-Control", "no-cache, no-store, must-revalidate");
+            he.sendResponseHeaders(200, response.getBytes(Charset.forName("UTF-8")).length);
+            OutputStream os = he.getResponseBody();
+            os.write(response.getBytes(Charset.forName("UTF-8")));
+            os.close();
         }
     }
 
@@ -543,7 +573,35 @@ public class RemoteControlServer {
             LivePanel lp = QueleaApp.get().getMainWindow().getMainPanel().getLivePanel();
             if (lp.getDisplayable() instanceof TextDisplayable) {
                 response = "<i>" + LabelGrabber.INSTANCE.getLabel("currently.displaying.text") + ": " + lp.getDisplayable().getPreviewText() + "<br/>" + "</i>";
-                response += lyrics();
+                response += lyrics(false);
+            } else if (lp.getDisplayable() instanceof MultimediaDisplayable) {
+                response = "<i>" + LabelGrabber.INSTANCE.getLabel("currently.displaying.text") + ": " + lp.getDisplayable().getPreviewText() + "<br/>" + "</i>";
+                response += "<button type=\"button\" onclick=\"play();\" id=\"playbutton\">" + LabelGrabber.INSTANCE.getLabel("play") + "</button><br/><br/>";
+                response += "<i>" + LabelGrabber.INSTANCE.getLabel("remote.empty.lyrics") + "</i>";
+            } else if (lp.getDisplayable() != null) {
+                response = "<i>" + LabelGrabber.INSTANCE.getLabel("currently.displaying.text") + ": " + lp.getDisplayable().getPreviewText() + "<br/><br/>" + "</i>";
+                response += "<i>" + LabelGrabber.INSTANCE.getLabel("remote.empty.lyrics") + "</i>";
+            }
+            byte[] bytes = response.getBytes("UTF-8");
+
+            t.getResponseHeaders().add("Cache-Control", "no-cache, no-store, must-revalidate");
+            t.sendResponseHeaders(200, bytes.length);
+            try (OutputStream os = t.getResponseBody()) {
+                os.write(bytes);
+            }
+        }
+    }
+
+    //Takes the chords (if there are any) and inserts them into the page
+    private class ChordsHandler implements HttpHandler {
+
+        @Override
+        public void handle(HttpExchange t) throws IOException {
+            String response = "<i>" + LabelGrabber.INSTANCE.getLabel("remote.empty.lyrics") + "</i>";
+            LivePanel lp = QueleaApp.get().getMainWindow().getMainPanel().getLivePanel();
+            if (lp.getDisplayable() instanceof TextDisplayable) {
+                response = "<i>" + LabelGrabber.INSTANCE.getLabel("currently.displaying.text") + ": " + lp.getDisplayable().getPreviewText() + "<br/>" + "</i>";
+                response += lyrics(true);
             } else if (lp.getDisplayable() instanceof MultimediaDisplayable) {
                 response = "<i>" + LabelGrabber.INSTANCE.getLabel("currently.displaying.text") + ": " + lp.getDisplayable().getPreviewText() + "<br/>" + "</i>";
                 response += "<button type=\"button\" onclick=\"play();\" id=\"playbutton\">" + LabelGrabber.INSTANCE.getLabel("play") + "</button><br/><br/>";
@@ -569,11 +627,11 @@ public class RemoteControlServer {
      * <p/>
      * @return All lyrics formatted in a HTML table
      */
-    public String lyrics() {
+    public String lyrics(boolean chords) {
         StringBuilder sb = new StringBuilder();
         sb.append("<div id=\"outer\">");
         int i = 0;
-        for (String lyricBlock : getLyrics()) {
+        for (String lyricBlock : getLyrics(chords)) {
             if (i == RCHandler.currentLyricSection()) {
                 sb.append("<div class=\"inner current\">");
             } else {
@@ -589,7 +647,7 @@ public class RemoteControlServer {
     }
 
     //Method returns all lyrics as an ArrayList of slides
-    private List<String> getLyrics() {
+    private List<String> getLyrics(boolean chords) {
         try {
             if (!checkInitialised()) {
                 List<String> tmp = new ArrayList<String>();
@@ -601,8 +659,17 @@ public class RemoteControlServer {
                 ArrayList<String> als = new ArrayList<String>();
                 for (TextSection currentSection : lp.getLyricsPanel().getLyricsList().getItems()) {
                     StringBuilder ret = new StringBuilder();
-                    for (String line : currentSection.getText(false, false)) {
-                        ret.append("<span class=\"lyric\">").append(line).append("</span>").append("<br/>");
+                    for (String line : currentSection.getText(chords, false)) {
+                        if (chords) {
+                            if (new LineTypeChecker(line).getLineType() == LineTypeChecker.Type.CHORDS) {
+                                ret.append("<span class=\"chord\">").append(line.replace(" ", "&#160;"));
+                            } else {
+                                ret.append("<span class=\"lyric\">").append(line);
+                            }
+                            ret.append("</span>").append("<br/>");
+                        } else {
+                            ret.append("<span class=\"lyric\">").append(line).append("</span>").append("<br/>");
+                        }
                     }
                     als.add(ret.toString());
                 }
