@@ -335,7 +335,8 @@ public class BasicSongPanel extends BorderPane {
     public void resetEditSong(SongDisplayable song) {
         getTitleField().setText(song.getTitle());
         getAuthorField().setText(song.getAuthor());
-        getLyricsField().replaceText(song.getLyrics(true, true));
+        getLyricsField().clear();
+        getLyricsField().insertText(0, song.getLyrics(true, true));
         getLyricsField().refreshStyle();
         getLyricsField().requestFocus();
     }
