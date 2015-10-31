@@ -29,7 +29,6 @@ import javafx.application.Platform;
 import org.quelea.data.bible.Bible;
 import org.quelea.data.bible.BibleBook;
 import org.quelea.data.db.SongManager;
-import org.quelea.data.displayable.BiblePassage;
 import org.quelea.data.displayable.Displayable;
 import org.quelea.data.displayable.SongDisplayable;
 import org.quelea.services.languages.LabelGrabber;
@@ -364,5 +363,37 @@ public class RCHandler {
             return ret.toString();
         }
         return "";
+    }
+
+    public static String listSongTranslations(HttpExchange he) {
+        StringBuilder ret = new StringBuilder();
+        final MainPanel p = QueleaApp.get().getMainWindow().getMainPanel();
+        int current = p.getSchedulePanel().getScheduleList().getItems().indexOf(p.getLivePanel().getDisplayable());
+        SongDisplayable d = ((SongDisplayable) QueleaApp.get().getMainWindow().getMainPanel().getSchedulePanel().getScheduleList().getItems().get(current));
+        for (String b : d.getTranslations().keySet()) {
+            ret.append(b).append("\n");
+        }
+        if (d.getTranslations().size() < 1) {
+            ret.append("None");
+        }
+        return ret.toString();
+    }
+
+    public static String getSongTranslation(HttpExchange he) throws UnsupportedEncodingException {
+        String language;
+        StringBuilder ret = new StringBuilder();
+        if (he.getRequestURI().toString().contains("/gettranslation/")) {
+            String uri = URLDecoder.decode(he.getRequestURI().toString(), "UTF-8");
+            language = uri.split("/gettranslation/", 2)[1];
+            final MainPanel p = QueleaApp.get().getMainWindow().getMainPanel();
+            int current = p.getSchedulePanel().getScheduleList().getItems().indexOf(p.getLivePanel().getDisplayable());
+            SongDisplayable d = ((SongDisplayable) QueleaApp.get().getMainWindow().getMainPanel().getSchedulePanel().getScheduleList().getItems().get(current));
+            for (String b : d.getTranslations().keySet()) {
+                if (b.equals(language)) {
+                    ret.append(d.getTranslations().get(language));
+                }
+            }
+        }
+        return ret.toString();
     }
 }
