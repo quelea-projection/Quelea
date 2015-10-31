@@ -22,16 +22,22 @@ import com.sun.net.httpserver.HttpHandler;
 import com.sun.net.httpserver.HttpServer;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.io.UnsupportedEncodingException;
 import java.net.InetSocketAddress;
+import java.net.URLDecoder;
 import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.quelea.data.bible.BibleBook;
 import org.quelea.data.displayable.BiblePassage;
+import org.quelea.data.displayable.SongDisplayable;
 import org.quelea.data.displayable.TextDisplayable;
 import org.quelea.data.displayable.TextSection;
 import org.quelea.services.languages.LabelGrabber;
@@ -39,6 +45,7 @@ import org.quelea.services.utils.LineTypeChecker;
 import org.quelea.services.utils.LoggerUtils;
 import org.quelea.windows.library.LibraryBiblePanel;
 import org.quelea.windows.main.LivePanel;
+import org.quelea.windows.main.MainPanel;
 import org.quelea.windows.main.QueleaApp;
 
 /**
@@ -70,6 +77,8 @@ public class MobileLyricsServer {
         server.createContext("/lyrics", new LyricsHandler());
         server.createContext("/chords", new ChordsHandler());
         server.createContext("/title", new TitleHandler());
+        server.createContext("/songtranslations", new SongTranslationsHandler());
+        server.createContext("/gettranslation", new SongTranslationsHandler());
         server.createContext("/jscolor.js", new FileHandler("icons/jscolor.js"));
         server.createContext("/arrow.gif", new FileHandler("icons/arrow.gif"));
         server.createContext("/gear.png", new FileHandler("icons/gear.png"));
@@ -165,7 +174,12 @@ public class MobileLyricsServer {
 
         @Override
         public void handle(HttpExchange t) throws IOException {
-            String response = getLyrics(false);
+            String response;
+            if (t.getRequestURI().toString().contains("all")) {
+                response = allLyrics();
+            } else {
+                response = getLyrics(false);
+            }
             byte[] bytes = response.getBytes("UTF-8");
             t.getResponseHeaders().add("Cache-Control", "no-cache, no-store, must-revalidate");
             t.sendResponseHeaders(200, bytes.length);
@@ -203,6 +217,27 @@ public class MobileLyricsServer {
         }
     }
 
+    private class SongTranslationsHandler implements HttpHandler {
+
+        @Override
+        public void handle(HttpExchange he) throws IOException {
+            String response = "";
+            LivePanel lp = QueleaApp.get().getMainWindow().getMainPanel().getLivePanel();
+            if (running && lp.getDisplayable() instanceof TextDisplayable) {
+                if (he.getRequestURI().toString().contains("/songtranslations")) {
+                    response = listSongTranslations(he);
+                } else {
+                    response = getSongTranslation(he);
+                }
+            }
+            he.getResponseHeaders().add("Cache-Control", "no-cache, no-store, must-revalidate");
+            he.sendResponseHeaders(200, response.getBytes(Charset.forName("UTF-8")).length);
+            OutputStream os = he.getResponseBody();
+            os.write(response.getBytes(Charset.forName("UTF-8")));
+            os.close();
+        }
+    }
+
     private String getLyrics(boolean chords) {
         try {
             if (!checkInitialised()) {
@@ -237,6 +272,57 @@ public class MobileLyricsServer {
         }
     }
 
+    public String allLyrics() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("<div id=\"outer\">");
+        int i = 0;
+        for (String lyricBlock : getAllLyrics()) {
+            if (i == RCHandler.currentLyricSection()) {
+                sb.append("<div class=\"inner current\">");
+            } else {
+                sb.append("<div class=\"inner\">");
+            }
+            sb.append(lyricBlock);
+            sb.append("</div>");
+            i++;
+        }
+        sb.append("</div>");
+        return sb.toString();
+    }
+
+    //Method returns all lyrics as an ArrayList of slides
+    private List<String> getAllLyrics() {
+        try {
+            if (!checkInitialised()) {
+                List<String> tmp = new ArrayList<>();
+                tmp.add("");
+                return tmp;
+            }
+            LivePanel lp = QueleaApp.get().getMainWindow().getMainPanel().getLivePanel();
+            if (running && lp.getDisplayable() instanceof TextDisplayable) {
+                ArrayList<String> als = new ArrayList<>();
+                lp.getLyricsPanel().getLyricsList().getItems().stream().map((currentSection) -> {
+                    StringBuilder ret = new StringBuilder();
+                    for (String line : currentSection.getText(false, false)) {
+                        ret.append("<span class=\"lyric\">").append(line).append("</span>").append("<br/>");
+                    }
+                    return ret;
+                }).forEach((ret) -> {
+                    als.add(ret.toString());
+                });
+                return als;
+            } else {
+                String response = "<i>" + LabelGrabber.INSTANCE.getLabel("remote.empty.lyrics") + "</i>";
+                ArrayList<String> als = new ArrayList<>();
+                als.add(response);
+                return als;
+            }
+        } catch (Exception ex) {
+            LOGGER.log(Level.WARNING, "Error getting lyrics", ex);
+            return null;
+        }
+    }
+
     private String getTitle() {
         try {
             if (!checkInitialised()) {
@@ -256,14 +342,24 @@ public class MobileLyricsServer {
                             break;
                         }
                     }
+                    String bible = response.substring(response.indexOf("\n") + 1);
                     String book = response.substring(0, chapterPos);
                     int bookNumber = 0;
+                    int bibleNumber = 0;
 
-                    for (int i = 0; i < lbp.getBookSelector().getItems().size(); i++) {
-                        if (lbp.getBookSelector().getItems().get(i).getBookName().equalsIgnoreCase(book)) {
-                            bookNumber = lbp.getBookSelector().getItems().get(i).getBookNumber();
+                    for (int i = 0; i < lbp.getBibleSelector().getItems().size(); i++) {
+                        if (lbp.getBibleSelector().getItems().get(i).toString().toLowerCase().contains(bible.toLowerCase())) {
+                            bibleNumber = i;
                         }
                     }
+
+                    BibleBook[] books = lbp.getBibleSelector().getItems().get(bibleNumber).getBooks();
+                    for (int i = 0; i < books.length; i++) {
+                        if (books[i].getBookName().equalsIgnoreCase(book)) {
+                            bookNumber = i + 1;
+                        }
+                    }
+
                     response = bookNumber + "<br/>" + response;
                 }
                 return response;
@@ -274,6 +370,50 @@ public class MobileLyricsServer {
             LOGGER.log(Level.WARNING, "Error getting title", ex);
             return "";
         }
+    }
+
+    public static String listSongTranslations(HttpExchange he) {
+        StringBuilder ret = new StringBuilder();
+        final MainPanel p = QueleaApp.get().getMainWindow().getMainPanel();
+        int current = p.getSchedulePanel().getScheduleList().getItems().indexOf(p.getLivePanel().getDisplayable());
+        SongDisplayable d = ((SongDisplayable) QueleaApp.get().getMainWindow().getMainPanel().getSchedulePanel().getScheduleList().getItems().get(current));
+        for (String b : d.getTranslations().keySet()) {
+            ret.append(b).append("\n");
+        }
+        if (d.getTranslations().size() < 1) {
+            ret.append("None");
+        }
+        return ret.toString();
+    }
+
+    public static String getSongTranslation(HttpExchange he) throws UnsupportedEncodingException {
+        String language;
+        StringBuilder lyrics = new StringBuilder();
+        StringBuilder sb = new StringBuilder();
+        if (he.getRequestURI().toString().contains("/gettranslation/")) {
+            String uri = URLDecoder.decode(he.getRequestURI().toString(), "UTF-8");
+            language = uri.split("/gettranslation/", 2)[1];
+            final MainPanel p = QueleaApp.get().getMainWindow().getMainPanel();
+            int currentSong = p.getSchedulePanel().getScheduleList().getItems().indexOf(p.getLivePanel().getDisplayable());
+            SongDisplayable d = ((SongDisplayable) QueleaApp.get().getMainWindow().getMainPanel().getSchedulePanel().getScheduleList().getItems().get(currentSong));
+            for (String b : d.getTranslations().keySet()) {
+                if (b.equals(language)) {
+                    lyrics.append(d.getTranslations().get(language));
+                }
+            }
+            String[] translation = lyrics.toString().split("\n\n");
+
+            int i = 0;
+            for (String currentSlide : translation) {
+                if (i == RCHandler.currentLyricSection()) {
+                    sb.append("<div class=\"inner current\">");
+                    sb.append(currentSlide);
+                    sb.append("</div>");
+                }
+                i++;
+            }
+        }
+        return sb.toString().replaceAll("\n", "<br/>");
     }
 
     /**
