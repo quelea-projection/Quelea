@@ -24,7 +24,6 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -51,6 +50,8 @@ public class KingswayWorshipParser implements SongParser {
     private static final int CONSECUTIVE_ERROR_THRESHOLD = 20;
     private static final Logger LOGGER = LoggerUtils.getLogger();
     private static final String UK = "https://www.weareworship.com/uk/songs/song-library/showsong/";
+    private static final String US = "https://www.weareworship.com/us/songs-2/song-library/showsong/";
+    private static boolean useUK = true;
 
     /**
      * Rough number of songs in the library at present. This is used to update
@@ -61,6 +62,33 @@ public class KingswayWorshipParser implements SongParser {
     private boolean all;
     private int startNum, endNum;
     private boolean range;
+
+    public KingswayWorshipParser() {
+        BufferedReader reader = null;
+        try {
+            URL url = new URL("http://ipinfo.io/json");
+            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+            conn.setConnectTimeout(5000);
+            conn.setReadTimeout(10000);
+            StringBuilder jsonBuilder = new StringBuilder();
+            try (BufferedReader in = new BufferedReader(new InputStreamReader(conn.getInputStream(), "UTF-8"))) {
+                String str;
+                while ((str = in.readLine()) != null) {
+                    jsonBuilder.append(str).append("\n");
+                }
+                String json = jsonBuilder.toString();
+                String[] jsonMap = json.split(",");
+                for(String s : jsonMap) {
+                    if(s.split(": ")[0].contains("country") && s.split(": ")[1].equals("\"US\"")) {
+                        useUK = false;
+                        LOGGER.log(Level.INFO, "Using US version of weareworship.com");
+                    }
+                }
+            } catch (Exception e) {
+            }
+        } catch (Exception e) {
+        }
+    }
 
     /**
      * Set whether we're getting all songs, or just one.
@@ -121,7 +149,7 @@ public class KingswayWorshipParser implements SongParser {
         }
 
         int index = startNum;
-        while (index <= endNum && (pageText = getPageText(UK, index)) != null) {
+        while (index <= endNum && (pageText = getPageText((useUK) ? UK : US, index)) != null) {
 //            System.out.println("Starting");
             int percentage = (int) (((double) (index - startNum) / (double) (endNum - startNum)) * 100);
             LOGGER.log(Level.INFO, "Kingsway import percent complete: {0}", percentage);
@@ -171,7 +199,7 @@ public class KingswayWorshipParser implements SongParser {
      */
     public List<SongDisplayable> getSong(int songID) {
         SongDisplayable song;
-        String html = getPageText(UK, songID);
+        String html = getPageText((useUK) ? UK : US, songID);
         try {
             if (html == null || html.equals("")) {
                 return null;
@@ -386,7 +414,7 @@ public class KingswayWorshipParser implements SongParser {
     }
 
     private String sanitize(String group) {
-        
+
 //            System.out.println("sanitizing lyrics");
         group = group.replace("\n", "");
         group = group.replace("<br />", "\n");
