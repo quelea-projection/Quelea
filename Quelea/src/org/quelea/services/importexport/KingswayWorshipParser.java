@@ -278,7 +278,7 @@ public class KingswayWorshipParser implements SongParser {
             int sindex = songHtml.indexOf("<h3>");
             songHtml = songHtml.substring(sindex).trim();
             String author = songHtml.substring(4, songHtml.indexOf("</h3>")).trim();
-            if (author.toLowerCase().startsWith("Sung by")) {
+            if (author.toLowerCase().startsWith("sung by")) {
                 author = author.substring(8).trim();
             }
 //            System.out.println("Done author");
