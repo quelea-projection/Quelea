@@ -130,12 +130,17 @@ public class KingswayWorshipParser implements SongParser {
         }
         if (all) {
             startNum = getStart();
-            endNum = ROUGH_NUM_SONGS + 20;
+            endNum = startNum + ROUGH_NUM_SONGS + 40;
 //            System.out.println("all");
         } else if (range) {
             String results = KingswayRangeInputDialog.getUserInput();
             startNum = Integer.parseInt(results.split(",")[0]);
             endNum = Integer.parseInt(results.split(",")[1]);
+            if(!useUK) {
+                startNum += 1990;
+                endNum += 1990;
+            }
+            
 //            System.out.println("range");
         } else {
             String entry = InputDialog.getUserInput(LabelGrabber.INSTANCE.getLabel("song.id.selector"), LabelGrabber.INSTANCE.getLabel("song.id.selector"));
@@ -225,6 +230,9 @@ public class KingswayWorshipParser implements SongParser {
     private int getStart() {
         final int start = QueleaProperties.get().getNextKingswaySong();
         if (start == 0) {
+            if(!useUK) {
+                return 1990; 
+            }
             return 0;
         }
         returnVal = -1;
