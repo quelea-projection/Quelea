@@ -30,6 +30,7 @@ public class PlainTextParser implements SongParser {
                     String line = "";
                     boolean titleRead = false;
                     String title = "";
+                    String author = "";
                     ArrayList<String> section = new ArrayList<>();
                     int sectionCount = 0;
                     SongDisplayable song = new SongDisplayable(title, "");
@@ -42,12 +43,21 @@ public class PlainTextParser implements SongParser {
                             }
                         }
                         if (!line.isEmpty()) {
-                            section.add(line);
+                            if (line.startsWith("Title: ")) {
+                                title = line.substring(7);
+                                song.setTitle(title);
+                            }
+                            else if (line.startsWith("Author: ")) {
+                                author = line.substring(8);
+                                song.setTitle(author);
+                            } else {
+                                section.add(line);
+                            }
                         } else {
                             String[] sectionsArray = new String[section.size()];
                             song.addSection(sectionCount,
                                     new TextSection("", section.toArray(sectionsArray), section.toArray(sectionsArray),
-                                    true));
+                                            true));
                             sectionCount++;
                             section.clear();
                         }
