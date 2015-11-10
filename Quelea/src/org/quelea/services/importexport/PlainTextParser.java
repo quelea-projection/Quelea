@@ -49,7 +49,7 @@ public class PlainTextParser implements SongParser {
                             }
                             else if (line.startsWith("Author: ")) {
                                 author = line.substring(8);
-                                song.setTitle(author);
+                                song.setAuthor(author);
                             } else {
                                 section.add(line);
                             }
