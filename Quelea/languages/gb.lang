@@ -577,3 +577,6 @@ use.24h.clock=Use 24H Clock
 split.bible.verses=Keep verses whole across slides
 no.verse.title=No verse found
 no.verse.message=We could not find one or more of the verses specified and have tried to continue without them.
+chorus.tooltip=Add chorus title
+recordings.path=Path for recordings
+convert.mp3=Automatically convert recordings to MP3 files (requires VLC)

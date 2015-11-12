@@ -801,6 +801,15 @@ public final class QueleaProperties extends Properties {
     public File getVidDir() {
         return new File(getQueleaUserHome(), "vid");
     }
+    
+    /**
+     * Get the directory used for storing temporary recordings.
+     * <p/>
+     * @return the temp directory
+     */
+    public File getTempDir() {
+        return new File(getQueleaUserHome(), "temp");
+    }
 
     /**
      * Get the extension used for quelea schedules.
@@ -1459,6 +1468,35 @@ public final class QueleaProperties extends Properties {
     public void setOOPath(String path) {
         setProperty("oo.path", path);
         write();
+    }
+    
+     /**
+     * Get the path to the desired direcotry for recordings.
+     * <p/>
+     * @return the path to the desired direcotry for recordings.
+     */
+    public String getRecordingsPath() {
+        return getProperty("rec.path", "");
+    }
+
+    /**
+     * Set the path to the desired direcotry for recordings.
+     * <p/>
+     * @param path the path to the desired direcotry for recordings.
+     */
+    public void setRecordingsPath(String path) {
+        setProperty("rec.path", path);
+        write();
+    }
+    
+    
+    /**
+     * Determine if the recordings should be converted to MP3 files.
+     * <p/>
+     * @return true if recordings should be converted, false otherwise.
+     */
+    public boolean getConvertMp3() {
+        return Boolean.parseBoolean(getProperty("convert.mp3", "true"));
     }
 
     /**
