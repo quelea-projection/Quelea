@@ -17,9 +17,7 @@
  */
 package org.quelea.windows.main;
 
-import com.sun.media.jfxmedia.logging.Logger;
 import java.io.File;
-import java.util.Arrays;
 import java.util.HashSet;
 import java.util.logging.Level;
 import javafx.application.Platform;
@@ -32,7 +30,6 @@ import javafx.scene.control.ToolBar;
 import javafx.scene.control.Tooltip;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
@@ -41,6 +38,7 @@ import javafx.scene.layout.Priority;
 import javafx.scene.layout.Region;
 import javafx.stage.FileChooser;
 import javafx.stage.Screen;
+import org.quelea.data.displayable.BiblePassage;
 import org.quelea.data.displayable.Displayable;
 import org.quelea.data.displayable.PresentationDisplayable;
 import org.quelea.services.languages.LabelGrabber;
@@ -48,8 +46,8 @@ import org.quelea.services.utils.FileFilters;
 import org.quelea.services.utils.LoggerUtils;
 import org.quelea.services.utils.QueleaProperties;
 import org.quelea.services.utils.Utils;
-import org.quelea.windows.lyrics.SelectLyricsList;
 import org.quelea.windows.lyrics.SelectLyricsPanel;
+import org.quelea.windows.main.actionhandlers.AddBibleVerseHandler;
 import org.quelea.windows.multimedia.VLCWindow;
 
 /**
@@ -244,12 +242,12 @@ public class LivePanel extends LivePreviewPanel {
                 if (t.getCharacter().equals(" ")) {
                     QueleaApp.get().getMainWindow().getMainPanel().getPreviewPanel().goLive();
                 }
-                if (t.getCharacter().matches("c") || t.getCharacter().matches("b") || t.getCharacter().matches("p") || t.getCharacter().matches("t") || t.getCharacter().matches("\\d")) {
+                if (t.getCharacter().matches("c") || t.getCharacter().matches("b") || t.getCharacter().matches("p") || t.getCharacter().matches("\\d")) {
                     final int slideIndex = getSlideIndex(t.getCharacter());
                     if (slideIndex > -1) {
-                            Platform.runLater(() -> {
-                                QueleaApp.get().getMainWindow().getMainPanel().getLivePanel().getLyricsPanel().select(slideIndex);
-                            });
+                        Platform.runLater(() -> {
+                            QueleaApp.get().getMainWindow().getMainPanel().getLivePanel().getLyricsPanel().select(slideIndex);
+                        });
                     } else {
                         if (t.getCharacter().matches("\\d")) {
                             try {
@@ -261,25 +259,32 @@ public class LivePanel extends LivePreviewPanel {
                             } catch (Exception ex) {
                                 LoggerUtils.getLogger().log(Level.INFO, "Could not cast keycode into integer for slide selection.", ex);
                             }
-
                         }
                     }
-
+                }
+                if (t.getCharacter().matches("\\+")) {
+                    if (getDisplayable() instanceof BiblePassage) {
+                        SelectLyricsPanel lp = QueleaApp.get().getMainWindow().getMainPanel().getLivePanel().getLyricsPanel();
+                        new AddBibleVerseHandler().add();
+                        QueleaApp.get().getMainWindow().getMainPanel().getPreviewPanel().goLive();
+                        int last = lp.getLyricsList().getItems().size() - 1;
+                        lp.select(last);
+                    }
                 }
             }
 
             private int getSlideIndex(String t) {
-                String[] slides = QueleaApp.get().getMainWindow().getMainPanel().getLivePanel().getDisplayable().getXML().split("</smalllines>");
-                    int slideIndex = -1;
-                    int i = 0;
-                    for (String slide : slides) {
-                        if ((slide.toLowerCase().contains("\"chorus") && t.matches("c")) || (slide.toLowerCase().contains("\"pre-chorus") && t.matches("p")) || (slide.toLowerCase().contains("\"bridge") && t.matches("b")) || (slide.toLowerCase().contains("\"tag") && t.matches("t")) || (slide.toLowerCase().contains("verse " + t) && t.matches("\\d"))) {
-                            slideIndex = i;
-                            break;
-                        }
-                        i++;
+                String[] slides = getDisplayable().getXML().split("</smalllines>");
+                int slideIndex = -1;
+                int i = 0;
+                for (String slide : slides) {
+                    if ((slide.toLowerCase().contains("\"chorus") && t.matches("c")) || (slide.toLowerCase().contains("\"pre-chorus") && t.matches("p")) || (slide.toLowerCase().contains("\"bridge") && t.matches("b")) || (slide.toLowerCase().contains("verse " + t) && t.matches("\\d"))) {
+                        slideIndex = i;
+                        break;
                     }
-                    return slideIndex;
+                    i++;
+                }
+                return slideIndex;
             }
         }
         );
