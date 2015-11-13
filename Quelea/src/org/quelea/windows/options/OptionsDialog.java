@@ -153,5 +153,9 @@ public class OptionsDialog extends Stage {
     public ServerSettingsPanel getServerSettingsPanel() {
         return serverSettingsPanel;
     }
+
+    public OptionsGeneralPanel getOptionsGeneralPanel() {
+        return generalPanel;
+    }
     
 }

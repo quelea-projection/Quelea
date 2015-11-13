@@ -18,20 +18,35 @@
  */
 package org.quelea.windows.main.toolbars;
 
+import javafx.application.Platform;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.scene.control.Button;
+import javafx.scene.control.ProgressBar;
 import javafx.scene.control.Separator;
+import javafx.scene.control.TextField;
+import javafx.scene.control.Toggle;
+import javafx.scene.control.ToggleButton;
+import javafx.scene.control.ToggleGroup;
 import javafx.scene.control.ToolBar;
 import javafx.scene.control.Tooltip;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.Region;
 import javafx.scene.layout.StackPane;
+import javafx.scene.text.Text;
+import org.javafx.dialog.Dialog;
 import org.quelea.services.languages.LabelGrabber;
+import org.quelea.services.utils.QueleaProperties;
 import org.quelea.services.utils.Utils;
 import org.quelea.windows.main.actionhandlers.AddDVDActionHandler;
 import org.quelea.windows.main.actionhandlers.AddPowerpointActionHandler;
 import org.quelea.windows.main.actionhandlers.AddVideoActionHandler;
 import org.quelea.windows.main.actionhandlers.AddYoutubeActionHandler;
 import org.quelea.windows.main.actionhandlers.AddTimerActionHandler;
+import org.quelea.windows.main.actionhandlers.RecordButtonHandler;
 import org.quelea.windows.main.actionhandlers.NewScheduleActionHandler;
 import org.quelea.windows.main.actionhandlers.NewSongActionHandler;
 import org.quelea.windows.main.actionhandlers.OpenScheduleActionHandler;
@@ -61,6 +76,13 @@ public class MainToolbar extends ToolBar {
     private final Button manageNoticesButton;
     private final ImageView loadingView;
     private final StackPane dvdImageStack;
+    private final ToggleButton recordAudioButton;
+    private final ToggleButton pauseAudioButton;
+    private boolean resume;
+    final ProgressBar pb = new ProgressBar(0);
+    Dialog setRecordinPathWarning;
+    RecordButtonHandler recordingsHandler;
+    TextField recordingPathTextField;
 
     /**
      * Create the toolbar and any associated shortcuts.
@@ -153,7 +175,7 @@ public class MainToolbar extends ToolBar {
         if (Utils.isMac()) {
             addYoutubeButton = getButtonFromImage("file:icons/youtube.png", 24, 24, false, true);
         } else {
-        addYoutubeButton = getButtonFromImage("file:icons/youtube.png");
+            addYoutubeButton = getButtonFromImage("file:icons/youtube.png");
         }
         Utils.setToolbarButtonStyle(addYoutubeButton);
         addYoutubeButton.setTooltip(new Tooltip(LabelGrabber.INSTANCE.getLabel("add.youtube.button")));
@@ -204,6 +226,48 @@ public class MainToolbar extends ToolBar {
         manageNoticesButton.setTooltip(new Tooltip(LabelGrabber.INSTANCE.getLabel("manage.notices.tooltip")));
         manageNoticesButton.setOnAction(new ShowNoticesActionHandler());
         getItems().add(manageNoticesButton);
+
+        recordingsHandler = new RecordButtonHandler();
+
+        final ToggleGroup group = new ToggleGroup();
+        recordingPathTextField = new TextField();
+        recordingPathTextField.setMinWidth(Region.USE_PREF_SIZE);
+        recordingPathTextField.setMaxWidth(Region.USE_PREF_SIZE);
+
+        // Set dynamic TextField width
+        recordingPathTextField.textProperty().addListener((ov, prevText, currText) -> {
+            Platform.runLater(() -> {
+                Text text = new Text(currText);
+                text.setFont(recordingPathTextField.getFont());
+                double width = text.getLayoutBounds().getWidth()
+                        + recordingPathTextField.getPadding().getLeft() + recordingPathTextField.getPadding().getRight()
+                        + 2d;
+                recordingPathTextField.setPrefWidth(width);
+                recordingPathTextField.positionCaret(recordingPathTextField.getCaretPosition());
+            });
+        });
+
+        group.selectedToggleProperty().addListener(new ToggleButtonListener(group));
+
+        recordAudioButton = getToggleButtonFromImage("file:icons/record.png");
+        Utils.setToolbarButtonStyle(recordAudioButton);
+        recordAudioButton.setToggleGroup(group);
+        recordAudioButton.setUserData("rec");
+        recordAudioButton.setTooltip(new Tooltip(LabelGrabber.INSTANCE.getLabel("record.audio.tooltip")));
+        getItems().add(recordAudioButton);
+
+        pauseAudioButton = getToggleButtonFromImage("file:icons/pause.png");
+        Utils.setToolbarButtonStyle(pauseAudioButton);
+        pauseAudioButton.setToggleGroup(group);
+        pauseAudioButton.setUserData("pause");
+        recordAudioButton.setTooltip(new Tooltip(LabelGrabber.INSTANCE.getLabel("pause.record.tooltip")));
+        pauseAudioButton.setVisible(false);
+        getItems().add(pauseAudioButton);
+
+    }
+
+    public void setToggleButtonText(String text) {
+        recordAudioButton.setText(text);
     }
 
     private Button getButtonFromImage(String uri) {
@@ -212,6 +276,14 @@ public class MainToolbar extends ToolBar {
         iv.setFitWidth(24);
         iv.setFitHeight(24);
         return new Button("", iv);
+    }
+
+    private ToggleButton getToggleButtonFromImage(String uri) {
+        ImageView iv = new ImageView(new Image(uri));
+        iv.setSmooth(true);
+        iv.setFitWidth(24);
+        iv.setFitHeight(24);
+        return new ToggleButton("", iv);
     }
 
     private Button getButtonFromImage(String uri, int width, int height, boolean preserveRatio, boolean smooth) {
@@ -236,4 +308,94 @@ public class MainToolbar extends ToolBar {
         }
     }
 
+    private class ToggleButtonListener implements ChangeListener<Toggle> {
+
+        private final ToggleGroup group;
+
+        public ToggleButtonListener(ToggleGroup group) {
+            this.group = group;
+        }
+
+        @Override
+        public void changed(ObservableValue<? extends Toggle> ov,
+                Toggle oldToggle, Toggle newToggle) {
+            if (!QueleaProperties.get().getRecordingsPath().equals("")) {
+                if (null != newToggle) {
+                    if (group.getSelectedToggle()
+                            .getUserData().equals("rec") && oldToggle == null && !resume) {
+                        startRecording();
+                    } else if (oldToggle != null && oldToggle.equals(recordAudioButton)) {
+                        pauseRecording();
+                    } else {
+                        resumeRecording();
+                        resume = false;
+                    }
+                } else {
+                    if (oldToggle.equals(pauseAudioButton)) {
+                        resume = true;
+                        recordAudioButton.setSelected(true);
+                    } else {
+                        stopRecording();
+                    }
+                }
+            } else {
+                if (newToggle != null) {
+                    newToggle.setSelected(false);
+                    Dialog.Builder setRecordingWarningBuilder = new Dialog.Builder()
+                            .create()
+                            .setTitle(LabelGrabber.INSTANCE.getLabel("recording.warning.title"))
+                            .setMessage(LabelGrabber.INSTANCE.getLabel("recording.warning.message"))
+                            .addLabelledButton(LabelGrabber.INSTANCE.getLabel("ok.button"), new EventHandler<ActionEvent>() {
+                                @Override
+                                public void handle(ActionEvent t) {
+                                    setRecordinPathWarning.hide();
+                                    setRecordinPathWarning = null;
+                                }
+                            });
+                    setRecordinPathWarning = setRecordingWarningBuilder.setWarningIcon().build();
+                    setRecordinPathWarning.showAndWait();
+                }
+            }
+        }
+    }
+
+    public void startRecording() {
+        pauseAudioButton.setVisible(true);
+        ImageView iv = new ImageView("file:icons/record_stop.png");
+        iv.setSmooth(true);
+        iv.setFitWidth(24);
+        iv.setFitHeight(24);
+        recordAudioButton.setGraphic(iv);
+        getItems().add(pb);
+        getItems().add(recordingPathTextField);
+        recordAudioButton.setText("Recording...");
+        recordingsHandler = new RecordButtonHandler();
+        recordingsHandler.passVariables("rec", pb, recordingPathTextField, recordAudioButton);
+    }
+
+    public void pauseRecording() {
+        recordingsHandler.passVariables("pause", pb, recordingPathTextField, recordAudioButton);
+    }
+
+    public void resumeRecording() {
+        recordingsHandler.passVariables("resume", pb, recordingPathTextField, recordAudioButton);
+    }
+
+    public void stopRecording() {
+        recordingsHandler.passVariables("stop", pb, recordingPathTextField, recordAudioButton);
+        ImageView iv = new ImageView("file:icons/record.png");
+        iv.setSmooth(true);
+        iv.setFitWidth(24);
+        iv.setFitHeight(24);
+        recordAudioButton.setGraphic(iv);
+        getItems().remove(pb);
+        getItems().remove(recordingPathTextField);
+        recordAudioButton.setText("");
+        pauseAudioButton.setVisible(false);
+        pauseAudioButton.setSelected(false);
+    }
+
+    public RecordButtonHandler getRecordButtonHandler() {
+        return recordingsHandler;
+    }
 }
