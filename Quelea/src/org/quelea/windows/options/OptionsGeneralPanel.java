@@ -54,7 +54,7 @@ import utils.BigDecimalSpinner;
  * @author Michael
  */
 public class OptionsGeneralPanel extends GridPane implements PropertyPanel {
-
+    
     QueleaProperties props = QueleaProperties.get();
     private final CheckBox startupUpdateCheckBox;
     private final CheckBox capitalFirstCheckBox;
@@ -70,8 +70,11 @@ public class OptionsGeneralPanel extends GridPane implements PropertyPanel {
     private final CheckBox uniformFontSizeCheckBox;
     private final ComboBox<LanguageFile> languageFileComboBox;
     private final TextField ooPathTextField;
+    private final TextField recordingsPathTextField;
     private final DirectoryChooser ooChooser;
+    private final DirectoryChooser recordingsChooser;
     private final Button selectButton;
+    private final Button recordingsSelectButton;
     private final Slider maximumFontSizeSlider;
     private final Slider additionalLineSpacingSlider;
     private final Slider maxCharsSlider;
@@ -87,6 +90,7 @@ public class OptionsGeneralPanel extends GridPane implements PropertyPanel {
     private final BigDecimalSpinner smallBibleSizeSpinner;
     private final CheckBox overflowSongCheckBox;
     private final CheckBox showVideoPanelCheckBox;
+    private final CheckBox convertMp3CheckBox;
 
     /**
      * Create a new general panel.
@@ -101,13 +105,12 @@ public class OptionsGeneralPanel extends GridPane implements PropertyPanel {
 //        GridPane.setConstraints(spacer, 1, rows);
 //        getChildren().add(spacer);
 //        rows++;
-
         Label userOptions = new Label(LabelGrabber.INSTANCE.getLabel("user.options.options"));
         userOptions.setFont(Font.font(userOptions.getFont().getFamily(), FontWeight.BOLD, userOptions.getFont().getSize()));
         GridPane.setConstraints(userOptions, 1, rows);
         getChildren().add(userOptions);
         rows++;
-
+        
         Label interfaceLanguageLabel = new Label(LabelGrabber.INSTANCE.getLabel("interface.language.label"));
         GridPane.setConstraints(interfaceLanguageLabel, 1, rows);
         getChildren().add(interfaceLanguageLabel);
@@ -127,7 +130,7 @@ public class OptionsGeneralPanel extends GridPane implements PropertyPanel {
         GridPane.setConstraints(languageFileComboBox, 2, rows);
         getChildren().add(languageFileComboBox);
         rows++;
-
+        
         Label startupLabel = new Label(LabelGrabber.INSTANCE.getLabel("check.for.update.label"));
         GridPane.setConstraints(startupLabel, 1, rows);
         getChildren().add(startupLabel);
@@ -136,7 +139,7 @@ public class OptionsGeneralPanel extends GridPane implements PropertyPanel {
         GridPane.setConstraints(startupUpdateCheckBox, 2, rows);
         getChildren().add(startupUpdateCheckBox);
         rows++;
-
+        
         Label warnLabel = new Label(LabelGrabber.INSTANCE.getLabel("1.monitor.warn.label"));
         GridPane.setConstraints(warnLabel, 1, rows);
         getChildren().add(warnLabel);
@@ -145,7 +148,7 @@ public class OptionsGeneralPanel extends GridPane implements PropertyPanel {
         GridPane.setConstraints(oneMonitorWarnCheckBox, 2, rows);
         getChildren().add(oneMonitorWarnCheckBox);
         rows++;
-
+        
         Label useOOLabel = new Label(LabelGrabber.INSTANCE.getLabel("use.oo.label"));
         GridPane.setConstraints(useOOLabel, 1, rows);
         getChildren().add(useOOLabel);
@@ -166,7 +169,7 @@ public class OptionsGeneralPanel extends GridPane implements PropertyPanel {
         GridPane.setConstraints(useOOCheckBox, 2, rows);
         getChildren().add(useOOCheckBox);
         rows++;
-
+        
         Label ooPathLabel = new Label(LabelGrabber.INSTANCE.getLabel("oo.path"));
         GridPane.setConstraints(ooPathLabel, 1, rows);
         getChildren().add(ooPathLabel);
@@ -192,7 +195,41 @@ public class OptionsGeneralPanel extends GridPane implements PropertyPanel {
         GridPane.setConstraints(selectButton, 3, rows);
         getChildren().add(selectButton);
         rows++;
-
+        
+        Label recordingsPathLabel = new Label(LabelGrabber.INSTANCE.getLabel("recordings.path"));
+        GridPane.setConstraints(recordingsPathLabel, 1, rows);
+        getChildren().add(recordingsPathLabel);
+        recordingsPathTextField = new TextField();
+        recordingsPathTextField.setMaxWidth(Double.MAX_VALUE);
+        GridPane.setHgrow(recordingsPathTextField, Priority.ALWAYS);
+        recordingsPathTextField.setEditable(false);
+        recordingsPathLabel.setLabelFor(recordingsPathTextField);
+        GridPane.setConstraints(recordingsPathTextField, 2, rows);
+        getChildren().add(recordingsPathTextField);
+        recordingsChooser = new DirectoryChooser();
+        recordingsSelectButton = new Button(LabelGrabber.INSTANCE.getLabel("browse"));
+        recordingsSelectButton.setOnAction(new EventHandler<javafx.event.ActionEvent>() {
+            @Override
+            public void handle(javafx.event.ActionEvent t) {
+                File dir = recordingsChooser.showDialog(QueleaApp.get().getMainWindow());
+                if (dir != null) {
+                    recordingsPathTextField.setText(dir.getAbsolutePath());
+                }
+            }
+        });
+        GridPane.setConstraints(recordingsSelectButton, 3, rows);
+        getChildren().add(recordingsSelectButton);
+        rows++;
+        
+        Label convertMp3Label = new Label(LabelGrabber.INSTANCE.getLabel("convert.mp3"));
+        GridPane.setConstraints(convertMp3Label, 1, rows);
+        getChildren().add(convertMp3Label);
+        convertMp3CheckBox = new CheckBox();
+        convertMp3Label.setLabelFor(convertMp3CheckBox);
+        GridPane.setConstraints(convertMp3CheckBox, 2, rows);
+        getChildren().add(convertMp3CheckBox);
+        rows++;
+        
         Label oneLineModeLabel = new Label(LabelGrabber.INSTANCE.getLabel("one.line.mode.label"));
         GridPane.setConstraints(oneLineModeLabel, 1, rows);
         getChildren().add(oneLineModeLabel);
@@ -201,7 +238,7 @@ public class OptionsGeneralPanel extends GridPane implements PropertyPanel {
         GridPane.setConstraints(oneLineModeCheckBox, 2, rows);
         getChildren().add(oneLineModeCheckBox);
         rows++;
-
+        
         Label autoPlayVidLabel = new Label(LabelGrabber.INSTANCE.getLabel("autoplay.vid.label"));
         GridPane.setConstraints(autoPlayVidLabel, 1, rows);
         getChildren().add(autoPlayVidLabel);
@@ -210,7 +247,7 @@ public class OptionsGeneralPanel extends GridPane implements PropertyPanel {
         GridPane.setConstraints(autoPlayVidCheckBox, 2, rows);
         getChildren().add(autoPlayVidCheckBox);
         rows++;
-
+        
         Label advanceOnLiveLabel = new Label(LabelGrabber.INSTANCE.getLabel("advance.on.live.label"));
         GridPane.setConstraints(advanceOnLiveLabel, 1, rows);
         getChildren().add(advanceOnLiveLabel);
@@ -228,17 +265,15 @@ public class OptionsGeneralPanel extends GridPane implements PropertyPanel {
         GridPane.setConstraints(overflowSongCheckBox, 2, rows);
         getChildren().add(overflowSongCheckBox);
         rows++;
-
+        
         advanceOnLiveCheckBox.selectedProperty().addListener((ObservableValue<? extends Boolean> a, Boolean b, Boolean c) -> {
-            if(advanceOnLiveCheckBox.isSelected()) {
+            if (advanceOnLiveCheckBox.isSelected()) {
                 overflowSongCheckBox.setDisable(false);
-            }
-            else {
+            } else {
                 overflowSongCheckBox.setDisable(true);
                 overflowSongCheckBox.setSelected(false);
             }
         });
-        
         
         Label previewOnImageChangeLabel = new Label(LabelGrabber.INSTANCE.getLabel("preview.on.image.change.label"));
         GridPane.setConstraints(previewOnImageChangeLabel, 1, rows);
@@ -266,7 +301,7 @@ public class OptionsGeneralPanel extends GridPane implements PropertyPanel {
         GridPane.setConstraints(autoTranslateCheckBox, 2, rows);
         getChildren().add(autoTranslateCheckBox);
         rows++;
-
+        
         Label clearLiveOnRemoveLabel = new Label(LabelGrabber.INSTANCE.getLabel("clear.live.on.remove.schedule") + " ");
         GridPane.setConstraints(clearLiveOnRemoveLabel, 1, rows);
         getChildren().add(clearLiveOnRemoveLabel);
@@ -275,7 +310,7 @@ public class OptionsGeneralPanel extends GridPane implements PropertyPanel {
         GridPane.setConstraints(clearLiveOnRemoveCheckBox, 2, rows);
         getChildren().add(clearLiveOnRemoveCheckBox);
         rows++;
-
+        
         Label embedMediaLabel = new Label(LabelGrabber.INSTANCE.getLabel("embed.media.in.schedule") + " ");
         GridPane.setConstraints(embedMediaLabel, 1, rows);
         getChildren().add(embedMediaLabel);
@@ -311,7 +346,7 @@ public class OptionsGeneralPanel extends GridPane implements PropertyPanel {
         getChildren().add(hboxSmallSong);
         showSmallSongTextLabel.setLabelFor(hboxSmallSong);
         rows++;
-
+        
         Label showSmallBibleTextLabel = new Label(LabelGrabber.INSTANCE.getLabel("show.small.bible.text.label"));
         GridPane.setConstraints(showSmallBibleTextLabel, 1, rows);
         getChildren().add(showSmallBibleTextLabel);
@@ -340,38 +375,36 @@ public class OptionsGeneralPanel extends GridPane implements PropertyPanel {
         rows++;
         
         showSmallBibleTextBox.selectedProperty().addListener((ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) -> {
-            if(newValue) {
+            if (newValue) {
                 smallBibleTextHPositionCombo.setDisable(false);
                 smallBibleTextVPositionCombo.setDisable(false);
-            }
-            else {
+            } else {
                 smallBibleTextHPositionCombo.setDisable(true);
                 smallBibleTextVPositionCombo.setDisable(true);
             }
         });
         
         showSmallSongTextBox.selectedProperty().addListener((ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) -> {
-            if(newValue) {
+            if (newValue) {
                 smallSongTextHPositionCombo.setDisable(false);
                 smallSongTextVPositionCombo.setDisable(false);
-            }
-            else {
+            } else {
                 smallSongTextHPositionCombo.setDisable(true);
                 smallSongTextVPositionCombo.setDisable(true);
             }
         });
-
+        
         Label spacer1 = new Label("");
         GridPane.setConstraints(spacer1, 1, rows);
         getChildren().add(spacer1);
         rows++;
-
+        
         Label textOptions = new Label(LabelGrabber.INSTANCE.getLabel("text.options.options"));
         textOptions.setFont(Font.font(textOptions.getFont().getFamily(), FontWeight.BOLD, textOptions.getFont().getSize()));
         GridPane.setConstraints(textOptions, 1, rows);
         getChildren().add(textOptions);
         rows++;
-
+        
         Label capitalFirstLabel = new Label(LabelGrabber.INSTANCE.getLabel("capitalise.start.line.label"));
         GridPane.setConstraints(capitalFirstLabel, 1, rows);
         getChildren().add(capitalFirstLabel);
@@ -380,7 +413,7 @@ public class OptionsGeneralPanel extends GridPane implements PropertyPanel {
         GridPane.setConstraints(capitalFirstCheckBox, 2, rows);
         getChildren().add(capitalFirstCheckBox);
         rows++;
-
+        
         Label uniformFontSizeLabel = new Label(LabelGrabber.INSTANCE.getLabel("uniform.font.size.label"));
         GridPane.setConstraints(uniformFontSizeLabel, 1, rows);
         getChildren().add(uniformFontSizeLabel);
@@ -389,7 +422,7 @@ public class OptionsGeneralPanel extends GridPane implements PropertyPanel {
         GridPane.setConstraints(uniformFontSizeCheckBox, 2, rows);
         getChildren().add(uniformFontSizeCheckBox);
         rows++;
-
+        
         Label maxFontSizeLabel = new Label(LabelGrabber.INSTANCE.getLabel("max.font.size.label"));
         GridPane.setConstraints(maxFontSizeLabel, 1, rows);
         getChildren().add(maxFontSizeLabel);
@@ -408,7 +441,7 @@ public class OptionsGeneralPanel extends GridPane implements PropertyPanel {
             }
         });
         rows++;
-
+        
         Label additionalLineSpacingLabel = new Label(LabelGrabber.INSTANCE.getLabel("additional.line.spacing.label"));
         GridPane.setConstraints(additionalLineSpacingLabel, 1, rows);
         getChildren().add(additionalLineSpacingLabel);
@@ -427,7 +460,7 @@ public class OptionsGeneralPanel extends GridPane implements PropertyPanel {
             }
         });
         rows++;
-
+        
         Label maxCharsLabel = new Label(LabelGrabber.INSTANCE.getLabel("max.chars.line.label"));
         GridPane.setConstraints(maxCharsLabel, 1, rows);
         getChildren().add(maxCharsLabel);
@@ -493,6 +526,8 @@ public class OptionsGeneralPanel extends GridPane implements PropertyPanel {
         startupUpdateCheckBox.setSelected(props.checkUpdate());
         useOOCheckBox.setSelected(props.getUseOO());
         ooPathTextField.setText(props.getOOPath());
+        recordingsPathTextField.setText(props.getRecordingsPath());
+        convertMp3CheckBox.setSelected(props.getConvertRecordings());
         capitalFirstCheckBox.setSelected(props.checkCapitalFirst());
         oneMonitorWarnCheckBox.setSelected(props.showSingleMonitorWarning());
         uniformFontSizeCheckBox.setSelected(props.getUseUniformFontSize());
@@ -532,6 +567,10 @@ public class OptionsGeneralPanel extends GridPane implements PropertyPanel {
         props.setUseOO(useOO);
         String ooPath = getOOPathTextField().getText();
         props.setOOPath(ooPath);
+        String recPath = getRecordingsPathTextField().getText();
+        props.setRecordingsPath(recPath);
+        boolean convertRecordings = convertMp3CheckBox.isSelected();
+        props.setConvertRecordings(convertRecordings);
         boolean showWarning = getOneMonitorWarningCheckBox().isSelected();
         props.setSingleMonitorWarning(showWarning);
         boolean checkCapital = getCapitalFirstCheckBox().isSelected();
@@ -668,6 +707,24 @@ public class OptionsGeneralPanel extends GridPane implements PropertyPanel {
     }
 
     /**
+     * Get the "recordings path" text field.
+     * <p/>
+     * @return the "openoffice path" text field.
+     */
+    public TextField getRecordingsPathTextField() {
+        return recordingsPathTextField;
+    }
+    
+    /**
+     * Get the "automatically convert recordings" checkbox.
+     * <p/>
+     * @return the "automatically convert recordings" checkbox.
+     */
+    public CheckBox getConvertRecordingsCheckBox() {
+        return convertMp3CheckBox;
+    }
+
+    /**
      * Get the "use small song text" checkbox.
      * <p/>
      * @return the "use small song text" checkbox.
@@ -693,7 +750,7 @@ public class OptionsGeneralPanel extends GridPane implements PropertyPanel {
     public ComboBox getSmallBibleTextVPositionComboBox() {
         return smallBibleTextVPositionCombo;
     }
-    
+
     /**
      * Get the "use small Bible text" checkbox.
      * <p/>
@@ -702,8 +759,8 @@ public class OptionsGeneralPanel extends GridPane implements PropertyPanel {
     public ComboBox getSmallBibleTextHPositionComboBox() {
         return smallBibleTextHPositionCombo;
     }
-    
-        /**
+
+    /**
      * Get the "use small Song text" checkbox.
      * <p/>
      * @return the "use small Song text" checkbox.
@@ -711,7 +768,7 @@ public class OptionsGeneralPanel extends GridPane implements PropertyPanel {
     public ComboBox getSmallSongTextVPositionComboBox() {
         return smallSongTextVPositionCombo;
     }
-    
+
     /**
      * Get the "use small Song text" checkbox.
      * <p/>
