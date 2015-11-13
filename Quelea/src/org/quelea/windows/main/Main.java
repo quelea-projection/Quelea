@@ -21,6 +21,8 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -29,6 +31,7 @@ import javafx.application.Platform;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
+import javafx.scene.control.CheckBox;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
 import javax.imageio.ImageIO;
@@ -50,6 +53,7 @@ import org.quelea.services.utils.ShortcutManager;
 import org.quelea.services.utils.UpdateChecker;
 import org.quelea.services.utils.UserFileChecker;
 import org.quelea.services.utils.Utils;
+import org.quelea.windows.main.actionhandlers.RecordingsHandler;
 import org.quelea.windows.multimedia.VLCWindow;
 import org.quelea.windows.splash.SplashStage;
 import uk.co.caprica.vlcj.discovery.NativeDiscovery;
@@ -66,6 +70,7 @@ public final class Main extends Application {
     private DisplayStage fullScreenWindow;
     private DisplayStage stageWindow;
     private Dialog vlcWarningDialog;
+    private Dialog temporaryFilesWarningDialog;
 
     public static void main(String[] args) {
         Application.launch(args);
@@ -79,12 +84,11 @@ public final class Main extends Application {
      */
     @Override
     public void start(Stage stage) {
-        if(Utils.isMac()) {
+        if (Utils.isMac()) {
             BufferedImage img = null;
             try {
                 img = ImageIO.read(new File("icons/logo64.png"));
-            }
-            catch(Exception ex) {
+            } catch (Exception ex) {
                 ex.printStackTrace();
             }
             com.apple.eawt.Application.getApplication().setDockIconImage(img);
@@ -169,7 +173,7 @@ public final class Main extends Application {
                     } else {
                         LOGGER.log(Level.INFO, "Remote control disabled");
                     }
-                    
+
                     if (QueleaProperties.get().getUseAutoDetectServers()) {
                         LOGGER.log(Level.INFO, "Starting auto-detection server on {0}", QueleaProperties.get().getAutoDetectPort());
                         try {
@@ -273,7 +277,7 @@ public final class Main extends Application {
                                 LOGGER.log(Level.INFO, "Opening schedule through argument: {0}", schedulePath);
                                 QueleaApp.get().openSchedule(new File(schedulePath));
                             }
-                            if(Utils.isMac()) {
+                            if (Utils.isMac()) {
                                 com.apple.eawt.Application.getApplication().setOpenFileHandler((com.apple.eawt.AppEvent.OpenFilesEvent ofe) -> {
                                     List<File> files = ofe.getFiles();
                                     if (files != null && files.size() > 0) {
@@ -284,9 +288,14 @@ public final class Main extends Application {
                             mainWindow.show();
                             splashWindow.hide();
                             showMonitorWarning(monitorNumber);
+                            CheckBox convertCheckBox = QueleaApp.get().getMainWindow().getOptionsDialog().getOptionsGeneralPanel().getConvertRecordingsCheckBox();
                             if (VLC_OK && VLC_INIT) {
                                 VLCWindow.INSTANCE.refreshPosition();
+                                convertCheckBox.setDisable(false);
                             } else { //Couldn't find the VLC libraries.
+                                QueleaProperties.get().setConvertRecordings(false);
+                                convertCheckBox.setSelected(false);
+                                convertCheckBox.setDisable(true);
                                 String message;
                                 if (VLC_OK) {
                                     message = LabelGrabber.INSTANCE.getLabel("vlc.version.message");
@@ -319,6 +328,45 @@ public final class Main extends Application {
                                 vlcWarningDialog = vlcWarningDialogBuilder.setWarningIcon().build();
                                 vlcWarningDialog.showAndWait();
                             }
+                            File tempFolder = QueleaProperties.get().getTempDir();
+                            if (tempFolder.exists()) {
+                                if (tempFolder.list().length > 0) {
+                                    ArrayList<String> tempFiles = new ArrayList<>();
+                                    for (File file : tempFolder.listFiles()) {
+                                        tempFiles.add(file.getPath());
+                                    }
+                                    RecordingsHandler rec = new RecordingsHandler();
+                                    Dialog.Builder temporaryFilesWarningDialogBuilder = new Dialog.Builder()
+                                            .create()
+                                            .setTitle(LabelGrabber.INSTANCE.getLabel("found.temp.title"))
+                                            .setMessage(LabelGrabber.INSTANCE.getLabel("found.temp.message"))
+                                            .addLabelledButton(LabelGrabber.INSTANCE.getLabel("save.temp"), (ActionEvent t) -> {
+                                                try {
+                                                    rec.saveToFile(tempFiles);
+                                                } catch (IOException ex) {
+                                                    LOGGER.log(Level.WARNING, "Couldn't save temporary files", ex);
+                                                } finally {
+                                                    try {
+                                                        rec.clearTemp();
+                                                    } catch (IOException ex) {
+                                                        LOGGER.log(Level.WARNING, "Couldn't delete temporary files", ex);
+                                                    }
+                                                }
+                                                temporaryFilesWarningDialog.hide();
+                                            })
+                                            .addLabelledButton(LabelGrabber.INSTANCE.getLabel("clear.temp"), (ActionEvent t) -> {
+                                                try {
+                                                    rec.clearTemp();
+                                                } catch (IOException ex) {
+                                                    LOGGER.log(Level.WARNING, "Couldn't delete temporary files", ex);
+                                                }
+                                                temporaryFilesWarningDialog.hide();
+                                            });
+                                    temporaryFilesWarningDialog = temporaryFilesWarningDialogBuilder.setWarningIcon().build();
+                                    temporaryFilesWarningDialog.showAndWait();
+                                }
+                            }
+
                             mainWindow.getMainPanel().setSliderPos();
                             QueleaApp.get().doneLoading();
                         }

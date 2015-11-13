@@ -1495,8 +1495,19 @@ public final class QueleaProperties extends Properties {
      * <p/>
      * @return true if recordings should be converted, false otherwise.
      */
-    public boolean getConvertMp3() {
-        return Boolean.parseBoolean(getProperty("convert.mp3", "true"));
+    public boolean getConvertRecordings() {
+        return Boolean.parseBoolean(getProperty("convert.mp3", "false"));
+    }
+    
+    /**
+     * Set whether to automatically convert the recordings to MP3 files.
+     * <p/>
+     * @param val if we should use covert to MP#, false if we should just store
+     * recordings as WAV files.
+     */
+    public void setConvertRecordings(boolean val) {
+        setProperty("convert.mp3", Boolean.toString(val));
+        write();
     }
 
     /**
