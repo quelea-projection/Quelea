@@ -242,7 +242,7 @@ public class LivePanel extends LivePreviewPanel {
                 if (t.getCharacter().equals(" ")) {
                     QueleaApp.get().getMainWindow().getMainPanel().getPreviewPanel().goLive();
                 }
-                if (t.getCharacter().matches("c") || t.getCharacter().matches("b") || t.getCharacter().matches("p") || t.getCharacter().matches("\\d")) {
+                if (t.getCharacter().matches("c") || t.getCharacter().matches("b") || t.getCharacter().matches("p") || t.getCharacter().matches("t") || t.getCharacter().matches("\\d")) {
                     final int slideIndex = getSlideIndex(t.getCharacter());
                     if (slideIndex > -1) {
                         Platform.runLater(() -> {
@@ -278,7 +278,7 @@ public class LivePanel extends LivePreviewPanel {
                 int slideIndex = -1;
                 int i = 0;
                 for (String slide : slides) {
-                    if ((slide.toLowerCase().contains("\"chorus") && t.matches("c")) || (slide.toLowerCase().contains("\"pre-chorus") && t.matches("p")) || (slide.toLowerCase().contains("\"bridge") && t.matches("b")) || (slide.toLowerCase().contains("verse " + t) && t.matches("\\d"))) {
+                    if ((slide.toLowerCase().contains("\"chorus") && t.matches("c")) || (slide.toLowerCase().contains("\"pre-chorus") && t.matches("p")) || (slide.toLowerCase().contains("\"bridge") && t.matches("b")) || (slide.toLowerCase().contains("\"tag") && t.matches("t")) || (slide.toLowerCase().contains("verse " + t) && t.matches("\\d"))) {
                         slideIndex = i;
                         break;
                     }
