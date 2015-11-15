@@ -27,6 +27,7 @@ import java.awt.Desktop;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.net.Inet4Address;
 import java.net.Inet6Address;
 import java.net.InetAddress;
 import java.net.NetworkInterface;
@@ -382,7 +383,7 @@ public class ServerSettingsPanel extends GridPane implements PropertyPanel {
                 if (current_addr instanceof Inet6Address && v6address == null) {
                     LOGGER.log(Level.INFO, "Storing v6 address, no v4 found yet: {0}", v6address);
                     v6address = current_addr.getHostAddress();
-                } else if (!(current_addr instanceof Inet6Address)) {
+                } else if (current_addr instanceof Inet4Address) {
                     LOGGER.log(Level.INFO, "Found v4: {0}", current_addr.getHostAddress());
                     return current_addr.getHostAddress();
                 }
