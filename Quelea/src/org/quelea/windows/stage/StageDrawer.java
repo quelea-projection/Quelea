@@ -101,16 +101,16 @@ public class StageDrawer extends WordDrawer {
         }
 
         List<LyricLine> newText;
-        if (dumbWrap) {
-            newText = new ArrayList<>();
-            for (String str : text) {
-                for (String line : str.split("\n")) {
-                    newText.add(new LyricLine(line));
-                }
-            }
-        } else {
-            newText = sanctifyText(text);
-        }
+//        if (dumbWrap) {
+//            newText = new ArrayList<>();
+//            for (String str : text) {
+//                for (String line : str.split("\n")) {
+//                    newText.add(new LyricLine(line));
+//                }
+//            }
+//        } else {
+        newText = sanctifyText(text);
+//        }
         double fontSize;
         if (defaultFontSize > 0) {
             fontSize = defaultFontSize;
@@ -135,7 +135,7 @@ public class StageDrawer extends WordDrawer {
         StackPane.setAlignment(newTextGroup, Pos.CENTER);
         smallTextGroup = new Group();
         StackPane.setAlignment(smallTextGroup, Pos.BOTTOM_LEFT);
-        
+
         for (Iterator< Node> it = getCanvas().getChildren().iterator(); it.hasNext();) {
             Node node = it.next();
             if (node instanceof Group) {
@@ -153,10 +153,10 @@ public class StageDrawer extends WordDrawer {
             loopMetrics = metrics;
             FormattedText t;
             t = new FormattedText(line.getLine());
-            
+
             t.setFont(font);
 
-            setPositionX(t, loopMetrics, line.getLine(), curDisplayable instanceof BiblePassage);
+            setPositionX(t, loopMetrics, line.getLine());
             t.setLayoutY(y);
 
             Color lineColor;
@@ -218,7 +218,7 @@ public class StageDrawer extends WordDrawer {
         }
     }
 
-    private void setPositionX(FormattedText t, FontMetrics metrics, String line, boolean biblePassage) {
+    private void setPositionX(FormattedText t, FontMetrics metrics, String line) {
         Utils.checkFXThread();
         String strippedLine = line.replaceAll("\\<\\/?sup\\>", "");
         double width = metrics.computeStringWidth(strippedLine);
@@ -226,7 +226,7 @@ public class StageDrawer extends WordDrawer {
         double centreOffset = (getCanvas().getWidth() - width) / 2;
         double rightOffset = (getCanvas().getWidth() - width);
         if (QueleaProperties.get().getStageTextAlignment().equalsIgnoreCase("Left")) {
-            t.setLayoutX(getCanvas().getWidth());
+            t.setLayoutX(leftOffset);
         } else {
             t.setLayoutX(centreOffset);
         }
@@ -258,7 +258,7 @@ public class StageDrawer extends WordDrawer {
         Image image;
         ColorAdjust colourAdjust = null;
         image = Utils.getImageFromColour(QueleaProperties.get().getStageBackgroundColor());
-        
+
         Node newBackground;
         if (image == null) {
             final VideoBackground vidBackground = (VideoBackground) theme.getBackground();
@@ -360,13 +360,23 @@ public class StageDrawer extends WordDrawer {
     private List<LyricLine> sanctifyText(String[] linesArr) {
         List<LyricLine> finalLines = new ArrayList<>();
         for (int i = 0; i < linesArr.length; i++) {
+            linesArr[i] = linesArr[i].replaceAll("\n", "");
             finalLines.add(new LyricLine(linesArr[i]));
         }
 
         List<LyricLine> ret = new ArrayList<>();
-        int maxLength = QueleaProperties.get().getMaxChars();
+        int maxLength;
+        if(curDisplayable instanceof BiblePassage) {
+            maxLength = QueleaProperties.get().getMaxBibleChars();
+        }
+        else { 
+            maxLength = QueleaProperties.get().getMaxChars();
+        }
+        
         for (LyricLine line : finalLines) {
-            ret.add(line);
+            for (String sline : splitLine(line.getLine(), maxLength, curDisplayable instanceof BiblePassage)) {
+                ret.add(new LyricLine(sline));
+            }
         }
         return ret;
     }
@@ -378,23 +388,28 @@ public class StageDrawer extends WordDrawer {
      * @return the split line (or the unaltered line if it is less than or equal
      * to the allowed length.
      */
-    private List<String> splitLine(String line, int maxLength) {
+    private List<String> splitLine(String line, int maxLength, boolean bible) {
         List<String> sections = new ArrayList<>();
         if (line.length() > maxLength) {
-            if (containsNotAtEnd(line, ";")) {
+            if (bible) {
+                for (String s : splitMiddle(line, ' ')) {
+                    sections.addAll(splitLine(s, maxLength, bible));
+                }
+            }
+            else if (containsNotAtEnd(line, ";")) {
                 for (String s : splitMiddle(line, ';')) {
-                    sections.addAll(splitLine(s, maxLength));
+                    sections.addAll(splitLine(s, maxLength, bible));
                 }
             } else if (containsNotAtEnd(line, ",")) {
                 for (String s : splitMiddle(line, ',')) {
-                    sections.addAll(splitLine(s, maxLength));
+                    sections.addAll(splitLine(s, maxLength, bible));
                 }
             } else if (containsNotAtEnd(line, " ")) {
                 for (String s : splitMiddle(line, ' ')) {
-                    sections.addAll(splitLine(s, maxLength));
+                    sections.addAll(splitLine(s, maxLength, bible));
                 }
             } else {
-                sections.addAll(splitLine(new StringBuilder(line).insert(line.length() / 2, " ").toString(), maxLength));
+                sections.addAll(splitLine(new StringBuilder(line).insert(line.length() / 2, " ").toString(), maxLength, bible));
             }
         } else {
             if (capitaliseFirst && QueleaProperties.get().checkCapitalFirst()) {
@@ -431,16 +446,16 @@ public class StageDrawer extends WordDrawer {
             }
             double newSize;
             List<LyricLine> newText;
-            if (displayable instanceof BiblePassage) {
-                newText = new ArrayList<>();
-                for (String str : section.getText(false, false)) {
-                    for (String line : str.split("\n")) {
-                        newText.add(new LyricLine(line));
-                    }
-                }
-            } else {
-                newText = sanctifyText(textArr);
-            }
+//            if (displayable instanceof BiblePassage) {
+//                newText = new ArrayList<>();
+//                for (String str : section.getText(false, false)) {
+//                    for (String line : str.split("\n")) {
+//                        newText.add(new LyricLine(line));
+//                    }
+//                }
+//            } else {
+            newText = sanctifyText(textArr);
+//            }
             newSize = pickFontSize(font, newText, getCanvas().getWidth() * 0.92, getCanvas().getHeight() * 0.9);
             if (newSize < fontSize) {
                 fontSize = newSize;
