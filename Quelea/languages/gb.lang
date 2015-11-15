@@ -590,3 +590,4 @@ save.temp=Yes, save to file before deleting
 clear.temp=No, clear temporary files
 record.audio.tooltip=Record Audio
 pause.record.tooltip=Pause Recording
+max.lines.per.slide=Lines per slide (approximately)

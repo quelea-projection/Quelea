@@ -66,7 +66,6 @@ import org.quelea.windows.multimedia.VLCWindow;
  */
 public class LyricDrawer extends WordDrawer {
 
-    
     private String[] text;
     private String[] translations;
     private Group textGroup;
@@ -122,17 +121,17 @@ public class LyricDrawer extends WordDrawer {
         }
 
         List<LyricLine> newText;
-        if (dumbWrap) {
-            newText = new ArrayList<>();
-            for (String str : text) {
-                for (String line : str.split("\n")) {
-                    newText.add(new LyricLine(line));
-                }
-            }
-//            newText = dumbWrapText(text);
-        } else {
-            newText = sanctifyText(text, translations);
-        }
+//        if (dumbWrap) {
+//            newText = new ArrayList<>();
+//            for (String str : text) {
+//                for (String line : str.split("\n")) {
+//                    newText.add(new LyricLine(line));
+//                }
+//            }
+////            newText = dumbWrapText(text);
+//        } else {
+        newText = sanctifyText(text, translations);
+//        }
         double fontSize;
 //        if (QueleaProperties.get().getUseUniformFontSize()) {
 //            fontSize = defaultFontSize;
@@ -241,7 +240,7 @@ public class LyricDrawer extends WordDrawer {
                 t.setFont(font);
             }
 
-            setPositionX(t, loopMetrics, line.getLine(), curDisplayable instanceof BiblePassage);
+            setPositionX(t, loopMetrics, line.getLine());
             t.setLayoutY(y);
 
             Color lineColor;
@@ -321,7 +320,7 @@ public class LyricDrawer extends WordDrawer {
         }
     }
 
-    private void setPositionX(FormattedText t, FontMetrics metrics, String line, boolean biblePassage) {
+    private void setPositionX(FormattedText t, FontMetrics metrics, String line) {
         Utils.checkFXThread();
         String strippedLine = line.replaceAll("\\<\\/?sup\\>", "");
         double width = metrics.computeStringWidth(strippedLine);
@@ -458,8 +457,9 @@ public class LyricDrawer extends WordDrawer {
         List<LyricLine> finalLines = new ArrayList<>();
         int translationOffset = 0;
         for (int i = 0; i < linesArr.length; i++) {
+            linesArr[i] = linesArr[i].replaceAll("\n", "");
             finalLines.add(new LyricLine(linesArr[i]));
-            if(new LineTypeChecker(linesArr[i]).getLineType() == Type.NONBREAK) {
+            if (new LineTypeChecker(linesArr[i]).getLineType() == Type.NONBREAK) {
                 continue;
             }
             if (translationArr != null && i < translationArr.length) {
@@ -473,14 +473,20 @@ public class LyricDrawer extends WordDrawer {
         }
 
         List<LyricLine> ret = new ArrayList<>();
-        int maxLength = QueleaProperties.get().getMaxChars();
+        int maxLength;
+        
+        if(curDisplayable instanceof BiblePassage) {
+            maxLength = QueleaProperties.get().getMaxBibleChars();
+        }
+        else { 
+            maxLength = QueleaProperties.get().getMaxChars();
+        }
         for (LyricLine line : finalLines) {
             if ((translationArr != null && translationArr.length > 0)) {
                 ret.add(line);
             } else {
-                List<String> splits = splitLine(line.getLine(), maxLength);
-                for (String split : splits) {
-                    ret.add(new LyricLine(split));
+                for (String sline : splitLine(line.getLine(), maxLength, curDisplayable instanceof BiblePassage)) {
+                    ret.add(new LyricLine(sline));
                 }
             }
         }
@@ -494,23 +500,27 @@ public class LyricDrawer extends WordDrawer {
      * @return the split line (or the unaltered line if it is less than or equal
      * to the allowed length.
      */
-    private List<String> splitLine(String line, int maxLength) {
+    private List<String> splitLine(String line, int maxLength, boolean bible) {
         List<String> sections = new ArrayList<>();
         if (line.length() > maxLength) {
-            if (containsNotAtEnd(line, ";")) {
+            if (bible) {
+                for (String s : splitMiddle(line, ' ')) {
+                    sections.addAll(splitLine(s, maxLength, bible));
+                }
+            } else if (containsNotAtEnd(line, ";")) {
                 for (String s : splitMiddle(line, ';')) {
-                    sections.addAll(splitLine(s, maxLength));
+                    sections.addAll(splitLine(s, maxLength, bible));
                 }
             } else if (containsNotAtEnd(line, ",")) {
                 for (String s : splitMiddle(line, ',')) {
-                    sections.addAll(splitLine(s, maxLength));
+                    sections.addAll(splitLine(s, maxLength, bible));
                 }
             } else if (containsNotAtEnd(line, " ")) {
                 for (String s : splitMiddle(line, ' ')) {
-                    sections.addAll(splitLine(s, maxLength));
+                    sections.addAll(splitLine(s, maxLength, bible));
                 }
             } else {
-                sections.addAll(splitLine(new StringBuilder(line).insert(line.length() / 2, " ").toString(), maxLength));
+                sections.addAll(splitLine(new StringBuilder(line).insert(line.length() / 2, " ").toString(), maxLength, bible));
             }
         } else {
             line = line.trim();
@@ -545,24 +555,24 @@ public class LyricDrawer extends WordDrawer {
             textArr = section.getText(false, false);
             List<LyricLine> processedText;
             double newSize;
-            if (displayable instanceof BiblePassage) {
-                processedText = new ArrayList<>();
-                for (String str : displayable.getSections()[i].getText(false, false)) {
-                    for (String line : str.split("\n")) {
-                        processedText.add(new LyricLine(line));
-                    }
+//            if (displayable instanceof BiblePassage) {
+//                processedText = new ArrayList<>();
+//                for (String str : displayable.getSections()[i].getText(false, false)) {
+//                    for (String line : str.split("\n")) {
+//                        processedText.add(new LyricLine(line));
+//                    }
+//                }
+////                processedText = dumbWrapText(textArr);
+//            } else {
+            String[] translationArr = null;
+            if (displayable instanceof SongDisplayable) {
+                String translationLyrics = ((SongDisplayable) displayable).getCurrentTranslationSection(i);
+                if (translationLyrics != null) {
+                    translationArr = translationLyrics.split("\n");
                 }
-//                processedText = dumbWrapText(textArr);
-            } else {
-                String[] translationArr = null;
-                if (displayable instanceof SongDisplayable) {
-                    String translationLyrics = ((SongDisplayable) displayable).getCurrentTranslationSection(i);
-                    if (translationLyrics != null) {
-                        translationArr = translationLyrics.split("\n");
-                    }
-                }
-                processedText = sanctifyText(textArr, translationArr);
             }
+            processedText = sanctifyText(textArr, translationArr);
+//            }
             newSize = pickFontSize(font, processedText, getCanvas().getWidth() * QueleaProperties.get().getLyricWidthBounds(), getCanvas().getHeight() * QueleaProperties.get().getLyricHeightBounds());
             if (newSize < fontSize) {
                 fontSize = newSize;
