@@ -1872,4 +1872,22 @@ public final class QueleaProperties extends Properties {
     public double getLyricHeightBounds() {
         return Double.parseDouble(getProperty("lyric.height.bound", "0.9"));
     }
+
+    public int getMaxBibleLines() {
+        return Integer.parseInt(getProperty("max.bible.lines", "8"));
+    }
+    
+    public void setMaxBibleLines(int number) {
+        setProperty("max.bible.lines", Integer.toString(number));
+        write();
+    }
+
+    public boolean getBibleUsingMaxLines() {
+        return Boolean.parseBoolean(getProperty("use.max.bible.lines", "false"));
+    }
+
+    public void setBibleUsingMaxLines(boolean lines) {
+        setProperty("use.max.bible.lines", Boolean.toString(lines));
+        write();
+    }
 }

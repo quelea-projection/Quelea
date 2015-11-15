@@ -235,4 +235,30 @@ public abstract class WordDrawer extends DisplayableDrawer {
 
         return font.getSize();
     }
+    
+    protected static String[] splitOdd(String line, char delimiter) {
+        final int first = (int) (((double) line.length() / 3) + 0.5);
+        final int second = (int) ((((double) line.length() / 3) * 2) + 0.5);
+        int nearestFirst = -1;
+        int nearestSecond = -1;
+        for (int i = 0; i < line.length(); i++) {
+            if (line.charAt(i) == delimiter) {
+                int curDistance = Math.abs(nearestFirst - first);
+                int newDistance = Math.abs(i - first);
+                if (newDistance < curDistance || nearestFirst < 0) {
+                    nearestFirst = i;
+                }
+            }
+        }
+        for (int i = 0; i < line.length(); i++) {
+            if (line.charAt(i) == delimiter) {
+                int curDistance = Math.abs(nearestSecond - second);
+                int newDistance = Math.abs(i - second);
+                if (newDistance < curDistance || nearestSecond < 0) {
+                    nearestSecond = i;
+                }
+            }
+        }
+        return new String[]{line.substring(0, nearestFirst + 1), line.substring(nearestSecond + 1, line.length())};
+    }
 }

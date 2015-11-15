@@ -90,7 +90,7 @@ public class BiblePassage implements TextDisplayable, Serializable {
      * Fill the text sections with the verses.
      */
     private void fillTextSections() {
-        final int MAX_CHARS = QueleaProperties.get().getMaxChars();
+        final int MAX_CHARS = QueleaProperties.get().getMaxBibleChars();
         final int MAX_VERSES = QueleaProperties.get().getMaxBibleVerses();
         final boolean SPLIT_VERSES = QueleaProperties.get().getBibleSplitVerses();
         final boolean USE_CHARS = QueleaProperties.get().getBibleUsingMaxChars();
@@ -128,7 +128,7 @@ public class BiblePassage implements TextDisplayable, Serializable {
                 count++;
                 if (USE_CHARS) {
                     if (!SPLIT_VERSES) {
-                        if (lines >= MAX_CHARS / 4) {
+                        if (lines >= QueleaProperties.get().getMaxBibleLines()) {
                             lines = 0;
                             textSections.add(new TextSection("", new String[]{section.toString().trim()}, smallText, false));
                             section.setLength(0);
@@ -138,7 +138,7 @@ public class BiblePassage implements TextDisplayable, Serializable {
                         if (!line.toString().trim().isEmpty()) {
                             lines++;
                         }
-                        if (lines >= MAX_CHARS / 4) {
+                        if (lines >= QueleaProperties.get().getMaxBibleLines()) {
                             if (!line.toString().isEmpty()) {
                                 line.append("\n");
                                 section.append(line);
