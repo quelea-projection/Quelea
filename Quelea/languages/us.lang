@@ -1,5 +1,5 @@
 #THIS IS AN AUTO GENERATED FILE, AND WILL BE OVERWRITTEN EACH TIME QUELEA IS REBUILT. DO NOT EDIT MANUALLY!
-#Sat Aug 01 13:10:30 BST 2015
+#Thu Oct 15 19:27:19 BST 2015
 email.error.text=There was an error opening your email client. Make sure you have an email client installed and registered to handle eml files, otherwise you'll have to send the email manually.
 ccli.number.label=CCLI number
 easyworship.button=EasyWorship
@@ -79,6 +79,7 @@ use.remote.control.label=Use Remote Control
 small.text.position.label=Song and bible information position
 video.error.unsupported=Sorry, the video file you selected isn't supported.
 remote.logo.text=Logo
+split.bible.verses=Keep verses whole across slides
 filefilters.description.usr.files=USR (SongSelect) files
 timer.files.description=Countdown timers
 vlc.version.message=Your version of VLC is too old. You'll need to download the latest version of VLC in order to play videos, audio, and show video backgrounds. Do you want to download it now? You'll need to restart Quelea after you've installed VLC for the changes to take effect.
@@ -213,6 +214,7 @@ shadow.offset.label=Shadow Offset
 bible.search.result.found=result found
 none.text=None
 confirm.overwrite.title=File already exists\!
+no.verse.title=No verse found
 yes.text=Yes
 file.replace.button=Replace
 bible.load.error.question=There appears to be a problem with your bible file ($1s), Quelea can't load it.\nDo you want to send it to the developers (anonymously) to check compatibility?\n(You can also post to the discuss group at "quelea-discuss@googlegroups.com" and ask for help there.)
@@ -402,6 +404,7 @@ add.presentation.button=Add Presentation
 author.label=Author
 remote.previtem.text=Previous Item
 startup.error.title=Startup Error
+no.verse.message=We could not find one or more of the verses specified and have tried to continue without them.
 database.heading=Database
 oo.path=OpenOffice path
 notice.background.colour.text=Notice background color

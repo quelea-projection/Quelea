@@ -21,8 +21,6 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -53,7 +51,6 @@ import org.quelea.services.utils.ShortcutManager;
 import org.quelea.services.utils.UpdateChecker;
 import org.quelea.services.utils.UserFileChecker;
 import org.quelea.services.utils.Utils;
-import org.quelea.windows.main.actionhandlers.RecordingsHandler;
 import org.quelea.windows.multimedia.VLCWindow;
 import org.quelea.windows.splash.SplashStage;
 import uk.co.caprica.vlcj.discovery.NativeDiscovery;
@@ -328,45 +325,6 @@ public final class Main extends Application {
                                 vlcWarningDialog = vlcWarningDialogBuilder.setWarningIcon().build();
                                 vlcWarningDialog.showAndWait();
                             }
-                            File tempFolder = QueleaProperties.get().getTempDir();
-                            if (tempFolder.exists()) {
-                                if (tempFolder.list().length > 0) {
-                                    ArrayList<String> tempFiles = new ArrayList<>();
-                                    for (File file : tempFolder.listFiles()) {
-                                        tempFiles.add(file.getPath());
-                                    }
-                                    RecordingsHandler rec = new RecordingsHandler();
-                                    Dialog.Builder temporaryFilesWarningDialogBuilder = new Dialog.Builder()
-                                            .create()
-                                            .setTitle(LabelGrabber.INSTANCE.getLabel("found.temp.title"))
-                                            .setMessage(LabelGrabber.INSTANCE.getLabel("found.temp.message"))
-                                            .addLabelledButton(LabelGrabber.INSTANCE.getLabel("save.temp"), (ActionEvent t) -> {
-                                                try {
-                                                    rec.saveToFile(tempFiles);
-                                                } catch (IOException ex) {
-                                                    LOGGER.log(Level.WARNING, "Couldn't save temporary files", ex);
-                                                } finally {
-                                                    try {
-                                                        rec.clearTemp();
-                                                    } catch (IOException ex) {
-                                                        LOGGER.log(Level.WARNING, "Couldn't delete temporary files", ex);
-                                                    }
-                                                }
-                                                temporaryFilesWarningDialog.hide();
-                                            })
-                                            .addLabelledButton(LabelGrabber.INSTANCE.getLabel("clear.temp"), (ActionEvent t) -> {
-                                                try {
-                                                    rec.clearTemp();
-                                                } catch (IOException ex) {
-                                                    LOGGER.log(Level.WARNING, "Couldn't delete temporary files", ex);
-                                                }
-                                                temporaryFilesWarningDialog.hide();
-                                            });
-                                    temporaryFilesWarningDialog = temporaryFilesWarningDialogBuilder.setWarningIcon().build();
-                                    temporaryFilesWarningDialog.showAndWait();
-                                }
-                            }
-
                             mainWindow.getMainPanel().setSliderPos();
                             QueleaApp.get().doneLoading();
                         }

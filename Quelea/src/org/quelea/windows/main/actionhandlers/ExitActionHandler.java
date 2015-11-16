@@ -108,41 +108,6 @@ public class ExitActionHandler implements EventHandler<ActionEvent> {
                 return; //Don't exit
             }
         }
-        MainToolbar main = QueleaApp.get().getMainWindow().getMainToolbar();
-        if (main.getRecordButtonHandler() != null && main.getRecordButtonHandler().getRecordingsHandler() != null && main.getRecordButtonHandler().getRecordingsHandler().getIsRecording()) {
-            cancel = true;
-            Dialog d = Dialog.buildConfirmation(LabelGrabber.INSTANCE.getLabel("save.recording.before.exit.title"), LabelGrabber.INSTANCE.getLabel("save.recording.before.exit.message")).addYesButton(new EventHandler<ActionEvent>() {
-                @Override
-                public void handle(ActionEvent t) {
-                   main.stopRecording();
-                   block = true;
-                   cancel = false;
-                }
-            }).addNoButton((ActionEvent t1) -> {
-                try {
-                    main.getRecordButtonHandler().getRecordingsHandler().clearTemp();
-                } catch (IOException ex) {
-                    LOGGER.log(Level.WARNING, "Couldn't delete temporary files", ex);
-                }
-                cancel = false;
-                block = false;
-            }).addCancelButton((ActionEvent t1) -> {
-                //No need to do anything
-            }).build();
-            d.showAndWait();
-            while (block) {
-                try {
-                    Thread.sleep(5);
-                } catch (InterruptedException ex) {
-                    //Meh.
-                } finally {
-                    block = !main.getRecordButtonHandler().getRecordingsHandler().getFinishedSaving();
-                }
-            }
-            if (cancel) {
-                return; //Don't exit
-            }
-        }
         LOGGER.log(Level.INFO, "Saving window position...");
         QueleaProperties.get().setSceneInfo(new SceneInfo(mainWindow.getX(), mainWindow.getY(), mainWindow.getWidth(), mainWindow.getHeight(), mainWindow.isMaximized()));
         QueleaProperties.get().setMainDivPos(mainWindow.getMainPanel().getMainDivPos());
