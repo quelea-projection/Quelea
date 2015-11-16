@@ -67,7 +67,6 @@ public final class Main extends Application {
     private DisplayStage fullScreenWindow;
     private DisplayStage stageWindow;
     private Dialog vlcWarningDialog;
-    private Dialog temporaryFilesWarningDialog;
 
     public static void main(String[] args) {
         Application.launch(args);
@@ -81,6 +80,7 @@ public final class Main extends Application {
      */
     @Override
     public void start(Stage stage) {
+        System.setProperty("glass.accessible.force", "false");
         if (Utils.isMac()) {
             BufferedImage img = null;
             try {
