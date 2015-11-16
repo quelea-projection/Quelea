@@ -115,14 +115,6 @@ public class OptionsGeneralPanel extends GridPane implements PropertyPanel {
         GridPane.setConstraints(interfaceLanguageLabel, 1, rows);
         getChildren().add(interfaceLanguageLabel);
         languageFileComboBox = new ComboBox<>();
-        languageFileComboBox.addEventFilter(MouseEvent.MOUSE_ENTERED, (MouseEvent e) -> {
-            languageFileComboBox.requestFocus();
-            //To be deleted when fixed in java #comboboxbug
-        });
-        languageFileComboBox.addEventFilter(MouseEvent.MOUSE_ENTERED, (MouseEvent e) -> {
-            languageFileComboBox.requestFocus();
-            //To be deleted when fixed in java #comboboxbug
-        });
         for (LanguageFile file : LanguageFileManager.INSTANCE.languageFiles()) {
             languageFileComboBox.getItems().add(file);
         }
@@ -325,15 +317,7 @@ public class OptionsGeneralPanel extends GridPane implements PropertyPanel {
         getChildren().add(showSmallSongTextLabel);
         showSmallSongTextBox = new CheckBox();
         smallSongTextVPositionCombo = new ComboBox<>();
-        smallSongTextVPositionCombo.addEventFilter(MouseEvent.MOUSE_ENTERED, (MouseEvent e) -> {
-            smallSongTextVPositionCombo.requestFocus();
-            //To be deleted when fixed in java #comboboxbug
-        });
         smallSongTextHPositionCombo = new ComboBox<>();
-        smallSongTextHPositionCombo.addEventFilter(MouseEvent.MOUSE_ENTERED, (MouseEvent e) -> {
-            smallSongTextHPositionCombo.requestFocus();
-            //To be deleted when fixed in java #comboboxbug
-        });
         smallSongSizeSpinner = new BigDecimalSpinner(new BigDecimal("0.01"), new BigDecimal("0.5"), new BigDecimal("0.01"), NumberFormat.getPercentInstance());
         smallSongSizeSpinner.setMaxWidth(70);
         smallSongSizeSpinner.setMinWidth(70);
@@ -352,15 +336,7 @@ public class OptionsGeneralPanel extends GridPane implements PropertyPanel {
         getChildren().add(showSmallBibleTextLabel);
         showSmallBibleTextBox = new CheckBox();
         smallBibleTextVPositionCombo = new ComboBox<>();
-        smallBibleTextVPositionCombo.addEventFilter(MouseEvent.MOUSE_ENTERED, (MouseEvent e) -> {
-            smallBibleTextVPositionCombo.requestFocus();
-            //To be deleted when fixed in java #comboboxbug
-        });
         smallBibleTextHPositionCombo = new ComboBox<>();
-        smallBibleTextHPositionCombo.addEventFilter(MouseEvent.MOUSE_ENTERED, (MouseEvent e) -> {
-            smallBibleTextHPositionCombo.requestFocus();
-            //To be deleted when fixed in java #comboboxbug
-        });
         smallBibleSizeSpinner = new BigDecimalSpinner(new BigDecimal("0.01"), new BigDecimal("0.5"), new BigDecimal("0.01"), NumberFormat.getPercentInstance());
         smallBibleSizeSpinner.setMaxWidth(70);
         smallBibleSizeSpinner.setMinWidth(70);

@@ -92,10 +92,6 @@ public class FontOptionsDialog extends Stage {
             fontSelectionDialog = new FontSelectionDialog();
         }
         fontSelection = new ComboBox<>();
-        fontSelection.addEventFilter(MouseEvent.MOUSE_ENTERED, (MouseEvent e) -> {
-            fontSelection.requestFocus();
-            //To be deleted when fixed in java #comboboxbug
-        });
         fontSelection.setMaxWidth(Integer.MAX_VALUE);
         fontSelection.getItems().addAll(fontSelectionDialog.getChosenFonts());
         Collections.sort(fontSelection.getItems());
