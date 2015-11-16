@@ -801,15 +801,6 @@ public final class QueleaProperties extends Properties {
     public File getVidDir() {
         return new File(getQueleaUserHome(), "vid");
     }
-    
-    /**
-     * Get the directory used for storing temporary recordings.
-     * <p/>
-     * @return the temp directory
-     */
-    public File getTempDir() {
-        return new File(getQueleaUserHome(), "temp");
-    }
 
     /**
      * Get the extension used for quelea schedules.
