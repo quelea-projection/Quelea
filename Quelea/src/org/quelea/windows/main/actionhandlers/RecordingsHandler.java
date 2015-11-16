@@ -24,7 +24,6 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.SequenceInputStream;
-import java.nio.file.Files;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -33,6 +32,7 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.application.Platform;
+import javafx.event.ActionEvent;
 import javafx.scene.control.ProgressBar;
 import javafx.scene.control.TextField;
 import javafx.scene.control.ToggleButton;
@@ -45,6 +45,9 @@ import javax.sound.sampled.DataLine;
 import javax.sound.sampled.LineUnavailableException;
 import javax.sound.sampled.TargetDataLine;
 import javax.sound.sampled.UnsupportedAudioFileException;
+import org.javafx.dialog.Dialog;
+import org.quelea.services.languages.LabelGrabber;
+import org.quelea.services.utils.LoggerUtils;
 import org.quelea.services.utils.QueleaProperties;
 import org.quelea.windows.multimedia.RecordingEncoder;
 
@@ -55,26 +58,27 @@ import org.quelea.windows.multimedia.RecordingEncoder;
  */
 public class RecordingsHandler {
 
-    protected boolean running;
+    private static final Logger LOGGER = LoggerUtils.getLogger();
+    private Dialog noDevicesDialog;
+    private boolean running;
     private boolean paused;
-    File wavFile;
-    String timeStamp = new SimpleDateFormat("yyyy-MM-dd HH.mm.ss").format(Calendar.getInstance().getTime());
-    String path = QueleaProperties.get().getRecordingsPath(); // Get path from settings
-    AudioFileFormat.Type fileType = AudioFileFormat.Type.WAVE; // format of audio file
-    TargetDataLine line; // the line from which audio data is captured
+    private File wavFile;
+    private String timeStamp = new SimpleDateFormat("yyyy-MM-dd HH.mm.ss").format(Calendar.getInstance().getTime());
+    private String path = QueleaProperties.get().getRecordingsPath(); // Get path from settings
+    private AudioFileFormat.Type fileType = AudioFileFormat.Type.WAVE; // format of audio file
+    private TargetDataLine line; // the line from which audio data is captured
     private ByteArrayOutputStream out; 
     private AudioFormat format;
-    long startTime;
-    Thread captureThread;
-    byte[] tempRecording;
-    long tempTime;
-    private ArrayList<String> recordingPaths = new ArrayList<>(); // List of stored temporary recordings
+    private long startTime;
+    private Thread captureThread;
+    private long tempTime;
+    private ArrayList<String> recordingPaths = new ArrayList<>();
     //Sound level variables
     private float level;
-    final static float MAX_8_BITS_SIGNED = Byte.MAX_VALUE;
-    final static float MAX_8_BITS_UNSIGNED = 0xff;
-    final static float MAX_16_BITS_SIGNED = Short.MAX_VALUE;
-    final static float MAX_16_BITS_UNSIGNED = 0xffff;
+    private final static float MAX_8_BITS_SIGNED = Byte.MAX_VALUE;
+    private final static float MAX_8_BITS_UNSIGNED = 0xff;
+    private final static float MAX_16_BITS_SIGNED = Short.MAX_VALUE;
+    private final static float MAX_16_BITS_UNSIGNED = 0xffff;
     private boolean isRecording;
     private boolean finishedSaving;
 
@@ -114,17 +118,30 @@ public class RecordingsHandler {
             DataLine.Info info = new DataLine.Info(TargetDataLine.class, format);
 
             // checks if system supports the data line
-            if (!AudioSystem.isLineSupported(info)) {
-                System.out.println("Line not supported");
-                System.exit(0);
+            if (AudioSystem.isLineSupported(info)) {
+                LOGGER.log(Level.INFO, "Capturing audio");
+                line = (TargetDataLine) AudioSystem.getLine(info);
+                line.open(format);
+                line.start();   // start capturing
+                startBuffering(pb, tb);
             }
-            line = (TargetDataLine) AudioSystem.getLine(info);
-            line.open(format);
-            line.start();   // start capturing
-
-            startBuffering(pb, tb);
+            else {
+                LOGGER.log(Level.INFO, "No recording device found");
+                Platform.runLater(() -> {
+                    Dialog.Builder setRecordingWarningBuilder = new Dialog.Builder()
+                            .create()
+                            .setTitle(LabelGrabber.INSTANCE.getLabel("recording.no.devices.title"))
+                            .setMessage(LabelGrabber.INSTANCE.getLabel("recording.no.devices.message"))
+                            .addLabelledButton(LabelGrabber.INSTANCE.getLabel("ok.button"), (ActionEvent t) -> {
+                                noDevicesDialog.hide();
+                                noDevicesDialog = null;
+                            });
+                    noDevicesDialog = setRecordingWarningBuilder.setWarningIcon().build();
+                    noDevicesDialog.show();
+                });
+            }
         } catch (LineUnavailableException ex) {
-            ex.printStackTrace();
+            LOGGER.log(Level.WARNING, "Line unavailable", ex);
         }
     }
 
@@ -182,15 +199,13 @@ public class RecordingsHandler {
                 String[] options = {":sout=#transcode{vcodec=none,acodec=mp3,ab=128,channels=2,samplerate=44100}:std{access=file{no-overwrite},mux=mp3,dst='" + newFileName.replace(".wav", ".mp3") + "'} vlc://quit"};
                 new RecordingEncoder(newFileName, options).run();
             }
-            
-            clearTemp();
         } catch (IOException ex) {
             finishedSaving = true;
             Logger.getLogger(RecordingsHandler.class.getName()).log(Level.SEVERE, null, ex);
         } finally {
             isRecording = false;
             finishedSaving = true;
-            System.out.println("Finished saving");
+            LOGGER.log(Level.INFO, "Saved");
         }
     }
     
@@ -214,7 +229,9 @@ public class RecordingsHandler {
                     int count
                             = line.read(buffer, 0, buffer.length);
                     calculateLevel(buffer, 0, 0);
-                    pb.setProgress(level);
+                    Platform.runLater(() -> {
+                        pb.setProgress(level);
+                    });
                     long elapsedTimeMillis;
                     elapsedTimeMillis = System.currentTimeMillis() - startTime + tempTime;
                     if (!paused) {
@@ -223,13 +240,15 @@ public class RecordingsHandler {
                     
                     // Change the color of the ProgressBar depending on level
                     // Proper limits should be checked
-                    if (level > 0.9f) {
-                        pb.setStyle("-fx-accent: red;");
-                    } else if (level > 0.7) {
-                        pb.setStyle("-fx-accent: orange;");
-                    } else {
-                        pb.setStyle("-fx-accent: green;");
-                    }
+                    Platform.runLater(() -> {
+                        if (level > 0.9f) {
+                            pb.setStyle("-fx-accent: red;");
+                        } else if (level > 0.7) {
+                            pb.setStyle("-fx-accent: orange;");
+                        } else {
+                            pb.setStyle("-fx-accent: green;");
+                        }
+                    });
                     if (count > 0) {
                         out.write(buffer, 0, count);
                     }
@@ -237,7 +256,6 @@ public class RecordingsHandler {
                     if (out.size() > (176400 * 10)) {
                         writeToTempFile();
                         out.reset();
-                        System.out.println("Data moved to temp");
                     }
                 }
                 line.stop();
@@ -262,16 +280,8 @@ public class RecordingsHandler {
         AudioInputStream ais = new AudioInputStream(input,
                 format, audio.length / format.getFrameSize());
         try {
-            if (!QueleaProperties.get().getTempDir().exists()) {
-                QueleaProperties.get().getTempDir().mkdir();
-            }
-            if (recordingPaths.isEmpty()) {
-                File folder = new File(QueleaProperties.get().getTempDir().toString());
-                for (File file : folder.listFiles()) {
-                    recordingPaths.add(file.getPath());
-                }
-            }
-            File tempFile = new File(QueleaProperties.get().getTempDir(), new SimpleDateFormat("yyyy-MM-dd HH.mm.ss").format(Calendar.getInstance().getTime()) + ".wav");
+            File tempFile = File.createTempFile("quelea.recording", ".wav");
+            tempFile.deleteOnExit();
             recordingPaths.add(tempFile.getPath());
             AudioSystem.write(ais, fileType, tempFile);
             input.close();
@@ -441,21 +451,13 @@ public class RecordingsHandler {
 
                 // Write recording to file
                 AudioSystem.write(clip1, fileType, wavFile);
-            } catch (Exception ex) {
+            } catch (UnsupportedAudioFileException | IOException ex) {
                 Logger.getLogger(RecordingsHandler.class.getName()).log(Level.SEVERE, null, ex);
             } finally {
                 if (clip1 != null) {
                     clip1.close();
                     System.gc();
                 }
-            }
-    }
-
-    public void clearTemp() throws IOException {
-        // Delete tempFiles
-            File folder = new File(QueleaProperties.get().getTempDir().toString());
-            for (File file : folder.listFiles()) {
-                Files.delete(file.toPath());
             }
     }
     
