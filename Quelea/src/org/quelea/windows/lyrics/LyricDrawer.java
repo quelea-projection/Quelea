@@ -121,34 +121,58 @@ public class LyricDrawer extends WordDrawer {
         }
 
         List<LyricLine> newText;
-//        if (dumbWrap) {
-//            newText = new ArrayList<>();
-//            for (String str : text) {
-//                for (String line : str.split("\n")) {
-//                    newText.add(new LyricLine(line));
-//                }
-//            }
-////            newText = dumbWrapText(text);
-//        } else {
+        double fontSize;
         if (curDisplayable instanceof BiblePassage) {
-            newText = bibleWrap(text);
+            int maxBibleChars = QueleaProperties.get().getMaxBibleChars();
+            StringBuilder all = new StringBuilder();
+            for (String s : text) {
+                all.append(s);
+            }
+            String allString = all.toString().replace("\n", "");
+            String firstLine;
+            if (allString.length() > maxBibleChars) {
+                firstLine = allString.substring(0, maxBibleChars);
+            } else {
+                firstLine = allString;
+            }
+
+            fontSize = defaultFontSize;
+            FontMetrics metrics = Toolkit.getToolkit().getFontLoader().getFontMetrics(font);
+
+            while (metrics.computeStringWidth(firstLine) > getCanvas().getWidth() * QueleaProperties.get().getLyricWidthBounds()) {
+                fontSize -= 1;
+                font = Font.font(font.getFamily(),
+                        theme.isBold() ? FontWeight.BOLD : FontWeight.NORMAL,
+                        theme.isItalic() ? FontPosture.ITALIC : FontPosture.REGULAR,
+                        fontSize);
+                metrics = Toolkit.getToolkit().getFontLoader().getFontMetrics(font);
+            }
+            newText = bibleWrapAdvanced(text, metrics, getCanvas().getWidth() * QueleaProperties.get().getLyricWidthBounds());
+            while (metrics.getLineHeight() * newText.size() > (getCanvas().getHeight() * QueleaProperties.get().getLyricHeightBounds())) {
+                fontSize -= 1;
+                font = Font.font(font.getFamily(),
+                        theme.isBold() ? FontWeight.BOLD : FontWeight.NORMAL,
+                        theme.isItalic() ? FontPosture.ITALIC : FontPosture.REGULAR,
+                        fontSize);
+                metrics = Toolkit.getToolkit().getFontLoader().getFontMetrics(font);
+            }
+            font = Font.font(font.getFamily(),
+                    theme.isBold() ? FontWeight.BOLD : FontWeight.NORMAL,
+                    theme.isItalic() ? FontPosture.ITALIC : FontPosture.REGULAR,
+                    fontSize);
+
         } else {
             newText = sanctifyText(text, translations);
+            fontSize = pickFontSize(font, newText, getCanvas().getWidth() * QueleaProperties.get().getLyricWidthBounds(), getCanvas().getHeight() * QueleaProperties.get().getLyricHeightBounds());
+            font = Font.font(font.getFamily(),
+                    theme.isBold() ? FontWeight.BOLD : FontWeight.NORMAL,
+                    theme.isItalic() ? FontPosture.ITALIC : FontPosture.REGULAR,
+                    fontSize);
+            translateFont = Font.font(translateFont.getFamily(),
+                    theme.isTranslateBold() ? FontWeight.BOLD : FontWeight.NORMAL,
+                    theme.isTranslateItalic() ? FontPosture.ITALIC : FontPosture.REGULAR,
+                    fontSize - QueleaProperties.get().getTranslationFontSizeOffset());
         }
-        double fontSize;
-//        if (QueleaProperties.get().getUseUniformFontSize()) {
-//            fontSize = defaultFontSize;
-//        } else {
-        fontSize = pickFontSize(font, newText, getCanvas().getWidth() * QueleaProperties.get().getLyricWidthBounds(), getCanvas().getHeight() * QueleaProperties.get().getLyricHeightBounds());
-//        }
-        font = Font.font(font.getFamily(),
-                theme.isBold() ? FontWeight.BOLD : FontWeight.NORMAL,
-                theme.isItalic() ? FontPosture.ITALIC : FontPosture.REGULAR,
-                fontSize);
-        translateFont = Font.font(translateFont.getFamily(),
-                theme.isTranslateBold() ? FontWeight.BOLD : FontWeight.NORMAL,
-                theme.isTranslateItalic() ? FontPosture.ITALIC : FontPosture.REGULAR,
-                fontSize - QueleaProperties.get().getTranslationFontSizeOffset());
         double smallFontSize;
         Font smallTextFont = Font.font("Arial", FontWeight.BOLD, FontPosture.REGULAR, 500);
 
@@ -574,13 +598,46 @@ public class LyricDrawer extends WordDrawer {
                 }
             }
             if (curDisplayable instanceof BiblePassage) {
-                processedText = bibleWrap(textArr);
+                int maxBibleChars = QueleaProperties.get().getMaxBibleChars();
+                StringBuilder all = new StringBuilder();
+                for (String s : textArr) {
+                    all.append(s);
+                }
+                String allString = all.toString().replace("\n", "");
+                String firstLine;
+                if (allString.length() > maxBibleChars) {
+                    firstLine = allString.substring(0, maxBibleChars);
+                } else {
+                    firstLine = allString;
+                }
+
+                newSize = 300;
+                font = Font.font(font.getFamily(),
+                        theme.isBold() ? FontWeight.BOLD : FontWeight.NORMAL,
+                        theme.isItalic() ? FontPosture.ITALIC : FontPosture.REGULAR,
+                        newSize);
+                FontMetrics metrics = Toolkit.getToolkit().getFontLoader().getFontMetrics(font);
+                while (metrics.computeStringWidth(firstLine) > getCanvas().getWidth() * QueleaProperties.get().getLyricWidthBounds()) {
+                    newSize -= 2;
+                    font = Font.font(font.getFamily(),
+                            theme.isBold() ? FontWeight.BOLD : FontWeight.NORMAL,
+                            theme.isItalic() ? FontPosture.ITALIC : FontPosture.REGULAR,
+                            newSize);
+                    metrics = Toolkit.getToolkit().getFontLoader().getFontMetrics(font);
+                }
+                List<LyricLine> newText = bibleWrapAdvanced(textArr, metrics, getCanvas().getWidth() * QueleaProperties.get().getLyricWidthBounds());
+                while ((metrics.getLineHeight() * newText.size()) > (getCanvas().getHeight() * QueleaProperties.get().getLyricHeightBounds())) {
+                    newSize -= 1;
+                    font = Font.font(font.getFamily(),
+                            theme.isBold() ? FontWeight.BOLD : FontWeight.NORMAL,
+                            theme.isItalic() ? FontPosture.ITALIC : FontPosture.REGULAR,
+                            newSize);
+                    metrics = Toolkit.getToolkit().getFontLoader().getFontMetrics(font);
+                }
             } else {
                 processedText = sanctifyText(textArr, translationArr);
+                newSize = pickFontSize(font, processedText, getCanvas().getWidth() * QueleaProperties.get().getLyricWidthBounds(), getCanvas().getHeight() * QueleaProperties.get().getLyricHeightBounds());
             }
-            
-//            }
-            newSize = pickFontSize(font, processedText, getCanvas().getWidth() * QueleaProperties.get().getLyricWidthBounds(), getCanvas().getHeight() * QueleaProperties.get().getLyricHeightBounds());
             if (newSize < fontSize) {
                 fontSize = newSize;
             }
