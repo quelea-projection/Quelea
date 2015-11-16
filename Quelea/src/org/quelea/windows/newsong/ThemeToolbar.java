@@ -109,10 +109,6 @@ public class ThemeToolbar extends HBox {
             fontSelectionDialog = new FontSelectionDialog();
         }
         fontSelection = new ComboBox<>();
-        fontSelection.addEventFilter(MouseEvent.MOUSE_ENTERED, (MouseEvent e) -> {
-            fontSelection.requestFocus();
-            //To be deleted when fixed in java #comboboxbug
-        });
         fontSelection.setMaxWidth(Integer.MAX_VALUE);
         fontSelection.getItems().addAll(fontSelectionDialog.getChosenFonts());
         Collections.sort(fontSelection.getItems());
@@ -237,10 +233,6 @@ public class ThemeToolbar extends HBox {
 
         HBox backTop = new HBox(15);
         backTypeSelection = new ComboBox<>();
-        backTypeSelection.addEventFilter(MouseEvent.MOUSE_ENTERED, (MouseEvent e) -> {
-            backTypeSelection.requestFocus();
-            //To be deleted when fixed in java #comboboxbug
-        });
         backTypeSelection.valueProperty().addListener(new ChangeListener<String>() {
             @Override
             public void changed(ObservableValue<? extends String> ov, String t, String t1) {
