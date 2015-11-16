@@ -57,10 +57,6 @@ public class OptionsNoticePanel extends GridPane implements PropertyPanel {
         GridPane.setConstraints(positionLabel, 1, 1);
         getChildren().add(positionLabel);
         noticePositionComboBox = new ComboBox<>();
-        noticePositionComboBox.addEventFilter(MouseEvent.MOUSE_ENTERED, (MouseEvent e) -> {
-            noticePositionComboBox.requestFocus();
-            //To be deleted when fixed in java #comboboxbug
-        });
         noticePositionComboBox.setEditable(false);
         noticePositionComboBox.getItems().add(LabelGrabber.INSTANCE.getLabel("top.text.position"));
         noticePositionComboBox.getItems().add(LabelGrabber.INSTANCE.getLabel("bottom.text.position"));

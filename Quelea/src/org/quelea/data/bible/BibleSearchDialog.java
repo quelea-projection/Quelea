@@ -73,10 +73,6 @@ public class BibleSearchDialog extends Stage implements BibleChangeListener {
         overlay = new LoadingPane();
         searchField = new TextField();
         bibles = new ComboBox<>();
-        bibles.addEventFilter(MouseEvent.MOUSE_ENTERED, (MouseEvent e) -> {
-            bibles.requestFocus();
-            //To be deleted when fixed in java #comboboxbug
-        });
         bibles.setEditable(false);
         chapterPane = new FlowPane();
         scrollPane = new ScrollPane();

@@ -7,7 +7,7 @@
     </singleInstance> 
     <jre>
         <path>winjre</path>
-        <opt>-Xms1200m -Dfile.encoding=UTF-8 -Djavafx.embed.singleThread=true -Dprism.dirtyopts=false</opt>
+        <opt>-Xms1200m -Dfile.encoding=UTF-8 -Djavafx.embed.singleThread=true -Dprism.dirtyopts=false -Dglass.accessible.force=false</opt>
     </jre>
     <outfile>..\dist\quelea.exe</outfile>
     <chdir>.</chdir>
