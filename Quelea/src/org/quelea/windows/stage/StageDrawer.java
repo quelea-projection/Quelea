@@ -109,8 +109,12 @@ public class StageDrawer extends WordDrawer {
 //                }
 //            }
 //        } else {
-        newText = sanctifyText(text);
-//        }
+
+        if (curDisplayable instanceof BiblePassage) {
+            newText = bibleWrap(text);
+        } else {
+            newText = sanctifyText(text);
+        }
         double fontSize;
         if (defaultFontSize > 0) {
             fontSize = defaultFontSize;
@@ -330,27 +334,26 @@ public class StageDrawer extends WordDrawer {
      * @param lines the lines to divide up.
      * @return the divided lines.
      */
-    private List<LyricLine> dumbWrapText(String[] lines) {
-        List<LyricLine> ret = new ArrayList<>();
-        int maxLength = QueleaProperties.get().getMaxBibleChars();
-        StringBuilder currentBuilder = new StringBuilder(maxLength);
-        for (String line : lines) {
-            for (String word : line.split(" ")) {
-                currentBuilder.append(' ');
-                if (currentBuilder.length() + word.length() < maxLength) {
-                    currentBuilder.append(word);
-                } else {
-                    ret.add(new LyricLine(currentBuilder.toString()));
-                    currentBuilder = new StringBuilder(word);
-                }
-            }
-        }
-        if (currentBuilder.length() > 0) {
-            ret.add(new LyricLine(currentBuilder.toString()));
-        }
-        return ret;
-    }
-
+//    private List<LyricLine> dumbWrapText(String[] lines) {
+//        List<LyricLine> ret = new ArrayList<>();
+//        int maxLength = QueleaProperties.get().getMaxBibleChars();
+//        StringBuilder currentBuilder = new StringBuilder(maxLength);
+//        for (String line : lines) {
+//            for (String word : line.split(" ")) {
+//                currentBuilder.append(' ');
+//                if (currentBuilder.length() + word.length() < maxLength) {
+//                    currentBuilder.append(word);
+//                } else {
+//                    ret.add(new LyricLine(currentBuilder.toString()));
+//                    currentBuilder = new StringBuilder(word);
+//                }
+//            }
+//        }
+//        if (currentBuilder.length() > 0) {
+//            ret.add(new LyricLine(currentBuilder.toString()));
+//        }
+//        return ret;
+//    }
     /**
      * Take the raw text and format it into a number of lines nicely, where the
      * lines aren't more than the maximum length.
@@ -366,13 +369,12 @@ public class StageDrawer extends WordDrawer {
 
         List<LyricLine> ret = new ArrayList<>();
         int maxLength;
-        if(curDisplayable instanceof BiblePassage) {
+        if (curDisplayable instanceof BiblePassage) {
             maxLength = QueleaProperties.get().getMaxBibleChars();
-        }
-        else { 
+        } else {
             maxLength = QueleaProperties.get().getMaxChars();
         }
-        
+
         for (LyricLine line : finalLines) {
             for (String sline : splitLine(line.getLine(), maxLength, curDisplayable instanceof BiblePassage)) {
                 ret.add(new LyricLine(sline));
@@ -395,8 +397,7 @@ public class StageDrawer extends WordDrawer {
                 for (String s : splitMiddle(line, ' ')) {
                     sections.addAll(splitLine(s, maxLength, bible));
                 }
-            }
-            else if (containsNotAtEnd(line, ";")) {
+            } else if (containsNotAtEnd(line, ";")) {
                 for (String s : splitMiddle(line, ';')) {
                     sections.addAll(splitLine(s, maxLength, bible));
                 }
@@ -454,7 +455,11 @@ public class StageDrawer extends WordDrawer {
 //                    }
 //                }
 //            } else {
-            newText = sanctifyText(textArr);
+            if (curDisplayable instanceof BiblePassage) {
+                newText = bibleWrap(textArr);
+            } else {
+                newText = sanctifyText(textArr);
+            }
 //            }
             newSize = pickFontSize(font, newText, getCanvas().getWidth() * 0.92, getCanvas().getHeight() * 0.9);
             if (newSize < fontSize) {

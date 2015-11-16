@@ -184,7 +184,7 @@ public abstract class WordDrawer extends DisplayableDrawer {
     }
 
     protected abstract void drawText(double defaultFontSize, boolean dumbWrap);
-    
+
     @Override
     public void draw(Displayable displayable) {
         draw(displayable, -1);
@@ -200,7 +200,7 @@ public abstract class WordDrawer extends DisplayableDrawer {
             LOGGER.log(Level.WARNING, "BUG: Unrecognised image background - " + getCanvas().getCanvasBackground().getClass(), new RuntimeException("DEBUG EXCEPTION"));
         }
     }
-    
+
     protected double pickSmallFontSize(Font font, String[] text, double width, double height) {
         FontMetrics metrics = Toolkit.getToolkit().getFontLoader().getFontMetrics(font);
         ArrayList<String> al = new ArrayList<>();
@@ -235,7 +235,7 @@ public abstract class WordDrawer extends DisplayableDrawer {
 
         return font.getSize();
     }
-    
+
     protected static String[] splitOdd(String line, char delimiter) {
         final int first = (int) (((double) line.length() / 3) + 0.5);
         final int second = (int) ((((double) line.length() / 3) * 2) + 0.5);
@@ -260,5 +260,40 @@ public abstract class WordDrawer extends DisplayableDrawer {
             }
         }
         return new String[]{line.substring(0, nearestFirst + 1), line.substring(nearestSecond + 1, line.length())};
+    }
+
+    protected List<LyricLine> bibleWrap(String[] lines) {
+        StringBuilder toAdd = new StringBuilder();
+        List<LyricLine> ret = new ArrayList<>();
+        char[] chars;
+        int maxBibleChars = QueleaProperties.get().getMaxBibleChars();
+        for (String line : lines) {
+            line = line.replaceAll("\n", "");
+            chars = line.toCharArray();
+            int i = 0;
+            while (i < chars.length) {
+                while (i < chars.length && toAdd.length() < maxBibleChars) {
+                    toAdd.append(chars[i]);
+                    i++;
+                }
+                if (i < chars.length) {
+                    int index = toAdd.lastIndexOf(" ");
+                    String add = toAdd.substring(0, index);
+                    String save = toAdd.substring(index);
+                    System.out.println(add.length());
+                    ret.add(new LyricLine(add));
+                    toAdd = new StringBuilder(save);
+                } else {
+                    ret.add(new LyricLine(toAdd.toString()));
+                    System.out.println(toAdd.length());
+                    toAdd = new StringBuilder();
+                }
+            }
+        }
+        if (toAdd.length() > 0) {
+            System.out.println("--" + toAdd.length());
+            ret.add(new LyricLine(toAdd.toString()));
+        }
+        return ret;
     }
 }

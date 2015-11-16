@@ -130,8 +130,11 @@ public class LyricDrawer extends WordDrawer {
 //            }
 ////            newText = dumbWrapText(text);
 //        } else {
-        newText = sanctifyText(text, translations);
-//        }
+        if (curDisplayable instanceof BiblePassage) {
+            newText = bibleWrap(text);
+        } else {
+            newText = sanctifyText(text, translations);
+        }
         double fontSize;
 //        if (QueleaProperties.get().getUseUniformFontSize()) {
 //            fontSize = defaultFontSize;
@@ -474,11 +477,10 @@ public class LyricDrawer extends WordDrawer {
 
         List<LyricLine> ret = new ArrayList<>();
         int maxLength;
-        
-        if(curDisplayable instanceof BiblePassage) {
+
+        if (curDisplayable instanceof BiblePassage) {
             maxLength = QueleaProperties.get().getMaxBibleChars();
-        }
-        else { 
+        } else {
             maxLength = QueleaProperties.get().getMaxChars();
         }
         for (LyricLine line : finalLines) {
@@ -571,7 +573,12 @@ public class LyricDrawer extends WordDrawer {
                     translationArr = translationLyrics.split("\n");
                 }
             }
-            processedText = sanctifyText(textArr, translationArr);
+            if (curDisplayable instanceof BiblePassage) {
+                processedText = bibleWrap(textArr);
+            } else {
+                processedText = sanctifyText(textArr, translationArr);
+            }
+            
 //            }
             newSize = pickFontSize(font, processedText, getCanvas().getWidth() * QueleaProperties.get().getLyricWidthBounds(), getCanvas().getHeight() * QueleaProperties.get().getLyricHeightBounds());
             if (newSize < fontSize) {
