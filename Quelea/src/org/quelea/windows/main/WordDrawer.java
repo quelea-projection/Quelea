@@ -27,6 +27,8 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.scene.image.ImageView;
 import javafx.scene.text.Font;
+import javafx.scene.text.FontPosture;
+import javafx.scene.text.FontWeight;
 import org.quelea.data.ThemeDTO;
 import org.quelea.data.displayable.BiblePassage;
 import org.quelea.data.displayable.Displayable;
@@ -280,18 +282,47 @@ public abstract class WordDrawer extends DisplayableDrawer {
                     int index = toAdd.lastIndexOf(" ");
                     String add = toAdd.substring(0, index);
                     String save = toAdd.substring(index);
-                    System.out.println(add.length());
                     ret.add(new LyricLine(add));
                     toAdd = new StringBuilder(save);
                 } else {
                     ret.add(new LyricLine(toAdd.toString()));
-                    System.out.println(toAdd.length());
                     toAdd = new StringBuilder();
                 }
             }
         }
         if (toAdd.length() > 0) {
-            System.out.println("--" + toAdd.length());
+            ret.add(new LyricLine(toAdd.toString()));
+        }
+        return ret;
+    }
+
+    protected List<LyricLine> bibleWrapAdvanced(String[] lines, FontMetrics metrics, double canvasWidth) {
+        StringBuilder toAdd = new StringBuilder();
+        List<LyricLine> ret = new ArrayList<>();
+        char[] chars;
+
+        for (String line : lines) {
+            line = line.replaceAll("\n", "");
+            chars = line.toCharArray();
+            int i = 0;
+            while (i < chars.length) {
+                while (i < chars.length && metrics.computeStringWidth(toAdd.toString()) < canvasWidth) {
+                    toAdd.append(chars[i]);
+                    i++;
+                }
+                if (i < chars.length && toAdd.lastIndexOf(" ") > 0) {
+                    int index = toAdd.lastIndexOf(" ");
+                    String add = toAdd.substring(0, index);
+                    String save = toAdd.substring(index);
+                    ret.add(new LyricLine(add));
+                    toAdd = new StringBuilder(save);
+                } else {
+                    ret.add(new LyricLine(toAdd.toString()));
+                    toAdd = new StringBuilder();
+                }
+            }
+        }
+        if (toAdd.length() > 0) {
             ret.add(new LyricLine(toAdd.toString()));
         }
         return ret;
