@@ -78,10 +78,6 @@ public class SwitchBibleVersionDialog extends Stage {
         containerPane.getChildren().add(root);
         setScene(new Scene(containerPane));
         setResizable(false);
-        comboBox.addEventFilter(MouseEvent.MOUSE_ENTERED, (MouseEvent e) -> {
-            comboBox.requestFocus();
-            //To be deleted when fixed in java #comboboxbug
-        });
     }
 
     /**

@@ -73,10 +73,6 @@ public class SingleDisplayPanel extends VBox {
         Label iconLabel = new Label("",new ImageView(new Image("file:"+iconLocation, 80, 80, false, true)));
         getChildren().add(iconLabel);
         outputSelect = new ComboBox<>(getAvailableScreens(none));
-        outputSelect.addEventFilter(MouseEvent.MOUSE_ENTERED, (MouseEvent e) -> {
-            outputSelect.requestFocus();
-            //To be deleted when fixed in java #comboboxbug
-        });
         getChildren().add(outputSelect);
         if(customPos) {
             outputSelect.setDisable(true);

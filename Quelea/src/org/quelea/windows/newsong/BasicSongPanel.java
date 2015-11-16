@@ -113,10 +113,6 @@ public class BasicSongPanel extends BorderPane {
         HBox.setHgrow(spacer, Priority.ALWAYS);
         lyricsToolbar.getItems().add(spacer);
         dictSelector = new ComboBox<>();
-        dictSelector.addEventFilter(MouseEvent.MOUSE_ENTERED, (MouseEvent e) -> {
-            dictSelector.requestFocus();
-            //To be deleted when fixed in java #comboboxbug
-        });
         Tooltip.install(dictSelector, new Tooltip(LabelGrabber.INSTANCE.getLabel("dictionary.language.text")));
         for (Dictionary dict : DictionaryManager.INSTANCE.getDictionaries()) {
             dictSelector.getItems().add(dict);
