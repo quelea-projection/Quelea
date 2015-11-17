@@ -30,6 +30,7 @@ import javafx.scene.control.ToolBar;
 import javafx.scene.control.Tooltip;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
@@ -288,6 +289,18 @@ public class LivePanel extends LivePreviewPanel {
             }
         }
         );
+        this.getLyricsPanel().getLyricsList().addEventFilter(KeyEvent.KEY_PRESSED, new EventHandler<KeyEvent>() {
+            @Override
+            public void handle(KeyEvent t) {
+                if (t.getCode().equals(KeyCode.PAGE_DOWN)) { // || t.getCode().equals(KeyCode.DOWN)) {
+                    t.consume();
+                    QueleaApp.get().getMainWindow().getMainPanel().getLivePanel().advance();
+                } else if (t.getCode().equals(KeyCode.PAGE_UP)) { // || t.getCode().equals(KeyCode.UP)) {
+                    t.consume();
+                    QueleaApp.get().getMainWindow().getMainPanel().getLivePanel().previous();
+                }
+            }
+        });
     }
 
     /**
