@@ -1,0 +1,15 @@
+quelea (0.5.1) stable; urgency=normal
+ 
+  * Deal with video errors better
+  * Add link to Facebook page in help menu
+  * Fix with crashing with large number of images
+  * Can now drag image over song / bible passage to set theme
+  * Quick edit can now delete sections
+  * Now have the option to display text with a shadow
+  * Long labels have been split up
+  * Number of monitors is reloaded on the fly without need for restart
+  * Themes can be edited from the theme menu
+  * Quick edit changed to control and bug fixed on Linux
+  * Various other bug fixes
+ 
+ -- Michael Berry <michael@quelea.org>  Sunday, 12 Mar 2012 00:00:00 +0000
