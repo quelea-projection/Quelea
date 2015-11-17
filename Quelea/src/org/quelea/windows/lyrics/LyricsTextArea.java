@@ -20,6 +20,7 @@ package org.quelea.windows.lyrics;
 import java.util.Optional;
 import java.util.function.BiFunction;
 import java.util.function.Consumer;
+import java.util.function.Function;
 import javafx.application.Platform;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.value.ChangeListener;
@@ -122,14 +123,13 @@ public class LyricsTextArea extends InlineCssTextArea {
             }
         };
         setUndoManager(new UndoManagerFactory() {
-
             @Override
-            public <C> UndoManager create(EventStream<C> stream, Consumer<C> cnsmr, Consumer<C> cnsmr1) {
+            public <C> UndoManager create(EventStream<C> stream, Function<? super C, ? extends C> fnctn, Consumer<C> cnsmr) {
                 return blankManager;
             }
 
             @Override
-            public <C> UndoManager create(EventStream<C> stream, Consumer<C> cnsmr, Consumer<C> cnsmr1, BiFunction<C, C, Optional<C>> bf) {
+            public <C> UndoManager create(EventStream<C> stream, Function<? super C, ? extends C> fnctn, Consumer<C> cnsmr, BiFunction<C, C, Optional<C>> bf) {
                 return blankManager;
             }
         });
