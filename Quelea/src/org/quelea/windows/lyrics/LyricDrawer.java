@@ -136,30 +136,36 @@ public class LyricDrawer extends WordDrawer {
                 firstLine = allString;
             }
 
-            fontSize = defaultFontSize;
-            FontMetrics metrics = Toolkit.getToolkit().getFontLoader().getFontMetrics(font);
-
-            while (metrics.computeStringWidth(firstLine) > getCanvas().getWidth() * QueleaProperties.get().getLyricWidthBounds()) {
-                fontSize -= 1;
-                font = Font.font(font.getFamily(),
-                        theme.isBold() ? FontWeight.BOLD : FontWeight.NORMAL,
-                        theme.isItalic() ? FontPosture.ITALIC : FontPosture.REGULAR,
-                        fontSize);
-                metrics = Toolkit.getToolkit().getFontLoader().getFontMetrics(font);
-            }
-            newText = bibleWrapAdvanced(text, metrics, getCanvas().getWidth() * QueleaProperties.get().getLyricWidthBounds());
-            while (metrics.getLineHeight() * newText.size() > (getCanvas().getHeight() * QueleaProperties.get().getLyricHeightBounds())) {
-                fontSize -= 1;
-                font = Font.font(font.getFamily(),
-                        theme.isBold() ? FontWeight.BOLD : FontWeight.NORMAL,
-                        theme.isItalic() ? FontPosture.ITALIC : FontPosture.REGULAR,
-                        fontSize);
-                metrics = Toolkit.getToolkit().getFontLoader().getFontMetrics(font);
-            }
+            fontSize = getUniformFontSize(curDisplayable);
             font = Font.font(font.getFamily(),
                     theme.isBold() ? FontWeight.BOLD : FontWeight.NORMAL,
                     theme.isItalic() ? FontPosture.ITALIC : FontPosture.REGULAR,
                     fontSize);
+            FontMetrics metrics = Toolkit.getToolkit().getFontLoader().getFontMetrics(font);
+            newText = bibleWrapAdvanced(text, metrics, getCanvas().getWidth() * QueleaProperties.get().getLyricWidthBounds());
+//            FontMetrics metrics = Toolkit.getToolkit().getFontLoader().getFontMetrics(font);
+//
+//            while (metrics.computeStringWidth(firstLine) > getCanvas().getWidth() * QueleaProperties.get().getLyricWidthBounds()) {
+//                fontSize -= 1;
+//                font = Font.font(font.getFamily(),
+//                        theme.isBold() ? FontWeight.BOLD : FontWeight.NORMAL,
+//                        theme.isItalic() ? FontPosture.ITALIC : FontPosture.REGULAR,
+//                        fontSize);
+//                metrics = Toolkit.getToolkit().getFontLoader().getFontMetrics(font);
+//            }
+//            newText = bibleWrapAdvanced(text, metrics, getCanvas().getWidth() * QueleaProperties.get().getLyricWidthBounds());
+//            while (metrics.getLineHeight() * newText.size() > (getCanvas().getHeight() * QueleaProperties.get().getLyricHeightBounds())) {
+//                fontSize -= 1;
+//                font = Font.font(font.getFamily(),
+//                        theme.isBold() ? FontWeight.BOLD : FontWeight.NORMAL,
+//                        theme.isItalic() ? FontPosture.ITALIC : FontPosture.REGULAR,
+//                        fontSize);
+//                metrics = Toolkit.getToolkit().getFontLoader().getFontMetrics(font);
+//            }
+//            font = Font.font(font.getFamily(),
+//                    theme.isBold() ? FontWeight.BOLD : FontWeight.NORMAL,
+//                    theme.isItalic() ? FontPosture.ITALIC : FontPosture.REGULAR,
+//                    fontSize);
 
         } else {
             newText = sanctifyText(text, translations);
@@ -511,7 +517,7 @@ public class LyricDrawer extends WordDrawer {
             if ((translationArr != null && translationArr.length > 0)) {
                 ret.add(line);
             } else {
-                for (String sline : splitLine(line.getLine(), maxLength, curDisplayable instanceof BiblePassage)) {
+                for (String sline : splitLine(line.getLine(), maxLength)) {
                     ret.add(new LyricLine(sline));
                 }
             }
@@ -526,27 +532,23 @@ public class LyricDrawer extends WordDrawer {
      * @return the split line (or the unaltered line if it is less than or equal
      * to the allowed length.
      */
-    private List<String> splitLine(String line, int maxLength, boolean bible) {
+    private List<String> splitLine(String line, int maxLength) {
         List<String> sections = new ArrayList<>();
         if (line.length() > maxLength) {
-            if (bible) {
-                for (String s : splitMiddle(line, ' ')) {
-                    sections.addAll(splitLine(s, maxLength, bible));
-                }
-            } else if (containsNotAtEnd(line, ";")) {
+            if (containsNotAtEnd(line, ";")) {
                 for (String s : splitMiddle(line, ';')) {
-                    sections.addAll(splitLine(s, maxLength, bible));
+                    sections.addAll(splitLine(s, maxLength));
                 }
             } else if (containsNotAtEnd(line, ",")) {
                 for (String s : splitMiddle(line, ',')) {
-                    sections.addAll(splitLine(s, maxLength, bible));
+                    sections.addAll(splitLine(s, maxLength));
                 }
             } else if (containsNotAtEnd(line, " ")) {
                 for (String s : splitMiddle(line, ' ')) {
-                    sections.addAll(splitLine(s, maxLength, bible));
+                    sections.addAll(splitLine(s, maxLength));
                 }
             } else {
-                sections.addAll(splitLine(new StringBuilder(line).insert(line.length() / 2, " ").toString(), maxLength, bible));
+                sections.addAll(splitLine(new StringBuilder(line).insert(line.length() / 2, " ").toString(), maxLength));
             }
         } else {
             line = line.trim();
@@ -618,7 +620,7 @@ public class LyricDrawer extends WordDrawer {
                         newSize);
                 FontMetrics metrics = Toolkit.getToolkit().getFontLoader().getFontMetrics(font);
                 while (metrics.computeStringWidth(firstLine) > getCanvas().getWidth() * QueleaProperties.get().getLyricWidthBounds()) {
-                    newSize -= 2;
+                    newSize -= 1;
                     font = Font.font(font.getFamily(),
                             theme.isBold() ? FontWeight.BOLD : FontWeight.NORMAL,
                             theme.isItalic() ? FontPosture.ITALIC : FontPosture.REGULAR,
@@ -626,7 +628,7 @@ public class LyricDrawer extends WordDrawer {
                     metrics = Toolkit.getToolkit().getFontLoader().getFontMetrics(font);
                 }
                 List<LyricLine> newText = bibleWrapAdvanced(textArr, metrics, getCanvas().getWidth() * QueleaProperties.get().getLyricWidthBounds());
-                while ((metrics.getLineHeight() * newText.size()) > (getCanvas().getHeight() * QueleaProperties.get().getLyricHeightBounds())) {
+                while (((metrics.getLineHeight() + QueleaProperties.get().getAdditionalLineSpacing()) * newText.size()) > (getCanvas().getHeight() * QueleaProperties.get().getLyricHeightBounds())) {
                     newSize -= 1;
                     font = Font.font(font.getFamily(),
                             theme.isBold() ? FontWeight.BOLD : FontWeight.NORMAL,
