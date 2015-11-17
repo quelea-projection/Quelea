@@ -27,8 +27,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.scene.image.ImageView;
 import javafx.scene.text.Font;
-import javafx.scene.text.FontPosture;
-import javafx.scene.text.FontWeight;
 import org.quelea.data.ThemeDTO;
 import org.quelea.data.displayable.BiblePassage;
 import org.quelea.data.displayable.Displayable;
@@ -264,38 +262,6 @@ public abstract class WordDrawer extends DisplayableDrawer {
         return new String[]{line.substring(0, nearestFirst + 1), line.substring(nearestSecond + 1, line.length())};
     }
 
-    protected List<LyricLine> bibleWrap(String[] lines) {
-        StringBuilder toAdd = new StringBuilder();
-        List<LyricLine> ret = new ArrayList<>();
-        char[] chars;
-        int maxBibleChars = QueleaProperties.get().getMaxBibleChars();
-        for (String line : lines) {
-            line = line.replaceAll("\n", "");
-            chars = line.toCharArray();
-            int i = 0;
-            while (i < chars.length) {
-                while (i < chars.length && toAdd.length() < maxBibleChars) {
-                    toAdd.append(chars[i]);
-                    i++;
-                }
-                if (i < chars.length) {
-                    int index = toAdd.lastIndexOf(" ");
-                    String add = toAdd.substring(0, index);
-                    String save = toAdd.substring(index);
-                    ret.add(new LyricLine(add));
-                    toAdd = new StringBuilder(save);
-                } else {
-                    ret.add(new LyricLine(toAdd.toString()));
-                    toAdd = new StringBuilder();
-                }
-            }
-        }
-        if (toAdd.length() > 0) {
-            ret.add(new LyricLine(toAdd.toString()));
-        }
-        return ret;
-    }
-
     protected List<LyricLine> bibleWrapAdvanced(String[] lines, FontMetrics metrics, double canvasWidth) {
         StringBuilder toAdd = new StringBuilder();
         List<LyricLine> ret = new ArrayList<>();
@@ -304,21 +270,23 @@ public abstract class WordDrawer extends DisplayableDrawer {
         for (String line : lines) {
             line = line.replaceAll("\n", "");
             chars = line.toCharArray();
-            int i = 0;
-            while (i < chars.length) {
-                while (i < chars.length && metrics.computeStringWidth(toAdd.toString()) < canvasWidth) {
-                    toAdd.append(chars[i]);
-                    i++;
-                }
-                if (i < chars.length && toAdd.lastIndexOf(" ") > 0) {
-                    int index = toAdd.lastIndexOf(" ");
-                    String add = toAdd.substring(0, index);
-                    String save = toAdd.substring(index);
-                    ret.add(new LyricLine(add));
-                    toAdd = new StringBuilder(save);
-                } else {
-                    ret.add(new LyricLine(toAdd.toString()));
-                    toAdd = new StringBuilder();
+            for (int i = 0; i < chars.length; i++) {
+                toAdd.append(chars[i]);
+                if (metrics.computeStringWidth(toAdd.toString()) > canvasWidth) {
+                    if (toAdd.toString().contains(" ")) {
+                        int index = toAdd.lastIndexOf(" ");
+                        String add = toAdd.substring(0, index);
+                        String save = toAdd.substring(index);
+                        ret.add(new LyricLine(add));
+                        toAdd = new StringBuilder(save);
+                    } else {
+                        if (chars[i + 1] != ' ') {
+                            toAdd.append("-");
+                            ret.add(new LyricLine(toAdd.toString()));
+                            toAdd = new StringBuilder();
+                        }
+                        // Else continue, because next char is a space anyway.
+                    }
                 }
             }
         }
