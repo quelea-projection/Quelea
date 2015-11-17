@@ -184,7 +184,7 @@ public abstract class WordDrawer extends DisplayableDrawer {
     }
 
     protected abstract void drawText(double defaultFontSize, boolean dumbWrap);
-
+    
     @Override
     public void draw(Displayable displayable) {
         draw(displayable, -1);
@@ -200,7 +200,7 @@ public abstract class WordDrawer extends DisplayableDrawer {
             LOGGER.log(Level.WARNING, "BUG: Unrecognised image background - " + getCanvas().getCanvasBackground().getClass(), new RuntimeException("DEBUG EXCEPTION"));
         }
     }
-
+    
     protected double pickSmallFontSize(Font font, String[] text, double width, double height) {
         FontMetrics metrics = Toolkit.getToolkit().getFontLoader().getFontMetrics(font);
         ArrayList<String> al = new ArrayList<>();
@@ -234,65 +234,5 @@ public abstract class WordDrawer extends DisplayableDrawer {
         }
 
         return font.getSize();
-    }
-
-    protected static String[] splitOdd(String line, char delimiter) {
-        final int first = (int) (((double) line.length() / 3) + 0.5);
-        final int second = (int) ((((double) line.length() / 3) * 2) + 0.5);
-        int nearestFirst = -1;
-        int nearestSecond = -1;
-        for (int i = 0; i < line.length(); i++) {
-            if (line.charAt(i) == delimiter) {
-                int curDistance = Math.abs(nearestFirst - first);
-                int newDistance = Math.abs(i - first);
-                if (newDistance < curDistance || nearestFirst < 0) {
-                    nearestFirst = i;
-                }
-            }
-        }
-        for (int i = 0; i < line.length(); i++) {
-            if (line.charAt(i) == delimiter) {
-                int curDistance = Math.abs(nearestSecond - second);
-                int newDistance = Math.abs(i - second);
-                if (newDistance < curDistance || nearestSecond < 0) {
-                    nearestSecond = i;
-                }
-            }
-        }
-        return new String[]{line.substring(0, nearestFirst + 1), line.substring(nearestSecond + 1, line.length())};
-    }
-
-    protected List<LyricLine> bibleWrapAdvanced(String[] lines, FontMetrics metrics, double canvasWidth) {
-        StringBuilder toAdd = new StringBuilder();
-        List<LyricLine> ret = new ArrayList<>();
-        char[] chars;
-
-        for (String line : lines) {
-            line = line.replaceAll("\n", "");
-            chars = line.toCharArray();
-            for (int i = 0; i < chars.length; i++) {
-                toAdd.append(chars[i]);
-                if (metrics.computeStringWidth(toAdd.toString()) > canvasWidth) {
-                    if (toAdd.toString().contains(" ")) {
-                        int index = toAdd.lastIndexOf(" ");
-                        String add = toAdd.substring(0, index);
-                        String save = toAdd.substring(index);
-                        ret.add(new LyricLine(add));
-                        toAdd = new StringBuilder(save);
-                    } else {
-                        if (chars[i + 1] != ' ') {
-                            toAdd.append("-");
-                            ret.add(new LyricLine(toAdd.toString()));
-                            toAdd = new StringBuilder();
-                        }
-                        // Else continue, because next char is a space anyway.
-                    }
-                }
-            }
-        }
-        if (toAdd.length() > 0) {
-            ret.add(new LyricLine(toAdd.toString()));
-        }
-        return ret;
     }
 }

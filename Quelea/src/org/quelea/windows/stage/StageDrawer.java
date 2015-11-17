@@ -99,65 +99,27 @@ public class StageDrawer extends WordDrawer {
         if (shadow == null) {
             shadow = ThemeDTO.DEFAULT_SHADOW.getDropShadow();
         }
-        List<LyricLine> newText;
-        double fontSize;
-        if (curDisplayable instanceof BiblePassage) {
-//            int maxBibleChars = QueleaProperties.get().getMaxBibleChars();
-//            StringBuilder all = new StringBuilder();
-//            for (String s : text) {
-//                all.append(s);
-//            }
-//            String allString = all.toString().replace("\n", "");
-//            String firstLine;
-//            if (allString.length() > maxBibleChars) {
-//                firstLine = allString.substring(0, maxBibleChars);
-//                System.out.println("h " + firstLine);
-//            } else {
-//                firstLine = allString;
-//            }
-//                System.out.println("i " + firstLine);
-//
-//            fontSize = 300;
-//            FontMetrics metrics = Toolkit.getToolkit().getFontLoader().getFontMetrics(font);
-//                System.out.println("j");
-//
-//            while (metrics.computeStringWidth(firstLine) > getCanvas().getWidth() * QueleaProperties.get().getLyricWidthBounds()) {
-//                System.out.println("k" + fontSize);
-//                fontSize -= 1;
-//                font = Font.font(font.getFamily(),
-//                        theme.isBold() ? FontWeight.BOLD : FontWeight.NORMAL,
-//                        theme.isItalic() ? FontPosture.ITALIC : FontPosture.REGULAR,
-//                        fontSize);
-//                metrics = Toolkit.getToolkit().getFontLoader().getFontMetrics(font);
-//            }
-//                System.out.println("l");
-//            newText = bibleWrapAdvanced(text, metrics, getCanvas().getWidth() * QueleaProperties.get().getLyricWidthBounds());
-//                System.out.println("m");
-//            while (metrics.getLineHeight() * newText.size() > (getCanvas().getHeight() * QueleaProperties.get().getLyricHeightBounds())) {
-//                fontSize -= 1;
-//                font = Font.font(font.getFamily(),
-//                        theme.isBold() ? FontWeight.BOLD : FontWeight.NORMAL,
-//                        theme.isItalic() ? FontPosture.ITALIC : FontPosture.REGULAR,
-//                        fontSize);
-//                metrics = Toolkit.getToolkit().getFontLoader().getFontMetrics(font);
-//                System.out.println("11");
-//            }
-            fontSize = getUniformFontSize(curDisplayable);
-            font = Font.font(font.getFamily(),
-                    theme.isBold() ? FontWeight.BOLD : FontWeight.NORMAL,
-                    theme.isItalic() ? FontPosture.ITALIC : FontPosture.REGULAR,
-                    fontSize);
-            FontMetrics metrics = Toolkit.getToolkit().getFontLoader().getFontMetrics(font);
-            newText = bibleWrapAdvanced(text, metrics, getCanvas().getWidth() * QueleaProperties.get().getLyricWidthBounds());
 
+        List<LyricLine> newText;
+        if (dumbWrap) {
+            newText = new ArrayList<>();
+            for (String str : text) {
+                for (String line : str.split("\n")) {
+                    newText.add(new LyricLine(line));
+                }
+            }
         } else {
             newText = sanctifyText(text);
-            fontSize = pickFontSize(font, newText, getCanvas().getWidth() * QueleaProperties.get().getLyricWidthBounds(), getCanvas().getHeight() * QueleaProperties.get().getLyricHeightBounds());
-            font = Font.font(font.getFamily(),
-                    theme.isBold() ? FontWeight.BOLD : FontWeight.NORMAL,
-                    theme.isItalic() ? FontPosture.ITALIC : FontPosture.REGULAR,
-                    fontSize);
         }
+        double fontSize;
+        if (defaultFontSize > 0) {
+            fontSize = defaultFontSize;
+        } else {
+            fontSize = pickFontSize(font, newText, getCanvas().getWidth() * 0.92, getCanvas().getHeight() * 0.9);
+        }
+        font = Font.font(font.getFamily(), FontWeight.NORMAL,
+                FontPosture.REGULAR, fontSize);
+
         double smallFontSize;
         Font smallTextFont = Font.font("Arial", FontWeight.BOLD, FontPosture.REGULAR, 500);
         smallFontSize = pickSmallFontSize(smallTextFont, smallText, getCanvas().getWidth() * 0.5, (getCanvas().getHeight() * 0.07) - 5); //-5 for insets
@@ -173,7 +135,7 @@ public class StageDrawer extends WordDrawer {
         StackPane.setAlignment(newTextGroup, Pos.CENTER);
         smallTextGroup = new Group();
         StackPane.setAlignment(smallTextGroup, Pos.BOTTOM_LEFT);
-
+        
         for (Iterator< Node> it = getCanvas().getChildren().iterator(); it.hasNext();) {
             Node node = it.next();
             if (node instanceof Group) {
@@ -191,10 +153,10 @@ public class StageDrawer extends WordDrawer {
             loopMetrics = metrics;
             FormattedText t;
             t = new FormattedText(line.getLine());
-
+            
             t.setFont(font);
 
-            setPositionX(t, loopMetrics, line.getLine());
+            setPositionX(t, loopMetrics, line.getLine(), curDisplayable instanceof BiblePassage);
             t.setLayoutY(y);
 
             Color lineColor;
@@ -256,7 +218,7 @@ public class StageDrawer extends WordDrawer {
         }
     }
 
-    private void setPositionX(FormattedText t, FontMetrics metrics, String line) {
+    private void setPositionX(FormattedText t, FontMetrics metrics, String line, boolean biblePassage) {
         Utils.checkFXThread();
         String strippedLine = line.replaceAll("\\<\\/?sup\\>", "");
         double width = metrics.computeStringWidth(strippedLine);
@@ -264,7 +226,7 @@ public class StageDrawer extends WordDrawer {
         double centreOffset = (getCanvas().getWidth() - width) / 2;
         double rightOffset = (getCanvas().getWidth() - width);
         if (QueleaProperties.get().getStageTextAlignment().equalsIgnoreCase("Left")) {
-            t.setLayoutX(leftOffset);
+            t.setLayoutX(getCanvas().getWidth());
         } else {
             t.setLayoutX(centreOffset);
         }
@@ -296,7 +258,7 @@ public class StageDrawer extends WordDrawer {
         Image image;
         ColorAdjust colourAdjust = null;
         image = Utils.getImageFromColour(QueleaProperties.get().getStageBackgroundColor());
-
+        
         Node newBackground;
         if (image == null) {
             final VideoBackground vidBackground = (VideoBackground) theme.getBackground();
@@ -368,26 +330,27 @@ public class StageDrawer extends WordDrawer {
      * @param lines the lines to divide up.
      * @return the divided lines.
      */
-//    private List<LyricLine> dumbWrapText(String[] lines) {
-//        List<LyricLine> ret = new ArrayList<>();
-//        int maxLength = QueleaProperties.get().getMaxBibleChars();
-//        StringBuilder currentBuilder = new StringBuilder(maxLength);
-//        for (String line : lines) {
-//            for (String word : line.split(" ")) {
-//                currentBuilder.append(' ');
-//                if (currentBuilder.length() + word.length() < maxLength) {
-//                    currentBuilder.append(word);
-//                } else {
-//                    ret.add(new LyricLine(currentBuilder.toString()));
-//                    currentBuilder = new StringBuilder(word);
-//                }
-//            }
-//        }
-//        if (currentBuilder.length() > 0) {
-//            ret.add(new LyricLine(currentBuilder.toString()));
-//        }
-//        return ret;
-//    }
+    private List<LyricLine> dumbWrapText(String[] lines) {
+        List<LyricLine> ret = new ArrayList<>();
+        int maxLength = QueleaProperties.get().getMaxBibleChars();
+        StringBuilder currentBuilder = new StringBuilder(maxLength);
+        for (String line : lines) {
+            for (String word : line.split(" ")) {
+                currentBuilder.append(' ');
+                if (currentBuilder.length() + word.length() < maxLength) {
+                    currentBuilder.append(word);
+                } else {
+                    ret.add(new LyricLine(currentBuilder.toString()));
+                    currentBuilder = new StringBuilder(word);
+                }
+            }
+        }
+        if (currentBuilder.length() > 0) {
+            ret.add(new LyricLine(currentBuilder.toString()));
+        }
+        return ret;
+    }
+
     /**
      * Take the raw text and format it into a number of lines nicely, where the
      * lines aren't more than the maximum length.
@@ -397,22 +360,13 @@ public class StageDrawer extends WordDrawer {
     private List<LyricLine> sanctifyText(String[] linesArr) {
         List<LyricLine> finalLines = new ArrayList<>();
         for (int i = 0; i < linesArr.length; i++) {
-            linesArr[i] = linesArr[i].replaceAll("\n", "");
             finalLines.add(new LyricLine(linesArr[i]));
         }
 
         List<LyricLine> ret = new ArrayList<>();
-        int maxLength;
-        if (curDisplayable instanceof BiblePassage) {
-            maxLength = QueleaProperties.get().getMaxBibleChars();
-        } else {
-            maxLength = QueleaProperties.get().getMaxChars();
-        }
-
+        int maxLength = QueleaProperties.get().getMaxChars();
         for (LyricLine line : finalLines) {
-            for (String sline : splitLine(line.getLine(), maxLength)) {
-                ret.add(new LyricLine(sline));
-            }
+            ret.add(line);
         }
         return ret;
     }
@@ -477,54 +431,17 @@ public class StageDrawer extends WordDrawer {
             }
             double newSize;
             List<LyricLine> newText;
-            FontMetrics metrics = Toolkit.getToolkit().getFontLoader().getFontMetrics(font);
-            if (curDisplayable instanceof BiblePassage) {
-                int maxBibleChars = QueleaProperties.get().getMaxBibleChars();
-                StringBuilder all = new StringBuilder();
-                for (String s : textArr) {
-                    all.append(s);
+            if (displayable instanceof BiblePassage) {
+                newText = new ArrayList<>();
+                for (String str : section.getText(false, false)) {
+                    for (String line : str.split("\n")) {
+                        newText.add(new LyricLine(line));
+                    }
                 }
-                String allString = all.toString().replace("\n", "");
-                String firstLine;
-                if (allString.length() > maxBibleChars) {
-                    firstLine = allString.substring(0, maxBibleChars);
-                } else {
-                    firstLine = allString;
-                }
-
-                newSize = 300;
-
-                while (metrics.computeStringWidth(firstLine) > getCanvas().getWidth() * QueleaProperties.get().getLyricWidthBounds()) {
-                    newSize -= 1;
-                    font = Font.font(font.getFamily(),
-                            theme.isBold() ? FontWeight.BOLD : FontWeight.NORMAL,
-                            theme.isItalic() ? FontPosture.ITALIC : FontPosture.REGULAR,
-                            newSize);
-                    metrics = Toolkit.getToolkit().getFontLoader().getFontMetrics(font);
-                }
-                newText = bibleWrapAdvanced(textArr, metrics, getCanvas().getWidth() * QueleaProperties.get().getLyricWidthBounds());
-                while (((metrics.getLineHeight() + QueleaProperties.get().getAdditionalLineSpacing()) * newText.size()) > (getCanvas().getHeight() * QueleaProperties.get().getLyricHeightBounds())) {
-                    newSize -= 1;
-                    font = Font.font(font.getFamily(),
-                            theme.isBold() ? FontWeight.BOLD : FontWeight.NORMAL,
-                            theme.isItalic() ? FontPosture.ITALIC : FontPosture.REGULAR,
-                            newSize);
-                    metrics = Toolkit.getToolkit().getFontLoader().getFontMetrics(font);
-                }
-                font = Font.font(font.getFamily(),
-                        theme.isBold() ? FontWeight.BOLD : FontWeight.NORMAL,
-                        theme.isItalic() ? FontPosture.ITALIC : FontPosture.REGULAR,
-                        newSize);
             } else {
                 newText = sanctifyText(textArr);
-                fontSize = pickFontSize(font, newText, getCanvas().getWidth() * QueleaProperties.get().getLyricWidthBounds(), getCanvas().getHeight() * QueleaProperties.get().getLyricHeightBounds());
-                font = Font.font(font.getFamily(),
-                        theme.isBold() ? FontWeight.BOLD : FontWeight.NORMAL,
-                        theme.isItalic() ? FontPosture.ITALIC : FontPosture.REGULAR,
-                        fontSize);
-                newSize = pickFontSize(font, newText, getCanvas().getWidth() * 0.92, getCanvas().getHeight() * 0.9);
             }
-
+            newSize = pickFontSize(font, newText, getCanvas().getWidth() * 0.92, getCanvas().getHeight() * 0.9);
             if (newSize < fontSize) {
                 fontSize = newSize;
             }
