@@ -53,7 +53,6 @@ import org.quelea.services.utils.Utils;
 import org.quelea.windows.main.QueleaApp;
 import org.quelea.windows.main.schedule.ScheduleList;
 import org.quelea.windows.main.widgets.NumberSpinner;
-import org.quelea.windows.main.widgets.NumberTextField;
 
 /**
  * The panel that shows the bible options
@@ -187,7 +186,7 @@ public class OptionsBiblePanel extends GridPane implements PropertyPanel, BibleC
 
         GridPane.setConstraints(maxCharsLabel, 1, 6);
         getChildren().add(maxCharsLabel);
-        maxCharsSlider = new Slider(20, 200, 0);
+        maxCharsSlider = new Slider(35, 200, 0);
         GridPane.setConstraints(maxCharsSlider, 2, 6);
         getChildren().add(maxCharsSlider);
         maxCharsLabel.setLabelFor(maxCharsSlider);
