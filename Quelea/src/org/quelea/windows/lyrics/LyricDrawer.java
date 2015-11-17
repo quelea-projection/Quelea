@@ -86,7 +86,7 @@ public class LyricDrawer extends WordDrawer {
 
     protected void drawText(double defaultFontSize, boolean dumbWrap) {
         Utils.checkFXThread();
-        if (defaultFontSize < 0) {
+        if (defaultFontSize < 1) {
             defaultFontSize = QueleaProperties.get().getMaxFontSize();
         }
         if (getCanvas().getCanvasBackground() != null) {
