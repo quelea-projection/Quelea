@@ -7,3 +7,4 @@ Quelea/dist/*
 \.chg\..*$
 \.rej$
 \.conflict\~$
+Thumbs.db

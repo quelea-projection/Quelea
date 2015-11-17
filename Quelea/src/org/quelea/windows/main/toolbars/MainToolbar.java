@@ -345,13 +345,10 @@ public class MainToolbar extends ToolBar {
                             .create()
                             .setTitle(LabelGrabber.INSTANCE.getLabel("recording.warning.title"))
                             .setMessage(LabelGrabber.INSTANCE.getLabel("recording.warning.message"))
-                            .addLabelledButton(LabelGrabber.INSTANCE.getLabel("ok.button"), new EventHandler<ActionEvent>() {
-                                @Override
-                                public void handle(ActionEvent t) {
-                                    setRecordinPathWarning.hide();
-                                    setRecordinPathWarning = null;
-                                }
-                            });
+                            .addLabelledButton(LabelGrabber.INSTANCE.getLabel("ok.button"), (ActionEvent t) -> {
+                                setRecordinPathWarning.hide();
+                                setRecordinPathWarning = null;
+                    });
                     setRecordinPathWarning = setRecordingWarningBuilder.setWarningIcon().build();
                     setRecordinPathWarning.showAndWait();
                 }
