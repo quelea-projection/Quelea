@@ -139,8 +139,9 @@ public class RecordingsHandler {
                     noDevicesDialog = setRecordingWarningBuilder.setWarningIcon().build();
                     noDevicesDialog.show();
                 });
+                finish(textField, tb);
             }
-        } catch (LineUnavailableException ex) {
+        } catch (LineUnavailableException | UnsupportedAudioFileException ex) {
             LOGGER.log(Level.WARNING, "Line unavailable", ex);
         }
     }
