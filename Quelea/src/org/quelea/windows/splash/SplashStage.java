@@ -62,9 +62,9 @@ public class SplashStage extends Stage {
         }
         ImageView imageView = new ImageView(splashImage);
         Text loadingText = new Text(LabelGrabber.INSTANCE.getLabel("loading.text") + "...");
-        Font loadingFont = Font.loadFont("file:icons/OpenSans-Bold.ttf", 25);
+        Font loadingFont = Font.loadFont("file:icons/OpenSans-Bold.ttf", 32);
         FontMetrics loadingMetrics = Toolkit.getToolkit().getFontLoader().getFontMetrics(loadingFont);
-        LinearGradient loadingGrad = new LinearGradient(0, 1, 0, 0, true, CycleMethod.REPEAT, new Stop(0, Color.web("#666666")), new Stop(1, Color.web("#000000")));
+        LinearGradient loadingGrad = new LinearGradient(0, 1, 0, 0, true, CycleMethod.REPEAT, new Stop(0, Color.web("#666666")), new Stop(1, Color.web("#ffffff")));
         loadingText.setFill(loadingGrad);
         loadingText.setFont(loadingFont);
         loadingText.setLayoutX(splashImage.getWidth() / 2 - loadingMetrics.computeStringWidth(loadingText.getText()) / 2);
