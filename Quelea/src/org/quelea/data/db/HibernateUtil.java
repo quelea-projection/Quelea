@@ -46,8 +46,7 @@ public class HibernateUtil {
             sessionFactory = cfg.buildSessionFactory(serviceRegistry);
             init = true;
             return true;
-        }
-        catch(Throwable ex) {
+        } catch (Throwable ex) {
             LOGGER.log(Level.INFO, "Initial SessionFactory creation failed. Quelea is probably already running.", ex);
             return false;
         }
@@ -60,13 +59,22 @@ public class HibernateUtil {
      * @param callback
      */
     public static void execute(SessionCallback callback) {
-        if(!init) {
+        if (!init) {
             throw new IllegalStateException("Database must be initialised first");
         }
-        final Session session = sessionFactory.openSession();
-        session.getTransaction().begin();
-        callback.execute(session);
-        session.getTransaction().commit();
-        session.close();
+
+        Session session = null;
+        try {
+            session = sessionFactory.openSession();
+            session.getTransaction().begin();
+            callback.execute(session);
+            session.getTransaction().commit();
+            session.close();
+        } catch (Exception ex) {
+            if (session != null) {
+                session.close();
+            }
+            throw new IllegalStateException("Couldn't update database", ex);
+        }
     }
 }
