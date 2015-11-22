@@ -68,7 +68,7 @@ public class SplashStage extends Stage {
         loadingText.setFill(loadingGrad);
         loadingText.setFont(loadingFont);
         loadingText.setLayoutX(splashImage.getWidth() / 2 - loadingMetrics.computeStringWidth(loadingText.getText()) / 2);
-        loadingText.setLayoutY(310);
+        loadingText.setLayoutY(270);
         Group mainPane = new Group();
         mainPane.getChildren().add(imageView);
         mainPane.getChildren().add(loadingText);
