@@ -35,6 +35,7 @@ public class PlainTextParser implements SongParser {
                     int sectionCount = 0;
                     SongDisplayable song = new SongDisplayable(title, "");
                     while ((line = bfr.readLine()) != null) {
+                        line = line.replace('\f', '\n');
                         if (!titleRead) {
                             if (!line.isEmpty()) {
                                 title = line;
@@ -46,8 +47,7 @@ public class PlainTextParser implements SongParser {
                             if (line.startsWith("Title: ")) {
                                 title = line.substring(7);
                                 song.setTitle(title);
-                            }
-                            else if (line.startsWith("Author: ")) {
+                            } else if (line.startsWith("Author: ")) {
                                 author = line.substring(8);
                                 song.setAuthor(author);
                             } else {
@@ -61,6 +61,13 @@ public class PlainTextParser implements SongParser {
                             sectionCount++;
                             section.clear();
                         }
+                    }
+                    if (section.size() > 0) {
+                        String[] sectionsArray = new String[section.size()];
+                        song.addSection(sectionCount,
+                                new TextSection("", section.toArray(sectionsArray), section.toArray(sectionsArray),
+                                        true));
+                        section.clear();
                     }
                     ret.add(song);
                 }
