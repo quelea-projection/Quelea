@@ -46,6 +46,6 @@ public class RemoveScheduleItemActionHandler implements EventHandler<ActionEvent
             scheduleList.getSelectionModel().select(selectedIndex);
         }
         QueleaApp.get().getMainWindow().getMainPanel().getSchedulePanel().updateScheduleDisplay();
-        QueleaApp.get().getMainWindow().getMainPanel().getLivePanel().updateCanvases();
+//        QueleaApp.get().getMainWindow().getMainPanel().getLivePanel().updateCanvases(); //This stops a playing video when an item is deleted, which isn't what we want.
     }
 }
