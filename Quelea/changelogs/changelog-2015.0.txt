@@ -1,0 +1,33 @@
+quelea (2015.0) stable; urgency=normal
+ 
+  * Moved to Java 8
+  * Changed to new skin (Modena) and updated splash screen
+  * New feature - Quickly change bible translations via right clicking on schedule list
+  * New feature - Broken bibles can be sent to devs for analysis
+  * New feature - QR code generator added for mobile lyrics URL
+  * New feature - Allow non-breaking lines in song lyrics
+  * New feature - Position of UI elements persists across invocations
+  * New feature - Song translations can now be exported to PDF
+  * New feature - Videos can now auto-play on being set live
+  * New feature - Schedule can now auto-advance when an item is sent live
+  * New feature - Item can be automatically previewed on image change
+  * New feature - Edit theme button now appears on each schedule item
+  * New feature - Countdown timers
+  * New feature - MediaShout importer
+  * Bugfix - Quick Edit now works properly
+  * Bugfix - FX UI element labels are now translated (such as colours)
+  * Bugfix - Translations now show properly when section headings are used
+  * Bugfix - Quelea no longer locks up when copying a video background
+  * Bugfix - window now remembers maximised state
+  * Bugfix - Memory leaks fixed
+  * Bugfix - Fix handling of bibles with missing verses
+  * Bugfix - DVDs and Blurays now work
+  * Bugfix = Youtube videos are now saved in schedules properly
+  * Bugfix - Fixed issue with small text not having a shadow
+  * Bugfix - Creating a new schedule clears the file (so that "save" will then not save over the previously open schedule.)
+  * Bugfix - Chord lines are no longer affected by the auto-translator
+  * Bugfix - Partial translations now display properly
+  * Bugfix - Video playback now works properly on OSX
+  * Various other minor bugfixes
+
+ -- Michael Berry <michael@quelea.org>  Wednesday, 12 Jan 2015 00:00:00 +0000
