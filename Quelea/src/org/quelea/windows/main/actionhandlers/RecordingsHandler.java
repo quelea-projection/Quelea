@@ -15,7 +15,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 package org.quelea.windows.main.actionhandlers;
 
 import java.io.ByteArrayInputStream;
@@ -49,11 +48,12 @@ import org.javafx.dialog.Dialog;
 import org.quelea.services.languages.LabelGrabber;
 import org.quelea.services.utils.LoggerUtils;
 import org.quelea.services.utils.QueleaProperties;
+import org.quelea.windows.main.QueleaApp;
 import org.quelea.windows.multimedia.RecordingEncoder;
 
 /**
  * Class to handle the recordings.
- * 
+ *
  * @author Arvid
  */
 public class RecordingsHandler {
@@ -61,13 +61,12 @@ public class RecordingsHandler {
     private static final Logger LOGGER = LoggerUtils.getLogger();
     private Dialog noDevicesDialog;
     private boolean running;
-    private boolean paused;
     private File wavFile;
     private String timeStamp = new SimpleDateFormat("yyyy-MM-dd HH.mm.ss").format(Calendar.getInstance().getTime());
     private String path = QueleaProperties.get().getRecordingsPath(); // Get path from settings
     private AudioFileFormat.Type fileType = AudioFileFormat.Type.WAVE; // format of audio file
-    private TargetDataLine line; // the line from which audio data is captured
-    private ByteArrayOutputStream out; 
+    private TargetDataLine targetLine; // the line from which audio data is captured
+    private ByteArrayOutputStream out;
     private AudioFormat format;
     private long startTime;
     private Thread captureThread;
@@ -84,27 +83,25 @@ public class RecordingsHandler {
 
     /**
      * Defines an audio format
-     * @return 
      */
-    AudioFormat getAudioFormat() {
+    private AudioFormat getAudioFormat() {
         float sampleRate = 44100;
         int sampleSizeInBits = 16;
         int channels = 2;
         boolean signed = true;
         boolean bigEndian = true;
-        AudioFormat format = new AudioFormat(sampleRate, sampleSizeInBits,
-                channels, signed, bigEndian);
+        AudioFormat format = new AudioFormat(sampleRate, sampleSizeInBits, channels, signed, bigEndian);
         return format;
     }
 
     /**
      * Initialize a new recording. Captures the sound and saves it to a WAV file
-     * 
+     *
      * @param pb
      * @param textField
-     * @param tb 
+     * @param tb
      */
-    void start(ProgressBar pb, TextField textField, ToggleButton tb) {
+    public void start(ProgressBar pb, TextField textField, ToggleButton tb) {
         try {
             isRecording = true;
             String fileName = timeStamp;
@@ -120,12 +117,11 @@ public class RecordingsHandler {
             // checks if system supports the data line
             if (AudioSystem.isLineSupported(info)) {
                 LOGGER.log(Level.INFO, "Capturing audio");
-                line = (TargetDataLine) AudioSystem.getLine(info);
-                line.open(format);
-                line.start();   // start capturing
+                targetLine = (TargetDataLine) AudioSystem.getLine(info);
+                targetLine.open(format);
+                targetLine.start();   // start capturing
                 startBuffering(pb, tb);
-            }
-            else {
+            } else {
                 LOGGER.log(Level.INFO, "No recording device found");
                 Platform.runLater(() -> {
                     Dialog.Builder setRecordingWarningBuilder = new Dialog.Builder()
@@ -139,59 +135,31 @@ public class RecordingsHandler {
                     noDevicesDialog = setRecordingWarningBuilder.setWarningIcon().build();
                     noDevicesDialog.show();
                 });
-                finish(textField, tb);
+                Platform.runLater(() -> {
+                    QueleaApp.get().getMainWindow().getMainToolbar().stopRecording();
+                });
             }
-        } catch (LineUnavailableException | UnsupportedAudioFileException ex) {
+        } catch (LineUnavailableException ex) {
             LOGGER.log(Level.WARNING, "Line unavailable", ex);
         }
     }
 
     /**
-     * Pause recording
-     * 
-     * @param tb 
-     */
-    void pause(ToggleButton tb) {
-        running = false;
-        paused = true;
-        tempTime = System.currentTimeMillis() - startTime + tempTime;
-        setTime(tempTime, tb);
-        writeToTempFile();
-    }
-
-    /**
-     * Resume recording
-     * 
-     * @param pb
-     * @param tb 
-     */
-    void resume(ProgressBar pb, ToggleButton tb) {
-        startTime = System.currentTimeMillis();
-        paused = false;
-        line.start();   // start capturing
-        startBuffering(pb, tb);
-    }
-
-    /**
      * Closes the target data line to finish capturing and recording
-     * 
+     *
      * @param textField
      * @param tb
-     * @throws UnsupportedAudioFileException 
+     * @throws UnsupportedAudioFileException
      */
-    void finish(TextField textField, ToggleButton tb) throws UnsupportedAudioFileException {
+    public void finish(TextField textField, ToggleButton tb) throws UnsupportedAudioFileException {
         try {
-            finishedSaving = false;
-            writeToTempFile();
-            // Stop recording
-            running = false;
-            line.stop();
-            line.close();
+            if (targetLine == null) {
+                return;
+            }
+            targetLine.stop();
+            targetLine.close();
             out.close();
             captureThread.interrupt();
-            // Save the recording to a file
-            saveToFile(recordingPaths);
-            // Rename file with name entered by user
             String newFileName = path + "\\" + textField.getText().replaceAll("[^\\p{L}0-9.-]", "_") + ".wav";
             wavFile.renameTo(new File(newFileName));
 
@@ -200,26 +168,26 @@ public class RecordingsHandler {
                 String[] options = {":sout=#transcode{vcodec=none,acodec=mp3,ab=128,channels=2,samplerate=44100}:std{access=file{no-overwrite},mux=mp3,dst='" + newFileName.replace(".wav", ".mp3") + "'} vlc://quit"};
                 new RecordingEncoder(newFileName, options).run();
             }
+            LOGGER.log(Level.INFO, "Saved");
         } catch (IOException ex) {
             finishedSaving = true;
-            Logger.getLogger(RecordingsHandler.class.getName()).log(Level.SEVERE, null, ex);
+            LOGGER.log(Level.WARNING, "Error saving", ex);
         } finally {
             isRecording = false;
+            running = false;
             finishedSaving = true;
-            LOGGER.log(Level.INFO, "Saved");
         }
     }
-    
+
     /**
      * Method to start capturing sound.
-     * 
+     *
      * @param pb ProgressBar to display sound input level
      * @param tb ToggleButton to display time
      */
     private void startBuffering(ProgressBar pb, ToggleButton tb) {
         Runnable runner = new Runnable() {
-            int bufferSize = (int) format.getSampleRate()
-                    * format.getFrameSize();
+            int bufferSize = (int) format.getSampleRate() * format.getFrameSize();
             byte buffer[] = new byte[bufferSize];
 
             @Override
@@ -227,18 +195,15 @@ public class RecordingsHandler {
                 out = new ByteArrayOutputStream();
                 running = true;
                 while (running) {
-                    int count
-                            = line.read(buffer, 0, buffer.length);
+                    int count = targetLine.read(buffer, 0, buffer.length);
                     calculateLevel(buffer, 0, 0);
                     Platform.runLater(() -> {
                         pb.setProgress(level);
                     });
                     long elapsedTimeMillis;
                     elapsedTimeMillis = System.currentTimeMillis() - startTime + tempTime;
-                    if (!paused) {
-                        setTime(elapsedTimeMillis, tb);
-                    }
-                    
+                    setTime(elapsedTimeMillis, tb);
+
                     // Change the color of the ProgressBar depending on level
                     // Proper limits should be checked
                     Platform.runLater(() -> {
@@ -253,101 +218,16 @@ public class RecordingsHandler {
                     if (count > 0) {
                         out.write(buffer, 0, count);
                     }
-                    // Store a temp recording if more than 10 seconds are recorded
-                    if (out.size() > (176400 * 10)) {
-                        writeToTempFile();
-                        out.reset();
-                    }
                 }
-                line.stop();
-                if (!paused) {
-                    Platform.runLater(() -> {
-                        tb.setText("");
-                    });
-                }
+                targetLine.stop();
+                Platform.runLater(() -> {
+                    tb.setText("");
+                });
             }
 
         };
         captureThread = new Thread(runner);
         captureThread.start();
-    }
-
-    /**
-     *  Method to store recording to a temporary file
-     */
-    private void writeToTempFile() {
-        byte audio[] = out.toByteArray();
-        InputStream input = new ByteArrayInputStream(audio);
-        AudioInputStream ais = new AudioInputStream(input,
-                format, audio.length / format.getFrameSize());
-        try {
-            File tempFile = File.createTempFile("quelea.recording", ".wav");
-            tempFile.deleteOnExit();
-            recordingPaths.add(tempFile.getPath());
-            AudioSystem.write(ais, fileType, tempFile);
-            input.close();
-            ais.close();
-        } catch (IOException ex) {
-            Logger.getLogger(RecordingsHandler.class.getName()).log(Level.SEVERE, null, ex);
-        }
-    }
-
-    /**
-     * Method to combine temporary recordings.
-     * 
-     * @param sourceFilesList
-     * @param destinationFileName
-     * @return
-     * @throws Exception 
-     */
-    public Boolean concatenateFiles(List<String> sourceFilesList, String destinationFileName) throws Exception {
-        Boolean result = false;
-
-        AudioInputStream audioInputStream = null;
-        List<AudioInputStream> audioInputStreamList = null;
-        AudioFormat audioFormat = null;
-        Long frameLength = null;
-
-        try {
-            // loop through our files first and load them up
-            for (String sourceFile : sourceFilesList) {
-                audioInputStream = AudioSystem.getAudioInputStream(new File(sourceFile));
-
-                // get the format of first file
-                if (audioFormat == null) {
-                    audioFormat = audioInputStream.getFormat();
-                }
-
-                // add it to our stream list
-                if (audioInputStreamList == null) {
-                    audioInputStreamList = new ArrayList<>();
-                }
-                audioInputStreamList.add(audioInputStream);
-
-                // keep calculating frame length
-                if (frameLength == null) {
-                    frameLength = audioInputStream.getFrameLength();
-                } else {
-                    frameLength += audioInputStream.getFrameLength();
-                }
-            }
-
-            // now write our concatenated file
-            AudioSystem.write(new AudioInputStream(new SequenceInputStream(Collections.enumeration(audioInputStreamList)), audioFormat, frameLength), Type.WAVE, new File(destinationFileName));
-
-            // if all is good, return true
-            result = true;
-        } catch (UnsupportedAudioFileException | IOException e) {
-            throw e;
-        } finally {
-            if (audioInputStream != null) {
-                audioInputStream.close();
-            }
-            if (audioInputStreamList != null) {
-                audioInputStreamList = null;
-            }
-        }
-        return result;
     }
 
     /**
@@ -402,18 +282,16 @@ public class RecordingsHandler {
             } else {
                 level = (float) max / MAX_8_BITS_SIGNED;
             }
+        } else if (use16Bit) {
+            level = (float) max / MAX_16_BITS_UNSIGNED;
         } else {
-            if (use16Bit) {
-                level = (float) max / MAX_16_BITS_UNSIGNED;
-            } else {
-                level = (float) max / MAX_8_BITS_UNSIGNED;
-            }
+            level = (float) max / MAX_8_BITS_UNSIGNED;
         }
     } // calculateLevel
 
-    
     /**
      * Method to set elapsed time on ToggleButton
+     *
      * @param elapsedTimeMillis Time elapsed recording last was started
      * @param tb ToggleButton to set time
      */
@@ -428,44 +306,10 @@ public class RecordingsHandler {
         });
     }
 
-    public void saveToFile(ArrayList<String> recordingPaths) throws IOException {
-        AudioInputStream clip1 = null;
-            try {
-                // Merge temp recordings (if any exist) with the most recent recording
-                for (String path : recordingPaths) {
-                    if (clip1 == null) {
-                        clip1 = AudioSystem.getAudioInputStream(new File(path));
-                        continue;
-                    }
-                    AudioInputStream clip2 = AudioSystem.getAudioInputStream(new File(path));
-                    AudioInputStream appendedFiles = new AudioInputStream(
-                            new SequenceInputStream(clip1, clip2),
-                            clip1.getFormat(),
-                            clip1.getFrameLength() + clip2.getFrameLength());
-                    clip1 = appendedFiles;
-                }
-                
-                // If temp files are being stored
-                if (wavFile == null) {
-                    wavFile = new File(path + "\\Restored recording" + timeStamp + ".wav");
-                }
-
-                // Write recording to file
-                AudioSystem.write(clip1, fileType, wavFile);
-            } catch (UnsupportedAudioFileException | IOException ex) {
-                Logger.getLogger(RecordingsHandler.class.getName()).log(Level.SEVERE, null, ex);
-            } finally {
-                if (clip1 != null) {
-                    clip1.close();
-                    System.gc();
-                }
-            }
-    }
-    
     public boolean getIsRecording() {
         return isRecording;
     }
-    
+
     public boolean getFinishedSaving() {
         return finishedSaving;
     }
