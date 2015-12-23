@@ -8,6 +8,9 @@ quelea (2016.0) stable; urgency=normal
   * Variety of Mobile Lyrics and Remote Lyrics additions for Android app support
   * Fixed Kingsway Import and provide support for US-based download.
   * Audio recording functionality (experimental)
+  * Logo & Splashscreen update
   * Bugfixes for edit song window
+  * Added recording ability (thanks Arvid!)
+  * Many other small bugfixes
 
  -- Michael Berry <michael@quelea.org>  Wednesday, 08 December 2015 00:00:00 +0000
