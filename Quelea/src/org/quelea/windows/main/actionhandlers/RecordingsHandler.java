@@ -65,8 +65,8 @@ public class RecordingsHandler {
     private String timeStamp = new SimpleDateFormat("yyyy-MM-dd HH.mm.ss").format(Calendar.getInstance().getTime());
     private String path = QueleaProperties.get().getRecordingsPath(); // Get path from settings
     private AudioFileFormat.Type fileType = AudioFileFormat.Type.WAVE; // format of audio file
+    private AudioInputStream ais;
     private TargetDataLine targetLine; // the line from which audio data is captured
-    private ByteArrayOutputStream out;
     private AudioFormat format;
     private long startTime;
     private Thread captureThread;
@@ -120,6 +120,7 @@ public class RecordingsHandler {
                 targetLine = (TargetDataLine) AudioSystem.getLine(info);
                 targetLine.open(format);
                 targetLine.start();   // start capturing
+                ais = new AudioInputStream(targetLine);
                 startBuffering(pb, tb);
             } else {
                 LOGGER.log(Level.INFO, "No recording device found");
@@ -153,25 +154,19 @@ public class RecordingsHandler {
      */
     public void finish(TextField textField, ToggleButton tb) throws UnsupportedAudioFileException {
         try {
-            if (targetLine == null) {
+            if (targetLine == null) { //Means we never started recording, probably no available devices
                 return;
             }
             targetLine.stop();
             targetLine.close();
-            out.close();
             captureThread.interrupt();
-            String newFileName = path + "\\" + textField.getText().replaceAll("[^\\p{L}0-9.-]", "_") + ".wav";
-            wavFile.renameTo(new File(newFileName));
 
             // Convert to MP3 if setting is checked
             if (QueleaProperties.get().getConvertRecordings()) {
-                String[] options = {":sout=#transcode{vcodec=none,acodec=mp3,ab=128,channels=2,samplerate=44100}:std{access=file{no-overwrite},mux=mp3,dst='" + newFileName.replace(".wav", ".mp3") + "'} vlc://quit"};
-                new RecordingEncoder(newFileName, options).run();
+                String[] options = {":sout=#transcode{vcodec=none,acodec=mp3,ab=128,channels=2,samplerate=44100}:std{access=file{no-overwrite},mux=mp3,dst='" + wavFile.getAbsolutePath().replace(".wav", ".mp3") + "'} vlc://quit"};
+                new RecordingEncoder(wavFile.getAbsolutePath(), options).run();
             }
             LOGGER.log(Level.INFO, "Saved");
-        } catch (IOException ex) {
-            finishedSaving = true;
-            LOGGER.log(Level.WARNING, "Error saving", ex);
         } finally {
             isRecording = false;
             running = false;
@@ -186,16 +181,23 @@ public class RecordingsHandler {
      * @param tb ToggleButton to display time
      */
     private void startBuffering(ProgressBar pb, ToggleButton tb) {
+        new Thread() {
+            public void run() {
+                try {
+                    AudioSystem.write(ais, fileType, wavFile);
+                } catch (IOException ex) {
+                    LOGGER.log(Level.WARNING, "Error writing to wav", ex);
+                }
+            }
+        }.start();
         Runnable runner = new Runnable() {
             int bufferSize = (int) format.getSampleRate() * format.getFrameSize();
             byte buffer[] = new byte[bufferSize];
 
             @Override
             public void run() {
-                out = new ByteArrayOutputStream();
                 running = true;
                 while (running) {
-                    int count = targetLine.read(buffer, 0, buffer.length);
                     calculateLevel(buffer, 0, 0);
                     Platform.runLater(() -> {
                         pb.setProgress(level);
@@ -215,9 +217,7 @@ public class RecordingsHandler {
                             pb.setStyle("-fx-accent: green;");
                         }
                     });
-                    if (count > 0) {
-                        out.write(buffer, 0, count);
-                    }
+
                 }
                 targetLine.stop();
                 Platform.runLater(() -> {
