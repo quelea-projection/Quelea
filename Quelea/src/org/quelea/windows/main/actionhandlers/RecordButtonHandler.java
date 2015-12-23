@@ -17,32 +17,25 @@
  */
 package org.quelea.windows.main.actionhandlers;
 
-import java.util.Timer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.scene.control.ProgressBar;
 import javafx.scene.control.TextField;
 import javafx.scene.control.ToggleButton;
 import javax.sound.sampled.UnsupportedAudioFileException;
-import org.quelea.windows.main.toolbars.MainToolbar;
 
 /**
  * Class to handle record button changes.
  *
  * @author Arvid
  */
-
 public class RecordButtonHandler {
 
-    RecordingsHandler recorder;
-
-    int seconds = 0;
-    Timer timer;
-    MainToolbar mt;
-    String in;
-    ProgressBar pb;
-    TextField textField;
-    ToggleButton tb;
+    private RecordingsHandler recorder;
+    private String in;
+    private ProgressBar pb;
+    private TextField textField;
+    private ToggleButton tb;
 
     /**
      * Method to pass varibles to the class.
@@ -84,25 +77,9 @@ public class RecordButtonHandler {
                 new Thread(r).start();
                 break;
             }
-            case "pause": {
-                Runnable r = () -> {
-                    if (recorder != null) {
-                        recorder.pause(tb);
-                    }
-                };
-                new Thread(r).start();
-                break;
-            }
-            case "resume": {
-                Runnable r = () -> {
-                    recorder.resume(pb, tb);
-                };
-                new Thread(r).start();
-                break;
-            }
         }
     }
-    
+
     public RecordingsHandler getRecordingsHandler() {
         return recorder;
     }
