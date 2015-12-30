@@ -150,15 +150,17 @@ public final class BibleBook implements BibleInterface, Serializable {
         } else {
             ret.bookNumber = defaultBookNum;
         }
+        
         if (node.getAttributes().getNamedItem("bname") != null) {
             ret.bookName = node.getAttributes().getNamedItem("bname").getNodeValue();
+        } else if (node.getAttributes().getNamedItem("n") != null) {
+            ret.bookName = node.getAttributes().getNamedItem("n").getNodeValue();
+        } else if (node.getAttributes().getNamedItem("name") != null) {
+            ret.bookName = node.getAttributes().getNamedItem("name").getNodeValue();
         } else {
-            if (node.getAttributes().getNamedItem("n") != null) {
-                ret.bookName = node.getAttributes().getNamedItem("n").getNodeValue();
-            } else {
-                ret.bookName = "Book " + ret.bookNumber;
-            }
+            ret.bookName = "Book " + ret.bookNumber;
         }
+        
         if (node.getAttributes().getNamedItem("bsname") != null) {
             ret.bsname = node.getAttributes().getNamedItem("bsname").getNodeValue();
         } else {
