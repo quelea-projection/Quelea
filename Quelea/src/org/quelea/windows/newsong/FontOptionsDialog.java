@@ -19,6 +19,7 @@
 package org.quelea.windows.newsong;
 
 import java.util.Collections;
+import javafx.beans.binding.Bindings;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
@@ -32,11 +33,11 @@ import javafx.scene.control.ColorPicker;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.Slider;
+import javafx.scene.control.TextField;
 import javafx.scene.control.ToggleButton;
 import javafx.scene.control.Tooltip;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
@@ -49,6 +50,7 @@ import javafx.scene.text.FontPosture;
 import javafx.scene.text.FontWeight;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import javafx.util.converter.NumberStringConverter;
 import org.quelea.data.ThemeDTO;
 import org.quelea.services.languages.LabelGrabber;
 import org.quelea.services.utils.QueleaProperties;
@@ -73,8 +75,11 @@ public class FontOptionsDialog extends Stage {
     private final ToggleButton italicButton;
     private final CheckBox useShadowCheckbox;
     private final Slider shadowOffsetSlider;
+    private final NumberTextField shadowOffsetText;
     private final Slider shadowRadiusSlider;
+    private final NumberTextField shadowRadiusText;
     private final Slider shadowSpreadSlider;
+    private final NumberTextField shadowSpreadText;
     private final Button okButton;
 
     /**
@@ -190,9 +195,16 @@ public class FontOptionsDialog extends Stage {
                 themePanel.updateTheme(false);
             }
         });
-        shadowOffsetLabel.setLabelFor(shadowOffsetSlider);
-        GridPane.setConstraints(shadowOffsetSlider, 2, 3);
-        shadowPane.getChildren().add(shadowOffsetSlider);
+        shadowOffsetText = new NumberTextField();
+        shadowOffsetText.setMaxWidth(50);
+        Bindings.bindBidirectional(shadowOffsetText.textProperty(), shadowOffsetSlider.valueProperty(), new NumberStringConverter());
+        HBox shadowOffsetBox = new HBox(5);
+        shadowOffsetBox.getChildren().add(shadowOffsetSlider);
+        shadowOffsetBox.getChildren().add(shadowOffsetText);
+
+        shadowOffsetLabel.setLabelFor(shadowOffsetBox);
+        GridPane.setConstraints(shadowOffsetBox, 2, 3);
+        shadowPane.getChildren().add(shadowOffsetBox);
 
         Label shadowRadiusLabel = new Label(LabelGrabber.INSTANCE.getLabel("shadow.radius.label"));
         GridPane.setConstraints(shadowRadiusLabel, 1, 4);
@@ -204,9 +216,16 @@ public class FontOptionsDialog extends Stage {
                 themePanel.updateTheme(false);
             }
         });
-        shadowRadiusLabel.setLabelFor(shadowRadiusSlider);
-        GridPane.setConstraints(shadowRadiusSlider, 2, 4);
-        shadowPane.getChildren().add(shadowRadiusSlider);
+        shadowRadiusText = new NumberTextField();
+        shadowRadiusText.setMaxWidth(50);
+        Bindings.bindBidirectional(shadowRadiusText.textProperty(), shadowRadiusSlider.valueProperty(), new NumberStringConverter());
+        HBox shadowRadiusBox = new HBox(5);
+        shadowRadiusBox.getChildren().add(shadowRadiusSlider);
+        shadowRadiusBox.getChildren().add(shadowRadiusText);
+        
+        shadowRadiusLabel.setLabelFor(shadowRadiusBox);
+        GridPane.setConstraints(shadowRadiusBox, 2, 4);
+        shadowPane.getChildren().add(shadowRadiusBox);
 
         Label shadowSpreadLabel = new Label(LabelGrabber.INSTANCE.getLabel("shadow.spread.label"));
         GridPane.setConstraints(shadowSpreadLabel, 1, 5);
@@ -218,9 +237,16 @@ public class FontOptionsDialog extends Stage {
                 themePanel.updateTheme(false);
             }
         });
-        shadowSpreadLabel.setLabelFor(shadowSpreadSlider);
-        GridPane.setConstraints(shadowSpreadSlider, 2, 5);
-        shadowPane.getChildren().add(shadowSpreadSlider);
+        shadowSpreadText = new NumberTextField();
+        shadowSpreadText.setMaxWidth(50);
+        Bindings.bindBidirectional(shadowSpreadText.textProperty(), shadowSpreadSlider.valueProperty(), new NumberStringConverter());
+        HBox shadowSpreadBox = new HBox(5);
+        shadowSpreadBox.getChildren().add(shadowSpreadSlider);
+        shadowSpreadBox.getChildren().add(shadowSpreadText);
+        
+        shadowSpreadLabel.setLabelFor(shadowSpreadBox);
+        GridPane.setConstraints(shadowSpreadBox, 2, 5);
+        shadowPane.getChildren().add(shadowSpreadBox);
 
         controlRoot.getChildren().add(shadowPane);
 
@@ -228,19 +254,15 @@ public class FontOptionsDialog extends Stage {
         StackPane buttonPane = new StackPane();
         buttonPane.setAlignment(Pos.CENTER);
         okButton = new Button(LabelGrabber.INSTANCE.getLabel("ok.button"), new ImageView(new Image("file:icons/tick.png")));
-        okButton.setOnAction(new EventHandler<ActionEvent>() {
-
-            @Override
-            public void handle(ActionEvent t) {
-                hide();
-            }
+        okButton.setOnAction((ActionEvent t) -> {
+            hide();
         });
         okButton.setAlignment(Pos.CENTER);
         StackPane.setMargin(okButton, new Insets(10));
         buttonPane.getChildren().add(okButton);
         root.setCenter(controlRoot);
         root.setBottom(buttonPane);
-        setScene(new Scene(root, 300, 320));
+        setScene(new Scene(root, 330, 350));
     }
 
     /**
@@ -310,4 +332,25 @@ public class FontOptionsDialog extends Stage {
         return italicButton.isSelected();
     }
 
+}
+
+class NumberTextField extends TextField {
+
+    @Override
+    public void replaceText(int start, int end, String text) {
+        if (validate(text)) {
+            super.replaceText(start, end, text);
+        }
+    }
+
+    @Override
+    public void replaceSelection(String text) {
+        if (validate(text)) {
+            super.replaceSelection(text);
+        }
+    }
+
+    private boolean validate(String text) {
+        return ("".equals(text) || text.matches("[0-9]"));
+    }
 }
