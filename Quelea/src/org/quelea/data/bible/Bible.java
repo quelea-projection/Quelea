@@ -94,7 +94,7 @@ public final class Bible implements BibleInterface, Serializable {
         }
         return true;
     }
-
+    
     /**
      * Parse a bible from a specified bible and return it as an object.
      * <p/>
@@ -161,7 +161,8 @@ public final class Bible implements BibleInterface, Serializable {
             if (list.item(i).getNodeName().equalsIgnoreCase("information")) {
                 ret.information = BibleInfo.parseXML(list.item(i));
             } else if (list.item(i).getNodeName().equalsIgnoreCase("biblebook")
-                    || list.item(i).getNodeName().equalsIgnoreCase("b")) {
+                    || list.item(i).getNodeName().equalsIgnoreCase("b")
+                    || list.item(i).getNodeName().equalsIgnoreCase("book")) {
                 BibleBook book = BibleBook.parseXML(list.item(i), i);
                 book.setBible(ret);
                 ret.addBook(book);
