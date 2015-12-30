@@ -166,6 +166,8 @@ public class RecordingsHandler {
                 String[] options = {":sout=#transcode{vcodec=none,acodec=mp3,ab=128,channels=2,samplerate=44100}:std{access=file{no-overwrite},mux=mp3,dst='" + wavFile.getAbsolutePath().replace(".wav", ".mp3") + "'} vlc://quit"};
                 new RecordingEncoder(wavFile.getAbsolutePath(), options).run();
             }
+
+            wavFile.renameTo(new File(path, textField.getText().replaceAll("[^\\p{L}0-9.-]", "_") + ".wav"));
             LOGGER.log(Level.INFO, "Saved");
         } finally {
             isRecording = false;
