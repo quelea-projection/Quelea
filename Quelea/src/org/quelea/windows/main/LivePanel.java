@@ -246,7 +246,8 @@ public class LivePanel extends LivePreviewPanel {
                     QueleaApp.get().getMainWindow().getMainPanel().getPreviewPanel().goLive();
                 }
                 if (t.getCharacter().matches("c") || t.getCharacter().matches("b") || t.getCharacter().matches("p") || t.getCharacter().matches("t") || t.getCharacter().matches("\\d")) {
-                    final int slideIndex = getSlideIndex(t.getCharacter());
+                    final int selectedIndex = QueleaApp.get().getMainWindow().getMainPanel().getLivePanel().getLyricsPanel().getCurrentIndex();
+                    final int slideIndex = getSlideIndex(selectedIndex, t.getCharacter());
                     if (slideIndex > -1) {
                         Platform.runLater(() -> {
                             QueleaApp.get().getMainWindow().getMainPanel().getLivePanel().getLyricsPanel().select(slideIndex);
@@ -273,32 +274,32 @@ public class LivePanel extends LivePreviewPanel {
                     }
                 }
             }
-            
+
             private boolean matches(String shortcut, String sectionTitle) {
-                if(shortcut.equalsIgnoreCase("c") && sectionTitle.toLowerCase().contains("chorus")) {
+                if (shortcut.equalsIgnoreCase("c") && sectionTitle.toLowerCase().contains("chorus")) {
                     return true;
                 }
-                if(shortcut.equalsIgnoreCase("p") && sectionTitle.toLowerCase().contains("pre-chorus")) {
+                if (shortcut.equalsIgnoreCase("p") && sectionTitle.toLowerCase().contains("pre-chorus")) {
                     return true;
                 }
-                if(shortcut.equalsIgnoreCase("b") && sectionTitle.toLowerCase().contains("bridge")) {
+                if (shortcut.equalsIgnoreCase("b") && sectionTitle.toLowerCase().contains("bridge")) {
                     return true;
                 }
-                if(shortcut.equalsIgnoreCase("t") && sectionTitle.toLowerCase().contains("tag")) {
+                if (shortcut.equalsIgnoreCase("t") && sectionTitle.toLowerCase().contains("tag")) {
                     return true;
                 }
-                if(shortcut.matches("\\d") && sectionTitle.toLowerCase().contains("verse " + shortcut)) {
+                if (shortcut.matches("\\d") && sectionTitle.toLowerCase().contains("verse " + shortcut)) {
                     return true;
                 }
                 return false;
             }
 
-            private int getSlideIndex(String t) {
+            private int getSlideIndex(int selectedIndex, String shortcutKey) {
                 if (getDisplayable() instanceof TextDisplayable) {
                     TextDisplayable displayable = (TextDisplayable) getDisplayable();
                     TextSection[] sections = displayable.getSections();
-                    for (int i = 0; i < sections.length; i++) {
-                        if(matches(t, sections[i].getTitle())) {
+                    for (int i = (selectedIndex + 1) % sections.length; i != selectedIndex; i = ((i + 1) % sections.length)) {
+                        if (matches(shortcutKey, sections[i].getTitle())) {
                             return i;
                         }
                     }
