@@ -42,6 +42,8 @@ import javafx.stage.Screen;
 import org.quelea.data.displayable.BiblePassage;
 import org.quelea.data.displayable.Displayable;
 import org.quelea.data.displayable.PresentationDisplayable;
+import org.quelea.data.displayable.TextDisplayable;
+import org.quelea.data.displayable.TextSection;
 import org.quelea.services.languages.LabelGrabber;
 import org.quelea.services.utils.FileFilters;
 import org.quelea.services.utils.LoggerUtils;
@@ -249,17 +251,15 @@ public class LivePanel extends LivePreviewPanel {
                         Platform.runLater(() -> {
                             QueleaApp.get().getMainWindow().getMainPanel().getLivePanel().getLyricsPanel().select(slideIndex);
                         });
-                    } else {
-                        if (t.getCharacter().matches("\\d")) {
-                            try {
-                                int i = Integer.parseInt(t.getCharacter());
-                                final int index = (i > 0) ? (i - 1) : 10;
-                                Platform.runLater(() -> {
-                                    QueleaApp.get().getMainWindow().getMainPanel().getLivePanel().getLyricsPanel().select(index);
-                                });
-                            } catch (Exception ex) {
-                                LoggerUtils.getLogger().log(Level.INFO, "Could not cast keycode into integer for slide selection.", ex);
-                            }
+                    } else if (t.getCharacter().matches("\\d")) {
+                        try {
+                            int i = Integer.parseInt(t.getCharacter());
+                            final int index = (i > 0) ? (i - 1) : 10;
+                            Platform.runLater(() -> {
+                                QueleaApp.get().getMainWindow().getMainPanel().getLivePanel().getLyricsPanel().select(index);
+                            });
+                        } catch (Exception ex) {
+                            LoggerUtils.getLogger().log(Level.INFO, "Could not cast keycode into integer for slide selection.", ex);
                         }
                     }
                 }
@@ -273,22 +273,41 @@ public class LivePanel extends LivePreviewPanel {
                     }
                 }
             }
+            
+            private boolean matches(String shortcut, String sectionTitle) {
+                if(shortcut.equalsIgnoreCase("c") && sectionTitle.toLowerCase().contains("chorus")) {
+                    return true;
+                }
+                if(shortcut.equalsIgnoreCase("p") && sectionTitle.toLowerCase().contains("pre-chorus")) {
+                    return true;
+                }
+                if(shortcut.equalsIgnoreCase("b") && sectionTitle.toLowerCase().contains("bridge")) {
+                    return true;
+                }
+                if(shortcut.equalsIgnoreCase("t") && sectionTitle.toLowerCase().contains("tag")) {
+                    return true;
+                }
+                if(shortcut.matches("\\d") && sectionTitle.toLowerCase().contains("verse " + shortcut)) {
+                    return true;
+                }
+                return false;
+            }
 
             private int getSlideIndex(String t) {
-                String[] slides = getDisplayable().getXML().split("</smalllines>");
-                int slideIndex = -1;
-                int i = 0;
-                for (String slide : slides) {
-                    if ((slide.toLowerCase().contains("\"chorus") && t.matches("c")) || (slide.toLowerCase().contains("\"pre-chorus") && t.matches("p")) || (slide.toLowerCase().contains("\"bridge") && t.matches("b")) || (slide.toLowerCase().contains("\"tag") && t.matches("t")) || (slide.toLowerCase().contains("verse " + t) && t.matches("\\d"))) {
-                        slideIndex = i;
-                        break;
+                if (getDisplayable() instanceof TextDisplayable) {
+                    TextDisplayable displayable = (TextDisplayable) getDisplayable();
+                    TextSection[] sections = displayable.getSections();
+                    for (int i = 0; i < sections.length; i++) {
+                        if(matches(t, sections[i].getTitle())) {
+                            return i;
+                        }
                     }
-                    i++;
+                    return -1;
+                } else {
+                    return -1;
                 }
-                return slideIndex;
             }
-        }
-        );
+        });
         this.getLyricsPanel().getLyricsList().addEventFilter(KeyEvent.KEY_PRESSED, new EventHandler<KeyEvent>() {
             @Override
             public void handle(KeyEvent t) {
