@@ -276,7 +276,7 @@ public class LivePanel extends LivePreviewPanel {
             }
 
             private boolean matches(String shortcut, String sectionTitle) {
-                if (shortcut.equalsIgnoreCase("c") && sectionTitle.toLowerCase().contains("chorus")) {
+                if (shortcut.equalsIgnoreCase("c") && sectionTitle.toLowerCase().startsWith("chorus")) {
                     return true;
                 }
                 if (shortcut.equalsIgnoreCase("p") && sectionTitle.toLowerCase().contains("pre-chorus")) {
