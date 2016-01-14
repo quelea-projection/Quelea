@@ -1,5 +1,5 @@
 #THIS IS AN AUTO GENERATED FILE, AND WILL BE OVERWRITTEN EACH TIME QUELEA IS REBUILT. DO NOT EDIT MANUALLY!
-#Wed Dec 23 18:02:06 GMT 2015
+#Thu Jan 14 01:09:47 GMT 2016
 ignore.text=Ignore
 import.no.songs.text=Couldn't find any songs to import.
 library.edit.song.text=Edit song
@@ -27,7 +27,6 @@ recording.no.devices.message=Sorry, no compatible recording devices were found.\
 select.export.songs.line2=Select the ones you want to export then hit "Add".
 filefilters.description.quelea.schedules=Quelea Schedules
 select.export.songs.line1=The following songs are in the database.
-clear.temp=No, clear temporary files
 saving.schedule=Saving the schedule...
 dont.save.text=Don't Save
 add.song.button=Add song
@@ -42,7 +41,6 @@ top=Top
 centre=Centre
 cancel.button=Cancel
 server.settings.heading=Server Settings
-fount.temp.message=Some temporary recording files were found. Would you like to save the files before clearing the folder?
 song.id.selector=Please select the song ID
 transpose.tooltip=Transpose...
 remote.logo.text=Logo
@@ -470,7 +468,6 @@ quick.insert.text=Quick Insert
 new.song.button=New Song
 png.files.description=PNG image files
 help.menu.download=Download
-found.temp.title=Found temporary recording files
 duration.tooltip.label=\#\:\#\# or \#\#m\#\#s
 new.schedule.tooltip=New Schedule
 auto.translate.label=Attempt to auto-translate songs
@@ -481,7 +478,6 @@ projector.menu=Projector
 export.schedule.songs.pdf.button=Export songs to PDF
 delete.song.button=Delete Song
 rcs.add.failed=Add Failed
-save.temp=Yes, save to file before deleting
 advance.on.live.label=Advance schedule on live display
 words=words
 controls.heading=Controls
