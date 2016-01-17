@@ -1,0 +1,6 @@
+quelea (2016.1) stable; urgency=normal
+ 
+  * Fix "c" selecting pre-chorus
+  * Add missing labels
+
+ -- Michael Berry <michael@quelea.org>  Wednesday, 14 January 2016 00:00:00 +0000
