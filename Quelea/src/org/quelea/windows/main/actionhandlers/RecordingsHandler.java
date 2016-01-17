@@ -200,6 +200,7 @@ public class RecordingsHandler {
             public void run() {
                 running = true;
                 while (running) {
+                    int count = targetLine.read(buffer, 0, buffer.length);
                     calculateLevel(buffer, 0, 0);
                     Platform.runLater(() -> {
                         pb.setProgress(level);
