@@ -66,6 +66,9 @@ public class SongSelectParser implements SongParser {
         List<SongDisplayable> ret = new ArrayList<>();
         SongDisplayable song = new SongDisplayable(title, author);
         song.setLyrics(lyrics);
+        song.setKey(p.getProperty("Keys"));
+        song.setCopyright(p.getProperty("Copyright"));
+        song.setCcli(p.getProperty("Ccli"));
         ret.add(song);
         return ret;
     }
