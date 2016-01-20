@@ -19,16 +19,12 @@
 package org.quelea.windows.main.toolbars;
 
 import javafx.application.Platform;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.scene.control.Button;
 import javafx.scene.control.ProgressBar;
 import javafx.scene.control.Separator;
 import javafx.scene.control.TextField;
-import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleButton;
-import javafx.scene.control.ToggleGroup;
 import javafx.scene.control.ToolBar;
 import javafx.scene.control.Tooltip;
 import javafx.scene.image.Image;
@@ -80,6 +76,7 @@ public class MainToolbar extends ToolBar {
     private Dialog setRecordinPathWarning;
     private RecordButtonHandler recordingsHandler;
     private TextField recordingPathTextField;
+    private boolean recording;
 
     /**
      * Create the toolbar and any associated shortcuts.
@@ -226,7 +223,6 @@ public class MainToolbar extends ToolBar {
 
         recordingsHandler = new RecordButtonHandler();
 
-        final ToggleGroup group = new ToggleGroup();
         recordingPathTextField = new TextField();
         recordingPathTextField.setMinWidth(Region.USE_PREF_SIZE);
         recordingPathTextField.setMaxWidth(Region.USE_PREF_SIZE);
@@ -244,12 +240,30 @@ public class MainToolbar extends ToolBar {
             });
         });
 
-        group.selectedToggleProperty().addListener(new ToggleButtonListener(group));
-
         recordAudioButton = getToggleButtonFromImage("file:icons/record.png");
         Utils.setToolbarButtonStyle(recordAudioButton);
-        recordAudioButton.setToggleGroup(group);
-        recordAudioButton.setUserData("rec");
+        recording = false;
+        recordAudioButton.setOnMouseClicked(e -> {
+            if (!QueleaProperties.get().getRecordingsPath().equals("")) {
+                if (recording) {
+                stopRecording();
+            } else {
+                startRecording();
+            }
+            } else {
+                recordAudioButton.setSelected(false);
+                Dialog.Builder setRecordingWarningBuilder = new Dialog.Builder()
+                        .create()
+                        .setTitle(LabelGrabber.INSTANCE.getLabel("recording.warning.title"))
+                        .setMessage(LabelGrabber.INSTANCE.getLabel("recording.warning.message"))
+                        .addLabelledButton(LabelGrabber.INSTANCE.getLabel("ok.button"), (ActionEvent t) -> {
+                            setRecordinPathWarning.hide();
+                            setRecordinPathWarning = null;
+                        });
+                setRecordinPathWarning = setRecordingWarningBuilder.setWarningIcon().build();
+                setRecordinPathWarning.showAndWait();
+            }
+        });
         recordAudioButton.setTooltip(new Tooltip(LabelGrabber.INSTANCE.getLabel("record.audio.tooltip")));
         getItems().add(recordAudioButton);
 
@@ -297,47 +311,14 @@ public class MainToolbar extends ToolBar {
         }
     }
 
-    private class ToggleButtonListener implements ChangeListener<Toggle> {
-
-        private final ToggleGroup group;
-
-        public ToggleButtonListener(ToggleGroup group) {
-            this.group = group;
-        }
-
-        @Override
-        public void changed(ObservableValue<? extends Toggle> ov,
-                Toggle oldToggle, Toggle newToggle) {
-            if (!QueleaProperties.get().getRecordingsPath().equals("")) {
-                if (null != newToggle) {
-                    if (group.getSelectedToggle().getUserData().equals("rec") && oldToggle == null) {
-                        startRecording();
-                    }
-                } else {
-                    stopRecording();
-                }
-            } else if (newToggle != null) {
-                newToggle.setSelected(false);
-                Dialog.Builder setRecordingWarningBuilder = new Dialog.Builder()
-                        .create()
-                        .setTitle(LabelGrabber.INSTANCE.getLabel("recording.warning.title"))
-                        .setMessage(LabelGrabber.INSTANCE.getLabel("recording.warning.message"))
-                        .addLabelledButton(LabelGrabber.INSTANCE.getLabel("ok.button"), (ActionEvent t) -> {
-                            setRecordinPathWarning.hide();
-                            setRecordinPathWarning = null;
-                        });
-                setRecordinPathWarning = setRecordingWarningBuilder.setWarningIcon().build();
-                setRecordinPathWarning.showAndWait();
-            }
-        }
-    }
-
     public void startRecording() {
         ImageView iv = new ImageView("file:icons/record_stop.png");
         iv.setSmooth(true);
         iv.setFitWidth(24);
         iv.setFitHeight(24);
         recordAudioButton.setGraphic(iv);
+        recordAudioButton.setSelected(true);
+        recording = true;
         getItems().add(pb);
         getItems().add(recordingPathTextField);
         recordAudioButton.setText("Recording...");
@@ -353,6 +334,8 @@ public class MainToolbar extends ToolBar {
         iv.setFitWidth(24);
         iv.setFitHeight(24);
         recordAudioButton.setGraphic(iv);
+        recordAudioButton.setSelected(false);
+        recording = false;
         getItems().remove(pb);
         getItems().remove(recordingPathTextField);
         recordAudioButton.setText("");
