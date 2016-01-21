@@ -63,18 +63,11 @@ public class OptionsGeneralPanel extends GridPane implements PropertyPanel {
     private final CheckBox autoTranslateCheckBox;
     private final CheckBox clearLiveOnRemoveCheckBox;
     private final CheckBox embedMediaInScheduleCheckBox;
-    private final CheckBox useOOCheckBox;
     private final CheckBox autoPlayVidCheckBox;
     private final CheckBox advanceOnLiveCheckBox;
     private final CheckBox previewOnImageChangeCheckBox;
     private final CheckBox uniformFontSizeCheckBox;
     private final ComboBox<LanguageFile> languageFileComboBox;
-    private final TextField ooPathTextField;
-    private final TextField recordingsPathTextField;
-    private final DirectoryChooser ooChooser;
-    private final DirectoryChooser recordingsChooser;
-    private final Button selectButton;
-    private final Button recordingsSelectButton;
     private final Slider maximumFontSizeSlider;
     private final Slider additionalLineSpacingSlider;
     private final Slider maxCharsSlider;
@@ -90,7 +83,6 @@ public class OptionsGeneralPanel extends GridPane implements PropertyPanel {
     private final BigDecimalSpinner smallBibleSizeSpinner;
     private final CheckBox overflowSongCheckBox;
     private final CheckBox showVideoPanelCheckBox;
-    private final CheckBox convertMp3CheckBox;
 
     /**
      * Create a new general panel.
@@ -139,87 +131,6 @@ public class OptionsGeneralPanel extends GridPane implements PropertyPanel {
         warnLabel.setLabelFor(oneMonitorWarnCheckBox);
         GridPane.setConstraints(oneMonitorWarnCheckBox, 2, rows);
         getChildren().add(oneMonitorWarnCheckBox);
-        rows++;
-        
-        Label useOOLabel = new Label(LabelGrabber.INSTANCE.getLabel("use.oo.label"));
-        GridPane.setConstraints(useOOLabel, 1, rows);
-        getChildren().add(useOOLabel);
-        useOOCheckBox = new CheckBox();
-        useOOCheckBox.selectedProperty().addListener(new javafx.beans.value.ChangeListener<Boolean>() {
-            @Override
-            public void changed(ObservableValue<? extends Boolean> ov, Boolean t, Boolean t1) {
-                if (useOOCheckBox.isSelected()) {
-                    ooPathTextField.setDisable(true);
-                    selectButton.setDisable(false);
-                } else {
-                    ooPathTextField.setDisable(true);
-                    selectButton.setDisable(true);
-                }
-            }
-        });
-        useOOLabel.setLabelFor(useOOCheckBox);
-        GridPane.setConstraints(useOOCheckBox, 2, rows);
-        getChildren().add(useOOCheckBox);
-        rows++;
-        
-        Label ooPathLabel = new Label(LabelGrabber.INSTANCE.getLabel("oo.path"));
-        GridPane.setConstraints(ooPathLabel, 1, rows);
-        getChildren().add(ooPathLabel);
-        ooPathTextField = new TextField();
-        ooPathTextField.setMaxWidth(Double.MAX_VALUE);
-        GridPane.setHgrow(ooPathTextField, Priority.ALWAYS);
-        ooPathTextField.setEditable(false);
-        ooPathLabel.setLabelFor(ooPathTextField);
-        GridPane.setConstraints(ooPathTextField, 2, rows);
-        getChildren().add(ooPathTextField);
-        ooChooser = new DirectoryChooser();
-        selectButton = new Button(LabelGrabber.INSTANCE.getLabel("browse"));
-        selectButton.setDisable(true);
-        selectButton.setOnAction(new EventHandler<javafx.event.ActionEvent>() {
-            @Override
-            public void handle(javafx.event.ActionEvent t) {
-                File dir = ooChooser.showDialog(QueleaApp.get().getMainWindow());
-                if (dir != null) {
-                    ooPathTextField.setText(dir.getAbsolutePath());
-                }
-            }
-        });
-        GridPane.setConstraints(selectButton, 3, rows);
-        getChildren().add(selectButton);
-        rows++;
-        
-        Label recordingsPathLabel = new Label(LabelGrabber.INSTANCE.getLabel("recordings.path"));
-        GridPane.setConstraints(recordingsPathLabel, 1, rows);
-        getChildren().add(recordingsPathLabel);
-        recordingsPathTextField = new TextField();
-        recordingsPathTextField.setMaxWidth(Double.MAX_VALUE);
-        GridPane.setHgrow(recordingsPathTextField, Priority.ALWAYS);
-        recordingsPathTextField.setEditable(false);
-        recordingsPathLabel.setLabelFor(recordingsPathTextField);
-        GridPane.setConstraints(recordingsPathTextField, 2, rows);
-        getChildren().add(recordingsPathTextField);
-        recordingsChooser = new DirectoryChooser();
-        recordingsSelectButton = new Button(LabelGrabber.INSTANCE.getLabel("browse"));
-        recordingsSelectButton.setOnAction(new EventHandler<javafx.event.ActionEvent>() {
-            @Override
-            public void handle(javafx.event.ActionEvent t) {
-                File dir = recordingsChooser.showDialog(QueleaApp.get().getMainWindow());
-                if (dir != null) {
-                    recordingsPathTextField.setText(dir.getAbsolutePath());
-                }
-            }
-        });
-        GridPane.setConstraints(recordingsSelectButton, 3, rows);
-        getChildren().add(recordingsSelectButton);
-        rows++;
-        
-        Label convertMp3Label = new Label(LabelGrabber.INSTANCE.getLabel("convert.mp3"));
-        GridPane.setConstraints(convertMp3Label, 1, rows);
-        getChildren().add(convertMp3Label);
-        convertMp3CheckBox = new CheckBox();
-        convertMp3Label.setLabelFor(convertMp3CheckBox);
-        GridPane.setConstraints(convertMp3CheckBox, 2, rows);
-        getChildren().add(convertMp3CheckBox);
         rows++;
         
         Label oneLineModeLabel = new Label(LabelGrabber.INSTANCE.getLabel("one.line.mode.label"));
@@ -500,10 +411,6 @@ public class OptionsGeneralPanel extends GridPane implements PropertyPanel {
     public final void readProperties() {
         languageFileComboBox.setValue(LanguageFileManager.INSTANCE.getCurrentFile());
         startupUpdateCheckBox.setSelected(props.checkUpdate());
-        useOOCheckBox.setSelected(props.getUseOO());
-        ooPathTextField.setText(props.getOOPath());
-        recordingsPathTextField.setText(props.getRecordingsPath());
-        convertMp3CheckBox.setSelected(props.getConvertRecordings());
         capitalFirstCheckBox.setSelected(props.checkCapitalFirst());
         oneMonitorWarnCheckBox.setSelected(props.showSingleMonitorWarning());
         uniformFontSizeCheckBox.setSelected(props.getUseUniformFontSize());
@@ -539,14 +446,6 @@ public class OptionsGeneralPanel extends GridPane implements PropertyPanel {
         props.setLanguageFile(languageFileComboBox.getValue().getFile().getName());
         boolean checkUpdate = getStartupUpdateCheckBox().isSelected();
         props.setCheckUpdate(checkUpdate);
-        boolean useOO = getUseOOCheckBox().isSelected();
-        props.setUseOO(useOO);
-        String ooPath = getOOPathTextField().getText();
-        props.setOOPath(ooPath);
-        String recPath = getRecordingsPathTextField().getText();
-        props.setRecordingsPath(recPath);
-        boolean convertRecordings = convertMp3CheckBox.isSelected();
-        props.setConvertRecordings(convertRecordings);
         boolean showWarning = getOneMonitorWarningCheckBox().isSelected();
         props.setSingleMonitorWarning(showWarning);
         boolean checkCapital = getCapitalFirstCheckBox().isSelected();
@@ -662,42 +561,6 @@ public class OptionsGeneralPanel extends GridPane implements PropertyPanel {
      */
     public CheckBox getAutoTranslateCheckBox() {
         return autoTranslateCheckBox;
-    }
-
-    /**
-     * Get the "use openoffice" checkbox.
-     * <p/>
-     * @return the "use openoffice" checkbox.
-     */
-    public CheckBox getUseOOCheckBox() {
-        return useOOCheckBox;
-    }
-
-    /**
-     * Get the "openoffice path" text field.
-     * <p/>
-     * @return the "openoffice path" text field.
-     */
-    public TextField getOOPathTextField() {
-        return ooPathTextField;
-    }
-
-    /**
-     * Get the "recordings path" text field.
-     * <p/>
-     * @return the "openoffice path" text field.
-     */
-    public TextField getRecordingsPathTextField() {
-        return recordingsPathTextField;
-    }
-    
-    /**
-     * Get the "automatically convert recordings" checkbox.
-     * <p/>
-     * @return the "automatically convert recordings" checkbox.
-     */
-    public CheckBox getConvertRecordingsCheckBox() {
-        return convertMp3CheckBox;
     }
 
     /**
