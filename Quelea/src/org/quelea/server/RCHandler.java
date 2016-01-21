@@ -102,6 +102,20 @@ public class RCHandler {
             p.getPreviewPanel().goLive();
         });
     }
+    
+    public static void gotoItem(String index) {
+        Platform.runLater(() -> {
+            final MainPanel p = QueleaApp.get().getMainWindow().getMainPanel();
+            p.getSchedulePanel().getScheduleList().getSelectionModel().clearSelection();
+            int item = Integer.parseInt(index.split("gotoitem")[1]);
+            if (item < p.getSchedulePanel().getScheduleList().getItems().size()) {
+                p.getSchedulePanel().getScheduleList().getSelectionModel().select(item);
+            } else {
+                p.getSchedulePanel().getScheduleList().getSelectionModel().select(p.getSchedulePanel().getScheduleList().getItems().size() - 1);
+            }
+            p.getPreviewPanel().goLive();
+        });
+    }
 
     public static int currentLyricSection() {
         return QueleaApp.get().getMainWindow().getMainPanel().getLivePanel().getLyricsPanel().getCurrentIndex();
