@@ -48,6 +48,8 @@ import org.quelea.services.utils.LineTypeChecker;
 import org.quelea.services.utils.LoggerUtils;
 import org.quelea.windows.main.LivePanel;
 import org.quelea.windows.main.QueleaApp;
+import org.quelea.windows.main.actionhandlers.RecordingsHandler;
+import org.quelea.windows.main.toolbars.MainToolbar;
 
 /**
  * The remote control server, responsible for handling the mobile HTTP calls and
@@ -101,6 +103,7 @@ public class RemoteControlServer {
         server.createContext("/section", new SectionHandler());
         server.createContext("/songtranslations", new SongTranslationsHandler());
         server.createContext("/gettranslation", new SongTranslationsHandler());
+        server.createContext("/record", new RecordToggleHandler());
         rootcontext.getFilters().add(new ParameterFilter());
         server.setExecutor(null);
     }
@@ -333,9 +336,12 @@ public class RemoteControlServer {
         @Override
         public void handle(HttpExchange he) throws IOException {
             if (RCHandler.isLoggedOn(he.getRemoteAddress().getAddress().toString())) {
+                final String response = "";
                 he.getResponseHeaders().add("Cache-Control", "no-cache, no-store, must-revalidate");
-                he.sendResponseHeaders(200, 1);
-                he.getResponseBody().write(count++);
+                he.sendResponseHeaders(200, response.getBytes(Charset.forName("UTF-8")).length);
+                OutputStream os = he.getResponseBody();
+                os.write(response.getBytes(Charset.forName("UTF-8")));
+                os.close();
                 RCHandler.logo();
             } else {
                 reload(he);
@@ -349,9 +355,12 @@ public class RemoteControlServer {
         @Override
         public void handle(HttpExchange he) throws IOException {
             if (RCHandler.isLoggedOn(he.getRemoteAddress().getAddress().toString())) {
+                final String response = "";
                 he.getResponseHeaders().add("Cache-Control", "no-cache, no-store, must-revalidate");
-                he.sendResponseHeaders(200, 1);
-                he.getResponseBody().write(count++);
+                he.sendResponseHeaders(200, response.getBytes(Charset.forName("UTF-8")).length);
+                OutputStream os = he.getResponseBody();
+                os.write(response.getBytes(Charset.forName("UTF-8")));
+                os.close();
                 RCHandler.black();
             } else {
                 reload(he);
@@ -365,9 +374,12 @@ public class RemoteControlServer {
         @Override
         public void handle(HttpExchange he) throws IOException {
             if (RCHandler.isLoggedOn(he.getRemoteAddress().getAddress().toString())) {
+                final String response = "";
                 he.getResponseHeaders().add("Cache-Control", "no-cache, no-store, must-revalidate");
-                he.sendResponseHeaders(200, 1);
-                he.getResponseBody().write(count++);
+                he.sendResponseHeaders(200, response.getBytes(Charset.forName("UTF-8")).length);
+                OutputStream os = he.getResponseBody();
+                os.write(response.getBytes(Charset.forName("UTF-8")));
+                os.close();
                 RCHandler.clear();
             } else {
                 reload(he);
@@ -381,9 +393,12 @@ public class RemoteControlServer {
         @Override
         public void handle(HttpExchange he) throws IOException {
             if (RCHandler.isLoggedOn(he.getRemoteAddress().getAddress().toString())) {
+                final String response = "";
                 he.getResponseHeaders().add("Cache-Control", "no-cache, no-store, must-revalidate");
-                he.sendResponseHeaders(200, 1);
-                he.getResponseBody().write(count++);
+                he.sendResponseHeaders(200, response.getBytes(Charset.forName("UTF-8")).length);
+                OutputStream os = he.getResponseBody();
+                os.write(response.getBytes(Charset.forName("UTF-8")));
+                os.close();
                 RCHandler.next();
             } else {
                 reload(he);
@@ -397,9 +412,12 @@ public class RemoteControlServer {
         @Override
         public void handle(HttpExchange he) throws IOException {
             if (RCHandler.isLoggedOn(he.getRemoteAddress().getAddress().toString())) {
+                final String response = "";
                 he.getResponseHeaders().add("Cache-Control", "no-cache, no-store, must-revalidate");
-                he.sendResponseHeaders(200, 1);
-                he.getResponseBody().write(count++);
+                he.sendResponseHeaders(200, response.getBytes(Charset.forName("UTF-8")).length);
+                OutputStream os = he.getResponseBody();
+                os.write(response.getBytes(Charset.forName("UTF-8")));
+                os.close();
                 RCHandler.prev();
             } else {
                 reload(he);
@@ -413,9 +431,12 @@ public class RemoteControlServer {
         @Override
         public void handle(HttpExchange he) throws IOException {
             if (RCHandler.isLoggedOn(he.getRemoteAddress().getAddress().toString())) {
+                final String response = "";
                 he.getResponseHeaders().add("Cache-Control", "no-cache, no-store, must-revalidate");
-                he.sendResponseHeaders(200, 1);
-                he.getResponseBody().write(count++);
+                he.sendResponseHeaders(200, response.getBytes(Charset.forName("UTF-8")).length);
+                OutputStream os = he.getResponseBody();
+                os.write(response.getBytes(Charset.forName("UTF-8")));
+                os.close();
                 RCHandler.nextItem();
             } else {
                 reload(he);
@@ -429,9 +450,12 @@ public class RemoteControlServer {
         @Override
         public void handle(HttpExchange he) throws IOException {
             if (RCHandler.isLoggedOn(he.getRemoteAddress().getAddress().toString())) {
+                final String response = "";
                 he.getResponseHeaders().add("Cache-Control", "no-cache, no-store, must-revalidate");
-                he.sendResponseHeaders(200, 1);
-                he.getResponseBody().write(count++);
+                he.sendResponseHeaders(200, response.getBytes(Charset.forName("UTF-8")).length);
+                OutputStream os = he.getResponseBody();
+                os.write(response.getBytes(Charset.forName("UTF-8")));
+                os.close();
                 RCHandler.prevItem();
             } else {
                 reload(he);
@@ -444,10 +468,20 @@ public class RemoteControlServer {
 
         @Override
         public void handle(HttpExchange he) throws IOException {
+            MainToolbar toolbar = QueleaApp.get().getMainWindow().getMainToolbar();
+            RecordingsHandler recHandler = toolbar.getRecordButtonHandler().getRecordingsHandler();
             if (RCHandler.isLoggedOn(he.getRemoteAddress().getAddress().toString())) {
-                String status = RCHandler.getLogo() + "," + RCHandler.getBlack() + ","
-                        + RCHandler.getClear() + "," + RCHandler.videoStatus();
-                byte[] bytes = status.getBytes(Charset.forName("UTF-8"));
+                StringBuilder sb = new StringBuilder();
+                sb.append(RCHandler.getLogo()).append(",");
+                sb.append(RCHandler.getBlack()).append(",");
+                sb.append(RCHandler.getClear()).append(",");
+                sb.append(RCHandler.videoStatus()).append(",");
+                if (toolbar.getRecordButtonHandler() != null && recHandler != null) {
+                    sb.append(recHandler.getIsRecording());
+                } else {
+                    sb.append("false");
+                }
+                byte[] bytes = sb.toString().getBytes(Charset.forName("UTF-8"));
                 he.getResponseHeaders().add("Cache-Control", "no-cache, no-store, must-revalidate");
                 he.sendResponseHeaders(200, bytes.length);
                 try (OutputStream os = he.getResponseBody()) {
@@ -483,6 +517,25 @@ public class RemoteControlServer {
                 he.getResponseHeaders().add("Cache-Control", "no-cache, no-store, must-revalidate");
                 he.sendResponseHeaders(200, -1);
                 RCHandler.play();
+            } else {
+                reload(he);
+            }
+        }
+    }
+    
+        //Handles recordings
+    private class RecordToggleHandler implements HttpHandler {
+
+        @Override
+        public void handle(HttpExchange he) throws IOException {
+            if (RCHandler.isLoggedOn(he.getRemoteAddress().getAddress().toString())) {
+                final String response = "";
+                he.getResponseHeaders().add("Cache-Control", "no-cache, no-store, must-revalidate");
+                he.sendResponseHeaders(200, response.getBytes(Charset.forName("UTF-8")).length);
+                OutputStream os = he.getResponseBody();
+                os.write(response.getBytes(Charset.forName("UTF-8")));
+                os.close();
+                RCHandler.record();
             } else {
                 reload(he);
             }
