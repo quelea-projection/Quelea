@@ -589,3 +589,5 @@ save.recording.before.exit.message=Would you like to save the recording before e
 record.audio.tooltip=Record Audio
 pause.record.tooltip=Pause Recording
 max.lines.per.slide=Lines per slide (approximately)
+presentation.options.heading=Presentations
+recordings.options.heading=Recordings
