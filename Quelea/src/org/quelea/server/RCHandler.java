@@ -38,6 +38,8 @@ import org.quelea.services.utils.Utils;
 import org.quelea.windows.library.LibraryBiblePanel;
 import org.quelea.windows.main.MainPanel;
 import org.quelea.windows.main.QueleaApp;
+import org.quelea.windows.main.actionhandlers.RecordingsHandler;
+import org.quelea.windows.main.toolbars.MainToolbar;
 import org.quelea.windows.multimedia.VLCWindow;
 
 /**
@@ -163,6 +165,26 @@ public class RCHandler {
             VLCWindow.INSTANCE.pause();
         } else {
             VLCWindow.INSTANCE.play();
+        }
+    }
+    
+        static void record() {
+        MainToolbar toolbar = QueleaApp.get().getMainWindow().getMainToolbar();
+        RecordingsHandler recHandler = toolbar.getRecordButtonHandler().getRecordingsHandler();
+        if (toolbar.getRecordButtonHandler() != null && recHandler != null) {
+            if (recHandler.getIsRecording()) {
+                Utils.fxRunAndWait(() -> {
+                    toolbar.stopRecording();
+                });
+            } else {
+                Utils.fxRunAndWait(() -> {
+                    toolbar.startRecording();
+                });
+            }
+        } else {
+            Utils.fxRunAndWait(() -> {
+                toolbar.startRecording();
+            });
         }
     }
 
