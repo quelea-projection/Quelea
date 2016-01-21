@@ -104,6 +104,7 @@ public class RemoteControlServer {
         server.createContext("/songtranslations", new SongTranslationsHandler());
         server.createContext("/gettranslation", new SongTranslationsHandler());
         server.createContext("/record", new RecordToggleHandler());
+        server.createContext("/gotoitem", new GotoItemHandler());
         rootcontext.getFilters().add(new ParameterFilter());
         server.setExecutor(null);
     }
@@ -457,6 +458,21 @@ public class RemoteControlServer {
                 os.write(response.getBytes(Charset.forName("UTF-8")));
                 os.close();
                 RCHandler.prevItem();
+            } else {
+                reload(he);
+            }
+        }
+    }
+    
+    //Handles jumping to a schedule item
+    private class GotoItemHandler implements HttpHandler {
+
+        @Override
+        public void handle(HttpExchange he) throws IOException {
+            if (RCHandler.isLoggedOn(he.getRemoteAddress().getAddress().toString())) {
+                he.getResponseHeaders().add("Cache-Control", "no-cache, no-store, must-revalidate");
+                he.sendResponseHeaders(200, -1);
+                RCHandler.gotoItem(he.getRequestURI().toString());
             } else {
                 reload(he);
             }
