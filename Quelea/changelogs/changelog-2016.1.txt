@@ -6,6 +6,9 @@ quelea (2016.1) stable; urgency=normal
   * Add song select import options for copyright & key
   * Fix keyboard shortcuts for presentations
   * Fix record button behaviour when no recording device is found
+  * New options dialog layout
+  * Add support for controlling recordings through the apps
+  * Add support for jumping to a schedule item from the apps
 
 
  -- Michael Berry <michael@quelea.org>  Wednesday, 14 January 2016 00:00:00 +0000
