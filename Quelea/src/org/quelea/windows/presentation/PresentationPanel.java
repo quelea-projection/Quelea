@@ -296,4 +296,8 @@ public class PresentationPanel extends AbstractPanel {
     public void selectLast() {
         presentationPreview.selectLast();
     }
+    
+        public PresentationPreview getPresentationPreview() {
+        return presentationPreview;
+    }
 }

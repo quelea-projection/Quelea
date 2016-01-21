@@ -242,22 +242,27 @@ public class LivePanel extends LivePreviewPanel {
         setOnKeyTyped(new EventHandler<KeyEvent>() {
             @Override
             public void handle(KeyEvent t) {
+                LivePanel lp = QueleaApp.get().getMainWindow().getMainPanel().getLivePanel();
                 if (t.getCharacter().equals(" ")) {
                     QueleaApp.get().getMainWindow().getMainPanel().getPreviewPanel().goLive();
                 }
                 if (t.getCharacter().matches("c") || t.getCharacter().matches("b") || t.getCharacter().matches("p") || t.getCharacter().matches("t") || t.getCharacter().matches("\\d")) {
-                    final int selectedIndex = QueleaApp.get().getMainWindow().getMainPanel().getLivePanel().getLyricsPanel().getCurrentIndex();
+                    final int selectedIndex = lp.getLyricsPanel().getCurrentIndex();
                     final int slideIndex = getSlideIndex(selectedIndex, t.getCharacter());
                     if (slideIndex > -1) {
                         Platform.runLater(() -> {
-                            QueleaApp.get().getMainWindow().getMainPanel().getLivePanel().getLyricsPanel().select(slideIndex);
+                            lp.getLyricsPanel().select(slideIndex);
                         });
                     } else if (t.getCharacter().matches("\\d")) {
                         try {
                             int i = Integer.parseInt(t.getCharacter());
                             final int index = (i > 0) ? (i - 1) : 10;
                             Platform.runLater(() -> {
-                                QueleaApp.get().getMainWindow().getMainPanel().getLivePanel().getLyricsPanel().select(index);
+                                if (lp.getDisplayable() instanceof PresentationDisplayable) {
+                                    lp.getPresentationPanel().getPresentationPreview().select(i);
+                                } else {
+                                    lp.getLyricsPanel().select(index);
+                                }
                             });
                         } catch (Exception ex) {
                             LoggerUtils.getLogger().log(Level.INFO, "Could not cast keycode into integer for slide selection.", ex);
@@ -266,11 +271,10 @@ public class LivePanel extends LivePreviewPanel {
                 }
                 if (t.getCharacter().matches("\\+")) {
                     if (getDisplayable() instanceof BiblePassage) {
-                        SelectLyricsPanel lp = QueleaApp.get().getMainWindow().getMainPanel().getLivePanel().getLyricsPanel();
                         new AddBibleVerseHandler().add();
                         QueleaApp.get().getMainWindow().getMainPanel().getPreviewPanel().goLive();
-                        int last = lp.getLyricsList().getItems().size() - 1;
-                        lp.select(last);
+                        int last = lp.getLyricsPanel().getLyricsList().getItems().size() - 1;
+                        lp.getLyricsPanel().select(last);
                     }
                 }
             }
