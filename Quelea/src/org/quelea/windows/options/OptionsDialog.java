@@ -47,9 +47,11 @@ public class OptionsDialog extends Stage {
     private final OptionsDisplaySetupPanel displayPanel;
     private final OptionsGeneralPanel generalPanel;
     private final OptionsNoticePanel noticePanel;
+    private final OptionsPresentationPanel presentationPanel;
     private final OptionsBiblePanel biblePanel;
     private final OptionsStageViewPanel stageViewPanel;
     private final ServerSettingsPanel serverSettingsPanel;
+    private final OptionsRecordingPanel recordingPanel;
 
     /**
      * Create a new options dialog.
@@ -68,6 +70,7 @@ public class OptionsDialog extends Stage {
         Tab generalTab = new Tab();
         generalTab.setClosable(false);
         generalTab.setText(LabelGrabber.INSTANCE.getLabel("general.options.heading"));
+        generalTab.setGraphic(new ImageView(new Image("file:icons/generalsettingsicon.png")));
         generalTab.setContent(generalPanel);
         tabbedPane.getTabs().add(generalTab);
         
@@ -75,6 +78,7 @@ public class OptionsDialog extends Stage {
         Tab displayTab = new Tab();
         displayTab.setClosable(false);
         displayTab.setText(LabelGrabber.INSTANCE.getLabel("display.options.heading"));
+        displayTab.setGraphic(new ImageView(new Image("file:icons/monitorsettingsicon.png")));
         displayTab.setContent(displayPanel);
         tabbedPane.getTabs().add(displayTab);
         
@@ -82,6 +86,7 @@ public class OptionsDialog extends Stage {
         Tab stageViewTab = new Tab();
         stageViewTab.setClosable(false);
         stageViewTab.setText(LabelGrabber.INSTANCE.getLabel("stage.options.heading"));
+        stageViewTab.setGraphic(new ImageView(new Image("file:icons/stageviewsettingsicon.png")));
         stageViewTab.setContent(stageViewPanel);
         tabbedPane.getTabs().add(stageViewTab);
         
@@ -89,22 +94,41 @@ public class OptionsDialog extends Stage {
         Tab noticeTab = new Tab();
         noticeTab.setClosable(false);
         noticeTab.setText(LabelGrabber.INSTANCE.getLabel("notice.options.heading"));
+        noticeTab.setGraphic(new ImageView(new Image("file:icons/noticessettingsicon.png")));
         noticeTab.setContent(noticePanel);
         tabbedPane.getTabs().add(noticeTab);
+        
+        presentationPanel = new OptionsPresentationPanel();
+        Tab presentationTab = new Tab();
+        presentationTab.setClosable(false);
+        presentationTab.setText(LabelGrabber.INSTANCE.getLabel("presentation.options.heading"));
+        presentationTab.setGraphic(new ImageView(new Image("file:icons/presentationssettingsicon.png")));
+        presentationTab.setContent(presentationPanel);
+        tabbedPane.getTabs().add(presentationTab);
         
         biblePanel = new OptionsBiblePanel();
         Tab bibleTab = new Tab();
         bibleTab.setClosable(false);
         bibleTab.setText(LabelGrabber.INSTANCE.getLabel("bible.options.heading"));
         bibleTab.setContent(biblePanel);
+        bibleTab.setGraphic(new ImageView(new Image("file:icons/biblesettingsicon.png")));
         tabbedPane.getTabs().add(bibleTab);
         
         serverSettingsPanel = new ServerSettingsPanel();
         Tab serverSettingsTab = new Tab();
         serverSettingsTab.setClosable(false);
         serverSettingsTab.setText(LabelGrabber.INSTANCE.getLabel("server.settings.heading"));
+        serverSettingsTab.setGraphic(new ImageView(new Image("file:icons/serversettingsicon.png")));
         serverSettingsTab.setContent(serverSettingsPanel);
         tabbedPane.getTabs().add(serverSettingsTab);
+        
+        recordingPanel = new OptionsRecordingPanel();
+        Tab optionsRecordingTab = new Tab();
+        optionsRecordingTab.setClosable(false);
+        optionsRecordingTab.setText(LabelGrabber.INSTANCE.getLabel("recordings.options.heading"));
+        optionsRecordingTab.setGraphic(new ImageView(new Image("file:icons/recordingssettingsicon.png")));
+        optionsRecordingTab.setContent(recordingPanel);
+        tabbedPane.getTabs().add(optionsRecordingTab);
         
         mainPane.setCenter(tabbedPane);
         okButton = new Button(LabelGrabber.INSTANCE.getLabel("ok.button"), new ImageView(new Image("file:icons/tick.png")));
@@ -128,6 +152,9 @@ public class OptionsDialog extends Stage {
     public void callBeforeShowing() {
         generalPanel.resetLanguageChanged();
         serverSettingsPanel.resetChanged();
+        
+        // TODO: Uncomment when PowerPoint support is added
+//        presentationPanel.resetPresentationChanged();
     }
     
     /**
@@ -140,6 +167,11 @@ public class OptionsDialog extends Stage {
         if(serverSettingsPanel.hasChanged()) {
             Dialog.showInfo(LabelGrabber.INSTANCE.getLabel("server.changed.label"), LabelGrabber.INSTANCE.getLabel("server.changed.message"), QueleaApp.get().getMainWindow());
         }
+        
+        // TODO: Uncomment when PowerPoint support is added
+//        if(presentationPanel.hasPPChanged()) {
+//            Dialog.showInfo(LabelGrabber.INSTANCE.getLabel("presentation.changed.label"), LabelGrabber.INSTANCE.getLabel("presentation.changed.message"), QueleaApp.get().getMainWindow());
+//        }
     }
 
     /**
@@ -153,9 +185,17 @@ public class OptionsDialog extends Stage {
     public ServerSettingsPanel getServerSettingsPanel() {
         return serverSettingsPanel;
     }
-
+    
     public OptionsGeneralPanel getOptionsGeneralPanel() {
         return generalPanel;
+    }
+    
+    public OptionsDisplaySetupPanel getDisplaySetupPanel() {
+        return displayPanel;
+    }
+    
+    public OptionsRecordingPanel getRecordingSettingsPanel() {
+        return recordingPanel;
     }
     
 }

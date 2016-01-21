@@ -285,7 +285,7 @@ public final class Main extends Application {
                             mainWindow.show();
                             splashWindow.hide();
                             showMonitorWarning(monitorNumber);
-                            CheckBox convertCheckBox = QueleaApp.get().getMainWindow().getOptionsDialog().getOptionsGeneralPanel().getConvertRecordingsCheckBox();
+                            CheckBox convertCheckBox = QueleaApp.get().getMainWindow().getOptionsDialog().getRecordingSettingsPanel().getConvertRecordingsCheckBox();
                             if (VLC_OK && VLC_INIT) {
                                 VLCWindow.INSTANCE.refreshPosition();
                                 convertCheckBox.setDisable(false);
