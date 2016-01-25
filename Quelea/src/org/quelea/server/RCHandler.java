@@ -31,11 +31,13 @@ import org.quelea.data.bible.BibleBook;
 import org.quelea.data.db.SongManager;
 import org.quelea.data.displayable.Displayable;
 import org.quelea.data.displayable.SongDisplayable;
+import org.quelea.data.displayable.TimerDisplayable;
 import org.quelea.services.languages.LabelGrabber;
 import org.quelea.services.lucene.SongSearchIndex;
 import org.quelea.services.utils.QueleaProperties;
 import org.quelea.services.utils.Utils;
 import org.quelea.windows.library.LibraryBiblePanel;
+import org.quelea.windows.main.LivePanel;
 import org.quelea.windows.main.MainPanel;
 import org.quelea.windows.main.QueleaApp;
 import org.quelea.windows.main.actionhandlers.RecordingsHandler;
@@ -167,6 +169,14 @@ public class RCHandler {
     }
 
     public static String videoStatus() {
+        LivePanel lp = QueleaApp.get().getMainWindow().getMainPanel().getLivePanel();
+        if (lp.getDisplayable() instanceof TimerDisplayable) {
+            if (lp.getTimerPanel().status()) {
+                return LabelGrabber.INSTANCE.getLabel("pause");
+            } else {
+                return LabelGrabber.INSTANCE.getLabel("play");
+            }
+        }
         if (VLCWindow.INSTANCE.isPlaying()) {
             return LabelGrabber.INSTANCE.getLabel("pause");
         } else {
@@ -179,6 +189,10 @@ public class RCHandler {
             VLCWindow.INSTANCE.pause();
         } else {
             VLCWindow.INSTANCE.play();
+        }
+        LivePanel lp = QueleaApp.get().getMainWindow().getMainPanel().getLivePanel();
+        if (lp.getDisplayable() instanceof TimerDisplayable) {
+            lp.getTimerPanel().togglePause();
         }
     }
     
