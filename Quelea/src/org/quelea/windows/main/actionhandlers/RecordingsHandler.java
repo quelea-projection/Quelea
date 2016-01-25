@@ -23,6 +23,11 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.SequenceInputStream;
+import java.nio.file.DirectoryNotEmptyException;
+import java.nio.file.Files;
+import java.nio.file.NoSuchFileException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -48,7 +53,9 @@ import org.javafx.dialog.Dialog;
 import org.quelea.services.languages.LabelGrabber;
 import org.quelea.services.utils.LoggerUtils;
 import org.quelea.services.utils.QueleaProperties;
+import org.quelea.services.utils.Utils;
 import org.quelea.windows.main.QueleaApp;
+import org.quelea.windows.main.StatusPanel;
 import org.quelea.windows.multimedia.RecordingEncoder;
 
 /**
@@ -80,6 +87,7 @@ public class RecordingsHandler {
     private final static float MAX_16_BITS_UNSIGNED = 0xffff;
     private boolean isRecording;
     private boolean finishedSaving;
+    private StatusPanel statusPanel;
 
     /**
      * Defines an audio format
@@ -163,8 +171,12 @@ public class RecordingsHandler {
 
             // Convert to MP3 if setting is checked
             if (QueleaProperties.get().getConvertRecordings()) {
-                String[] options = {":sout=#transcode{vcodec=none,acodec=mp3,ab=128,channels=2,samplerate=44100}:std{access=file{no-overwrite},mux=mp3,dst='" + wavFile.getAbsolutePath().replace(".wav", ".mp3") + "'} vlc://quit"};
-                new RecordingEncoder(wavFile.getAbsolutePath(), options).run();
+                if (!Utils.isMac()) {
+                    String[] options = {":sout=#transcode{vcodec=none,acodec=mp3,ab=128,channels=2,samplerate=44100}:std{access=file{no-overwrite},mux=mp3,dst='" + wavFile.getAbsolutePath().replace(".wav", ".mp3") + "'} vlc://quit"};
+                    new RecordingEncoder(wavFile.getAbsolutePath(), options).run();
+                } else {
+                    convertOSX(wavFile.getAbsolutePath());
+                }
             }
 
             wavFile.renameTo(new File(path, textField.getText().replaceAll("[^\\p{L}0-9.-]", "_") + ".wav"));
@@ -316,4 +328,58 @@ public class RecordingsHandler {
     public boolean getFinishedSaving() {
         return finishedSaving;
     }
+
+    /**
+     * Use Mac command line to convert recording to MP3 and delete old file.
+     *
+     * @param file original to convert.
+     */
+    private void convertOSX(String file) {
+        Platform.runLater(() -> {
+            statusPanel = QueleaApp.get().getStatusGroup().addPanel(LabelGrabber.INSTANCE.getLabel("Converting recording to MP3"));
+        });
+        Process vlcProcess;
+        List<String> vlcArgs = new ArrayList<>();
+        {
+            vlcArgs.add("/Applications/VLC.app/Contents/MacOS/VLC");
+            vlcArgs.add(file);
+            vlcArgs.add("-I");
+            vlcArgs.add("dummy");
+            vlcArgs.add("--sout=#transcode{vcodec=none,acodec=mp3,ab=128,channels=2,samplerate=44100}:std{access=file{no-overwrite},mux=mp3,dst=" + file.replace("wav", "mp3") + "}");
+            vlcArgs.add("vlc://quit");
+        }
+
+        try {
+            vlcProcess = Runtime.getRuntime().exec(vlcArgs.toArray(new String[0]));
+        } catch (Exception exc) {
+            LOGGER.log(Level.INFO, "Failed to start VLC", exc);
+        } finally {
+            // Wait a second to make sure the conversion starts before deleting the old file
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException ignored) {}
+            String error;
+            Path oldFile = Paths.get(file);
+            do {
+                try {
+                    if (new File(file.replace("wav", "mp3")).exists()) {
+                        Files.delete(oldFile);
+                    }
+                    error = "";
+                } catch (NoSuchFileException | DirectoryNotEmptyException x) {
+                    error = "";
+                } catch (IOException x) {
+                    // If the file is still being read by the system,
+                    // keep trying to delete until it's avaiable again.
+                    error = "busy";
+                }
+            } while (!error.equals(""));
+            if (statusPanel != null) {
+                Platform.runLater(() -> {
+                    statusPanel.done();
+                });
+            }
+        }
+    }
+
 }
