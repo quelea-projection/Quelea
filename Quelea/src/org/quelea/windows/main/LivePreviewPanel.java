@@ -385,4 +385,13 @@ public abstract class LivePreviewPanel extends BorderPane {
     public Set<DisplayStage> getWindows() {
         return windows;
     }
+
+    /**
+     * Get the timer panel.
+     * <p/>
+     * @return the timer panel.
+     */
+    public TimerPanel getTimerPanel() {
+        return timerPanel;
+    }
 }

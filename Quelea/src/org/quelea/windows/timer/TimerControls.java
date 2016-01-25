@@ -213,4 +213,13 @@ public class TimerControls extends StackPane {
     public void setStageTimer(Timer timer) {
         stageTimer = timer;
     }
+
+    public void togglePause() {
+        play(playButton.getImage().equals(PAUSE_IMAGE));
+    }
+    
+    public boolean status() {
+        return playButton.getImage().equals(PAUSE_IMAGE);
+    }
+
 }
