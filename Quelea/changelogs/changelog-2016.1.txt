@@ -10,6 +10,7 @@ quelea (2016.1) stable; urgency=normal
   * Add support for controlling recordings through the apps
   * Add support for jumping to a schedule item from the apps
   * Fix remote control play/pause functionality for timers
+  * Fix Mac recording conversions
 
 
  -- Michael Berry <michael@quelea.org>  Wednesday, 14 January 2016 00:00:00 +0000
