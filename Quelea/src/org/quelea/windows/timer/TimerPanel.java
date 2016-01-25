@@ -110,6 +110,14 @@ public class TimerPanel extends AbstractPanel {
     public void play() {
         controlPanel.play(false);
     }
+    
+    public void togglePause() {
+        controlPanel.togglePause();
+    }
+    
+    public boolean status() {
+        return controlPanel.status();
+    }
 
     @Override
     public int getCurrentIndex() {
