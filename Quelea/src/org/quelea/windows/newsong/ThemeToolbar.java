@@ -19,6 +19,8 @@
 package org.quelea.windows.newsong;
 
 import java.util.Collections;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
@@ -38,7 +40,6 @@ import javafx.scene.control.ToggleGroup;
 import javafx.scene.control.Tooltip;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.Region;
@@ -55,6 +56,7 @@ import org.quelea.data.ImageBackground;
 import org.quelea.data.ThemeDTO;
 import org.quelea.data.VideoBackground;
 import org.quelea.services.languages.LabelGrabber;
+import org.quelea.services.utils.LoggerUtils;
 import org.quelea.services.utils.QueleaProperties;
 import org.quelea.services.utils.SerializableDropShadow;
 import org.quelea.services.utils.SerializableFont;
@@ -69,6 +71,7 @@ import org.quelea.windows.main.widgets.CardPane;
  */
 public class ThemeToolbar extends HBox {
 
+    private static final Logger LOGGER = LoggerUtils.getLogger();
     private final ComboBox<String> fontSelection;
     private final Button fontExpandButton;
     private final Button moreOptionsButton;
@@ -416,6 +419,8 @@ public class ThemeToolbar extends HBox {
                 boldButton.isSelected() ? FontWeight.BOLD : FontWeight.NORMAL,
                 italicButton.isSelected() ? FontPosture.ITALIC : FontPosture.REGULAR,
                 QueleaProperties.get().getMaxFontSize());
+        
+        LOGGER.log(Level.INFO, "Selected font theme \"{0}\", font family is \"{1}\"", new Object[]{fontSelection.getSelectionModel().getSelectedItem(), font.getFamily()});
 
         Background background = new ColourBackground(Color.BLACK);
         if (backTypeSelection.getSelectionModel().getSelectedItem() == null) {
