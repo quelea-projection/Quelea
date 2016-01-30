@@ -39,31 +39,23 @@ public class FontInstaller {
      * Register the bundled fonts.
      */
     public void setupBundledFonts() {
-        loadFonts("icons/bundledfonts");
-        if(Utils.isMac()) {
-            loadFonts("/System/Library/Fonts");
-            loadFonts("/Library/Fonts");
-            loadFonts("/Library/Fonts/Microsoft");
-        }
-    }
-    
-    private void loadFonts(String dir) {
         GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
-        for (File file : new File(dir).listFiles()) {
-            if (file.getName().toLowerCase().endsWith("otf") || file.getName().toLowerCase().endsWith("ttf")) {
+        for(File file : new File("icons/bundledfonts").listFiles()) {
+            if(file.getName().toLowerCase().endsWith("otf") || file.getName().toLowerCase().endsWith("ttf")) {
                 try {
                     javafx.scene.text.Font fxFont;
-                    try (FileInputStream fis = new FileInputStream(file)) {
-                        fxFont = javafx.scene.text.Font.loadFont(fis, 72);
+                    try(FileInputStream fis = new FileInputStream(file)) {
+                        fxFont = javafx.scene.text.Font.loadFont(fis, 72);                        
                     }
-                    if (fxFont == null) {
+                    if(fxFont == null) {
                         LOGGER.log(Level.WARNING, "Couldn't load font {0}", file.getAbsolutePath());
                     }
                     boolean geSuccess = ge.registerFont(Font.createFont(Font.TRUETYPE_FONT, file));
-                    if (geSuccess && fxFont != null) {
+                    if(geSuccess && fxFont != null) {
                         LOGGER.log(Level.INFO, "Loaded bundled font {0}", file.getAbsolutePath());
                     }
-                } catch (FontFormatException | IOException ex) {
+                }
+                catch(FontFormatException | IOException ex) {
                     LOGGER.log(Level.WARNING, "Couldn't load font " + file.getAbsolutePath(), ex);
                 }
             }
