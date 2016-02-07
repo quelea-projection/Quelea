@@ -24,12 +24,12 @@ import java.awt.Graphics2D;
 import java.awt.RenderingHints;
 import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.scene.image.Image;
 import javafx.scene.image.WritableImage;
-import org.apache.poi.hslf.model.Slide;
+import org.apache.poi.sl.usermodel.Slide;
+import org.apache.poi.sl.usermodel.SlideShow;
 import org.apache.poi.xslf.usermodel.XSLFSlide;
 import org.quelea.services.languages.LabelGrabber;
 import org.quelea.services.utils.LoggerUtils;
@@ -54,13 +54,13 @@ public class PresentationSlide {
      * @param slide the underlying apache POI slide.
      */
     public PresentationSlide(Slide slide, int numSlide) {
-        org.apache.poi.hslf.usermodel.SlideShow slideshow = slide.getSlideShow();
+        SlideShow slideshow = slide.getSlideShow();
         if (Math.abs(slideshow.getPageSize().getHeight() - HEIGHT) > 0.1) {
             int adjustHeight = HEIGHT;
             int adjustWidth = (int) ((adjustHeight / slideshow.getPageSize().getHeight()) * slideshow.getPageSize().getWidth());
             scaleWidth = (double) adjustWidth / slideshow.getPageSize().getWidth();
             scaleHeight = (double) adjustHeight / slideshow.getPageSize().getHeight();
-            slideshow.setPageSize(new Dimension(adjustWidth, adjustHeight));
+//            slideshow.setPageSize(new Dimension(adjustWidth, adjustHeight));
         }
         BufferedImage originalImage = new BufferedImage((int) slideshow.getPageSize().getWidth(), (int) slideshow.getPageSize().getHeight(), BufferedImage.TYPE_INT_ARGB);
         Graphics2D g2 = originalImage.createGraphics();
