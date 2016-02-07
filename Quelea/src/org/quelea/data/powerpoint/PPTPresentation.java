@@ -17,10 +17,13 @@
  */
 package org.quelea.data.powerpoint;
 
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
-import org.apache.poi.hslf.HSLFSlideShow;
-import org.apache.poi.hslf.model.Slide;
-import org.apache.poi.hslf.usermodel.SlideShow;
+import java.util.List;
+import org.apache.poi.hslf.usermodel.HSLFSlide;
+import org.apache.poi.hslf.usermodel.HSLFSlideShow;
+import org.apache.poi.xslf.usermodel.XMLSlideShow;
 
 /**
  * A presentation that can be displayed. At the moment represents a powerpoint
@@ -30,7 +33,7 @@ import org.apache.poi.hslf.usermodel.SlideShow;
  */
 public class PPTPresentation implements Presentation {
 
-    private SlideShow slideshow;
+    private HSLFSlideShow slideshow;
     private PresentationSlide[] slides;
 
     /**
@@ -39,7 +42,7 @@ public class PPTPresentation implements Presentation {
      * @param file the file containing the presentation.
      */
     public PPTPresentation(String file) throws IOException {
-        slideshow = new SlideShow(new HSLFSlideShow(file));
+        slideshow = new HSLFSlideShow(new FileInputStream(new File(file)));
         slides = makeSlides();
     }
 
@@ -71,10 +74,10 @@ public class PPTPresentation implements Presentation {
      * @return all the slides.
      */
     private PresentationSlide[] makeSlides() {
-        Slide[] lSlides = slideshow.getSlides();
-        PresentationSlide[] ret = new PresentationSlide[lSlides.length];
-        for (int i = 0; i < lSlides.length; i++) {
-            ret[i] = new PresentationSlide(lSlides[i], i + 1);
+        List<HSLFSlide> lSlides = slideshow.getSlides();
+        PresentationSlide[] ret = new PresentationSlide[lSlides.size()];
+        for (int i = 0; i < lSlides.size(); i++) {
+            ret[i] = new PresentationSlide(lSlides.get(i), i + 1);
         }
         return ret;
     }
