@@ -21,6 +21,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 import org.apache.poi.xslf.usermodel.XMLSlideShow;
 import org.apache.poi.xslf.usermodel.XSLFSlide;
 
@@ -72,11 +73,11 @@ public class PPTXPresentation implements Presentation {
      * @return all the slides.
      */
     private PresentationSlide[] makeSlides() {
-        XSLFSlide[] lSlides = slideshow.getSlides();
+        List<XSLFSlide> lSlides = slideshow.getSlides();
         ArrayList<PresentationSlide> ret = new ArrayList<>();
-        for (int i = 0; i < lSlides.length; i++) {
-            if (lSlides[i] != null) {
-                ret.add(new PresentationSlide(lSlides[i], i + 1));
+        for (int i = 0; i < lSlides.size(); i++) {
+            if (lSlides.get(i) != null) {
+                ret.add(new PresentationSlide(lSlides.get(i), i + 1));
             }
         }
         return ret.toArray(new PresentationSlide[ret.size()]);
