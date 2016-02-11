@@ -23,6 +23,7 @@ import javafx.scene.control.Menu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.stage.Stage;
 import org.quelea.services.importexport.EasySlidesImportDialog;
 import org.quelea.services.importexport.EasyWorshipImportDialog;
 import org.quelea.services.importexport.EpicWorshipImportDialog;
@@ -44,6 +45,7 @@ import org.quelea.services.importexport.SundayPlusImportDialog;
 import org.quelea.services.importexport.SurvivorImportDialog;
 import org.quelea.services.importexport.ZWTurboDBChecker;
 import org.quelea.services.importexport.ZionWorxImportDialog;
+import org.quelea.services.importexport.PlanningCenterOnlineImportDialog;
 import org.quelea.services.languages.LabelGrabber;
 import org.quelea.services.utils.Utils;
 
@@ -72,6 +74,7 @@ public class ImportMenu extends Menu {
     private final ImportDialog songBeamerImportDialog;
     private final ImportDialog epicWorshipImportDialog;
     private final ImportDialog sofImportDialog;
+    private final PlanningCenterOnlineImportDialog planningCenterOnlineImportDialog;
     private final MenuItem qspItem;
     private final MenuItem osItem;
     private final MenuItem spItem;
@@ -89,6 +92,7 @@ public class ImportMenu extends Menu {
     private final MenuItem songproItem;
     private final MenuItem songSelectItem;
     private final MenuItem epicWorshipItem;
+    private final MenuItem pcoItem;
     private final Menu kingswayItem;
 
     /**
@@ -115,6 +119,7 @@ public class ImportMenu extends Menu {
         songBeamerImportDialog = new SongBeamerImportDialog();
         epicWorshipImportDialog = new EpicWorshipImportDialog();
         sofImportDialog = new SoFImportDialog();
+        planningCenterOnlineImportDialog = new PlanningCenterOnlineImportDialog();
 
         qspItem = new MenuItem(LabelGrabber.INSTANCE.getLabel("qsp.button"), new ImageView(new Image("file:icons/logo16.png", 16, 16, false, true)));
         qspItem.setOnAction((ActionEvent t) -> {
@@ -127,6 +132,13 @@ public class ImportMenu extends Menu {
             openSongImportDialog.show();
         });
         getItems().add(osItem);
+        
+        // planning center online
+        pcoItem = new MenuItem(LabelGrabber.INSTANCE.getLabel("pco.button"), new ImageView(new Image("file:icons/planningcenteronline.png", 16, 16, false, true)));
+        pcoItem.setOnAction((ActionEvent t) -> {
+            planningCenterOnlineImportDialog.start();
+        });
+        getItems().add(pcoItem);        
 
         olpItem = new MenuItem(LabelGrabber.INSTANCE.getLabel("olp.button"), new ImageView(new Image("file:icons/openlp.png", 16, 16, false, true)));
         olpItem.setOnAction((ActionEvent t) -> {
