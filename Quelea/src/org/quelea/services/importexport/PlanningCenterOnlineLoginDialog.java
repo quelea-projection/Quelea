@@ -54,10 +54,12 @@ public class PlanningCenterOnlineLoginDialog extends Stage {
     private TextField userField;
     private TextField passwordField;
     private boolean isLoggedIn = false;
-    private PlanningCenterOnlineImportDialog importDialog;
+    private final PlanningCenterOnlineImportDialog importDialog;
+    private final PlanningCenterOnlineParser parser;
 
-    public PlanningCenterOnlineLoginDialog(PlanningCenterOnlineImportDialog importDlg) {
+    public PlanningCenterOnlineLoginDialog(PlanningCenterOnlineImportDialog importDlg, PlanningCenterOnlineParser parse) {
         importDialog = importDlg;
+        parser = parse;
         
         initModality(Modality.APPLICATION_MODAL);
         setResizable(false);
@@ -124,7 +126,7 @@ public class PlanningCenterOnlineLoginDialog extends Stage {
     }    
     
     private boolean login() {
-        return PlanningCenterOnlineParser.login(userField.getText(), passwordField.getText());
+        return parser.login(userField.getText(), passwordField.getText());
     }
     
     public void start() {

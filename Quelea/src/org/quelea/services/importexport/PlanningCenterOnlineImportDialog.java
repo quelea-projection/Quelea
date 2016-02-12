@@ -17,9 +17,9 @@
  */
 package org.quelea.services.importexport;
 
-import javafx.event.ActionEvent;
 import javafx.stage.Stage;
-import org.quelea.services.importexport.PlanningCenterOnlineLoginDialog;
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
 
 /**
  *
@@ -29,10 +29,13 @@ import org.quelea.services.importexport.PlanningCenterOnlineLoginDialog;
 
 public class PlanningCenterOnlineImportDialog extends Stage{
     
+    
+    private final PlanningCenterOnlineParser parser;
     private final PlanningCenterOnlineLoginDialog loginDialog;
     
     public PlanningCenterOnlineImportDialog() {
-        loginDialog = new PlanningCenterOnlineLoginDialog(this);
+        parser = new PlanningCenterOnlineParser();
+        loginDialog = new PlanningCenterOnlineLoginDialog(this, parser);
     }
     
     public void start() {
@@ -41,6 +44,28 @@ public class PlanningCenterOnlineImportDialog extends Stage{
     
     protected void onLogin() {
         // update ui to retreive plans and populate the list
+        updatePlans();
         show();
+    }
+    
+    protected void updatePlans() {
+        JSONObject jsonMap = parser.organisation();
+        JSONArray serviceTypes = (JSONArray)jsonMap.get("service_types");
+        for (Object serviceTypeObj : serviceTypes) {
+            JSONObject serviceType = (JSONObject)serviceTypeObj;
+            Long serviceTypeId = (Long)serviceType.get("id");
+            JSONObject serviceTypePlans = parser.serviceTypePlans(serviceTypeId);
+            String serviceTypeName = (String)serviceType.get("name");
+            JSONArray serviceTypePlansArray = (JSONArray)serviceTypePlans.get("array");
+            
+            System.out.println("Service type: " + serviceTypeName);
+            for (Object planObj : serviceTypePlansArray) {
+                JSONObject plan = (JSONObject)planObj;
+                String date = (String)plan.get("dates");
+                Long id = (Long)plan.get("id");
+                
+                System.out.println("\tPlan: date:" + date + " id:" + id);
+            }
+        }
     }
 }
