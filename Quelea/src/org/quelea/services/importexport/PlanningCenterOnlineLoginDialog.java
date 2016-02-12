@@ -17,29 +17,15 @@
  */
 package org.quelea.services.importexport;
 
-import javafx.beans.property.ObjectProperty;
-import javafx.beans.property.ObjectPropertyBase;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
-import javafx.geometry.Insets;
-import javafx.geometry.Pos;
+import javafx.fxml.FXMLLoader;
+import javafx.fxml.FXML;
+import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.control.ButtonBase;
-import javafx.scene.control.Label;
+import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
-import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.GridPane;
-import javafx.scene.layout.Priority;
-import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
-import javafx.stage.WindowEvent;
-import javax.swing.event.EventListenerList;
 import org.quelea.services.languages.LabelGrabber;
 
 /**
@@ -49,86 +35,49 @@ import org.quelea.services.languages.LabelGrabber;
 
 
 public class PlanningCenterOnlineLoginDialog extends Stage {
-    
-    private Button okButton;
-    private TextField userField;
-    private TextField passwordField;
+
     private boolean isLoggedIn = false;
     private final PlanningCenterOnlineImportDialog importDialog;
     private final PlanningCenterOnlineParser parser;
+        
+    @FXML private TextField emailField;
+    @FXML private PasswordField passwordField;
 
+    public PlanningCenterOnlineLoginDialog() {
+        importDialog = null;
+        parser = null;
+    }
+    
     public PlanningCenterOnlineLoginDialog(PlanningCenterOnlineImportDialog importDlg, PlanningCenterOnlineParser parse) {
         importDialog = importDlg;
         parser = parse;
         
         initModality(Modality.APPLICATION_MODAL);
-        setResizable(false);
         setTitle(LabelGrabber.INSTANCE.getLabel("pco.login.import.heading"));
 
-        setupUI();
+        try {
+            FXMLLoader loader = new FXMLLoader();
+            loader.setController(this);
+            Parent root = loader.load(getClass().getResourceAsStream("PlanningCenterOnlineLoginDialog.fxml"));
+            setScene(new Scene(root));
         
-        setOnCloseRequest(new EventHandler<WindowEvent>() {
-          public void handle(WindowEvent we) {
-              System.out.println("Stage is closing");
-          }
-      });  
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }  
+    
+    @FXML private void onLoginAction(ActionEvent event) {
+        if (parser.login(emailField.getText(), passwordField.getText())) {    
+            isLoggedIn = true;
+            hide();
+            importDialog.onLogin();
+        }
     }
     
-    public void setupUI() {
-        BorderPane mainPane = new BorderPane();
-        final VBox centrePanel = new VBox();
-
-        GridPane topPanel = new GridPane();
-
-        userField = new TextField();
-        GridPane.setHgrow(userField, Priority.ALWAYS);
-        Label titleLabel = new Label(LabelGrabber.INSTANCE.getLabel("email.label"));
-        GridPane.setConstraints(titleLabel, 1, 1);
-        topPanel.getChildren().add(titleLabel);
-        titleLabel.setLabelFor(userField);
-        GridPane.setConstraints(userField, 2, 1);
-        topPanel.getChildren().add(userField);
-
-        passwordField = new TextField();
-        GridPane.setHgrow(passwordField, Priority.ALWAYS);
-        Label authorLabel = new Label(LabelGrabber.INSTANCE.getLabel("password.label"));
-        GridPane.setConstraints(authorLabel, 1, 2);
-        topPanel.getChildren().add(authorLabel);
-        authorLabel.setLabelFor(passwordField);
-        GridPane.setConstraints(passwordField, 2, 2);
-        topPanel.getChildren().add(passwordField);
-
-        centrePanel.getChildren().add(topPanel);
-
-        okButton = new Button(LabelGrabber.INSTANCE.getLabel("ok.button"), new ImageView(new Image("file:icons/tick.png")));
-        okButton.setDefaultButton(true);
-        okButton.setOnAction((ActionEvent t) -> {
-            if (login()) {
-                isLoggedIn = true;
-                hide();
-                importDialog.onLogin();
-            }
-        });
-        BorderPane.setMargin(okButton, new Insets(5));
-        BorderPane.setAlignment(okButton, Pos.CENTER);
-        mainPane.setBottom(okButton);
-
-        ChangeListener<Integer> cl = (ObservableValue<? extends Integer> observable, Integer oldValue, Integer newValue) -> {
-            if (newValue < 0 || newValue == null) {
-                okButton.setDisable(true);
-            } else {
-                okButton.setDisable(false);
-            }
-        };
-        
-        mainPane.setCenter(centrePanel);
-        setScene(new Scene(mainPane));
-    }    
-    
-    private boolean login() {
-        return parser.login(userField.getText(), passwordField.getText());
+    @FXML private void onCancelAction(ActionEvent event) {
+        hide();
     }
-    
+        
     public void start() {
         if (!isLoggedIn)
         {
