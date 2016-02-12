@@ -17,9 +17,18 @@
  */
 package org.quelea.services.importexport;
 
+import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
+import javafx.scene.control.TreeItem;
+import javafx.scene.control.TreeTableView;
+import javafx.scene.control.TreeView;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
+import org.quelea.services.languages.LabelGrabber;
 
 /**
  *
@@ -29,13 +38,28 @@ import org.json.simple.JSONObject;
 
 public class PlanningCenterOnlineImportDialog extends Stage{
     
-    
     private final PlanningCenterOnlineParser parser;
     private final PlanningCenterOnlineLoginDialog loginDialog;
+    
+    @FXML private TreeView serviceView;
+    @FXML private TreeTableView planView;
     
     public PlanningCenterOnlineImportDialog() {
         parser = new PlanningCenterOnlineParser();
         loginDialog = new PlanningCenterOnlineLoginDialog(this, parser);
+        
+        initModality(Modality.APPLICATION_MODAL);
+        setTitle(LabelGrabber.INSTANCE.getLabel("pco.login.import.heading"));
+
+        try {
+            FXMLLoader loader = new FXMLLoader();
+            loader.setController(this);
+            Parent root = loader.load(getClass().getResourceAsStream("PlanningCenterOnlineImportDialog.fxml"));
+            setScene(new Scene(root));
+        
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
     
     public void start() {
@@ -49,6 +73,11 @@ public class PlanningCenterOnlineImportDialog extends Stage{
     }
     
     protected void updatePlans() {
+        
+        serviceView.setShowRoot(false);
+        TreeItem<String> rootItem = new TreeItem<String>();
+        serviceView.setRoot(rootItem);
+        
         JSONObject jsonMap = parser.organisation();
         JSONArray serviceTypes = (JSONArray)jsonMap.get("service_types");
         for (Object serviceTypeObj : serviceTypes) {
@@ -59,12 +88,19 @@ public class PlanningCenterOnlineImportDialog extends Stage{
             JSONArray serviceTypePlansArray = (JSONArray)serviceTypePlans.get("array");
             
             System.out.println("Service type: " + serviceTypeName);
+            
+            TreeItem<String> serviceItem = new TreeItem<String>(serviceTypeName);
+            rootItem.getChildren().add(serviceItem);
+            
             for (Object planObj : serviceTypePlansArray) {
                 JSONObject plan = (JSONObject)planObj;
                 String date = (String)plan.get("dates");
                 Long id = (Long)plan.get("id");
                 
                 System.out.println("\tPlan: date:" + date + " id:" + id);
+                
+                TreeItem<String> planItem = new TreeItem<String>(date);
+                serviceItem.getChildren().add(planItem);                
             }
         }
     }
