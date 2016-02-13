@@ -26,6 +26,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.fxml.FXML;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.Button;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
@@ -44,19 +45,16 @@ public class PlanningCenterOnlineLoginDialog extends Stage {
 
     private boolean isLoggedIn = false;
     private final PlanningCenterOnlineImportDialog importDialog;
-    private final PlanningCenterOnlineParser parser;
         
     @FXML private TextField emailField;
     @FXML private PasswordField passwordField;
 
     public PlanningCenterOnlineLoginDialog() {
         importDialog = null;
-        parser = null;
     }
     
-    public PlanningCenterOnlineLoginDialog(PlanningCenterOnlineImportDialog importDlg, PlanningCenterOnlineParser parse) {
+    public PlanningCenterOnlineLoginDialog(PlanningCenterOnlineImportDialog importDlg) {
         importDialog = importDlg;
-        parser = parse;
         
         initModality(Modality.APPLICATION_MODAL);
         setTitle(LabelGrabber.INSTANCE.getLabel("pco.login.import.heading"));
@@ -78,7 +76,7 @@ public class PlanningCenterOnlineLoginDialog extends Stage {
     }  
     
     @FXML private void onLoginAction(ActionEvent event) {
-        if (parser.login(emailField.getText(), passwordField.getText())) {    
+        if (importDialog.getParser().login(emailField.getText(), passwordField.getText())) {    
             isLoggedIn = true;
             hide();
             importDialog.onLogin();
