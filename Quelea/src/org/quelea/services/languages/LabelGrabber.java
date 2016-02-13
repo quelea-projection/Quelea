@@ -19,8 +19,12 @@ package org.quelea.services.languages;
 import java.io.File;
 import java.io.IOException;
 import java.io.StringReader;
+import java.util.Collections;
+import java.util.Enumeration;
 import java.util.Locale;
 import java.util.Properties;
+import java.util.ResourceBundle;
+import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.quelea.services.utils.LoggerUtils;
@@ -33,7 +37,7 @@ import org.quelea.services.utils.Utils;
  * <p/>
  * @author Michael
  */
-public class LabelGrabber {
+public class LabelGrabber extends ResourceBundle {
 
     private static final Logger LOGGER = LoggerUtils.getLogger();
     public static final LabelGrabber INSTANCE = new LabelGrabber();
@@ -113,5 +117,22 @@ public class LabelGrabber {
             }
         }
         return ret;
+    }
+    
+    public Enumeration<String> getKeys() {
+        return Collections.enumeration(keySet());
+    }
+    
+    public Object handleGetObject(String key) {
+        return getLabel(key);
+    }
+    
+    // Overrides handleKeySet() so that the getKeys() implementation
+    // can rely on the keySet() value.
+    protected Set<String> handleKeySet() {
+        Set<String> result = labels.stringPropertyNames();
+        Set<String> resultEng = engLabels.stringPropertyNames();
+        result.addAll(resultEng);
+        return result;
     }
 }
