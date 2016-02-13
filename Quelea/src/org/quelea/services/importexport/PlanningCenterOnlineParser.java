@@ -216,4 +216,8 @@ public class PlanningCenterOnlineParser {
         return getJson("https://planningcenteronline.com/service_types/" + serviceTypeId + "/plans.json");
     }
     
+    // Plan data
+    public JSONObject plan(Long planId) {
+        return getJson("https://planningcenteronline.com/plans/" + planId + ".json?include_slides=true");
+    }
 }

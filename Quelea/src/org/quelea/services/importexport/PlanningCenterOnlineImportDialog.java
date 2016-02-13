@@ -17,6 +17,11 @@
  */
 package org.quelea.services.importexport;
 
+import java.util.HashMap;
+import java.util.Map;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -25,6 +30,7 @@ import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeTableView;
 import javafx.scene.control.TreeView;
 import javafx.scene.image.Image;
+import javafx.scene.layout.StackPane;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import org.json.simple.JSONArray;
@@ -39,15 +45,17 @@ import org.quelea.services.languages.LabelGrabber;
 
 public class PlanningCenterOnlineImportDialog extends Stage{
     
+    
+    private final Map<TreeItem<String>, PlanningCenterOnlinePlanDialog> treeViewItemPlanDialogMap = new HashMap<TreeItem<String>, PlanningCenterOnlinePlanDialog>();
     private final PlanningCenterOnlineParser parser;
     private final PlanningCenterOnlineLoginDialog loginDialog;
     
     @FXML private TreeView serviceView;
-    @FXML private TreeTableView planView;
+    @FXML private StackPane planStack;
     
     public PlanningCenterOnlineImportDialog() {
         parser = new PlanningCenterOnlineParser();
-        loginDialog = new PlanningCenterOnlineLoginDialog(this, parser);
+        loginDialog = new PlanningCenterOnlineLoginDialog(this);
         
         initModality(Modality.APPLICATION_MODAL);
         setTitle(LabelGrabber.INSTANCE.getLabel("pco.import.heading"));
@@ -58,6 +66,18 @@ public class PlanningCenterOnlineImportDialog extends Stage{
             loader.setResources(LabelGrabber.INSTANCE);
             Parent root = loader.load(getClass().getResourceAsStream("PlanningCenterOnlineImportDialog.fxml"));
             setScene(new Scene(root));
+            
+            serviceView.getSelectionModel().selectedItemProperty()
+            .addListener(new ChangeListener<TreeItem<String>>() {
+
+                @Override
+                public void changed(
+                        ObservableValue<? extends TreeItem<String>> observable,
+                        TreeItem<String> old_val, TreeItem<String> new_val) {
+                    onServiceViewSelectedItem(observable, old_val, new_val);
+                }
+
+            });
         
         } catch (Exception e) {
             e.printStackTrace();
@@ -67,14 +87,32 @@ public class PlanningCenterOnlineImportDialog extends Stage{
         getIcons().add(new Image("file:icons/planningcenteronline.png"));        
     }
     
+    public PlanningCenterOnlineParser getParser() {
+        return parser;
+    }
+    
     public void start() {
         loginDialog.start();
+    }
+    
+    protected void onServiceViewSelectedItem(ObservableValue<? extends TreeItem<String>> observable,
+                        TreeItem<String> old_val, TreeItem<String> new_val) {
+        TreeItem<String> selectedItem = new_val;        
+        planStack.getChildren().clear();
+        PlanningCenterOnlinePlanDialog planDialog = treeViewItemPlanDialogMap.get(selectedItem);
+        if (planDialog != null) {
+            planStack.getChildren().add(planDialog);
+        }
     }
     
     protected void onLogin() {
         // update ui to retreive plans and populate the list
         updatePlans();
         show();
+    }
+    
+    @FXML private void onAcceptAction(ActionEvent event) {
+        hide();
     }
     
     protected void updatePlans() {
@@ -95,17 +133,25 @@ public class PlanningCenterOnlineImportDialog extends Stage{
             System.out.println("Service type: " + serviceTypeName);
             
             TreeItem<String> serviceItem = new TreeItem<String>(serviceTypeName);
-            rootItem.getChildren().add(serviceItem);
-            
             for (Object planObj : serviceTypePlansArray) {
                 JSONObject plan = (JSONObject)planObj;
                 String date = (String)plan.get("dates");
-                Long id = (Long)plan.get("id");
+                if (date.isEmpty() || date.equals("No dates")) {
+                    continue;
+                }
                 
+                Long id = (Long)plan.get("id");
                 System.out.println("\tPlan: date:" + date + " id:" + id);
                 
                 TreeItem<String> planItem = new TreeItem<String>(date);
-                serviceItem.getChildren().add(planItem);                
+                serviceItem.getChildren().add(planItem);
+                PlanningCenterOnlinePlanDialog planDialog = new PlanningCenterOnlinePlanDialog(this, id);
+                treeViewItemPlanDialogMap.put(planItem, planDialog);
+            }
+            
+            if (!serviceItem.getChildren().isEmpty()) {
+                serviceItem.setExpanded(true);
+                rootItem.getChildren().add(serviceItem);
             }
         }
     }
