@@ -18,12 +18,12 @@
  */
 package org.quelea.windows.main.menus;
 
+import java.util.Comparator;
 import javafx.event.ActionEvent;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.stage.Stage;
 import org.quelea.services.importexport.EasySlidesImportDialog;
 import org.quelea.services.importexport.EasyWorshipImportDialog;
 import org.quelea.services.importexport.EpicWorshipImportDialog;
@@ -260,5 +260,14 @@ public class ImportMenu extends Menu {
             plainTextImportDialog.show();
         });
         getItems().add(plainTextItem);
+        
+        //menu sorting - alphabetic
+        this.getItems().sort(new Comparator<MenuItem>() {
+          @Override
+          public int compare(MenuItem o1, MenuItem o2) {
+            return o1.getText().compareTo(o2.getText());
+          }
+        });
+        
     }
 }
