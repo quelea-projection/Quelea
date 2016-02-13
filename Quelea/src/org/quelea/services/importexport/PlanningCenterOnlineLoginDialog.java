@@ -17,6 +17,10 @@
  */
 package org.quelea.services.importexport;
 
+import java.io.File;
+import java.net.URLClassLoader;
+import java.util.Locale;
+import java.util.ResourceBundle;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.FXML;
@@ -24,6 +28,8 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
+import javafx.scene.image.Image;
+import static javafx.scene.input.DataFormat.URL;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import org.quelea.services.languages.LabelGrabber;
@@ -55,8 +61,9 @@ public class PlanningCenterOnlineLoginDialog extends Stage {
         initModality(Modality.APPLICATION_MODAL);
         setTitle(LabelGrabber.INSTANCE.getLabel("pco.login.import.heading"));
 
-        try {
+        try {        
             FXMLLoader loader = new FXMLLoader();
+            loader.setResources(LabelGrabber.INSTANCE);
             loader.setController(this);
             Parent root = loader.load(getClass().getResourceAsStream("PlanningCenterOnlineLoginDialog.fxml"));
             setScene(new Scene(root));
@@ -64,6 +71,10 @@ public class PlanningCenterOnlineLoginDialog extends Stage {
         } catch (Exception e) {
             e.printStackTrace();
         }
+        
+        centerOnScreen();
+        setResizable(false);
+        getIcons().add(new Image("file:icons/planningcenteronline.png"));
     }  
     
     @FXML private void onLoginAction(ActionEvent event) {
