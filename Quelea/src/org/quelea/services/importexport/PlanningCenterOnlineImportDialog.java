@@ -24,6 +24,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeTableView;
 import javafx.scene.control.TreeView;
+import javafx.scene.image.Image;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import org.json.simple.JSONArray;
@@ -49,17 +50,21 @@ public class PlanningCenterOnlineImportDialog extends Stage{
         loginDialog = new PlanningCenterOnlineLoginDialog(this, parser);
         
         initModality(Modality.APPLICATION_MODAL);
-        setTitle(LabelGrabber.INSTANCE.getLabel("pco.login.import.heading"));
+        setTitle(LabelGrabber.INSTANCE.getLabel("pco.import.heading"));
 
         try {
             FXMLLoader loader = new FXMLLoader();
             loader.setController(this);
+            loader.setResources(LabelGrabber.INSTANCE);
             Parent root = loader.load(getClass().getResourceAsStream("PlanningCenterOnlineImportDialog.fxml"));
             setScene(new Scene(root));
         
         } catch (Exception e) {
             e.printStackTrace();
         }
+        
+        centerOnScreen();
+        getIcons().add(new Image("file:icons/planningcenteronline.png"));        
     }
     
     public void start() {
