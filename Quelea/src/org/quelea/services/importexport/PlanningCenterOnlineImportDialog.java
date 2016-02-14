@@ -44,8 +44,7 @@ import org.quelea.services.languages.LabelGrabber;
 
 
 public class PlanningCenterOnlineImportDialog extends Stage{
-    
-    
+
     private final Map<TreeItem<String>, PlanningCenterOnlinePlanDialog> treeViewItemPlanDialogMap = new HashMap<TreeItem<String>, PlanningCenterOnlinePlanDialog>();
     private final PlanningCenterOnlineParser parser;
     private final PlanningCenterOnlineLoginDialog loginDialog;

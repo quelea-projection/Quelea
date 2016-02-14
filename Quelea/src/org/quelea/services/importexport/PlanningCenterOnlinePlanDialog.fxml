@@ -2,28 +2,20 @@
 
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.TreeView?>
-<?import javafx.scene.image.Image?>
-<?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" xmlns="http://javafx.com/javafx/8.0.65" xmlns:fx="http://javafx.com/fxml/1">
+<AnchorPane prefHeight="257.0" prefWidth="572.0" xmlns="http://javafx.com/javafx/8.0.65" xmlns:fx="http://javafx.com/fxml/1">
    <children>
       <HBox layoutX="113.0" layoutY="272.0" prefHeight="100.0" prefWidth="370.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
          <children>
             <TreeView fx:id="planView" prefHeight="281.0" prefWidth="326.0" HBox.hgrow="ALWAYS" />
-            <VBox prefHeight="387.0" prefWidth="91.0">
+            <VBox prefHeight="257.0" prefWidth="164.0">
                <children>
-                  <Button fx:id="importButton" alignment="TOP_RIGHT" mnemonicParsing="false" onAction="#onImportAction" text="Import">
-                     <graphic>
-                        <ImageView fitHeight="16.0" fitWidth="16.0" pickOnBounds="true" preserveRatio="true">
-                           <image>
-                              <Image url="@file:icons/tick.png" />
-                           </image>
-                        </ImageView>
-                     </graphic>
-                  </Button>
+                  <Button mnemonicParsing="false" onAction="#onImportAllAction" prefHeight="25.0" prefWidth="76.0" text="Import All" />
+                  <Button mnemonicParsing="false" onAction="#onImportSelectedAction" prefHeight="25.0" prefWidth="139.0" text="Import Selected" />
+                  <Button mnemonicParsing="false" onAction="#onRefreshAction" text="Refresh" />
                </children>
             </VBox>
          </children>
