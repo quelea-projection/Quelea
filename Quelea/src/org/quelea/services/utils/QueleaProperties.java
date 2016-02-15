@@ -1489,6 +1489,24 @@ public final class QueleaProperties extends Properties {
         write();
     }
     
+    /**
+     * Get the path to the desired directory for downloading.
+     * <p/>
+     * @return the path to the desired directory for recordings.
+     */
+    public String getDownloadPath() {
+        return getProperty("download.path", "");
+    }
+
+    /**
+     * Set the path to the desired directory for downloading.
+     * <p/>
+     * @param path the path to the desired directory for downloading.
+     */
+    public void setDownloadPath(String path) {
+        setProperty("download.path", path);
+        write();
+    }
     
     /**
      * Determine if the recordings should be converted to MP3 files.

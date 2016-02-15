@@ -52,6 +52,7 @@ public class OptionsDialog extends Stage {
     private final OptionsStageViewPanel stageViewPanel;
     private final ServerSettingsPanel serverSettingsPanel;
     private final OptionsRecordingPanel recordingPanel;
+    private final OptionsImportExportPanel importExportPanel;
 
     /**
      * Create a new options dialog.
@@ -130,6 +131,14 @@ public class OptionsDialog extends Stage {
         optionsRecordingTab.setContent(recordingPanel);
         tabbedPane.getTabs().add(optionsRecordingTab);
         
+        importExportPanel = new OptionsImportExportPanel();
+        Tab optionsImportExportTab = new Tab();
+        optionsImportExportTab.setClosable(false);
+        optionsImportExportTab.setText(LabelGrabber.INSTANCE.getLabel("importexport.options.heading"));
+        optionsImportExportTab.setGraphic(new ImageView(new Image("file:icons/text.png")));
+        optionsImportExportTab.setContent(importExportPanel);
+        tabbedPane.getTabs().add(optionsImportExportTab);
+        
         mainPane.setCenter(tabbedPane);
         okButton = new Button(LabelGrabber.INSTANCE.getLabel("ok.button"), new ImageView(new Image("file:icons/tick.png")));
         BorderPane.setMargin(okButton, new Insets(5));
@@ -198,4 +207,7 @@ public class OptionsDialog extends Stage {
         return recordingPanel;
     }
     
+    public OptionsImportExportPanel getImportExportSettingsPanel() {
+        return importExportPanel;
+    }
 }

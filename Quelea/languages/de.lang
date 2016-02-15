@@ -587,4 +587,5 @@ recording.warning.title=Zuerst Dateipfad festlegen
 convert.mp3=Audioaufnahmen automatisch als MP3 Datei konvertieren (erfordert VLC)
 overflow.song.label=Vom aktuellen Lied direkt ins nächste Lied springen
 recordings.path=Aufnahmepfad
+download.path=Download-Pfad
 max.lines.per.slide=Zeilen pro Seite (ungefähr)
