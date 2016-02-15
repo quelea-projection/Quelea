@@ -17,6 +17,7 @@
  */
 package org.quelea.services.importexport;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -29,11 +30,21 @@ import javafx.scene.control.SelectionMode;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
 import javafx.scene.layout.Pane;
+import org.apache.commons.io.FilenameUtils;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
+import org.quelea.data.YoutubeInfo;
+import org.quelea.data.displayable.Displayable;
+import org.quelea.data.displayable.ImageDisplayable;
+import org.quelea.data.displayable.PresentationDisplayable;
+import org.quelea.data.displayable.SongDisplayable;
 import org.quelea.data.displayable.TextSection;
 import org.quelea.data.displayable.TextSlides;
+import org.quelea.data.displayable.VideoDisplayable;
 import org.quelea.services.languages.LabelGrabber;
+import org.quelea.services.utils.FileFilters;
+import org.quelea.services.utils.QueleaProperties;
+import org.quelea.services.utils.Utils;
 import org.quelea.windows.main.QueleaApp;
 
 /**
@@ -49,6 +60,13 @@ public class PlanningCenterOnlinePlanDialog extends Pane {
         PlanSong,
         PlanCustomSlides,
         PlanUnknown,
+    }
+    
+    enum MediaType {
+        MediaPresentation,
+        MediaVideo,
+        MediaImage,
+        MediaUnknown,
     }
     
     private final Map<TreeItem<String>, JSONObject> treeViewItemMap = new HashMap<TreeItem<String>, JSONObject>();
@@ -194,9 +212,102 @@ public class PlanningCenterOnlinePlanDialog extends Pane {
     }
     
     protected void import_PlanMedia(JSONObject item, TreeItem<String> treeItem) {
+        JSONArray itemMediaJSON = (JSONArray)item.get("plan_item_medias");
+        if (itemMediaJSON.size() <= 0) {
+            return;
+        }
+         
+        Long mediaId = (long)((JSONObject)itemMediaJSON.get(0)).get("media_id");
+        JSONObject mediaJSON = importDialog.getParser().media(mediaId);
+        
+        JSONArray attachmentsJSON = (JSONArray)mediaJSON.get("attachments");
+        JSONObject firstAttachmentJSON = ((JSONObject)attachmentsJSON.get(0));
+        
+        // public URL's are youtube
+        if (firstAttachmentJSON.containsKey("public_url")) {
+            String url = (String)firstAttachmentJSON.get("public_url");
+            YoutubeInfo youtubeInfo = new YoutubeInfo(url);
+            VideoDisplayable displayable = new VideoDisplayable(youtubeInfo.getLocation(), youtubeInfo);
+            QueleaApp.get().getMainWindow().getMainPanel().getSchedulePanel().getScheduleList().add(displayable);
+        }
+        else { // a file to download then put into Quela
+            String url = (String)firstAttachmentJSON.get("url");
+            String fileName = (String)firstAttachmentJSON.get("filename");
+  
+            fileName = importDialog.getParser().downloadFile(url, fileName);
+            
+            Displayable displayable = null;
+            MediaType mediaType = classifyMedia(fileName);
+            switch (mediaType)
+            {
+                case MediaPresentation:
+                    try {
+                        displayable = new PresentationDisplayable(new File(fileName));                    
+                    }
+                    catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                    break;
+                    
+                case MediaVideo:
+                    displayable = new VideoDisplayable(fileName);
+                    break;
+                    
+                case MediaImage:
+                    displayable = new ImageDisplayable(new File(fileName));
+                    break;
+                    
+                default:
+                case MediaUnknown:
+                    break;
+            }
+            
+            if (displayable != null) {
+                //QueleaProperties.get().setLastDirectory(file.getParentFile());
+                QueleaApp.get().getMainWindow().getMainPanel().getSchedulePanel().getScheduleList().add(displayable);
+            }
+        }
     }
     
+    protected MediaType classifyMedia(String fileName) {                
+        String extension = "*." + FilenameUtils.getExtension(fileName);
+        if (FileFilters.POWERPOINT.getExtensions().contains(extension)) {
+            return MediaType.MediaPresentation;
+        }
+        
+        if (FileFilters.VIDEOS.getExtensions().contains(extension)) {
+            return MediaType.MediaVideo;
+        }
+        
+        if (FileFilters.IMAGES.getExtensions().contains(extension)) {
+            return MediaType.MediaImage;
+        }
+        
+        return MediaType.MediaUnknown;
+    }
+            
+    
     protected void import_PlanSong(JSONObject item, TreeItem<String> treeItem) {
+        JSONObject songJSON = (JSONObject)item.get("song");
+        String title = (String)songJSON.get("title");
+        String author = (String)songJSON.get("author");
+ 
+        Long arrangementId = (Long)((JSONObject)item.get("arrangement")).get("id");
+        JSONObject arrangement = importDialog.getParser().arrangement(arrangementId);
+        String lyrics = (String)arrangement.get("chord_chart");
+        String sequence = (String)arrangement.get("sequence_to_s");
+
+        Long ccli = (Long)songJSON.get("ccli_id");
+        String copyright = (String)songJSON.get("copyright");
+        
+        SongDisplayable song = new SongDisplayable(title, author);
+        song.setLyrics(lyrics);
+        song.setCopyright(copyright);
+        song.setCcli(String.valueOf(ccli));     
+        
+        Utils.updateSongInBackground(song, true, false);
+        QueleaApp.get().getMainWindow().getMainPanel().getSchedulePanel().getScheduleList().add(song);
+        QueleaApp.get().getMainWindow().getMainPanel().getPreviewPanel().refresh();
     }
     
     protected void import_CustomSlides(JSONObject item, TreeItem<String> treeItem) {

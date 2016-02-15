@@ -16,19 +16,18 @@
  */
 package org.quelea.services.importexport;
 
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
 import java.net.CookieHandler;
 import java.net.CookieManager;
 import java.net.CookiePolicy;
-import java.net.CookieStore;
 import java.net.HttpCookie;
-import java.net.HttpURLConnection;
-import java.net.URL;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import org.apache.commons.io.FilenameUtils;
 import org.apache.http.Header;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -46,6 +45,7 @@ import org.apache.http.protocol.HttpContext;
 import org.apache.http.util.EntityUtils;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
+import org.quelea.services.utils.QueleaProperties;
 
 /**
  *
@@ -119,30 +119,11 @@ public class PlanningCenterOnlineParser {
             
             HttpEntity entity = response.getEntity();
             String text = EntityUtils.toString(entity);
-            /*
-            if (response1.getStatusLine().getStatusCode() == 302) {
-                Header[] locationList = response1.getHeaders("Location");
-                if (locationList.length > 0)
-                {
-                    String newUrl = locationList[0].getValue();
-                    
-                    try {
-                        HttpGet httget = new HttpGet(newUrl);
-                        response1 = httpClient.execute(httget, httpContext);
-                        
-                        entity = response1.getEntity();
-                        text = EntityUtils.toString(entity);
-                    } catch (Exception e) {
-                        int nothing = 0;
-                        ++nothing;
-                    }
-                }
-            }
-            */
-            
+            entity.consumeContent();
             return text;
         } 
         catch (Exception e) {
+            e.printStackTrace();
         }
         
         return null;
@@ -155,36 +136,13 @@ public class PlanningCenterOnlineParser {
 
             HttpEntity entity = response.getEntity();
             String text = EntityUtils.toString(entity);
+            entity.consumeContent();
             return text;
         } catch (Exception e) {
-            return null;
+            e.printStackTrace();
         }
         
-        /*
-        // debug cookies
-        CookieManager cm = ((CookieManager)CookieHandler.getDefault());
-        CookieStore cookies = cm.getCookieStore();
-        
-        
-        try {
-            StringBuilder content = new StringBuilder();
-            URL url = new URL(urlString);
-            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-            
-            int response = conn.getResponseCode();
-            if (response == HttpURLConnection.HTTP_MOVED_PERM || response == HttpURLConnection.HTTP_MOVED_TEMP) {
-                url = new URL(conn.getHeaderField("Location"));
-            }
-            try (BufferedReader in = new BufferedReader(new InputStreamReader(url.openConnection().getInputStream(), "UTF-8"))) {
-                String str;
-                while ((str = in.readLine()) != null) {
-                    content.append(str).append("\n");
-                }
-            }
-            return content.toString();
-        } catch (Exception ex) {
-            return null;
-        }*/
+        return null;
     }
     
     private JSONObject getJson(String urlString) {
@@ -202,8 +160,10 @@ public class PlanningCenterOnlineParser {
             return json;
         }
         catch(Exception e) {
-            return null;
+            e.printStackTrace();
         }
+        
+        return null;
     }
     
     // Contains organisation data - service types
@@ -219,5 +179,61 @@ public class PlanningCenterOnlineParser {
     // Plan data
     public JSONObject plan(Long planId) {
         return getJson("https://planningcenteronline.com/plans/" + planId + ".json?include_slides=true");
+    }
+    
+    // Arrangement data
+    public JSONObject arrangement(Long arrangementId) {
+        return getJson("https://planningcenteronline.com/arrangements/" + arrangementId + ".json");
+    }
+    
+    // Media data
+    public JSONObject media(Long mediaId) {
+        return getJson("https://services.planningcenteronline.com/medias/" + mediaId + ".json");
+    }
+    
+    // Download file from url to fileName, putting the file into the download directory
+    // if the file exists it wont be downloaded
+    // will give the file a temporary name until the download is fully complete at
+    // which point it will rename to indicate the file is downloaded properly
+    public String downloadFile(String url, String fileName) {
+        try {
+            QueleaProperties props = QueleaProperties.get();
+            String fullFileName = FilenameUtils.concat(props.getDownloadPath(), fileName);
+            File file = new File(fullFileName);
+            if (file.exists()) {
+                return file.getAbsolutePath();
+            }
+            
+            String partFullFileName = fullFileName + ".part";
+            File partFile = new File(partFullFileName);
+        
+            HttpGet httpget = new HttpGet(url);
+            HttpResponse response = httpClient.execute(httpget, httpContext);
+            HttpEntity entity = response.getEntity();
+            if (entity != null) {
+                
+                int statusCode = response.getStatusLine().getStatusCode();
+                long len = entity.getContentLength();
+
+                BufferedInputStream bis = new BufferedInputStream(entity.getContent());
+                BufferedOutputStream bos = new BufferedOutputStream(new FileOutputStream(partFile));
+                int inByte;
+                while((inByte = bis.read()) != -1) {
+                    bos.write(inByte);
+                }
+                bis.close();
+                bos.close();
+                
+                entity.consumeContent();
+            }
+            
+            boolean success = partFile.renameTo(file);
+            return file.getAbsolutePath();
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+        }
+        
+        return "";
     }
 }
