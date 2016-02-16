@@ -26,10 +26,13 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
+import javafx.scene.control.ProgressBar;
 import javafx.scene.control.SelectionMode;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
-import javafx.scene.layout.Pane;
+import javafx.scene.layout.BorderPane;
+import javafx.concurrent.Task;
+import javafx.scene.layout.VBox;
 import org.apache.commons.io.FilenameUtils;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -43,7 +46,6 @@ import org.quelea.data.displayable.TextSlides;
 import org.quelea.data.displayable.VideoDisplayable;
 import org.quelea.services.languages.LabelGrabber;
 import org.quelea.services.utils.FileFilters;
-import org.quelea.services.utils.QueleaProperties;
 import org.quelea.services.utils.Utils;
 import org.quelea.windows.main.QueleaApp;
 
@@ -53,7 +55,7 @@ import org.quelea.windows.main.QueleaApp;
  */
 
 
-public class PlanningCenterOnlinePlanDialog extends Pane {
+public class PlanningCenterOnlinePlanDialog extends BorderPane {
     
     enum PlanType {
         PlanMedia,
@@ -76,6 +78,10 @@ public class PlanningCenterOnlinePlanDialog extends Pane {
     private JSONObject  planJSON;
     
     @FXML private TreeView planView;
+    @FXML private ProgressBar totalProgress;
+    @FXML private ProgressBar itemProgress;
+    @FXML private VBox buttonBox;
+    @FXML private VBox progressBox;
     
     public PlanningCenterOnlinePlanDialog() {   
         importDialog = null;
@@ -91,9 +97,10 @@ public class PlanningCenterOnlinePlanDialog extends Pane {
             loader.setController(this);
             loader.setResources(LabelGrabber.INSTANCE);
             Parent root = loader.load(getClass().getResourceAsStream("PlanningCenterOnlinePlanDialog.fxml"));
-            getChildren().addAll(root);
+            setCenter(root);
             planView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
-  
+            enablePlanProgressBars(false);
+            
             updateView();
         
         } catch (Exception e) {
@@ -116,7 +123,7 @@ public class PlanningCenterOnlinePlanDialog extends Pane {
         return PlanType.PlanUnknown;
     }
             
-    
+    @SuppressWarnings("unchecked")
     protected void updateView() {
         planJSON = importDialog.getParser().plan(planId);  
         
@@ -172,13 +179,15 @@ public class PlanningCenterOnlinePlanDialog extends Pane {
         treeViewItemMap.put(treeItem, item);
     }
     
+    @SuppressWarnings("unchecked")
     @FXML private void onImportAllAction(ActionEvent event) {
-        List<TreeItem<String> > allTreeItems = planView.getRoot().getChildren();
+        List<TreeItem<String> > allTreeItems = (List<TreeItem<String> >)planView.getRoot().getChildren();
         importSelected(allTreeItems);
     }
     
+    @SuppressWarnings("unchecked")
     @FXML private void onImportSelectedAction(ActionEvent event) {
-        List<TreeItem<String> > selectedTreeItems = planView.getSelectionModel().getSelectedItems();
+        List<TreeItem<String> > selectedTreeItems = (List<TreeItem<String> >)planView.getSelectionModel().getSelectedItems();
         importSelected(selectedTreeItems);
     }
     
@@ -186,29 +195,71 @@ public class PlanningCenterOnlinePlanDialog extends Pane {
         updateView();
     }
     
-    private void importSelected(List<TreeItem<String> > selectedTreeItems) {
-        for (TreeItem<String> treeItem : selectedTreeItems) {
-            JSONObject item = treeViewItemMap.get(treeItem);
-            
-            PlanType planType = getItemPlanType(item);
-            switch (planType)
-            {
-                case PlanMedia:
-                    import_PlanMedia(item, treeItem);
-                    break;
-                    
-                case PlanSong:
-                    import_PlanSong(item, treeItem);
-                    break;
-                    
-                case PlanCustomSlides:
-                    import_CustomSlides(item, treeItem);
-                    break;
-                    
-                default:
-                    break;
-            }
+    // Disable/enable appropriate widgets while a import task is in operation
+    private void enablePlanProgressBars(boolean enable) {
+        buttonBox.setDisable(enable);
+        progressBox.setVisible(enable);
+        planView.setDisable(enable);
+        
+        // stop user being able to try to change to another plan and do bad!
+        importDialog.enablePlanProgressBars(enable);        
+    }
+    
+    class ImportTask extends Task<Void> {
+
+        List<TreeItem<String> > selectedTreeItems;
+
+        ImportTask(List<TreeItem<String> > selectedTreeItems) {
+            this.selectedTreeItems = selectedTreeItems;
         }
+
+        @Override 
+        protected Void call() throws Exception {
+            enablePlanProgressBars(true);
+            totalProgress.setProgress(0);
+
+            int index = 0;
+            for (TreeItem<String> treeItem : selectedTreeItems) {
+                JSONObject item = treeViewItemMap.get(treeItem);
+
+                itemProgress.setProgress(0);
+
+                PlanType planType = getItemPlanType(item);
+                switch (planType)
+                {
+                    case PlanMedia:
+                        import_PlanMedia(item, treeItem);
+                        break;
+
+                    case PlanSong:
+                        import_PlanSong(item, treeItem);
+                        break;
+
+                    case PlanCustomSlides:
+                        import_CustomSlides(item, treeItem);
+                        break;
+
+                    default:
+                        break;
+                }
+
+                ++index;                
+                totalProgress.setProgress((double)index / (double)selectedTreeItems.size());
+            }
+
+            enablePlanProgressBars(false);  
+            return null;
+        }
+        
+        @Override 
+        protected void succeeded() {
+            super.succeeded();
+        }
+    };
+    
+    private void importSelected(List<TreeItem<String> > selectedTreeItems) {
+        ImportTask task = new ImportTask(selectedTreeItems);
+        new Thread(task).start();
     }
     
     protected void import_PlanMedia(JSONObject item, TreeItem<String> treeItem) {
@@ -234,7 +285,7 @@ public class PlanningCenterOnlinePlanDialog extends Pane {
             String url = (String)firstAttachmentJSON.get("url");
             String fileName = (String)firstAttachmentJSON.get("filename");
   
-            fileName = importDialog.getParser().downloadFile(url, fileName);
+            fileName = importDialog.getParser().downloadFile(url, fileName, itemProgress);
             
             Displayable displayable = null;
             MediaType mediaType = classifyMedia(fileName);

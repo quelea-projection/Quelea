@@ -26,11 +26,11 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.Button;
 import javafx.scene.control.TreeItem;
-import javafx.scene.control.TreeTableView;
 import javafx.scene.control.TreeView;
 import javafx.scene.image.Image;
-import javafx.scene.layout.StackPane;
+import javafx.scene.layout.Pane;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import org.json.simple.JSONArray;
@@ -50,7 +50,8 @@ public class PlanningCenterOnlineImportDialog extends Stage{
     private final PlanningCenterOnlineLoginDialog loginDialog;
     
     @FXML private TreeView serviceView;
-    @FXML private StackPane planStack;
+    @FXML private Pane planPane;
+    @FXML private Button okButton;
     
     public PlanningCenterOnlineImportDialog() {
         parser = new PlanningCenterOnlineParser();
@@ -65,7 +66,7 @@ public class PlanningCenterOnlineImportDialog extends Stage{
             loader.setResources(LabelGrabber.INSTANCE);
             Parent root = loader.load(getClass().getResourceAsStream("PlanningCenterOnlineImportDialog.fxml"));
             setScene(new Scene(root));
-            
+                
             serviceView.getSelectionModel().selectedItemProperty()
             .addListener(new ChangeListener<TreeItem<String>>() {
 
@@ -77,7 +78,7 @@ public class PlanningCenterOnlineImportDialog extends Stage{
                 }
 
             });
-        
+            
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -94,13 +95,20 @@ public class PlanningCenterOnlineImportDialog extends Stage{
         loginDialog.start();
     }
     
+    // Disable/enable appropriate widgets while a import task is in operation
+    public void enablePlanProgressBars(boolean enable) {        
+        // stop user being able to try to change to another plan and do bad!
+        serviceView.setDisable(enable);     
+        okButton.setDisable(enable);
+    }
+    
     protected void onServiceViewSelectedItem(ObservableValue<? extends TreeItem<String>> observable,
                         TreeItem<String> old_val, TreeItem<String> new_val) {
         TreeItem<String> selectedItem = new_val;        
-        planStack.getChildren().clear();
+        planPane.getChildren().clear();
         PlanningCenterOnlinePlanDialog planDialog = treeViewItemPlanDialogMap.get(selectedItem);
         if (planDialog != null) {
-            planStack.getChildren().add(planDialog);
+            planPane.getChildren().add(planDialog);
         }
     }
     
