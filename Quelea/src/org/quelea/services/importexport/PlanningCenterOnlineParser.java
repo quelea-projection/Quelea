@@ -16,10 +16,11 @@
  */
 package org.quelea.services.importexport;
 
-import java.io.BufferedInputStream;
+import static com.neovisionaries.i18n.LanguageAlpha3Code.bis;
 import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.InputStream;
 import java.net.CookieHandler;
 import java.net.CookieManager;
 import java.net.CookiePolicy;
@@ -27,6 +28,7 @@ import java.net.HttpCookie;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import javafx.scene.control.ProgressBar;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.http.Header;
 import org.apache.http.HttpEntity;
@@ -195,7 +197,7 @@ public class PlanningCenterOnlineParser {
     // if the file exists it wont be downloaded
     // will give the file a temporary name until the download is fully complete at
     // which point it will rename to indicate the file is downloaded properly
-    public String downloadFile(String url, String fileName) {
+    public String downloadFile(String url, String fileName, ProgressBar progressBar) {
         try {
             QueleaProperties props = QueleaProperties.get();
             String fullFileName = FilenameUtils.concat(props.getDownloadPath(), fileName);
@@ -213,15 +215,22 @@ public class PlanningCenterOnlineParser {
             if (entity != null) {
                 
                 int statusCode = response.getStatusLine().getStatusCode();
-                long len = entity.getContentLength();
+                long contentLength = entity.getContentLength();
 
-                BufferedInputStream bis = new BufferedInputStream(entity.getContent());
+                InputStream is = entity.getContent();
                 BufferedOutputStream bos = new BufferedOutputStream(new FileOutputStream(partFile));
-                int inByte;
-                while((inByte = bis.read()) != -1) {
-                    bos.write(inByte);
+                
+                Long totalBytesRead = 0L;
+                
+                byte buffer[] = new byte[1024*1024];
+                int count;
+                while ((count = is.read(buffer)) != -1) {
+                    bos.write(buffer, 0, count);
+                    
+                    totalBytesRead += count;
+                    progressBar.setProgress((double)totalBytesRead / (double)contentLength);
                 }
-                bis.close();
+                
                 bos.close();
                 
                 entity.consumeContent();
