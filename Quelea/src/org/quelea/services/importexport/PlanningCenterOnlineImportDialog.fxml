@@ -30,7 +30,7 @@
       <HBox AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0">
          <children>
             <Pane HBox.hgrow="ALWAYS" />
-            <Button fx:id="okButton" alignment="TOP_RIGHT" mnemonicParsing="false" onAction="#onAcceptAction" text="Ok">
+            <Button fx:id="okButton" alignment="TOP_RIGHT" mnemonicParsing="false" onAction="#onAcceptAction" text="%ok.button">
                <graphic>
                   <ImageView fitHeight="16.0" fitWidth="16.0" pickOnBounds="true" preserveRatio="true">
                      <image>

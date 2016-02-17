@@ -17,9 +17,9 @@
                <children>
                   <VBox fx:id="buttonBox" alignment="TOP_CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefWidth="150.0" spacing="5.0">
                      <children>
-                        <Button mnemonicParsing="false" onAction="#onImportAllAction" prefHeight="25.0" prefWidth="76.0" text="Import All" />
-                        <Button mnemonicParsing="false" onAction="#onImportSelectedAction" prefHeight="25.0" prefWidth="139.0" text="Import Selected" />
-                        <Button mnemonicParsing="false" onAction="#onRefreshAction" text="Refresh" />
+                        <Button mnemonicParsing="false" onAction="#onImportAllAction" prefWidth="150.0" text="%import.all.button" />
+                        <Button mnemonicParsing="false" onAction="#onImportSelectedAction" prefWidth="150.0" text="%import.selection.button" />
+                        <Button mnemonicParsing="false" onAction="#onRefreshAction" prefWidth="150.0" text="%refresh.button" />
                      </children>
                      <padding>
                         <Insets top="10.0" />
@@ -31,8 +31,8 @@
          <bottom>
             <VBox fx:id="progressBox" BorderPane.alignment="CENTER">
                <children>
-                  <ProgressBar fx:id="totalProgress" prefWidth="200.0" progress="0.0" />
-                  <ProgressBar fx:id="itemProgress" prefWidth="200.0" progress="0.0" />
+                  <ProgressBar fx:id="totalProgress" prefWidth="150.0" progress="0.0" />
+                  <ProgressBar fx:id="itemProgress" prefWidth="150.0" progress="0.0" />
                </children>
             </VBox>
          </bottom>
