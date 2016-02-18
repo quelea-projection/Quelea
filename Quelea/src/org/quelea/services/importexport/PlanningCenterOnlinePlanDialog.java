@@ -26,6 +26,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -352,6 +354,91 @@ public class PlanningCenterOnlinePlanDialog extends BorderPane {
         return MediaType.MediaUnknown;
     }
             
+    // clean up things like (C2) transform it to (Chorus 2)
+    // so Quelea can handle it
+    protected String cleanLyrics(String lyrics) {
+        Pattern titleExp = Pattern.compile("\\(?(Verse|Chorus|Tag|Outro|Bridge|Misc)\\)?\\s?(\\d?)|\\(?(\\S)(\\d+)\\)?");
+        
+        // allows us to expand abbreviations to full name (ensure Key value is all uppercase)
+        Map<String, String> titleDict = new HashMap<String, String>();
+        titleDict.put("C", "Chorus");
+        titleDict.put("V", "Verse");
+        titleDict.put("T", "Tag");
+        titleDict.put("O", "Outro");
+        titleDict.put("B", "Bridge");
+        titleDict.put("M", "Misc");
+        
+        class TitleTextBlock
+        {
+            public String title;
+            public String text;
+            
+            public TitleTextBlock(String title, String text) {
+                this.title = title;
+                this.text = text;
+            }
+        }
+        List<TitleTextBlock> titleTextBlockList = new ArrayList<TitleTextBlock>();
+        
+        int lastMatchEnd = -1;
+        String lastTitle = "";
+        Matcher match = titleExp.matcher(lyrics);        
+        while (match.find()) {            
+            try {
+                int groupCount = match.groupCount();
+                String title = (match.group(1) != null) ? match.group(1) : "";
+                title = (match.group(3) != null) ? match.group(3) : title;
+                if (!title.isEmpty()) {
+                    // expand abbreviations
+                    if (titleDict.containsKey(title.toUpperCase())) {
+                        title = titleDict.get(title);
+                    }
+                }
+
+                String number =  (match.group(2) != null) ? match.group(2) : "";
+                number = (match.group(4) != null) ? match.group(4) : number;
+
+                title = title + " " + number;
+                title = title.trim();
+
+                if (lastMatchEnd != -1) {
+                    String text = lyrics.substring(lastMatchEnd, match.start()).trim();
+                    titleTextBlockList.add(new TitleTextBlock(lastTitle, text));
+                }
+                
+                lastTitle = title;
+            }
+            catch (Exception e) {
+                e.printStackTrace();
+            }
+            
+            lastMatchEnd = match.end();
+        }
+        
+        if (lastMatchEnd != -1) {
+            String text = lyrics.substring(lastMatchEnd).trim();
+            titleTextBlockList.add(new TitleTextBlock(lastTitle, text));
+        }
+        
+        // now the song has been divided into titled text blocks, time to bring it together nicely
+        // for Quelea
+        String cleanedLyrics = "";
+        for (int i = 0; i < titleTextBlockList.size(); ++i) {
+            TitleTextBlock titleTextBlock = titleTextBlockList.get(i);
+            if (titleTextBlock.text.isEmpty()) {
+                continue;
+            }
+            
+            // newlines separating previous from current
+            if (i != 0) {
+                cleanedLyrics += System.lineSeparator() + System.lineSeparator();
+            }
+            
+            cleanedLyrics += "(" + titleTextBlock.title + ")" + System.lineSeparator() + titleTextBlock.text;
+         }
+
+        return cleanedLyrics;
+    }
     
     protected void import_PlanSong(JSONObject item, TreeItem<String> treeItem) {
         JSONObject songJSON = (JSONObject)item.get("song");
@@ -360,7 +447,7 @@ public class PlanningCenterOnlinePlanDialog extends BorderPane {
  
         Long arrangementId = (Long)((JSONObject)item.get("arrangement")).get("id");
         JSONObject arrangement = importDialog.getParser().arrangement(arrangementId);
-        String lyrics = (String)arrangement.get("chord_chart");
+        String lyrics = cleanLyrics((String)arrangement.get("chord_chart"));
         String sequence = (String)arrangement.get("sequence_to_s");
 
         Long ccli = (Long)songJSON.get("ccli_id");
