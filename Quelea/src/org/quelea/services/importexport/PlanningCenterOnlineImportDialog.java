@@ -55,6 +55,7 @@ public class PlanningCenterOnlineImportDialog extends Stage{
     @FXML private Pane planPane;
     @FXML private Button okButton;
     
+    @SuppressWarnings("unchecked")
     public PlanningCenterOnlineImportDialog() {
         parser = new PlanningCenterOnlineParser();
         loginDialog = new PlanningCenterOnlineLoginDialog(this);
@@ -130,6 +131,7 @@ public class PlanningCenterOnlineImportDialog extends Stage{
         UpdatePlanTask() {
         }
 
+        @SuppressWarnings("unchecked")
         @Override 
         protected Void call() throws Exception {
             
@@ -171,6 +173,7 @@ public class PlanningCenterOnlineImportDialog extends Stage{
         }
     };
         
+    @SuppressWarnings("unchecked")
     protected void updatePlans() {
         
         serviceView.setShowRoot(false);
