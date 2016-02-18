@@ -18,9 +18,11 @@
 package org.quelea.services.importexport;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -92,6 +94,7 @@ public class PlanningCenterOnlineImportDialog extends Stage{
     }
     
     public void start() {
+        show();
         loginDialog.start();
     }
     
@@ -115,51 +118,66 @@ public class PlanningCenterOnlineImportDialog extends Stage{
     protected void onLogin() {
         // update ui to retreive plans and populate the list
         updatePlans();
-        show();
     }
     
-    @FXML private void onAcceptAction(ActionEvent event) {
+    @FXML public void onAcceptAction(ActionEvent event) {
         hide();
     }
     
+    
+    class UpdatePlanTask extends Task<Void> {
+
+        UpdatePlanTask() {
+        }
+
+        @Override 
+        protected Void call() throws Exception {
+            
+            JSONObject jsonMap = parser.organisation();
+            JSONArray serviceTypes = (JSONArray)jsonMap.get("service_types");
+            for (Object serviceTypeObj : serviceTypes) {
+                JSONObject serviceType = (JSONObject)serviceTypeObj;
+                Long serviceTypeId = (Long)serviceType.get("id");
+                JSONObject serviceTypePlans = parser.serviceTypePlans(serviceTypeId);
+                String serviceTypeName = (String)serviceType.get("name");
+                JSONArray serviceTypePlansArray = (JSONArray)serviceTypePlans.get("array");
+
+                System.out.println("Service type: " + serviceTypeName);
+
+                TreeItem<String> serviceItem = new TreeItem<String>(serviceTypeName);
+                for (Object planObj : serviceTypePlansArray) {
+                    JSONObject plan = (JSONObject)planObj;
+                    String date = (String)plan.get("dates");
+                    if (date.isEmpty() || date.equals("No dates")) {
+                        continue;
+                    }
+
+                    Long id = (Long)plan.get("id");
+                    System.out.println("\tPlan: date:" + date + " id:" + id);
+
+                    TreeItem<String> planItem = new TreeItem<String>(date);
+                    serviceItem.getChildren().add(planItem);
+                    PlanningCenterOnlinePlanDialog planDialog = new PlanningCenterOnlinePlanDialog(PlanningCenterOnlineImportDialog.this, id);
+                    treeViewItemPlanDialogMap.put(planItem, planDialog);
+                }
+
+                if (!serviceItem.getChildren().isEmpty()) {
+                    serviceItem.setExpanded(true);
+                    serviceView.getRoot().getChildren().add(serviceItem);
+                }
+            }
+          
+            return null;
+        }
+    };
+        
     protected void updatePlans() {
         
         serviceView.setShowRoot(false);
         TreeItem<String> rootItem = new TreeItem<String>();
         serviceView.setRoot(rootItem);
         
-        JSONObject jsonMap = parser.organisation();
-        JSONArray serviceTypes = (JSONArray)jsonMap.get("service_types");
-        for (Object serviceTypeObj : serviceTypes) {
-            JSONObject serviceType = (JSONObject)serviceTypeObj;
-            Long serviceTypeId = (Long)serviceType.get("id");
-            JSONObject serviceTypePlans = parser.serviceTypePlans(serviceTypeId);
-            String serviceTypeName = (String)serviceType.get("name");
-            JSONArray serviceTypePlansArray = (JSONArray)serviceTypePlans.get("array");
-            
-            System.out.println("Service type: " + serviceTypeName);
-            
-            TreeItem<String> serviceItem = new TreeItem<String>(serviceTypeName);
-            for (Object planObj : serviceTypePlansArray) {
-                JSONObject plan = (JSONObject)planObj;
-                String date = (String)plan.get("dates");
-                if (date.isEmpty() || date.equals("No dates")) {
-                    continue;
-                }
-                
-                Long id = (Long)plan.get("id");
-                System.out.println("\tPlan: date:" + date + " id:" + id);
-                
-                TreeItem<String> planItem = new TreeItem<String>(date);
-                serviceItem.getChildren().add(planItem);
-                PlanningCenterOnlinePlanDialog planDialog = new PlanningCenterOnlinePlanDialog(this, id);
-                treeViewItemPlanDialogMap.put(planItem, planDialog);
-            }
-            
-            if (!serviceItem.getChildren().isEmpty()) {
-                serviceItem.setExpanded(true);
-                rootItem.getChildren().add(serviceItem);
-            }
-        }
+        UpdatePlanTask task = new UpdatePlanTask();
+        new Thread(task).start();
     }
 }

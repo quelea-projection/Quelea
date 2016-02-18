@@ -33,6 +33,7 @@ import javafx.scene.image.Image;
 import static javafx.scene.input.DataFormat.URL;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import org.javafx.dialog.Dialog;
 import org.quelea.services.languages.LabelGrabber;
 
 /**
@@ -81,10 +82,14 @@ public class PlanningCenterOnlineLoginDialog extends Stage {
             hide();
             importDialog.onLogin();
         }
+        else {
+            Dialog.showWarning(LabelGrabber.INSTANCE.getLabel("pco.loginerror.title"), LabelGrabber.INSTANCE.getLabel("pco.loginerror.warning"));
+        }
     }
     
     @FXML private void onCancelAction(ActionEvent event) {
         hide();
+        importDialog.onAcceptAction(event); // close parent dialog also
     }
         
     public void start() {
