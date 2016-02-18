@@ -197,13 +197,23 @@ public class PlanningCenterOnlineParser {
     // if the file exists it wont be downloaded
     // will give the file a temporary name until the download is fully complete at
     // which point it will rename to indicate the file is downloaded properly
-    public String downloadFile(String url, String fileName, ProgressBar progressBar) {
+    public String downloadFile(String url, String fileName, ProgressBar progressBar, Date lastUpdated) {
         try {
             QueleaProperties props = QueleaProperties.get();
             String fullFileName = FilenameUtils.concat(props.getDownloadPath(), fileName);
             File file = new File(fullFileName);
             if (file.exists()) {
-                return file.getAbsolutePath();
+                long lastModified = file.lastModified();
+                if (lastUpdated == null || lastUpdated.getTime() <= lastModified) {
+                    return file.getAbsolutePath();
+                }
+                
+                // file is going to get overridden as it failed the timestamp check
+                if (!file.delete()) {
+                    // deletion of exiting file failed! just use the existing file then
+                    System.out.println("Couldn't delete existing file: " + fullFileName);
+                    return file.getAbsolutePath();
+                }
             }
             
             String partFullFileName = fullFileName + ".part";
@@ -237,6 +247,9 @@ public class PlanningCenterOnlineParser {
             }
             
             boolean success = partFile.renameTo(file);
+            if (success && lastUpdated != null) {
+                file.setLastModified(lastUpdated.getTime()); // set file timestamp to same as on PCO
+            }
             return file.getAbsolutePath();
         }
         catch (Exception e) {
