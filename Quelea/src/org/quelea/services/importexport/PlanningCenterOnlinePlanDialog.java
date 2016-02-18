@@ -18,9 +18,13 @@
 package org.quelea.services.importexport;
 
 import java.io.File;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -284,8 +288,19 @@ public class PlanningCenterOnlinePlanDialog extends BorderPane {
         else { // a file to download then put into Quela
             String url = (String)firstAttachmentJSON.get("url");
             String fileName = (String)firstAttachmentJSON.get("filename");
+            
+            // work out when file was last updated in PCO
+            Date date = null;
+            try {
+                String stringDate = (String)firstAttachmentJSON.get("updated_at");
+                DateFormat format = new SimpleDateFormat("yyyy/MM/dd hh:mm:ss X", Locale.ENGLISH);
+                date = format.parse(stringDate);
+            }
+            catch (Exception e) {
+                e.printStackTrace();
+            }
   
-            fileName = importDialog.getParser().downloadFile(url, fileName, itemProgress);
+            fileName = importDialog.getParser().downloadFile(url, fileName, itemProgress, date);
             
             Displayable displayable = null;
             MediaType mediaType = classifyMedia(fileName);
