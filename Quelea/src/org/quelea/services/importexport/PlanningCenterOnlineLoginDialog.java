@@ -93,14 +93,12 @@ public class PlanningCenterOnlineLoginDialog extends Stage {
     }
         
     public void start() {
-        if (!isLoggedIn)
-        {
-            show();
-        }
-        else
-        {
-            // already logged in from previously
-            importDialog.onLogin();
+        show();
+        
+        // attempt to login again
+        if (isLoggedIn) {
+            // login again 
+            onLoginAction(null);
         }
     }
 }
