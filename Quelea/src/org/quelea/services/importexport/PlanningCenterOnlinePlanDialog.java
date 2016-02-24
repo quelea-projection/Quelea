@@ -48,7 +48,6 @@ import org.quelea.data.displayable.ImageDisplayable;
 import org.quelea.data.displayable.PresentationDisplayable;
 import org.quelea.data.displayable.SongDisplayable;
 import org.quelea.data.displayable.TextSection;
-import org.quelea.data.displayable.TextSlides;
 import org.quelea.data.displayable.VideoDisplayable;
 import org.quelea.services.languages.LabelGrabber;
 import org.quelea.services.utils.FileFilters;
@@ -64,17 +63,17 @@ import org.quelea.windows.main.QueleaApp;
 public class PlanningCenterOnlinePlanDialog extends BorderPane {
     
     enum PlanType {
-        PlanMedia,
-        PlanSong,
-        PlanCustomSlides,
-        PlanUnknown,
+        MEDIA,
+        SONG,
+        CUSTOM_SLIDES,
+        UNKNOWN,
     }
     
     enum MediaType {
-        MediaPresentation,
-        MediaVideo,
-        MediaImage,
-        MediaUnknown,
+        PRESENTATION,
+        VIDEO,
+        IMAGE,
+        UNKNOWN,
     }
     
     private final Map<TreeItem<String>, JSONObject> treeViewItemMap = new HashMap<TreeItem<String>, JSONObject>();
@@ -117,16 +116,16 @@ public class PlanningCenterOnlinePlanDialog extends BorderPane {
     protected PlanType getItemPlanType(JSONObject item) {
         String itemType = (String)item.get("type");
         if (itemType.equals("PlanMedia")) {
-            return PlanType.PlanMedia;
+            return PlanType.MEDIA;
         }
         else if (itemType.equals("PlanSong")) {
-            return PlanType.PlanSong;
+            return PlanType.SONG;
         }
         else if (itemType.equals("PlanItem") && (boolean)item.get("using_custom_slides") == true) {
-            return PlanType.PlanCustomSlides;
+            return PlanType.CUSTOM_SLIDES;
         }
         
-        return PlanType.PlanUnknown;
+        return PlanType.UNKNOWN;
     }
             
     @SuppressWarnings("unchecked")
@@ -146,15 +145,15 @@ public class PlanningCenterOnlinePlanDialog extends BorderPane {
             PlanType planType = getItemPlanType(item);
             switch (planType)
             {
-                case PlanMedia:
+                case MEDIA:
                     addToView_PlanMedia(item, rootTreeItem);
                     break;
                     
-                case PlanSong:
+                case SONG:
                     addToView_PlanSong(item, rootTreeItem);
                     break;
                     
-                case PlanCustomSlides:
+                case CUSTOM_SLIDES:
                     addToView_CustomSlides(item, rootTreeItem);
                     break;
                     
@@ -233,15 +232,15 @@ public class PlanningCenterOnlinePlanDialog extends BorderPane {
                 PlanType planType = getItemPlanType(item);
                 switch (planType)
                 {
-                    case PlanMedia:
+                    case MEDIA:
                         import_PlanMedia(item, treeItem);
                         break;
 
-                    case PlanSong:
+                    case SONG:
                         import_PlanSong(item, treeItem);
                         break;
 
-                    case PlanCustomSlides:
+                    case CUSTOM_SLIDES:
                         import_CustomSlides(item, treeItem);
                         break;
 
@@ -308,7 +307,7 @@ public class PlanningCenterOnlinePlanDialog extends BorderPane {
             MediaType mediaType = classifyMedia(fileName);
             switch (mediaType)
             {
-                case MediaPresentation:
+                case PRESENTATION:
                     try {
                         displayable = new PresentationDisplayable(new File(fileName));                    
                     }
@@ -317,16 +316,16 @@ public class PlanningCenterOnlinePlanDialog extends BorderPane {
                     }
                     break;
                     
-                case MediaVideo:
+                case VIDEO:
                     displayable = new VideoDisplayable(fileName);
                     break;
                     
-                case MediaImage:
+                case IMAGE:
                     displayable = new ImageDisplayable(new File(fileName));
                     break;
                     
                 default:
-                case MediaUnknown:
+                case UNKNOWN:
                     break;
             }
             
@@ -340,18 +339,18 @@ public class PlanningCenterOnlinePlanDialog extends BorderPane {
     protected MediaType classifyMedia(String fileName) {                
         String extension = "*." + FilenameUtils.getExtension(fileName);
         if (FileFilters.POWERPOINT.getExtensions().contains(extension)) {
-            return MediaType.MediaPresentation;
+            return MediaType.PRESENTATION;
         }
         
         if (FileFilters.VIDEOS.getExtensions().contains(extension)) {
-            return MediaType.MediaVideo;
+            return MediaType.VIDEO;
         }
         
         if (FileFilters.IMAGES.getExtensions().contains(extension)) {
-            return MediaType.MediaImage;
+            return MediaType.IMAGE;
         }
         
-        return MediaType.MediaUnknown;
+        return MediaType.UNKNOWN;
     }
             
     // clean up things like (C2) transform it to (Chorus 2)
@@ -467,16 +466,24 @@ public class PlanningCenterOnlinePlanDialog extends BorderPane {
         String title = (String)item.get("title");
         List<TextSection> textSections = new ArrayList<TextSection>();
         
+        List<String> slideTextArray = new ArrayList<String>();
         JSONArray customSlides = (JSONArray)item.get("custom_slides");
         for (Object slideObj : customSlides) {
             JSONObject slide = (JSONObject)slideObj;            
             String body = (String)slide.get("body");
-            String[] bodyLines = body.split("\\r?\\n");
-            TextSection text = new TextSection(""/*(String)slide.get("label")*/, bodyLines, null, false);
-            textSections.add(text);
+            
+            // might need something like this in future:
+            // depending on how often we use custom slides with an empty line which I think is rare
+            // enough to ignore for now
+            //String body = "(" + (String)slide.get("label") + ")" + System.lineSeparator() + (String)slide.get("body");
+            slideTextArray.add(body);
         }
+        
+        // double line separator so SongDisplayable knows where to break the slides apart
+        String joinedSlidesText = String.join(System.lineSeparator() + System.lineSeparator(), slideTextArray);
 
-        TextSlides slides = new TextSlides(title, textSections);
+        SongDisplayable slides = new SongDisplayable(title, "Unknown");
+        slides.setLyrics(joinedSlidesText);
         QueleaApp.get().getMainWindow().getMainPanel().getSchedulePanel().getScheduleList().add(slides);
     }
 }
