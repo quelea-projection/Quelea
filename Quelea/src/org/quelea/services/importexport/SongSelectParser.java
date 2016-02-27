@@ -25,6 +25,7 @@ import java.util.List;
 import java.util.Properties;
 import java.util.regex.Pattern;
 import org.quelea.data.displayable.SongDisplayable;
+import org.quelea.services.utils.Utils;
 import org.quelea.windows.main.StatusPanel;
 
 /**
@@ -43,6 +44,13 @@ public class SongSelectParser implements SongParser {
      */
     @Override
     public List<SongDisplayable> getSongs(File location, StatusPanel statusPanel) throws IOException {
+        String text = Utils.getTextFromFile(location.getAbsolutePath(), "");
+        String ccli = null;
+        for(String line : text.split("\n")) {
+            if(line.trim().startsWith("[S A")) {
+                ccli = line.trim().substring(4, line.length()-1);
+            }
+        }
         Properties p = new Properties();
         p.load(new FileReader(location));
         String lyricsRaw = p.getProperty("Words");
@@ -68,7 +76,7 @@ public class SongSelectParser implements SongParser {
         song.setLyrics(lyrics);
         song.setKey(p.getProperty("Keys"));
         song.setCopyright(p.getProperty("Copyright"));
-        song.setCcli(p.getProperty("Ccli"));
+        song.setCcli(ccli);
         ret.add(song);
         return ret;
     }
