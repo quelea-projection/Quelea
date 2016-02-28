@@ -254,10 +254,13 @@ public final class Utils {
      * @return the options split as an array.
      */
     public static String[] splitVLCOpts(String options) {
-        String[] parts = options.split("\\:");
+        String[] parts = options.split(" \\:");
         String[] ret = new String[parts.length];
         for (int i = 0; i < parts.length; i++) {
-            ret[i] = ":" + parts[i].trim();
+            ret[i] = parts[i].trim();
+            if(!ret[i].startsWith(":")) {
+                ret[i] = ":" + ret[i];
+            }
         }
         return ret;
     }
