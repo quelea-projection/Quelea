@@ -12,6 +12,6 @@ quelea (2016.1) stable; urgency=normal
   * Fix remote control play/pause functionality for timers
   * Fix Mac recording conversions
   * Add CCLI number to SongSelectParser
-
+  * Fix vlc arg option splitting for absolute paths on windows
 
  -- Michael Berry <michael@quelea.org>  Wednesday, 14 January 2016 00:00:00 +0000
