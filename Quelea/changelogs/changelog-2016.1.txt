@@ -13,5 +13,6 @@ quelea (2016.1) stable; urgency=normal
   * Fix Mac recording conversions
   * Add CCLI number to SongSelectParser
   * Fix vlc arg option splitting for absolute paths on windows
+  * Add presentation manager import
 
- -- Michael Berry <michael@quelea.org>  Wednesday, 14 January 2016 00:00:00 +0000
+ -- Michael Berry <michael@quelea.org>  Wednesday, 05 Mar 2016 00:00:00 +0000
