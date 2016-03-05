@@ -633,6 +633,10 @@ public final class Utils {
     public static String escapeXML(String s) {
         return StringEscapeUtils.escapeXml(s);
     }
+    
+    public static synchronized String getTextFromFile(String fileName, String errorText) {
+        return getTextFromFile(fileName, errorText, "UTF-8");
+    }
 
     /**
      * Get the textual content from a file as a string, returning the given
@@ -643,8 +647,8 @@ public final class Utils {
      * @return hopefully the text content of the file, or the errorText string
      * if we can't get the text content for some reason.
      */
-    public static synchronized String getTextFromFile(String fileName, String errorText) {
-        try (BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(fileName), "UTF-8"))) {
+    public static synchronized String getTextFromFile(String fileName, String errorText, String encoding) {
+        try (BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(fileName), encoding))) {
             StringBuilder content = new StringBuilder();
             String line;
             while ((line = reader.readLine()) != null) {
