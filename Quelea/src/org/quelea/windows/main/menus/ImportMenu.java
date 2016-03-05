@@ -34,6 +34,7 @@ import org.quelea.services.importexport.OpenLyricsImportDialog;
 import org.quelea.services.importexport.OpenSongImportDialog;
 import org.quelea.services.importexport.ParadoxJDBCChecker;
 import org.quelea.services.importexport.PlainTextSongsImportDialog;
+import org.quelea.services.importexport.PresentationManagerImportDialog;
 import org.quelea.services.importexport.QSPImportDialog;
 import org.quelea.services.importexport.SoFImportDialog;
 import org.quelea.services.importexport.SongBeamerImportDialog;
@@ -71,6 +72,7 @@ public class ImportMenu extends Menu {
     private final ImportDialog mediaShoutImportDialog;
     private final ImportDialog songBeamerImportDialog;
     private final ImportDialog epicWorshipImportDialog;
+    private final ImportDialog presentationManagerImportDialog;
     private final ImportDialog sofImportDialog;
     private final MenuItem qspItem;
     private final MenuItem osItem;
@@ -82,6 +84,7 @@ public class ImportMenu extends Menu {
     private final MenuItem sbItem;
     private final MenuItem sofItem;
     private final MenuItem sourceItem;
+    private final MenuItem pmItem;
     private final MenuItem mediaShoutItem;
     private final MenuItem plainTextItem;
     private final MenuItem easySlidesItem;
@@ -114,6 +117,7 @@ public class ImportMenu extends Menu {
         mediaShoutImportDialog = new MediaShoutImportDialog();
         songBeamerImportDialog = new SongBeamerImportDialog();
         epicWorshipImportDialog = new EpicWorshipImportDialog();
+        presentationManagerImportDialog = new PresentationManagerImportDialog();
         sofImportDialog = new SoFImportDialog();
 
         qspItem = new MenuItem(LabelGrabber.INSTANCE.getLabel("qsp.button"), new ImageView(new Image("file:icons/logo16.png", 16, 16, false, true)));
@@ -211,6 +215,12 @@ public class ImportMenu extends Menu {
             epicWorshipImportDialog.show();
         });
         getItems().add(epicWorshipItem);
+        
+        pmItem = new MenuItem(LabelGrabber.INSTANCE.getLabel("pm.button"), new ImageView(new Image("file:icons/pm.png", 16, 16, false, true)));
+        pmItem.setOnAction((ActionEvent t) -> {
+            presentationManagerImportDialog.show();
+        });
+        getItems().add(pmItem);
         
         sofItem = new MenuItem(LabelGrabber.INSTANCE.getLabel("sof.button"), new ImageView(new Image("file:icons/sof.png", 16, 16, false, true)));
         sofItem.setOnAction((ActionEvent t) -> {
