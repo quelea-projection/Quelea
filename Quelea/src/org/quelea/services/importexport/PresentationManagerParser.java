@@ -56,7 +56,7 @@ public class PresentationManagerParser implements SongParser {
         StringBuilder xmlText = new StringBuilder();
         boolean first = true;
         for (String line : lines) {
-            if(first) {
+            if (first) {
                 first = false;
                 continue;
             }
@@ -64,7 +64,14 @@ public class PresentationManagerParser implements SongParser {
                 xmlText.append(line.trim()).append("\n");
             }
         }
-        ret.add(getSongFromXML(xmlText.toString() + "</song>")); //Format seems to miss out the end tag...
+        String xmlStr = xmlText.toString();
+        if (!xmlStr.trim().endsWith("</song>")) {
+            xmlStr += "</song>";
+        }
+        SongDisplayable song = getSongFromXML(xmlStr);
+        if (song != null) {
+            ret.add(song); //Format seems to miss out the end tag...
+        }
         return ret;
     }
 
@@ -86,9 +93,9 @@ public class PresentationManagerParser implements SongParser {
                         if (!verseText.isEmpty()) {
                             String[] verseLines = verseText.split("\n");
                             StringBuilder verseBuilder = new StringBuilder();
-                            for(String verseLine : verseLines) {
+                            for (String verseLine : verseLines) {
                                 verseLine = verseLine.trim();
-                                if(verseLine.isEmpty()) {
+                                if (verseLine.isEmpty()) {
                                     verseLine = " "; //Alt + 0160, non breaking space
                                 }
                                 verseBuilder.append(verseLine).append("\n");
@@ -120,7 +127,7 @@ public class PresentationManagerParser implements SongParser {
     }
 
     public static void main(String[] args) throws IOException {
-        new PresentationManagerParser().getSongs(new File("C:\\users\\michael\\desktop\\gk   2.sng"), null);
+        new PresentationManagerParser().getSongs(new File("C:\\users\\michael\\desktop\\2.sng"), null);
     }
 
 }
