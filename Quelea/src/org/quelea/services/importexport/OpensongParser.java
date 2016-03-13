@@ -122,12 +122,59 @@ public class OpensongParser implements SongParser {
             return null;
         }
         SongDisplayable ret = new SongDisplayable(title, author);
-        ret.setLyrics(lyrics);
+        ret.setLyrics(processLyrics(lyrics));
         ret.setCopyright(copyright);
         ret.setKey(key);
         ret.setCcli(ccli);
         ret.setCapo(capo);
         return ret;
     }
-
+    
+    private String processLyrics(String lyrics) {
+        StringBuilder ret = new StringBuilder();
+        String[] arr = lyrics.split("\n");
+        for(String line : arr) {
+            if(line.startsWith("[") && line.endsWith("]") && line.length()>2) {
+                String sectionTitle = line.substring(1, line.length()-1);
+                if(sectionTitle.startsWith("V")) {
+                    if(sectionTitle.length()>1) {
+                        line = "Verse " + sectionTitle.substring(1);                        
+                    }
+                    else {
+                        line = "Verse";
+                    }
+                }
+                else if(sectionTitle.equals("C")) {
+                    if (sectionTitle.length() > 1) {
+                        line = "Chorus " + sectionTitle.substring(1);
+                    } else {
+                        line = "Chorus";
+                    }
+                }
+                else if(sectionTitle.equals("T")) {
+                    if (sectionTitle.length() > 1) {
+                        line = "Tag " + sectionTitle.substring(1);
+                    } else {
+                        line = "Tag";
+                    }
+                }
+                else if(sectionTitle.equals("B")) {
+                    if (sectionTitle.length() > 1) {
+                        line = "Bridge " + sectionTitle.substring(1);
+                    } else {
+                        line = "Bridge";
+                    }
+                }
+                else {
+                    line = "Verse";
+                }
+            }
+            else if(line.startsWith(".")) {
+                line = line.substring(1);
+            }
+            ret.append(line).append("\n");
+        }
+        return ret.toString();
+    }
+    
 }
