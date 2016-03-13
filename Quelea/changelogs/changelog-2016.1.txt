@@ -14,5 +14,6 @@ quelea (2016.1) stable; urgency=normal
   * Add CCLI number to SongSelectParser
   * Fix vlc arg option splitting for absolute paths on windows
   * Add presentation manager import
+  * Fix Opensong import to recognise chords and section titles
 
  -- Michael Berry <michael@quelea.org>  Wednesday, 05 Mar 2016 00:00:00 +0000
