@@ -172,6 +172,9 @@ public class OpensongParser implements SongParser {
             else if(line.startsWith(".")) {
                 line = line.substring(1);
             }
+            else if(line.equals("||")) {
+                line = "";
+            }
             ret.append(line).append("\n");
         }
         return ret.toString();
