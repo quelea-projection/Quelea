@@ -38,7 +38,6 @@ import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
-import org.quelea.data.displayable.Displayable;
 import org.quelea.data.displayable.SongDisplayable;
 import org.quelea.data.displayable.TextSection;
 import org.quelea.services.languages.LabelGrabber;
@@ -122,6 +121,8 @@ public class OpenLyricsExporter implements Exporter {
             Document doc = docBuilder.newDocument();
 
             Element rootElement = doc.createElement("song");
+            rootElement.setAttribute("xmlns", "http://openlyrics.info/namespace/2009/song");
+            rootElement.setAttribute("version", "0.9");
             doc.appendChild(rootElement);
 
             Element propertiesElement = doc.createElement("properties");
@@ -133,21 +134,27 @@ public class OpenLyricsExporter implements Exporter {
             titleElement.appendChild(doc.createTextNode(song.getTitle()));
             titlesElement.appendChild(titleElement);
 
-            Element authorsElement = doc.createElement("authors");
-            propertiesElement.appendChild(authorsElement);
-            Element authorElement = doc.createElement("author");
-            authorElement.appendChild(doc.createTextNode(song.getAuthor()));
-            authorsElement.appendChild(authorElement);
+            if (song.getAuthor() != null && !song.getAuthor().trim().isEmpty()) {
+                Element authorsElement = doc.createElement("authors");
+                propertiesElement.appendChild(authorsElement);
+                Element authorElement = doc.createElement("author");
+                authorElement.appendChild(doc.createTextNode(song.getAuthor()));
+                authorsElement.appendChild(authorElement);
+            }
 
-            Element ccliElement = doc.createElement("ccliNo");
-            propertiesElement.appendChild(ccliElement);
-            ccliElement.appendChild(doc.createTextNode(song.getCcli()));
+            if (song.getCcli() != null && !song.getCcli().trim().isEmpty()) {
+                Element ccliElement = doc.createElement("ccliNo");
+                propertiesElement.appendChild(ccliElement);
+                ccliElement.appendChild(doc.createTextNode(song.getCcli()));
+            }
 
             Element lyricsElement = doc.createElement("lyrics");
             rootElement.appendChild(lyricsElement);
 
+            int sectionNum = 1;
             for (TextSection section : song.getSections()) {
                 Element verseElement = doc.createElement("verse");
+                verseElement.setAttribute("name", "v" + sectionNum);
                 lyricsElement.appendChild(verseElement);
                 Element linesElement = doc.createElement("lines");
                 verseElement.appendChild(linesElement);
@@ -156,6 +163,7 @@ public class OpenLyricsExporter implements Exporter {
                     linesElement.appendChild(doc.createTextNode(line));
                     linesElement.appendChild(doc.createElement("br"));
                 }
+                sectionNum++;
             }
 
             TransformerFactory tf = TransformerFactory.newInstance();
