@@ -16,5 +16,6 @@ quelea (2016.1) stable; urgency=normal
   * Add presentation manager import
   * Fix Opensong import to recognise chords and section titles
   * Fix missing required attributes for openlyrics export
+  * Add "copy to schedule" option
 
- -- Michael Berry <michael@quelea.org>  Sunday, 13 Mar 2016 00:00:00 +0000
+ -- Michael Berry <michael@quelea.org>  Sunday, 15 Mar 2016 00:00:00 +0000
