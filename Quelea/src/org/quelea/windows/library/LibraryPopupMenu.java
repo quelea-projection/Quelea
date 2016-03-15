@@ -43,6 +43,7 @@ import org.quelea.windows.main.actionhandlers.RemoveSongDBActionHandler;
 public class LibraryPopupMenu extends ContextMenu {
 
     private final MenuItem addToSchedule;
+    private final MenuItem copyToSchedule;
     private final MenuItem preview;
     private final MenuItem editDB;
     private final MenuItem removeFromDB;
@@ -54,7 +55,9 @@ public class LibraryPopupMenu extends ContextMenu {
      */
     public LibraryPopupMenu() {
         addToSchedule = new MenuItem(LabelGrabber.INSTANCE.getLabel("library.add.to.schedule.text"), new ImageView(new Image("file:icons/add.png", 16, 16, false, true)));
-        addToSchedule.setOnAction(new AddSongActionHandler());
+        addToSchedule.setOnAction(new AddSongActionHandler(true));
+        copyToSchedule = new MenuItem(LabelGrabber.INSTANCE.getLabel("library.copy.to.schedule.text"), new ImageView(new Image("file:icons/add.png", 16, 16, false, true)));
+        copyToSchedule.setOnAction(new AddSongActionHandler(false));
         preview = new MenuItem(LabelGrabber.INSTANCE.getLabel("library.preview.song.text"), new ImageView(new Image("file:icons/prev.png", 16, 16, false, true)));
         preview.setOnAction(new PreviewSongActionHandler());
         editDB = new MenuItem(LabelGrabber.INSTANCE.getLabel("library.edit.song.text"), new ImageView(new Image("file:icons/edit.png", 16, 16, false, true)));
@@ -91,6 +94,7 @@ public class LibraryPopupMenu extends ContextMenu {
         });
 
         getItems().add(addToSchedule);
+        getItems().add(copyToSchedule);
         getItems().add(preview);
         getItems().add(editDB);
         getItems().add(removeFromDB);

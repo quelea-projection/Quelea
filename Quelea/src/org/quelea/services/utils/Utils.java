@@ -378,6 +378,9 @@ public final class Utils {
      * the status panel.
      */
     public static void updateSongInBackground(final SongDisplayable song, final boolean showError, final boolean silent) {
+        if(!song.checkDBUpdate()) {
+            return;
+        }
         final Runnable updateRunner = new Runnable() {
             @Override
             public void run() {
