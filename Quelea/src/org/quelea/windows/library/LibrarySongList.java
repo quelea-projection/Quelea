@@ -49,6 +49,7 @@ import org.quelea.data.db.SongManager;
 import org.quelea.data.displayable.SongDisplayable;
 import org.quelea.services.lucene.SongSearchIndex;
 import org.quelea.services.utils.LoggerUtils;
+import org.quelea.services.utils.QueleaProperties;
 import org.quelea.windows.main.QueleaApp;
 import org.quelea.windows.main.actionhandlers.AddSongActionHandler;
 import org.quelea.windows.main.widgets.AddSongPromptOverlay;
@@ -132,7 +133,7 @@ public class LibrarySongList extends StackPane {
         popupMenu = new LibraryPopupMenu();
         songList.setOnMouseClicked((MouseEvent t) -> {
             if (t.getClickCount() == 2 && songList.getSelectionModel().getSelectedItem() != null) {
-                new AddSongActionHandler().handle(null);
+                new AddSongActionHandler(QueleaProperties.get().getDefaultSongDBUpdate()).handle(null);
             } else if (t.getClickCount() == 1 && t.isControlDown()) {
                 QueleaApp.get().getMainWindow().getMainPanel().getPreviewPanel().setDisplayable(songList.getSelectionModel().getSelectedItem(), 0);
             }

@@ -54,7 +54,7 @@ import utils.BigDecimalSpinner;
  * @author Michael
  */
 public class OptionsGeneralPanel extends GridPane implements PropertyPanel {
-    
+
     QueleaProperties props = QueleaProperties.get();
     private final CheckBox startupUpdateCheckBox;
     private final CheckBox capitalFirstCheckBox;
@@ -67,6 +67,7 @@ public class OptionsGeneralPanel extends GridPane implements PropertyPanel {
     private final CheckBox advanceOnLiveCheckBox;
     private final CheckBox previewOnImageChangeCheckBox;
     private final CheckBox uniformFontSizeCheckBox;
+    private final CheckBox defaultSongDBUpdateCheckBox;
     private final ComboBox<LanguageFile> languageFileComboBox;
     private final Slider maximumFontSizeSlider;
     private final Slider additionalLineSpacingSlider;
@@ -102,7 +103,7 @@ public class OptionsGeneralPanel extends GridPane implements PropertyPanel {
         GridPane.setConstraints(userOptions, 1, rows);
         getChildren().add(userOptions);
         rows++;
-        
+
         Label interfaceLanguageLabel = new Label(LabelGrabber.INSTANCE.getLabel("interface.language.label"));
         GridPane.setConstraints(interfaceLanguageLabel, 1, rows);
         getChildren().add(interfaceLanguageLabel);
@@ -114,7 +115,7 @@ public class OptionsGeneralPanel extends GridPane implements PropertyPanel {
         GridPane.setConstraints(languageFileComboBox, 2, rows);
         getChildren().add(languageFileComboBox);
         rows++;
-        
+
         Label startupLabel = new Label(LabelGrabber.INSTANCE.getLabel("check.for.update.label"));
         GridPane.setConstraints(startupLabel, 1, rows);
         getChildren().add(startupLabel);
@@ -123,7 +124,7 @@ public class OptionsGeneralPanel extends GridPane implements PropertyPanel {
         GridPane.setConstraints(startupUpdateCheckBox, 2, rows);
         getChildren().add(startupUpdateCheckBox);
         rows++;
-        
+
         Label warnLabel = new Label(LabelGrabber.INSTANCE.getLabel("1.monitor.warn.label"));
         GridPane.setConstraints(warnLabel, 1, rows);
         getChildren().add(warnLabel);
@@ -132,7 +133,7 @@ public class OptionsGeneralPanel extends GridPane implements PropertyPanel {
         GridPane.setConstraints(oneMonitorWarnCheckBox, 2, rows);
         getChildren().add(oneMonitorWarnCheckBox);
         rows++;
-        
+
         Label oneLineModeLabel = new Label(LabelGrabber.INSTANCE.getLabel("one.line.mode.label"));
         GridPane.setConstraints(oneLineModeLabel, 1, rows);
         getChildren().add(oneLineModeLabel);
@@ -141,7 +142,7 @@ public class OptionsGeneralPanel extends GridPane implements PropertyPanel {
         GridPane.setConstraints(oneLineModeCheckBox, 2, rows);
         getChildren().add(oneLineModeCheckBox);
         rows++;
-        
+
         Label autoPlayVidLabel = new Label(LabelGrabber.INSTANCE.getLabel("autoplay.vid.label"));
         GridPane.setConstraints(autoPlayVidLabel, 1, rows);
         getChildren().add(autoPlayVidLabel);
@@ -150,7 +151,7 @@ public class OptionsGeneralPanel extends GridPane implements PropertyPanel {
         GridPane.setConstraints(autoPlayVidCheckBox, 2, rows);
         getChildren().add(autoPlayVidCheckBox);
         rows++;
-        
+
         Label advanceOnLiveLabel = new Label(LabelGrabber.INSTANCE.getLabel("advance.on.live.label"));
         GridPane.setConstraints(advanceOnLiveLabel, 1, rows);
         getChildren().add(advanceOnLiveLabel);
@@ -159,7 +160,7 @@ public class OptionsGeneralPanel extends GridPane implements PropertyPanel {
         GridPane.setConstraints(advanceOnLiveCheckBox, 2, rows);
         getChildren().add(advanceOnLiveCheckBox);
         rows++;
-        
+
         Label overflowSongLabel = new Label(LabelGrabber.INSTANCE.getLabel("overflow.song.label"));
         GridPane.setConstraints(overflowSongLabel, 1, rows);
         getChildren().add(overflowSongLabel);
@@ -168,7 +169,7 @@ public class OptionsGeneralPanel extends GridPane implements PropertyPanel {
         GridPane.setConstraints(overflowSongCheckBox, 2, rows);
         getChildren().add(overflowSongCheckBox);
         rows++;
-        
+
         advanceOnLiveCheckBox.selectedProperty().addListener((ObservableValue<? extends Boolean> a, Boolean b, Boolean c) -> {
             if (advanceOnLiveCheckBox.isSelected()) {
                 overflowSongCheckBox.setDisable(false);
@@ -177,7 +178,7 @@ public class OptionsGeneralPanel extends GridPane implements PropertyPanel {
                 overflowSongCheckBox.setSelected(false);
             }
         });
-        
+
         Label previewOnImageChangeLabel = new Label(LabelGrabber.INSTANCE.getLabel("preview.on.image.change.label"));
         GridPane.setConstraints(previewOnImageChangeLabel, 1, rows);
         getChildren().add(previewOnImageChangeLabel);
@@ -186,7 +187,7 @@ public class OptionsGeneralPanel extends GridPane implements PropertyPanel {
         GridPane.setConstraints(previewOnImageChangeCheckBox, 2, rows);
         getChildren().add(previewOnImageChangeCheckBox);
         rows++;
-        
+
         Label showVideoPanelLabel = new Label(LabelGrabber.INSTANCE.getLabel("show.video.library.panel"));
         GridPane.setConstraints(showVideoPanelLabel, 1, rows);
         getChildren().add(showVideoPanelLabel);
@@ -195,7 +196,7 @@ public class OptionsGeneralPanel extends GridPane implements PropertyPanel {
         GridPane.setConstraints(showVideoPanelCheckBox, 2, rows);
         getChildren().add(showVideoPanelCheckBox);
         rows++;
-        
+
         Label autoTranslateLabel = new Label(LabelGrabber.INSTANCE.getLabel("auto.translate.label"));
         GridPane.setConstraints(autoTranslateLabel, 1, rows);
         getChildren().add(autoTranslateLabel);
@@ -204,7 +205,16 @@ public class OptionsGeneralPanel extends GridPane implements PropertyPanel {
         GridPane.setConstraints(autoTranslateCheckBox, 2, rows);
         getChildren().add(autoTranslateCheckBox);
         rows++;
-        
+
+        Label defaultSongDBUpdateLabel = new Label(LabelGrabber.INSTANCE.getLabel("copy.song.db.default"));
+        GridPane.setConstraints(defaultSongDBUpdateLabel, 1, rows);
+        getChildren().add(defaultSongDBUpdateLabel);
+        defaultSongDBUpdateCheckBox = new CheckBox();
+        startupLabel.setLabelFor(defaultSongDBUpdateCheckBox);
+        GridPane.setConstraints(defaultSongDBUpdateCheckBox, 2, rows);
+        getChildren().add(defaultSongDBUpdateCheckBox);
+        rows++;
+
         Label clearLiveOnRemoveLabel = new Label(LabelGrabber.INSTANCE.getLabel("clear.live.on.remove.schedule") + " ");
         GridPane.setConstraints(clearLiveOnRemoveLabel, 1, rows);
         getChildren().add(clearLiveOnRemoveLabel);
@@ -213,7 +223,7 @@ public class OptionsGeneralPanel extends GridPane implements PropertyPanel {
         GridPane.setConstraints(clearLiveOnRemoveCheckBox, 2, rows);
         getChildren().add(clearLiveOnRemoveCheckBox);
         rows++;
-        
+
         Label embedMediaLabel = new Label(LabelGrabber.INSTANCE.getLabel("embed.media.in.schedule") + " ");
         GridPane.setConstraints(embedMediaLabel, 1, rows);
         getChildren().add(embedMediaLabel);
@@ -222,7 +232,7 @@ public class OptionsGeneralPanel extends GridPane implements PropertyPanel {
         GridPane.setConstraints(embedMediaInScheduleCheckBox, 2, rows);
         getChildren().add(embedMediaInScheduleCheckBox);
         rows++;
-        
+
         Label showSmallSongTextLabel = new Label(LabelGrabber.INSTANCE.getLabel("show.small.song.text.label"));
         GridPane.setConstraints(showSmallSongTextLabel, 1, rows);
         getChildren().add(showSmallSongTextLabel);
@@ -241,7 +251,7 @@ public class OptionsGeneralPanel extends GridPane implements PropertyPanel {
         getChildren().add(hboxSmallSong);
         showSmallSongTextLabel.setLabelFor(hboxSmallSong);
         rows++;
-        
+
         Label showSmallBibleTextLabel = new Label(LabelGrabber.INSTANCE.getLabel("show.small.bible.text.label"));
         GridPane.setConstraints(showSmallBibleTextLabel, 1, rows);
         getChildren().add(showSmallBibleTextLabel);
@@ -260,7 +270,7 @@ public class OptionsGeneralPanel extends GridPane implements PropertyPanel {
         getChildren().add(hboxSmallBible);
         showSmallSongTextLabel.setLabelFor(hboxSmallBible);
         rows++;
-        
+
         showSmallBibleTextBox.selectedProperty().addListener((ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) -> {
             if (newValue) {
                 smallBibleTextHPositionCombo.setDisable(false);
@@ -270,7 +280,7 @@ public class OptionsGeneralPanel extends GridPane implements PropertyPanel {
                 smallBibleTextVPositionCombo.setDisable(true);
             }
         });
-        
+
         showSmallSongTextBox.selectedProperty().addListener((ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) -> {
             if (newValue) {
                 smallSongTextHPositionCombo.setDisable(false);
@@ -280,18 +290,18 @@ public class OptionsGeneralPanel extends GridPane implements PropertyPanel {
                 smallSongTextVPositionCombo.setDisable(true);
             }
         });
-        
+
         Label spacer1 = new Label("");
         GridPane.setConstraints(spacer1, 1, rows);
         getChildren().add(spacer1);
         rows++;
-        
+
         Label textOptions = new Label(LabelGrabber.INSTANCE.getLabel("text.options.options"));
         textOptions.setFont(Font.font(textOptions.getFont().getFamily(), FontWeight.BOLD, textOptions.getFont().getSize()));
         GridPane.setConstraints(textOptions, 1, rows);
         getChildren().add(textOptions);
         rows++;
-        
+
         Label capitalFirstLabel = new Label(LabelGrabber.INSTANCE.getLabel("capitalise.start.line.label"));
         GridPane.setConstraints(capitalFirstLabel, 1, rows);
         getChildren().add(capitalFirstLabel);
@@ -300,7 +310,7 @@ public class OptionsGeneralPanel extends GridPane implements PropertyPanel {
         GridPane.setConstraints(capitalFirstCheckBox, 2, rows);
         getChildren().add(capitalFirstCheckBox);
         rows++;
-        
+
         Label uniformFontSizeLabel = new Label(LabelGrabber.INSTANCE.getLabel("uniform.font.size.label"));
         GridPane.setConstraints(uniformFontSizeLabel, 1, rows);
         getChildren().add(uniformFontSizeLabel);
@@ -309,7 +319,7 @@ public class OptionsGeneralPanel extends GridPane implements PropertyPanel {
         GridPane.setConstraints(uniformFontSizeCheckBox, 2, rows);
         getChildren().add(uniformFontSizeCheckBox);
         rows++;
-        
+
         Label maxFontSizeLabel = new Label(LabelGrabber.INSTANCE.getLabel("max.font.size.label"));
         GridPane.setConstraints(maxFontSizeLabel, 1, rows);
         getChildren().add(maxFontSizeLabel);
@@ -328,7 +338,7 @@ public class OptionsGeneralPanel extends GridPane implements PropertyPanel {
             }
         });
         rows++;
-        
+
         Label additionalLineSpacingLabel = new Label(LabelGrabber.INSTANCE.getLabel("additional.line.spacing.label"));
         GridPane.setConstraints(additionalLineSpacingLabel, 1, rows);
         getChildren().add(additionalLineSpacingLabel);
@@ -347,7 +357,7 @@ public class OptionsGeneralPanel extends GridPane implements PropertyPanel {
             }
         });
         rows++;
-        
+
         Label maxCharsLabel = new Label(LabelGrabber.INSTANCE.getLabel("max.chars.line.label"));
         GridPane.setConstraints(maxCharsLabel, 1, rows);
         getChildren().add(maxCharsLabel);
@@ -414,6 +424,7 @@ public class OptionsGeneralPanel extends GridPane implements PropertyPanel {
         capitalFirstCheckBox.setSelected(props.checkCapitalFirst());
         oneMonitorWarnCheckBox.setSelected(props.showSingleMonitorWarning());
         uniformFontSizeCheckBox.setSelected(props.getUseUniformFontSize());
+        defaultSongDBUpdateCheckBox.setSelected(!props.getDefaultSongDBUpdate());
         oneLineModeCheckBox.setSelected(props.getOneLineMode());
         autoTranslateCheckBox.setSelected(props.getAutoTranslate());
         autoPlayVidCheckBox.setSelected(props.getAutoPlayVideo());
@@ -452,6 +463,8 @@ public class OptionsGeneralPanel extends GridPane implements PropertyPanel {
         props.setCapitalFirst(checkCapital);
         boolean useUniformFontSize = uniformFontSizeCheckBox.isSelected();
         props.setUseUniformFontSize(useUniformFontSize);
+        boolean defaultSongDBUpdate = !defaultSongDBUpdateCheckBox.isSelected();
+        props.setDefaultSongDBUpdate(defaultSongDBUpdate);
         boolean clearLive = clearLiveOnRemoveCheckBox.isSelected();
         props.setClearLiveOnRemove(clearLive);
         boolean embedMedia = embedMediaInScheduleCheckBox.isSelected();

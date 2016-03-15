@@ -252,6 +252,7 @@ public class SongDisplayable implements TextDisplayable, Comparable<SongDisplaya
     }
     public static final DataFormat SONG_DISPLAYABLE_FORMAT = new DataFormat("songdisplayable");
     private static final Logger LOGGER = LoggerUtils.getLogger();
+    private boolean updateInDB = true;
     private String title = "";
     private String author = "";
     private String ccli = "";
@@ -279,7 +280,10 @@ public class SongDisplayable implements TextDisplayable, Comparable<SongDisplaya
     public SongDisplayable(SongDisplayable song) {
         this.title = song.title;
         this.author = song.author;
-        this.sections = song.sections;
+        this.sections = new ArrayList<>();
+        for(TextSection section : song.getSections()) {
+            this.sections.add(new TextSection(section));
+        }
         this.theme = song.theme;
         this.id = song.id;
         this.ccli = song.ccli;
@@ -320,6 +324,21 @@ public class SongDisplayable implements TextDisplayable, Comparable<SongDisplaya
         this.author = author;
         this.theme = theme;
         sections = new ArrayList<>();
+    }
+    
+    /**
+     * Ensure changes to this song are not updated in the database.
+     */
+    public void setNoDBUpdate() {
+        updateInDB = false;
+    }
+    
+    /**
+     * Check whether changes to this song should be persisted to the database.
+     * @return true if changes should be persisted, false otherwise.
+     */
+    public boolean checkDBUpdate() {
+        return updateInDB;
     }
 
     /**

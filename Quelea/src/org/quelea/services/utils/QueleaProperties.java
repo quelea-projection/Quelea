@@ -125,7 +125,7 @@ public final class QueleaProperties extends Properties {
         setProperty("language.file", file);
         write();
     }
-
+    
     /**
      * Get the english languages file that should be present on all
      * installations. We can default to this if labels are missing in other
@@ -1871,5 +1871,14 @@ public final class QueleaProperties extends Properties {
 
     public double getLyricHeightBounds() {
         return Double.parseDouble(getProperty("lyric.height.bound", "0.9"));
+    }
+    
+    public boolean getDefaultSongDBUpdate() {
+        return Boolean.parseBoolean(getProperty("default.song.db.update", "true"));
+    }
+    
+    public void setDefaultSongDBUpdate(boolean updateInDB) {
+        setProperty("default.song.db.update", Boolean.toString(updateInDB));
+        write();
     }
 }

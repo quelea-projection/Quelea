@@ -38,12 +38,21 @@ import org.w3c.dom.NodeList;
  */
 public class TextSection implements Serializable {
 
-    private String title;
-    private String[] lines;
-    private String[] smallLines;
+    private final String title;
+    private final String[] lines;
+    private final String[] smallLines;
     private ThemeDTO theme;
     private ThemeDTO tempTheme;
-    private boolean capitaliseFirst;
+    private final boolean capitaliseFirst;
+    
+    public TextSection(TextSection orig) {
+        this.title = orig.title;
+        this.lines = orig.lines;
+        this.smallLines = orig.smallLines;
+        this.theme = orig.theme;
+        this.tempTheme = orig.tempTheme;
+        this.capitaliseFirst = orig.capitaliseFirst;
+    }
 
     /**
      * Create a new text section with the specified title and lyrics.
