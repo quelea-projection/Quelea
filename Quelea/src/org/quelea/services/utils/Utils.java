@@ -54,6 +54,7 @@ import java.util.logging.Logger;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.collections.ObservableList;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.event.EventHandler;
 import javafx.geometry.BoundingBox;
@@ -258,7 +259,7 @@ public final class Utils {
         String[] ret = new String[parts.length];
         for (int i = 0; i < parts.length; i++) {
             ret[i] = parts[i].trim();
-            if(!ret[i].startsWith(":")) {
+            if (!ret[i].startsWith(":")) {
                 ret[i] = ":" + ret[i];
             }
         }
@@ -378,13 +379,33 @@ public final class Utils {
      * the status panel.
      */
     public static void updateSongInBackground(final SongDisplayable song, final boolean showError, final boolean silent) {
-        if(!song.checkDBUpdate()) {
+        if (!song.checkDBUpdate()) {
             return;
         }
         final Runnable updateRunner = new Runnable() {
             @Override
             public void run() {
                 boolean result = SongManager.get().updateSong(song);
+                if (result && song.checkDBUpdate()) {
+                    ObservableList<SongDisplayable> songs = QueleaApp.get().getMainWindow().getMainPanel().getLibraryPanel().getLibrarySongPanel().getSongList().getListView().getItems();
+                    int replaceIdx = -1;
+                    for (int i = 0; i < songs.size(); i++) {
+                        if (song.getID() == songs.get(i).getID()) {
+                            replaceIdx = i;
+                            break;
+                        }
+                    }
+                    final int replaceIdxFi = replaceIdx;
+                    if (replaceIdx != -1) {
+                        Platform.runLater(new Runnable() {
+                            @Override
+                            public void run() {
+                                songs.remove(replaceIdxFi);
+                                songs.add(replaceIdxFi, song);
+                            }
+                        });
+                    }
+                }
                 if (!result && showError) {
                     Platform.runLater(new Runnable() {
                         @Override
@@ -636,7 +657,7 @@ public final class Utils {
     public static String escapeXML(String s) {
         return StringEscapeUtils.escapeXml(s);
     }
-    
+
     public static synchronized String getTextFromFile(String fileName, String errorText) {
         return getTextFromFile(fileName, errorText, "UTF-8");
     }
