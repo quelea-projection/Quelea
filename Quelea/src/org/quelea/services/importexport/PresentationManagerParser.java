@@ -126,8 +126,4 @@ public class PresentationManagerParser implements SongParser {
         }
     }
 
-    public static void main(String[] args) throws IOException {
-        new PresentationManagerParser().getSongs(new File("C:\\users\\michael\\desktop\\2.sng"), null);
-    }
-
 }
