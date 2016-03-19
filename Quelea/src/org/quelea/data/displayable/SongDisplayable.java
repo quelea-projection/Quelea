@@ -426,9 +426,9 @@ public class SongDisplayable implements TextDisplayable, Comparable<SongDisplaya
      * can't be done, leave it as -1.
      */
     public void matchID() {
-        if (id == -1) {
+        if (id == -1 && updateInDB) {
             for (SongDisplayable song : SongManager.get().getSongs()) {
-                if (this.title.equals(song.title)) {
+                if (this.title.equals(song.title) && getLyrics(true, true).equals(song.getLyrics(true, true)) && this.author.equals(song.author)) {
                     id = song.getID();
                 }
             }
@@ -890,6 +890,9 @@ public class SongDisplayable implements TextDisplayable, Comparable<SongDisplaya
     public String getXML() {
         StringBuilder xml = new StringBuilder();
         xml.append("<song>");
+        xml.append("<updateInDB>");
+        xml.append(updateInDB);
+        xml.append("</updateInDB>");
         xml.append("<title>");
         xml.append(Utils.escapeXML(title));
         xml.append("</title>");
@@ -1044,9 +1047,15 @@ public class SongDisplayable implements TextDisplayable, Comparable<SongDisplaya
         String notes = "";
         String currentTranslation = "";
         String translationLyrics = "";
+        boolean updateInDB = true;
         List<TextSection> songSections = new ArrayList<>();
         for (int i = 0; i < list.getLength(); i++) {
             Node node = list.item(i);
+            if (node.getNodeName().equals("updateInDB")) {
+                if(node.getTextContent().equals("false")) {
+                    updateInDB = false;
+                }
+            }
             if (node.getNodeName().equals("title")) {
                 title = node.getTextContent();
             }
@@ -1094,6 +1103,9 @@ public class SongDisplayable implements TextDisplayable, Comparable<SongDisplaya
         SongDisplayable ret = new SongDisplayable(title, author,
                 new ThemeDTO(ThemeDTO.DEFAULT_FONT, ThemeDTO.DEFAULT_FONT_COLOR, ThemeDTO.DEFAULT_FONT, ThemeDTO.DEFAULT_TRANSLATE_FONT_COLOR,
                         ThemeDTO.DEFAULT_BACKGROUND, ThemeDTO.DEFAULT_SHADOW, false, false, false, true, -1, 0));
+        if(!updateInDB) {
+            ret.setNoDBUpdate();
+        }
         for (TextSection section : songSections) {
             ret.addSection(section);
         }
@@ -1196,7 +1208,10 @@ public class SongDisplayable implements TextDisplayable, Comparable<SongDisplaya
      */
     @Override
     public ImageView getPreviewIcon() {
-        if (hasChords()) {
+        if(getID()<0) {
+            return new ImageView(new Image("file:icons/lyricscopy.png"));
+        }
+        else if (hasChords()) {
             return new ImageView(new Image("file:icons/lyricsandchords.png"));
         } else {
             return new ImageView(new Image("file:icons/lyrics.png"));
