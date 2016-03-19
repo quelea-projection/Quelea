@@ -52,11 +52,9 @@ public class AddSongActionHandler implements EventHandler<ActionEvent> {
         SchedulePanel schedulePanel = QueleaApp.get().getMainWindow().getMainPanel().getSchedulePanel();
         SongDisplayable song = libraryPanel.getLibrarySongPanel().getSongList().getSelectedValue();
         if(QueleaProperties.get().getSongOverflow() || !updateInDB) {
-            System.out.println("new song");
             song = new SongDisplayable(song);
         }
         if(!updateInDB) {
-            System.out.println("no update");
             song.setID(-1);
             song.setNoDBUpdate();
         }
