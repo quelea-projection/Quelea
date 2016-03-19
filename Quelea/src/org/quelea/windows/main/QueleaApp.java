@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import java.util.List;
 import org.javafx.dialog.Dialog;
 import org.quelea.data.Schedule;
+import org.quelea.data.displayable.SongDisplayable;
 import org.quelea.server.AutoDetectServer;
 import org.quelea.server.MobileLyricsServer;
 import org.quelea.server.RemoteControlServer;
