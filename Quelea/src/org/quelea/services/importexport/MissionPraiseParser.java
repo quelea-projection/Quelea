@@ -25,7 +25,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import java.util.regex.Pattern;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.Document;
 import javax.swing.text.rtf.RTFEditorKit;
@@ -80,14 +79,14 @@ public class MissionPraiseParser implements SongParser {
     
     private String getTitle(String plainText) {
         String line = plainText.split("\n")[0].trim();
-        return line.replaceAll("[0-9]+\\w+", "").replace(" ", " ").trim();
+        return line.replace(" ", " ").replaceAll("^[0-9]+\\s+", "").trim();
     }
     
     private String getLyrics(String plainText) {
         String[] arr = plainText.split("\n");
         int endIdx = arr.length;
         for(int i=1 ; i<arr.length ; i++) {
-            if(arr[i].matches("^[a-zA-Z©].*")) {
+            if(arr[i].startsWith("©")) {
                 endIdx = i;
                 break;
             }
@@ -115,10 +114,6 @@ public class MissionPraiseParser implements SongParser {
             }
         }
         return "";
-    }
-    
-    public static void main(String[] args) throws Exception {
-        new MissionPraiseParser().getSongs(new File("C:\\users\\michael\\desktop\\x.rtf"), null);
     }
 
 }
