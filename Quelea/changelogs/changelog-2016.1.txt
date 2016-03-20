@@ -14,6 +14,8 @@ quelea (2016.1) stable; urgency=normal
   * Add CCLI number to SongSelectParser
   * Fix vlc arg option splitting for absolute paths on windows
   * Add presentation manager import
+  * Add mission praise import
+  * Reorder import options to be alphabetical
   * Fix Opensong import to recognise chords and section titles
   * Fix missing required attributes for openlyrics export
   * Add "copy to schedule" option

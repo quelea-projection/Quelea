@@ -129,6 +129,10 @@ public final class FileFilters {
      */
     public static final FileChooser.ExtensionFilter SONGS_MB = new FileChooser.ExtensionFilter(LabelGrabber.INSTANCE.getLabel("filefilters.description.songs.mb") + " (Songs.MB)", "Songs.MB");
     /**
+     * The file filter used for Songs.MB (the easyworship database.)
+     */
+    public static final FileChooser.ExtensionFilter MISSION_PRAISE_RTF = new FileChooser.ExtensionFilter(LabelGrabber.INSTANCE.getLabel("filefilters.description.songs.missionpraise") + " (*.rtf)", "*.rtf", "*.rtf'");
+    /**
      * The file filter used for *.epc (the epicworship songpack.)
      */
     public static final FileChooser.ExtensionFilter EPC = new FileChooser.ExtensionFilter(LabelGrabber.INSTANCE.getLabel("filefilters.description.epc") + " (*.epc)", "*.epc");
