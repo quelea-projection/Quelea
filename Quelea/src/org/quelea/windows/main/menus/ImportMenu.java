@@ -29,6 +29,7 @@ import org.quelea.services.importexport.EpicWorshipImportDialog;
 import org.quelea.services.importexport.ImportDialog;
 import org.quelea.services.importexport.KingswayImportDialog;
 import org.quelea.services.importexport.MediaShoutImportDialog;
+import org.quelea.services.importexport.MissionPraiseImportDialog;
 import org.quelea.services.importexport.OpenLPImportDialog;
 import org.quelea.services.importexport.OpenLyricsImportDialog;
 import org.quelea.services.importexport.OpenSongImportDialog;
@@ -58,6 +59,7 @@ public class ImportMenu extends Menu {
     private final ImportDialog sImportDialog;
     private final ImportDialog qspImportDialog;
     private final ImportDialog openSongImportDialog;
+    private final ImportDialog missionPraiseImportDialog;
     private final ImportDialog openLPImportDialog;
     private final ImportDialog openLyricsImportDialog;
     private final ImportDialog zionWorxImportDialog;
@@ -76,6 +78,7 @@ public class ImportMenu extends Menu {
     private final ImportDialog sofImportDialog;
     private final MenuItem qspItem;
     private final MenuItem osItem;
+    private final MenuItem mpItem;
     private final MenuItem spItem;
     private final MenuItem olItem;
     private final MenuItem olpItem;
@@ -102,6 +105,7 @@ public class ImportMenu extends Menu {
 
         qspImportDialog = new QSPImportDialog();
         openSongImportDialog = new OpenSongImportDialog();
+        missionPraiseImportDialog = new MissionPraiseImportDialog();
         openLPImportDialog = new OpenLPImportDialog();
         openLyricsImportDialog = new OpenLyricsImportDialog();
         zionWorxImportDialog = new ZionWorxImportDialog();
@@ -124,25 +128,26 @@ public class ImportMenu extends Menu {
         qspItem.setOnAction((ActionEvent t) -> {
             qspImportDialog.show();
         });
-        getItems().add(qspItem);
 
         osItem = new MenuItem(LabelGrabber.INSTANCE.getLabel("os.button"), new ImageView(new Image("file:icons/opensong.png", 16, 16, false, true)));
         osItem.setOnAction((ActionEvent t) -> {
             openSongImportDialog.show();
         });
-        getItems().add(osItem);
+
+        mpItem = new MenuItem(LabelGrabber.INSTANCE.getLabel("mp.button"), new ImageView(new Image("file:icons/missionpraise.png", 16, 16, false, true)));
+        mpItem.setOnAction((ActionEvent t) -> {
+            missionPraiseImportDialog.show();
+        });
 
         olpItem = new MenuItem(LabelGrabber.INSTANCE.getLabel("olp.button"), new ImageView(new Image("file:icons/openlp.png", 16, 16, false, true)));
         olpItem.setOnAction((ActionEvent t) -> {
             openLPImportDialog.show();
         });
-        getItems().add(olpItem);
 
         olItem = new MenuItem(LabelGrabber.INSTANCE.getLabel("olyrics.button"));
         olItem.setOnAction((ActionEvent t) -> {
             openLyricsImportDialog.show();
         });
-        getItems().add(olItem);
 
         zwItem = new MenuItem(LabelGrabber.INSTANCE.getLabel("zw.button"), new ImageView(new Image("file:icons/zionworx.png", 16, 16, false, true)));
         zwItem.setOnAction((ActionEvent t) -> {
@@ -151,82 +156,67 @@ public class ImportMenu extends Menu {
                 zionWorxImportDialog.show();
             }
         });
-        if (Utils.isWindows()) {
-            getItems().add(zwItem);
-        }
 
         spItem = new MenuItem(LabelGrabber.INSTANCE.getLabel("sp.button"), new ImageView(new Image("file:icons/sundayplus.png", 16, 16, false, true)));
         spItem.setOnAction((ActionEvent t) -> {
             sundayPlusImportDialog.show();
         });
-        getItems().add(spItem);
 
         ssItem = new MenuItem(LabelGrabber.INSTANCE.getLabel("ss.button"), new ImageView(new Image("file:icons/survivor.jpg", 16, 16, false, true)));
         ssItem.setOnAction((ActionEvent t) -> {
             sImportDialog.show();
         });
-        getItems().add(ssItem);
 
         songSelectItem = new MenuItem(LabelGrabber.INSTANCE.getLabel("songselect.button"), new ImageView(new Image("file:icons/songselect.png", 16, 16, false, true)));
         songSelectItem.setOnAction((ActionEvent t) -> {
             songSelectImportDialog.show();
         });
-        getItems().add(songSelectItem);
 
         mediaShoutItem = new MenuItem(LabelGrabber.INSTANCE.getLabel("mediashout.button"), new ImageView(new Image("file:icons/mediashout.png", 16, 16, false, true)));
         mediaShoutItem.setOnAction((ActionEvent t) -> {
             mediaShoutImportDialog.show();
         });
-        getItems().add(mediaShoutItem);
 
         sbItem = new MenuItem(LabelGrabber.INSTANCE.getLabel("songbeamer.button"), new ImageView(new Image("file:icons/songbeamer.png", 16, 16, false, true)));
         sbItem.setOnAction((ActionEvent t) -> {
             songBeamerImportDialog.show();
         });
-        getItems().add(sbItem);
 
         sourceItem = new MenuItem(LabelGrabber.INSTANCE.getLabel("source.button"), new ImageView(new Image("file:icons/source.jpg", 16, 16, false, true)));
         sourceItem.setOnAction((ActionEvent t) -> {
             sourceImportDialog.show();
         });
-        getItems().add(sourceItem);
 
         easySlidesItem = new MenuItem(LabelGrabber.INSTANCE.getLabel("easyslides.button"), new ImageView(new Image("file:icons/easyslides.png", 16, 16, false, true)));
         easySlidesItem.setOnAction((ActionEvent t) -> {
             easySlidesImportDialog.show();
         });
-        getItems().add(easySlidesItem);
 
         easyWorshipItem = new MenuItem(LabelGrabber.INSTANCE.getLabel("easyworship.button"), new ImageView(new Image("file:icons/easyworship.png", 16, 16, false, true)));
         easyWorshipItem.setOnAction((ActionEvent t) -> {
             new ParadoxJDBCChecker().runChecks();
             easyWorshipImportDialog.show();
         });
-        getItems().add(easyWorshipItem);
 
         songproItem = new MenuItem(LabelGrabber.INSTANCE.getLabel("songpro.button"), new ImageView(new Image("file:icons/songpro.png", 16, 16, false, true)));
         songproItem.setOnAction((ActionEvent t) -> {
             songproImportDialog.show();
         });
-        getItems().add(songproItem);
-        
+
         epicWorshipItem = new MenuItem(LabelGrabber.INSTANCE.getLabel("epicworship.button"), new ImageView(new Image("file:icons/epicworship.png", 16, 16, false, true)));
         epicWorshipItem.setOnAction((ActionEvent t) -> {
             epicWorshipImportDialog.show();
         });
-        getItems().add(epicWorshipItem);
-        
+
         pmItem = new MenuItem(LabelGrabber.INSTANCE.getLabel("pm.button"), new ImageView(new Image("file:icons/pm.png", 16, 16, false, true)));
         pmItem.setOnAction((ActionEvent t) -> {
             presentationManagerImportDialog.show();
         });
-        getItems().add(pmItem);
-        
+
         sofItem = new MenuItem(LabelGrabber.INSTANCE.getLabel("sof.button"), new ImageView(new Image("file:icons/sof.png", 16, 16, false, true)));
         sofItem.setOnAction((ActionEvent t) -> {
             sofImportDialog.show();
         });
-        getItems().add(sofItem);
 
         MenuItem kingswayAll, kingswayRange, kingswayOne;
 
@@ -236,13 +226,13 @@ public class ImportMenu extends Menu {
             kingswayImportDialog.setAll(true);
             kingswayImportDialog.show();
         });
-        
+
         kingswayRange = new MenuItem(LabelGrabber.INSTANCE.getLabel("kingsway.button.range"), new ImageView(new Image("file:icons/kingsway.png", 16, 16, false, true)));
         kingswayRange.setOnAction((ActionEvent t) -> {
             kingswayImportDialog.setRange(true);
             kingswayImportDialog.show();
         });
-      
+
         kingswayOne = new MenuItem(LabelGrabber.INSTANCE.getLabel("kingsway.button.one"), new ImageView(new Image("file:icons/kingsway.png", 16, 16, false, true)));
         kingswayOne.setOnAction((ActionEvent t) -> {
             kingswayImportDialog.setAll(false);
@@ -250,13 +240,34 @@ public class ImportMenu extends Menu {
             kingswayImportDialog.show();
         });
 
-        getItems().add(kingswayItem);
         kingswayItem.getItems().addAll(kingswayAll, kingswayRange, kingswayOne);
 
         plainTextItem = new MenuItem(LabelGrabber.INSTANCE.getLabel("plainText.button"), new ImageView(new Image("file:icons/text.png", 16, 16, false, true)));
         plainTextItem.setOnAction((ActionEvent t) -> {
             plainTextImportDialog.show();
         });
+
+        getItems().add(easySlidesItem);
+        getItems().add(easyWorshipItem);
+        getItems().add(epicWorshipItem);
+        getItems().add(kingswayItem);
+        getItems().add(mediaShoutItem);
+        getItems().add(mpItem);
+        getItems().add(olpItem);
+        getItems().add(olItem);
+        getItems().add(osItem);
         getItems().add(plainTextItem);
+        getItems().add(pmItem);
+        getItems().add(qspItem);
+        getItems().add(sbItem);
+        getItems().add(songproItem);
+        getItems().add(songSelectItem);
+        getItems().add(sofItem);
+        getItems().add(spItem);
+        getItems().add(ssItem);
+        getItems().add(sourceItem);
+        if (Utils.isWindows()) {
+            getItems().add(zwItem);
+        }
     }
 }
