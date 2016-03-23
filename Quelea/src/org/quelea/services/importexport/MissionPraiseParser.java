@@ -79,7 +79,8 @@ public class MissionPraiseParser implements SongParser {
     
     private String getTitle(String plainText) {
         String line = plainText.split("\n")[0].trim();
-        return line.replace(" ", " ").replaceAll("^[0-9]+\\s+", "").trim();
+        return line.replace(" ", " ").trim();
+//        return line.replace(" ", " ").replaceAll("^[0-9]+\\s+", "").trim();
     }
     
     private String getLyrics(String plainText) {
