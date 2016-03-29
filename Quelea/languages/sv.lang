@@ -589,3 +589,5 @@ save.recording.before.exit.message=Vill du spara inspelningen innan du avslutar?
 record.audio.tooltip=Spela in ljud
 pause.record.tooltip=Pausa inspelningen
 max.lines.per.slide=Rader per stycke (ungefärligt)
+copy.song.db.default=Kopiera sånger till gudstjänstordningen som standard
+mp.button=Mission Praise
