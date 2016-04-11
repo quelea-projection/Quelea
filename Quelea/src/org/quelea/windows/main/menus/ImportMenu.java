@@ -44,6 +44,7 @@ import org.quelea.services.importexport.SongSelectImportDialog;
 import org.quelea.services.importexport.SourceImportDialog;
 import org.quelea.services.importexport.SundayPlusImportDialog;
 import org.quelea.services.importexport.SurvivorImportDialog;
+import org.quelea.services.importexport.VideoPsalmImportDialog;
 import org.quelea.services.importexport.ZWTurboDBChecker;
 import org.quelea.services.importexport.ZionWorxImportDialog;
 import org.quelea.services.languages.LabelGrabber;
@@ -71,6 +72,7 @@ public class ImportMenu extends Menu {
     private final ImportDialog sundayPlusImportDialog;
     private final ImportDialog songSelectImportDialog;
     private final ImportDialog songproImportDialog;
+    private final ImportDialog videoPsalmImportDialog;
     private final ImportDialog mediaShoutImportDialog;
     private final ImportDialog songBeamerImportDialog;
     private final ImportDialog epicWorshipImportDialog;
@@ -93,6 +95,7 @@ public class ImportMenu extends Menu {
     private final MenuItem easySlidesItem;
     private final MenuItem easyWorshipItem;
     private final MenuItem songproItem;
+    private final MenuItem vsItem;
     private final MenuItem songSelectItem;
     private final MenuItem epicWorshipItem;
     private final Menu kingswayItem;
@@ -116,6 +119,7 @@ public class ImportMenu extends Menu {
         easySlidesImportDialog = new EasySlidesImportDialog();
         easyWorshipImportDialog = new EasyWorshipImportDialog();
         songproImportDialog = new SongProImportDialog();
+        videoPsalmImportDialog = new VideoPsalmImportDialog();
         sundayPlusImportDialog = new SundayPlusImportDialog();
         songSelectImportDialog = new SongSelectImportDialog();
         mediaShoutImportDialog = new MediaShoutImportDialog();
@@ -203,6 +207,11 @@ public class ImportMenu extends Menu {
             songproImportDialog.show();
         });
 
+        vsItem = new MenuItem(LabelGrabber.INSTANCE.getLabel("videopsalm.button"));
+        vsItem.setOnAction((ActionEvent t) -> {
+            videoPsalmImportDialog.show();
+        });
+
         epicWorshipItem = new MenuItem(LabelGrabber.INSTANCE.getLabel("epicworship.button"), new ImageView(new Image("file:icons/epicworship.png", 16, 16, false, true)));
         epicWorshipItem.setOnAction((ActionEvent t) -> {
             epicWorshipImportDialog.show();
@@ -266,6 +275,7 @@ public class ImportMenu extends Menu {
         getItems().add(spItem);
         getItems().add(ssItem);
         getItems().add(sourceItem);
+        getItems().add(vsItem);
         if (Utils.isWindows()) {
             getItems().add(zwItem);
         }
