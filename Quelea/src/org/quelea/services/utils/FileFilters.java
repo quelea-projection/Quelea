@@ -121,6 +121,10 @@ public final class FileFilters {
      */
     public static final FileChooser.ExtensionFilter PM_SONG = new FileChooser.ExtensionFilter(LabelGrabber.INSTANCE.getLabel("filefilters.description.pmsong.files") + " (*.sng)", "*.sng");
     /**
+     * The file filter used for VideoPsalm databases.
+     */
+    public static final FileChooser.ExtensionFilter VS_DB = new FileChooser.ExtensionFilter(LabelGrabber.INSTANCE.getLabel("filefilters.description.vs.files") + " (*.json)", "*.json");
+    /**
      * The file filter used for MainTable.dat.
      */
     public static final FileChooser.ExtensionFilter MAINTABLE_DAT = new FileChooser.ExtensionFilter(LabelGrabber.INSTANCE.getLabel("filefilters.description.maintable.dat") + " (MainTable.dat)", "MainTable.dat");
