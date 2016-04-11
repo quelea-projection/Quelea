@@ -15,9 +15,11 @@ quelea (2016.1) stable; urgency=normal
   * Fix vlc arg option splitting for absolute paths on windows
   * Add presentation manager import
   * Add mission praise import
+  * Add video psalm import
   * Reorder import options to be alphabetical
   * Fix Opensong import to recognise chords and section titles
   * Fix missing required attributes for openlyrics export
   * Add "copy to schedule" option
+  * Add Bulgarian translation
 
- -- Michael Berry <michael@quelea.org>  Sunday, 15 Mar 2016 00:00:00 +0000
+ -- Michael Berry <michael@quelea.org>  Sunday, 06 Apr 2016 00:00:00 +0000
