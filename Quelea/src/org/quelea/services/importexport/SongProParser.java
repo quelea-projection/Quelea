@@ -26,9 +26,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.quelea.data.displayable.SongDisplayable;
 import org.quelea.services.utils.LoggerUtils;
@@ -99,6 +97,9 @@ public class SongProParser implements SongParser {
     private String getSection(String secName, String sec) {
         if (sec == null || sec.trim().isEmpty()) {
             return null;
+        }
+        if (sec.contains("\\rtf1")) {
+            sec = sec.replaceAll("\\\\\\w+|\\{.*?\\}|}", "").trim();
         }
         StringBuilder ret = new StringBuilder();
         sec = sec.replace("\n\n", "\n<>\n");
