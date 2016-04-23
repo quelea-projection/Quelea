@@ -69,16 +69,16 @@ public class SongProParser implements SongParser {
             StringBuilder lyrics = new StringBuilder();
             for (int i = 1; i <= 8; i++) {
                 String versesec = getSection("Verse " + i, r1.getString("Verse" + i));
-                if (versesec != null) {
+                if (versesec != null && !versesec.trim().isEmpty()) {
                     lyrics.append(versesec);
                 }
             }
             String chorussec = getSection("Chorus", r1.getString("Chorus"));
-            if (chorussec != null) {
+            if (chorussec != null && !chorussec.trim().isEmpty()) {
                 lyrics.append(chorussec);
             }
             String bridgesec = getSection("Bridge", r1.getString("Bridge"));
-            if (bridgesec != null) {
+            if (bridgesec != null && !bridgesec.trim().isEmpty()) {
                 lyrics.append(bridgesec);
             }
 
