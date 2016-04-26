@@ -598,3 +598,6 @@ presentation.options.heading=Präsentationen
 pm.button=Presentation Manager
 filefilters.description.songs.missionpraise=Mission Praise RTF Dateien
 pm.import.line1=Bitte die zu importierenden Presentation Manager Datein auswählen.
+videopsalm.import.line1=Hiermit wird die VideoPsalm Bibliothek aus einer JSON Datei importiert.
+filefilters.description.vs.files=VideoPsalm Datenbank
+videopsalm.button=VideoPsalm
