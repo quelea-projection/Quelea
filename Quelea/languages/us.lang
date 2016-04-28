@@ -1,5 +1,5 @@
 #THIS IS AN AUTO GENERATED FILE, AND WILL BE OVERWRITTEN EACH TIME QUELEA IS REBUILT. DO NOT EDIT MANUALLY!
-#Thu Mar 31 01:03:26 BST 2016
+#Thu Apr 28 20:04:04 BST 2016
 ignore.text=Ignore
 import.no.songs.text=Couldn't find any songs to import.
 library.edit.song.text=Edit song
@@ -156,6 +156,7 @@ help.about.line2=It is, and always will be, free and open source software.
 manage.notices.tooltip=Manage Notices
 import.button=Import
 help.about.line1=Quelea is licensed under the GPL (Version 3.)
+videopsalm.button=VideoPsalm
 interface.language.label=Interface language\:
 remove.song.text=Remove song from database
 select.songs.title=Select Songs
@@ -222,6 +223,7 @@ more.fonts.label=More fonts
 schedule.heading=Schedule
 filefilters.description.xml.easyslide=XML Easyslide files
 adjust.theme.tooltip=Adjust theme
+filefilters.description.vs.files=VideoPsalm databases
 library.remove.song.text=Remove song
 olp.import.line1=Select the location of the OpenLP database below.
 edit.theme.heading=Edit theme
@@ -316,6 +318,7 @@ search.bible.button=Search bibles...
 export.schedule.pdf.button=Export order of service to PDF
 video.error=Couldn't initialize the video libraries - video won't work. Please ask on the discuss list (see the help menu) for help solving this.
 new.song.title=New Song
+videopsalm.import.line1=This will import the VideoPsalm library from a JSON file.
 stage.lyrics.colour=Lyrics Color
 email.text=Hi\! Attached is a Quelea schedule you've been sent. Simply open it with Quelea and all the items should appear correctly.
 check.uncheck.all.text=Check/Uncheck all
