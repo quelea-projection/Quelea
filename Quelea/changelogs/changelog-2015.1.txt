@@ -1,0 +1,16 @@
+quelea (2015.1) stable; urgency=normal
+ 
+  * Fix clear / logo / black screen crash (Bundled with 8u40 on Windows to fix memory issues related to Java bug - must be run with 8u40 for this to work on unbundled versions.)
+  * Fix video control display issues
+  * Fix issue with library bible panel never showing the last verse of a chapter
+  * Fix chord spacing when exporting to PDF
+  * Fix occasional NullPointerException when dragging
+  * Fix issue with reset video not being called on correct thread
+  * Fix issue with deleting a saved location folder causing a crash
+  * Fix issue with visual glitches in lyrics area
+  * Fix issue where right clicking on the schedule didn't always display the correct context menu
+  * Fix issue where copy / pasting lyrics from some websites / sources didn't split into sections correctly
+  * Fix issue with the colour / video / image dropdown list not always showing
+  * Add option to disable fading of lyrics on stage view
+
+ -- Michael Berry <michael@quelea.org>  Wednesday, 25 Feb 2015 00:00:00 +0000
