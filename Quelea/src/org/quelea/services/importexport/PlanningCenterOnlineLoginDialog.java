@@ -77,10 +77,14 @@ public class PlanningCenterOnlineLoginDialog extends Stage {
     }  
     
     @FXML private void onLoginAction(ActionEvent event) {
+        if (event != null) {
+            event.consume();
+        }
+        
         if (importDialog.getParser().login(emailField.getText(), passwordField.getText())) {    
             isLoggedIn = true;
-            hide();
             importDialog.onLogin();
+            hide();
         }
         else {
             Dialog.showWarning(LabelGrabber.INSTANCE.getLabel("pco.loginerror.title"), LabelGrabber.INSTANCE.getLabel("pco.loginerror.warning"));
@@ -88,8 +92,9 @@ public class PlanningCenterOnlineLoginDialog extends Stage {
     }
     
     @FXML private void onCancelAction(ActionEvent event) {
-        hide();
+        event.consume();
         importDialog.onAcceptAction(event); // close parent dialog also
+        hide();
     }
         
     public void start() {

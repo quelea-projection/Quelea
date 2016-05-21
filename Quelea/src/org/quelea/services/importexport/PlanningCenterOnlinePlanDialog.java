@@ -213,6 +213,7 @@ public class PlanningCenterOnlinePlanDialog extends BorderPane {
     class ImportTask extends Task<Void> {
 
         List<TreeItem<String> > selectedTreeItems;
+        List<Displayable>       importItems = new ArrayList<Displayable>();
 
         ImportTask(List<TreeItem<String> > selectedTreeItems) {
             this.selectedTreeItems = selectedTreeItems;
@@ -233,15 +234,15 @@ public class PlanningCenterOnlinePlanDialog extends BorderPane {
                 switch (planType)
                 {
                     case MEDIA:
-                        import_PlanMedia(item, treeItem);
+                        prepare_PlanMedia(item, treeItem);
                         break;
 
                     case SONG:
-                        import_PlanSong(item, treeItem);
+                        prepare_PlanSong(item, treeItem);
                         break;
 
                     case CUSTOM_SLIDES:
-                        import_CustomSlides(item, treeItem);
+                        prepare_CustomSlides(item, treeItem);
                         break;
 
                     default:
@@ -252,88 +253,145 @@ public class PlanningCenterOnlinePlanDialog extends BorderPane {
                 totalProgress.setProgress((double)index / (double)selectedTreeItems.size());
             }
 
-            enablePlanProgressBars(false);  
+            enablePlanProgressBars(false);
             return null;
         }
         
         @Override 
-        protected void succeeded() {
+        protected void succeeded() { 
+            importTaskSucceeded(this);
             super.succeeded();
         }
+        
+        protected void prepare_PlanMedia(JSONObject item, TreeItem<String> treeItem) {
+            JSONArray itemMediaJSON = (JSONArray)item.get("plan_item_medias");
+            if (itemMediaJSON.size() <= 0) {
+                return;
+            }
+
+            Long mediaId = (long)((JSONObject)itemMediaJSON.get(0)).get("media_id");
+            JSONObject mediaJSON = importDialog.getParser().media(mediaId);
+
+            JSONArray attachmentsJSON = (JSONArray)mediaJSON.get("attachments");
+            JSONObject firstAttachmentJSON = ((JSONObject)attachmentsJSON.get(0));
+
+            // public URL's are youtube
+            if (firstAttachmentJSON.containsKey("public_url")) {
+                String url = (String)firstAttachmentJSON.get("public_url");
+                YoutubeInfo youtubeInfo = new YoutubeInfo(url);
+                VideoDisplayable displayable = new VideoDisplayable(youtubeInfo.getLocation(), youtubeInfo);
+                QueleaApp.get().getMainWindow().getMainPanel().getSchedulePanel().getScheduleList().add(displayable);
+            }
+            else { // a file to download then put into Quela
+                String url = (String)firstAttachmentJSON.get("url");
+                String fileName = (String)firstAttachmentJSON.get("filename");
+
+                // work out when file was last updated in PCO
+                Date date = null;
+                try {
+                    String stringDate = (String)firstAttachmentJSON.get("updated_at");
+                    DateFormat format = new SimpleDateFormat("yyyy/MM/dd hh:mm:ss X", Locale.ENGLISH);
+                    date = format.parse(stringDate);
+                }
+                catch (Exception e) {
+                    e.printStackTrace();
+                }
+
+                fileName = importDialog.getParser().downloadFile(url, fileName, itemProgress, date);
+
+                Displayable displayable = null;
+                MediaType mediaType = classifyMedia(fileName);
+                switch (mediaType)
+                {
+                    case PRESENTATION:
+                        try {
+                            displayable = new PresentationDisplayable(new File(fileName));                    
+                        }
+                        catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                        break;
+
+                    case VIDEO:
+                        displayable = new VideoDisplayable(fileName);
+                        break;
+
+                    case IMAGE:
+                        displayable = new ImageDisplayable(new File(fileName));
+                        break;
+
+                    default:
+                    case UNKNOWN:
+                        break;
+                }
+
+                if (displayable != null) {
+                    importItems.add(displayable);
+                }
+            }
+        }
+        
+        protected void prepare_PlanSong(JSONObject item, TreeItem<String> treeItem) {
+            JSONObject songJSON = (JSONObject)item.get("song");
+            String title = (String)songJSON.get("title");
+            String author = (String)songJSON.get("author");
+
+            Long arrangementId = (Long)((JSONObject)item.get("arrangement")).get("id");
+            JSONObject arrangement = importDialog.getParser().arrangement(arrangementId);
+            String lyrics = cleanLyrics((String)arrangement.get("chord_chart"));
+            String sequence = (String)arrangement.get("sequence_to_s");
+
+            Long ccli = (Long)songJSON.get("ccli_id");
+            String copyright = (String)songJSON.get("copyright");
+
+            SongDisplayable song = new SongDisplayable(title, author);
+            song.setLyrics(lyrics);
+            song.setCopyright(copyright);
+            song.setCcli(String.valueOf(ccli));     
+
+            Utils.updateSongInBackground(song, true, false);
+            importItems.add(song);
+        }
+
+        protected void prepare_CustomSlides(JSONObject item, TreeItem<String> treeItem) {
+            String title = (String)item.get("title");
+            List<TextSection> textSections = new ArrayList<TextSection>();
+
+            List<String> slideTextArray = new ArrayList<String>();
+            JSONArray customSlides = (JSONArray)item.get("custom_slides");
+            for (Object slideObj : customSlides) {
+                JSONObject slide = (JSONObject)slideObj;            
+                String body = (String)slide.get("body");
+
+                // might need something like this in future:
+                // depending on how often we use custom slides with an empty line which I think is rare
+                // enough to ignore for now
+                //String body = "(" + (String)slide.get("label") + ")" + System.lineSeparator() + (String)slide.get("body");
+                slideTextArray.add(body);
+            }
+
+            // double line separator so SongDisplayable knows where to break the slides apart
+            String joinedSlidesText = String.join(System.lineSeparator() + System.lineSeparator(), slideTextArray);
+
+            SongDisplayable slides = new SongDisplayable(title, "Unknown");
+            slides.setLyrics(joinedSlidesText);
+            importItems.add(slides);
+        }
     };
+    
+    // This MUST be run in the main thread
+    // This adds the prepared displayable items into Quelea
+    private void importTaskSucceeded(ImportTask importTask) {
+        for (Displayable displayable : importTask.importItems) {
+            QueleaApp.get().getMainWindow().getMainPanel().getSchedulePanel().getScheduleList().add(displayable);
+        }
+        
+        QueleaApp.get().getMainWindow().getMainPanel().getPreviewPanel().refresh();
+    }
     
     private void importSelected(List<TreeItem<String> > selectedTreeItems) {
         ImportTask task = new ImportTask(selectedTreeItems);
         new Thread(task).start();
-    }
-    
-    protected void import_PlanMedia(JSONObject item, TreeItem<String> treeItem) {
-        JSONArray itemMediaJSON = (JSONArray)item.get("plan_item_medias");
-        if (itemMediaJSON.size() <= 0) {
-            return;
-        }
-         
-        Long mediaId = (long)((JSONObject)itemMediaJSON.get(0)).get("media_id");
-        JSONObject mediaJSON = importDialog.getParser().media(mediaId);
-        
-        JSONArray attachmentsJSON = (JSONArray)mediaJSON.get("attachments");
-        JSONObject firstAttachmentJSON = ((JSONObject)attachmentsJSON.get(0));
-        
-        // public URL's are youtube
-        if (firstAttachmentJSON.containsKey("public_url")) {
-            String url = (String)firstAttachmentJSON.get("public_url");
-            YoutubeInfo youtubeInfo = new YoutubeInfo(url);
-            VideoDisplayable displayable = new VideoDisplayable(youtubeInfo.getLocation(), youtubeInfo);
-            QueleaApp.get().getMainWindow().getMainPanel().getSchedulePanel().getScheduleList().add(displayable);
-        }
-        else { // a file to download then put into Quela
-            String url = (String)firstAttachmentJSON.get("url");
-            String fileName = (String)firstAttachmentJSON.get("filename");
-            
-            // work out when file was last updated in PCO
-            Date date = null;
-            try {
-                String stringDate = (String)firstAttachmentJSON.get("updated_at");
-                DateFormat format = new SimpleDateFormat("yyyy/MM/dd hh:mm:ss X", Locale.ENGLISH);
-                date = format.parse(stringDate);
-            }
-            catch (Exception e) {
-                e.printStackTrace();
-            }
-  
-            fileName = importDialog.getParser().downloadFile(url, fileName, itemProgress, date);
-            
-            Displayable displayable = null;
-            MediaType mediaType = classifyMedia(fileName);
-            switch (mediaType)
-            {
-                case PRESENTATION:
-                    try {
-                        displayable = new PresentationDisplayable(new File(fileName));                    
-                    }
-                    catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                    break;
-                    
-                case VIDEO:
-                    displayable = new VideoDisplayable(fileName);
-                    break;
-                    
-                case IMAGE:
-                    displayable = new ImageDisplayable(new File(fileName));
-                    break;
-                    
-                default:
-                case UNKNOWN:
-                    break;
-            }
-            
-            if (displayable != null) {
-                //QueleaProperties.get().setLastDirectory(file.getParentFile());
-                QueleaApp.get().getMainWindow().getMainPanel().getSchedulePanel().getScheduleList().add(displayable);
-            }
-        }
     }
     
     protected MediaType classifyMedia(String fileName) {                
@@ -437,53 +495,5 @@ public class PlanningCenterOnlinePlanDialog extends BorderPane {
          }
 
         return cleanedLyrics;
-    }
-    
-    protected void import_PlanSong(JSONObject item, TreeItem<String> treeItem) {
-        JSONObject songJSON = (JSONObject)item.get("song");
-        String title = (String)songJSON.get("title");
-        String author = (String)songJSON.get("author");
- 
-        Long arrangementId = (Long)((JSONObject)item.get("arrangement")).get("id");
-        JSONObject arrangement = importDialog.getParser().arrangement(arrangementId);
-        String lyrics = cleanLyrics((String)arrangement.get("chord_chart"));
-        String sequence = (String)arrangement.get("sequence_to_s");
-
-        Long ccli = (Long)songJSON.get("ccli_id");
-        String copyright = (String)songJSON.get("copyright");
-        
-        SongDisplayable song = new SongDisplayable(title, author);
-        song.setLyrics(lyrics);
-        song.setCopyright(copyright);
-        song.setCcli(String.valueOf(ccli));     
-        
-        Utils.updateSongInBackground(song, true, false);
-        QueleaApp.get().getMainWindow().getMainPanel().getSchedulePanel().getScheduleList().add(song);
-        QueleaApp.get().getMainWindow().getMainPanel().getPreviewPanel().refresh();
-    }
-    
-    protected void import_CustomSlides(JSONObject item, TreeItem<String> treeItem) {
-        String title = (String)item.get("title");
-        List<TextSection> textSections = new ArrayList<TextSection>();
-        
-        List<String> slideTextArray = new ArrayList<String>();
-        JSONArray customSlides = (JSONArray)item.get("custom_slides");
-        for (Object slideObj : customSlides) {
-            JSONObject slide = (JSONObject)slideObj;            
-            String body = (String)slide.get("body");
-            
-            // might need something like this in future:
-            // depending on how often we use custom slides with an empty line which I think is rare
-            // enough to ignore for now
-            //String body = "(" + (String)slide.get("label") + ")" + System.lineSeparator() + (String)slide.get("body");
-            slideTextArray.add(body);
-        }
-        
-        // double line separator so SongDisplayable knows where to break the slides apart
-        String joinedSlidesText = String.join(System.lineSeparator() + System.lineSeparator(), slideTextArray);
-
-        SongDisplayable slides = new SongDisplayable(title, "Unknown");
-        slides.setLyrics(joinedSlidesText);
-        QueleaApp.get().getMainWindow().getMainPanel().getSchedulePanel().getScheduleList().add(slides);
     }
 }
