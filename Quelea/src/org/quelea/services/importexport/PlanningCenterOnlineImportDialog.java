@@ -122,6 +122,7 @@ public class PlanningCenterOnlineImportDialog extends Stage{
     }
     
     @FXML public void onAcceptAction(ActionEvent event) {
+        event.consume();
         hide();
     }
     
