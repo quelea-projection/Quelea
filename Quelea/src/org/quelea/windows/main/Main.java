@@ -201,11 +201,6 @@ public final class Main extends Application {
                                 fullScreenWindow = new DisplayStage(Utils.getBoundsFromRect2D(monitors.get(projectorScreen).getVisualBounds()), false);
                             }
                             
-                            // fixes some window frame display issues on linux
-                            if (!Utils.isLinux()) {
-                                fullScreenWindow.setFullScreen(true);
-                            }
-                            
                             QueleaApp.get().setProjectionWindow(fullScreenWindow);
 
                             if (stageHidden) {
