@@ -32,6 +32,7 @@ import javafx.event.EventHandler;
 import javafx.scene.control.CheckBox;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
+import javafx.stage.StageStyle;
 import javax.imageio.ImageIO;
 import org.javafx.dialog.Dialog;
 import org.quelea.data.bible.BibleManager;
@@ -199,9 +200,13 @@ public final class Main extends Application {
                                 LOGGER.log(Level.INFO, "Starting projector display on monitor {0} (base 0!)", projectorScreen);
                                 fullScreenWindow = new DisplayStage(Utils.getBoundsFromRect2D(monitors.get(projectorScreen).getVisualBounds()), false);
                             }
-                            fullScreenWindow.setFullScreen(true);
+                            
+                            // fixes some window frame display issues on linux
+                            if (!Utils.isLinux()) {
+                                fullScreenWindow.setFullScreen(true);
+                            }
+                            
                             QueleaApp.get().setProjectionWindow(fullScreenWindow);
-                            //fullScreenWindow.toFront();
 
                             if (stageHidden) {
                                 LOGGER.log(Level.INFO, "Hiding stage display on monitor 0 (base 0!)");
