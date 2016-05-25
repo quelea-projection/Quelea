@@ -22,4 +22,4 @@ quelea (2016.1) stable; urgency=normal
   * Add "copy to schedule" option
   * Add Bulgarian translation
 
- -- Michael Berry <michael@quelea.org>  Sunday, 06 Apr 2016 00:00:00 +0000
+ -- Michael Berry <michael@quelea.org>  Sunday, 26 May 2016 00:00:00 +0000
