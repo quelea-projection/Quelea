@@ -198,7 +198,7 @@ public final class Main extends Application {
                                 fullScreenWindow = new DisplayStage(QueleaProperties.get().getProjectorCoords(), false);
                             } else {
                                 LOGGER.log(Level.INFO, "Starting projector display on monitor {0} (base 0!)", projectorScreen);
-                                fullScreenWindow = new DisplayStage(Utils.getBoundsFromRect2D(monitors.get(projectorScreen).getVisualBounds()), false);
+                                fullScreenWindow = new DisplayStage(Utils.getBoundsFromRect2D(monitors.get(projectorScreen).getBounds()), false);
                             }
                             
                             QueleaApp.get().setProjectionWindow(fullScreenWindow);
