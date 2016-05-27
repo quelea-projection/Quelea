@@ -26,6 +26,7 @@ import java.util.Arrays;
 import java.util.TreeSet;
 import java.util.regex.Pattern;
 import javafx.application.Platform;
+import org.quelea.data.ThemeDTO;
 import org.quelea.data.bible.Bible;
 import org.quelea.data.bible.BibleBook;
 import org.quelea.data.db.SongManager;
@@ -41,6 +42,8 @@ import org.quelea.windows.main.LivePanel;
 import org.quelea.windows.main.MainPanel;
 import org.quelea.windows.main.QueleaApp;
 import org.quelea.windows.main.actionhandlers.RecordingsHandler;
+import org.quelea.windows.main.schedule.ScheduleList;
+import org.quelea.windows.main.schedule.ScheduleThemeNode;
 import org.quelea.windows.main.toolbars.MainToolbar;
 import org.quelea.windows.multimedia.VLCWindow;
 
@@ -116,6 +119,24 @@ public class RCHandler {
                 p.getSchedulePanel().getScheduleList().getSelectionModel().select(p.getSchedulePanel().getScheduleList().getItems().size() - 1);
             }
             p.getPreviewPanel().goLive();
+        });
+    }
+    
+    public static void moveUp(String index) {
+        int item = Integer.parseInt(index.split("moveup/")[1]);
+        Platform.runLater(() -> {
+            final MainPanel p = QueleaApp.get().getMainWindow().getMainPanel();
+            p.getSchedulePanel().getScheduleList().getSelectionModel().select(item);
+            QueleaApp.get().getMainWindow().getMainPanel().getSchedulePanel().getScheduleList().moveCurrentItem(ScheduleList.Direction.UP);
+        });
+    }
+
+    public static void moveDown(String index) {
+        int item = Integer.parseInt(index.split("movedown/")[1]);
+        Platform.runLater(() -> {
+            final MainPanel p = QueleaApp.get().getMainWindow().getMainPanel();
+            p.getSchedulePanel().getScheduleList().getSelectionModel().select(item);
+            QueleaApp.get().getMainWindow().getMainPanel().getSchedulePanel().getScheduleList().moveCurrentItem(ScheduleList.Direction.DOWN);
         });
     }
 
@@ -298,6 +319,24 @@ public class RCHandler {
         }
         return LabelGrabber.INSTANCE.getLabel("rcs.add.failed");
     }
+    
+    public static String removeItemFromSchedule(HttpExchange he) {
+        String songIDString;
+        int songID;
+        if (he.getRequestURI().toString().contains("/remove/")) {
+            final MainPanel p = QueleaApp.get().getMainWindow().getMainPanel();
+            songIDString = he.getRequestURI().toString().split("/remove/", 2)[1];
+            songID = Integer.parseInt(songIDString);
+
+            Utils.fxRunAndWait(() -> {
+                p.getSchedulePanel().getScheduleList().getSelectionModel().select(songID);
+                QueleaApp.get().getMainWindow().getMainPanel().getSchedulePanel().getScheduleList().removeCurrentItem();
+            });
+
+            return LabelGrabber.INSTANCE.getLabel("Item removal was succsessful");
+        }
+        return LabelGrabber.INSTANCE.getLabel("Item removal failed");
+    }
 
     public static String songDisplay(HttpExchange he) {
         String songIDString;
@@ -373,6 +412,41 @@ public class RCHandler {
         } else {
             return "";
         }
+    }
+    
+    public static String getThemes(HttpExchange he) {
+        StringBuilder ret = new StringBuilder();
+        for (ThemeDTO t : QueleaApp.get().getMainWindow().getMainPanel().getSchedulePanel().getThemeNode().getThemes()) {
+            ret.append(t.getThemeName()).append("\n");
+        }
+        ret.append(LabelGrabber.INSTANCE.getLabel("default.theme.text")).append("\n");
+        return ret.toString();
+    }
+
+    public static String setTheme(HttpExchange he) throws UnsupportedEncodingException {
+        String themeName;
+        if (he.getRequestURI().toString().contains("/settheme/")) {
+            final MainPanel p = QueleaApp.get().getMainWindow().getMainPanel();
+            String uri = URLDecoder.decode(he.getRequestURI().toString(), "UTF-8");
+            themeName = uri.split("/settheme/", 2)[1];
+            ScheduleThemeNode stn = QueleaApp.get().getMainWindow().getMainPanel().getSchedulePanel().getThemeNode();
+
+            Utils.fxRunAndWait(() -> {
+                int i = 0;
+                for (ThemeDTO t : stn.getThemes()) {
+                    i++;
+                    if (t.getThemeName().equals(themeName)) {
+                        stn.selectTheme(t);
+                        break;
+                    } else if (i == stn.getThemes().size()) {
+                        stn.selectTheme(ThemeDTO.DEFAULT_THEME);
+                    }
+                }
+            });
+
+            return "";
+        }
+        return "";
     }
 
     public static String listBibleTranslations(HttpExchange he) {
