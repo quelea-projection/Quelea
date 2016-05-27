@@ -17,17 +17,21 @@
  */
 package org.quelea.windows.main;
 
+import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javafx.embed.swing.SwingFXUtils;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
+import javafx.scene.SnapshotParameters;
 import javafx.scene.control.Button;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.Tooltip;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.image.WritableImage;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Region;
@@ -62,6 +66,7 @@ public class ThemePreviewPanel extends VBox {
     private EditThemeDialog themeDialog;
     private Window popup;
     private ScheduleThemeNode parent;
+    private WritableImage previewImage;
 
     /**
      * Create a new theme preview panel.
@@ -193,4 +198,20 @@ public class ThemePreviewPanel extends VBox {
         drawer.setTheme(theme);
         drawer.setText(ThemePanel.SAMPLE_LYRICS, new String[0], new String[0], false, -1);
     }
+    
+    public Image getThemePreviewImage() {
+        WordDrawer drawer;
+        if (canvas.isStageView()) {
+            drawer = new StageDrawer();
+        } else {
+            drawer = new LyricDrawer();
+        }
+        previewImage = new WritableImage(200, 200);
+        canvas.snapshot(new SnapshotParameters(), previewImage);
+        BufferedImage bi = SwingFXUtils.fromFXImage((WritableImage) previewImage, null);
+        SwingFXUtils.toFXImage(bi, previewImage);
+
+        return previewImage;
+    }
+    
 }
