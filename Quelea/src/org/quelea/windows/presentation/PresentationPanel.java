@@ -43,6 +43,7 @@ import org.quelea.windows.main.DisplayableDrawer;
 import org.quelea.windows.main.LivePanel;
 import org.quelea.windows.main.LivePreviewPanel;
 import org.quelea.windows.main.QueleaApp;
+import org.quelea.windows.pdf.PdfPreview;
 
 /**
  * The panel for displaying presentation slides in the live / preview panels.
@@ -71,13 +72,12 @@ public class PresentationPanel extends AbstractPanel {
         presentationPreview.addSlideChangedListener(new org.quelea.windows.presentation.SlideChangedListener() {
             @Override
             public void slideChanged(PresentationSlide newSlide) {
-                if(live) {
-                    if(newSlide != null && displayable != null) {
-                        if(displayable.getOOPresentation() == null) {
+                if (live) {
+                    if (newSlide != null && displayable != null) {
+                        if (displayable.getOOPresentation() == null) {
                             currentSlide = newSlide;
                             updateCanvas();
-                        }
-                        else {
+                        } else {
                             OOPresentation pres = displayable.getOOPresentation();
                             pres.addSlideListener(new SlideChangedListener() {
                                 @Override
@@ -102,7 +102,7 @@ public class PresentationPanel extends AbstractPanel {
                 if (t.getCode().equals(KeyCode.PAGE_DOWN) || t.getCode().equals(KeyCode.DOWN)) {
                     t.consume();
                     QueleaApp.get().getMainWindow().getMainPanel().getLivePanel().advance();
-                } else if (t.getCode().equals(KeyCode.PAGE_UP)|| t.getCode().equals(KeyCode.UP)) {
+                } else if (t.getCode().equals(KeyCode.PAGE_UP) || t.getCode().equals(KeyCode.UP)) {
                     t.consume();
                     QueleaApp.get().getMainWindow().getMainPanel().getLivePanel().previous();
                 }
@@ -111,22 +111,24 @@ public class PresentationPanel extends AbstractPanel {
         mainPanel.setCenter(presentationPreview);
         setCenter(mainPanel);
     }
-    
+
     @Override
     public void requestFocus() {
         presentationPreview.requestFocus();
     }
-    
+
     public void buildLoopTimeline() {
         loopTimeline = new Timeline(
                 new KeyFrame(Duration.seconds(0),
                         new EventHandler<ActionEvent>() {
                             @Override
                             public void handle(ActionEvent actionEvent) {
-                                if(containerPanel instanceof LivePanel) {
+                                if (containerPanel instanceof LivePanel) {
                                     LivePanel livePanel = ((LivePanel) containerPanel);
-                                    if(livePanel.isLoopSelected()) {
+                                    if (livePanel.isLoopSelected()) {
                                         presentationPreview.advanceSlide(true);
+                                        PdfPreview pdfPreview = livePanel.getPdfPanel().getPresentationPreview();
+                                        pdfPreview.advanceSlide(true);
                                     }
                                 }
                             }
@@ -147,8 +149,7 @@ public class PresentationPanel extends AbstractPanel {
                         int newTime;
                         try {
                             newTime = Integer.parseInt(t1);
-                        }
-                        catch(NumberFormatException ex) {
+                        } catch (NumberFormatException ex) {
                             return;
                         }
                         loopTimeline.stop();
@@ -157,10 +158,12 @@ public class PresentationPanel extends AbstractPanel {
                                         new EventHandler<ActionEvent>() {
                                             @Override
                                             public void handle(ActionEvent actionEvent) {
-                                                if(containerPanel instanceof LivePanel) {
+                                                if (containerPanel instanceof LivePanel) {
                                                     LivePanel livePanel = ((LivePanel) containerPanel);
-                                                    if(livePanel.isLoopSelected()) {
+                                                    if (livePanel.isLoopSelected()) {
                                                         presentationPreview.advanceSlide(true);
+                                                        PdfPreview pdfPreview = livePanel.getPdfPanel().getPresentationPreview();
+                                                        pdfPreview.advanceSlide(true);
                                                     }
                                                 }
                                             }
@@ -184,8 +187,8 @@ public class PresentationPanel extends AbstractPanel {
     }
 
     public void stopCurrent() {
-        if(live && displayable != null) {
-            if(displayable.getOOPresentation() != null) {
+        if (live && displayable != null) {
+            if (displayable.getOOPresentation() != null) {
                 displayable.getOOPresentation().stop();
                 displayable = null;
             }
@@ -197,7 +200,7 @@ public class PresentationPanel extends AbstractPanel {
      */
     private void startOOPres() {
         OOPresentation pres = displayable.getOOPresentation();
-        if(pres != null && !pres.isRunning()) {
+        if (pres != null && !pres.isRunning()) {
             pres.start(QueleaProperties.get().getProjectorScreen());
         }
     }
@@ -216,11 +219,11 @@ public class PresentationPanel extends AbstractPanel {
      * @param index the index to display.
      */
     public void showDisplayable(final PresentationDisplayable displayable, final int index) {
-        if(this.displayable == displayable) {
+        if (this.displayable == displayable) {
             return;
         }
         this.displayable = displayable;
-        if(displayable == null) {
+        if (displayable == null) {
             presentationPreview.clear();
             return;
         }
@@ -229,15 +232,14 @@ public class PresentationPanel extends AbstractPanel {
         Platform.runLater(new Runnable() {
             @Override
             public void run() {
-                if(index < 1) { 
+                if (index < 1) {
                     presentationPreview.select(1, true);
-                }
-                else { 
+                } else {
                     presentationPreview.select(index, true);
                 }
             }
         });
-        
+
         /*
          * TODO
          * For some reason the following scroll to line causes a bug whereby 
@@ -273,8 +275,8 @@ public class PresentationPanel extends AbstractPanel {
 
     @Override
     public void updateCanvas() {
-        for(DisplayCanvas canvas : getCanvases()) {
-            if(currentSlide != null) {
+        for (DisplayCanvas canvas : getCanvases()) {
+            if (currentSlide != null) {
                 drawSlide(currentSlide, canvas);
             }
         }
@@ -288,7 +290,7 @@ public class PresentationPanel extends AbstractPanel {
     public void advance() {
         presentationPreview.advanceSlide(false);
     }
-    
+
     public void previous() {
         presentationPreview.previousSlide();
     }
@@ -296,8 +298,8 @@ public class PresentationPanel extends AbstractPanel {
     public void selectLast() {
         presentationPreview.selectLast();
     }
-    
-        public PresentationPreview getPresentationPreview() {
+
+    public PresentationPreview getPresentationPreview() {
         return presentationPreview;
     }
 }

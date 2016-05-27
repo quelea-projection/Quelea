@@ -602,3 +602,4 @@ presentation.options.heading=Presentations
 recordings.options.heading=Recordings
 copy.song.db.default=Copy song to schedule by default
 mp.button=Mission Praise
+add.pdf.tooltip=Add PDF
