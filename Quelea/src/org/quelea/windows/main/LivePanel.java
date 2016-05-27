@@ -41,6 +41,7 @@ import javafx.stage.FileChooser;
 import javafx.stage.Screen;
 import org.quelea.data.displayable.BiblePassage;
 import org.quelea.data.displayable.Displayable;
+import org.quelea.data.displayable.PdfDisplayable;
 import org.quelea.data.displayable.PresentationDisplayable;
 import org.quelea.data.displayable.TextDisplayable;
 import org.quelea.data.displayable.TextSection;
@@ -77,6 +78,7 @@ public class LivePanel extends LivePreviewPanel {
      */
     public LivePanel() {
         getPresentationPanel().setLive();
+        getPdfPanel().setLive();
         header = new ToolBar();
         Label headerLabel = new Label(LabelGrabber.INSTANCE.getLabel("live.heading"));
         headerLabel.setStyle("-fx-font-weight: bold;");
@@ -260,6 +262,8 @@ public class LivePanel extends LivePreviewPanel {
                             Platform.runLater(() -> {
                                 if (lp.getDisplayable() instanceof PresentationDisplayable) {
                                     lp.getPresentationPanel().getPresentationPreview().select(i);
+                                } else if (lp.getDisplayable() instanceof PdfDisplayable) {
+                                    lp.getPdfPanel().getPresentationPreview().select(i);
                                 } else {
                                     lp.getLyricsPanel().select(index);
                                 }
@@ -337,7 +341,7 @@ public class LivePanel extends LivePreviewPanel {
     public void setDisplayable(Displayable d, int index) {
         super.setDisplayable(d, index);
         loop.setSelected(false);
-        if (d instanceof PresentationDisplayable) {
+        if (d instanceof PresentationDisplayable || d instanceof PdfDisplayable) {
             if (!header.getItems().contains(loopBox)) {
                 header.getItems().add(1, loopBox);
             }
