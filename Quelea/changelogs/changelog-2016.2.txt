@@ -1,5 +1,6 @@
 quelea (2016.2) stable; urgency=normal
  
+  * Add support for displaying PDF
   * 
 
  -- Michael Berry <michael@quelea.org>  Sunday, 26 May 2016 00:00:00 +0000
