@@ -33,6 +33,7 @@ import org.quelea.data.displayable.AudioDisplayable;
 import org.quelea.data.displayable.Displayable;
 import org.quelea.data.displayable.ImageDisplayable;
 import org.quelea.data.displayable.MultimediaDisplayable;
+import org.quelea.data.displayable.PdfDisplayable;
 import org.quelea.data.displayable.PresentationDisplayable;
 import org.quelea.data.displayable.SongDisplayable;
 import org.quelea.data.displayable.TextDisplayable;
@@ -46,6 +47,7 @@ import org.quelea.windows.lyrics.SelectLyricsPanel;
 import org.quelea.windows.main.quickedit.QuickEditDialog;
 import org.quelea.windows.main.widgets.CardPane;
 import org.quelea.windows.multimedia.MultimediaPanel;
+import org.quelea.windows.pdf.PdfPanel;
 import org.quelea.windows.timer.TimerPanel;
 import org.quelea.windows.presentation.PresentationPanel;
 
@@ -67,10 +69,12 @@ public abstract class LivePreviewPanel extends BorderPane {
     private static final String TIMER_LABEL = "TIMER";
     private static final String AUDIO_LABEL = "AUDIO";
     private static final String PRESENTATION_LABEL = "PPT";
+    private static final String PDF_LABEL = "PDF";
     private String currentLabel;
     private SelectLyricsPanel lyricsPanel = new SelectLyricsPanel(this);
     private final ImagePanel imagePanel = new ImagePanel();
     private final PresentationPanel presentationPanel = new PresentationPanel(this);
+    private final PdfPanel pdfPanel = new PdfPanel(this);
     private final MultimediaPanel videoPanel = new MultimediaPanel();
     private final MultimediaPanel audioPanel = new MultimediaPanel();
     private final TimerPanel timerPanel = new TimerPanel();
@@ -88,6 +92,7 @@ public abstract class LivePreviewPanel extends BorderPane {
         cardPanel.add(timerPanel, TIMER_LABEL);
         cardPanel.add(audioPanel, AUDIO_LABEL);
         cardPanel.add(presentationPanel, PRESENTATION_LABEL);
+        cardPanel.add(pdfPanel, PDF_LABEL);
         cardPanel.show(LYRICS_LABEL);
         lyricsPanel.getLyricsList().setOnMouseClicked(new EventHandler<MouseEvent>() {
             @Override
@@ -139,6 +144,8 @@ public abstract class LivePreviewPanel extends BorderPane {
             presentationPanel.selectLast();
         } else if (LYRICS_LABEL.equals(currentLabel)) {
             lyricsPanel.selectLast();
+        } else if (PDF_LABEL.equals(currentLabel)) {
+            pdfPanel.selectLast();
         }
     }
 
@@ -149,6 +156,15 @@ public abstract class LivePreviewPanel extends BorderPane {
      */
     protected PresentationPanel getPresentationPanel() {
         return presentationPanel;
+    }
+    
+    /**
+     * Get the PDF panel on this live / preview panel.
+     * <p/>
+     * @return the PDF panel.
+     */
+    public PdfPanel getPdfPanel() {
+        return pdfPanel;
     }
 
     /**
@@ -190,6 +206,9 @@ public abstract class LivePreviewPanel extends BorderPane {
         if (PRESENTATION_LABEL.equals(currentLabel)) {
             presentationPanel.showDisplayable(null, 0);
         }
+        if (PDF_LABEL.equals(currentLabel)) {
+            pdfPanel.showDisplayable(null, 0);
+        }
         for (Node panel : cardPanel) {
             if (panel instanceof ContainedPanel) {
                 ((ContainedPanel) panel).removeCurrentDisplayable();
@@ -212,6 +231,8 @@ public abstract class LivePreviewPanel extends BorderPane {
     public int getIndex() {
         if (PRESENTATION_LABEL.equals(currentLabel)) {
             return presentationPanel.getIndex();
+        } else if (PDF_LABEL.equals(currentLabel)) {
+            return pdfPanel.getIndex();
         } else {
             return lyricsPanel.getIndex();
         }
@@ -225,6 +246,8 @@ public abstract class LivePreviewPanel extends BorderPane {
     public void advance() {
         if (PRESENTATION_LABEL.equals(currentLabel)) {
             presentationPanel.advance();
+        } else if (PDF_LABEL.equals(currentLabel)) {
+            pdfPanel.advance();
         } else if (LYRICS_LABEL.equals(currentLabel)) {
             lyricsPanel.advance();
         } else if (IMAGE_LABEL.equals(currentLabel)) {
@@ -244,6 +267,8 @@ public abstract class LivePreviewPanel extends BorderPane {
     public void previous() {
         if (PRESENTATION_LABEL.equals(currentLabel)) {
             presentationPanel.previous();
+        } else if (PDF_LABEL.equals(currentLabel)) {
+            pdfPanel.previous();
         } else if (LYRICS_LABEL.equals(currentLabel)) {
             lyricsPanel.previous();
         } else if (IMAGE_LABEL.equals(currentLabel)) {
@@ -277,13 +302,18 @@ public abstract class LivePreviewPanel extends BorderPane {
         }
         this.displayable = displayable;
         presentationPanel.stopCurrent();
+        pdfPanel.stopCurrent();
         audioPanel.removeCurrentDisplayable();
         videoPanel.removeCurrentDisplayable();
         timerPanel.removeCurrentDisplayable();
         imagePanel.removeCurrentDisplayable();
         presentationPanel.removeCurrentDisplayable();
+        pdfPanel.removeCurrentDisplayable();
         if (PRESENTATION_LABEL.equals(currentLabel)) {
             presentationPanel.showDisplayable(null, 0);
+        }
+        if (PDF_LABEL.equals(currentLabel)) {
+            pdfPanel.showDisplayable(null, 0);
         }
         if (displayable instanceof TextDisplayable) {
             lyricsPanel.showDisplayable((TextDisplayable) displayable, index);
@@ -315,6 +345,10 @@ public abstract class LivePreviewPanel extends BorderPane {
             presentationPanel.showDisplayable((PresentationDisplayable) displayable, index);
             cardPanel.show(PRESENTATION_LABEL);
             currentLabel = PRESENTATION_LABEL;
+        } else if (displayable instanceof PdfDisplayable) {
+            pdfPanel.showDisplayable((PdfDisplayable) displayable, index);
+            cardPanel.show(PDF_LABEL);
+            currentLabel = PDF_LABEL;
         } else if (displayable == null) {
 //            LOGGER.log(Level.WARNING, "BUG: Called showDisplayable(null), should probably call clear() instead.", 
 //                    new RuntimeException("BUG: Called showDisplayable(null), should probably call clear() instead.")); clear();
