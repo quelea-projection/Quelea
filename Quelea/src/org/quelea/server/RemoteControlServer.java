@@ -22,13 +22,17 @@ import com.sun.net.httpserver.HttpContext;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 import com.sun.net.httpserver.HttpServer;
+import java.awt.image.BufferedImage;
 import java.io.BufferedReader;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
+import java.net.FileNameMap;
 import java.net.InetSocketAddress;
 import java.net.URI;
+import java.net.URLConnection;
 import java.net.URLDecoder;
 import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
@@ -40,15 +44,20 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javafx.embed.swing.SwingFXUtils;
+import javax.imageio.ImageIO;
 import org.quelea.data.displayable.MultimediaDisplayable;
 import org.quelea.data.displayable.TextDisplayable;
 import org.quelea.data.displayable.TextSection;
 import org.quelea.services.languages.LabelGrabber;
 import org.quelea.services.utils.LineTypeChecker;
 import org.quelea.services.utils.LoggerUtils;
+import org.quelea.services.utils.Utils;
 import org.quelea.windows.main.LivePanel;
 import org.quelea.windows.main.QueleaApp;
+import org.quelea.windows.main.ThemePreviewPanel;
 import org.quelea.windows.main.actionhandlers.RecordingsHandler;
+import org.quelea.windows.main.schedule.ScheduleThemeNode;
 import org.quelea.windows.main.toolbars.MainToolbar;
 
 /**
@@ -105,6 +114,12 @@ public class RemoteControlServer {
         server.createContext("/gettranslation", new SongTranslationsHandler());
         server.createContext("/record", new RecordToggleHandler());
         server.createContext("/gotoitem", new GotoItemHandler());
+        server.createContext("/remove", new RemoveItemHandler());
+        server.createContext("/getthemes", new GetThemesHandler());
+        server.createContext("/settheme", new SetThemeHandler());
+        server.createContext("/moveup", new MoveItemUpHandler());
+        server.createContext("/movedown", new MoveItemDownHandler());
+        server.createContext("/themethumb", new ThemeThumbnailsHandler());
         rootcontext.getFilters().add(new ParameterFilter());
         server.setExecutor(null);
     }
@@ -276,6 +291,33 @@ public class RemoteControlServer {
         }
 
     }
+    
+    private class ThemeThumbnailsHandler implements HttpHandler {
+
+        FileNameMap fileNameMap = URLConnection.getFileNameMap();
+
+        public void handle(HttpExchange t) {
+            Utils.fxRunAndWait(() -> {
+                try {
+                    ScheduleThemeNode stn = QueleaApp.get().getMainWindow().getMainPanel().getSchedulePanel().getThemeNode();
+                    int themeNum = Integer.parseInt(t.getRequestURI().getPath().replace("/themethumb", ""));
+                    BufferedImage image = SwingFXUtils.fromFXImage(((ThemePreviewPanel) stn.getThemePreviews().getChildren().get(themeNum)).getThemePreviewImage(), null);
+                    ByteArrayOutputStream output = new ByteArrayOutputStream();
+                    ImageIO.write(image, "png", output);
+                    byte[] byteArray = output.toByteArray();
+                    t.sendResponseHeaders(200, byteArray.length);
+                    OutputStream out = t.getResponseBody();
+                    out.write(byteArray);
+                    out.close();
+
+                } catch (IOException e) {
+                    System.out.println("Failed saving");
+                } catch (Exception e) {
+                    System.out.println("Exception " + e);
+                }
+            });
+        }
+    }
 
     private class AddSongHandler implements HttpHandler {
 
@@ -295,6 +337,24 @@ public class RemoteControlServer {
         }
 
     }
+    
+        private class RemoveItemHandler implements HttpHandler {
+
+        @Override
+        public void handle(HttpExchange he) throws IOException {
+            if (RCHandler.isLoggedOn(he.getRemoteAddress().getAddress().toString())) {
+                final String response;
+                response = RCHandler.removeItemFromSchedule(he);
+                he.getResponseHeaders().add("Cache-Control", "no-cache, no-store, must-revalidate");
+                he.sendResponseHeaders(200, response.getBytes(Charset.forName("UTF-8")).length);
+                OutputStream os = he.getResponseBody();
+                os.write(response.getBytes(Charset.forName("UTF-8")));
+                os.close();
+            } else {
+                passwordPage(he);
+            }
+        }
+    }
 
     private class DatabaseSearchHandler implements HttpHandler {
 
@@ -303,6 +363,42 @@ public class RemoteControlServer {
             if (RCHandler.isLoggedOn(he.getRemoteAddress().getAddress().toString())) {
                 final String response;
                 response = RCHandler.databaseSearch(he);
+                he.getResponseHeaders().add("Cache-Control", "no-cache, no-store, must-revalidate");
+                he.sendResponseHeaders(200, response.getBytes(Charset.forName("UTF-8")).length);
+                OutputStream os = he.getResponseBody();
+                os.write(response.getBytes(Charset.forName("UTF-8")));
+                os.close();
+            } else {
+                passwordPage(he);
+            }
+        }
+    }
+    
+    private class GetThemesHandler implements HttpHandler {
+
+        @Override
+        public void handle(HttpExchange he) throws IOException {
+            if (RCHandler.isLoggedOn(he.getRemoteAddress().getAddress().toString())) {
+                final String response;
+                response = RCHandler.getThemes(he);
+                he.getResponseHeaders().add("Cache-Control", "no-cache, no-store, must-revalidate");
+                he.sendResponseHeaders(200, response.getBytes(Charset.forName("UTF-8")).length);
+                OutputStream os = he.getResponseBody();
+                os.write(response.getBytes(Charset.forName("UTF-8")));
+                os.close();
+            } else {
+                passwordPage(he);
+            }
+        }
+    }
+
+    private class SetThemeHandler implements HttpHandler {
+
+        @Override
+        public void handle(HttpExchange he) throws IOException {
+            if (RCHandler.isLoggedOn(he.getRemoteAddress().getAddress().toString())) {
+                final String response;
+                response = RCHandler.setTheme(he);
                 he.getResponseHeaders().add("Cache-Control", "no-cache, no-store, must-revalidate");
                 he.sendResponseHeaders(200, response.getBytes(Charset.forName("UTF-8")).length);
                 OutputStream os = he.getResponseBody();
@@ -445,6 +541,44 @@ public class RemoteControlServer {
                 he.getResponseHeaders().add("Cache-Control", "no-cache, no-store, must-revalidate");
                 he.sendResponseHeaders(200, -1);
                 RCHandler.gotoItem(he.getRequestURI().toString());
+            } else {
+                reload(he);
+            }
+        }
+    }
+    
+    //Handles item moves up
+    private class MoveItemUpHandler implements HttpHandler {
+
+        @Override
+        public void handle(HttpExchange he) throws IOException {
+            if (RCHandler.isLoggedOn(he.getRemoteAddress().getAddress().toString())) {
+                final String response = "";
+                he.getResponseHeaders().add("Cache-Control", "no-cache, no-store, must-revalidate");
+                he.sendResponseHeaders(200, response.getBytes(Charset.forName("UTF-8")).length);
+                OutputStream os = he.getResponseBody();
+                os.write(response.getBytes(Charset.forName("UTF-8")));
+                os.close();
+                RCHandler.moveUp(he.getRequestURI().toString());
+            } else {
+                reload(he);
+            }
+        }
+    }
+
+    //Handles item moves down
+    private class MoveItemDownHandler implements HttpHandler {
+
+        @Override
+        public void handle(HttpExchange he) throws IOException {
+            if (RCHandler.isLoggedOn(he.getRemoteAddress().getAddress().toString())) {
+                final String response = "";
+                he.getResponseHeaders().add("Cache-Control", "no-cache, no-store, must-revalidate");
+                he.sendResponseHeaders(200, response.getBytes(Charset.forName("UTF-8")).length);
+                OutputStream os = he.getResponseBody();
+                os.write(response.getBytes(Charset.forName("UTF-8")));
+                os.close();
+                RCHandler.moveDown(he.getRequestURI().toString());
             } else {
                 reload(he);
             }

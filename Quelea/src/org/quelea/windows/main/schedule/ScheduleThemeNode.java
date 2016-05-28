@@ -209,7 +209,7 @@ public class ScheduleThemeNode extends BorderPane {
      * <p/>
      * @return the list of themes displayed.
      */
-    private List<ThemeDTO> getThemes() {
+    public List<ThemeDTO> getThemes() {
         List<ThemeDTO> themesList = new ArrayList<>();
         File themeDir = new File(QueleaProperties.getQueleaUserHome(), "themes");
         if (!themeDir.exists()) {
@@ -240,6 +240,24 @@ public class ScheduleThemeNode extends BorderPane {
      */
     public void setTheme(ThemeDTO theme) {
         callback.updateTheme(theme);
+    }
+    
+    /**
+     * Select a theme to be used.
+     * @param theme that is supposed to be used
+     */
+    public void selectTheme(ThemeDTO theme) {
+        int i = 0;
+        for (Node node : themePreviews.getChildren()) {
+            i++;
+            if (node instanceof ThemePreviewPanel) {
+                ThemePreviewPanel panel = (ThemePreviewPanel) node;
+                if (i == themePreviews.getChildren().size() || panel.getTheme().getThemeName().equals(theme.getThemeName())) {
+                    panel.getSelectButton().fire();
+                    break;
+                }
+            }
+        }
     }
 
     public FlowPane getThemePreviews() {
