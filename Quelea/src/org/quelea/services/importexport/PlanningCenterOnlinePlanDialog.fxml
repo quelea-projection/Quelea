@@ -8,32 +8,31 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
-<HBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" xmlns="http://javafx.com/javafx/8.0.65" xmlns:fx="http://javafx.com/fxml/1">
+<HBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="350.0" prefWidth="500.0" xmlns="http://javafx.com/javafx/8.0.65" xmlns:fx="http://javafx.com/fxml/1">
    <children>
       <TreeView fx:id="planView" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
       <BorderPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308">
          <top>
-            <VBox prefHeight="200.0" prefWidth="100.0" BorderPane.alignment="CENTER">
+            <VBox fx:id="buttonBox" spacing="5.0" BorderPane.alignment="CENTER">
                <children>
-                  <VBox fx:id="buttonBox" alignment="TOP_CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefWidth="150.0" spacing="5.0">
-                     <children>
-                        <Button mnemonicParsing="false" onAction="#onImportAllAction" prefWidth="150.0" text="%import.all.button" />
-                        <Button mnemonicParsing="false" onAction="#onImportSelectedAction" prefWidth="150.0" text="%import.selection.button" />
-                        <Button mnemonicParsing="false" onAction="#onRefreshAction" prefWidth="150.0" text="%refresh.button" />
-                     </children>
-                     <padding>
-                        <Insets top="10.0" />
-                     </padding>
-                  </VBox>
+                  <Button mnemonicParsing="false" onAction="#onImportAllAction" prefWidth="150.0" text="%import.all.button" />
+                  <Button mnemonicParsing="false" onAction="#onImportSelectedAction" prefWidth="150.0" text="%import.selection.button" />
+                  <Button mnemonicParsing="false" onAction="#onRefreshAction" prefWidth="150.0" text="%refresh.button" />
                </children>
+               <padding>
+                  <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+               </padding>
             </VBox>
          </top>
          <bottom>
-            <VBox fx:id="progressBox" BorderPane.alignment="CENTER">
+            <VBox fx:id="progressBox" spacing="5.0" BorderPane.alignment="CENTER">
                <children>
                   <ProgressBar fx:id="totalProgress" prefWidth="150.0" progress="0.0" />
                   <ProgressBar fx:id="itemProgress" prefWidth="150.0" progress="0.0" />
                </children>
+               <padding>
+                  <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+               </padding>
             </VBox>
          </bottom>
       </BorderPane>

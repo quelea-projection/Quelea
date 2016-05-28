@@ -18,7 +18,6 @@
 package org.quelea.services.importexport;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -32,6 +31,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
 import javafx.scene.image.Image;
+import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Pane;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
@@ -112,6 +112,7 @@ public class PlanningCenterOnlineImportDialog extends Stage{
         planPane.getChildren().clear();
         PlanningCenterOnlinePlanDialog planDialog = treeViewItemPlanDialogMap.get(selectedItem);
         if (planDialog != null) {
+            planPane.getChildren().clear();
             planPane.getChildren().add(planDialog);
         }
     }
