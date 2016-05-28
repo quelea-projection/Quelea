@@ -157,7 +157,6 @@ public class ImportMenu extends Menu {
             planningCenterOnlineImportDialog.start();
         });
         pcoItem.setAccelerator(new KeyCodeCombination(KeyCode.P, KeyCombination.SHORTCUT_DOWN, KeyCombination.ALT_DOWN));
-        getItems().add(pcoItem);        
 
         olpItem = new MenuItem(LabelGrabber.INSTANCE.getLabel("olp.button"), new ImageView(new Image("file:icons/openlp.png", 16, 16, false, true)));
         olpItem.setOnAction((ActionEvent t) -> {
@@ -281,6 +280,7 @@ public class ImportMenu extends Menu {
         getItems().add(olpItem);
         getItems().add(olItem);
         getItems().add(osItem);
+        getItems().add(pcoItem);
         getItems().add(plainTextItem);
         getItems().add(pmItem);
         getItems().add(qspItem);

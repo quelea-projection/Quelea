@@ -41,6 +41,7 @@ import org.quelea.services.utils.Utils;
 import org.quelea.windows.main.MainPanel;
 import org.quelea.windows.main.QueleaApp;
 import org.quelea.windows.main.actionhandlers.AddDVDActionHandler;
+import org.quelea.windows.main.actionhandlers.AddPdfActionHandler;
 import org.quelea.windows.main.actionhandlers.AddPowerpointActionHandler;
 import org.quelea.windows.main.actionhandlers.AddTimerActionHandler;
 import org.quelea.windows.main.actionhandlers.AddVideoActionHandler;
@@ -62,6 +63,7 @@ public class ScheduleMenu extends Menu {
     private final MenuItem addYoutubeItem;
     private final MenuItem addTimerItem;
     private final MenuItem addDVDItem;
+    private final MenuItem addPDFItem;
     private final StackPane dvdImageStack;
     private final MenuItem manageNoticesItem;
     private final MenuItem shareScheduleItem;
@@ -97,6 +99,10 @@ public class ScheduleMenu extends Menu {
         addTimerItem = new MenuItem(LabelGrabber.INSTANCE.getLabel("add.timer.tooltip"), new ImageView(new Image("file:icons/timer-dark.png", 16, 16, false, true)));
         addTimerItem.setOnAction(new AddTimerActionHandler());
         getItems().add(addTimerItem);
+        
+        addPDFItem = new MenuItem(LabelGrabber.INSTANCE.getLabel("add.pdf.tooltip"), new ImageView(new Image("file:icons/infobig.png", 16, 16, false, true)));
+        addPDFItem.setOnAction(new AddPdfActionHandler());
+        getItems().add(addPDFItem);
         
         dvdImageStack = new StackPane();
         dvdImageStack.getChildren().add(new ImageView(new Image("file:icons/dvd.png", 16, 16, false, true)));
