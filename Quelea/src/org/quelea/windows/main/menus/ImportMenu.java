@@ -18,7 +18,6 @@
  */
 package org.quelea.windows.main.menus;
 
-import java.util.Comparator;
 import javafx.event.ActionEvent;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuItem;
@@ -30,6 +29,7 @@ import javafx.scene.input.KeyCombination;
 import org.quelea.services.importexport.EasySlidesImportDialog;
 import org.quelea.services.importexport.EasyWorshipImportDialog;
 import org.quelea.services.importexport.EpicWorshipImportDialog;
+import org.quelea.services.importexport.FreeWorshipImportDialog;
 import org.quelea.services.importexport.ImportDialog;
 import org.quelea.services.importexport.KingswayImportDialog;
 import org.quelea.services.importexport.MediaShoutImportDialog;
@@ -73,6 +73,7 @@ public class ImportMenu extends Menu {
     private final ImportDialog kingswayImportDialog;
     private final ImportDialog plainTextImportDialog;
     private final ImportDialog easySlidesImportDialog;
+    private final ImportDialog freeWorshipImportDialog;
     private final ImportDialog easyWorshipImportDialog;
     private final ImportDialog sundayPlusImportDialog;
     private final ImportDialog songSelectImportDialog;
@@ -89,6 +90,7 @@ public class ImportMenu extends Menu {
     private final MenuItem mpItem;
     private final MenuItem spItem;
     private final MenuItem olItem;
+    private final MenuItem freeWorshipItem;
     private final MenuItem olpItem;
     private final MenuItem zwItem;
     private final MenuItem ssItem;
@@ -124,6 +126,7 @@ public class ImportMenu extends Menu {
         kingswayImportDialog = new KingswayImportDialog(null);
         plainTextImportDialog = new PlainTextSongsImportDialog();
         easySlidesImportDialog = new EasySlidesImportDialog();
+        freeWorshipImportDialog = new FreeWorshipImportDialog();
         easyWorshipImportDialog = new EasyWorshipImportDialog();
         songproImportDialog = new SongProImportDialog();
         videoPsalmImportDialog = new VideoPsalmImportDialog();
@@ -211,6 +214,11 @@ public class ImportMenu extends Menu {
             easySlidesImportDialog.show();
         });
 
+        freeWorshipItem = new MenuItem(LabelGrabber.INSTANCE.getLabel("freeworship.button"), new ImageView(new Image("file:icons/freeworship.png", 16, 16, false, true)));
+        freeWorshipItem.setOnAction((ActionEvent t) -> {
+            freeWorshipImportDialog.show();
+        });
+
         easyWorshipItem = new MenuItem(LabelGrabber.INSTANCE.getLabel("easyworship.button"), new ImageView(new Image("file:icons/easyworship.png", 16, 16, false, true)));
         easyWorshipItem.setOnAction((ActionEvent t) -> {
             new ParadoxJDBCChecker().runChecks();
@@ -274,6 +282,7 @@ public class ImportMenu extends Menu {
         getItems().add(easySlidesItem);
         getItems().add(easyWorshipItem);
         getItems().add(epicWorshipItem);
+        getItems().add(freeWorshipItem);
         getItems().add(kingswayItem);
         getItems().add(mediaShoutItem);
         getItems().add(mpItem);
