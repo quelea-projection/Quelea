@@ -161,9 +161,7 @@ public class OptionsDialog extends Stage {
     public void callBeforeShowing() {
         generalPanel.resetLanguageChanged();
         serverSettingsPanel.resetChanged();
-        
-        // TODO: Uncomment when PowerPoint support is added
-//        presentationPanel.resetPresentationChanged();
+        presentationPanel.resetPresentationChanged();
     }
     
     /**
@@ -176,11 +174,9 @@ public class OptionsDialog extends Stage {
         if(serverSettingsPanel.hasChanged()) {
             Dialog.showInfo(LabelGrabber.INSTANCE.getLabel("server.changed.label"), LabelGrabber.INSTANCE.getLabel("server.changed.message"), QueleaApp.get().getMainWindow());
         }
-        
-        // TODO: Uncomment when PowerPoint support is added
-//        if(presentationPanel.hasPPChanged()) {
-//            Dialog.showInfo(LabelGrabber.INSTANCE.getLabel("presentation.changed.label"), LabelGrabber.INSTANCE.getLabel("presentation.changed.message"), QueleaApp.get().getMainWindow());
-//        }
+        if(presentationPanel.hasPPChanged()) {
+            Dialog.showInfo(LabelGrabber.INSTANCE.getLabel("presentation.changed.label"), LabelGrabber.INSTANCE.getLabel("presentation.changed.message"), QueleaApp.get().getMainWindow());
+        }
     }
 
     /**
