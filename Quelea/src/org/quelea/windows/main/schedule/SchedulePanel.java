@@ -244,5 +244,9 @@ public class SchedulePanel extends BorderPane {
     public Button getThemeButton() {
         return themeButton;
     }
+    
+    public ScheduleThemeNode getThemeNode() {
+        return scheduleThemeNode;
+    }
 
 }
