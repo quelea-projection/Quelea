@@ -20,6 +20,7 @@ package org.quelea.windows.main;
 import java.io.File;
 import java.util.HashSet;
 import java.util.logging.Level;
+import java.util.logging.Logger;
 import javafx.application.Platform;
 import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
@@ -39,6 +40,7 @@ import javafx.scene.layout.Priority;
 import javafx.scene.layout.Region;
 import javafx.stage.FileChooser;
 import javafx.stage.Screen;
+import org.javafx.dialog.Dialog;
 import org.quelea.data.displayable.BiblePassage;
 import org.quelea.data.displayable.Displayable;
 import org.quelea.data.displayable.PdfDisplayable;
@@ -53,6 +55,7 @@ import org.quelea.services.utils.Utils;
 import org.quelea.windows.lyrics.SelectLyricsPanel;
 import org.quelea.windows.main.actionhandlers.AddBibleVerseHandler;
 import org.quelea.windows.multimedia.VLCWindow;
+import org.quelea.windows.presentation.PowerPointHandler;
 
 /**
  * The panel displaying the live lyrics selection - changes made on this panel
@@ -72,6 +75,7 @@ public class LivePanel extends LivePreviewPanel {
     private final ToggleButton hide;
 
     private final ToolBar header;
+    private Displayable oldD;
 
     /**
      * Create a new live lyrics panel.
@@ -165,6 +169,9 @@ public class LivePanel extends LivePreviewPanel {
         black.setOnAction(new EventHandler<javafx.event.ActionEvent>() {
             @Override
             public void handle(javafx.event.ActionEvent t) {
+                if (getDisplayable() instanceof PresentationDisplayable && QueleaProperties.get().getUsePP()) {
+                    PowerPointHandler.screenBlack();
+                }
                 HashSet<DisplayCanvas> canvases = new HashSet<>();
                 canvases.addAll(getCanvases());
                 for (DisplayCanvas canvas : canvases) {
@@ -248,7 +255,27 @@ public class LivePanel extends LivePreviewPanel {
                 if (t.getCharacter().equals(" ")) {
                     QueleaApp.get().getMainWindow().getMainPanel().getPreviewPanel().goLive();
                 }
-                if (t.getCharacter().matches("c") || t.getCharacter().matches("b") || t.getCharacter().matches("p") || t.getCharacter().matches("t") || t.getCharacter().matches("\\d")) {
+                if (getDisplayable() instanceof PresentationDisplayable) {
+                    if (t.getCharacter().matches("\\d")) {
+                        try {
+                            int i = Integer.parseInt(t.getCharacter());
+                            if (i > 0 && i < 10) {
+                                if (QueleaProperties.get().getUsePP()) {
+                                    PowerPointHandler.gotoSlide(i);
+                                    String result = PowerPointHandler.getCurrentSlide();
+                                    if (!result.contains("not running") && !result.equals("")) {
+                                        int slide = Integer.parseInt(result);
+                                        QueleaApp.get().getMainWindow().getMainPanel().getLivePanel().getPresentationPanel().getPresentationPreview().select(slide, true);
+                                    }
+                                } else {
+                                    QueleaApp.get().getMainWindow().getMainPanel().getLivePanel().getPresentationPanel().getPresentationPreview().select(i);
+                                }
+                            }
+                        } catch (Exception ex) {
+                            LoggerUtils.getLogger().log(Level.INFO, "Could not cast keycode into integer for slide selection.", ex);
+                        }
+                    }
+                } else if (t.getCharacter().matches("c") || t.getCharacter().matches("b") || t.getCharacter().matches("p") || t.getCharacter().matches("t") || t.getCharacter().matches("\\d")) {
                     final int selectedIndex = lp.getLyricsPanel().getCurrentIndex();
                     final int slideIndex = getSlideIndex(selectedIndex, t.getCharacter());
                     if (slideIndex > -1) {
@@ -345,8 +372,37 @@ public class LivePanel extends LivePreviewPanel {
             if (!header.getItems().contains(loopBox)) {
                 header.getItems().add(1, loopBox);
             }
+            if (d instanceof PresentationDisplayable) {
+                if (QueleaProperties.get().getUsePP() && (oldD == null || !oldD.equals(d))) {
+                    String filePath;
+                    filePath = "\"" + d.getResources().toString().replace("[", "").replace("]", "") + "\"";
+                    String openPP = PowerPointHandler.openPresentation(filePath);
+                    if (openPP.contains("not started")) {
+                        Dialog.showInfo(LabelGrabber.INSTANCE.getLabel("presentation.not.started.label"), LabelGrabber.INSTANCE.getLabel("presentation.not.started.message"));
+                        LoggerUtils.getLogger().log(Level.INFO, "PowerPoint couldn't be started.");
+                    } else if (openPP.contains("running")) {
+                        if (!(oldD instanceof PresentationDisplayable)) {
+                            Dialog.showAndWaitError(LabelGrabber.INSTANCE.getLabel("close.all.presentations.label"), LabelGrabber.INSTANCE.getLabel("close.all.presentations.message"));
+                        }
+                        PowerPointHandler.closePresentation();
+                        try {
+                            Thread.sleep(500);
+                        } catch (InterruptedException ex) {
+                            Logger.getLogger(LivePanel.class.getName()).log(Level.SEVERE, null, ex);
+                        }
+                        openPP = PowerPointHandler.openPresentation(filePath);
+                        if (openPP.contains("not started")) {
+                            Dialog.showInfo(LabelGrabber.INSTANCE.getLabel("presentation.not.started.label"), LabelGrabber.INSTANCE.getLabel("presentation.not.started.message"));
+                            LoggerUtils.getLogger().log(Level.INFO, "PowerPoint couldn't be started.");
+                        }
+                    }
+                }
+            }
         } else {
             header.getItems().remove(loopBox);
+            if (oldD != null && oldD instanceof PresentationDisplayable) {
+                PowerPointHandler.closePresentation();
+            }
         }
         if (d == null) {
             clear.setSelected(false);
@@ -367,6 +423,7 @@ public class LivePanel extends LivePreviewPanel {
                 canvas.setCleared(clear.isSelected());
             }
         }
+        oldD = d;
     }
 
     /**
@@ -466,6 +523,14 @@ public class LivePanel extends LivePreviewPanel {
 
     public boolean getCleared() {
         return clear.isSelected();
+    }
+
+    public void setBlacked(boolean isBlack) {
+        this.black.setSelected(isBlack);
+    }
+
+    public void stopLoop() {
+        loop.setSelected(false);
     }
 
 }

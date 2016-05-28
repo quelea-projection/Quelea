@@ -29,6 +29,7 @@ import org.quelea.data.SaveCallback;
 import org.quelea.data.Schedule;
 import org.quelea.data.ScheduleSaver;
 import org.quelea.data.displayable.Displayable;
+import org.quelea.data.displayable.PresentationDisplayable;
 import org.quelea.data.powerpoint.OOUtils;
 import org.quelea.services.languages.LabelGrabber;
 import org.quelea.services.utils.LoggerUtils;
@@ -37,6 +38,7 @@ import org.quelea.services.utils.SceneInfo;
 import org.quelea.windows.main.MainWindow;
 import org.quelea.windows.main.QueleaApp;
 import org.quelea.windows.main.toolbars.MainToolbar;
+import org.quelea.windows.presentation.PowerPointHandler;
 
 /**
  * The exit action listener - called when the user requests they wish to exit
@@ -134,6 +136,10 @@ public class ExitActionHandler implements EventHandler<ActionEvent> {
         if (QueleaApp.get().getRemoteControlServer() != null) {
             LOGGER.log(Level.INFO, "Stopping remote control server");
             QueleaApp.get().getRemoteControlServer().stop();
+        }
+        if (QueleaApp.get().getMainWindow().getMainPanel().getLivePanel().getDisplayable() instanceof PresentationDisplayable) {
+            LOGGER.log(Level.INFO, "Closing open PowerPoint presentations");
+            PowerPointHandler.closePresentation();
         }
         System.exit(0);
     }

@@ -2,6 +2,7 @@ quelea (2016.2) stable; urgency=normal
  
   * Add support for displaying PDF
   * Add planning centre online import
+  * Add native PowerPoint support
   * Aspect ratio fix
   * Fix for the projector not opening with the correct size on Linux
 

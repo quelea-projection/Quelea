@@ -24,6 +24,7 @@ import java.awt.Graphics2D;
 import java.awt.RenderingHints;
 import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.scene.image.Image;
@@ -33,6 +34,7 @@ import org.apache.poi.sl.usermodel.SlideShow;
 import org.apache.poi.xslf.usermodel.XSLFSlide;
 import org.quelea.services.languages.LabelGrabber;
 import org.quelea.services.utils.LoggerUtils;
+import org.quelea.services.utils.QueleaProperties;
 
 /**
  * A slide in a powerpoint presentation.
@@ -65,13 +67,17 @@ public class PresentationSlide {
         BufferedImage originalImage = new BufferedImage((int) slideshow.getPageSize().getWidth(), (int) slideshow.getPageSize().getHeight(), BufferedImage.TYPE_INT_ARGB);
         Graphics2D g2 = originalImage.createGraphics();
         g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-//        try {
-        g2.setTransform(AffineTransform.getScaleInstance(scaleWidth, scaleHeight));
-        slide.draw(g2);
-//        } catch (Exception ex) {
-//            LOGGER.log(Level.INFO, "Couldn't use library to generate thumbnail, using default", ex);
-//            draw(g2, originalImage.getWidth(), originalImage.getHeight(), numSlide);
-//        }
+        try {
+            g2.setTransform(AffineTransform.getScaleInstance(scaleWidth, scaleHeight));
+            slide.draw(g2);
+        } catch (Exception ex) {
+            if (QueleaProperties.get().getUsePP()) {
+                LOGGER.log(Level.INFO, "Couldn't use library to generate thumbnail, using default");
+                draw(g2, originalImage.getWidth(), originalImage.getHeight(), numSlide);
+            } else {
+                throw ex;
+            }
+        }
         image = new WritableImage(originalImage.getWidth(), originalImage.getHeight());
         SwingFXUtils.toFXImage(originalImage, image);
     }
@@ -93,27 +99,31 @@ public class PresentationSlide {
         BufferedImage originalImage = new BufferedImage((int) slideshow.getPageSize().getWidth(), (int) slideshow.getPageSize().getHeight(), BufferedImage.TYPE_INT_ARGB);
         Graphics2D g2 = originalImage.createGraphics();
         g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-//        try {
-        g2.setTransform(AffineTransform.getScaleInstance(scaleWidth, scaleHeight));
-        slide.draw(g2);
-//        } catch (Exception ex) {
-//            LOGGER.log(Level.INFO, "Couldn't use library to generate thumbnail, using default", ex);
-//            draw(g2, originalImage.getWidth(), originalImage.getHeight(), numSlide);
-//        }
+        try {
+            g2.setTransform(AffineTransform.getScaleInstance(scaleWidth, scaleHeight));
+            slide.draw(g2);
+        } catch (NullPointerException ex) {
+            if (QueleaProperties.get().getUsePP()) {
+                LOGGER.log(Level.INFO, "Couldn't use library to generate thumbnail, using default");
+                draw(g2, originalImage.getWidth(), originalImage.getHeight(), numSlide);
+            } else {
+                throw ex;
+            }
+        }
         image = new WritableImage(originalImage.getWidth(), originalImage.getHeight());
         SwingFXUtils.toFXImage(originalImage, image);
     }
 
     private void draw(Graphics2D graphics, int width, int height, int num) {
-        String slideText = LabelGrabber.INSTANCE.getLabel("slide.text") + " " + num;
+        String slideText = LabelGrabber.INSTANCE.getLabel("preview.failed");
         graphics.setColor(new Color(174, 167, 159));
         graphics.fillRect(0, 0, width, height);
         graphics.setFont(new Font("Calibri", 0, 1000));
         graphics.setColor(new Color(250, 250, 250));
-        while (graphics.getFontMetrics().stringWidth(slideText) > width - 200) {
+        while (graphics.getFontMetrics().stringWidth(slideText) > width - 1000) {
             graphics.setFont(new Font("Calibri", 0, graphics.getFont().getSize() - 2));
         }
-        graphics.drawString(slideText, 100, height / 2 - graphics.getFontMetrics().getHeight() / 4);
+        graphics.drawString(slideText, 10, height / 2 - graphics.getFontMetrics().getHeight() / 4);
     }
 
     /**
