@@ -54,6 +54,7 @@ import java.util.logging.Logger;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.collections.ObservableList;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.event.EventHandler;
 import javafx.geometry.BoundingBox;
@@ -254,10 +255,13 @@ public final class Utils {
      * @return the options split as an array.
      */
     public static String[] splitVLCOpts(String options) {
-        String[] parts = options.split("\\:");
+        String[] parts = options.split(" \\:");
         String[] ret = new String[parts.length];
         for (int i = 0; i < parts.length; i++) {
-            ret[i] = ":" + parts[i].trim();
+            ret[i] = parts[i].trim();
+            if (!ret[i].startsWith(":")) {
+                ret[i] = ":" + ret[i];
+            }
         }
         return ret;
     }
@@ -375,10 +379,33 @@ public final class Utils {
      * the status panel.
      */
     public static void updateSongInBackground(final SongDisplayable song, final boolean showError, final boolean silent) {
+        if (!song.checkDBUpdate()) {
+            return;
+        }
         final Runnable updateRunner = new Runnable() {
             @Override
             public void run() {
                 boolean result = SongManager.get().updateSong(song);
+                if (result && song.checkDBUpdate()) {
+                    ObservableList<SongDisplayable> songs = QueleaApp.get().getMainWindow().getMainPanel().getLibraryPanel().getLibrarySongPanel().getSongList().getListView().getItems();
+                    int replaceIdx = -1;
+                    for (int i = 0; i < songs.size(); i++) {
+                        if (song.getID() == songs.get(i).getID()) {
+                            replaceIdx = i;
+                            break;
+                        }
+                    }
+                    final int replaceIdxFi = replaceIdx;
+                    if (replaceIdx != -1) {
+                        Platform.runLater(new Runnable() {
+                            @Override
+                            public void run() {
+                                songs.remove(replaceIdxFi);
+                                songs.add(replaceIdxFi, song);
+                            }
+                        });
+                    }
+                }
                 if (!result && showError) {
                     Platform.runLater(new Runnable() {
                         @Override
@@ -631,6 +658,10 @@ public final class Utils {
         return StringEscapeUtils.escapeXml(s);
     }
 
+    public static synchronized String getTextFromFile(String fileName, String errorText) {
+        return getTextFromFile(fileName, errorText, "UTF-8");
+    }
+
     /**
      * Get the textual content from a file as a string, returning the given
      * error string if a problem occurs retrieving the content.
@@ -640,8 +671,8 @@ public final class Utils {
      * @return hopefully the text content of the file, or the errorText string
      * if we can't get the text content for some reason.
      */
-    public static synchronized String getTextFromFile(String fileName, String errorText) {
-        try (BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(fileName), "UTF-8"))) {
+    public static synchronized String getTextFromFile(String fileName, String errorText, String encoding) {
+        try (BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(fileName), encoding))) {
             StringBuilder content = new StringBuilder();
             String line;
             while ((line = reader.readLine()) != null) {

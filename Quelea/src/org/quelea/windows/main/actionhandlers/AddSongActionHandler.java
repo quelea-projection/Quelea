@@ -34,6 +34,12 @@ import org.quelea.windows.main.schedule.SchedulePanel;
  * @author Michael
  */
 public class AddSongActionHandler implements EventHandler<ActionEvent> {
+    
+    private final boolean updateInDB;
+    
+    public AddSongActionHandler(boolean updateInDB) {
+        this.updateInDB = updateInDB;
+    }
 
     /**
      * Get the current selected song from the library to the schedule.
@@ -45,8 +51,12 @@ public class AddSongActionHandler implements EventHandler<ActionEvent> {
         LibraryPanel libraryPanel = QueleaApp.get().getMainWindow().getMainPanel().getLibraryPanel();
         SchedulePanel schedulePanel = QueleaApp.get().getMainWindow().getMainPanel().getSchedulePanel();
         SongDisplayable song = libraryPanel.getLibrarySongPanel().getSongList().getSelectedValue();
-        if(QueleaProperties.get().getSongOverflow()) {
+        if(QueleaProperties.get().getSongOverflow() || !updateInDB) {
             song = new SongDisplayable(song);
+        }
+        if(!updateInDB) {
+            song.setID(-1);
+            song.setNoDBUpdate();
         }
         cacheVidPreview(song);
         schedulePanel.getScheduleList().add(song);

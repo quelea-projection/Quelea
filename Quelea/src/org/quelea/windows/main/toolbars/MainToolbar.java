@@ -37,6 +37,7 @@ import org.quelea.services.languages.LabelGrabber;
 import org.quelea.services.utils.QueleaProperties;
 import org.quelea.services.utils.Utils;
 import org.quelea.windows.main.actionhandlers.AddDVDActionHandler;
+import org.quelea.windows.main.actionhandlers.AddPdfActionHandler;
 import org.quelea.windows.main.actionhandlers.AddPowerpointActionHandler;
 import org.quelea.windows.main.actionhandlers.AddVideoActionHandler;
 import org.quelea.windows.main.actionhandlers.AddYoutubeActionHandler;
@@ -68,6 +69,7 @@ public class MainToolbar extends ToolBar {
     private final Button addTimerButton;
     private final Button addDVDButton;
     private final Button addVideoButton;
+    private final Button addPDFButton;
     private final Button manageNoticesButton;
     private final ImageView loadingView;
     private final StackPane dvdImageStack;
@@ -209,6 +211,16 @@ public class MainToolbar extends ToolBar {
         addDVDButton.setOnAction(new AddDVDActionHandler());
         getItems().add(addDVDButton);
 
+        if (Utils.isMac()) {
+            addPDFButton = getButtonFromImage("file:icons/add_pdfbig.png");
+        } else {
+            addPDFButton = getButtonFromImage("file:icons/add_pdf.png");
+        }
+        Utils.setToolbarButtonStyle(addPDFButton);
+        addPDFButton.setTooltip(new Tooltip(LabelGrabber.INSTANCE.getLabel("add.pdf.tooltip")));
+        addPDFButton.setOnAction(new AddPdfActionHandler());
+        getItems().add(addPDFButton);
+
         getItems().add(new Separator());
 
         if (Utils.isMac()) {
@@ -246,10 +258,10 @@ public class MainToolbar extends ToolBar {
         recordAudioButton.setOnMouseClicked(e -> {
             if (!QueleaProperties.get().getRecordingsPath().equals("")) {
                 if (recording) {
-                stopRecording();
-            } else {
-                startRecording();
-            }
+                    stopRecording();
+                } else {
+                    startRecording();
+                }
             } else {
                 recordAudioButton.setSelected(false);
                 Dialog.Builder setRecordingWarningBuilder = new Dialog.Builder()

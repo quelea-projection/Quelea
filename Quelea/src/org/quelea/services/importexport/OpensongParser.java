@@ -46,7 +46,7 @@ import org.xml.sax.SAXException;
  * @author Michael
  */
 public class OpensongParser implements SongParser {
-    
+
     private static final Logger LOGGER = LoggerUtils.getLogger();
 
     @Override
@@ -55,26 +55,24 @@ public class OpensongParser implements SongParser {
         List<SongDisplayable> ret = new ArrayList<>();
         try {
             final Enumeration<? extends ZipEntry> entries = file.entries();
-            while(entries.hasMoreElements()) {
+            while (entries.hasMoreElements()) {
                 final ZipEntry entry = entries.nextElement();
                 DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
                 DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
                 Document doc = dBuilder.parse(new InputSource(new UnicodeReader(file.getInputStream(entry), "UTF-8")));
                 NodeList list = doc.getChildNodes();
-                for(int i = 0; i < list.getLength(); i++) {
-                    if(list.item(i).getNodeName().equalsIgnoreCase("song")) {
+                for (int i = 0; i < list.getLength(); i++) {
+                    if (list.item(i).getNodeName().equalsIgnoreCase("song")) {
                         SongDisplayable displayable = getDisplayable(list.item(i));
-                        if(displayable != null) {
+                        if (displayable != null) {
                             ret.add(displayable);
                         }
                     }
                 }
             }
-        }
-        catch(IOException | ParserConfigurationException | SAXException ex) {
+        } catch (IOException | ParserConfigurationException | SAXException ex) {
             LOGGER.log(Level.WARNING, "Error importing opensong", ex);
-        }
-        finally {
+        } finally {
             file.close();
         }
         return ret;
@@ -82,6 +80,7 @@ public class OpensongParser implements SongParser {
 
     /**
      * Get a song displayable from a song node.
+     *
      * @param root the "song" root node
      * @return the SongDisplayable represented by this node.
      */
@@ -94,40 +93,87 @@ public class OpensongParser implements SongParser {
         String key = "";
         String ccli = "";
         String capo = "";
-        for(int i = 0; i < nl.getLength(); i++) {
+        for (int i = 0; i < nl.getLength(); i++) {
             Node node = nl.item(i);
-            if(node.getNodeName().equalsIgnoreCase("title")) {
+            if (node.getNodeName().equalsIgnoreCase("title")) {
                 title = node.getTextContent();
-            }
-            else if(node.getNodeName().equalsIgnoreCase("author")) {
+            } else if (node.getNodeName().equalsIgnoreCase("author")) {
                 author = node.getTextContent();
-            }
-            else if(node.getNodeName().equalsIgnoreCase("copyright")) {
+            } else if (node.getNodeName().equalsIgnoreCase("copyright")) {
                 copyright = node.getTextContent();
-            }
-            else if(node.getNodeName().equalsIgnoreCase("key")) {
+            } else if (node.getNodeName().equalsIgnoreCase("key")) {
                 key = node.getTextContent();
-            }
-            else if(node.getNodeName().equalsIgnoreCase("ccli")) {
+            } else if (node.getNodeName().equalsIgnoreCase("ccli")) {
                 ccli = node.getTextContent();
-            }
-            else if(node.getNodeName().equalsIgnoreCase("capo")) {
+            } else if (node.getNodeName().equalsIgnoreCase("capo")) {
                 capo = node.getTextContent();
-            }
-            else if(node.getNodeName().equalsIgnoreCase("lyrics")) {
+            } else if (node.getNodeName().equalsIgnoreCase("lyrics")) {
                 lyrics = node.getTextContent();
             }
         }
-        if(title.isEmpty()) {
+        if (title.isEmpty()) {
             return null;
         }
         SongDisplayable ret = new SongDisplayable(title, author);
-        ret.setLyrics(lyrics);
+        ret.setLyrics(processLyrics(lyrics));
         ret.setCopyright(copyright);
         ret.setKey(key);
         ret.setCcli(ccli);
         ret.setCapo(capo);
         return ret;
+    }
+
+    private String processLyrics(String lyrics) {
+        StringBuilder ret = new StringBuilder();
+        String[] arr = lyrics.split("\n");
+        boolean ignoreVerse = false;
+        for (String line : arr) {
+            line = line.trim();
+            if (line.startsWith("[") && line.endsWith("]") && line.length() > 2) {
+                ignoreVerse = false;
+                String sectionTitle = line.substring(1, line.length() - 1);
+                if (sectionTitle.startsWith("V")) {
+                    if (sectionTitle.length() > 1) {
+                        line = "Verse " + sectionTitle.substring(1);
+                    } else {
+                        line = "Verse";
+                    }
+                } else if (sectionTitle.startsWith("C")) {
+                    if (sectionTitle.length() > 1) {
+                        line = "Chorus " + sectionTitle.substring(1);
+                    } else {
+                        line = "Chorus";
+                    }
+                } else if (sectionTitle.startsWith("T")) {
+                    if (sectionTitle.length() > 1) {
+                        line = "Tag " + sectionTitle.substring(1);
+                    } else {
+                        line = "Tag";
+                    }
+                } else if (sectionTitle.startsWith("B")) {
+                    if (sectionTitle.length() > 1) {
+                        line = "Bridge " + sectionTitle.substring(1);
+                    } else {
+                        line = "Bridge";
+                    }
+                } else {
+                    line = "Verse";
+                }
+            } else if (line.startsWith(".")) {
+                line = line.substring(1);
+            } else if (line.endsWith("||")) {
+                line = line.substring(0, line.length()-2) + "\n";
+            } else if (line.equals("---")) {
+                line = "";
+            } else if (line.startsWith(";")) {
+                ignoreVerse = true;
+            }
+            
+            if (!ignoreVerse) {
+                ret.append(line).append("\n");
+            }
+        }
+        return ret.toString();
     }
 
 }

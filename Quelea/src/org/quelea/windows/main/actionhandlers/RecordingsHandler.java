@@ -21,8 +21,6 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.SequenceInputStream;
 import java.nio.file.DirectoryNotEmptyException;
 import java.nio.file.Files;
 import java.nio.file.NoSuchFileException;
@@ -31,7 +29,6 @@ import java.nio.file.Paths;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Collections;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -41,7 +38,6 @@ import javafx.scene.control.ProgressBar;
 import javafx.scene.control.TextField;
 import javafx.scene.control.ToggleButton;
 import javax.sound.sampled.AudioFileFormat;
-import javax.sound.sampled.AudioFileFormat.Type;
 import javax.sound.sampled.AudioFormat;
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
@@ -69,16 +65,14 @@ public class RecordingsHandler {
     private Dialog noDevicesDialog;
     private boolean running;
     private File wavFile;
-    private String timeStamp = new SimpleDateFormat("yyyy-MM-dd HH.mm.ss").format(Calendar.getInstance().getTime());
+    private final String timeStamp = new SimpleDateFormat("yyyy-MM-dd HH.mm.ss").format(Calendar.getInstance().getTime());
     private String path = QueleaProperties.get().getRecordingsPath(); // Get path from settings
-    private AudioFileFormat.Type fileType = AudioFileFormat.Type.WAVE; // format of audio file
-    private AudioInputStream ais;
+    private final AudioFileFormat.Type fileType = AudioFileFormat.Type.WAVE; // format of audio file
     private TargetDataLine targetLine; // the line from which audio data is captured
     private AudioFormat format;
     private long startTime;
     private Thread captureThread;
-    private long tempTime;
-    private ArrayList<String> recordingPaths = new ArrayList<>();
+    private ByteArrayOutputStream outStream;
     //Sound level variables
     private float level;
     private final static float MAX_8_BITS_SIGNED = Byte.MAX_VALUE;
@@ -113,12 +107,9 @@ public class RecordingsHandler {
         try {
             isRecording = true;
             String fileName = timeStamp;
-            wavFile = new File(path + "\\" + fileName + ".wav");
             Platform.runLater(() -> {
                 textField.setText(fileName);
             });
-            startTime = System.currentTimeMillis();
-            tempTime = 0;
             format = getAudioFormat();
             DataLine.Info info = new DataLine.Info(TargetDataLine.class, format);
 
@@ -128,7 +119,7 @@ public class RecordingsHandler {
                 targetLine = (TargetDataLine) AudioSystem.getLine(info);
                 targetLine.open(format);
                 targetLine.start();   // start capturing
-                ais = new AudioInputStream(targetLine);
+                startTime = System.currentTimeMillis();
                 startBuffering(pb, tb);
             } else {
                 LOGGER.log(Level.INFO, "No recording device found");
@@ -167,7 +158,22 @@ public class RecordingsHandler {
             }
             targetLine.stop();
             targetLine.close();
-            captureThread.interrupt();
+            running = false;
+
+            byte[] audioData = outStream.toByteArray();
+            ByteArrayInputStream bais = new ByteArrayInputStream(audioData);
+            AudioInputStream audioInputStream = new AudioInputStream(bais, format,
+                    audioData.length / format.getFrameSize());
+            
+            wavFile = new File(path, textField.getText().replaceAll("[^\\p{L}0-9.-]", "_") + ".wav");
+
+            try {
+                AudioSystem.write(audioInputStream, fileType, wavFile);
+                audioInputStream.close();
+                outStream.close();
+            } catch (IOException ex) {
+                LOGGER.log(Level.WARNING, "Error writing to wav", ex);
+            }
 
             // Convert to MP3 if setting is checked
             if (QueleaProperties.get().getConvertRecordings()) {
@@ -179,11 +185,9 @@ public class RecordingsHandler {
                 }
             }
 
-            wavFile.renameTo(new File(path, textField.getText().replaceAll("[^\\p{L}0-9.-]", "_") + ".wav"));
             LOGGER.log(Level.INFO, "Saved");
         } finally {
             isRecording = false;
-            running = false;
             finishedSaving = true;
         }
     }
@@ -195,30 +199,26 @@ public class RecordingsHandler {
      * @param tb ToggleButton to display time
      */
     private void startBuffering(ProgressBar pb, ToggleButton tb) {
-        new Thread() {
-            public void run() {
-                try {
-                    AudioSystem.write(ais, fileType, wavFile);
-                } catch (IOException ex) {
-                    LOGGER.log(Level.WARNING, "Error writing to wav", ex);
-                }
-            }
-        }.start();
         Runnable runner = new Runnable() {
-            int bufferSize = (int) format.getSampleRate() * format.getFrameSize();
+            int bufferSize = 10000;
             byte buffer[] = new byte[bufferSize];
 
             @Override
             public void run() {
+                outStream = new ByteArrayOutputStream();
                 running = true;
                 while (running) {
-                    int count = targetLine.read(buffer, 0, buffer.length);
+                    int count
+                            = targetLine.read(buffer, 0, buffer.length);
+                    if (count > 0) {
+                        outStream.write(buffer, 0, count);
+                    }
                     calculateLevel(buffer, 0, 0);
                     Platform.runLater(() -> {
                         pb.setProgress(level);
                     });
                     long elapsedTimeMillis;
-                    elapsedTimeMillis = System.currentTimeMillis() - startTime + tempTime;
+                    elapsedTimeMillis = System.currentTimeMillis() - startTime;
                     setTime(elapsedTimeMillis, tb);
 
                     // Change the color of the ProgressBar depending on level

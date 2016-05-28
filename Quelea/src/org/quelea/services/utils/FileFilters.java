@@ -117,6 +117,14 @@ public final class FileFilters {
      */
     public static final FileChooser.ExtensionFilter SQLITE = new FileChooser.ExtensionFilter(LabelGrabber.INSTANCE.getLabel("filefilters.description.sqlite.files") + " (*.sqlite)", "*.sqlite");
     /**
+     * The file filter used for Presentation Manager songs.
+     */
+    public static final FileChooser.ExtensionFilter PM_SONG = new FileChooser.ExtensionFilter(LabelGrabber.INSTANCE.getLabel("filefilters.description.pmsong.files") + " (*.sng)", "*.sng");
+    /**
+     * The file filter used for VideoPsalm databases.
+     */
+    public static final FileChooser.ExtensionFilter VS_DB = new FileChooser.ExtensionFilter(LabelGrabber.INSTANCE.getLabel("filefilters.description.vs.files") + " (*.json)", "*.json");
+    /**
      * The file filter used for MainTable.dat.
      */
     public static final FileChooser.ExtensionFilter MAINTABLE_DAT = new FileChooser.ExtensionFilter(LabelGrabber.INSTANCE.getLabel("filefilters.description.maintable.dat") + " (MainTable.dat)", "MainTable.dat");
@@ -124,6 +132,10 @@ public final class FileFilters {
      * The file filter used for Songs.MB (the easyworship database.)
      */
     public static final FileChooser.ExtensionFilter SONGS_MB = new FileChooser.ExtensionFilter(LabelGrabber.INSTANCE.getLabel("filefilters.description.songs.mb") + " (Songs.MB)", "Songs.MB");
+    /**
+     * The file filter used for Songs.MB (the easyworship database.)
+     */
+    public static final FileChooser.ExtensionFilter MISSION_PRAISE_RTF = new FileChooser.ExtensionFilter(LabelGrabber.INSTANCE.getLabel("filefilters.description.songs.missionpraise") + " (*.rtf)", "*.rtf", "*.rtf'");
     /**
      * The file filter used for *.epc (the epicworship songpack.)
      */

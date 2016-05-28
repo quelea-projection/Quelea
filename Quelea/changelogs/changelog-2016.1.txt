@@ -11,6 +11,15 @@ quelea (2016.1) stable; urgency=normal
   * Add support for jumping to a schedule item from the apps
   * Fix remote control play/pause functionality for timers
   * Fix Mac recording conversions
+  * Add CCLI number to SongSelectParser
+  * Fix vlc arg option splitting for absolute paths on windows
+  * Add presentation manager import
+  * Add mission praise import
+  * Add video psalm import
+  * Reorder import options to be alphabetical
+  * Fix Opensong import to recognise chords and section titles
+  * Fix missing required attributes for openlyrics export
+  * Add "copy to schedule" option
+  * Add Bulgarian translation
 
-
- -- Michael Berry <michael@quelea.org>  Wednesday, 14 January 2016 00:00:00 +0000
+ -- Michael Berry <michael@quelea.org>  Sunday, 26 May 2016 00:00:00 +0000
