@@ -46,16 +46,14 @@ public class OptionsPresentationPanel extends GridPane implements PropertyPanel 
 
     private static final Logger LOGGER = LoggerUtils.getLogger();
     private final Button selectButton;
+    private final Button ppSelectButton;
     private final DirectoryChooser ooChooser;
+    private final FileChooser powerPointChooser;
     private final CheckBox useOOCheckBox;
+    private final CheckBox usePowerPointCheckBox;
+    private boolean usePowerPoint;
     private final TextField ooPathTextField;
-    
-    // TODO: Uncomment when PowerPoint support is added
-//    private final Button ppSelectButton;
-//    private final FileChooser powerPointChooser;
-//    private final CheckBox usePowerPointCheckBox;
-//    private boolean usePowerPoint;
-//    private final TextField ppPathTextField;
+    private final TextField ppPathTextField;
 
     /**
      * Create the options presentation panel.
@@ -78,11 +76,10 @@ public class OptionsPresentationPanel extends GridPane implements PropertyPanel 
                     ooPathTextField.setDisable(false);
                     selectButton.setDisable(false);
                     selectButton.setDisable(false);
-                    // TODO: Uncomment when PowerPoint support is added
-//                    ppPathTextField.setDisable(true);
-//                    ppSelectButton.setDisable(true);
-//                    usePowerPointCheckBox.setSelected(false);
-//                    props.setUsePP(false);
+                    ppPathTextField.setDisable(true);
+                    ppSelectButton.setDisable(true);
+                    usePowerPointCheckBox.setSelected(false);
+                    props.setUsePP(false);
                 } else {
                     ooPathTextField.setDisable(true);
                     selectButton.setDisable(true);
@@ -120,90 +117,87 @@ public class OptionsPresentationPanel extends GridPane implements PropertyPanel 
         getChildren().add(selectButton);
         rows++;
 
-// TODO: Uncomment when PowerPoint support is added
-//        Label usePPLabel = new Label(LabelGrabber.INSTANCE.getLabel("use.pp.label"));
-//        GridPane.setConstraints(usePPLabel, 1, rows);
-//
-//        usePowerPointCheckBox = new CheckBox();
-//        usePowerPointCheckBox.selectedProperty().addListener(new javafx.beans.value.ChangeListener<Boolean>() {
-//            @Override
-//            public void changed(ObservableValue<? extends Boolean> ov, Boolean t, Boolean t1) {
-//                if (usePowerPointCheckBox.isSelected()) {
-//                    if (Utils.isWindows()) {
-//                        ppPathTextField.setDisable(false);
-//                        ppSelectButton.setDisable(false);
-//                    }
-//                    ooPathTextField.setDisable(true);
-//                    selectButton.setDisable(true);
-//                    useOOCheckBox.setSelected(false);
-//                    props.setUseOO(false);
-//                } else {
-//                    ppPathTextField.setDisable(true);
-//                    ppSelectButton.setDisable(true);
-//                }
-//            }
-//        });
-//        usePPLabel.setLabelFor(usePowerPointCheckBox);
-//        GridPane.setConstraints(usePowerPointCheckBox, 2, rows);
-//        if (!Utils.isLinux()) {
-//            getChildren().add(usePPLabel);
-//            getChildren().add(usePowerPointCheckBox);
-//            rows++;
-//        }
-//
-//        Label ppPathLabel = new Label(LabelGrabber.INSTANCE.getLabel("pp.path.label"));
-//        GridPane.setConstraints(ppPathLabel, 1, rows);
-//
-//        ppPathTextField = new TextField();
-//        ppPathTextField.setMaxWidth(Double.MAX_VALUE);
-//        GridPane.setHgrow(ppPathTextField, Priority.ALWAYS);
-//        ppPathTextField.setEditable(false);
-//        ppPathLabel.setLabelFor(ppPathTextField);
-//        GridPane.setConstraints(ppPathTextField, 2, rows);
-//
-//        powerPointChooser = new FileChooser();
-//        powerPointChooser.setInitialDirectory(new File("C:\\"));
-//        powerPointChooser.getExtensionFilters().addAll(new FileChooser.ExtensionFilter("PowerPoint", "POWERPNT.EXE", "PPTVIEW.EXE"));
-//        ppSelectButton = new Button(LabelGrabber.INSTANCE.getLabel("browse"));
-//        ppSelectButton.setDisable(true);
-//        ppSelectButton.setOnAction(new EventHandler<javafx.event.ActionEvent>() {
-//            @Override
-//            public void handle(javafx.event.ActionEvent t) {
-//                File dir = powerPointChooser.showOpenDialog(QueleaApp.get().getMainWindow());
-//                if (dir != null) {
-//                    ppPathTextField.setText(dir.getAbsolutePath());
-//                }
-//            }
-//        });
-//        GridPane.setConstraints(ppSelectButton, 3, rows);
-//        if (Utils.isWindows()) {
-//            getChildren().add(ppPathLabel);
-//            getChildren().add(ppPathTextField);
-//            getChildren().add(ppSelectButton);
-//            rows++;
-//        }
+        Label usePPLabel = new Label(LabelGrabber.INSTANCE.getLabel("use.pp.label"));
+        GridPane.setConstraints(usePPLabel, 1, rows);
+
+        usePowerPointCheckBox = new CheckBox();
+        usePowerPointCheckBox.selectedProperty().addListener(new javafx.beans.value.ChangeListener<Boolean>() {
+            @Override
+            public void changed(ObservableValue<? extends Boolean> ov, Boolean t, Boolean t1) {
+                if (usePowerPointCheckBox.isSelected()) {
+                    if (Utils.isWindows()) {
+                        ppPathTextField.setDisable(false);
+                        ppSelectButton.setDisable(false);
+                    }
+                    ooPathTextField.setDisable(true);
+                    selectButton.setDisable(true);
+                    useOOCheckBox.setSelected(false);
+                    props.setUseOO(false);
+                } else {
+                    ppPathTextField.setDisable(true);
+                    ppSelectButton.setDisable(true);
+                }
+            }
+        });
+        usePPLabel.setLabelFor(usePowerPointCheckBox);
+        GridPane.setConstraints(usePowerPointCheckBox, 2, rows);
+        if (!Utils.isLinux()) {
+            getChildren().add(usePPLabel);
+            getChildren().add(usePowerPointCheckBox);
+            rows++;
+        }
+
+        Label ppPathLabel = new Label(LabelGrabber.INSTANCE.getLabel("pp.path.label"));
+        GridPane.setConstraints(ppPathLabel, 1, rows);
+
+        ppPathTextField = new TextField();
+        ppPathTextField.setMaxWidth(Double.MAX_VALUE);
+        GridPane.setHgrow(ppPathTextField, Priority.ALWAYS);
+        ppPathTextField.setEditable(false);
+        ppPathLabel.setLabelFor(ppPathTextField);
+        GridPane.setConstraints(ppPathTextField, 2, rows);
+
+        powerPointChooser = new FileChooser();
+        powerPointChooser.setInitialDirectory(new File("C:\\"));
+        powerPointChooser.getExtensionFilters().addAll(new FileChooser.ExtensionFilter("PowerPoint", "POWERPNT.EXE", "PPTVIEW.EXE"));
+        ppSelectButton = new Button(LabelGrabber.INSTANCE.getLabel("browse"));
+        ppSelectButton.setDisable(true);
+        ppSelectButton.setOnAction(new EventHandler<javafx.event.ActionEvent>() {
+            @Override
+            public void handle(javafx.event.ActionEvent t) {
+                File dir = powerPointChooser.showOpenDialog(QueleaApp.get().getMainWindow());
+                if (dir != null) {
+                    ppPathTextField.setText(dir.getAbsolutePath());
+                }
+            }
+        });
+        GridPane.setConstraints(ppSelectButton, 3, rows);
+        if (Utils.isWindows()) {
+            getChildren().add(ppPathLabel);
+            getChildren().add(ppPathTextField);
+            getChildren().add(ppSelectButton);
+            rows++;
+        }
 
         readProperties();
     }
 
-    
-    // TODO: Uncomment when PowerPoint support is added
-//    /**
-//     * Reset the mechanism for determining if the user has changed the PowerPoint 
-//     * settings. Call before showing the options dialog.
-//     */
-//    public void resetPresentationChanged() {
-//        usePowerPoint = usePowerPointCheckBox.isSelected();
-//    }
-//
-//    /**
-//     * Determine if the user has changed the presentation method since the last
-//     * call of resetLanguageChanged().
-//     * @return true if the settings have been changed, false otherwise.
-//     */
-//    public boolean hasPPChanged() {
-//        return usePowerPointCheckBox.isSelected() != usePowerPoint;
-//    }
+    /**
+     * Reset the mechanism for determining if the user has changed the PowerPoint 
+     * settings. Call before showing the options dialog.
+     */
+    public void resetPresentationChanged() {
+        usePowerPoint = usePowerPointCheckBox.isSelected();
+    }
+
+    /**
+     * Determine if the user has changed the presentation method since the last
+     * call of resetLanguageChanged().
+     * @return true if the settings have been changed, false otherwise.
+     */
+    public boolean hasPPChanged() {
+        return usePowerPointCheckBox.isSelected() != usePowerPoint;
+    }
 
     /**
      * @inheritDoc
@@ -213,10 +207,8 @@ public class OptionsPresentationPanel extends GridPane implements PropertyPanel 
         QueleaProperties props = QueleaProperties.get();
         useOOCheckBox.setSelected(props.getUseOO());
         ooPathTextField.setText(props.getOOPath());
-        
-        // TODO: Uncomment when PowerPoint support is added
-//        usePowerPointCheckBox.setSelected(props.getUsePP());
-//        ppPathTextField.setText(props.getPPPath());
+        usePowerPointCheckBox.setSelected(props.getUsePP());
+        ppPathTextField.setText(props.getPPPath());
     }
 
     /**
@@ -229,12 +221,10 @@ public class OptionsPresentationPanel extends GridPane implements PropertyPanel 
         props.setUseOO(useOO);
         String ooPath = getOOPathTextField().getText();
         props.setOOPath(ooPath);
-        
-        // TODO: Uncomment when PowerPoint support is added
-//        boolean usePP = getUsePPCheckBox().isSelected();
-//        props.setUsePP(usePP);
-//        String ppPath = getPPPathTextField().getText();
-//        props.setPPPath(ppPath);
+        boolean usePP = getUsePPCheckBox().isSelected();
+        props.setUsePP(usePP);
+        String ppPath = getPPPathTextField().getText();
+        props.setPPPath(ppPath);
     }
     
     /**
@@ -255,23 +245,22 @@ public class OptionsPresentationPanel extends GridPane implements PropertyPanel 
         return ooPathTextField;
     }
 
-    // TODO: Uncomment when PowerPoint support is added
-//    /**
-//     * Get the "use PowerPoint" checkbox.
-//     * <p/>
-//     * @return the "use PowerPoint" checkbox.
-//     */
-//    public CheckBox getUsePPCheckBox() {
-//        return usePowerPointCheckBox;
-//    }
-//
-//    /**
-//     * Get the "PowerPoint path" text field.
-//     * <p/>
-//     * @return the "PowerPoint path" text field.
-//     */
-//    public TextField getPPPathTextField() {
-//        return ppPathTextField;
-//    }
+    /**
+     * Get the "use PowerPoint" checkbox.
+     * <p/>
+     * @return the "use PowerPoint" checkbox.
+     */
+    public CheckBox getUsePPCheckBox() {
+        return usePowerPointCheckBox;
+    }
+
+    /**
+     * Get the "PowerPoint path" text field.
+     * <p/>
+     * @return the "PowerPoint path" text field.
+     */
+    public TextField getPPPathTextField() {
+        return ppPathTextField;
+    }
 
 }

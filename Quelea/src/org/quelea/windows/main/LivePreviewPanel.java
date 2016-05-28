@@ -154,7 +154,7 @@ public abstract class LivePreviewPanel extends BorderPane {
      * <p/>
      * @return the presentation panel.
      */
-    protected PresentationPanel getPresentationPanel() {
+    public PresentationPanel getPresentationPanel() {
         return presentationPanel;
     }
     

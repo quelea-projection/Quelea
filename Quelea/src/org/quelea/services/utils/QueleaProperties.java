@@ -1470,6 +1470,46 @@ public final class QueleaProperties extends Properties {
         write();
     }
     
+    /**
+     * Get whether to use PowerPoint for presentations.
+     * <p/>
+     * @return true if we should use PowerPoint, false if we should just use the
+     * basic POI images or openoffice.
+     */
+    public boolean getUsePP() {
+        return Boolean.parseBoolean(getProperty("use.pp", "false"));
+    }
+
+    /**
+     * Set whether to use PowerPoint for presentations.
+     * <p/>
+     * @param val if we should use PowerPoint, false if we should just use the
+     * basic POI images or openoffice.
+     */
+    public void setUsePP(boolean val) {
+        setProperty("use.pp", Boolean.toString(val));
+        write();
+    }
+
+    /**
+     * Get the path to the PowerPoint installation on this machine.
+     * <p/>
+     * @return the path to the PowerPoint installation on this machine.
+     */
+    public String getPPPath() {
+        return getProperty("pp.path", "");
+    }
+
+    /**
+     * Set the path to the PowerPoint installation on this machine.
+     * <p/>
+     * @param path the path to the PowerPoint installation on this machine.
+     */
+    public void setPPPath(String path) {
+        setProperty("pp.path", path);
+        write();
+    }
+    
      /**
      * Get the path to the desired direcotry for recordings.
      * <p>
