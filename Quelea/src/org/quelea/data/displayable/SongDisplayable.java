@@ -252,6 +252,7 @@ public class SongDisplayable implements TextDisplayable, Comparable<SongDisplaya
     }
     public static final DataFormat SONG_DISPLAYABLE_FORMAT = new DataFormat("songdisplayable");
     private static final Logger LOGGER = LoggerUtils.getLogger();
+    private boolean updateInDB = true;
     private String title = "";
     private String author = "";
     private String ccli = "";
@@ -279,7 +280,10 @@ public class SongDisplayable implements TextDisplayable, Comparable<SongDisplaya
     public SongDisplayable(SongDisplayable song) {
         this.title = song.title;
         this.author = song.author;
-        this.sections = song.sections;
+        this.sections = new ArrayList<>();
+        for(TextSection section : song.getSections()) {
+            this.sections.add(new TextSection(section));
+        }
         this.theme = song.theme;
         this.id = song.id;
         this.ccli = song.ccli;
@@ -320,6 +324,21 @@ public class SongDisplayable implements TextDisplayable, Comparable<SongDisplaya
         this.author = author;
         this.theme = theme;
         sections = new ArrayList<>();
+    }
+    
+    /**
+     * Ensure changes to this song are not updated in the database.
+     */
+    public void setNoDBUpdate() {
+        updateInDB = false;
+    }
+    
+    /**
+     * Check whether changes to this song should be persisted to the database.
+     * @return true if changes should be persisted, false otherwise.
+     */
+    public boolean checkDBUpdate() {
+        return updateInDB;
     }
 
     /**
@@ -407,9 +426,9 @@ public class SongDisplayable implements TextDisplayable, Comparable<SongDisplaya
      * can't be done, leave it as -1.
      */
     public void matchID() {
-        if (id == -1) {
+        if (id == -1 && updateInDB) {
             for (SongDisplayable song : SongManager.get().getSongs()) {
-                if (this.title.equals(song.title)) {
+                if (this.title.equals(song.title) && getLyrics(true, true).equals(song.getLyrics(true, true)) && this.author.equals(song.author)) {
                     id = song.getID();
                 }
             }
@@ -871,6 +890,9 @@ public class SongDisplayable implements TextDisplayable, Comparable<SongDisplaya
     public String getXML() {
         StringBuilder xml = new StringBuilder();
         xml.append("<song>");
+        xml.append("<updateInDB>");
+        xml.append(updateInDB);
+        xml.append("</updateInDB>");
         xml.append("<title>");
         xml.append(Utils.escapeXML(title));
         xml.append("</title>");
@@ -1025,9 +1047,15 @@ public class SongDisplayable implements TextDisplayable, Comparable<SongDisplaya
         String notes = "";
         String currentTranslation = "";
         String translationLyrics = "";
+        boolean updateInDB = true;
         List<TextSection> songSections = new ArrayList<>();
         for (int i = 0; i < list.getLength(); i++) {
             Node node = list.item(i);
+            if (node.getNodeName().equals("updateInDB")) {
+                if(node.getTextContent().equals("false")) {
+                    updateInDB = false;
+                }
+            }
             if (node.getNodeName().equals("title")) {
                 title = node.getTextContent();
             }
@@ -1075,6 +1103,9 @@ public class SongDisplayable implements TextDisplayable, Comparable<SongDisplaya
         SongDisplayable ret = new SongDisplayable(title, author,
                 new ThemeDTO(ThemeDTO.DEFAULT_FONT, ThemeDTO.DEFAULT_FONT_COLOR, ThemeDTO.DEFAULT_FONT, ThemeDTO.DEFAULT_TRANSLATE_FONT_COLOR,
                         ThemeDTO.DEFAULT_BACKGROUND, ThemeDTO.DEFAULT_SHADOW, false, false, false, true, -1, 0));
+        if(!updateInDB) {
+            ret.setNoDBUpdate();
+        }
         for (TextSection section : songSections) {
             ret.addSection(section);
         }
@@ -1177,7 +1208,10 @@ public class SongDisplayable implements TextDisplayable, Comparable<SongDisplaya
      */
     @Override
     public ImageView getPreviewIcon() {
-        if (hasChords()) {
+        if(getID()<0) {
+            return new ImageView(new Image("file:icons/lyricscopy.png"));
+        }
+        else if (hasChords()) {
             return new ImageView(new Image("file:icons/lyricsandchords.png"));
         } else {
             return new ImageView(new Image("file:icons/lyrics.png"));
