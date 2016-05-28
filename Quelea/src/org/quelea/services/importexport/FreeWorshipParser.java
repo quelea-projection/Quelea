@@ -122,8 +122,4 @@ public class FreeWorshipParser implements SongParser {
         return sb.toString();
     }
 
-    public static void main(String[] args) throws IOException {
-        new FreeWorshipParser().getSongs(new File("C:\\users\\michael\\desktop\\Songs\\Beautiful One (Tim Hughes).xml"), null);
-    }
-
 }
