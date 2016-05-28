@@ -1,0 +1,10 @@
+syntax: regexp
+Quelea/nbproject/*
+Quelea/build/*
+Quelea/dist/*
+\.orig\..*$
+\.orig$
+\.chg\..*$
+\.rej$
+\.conflict\~$
+Thumbs.db
