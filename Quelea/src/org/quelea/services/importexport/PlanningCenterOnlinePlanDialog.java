@@ -122,7 +122,13 @@ public class PlanningCenterOnlinePlanDialog extends BorderPane {
             return PlanType.SONG;
         }
         else if (itemType.equals("PlanItem") && (boolean)item.get("using_custom_slides") == true) {
-            return PlanType.CUSTOM_SLIDES;
+                return PlanType.CUSTOM_SLIDES;            
+        }   
+        
+        // any unknown item with a media item we will assume should be imported as media
+        JSONArray itemMediaJSON = (JSONArray)item.get("plan_item_medias");
+        if (itemMediaJSON.size() > 0) {
+            return PlanType.MEDIA;
         }
         
         return PlanType.UNKNOWN;
