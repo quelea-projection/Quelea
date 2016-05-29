@@ -29,7 +29,14 @@ import javafx.application.Platform;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
+import javafx.geometry.Rectangle2D;
+import javafx.scene.Scene;
 import javafx.scene.control.CheckBox;
+import javafx.scene.layout.StackPane;
+import javafx.scene.paint.Color;
+import javafx.scene.text.Font;
+import javafx.scene.text.FontWeight;
+import javafx.scene.text.Text;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
@@ -55,6 +62,7 @@ import org.quelea.services.utils.Utils;
 import org.quelea.windows.multimedia.VLCWindow;
 import org.quelea.windows.splash.SplashStage;
 import uk.co.caprica.vlcj.discovery.NativeDiscovery;
+import utils.PlatformUtils;
 
 /**
  * The main class, sets everything in motion...
@@ -72,7 +80,7 @@ public final class Main extends Application {
     public static void main(String[] args) {
         Application.launch(args);
     }
-
+    
     /**
      * Starts the program off, this is the first thing that is executed by
      * Quelea when the program starts.
@@ -201,6 +209,7 @@ public final class Main extends Application {
                                 fullScreenWindow = new DisplayStage(Utils.getBoundsFromRect2D(monitors.get(projectorScreen).getBounds()), false);
                             }
                             
+                            PlatformUtils.setFullScreenAlwaysOnTop(fullScreenWindow, true);
                             QueleaApp.get().setProjectionWindow(fullScreenWindow);
 
                             if (stageHidden) {
