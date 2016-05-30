@@ -324,11 +324,6 @@ public class MainToolbar extends ToolBar {
     }
 
     public void startRecording() {
-        ImageView iv = new ImageView("file:icons/record_stop.png");
-        iv.setSmooth(true);
-        iv.setFitWidth(24);
-        iv.setFitHeight(24);
-        recordAudioButton.setGraphic(iv);
         recordAudioButton.setSelected(true);
         recording = true;
         getItems().add(pb);
@@ -341,11 +336,6 @@ public class MainToolbar extends ToolBar {
 
     public void stopRecording() {
         recordingsHandler.passVariables("stop", pb, recordingPathTextField, recordAudioButton);
-        ImageView iv = new ImageView("file:icons/record.png");
-        iv.setSmooth(true);
-        iv.setFitWidth(24);
-        iv.setFitHeight(24);
-        recordAudioButton.setGraphic(iv);
         recordAudioButton.setSelected(false);
         recording = false;
         getItems().remove(pb);

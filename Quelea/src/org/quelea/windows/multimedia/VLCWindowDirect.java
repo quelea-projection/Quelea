@@ -860,6 +860,26 @@ public class VLCWindowDirect extends VLCWindow {
         return hue;
     }
 
+    @Override
+    public long getTime() {
+        return mediaPlayer.getMediaPlayer().getTime();
+    }
+
+    @Override
+    public long getTotal() {
+        return mediaPlayer.getMediaPlayer().getLength();
+    }
+
+    @Override
+    public int getVolume() {
+        return mediaPlayer.getMediaPlayer().getVolume();
+    }
+
+    @Override
+    public void setVolume(int volume) {
+        mediaPlayer.getMediaPlayer().setVolume(volume);
+    }
+
     /**
      * Run the specified runnable on the VLC thread. All VLC actions should be
      * executed on this thread to avoid threading issues.

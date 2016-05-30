@@ -1,5 +1,7 @@
 package org.quelea.windows.multimedia;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javafx.scene.image.ImageView;
 import org.quelea.data.displayable.Displayable;
 import org.quelea.data.displayable.MultimediaDisplayable;
@@ -22,15 +24,23 @@ public class MultimediaDrawer extends DisplayableDrawer {
 
     @Override
     public void draw(Displayable displayable) {
-        if(getCanvas().isStageView()) {
+        if (getCanvas().isStageView()) {
             ImageView imageView = getCanvas().getNewImageView();
             imageView.setImage(Utils.getImageFromColour(QueleaProperties.get().getStageBackgroundColor()));
             getCanvas().getChildren().add(0, imageView);
-        }
-        else {
-            if (playVideo) {
+        } else {
+            if (!playVideo) {
                 controlPanel.reset();
                 controlPanel.loadMultimedia(((MultimediaDisplayable) displayable).getLocation());
+            }
+            VLCWindow.INSTANCE.play();
+            try {
+                Thread.sleep(200);
+            } catch (InterruptedException ex) {
+                Logger.getLogger(MultimediaDrawer.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            VLCWindow.INSTANCE.pause();
+            if (playVideo) {
                 VLCWindow.INSTANCE.refreshPosition();
                 VLCWindow.INSTANCE.show();
             }
