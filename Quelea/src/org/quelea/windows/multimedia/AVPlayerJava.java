@@ -21,20 +21,22 @@ package org.quelea.windows.multimedia;
 import java.io.File;
 
 /**
- *Class that loads native objective-c code in order to nicely play video on MacOS
+ * Class that loads native objective-c code in order to nicely play video on
+ * MacOS
+ *
  * @author grgarno
  */
 public class AVPlayerJava {
-    
+
     static {
         File library = new File("./lib/libAVPlayerJava.jnilib");
         System.load(library.getAbsolutePath());
         //boolean blub = isInit();
     }
 
-  
     /**
-     * Initializes native code, then determines whether the av player has been sucessfully initilized.
+     * Initializes native code, then determines whether the av player has been
+     * sucessfully initilized.
      *
      * @return True if initialized, false otherwise.
      */
@@ -56,26 +58,30 @@ public class AVPlayerJava {
 
     /**
      * Set options for loading a player
+     *
      * @param options The options// currently are ignored
      */
     public static native void setOptions(String options);
-    
+
     /**
-     * Set stretch for the video 
-     * @param stretch true if the video should fill the frame, false to hold the aspect ratio.
+     * Set stretch for the video
+     *
+     * @param stretch true if the video should fill the frame, false to hold the
+     * aspect ratio.
      */
     public static native void setStretch(boolean stretch);
-    
+
     /**
      * Set the fade speed of the player
+     *
      * @param FadeSpeed The fade speed in seconds.
      */
     public static native void setFadeSpeed(double FadeSpeed);
+
     /**
      * Play the current loaded video
      */
     public static native void play();
-
 
     /**
      * Get the last location of a played video
@@ -176,7 +182,9 @@ public class AVPlayerJava {
     public static native void setLocation(int x, int y);
 
     /**
-     * Set the size of the video window.      *
+     * Set the size of the video window.
+     *
+     *
      * @param width The width of the video
      * @param height The height of the video
      */
@@ -195,4 +203,19 @@ public class AVPlayerJava {
      * @return The hue of the video
      */
     public static native double getHue();
+
+    /**
+     * Todo: Untested code to return current time
+     *
+     * @return The elapsed time
+     */
+    public static native long getCurrentTime();
+
+    /**
+     * Todo: Fix working code to get total time
+     *
+     * @return The total time
+     */
+    public static native long getTotal();
+
 }

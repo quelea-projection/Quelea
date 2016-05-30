@@ -26,6 +26,9 @@ import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.EventHandler;
+import javafx.geometry.Orientation;
+import javafx.geometry.Pos;
+import javafx.scene.control.Label;
 import javafx.scene.control.Slider;
 import javafx.scene.effect.DropShadow;
 import javafx.scene.effect.Glow;
@@ -33,6 +36,7 @@ import javafx.scene.effect.Reflection;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.Background;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.CycleMethod;
@@ -56,11 +60,17 @@ public class MultimediaControls extends StackPane {
     private static final Image PLAY_IMAGE_DISABLE = new Image("file:icons/playdisable.png");
     private static final Image PAUSE_IMAGE_DISABLE = new Image("file:icons/pausedisable.png");
     private static final Image STOP_IMAGE_DISABLE = new Image("file:icons/stopdisable.png");
+    private static final Image VOLUME = new Image("file:icons/volume.png");
     private boolean playpause;
     private ImageView playButton;
     private ImageView stopButton;
     private Slider posSlider;
     private boolean disableControls;
+    private Label elapsedTime;
+    private Label totalTime;
+    private Slider volSlider;
+    private int vol = 100;
+    private final ImageView muteButton;
 
     public MultimediaControls() {
         Rectangle rect = new Rectangle(230, 100);
@@ -88,6 +98,7 @@ public class MultimediaControls extends StackPane {
                 if (!disableControls) {
                     play();
                 }
+                volSlider.setVisible(false);
             }
         });
 
@@ -98,6 +109,7 @@ public class MultimediaControls extends StackPane {
                 if (!disableControls) {
                     reset();
                 }
+                volSlider.setVisible(false);
             }
         });
         setButtonParams(stopButton);
@@ -111,6 +123,8 @@ public class MultimediaControls extends StackPane {
             public void changed(ObservableValue<? extends Number> ov, Number t, Number t1) {
                 if (!disableControls && (VLCWindow.INSTANCE.isPlaying() || VLCWindow.INSTANCE.isPaused()) && posSlider.isValueChanging()) {
                     VLCWindow.INSTANCE.setProgressPercent(posSlider.getValue());
+                    long time = (long) (VLCWindow.INSTANCE.getProgressPercent() * VLCWindow.INSTANCE.getTotal());
+                    elapsedTime.setText(getTime(time));
                 }
             }
         });
@@ -118,6 +132,63 @@ public class MultimediaControls extends StackPane {
         posSlider.setPrefWidth(rect.getWidth() - 20);
         posSlider.setMaxWidth(rect.getWidth() - 20);
         getChildren().add(posSlider);
+
+        muteButton = new ImageView(VOLUME);
+        muteButton.setFitWidth(25);
+        muteButton.setPreserveRatio(true);
+
+        volSlider = new Slider(0, 100, 0);
+        volSlider.setMaxHeight(70);
+        volSlider.setVisible(false);
+        volSlider.setOrientation(Orientation.VERTICAL);
+        volSlider.valueProperty().addListener((ObservableValue<? extends Number> ov, Number t, Number t1) -> {
+            Double vol1 = volSlider.getValue();
+            vol = vol1.intValue();
+            VLCWindow.INSTANCE.setVolume(vol);
+        });
+        muteButton.setTranslateY(30);
+        muteButton.setTranslateX(posSlider.getMaxWidth() - 80);
+        getChildren().add(muteButton);
+        muteButton.setOnMouseClicked((MouseEvent t) -> {
+            if (!disableControls) {
+                Platform.runLater(new Runnable() {
+
+                    @Override
+                    public void run() {
+                        volSlider.setVisible(!volSlider.isVisible());
+                        volSlider.setValue(VLCWindow.INSTANCE.getVolume());
+                        volSlider.requestFocus();
+                    }
+                });
+            }
+        });
+
+        volSlider.setTranslateX(muteButton.localToScene(0, 0).getX());
+        volSlider.setTranslateY(muteButton.localToScene(0, 0).getY() - 45);
+        getChildren().add(volSlider);
+
+        volSlider.focusedProperty().addListener((ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) -> {
+            if (!newValue) {
+                volSlider.setVisible(false);
+            }
+        });
+
+        elapsedTime = new Label();
+        elapsedTime.setPrefWidth(rect.getWidth() - 20);
+        elapsedTime.setMaxWidth(rect.getWidth() - 20);
+        elapsedTime.setBackground(Background.EMPTY);
+        elapsedTime.setTranslateY(40);
+        elapsedTime.setTextFill(Color.WHITE);
+        getChildren().add(elapsedTime);
+
+        totalTime = new Label();
+        totalTime.setPrefWidth(rect.getWidth() - 20);
+        totalTime.setMaxWidth(rect.getWidth() - 20);
+        totalTime.setBackground(Background.EMPTY);
+        totalTime.setTranslateY(40);
+        totalTime.setAlignment(Pos.BASELINE_RIGHT);
+        totalTime.setTextFill(Color.WHITE);
+        getChildren().add(totalTime);
 
         ScheduledExecutorService service = Executors.newSingleThreadScheduledExecutor();
         service.scheduleAtFixedRate(new Runnable() {
@@ -129,11 +200,28 @@ public class MultimediaControls extends StackPane {
                         @Override
                         public void run() {
                             posSlider.setValue(VLCWindow.INSTANCE.getProgressPercent());
+                            elapsedTime.setText(getTime(VLCWindow.INSTANCE.getTime()));
+                            totalTime.setText(getTime(VLCWindow.INSTANCE.getTotal()));
                         }
                     });
                 }
             }
         }, 0, SLIDER_UPDATE_RATE, TimeUnit.MILLISECONDS);
+
+        ScheduledExecutorService update = Executors.newSingleThreadScheduledExecutor();
+        update.scheduleAtFixedRate(new Runnable() {
+            @Override
+            public void run() {
+                if (!disableControls && VLCWindow.INSTANCE.isPlaying() && !volSlider.isValueChanging()) {
+                    Platform.runLater(new Runnable() {
+                        @Override
+                        public void run() {
+                            volSlider.setValue(VLCWindow.INSTANCE.getVolume());
+                        }
+                    });
+                }
+            }
+        }, 0, 2000, TimeUnit.MILLISECONDS);
         VLCWindow.INSTANCE.setOnFinished(new Runnable() {
             @Override
             public void run() {
@@ -175,7 +263,7 @@ public class MultimediaControls extends StackPane {
             stopButton.setImage(STOP_IMAGE);
         }
     }
-    
+
     public void play() {
         playpause = !playpause;
         if (playpause) {
@@ -184,6 +272,7 @@ public class MultimediaControls extends StackPane {
             VLCWindow.INSTANCE.setHue(0);
             VLCWindow.INSTANCE.play();
             posSlider.setDisable(false);
+            muteButton.setDisable(false);
         } else {
             playButton.setImage(PLAY_IMAGE);
             VLCWindow.INSTANCE.pause();
@@ -200,6 +289,9 @@ public class MultimediaControls extends StackPane {
         playpause = false;
         posSlider.setValue(0);
         posSlider.setDisable(true);
+        muteButton.setDisable(true);
+        elapsedTime.setText("");
+        totalTime.setText("");
     }
 
     private void setButtonParams(final ImageView button) {
@@ -220,5 +312,19 @@ public class MultimediaControls extends StackPane {
         button.setFitWidth(50);
         button.setPreserveRatio(true);
         button.setTranslateY(-10);
+    }
+
+    /**
+     * Method to get the elapsed time of the video
+     *
+     * @param elapsedTimeMillis Time elapsed
+     */
+    private String getTime(long elapsedTimeMillis) {
+        float elapsedTimeSec = elapsedTimeMillis / 1000F;
+        int hours = (int) elapsedTimeSec / 3600;
+        int minutes = (int) (elapsedTimeSec % 3600) / 60;
+        int seconds = (int) elapsedTimeSec % 60;
+        String time = String.format("%02d:%02d:%02d", hours, minutes, seconds);
+        return time;
     }
 }
