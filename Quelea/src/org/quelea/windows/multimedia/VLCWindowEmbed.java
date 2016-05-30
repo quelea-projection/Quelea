@@ -68,7 +68,7 @@ public class VLCWindowEmbed extends VLCWindow {
     private volatile double hue = 0;
 
     private VLCWindowEmbed() {
-        
+
         runOnVLCThread(new Runnable() {
             @Override
             public void run() {
@@ -221,7 +221,7 @@ public class VLCWindowEmbed extends VLCWindow {
 //                System.out.println("play("+vid+") start");
                 if (init) {
                     paused = false;
-                    if(mediaPlayer.isPlaying()) {
+                    if (mediaPlayer.isPlaying()) {
                         mediaPlayer.stop();
                     }
                     if (options == null) {
@@ -601,6 +601,26 @@ public class VLCWindowEmbed extends VLCWindow {
 
     public double getHue() {
         return hue;
+    }
+
+    @Override
+    public long getTime() {
+        return mediaPlayer.getTime();
+    }
+
+    @Override
+    public long getTotal() {
+        return mediaPlayer.getLength();
+    }
+
+    @Override
+    public int getVolume() {
+        return mediaPlayer.getVolume();
+    }
+
+    @Override
+    public void setVolume(int volume) {
+        mediaPlayer.setVolume(volume);
     }
 
     /**

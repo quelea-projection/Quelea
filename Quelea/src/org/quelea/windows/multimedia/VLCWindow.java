@@ -103,5 +103,13 @@ public abstract class VLCWindow {
     public abstract void setHue(final double hue);
 
     public abstract double getHue();
+    
+    public abstract long getTime();
+    
+    public abstract long getTotal();
+    
+    public abstract int getVolume();
+    
+    public abstract void setVolume(int volume);
 
 }

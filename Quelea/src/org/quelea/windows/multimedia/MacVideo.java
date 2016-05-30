@@ -18,7 +18,6 @@
  */
 package org.quelea.windows.multimedia;
 
-
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.logging.Level;
@@ -31,7 +30,8 @@ import org.quelea.windows.main.QueleaApp;
 /**
  * A native AVPlayer window which is responsible for moving where it's told, and
  * playing video files. Transparent windows can then sit on top of this giving
- * the impression of a video background. This is a singleton to follow the VLCWindow interface.
+ * the impression of a video background. This is a singleton to follow the
+ * VLCWindow interface.
  * <p>
  * @author grgarno
  */
@@ -619,6 +619,42 @@ public class MacVideo extends VLCWindow {
     }
 
     /**
+     * TODO: Get the elapsed time of the item, not yet tested.
+     * @return The elapsed time
+     */
+    @Override
+    public long getTime() {
+        return AVPlayerJava.getCurrentTime();
+    }
+
+    /**
+     * TODO: Get the total time of the item, not yet tested.
+     * @return The total time
+     */
+    @Override
+    public long getTotal() {
+        return AVPlayerJava.getCurrentTime()/(long)getProgressPercent();
+    }
+
+    /**
+     * TODO: Get the current volume level of the item, not yet tested.
+     * @return The volume level
+     */
+    @Override
+    public int getVolume() {
+        return (new Double(AVPlayerJava.getVolume())).intValue();
+    }
+
+    /**
+     * TODO: Set the volume level of the item, not yet tested.
+     * @param volume Desired volume level
+     */
+    @Override
+    public void setVolume(int volume) {
+        AVPlayerJava.setVolume(new Double(volume).intValue());
+    }
+
+    /**
      * Currently a convenience method, as everything that should be run on the
      * player thread is funneled through this method, or the runAndWait method.
      * This is so that it will be easier to diagnose threading problems later.
@@ -630,13 +666,14 @@ public class MacVideo extends VLCWindow {
         /*
          MAC_VID_EXECUTOR.submit(r);
          */
-        
+
     }
 
     /**
-     *Currently a convenience method, as everything that should be run on the
-     * player thread is funneled through this method, or the run method.
-     * This is so that it will be easier to diagnose threading problems later.
+     * Currently a convenience method, as everything that should be run on the
+     * player thread is funneled through this method, or the run method. This is
+     * so that it will be easier to diagnose threading problems later.
+     *
      * @param r the runnable to run.
      */
     private void runOnVIDThreadAndWait(Runnable r) {
