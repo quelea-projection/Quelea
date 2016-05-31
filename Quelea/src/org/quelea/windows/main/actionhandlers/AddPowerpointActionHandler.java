@@ -59,6 +59,10 @@ public class AddPowerpointActionHandler implements EventHandler<ActionEvent> {
         }
         chooser.getExtensionFilters().add(FileFilters.POWERPOINT);
         final List<File> files = chooser.showOpenMultipleDialog(QueleaApp.get().getMainWindow());
+        addPresentation(files);
+    }
+
+    public void addPresentation(List<File> files) {
         if(files != null) {
             new Thread() {
 
