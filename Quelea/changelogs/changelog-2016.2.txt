@@ -10,5 +10,8 @@ quelea (2016.2) stable; urgency=normal
   * Update record icon
   * Add option to adjust video volume
   * Add elapsed and total time on video playback
+  * Fix canvas ratio to match projection window
+  * Add drag and drop support for presentations, PDF files, videos and images
+  * Merge add buttons to a drop-down menu
 
  -- Michael Berry <michael@quelea.org>  Sunday, 26 May 2016 00:00:00 +0000
