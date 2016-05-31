@@ -21,6 +21,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.application.Platform;
@@ -53,6 +54,7 @@ import org.quelea.data.displayable.SongDisplayable;
 import org.quelea.data.displayable.TextDisplayable;
 import org.quelea.data.displayable.TextSection;
 import org.quelea.data.displayable.TimerDisplayable;
+import org.quelea.data.displayable.VideoDisplayable;
 import org.quelea.services.utils.LoggerUtils;
 import org.quelea.services.utils.QueleaProperties;
 import org.quelea.services.utils.SerializableDropShadow;
@@ -62,6 +64,8 @@ import org.quelea.windows.library.DisplayableListCell;
 import org.quelea.windows.lyrics.LyricDrawer;
 import org.quelea.windows.main.QueleaApp;
 import org.quelea.windows.main.WordDrawer;
+import org.quelea.windows.main.actionhandlers.AddPdfActionHandler;
+import org.quelea.windows.main.actionhandlers.AddPowerpointActionHandler;
 import org.quelea.windows.main.actionhandlers.RemoveScheduleItemActionHandler;
 import org.quelea.windows.multimedia.VLCWindow;
 import org.quelea.windows.stage.StageDrawer;
@@ -170,10 +174,10 @@ public class ScheduleList extends StackPane {
                                 } else {
                                     if (listCell.getItem() instanceof SongDisplayable) {
                                         listCell.setStyle("-fx-background-color: #99cccc;");
-                                    }else{
+                                    } else {
                                         markerRect.setTranslateX(listCell.getLayoutX() + listCell.getTranslateX());
-                                    markerRect.setTranslateY(listCell.getLayoutY() + listCell.getTranslateY());
-                                    markerRect.setVisible(true);
+                                        markerRect.setTranslateY(listCell.getLayoutY() + listCell.getTranslateY());
+                                        markerRect.setVisible(true);
                                     }
                                 }
                             } else if (event.getDragboard().getContent(SongDisplayable.SONG_DISPLAYABLE_FORMAT) != null) {
@@ -221,6 +225,11 @@ public class ScheduleList extends StackPane {
                 if (event.getDragboard().getString() != null || event.getDragboard().getContent(SongDisplayable.SONG_DISPLAYABLE_FORMAT) != null) {
                     event.acceptTransferModes(TransferMode.ANY);
                 }
+                if (event.getDragboard().hasFiles()) {
+                    event.getDragboard().getFiles().stream().filter((file) -> (Utils.fileIsImage(file) || Utils.fileIsVideo(file) || file.getPath().matches("(.*)(pdf|ppt|pptx)") && !file.isDirectory())).forEach((file) -> {
+                        event.acceptTransferModes(TransferMode.ANY);
+                    });
+                }
             }
         });
         listView.setOnDragDropped(new EventHandler<DragEvent>() {
@@ -259,6 +268,30 @@ public class ScheduleList extends StackPane {
     }
 
     private void dragDropped(DragEvent event, ListCell<Displayable> listCell) {
+        Dragboard db = event.getDragboard();
+        if (db.hasFiles()) {
+            db.getFiles().stream().forEach((file) -> {
+                if (Utils.fileIsImage(file)) {
+                    add(new ImageDisplayable(file));
+                } else if (Utils.fileIsVideo(file)) {
+                    add(new VideoDisplayable(file.getPath()));
+                    new Thread() {
+                        @Override
+                        public void run() {
+                            Utils.getVidBlankImage(file); //Cache preview image
+                        }
+                    }.start();
+                } else if (file.getPath().matches("(.*)(ppt|pptx)")) {
+                    List<File> presentation = new ArrayList<>();
+                    presentation.add(file);
+                    new AddPowerpointActionHandler().addPresentation(presentation);
+                } else if (file.getPath().contains(".pdf")) {
+                    List<File> pdf = new ArrayList<>();
+                    pdf.add(file);
+                    new AddPdfActionHandler().addPDF(pdf);
+                }
+            });
+        }
         if (listCell != null) {
             listCell.setStyle("-fx-border-color: rgb(0, 0, 0);-fx-border-width: 0,0,0,0;");
         }
@@ -275,8 +308,8 @@ public class ScheduleList extends StackPane {
             }
             boolean isSong = true;
             isSong = !(listCell == null || listCell.isEmpty());
-            if(isSong){
-                if(!(listCell.getItem() instanceof TextDisplayable)){
+            if (isSong) {
+                if (!(listCell.getItem() instanceof TextDisplayable)) {
                     isSong = false;
                 }
             }
@@ -286,7 +319,7 @@ public class ScheduleList extends StackPane {
                 tempDisp = img;
             } else {
                 if (useTempDisp) {
-                    
+
                     //potentially check if the displayable is an image and then add it to theme of song.
                     //Was not added due to the thought that it could get confusing if someone added image to 
                     //schedule and then it all of a sudden disappeared if they were trying to rearrange the schedule.
