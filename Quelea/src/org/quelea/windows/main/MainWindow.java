@@ -168,6 +168,15 @@ public class MainWindow extends Stage {
     }
 
     /**
+     * Get the main menu bar.
+     *
+     * @return MainMenuBar.
+     */
+    public MainMenuBar getMainMenuBar() {
+        return menuBar;
+    }
+
+    /**
      * Get the bible search dialog on this main window.
      * <p/>
      * @return the bible search dialog.
