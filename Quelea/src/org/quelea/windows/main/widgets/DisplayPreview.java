@@ -92,7 +92,7 @@ public class DisplayPreview extends StackPane {
     }
 
     private double getRatio() {
-        if(QueleaApp.get().getProjectionWindow() == null || QueleaApp.get().getProjectionWindow().isShowing()) {
+        if(QueleaApp.get().getProjectionWindow() == null) {
             return DEFAULT_RATIO;
         }
         double width = QueleaApp.get().getProjectionWindow().getWidth();
