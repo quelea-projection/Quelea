@@ -62,6 +62,7 @@ public class MobileLyricsServer {
     private boolean running;
     private String pageContent;
     private final Map<String, byte[]> fileCache;
+    private String text = "";
 
     /**
      * Create a new mobile lyrics server on a specified port. The port must not
@@ -79,9 +80,11 @@ public class MobileLyricsServer {
         server.createContext("/title", new TitleHandler());
         server.createContext("/songtranslations", new SongTranslationsHandler());
         server.createContext("/gettranslation", new SongTranslationsHandler());
+        server.createContext("/livetext", new LiveTextHandler());
         server.createContext("/jscolor.js", new FileHandler("icons/jscolor.js"));
         server.createContext("/arrow.gif", new FileHandler("icons/arrow.gif"));
         server.createContext("/gear.png", new FileHandler("icons/gear.png"));
+        server.createContext("/translate.png", new FileHandler("icons/translate_on.png"));
         server.createContext("/cross.gif", new FileHandler("icons/cross.gif"));
         server.createContext("/hs.png", new FileHandler("icons/hs.png"));
         server.createContext("/hv.png", new FileHandler("icons/hv.png"));
@@ -124,6 +127,8 @@ public class MobileLyricsServer {
         content = content.replace("[background.colour.label]", LabelGrabber.INSTANCE.getLabel("background.colour.label"));
         content = content.replace("[change.graphics.label]", LabelGrabber.INSTANCE.getLabel("change.graphics.label"));
         content = content.replace("[show.chords.label]", LabelGrabber.INSTANCE.getLabel("stage.show.chords"));
+        content = content.replace("[default.translation]", LabelGrabber.INSTANCE.getLabel("default.translation.label"));
+        content = content.replace("[select.language]", LabelGrabber.INSTANCE.getLabel("translation.choice.title"));
         return content;
     }
 
@@ -203,6 +208,20 @@ public class MobileLyricsServer {
         }
     }
 
+    private class LiveTextHandler implements HttpHandler {
+
+        @Override
+        public void handle(HttpExchange t) throws IOException {
+            String response = getText();
+            byte[] bytes = response.getBytes("UTF-8");
+            t.getResponseHeaders().add("Cache-Control", "no-cache, no-store, must-revalidate");
+            t.sendResponseHeaders(200, bytes.length);
+            try (OutputStream os = t.getResponseBody()) {
+                os.write(bytes);
+            }
+        }
+    }
+
     private class TitleHandler implements HttpHandler {
 
         @Override
@@ -228,6 +247,9 @@ public class MobileLyricsServer {
                     response = listSongTranslations(he);
                 } else {
                     response = getSongTranslation(he);
+                }
+                if (getLyrics(false).equals("")) {
+                    response = "";
                 }
             }
             he.getResponseHeaders().add("Cache-Control", "no-cache, no-store, must-revalidate");
@@ -414,6 +436,14 @@ public class MobileLyricsServer {
             }
         }
         return sb.toString().replaceAll("\n", "<br/>");
+    }
+
+    public String getText() {
+        return text;
+    }
+    
+    public void setText(String text) {
+        this.text = text;
     }
 
     /**
