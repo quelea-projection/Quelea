@@ -1,0 +1,17 @@
+quelea (2016.0) stable; urgency=normal
+ 
+  * Labelled text sections now appear in the Live and Preview Panels
+  * Bible passages can now be continued one verse at a time using '+' key
+  * Re-enabled option to select maximum number of bible verses per slide
+  * Use of numbers, 'c', 'b', 't' and 'p' keys to traverse live panel / text sections
+  * Editable bounds for lyrics to appear in (Advanced/Hidden feature)
+  * Variety of Mobile Lyrics and Remote Lyrics additions for Android app support
+  * Fixed Kingsway Import and provide support for US-based download.
+  * Audio recording functionality (experimental)
+  * Logo & Splashscreen update
+  * Updates to bible import (can now import more previously un-importable bibles)
+  * Bugfixes for edit song window
+  * Added recording ability (thanks Arvid!)
+  * Many other small bugfixes
+
+ -- Michael Berry <michael@quelea.org>  Wednesday, 08 December 2015 00:00:00 +0000
