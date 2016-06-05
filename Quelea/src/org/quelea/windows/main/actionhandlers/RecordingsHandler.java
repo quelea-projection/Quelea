@@ -82,6 +82,7 @@ public class RecordingsHandler {
     private boolean isRecording;
     private boolean finishedSaving;
     private StatusPanel statusPanel;
+    private RecordingEncoder encoder;
 
     /**
      * Defines an audio format
@@ -164,7 +165,7 @@ public class RecordingsHandler {
             ByteArrayInputStream bais = new ByteArrayInputStream(audioData);
             AudioInputStream audioInputStream = new AudioInputStream(bais, format,
                     audioData.length / format.getFrameSize());
-            
+
             wavFile = new File(path, textField.getText().replaceAll("[^\\p{L}0-9.-]", "_") + ".wav");
 
             try {
@@ -330,6 +331,17 @@ public class RecordingsHandler {
     }
 
     /**
+     * @return the status
+     */
+    public boolean isConverting() {
+        if (encoder != null) {
+            return encoder.isConverting();
+        } else {
+            return false;
+        }
+    }
+
+    /**
      * Use Mac command line to convert recording to MP3 and delete old file.
      *
      * @param file original to convert.
@@ -357,7 +369,8 @@ public class RecordingsHandler {
             // Wait a second to make sure the conversion starts before deleting the old file
             try {
                 Thread.sleep(1000);
-            } catch (InterruptedException ignored) {}
+            } catch (InterruptedException ignored) {
+            }
             String error;
             Path oldFile = Paths.get(file);
             do {
