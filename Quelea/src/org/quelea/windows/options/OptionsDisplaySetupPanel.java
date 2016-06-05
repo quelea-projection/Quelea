@@ -188,4 +188,8 @@ public class OptionsDisplaySetupPanel extends GridPane implements PropertyPanel 
         }
         updatePos();
     }
+    
+    public SingleDisplayPanel getProjectorPanel() {
+        return projectorPanel;
+    }
 }
