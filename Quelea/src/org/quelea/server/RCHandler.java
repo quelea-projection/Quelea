@@ -18,23 +18,33 @@
 package org.quelea.server;
 
 import com.sun.net.httpserver.HttpExchange;
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.TreeSet;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.regex.Pattern;
 import javafx.application.Platform;
+import javafx.embed.swing.SwingFXUtils;
+import javax.imageio.ImageIO;
 import org.quelea.data.ThemeDTO;
 import org.quelea.data.bible.Bible;
 import org.quelea.data.bible.BibleBook;
 import org.quelea.data.db.SongManager;
 import org.quelea.data.displayable.Displayable;
+import org.quelea.data.displayable.PresentationDisplayable;
 import org.quelea.data.displayable.SongDisplayable;
 import org.quelea.data.displayable.TimerDisplayable;
+import org.quelea.data.powerpoint.Presentation;
 import org.quelea.services.languages.LabelGrabber;
 import org.quelea.services.lucene.SongSearchIndex;
+import org.quelea.services.utils.LoggerUtils;
 import org.quelea.services.utils.QueleaProperties;
 import org.quelea.services.utils.Utils;
 import org.quelea.windows.library.LibraryBiblePanel;
@@ -55,6 +65,7 @@ import org.quelea.windows.multimedia.VLCWindow;
 public class RCHandler {
 
     private static final ArrayList<String> devices = new ArrayList<>();
+    private static final Logger LOGGER = LoggerUtils.getLogger();
 
     public static void logo() {
         Platform.runLater(QueleaApp.get().getMainWindow().getMainPanel().getLivePanel()::toggleLogo);
@@ -107,7 +118,7 @@ public class RCHandler {
             p.getPreviewPanel().goLive();
         });
     }
-    
+
     public static void gotoItem(String index) {
         Platform.runLater(() -> {
             final MainPanel p = QueleaApp.get().getMainWindow().getMainPanel();
@@ -121,7 +132,7 @@ public class RCHandler {
             p.getPreviewPanel().goLive();
         });
     }
-    
+
     public static void moveUp(String index) {
         int item = Integer.parseInt(index.split("moveup/")[1]);
         Platform.runLater(() -> {
@@ -216,8 +227,8 @@ public class RCHandler {
             lp.getTimerPanel().togglePause();
         }
     }
-    
-        static void record() {
+
+    static void record() {
         MainToolbar toolbar = QueleaApp.get().getMainWindow().getMainToolbar();
         RecordingsHandler recHandler = toolbar.getRecordButtonHandler().getRecordingsHandler();
         if (toolbar.getRecordButtonHandler() != null && recHandler != null) {
@@ -319,7 +330,7 @@ public class RCHandler {
         }
         return LabelGrabber.INSTANCE.getLabel("rcs.add.failed");
     }
-    
+
     public static String removeItemFromSchedule(HttpExchange he) {
         String songIDString;
         int songID;
@@ -413,7 +424,7 @@ public class RCHandler {
             return "";
         }
     }
-    
+
     public static String getThemes(HttpExchange he) {
         StringBuilder ret = new StringBuilder();
         for (ThemeDTO t : QueleaApp.get().getMainWindow().getMainPanel().getSchedulePanel().getThemeNode().getThemes()) {
@@ -447,6 +458,40 @@ public class RCHandler {
             return "";
         }
         return "";
+    }
+
+    public static byte[] getPresentationSlides(HttpExchange he) {
+        String targetPath = he.getRequestURI().getPath().replace("/slides", "");
+        Displayable d = QueleaApp.get().getMainWindow().getMainPanel().getLivePanel().getDisplayable();
+        if (d instanceof PresentationDisplayable) {
+            Presentation pres = ((PresentationDisplayable) d).getPresentation();
+            if (targetPath.contains("/")) {
+                try {
+                    int slide = Integer.parseInt(targetPath.replace("/slide", "").replace(".png", ""));
+                    BufferedImage image = SwingFXUtils.fromFXImage(pres.getSlide(slide - 1).getImage(), null);
+                    ByteArrayOutputStream output = new ByteArrayOutputStream();
+                    ImageIO.write(image, "png", output);
+                    return output.toByteArray();
+                } catch (IOException ex) {
+                    LOGGER.log(Level.WARNING, "Error getting PowerPoint slides", ex);
+                }
+            } else {
+                StringBuilder sb = new StringBuilder();
+                sb.append("\n<html>");
+                int numberOfFiles = pres.getSlides().length;
+                for (int i = 0; i < numberOfFiles; i++) {
+                    if (currentLyricSection() == i) {
+                        sb.append("<div class=\"inner current\">");
+                    }
+                    sb.append("<p class=\"empty\" onclick=\"section(").append(i).append(");\">");
+                    sb.append("<a href='").append("/").append("slides/slide").append(i).append("'>").append("</a>");
+                    sb.append("</p>");
+                }
+                sb.append("\n</html>");
+                return sb.toString().getBytes();
+            }
+        }
+        return "".getBytes();
     }
 
     public static String listBibleTranslations(HttpExchange he) {
