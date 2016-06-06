@@ -18,5 +18,10 @@ quelea (2016.2) stable; urgency=normal
   * Add advanced option to automatically move projection window when new screens are connected
   * Add Live Text feature to send non-projected text to Mobile Lyrics
   * Add section title buttons to song dialog
+  * Add French translation
+  * Get presentation slide previews through Mobile Remote
+  * Add support for displaying websites
+  * Add support for displaying groups of images
+
 
  -- Michael Berry <michael@quelea.org>  Sunday, 26 May 2016 00:00:00 +0000
