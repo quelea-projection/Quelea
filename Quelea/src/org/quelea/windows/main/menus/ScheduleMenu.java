@@ -41,10 +41,12 @@ import org.quelea.services.utils.Utils;
 import org.quelea.windows.main.MainPanel;
 import org.quelea.windows.main.QueleaApp;
 import org.quelea.windows.main.actionhandlers.AddDVDActionHandler;
+import org.quelea.windows.main.actionhandlers.AddImageActionHandler;
 import org.quelea.windows.main.actionhandlers.AddPdfActionHandler;
 import org.quelea.windows.main.actionhandlers.AddPowerpointActionHandler;
 import org.quelea.windows.main.actionhandlers.AddTimerActionHandler;
 import org.quelea.windows.main.actionhandlers.AddVideoActionHandler;
+import org.quelea.windows.main.actionhandlers.AddWebActionHandler;
 import org.quelea.windows.main.actionhandlers.AddYoutubeActionHandler;
 import org.quelea.windows.main.actionhandlers.ExportPDFScheduleSongsActionHandler;
 import org.quelea.windows.main.actionhandlers.ShowNoticesActionHandler;
@@ -64,6 +66,8 @@ public class ScheduleMenu extends Menu {
     private final MenuItem addTimerItem;
     private final MenuItem addDVDItem;
     private final MenuItem addPDFItem;
+    private final MenuItem addWebItem;
+    private final MenuItem addImageItem;
     private final StackPane dvdImageStack;
     private final MenuItem manageNoticesItem;
     private final MenuItem shareScheduleItem;
@@ -100,7 +104,7 @@ public class ScheduleMenu extends Menu {
         addTimerItem.setOnAction(new AddTimerActionHandler());
         getItems().add(addTimerItem);
         
-        addPDFItem = new MenuItem(LabelGrabber.INSTANCE.getLabel("add.pdf.tooltip"), new ImageView(new Image("file:icons/infobig.png", 16, 16, false, true)));
+        addPDFItem = new MenuItem(LabelGrabber.INSTANCE.getLabel("add.pdf.tooltip"), new ImageView(new Image("file:icons/add_pdf.png", 16, 16, false, true)));
         addPDFItem.setOnAction(new AddPdfActionHandler());
         getItems().add(addPDFItem);
         
@@ -109,6 +113,14 @@ public class ScheduleMenu extends Menu {
         addDVDItem = new MenuItem(LabelGrabber.INSTANCE.getLabel("add.dvd.button"), dvdImageStack);
         addDVDItem.setOnAction(new AddDVDActionHandler());
         getItems().add(addDVDItem);
+        
+        addWebItem = new MenuItem(LabelGrabber.INSTANCE.getLabel("add.website"), new ImageView(new Image("file:icons/web-small.png", 16, 16, false, true)));
+        addWebItem.setOnAction(new AddWebActionHandler());
+        getItems().add(addWebItem);
+        
+        addImageItem = new MenuItem(LabelGrabber.INSTANCE.getLabel("add.images.panel"), new ImageView(new Image("file:icons/image.png", 16, 16, false, true)));
+        addImageItem.setOnAction(new AddImageActionHandler());
+        getItems().add(addImageItem);
         
         getItems().add(new SeparatorMenuItem());
 
