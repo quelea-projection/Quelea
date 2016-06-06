@@ -33,6 +33,7 @@ import javafx.scene.layout.BorderPane;
 import javafx.util.Duration;
 import org.javafx.dialog.Dialog;
 import org.quelea.data.displayable.ImageDisplayable;
+import org.quelea.data.displayable.ImageGroupDisplayable;
 import org.quelea.data.displayable.PdfDisplayable;
 import org.quelea.data.displayable.PresentationDisplayable;
 import org.quelea.data.powerpoint.OOPresentation;
@@ -41,6 +42,7 @@ import org.quelea.data.powerpoint.SlideChangedListener;
 import org.quelea.services.languages.LabelGrabber;
 import org.quelea.services.utils.QueleaProperties;
 import org.quelea.windows.image.ImageDrawer;
+import org.quelea.windows.imagegroup.ImageGroupPreview;
 import org.quelea.windows.main.AbstractPanel;
 import org.quelea.windows.main.DisplayCanvas;
 import org.quelea.windows.main.DisplayableDrawer;
@@ -150,10 +152,16 @@ public class PresentationPanel extends AbstractPanel {
                                 if (containerPanel instanceof LivePanel) {
                                     LivePanel livePanel = ((LivePanel) containerPanel);
                                     if (livePanel.isLoopSelected()) {
-                                        if (!QueleaProperties.get().getUsePP() || livePanel.getDisplayable() instanceof PdfDisplayable) {
-                                            presentationPreview.advanceSlide(true);
-                                            PdfPreview pdfPreview = livePanel.getPdfPanel().getPresentationPreview();
-                                            pdfPreview.advanceSlide(true);
+                                        if (!QueleaProperties.get().getUsePP() || livePanel.getDisplayable() instanceof PdfDisplayable || livePanel.getDisplayable() instanceof ImageGroupDisplayable) {
+                                            if (livePanel.getDisplayable() instanceof PdfDisplayable) {
+                                                presentationPreview.advanceSlide(true);
+                                                PdfPreview pdfPreview = livePanel.getPdfPanel().getPresentationPreview();
+                                                pdfPreview.advanceSlide(true);
+                                            } else if (livePanel.getDisplayable() instanceof ImageGroupDisplayable) {
+                                                presentationPreview.advanceSlide(true);
+                                                ImageGroupPreview imageGroupPreview = livePanel.getImageGroupPanel().getPresentationPreview();
+                                                imageGroupPreview.advanceSlide(true);
+                                            }
                                         } else {
                                             String result = PowerPointHandler.gotoNext();
                                             if (result.contains("not running")) {
@@ -204,10 +212,16 @@ public class PresentationPanel extends AbstractPanel {
                                                 if (containerPanel instanceof LivePanel) {
                                                     LivePanel livePanel = ((LivePanel) containerPanel);
                                                     if (livePanel.isLoopSelected()) {
-                                                        if (!QueleaProperties.get().getUsePP() || livePanel.getDisplayable() instanceof PdfDisplayable) {
-                                                            PdfPreview pdfPreview = livePanel.getPdfPanel().getPresentationPreview();
-                                                            presentationPreview.advanceSlide(true);
-                                                            pdfPreview.advanceSlide(true);
+                                                        if (!QueleaProperties.get().getUsePP() || livePanel.getDisplayable() instanceof PdfDisplayable || livePanel.getDisplayable() instanceof ImageGroupDisplayable) {
+                                                            if (livePanel.getDisplayable() instanceof PdfDisplayable) {
+                                                                presentationPreview.advanceSlide(true);
+                                                                PdfPreview pdfPreview = livePanel.getPdfPanel().getPresentationPreview();
+                                                                pdfPreview.advanceSlide(true);
+                                                            } else if (livePanel.getDisplayable() instanceof ImageGroupDisplayable) {
+                                                                presentationPreview.advanceSlide(true);
+                                                                ImageGroupPreview imageGroupPreview = livePanel.getImageGroupPanel().getPresentationPreview();
+                                                                imageGroupPreview.advanceSlide(true);
+                                                            }
                                                         } else {
                                                             String result = PowerPointHandler.gotoNext();
                                                             if (result.contains("not running")) {
