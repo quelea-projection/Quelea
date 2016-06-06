@@ -46,9 +46,12 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.embed.swing.SwingFXUtils;
 import javax.imageio.ImageIO;
+import org.quelea.data.displayable.Displayable;
 import org.quelea.data.displayable.MultimediaDisplayable;
+import org.quelea.data.displayable.PresentationDisplayable;
 import org.quelea.data.displayable.TextDisplayable;
 import org.quelea.data.displayable.TextSection;
+import org.quelea.data.powerpoint.Presentation;
 import org.quelea.services.languages.LabelGrabber;
 import org.quelea.services.utils.LineTypeChecker;
 import org.quelea.services.utils.LoggerUtils;
@@ -120,6 +123,7 @@ public class RemoteControlServer {
         server.createContext("/moveup", new MoveItemUpHandler());
         server.createContext("/movedown", new MoveItemDownHandler());
         server.createContext("/themethumb", new ThemeThumbnailsHandler());
+        server.createContext("/slides", new PresentationSlidesHandler());
         rootcontext.getFilters().add(new ParameterFilter());
         server.setExecutor(null);
     }
@@ -291,7 +295,7 @@ public class RemoteControlServer {
         }
 
     }
-    
+
     private class ThemeThumbnailsHandler implements HttpHandler {
 
         FileNameMap fileNameMap = URLConnection.getFileNameMap();
@@ -319,6 +323,22 @@ public class RemoteControlServer {
         }
     }
 
+    private class PresentationSlidesHandler implements HttpHandler {
+
+        @Override
+        public void handle(HttpExchange t) throws IOException {
+            if (RCHandler.isLoggedOn(t.getRemoteAddress().getAddress().toString())) {
+                byte[] byteArray = RCHandler.getPresentationSlides(t);
+                t.sendResponseHeaders(200, byteArray.length);
+                OutputStream out = t.getResponseBody();
+                out.write(byteArray);
+                out.close();
+            } else {
+                passwordPage(t);
+            }
+        }
+    }
+
     private class AddSongHandler implements HttpHandler {
 
         @Override
@@ -337,8 +357,8 @@ public class RemoteControlServer {
         }
 
     }
-    
-        private class RemoveItemHandler implements HttpHandler {
+
+    private class RemoveItemHandler implements HttpHandler {
 
         @Override
         public void handle(HttpExchange he) throws IOException {
@@ -373,7 +393,7 @@ public class RemoteControlServer {
             }
         }
     }
-    
+
     private class GetThemesHandler implements HttpHandler {
 
         @Override
@@ -531,7 +551,7 @@ public class RemoteControlServer {
             }
         }
     }
-    
+
     //Handles jumping to a schedule item
     private class GotoItemHandler implements HttpHandler {
 
@@ -546,7 +566,7 @@ public class RemoteControlServer {
             }
         }
     }
-    
+
     //Handles item moves up
     private class MoveItemUpHandler implements HttpHandler {
 
@@ -644,8 +664,8 @@ public class RemoteControlServer {
             }
         }
     }
-    
-        //Handles recordings
+
+    //Handles recordings
     private class RecordToggleHandler implements HttpHandler {
 
         @Override
@@ -749,6 +769,21 @@ public class RemoteControlServer {
                 response = "<i>" + LabelGrabber.INSTANCE.getLabel("currently.displaying.text") + ": " + lp.getDisplayable().getPreviewText() + "<br/>" + "</i>";
                 response += "<button type=\"button\" onclick=\"play();\" id=\"playbutton\">" + LabelGrabber.INSTANCE.getLabel("play") + "</button><br/><br/>";
                 response += "<i>" + LabelGrabber.INSTANCE.getLabel("remote.empty.lyrics") + "</i>";
+            } else if (lp.getDisplayable() instanceof PresentationDisplayable) {
+                StringBuilder sb = new StringBuilder();
+                sb.append("\n<html><i>").append(LabelGrabber.INSTANCE.getLabel("currently.displaying.text")).append(": ").append(lp.getDisplayable().getPreviewText()).append("<br/>" + "</i>");
+                Displayable d = QueleaApp.get().getMainWindow().getMainPanel().getLivePanel().getDisplayable();
+                int numberOfFiles = ((PresentationDisplayable) d).getPresentation().getSlides().length;
+                for (int i = 0; i < numberOfFiles; i++) {
+                    if (i == QueleaApp.get().getMainWindow().getMainPanel().getLivePanel().getPresentationPanel().getCurrentIndex() - 1) {
+                        sb.append("<div class=\"inner current\">");
+                    } else {
+                        sb.append("<div class=\"inner\">");
+                    }
+                    sb.append("<p class=\"empty\" onclick=\"section(").append(i).append(");\"><img src=\"/slides/slide").append(i + 1).append(".png\" style=\"width:192px;height:108px;\">");
+                    sb.append("<br/>Slide ").append(i + 1).append("</p></div><br/><br/>");
+                }
+                response = sb.append("\n</html>").toString();
             } else if (lp.getDisplayable() != null) {
                 response = "<i>" + LabelGrabber.INSTANCE.getLabel("currently.displaying.text") + ": " + lp.getDisplayable().getPreviewText() + "<br/><br/>" + "</i>";
                 response += "<i>" + LabelGrabber.INSTANCE.getLabel("remote.empty.lyrics") + "</i>";
