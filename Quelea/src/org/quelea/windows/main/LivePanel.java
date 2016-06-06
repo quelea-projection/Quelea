@@ -17,13 +17,19 @@
  */
 package org.quelea.windows.main;
 
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.util.HashSet;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.application.Platform;
 import javafx.collections.ObservableList;
+import javafx.embed.swing.SwingFXUtils;
 import javafx.event.EventHandler;
+import javafx.scene.SnapshotParameters;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.control.ToggleButton;
@@ -31,6 +37,7 @@ import javafx.scene.control.ToolBar;
 import javafx.scene.control.Tooltip;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.image.WritableImage;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseButton;
@@ -38,15 +45,19 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.Region;
+import javafx.scene.paint.Color;
+import javafx.scene.web.WebView;
 import javafx.stage.FileChooser;
 import javafx.stage.Screen;
 import org.javafx.dialog.Dialog;
 import org.quelea.data.displayable.BiblePassage;
 import org.quelea.data.displayable.Displayable;
+import org.quelea.data.displayable.ImageGroupDisplayable;
 import org.quelea.data.displayable.PdfDisplayable;
 import org.quelea.data.displayable.PresentationDisplayable;
 import org.quelea.data.displayable.TextDisplayable;
 import org.quelea.data.displayable.TextSection;
+import org.quelea.data.displayable.WebDisplayable;
 import org.quelea.services.languages.LabelGrabber;
 import org.quelea.services.utils.FileFilters;
 import org.quelea.services.utils.LoggerUtils;
@@ -76,6 +87,8 @@ public class LivePanel extends LivePreviewPanel {
 
     private final ToolBar header;
     private Displayable oldD;
+    private WritableImage webPreviewImage;
+    private ScheduledExecutorService updateWebPreview;
 
     /**
      * Create a new live lyrics panel.
@@ -83,6 +96,7 @@ public class LivePanel extends LivePreviewPanel {
     public LivePanel() {
         getPresentationPanel().setLive();
         getPdfPanel().setLive();
+        getImageGroupPanel().setLive();
         header = new ToolBar();
         Label headerLabel = new Label(LabelGrabber.INSTANCE.getLabel("live.heading"));
         headerLabel.setStyle("-fx-font-weight: bold;");
@@ -368,7 +382,7 @@ public class LivePanel extends LivePreviewPanel {
     public void setDisplayable(Displayable d, int index) {
         super.setDisplayable(d, index);
         loop.setSelected(false);
-        if (d instanceof PresentationDisplayable || d instanceof PdfDisplayable) {
+        if (d instanceof PresentationDisplayable || d instanceof PdfDisplayable || d instanceof ImageGroupDisplayable) {
             if (!header.getItems().contains(loopBox)) {
                 header.getItems().add(1, loopBox);
             }
@@ -413,6 +427,27 @@ public class LivePanel extends LivePreviewPanel {
                 clear.setSelected(false);
             }
         }
+         if (d instanceof WebDisplayable) {
+            updateWebPreview = Executors.newSingleThreadScheduledExecutor();
+            updateWebPreview.scheduleAtFixedRate(new Runnable() {
+                @Override
+                public void run() {
+                    Platform.runLater(new Runnable() {
+                        @Override
+                        public void run() {
+                            if (d != null && d instanceof WebDisplayable) {
+                                getWebPanel().setLoading();
+                                getWebPanel().getImagePreview().setImage(geWebPreviewImage());
+                            }
+                        }
+                    });
+                }
+            }, 0, 500, TimeUnit.MILLISECONDS);
+        }
+        if (oldD instanceof WebDisplayable) {
+            ((WebDisplayable) oldD).dispose();
+            updateWebPreview.shutdown();
+        }
         HashSet<DisplayCanvas> canvases = new HashSet<>();
         canvases.addAll(getCanvases());
         for (DisplayCanvas canvas : canvases) {
@@ -421,6 +456,11 @@ public class LivePanel extends LivePreviewPanel {
                 canvas.setCleared(false);
             } else {
                 canvas.setCleared(clear.isSelected());
+            }
+            if (d instanceof WebDisplayable) {
+                canvas.makeClickable(true);
+            } else {
+                canvas.makeClickable(false);
             }
         }
         oldD = d;
@@ -531,6 +571,36 @@ public class LivePanel extends LivePreviewPanel {
 
     public void stopLoop() {
         loop.setSelected(false);
+    }
+
+    /**
+     * Get a preview image of the web view or move it to the main panel if it's
+     * not visible.
+     *
+     * @return a screenshot image of the web view
+     */
+    private Image geWebPreviewImage() {
+        DisplayCanvas canvas = QueleaApp.get().getProjectionWindow().getCanvas();
+        if (QueleaApp.get().getProjectionWindow().isShowing() && isContentShowing()) {
+            Double d = canvas.getBoundsInLocal().getHeight();
+            int h = d.intValue();
+            Double d2 = canvas.getBoundsInLocal().getWidth();;
+            int w = d2.intValue();
+            webPreviewImage = new WritableImage(w, h);
+            SnapshotParameters params = new SnapshotParameters();
+            params.setFill(Color.TRANSPARENT);
+            canvas.snapshot(params, webPreviewImage);
+            BufferedImage bi = SwingFXUtils.fromFXImage((WritableImage) webPreviewImage, null);
+            SwingFXUtils.toFXImage(bi, webPreviewImage);
+            WebView wv = getWebPanel().removeWebView();
+            if (!canvas.getChildren().contains(wv)) {
+                canvas.getChildren().add(wv);
+            }
+            return webPreviewImage;
+        } else {
+            getWebPanel().addWebView();
+            return new Image("file:icons/web preview.png");
+        }
     }
 
 }
