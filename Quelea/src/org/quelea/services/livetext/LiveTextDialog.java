@@ -67,7 +67,6 @@ public class LiveTextDialog extends Stage {
 
         // Update the text for each punctuation or space character
         textField.setOnKeyTyped((KeyEvent event) -> {
-            System.out.println(textField.getCaretPosition());
             if (event.getCharacter().matches("\\p{Blank}") || event.getCharacter().matches("\\p{Punct}")) {
                 event.consume();
                 textField.insertText(textField.getCaretPosition(), event.getCharacter());

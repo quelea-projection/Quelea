@@ -158,7 +158,12 @@ public class RCHandler {
     public static void setLyrics(final String index) {
         Platform.runLater(() -> {
             int num = Integer.parseInt(index.split("section")[1]);
-            QueleaApp.get().getMainWindow().getMainPanel().getLivePanel().getLyricsPanel().select(num);
+            LivePanel lp = QueleaApp.get().getMainWindow().getMainPanel().getLivePanel();
+            if (lp.getDisplayable() instanceof PresentationDisplayable) {
+                lp.getPresentationPanel().getPresentationPreview().select(num + 1);
+            } else {
+                lp.getLyricsPanel().select(num);
+            }
         });
     }
 
