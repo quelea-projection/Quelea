@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Quelea Lyrics Display</title>
+        <meta charset="utf-8">
+        <meta name="apple-mobile-web-app-capable" content="yes">
+        <meta name="mobile-web-app-capable" content="yes">
+        <style type="text/css">
+            .button {
+                display: block;
+                width: 10px;
+                height: 10px;
+                background: #4E9CAF;
+                padding: 10px;
+                border-radius: 20px;
+                color: white;
+                font-weight: bold;
+                text-decoration:none;
+                font-size: 20px;
+                opacity:0.6;
+                font-family: 'DejaVu Sans',sans-serif;
+            }
+            .modalDialog {
+                position: fixed;
+                font-family: Arial, Helvetica, sans-serif;
+                top: 0;
+                right: 0;
+                bottom: 0;
+                left: 0;
+                background: rgba(0,0,0,0.8);
+                z-index: 1;
+                opacity:0;
+                -webkit-transition: opacity 400ms ease-in;
+                -moz-transition: opacity 400ms ease-in;
+                transition: opacity 400ms ease-in;
+                pointer-events: none;
+            }
+
+            .modalDialog:target {
+                opacity:1;
+                pointer-events: auto;
+            }
+
+            .modalDialog > div {
+                width: 80%;
+                max-width: 400px;
+                position: relative;
+                margin: 10% auto;
+                padding: 5px 20px 13px 20px;
+                border-radius: 10px;
+                background: #fff;
+                background: -moz-linear-gradient(#fff, #999);
+                background: -webkit-linear-gradient(#fff, #999);
+                background: -o-linear-gradient(#fff, #999);
+            }
+
+            .close {
+                background: #606061;
+                color: #FFFFFF;
+                line-height: 25px;
+                position: absolute;
+                right: -12px;
+                text-align: center;
+                top: -10px;
+                width: 24px;
+                text-decoration: none;
+                font-weight: bold;
+                -webkit-border-radius: 12px;
+                -moz-border-radius: 12px;
+                border-radius: 12px;
+                -moz-box-shadow: 1px 1px 3px #000;
+                -webkit-box-shadow: 1px 1px 3px #000;
+                box-shadow: 1px 1px 3px #000;
+            }
+
+            .close:hover { background: #00d9ff; }
+            #dynamicDiv
+            {
+                background: #CCCCCC;
+                min-height: 100%; 
+                overflow: hidden;
+                color: #111111;
+                font-family:"Helvetica";
+                font-weight:bold;
+            }
+        </style>
+        <script type="text/javascript" src="jscolor.js"></script>
+        <script>
+            var xmlhttp;
+            var translationhttp;
+            var translations;
+            var translations = "";
+            function setup()
+            {
+                setInterval(function () {
+                    loadXMLDoc();
+                    shrink();
+                    checkTranslation();
+                }, 500);
+                xmlhttp = new XMLHttpRequest();
+                xmlhttp.onreadystatechange = function ()
+                {
+                    if (xmlhttp.readyState === 4 && xmlhttp.status === 200)
+                    {
+                        if (xmlhttp.responseText !== "")
+                        {
+                            document.getElementById("child").innerHTML = xmlhttp.responseText;
+                        }
+                        else
+                        {
+                            getLiveText();
+                        }
+                        shrink();
+                    }
+                }
+                translationhttp = new XMLHttpRequest();
+                translationhttp.onreadystatechange = function ()
+                {
+                    if (translationhttp.readyState === 4 && translationhttp.status === 200)
+                    {
+                        var str = translationhttp.responseText;
+                        if (str !== "" && str !== "None")
+                        {
+                            document.getElementById("translationButton").style.visibility = "visible";
+                            if (translations !== str) {
+                                console.log("New languages");
+                                translations = str;
+                                if (str.indexOf(getCookie("translation")) === -1)
+                                {
+                                    setCookie("translation", "default", 100);
+                                }
+                                var x = document.getElementById("selectLanguage");
+                                removeOptions(x);
+                                var res = str.split("\n");
+                                var arrayLength = res.length;
+                                for (var i = 0; i < arrayLength - 1; i++) {
+                                    var c = document.createElement("option");
+                                    c.text = res[i];
+                                    x.options.add(c, 1);
+                                }
+                            }
+                        }
+                        else
+                        {
+                            document.getElementById("translationButton").style.visibility = "hidden";
+                        }
+                    }
+                }
+                var fontcolor = getCookie("fontcolor");
+                if (!fontcolor) {
+                    fontcolor = '#000000';
+                }
+                document.getElementById('dynamicDiv').style.color = fontcolor;
+                document.getElementById('font-color').color.fromString(fontcolor);
+                var backcolor = getCookie("backcolor");
+                if (!backcolor) {
+                    backcolor = '#CCCCCC';
+                }
+                document.getElementById('dynamicDiv').style.background = backcolor;
+                document.getElementById('back-color').color.fromString(backcolor);
+                var chords = getCookie("chords");
+                if (chords) {
+                    document.getElementById('chords').checked = chords;
+                }
+            }
+            function shrink()
+            {
+                var textDiv = document.getElementById("dynamicDiv");
+                textDiv.style.fontSize = "200px";
+                var size = 200;
+                var style = window.getComputedStyle(textDiv, null).getPropertyValue('font-size');
+                var fontSize = parseFloat(style);
+                while (document.body.clientHeight > window.innerHeight)
+                {
+                    size = size - 5;
+                    textDiv.style.fontSize = (size) + "px";
+                }
+                while (dynamicDiv.scrollWidth > document.body.clientWidth)
+                {
+                    size = size - 5;
+                    textDiv.style.fontSize = (size) + "px";
+                }
+            }
+            window.onload = setup;
+            function loadXMLDoc()
+            {
+                var translation = getCookie("translation");
+                if ((!translation) || (translation === "default"))
+                {
+                    if (document.getElementById("chords").checked) {
+                        xmlhttp.open("GET", "/chords", true);
+                    }
+                    else {
+                        xmlhttp.open("GET", "/lyrics", true);
+                    }
+                }
+                else
+                {
+                    xmlhttp.open("GET", "/gettranslation/" + translation, true);
+                }
+                xmlhttp.timeout = 4000;
+                xmlhttp.ontimeout = function () {
+                    document.getElementById("child").innerHTML = "";
+                }
+                xmlhttp.send();
+            }
+            function setCookie(cname, cvalue, exdays)
+            {
+                var d = new Date();
+                d.setTime(d.getTime() + (exdays * 24 * 60 * 60 * 1000));
+                var expires = "expires=" + d.toGMTString();
+                document.cookie = cname + "=" + cvalue + "; " + expires;
+            }
+            function getCookie(cname)
+            {
+                var name = cname + "=";
+                var ca = document.cookie.split(';');
+                for (var i = 0; i < ca.length; i++)
+                {
+                    var c = ca[i].trim();
+                    if (c.indexOf(name) == 0)
+                        return c.substring(name.length, c.length);
+                }
+                return "";
+            }
+            function getLiveText()
+            {
+                var livetext;
+                livetext = new XMLHttpRequest();
+                livetext.onreadystatechange = function ()
+                {
+                    if (livetext.readyState === 4 && livetext.status === 200)
+                    {
+                        document.getElementById("child").innerHTML = livetext.responseText;
+                    }
+                }
+                livetext.open("GET", "/livetext", true);
+                livetext.timeout = 4000;
+                livetext.ontimeout = function () {
+                    document.getElementById("child").innerHTML = "";
+                }
+                livetext.send();
+            }
+            function checkTranslation()
+            {
+                translationhttp.open("GET", "/songtranslations", true);
+                translationhttp.timeout = 4000;
+                translationhttp.ontimeout = function () {
+                    document.getElementById("translationButton").style.visibility = "hidden";
+                }
+                translationhttp.send();
+            }
+            function removeOptions(selectbox)
+            {
+                var i;
+                for (i = selectbox.options.length - 1; i >= 1; i--)
+                {
+                    selectbox.remove(i);
+                }
+            }
+            function setLanguage()
+            {
+                var myselect = document.getElementById("selectLanguage");
+                setCookie("translation", myselect.options[myselect.selectedIndex].value, 100);
+                window.location = "/#close";
+            }
+        </script>
+    </head>
+    <body>
+        <div style="position: absolute; top: 10px; right: 10px;">
+            <a style="" class="button" href="#openModal"></a>
+            <a href="#openModal"><img style="font-family: 'DejaVu Sans',sans-serif;position: absolute; top: 5px; right: 5px;font-size:30px;text-decoration:none;" src="gear.png" alt="&#9881;" height="20" width="20"/></a>
+        </div>
+        <div id="translationButton" style="position: absolute; bottom: 50px; right: 10px; visibility: hidden">
+            <a href="#selectTranslation"><img style="font-family: 'DejaVu Sans',sans-serif;position: absolute; top: 5px; right: 5px;font-size:30px;text-decoration:none;" src="translate.png" alt="&#9881;" height="40" width="40"/></a>
+        </div>
+        <div id="dynamicDiv"><div id="child">[loading.text]...</div></div>
+        <div id="openModal" class="modalDialog">
+            <div>
+                <a href="#close" title="Close" class="close">X</a>
+                <h2>[change.graphics.label]</h2>
+                <div><p>[font.colour.label]: <input id="font-color" type="text" readonly class="color" onchange="javascript:document.getElementById('dynamicDiv').style.color = '#' + document.getElementById('font-color').value;
+                        setCookie('fontcolor', '#' + document.getElementById('font-color').value, 100);"></p></div>
+
+                <div><p>[background.colour.label]: <input id="back-color" type="text" readonly class="color" onchange="javascript:document.getElementById('dynamicDiv').style.background = '#' + document.getElementById('back-color').value;
+                        setCookie('backcolor', '#' + document.getElementById('back-color').value, 100);"></p></div>
+
+                <div><p>[show.chords.label] <input type="checkbox" name="chords" id="chords" onchange="setCookie('chords', document.getElementById('chords').checked, 100);
+                        shrink();"></p></div>
+
+            </div>
+        </div>
+        <div id="selectTranslation" class="modalDialog">
+            <div>
+                <a href="#close" title="Close" class="close">X</a>
+                <h2>[select.language]</h2>
+                <select id="selectLanguage" onChange="setLanguage()" style="width: 100%">
+                    <option value="default">[default.translation]</option>
+                </select> 
+            </div>
+        </div>
+    </body>
+</html>
