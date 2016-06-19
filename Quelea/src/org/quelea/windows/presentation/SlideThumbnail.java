@@ -22,6 +22,7 @@ import javafx.scene.control.Label;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
 import org.quelea.data.powerpoint.PresentationSlide;
+import org.quelea.services.utils.QueleaProperties;
 
 /**
  *
@@ -34,15 +35,18 @@ public class SlideThumbnail extends BorderPane {
     private static final String BORDER_STYLE_DESELECTED = "-fx-padding: 0.2em;-fx-border-color: rgb(0,0,0,0);-fx-border-radius: 5;-fx-border-width: 0.1em;";
     private int num;
     private PresentationSlide slide;
+    private ImageView image;
     private boolean selected;
     private boolean active;
 
     public SlideThumbnail(PresentationSlide slide, int num) {
         this.num = num;
         this.slide = slide;
-        ImageView image = new ImageView(slide.getImage());
-        image.setFitWidth(200);
+        image = new ImageView(slide.getImage());
+        image.setFitWidth(QueleaProperties.get().getThumbnailSize());
         image.setPreserveRatio(true);
+        image.setSmooth(true);
+        image.setCache(true);
         setTop(image);
         setCenter(new Label(Integer.toString(num)));
     }
@@ -54,6 +58,7 @@ public class SlideThumbnail extends BorderPane {
 
     public void setActive(boolean active) {
         this.active=active;
+        image.setFitWidth(QueleaProperties.get().getThumbnailSize());
         recalcBorder();
     }
     

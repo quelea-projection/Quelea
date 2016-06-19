@@ -410,6 +410,7 @@ bible.search.result.found=result found
 bible.search.keep.typing=Keep typing...
 uniform.font.size.label=Use uniform font size
 max.font.size.label=Maximum font size
+thumbnail.size.label=Thumbnail size
 additional.line.spacing.label=Additional line spacing
 logo.screen.tooltip=Left-click display - Right-click set
 change.graphics.label=Change Graphics

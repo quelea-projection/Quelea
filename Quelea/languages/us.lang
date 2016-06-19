@@ -241,6 +241,7 @@ use.shadow.label=Use Shadow?
 navigate.mob.url.label=Mobile Lyrics URL
 add.song.hint.text=There are no songs here yet, but don't panic\! To add a song, click the "New Song" button on the left.
 max.font.size.label=Maximum font size
+thumbnail.size.label=Thumbnail size
 cant.save.schedule.title=Error saving schedule
 port.number.label=Port Number
 enter.translation.name.label=What language would you like to translate to?

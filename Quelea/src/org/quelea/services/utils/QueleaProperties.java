@@ -614,6 +614,24 @@ public final class QueleaProperties extends Properties {
     }
 
     /**
+     * Get the thumbnail size.
+     * <p>
+     * @return the thumbnail size.
+     */
+    public int getThumbnailSize() {
+        return Integer.parseInt(getProperty("thumbnail.size", "200"));
+    }
+
+    /**
+     * Set the thumbnail size.
+     * <p>
+     * @param thumbnailSize the thumbnail size.
+     */
+    public void setThumbnailSize(int thumbnailSize) {
+        setProperty("thumbnail.size", Integer.toString(thumbnailSize));
+    }
+    
+    /**
      * Determine if, when an item is removed from the schedule and displayed on
      * the live view, whether it should be removed from the live view or kept
      * until something replaces it.

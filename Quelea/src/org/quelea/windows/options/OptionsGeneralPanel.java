@@ -69,6 +69,7 @@ public class OptionsGeneralPanel extends GridPane implements PropertyPanel {
     private final CheckBox uniformFontSizeCheckBox;
     private final CheckBox defaultSongDBUpdateCheckBox;
     private final ComboBox<LanguageFile> languageFileComboBox;
+    private final Slider thumbnailSizeSlider;
     private final Slider maximumFontSizeSlider;
     private final Slider additionalLineSpacingSlider;
     private final Slider maxCharsSlider;
@@ -290,6 +291,31 @@ public class OptionsGeneralPanel extends GridPane implements PropertyPanel {
                 smallSongTextVPositionCombo.setDisable(true);
             }
         });
+        
+        Label thumbnailSizeLabel = new Label(LabelGrabber.INSTANCE.getLabel("thumbnail.size.label"));
+        GridPane.setConstraints(thumbnailSizeLabel, 1, rows);
+        getChildren().add(thumbnailSizeLabel);
+        thumbnailSizeSlider = new Slider(100, 500, 200);
+        thumbnailSizeSlider.setMajorTickUnit(50);
+        thumbnailSizeSlider.setMinorTickCount(0);
+        thumbnailSizeSlider.setShowTickMarks(true);
+        thumbnailSizeSlider.setSnapToTicks(true); 
+        thumbnailSizeSlider.setBlockIncrement(50);
+        
+        GridPane.setConstraints(thumbnailSizeSlider, 2, rows);
+        getChildren().add(thumbnailSizeSlider);
+        thumbnailSizeLabel.setLabelFor(thumbnailSizeSlider);
+        final Label thumbnailSizeValue = new Label(Integer.toString((int) thumbnailSizeSlider.getValue()));
+        GridPane.setConstraints(thumbnailSizeValue, 3, rows);
+        getChildren().add(thumbnailSizeValue);
+        thumbnailSizeValue.setLabelFor(thumbnailSizeSlider);
+        thumbnailSizeSlider.valueProperty().addListener(new javafx.beans.value.ChangeListener<Number>() {
+            @Override
+            public void changed(ObservableValue<? extends Number> ov, Number t, Number t1) {
+                thumbnailSizeValue.setText(Integer.toString((int) thumbnailSizeSlider.getValue()));
+            }
+        });
+        rows++;
 
         Label spacer1 = new Label("");
         GridPane.setConstraints(spacer1, 1, rows);
@@ -446,6 +472,7 @@ public class OptionsGeneralPanel extends GridPane implements PropertyPanel {
         smallSongSizeSpinner.setNumber(new BigDecimal(props.getSmallSongTextSize()));
         additionalLineSpacingSlider.setValue(props.getAdditionalLineSpacing());
         maximumFontSizeSlider.setValue(props.getMaxFontSize());
+        thumbnailSizeSlider.setValue(props.getThumbnailSize());
     }
 
     /**
@@ -508,6 +535,8 @@ public class OptionsGeneralPanel extends GridPane implements PropertyPanel {
         props.setSmallSongTextSize(smallSongSize);
         props.setMaxFontSize(maximumFontSizeSlider.getValue());
         props.setAdditionalLineSpacing(additionalLineSpacingSlider.getValue());
+        props.setThumbnailSize((int)thumbnailSizeSlider.getValue());
+        
         //Initialise presentation
         if (!OOPresentation.isInit()) {
             OOUtils.attemptInit();
