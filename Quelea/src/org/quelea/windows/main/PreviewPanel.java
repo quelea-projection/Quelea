@@ -111,6 +111,7 @@ public class PreviewPanel extends LivePreviewPanel {
     public void setDisplayable(Displayable d, int index) {
         super.setDisplayable(d, index);
         liveButton.setDisable(false);
+        getWebPanel().blockButtons();
     }
 
     /**

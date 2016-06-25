@@ -24,7 +24,11 @@ import java.nio.file.Files;
 import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import javafx.application.Platform;
 import javax.swing.JFrame;
+import org.quelea.services.languages.LabelGrabber;
+import org.quelea.windows.main.QueleaApp;
+import org.quelea.windows.main.StatusPanel;
 import uk.co.caprica.vlcj.component.EmbeddedMediaPlayerComponent;
 import uk.co.caprica.vlcj.discovery.NativeDiscovery;
 import uk.co.caprica.vlcj.player.MediaPlayer;
@@ -41,6 +45,8 @@ public class RecordingEncoder {
     private EmbeddedMediaPlayerComponent mp;
     private String mediaPath = "";
     private final String[] options;
+    private StatusPanel statusPanel;
+    private boolean converting;
 
     public RecordingEncoder(String mediaUrl, String[] options) {
         this.options = options;
@@ -61,11 +67,17 @@ public class RecordingEncoder {
                     } catch (NoSuchFileException | DirectoryNotEmptyException x) {
                         error = "";
                     } catch (IOException x) {
-                        // File if file is still being read by the system,
+                        // File is still being read by the system,
                         // keep trying to delete until it's avaiable again.
                         error = "busy";
                     }
                 } while (!error.equals(""));
+                if (statusPanel != null) {
+                    Platform.runLater(() -> {
+                        statusPanel.done();
+                    });
+                }
+                converting = false;
             }
         };
         
@@ -82,5 +94,18 @@ public class RecordingEncoder {
         // Hide the VLC window
         ourFrame.setVisible(false);
         ourFrame.dispose();
+        // Start loading panel
+        Platform.runLater(() -> {
+            statusPanel = QueleaApp.get().getStatusGroup().addPanel(LabelGrabber.INSTANCE.getLabel("converting.to.mp3"));
+        });
+        converting = true;
     }
+
+    /**
+     * @return the converting
+     */
+    public boolean isConverting() {
+        return converting;
+    }
+
 }

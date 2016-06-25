@@ -41,11 +41,13 @@ import org.quelea.services.utils.QueleaProperties;
 import org.quelea.services.utils.Utils;
 import org.quelea.windows.main.QueleaApp;
 import org.quelea.windows.main.actionhandlers.AddDVDActionHandler;
+import org.quelea.windows.main.actionhandlers.AddImageActionHandler;
 import org.quelea.windows.main.actionhandlers.AddPdfActionHandler;
 import org.quelea.windows.main.actionhandlers.AddPowerpointActionHandler;
 import org.quelea.windows.main.actionhandlers.AddVideoActionHandler;
 import org.quelea.windows.main.actionhandlers.AddYoutubeActionHandler;
 import org.quelea.windows.main.actionhandlers.AddTimerActionHandler;
+import org.quelea.windows.main.actionhandlers.AddWebActionHandler;
 import org.quelea.windows.main.actionhandlers.RecordButtonHandler;
 import org.quelea.windows.main.actionhandlers.NewScheduleActionHandler;
 import org.quelea.windows.main.actionhandlers.NewSongActionHandler;
@@ -241,6 +243,26 @@ public class MainToolbar extends ToolBar {
         addPdfButton.setText(LabelGrabber.INSTANCE.getLabel("add.pdf.tooltip"));
         addPdfButton.setOnAction(new AddPdfActionHandler());
         add.getItems().add(addPdfButton);
+        
+        MenuItem addWebButton;
+        if (Utils.isMac()) {
+            addWebButton = getMenuItemFromImage("file:icons/web.png");
+        } else {
+            addWebButton = getMenuItemFromImage("file:icons/web-small.png");
+        }
+        addWebButton.setText(LabelGrabber.INSTANCE.getLabel("add.website"));
+        addWebButton.setOnAction(new AddWebActionHandler());
+        add.getItems().add(addWebButton);
+        
+        MenuItem addImageGroupButton;
+        if (Utils.isMac()) {
+            addImageGroupButton = getMenuItemFromImage("file:icons/image.png");
+        } else {
+            addImageGroupButton = getMenuItemFromImage("file:icons/image.png", 24, 24, false, true);
+        }
+        addImageGroupButton.setText(LabelGrabber.INSTANCE.getLabel("add.images.panel"));
+        addImageGroupButton.setOnAction(new AddImageActionHandler());
+        add.getItems().add(addImageGroupButton);
         
         getItems().add(new Separator());
         
