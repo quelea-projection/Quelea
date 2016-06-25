@@ -25,7 +25,9 @@ import javafx.event.EventHandler;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
+import javafx.scene.control.MenuItem;
 import javafx.scene.control.Separator;
+import javafx.scene.control.SplitMenuButton;
 import javafx.scene.control.TextField;
 import javafx.scene.control.ToolBar;
 import javafx.scene.control.Tooltip;
@@ -68,6 +70,11 @@ public class BasicSongPanel extends BorderPane {
     private final TextField authorField;
     private final Button transposeButton;
     private final Button nonBreakingLineButton;
+    private final Button chorusButton;
+    private final Button bridgeButton;
+    private final Button preChorusButton;
+    private final Button tagButton;
+    private final SplitMenuButton verseButton;
     private final ComboBox<Dictionary> dictSelector;
     private final TransposeDialog transposeDialog;
     private String saveHash = "";
@@ -108,11 +115,27 @@ public class BasicSongPanel extends BorderPane {
         nonBreakingLineButton = getNonBreakingLineButton();
         lyricsToolbar.getItems().add(transposeButton);
         lyricsToolbar.getItems().add(nonBreakingLineButton);
+        
+        chorusButton = getTitleButton("chorus.png", "chorus.tooltip", "Chorus");
+        preChorusButton = getTitleButton("pre_chorus.png", "prechorus.tooltip", "Pre-chorus");
+        bridgeButton = getTitleButton("bridge.png", "bridge.tooltip", "Bridge");
+        tagButton = getTitleButton("tag_coda.png", "tag.tooltip", "Tag");
+        verseButton = getVerseButton();
         lyricsToolbar.getItems().add(new Separator());
+        lyricsToolbar.getItems().add(chorusButton);
+        lyricsToolbar.getItems().add(preChorusButton);
+        lyricsToolbar.getItems().add(bridgeButton);
+        lyricsToolbar.getItems().add(tagButton);
+        lyricsToolbar.getItems().add(verseButton);
+        
         Region spacer = new Region();
         HBox.setHgrow(spacer, Priority.ALWAYS);
         lyricsToolbar.getItems().add(spacer);
         dictSelector = new ComboBox<>();
+        dictSelector.addEventFilter(MouseEvent.MOUSE_ENTERED, (MouseEvent e) -> {
+            dictSelector.requestFocus();
+            //To be deleted when fixed in java #comboboxbug
+        });
         Tooltip.install(dictSelector, new Tooltip(LabelGrabber.INSTANCE.getLabel("dictionary.language.text")));
         for (Dictionary dict : DictionaryManager.INSTANCE.getDictionaries()) {
             dictSelector.getItems().add(dict);
@@ -192,7 +215,27 @@ public class BasicSongPanel extends BorderPane {
         return ret;
     }
 
+    /**
+     * Get a title button
+     * @param fileName Image file name
+     * @param label Tooltip label
+     * @param titleName Title name to be inserted
+     * @return the title button
+     */
+    private Button getTitleButton(String fileName, String label, String titleName) {
+        Button ret = new Button("", new ImageView(new Image("file:icons/" + fileName, 24, 24, false, true)));
+        Utils.setToolbarButtonStyle(ret);
+        ret.setTooltip(new Tooltip(LabelGrabber.INSTANCE.getLabel(label)));
+        ret.setOnAction((event) -> {
+            insertTitle(titleName, "");
+        });
+        return ret;
+    }
+
     private int nextLinePos(String s, int pos) {
+        if (pos == 0 || s.charAt(pos - 1) == '\n') {
+            return pos;
+        }
         while (s.charAt(pos) != '\n' && pos <= s.length()) {
             pos++;
         }
@@ -362,6 +405,76 @@ public class BasicSongPanel extends BorderPane {
      */
     public TextField getAuthorField() {
         return authorField;
+    }
+
+    /**
+     * Get the verse title button
+     * 
+     * @return verse button
+     */
+    private SplitMenuButton getVerseButton() {
+        SplitMenuButton m = new SplitMenuButton();
+        m.setGraphic(new ImageView(new Image("file:icons/verse.png", 24, 24, false, true)));
+        m.setTooltip(new Tooltip(LabelGrabber.INSTANCE.getLabel("verse.tooltip")));
+        m.setOnMouseClicked((MouseEvent event) -> {
+                insertTitle("Verse", "");
+            });
+        for (int i = 1; i < 10; i++) {
+            MenuItem mi = new MenuItem("", new ImageView(new Image("file:icons/verse" + i + ".png", 24, 24, false, true)));
+            final int finalI = i;
+            mi.setOnAction((ActionEvent event) -> {
+                insertTitle("Verse", Integer.toString(finalI));
+            });
+            m.getItems().add(mi);
+        }
+        return m;
+    }
+
+    /**
+     * Insert a title in the lyrics
+     * 
+     * @param title The name of the section title, e.g. "Chorus"
+     * @param number The number of the title as a string, e.g. (Verse) "2",
+     * and use "" if no number is wanted
+     */
+    private void insertTitle(String title, String number) {
+        int caretPos = lyricsArea.getArea().getCaretPosition();
+        String[] parts = lyricsArea.getText().split("\n");
+        if (parts.length == 0) {
+            Platform.runLater(() -> {
+                lyricsArea.getArea().replaceText(0, 0, title + " " + number + "\n");
+                lyricsArea.getArea().refreshStyle();
+            });
+        } else {
+            if (caretPos == lyricsArea.getText().length() + 1) {
+                Platform.runLater(() -> {
+                    lyricsArea.getArea().replaceText(caretPos, caretPos, title + " " + number + "\n");
+                    lyricsArea.getArea().refreshStyle();
+                });
+            } else {
+                int lineIndex = lineFromPos(lyricsArea.getText(), caretPos);
+                    String line = parts[lineIndex];
+                if (line.trim().isEmpty()) {
+                    Platform.runLater(() -> {
+                        lyricsArea.getArea().replaceText(caretPos, caretPos, "\n"+ title + " " + number);
+                        lyricsArea.getArea().refreshStyle();
+                    });
+                } else {
+                    int nextLinePos = nextLinePos(lyricsArea.getText(), caretPos);
+                    if (nextLinePos >= lyricsArea.getText().length()) {
+                        Platform.runLater(() -> {
+                            lyricsArea.getArea().replaceText(nextLinePos, nextLinePos, "\n\n" + title + " " + number + "\n");
+                            lyricsArea.getArea().refreshStyle();
+                        });
+                    } else {
+                        Platform.runLater(() -> {
+                            lyricsArea.getArea().replaceText(nextLinePos, nextLinePos, title + " " + number + "\n");
+                            lyricsArea.getArea().refreshStyle();
+                        });
+                    }
+                }
+            }
+        }
     }
 
 }
