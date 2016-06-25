@@ -32,6 +32,7 @@ import javafx.scene.layout.BorderPane;
 import org.quelea.data.displayable.AudioDisplayable;
 import org.quelea.data.displayable.Displayable;
 import org.quelea.data.displayable.ImageDisplayable;
+import org.quelea.data.displayable.ImageGroupDisplayable;
 import org.quelea.data.displayable.MultimediaDisplayable;
 import org.quelea.data.displayable.PdfDisplayable;
 import org.quelea.data.displayable.PresentationDisplayable;
@@ -39,10 +40,12 @@ import org.quelea.data.displayable.SongDisplayable;
 import org.quelea.data.displayable.TextDisplayable;
 import org.quelea.data.displayable.TimerDisplayable;
 import org.quelea.data.displayable.VideoDisplayable;
+import org.quelea.data.displayable.WebDisplayable;
 import org.quelea.services.utils.LoggerUtils;
 import org.quelea.services.utils.QueleaProperties;
 import org.quelea.services.utils.Utils;
 import org.quelea.windows.image.ImagePanel;
+import org.quelea.windows.imagegroup.ImageGroupPanel;
 import org.quelea.windows.lyrics.SelectLyricsPanel;
 import org.quelea.windows.main.quickedit.QuickEditDialog;
 import org.quelea.windows.main.widgets.CardPane;
@@ -50,6 +53,7 @@ import org.quelea.windows.multimedia.MultimediaPanel;
 import org.quelea.windows.pdf.PdfPanel;
 import org.quelea.windows.timer.TimerPanel;
 import org.quelea.windows.presentation.PresentationPanel;
+import org.quelea.windows.web.WebPanel;
 
 /**
  * The common superclass of the live / preview panels used for selecting the
@@ -70,6 +74,8 @@ public abstract class LivePreviewPanel extends BorderPane {
     private static final String AUDIO_LABEL = "AUDIO";
     private static final String PRESENTATION_LABEL = "PPT";
     private static final String PDF_LABEL = "PDF";
+    private static final String WEB_LABEL = "WEB";
+    private static final String IMAGE_GROUP_LABEL = "IMAGE_GROUP";
     private String currentLabel;
     private SelectLyricsPanel lyricsPanel = new SelectLyricsPanel(this);
     private final ImagePanel imagePanel = new ImagePanel();
@@ -78,6 +84,8 @@ public abstract class LivePreviewPanel extends BorderPane {
     private final MultimediaPanel videoPanel = new MultimediaPanel();
     private final MultimediaPanel audioPanel = new MultimediaPanel();
     private final TimerPanel timerPanel = new TimerPanel();
+    private final WebPanel webPanel = new WebPanel();
+    private final ImageGroupPanel imageGroupPanel = new ImageGroupPanel(this);
     private final QuickEditDialog quickEditDialog = new QuickEditDialog();
 
     /**
@@ -93,6 +101,8 @@ public abstract class LivePreviewPanel extends BorderPane {
         cardPanel.add(audioPanel, AUDIO_LABEL);
         cardPanel.add(presentationPanel, PRESENTATION_LABEL);
         cardPanel.add(pdfPanel, PDF_LABEL);
+        cardPanel.add(webPanel, WEB_LABEL);
+        cardPanel.add(imageGroupPanel, IMAGE_GROUP_LABEL);
         cardPanel.show(LYRICS_LABEL);
         lyricsPanel.getLyricsList().setOnMouseClicked(new EventHandler<MouseEvent>() {
             @Override
@@ -146,6 +156,8 @@ public abstract class LivePreviewPanel extends BorderPane {
             lyricsPanel.selectLast();
         } else if (PDF_LABEL.equals(currentLabel)) {
             pdfPanel.selectLast();
+        } else if (IMAGE_GROUP_LABEL.equals(currentLabel)) {
+            imageGroupPanel.selectLast();
         }
     }
 
@@ -165,6 +177,15 @@ public abstract class LivePreviewPanel extends BorderPane {
      */
     public PdfPanel getPdfPanel() {
         return pdfPanel;
+    }
+    
+    /**
+     * Get the image group panel on this live / preview panel.
+     * <p/>
+     * @return the image group panel.
+     */
+    public ImageGroupPanel getImageGroupPanel() {
+        return imageGroupPanel;
     }
 
     /**
@@ -209,6 +230,9 @@ public abstract class LivePreviewPanel extends BorderPane {
         if (PDF_LABEL.equals(currentLabel)) {
             pdfPanel.showDisplayable(null, 0);
         }
+        if (IMAGE_GROUP_LABEL.equals(currentLabel)) {
+            imageGroupPanel.showDisplayable(null, 0);
+        }
         for (Node panel : cardPanel) {
             if (panel instanceof ContainedPanel) {
                 ((ContainedPanel) panel).removeCurrentDisplayable();
@@ -233,6 +257,8 @@ public abstract class LivePreviewPanel extends BorderPane {
             return presentationPanel.getIndex();
         } else if (PDF_LABEL.equals(currentLabel)) {
             return pdfPanel.getIndex();
+        } else if (IMAGE_GROUP_LABEL.equals(currentLabel)) {
+            return imageGroupPanel.getIndex();
         } else {
             return lyricsPanel.getIndex();
         }
@@ -248,6 +274,8 @@ public abstract class LivePreviewPanel extends BorderPane {
             presentationPanel.advance();
         } else if (PDF_LABEL.equals(currentLabel)) {
             pdfPanel.advance();
+        } else if (IMAGE_GROUP_LABEL.equals(currentLabel)) {
+            imageGroupPanel.advance();
         } else if (LYRICS_LABEL.equals(currentLabel)) {
             lyricsPanel.advance();
         } else if (IMAGE_LABEL.equals(currentLabel)) {
@@ -256,6 +284,8 @@ public abstract class LivePreviewPanel extends BorderPane {
             videoPanel.advance();
         } else if (TIMER_LABEL.equals(currentLabel)) {
             timerPanel.advance();
+        } else if (WEB_LABEL.equals(currentLabel)) {
+            webPanel.advance();
         }
     }
 
@@ -269,6 +299,8 @@ public abstract class LivePreviewPanel extends BorderPane {
             presentationPanel.previous();
         } else if (PDF_LABEL.equals(currentLabel)) {
             pdfPanel.previous();
+        } else if (IMAGE_GROUP_LABEL.equals(currentLabel)) {
+            imageGroupPanel.previous();
         } else if (LYRICS_LABEL.equals(currentLabel)) {
             lyricsPanel.previous();
         } else if (IMAGE_LABEL.equals(currentLabel)) {
@@ -277,6 +309,8 @@ public abstract class LivePreviewPanel extends BorderPane {
             videoPanel.previous();
         } else if (TIMER_LABEL.equals(currentLabel)) {
             timerPanel.previous();
+        } else if (WEB_LABEL.equals(currentLabel)) {
+            webPanel.previous();
         }
     }
 
@@ -303,17 +337,23 @@ public abstract class LivePreviewPanel extends BorderPane {
         this.displayable = displayable;
         presentationPanel.stopCurrent();
         pdfPanel.stopCurrent();
+        imageGroupPanel.stopCurrent();
         audioPanel.removeCurrentDisplayable();
         videoPanel.removeCurrentDisplayable();
         timerPanel.removeCurrentDisplayable();
         imagePanel.removeCurrentDisplayable();
         presentationPanel.removeCurrentDisplayable();
         pdfPanel.removeCurrentDisplayable();
+        webPanel.removeCurrentDisplayable();
+        imageGroupPanel.removeCurrentDisplayable();
         if (PRESENTATION_LABEL.equals(currentLabel)) {
             presentationPanel.showDisplayable(null, 0);
         }
         if (PDF_LABEL.equals(currentLabel)) {
             pdfPanel.showDisplayable(null, 0);
+        }
+        if (IMAGE_GROUP_LABEL.equals(currentLabel)) {
+            imageGroupPanel.showDisplayable(null, 0);
         }
         if (displayable instanceof TextDisplayable) {
             lyricsPanel.showDisplayable((TextDisplayable) displayable, index);
@@ -349,6 +389,15 @@ public abstract class LivePreviewPanel extends BorderPane {
             pdfPanel.showDisplayable((PdfDisplayable) displayable, index);
             cardPanel.show(PDF_LABEL);
             currentLabel = PDF_LABEL;
+        } else if (displayable instanceof WebDisplayable) {
+            webPanel.showDisplayable((WebDisplayable) displayable);
+            cardPanel.show(WEB_LABEL);
+            currentLabel = WEB_LABEL;
+            webPanel.setText();
+        } else if (displayable instanceof ImageGroupDisplayable) {
+            imageGroupPanel.showDisplayable((ImageGroupDisplayable) displayable, index);
+            cardPanel.show(IMAGE_GROUP_LABEL);
+            currentLabel = IMAGE_GROUP_LABEL;
         } else if (displayable == null) {
 //            LOGGER.log(Level.WARNING, "BUG: Called showDisplayable(null), should probably call clear() instead.", 
 //                    new RuntimeException("BUG: Called showDisplayable(null), should probably call clear() instead.")); clear();
@@ -427,5 +476,14 @@ public abstract class LivePreviewPanel extends BorderPane {
      */
     public TimerPanel getTimerPanel() {
         return timerPanel;
+    }
+    
+    /**
+     * Get the web panel.
+     * <p/>
+     * @return the web panel.
+     */
+    public WebPanel getWebPanel() {
+        return webPanel;
     }
 }

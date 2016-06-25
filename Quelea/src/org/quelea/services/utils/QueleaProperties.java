@@ -906,6 +906,27 @@ public final class QueleaProperties extends Properties {
         setProperty("projector.screen", Integer.toString(screen));
         write();
     }
+    
+    /**
+     * Determine whether the projection screen automatically should be moved to
+     * a recently inserted monitor.
+     * * <p/>
+     * @return true if the projector screen should be moved, false otherwise.
+     */
+    public boolean getUseAutoExtend() {
+        return Boolean.parseBoolean(getProperty("use.auto.extend", "false"));
+    }
+
+    /**
+     * Set whether the projection screen automatically should be moved to a
+     * recently inserted monitor.
+     * * <p/>
+     * @param extend true if it should automatically move projection screen,
+     * false otherwise.
+     */
+    public void setUseAutoExtend(boolean extend) {
+        setProperty("use.auto.extend", Boolean.toString(extend));
+    }
 
     /**
      * Get the maximum number of characters allowed on any one line of projected
