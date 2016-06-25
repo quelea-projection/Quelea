@@ -86,7 +86,7 @@ public class PresentationManagerParser implements SongParser {
             String author = "";
             NodeList rootChildren = root.getChildNodes();
             for (int i = 0; i < rootChildren.getLength(); i++) {
-                if (rootChildren.item(i).getNodeName().equals("verses")) {
+                if (rootChildren.item(i).getNodeName().equalsIgnoreCase("verses")) {
                     NodeList verses = rootChildren.item(i).getChildNodes();
                     for (int j = 0; j < verses.getLength(); j++) {
                         String verseText = verses.item(j).getTextContent().trim();
@@ -105,14 +105,14 @@ public class PresentationManagerParser implements SongParser {
                     }
                 }
 
-                if (rootChildren.item(i).getNodeName().equals("attributes")) {
+                if (rootChildren.item(i).getNodeName().equalsIgnoreCase("attributes")) {
                     NodeList attributes = rootChildren.item(i).getChildNodes();
                     for (int j = 0; j < attributes.getLength(); j++) {
                         String name = attributes.item(j).getNodeName();
-                        if (name.equals("Title")) {
+                        if (name.equalsIgnoreCase("Title")) {
                             title = attributes.item(j).getTextContent();
                         }
-                        if (name.equals("Author")) {
+                        if (name.equalsIgnoreCase("Author")) {
                             author = attributes.item(j).getTextContent();
                         }
                     }
