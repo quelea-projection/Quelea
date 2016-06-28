@@ -148,6 +148,10 @@ public class PdfPreview extends ScrollPane {
     public int getSelectedIndex() {
         return selectedIndex;
     }
+    
+    public int getSlideCount() {
+        return slides.length;
+    }
 
     public PdfSlide getSelectedSlide() {
         return selectedSlide;

@@ -71,8 +71,8 @@ public class PdfPanel extends AbstractPanel {
                 if (live) {
                     LivePanel lp = QueleaApp.get().getMainWindow().getMainPanel().getLivePanel();
                     if (newSlide != null && displayable != null) {
-                            currentSlide = newSlide;
-                            updateCanvas();
+                        currentSlide = newSlide;
+                        updateCanvas();
                     }
                 }
             }
@@ -223,6 +223,15 @@ public class PdfPanel extends AbstractPanel {
     }
 
     /**
+     * Get the length of the item on this panel.
+     * <p/>
+     * @return the length of the item on this panel.
+     */
+    public int getSlideCount() {
+        return pdfPreview.getSlideCount();
+    }
+
+    /**
      * Clear this panel (well, actually don't do anything because we can't clear
      * a presentation.)
      */
@@ -260,6 +269,10 @@ public class PdfPanel extends AbstractPanel {
 
     public void selectLast() {
         pdfPreview.selectLast();
+    }
+    
+    public void selectFirst() {
+        pdfPreview.select(1, true);
     }
 
     public PdfPreview getPresentationPreview() {
