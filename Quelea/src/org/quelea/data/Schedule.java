@@ -50,10 +50,13 @@ import org.quelea.data.displayable.AudioDisplayable;
 import org.quelea.data.displayable.BiblePassage;
 import org.quelea.data.displayable.Displayable;
 import org.quelea.data.displayable.ImageDisplayable;
+import org.quelea.data.displayable.ImageGroupDisplayable;
+import org.quelea.data.displayable.PdfDisplayable;
 import org.quelea.data.displayable.PresentationDisplayable;
 import org.quelea.data.displayable.SongDisplayable;
 import org.quelea.data.displayable.TimerDisplayable;
 import org.quelea.data.displayable.VideoDisplayable;
+import org.quelea.data.displayable.WebDisplayable;
 import org.quelea.services.languages.LabelGrabber;
 import org.quelea.services.utils.LoggerUtils;
 import org.quelea.services.utils.QueleaProperties;
@@ -332,6 +335,12 @@ public class Schedule implements Iterable<Displayable> {
                     }
                 } else if (name.equalsIgnoreCase("timer")) {
                     newSchedule.add(TimerDisplayable.parseXML(node));
+                } else if (name.equalsIgnoreCase("filepdf")) {
+                    newSchedule.add(PdfDisplayable.parseXML(node));
+                } else if (name.equalsIgnoreCase("fileimagegroup")) {
+                    newSchedule.add(ImageGroupDisplayable.parseXML(node));
+                } else if (name.equalsIgnoreCase("url")) {
+                    newSchedule.add(WebDisplayable.parseXML(node));
                 }
             }
             newSchedule.modified = false;
