@@ -40,7 +40,7 @@ public class SlideThumbnail extends BorderPane {
     public SlideThumbnail(PdfSlide slide, int num) {
         this.num = num;
         this.slide = slide;
-        ImageView image = new ImageView(slide.getImage());
+        ImageView image = new ImageView(slide.getThumbnail());
         image.setFitWidth(200);
         image.setPreserveRatio(true);
         setTop(image);
