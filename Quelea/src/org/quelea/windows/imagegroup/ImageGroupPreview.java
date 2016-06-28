@@ -152,6 +152,10 @@ public class ImageGroupPreview extends ScrollPane {
     public ImageGroupSlide getSelectedSlide() {
         return selectedSlide;
     }
+    
+    public int getSlidesCount() {
+        return slides.length;
+    }
 
     /**
      * Advances the current slide.

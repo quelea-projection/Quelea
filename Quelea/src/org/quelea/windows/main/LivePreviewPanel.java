@@ -146,7 +146,13 @@ public abstract class LivePreviewPanel extends BorderPane {
     }
 
     public void selectFirstLyric() {
-        lyricsPanel.selectFirst();
+        if (LYRICS_LABEL.equals(currentLabel)) {
+            lyricsPanel.selectFirst();
+        } else if (PDF_LABEL.equals(currentLabel)) {
+            pdfPanel.selectFirst();
+        } else if (IMAGE_GROUP_LABEL.equals(currentLabel)) {
+            imageGroupPanel.selectFirst();
+        }
     }
 
     public void selectLastLyric() {
@@ -248,7 +254,7 @@ public abstract class LivePreviewPanel extends BorderPane {
 
     /**
      * Get the currently selected displayable index. Only suitable for
-     * powerpoint / lyrics panels.
+     * powerpoint / PDF / image group / lyrics panels.
      * <p/>
      * @return the currently selected displayable index.
      */
@@ -261,6 +267,25 @@ public abstract class LivePreviewPanel extends BorderPane {
             return imageGroupPanel.getIndex();
         } else {
             return lyricsPanel.getIndex();
+        }
+    }
+    
+    /**
+     * Get the length of the current displayable. Only suitable for
+     * powerpoint / PDF / image group / lyrics panels.
+     * <p/>
+     * @return the currently selected displayable index.
+     */
+    
+    public int getLenght() {
+        if (PRESENTATION_LABEL.equals(currentLabel)) {
+            return presentationPanel.getSlideCount();
+        } else if (PDF_LABEL.equals(currentLabel)) {
+            return pdfPanel.getSlideCount();
+        } else if (IMAGE_GROUP_LABEL.equals(currentLabel)) {
+            return imageGroupPanel.getSlideCount();
+        } else {
+            return lyricsPanel.getSlideCount();
         }
     }
 

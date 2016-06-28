@@ -321,7 +321,6 @@ public class LibraryBiblePanel extends VBox implements BibleChangeListener {
 
                         // Only add and mark the selected verses but load the others from the chapter as well
                         String id = (cvp.getFromChapter() + 1) + ":" + verse.getNum();
-//                        System.out.println(toVerse);
                         if ((verse.getNum() >= cvp.getFromVerse() && verse.getNum() <= toVerse) || cvp.getFromVerse() == 0) {
                             verses.add(verse);
                             previewText.append("<mark>");
