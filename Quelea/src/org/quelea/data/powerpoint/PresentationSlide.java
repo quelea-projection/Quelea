@@ -80,6 +80,8 @@ public class PresentationSlide {
         }
         image = new WritableImage(originalImage.getWidth(), originalImage.getHeight());
         SwingFXUtils.toFXImage(originalImage, image);
+        originalImage.flush();
+        originalImage = null;
     }
 
     /**
