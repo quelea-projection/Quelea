@@ -53,31 +53,24 @@ import org.quelea.services.utils.QueleaProperties;
  *
  * @author Bronson
  */
-
-
 public class PlanningCenterOnlineParser {
-    
+
     private final DefaultHttpClient httpClient;
     private final BasicCookieStore cookieStore;
     private final HttpContext httpContext;
-    
+
     public PlanningCenterOnlineParser() {
-        
+
         // need to handle cookies
-        CookieManager cm = ((CookieManager)CookieHandler.getDefault());
-        if (cm == null) {
-            CookieHandler.setDefault( new CookieManager( null, CookiePolicy.ACCEPT_ALL ) );
-        }
-        else {
-            cm.setCookiePolicy(CookiePolicy.ACCEPT_ALL);
-        }
-        
+        java.net.CookieManager cm = new java.net.CookieManager(null, CookiePolicy.ACCEPT_ALL);
+        java.net.CookieHandler.setDefault(cm);
+
         httpClient = new DefaultHttpClient();
         cookieStore = new BasicCookieStore();
         httpContext = new BasicHttpContext();
         httpContext.setAttribute(ClientContext.COOKIE_STORE, cookieStore);
     }
-    
+
     public boolean login(String email, String password) {
         String args = String.format("email=%s&password=%s&submit=login", email, password);
         String url = "https://accounts.planningcenteronline.com/login";
@@ -85,52 +78,51 @@ public class PlanningCenterOnlineParser {
         if (result == null) {
             return false;
         }
-        
+
         // check for a bad login page
         if (result.contains("<title>Login - Accounts</title>")) {
             return false;
         }
-        
+
         return true;
     }
-    
+
     private String post(String urlString, String urlParameters, String email, String password) {
-        try {         
+        try {
             HttpPost httpost = new HttpPost(urlString);
-            List<NameValuePair> nvps = new ArrayList <NameValuePair>();
+            List<NameValuePair> nvps = new ArrayList<NameValuePair>();
             nvps.add(new BasicNameValuePair("email", email));
             nvps.add(new BasicNameValuePair("password", password));
             httpost.setEntity(new UrlEncodedFormEntity(nvps));
-            
+
             HttpResponse response = httpClient.execute(httpost, httpContext);
-                       
+
             Header[] cookieList = response.getHeaders("Set-Cookie");
             for (Header cookieHeader : cookieList) {
                 String cookieStr = cookieHeader.getValue();
-                
+
                 HttpCookie httpCookie = HttpCookie.parse(cookieStr).get(0);
                 BasicClientCookie cookie = new BasicClientCookie(httpCookie.getName(), httpCookie.getValue());
                 cookie.setPath(httpCookie.getPath());
                 cookie.setDomain(httpCookie.getDomain());
-                
+
                 Date today = new Date();
                 Date tomorrow = new Date(today.getTime() + (1000 * 60 * 60 * 24));
                 cookie.setExpiryDate(tomorrow);
                 cookieStore.addCookie(cookie);
             }
-            
+
             HttpEntity entity = response.getEntity();
             String text = EntityUtils.toString(entity);
             entity.consumeContent();
             return text;
-        } 
-        catch (Exception e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
-        
+
         return null;
     }
-    
+
     private String get(String urlString) {
         try {
             HttpGet httget = new HttpGet(urlString);
@@ -143,56 +135,54 @@ public class PlanningCenterOnlineParser {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        
+
         return null;
     }
-    
+
     private JSONObject getJson(String urlString) {
         try {
             String jsonStr = get(urlString);
-            
+
             // fix up arrays JSONParser wont handle
-            if (jsonStr.startsWith("[") && jsonStr.endsWith("]"))
-            {
+            if (jsonStr.startsWith("[") && jsonStr.endsWith("]")) {
                 jsonStr = "{\"array\":" + jsonStr + "}";
             }
-            
+
             JSONParser parser = new JSONParser();
             JSONObject json = (JSONObject) parser.parse(jsonStr);
             return json;
-        }
-        catch(Exception e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
-        
+
         return null;
     }
-    
+
     // Contains organisation data - service types
-    public JSONObject organisation() {        
+    public JSONObject organisation() {
         return getJson("https://services.planningcenteronline.com/organization.json");
     }
-    
+
     // Contains all plans for a certain service type
     public JSONObject serviceTypePlans(Long serviceTypeId) {
         return getJson("https://planningcenteronline.com/service_types/" + serviceTypeId + "/plans.json");
     }
-    
+
     // Plan data
     public JSONObject plan(Long planId) {
         return getJson("https://planningcenteronline.com/plans/" + planId + ".json?include_slides=true");
     }
-    
+
     // Arrangement data
     public JSONObject arrangement(Long arrangementId) {
         return getJson("https://planningcenteronline.com/arrangements/" + arrangementId + ".json");
     }
-    
+
     // Media data
     public JSONObject media(Long mediaId) {
         return getJson("https://services.planningcenteronline.com/medias/" + mediaId + ".json");
     }
-    
+
     // Download file from url to fileName, putting the file into the download directory
     // if the file exists it wont be downloaded
     // will give the file a temporary name until the download is fully complete at
@@ -207,7 +197,7 @@ public class PlanningCenterOnlineParser {
                 if (lastUpdated == null || lastUpdated.getTime() <= lastModified) {
                     return file.getAbsolutePath();
                 }
-                
+
                 // file is going to get overridden as it failed the timestamp check
                 if (!file.delete()) {
                     // deletion of exiting file failed! just use the existing file then
@@ -215,47 +205,46 @@ public class PlanningCenterOnlineParser {
                     return file.getAbsolutePath();
                 }
             }
-            
+
             String partFullFileName = fullFileName + ".part";
             File partFile = new File(partFullFileName);
-        
+
             HttpGet httpget = new HttpGet(url);
             HttpResponse response = httpClient.execute(httpget, httpContext);
             HttpEntity entity = response.getEntity();
             if (entity != null) {
-                
+
                 int statusCode = response.getStatusLine().getStatusCode();
                 long contentLength = entity.getContentLength();
 
                 InputStream is = entity.getContent();
                 BufferedOutputStream bos = new BufferedOutputStream(new FileOutputStream(partFile));
-                
+
                 Long totalBytesRead = 0L;
-                
-                byte buffer[] = new byte[1024*1024];
+
+                byte buffer[] = new byte[1024 * 1024];
                 int count;
                 while ((count = is.read(buffer)) != -1) {
                     bos.write(buffer, 0, count);
-                    
+
                     totalBytesRead += count;
-                    progressBar.setProgress((double)totalBytesRead / (double)contentLength);
+                    progressBar.setProgress((double) totalBytesRead / (double) contentLength);
                 }
-                
+
                 bos.close();
-                
+
                 entity.consumeContent();
             }
-            
+
             boolean success = partFile.renameTo(file);
             if (success && lastUpdated != null) {
                 file.setLastModified(lastUpdated.getTime()); // set file timestamp to same as on PCO
             }
             return file.getAbsolutePath();
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
-        
+
         return "";
     }
 }
