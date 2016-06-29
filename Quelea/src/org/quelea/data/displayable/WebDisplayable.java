@@ -39,6 +39,7 @@ public class WebDisplayable implements Displayable {
     private String url;
     private final WebView webView;
     private final WebEngine webEngine;
+    private double zoomLevel = 1;
 
     /**
      * Create a new web displayable.
@@ -51,6 +52,8 @@ public class WebDisplayable implements Displayable {
         webEngine = webView.getEngine();
         webEngine.setJavaScriptEnabled(true);
         webView.setCursor(Cursor.NONE);
+        webView.setZoom(zoomLevel);
+        webEngine.load(getUrl());
     }
 
     /**
@@ -130,7 +133,7 @@ public class WebDisplayable implements Displayable {
 
     @Override
     public void dispose() {
-        webEngine.load("about:blank");
+        // Do nothing to be able to keep the page loaded in the background
     }
 
     public void updatePreview() {
@@ -181,10 +184,11 @@ public class WebDisplayable implements Displayable {
 
     public void zoom(boolean zoomIn) {
         if (!zoomIn) {
-            webView.setZoom(webView.getZoom()*0.9);
+            zoomLevel = webView.getZoom()*0.9;
         } else {
-            webView.setZoom(webView.getZoom()*1.1);
+            zoomLevel = webView.getZoom()*1.1;
         }
+        webView.setZoom(zoomLevel);
     }
 
 }
