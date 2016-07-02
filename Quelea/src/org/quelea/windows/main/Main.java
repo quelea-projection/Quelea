@@ -29,17 +29,9 @@ import javafx.application.Platform;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
-import javafx.geometry.Rectangle2D;
-import javafx.scene.Scene;
 import javafx.scene.control.CheckBox;
-import javafx.scene.layout.StackPane;
-import javafx.scene.paint.Color;
-import javafx.scene.text.Font;
-import javafx.scene.text.FontWeight;
-import javafx.scene.text.Text;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
-import javafx.stage.StageStyle;
 import javax.imageio.ImageIO;
 import org.javafx.dialog.Dialog;
 import org.quelea.data.bible.BibleManager;
@@ -62,7 +54,6 @@ import org.quelea.services.utils.Utils;
 import org.quelea.windows.multimedia.VLCWindow;
 import org.quelea.windows.splash.SplashStage;
 import uk.co.caprica.vlcj.discovery.NativeDiscovery;
-import utils.PlatformUtils;
 
 /**
  * The main class, sets everything in motion...
@@ -111,7 +102,7 @@ public final class Main extends Application {
                 try {
                     boolean vlcOk = false;
                     try {
-                        vlcOk = new NativeDiscovery().discover();
+                        vlcOk = new NativeDiscovery().discover();                        
                     } catch (Throwable ex) {
                         LOGGER.log(Level.WARNING, "Exception during VLC initialisation", ex);
                     }
@@ -207,9 +198,9 @@ public final class Main extends Application {
                             } else {
                                 LOGGER.log(Level.INFO, "Starting projector display on monitor {0} (base 0!)", projectorScreen);
                                 fullScreenWindow = new DisplayStage(Utils.getBoundsFromRect2D(monitors.get(projectorScreen).getBounds()), false);
+                                fullScreenWindow.setFullScreenAlwaysOnTop(true);
                             }
                             
-                            PlatformUtils.setFullScreenAlwaysOnTop(fullScreenWindow, true);
                             QueleaApp.get().setProjectionWindow(fullScreenWindow);
 
                             if (stageHidden) {
@@ -223,6 +214,7 @@ public final class Main extends Application {
                                 LOGGER.log(Level.INFO, "Starting stage display on monitor {0} (base 0!)", stageScreen);
                                 stageWindow = new DisplayStage(Utils.getBoundsFromRect2D(monitors.get(stageScreen).getVisualBounds()), true);
                             }
+
                             QueleaApp.get().setStageWindow(stageWindow);
                             //stageWindow.toFront();
 

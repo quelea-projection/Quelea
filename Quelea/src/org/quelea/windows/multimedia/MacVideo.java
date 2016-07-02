@@ -650,4 +650,7 @@ public class MacVideo extends VLCWindow {
          */
 
     }
+    
+    public void setWindowVisible(boolean visible) { 
+    }
 }
