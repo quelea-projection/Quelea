@@ -50,6 +50,8 @@ public class MultimediaPanel extends AbstractPanel {
     private final MultimediaControls controlPanel;
     private final Text previewText;
     private final ImageView imgView;
+    private MultimediaDisplayable displayable;
+    private boolean live = false;
 
     /**
      * Create a new image panel.
@@ -168,5 +170,51 @@ public class MultimediaPanel extends AbstractPanel {
                 qmp.getPreviewPanel().goLive();
             }
         }
+    }
+    
+    
+    /**
+     * Set the displayable to be on this presentation panel.
+     * <p/>
+     * @param displayable the presentation displayable to display.
+     * @param index the index to display.
+     */
+    public void showDisplayable(final MultimediaDisplayable displayable, final int index) {
+        if (this.displayable == displayable) {
+            return;
+        }
+        this.displayable = displayable;
+        if (displayable == null) {
+            return;
+        }
+        
+        if (live) {
+            drawer.setVisible(true);
+        }
+        super.showDisplayable(displayable);
+    }
+    
+    public void stopCurrent() {
+        if (live && displayable != null) {
+            if (displayable != null) {
+                drawer.setVisible(false);
+                displayable = null;
+            }
+        }
+    }
+    
+    /**
+     * Let this panel know it is live and should update accordingly.
+     */
+    public void setLive() {
+        live = true;
+    }
+    
+    /**
+     * Clear the panel and all canvases associated with it.
+     */
+    @Override
+    public void removeCurrentDisplayable() {
+        super.removeCurrentDisplayable();
     }
 }
