@@ -83,6 +83,7 @@ public class LivePanel extends LivePreviewPanel {
     public LivePanel() {
         getPresentationPanel().setLive();
         getPdfPanel().setLive();
+        getVideoPanel().setLive();
         header = new ToolBar();
         Label headerLabel = new Label(LabelGrabber.INSTANCE.getLabel("live.heading"));
         headerLabel.setStyle("-fx-font-weight: bold;");
