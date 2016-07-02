@@ -103,5 +103,6 @@ public abstract class VLCWindow {
     public abstract void setHue(final double hue);
 
     public abstract double getHue();
-
+    
+    public abstract void setWindowVisible(boolean visible);
 }

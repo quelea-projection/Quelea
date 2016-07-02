@@ -32,7 +32,6 @@ import javafx.event.EventHandler;
 import javafx.scene.control.CheckBox;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
-import javafx.stage.StageStyle;
 import javax.imageio.ImageIO;
 import org.javafx.dialog.Dialog;
 import org.quelea.data.bible.BibleManager;
@@ -72,7 +71,7 @@ public final class Main extends Application {
     public static void main(String[] args) {
         Application.launch(args);
     }
-
+    
     /**
      * Starts the program off, this is the first thing that is executed by
      * Quelea when the program starts.
@@ -103,7 +102,7 @@ public final class Main extends Application {
                 try {
                     boolean vlcOk = false;
                     try {
-                        vlcOk = new NativeDiscovery().discover();
+                        vlcOk = new NativeDiscovery().discover();                        
                     } catch (Throwable ex) {
                         LOGGER.log(Level.WARNING, "Exception during VLC initialisation", ex);
                     }
@@ -199,6 +198,7 @@ public final class Main extends Application {
                             } else {
                                 LOGGER.log(Level.INFO, "Starting projector display on monitor {0} (base 0!)", projectorScreen);
                                 fullScreenWindow = new DisplayStage(Utils.getBoundsFromRect2D(monitors.get(projectorScreen).getBounds()), false);
+                                fullScreenWindow.setFullScreenAlwaysOnTop(true);
                             }
                             
                             QueleaApp.get().setProjectionWindow(fullScreenWindow);
@@ -214,6 +214,7 @@ public final class Main extends Application {
                                 LOGGER.log(Level.INFO, "Starting stage display on monitor {0} (base 0!)", stageScreen);
                                 stageWindow = new DisplayStage(Utils.getBoundsFromRect2D(monitors.get(stageScreen).getVisualBounds()), true);
                             }
+
                             QueleaApp.get().setStageWindow(stageWindow);
                             //stageWindow.toFront();
 
