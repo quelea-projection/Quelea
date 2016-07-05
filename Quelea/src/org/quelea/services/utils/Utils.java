@@ -801,6 +801,32 @@ public final class Utils {
         return ret;
     }
 
+    /**
+     * Get a list of all supported audio extensions.
+     * <p/>
+     * @return a list of all supported audio extensions.
+     */
+    public static List<String> getAudioExtensions() {
+        List<String> ret = new ArrayList<>();
+        ret.add("mp3");
+        ret.add("wav");
+        ret.add("wma");
+        // TODO: Add more extensions
+        return ret;
+    }
+
+    /**
+     * Get a list of all supported multimedia extensions.
+     * <p/>
+     * @return a list of all supported multimedia extensions.
+     */
+    public static List<String> getMultimediaExtensions() {
+        List<String> ret = new ArrayList<>();
+        ret.addAll(getVideoExtensions());
+        ret.addAll(getAudioExtensions());
+        return ret;
+    }
+
     public static List<String> getImageAndVideoExtensions() {
         List<String> ret = new ArrayList<>();
         ret.addAll(getVideoExtensions());
@@ -881,6 +907,9 @@ public final class Utils {
      */
     public static Image getVidBlankImage(File videoFile) {
         synchronized (videoPreviewCache) {
+            if (!fileIsVideo(videoFile)) {
+                return new Image("file:icons/audio preview.png");
+            }
             if (videoFile.isFile()) {
                 try {
                     WritableImage ret = videoPreviewCache.get(videoFile);
