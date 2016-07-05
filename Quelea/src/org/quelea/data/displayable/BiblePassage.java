@@ -28,6 +28,9 @@ import javafx.scene.image.ImageView;
 import org.javafx.dialog.Dialog;
 import org.quelea.data.Background;
 import org.quelea.data.ThemeDTO;
+import org.quelea.data.bible.Bible;
+import org.quelea.data.bible.BibleBook;
+import org.quelea.data.bible.BibleManager;
 import org.quelea.data.bible.BibleVerse;
 import org.quelea.services.languages.LabelGrabber;
 import org.quelea.services.utils.QueleaProperties;
@@ -175,7 +178,7 @@ public class BiblePassage implements TextDisplayable, Serializable {
         if (!section.toString().isEmpty()) {
             textSections.add(new TextSection("", new String[]{section.toString().trim()}, smallText, false));
         }
-        
+
         if (verseError) {
             Dialog.showInfo(LabelGrabber.INSTANCE.getLabel("no.verse.title"), LabelGrabber.INSTANCE.getLabel("no.verse.message"), QueleaApp.get().getMainWindow());
         }
@@ -284,7 +287,21 @@ public class BiblePassage implements TextDisplayable, Serializable {
         for (int i = 0; i < list.getLength(); i++) {
             Node node = list.item(i);
             if (node.getNodeName().equals("vers")) {
-                verses.add(BibleVerse.parseXML(node));
+                BibleVerse bv = BibleVerse.parseXML(node);
+                for (Bible b : BibleManager.get().getBibles()) {
+                    if (b.getBibleName().equals(bibleSummary)) {
+                        int ii = 1;
+                        for (BibleBook bb : b.getBooks()) {
+                            String p = passageSummary.split(" \\d")[0];
+                            if (bb.getBookName().equals(p)) {
+                                bv.getChapter().setBook(BibleBook.parseXML(node, ii));
+                                bv.getChapter().getBook().setBible(b);
+                                verses.add(bv);
+                            }
+                            ii++;
+                        }
+                    }
+                }
             } else if (node.getNodeName().equals("theme")) {
                 tempTheme = ThemeDTO.fromString(node.getTextContent());
             }
