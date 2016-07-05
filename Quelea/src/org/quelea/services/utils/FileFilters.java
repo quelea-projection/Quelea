@@ -63,7 +63,7 @@ public final class FileFilters {
     /**
      * Accept audio files.
      */
-    public static final FileChooser.ExtensionFilter AUDIOS = new FileChooser.ExtensionFilter(LabelGrabber.INSTANCE.getLabel("filefilters.description.audio.files") + " (*.mp3)", "*.mp3");
+    public static final FileChooser.ExtensionFilter AUDIOS = new FileChooser.ExtensionFilter(LabelGrabber.INSTANCE.getLabel("filefilters.description.audio.files"), Utils.getFileExtensions(Utils.getAudioExtensions()));
     /**
      * Accept powerpoint files.
      */
@@ -140,6 +140,11 @@ public final class FileFilters {
      * The file filter used for *.epc (the epicworship songpack.)
      */
     public static final FileChooser.ExtensionFilter EPC = new FileChooser.ExtensionFilter(LabelGrabber.INSTANCE.getLabel("filefilters.description.epc") + " (*.epc)", "*.epc");
+    /**
+     * Accept multimedia files.
+     */
+    public static final FileChooser.ExtensionFilter MULTIMEDIA = new FileChooser.ExtensionFilter(LabelGrabber.INSTANCE.getLabel("filefilters.description.multimedia.files"), Utils.getFileExtensions(Utils.getMultimediaExtensions()));
+    
 
     /**
      * No instantiation for me thanks.

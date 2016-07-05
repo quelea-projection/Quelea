@@ -20,10 +20,8 @@ package org.quelea.windows.main.actionhandlers;
 
 import java.io.File;
 import java.util.List;
-import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
-import javafx.scene.image.Image;
 import javafx.stage.FileChooser;
 import org.quelea.data.displayable.VideoDisplayable;
 import org.quelea.services.utils.FileFilters;
@@ -32,7 +30,7 @@ import org.quelea.services.utils.Utils;
 import org.quelea.windows.main.QueleaApp;
 
 /**
- * The action handler for adding a video.
+ * The action handler for adding a multimedia file.
  *
  * @author Michael
  */
@@ -44,7 +42,7 @@ public class AddVideoActionHandler implements EventHandler<ActionEvent> {
         if (QueleaProperties.get().getLastVideoDirectory() != null) {
             fileChooser.setInitialDirectory(QueleaProperties.get().getLastVideoDirectory());
         }
-        fileChooser.getExtensionFilters().add(FileFilters.VIDEOS);
+        fileChooser.getExtensionFilters().add(FileFilters.MULTIMEDIA);
         final List<File> files = fileChooser.showOpenMultipleDialog(QueleaApp.get().getMainWindow());
 
         if (files != null) {
