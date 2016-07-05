@@ -39,6 +39,7 @@ public class VideoDisplayable implements MultimediaDisplayable, Serializable {
     private final String location;
     private YoutubeInfo youtubeinfo;
     private final boolean youtubeFlag;
+    private boolean isVideo;
 
     /**
      * Create a new video displayable.
@@ -71,7 +72,7 @@ public class VideoDisplayable implements MultimediaDisplayable, Serializable {
     public boolean isYoutubeFlag() {
         return youtubeFlag;
     }
-    
+
     /**
      * Get the displayable location.
      * <p>
@@ -81,7 +82,7 @@ public class VideoDisplayable implements MultimediaDisplayable, Serializable {
     public String getLocation() {
         return location;
     }
-    
+
     /**
      * Get the displayable location (as a file.)
      * <p>
@@ -151,7 +152,11 @@ public class VideoDisplayable implements MultimediaDisplayable, Serializable {
      */
     @Override
     public ImageView getPreviewIcon() {
-        return new ImageView(new Image("file:icons/video.png"));
+        if (Utils.fileIsVideo(getLocationAsFile())) {
+            return new ImageView(new Image("file:icons/video.png"));
+        } else {
+            return new ImageView(new Image("file:icons/audio30.png"));
+        }
     }
 
     /**
@@ -191,5 +196,13 @@ public class VideoDisplayable implements MultimediaDisplayable, Serializable {
     @Override
     public void dispose() {
         //Nothing needed here.
+    }
+
+    public boolean isVideo() {
+        if (Utils.fileIsVideo(getLocationAsFile())) {
+            return true;
+        } else {
+            return false;
+        }
     }
 }
