@@ -168,6 +168,7 @@ public class OpensongParser implements SongParser {
             } else if (line.startsWith(";")) {
                 ignoreVerse = true;
             }
+            line = line.replace("|", "\n");
             
             if (!ignoreVerse) {
                 ret.append(line).append("\n");

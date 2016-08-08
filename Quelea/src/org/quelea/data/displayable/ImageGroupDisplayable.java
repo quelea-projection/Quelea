@@ -28,7 +28,9 @@ import javafx.scene.image.ImageView;
 import org.quelea.data.imagegroup.ImageGroup;
 import org.quelea.data.imagegroup.ImageGroupFactory;
 import org.quelea.services.utils.LoggerUtils;
+import org.quelea.services.utils.QueleaProperties;
 import org.quelea.services.utils.Utils;
+import org.w3c.dom.Node;
 
 /**
  * A displayable that's an image group.
@@ -79,6 +81,22 @@ public class ImageGroupDisplayable implements Displayable {
         }
         ret.append("</fileimagegroup>");
         return ret.toString();
+    }
+    
+    /**
+     * Parse some XML representing this object and return the object it
+     * represents.
+     *
+     * @param node the XML node representing this object.
+     * @return the object as defined by the XML.
+     */
+    public static ImageGroupDisplayable parseXML(Node node) throws IOException {
+        String[] files = node.getTextContent().split(";");
+        ArrayList<File> tmp = new ArrayList<>();
+        for (String f : files) {
+            tmp.add(new File(f));
+        }
+        return new ImageGroupDisplayable(tmp.toArray(new File[tmp.size()]));
     }
 
     /**

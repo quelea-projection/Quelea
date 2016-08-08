@@ -54,7 +54,9 @@ public class WebDrawer extends DisplayableDrawer {
             if (!d.getUrl().startsWith("http")) {
                 d.setUrl("http://" + d.getUrl());
             } else {
-                webEngine.load(d.getUrl());
+                if (webEngine.getTitle() == null) {
+                    webEngine.load(d.getUrl());
+                }
             }
             addWebView(webView);
         } else {

@@ -28,20 +28,19 @@ import javafx.scene.image.ImageView;
 import org.quelea.data.pdf.*;
 import org.quelea.services.utils.LoggerUtils;
 import org.quelea.services.utils.Utils;
+import org.w3c.dom.Node;
 
 /**
  * A displayable that's a PDF.
  * <p/>
  * @author Arvid, based on PresentationDisplayable
  */
+public class PdfDisplayable implements Displayable {
 
-
-public class PdfDisplayable implements Displayable{
-    
     private static final Logger LOGGER = LoggerUtils.getLogger();
     private final File file;
     private final Pdf presentation;
-    
+
     /**
      * Create a new PDF displayable
      * <p/>
@@ -50,7 +49,7 @@ public class PdfDisplayable implements Displayable{
     public PdfDisplayable(File file) throws IOException {
         this.file = file;
         presentation = new PdfFactory().getPresentation(file);
-        if(presentation == null) {
+        if (presentation == null) {
             throw new IOException("Error with PDF, couldn't open " + file);
         }
     }
@@ -79,7 +78,18 @@ public class PdfDisplayable implements Displayable{
         return ret.toString();
     }
 
-        /**
+    /**
+     * Parse some XML representing this object and return the object it
+     * represents.
+     *
+     * @param node the XML node representing this object.
+     * @return the object as defined by the XML.
+     */
+    public static PdfDisplayable parseXML(Node node) throws IOException {
+        return new PdfDisplayable(new File(node.getTextContent()));
+    }
+
+    /**
      * Get the preview icon of this PDF.
      * <p/>
      * @return the PDF preview icon.
@@ -117,7 +127,7 @@ public class PdfDisplayable implements Displayable{
     @Override
     public void dispose() {
     }
-    
+
     /**
      * Get the displayable file.
      * <p/>
@@ -126,5 +136,5 @@ public class PdfDisplayable implements Displayable{
     public Pdf getPresentation() {
         return presentation;
     }
-    
+
 }
