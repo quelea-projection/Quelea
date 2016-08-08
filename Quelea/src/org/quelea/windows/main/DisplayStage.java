@@ -35,6 +35,7 @@ import org.quelea.windows.main.DisplayCanvas.Priority;
 import org.quelea.windows.main.widgets.Clock;
 import org.quelea.windows.main.widgets.TestImage;
 import org.quelea.windows.multimedia.VLCWindow;
+import utils.PlatformUtils;
 
 /**
  * The full screen window used for displaying the projection.
@@ -67,7 +68,7 @@ public class DisplayStage extends Stage {
         initStyle(StageStyle.TRANSPARENT);
         Utils.addIconsToStage(this);
         setTitle(LabelGrabber.INSTANCE.getLabel("projection.window.title"));
-        setArea(area);
+        setAreaImmediate(area);
         StackPane scenePane = new StackPane();
         scenePane.setStyle("-fx-background-color: transparent;");
         canvas = new DisplayCanvas(true, stageView, playVideo, null, stageView ? Priority.HIGH : Priority.MID);
@@ -148,9 +149,44 @@ public class DisplayStage extends Stage {
         testImage.setVisible(img != null);
         testImage.setImage(img);
     }
+    
+    /**
+     * Set the Stage to be fullscreen or to make it non-fullscreen.
+     * <p/>
+     * @param area the area of the window.
+     */
+    public final void setFullScreenAlwaysOnTopImmediate(boolean fullscreen) {
+        PlatformUtils.setFullScreenAlwaysOnTop(this, fullscreen);
+    }
+    
+    /**
+     * Set the Stage to be fullscreen or to make it non-fullscreen using run later.
+     * <p/>
+     * @param area the area of the window.
+     */
+    public final void setFullScreenAlwaysOnTop(boolean fullscreen) {
+        Platform.runLater(new Runnable() {
+            @Override
+            public void run() {
+                setFullScreenAlwaysOnTopImmediate(fullscreen);  
+            }
+        });
+    }
 
     /**
      * Set the area of the display window.
+     * <p/>
+     * @param area the area of the window.
+     */
+    public final void setAreaImmediate(final Bounds area) {
+        setWidth(area.getMaxX() - area.getMinX());
+        setHeight(area.getMaxY() - area.getMinY());
+        setX(area.getMinX());
+        setY(area.getMinY());
+    }
+    
+    /**
+     * Set the area of the display window using run later.
      * <p/>
      * @param area the area of the window.
      */
@@ -158,10 +194,9 @@ public class DisplayStage extends Stage {
         Platform.runLater(new Runnable() {
             @Override
             public void run() {
-                setWidth(area.getMaxX() - area.getMinX());
-                setHeight(area.getMaxY() - area.getMinY());
-                setX(area.getMinX());
-                setY(area.getMinY());
+                // ensure the window is not fullscreen always on top here
+                setFullScreenAlwaysOnTopImmediate(false);
+                setAreaImmediate(area);
             }
         });
     }

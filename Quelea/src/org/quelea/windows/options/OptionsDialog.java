@@ -28,6 +28,7 @@ import javafx.scene.control.TabPane;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.GridPane;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import org.javafx.dialog.Dialog;
@@ -205,5 +206,14 @@ public class OptionsDialog extends Stage {
     
     public OptionsImportExportPanel getImportExportSettingsPanel() {
         return importExportPanel;
+    }
+    
+    public void setCurrentPanel(GridPane pane) {
+        for (Tab tab : tabbedPane.getTabs()) {
+            if (tab.getContent() == pane) {
+                tabbedPane.getSelectionModel().select(tab);
+                break;
+            }
+        }
     }
 }

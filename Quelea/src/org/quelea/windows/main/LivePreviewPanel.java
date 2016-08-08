@@ -168,6 +168,15 @@ public abstract class LivePreviewPanel extends BorderPane {
     }
 
     /**
+     * Get the video panel on this live / preview panel.
+     * <p/>
+     * @return the presentation panel.
+     */
+    public MultimediaPanel getVideoPanel() {
+        return videoPanel;
+    }
+    
+    /**
      * Get the presentation panel on this live / preview panel.
      * <p/>
      * @return the presentation panel.
@@ -238,6 +247,9 @@ public abstract class LivePreviewPanel extends BorderPane {
         }
         if (IMAGE_GROUP_LABEL.equals(currentLabel)) {
             imageGroupPanel.showDisplayable(null, 0);
+        }
+        if (VIDEO_LABEL.equals(currentLabel)) {
+            videoPanel.showDisplayable(null, 0);
         }
         for (Node panel : cardPanel) {
             if (panel instanceof ContainedPanel) {
@@ -359,10 +371,13 @@ public abstract class LivePreviewPanel extends BorderPane {
         if (!(this.displayable instanceof TextDisplayable && displayable instanceof TextDisplayable)) {
             lyricsPanel.removeCurrentDisplayable();
         }
+
         this.displayable = displayable;
         presentationPanel.stopCurrent();
         pdfPanel.stopCurrent();
         imageGroupPanel.stopCurrent();
+        videoPanel.stopCurrent();
+        
         audioPanel.removeCurrentDisplayable();
         videoPanel.removeCurrentDisplayable();
         timerPanel.removeCurrentDisplayable();
@@ -380,6 +395,9 @@ public abstract class LivePreviewPanel extends BorderPane {
         if (IMAGE_GROUP_LABEL.equals(currentLabel)) {
             imageGroupPanel.showDisplayable(null, 0);
         }
+        if (VIDEO_LABEL.equals(currentLabel)) {
+            videoPanel.showDisplayable(null, 0);
+        }
         if (displayable instanceof TextDisplayable) {
             lyricsPanel.showDisplayable((TextDisplayable) displayable, index);
             cardPanel.show(LYRICS_LABEL);
@@ -389,7 +407,7 @@ public abstract class LivePreviewPanel extends BorderPane {
             cardPanel.show(IMAGE_LABEL);
             currentLabel = IMAGE_LABEL;
         } else if (displayable instanceof VideoDisplayable) {
-            videoPanel.showDisplayable((MultimediaDisplayable) displayable);
+            videoPanel.showDisplayable((MultimediaDisplayable) displayable, index);
             cardPanel.show(VIDEO_LABEL);
             currentLabel = VIDEO_LABEL;
             if (QueleaProperties.get().getAutoPlayVideo() && LivePreviewPanel.this instanceof LivePanel) {

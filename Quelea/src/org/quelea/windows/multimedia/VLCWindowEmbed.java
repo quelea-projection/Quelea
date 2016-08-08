@@ -20,17 +20,31 @@ package org.quelea.windows.multimedia;
 
 import java.awt.Canvas;
 import java.awt.Color;
-import java.awt.Window;
+import java.awt.Frame;
+import java.awt.GraphicsDevice;
+import java.awt.GraphicsEnvironment;
+import java.awt.Toolkit;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.ImageIcon;
+import javax.swing.JFrame;
 import javax.swing.SwingUtilities;
+import org.quelea.services.languages.LabelGrabber;
 import org.quelea.services.utils.LoggerUtils;
+import org.quelea.services.utils.QueleaProperties;
 import org.quelea.services.utils.Utils;
+import org.quelea.windows.main.DisplayStage;
 import org.quelea.windows.main.QueleaApp;
 import uk.co.caprica.vlcj.player.MediaPlayer;
 import uk.co.caprica.vlcj.player.MediaPlayerEventAdapter;
@@ -48,7 +62,7 @@ import uk.co.caprica.vlcj.player.embedded.videosurface.CanvasVideoSurface;
  * @author Michael
  */
 public class VLCWindowEmbed extends VLCWindow {
-
+    
     /**
      * Use this thread for all VLC media player stuff to keep this class thread
      * safe.
@@ -56,17 +70,88 @@ public class VLCWindowEmbed extends VLCWindow {
     private static final ExecutorService VLC_EXECUTOR = Executors.newSingleThreadExecutor();
     private static final Logger LOGGER = LoggerUtils.getLogger();
     protected static final VLCWindow EMBED_INSTANCE = new VLCWindowEmbed();
-    private Window window;
+    private JFrame frame;
     private Canvas canvas;
     private MediaPlayerFactory mediaPlayerFactory;
-    private EmbeddedMediaPlayer mediaPlayer;
+    private EmbeddedMediaPlayer mediaPlayer = null;
+    private CanvasVideoSurface videoSurface;
     private volatile boolean hideButton;
     private boolean show;
     private boolean paused;
     private volatile boolean init;
     private String location;
     private volatile double hue = 0;
+    private boolean disposeFrame = false;
 
+    static public boolean setFullScreen(final JFrame frame, boolean doPack) {
+        
+        // ops! the projector is not running fullscreen, so just display it as it
+        if (QueleaProperties.get().isProjectorModeCoords()) {
+            frame.setUndecorated(true);
+            frame.setVisible(true);
+            return true;
+        }
+            
+        int projectorScreen = QueleaProperties.get().getProjectorScreen();
+        
+        GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
+        GraphicsDevice[] gs = ge.getScreenDevices();
+        if (projectorScreen < 0 || projectorScreen >= gs.length) {
+            projectorScreen = 0;
+        }
+        
+        GraphicsDevice device = frame.getGraphicsConfiguration().getDevice();
+        boolean result = device.isFullScreenSupported();
+
+        frame.dispose();
+        
+        // this code works well on linux, but not on windows
+        if (result && Utils.isLinux()) {
+            frame.setUndecorated(true);
+            frame.setResizable(true);
+            frame.setAlwaysOnTop(true);
+
+            frame.addFocusListener(new FocusListener() {
+
+                @Override
+                public void focusGained(FocusEvent arg0) {
+                    //frame.setAlwaysOnTop(true);
+                }
+
+                @Override
+                public void focusLost(FocusEvent arg0) {
+                    //frame.setAlwaysOnTop(false);
+                }
+            });
+
+            if (doPack)
+                frame.pack();
+
+            gs[projectorScreen].setFullScreenWindow(frame);
+        }
+        // this code works well on windows, not on linux
+        else {
+            frame.setUndecorated(true);
+            
+            frame.setPreferredSize(gs[projectorScreen].getDefaultConfiguration().getBounds().getSize());
+            frame.setLocation(gs[projectorScreen].getDefaultConfiguration().getBounds().x, frame.getY());
+
+            if (doPack)
+                frame.pack();
+
+            frame.setResizable(true);
+
+            frame.setExtendedState(Frame.MAXIMIZED_BOTH);
+            boolean successful = frame.getExtendedState() == Frame.MAXIMIZED_BOTH;
+
+            frame.setVisible(true);
+
+            if (!successful)
+                frame.setExtendedState(Frame.MAXIMIZED_BOTH);
+        }
+        return result;
+    }
+    
     private VLCWindowEmbed() {
 
         runOnVLCThread(new Runnable() {
@@ -77,37 +162,28 @@ public class VLCWindowEmbed extends VLCWindow {
 
                         @Override
                         public void run() {
-                            window = new Window(null);
-                            window.setBackground(Color.BLACK);
+                            
+                            frame = new JFrame();
+                            frame.setBackground(Color.BLACK);
+                            frame.setType(JFrame.Type.UTILITY);
+                            frame.setTitle(LabelGrabber.INSTANCE.getLabel("video.theme.label"));
+                            
                             canvas = new Canvas();
                             canvas.setBackground(Color.BLACK);
                         }
                     });
 
-                    mediaPlayerFactory = new MediaPlayerFactory("--no-video-title-show", "--mouse-hide-timeout=0");
-                    mediaPlayer = mediaPlayerFactory.newEmbeddedMediaPlayer();
-                    CanvasVideoSurface videoSurface = mediaPlayerFactory.newVideoSurface(canvas);
+                    mediaPlayerFactory = new MediaPlayerFactory("--no-video-title-show", "--mouse-hide-timeout=0", "--no-xlib");
+                    videoSurface = mediaPlayerFactory.newVideoSurface(canvas);
+                    createMediaPlayer();
 
-                    mediaPlayer.setVideoSurface(videoSurface);
-                    mediaPlayer.addMediaPlayerEventListener(new MediaPlayerEventAdapter() {
-
-                        @Override
-                        public void finished(MediaPlayer mp) {
-                            if (mediaPlayer.subItemCount() > 0) {
-                                String mrl = mediaPlayer.subItems().remove(0);
-                                mediaPlayer.playMedia(mrl);
-                            }
-                        }
-                    });
                     SwingUtilities.invokeAndWait(new Runnable() {
 
                         @Override
                         public void run() {
-                            window.add(canvas);
-                            show = true;
-
-                            window.setVisible(true);
-                            window.toBack();
+                            frame.add(canvas);
+                            setFullScreen(frame, false);
+                            frame.toBack();
                             init = true;
                         }
                     });
@@ -134,6 +210,21 @@ public class VLCWindowEmbed extends VLCWindow {
                 }
             }
         }, 0, 30, TimeUnit.MILLISECONDS);
+    }
+    
+    private void createMediaPlayer() {        
+        mediaPlayer = mediaPlayerFactory.newEmbeddedMediaPlayer();
+        mediaPlayer.setVideoSurface(videoSurface);
+        mediaPlayer.addMediaPlayerEventListener(new MediaPlayerEventAdapter() {
+
+            @Override
+            public void finished(MediaPlayer mp) {
+                if (mediaPlayer.subItemCount() > 0) {
+                    String mrl = mediaPlayer.subItems().remove(0);
+                    mediaPlayer.playMedia(mrl);
+                }
+            }
+        });
     }
 
     /**
@@ -173,7 +264,7 @@ public class VLCWindowEmbed extends VLCWindow {
         runOnVLCThread(new Runnable() {
             @Override
             public void run() {
-//                System.out.println("load("+path+") start");
+//                System.out.println("load("+path+") start");                
                 if (init) {
                     paused = false;
                     String sanitisedPath = path;
@@ -274,7 +365,7 @@ public class VLCWindowEmbed extends VLCWindow {
 
                         @Override
                         public void run() {
-                            window.toBack();
+                            //frame.toBack();
                         }
                     });
                 }
@@ -410,7 +501,7 @@ public class VLCWindowEmbed extends VLCWindow {
         runOnVLCThread(new Runnable() {
             @Override
             public void run() {
-//                System.out.println("show() start");
+//                System.out.println("show() start");                
                 if (init) {
                     show = true;
                     updateState();
@@ -450,7 +541,40 @@ public class VLCWindowEmbed extends VLCWindow {
         });
     }
 
+    /**
+     * Called when a video is going live or when a live video is going away
+     * @param visible if true, the video is going live, else its going away
+     */
+    @Override
+    public void setWindowVisible(boolean visible) {
+        runOnVLCThread(new Runnable() {
+            @Override
+            public void run() {
+                
+                try {
+                    SwingUtilities.invokeAndWait(new Runnable() {
+
+                        @Override
+                        public void run() {
+                            if (visible) {
+                                frame.toFront();
+                            }
+                            else {
+                                frame.toBack();
+                            }
+                        }
+                    });
+                } catch (Exception ex) {
+                    LOGGER.log(Level.INFO, "Couldn't initialise video, almost definitely because VLC (or correct version of VLC) was not found.", ex);
+                }
+            }
+        });
+            
+    }
+    
+    // Redundant as this is now handled in setWindowVisible
     private void updateState() {
+        /*
         runOnVLCThread(new Runnable() {
             @Override
             public void run() {
@@ -459,14 +583,22 @@ public class VLCWindowEmbed extends VLCWindow {
                     SwingUtilities.invokeLater(new Runnable() {
                         @Override
                         public void run() {
-                            window.setVisible((!hideButton && show));
-                            window.toBack();
+                            //window.setVisible((!hideButton && show));
+                            //window.toBack();
+                            
+                            if ((!hideButton && show)) {
+                                setFullScreen(frame, false);
+                            }
+                            else {
+                                frame.setVisible(false);
+                            }
+                            frame.toBack();
                         }
                     });
                 }
 //                System.out.println("updateState() end");
             }
-        });
+        });*/
     }
 
     @Override
@@ -479,7 +611,7 @@ public class VLCWindowEmbed extends VLCWindow {
                     SwingUtilities.invokeLater(new Runnable() {
                         @Override
                         public void run() {
-                            window.setLocation(x, y);
+                            frame.setLocation(x, y);
                         }
                     });
                 }
@@ -499,7 +631,7 @@ public class VLCWindowEmbed extends VLCWindow {
 
                         @Override
                         public void run() {
-                            window.setSize(width, height);
+                            frame.setSize(width, height);
                         }
                     });
                 }
@@ -510,8 +642,7 @@ public class VLCWindowEmbed extends VLCWindow {
     private int tempX, tempY, tempWidth, tempHeight;
     private boolean showing;
 
-    @Override
-    public void refreshPosition() {
+    private void refreshPositionImmediate() {
         Utils.fxRunAndWait(new Runnable() {
             @Override
             public void run() {
@@ -524,20 +655,26 @@ public class VLCWindowEmbed extends VLCWindow {
                 }
             }
         });
+        
+//      System.out.println("refreshPosition() start");
+        if (init) {
+            if (showing) {
+                show();
+                setLocation(tempX, tempY);
+                setSize(tempWidth, tempHeight);
+            } else {
+                hide();
+            }
+        }
+//      System.out.println("refreshPosition() end");
+    }
+    
+    @Override
+    public void refreshPosition() {
         runOnVLCThread(new Runnable() {
             @Override
             public void run() {
-//                System.out.println("refreshPosition() start");
-                if (init) {
-                    if (showing) {
-                        show();
-                        setLocation(tempX, tempY);
-                        setSize(tempWidth, tempHeight);
-                    } else {
-                        hide();
-                    }
-                }
-//                System.out.println("refreshPosition() end");
+                refreshPositionImmediate();
             }
         });
     }
@@ -642,9 +779,16 @@ public class VLCWindowEmbed extends VLCWindow {
      */
     private void runOnVLCThreadAndWait(Runnable r) {
         try {
-            VLC_EXECUTOR.submit(r).get();
-        } catch (InterruptedException | ExecutionException ex) {
-            LOGGER.log(Level.WARNING, "Interrupted or execution error", ex);
+            Callable<Object> c = Executors.callable(r);            
+            List<Callable<Object>> tasks = new ArrayList<>();
+            tasks.add(c);
+            List<Future<Object>> futures = VLC_EXECUTOR.invokeAll(tasks, 1000, TimeUnit.MILLISECONDS);
+            if (futures.size() <= 0 && !futures.get(0).isDone()) {
+                LOGGER.log(Level.WARNING, "runOnVLCThreadAndWait Runnable was failed");
+            }
+        } catch (Exception ex) {
+            LOGGER.log(Level.WARNING, "runOnVLCThreadAndWait exception", ex);
+            System.out.println("EXCEPTION, WOULD HAVE NORMALLY CRASHED!!!!!!");            
         }
     }
 }
