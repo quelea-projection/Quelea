@@ -18,8 +18,9 @@
  */
 package org.quelea.windows.multimedia;
 
+import com.sun.jna.Memory;
 import java.awt.Dimension;
-import java.nio.IntBuffer;
+import java.nio.ByteBuffer;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -47,10 +48,10 @@ import uk.co.caprica.vlcj.player.MediaPlayer;
 import uk.co.caprica.vlcj.player.MediaPlayerEventAdapter;
 import uk.co.caprica.vlcj.player.direct.BufferFormat;
 import uk.co.caprica.vlcj.player.direct.BufferFormatCallback;
-import uk.co.caprica.vlcj.player.direct.DefaultDirectMediaPlayer;
 import uk.co.caprica.vlcj.player.direct.DirectMediaPlayer;
-import uk.co.caprica.vlcj.player.direct.RenderCallbackAdapter;
+import uk.co.caprica.vlcj.player.direct.RenderCallback;
 import uk.co.caprica.vlcj.player.direct.format.RV32BufferFormat;
+import utils.PlatformUtils;
 
 /**
  * A JavaFX rendered VLC window which is responsible for moving where it's told,
@@ -84,7 +85,7 @@ public class VLCWindowDirect extends VLCWindow {
     private BorderPane borderPane;
     private Canvas canvas;
     private PixelWriter pixelWriter;
-    private WritablePixelFormat<IntBuffer> pixelFormat;
+    private WritablePixelFormat<ByteBuffer> pixelFormat;
     private BorderPane broderPane;
     private Stage stage;
     private Scene scene;
@@ -103,6 +104,7 @@ public class VLCWindowDirect extends VLCWindow {
                         @Override
                         public void run() {
                             stage = new Stage(StageStyle.UNDECORATED);
+                            PlatformUtils.setFullScreenAlwaysOnTop(stage, true);
                             stage.focusedProperty().addListener(new ChangeListener<Boolean>() {
                                 public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
                                     if (newValue.booleanValue()) {
@@ -121,7 +123,7 @@ public class VLCWindowDirect extends VLCWindow {
                             scene = new Scene(borderPane);
                             scene.setFill(Color.BLACK);
                             pixelWriter = canvas.getGraphicsContext2D().getPixelWriter();
-                            pixelFormat = PixelFormat.getIntArgbPreInstance();
+                            pixelFormat = PixelFormat.getByteBgraPreInstance();
 
                         }
                     });
@@ -216,7 +218,15 @@ public class VLCWindowDirect extends VLCWindow {
             super(new VLCBufferFormatCallback());
 
         }
-
+/*
+        @Override
+      public void display(Memory nativeBuffer) {
+        ByteBuffer byteBuffer = nativeBuffer.getByteBuffer(0, nativeBuffer.size());
+        pixelWriter.setPixels(0, 0, bufferFormat.getWidth(), bufferFormat.getHeight(), pixelFormat, byteBuffer, bufferFormat.getWidth()*4);
+        //pixelWriter.setPixels(0, 0, bufferFormat.getWidth(), bufferFormat.getHeight(), pixelFormat, byteBuffer, bufferFormat.getWidth() * 4, WIDTH);
+                    
+      }*/
+      
         /**
          * when the the component wants to get the render callback, a new render
          * callback adapter Class is created
@@ -225,7 +235,7 @@ public class VLCWindowDirect extends VLCWindow {
          */
         @Override
         protected RenderCallback onGetRenderCallback() {
-            return new RenderCallback();
+            return new VLCRenderCallback();
         }
 
     }
@@ -268,34 +278,12 @@ public class VLCWindowDirect extends VLCWindow {
      * Private class that is a render callback. This class is responsible for
      * the actual rendering of frames.
      */
-    private class RenderCallback extends RenderCallbackAdapter {
-
-        public final Object lock = new Object();
-        /**
-         * Created this runnable as a convenience, so it is really clean to call
-         * it later.
-         */
-        Runnable render = new Runnable() {
-            @Override
-            public void run() {
-                if (!canvasScaled) {
-                    canvasScaled = scaleCanvas();
-                }
-                try {
-                    synchronized (lock) {
-                        pixelWriter.setPixels(0, 0, bufferFormat.getWidth(), bufferFormat.getHeight(), pixelFormat, intBuffer, bufferFormat.getWidth() * 4, WIDTH);
-                    }
-                } catch (Exception ex) {
-                    LOGGER.log(Level.WARNING, "Pixel Writer Problem", ex);
-                }
-            }
-        };
+    private class VLCRenderCallback implements RenderCallback {
 
         /**
          * Constructor that initializes super class
          */
-        private RenderCallback() {
-            super(new int[(WIDTH * HEIGHT)]);
+        private VLCRenderCallback() {
         }
 
         /**
@@ -305,14 +293,9 @@ public class VLCWindowDirect extends VLCWindow {
          * @param rgbBuffer int array holding picture data
          */
         @Override
-        public void onDisplay(DirectMediaPlayer mediaPlayer, int[] rgbBuffer) {
-            synchronized (lock) {
-                bufferFormat = ((DefaultDirectMediaPlayer) mediaPlayer).getBufferFormat();
-                intBuffer = new int[rgbBuffer.length];
-                System.arraycopy(rgbBuffer, 0, intBuffer, 0, rgbBuffer.length);
-            }
-            Platform.runLater(render);
-
+        public void display(DirectMediaPlayer mediaPlayer, Memory[] nativeBuffer, BufferFormat bufferFormat) {
+            ByteBuffer byteBuffer = nativeBuffer[0].getByteBuffer(0, nativeBuffer[0].size());
+            pixelWriter.setPixels(0, 0, bufferFormat.getWidth(), bufferFormat.getHeight(), pixelFormat, byteBuffer, bufferFormat.getWidth()*4);
         }
     }
 
@@ -903,5 +886,8 @@ public class VLCWindowDirect extends VLCWindow {
         } catch (InterruptedException | ExecutionException ex) {
             LOGGER.log(Level.WARNING, "Interrupted or execution error", ex);
         }
+    }
+    
+    public void setWindowVisible(boolean visible) { 
     }
 }

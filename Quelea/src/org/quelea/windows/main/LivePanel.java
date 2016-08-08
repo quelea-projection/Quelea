@@ -96,6 +96,7 @@ public class LivePanel extends LivePreviewPanel {
     public LivePanel() {
         getPresentationPanel().setLive();
         getPdfPanel().setLive();
+         getVideoPanel().setLive();
         getImageGroupPanel().setLive();
         header = new ToolBar();
         Label headerLabel = new Label(LabelGrabber.INSTANCE.getLabel("live.heading"));
@@ -604,3 +605,4 @@ public class LivePanel extends LivePreviewPanel {
     }
 
 }
+
