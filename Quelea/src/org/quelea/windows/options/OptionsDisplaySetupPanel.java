@@ -57,6 +57,7 @@ public class OptionsDisplaySetupPanel extends GridPane implements PropertyPanel 
         getChildren().add(stagePanel);
         readProperties();
 
+        OptionsDisplaySetupPanel panel = this;
         GraphicsDeviceWatcher.INSTANCE.addGraphicsDeviceListener(new GraphicsDeviceListener() {
 //            @Override
 //            public void devicesChanged(GraphicsDevice[] devices) {
@@ -81,6 +82,10 @@ public class OptionsDisplaySetupPanel extends GridPane implements PropertyPanel 
                         projectorPanel.update();
                         stagePanel.update();
                         updatePos();
+                        
+                        // want to make the this panel the next panel the users sees upon entering the options
+                        // as they will most likely want to change this next
+                        QueleaApp.get().getMainWindow().getOptionsDialog().setCurrentPanel(panel);
                     }
                 });
             }
@@ -116,6 +121,7 @@ public class OptionsDisplaySetupPanel extends GridPane implements PropertyPanel 
         DisplayStage stageWindow = QueleaApp.get().getStageWindow();
         if(projectorPanel.getOutputBounds() == null) {
             if(appWindow != null) {
+                appWindow.setFullScreenAlwaysOnTopImmediate(false);
                 appWindow.hide();
             }
         }
@@ -127,9 +133,14 @@ public class OptionsDisplaySetupPanel extends GridPane implements PropertyPanel 
             Platform.runLater(new Runnable() {
                 @Override
                 public void run() {
-                    fiLyricWindow.setArea(projectorPanel.getOutputBounds());
+                    fiLyricWindow.setAreaImmediate(projectorPanel.getOutputBounds());
                     if(!QueleaApp.get().getMainWindow().getMainPanel().getLivePanel().getHide().isSelected()) {
                         fiLyricWindow.show();
+                    }
+                    
+                    // non-custom positioned windows are fullscreen
+                    if (!projectorPanel.customPosition()) {
+                        fiLyricWindow.setFullScreenAlwaysOnTop(true);
                     }
                 }
             });

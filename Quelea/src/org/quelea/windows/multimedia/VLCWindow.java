@@ -106,6 +106,8 @@ public abstract class VLCWindow {
     
     public abstract long getTime();
     
+    public abstract void setWindowVisible(boolean visible);
+    
     public abstract long getTotal();
     
     public abstract int getVolume();
